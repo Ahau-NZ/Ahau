@@ -5,11 +5,22 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "dev": "concurrently \"npm run serve\" \"npm run start:dev\"",
+    "start:dev": "NODE_ENV=development electron server -- --title whakapapa-ora",
+    "start:production": "electron server -- --title whakapapa-ora"
   },
   "dependencies": {
+    "apollo-server": "^2.9.3",
+    "concurrently": "^4.1.2",
     "core-js": "^2.6.5",
+    "ssb-ahoy": "git://github.com/ssbc/ssb-ahoy#dev-server",
+    "ssb-client": "^4.7.8",
+    "ssb-conn": "^0.11.0",
+    "ssb-private": "^0.2.3",
+    "ssb-server": "^15.1.1",
     "vue": "^2.6.10",
+    "vue-apollo": "^3.0.0-beta.11",
     "vue-router": "^3.0.3",
     "vuex": "^3.0.1"
   },
@@ -21,8 +32,10 @@
     "babel-eslint": "^10.0.1",
     "eslint": "^5.16.0",
     "eslint-plugin-vue": "^5.0.0",
+    "graphql-tag": "^2.9.0",
     "sass": "^1.18.0",
     "sass-loader": "^7.1.0",
+    "vue-cli-plugin-apollo": "^0.21.0",
     "vue-template-compiler": "^2.6.10"
   }
 }
