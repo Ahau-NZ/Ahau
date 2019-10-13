@@ -8,10 +8,11 @@ const plugins = [
   'ssb-unix-socket',
   'ssb-no-auth',
 
-  'ssb-conn',
+  'ssb-legacy-conn',
+  // 'ssb-conn', // uninstalled for the moment
   // 'ssb-replicate',
   // 'ssb-friends',
-  // 'ssb-invite',
+  'ssb-invite',
   'ssb-private'
   // 'ssb-backlinks',
   // 'ssb-about',
@@ -24,10 +25,12 @@ ahoy(
     title: 'Whakapapa Ora',
     config: Config(),
     plugins,
-    appDir: '../whakapapa-ora', // only with ssb-ahoy symlinked
+
+    // appDir: '../whakapapa-ora', // only with ssb-ahoy symlinked
+
     appURL: process.env.NODE_ENV === 'development'
       ? 'http://localhost:8080' // dev-server
-      : `file://${__dirname}/dist/index.html`
+      : `file://${__dirname}/bundle/index.html`
   },
   ({ config }) => {
     console.log('<<< welcome aboard >>>')
