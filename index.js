@@ -30,7 +30,7 @@ ahoy(
 
     appURL: process.env.NODE_ENV === 'development'
       ? 'http://localhost:8080' // dev-server
-      : `file://${__dirname}/bundle/index.html`
+      : `file://${__dirname}/dist/index.html`
   },
   ({ config }) => {
     console.log('<<< welcome aboard >>>')

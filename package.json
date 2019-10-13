@@ -10,7 +10,8 @@
     "start:dev": "NODE_ENV=development electron index.js -- --title whakapapa-ora",
     "build": "vue-cli-service build",
     "start": "electron index.js -- --title whakapapa-ora",
-    "dist": "electron-builder"
+    "dist": "electron-builder",
+    "publish": "npm run build && npm run dist"
   },
   "dependencies": {
     "apollo-server": "^2.9.3",
@@ -47,6 +48,9 @@
   },
   "build": {
     "appId": "org.ahau.whakapapa-ora",
+    "directories": {
+      "output": "dist/installers"
+    },
     "linux": {
       "category": "Network",
       "target": "AppImage"
@@ -67,6 +71,9 @@
     },
     "files": [
       "**/*",
+      "!src/*",
+      "!public/*",
+      "!dist/installers*",
       "!**/node_modules/*/{CHANGELOG.md,README.md,README,readme.md,readme}",
       "!**/node_modules/*/{test,__tests__,tests,powered-test,example,examples}",
       "!**/node_modules/*.d.ts",
@@ -77,10 +84,7 @@
       "!**/{.DS_Store,.git,.hg,.svn,CVS,RCS,SCCS,.gitignore,.gitattributes}",
       "!**/{__pycache__,thumbs.db,.flowconfig,.idea,.vs,.nyc_output}",
       "!**/{appveyor.yml,.travis.yml,circle.yml}",
-      "!**/{npm-debug.log,yarn.lock,.yarn-integrity,.yarn-metadata.json}",
-      "!src/*",
-      "!public/*",
-      "!dist/*"
+      "!**/{npm-debug.log,yarn.lock,.yarn-integrity,.yarn-metadata.json}"
     ]
   }
 }
