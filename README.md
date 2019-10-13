@@ -1,29 +1,38 @@
 # whakapapa-ora
 
-## Project setup
-```
-yarn install
+## Setup
+
+```bash
+$ npm install
 ```
 
-### Runs server and compiles and hot-reloads client for development
+## Development
+
+```bash
+$ npm run dev
 ```
-yarn run dev
+Launches electron app, connecting to a dev-server which is compiling and hot-reloading front-end (UI) code.
+
+NOTE live-reload doesn't work for `ssb-server` (back end) code.
+
+## Production
+
+```bash
+$ npm run build
+$ npm start
 ```
 
-### Compiles and minifies client for production
-```
-yarn run build
-```
+Compiles and minifies code (and assets) for production.
 
-### Run your tests
-```
-yarn run test
-```
+TODO: add `electron-builder` which then creates installers
 
-### Lints and fixes files
-```
-yarn run lint
-```
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
+see also:
+
+```
+npm run test
+npm run lint
+```

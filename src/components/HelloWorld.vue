@@ -4,6 +4,7 @@
       {{ isLoading ? whoami : 'loading...' }}
     </h1>
     <div>working !!</div>
+    <div>{{ msg }}</div>
   </div>
 </template>
 
@@ -12,6 +13,9 @@ import gql from 'graphql-tag'
 
 export default {
   name: 'HelloWorld',
+  props: {
+    msg: String
+  },
   apollo: {
     whoami: gql`query {
       whoami
