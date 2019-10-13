@@ -1,6 +1,9 @@
 <template>
   <div class="hello">
-    <h1>{{ whoami }}</h1>
+    <h1>
+      {{ isLoading ? whoami : 'loading...' }}
+    </h1>
+    <div>working !!</div>
   </div>
 </template>
 
@@ -13,6 +16,11 @@ export default {
     whoami: gql`query {
       whoami
     }`
+  },
+  computed: {
+    isLoading () {
+      return Boolean(this.whoami)
+    }
   }
 }
 </script>

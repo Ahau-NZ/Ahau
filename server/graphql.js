@@ -18,7 +18,10 @@ module.exports = sbot => {
             if (err) {
               reject(err)
             }
-            resolve(info.id)
+            setTimeout(
+              () => resolve(info.id),
+              1e3
+            )
           })
         })
     }
