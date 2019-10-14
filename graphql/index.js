@@ -1,7 +1,7 @@
 const { ApolloServer, gql } = require('apollo-server')
 // const { typeDefs, resolvers } = require('./ssb')
+
 module.exports = sbot => {
-  console.log('Starting GraphQL Server')
   const typeDefs = gql`
     type Query {
       "Scuttlebutt Who am I"
@@ -18,7 +18,10 @@ module.exports = sbot => {
             if (err) {
               reject(err)
             }
-            resolve(info.id)
+            setTimeout(
+              () => resolve(info.id),
+              1e3
+            )
           })
         })
     }
@@ -30,6 +33,6 @@ module.exports = sbot => {
   })
 
   server.listen().then(({ url }) => {
-    console.log(`🚀 Server ready at ${url}`)
+    console.log(`GraphQL server ready at ${url}`)
   })
 }
