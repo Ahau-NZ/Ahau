@@ -20,27 +20,27 @@ const plugins = [
   // 'ssb-suggest'
 ]
 
-ahoy(
-  {
-    title: 'Whakapapa Ora',
-    config: Config(),
-    plugins,
+const appURL = process.env.NODE_ENV === 'development'
+  ? 'http://localhost:8080' // dev-server
+  : `file://${__dirname}/dist/index.html` // production build
 
-    // appDir: '../whakapapa-ora', // only with ssb-ahoy symlinked
-
-    appURL: process.env.NODE_ENV === 'development'
-      ? 'http://localhost:8080' // dev-server
-      : `file://${__dirname}/dist/index.html`
-  },
-  ({ config }) => {
+ahoy({
+  title: 'Whakapapa Ora',
+  appName: 'ssb',
+  config: Config(),
+  plugins,
+  appURL,
+  // appDir: '../whakapapa-ora', // only use this when ssb-ahoy symlinked
+  onReady: ({ config }) => {
     console.log('<<< welcome aboard >>>')
 
-    setImmediate(
-      () => ssbClient(config.keys, config, (err, sbot) => {
-        if (err) throw err
+    ssbClient(config.keys, config, (err, sbot) => {
+      if (err) {
+        console.log('BOOM')
+        throw err
+      }
 
-        Graphql(sbot)
-      })
-    )
+      Graphql(sbot)
+    })
   }
-)
+})
