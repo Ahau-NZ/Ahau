@@ -1,30 +1,38 @@
 {
   "name": "whakapapa-ora",
   "version": "0.1.0",
-  "private": true,
   "scripts": {
+    "postinstall": "npm run rebuild",
+    "rebuild": "electron-builder install-app-deps",
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
     "dev": "concurrently \"npm run serve\" \"npm run start:dev\"",
-    "start:dev": "NODE_ENV=development electron server -- --title whakapapa-ora",
-    "start:production": "electron server -- --title whakapapa-ora"
+    "start:dev": "NODE_ENV=development electron index.js -- --title whakapapa-ora",
+    "build": "vue-cli-service build",
+    "start": "electron index.js -- --title whakapapa-ora",
+    "dist": "electron-builder",
+    "publish": "npm run build && npm run dist"
   },
   "dependencies": {
     "apollo-server": "^2.9.3",
     "concurrently": "^4.1.2",
     "core-js": "^2.6.5",
-    "ssb-ahoy": "git://github.com/ssbc/ssb-ahoy#dev-server",
+    "ssb-ahoy": "^2.0.0",
     "ssb-client": "^4.7.8",
-    "ssb-conn": "^0.11.0",
+    "ssb-invite": "^2.1.4",
+    "ssb-legacy-conn": "^1.0.25",
+    "ssb-master": "^1.0.3",
+    "ssb-no-auth": "^1.0.0",
     "ssb-private": "^0.2.3",
     "ssb-server": "^15.1.1",
+    "ssb-unix-socket": "^1.0.0",
     "vue": "^2.6.10",
     "vue-apollo": "^3.0.0-beta.11",
     "vue-router": "^3.0.3",
     "vuex": "^3.0.1"
   },
   "devDependencies": {
+    "electron-builder": "^20.44.4",
     "@vue/cli-plugin-babel": "^3.11.0",
     "@vue/cli-plugin-eslint": "^3.11.0",
     "@vue/cli-service": "^3.11.0",
@@ -37,5 +45,46 @@
     "sass-loader": "^7.1.0",
     "vue-cli-plugin-apollo": "^0.21.0",
     "vue-template-compiler": "^2.6.10"
+  },
+  "build": {
+    "appId": "org.ahau.whakapapa-ora",
+    "directories": {
+      "output": "dist/installers"
+    },
+    "linux": {
+      "category": "Network",
+      "target": "AppImage"
+    },
+    "appImage": {
+      "artifactName": "${name}-Linux-${version}-${arch}.${ext}"
+    },
+    "dmg": {
+      "artifactName": "${name}-Mac-${version}.${ext}",
+      "icon": "build/dmg-icon.icns"
+    },
+    "win": {
+      "publisherName": "Ahau"
+    },
+    "nsis": {
+      "artifactName": "${name}-Windows-${version}.${ext}",
+      "installerIcon": "build/setup-icon.ico"
+    },
+    "files": [
+      "**/*",
+      "!src/*",
+      "!public/*",
+      "!dist/installers*",
+      "!**/node_modules/*/{CHANGELOG.md,README.md,README,readme.md,readme}",
+      "!**/node_modules/*/{test,__tests__,tests,powered-test,example,examples}",
+      "!**/node_modules/*.d.ts",
+      "!**/node_modules/.bin",
+      "!**/*.{iml,o,hprof,orig,pyc,pyo,rbc,swp,csproj,sln,xproj}",
+      "!.editorconfig",
+      "!**/._*",
+      "!**/{.DS_Store,.git,.hg,.svn,CVS,RCS,SCCS,.gitignore,.gitattributes}",
+      "!**/{__pycache__,thumbs.db,.flowconfig,.idea,.vs,.nyc_output}",
+      "!**/{appveyor.yml,.travis.yml,circle.yml}",
+      "!**/{npm-debug.log,yarn.lock,.yarn-integrity,.yarn-metadata.json}"
+    ]
   }
 }

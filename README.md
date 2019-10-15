@@ -1,29 +1,48 @@
 # whakapapa-ora
 
-## Project setup
-```
-yarn install
+## Setup
+
+```bash
+$ npm install
 ```
 
-### Runs server and compiles and hot-reloads client for development
+## Development
+
+```bash
+$ npm run dev
 ```
-yarn run dev
+Launches electron app, connecting to a dev-server which is compiling and hot-reloading front-end (UI) code.
+
+NOTES
+- live-reload doesn't work for `ssb-server` (back end) code.
+- Windows sets env differently. Open 2 Powershell windows and run the following in each:
+  - `npm run serve` (starts the dev-server, which serves hot-reloading client-side code)
+  - `$env:NODE_ENV="development"`, then `npm start` (set the env to development, then launch electron app)
+
+## Production Build
+
+```bash
+$ npm run build
+$ npm start
 ```
 
-### Compiles and minifies client for production
-```
-yarn run build
+Compiles and minifies code (and assets) for production, outputs to `./dist`
+
+```bash
+$ npm run dist
 ```
 
-### Run your tests
-```
-yarn run test
-```
+Builds installer (using compiled clientside code + back end code), and outputs to `./dist/installers`.
 
-### Lints and fixes files
-```
-yarn run lint
-```
+
+
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
+see also:
+
+```
+npm run test
+npm run lint
+```
