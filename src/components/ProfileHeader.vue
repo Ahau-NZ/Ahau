@@ -1,8 +1,8 @@
 <template>
   <div>
-    <v-img min-width="100%" max-height="35vh" src="https://picsum.photos/800/600" />
+    <v-img min-width="100%" max-height="35vh" v-bind:src="profile.coverImage" />
     <div class="avatar">
-      <Avatar image="https://picsum.photos/300/300" alt="" />
+      <Avatar v-bind:image="profile.avatarImage" v-bind:alt="profile.preferredName" />
     </div>
   </div>
 </template>
@@ -16,14 +16,26 @@ export default {
   components: {
     Avatar
   },
-  apollo: {
-    profile: gql`query {
-      profile {
-        preferredName
-        avatarImage
-        coverPhoto
+  data () {
+    return {
+      profile: {
+        preferredName: '',
+        avatarImage: '',
+        coverImage: ''
       }
-    }`
+    }
+  },
+  apollo: {
+    // Query with parameters
+    profile: {
+      query: gql`query {
+        profile {
+          preferredName
+          avatarImage
+          coverImage
+        }
+      }`
+    }
   }
 }
 </script>

@@ -6,6 +6,7 @@
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
     "dev": "concurrently \"npm run serve\" \"npm run start:dev\"",
+    "dev:server": "SERVER=true nodemon .",
     "dist": "electron-builder",
     "postinstall": "npm run rebuild",
     "publish": "npm run build && npm run dist",
@@ -15,6 +16,7 @@
   },
   "dependencies": {
     "apollo-server": "^2.9.3",
+    "casual": "^1.6.2",
     "concurrently": "^4.1.2",
     "core-js": "^2.6.5",
     "ssb-ahoy": "^2.0.0",

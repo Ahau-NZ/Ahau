@@ -6,7 +6,7 @@
           <img src="../assets/logo_red.svg" />
         </router-link>
         <router-link to="/profile">
-          <Avatar size="50px" image="https://picsum.photos/300/300" />
+          <Avatar size="50px" v-bind:image="profile.avatarImage" v-bind:alt="profile.preferredName" />
         </router-link>
       </v-toolbar-title>
 
@@ -37,12 +37,24 @@ export default {
   components: {
     Avatar
   },
-  apollo: {
-    profile: gql`query {
-      profile {
-        avatarPhoto
+  data () {
+    return {
+      profile: {
+        preferredName: '',
+        avatarImage: ''
       }
-    }`
+    }
+  },
+  apollo: {
+    // Query with parameters
+    profile: {
+      query: gql`query {
+        profile {
+          preferredName
+          avatarImage
+        }
+      }`
+    }
   }
 }
 </script>

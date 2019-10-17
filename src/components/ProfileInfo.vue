@@ -2,15 +2,15 @@
   <v-container class="white mx-auto py-12 px-12 d-flex justify-space-between align-center">
     <v-row>
       <v-col cols="8">
-        <h1 class="primary--text">{{preferredName || 'Ben'}}</h1>
+        <h1 class="primary--text">{{profile.preferredName}}</h1>
         <v-row>
           <v-col cols="6">
             <h3 class="primary--text caption">Legal name</h3>
-            <p class="primary--text body-1">{{legalName || 'Legal name'}}</p>
+            <p class="primary--text body-1">{{profile.legalName}}</p>
           </v-col>
           <v-col cols="6">
             <h3 class="primary--text caption">Other names</h3>
-            <p class="primary--text body-1">{{altNames || 'Alternative names'}}</p>
+            <p class="primary--text body-1">{{profile.altNames.join(', ')}}</p>
           </v-col>
         </v-row>
         <v-card
@@ -18,7 +18,7 @@
           min-height="200px"
         >
           <v-card-title class="headline font-weight-bold">About</v-card-title>
-          <v-card-text>Listen to your favorite artists and albums whenever and wherever, online and offline.</v-card-text>
+          <v-card-text>{{profile.description}}</v-card-text>
         </v-card>
       </v-col>
       <v-col cols="4 justify-end">
@@ -41,14 +41,28 @@ import gql from 'graphql-tag'
 
 export default {
   name: 'ProfileHeader',
-  apollo: {
-    profile: gql`query {
-      profile {
-        preferredName
-        legalName
-        altNames
+  data () {
+    return {
+      profile: {
+        preferredName: '',
+        legalName: '',
+        altNames: [],
+        description: ''
       }
-    }`
+    }
+  },
+  apollo: {
+    // Query with parameters
+    profile: {
+      query: gql`query {
+        profile {
+          preferredName
+          legalName
+          altNames
+          description
+        }
+      }`
+    }
   }
 }
 </script>

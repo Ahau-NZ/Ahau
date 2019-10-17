@@ -20,27 +20,38 @@ const plugins = [
   // 'ssb-suggest'
 ]
 
-const appURL = process.env.NODE_ENV === 'development'
-  ? 'http://localhost:8080' // dev-server
-  : `file://${__dirname}/dist/index.html` // production build
+const appURL =
+  process.env.NODE_ENV === 'development'
+    ? 'http://localhost:8080' // dev-server
+    : `file://${__dirname}/dist/index.html` // production build
 
-ahoy({
-  title: 'Whakapapa Ora',
-  appName: 'ssb',
-  config: Config(),
-  plugins,
-  appURL,
-  // appDir: '../whakapapa-ora', // only use this when ssb-ahoy symlinked
-  onReady: ({ config }) => {
-    console.log('<<< welcome aboard >>>')
+if (!process.env.SERVER) {
+  ahoy({
+    title: 'Whakapapa Ora',
+    appName: 'ssb',
+    config: Config(),
+    plugins,
+    appURL,
+    // appDir: '../whakapapa-ora', // only use this when ssb-ahoy symlinked
+    onReady: ({ config }) => {
+      console.log('<<< welcome aboard >>>')
 
-    ssbClient(config.keys, config, (err, sbot) => {
-      if (err) {
-        console.log('BOOM')
-        throw err
-      }
+      ssbClient(config.keys, config, (err, sbot) => {
+        if (err) {
+          console.log('BOOM')
+          throw err
+        }
 
-      Graphql(sbot)
-    })
-  }
-})
+        Graphql(sbot)
+      })
+    }
+  })
+} else {
+  const Server = require('ssb-server')
+  Server.use(require('ssb-master'))
+    .use(require('ssb-legacy-conn'))
+    .use(require('ssb-replicate'))
+  const config = Config()
+  const sbot = Server(config)
+  Graphql(sbot)
+}
