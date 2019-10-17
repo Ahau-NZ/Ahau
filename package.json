@@ -2,16 +2,16 @@
   "name": "whakapapa-ora",
   "version": "0.1.0",
   "scripts": {
-    "postinstall": "npm run rebuild",
-    "rebuild": "electron-builder install-app-deps",
     "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
     "dev": "concurrently \"npm run serve\" \"npm run start:dev\"",
-    "start:dev": "NODE_ENV=development electron index.js -- --title whakapapa-ora",
-    "build": "vue-cli-service build",
-    "start": "electron index.js -- --title whakapapa-ora",
     "dist": "electron-builder",
-    "publish": "npm run build && npm run dist"
+    "postinstall": "npm run rebuild",
+    "publish": "npm run build && npm run dist",
+    "rebuild": "electron-builder install-app-deps",
+    "start": "electron index.js -- --title whakapapa-ora",
+    "start:dev": "NODE_ENV=development electron index.js -- --title whakapapa-ora"
   },
   "dependencies": {
     "apollo-server": "^2.9.3",
@@ -29,22 +29,25 @@
     "vue": "^2.6.10",
     "vue-apollo": "^3.0.0-beta.11",
     "vue-router": "^3.0.3",
+    "vuetify": "^2.1.0",
     "vuex": "^3.0.1"
   },
   "devDependencies": {
-    "electron-builder": "^20.44.4",
     "@vue/cli-plugin-babel": "^3.11.0",
     "@vue/cli-plugin-eslint": "^3.11.0",
     "@vue/cli-service": "^3.11.0",
     "@vue/eslint-config-standard": "^4.0.0",
     "babel-eslint": "^10.0.1",
+    "electron-builder": "^20.44.4",
     "eslint": "^5.16.0",
     "eslint-plugin-vue": "^5.0.0",
     "graphql-tag": "^2.9.0",
     "sass": "^1.18.0",
     "sass-loader": "^7.1.0",
     "vue-cli-plugin-apollo": "^0.21.0",
-    "vue-template-compiler": "^2.6.10"
+    "vue-cli-plugin-vuetify": "^1.0.1",
+    "vue-template-compiler": "^2.6.10",
+    "vuetify-loader": "^1.2.2"
   },
   "build": {
     "appId": "org.ahau.whakapapa-ora",

@@ -1,17 +1,19 @@
 <template>
-  <div class="wrapper">
+  <div>
     <ProfileHeader />
+    <ProfileInfo />
   </div>
 </template>
 
 <script>
-import gql from 'graphql-tag'
 import ProfileHeader from '@/components/ProfileHeader.vue'
+import ProfileInfo from '@/components/ProfileInfo.vue'
 
 export default {
   name: 'Profile',
   components: {
     ProfileHeader,
+    ProfileInfo
   }
 }
 </script>

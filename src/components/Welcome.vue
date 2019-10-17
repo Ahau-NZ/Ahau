@@ -1,9 +1,8 @@
 <template>
-  <div class="hello">
+  <div>
     <h1>
-      {{ isLoading ? whoami : 'loading...' }}
+      {{ isLoading ? `Welcome ${whoami}` : 'loading...' }}
     </h1>
-    <div>working !!</div>
     <div>{{ msg }}</div>
   </div>
 </template>
@@ -12,7 +11,7 @@
 import gql from 'graphql-tag'
 
 export default {
-  name: 'HelloWorld',
+  name: 'Welcome',
   props: {
     msg: String
   },
@@ -20,6 +19,13 @@ export default {
     whoami: gql`query {
       whoami
     }`
+  },
+  updated () {
+    console.log('Updatred', this.whoami)
+    if (this.whoami) {
+      this.$router.push(`/profile?id=${this.whoami}`)
+    }
+    console.log('Updated ', this.whoami)
   },
   computed: {
     isLoading () {
