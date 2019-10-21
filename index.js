@@ -25,11 +25,16 @@ const appURL =
     ? 'http://localhost:8080' // dev-server
     : `file://${__dirname}/dist/index.html` // production build
 
+const config = Config('ssb-ahau', {
+  caps: {
+    shs: 'LftKJZRB4nbBRnlJuFteWG9AP+gGboVEhibx016bR0s='
+  }
+})
+
 if (!process.env.SERVER) {
   ahoy({
     title: 'Whakapapa Ora',
-    appName: 'ssb',
-    config: Config(),
+    config,
     plugins,
     appURL,
     // appDir: '../whakapapa-ora', // only use this when ssb-ahoy symlinked
