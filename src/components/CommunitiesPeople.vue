@@ -3,15 +3,24 @@
     <v-row class="py-2">
       <h2 class="grey--text subtitle-1">People</h2>
     </v-row>
-    <v-row class="d-flex flex-column align-center">
-      <Avatar image="https://" size="80" />
-      <p class="black--text">{{preferredName}}</p>
+    <v-row class="d-flex flex-row align-center">
+      <v-col
+        v-for="(peer, index) in peers"
+        v-bind:item="peer"
+        v-bind:index="index"
+        v-bind:key="index"
+      >
+        <Avatar image="https://picsum.photos/300/300" size="80" />
+        <p class="black--text">{{peer.id}}</p>
+      </v-col>
     </v-row>
   </v-container>
 </template>
 
 <script>
+import gql from 'graphql-tag'
 import Avatar from '@/components/Avatar'
+
 export default {
   name: 'CommunitiesPeople',
   components: {
@@ -19,7 +28,23 @@ export default {
   },
   data () {
     return {
-      preferredName: 'Ben'
+      peers: []
+    }
+  },
+  apollo: {
+    // Subscriptions
+    $subscribe: {
+      peers: {
+        query: gql`subscription {
+          peers {
+            id
+            state
+          }
+        }`,
+        result ({ data }) {
+          this.peers = data.peers
+        }
+      }
     }
   }
 }

@@ -3,16 +3,20 @@
     <v-row class="py-2">
       <h2 class="grey--text subtitle-1">Communities</h2>
     </v-row>
-    <v-row class="d-flex flex-column align-center">
-      <v-col>
+    <v-row class="d-flex flex-row align-start justify-center">
+      <v-col
+        v-for="community in communities"
+        v-bind:item="community"
+        v-bind:key="community.preferredName"
+      >
         <v-card
           light
-          height="350px"
-          width="250px"
+          height="380px"
+          width="300px"
         >
-          <v-img height="100px" v-bind:src="image" />
-          <v-card-title class="headline font-weight-bold">{{name}}</v-card-title>
-          <v-card-text>{{description}}</v-card-text>
+          <v-img height="150px" v-bind:src="community.headerImage" />
+          <v-card-title class="subtitle font-weight-bold">{{community.preferredName}}</v-card-title>
+          <v-card-text class="body-2">{{community.description.substring(0, 180)}}</v-card-text>
         </v-card>
       </v-col>
     </v-row>
@@ -20,13 +24,28 @@
 </template>
 
 <script>
+import gql from 'graphql-tag'
+
 export default {
   name: 'CommunitiesList',
   data () {
     return {
-      name: 'Ngati Tai-a-rae-ke',
-      description: 'Description for the community',
-      image: 'http'
+      profile: {
+        preferredName: '',
+        description: '',
+        headerImage: ''
+      }
+    }
+  },
+  apollo: {
+    communities: {
+      query: gql`query {
+        communities {
+          preferredName
+          description
+          headerImage
+        }
+      }`
     }
   }
 }

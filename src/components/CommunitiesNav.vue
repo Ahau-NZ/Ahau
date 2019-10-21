@@ -7,19 +7,25 @@
         </v-row>
         <v-row>
           <v-col cols="3">
-            <h3 class="primary--text display-1">Local</h3>
+            <router-link to="/communities?local">
+              <h3 class="primary--text display-1 active">Local</h3>
+            </router-link>
           </v-col>
           <v-col cols="1">
             <div class="pipe" />
           </v-col>
           <v-col cols="3">
-            <h3 class="primary--text display-1">Internet</h3>
+            <router-link to="/communities?internet">
+              <h3 class="primary--text display-1">Internet</h3>
+            </router-link>
           </v-col>
           <v-col cols="1">
             <div class="pipe" />
-          </v-col>
+          </v-col>  
           <v-col cols="3">
-            <h3 class="primary--text display-1">Invite</h3>
+            <router-link to="/communities?invite">
+              <h3 class="primary--text display-1">Invite</h3>
+            </router-link>
           </v-col>
         </v-row>
       </v-col>
@@ -35,10 +41,16 @@
 <script>
 export default {
   name: 'CommunitiesNav',
+  props: {
+    navigate: Function
+  },
   data () {
     return {
       helperText: 'Connect to people or communities'
     }
+  },
+  mounted () {
+    console.log('THIS', this)
   }
 }
 </script>
@@ -49,5 +61,9 @@ export default {
     height: 30px;
     width: 1px;
     background: black;
+  }
+  .active {
+    border-bottom: 3px solid red;
+    width: 140px;
   }
 </style>

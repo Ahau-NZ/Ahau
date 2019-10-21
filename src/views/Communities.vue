@@ -1,6 +1,6 @@
 <template>
   <v-container class="white mx-auto py-2 px-12 d-flex flex-column justify-space-between align-center">
-    <CommunitiesNav />
+    <CommunitiesNav v-bind:nav="navigate" />
     <CommunitiesPeople />
     <CommunitiesList />
   </v-container>
@@ -17,6 +17,11 @@ export default {
     CommunitiesNav,
     CommunitiesPeople,
     CommunitiesList
+  },
+  methods () {
+    return {
+      navigate: (e) => console.log('Changed', e)
+    }
   }
 }
 </script>

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-img min-width="100%" max-height="35vh" v-bind:src="profile.coverImage" />
+    <v-img min-width="100%" max-height="35vh" v-bind:src="profile.headerImage" />
     <div class="avatar">
       <Avatar v-bind:image="profile.avatarImage" v-bind:alt="profile.preferredName" />
     </div>
@@ -21,7 +21,7 @@ export default {
       profile: {
         preferredName: '',
         avatarImage: '',
-        coverImage: ''
+        headerImage: ''
       }
     }
   },
@@ -32,7 +32,7 @@ export default {
         profile {
           preferredName
           avatarImage
-          coverImage
+          headerImage
         }
       }`
     }
