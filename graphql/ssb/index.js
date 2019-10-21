@@ -13,6 +13,7 @@ module.exports = sbot => {
       avatarImage: String
       headerImage: String
       description: String
+      type: String
     }
     input CommunityInput {
       preferredName: String
@@ -42,6 +43,7 @@ module.exports = sbot => {
       avatarImage: String
       headerImage: String
       description: String
+      type: String
     }
     type Query {
       "Scuttlebutt Who am I"
@@ -70,33 +72,42 @@ module.exports = sbot => {
           })
         }),
       profile: (_, { id }) => {
-        console.log('ID', id)
         return new Promise((resolve, reject) => {
-          sbot.profile.get({ profileId: id }, (err, profileState) => {
+          sbot.profile.get(id, (err, profileState) => {
             if (err) {
               reject(err)
             }
-            console.log(profileState)
-            resolve(profileState)
+            const state = Object.keys(profileState)[0]
+            resolve({
+              id,
+              ...profileState[state]
+            })
           })
         })
       }
     },
     Mutation: {
       saveProfile: async (_, { input }) => {
-        const type = 'person'
+        const type = input.type
         const details = {
-          preferredName: { set: 'Ben' },
-          description: { set: 'Kia orano, Ko te Mata Atau te waka' }
+          preferredName: { set: input.preferredName },
+          legalName: { set: input.legalName },
+          altNames: { set: input.altNames },
+          avatarImage: { set: input.avatarImage },
+          headerImage: { set: input.headerImage },
+          description: { set: input.description }
         }
+        console.log('TCL: details', details)
         try {
           return await sbot.profile.create(type, details, (err, profileId) => {
             if (err) {
               console.log('TCL: err', err)
             }
             console.log('TCL: profileId', profileId)
-
-            console.log()
+            return {
+              id: profileId,
+              ...details
+            }
           })
         } catch (err) {
           throw err

@@ -120,7 +120,9 @@ export default {
     },
     async saveProfile () {
       // Call to the graphql mutation
-      let cleanInput = {}
+      let cleanInput = {
+        type: 'person'
+      }
       await Object.keys(this.profile).map(k => {
         if (k !== '__typename') {
           cleanInput[k] = this.profile[k]
