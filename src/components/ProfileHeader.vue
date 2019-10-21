@@ -9,7 +9,7 @@
     <v-row class="avatar">
       <Avatar v-bind:image="profile.avatarImage" v-bind:alt="profile.preferredName" />
       <v-btn v-if="edit" class="edit-avatar" fab color="grey">
-        <v-icon right>mdi-pencil</v-icon>
+        <v-icon right>mdi-camera</v-icon>
       </v-btn>
     </v-row>
   </v-container>
