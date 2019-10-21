@@ -4,6 +4,7 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
+    "icon": "./build/build-icon",
     "lint": "vue-cli-service lint",
     "dev": "concurrently \"npm run serve\" \"npm run start:dev\"",
     "dev:server": "SERVER=true nodemon .",
@@ -15,10 +16,12 @@
     "start:dev": "NODE_ENV=development electron index.js -- --title whakapapa-ora"
   },
   "dependencies": {
+    "@fiahfy/icns-convert": "0.0.6",
     "apollo-server": "^2.9.3",
     "casual": "^1.6.2",
     "concurrently": "^4.1.2",
     "core-js": "^2.6.5",
+    "sharp": "^0.23.1",
     "ssb-ahoy": "^2.0.1",
     "ssb-client": "^4.7.8",
     "ssb-invite": "^2.1.4",
@@ -28,6 +31,7 @@
     "ssb-private": "^0.2.3",
     "ssb-server": "^15.1.1",
     "ssb-unix-socket": "^1.0.0",
+    "to-ico": "^1.1.5",
     "vue": "^2.6.10",
     "vue-apollo": "^3.0.0-beta.11",
     "vue-router": "^3.0.3",
