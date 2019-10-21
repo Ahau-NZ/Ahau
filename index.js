@@ -13,8 +13,10 @@ const plugins = [
   // 'ssb-replicate',
   // 'ssb-friends',
   'ssb-invite',
-  'ssb-private'
-  // 'ssb-backlinks',
+  'ssb-private',
+  'ssb-backlinks',
+  'ssb-profile'
+
   // 'ssb-about',
   // 'ssb-query',
   // 'ssb-suggest'
@@ -55,6 +57,8 @@ if (!process.env.SERVER) {
   const Server = require('ssb-server')
   Server.use(require('ssb-master'))
     .use(require('ssb-conn'))
+    .use(require('ssb-backlinks'))
+    .use(require('ssb-profile'))
     .use(require('ssb-replicate'))
   const config = Config()
   const sbot = Server(config)

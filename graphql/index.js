@@ -13,10 +13,10 @@ module.exports = sbot => {
 
   const server = new ApolloServer({
     typeDefs,
-    resolvers,
-    mockEntireSchema: false,
-    mocks:
-      process.env.NODE_ENV === 'production' ? false : require('./ssb/mocks')
+    resolvers
+    // mockEntireSchema: false,
+    // mocks:
+    //   process.env.NODE_ENV === 'production' ? false : require('./ssb/mocks')
   })
 
   server.applyMiddleware({ app })

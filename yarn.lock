@@ -6088,7 +6088,7 @@ flumeview-level@^3.0.0, flumeview-level@^3.0.5:
     pull-stream "^3.5.0"
     pull-write "^1.1.1"
 
-flumeview-query@^6.0.0, flumeview-query@^6.1.0:
+flumeview-query@^6.0.0, flumeview-query@^6.1.0, flumeview-query@^6.2.0:
   version "6.3.0"
   resolved "https://registry.yarnpkg.com/flumeview-query/-/flumeview-query-6.3.0.tgz#c0d19176c34b3b73340f5021ee3f2ddd8db0244a"
   integrity sha512-8QBannTFLICARmflhHpXNeR5hh6IzIyJz4XhKTofzmxq/hXEn1un7aF6P6dRQkOwthENDTbSB07eWKqwnYDKtw==
@@ -6334,6 +6334,20 @@ gaze@1.1.3:
   integrity sha512-BRdNm8hbWzFzWHERTrejLqwHDfS4GibPoq5wjTPIoJHoBtKGPg3xAFfxmM+9ztbXelxcf2hwQcaz1PtmFeue8g==
   dependencies:
     globule "^1.0.0"
+
+generate-function@^2.0.0:
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/generate-function/-/generate-function-2.3.1.tgz#f069617690c10c868e73b8465746764f97c3479f"
+  integrity sha512-eeB5GfMNeevm/GRYq20ShmsaGcmI81kIX2K9XQx5miC8KdHaC6Jm0qQ8ZNeGOi7wYB8OsdxKs+Y2oVuTFuVwKQ==
+  dependencies:
+    is-property "^1.0.2"
+
+generate-object-property@^1.1.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/generate-object-property/-/generate-object-property-1.2.0.tgz#9c0e1c40308ce804f4783618b937fa88f99d50d0"
+  integrity sha1-nA4cQDCM6AT0eDYYuTf6iPmdUNA=
+  dependencies:
+    is-property "^1.0.0"
 
 get-assigned-identifiers@^1.1.0:
   version "1.2.0"
@@ -7616,6 +7630,22 @@ is-lower-case@^1.1.0:
   dependencies:
     lower-case "^1.1.0"
 
+is-my-ip-valid@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/is-my-ip-valid/-/is-my-ip-valid-1.0.0.tgz#7b351b8e8edd4d3995d4d066680e664d94696824"
+  integrity sha512-gmh/eWXROncUzRnIa1Ubrt5b8ep/MGSnfAUI3aRp+sqTCs1tv1Isl8d8F6JmkN3dXKc3ehZMrtiPN9eL03NuaQ==
+
+is-my-json-valid@^2.17.2:
+  version "2.20.0"
+  resolved "https://registry.yarnpkg.com/is-my-json-valid/-/is-my-json-valid-2.20.0.tgz#1345a6fca3e8daefc10d0fa77067f54cedafd59a"
+  integrity sha512-XTHBZSIIxNsIsZXg7XB5l8z/OBFosl1Wao4tXLpeC7eKU4Vm/kdop2azkPqULwnfGQjmeDIyey9g7afMMtdWAA==
+  dependencies:
+    generate-function "^2.0.0"
+    generate-object-property "^1.1.0"
+    is-my-ip-valid "^1.0.0"
+    jsonpointer "^4.0.0"
+    xtend "^4.0.0"
+
 is-npm@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/is-npm/-/is-npm-1.0.0.tgz#f2fb63a65e4905b406c86072765a1a4dc793b9f4"
@@ -7719,6 +7749,11 @@ is-promise@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/is-promise/-/is-promise-2.1.0.tgz#79a2a9ece7f096e80f36d2b2f3bc16c1ff4bf3fa"
   integrity sha1-eaKp7OfwlugPNtKy87wWwf9L8/o=
+
+is-property@^1.0.0, is-property@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/is-property/-/is-property-1.0.2.tgz#57fe1c4e48474edd65b09911f26b1cd4095dda84"
+  integrity sha1-V/4cTkhHTt1lsJkR8msc1Ald2oQ=
 
 is-redirect@^1.0.0:
   version "1.0.0"
@@ -7990,6 +8025,11 @@ jsonfile@^4.0.0:
   integrity sha1-h3Gq4HmbZAdrdmQPygWPnBDjPss=
   optionalDependencies:
     graceful-fs "^4.1.6"
+
+jsonpointer@^4.0.0:
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/jsonpointer/-/jsonpointer-4.0.1.tgz#4fd92cb34e0e9db3c89c8622ecf51f9b978c6cb9"
+  integrity sha1-T9kss04OnbPInIYi7PUfm5eMbLk=
 
 jsprim@^1.2.2:
   version "1.4.1"
@@ -8421,6 +8461,11 @@ lodash.pickby@4.6.0, lodash.pickby@^4.6.0:
   version "4.6.0"
   resolved "https://registry.yarnpkg.com/lodash.pickby/-/lodash.pickby-4.6.0.tgz#7dea21d8c18d7703a27c704c15d3b84a67e33aff"
   integrity sha1-feoh2MGNdwOifHBMFdO4SmfjOv8=
+
+lodash.set@^4.3.2:
+  version "4.3.2"
+  resolved "https://registry.yarnpkg.com/lodash.set/-/lodash.set-4.3.2.tgz#d8757b1da807dde24816b0d6a84bea1a76230b23"
+  integrity sha1-2HV7HagH3eJIFrDWqEvqGnYjCyM=
 
 lodash.sortby@^4.7.0:
   version "4.7.0"
@@ -12476,10 +12521,10 @@ sprintf-js@~1.0.2:
   resolved "https://registry.yarnpkg.com/sprintf-js/-/sprintf-js-1.0.3.tgz#04e6926f662895354f3dd015203633b857297e2c"
   integrity sha1-BOaSb2YolTVPPdAVIDYzuFcpfiw=
 
-ssb-ahoy@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/ssb-ahoy/-/ssb-ahoy-2.0.0.tgz#b1c2164aec6204e605989281fcebe320d05aeaea"
-  integrity sha512-EvH7PzlFH6lM/qdVfUu5ldk73Ff03ptxBYNmZY5Q34KXqvxlU15IeWkOvy/f95Vqmqk7NXZqI5nb69DytkgJsQ==
+ssb-ahoy@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/ssb-ahoy/-/ssb-ahoy-2.0.1.tgz#8b887cdfbafbd429d93ca66f956be382e477e54a"
+  integrity sha512-Tu406PdgHntGBqnMilWKtrG+X96fWWAz36ynB31RpUlylom7B253tjNQmIsAb9Sp2eEcMmXw9p1SmMLH7Aem8A==
   dependencies:
     electron "^4.2.0"
     electron-default-menu "^1.0.1"
@@ -12505,6 +12550,19 @@ ssb-ahoy@^2.0.0:
     ssb-invite "^2.1.4"
     ssb-legacy-conn "^1.0.0"
     ssb-replicate "^1.3.0"
+
+ssb-backlinks@^0.7.3:
+  version "0.7.3"
+  resolved "https://registry.yarnpkg.com/ssb-backlinks/-/ssb-backlinks-0.7.3.tgz#4ed737facd176bbe713118a32e7b611b36f0f3a8"
+  integrity sha512-84s5phSVyZsYV0FTmBJvICPgOMuu8ouzukG8Gz2XtuOui95GBP/G7UIBURgYVS82XA6g9xPA/jf38fsMxid38Q==
+  dependencies:
+    base64-url "^2.2.0"
+    deep-equal "^1.0.1"
+    flumeview-query "^6.2.0"
+    pull-stream "^3.6.7"
+    ssb-keys "^7.0.14"
+    ssb-ref "^2.9.0"
+    xtend "^4.0.1"
 
 ssb-blobs@1.2.1:
   version "1.2.1"
@@ -12843,6 +12901,11 @@ ssb-master@^1.0.2, ssb-master@^1.0.3:
   resolved "https://registry.yarnpkg.com/ssb-master/-/ssb-master-1.0.3.tgz#0d33e9ead15a97cd9b0b7b1773c6227757b93aea"
   integrity sha512-N1Cxm9WscGD9VEZrWbF2amyQai2U2g9gtq57W5zTqbhlQTLUUvl84U9A6fg6GPkECnUXadulnTw+mMYVkLLHjQ==
 
+ssb-msg-content@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/ssb-msg-content/-/ssb-msg-content-1.0.1.tgz#08d61181ea2b4676185ed0ae7062a32e67773dfa"
+  integrity sha512-M6W0Ef+jif829USmGvh6XeS4lYb/F2lgFhfEoCE/md7ESILNOGidp8frJE2uVOzSr2wVRA265tPrnVb7rYHkug==
+
 ssb-msgs@^5.0.0, ssb-msgs@^5.2.0:
   version "5.2.0"
   resolved "https://registry.yarnpkg.com/ssb-msgs/-/ssb-msgs-5.2.0.tgz#c681da5cd70c574c922dca4f03c521538135c243"
@@ -12909,6 +12972,17 @@ ssb-private@^0.2.3:
     pull-stream "^3.6.7"
     ssb-keys "^7.0.14"
 
+"ssb-profile@https://gitlab.com/ahau/ssb-profile":
+  version "0.1.0"
+  resolved "https://gitlab.com/ahau/ssb-profile#fe9072dc00f46c12b524afd2dcbb280d172c9320"
+  dependencies:
+    is-my-json-valid "^2.17.2"
+    pull-stream "^3.6.14"
+    ssb-msg-content "^1.0.1"
+    ssb-ref "^2.13.9"
+    ssb-schema-definitions "^2.0.2"
+    ssb-tangle "^2.0.0"
+
 ssb-query@^2.4.0:
   version "2.4.3"
   resolved "https://registry.yarnpkg.com/ssb-query/-/ssb-query-2.4.3.tgz#ac71293aef071d3c53c24e82b754eaad75bf0887"
@@ -12918,7 +12992,7 @@ ssb-query@^2.4.0:
     flumeview-query "^7.0.0"
     pull-stream "^3.6.2"
 
-ssb-ref@^2.0.0, ssb-ref@^2.12.0, ssb-ref@^2.13.3, ssb-ref@^2.13.9, ssb-ref@^2.3.0, ssb-ref@^2.6.2, ssb-ref@^2.7.1, ssb-ref@^2.9.1, ssb-ref@~2.13.9:
+ssb-ref@^2.0.0, ssb-ref@^2.12.0, ssb-ref@^2.13.3, ssb-ref@^2.13.6, ssb-ref@^2.13.9, ssb-ref@^2.3.0, ssb-ref@^2.6.2, ssb-ref@^2.7.1, ssb-ref@^2.9.0, ssb-ref@^2.9.1, ssb-ref@~2.13.9:
   version "2.13.9"
   resolved "https://registry.yarnpkg.com/ssb-ref/-/ssb-ref-2.13.9.tgz#1de8c5b4f12e5b743be95705656ad2706c0e3cd0"
   integrity sha512-TfatNqLvoP+eW/pMIbCmNcaoDq4R2k8jCtWkwDKx4AtluN/LwtyP931d5Mh+2gmzA04W7kxkr6f5ENGgdadMYg==
@@ -12943,6 +13017,14 @@ ssb-replicate@^1.3.0:
     pull-pushable "^2.2.0"
     pull-stream "^3.6.9"
     ssb-ref "^2.13.9"
+
+ssb-schema-definitions@^2.0.2:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/ssb-schema-definitions/-/ssb-schema-definitions-2.0.2.tgz#12dec82a3f88d4e00b2fe20cf505913f5e5b0ed1"
+  integrity sha512-hv7XbXSjld1EWl7FEx84EHrNQB0j4hln+CWmvznh0+E9SZtbqKyggYZP1TE+1JyBwpucSGALucy/woFIHwuiNQ==
+  dependencies:
+    lodash.clone "^4.5.0"
+    ssb-ref "^2.13.6"
 
 ssb-server@^15.1.1:
   version "15.1.1"
@@ -13000,6 +13082,17 @@ ssb-server@^15.1.1:
     ssb-ws "^6.2.1"
     stream-to-pull-stream "^1.6.10"
     zerr "^1.0.0"
+
+ssb-tangle@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/ssb-tangle/-/ssb-tangle-2.0.0.tgz#49388367145776a992e39a816a62f41a7029bce6"
+  integrity sha512-VTfLyhjgG6cL0cCqFSSNDz+ce8yesWcD3oNiZYQVNv3axBJx7b3myIpS43ZWgoCuIdFhHA5Y1ZDBtFLoNr5zLg==
+  dependencies:
+    lodash.clone "^4.5.0"
+    lodash.get "^4.4.2"
+    lodash.isequal "^4.5.0"
+    lodash.merge "^4.6.2"
+    lodash.set "^4.3.2"
 
 ssb-typescript@^1.4.0:
   version "1.4.0"

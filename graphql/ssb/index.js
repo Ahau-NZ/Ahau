@@ -47,7 +47,7 @@ module.exports = sbot => {
       "Scuttlebutt Who am I"
       whoami: String
       "Scuttlebutt identity profile"
-      profile: Profile
+      profile(id: String!): Profile
       "Scuttlebutt community"
       communities: [Community]
     }
@@ -68,16 +68,36 @@ module.exports = sbot => {
             }
             setTimeout(() => resolve(info.id), 1e3)
           })
+        }),
+      profile: (_, { id }) => {
+        console.log('ID', id)
+        return new Promise((resolve, reject) => {
+          sbot.profile.get({ profileId: id }, (err, profileState) => {
+            if (err) {
+              reject(err)
+            }
+            console.log(profileState)
+            resolve(profileState)
+          })
         })
+      }
     },
     Mutation: {
       saveProfile: async (_, { input }) => {
+        const type = 'person'
+        const details = {
+          preferredName: { set: 'Ben' },
+          description: { set: 'Kia orano, Ko te Mata Atau te waka' }
+        }
         try {
-          const saved = await sbot.publish({
-            type: 'profile',
-            content: input
+          return await sbot.profile.create(type, details, (err, profileId) => {
+            if (err) {
+              console.log('TCL: err', err)
+            }
+            console.log('TCL: profileId', profileId)
+
+            console.log()
           })
-          return saved
         } catch (err) {
           throw err
         }
