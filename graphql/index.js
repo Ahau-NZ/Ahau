@@ -1,61 +1,37 @@
-const { ApolloServer, gql, MockList } = require('apollo-server')
-const casual = require('casual')
-// const { typeDefs, resolvers } = require('./ssb')
+const { ApolloServer } = require('apollo-server-express')
+const http = require('http')
+const express = require('express')
+const cors = require('cors')
+
+const PORT = 4000
+const app = express()
+app.options('*', cors())
 
 module.exports = sbot => {
-  const typeDefs = gql`
-    type Profile {
-      preferredName: String
-      legalName: String
-      altNames: [String]
-      avatarImage: String
-      coverImage: String
-      description: String
-    }
-    type Query {
-      "Scuttlebutt Who am I"
-      whoami: String
-      "Scuttlebutt profile"
-      profile: Profile
-    }
-  `
-
-  const mocks = {
-    Query: () => ({
-      profile: () => ({
-        preferredName: () => casual.name,
-        legalName: () => casual.full_name,
-        altNames: () => new MockList([0, 4], () => casual.name),
-        avatarImage: () => 'https://picsum.photos/300/300',
-        coverImage: () => 'https://picsum.photos/800/300',
-        description: () => casual.catch_phrase
-      })
-    })
-  }
-
+  const { typeDefs, resolvers } = require('./ssb')(sbot)
   // A map of functions which return data for the schema.
-  const resolvers = {
-    Query: {
-      whoami: () =>
-        new Promise((resolve, reject) => {
-          sbot.whoami((err, info) => {
-            if (err) {
-              reject(err)
-            }
-            setTimeout(() => resolve(info.id), 1e3)
-          })
-        })
-    }
-  }
 
   const server = new ApolloServer({
     typeDefs,
     resolvers,
     mockEntireSchema: false,
-    mocks: process.env.NODE_ENV === 'production' ? false : mocks
+    mocks:
+      process.env.NODE_ENV === 'production' ? false : require('./ssb/mocks')
   })
 
-  server.listen().then(({ url }) => {
-    console.log(`GraphQL server ready at ${url}`)
+  server.applyMiddleware({ app })
+
+  const httpServer = http.createServer(app)
+  server.installSubscriptionHandlers(httpServer)
+  // ⚠️ Pay attention to the fact that we are calling `listen` on the http server variable, and not on `app`.
+  httpServer.listen(PORT, () => {
+    console.log(
+      `🚀 Server ready at http://localhost:${PORT}${server.graphqlPath}`
+    )
+    console.log(
+      `🚀 Subscriptions ready at ws://localhost:${PORT}${
+        server.subscriptionsPath
+      }`
+    )
   })
 }

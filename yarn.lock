@@ -1872,6 +1872,14 @@ apollo-cache-control@^0.8.4:
     apollo-server-env "^2.4.3"
     graphql-extensions "^0.10.3"
 
+apollo-cache-control@^0.8.5:
+  version "0.8.5"
+  resolved "https://registry.yarnpkg.com/apollo-cache-control/-/apollo-cache-control-0.8.5.tgz#d4b34691f6ca1cefac9d82b99a94a0815a85a5a8"
+  integrity sha512-2yQ1vKgJQ54SGkoQS/ZLZrDX3La6cluAYYdruFYJMJtL4zQrSdeOCy11CQliCMYEd6eKNyE70Rpln51QswW2Og==
+  dependencies:
+    apollo-server-env "^2.4.3"
+    graphql-extensions "^0.10.4"
+
 apollo-cache-inmemory@^1.6.2:
   version "1.6.3"
   resolved "https://registry.yarnpkg.com/apollo-cache-inmemory/-/apollo-cache-inmemory-1.6.3.tgz#826861d20baca4abc45f7ca7a874105905b8525d"
@@ -1982,6 +1990,13 @@ apollo-engine-reporting-protobuf@^0.4.0:
   dependencies:
     protobufjs "^6.8.6"
 
+apollo-engine-reporting-protobuf@^0.4.1:
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/apollo-engine-reporting-protobuf/-/apollo-engine-reporting-protobuf-0.4.1.tgz#c0a35bcf28487f87dcbc452b03277f575192f5d2"
+  integrity sha512-d7vFFZ2oUrvGaN0Hpet8joe2ZG0X0lIGilN+SwgVP38dJnOuadjsaYMyrD9JudGQJg0bJA5wVQfYzcCVy0slrw==
+  dependencies:
+    protobufjs "^6.8.6"
+
 apollo-engine-reporting@^1.4.6:
   version "1.4.6"
   resolved "https://registry.yarnpkg.com/apollo-engine-reporting/-/apollo-engine-reporting-1.4.6.tgz#83af6689c4ab82d1c62c3f5dde7651975508114f"
@@ -1994,6 +2009,19 @@ apollo-engine-reporting@^1.4.6:
     apollo-server-types "^0.2.4"
     async-retry "^1.2.1"
     graphql-extensions "^0.10.3"
+
+apollo-engine-reporting@^1.4.7:
+  version "1.4.7"
+  resolved "https://registry.yarnpkg.com/apollo-engine-reporting/-/apollo-engine-reporting-1.4.7.tgz#6ca69ebdc1c17200969e2e4e07a0be64d748c27e"
+  integrity sha512-qsKDz9VkoctFhojM3Nj3nvRBO98t8TS2uTgtiIjUGs3Hln2poKMP6fIQ37Nm2Q2B3JJst76HQtpPwXmRJd1ZUg==
+  dependencies:
+    apollo-engine-reporting-protobuf "^0.4.1"
+    apollo-graphql "^0.3.4"
+    apollo-server-caching "^0.5.0"
+    apollo-server-env "^2.4.3"
+    apollo-server-types "^0.2.5"
+    async-retry "^1.2.1"
+    graphql-extensions "^0.10.4"
 
 apollo-env@0.5.1, apollo-env@^0.5.1:
   version "0.5.1"
@@ -2010,6 +2038,14 @@ apollo-graphql@^0.3.3:
   integrity sha512-t3CO/xIDVsCG2qOvx2MEbuu4b/6LzQjcBBwiVnxclmmFyAxYCIe7rpPlnLHSq7HyOMlCWDMozjoeWfdqYSaLqQ==
   dependencies:
     apollo-env "0.5.1"
+    lodash.sortby "^4.7.0"
+
+apollo-graphql@^0.3.4:
+  version "0.3.4"
+  resolved "https://registry.yarnpkg.com/apollo-graphql/-/apollo-graphql-0.3.4.tgz#c1f68591a4775945441d049eff9323542ab0401f"
+  integrity sha512-w+Az1qxePH4oQ8jvbhQBl5iEVvqcqynmU++x/M7MM5xqN1C7m1kyIzpN17gybXlTJXY4Oxej2WNURC2/hwpfYw==
+  dependencies:
+    apollo-env "^0.5.1"
     lodash.sortby "^4.7.0"
 
 apollo-language-server@^1.15.3:
@@ -2145,6 +2181,33 @@ apollo-server-core@^2.9.3:
     subscriptions-transport-ws "^0.9.11"
     ws "^6.0.0"
 
+apollo-server-core@^2.9.6:
+  version "2.9.6"
+  resolved "https://registry.yarnpkg.com/apollo-server-core/-/apollo-server-core-2.9.6.tgz#b6dc087200633f47ca4f08244d3e606b4d616320"
+  integrity sha512-2tHAWQxP7HrETI/BZvg2fem6YlahF9HUp4Y6SSL95WP3uNMOJBlN12yM1y+O2u5K5e4jwdPNaLjoL2A/26XrLw==
+  dependencies:
+    "@apollographql/apollo-tools" "^0.4.0"
+    "@apollographql/graphql-playground-html" "1.6.24"
+    "@types/graphql-upload" "^8.0.0"
+    "@types/ws" "^6.0.0"
+    apollo-cache-control "^0.8.5"
+    apollo-datasource "^0.6.3"
+    apollo-engine-reporting "^1.4.7"
+    apollo-server-caching "^0.5.0"
+    apollo-server-env "^2.4.3"
+    apollo-server-errors "^2.3.3"
+    apollo-server-plugin-base "^0.6.5"
+    apollo-server-types "^0.2.5"
+    apollo-tracing "^0.8.5"
+    fast-json-stable-stringify "^2.0.0"
+    graphql-extensions "^0.10.4"
+    graphql-tag "^2.9.2"
+    graphql-tools "^4.0.0"
+    graphql-upload "^8.0.2"
+    sha.js "^2.4.11"
+    subscriptions-transport-ws "^0.9.11"
+    ws "^6.0.0"
+
 apollo-server-env@^2.4.3:
   version "2.4.3"
   resolved "https://registry.yarnpkg.com/apollo-server-env/-/apollo-server-env-2.4.3.tgz#9bceedaae07eafb96becdfd478f8d92617d825d2"
@@ -2180,6 +2243,28 @@ apollo-server-express@^2.6.7, apollo-server-express@^2.9.3:
     subscriptions-transport-ws "^0.9.16"
     type-is "^1.6.16"
 
+apollo-server-express@^2.9.6:
+  version "2.9.6"
+  resolved "https://registry.yarnpkg.com/apollo-server-express/-/apollo-server-express-2.9.6.tgz#eec2ec43b829b059278e14994d06bd23e43266f9"
+  integrity sha512-j80azBeXvLvyZsbqCnus7GH+w8vk+2IOnYzROZu/f0D2roDZtsu1XZkn+aplDJZXMcEXtqB6t4qNpyvV4zY0XQ==
+  dependencies:
+    "@apollographql/graphql-playground-html" "1.6.24"
+    "@types/accepts" "^1.3.5"
+    "@types/body-parser" "1.17.1"
+    "@types/cors" "^2.8.4"
+    "@types/express" "4.17.1"
+    accepts "^1.3.5"
+    apollo-server-core "^2.9.6"
+    apollo-server-types "^0.2.5"
+    body-parser "^1.18.3"
+    cors "^2.8.4"
+    express "^4.17.1"
+    graphql-subscriptions "^1.0.0"
+    graphql-tools "^4.0.0"
+    parseurl "^1.3.2"
+    subscriptions-transport-ws "^0.9.16"
+    type-is "^1.6.16"
+
 apollo-server-plugin-base@^0.6.4:
   version "0.6.4"
   resolved "https://registry.yarnpkg.com/apollo-server-plugin-base/-/apollo-server-plugin-base-0.6.4.tgz#63ea4fd0bbb6c4510bc8d0d2ad0a0684c8d0da8c"
@@ -2187,12 +2272,28 @@ apollo-server-plugin-base@^0.6.4:
   dependencies:
     apollo-server-types "^0.2.4"
 
+apollo-server-plugin-base@^0.6.5:
+  version "0.6.5"
+  resolved "https://registry.yarnpkg.com/apollo-server-plugin-base/-/apollo-server-plugin-base-0.6.5.tgz#eebe27734c51bf6a45b6a9ec8738750b132ffde7"
+  integrity sha512-z2ve7HEPWmZI3EzL0iiY9qyt1i0hitT+afN5PzssCw594LB6DfUQWsI14UW+W+gcw8hvl8VQUpXByfUntAx5vw==
+  dependencies:
+    apollo-server-types "^0.2.5"
+
 apollo-server-types@^0.2.4:
   version "0.2.4"
   resolved "https://registry.yarnpkg.com/apollo-server-types/-/apollo-server-types-0.2.4.tgz#28864900ffc7f9711a859297c143a833fdb6aa43"
   integrity sha512-G4FvBVgGQcTW6ZBS2+hvcDQkSfdOIKV+cHADduXA275v+5zl42g+bCaGd/hCCKTDRjmQvObLiMxH/BJ6pDMQgA==
   dependencies:
     apollo-engine-reporting-protobuf "^0.4.0"
+    apollo-server-caching "^0.5.0"
+    apollo-server-env "^2.4.3"
+
+apollo-server-types@^0.2.5:
+  version "0.2.5"
+  resolved "https://registry.yarnpkg.com/apollo-server-types/-/apollo-server-types-0.2.5.tgz#2d63924706ffc1a59480cbbc93e9fe86655a57a5"
+  integrity sha512-6iJQsPh59FWu4K7ABrVmpnQVgeK8Ockx8BcawBh+saFYWTlVczwcLyGSZPeV1tPSKwFwKZutyEslrYSafcarXQ==
+  dependencies:
+    apollo-engine-reporting-protobuf "^0.4.1"
     apollo-server-caching "^0.5.0"
     apollo-server-env "^2.4.3"
 
@@ -2214,6 +2315,14 @@ apollo-tracing@^0.8.4:
   dependencies:
     apollo-server-env "^2.4.3"
     graphql-extensions "^0.10.3"
+
+apollo-tracing@^0.8.5:
+  version "0.8.5"
+  resolved "https://registry.yarnpkg.com/apollo-tracing/-/apollo-tracing-0.8.5.tgz#f07c4584d95bcf750e44bfe9845e073b03774941"
+  integrity sha512-lZn10/GRBZUlMxVYLghLMFsGcLN0jTYDd98qZfBtxw+wEWUx+PKkZdljDT+XNoOm/kDvEutFGmi5tSLhArIzWQ==
+  dependencies:
+    apollo-server-env "^2.4.3"
+    graphql-extensions "^0.10.4"
 
 apollo-upload-client@^10.0.1:
   version "10.0.1"
@@ -4013,7 +4122,7 @@ core-util-is@1.0.2, core-util-is@~1.0.0:
   resolved "https://registry.yarnpkg.com/core-util-is/-/core-util-is-1.0.2.tgz#b5fd54220aa2bc5ab57aab7140c940754503c1a7"
   integrity sha1-tf1UIgqivFq1eqtxQMlAdUUDwac=
 
-cors@^2.8.4:
+cors@^2.8.4, cors@^2.8.5:
   version "2.8.5"
   resolved "https://registry.yarnpkg.com/cors/-/cors-2.8.5.tgz#eac11da51592dd86b9f06f6e7ac293b3df875d29"
   integrity sha512-KIHbLJqu73RGr/hnbrO9uBeixNGuvSQjul/jdFvS/KFSIH1hWVd1ng7zOHx+YrEfInLG7q4n6GHQ9cDtxv/P6g==
@@ -6516,6 +6625,15 @@ graphql-extensions@^0.10.3:
     apollo-server-env "^2.4.3"
     apollo-server-types "^0.2.4"
 
+graphql-extensions@^0.10.4:
+  version "0.10.4"
+  resolved "https://registry.yarnpkg.com/graphql-extensions/-/graphql-extensions-0.10.4.tgz#af851b0d44ea6838cf54de9df3cfc6a8e575e571"
+  integrity sha512-lE6MroluEYocbR/ICwccv39w+Pz4cBPadJ11z1rJkbZv5wstISEganbDOwl9qN21rcZGiWzh7QUNxUiFUXXEDw==
+  dependencies:
+    "@apollographql/apollo-tools" "^0.4.0"
+    apollo-server-env "^2.4.3"
+    apollo-server-types "^0.2.5"
+
 graphql-subscriptions@^1.0.0, graphql-subscriptions@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/graphql-subscriptions/-/graphql-subscriptions-1.1.0.tgz#5f2fa4233eda44cf7570526adfcf3c16937aef11"
@@ -6598,6 +6716,11 @@ has-flag@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/has-flag/-/has-flag-3.0.0.tgz#b5d454dc2199ae225699f3467e5a07f3b955bafd"
   integrity sha1-tdRU3CGZriJWmfNGfloH87lVuv0=
+
+has-network2@0.0.1:
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/has-network2/-/has-network2-0.0.1.tgz#09dc743094537313dd099748390c16d603d5eccc"
+  integrity sha512-cpqaHIBwSKOhHzpWPXS2FnOzN6ekF238MxonA1CWZNx7UivVlq3GF+GqS6gXbvDwMYoaxXM+8el7tP8uFSrjsQ==
 
 has-network@0.0.1:
   version "0.0.1"
@@ -8989,6 +9112,22 @@ multiserver@^3.0.2, multiserver@^3.1.0, multiserver@^3.1.2, multiserver@^3.3.1, 
     socks "^2.2.3"
     stream-to-pull-stream "^1.7.2"
 
+multiserver@^3.4.0:
+  version "3.6.0"
+  resolved "https://registry.yarnpkg.com/multiserver/-/multiserver-3.6.0.tgz#f01c6c72cadcb2f4175bfa39fbe3ccc1881a4975"
+  integrity sha512-MeANpx7//lJTwYKLYfsucdRvDafbyxaijUm9BhmF+QfLBMGRebNoKRYLhZItbHYAcsI0HBTtpBVHNw+bmRRnFQ==
+  dependencies:
+    debug "^4.1.1"
+    multicb "^1.2.2"
+    multiserver-scopes "^1.0.0"
+    pull-cat "~1.1.5"
+    pull-stream "^3.6.1"
+    pull-ws "^3.3.0"
+    secret-handshake "^1.1.16"
+    separator-escape "0.0.0"
+    socks "^2.2.3"
+    stream-to-pull-stream "^1.7.2"
+
 mutant@^3.22.1:
   version "3.23.0"
   resolved "https://registry.yarnpkg.com/mutant/-/mutant-3.23.0.tgz#cdef5f5cf0eb72aab02295150f89977c20cda816"
@@ -9527,6 +9666,11 @@ obv@0.0.1, obv@^0.0.1:
   version "0.0.1"
   resolved "https://registry.yarnpkg.com/obv/-/obv-0.0.1.tgz#cb236106341536f0dac4815e06708221cad7fb5e"
   integrity sha1-yyNhBjQVNvDaxIFeBnCCIcrX+14=
+
+on-change-network-strict@1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/on-change-network-strict/-/on-change-network-strict-1.0.0.tgz#0d3c5ca7f03944ad07198e096db83693208e9ee0"
+  integrity sha512-ldHCpTJWgr5KUJy3/TVoSGNwBUA8BP9UFmd0iQqe4aGaXY4PJyzQPiVBIo8VBSlSoKyaJY3vcpW0hixZb6gPaA==
 
 on-change-network@0.0.2:
   version "0.0.2"
@@ -10818,6 +10962,11 @@ pull-paramap@^1.1.3, pull-paramap@^1.2.1, pull-paramap@^1.2.2:
   dependencies:
     looper "^4.0.0"
 
+pull-pause@~0.0.2:
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/pull-pause/-/pull-pause-0.0.2.tgz#19d45be8faa615fa556f14a96fd733462c37fba3"
+  integrity sha1-GdRb6PqmFfpVbxSpb9czRiw3+6M=
+
 pull-ping@^2.0.2:
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/pull-ping/-/pull-ping-2.0.2.tgz#7bc4a340167dad88f682a196c63485735c7a0894"
@@ -10857,7 +11006,7 @@ pull-sort@^1.0.1:
     pull-defer "^0.2.3"
     pull-stream "^3.6.9"
 
-pull-stream@^3.2.3, pull-stream@^3.3.0, pull-stream@^3.4.0, pull-stream@^3.4.3, pull-stream@^3.4.5, pull-stream@^3.5.0, pull-stream@^3.6.0, pull-stream@^3.6.1, pull-stream@^3.6.11, pull-stream@^3.6.13, pull-stream@^3.6.2, pull-stream@^3.6.7, pull-stream@^3.6.8, pull-stream@^3.6.9, pull-stream@~3.6.9:
+pull-stream@^3.2.3, pull-stream@^3.3.0, pull-stream@^3.4.0, pull-stream@^3.4.3, pull-stream@^3.4.5, pull-stream@^3.5.0, pull-stream@^3.6.0, pull-stream@^3.6.1, pull-stream@^3.6.11, pull-stream@^3.6.13, pull-stream@^3.6.14, pull-stream@^3.6.2, pull-stream@^3.6.7, pull-stream@^3.6.8, pull-stream@^3.6.9, pull-stream@~3.6.9:
   version "3.6.14"
   resolved "https://registry.yarnpkg.com/pull-stream/-/pull-stream-3.6.14.tgz#529dbd5b86131f4a5ed636fdf7f6af00781357ee"
   integrity sha512-KIqdvpqHHaTUA2mCYcLG1ibEbu/LCKoJZsBWyv9lSYtPkJPBq8m3Hxa103xHi6D2thj5YXa0TqK3L3GUkwgnew==
@@ -11836,6 +11985,11 @@ secret-handshake@^1.1.16:
     pull-handshake "^1.1.1"
     pull-stream "^3.4.5"
 
+secret-stack-decorators@1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/secret-stack-decorators/-/secret-stack-decorators-1.0.0.tgz#0eb4c25feb06f678572235415420d3192e897f59"
+  integrity sha512-IOg/RCXS6q5rRuGPV0fsExG5D5wGVk+evvPl0pdZJrfBwDQiWGi4yxPhDNxvZb/So4TiVj8iQRxVdkWwrPFaBg==
+
 secret-stack@^6.2.1:
   version "6.3.0"
   resolved "https://registry.yarnpkg.com/secret-stack/-/secret-stack-6.3.0.tgz#46ed285cf3ce6acaaa76945a6ad736971a1659df"
@@ -12409,6 +12563,17 @@ ssb-conn-db@0.1.0:
     pull-notify "~0.1.1"
     ssb-ref "~2.13.9"
 
+ssb-conn-db@~0.2.1:
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/ssb-conn-db/-/ssb-conn-db-0.2.1.tgz#363d75fbe55d008a7f4e576fb7ec3ba886df1742"
+  integrity sha512-ZcqB6pXyu20UmQ+3QPr8mY1+TAdQfQv20qjkf0wqm9LB1GRkYfKLm2O7Nc2DpLs1SOsWuFXfO8vgXjEAsDBOQQ==
+  dependencies:
+    atomic-file "^1.1.5"
+    debug "~4.1.1"
+    multiserver-address "~1.0.1"
+    pull-notify "~0.1.1"
+    ssb-ref "~2.13.9"
+
 ssb-conn-hub@0.0.3:
   version "0.0.3"
   resolved "https://registry.yarnpkg.com/ssb-conn-hub/-/ssb-conn-hub-0.0.3.tgz#1c2d4211ca966aa1c199d0dbe24f8f1f14e75f73"
@@ -12433,6 +12598,30 @@ ssb-conn-hub@~0.0.3:
     pull-stream "~3.6.9"
     ssb-ref "~2.13.9"
 
+ssb-conn-hub@~0.2.7:
+  version "0.2.7"
+  resolved "https://registry.yarnpkg.com/ssb-conn-hub/-/ssb-conn-hub-0.2.7.tgz#3d281cdb03b29a90d79418abb36d1ac487f29269"
+  integrity sha512-fvX7HK44V65C8uMQhTK9B4SHZE7K5P0AU/cHVuDciKPNagEFV0QHKk//JnrrMKHKKvz1msKUxhA0S0iH0S4gqQ==
+  dependencies:
+    debug "^4.1.1"
+    ip "^1.1.5"
+    multiserver "^3.4.0"
+    multiserver-address "~1.0.1"
+    promisify-tuple "^1.0.0"
+    pull-cat "~1.1.11"
+    pull-notify "~0.1.1"
+    pull-stream "~3.6.9"
+    ssb-ref "~2.13.9"
+
+ssb-conn-query@~0.4.4:
+  version "0.4.4"
+  resolved "https://registry.yarnpkg.com/ssb-conn-query/-/ssb-conn-query-0.4.4.tgz#87502b776ec43fb60c872f7b54fe26bfcf167a94"
+  integrity sha512-FeHwQwec24RyEFImETEnP5Qdzg3IPOhEDNloJ9PqsZfd1c3fCoY0aunJz6Z3OgkrGIVSPzS4eze6iXx+ns+WIw==
+  dependencies:
+    ssb-conn-db "~0.2.1"
+    ssb-conn-hub "~0.2.7"
+    ssb-conn-staging "~0.1.0"
+
 ssb-conn-staging@0.0.1:
   version "0.0.1"
   resolved "https://registry.yarnpkg.com/ssb-conn-staging/-/ssb-conn-staging-0.0.1.tgz#81bc32f3610199e2e6669930b8a0acfaf04bc2a7"
@@ -12443,6 +12632,41 @@ ssb-conn-staging@0.0.1:
     pull-notify "~0.1.1"
     pull-stream "^3.6.9"
     ssb-conn-hub "~0.0.3"
+
+ssb-conn-staging@~0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/ssb-conn-staging/-/ssb-conn-staging-0.1.0.tgz#3a55607a2a3d5c66428ef976d9308b0e2b58a78c"
+  integrity sha512-bFtArSUiF3QrJ9LJ1auonC40pxJd58eBzozBiWsburwbZLUuxqrnW/kCaoyu+PYwTvc0FvMzZR/g4yL2wcE4Yw==
+  dependencies:
+    debug "^4.1.1"
+    multiserver-address "~1.0.1"
+    pull-cat "~1.1.11"
+    pull-notify "~0.1.1"
+    pull-stream "^3.6.9"
+
+ssb-conn@^0.11.2:
+  version "0.11.2"
+  resolved "https://registry.yarnpkg.com/ssb-conn/-/ssb-conn-0.11.2.tgz#99aa302cab5d91993d99589b2450bebca62822c4"
+  integrity sha512-jekmlO3nXYFIMpIe6N5n3NFRD484IaA9vROFFIuHZVcWdd13o1x577b+qNoWcigg2OjjGVN9ySFRlqVCO0zMMg==
+  dependencies:
+    debug "~4.1.1"
+    has-network2 "0.0.1"
+    ip "^1.1.5"
+    on-change-network-strict "1.0.0"
+    on-wakeup "^1.0.1"
+    pull-notify "^0.1.1"
+    pull-pause "~0.0.2"
+    pull-ping "^2.0.2"
+    pull-stream "^3.6.9"
+    secret-stack-decorators "1.0.0"
+    ssb-conn-db "~0.2.1"
+    ssb-conn-hub "~0.2.7"
+    ssb-conn-query "~0.4.4"
+    ssb-conn-staging "~0.1.0"
+    ssb-ref "^2.13.9"
+    ssb-typescript "^1.4.0"
+    statistics "^3.3.0"
+    zii "~1.1.0"
 
 ssb-db@19.2.0:
   version "19.2.0"
@@ -12776,6 +13000,11 @@ ssb-server@^15.1.1:
     ssb-ws "^6.2.1"
     stream-to-pull-stream "^1.6.10"
     zerr "^1.0.0"
+
+ssb-typescript@^1.4.0:
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/ssb-typescript/-/ssb-typescript-1.4.0.tgz#9bdb9d45e269ebdb5c2e346c6bd23852782424f4"
+  integrity sha512-+qFUlFGTIR9f4ab45UfszGCBiClSPH1llM072zWiwlxMyKu70CQ4IUgsWGWyge2mN8z9CiNkPm+ElZ5Ok0Mxcg==
 
 ssb-unix-socket@^1.0.0:
   version "1.0.0"
@@ -14730,3 +14959,8 @@ zerr@^1.0.0, zerr@^1.0.4:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/zerr/-/zerr-1.0.4.tgz#62814dd799eff8361f2a228f41f705c5e19de4c9"
   integrity sha1-YoFN15nv+DYfKiKPQfcFxeGd5Mk=
+
+zii@~1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/zii/-/zii-1.1.0.tgz#7fa29593f52eea0706c7779fcd70c6b258df82f4"
+  integrity sha512-l4EKO8dgLsEWxdb/koCjv92FplAIAQaV4Riq5n/38dTC7Z3NwaFSKQ5Bda+CUTu11VtFE1D+4+HPfPt7/86CRw==

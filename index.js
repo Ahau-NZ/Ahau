@@ -8,8 +8,8 @@ const plugins = [
   'ssb-unix-socket',
   'ssb-no-auth',
 
-  'ssb-legacy-conn',
-  // 'ssb-conn', // uninstalled for the moment
+  // 'ssb-legacy-conn',
+  'ssb-conn', // uninstalled for the moment
   // 'ssb-replicate',
   // 'ssb-friends',
   'ssb-invite',
@@ -49,7 +49,7 @@ if (!process.env.SERVER) {
 } else {
   const Server = require('ssb-server')
   Server.use(require('ssb-master'))
-    .use(require('ssb-legacy-conn'))
+    .use(require('ssb-conn'))
     .use(require('ssb-replicate'))
   const config = Config()
   const sbot = Server(config)
