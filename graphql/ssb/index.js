@@ -52,7 +52,7 @@ module.exports = sbot => {
       communities: [Community]
     }
     type Mutation {
-      saveProfile(input: ProfileInput): String
+      saveProfile(input: ProfileInput): Profile
     }
     type Subscription {
       peers: [Peer]

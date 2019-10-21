@@ -9,7 +9,7 @@
         >
           <v-text-field
             light
-            v-model="preferredName"
+            v-model="profile.preferredName"
             label="Preferred name"
           ></v-text-field>
         </v-col>
@@ -20,8 +20,8 @@
         >
           <v-text-field
             light
-            v-model="legalName"
-            label="Last name"
+            v-model="profile.legalName"
+            label="Legal name"
           ></v-text-field>
         </v-col>
 
@@ -39,13 +39,13 @@
           cols="2"
           md="2"
         >
-          <v-btn fab color="grey">
+          <v-btn @click="addAltName" fab color="grey">
             <v-icon right>mdi-plus</v-icon>
           </v-btn>
         </v-col>
         <v-col cols="12" md="12">
           <h3 class="black--text">Other names</h3>
-          <v-row v-for="name in altNames" v-bind:key="name">
+          <v-row v-for="name in profile.altNames" v-bind:key="name">
             <p
               class="black--text"
             >{{name}}</p>
@@ -53,7 +53,7 @@
         </v-col>
         <v-col cols="12">
           <v-textarea
-            v-model="description"
+            v-model="profile.description"
             light
             name="input-7-1"
             label="Description"
@@ -91,7 +91,13 @@ export default {
   },
   data () {
     return {
-      newAltName: ''
+      newAltName: '',
+      profile: {
+        preferredName: '',
+        legalName: '',
+        altNames: [],
+        description: ''
+      }
     }
   },
   apollo: {
@@ -108,35 +114,61 @@ export default {
     }
   },
   methods: {
-    saveProfile: () => {
-      console.log('Saving')
+    addAltName () {
+      this.profile.altNames = this.profile.altNames.concat(this.newAltName)
+      this.newAltName = ''
+    },
+    async saveProfile () {
+      // Call to the graphql mutation
+      let cleanInput = {}
+      await Object.keys(this.profile).map(k => {
+        if (k !== '__typename') {
+          cleanInput[k] = this.profile[k]
+        }
+      })
+      const result = await this.$apollo.mutate({
+        // Query
+        mutation: gql`mutation ($input: ProfileInput!) {
+          saveProfile(input: $input) {
+            preferredName
+            legalName
+            altNames
+            description
+          }
+        }`,
+        // Parameters
+        variables: {
+          input: cleanInput
+        }
+      })
+      console.log('RES', result)
     },
     cancel: () => {
       console.log('Canceling')
     }
-  },
-  computed: {
-    preferredName () {
-      if (this.profile) {
-        return this.profile.preferredName || ''
-      } else return ''
-    },
-    legalName () {
-      if (this.profile) {
-        return this.profile.legalName || ''
-      } else return ''
-    },
-    altNames () {
-      if (this.profile) {
-        return this.profile.altNames || ''
-      } else return []
-    },
-    description () {
-      if (this.profile) {
-        return this.profile.description || ''
-      } else return ''
-    }
   }
+  // computed: {
+  //   preferredName () {
+  //     if (this.profile) {
+  //       return this.profile.preferredName || ''
+  //     } else return ''
+  //   },
+  //   legalName () {
+  //     if (this.profile) {
+  //       return this.profile.legalName || ''
+  //     } else return ''
+  //   },
+  //   altNames () {
+  //     if (this.profile) {
+  //       return this.profile.altNames || ''
+  //     } else return []
+  //   },
+  //   description () {
+  //     if (this.profile) {
+  //       return this.profile.description || ''
+  //     } else return ''
+  //   }
+  // }
 }
 </script>
 
