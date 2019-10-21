@@ -1,8 +1,9 @@
 <template>
   <v-container class="white mx-auto py-2 px-12 d-flex flex-column justify-space-between align-center">
-    <CommunitiesNav v-bind:nav="navigate" />
+    <CommunitiesNav />
     <CommunitiesPeople />
     <CommunitiesList />
+    <h1>{{nav}}</h1>
   </v-container>
 </template>
 
@@ -18,9 +19,11 @@ export default {
     CommunitiesPeople,
     CommunitiesList
   },
-  methods () {
-    return {
-      navigate: (e) => console.log('Changed', e)
+  computed: {
+    nav () {
+      // We will see what `params` is shortly
+      console.log(this.$route.params)
+      return this.$route.params
     }
   }
 }

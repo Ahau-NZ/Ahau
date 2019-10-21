@@ -21,10 +21,12 @@
           <v-card-text>{{profile.description}}</v-card-text>
         </v-card>
       </v-col>
-      <v-col cols="4 justify-end">
-        <v-btn class="my-2" tile outlined color="primary">
-          <v-icon left>mdi-pencil</v-icon> Edit
-        </v-btn>
+      <v-col  v-if="!edit" cols="4 justify-end">
+        <router-link to="/edit">
+          <v-btn class="my-2" tile outlined color="primary">
+            <v-icon left>mdi-pencil</v-icon> Edit
+          </v-btn>
+        </router-link>
         <v-card
           min-height="200px"
           light
@@ -41,6 +43,9 @@ import gql from 'graphql-tag'
 
 export default {
   name: 'ProfileHeader',
+  props: {
+    edit: Boolean
+  },
   data () {
     return {
       profile: {

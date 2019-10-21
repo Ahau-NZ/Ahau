@@ -7,7 +7,7 @@
         </v-row>
         <v-row>
           <v-col cols="3">
-            <router-link to="/communities?local">
+            <router-link to="/communities?page=local">
               <h3 class="primary--text display-1 active">Local</h3>
             </router-link>
           </v-col>
@@ -15,15 +15,15 @@
             <div class="pipe" />
           </v-col>
           <v-col cols="3">
-            <router-link to="/communities?internet">
+            <router-link to="/communities?page=internet">
               <h3 class="primary--text display-1">Internet</h3>
             </router-link>
           </v-col>
           <v-col cols="1">
             <div class="pipe" />
-          </v-col>  
+          </v-col>
           <v-col cols="3">
-            <router-link to="/communities?invite">
+            <router-link to="/communities?page=invite">
               <h3 class="primary--text display-1">Invite</h3>
             </router-link>
           </v-col>
@@ -50,7 +50,6 @@ export default {
     }
   },
   mounted () {
-    console.log('THIS', this)
   }
 }
 </script>
