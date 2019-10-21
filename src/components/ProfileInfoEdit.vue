@@ -91,7 +91,7 @@ export default {
   },
   data () {
     return {
-      newAltName: '',
+      newAltName: ''
     }
   },
   apollo: {
