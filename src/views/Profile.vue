@@ -1,7 +1,7 @@
 <template>
   <div>
-    <ProfileHeader />
-    <ProfileInfo />
+    <ProfileHeader v-bind:id="this.$route.query.id" />
+    <ProfileInfo v-bind:id="this.$route.query.id"  />
   </div>
 </template>
 

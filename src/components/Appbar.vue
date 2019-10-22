@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import gql from 'graphql-tag'
+// import gql from 'graphql-tag'
 import Avatar from '@/components/Avatar'
 
 export default {
@@ -44,18 +44,18 @@ export default {
         avatarImage: ''
       }
     }
-  },
-  apollo: {
-    // Query with parameters
-    profile: {
-      query: gql`query {
-        profile {
-          preferredName
-          avatarImage
-        }
-      }`
-    }
   }
+  // apollo: {
+  //   // Query with parameters
+  //   profile: {
+  //     query: gql`query {
+  //       profile {
+  //         preferredName
+  //         avatarImage
+  //       }
+  //     }`
+  //   }
+  // }
 }
 </script>
 

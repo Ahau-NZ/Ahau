@@ -22,7 +22,8 @@ import Avatar from '@/components/Avatar.vue'
 export default {
   name: 'ProfileHeader',
   props: {
-    edit: Boolean
+    edit: Boolean,
+    id: String
   },
   components: {
     Avatar
@@ -37,15 +38,19 @@ export default {
     }
   },
   apollo: {
-    // Query with parameters
     profile: {
-      query: gql`query {
-        profile {
+      query: gql`query($id: String!) {
+        profile(id: $id) {
           preferredName
           avatarImage
           headerImage
         }
-      }`
+      }`,
+      variables () {
+        return {
+          id: this.id
+        }
+      }
     }
   }
 }

@@ -131,12 +131,7 @@ export default {
       const result = await this.$apollo.mutate({
         // Query
         mutation: gql`mutation ($input: ProfileInput!) {
-          saveProfile(input: $input) {
-            preferredName
-            legalName
-            altNames
-            description
-          }
+          createProfile(input: $input)
         }`,
         // Parameters
         variables: {

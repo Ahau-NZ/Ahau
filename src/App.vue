@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <Appbar />
+    <Appbar v-if="displayAppbar" />
     <v-content>
       <router-view/>
     </v-content>
@@ -14,6 +14,16 @@ export default {
   name: 'App',
   components: {
     Appbar
+  },
+  data () {
+    return {
+      displayAppbar: false
+    }
+  },
+  beforeMount () {
+    if (this.$route.name !== 'profiles' && this.$route.name !== 'home') {
+      this.displayAppbar = true
+    }
   }
 }
 </script>

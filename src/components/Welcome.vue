@@ -21,11 +21,9 @@ export default {
     }`
   },
   updated () {
-    console.log('Updatred', this.whoami)
     if (this.whoami) {
-      this.$router.push(`/profile?id=${this.whoami}`)
+      this.$router.push(`/profiles`)
     }
-    console.log('Updated ', this.whoami)
   },
   computed: {
     isLoading () {

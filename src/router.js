@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Home from './views/Home.vue'
+import Profiles from './views/Profiles.vue'
 import Profile from './views/Profile.vue'
 import Edit from './views/Edit.vue'
 import Communities from './views/Communities.vue'
@@ -15,6 +16,11 @@ export default new Router({
       path: '/',
       name: 'home',
       component: Home
+    },
+    {
+      path: '/profiles',
+      name: 'profiles',
+      component: Profiles
     },
     {
       path: '/profile',
