@@ -15,10 +15,10 @@ const plugins = [
   'ssb-invite',
   'ssb-private',
   'ssb-backlinks',
-  'ssb-profile'
+  'ssb-profile',
 
   // 'ssb-about',
-  // 'ssb-query',
+  'ssb-query'
   // 'ssb-suggest'
 ]
 
@@ -54,11 +54,13 @@ if (!process.env.SERVER) {
     }
   })
 } else {
-  const Server = require('ssb-server')
-  Server.use(require('ssb-master'))
+  const Server = require('secret-stack')({})
+    .use(require('ssb-db'))
+    .use(require('ssb-master'))
     .use(require('ssb-conn'))
     .use(require('ssb-backlinks'))
     .use(require('ssb-profile'))
+    .use(require('ssb-query'))
     .use(require('ssb-replicate'))
   const config = Config()
   const sbot = Server(config)
