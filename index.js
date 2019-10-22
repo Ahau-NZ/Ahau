@@ -28,6 +28,7 @@ const appURL =
     : `file://${__dirname}/dist/index.html` // production build
 
 const config = Config('ssb-ahau', {
+  port: 8009,
   caps: {
     shs: 'LftKJZRB4nbBRnlJuFteWG9AP+gGboVEhibx016bR0s='
   }
