@@ -41,7 +41,7 @@ if (!process.env.SERVER) {
     appURL,
     // appDir: '../whakapapa-ora', // only use this when ssb-ahoy symlinked
     onReady: ({ config }) => {
-      console.log('<<< welcome aboard >>>')
+      // this config has updated manifest added
 
       ssbClient(config.keys, config, (err, sbot) => {
         if (err) {
