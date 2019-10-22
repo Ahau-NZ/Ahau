@@ -25,9 +25,6 @@ export default {
     edit: Boolean,
     id: String
   },
-  components: {
-    Avatar
-  },
   data () {
     return {
       profile: {
@@ -52,6 +49,9 @@ export default {
         }
       }
     }
+  },
+  components: {
+    Avatar
   }
 }
 </script>

@@ -43,7 +43,7 @@ export default {
   },
   methods: {
     gotoProfile (id) {
-      this.$router.push({ path: 'profile', query: { id } })
+      this.$router.push({ name: 'profileShow', params: { id } })
     }
   }
 

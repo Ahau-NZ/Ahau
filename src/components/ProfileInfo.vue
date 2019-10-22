@@ -22,7 +22,7 @@
         </v-card>
       </v-col>
       <v-col  v-if="!edit" cols="4 justify-end">
-        <router-link to="/edit">
+        <router-link :to="{ name: 'profileEdit', params: { id } }">
           <v-btn class="my-2" tile outlined color="primary">
             <v-icon left>mdi-pencil</v-icon> Edit
           </v-btn>
@@ -59,7 +59,7 @@ export default {
   },
   apollo: {
     profile: {
-      query: gql`query($id: String!) {
+      query: gql`query ProfileData($id: String!) {
         profile(id: $id) {
           preferredName
           legalName

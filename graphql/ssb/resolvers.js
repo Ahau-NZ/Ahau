@@ -13,7 +13,7 @@ module.exports = sbot => ({
           if (err) {
             reject(err)
           }
-          setTimeout(() => resolve(info.id), 1e3)
+          resolve(info.id)
         })
       }),
     profiles: () => {
@@ -43,7 +43,8 @@ module.exports = sbot => ({
             6 // "width" i.e. how many to simultaneously run in parallel
           ),
           pull.collect((err, profiles) => {
-            if (err) reject(err)
+            if (err) return reject(err)
+
             const cleanProfiles = Object.entries(profiles)
               .map(([head, state]) => ({ head, state }))
               .map(profile => {
@@ -60,14 +61,16 @@ module.exports = sbot => ({
     },
     profile: (_, { id }) => {
       return new Promise((resolve, reject) => {
+        console.log('ID', id)
         sbot.profile.get(id, (err, profileState) => {
-          if (err) {
-            reject(err)
-          }
-          const state = Object.keys(profileState)[0]
+          console.log('ERRORS HERE', err)
+          if (err) return reject(err)
+
+          console.log('state', JSON.stringify(profileState, null, 2))
+          const state = Object.values(profileState)[0]
           resolve({
             id,
-            ...profileState[state]
+            ...state
           })
         })
       })

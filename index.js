@@ -10,8 +10,8 @@ const plugins = [
 
   // 'ssb-legacy-conn',
   'ssb-conn', // uninstalled for the moment
-  // 'ssb-replicate',
-  // 'ssb-friends',
+  'ssb-replicate',
+  'ssb-friends',
   'ssb-invite',
   'ssb-private',
   'ssb-backlinks',

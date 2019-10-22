@@ -1,7 +1,7 @@
 <template>
   <div>
-    <ProfileHeader v-bind:id="this.$route.query.id" />
-    <ProfileInfo v-bind:id="this.$route.query.id"  />
+    <ProfileHeader :id="id" />
+    <ProfileInfo :id="id"  />
   </div>
 </template>
 
@@ -11,6 +11,11 @@ import ProfileInfo from '@/components/ProfileInfo.vue'
 
 export default {
   name: 'Profile',
+  data () {
+    return {
+      id: this.$route.params.id
+    }
+  },
   components: {
     ProfileHeader,
     ProfileInfo

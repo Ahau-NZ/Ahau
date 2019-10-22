@@ -12,18 +12,19 @@ import Appbar from '@/components/Appbar.vue'
 
 export default {
   name: 'App',
-  components: {
-    Appbar
-  },
   data () {
     return {
-      displayAppbar: false
+      // displayAppbar: false
+      displayAppbar: true // temporary
     }
   },
   beforeMount () {
     if (this.$route.name !== 'profiles' && this.$route.name !== 'home') {
       this.displayAppbar = true
     }
+  },
+  components: {
+    Appbar
   }
 }
 </script>
