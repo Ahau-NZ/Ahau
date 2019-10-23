@@ -107,29 +107,27 @@ module.exports = sbot => ({
         })
       })
     },
-    updateProfile: (_, { input }) => {
+    updateProfile: (_, { input }) => new Promise((resolve, reject) => {
       const id = input.id
+
       let update = {}
-      Object.keys(input).map(i => {
+      Object.keys(input).forEach(i => {
+        if (i === 'id') return
+
         if (i === 'altNames') {
-          update[i] = {
-            add: input[i]
-          }
-        } else if (i !== 'id') {
-          update[i] = {
-            set: input[i]
-          }
+          // update[i] = {
+          //   add: input[i]
+          // }
+        } else {
+          update[i] = { set: input[i] }
         }
       })
-      return new Promise((resolve, reject) => {
-        sbot.profile.update(id, update, (err, updateMsg) => {
-          if (err) {
-            reject(err)
-          }
-          resolve(updateMsg.key)
-        })
+
+      sbot.profile.update(id, update, (err, updateMsg) => {
+        if (err) reject(err)
+        else resolve(updateMsg.key)
       })
-    }
+    })
   },
   Subscription: {
     peers: {

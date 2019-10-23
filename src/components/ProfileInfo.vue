@@ -59,25 +59,31 @@ export default {
     }
   },
   apollo: {
-    profile: {
-      query: gql`query ProfileData($id: String!) {
-        profile(id: $id) {
-          preferredName
-          legalName
-          altNames
-          description
-        }
-      }`,
-      variables () {
-        return {
-          id: this.id
-        }
+    profile () {
+      console.log('Getting the profile data!')
+      return {
+        query: gql`query ProfileData($id: String!) {
+          profile(id: $id) {
+            preferredName
+            legalName
+            altNames
+            description
+          }
+        }`,
+        variables () {
+          return {
+            id: this.id
+          }
+        },
+        fetchPolocy: 'no-cache'
       }
     }
   },
   computed: {
     altNames () {
-      return get(this, 'profile.altNames', []).join(', ')
+      const names = get(this, 'profile.altNames')
+      // NOTE get's defaultValue doesn't work if value returned is null
+      return names ? names.join(', ') : ''
     }
   }
 }

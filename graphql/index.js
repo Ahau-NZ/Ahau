@@ -21,6 +21,9 @@ module.exports = sbot => {
       resolvers
       // mockEntireSchema: false,
       // mocks: process.env.NODE_ENV === 'production' ? false : require('./ssb/mocks')
+      // cacheControl: {
+      //   defaultMaxAge: 5
+      // }
     })
 
     server.applyMiddleware({ app })
@@ -55,7 +58,12 @@ function getContext (sbot, cb) {
 
         if (profileState) return cb(null, { feedId, profileId: profileState.key })
 
-        sbot.profile.create('person', {}, (err, profileId) => {
+        console.warn('WARNING - this is setting initial name!')
+        const details = {
+          preferredName: { set: 'mix' },
+          altNames: { mixy: 1, john: 0, mixmix: 2 }
+        }
+        sbot.profile.create('person', details, (err, profileId) => {
           if (err) return cb(err)
 
           sbot.profile.link.create({ profile: profileId }, (err, link) => {

@@ -6,21 +6,21 @@
           <img src="../assets/logo_red.svg" />
         </router-link>
         <router-link :to="{ name: 'profileShow', params: { id: whoami } }">
-          <Avatar size="50px" v-bind:image="profile.avatarImage" v-bind:alt="profile.preferredName" />
+          <Avatar size="50px" :image="profile.avatarImage" :alt="profile.preferredName" />
         </router-link>
       </v-toolbar-title>
 
       <v-spacer></v-spacer>
 
       <v-toolbar-items>
-        <v-btn text>
-          <router-link class="white--text text-uppercase" to="/community">community</router-link>
+        <v-btn text to='/community' class="white--text text-uppercase">
+          community
         </v-btn>
-        <v-btn text>
-          <router-link class="white--text text-uppercase" :to="{ name: 'profileShow', params: { id: whoami } }">profile</router-link>
+        <v-btn text :to="{ name: 'profileShow', params: { id: whoami } }" class="white--text text-uppercase">
+          profile
         </v-btn>
-        <v-btn text>
-          <router-link class="white--text text-uppercase" to="/signout">sign out</router-link>
+        <v-btn text to="/signout" class="white--text text-uppercase">
+          sign out
         </v-btn>
 
       </v-toolbar-items>

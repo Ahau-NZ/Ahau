@@ -1,23 +1,25 @@
 const { gql } = require('apollo-server')
 
+// TODO change defs of altNames
+
 module.exports = gql`
   input UpdateProfileInput {
+    id: String!
     preferredName: String
     legalName: String
     altNames: [String]
     avatarImage: String
     headerImage: String
     description: String
-    id: String!
   }
   input CreateProfileInput {
+    type: String!
     preferredName: String
     legalName: String
     altNames: [String]
     avatarImage: String
     headerImage: String
     description: String
-    type: String!
   }
   input CommunityInput {
     preferredName: String
