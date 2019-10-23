@@ -20,9 +20,14 @@ export default {
       whoami
     }`
   },
+  mounted () {
+    if (this.whoami) {
+      this.$router.push(`/profile`)
+    }
+  },
   updated () {
     if (this.whoami) {
-      this.$router.push(`/profiles`)
+      this.$router.push(`/profile`)
     }
   },
   computed: {
