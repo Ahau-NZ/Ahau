@@ -3,10 +3,8 @@
   <v-form class="pt-0">
     <v-container class="white mx-auto pt-12 px-12">
       <v-row class="form">
-        <v-col
-          cols="12"
-          md="12"
-        >
+
+        <v-col cols="12" md="12" >
           <v-text-field
             light
             v-model="profile.preferredName"
@@ -14,10 +12,7 @@
           ></v-text-field>
         </v-col>
 
-        <v-col
-          cols="12"
-          md="12"
-        >
+        <v-col cols="12" md="12" >
           <v-text-field
             light
             v-model="profile.legalName"
@@ -25,32 +20,29 @@
           ></v-text-field>
         </v-col>
 
-        <v-col
-          cols="9"
-          md="9"
-        >
+        <v-col cols="9" md="9" >
           <v-text-field
             light
             v-model="newAltName"
             label="Add another name"
           ></v-text-field>
         </v-col>
-        <v-col
-          cols="2"
-          md="2"
-        >
+
+        <v-col cols="2" md="2" >
           <v-btn @click="addAltName" fab color="grey">
             <v-icon right>mdi-plus</v-icon>
           </v-btn>
         </v-col>
+
         <v-col cols="12" md="12">
           <h3 class="black--text">Other names</h3>
-          <v-row v-for="name in profile.altNames" v-bind:key="name">
+          <v-row v-for="name in altNames" :key="name">
             <p
               class="black--text"
             >{{name}}</p>
           </v-row>
         </v-col>
+
         <v-col cols="12">
           <v-textarea
             v-model="profile.description"
@@ -60,6 +52,7 @@
             hint="Hint text"
           ></v-textarea>
         </v-col>
+
         <v-col cols="12">
           <v-btn
             color="success"
@@ -76,6 +69,7 @@
             <v-icon right>mdi-cancel</v-icon>
           </v-btn>
         </v-col>
+
       </v-row>
     </v-container>
   </v-form>
@@ -83,9 +77,10 @@
 
 <script>
 import gql from 'graphql-tag'
+const get = require('lodash.get')
 
 export default {
-  name: 'ProfileHeader',
+  name: 'ProfileInfoEdit',
   props: {
     edit: Boolean
   },
@@ -140,32 +135,28 @@ export default {
       })
       console.log('RES', result)
     },
-    cancel: () => {
-      console.log('Canceling')
+    cancel () {
+      this.$router.push({ name: 'profileShow', params: { id: this.id } })
     }
+  },
+  computed: {
+    altNames () {
+      return get(this, 'profile.altNames', [])
+    }
+    // preferredName () {
+    //   return get(this.profile, 'preferredName', '')
+    // },
+    // legalName () {
+    //   if (this.profile) {
+    //     return this.profile.legalName || ''
+    //   } else return ''
+    // },
+    // description () {
+    //   if (this.profile) {
+    //     return this.profile.description || ''
+    //   } else return ''
+    // }
   }
-  // computed: {
-  //   preferredName () {
-  //     if (this.profile) {
-  //       return this.profile.preferredName || ''
-  //     } else return ''
-  //   },
-  //   legalName () {
-  //     if (this.profile) {
-  //       return this.profile.legalName || ''
-  //     } else return ''
-  //   },
-  //   altNames () {
-  //     if (this.profile) {
-  //       return this.profile.altNames || ''
-  //     } else return []
-  //   },
-  //   description () {
-  //     if (this.profile) {
-  //       return this.profile.description || ''
-  //     } else return ''
-  //   }
-  // }
 }
 </script>
 

@@ -1,7 +1,7 @@
 <template>
   <div>
-    <ProfileHeader v-bind:edit="true" />
-    <ProfileInfoEdit v-bind:edit="true" />
+    <ProfileHeader :id="id" :edit="true"/>
+    <ProfileInfoEdit :id="id" :edit="true"/>
   </div>
 </template>
 
@@ -11,6 +11,11 @@ import ProfileInfoEdit from '@/components/ProfileInfoEdit.vue'
 
 export default {
   name: 'Edit',
+  data () {
+    return {
+      id: this.$route.params.id
+    }
+  },
   components: {
     ProfileHeader,
     ProfileInfoEdit

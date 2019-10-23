@@ -1,7 +1,7 @@
 <template>
   <div>
-    <ProfileHeader :id="id" />
-    <ProfileInfo :id="id"  />
+    <ProfileHeader :id="id"/>
+    <ProfileInfo :id="id"/>
   </div>
 </template>
 

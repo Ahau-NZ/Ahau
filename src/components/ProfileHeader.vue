@@ -1,13 +1,13 @@
 <template>
   <v-container class="my-0 py-0">
     <v-row>
-      <v-img min-width="100%" height="35vh" v-bind:src="profile.headerImage" />
+      <v-img :src="profile.headerImage || undefined" min-width="100%" height="35vh"/>
       <v-btn v-if="edit" class="edit-header" tile color="grey">
         <v-icon right>mdi-pencil</v-icon> Edit header
       </v-btn>
     </v-row>
     <v-row class="avatar">
-      <Avatar v-bind:image="profile.avatarImage" v-bind:alt="profile.preferredName" />
+      <Avatar :image="profile.avatarImage" :alt="profile.preferredName" />
       <v-btn v-if="edit" class="edit-avatar" fab color="grey">
         <v-icon right>mdi-camera</v-icon>
       </v-btn>

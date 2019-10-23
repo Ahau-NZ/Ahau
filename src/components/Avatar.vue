@@ -1,9 +1,6 @@
 <template>
-  <v-avatar v-bind:size="size" color="indigo">
-    <v-img
-      v-bind:src="image"
-      v-bind:alt="alt"
-    />
+  <v-avatar :size="size" color="indigo">
+    <v-img :src="image || undefined" :alt="alt" />
   </v-avatar>
 </template>
 
