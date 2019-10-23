@@ -1,5 +1,5 @@
 <template>
-  <v-container class="d-flex align-center" height="100vh">
+  <v-container class="d-flex align-center py-12" height="100vh">
     <v-row>
       <v-col
         cols="3"
@@ -8,8 +8,8 @@
         v-bind:key="profile.id"
         @click="gotoProfile(profile.id)"
       >
-        <Avatar image="profile.avatarImage" size="13vh" />
-        <h3>{{ profile.preferredName }}</h3>
+        <Avatar class="pointer" v-bind:image="profile.avatarImage" size="13vh" />
+        <h3 class="pointer">{{ profile.preferredName }}</h3>
       </v-col>
     </v-row>
   </v-container>
@@ -52,4 +52,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
+  .pointer {
+    cursor: pointer;
+  }
 </style>
