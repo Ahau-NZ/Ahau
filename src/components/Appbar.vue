@@ -5,9 +5,12 @@
         <router-link to="/">
           <img src="../assets/logo_red.svg" />
         </router-link>
-          <router-link class="px-1" v-for="profile in profiles" :key="profile.id" :to="{ name: 'profileShow', params: { id: profile.id }}">
-            <Avatar size="50px" :image="profile.avatarImage" :alt="profile.preferredName" />
-          </router-link>
+        <router-link :to="{ name: 'profileShow', params: { id: profileId } }">
+          <Avatar size="50px" :image="profile.avatarImage" :alt="profile.preferredName" />
+        </router-link>
+          <!-- <router-link class="px-1" v-for="profile in profiles" :key="profile.id" :to="{ name: 'profileShow', params: { id: profile.id }}"> -->
+          <!--   <Avatar size="50px" :image="profile.avatarImage" :alt="profile.preferredName" /> -->
+          <!-- </router-link> -->
       </v-toolbar-title>
 
       <v-spacer></v-spacer>
@@ -16,7 +19,7 @@
         <v-btn text to='/community' class="white--text text-uppercase">
           community
         </v-btn>
-        <v-btn text :to="{ name: 'profileShow', params: { id: whoami } }" class="white--text text-uppercase">
+        <v-btn text :to="{ name: 'profile' }" class="white--text text-uppercase">
           profile
         </v-btn>
         <v-btn text to="/signout" class="white--text text-uppercase">
@@ -36,25 +39,34 @@ export default {
   name: 'Appbar',
   data () {
     return {
-      profiles: []
+      profile: {
+        preferredName: '',
+        avatarImage: ''
+      },
+      profileId: ''
+      // profiles: []
     }
   },
   apollo: {
-    profiles: gql`
-      query {
-        profiles {
-          id
-          preferredName
-          avatarImage
-          description
-          type
+    // profiles: gql`query {
+    //   profiles {
+    //     id
+    //     preferredName
+    //     avatarImage
+    //     description
+    //     type
+    //   }
+    // }`,
+    profileId: {
+      query: gql` {
+        whoami {
+          profileId
         }
       }`,
-    whoami: gql`
-      query {
-        whoami
+      update: data => {
+        return data.whoami.profileId
       }
-    `
+    }
   },
   components: {
     Avatar
