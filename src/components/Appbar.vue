@@ -5,9 +5,9 @@
         <router-link to="/">
           <img src="../assets/logo_red.svg" />
         </router-link>
-        <router-link :to="{ name: 'profileShow', params: { id: whoami } }">
-          <Avatar size="50px" :image="profile.avatarImage" :alt="profile.preferredName" />
-        </router-link>
+          <router-link class="px-1" v-for="profile in profiles" :key="profile.id" :to="{ name: 'profileShow', params: { id: profile.id } }">
+            <Avatar size="50px" :image="profile.avatarImage" :alt="profile.preferredName" />
+          </router-link>
       </v-toolbar-title>
 
       <v-spacer></v-spacer>
@@ -36,28 +36,25 @@ export default {
   name: 'Appbar',
   data () {
     return {
-      profile: {
-        preferredName: '',
-        avatarImage: '',
-        whoami: ''
-      }
+      profiles: []
     }
   },
   apollo: {
+    profiles: gql`
+      query {
+        profiles {
+          id
+          preferredName
+          avatarImage
+          description
+          type
+        }
+      }`,
     whoami: gql`
       query {
         whoami
-      }`
-  //   // Query with parameters
-  //   profile: {
-  //     query: gql`query {
-  //       profile {
-  //         preferredName
-  //         avatarImage
-  //       }
-  //     }`
-  //   }
-  // }
+      }
+    `
   },
   components: {
     Avatar
