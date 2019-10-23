@@ -10,10 +10,10 @@ import ProfileHeader from '@/components/ProfileHeader.vue'
 import ProfileInfo from '@/components/ProfileInfo.vue'
 
 export default {
-  name: 'Profile',
-  data () {
-    return {
-      id: this.$route.params.id
+  name: 'ProfileShow',
+  computed: {
+    id () {
+      return this.$route.params.id
     }
   },
   components: {

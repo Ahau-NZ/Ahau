@@ -8,8 +8,10 @@
         v-bind:key="profile.id"
         @click="gotoProfile(profile.id)"
       >
+      <router-link :to="{ name: 'profileShow', params: { id: profile.id }}">
         <Avatar class="pointer" v-bind:image="profile.avatarImage" size="13vh" />
         <h3 class="pointer">{{ profile.preferredName }}</h3>
+      </router-link>
       </v-col>
     </v-row>
   </v-container>
@@ -54,5 +56,7 @@ export default {
 <style scoped lang="scss">
   .pointer {
     cursor: pointer;
+    color: white;
+    text-align: center;
   }
 </style>

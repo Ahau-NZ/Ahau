@@ -5,7 +5,7 @@
         <router-link to="/">
           <img src="../assets/logo_red.svg" />
         </router-link>
-          <router-link class="px-1" v-for="profile in profiles" :key="profile.id" :to="{ name: 'profileShow', params: { id: profile.id } }">
+          <router-link class="px-1" v-for="profile in profiles" :key="profile.id" :to="{ name: 'profileShow', params: { id: profile.id }}">
             <Avatar size="50px" :image="profile.avatarImage" :alt="profile.preferredName" />
           </router-link>
       </v-toolbar-title>
