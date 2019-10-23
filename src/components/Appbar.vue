@@ -44,10 +44,10 @@ export default {
     }
   },
   apollo: {
-    whoami: gql` {
+    whoami: gql`query {
       whoami {
         id
-        profileId
+        profileId 
       }
     }`
     // profileId: {

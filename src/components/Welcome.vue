@@ -17,7 +17,10 @@ export default {
   },
   apollo: {
     whoami: gql`query {
-      whoami
+      whoami {
+        id
+        profileId 
+      }
     }`
   },
   updated () {
