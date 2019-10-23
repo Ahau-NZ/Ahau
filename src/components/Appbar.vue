@@ -5,7 +5,7 @@
         <router-link to="/">
           <img src="../assets/logo_red.svg" />
         </router-link>
-        <router-link :to="{ name: 'profileShow', params: { id: whoami } }">
+        <router-link :to="{ name: 'profileShow', params: { id: profileId } }">
           <Avatar size="50px" :image="profile.avatarImage" :alt="profile.preferredName" />
         </router-link>
       </v-toolbar-title>
@@ -16,7 +16,7 @@
         <v-btn text to='/community' class="white--text text-uppercase">
           community
         </v-btn>
-        <v-btn text :to="{ name: 'profileShow', params: { id: whoami } }" class="white--text text-uppercase">
+        <v-btn text :to="{ name: 'profileShow', params: { id: profileId } }" class="white--text text-uppercase">
           profile
         </v-btn>
         <v-btn text to="/signout" class="white--text text-uppercase">
@@ -38,26 +38,29 @@ export default {
     return {
       profile: {
         preferredName: '',
-        avatarImage: '',
-        whoami: ''
-      }
+        avatarImage: ''
+      },
+      profileId: ''
     }
   },
   apollo: {
-    whoami: gql`
-      query {
-        whoami
-      }`
-  //   // Query with parameters
-  //   profile: {
-  //     query: gql`query {
-  //       profile {
-  //         preferredName
-  //         avatarImage
-  //       }
-  //     }`
-  //   }
-  // }
+    whoami: gql` {
+      whoami {
+        id
+        profileId
+      }
+    }`
+    // profileId: {
+    //   query: gql` {
+    //     whoami {
+    //       profileId
+    //     }
+    //   }`,
+    //   update: data => {
+    //     debugger
+    //     return data.whoami.profileId
+    //   }
+    // }
   },
   components: {
     Avatar

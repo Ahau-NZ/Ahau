@@ -8,13 +8,9 @@ const pubsub = new PubSub()
 
 module.exports = sbot => ({
   Query: {
-    whoami: () => new Promise((resolve, reject) => {
-      sbot.whoami((err, info) => {
-        if (err) {
-          reject(err)
-        }
-        resolve(info.id)
-      })
+    whoami: (_, __, context) => new Promise((resolve, reject) => {
+      const { feedId, profileId } = context
+      resolve({ id: feedId, feedId, profileId })
     }),
 
     profiles: () => new Promise((resolve, reject) => {

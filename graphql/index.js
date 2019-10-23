@@ -17,7 +17,7 @@ module.exports = sbot => {
 
     const server = new ApolloServer({
       typeDefs,
-      context,
+      context, // feedId, profileId
       resolvers
       // mockEntireSchema: false,
       // mocks: process.env.NODE_ENV === 'production' ? false : require('./ssb/mocks')
