@@ -14,6 +14,8 @@ const plugins = [
   'ssb-friends',
   'ssb-promiscuous', // temporary?
 
+  'ssb-blobs',
+
   'ssb-backlinks',
   'ssb-profile',
 
