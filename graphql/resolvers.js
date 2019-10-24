@@ -1,7 +1,7 @@
 const { PubSub } = require('apollo-server')
 const { isMsg, isFeed } = require('ssb-ref')
 const pull = require('pull-stream')
-const pullFile = require('pull-file')
+const toPull = require('stream-to-pull-stream')
 const { GraphQLUpload } = require('graphql-upload')
 
 const getProfiles = require('./ssb/profiles')
@@ -52,14 +52,17 @@ module.exports = sbot => ({
   Mutation: {
     async uploadFile (_, { file }) {
       const { createReadStream, filename, mimetype, encoding } = await file
-      // console.log(createReadStream(), filename, mimetype, encoding)
-      pull(
-        pullFile(createReadStream(), {}),
-        sbot.blobs.add((err, hash) => {
-          if (err) return console.error('SSB:', err)
-          console.log('Success', hash)
-        })
-      )
+      console.log('!!!! INCOMING FILE !!!!!!', filename, mimetype, encoding)
+
+      return new Promise((resolve, reject) => {
+        pull(
+          toPull.source(createReadStream()),
+          sbot.blobs.add((err, hash) => {
+            if (err) return reject(err)
+            resolve(hash)
+          })
+        )
+      })
     },
     createProfile: (_, { input }) => {
       const type = input.type
