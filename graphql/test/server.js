@@ -3,8 +3,8 @@ const http = require('http')
 const express = require('express')
 const cors = require('cors')
 const pull = require('pull-stream')
-const typeDefs = require('./typeDefs')
-const Resolvers = require('./resolvers')
+const typeDefs = require('../typeDefs')
+const Resolvers = require('../resolvers')
 
 const PORT = 4000
 const app = express()
@@ -38,7 +38,9 @@ module.exports = sbot => {
         `🚀 Server ready at http://localhost:${PORT}${server.graphqlPath}`
       )
       console.log(
-        `🚀 Subscriptions ready at ws://localhost:${PORT}${server.subscriptionsPath}`
+        `🚀 Subscriptions ready at ws://localhost:${PORT}${
+          server.subscriptionsPath
+        }`
       )
     })
   })
@@ -57,7 +59,7 @@ function getContext (sbot, cb) {
       sbot.profile.findByFeedId(feedId, (err, profileState) => {
         if (err) return cb(err)
 
-        if (profileState) return cb(null, { feedId, profileId: profileState.key })
+        if (profileState) { return cb(null, { feedId, profileId: profileState.key }) }
 
         console.warn('WARNING - this is setting initial name!')
         const details = {
