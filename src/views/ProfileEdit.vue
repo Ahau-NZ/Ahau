@@ -1,19 +1,24 @@
 <template>
   <div>
-    <ProfileHeader />
-    <ProfileInfo />
+    <ProfileHeader :id="id" :edit="true"/>
+    <ProfileInfoEdit :id="id" :edit="true"/>
   </div>
 </template>
 
 <script>
 import ProfileHeader from '@/components/ProfileHeader.vue'
-import ProfileInfo from '@/components/ProfileInfo.vue'
+import ProfileInfoEdit from '@/components/ProfileInfoEdit.vue'
 
 export default {
-  name: 'Profile',
+  name: 'Edit',
+  data () {
+    return {
+      id: this.$route.params.id
+    }
+  },
   components: {
     ProfileHeader,
-    ProfileInfo
+    ProfileInfoEdit
   }
 }
 </script>

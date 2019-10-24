@@ -1,7 +1,7 @@
 <template>
   <div>
     <h1>
-      {{ isLoading ? `Welcome ${whoami}` : 'loading...' }}
+      {{ heading }}
     </h1>
     <div>{{ msg }}</div>
   </div>
@@ -17,19 +17,28 @@ export default {
   },
   apollo: {
     whoami: gql`query {
-      whoami
+      whoami {
+        id
+        profileId 
+        feedId 
+      }
     }`
   },
-  updated () {
-    console.log('Updatred', this.whoami)
-    if (this.whoami) {
-      this.$router.push(`/profile?id=${this.whoami}`)
-    }
-    console.log('Updated ', this.whoami)
-  },
+  // mounted () {
+  //   if (this.whoami) {
+  //     this.$router.push(`/profile`)
+  //   }
+  // },
+  // updated () {
+  //   if (this.whoami) {
+  //     this.$router.push(`/profile`)
+  //   }
+  // },
   computed: {
-    isLoading () {
-      return Boolean(this.whoami)
+    heading () {
+      return this.$apollo.loading
+        ? 'loading...'
+        : `Welcome ${this.whoami.feedId}`
     }
   }
 }

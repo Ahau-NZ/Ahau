@@ -10,7 +10,7 @@
           </v-col>
           <v-col cols="6">
             <h3 class="primary--text caption">Other names</h3>
-            <p class="primary--text body-1">{{profile.altNames.join(', ')}}</p>
+            <p class="primary--text body-1">{{altNames}}</p>
           </v-col>
         </v-row>
         <v-card
@@ -22,7 +22,7 @@
         </v-card>
       </v-col>
       <v-col  v-if="!edit" cols="4 justify-end">
-        <router-link to="/edit">
+        <router-link :to="{ name: 'profileEdit', params: { id } }">
           <v-btn class="my-2" tile outlined color="primary">
             <v-icon left>mdi-pencil</v-icon> Edit
           </v-btn>
@@ -40,11 +40,13 @@
 
 <script>
 import gql from 'graphql-tag'
+const get = require('lodash.get')
 
 export default {
-  name: 'ProfileHeader',
+  name: 'ProfileInfo',
   props: {
-    edit: Boolean
+    edit: Boolean,
+    id: String
   },
   data () {
     return {
@@ -57,16 +59,28 @@ export default {
     }
   },
   apollo: {
-    // Query with parameters
     profile: {
-      query: gql`query {
-        profile {
+      query: gql`query ProfileData($id: String!) {
+        profile(id: $id) {
           preferredName
           legalName
           altNames
           description
         }
-      }`
+      }`,
+      variables () {
+        return {
+          id: this.id
+        }
+      },
+      fetchPolicy: 'no-cache'
+    }
+  },
+  computed: {
+    altNames () {
+      const names = get(this, 'profile.altNames')
+      // NOTE get's defaultValue doesn't work if value returned is null
+      return names ? names.join(', ') : ''
     }
   }
 }

@@ -1,19 +1,24 @@
 <template>
   <div>
-    <ProfileHeader v-bind:edit="true" />
-    <ProfileInfoEdit v-bind:edit="true" />
+    <ProfileHeader :id="id"/>
+    <ProfileInfo :id="id"/>
   </div>
 </template>
 
 <script>
 import ProfileHeader from '@/components/ProfileHeader.vue'
-import ProfileInfoEdit from '@/components/ProfileInfoEdit.vue'
+import ProfileInfo from '@/components/ProfileInfo.vue'
 
 export default {
-  name: 'Edit',
+  name: 'ProfileShow',
+  computed: {
+    id () {
+      return this.$route.params.id
+    }
+  },
   components: {
     ProfileHeader,
-    ProfileInfoEdit
+    ProfileInfo
   }
 }
 </script>

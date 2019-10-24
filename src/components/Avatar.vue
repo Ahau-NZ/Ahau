@@ -1,9 +1,7 @@
 <template>
-  <v-avatar v-bind:size="size" color="indigo">
-    <v-img
-      v-bind:src="image"
-      v-bind:alt="alt"
-    />
+  <v-avatar :size="size" color="indigo">
+    <v-img v-if="image" :src="image || undefined" :alt="alt" />
+    <span v-else-if="alt">{{alt.substring(0,1)}}</span>
   </v-avatar>
 </template>
 
