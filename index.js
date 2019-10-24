@@ -8,17 +8,20 @@ const plugins = [
   'ssb-unix-socket',
   'ssb-no-auth',
 
-  // 'ssb-legacy-conn',
-  'ssb-conn', // uninstalled for the moment
+  'ssb-conn',
+  'ssb-lan',
   'ssb-replicate',
   'ssb-friends',
-  'ssb-invite',
-  'ssb-private',
+  'ssb-promiscuous', // temporary?
+
   'ssb-backlinks',
   'ssb-profile',
 
-  // 'ssb-about',
   'ssb-query'
+
+  // 'ssb-private',
+  // 'ssb-invite',
+  // 'ssb-about',
   // 'ssb-suggest'
 ]
 
