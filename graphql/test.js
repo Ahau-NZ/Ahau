@@ -6,9 +6,9 @@ const sbot = require('secret-stack')({}) // eslint-disable-line
   .use(require('ssb-master'))
 
   .use(require('ssb-conn'))
-  // .use(require('ssb-replicate'))
+  .use(require('ssb-replicate'))
   .use(require('ssb-friends'))
-
+  .use(require('ssb-blobs'))
   .use(require('ssb-backlinks'))
   .use(require('ssb-profile'))
   .use(require('ssb-query'))

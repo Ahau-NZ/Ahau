@@ -8,6 +8,7 @@
     </v-row>
     <v-row class="avatar">
       <Avatar :image="profile.avatarImage" :alt="profile.preferredName" />
+      <input @change="handleAvatarImage" type="file" />
       <v-btn v-if="edit" class="edit-avatar" fab color="grey">
         <v-icon>mdi-camera</v-icon>
       </v-btn>
@@ -25,8 +26,13 @@ export default {
     edit: Boolean,
     id: String
   },
+  components: {
+    Avatar
+  },
   data () {
     return {
+      newAvatarImage: null,
+      newHeaderImage: null,
       profile: {
         preferredName: '',
         avatarImage: '',
@@ -50,8 +56,21 @@ export default {
       }
     }
   },
-  components: {
-    Avatar
+  methods: {
+    async handleAvatarImage (e) {
+      console.log('E', e.target.files[0])
+      // this.newAvatarImage = e.target.value
+      const result = await this.$apollo.mutate({
+        mutation: gql`mutation uploadFile($file: Upload!) {
+          uploadFile(file: $file)
+        }`,
+        variables: {
+          file: e.target.files[0]
+        }
+      })
+      console.log('RES', result)
+      // if (result.data) this.goToShow()
+    }
   }
 }
 </script>

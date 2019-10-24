@@ -77,6 +77,7 @@ module.exports = gql`
   type Mutation {
     createProfile(input: CreateProfileInput): String
     updateProfile(input: UpdateProfileInput): String
+    uploadFile(file: Upload!): String
   }
 
   type Subscription {

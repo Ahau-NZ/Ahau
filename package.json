@@ -16,16 +16,20 @@
   "dependencies": {
     "apollo-server": "^2.9.3",
     "apollo-server-express": "^2.9.6",
+    "apollo-upload-client": "^10.0.1",
     "casual": "^1.6.2",
     "core-js": "^2.6.5",
     "cors": "^2.8.5",
     "express": "^4.17.1",
+    "graphql-upload": "^8.0.7",
     "lodash.get": "^4.4.2",
+    "pull-file": "^1.1.0",
     "pull-paramap": "^1.2.2",
     "pull-stream": "^3.6.14",
     "secret-stack": "^6.3.0",
     "ssb-ahoy": "github:ssbc/ssb-ahoy#secret-stack",
     "ssb-backlinks": "^0.7.3",
+    "ssb-blobs": "^1.2.2",
     "ssb-client": "^4.7.8",
     "ssb-config": "^3.4.1",
     "ssb-conn": "^0.11.2",
@@ -46,6 +50,7 @@
     "vue-apollo": "^3.0.0-beta.11",
     "vue-router": "^3.0.3",
     "vuetify": "^2.1.0",
+    "vuetify-image-input": "^19.0.0",
     "vuex": "^3.0.1"
   },
   "devDependencies": {
