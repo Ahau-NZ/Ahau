@@ -11,7 +11,7 @@ export default new Vuetify({
         primary: '#383838',
         secondary: '#A80000',
         accent: '#A70000',
-        error: 'red'
+        error: '#ff0000'
       }
     }
   },

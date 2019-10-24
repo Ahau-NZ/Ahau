@@ -1,7 +1,7 @@
 <template>
   <div>
-    <ProfileHeader />
-    <ProfileInfo />
+    <ProfileHeader :id="id"/>
+    <ProfileInfo :id="id"/>
   </div>
 </template>
 
@@ -10,7 +10,12 @@ import ProfileHeader from '@/components/ProfileHeader.vue'
 import ProfileInfo from '@/components/ProfileInfo.vue'
 
 export default {
-  name: 'Profile',
+  name: 'ProfileShow',
+  computed: {
+    id () {
+      return this.$route.params.id
+    }
+  },
   components: {
     ProfileHeader,
     ProfileInfo

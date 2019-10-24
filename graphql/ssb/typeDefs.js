@@ -1,43 +1,85 @@
 const { gql } = require('apollo-server')
 
-const Query = gql`
-  input ProfileInput {
-    firstName: String
-    lastName: String
-    names: [String]
-    bio: String
-    preferredName: String
-    coverPhoto: String
-    avatarPhoto: String
+// TODO change defs of altNames
+
+module.exports = gql`
+  type CurrentIdentity {
+    id: String
+    feedId: String
+    profileId: String
   }
+
   type Profile {
-    firstName: String
-    lastName: String
-    names: [String]
-    bio: String
+    id: String
+    type: String
     preferredName: String
-    coverPhoto: String
-    avatarPhoto: String
+    legalName: String
+    altNames: [String]
+    avatarImage: String
+    headerImage: String
+    description: String
   }
+  input UpdateProfileInput {
+    id: String!
+    preferredName: String
+    legalName: String
+    altNames: [String]
+    avatarImage: String
+    headerImage: String
+    description: String
+  }
+  input CreateProfileInput {
+    type: String!
+    preferredName: String
+    legalName: String
+    altNames: [String]
+    avatarImage: String
+    headerImage: String
+    description: String
+  }
+
+  input CommunityInput {
+    preferredName: String
+    legalName: String
+    altNames: [String]
+    avatarImage: String
+    headerImage: String
+    description: String
+  }
+  type Community {
+    preferredName: String
+    legalName: String
+    altNames: [String]
+    avatarImage: String
+    headerImage: String
+    description: String
+  }
+
+  type Peer {
+    id: String
+    state: String
+  }
+
   type Query {
-    whoami: String
-    profile: Profile
-  }
-`
+    "Scuttlebutt Who am I"
+    whoami: CurrentIdentity
 
-const Mutation = gql`
+    "Scuttlebutt identity profile"
+    profile(id: String!): Profile
+
+    "List human profiles"
+    profiles: [Profile]
+
+    "Scuttlebutt community"
+    communities: [Community]
+  }
+
   type Mutation {
-    saveProfile(input: ProfileInput): String
+    createProfile(input: CreateProfileInput): String
+    updateProfile(input: UpdateProfileInput): String
+  }
+
+  type Subscription {
+    peers: [Peer]
   }
 `
-
-const Schema = () => [
-  `
-  schema {
-    query: Query
-    mutation: Mutation
-  }
-`
-]
-
-module.exports = [Schema, Query, Mutation]

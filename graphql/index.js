@@ -1,61 +1,82 @@
-const { ApolloServer, gql, MockList } = require('apollo-server')
-const casual = require('casual')
-// const { typeDefs, resolvers } = require('./ssb')
+const { ApolloServer } = require('apollo-server-express')
+const http = require('http')
+const express = require('express')
+const cors = require('cors')
+const pull = require('pull-stream')
+
+const PORT = 4000
+const app = express()
+app.options('*', cors())
 
 module.exports = sbot => {
-  const typeDefs = gql`
-    type Profile {
-      preferredName: String
-      legalName: String
-      altNames: [String]
-      avatarImage: String
-      coverImage: String
-      description: String
-    }
-    type Query {
-      "Scuttlebutt Who am I"
-      whoami: String
-      "Scuttlebutt profile"
-      profile: Profile
-    }
-  `
-
-  const mocks = {
-    Query: () => ({
-      profile: () => ({
-        preferredName: () => casual.name,
-        legalName: () => casual.full_name,
-        altNames: () => new MockList([0, 4], () => casual.name),
-        avatarImage: () => 'https://picsum.photos/300/300',
-        coverImage: () => 'https://picsum.photos/800/300',
-        description: () => casual.catch_phrase
-      })
-    })
-  }
-
+  const { typeDefs, resolvers } = require('./ssb')(sbot)
   // A map of functions which return data for the schema.
-  const resolvers = {
-    Query: {
-      whoami: () =>
-        new Promise((resolve, reject) => {
-          sbot.whoami((err, info) => {
-            if (err) {
-              reject(err)
-            }
-            setTimeout(() => resolve(info.id), 1e3)
+
+  getContext(sbot, (err, context) => {
+    if (err) throw err
+
+    const server = new ApolloServer({
+      typeDefs,
+      context, // feedId, profileId
+      resolvers
+      // mockEntireSchema: false,
+      // mocks: process.env.NODE_ENV === 'production' ? false : require('./ssb/mocks')
+      // cacheControl: {
+      //   defaultMaxAge: 5
+      // }
+    })
+
+    server.applyMiddleware({ app })
+
+    const httpServer = http.createServer(app)
+    server.installSubscriptionHandlers(httpServer)
+
+    // ⚠️ Pay attention to the fact that we are calling `listen` on the http server variable, and not on `app`.
+    httpServer.listen(PORT, () => {
+      console.log(
+        `🚀 Server ready at http://localhost:${PORT}${server.graphqlPath}`
+      )
+      console.log(
+        `🚀 Subscriptions ready at ws://localhost:${PORT}${server.subscriptionsPath}`
+      )
+    })
+  })
+}
+
+function getContext (sbot, cb) {
+  pull(
+    pull.once('go get it!'), // dummy entry
+    pull.asyncMap((_, cb) => {
+      sbot.whoami((err, data) => {
+        if (err) cb(err)
+        else cb(null, data.id)
+      })
+    }),
+    pull.asyncMap((feedId, cb) => {
+      sbot.profile.findByFeedId(feedId, (err, profileState) => {
+        if (err) return cb(err)
+
+        if (profileState) return cb(null, { feedId, profileId: profileState.key })
+
+        console.warn('WARNING - this is setting initial name!')
+        const details = {
+          preferredName: { set: 'mix' },
+          altNames: { mixy: 1, john: 0, mixmix: 2 }
+        }
+        sbot.profile.create('person', details, (err, profileId) => {
+          if (err) return cb(err)
+
+          sbot.profile.link.create({ profile: profileId }, (err, link) => {
+            if (err) return cb(err)
+
+            cb(null, { feedId, profileId })
           })
         })
-    }
-  }
-
-  const server = new ApolloServer({
-    typeDefs,
-    resolvers,
-    mockEntireSchema: false,
-    mocks: process.env.NODE_ENV === 'production' ? false : mocks
-  })
-
-  server.listen().then(({ url }) => {
-    console.log(`GraphQL server ready at ${url}`)
-  })
+      })
+    }),
+    pull.collect((err, data) => {
+      if (err) cb(err)
+      else cb(null, data[0])
+    })
+  )
 }

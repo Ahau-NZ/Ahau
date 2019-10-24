@@ -8,15 +8,17 @@ const plugins = [
   'ssb-unix-socket',
   'ssb-no-auth',
 
-  'ssb-legacy-conn',
-  // 'ssb-conn', // uninstalled for the moment
-  // 'ssb-replicate',
-  // 'ssb-friends',
+  // 'ssb-legacy-conn',
+  'ssb-conn', // uninstalled for the moment
+  'ssb-replicate',
+  'ssb-friends',
   'ssb-invite',
-  'ssb-private'
-  // 'ssb-backlinks',
+  'ssb-private',
+  'ssb-backlinks',
+  'ssb-profile',
+
   // 'ssb-about',
-  // 'ssb-query',
+  'ssb-query'
   // 'ssb-suggest'
 ]
 
@@ -26,6 +28,7 @@ const appURL =
     : `file://${__dirname}/dist/index.html` // production build
 
 const config = Config('ssb-ahau', {
+  port: 8009,
   caps: {
     shs: 'LftKJZRB4nbBRnlJuFteWG9AP+gGboVEhibx016bR0s='
   }
@@ -39,7 +42,7 @@ if (!process.env.SERVER) {
     appURL,
     // appDir: '../whakapapa-ora', // only use this when ssb-ahoy symlinked
     onReady: ({ config }) => {
-      console.log('<<< welcome aboard >>>')
+      // this config has updated manifest added
 
       ssbClient(config.keys, config, (err, sbot) => {
         if (err) {
@@ -52,9 +55,13 @@ if (!process.env.SERVER) {
     }
   })
 } else {
-  const Server = require('ssb-server')
-  Server.use(require('ssb-master'))
-    .use(require('ssb-legacy-conn'))
+  const Server = require('secret-stack')({})
+    .use(require('ssb-db'))
+    .use(require('ssb-master'))
+    .use(require('ssb-conn'))
+    .use(require('ssb-backlinks'))
+    .use(require('ssb-profile'))
+    .use(require('ssb-query'))
     .use(require('ssb-replicate'))
   const config = Config()
   const sbot = Server(config)
