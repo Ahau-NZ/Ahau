@@ -27,7 +27,7 @@
     "ssb-ahoy": "github:ssbc/ssb-ahoy#secret-stack",
     "ssb-backlinks": "^0.7.3",
     "ssb-client": "^4.7.8",
-    "ssb-config": "^3.3.3",
+    "ssb-config": "^3.4.1",
     "ssb-conn": "^0.11.2",
     "ssb-db": "^19.3.1",
     "ssb-friends": "^4.1.4",

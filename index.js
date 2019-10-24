@@ -1,6 +1,6 @@
 const ahoy = require('ssb-ahoy')
 const ssbClient = require('ssb-client')
-const config = require('./ssb.config')
+const Config = require('./ssb.config')
 const Graphql = require('./graphql')
 
 const plugins = [
@@ -32,7 +32,7 @@ const appURL =
 
 ahoy({
   title: 'Whakapapa Ora',
-  config,
+  config: Config(),
   plugins,
   appURL,
   // appDir: '../whakapapa-ora', // only use this when ssb-ahoy symlinked

@@ -1,5 +1,5 @@
 const Graphql = require('./')
-const config = require('../ssb.config.js')
+const Config = require('../ssb.config.js')
 
 const sbot = require('secret-stack')({}) // eslint-disable-line
   .use(require('ssb-db'))
@@ -12,6 +12,6 @@ const sbot = require('secret-stack')({}) // eslint-disable-line
   .use(require('ssb-backlinks'))
   .use(require('ssb-profile'))
   .use(require('ssb-query'))
-  .call(null, config)
+  .call(null, Config())
 
 Graphql(sbot)
