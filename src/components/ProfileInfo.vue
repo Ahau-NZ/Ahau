@@ -59,24 +59,21 @@ export default {
     }
   },
   apollo: {
-    profile () {
-      console.log('Getting the profile data!')
-      return {
-        query: gql`query ProfileData($id: String!) {
-          profile(id: $id) {
-            preferredName
-            legalName
-            altNames
-            description
-          }
-        }`,
-        variables () {
-          return {
-            id: this.id
-          }
-        },
-        fetchPolocy: 'no-cache'
-      }
+    profile: {
+      query: gql`query ProfileData($id: String!) {
+        profile(id: $id) {
+          preferredName
+          legalName
+          altNames
+          description
+        }
+      }`,
+      variables () {
+        return {
+          id: this.id
+        }
+      },
+      fetchPolicy: 'no-cache'
     }
   },
   computed: {

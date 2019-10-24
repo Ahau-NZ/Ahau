@@ -1,7 +1,7 @@
 <template>
   <div>
     <h1>
-      {{ isLoading ? `Welcome ${whoami}` : 'loading...' }}
+      {{ heading }}
     </h1>
     <div>{{ msg }}</div>
   </div>
@@ -20,22 +20,25 @@ export default {
       whoami {
         id
         profileId 
+        feedId 
       }
     }`
   },
-  mounted () {
-    if (this.whoami) {
-      this.$router.push(`/profile`)
-    }
-  },
-  updated () {
-    if (this.whoami) {
-      this.$router.push(`/profile`)
-    }
-  },
+  // mounted () {
+  //   if (this.whoami) {
+  //     this.$router.push(`/profile`)
+  //   }
+  // },
+  // updated () {
+  //   if (this.whoami) {
+  //     this.$router.push(`/profile`)
+  //   }
+  // },
   computed: {
-    isLoading () {
-      return Boolean(this.whoami)
+    heading () {
+      return this.$apollo.loading
+        ? 'loading...'
+        : `Welcome ${this.whoami.feedId}`
     }
   }
 }

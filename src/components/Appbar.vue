@@ -5,12 +5,16 @@
         <router-link to="/">
           <img src="../assets/logo_red.svg" />
         </router-link>
-        <router-link :to="{ name: 'profileShow', params: { id: profileId } }">
+
+        <!-- <router-link :to="{ name: 'profileShow', params: { id: profileId } }"> -->
+        <!--   <Avatar size="50px" :image="profile.avatarImage" :alt="profile.preferredName" /> -->
+        <!-- </router-link> -->
+        <v-btn icon :to="{ name: 'profileShow', params: { id: profileId } }">
           <Avatar size="50px" :image="profile.avatarImage" :alt="profile.preferredName" />
-        </router-link>
-          <!-- <router-link class="px-1" v-for="profile in profiles" :key="profile.id" :to="{ name: 'profileShow', params: { id: profile.id }}"> -->
-          <!--   <Avatar size="50px" :image="profile.avatarImage" :alt="profile.preferredName" /> -->
-          <!-- </router-link> -->
+        </v-btn>
+        <!-- <router-link class="px-1" v-for="profile in profiles" :key="profile.id" :to="{ name: 'profileShow', params: { id: profile.id }}"> -->
+        <!--   <Avatar size="50px" :image="profile.avatarImage" :alt="profile.preferredName" /> -->
+        <!-- </router-link> -->
       </v-toolbar-title>
 
       <v-spacer></v-spacer>
@@ -19,7 +23,7 @@
         <v-btn text to='/community' class="white--text text-uppercase">
           community
         </v-btn>
-        <v-btn text :to="{ name: 'profile' }" class="white--text text-uppercase">
+        <v-btn text to="/profile" class="white--text text-uppercase">
           profile
         </v-btn>
         <v-btn text to="/signout" class="white--text text-uppercase">

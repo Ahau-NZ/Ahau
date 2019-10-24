@@ -115,7 +115,8 @@ export default {
           id: this.id
         }
       },
-      update: data => data.profile
+      update: data => data.profile,
+      fetchPolicy: 'no-cache'
     }
   },
   watch: {
