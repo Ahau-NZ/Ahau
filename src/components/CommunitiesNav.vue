@@ -7,7 +7,7 @@
         </v-row>
         <v-row>
           <v-col cols="3">
-            <router-link to="/communities?page=local">
+            <router-link to="/community?page=local">
               <h3 class="primary--text display-1 active">Local</h3>
             </router-link>
           </v-col>
@@ -15,7 +15,7 @@
             <div class="pipe" />
           </v-col>
           <v-col cols="3">
-            <router-link to="/communities?page=internet">
+            <router-link to="/community?page=internet">
               <h3 class="primary--text display-1">Internet</h3>
             </router-link>
           </v-col>
@@ -23,7 +23,7 @@
             <div class="pipe" />
           </v-col>
           <v-col cols="3">
-            <router-link to="/communities?page=invite">
+            <router-link to="/community?page=invite">
               <h3 class="primary--text display-1">Invite</h3>
             </router-link>
           </v-col>

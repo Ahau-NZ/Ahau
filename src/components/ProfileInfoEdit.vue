@@ -3,10 +3,8 @@
   <v-form class="pt-0">
     <v-container class="white mx-auto pt-12 px-12">
       <v-row class="form">
-        <v-col
-          cols="12"
-          md="12"
-        >
+
+        <v-col cols="12" md="12" >
           <v-text-field
             light
             v-model="profile.preferredName"
@@ -14,10 +12,7 @@
           ></v-text-field>
         </v-col>
 
-        <v-col
-          cols="12"
-          md="12"
-        >
+        <v-col cols="12" md="12" >
           <v-text-field
             light
             v-model="profile.legalName"
@@ -25,32 +20,29 @@
           ></v-text-field>
         </v-col>
 
-        <v-col
-          cols="9"
-          md="9"
-        >
-          <v-text-field
-            light
-            v-model="newAltName"
-            label="Add another name"
-          ></v-text-field>
-        </v-col>
-        <v-col
-          cols="2"
-          md="2"
-        >
-          <v-btn @click="addAltName" fab color="grey">
-            <v-icon right>mdi-plus</v-icon>
-          </v-btn>
-        </v-col>
-        <v-col cols="12" md="12">
-          <h3 class="black--text">Other names</h3>
-          <v-row v-for="name in profile.altNames" v-bind:key="name">
-            <p
-              class="black--text"
-            >{{name}}</p>
-          </v-row>
-        </v-col>
+        <!-- <v-col cols="9" md="9" > -->
+        <!--   <v-text-field -->
+        <!--     light -->
+        <!--     v-model="newAltName" -->
+        <!--     label="Add another name" -->
+        <!--   ></v-text-field> -->
+        <!-- </v-col> -->
+
+        <!-- <v-col cols="2" md="2" > -->
+        <!--   <v-btn @click="addAltName" fab color="grey"> -->
+        <!--     <v-icon>mdi-plus</v-icon> -->
+        <!--   </v-btn> -->
+        <!-- </v-col> -->
+
+        <!-- <v-col cols="12" md="12"> -->
+        <!--   <h3 class="black--text">Other names</h3> -->
+        <!--   <v-row v-for="name in altNames" :key="name"> -->
+        <!--     <p -->
+        <!--       class="black--text" -->
+        <!--     >{{name}}</p> -->
+        <!--   </v-row> -->
+        <!-- </v-col> -->
+
         <v-col cols="12">
           <v-textarea
             v-model="profile.description"
@@ -60,22 +52,24 @@
             hint="Hint text"
           ></v-textarea>
         </v-col>
+
         <v-col cols="12">
           <v-btn
             color="success"
             class="mr-4"
             @click="saveProfile"
           >
-            <v-icon right>mdi-check</v-icon>
+            <v-icon>mdi-check</v-icon>
           </v-btn>
           <v-btn
             color="success"
             class="mr-4"
-            @click="cancel"
+            @click="goToShow"
           >
-            <v-icon right>mdi-cancel</v-icon>
+            <v-icon>mdi-cancel</v-icon>
           </v-btn>
         </v-col>
+
       </v-row>
     </v-container>
   </v-form>
@@ -83,94 +77,115 @@
 
 <script>
 import gql from 'graphql-tag'
+const get = require('lodash.get')
 
 export default {
-  name: 'ProfileHeader',
+  name: 'ProfileInfoEdit',
   props: {
+    id: String,
     edit: Boolean
   },
   data () {
     return {
       newAltName: '',
       profile: {
-        preferredName: '',
+        id: '',
+        preferredName: '', // ideually these would be null to start with to make change detection from persisted state easier
         legalName: '',
         altNames: [],
         description: ''
-      }
+      },
+      persistedState: {}
     }
   },
   apollo: {
     // Query with parameters
-    profile: {
-      query: gql`query {
-        profile {
+    persistedState: {
+      query: gql`query ProfileData($id: String!) {
+        profile(id: $id) {
+          id
           preferredName
           legalName
           altNames
           description
         }
-      }`
+      }`,
+      variables () {
+        return {
+          id: this.id
+        }
+      },
+      update: data => data.profile,
+      fetchPolicy: 'no-cache'
+    }
+  },
+  watch: {
+    persistedState (nextValue) {
+      Object.entries(nextValue)
+        .filter(([key]) => !key.startsWith('_'))
+        .forEach(([key, value]) => {
+          if (value !== null) this.profile[key] = value
+        })
     }
   },
   methods: {
-    addAltName () {
-      this.profile.altNames = this.profile.altNames.concat(this.newAltName)
-      this.newAltName = ''
-    },
+    // addAltName () {
+    //   this.profile.altNames = this.profile.altNames.concat(this.newAltName)
+    //   this.newAltName = ''
+    // },
     async saveProfile () {
       // Call to the graphql mutation
-      let cleanInput = {
-        type: 'person'
-      }
-      await Object.keys(this.profile).map(k => {
-        if (k !== '__typename') {
-          cleanInput[k] = this.profile[k]
+      let changes = {}
+      Object.entries(this.profile).map(([key, value]) => {
+        if (value !== this.persistedState[key]) {
+          changes[key] = value
         }
+        // TODO: special case for altNames
       })
+      // TODO call it off if there are no changes!
+
+      console.log(changes)
+
       const result = await this.$apollo.mutate({
         // Query
-        mutation: gql`mutation ($input: ProfileInput!) {
-          saveProfile(input: $input) {
-            preferredName
-            legalName
-            altNames
-            description
-          }
+        // TODO figure out if this is a create or update!
+        // TODO include the key you're updating!
+        mutation: gql`mutation ($input: UpdateProfileInput!) {
+          updateProfile(input: $input)
         }`,
         // Parameters
         variables: {
-          input: cleanInput
+          input: {
+            id: this.profile.id,
+            ...changes
+          }
         }
       })
       console.log('RES', result)
+      if (result.data) this.goToShow()
     },
-    cancel: () => {
-      console.log('Canceling')
+    goToShow () {
+      this.$router.push({ name: 'profileShow', params: { id: this.id } })
     }
+  },
+  computed: {
+    altNames () {
+      return get(this, 'profile.altNames', [])
+    }
+    // preferredName () {
+    //   return get(this.profile, 'preferredName', '')
+    // },
+    // legalName () {
+    //   if (this.profile) {
+    //     return this.profile.legalName || ''
+    //   } else return ''
+    // },
+    // description () {
+    //   if (this.profile) {
+    //     return this.profile.description || ''
+    //   } else return ''
+    // }
   }
-  // computed: {
-  //   preferredName () {
-  //     if (this.profile) {
-  //       return this.profile.preferredName || ''
-  //     } else return ''
-  //   },
-  //   legalName () {
-  //     if (this.profile) {
-  //       return this.profile.legalName || ''
-  //     } else return ''
-  //   },
-  //   altNames () {
-  //     if (this.profile) {
-  //       return this.profile.altNames || ''
-  //     } else return []
-  //   },
-  //   description () {
-  //     if (this.profile) {
-  //       return this.profile.description || ''
-  //     } else return ''
-  //   }
-  // }
 }
 </script>
 
