@@ -43,8 +43,8 @@ const defaultOptions = {
   // Override default apollo link
   // note: don't override httpLink here, specify httpLink options in the
   // httpLinkOptions property of defaultOptions.
-  // link: myLink
   link: httpLink
+
   // Override default cache
   // cache: myCache
 

@@ -2,60 +2,25 @@ const { PubSub } = require('apollo-server')
 const { isMsg, isFeed } = require('ssb-ref')
 const pull = require('pull-stream')
 const pullFile = require('pull-file')
-const pullParamap = require('pull-paramap')
-const isProfile = require('ssb-profile/lib/is-profile')
 const { GraphQLUpload } = require('graphql-upload')
+
+const getProfiles = require('./ssb/profiles')
 
 const pubsub = new PubSub()
 
 module.exports = sbot => ({
   Query: {
-    whoami: (_, __, context) =>
-      new Promise((resolve, reject) => {
-        const { feedId, profileId } = context
+    whoami: (_, __, { feedId, profileId }) =>
+      new Promise(resolve =>
         resolve({ id: feedId, feedId, profileId })
-      }),
+      ),
 
     profiles: () =>
       new Promise((resolve, reject) => {
-        const query = [
-          {
-            $filter: {
-              timestamp: { $gt: 0 }, // forces order by received time
-              value: {
-                // timestamp: { $gt: 0 }, // forces order by asserted publish time
-                content: {
-                  type: 'profile/person', // for example
-                  tangles: {
-                    profile: { root: null, previous: null }
-                  }
-                }
-              }
-            }
-          }
-        ]
-
-        pull(
-          sbot.query.read({ query }),
-          pull.filter(isProfile),
-          pullParamap(
-            (root, cb) =>
-              sbot.profile.get(root.key, (err, profile) => {
-                if (err) cb(null, null)
-                else {
-                  const { state } = profile.states[0] // WARNING! we're assuming just one head-state!
-                  cb(null, { id: root.key, ...state })
-                }
-              }),
-            6 // "width" i.e. how many to simultaneously run in parallel
-          ),
-          pull.filter(Boolean), // drop profiles which has some trouble resolving
-          pull.collect((err, profiles) => {
-            if (err) return reject(err)
-
-            resolve(profiles)
-          })
-        )
+        getProfiles(sbot, (err, profiles) => {
+          if (err) reject(err)
+          else resolve(profiles)
+        })
       }),
 
     profile: (_, { id }, context) =>
@@ -88,9 +53,8 @@ module.exports = sbot => ({
     async uploadFile (_, { file }) {
       const { createReadStream, filename, mimetype, encoding } = await file
       // console.log(createReadStream(), filename, mimetype, encoding)
-      console.log('Start', createReadStream())
       pull(
-        pullFile(createReadStream, {}),
+        pullFile(createReadStream(), {}),
         sbot.blobs.add((err, hash) => {
           if (err) return console.error('SSB:', err)
           console.log('Success', hash)
