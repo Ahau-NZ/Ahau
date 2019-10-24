@@ -21,7 +21,7 @@
           <v-card-text>{{profile.description}}</v-card-text>
         </v-card>
       </v-col>
-      <v-col  v-if="!edit" cols="4 justify-end">
+      <v-col v-if="canEdit" cols="4 justify-end">
         <router-link :to="{ name: 'profileEdit', params: { id } }">
           <v-btn class="my-2" tile outlined color="primary">
             <v-icon left>mdi-pencil</v-icon> Edit
@@ -55,7 +55,8 @@ export default {
         legalName: '',
         altNames: [],
         description: ''
-      }
+      },
+      canEdit: false
     }
   },
   apollo: {
@@ -74,6 +75,18 @@ export default {
         }
       },
       fetchPolicy: 'no-cache'
+    },
+    canEdit: {
+      query: gql`query {
+        whoami {
+          feedId
+          profileId
+        }
+      }`,
+      update ({ whoami }) {
+        return whoami.profileId === this.id ||
+          whoami.feedId === this.is
+      }
     }
   },
   computed: {
