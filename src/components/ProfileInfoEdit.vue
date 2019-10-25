@@ -83,7 +83,8 @@ export default {
   name: 'ProfileInfoEdit',
   props: {
     id: String,
-    edit: Boolean
+    edit: Boolean,
+    images: Object
   },
   data () {
     return {
@@ -135,16 +136,19 @@ export default {
     // },
     async saveProfile () {
       // Call to the graphql mutation
-      let changes = {}
+      let changes = {
+        ...this.images
+      }
       Object.entries(this.profile).map(([key, value]) => {
         if (value !== this.persistedState[key]) {
           changes[key] = value
         }
         // TODO: special case for altNames
       })
+
       // TODO call it off if there are no changes!
 
-      console.log(changes)
+      console.log('TO POST', changes)
 
       const result = await this.$apollo.mutate({
         // Query
@@ -172,19 +176,6 @@ export default {
     altNames () {
       return get(this, 'profile.altNames', [])
     }
-    // preferredName () {
-    //   return get(this.profile, 'preferredName', '')
-    // },
-    // legalName () {
-    //   if (this.profile) {
-    //     return this.profile.legalName || ''
-    //   } else return ''
-    // },
-    // description () {
-    //   if (this.profile) {
-    //     return this.profile.description || ''
-    //   } else return ''
-    // }
   }
 }
 </script>

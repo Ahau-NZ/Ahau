@@ -99,10 +99,6 @@ module.exports = sbot => ({
         let update = {}
         Object.keys(input).forEach(i => {
           if (i === 'id') return
-          if (i === 'avatarImage') {
-            console.log('IMAGE FILE', input[i])
-            return
-          }
           if (i === 'altNames') {
             // update[i] = {
             //   add: input[i]
@@ -111,7 +107,7 @@ module.exports = sbot => ({
             update[i] = { set: input[i] }
           }
         })
-
+        console.log(update)
         sbot.profile.update(id, update, (err, updateMsg) => {
           if (err) reject(err)
           else resolve(updateMsg.key)
