@@ -23,29 +23,43 @@ module.exports = sbot => ({
         })
       }),
 
-    profile: (_, { id }, context) =>
+    profile: (_, { id }, { feedId, profileId }) =>
       new Promise((resolve, reject) => {
-        if (isMsg(id)) {
-          // if it's a %messageId, look it up
-          sbot.profile.get(id, (err, profile) => {
-            if (err) return reject(err)
+        if (!isMsg(id)) reject(new Error('profile query expected %msgId, got ' + id))
 
-            const { state } = profile.states[0] // WARNING! we're assuming just one head-state!
-            resolve({ id, ...state })
-          })
-        } else if (isFeed(id)) {
-          // if it's a @feedId, try looking up the associated profile
-          sbot.profile.findByFeedId(id, (err, profile) => {
-            if (err) return reject(err)
+        sbot.profile.get(id, (err, profile) => {
+          if (err) return reject(err)
 
-            if (profile) {
-              const { state } = profile.states[0] // WARNING! we're assuming just one head-state!
-              resolve({ id: profile.key, ...state })
-            } else {
-              reject(new Error('no profile set up for id:' + id))
-            }
+          // <<< WIP
+          const { state } = profile.states[0] // WARNING! we're assuming just one head-state!
+          var canEdit = false
+          if (id === profileId) canEdit = true
+          if (state.type === 'community') canEdit = true
+          // TODO to change profile.get to return "authors" so can check if I canEdit?
+          // >>>
+
+          resolve({
+            id,
+            canEdit,
+
+            ...state
           })
-        }
+        })
+
+        // TODO Deprecate?
+        // else if (isFeed(id)) {
+        //   // if it's a @feedId, try looking up the associated profile
+        //   sbot.profile.findByFeedId(id, (err, profile) => {
+        //     if (err) return reject(err)
+
+        //     if (profile) {
+        //       const { state } = profile.states[0] // WARNING! we're assuming just one head-state!
+        //       resolve({ id: profile.key, ...state })
+        //     } else {
+        //       reject(new Error('no profile set up for id:' + id))
+        //     }
+        //   })
+        // }
       })
   },
 
@@ -79,8 +93,6 @@ module.exports = sbot => ({
             details[key] = { set: value }
         }
       })
-
-      console.log(input.type, JSON.stringify(details, null, 2))
 
       return new Promise((resolve, reject) => {
         sbot.profile.create(input.type, details, (err, profileId) => {

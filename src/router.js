@@ -9,6 +9,7 @@ import ProfileEdit from '@/views/ProfileEdit.vue'
 
 import Communities from '@/views/Communities.vue'
 import CommunityNew from '@/views/CommunityNew.vue'
+import CommunityShow from '@/views/CommunityShow.vue'
 
 Vue.use(Router)
 
@@ -22,6 +23,7 @@ export default new Router({
     { path: '/profile/:id', name: 'profileShow', component: ProfileShow },
     { path: '/community', name: 'communityIndex', component: Communities },
     { path: '/community/new', name: 'communityNew', component: CommunityNew },
+    { path: '/community/:id', name: 'communityShow', component: CommunityShow },
     { path: '*', redirect: '/' }
   ]
 })

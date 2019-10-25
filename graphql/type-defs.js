@@ -12,6 +12,8 @@ module.exports = gql`
   type Profile {
     id: String
     type: String
+    canEdit: Boolean
+
     preferredName: String
     legalName: String
     altNames: [String]

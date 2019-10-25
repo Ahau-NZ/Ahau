@@ -56,7 +56,7 @@ import gql from 'graphql-tag'
 const get = require('lodash.get')
 
 export default {
-  name: 'ProfileInfoEdit',
+  name: 'CommunityNew',
   props: {
     id: String,
     edit: Boolean
@@ -166,11 +166,11 @@ export default {
           }
         }
 
-      debugger
       const result = await this.$apollo.mutate(request)
 
       if (result.data) {
-        this.$router.push({ name: 'communityShow', params: { id: result.data.id } })
+        console.log(result)
+        this.$router.push({ name: 'communityShow', params: { id: result.data.createProfile } })
       }
     },
     onCancel () {
