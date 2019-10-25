@@ -15,10 +15,9 @@ module.exports = function getContext (sbot, cb) {
 
         if (profileState) return cb(null, { feedId, profileId: profileState.key })
 
-        console.warn('WARNING - this is setting initial name!')
         const details = {
-          preferredName: { set: 'mix' },
-          altNames: { mixy: 1, john: 0, mixmix: 2 }
+          // preferredName: { set: 'mix' },
+          // altNames: { mixy: 1, mixmix: 2 }
         }
         sbot.profile.create('person', details, (err, profileId) => {
           if (err) return cb(err)

@@ -1,10 +1,14 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Home from './views/Home.vue'
-import Profiles from './views/Profiles.vue'
-import ProfileShow from './views/ProfileShow.vue'
-import ProfileEdit from './views/ProfileEdit.vue'
-import Communities from './views/Communities.vue'
+
+import Home from '@/views/Home.vue'
+
+import Profiles from '@/views/Profiles.vue'
+import ProfileShow from '@/views/ProfileShow.vue'
+import ProfileEdit from '@/views/ProfileEdit.vue'
+
+import Communities from '@/views/Communities.vue'
+import CommunityNew from '@/views/CommunityNew.vue'
 
 Vue.use(Router)
 
@@ -17,6 +21,7 @@ export default new Router({
     { path: '/profile/:id/edit', name: 'profileEdit', component: ProfileEdit },
     { path: '/profile/:id', name: 'profileShow', component: ProfileShow },
     { path: '/community', name: 'communityIndex', component: Communities },
+    { path: '/community/new', name: 'communityNew', component: CommunityNew },
     { path: '*', redirect: '/' }
   ]
 })

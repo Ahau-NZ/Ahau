@@ -20,7 +20,7 @@
       <v-spacer></v-spacer>
 
       <v-toolbar-items>
-        <v-btn text to='/community' class="white--text text-uppercase">
+        <v-btn text to='/community?page=local' class="white--text text-uppercase">
           community
         </v-btn>
         <v-btn text to="/profile" class="white--text text-uppercase">

@@ -64,31 +64,33 @@ module.exports = sbot => ({
         )
       })
     },
+
     createProfile: (_, { input }) => {
-      const type = input.type
       let details = {}
-      Object.keys(input).map(i => {
-        if (i !== 'type') {
-          details[i] = {
-            set: input[i]
-          }
+      Object.entries(input).forEach(([ key, value ]) => {
+        switch (key) {
+          case 'type': return
+
+          case 'alt':
+            // TODO
+            return
+
+          default:
+            details[key] = { set: value }
         }
       })
+
       return new Promise((resolve, reject) => {
-        sbot.profile.create(type, details, (err, profileId) => {
-          if (err) {
-            reject(err)
-          }
-          /* For full profile response */
-          // const res = {
-          //   id: profileId,
-          //   ...input
-          // }
-          resolve(profileId)
+        sbot.profile.create(input.type, details, (err, profileId) => {
+          if (err) reject(err)
+          else resolve(profileId)
         })
       })
     },
+
     updateProfile: (_, { input }) =>
+    // TODO check permissions?
+
       new Promise((resolve, reject) => {
         const id = input.id
 
@@ -110,7 +112,7 @@ module.exports = sbot => ({
 
         sbot.profile.update(id, update, (err, updateMsg) => {
           if (err) reject(err)
-          else resolve(updateMsg.key)
+          else resolve(id)
         })
       })
   },
