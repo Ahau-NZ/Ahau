@@ -9,14 +9,21 @@ $ npm install
 ## Development
 
 ```bash
-$ npm run dev
+$ npm run server
+// start a webpack dev-server which serves up live-updating UI
 ```
-Launches electron app, connecting to a dev-server which is compiling and hot-reloading front-end (UI) code.
+
+Then in another terminal
+```bash
+$ npm run start:dev
+// launches the scuttlebutt + graphql servers + electron
+// which then asks for UI from dev-server
+```
 
 NOTES
 - live-reload doesn't work for `ssb-server` (back end) code.
 - Windows sets env differently. Open 2 Powershell windows and run the following in each:
-  - `npm run serve` (starts the dev-server, which serves hot-reloading client-side code)
+  - `npm run serve`
   - `$env:NODE_ENV="development"`, then `npm start` (set the env to development, then launch electron app)
 
 ## Production Build
