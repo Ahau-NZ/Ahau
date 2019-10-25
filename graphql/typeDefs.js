@@ -38,7 +38,6 @@ module.exports = gql`
     id: String
     type: String
     canEdit: Boolean
-
     preferredName: String
     legalName: String
     altNames: [String]
@@ -65,23 +64,13 @@ module.exports = gql`
     headerImage: ImageInput
     description: String
   }
-  input UpdateProfileInput {
-    id: String!
-
-    preferredName: String
-    legalName: String
-    altNames: [String]
-    avatarImage: ImageInput
-    headerImage: ImageInput
-    description: String
-  }
 
   input CommunityInput {
     preferredName: String
     legalName: String
     altNames: [String]
-    avatarImage: Image
-    headerImage: Image
+    avatarImage: ImageInput
+    headerImage: ImageInput
     description: String
   }
 
