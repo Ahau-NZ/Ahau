@@ -1,9 +1,9 @@
 <template>
-  <CommunityForm :id="id" />
+  <ProfileForm :id="id" type="community"/>
 </template>
 
 <script>
-import CommunityForm from '@/components/CommunityForm'
+import ProfileForm from '@/components/ProfileForm'
 
 export default {
   name: 'CommunityEdit',
@@ -11,7 +11,7 @@ export default {
     return { id: this.$route.params.id }
   },
   components: {
-    CommunityForm
+    ProfileForm
   }
 }
 </script>

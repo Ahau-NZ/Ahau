@@ -30,19 +30,15 @@
         </v-col>
 
         <v-col cols="12">
-          <v-btn
-            color="success"
-            class="mr-4"
-            @click="saveProfile"
-          >
+          <v-btn @click="onCancel" outlined color="secondary" class="mr-4">
+            <v-icon>mdi-cancel</v-icon>
+          </v-btn>
+
+          <v-btn v-if="hasChanges" @click="saveProfile"  color="success" class="mr-4">
             <v-icon>mdi-check</v-icon>
           </v-btn>
-          <v-btn
-            color="success"
-            class="mr-4"
-            @click="onCancel"
-          >
-            <v-icon>mdi-cancel</v-icon>
+          <v-btn v-else outlined color="success" class="mr-4">
+            <v-icon>mdi-check</v-icon>
           </v-btn>
         </v-col>
 
@@ -56,9 +52,10 @@ import gql from 'graphql-tag'
 const get = require('lodash.get')
 
 export default {
-  name: 'CommunityForm',
+  name: 'ProfileForm',
   props: {
-    id: String
+    id: String,
+    type: String
   },
   data () {
     return {
@@ -148,7 +145,7 @@ export default {
           }`,
           variables: {
             input: {
-              type: 'community',
+              type: this.type,
               ...this.profileChanges
             }
           }
@@ -174,7 +171,7 @@ export default {
     },
     onCancel () {
       if (this.isNew) this.$router.push({ name: 'communityIndex' })
-      else this.$router.push({ name: 'communityShow', params: { id: this.updateProfile.id } })
+      else this.$router.push({ name: 'communityShow', params: { id: this.id } })
     }
   }
 }

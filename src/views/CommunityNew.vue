@@ -1,14 +1,14 @@
 <template>
-  <CommunityForm />
+  <ProfileForm type="community" />
 </template>
 
 <script>
-import CommunityForm from '@/components/CommunityForm'
+import ProfileForm from '@/components/ProfileForm'
 
 export default {
   name: 'CommunityNew',
   components: {
-    CommunityForm
+    ProfileForm
   }
 }
 </script>
