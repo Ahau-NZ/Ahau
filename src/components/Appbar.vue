@@ -5,16 +5,9 @@
         <router-link to="/">
           <img src="../assets/logo_red.svg" />
         </router-link>
-
-        <!-- <router-link :to="{ name: 'profileShow', params: { id: profileId } }"> -->
-        <!--   <Avatar size="50px" :image="profile.avatarImage" :alt="profile.preferredName" /> -->
-        <!-- </router-link> -->
         <v-btn icon :to="{ name: 'profileShow', params: { id: profileId } }">
-          <Avatar size="50px" :image="profile.avatarImage" :alt="profile.preferredName" />
+          <Avatar size="50px" :image="profile.avatarImage ? profile.avatarImage.uri : ''" :alt="profile.preferredName" />
         </v-btn>
-        <!-- <router-link class="px-1" v-for="profile in profiles" :key="profile.id" :to="{ name: 'profileShow', params: { id: profile.id }}"> -->
-        <!--   <Avatar size="50px" :image="profile.avatarImage" :alt="profile.preferredName" /> -->
-        <!-- </router-link> -->
       </v-toolbar-title>
 
       <v-spacer></v-spacer>
@@ -45,7 +38,9 @@ export default {
     return {
       profile: {
         preferredName: '',
-        avatarImage: ''
+        avatarImage: {
+          uri: ''
+        }
       },
       profileId: ''
       // profiles: []

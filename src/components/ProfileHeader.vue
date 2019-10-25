@@ -1,17 +1,35 @@
 <template>
   <v-container class="my-0 py-0">
     <v-row>
-      <v-img :src="profile.headerImage.uri || undefined" min-width="100%" height="35vh"/>
+      <v-img :src="profile.headerImage ? profile.headerImage.uri : ''" min-width="100%" height="35vh"/>
       <v-btn v-if="edit" class="edit-header" tile color="grey">
         <v-icon>mdi-pencil</v-icon> Edit header
       </v-btn>
     </v-row>
     <v-row class="avatar">
-      <Avatar :image="profile.avatarImage.uri" :alt="profile.preferredName" />
-      <input @change="handleAvatarImage" type="file" />
-      <v-btn v-if="edit" class="edit-avatar" fab color="grey">
-        <v-icon>mdi-camera</v-icon>
-      </v-btn>
+      <div v-if="edit">
+        <v-image-input
+          v-model="newAvatar"
+          :image-quality="0.85"
+          clearable
+          image-format="jpeg"
+        />
+        <v-btn
+          :disabled="!newAvatar"
+          color="success"
+          class="handle-avatar-button"
+          @click="handleAvatarImage"
+        >
+          <v-icon>mdi-check</v-icon>
+        </v-btn>
+      </div>
+      <Avatar :image="profile.avatarImage ? profile.avatarImage.uri : ''" :alt="profile.preferredName" />
+      <!-- <div v-if="edit && !newAvatar">
+        <input v-if="edit" @change="handleAvatarImage" type="file" />
+        <v-btn v-if="edit" class="edit-avatar" fab color="grey">
+          <v-icon>mdi-camera</v-icon>
+        </v-btn>
+      </div> -->
     </v-row>
   </v-container>
 </template>
@@ -31,19 +49,14 @@ export default {
   },
   data () {
     return {
-      newAvatarImage: {
-        uri: null
-      },
-      newHeaderImage: {
-        uri: null
-      },
+      newAvatar: null,
       profile: {
         preferredName: '',
         avatarImage: {
-          uri: null
+          uri: ''
         },
         headerImage: {
-          uri: null
+          uri: ''
         }
       }
     }
@@ -69,9 +82,8 @@ export default {
     }
   },
   methods: {
-    async handleAvatarImage (e) {
-      console.log('E', e.target.files[0])
-      // this.newAvatarImage = e.target.value
+    async handleAvatarImage () {
+      const file = this.newAvatar // TODO convert base64 to File
       const result = await this.$apollo.mutate({
         mutation: gql`mutation uploadFile($file: Upload!) {
           uploadFile(file: $file) {
@@ -82,11 +94,10 @@ export default {
           }
         }`,
         variables: {
-          file: e.target.files[0]
+          file
         }
       })
-      console.log('RES', result.data.uploadFile)
-      // if (result.data) this.goToShow()
+      this.profile.avatarImage = result.data.uploadFile
     }
   }
 }
@@ -112,5 +123,10 @@ export default {
     top: 17vh;
     left: 1vw;
     z-index: 999;
+  }
+  .handle-avatar-button {
+    position: relative;
+    top: -3vh;
+    left: -27vw;
   }
 </style>

@@ -1,6 +1,8 @@
 import Vue from 'vue'
 import Vuetify from 'vuetify/lib'
+import VImageInput from 'vuetify-image-input'
 
+Vue.component(VImageInput.name, VImageInput)
 Vue.use(Vuetify)
 
 export default new Vuetify({
