@@ -89,22 +89,10 @@ module.exports = sbot => ({
     },
 
     createProfile: (_, { input }) => {
-      let details = {}
-      Object.entries(input).forEach(([ key, value ]) => {
-        switch (key) {
-          case 'type': return
-
-          case 'alt':
-            // TODO
-            return
-
-          default:
-            details[key] = { set: value }
-        }
-      })
+      const T = buildTransformation(input)
 
       return new Promise((resolve, reject) => {
-        sbot.profile.create(input.type, details, (err, profileId) => {
+        sbot.profile.create(input.type, T, (err, profileId) => {
           if (err) reject(err)
           else resolve(profileId)
         })
@@ -115,27 +103,11 @@ module.exports = sbot => ({
     // TODO check permissions?
 
       new Promise((resolve, reject) => {
-        const id = input.id
+        const T = buildTransformation(input)
 
-        let update = {}
-        Object.keys(input).forEach(i => {
-          if (i === 'id') return
-          if (i === 'avatarImage') {
-            console.log('IMAGE FILE', input[i])
-            return
-          }
-          if (i === 'altNames') {
-            // update[i] = {
-            //   add: input[i]
-            // }
-          } else {
-            update[i] = { set: input[i] }
-          }
-        })
-
-        sbot.profile.update(id, update, (err, updateMsg) => {
+        sbot.profile.update(input.id, T, (err, updateMsg) => {
           if (err) reject(err)
-          else resolve(id)
+          else resolve(input.id)
         })
       })
   },
@@ -163,3 +135,27 @@ module.exports = sbot => ({
   },
   Upload: GraphQLUpload
 })
+
+function buildTransformation (input) {
+  let T = {}
+
+  Object.entries(input).forEach(([ key, value ]) => {
+    switch (key) {
+      case 'type': return
+      case 'id': return
+
+      case 'alt':
+        // TODO
+        return
+
+      case 'avatarImage':
+        // TODO
+        return
+
+      default:
+        T[key] = { set: value }
+    }
+  })
+
+  return T
+}

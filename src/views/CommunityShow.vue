@@ -18,21 +18,23 @@
           min-height="200px"
         >
           <v-card-title class="headline font-weight-bold">About</v-card-title>
-          <v-card-text>{{profile.description}}</v-card-text>
+          <v-card-text>
+            <p v-for="(p, i) in splitParagraphs(profile.description)" :key="i + p">
+              {{p}}
+            </p>
+          </v-card-text>
         </v-card>
       </v-col>
-      <v-col v-if="profile.canEdit" cols="4 justify-end">
-        <router-link :to="{ name: 'communityShow', params: { id } }">
+      <v-col  cols="4 justify-end">
+        <router-link v-if="profile.canEdit" :to="{ name: 'communityEdit', params: { id } }">
           <v-btn class="my-2" tile outlined color="primary">
             <v-icon left>mdi-pencil</v-icon> Edit
           </v-btn>
         </router-link>
-        <v-card
-          min-height="200px"
-          light
-        >
-          <v-card-title class="headline">Communities</v-card-title>
-        </v-card>
+
+        <!-- <v-card min-height="200px" light > -->
+        <!--   <v-card-title class="headline">Communities</v-card-title> -->
+        <!-- </v-card> -->
       </v-col>
     </v-row>
   </v-container>
@@ -44,11 +46,9 @@ import gql from 'graphql-tag'
 
 export default {
   name: 'CommmunityShow',
-  // props: {
-  //   id: String
-  // },
   data () {
     return {
+      id: this.$route.params.id,
       profile: {
         id: '',
         type: '',
@@ -79,6 +79,13 @@ export default {
         }
       },
       fetchPolicy: 'no-cache'
+    }
+  },
+  methods: {
+    splitParagraphs (text) {
+      if (!text) return
+
+      return text.split('\n')
     }
   }
 }

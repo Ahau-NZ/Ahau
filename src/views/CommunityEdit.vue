@@ -1,12 +1,15 @@
 <template>
-  <CommunityForm />
+  <CommunityForm :id="id" />
 </template>
 
 <script>
 import CommunityForm from '@/components/CommunityForm'
 
 export default {
-  name: 'CommunityNew',
+  name: 'CommunityEdit',
+  data () {
+    return { id: this.$route.params.id }
+  },
   components: {
     CommunityForm
   }
