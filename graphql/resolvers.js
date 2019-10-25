@@ -5,6 +5,7 @@ const toPull = require('stream-to-pull-stream')
 const { GraphQLUpload } = require('graphql-upload')
 
 const getProfiles = require('./ssb/profiles')
+const getCommunities = require('./ssb/communities')
 
 const pubsub = new PubSub()
 
@@ -15,9 +16,17 @@ module.exports = sbot => ({
         resolve({ id: feedId, feedId, profileId })
       ),
 
-    profiles: () =>
+    persons: () =>
       new Promise((resolve, reject) => {
         getProfiles(sbot, (err, profiles) => {
+          if (err) reject(err)
+          else resolve(profiles)
+        })
+      }),
+
+    communities: () =>
+      new Promise((resolve, reject) => {
+        getCommunities(sbot, (err, profiles) => {
           if (err) reject(err)
           else resolve(profiles)
         })

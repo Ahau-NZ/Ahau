@@ -44,10 +44,9 @@ import gql from 'graphql-tag'
 
 export default {
   name: 'CommmunityShow',
-  props: {
-    edit: Boolean,
-    id: String
-  },
+  // props: {
+  //   id: String
+  // },
   data () {
     return {
       profile: {
@@ -76,7 +75,7 @@ export default {
       }`,
       variables () {
         return {
-          id: this.id
+          id: this.$route.params.id
         }
       },
       fetchPolicy: 'no-cache'

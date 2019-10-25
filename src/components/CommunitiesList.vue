@@ -4,20 +4,14 @@
       <h2 class="grey--text subtitle-1">Communities</h2>
     </v-row>
     <v-row class="d-flex flex-row align-start justify-center">
-      <v-col
-        v-for="community in communities"
-        v-bind:item="community"
-        v-bind:key="community.preferredName"
-      >
-        <v-card
-          light
-          height="380px"
-          width="300px"
-        >
-          <v-img height="150px" v-bind:src="community.headerImage" />
-          <v-card-title class="subtitle font-weight-bold">{{community.preferredName}}</v-card-title>
-          <v-card-text class="body-2">{{community.description.substring(0, 180)}}</v-card-text>
-        </v-card>
+      <v-col v-for="community in communities" :item="community" :key="community.id">
+        <router-link :to="{ name: 'communityShow', params: { id: community.id } }">
+          <v-card light height="380px" width="300px" >
+            <v-img height="150px" :src="community.headerImage || ''" />
+            <v-card-title class="subtitle font-weight-bold">{{community.preferredName}}</v-card-title>
+            <v-card-text class="body-2">{{shortDescrciption(community)}}</v-card-text>
+          </v-card>
+        </router-link>
       </v-col>
     </v-row>
   </v-container>
@@ -41,11 +35,18 @@ export default {
     communities: {
       query: gql`query {
         communities {
+          id
           preferredName
           description
           headerImage
         }
       }`
+    }
+  },
+  methods: {
+    shortDescrciption (community) {
+      if (!community.description) return
+      return community.description.substring(0, 180)
     }
   }
 }

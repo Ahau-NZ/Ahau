@@ -21,10 +21,10 @@
 
       <v-toolbar-items>
         <v-btn text to='/community?page=local' class="white--text text-uppercase">
-          community
+          communities
         </v-btn>
         <v-btn text to="/profile" class="white--text text-uppercase">
-          profile
+          people
         </v-btn>
         <v-btn text to="/signout" class="white--text text-uppercase">
           sign out

@@ -51,14 +51,6 @@ module.exports = gql`
     headerImage: String
     description: String
   }
-  type Community {
-    preferredName: String
-    legalName: String
-    altNames: [String]
-    avatarImage: String
-    headerImage: String
-    description: String
-  }
 
   type Peer {
     id: String
@@ -69,14 +61,14 @@ module.exports = gql`
     "Scuttlebutt Who am I"
     whoami: CurrentIdentity
 
+    "List of person profiles"
+    persons: [Profile]
+    "List of community profiles"
+    communities: [Profile]
+
     "Scuttlebutt identity profile"
     profile(id: String!): Profile
 
-    "List human profiles"
-    profiles: [Profile]
-
-    "Scuttlebutt community"
-    communities: [Community]
   }
 
   type Mutation {
