@@ -96,7 +96,6 @@ module.exports = sbot => ({
 
     createProfile: (_, { input }) => {
       const T = buildTransformation(input)
-
       return new Promise((resolve, reject) => {
         sbot.profile.create(input.type, T, (err, profileId) => {
           if (err) reject(err)
@@ -106,51 +105,13 @@ module.exports = sbot => ({
     },
 
     updateProfile: (_, { input }) =>
-    // TODO check permissions?
-
+      // TODO check permissions?
       new Promise((resolve, reject) => {
-        const id = input.id
-
-        let update = {}
-        Object.keys(input).forEach(i => {
-          if (i === 'id') return
-          if (i === 'altNames') {
-            // update[i] = {
-            //   add: input[i]
-            // }
-          } else {
-            update[i] = { set: input[i] }
-          }
-        })
-        console.log(update)
-        sbot.profile.update(id, update, (err, updateMsg) => {
-          if (err) throw err
-          const id = input.id
-
-          let update = {}
-          Object.keys(input).forEach(i => {
-            if (i === 'id') return
-            if (i === 'avatarImage') {
-              console.log('IMAGE FILE', input[i])
-              return
-            }
-            if (i === 'altNames') {
-              // update[i] = {
-              //   add: input[i]
-              // }
-            } else {
-              update[i] = { set: input[i] }
-            }
-          })
-
-          sbot.profile.update(id, update, (err, updateMsg) => {
-            if (err) throw err
-            const T = buildTransformation(input)
-            sbot.profile.update(input.id, T, (err, updateMsg) => {
-              if (err) reject(err)
-              else resolve(input.id)
-            })
-          })
+        const update = buildTransformation(input)
+        console.log('update', update)
+        sbot.profile.update(input.id, update, (err, updateMsg) => {
+          if (err) reject(err)
+          else resolve(input.id)
         })
       })
   },
@@ -179,6 +140,16 @@ module.exports = sbot => ({
   Upload: GraphQLUpload
 })
 
+function removeUriFromImage (image) {
+  const res = {}
+  Object.keys(image).map(imageKey => {
+    if (imageKey !== 'uri') {
+      res[imageKey] = image[imageKey]
+    }
+  })
+  return res
+}
+
 function buildTransformation (input) {
   let T = {}
 
@@ -194,7 +165,10 @@ function buildTransformation (input) {
         return
 
       case 'avatarImage':
-        // TODO
+        T[key] = { set: removeUriFromImage(input[key]) }
+        return
+      case 'headerImage':
+        T[key] = { set: removeUriFromImage(input[key]) }
         return
 
       default:
