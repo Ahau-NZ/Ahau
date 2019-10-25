@@ -3,6 +3,7 @@ const { isMsg, isFeed } = require('ssb-ref')
 const pull = require('pull-stream')
 const toPull = require('stream-to-pull-stream')
 const { GraphQLUpload } = require('graphql-upload')
+const toUrl = require('ssb-serve-blobs/id-to-url')
 
 const getProfiles = require('./ssb/profiles')
 
@@ -11,9 +12,7 @@ const pubsub = new PubSub()
 module.exports = sbot => ({
   Query: {
     whoami: (_, __, { feedId, profileId }) =>
-      new Promise(resolve =>
-        resolve({ id: feedId, feedId, profileId })
-      ),
+      new Promise(resolve => resolve({ id: feedId, feedId, profileId })),
 
     profiles: () =>
       new Promise((resolve, reject) => {
@@ -59,7 +58,12 @@ module.exports = sbot => ({
           toPull.source(createReadStream()),
           sbot.blobs.add((err, hash) => {
             if (err) return reject(err)
-            resolve(hash)
+            resolve({
+              blob: hash,
+              mimeType: mimetype,
+              uri: toUrl(hash)
+              // TODO size:
+            })
           })
         )
       })

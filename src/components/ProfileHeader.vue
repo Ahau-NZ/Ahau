@@ -1,13 +1,13 @@
 <template>
   <v-container class="my-0 py-0">
     <v-row>
-      <v-img :src="profile.headerImage || undefined" min-width="100%" height="35vh"/>
+      <v-img :src="profile.headerImage.uri || undefined" min-width="100%" height="35vh"/>
       <v-btn v-if="edit" class="edit-header" tile color="grey">
         <v-icon>mdi-pencil</v-icon> Edit header
       </v-btn>
     </v-row>
     <v-row class="avatar">
-      <Avatar :image="profile.avatarImage" :alt="profile.preferredName" />
+      <Avatar :image="profile.avatarImage.uri" :alt="profile.preferredName" />
       <input @change="handleAvatarImage" type="file" />
       <v-btn v-if="edit" class="edit-avatar" fab color="grey">
         <v-icon>mdi-camera</v-icon>
@@ -31,12 +31,20 @@ export default {
   },
   data () {
     return {
-      newAvatarImage: null,
-      newHeaderImage: null,
+      newAvatarImage: {
+        uri: null
+      },
+      newHeaderImage: {
+        uri: null
+      },
       profile: {
         preferredName: '',
-        avatarImage: '',
-        headerImage: ''
+        avatarImage: {
+          uri: null
+        },
+        headerImage: {
+          uri: null
+        }
       }
     }
   },
@@ -45,8 +53,12 @@ export default {
       query: gql`query($id: String!) {
         profile(id: $id) {
           preferredName
-          avatarImage
-          headerImage
+          avatarImage {
+            uri
+          }
+          headerImage {
+            uri
+          }
         }
       }`,
       variables () {
@@ -62,13 +74,18 @@ export default {
       // this.newAvatarImage = e.target.value
       const result = await this.$apollo.mutate({
         mutation: gql`mutation uploadFile($file: Upload!) {
-          uploadFile(file: $file)
+          uploadFile(file: $file) {
+            blob
+            mimeType
+            size
+            uri
+          }
         }`,
         variables: {
           file: e.target.files[0]
         }
       })
-      console.log('RES', result)
+      console.log('RES', result.data.uploadFile)
       // if (result.data) this.goToShow()
     }
   }

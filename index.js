@@ -19,8 +19,8 @@ const plugins = [
   'ssb-backlinks',
   'ssb-profile',
 
-  'ssb-query'
-
+  'ssb-query',
+  'ssb-serve-blobs'
   // 'ssb-private',
   // 'ssb-invite',
   // 'ssb-about',
