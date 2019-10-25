@@ -4,12 +4,7 @@
       <h2 class="grey--text subtitle-1">People</h2>
     </v-row>
     <v-row class="d-flex flex-row align-center">
-      <v-col
-        v-for="(peer, index) in peers"
-        v-bind:item="peer"
-        v-bind:index="index"
-        v-bind:key="index"
-      >
+      <v-col v-for="(peer, index) in peers" :item="peer" :index="index" :key="index" >
         <Avatar image="https://picsum.photos/300/300" size="80" />
         <p class="black--text">{{peer.id}}</p>
       </v-col>

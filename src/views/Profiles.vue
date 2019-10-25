@@ -4,7 +4,7 @@
       <v-col
         cols="3"
         class="d-flex flex-column align-center"
-        v-for="profile in profiles"
+        v-for="profile in persons"
         v-bind:key="profile.id"
         @click="gotoProfile(profile.id)"
       >
@@ -28,14 +28,14 @@ export default {
   },
   data () {
     return {
-      profiles: []
+      persons: []
     }
   },
   apollo: {
     // Query with parameters
-    profiles: {
+    persons: {
       query: gql`query {
-        profiles {
+        persons {
           id
           preferredName
           avatarImage {

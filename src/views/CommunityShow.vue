@@ -8,31 +8,33 @@
             <h3 class="primary--text caption">Legal name</h3>
             <p class="primary--text body-1">{{profile.legalName}}</p>
           </v-col>
-          <v-col cols="6">
-            <h3 class="primary--text caption">Other names</h3>
-            <p class="primary--text body-1">{{altNames}}</p>
-          </v-col>
+          <!-- <v-col cols="6"> -->
+          <!--   <h3 class="primary--text caption">Other names</h3> -->
+          <!--   <p class="primary--text body-1">{{altNames}}</p> -->
+          <!-- </v-col> -->
         </v-row>
         <v-card
           light
           min-height="200px"
         >
           <v-card-title class="headline font-weight-bold">About</v-card-title>
-          <v-card-text>{{profile.description}}</v-card-text>
+          <v-card-text>
+            <p v-for="(p, i) in splitParagraphs(profile.description)" :key="i + p">
+              {{p}}
+            </p>
+          </v-card-text>
         </v-card>
       </v-col>
-      <v-col v-if="canEdit" cols="4 justify-end">
-        <router-link :to="{ name: 'profileEdit', params: { id } }">
+      <v-col  cols="4 justify-end">
+        <router-link v-if="profile.canEdit" :to="{ name: 'communityEdit', params: { id } }">
           <v-btn class="my-2" tile outlined color="primary">
             <v-icon left>mdi-pencil</v-icon> Edit
           </v-btn>
         </router-link>
-        <v-card
-          min-height="200px"
-          light
-        >
-          <v-card-title class="headline">Communities</v-card-title>
-        </v-card>
+
+        <!-- <v-card min-height="200px" light > -->
+        <!--   <v-card-title class="headline">Communities</v-card-title> -->
+        <!-- </v-card> -->
       </v-col>
     </v-row>
   </v-container>
@@ -40,60 +42,50 @@
 
 <script>
 import gql from 'graphql-tag'
-const get = require('lodash.get')
+// const get = require('lodash.get')
 
 export default {
-  name: 'ProfileInfo',
-  props: {
-    edit: Boolean,
-    id: String
-  },
+  name: 'CommmunityShow',
   data () {
     return {
+      id: this.$route.params.id,
       profile: {
+        id: '',
+        type: '',
+        canEdit: false,
+
         preferredName: '',
         legalName: '',
-        altNames: [],
         description: ''
-      },
-      canEdit: false
+      }
     }
   },
   apollo: {
     profile: {
       query: gql`query ProfileData($id: String!) {
         profile(id: $id) {
+          id
+          type
+          canEdit
+
           preferredName
           legalName
-          altNames
           description
         }
       }`,
       variables () {
         return {
-          id: this.id
+          id: this.$route.params.id
         }
       },
       fetchPolicy: 'no-cache'
-    },
-    canEdit: {
-      query: gql`query {
-        whoami {
-          feedId
-          profileId
-        }
-      }`,
-      update ({ whoami }) {
-        return whoami.profileId === this.id ||
-          whoami.feedId === this.is
-      }
     }
   },
-  computed: {
-    altNames () {
-      const names = get(this, 'profile.altNames')
-      // NOTE get's defaultValue doesn't work if value returned is null
-      return names ? names.join(', ') : ''
+  methods: {
+    splitParagraphs (text) {
+      if (!text) return
+
+      return text.split('\n')
     }
   }
 }

@@ -6,6 +6,7 @@ const { GraphQLUpload } = require('graphql-upload')
 const toUrl = require('ssb-serve-blobs/id-to-url')
 
 const getProfiles = require('./ssb/profiles')
+const getCommunities = require('./ssb/communities')
 
 const pubsub = new PubSub()
 
@@ -14,7 +15,7 @@ module.exports = sbot => ({
     whoami: (_, __, { feedId, profileId }) =>
       new Promise(resolve => resolve({ id: feedId, feedId, profileId })),
 
-    profiles: () =>
+    persons: () =>
       new Promise((resolve, reject) => {
         getProfiles(sbot, (err, profiles) => {
           if (err) reject(err)
@@ -22,29 +23,53 @@ module.exports = sbot => ({
         })
       }),
 
-    profile: (_, { id }, context) =>
+    communities: () =>
       new Promise((resolve, reject) => {
-        if (isMsg(id)) {
-          // if it's a %messageId, look it up
-          sbot.profile.get(id, (err, profile) => {
-            if (err) return reject(err)
+        getCommunities(sbot, (err, profiles) => {
+          if (err) reject(err)
+          else resolve(profiles)
+        })
+      }),
 
-            const { state } = profile.states[0] // WARNING! we're assuming just one head-state!
-            resolve({ id, ...state })
-          })
-        } else if (isFeed(id)) {
-          // if it's a @feedId, try looking up the associated profile
-          sbot.profile.findByFeedId(id, (err, profile) => {
-            if (err) return reject(err)
-
-            if (profile) {
-              const { state } = profile.states[0] // WARNING! we're assuming just one head-state!
-              resolve({ id: profile.key, ...state })
-            } else {
-              reject(new Error('no profile set up for id:' + id))
-            }
-          })
+    profile: (_, { id }, { feedId, profileId }) =>
+      new Promise((resolve, reject) => {
+        if (!isMsg(id)) {
+          reject(new Error('profile query expected %msgId, got ' + id))
         }
+
+        sbot.profile.get(id, (err, profile) => {
+          if (err) return reject(err)
+
+          // <<< WIP
+          const { state } = profile.states[0] // WARNING! we're assuming just one head-state!
+          var canEdit = false
+          if (id === profileId) canEdit = true
+          if (state.type === 'community') canEdit = true
+          // TODO to change profile.get to return "authors" so can check if I canEdit?
+          // >>>
+
+          resolve({
+            id,
+            canEdit,
+
+            ...state
+          })
+        })
+
+        // TODO Deprecate?
+        // else if (isFeed(id)) {
+        //   // if it's a @feedId, try looking up the associated profile
+        //   sbot.profile.findByFeedId(id, (err, profile) => {
+        //     if (err) return reject(err)
+
+        //     if (profile) {
+        //       const { state } = profile.states[0] // WARNING! we're assuming just one head-state!
+        //       resolve({ id: profile.key, ...state })
+        //     } else {
+        //       reject(new Error('no profile set up for id:' + id))
+        //     }
+        //   })
+        // }
       })
   },
 
@@ -68,31 +93,21 @@ module.exports = sbot => ({
         )
       })
     },
+
     createProfile: (_, { input }) => {
-      const type = input.type
-      let details = {}
-      Object.keys(input).map(i => {
-        if (i !== 'type') {
-          details[i] = {
-            set: input[i]
-          }
-        }
-      })
+      const T = buildTransformation(input)
+
       return new Promise((resolve, reject) => {
-        sbot.profile.create(type, details, (err, profileId) => {
-          if (err) {
-            reject(err)
-          }
-          /* For full profile response */
-          // const res = {
-          //   id: profileId,
-          //   ...input
-          // }
-          resolve(profileId)
+        sbot.profile.create(input.type, T, (err, profileId) => {
+          if (err) reject(err)
+          else resolve(profileId)
         })
       })
     },
+
     updateProfile: (_, { input }) =>
+    // TODO check permissions?
+
       new Promise((resolve, reject) => {
         const id = input.id
 
@@ -109,8 +124,33 @@ module.exports = sbot => ({
         })
         console.log(update)
         sbot.profile.update(id, update, (err, updateMsg) => {
-          if (err) reject(err)
-          else resolve(updateMsg.key)
+          if (err) throw err
+          const id = input.id
+
+          let update = {}
+          Object.keys(input).forEach(i => {
+            if (i === 'id') return
+            if (i === 'avatarImage') {
+              console.log('IMAGE FILE', input[i])
+              return
+            }
+            if (i === 'altNames') {
+              // update[i] = {
+              //   add: input[i]
+              // }
+            } else {
+              update[i] = { set: input[i] }
+            }
+          })
+
+          sbot.profile.update(id, update, (err, updateMsg) => {
+            if (err) throw err
+            const T = buildTransformation(input)
+            sbot.profile.update(input.id, T, (err, updateMsg) => {
+              if (err) reject(err)
+              else resolve(input.id)
+            })
+          })
         })
       })
   },
@@ -138,3 +178,29 @@ module.exports = sbot => ({
   },
   Upload: GraphQLUpload
 })
+
+function buildTransformation (input) {
+  let T = {}
+
+  Object.entries(input).forEach(([key, value]) => {
+    switch (key) {
+      case 'type':
+        return
+      case 'id':
+        return
+
+      case 'alt':
+        // TODO
+        return
+
+      case 'avatarImage':
+        // TODO
+        return
+
+      default:
+        T[key] = { set: value }
+    }
+  })
+
+  return T
+}

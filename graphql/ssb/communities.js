@@ -10,7 +10,7 @@ module.exports = function profiles (sbot, cb) {
         value: {
           // timestamp: { $gt: 0 }, // forces order by asserted publish time
           content: {
-            type: 'profile/person',
+            type: 'profile/community',
             tangles: {
               profile: { root: null, previous: null }
             }

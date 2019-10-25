@@ -3,7 +3,6 @@
     <CommunitiesNav />
     <CommunitiesPeople />
     <CommunitiesList />
-    <h1>{{nav}}</h1>
   </v-container>
 </template>
 
@@ -18,13 +17,6 @@ export default {
     CommunitiesNav,
     CommunitiesPeople,
     CommunitiesList
-  },
-  computed: {
-    nav () {
-      // We will see what `params` is shortly
-      console.log(this.$route.params)
-      return this.$route.params
-    }
   }
 }
 </script>

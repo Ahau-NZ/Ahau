@@ -7,30 +7,39 @@
         </v-row>
         <v-row>
           <v-col cols="3">
-            <router-link to="/community?page=local">
-              <h3 class="primary--text display-1 active">Local</h3>
+            <router-link to="/community?page=local"
+              class="nav d-flex flex-column align-center"
+              active-class="-active" exact>
+              <h3 class="primary--text display-1">Local</h3>
+              <div class="underline"></div>
             </router-link>
           </v-col>
-          <v-col cols="1">
-            <div class="pipe" />
+          <v-col cols="1" class="d-flex flex-column justify-center align-center">
+            <div class="pipe"/>
           </v-col>
           <v-col cols="3">
-            <router-link to="/community?page=internet">
+            <router-link to="/community?page=internet"
+              class="nav d-flex flex-column align-center"
+              active-class="-active" exact>
               <h3 class="primary--text display-1">Internet</h3>
+              <div class='underline' />
             </router-link>
           </v-col>
-          <v-col cols="1">
-            <div class="pipe" />
+          <v-col cols="1" class="d-flex flex-column justify-center align-center">
+            <div class="pipe"/>
           </v-col>
           <v-col cols="3">
-            <router-link to="/community?page=invite">
+            <router-link to="/community?page=invite"
+              class="nav d-flex flex-column align-center"
+              active-class="-active" exact>
               <h3 class="primary--text display-1">Invite</h3>
+              <div class='underline' />
             </router-link>
           </v-col>
         </v-row>
       </v-col>
       <v-col cols="3 justify-end">
-        <v-btn class="my-2" tile outlined color="primary">
+        <v-btn to="/community/new" class="my-2" tile outlined color="primary">
           <v-icon left>mdi-plus</v-icon> Create
         </v-btn>
       </v-col>
@@ -41,28 +50,40 @@
 <script>
 export default {
   name: 'CommunitiesNav',
-  props: {
-    navigate: Function
-  },
   data () {
     return {
       helperText: 'Connect to people or communities'
     }
-  },
-  mounted () {
   }
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
+  .nav {
+    h3 {
+      font-weight: 300;
+      text-transform: none;
+    }
+    .underline {
+      width: 20px;
+      border-bottom: 3px solid rgba(0,0,0,0);
+    }
+
+    &.-active {
+      h3 {
+      font-weight: 400;
+      }
+      .underline {
+        border-bottom: 3px solid #a80000;
+      }
+    }
+  }
+
   .pipe {
     height: 30px;
     width: 1px;
     background: black;
   }
-  .active {
-    border-bottom: 3px solid red;
-    width: 140px;
-  }
+
 </style>
