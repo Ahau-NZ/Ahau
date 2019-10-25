@@ -19,8 +19,10 @@ module.exports = gql`
     headerImage: String
     description: String
   }
-  input UpdateProfileInput {
-    id: String!
+
+  input CreateProfileInput {
+    type: String!
+
     preferredName: String
     legalName: String
     altNames: [String]
@@ -28,8 +30,9 @@ module.exports = gql`
     headerImage: String
     description: String
   }
-  input CreateProfileInput {
-    type: String!
+  input UpdateProfileInput {
+    id: String!
+
     preferredName: String
     legalName: String
     altNames: [String]

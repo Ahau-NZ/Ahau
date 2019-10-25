@@ -65,13 +65,46 @@ export default {
     return {
       profile: {
         id: '',
-        preferredName: null,
+        preferredName: '',
         legalName: '',
         description: ''
         // avatarImage
         // headerImage
       },
       persistedState: {}
+    }
+  },
+  computed: {
+    isNew () {
+      if (!this.id) return true
+      else return false
+    },
+    altNames () {
+      return get(this, 'profile.altNames', [])
+    },
+    profileChanges () {
+      let changes = {}
+      Object.entries(this.profile).map(([key, value]) => {
+        // TODO: special case for altNames
+
+        if (this.isNew) {
+          if (value !== '') changes[key] = value
+          return
+        }
+
+        // if this value hasn't been written before
+        if (this.persistedState[key] === null) {
+          // and the new value isn't "empty", then it's a change
+          if (value !== '') changes[key] = value
+        } else {
+          // it has been written before, and it's a new value!
+          if (this.persistedState[key] !== value) changes[key] = value
+        }
+      })
+      return changes
+    },
+    hasChanges () {
+      return Object.keys(this.profileChanges).length > 0
     }
   },
   apollo: {
@@ -106,49 +139,43 @@ export default {
     }
   },
   methods: {
-    // addAltName () {
-    //   this.profile.altNames = this.profile.altNames.concat(this.newAltName)
-    //   this.newAltName = ''
-    // },
     async saveProfile () {
-      // Call to the graphql mutation
-      let changes = {}
-      Object.entries(this.profile).map(([key, value]) => {
-        if (value !== this.persistedState[key]) {
-          changes[key] = value
-        }
-        // TODO: special case for altNames
-      })
-      // TODO call it off if there are no changes!
+      if (!this.hasChanges) return
 
-      const result = await this.$apollo.mutate({
-        // Query
-        // TODO figure out if this is a create or update!
-        // TODO include the key you're updating!
-        mutation: gql`mutation ($input: UpdateProfileInput!) {
-          updateProfile(input: $input)
-        }`,
-        // Parameters
-        variables: {
-          input: {
-            id: this.profile.id,
-            ...changes
+      const request = this.isNew
+        ? {
+          mutation: gql`mutation ($input: CreateProfileInput!) {
+            createProfile(input: $input)
+          }`,
+          variables: {
+            input: {
+              type: 'community',
+              ...this.profileChanges
+            }
           }
         }
-      })
+        : {
+          mutation: gql`mutation ($input: UpdateProfileInput!) {
+            updateProfile(input: $input)
+          }`,
+          variables: {
+            input: {
+              id: this.profile.id,
+              ...this.profileChanges
+            }
+          }
+        }
+
+      debugger
+      const result = await this.$apollo.mutate(request)
 
       if (result.data) {
         this.$router.push({ name: 'communityShow', params: { id: result.data.id } })
       }
     },
     onCancel () {
-      if (this.id) this.$router.push({ name: 'communityShow', params: { id: this.id } })
-      else this.$router.push({ name: 'communityIndex' })
-    }
-  },
-  computed: {
-    altNames () {
-      return get(this, 'profile.altNames', [])
+      if (this.isNew) this.$router.push({ name: 'communityIndex' })
+      else this.$router.push({ name: 'communityShow', params: { id: this.id } })
     }
   }
 }

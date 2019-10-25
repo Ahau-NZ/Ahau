@@ -80,6 +80,8 @@ module.exports = sbot => ({
         }
       })
 
+      console.log(input.type, JSON.stringify(details, null, 2))
+
       return new Promise((resolve, reject) => {
         sbot.profile.create(input.type, details, (err, profileId) => {
           if (err) reject(err)
