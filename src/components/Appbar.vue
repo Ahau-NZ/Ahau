@@ -6,7 +6,7 @@
           <img src="../assets/logo_red.svg" />
         </router-link>
         <v-btn icon :to="{ name: 'profileShow', params: { id: profileId } }">
-          <Avatar size="50px" :image="profile.avatarImage ? profile.avatarImage.uri : ''" :alt="profile.preferredName" />
+          <Avatar size="50px" :image="profile.avatarImage" :alt="profile.preferredName" />
         </v-btn>
       </v-toolbar-title>
 
@@ -47,15 +47,6 @@ export default {
     }
   },
   apollo: {
-    // profiles: gql`query {
-    //   profiles {
-    //     id
-    //     preferredName
-    //     avatarImage
-    //     description
-    //     type
-    //   }
-    // }`,
     profileId: {
       query: gql` {
         whoami {
@@ -65,6 +56,30 @@ export default {
       update: data => {
         return data.whoami.profileId
       }
+    }
+  },
+  watch: {
+    async profileId (id) {
+      if (!id) return
+
+      const request = {
+        query: gql`query ProfileData($id: String!) {
+          profile(id: $id) {
+            preferredName
+            avatarImage{
+              uri
+            }
+          }
+        }`,
+        variables: {
+          id
+        }
+      }
+
+      const result = await this.$apollo.query(request)
+      if (result.errors) return
+
+      this.profile = result.data.profile
     }
   },
   components: {

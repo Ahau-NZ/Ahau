@@ -35,7 +35,7 @@
       </div>
     </div>
     <v-row class="avatar">
-      <Avatar v-if="!updatingAvatar" :image="profile.avatarImage ? profile.avatarImage.uri : ''" :alt="profile.preferredName" />
+      <Avatar v-if="!updatingAvatar" :image="profile.avatarImage" :alt="profile.preferredName" />
       <div v-if="edit && !updatingAvatar">
         <v-btn v-if="edit && !updatingAvatar" class="edit-avatar-button" fab color="grey" @click="toggleUpdateAvatar">
           <v-icon>mdi-camera</v-icon>
@@ -148,7 +148,6 @@ export default {
           uploadFile(file: $file) {
             blob
             mimeType
-            size
             uri
           }
         }`,
@@ -168,7 +167,6 @@ export default {
           uploadFile(file: $file) {
             blob
             mimeType
-            size
             uri
           }
         }`,

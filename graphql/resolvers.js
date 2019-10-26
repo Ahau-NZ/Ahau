@@ -4,6 +4,9 @@ const pull = require('pull-stream')
 const toPull = require('stream-to-pull-stream')
 const { GraphQLUpload } = require('graphql-upload')
 const toUrl = require('ssb-serve-blobs/id-to-url')
+const get = require('lodash.get')
+const pick = require('lodash.pick')
+const blobToURI = require('ssb-serve-blobs/id-to-url')
 
 const getProfiles = require('./ssb/profiles')
 const getCommunities = require('./ssb/communities')
@@ -19,7 +22,7 @@ module.exports = sbot => ({
       new Promise((resolve, reject) => {
         getProfiles(sbot, (err, profiles) => {
           if (err) reject(err)
-          else resolve(profiles)
+          else resolve(profiles.map(addURIs))
         })
       }),
 
@@ -27,7 +30,7 @@ module.exports = sbot => ({
       new Promise((resolve, reject) => {
         getCommunities(sbot, (err, profiles) => {
           if (err) reject(err)
-          else resolve(profiles)
+          else resolve(profiles.map(addURIs))
         })
       }),
 
@@ -52,7 +55,7 @@ module.exports = sbot => ({
             id,
             canEdit,
 
-            ...state
+            ...addURIs(state)
           })
         })
 
@@ -75,8 +78,7 @@ module.exports = sbot => ({
 
   Mutation: {
     async uploadFile (_, { file }) {
-      const { createReadStream, filename, mimetype, encoding } = await file
-      console.log('!!!! INCOMING FILE !!!!!!', filename, mimetype, encoding)
+      const { createReadStream, filename, mimetype } = await file
 
       return new Promise((resolve, reject) => {
         pull(
@@ -108,7 +110,6 @@ module.exports = sbot => ({
       // TODO check permissions?
       new Promise((resolve, reject) => {
         const update = buildTransformation(input)
-        console.log('update', update)
         sbot.profile.update(input.id, update, (err, updateMsg) => {
           if (err) reject(err)
           else resolve(input.id)
@@ -140,16 +141,6 @@ module.exports = sbot => ({
   Upload: GraphQLUpload
 })
 
-function removeUriFromImage (image) {
-  const res = {}
-  Object.keys(image).map(imageKey => {
-    if (imageKey !== 'uri') {
-      res[imageKey] = image[imageKey]
-    }
-  })
-  return res
-}
-
 function buildTransformation (input) {
   let T = {}
 
@@ -160,15 +151,15 @@ function buildTransformation (input) {
       case 'id':
         return
 
-      case 'alt':
+      case 'altNames':
         // TODO
         return
 
       case 'avatarImage':
-        T[key] = { set: removeUriFromImage(input[key]) }
+        T[key] = { set: pick(value, ['blob', 'mimeType', 'size', 'width', 'height']) }
         return
       case 'headerImage':
-        T[key] = { set: removeUriFromImage(input[key]) }
+        T[key] = { set: pick(value, ['blob', 'mimeType', 'size', 'width', 'height']) }
         return
 
       default:
@@ -177,4 +168,16 @@ function buildTransformation (input) {
   })
 
   return T
+}
+
+function addURIs (state) {
+  if (get(state, 'avatarImage.blob')) {
+    state.avatarImage.uri = blobToURI(state.avatarImage.blob)
+  }
+
+  if (get(state, 'headerImage.blob')) {
+    state.headerImage.uri = blobToURI(state.headerImage.blob)
+  }
+
+  return state
 }

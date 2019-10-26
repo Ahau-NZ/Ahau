@@ -38,7 +38,9 @@ export default {
           id
           preferredName
           description
-          headerImage
+          avatarImage {
+            uri
+          }
         }
       }`
     }

@@ -1,54 +1,63 @@
 <template>
-  <v-form class="pt-0">
-    <v-container class="white mx-auto pt-12 px-12">
-      <v-row class="form">
+  <div>
+    <ProfileHeaderEdit
+      :preferredName="profile.preferredName"
+      :avatarImage="profile.avatarImage"
+      :headerImage="profile.headerImage"
+      :addImages="addImages"
+    />
+    <v-form class="pt-0">
+      <v-container class="white mx-auto pt-12 px-12">
+        <v-row class="form">
 
-        <v-col cols="12" md="12" >
-          <v-text-field
-            light
-            v-model="profile.preferredName"
-            label="Preferred name"
-          ></v-text-field>
-        </v-col>
+          <v-col cols="12" md="12" >
+            <v-text-field
+              light
+              v-model="profile.preferredName"
+              label="Preferred name"
+            ></v-text-field>
+          </v-col>
 
-        <v-col cols="12" md="12" >
-          <v-text-field
-            light
-            v-model="profile.legalName"
-            label="Legal name"
-          ></v-text-field>
-        </v-col>
+          <v-col cols="12" md="12" >
+            <v-text-field
+              light
+              v-model="profile.legalName"
+              label="Legal name"
+            ></v-text-field>
+          </v-col>
 
-        <v-col cols="12">
-          <v-textarea
-            v-model="profile.description"
-            light
-            name="input-7-1"
-            label="Description"
-            hint="Hint text"
-          ></v-textarea>
-        </v-col>
+          <v-col cols="12">
+            <v-textarea
+              v-model="profile.description"
+              light
+              name="input-7-1"
+              label="Description"
+              hint="Hint text"
+            ></v-textarea>
+          </v-col>
 
-        <v-col cols="12">
-          <v-btn @click="onCancel" outlined color="secondary" class="mr-4">
-            <v-icon>mdi-cancel</v-icon>
-          </v-btn>
+          <v-col cols="12">
+            <v-btn @click="onCancel" outlined color="secondary" class="mr-4">
+              <v-icon>mdi-cancel</v-icon>
+            </v-btn>
 
-          <v-btn v-if="hasChanges" @click="saveProfile"  color="success" class="mr-4">
-            <v-icon>mdi-check</v-icon>
-          </v-btn>
-          <v-btn v-else outlined color="success" class="mr-4">
-            <v-icon>mdi-check</v-icon>
-          </v-btn>
-        </v-col>
+            <v-btn v-if="hasChanges" @click="saveProfile"  color="success" class="mr-4">
+              <v-icon>mdi-check</v-icon>
+            </v-btn>
+            <v-btn v-else outlined color="success" class="mr-4">
+              <v-icon>mdi-check</v-icon>
+            </v-btn>
+          </v-col>
 
-      </v-row>
-    </v-container>
-  </v-form>
+        </v-row>
+      </v-container>
+    </v-form>
+  </div>
 </template>
 
 <script>
 import gql from 'graphql-tag'
+import ProfileHeaderEdit from '@/components/ProfileHeaderEdit'
 const get = require('lodash.get')
 
 export default {
@@ -63,9 +72,9 @@ export default {
         id: '',
         preferredName: '',
         legalName: '',
-        description: ''
-        // avatarImage
-        // headerImage
+        description: '',
+        avatarImage: undefined,
+        headerImage: undefined
       },
       persistedState: {}
     }
@@ -114,6 +123,13 @@ export default {
           legalName
           altNames
           description
+
+          avatarImage {
+            uri
+          }
+          headerImage {
+            uri
+          }
         }
       }`,
       variables () {
@@ -135,6 +151,10 @@ export default {
     }
   },
   methods: {
+    addImages ({ avatarImage, headerImage }) {
+      if (avatarImage) this.profile.avatarImage = avatarImage
+      if (headerImage) this.profile.headerImage = headerImage
+    },
     async saveProfile () {
       if (!this.hasChanges) return
 
@@ -173,6 +193,9 @@ export default {
       if (this.isNew) this.$router.push({ name: 'communityIndex' })
       else this.$router.push({ name: 'communityShow', params: { id: this.id } })
     }
+  },
+  components: {
+    ProfileHeaderEdit
   }
 }
 </script>
