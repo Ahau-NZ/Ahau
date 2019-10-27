@@ -8506,6 +8506,18 @@ mime-db@1.40.0:
   resolved "https://registry.yarnpkg.com/mime-db/-/mime-db-1.41.0.tgz#9110408e1f6aa1b34aef51f2c9df3caddf46b6a0"
   integrity sha512-B5gxBI+2K431XW8C2rcc/lhppbuji67nf9v39eH8pkWoZDxnAL0PxdpH32KYRScniF8qDHBDlI+ipgg5WrCUYw==
 
+mime-db@~1.30.0:
+  version "1.30.0"
+  resolved "https://registry.yarnpkg.com/mime-db/-/mime-db-1.30.0.tgz#74c643da2dd9d6a45399963465b26d5ca7d71f01"
+  integrity sha1-dMZD2i3Z1qRTmZY0ZbJtXKfXHwE=
+
+mime-types@2.1.17:
+  version "2.1.17"
+  resolved "https://registry.yarnpkg.com/mime-types/-/mime-types-2.1.17.tgz#09d7a393f03e995a79f8af857b70a9e0ab16557a"
+  integrity sha1-Cdejk/A+mVp5+K+Fe3Cp4KsWVXo=
+  dependencies:
+    mime-db "~1.30.0"
+
 mime-types@^2.1.12, mime-types@~2.1.17, mime-types@~2.1.19, mime-types@~2.1.24:
   version "2.1.24"
   resolved "https://registry.yarnpkg.com/mime-types/-/mime-types-2.1.24.tgz#b6f8d0b3e951efb77dedeca194cff6d16f676f81"
@@ -10354,7 +10366,7 @@ pull-box-stream@^1.0.13:
     pull-through "^1.0.18"
     split-buffer "~1.0.0"
 
-pull-cat@^1.1.11, pull-cat@^1.1.9, pull-cat@~1.1.11, pull-cat@~1.1.5:
+pull-cat@1.1.11, pull-cat@^1.1.11, pull-cat@^1.1.9, pull-cat@~1.1.11, pull-cat@~1.1.5:
   version "1.1.11"
   resolved "https://registry.yarnpkg.com/pull-cat/-/pull-cat-1.1.11.tgz#b642dd1255da376a706b6db4fa962f5fdb74c31b"
   integrity sha1-tkLdElXaN2pwa220+pYvX9t0wxs=
@@ -10368,6 +10380,11 @@ pull-cont@^0.1.1:
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/pull-cont/-/pull-cont-0.1.1.tgz#df1d580e271757ba9acbaeba20de2421d660d618"
   integrity sha1-3x1YDicXV7qay666IN4kIdZg1hg=
+
+pull-core@~1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/pull-core/-/pull-core-1.1.0.tgz#3d8127d6dac1475705c9800961f59d66c8046c8a"
+  integrity sha1-PYEn1trBR1cFyYAJYfWdZsgEbIo=
 
 pull-cursor@^3.0.0:
   version "3.0.0"
@@ -10441,6 +10458,13 @@ pull-hash@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/pull-hash/-/pull-hash-1.0.0.tgz#fcad4d2507bf2c2b3231f653dc9bfb2db4f0d88c"
   integrity sha1-/K1NJQe/LCsyMfZT3Jv7LbTw2Iw=
+
+pull-identify-filetype@1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/pull-identify-filetype/-/pull-identify-filetype-1.1.0.tgz#5f99af15e8846d48ecf625edc248ec2cf57f6b0d"
+  integrity sha1-X5mvFeiEbUjs9iXtwkjsLPV/aw0=
+  dependencies:
+    pull-stream "^2.28.2"
 
 pull-inactivity@~2.1.1:
   version "2.1.3"
@@ -10545,6 +10569,13 @@ pull-sort@^1.0.1:
   dependencies:
     pull-defer "^0.2.3"
     pull-stream "^3.6.9"
+
+pull-stream@^2.28.2:
+  version "2.28.4"
+  resolved "https://registry.yarnpkg.com/pull-stream/-/pull-stream-2.28.4.tgz#7ea97413c1619c20bc3bdf9e10e91347b03253e4"
+  integrity sha1-fql0E8FhnCC8O9+eEOkTR7AyU+Q=
+  dependencies:
+    pull-core "~1.1.0"
 
 pull-stream@^3.2.3, pull-stream@^3.3.0, pull-stream@^3.4.0, pull-stream@^3.4.3, pull-stream@^3.4.5, pull-stream@^3.5.0, pull-stream@^3.6.0, pull-stream@^3.6.1, pull-stream@^3.6.11, pull-stream@^3.6.13, pull-stream@^3.6.14, pull-stream@^3.6.2, pull-stream@^3.6.7, pull-stream@^3.6.8, pull-stream@^3.6.9, pull-stream@~3.6.9:
   version "3.6.14"
@@ -12345,6 +12376,17 @@ ssb-schema-definitions@^2.0.2:
     lodash.clone "^4.5.0"
     ssb-ref "^2.13.6"
 
+ssb-serve-blobs@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/ssb-serve-blobs/-/ssb-serve-blobs-2.1.0.tgz#6f5f71f2e1c439f3eb0d9d68900f1efa78a37763"
+  integrity sha512-EsVYKPMP827r2LQJjr4kMmBdhzj3S50DDb/gzeHcan/duPVKSR+tQb94ZMgTA25pwbGLU/SR0zRlvwT9f7Zp/A==
+  dependencies:
+    mime-types "2.1.17"
+    pull-cat "1.1.11"
+    pull-identify-filetype "1.1.0"
+    pull-stream "^3.3.0"
+    stream-to-pull-stream "1.7.2"
+
 ssb-tangle@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/ssb-tangle/-/ssb-tangle-2.0.0.tgz#49388367145776a992e39a816a62f41a7029bce6"
@@ -12503,7 +12545,15 @@ stream-shift@^1.0.0:
   resolved "https://registry.yarnpkg.com/stream-shift/-/stream-shift-1.0.0.tgz#d5c752825e5367e786f78e18e445ea223a155952"
   integrity sha1-1cdSgl5TZ+eG944Y5EXqIjoVWVI=
 
-stream-to-pull-stream@^1.6.1, stream-to-pull-stream@^1.7.1, stream-to-pull-stream@^1.7.2:
+stream-to-pull-stream@1.7.2:
+  version "1.7.2"
+  resolved "https://registry.yarnpkg.com/stream-to-pull-stream/-/stream-to-pull-stream-1.7.2.tgz#757609ae1cebd33c7432d4afbe31ff78650b9dde"
+  integrity sha1-dXYJrhzr0zx0MtSvvjH/eGULnd4=
+  dependencies:
+    looper "^3.0.0"
+    pull-stream "^3.2.3"
+
+stream-to-pull-stream@^1.6.1, stream-to-pull-stream@^1.7.1, stream-to-pull-stream@^1.7.2, stream-to-pull-stream@^1.7.3:
   version "1.7.3"
   resolved "https://registry.yarnpkg.com/stream-to-pull-stream/-/stream-to-pull-stream-1.7.3.tgz#4161aa2d2eb9964de60bfa1af7feaf917e874ece"
   integrity sha512-6sNyqJpr5dIOQdgNy/xcDWwDuzAsAwVzhzrWlAPAQ7Lkjx/rv0wgvxEyKwTq6FmNd5rjTrELt/CLmaSw7crMGg==

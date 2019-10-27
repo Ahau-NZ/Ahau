@@ -1,7 +1,7 @@
 <template>
   <div>
-    <ProfileHeader :id="id" :edit="true"/>
-    <ProfileInfoEdit :id="id" :edit="true"/>
+    <ProfileHeader :addToForm="addToForm" :id="id" :edit="true"/>
+    <ProfileInfoEdit :images="images" :id="id" :edit="true"/>
   </div>
 </template>
 
@@ -13,12 +13,24 @@ export default {
   name: 'Edit',
   data () {
     return {
-      id: this.$route.params.id
+      id: this.$route.params.id,
+      images: {}
     }
   },
   components: {
     ProfileHeader,
     ProfileInfoEdit
+  },
+  methods: {
+    addToForm (form, data) {
+      let cleanData = {}
+      Object.keys(data).map(d => {
+        if (d !== '__typename') {
+          cleanData[d] = data[d]
+        }
+      })
+      this.images[form] = cleanData
+    }
   }
 }
 </script>

@@ -5,26 +5,19 @@
         <router-link to="/">
           <img src="../assets/logo_red.svg" />
         </router-link>
-
-        <!-- <router-link :to="{ name: 'profileShow', params: { id: profileId } }"> -->
-        <!--   <Avatar size="50px" :image="profile.avatarImage" :alt="profile.preferredName" /> -->
-        <!-- </router-link> -->
-        <v-btn icon :to="{ name: 'profileShow', params: { id: profileId } }">
+        <v-btn icon :to="{ name: 'profileShow', params: { id: profile.id } }">
           <Avatar size="50px" :image="profile.avatarImage" :alt="profile.preferredName" />
         </v-btn>
-        <!-- <router-link class="px-1" v-for="profile in profiles" :key="profile.id" :to="{ name: 'profileShow', params: { id: profile.id }}"> -->
-        <!--   <Avatar size="50px" :image="profile.avatarImage" :alt="profile.preferredName" /> -->
-        <!-- </router-link> -->
       </v-toolbar-title>
 
       <v-spacer></v-spacer>
 
       <v-toolbar-items>
-        <v-btn text to='/community' class="white--text text-uppercase">
-          community
+        <v-btn text to='/community?page=local' class="white--text text-uppercase">
+          communities
         </v-btn>
         <v-btn text to="/profile" class="white--text text-uppercase">
-          profile
+          people
         </v-btn>
         <v-btn text to="/signout" class="white--text text-uppercase">
           sign out
@@ -44,32 +37,28 @@ export default {
   data () {
     return {
       profile: {
-        preferredName: '',
-        avatarImage: ''
-      },
-      profileId: ''
-      // profiles: []
+        id: null,
+        avatarImage: null
+      }
     }
   },
   apollo: {
-    // profiles: gql`query {
-    //   profiles {
-    //     id
-    //     preferredName
-    //     avatarImage
-    //     description
-    //     type
-    //   }
-    // }`,
-    profileId: {
+    profile: {
       query: gql` {
         whoami {
-          profileId
+          profile {
+            id
+            preferredName
+            avatarImage {
+              uri
+            }
+          }
         }
       }`,
-      update: data => {
-        return data.whoami.profileId
-      }
+      update (data) {
+        return data.whoami.profile
+      },
+      fetchPolicy: 'no-cache'
     }
   },
   components: {

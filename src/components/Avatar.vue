@@ -1,7 +1,9 @@
 <template>
-  <v-avatar :size="size" color="indigo">
-    <v-img v-if="image" :src="image || undefined" :alt="alt" />
-    <span v-else-if="alt">{{alt.substring(0,1)}}</span>
+  <v-avatar :size="size" color="grey">
+    <v-img v-if="image && image.uri" :src="image.uri" :alt="alt" />
+    <v-icon v-else>
+      mdi-account
+    </v-icon>
   </v-avatar>
 </template>
 
@@ -9,7 +11,7 @@
 export default {
   name: 'Avatar',
   props: {
-    image: String,
+    image: Object,
     alt: String,
     size: {
       type: String,
