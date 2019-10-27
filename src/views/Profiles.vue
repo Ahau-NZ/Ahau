@@ -2,16 +2,15 @@
   <v-container class="d-flex align-center py-12" height="100vh">
     <v-row>
       <v-col
+        v-for="profile in persons"
+        :key="profile.id"
         cols="3"
         class="d-flex flex-column align-center"
-        v-for="profile in persons"
-        v-bind:key="profile.id"
-        @click="gotoProfile(profile.id)"
       >
-      <router-link :to="{ name: 'profileShow', params: { id: profile.id }}">
-        <Avatar class="pointer" :image="profile.avatarImage" size="13vh" />
-        <h3 class="pointer">{{ profile.preferredName }}</h3>
-      </router-link>
+        <router-link :to="{ name: 'profileShow', params: { id: profile.id }}">
+          <Avatar class="pointer" :image="profile.avatarImage" size="13vh" />
+          <h3 class="pointer">{{ profile.preferredName }}</h3>
+        </router-link>
       </v-col>
     </v-row>
   </v-container>
@@ -44,13 +43,7 @@ export default {
         }
       }`
     }
-  },
-  methods: {
-    gotoProfile (id) {
-      this.$router.push({ name: 'profileShow', params: { id } })
-    }
   }
-
 }
 </script>
 

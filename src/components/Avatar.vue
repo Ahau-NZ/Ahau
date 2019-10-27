@@ -1,6 +1,9 @@
 <template>
-  <v-avatar :size="size" color="indigo">
+  <v-avatar :size="size" color="grey">
     <v-img v-if="image && image.uri" :src="image.uri" :alt="alt" />
+    <v-icon v-else>
+      mdi-account
+    </v-icon>
   </v-avatar>
 </template>
 

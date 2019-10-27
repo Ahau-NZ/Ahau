@@ -1,5 +1,4 @@
 const { PubSub } = require('apollo-server')
-const { isMsg, isFeed } = require('ssb-ref')
 const pull = require('pull-stream')
 const toPull = require('stream-to-pull-stream')
 const { GraphQLUpload } = require('graphql-upload')
@@ -9,6 +8,7 @@ const pick = require('lodash.pick')
 const blobToURI = require('ssb-serve-blobs/id-to-url')
 
 const getProfiles = require('./ssb/profiles')
+const getProfile = require('./ssb/profile')
 const getCommunities = require('./ssb/communities')
 
 const pubsub = new PubSub()
@@ -16,7 +16,17 @@ const pubsub = new PubSub()
 module.exports = sbot => ({
   Query: {
     whoami: (_, __, { feedId, profileId }) =>
-      new Promise(resolve => resolve({ id: feedId, feedId, profileId })),
+      new Promise((resolve, reject) => {
+        getProfile(sbot, profileId, (err, profile) => {
+          if (err) return reject(err)
+
+          resolve({
+            id: feedId,
+            feedId,
+            profile: addURIs(profile)
+          })
+        })
+      }),
 
     persons: () =>
       new Promise((resolve, reject) => {
@@ -36,43 +46,15 @@ module.exports = sbot => ({
 
     profile: (_, { id }, { feedId, profileId }) =>
       new Promise((resolve, reject) => {
-        if (!isMsg(id)) {
-          reject(new Error('profile query expected %msgId, got ' + id))
-        }
-
-        sbot.profile.get(id, (err, profile) => {
+        getProfile(sbot, id, (err, profile) => {
           if (err) return reject(err)
-
-          // <<< WIP
-          const { state } = profile.states[0] // WARNING! we're assuming just one head-state!
-          var canEdit = false
-          if (id === profileId) canEdit = true
-          if (state.type === 'community') canEdit = true
-          // TODO to change profile.get to return "authors" so can check if I canEdit?
-          // >>>
 
           resolve({
             id,
-            canEdit,
-
-            ...addURIs(state)
+            canEdit: profile.tiaki === feedId, // WIP
+            ...addURIs(profile)
           })
         })
-
-        // TODO Deprecate?
-        // else if (isFeed(id)) {
-        //   // if it's a @feedId, try looking up the associated profile
-        //   sbot.profile.findByFeedId(id, (err, profile) => {
-        //     if (err) return reject(err)
-
-        //     if (profile) {
-        //       const { state } = profile.states[0] // WARNING! we're assuming just one head-state!
-        //       resolve({ id: profile.key, ...state })
-        //     } else {
-        //       reject(new Error('no profile set up for id:' + id))
-        //     }
-        //   })
-        // }
       })
   },
 

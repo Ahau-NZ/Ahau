@@ -1,12 +1,12 @@
 <template>
-  <div>
+  <div class='wrapper'>
     <ProfileHeaderEdit
       :preferredName="profile.preferredName"
       :avatarImage="profile.avatarImage"
       :headerImage="profile.headerImage"
       :addImages="addImages"
     />
-    <v-form class="pt-0">
+    <v-form class="body-width pt-0">
       <v-container class="white mx-auto pt-12 px-12">
         <v-row class="form">
 
@@ -202,6 +202,15 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
+  .wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .body-width {
+    max-width: 900px;
+  }
   .form {
     max-width: 600px;
     margin: 0 auto;

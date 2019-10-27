@@ -1,5 +1,5 @@
 <template>
-  <v-container class="white mx-auto py-12 px-12 d-flex justify-space-between align-center">
+  <v-container class="body-width white mx-auto py-12 px-12 d-flex justify-space-between align-center">
     <v-row>
       <v-col cols="8">
         <h1 class="primary--text">{{profile.preferredName}}</h1>
@@ -21,7 +21,7 @@
           <v-card-text>{{profile.description}}</v-card-text>
         </v-card>
       </v-col>
-      <v-col v-if="canEdit" cols="4 justify-end">
+      <v-col v-if="profile.canEdit" cols="4 justify-end">
         <router-link :to="{ name: 'profileEdit', params: { id } }">
           <v-btn class="my-2" tile outlined color="primary">
             <v-icon left>mdi-pencil</v-icon> Edit
@@ -54,9 +54,9 @@ export default {
         preferredName: '',
         legalName: '',
         altNames: [],
-        description: ''
-      },
-      canEdit: false
+        description: '',
+        canEdit: false
+      }
     }
   },
   apollo: {
@@ -67,6 +67,7 @@ export default {
           legalName
           altNames
           description
+          canEdit
         }
       }`,
       variables () {
@@ -75,18 +76,6 @@ export default {
         }
       },
       fetchPolicy: 'no-cache'
-    },
-    canEdit: {
-      query: gql`query {
-        whoami {
-          feedId
-          profileId
-        }
-      }`,
-      update ({ whoami }) {
-        return whoami.profileId === this.id ||
-          whoami.feedId === this.is
-      }
     }
   },
   computed: {
@@ -101,4 +90,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
+  .body-width {
+    max-width: 900px;
+  }
 </style>

@@ -1,7 +1,7 @@
 <template>
-  <v-container class="my-0 py-0">
+  <v-container class="my-0 py-0" id="header-section">
     <v-row>
-      <v-img v-if="!updatingHeader" :src="profile.headerImage ? profile.headerImage.uri : ''" min-width="100%" height="35vh"/>
+      <v-img v-if="!updatingHeader" class='header-bg' :src="profile.headerImage ? profile.headerImage.uri : ''" min-width="100%" height="35vh"/>
       <v-btn v-if="edit && !updatingHeader" class="edit-header-button" tile color="grey" @click="toggleUpdateHeader">
         <v-icon>mdi-pencil</v-icon> Edit header
       </v-btn>
@@ -185,6 +185,13 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
+  #header-section {
+    max-width: 100%;
+  }
+  .header-bg {
+    background: linear-gradient(45deg, hsl(0, 6%, 37.1%) 12%, transparent 0, transparent 88%, hsl(0, 6%, 37.1%) 0), linear-gradient(135deg, transparent 37%, hsl(13.5, 4%, 31%) 0, hsl(13.5, 4%, 31%) 63%, transparent 0), linear-gradient(45deg, transparent 37%, hsl(0, 6%, 37.1%) 0, hsl(0, 6%, 37.1%) 63%, transparent 0), hsl(0, 5.2%, 27.6%);
+    background-size: 50px 50px;
+  }
   .super-z {
     z-index: 998;
   }
@@ -214,6 +221,7 @@ export default {
   .avatar {
     position: relative;
     top: -18.75vh;
+    left: calc(50% - 450px - 64px);
     margin-bottom: -25vh;
     width: 25vh;
   }

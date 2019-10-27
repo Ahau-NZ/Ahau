@@ -5,7 +5,7 @@
         <router-link to="/">
           <img src="../assets/logo_red.svg" />
         </router-link>
-        <v-btn icon :to="{ name: 'profileShow', params: { id: profileId } }">
+        <v-btn icon :to="{ name: 'profileShow', params: { id: profile.id } }">
           <Avatar size="50px" :image="profile.avatarImage" :alt="profile.preferredName" />
         </v-btn>
       </v-toolbar-title>
@@ -37,49 +37,28 @@ export default {
   data () {
     return {
       profile: {
-        preferredName: '',
-        avatarImage: {
-          uri: ''
-        }
-      },
-      profileId: ''
-      // profiles: []
+        id: null,
+        avatarImage: null
+      }
     }
   },
   apollo: {
-    profileId: {
+    profile: {
       query: gql` {
         whoami {
-          profileId
-        }
-      }`,
-      update: data => {
-        return data.whoami.profileId
-      }
-    }
-  },
-  watch: {
-    async profileId (id) {
-      if (!id) return
-
-      const request = {
-        query: gql`query ProfileData($id: String!) {
-          profile(id: $id) {
+          profile {
+            id
             preferredName
-            avatarImage{
+            avatarImage {
               uri
             }
           }
-        }`,
-        variables: {
-          id
         }
-      }
-
-      const result = await this.$apollo.query(request)
-      if (result.errors) return
-
-      this.profile = result.data.profile
+      }`,
+      update (data) {
+        return data.whoami.profile
+      },
+      fetchPolicy: 'no-cache'
     }
   },
   components: {

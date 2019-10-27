@@ -7,6 +7,8 @@ module.exports = gql`
     id: String
     feedId: String
     profileId: String
+
+    profile: Profile
   }
 
   input ImageInput {
@@ -37,13 +39,15 @@ module.exports = gql`
   type Profile {
     id: String
     type: String
+    tiaki: String
     canEdit: Boolean
+
     preferredName: String
     legalName: String
     altNames: [String]
+    description: String
     avatarImage: Image
     headerImage: Image
-    description: String
   }
   input UpdateProfileInput {
     id: String!

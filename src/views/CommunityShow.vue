@@ -1,7 +1,7 @@
 <template>
   <div>
     <ProfileHeaderShow :preferredName="profile.preferredName" :headerImage="profile.headerImage" :avatarImage="profile.avatarImage"/>
-    <v-container class="white mx-auto py-12 px-12 d-flex justify-space-between align-center">
+    <v-container class="body-width white mx-auto py-12 px-12 d-flex justify-space-between align-center">
       <v-row>
         <v-col cols="8">
           <h1 class="primary--text">{{profile.preferredName}}</h1>
@@ -110,4 +110,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
+  .body-width {
+    max-width: 900px;
+  }
 </style>
