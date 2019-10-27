@@ -19,7 +19,7 @@
         <v-btn text to="/profile" class="white--text text-uppercase">
           people
         </v-btn>
-        <v-btn text to="/signout" class="white--text text-uppercase">
+        <v-btn text to="/logout" class="white--text text-uppercase">
           sign out
         </v-btn>
 

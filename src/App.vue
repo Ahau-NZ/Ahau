@@ -12,15 +12,12 @@ import Appbar from '@/components/Appbar.vue'
 
 export default {
   name: 'App',
-  data () {
-    return {
-      // displayAppbar: false
-      displayAppbar: true // temporary
-    }
-  },
-  beforeMount () {
-    if (this.$route.name !== 'profiles' && this.$route.name !== 'home') {
-      this.displayAppbar = true
+  computed: {
+    displayAppbar () {
+      if (this.$route.name === 'login') return false
+      if (this.$route.name === 'profileEdit' && this.$route.query.setup === true) return false
+
+      return true
     }
   },
   components: {

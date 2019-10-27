@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 
-import Home from '@/views/Home.vue'
+import Login from '@/views/Login.vue'
 
 import Profiles from '@/views/Profiles.vue'
 import ProfileShow from '@/views/ProfileShow.vue'
@@ -16,9 +16,11 @@ Vue.use(Router)
 
 export default new Router({
   mode: 'history',
-  base: process.env.BASE_URL || '/',
   routes: [
-    { path: '/', name: 'home', component: Home },
+    { path: '/', redirect: '/login' },
+    { path: '/login', name: 'login', component: Login },
+    { path: '/logout', redirect: '/login' },
+
     { path: '/profile', name: 'profileIndex', component: Profiles },
     { path: '/profile/:id/edit', name: 'profileEdit', component: ProfileEdit },
     { path: '/profile/:id', name: 'profileShow', component: ProfileShow },

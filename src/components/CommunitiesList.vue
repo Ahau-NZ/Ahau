@@ -39,7 +39,8 @@ export default {
             uri
           }
         }
-      }`
+      }`,
+      fetchPolicy: 'no-cache'
     }
   },
   methods: {

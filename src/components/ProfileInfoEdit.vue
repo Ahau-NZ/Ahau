@@ -167,7 +167,13 @@ export default {
         }
       })
       console.log('RES', result)
-      if (result.data) this.goToShow()
+      if (result.data) {
+        if (this.$route.query.setup) {
+          this.$router.push({ name: 'communityIndex' })
+        } else {
+          this.goToShow()
+        }
+      }
     },
     goToShow () {
       this.$router.push({ name: 'profileShow', params: { id: this.id } })
