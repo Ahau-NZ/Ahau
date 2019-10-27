@@ -42,23 +42,36 @@ export default {
       }
     }
   },
-  apollo: {
-    profile: {
-      query: gql` {
-        whoami {
-          profile {
-            id
-            preferredName
-            avatarImage {
-              uri
+  beforeMount () {
+    this.updateProfile()
+  },
+  methods: {
+    async updateProfile () {
+      const result = await this.$apollo.query({
+        query: gql` {
+          whoami {
+            profile {
+              id
+              preferredName
+              avatarImage {
+                uri
+              }
             }
           }
-        }
-      }`,
-      update (data) {
-        return data.whoami.profile
-      },
-      fetchPolicy: 'no-cache'
+        }`,
+        fetchPolicy: 'no-cache'
+      })
+
+      if (result.errors) throw result.errors
+
+      this.profile = result.data.whoami.profile
+    }
+  },
+  watch: {
+    $route (next, last) {
+      if (last.name === 'profileEdit' && last.params.id === this.profile.id) {
+        this.updateProfile()
+      }
     }
   },
   components: {
