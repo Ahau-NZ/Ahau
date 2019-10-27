@@ -5,6 +5,7 @@ import {
   createApolloClient,
   restartWebsockets
 } from 'vue-cli-plugin-apollo/graphql-client'
+// WARNING! this seems wrong (a cli plugin as a dependency?)
 
 // Install the vue plugin
 Vue.use(VueApollo)
