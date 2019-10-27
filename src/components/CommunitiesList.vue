@@ -7,7 +7,7 @@
       <v-col v-for="community in communities" :item="community" :key="community.id">
         <router-link :to="{ name: 'communityShow', params: { id: community.id } }">
           <v-card light height="380px" width="300px" >
-            <v-img height="150px" :src="community.headerImage || ''" />
+            <v-img height="150px" :src="getImage(community)" />
             <v-card-title class="subtitle font-weight-bold">{{community.preferredName}}</v-card-title>
             <v-card-text class="body-2">{{shortDescrciption(community)}}</v-card-text>
           </v-card>
@@ -19,16 +19,13 @@
 
 <script>
 import gql from 'graphql-tag'
+const get = require('lodash.get')
 
 export default {
   name: 'CommunitiesList',
   data () {
     return {
-      profile: {
-        preferredName: '',
-        description: '',
-        headerImage: ''
-      }
+      communities: []
     }
   },
   apollo: {
@@ -38,7 +35,7 @@ export default {
           id
           preferredName
           description
-          avatarImage {
+          headerImage {
             uri
           }
         }
@@ -46,6 +43,9 @@ export default {
     }
   },
   methods: {
+    getImage (community) {
+      return get(community, 'headerImage.uri') || ''
+    },
     shortDescrciption (community) {
       if (!community.description) return
       return community.description.substring(0, 180)

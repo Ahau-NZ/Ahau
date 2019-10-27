@@ -74,7 +74,7 @@ export default {
   data () {
     return {
       updatingHeader: false,
-      newHeaderImage: null,
+      newHeader: null,
       updatingAvatar: false,
       newAvatar: null
     }
@@ -110,7 +110,6 @@ export default {
       this.newAvatar = null
     },
     async handleHeaderImage () {
-      const file = dataURLtoFile(this.newHeader, 'header.jpg')
       const result = await this.$apollo.mutate({
         mutation: gql`mutation uploadFile($file: Upload!) {
           uploadFile(file: $file) {
@@ -120,13 +119,16 @@ export default {
           }
         }`,
         variables: {
-          file
+          file: dataURLtoFile(this.newHeader, 'header.jpg')
         }
       })
-      this.profile.headerImage = result.data.uploadFile
-      this.addToForm('headerImage', result.data.uploadFile)
+      if (result.errors) throw result.errors
+
+      this.addImages({
+        headerImage: pick(result.data.uploadFile, ['blob', 'mimeType', 'uri'])
+      })
+      this.updatingHeader = false
       this.newHeader = null
-      this.updatingHeader = null
     }
   },
   components: {
