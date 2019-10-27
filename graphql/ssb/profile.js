@@ -1,17 +1,16 @@
 const { isMsg } = require('ssb-ref')
 
-const cache = {}
 const TIME_VALID = 5e3 // time cache is valid for
+const cache = new Cache()
+var lookup
 
 module.exports = function getProfile (sbot, id, cb) {
   if (!isMsg(id)) {
     cb(new Error('profile query expected %msgId, got ' + id))
   }
 
-  if (cache[id] && cache[id].time + TIME_VALID > Date.now()) {
-    console.log('serving the old value!')
-    return cb(null, cache[id].state)
-  }
+  lookup = cache.get(id)
+  if (lookup) return cb(null, lookup)
 
   sbot.profile.get(id, (err, profile) => {
     if (err) return cb(err)
@@ -25,13 +24,25 @@ module.exports = function getProfile (sbot, id, cb) {
       state.id = id // TODO change ssb-profile to do this
       state.tiaki = author
 
-      cache[id] = {
-        time: Date.now(),
-        state
-      }
+      cache.set(id, state)
 
       cb(null, state)
     })
     // >>>>
   })
+}
+
+function Cache () {
+  this.store = {}
+}
+Cache.prototype.get = function (id) {
+  if (this.store[id] && this.store[id].time + TIME_VALID > Date.now()) {
+    return this.store[id].state
+  }
+}
+Cache.prototype.set = function (id, state) {
+  this.store[id] = {
+    time: Date.now(),
+    state
+  }
 }
