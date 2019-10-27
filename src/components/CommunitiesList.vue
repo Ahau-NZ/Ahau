@@ -7,7 +7,7 @@
       <v-col v-for="community in communities" :item="community" :key="community.id">
         <router-link :to="{ name: 'communityShow', params: { id: community.id } }">
           <v-card light height="380px" width="300px" >
-            <v-img height="150px" :src="getImage(community)" />
+            <v-img height="150px" :src="getImage(community)" class='card-image'/>
             <v-card-title class="subtitle font-weight-bold">{{community.preferredName}}</v-card-title>
             <v-card-text class="body-2">{{shortDescrciption(community)}}</v-card-text>
           </v-card>
@@ -56,4 +56,8 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
+  .card-image {
+    background: linear-gradient(45deg, hsl(0, 6%, 37.1%) 12%, transparent 0, transparent 88%, hsl(0, 6%, 37.1%) 0), linear-gradient(135deg, transparent 37%, hsl(13.5, 4%, 31%) 0, hsl(13.5, 4%, 31%) 63%, transparent 0), linear-gradient(45deg, transparent 37%, hsl(0, 6%, 37.1%) 0, hsl(0, 6%, 37.1%) 63%, transparent 0), hsl(0, 5.2%, 27.6%);
+    background-size: 50px 50px;
+  }
 </style>
