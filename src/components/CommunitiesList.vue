@@ -1,18 +1,17 @@
 <template>
-  <v-container class="white py-4 d-flex flex-column align-self-start">
+  <v-container class="white py-4">
     <v-row class="py-2">
       <v-col cols="3">
         <h2 class="grey--text subtitle-1">Communities</h2>
-      </v-col>
-
-      <v-col cols="3 justify-end">
         <v-btn to="/community/new" class="my-2" tile outlined color="primary">
           <v-icon left>mdi-plus</v-icon> Create
         </v-btn>
       </v-col>
     </v-row>
-    <v-row class="d-flex flex-row align-start justify-center">
-      <v-col v-for="community in communities" :item="community" :key="community.id">
+
+    <v-row justify="start">
+      <v-col v-for="community in communities" :item="community" :key="community.id"
+        justify-self="start">
         <router-link :to="{ name: 'communityShow', params: { id: community.id } }">
           <v-card light height="380px" width="300px" >
             <v-img height="150px" :src="getImage(community)" class='card-image'/>
@@ -20,12 +19,6 @@
             <v-card-text class="body-2">{{shortDescrciption(community)}}</v-card-text>
           </v-card>
         </router-link>
-      </v-col>
-
-      <v-col cols="3 justify-end">
-        <v-btn to="/community/new" class="my-2" tile outlined color="primary">
-          <v-icon left>mdi-plus</v-icon> Create
-        </v-btn>
       </v-col>
     </v-row>
   </v-container>
@@ -71,6 +64,10 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
+  .col {
+    flex-grow: 0;
+  }
+
   .card-image {
     background: linear-gradient(45deg, hsl(0, 6%, 37.1%) 12%, transparent 0, transparent 88%, hsl(0, 6%, 37.1%) 0), linear-gradient(135deg, transparent 37%, hsl(13.5, 4%, 31%) 0, hsl(13.5, 4%, 31%) 63%, transparent 0), linear-gradient(45deg, transparent 37%, hsl(0, 6%, 37.1%) 0, hsl(0, 6%, 37.1%) 63%, transparent 0), hsl(0, 5.2%, 27.6%);
     background-size: 50px 50px;

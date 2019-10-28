@@ -1,12 +1,12 @@
 <template>
   <div>
     <ProfileHeaderShow :preferredName="profile.preferredName" :headerImage="profile.headerImage" :avatarImage="profile.avatarImage"/>
-    <v-container class="body-width white mx-auto py-12 px-12 d-flex justify-space-between align-center">
+    <v-container class="body-width white mx-auto py-12 px-12">
       <v-row>
         <v-col cols="8">
           <h1 class="primary--text">{{profile.preferredName}}</h1>
           <v-row>
-            <v-col cols="6">
+            <v-col v-if="profile.legalName" cols="6">
               <h3 class="primary--text caption">Legal name</h3>
               <p class="primary--text body-1">{{profile.legalName}}</p>
             </v-col>
@@ -15,10 +15,20 @@
             <!--   <p class="primary--text body-1">{{altNames}}</p> -->
             <!-- </v-col> -->
           </v-row>
-          <v-card
-            light
-            min-height="200px"
-          >
+        </v-col>
+
+        <v-col cols="4" class="d-flex justify-end">
+          <router-link v-if="profile.canEdit" :to="{ name: 'communityEdit', params: { id } }">
+            <v-btn class="my-2" tile outlined color="primary">
+              <v-icon left>mdi-pencil</v-icon> Edit
+            </v-btn>
+          </router-link>
+        </v-col>
+      </v-row>
+
+      <v-row>
+        <v-col cols="8">
+          <v-card light min-height="200px" >
             <v-card-title class="headline font-weight-bold">About</v-card-title>
             <v-card-text>
               <p v-for="(p, i) in splitParagraphs(profile.description)" :key="i + p">
@@ -27,18 +37,23 @@
             </v-card-text>
           </v-card>
         </v-col>
-        <v-col  cols="4 justify-end">
-          <router-link v-if="profile.canEdit" :to="{ name: 'communityEdit', params: { id } }">
-            <v-btn class="my-2" tile outlined color="primary">
-              <v-icon left>mdi-pencil</v-icon> Edit
-            </v-btn>
-          </router-link>
 
-          <!-- <v-card min-height="200px" light > -->
-          <!--   <v-card-title class="headline">Communities</v-card-title> -->
-          <!-- </v-card> -->
+        <v-col cols="4">
+          <v-card v-if="type === 'community'" light outlined min-height="200px">
+            <v-card-title class="headline">Tiaki</v-card-title>
+            <v-btn text v-for="t in profile.tiaki" :key="t.id"
+              :to="{ name: 'personShow', params: { id: t.id } }">
+              {{ t.preferredName }}
+            </v-btn>
+          </v-card>
         </v-col>
       </v-row>
+
+      <!-- <v-row> -->
+        <!-- <v-card min-height="200px" light > -->
+        <!--   <v-card-title class="headline">Communities</v-card-title> -->
+        <!-- </v-card> -->
+      <!-- </v-row> -->
     </v-container>
   </div>
 </template>
@@ -52,12 +67,14 @@ export default {
   name: 'ProfileShow',
   props: {
     id: String,
-    type: String // person / community?
+    type: {
+      type: String, // person / community?
+      required: true
+    }
   },
   data () {
     return {
       profile: {
-        type: '',
         canEdit: false,
 
         preferredName: '',
@@ -70,30 +87,57 @@ export default {
     }
   },
   apollo: {
-    profile: {
-      query: gql`query ProfileData($id: String!) {
-        profile(id: $id) {
-          type
-          canEdit
+    profile () {
+      var query
+      if (this.type === 'community') {
+        query = gql`query ProfileData($id: String!) {
+          profile(id: $id) {
+            canEdit
 
-          preferredName
-          legalName
-          description
+            preferredName
+            legalName
+            description
 
-          headerImage {
-            uri
+            headerImage {
+              uri
+            }
+            avatarImage {
+              uri
+            }
+
+            tiaki {
+              id
+              preferredName
+            }
           }
-          avatarImage {
-            uri
+        }`
+      }
+      if (this.type === 'person') {
+        query = gql`query ProfileData($id: String!) {
+          profile(id: $id) {
+            canEdit
+
+            preferredName
+            legalName
+            description
+
+            headerImage {
+              uri
+            }
+            avatarImage {
+              uri
+            }
           }
-        }
-      }`,
-      variables () {
-        return {
+        }`
+      }
+
+      return {
+        query,
+        variables: {
           id: this.$route.params.id
-        }
-      },
-      fetchPolicy: 'no-cache'
+        },
+        fetchPolicy: 'no-cache'
+      }
     }
   },
   methods: {

@@ -51,10 +51,36 @@ module.exports = sbot => ({
 
           resolve({
             id,
-            canEdit: profile.tiaki === feedId, // WIP
+            authors: profile.authors,
+            canEdit: profile.authors.includes(feedId), // WIP
             ...addURIs(profile)
           })
         })
+      })
+  },
+
+  Profile: {
+    tiaki: (obj) =>
+      new Promise((resolve, reject) => {
+        pull(
+          pull.values(obj.authors),
+          pull.asyncMap((author, cb) => {
+            sbot.profile.findByFeedId(author, cb)
+          }),
+          pull.collect((err, profiles) => {
+            if (err) reject(err)
+            else {
+              profiles = profiles.map(profile => {
+                return {
+                  id: profile.key,
+                  // WARNING! we're assuming just one head-state!
+                  ...profile.states[0].state
+                }
+              })
+              resolve(profiles)
+            }
+          })
+        )
       })
   },
 

@@ -39,7 +39,7 @@ module.exports = gql`
   type Profile {
     id: String
     type: String
-    tiaki: String
+    authors: [String]
     canEdit: Boolean
 
     preferredName: String
@@ -48,7 +48,10 @@ module.exports = gql`
     description: String
     avatarImage: Image
     headerImage: Image
+
+    tiaki: [Profile]
   }
+
   input UpdateProfileInput {
     id: String!
     preferredName: String

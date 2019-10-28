@@ -20,9 +20,9 @@ module.exports = function getProfile (sbot, id, cb) {
     const { state } = profile.states[0]
 
     // Get the original message and call that the tiaki (guardian)
-    sbot.get(id, (_, { author }) => {
+    sbot.get(id, (_, value) => {
       state.id = id // TODO change ssb-profile to do this
-      state.tiaki = author
+      state.authors = [ value.author ]
 
       cache.set(id, state)
 

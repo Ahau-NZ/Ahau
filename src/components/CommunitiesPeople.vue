@@ -1,23 +1,21 @@
 <template>
-  <v-container class="white py-4 d-flex flex-column align-start">
+  <v-container class="white py-4">
+  <!-- <v-container class="white py-4 d-flex flex-column align-start"> -->
     <v-row class="py-2">
       <h2 class="grey--text subtitle-1">People</h2>
     </v-row>
 
-    <v-container class="d-flex align-center py-12">
-      <v-row class="d-flex justify-left">
-        <v-col
-          v-for="profile in persons"
-          :key="profile.id"
-          cols="3"
-        >
-          <router-link :to="{ name: 'personShow', params: { id: profile.id }}" class="d-flex flex-column align-center">
-            <Avatar class="pointer" :image="profile.avatarImage" size="13vh" />
-            <h3 class="pointer">{{ profile.preferredName }}</h3>
-          </router-link>
-        </v-col>
-      </v-row>
-    </v-container>
+    <v-row justify="start">
+      <v-col v-for="profile in persons" :key="profile.id"
+        justify-self="start"
+        class="pr-8"
+      >
+        <router-link :to="{ name: 'personShow', params: { id: profile.id }}" class="d-flex flex-column align-center">
+          <Avatar class="pointer" :image="profile.avatarImage" size="13vh" />
+          <h3 class="pointer">{{ profile.preferredName }}</h3>
+        </router-link>
+      </v-col>
+    </v-row>
 
     <v-row class="d-flex flex-row align-center">
       <v-col v-for="(peer, index) in peers" :item="peer" :index="index" :key="index" >
@@ -76,4 +74,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
+  .col {
+    flex-grow: 0;
+  }
 </style>
