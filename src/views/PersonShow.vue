@@ -1,12 +1,12 @@
 <template>
-  <ProfileShow :id="id" type="community" />
+  <ProfileShow :id="id" type="person" />
 </template>
 
 <script>
 import ProfileShow from '@/components/ProfileShow'
 
 export default {
-  name: 'CommmunityShow',
+  name: 'PersonShow',
   data () {
     return {
       id: this.$route.params.id

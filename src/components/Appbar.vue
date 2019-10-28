@@ -5,7 +5,7 @@
         <router-link to="/">
           <img src="../assets/logo_red.svg" />
         </router-link>
-        <v-btn icon :to="{ name: 'profileShow', params: { id: profile.id } }">
+        <v-btn icon :to="{ name: 'personShow', params: { id: profile.id } }">
           <Avatar size="50px" :image="profile.avatarImage" :alt="profile.preferredName" />
         </v-btn>
       </v-toolbar-title>
@@ -16,7 +16,7 @@
         <v-btn text to='/community?page=local' class="white--text text-uppercase">
           communities
         </v-btn>
-        <v-btn text to="/profile" class="white--text text-uppercase">
+        <v-btn text to="/person" class="white--text text-uppercase">
           people
         </v-btn>
         <v-btn text to="/logout" class="white--text text-uppercase">
@@ -69,7 +69,7 @@ export default {
   },
   watch: {
     $route (next, last) {
-      if (last.name === 'profileEdit' && last.params.id === this.profile.id) {
+      if (last.name === 'personEdit' && last.params.id === this.profile.id) {
         this.updateProfile()
       }
     }

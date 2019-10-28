@@ -61,7 +61,7 @@ export default {
 
       if (!this.profile.preferredName) {
         this.$router.push({
-          name: 'profileEdit',
+          name: 'personEdit',
           params: { id: this.profile.id },
           query: { setup: true }
         })

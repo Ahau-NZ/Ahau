@@ -7,7 +7,7 @@
         cols="3"
         class="d-flex flex-column align-center"
       >
-        <router-link :to="{ name: 'profileShow', params: { id: profile.id }}">
+        <router-link :to="{ name: 'personShow', params: { id: profile.id }}">
           <Avatar class="pointer" :image="profile.avatarImage" size="13vh" />
           <h3 class="pointer">{{ profile.preferredName }}</h3>
         </router-link>
@@ -21,7 +21,7 @@ import gql from 'graphql-tag'
 import Avatar from '@/components/Avatar.vue'
 
 export default {
-  name: 'Profile',
+  name: 'People',
   components: {
     Avatar
   },

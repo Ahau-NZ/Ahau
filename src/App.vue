@@ -15,7 +15,7 @@ export default {
   computed: {
     displayAppbar () {
       if (this.$route.name === 'login') return false
-      if (this.$route.name === 'profileEdit' && this.$route.query.setup === true) return false
+      if (this.$route.name === 'personEdit' && this.$route.query.setup === true) return false
 
       return true
     }

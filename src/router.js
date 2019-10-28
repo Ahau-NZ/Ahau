@@ -3,9 +3,9 @@ import Router from 'vue-router'
 
 import Login from '@/views/Login.vue'
 
-import Profiles from '@/views/Profiles.vue'
-import ProfileShow from '@/views/ProfileShow.vue'
-import ProfileEdit from '@/views/ProfileEdit.vue'
+import People from '@/views/People.vue'
+import PersonShow from '@/views/PersonShow.vue'
+import PersonEdit from '@/views/PersonEdit.vue'
 
 import Communities from '@/views/Communities.vue'
 import CommunityNew from '@/views/CommunityNew.vue'
@@ -21,9 +21,9 @@ export default new Router({
     { path: '/login', name: 'login', component: Login },
     { path: '/logout', redirect: '/login' },
 
-    { path: '/profile', name: 'profileIndex', component: Profiles },
-    { path: '/profile/:id/edit', name: 'profileEdit', component: ProfileEdit },
-    { path: '/profile/:id', name: 'profileShow', component: ProfileShow },
+    { path: '/person', name: 'personIndex', component: People },
+    { path: '/person/:id/edit', name: 'personEdit', component: PersonEdit },
+    { path: '/person/:id', name: 'personShow', component: PersonShow },
     { path: '/community', name: 'communityIndex', component: Communities },
     { path: '/community/new', name: 'communityNew', component: CommunityNew },
     { path: '/community/:id/edit', name: 'communityEdit', component: CommunityEdit },
