@@ -7,7 +7,7 @@ import People from '@/views/People.vue'
 import PersonShow from '@/views/PersonShow.vue'
 import PersonEdit from '@/views/PersonEdit.vue'
 
-import Communities from '@/views/Communities.vue'
+import Discovery from '@/views/Discovery.vue'
 import CommunityNew from '@/views/CommunityNew.vue'
 import CommunityShow from '@/views/CommunityShow.vue'
 import CommunityEdit from '@/views/CommunityEdit.vue'
@@ -24,7 +24,7 @@ export default new Router({
     { path: '/person', name: 'personIndex', component: People },
     { path: '/person/:id/edit', name: 'personEdit', component: PersonEdit },
     { path: '/person/:id', name: 'personShow', component: PersonShow },
-    { path: '/community', name: 'communityIndex', component: Communities },
+    { path: '/discovery', name: 'discovery', component: Discovery },
     { path: '/community/new', name: 'communityNew', component: CommunityNew },
     { path: '/community/:id/edit', name: 'communityEdit', component: CommunityEdit },
     { path: '/community/:id', name: 'communityShow', component: CommunityShow },

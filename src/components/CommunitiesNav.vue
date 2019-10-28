@@ -7,7 +7,7 @@
         </v-row>
         <v-row>
           <v-col cols="3">
-            <router-link to="/community?page=local"
+            <router-link to="/discovery?page=local"
               class="nav d-flex flex-column align-center"
               active-class="-active" exact>
               <h3 class="primary--text display-1">Local</h3>
@@ -18,7 +18,7 @@
             <div class="pipe"/>
           </v-col>
           <v-col cols="3">
-            <router-link to="/community?page=internet"
+            <router-link to="/discovery?page=internet"
               class="nav d-flex flex-column align-center"
               active-class="-active" exact>
               <h3 class="primary--text display-1">Internet</h3>
@@ -29,7 +29,7 @@
             <div class="pipe"/>
           </v-col>
           <v-col cols="3">
-            <router-link to="/community?page=invite"
+            <router-link to="/discovery?page=invite"
               class="nav d-flex flex-column align-center"
               active-class="-active" exact>
               <h3 class="primary--text display-1">Invite</h3>
@@ -37,11 +37,6 @@
             </router-link>
           </v-col>
         </v-row>
-      </v-col>
-      <v-col cols="3 justify-end">
-        <v-btn to="/community/new" class="my-2" tile outlined color="primary">
-          <v-icon left>mdi-plus</v-icon> Create
-        </v-btn>
       </v-col>
     </v-row>
   </v-container>

@@ -13,11 +13,11 @@
       <v-spacer></v-spacer>
 
       <v-toolbar-items>
-        <v-btn text to='/community?page=local' class="white--text text-uppercase">
-          communities
+        <v-btn text to='/discovery?page=local' class="white--text text-uppercase">
+          discover
         </v-btn>
-        <v-btn text to="/person" class="white--text text-uppercase">
-          people
+        <v-btn text :to="{ name: 'personShow', params: { id: profile.id } }" class="white--text text-uppercase">
+          profile
         </v-btn>
         <v-btn text to="/logout" class="white--text text-uppercase">
           sign out

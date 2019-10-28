@@ -1,21 +1,21 @@
 <template>
   <v-container class="white mx-auto py-2 px-12 d-flex flex-column justify-space-between align-center">
-    <CommunitiesNav />
-    <!-- <CommunitiesPeople /> -->
+    <!-- <CommunitiesNav /> -->
+    <CommunitiesPeople />
     <CommunitiesList />
   </v-container>
 </template>
 
 <script>
-import CommunitiesNav from '@/components/CommunitiesNav'
-// import CommunitiesPeople from '@/components/CommunitiesPeople'
+// import CommunitiesNav from '@/components/CommunitiesNav'
+import CommunitiesPeople from '@/components/CommunitiesPeople'
 import CommunitiesList from '@/components/CommunitiesList'
 
 export default {
-  name: 'Commmunities',
+  name: 'Discovery',
   components: {
-    CommunitiesNav,
-    // CommunitiesPeople,
+    // CommunitiesNav,
+    CommunitiesPeople,
     CommunitiesList
   }
 }

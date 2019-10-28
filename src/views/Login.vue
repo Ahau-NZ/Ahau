@@ -3,7 +3,7 @@
     <div v-if='isSplash' class='image-container'>
       <img src='@/assets/logo_red.svg' />
     </div>
-    <router-link v-else :to="{ name: 'communityIndex' }" class="d-flex flex-column align-center">
+    <router-link v-else :to="{ name: 'personShow', params: { id: profile.id } }" class="d-flex flex-column align-center">
       <Avatar :image="profile.avatarImage" size="13vh" />
       <h3 class="name mt-2">{{ profile.preferredName }}</h3>
     </router-link>

@@ -1,7 +1,15 @@
 <template>
   <v-container class="white py-4 d-flex flex-column align-self-start">
     <v-row class="py-2">
-      <h2 class="grey--text subtitle-1">Communities</h2>
+      <v-col cols="3">
+        <h2 class="grey--text subtitle-1">Communities</h2>
+      </v-col>
+
+      <v-col cols="3 justify-end">
+        <v-btn to="/community/new" class="my-2" tile outlined color="primary">
+          <v-icon left>mdi-plus</v-icon> Create
+        </v-btn>
+      </v-col>
     </v-row>
     <v-row class="d-flex flex-row align-start justify-center">
       <v-col v-for="community in communities" :item="community" :key="community.id">
@@ -12,6 +20,12 @@
             <v-card-text class="body-2">{{shortDescrciption(community)}}</v-card-text>
           </v-card>
         </router-link>
+      </v-col>
+
+      <v-col cols="3 justify-end">
+        <v-btn to="/community/new" class="my-2" tile outlined color="primary">
+          <v-icon left>mdi-plus</v-icon> Create
+        </v-btn>
       </v-col>
     </v-row>
   </v-container>
