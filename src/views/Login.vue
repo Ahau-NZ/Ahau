@@ -3,10 +3,22 @@
     <div v-if='isSplash' class='image-container'>
       <img src='@/assets/logo_red.svg' />
     </div>
-    <router-link v-else :to="{ name: 'personShow', params: { id: profile.id } }" class="d-flex flex-column align-center">
+
+    <v-btn v-if="!isSplash && !isSetup"
+      text x-large color="#b12526"
+      :to="{ name: 'personEdit', params: { id: profile.id }, query: { setup: true } }"
+      >
+      <v-icon left>mdi-plus</v-icon>
+      Create profile
+    </v-btn>
+
+    <router-link v-if="!isSplash && isSetup"
+      :to="{ name: 'personShow', params: { id: profile.id } }"
+      class="d-flex flex-column align-center">
       <Avatar :image="profile.avatarImage" size="13vh" />
       <h3 class="name mt-2">{{ profile.preferredName }}</h3>
     </router-link>
+
   </div>
 </template>
 
@@ -18,6 +30,7 @@ export default {
   data () {
     return {
       isSplash: true,
+      isSetup: true, // has profile set up
       profile: {
         id: null,
         preferredName: null,
@@ -59,13 +72,8 @@ export default {
         return setTimeout(this.proceed, 500)
       }
 
-      if (!this.profile.preferredName) {
-        this.$router.push({
-          name: 'personEdit',
-          params: { id: this.profile.id },
-          query: { setup: true }
-        })
-      } else this.isSplash = false
+      this.isSetup = this.profile.preferredName
+      this.isSplash = false
     }
   },
   components: {
