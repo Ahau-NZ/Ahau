@@ -22,6 +22,7 @@
     "core-js": "^2.6.5",
     "cors": "^2.8.5",
     "express": "^4.17.1",
+    "graphql-tag": "^2.9.0",
     "graphql-upload": "^8.0.7",
     "lodash.get": "^4.4.2",
     "lodash.pick": "^4.4.0",
@@ -33,7 +34,7 @@
     "ssb-backlinks": "^0.7.3",
     "ssb-blobs": "^1.2.2",
     "ssb-client": "^4.7.8",
-    "ssb-config": "^3.4.2",
+    "ssb-config": "^3.4.3",
     "ssb-conn": "^0.11.2",
     "ssb-db": "^19.3.1",
     "ssb-friends": "^4.1.4",
@@ -52,12 +53,11 @@
     "stream-to-pull-stream": "^1.7.3",
     "vue": "^2.6.10",
     "vue-apollo": "^3.0.0-beta.11",
-    "graphql-tag": "^2.9.0",
+    "vue-cli-plugin-apollo": "^0.21.0",
     "vue-router": "^3.0.3",
     "vuetify": "^2.1.0",
     "vuetify-image-input": "^19.0.0",
-    "vuex": "^3.0.1",
-    "vue-cli-plugin-apollo": "^0.21.0"
+    "vuex": "^3.0.1"
   },
   "devDependencies": {
     "@fiahfy/icns-convert": "0.0.6",

@@ -9,7 +9,7 @@ $ npm install
 ## Development
 
 ```bash
-$ npm run server
+$ npm run serve
 // start a webpack dev-server which serves up live-updating UI
 ```
 
