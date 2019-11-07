@@ -54,6 +54,11 @@
         <!--   <v-card-title class="headline">Communities</v-card-title> -->
         <!-- </v-card> -->
       <!-- </v-row> -->
+
+      <v-row>
+        <tree></tree>
+      </v-row>
+      
     </v-container>
   </div>
 </template>
@@ -61,6 +66,8 @@
 <script>
 import gql from 'graphql-tag'
 import ProfileHeaderShow from '@/components/ProfileHeaderShow'
+import Tree from '@/components/Tree.vue'
+
 // const get = require('lodash.get')
 
 export default {
@@ -148,7 +155,8 @@ export default {
     }
   },
   components: {
-    ProfileHeaderShow
+    ProfileHeaderShow,
+    Tree
   }
 }
 </script>
