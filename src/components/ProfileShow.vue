@@ -56,7 +56,7 @@
       <!-- </v-row> -->
 
       <v-row>
-        <tree></tree>
+        <Tree />
       </v-row>
       
     </v-container>
