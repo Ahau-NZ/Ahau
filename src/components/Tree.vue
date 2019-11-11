@@ -1,17 +1,19 @@
 <template>
   <div id="app">
-    <svg :width="settings.width" :height="settings.height" style="{margin-left: 100px;}">
-      <transition-group tag="g" name="link">
-        <g class="link" v-for="link in links" :key="link.id">
-          <path class="link" :d="link.d" />
-        </g>
-      </transition-group>
-      <transition-group tag="g" name="node">
-        <g class="node" v-for="node in nodes" :key="node.id" :style="node.style">
-          <circle class="node-circle" @click="nodeClick(node.name)" :r="node.radius" />
-        </g>
-      </transition-group>
-    </svg>
+    <v-container class="body-width white mx-auto py-12 px-12">
+      <svg :width="settings.width" :height="settings.height" style="{margin-left: 100px;}">
+        <transition-group tag="g" name="link">
+          <g class="link" v-for="link in links" :key="link.id">
+            <path class="link" :d="link.d" />
+          </g>
+        </transition-group>
+        <transition-group tag="g" name="node">
+          <g class="node" v-for="node in nodes" :key="node.id" :style="node.style">
+            <circle class="node-circle" @click="nodeClick(node.name)" :r="node.radius" />
+          </g>
+        </transition-group>
+      </svg>
+    </v-container>
   </div>
 </template>
 
