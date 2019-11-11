@@ -3,9 +3,13 @@
     <v-row class="py-2">
       <v-col cols="3">
         <h2 class="grey--text subtitle-1">Communities</h2>
-        <v-btn to="/community/new" class="my-2" tile outlined color="primary">
-          <v-icon left>mdi-plus</v-icon> Create
-        </v-btn>
+        <router-link to="/community/new" class="my-2">
+          <v-btn fab color="white">
+            <v-icon class="black--text">mdi-plus</v-icon>
+          </v-btn>
+          <span class="black--text pl-4 subtitle">Create community</span>
+          <!-- <v-icon left>mdi-plus</v-icon> Create community -->
+        </router-link>
       </v-col>
     </v-row>
 
