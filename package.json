@@ -21,6 +21,7 @@
     "casual": "^1.6.2",
     "core-js": "^2.6.5",
     "cors": "^2.8.5",
+    "d3": "^5.12.0",
     "express": "^4.17.1",
     "graphql-tag": "^2.9.0",
     "graphql-upload": "^8.0.7",
@@ -54,11 +55,11 @@
     "vue": "^2.6.10",
     "vue-apollo": "^3.0.0-beta.11",
     "vue-cli-plugin-apollo": "^0.21.0",
+    "vue-context": "^4.1.1",
     "vue-router": "^3.0.3",
     "vuetify": "^2.1.0",
     "vuetify-image-input": "^19.0.0",
-    "vuex": "^3.0.1",
-    "d3": "^5.12.0"
+    "vuex": "^3.0.1"
   },
   "devDependencies": {
     "@fiahfy/icns-convert": "0.0.6",
