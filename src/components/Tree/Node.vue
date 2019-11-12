@@ -9,9 +9,9 @@ export default {
   components: {
 
   },
-  props: ['node', 'ref'],
+  props: ['node'],
   mounted () {
-    console.log(this.ref)
+    console.log(this.node.id + " " + this.node.x + "," + this.node.y)
   },
   data () {
     return {

@@ -1,10 +1,14 @@
 <template>
-  <path class="link" :d="d" />
+  <path class="link" :d="link.d" />
 </template>
 
 <script>
+/* es-lint disable */
 export default {
-  props: ['d']
+  props: ['link'],
+  mounted(){
+    
+  }
 }
 </script>
 

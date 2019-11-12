@@ -1,18 +1,20 @@
 <template>
   <div id="app">
-    <v-container class="body-width white mx-auto py-12 px-12">
+    <v-container class="body-width white mx-auto py-12 px-12"> 
       <v-row>
-        <svg :width="width" :height="height">
-          <g class="link" v-for="link in links" :key="link.id">
-            <Link :d="link.d"/>
-          </g>
-          <g class="node" v-for="node in nodes" :key="node.id" :style="node.style">
-            <Node :node="node"/>
-          </g>
-        </svg>
+          <h1>Tree</h1>
       </v-row>
       <v-row>
-        <NodeMenu ref="nodeMenu"/>
+        <svg width="100%" :height="svgHeight" ref="baseSvg">
+          <g class="tree" :transform="`translate(${treeX} ${treeY})`">
+            <g class="link" v-for="link in links" :key="link.id">
+              <Link :link="link"/>
+            </g>
+            <g class="node" v-for="node in nodes" :key="node.id" :style="node.style">
+              <Node :node="node"/>
+            </g>
+          </g>
+        </svg>
       </v-row>
     </v-container>
   </div>
@@ -33,14 +35,20 @@ export default {
   },
   data () {
     return {
-      // nodeWidth: 50,
-      // nodeHeight: 50,
-      horizontalSeparationBetweenNodes: 100,
-      verticalSeparationBetweenNodes: 100,
+      componentLoaded: false,
+      nodeSeparationX: 100,
+      nodeSeparationY: 100,
       settings: {
-        width: 1000,
-        height: 500,
+        radius: 20,
         branch: 50
+      },
+      width: 900,
+      height: 500,
+      margin: {
+        left: 120,
+        top: 20, 
+        right: 120,
+        bottom: 20
       },
       treeData: {
         // my family data -> Claudine is the mother of 5 children, and one of them has a child 'Otene'
@@ -84,25 +92,19 @@ export default {
     }
   },
   computed: {
-    positionX () {
-      return 500
-    },
-    positionY () {
-      return 500
-    },
     /*
       Returns computed width for the treeLayout()
       TODO: change this once I have more of an understanding
     */
-    width () {
-      return screen.width
+    svgWidth () {
+      return this.width
     },
     /*
       Returns computed height for the treeLayout()
       TODO: change this once I have more of an understanding
     */
-    height () {
-      return screen.height
+    svgHeight () {
+      return this.height
     },
     /*
       Returns a nested data structure representing a tree based on the treeData object
@@ -115,15 +117,13 @@ export default {
     */
     treeLayout () {
       return d3.tree()
-        // .size([this.height, this.width])
+        //.size([960 - this.margin.right - this.margin.left, 500 - this.margin.top - this.margin.bottom])
         .nodeSize([
-          this.horizontalSeparationBetweenNodes,
-          this.verticalSeparationBetweenNodes
-          // this.horizontalSeparationBetweenNodes,
-          // this.nodeHeight + this.verticalSeparationBetweenNodes
+          this.nodeSeparationX,
+          this.nodeSeparationY
         ])
-        .separation(function (a, b) {
-          return a.parent === b.parent ? 1 : 2
+        .separation(function(a, b) {
+          return a.parent == b.parent ? 1 : 2;
         })
     },
     /*
@@ -141,9 +141,9 @@ export default {
             name: d.data.name,
             children: d.data.children,
             style: {
-              transform: this.nodeHorizontal(d.x + this.positionX, d.y + this.positionY)
+              transform: this.nodeHorizontal(d.x, d.y)
             },
-            radius: 20, // could probably move to data(),
+            radius: this.settings.radius, // could probably move to data(),
             x: d.x, // X position for the centre of the node (USEFUL TO HAVE)
             // y: d.y // Y position for the centre of the node (USEFUL TO HAVE)
             y: d.y
@@ -163,19 +163,30 @@ export default {
             y1: d.source.x, // centre y position of the parent node
             y2: d.target.y, // centre y position of the child node
             d: this.linkElbow(
-              d.source.x + this.positionX,
-              d.source.y + this.positionY,
-              d.target.x + this.positionX,
-              d.target.y + this.positionY
+              d.source.x,
+              d.source.y,
+              d.target.x,
+              d.target.y
             )
 
           }
         })
+    },
+    treeX() {
+      if(!this.componentLoaded){
+        return null
+      }
+      return this.$refs.baseSvg.clientWidth/2
+    },
+    treeY() {
+      if(!this.componentLoaded){
+        return null
+      }
+      return this.$refs.baseSvg.clientHeight/3
     }
   },
   mounted () {
-    console.log(this.nodes)
-    console.log(this.links)
+    this.componentLoaded = true;
   },
   methods: {
     /*
@@ -240,5 +251,10 @@ export default {
 </script>
 
 <style scoped>
-
+  h1 {
+    color: black;
+  }
+  .tree {
+      
+  }
 </style>
