@@ -157,89 +157,68 @@ function dataURLtoFile (dataurl, filename) {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
-.full-width {
-  max-width: 100%;
-}
-.super-z {
-  z-index: 998;
-}
-.header-bg {
-  background: linear-gradient(
-      45deg,
-      hsl(0, 6%, 37.1%) 12%,
-      transparent 0,
-      transparent 88%,
-      hsl(0, 6%, 37.1%) 0
-    ),
-    linear-gradient(
-      135deg,
-      transparent 37%,
-      hsl(13.5, 4%, 31%) 0,
-      hsl(13.5, 4%, 31%) 63%,
-      transparent 0
-    ),
-    linear-gradient(
-      45deg,
-      transparent 37%,
-      hsl(0, 6%, 37.1%) 0,
-      hsl(0, 6%, 37.1%) 63%,
-      transparent 0
-    ),
-    hsl(0, 5.2%, 27.6%);
-  background-size: 50px 50px;
-}
-.header {
-  min-height: 35vh;
-  background: grey;
-  width: 100%;
-  margin-bottom: -35vh;
-  position: relative;
-  top: -35vh;
-  opacity: 0.6;
-}
-.header-edit {
-  height: 64vh;
-  margin-bottom: calc(35vh - 64vh);
-  background: rgba(0, 0, 0, 0.6);
-  z-index: 999;
-}
-.edit-header {
-  cursor: pointer;
-  position: absolute;
-  top: 25vh;
-  right: 5vw;
-  z-index: 999;
-}
-.handle-header-buttons {
-  position: relative;
-  top: -15vh;
-  right: -55%;
-  z-index: 999;
-  display: flex;
-  flex-flow: row nowrap;
-  justify-content: space-around;
-  width: 300px;
-}
-.avatar {
-  position: relative;
-  top: -18.75vh;
-  left: calc(50% - 400px - 64px);
-  margin-bottom: -25vh;
-  width: 25vh;
-}
-.avatar-image {
-  width: 25vh;
-  margin-bottom: -25vh;
-  background: rgba(100, 100, 100, 0.8);
-  position: relative;
-  top: -25vh;
-  border-radius: 12.5vh;
-  display: flex;
-  flex-flow: column;
-  align-content: center;
-  align-items: center;
-  justify-content: center;
-}
+  .full-width {
+    max-width: 100%
+  }
+  .super-z {
+    z-index: 998;
+  }
+  .header-bg {
+    background: linear-gradient(45deg, hsl(0, 6%, 37.1%) 12%, transparent 0, transparent 88%, hsl(0, 6%, 37.1%) 0), linear-gradient(135deg, transparent 37%, hsl(13.5, 4%, 31%) 0, hsl(13.5, 4%, 31%) 63%, transparent 0), linear-gradient(45deg, transparent 37%, hsl(0, 6%, 37.1%) 0, hsl(0, 6%, 37.1%) 63%, transparent 0), hsl(0, 5.2%, 27.6%);
+    background-size: 50px 50px;
+  }
+  .header {
+    min-height: 35vh;
+    background: grey;
+    width: 100%;
+    margin-bottom: -35vh;
+    position: relative;
+    top: -35vh;
+    opacity: 0.6;
+  }
+  .header-edit {
+    height: 64vh;
+    margin-bottom: calc(35vh - 64vh);
+    background: rgba(0,0,0,.6);
+    z-index: 999;
+  }
+  .edit-header-button {
+    cursor: pointer;
+    position: absolute;
+    top: 27vh;
+    right: 5vw;
+    z-index: 999;
+  }
+  .handle-header-buttons {
+    position: relative;
+    top: -15vh;
+    right: -55%;
+    z-index: 999;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-around;
+    width: 300px;
+  }
+  .avatar {
+    position: relative;
+    top: -18.75vh;
+    left: calc(50% - 400px - 64px);
+    margin-bottom: -25vh;
+    width: 25vh;
+  }
+  .avatar-image {
+    width: 25vh;
+    margin-bottom: -25vh;
+    background: rgba(100,100,100,0.8);
+    position: relative;
+    top: -25vh;
+    border-radius: 12.5vh;
+    display: flex;
+    flex-flow: column;
+    align-content: center;
+    align-items: center;
+    justify-content: center;
+  }
 
 .toggle {
   cursor: pointer;

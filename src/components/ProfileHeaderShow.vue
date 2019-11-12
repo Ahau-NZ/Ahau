@@ -38,7 +38,7 @@ export default {
   .avatar {
     position: relative;
     top: -18.75vh;
-    left: calc(50% - 450px - 64px);
+    left: calc(50% - 350px - 64px);
     margin-bottom: -25vh;
     width: 25vh;
   }
