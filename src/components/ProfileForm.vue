@@ -9,7 +9,6 @@
     <v-form class="body-width pt-0">
       <v-container class="white mx-auto pt-12 px-12">
         <v-row class="form">
-
           <v-col cols="12" md="12" >
             <v-text-field
               light
@@ -37,14 +36,14 @@
           </v-col>
 
           <v-col cols="12">
-            <v-btn @click="onCancel" outlined color="secondary" class="mr-4">
-              <v-icon>mdi-cancel</v-icon>
+            <v-btn @click="onCancel" outlined text color="secondary" class="mr-4">
+              <v-icon>mdi-close</v-icon>
             </v-btn>
 
-            <v-btn v-if="hasChanges" @click="saveProfile"  color="success" class="mr-4">
+            <v-btn v-if="hasChanges" @click="saveProfile" text color="secondary" class="mr-4">
               <v-icon>mdi-check</v-icon>
             </v-btn>
-            <v-btn v-else outlined color="success" class="mr-4">
+            <v-btn v-else outlined color="secondary" text class="mr-4">
               <v-icon>mdi-check</v-icon>
             </v-btn>
           </v-col>
@@ -206,10 +205,11 @@ export default {
     display: flex;
     flex-direction: column;
     align-items: center;
+    background: linear-gradient(to right, grey 0%,grey 50%,#000000 50%,white 50%,white 100%);
   }
-
   .body-width {
-    max-width: 900px;
+    min-height: calc(100vh - 40vh);
+    background: white;
   }
   .form {
     max-width: 600px;

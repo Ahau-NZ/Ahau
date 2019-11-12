@@ -3,14 +3,14 @@
     <v-row v-if="!updatingHeader" class="header-bg">
       <v-img :src="headerImage ? headerImage.uri : ''" min-width="100%" height="35vh"/>
       <div class="header"></div>
-      <div @click="toggleUpdateHeader" class="edit-header">
+      <div @click="toggleUpdateHeader" class="edit-header-button">
         <v-btn fab color="white">
           <v-icon class="black--text">mdi-pencil</v-icon>
         </v-btn>
         <span class="white--text pl-4 title">Upload header photo</span>
       </div>
     </v-row>
-    <v-row v-if="updatingHeader" class="header-edit">
+    <v-row v-else class="header-edit">
       <v-image-input
         v-model="newHeader"
         :image-quality="0.85"
@@ -22,10 +22,10 @@
         image-format="jpeg"
       />
       <div class="handle-header-buttons">
-        <v-btn @click="toggleUpdateHeader" color="error" class="mr-4" >
-          <v-icon>mdi-cancel</v-icon>
+        <v-btn @click="toggleUpdateHeader" text color="secondary" class="mr-4" >
+          <v-icon>mdi-close</v-icon>
         </v-btn>
-        <v-btn @click="handleHeaderImage" :disabled="!newHeader" color="success">
+        <v-btn @click="handleHeaderImage" text :disabled="!newHeader" color="secondary">
           <v-icon>mdi-check</v-icon>
         </v-btn>
       </div>
@@ -49,10 +49,10 @@
           backgroundColor="black"
         />
         <v-row class="actions">
-          <v-btn @click="toggleUpdateAvatar" outlined color="grey" class="mr-4" >
-            <v-icon>mdi-cancel</v-icon>
+          <v-btn @click="toggleUpdateAvatar" text color="secondary" class="mr-4" >
+            <v-icon>mdi-close</v-icon>
           </v-btn>
-          <v-btn @click="handleAvatarImage" :disabled="!newAvatar" color="success" >
+          <v-btn @click="handleAvatarImage" text :disabled="!newAvatar" color="secondary" >
             <v-icon>mdi-check</v-icon>
           </v-btn>
         </v-row>
@@ -218,6 +218,15 @@ function dataURLtoFile (dataurl, filename) {
     align-content: center;
     align-items: center;
     justify-content: center;
+  }
+
+  .editor {
+    position: absolute;
+    background: rgba(0,0,0,.8);
+    height: 460px;
+    width: 610px;
+    z-index: 998;
+    padding: 50px;
   }
 
 .toggle {
