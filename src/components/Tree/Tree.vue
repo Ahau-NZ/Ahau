@@ -10,7 +10,7 @@
             <g class="link" v-for="link in links" :key="link.id">
               <Link :link="link"/>
             </g>
-            <g @contextmenu.prevent="$refs.menu.open" class="node" v-for="node in nodes" :key="node.id" :style="node.style">
+            <g @contextmenu.prevent="$refs.menu.open" @click="selectedNode = node" class="node" v-for="node in nodes" :key="node.id" :style="node.style">
               <Node :node="node" />
             </g>
           </g>
@@ -19,7 +19,7 @@
     </v-container>
       <vue-context ref="menu">
         <li v-for="(option, index) in contextmenu" :key="index">
-          <a hret="#" @click.prevent="onclick(option.title)">{{ option.title }}</a>
+          <a hret="#" @click.prevent="optionHandler(option.title)">{{ option.title }}</a>
         </li>
     </vue-context>
   </div>
@@ -41,6 +41,7 @@ export default {
   },
   data () {
     return {
+      selectedNode: null,
       componentLoaded: false,
       settings: {
         nodeSeparationX: 100,
@@ -67,33 +68,26 @@ export default {
       ],
       treeData: {
         // my family data -> Claudine is the mother of 5 children, and one of them has a child 'Otene'
-        id: 0,
         name: 'Claudine',
         children: [
           {
-            id: 1,
             name: 'Zara',
             children: [
               {
-                id: 6,
                 name: 'Otene'
               }
             ]
           },
           {
-            id: 2,
             name: 'Cherese'
           },
           {
-            id: 3,
             name: 'Daynah'
           },
           {
-            id: 4,
             name: 'Pititi'
           },
           {
-            id: 5,
             name: 'Damon'
           }
         ]
@@ -182,7 +176,7 @@ export default {
         .descendants() // returns the array of descendants starting with the root node, then followed by each child in topological order
         .map((d, i) => { // returns a new custom object for each node
           return {
-            id: `node-${d.data.id}`,
+            id: `node-${i}`,
             index: i,
             name: d.data.name,
             children: d.data.children,
@@ -202,7 +196,7 @@ export default {
         .links() // returns the array of links
         .map((d, i) => { // returns a new custom object for each link
           return {
-            id: `link-${d.source.data.id}-${d.target.data.id}`,
+            id: `link-${i}-${i+1}`,
             index: i,
             // coordinates from drawing lines/links from Parent(x1,y1) to Child(x2,y2)
             x1: d.source.x, // centre x position of parent node
@@ -218,8 +212,22 @@ export default {
     this.componentLoaded = true
   },
   methods: {
-    onclick(method) {
-      console.log(method)
+    openContextMenu(node){
+      console.log(node.id + " clicked!")
+
+    },
+    optionHandler(method) {
+      if(method === 'Edit Person'){
+        this.editPerson()
+      }else if(method === 'Delete Person'){
+        this.deletePerson()
+      }else if(method === 'Add Child'){
+        this.addChild()
+      }else if(method === 'Add Sibling'){
+        this.addSibling()
+      }else if(method === 'Add Parent'){
+        this.addParent()
+      }
     },
     /*
       Method which calculates the transform to draw nodes horizontally
