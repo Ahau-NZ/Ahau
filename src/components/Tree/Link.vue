@@ -9,7 +9,7 @@ export default {
   data () {
     return {
       settings: {
-        branch: 50
+        branch: 70
       }
     }
   },

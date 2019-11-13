@@ -44,10 +44,8 @@ export default {
       selectedNode: null,
       componentLoaded: false,
       settings: {
-        nodeSeparationX: 100,
-        nodeSeparationY: 100,
-        radius: 40,
-        branch: 50
+        nodeSeparationX: 150,
+        nodeSeparationY: 150
       },
       contextmenu: [
         {

@@ -10,7 +10,7 @@ export default {
   data () {
     return {
       settings: {
-        radius: 20
+        radius: 40
       }
     }
   },
