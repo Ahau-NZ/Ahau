@@ -2,7 +2,7 @@
 
 Instead of having everything from generating, drawing and re-orientating nodes and links in one file, I have instead split them up into different components.
 
-## Tree Component
+### Tree Component
 
 Handles turning the treeData into an array of nodes and links.
 
@@ -13,16 +13,24 @@ Handles turning the treeData into an array of nodes and links.
 
 ---
 
-## Node Component
+### Node Component
 
 Handles drawing a `<circle>`, but currently the parent element handles positioning it.
 
 ---
  
-## Link Componenent
+### Link Componenent
 
 Handles drawing a `<path>` from Parent(x1,y1) to Child(x2,y2).
 
 It also holds methods to draw the elbow lines horizontally or vertically. 
 
 ---
+
+### Notes
+
+* Changing size of the nodes needs to be changed in four places: 
+    1. Node.vue: radius
+    2. Link.vue: branch needs to be larger than the radius
+    3. Tree.vue: nodeSeparationX
+    4. Tree.vue: nodeSeparationY
