@@ -1,13 +1,46 @@
 <template>
-  <path class="link" :d="link.d" />
+  <path class="link" :d="elbowV" />
 </template>
 
 <script>
 /* es-lint disable */
 export default {
   props: ['link'],
-  mounted(){
-    
+  data() {
+    return {
+      settings: {
+        branch: 50
+      }
+    }
+  },
+  mounted () {
+
+  },
+  computed: {
+    /*
+      generates a d attribute for the <path> which orientates the link vertically
+      in an elbow shape    
+    */
+    elbowV () {
+      return `
+        M ${this.link.x1}, ${this.link.y1} 
+        v ${this.settings.branch} 
+        H ${this.link.x2} 
+        V ${this.link.y2}
+      `
+    },
+    /*
+      generates a d attribute for the <path> which orientates the link horizontally
+      in an elbow shape
+    */
+    elbowH () {
+      return `
+        M ${this.link.y1}, ${this.link.x1} 
+        h ${this.settings.branch} 
+        H ${this.link.y2} 
+        V ${this.link.x2}
+      `
+    }
   }
 }
 </script>
