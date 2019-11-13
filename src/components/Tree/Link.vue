@@ -6,7 +6,7 @@
 /* es-lint disable */
 export default {
   props: ['link'],
-  data() {
+  data () {
     return {
       settings: {
         branch: 50
@@ -19,7 +19,7 @@ export default {
   computed: {
     /*
       generates a d attribute for the <path> which orientates the link vertically
-      in an elbow shape    
+      in an elbow shape
     */
     elbowV () {
       return `

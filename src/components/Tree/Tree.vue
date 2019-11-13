@@ -10,13 +10,18 @@
             <g class="link" v-for="link in links" :key="link.id">
               <Link :link="link"/>
             </g>
-            <g class="node" v-for="node in nodes" :key="node.id" :style="node.style">
-              <Node :node="node"/>
+            <g @contextmenu.prevent="$refs.menu.open" class="node" v-for="node in nodes" :key="node.id" :style="node.style">
+              <Node :node="node" />
             </g>
           </g>
         </svg>
       </v-row>
     </v-container>
+      <vue-context ref="menu">
+        <li v-for="(option, index) in contextmenu" :key="index">
+          <a hret="#" @click.prevent="onclick(option.title)">{{ option.title }}</a>
+        </li>
+    </vue-context>
   </div>
 </template>
 
@@ -26,10 +31,13 @@ import * as d3 from 'd3'
 import Node from './Node.vue'
 import Link from './Link.vue'
 
+import { VueContext } from 'vue-context'
+
 export default {
   components: {
     Node,
-    Link
+    Link,
+    VueContext
   },
   data () {
     return {
@@ -40,6 +48,23 @@ export default {
         radius: 40,
         branch: 50
       },
+      contextmenu: [
+        {
+          title: 'Edit Person'
+        },
+        {
+          title: 'Delete Person'
+        },
+        {
+          title: 'Add Child'
+        },
+        {
+          title: 'Add Sibling'
+        },
+        {
+          title: 'Add Parent'
+        }
+      ],
       treeData: {
         // my family data -> Claudine is the mother of 5 children, and one of them has a child 'Otene'
         id: 0,
@@ -78,7 +103,7 @@ export default {
   computed: {
     /*
       gets the X position of the tree based on the svg size
-      TODO: change so it does it when the screen is resized, only displays changes when the page is 
+      TODO: change so it does it when the screen is resized, only displays changes when the page is
       refreshed
     */
     treeX () {
@@ -89,7 +114,7 @@ export default {
     },
     /*
       gets the Y position of the tree based on the svg size
-      TODO: change so it does it when the screen is resized, only displays changes when the page is 
+      TODO: change so it does it when the screen is resized, only displays changes when the page is
       refreshed
     */
     treeY () {
@@ -162,7 +187,7 @@ export default {
             name: d.data.name,
             children: d.data.children,
             style: {
-              transform: this.nodeVertical(d.x, d.y) //sets the position of this node
+              transform: this.nodeVertical(d.x, d.y) // sets the position of this node
             },
             x: d.x, // X position for the centre of the node (USEFUL TO HAVE)
             y: d.y // Y position for the centre of the node (USEFUL TO HAVE)
@@ -174,8 +199,8 @@ export default {
     */
     links () {
       return this.treeLayout(this.root)
-        .links() //returns the array of links
-        .map((d, i) => { //returns a new custom object for each link
+        .links() // returns the array of links
+        .map((d, i) => { // returns a new custom object for each link
           return {
             id: `link-${d.source.data.id}-${d.target.data.id}`,
             index: i,
@@ -183,16 +208,19 @@ export default {
             x1: d.source.x, // centre x position of parent node
             x2: d.target.x, // centre x position of child node
             y1: d.source.y, // centre y position of the parent node
-            y2: d.target.y, // centre y position of the child node
+            y2: d.target.y // centre y position of the child node
           }
         })
     }
   },
   mounted () {
-    //means the vue component has rendered
+    // means the vue component has rendered
     this.componentLoaded = true
   },
   methods: {
+    onclick(method) {
+      console.log(method)
+    },
     /*
       Method which calculates the transform to draw nodes horizontally
       TODO: needs to be moved to the node component
@@ -206,13 +234,30 @@ export default {
     */
     nodeVertical (x, y) {
       return `translate(${x}px, ${y}px)`
+    },
+    editPerson () {
+      console.log('editPerson')
+    },
+    deletePerson () {
+      console.log('deletePerson')
+    },
+    addChild () {
+      console.log('addChild')
+    },
+    addSibling () {
+      console.log('addSibling')
+    },
+    addParent () {
+      console.log('addParent')
     }
   }
 }
 </script>
 
 <style scoped>
+  @import '~vue-context/dist/css/vue-context.css';
   h1 {
     color: black;
   }
+
 </style>
