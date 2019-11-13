@@ -19,6 +19,7 @@
     "apollo-server-express": "^2.9.6",
     "apollo-upload-client": "^10.0.1",
     "casual": "^1.6.2",
+    "context-menu": "^2.0.0",
     "core-js": "^2.6.5",
     "cors": "^2.8.5",
     "d3": "^5.12.0",

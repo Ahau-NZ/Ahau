@@ -18,7 +18,7 @@ Vue.use(Router)
 export default new Router({
   mode: 'history',
   routes: [
-     { path: '/', redirect: '/login' },
+    { path: '/', redirect: '/login' },
 
     // { path: '/', redirect: '/tree' },
     { path: '/tree', name: 'tree', component: Tree },

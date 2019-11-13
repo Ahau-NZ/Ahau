@@ -194,7 +194,7 @@ export default {
         .links() // returns the array of links
         .map((d, i) => { // returns a new custom object for each link
           return {
-            id: `link-${i}-${i+1}`,
+            id: `link-${i}-${i + 1}`,
             index: i,
             // coordinates from drawing lines/links from Parent(x1,y1) to Child(x2,y2)
             x1: d.source.x, // centre x position of parent node
@@ -214,16 +214,16 @@ export default {
       checks which option was clicked and calls the corresponding method
       @TODO: see if there is a way to use key/value pairs to point option to its method
     */
-    optionHandler(option) {
-      if(option === 'Edit Person'){
+    optionHandler (option) {
+      if (option === 'Edit Person') {
         this.editPerson()
-      }else if(option === 'Delete Person'){
+      } else if (option === 'Delete Person') {
         this.deletePerson()
-      }else if(option === 'Add Child'){
+      } else if (option === 'Add Child') {
         this.addChild()
-      }else if(option === 'Add Sibling'){
+      } else if (option === 'Add Sibling') {
         this.addSibling()
-      }else if(option === 'Add Parent'){
+      } else if (option === 'Add Parent') {
         this.addParent()
       }
     },
@@ -271,7 +271,7 @@ export default {
       console.log('addSibling')
     },
     /*
-      handles adding a parent for the current node - adding this node as a child 
+      handles adding a parent for the current node - adding this node as a child
       of a new parent node
       @TODO: figure out if more suited in node component or this component
     */
