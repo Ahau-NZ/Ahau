@@ -97,7 +97,7 @@ export default {
   computed: {
     /*
       gets the X position of the tree based on the svg size
-      TODO: change so it does it when the screen is resized, only displays changes when the page is
+      @TODO: change so it does it when the screen is resized, only displays changes when the page is
       refreshed
     */
     treeX () {
@@ -108,7 +108,7 @@ export default {
     },
     /*
       gets the Y position of the tree based on the svg size
-      TODO: change so it does it when the screen is resized, only displays changes when the page is
+      @TODO: change so it does it when the screen is resized, only displays changes when the page is
       refreshed
     */
     treeY () {
@@ -212,49 +212,71 @@ export default {
     this.componentLoaded = true
   },
   methods: {
-    openContextMenu(node){
-      console.log(node.id + " clicked!")
-
-    },
-    optionHandler(method) {
-      if(method === 'Edit Person'){
+    /*
+      checks which option was clicked and calls the corresponding method
+      @TODO: see if there is a way to use key/value pairs to point option to its method
+    */
+    optionHandler(option) {
+      if(option === 'Edit Person'){
         this.editPerson()
-      }else if(method === 'Delete Person'){
+      }else if(option === 'Delete Person'){
         this.deletePerson()
-      }else if(method === 'Add Child'){
+      }else if(option === 'Add Child'){
         this.addChild()
-      }else if(method === 'Add Sibling'){
+      }else if(option === 'Add Sibling'){
         this.addSibling()
-      }else if(method === 'Add Parent'){
+      }else if(option === 'Add Parent'){
         this.addParent()
       }
     },
     /*
       Method which calculates the transform to draw nodes horizontally
-      TODO: needs to be moved to the node component
+      @TODO: needs to be moved to the node component
     */
     nodeHorizontal (x, y) {
       return `translate(${y}px, ${x}px)`
     },
     /*
       Method which calculates the transform to draw nodes vertically
-      TODO: needs to be moved to the node component
+      @TODO: needs to be moved to the node component
     */
     nodeVertical (x, y) {
       return `translate(${x}px, ${y}px)`
     },
+    /*
+      handles editing a persons details
+      @TODO: move into node component
+    */
     editPerson () {
       console.log('editPerson')
     },
+    /*
+      handles deleting a person
+      @TODO: figure out if more suited in node component or this component
+    */
     deletePerson () {
       console.log('deletePerson')
     },
+    /*
+      handles adding a child to the person
+      @TODO: move into node component
+    */
     addChild () {
       console.log('addChild')
     },
+    /*
+      handles adding a sibling to the node - adding child to parent of this node
+      NOTE: will need to specify which parent?
+      @TODO: figure out if more suited in node component or this component
+    */
     addSibling () {
       console.log('addSibling')
     },
+    /*
+      handles adding a parent for the current node - adding this node as a child 
+      of a new parent node
+      @TODO: figure out if more suited in node component or this component
+    */
     addParent () {
       console.log('addParent')
     }
