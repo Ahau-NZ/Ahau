@@ -94,8 +94,8 @@ export default {
   }
 
   .image-container {
-    height: 40vh;
-    width: 40vh;
+    height: 20vh;
+    width: 20vh;
   }
   .name {
     color: white;
