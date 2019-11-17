@@ -10,7 +10,7 @@ export default {
   data () {
     return {
       settings: {
-        radius: 40
+        radius: 60
       }
     }
   },
@@ -28,7 +28,7 @@ export default {
     stroke: black;
     &:hover {
       cursor: pointer;
-      transform: scale(1.5);
+      transform: scale(1.2);
     }
   }
 </style>
