@@ -5,11 +5,13 @@
           <h1>Tree</h1>
       </v-row>
       <v-row>
-        <svg width="100%" :height="height-treeHeight" ref="baseSvg">
+        <svg width="100%" :height="height" ref="baseSvg">
           <g :transform="`translate(${treeX} ${treeY})`" ref="tree">
             <g class="link" v-for="link in links" :key="link.id">
               <Link :link="link"/>
             </g>
+          </g>
+          <g :transform="`translate(${treeX-50} ${treeY-50})`" ref="tree">
             <g v-for="node in nodes" :key="node.id"
               class="node"
               @contextmenu.prevent="openMenu($event, node)"

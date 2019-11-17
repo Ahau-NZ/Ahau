@@ -1,6 +1,16 @@
 <template>
+  <!--
   <circle :r="settings.radius" @click="onClick">
   </circle>
+  -->
+  <svg>
+      <defs>
+        <clipPath id="myCircle">
+          <circle :cx="node.x + settings.radius" :cy="node.y + settings.radius" :r="settings.radius-1"/>
+        </clipPath>
+      </defs>
+      <image :width="settings.radius*2" :height="settings.radius*2" xlink:href="https://www.tutorialspoint.com/videotutorials/images/coding_ground_home.jpg" clip-path="url(#myCircle)" />
+  </svg>
 </template>
 <script>
 /* es-lint disable */
@@ -10,7 +20,7 @@ export default {
   data () {
     return {
       settings: {
-        radius: 60
+        radius: 50
       }
     }
   },
@@ -23,12 +33,5 @@ export default {
 </script>
 
 <style scoped lang="scss">
-  circle {
-    fill: #5f9ea0;
-    stroke: black;
-    &:hover {
-      cursor: pointer;
-      transform: scale(1.2);
-    }
-  }
+  
 </style>
