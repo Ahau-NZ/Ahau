@@ -10,8 +10,11 @@
             <g class="link" v-for="link in links" :key="link.id">
               <Link :link="link"/>
             </g>
-            <g @contextmenu.prevent="$refs.menu.open" @click="selectedNode = node" class="node" v-for="node in nodes" :key="node.id" :style="node.style">
-              <Node :node="node" />
+            <g v-for="node in nodes" :key="node.id"
+              class="node"
+              @contextmenu.prevent="openMenu($event, node)"
+              :style="node.style">
+              <Node :node="node"/>
             </g>
           </g>
         </svg>
@@ -19,7 +22,7 @@
     </v-container>
       <vue-context ref="menu">
         <li v-for="(option, index) in contextmenu" :key="index">
-          <a hret="#" @click.prevent="optionHandler(option.title)">{{ option.title }}</a>
+          <a hret="#" @click.prevent="option.action">{{ option.title }}</a>
         </li>
     </vue-context>
   </div>
@@ -44,24 +47,29 @@ export default {
       selectedNode: null,
       componentLoaded: false,
       settings: {
-        nodeSeparationX: 150,
-        nodeSeparationY: 150
+        nodeSeparationX: 50,
+        nodeSeparationY: 50
       },
       contextmenu: [
         {
-          title: 'Edit Person'
+          title: 'Edit Person',
+          action: this.editPerson
         },
         {
-          title: 'Delete Person'
+          title: 'Delete Person',
+          action: this.deletePerson
         },
         {
-          title: 'Add Child'
+          title: 'Add Child',
+          action: this.addChild
         },
         {
-          title: 'Add Sibling'
+          title: 'Add Sibling',
+          action: this.addSibling
         },
         {
-          title: 'Add Parent'
+          title: 'Add Parent',
+          action: this.addParent
         }
       ],
       treeData: {
@@ -72,27 +80,101 @@ export default {
             name: 'Zara',
             children: [
               {
-                name: 'Otene'
+                name: 'Otene',
+                children: []
               }
             ]
           },
           {
-            name: 'Cherese'
+            name: 'Cherese',
+            children: []
           },
           {
-            name: 'Daynah'
+            name: 'Daynah',
+            children: []
           },
           {
-            name: 'Pititi'
+            name: 'Pititi',
+            children: []
           },
           {
-            name: 'Damon'
+            name: 'Damon',
+            children: []
+          }
+        ]
+      },
+      familyTree: {
+        id: 0,
+        name: 'Stacey',
+        partners: [
+          {
+            id: 1,
+            name: 'Claudine',
+            children: [
+              {
+                id: 2,
+                name: 'Zara',
+                partners: [
+                  {
+                    id: 7,
+                    name: 'Makene',
+                    children: [
+                      {
+                        'id': 8,
+                        'name': 'Otene'
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                id: 3,
+                name: 'Cherese',
+                partners: [
+                  {
+                    id: 9,
+                    name: 'Dillon'
+                  }
+                ]
+              },
+              {
+                id: 4,
+                name: 'Daynah'
+              },
+              {
+                id: 5,
+                name: 'Pititi',
+                partners: [
+                  {
+                    id: 10,
+                    name: 'Kevin'
+                  }
+                ]
+              },
+              {
+                id: 6,
+                name: 'Damon'
+              }
+            ]
+          },
+          {
+            id: 11,
+            name: 'Susan',
+            children: [
+              {
+                id: 12,
+                name: 'Zavien'
+              }
+            ]
           }
         ]
       }
     }
   },
   computed: {
+    node() {
+      return this.selectedNode
+    },
     /*
       gets the X position of the tree based on the svg size
       @TODO: change so it does it when the screen is resized, only displays changes when the page is
@@ -170,6 +252,7 @@ export default {
       extra attributes
     */
     nodes () {
+      console.log(this.root)
       return this.treeLayout(this.root)
         .descendants() // returns the array of descendants starting with the root node, then followed by each child in topological order
         .map((d, i) => { // returns a new custom object for each node
@@ -210,22 +293,9 @@ export default {
     this.componentLoaded = true
   },
   methods: {
-    /*
-      checks which option was clicked and calls the corresponding method
-      @TODO: see if there is a way to use key/value pairs to point option to its method
-    */
-    optionHandler (option) {
-      if (option === 'Edit Person') {
-        this.editPerson()
-      } else if (option === 'Delete Person') {
-        this.deletePerson()
-      } else if (option === 'Add Child') {
-        this.addChild()
-      } else if (option === 'Add Sibling') {
-        this.addSibling()
-      } else if (option === 'Add Parent') {
-        this.addParent()
-      }
+    openMenu ($event, node) {
+      this.selectedNode = node
+      this.$refs.menu.open($event)
     },
     /*
       Method which calculates the transform to draw nodes horizontally
@@ -260,7 +330,20 @@ export default {
       @TODO: move into node component
     */
     addChild () {
-      console.log('addChild')
+      console.log('addChild()')
+
+      var newChild = {
+        name: 'temp',
+        children: []
+      }
+
+      if (this.node.children !== undefined){
+        this.node.children.push(newChild)
+      }else{
+        this.node.children = [
+          newChild
+        ]
+      }
     },
     /*
       handles adding a sibling to the node - adding child to parent of this node
@@ -287,5 +370,4 @@ export default {
   h1 {
     color: black;
   }
-
 </style>
