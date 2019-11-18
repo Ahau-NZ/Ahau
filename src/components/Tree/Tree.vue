@@ -5,9 +5,13 @@
           <h1>Tree</h1>
       </v-row>
       <v-row>
-        <svg width="100%" :height="height" ref="baseSvg">
+        <svg 
+          width="100%" 
+          :height="height"
+          ref="baseSvg">
           <g :transform="`translate(${treeX} ${treeY})`" ref="tree">
-            <g class="link" v-for="link in links" :key="link.id">
+            <g v-for="link in links" :key="link.id"
+              class="link">
               <Link
                 :link="link"
                 :branch="branch"
@@ -27,10 +31,13 @@
         </svg>
       </v-row>
     </v-container>
-      <vue-context ref="menu">
-        <li v-for="(option, index) in contextmenu" :key="index">
-          <a hret="#" @click.prevent="option.action">{{ option.title }}</a>
-        </li>
+    <vue-context ref="menu">
+      <li v-for="(option, index) in contextmenu" :key="index">
+        <a hret="#"
+          @click.prevent="option.action">
+          {{ option.title }}
+        </a>
+      </li>
     </vue-context>
   </div>
 </template>
@@ -54,9 +61,7 @@ export default {
       selectedNode: null,
       componentLoaded: false,
       settings: {
-        nodeSeparationX: 150,
-        nodeSeparationY: 150,
-        nodeRadius: 50
+        nodeRadius: 70
       },
       contextmenu: [
         {
@@ -186,6 +191,12 @@ export default {
     branch () {
       return this.settings.nodeRadius + (this.settings.nodeRadius) / 2
     },
+    nodeSeparationX() {
+      return this.settings.nodeRadius*3
+    },
+    nodeSeparationY() {
+      return this.settings.nodeRadius*3
+    },
     /*
       gets the X position of the tree based on the svg size
       @TODO: change so it does it when the screen is resized, only displays changes when the page is
@@ -251,8 +262,8 @@ export default {
     treeLayout () {
       return d3.tree()
         .nodeSize([
-          this.settings.nodeSeparationX,
-          this.settings.nodeSeparationY
+          this.nodeSeparationX,
+          this.nodeSeparationY
         ])
         .separation(function (a, b) {
           return a.parent === b.parent ? 1 : 2

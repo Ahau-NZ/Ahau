@@ -10,8 +10,8 @@
         </clipPath>
       </defs>
       <image
-        :width="radius*2"
-        :height="radius*2"
+        :width="imageConstraints"
+        :height="imageConstraints"
         :xlink:href="image"
         clip-path="url(#myCircle)"
       />
@@ -44,6 +44,9 @@ export default {
   computed: {
     image () {
       return this.node.gender === 'male' ? male : female
+    },
+    imageConstraints() {
+      return this.radius * 2
     }
   }
 }
