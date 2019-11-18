@@ -2,7 +2,7 @@
   <svg>
       <defs>
         <clipPath id="myCircle">
-          <circle id="myCircle"
+          <circle
             :cx="radius"
             :cy="radius"
             :r="radius"
