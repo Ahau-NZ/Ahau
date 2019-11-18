@@ -18,10 +18,24 @@
           v-on="on"
         ></v-text-field>
       </template>
-      <v-date-picker light v-model="date" no-title scrollable>
+      <v-date-picker v-model="date"
+        no-title
+        scrollable
+        light
+      >
         <v-spacer></v-spacer>
-        <v-btn text color="primary" @click="menu = false">Cancel</v-btn>
-        <v-btn text color="primary" @click="$refs.menu.save(date)">OK</v-btn>
+        <v-btn @click="menu = false"
+          text
+          color="primary"
+        >
+          Cancel
+        </v-btn>
+        <v-btn  @click="$refs.menu.save(date)"
+          text
+          color="primary"
+        >
+          OK
+        </v-btn>
       </v-date-picker>
     </v-menu>
   </div>

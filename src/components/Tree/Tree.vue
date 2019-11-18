@@ -9,7 +9,7 @@
           width="100%"
           :height="height"
           ref="baseSvg">
-          <g :transform="`translate(${treeX} ${treeY})`" 
+          <g :transform="`translate(${treeX} ${treeY})`"
             ref="tree"
           >
             <g v-for="link in links" :key="link.id"
@@ -20,7 +20,7 @@
               />
             </g>
           </g>
-          <g :transform="`translate(${treeX-settings.nodeRadius} ${treeY-settings.nodeRadius})`" 
+          <g :transform="`translate(${treeX-settings.nodeRadius} ${treeY-settings.nodeRadius})`"
             ref="tree"
           >
             <g v-for="node in nodes" :key="node.id"
@@ -65,9 +65,9 @@ export default {
   },
   data () {
     return {
-      addNodeFormVisible: false, //if set to true, it displays the add node form
-      selectedNode: null, //gets value of current selected node (when right clicked)
-      componentLoaded: false, //need to ensure component is loaded before using $refs
+      addNodeFormVisible: false, // if set to true, it displays the add node form
+      selectedNode: null, // gets value of current selected node (when right clicked)
+      componentLoaded: false, // need to ensure component is loaded before using $refs
       settings: {
         nodeRadius: 70 // use variable for zoom later on
       },
@@ -197,7 +197,7 @@ export default {
   },
   computed: {
     /*
-      returns the node which has been right clicked 
+      returns the node which has been right clicked
     */
     node () {
       return this.selectedNode
