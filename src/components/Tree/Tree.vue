@@ -5,11 +5,13 @@
           <h1>Tree</h1>
       </v-row>
       <v-row>
-        <svg 
-          width="100%" 
+        <svg
+          width="100%"
           :height="height"
           ref="baseSvg">
-          <g :transform="`translate(${treeX} ${treeY})`" ref="tree">
+          <g :transform="`translate(${treeX} ${treeY})`" 
+            ref="tree"
+          >
             <g v-for="link in links" :key="link.id"
               class="link">
               <Link
@@ -18,7 +20,9 @@
               />
             </g>
           </g>
-          <g :transform="`translate(${treeX-settings.nodeRadius} ${treeY-settings.nodeRadius})`" ref="tree">
+          <g :transform="`translate(${treeX-settings.nodeRadius} ${treeY-settings.nodeRadius})`" 
+            ref="tree"
+          >
             <g v-for="node in nodes" :key="node.id"
               class="node"
               @contextmenu.prevent="openMenu($event, node)"
@@ -31,6 +35,7 @@
         </svg>
       </v-row>
     </v-container>
+    <AddNodeForm :visible="addNodeFormVisible"/>
     <vue-context ref="menu">
       <li v-for="(option, index) in contextmenu" :key="index">
         <a hret="#"
@@ -47,6 +52,7 @@
 import * as d3 from 'd3'
 import Node from './Node.vue'
 import Link from './Link.vue'
+import AddNodeForm from './AddNodeForm.vue'
 
 import { VueContext } from 'vue-context'
 
@@ -54,14 +60,16 @@ export default {
   components: {
     Node,
     Link,
-    VueContext
+    VueContext,
+    AddNodeForm
   },
   data () {
     return {
-      selectedNode: null,
-      componentLoaded: false,
+      addNodeFormVisible: false, //if set to true, it displays the add node form
+      selectedNode: null, //gets value of current selected node (when right clicked)
+      componentLoaded: false, //need to ensure component is loaded before using $refs
       settings: {
-        nodeRadius: 70
+        nodeRadius: 70 // use variable for zoom later on
       },
       contextmenu: [
         {
@@ -85,6 +93,9 @@ export default {
           action: this.addParent
         }
       ],
+      options: {
+        addnode: false
+      },
       treeData: {
         // my family data -> Claudine is the mother of 5 children, and one of them has a child 'Otene'
         name: 'Claudine',
@@ -185,17 +196,31 @@ export default {
     }
   },
   computed: {
+    /*
+      returns the node which has been right clicked 
+    */
     node () {
       return this.selectedNode
     },
+    /*
+      calculation for the elbow style tree links
+    */
     branch () {
       return this.settings.nodeRadius + (this.settings.nodeRadius) / 2
     },
-    nodeSeparationX() {
-      return this.settings.nodeRadius*3
+    /*
+      the space between nodes on the x axis
+      @TODO: will be used later on for implementing zoom and pan on tree
+    */
+    nodeSeparationX () {
+      return this.settings.nodeRadius * 3
     },
-    nodeSeparationY() {
-      return this.settings.nodeRadius*3
+    /*
+      the space between node on the y axis
+      @TODO: will be used later on for implementing zoom and pan on tree
+    */
+    nodeSeparationY () {
+      return this.settings.nodeRadius * 3
     },
     /*
       gets the X position of the tree based on the svg size
@@ -348,10 +373,11 @@ export default {
       console.log('deletePerson')
     },
     /*
-      handles adding a child to the person
+      handles adding a child to the person, currently opens add node form
       @TODO: move into node component
     */
     addChild () {
+      this.addNodeFormVisible = true
       /*
       console.log('addChild()')
 
@@ -368,7 +394,6 @@ export default {
         ]
       }
       */
-
     },
     /*
       handles adding a sibling to the node - adding child to parent of this node
@@ -390,7 +415,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
   @import '~vue-context/dist/css/vue-context.css';
   h1 {
     color: black;

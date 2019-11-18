@@ -31,21 +31,17 @@ export default {
       required: true
     }
   },
-  data () {
-    return {
-
-    }
-  },
-  methods: {
-    onClick () {
-      alert(this.node.name)
-    }
-  },
   computed: {
+    /*
+      temporary function to display placeholder image of male or female based on gender
+    */
     image () {
       return this.node.gender === 'male' ? male : female
     },
-    imageConstraints() {
+    /*
+      required size for the image based on the given radius value
+    */
+    imageConstraints () {
       return this.radius * 2
     }
   }
