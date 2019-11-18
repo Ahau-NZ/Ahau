@@ -11,12 +11,14 @@
               <Link :link="link"/>
             </g>
           </g>
-          <g :transform="`translate(${treeX-50} ${treeY-50})`" ref="tree">
+          <g :transform="`translate(${treeX-settings.nodeRadius} ${treeY-settings.nodeRadius})`" ref="tree">
             <g v-for="node in nodes" :key="node.id"
               class="node"
               @contextmenu.prevent="openMenu($event, node)"
               :style="node.style">
-              <Node :node="node"/>
+              <Node 
+                :node="node"
+                :radius="settings.nodeRadius"/>
             </g>
           </g>
         </svg>
@@ -50,7 +52,8 @@ export default {
       componentLoaded: false,
       settings: {
         nodeSeparationX: 150,
-        nodeSeparationY: 150
+        nodeSeparationY: 150,
+        nodeRadius: 50
       },
       contextmenu: [
         {
@@ -332,6 +335,7 @@ export default {
       @TODO: move into node component
     */
     addChild () {
+      /*
       console.log('addChild()')
 
       var newChild = {
@@ -346,6 +350,8 @@ export default {
           newChild
         ]
       }
+      */
+
     },
     /*
       handles adding a sibling to the node - adding child to parent of this node

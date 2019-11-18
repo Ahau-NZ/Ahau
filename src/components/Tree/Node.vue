@@ -1,37 +1,56 @@
 <template>
-  <!--
-  <circle :r="settings.radius" @click="onClick">
-  </circle>
-  -->
   <svg>
       <defs>
         <clipPath id="myCircle">
-          <circle :cx="node.x + settings.radius" :cy="node.y + settings.radius" :r="settings.radius-1"/>
+          <circle id="myCircle" 
+            :cx="radius"
+            :cy="radius"
+            :r="radius"
+          />
         </clipPath>
       </defs>
-      <image :width="settings.radius*2" :height="settings.radius*2" xlink:href="https://www.tutorialspoint.com/videotutorials/images/coding_ground_home.jpg" clip-path="url(#myCircle)" />
+      <image 
+        :width="radius*2" 
+        :height="radius*2" 
+        :xlink:href="image" 
+        clip-path="url(#myCircle)"
+      />
   </svg>
 </template>
 <script>
 /* es-lint disable */
 
 export default {
-  props: ['node'],
+  props: {
+    node: {
+      type: Object,
+      required: true
+    },
+    radius: {
+      type: Number,
+      required: true
+    }
+  },
   data () {
     return {
-      settings: {
-        radius: 50
-      }
+      
     }
   },
   methods: {
     onClick () {
       alert(this.node.name)
     }
+  },
+  computed: {
+    image() {
+        return this.node.gender === "male" ? male : female;
+    }
   }
 }
 </script>
 
 <style scoped lang="scss">
-  
+  image {
+    border: 4 solid black;
+  }
 </style>
