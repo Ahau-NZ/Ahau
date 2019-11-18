@@ -5,7 +5,16 @@
 <script>
 /* es-lint disable */
 export default {
-  props: ['link'],
+  props: {
+    link: {
+      type: Object,
+      required: true
+    },
+    branch: {
+      type: Number,
+      required: true
+    }
+  },
   data () {
     return {
       settings: {
@@ -24,7 +33,7 @@ export default {
     elbowV () {
       return `
         M ${this.link.x1}, ${this.link.y1} 
-        v ${this.settings.branch} 
+        v ${this.branch} 
         H ${this.link.x2} 
         V ${this.link.y2}
       `
@@ -36,7 +45,7 @@ export default {
     elbowH () {
       return `
         M ${this.link.y1}, ${this.link.x1} 
-        h ${this.settings.branch} 
+        h ${this.branch} 
         H ${this.link.y2} 
         V ${this.link.x2}
       `

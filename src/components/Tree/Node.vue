@@ -2,17 +2,17 @@
   <svg>
       <defs>
         <clipPath id="myCircle">
-          <circle id="myCircle" 
+          <circle id="myCircle"
             :cx="radius"
             :cy="radius"
             :r="radius"
           />
         </clipPath>
       </defs>
-      <image 
-        :width="radius*2" 
-        :height="radius*2" 
-        :xlink:href="image" 
+      <image
+        :width="radius*2"
+        :height="radius*2"
+        :xlink:href="image"
         clip-path="url(#myCircle)"
       />
   </svg>
@@ -33,7 +33,7 @@ export default {
   },
   data () {
     return {
-      
+
     }
   },
   methods: {
@@ -42,8 +42,8 @@ export default {
     }
   },
   computed: {
-    image() {
-        return this.node.gender === "male" ? male : female;
+    image () {
+      return this.node.gender === 'male' ? male : female
     }
   }
 }

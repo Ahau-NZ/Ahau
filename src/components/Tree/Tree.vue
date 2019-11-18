@@ -8,7 +8,10 @@
         <svg width="100%" :height="height" ref="baseSvg">
           <g :transform="`translate(${treeX} ${treeY})`" ref="tree">
             <g class="link" v-for="link in links" :key="link.id">
-              <Link :link="link"/>
+              <Link
+                :link="link"
+                :branch="branch"
+              />
             </g>
           </g>
           <g :transform="`translate(${treeX-settings.nodeRadius} ${treeY-settings.nodeRadius})`" ref="tree">
@@ -16,7 +19,7 @@
               class="node"
               @contextmenu.prevent="openMenu($event, node)"
               :style="node.style">
-              <Node 
+              <Node
                 :node="node"
                 :radius="settings.nodeRadius"/>
             </g>
@@ -177,8 +180,11 @@ export default {
     }
   },
   computed: {
-    node() {
+    node () {
       return this.selectedNode
+    },
+    branch () {
+      return this.settings.nodeRadius + (this.settings.nodeRadius) / 2
     },
     /*
       gets the X position of the tree based on the svg size
