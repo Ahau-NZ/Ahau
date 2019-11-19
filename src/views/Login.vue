@@ -2,6 +2,7 @@
   <div class="container">
     <div v-if='isSplash' class='image-container'>
       <img src='@/assets/logo_red.svg' />
+      <h1>Āhau</h1>
     </div>
 
     <v-btn v-if="!isSplash && !isSetup"
@@ -84,6 +85,12 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
+  h1 {
+    text-transform: uppercase;
+    letter-spacing: 0.5vw;
+    text-align: center;
+    padding-top: 15%;
+  }
   .container {
     width: 100%;
     height: 90%;
@@ -94,8 +101,8 @@ export default {
   }
 
   .image-container {
-    height: 40vh;
-    width: 40vh;
+    height: 20vh;
+    width: 20vh;
   }
   .name {
     color: white;

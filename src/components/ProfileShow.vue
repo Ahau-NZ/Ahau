@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class='wrapper'>
     <ProfileHeaderShow :preferredName="profile.preferredName" :headerImage="profile.headerImage" :avatarImage="profile.avatarImage"/>
     <v-container class="body-width white mx-auto py-12 px-12">
       <v-row>
@@ -19,9 +19,10 @@
 
         <v-col cols="4" class="d-flex justify-end">
           <router-link v-if="profile.canEdit" :to="{ name: 'communityEdit', params: { id } }">
-            <v-btn class="my-2" tile outlined color="primary">
-              <v-icon left>mdi-pencil</v-icon> Edit
+            <v-btn class="my-2" fab color="white">
+              <v-icon class="black--text">mdi-pencil</v-icon>
             </v-btn>
+            <span class="ml-4 subtitle">Edit</span>
           </router-link>
         </v-col>
       </v-row>
@@ -61,6 +62,7 @@
 <script>
 import gql from 'graphql-tag'
 import ProfileHeaderShow from '@/components/ProfileHeaderShow'
+
 // const get = require('lodash.get')
 
 export default {
@@ -155,7 +157,16 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
+  .wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: linear-gradient(to right, grey 0%,grey 50%,#000000 50%,white 50%,white 100%);
+  }
   .body-width {
-    max-width: 900px;
+    min-width: 600px;
+    max-width: 60vw;
+    min-height: calc(100vh - 40vh);
+    background: white;
   }
 </style>

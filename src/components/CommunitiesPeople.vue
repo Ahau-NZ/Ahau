@@ -17,12 +17,12 @@
       </v-col>
     </v-row>
 
-    <v-row class="d-flex flex-row align-center">
+    <!-- <v-row class="d-flex flex-row align-center">
       <v-col v-for="(peer, index) in peers" :item="peer" :index="index" :key="index" >
         <Avatar image="https://picsum.photos/300/300" size="80" />
         <p class="black--text">{{peer.id}}</p>
       </v-col>
-    </v-row>
+    </v-row> -->
   </v-container>
 </template>
 
