@@ -12,13 +12,16 @@
       <image
         :width="imageConstraints"
         :height="imageConstraints"
-        :xlink:href="image"
+        :xlink:href="imageSource"
         clip-path="url(#myCircle)"
       />
   </svg>
 </template>
 <script>
 /* es-lint disable */
+
+import tane from '@/assets/tane.svg'
+import wahine from '@/assets/wahine.svg'
 
 export default {
   props: {
@@ -35,8 +38,12 @@ export default {
     /*
       temporary function to display placeholder image of male or female based on gender
     */
-    image () {
-      return this.node.gender === 'male' ? male : female
+    imageSource () {
+      switch (this.node.gender) {
+        case 'male': return tane
+        case 'female': return wahine
+        default: return wahine // TODO androgenous avatar
+      }
     },
     /*
       required size for the image based on the given radius value

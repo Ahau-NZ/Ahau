@@ -380,9 +380,9 @@ export default {
         children: []
       }
 
-      if (this.node.children !== undefined){
+      if (this.node.children !== undefined) {
         this.node.children.push(newChild)
-      }else{
+      } else {
         this.node.children = [
           newChild
         ]
