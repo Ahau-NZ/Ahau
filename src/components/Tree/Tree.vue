@@ -35,6 +35,8 @@
         </svg>
       </v-row>
     </v-container>
+    <AddNodeForm :visible="forms.addNode.visible"
+    />
     <vue-context ref="menu">
       <li v-for="(option, index) in contextmenu" :key="index">
         <a hret="#"
@@ -52,13 +54,16 @@ import * as d3 from 'd3'
 import Node from './Node.vue'
 import Link from './Link.vue'
 
+import AddNodeForm from './AddNodeForm.vue'
+
 import { VueContext } from 'vue-context'
 
 export default {
   components: {
     Node,
     Link,
-    VueContext
+    VueContext,
+    AddNodeForm
   },
   data () {
     return {
@@ -66,6 +71,11 @@ export default {
       componentLoaded: false, // need to ensure component is loaded before using $refs
       settings: {
         nodeRadius: 70 // use variable for zoom later on
+      },
+      forms: {
+        addNode: {
+          visible: false
+        }
       },
       contextmenu: [
         {
@@ -380,6 +390,8 @@ export default {
     */
     addChild () {
       console.log('addChild()')
+      this.forms.addNode.visible = true
+      /*
 
       var newChild = {
         name: 'temp',
@@ -393,6 +405,8 @@ export default {
           newChild
         ]
       }
+
+      */
     },
     /*
       handles adding a sibling to the node - adding child to parent of this node
