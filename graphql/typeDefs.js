@@ -81,6 +81,21 @@ module.exports = gql`
     description: String
   }
 
+  input CreateWhakapapaInput {
+    child: String!
+    parent: String!
+    relationshipType: RelationshipType
+    legallyAdopted: Boolean
+    recps: [String]
+  }
+
+  enum RelationshipType {
+    birth
+    adopted
+    whangai
+    unknown
+  }
+
   type Peer {
     id: String
     state: String
@@ -103,6 +118,7 @@ module.exports = gql`
     createProfile(input: CreateProfileInput): String
     updateProfile(input: UpdateProfileInput): String
     uploadFile(file: Upload!): Blob
+    createWhakapapaRelation(input: CreateWhakapapaInput): String
   }
 
   type Subscription {
