@@ -73,21 +73,21 @@ export default {
           action: this.editPerson
         },
         {
-          title: 'Delete Person',
-          action: this.deletePerson
-        },
-        {
           title: 'Add Child',
           action: this.addChild
-        },
-        {
-          title: 'Add Sibling',
-          action: this.addSibling
         },
         {
           title: 'Add Parent',
           action: this.addParent
         }
+        // {
+        //   title: 'Delete Person',
+        //   action: this.deletePerson
+        // },
+        // {
+        //   title: 'Add Sibling',
+        //   action: this.addSibling
+        // }
       ],
       options: {
         addnode: false
@@ -95,22 +95,27 @@ export default {
       treeData: {
         // my family data -> Claudine is the mother of 5 children, and one of them has a child 'Otene'
         name: 'Claudine',
+        gender: 'female',
         children: [
           {
             name: 'Zara',
+            gender: 'female',
             children: [
               {
                 name: 'Otene',
+                gender: 'male',
                 children: []
               }
             ]
           },
           {
             name: 'Cherese',
+            gender: 'female',
             children: []
           },
           {
             name: 'Daynah',
+            gender: 'female',
             children: []
           },
           {
@@ -119,6 +124,7 @@ export default {
           },
           {
             name: 'Damon',
+            gender: 'male',
             children: []
           }
         ]
@@ -295,14 +301,14 @@ export default {
       extra attributes
     */
     nodes () {
-      console.log(this.root)
       return this.treeLayout(this.root)
         .descendants() // returns the array of descendants starting with the root node, then followed by each child in topological order
         .map((d, i) => { // returns a new custom object for each node
           return {
-            id: `node-${i}`,
+            id: `${name}-${i}`,
             index: i,
             name: d.data.name,
+            gender: d.data.gender,
             children: d.data.children,
             style: {
               transform: this.nodeVertical(d.x, d.y) // sets the position of this node
