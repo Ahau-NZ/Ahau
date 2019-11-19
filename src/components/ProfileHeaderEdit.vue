@@ -31,14 +31,16 @@
       </div>
     </v-row>
 
-    <v-row class="avatar">
-      <Avatar :image="avatarImage" :alt="preferredName" />
-      <div class="avatar-image">
-        <v-btn v-if="!updatingAvatar" class="toggle" fab color="white" @click="toggleUpdateAvatar">
-          <v-icon class="black--text">mdi-camera</v-icon>
-        </v-btn>
-        <span class="caption pt-4">Upload profile photo</span>
-      </div>
+    <v-row class="avatar-row">
+      <v-row class="avatar-box">
+        <div class="avatar-picker">
+          <v-btn v-if="!updatingAvatar" class="toggle" fab color="white" @click="toggleUpdateAvatar">
+            <v-icon class="black--text">mdi-camera</v-icon>
+          </v-btn>
+          <span class="caption pt-4">Upload profile photo</span>
+        </div>
+        <Avatar :image="avatarImage" :alt="preferredName" />
+      </v-row>
       <v-container v-if="updatingAvatar" class="editor">
         <v-image-input
           v-model="newAvatar"
@@ -199,25 +201,39 @@ function dataURLtoFile (dataurl, filename) {
     justify-content: space-around;
     width: 300px;
   }
-  .avatar {
+
+  .avatar-row {
     position: relative;
-    top: -18.75vh;
-    left: calc(50% - 400px - 64px);
-    margin-bottom: -25vh;
-    width: 25vh;
-  }
-  .avatar-image {
-    width: 25vh;
-    margin-bottom: -25vh;
-    background: rgba(100,100,100,0.8);
-    position: relative;
-    top: -25vh;
-    border-radius: 12.5vh;
-    display: flex;
-    flex-flow: column;
-    align-content: center;
-    align-items: center;
-    justify-content: center;
+    min-width: 600px;
+    max-width: 60vw;
+
+    margin: 0 auto;
+    // this seems like a bad way to be doing alignment here
+
+    .avatar-box {
+      position: absolute;
+      top: -18.75vh;
+      left: -5vh;
+
+      margin-bottom: -25vh;
+      width: 25vh;
+
+      .avatar-picker {
+        z-index: 1;
+
+        background: rgba(100,100,100,0.8);
+
+        width: 25vh;
+        border-radius: 12.5vh;
+        margin-bottom: -25vh;
+
+        display: flex;
+        flex-flow: column;
+        align-content: center;
+        align-items: center;
+        justify-content: center;
+      }
+    }
   }
 
   .editor {

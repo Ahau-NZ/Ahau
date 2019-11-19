@@ -164,7 +164,8 @@ export default {
     background: linear-gradient(to right, grey 0%,grey 50%,#000000 50%,white 50%,white 100%);
   }
   .body-width {
-    max-width: 600px;
+    min-width: 600px;
+    max-width: 60vw;
     min-height: calc(100vh - 40vh);
     background: white;
   }

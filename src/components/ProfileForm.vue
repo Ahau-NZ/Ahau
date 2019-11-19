@@ -8,7 +8,7 @@
     />
     <v-form class="body-width pt-0">
       <v-container class="white mx-auto pt-12 px-12">
-        <v-row class="form">
+        <v-row>
           <v-col cols="12" md="12" >
             <v-text-field
               light
@@ -208,11 +208,11 @@ export default {
     background: linear-gradient(to right, grey 0%,grey 50%,#000000 50%,white 50%,white 100%);
   }
   .body-width {
-    min-height: calc(100vh - 40vh);
     background: white;
-  }
-  .form {
-    max-width: 600px;
+
+    min-height: 60vh;
+    min-width: 600px;
+    max-width: 60vw;
     margin: 0 auto;
   }
 </style>
