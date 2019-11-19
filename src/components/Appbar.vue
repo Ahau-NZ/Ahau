@@ -13,6 +13,9 @@
       <v-spacer></v-spacer>
 
       <v-toolbar-items>
+        <v-btn text to='/tree?page=local' class="white--text text-uppercase">
+          whakapapa
+        </v-btn>
         <v-btn text to='/discovery?page=local' class="white--text text-uppercase">
           discover
         </v-btn>

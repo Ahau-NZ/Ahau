@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 
 import Login from '@/views/Login.vue'
+import Tree from '@/views/Tree.vue'
 
 import People from '@/views/People.vue'
 import PersonShow from '@/views/PersonShow.vue'
@@ -18,6 +19,10 @@ export default new Router({
   mode: 'history',
   routes: [
     { path: '/', redirect: '/login' },
+
+    // { path: '/', redirect: '/tree' },
+    { path: '/tree', name: 'tree', component: Tree },
+
     { path: '/login', name: 'login', component: Login },
     { path: '/logout', redirect: '/login' },
 
