@@ -1,64 +1,67 @@
 <template>
-  <div id="app">
+  <v-layout row wrap>
     <v-menu
-      ref="menu"
       v-model="menu"
       :close-on-content-click="false"
-      :return-value.sync="date"
+      :nudge-right="40"
       transition="scale-transition"
       offset-y
+      max-width="290px"
       min-width="290px"
     >
       <template v-slot:activator="{ on }">
         <v-text-field
-          v-model="date"
           :label="label"
           readonly
-          :required="required"
+          :value="date"
           v-on="on"
-        ></v-text-field>
+          prepend-icon="mdi-calendar"
+          color="pink"
+          required
+          :rules="rules"
+        >
+        </v-text-field>
       </template>
-      <v-date-picker v-model="date"
+      <v-date-picker
+        locale="en-in"
+        :max="maxDate"
+        v-model="value"
         no-title
-        scrollable
-        light
-      >
-        <v-spacer></v-spacer>
-        <v-btn @click="menu = false"
-          text
-          color="primary"
-        >
-          Cancel
-        </v-btn>
-        <v-btn  @click="$refs.menu.save(date)"
-          text
-          color="primary"
-        >
-          OK
-        </v-btn>
-      </v-date-picker>
+        @input="menu = false"
+      ></v-date-picker>
     </v-menu>
-  </div>
+  </v-layout>
 </template>
-
 <script>
-export default {
-  data () {
-    return {
-      date: null,
-      menu: false,
-      modal: false
-    }
-  },
-  props: {
-    label: {
-      type: String,
-      required: true
+  export default {
+    computed: {
+      date() {
+        return this.value ? this.formatDate(this.value) : "";
+      },
+      /*
+        gets todays date in YYYY-MM-DD format
+        TODO: change to get date in NZ
+      */
+      maxDate(){
+        var currentDate = new Date().toJSON().slice(0,10).replace(/-/g,'-');
+        return currentDate
+      }
     },
-    required: {
-      type: Boolean,
-      default: false
+    data() {
+      return {
+        menu: false,
+        value: null
+      };
+    },
+    props: {
+      rules: {
+        type: Array,
+        required: false
+      },
+      label: {
+        type: String,
+        required: true
+      }
     }
-  }
-}
+  };
 </script>
