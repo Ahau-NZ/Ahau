@@ -2,11 +2,15 @@
   <v-container class="full-width my-0 py-0">
     <v-row v-if="!updatingHeader" class="header-bg">
       <v-img :src="headerImage ? headerImage.uri : ''" min-width="100%" height="35vh"/>
-      <v-btn @click="toggleUpdateHeader" class="edit-header-button" tile color="grey">
-        <v-icon>mdi-pencil</v-icon> Edit header
-      </v-btn>
+      <div class="header"></div>
+      <div @click="toggleUpdateHeader" class="edit-header-button">
+        <v-btn fab color="white">
+          <v-icon class="black--text">mdi-pencil</v-icon>
+        </v-btn>
+        <span class="white--text pl-4 title">Upload header photo</span>
+      </div>
     </v-row>
-    <v-row v-if="updatingHeader" class="header-edit">
+    <v-row v-else class="header-edit">
       <v-image-input
         v-model="newHeader"
         :image-quality="0.85"
@@ -18,21 +22,25 @@
         image-format="jpeg"
       />
       <div class="handle-header-buttons">
-        <v-btn @click="toggleUpdateHeader" color="error" class="mr-4" >
-          <v-icon>mdi-cancel</v-icon>
+        <v-btn @click="toggleUpdateHeader" text color="secondary" class="mr-4" >
+          <v-icon>mdi-close</v-icon>
         </v-btn>
-        <v-btn @click="handleHeaderImage" :disabled="!newHeader" color="success">
+        <v-btn @click="handleHeaderImage" text :disabled="!newHeader" color="secondary">
           <v-icon>mdi-check</v-icon>
         </v-btn>
       </div>
     </v-row>
 
-    <v-row class="avatar">
-      <Avatar :image="avatarImage" :alt="preferredName" />
-      <v-btn v-if="!updatingAvatar" class="toggle" fab color="grey" @click="toggleUpdateAvatar">
-        <v-icon>mdi-camera</v-icon>
-      </v-btn>
-
+    <v-row class="avatar-row">
+      <v-row class="avatar-box">
+        <div class="avatar-picker">
+          <v-btn v-if="!updatingAvatar" class="toggle" fab color="white" @click="toggleUpdateAvatar">
+            <v-icon class="black--text">mdi-camera</v-icon>
+          </v-btn>
+          <span class="caption pt-4">Upload profile photo</span>
+        </div>
+        <Avatar :image="avatarImage" :alt="preferredName" />
+      </v-row>
       <v-container v-if="updatingAvatar" class="editor">
         <v-image-input
           v-model="newAvatar"
@@ -43,10 +51,10 @@
           backgroundColor="black"
         />
         <v-row class="actions">
-          <v-btn @click="toggleUpdateAvatar" outlined color="grey" class="mr-4" >
-            <v-icon>mdi-cancel</v-icon>
+          <v-btn @click="toggleUpdateAvatar" text color="secondary" class="mr-4" >
+            <v-icon>mdi-close</v-icon>
           </v-btn>
-          <v-btn @click="handleAvatarImage" :disabled="!newAvatar" color="success" >
+          <v-btn @click="handleAvatarImage" text :disabled="!newAvatar" color="secondary" >
             <v-icon>mdi-check</v-icon>
           </v-btn>
         </v-row>
@@ -161,6 +169,15 @@ function dataURLtoFile (dataurl, filename) {
     background: linear-gradient(45deg, hsl(0, 6%, 37.1%) 12%, transparent 0, transparent 88%, hsl(0, 6%, 37.1%) 0), linear-gradient(135deg, transparent 37%, hsl(13.5, 4%, 31%) 0, hsl(13.5, 4%, 31%) 63%, transparent 0), linear-gradient(45deg, transparent 37%, hsl(0, 6%, 37.1%) 0, hsl(0, 6%, 37.1%) 63%, transparent 0), hsl(0, 5.2%, 27.6%);
     background-size: 50px 50px;
   }
+  .header {
+    min-height: 35vh;
+    background: grey;
+    width: 100%;
+    margin-bottom: -35vh;
+    position: relative;
+    top: -35vh;
+    opacity: 0.6;
+  }
   .header-edit {
     height: 64vh;
     margin-bottom: calc(35vh - 64vh);
@@ -170,7 +187,7 @@ function dataURLtoFile (dataurl, filename) {
   .edit-header-button {
     cursor: pointer;
     position: absolute;
-    top: 30vh;
+    top: 27vh;
     right: 5vw;
     z-index: 999;
   }
@@ -184,39 +201,71 @@ function dataURLtoFile (dataurl, filename) {
     justify-content: space-around;
     width: 300px;
   }
-  .avatar {
+
+  .avatar-row {
     position: relative;
-    top: -18.75vh;
-    left: calc(50% - 450px - 64px);
-    margin-bottom: -25vh;
-    width: 25vh;
+    min-width: 600px;
+    max-width: 60vw;
 
-    .toggle {
-      cursor: pointer;
-      position: absolute;
-      top: 17vh;
-      left: 1vw;
-      z-index: 999;
-    }
-    .editor {
-      position: absolute;
-      background: rgba(0,0,0,.8);
-      height: 460px;
-      width: 610px;
-      z-index: 998;
-      padding: 50px;
+    margin: 0 auto;
+    // this seems like a bad way to be doing alignment here
 
-      .actions {
-        position: relative;
-        top: -5vh;
-        left: -3vw;
-        left: 0;
-        z-index: 999;
+    .avatar-box {
+      position: absolute;
+      top: -18.75vh;
+      left: -5vh;
+
+      margin-bottom: -25vh;
+      width: 25vh;
+
+      .avatar-picker {
+        z-index: 1;
+
+        background: rgba(100,100,100,0.8);
+
+        width: 25vh;
+        border-radius: 12.5vh;
+        margin-bottom: -25vh;
+
         display: flex;
-        flex-flow: row nowrap;
-        justify-content: space-around;
-        width: 300px;
+        flex-flow: column;
+        align-content: center;
+        align-items: center;
+        justify-content: center;
       }
     }
   }
+
+  .editor {
+    position: absolute;
+    background: rgba(0,0,0,.8);
+    height: 460px;
+    width: 610px;
+    z-index: 998;
+    padding: 50px;
+  }
+
+.toggle {
+  cursor: pointer;
+  z-index: 999;
+}
+.editor {
+  position: absolute;
+  background: rgba(0, 0, 0, 0.8);
+  height: 460px;
+  width: 610px;
+  z-index: 998;
+  padding: 50px;
+}
+.actions {
+  position: relative;
+  top: -5vh;
+  left: -3vw;
+  left: 0;
+  z-index: 999;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-around;
+  width: 300px;
+}
 </style>
