@@ -61,6 +61,7 @@
 <script>
 import gql from 'graphql-tag'
 import ProfileHeaderShow from '@/components/ProfileHeaderShow'
+
 // const get = require('lodash.get')
 
 export default {
