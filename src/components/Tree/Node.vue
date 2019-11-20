@@ -40,8 +40,8 @@ export default {
     */
     imageSource () {
       switch (this.node.gender) {
-        case 'male': return tane
-        case 'female': return wahine
+        case 'Male': return tane
+        case 'Female': return wahine
         default: return wahine // TODO androgenous avatar
       }
     },

@@ -108,37 +108,80 @@ export default {
       },
       treeData: {
         // my family data -> Claudine is the mother of 5 children, and one of them has a child 'Otene'
-        name: 'Claudine',
-        gender: 'female',
+        title: 'Ms',
+        gender: 'Female',
+        preferredName: 'Bubz',
+        legalName: 'Claudine Anita Eriepa',
+        dateOfBirth: '1970-07-19',
+        dateOfDeath: '',
+        adopted: false,
+        raised: false,
         children: [
           {
-            name: 'Zara',
-            gender: 'female',
+            title: 'Mrs',
+            gender: 'Female',
+            preferredName: 'Zara',
+            legalName: 'Zara Aria Davis',
+            dateOfBirth: '1994-06-08',
+            dateOfDeath: '',
+            adopted: false,
+            raised: false,
             children: [
               {
-                name: 'Otene',
-                gender: 'male',
+                title: 'Mr',
+                gender: 'Male',
+                preferredName: 'Otene',
+                legalName: 'Otene Pirika Henare Davis',
+                dateOfBirth: '2019-07-08',
+                dateOfDeath: '',
+                adopted: false,
+                raised: false,
                 children: []
               }
             ]
           },
           {
-            name: 'Cherese',
-            gender: 'female',
+            title: 'Miss',
+            gender: 'Female',
+            preferredName: 'Cherese',
+            legalName: 'Cherese Putiputi Eriepa',
+            dateOfBirth: '1995-07-24',
+            dateOfDeath: '',
+            adopted: false,
+            raised: false,
             children: []
           },
           {
-            name: 'Daynah',
-            gender: 'female',
+            title: 'Miss',
+            gender: 'Female',
+            preferredName: 'Daynah',
+            legalName: 'Daynah Anahera Eriepa',
+            dateOfBirth: '1995-07-24',
+            dateOfDeath: '',
+            adopted: false,
+            raised: false,
             children: []
           },
           {
-            name: 'Pititi',
+            title: 'Miss',
+            gender: 'Female',
+            preferredName: 'Peaches',
+            legalName: 'Pititi Kimiel Eriepa',
+            dateOfBirth: '1999-10-20',
+            dateOfDeath: '',
+            adopted: false,
+            raised: false,
             children: []
           },
           {
-            name: 'Damon',
-            gender: 'male',
+            title: 'Mr',
+            gender: 'Male',
+            preferredName: 'Dude',
+            legalName: 'Damon Manaia Deisher',
+            dateOfBirth: '2000-12-19',
+            dateOfDeath: '',
+            adopted: false,
+            raised: false,
             children: []
           }
         ]
@@ -319,10 +362,16 @@ export default {
         .descendants() // returns the array of descendants starting with the root node, then followed by each child in topological order
         .map((d, i) => { // returns a new custom object for each node
           return {
-            id: `${name}-${i}`,
+            id: `node-${i}`,
             index: i,
-            name: d.data.name,
+            title: d.data.title,
             gender: d.data.gender,
+            preferredName: d.data.preferredName,
+            legalName: d.data.legalName,
+            dateOfBirth: d.data.dateOfBirth,
+            dateOfDeath: d.data.dateOfDeath,
+            adopted: d.data.adopted,
+            raised: d.data.raised,
             children: d.data.children,
             style: {
               transform: this.nodeVertical(d.x, d.y) // sets the position of this node
@@ -409,25 +458,16 @@ export default {
     */
     addChild ($event) {
       console.log('addChild()')
-      console.log($event)
+
       this.newNode = $event
-      console.log(this.newNode)
-      /*
-
-      var newChild = {
-        name: 'temp',
-        children: []
-      }
-
-      if (this.node.children !== undefined) {
-        this.node.children.push(newChild)
-      } else {
+      
+      if(this.node.children !== undefined){
+        this.node.children.push(this.newNode)
+      }else{
         this.node.children = [
-          newChild
+          this.newNode
         ]
       }
-
-      */
     },
     /*
       handles adding a sibling to the node - adding child to parent of this node

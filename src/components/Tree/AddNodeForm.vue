@@ -38,20 +38,20 @@
                   <NodeDatePicker label="Date of Birth*"
                     :required="true"
                     :rules="form.rules.date.birth"
-                    @date="node.date.birth = $event"
+                    @date="node.dateOfBirth = $event"
                   />
                 </v-col>
                 <v-col cols="12" sm="5" md="3">
                   <NodeDatePicker label="Date Deceased"
                     :required="false"
-                    @date="node.date.death = $event"
+                    @date="node.dateOfDeath = $event"
                   />
                 </v-col>
               </v-row>
               <v-row>
                 <v-col cols="12" sm="5" md="7">
                   <v-text-field label="Preferred Name*"
-                    v-model="node.name.preferred"
+                    v-model="node.preferredName"
                     :rules="form.rules.name.preferred"
                     hint="This is the name that will show on the whakapapa"
                     required
@@ -64,7 +64,7 @@
               <v-row>
                 <v-col cols="12" sm="5" md="7">
                   <v-text-field label="Legal Name*"
-                    v-model="node.name.legal"
+                    v-model="node.legalName"
                     :rules="form.rules.name.legal"
                     hint="This is the name that appears on your birth certificate or ID"
                     required
@@ -153,16 +153,15 @@ export default {
         }
       },
       node: {
-        name: {
-          preferred: '',
-          legal: ''
-        },
-        date: {
-          birth: '',
-          death: ''
-        },
+        title: '',
+        gender: '',
+        preferredName: '',
+        legalName: '',
+        dateOfBirth: '',
+        dateOfDeath: '',
         adopted: false,
-        raised: false
+        raised: false,
+        children: []
       },
       titles: [
         'Mr',
