@@ -35,10 +35,10 @@
         </svg>
       </v-row>
     </v-container>
-    <AddNodeForm :visible="forms.addNode.visible"
-      @update-visible="hideAddNodeForm"
-      @new-node="addChild($event)"
-
+    <AddNodeForm
+      :visible="childNode"
+      @update-visible="child().hideForm()"
+      @new-node="child().add($event)"
     />
     <vue-context ref="menu">
       <li v-for="(option, index) in contextmenu" :key="index">
@@ -70,11 +70,12 @@ export default {
   },
   data () {
     return {
+      childNode: false,
       selectedNode: null, // gets value of current selected node (when right clicked)
       newNode: null,
       componentLoaded: false, // need to ensure component is loaded before using $refs
       settings: {
-        nodeRadius: 70 // use variable for zoom later on
+        nodeRadius: 45 // use variable for zoom later on
       },
       forms: {
         addNode: {
@@ -88,7 +89,7 @@ export default {
         },
         {
           title: 'Add Child',
-          action: this.showAddNodeForm
+          action: this.child().showForm
         },
         {
           title: 'Add Parent',
@@ -407,18 +408,6 @@ export default {
   methods: {
     /*
 
-      Add Node Form Methods
-
-    */
-    showAddNodeForm () {
-      this.forms.addNode.visible = true
-    },
-    hideAddNodeForm () {
-      this.forms.addNode.visible = false
-    },
-
-    /*
-
     */
     openContextMenu ($event, node) {
       this.selectedNode = node
@@ -453,20 +442,39 @@ export default {
       console.log('deletePerson')
     },
     /*
-      handles adding a child to the person, currently opens add node form
-      @TODO: move into node component
+      groups functions related to a adding a child
     */
-    addChild ($event) {
-      console.log('addChild()')
-
-      this.newNode = $event
-      
-      if(this.node.children !== undefined){
-        this.node.children.push(this.newNode)
-      }else{
-        this.node.children = [
-          this.newNode
-        ]
+    child() {
+      var vm = this
+      return {
+        /*
+          adds a new child node onto the selected node
+        */
+        add($event) {
+          console.log('child.add()')
+          vm.newNode = $event
+          if(vm.node.children !== undefined){
+            vm.node.children.push(vm.newNode)
+          }else{
+            vm.node.children = [
+              vm.newNode
+            ]
+          }
+        },
+        /*
+          shows the form for adding a child
+        */
+        showForm(){
+          console.log('child.showForm()')
+          vm.childNode = true
+        },
+        /*
+          hides the form for adding a child
+        */
+        hideForm(){
+          console.log('child.hideForm()')
+          vm.childNode = false
+        }
       }
     },
     /*
