@@ -33,35 +33,36 @@
   </v-layout>
 </template>
 <script>
-  export default {
-    computed: {
-      date() {
-        return this.value ? this.formatDate(this.value) : "";
-      },
-      /*
+export default {
+  computed: {
+    date () {
+      this.$emit('date', this.value)
+      return this.value
+    },
+    /*
         gets todays date in YYYY-MM-DD format
         TODO: change to get date in NZ
       */
-      maxDate(){
-        var currentDate = new Date().toJSON().slice(0,10).replace(/-/g,'-');
-        return currentDate
-      }
-    },
-    data() {
-      return {
-        menu: false,
-        value: null
-      };
-    },
-    props: {
-      rules: {
-        type: Array,
-        required: false
-      },
-      label: {
-        type: String,
-        required: true
-      }
+    maxDate () {
+      var currentDate = new Date().toJSON().slice(0, 10).replace(/-/g, '-')
+      return currentDate
     }
-  };
+  },
+  data () {
+    return {
+      menu: false,
+      value: null
+    }
+  },
+  props: {
+    rules: {
+      type: Array,
+      required: false
+    },
+    label: {
+      type: String,
+      required: true
+    }
+  }
+}
 </script>

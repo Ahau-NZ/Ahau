@@ -1,6 +1,6 @@
 <template>
   <v-row justify="center">
-    <v-dialog v-model="getVisible"
+    <v-dialog v-model="visible"
       light
       persistent
       max-width="1000px"
@@ -35,16 +35,16 @@
                   ></v-select>
                 </v-col>
                 <v-col cols="12" sm="5" md="3">
-                  <NodeDatePicker label="Date of Birth*" 
+                  <NodeDatePicker label="Date of Birth*"
                     :required="true"
                     :rules="form.rules.date.birth"
-                    @date="node.date.birth = $event.target.value"
+                    @date="node.date.birth = $event"
                   />
                 </v-col>
                 <v-col cols="12" sm="5" md="3">
                   <NodeDatePicker label="Date Deceased"
                     :required="false"
-                    @date="node.date.death = $event.target.value"
+                    @date="node.date.death = $event"
                   />
                 </v-col>
               </v-row>
@@ -83,11 +83,11 @@
               </v-row>
 
               <v-row>
-                  
+
                 <v-btn class="mx-2" fab>
                   <v-icon>mdi-plus</v-icon>
                 </v-btn>
-                  
+
               </v-row>
 
               <v-row class="actions">
@@ -98,9 +98,9 @@
                   <v-btn @click="onCancel" fab text color="secondary" class="mr-4">
                     <v-icon>mdi-cancel</v-icon>
                   </v-btn>
-                  <v-btn @click="validate"
+                  <v-btn @click="onSubmit"
                     :disabled="!form.valid"
-                    fab 
+                    fab
                     text
                     color="success"
                     class="mr-4">
@@ -118,19 +118,14 @@
 
 <script>
 import NodeDatePicker from './NodeDatePicker.vue'
-import Avatar from '../Avatar.vue'
 
 export default {
   components: {
-    NodeDatePicker,
-    Avatar
+    NodeDatePicker
   },
-  data(){
+  data () {
     return {
-      isVisible: true,
-      avatar: {
-        update: false
-      },
+      isVisible: false,
       form: {
         valid: true,
         rules: {
@@ -143,11 +138,11 @@ export default {
           name: {
             preferred: [
               v => !!v || 'Preferred name is required',
-              v => (v && v.length <= 20) || 'Name must be less than 20 characters',
+              v => (v && v.length <= 20) || 'Name must be less than 20 characters'
             ],
             legal: [
               v => !!v || 'Legal name is required',
-              v => (v && v.length <= 50) || 'Name must be less than 50 characters',
+              v => (v && v.length <= 50) || 'Name must be less than 50 characters'
             ]
           },
           date: {
@@ -159,7 +154,7 @@ export default {
       },
       node: {
         name: {
-          preffered: '',
+          preferred: '',
           legal: ''
         },
         date: {
@@ -189,28 +184,34 @@ export default {
       required: true
     }
   },
-  computed: {
-    setVisible(value) {
-      this.isVisible = value
-    },
-    getVisible(){
-      return this.isVisible
-    }
-  },
   methods: {
-    onSubmit(){
-      alert('Submitted!')
-    },
-    onCancel(){
-      alert('Cancelled!')
-    },
-    validate(){
-      if(this.$refs.form.validate()){
-        alert('Validated!')
+    onSubmit () {
+      console.log('onSubmit()')
+      if (this.$refs.form.validate()) {
+        var node = this.node
+        console.log('onSubmit() validated')
+
+        console.log(node)
+        // send the data back to the parent component
+        this.$emit('new-node', node)
+
+        // hide this form in parent component
+        this.$emit('update-visible')
+        
+      } else {
+        console.log('onSubmit() not validated')
       }
+    },
+    onCancel () {
+      console.log('onCancel()')
+
+      // update visible in parent component
+      this.$emit('update-visible', false)
+
+      // reset the form
+      this.$refs.form.reset()
     }
   }
-  
 }
 </script>
 

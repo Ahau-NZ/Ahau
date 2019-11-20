@@ -25,7 +25,7 @@
           >
             <g v-for="node in nodes" :key="node.id"
               class="node"
-              @contextmenu.prevent="openMenu($event, node)"
+              @contextmenu.prevent="openContextMenu($event, node)"
               :style="node.style">
               <Node
                 :node="node"
@@ -36,6 +36,9 @@
       </v-row>
     </v-container>
     <AddNodeForm :visible="forms.addNode.visible"
+      @update-visible="hideAddNodeForm"
+      @new-node="addChild($event)"
+
     />
     <vue-context ref="menu">
       <li v-for="(option, index) in contextmenu" :key="index">
@@ -68,6 +71,7 @@ export default {
   data () {
     return {
       selectedNode: null, // gets value of current selected node (when right clicked)
+      newNode: null,
       componentLoaded: false, // need to ensure component is loaded before using $refs
       settings: {
         nodeRadius: 70 // use variable for zoom later on
@@ -84,7 +88,7 @@ export default {
         },
         {
           title: 'Add Child',
-          action: this.addChild
+          action: this.showAddNodeForm
         },
         {
           title: 'Add Parent',
@@ -352,7 +356,22 @@ export default {
     this.componentLoaded = true
   },
   methods: {
-    openMenu ($event, node) {
+    /*
+
+      Add Node Form Methods
+
+    */
+    showAddNodeForm () {
+      this.forms.addNode.visible = true
+    },
+    hideAddNodeForm () {
+      this.forms.addNode.visible = false
+    },
+
+    /*
+
+    */
+    openContextMenu ($event, node) {
       this.selectedNode = node
       this.$refs.menu.open($event)
     },
@@ -388,9 +407,11 @@ export default {
       handles adding a child to the person, currently opens add node form
       @TODO: move into node component
     */
-    addChild () {
+    addChild ($event) {
       console.log('addChild()')
-      this.forms.addNode.visible = true
+      console.log($event)
+      this.newNode = $event
+      console.log(this.newNode)
       /*
 
       var newChild = {
