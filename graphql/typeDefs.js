@@ -125,7 +125,7 @@ module.exports = gql`
     "Scuttlebutt identity profile"
     profile(id: String!): Profile
 
-    "Scuttlebutt identity profile"
+    "Scuttlebutt parent and child relations to a profile"
     whakapapa(id: String!): Whakapapa
   }
 
@@ -133,7 +133,7 @@ module.exports = gql`
     createProfile(input: CreateProfileInput): String
     updateProfile(input: UpdateProfileInput): String
     uploadFile(file: Upload!): Blob
-    createWhakapapaRelation(input: CreateWhakapapaInput): Whakapapa
+    createWhakapapaRelation(input: CreateWhakapapaInput): String
   }
 
   type Subscription {
