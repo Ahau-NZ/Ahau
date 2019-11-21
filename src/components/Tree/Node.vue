@@ -41,7 +41,7 @@ export default {
       temporary function to display placeholder image of male or female based on gender
     */
     imageSource () {
-      switch (this.node.gender) {
+      switch (this.node.data.gender) {
         case 'Male': return tane
         case 'Female': return wahine
         default: return wahine // TODO androgenous avatar

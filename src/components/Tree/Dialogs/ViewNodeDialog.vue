@@ -11,7 +11,7 @@
         <v-card-text>
           <v-container light>
             <v-row>
-              {{ node.preferredName }}
+              Preferred Name: {{ node.data.preferredName }}
             </v-row>
           </v-container>
         </v-card-text>

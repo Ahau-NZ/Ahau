@@ -5,7 +5,7 @@
           <h1>Tree</h1>
       </v-row>
       <v-row>
-        <v-btn @click="newNode().addChild()"> Add Child </v-btn>
+        <!--<v-btn @click="newNode().addChild(tempNode)"> Add Child </v-btn>-->
         <svg
           width="100%"
           :height="height"
@@ -86,6 +86,17 @@ export default {
   },
   data () {
     return {
+      tempNode: {
+        title: 'Ms',
+        gender: 'Female',
+        preferredName: 'Temp',
+        legalName: 'Temporary Node',
+        dateOfBirth: '1970-07-19',
+        dateOfDeath: '',
+        adopted: false,
+        raised: false,
+        children: []
+      },
       dialogs: {
         viewNode: false,
         editNode: false,
@@ -279,7 +290,7 @@ export default {
     selectedNode () {
       var vm = this
       if (vm.node.selected === null) {
-        vm.node.selected = vm.nodes[0]
+        vm.node.selected = this.nodes[0]
       }
       return vm.node.selected
     },
@@ -310,7 +321,7 @@ export default {
     */
     treeX () {
       if (!this.componentLoaded) {
-        return null
+        return 0
       }
       return this.$refs.baseSvg.clientWidth / 2
     },
@@ -321,7 +332,7 @@ export default {
     */
     treeY () {
       if (!this.componentLoaded) {
-        return null
+        return 0
       }
       return this.$refs.baseSvg.clientHeight / 3
     },
@@ -383,7 +394,6 @@ export default {
       return this.treeLayout(this.root)
         .descendants() // returns the array of descendants starting with the root node, then followed by each child in topological order
         .map((d, i) => { // returns a new custom object for each node
-          console.log(d)
           return {
             children: d.children,
             data: d.data,
@@ -519,18 +529,6 @@ export default {
           TODO: Fix memory leak with NewNodeDialog and Tree
         */
         addChild ($event) {
-          /*
-          var newNodeObj = {
-            title: 'Ms',
-            gender: 'Female',
-            preferredName: 'Temp',
-            legalName: 'Temporary Node',
-            dateOfBirth: '1970-07-19',
-            dateOfDeath: '',
-            adopted: false,
-            raised: false,
-            children: []
-          } */
           var newNodeObj = $event
           var selected = vm.node.selected
           var newNode = d3.hierarchy(newNodeObj)
