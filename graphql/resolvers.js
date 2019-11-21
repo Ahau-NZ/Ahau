@@ -10,6 +10,7 @@ const blobToURI = require('ssb-serve-blobs/id-to-url')
 const getProfiles = require('./ssb/profiles')
 const getProfile = require('./ssb/profile')
 const getCommunities = require('./ssb/communities')
+const getWhakapapa = require('./ssb/whakapapa')
 
 const pubsub = new PubSub()
 
@@ -56,7 +57,16 @@ module.exports = sbot => ({
             ...addURIs(profile)
           })
         })
+      }),
+
+    whakapapa: (_, { id }, { feedId, profileId }) =>
+      new Promise((resolve, reject) => {
+        getWhakapapa(sbot, id, (err, whakapapa) => {
+          if (err) return reject(err)
+          resolve(whakapapa)
+        })
       })
+
   },
 
   Profile: {

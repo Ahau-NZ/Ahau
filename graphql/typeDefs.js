@@ -101,6 +101,18 @@ module.exports = gql`
     state: String
   }
 
+  type WhakapapaNode {
+    profileId: String
+    relationshipType: RelationshipType
+    legallyAdopted: Boolean
+  }
+
+  type Whakapapa {
+    profileId: String
+    parents: [WhakapapaNode]
+    children: [WhakapapaNode]
+  }
+
   type Query {
     "Scuttlebutt Who am I"
     whoami: CurrentIdentity
@@ -112,13 +124,16 @@ module.exports = gql`
 
     "Scuttlebutt identity profile"
     profile(id: String!): Profile
+
+    "Scuttlebutt identity profile"
+    whakapapa(id: String!): Whakapapa
   }
 
   type Mutation {
     createProfile(input: CreateProfileInput): String
     updateProfile(input: UpdateProfileInput): String
     uploadFile(file: Upload!): Blob
-    createWhakapapaRelation(input: CreateWhakapapaInput): String
+    createWhakapapaRelation(input: CreateWhakapapaInput): Whakapapa
   }
 
   type Subscription {
