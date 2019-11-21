@@ -5,6 +5,7 @@
           <h1>Tree</h1>
       </v-row>
       <v-row>
+        <v-btn @click="newNode().addChild()"> Add Child </v-btn>
         <svg
           width="100%"
           :height="height"
@@ -57,7 +58,7 @@
     <NewNodeDialog
       :show="dialogs.newNode"
       @close="newNode().hide()"
-      @submit="newNode().add($event)"
+      @submit="newNode().addChild($event)"
     />
   </div>
 </template>
@@ -272,13 +273,14 @@ export default {
     }
   },
   computed: {
+    /*
+      returns the node selected on the tree or the root if none is selected
+    */
     selectedNode () {
       var vm = this
       if (vm.node.selected === null) {
         vm.node.selected = vm.nodes[0]
       }
-      console.log('selected')
-      console.log(vm.node.selected)
       return vm.node.selected
     },
     /*
@@ -381,23 +383,18 @@ export default {
       return this.treeLayout(this.root)
         .descendants() // returns the array of descendants starting with the root node, then followed by each child in topological order
         .map((d, i) => { // returns a new custom object for each node
+          console.log(d)
           return {
-            id: `node-${i}`,
-            index: i,
-            title: d.data.title,
-            gender: d.data.gender,
-            preferredName: d.data.preferredName,
-            legalName: d.data.legalName,
-            dateOfBirth: d.data.dateOfBirth,
-            dateOfDeath: d.data.dateOfDeath,
-            adopted: d.data.adopted,
-            raised: d.data.raised,
-            children: d.data.children,
+            children: d.children,
+            data: d.data,
+            depth: d.depth,
+            height: d.height,
+            parent: d.parent,
+            x: d.x,
+            y: d.depth * 180,
             style: {
               transform: this.nodeVertical(d.x, d.y) // sets the position of this node
-            },
-            x: d.x, // X position for the centre of the node (USEFUL TO HAVE)
-            y: d.y // Y position for the centre of the node (USEFUL TO HAVE)
+            }
           }
         })
     },
@@ -476,6 +473,9 @@ export default {
     addParent () {
       console.log('addParent')
     },
+    /*
+      handles hiding and showing the view person dialog
+    */
     viewNode () {
       var vm = this
       return {
@@ -488,6 +488,9 @@ export default {
         }
       }
     },
+    /*
+      handles hiding and showing the edit person dialog
+    */
     editNode () {
       var vm = this
       return {
@@ -499,6 +502,9 @@ export default {
         }
       }
     },
+    /*
+      handles adding a node to the tree as well as hiding and showing the dialog
+    */
     newNode () {
       var vm = this
       return {
@@ -510,19 +516,36 @@ export default {
         },
         /*
           adds a new child node onto the selected node
+          TODO: Fix memory leak with NewNodeDialog and Tree
         */
-        add ($event) {
-          console.log('child().add()')
-          console.log($event)
-          vm.node.new = $event
-          if (vm.node.selected.children !== undefined) {
-            vm.node.selected.children.push(vm.node.new)
-          } else {
-            vm.node.selected.children = [
-              vm.node.new
-            ]
+        addChild ($event) {
+          /*
+          var newNodeObj = {
+            title: 'Ms',
+            gender: 'Female',
+            preferredName: 'Temp',
+            legalName: 'Temporary Node',
+            dateOfBirth: '1970-07-19',
+            dateOfDeath: '',
+            adopted: false,
+            raised: false,
+            children: []
+          } */
+          var newNodeObj = $event
+          var selected = vm.node.selected
+          var newNode = d3.hierarchy(newNodeObj)
+
+          newNode.depth = selected.depth + 1
+          newNode.height = selected.height - 1
+          newNode.parent = selected
+
+          if (selected.children === undefined) {
+            selected.children = []
+            selected.data.children = []
           }
-          console.log(vm.root)
+
+          selected.children.push(newNode)
+          selected.data.children.push(newNode.data)
         }
       }
     }
