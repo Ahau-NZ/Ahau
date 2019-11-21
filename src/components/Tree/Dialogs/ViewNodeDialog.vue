@@ -1,0 +1,72 @@
+<template>
+  <Dialog :show="show" @close="close">
+    <v-form ref="form"
+    >
+      <v-card>
+        <v-card-title>
+          <span class="headline">
+            View Person
+          </span>
+        </v-card-title>
+        <v-card-text>
+          <v-container light>
+            <v-row>
+              {{ node.preferredName }}
+            </v-row>
+          </v-container>
+        </v-card-text>
+      </v-card>
+    </v-form>
+  </Dialog>
+</template>
+
+<script>
+import Dialog from './Dialog.vue'
+
+export default {
+  components: {
+    Dialog
+  },
+  props: {
+    show: {
+      type: Boolean,
+      required: true
+    },
+    node: {
+      type: Object,
+      required: false,
+      default () {
+        return {
+          title: '',
+          gender: '',
+          preferredName: '',
+          legalName: '',
+          dateOfBirth: '',
+          dateOfDeath: '',
+          adopted: false,
+          raised: false,
+          children: []
+        }
+      }
+    }
+  },
+  data () {
+    return {
+
+    }
+  },
+  methods: {
+    close: function () {
+      console.log(this.node)
+      this.$emit('close')
+
+      // reset forms?
+    },
+    save: function () {
+      // do stuff here
+
+      this.close()
+    }
+  }
+}
+</script>

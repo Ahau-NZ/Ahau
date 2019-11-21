@@ -23,23 +23,20 @@
           <g :transform="`translate(${treeX-settings.nodeRadius} ${treeY-settings.nodeRadius})`"
             ref="tree"
           >
-            <g v-for="node in nodes" :key="node.id"
+            <g v-for="nodeItem in nodes" :key="nodeItem.id"
               class="node"
-              @contextmenu.prevent="openContextMenu($event, node)"
-              :style="node.style">
+              @contextmenu.prevent="openContextMenu($event, nodeItem)"
+              :style="nodeItem.style">
               <Node
-                :node="node"
-                :radius="settings.nodeRadius"/>
+                :node="nodeItem"
+                :radius="settings.nodeRadius"
+                @click="viewNode().show($event)"
+              />
             </g>
           </g>
         </svg>
       </v-row>
     </v-container>
-    <AddNodeForm
-      :visible="childNode"
-      @update-visible="child().hideForm()"
-      @new-node="child().add($event)"
-    />
     <vue-context ref="menu">
       <li v-for="(option, index) in contextmenu" :key="index">
         <a hret="#"
@@ -48,6 +45,20 @@
         </a>
       </li>
     </vue-context>
+    <ViewNodeDialog
+      :show="dialogs.viewNode"
+      @close="viewNode().hide()"
+      :node="selectedNode"
+    />
+    <EditNodeDialog
+      :show="dialogs.editNode"
+      @close="editNode().hide()"
+    />
+    <NewNodeDialog
+      :show="dialogs.newNode"
+      @close="newNode().hide()"
+      @submit="newNode().add($event)"
+    />
   </div>
 </template>
 
@@ -57,39 +68,44 @@ import * as d3 from 'd3'
 import Node from './Node.vue'
 import Link from './Link.vue'
 
-import AddNodeForm from './AddNodeForm.vue'
-
 import { VueContext } from 'vue-context'
+
+import ViewNodeDialog from './Dialogs/ViewNodeDialog.vue'
+import EditNodeDialog from './Dialogs/EditNodeDialog.vue'
+import NewNodeDialog from './Dialogs/NewNodeDialog.vue'
 
 export default {
   components: {
     Node,
     Link,
     VueContext,
-    AddNodeForm
+    ViewNodeDialog,
+    EditNodeDialog,
+    NewNodeDialog
   },
   data () {
     return {
-      childNode: false,
-      selectedNode: null, // gets value of current selected node (when right clicked)
-      newNode: null,
+      dialogs: {
+        viewNode: false,
+        editNode: false,
+        newNode: false
+      },
+      node: {
+        selected: null,
+        new: null
+      },
       componentLoaded: false, // need to ensure component is loaded before using $refs
       settings: {
         nodeRadius: 45 // use variable for zoom later on
       },
-      forms: {
-        addNode: {
-          visible: false
-        }
-      },
       contextmenu: [
         {
           title: 'Edit Person',
-          action: this.editPerson
+          action: this.editNode().show
         },
         {
           title: 'Add Child',
-          action: this.child().showForm
+          action: this.newNode().show
         },
         {
           title: 'Add Parent',
@@ -256,11 +272,14 @@ export default {
     }
   },
   computed: {
-    /*
-      returns the node which has been right clicked
-    */
-    node () {
-      return this.selectedNode
+    selectedNode () {
+      var vm = this
+      if (vm.node.selected === null) {
+        vm.node.selected = vm.nodes[0]
+      }
+      console.log('selected')
+      console.log(vm.node.selected)
+      return vm.node.selected
     },
     /*
       calculation for the elbow style tree links
@@ -410,7 +429,7 @@ export default {
 
     */
     openContextMenu ($event, node) {
-      this.selectedNode = node
+      this.node.selected = node
       this.$refs.menu.open($event)
     },
     /*
@@ -442,42 +461,6 @@ export default {
       console.log('deletePerson')
     },
     /*
-      groups functions related to a adding a child
-    */
-    child() {
-      var vm = this
-      return {
-        /*
-          adds a new child node onto the selected node
-        */
-        add($event) {
-          console.log('child.add()')
-          vm.newNode = $event
-          if(vm.node.children !== undefined){
-            vm.node.children.push(vm.newNode)
-          }else{
-            vm.node.children = [
-              vm.newNode
-            ]
-          }
-        },
-        /*
-          shows the form for adding a child
-        */
-        showForm(){
-          console.log('child.showForm()')
-          vm.childNode = true
-        },
-        /*
-          hides the form for adding a child
-        */
-        hideForm(){
-          console.log('child.hideForm()')
-          vm.childNode = false
-        }
-      }
-    },
-    /*
       handles adding a sibling to the node - adding child to parent of this node
       NOTE: will need to specify which parent?
       @TODO: figure out if more suited in node component or this component
@@ -492,6 +475,56 @@ export default {
     */
     addParent () {
       console.log('addParent')
+    },
+    viewNode () {
+      var vm = this
+      return {
+        show ($event) {
+          vm.node.selected = $event
+          vm.dialogs.viewNode = true
+        },
+        hide () {
+          vm.dialogs.viewNode = false
+        }
+      }
+    },
+    editNode () {
+      var vm = this
+      return {
+        show () {
+          vm.dialogs.editNode = true
+        },
+        hide () {
+          vm.dialogs.editNode = false
+        }
+      }
+    },
+    newNode () {
+      var vm = this
+      return {
+        show () {
+          vm.dialogs.newNode = true
+        },
+        hide () {
+          vm.dialogs.newNode = false
+        },
+        /*
+          adds a new child node onto the selected node
+        */
+        add ($event) {
+          console.log('child().add()')
+          console.log($event)
+          vm.node.new = $event
+          if (vm.node.selected.children !== undefined) {
+            vm.node.selected.children.push(vm.node.new)
+          } else {
+            vm.node.selected.children = [
+              vm.node.new
+            ]
+          }
+          console.log(vm.root)
+        }
+      }
     }
   }
 }

@@ -14,6 +14,8 @@
         :height="imageConstraints"
         :xlink:href="imageSource"
         clip-path="url(#myCircle)"
+        @click="click"
+
       />
   </svg>
 </template>
@@ -51,12 +53,17 @@ export default {
     imageConstraints () {
       return this.radius * 2
     }
+  },
+  methods: {
+    click () {
+      this.$emit('click', this.node)
+    }
   }
 }
 </script>
 
 <style scoped lang="scss">
   image {
-    border: 4 solid black;
+    text-align: center;
   }
 </style>
