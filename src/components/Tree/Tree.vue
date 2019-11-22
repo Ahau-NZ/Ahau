@@ -56,6 +56,7 @@
       @close="editNode().hide()"
     />
     <NewNodeDialog
+      v-if="dialogs.newNode"
       :show="dialogs.newNode"
       @close="newNode().hide()"
       @submit="newNode().addChild($event)"
@@ -214,7 +215,162 @@ export default {
             children: []
           }
         ]
+      }, 
+      treeData2: {
+        id: 0
       },
+      profile: [
+        {
+          id: 0,
+          name: 'claudine',
+          children: [
+            {
+              id: 1
+            },
+            {
+              id: 2
+            },
+            {
+              id: 3
+            },
+            {
+              id: 4
+            },
+            {
+              id: 5
+            }
+          ],
+          parents: [
+            {
+              id: 6
+            },
+            {
+              id: 7
+            }
+          ]
+        },
+        {
+          id: 1,
+          name: 'zara',
+          children: [
+            {
+              id: 8
+            }
+          ],
+          parents: [
+            {
+              id: 0
+            },
+            {
+              id: 9
+            }
+          ]
+        },
+        {
+          id: 2,
+          name: 'cherese',
+          children: [],
+          parents: [
+            {
+              id: 0
+            },
+            {
+              id: 9
+            }
+          ]
+        },
+        {
+          id: 3,
+          name: 'daynah',
+          children: [],
+          parents: [
+            {
+              id: 0
+            },
+            {
+              id: 9
+            }
+          ]
+        },
+        {
+          id: 4,
+          name: 'pititi',
+          children: [],
+          parents: [
+            {
+              id: 0
+            },
+            {
+              id: 9
+            }
+          ]
+        },
+        {
+          id: 5,
+          name: 'damon',
+          children: [],
+          parents: [
+            {
+              id: 0
+            },
+            {
+              id: 9
+            }
+          ]
+        },
+        {
+          id: 6,
+          name: 'bill',
+          children: [
+            {
+              id: 0
+            }
+          ],
+          parents: []
+
+        },
+        {
+          id: 7,
+          name: 'rena',
+          children: [
+            {
+              id: 0
+            }
+          ],
+          parents: []
+        },
+        {
+          id: 8,
+          name: 'otene',
+          children: [],
+          parents: [
+            {
+              id: 1
+            }
+          ]
+        },
+        {
+          id: 9,
+          name: 'stacey',
+          children: [
+            {
+              id: 1
+            },
+            {
+              id: 2
+            },
+            {
+              id: 3
+            },
+            {
+              id: 4
+            },
+            {
+              id: 5
+            }
+          ]
+        }
+      ],
       familyTree: {
         id: 0,
         name: 'Stacey',

@@ -28,5 +28,9 @@
 **8:00am:** Crash seems to happen when adding a node onto a newly added one...
 
 **9:00am:** The crash only happens when getting the data from `$event`in `newNode().addChild()`. Because I added a button and was calling the function from it using local data, and it worked fine.
+
+**1:00pm** Confirmed: Crash only happens when adding a child onto a new node only, can add as much as we want with the original treeData nodes
+
+**1:30pm** Fixed Crash with simple v-if statement
     
 ---

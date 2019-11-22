@@ -11,7 +11,28 @@
         <v-card-text>
           <v-container light>
             <v-row>
+              Title: {{ node.data.title }}
+            </v-row>
+            <v-row>
+              Gender: {{ node.data.gender }}
+            </v-row>
+            <v-row>
+              Date Of Birth: {{ node.data.dateOfBirth }}
+            </v-row>
+            <v-row>
+              Date Of Death: {{ node.data.dateOfDeath }}
+            </v-row>
+            <v-row>
               Preferred Name: {{ node.data.preferredName }}
+            </v-row>
+            <v-row>
+              Legal Name: {{ node.data.legalName }}
+            </v-row>
+            <v-row>
+              Legally Adopted: {{ node.data.adopted }}
+            </v-row>
+            <v-row>
+              Raised: {{ node.data.raised }}
             </v-row>
           </v-container>
         </v-card-text>
