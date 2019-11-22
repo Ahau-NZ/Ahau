@@ -33,8 +33,6 @@ export default {
       this.$emit('close')
     },
     save () {
-      // do stuff here
-
       this.close()
     }
   }

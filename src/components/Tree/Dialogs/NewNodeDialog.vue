@@ -223,7 +223,6 @@ export default {
       }
 
       console.log('---->validated')
-
       // send the data back to the parent component
       this.$emit('submit', this.data)
 
