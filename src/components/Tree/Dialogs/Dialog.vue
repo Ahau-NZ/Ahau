@@ -11,6 +11,7 @@
     </v-row>
   </transition>
 </template>
+
 <script>
 export default {
   props: {

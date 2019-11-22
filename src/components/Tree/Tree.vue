@@ -2,61 +2,38 @@
   <div id="app">
     <v-container class="body-width white mx-auto py-12 px-12">
       <v-row>
-          <h1>Tree</h1>
+        <h1>Tree</h1>
       </v-row>
       <v-row>
         <!--<v-btn @click="newNode().addChild(tempNode)"> Add Child </v-btn>-->
-        <svg
-          width="100%"
-          :height="height"
-          ref="baseSvg">
-          <g :transform="`translate(${treeX} ${treeY})`"
-            ref="tree"
-          >
-            <g v-for="link in links" :key="link.id"
-              class="link">
-              <Link
-                :link="link"
-                :branch="branch"
-              />
+        <svg width="100%" :height="height" ref="baseSvg">
+          <g :transform="`translate(${treeX} ${treeY})`">
+            <g v-for="link in links" :key="link.id" class="link">
+              <Link :link="link" :branch="branch" />
             </g>
           </g>
+
           <g :transform="`translate(${treeX-settings.nodeRadius} ${treeY-settings.nodeRadius})`"
-            ref="tree"
-          >
-            <g v-for="nodeItem in nodes" :key="nodeItem.id"
+            ref="tree">
+            <g v-for="node in nodes" :key="node.id"
               class="node"
-              @contextmenu.prevent="openContextMenu($event, nodeItem)"
-              :style="nodeItem.style">
-              <Node
-                :node="nodeItem"
-                :radius="settings.nodeRadius"
-                @click="viewNode().show($event)"
-              />
+              @contextmenu.prevent="openContextMenu($event, node)"
+              :style="node.style">
+              <Node :node="node" :radius="settings.nodeRadius" @click="viewNode().show($event)" />
             </g>
           </g>
         </svg>
       </v-row>
     </v-container>
+
     <vue-context ref="menu">
       <li v-for="(option, index) in contextmenu" :key="index">
-        <a hret="#"
-          @click.prevent="option.action">
-          {{ option.title }}
-        </a>
+        <a href="#" @click.prevent="option.action"> {{ option.title }} </a>
       </li>
     </vue-context>
-    <ViewNodeDialog
-      v-if="dialogs.viewNode"
-      :show="dialogs.viewNode"
-      @close="viewNode().hide()"
-      :node="selectedNode"
-    />
-    <EditNodeDialog
-      v-if="dialogs.editNode"
-      :show="dialogs.editNode"
-      @close="editNode().hide()"
-    />
+
+    <ViewNodeDialog v-if="dialogs.viewNode" :show="dialogs.viewNode" @close="viewNode().hide()" :node="node.selected" />
+    <EditNodeDialog v-if="dialogs.editNode" :show="dialogs.editNode" @close="editNode().hide()" />
     <NewNodeDialog
       v-if="dialogs.newNode"
       :show="dialogs.newNode"
@@ -67,16 +44,18 @@
 </template>
 
 <script>
-
 import * as d3 from 'd3'
-import Node from './Node.vue'
-import Link from './Link.vue'
 
 import { VueContext } from 'vue-context'
 
+import Node from './Node.vue'
+import Link from './Link.vue'
 import ViewNodeDialog from './Dialogs/ViewNodeDialog.vue'
 import EditNodeDialog from './Dialogs/EditNodeDialog.vue'
 import NewNodeDialog from './Dialogs/NewNodeDialog.vue'
+import mockTreeData from './mock-tree-data'
+
+console.log(mockTreeData)
 
 export default {
   components: {
@@ -138,102 +117,10 @@ export default {
       options: {
         addnode: false
       },
-      treeData: {
-        // my family data -> Claudine is the mother of 5 children, and one of them has a child 'Otene'
-        title: 'Ms',
-        gender: 'Female',
-        preferredName: 'Bubz',
-        legalName: 'Claudine Anita Eriepa',
-        dateOfBirth: '1970-07-19',
-        dateOfDeath: '',
-        adopted: false,
-        raised: false,
-        children: [
-          {
-            title: 'Mrs',
-            gender: 'Female',
-            preferredName: 'Zara',
-            legalName: 'Zara Aria Davis',
-            dateOfBirth: '1994-06-08',
-            dateOfDeath: '',
-            adopted: false,
-            raised: false,
-            children: [
-              {
-                title: 'Mr',
-                gender: 'Male',
-                preferredName: 'Otene',
-                legalName: 'Otene Pirika Henare Davis',
-                dateOfBirth: '2019-07-08',
-                dateOfDeath: '',
-                adopted: false,
-                raised: false,
-                children: []
-              }
-            ]
-          },
-          {
-            title: 'Miss',
-            gender: 'Female',
-            preferredName: 'Cherese',
-            legalName: 'Cherese Putiputi Eriepa',
-            dateOfBirth: '1995-07-24',
-            dateOfDeath: '',
-            adopted: false,
-            raised: false,
-            children: []
-          },
-          {
-            title: 'Miss',
-            gender: 'Female',
-            preferredName: 'Daynah',
-            legalName: 'Daynah Anahera Eriepa',
-            dateOfBirth: '1995-07-24',
-            dateOfDeath: '',
-            adopted: false,
-            raised: false,
-            children: []
-          },
-          {
-            title: 'Miss',
-            gender: 'Female',
-            preferredName: 'Peaches',
-            legalName: 'Pititi Kimiel Eriepa',
-            dateOfBirth: '1999-10-20',
-            dateOfDeath: '',
-            adopted: false,
-            raised: false,
-            children: []
-          },
-          {
-            title: 'Mr',
-            gender: 'Male',
-            preferredName: 'Dude',
-            legalName: 'Damon Manaia Deisher',
-            dateOfBirth: '2000-12-19',
-            dateOfDeath: '',
-            adopted: false,
-            raised: false,
-            children: []
-          }
-        ]
-      }
+      treeData: mockTreeData
     }
   },
   computed: {
-    /*
-      returns the node selected on the tree or the root if none is selected
-    */
-    selectedNode () {
-      var vm = this
-      if (vm.node.selected === null) {
-        vm.node.selected = this.nodes[0]
-      }
-      return vm.node.selected
-    },
-    /*
-      calculation for the elbow style tree links
-    */
     branch () {
       return this.settings.nodeRadius + (this.settings.nodeRadius) / 2
     },
