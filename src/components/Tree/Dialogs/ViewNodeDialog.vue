@@ -71,21 +71,11 @@ export default {
       }
     }
   },
-  data () {
-    return {
-
-    }
-  },
   methods: {
     close: function () {
-      console.log(this.node)
       this.$emit('close')
-
-      // reset forms?
     },
     save: function () {
-      // do stuff here
-
       this.close()
     }
   }

@@ -183,36 +183,15 @@ export default {
   },
   methods: {
     close: function () {
-      console.log('close()')
       this.$emit('close')
-
-      // reset the form properties
-      // TODO: figure out when is a good time to reset these?
-       //this.node.title = ''
-       //this.node.gender = ''
-       //this.node.preferredName = ''
-       //this.node.legalName = ''
-       //this.node.dateOfBirth = ''
-       //this.node.dateOfDeath = ''
-       //this.node.adopted = false
-       //this.node.raised = false
-       //this.node.children = []
-
     },
     submit () {
-      var vm = this
-      console.log('submit()')
       if (this.$refs.form.validate()) {
-        console.log('---->validated')
-        var node = vm.node
-
         // send the data back to the parent component
-        this.$emit('submit', node)
+        this.$emit('submit', this.node)
 
         // close this dialog
         this.close()
-      } else {
-        console.log('---->not validated')
       }
     }
   }
