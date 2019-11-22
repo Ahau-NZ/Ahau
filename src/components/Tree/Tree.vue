@@ -5,7 +5,7 @@
         <h1>Tree</h1>
       </v-row>
       <v-row>
-        <!--<v-btn @click="newNode().addChild(tempNode)"> Add Child </v-btn>-->
+        <!--<v-btn @click="addChild(mockNode)"> Add Child </v-btn>-->
         <svg width="100%" :height="height" ref="baseSvg">
           <g :transform="`translate(${treeX} ${treeY})`">
             <g v-for="link in links" :key="link.id" class="link">
@@ -19,7 +19,7 @@
               class="node"
               @contextmenu.prevent="openContextMenu($event, node)"
               :style="node.style">
-              <Node :node="node" :radius="settings.nodeRadius" @click="viewNode().show($event)" />
+              <Node :node="node" :radius="settings.nodeRadius" @click="toggleShow" />
             </g>
           </g>
         </svg>
@@ -31,15 +31,14 @@
         <a href="#" @click.prevent="option.action"> {{ option.title }} </a>
       </li>
     </vue-context>
+nod
 
-    <ViewNodeDialog v-if="dialogs.viewNode" :show="dialogs.viewNode" @close="viewNode().hide()" :node="node.selected" />
-    <EditNodeDialog v-if="dialogs.editNode" :show="dialogs.editNode" @close="editNode().hide()" />
-    <NewNodeDialog
-      v-if="dialogs.newNode"
-      :show="dialogs.newNode"
-      @close="newNode().hide()"
-      @submit="newNode().addChild($event)"
-    />
+    <ViewNodeDialog v-if="dialog.show" :show="dialog.show" :node="node.selected"
+      @close="toggleShow"/>
+    <EditNodeDialog v-if="dialog.edit" :show="dialog.edit"
+      @close="toggleEdit"/>
+    <NewNodeDialog v-if="dialog.new" :show="dialog.new"
+      @close="toggleNew" @submit="addChild($event)"/>
   </div>
 </template>
 
@@ -54,8 +53,7 @@ import ViewNodeDialog from './Dialogs/ViewNodeDialog.vue'
 import EditNodeDialog from './Dialogs/EditNodeDialog.vue'
 import NewNodeDialog from './Dialogs/NewNodeDialog.vue'
 import mockTreeData from './mock-tree-data'
-
-console.log(mockTreeData)
+// import mockNode from './mock-node'
 
 export default {
   components: {
@@ -68,21 +66,10 @@ export default {
   },
   data () {
     return {
-      tempNode: {
-        title: 'Ms',
-        gender: 'Female',
-        preferredName: 'Temp',
-        legalName: 'Temporary Node',
-        dateOfBirth: '1970-07-19',
-        dateOfDeath: '',
-        adopted: false,
-        raised: false,
-        children: []
-      },
-      dialogs: {
-        viewNode: false,
-        editNode: false,
-        newNode: false
+      dialog: {
+        show: false,
+        edit: false,
+        new: false
       },
       node: {
         selected: null,
@@ -93,26 +80,9 @@ export default {
         nodeRadius: 45 // use variable for zoom later on
       },
       contextmenu: [
-        {
-          title: 'Edit Person',
-          action: this.editNode().show
-        },
-        {
-          title: 'Add Child',
-          action: this.newNode().show
-        },
-        {
-          title: 'Add Parent',
-          action: this.addParent
-        }
-        // {
-        //   title: 'Delete Person',
-        //   action: this.deletePerson
-        // },
-        // {
-        //   title: 'Add Sibling',
-        //   action: this.addSibling
-        // }
+        { title: 'Add Child', action: this.toggleNew },
+        { title: 'Add Parent', action: this.setNew },
+        { title: 'Edit Person', action: this.toggleEdit }
       ],
       options: {
         addnode: false
@@ -256,120 +226,51 @@ export default {
     this.componentLoaded = true
   },
   methods: {
-    /*
+    toggleShow (target) {
+      this.node.selected = target
+      this.dialog.show = !this.dialog.show
+    },
+    toggleEdit () {
+      this.dialog.edit = !this.dialog.edit
+    },
+    toggleNew (state = false) {
+      this.dialog.new = !this.dialog.new
+    },
 
-    */
     openContextMenu ($event, node) {
       this.node.selected = node
       this.$refs.menu.open($event)
     },
     /*
-      Method which calculates the transform to draw nodes horizontally
-      @TODO: needs to be moved to the node component
+      adds a new child node onto the selected node
+      TODO: Fix memory leak with NewNodeDialog and Tree
     */
+    addChild ($event) {
+      var selected = this.node.selected
+      var newNode = d3.hierarchy($event)
+
+      newNode.depth = selected.depth + 1
+      newNode.height = selected.height - 1
+      newNode.parent = selected
+
+      if (selected.children === undefined) {
+        selected.children = []
+        selected.data.children = []
+      }
+
+      selected.children.push(newNode)
+      selected.data.children.push(newNode.data)
+    },
+
+    // d3 helpers
+    // @TODO: needs to be move these to the Node component
     nodeHorizontal (x, y) {
+      // calculate the transform to draw nodes horizontally
       return `translate(${y}px, ${x}px)`
     },
-    /*
-      Method which calculates the transform to draw nodes vertically
-      @TODO: needs to be moved to the node component
-    */
     nodeVertical (x, y) {
+      // calculate the transform to draw nodes vertically
       return `translate(${x}px, ${y}px)`
-    },
-    /*
-      handles editing a persons details
-      @TODO: move into node component
-    */
-    editPerson () {
-      console.log('editPerson')
-    },
-    /*
-      handles deleting a person
-      @TODO: figure out if more suited in node component or this component
-    */
-    deletePerson () {
-      console.log('deletePerson')
-    },
-    /*
-      handles adding a sibling to the node - adding child to parent of this node
-      NOTE: will need to specify which parent?
-      @TODO: figure out if more suited in node component or this component
-    */
-    addSibling () {
-      console.log('addSibling')
-    },
-    /*
-      handles adding a parent for the current node - adding this node as a child
-      of a new parent node
-      @TODO: figure out if more suited in node component or this component
-    */
-    addParent () {
-      console.log('addParent')
-    },
-    /*
-      handles hiding and showing the view person dialog
-    */
-    viewNode () {
-      var vm = this
-      return {
-        show ($event) {
-          vm.node.selected = $event
-          vm.dialogs.viewNode = true
-        },
-        hide () {
-          vm.dialogs.viewNode = false
-        }
-      }
-    },
-    /*
-      handles hiding and showing the edit person dialog
-    */
-    editNode () {
-      var vm = this
-      return {
-        show () {
-          vm.dialogs.editNode = true
-        },
-        hide () {
-          vm.dialogs.editNode = false
-        }
-      }
-    },
-    /*
-      handles adding a node to the tree as well as hiding and showing the dialog
-    */
-    newNode () {
-      var vm = this
-      return {
-        show () {
-          vm.dialogs.newNode = true
-        },
-        hide () {
-          vm.dialogs.newNode = false
-        },
-        /*
-          adds a new child node onto the selected node
-          TODO: Fix memory leak with NewNodeDialog and Tree
-        */
-        addChild ($event) {
-          var newNodeObj = $event
-          var selected = vm.node.selected
-          var newNode = d3.hierarchy(newNodeObj)
-
-          newNode.depth = selected.depth + 1
-          newNode.height = selected.height - 1
-          newNode.parent = selected
-
-          if (selected.children === undefined) {
-            selected.children = []
-            selected.data.children = []
-          }
-
-          selected.children.push(newNode)
-          selected.data.children.push(newNode.data)
-        }
-      }
     }
   }
 }

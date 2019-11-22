@@ -1,5 +1,5 @@
 <template>
-  <Dialog :show="show" @close="close">
+  <Dialog :node=node :show="show" @close="close">
     <v-form ref="form">
       <v-card>
         <v-card-title>
@@ -32,10 +32,7 @@ export default {
     Dialog
   },
   props: {
-    show: {
-      type: Boolean,
-      required: true
-    },
+    show: { type: Boolean, required: true },
     node: {
       type: Object,
       required: false,
@@ -55,8 +52,7 @@ export default {
     }
   },
   methods: {
-    close: function () {
-      console.log(this.node)
+    close () {
       this.$emit('close')
     }
   }

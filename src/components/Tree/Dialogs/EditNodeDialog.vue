@@ -29,12 +29,10 @@ export default {
     }
   },
   methods: {
-    close: function () {
+    close () {
       this.$emit('close')
-
-      // reset forms?
     },
-    save: function () {
+    save () {
       // do stuff here
 
       this.close()
