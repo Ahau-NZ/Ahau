@@ -29,6 +29,12 @@ module.exports = gql`
     uri: String
   }
 
+  enum Gender {
+    male
+    female
+    other
+  }
+
   type Blob {
     blob: String
     mimeType: String
@@ -49,6 +55,8 @@ module.exports = gql`
     avatarImage: Image
     headerImage: Image
 
+    gender: Gender
+
     tiaki: [Profile]
   }
 
@@ -60,6 +68,7 @@ module.exports = gql`
     avatarImage: ImageInput
     headerImage: ImageInput
     description: String
+    gender: Gender
   }
   input CreateProfileInput {
     type: String!
@@ -70,6 +79,7 @@ module.exports = gql`
     avatarImage: ImageInput
     headerImage: ImageInput
     description: String
+    gender: Gender
   }
 
   input CommunityInput {
