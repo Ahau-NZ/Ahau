@@ -11,6 +11,7 @@
     </v-row>
   </transition>
 </template>
+
 <script>
 export default {
   props: {
@@ -19,17 +20,23 @@ export default {
       required: true
     }
   },
+  data () {
+    return {
+      listener: null
+    }
+  },
   methods: {
     close: function () {
       this.$emit('close')
     }
   },
-  mounted: function () {
-    document.addEventListener('keydown', (e) => {
-      if (this.show && e.keyCode === 27) {
-        this.close()
-      }
+  mounted () {
+    this.listener = document.addEventListener('keydown', (e) => {
+      if (e.keyCode === 27) this.close()
     })
+  },
+  destroyed () {
+    document.removeEventListener('keydown', this.listener)
   }
 }
 </script>

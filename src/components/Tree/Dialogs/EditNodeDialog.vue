@@ -29,10 +29,10 @@ export default {
     }
   },
   methods: {
-    close: function () {
+    close () {
       this.$emit('close')
     },
-    save: function () {
+    save () {
       this.close()
     }
   }
