@@ -1,32 +1,3 @@
-# Tree
-
-Instead of having everything from generating, drawing and re-orientating nodes and links in one file, I have instead split them up into different components.
-
-### Tree Component
-
-Handles turning the treeData into an array of nodes and links.
-
-* Nodes: holds all information about a person stored within treeData.
-  > The nodes have been customized.
-* Links: holds information about the line between the parent and the child node.
-  > The links have been customized.
-
----
-
-### Node Component
-
-Handles drawing a `<circle>`, but currently the parent element handles positioning it.
-
----
- 
-### Link Componenent
-
-Handles drawing a `<path>` from Parent(x1,y1) to Child(x2,y2).
-
-It also holds methods to draw the elbow lines horizontally or vertically. 
-
----
-
 ### Notes
 
 * Changing size of the nodes needs to be changed in four places: 
@@ -34,3 +5,32 @@ It also holds methods to draw the elbow lines horizontally or vertically.
     2. Link.vue: branch needs to be larger than the radius
     3. Tree.vue: nodeSeparationX
     4. Tree.vue: nodeSeparationY
+
+---
+
+### TODO
+
+
+ - [ ] Clear addnode form after submission
+ - [ ] Allow dates to be cleared as they cant be at the moment
+ - [ ] Add Zoom and Pan
+ - [ ] Resize tree when window changes
+ - [ ] Resize tree when nodes are added or removed
+
+
+---
+### Fix memory leak crash happening when calling `newNode().addChild()`
+  
+#### Updates
+
+##### Friday 22 November 2019
+
+**8:00am:** Crash seems to happen when adding a node onto a newly added one...
+
+**9:00am:** The crash only happens when getting the data from `$event`in `newNode().addChild()`. Because I added a button and was calling the function from it using local data, and it worked fine.
+
+**1:00pm** Confirmed: Crash only happens when adding a child onto a new node only, can add as much as we want with the original treeData nodes
+
+**1:30pm** Fixed Crash with simple v-if statement
+    
+---
