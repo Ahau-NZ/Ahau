@@ -31,7 +31,6 @@
         <a href="#" @click.prevent="option.action"> {{ option.title }} </a>
       </li>
     </vue-context>
-nod
 
     <ViewNodeDialog v-if="dialog.show" :show="dialog.show" :node="node.selected"
       @close="toggleShow"/>
