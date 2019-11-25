@@ -6,57 +6,20 @@
       :headerImage="profile.headerImage"
       :addImages="addImages"
     />
-    <v-form class="body-width pt-0">
-      <v-container class="white mx-auto pt-12 px-12">
-        <v-row>
-          <v-col cols="12" md="12" >
-            <v-text-field
-              light
-              v-model="profile.preferredName"
-              label="Preferred name"
-            ></v-text-field>
-          </v-col>
-
-          <v-col cols="12" md="12" >
-            <v-text-field
-              light
-              v-model="profile.legalName"
-              label="Legal name"
-            ></v-text-field>
-          </v-col>
-
-          <v-col cols="12">
-            <v-textarea
-              v-model="profile.description"
-              light
-              name="input-7-1"
-              label="Description"
-              hint="Hint text"
-            ></v-textarea>
-          </v-col>
-
-          <v-col cols="12">
-            <v-btn @click="onCancel" outlined text color="secondary" class="mr-4">
-              <v-icon>mdi-close</v-icon>
-            </v-btn>
-
-            <v-btn v-if="hasChanges" @click="saveProfile" text color="secondary" class="mr-4">
-              <v-icon>mdi-check</v-icon>
-            </v-btn>
-            <v-btn v-else outlined color="secondary" text class="mr-4">
-              <v-icon>mdi-check</v-icon>
-            </v-btn>
-          </v-col>
-
-        </v-row>
-      </v-container>
-    </v-form>
+    <ProfileInfoEdit
+      :saveProfile="saveProfile"
+      :preferredName="profile.preferredName"
+      :legalName="profile.legalName"
+      :description="profile.description"
+    />
   </div>
 </template>
 
 <script>
 import gql from 'graphql-tag'
 import ProfileHeaderEdit from '@/components/ProfileHeaderEdit'
+import ProfileInfoEdit from '@/components/ProfileInfoEdit'
+
 const get = require('lodash.get')
 
 export default {
@@ -194,7 +157,8 @@ export default {
     }
   },
   components: {
-    ProfileHeaderEdit
+    ProfileHeaderEdit,
+    ProfileInfoEdit
   }
 }
 </script>
@@ -206,13 +170,5 @@ export default {
     flex-direction: column;
     align-items: center;
     background: linear-gradient(to right, grey 0%,grey 50%,#000000 50%,white 50%,white 100%);
-  }
-  .body-width {
-    background: white;
-
-    min-height: 60vh;
-    min-width: 600px;
-    max-width: 60vw;
-    margin: 0 auto;
   }
 </style>

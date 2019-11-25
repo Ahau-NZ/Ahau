@@ -43,6 +43,7 @@
 
 <script>
 import * as d3 from 'd3'
+import gql from 'graphql-tag'
 
 import { VueContext } from 'vue-context'
 
@@ -51,7 +52,7 @@ import Link from './Link.vue'
 import ViewNodeDialog from './Dialogs/ViewNodeDialog.vue'
 import EditNodeDialog from './Dialogs/EditNodeDialog.vue'
 import NewNodeDialog from './Dialogs/NewNodeDialog.vue'
-import mockTreeData from './mock-tree-data'
+// import mockTreeData from './mock-tree-data'
 // import mockNode from './mock-node'
 
 export default {
@@ -86,7 +87,13 @@ export default {
       options: {
         addnode: false
       },
-      treeData: mockTreeData
+      whakapapa: {
+          gender: null,
+          preferredName: '',
+          legalName: '',
+          children: [],
+          parents: []
+      }
     }
   },
   computed: {
@@ -163,7 +170,7 @@ export default {
       returns a nested data structure representing a tree based on the treeData object
     */
     root () {
-      return d3.hierarchy(this.treeData)
+      return d3.hierarchy(this.whakapapa)
     },
     /*
       creates a new tree layout and sets the size depending on the separation
@@ -218,6 +225,32 @@ export default {
             y2: d.target.y // centre y position of the child node
           }
         })
+    }
+  },
+  apollo: {
+    // Query with parameters
+    whakapapa: {
+      query: gql`query {
+        whakapapa {
+          id
+          gender
+          preferredName
+          legalName
+          children {
+            id
+            gender
+            preferredName
+            legalName
+          }
+          parents {
+            id
+            gender
+            preferredName
+            legalName
+          }
+        }
+      }`,
+      fetchPolicy: 'no-cache'
     }
   },
   mounted () {

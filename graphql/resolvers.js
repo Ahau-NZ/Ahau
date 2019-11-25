@@ -59,11 +59,23 @@ module.exports = sbot => ({
         })
       }),
 
-    whakapapa: (_, { id }, { feedId, profileId }) =>
+    whakapapa: async (_, { id }, { feedId, profileId }) =>
       new Promise((resolve, reject) => {
+        let response = {}
         getWhakapapa(sbot, id, (err, whakapapa) => {
           if (err) return reject(err)
-          resolve(whakapapa)
+          try {
+            response = await getProfile(sbot, id)
+            response.parents = await whakapapa.parents.map(async parent => {
+              return await getProfile(sbot, parent.id)
+            })
+            response.children = await whakapapa.children.map(async child => {
+              return await getProfile(sbot, child.id)
+            })
+          } catch (err) {
+            return reject(err)
+          }
+          resolve(response)
         })
       })
 

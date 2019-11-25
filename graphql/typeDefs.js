@@ -101,14 +101,12 @@ module.exports = gql`
     state: String
   }
 
-  type WhakapapaNode {
-    profileId: String
+  type WhakapapaNode extend Profile {
     relationshipType: RelationshipType
     legallyAdopted: Boolean
   }
 
-  type Whakapapa {
-    profileId: String
+  type Whakapapa extend Profile {
     parents: [WhakapapaNode]
     children: [WhakapapaNode]
   }
