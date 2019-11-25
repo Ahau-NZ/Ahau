@@ -10,7 +10,14 @@
       :height="imageConstraints"
       :xlink:href="imageSource"
       clip-path="url(#myCircle)"
-      @click="click" />
+      @click="click" 
+    />
+    <text
+      :x="textX"
+      :y="imageConstraints+10"
+    >
+      {{ node.data.legalName }}
+    </text>
   </svg>
 </template>
 <script>
@@ -46,6 +53,14 @@ export default {
     */
     imageConstraints () {
       return this.radius * 2
+    },
+    textX(){
+      return this.radius - (this.textWidth/2)
+    },
+    textWidth(){
+      var width = (this.node.data.legalName.length * 15) / 2
+      this.$emit('textWidth', width)
+      return width
     }
   },
   methods: {
@@ -57,7 +72,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-  image {
-    text-align: center;
+  svg:not(:root) {
+    overflow: visible;
   }
 </style>
