@@ -18,7 +18,7 @@
             <g v-for="node in nodes" :key="node.id"
               class="node"
               @contextmenu.prevent="openContextMenu($event, node)"
-              :style="node.style">
+              >
               <Node :node="node" :radius="settings.nodeRadius" @click="toggleShow" />
             </g>
           </g>
@@ -194,10 +194,7 @@ export default {
             height: d.height,
             parent: d.parent,
             x: d.x,
-            y: d.depth * 180,
-            style: {
-              transform: this.nodeVertical(d.x, d.y) // sets the position of this node
-            }
+            y: d.y
           }
         })
     },
@@ -259,17 +256,6 @@ export default {
 
       selected.children.push(newNode)
       selected.data.children.push(newNode.data)
-    },
-
-    // d3 helpers
-    // @TODO: needs to be move these to the Node component
-    nodeHorizontal (x, y) {
-      // calculate the transform to draw nodes horizontally
-      return `translate(${y}px, ${x}px)`
-    },
-    nodeVertical (x, y) {
-      // calculate the transform to draw nodes vertically
-      return `translate(${x}px, ${y}px)`
     }
   }
 }

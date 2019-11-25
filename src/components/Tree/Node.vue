@@ -1,23 +1,25 @@
 <template>
   <svg>
-    <defs>
-      <clipPath id="myCircle">
-        <circle :cx="radius" :cy="radius" :r="radius" />
-      </clipPath>
-    </defs>
-    <image
-      :width="imageConstraints"
-      :height="imageConstraints"
-      :xlink:href="imageSource"
-      clip-path="url(#myCircle)"
-      @click="click" 
-    />
-    <text
-      :x="textX"
-      :y="imageConstraints+10"
-    >
-      {{ node.data.legalName }}
-    </text>
+    <g :style="style">
+      <defs>
+        <clipPath id="myCircle">
+          <circle :cx="radius" :cy="radius" :r="radius" />
+        </clipPath>
+      </defs>
+      <image
+        :width="imageConstraints"
+        :height="imageConstraints"
+        :xlink:href="imageSource"
+        clip-path="url(#myCircle)"
+        @click="click" 
+      />
+      <text
+        :x="textX"
+        :y="imageConstraints+10"
+      >
+        {{ node.data.legalName }}
+      </text>
+    </g>
   </svg>
 </template>
 <script>
@@ -61,11 +63,22 @@ export default {
       var width = (this.node.data.legalName.length * 15) / 2
       this.$emit('textWidth', width)
       return width
+    },
+    style(){
+      return { transform: this.nodeVertical(this.node.x, this.node.y) } // sets the position of this node
     }
   },
   methods: {
     click () {
       this.$emit('click', this.node)
+    },
+    nodeHorizontal (x, y) {
+      // calculate the transform to draw nodes horizontally
+      return `translate(${y}px, ${x}px)`
+    },
+    nodeVertical (x, y) {
+      // calculate the transform to draw nodes vertically
+      return `translate(${x}px, ${y}px)`
     }
   }
 }
