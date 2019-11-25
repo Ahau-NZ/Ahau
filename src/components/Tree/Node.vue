@@ -13,11 +13,8 @@
         clip-path="url(#myCircle)"
         @click="click"
       />
-      <text
-        :x="textX"
-        :y="imageConstraints+10"
-      >
-        {{ node.data.legalName }}
+      <text :x="textX" :y="imageConstraints+5">
+        {{ node.data.preferredName }}
       </text>
     </g>
   </svg>
@@ -56,41 +53,38 @@ export default {
     imageConstraints () {
       return this.radius * 2
     },
+    /*
+      centers the text element under image
+    */
     textX () {
       return this.radius - (this.textWidth / 2)
     },
+    /*
+      calculates the width of the text element
+    */
     textWidth () {
-      var width = (this.node.data.legalName.length * 7.2)
+      var width = (this.node.data.preferredName.length * 7.2)
       this.$emit('textWidth', width)
       return width
     },
+    /*
+      sets the position of this node
+    */
     style () {
-      return { transform: this.nodeVertical(this.node.x, this.node.y) } // sets the position of this node
+      return { transform: this.nodeVertical }
     },
-    spaces () {
-      var spacesCount = 0
-      var text = this.node.data.legalName
-      for (var i = 1; i < text.length; i++) {
-        if (text.charAt(i) === ' ') {
-          spacesCount++
-        }
-      }
-      console.log('spaces: ' + spacesCount)
-      return spacesCount
+    nodeHorizontal () {
+      // calculate the transform to draw nodes horizontally
+      return `translate(${this.node.y}px, ${this.node.x}px)`
+    },
+    nodeVertical () {
+      // calculate the transform to draw nodes vertically
+      return `translate(${this.node.x}px, ${this.node.y}px)`
     }
-
   },
   methods: {
     click () {
       this.$emit('click', this.node)
-    },
-    nodeHorizontal (x, y) {
-      // calculate the transform to draw nodes horizontally
-      return `translate(${y}px, ${x}px)`
-    },
-    nodeVertical (x, y) {
-      // calculate the transform to draw nodes vertically
-      return `translate(${x}px, ${y}px)`
     }
   }
 }

@@ -76,9 +76,9 @@ export default {
       },
       componentLoaded: false, // need to ensure component is loaded before using $refs
       settings: {
-        nodeRadius: 70, // use variable for zoom later on
-        nodeSeparationX: 0,
-        nodeSeparationY: 150,
+        nodeRadius: 50, // use variable for zoom later on
+        nodeSeparationX: 100,
+        nodeSeparationY: 150
       },
       contextmenu: [
         { title: 'Add Child', action: this.toggleNew },
@@ -93,7 +93,7 @@ export default {
   },
   computed: {
     branch () {
-      return this.settings.nodeSeparationY/2 + this.settings.nodeRadius
+      return this.settings.nodeSeparationY / 2 + this.settings.nodeRadius
     },
     /*
       the space between nodes on the x axis
@@ -259,11 +259,15 @@ export default {
       selected.children.push(newNode)
       selected.data.children.push(newNode.data)
     },
-    updateSeparation($event){
+    /*
+      updated when the Node returns its text-width, sets the separation between nodes to the largest text width.
+      Which stops overlapping labels.
+    */
+    updateSeparation ($event) {
       var textWidth = $event
-      console.log(textWidth)
-      if(textWidth > this.settings.nodeSeparationX){
+      if (textWidth > this.settings.nodeSeparationX) {
         this.settings.nodeSeparationX = textWidth
+        this.settings.nodeSeparationY = textWidth / 2
       }
     }
   }
