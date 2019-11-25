@@ -19,7 +19,7 @@
               class="node"
               @contextmenu.prevent="openContextMenu($event, node)"
               >
-              <Node :node="node" :radius="settings.nodeRadius" @click="toggleShow" />
+              <Node :node="node" :radius="settings.nodeRadius" @click="toggleShow" @textWidth="updateSeparation"/>
             </g>
           </g>
         </svg>
@@ -76,7 +76,9 @@ export default {
       },
       componentLoaded: false, // need to ensure component is loaded before using $refs
       settings: {
-        nodeRadius: 45 // use variable for zoom later on
+        nodeRadius: 70, // use variable for zoom later on
+        nodeSeparationX: 0,
+        nodeSeparationY: 150,
       },
       contextmenu: [
         { title: 'Add Child', action: this.toggleNew },
@@ -91,21 +93,21 @@ export default {
   },
   computed: {
     branch () {
-      return this.settings.nodeRadius + (this.settings.nodeRadius) / 2
+      return this.settings.nodeSeparationY/2 + this.settings.nodeRadius
     },
     /*
       the space between nodes on the x axis
       @TODO: will be used later on for implementing zoom and pan on tree
     */
     nodeSeparationX () {
-      return this.settings.nodeRadius * 3
+      return this.settings.nodeSeparationX
     },
     /*
       the space between node on the y axis
       @TODO: will be used later on for implementing zoom and pan on tree
     */
     nodeSeparationY () {
-      return this.settings.nodeRadius * 3
+      return this.settings.nodeSeparationY
     },
     /*
       gets the X position of the tree based on the svg size
@@ -172,8 +174,8 @@ export default {
     treeLayout () {
       return d3.tree()
         .nodeSize([
-          this.nodeSeparationX,
-          this.nodeSeparationY
+          this.nodeSeparationX + this.settings.nodeRadius,
+          this.nodeSeparationY + this.settings.nodeRadius
         ])
         .separation(function (a, b) {
           return a.parent === b.parent ? 1 : 2
@@ -256,6 +258,13 @@ export default {
 
       selected.children.push(newNode)
       selected.data.children.push(newNode.data)
+    },
+    updateSeparation($event){
+      var textWidth = $event
+      console.log(textWidth)
+      if(textWidth > this.settings.nodeSeparationX){
+        this.settings.nodeSeparationX = textWidth
+      }
     }
   }
 }

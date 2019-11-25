@@ -11,7 +11,7 @@
         :height="imageConstraints"
         :xlink:href="imageSource"
         clip-path="url(#myCircle)"
-        @click="click" 
+        @click="click"
       />
       <text
         :x="textX"
@@ -56,17 +56,29 @@ export default {
     imageConstraints () {
       return this.radius * 2
     },
-    textX(){
-      return this.radius - (this.textWidth/2)
+    textX () {
+      return this.radius - (this.textWidth / 2)
     },
-    textWidth(){
-      var width = (this.node.data.legalName.length * 15) / 2
+    textWidth () {
+      var width = (this.node.data.legalName.length * 7.2)
       this.$emit('textWidth', width)
       return width
     },
-    style(){
+    style () {
       return { transform: this.nodeVertical(this.node.x, this.node.y) } // sets the position of this node
+    },
+    spaces () {
+      var spacesCount = 0
+      var text = this.node.data.legalName
+      for (var i = 1; i < text.length; i++) {
+        if (text.charAt(i) === ' ') {
+          spacesCount++
+        }
+      }
+      console.log('spaces: ' + spacesCount)
+      return spacesCount
     }
+
   },
   methods: {
     click () {
@@ -87,5 +99,8 @@ export default {
 <style scoped lang="scss">
   svg:not(:root) {
     overflow: visible;
+  }
+  svg:hover{
+    cursor: pointer;
   }
 </style>
