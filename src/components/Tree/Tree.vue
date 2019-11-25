@@ -6,20 +6,22 @@
       </v-row>
       <v-row>
         <!--<v-btn @click="addChild(mockNode)"> Add Child </v-btn>-->
-        <svg width="100%" :height="height" ref="baseSvg">
-          <g :transform="`translate(${treeX} ${treeY})`">
-            <g v-for="link in links" :key="link.id" class="link">
-              <Link :link="link" :branch="branch" />
+        <svg id="baseSvg" width="100%" :height="height" ref="baseSvg">
+          <g id="baseGroup">
+            <g :transform="`translate(${treeX} ${treeY})`">
+              <g v-for="link in links" :key="link.id" class="link">
+                <Link :link="link" :branch="branch" />
+              </g>
             </g>
-          </g>
 
-          <g :transform="`translate(${treeX-settings.nodeRadius} ${treeY-settings.nodeRadius})`"
-            ref="tree">
-            <g v-for="node in nodes" :key="node.id"
-              @contextmenu.prevent="openContextMenu($event, node)"
-              class="node"
-              >
-              <Node :node="node" :radius="settings.nodeRadius" @click="toggleShow" @textWidth="updateSeparation"/>
+            <g :transform="`translate(${treeX-settings.nodeRadius} ${treeY-settings.nodeRadius})`"
+              ref="tree">
+              <g v-for="node in nodes" :key="node.id"
+                @contextmenu.prevent="openContextMenu($event, node)"
+                class="node"
+                >
+                <Node :node="node" :radius="settings.nodeRadius" @click="toggleShow" @textWidth="updateSeparation"/>
+              </g>
             </g>
           </g>
         </svg>
@@ -76,7 +78,7 @@ export default {
       },
       componentLoaded: false, // need to ensure component is loaded before using $refs
       settings: {
-        nodeRadius: 50, // use variable for zoom later on
+        nodeRadius: 70, // use variable for zoom later on
         nodeSeparationX: 100,
         nodeSeparationY: 150
       },
@@ -202,8 +204,18 @@ export default {
   mounted () {
     // means the vue component has rendered
     this.componentLoaded = true
+    this.zoom()
   },
   methods: {
+    zoom(){
+      var svg = d3.select('#baseSvg')
+      var g = d3.select('#baseGroup')
+      svg.call(
+        d3.zoom()
+        .on('zoom', function(){
+          g.attr('transform', d3.event.transform)  
+        }))
+    },
     toggleShow (target) {
       this.node.selected = target
       this.dialog.show = !this.dialog.show
