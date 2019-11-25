@@ -1,26 +1,26 @@
 <template>
   <svg>
-    <g :style="style">
+    <g :style="groupStyle">
       <defs>
         <clipPath id="myCircle">
           <circle :cx="radius" :cy="radius" :r="radius" />
         </clipPath>
       </defs>
       <image
-        :width="imageConstraints"
-        :height="imageConstraints"
+        :width="diameter"
+        :height="diameter"
         :xlink:href="imageSource"
         clip-path="url(#myCircle)"
         @click="click"
       />
-      <text :x="textX" :y="imageConstraints+5">
-        {{ node.data.preferredName }}
-      </text>
+      <g :style="textStyle">
+        <rect :width="textWidth" y="-16" height="20"></rect>
+        <text>{{ node.data.preferredName }}</text>
+      </g>
     </g>
   </svg>
 </template>
 <script>
-/* es-lint disable */
 
 import tane from '@/assets/tane.svg'
 import wahine from '@/assets/wahine.svg'
@@ -37,49 +37,37 @@ export default {
     }
   },
   computed: {
-    /*
-      temporary function to display placeholder image of male or female based on gender
-    */
+    diameter () {
+      return this.radius * 2
+    },
     imageSource () {
+      // temporary function to display placeholder image of male or female based on gender
       switch (this.node.data.gender) {
         case 'male': return tane
         case 'female': return wahine
         default: return wahine // TODO androgenous avatar
       }
     },
-    /*
-      required size for the image based on the given radius value
-    */
-    imageConstraints () {
-      return this.radius * 2
-    },
-    /*
-      centers the text element under image
-    */
-    textX () {
-      return this.radius - (this.textWidth / 2)
-    },
-    /*
-      calculates the width of the text element
-    */
     textWidth () {
-      var width = (this.node.data.preferredName.length * 7.2)
+      // const { x, y } = textElm.getBBox();
+      const width = (this.node.data.preferredName.length * 8)
       this.$emit('textWidth', width)
       return width
     },
-    /*
-      sets the position of this node
-    */
-    style () {
-      return { transform: this.nodeVertical }
+    groupStyle () {
+      // sets the position of this node
+      return {
+        transform: `translate(${this.node.x}px, ${this.node.y}px)`
+        // calculate the transform to draw nodes vertically
+      }
     },
-    nodeHorizontal () {
-      // calculate the transform to draw nodes horizontally
-      return `translate(${this.node.y}px, ${this.node.x}px)`
-    },
-    nodeVertical () {
-      // calculate the transform to draw nodes vertically
-      return `translate(${this.node.x}px, ${this.node.y}px)`
+    textStyle () {
+      // centers the text element under image
+
+      return {
+        transform: `translate(${this.radius - (this.textWidth / 2)}px, ${this.diameter + 15}px)`
+        // calculate the transform to draw nodes vertically
+      }
     }
   },
   methods: {
@@ -91,10 +79,19 @@ export default {
 </script>
 
 <style scoped lang="scss">
-  svg:not(:root) {
-    overflow: visible;
-  }
-  svg:hover{
-    cursor: pointer;
+  svg {
+    &:not(:root) {
+      overflow: visible;
+    }
+    &:hover{
+      cursor: pointer;
+    }
+
+    rect {
+      fill: #FFF;
+    }
+    text {
+      fill: #555;
+    }
   }
 </style>

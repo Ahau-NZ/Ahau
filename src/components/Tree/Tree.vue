@@ -16,8 +16,8 @@
           <g :transform="`translate(${treeX-settings.nodeRadius} ${treeY-settings.nodeRadius})`"
             ref="tree">
             <g v-for="node in nodes" :key="node.id"
-              class="node"
               @contextmenu.prevent="openContextMenu($event, node)"
+              class="node"
               >
               <Node :node="node" :radius="settings.nodeRadius" @click="toggleShow" @textWidth="updateSeparation"/>
             </g>
@@ -115,9 +115,7 @@ export default {
       refreshed
     */
     treeX () {
-      if (!this.componentLoaded) {
-        return 0
-      }
+      if (!this.componentLoaded) return 0
       return this.$refs.baseSvg.clientWidth / 2
     },
     /*
@@ -126,38 +124,20 @@ export default {
       refreshed
     */
     treeY () {
-      if (!this.componentLoaded) {
-        return 0
-      }
+      if (!this.componentLoaded) return 0
       return this.$refs.baseSvg.clientHeight / 3
     },
-    /*
-      gets the width of the tree
-    */
     treeWidth () {
-      if (!this.componentLoaded) {
-        return null
-      }
+      if (!this.componentLoaded) return null
       return this.$refs.tree.clientWidth
     },
-    /*
-      gets the height of the tree
-    */
     treeHeight () {
-      if (!this.componentLoaded) {
-        return null
-      }
+      if (!this.componentLoaded) return null
       return this.$refs.tree.clientHeight
     },
-    /*
-      returns the width of the screen
-    */
     width () {
       return screen.width
     },
-    /*
-      returns the height of the screen
-    */
     height () {
       return screen.height
     },
