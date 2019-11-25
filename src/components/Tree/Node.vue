@@ -1,20 +1,16 @@
 <template>
   <svg>
-      <defs>
-        <clipPath id="myCircle">
-          <circle
-            :cx="radius"
-            :cy="radius"
-            :r="radius"
-          />
-        </clipPath>
-      </defs>
-      <image
-        :width="imageConstraints"
-        :height="imageConstraints"
-        :xlink:href="imageSource"
-        clip-path="url(#myCircle)"
-      />
+    <defs>
+      <clipPath id="myCircle">
+        <circle :cx="radius" :cy="radius" :r="radius" />
+      </clipPath>
+    </defs>
+    <image
+      :width="imageConstraints"
+      :height="imageConstraints"
+      :xlink:href="imageSource"
+      clip-path="url(#myCircle)"
+      @click="click" />
   </svg>
 </template>
 <script>
@@ -39,7 +35,7 @@ export default {
       temporary function to display placeholder image of male or female based on gender
     */
     imageSource () {
-      switch (this.node.gender) {
+      switch (this.node.data.gender) {
         case 'male': return tane
         case 'female': return wahine
         default: return wahine // TODO androgenous avatar
@@ -51,12 +47,17 @@ export default {
     imageConstraints () {
       return this.radius * 2
     }
+  },
+  methods: {
+    click () {
+      this.$emit('click', this.node)
+    }
   }
 }
 </script>
 
 <style scoped lang="scss">
   image {
-    border: 4 solid black;
+    text-align: center;
   }
 </style>
