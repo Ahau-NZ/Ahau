@@ -16,10 +16,10 @@
           <g :transform="`translate(${treeX-settings.nodeRadius} ${treeY-settings.nodeRadius})`"
             ref="tree">
             <g v-for="node in nodes" :key="node.id"
-              class="node"
               @contextmenu.prevent="openContextMenu($event, node)"
-              :style="node.style">
-              <Node :node="node" :radius="settings.nodeRadius" @click="toggleShow" />
+              class="node"
+              >
+              <Node :node="node" :radius="settings.nodeRadius" @click="toggleShow" @textWidth="updateSeparation"/>
             </g>
           </g>
         </svg>
@@ -76,7 +76,9 @@ export default {
       },
       componentLoaded: false, // need to ensure component is loaded before using $refs
       settings: {
-        nodeRadius: 45 // use variable for zoom later on
+        nodeRadius: 50, // use variable for zoom later on
+        nodeSeparationX: 100,
+        nodeSeparationY: 150
       },
       contextmenu: [
         { title: 'Add Child', action: this.toggleNew },
@@ -91,21 +93,21 @@ export default {
   },
   computed: {
     branch () {
-      return this.settings.nodeRadius + (this.settings.nodeRadius) / 2
+      return this.settings.nodeSeparationY / 2 + this.settings.nodeRadius
     },
     /*
       the space between nodes on the x axis
       @TODO: will be used later on for implementing zoom and pan on tree
     */
     nodeSeparationX () {
-      return this.settings.nodeRadius * 3
+      return this.settings.nodeSeparationX
     },
     /*
       the space between node on the y axis
       @TODO: will be used later on for implementing zoom and pan on tree
     */
     nodeSeparationY () {
-      return this.settings.nodeRadius * 3
+      return this.settings.nodeSeparationY
     },
     /*
       gets the X position of the tree based on the svg size
@@ -113,9 +115,7 @@ export default {
       refreshed
     */
     treeX () {
-      if (!this.componentLoaded) {
-        return 0
-      }
+      if (!this.componentLoaded) return 0
       return this.$refs.baseSvg.clientWidth / 2
     },
     /*
@@ -124,38 +124,20 @@ export default {
       refreshed
     */
     treeY () {
-      if (!this.componentLoaded) {
-        return 0
-      }
+      if (!this.componentLoaded) return 0
       return this.$refs.baseSvg.clientHeight / 3
     },
-    /*
-      gets the width of the tree
-    */
     treeWidth () {
-      if (!this.componentLoaded) {
-        return null
-      }
+      if (!this.componentLoaded) return null
       return this.$refs.tree.clientWidth
     },
-    /*
-      gets the height of the tree
-    */
     treeHeight () {
-      if (!this.componentLoaded) {
-        return null
-      }
+      if (!this.componentLoaded) return null
       return this.$refs.tree.clientHeight
     },
-    /*
-      returns the width of the screen
-    */
     width () {
       return screen.width
     },
-    /*
-      returns the height of the screen
-    */
     height () {
       return screen.height
     },
@@ -172,8 +154,8 @@ export default {
     treeLayout () {
       return d3.tree()
         .nodeSize([
-          this.nodeSeparationX,
-          this.nodeSeparationY
+          this.nodeSeparationX + this.settings.nodeRadius,
+          this.nodeSeparationY + this.settings.nodeRadius
         ])
         .separation(function (a, b) {
           return a.parent === b.parent ? 1 : 2
@@ -194,10 +176,7 @@ export default {
             height: d.height,
             parent: d.parent,
             x: d.x,
-            y: d.depth * 180,
-            style: {
-              transform: this.nodeVertical(d.x, d.y) // sets the position of this node
-            }
+            y: d.y
           }
         })
     },
@@ -260,16 +239,16 @@ export default {
       selected.children.push(newNode)
       selected.data.children.push(newNode.data)
     },
-
-    // d3 helpers
-    // @TODO: needs to be move these to the Node component
-    nodeHorizontal (x, y) {
-      // calculate the transform to draw nodes horizontally
-      return `translate(${y}px, ${x}px)`
-    },
-    nodeVertical (x, y) {
-      // calculate the transform to draw nodes vertically
-      return `translate(${x}px, ${y}px)`
+    /*
+      updated when the Node returns its text-width, sets the separation between nodes to the largest text width.
+      Which stops overlapping labels.
+    */
+    updateSeparation ($event) {
+      var textWidth = $event
+      if (textWidth > this.settings.nodeSeparationX) {
+        this.settings.nodeSeparationX = textWidth
+        this.settings.nodeSeparationY = textWidth / 2
+      }
     }
   }
 }
