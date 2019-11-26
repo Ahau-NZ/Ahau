@@ -36,8 +36,12 @@
       @close="toggleShow"/>
     <EditNodeDialog v-if="dialog.edit" :show="dialog.edit"
       @close="toggleEdit"/>
-    <NewNodeDialog v-if="dialog.new" :show="dialog.new"
-      @close="toggleNew" @submit="addChild($event)"/>
+    <NewNodeDialog
+      v-if="dialog.new"
+      :show="dialog.new"
+      @close="toggleNew"
+      @submit="addChild($event)"
+    />
   </div>
 </template>
 
@@ -52,8 +56,6 @@ import Link from './Link.vue'
 import ViewNodeDialog from './Dialogs/ViewNodeDialog.vue'
 import EditNodeDialog from './Dialogs/EditNodeDialog.vue'
 import NewNodeDialog from './Dialogs/NewNodeDialog.vue'
-// import mockTreeData from './mock-tree-data'
-// import mockNode from './mock-node'
 
 export default {
   components: {
@@ -90,11 +92,11 @@ export default {
         addnode: false
       },
       whakapapa: {
-          gender: null,
-          preferredName: '',
-          legalName: '',
-          children: [],
-          parents: []
+        gender: null,
+        preferredName: '',
+        legalName: '',
+        children: [],
+        parents: []
       }
     }
   },

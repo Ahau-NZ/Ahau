@@ -111,7 +111,6 @@
 </template>
 
 <script>
-import gql from 'graphql-tag'
 import Dialog from './Dialog.vue'
 // import NodeDatePicker from '../NodeDatePicker.vue'
 import { GENDERS, RELATIONSHIPS } from '../../../lib/constants'
@@ -181,23 +180,6 @@ export default {
         case 'adopted': return true
         default: return false
       }
-    }
-  },
-  apollo: {
-    persistedState: {
-      // only run this if an id props was passed
-      skip () { return !this.id },
-      query: gql`query createWhakapapa($id: String!) {
-        createWhakapapa(child: $id parent: $id)
-      }`,
-      variables () {
-        return {
-          child: this.data.relationshipType,
-          parent: this.parents,
-        }
-      },
-      update: data => data.whakapapa,
-      fetchPolicy: 'no-cache'
     }
   },
   watch: {
