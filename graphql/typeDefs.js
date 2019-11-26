@@ -169,7 +169,7 @@ module.exports = gql`
     profile(id: String!): Profile
 
     "Scuttlebutt parent and child relations to a profile"
-    whakapapa(id: String!): Whakapapa
+    whakapapa(id: String): Whakapapa
   }
 
   type Mutation {

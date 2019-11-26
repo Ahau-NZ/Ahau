@@ -72,6 +72,9 @@ module.exports = sbot => ({
       }
     },
     whakapapa: async (_, { id }, { feedId, profileId }) => {
+      if (!id) {
+        id = profileId
+      }
       try {
         const whakapapa = await getWhakapapa(sbot, id)
         let response = await getProfile(sbot, id)
