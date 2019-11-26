@@ -39,7 +39,7 @@
     <NewNodeDialog
       v-if="dialog.new"
       :show="dialog.new"
-      @close="toggleNew"
+      @close="closeNew"
       @submit="addChild($event)"
     />
   </div>
@@ -69,7 +69,8 @@ export default {
       dialog: {
         show: false,
         edit: false,
-        new: false
+        new: false,
+        type: 'child'
       },
       node: {
         selected: null,
@@ -82,8 +83,8 @@ export default {
         nodeSeparationY: 150
       },
       contextmenu: [
-        { title: 'Add Child', action: this.toggleNew },
-        { title: 'Add Parent', action: this.setNew },
+        { title: 'Add Child', action: this.toggleNewChild },
+        { title: 'Add Parent', action: this.toggleNewParent },
         { title: 'Edit Person', action: this.toggleEdit }
       ],
       options: {
@@ -244,8 +245,17 @@ export default {
     toggleEdit () {
       this.dialog.edit = !this.dialog.edit
     },
-    toggleNew (state = false) {
-      this.dialog.new = !this.dialog.new
+    closeNew () {
+      this.dialog.new = false
+    },
+    toggleNewChild (state = false) {
+      this.dialog.type = 'child'
+      this.dialog.new = true
+    },
+
+    toggleNewParent (state = false) {
+      this.dialog.type = 'parent'
+      this.dialog.new = true
     },
 
     openContextMenu ($event, node) {
@@ -272,15 +282,17 @@ export default {
         }
       }
       const profileResponse = await this.$apollo.mutate(createProfileReq)
+      const child = this.dialog.type === 'child' ? profileResponse.data.createProfile : this.node.selected.data.id
+      const parent = this.dialog.type === 'child' ? this.node.selected.data.id : profileResponse.data.createProfile
       const saveWhakapapaReq = {
         mutation: gql`mutation ($input: WhakapapaRelationInput!) {
           saveWhakapapaRelation(input: $input)
         }`,
         variables: {
           input: {
-            child: profileResponse.data.createProfile,
-            parent: this.node.selected.data.id,
-            relationshipType: $event.relationshipType,
+            child,
+            parent,
+            relationshipType: $event.relationshipType || 'unknown',
             legallyAdopted: $event.legallyAdopted
           }
         }
