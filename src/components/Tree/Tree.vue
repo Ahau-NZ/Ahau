@@ -275,7 +275,7 @@ export default {
       }
       const profileResponse = await this.$apollo.mutate(createProfileReq)
       const saveWhakapapaReq = {
-        mutation: gql`mutation ($input: saveWhakapapaInput!) {
+        mutation: gql`mutation ($input: WhakapapaRelationInput!) {
           saveWhakapapaRelation(input: $input)
         }`,
         variables: {
