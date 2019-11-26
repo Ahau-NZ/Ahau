@@ -220,9 +220,9 @@ module.exports = sbot => ({
       }
       if (viewId) {
         return new Promise((resolve, reject) => {
-          sbot.whakapapa.view.update(details, (err, id) => {
+          sbot.whakapapa.view.update(viewId, details, (err) => {
             if (err) reject(err)
-            resolve(id)
+            resolve('Updated!')
           })
         })
       } else {
