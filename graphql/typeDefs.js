@@ -33,6 +33,7 @@ module.exports = gql`
     male
     female
     other
+    unknown
   }
 
   type Blob {
