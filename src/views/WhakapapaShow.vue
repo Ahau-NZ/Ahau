@@ -5,10 +5,9 @@
 <script>
 import Tree from '@/components/Tree/Tree.vue'
 export default {
-  props: {
-    id: {
-      type: String,
-      required: true
+  data () {
+    return {
+      id: this.$route.params.id
     }
   },
   components: {
