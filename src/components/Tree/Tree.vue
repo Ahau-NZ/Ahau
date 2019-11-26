@@ -58,13 +58,11 @@ import EditNodeDialog from './Dialogs/EditNodeDialog.vue'
 import NewNodeDialog from './Dialogs/NewNodeDialog.vue'
 
 export default {
-  components: {
-    Node,
-    Link,
-    VueContext,
-    ViewNodeDialog,
-    EditNodeDialog,
-    NewNodeDialog
+  props: {
+    viewId: {
+      type: String,
+      required: true
+    }
   },
   data () {
     return {
@@ -315,6 +313,14 @@ export default {
         this.settings.nodeSeparationY = textWidth / 2
       }
     }
+  },
+  components: {
+    Node,
+    Link,
+    VueContext,
+    ViewNodeDialog,
+    EditNodeDialog,
+    NewNodeDialog
   }
 }
 </script>
