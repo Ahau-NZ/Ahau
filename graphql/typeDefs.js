@@ -42,21 +42,22 @@ module.exports = gql`
     uri: String
   }
 
-  type Profile {
+  interface Person {
     id: String
     type: String
-    authors: [String]
-    canEdit: Boolean
-
     preferredName: String
     legalName: String
     altNames: [String]
     description: String
     avatarImage: Image
     headerImage: Image
-
     gender: Gender
+  }
 
+  type Profile implements Person {
+    type: String
+    authors: [String]
+    canEdit: Boolean
     tiaki: [Profile]
   }
 
@@ -111,12 +112,12 @@ module.exports = gql`
     state: String
   }
 
-  type WhakapapaNode extend Profile {
+  type WhakapapaNode implements Person {
     relationshipType: RelationshipType
     legallyAdopted: Boolean
   }
 
-  type Whakapapa extend Profile {
+  type Whakapapa implements Person {
     parents: [WhakapapaNode]
     children: [WhakapapaNode]
   }
