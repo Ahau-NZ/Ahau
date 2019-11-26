@@ -1,13 +1,14 @@
 <template>
-  <Tree />
+  <Tree :viewId="id"/>
 </template>
 
 <script>
 import Tree from '@/components/Tree/Tree.vue'
 export default {
-  data () {
-    return {
-
+  props: {
+    id: {
+      type: String,
+      required: true
     }
   },
   components: {
