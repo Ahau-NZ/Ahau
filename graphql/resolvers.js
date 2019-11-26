@@ -164,8 +164,8 @@ module.exports = sbot => ({
       const { child, parent, relationshipType, legallyAdopted, recps } = input
       const opts = {
         recps,
-        legallyAdopted: legallyAdopted ? { set: legallyAdopted } : null,
-        relationshipType: relationshipType ? { set: relationshipType } : null
+        legallyAdopted: { set: legallyAdopted || false },
+        relationshipType: { set: relationshipType || 'unknown' }
       }
       return new Promise((resolve, reject) => {
         sbot.whakapapa.child.create({ parent, child }, opts, (err, id) => {
