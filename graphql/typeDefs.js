@@ -105,12 +105,27 @@ module.exports = gql`
     description: String
   }
 
-  input CreateWhakapapaInput {
-    child: String!
-    parent: String!
+  input WhakapapaRelationInput {
+    relationshipId: String
+    child: String
+    parent: String
     relationshipType: RelationshipType
     legallyAdopted: Boolean
     recps: [String]
+  }
+
+  input WhakapapaViewInput {
+    viewId: String
+    name: String
+    description: String
+    focus: String
+    mode: Mode
+    recps: [String]
+  }
+
+  enum Mode {
+    descendants
+    ancestors
   }
 
   enum RelationshipType {
@@ -177,7 +192,8 @@ module.exports = gql`
     createProfile(input: CreateProfileInput): String
     updateProfile(input: UpdateProfileInput): String
     uploadFile(file: Upload!): Blob
-    createWhakapapaRelation(input: CreateWhakapapaInput): String
+    saveWhakapapaRelation(input: WhakapapaRelationInput): String
+    saveWhakapapaView(input: WhakapapaViewInput): String
   }
 
   type Subscription {

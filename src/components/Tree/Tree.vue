@@ -274,9 +274,9 @@ export default {
         }
       }
       const profileResponse = await this.$apollo.mutate(createProfileReq)
-      const createWhakapapaReq = {
-        mutation: gql`mutation ($input: CreateWhakapapaInput!) {
-          createWhakapapaRelation(input: $input)
+      const saveWhakapapaReq = {
+        mutation: gql`mutation ($input: saveWhakapapaInput!) {
+          saveWhakapapaRelation(input: $input)
         }`,
         variables: {
           input: {
@@ -287,8 +287,8 @@ export default {
           }
         }
       }
-      const whakapapaResponse = await this.$apollo.mutate(createWhakapapaReq)
-      console.log('Created new Whakapapa relation: ', whakapapaResponse.data.createWhakapapaRelation)
+      const whakapapaResponse = await this.$apollo.mutate(saveWhakapapaReq)
+      console.log('Created new Whakapapa relation: ', whakapapaResponse.data.saveWhakapapaRelation)
       var selected = this.node.selected
       var newNode = d3.hierarchy($event)
 

@@ -172,19 +172,62 @@ module.exports = sbot => ({
         })
       }),
 
-    createWhakapapaRelation: (_, { input }) => {
-      const { child, parent, relationshipType, legallyAdopted, recps } = input
+    saveWhakapapaRelation: (_, { input }) => {
+      const { relationshipId, child, parent, relationshipType, legallyAdopted, recps } = input
       const opts = {
         recps,
         legallyAdopted: { set: legallyAdopted || false },
         relationshipType: { set: relationshipType || 'unknown' }
       }
-      return new Promise((resolve, reject) => {
-        sbot.whakapapa.child.create({ parent, child }, opts, (err, id) => {
-          if (err) reject(err)
-          resolve(id)
+      if (relationshipId) {
+        return new Promise((resolve, reject) => {
+          sbot.whakapapa.child.update(relationshipId, opts, (err, id) => {
+            if (err) reject(err)
+            resolve(id)
+          })
         })
-      })
+      } else if (child && parent) {
+        return new Promise((resolve, reject) => {
+          sbot.whakapapa.child.create({ parent, child }, opts, (err, id) => {
+            if (err) reject(err)
+            resolve(id)
+          })
+        })
+      } else {
+        throw new Error('Invalid input')
+      }
+    },
+    saveWhakapapaView: (_, { input }, { feedId, profileId }) => {
+      const {
+        viewId,
+        name,
+        description,
+        focus,
+        mode,
+        recps
+      } = input
+      const details = {
+        name: name ? { set: name } : null,
+        description: description ? { set: description } : null,
+        focus: { set: focus || profileId },
+        mode: { set: mode || 'descendants' },
+        recps: recps ? recps.length < 1 ? [profileId] : recps : null
+      }
+      if (viewId) {
+        return new Promise((resolve, reject) => {
+          sbot.whakapapa.view.update(details, (err, id) => {
+            if (err) reject(err)
+            resolve(id)
+          })
+        })
+      } else {
+        return new Promise((resolve, reject) => {
+          sbot.whakapapa.view.create(details, (err, id) => {
+            if (err) reject(err)
+            resolve(id)
+          })
+        })
+      }
     }
   },
   Subscription: {
