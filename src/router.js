@@ -1,17 +1,20 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 
-import Login from '@/views/Login.vue'
-import Whakapapa from '@/views/Whakapapa.vue'
+import WhakapapaIndex from '@/views/WhakapapaIndex.vue'
+import WhakapapaShow from '@/views/WhakapapaShow.vue'
+
+import Discovery from '@/views/Discovery.vue'
 
 import People from '@/views/People.vue'
 import PersonShow from '@/views/PersonShow.vue'
 import PersonEdit from '@/views/PersonEdit.vue'
 
-import Discovery from '@/views/Discovery.vue'
 import CommunityNew from '@/views/CommunityNew.vue'
 import CommunityShow from '@/views/CommunityShow.vue'
 import CommunityEdit from '@/views/CommunityEdit.vue'
+
+import Login from '@/views/Login.vue'
 
 Vue.use(Router)
 
@@ -19,20 +22,22 @@ export default new Router({
   mode: 'history',
   routes: [
     { path: '/', redirect: '/login' },
-
-    // { path: '/', redirect: '/tree' },
-    { path: '/tree', name: 'tree', component: Whakapapa },
-
     { path: '/login', name: 'login', component: Login },
     { path: '/logout', redirect: '/login' },
+
+    { path: '/whakapapa', name: 'whakapapaIndex', component: WhakapapaIndex },
+    { path: '/whakapapa/:id', name: 'whakapapaShow', component: WhakapapaShow },
+
+    { path: '/discovery', name: 'discovery', component: Discovery },
 
     { path: '/person', name: 'personIndex', component: People },
     { path: '/person/:id/edit', name: 'personEdit', component: PersonEdit },
     { path: '/person/:id', name: 'personShow', component: PersonShow },
-    { path: '/discovery', name: 'discovery', component: Discovery },
+
     { path: '/community/new', name: 'communityNew', component: CommunityNew },
     { path: '/community/:id/edit', name: 'communityEdit', component: CommunityEdit },
     { path: '/community/:id', name: 'communityShow', component: CommunityShow },
+
     { path: '*', redirect: '/' }
   ]
 })

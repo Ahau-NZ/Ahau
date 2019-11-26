@@ -55,13 +55,11 @@ import mockTreeData from './mock-tree-data'
 // import mockNode from './mock-node'
 
 export default {
-  components: {
-    Node,
-    Link,
-    VueContext,
-    ViewNodeDialog,
-    EditNodeDialog,
-    NewNodeDialog
+  props: {
+    viewId: {
+      type: String,
+      required: true
+    }
   },
   data () {
     return {
@@ -250,6 +248,14 @@ export default {
         this.settings.nodeSeparationY = textWidth / 2
       }
     }
+  },
+  components: {
+    Node,
+    Link,
+    VueContext,
+    ViewNodeDialog,
+    EditNodeDialog,
+    NewNodeDialog
   }
 }
 </script>

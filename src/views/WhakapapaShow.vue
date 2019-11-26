@@ -1,5 +1,5 @@
 <template>
-  <Tree />
+  <Tree :viewId="id"/>
 </template>
 
 <script>
@@ -7,7 +7,7 @@ import Tree from '@/components/Tree/Tree.vue'
 export default {
   data () {
     return {
-
+      id: this.$route.params.id
     }
   },
   components: {
