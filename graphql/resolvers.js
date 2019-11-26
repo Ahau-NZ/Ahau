@@ -186,9 +186,9 @@ module.exports = sbot => ({
       }
       if (relationshipId) {
         return new Promise((resolve, reject) => {
-          sbot.whakapapa.child.update(relationshipId, opts, (err, id) => {
+          sbot.whakapapa.child.update(relationshipId, opts, (err) => {
             if (err) reject(err)
-            resolve(id)
+            resolve('Updated!')
           })
         })
       } else if (child && parent) {
