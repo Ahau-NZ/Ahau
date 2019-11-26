@@ -42,22 +42,34 @@ module.exports = gql`
     uri: String
   }
 
-  interface Person {
+  # TODO: make Profile, Whakapapa, WhakapapaNode a implementation of Person
+  # interface Person {
+  #   id: String
+  #   type: String
+  #   preferredName: String
+  #   legalName: String
+  #   altNames: [String]
+  #   description: String
+  #   avatarImage: Image
+  #   headerImage: Image
+  #   gender: Gender
+  # }
+
+  type Profile {
     id: String
     type: String
+    authors: [String]
+    canEdit: Boolean
+
     preferredName: String
     legalName: String
     altNames: [String]
     description: String
     avatarImage: Image
     headerImage: Image
-    gender: Gender
-  }
 
-  type Profile implements Person {
-    type: String
-    authors: [String]
-    canEdit: Boolean
+    gender: Gender
+
     tiaki: [Profile]
   }
 
@@ -112,12 +124,34 @@ module.exports = gql`
     state: String
   }
 
-  type WhakapapaNode implements Person {
+  type WhakapapaNode {
+    id: String
+
+    preferredName: String
+    legalName: String
+    altNames: [String]
+    description: String
+    avatarImage: Image
+    headerImage: Image
+
+    gender: Gender
+
     relationshipType: RelationshipType
     legallyAdopted: Boolean
   }
 
-  type Whakapapa implements Person {
+  type Whakapapa {
+    id: String
+
+    preferredName: String
+    legalName: String
+    altNames: [String]
+    description: String
+    avatarImage: Image
+    headerImage: Image
+
+    gender: Gender
+
     parents: [WhakapapaNode]
     children: [WhakapapaNode]
   }

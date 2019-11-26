@@ -81,6 +81,20 @@ module.exports = sbot => ({
 
   },
 
+  // Person: (_, { id }, { feedId, profileId }) =>
+  //   new Promise((resolve, reject) => {
+  //     getProfile(sbot, id, (err, profile) => {
+  //       if (err) return reject(err)
+
+  //       resolve({
+  //         id,
+  //         authors: profile.authors,
+  //         canEdit: profile.authors.includes(feedId), // WIP
+  //         ...addURIs(profile)
+  //       })
+  //     })
+  //   }),
+
   Profile: {
     tiaki: (obj) =>
       new Promise((resolve, reject) => {
