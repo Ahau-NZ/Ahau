@@ -41,10 +41,9 @@ module.exports = sbot => ({
     whoami: async (_, __, { feedId, profileId }) => {
       const profile = await getProfile(sbot, profileId)
       return {
-        id: profileId,
-        authors: profile.authors,
-        canEdit: profile.authors.includes(feedId), // WIP
-        ...addURIs(profile)
+        id: feedId,
+        feedId,
+        profile: addURIs(profile)
       }
     },
     persons: () =>
