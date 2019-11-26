@@ -14,21 +14,39 @@ const getWhakapapa = require('./ssb/whakapapa')
 
 const pubsub = new PubSub()
 
+function reduceWhakapapaNode (nodes) {
+  return nodes.reduce((acc, curr) => {
+    const existingIndex = acc.findIndex(i => i.profileId === curr.profileId)
+    if (existingIndex === -1) {
+      return acc.concat(curr)
+    } else {
+      let newArray = acc.map(entry => {
+        let newObject = {}
+        Object.entries(entry).map(([key, value]) => {
+          if (curr[key]) {
+            newObject[key] = curr[key]
+          } else {
+            newObject[key] = value
+          }
+        })
+        return newObject
+      })
+      return newArray
+    }
+  }, [])
+}
+
 module.exports = sbot => ({
   Query: {
-    whoami: (_, __, { feedId, profileId }) =>
-      new Promise((resolve, reject) => {
-        getProfile(sbot, profileId, (err, profile) => {
-          if (err) return reject(err)
-
-          resolve({
-            id: feedId,
-            feedId,
-            profile: addURIs(profile)
-          })
-        })
-      }),
-
+    whoami: async (_, __, { feedId, profileId }) => {
+      const profile = await getProfile(sbot, profileId)
+      return {
+        id: profileId,
+        authors: profile.authors,
+        canEdit: profile.authors.includes(feedId), // WIP
+        ...addURIs(profile)
+      }
+    },
     persons: () =>
       new Promise((resolve, reject) => {
         getProfiles(sbot, (err, profiles) => {
@@ -45,40 +63,32 @@ module.exports = sbot => ({
         })
       }),
 
-    profile: (_, { id }, { feedId, profileId }) =>
-      new Promise((resolve, reject) => {
-        getProfile(sbot, id, (err, profile) => {
-          if (err) return reject(err)
-
-          resolve({
-            id,
-            authors: profile.authors,
-            canEdit: profile.authors.includes(feedId), // WIP
-            ...addURIs(profile)
-          })
+    profile: async (_, { id }, { feedId, profileId }) => {
+      const profile = await getProfile(sbot, id)
+      return {
+        id,
+        authors: profile.authors,
+        canEdit: profile.authors.includes(feedId), // WIP
+        ...addURIs(profile)
+      }
+    },
+    whakapapa: async (_, { id }, { feedId, profileId }) => {
+      try {
+        const whakapapa = await getWhakapapa(sbot, id)
+        let response = await getProfile(sbot, id)
+        const reducedParents = await reduceWhakapapaNode(whakapapa.parents)
+        const reducedChildren = await reduceWhakapapaNode(whakapapa.children)
+        response.parents = await reducedParents.map(async parent => {
+          return getProfile(sbot, parent.profileId)
         })
-      }),
-
-    whakapapa: async (_, { id }, { feedId, profileId }) =>
-      new Promise((resolve, reject) => {
-        let response = {}
-        getWhakapapa(sbot, id, (err, whakapapa) => {
-          if (err) return reject(err)
-          try {
-            response = await getProfile(sbot, id)
-            response.parents = await whakapapa.parents.map(async parent => {
-              return await getProfile(sbot, parent.id)
-            })
-            response.children = await whakapapa.children.map(async child => {
-              return await getProfile(sbot, child.id)
-            })
-          } catch (err) {
-            return reject(err)
-          }
-          resolve(response)
+        response.children = await reducedChildren.map(async child => {
+          return getProfile(sbot, child.profileId)
         })
-      })
-
+        return response
+      } catch (err) {
+        return err
+      }
+    }
   },
 
   // Person: (_, { id }, { feedId, profileId }) =>
