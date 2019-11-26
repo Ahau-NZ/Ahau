@@ -90,9 +90,14 @@ module.exports = sbot => ({
       } catch (err) {
         return err
       }
-    }
+    },
+    whakapapaView: (_, { id }, { feedId, profileId }) => new Promise((resolve, reject) => {
+      sbot.whakapapa.view.get(id, (err, view) => {
+        if (err) reject(err)
+        resolve(view)
+      })
+    })
   },
-
   // Person: (_, { id }, { feedId, profileId }) =>
   //   new Promise((resolve, reject) => {
   //     getProfile(sbot, id, (err, profile) => {

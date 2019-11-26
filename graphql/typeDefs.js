@@ -172,6 +172,13 @@ module.exports = gql`
     children: [WhakapapaNode]
   }
 
+  type WhakapapaView {
+    name: String
+    description: String
+    focus: ID
+    mode: Mode
+  }
+
   type Query {
     "Scuttlebutt Who am I"
     whoami: CurrentIdentity
@@ -186,6 +193,9 @@ module.exports = gql`
 
     "Scuttlebutt parent and child relations to a profile"
     whakapapa(id: String): Whakapapa
+
+    "Whakapapa views from a perspective"
+    whakapapaView(id: String!): WhakapapaView
   }
 
   type Mutation {
