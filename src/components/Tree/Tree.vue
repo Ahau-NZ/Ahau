@@ -258,7 +258,37 @@ export default {
       adds a new child node onto the selected node
       TODO: Fix memory leak with NewNodeDialog and Tree
     */
-    addChild ($event) {
+    async addChild ($event) {
+      const createProfileReq = {
+        mutation: gql`mutation ($input: CreateProfileInput!) {
+          createProfile(input: $input)
+        }`,
+        variables: {
+          input: {
+            type: 'person',
+            preferredName: $event.preferredName,
+            legalName: $event.legalName,
+            // avatarImage: ImageInput
+            gender: $event.gender
+          }
+        }
+      }
+      const profileResponse = await this.$apollo.mutate(createProfileReq)
+      const createWhakapapaReq = {
+        mutation: gql`mutation ($input: CreateWhakapapaInput!) {
+          createWhakapapaRelation(input: $input)
+        }`,
+        variables: {
+          input: {
+            child: profileResponse.data.createProfile,
+            parent: this.node.selected.data.id,
+            relationshipType: $event.relationshipType,
+            legallyAdopted: $event.legallyAdopted
+          }
+        }
+      }
+      const whakapapaResponse = await this.$apollo.mutate(createWhakapapaReq)
+      console.log('Created new Whakapapa relation: ', whakapapaResponse.data.createWhakapapaRelation)
       var selected = this.node.selected
       var newNode = d3.hierarchy($event)
 
