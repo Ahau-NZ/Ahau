@@ -292,7 +292,7 @@ export default {
           input: {
             child,
             parent,
-            relationshipType: $event.relationshipType || 'unknown',
+            relationshipType: $event.relationshipType,
             legallyAdopted: $event.legallyAdopted
           }
         }

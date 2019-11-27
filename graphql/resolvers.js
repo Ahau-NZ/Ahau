@@ -144,12 +144,8 @@ module.exports = sbot => ({
       }),
 
     saveWhakapapaRelation: (_, { input }, { feedId, profileId }) => {
-      const { relationshipId, child, parent, relationshipType, legallyAdopted, recps } = input
-      const opts = {
-        recps: (recps && recps.length > 0) ? recps : [profileId],
-        legallyAdopted: { set: legallyAdopted || false },
-        relationshipType: { set: relationshipType || 'unknown' }
-      }
+      const { relationshipId, child, parent } = input
+      const opts = buildWhakapapaOpts(input)
       if (relationshipId) {
         return new Promise((resolve, reject) => {
           sbot.whakapapa.child.update(relationshipId, opts, (err) => {
@@ -169,21 +165,8 @@ module.exports = sbot => ({
       }
     },
     saveWhakapapaView: (_, { input }, { feedId, profileId }) => {
-      const {
-        viewId,
-        name,
-        description,
-        focus,
-        mode,
-        recps
-      } = input
-      const details = {
-        name: name ? { set: name } : null,
-        description: description ? { set: description } : null,
-        focus: { set: focus || profileId },
-        mode: { set: mode || 'descendants' },
-        recps: (recps && recps.length > 0) ? recps : [profileId]
-      }
+      const { viewId } = input
+      const details = buildWhakapapaViewDetails(input)
       if (viewId) {
         return new Promise((resolve, reject) => {
           sbot.whakapapa.view.update(viewId, details, (err) => {
@@ -265,4 +248,28 @@ function addURIs (state) {
   }
 
   return state
+}
+
+function buildWhakapapaOpts (input) {
+  const permittedAttrs = ['relationshipType', 'legallyAdopted', 'recps']
+
+  let opts = pick(input, permittedAttrs)
+  Object.entries(opts).forEach(([key, value]) => {
+    if (key === 'recps') return
+    opts[key] = { set: value }
+  })
+
+  return opts
+}
+
+function buildWhakapapaViewDetails (input) {
+  const permittedAttrs = ['name', 'description', 'focus', 'mode', 'recps']
+
+  let details = pick(input, permittedAttrs)
+  Object.entries(details).forEach(([key, value]) => {
+    if (key === 'recps') return
+    details[key] = { set: value }
+  })
+
+  return details
 }
