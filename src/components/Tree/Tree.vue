@@ -288,9 +288,10 @@ export default {
           }
         }
       }
+      const isChild = this.dialog.type === 'child'
       const profileResponse = await this.$apollo.mutate(createProfileReq)
-      const child = this.dialog.type === 'child' ? profileResponse.data.createProfile : this.node.selected.data.id
-      const parent = this.dialog.type === 'child' ? this.node.selected.data.id : profileResponse.data.createProfile
+      const child = isChild ? profileResponse.data.createProfile : this.node.selected.data.id
+      const parent = isChild ? this.node.selected.data.id : profileResponse.data.createProfile
       const saveWhakapapaReq = {
         mutation: gql`mutation ($input: WhakapapaRelationInput!) {
           saveWhakapapaRelation(input: $input)
