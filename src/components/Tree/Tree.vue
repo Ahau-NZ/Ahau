@@ -356,17 +356,26 @@ export default {
       var selected = this.node.selected
       var newNode = d3.hierarchy($event)
 
-      newNode.depth = selected.depth + 1
-      newNode.height = selected.height - 1
-      newNode.parent = selected
+      newNode.depth = isChild ? selected.depth + 1 : selected.depth - 1
+      newNode.height = isChild ? selected.height - 1 : selected.height + 1
+      if (isChild) newNode.parent = selected
+      else newNode.child = selected
 
       if (selected.children === undefined) {
         selected.children = []
         selected.data.children = []
       }
-
-      selected.children.push(newNode)
-      selected.data.children.push(newNode.data)
+      if (selected.parents === undefined) {
+        selected.parents = []
+        selected.data.parents = []
+      }
+      if (isChild) {
+        selected.children.push(newNode)
+        selected.data.children.push(newNode.data)
+      } else {
+        selected.parents.push(newNode)
+        selected.data.parents.push(newNode.data)
+      }
     },
     /*
       updated when the Node returns its text-width, sets the separation between nodes to the largest text width.
