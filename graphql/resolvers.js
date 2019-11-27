@@ -63,6 +63,7 @@ module.exports = sbot => ({
       })
     })
   },
+  // TODO: make profile and whakapapa a implementation of Person
   // Person: (_, { id }, { feedId, profileId }) =>
   //   new Promise((resolve, reject) => {
   //     getProfile(sbot, id, (err, profile) => {
