@@ -50,44 +50,10 @@ module.exports = sbot => ({
       }
     },
     whakapapa: async (_, { id }, { feedId, profileId }) => {
-      function reduceWhakapapaNode (nodes) {
-        return nodes.reduce((acc, curr) => {
-          const existingIndex = acc.findIndex(oldWhakapapa => oldWhakapapa.profileId === curr.profileId)
-          if (existingIndex === -1) {
-            return acc.concat(curr)
-          } else {
-            let newArray = acc.map(whakapapa => {
-              let newObject = {}
-              Object.entries(whakapapa).forEach(([whakapapaKey, whakapapaValue]) => {
-                if (curr[whakapapaKey]) {
-                  newObject[whakapapaKey] = curr[whakapapaKey]
-                } else {
-                  newObject[whakapapaKey] = whakapapaValue
-                }
-              })
-              return newObject
-            })
-            return newArray
-          }
-        }, [])
-      }
-      if (!id) {
-        id = profileId
-      }
       try {
-        const whakapapa = await getWhakapapa(sbot, id)
-        let response = await getProfile(sbot, id)
-        const reducedParents = await reduceWhakapapaNode(whakapapa.parents)
-        const reducedChildren = await reduceWhakapapaNode(whakapapa.children)
-        response.parents = await reducedParents.map(async parent => {
-          return getProfile(sbot, parent.profileId)
-        })
-        response.children = await reducedChildren.map(async child => {
-          return getProfile(sbot, child.profileId)
-        })
-        return response
+        return getWhakapapa(sbot, id, profileId)
       } catch (err) {
-        return err
+        throw err
       }
     },
     whakapapaView: (_, { id }, { feedId, profileId }) => new Promise((resolve, reject) => {
