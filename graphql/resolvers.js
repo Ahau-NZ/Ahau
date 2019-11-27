@@ -59,7 +59,7 @@ module.exports = sbot => ({
     whakapapaView: (_, { id }, { feedId, profileId }) => new Promise((resolve, reject) => {
       sbot.whakapapa.view.get(id, (err, view) => {
         if (err) reject(err)
-        resolve(view)
+        else resolve(view)
       })
     })
   },
@@ -154,14 +154,14 @@ module.exports = sbot => ({
         return new Promise((resolve, reject) => {
           sbot.whakapapa.child.update(relationshipId, opts, (err) => {
             if (err) reject(err)
-            resolve('Updated!')
+            else resolve('Updated!')
           })
         })
       } else if (child && parent) {
         return new Promise((resolve, reject) => {
           sbot.whakapapa.child.create({ parent, child }, opts, (err, id) => {
             if (err) reject(err)
-            resolve(id)
+            else resolve(id)
           })
         })
       } else {
@@ -188,14 +188,14 @@ module.exports = sbot => ({
         return new Promise((resolve, reject) => {
           sbot.whakapapa.view.update(viewId, details, (err) => {
             if (err) reject(err)
-            resolve('Updated!')
+            else resolve('Updated!')
           })
         })
       } else {
         return new Promise((resolve, reject) => {
           sbot.whakapapa.view.create(details, (err, id) => {
             if (err) reject(err)
-            resolve(id)
+            else resolve(id)
           })
         })
       }
