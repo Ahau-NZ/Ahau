@@ -5,7 +5,7 @@
         <h1>Tree</h1>
       </v-row>
       <v-row>
-        <!--<v-btn @click="addChild(mockNode)"> Add Child </v-btn>-->
+        <!--<v-btn @click="addPerson(mockNode)"> Add Child </v-btn>-->
         <svg width="100%" :height="height" ref="baseSvg">
           <g :transform="`translate(${treeX} ${treeY})`">
             <g v-for="link in links" :key="link.id" class="link">
@@ -40,7 +40,7 @@
       v-if="dialog.new"
       :show="dialog.new"
       @close="closeNew"
-      @submit="addChild($event)"
+      @submit="addPerson($event)"
     />
   </div>
 </template>
@@ -90,6 +90,7 @@ export default {
       options: {
         addnode: false
       },
+      // deeply nested tree of profiles!
       whakapapa: {
         gender: null,
         preferredName: '',
@@ -215,18 +216,24 @@ export default {
           id
           gender
           preferredName
-          legalName
+          avatarImage {
+            uri
+          }
           children {
             id
             gender
             preferredName
-            legalName
+            avatarImage {
+              uri
+            }
           }
           parents {
             id
             gender
             preferredName
-            legalName
+            avatarImage {
+              uri
+            }
           }
         }
       }`,
@@ -266,7 +273,7 @@ export default {
       adds a new child node onto the selected node
       TODO: Fix memory leak with NewNodeDialog and Tree
     */
-    async addChild ($event) {
+    async addPerson ($event) {
       const createProfileReq = {
         mutation: gql`mutation ($input: CreateProfileInput!) {
           createProfile(input: $input)
