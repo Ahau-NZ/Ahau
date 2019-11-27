@@ -14,28 +14,6 @@ const getWhakapapa = require('./ssb/whakapapa')
 
 const pubsub = new PubSub()
 
-function reduceWhakapapaNode (nodes) {
-  return nodes.reduce((acc, curr) => {
-    const existingIndex = acc.findIndex(i => i.profileId === curr.profileId)
-    if (existingIndex === -1) {
-      return acc.concat(curr)
-    } else {
-      let newArray = acc.map(entry => {
-        let newObject = {}
-        Object.entries(entry).map(([key, value]) => {
-          if (curr[key]) {
-            newObject[key] = curr[key]
-          } else {
-            newObject[key] = value
-          }
-        })
-        return newObject
-      })
-      return newArray
-    }
-  }, [])
-}
-
 module.exports = sbot => ({
   Query: {
     whoami: async (_, __, { feedId, profileId }) => {
@@ -72,6 +50,27 @@ module.exports = sbot => ({
       }
     },
     whakapapa: async (_, { id }, { feedId, profileId }) => {
+      function reduceWhakapapaNode (nodes) {
+        return nodes.reduce((acc, curr) => {
+          const existingIndex = acc.findIndex(oldWhakapapa => oldWhakapapa.profileId === curr.profileId)
+          if (existingIndex === -1) {
+            return acc.concat(curr)
+          } else {
+            let newArray = acc.map(whakapapa => {
+              let newObject = {}
+              Object.entries(whakapapa).forEach(([whakapapaKey, whakapapaValue]) => {
+                if (curr[whakapapaKey]) {
+                  newObject[whakapapaKey] = curr[whakapapaKey]
+                } else {
+                  newObject[whakapapaKey] = whakapapaValue
+                }
+              })
+              return newObject
+            })
+            return newArray
+          }
+        }, [])
+      }
       if (!id) {
         id = profileId
       }
