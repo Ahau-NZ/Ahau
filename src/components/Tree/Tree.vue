@@ -90,17 +90,29 @@ export default {
       options: {
         addnode: false
       },
-      // deeply nested tree of profiles!
-      whakapapa: {
-        gender: null,
-        preferredName: '',
-        legalName: '',
-        children: [],
-        parents: []
-      }
+      // profiles with format { %profileId: profile }
+      flatWhakapapa: {},
+      focus: null // TODO - perhaps this should be a props later?
     }
   },
   computed: {
+    // deeply nested tree of profiles!
+    nestedWhakapapa () {
+      if (!this.focus) return {}
+
+      var result = this.flatWhakapapa[this.focus]
+      hydrate(result)
+
+      return result
+
+      function hydrate (node) {
+        node.children = node.children.map(id => this.flatWhakapapa[id])
+        node.parents = node.children.map(id => this.flatWhakapapa[id])
+
+        node.children.forEach(hydrate)
+        node.parents.forEach(hydrate)
+      }
+    },
     branch () {
       return this.settings.nodeSeparationY / 2 + this.settings.nodeRadius
     },
@@ -208,43 +220,64 @@ export default {
         })
     }
   },
-  apollo: {
-    // Query with parameters
-    whakapapa: {
-      query: gql`query {
-        whakapapa {
-          id
-          gender
-          preferredName
-          avatarImage {
-            uri
-          }
-          children {
-            id
-            gender
-            preferredName
-            avatarImage {
-              uri
-            }
-          }
-          parents {
-            id
-            gender
-            preferredName
-            avatarImage {
-              uri
-            }
-          }
-        }
-      }`,
-      fetchPolicy: 'no-cache'
-    }
-  },
   mounted () {
     // means the vue component has rendered
     this.componentLoaded = true
+    this.getCloseWhakapapa()
   },
   methods: {
+    async getCloseWhakapapa (profileId) {
+      // Query with parameters
+      const query = {
+        query: gql`query {
+          whakapapa {
+            id
+            gender
+            preferredName
+            avatarImage {
+              uri
+            }
+            children {
+              id
+              gender
+              preferredName
+              avatarImage {
+                uri
+              }
+            }
+            parents {
+              id
+              gender
+              preferredName
+              avatarImage {
+                uri
+              }
+            }
+          }
+        }`,
+        // variables: {
+        // },
+        fetchPolicy: 'no-cache'
+      }
+
+      const result = await this.$apollo.queries(query)
+      // if (!result.data) ???
+
+      const { children, parents } = result.data.whakapapa
+      // could add a note of the parent to each child
+      const profile = result.data.whakapapa
+      this.focus = profile.id
+      profile.children = profile.children.map(p => p.id)
+      profile.parents = profile.parents.map(p => p.id)
+
+      this.flatWhakapapa = Object.assign(
+        {},
+        this.flatWhakapapa,
+        { [profile.id]: profile },
+        ...children.map(p => ({ [p.id]: p })),
+        ...parents.map(p => ({ [p.id]: p }))
+      )
+    },
     toggleShow (target) {
       this.node.selected = target
       this.dialog.show = !this.dialog.show
