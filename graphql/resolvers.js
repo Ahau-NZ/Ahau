@@ -177,10 +177,10 @@ module.exports = sbot => ({
         })
       }),
 
-    saveWhakapapaRelation: (_, { input }) => {
+    saveWhakapapaRelation: (_, { input }, { feedId, profileId }) => {
       const { relationshipId, child, parent, relationshipType, legallyAdopted, recps } = input
       const opts = {
-        recps,
+        recps: (recps && recps.length > 0) ? recps : [profileId],
         legallyAdopted: { set: legallyAdopted || false },
         relationshipType: { set: relationshipType || 'unknown' }
       }
@@ -216,7 +216,7 @@ module.exports = sbot => ({
         description: description ? { set: description } : null,
         focus: { set: focus || profileId },
         mode: { set: mode || 'descendants' },
-        recps: recps ? recps.length < 1 ? [profileId] : recps : null
+        recps: (recps && recps.length > 0) ? recps : [profileId]
       }
       if (viewId) {
         return new Promise((resolve, reject) => {
