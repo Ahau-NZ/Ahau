@@ -98,19 +98,31 @@ export default {
   computed: {
     // deeply nested tree of profiles!
     nestedWhakapapa () {
-      if (!this.focus) return {}
+      if (!this.focus) {
+        return {
+          preferredName: 'Loading...',
+          gender: 'unknown',
+          children: [],
+          parents: []
+        }
+      }
 
-      var result = this.flatWhakapapa[this.focus]
-      hydrate(result)
+      var flatWhakapapa = this.flatWhakapapa
 
-      return result
+      var output = this.flatWhakapapa[this.focus]
+      hydrate(output)
+
+      return output
 
       function hydrate (node) {
-        node.children = node.children.map(id => this.flatWhakapapa[id])
-        node.parents = node.children.map(id => this.flatWhakapapa[id])
-
-        node.children.forEach(hydrate)
-        node.parents.forEach(hydrate)
+        if (node.children) {
+          node.children = node.children.map(id => flatWhakapapa[id])
+          node.children.forEach(hydrate)
+        }
+        if (node.parents) {
+          node.parents = node.parents.map(id => flatWhakapapa[id])
+          node.parents.forEach(hydrate)
+        }
       }
     },
     branch () {
@@ -163,12 +175,6 @@ export default {
       return screen.height
     },
     /*
-      returns a nested data structure representing a tree based on the treeData object
-    */
-    root () {
-      return d3.hierarchy(this.whakapapa)
-    },
-    /*
       creates a new tree layout and sets the size depending on the separation
       between nodes
     */
@@ -181,6 +187,10 @@ export default {
         .separation(function (a, b) {
           return a.parent === b.parent ? 1 : 2
         })
+    },
+    //  returns a nested data structure representing a tree based on the treeData object
+    root () {
+      return d3.hierarchy(this.nestedWhakapapa)
     },
     /*
       returns an array of nodes associated with the root node created from the treeData object, as well as
@@ -228,7 +238,7 @@ export default {
   methods: {
     async getCloseWhakapapa (profileId) {
       // Query with parameters
-      const query = {
+      const request = {
         query: gql`query {
           whakapapa {
             id
@@ -260,8 +270,11 @@ export default {
         fetchPolicy: 'no-cache'
       }
 
-      const result = await this.$apollo.queries(query)
-      // if (!result.data) ???
+      const result = await this.$apollo.query(request)
+      if (!result.data) {
+        console.error('WARNING, something went wrong')
+        return
+      }
 
       const { children, parents } = result.data.whakapapa
       // could add a note of the parent to each child

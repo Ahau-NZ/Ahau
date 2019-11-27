@@ -75,7 +75,7 @@ export default {
               v => !!v || 'Legal name is required',
               v => (v && v.length <= 50) || 'Name must be less than 50 characters'
             ]
-          },
+          }
           // date: {
           //   birth: [
           //     v => !!v || 'Date of birth is required'
@@ -84,7 +84,7 @@ export default {
         }
       }
     }
-  },
+  }
 }
 </script>
 
