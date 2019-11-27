@@ -113,7 +113,7 @@
 <script>
 import Dialog from './Dialog.vue'
 // import NodeDatePicker from '../NodeDatePicker.vue'
-import { GENDERS, RELATIONSHIPS } from '../../../lib/constants'
+import { GENDERS, RELATIONSHIPS } from '@/lib/constants'
 
 function defaultData () {
   return {
