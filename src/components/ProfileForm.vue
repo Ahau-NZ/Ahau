@@ -11,22 +11,11 @@
       :legalName="profile.legalName"
       :description="profile.description"
     />
-    <v-container class="white mx-auto pt-12 px-12">
-      <v-row>
-        <v-col cols="12">
-          <v-btn @click="onCancel" outlined text color="secondary" class="mr-4">
-            <v-icon>mdi-close</v-icon>
-          </v-btn>
-
-          <v-btn v-if="hasChanges" @click="saveProfile" text color="secondary" class="mr-4">
-            <v-icon>mdi-check</v-icon>
-          </v-btn>
-          <v-btn v-else outlined color="secondary" text class="mr-4">
-            <v-icon>mdi-check</v-icon>
-          </v-btn>
-        </v-col>
-      </v-row>
-    </v-container>
+    <ProfileEditActions
+      :save="saveProfile"
+      :cancel="onCancel"
+      :hasChanges="hasChanges"
+    />
   </div>
 </template>
 
@@ -34,6 +23,7 @@
 import gql from 'graphql-tag'
 import ProfileHeaderEdit from '@/components/ProfileHeaderEdit'
 import ProfileInfoEdit from '@/components/ProfileInfoEdit'
+import ProfileEditActions from '@/components/ProfileEditActions'
 
 const get = require('lodash.get')
 
@@ -173,7 +163,8 @@ export default {
   },
   components: {
     ProfileHeaderEdit,
-    ProfileInfoEdit
+    ProfileInfoEdit,
+    ProfileEditActions
   }
 }
 </script>
@@ -185,5 +176,9 @@ export default {
     flex-direction: column;
     align-items: center;
     background: linear-gradient(to right, grey 0%,grey 50%,#000000 50%,white 50%,white 100%);
+  }
+  .body-width {
+    min-width: 600px;
+    max-width: 60vw;
   }
 </style>
