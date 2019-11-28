@@ -39,7 +39,7 @@ export default {
   props: {
     preferredName: String,
     legalName: String,
-    description: String,
+    description: String
   },
   data () {
     return {

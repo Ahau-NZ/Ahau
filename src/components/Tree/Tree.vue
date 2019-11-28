@@ -251,9 +251,8 @@ export default {
       var svg = d3.select('#baseSvg')
       var g = d3.select('#baseGroup')
       svg.call(
-        d3.zoom()
-        .on('zoom', function(){
-          g.attr('transform', d3.event.transform)  
+        d3.zoom().on('zoom', function () {
+          g.attr('transform', d3.event.transform)
         }))
     },
     async loadDescendants (profileId) {
