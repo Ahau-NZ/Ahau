@@ -51,6 +51,7 @@ import gql from 'graphql-tag'
 
 import { VueContext } from 'vue-context'
 
+import tree from '@/lib/tree-helpers'
 import Node from './Node.vue'
 import Link from './Link.vue'
 import ViewNodeDialog from './Dialogs/ViewNodeDialog.vue'
@@ -100,30 +101,17 @@ export default {
     nestedWhakapapa () {
       if (!this.focus) {
         return {
-          preferredName: 'Loading...',
+          preferredName: 'Loading',
           gender: 'unknown',
           children: [],
           parents: []
         }
       }
 
-      var flatWhakapapa = this.flatWhakapapa
-
       var output = this.flatWhakapapa[this.focus]
-      hydrate(output)
+      tree.hydrate(output, this.flatWhakapapa)
 
       return output
-
-      function hydrate (node) {
-        if (node.children) {
-          node.children = node.children.map(id => flatWhakapapa[id])
-          node.children.forEach(hydrate)
-        }
-        if (node.parents) {
-          node.parents = node.parents.map(id => flatWhakapapa[id])
-          node.parents.forEach(hydrate)
-        }
-      }
     },
     branch () {
       return this.settings.nodeSeparationY / 2 + this.settings.nodeRadius
@@ -276,20 +264,13 @@ export default {
         return
       }
 
-      const { children, parents } = result.data.whakapapa
-      // could add a note of the parent to each child
-      const profile = result.data.whakapapa
-      this.focus = profile.id
-      profile.children = profile.children.map(p => p.id)
-      profile.parents = profile.parents.map(p => p.id)
+      const record = result.data.whakapapa
+      this.focus = record.id
 
-      this.flatWhakapapa = Object.assign(
-        {},
-        this.flatWhakapapa,
-        { [profile.id]: profile },
-        ...children.map(p => ({ [p.id]: p })),
-        ...parents.map(p => ({ [p.id]: p }))
-      )
+      this.flatWhakapapa = {
+        ...this.flatWhakapapa,
+        ...tree.flatten(record)
+      }
     },
     toggleShow (target) {
       this.node.selected = target
