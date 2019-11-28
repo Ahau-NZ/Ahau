@@ -2,7 +2,6 @@
   <div id="app">
     <v-container class="body-width white mx-auto py-12 px-12">
       <v-row>
-        <!--<v-btn @click="addPerson(mockNode)"> Add Child </v-btn>-->
         <svg width="100%" :height="height" ref="baseSvg">
           <g :transform="`translate(${treeX} ${treeY})`">
             <g v-for="link in links" :key="link.id" class="link">
@@ -242,8 +241,7 @@ export default {
       var output = Object.assign({}, this.flatWhakapapa)
       Object.entries(tree.flatten(record))
         .forEach(([ profileId, profile ]) => {
-          // this could be a crap merge ):
-          console.log('dip', output[profileId], profile)
+          // this could be a crap merge ??
           output[profileId] = Object.assign({}, output[profileId] || {}, profile)
         })
 
@@ -316,10 +314,43 @@ export default {
       this.$refs.menu.open($event)
     },
     /*
-      adds a new child node onto the selected node
       TODO: Fix memory leak with NewNodeDialog and Tree
     */
     async addPerson ($event) {
+      // create a new profile
+      const profileId = await this.createProfile($event)
+
+      // link it up
+      switch (this.dialog.type) {
+        case 'child':
+          return this.createChildLink(profileId, $event)
+        case 'parent':
+        default: console.log('not built')
+      }
+    },
+    async createChildLink (profileId, { relationshipType, legallyAdopted }) {
+      const parent = this.node.selected.data.id
+
+      const saveWhakapapaReq = {
+        mutation: gql`mutation ($input: WhakapapaRelationInput!) {
+          saveWhakapapaRelation(input: $input)
+        }`,
+        variables: {
+          input: {
+            child: profileId,
+            parent,
+            relationshipType,
+            legallyAdopted
+          }
+        }
+      }
+      const whakapapaResponse = await this.$apollo.mutate(saveWhakapapaReq)
+      console.log('Created new Whakapapa relation: ', whakapapaResponse.data.saveWhakapapaRelation)
+
+      // reload the parent (and hence the new child!)
+      this.loadDescendants(parent)
+    },
+    async createProfile ($event) {
       const createProfileReq = {
         mutation: gql`mutation ($input: CreateProfileInput!) {
           createProfile(input: $input)
@@ -335,49 +366,11 @@ export default {
         }
       }
       const res = await this.$apollo.mutate(createProfileReq)
-      const isChild = this.dialog.type === 'child'
-
-      const saveWhakapapaReq = {
-        mutation: gql`mutation ($input: WhakapapaRelationInput!) {
-          saveWhakapapaRelation(input: $input)
-        }`,
-        variables: {
-          input: {
-            child: isChild ? res.data.createProfile : this.node.selected.data.id,
-            parent: isChild ? this.node.selected.data.id : res.data.createProfile,
-            relationshipType: $event.relationshipType,
-            legallyAdopted: $event.legallyAdopted
-          }
-        }
+      if (!res.data) {
+        console.error('error!', res)
+        return
       }
-      const whakapapaResponse = await this.$apollo.mutate(saveWhakapapaReq)
-      console.log('Created new Whakapapa relation: ', whakapapaResponse.data.saveWhakapapaRelation)
-
-      // TODO this is not reactive - i.e. we should not be doing this newNode manipulation here
-
-      var selected = this.node.selected
-      var newNode = d3.hierarchy($event)
-
-      newNode.depth = isChild ? selected.depth + 1 : selected.depth - 1
-      newNode.height = isChild ? selected.height - 1 : selected.height + 1
-      if (isChild) newNode.parent = selected
-      else newNode.child = selected
-
-      if (selected.children === undefined) {
-        selected.children = []
-        selected.data.children = []
-      }
-      if (selected.parents === undefined) {
-        selected.parents = []
-        selected.data.parents = []
-      }
-      if (isChild) {
-        selected.children.push(newNode)
-        selected.data.children.push(newNode.data)
-      } else {
-        selected.parents.push(newNode)
-        selected.data.parents.push(newNode.data)
-      }
+      return res.data.createProfile // a profileId
     },
     /*
       updated when the Node returns its text-width, sets the separation between nodes to the largest text width.
