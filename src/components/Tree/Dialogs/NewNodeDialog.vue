@@ -44,7 +44,7 @@
               <v-col cols="12" sm="5" md="3">
                 <v-select label="Gender*"
                   v-model="data.gender"
-                  :rules="form.rules.title"
+                  :rules="form.rules.gender"
                   :items="genders"
                   required
                 ></v-select>
@@ -113,27 +113,7 @@
 <script>
 import Dialog from './Dialog.vue'
 // import NodeDatePicker from '../NodeDatePicker.vue'
-
-// TODO - these should be extracted and live in one place in the app
-const GENDERS = [
-  'male',
-  'female',
-  'other',
-  'unknown'
-]
-const RELATIONSHIPS = [
-  'birth',
-  'whangai',
-  'adopted',
-  'unknown'
-]
-// const TITLES = [
-//   'Mr',
-//   'Mrs',
-//   'Ms',
-//   'Miss',
-//   'Other'
-// ]
+import { GENDERS, RELATIONSHIPS } from '@/lib/constants'
 
 function defaultData () {
   return {
@@ -171,9 +151,6 @@ export default {
           // title: [
           //   v => !!v || 'Title is required'
           // ],
-          gender: [
-            v => !!v || 'Gender is required'
-          ],
           name: {
             preferred: [
               v => !!v || 'Preferred name is required',
@@ -184,11 +161,17 @@ export default {
               v => (v && v.length <= 50) || 'Name must be less than 50 characters'
             ]
           },
-          date: {
-            birth: [
-              v => !!v || 'Date of birth is required'
-            ]
-          }
+          gender: [
+            v => !!v || 'Gender is required'
+          ],
+          relationshipType: [
+            v => !!v || 'Relationship type is required'
+          ]
+          // date: {
+          //   birth: [
+          //     v => !!v || 'Date of birth is required'
+          //   ]
+          // }
         }
       }
     }
@@ -222,7 +205,6 @@ export default {
         return
       }
 
-      console.log('---->validated')
       // send the data back to the parent component
       this.$emit('submit', this.data)
 

@@ -2,10 +2,6 @@
   <div id="app">
     <v-container class="body-width white mx-auto py-12 px-12">
       <v-row>
-        <h1>Tree</h1>
-      </v-row>
-      <v-row>
-        <!--<v-btn @click="addChild(mockNode)"> Add Child </v-btn>-->
         <svg width="100%" :height="height" ref="baseSvg">
           <g :transform="`translate(${treeX} ${treeY})`">
             <g v-for="link in links" :key="link.id" class="link">
@@ -17,8 +13,7 @@
             ref="tree">
             <g v-for="node in nodes" :key="node.id"
               @contextmenu.prevent="openContextMenu($event, node)"
-              class="node"
-              >
+              class="node">
               <Node :node="node" :radius="settings.nodeRadius" @click="toggleShow" @textWidth="updateSeparation"/>
             </g>
           </g>
@@ -37,22 +32,31 @@
     <EditNodeDialog v-if="dialog.edit" :show="dialog.edit"
       @close="toggleEdit"/>
     <NewNodeDialog v-if="dialog.new" :show="dialog.new"
-      @close="toggleNew" @submit="addChild($event)"/>
+      @close="closeNew" @submit="addPerson($event)"/>
   </div>
 </template>
 
 <script>
 import * as d3 from 'd3'
+import gql from 'graphql-tag'
 
 import { VueContext } from 'vue-context'
 
+import tree from '@/lib/tree-helpers'
 import Node from './Node.vue'
 import Link from './Link.vue'
 import ViewNodeDialog from './Dialogs/ViewNodeDialog.vue'
 import EditNodeDialog from './Dialogs/EditNodeDialog.vue'
 import NewNodeDialog from './Dialogs/NewNodeDialog.vue'
-import mockTreeData from './mock-tree-data'
-// import mockNode from './mock-node'
+
+const saveWhakapapaMutation = (input) => ({
+  mutation: gql`mutation ($input: WhakapapaRelationInput!) {
+    saveWhakapapaRelation(input: $input)
+  }`,
+  variables: {
+    input
+  }
+})
 
 export default {
   props: {
@@ -63,10 +67,14 @@ export default {
   },
   data () {
     return {
+      focus: null, // ? be in props later?
+      flatWhakapapa: {}, // profiles with format { %profileId: profile }
+
       dialog: {
         show: false,
         edit: false,
-        new: false
+        new: false,
+        type: 'child'
       },
       node: {
         selected: null,
@@ -79,17 +87,42 @@ export default {
         nodeSeparationY: 150
       },
       contextmenu: [
-        { title: 'Add Child', action: this.toggleNew },
-        { title: 'Add Parent', action: this.setNew },
+        { title: 'Add Child', action: this.toggleNewChild },
+        { title: 'Add Parent', action: this.toggleNewParent },
         { title: 'Edit Person', action: this.toggleEdit }
       ],
       options: {
         addnode: false
-      },
-      treeData: mockTreeData
+      }
+    }
+  },
+  apollo: {
+    // TEMP - just using until we connect whakapapa/views
+    focus: {
+      query: gql` {
+        whoami {
+          profile { id }
+        }
+      }`,
+      update: data => data.whoami.profile.id,
+      fetchPolicy: 'no-cache'
     }
   },
   computed: {
+    // deeply nested tree of profiles!
+    nestedWhakapapa () {
+      var output = this.flatWhakapapa[this.focus]
+      if (!output) {
+        return {
+          preferredName: 'Loading',
+          gender: 'unknown',
+          children: [],
+          parents: []
+        }
+      }
+
+      return tree.hydrate(output, this.flatWhakapapa)
+    },
     branch () {
       return this.settings.nodeSeparationY / 2 + this.settings.nodeRadius
     },
@@ -140,12 +173,6 @@ export default {
       return screen.height
     },
     /*
-      returns a nested data structure representing a tree based on the treeData object
-    */
-    root () {
-      return d3.hierarchy(this.treeData)
-    },
-    /*
       creates a new tree layout and sets the size depending on the separation
       between nodes
     */
@@ -158,6 +185,10 @@ export default {
         .separation(function (a, b) {
           return a.parent === b.parent ? 1 : 2
         })
+    },
+    //  returns a nested data structure representing a tree based on the treeData object
+    root () {
+      return d3.hierarchy(this.nestedWhakapapa)
     },
     /*
       returns an array of nodes associated with the root node created from the treeData object, as well as
@@ -197,11 +228,76 @@ export default {
         })
     }
   },
+  watch: {
+    // TEMP ? till we connect whakapapa/views
+    focus (newProfileId) {
+      this.loadDescendants(newProfileId)
+    }
+  },
   mounted () {
     // means the vue component has rendered
     this.componentLoaded = true
   },
   methods: {
+    async loadDescendants (profileId) {
+      const result = await this.getCloseWhakapapa(profileId)
+
+      const record = result.data.whakapapa
+      record.children.forEach(profile => {
+        this.loadDescendants(profile.id)
+      })
+
+      var output = Object.assign({}, this.flatWhakapapa)
+      Object.entries(tree.flatten(record))
+        .forEach(([ profileId, profile ]) => {
+          // this could be a crap merge ??
+          output[profileId] = Object.assign({}, output[profileId] || {}, profile)
+        })
+
+      this.flatWhakapapa = output
+    },
+    async getCloseWhakapapa (profileId) {
+      const request = {
+        query: gql`query ($id: String) {
+          whakapapa(id: $id) {
+            id
+            gender
+            preferredName
+            avatarImage {
+              uri
+            }
+            children {
+              id
+              gender
+              preferredName
+              avatarImage {
+                uri
+              }
+            }
+            parents {
+              id
+              gender
+              preferredName
+              avatarImage {
+                uri
+              }
+            }
+          }
+        }`,
+        variables: {
+          id: profileId
+        },
+        fetchPolicy: 'no-cache'
+      }
+
+      const result = await this.$apollo.query(request)
+      if (!result.data) {
+        console.error('WARNING, something went wrong')
+        console.error(result)
+        return
+      }
+      return result
+    },
     toggleShow (target) {
       this.node.selected = target
       this.dialog.show = !this.dialog.show
@@ -209,8 +305,17 @@ export default {
     toggleEdit () {
       this.dialog.edit = !this.dialog.edit
     },
-    toggleNew (state = false) {
-      this.dialog.new = !this.dialog.new
+    closeNew () {
+      this.dialog.new = false
+    },
+    toggleNewChild (state = false) {
+      this.dialog.type = 'child'
+      this.dialog.new = true
+    },
+
+    toggleNewParent (state = false) {
+      this.dialog.type = 'parent'
+      this.dialog.new = true
     },
 
     openContextMenu ($event, node) {
@@ -218,24 +323,72 @@ export default {
       this.$refs.menu.open($event)
     },
     /*
-      adds a new child node onto the selected node
       TODO: Fix memory leak with NewNodeDialog and Tree
     */
-    addChild ($event) {
-      var selected = this.node.selected
-      var newNode = d3.hierarchy($event)
+    async addPerson ($event) {
+      // create a new profile
+      const profileId = await this.createProfile($event)
 
-      newNode.depth = selected.depth + 1
-      newNode.height = selected.height - 1
-      newNode.parent = selected
-
-      if (selected.children === undefined) {
-        selected.children = []
-        selected.data.children = []
+      // link it up
+      switch (this.dialog.type) {
+        case 'child':
+          return this.createChildLink(profileId, $event)
+        case 'parent':
+          return this.createParentLink(profileId, $event)
+        default: console.log('not built')
       }
+    },
+    async createParentLink (profileId, { relationshipType, legallyAdopted }) {
+      const child = this.node.selected.data.id
+      const input = {
+        child,
+        parent: profileId,
+        relationshipType,
+        legallyAdopted
+        // recps: [profileId]
+      }
+      const whakapapaResponse = await this.$apollo.mutate(saveWhakapapaMutation(input))
+      console.log('Created new Whakapapa relation: ', whakapapaResponse.data.saveWhakapapaRelation)
+      // Change focus
+      this.focus = profileId
+    },
+    async createChildLink (profileId, { relationshipType, legallyAdopted }) {
+      const parent = this.node.selected.data.id
+      const input = {
+        child: profileId,
+        parent,
+        relationshipType,
+        legallyAdopted
+        // recps: [profileId]
+      }
+      const whakapapaResponse = await this.$apollo.mutate(saveWhakapapaMutation(input))
+      console.log('Created new Whakapapa relation: ', whakapapaResponse.data.saveWhakapapaRelation)
 
-      selected.children.push(newNode)
-      selected.data.children.push(newNode.data)
+      // reload the parent (and hence the new child!)
+      // TODO: Should be loadCloseWhakapapa
+      this.loadDescendants(parent)
+    },
+    async createProfile ($event) {
+      const createProfileReq = {
+        mutation: gql`mutation ($input: CreateProfileInput!) {
+          createProfile(input: $input)
+        }`,
+        variables: {
+          input: {
+            type: 'person',
+            preferredName: $event.preferredName,
+            legalName: $event.legalName,
+            // avatarImage: ImageInput
+            gender: $event.gender
+          }
+        }
+      }
+      const res = await this.$apollo.mutate(createProfileReq)
+      try {
+        return res.data.createProfile // a profileId
+      } catch (err) {
+        return err
+      }
     },
     /*
       updated when the Node returns its text-width, sets the separation between nodes to the largest text width.

@@ -3,36 +3,30 @@ const pull = require('pull-stream')
 const toPull = require('stream-to-pull-stream')
 const { GraphQLUpload } = require('graphql-upload')
 const toUrl = require('ssb-serve-blobs/id-to-url')
-const get = require('lodash.get')
 const pick = require('lodash.pick')
-const blobToURI = require('ssb-serve-blobs/id-to-url')
 
 const getProfiles = require('./ssb/profiles')
 const getProfile = require('./ssb/profile')
 const getCommunities = require('./ssb/communities')
+const getCloseWhakapapa = require('./ssb/close-whakapapa')
 
 const pubsub = new PubSub()
 
 module.exports = sbot => ({
   Query: {
-    whoami: (_, __, { feedId, profileId }) =>
-      new Promise((resolve, reject) => {
-        getProfile(sbot, profileId, (err, profile) => {
-          if (err) return reject(err)
-
-          resolve({
-            id: feedId,
-            feedId,
-            profile: addURIs(profile)
-          })
-        })
-      }),
-
+    whoami: async (_, __, { feedId, profileId }) => {
+      const profile = await getProfile(sbot, profileId)
+      return {
+        id: feedId,
+        feedId,
+        profile
+      }
+    },
     persons: () =>
       new Promise((resolve, reject) => {
         getProfiles(sbot, (err, profiles) => {
           if (err) reject(err)
-          else resolve(profiles.map(addURIs))
+          else resolve(profiles)
         })
       }),
 
@@ -40,24 +34,46 @@ module.exports = sbot => ({
       new Promise((resolve, reject) => {
         getCommunities(sbot, (err, profiles) => {
           if (err) reject(err)
-          else resolve(profiles.map(addURIs))
+          else resolve(profiles)
         })
       }),
 
-    profile: (_, { id }, { feedId, profileId }) =>
-      new Promise((resolve, reject) => {
-        getProfile(sbot, id, (err, profile) => {
-          if (err) return reject(err)
+    profile: async (_, { id }, { feedId, profileId }) => {
+      const profile = await getProfile(sbot, id)
 
-          resolve({
-            id,
-            authors: profile.authors,
-            canEdit: profile.authors.includes(feedId), // WIP
-            ...addURIs(profile)
-          })
-        })
+      return {
+        ...profile,
+        canEdit: profile.authors.includes(feedId) // WIP
+      }
+    },
+    whakapapa: async (_, { id }, { feedId, profileId }) => {
+      try {
+        return getCloseWhakapapa(sbot, id || profileId)
+      } catch (err) {
+        throw err
+      }
+    },
+    whakapapaView: (_, { id }, { feedId, profileId }) => new Promise((resolve, reject) => {
+      sbot.whakapapa.view.get(id, (err, view) => {
+        if (err) reject(err)
+        else resolve(view)
       })
+    })
   },
+  // TODO: make profile and whakapapa a implementation of Person
+  // Person: (_, { id }, { feedId, profileId }) =>
+  //   new Promise((resolve, reject) => {
+  //     getProfile(sbot, id, (err, profile) => {
+  //       if (err) return reject(err)
+
+  //       resolve({
+  //         id,
+  //         authors: profile.authors,
+  //         canEdit: profile.authors.includes(feedId), // WIP
+  //         ...profile
+  //       })
+  //     })
+  //   }),
 
   Profile: {
     tiaki: (obj) =>
@@ -122,7 +138,48 @@ module.exports = sbot => ({
           if (err) reject(err)
           else resolve(input.id)
         })
-      })
+      }),
+
+    saveWhakapapaRelation: (_, { input }, { feedId, profileId }) => {
+      const { relationshipId, child, parent } = input
+      const opts = buildWhakapapaOpts(input)
+      if (relationshipId) {
+        return new Promise((resolve, reject) => {
+          sbot.whakapapa.child.update(relationshipId, opts, (err) => {
+            if (err) reject(err)
+            else resolve('Updated!')
+          })
+        })
+      } else if (child && parent) {
+        return new Promise((resolve, reject) => {
+          sbot.whakapapa.child.create({ parent, child }, opts, (err, id) => {
+            if (err) reject(err)
+            else resolve(id)
+          })
+        })
+      } else {
+        throw new Error('Invalid input')
+      }
+    },
+    saveWhakapapaView: (_, { input }, { feedId, profileId }) => {
+      const { viewId } = input
+      const details = buildWhakapapaViewDetails(input)
+      if (viewId) {
+        return new Promise((resolve, reject) => {
+          sbot.whakapapa.view.update(viewId, details, (err) => {
+            if (err) reject(err)
+            else resolve('Updated!')
+          })
+        })
+      } else {
+        return new Promise((resolve, reject) => {
+          sbot.whakapapa.view.create(details, (err, id) => {
+            if (err) reject(err)
+            else resolve(id)
+          })
+        })
+      }
+    }
   },
   Subscription: {
     peers: {
@@ -178,14 +235,26 @@ function buildTransformation (input) {
   return T
 }
 
-function addURIs (state) {
-  if (get(state, 'avatarImage.blob')) {
-    state.avatarImage.uri = blobToURI(state.avatarImage.blob)
-  }
+function buildWhakapapaOpts (input) {
+  const permittedAttrs = ['relationshipType', 'legallyAdopted', 'recps']
 
-  if (get(state, 'headerImage.blob')) {
-    state.headerImage.uri = blobToURI(state.headerImage.blob)
-  }
+  let opts = pick(input, permittedAttrs)
+  Object.entries(opts).forEach(([key, value]) => {
+    if (key === 'recps') return
+    opts[key] = { set: value }
+  })
 
-  return state
+  return opts
+}
+
+function buildWhakapapaViewDetails (input) {
+  const permittedAttrs = ['name', 'description', 'focus', 'mode', 'recps']
+
+  let details = pick(input, permittedAttrs)
+  Object.entries(details).forEach(([key, value]) => {
+    if (key === 'recps') return
+    details[key] = { set: value }
+  })
+
+  return details
 }
