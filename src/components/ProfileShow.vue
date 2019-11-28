@@ -1,7 +1,7 @@
 <template>
   <div class='wrapper'>
     <ProfileHeaderShow :preferredName="profile.preferredName" :headerImage="profile.headerImage" :avatarImage="profile.avatarImage"/>
-    <v-container class="body-width white mx-auto py-12 px-12">
+    <v-container class="body-width white py-12 px-12">
       <v-row>
         <v-col cols="8">
           <h1 class="primary--text">{{profile.preferredName}}</h1>
@@ -162,11 +162,12 @@ export default {
     flex-direction: column;
     align-items: center;
     background: linear-gradient(to right, grey 0%,grey 50%,#000000 50%,white 50%,white 100%);
-  }
-  .body-width {
-    min-width: 600px;
-    max-width: 60vw;
-    min-height: calc(100vh - 40vh);
-    background: white;
+
+    .body-width {
+      min-width: 600px;
+      max-width: 60vw;
+      min-height: calc(100vh - 40vh);
+      background: white;
+    }
   }
 </style>

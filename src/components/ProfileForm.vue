@@ -6,7 +6,7 @@
       :headerImage="profile.headerImage"
       :addImages="addImages"
     />
-    <v-container class='body'>
+    <v-container class='body px-12 pt-12'>
       <v-row>
         <v-col>
           <ProfileInfoEdit
@@ -25,6 +25,9 @@
           />
         </v-col>
       </v-row>
+
+      <v-row class='spacer'/>
+
     </v-container>
   </div>
 </template>
@@ -187,18 +190,21 @@ export default {
     align-items: center;
     background: linear-gradient(to right, grey 0%,grey 50%,#000000 50%,white 50%,white 100%);
 
-    .body {
+    > .body {
       min-width: 600px;
       max-width: 60vw;
       background: #fff;
 
       padding: 0;
-      padding-bottom: 40vh;
 
       .row {
         .col {
           padding: 0;
         }
+      }
+      .row.spacer {
+        background: #fff;
+        height: 20vh
       }
     }
   }
