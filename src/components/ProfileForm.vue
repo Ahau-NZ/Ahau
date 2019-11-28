@@ -6,16 +6,26 @@
       :headerImage="profile.headerImage"
       :addImages="addImages"
     />
-    <ProfileInfoEdit
-      :preferredName="profile.preferredName"
-      :legalName="profile.legalName"
-      :description="profile.description"
-    />
-    <ProfileEditActions
-      :save="saveProfile"
-      :cancel="onCancel"
-      :hasChanges="hasChanges"
-    />
+    <v-container class='body'>
+      <v-row>
+        <v-col>
+          <ProfileInfoEdit
+            :preferredName="profile.preferredName"
+            :legalName="profile.legalName"
+            :description="profile.description"
+          />
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col>
+          <ProfileEditActions
+            :save="saveProfile"
+            :cancel="onCancel"
+            :hasChanges="hasChanges"
+          />
+        </v-col>
+      </v-row>
+    </v-container>
   </div>
 </template>
 
@@ -176,9 +186,20 @@ export default {
     flex-direction: column;
     align-items: center;
     background: linear-gradient(to right, grey 0%,grey 50%,#000000 50%,white 50%,white 100%);
-  }
-  .body-width {
-    min-width: 600px;
-    max-width: 60vw;
+
+    .body {
+      min-width: 600px;
+      max-width: 60vw;
+      background: #fff;
+
+      padding: 0;
+      padding-bottom: 40vh;
+
+      .row {
+        .col {
+          padding: 0;
+        }
+      }
+    }
   }
 </style>
