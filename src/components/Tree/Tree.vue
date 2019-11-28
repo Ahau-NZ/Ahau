@@ -306,12 +306,12 @@ export default {
         fetchPolicy: 'no-cache'
       }
 
-      const result = await this.$apollo.query(request)
       try {
-        return result.data
+        const result = await this.$apollo.query(request)
+        return result
       } catch (err) {
         console.error('WARNING, something went wrong')
-        console.error(result)
+        console.error(err)
         return err
       }
     },
