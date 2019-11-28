@@ -3,14 +3,12 @@ const pull = require('pull-stream')
 const toPull = require('stream-to-pull-stream')
 const { GraphQLUpload } = require('graphql-upload')
 const toUrl = require('ssb-serve-blobs/id-to-url')
-const get = require('lodash.get')
 const pick = require('lodash.pick')
-const blobToURI = require('ssb-serve-blobs/id-to-url')
 
 const getProfiles = require('./ssb/profiles')
 const getProfile = require('./ssb/profile')
 const getCommunities = require('./ssb/communities')
-const getWhakapapa = require('./ssb/whakapapa')
+const getCloseWhakapapa = require('./ssb/close-whakapapa')
 
 const pubsub = new PubSub()
 
@@ -21,14 +19,14 @@ module.exports = sbot => ({
       return {
         id: feedId,
         feedId,
-        profile: addURIs(profile)
+        profile
       }
     },
     persons: () =>
       new Promise((resolve, reject) => {
         getProfiles(sbot, (err, profiles) => {
           if (err) reject(err)
-          else resolve(profiles.map(addURIs))
+          else resolve(profiles)
         })
       }),
 
@@ -36,22 +34,21 @@ module.exports = sbot => ({
       new Promise((resolve, reject) => {
         getCommunities(sbot, (err, profiles) => {
           if (err) reject(err)
-          else resolve(profiles.map(addURIs))
+          else resolve(profiles)
         })
       }),
 
     profile: async (_, { id }, { feedId, profileId }) => {
       const profile = await getProfile(sbot, id)
+
       return {
-        id,
-        authors: profile.authors,
-        canEdit: profile.authors.includes(feedId), // WIP
-        ...addURIs(profile)
+        ...profile,
+        canEdit: profile.authors.includes(feedId) // WIP
       }
     },
     whakapapa: async (_, { id }, { feedId, profileId }) => {
       try {
-        return getWhakapapa(sbot, id, profileId)
+        return getCloseWhakapapa(sbot, id || profileId)
       } catch (err) {
         throw err
       }
@@ -73,7 +70,7 @@ module.exports = sbot => ({
   //         id,
   //         authors: profile.authors,
   //         canEdit: profile.authors.includes(feedId), // WIP
-  //         ...addURIs(profile)
+  //         ...profile
   //       })
   //     })
   //   }),
@@ -236,18 +233,6 @@ function buildTransformation (input) {
   })
 
   return T
-}
-
-function addURIs (state) {
-  if (get(state, 'avatarImage.blob')) {
-    state.avatarImage.uri = blobToURI(state.avatarImage.blob)
-  }
-
-  if (get(state, 'headerImage.blob')) {
-    state.headerImage.uri = blobToURI(state.headerImage.blob)
-  }
-
-  return state
 }
 
 function buildWhakapapaOpts (input) {

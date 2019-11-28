@@ -28,19 +28,6 @@
           ></v-textarea>
         </v-col>
 
-        <v-col cols="12">
-          <v-btn @click="onCancel" outlined text color="secondary" class="mr-4">
-            <v-icon>mdi-close</v-icon>
-          </v-btn>
-
-          <v-btn v-if="hasChanges" @click="saveProfile" text color="secondary" class="mr-4">
-            <v-icon>mdi-check</v-icon>
-          </v-btn>
-          <v-btn v-else outlined color="secondary" text class="mr-4">
-            <v-icon>mdi-check</v-icon>
-          </v-btn>
-        </v-col>
-
       </v-row>
     </v-container>
   </v-form>
@@ -53,7 +40,6 @@ export default {
     preferredName: String,
     legalName: String,
     description: String,
-    saveProfile: Function
   },
   data () {
     return {

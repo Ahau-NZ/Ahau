@@ -7,11 +7,26 @@
       :addImages="addImages"
     />
     <ProfileInfoEdit
-      :saveProfile="saveProfile"
       :preferredName="profile.preferredName"
       :legalName="profile.legalName"
       :description="profile.description"
     />
+    <v-container class="white mx-auto pt-12 px-12">
+      <v-row>
+        <v-col cols="12">
+          <v-btn @click="onCancel" outlined text color="secondary" class="mr-4">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+
+          <v-btn v-if="hasChanges" @click="saveProfile" text color="secondary" class="mr-4">
+            <v-icon>mdi-check</v-icon>
+          </v-btn>
+          <v-btn v-else outlined color="secondary" text class="mr-4">
+            <v-icon>mdi-check</v-icon>
+          </v-btn>
+        </v-col>
+      </v-row>
+    </v-container>
   </div>
 </template>
 
