@@ -384,11 +384,11 @@ export default {
         }
       }
       const res = await this.$apollo.mutate(createProfileReq)
-      if (!res.data) {
-        console.error('error!', res)
-        return
+      try {
+        return res.data.createProfile // a profileId
+      } catch (err) {
+        return err
       }
-      return res.data.createProfile // a profileId
     },
     /*
       updated when the Node returns its text-width, sets the separation between nodes to the largest text width.
