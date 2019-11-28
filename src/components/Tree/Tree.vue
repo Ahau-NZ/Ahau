@@ -258,7 +258,7 @@ export default {
     async loadDescendants (profileId) {
       const result = await this.getCloseWhakapapa(profileId)
 
-      const record = result.data.whakapapa
+      const record = result.data.closeWhakapapa
       record.children.forEach(profile => {
         this.loadDescendants(profile.id)
       })
@@ -275,7 +275,7 @@ export default {
     async getCloseWhakapapa (profileId) {
       const request = {
         query: gql`query ($id: String) {
-          whakapapa(id: $id) {
+          closeWhakapapa(id: $id) {
             id
             gender
             preferredName

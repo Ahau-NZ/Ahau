@@ -192,7 +192,7 @@ module.exports = gql`
     profile(id: String!): Profile
 
     "Scuttlebutt parent and child relations to a profile"
-    whakapapa(id: String): Whakapapa
+    closeWhakapapa(id: String): Whakapapa
 
     "Whakapapa views from a perspective"
     whakapapaView(id: String!): WhakapapaView

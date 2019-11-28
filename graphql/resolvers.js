@@ -46,7 +46,7 @@ module.exports = sbot => ({
         canEdit: profile.authors.includes(feedId) // WIP
       }
     },
-    whakapapa: async (_, { id }, { feedId, profileId }) => {
+    closeWhakapapa: async (_, { id }, { feedId, profileId }) => {
       try {
         return getCloseWhakapapa(sbot, id || profileId)
       } catch (err) {
