@@ -307,12 +307,13 @@ export default {
       }
 
       const result = await this.$apollo.query(request)
-      if (!result.data) {
+      try {
+        return result.data
+      } catch (err) {
         console.error('WARNING, something went wrong')
         console.error(result)
-        return
+        return err
       }
-      return result
     },
     toggleShow (target) {
       this.node.selected = target
