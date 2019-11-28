@@ -20,8 +20,9 @@
     </g>
   </svg>
 </template>
-<script>
 
+<script>
+import get from 'lodash.get'
 import tane from '@/assets/tane.svg'
 import wahine from '@/assets/wahine.svg'
 
@@ -41,7 +42,10 @@ export default {
       return this.radius * 2
     },
     imageSource () {
-      // temporary function to display placeholder image of male or female based on gender
+      const uri = get(this.node, 'data.avatarImage.uri')
+      if (uri) return uri
+
+      // fallback
       switch (this.node.data.gender) {
         case 'male': return tane
         case 'female': return wahine
