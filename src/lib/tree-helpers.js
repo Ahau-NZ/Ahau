@@ -1,3 +1,4 @@
+import clone from 'lodash.clonedeep'
 export default {
   flatten,
   hydrate
@@ -23,12 +24,16 @@ function flatten (node) {
 }
 
 function hydrate (node, flatStore) {
-  if (node.children) {
-    node.children = node.children.map(id => flatStore[id])
-    node.children.forEach(n => hydrate(n, flatStore))
+  var output = clone(node)
+
+  if (output.children) {
+    output.children = output.children
+      .map(profileId => hydrate(flatStore[profileId], flatStore))
   }
-  if (node.parents) {
-    node.parents = node.parents.map(id => flatStore[id])
-    node.parents.forEach(n => hydrate(n, flatStore))
-  }
+  // if (node.parents) {
+  //   careful, infinite recursion!
+  //   would need to add a "seen this" tracker
+  // }
+
+  return output
 }

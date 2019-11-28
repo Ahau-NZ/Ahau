@@ -25,6 +25,8 @@
     "express": "^4.17.1",
     "graphql-tag": "^2.9.0",
     "graphql-upload": "^8.0.7",
+    "lodash.clone": "^4.5.0",
+    "lodash.clonedeep": "^4.5.0",
     "lodash.get": "^4.4.2",
     "lodash.pick": "^4.4.0",
     "pull-file": "^1.1.0",

@@ -112,9 +112,8 @@ export default {
           parents: []
         }
       }
-      tree.hydrate(output, this.flatWhakapapa)
 
-      return output
+      return tree.hydrate(output, this.flatWhakapapa)
     },
     branch () {
       return this.settings.nodeSeparationY / 2 + this.settings.nodeRadius
@@ -223,8 +222,8 @@ export default {
   },
   watch: {
     // TEMP ? till we connect whakapapa/views
-    focus (newVal, oldVal) {
-      this.getCloseWhakapapa(newVal)
+    focus (newProfileId) {
+      this.loadDescendants(newProfileId)
     }
   },
   mounted () {
@@ -232,10 +231,28 @@ export default {
     this.componentLoaded = true
   },
   methods: {
+    async loadDescendants (profileId) {
+      const result = await this.getCloseWhakapapa(profileId)
+
+      const record = result.data.whakapapa
+      record.children.forEach(profile => {
+        this.loadDescendants(profile.id)
+      })
+
+      var output = Object.assign({}, this.flatWhakapapa)
+      Object.entries(tree.flatten(record))
+        .forEach(([ profileId, profile ]) => {
+          // this could be a crap merge ):
+          console.log('dip', output[profileId], profile)
+          output[profileId] = Object.assign({}, output[profileId] || {}, profile)
+        })
+
+      this.flatWhakapapa = output
+    },
     async getCloseWhakapapa (profileId) {
       const request = {
-        query: gql`query {
-          whakapapa {
+        query: gql`query ($id: String) {
+          whakapapa(id: $id) {
             id
             gender
             preferredName
@@ -260,24 +277,19 @@ export default {
             }
           }
         }`,
-        // variables: {
-        // },
+        variables: {
+          id: profileId
+        },
         fetchPolicy: 'no-cache'
       }
 
       const result = await this.$apollo.query(request)
       if (!result.data) {
         console.error('WARNING, something went wrong')
+        console.error(result)
         return
       }
-
-      const record = result.data.whakapapa
-
-      this.flatWhakapapa = {
-        ...this.flatWhakapapa,
-        ...tree.flatten(record)
-      }
-      // TODO - perhaps do a more deliberate merge! this will overwrite important info
+      return result
     },
     toggleShow (target) {
       this.node.selected = target
