@@ -11,7 +11,6 @@
         :height="diameter"
         :xlink:href="imageSource"
         clip-path="url(#myCircle)"
-        
       />
       <g :style="textStyle">
         <rect :width="textWidth" y="-16" height="20"></rect>

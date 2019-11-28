@@ -16,7 +16,7 @@
 
             <g :transform="`translate(${treeX-settings.nodeRadius} ${treeY-settings.nodeRadius})`"
               ref="tree">
-              <g v-for="node in nodes" :key="node.id"
+              <g v-for="(node, index) in nodes" :key="index"
                 @contextmenu.prevent="openContextMenu($event, node)"
                 class="node"
                 >
@@ -76,7 +76,6 @@ export default {
     return {
       focus: null, // ? be in props later?
       flatWhakapapa: {}, // profiles with format { %profileId: profile }
-
       dialog: {
         show: false,
         edit: false,
@@ -178,12 +177,6 @@ export default {
     },
     height () {
       return screen.height
-    },
-    /*
-      returns a nested data structure representing a tree based on the treeData object
-    */
-    root () {
-      return d3.hierarchy(this.data)
     },
     /*
       creates a new tree layout and sets the size depending on the separation
@@ -425,14 +418,17 @@ export default {
       }
     },
     collapse(node){
-      var selected = node.data
-
-      if(selected.children){
-        selected._children = selected.children
-        selected.children = null
+      const parent = node.data.id
+      if(node.children){
+        node.data._children = node.data.children
+        node.data.children = null
+        this.flatWhakapapa[node.data.id] = node.data
+        console.log(node.data)
       }else{
-        selected.children = selected._children
-        selected._children = null
+        node.children = node._children
+        node._children = null
+        this.loadDescendants(parent)
+        
       }
     }
   },
