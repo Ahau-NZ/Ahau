@@ -1,6 +1,7 @@
 const pull = require('pull-stream')
 const pullParamap = require('pull-paramap')
 const isProfile = require('ssb-profile/lib/is-profile')
+const fetchProfile = require('./profile')
 
 module.exports = function profiles (sbot, cb) {
   const query = [
@@ -24,14 +25,11 @@ module.exports = function profiles (sbot, cb) {
     sbot.query.read({ query }),
     pull.filter(isProfile),
     pullParamap(
-      (root, cb) =>
-        sbot.profile.get(root.key, (err, profile) => {
-          if (err) cb(null, null)
-          else {
-            const { state } = profile.states[0] // WARNING! we're assuming just one head-state!
-            cb(null, { id: root.key, ...state })
-          }
-        }),
+      (root, cb) => {
+        fetchProfile(sbot, root.key)
+          .then(profile => cb(null, profile))
+          .catch(_ => cb(null, null))
+      },
       6 // "width" i.e. how many to simultaneously run in parallel
     ),
     pull.filter(Boolean), // drop profiles which has some trouble resolving
