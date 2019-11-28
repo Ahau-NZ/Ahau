@@ -1,6 +1,6 @@
 <template>
   <div class='wrapper'>
-    <Header
+    <ProfileHeaderEdit
       :preferredName="profile.preferredName"
       :avatarImage="profile.avatarImage"
       :headerImage="profile.headerImage"
@@ -9,7 +9,7 @@
     <v-container class='body px-12 pt-12'>
       <v-row>
         <v-col>
-          <Info
+          <ProfileInfoEdit
             :preferredName="profile.preferredName"
             :legalName="profile.legalName"
             :description="profile.description"
@@ -18,7 +18,7 @@
       </v-row>
       <v-row>
         <v-col>
-          <Actions
+          <ProfileEditActions
             :save="saveProfile"
             :cancel="onCancel"
             :hasChanges="hasChanges"
@@ -34,9 +34,9 @@
 
 <script>
 import gql from 'graphql-tag'
-import Header from '@/components/profile-form/Header'
-import Info from '@/components/profile-form/Info'
-import Actions from '@/components/profile-form/Actions'
+import ProfileHeaderEdit from '@/components/ProfileHeaderEdit'
+import ProfileInfoEdit from '@/components/ProfileInfoEdit'
+import ProfileEditActions from '@/components/ProfileEditActions'
 
 const get = require('lodash.get')
 
@@ -175,9 +175,9 @@ export default {
     }
   },
   components: {
-    Header,
-    Info,
-    Actions
+    ProfileHeaderEdit,
+    ProfileInfoEdit,
+    ProfileEditActions
   }
 }
 </script>
