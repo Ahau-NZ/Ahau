@@ -19,7 +19,7 @@
               @contextmenu.prevent="openContextMenu($event, node)"
               class="node"
               >
-              <Node :node="node" :radius="settings.nodeRadius" @click="toggleShow" @textWidth="updateSeparation"/>
+              <Node :node="node" :radius="settings.nodeRadius" @click="collapse(node)" @textWidth="updateSeparation"/>
             </g>
           </g>
         </svg>
@@ -86,7 +86,8 @@ export default {
       options: {
         addnode: false
       },
-      treeData: mockTreeData
+      //treeData: mockTreeData,
+      data: mockTreeData
     }
   },
   computed: {
@@ -143,7 +144,7 @@ export default {
       returns a nested data structure representing a tree based on the treeData object
     */
     root () {
-      return d3.hierarchy(this.treeData)
+      return d3.hierarchy(this.data)
     },
     /*
       creates a new tree layout and sets the size depending on the separation
@@ -223,6 +224,7 @@ export default {
     */
     addChild ($event) {
       var selected = this.node.selected
+      console.log(selected)
       var newNode = d3.hierarchy($event)
 
       newNode.depth = selected.depth + 1
@@ -246,6 +248,17 @@ export default {
       if (textWidth > this.settings.nodeSeparationX) {
         this.settings.nodeSeparationX = textWidth
         this.settings.nodeSeparationY = textWidth / 2
+      }
+    },
+    collapse(node){
+      var selected = node.data
+
+      if(selected.children){
+        selected._children = selected.children
+        selected.children = null
+      }else{
+        selected.children = selected._children
+        selected._children = null
       }
     }
   },

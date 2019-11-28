@@ -1,6 +1,6 @@
 <template>
   <svg>
-    <g :style="groupStyle">
+    <g :style="groupStyle" @click="click">
       <defs>
         <clipPath id="myCircle">
           <circle :cx="radius" :cy="radius" :r="radius" />
@@ -11,7 +11,7 @@
         :height="diameter"
         :xlink:href="imageSource"
         clip-path="url(#myCircle)"
-        @click="click"
+        
       />
       <g :style="textStyle">
         <rect :width="textWidth" y="-16" height="20"></rect>
@@ -72,7 +72,7 @@ export default {
   },
   methods: {
     click () {
-      this.$emit('click', this.node)
+      this.$emit('click')
     }
   }
 }
