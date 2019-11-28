@@ -16,7 +16,7 @@
 import Avatar from '@/components/Avatar.vue'
 
 export default {
-  name: 'ProfileHeaderShow',
+  name: 'ProfileHeader',
   props: {
     preferredName: String,
     headerImage: Object,

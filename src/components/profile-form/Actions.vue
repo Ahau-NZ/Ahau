@@ -18,7 +18,7 @@
 
 <script>
 export default {
-  name: 'ProfileEditAction',
+  name: 'ProfileFormAction',
   props: {
     save: Function,
     cancel: Function,

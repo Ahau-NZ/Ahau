@@ -1,6 +1,6 @@
 <template>
   <div class='wrapper'>
-    <ProfileHeaderShow :preferredName="profile.preferredName" :headerImage="profile.headerImage" :avatarImage="profile.avatarImage"/>
+    <Header :preferredName="profile.preferredName" :headerImage="profile.headerImage" :avatarImage="profile.avatarImage"/>
     <v-container class="body-width white py-12 px-12">
       <v-row>
         <v-col cols="8">
@@ -61,7 +61,7 @@
 
 <script>
 import gql from 'graphql-tag'
-import ProfileHeaderShow from '@/components/ProfileHeaderShow'
+import Header from '@/components/profile/Header.vue'
 
 // const get = require('lodash.get')
 
@@ -150,7 +150,7 @@ export default {
     }
   },
   components: {
-    ProfileHeaderShow
+    Header
   }
 }
 </script>
