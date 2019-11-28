@@ -2,9 +2,6 @@
   <div id="app">
     <v-container class="body-width white mx-auto py-12 px-12">
       <v-row>
-        <h1>Tree</h1>
-      </v-row>
-      <v-row>
         <!--<v-btn @click="addPerson(mockNode)"> Add Child </v-btn>-->
         <svg width="100%" :height="height" ref="baseSvg">
           <g :transform="`translate(${treeX} ${treeY})`">
@@ -17,8 +14,7 @@
             ref="tree">
             <g v-for="node in nodes" :key="node.id"
               @contextmenu.prevent="openContextMenu($event, node)"
-              class="node"
-              >
+              class="node">
               <Node :node="node" :radius="settings.nodeRadius" @click="toggleShow" @textWidth="updateSeparation"/>
             </g>
           </g>
@@ -36,12 +32,8 @@
       @close="toggleShow"/>
     <EditNodeDialog v-if="dialog.edit" :show="dialog.edit"
       @close="toggleEdit"/>
-    <NewNodeDialog
-      v-if="dialog.new"
-      :show="dialog.new"
-      @close="closeNew"
-      @submit="addPerson($event)"
-    />
+    <NewNodeDialog v-if="dialog.new" :show="dialog.new"
+      @close="closeNew" @submit="addPerson($event)"/>
   </div>
 </template>
 
@@ -67,6 +59,9 @@ export default {
   },
   data () {
     return {
+      focus: null, // ? be in props later?
+      flatWhakapapa: {}, // profiles with format { %profileId: profile }
+
       dialog: {
         show: false,
         edit: false,
@@ -90,16 +85,26 @@ export default {
       ],
       options: {
         addnode: false
-      },
-      // profiles with format { %profileId: profile }
-      flatWhakapapa: {},
-      focus: null // TODO - perhaps this should be a props later?
+      }
+    }
+  },
+  apollo: {
+    // TEMP - just using until we connect whakapapa/views
+    focus: {
+      query: gql` {
+        whoami {
+          profile { id }
+        }
+      }`,
+      update: data => data.whoami.profile.id,
+      fetchPolicy: 'no-cache'
     }
   },
   computed: {
     // deeply nested tree of profiles!
     nestedWhakapapa () {
-      if (!this.focus) {
+      var output = this.flatWhakapapa[this.focus]
+      if (!output) {
         return {
           preferredName: 'Loading',
           gender: 'unknown',
@@ -107,8 +112,6 @@ export default {
           parents: []
         }
       }
-
-      var output = this.flatWhakapapa[this.focus]
       tree.hydrate(output, this.flatWhakapapa)
 
       return output
@@ -218,14 +221,18 @@ export default {
         })
     }
   },
+  watch: {
+    // TEMP ? till we connect whakapapa/views
+    focus (newVal, oldVal) {
+      this.getCloseWhakapapa(newVal)
+    }
+  },
   mounted () {
     // means the vue component has rendered
     this.componentLoaded = true
-    this.getCloseWhakapapa()
   },
   methods: {
     async getCloseWhakapapa (profileId) {
-      // Query with parameters
       const request = {
         query: gql`query {
           whakapapa {
@@ -265,12 +272,12 @@ export default {
       }
 
       const record = result.data.whakapapa
-      this.focus = record.id
 
       this.flatWhakapapa = {
         ...this.flatWhakapapa,
         ...tree.flatten(record)
       }
+      // TODO - perhaps do a more deliberate merge! this will overwrite important info
     },
     toggleShow (target) {
       this.node.selected = target
@@ -315,18 +322,17 @@ export default {
           }
         }
       }
+      const res = await this.$apollo.mutate(createProfileReq)
       const isChild = this.dialog.type === 'child'
-      const profileResponse = await this.$apollo.mutate(createProfileReq)
-      const child = isChild ? profileResponse.data.createProfile : this.node.selected.data.id
-      const parent = isChild ? this.node.selected.data.id : profileResponse.data.createProfile
+
       const saveWhakapapaReq = {
         mutation: gql`mutation ($input: WhakapapaRelationInput!) {
           saveWhakapapaRelation(input: $input)
         }`,
         variables: {
           input: {
-            child,
-            parent,
+            child: isChild ? res.data.createProfile : this.node.selected.data.id,
+            parent: isChild ? this.node.selected.data.id : res.data.createProfile,
             relationshipType: $event.relationshipType,
             legallyAdopted: $event.legallyAdopted
           }
@@ -334,6 +340,9 @@ export default {
       }
       const whakapapaResponse = await this.$apollo.mutate(saveWhakapapaReq)
       console.log('Created new Whakapapa relation: ', whakapapaResponse.data.saveWhakapapaRelation)
+
+      // TODO this is not reactive - i.e. we should not be doing this newNode manipulation here
+
       var selected = this.node.selected
       var newNode = d3.hierarchy($event)
 

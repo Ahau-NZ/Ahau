@@ -18,14 +18,9 @@ export default {
     }
   },
   mounted () {
-    setTimeout(
-      () => {
-        this.views = [
-          { viewId: '%someViewId', name: 'Irving Family' }
-        ]
-      },
-      1e3
-    )
+    this.views = [
+      { viewId: '%someViewId', name: 'Irving Family' }
+    ]
   }
 }
 </script>
