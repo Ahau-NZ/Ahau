@@ -49,6 +49,15 @@ import ViewNodeDialog from './Dialogs/ViewNodeDialog.vue'
 import EditNodeDialog from './Dialogs/EditNodeDialog.vue'
 import NewNodeDialog from './Dialogs/NewNodeDialog.vue'
 
+const saveWhakapapaMutation = (input) => ({
+  mutation: gql`mutation ($input: WhakapapaRelationInput!) {
+    saveWhakapapaRelation(input: $input)
+  }`,
+  variables: {
+    input
+  }
+})
+
 export default {
   props: {
     viewId: {
@@ -325,29 +334,38 @@ export default {
         case 'child':
           return this.createChildLink(profileId, $event)
         case 'parent':
+          return this.createParentLink(profileId, $event)
         default: console.log('not built')
       }
     },
+    async createParentLink (profileId, { relationshipType, legallyAdopted }) {
+      const child = this.node.selected.data.id
+      const input = {
+        child,
+        parent: profileId,
+        relationshipType,
+        legallyAdopted
+        // recps: [profileId]
+      }
+      const whakapapaResponse = await this.$apollo.mutate(saveWhakapapaMutation(input))
+      console.log('Created new Whakapapa relation: ', whakapapaResponse.data.saveWhakapapaRelation)
+      // Change focus
+      this.focus = profileId
+    },
     async createChildLink (profileId, { relationshipType, legallyAdopted }) {
       const parent = this.node.selected.data.id
-
-      const saveWhakapapaReq = {
-        mutation: gql`mutation ($input: WhakapapaRelationInput!) {
-          saveWhakapapaRelation(input: $input)
-        }`,
-        variables: {
-          input: {
-            child: profileId,
-            parent,
-            relationshipType,
-            legallyAdopted
-          }
-        }
+      const input = {
+        child: profileId,
+        parent,
+        relationshipType,
+        legallyAdopted
+        // recps: [profileId]
       }
-      const whakapapaResponse = await this.$apollo.mutate(saveWhakapapaReq)
+      const whakapapaResponse = await this.$apollo.mutate(saveWhakapapaMutation(input))
       console.log('Created new Whakapapa relation: ', whakapapaResponse.data.saveWhakapapaRelation)
 
       // reload the parent (and hence the new child!)
+      // TODO: Should be loadCloseWhakapapa
       this.loadDescendants(parent)
     },
     async createProfile ($event) {
