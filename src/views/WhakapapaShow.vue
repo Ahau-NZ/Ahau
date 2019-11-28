@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import Tree from '@/components/Tree/Tree.vue'
+import Tree from '@/components/Tree.vue'
 export default {
   data () {
     return {

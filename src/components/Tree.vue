@@ -50,11 +50,11 @@ import gql from 'graphql-tag'
 import { VueContext } from 'vue-context'
 
 import tree from '@/lib/tree-helpers'
-import Node from './Node.vue'
-import Link from './Link.vue'
-import ViewNodeDialog from './Dialogs/ViewNodeDialog.vue'
-import EditNodeDialog from './Dialogs/EditNodeDialog.vue'
-import NewNodeDialog from './Dialogs/NewNodeDialog.vue'
+import Node from './tree/Node.vue'
+import Link from './tree/Link.vue'
+import ViewNodeDialog from './tree/Dialogs/ViewNodeDialog.vue'
+import EditNodeDialog from './tree/Dialogs/EditNodeDialog.vue'
+import NewNodeDialog from './tree/Dialogs/NewNodeDialog.vue'
 
 const saveWhakapapaMutation = (input) => ({
   mutation: gql`mutation ($input: WhakapapaRelationInput!) {
