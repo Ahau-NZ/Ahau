@@ -3,7 +3,6 @@
 </template>
 
 <script>
-/* es-lint disable */
 export default {
   props: {
     link: {
@@ -15,16 +14,13 @@ export default {
       required: true
     }
   },
-  data () {
-    return {
-      settings: {
-        branch: 75
-      }
-    }
-  },
-  mounted () {
-
-  },
+  // data () {
+  //   return {
+  //     settings: {
+  //       branch: 75
+  //     }
+  //   }
+  // },
   computed: {
     /*
       generates a d attribute for the <path> which orientates the link vertically
@@ -37,19 +33,19 @@ export default {
         H ${this.link.x2} 
         V ${this.link.y2}
       `
-    },
+    }
     /*
       generates a d attribute for the <path> which orientates the link horizontally
       in an elbow shape
     */
-    elbowH () {
-      return `
-        M ${this.link.y1}, ${this.link.x1} 
-        h ${this.branch} 
-        H ${this.link.y2} 
-        V ${this.link.x2}
-      `
-    }
+    // elbowH () {
+    //   return `
+    //     M ${this.link.y1}, ${this.link.x1}
+    //     h ${this.branch}
+    //     H ${this.link.y2}
+    //     V ${this.link.x2}
+    //   `
+    // }
   }
 }
 </script>

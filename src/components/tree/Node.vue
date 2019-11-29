@@ -1,21 +1,20 @@
 <template>
   <svg>
-    <g :style="groupStyle">
+    <g :style="groupStyle" @click="click">
       <defs>
         <clipPath id="myCircle">
           <circle :cx="radius" :cy="radius" :r="radius" />
         </clipPath>
       </defs>
       <image
+        :xlink:href="imageSource"
         :width="diameter"
         :height="diameter"
-        :xlink:href="imageSource"
         clip-path="url(#myCircle)"
-        @click="click"
       />
       <g :style="textStyle">
         <rect :width="textWidth" y="-16" height="20"></rect>
-        <text>{{ node.data.preferredName }}</text>
+        <text>{{ profile.preferredName }}</text>
       </g>
     </g>
   </svg>
@@ -37,7 +36,15 @@ export default {
       required: true
     }
   },
+  data () {
+    return {
+      collapsed: false
+    }
+  },
   computed: {
+    profile () {
+      return this.node.data
+    },
     diameter () {
       return this.radius * 2
     },
@@ -46,7 +53,7 @@ export default {
       if (uri) return uri
 
       // fallback
-      switch (this.node.data.gender) {
+      switch (this.profile.gender) {
         case 'male': return tane
         case 'female': return wahine
         default: return wahine // TODO androgenous avatar
@@ -54,16 +61,15 @@ export default {
     },
     textWidth () {
       // const { x, y } = textElm.getBBox();
-      const width = (this.node.data.preferredName.length * 8)
+      const width = (this.profile.preferredName.length * 8)
       this.$emit('textWidth', width)
       return width
     },
     groupStyle () {
-      // sets the position of this node
-      return {
-        transform: `translate(${this.node.x}px, ${this.node.y}px)`
-        // calculate the transform to draw nodes vertically
-      }
+      var transform = (!this.collapsed)
+        ? `translate(${this.node.x}px, ${this.node.y}px)`
+        : `translate(${this.node.x}px, ${this.node.y}px) scale(1.2)`
+      return { transform }
     },
     textStyle () {
       // centers the text element under image
@@ -76,7 +82,9 @@ export default {
   },
   methods: {
     click () {
-      this.$emit('click', this.node)
+      this.$emit('click')
+      this.collapsed = !this.collapsed
+      // probably want to draw something below avatar if collapsed === true?
     }
   }
 }
@@ -91,8 +99,15 @@ export default {
       cursor: pointer;
     }
 
+    image {
+      transition: ease-in 0.2s;
+
+      &:hover{
+        filter: contrast(1.4) brightness(1.4);
+      }
+    }
     rect {
-      fill: #FFF;
+      fill: #fff;
     }
     text {
       fill: #555;

@@ -16,11 +16,10 @@
 
             <g :transform="`translate(${treeX-settings.nodeRadius} ${treeY-settings.nodeRadius})`"
               ref="tree">
-              <g v-for="node in nodes" :key="node.id"
+              <g v-for="node in nodes" :key="node.data.id"
                 @contextmenu.prevent="openContextMenu($event, node)"
-                class="node"
-                >
-                <Node :node="node" :radius="settings.nodeRadius" @click="toggleShow" @textWidth="updateSeparation"/>
+                class="node">
+                <Node :node="node" :radius="settings.nodeRadius" @click="collapse(node)" @textWidth="updateSeparation"/>
               </g>
             </g>
           </g>
@@ -56,6 +55,11 @@ import ViewNodeDialog from './tree/Dialogs/ViewNodeDialog.vue'
 import EditNodeDialog from './tree/Dialogs/EditNodeDialog.vue'
 import NewNodeDialog from './tree/Dialogs/NewNodeDialog.vue'
 
+function clone (object) {
+  return Object.assign({}, object)
+  // NOTE - this is just a shallow clone for the moment
+}
+
 const saveWhakapapaMutation = (input) => ({
   mutation: gql`mutation ($input: WhakapapaRelationInput!) {
     saveWhakapapaRelation(input: $input)
@@ -76,7 +80,6 @@ export default {
     return {
       focus: null, // ? be in props later?
       flatWhakapapa: {}, // profiles with format { %profileId: profile }
-
       dialog: {
         show: false,
         edit: false,
@@ -89,7 +92,7 @@ export default {
       },
       componentLoaded: false, // need to ensure component is loaded before using $refs
       settings: {
-        nodeRadius: 70, // use variable for zoom later on
+        nodeRadius: 50, // use variable for zoom later on
         nodeSeparationX: 100,
         nodeSeparationY: 150
       },
@@ -417,6 +420,20 @@ export default {
         this.settings.nodeSeparationX = textWidth
         this.settings.nodeSeparationY = textWidth / 2
       }
+    },
+    collapse (node) {
+      const profile = clone(this.flatWhakapapa[node.data.id])
+      const { children, _children = [] } = profile
+
+      if (children.length) {
+        profile._children = children
+        profile.children = []
+      } else {
+        profile.children = _children
+        profile._children = []
+      }
+
+      this.flatWhakapapa[node.data.id] = profile
     }
   },
   components: {
