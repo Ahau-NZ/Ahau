@@ -38,7 +38,8 @@ export default {
   },
   data () {
     return {
-      collapsed: false
+      collapsed: false,
+      count: 0
     }
   },
   computed: {
@@ -78,6 +79,22 @@ export default {
         transform: `translate(${this.radius - (this.textWidth / 2)}px, ${this.diameter + 15}px)`
         // calculate the transform to draw nodes vertically
       }
+    },
+    partners(){
+      let unique = []
+      let partners = []
+      var children = this.node.data.children
+      children.forEach(child => {
+        console.log(child)
+        child.parents.forEach(parent => {
+          if(!unique[parent]){
+            unique[parent] = true
+            partners.push(parent)
+          }
+        })
+      })
+
+      return partners
     }
   },
   methods: {
@@ -86,7 +103,13 @@ export default {
       this.collapsed = !this.collapsed
       // probably want to draw something below avatar if collapsed === true?
     }
+  },
+  mounted(){
+    setTimeout(() => {
+      console.log(this.partners)
+    }, 1000);
   }
+
 }
 </script>
 
