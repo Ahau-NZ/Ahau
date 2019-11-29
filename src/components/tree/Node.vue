@@ -7,9 +7,9 @@
         </clipPath>
       </defs>
       <image
+        :xlink:href="imageSource"
         :width="diameter"
         :height="diameter"
-        :xlink:href="imageSource"
         clip-path="url(#myCircle)"
       />
       <g :style="textStyle">
@@ -66,16 +66,10 @@ export default {
       return width
     },
     groupStyle () {
-      if (!this.collapsed) {
-        return {
-          transform: `translate(${this.node.x}px, ${this.node.y}px)`
-          // calculate the transform to draw nodes vertically
-        }
-      } else {
-        return {
-          transform: `translate(${this.node.x}px, ${this.node.y}px)scale(1.2)`
-        }
-      }
+      var transform = (!this.collapsed)
+        ? `translate(${this.node.x}px, ${this.node.y}px)`
+        : `translate(${this.node.x}px, ${this.node.y}px) scale(1.2)`
+      return { transform }
     },
     textStyle () {
       // centers the text element under image
@@ -90,6 +84,7 @@ export default {
     click () {
       this.$emit('click')
       this.collapsed = !this.collapsed
+      // probably want to draw something below avatar if collapsed === true?
     }
   }
 }
@@ -102,19 +97,20 @@ export default {
     }
     &:hover{
       cursor: pointer;
-
     }
 
+    image {
+      transition: ease-in 0.2s;
+
+      &:hover{
+        filter: contrast(1.4) brightness(1.4);
+      }
+    }
     rect {
-      fill: #FFF;
+      fill: #fff;
     }
     text {
       fill: #555;
-    }
-  }
-  image {
-    &:hover{
-      transform: scale(1.2);
     }
   }
 </style>
