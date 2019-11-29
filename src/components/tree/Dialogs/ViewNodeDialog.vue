@@ -25,7 +25,7 @@
 </template>
 
 <script>
-import Dialog from './Dialog.vue'
+import Dialog from '@/components/Dialog.vue'
 
 export default {
   components: {

@@ -5,7 +5,6 @@
         <h1>Tree</h1>
       </v-row>
       <v-row>
-        <!--<v-btn @click="addChild(mockNode)"> Add Child </v-btn>-->
         <svg id="baseSvg" width="100%" :height="height" ref="baseSvg">
           <g id="baseGroup">
             <g :transform="`translate(${treeX} ${treeY})`">
@@ -33,8 +32,10 @@
       </li>
     </vue-context>
 
-    <ViewNodeDialog v-if="dialog.show" :show="dialog.show" :node="node.selected"
-      @close="toggleShow"/>
+    <!--  this is currently dead
+      <ViewNodeDialog v-if="dialog.show" :show="dialog.show" :node="node.selected"
+        @close="toggleShow"/>
+    -->
     <EditNodeDialog v-if="dialog.edit" :show="dialog.edit"
       @close="toggleEdit"/>
     <NewNodeDialog v-if="dialog.new" :show="dialog.new"
@@ -51,7 +52,7 @@ import { VueContext } from 'vue-context'
 import tree from '@/lib/tree-helpers'
 import Node from './tree/Node.vue'
 import Link from './tree/Link.vue'
-import ViewNodeDialog from './tree/Dialogs/ViewNodeDialog.vue'
+// import ViewNodeDialog from './tree/Dialogs/ViewNodeDialog.vue'
 import EditNodeDialog from './tree/Dialogs/EditNodeDialog.vue'
 import NewNodeDialog from './tree/Dialogs/NewNodeDialog.vue'
 
@@ -323,19 +324,21 @@ export default {
       this.dialog.show = !this.dialog.show
     },
     toggleEdit () {
-      this.dialog.edit = !this.dialog.edit
+      // TEMP - use the UI we have!
+      this.$router.push({ name: 'personEdit', params: { id: this.node.selected.data.id } })
+
+      // this.dialog.edit = !this.dialog.edit
     },
     closeNew () {
       this.dialog.new = false
     },
-    toggleNewChild (state = false) {
+    toggleNewChild () {
       this.dialog.type = 'child'
-      this.dialog.new = true
+      this.dialog.new = !this.dialog.new
     },
-
-    toggleNewParent (state = false) {
+    toggleNewParent () {
       this.dialog.type = 'parent'
-      this.dialog.new = true
+      this.dialog.new = !this.dialog.new
     },
 
     openContextMenu ($event, node) {
@@ -440,7 +443,7 @@ export default {
     Node,
     Link,
     VueContext,
-    ViewNodeDialog,
+    // ViewNodeDialog,
     EditNodeDialog,
     NewNodeDialog
   }
