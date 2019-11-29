@@ -70,7 +70,7 @@ import Avatar from '@/components/Avatar.vue'
 const pick = require('lodash.pick')
 
 export default {
-  name: 'ProfileHeaderEdit',
+  name: 'ProfileFormHeader',
   props: {
     id: String,
     preferredName: String,

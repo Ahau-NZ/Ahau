@@ -33,7 +33,7 @@
 
 <script>
 export default {
-  name: 'ProfileForm',
+  name: 'ProfileFormInfo',
   props: {
     preferredName: String,
     legalName: String,
