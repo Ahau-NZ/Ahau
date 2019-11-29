@@ -88,7 +88,7 @@ export default {
       },
       componentLoaded: false, // need to ensure component is loaded before using $refs
       settings: {
-        nodeRadius: 70, // use variable for zoom later on
+        nodeRadius: 50, // use variable for zoom later on
         nodeSeparationX: 100,
         nodeSeparationY: 150
       },
