@@ -16,10 +16,9 @@
 
             <g :transform="`translate(${treeX-settings.nodeRadius} ${treeY-settings.nodeRadius})`"
               ref="tree">
-              <g v-for="(node, index) in nodes" :key="index"
+              <g v-for="node in nodes" :key="node.data.id"
                 @contextmenu.prevent="openContextMenu($event, node)"
-                class="node"
-                >
+                class="node">
                 <Node :node="node" :radius="settings.nodeRadius" @click="collapse(node)" @textWidth="updateSeparation"/>
               </g>
             </g>
@@ -55,6 +54,11 @@ import Link from './tree/Link.vue'
 import ViewNodeDialog from './tree/Dialogs/ViewNodeDialog.vue'
 import EditNodeDialog from './tree/Dialogs/EditNodeDialog.vue'
 import NewNodeDialog from './tree/Dialogs/NewNodeDialog.vue'
+
+function clone (object) {
+  return Object.assign({}, object)
+  // NOTE - this is just a shallow clone for the moment
+}
 
 const saveWhakapapaMutation = (input) => ({
   mutation: gql`mutation ($input: WhakapapaRelationInput!) {
@@ -418,17 +422,18 @@ export default {
       }
     },
     collapse (node) {
-      const parent = node.data.id
-      if (node.children) {
-        node.data._children = node.data.children
-        node.data.children = null
-        this.flatWhakapapa[node.data.id] = node.data
-        console.log(node.data)
+      const profile = clone(this.flatWhakapapa[node.data.id])
+      const { children, _children = [] } = profile
+
+      if (children.length) {
+        profile._children = children
+        profile.children = []
       } else {
-        node.children = node._children
-        node._children = null
-        this.loadDescendants(parent)
+        profile.children = _children
+        profile._children = []
       }
+
+      this.flatWhakapapa[node.data.id] = profile
     }
   },
   components: {
