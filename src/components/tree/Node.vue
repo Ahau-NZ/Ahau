@@ -25,6 +25,8 @@ import get from 'lodash.get'
 import tane from '@/assets/tane.svg'
 import wahine from '@/assets/wahine.svg'
 
+import gql from 'graphql-tag'
+
 export default {
   props: {
     node: {
@@ -79,22 +81,6 @@ export default {
         transform: `translate(${this.radius - (this.textWidth / 2)}px, ${this.diameter + 15}px)`
         // calculate the transform to draw nodes vertically
       }
-    },
-    partners(){
-      let unique = []
-      let partners = []
-      var children = this.node.data.children
-      children.forEach(child => {
-        console.log(child)
-        child.parents.forEach(parent => {
-          if(!unique[parent]){
-            unique[parent] = true
-            partners.push(parent)
-          }
-        })
-      })
-
-      return partners
     }
   },
   methods: {
@@ -102,11 +88,88 @@ export default {
       this.$emit('click')
       this.collapsed = !this.collapsed
       // probably want to draw something below avatar if collapsed === true?
+    },
+    async getCloseWhakapapa (profileId) {
+      const request = {
+        query: gql`query ($id: String) {
+          closeWhakapapa(id: $id) {
+            id
+            gender
+            preferredName
+            avatarImage {
+              uri
+            }
+            children {
+              id
+              gender
+              preferredName
+              avatarImage {
+                uri
+              }
+            }
+            parents {
+              id
+              gender
+              preferredName
+              avatarImage {
+                uri
+              }
+            }
+          }
+        }`,
+        variables: {
+          id: profileId
+        },
+        fetchPolicy: 'no-cache'
+      }
+
+      try {
+        const result = await this.$apollo.query(request)
+        return result
+      } catch (err) {
+        console.error('WARNING, something went wrong')
+        console.error(err)
+        return err
+      }
+    },
+    async partners(){
+      /*
+      // this wouldnt work
+      let unique = []
+      let partners = []
+       this.profile.children.forEach(child => {
+         child.parents.forEach(profileId => {
+          if(!unique[profileId]){
+            unique[profileId] = true
+            const partner = this.loadPartner(profileId)
+            partners.push(partner)
+          }
+        })
+      })
+      */
+     let unique = []
+     let partners = []
+     for(const child of this.profile.children){
+       for(const profileId of child.parents){
+         if(!unique[profileId]){
+           unique[profileId] = true
+           const partner = await this.loadPartner(profileId)
+           partners.push(partner)
+         }
+       }
+     }
+      return partners
+    },
+    async loadPartner(profileId){
+      const result = await this.getCloseWhakapapa(profileId)
+      const record = result.data.closeWhakapapa
+      return record
     }
   },
   mounted(){
-    setTimeout(() => {
-      console.log(this.partners)
+    setTimeout(async () => {
+      const partners = await this.partners()
+      console.log(partners)
     }, 1000);
   }
 
