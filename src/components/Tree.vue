@@ -417,18 +417,17 @@ export default {
         this.settings.nodeSeparationY = textWidth / 2
       }
     },
-    collapse(node){
+    collapse (node) {
       const parent = node.data.id
-      if(node.children){
+      if (node.children) {
         node.data._children = node.data.children
         node.data.children = null
         this.flatWhakapapa[node.data.id] = node.data
         console.log(node.data)
-      }else{
+      } else {
         node.children = node._children
         node._children = null
         this.loadDescendants(parent)
-        
       }
     }
   },

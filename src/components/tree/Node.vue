@@ -36,7 +36,7 @@ export default {
       required: true
     }
   },
-  data(){
+  data () {
     return {
       collapsed: false
     }
@@ -66,12 +66,12 @@ export default {
       return width
     },
     groupStyle () {
-      if(!this.collapsed){
+      if (!this.collapsed) {
         return {
           transform: `translate(${this.node.x}px, ${this.node.y}px)`
           // calculate the transform to draw nodes vertically
         }
-      }else{
+      } else {
         return {
           transform: `translate(${this.node.x}px, ${this.node.y}px)scale(1.2)`
         }
@@ -102,7 +102,7 @@ export default {
     }
     &:hover{
       cursor: pointer;
-      
+
     }
 
     rect {
