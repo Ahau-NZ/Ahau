@@ -19,7 +19,7 @@
               <g v-for="node in nodes" :key="node.data.id"
                 @contextmenu.prevent="openContextMenu($event, node)"
                 class="node">
-                <Node :node="node" :radius="settings.nodeRadius" @click="collapse(node)" @textWidth="updateSeparation"/>
+                <Node :node="node" :radius="settings.nodeRadius" @click="collapse(node)" @textWidth="updateSeparation" :main="true"/>
               </g>
             </g>
           </g>
@@ -215,7 +215,29 @@ export default {
             height: d.height,
             parent: d.parent,
             x: d.x,
-            y: d.y
+            y: d.y,
+            partners: [
+            {
+              id: 0,
+              gender: 'male',
+              preferredName: 'Partner 1',
+              avatarImage: null,
+              children: [],
+              parents: [],
+              x: d.x + 100,
+              y: d.y
+            },
+            {
+              id: 1,
+              gender: 'male',
+              preferredName: 'Partner 2',
+              avatarImage: null,
+              children: [],
+              parents: [],
+              x: d.x + 200,
+              y: d.y
+            }
+            ]
           }
         })
     },

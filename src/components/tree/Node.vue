@@ -1,6 +1,9 @@
 <template>
   <svg>
     <g :style="groupStyle" @click="click">
+      <g v-for="(partner, index) in partners" :key="index">
+        <Node v-if="partners.length" :node="partner" :radius="radius-10" @click="partnerClick" :main="false"/>
+      </g>
       <defs>
         <clipPath id="myCircle">
           <circle :cx="radius" :cy="radius" :r="radius" />
@@ -12,7 +15,7 @@
         :height="diameter"
         clip-path="url(#myCircle)"
       />
-      <g :style="textStyle">
+      <g v-if="main" :style="textStyle">
         <rect :width="textWidth" y="-16" height="20"></rect>
         <text>{{ profile.preferredName }}</text>
       </g>
@@ -28,6 +31,7 @@ import wahine from '@/assets/wahine.svg'
 import gql from 'graphql-tag'
 
 export default {
+  name: 'Node',
   props: {
     node: {
       type: Object,
@@ -35,6 +39,10 @@ export default {
     },
     radius: {
       type: Number,
+      required: true
+    },
+    main: {
+      type: Boolean,
       required: true
     }
   },
@@ -45,6 +53,9 @@ export default {
     }
   },
   computed: {
+    hasPartner(){
+      
+    },
     profile () {
       return this.node.data
     },
@@ -74,6 +85,12 @@ export default {
         : `translate(${this.node.x}px, ${this.node.y}px) scale(1.2)`
       return { transform }
     },
+    partnerStyle () {
+      return {
+        transform: `translate(${-this.radius}px, ${0}px)`
+        // calculate the transform to draw nodes vertically
+      }
+    },
     textStyle () {
       // centers the text element under image
 
@@ -81,7 +98,20 @@ export default {
         transform: `translate(${this.radius - (this.textWidth / 2)}px, ${this.diameter + 15}px)`
         // calculate the transform to draw nodes vertically
       }
-    }
+    },
+    partners(){
+      if(this.node.partners){
+        return this.node.partners // change to node.data.partners OR profile.partners
+          .map((d, i) => {
+            var x = (i + 1) * this.radius
+            return {
+              data: d,
+              x: x,
+              y: 0
+            }
+          })
+      }
+    },
   },
   methods: {
     click () {
@@ -132,8 +162,8 @@ export default {
         return err
       }
     },
-    async partners(){
-      /*
+    /*async mpartners(){
+      
       // this wouldnt work
       let unique = []
       let partners = []
@@ -146,7 +176,7 @@ export default {
           }
         })
       })
-      */
+      
      let unique = []
      let partners = []
      for(const child of this.profile.children){
@@ -164,13 +194,13 @@ export default {
       const result = await this.getCloseWhakapapa(profileId)
       const record = result.data.closeWhakapapa
       return record
+    },*/
+    partnerClick(){
+      console.log('Partner Clicked')
     }
   },
   mounted(){
-    setTimeout(async () => {
-      const partners = await this.partners()
-      console.log(partners)
-    }, 1000);
+    //console.log(this.partners)
   }
 
 }
