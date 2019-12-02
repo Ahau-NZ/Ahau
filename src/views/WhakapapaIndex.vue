@@ -13,14 +13,16 @@
       </v-btn>
       <span class="pointer black--text pl-4 subtitle">Create new whakapapa</span>
     </div>
+
+    <NewViewForm :show="showViewForm" @close="toggleViewForm" @submit="handleStepOne($event)" />
     <NewProfileDialog v-if="showProfileForm" :show="showProfileForm"
-      @close="toggleProfileForm" @submit="createProfileAndView($event)"/>
-    <NewViewForm :show="showViewForm" @close="toggleViewForm" @submit="createWhakapapa($event)" />
+      @close="toggleProfileForm" @submit="handleDoubleStep($event)"/>
   </v-container>
 </template>
 
 <script>
 import gql from 'graphql-tag'
+import pick from 'lodash.pick'
 import NewViewForm from '@/components/whakapapa-view/New.vue'
 import NewProfileDialog from '@/components/profile-form/Dialog.vue'
 
@@ -38,11 +40,12 @@ export default {
   name: 'WhakapapaIndex',
   data () {
     return {
-      newView: null,
       views: [],
+
+      whoami: {},
       showProfileForm: false,
       showViewForm: false,
-      whoami: {}
+      newView: null
     }
   },
   apollo: {
@@ -73,61 +76,26 @@ export default {
     toggleViewForm () {
       this.showViewForm = !this.showViewForm
     },
-    async createProfileAndView ($event) {
-      try {
-        const profile = await this.$apollo.mutate({
-          mutation: createProfileQuery,
-          variables: {
-            input: {
-              ...$event,
-              type: 'person'
-            }
-          }
-        })
-        if (profile.data) {
-          const view = await this.$apollo.mutate({
-            mutation: saveWhakapapaViewQuery,
-            variables: { input: this.newView }
-          })
-          if (view.data) {
-            this.newView = null
-            this.$router.push({ name: 'whakapapaShow', params: { id: view.data.saveWhakapapaView } })
-          } else {
-            return
-          }
-        }
-      } catch (err) {
-        throw err
-      }
-
-      // publish view, then navigate to it?
-    },
-    async createWhakapapa ($event) {
-      const cleanEvent = {}
-      Object.keys($event).forEach(e => {
-        if (e !== 'focus') {
-          cleanEvent[e] = $event[e]
-        }
-      })
+    async handleStepOne ($event) {
+      const input = pick($event, ['name', 'description', 'mode'])
       switch ($event.focus) {
         case 'self':
-          this.createView(cleanEvent)
-          break
+          input.focus = this.whoami.profile.id
+          return this.createView(input)
         case 'new':
-          this.toggleProfileForm()
-          this.newView = cleanEvent
-          break
+          this.newView = input
+          return this.toggleProfileForm()
         default:
       }
     },
-    async createView ($event) {
+    async createView (input) {
       try {
         const result = await this.$apollo.mutate({
           mutation: saveWhakapapaViewQuery,
           variables: {
             input: {
-              ...$event,
-              focus: this.whoami.profile.id,
+              ...input,
+              mode: 'descendants', // HARD coded at the moment
               recps: [this.whoami.feedId]
             }
           }
@@ -142,6 +110,30 @@ export default {
         throw err
       }
       // publish view, then navigate to it?
+    },
+    async handleDoubleStep ($event) {
+      try {
+        const res = await this.$apollo.mutate({
+          mutation: createProfileQuery,
+          variables: {
+            input: {
+              ...$event,
+              type: 'person'
+            }
+          }
+        })
+        if (res.errors) {
+          console.log('failed to create profile', res)
+          return
+        }
+
+        this.createView({
+          ...this.newView,
+          focus: res.data.createProfile
+        })
+      } catch (err) {
+        throw err
+      }
     }
   },
   components: {
