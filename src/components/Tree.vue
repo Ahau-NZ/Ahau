@@ -210,41 +210,7 @@ export default {
             height: d.height,
             parent: d.parent,
             x: d.x,
-            y: d.y,
-            partners: [
-              {
-                id: 0,
-                gender: 'male',
-                preferredName: 'Partner 1',
-                avatarImage: null,
-                children: [],
-                parents: []
-              },
-              {
-                id: 1,
-                gender: 'male',
-                preferredName: 'Partner 2',
-                avatarImage: null,
-                children: [],
-                parents: []
-              },
-              {
-                id: 2,
-                gender: 'male',
-                preferredName: 'Partner 3',
-                avatarImage: null,
-                children: [],
-                parents: []
-              },
-              {
-                id: 3,
-                gender: 'male',
-                preferredName: 'Partner 4',
-                avatarImage: null,
-                children: [],
-                parents: []
-              }
-            ]
+            y: d.y
           }
         })
     },
@@ -294,6 +260,49 @@ export default {
       record.children.forEach(profile => {
         this.loadDescendants(profile.id)
       })
+      // dummy partners to be removed when partners are stored
+      record.partners = [
+        {
+          id: 0,
+          gender: 'male',
+          preferredName: 'Partner 1',
+          avatarImage: null,
+          children: [],
+          parents: []
+        },
+        {
+          id: 1,
+          gender: 'male',
+          preferredName: 'Partner 2',
+          avatarImage: null,
+          children: [],
+          parents: []
+        },
+        {
+          id: 2,
+          gender: 'male',
+          preferredName: 'Partner 3',
+          avatarImage: null,
+          children: [],
+          parents: []
+        },
+        {
+          id: 3,
+          gender: 'male',
+          preferredName: 'Partner 4',
+          avatarImage: null,
+          children: [],
+          parents: []
+        },
+        {
+          id: 4,
+          gender: 'male',
+          preferredName: 'Partner 5',
+          avatarImage: null,
+          children: [],
+          parents: []
+        }
+      ]
 
       var output = Object.assign({}, this.flatWhakapapa)
       Object.entries(tree.flatten(record))

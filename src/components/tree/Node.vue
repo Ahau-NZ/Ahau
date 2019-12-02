@@ -1,31 +1,33 @@
 <template>
   <svg>
-    <g id="nodeGroup" :style="groupStyle" @click="click">
-      <g v-for="(partner, index) in partners" :key="index">
-        <Node
-          v-if="main && hasPartner"
-          :node="partner"
-          :radius="radius"
-          :main="false"
-        ></Node>
-      </g>
-      <defs>
-        <clipPath id="myCircle">
-          <circle :cx="radius" :cy="radius" :r="radius" />
-        </clipPath>
-      </defs>
-      <image
-        :xlink:href="imageSource"
-        :width="diameter"
-        :height="diameter"
-        clip-path="url(#myCircle)"
-      />
-      <g v-if="main" :style="textStyle">
-        <rect :width="textWidth" y="-16" height="20"></rect>
-        <text>{{ profile.preferredName }}</text>
-      </g>
-      <g v-if="profile.isCollapsed" :style="collapsedStyle">
-        <text> ... </text>
+    <g id="nodeGroup" :style="groupStyle">
+        <g v-for="(partner, index) in partnersArray" :key="index">
+          <Node
+            v-if="profile.partners"
+            :node="partner"
+            :radius="partnerRadius"
+            :main="false"
+          ></Node>
+        </g>
+      <g @click="click">
+        <defs>
+          <clipPath id="myCircle">
+            <circle :cx="radius" :cy="radius + offset" :r="radius + offset" />
+          </clipPath>
+        </defs>
+        <image
+          :xlink:href="imageSource"
+          :width="diameter"
+          :height="diameter"
+          clip-path="url(#myCircle)"
+        />
+        <g v-if="main" :style="textStyle">
+          <rect :width="textWidth" y="-16" height="20"></rect>
+          <text>{{ profile.preferredName }}</text>
+        </g>
+        <g v-if="profile.isCollapsed" :style="collapsedStyle">
+          <text> ... </text>
+        </g>
       </g>
     </g>
   </svg>
@@ -54,9 +56,10 @@ export default {
       required: true
     }
   },
-  data() {
+  data () {
     return {
-      count: 0
+      count: 0,
+      offset: 20
     }
   },
   computed: {
@@ -95,62 +98,20 @@ export default {
         // calculate the transform to draw nodes vertically
       }
     },
-    partners () {
-      // if (this.hasPartner) {
-      //  return this.node.partners // change to node.data.partners OR profile.partners
-      //    .map((d, i) => {
-      //      const x = (i + 1) * this.radius
-      //      return {
-      //        data: d,
-      //        x: x,
-      //        y: 10
-      //      }
-      //    })
-      //    .slice()
-      //    .reverse()
-      // }
-      // return undefined
-      if(!this.hasPartner){
+    partnersArray () {
+      if (this.partners === undefined) {
         return undefined
       }
-      let partners = this.leftSide.concat(this.rightSide)
-      console.log(partners)
-      return partners
+      var halfway = Math.round(this.partners.length / 2)
+      var right = this.map(0, halfway, 1)
+      var left = this.map(halfway, this.partners.length, -1)
+      return left.concat(right).reverse()
     },
-    npartners(){
-      return this.node.partners
+    partnerRadius () {
+      return this.radius - 10
     },
-    leftSide(){
-      var count = 0
-      var half_len = Math.ceil(this.npartners.length / 2)
-      let leftPartners = this.npartners
-        .splice(0, half_len)
-        .map((d, i) => {
-          var x = -(++count * this.radius)
-          return {
-            data: d,
-            x: x,
-            y: 10
-          }
-        })
-      
-      return leftPartners
-    },
-    rightSide(){
-      var count = 0
-      var half_len = Math.ceil(this.npartners.length / 2)
-      let rightPartners = this.npartners
-        .splice(half_len-1, this.npartners.length)
-        .map((d, i) => {
-          var x = (++count * this.radius)
-          return {
-            data: d,
-            x: x,
-            y: 10
-          }
-        })
-      
-      return rightPartners
+    partners () {
+      return this.profile.partners
     },
     collapsedStyle () {
       // centers the text element under name
@@ -160,14 +121,25 @@ export default {
         transform: `translate(${this.radius - 3}px, ${this.diameter + 25}px) rotate(90deg)`
         // calculate the transform to draw nodes vertically
       }
-    },
-    hasPartner () {
-      return this.node.partners !== undefined
     }
   },
   methods: {
     click () {
       this.$emit('click')
+    },
+    map (rangeFrom, rangeTo, sign) {
+      var count = 0
+      return this.partners
+        .slice(rangeFrom, rangeTo)
+        .map((d, i) => {
+          var offset = (sign === 1) ? this.offset * 2 : this.offset * -1
+          var x = (sign * (++count * this.partnerRadius)) + offset
+          return {
+            data: d,
+            x: x,
+            y: 10
+          }
+        })
     }
   },
   mounted () {
@@ -177,10 +149,6 @@ export default {
       .width
 
     this.$emit('update', width)
-    if(this.hasPartner){
-      this.partners
-      console.log('------------')
-    }
   }
 
 }
