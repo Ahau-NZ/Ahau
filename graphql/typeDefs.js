@@ -173,6 +173,7 @@ module.exports = gql`
   }
 
   type WhakapapaView {
+    id: ID
     name: String
     description: String
     focus: ID
@@ -187,6 +188,8 @@ module.exports = gql`
     persons: [Profile]
     "List of community profiles"
     communities: [Profile]
+    "List of whakapapa views"
+    views: [WhakapapaView]
 
     "Scuttlebutt identity profile"
     profile(id: String!): Profile
