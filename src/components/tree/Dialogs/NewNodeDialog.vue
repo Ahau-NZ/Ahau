@@ -80,14 +80,14 @@
               </v-col>
             </v-row>
 
-            <v-row>
+            <!-- <v-row>
 
-              <v-btn class="mx-2" fab>
-                <v-icon>mdi-plus</v-icon>
+              <v-btn class="mx-2" fab> -->
+                <!-- <v-icon>mdi-plus</v-icon> -->
                 <!-- insert photo picker here -->
-              </v-btn>
+              <!-- </v-btn>
 
-            </v-row>
+            </v-row> -->
 
             <v-row class="actions">
               <v-col cols="12" sm="5" md="9">
@@ -130,6 +130,7 @@ function defaultData () {
 }
 
 export default {
+  name: 'NewNodeDialog',
   components: {
     Dialog
     // NodeDatePicker

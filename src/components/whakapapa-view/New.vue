@@ -3,7 +3,7 @@
     <v-form ref="form" v-model="form.valid" lazy-validation>
       <v-card>
         <v-card-title>
-          <span class="headline"> Create a new Whakapapa record </span>
+          <span class="headline"> {{text || 'Create a new Whakapapa record'}} </span>
         </v-card-title>
 
         <v-card-text>
@@ -75,6 +75,7 @@ function defaultData () {
 export default {
   name: 'WhakapapaViewNew',
   props: {
+    text: String,
     show: {
       type: Boolean,
       required: true
