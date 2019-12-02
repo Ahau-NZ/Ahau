@@ -1,6 +1,6 @@
 <template>
-  <div id="app">
-    <v-container class="body-width white mx-auto py-12 px-12">
+  <div id="whakapapa-tree">
+    <v-container class="white mx-auto py-12 px-12">
       <v-row>
         <h1>Tree</h1>
       </v-row>
@@ -54,11 +54,6 @@ import Link from './tree/Link.vue'
 import ViewNodeDialog from './tree/Dialogs/ViewNodeDialog.vue'
 import EditNodeDialog from './tree/Dialogs/EditNodeDialog.vue'
 import NewNodeDialog from './tree/Dialogs/NewNodeDialog.vue'
-
-function clone (object) {
-  return Object.assign({}, object)
-  // NOTE - this is just a shallow clone for the moment
-}
 
 const saveWhakapapaMutation = (input) => ({
   mutation: gql`mutation ($input: WhakapapaRelationInput!) {
@@ -422,18 +417,16 @@ export default {
       }
     },
     collapse (node) {
-      const profile = clone(this.flatWhakapapa[node.data.id])
+      const profile = this.flatWhakapapa[node.data.id]
       const { children, _children = [] } = profile
 
-      if (children.length) {
-        profile._children = children
-        profile.children = []
-      } else {
-        profile.children = _children
-        profile._children = []
-      }
+      if (children.length === 0 && _children.length === 0) return
 
-      this.flatWhakapapa[node.data.id] = profile
+      this.flatWhakapapa[node.data.id] = Object.assign(profile, {
+        isCollapsed: !profile.isCollapsed,
+        _children: children,
+        children: _children
+      })
     }
   },
   components: {
@@ -451,5 +444,8 @@ export default {
   @import '~vue-context/dist/css/vue-context.css';
   h1 {
     color: black;
+  }
+  svg#baseSvg {
+    cursor: grab;
   }
 </style>
