@@ -2,7 +2,10 @@
   <div id="whakapapa-tree">
     <v-container class="white mx-auto py-12 px-12">
       <v-row>
-        <h1>Tree</h1>
+        <h1>{{ view.name }}</h1>
+      </v-row>
+      <v-row>
+        <div class='description'>{{ view.description }}</div>
       </v-row>
       <v-row>
         <svg id="baseSvg" width="100%" :height="height" ref="baseSvg">
@@ -53,7 +56,7 @@ import ViewNodeDialog from './tree/Dialogs/ViewNodeDialog.vue'
 import EditNodeDialog from './tree/Dialogs/EditNodeDialog.vue'
 import NewNodeDialog from './tree/Dialogs/NewNodeDialog.vue'
 
-const saveWhakapapaMutation = (input) => ({
+const saveWhakapapaRelMutation = (input) => ({
   mutation: gql`mutation ($input: WhakapapaRelationInput!) {
     saveWhakapapaRelation(input: $input)
   }`,
@@ -78,7 +81,19 @@ export default {
         description: null,
         focus: null
       },
+      whoami: { feedId: null },
       flatWhakapapa: {}, // profiles with format { %profileId: profile }
+      node: {
+        selected: null,
+        new: null
+      },
+      componentLoaded: false, // need to ensure component is loaded before using $refs
+
+      settings: {
+        nodeRadius: 50, // use variable for zoom later on
+        nodeSeparationX: 100,
+        nodeSeparationY: 150
+      },
       dialog: {
         show: false,
         edit: false,
@@ -87,23 +102,13 @@ export default {
         newDetails: {},
         type: 'child'
       },
-      node: {
-        selected: null,
-        new: null
-      },
-      componentLoaded: false, // need to ensure component is loaded before using $refs
-      settings: {
-        nodeRadius: 50, // use variable for zoom later on
-        nodeSeparationX: 100,
-        nodeSeparationY: 150
-      },
       contextmenu: [
         { title: 'Add Child', action: this.toggleNewChild },
         { title: 'Add Parent', action: this.toggleNewParent },
         { title: 'Edit Person', action: this.toggleEdit }
       ],
       options: {
-        addnode: false
+        addnode: false // Is this used by anything?
       }
     }
   },
@@ -118,27 +123,30 @@ export default {
             mode
           }
         }`,
-        variables: {
-          id: this.viewId
-        },
+        variables: { id: this.viewId },
+        update: data => data.whakapapaView,
         fetchPolicy: 'no-cache'
       }
+    },
+    whoami: {
+      query: gql` {
+        whoami { feedId }
+      }`
     }
   },
   watch: {
     'view.focus': async function (newFocus) {
-      await this.loadDescendants(newFocus)
-
-      if (!this.componentLoaded) {
-        this.componentLoaded = true
-        this.zoom()
-      }
+      this.loadDescendants(newFocus)
     }
+  },
+  mounted () {
+    this.componentLoaded = true
+    this.zoom()
   },
   computed: {
     // deeply nested tree of profiles!
     nestedWhakapapa () {
-      var output = this.flatWhakapapa[this.view.foucs]
+      var output = this.flatWhakapapa[this.view.focus]
       if (!output) {
         return {
           preferredName: 'Loading',
@@ -359,18 +367,19 @@ export default {
         const profileId = await this.createProfile($event)
         if (!profileId) return
 
-        let child, parent
+        let child, parent, res
         const relationshipAttrs = pick($event, ['relationshipType', 'legallyAdopted'])
         switch (this.dialog.type) {
           case 'child':
             child = profileId
-            parent = this.node.selected.id
-            await this.createChildLink({ child, parent, ...relationshipAttrs })
+            parent = this.node.selected.data.id
+            res = await this.createChildLink({ child, parent, ...relationshipAttrs })
+            this.loadDescendants(parent)
             break
           case 'parent':
-            child = this.node.selected.id
+            child = this.node.selected.data.id
             parent = profileId
-            await this.createChildLink({ child, parent, ...relationshipAttrs })
+            res = await this.createChildLink({ child, parent, ...relationshipAttrs })
             if (child === this.view.focus) {
               // update the view focus to be parent
               await this.updateFocus(parent)
@@ -394,12 +403,13 @@ export default {
             preferredName,
             legalName,
             gender
+            // recps: [ this.whoami.feedId ]
             // avatarImage: ImageInput
           }
         }
       })
 
-      if (!res.data) {
+      if (res.errors) {
         console.error('failed to createProfile', res)
         return
       }
@@ -411,19 +421,24 @@ export default {
         parent,
         relationshipType,
         legallyAdopted
-        // recps: [profileId]
+        // recps: [ this.whoami.feedId ]
       }
       try {
-        this.$apollo.mutate(saveWhakapapaMutation(input))
+        const res = await this.$apollo.mutate(saveWhakapapaRelMutation(input))
+        if (!res.data) console.error('failed to createChildLink', res)
       } catch (err) {
         throw err
       }
     },
     async updateFocus (focus) {
-      const input = { focus }
+      const input = {
+        viewId: this.viewId,
+        focus
+      }
       try {
         const res = await this.$apollo.mutate(saveWhakapapaViewMutation(input))
         if (res.data) this.view.focus = focus
+        else console.error(res)
       } catch (err) {
         throw err
       }
@@ -467,6 +482,9 @@ export default {
   @import '~vue-context/dist/css/vue-context.css';
   h1 {
     color: black;
+  }
+  .description {
+    color: #555;
   }
   svg#baseSvg {
     cursor: grab;
