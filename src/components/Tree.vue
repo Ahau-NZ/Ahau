@@ -261,7 +261,6 @@ export default {
         }))
     },
     async getView () {
-      console.log("TCL: getView -> this.$route.params.id", this.$route.params.id)
       const view = await this.$apollo.query({
         query: whakapapaViewQuery,
         variables: {
