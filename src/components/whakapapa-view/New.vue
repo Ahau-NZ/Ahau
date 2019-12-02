@@ -29,13 +29,11 @@
               </v-col>
             </v-row>
 
-            <!-- TODO
+            <!-- TODO insert photo-picker
             <v-row>
               <v-btn class="mx-2" fab>
                 <v-icon>mdi-plus</v-icon>
-                <!-- insert photo picker here -->
               </v-btn>
-
             </v-row>
             -->
 

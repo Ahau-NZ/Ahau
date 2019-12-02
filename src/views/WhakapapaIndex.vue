@@ -33,7 +33,7 @@ export default {
     },
     createView ($event) {
       console.log($event)
-      
+
       // publish view, then navigate to it?
     }
   },
