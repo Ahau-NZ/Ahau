@@ -367,21 +367,23 @@ export default {
         const profileId = await this.createProfile($event)
         if (!profileId) return
 
-        let child, parent, res
+        let child, parent
         const relationshipAttrs = pick($event, ['relationshipType', 'legallyAdopted'])
         switch (this.dialog.type) {
           case 'child':
             child = profileId
             parent = this.node.selected.data.id
-            res = await this.createChildLink({ child, parent, ...relationshipAttrs })
+            await this.createChildLink({ child, parent, ...relationshipAttrs })
             this.loadDescendants(parent)
             break
           case 'parent':
             child = this.node.selected.data.id
             parent = profileId
-            res = await this.createChildLink({ child, parent, ...relationshipAttrs })
+            const linkId = await this.createChildLink({ child, parent, ...relationshipAttrs })
+            if (!linkId) return
+
             if (child === this.view.focus) {
-              // update the view focus to be parent
+              // in this case we're updating the top of the graph, we update view.focus to that new top parent
               await this.updateFocus(parent)
             }
             break
@@ -425,7 +427,11 @@ export default {
       }
       try {
         const res = await this.$apollo.mutate(saveWhakapapaRelMutation(input))
-        if (!res.data) console.error('failed to createChildLink', res)
+        if (res.errors) {
+          console.error('failed to createChildLink', res)
+          return
+        }
+        return res // TODO return the linkId
       } catch (err) {
         throw err
       }
