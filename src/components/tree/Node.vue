@@ -3,7 +3,7 @@
     <g id="nodeGroup" :style="groupStyle" @click="click">
       <g v-for="(partner, index) in partners" :key="index">
         <Node
-          v-if="hasPartner"
+          v-if="main && hasPartner"
           :node="partner"
           :radius="radius"
           :main="false"
@@ -54,6 +54,11 @@ export default {
       required: true
     }
   },
+  data() {
+    return {
+      count: 0
+    }
+  },
   computed: {
     profile () {
       return this.node.data
@@ -91,20 +96,61 @@ export default {
       }
     },
     partners () {
-      if (this.hasPartner) {
-        return this.node.partners // change to node.data.partners OR profile.partners
-          .map((d, i) => {
-            const x = (i + 1) * this.radius
-            return {
-              data: d,
-              x: x,
-              y: 10
-            }
-          })
-          .slice()
-          .reverse()
+      // if (this.hasPartner) {
+      //  return this.node.partners // change to node.data.partners OR profile.partners
+      //    .map((d, i) => {
+      //      const x = (i + 1) * this.radius
+      //      return {
+      //        data: d,
+      //        x: x,
+      //        y: 10
+      //      }
+      //    })
+      //    .slice()
+      //    .reverse()
+      // }
+      // return undefined
+      if(!this.hasPartner){
+        return undefined
       }
-      return undefined
+      let partners = this.leftSide.concat(this.rightSide)
+      console.log(partners)
+      return partners
+    },
+    npartners(){
+      return this.node.partners
+    },
+    leftSide(){
+      var count = 0
+      var half_len = Math.ceil(this.npartners.length / 2)
+      let leftPartners = this.npartners
+        .splice(0, half_len)
+        .map((d, i) => {
+          var x = -(++count * this.radius)
+          return {
+            data: d,
+            x: x,
+            y: 10
+          }
+        })
+      
+      return leftPartners
+    },
+    rightSide(){
+      var count = 0
+      var half_len = Math.ceil(this.npartners.length / 2)
+      let rightPartners = this.npartners
+        .splice(half_len-1, this.npartners.length)
+        .map((d, i) => {
+          var x = (++count * this.radius)
+          return {
+            data: d,
+            x: x,
+            y: 10
+          }
+        })
+      
+      return rightPartners
     },
     collapsedStyle () {
       // centers the text element under name
@@ -131,6 +177,10 @@ export default {
       .width
 
     this.$emit('update', width)
+    if(this.hasPartner){
+      this.partners
+      console.log('------------')
+    }
   }
 
 }
