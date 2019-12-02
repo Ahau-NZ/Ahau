@@ -173,6 +173,7 @@ module.exports = gql`
   }
 
   type WhakapapaView {
+    id: ID
     name: String
     description: String
     focus: ID

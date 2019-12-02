@@ -22,7 +22,6 @@
 <script>
 import gql from 'graphql-tag'
 import NewViewForm from '@/components/whakapapa-view/New.vue'
-import { getView, concatView } from '@/lib/localStorage'
 
 const saveWhakapapaViewQuery = gql`mutation ($input: WhakapapaViewInput) {
   saveWhakapapaView(input: $input)
@@ -38,24 +37,27 @@ export default {
       views: [],
       showNodeForm: false,
       showViewForm: false,
-      focus: null
-    }
-  },
-  mounted () {
-    // Temporary localStorage
-    this.views = getView()
-    if (this.views === undefined || this.views.length === 0 || !this.views[0].id) {
-      this.toggleViewForm()
+      whoami: {}
     }
   },
   apollo: {
-    focus: {
+    whoami: {
       query: gql` {
         whoami {
           profile { id }
+          feedId
         }
       }`,
-      update: data => data.whoami.profile.id,
+      fetchPolicy: 'no-cache'
+    },
+    views: {
+      query: gql` {
+        views {
+          id
+          name
+          description
+        }
+      }`,
       fetchPolicy: 'no-cache'
     }
   },
@@ -96,28 +98,18 @@ export default {
           variables: {
             input: {
               ...$event,
-              focus: this.focus
-              // recps: [focus]
-              // no, focus is a pofileId, need whoami.feedId
+              focus: this.whoami.profile.id,
+              recps: [this.whoami.feedId]
             }
           }
         })
-        if (result.data) {
-          const id = result.data.saveWhakapapaView
-          // Temporary localStorage
-          concatView({
-            id,
-            focus: this.focus,
-            ...$event
-            // recps: [focus]
-          })
-          this.views = getView()
-          // Should it go to the view automatatically?
-          // this.$router.push({ name: 'whakapapaShow', params: { id } })
-        } else {
+        if (!result.data) {
           console.log('Something bad happened here...')
           return
         }
+
+        console.log('this.data')
+        this.$router.push({ name: 'whakapapaShow', params: { id: result.data.saveWhakapapaView.id } })
       } catch (err) {
         throw err
       }

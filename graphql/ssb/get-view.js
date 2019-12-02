@@ -8,17 +8,12 @@ module.exports = (sbot, id) => new Promise((resolve, reject) => {
   sbot.whakapapa.view.get(id, (err, view) => {
     if (err) return reject(err)
 
-    // <<< WIP
-    // WARNING! we're assuming just one head-state!
-    const { state } = view.states[0]
+    view.id = id // TODO change ssb-whakapapa to do this?
 
-    // Get the original message and use tha to define the authors / tiaki
-    sbot.get(id, (_, value) => {
-      state.id = id // TODO change ssb-whakapapa to do this
-      state.authors = [ value.author ]
+    sbot.get({ id, private: true }, (_, value) => {
+      view.authors = [ value.author ]
 
-      resolve(state)
+      resolve(view)
     })
-    // >>>>
   })
 })
