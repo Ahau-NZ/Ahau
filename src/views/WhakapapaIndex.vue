@@ -11,10 +11,10 @@
       <v-btn fab >
         <v-icon>mdi-plus</v-icon>
       </v-btn>
-      <span class="black--text pl-4 subtitle">Create new whakapapa</span>
+      <span class="pointer black--text pl-4 subtitle">Create new whakapapa</span>
     </div>
-    <NewProfileDialog v-if="showNodeForm" :show="showNodeForm"
-      @close="toggleNodeForm" @submit="createProfileAndView($event)"/>
+    <NewProfileDialog v-if="showProfileForm" :show="showProfileForm"
+      @close="toggleProfileForm" @submit="createProfileAndView($event)"/>
     <NewViewForm :show="showViewForm" @close="toggleViewForm" @submit="createWhakapapa($event)" />
   </v-container>
 </template>
@@ -23,6 +23,7 @@
 import gql from 'graphql-tag'
 import NewViewForm from '@/components/whakapapa-view/New.vue'
 import NewProfileDialog from '@/components/profile-form/Dialog.vue'
+
 const saveWhakapapaViewQuery = gql`mutation ($input: WhakapapaViewInput) {
   saveWhakapapaView(input: $input)
 }`
@@ -39,7 +40,7 @@ export default {
     return {
       newView: null,
       views: [],
-      showNodeForm: false,
+      showProfileForm: false,
       showViewForm: false,
       whoami: {}
     }
@@ -66,8 +67,8 @@ export default {
     }
   },
   methods: {
-    toggleNodeForm () {
-      this.showNodeForm = !this.showNodeForm
+    toggleProfileForm () {
+      this.showProfileForm = !this.showProfileForm
     },
     toggleViewForm () {
       this.showViewForm = !this.showViewForm
@@ -75,11 +76,15 @@ export default {
     async createProfileAndView ($event) {
       try {
         const profile = await this.$apollo.mutate({
-          mutatation: createProfileQuery,
-          variables: $event
+          mutation: createProfileQuery,
+          variables: {
+            input: {
+              ...$event,
+              type: 'person'
+            }
+          }
         })
         if (profile.data) {
-          console.log("TCL: createProfileAndView -> $event", $event)
           const view = await this.$apollo.mutate({
             mutation: saveWhakapapaViewQuery,
             variables: { input: this.newView }
@@ -109,7 +114,7 @@ export default {
           this.createView(cleanEvent)
           break
         case 'new':
-          this.toggleNodeForm()
+          this.toggleProfileForm()
           this.newView = cleanEvent
           break
         default:
@@ -150,5 +155,8 @@ export default {
 <style scoped lang="scss">
   .body-width {
     max-width: 900px;
+  }
+  .pointer {
+    cursor: pointer;
   }
 </style>

@@ -28,14 +28,15 @@
                 ></v-textarea>
               </v-col>
             </v-row>
-            <v-row class="actions">
+            <v-row class="d-flex flex-column">
+              <div class="black--text">Would you like to start with :</div>
               <v-radio-group v-model="data.focus">
                 <v-radio
-                  :label="`Your profile`"
+                  :label="`Yourself`"
                   value="self"
                 ></v-radio>
                 <v-radio
-                  :label="`Create a new profile`"
+                  :label="`Another person`"
                   value="new"
                 ></v-radio>
               </v-radio-group>
