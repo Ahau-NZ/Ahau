@@ -1,8 +1,13 @@
 <template>
   <svg>
-    <g :style="groupStyle" @click="click">
+    <g id="nodeGroup" :style="groupStyle" @click="click">
       <g v-for="(partner, index) in partners" :key="index">
-        <Node v-if="partners.length" :node="partner" :radius="radius-10" @click="partnerClick" :main="false"/>
+        <Node
+          v-if="hasPartner"
+          :node="partner"
+          :radius="radius"
+          :main="false"
+        ></Node>
       </g>
       <defs>
         <clipPath id="myCircle">
@@ -19,6 +24,9 @@
         <rect :width="textWidth" y="-16" height="20"></rect>
         <text>{{ profile.preferredName }}</text>
       </g>
+      <g v-if="profile.isCollapsed" :style="collapsedStyle">
+        <text> ... </text>
+      </g>
     </g>
   </svg>
 </template>
@@ -28,7 +36,7 @@ import get from 'lodash.get'
 import tane from '@/assets/tane.svg'
 import wahine from '@/assets/wahine.svg'
 
-import gql from 'graphql-tag'
+import * as d3 from 'd3' // will be changed later on
 
 export default {
   name: 'Node',
@@ -46,16 +54,7 @@ export default {
       required: true
     }
   },
-  data () {
-    return {
-      collapsed: false,
-      count: 0
-    }
-  },
   computed: {
-    hasPartner(){
-      
-    },
     profile () {
       return this.node.data
     },
@@ -76,19 +75,11 @@ export default {
     textWidth () {
       // const { x, y } = textElm.getBBox();
       const width = (this.profile.preferredName.length * 8)
-      this.$emit('textWidth', width)
       return width
     },
     groupStyle () {
-      var transform = (!this.collapsed)
-        ? `translate(${this.node.x}px, ${this.node.y}px)`
-        : `translate(${this.node.x}px, ${this.node.y}px) scale(1.2)`
-      return { transform }
-    },
-    partnerStyle () {
       return {
-        transform: `translate(${-this.radius}px, ${0}px)`
-        // calculate the transform to draw nodes vertically
+        transform: `translate(${this.node.x}px, ${this.node.y}px)`
       }
     },
     textStyle () {
@@ -99,108 +90,47 @@ export default {
         // calculate the transform to draw nodes vertically
       }
     },
-    partners(){
-      if(this.node.partners){
+    partners () {
+      if (this.hasPartner) {
         return this.node.partners // change to node.data.partners OR profile.partners
           .map((d, i) => {
-            var x = (i + 1) * this.radius
+            const x = (i + 1) * this.radius
             return {
               data: d,
               x: x,
-              y: 0
+              y: 10
             }
           })
+          .slice()
+          .reverse()
+      }
+      return undefined
+    },
+    collapsedStyle () {
+      // centers the text element under name
+      return {
+        fontSize: '30px',
+        fontWeight: 600,
+        transform: `translate(${this.radius - 3}px, ${this.diameter + 25}px) rotate(90deg)`
+        // calculate the transform to draw nodes vertically
       }
     },
+    hasPartner () {
+      return this.node.partners !== undefined
+    }
   },
   methods: {
     click () {
       this.$emit('click')
-      this.collapsed = !this.collapsed
-      // probably want to draw something below avatar if collapsed === true?
-    },
-    async getCloseWhakapapa (profileId) {
-      const request = {
-        query: gql`query ($id: String) {
-          closeWhakapapa(id: $id) {
-            id
-            gender
-            preferredName
-            avatarImage {
-              uri
-            }
-            children {
-              id
-              gender
-              preferredName
-              avatarImage {
-                uri
-              }
-            }
-            parents {
-              id
-              gender
-              preferredName
-              avatarImage {
-                uri
-              }
-            }
-          }
-        }`,
-        variables: {
-          id: profileId
-        },
-        fetchPolicy: 'no-cache'
-      }
-
-      try {
-        const result = await this.$apollo.query(request)
-        return result
-      } catch (err) {
-        console.error('WARNING, something went wrong')
-        console.error(err)
-        return err
-      }
-    },
-    /*async mpartners(){
-      
-      // this wouldnt work
-      let unique = []
-      let partners = []
-       this.profile.children.forEach(child => {
-         child.parents.forEach(profileId => {
-          if(!unique[profileId]){
-            unique[profileId] = true
-            const partner = this.loadPartner(profileId)
-            partners.push(partner)
-          }
-        })
-      })
-      
-     let unique = []
-     let partners = []
-     for(const child of this.profile.children){
-       for(const profileId of child.parents){
-         if(!unique[profileId]){
-           unique[profileId] = true
-           const partner = await this.loadPartner(profileId)
-           partners.push(partner)
-         }
-       }
-     }
-      return partners
-    },
-    async loadPartner(profileId){
-      const result = await this.getCloseWhakapapa(profileId)
-      const record = result.data.closeWhakapapa
-      return record
-    },*/
-    partnerClick(){
-      console.log('Partner Clicked')
     }
   },
-  mounted(){
-    //console.log(this.partners)
+  mounted () {
+    var width = d3.select('#nodeGroup')
+      .node()
+      .getBoundingClientRect()
+      .width
+
+    this.$emit('update', width)
   }
 
 }
