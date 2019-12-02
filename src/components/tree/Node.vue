@@ -16,6 +16,9 @@
         <rect :width="textWidth" y="-16" height="20"></rect>
         <text>{{ profile.preferredName }}</text>
       </g>
+      <g v-if="profile.isCollapsed" :style="collapsedStyle">
+        <text> ... </text>
+      </g>
     </g>
   </svg>
 </template>
@@ -34,11 +37,6 @@ export default {
     radius: {
       type: Number,
       required: true
-    }
-  },
-  data () {
-    return {
-      collapsed: false
     }
   },
   computed: {
@@ -66,10 +64,9 @@ export default {
       return width
     },
     groupStyle () {
-      var transform = (!this.collapsed)
-        ? `translate(${this.node.x}px, ${this.node.y}px)`
-        : `translate(${this.node.x}px, ${this.node.y}px) scale(1.2)`
-      return { transform }
+      return {
+        transform: `translate(${this.node.x}px, ${this.node.y}px)`
+      }
     },
     textStyle () {
       // centers the text element under image
@@ -78,13 +75,20 @@ export default {
         transform: `translate(${this.radius - (this.textWidth / 2)}px, ${this.diameter + 15}px)`
         // calculate the transform to draw nodes vertically
       }
+    },
+    collapsedStyle () {
+      // centers the text element under name
+      return {
+        fontSize: '30px',
+        fontWeight: 600,
+        transform: `translate(${this.radius - 3}px, ${this.diameter + 25}px) rotate(90deg)`
+        // calculate the transform to draw nodes vertically
+      }
     }
   },
   methods: {
     click () {
       this.$emit('click')
-      this.collapsed = !this.collapsed
-      // probably want to draw something below avatar if collapsed === true?
     }
   }
 }
