@@ -5,10 +5,11 @@ const { GraphQLUpload } = require('graphql-upload')
 const toUrl = require('ssb-serve-blobs/id-to-url')
 const pick = require('lodash.pick')
 
-const getProfiles = require('./ssb/profiles')
-const getProfile = require('./ssb/profile')
-const getCommunities = require('./ssb/communities')
-const getCloseWhakapapa = require('./ssb/close-whakapapa')
+const getProfiles = require('./ssb/get-profiles')
+const getProfile = require('./ssb/get-profile')
+const getCommunities = require('./ssb/get-communities')
+const getViews = require('./ssb/get-views')
+const getCloseWhakapapa = require('./ssb/get-close-whakapapa')
 
 const pubsub = new PubSub()
 
@@ -35,6 +36,14 @@ module.exports = sbot => ({
         getCommunities(sbot, (err, profiles) => {
           if (err) reject(err)
           else resolve(profiles)
+        })
+      }),
+
+    views: () =>
+      new Promise((resolve, reject) => {
+        getViews(sbot, (err, views) => {
+          if (err) reject(err)
+          else resolve(views)
         })
       }),
 

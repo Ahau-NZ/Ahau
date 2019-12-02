@@ -1,4 +1,4 @@
-const getProfile = require('./profile')
+const getProfile = require('./get-profile')
 
 module.exports = async function closeWhakapapa (sbot, profileId) {
   try {
