@@ -37,14 +37,13 @@
       @close="toggleEdit"/>
     <NewNodeDialog v-if="dialog.new" :show="dialog.new"
       @close="closeNew" @submit="addPerson($event)"/>
-    <NewViewForm :show="dialog.view" @close="toggleNewView" @submit="createView($event)" />
   </div>
 </template>
 
 <script>
 import * as d3 from 'd3'
 import gql from 'graphql-tag'
-
+import pick from 'lodash.pick'
 import { VueContext } from 'vue-context'
 
 import tree from '@/lib/tree-helpers'
@@ -53,8 +52,6 @@ import Link from './tree/Link.vue'
 import ViewNodeDialog from './tree/Dialogs/ViewNodeDialog.vue'
 import EditNodeDialog from './tree/Dialogs/EditNodeDialog.vue'
 import NewNodeDialog from './tree/Dialogs/NewNodeDialog.vue'
-import NewViewForm from '@/components/whakapapa-view/New.vue'
-import { concatView } from '@/lib/localStorage'
 
 function clone (object) {
   return Object.assign({}, object)
@@ -65,36 +62,27 @@ const saveWhakapapaMutation = (input) => ({
   mutation: gql`mutation ($input: WhakapapaRelationInput!) {
     saveWhakapapaRelation(input: $input)
   }`,
-  variables: {
-    input
-  }
+  variables: { input }
 })
 
-const saveWhakapapaViewQuery = gql`mutation ($input: WhakapapaViewInput) {
-  saveWhakapapaView(input: $input)
-}`
-
-const whakapapaViewQuery = gql`
-  query ($id: String!) {
-    whakapapaView(id: $id) {
-      name
-      description
-      focus
-      mode
-    }
-  }
-`
+const saveWhakapapaViewMutation = (input) => ({
+  mutation: gql`mutation ($input: WhakapapaViewInput) {
+    saveWhakapapaView(input: $input)
+  }`,
+  variables: { input }
+})
 
 export default {
   props: {
-    viewId: {
-      type: String,
-      required: true
-    }
+    viewId: { type: String, required: true }
   },
   data () {
     return {
-      focus: null,
+      view: {
+        name: null,
+        description: null,
+        focus: null
+      },
       flatWhakapapa: {}, // profiles with format { %profileId: profile }
       dialog: {
         show: false,
@@ -124,10 +112,26 @@ export default {
       }
     }
   },
+  apollo: {
+    view: {
+      query: gql` query ($id: String!) {
+        whakapapaView(id: $id) {
+          name
+          description
+          focus
+          mode
+        }
+      }`,
+      variables: {
+        id: this.viewId
+      },
+      fetchPolicy: 'no-cache'
+    }
+  },
   computed: {
     // deeply nested tree of profiles!
     nestedWhakapapa () {
-      var output = this.flatWhakapapa[this.focus]
+      var output = this.flatWhakapapa[this.view.foucs]
       if (!output) {
         return {
           preferredName: 'Loading',
@@ -261,13 +265,12 @@ export default {
         }))
     },
     async getView () {
-      console.log("TCL: getView -> this.$route.params.id", this.$route.params.id)
       const view = await this.$apollo.query({
-        query: whakapapaViewQuery,
-        variables: {
-          id: this.$route.params.id
-        }
       })
+      if (!view.data) {
+        console.error('failed to load view')
+        return
+      }
       this.focus = view.data.whakapapaView.focus
     },
     async loadDescendants (profileId) {
@@ -362,100 +365,80 @@ export default {
     */
     async addPerson ($event) {
       try {
-        // create a new profile
         const profileId = await this.createProfile($event)
-        if (profileId) {
-          switch (this.dialog.type) {
-            case 'child':
-              return this.createChildLink(profileId, $event)
-            case 'parent':
-              const newDetails = {
-                profileId,
-                relationDetails: $event
-              }
-              this.dialog.newDetails = newDetails
-              return this.toggleNewView()
-            default: console.log('not built')
-          }
+        if (!profileId) return
+
+        const relationshipAttrs = pick($event, ['relationshipType', 'legallyAdopted'])
+        switch (this.dialog.type) {
+          case 'child':
+            await this.createChildLink({
+              child: profileId,
+              parent: this.node.selected.id,
+              ...relationshipAttrs
+            })
+            break
+          case 'parent':
+            const child = this.node.selected.id
+            await this.createChildLink({
+              child,
+              parent: profileId,
+              ...relationshipAttrs
+            })
+            if (child === this.focus) {
+              // update the view focus to be parent
+
+            }
+            break
+          default: console.log('not built')
         }
+        this.toggleNewView()
       } catch (err) {
         throw err
       }
     },
-    async createView ($event) {
-      const input = {
-        ...$event,
-        focus: this.dialog.newDetails.profileId
-      }
-      const viewResponse = await this.$apollo.mutate({
-        mutation: saveWhakapapaViewQuery,
-        variables: {
-          input
-        }
-      })
-      const viewId = viewResponse.data.saveWhakapapaView
-      // Temporary localStorage
-      concatView({
-        id: viewId,
-        ...input
-      })
-      // link it up
-      return this.createParentLink(input.focus, this.dialog.newDetails.relationDetails, viewId)
-    },
-    async createParentLink (profileId, { relationshipType, legallyAdopted }, view) {
-      const child = this.node.selected.data.id
-      const input = {
-        child,
-        parent: profileId,
-        relationshipType,
-        legallyAdopted
-        // recps: [profileId]
-      }
-      try {
-        await this.$apollo.mutate(saveWhakapapaMutation(input))
-        // Change view
-        console.log('Sucess! Should change route...')
-        this.$router.push({ name: 'whakapapaShow', params: { id: view } })
-      } catch (err) {
-        throw err
-      }
-    },
-    async createChildLink (profileId, { relationshipType, legallyAdopted }) {
-      const parent = this.node.selected.data.id
-      const input = {
-        child: profileId,
-        parent,
-        relationshipType,
-        legallyAdopted
-        // recps: [profileId]
-      }
-      try {
-        await this.$apollo.mutate(saveWhakapapaMutation(input))
-        this.loadDescendants(this.focus)
-      } catch (err) {
-        throw err
-      }
-    },
-    async createProfile ($event) {
-      const createProfileReq = {
+    async createProfile ({ preferredName, legalName, gender }) {
+      const res = await this.$apollo.mutate({
         mutation: gql`mutation ($input: CreateProfileInput!) {
           createProfile(input: $input)
         }`,
         variables: {
           input: {
             type: 'person',
-            preferredName: $event.preferredName,
-            legalName: $event.legalName,
+            preferredName,
+            legalName,
+            gender
             // avatarImage: ImageInput
-            gender: $event.gender
           }
         }
+      })
+
+      if (!res.data) {
+        console.error('failed to createProfile', res)
+        return
       }
-      const res = await this.$apollo.mutate(createProfileReq)
+      return res.data.createProfile // a profileId
+    },
+    async createChildLink ({ child, parent, relationshipType, legallyAdopted }, view) {
+      const input = {
+        child,
+        parent,
+        relationshipType,
+        legallyAdopted
+        // recps: [profileId]
+      }
       try {
-        return res.data.createProfile // a profileId
+        this.$apollo.mutate(saveWhakapapaMutation(input))
       } catch (err) {
-        return err
+        throw err
+      }
+    },
+    async updateFocus (focus) {
+      const input = { focus }
+      try {
+        const res = await this.$apollo.mutate(saveWhakapapaViewMutation(input))
+        if (res.data) this.focus = focus
+      } catch (err) {
+        throw err
       }
     },
     /*
@@ -490,8 +473,7 @@ export default {
     VueContext,
     EditNodeDialog,
     NewNodeDialog,
-    ViewNodeDialog,
-    NewViewForm
+    ViewNodeDialog
   }
 }
 </script>
