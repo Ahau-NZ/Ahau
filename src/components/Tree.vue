@@ -108,19 +108,31 @@ export default {
     }
   },
   apollo: {
-    view: {
-      query: gql` query ($id: String!) {
-        whakapapaView(id: $id) {
-          name
-          description
-          focus
-          mode
-        }
-      }`,
-      variables: {
-        id: this.viewId
-      },
-      fetchPolicy: 'no-cache'
+    view () {
+      return {
+        query: gql` query ($id: String!) {
+          whakapapaView(id: $id) {
+            name
+            description
+            focus
+            mode
+          }
+        }`,
+        variables: {
+          id: this.viewId
+        },
+        fetchPolicy: 'no-cache'
+      }
+    }
+  },
+  watch: {
+    'view.focus': async function (newFocus) {
+      await this.loadDescendants(newFocus)
+
+      if (!this.componentLoaded) {
+        this.componentLoaded = true
+        this.zoom()
+      }
     }
   },
   computed: {
@@ -243,13 +255,6 @@ export default {
         })
     }
   },
-  async mounted () {
-    await this.getView()
-    await this.loadDescendants(this.focus)
-    // means the vue component has rendered
-    this.componentLoaded = true
-    this.zoom()
-  },
   methods: {
     zoom () {
       var svg = d3.select('#baseSvg')
@@ -258,15 +263,6 @@ export default {
         d3.zoom().on('zoom', function () {
           g.attr('transform', d3.event.transform)
         }))
-    },
-    async getView () {
-      const view = await this.$apollo.query({
-      })
-      if (!view.data) {
-        console.error('failed to load view')
-        return
-      }
-      this.focus = view.data.whakapapaView.focus
     },
     async loadDescendants (profileId) {
       const result = await this.getCloseWhakapapa(profileId)
@@ -363,25 +359,21 @@ export default {
         const profileId = await this.createProfile($event)
         if (!profileId) return
 
+        let child, parent
         const relationshipAttrs = pick($event, ['relationshipType', 'legallyAdopted'])
         switch (this.dialog.type) {
           case 'child':
-            await this.createChildLink({
-              child: profileId,
-              parent: this.node.selected.id,
-              ...relationshipAttrs
-            })
+            child = profileId
+            parent = this.node.selected.id
+            await this.createChildLink({ child, parent, ...relationshipAttrs })
             break
           case 'parent':
-            const child = this.node.selected.id
-            await this.createChildLink({
-              child,
-              parent: profileId,
-              ...relationshipAttrs
-            })
-            if (child === this.focus) {
+            child = this.node.selected.id
+            parent = profileId
+            await this.createChildLink({ child, parent, ...relationshipAttrs })
+            if (child === this.view.focus) {
               // update the view focus to be parent
-
+              await this.updateFocus(parent)
             }
             break
           default: console.log('not built')
@@ -431,7 +423,7 @@ export default {
       const input = { focus }
       try {
         const res = await this.$apollo.mutate(saveWhakapapaViewMutation(input))
-        if (res.data) this.focus = focus
+        if (res.data) this.view.focus = focus
       } catch (err) {
         throw err
       }

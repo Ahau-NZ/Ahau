@@ -13,6 +13,7 @@ module.exports = (sbot, id) => new Promise((resolve, reject) => {
     sbot.get({ id, private: true }, (_, value) => {
       view.authors = [ value.author ]
 
+      console.log(view)
       resolve(view)
     })
   })

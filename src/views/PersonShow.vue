@@ -1,5 +1,5 @@
 <template>
-  <ProfileShow :id="id" type="person" />
+  <ProfileShow :profileId="id" type="person" />
 </template>
 
 <script>
