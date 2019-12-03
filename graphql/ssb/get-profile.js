@@ -36,7 +36,7 @@ module.exports = (sbot, id) => new Promise((resolve, reject) => {
     const { state } = profile.states[0]
 
     // Get the original message and use tha to define the authors / tiaki
-    sbot.get(id, (_, value) => {
+    sbot.get({ id, private: true }, (_, value) => {
       state.id = id // TODO change ssb-profile to do this
       state.authors = [ value.author ]
 

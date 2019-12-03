@@ -4,16 +4,41 @@
       :preferredName="profile.preferredName"
       :avatarImage="profile.avatarImage"
       :headerImage="profile.headerImage"
-      :addImages="addImages"
+      :addImages="addChanges"
     />
     <v-container class='body px-12 pt-12'>
       <v-row>
         <v-col>
-          <Info
-            :preferredName="profile.preferredName"
-            :legalName="profile.legalName"
-            :description="profile.description"
-          />
+          <v-form class="body white pt-0" ref="form" v-model="form.valid" lazy-validation>
+            <v-row>
+              <v-col cols="12" md="12" >
+                <v-text-field
+                  light
+                  v-model="profile.preferredName"
+                  label="Preferred name"
+                ></v-text-field>
+              </v-col>
+
+              <v-col cols="12" md="12" >
+                <v-text-field
+                  light
+                  v-model="profile.legalName"
+                  label="Legal name"
+                ></v-text-field>
+              </v-col>
+
+              <v-col cols="12">
+                <v-textarea
+                  v-model="profile.description"
+                  light
+                  name="input-7-1"
+                  label="Description"
+                  hint="Hint text"
+                ></v-textarea>
+              </v-col>
+
+            </v-row>
+          </v-form>
         </v-col>
       </v-row>
       <v-row>
@@ -34,8 +59,8 @@
 
 <script>
 import gql from 'graphql-tag'
+import pick from 'lodash.pick'
 import Header from '@/components/profile-form/Header'
-import Info from '@/components/profile-form/Info'
 import Actions from '@/components/profile-form/Actions'
 
 const get = require('lodash.get')
@@ -56,7 +81,33 @@ export default {
         avatarImage: undefined,
         headerImage: undefined
       },
-      persistedState: {}
+      persistedState: {},
+      form: {
+        valid: true,
+        rules: {
+          // title: [
+          //   v => !!v || 'Title is required'
+          // ],
+          // gender: [
+          //   v => !!v || 'Gender is required'
+          // ],
+          name: {
+            preferred: [
+              v => !!v || 'Preferred name is required',
+              v => (v && v.length <= 20) || 'Name must be less than 20 characters'
+            ],
+            legal: [
+              v => !!v || 'Legal name is required',
+              v => (v && v.length <= 50) || 'Name must be less than 50 characters'
+            ]
+          }
+          // date: {
+          //   birth: [
+          //     v => !!v || 'Date of birth is required'
+          //   ]
+          // }
+        }
+      }
     }
   },
   computed: {
@@ -131,9 +182,15 @@ export default {
     }
   },
   methods: {
-    addImages ({ avatarImage, headerImage }) {
-      if (avatarImage) this.profile.avatarImage = avatarImage
-      if (headerImage) this.profile.headerImage = headerImage
+    addChanges (changes) {
+      const permitted = [
+        'preferredName',
+        'legalName',
+        'description',
+        'avatarImage',
+        'headerImage'
+      ]
+      this.profile = Object.assign({}, this.profile, pick(changes, permitted))
     },
     async saveProfile () {
       if (!this.hasChanges) return
@@ -165,8 +222,12 @@ export default {
       const result = await this.$apollo.mutate(request)
 
       if (result.data) {
-        const id = this.isNew ? result.data.createProfile : result.data.updateProfile
-        this.$router.push({ name: 'communityShow', params: { id } })
+        if (this.isNew) {
+          this.$router.push({ name: 'communityShow', params: { id: result.data.createProfile } })
+        } else {
+          this.$router.push({ name: 'communityShow', params: { id: result.data.updateProfile } })
+          // this.$router.go(-1)
+        }
       }
     },
     onCancel () {
@@ -176,7 +237,6 @@ export default {
   },
   components: {
     Header,
-    Info,
     Actions
   }
 }

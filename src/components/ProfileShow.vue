@@ -18,7 +18,8 @@
         </v-col>
 
         <v-col cols="4" class="d-flex justify-end">
-          <router-link v-if="profile.canEdit" :to="{ name: 'communityEdit', params: { id } }">
+          <router-link v-if="profile.canEdit"
+            :to="{ name: type + 'Edit', params: { id: this.profileId } }">
             <v-btn class="my-2" fab color="white">
               <v-icon class="black--text">mdi-pencil</v-icon>
             </v-btn>
@@ -68,7 +69,7 @@ import Header from '@/components/profile/Header.vue'
 export default {
   name: 'ProfileShow',
   props: {
-    id: String,
+    profileId: String,
     type: {
       type: String, // person / community?
       required: true
@@ -136,7 +137,7 @@ export default {
       return {
         query,
         variables: {
-          id: this.$route.params.id
+          id: this.profileId
         },
         fetchPolicy: 'no-cache'
       }

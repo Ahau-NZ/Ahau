@@ -5,10 +5,11 @@ const { GraphQLUpload } = require('graphql-upload')
 const toUrl = require('ssb-serve-blobs/id-to-url')
 const pick = require('lodash.pick')
 
-const getProfiles = require('./ssb/profiles')
-const getProfile = require('./ssb/profile')
-const getCommunities = require('./ssb/communities')
-const getCloseWhakapapa = require('./ssb/close-whakapapa')
+const getProfiles = require('./ssb/get-profiles')
+const getProfile = require('./ssb/get-profile')
+const getCommunities = require('./ssb/get-communities')
+const getViews = require('./ssb/get-views')
+const getCloseWhakapapa = require('./ssb/get-close-whakapapa')
 
 const pubsub = new PubSub()
 
@@ -38,6 +39,14 @@ module.exports = sbot => ({
         })
       }),
 
+    views: () =>
+      new Promise((resolve, reject) => {
+        getViews(sbot, (err, views) => {
+          if (err) reject(err)
+          else resolve(views)
+        })
+      }),
+
     profile: async (_, { id }, { feedId, profileId }) => {
       const profile = await getProfile(sbot, id)
 
@@ -53,12 +62,13 @@ module.exports = sbot => ({
         throw err
       }
     },
-    whakapapaView: (_, { id }, { feedId, profileId }) => new Promise((resolve, reject) => {
-      sbot.whakapapa.view.get(id, (err, view) => {
-        if (err) reject(err)
-        else resolve(view)
+    whakapapaView: (_, { id }, { feedId, profileId }) =>
+      new Promise((resolve, reject) => {
+        sbot.whakapapa.view.get(id, (err, view) => {
+          if (err) reject(err)
+          else resolve(view)
+        })
       })
-    })
   },
   // TODO: make profile and whakapapa a implementation of Person
   // Person: (_, { id }, { feedId, profileId }) =>
@@ -142,7 +152,8 @@ module.exports = sbot => ({
 
     saveWhakapapaRelation: (_, { input }, { feedId, profileId }) => {
       const { relationshipId, child, parent } = input
-      const opts = buildWhakapapaOpts(input)
+      const opts = buildWhakapapaLinkOpts(input)
+
       if (relationshipId) {
         return new Promise((resolve, reject) => {
           sbot.whakapapa.child.update(relationshipId, opts, (err) => {
@@ -163,7 +174,8 @@ module.exports = sbot => ({
     },
     saveWhakapapaView: (_, { input }, { feedId, profileId }) => {
       const { viewId } = input
-      const details = buildWhakapapaViewDetails(input)
+      const details = buildWhakakakaViewOpts(input)
+
       if (viewId) {
         return new Promise((resolve, reject) => {
           sbot.whakapapa.view.update(viewId, details, (err) => {
@@ -235,7 +247,7 @@ function buildTransformation (input) {
   return T
 }
 
-function buildWhakapapaOpts (input) {
+function buildWhakapapaLinkOpts (input) {
   const permittedAttrs = ['relationshipType', 'legallyAdopted', 'recps']
 
   let opts = pick(input, permittedAttrs)
@@ -247,8 +259,9 @@ function buildWhakapapaOpts (input) {
   return opts
 }
 
-function buildWhakapapaViewDetails (input) {
+function buildWhakakakaViewOpts (input) {
   const permittedAttrs = ['name', 'description', 'focus', 'mode', 'recps']
+  // NOTE recps will be ignored in updates
 
   let details = pick(input, permittedAttrs)
   Object.entries(details).forEach(([key, value]) => {
