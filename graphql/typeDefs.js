@@ -178,6 +178,7 @@ module.exports = gql`
     description: String
     focus: ID
     mode: Mode
+    recps: [String]
   }
 
   type Query {
