@@ -28,6 +28,19 @@
                 ></v-textarea>
               </v-col>
             </v-row>
+            <v-row class="d-flex flex-column">
+              <div class="black--text">Would you like to start with :</div>
+              <v-radio-group v-model="data.focus">
+                <v-radio
+                  :label="`Yourself`"
+                  value="self"
+                ></v-radio>
+                <v-radio
+                  :label="`Another person`"
+                  value="new"
+                ></v-radio>
+              </v-radio-group>
+            </v-row>
 
             <!-- TODO insert photo-picker
             <v-row>
@@ -51,7 +64,6 @@
                 </v-btn>
               </v-col>
             </v-row>
-
           </v-container>
         </v-card-text>
 
@@ -67,8 +79,8 @@ function defaultData () {
   return {
     name: '',
     description: '',
-    // focus: ''
-    mode: 'descendants'
+    mode: 'descendants',
+    focus: 'self'
   }
 }
 

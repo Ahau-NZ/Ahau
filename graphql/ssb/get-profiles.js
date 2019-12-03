@@ -1,7 +1,7 @@
 const pull = require('pull-stream')
 const pullParamap = require('pull-paramap')
 const isProfile = require('ssb-profile/lib/is-profile')
-const fetchProfile = require('./profile')
+const getProfile = require('./get-profile')
 
 module.exports = function profiles (sbot, cb) {
   const query = [
@@ -26,7 +26,7 @@ module.exports = function profiles (sbot, cb) {
     pull.filter(isProfile),
     pullParamap(
       (root, cb) => {
-        fetchProfile(sbot, root.key)
+        getProfile(sbot, root.key)
           .then(profile => cb(null, profile))
           .catch(_ => cb(null, null))
       },
