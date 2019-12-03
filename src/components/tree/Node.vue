@@ -103,9 +103,9 @@ export default {
         return undefined
       }
       var halfway = Math.round(this.partners.length / 2)
-      var right = this.map(0, halfway, 1)
+      var right = this.map(1, halfway, 1) // skips the first parent as that is the 'main' node
       var left = this.map(halfway, this.partners.length, -1)
-      return left.concat(right).reverse()
+      return right.concat(left).reverse()
     },
     partnerRadius () {
       return this.radius - 10

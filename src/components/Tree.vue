@@ -273,55 +273,23 @@ export default {
         }))
     },
     async loadDescendants (profileId) {
-      const result = await this.getCloseWhakapapa(profileId)
-
-      const record = result.data.closeWhakapapa
+      let unique = []
+      let partners = []
+      const record = await this.loadProfile(profileId)
       record.children.forEach(profile => {
         this.loadDescendants(profile.id)
       })
-      // dummy partners to be removed when partners are stored
-      record.partners = [
-        {
-          id: 0,
-          gender: 'male',
-          preferredName: 'Partner 1',
-          avatarImage: null,
-          children: [],
-          parents: []
-        },
-        {
-          id: 1,
-          gender: 'male',
-          preferredName: 'Partner 2',
-          avatarImage: null,
-          children: [],
-          parents: []
-        },
-        {
-          id: 2,
-          gender: 'male',
-          preferredName: 'Partner 3',
-          avatarImage: null,
-          children: [],
-          parents: []
-        },
-        {
-          id: 3,
-          gender: 'male',
-          preferredName: 'Partner 4',
-          avatarImage: null,
-          children: [],
-          parents: []
-        },
-        {
-          id: 4,
-          gender: 'male',
-          preferredName: 'Partner 5',
-          avatarImage: null,
-          children: [],
-          parents: []
-        }
-      ]
+      record.children.forEach(async profile => {
+        const childProfile = await this.loadProfile(profile.id)
+        childProfile.parents.forEach(async profileId => {
+          if (!unique[profileId]) {
+            unique[profileId] = true
+            const parentProfile = await this.loadProfile(profileId)
+            partners.push(parentProfile)
+          }
+        })
+      })
+      record.partners = partners
 
       var output = Object.assign({}, this.flatWhakapapa)
       Object.entries(tree.flatten(record))
@@ -330,6 +298,11 @@ export default {
           output[profileId] = Object.assign({}, output[profileId] || {}, profile)
         })
       this.flatWhakapapa = output
+    },
+    async loadProfile (profileId) {
+      const result = await this.getCloseWhakapapa(profileId)
+      const record = result.data.closeWhakapapa
+      return record
     },
     async getCloseWhakapapa (profileId) {
       const request = {
