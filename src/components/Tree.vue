@@ -79,9 +79,9 @@ export default {
       view: {
         name: null,
         description: null,
-        focus: null
+        focus: null,
+        recps: null
       },
-      whoami: { feedId: null },
       flatWhakapapa: {}, // profiles with format { %profileId: profile }
       node: {
         selected: null,
@@ -121,17 +121,13 @@ export default {
             description
             focus
             mode
+            recps
           }
         }`,
         variables: { id: this.viewId },
         update: data => data.whakapapaView,
         fetchPolicy: 'no-cache'
       }
-    },
-    whoami: {
-      query: gql` {
-        whoami { feedId }
-      }`
     }
   },
   watch: {
@@ -420,8 +416,8 @@ export default {
             type: 'person',
             preferredName,
             legalName,
-            gender
-            // recps: [ this.whoami.feedId ]
+            gender,
+            recps: this.view.recps
             // avatarImage: ImageInput
           }
         }
@@ -438,8 +434,8 @@ export default {
         child,
         parent,
         relationshipType,
-        legallyAdopted
-        // recps: [ this.whoami.feedId ]
+        legallyAdopted,
+        recps: this.view.recps
       }
       try {
         const res = await this.$apollo.mutate(saveWhakapapaRelMutation(input))

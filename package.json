@@ -1,6 +1,6 @@
 {
   "name": "whakapapa-ora",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "scripts": {
     "postinstall": "npm run rebuild",
     "rebuild": "electron-builder install-app-deps",
