@@ -65,11 +65,11 @@
     "vue-router": "^3.0.3",
     "vuetify": "^2.1.0",
     "vuetify-image-input": "^19.0.0",
+    "@mdi/font": "^4.5.95",
     "vuex": "^3.0.1"
   },
   "devDependencies": {
     "@fiahfy/icns-convert": "0.0.6",
-    "@mdi/font": "^4.5.95",
     "@vue/cli-plugin-babel": "^3.11.0",
     "@vue/cli-plugin-eslint": "^3.11.0",
     "@vue/cli-service": "^3.11.0",
