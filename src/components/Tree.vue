@@ -276,10 +276,9 @@ export default {
       let unique = []
       let partners = []
       const record = await this.loadProfile(profileId)
-      record.children.forEach(profile => {
-        this.loadDescendants(profile.id)
-      })
       record.children.forEach(async profile => {
+        this.loadDescendants(profile.id)
+
         const childProfile = await this.loadProfile(profile.id)
         childProfile.parents.forEach(async profileId => {
           if (!unique[profileId]) {
