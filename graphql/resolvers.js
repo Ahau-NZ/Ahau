@@ -130,6 +130,7 @@ module.exports = sbot => ({
       })
     },
 
+    // TODO collect create/update into saveProfile
     createProfile: (_, { input }) => {
       const T = buildTransformation(input)
       return new Promise((resolve, reject) => {
@@ -139,7 +140,6 @@ module.exports = sbot => ({
         })
       })
     },
-
     updateProfile: (_, { input }) =>
       // TODO check permissions?
       new Promise((resolve, reject) => {
@@ -150,6 +150,7 @@ module.exports = sbot => ({
         })
       }),
 
+    // TODO align naming across stack : link / relation / child
     saveWhakapapaRelation: (_, { input }, { feedId, profileId }) => {
       const { relationshipId, child, parent } = input
       const opts = buildWhakapapaLinkOpts(input)
@@ -223,10 +224,8 @@ function buildTransformation (input) {
 
   Object.entries(input).forEach(([key, value]) => {
     switch (key) {
-      case 'type':
-        return
-      case 'id':
-        return
+      case 'type': return
+      case 'id': return
 
       case 'altNames':
         // TODO
@@ -237,6 +236,10 @@ function buildTransformation (input) {
         return
       case 'headerImage':
         T[key] = { set: pick(value, ['blob', 'mimeType', 'size', 'width', 'height']) }
+        return
+
+      case 'recps':
+        T[key] = value
         return
 
       default:
