@@ -9,7 +9,7 @@
     "build": "vue-cli-service build",
     "icon": "./build/build-icon",
     "start": "electron index.js -- --title whakapapa-ora",
-    "dist": "electron-builder",
+    "dist": "electron-builder --config electron-builder.config.js",
     "publish": "npm run build && npm run dist",
     "serve": "vue-cli-service serve",
     "start:dev": "NODE_ENV=development electron index.js -- --title whakapapa-ora",
@@ -75,6 +75,7 @@
     "@vue/eslint-config-standard": "^4.0.0",
     "babel-eslint": "^10.0.1",
     "electron-builder": "^21.2.0",
+    "electron-notarize": "^0.2.1",
     "eslint": "^5.16.0",
     "eslint-plugin-vue": "^5.0.0",
     "sass": "^1.18.0",
@@ -98,9 +99,17 @@
     "appImage": {
       "artifactName": "${name}-Linux-${version}-${arch}.${ext}"
     },
+    "mac": {
+      "category": "public.app-category.social-networking",
+      "hardenedRuntime": true,
+      "gatekeeperAssess": false,
+      "entitlements": "build/entitlements.mac.plist",
+      "entitlementsInherit": "build/entitlements.mac.plist"
+    },
     "dmg": {
       "artifactName": "${name}-Mac-${version}.${ext}",
-      "icon": "build/dmg-icon.icns"
+      "icon": "build/dmg-icon.icns",
+      "sign": false
     },
     "win": {
       "publisherName": "Ahau"
