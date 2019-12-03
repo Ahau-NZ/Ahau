@@ -4,7 +4,7 @@ const express = require('express')
 const cors = require('cors')
 const typeDefs = require('./typeDefs')
 const Resolvers = require('./resolvers')
-const Context = require('./ssb/context')
+const Context = require('./ssb/get-context')
 
 const PORT = 4000
 const app = express()

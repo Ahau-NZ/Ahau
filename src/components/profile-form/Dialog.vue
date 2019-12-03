@@ -33,6 +33,17 @@
               </v-col>
             </v-row>
             <v-row>
+              <v-col cols="12" sm="5" md="7">
+                <v-textarea
+                  v-model="data.description"
+                  light
+                  name="input-7-1"
+                  label="Description"
+                  hint="A short bio"
+                ></v-textarea>
+              </v-col>
+            </v-row>
+            <v-row>
               <!-- <v-col cols="12" sm="5" md="3"> -->
               <!--   <v-select label="Title*" -->
               <!--     :items="titles" -->
@@ -66,20 +77,6 @@
             <!--     /> -->
             <!--   </v-col> -->
             </v-row>
-            <v-row>
-              <v-col cols="12" sm="5" md="3">
-                <v-select label="Relationship Type*"
-                  v-model="data.relationshipType"
-                  :rules="form.rules.relationshipType"
-                  :items="relationshipTypes"
-                  required
-                ></v-select>
-              </v-col>
-              <v-col v-if="showLegallyAdopted">
-                <v-checkbox label="Legally Adopted" v-model="data.legallyAdopted"/>
-              </v-col>
-            </v-row>
-
             <!-- <v-row>
 
               <v-btn class="mx-2" fab> -->
@@ -113,16 +110,14 @@
 <script>
 import Dialog from '@/components/Dialog.vue'
 // import NodeDatePicker from './NodeDatePicker.vue'
-import { GENDERS, RELATIONSHIPS } from '@/lib/constants'
+import { GENDERS } from '@/lib/constants'
 
 function defaultData () {
   return {
     preferredName: '',
     legalName: '',
     gender: '',
-    relationshipType: '',
-    legallyAdopted: false,
-    children: []
+    description: ''
     // title: '',
     // dateOfBirth: '',
     // dateOfDeath: '',
@@ -144,7 +139,6 @@ export default {
   data () {
     return {
       genders: GENDERS,
-      relationshipTypes: RELATIONSHIPS,
       data: defaultData(),
       form: {
         valid: true,
@@ -164,9 +158,6 @@ export default {
           },
           gender: [
             v => !!v || 'Gender is required'
-          ],
-          relationshipType: [
-            v => !!v || 'Relationship type is required'
           ]
           // date: {
           //   birth: [
@@ -175,21 +166,6 @@ export default {
           // }
         }
       }
-    }
-  },
-  computed: {
-    showLegallyAdopted () {
-      switch (this.data.relationshipType) {
-        case 'whangai': return true
-        case 'adopted': return true
-        default: return false
-      }
-    }
-  },
-  watch: {
-    'data.relationshipType' (newValue, oldValue) {
-      // make sure adoption status can't be set true when relationship type is birth
-      if (newValue === 'birth') this.data.legallyAdopted = false
     }
   },
   methods: {
