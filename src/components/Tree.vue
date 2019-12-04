@@ -88,8 +88,8 @@ export default {
         recps: null
       },
       flatWhakapapa: {}, // profiles with format { %profileId: profile }
+      selectedProfilId: null,
       node: {
-        selected: null,
         new: null
       },
       componentLoaded: false, // need to ensure component is loaded before using $refs
@@ -345,7 +345,7 @@ export default {
     },
 
     openContextMenu ({ $event, profileId }) {
-      this.hoveredProfileId = profileId
+      this.selectedProfilId = profileId
       this.$refs.menu.open($event)
     },
     // toggleShow (target) {
@@ -354,7 +354,7 @@ export default {
     // },
     toggleEdit () {
       // TEMP - use the UI we have!
-      this.$router.push({ name: 'personEdit', params: { id: this.hoveredProfileId } })
+      this.$router.push({ name: 'personEdit', params: { id: this.selectedProfilId } })
 
       // this.dialog.edit = !this.dialog.edit
     },
@@ -382,12 +382,12 @@ export default {
         switch (this.dialog.type) {
           case 'child':
             child = profileId
-            parent = this.hoveredProfileId
+            parent = this.selectedProfilId
             await this.createChildLink({ child, parent, ...relationshipAttrs })
             this.loadDescendants(parent)
             break
           case 'parent':
-            child = this.hoveredProfileId
+            child = this.selectedProfilId
             parent = profileId
             const linkId = await this.createChildLink({ child, parent, ...relationshipAttrs })
             if (!linkId) return
