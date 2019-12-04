@@ -3,7 +3,8 @@ const pullParamap = require('pull-paramap')
 const isProfile = require('ssb-profile/lib/is-profile')
 const getProfile = require('./get-profile')
 
-module.exports = function profiles (sbot, cb) {
+// get all profiles (excpet those ones I made just for me)
+module.exports = function getPersons (sbot, cb) {
   const query = [
     {
       $filter: {
@@ -23,7 +24,16 @@ module.exports = function profiles (sbot, cb) {
 
   pull(
     sbot.query.read({ query }),
+
     pull.filter(isProfile),
+
+    pull.filter(m => {
+      if (!m.value.content.recps) return true
+      if (m.value.content.recps.length === 1 && m.value.content.recps[0] === sbot.id) return false
+      // exclude entries that were only encrypted to me
+      return true
+    }),
+
     pullParamap(
       (root, cb) => {
         getProfile(sbot, root.key)
@@ -33,6 +43,7 @@ module.exports = function profiles (sbot, cb) {
       6 // "width" i.e. how many to simultaneously run in parallel
     ),
     pull.filter(Boolean), // drop profiles which has some trouble resolving
+
     pull.collect((err, profiles) => {
       if (err) return cb(err)
 

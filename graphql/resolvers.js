@@ -5,7 +5,7 @@ const { GraphQLUpload } = require('graphql-upload')
 const toUrl = require('ssb-serve-blobs/id-to-url')
 const pick = require('lodash.pick')
 
-const getProfiles = require('./ssb/get-profiles')
+const getPersons = require('./ssb/get-persons')
 const getProfile = require('./ssb/get-profile')
 const getCommunities = require('./ssb/get-communities')
 const getViews = require('./ssb/get-views')
@@ -25,7 +25,7 @@ module.exports = sbot => ({
     },
     persons: () =>
       new Promise((resolve, reject) => {
-        getProfiles(sbot, (err, profiles) => {
+        getPersons(sbot, (err, profiles) => {
           if (err) reject(err)
           else resolve(profiles)
         })
