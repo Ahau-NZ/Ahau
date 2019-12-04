@@ -1,18 +1,20 @@
 <template>
   <svg>
     <g id="nodeGroup" :style="groupStyle">
+      <!-- recursion of partners (first so they're drawing in background) -->
       <g v-if="!profile.isCollapsed">
-        <g v-for="(partner, index) in partnersArray" :key="index">
+        <g v-for="partner in partnersArray" :key="partner.id">
           <Node
-            v-if="profile.partners"
             :node="partner"
             :radius="partnerRadius"
-            :main="false"
+            :isPartner="true"
             @update="updateWidth"
-          ></Node>
+            @openmenu="$emit('openmenu', $event)"
+          />
         </g>
       </g>
-      <g @click="click" v-if="main">
+
+      <g v-if="!isPartner" @click.left="click" @click.right.prevent="openMenu($event, profile.id)">
         <defs>
           <clipPath id="myCircle">
             <circle :cx="radius" :cy="radius" :r="radius" />
@@ -24,12 +26,12 @@
           :height="diameter"
           clip-path="url(#myCircle)"
         />
-        
+
         <g v-if="profile.isCollapsed" :style="collapsedStyle">
           <text> ... </text>
         </g>
       </g>
-      <g v-else>
+      <g v-else @click.right.prevent="openMenu($event, profile.id)">
         <defs>
           <clipPath id="myPartnerCircle">
             <circle :cx="radius" :cy="radius" :r="radius" />
@@ -42,10 +44,12 @@
           clip-path="url(#myPartnerCircle)"
         />
       </g>
+
       <g :style="textStyle">
-          <rect :width="textWidth" y="-16" height="20"></rect>
-          <text>{{ profile.preferredName }}</text>
+        <rect :width="textWidth" y="-16" height="20"></rect>
+        <text>{{ profile.preferredName }}</text>
       </g>
+
     </g>
   </svg>
 </template>
@@ -68,15 +72,15 @@ export default {
       type: Number,
       required: true
     },
-    main: {
+    isPartner: {
       type: Boolean,
-      required: true
+      default: false
     }
   },
   data () {
     return {
-      count: 0,
-      offset: 20
+      offsetSize: 15,
+      partnerRadius: 0.8 * this.radius
     }
   },
   computed: {
@@ -116,16 +120,14 @@ export default {
       }
     },
     partnersArray () {
-      if (this.partners === undefined) {
-        return undefined
-      }
-      var halfway = Math.round(this.partners.length / 2)
-      var right = this.map(0, halfway, 1) // skips the first parent as that is the 'main' node
+      if (this.isPartner) return []
+      if (this.partners === undefined) return []
+
+      var halfway = Math.floor(this.partners.length / 2)
+
+      var right = this.map(0, halfway, 1)
       var left = this.map(halfway, this.partners.length, -1)
-      return right.concat(left).reverse()
-    },
-    partnerRadius () {
-      return this.radius - 10
+      return [...right, ...left].reverse()
     },
     partners () {
       return this.profile.partners
@@ -144,17 +146,22 @@ export default {
     click () {
       this.$emit('click')
     },
+    openMenu ($event, profileId) {
+      this.$emit('openmenu', { $event, profileId })
+    },
     map (rangeFrom, rangeTo, sign) {
       var count = 0
       return this.partners
         .slice(rangeFrom, rangeTo)
         .map((d, i) => {
-          var offset = (sign === 1) ? this.offset * 2 : this.offset * -1
-          var x = (sign * (++count * this.partnerRadius)) + offset
+          var offset = (sign === 1)
+            ? +2 * this.offsetSize
+            : -1 * this.offsetSize
+
           return {
-            data: d,
-            x: x,
-            y: 10
+            x: sign * ++count * this.partnerRadius + offset,
+            y: 10,
+            data: d
           }
         })
     },
