@@ -272,6 +272,7 @@ export default {
       let unique = []
       let partners = []
       const record = await this.loadProfile(profileId)
+      unique[profileId] = true
       record.children.forEach(async profile => {
         this.loadDescendants(profile.id)
 
@@ -469,7 +470,6 @@ export default {
       var width = $event
       if (width > this.settings.nodeSeparationX) {
         this.settings.nodeSeparationX = width
-        this.settings.nodeSeparationY = width / 2
       }
     },
     collapse (node) {

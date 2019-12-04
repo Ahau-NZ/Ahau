@@ -7,12 +7,13 @@
             :node="partner"
             :radius="partnerRadius"
             :main="false"
+            @update="updateWidth"
           ></Node>
         </g>
-      <g @click="click">
+      <g @click="click" v-if="main">
         <defs>
           <clipPath id="myCircle">
-            <circle :cx="radius" :cy="radius + offset" :r="radius + offset" />
+            <circle :cx="radius" :cy="radius" :r="radius" />
           </clipPath>
         </defs>
         <image
@@ -29,6 +30,19 @@
           <text> ... </text>
         </g>
       </g>
+    <g v-else>
+      <defs>
+        <clipPath id="myPartnerCircle">
+          <circle :cx="radius" :cy="radius" :r="radius" />
+        </clipPath>
+      </defs>
+      <image
+        :xlink:href="imageSource"
+        :width="diameter"
+        :height="diameter"
+        clip-path="url(#myPartnerCircle)"
+      />
+    </g>
     </g>
   </svg>
 </template>
@@ -103,7 +117,7 @@ export default {
         return undefined
       }
       var halfway = Math.round(this.partners.length / 2)
-      var right = this.map(1, halfway, 1) // skips the first parent as that is the 'main' node
+      var right = this.map(0, halfway, 1) // skips the first parent as that is the 'main' node
       var left = this.map(halfway, this.partners.length, -1)
       return right.concat(left).reverse()
     },
@@ -121,6 +135,14 @@ export default {
         transform: `translate(${this.radius - 3}px, ${this.diameter + 25}px) rotate(90deg)`
         // calculate the transform to draw nodes vertically
       }
+    },
+    updateWidth(){
+      var width = d3.select('#nodeGroup')
+      .node()
+      .getBoundingClientRect()
+      .width
+
+      this.$emit('update', width)
     }
   },
   methods: {
@@ -141,16 +163,7 @@ export default {
           }
         })
     }
-  },
-  mounted () {
-    var width = d3.select('#nodeGroup')
-      .node()
-      .getBoundingClientRect()
-      .width
-
-    this.$emit('update', width)
   }
-
 }
 </script>
 
