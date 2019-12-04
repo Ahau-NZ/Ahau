@@ -18,10 +18,12 @@
 
             <g :transform="`translate(${treeX-settings.nodeRadius} ${treeY-settings.nodeRadius})`"
               ref="tree">
-              <g v-for="node in nodes" :key="node.data.id"
-                @contextmenu.prevent="openContextMenu($event, node)"
-                class="node">
-                <Node :node="node" :radius="settings.nodeRadius" @click="collapse(node)" @textWidth="updateSeparation"/>
+              <g v-for="node in nodes" :key="node.data.id" class="node">
+                <Node :node="node" :radius="settings.nodeRadius"
+                  @click="collapse(node)"
+                  @openmenu="openContextMenu($event)"
+                  @update="updateSeparation"
+                />
               </g>
             </g>
           </g>
@@ -34,8 +36,11 @@
         <a href="#" @click.prevent="option.action"> {{ option.title }} </a>
       </li>
     </vue-context>
+    <!--
       <ViewNodeDialog v-if="dialog.show" :show="dialog.show" :node="node.selected"
-        @close="toggleShow"/>
+      @close="toggleShow"/>
+      // NOTE node.selected has changed
+    -->
     <EditNodeDialog v-if="dialog.edit" :show="dialog.edit"
       @close="toggleEdit"/>
     <NewNodeDialog v-if="dialog.new" :show="dialog.new"
@@ -83,8 +88,8 @@ export default {
         recps: null
       },
       flatWhakapapa: {}, // profiles with format { %profileId: profile }
+      selectedProfilId: null,
       node: {
-        selected: null,
         new: null
       },
       componentLoaded: false, // need to ensure component is loaded before using $refs
@@ -270,17 +275,29 @@ export default {
     },
     async loadDescendants (profileId) {
       const result = await this.getCloseWhakapapa(profileId)
-
       const record = result.data.closeWhakapapa
+
       record.children.forEach(profile => {
         this.loadDescendants(profile.id)
       })
+
       var output = Object.assign({}, this.flatWhakapapa)
       Object.entries(tree.flatten(record))
         .forEach(([ profileId, profile ]) => {
-          // this could be a crap merge ??
           output[profileId] = Object.assign({}, output[profileId] || {}, profile)
+          // this merge might be overwriting a lot
         })
+
+      const parentIds = record.parents.map(profile => profile.id)
+      parentIds.map(parentId => {
+        if (!output[parentId]) return
+
+        const currentPartners = output[parentId].partners || []
+        const partners = new Set([...currentPartners, ...parentIds])
+        partners.delete(parentId)
+        output[parentId].partners = Array.from(partners)
+      })
+
       this.flatWhakapapa = output
     },
     async getCloseWhakapapa (profileId) {
@@ -326,13 +343,18 @@ export default {
         return err
       }
     },
-    toggleShow (target) {
-      this.node.selected = target
-      this.dialog.show = !this.dialog.show
+
+    openContextMenu ({ $event, profileId }) {
+      this.selectedProfilId = profileId
+      this.$refs.menu.open($event)
     },
+    // toggleShow (target) {
+    //   this.node.selected = target
+    //   this.dialog.show = !this.dialog.show
+    // },
     toggleEdit () {
       // TEMP - use the UI we have!
-      this.$router.push({ name: 'personEdit', params: { id: this.node.selected.data.id } })
+      this.$router.push({ name: 'personEdit', params: { id: this.selectedProfilId } })
 
       // this.dialog.edit = !this.dialog.edit
     },
@@ -350,14 +372,6 @@ export default {
     toggleNewView () {
       this.dialog.view = !this.dialog.view
     },
-
-    openContextMenu ($event, node) {
-      this.node.selected = node
-      this.$refs.menu.open($event)
-    },
-    /*
-      TODO: Fix memory leak with NewNodeDialog and Tree
-    */
     async addPerson ($event) {
       try {
         const profileId = await this.createProfile($event)
@@ -368,12 +382,12 @@ export default {
         switch (this.dialog.type) {
           case 'child':
             child = profileId
-            parent = this.node.selected.data.id
+            parent = this.selectedProfilId
             await this.createChildLink({ child, parent, ...relationshipAttrs })
             this.loadDescendants(parent)
             break
           case 'parent':
-            child = this.node.selected.data.id
+            child = this.selectedProfilId
             parent = profileId
             const linkId = await this.createChildLink({ child, parent, ...relationshipAttrs })
             if (!linkId) return
@@ -381,6 +395,8 @@ export default {
             if (child === this.view.focus) {
               // in this case we're updating the top of the graph, we update view.focus to that new top parent
               await this.updateFocus(parent)
+            } else {
+              this.loadDescendants(child)
             }
             break
           default: console.log('not built')
@@ -450,10 +466,9 @@ export default {
       Which stops overlapping labels.
     */
     updateSeparation ($event) {
-      var textWidth = $event
-      if (textWidth > this.settings.nodeSeparationX) {
-        this.settings.nodeSeparationX = textWidth
-        this.settings.nodeSeparationY = textWidth / 2
+      var width = $event
+      if (width > this.settings.nodeSeparationX) {
+        this.settings.nodeSeparationX = width
       }
     },
     collapse (node) {
