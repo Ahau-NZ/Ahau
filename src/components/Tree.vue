@@ -275,7 +275,6 @@ export default {
       unique[profileId] = true
       record.children.forEach(async profile => {
         this.loadDescendants(profile.id)
-
         const childProfile = await this.loadProfile(profile.id)
         childProfile.parents.forEach(async profileId => {
           if (!unique[profileId]) {
@@ -372,9 +371,6 @@ export default {
       this.node.selected = node
       this.$refs.menu.open($event)
     },
-    /*
-      TODO: Fix memory leak with NewNodeDialog and Tree
-    */
     async addPerson ($event) {
       try {
         const profileId = await this.createProfile($event)

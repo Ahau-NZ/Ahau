@@ -1,6 +1,7 @@
 <template>
   <svg>
     <g id="nodeGroup" :style="groupStyle">
+      <g v-if="!profile.isCollapsed">
         <g v-for="(partner, index) in partnersArray" :key="index">
           <Node
             v-if="profile.partners"
@@ -10,6 +11,7 @@
             @update="updateWidth"
           ></Node>
         </g>
+      </g>
       <g @click="click" v-if="main">
         <defs>
           <clipPath id="myCircle">
@@ -22,27 +24,28 @@
           :height="diameter"
           clip-path="url(#myCircle)"
         />
-        <g v-if="main" :style="textStyle">
-          <rect :width="textWidth" y="-16" height="20"></rect>
-          <text>{{ profile.preferredName }}</text>
-        </g>
+        
         <g v-if="profile.isCollapsed" :style="collapsedStyle">
           <text> ... </text>
         </g>
       </g>
-    <g v-else>
-      <defs>
-        <clipPath id="myPartnerCircle">
-          <circle :cx="radius" :cy="radius" :r="radius" />
-        </clipPath>
-      </defs>
-      <image
-        :xlink:href="imageSource"
-        :width="diameter"
-        :height="diameter"
-        clip-path="url(#myPartnerCircle)"
-      />
-    </g>
+      <g v-else>
+        <defs>
+          <clipPath id="myPartnerCircle">
+            <circle :cx="radius" :cy="radius" :r="radius" />
+          </clipPath>
+        </defs>
+        <image
+          :xlink:href="imageSource"
+          :width="diameter"
+          :height="diameter"
+          clip-path="url(#myPartnerCircle)"
+        />
+      </g>
+      <g :style="textStyle">
+          <rect :width="textWidth" y="-16" height="20"></rect>
+          <text>{{ profile.preferredName }}</text>
+      </g>
     </g>
   </svg>
 </template>
@@ -135,14 +138,6 @@ export default {
         transform: `translate(${this.radius - 3}px, ${this.diameter + 25}px) rotate(90deg)`
         // calculate the transform to draw nodes vertically
       }
-    },
-    updateWidth(){
-      var width = d3.select('#nodeGroup')
-      .node()
-      .getBoundingClientRect()
-      .width
-
-      this.$emit('update', width)
     }
   },
   methods: {
@@ -162,6 +157,14 @@ export default {
             y: 10
           }
         })
+    },
+    updateWidth () {
+      var width = d3.select('#nodeGroup')
+        .node()
+        .getBoundingClientRect()
+        .width
+
+      this.$emit('update', width)
     }
   }
 }
