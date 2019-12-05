@@ -36,8 +36,11 @@
     </v-container>
 
     <vue-context ref="menu">
-      <li v-for="(option, index) in contextmenu" :key="index">
+      <li v-for="(option, index) in contextMenuOpts" :key="index">
         <a href="#" @click.prevent="option.action"> {{ option.title }} </a>
+      </li>
+      <li v-if="canDelete">
+        <a href="#" @click.prevent="toggleDelete"> Delete Person </a>
       </li>
     </vue-context>
     <!--
@@ -48,7 +51,9 @@
     <EditNodeDialog v-if="dialog.edit" :show="dialog.edit"
       @close="toggleEdit"/>
     <NewNodeDialog v-if="dialog.new" :show="dialog.new"
-      @close="closeNew" @submit="addPerson($event)"/>
+      @close="toggleNew" @submit="addPerson($event)"/>
+    <DeleteNodeDialog v-if="dialog.delete" :show="dialog.delete" :name="selectedProfile.preferredName"
+      @close="toggleDelete" @submit="deleteProfile" />
   </div>
 </template>
 
@@ -61,9 +66,10 @@ import { VueContext } from 'vue-context'
 import tree from '@/lib/tree-helpers'
 import Node from './tree/Node.vue'
 import Link from './tree/Link.vue'
-import ViewNodeDialog from './tree/Dialogs/ViewNodeDialog.vue'
+// import ViewNodeDialog from './tree/Dialogs/ViewNodeDialog.vue'
 import EditNodeDialog from './tree/Dialogs/EditNodeDialog.vue'
 import NewNodeDialog from './tree/Dialogs/NewNodeDialog.vue'
+import DeleteNodeDialog from './tree/Dialogs/DeleteNodeDialog.vue'
 
 const saveWhakapapaRelMutation = (input) => ({
   mutation: gql`mutation ($input: WhakapapaRelationInput!) {
@@ -91,8 +97,9 @@ export default {
         focus: null,
         recps: null
       },
+      myProfileId: null,
       flatWhakapapa: {}, // profiles with format { %profileId: profile }
-      selectedProfilId: null,
+      selectedProfile: null,
       node: {
         new: null
       },
@@ -104,14 +111,13 @@ export default {
         nodeSeparationY: 150
       },
       dialog: {
+        new: false,
         show: false,
         edit: false,
-        new: false,
-        view: false,
-        newDetails: {},
+        delete: false,
         type: 'child'
       },
-      contextmenu: [
+      contextMenuOpts: [
         { title: 'Add Child', action: this.toggleNewChild },
         { title: 'Add Parent', action: this.toggleNewParent },
         { title: 'Edit Person', action: this.toggleEdit }
@@ -137,6 +143,19 @@ export default {
         update: data => data.whakapapaView,
         fetchPolicy: 'no-cache'
       }
+    },
+    myProfileId: {
+      query: gql` {
+        whoami {
+          profile {
+            id
+          }
+        }
+      }`,
+      update (data) {
+        return data.whoami.profile.id
+      },
+      fetchPolicy: 'no-cache'
     }
   },
   watch: {
@@ -149,6 +168,14 @@ export default {
     this.zoom()
   },
   computed: {
+    canDelete () {
+      if (!this.selectedProfile) return false
+
+      if (this.selectedProfile.id === this.myProfileId) return false
+      if (this.selectedProfile.id === this.view.focus) return false
+
+      return true
+    },
     // deeply nested tree of profiles!
     nestedWhakapapa () {
       var output = this.flatWhakapapa[this.view.focus]
@@ -347,9 +374,8 @@ export default {
         return err
       }
     },
-
     openContextMenu ({ $event, profileId }) {
-      this.selectedProfilId = profileId
+      this.selectedProfile = this.flatWhakapapa[profileId]
       this.$refs.menu.open($event)
     },
     // toggleShow (target) {
@@ -358,23 +384,23 @@ export default {
     // },
     toggleEdit () {
       // TEMP - use the UI we have!
-      this.$router.push({ name: 'personEdit', params: { id: this.selectedProfilId } })
+      this.$router.push({ name: 'personEdit', params: { id: this.selectedProfile.id } })
 
       // this.dialog.edit = !this.dialog.edit
     },
-    closeNew () {
-      this.dialog.new = false
+    toggleDelete () {
+      this.dialog.delete = !this.dialog.delete
     },
     toggleNewChild () {
       this.dialog.type = 'child'
-      this.dialog.new = !this.dialog.new
+      this.toggleNew()
     },
     toggleNewParent () {
       this.dialog.type = 'parent'
-      this.dialog.new = !this.dialog.new
+      this.toggleNew()
     },
-    toggleNewView () {
-      this.dialog.view = !this.dialog.view
+    toggleNew () {
+      this.dialog.new = !this.dialog.new
     },
     async addPerson ($event) {
       try {
@@ -386,12 +412,12 @@ export default {
         switch (this.dialog.type) {
           case 'child':
             child = profileId
-            parent = this.selectedProfilId
+            parent = this.selectedProfile.id
             await this.createChildLink({ child, parent, ...relationshipAttrs })
             this.loadDescendants(parent)
             break
           case 'parent':
-            child = this.selectedProfilId
+            child = this.selectedProfile.id
             parent = profileId
             const linkId = await this.createChildLink({ child, parent, ...relationshipAttrs })
             if (!linkId) return
@@ -405,7 +431,7 @@ export default {
             break
           default: console.log('not built')
         }
-        this.toggleNewView()
+        this.dialog.new = false
       } catch (err) {
         throw err
       }
@@ -452,6 +478,30 @@ export default {
         throw err
       }
     },
+    async deleteProfile () {
+      if (!this.canDelete) return
+
+      const res = await this.$apollo.mutate({
+        mutation: gql`mutation ($input: UpdateProfileInput!) {
+          updateProfile(input: $input)
+        }`,
+        variables: {
+          input: {
+            id: this.selectedProfile.id,
+            tombstone: { date: new Date() }
+          }
+        }
+      })
+
+      if (res.errors) {
+        console.error('failed to delete profile', res)
+        return
+      }
+
+      this.flatWhakapapa = {}
+      this.loadDescendants(this.view.focus)
+      // TODO - find a smaller subset to reload!
+    },
     async updateFocus (focus) {
       const input = {
         viewId: this.viewId,
@@ -493,7 +543,8 @@ export default {
     Link,
     VueContext,
     EditNodeDialog,
-    NewNodeDialog
+    NewNodeDialog,
+    DeleteNodeDialog
     // ViewNodeDialog
   }
 }

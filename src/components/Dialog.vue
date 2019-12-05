@@ -4,7 +4,7 @@
       <v-dialog v-model="show"
         light
         persistent
-        max-width="1000px"
+        :max-width="width"
       >
         <slot></slot>
       </v-dialog>
@@ -18,6 +18,11 @@ export default {
     show: {
       type: Boolean,
       required: true
+    },
+    width: {
+      type: String,
+      required: false,
+      default: '1000px'
     }
   },
   data () {
