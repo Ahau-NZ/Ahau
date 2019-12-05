@@ -4,12 +4,12 @@
       <v-container light>
         <v-card-title>
           <span class="headline">
-            Delete {{ profile }}
+            Delete {{ name }}
           </span>
         </v-card-title>
         <v-spacer />
         <v-card-subtitle>
-          Are you sure you want to delete {{ profile }} and all connected children from the whakapapa record.
+          Are you sure you want to delete {{ name }} and all connected children from the whakapapa record.
           It cannot be undone once deleted?
         </v-card-subtitle>
         <v-row class="actions">
@@ -33,18 +33,9 @@
 import Dialog from '@/components/Dialog.vue'
 
 export default {
-  components: {
-    Dialog
-  },
   props: {
-    show: {
-      type: Boolean,
-      required: true
-    },
-    profile: {
-      type: String,
-      required: true
-    }
+    show: { type: Boolean, required: true },
+    name: { type: String, required: true }
   },
   methods: {
     close () {
@@ -54,6 +45,9 @@ export default {
       this.$emit('submit')
       this.close()
     }
+  },
+  components: {
+    Dialog
   }
 }
 </script>
