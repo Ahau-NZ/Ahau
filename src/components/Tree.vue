@@ -49,6 +49,8 @@
       @close="toggleEdit"/>
     <NewNodeDialog v-if="dialog.new" :show="dialog.new"
       @close="closeNew" @submit="addPerson($event)"/>
+    <DeleteNodeDialog v-if="dialog.delete" :show="dialog.delete"
+      @close="closeDelete" @submit="deletePerson" :profile="flatWhakapapa[selectedProfilId].preferredName"/>
   </div>
 </template>
 
@@ -61,9 +63,10 @@ import { VueContext } from 'vue-context'
 import tree from '@/lib/tree-helpers'
 import Node from './tree/Node.vue'
 import Link from './tree/Link.vue'
-import ViewNodeDialog from './tree/Dialogs/ViewNodeDialog.vue'
+// import ViewNodeDialog from './tree/Dialogs/ViewNodeDialog.vue'
 import EditNodeDialog from './tree/Dialogs/EditNodeDialog.vue'
 import NewNodeDialog from './tree/Dialogs/NewNodeDialog.vue'
+import DeleteNodeDialog from './tree/Dialogs/DeleteNodeDialog.vue'
 
 const saveWhakapapaRelMutation = (input) => ({
   mutation: gql`mutation ($input: WhakapapaRelationInput!) {
@@ -108,13 +111,15 @@ export default {
         edit: false,
         new: false,
         view: false,
+        delete: false,
         newDetails: {},
         type: 'child'
       },
       contextmenu: [
         { title: 'Add Child', action: this.toggleNewChild },
         { title: 'Add Parent', action: this.toggleNewParent },
-        { title: 'Edit Person', action: this.toggleEdit }
+        { title: 'Edit Person', action: this.toggleEdit },
+        { title: 'Delete Person', action: this.toggleDelete }
       ],
       options: {
         addnode: false // Is this used by anything?
@@ -347,7 +352,11 @@ export default {
         return err
       }
     },
-
+    getPreferredName () {
+      if (this.selectedProfilId) {
+        return this.flatWhakapapa[this.selectedProfilId].preferredName
+      }
+    },
     openContextMenu ({ $event, profileId }) {
       this.selectedProfilId = profileId
       this.$refs.menu.open($event)
@@ -362,8 +371,14 @@ export default {
 
       // this.dialog.edit = !this.dialog.edit
     },
+    toggleDelete () {
+      this.dialog.delete = !this.dialog.delete
+    },
     closeNew () {
       this.dialog.new = false
+    },
+    closeDelete () {
+      this.dialog.delete = false
     },
     toggleNewChild () {
       this.dialog.type = 'child'
@@ -452,6 +467,9 @@ export default {
         throw err
       }
     },
+    deletePerson () {
+      console.log('delete person')
+    },
     async updateFocus (focus) {
       const input = {
         viewId: this.viewId,
@@ -493,7 +511,8 @@ export default {
     Link,
     VueContext,
     EditNodeDialog,
-    NewNodeDialog
+    NewNodeDialog,
+    DeleteNodeDialog
     // ViewNodeDialog
   }
 }
