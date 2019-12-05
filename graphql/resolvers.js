@@ -241,7 +241,6 @@ function buildTransformation (input) {
         return
 
       case 'tombstone':
-        console.log('TOMBSTONE INCOMING', value, Number(value.date))
         T[key] = { set: pick(value, ['date', 'reason']) }
         T[key].set.date = Number(T[key].set.date)
         // graphql only allows 32bit signed Ints
