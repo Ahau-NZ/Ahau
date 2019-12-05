@@ -3,13 +3,16 @@
     <g id="nodeGroup" :style="groupStyle">
       <!-- recursion of partners (first so they're drawing in background) -->
       <g v-if="!profile.isCollapsed">
-        <g v-for="partner in partnersArray" :key="partner.id">
-          <Node
+        <g v-for="(partner, index) in partnersArray" :key="partner.id">
+          <Node :id="`node-${index}`"
             :node="partner"
             :radius="partnerRadius"
             :isPartner="true"
+            :showLabel="false"
             @update="updateWidth"
             @openmenu="$emit('openmenu', $event)"
+            @mouseover.native="handleMouseOver($event, partner, index)"
+            @mouseout.native="handleMouseOut($event, partner, index)"
           />
         </g>
       </g>
@@ -45,7 +48,7 @@
         />
       </g>
 
-      <g :style="textStyle">
+      <g id="node-label" v-if="showLabel" :style="textStyle">
         <rect :width="textWidth" y="-16" height="20"></rect>
         <text>{{ profile.preferredName }}</text>
       </g>
@@ -64,23 +67,16 @@ import * as d3 from 'd3' // will be changed later on
 export default {
   name: 'Node',
   props: {
-    node: {
-      type: Object,
-      required: true
-    },
-    radius: {
-      type: Number,
-      required: true
-    },
-    isPartner: {
-      type: Boolean,
-      default: false
-    }
+    node: { type: Object, required: true },
+    radius: { type: Number, required: true },
+    isPartner: { type: Boolean, default: false },
+    showLabel: { type: Boolean, default: true }
   },
   data () {
     return {
       offsetSize: 15,
-      partnerRadius: 0.8 * this.radius
+      partnerRadius: 0.8 * this.radius,
+      hover: false
     }
   },
   computed: {
@@ -112,11 +108,8 @@ export default {
       }
     },
     textStyle () {
-      // centers the text element under image
-
       return {
         transform: `translate(${this.radius - (this.textWidth / 2)}px, ${this.diameter + 15}px)`
-        // calculate the transform to draw nodes vertically
       }
     },
     partnersArray () {
@@ -157,7 +150,6 @@ export default {
           var offset = (sign === 1)
             ? +2 * this.offsetSize
             : -1 * this.offsetSize
-
           return {
             x: sign * ++count * this.partnerRadius + offset,
             y: 10,
@@ -172,6 +164,12 @@ export default {
         .width
 
       this.$emit('update', width)
+    },
+    handleMouseOver ($event, partner, index) {
+      console.log('mouseover')
+    },
+    handleMouseOut ($event, partner, index) {
+      console.log('mouseout')
     }
   }
 }
