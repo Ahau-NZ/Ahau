@@ -10,6 +10,8 @@ exports.default = async function notarizing (context) {
 
   const appName = context.packager.appInfo.productFilename
 
+  console.log('Starting notarization...')
+
   return await notarize({ // eslint-disable-line
     appBundleId: 'com.ahau.whakapapaora',
     appPath: `${appOutDir}/${appName}.app`,
