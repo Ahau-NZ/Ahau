@@ -14,6 +14,7 @@ exports.default = async function notarizing (context) {
     appBundleId: 'com.ahau.whakapapaora',
     appPath: `${appOutDir}/${appName}.app`,
     appleId,
-    appleIdPassword: `@keychain:"Application Loader: ${appleId}"`
+    // appleIdPassword: `@keychain:"Application Loader: ${appleId}"`
+    appleIdPassword: process.env.APPLE_ID_PASS
   })
 }

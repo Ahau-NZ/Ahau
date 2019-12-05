@@ -1,5 +1,6 @@
 module.exports = {
   appId: 'org.ahau.whakapapa-ora',
+  afterSign: 'build/notarize.js',
   directories: {
     'output': 'dist/installers'
   },
