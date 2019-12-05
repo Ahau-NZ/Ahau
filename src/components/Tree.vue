@@ -1,12 +1,16 @@
 <template>
   <div id="whakapapa-tree">
-    <v-container class="white mx-auto py-12 px-12">
-      <v-row>
-        <h1>{{ view.name }}</h1>
-      </v-row>
-      <v-row>
-        <div class='description'>{{ view.description }}</div>
-      </v-row>
+    <v-container class="white px-0 py-0 mx-auto">
+      <!-- TODO extract this to WhakapapaShow, it's not part of the Tree -->
+        <v-container class='header px-0 py-0'>
+          <v-row>
+            <v-col> <h1>{{ view.name }}</h1> </v-col>
+          </v-row>
+          <v-row>
+            <v-col class='description'> {{ view.description }} </v-col>
+          </v-row>
+        </v-container>
+
       <v-row>
         <svg id="baseSvg" width="100%" :height="height" ref="baseSvg">
           <g id="baseGroup">
@@ -489,14 +493,31 @@ export default {
     Link,
     VueContext,
     EditNodeDialog,
-    NewNodeDialog,
-    ViewNodeDialog
+    NewNodeDialog
+    // ViewNodeDialog
   }
 }
 </script>
 
 <style scoped lang="scss">
   @import '~vue-context/dist/css/vue-context.css';
+
+  #whakapapa-tree {
+    .container {
+      position: relative;
+
+      .header {
+        position: absolute;
+        top: 20px;
+        left: 30px;
+
+        .col {
+          padding-top: 0;
+          padding-bottom: 0;
+        }
+      }
+    }
+  }
   h1 {
     color: black;
   }
