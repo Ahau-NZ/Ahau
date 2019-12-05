@@ -431,7 +431,7 @@ export default {
             break
           default: console.log('not built')
         }
-        this.toggleNew()
+        this.dialog.new = false
       } catch (err) {
         throw err
       }
@@ -479,7 +479,28 @@ export default {
       }
     },
     async deleteProfile () {
-      console.log('delete person')
+      if (!this.canDelete) return
+
+      const res = await this.$apollo.mutate({
+        mutation: gql`mutation ($input: UpdateProfileInput!) {
+          updateProfile(input: $input)
+        }`,
+        variables: {
+          input: {
+            id: this.selectedProfile.id,
+            tombstone: { date: new Date() }
+          }
+        }
+      })
+
+      if (res.errors) {
+        console.error('failed to delete profile', res)
+        return
+      }
+
+      this.flatWhakapapa = {}
+      this.loadDescendants(this.view.focus)
+      // TODO - find a smaller subset to reload!
     },
     async updateFocus (focus) {
       const input = {

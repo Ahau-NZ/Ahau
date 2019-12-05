@@ -1,7 +1,8 @@
 const { PubSub } = require('apollo-server')
+const { GraphQLUpload } = require('graphql-upload')
+const GraphQLDate = require('graphql-date')
 const pull = require('pull-stream')
 const toPull = require('stream-to-pull-stream')
-const { GraphQLUpload } = require('graphql-upload')
 const toUrl = require('ssb-serve-blobs/id-to-url')
 const pick = require('lodash.pick')
 
@@ -216,7 +217,8 @@ module.exports = sbot => ({
       }
     }
   },
-  Upload: GraphQLUpload
+  Upload: GraphQLUpload,
+  Date: GraphQLDate
 })
 
 function buildTransformation (input) {
@@ -236,6 +238,14 @@ function buildTransformation (input) {
         return
       case 'headerImage':
         T[key] = { set: pick(value, ['blob', 'mimeType', 'size', 'width', 'height']) }
+        return
+
+      case 'tombstone':
+        console.log('TOMBSTONE INCOMING', value, Number(value.date))
+        T[key] = { set: pick(value, ['date', 'reason']) }
+        T[key].set.date = Number(T[key].set.date)
+        // graphql only allows 32bit signed Ints
+        // so we're passing a Date and converting it to Int for ssb
         return
 
       case 'recps':

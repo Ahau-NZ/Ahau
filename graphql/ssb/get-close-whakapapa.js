@@ -5,15 +5,18 @@ module.exports = async function closeWhakapapa (sbot, profileId) {
     const whakapapa = await fetchCloseWhakapapa(sbot, profileId)
     let profile = await getProfile(sbot, profileId)
 
-    const reducedParents = removeRepetition(whakapapa.parents)
-    const reducedChildren = removeRepetition(whakapapa.children)
+    const reducedParents = prune(whakapapa.parents)
+    const reducedChildren = prune(whakapapa.children)
 
-    profile.parents = await reducedParents.map(async parent => {
-      return getProfile(sbot, parent.profileId)
-    })
-    profile.children = await reducedChildren.map(async child => {
-      return getProfile(sbot, child.profileId)
-    })
+    profile.parents = await Promise.all(
+      reducedParents.map(async parent => getProfile(sbot, parent.profileId))
+    )
+    profile.parents = profile.parents.filter(isPreTomb)
+
+    profile.children = await Promise.all(
+      reducedChildren.map(async parent => getProfile(sbot, parent.profileId))
+    )
+    profile.children = profile.children.filter(isPreTomb)
 
     return profile
   } catch (err) {
@@ -28,7 +31,7 @@ const fetchCloseWhakapapa = (sbot, id) => new Promise((resolve, reject) => {
   })
 })
 
-function removeRepetition (nodes) {
+function prune (nodes) {
   // it's possible for there to be multiple relationship/child messages
   // connected two nodes, but that duplication is not desireable in the UI
   // so here we remove the duplicates
@@ -50,4 +53,8 @@ function removeRepetition (nodes) {
     })
     return newArray
   }, [])
+}
+
+function isPreTomb (profile) {
+  return profile.tombstone === null
 }
