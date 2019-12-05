@@ -1,6 +1,6 @@
 <template>
-  <Dialog :show="show" @close="close" :width="`550px`">
-    <v-card>
+  <Dialog :show="show" @close="close" :width="`600px`">
+    <v-card overflow="none">
       <v-card-title>
         <span class="headline">
           Delete {{ profile }}
@@ -44,20 +44,8 @@ export default {
       required: true
     }
   },
-  data () {
-    return {
-      message: ''
-    }
-  },
-  computed: {
-    deleteMessage () {
-      return `Are you sure you want to delete Ben and all connected children from the whakapapa record.\n
-      it cannot be undone once delete?`
-    }
-  },
   methods: {
     close () {
-      console.log('close delete dialog')
       this.$emit('close')
     },
     submit () {

@@ -39,6 +39,9 @@
       <li v-for="(option, index) in contextmenu" :key="index">
         <a href="#" @click.prevent="option.action"> {{ option.title }} </a>
       </li>
+      <li v-if="profile.id !== selectedProfilId">
+        <a href="#" @click.prevent="toggleDelete"> Delete Person </a>
+      </li>
     </vue-context>
     <!--
       <ViewNodeDialog v-if="dialog.show" :show="dialog.show" :node="node.selected"
@@ -50,7 +53,7 @@
     <NewNodeDialog v-if="dialog.new" :show="dialog.new"
       @close="closeNew" @submit="addPerson($event)"/>
     <DeleteNodeDialog v-if="dialog.delete" :show="dialog.delete"
-      @close="closeDelete" @submit="deletePerson" :profile="flatWhakapapa[selectedProfilId].preferredName"/>
+      @close="closeDelete" @submit="deleteProfile" :profile="flatWhakapapa[selectedProfilId].preferredName"/>
   </div>
 </template>
 
@@ -88,6 +91,9 @@ export default {
   },
   data () {
     return {
+      profile: {
+        id: null
+      },
       view: {
         name: null,
         description: null,
@@ -118,8 +124,7 @@ export default {
       contextmenu: [
         { title: 'Add Child', action: this.toggleNewChild },
         { title: 'Add Parent', action: this.toggleNewParent },
-        { title: 'Edit Person', action: this.toggleEdit },
-        { title: 'Delete Person', action: this.toggleDelete }
+        { title: 'Edit Person', action: this.toggleEdit }
       ],
       options: {
         addnode: false // Is this used by anything?
@@ -142,6 +147,19 @@ export default {
         update: data => data.whakapapaView,
         fetchPolicy: 'no-cache'
       }
+    },
+    profile: {
+      query: gql` {
+        whoami {
+          profile {
+            id
+          }
+        }
+      }`,
+      update (data) {
+        return data.whoami.profile
+      },
+      fetchPolicy: 'no-cache'
     }
   },
   watch: {
@@ -467,7 +485,7 @@ export default {
         throw err
       }
     },
-    deletePerson () {
+    deleteProfile () {
       console.log('delete person')
     },
     async updateFocus (focus) {
