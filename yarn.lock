@@ -2754,6 +2754,14 @@ asn1@~0.2.3:
   dependencies:
     safer-buffer "~2.1.0"
 
+assert-err@^1.0.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/assert-err/-/assert-err-1.1.0.tgz#c05062799a1d97d3f5eaa258e3242aab499fc8ef"
+  integrity sha1-wFBieZodl9P16qJY4yQqq0mfyO8=
+  dependencies:
+    escape-string-regexp "^1.0.5"
+    object-assign "^4.1.0"
+
 assert-plus@1.0.0, assert-plus@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/assert-plus/-/assert-plus-1.0.0.tgz#f12e0f3c5d77b0b1cdd9146942e4e96c1e4dd525"
@@ -6909,6 +6917,13 @@ graphql-anywhere@^4.1.0-alpha.0:
     apollo-utilities "^1.3.2"
     ts-invariant "^0.3.2"
     tslib "^1.9.3"
+
+graphql-date@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/graphql-date/-/graphql-date-1.0.3.tgz#31ce05ae40ed8c8ceb040364060109771e712e91"
+  integrity sha1-Mc4FrkDtjIzrBANkBgEJdx5xLpE=
+  dependencies:
+    assert-err "^1.0.0"
 
 graphql-extensions@^0.10.7:
   version "0.10.7"
@@ -12637,9 +12652,10 @@ sprintf-js@~1.0.2:
   resolved "https://registry.yarnpkg.com/sprintf-js/-/sprintf-js-1.0.3.tgz#04e6926f662895354f3dd015203633b857297e2c"
   integrity sha1-BOaSb2YolTVPPdAVIDYzuFcpfiw=
 
-"ssb-ahoy@github:ssbc/ssb-ahoy#secret-stack":
-  version "2.0.1"
-  resolved "https://codeload.github.com/ssbc/ssb-ahoy/tar.gz/db2df26d2e8e75184203aa9fb094366204f214dd"
+ssb-ahoy@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/ssb-ahoy/-/ssb-ahoy-3.0.0.tgz#45f8d1009bf52ea84c51f93cf8d7f6c16a0f73cc"
+  integrity sha512-0fP2JxpCUVAH2HtfZxNIS6lGzr7MdUNz7/ANK4/BP9FbxjPCJDbPV5n7gY9HknznwQuT1+XN6JWR0JrA1p7/Qw==
   dependencies:
     electron "^4.2.0"
     electron-default-menu "^1.0.1"
@@ -12658,6 +12674,7 @@ sprintf-js@~1.0.2:
     pull-stream "^3.6.9"
     require-style "^1.1.0"
     setimmediate "^1.0.5"
+    ssb-caps "^1.1.0"
     ssb-client "^4.7.7"
     ssb-config "^3.2.5"
     ssb-conn "^0.11.2"
@@ -12692,7 +12709,7 @@ ssb-blobs@^1.2.2:
     pull-stream "^3.3.0"
     ssb-ref "^2.3.0"
 
-ssb-caps@^1.0.1:
+ssb-caps@^1.0.1, ssb-caps@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/ssb-caps/-/ssb-caps-1.1.0.tgz#1cdce2971b13dea8ca595be9668fdf94b5955fb2"
   integrity sha512-qe3qpvchJ+gnH8M/ge4rpL+7eRbSmsEAzNwHkDdrW06OBcziQ6/KuAdmcR6joxCbNeoAXAZF+inkefgE16okXA==
@@ -12996,10 +13013,10 @@ ssb-private@^0.2.3:
     pull-stream "^3.6.7"
     ssb-keys "^7.0.14"
 
-ssb-profile@^0.3.1:
-  version "0.3.2"
-  resolved "https://registry.yarnpkg.com/ssb-profile/-/ssb-profile-0.3.2.tgz#c6c1ecd721e3e84f0686aa33df526f58f999d6e9"
-  integrity sha512-LJMSXg3GdUYKCXLL44c4EvYNyfhpsgbA/Wfl5WsHdhxoTCUDoshQzQc5uzMoyWpBlikwsfHXCmAPPQj9laQwow==
+ssb-profile@^0.5.0:
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/ssb-profile/-/ssb-profile-0.5.0.tgz#8eba3abc27f418ba1cc11298c8e43da2d6342358"
+  integrity sha512-V0mizIteqAd3n4U5DvHGAftWb8t+zr09NrPmxIgCY1GMdcxz15/zoizq/72YIA5PNnHXFGQTHIsYSVJd+0BqWA==
   dependencies:
     is-my-json-valid "^2.17.2"
     pull-stream "^3.6.14"
@@ -13102,12 +13119,14 @@ ssb-validate@^4.0.0:
     ssb-keys "^7.0.7"
     ssb-ref "^2.6.2"
 
-"ssb-whakapapa@gitlab:ahau/ssb-whakapapa":
-  version "0.0.1"
-  resolved "https://gitlab.com/ahau/ssb-whakapapa/repository/archive.tar.gz?ref=9633b905367a68c6d152d79eabde1fda002f8efd"
+ssb-whakapapa@^0.1.1:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/ssb-whakapapa/-/ssb-whakapapa-0.1.1.tgz#081197bea05276cc8e7f4d0c2441efb0d96ba8fd"
+  integrity sha512-Y3RSVXqIV9jeTAU4zhTkfvOIDBkcovuXn03tAnIeUwFb8Nwr3QP0Y9YsrTumUtVoxe0kYS4heDdHBLDBdfmt5w==
   dependencies:
     is-my-json-valid "^2.20.0"
     lodash.pick "^4.4.0"
+    pull-paramap "^1.2.2"
     pull-stream "^3.6.14"
     ssb-msg-content "^1.0.1"
     ssb-schema-definitions "^2.0.2"

@@ -1,11 +1,12 @@
 const { PubSub } = require('apollo-server')
+const { GraphQLUpload } = require('graphql-upload')
+const GraphQLDate = require('graphql-date')
 const pull = require('pull-stream')
 const toPull = require('stream-to-pull-stream')
-const { GraphQLUpload } = require('graphql-upload')
 const toUrl = require('ssb-serve-blobs/id-to-url')
 const pick = require('lodash.pick')
 
-const getProfiles = require('./ssb/get-profiles')
+const getPersons = require('./ssb/get-persons')
 const getProfile = require('./ssb/get-profile')
 const getCommunities = require('./ssb/get-communities')
 const getViews = require('./ssb/get-views')
@@ -25,7 +26,7 @@ module.exports = sbot => ({
     },
     persons: () =>
       new Promise((resolve, reject) => {
-        getProfiles(sbot, (err, profiles) => {
+        getPersons(sbot, (err, profiles) => {
           if (err) reject(err)
           else resolve(profiles)
         })
@@ -130,6 +131,7 @@ module.exports = sbot => ({
       })
     },
 
+    // TODO collect create/update into saveProfile
     createProfile: (_, { input }) => {
       const T = buildTransformation(input)
       return new Promise((resolve, reject) => {
@@ -139,7 +141,6 @@ module.exports = sbot => ({
         })
       })
     },
-
     updateProfile: (_, { input }) =>
       // TODO check permissions?
       new Promise((resolve, reject) => {
@@ -150,6 +151,7 @@ module.exports = sbot => ({
         })
       }),
 
+    // TODO align naming across stack : link / relation / child
     saveWhakapapaRelation: (_, { input }, { feedId, profileId }) => {
       const { relationshipId, child, parent } = input
       const opts = buildWhakapapaLinkOpts(input)
@@ -215,7 +217,8 @@ module.exports = sbot => ({
       }
     }
   },
-  Upload: GraphQLUpload
+  Upload: GraphQLUpload,
+  Date: GraphQLDate
 })
 
 function buildTransformation (input) {
@@ -223,10 +226,8 @@ function buildTransformation (input) {
 
   Object.entries(input).forEach(([key, value]) => {
     switch (key) {
-      case 'type':
-        return
-      case 'id':
-        return
+      case 'type': return
+      case 'id': return
 
       case 'altNames':
         // TODO
@@ -237,6 +238,17 @@ function buildTransformation (input) {
         return
       case 'headerImage':
         T[key] = { set: pick(value, ['blob', 'mimeType', 'size', 'width', 'height']) }
+        return
+
+      case 'tombstone':
+        T[key] = { set: pick(value, ['date', 'reason']) }
+        T[key].set.date = Number(T[key].set.date)
+        // graphql only allows 32bit signed Ints
+        // so we're passing a Date and converting it to Int for ssb
+        return
+
+      case 'recps':
+        T[key] = value
         return
 
       default:

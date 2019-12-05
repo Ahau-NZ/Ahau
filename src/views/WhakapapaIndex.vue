@@ -1,13 +1,25 @@
 <template>
   <v-container class="body-width white mx-auto py-12 px-12">
+    <v-row v-for="view in views" :key="view.id" dense>
+      <v-col cols="12">
+        <v-card
+          :to="{ name: 'whakapapaShow', params: { id: view.id } }"
+          color="primary"
+        >
+          <v-card-title class="headline">{{ view.name }}</v-card-title>
+          <v-card-subtitle>{{ view.description }} </v-card-subtitle>
 
-    <v-row v-for="view in views" :key="view.id">
-      <router-link :to="{ name: 'whakapapaShow', params: { id: view.id } }">
-        <v-col> {{view.name}} </v-col>
-      </router-link>
+          <!--
+          <v-card-actions>
+            <v-btn text> Edit </v-btn>
+          </v-card-actions>
+          -->
+        </v-card>
+      </v-col>
     </v-row>
+
     <!-- Don't think this should be here -->
-    <div @click="toggleViewForm" class="mb-4">
+    <div @click="toggleViewForm" class="mt-8 mb-4">
       <v-btn fab >
         <v-icon>mdi-plus</v-icon>
       </v-btn>

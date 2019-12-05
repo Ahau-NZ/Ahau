@@ -3,6 +3,8 @@ const { gql } = require('apollo-server')
 // TODO change defs of altNames
 
 module.exports = gql`
+  scalar Date
+
   type CurrentIdentity {
     id: String
     feedId: String
@@ -34,6 +36,11 @@ module.exports = gql`
     female
     other
     unknown
+  }
+
+  input TombstoneInput {
+    date: Date
+    reason: String
   }
 
   type Blob {
@@ -74,16 +81,6 @@ module.exports = gql`
     tiaki: [Profile]
   }
 
-  input UpdateProfileInput {
-    id: String!
-    preferredName: String
-    legalName: String
-    altNames: [String]
-    avatarImage: ImageInput
-    headerImage: ImageInput
-    description: String
-    gender: Gender
-  }
   input CreateProfileInput {
     type: String!
 
@@ -94,6 +91,19 @@ module.exports = gql`
     headerImage: ImageInput
     description: String
     gender: Gender
+    recps: [String]
+  }
+  input UpdateProfileInput {
+    id: String!
+
+    preferredName: String
+    legalName: String
+    altNames: [String]
+    avatarImage: ImageInput
+    headerImage: ImageInput
+    description: String
+    gender: Gender
+    tombstone: TombstoneInput
   }
 
   input CommunityInput {
@@ -103,6 +113,7 @@ module.exports = gql`
     avatarImage: ImageInput
     headerImage: ImageInput
     description: String
+    recps: [String]
   }
 
   input WhakapapaRelationInput {
