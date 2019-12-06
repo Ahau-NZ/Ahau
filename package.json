@@ -1,20 +1,23 @@
 {
-  "name": "whakapapa-ora",
+  "name": "ahau",
   "version": "0.2.0",
+  "description": "An application for gathering and sharing whakapapa (family trees, traditional knowledge). Built using scuttlebutt",
+  "homepage": "https://gitlab.com/ahau/whakapapa-ora",
   "scripts": {
     "postinstall": "npm run rebuild",
     "rebuild": "electron-builder install-app-deps",
     "build": "vue-cli-service build",
     "icon": "./build/build-icon",
-    "start": "electron index.js -- --title whakapapa-ora",
-    "dist": "electron-builder",
+    "start": "electron index.js -- --title Āhau",
+    "dist": "electron-builder --config electron-builder.config.js",
     "publish": "npm run build && npm run dist",
     "serve": "vue-cli-service serve",
-    "start:dev": "NODE_ENV=development electron index.js -- --title whakapapa-ora",
+    "start:dev": "NODE_ENV=development electron index.js -- --title Āhau",
     "start:gql": "nodemon ./graphql/test/server.js",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@mdi/font": "^4.5.95",
     "apollo-server": "^2.9.3",
     "apollo-server-express": "^2.9.6",
     "apollo-upload-client": "^10.0.1",
@@ -26,7 +29,6 @@
     "graphql-date": "^1.0.3",
     "graphql-tag": "^2.9.0",
     "graphql-upload": "^8.0.7",
-    "lodash.clone": "^4.5.0",
     "lodash.clonedeep": "^4.5.0",
     "lodash.get": "^4.4.2",
     "lodash.pick": "^4.4.0",
@@ -68,62 +70,28 @@
   },
   "devDependencies": {
     "@fiahfy/icns-convert": "0.0.6",
-    "@mdi/font": "^4.5.95",
     "@vue/cli-plugin-babel": "^3.11.0",
     "@vue/cli-plugin-eslint": "^3.11.0",
     "@vue/cli-service": "^3.11.0",
     "@vue/eslint-config-standard": "^4.0.0",
     "babel-eslint": "^10.0.1",
     "electron-builder": "^21.2.0",
+    "electron-notarize": "^0.2.1",
     "eslint": "^5.16.0",
     "eslint-plugin-vue": "^5.0.0",
     "sass": "^1.18.0",
     "sass-loader": "^7.1.0",
     "sharp": "^0.23.1",
     "to-ico": "^1.1.5",
+    "typescript": "^3.7.2",
     "vue-cli-plugin-vuetify": "^1.0.1",
     "vue-template-compiler": "^2.6.10",
     "vuetify-loader": "^1.2.2"
   },
-  "build": {
-    "appId": "org.ahau.whakapapa-ora",
-    "directories": {
-      "output": "dist/installers"
-    },
-    "linux": {
-      "category": "Network",
-      "target": "AppImage"
-    },
-    "appImage": {
-      "artifactName": "${name}-Linux-${version}-${arch}.${ext}"
-    },
-    "dmg": {
-      "artifactName": "${name}-Mac-${version}.${ext}",
-      "icon": "build/dmg-icon.icns"
-    },
-    "win": {
-      "publisherName": "Ahau"
-    },
-    "nsis": {
-      "artifactName": "${name}-Windows-${version}.${ext}",
-      "installerIcon": "build/setup-icon.ico"
-    },
-    "files": [
-      "**/*",
-      "!src/*",
-      "!public/*",
-      "!dist/installers",
-      "!**/node_modules/*/{CHANGELOG.md,README.md,README,readme.md,readme}",
-      "!**/node_modules/*/{test,__tests__,tests,powered-test,example,examples}",
-      "!**/node_modules/*.d.ts",
-      "!**/node_modules/.bin",
-      "!**/*.{iml,o,hprof,orig,pyc,pyo,rbc,swp,csproj,sln,xproj}",
-      "!.editorconfig",
-      "!**/._*",
-      "!**/{.DS_Store,.git,.hg,.svn,CVS,RCS,SCCS,.gitignore,.gitattributes}",
-      "!**/{__pycache__,thumbs.db,.flowconfig,.idea,.vs,.nyc_output}",
-      "!**/{appveyor.yml,.travis.yml,circle.yml}",
-      "!**/{npm-debug.log,yarn.lock,.yarn-integrity,.yarn-metadata.json}"
-    ]
-  }
+  "author": "Āhau Ltd.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://gitlab.com/ahau/whakapapa-ora.git"
+  },
+  "license": "AGPL-3.0"
 }
