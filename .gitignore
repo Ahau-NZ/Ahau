@@ -7,6 +7,10 @@ node_modules
 .env.local
 .env.*.local
 
+# env + certificate files for building
+electron-builder.env
+build/win_csc.pfx
+
 # Log files
 npm-debug.log*
 yarn-debug.log*
