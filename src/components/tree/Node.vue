@@ -3,12 +3,12 @@
     <g id="nodeGroup" :style="groupStyle">
       <!-- recursion of partners (first so they're drawing in background) -->
       <g v-if="!profile.isCollapsed">
-        <g v-for="(partner, index) in initPartners" :key="partner.id">
+        <g v-for="(partner, index) in partners" :key="partner.id">
           <Node :id="`node-${index}`"
-            :node="partner"
             :radius="partnerRadius"
             :isPartner="true"
             :showLabel="partner.showLabel"
+            :node="partner"
             @update="updateWidth"
             @openmenu="$emit('openmenu', $event)"
             @mouseover.native="partner.showLabel = !partner.showLabel"
@@ -80,9 +80,6 @@ export default {
     }
   },
   computed: {
-    rootPartners () {
-      return this.basePartners
-    },
     profile () {
       return this.node.data
     },
@@ -124,7 +121,7 @@ export default {
         // calculate the transform to draw nodes vertically
       }
     },
-    initPartners(){
+    partners(){
       if (this.isPartner || this.profile.partners === undefined) this.profile.partners = []
       var leftCount = 0
       var rightCount = 0
@@ -163,15 +160,9 @@ export default {
         .width
 
       this.$emit('update', width)
-    },
-    hover ($event, partner, index) {
-      partner.showLabel = !partner.showLabel
-      this.partners.$set(index, partner)
     }
   },
   mounted () {
-    this.initPartners
-
   }
 
 }
