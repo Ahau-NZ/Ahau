@@ -3,7 +3,7 @@
     <g id="nodeGroup" :style="groupStyle">
       <!-- recursion of partners (first so they're drawing in background) -->
       <g v-if="!profile.isCollapsed">
-        <g v-for="(partner, index) in partnersArray" :key="partner.id">
+        <g v-for="(partner, index) in partners" :key="partner.id">
           <Node :id="`node-${index}`"
             :node="partner"
             :radius="partnerRadius"
@@ -70,7 +70,7 @@ export default {
     node: { type: Object, required: true },
     radius: { type: Number, required: true },
     isPartner: { type: Boolean, default: false },
-    showLabel: { type: Boolean, default: true }
+    showLabel: { type: Boolean, required: true }
   },
   data () {
     return {
@@ -112,18 +112,29 @@ export default {
         transform: `translate(${this.radius - (this.textWidth / 2)}px, ${this.diameter + 15}px)`
       }
     },
-    partnersArray () {
+    partners(){
+      var leftCount = 0
+      var rightCount = 0
       if (this.isPartner) return []
-      if (this.partners === undefined) return []
-
-      var halfway = Math.floor(this.partners.length / 2)
-
-      var right = this.map(0, halfway, 1)
-      var left = this.map(halfway, this.partners.length, -1)
-      return [...right, ...left].reverse()
-    },
-    partners () {
+      if (this.profile.partners === undefined) return []
       return this.profile.partners
+        .map((d, i) => {
+          var sign = (i % 2 == 0) ? 1 : -1
+          var offset = (sign === 1)
+          ? +2 * this.offsetSize
+          : -1 * this.offsetSize
+          var count = (sign === 1)
+          ? ++leftCount
+          : ++rightCount
+          return {
+            index: i,
+            x: sign * count * this.partnerRadius + offset,
+            y: 10,
+            data: d,
+            showLabel: false
+          }
+        })
+        .reverse()
     },
     collapsedStyle () {
       // centers the text element under name
@@ -141,21 +152,6 @@ export default {
     },
     openMenu ($event, profileId) {
       this.$emit('openmenu', { $event, profileId })
-    },
-    map (rangeFrom, rangeTo, sign) {
-      var count = 0
-      return this.partners
-        .slice(rangeFrom, rangeTo)
-        .map((d, i) => {
-          var offset = (sign === 1)
-            ? +2 * this.offsetSize
-            : -1 * this.offsetSize
-          return {
-            x: sign * ++count * this.partnerRadius + offset,
-            y: 10,
-            data: d
-          }
-        })
     },
     updateWidth () {
       var width = d3.select('#nodeGroup')
