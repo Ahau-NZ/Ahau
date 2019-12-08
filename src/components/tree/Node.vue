@@ -3,16 +3,16 @@
     <g id="nodeGroup" :style="groupStyle">
       <!-- recursion of partners (first so they're drawing in background) -->
       <g v-if="!profile.isCollapsed">
-        <g v-for="(partner, index) in partners" :key="partner.id">
+        <g v-for="(partner, index) in initPartners" :key="partner.id">
           <Node :id="`node-${index}`"
             :node="partner"
             :radius="partnerRadius"
             :isPartner="true"
-            :showLabel="false"
+            :showLabel="partner.showLabel"
             @update="updateWidth"
             @openmenu="$emit('openmenu', $event)"
-            @mouseover.native="handleMouseOver($event, partner, index)"
-            @mouseout.native="handleMouseOut($event, partner, index)"
+            @mouseover.native="partner.showLabel = !partner.showLabel"
+            @mouseout.native="partner.showLabel = !partner.showLabel"
           />
         </g>
       </g>
@@ -76,10 +76,13 @@ export default {
     return {
       offsetSize: 15,
       partnerRadius: 0.8 * this.radius,
-      hover: false
+      basePartners: []
     }
   },
   computed: {
+    rootPartners () {
+      return this.basePartners
+    },
     profile () {
       return this.node.data
     },
@@ -112,12 +115,20 @@ export default {
         transform: `translate(${this.radius - (this.textWidth / 2)}px, ${this.diameter + 15}px)`
       }
     },
-    partners(){
+    collapsedStyle () {
+      // centers the text element under name
+      return {
+        fontSize: '30px',
+        fontWeight: 600,
+        transform: `translate(${this.radius - 3}px, ${this.diameter + 25}px) rotate(90deg)`
+        // calculate the transform to draw nodes vertically
+      }
+    },
+    initPartners(){
+      if (this.isPartner || this.profile.partners === undefined) this.profile.partners = []
       var leftCount = 0
       var rightCount = 0
-      if (this.isPartner) return []
-      if (this.profile.partners === undefined) return []
-      return this.profile.partners
+      this.basePartners = this.profile.partners
         .map((d, i) => {
           var sign = (i % 2 == 0) ? 1 : -1
           var offset = (sign === 1)
@@ -135,16 +146,8 @@ export default {
           }
         })
         .reverse()
+      return this.basePartners
     },
-    collapsedStyle () {
-      // centers the text element under name
-      return {
-        fontSize: '30px',
-        fontWeight: 600,
-        transform: `translate(${this.radius - 3}px, ${this.diameter + 25}px) rotate(90deg)`
-        // calculate the transform to draw nodes vertically
-      }
-    }
   },
   methods: {
     click () {
@@ -161,13 +164,16 @@ export default {
 
       this.$emit('update', width)
     },
-    handleMouseOver ($event, partner, index) {
-      console.log('mouseover')
-    },
-    handleMouseOut ($event, partner, index) {
-      console.log('mouseout')
+    hover ($event, partner, index) {
+      partner.showLabel = !partner.showLabel
+      this.partners.$set(index, partner)
     }
+  },
+  mounted () {
+    this.initPartners
+
   }
+
 }
 </script>
 
