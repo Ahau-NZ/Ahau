@@ -76,8 +76,7 @@ export default {
     return {
       offsetSize: 15,
       partnerRadius: 0.8 * this.radius,
-      basePartners: [],
-      map: new Map()
+      basePartners: []
     }
   },
   computed: {
@@ -163,6 +162,7 @@ export default {
             showLabel: false
           }
         })
+        .reverse()
     }
   },
   mounted () {
