@@ -75,7 +75,8 @@ export default {
     return {
       offsetSize: 15,
       partnerRadius: 0.8 * this.radius,
-      basePartners: []
+      basePartners: [],
+      componentLoaded: false
     }
   },
   computed: {
@@ -126,6 +127,7 @@ export default {
       return this.basePartners
     },
     width () {
+      if (!this.componentLoaded) return this.node.width
       return d3.select(`#${this.node.index}`)
         .node()
         .getBoundingClientRect()
@@ -162,13 +164,16 @@ export default {
         .reverse()
     }
   },
-  updated () {
-    if (!this.isPartner) {
-      console.log(this.width)
-      this.$emit('width', this.width)
+  watch: {
+    width (newValue) { // is this bad practise ?
+      if (!this.isPartner) {
+        this.$emit('width', newValue)
+      }
     }
+  },
+  mounted () {
+    this.componentLoaded = true
   }
-
 }
 </script>
 
