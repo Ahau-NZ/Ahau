@@ -76,7 +76,8 @@ export default {
     return {
       offsetSize: 15,
       partnerRadius: 0.8 * this.radius,
-      basePartners: []
+      basePartners: [],
+      map: new Map()
     }
   },
   computed: {
@@ -121,30 +122,11 @@ export default {
         // calculate the transform to draw nodes vertically
       }
     },
-    partners(){
-      if (this.isPartner || this.profile.partners === undefined) this.profile.partners = []
-      var leftCount = 0
-      var rightCount = 0
-      this.basePartners = this.profile.partners
-        .map((d, i) => {
-          var sign = (i % 2 == 0) ? 1 : -1
-          var offset = (sign === 1)
-          ? +2 * this.offsetSize
-          : -1 * this.offsetSize
-          var count = (sign === 1)
-          ? ++leftCount
-          : ++rightCount
-          return {
-            index: i,
-            x: sign * count * this.partnerRadius + offset,
-            y: 10,
-            data: d,
-            showLabel: false
-          }
-        })
-        .reverse()
+    partners () {
+      if (this.isPartner || this.profile.partners === undefined) return []
+      this.getPartners()
       return this.basePartners
-    },
+    }
   },
   methods: {
     click () {
@@ -160,6 +142,27 @@ export default {
         .width
 
       this.$emit('update', width)
+    },
+    getPartners () {
+      var leftCount = 0
+      var rightCount = 0
+      this.basePartners = this.profile.partners
+        .map((d, i) => {
+          var sign = (i % 2 === 0) ? 1 : -1
+          var offset = (sign === 1)
+            ? +2 * this.offsetSize
+            : -1 * this.offsetSize
+          var count = (sign === 1)
+            ? ++leftCount
+            : ++rightCount
+          return {
+            index: i,
+            x: sign * count * this.partnerRadius + offset,
+            y: 10,
+            data: d,
+            showLabel: false
+          }
+        })
     }
   },
   mounted () {
