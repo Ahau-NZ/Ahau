@@ -1,15 +1,14 @@
 <template>
   <svg>
-    <g id="nodeGroup" :style="groupStyle">
+    <g :id="node.index" :style="groupStyle">
       <!-- recursion of partners (first so they're drawing in background) -->
       <g v-if="!profile.isCollapsed">
-        <g v-for="(partner, index) in partners" :key="partner.id">
-          <Node :id="`node-${index}`"
+        <g v-for="partner in partners" :key="partner.index">
+          <Node :id="partner.index"
             :radius="partnerRadius"
             :isPartner="true"
             :showLabel="partner.showLabel"
             :node="partner"
-            @update="updateWidth"
             @openmenu="$emit('openmenu', $event)"
             @mouseover.native="partner.showLabel = !partner.showLabel"
             @mouseout.native="partner.showLabel = !partner.showLabel"
@@ -70,14 +69,13 @@ export default {
     node: { type: Object, required: true },
     radius: { type: Number, required: true },
     isPartner: { type: Boolean, default: false },
-    showLabel: { type: Boolean, required: true }
+    showLabel: { type: Boolean, default: true }
   },
   data () {
     return {
       offsetSize: 15,
       partnerRadius: 0.8 * this.radius,
-      basePartners: [],
-      map: new Map()
+      basePartners: []
     }
   },
   computed: {
@@ -126,6 +124,12 @@ export default {
       if (this.isPartner || this.profile.partners === undefined) return []
       this.getPartners()
       return this.basePartners
+    },
+    width () {
+      return d3.select(`#${this.node.index}`)
+        .node()
+        .getBoundingClientRect()
+        .width
     }
   },
   methods: {
@@ -134,14 +138,6 @@ export default {
     },
     openMenu ($event, profileId) {
       this.$emit('openmenu', { $event, profileId })
-    },
-    updateWidth () {
-      var width = d3.select('#nodeGroup')
-        .node()
-        .getBoundingClientRect()
-        .width
-
-      this.$emit('update', width)
     },
     getPartners () {
       var leftCount = 0
@@ -156,16 +152,21 @@ export default {
             ? ++leftCount
             : ++rightCount
           return {
-            index: i,
+            index: `${this.node.index}-partner-${i}`,
             x: sign * count * this.partnerRadius + offset,
             y: 10,
             data: d,
             showLabel: false
           }
         })
+        .reverse()
     }
   },
-  mounted () {
+  updated () {
+    if (!this.isPartner) {
+      console.log(this.width)
+      this.$emit('width', this.width)
+    }
   }
 
 }
