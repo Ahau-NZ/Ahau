@@ -1,6 +1,11 @@
 // HACK ///////////////////
-//   Vuetify + Storybook is  a pain. This ugly solution works...
-//   https://github.com/storybookjs/storybook/issues/7593#issuecomment-548146120
+//
+// Vuetify + Storybook is a pain at the moment. This ugly solution works...
+// https://github.com/storybookjs/storybook/issues/7593#issuecomment-548146120
+//
+// + "@storybook/vue": "^5.2.8",
+// + "babel-preset-vue": "^2.0.2",
+// + "fibers": "^4.0.2",
 
 const path = require('path')
 
