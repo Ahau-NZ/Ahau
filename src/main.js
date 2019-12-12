@@ -5,7 +5,9 @@ import router from './router'
 import store from './store'
 import { createProvider } from './vue-apollo'
 import vuetify from './plugins/vuetify'
-
+import VuejsClipper from 'vuejs-clipper'
+// install
+Vue.use(VuejsClipper)
 Vue.config.productionTip = false
 
 new Vue({

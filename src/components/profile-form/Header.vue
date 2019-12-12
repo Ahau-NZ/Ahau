@@ -1,64 +1,67 @@
 <template>
   <v-container class="full-width my-0 py-0">
-    <v-row v-if="!updatingHeader" class="header-bg">
-      <v-img :src="headerImage ? headerImage.uri : ''" min-width="100%" height="35vh"/>
-      <div class="header"></div>
-      <div @click="toggleUpdateHeader" class="edit-header-button">
+    <v-row class="header-bg">
+      <v-img v-if="!header.new" :src="headerImage ? headerImage.uri : ''" min-width="100%" height="23vw" />
+      <v-overlay :value="header.overlay" color="black" opacity="0.9">
+        <div class="header-editor">
+          <clipper-fixed :min-scale="1" :grid="true" :ratio="16/3" :area="100" :src="header.new" bg-color="rgba(0, 0, 0, 0)" :round="false" shadow="rgba(0,0,0,0.5)" :rotate="header.rotation"></clipper-fixed :grid="false">
+          <div class="px-8 py-4">
+            <h5>rotate</h5>
+            <clipper-range v-model="header.rotation" style="max-width:300px" :min="0" :max="360"></clipper-range>
+            <v-row class="actions py-6">
+              <v-btn @click="toggleUpdateHeader(null)" text color="secondary" class="mr-4" >
+                <v-icon>mdi-close</v-icon>
+              </v-btn>
+              <v-btn @click="handleImageUpload('header')" text color="secondary" >
+                <v-icon>mdi-check</v-icon>
+              </v-btn>
+            </v-row>
+          </div>
+        </div>
+      </v-overlay>
+      <clipperUpload @input="toggleUpdateHeader" accept="image/*" class="edit-header-button">
         <v-btn fab color="white">
           <v-icon class="black--text">mdi-pencil</v-icon>
         </v-btn>
         <span class="white--text pl-4 title">Upload header photo</span>
-      </div>
-    </v-row>
-    <v-row v-else class="header-edit">
-      <v-image-input
-        v-model="newHeader"
-        :image-quality="0.85"
-        class="super-z"
-        fullWidth
-        imageHeight=256
-        imageWidth=800
-        clearable
-        image-format="jpeg"
-      />
-      <div class="handle-header-buttons">
-        <v-btn @click="toggleUpdateHeader" text color="secondary" class="mr-4" >
-          <v-icon>mdi-close</v-icon>
-        </v-btn>
-        <v-btn @click="handleHeaderImage" text :disabled="!newHeader" color="secondary">
-          <v-icon>mdi-check</v-icon>
-        </v-btn>
-      </div>
+      </clipperUpload>
     </v-row>
 
     <v-row class="avatar-row">
       <v-row class="avatar-box">
-        <div class="avatar-picker">
-          <v-btn v-if="!updatingAvatar" class="toggle" fab color="white" @click="toggleUpdateAvatar">
+        <clipperUpload class="avatar-picker" accept="image/*" @input="toggleUpdateAvatar">
+          <v-btn v-if="!avatar.new" class="toggle" fab color="white">
             <v-icon class="black--text">mdi-camera</v-icon>
           </v-btn>
           <span class="caption pt-4">Upload profile photo</span>
-        </div>
-        <Avatar :image="avatarImage" :alt="preferredName" />
+        </clipperUpload>
+        <Avatar v-if="!avatar.new" :image="avatarImage" :alt="preferredName" />
+        <v-overlay :value="avatar.overlay" color="black" opacity="0.9">
+          <div class="avatar-editor">
+            <clipper-fixed
+              :grid="false"
+              :src="avatar.new"
+              bg-color="rgba(0, 0, 0, 0)"
+              :round="true"
+              shadow="rgba(0,0,0,0.5)"
+              :rotate="avatar.rotation"
+              @clip="avatarClip">
+            </clipper-fixed>
+            <div class="px-8 py-4">
+              <h5>rotate</h5>
+              <clipper-range v-model="avatar.rotation" style="max-width:300px" :min="0" :max="360"></clipper-range>
+              <v-row class="actions py-6">
+                <v-btn @click="toggleUpdateAvatar(null)" text color="secondary" class="mr-4" >
+                  <v-icon>mdi-close</v-icon>
+                </v-btn>
+                <v-btn @click="handleImageUpload('avatar')" text color="secondary" >
+                  <v-icon>mdi-check</v-icon>
+                </v-btn>
+              </v-row>
+            </div>
+          </div>
+        </v-overlay>
       </v-row>
-      <v-container v-if="updatingAvatar" class="editor">
-        <v-image-input
-          v-model="newAvatar"
-          :image-quality="0.85"
-          class="super-z va"
-          clearable
-          image-format="jpeg"
-          backgroundColor="black"
-        />
-        <v-row class="actions">
-          <v-btn @click="toggleUpdateAvatar" text color="secondary" class="mr-4" >
-            <v-icon>mdi-close</v-icon>
-          </v-btn>
-          <v-btn @click="handleAvatarImage" text :disabled="!newAvatar" color="secondary" >
-            <v-icon>mdi-check</v-icon>
-          </v-btn>
-        </v-row>
-      </v-container>
     </v-row>
 
   </v-container>
@@ -67,6 +70,7 @@
 <script>
 import gql from 'graphql-tag'
 import Avatar from '@/components/Avatar.vue'
+import { clipperUpload, clipperFixed } from 'vuejs-clipper'
 const pick = require('lodash.pick')
 
 export default {
@@ -81,22 +85,42 @@ export default {
   },
   data () {
     return {
-      updatingHeader: false,
-      newHeader: null,
-      updatingAvatar: false,
-      newAvatar: null
+      avatar: {
+        new: null,
+        overlay: false,
+        rotation: 0
+      },
+      header: {
+        new: null,
+        overlay: false,
+        rotation: 0
+      }
+    }
+  },
+  watch: {
+    'avatarCanvas' (a) {
+      this.$refs.clipper.onChange$.subscribe(() => {
+        console.log('CHANGED', a)
+      // This happens whenever zooming, moving and rotating occur.
+      })
     }
   },
   methods: {
-    toggleUpdateAvatar () {
-      this.updatingAvatar = !this.updatingAvatar
-      this.updatingHeader = false
+    toggleUpdateAvatar (file) {
+      this.avatar.new = this.avatar.new ? null : file
+      this.avatar.overlay = !this.avatar.overlay
+      this.header.new = null
     },
-    toggleUpdateHeader () {
-      this.updatingHeader = !this.updatingHeader
-      this.updatingAvatar = false
+    toggleUpdateHeader (file) {
+      this.header.new = this.header.new ? null : file
+      this.header.overlay = !this.header.overlay
+      this.avatar.new = null
     },
-    async handleAvatarImage () {
+    avatarClip (c) {
+      console.log("TCL: avatarClip -> c", c)
+    },
+    async handleImageUpload (type) {
+      const file = await blob2file(this[type].new)
       const result = await this.$apollo.mutate({
         mutation: gql`mutation uploadFile($file: Upload!) {
           uploadFile(file: $file) {
@@ -106,54 +130,30 @@ export default {
           }
         }`,
         variables: {
-          file: dataURLtoFile(this.newAvatar, 'avatar.jpg')
+          file
         }
       })
       if (result.errors) throw result.errors
 
       this.addImages({
-        avatarImage: pick(result.data.uploadFile, ['blob', 'mimeType', 'uri'])
+        [type + 'Image']: pick(result.data.uploadFile, ['blob', 'mimeType', 'uri'])
       })
-      this.updatingAvatar = false
-      this.newAvatar = null
-    },
-    async handleHeaderImage () {
-      const result = await this.$apollo.mutate({
-        mutation: gql`mutation uploadFile($file: Upload!) {
-          uploadFile(file: $file) {
-            blob
-            mimeType
-            uri
-          }
-        }`,
-        variables: {
-          file: dataURLtoFile(this.newHeader, 'header.jpg')
-        }
-      })
-      if (result.errors) throw result.errors
-
-      this.addImages({
-        headerImage: pick(result.data.uploadFile, ['blob', 'mimeType', 'uri'])
-      })
-      this.updatingHeader = false
-      this.newHeader = null
+      this[type].new = null
+      this[type].overlay = false
     }
   },
   components: {
-    Avatar
+    Avatar,
+    clipperUpload,
+    clipperFixed
   }
 }
 
-function dataURLtoFile (dataurl, filename) {
-  const arr = dataurl.split(',')
-  const mime = arr[0].match(/:(.*?);/)[1]
-  const bstr = atob(arr[1])
-  let n = bstr.length
-  const u8arr = new Uint8Array(n)
-  while (n--) {
-    u8arr[n] = bstr.charCodeAt(n)
-  }
-  return new File([u8arr], filename, { type: mime })
+async function blob2file (blobUrl, name) {
+  let file = await fetch(blobUrl)
+    .then(r => r.blob())
+    .then(blobFile => new File([blobFile], name || 'file', { type: 'image/jpg' }))
+  return file
 }
 </script>
 
@@ -178,18 +178,17 @@ function dataURLtoFile (dataurl, filename) {
     top: -35vh;
     opacity: 0.6;
   }
-  .header-edit {
-    height: 64vh;
-    margin-bottom: calc(35vh - 64vh);
-    background: rgba(0,0,0,.6);
-    z-index: 999;
+  .header-editor {
+    width: 100vw;
+    position: absolute;
+    top: -30vw;
+    left: -45vw;
   }
   .edit-header-button {
     cursor: pointer;
     position: absolute;
     top: 27vh;
     right: 5vw;
-    z-index: 999;
   }
   .handle-header-buttons {
     position: relative;
@@ -236,13 +235,14 @@ function dataURLtoFile (dataurl, filename) {
     }
   }
 
-  .editor {
+  .avatar-editor {
     position: absolute;
-    background: rgba(0,0,0,.8);
-    height: 460px;
-    width: 610px;
-    z-index: 998;
-    padding: 50px;
+    // background: rgba(0,0,0,.8);
+    height: auto;
+    min-width: 610px;
+    z-index: 999;
+    top: -45vh;
+    right: 5vw;
   }
 
 .toggle {
@@ -258,11 +258,11 @@ function dataURLtoFile (dataurl, filename) {
   padding: 50px;
 }
 .actions {
-  position: relative;
-  top: -5vh;
-  left: -3vw;
-  left: 0;
-  z-index: 999;
+  // position: relative;
+  // top: -5vh;
+  // left: -3vw;
+  // left: 0;
+  // z-index: 999;
   display: flex;
   flex-flow: row nowrap;
   justify-content: space-around;
