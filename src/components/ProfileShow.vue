@@ -18,13 +18,10 @@
         </v-col>
 
         <v-col cols="4" class="d-flex justify-end">
-          <router-link v-if="profile.canEdit"
-            :to="{ name: type + 'Edit', params: { id: this.profileId } }">
-            <v-btn class="my-2" fab color="white">
-              <v-icon class="black--text">mdi-pencil</v-icon>
-            </v-btn>
-            <span class="ml-4 subtitle">Edit</span>
-          </router-link>
+          <v-btn v-if="profile.canEdit" class="my-2" fab color="white" @click="editProfile()">
+            <v-icon class="black--text">mdi-pencil</v-icon>
+          </v-btn>
+          <span class="ml-4 subtitle">Edit</span>
         </v-col>
       </v-row>
 
@@ -61,7 +58,6 @@
 </template>
 
 <script>
-import gql from 'graphql-tag'
 import Header from '@/components/profile/Header.vue'
 
 // const get = require('lodash.get')
@@ -69,78 +65,17 @@ import Header from '@/components/profile/Header.vue'
 export default {
   name: 'ProfileShow',
   props: {
-    profileId: String,
     type: {
       type: String, // person / community?
       required: true
-    }
-  },
-  data () {
-    return {
-      profile: {
-        canEdit: false,
-
-        preferredName: '',
-        legalName: '',
-        description: '',
-
-        avatarImage: undefined,
-        headerImage: undefined
-      }
-    }
-  },
-  apollo: {
-    profile () {
-      var query
-      if (this.type === 'community') {
-        query = gql`query ProfileData($id: String!) {
-          profile(id: $id) {
-            canEdit
-
-            preferredName
-            legalName
-            description
-
-            headerImage {
-              uri
-            }
-            avatarImage {
-              uri
-            }
-
-            tiaki {
-              id
-              preferredName
-            }
-          }
-        }`
-      }
-      if (this.type === 'person') {
-        query = gql`query ProfileData($id: String!) {
-          profile(id: $id) {
-            canEdit
-
-            preferredName
-            legalName
-            description
-
-            headerImage {
-              uri
-            }
-            avatarImage {
-              uri
-            }
-          }
-        }`
-      }
-
-      return {
-        query,
-        variables: {
-          id: this.profileId
-        },
-        fetchPolicy: 'no-cache'
-      }
+    },
+    profile: {
+      type: Object,
+      default: () => ({})
+    },
+    editProfile: {
+      type: Function
+      // default: () => console.log('need to define editProfile!')
     }
   },
   methods: {
