@@ -9,7 +9,7 @@
           <v-card-title class="headline">{{ view.name }}</v-card-title>
           <v-card-subtitle>{{ view.description }} </v-card-subtitle>
 
-          <!--
+<!--
           <v-card-actions>
             <v-btn text> Edit </v-btn>
           </v-card-actions>
@@ -35,6 +35,7 @@
 <script>
 import gql from 'graphql-tag'
 import pick from 'lodash.pick'
+import lock from '@/assets/lock.svg'
 import NewViewForm from '@/components/whakapapa-view/New.vue'
 import NewProfileDialog from '@/components/profile-form/Dialog.vue'
 
@@ -163,4 +164,5 @@ export default {
   .pointer {
     cursor: pointer;
   }
+
 </style>

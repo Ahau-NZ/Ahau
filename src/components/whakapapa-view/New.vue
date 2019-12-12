@@ -55,6 +55,11 @@
                 <small>*indicates required field</small>
               </v-col>
 
+              <v-col class='lock-icon' cols="12" sm="5" md="9">
+                <v-icon medium color='#555'>mdi-lock</v-icon>
+                <span id='lock-icon-margin'>Private record - Only visible by you</span>
+              </v-col>
+
               <v-col>
                 <v-btn @click="close" fab text color="secondary" class="mr-4">
                   <v-icon>mdi-cancel</v-icon>
@@ -132,3 +137,18 @@ export default {
   }
 }
 </script>
+
+<style scoped lang="scss">
+  @import '~vue-context/dist/css/vue-context.css';
+
+  .lock-icon {
+    display: flex;
+    align-items: center;
+    font-size: 0.8em;
+    color: #555;
+  }
+  #lock-icon-margin {
+    margin-left: 10px;
+  }
+
+</style>

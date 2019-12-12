@@ -9,6 +9,12 @@
           <v-row>
             <v-col class='description'> {{ view.description }} </v-col>
           </v-row>
+          <v-row class='lock-container'>
+             <v-col class='lock-icon'>
+              <v-icon small color='#555'>mdi-lock</v-icon>
+               <span id='lock-icon-margin'>Private record - Only visible by you</span>
+              </v-col>
+          </v-row>
         </v-container>
 
       <v-row>
@@ -575,6 +581,18 @@ export default {
   }
   .description {
     color: #555;
+  }
+  .lock-container {
+    margin-top: 20px;
+    .lock-icon {
+      display: flex;
+      align-items: center;
+      font-size: 0.8em;
+      color: #555;
+    }
+    #lock-icon-margin {
+     margin-left: 10px;
+    }
   }
   svg#baseSvg {
     cursor: grab;

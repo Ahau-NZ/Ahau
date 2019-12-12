@@ -162,7 +162,7 @@ export default {
     display: flex;
     flex-direction: column;
     align-items: center;
-    background: linear-gradient(to right, grey 0%,grey 50%,#000000 50%,white 50%,white 100%);
+    // background: linear-gradient(to right, grey 0%,grey 50%,#000000 50%,white 50%,white 100%);
 
     .body-width {
       min-width: 600px;

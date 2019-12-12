@@ -165,10 +165,9 @@ export default {
     }
   },
   watch: {
-    width (newValue) { // is this bad practise ?
-      if (!this.isPartner) {
-        this.$emit('width', newValue)
-      }
+    width (newValue) {
+      if (this.isPartner) return
+      this.$emit('width', newValue)
     }
   },
   mounted () {
