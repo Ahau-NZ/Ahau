@@ -27,6 +27,7 @@
                   @click="collapse(node)"
                   @openmenu="openContextMenu($event)"
                   @update="updateSeparation"
+                  :showLabel="true"
                 />
               </g>
             </g>
