@@ -25,13 +25,12 @@ export default {
   },
   // this watch add class to body depending on the route clicked. used for changing body backgrounds, unique to each route.
   watch: {
-    $route: {
+    '$route.name': {
       handler (to, from) {
-        const body = document.getElementsByTagName('body')[0]
         if (from !== undefined) {
-          body.classList.remove('page--' + from.name.toLowerCase())
+          document.body.classList.remove('page--' + from.toLowerCase())
         }
-        body.classList.add('page--' + to.name.toLowerCase())
+        document.body.classList.add('page--' + to.toLowerCase())
       },
       immediate: true
     }
@@ -40,37 +39,40 @@ export default {
 </script>
 
 <style lang="scss">
-  a {
-    text-decoration:  none;
-  }
+  // global styles
+  a { text-decoration:  none; }
 
   //remove default vuetify dark theme background
-  .v-application {
-    background: none !important;
-  }
+  .v-application { background: none !important; }
 
   //custom backgrounds per route. see above 'watcher'
-  .page--login {
-    background: url(./assets/niho.svg);
-    background-color: #303030;
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-position-y: -110%;
+  body {
+    --primary-background: #303030;
+
+    &.page--login {
+      background: url(./assets/niho.svg);
+      background-color: var(--primary-background);
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-position-y: -110%;
+    }
+    &.page--whakapapaindex {
+      background: url(./assets/niho.svg);
+      background-color: var(--primary-background);
+      background-repeat: no-repeat;
+      background-position-x: 150%;
+      // background-size: cover;
+    }
+    &.page--whakapapashow {
+      background: url(./assets/niho.svg);
+      background-color: var(--primary-background);
+      background-position-x: -300px;
+      // background-repeat: no-repeat;
+      // background-size: cover;
+    }
+    &.page--personshow {
+      background-color: hotpink;
+    }
   }
-  .page--whakapapaindex {
-    background: url(./assets/niho.svg);
-    background-color: #303030;
-    background-repeat: no-repeat;
-    background-position-x: 150%;
-    // background-size: cover;
-  }
-  .page--whakapapashow {
-    background: url(./assets/niho.svg);
-    background-color: #303030;
-    background-position-x: -300px;
-    // background-repeat: no-repeat;
-    // background-size: cover;
-  }
-  .page--personshow {background-color: pink;}
 
 </style>
