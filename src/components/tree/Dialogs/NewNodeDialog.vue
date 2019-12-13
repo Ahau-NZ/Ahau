@@ -147,9 +147,12 @@
 </template>
 
 <script>
+import gql from 'graphql-tag'
 import Dialog from '@/components/Dialog.vue'
+import Avatar from '@/components/Avatar.vue'
 // import NodeDatePicker from './NodeDatePicker.vue'
 import { GENDERS, RELATIONSHIPS } from '@/lib/constants'
+import blob2file from '@/lib/blob2file'
 
 function defaultData () {
   return {
@@ -158,7 +161,8 @@ function defaultData () {
     gender: '',
     relationshipType: '',
     legallyAdopted: false,
-    children: []
+    children: [],
+    avatarImage: null
     // title: '',
     // dateOfBirth: '',
     // dateOfDeath: '',
@@ -168,7 +172,8 @@ function defaultData () {
 export default {
   name: 'NewNodeDialog',
   components: {
-    Dialog
+    Dialog,
+    Avatar
     // NodeDatePicker
   },
   props: {
@@ -182,6 +187,12 @@ export default {
       genders: GENDERS,
       relationshipTypes: RELATIONSHIPS,
       data: defaultData(),
+      avatarImage: undefined,
+      avatar: {
+        new: null,
+        overlay: false,
+        rotation: 0
+      },
       form: {
         valid: true,
         rules: {
@@ -235,6 +246,40 @@ export default {
       this.data = defaultData()
 
       this.$emit('close')
+    },
+    toggleAvatar (file) {
+      this.avatar.new = this.avatar.new ? null : file
+      this.avatar.overlay = !this.avatar.overlay
+    },
+    async handleImageUpload () {
+      try {
+        const canvas = this.$refs.avatar.clip({ maxWPixel: 1920 })
+        canvas.toBlob(async blob => {
+          const file = await blob2file(URL.createObjectURL(blob), 'avatar')
+          const result = await this.$apollo.mutate({
+            mutation: gql`mutation uploadFile($file: Upload!) {
+              uploadFile(file: $file) {
+                blob
+                mimeType
+                uri
+              }
+            }`,
+            variables: {
+              file
+            }
+          })
+          if (result.errors) throw result.errors
+          let cleanImage = {}
+          Object.entries(result.data.uploadFile).forEach(([key, value]) => {
+            if (key !== '__typename') cleanImage[key] = value
+          })
+          this.avatar.new = null
+          this.avatar.overlay = false
+          this.data.avatarImage = cleanImage
+        })
+      } catch (error) {
+        throw error
+      }
     },
     submit () {
       if (!this.$refs.form.validate()) {
