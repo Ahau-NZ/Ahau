@@ -88,6 +88,42 @@
               <!-- </v-btn>
 
             </v-row> -->
+            <v-row class="py-4 d-flex align-center">
+              <Avatar class="mr-4" size="55px" v-if="data.avatarImage" :image="data.avatarImage" :alt="data.preferredName" />
+              <clipper-upload accept="image/*" @input="toggleAvatar">
+                <v-btn v-if="!avatar.new" class="toggle" fab color="white">
+                  <v-icon class="black--text">mdi-camera</v-icon>
+                </v-btn>
+                <span class="caption pt-4 pl-4">Upload profile photo</span>
+              </clipper-upload>
+              <v-overlay :value="avatar.overlay" color="black" opacity="0.9">
+                <div>
+                  <clipper-fixed
+                    ref="avatar"
+                    :grid="false"
+                    :src="avatar.new"
+                    :area="100"
+                    bg-color="rgba(0, 0, 0, 0)"
+                    :round="true"
+                    shadow="rgba(0,0,0,0.5)"
+                    :rotate="avatar.rotation">
+                  </clipper-fixed>
+                  <div class="px-8 py-4">
+                    <h6 class="caption pt-8"><v-icon>mdi-gesture-tap-hold</v-icon> Ajust the image by zooming, scaling and moving it around before saving.</h6>
+                    <h5 class="pt-8">rotate</h5>
+                    <clipper-range v-model="avatar.rotation" style="max-width:300px" :min="0" :max="360"></clipper-range>
+                    <v-row class="actions py-6">
+                      <v-btn @click="toggleAvatar(null)" text color="secondary" class="mr-4" >
+                        <v-icon>mdi-close</v-icon>
+                      </v-btn>
+                      <v-btn @click="handleImageUpload()" text color="secondary" >
+                        <v-icon>mdi-check</v-icon>
+                      </v-btn>
+                    </v-row>
+                  </div>
+                </div>
+              </v-overlay>
+            </v-row>
 
             <v-row class="actions">
               <v-col cols="12" sm="5" md="9">

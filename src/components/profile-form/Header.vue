@@ -16,8 +16,9 @@
           shadow="rgba(0,0,0,0.5)"
           :rotate="header.rotation"
         ></clipper-fixed>
-        <div class="controls px-8 py-4">
-          <h5>rotate</h5>
+        <div class="controls px-4 py-4">
+          <h6 class="caption pt-8"><v-icon>mdi-gesture-tap-hold</v-icon> Ajust the image by zooming, scaling and moving it around before saving.</h6>
+          <h5 class="pt-4">rotate</h5>
           <clipper-range v-model="header.rotation" style="max-width:300px" :min="0" :max="360"></clipper-range>
           <v-row class="actions py-6">
             <v-btn @click="toggleUpdateHeader(null)" text color="secondary" class="mr-4" >
@@ -29,36 +30,38 @@
           </v-row>
         </div>
       </div>
-      <clipperUpload v-if="!header.new" @input="toggleUpdateHeader" accept="image/*" class="edit-header-button">
+      <clipper-upload v-if="!header.new" @input="toggleUpdateHeader" accept="image/*" class="edit-header-button">
         <v-btn fab color="white">
           <v-icon class="black--text">mdi-pencil</v-icon>
         </v-btn>
         <span class="white--text pl-4 title">Upload header photo</span>
-      </clipperUpload>
+      </clipper-upload>
     </v-row>
 
     <v-row class="avatar-row">
       <v-row class="avatar-box">
-        <clipperUpload class="avatar-picker" accept="image/*" @input="toggleUpdateAvatar">
+        <clipper-upload v-if="!header.overlay" class="avatar-picker" accept="image/*" @input="toggleUpdateAvatar">
           <v-btn v-if="!avatar.new" class="toggle" fab color="white">
             <v-icon class="black--text">mdi-camera</v-icon>
           </v-btn>
           <span class="caption pt-4">Upload profile photo</span>
-        </clipperUpload>
+        </clipper-upload>
         <Avatar v-if="!avatar.new" :image="avatarImage" :alt="preferredName" />
         <v-overlay :value="avatar.overlay" color="black" opacity="0.9">
           <div class="avatar-editor">
             <clipper-fixed
               ref="avatarClipper"
               :grid="false"
+              :area="100"
               :src="avatar.new"
               bg-color="rgba(0, 0, 0, 0)"
               :round="true"
               shadow="rgba(0,0,0,0.5)"
               :rotate="avatar.rotation">
             </clipper-fixed>
-            <div class="px-8 py-4">
-              <h5>rotate</h5>
+            <div class="px-4 py-4">
+              <h6 class="caption pt-8"><v-icon>mdi-gesture-tap-hold</v-icon> Ajust the image by zooming, scaling and moving it around before saving.</h6>
+              <h5 class="pt-8">rotate</h5>
               <clipper-range v-model="avatar.rotation" style="max-width:300px" :min="0" :max="360"></clipper-range>
               <v-row class="actions py-6">
                 <v-btn @click="toggleUpdateAvatar(null)" text color="secondary" class="mr-4" >
