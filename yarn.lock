@@ -1310,11 +1310,6 @@
   dependencies:
     any-observable "^0.3.0"
 
-"@seregpie/claw@^3.0.0":
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/@seregpie/claw/-/claw-3.0.0.tgz#a0746d0ec0aae5524cb277a8523eac386cac0344"
-  integrity sha512-FljpNMtIbq0BPYU3f8x6xo28Q5RKGdMpMfGUkPEuZJnqiyJUUeaQ/InPdLLZDBXk2BDT/9h3spck4UcsgQndPA==
-
 "@sindresorhus/is@^0.14.0":
   version "0.14.0"
   resolved "https://registry.yarnpkg.com/@sindresorhus/is/-/is-0.14.0.tgz#9fb3a3cf3132328151f353de4632e01e52102bea"
@@ -14513,7 +14508,7 @@ vue-clickaway@^2.2.2:
   dependencies:
     loose-envify "^1.2.0"
 
-vue-context@5.x:
+vue-context@^5.0.0:
   version "5.0.0"
   resolved "https://registry.yarnpkg.com/vue-context/-/vue-context-5.0.0.tgz#7f9a90bb00a45eba6aad1d49fdf9e0a946bf503f"
   integrity sha512-clXrOGmFguQp5F5ri8lqCBZTvBhizwLYEkbY2sreUdCpmP5Z/yUfx/W/x9K4Kh5q0pRQ+TDZlGJCLutFuihxcA==
@@ -14596,13 +14591,6 @@ vue@^2.6.10:
   resolved "https://registry.yarnpkg.com/vue/-/vue-2.6.10.tgz#a72b1a42a4d82a721ea438d1b6bf55e66195c637"
   integrity sha512-ImThpeNU9HbdZL3utgMCq0oiMzAkt1mcgy3/E6zWC/G6AaQoeuFdsl9nDhTDU3X1R6FK7nsIUuRACVcjI+A2GQ==
 
-vueclaw@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/vueclaw/-/vueclaw-1.1.0.tgz#5a80a8c778c4a0fc2f4149059dbd43be09e4b676"
-  integrity sha512-rHPgAud0JBXaNWMwf2hqrCoCR+tjnmWlVDkBayxhTCwSXOYIQnxNtwOSbrVkhtnN4LfTZoqIX8mkuk9tFyr7/Q==
-  dependencies:
-    "@seregpie/claw" "^3.0.0"
-
 vuejs-clipper@^1.1.5:
   version "1.1.5"
   resolved "https://registry.yarnpkg.com/vuejs-clipper/-/vuejs-clipper-1.1.5.tgz#bfae53d206ca43312246e518aef9bfef820bc83e"
@@ -14611,13 +14599,6 @@ vuejs-clipper@^1.1.5:
     exif-js "^2.3.0"
     rxjs "^6.5.2"
     vue-rx "^6.0.1"
-
-vuetify-image-input@^19.0.0:
-  version "19.1.0"
-  resolved "https://registry.yarnpkg.com/vuetify-image-input/-/vuetify-image-input-19.1.0.tgz#1656fefaf874f7e04605cf28bc6d4a5e2ef371d8"
-  integrity sha512-96i21jPgIMVMA7lDkUIOePt0M4hReYPxVr9iT/nQJkil5YIJWxmoIhUSWjc867a81wwJbWBSLPq4dmvO8ftypg==
-  dependencies:
-    vueclaw "^1.1.0"
 
 vuetify-loader@^1.2.2:
   version "1.4.2"
