@@ -14495,10 +14495,10 @@ vue-clickaway@^2.2.2:
   dependencies:
     loose-envify "^1.2.0"
 
-vue-context@^4.1.1:
-  version "4.1.1"
-  resolved "https://registry.yarnpkg.com/vue-context/-/vue-context-4.1.1.tgz#363bf63b207450a3dddf9fd8afd829f839cd12a3"
-  integrity sha512-xOhKlt80Y+jOuO0meMuhBH1UNdu4q3ELEGZMSAf4frabYlCfamSQ0YvUQmk/aLWg1TRQE3DuN+GlvGYLmaVk4g==
+vue-context@5.x:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/vue-context/-/vue-context-5.0.0.tgz#7f9a90bb00a45eba6aad1d49fdf9e0a946bf503f"
+  integrity sha512-clXrOGmFguQp5F5ri8lqCBZTvBhizwLYEkbY2sreUdCpmP5Z/yUfx/W/x9K4Kh5q0pRQ+TDZlGJCLutFuihxcA==
   dependencies:
     vue-clickaway "^2.2.2"
 
