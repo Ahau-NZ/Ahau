@@ -4,7 +4,7 @@
       <v-img v-if="!header.new" :src="headerImage ? headerImage.uri : ''" min-width="100%" height="23vw" />
       <v-overlay :value="header.overlay" color="black" opacity="0.9">
         <div class="header-editor">
-          <clipper-fixed :min-scale="1" :grid="true" :ratio="16/3" :area="100" :src="header.new" bg-color="rgba(0, 0, 0, 0)" :round="false" shadow="rgba(0,0,0,0.5)" :rotate="header.rotation"></clipper-fixed :grid="false">
+          <clipper-fixed ref="headerClipper" :min-scale="1" :grid="true" :ratio="16/3" :area="100" :src="header.new" bg-color="rgba(0, 0, 0, 0)" :round="false" shadow="rgba(0,0,0,0.5)" :rotate="header.rotation"></clipper-fixed>
           <div class="px-8 py-4">
             <h5>rotate</h5>
             <clipper-range v-model="header.rotation" style="max-width:300px" :min="0" :max="360"></clipper-range>
@@ -39,13 +39,13 @@
         <v-overlay :value="avatar.overlay" color="black" opacity="0.9">
           <div class="avatar-editor">
             <clipper-fixed
+              ref="avatarClipper"
               :grid="false"
               :src="avatar.new"
               bg-color="rgba(0, 0, 0, 0)"
               :round="true"
               shadow="rgba(0,0,0,0.5)"
-              :rotate="avatar.rotation"
-              @clip="avatarClip">
+              :rotate="avatar.rotation">
             </clipper-fixed>
             <div class="px-8 py-4">
               <h5>rotate</h5>
@@ -97,14 +97,6 @@ export default {
       }
     }
   },
-  watch: {
-    'avatarCanvas' (a) {
-      this.$refs.clipper.onChange$.subscribe(() => {
-        console.log('CHANGED', a)
-      // This happens whenever zooming, moving and rotating occur.
-      })
-    }
-  },
   methods: {
     toggleUpdateAvatar (file) {
       this.avatar.new = this.avatar.new ? null : file
@@ -116,30 +108,33 @@ export default {
       this.header.overlay = !this.header.overlay
       this.avatar.new = null
     },
-    avatarClip (c) {
-      console.log("TCL: avatarClip -> c", c)
-    },
     async handleImageUpload (type) {
-      const file = await blob2file(this[type].new)
-      const result = await this.$apollo.mutate({
-        mutation: gql`mutation uploadFile($file: Upload!) {
-          uploadFile(file: $file) {
-            blob
-            mimeType
-            uri
-          }
-        }`,
-        variables: {
-          file
-        }
-      })
-      if (result.errors) throw result.errors
-
-      this.addImages({
-        [type + 'Image']: pick(result.data.uploadFile, ['blob', 'mimeType', 'uri'])
-      })
-      this[type].new = null
-      this[type].overlay = false
+      try {
+        const canvas = this.$refs[type + 'Clipper'].clip({ maxWPixel: 1920 })
+        canvas.toBlob(async blob => {
+          const file = await blob2file(URL.createObjectURL(blob), type)
+          const result = await this.$apollo.mutate({
+            mutation: gql`mutation uploadFile($file: Upload!) {
+              uploadFile(file: $file) {
+                blob
+                mimeType
+                uri
+              }
+            }`,
+            variables: {
+              file
+            }
+          })
+          if (result.errors) throw result.errors
+          this.addImages({
+            [type + 'Image']: pick(result.data.uploadFile, ['blob', 'mimeType', 'uri'])
+          })
+          this[type].new = null
+          this[type].overlay = false
+        })
+      } catch (error) {
+        throw error
+      }
     }
   },
   components: {
