@@ -17,7 +17,7 @@ module.exports = {
   mac: {
     category: 'public.app-category.social-networking',
     hardenedRuntime: true, // N
-    gatekeeperAssess: false, // N
+    gatekeeperAssess: false // N
     // entitlements: 'build/entitlements.mac.plist', // N
     // entitlementsInherit: 'build/entitlements.mac.plist' // N
   },
