@@ -6,7 +6,7 @@
         <clipper-fixed
           ref="headerClipper"
           :min-scale="0.5"
-          :grid="true"
+          :grid="false"
           :ratio="16/3"
           :area="100"
           :src="header.new"
@@ -83,7 +83,7 @@
 <script>
 import gql from 'graphql-tag'
 import Avatar from '@/components/Avatar.vue'
-import { clipperUpload, clipperFixed } from 'vuejs-clipper'
+import blob2file from '@/lib/blob2file'
 const pick = require('lodash.pick')
 
 export default {
@@ -151,17 +151,8 @@ export default {
     }
   },
   components: {
-    Avatar,
-    clipperUpload,
-    clipperFixed
+    Avatar
   }
-}
-
-async function blob2file (blobUrl, name) {
-  let file = await fetch(blobUrl)
-    .then(r => r.blob())
-    .then(blobFile => new File([blobFile], name || 'file', { type: 'image/jpg' }))
-  return file
 }
 </script>
 
@@ -192,7 +183,7 @@ async function blob2file (blobUrl, name) {
     margin-bottom: -1vw;
     .controls {
       position: absolute;
-      top: 0;
+      top: calc(100vw / 5.33333);
       right: 0;
       background: rgba(0, 0, 0, 0.8);
     }
@@ -200,7 +191,7 @@ async function blob2file (blobUrl, name) {
   .edit-header-button {
     cursor: pointer;
     position: absolute;
-    top: 27vh;
+    top: calc(100vw / 5.33333 - 10vh);
     right: 5vw;
   }
   .handle-header-buttons {
@@ -250,12 +241,10 @@ async function blob2file (blobUrl, name) {
 
   .avatar-editor {
     position: absolute;
-    // background: rgba(0,0,0,.8);
     height: auto;
-    min-width: 610px;
-    z-index: 999;
-    top: -45vh;
-    right: 5vw;
+    min-width: 25vh;
+    top: -35vh;
+    right: 8vw;
   }
 
 .toggle {
