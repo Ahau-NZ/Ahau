@@ -1,25 +1,35 @@
 <template>
   <v-container class="full-width my-0 py-0">
     <v-row class="header-bg">
-      <v-img v-if="!header.new" :src="headerImage ? headerImage.uri : ''" min-width="100%" height="23vw" />
-      <v-overlay :value="header.overlay" color="black" opacity="0.9">
-        <div class="header-editor">
-          <clipper-fixed ref="headerClipper" :min-scale="1" :grid="true" :ratio="16/3" :area="100" :src="header.new" bg-color="rgba(0, 0, 0, 0)" :round="false" shadow="rgba(0,0,0,0.5)" :rotate="header.rotation"></clipper-fixed>
-          <div class="px-8 py-4">
-            <h5>rotate</h5>
-            <clipper-range v-model="header.rotation" style="max-width:300px" :min="0" :max="360"></clipper-range>
-            <v-row class="actions py-6">
-              <v-btn @click="toggleUpdateHeader(null)" text color="secondary" class="mr-4" >
-                <v-icon>mdi-close</v-icon>
-              </v-btn>
-              <v-btn @click="handleImageUpload('header')" text color="secondary" >
-                <v-icon>mdi-check</v-icon>
-              </v-btn>
-            </v-row>
-          </div>
+      <v-img v-if="!header.new" :src="headerImage ? headerImage.uri : ''" min-width="100%" />
+      <div v-if="header.overlay" class="header-editor">
+        <clipper-fixed
+          ref="headerClipper"
+          :min-scale="0.5"
+          :grid="true"
+          :ratio="16/3"
+          :area="100"
+          :src="header.new"
+          border-color="black"
+          bg-color="rgba(0, 0, 0, 0)"
+          :round="false"
+          shadow="rgba(0,0,0,0.5)"
+          :rotate="header.rotation"
+        ></clipper-fixed>
+        <div class="controls px-8 py-4">
+          <h5>rotate</h5>
+          <clipper-range v-model="header.rotation" style="max-width:300px" :min="0" :max="360"></clipper-range>
+          <v-row class="actions py-6">
+            <v-btn @click="toggleUpdateHeader(null)" text color="secondary" class="mr-4" >
+              <v-icon>mdi-close</v-icon>
+            </v-btn>
+            <v-btn @click="handleImageUpload('header')" text color="secondary" >
+              <v-icon>mdi-check</v-icon>
+            </v-btn>
+          </v-row>
         </div>
-      </v-overlay>
-      <clipperUpload @input="toggleUpdateHeader" accept="image/*" class="edit-header-button">
+      </div>
+      <clipperUpload v-if="!header.new" @input="toggleUpdateHeader" accept="image/*" class="edit-header-button">
         <v-btn fab color="white">
           <v-icon class="black--text">mdi-pencil</v-icon>
         </v-btn>
@@ -165,19 +175,24 @@ async function blob2file (blobUrl, name) {
     background-size: 50px 50px;
   }
   .header {
-    min-height: 35vh;
+    height: calc(100vw / 5.33333);
     background: grey;
     width: 100%;
-    margin-bottom: -35vh;
+    margin-bottom: calc(-100vw / 5.33333);
     position: relative;
-    top: -35vh;
+    top: calc(-100vw / 5.33333);
     opacity: 0.6;
   }
   .header-editor {
     width: 100vw;
-    position: absolute;
-    top: -30vw;
-    left: -45vw;
+    height: calc(100vw / 5.33333);
+    margin-bottom: -1vw;
+    .controls {
+      position: absolute;
+      top: 0;
+      right: 0;
+      background: rgba(0, 0, 0, 0.8);
+    }
   }
   .edit-header-button {
     cursor: pointer;
