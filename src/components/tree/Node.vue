@@ -8,7 +8,7 @@
             :isPartner="true"
             :node="partner"
             @update="updateWidth"
-            @openmenu="$emit('openmenu', $event)"
+            @open-context-menu="$emit('open-context-menu', $event)"
           />
         </g>
       </g>
@@ -156,7 +156,7 @@ export default {
       this.$emit('click')
     },
     openMenu ($event, profileId) {
-      this.$emit('openmenu', { $event, profileId })
+      this.$emit('open-context-menu', { event, profileId })
     },
     updateWidth () {
       var width = d3.select('#nodeGroup')
