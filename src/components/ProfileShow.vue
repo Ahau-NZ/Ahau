@@ -38,8 +38,9 @@
         </v-col>
 
         <v-col cols="4">
+          <!-- TODO perhaps this should be a different component? -->
           <v-card v-if="type === 'community'" light outlined min-height="200px">
-            <v-card-title class="headline">Tiaki</v-card-title>
+            <v-card-title class="headline">Kaitiaki</v-card-title>
             <v-btn text v-for="t in profile.tiaki" :key="t.id"
               :to="{ name: 'personShow', params: { id: t.id } }">
               {{ t.preferredName }}

@@ -45,7 +45,7 @@ export default {
   },
   methods: {
     edit () {
-      this.$router.push({ name: 'personEdit', params: { id: this.$route.parama.id } })
+      this.$router.push({ name: 'personEdit', params: { id: this.$route.params.id } })
     }
   },
   components: {
