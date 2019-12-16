@@ -36,16 +36,8 @@
             </v-card-text>
           </v-card>
         </v-col>
-
         <v-col cols="4">
-          <!-- TODO perhaps this should be a different component? -->
-          <v-card v-if="type === 'community'" light outlined min-height="200px">
-            <v-card-title class="headline">Kaitiaki</v-card-title>
-            <v-btn text v-for="t in profile.tiaki" :key="t.id"
-              :to="{ name: 'personShow', params: { id: t.id } }">
-              {{ t.preferredName }}
-            </v-btn>
-          </v-card>
+          <Kaitiaki :profile="profile" v-if="type === 'community'" />
         </v-col>
       </v-row>
 
@@ -60,6 +52,7 @@
 
 <script>
 import Header from '@/components/profile/Header.vue'
+import Kaitiaki from '@/components/profile/Kaitiaki.vue'
 
 // const get = require('lodash.get')
 
@@ -87,7 +80,8 @@ export default {
     }
   },
   components: {
-    Header
+    Header,
+    Kaitiaki
   }
 }
 </script>
