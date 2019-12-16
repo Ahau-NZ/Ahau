@@ -5,29 +5,73 @@ export default {
   title: 'ProfileShow'
 }
 
-const avatarImage = { uri: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Ruru-morepork-heaphy-track.jpg/800px-Ruru-morepork-heaphy-track.jpg' }
-const headerImage = { uri: 'https://upload.wikimedia.org/wikipedia/commons/d/d7/View_from_te_mata_peak.jpg' }
+const avatarImage = {
+  uri:
+    'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Ruru-morepork-heaphy-track.jpg/800px-Ruru-morepork-heaphy-track.jpg'
+}
+const headerImage = {
+  uri:
+    'https://upload.wikimedia.org/wikipedia/commons/d/d7/View_from_te_mata_peak.jpg'
+}
 
-// profile/person ////////////////////
+const communityAvatarImage = {
+  uri:
+    'https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/MAP_Expo_Maori_Hame%C3%A7on_13012012_4.jpg/800px-MAP_Expo_Maori_Hame%C3%A7on_13012012_4.jpg'
+}
+const communityHeaderImage = {
+  uri:
+    'https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Wilkin_River_close_to_its_confluence_with_Makarora_River%2C_New_Zealand.jpg/800px-Wilkin_River_close_to_its_confluence_with_Makarora_River%2C_New_Zealand.jpg'
+}
 
-export const CompleteProfile = () => ({
-  template: '<ProfileShow :profile="profile" type="person" :editProfile="editProfile"/>',
+const mixProfile = {
+  id: '%someProfileId',
+  canEdit: true,
+
+  preferredName: 'Mix',
+  legalName: 'J A Irving',
+  description: `
+      Grew up in Hawkes Bay, the child of two British immigrants - a teacher and a programmer.
+      Is somewhat predicatably a teacher and programmer.
+    `,
+  avatarImage,
+  headerImage
+}
+
+// profile/community ////////////////////
+export const CompleteCommunityProfile = () => ({
+  template:
+    '<ProfileShow :profile="profile" type="community" :editProfile="editProfile"/>',
   data: () => ({
-    type: 'person',
+    type: 'community',
     profile: {
       id: '%someProfileId',
       canEdit: true,
 
-      preferredName: 'Mix',
-      legalName: 'J A Irving',
+      preferredName: 'Aoteaora',
+      legalName: 'Aoteaora',
       description: `
-        Grew up in Hawkes Bay, the child of two British immigrants - a teacher and a programmer.
-        Is somewhat predicatably a teacher and programmer.
+        Several meanings have been proposed for the name; the most popular meaning usually given is "long white cloud", or variations thereof.
+        This refers to the cloud formations which helped early Polynesian navigators find the country.
       `,
 
-      avatarImage,
-      headerImage
+      avatarImage: communityAvatarImage,
+      headerImage: communityHeaderImage,
+      tiaki: [mixProfile]
     }
+  }),
+  methods: {
+    editProfile: action('edit profile')
+  },
+  components: { ProfileShow }
+})
+
+// profile/person ////////////////////
+export const CompleteProfile = () => ({
+  template:
+    '<ProfileShow :profile="profile" type="person" :editProfile="editProfile"/>',
+  data: () => ({
+    type: 'person',
+    profile: mixProfile
   }),
   methods: {
     editProfile: action('edit profile')
@@ -57,4 +101,3 @@ export const EmptyProfile = () => ({
 // profile/community ////////////////////
 
 // TODO
-
