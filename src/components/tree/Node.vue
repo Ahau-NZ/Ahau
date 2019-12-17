@@ -82,21 +82,18 @@ import get from 'lodash.get'
 import tane from '@/assets/tane.svg'
 import wahine from '@/assets/wahine.svg'
 
-import * as d3 from 'd3' // will be changed later on
-
 export default {
   name: 'Node',
   props: {
     node: { type: Object, required: true },
     radius: { type: Number, required: true },
-    isPartner: { type: Boolean, default: false },
+    isPartner: { type: Boolean, default: false }
   },
   data () {
     return {
       offsetSize: 15,
       partnerRadius: 0.8 * this.radius,
-      basePartners: [],
-      componentLoaded: false
+      basePartners: []
     }
   },
   computed: {
@@ -143,15 +140,7 @@ export default {
     },
     partners () {
       if (this.isPartner || this.profile.partners === undefined) return []
-      this.getPartners()
-      return this.basePartners
-    },
-    width () {
-      if (!this.componentLoaded) return this.node.width
-      return d3.select(`#${this.node.index}`)
-        .node()
-        .getBoundingClientRect()
-        .width
+      return this.getPartners()
     },
     partnerMenuTranslate () {
       const x = this.node.right ? -0.3 : 1.4
@@ -168,7 +157,7 @@ export default {
     getPartners () {
       var leftCount = 0
       var rightCount = 0
-      this.basePartners = this.profile.partners
+      return this.profile.partners
         .map((d, i) => {
           var sign = (i % 2 === 0) ? 1 : -1
           var offset = (sign === 1)
@@ -187,15 +176,6 @@ export default {
         })
         .reverse()
     }
-  },
-  watch: {
-    width (newValue) {
-      if (this.isPartner) return
-      this.$emit('width', newValue)
-    }
-  },
-  mounted () {
-    this.componentLoaded = true
   }
 }
 </script>
