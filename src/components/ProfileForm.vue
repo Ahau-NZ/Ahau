@@ -153,7 +153,7 @@ export default {
         'headerImage'
       ]
       this.profile = Object.assign({}, this.profile, pick(changes, permitted))
-    },
+    }
     // async saveProfile () {
     //   if (!this.hasChanges) return
 
