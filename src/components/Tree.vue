@@ -26,13 +26,12 @@
               </g>
             </g>
 
-            <g :transform="`translate(${treeX-settings.nodeRadius} ${treeY-settings.nodeRadius})`"
+            <g :transform="`translate(${treeX - nodeRadius} ${treeY - nodeRadius})`"
               ref="tree">
               <g v-for="node in nodes" :key="node.data.id" class="node">
-                <Node :node="node" :radius="settings.nodeRadius"
+                <Node :node="node" :radius="nodeRadius"
                   @click="collapse(node)"
-                  @openmenu="openContextMenu($event)"
-                  @update="updateSeparation"
+                  @open-context-menu="$emit('open-context-menu', $event)"
                   :showLabel="true"
                 />
               </g>
@@ -41,133 +40,46 @@
         </svg>
       </v-row>
     </v-container>
-
-    <vue-context ref="menu">
-      <li v-for="(option, index) in contextMenuOpts" :key="index">
-        <a href="#" @click.prevent="option.action"> {{ option.title }} </a>
-      </li>
-      <li v-if="canDelete">
-        <a href="#" @click.prevent="toggleDelete"> Delete Person </a>
-      </li>
-    </vue-context>
-    <!--
-      <ViewNodeDialog v-if="dialog.show" :show="dialog.show" :node="node.selected"
-      @close="toggleShow"/>
-      // NOTE node.selected has changed
-    -->
-    <EditNodeDialog v-if="dialog.edit" :show="dialog.edit"
-      @close="toggleEdit"/>
-    <NewNodeDialog v-if="dialog.new" :show="dialog.new"
-      @close="toggleNew" @submit="addPerson($event)"/>
-    <DeleteNodeDialog v-if="dialog.delete" :show="dialog.delete" :name="selectedProfile.preferredName"
-      @close="toggleDelete" @submit="deleteProfile" />
   </div>
 </template>
 
 <script>
 import * as d3 from 'd3'
-import gql from 'graphql-tag'
-import pick from 'lodash.pick'
-import { VueContext } from 'vue-context'
-
-import tree from '@/lib/tree-helpers'
+import get from 'lodash.get'
 import Node from './tree/Node.vue'
 import Link from './tree/Link.vue'
-// import ViewNodeDialog from './tree/Dialogs/ViewNodeDialog.vue'
-import EditNodeDialog from './tree/Dialogs/EditNodeDialog.vue'
-import NewNodeDialog from './tree/Dialogs/NewNodeDialog.vue'
-import DeleteNodeDialog from './tree/Dialogs/DeleteNodeDialog.vue'
-
-const saveWhakapapaRelMutation = (input) => ({
-  mutation: gql`mutation ($input: WhakapapaRelationInput!) {
-    saveWhakapapaRelation(input: $input)
-  }`,
-  variables: { input }
-})
-
-const saveWhakapapaViewMutation = (input) => ({
-  mutation: gql`mutation ($input: WhakapapaViewInput) {
-    saveWhakapapaView(input: $input)
-  }`,
-  variables: { input }
-})
 
 export default {
   props: {
-    viewId: { type: String, required: true }
+    nestedWhakapapa: {
+      type: Object,
+      default: () => ({
+        preferredName: 'Loading',
+        gender: 'unknown',
+        children: [],
+        parents: []
+      })
+    },
+    view: {
+      type: Object,
+      required: true
+    },
+    profiles: {
+      type: Object,
+      required: true
+    }
   },
   data () {
     return {
-      view: {
-        name: null,
-        description: null,
-        focus: null,
-        recps: null
-      },
-      myProfileId: null,
-      flatWhakapapa: {}, // profiles with format { %profileId: profile }
-      selectedProfile: null,
-      node: {
-        new: null
-      },
       componentLoaded: false, // need to ensure component is loaded before using $refs
+      // ?? think this is unused ??
+      // node: {
+      //   new: null
+      // },
 
-      settings: {
-        nodeRadius: 50, // use variable for zoom later on
-        nodeSeparationX: 100,
-        nodeSeparationY: 150
-      },
-      dialog: {
-        new: false,
-        show: false,
-        edit: false,
-        delete: false,
-        type: 'child'
-      },
-      contextMenuOpts: [
-        { title: 'Add Child', action: this.toggleNewChild },
-        { title: 'Add Parent', action: this.toggleNewParent },
-        { title: 'Edit Person', action: this.toggleEdit }
-      ],
-      options: {
-        addnode: false // Is this used by anything?
-      }
-    }
-  },
-  apollo: {
-    view () {
-      return {
-        query: gql` query ($id: String!) {
-          whakapapaView(id: $id) {
-            name
-            description
-            focus
-            mode
-            recps
-          }
-        }`,
-        variables: { id: this.viewId },
-        update: data => data.whakapapaView,
-        fetchPolicy: 'no-cache'
-      }
-    },
-    myProfileId: {
-      query: gql` {
-        whoami {
-          profile {
-            id
-          }
-        }
-      }`,
-      update (data) {
-        return data.whoami.profile.id
-      },
-      fetchPolicy: 'no-cache'
-    }
-  },
-  watch: {
-    'view.focus': async function (newFocus) {
-      this.loadDescendants(newFocus)
+      nodeRadius: 50, // use variable for zoom later on
+      nodeSeparationX: 100,
+      nodeSeparationY: 150
     }
   },
   mounted () {
@@ -175,44 +87,8 @@ export default {
     this.zoom()
   },
   computed: {
-    canDelete () {
-      if (!this.selectedProfile) return false
-
-      if (this.selectedProfile.id === this.myProfileId) return false
-      if (this.selectedProfile.id === this.view.focus) return false
-
-      return true
-    },
-    // deeply nested tree of profiles!
-    nestedWhakapapa () {
-      var output = this.flatWhakapapa[this.view.focus]
-      if (!output) {
-        return {
-          preferredName: 'Loading',
-          gender: 'unknown',
-          children: [],
-          parents: []
-        }
-      }
-
-      return tree.hydrate(output, this.flatWhakapapa)
-    },
     branch () {
-      return this.settings.nodeSeparationY / 2 + this.settings.nodeRadius
-    },
-    /*
-      the space between nodes on the x axis
-      @TODO: will be used later on for implementing zoom and pan on tree
-    */
-    nodeSeparationX () {
-      return this.settings.nodeSeparationX
-    },
-    /*
-      the space between node on the y axis
-      @TODO: will be used later on for implementing zoom and pan on tree
-    */
-    nodeSeparationY () {
-      return this.settings.nodeSeparationY
+      return this.nodeSeparationY / 2 + this.nodeRadius
     },
     /*
       gets the X position of the tree based on the svg size
@@ -253,11 +129,18 @@ export default {
     treeLayout () {
       return d3.tree()
         .nodeSize([
-          this.nodeSeparationX + this.settings.nodeRadius,
-          this.nodeSeparationY + this.settings.nodeRadius
+          this.nodeSeparationX + this.nodeRadius,
+          this.nodeSeparationY + this.nodeRadius
         ])
-        .separation(function (a, b) {
-          return a.parent === b.parent ? 1 : 2
+        .separation((a, b) => {
+          if (a.parent !== b.parent) return 1.3
+          // "how far cousins be spaced"  (I think)
+          // nodes have only one one "node.parent" (but multiple node.data.parents)
+
+          return 1 + 0.3 * (this.visiblePartners(a) + this.visiblePartners(b))
+          // "how far are siblings spaced" (I think)
+          // start with a baseline of 1, then add a proportion of the number of partners
+          // as partners take up less space than central node, are placed evenly to either side
         })
     },
     //  returns a nested data structure representing a tree based on the treeData object
@@ -273,6 +156,7 @@ export default {
         .descendants() // returns the array of descendants starting with the root node, then followed by each child in topological order
         .map((d, i) => { // returns a new custom object for each node
           return {
+            index: `node-${i}`,
             children: d.children,
             data: d.data,
             depth: d.depth,
@@ -303,6 +187,20 @@ export default {
     }
   },
   methods: {
+    loadDescendants (profileId) {
+      this.$emit('load-descendants', profileId)
+    },
+    collapse (node) {
+      this.$emit('collapse-node', node.data.id)
+      // TODO
+      // this one feels like perhaps it should be handled in this file
+    },
+    visiblePartners (node) {
+      return get(node, 'data.isCollapsed')
+        ? 0
+        : get(node, 'data.partners.length', 0)
+    },
+
     zoom () {
       var svg = d3.select('#baseSvg')
       var g = d3.select('#baseGroup')
@@ -310,249 +208,11 @@ export default {
         d3.zoom().on('zoom', function () {
           g.attr('transform', d3.event.transform)
         }))
-    },
-    async loadDescendants (profileId) {
-      const result = await this.getCloseWhakapapa(profileId)
-      const record = result.data.closeWhakapapa
-
-      record.children.forEach(profile => {
-        this.loadDescendants(profile.id)
-      })
-
-      var output = Object.assign({}, this.flatWhakapapa)
-      Object.entries(tree.flatten(record))
-        .forEach(([ profileId, profile ]) => {
-          output[profileId] = Object.assign({}, output[profileId] || {}, profile)
-          // this merge might be overwriting a lot
-        })
-
-      const parentIds = record.parents.map(profile => profile.id)
-      parentIds.map(parentId => {
-        if (!output[parentId]) return
-
-        const currentPartners = output[parentId].partners || []
-        const partners = new Set([...currentPartners, ...parentIds])
-        partners.delete(parentId)
-        output[parentId].partners = Array.from(partners)
-      })
-
-      this.flatWhakapapa = output
-    },
-    async getCloseWhakapapa (profileId) {
-      const request = {
-        query: gql`query ($id: String) {
-          closeWhakapapa(id: $id) {
-            id
-            gender
-            preferredName
-            avatarImage {
-              uri
-            }
-            children {
-              id
-              gender
-              preferredName
-              avatarImage {
-                uri
-              }
-            }
-            parents {
-              id
-              gender
-              preferredName
-              avatarImage {
-                uri
-              }
-            }
-          }
-        }`,
-        variables: {
-          id: profileId
-        },
-        fetchPolicy: 'no-cache'
-      }
-
-      try {
-        const result = await this.$apollo.query(request)
-        return result
-      } catch (err) {
-        console.error('WARNING, something went wrong')
-        console.error(err)
-        return err
-      }
-    },
-    openContextMenu ({ $event, profileId }) {
-      this.selectedProfile = this.flatWhakapapa[profileId]
-      this.$refs.menu.open($event)
-    },
-    // toggleShow (target) {
-    //   this.node.selected = target
-    //   this.dialog.show = !this.dialog.show
-    // },
-    toggleEdit () {
-      // TEMP - use the UI we have!
-      this.$router.push({ name: 'personEdit', params: { id: this.selectedProfile.id } })
-
-      // this.dialog.edit = !this.dialog.edit
-    },
-    toggleDelete () {
-      this.dialog.delete = !this.dialog.delete
-    },
-    toggleNewChild () {
-      this.dialog.type = 'child'
-      this.toggleNew()
-    },
-    toggleNewParent () {
-      this.dialog.type = 'parent'
-      this.toggleNew()
-    },
-    toggleNew () {
-      this.dialog.new = !this.dialog.new
-    },
-    async addPerson ($event) {
-      try {
-        const profileId = await this.createProfile($event)
-        if (!profileId) return
-
-        let child, parent
-        const relationshipAttrs = pick($event, ['relationshipType', 'legallyAdopted'])
-        switch (this.dialog.type) {
-          case 'child':
-            child = profileId
-            parent = this.selectedProfile.id
-            await this.createChildLink({ child, parent, ...relationshipAttrs })
-            this.loadDescendants(parent)
-            break
-          case 'parent':
-            child = this.selectedProfile.id
-            parent = profileId
-            const linkId = await this.createChildLink({ child, parent, ...relationshipAttrs })
-            if (!linkId) return
-
-            if (child === this.view.focus) {
-              // in this case we're updating the top of the graph, we update view.focus to that new top parent
-              await this.updateFocus(parent)
-            } else {
-              this.loadDescendants(child)
-            }
-            break
-          default: console.log('not built')
-        }
-        this.dialog.new = false
-      } catch (err) {
-        throw err
-      }
-    },
-    async createProfile ({ preferredName, legalName, gender, avatarImage }) {
-      const res = await this.$apollo.mutate({
-        mutation: gql`mutation ($input: CreateProfileInput!) {
-          createProfile(input: $input)
-        }`,
-        variables: {
-          input: {
-            type: 'person',
-            preferredName,
-            legalName,
-            gender,
-            recps: this.view.recps,
-            avatarImage
-          }
-        }
-      })
-
-      if (res.errors) {
-        console.error('failed to createProfile', res)
-        return
-      }
-      return res.data.createProfile // a profileId
-    },
-    async createChildLink ({ child, parent, relationshipType, legallyAdopted }, view) {
-      const input = {
-        child,
-        parent,
-        relationshipType,
-        legallyAdopted,
-        recps: this.view.recps
-      }
-      try {
-        const res = await this.$apollo.mutate(saveWhakapapaRelMutation(input))
-        if (res.errors) {
-          console.error('failed to createChildLink', res)
-          return
-        }
-        return res // TODO return the linkId
-      } catch (err) {
-        throw err
-      }
-    },
-    async deleteProfile () {
-      if (!this.canDelete) return
-
-      const res = await this.$apollo.mutate({
-        mutation: gql`mutation ($input: UpdateProfileInput!) {
-          updateProfile(input: $input)
-        }`,
-        variables: {
-          input: {
-            id: this.selectedProfile.id,
-            tombstone: { date: new Date() }
-          }
-        }
-      })
-
-      if (res.errors) {
-        console.error('failed to delete profile', res)
-        return
-      }
-
-      this.flatWhakapapa = {}
-      this.loadDescendants(this.view.focus)
-      // TODO - find a smaller subset to reload!
-    },
-    async updateFocus (focus) {
-      const input = {
-        viewId: this.viewId,
-        focus
-      }
-      try {
-        const res = await this.$apollo.mutate(saveWhakapapaViewMutation(input))
-        if (res.data) this.view.focus = focus
-        else console.error(res)
-      } catch (err) {
-        throw err
-      }
-    },
-    /*
-      updated when the Node returns its text-width, sets the separation between nodes to the largest text width.
-      Which stops overlapping labels.
-    */
-    updateSeparation ($event) {
-      var width = $event
-      if (width > this.settings.nodeSeparationX) {
-        this.settings.nodeSeparationX = width
-      }
-    },
-    collapse (node) {
-      const profile = this.flatWhakapapa[node.data.id]
-      const { children, _children = [] } = profile
-
-      if (children.length === 0 && _children.length === 0) return
-
-      this.flatWhakapapa[node.data.id] = Object.assign(profile, {
-        isCollapsed: !profile.isCollapsed,
-        _children: children,
-        children: _children
-      })
     }
   },
   components: {
     Node,
-    Link,
-    VueContext,
-    EditNodeDialog,
-    NewNodeDialog,
-    DeleteNodeDialog
-    // ViewNodeDialog
+    Link
   }
 }
 </script>

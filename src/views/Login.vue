@@ -59,7 +59,8 @@ export default {
     }
   },
   mounted () {
-    setTimeout(this.proceed, 2e3)
+    if (process.env.NODE_ENV === 'development') this.proceed()
+    else setTimeout(this.proceed, 2e3)
   },
   methods: {
     proceed () {

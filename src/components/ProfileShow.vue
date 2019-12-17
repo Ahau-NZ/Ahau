@@ -18,13 +18,10 @@
         </v-col>
 
         <v-col cols="4" class="d-flex justify-end">
-          <router-link v-if="profile.canEdit"
-            :to="{ name: type + 'Edit', params: { id: this.profileId } }">
-            <v-btn class="my-2" fab color="white">
-              <v-icon class="black--text">mdi-pencil</v-icon>
-            </v-btn>
-            <span class="ml-4 subtitle">Edit</span>
-          </router-link>
+          <v-btn v-if="profile.canEdit" class="my-2" fab color="white" @click="editProfile()">
+            <v-icon class="black--text">mdi-pencil</v-icon>
+          </v-btn>
+          <span class="ml-4 subtitle">Edit</span>
         </v-col>
       </v-row>
 
@@ -39,15 +36,8 @@
             </v-card-text>
           </v-card>
         </v-col>
-
         <v-col cols="4">
-          <v-card v-if="type === 'community'" light outlined min-height="200px">
-            <v-card-title class="headline">Tiaki</v-card-title>
-            <v-btn text v-for="t in profile.tiaki" :key="t.id"
-              :to="{ name: 'personShow', params: { id: t.id } }">
-              {{ t.preferredName }}
-            </v-btn>
-          </v-card>
+          <Kaitiaki :profile="profile" v-if="type === 'community'" />
         </v-col>
       </v-row>
 
@@ -61,86 +51,25 @@
 </template>
 
 <script>
-import gql from 'graphql-tag'
 import Header from '@/components/profile/Header.vue'
+import Kaitiaki from '@/components/profile/Kaitiaki.vue'
 
 // const get = require('lodash.get')
 
 export default {
   name: 'ProfileShow',
   props: {
-    profileId: String,
     type: {
       type: String, // person / community?
       required: true
-    }
-  },
-  data () {
-    return {
-      profile: {
-        canEdit: false,
-
-        preferredName: '',
-        legalName: '',
-        description: '',
-
-        avatarImage: undefined,
-        headerImage: undefined
-      }
-    }
-  },
-  apollo: {
-    profile () {
-      var query
-      if (this.type === 'community') {
-        query = gql`query ProfileData($id: String!) {
-          profile(id: $id) {
-            canEdit
-
-            preferredName
-            legalName
-            description
-
-            headerImage {
-              uri
-            }
-            avatarImage {
-              uri
-            }
-
-            tiaki {
-              id
-              preferredName
-            }
-          }
-        }`
-      }
-      if (this.type === 'person') {
-        query = gql`query ProfileData($id: String!) {
-          profile(id: $id) {
-            canEdit
-
-            preferredName
-            legalName
-            description
-
-            headerImage {
-              uri
-            }
-            avatarImage {
-              uri
-            }
-          }
-        }`
-      }
-
-      return {
-        query,
-        variables: {
-          id: this.profileId
-        },
-        fetchPolicy: 'no-cache'
-      }
+    },
+    profile: {
+      type: Object,
+      default: () => ({})
+    },
+    editProfile: {
+      type: Function
+      // default: () => console.log('need to define editProfile!')
     }
   },
   methods: {
@@ -151,7 +80,8 @@ export default {
     }
   },
   components: {
-    Header
+    Header,
+    Kaitiaki
   }
 }
 </script>
