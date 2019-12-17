@@ -27,6 +27,15 @@ $ npm run start:dev
 // which then asks for UI from dev-server
 ```
 
+OTHER TOOLS
+- [Graphiql](https://github.com/graphql/graphiql)
+  - a sweet GraphQL tool for exploring generated doc and practicing queries/ mutations with the server
+  - start the above dev environment then go to http://localhost:4000/graphql
+- [Storybook](https://storybook.js.org/)
+  - a tool to help you build components in isolation
+  - start it with `npm run storybook`
+  - serves up `*.stories.js` files
+
 NOTES
 - live-reload doesn't work for `ssb-server` (back end) code.
 - Windows sets env differently. Open 2 Powershell windows and run the following in each:
