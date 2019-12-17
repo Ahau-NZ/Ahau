@@ -1,14 +1,13 @@
 <template>
-    <g id="nodeGroup" :style="groupStyle">
+    <g :id="node.index" :style="groupStyle">
       <!-- recursion of partners (first so they're drawing in background) -->
       <g v-if="!profile.isCollapsed">
-        <g v-for="(partner, index) in partners" :key="partner.id">
-          <Node :id="`node-${index}`"
+        <g v-for="partner in partners" :key="partner.index">
+          <Node :id="partner.index"
             :radius="partnerRadius"
             :isPartner="true"
             :node="partner"
-            @update="updateWidth"
-            @openmenu="$emit('openmenu', $event)"
+            @open-context-menu="$emit('open-context-menu', $event)"
           />
         </g>
       </g>
@@ -83,8 +82,6 @@ import get from 'lodash.get'
 import tane from '@/assets/tane.svg'
 import wahine from '@/assets/wahine.svg'
 
-import * as d3 from 'd3' // will be changed later on
-
 export default {
   name: 'Node',
   props: {
@@ -143,8 +140,7 @@ export default {
     },
     partners () {
       if (this.isPartner || this.profile.partners === undefined) return []
-      this.getPartners()
-      return this.basePartners
+      return this.getPartners()
     },
     partnerMenuTranslate () {
       const x = this.node.right ? -0.3 : 1.4
@@ -156,20 +152,12 @@ export default {
       this.$emit('click')
     },
     openMenu ($event, profileId) {
-      this.$emit('openmenu', { $event, profileId })
-    },
-    updateWidth () {
-      var width = d3.select('#nodeGroup')
-        .node()
-        .getBoundingClientRect()
-        .width
-
-      this.$emit('update', width)
+      this.$emit('open-context-menu', { event, profileId })
     },
     getPartners () {
       var leftCount = 0
       var rightCount = 0
-      this.basePartners = this.profile.partners
+      return this.profile.partners
         .map((d, i) => {
           var sign = (i % 2 === 0) ? 1 : -1
           var offset = (sign === 1)
@@ -179,7 +167,7 @@ export default {
             ? ++leftCount
             : ++rightCount
           return {
-            index: i,
+            index: `${this.node.index}-partner-${i}`,
             x: sign * count * this.partnerRadius + offset,
             y: 10,
             data: d,
@@ -188,10 +176,7 @@ export default {
         })
         .reverse()
     }
-  },
-  mounted () {
   }
-
 }
 </script>
 
