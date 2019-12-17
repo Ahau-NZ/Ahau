@@ -1,5 +1,4 @@
 <template>
-  <svg>
     <g :id="node.index" :style="groupStyle">
       <!-- recursion of partners (first so they're drawing in background) -->
       <g v-if="!profile.isCollapsed">
@@ -7,16 +6,13 @@
           <Node :id="partner.index"
             :radius="partnerRadius"
             :isPartner="true"
-            :showLabel="partner.showLabel"
             :node="partner"
-            @openmenu="$emit('openmenu', $event)"
-            @mouseover.native="partner.showLabel = !partner.showLabel"
-            @mouseout.native="partner.showLabel = !partner.showLabel"
+            @open-context-menu="$emit('open-context-menu', $event)"
           />
         </g>
       </g>
 
-      <g v-if="!isPartner" @click.left="click" @click.right.prevent="openMenu($event, profile.id)">
+      <g class='avatar -main' v-if="!isPartner" @click.left="click">
         <defs>
           <clipPath id="myCircle">
             <circle :cx="radius" :cy="radius" :r="radius" />
@@ -32,8 +28,18 @@
         <g v-if="profile.isCollapsed" :style="collapsedStyle">
           <text> ... </text>
         </g>
+        <g class='menu-button' v-else
+           @click.stop="openMenu($event, profile.id)"
+          :transform="`translate(${1.4 * radius}, ${1.4 * radius})`"
+        >
+          <circle stroke="white" fill="white" filter="url(#shadow)" cx="20" cy="1" r="10"/>
+          <polygon points="15,0  25,0  20,6"
+            style="fill:#000;"/>
+        </g>
+
       </g>
-      <g v-else @click.right.prevent="openMenu($event, profile.id)">
+
+      <g v-else class='avatar -partner'>
         <defs>
           <clipPath id="myPartnerCircle">
             <circle :cx="radius" :cy="radius" :r="radius" />
@@ -45,15 +51,30 @@
           :height="diameter"
           clip-path="url(#myPartnerCircle)"
         />
+
+        <g class='menu-button'
+          @click.stop="openMenu($event, profile.id)"
+          :transform="partnerMenuTranslate"
+        >
+          <circle stroke="white" fill="white" filter="url(#shadow)" cx="20" cy="1" r="10"/>
+          <polygon points="15,0  25,0  20,6"
+            style="fill:#000;"/>
+        </g>
       </g>
 
-      <g id="node-label" v-if="showLabel" :style="textStyle">
+      <g id="node-label" :style="textStyle">
         <rect :width="textWidth" y="-16" height="20"></rect>
         <text>{{ profile.preferredName }}</text>
       </g>
-
+      <defs>
+        <filter id="shadow">
+          <feDropShadow dx="1" dy="0.6" stdDeviation="0.8"/>
+        </filter>
+      </defs>
+      <g v-if="profile.isCollapsed" :style="collapsedStyle">
+        <text> ... </text>
+      </g>
     </g>
-  </svg>
 </template>
 
 <script>
@@ -69,7 +90,6 @@ export default {
     node: { type: Object, required: true },
     radius: { type: Number, required: true },
     isPartner: { type: Boolean, default: false },
-    showLabel: { type: Boolean, default: true }
   },
   data () {
     return {
@@ -132,6 +152,10 @@ export default {
         .node()
         .getBoundingClientRect()
         .width
+    },
+    partnerMenuTranslate () {
+      const x = this.node.right ? -0.3 : 1.4
+      return `translate(${x * this.radius} ${1.3 * this.radius})`
     }
   },
   methods: {
@@ -139,7 +163,7 @@ export default {
       this.$emit('click')
     },
     openMenu ($event, profileId) {
-      this.$emit('openmenu', { $event, profileId })
+      this.$emit('open-context-menu', { event, profileId })
     },
     getPartners () {
       var leftCount = 0
@@ -158,7 +182,7 @@ export default {
             x: sign * count * this.partnerRadius + offset,
             y: 10,
             data: d,
-            showLabel: false
+            right: sign === -1
           }
         })
         .reverse()
@@ -177,26 +201,34 @@ export default {
 </script>
 
 <style scoped lang="scss">
-  svg {
+  g {
+    transition: all ease-in .1s;
+
+    g.avatar {
+      image {
+      }
+
+      .menu-button {
+        transition: opacity ease-in .2s;
+         opacity: 0;
+       }
+
+      &:hover {
+        .menu-button { opacity: 1; }
+        image {
+          filter: contrast(1.4) brightness(1.4);
+        }
+      }
+    }
+    rect { fill: #fff; }
+    text { fill: #555; }
+
     &:not(:root) {
       overflow: visible;
     }
     &:hover{
       cursor: pointer;
-    }
 
-    image {
-      transition: ease-in 0.2s;
-
-      &:hover{
-        filter: contrast(1.4) brightness(1.4);
-      }
-    }
-    rect {
-      fill: #fff;
-    }
-    text {
-      fill: #555;
     }
   }
 </style>

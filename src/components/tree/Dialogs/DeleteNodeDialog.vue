@@ -18,8 +18,7 @@
             <v-btn @click="close" fab text color="secondary" class="mr-4">
               <v-icon>mdi-close</v-icon>
             </v-btn>
-            <v-btn @click="submit"
-              fab text color="blue" class="mr-4">
+            <v-btn @click="submit" fab text color="blue" class="mr-4">
               <v-icon>mdi-check</v-icon>
             </v-btn>
           </v-col>
