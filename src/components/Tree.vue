@@ -26,13 +26,12 @@
               </g>
             </g>
 
-            <g :transform="`translate(${treeX-settings.nodeRadius} ${treeY-settings.nodeRadius})`"
+            <g :transform="`translate(${treeX - nodeRadius} ${treeY - nodeRadius})`"
               ref="tree">
               <g v-for="node in nodes" :key="node.data.id" class="node">
-                <Node :node="node" :radius="settings.nodeRadius"
+                <Node :node="node" :radius="nodeRadius"
                   @click="collapse(node)"
                   @open-context-menu="$emit('open-context-menu', $event)"
-                  @update="updateSeparation"
                   :showLabel="true"
                 />
               </g>
@@ -46,7 +45,7 @@
 
 <script>
 import * as d3 from 'd3'
-
+import get from 'lodash.get'
 import Node from './tree/Node.vue'
 import Link from './tree/Link.vue'
 
@@ -72,19 +71,15 @@ export default {
   },
   data () {
     return {
-      node: {
-        new: null
-      },
       componentLoaded: false, // need to ensure component is loaded before using $refs
+      // ?? think this is unused ??
+      // node: {
+      //   new: null
+      // },
 
-      settings: {
-        nodeRadius: 50, // use variable for zoom later on
-        nodeSeparationX: 100,
-        nodeSeparationY: 150
-      }
-      // options: {
-      //   addnode: false // Is this used by anything?
-      // }
+      nodeRadius: 50, // use variable for zoom later on
+      nodeSeparationX: 100,
+      nodeSeparationY: 150
     }
   },
   mounted () {
@@ -93,21 +88,7 @@ export default {
   },
   computed: {
     branch () {
-      return this.settings.nodeSeparationY / 2 + this.settings.nodeRadius
-    },
-    /*
-      the space between nodes on the x axis
-      @TODO: will be used later on for implementing zoom and pan on tree
-    */
-    nodeSeparationX () {
-      return this.settings.nodeSeparationX
-    },
-    /*
-      the space between node on the y axis
-      @TODO: will be used later on for implementing zoom and pan on tree
-    */
-    nodeSeparationY () {
-      return this.settings.nodeSeparationY
+      return this.nodeSeparationY / 2 + this.nodeRadius
     },
     /*
       gets the X position of the tree based on the svg size
@@ -148,11 +129,18 @@ export default {
     treeLayout () {
       return d3.tree()
         .nodeSize([
-          this.nodeSeparationX + this.settings.nodeRadius,
-          this.nodeSeparationY + this.settings.nodeRadius
+          this.nodeSeparationX + this.nodeRadius,
+          this.nodeSeparationY + this.nodeRadius
         ])
-        .separation(function (a, b) {
-          return a.parent === b.parent ? 1 : 2
+        .separation((a, b) => {
+          if (a.parent !== b.parent) return 1.3
+          // "how far cousins be spaced"  (I think)
+          // nodes have only one one "node.parent" (but multiple node.data.parents)
+
+          return 1 + 0.3 * (this.visiblePartners(a) + this.visiblePartners(b))
+          // "how far are siblings spaced" (I think)
+          // start with a baseline of 1, then add a proportion of the number of partners
+          // as partners take up less space than central node, are placed evenly to either side
         })
     },
     //  returns a nested data structure representing a tree based on the treeData object
@@ -168,6 +156,7 @@ export default {
         .descendants() // returns the array of descendants starting with the root node, then followed by each child in topological order
         .map((d, i) => { // returns a new custom object for each node
           return {
+            index: `node-${i}`,
             children: d.children,
             data: d.data,
             depth: d.depth,
@@ -206,17 +195,12 @@ export default {
       // TODO
       // this one feels like perhaps it should be handled in this file
     },
-
-    /*
-      updated when the Node returns its text-width, sets the separation between nodes to the largest text width.
-      Which stops overlapping labels.
-    */
-    updateSeparation ($event) {
-      var width = $event
-      if (width > this.settings.nodeSeparationX) {
-        this.settings.nodeSeparationX = width
-      }
+    visiblePartners (node) {
+      return get(node, 'data.isCollapsed')
+        ? 0
+        : get(node, 'data.partners.length', 0)
     },
+
     zoom () {
       var svg = d3.select('#baseSvg')
       var g = d3.select('#baseGroup')
