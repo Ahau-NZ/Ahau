@@ -46,7 +46,7 @@
           </v-btn>
           <span class="caption pt-4">Upload profile photo</span>
         </clipper-upload>
-        <Avatar v-if="!avatar.new" :image="avatarImage" :alt="preferredName" />
+        <Avatar v-if="!avatar.new" :image="avatarImage" :alt="preferredName" size="18vh" />
         <v-overlay :value="avatar.overlay" color="black" opacity="0.9">
           <div class="avatar-editor">
             <clipper-fixed

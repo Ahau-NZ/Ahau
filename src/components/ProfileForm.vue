@@ -7,7 +7,7 @@
       :addImages="addChanges"
     />
     <v-container class='body px-12 pt-12'>
-      <v-row>
+      <v-row class="pt-12">
         <v-col>
           <v-form class="body white pt-0" ref="form" v-model="form.valid" lazy-validation>
             <v-row>
@@ -25,7 +25,7 @@
                 ></v-text-field>
               </v-col>
 
-              <v-col cols="12">
+              <v-col cols="12" md="12">
                 <v-textarea v-model="profile.description"
                   name="input-7-1"
                   label="Description"
@@ -39,7 +39,7 @@
         </v-col>
       </v-row>
 
-      <v-row>
+      <v-row class="pt-12">
         <v-col>
           <Actions :hasChanges="hasChanges"
             @cancel="$emit('cancel')"

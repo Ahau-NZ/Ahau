@@ -2,7 +2,7 @@
   <div class='wrapper'>
     <Header :preferredName="profile.preferredName" :headerImage="profile.headerImage" :avatarImage="profile.avatarImage"/>
     <v-container class="body-width white py-12 px-12">
-      <v-row>
+      <v-row class="pt-12">
         <v-col cols="8">
           <h1 class="primary--text">{{profile.preferredName}}</h1>
           <v-row>

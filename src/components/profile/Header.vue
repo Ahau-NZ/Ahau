@@ -6,7 +6,7 @@
 
     <v-row class='avatar-row'>
       <v-row class='avatar-box'>
-        <Avatar :image="avatarImage" :alt="preferredName" />
+        <Avatar :image="avatarImage" :alt="preferredName" size="18vh" />
       </v-row>
     </v-row>
   </v-container>
