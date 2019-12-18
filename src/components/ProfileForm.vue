@@ -154,44 +154,6 @@ export default {
       ]
       this.profile = Object.assign({}, this.profile, pick(changes, permitted))
     }
-    // async saveProfile () {
-    //   if (!this.hasChanges) return
-
-    //   const request = this.isNew
-    //     ? {
-    //       mutation: gql`mutation ($input: CreateProfileInput!) {
-    //         createProfile(input: $input)
-    //       }`,
-    //       variables: {
-    //         input: {
-    //           type: this.type,
-    //           ...this.profileChanges
-    //         }
-    //       }
-    //     }
-    //     : {
-    //       mutation: gql`mutation ($input: UpdateProfileInput!) {
-    //         updateProfile(input: $input)
-    //       }`,
-    //       variables: {
-    //         input: {
-    //           id: this.profile.id,
-    //           ...this.profileChanges
-    //         }
-    //       }
-    //     }
-
-    //   const result = await this.$apollo.mutate(request)
-
-    //   if (result.data) {
-    //     if (this.isNew) {
-    //       this.$router.push({ name: 'communityShow', params: { id: result.data.createProfile } })
-    //     } else {
-    //       this.$router.push({ name: 'communityShow', params: { id: result.data.updateProfile } })
-    //       // this.$router.go(-1)
-    //     }
-    //   }
-    // }
   },
   components: {
     Header,
@@ -199,8 +161,6 @@ export default {
   }
 }
 </script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 .wrapper {
   display: flex;
