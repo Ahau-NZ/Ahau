@@ -158,8 +158,14 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
+
+  $avatarSize: 18vh;
+  $headerHeight: 100vw / 5.33333;
+  $formWidth: 600px;
+
   .full-width {
-    max-width: 100%
+    max-width: 100%;
+    // @media
   }
   .super-z {
     z-index: 998;
@@ -169,21 +175,21 @@ export default {
     background-size: 50px 50px;
   }
   .header {
-    height: calc(100vw / 5.33333);
+    height: $headerHeight;
     background: grey;
     width: 100%;
-    margin-bottom: calc(-100vw / 5.33333);
+    margin-bottom: -$headerHeight;
     position: relative;
-    top: calc(-100vw / 5.33333);
+    top: -$headerHeight;
     opacity: 0.6;
   }
   .header-editor {
     width: 100vw;
-    height: calc(100vw / 5.33333);
+    height: $headerHeight;
     margin-bottom: -1vw;
     .controls {
       position: absolute;
-      top: calc(100vw / 5.33333);
+      top: $headerHeight;
       right: 0;
       background: rgba(0, 0, 0, 0.8);
     }
@@ -191,23 +197,13 @@ export default {
   .edit-header-button {
     cursor: pointer;
     position: absolute;
-    top: calc(100vw / 5.33333 - 10vh);
+    top: calc(#{-$headerHeight/3} + #{$headerHeight});
     right: 5vw;
-  }
-  .handle-header-buttons {
-    position: relative;
-    top: -15vh;
-    right: -55%;
-    z-index: 999;
-    display: flex;
-    flex-flow: row nowrap;
-    justify-content: space-around;
-    width: 300px;
   }
 
   .avatar-row {
     position: relative;
-    min-width: 600px;
+    min-width: $formWidth;
     max-width: 60vw;
 
     margin: 0 auto;
@@ -215,20 +211,20 @@ export default {
 
     .avatar-box {
       position: absolute;
-      top: -18.75vh;
-      left: -5vh;
+      top: -$avatarSize/2;
+      left: -$avatarSize/4;
 
-      margin-bottom: -25vh;
-      width: 25vh;
+      margin-bottom: -$avatarSize;
+      width: $avatarSize;
 
       .avatar-picker {
         z-index: 1;
 
         background: rgba(100,100,100,0.8);
 
-        width: 25vh;
-        border-radius: 12.5vh;
-        margin-bottom: -25vh;
+        width: $avatarSize;
+        border-radius: $avatarSize/2;
+        margin-bottom: -$avatarSize;
 
         display: flex;
         flex-flow: column;
@@ -242,22 +238,14 @@ export default {
   .avatar-editor {
     position: absolute;
     height: auto;
-    min-width: 25vh;
-    top: -35vh;
-    right: 8vw;
+    min-width: $avatarSize;
+    top: -2 * $avatarSize;
+    right: $avatarSize/2;
   }
 
 .toggle {
   cursor: pointer;
   z-index: 999;
-}
-.editor {
-  position: absolute;
-  background: rgba(0, 0, 0, 0.8);
-  height: 460px;
-  width: 610px;
-  z-index: 998;
-  padding: 50px;
 }
 .actions {
   // position: relative;
@@ -268,6 +256,6 @@ export default {
   display: flex;
   flex-flow: row nowrap;
   justify-content: space-around;
-  width: 300px;
+  width: $formWidth/2;
 }
 </style>

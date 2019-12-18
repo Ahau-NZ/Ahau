@@ -30,6 +30,9 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
+  $avatarSize: 18vh;
+  $headerHeight: 100vw / 5.33333;
+  $formWidth: 600px;
   .full-width {
     max-width: 100%
   }
@@ -40,7 +43,7 @@ export default {
 
   .avatar-row {
     position: relative;
-    min-width: 600px;
+    min-width: $formWidth;
     max-width: 60vw;
 
     margin: 0 auto;
@@ -48,11 +51,11 @@ export default {
 
     .avatar-box {
       position: absolute;
-      top: -18.75vh;
-      left: -5vh;
+      top: -$avatarSize/2;
+      left: -$avatarSize/4;
 
-      margin-bottom: -25vh;
-      width: 25vh;
+      margin-bottom: -$avatarSize;
+      width: $avatarSize;
     }
   }
 </style>

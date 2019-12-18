@@ -85,9 +85,8 @@ export default {
   }
 }
 </script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
+  $formWidth: 600px;
   .wrapper {
     display: flex;
     flex-direction: column;
@@ -95,9 +94,9 @@ export default {
     // background: linear-gradient(to right, grey 0%,grey 50%,#000000 50%,white 50%,white 100%);
 
     .body-width {
-      min-width: 600px;
+      min-width: $formWidth;
       max-width: 60vw;
-      min-height: calc(100vh - 40vh);
+      min-height: 100vh;
       background: white;
     }
   }
