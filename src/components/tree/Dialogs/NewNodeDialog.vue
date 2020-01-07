@@ -160,7 +160,6 @@ import Dialog from '@/components/Dialog.vue'
 import Avatar from '@/components/Avatar.vue'
 // import NodeDatePicker from './NodeDatePicker.vue'
 import { GENDERS, RELATIONSHIPS } from '@/lib/constants'
-import blob2file from '@/lib/blob2file'
 
 function defaultData () {
   return {
@@ -262,8 +261,8 @@ export default {
       try {
         const canvas = this.$refs.avatar.clip({ maxWPixel: 1920 })
         canvas.toBlob(async blob => {
-          const file = await blob2file(URL.createObjectURL(blob), 'avatar')
-          // const file = new File(blob, 'avatar', { type: 'image/jpg' })
+          const file = new File([blob], 'avatar', { type: blob.type })
+
           const result = await this.$apollo.mutate({
             mutation: gql`mutation uploadFile($file: Upload!) {
               uploadFile(file: $file) {

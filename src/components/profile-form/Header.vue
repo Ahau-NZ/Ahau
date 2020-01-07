@@ -83,7 +83,6 @@
 <script>
 import gql from 'graphql-tag'
 import Avatar from '@/components/Avatar.vue'
-import blob2file from '@/lib/blob2file'
 const pick = require('lodash.pick')
 
 export default {
@@ -125,7 +124,8 @@ export default {
       try {
         const canvas = this.$refs[type + 'Clipper'].clip({ maxWPixel: 1920 })
         canvas.toBlob(async blob => {
-          const file = await blob2file(URL.createObjectURL(blob), type)
+          const file = new File([blob], type, { type: blob.type })
+
           const result = await this.$apollo.mutate({
             mutation: gql`mutation uploadFile($file: Upload!) {
               uploadFile(file: $file) {
