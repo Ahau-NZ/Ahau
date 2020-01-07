@@ -1,117 +1,163 @@
 <template>
-  <Dialog :show="show" @close="close">
-    <v-form ref="form"
-      v-model="form.valid"
-      lazy-validation
-    >
-      <v-card>
-        <v-card-title>
-          <span class="headline">
-            Create a new Person
-          </span>
-        </v-card-title>
-        <v-card-text>
-          <v-container light>
-            <v-row>
-              <v-col cols="12" sm="5" md="7">
-                <v-text-field label="Preferred Name*"
-                  v-model="data.preferredName"
-                  :rules="form.rules.name.preferred"
-                  hint="This is the name that will show on the whakapapa"
-                  required
-                ></v-text-field>
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col cols="12" sm="5" md="7">
-                <v-text-field label="Legal Name*"
-                  v-model="data.legalName"
-                  :rules="form.rules.name.legal"
-                  hint="This is the name that appears on your birth certificate or ID"
-                  required
-                ></v-text-field>
-              </v-col>
-            </v-row>
-            <v-row>
-              <!-- <v-col cols="12" sm="5" md="3"> -->
-              <!--   <v-select label="Title*" -->
-              <!--     :items="titles" -->
-              <!--     v-model="data.title" -->
-              <!--     :rules="form.rules.title" -->
-              <!--     required -->
-              <!--   ></v-select> -->
-              <!-- </v-col> -->
-              <v-col cols="12" sm="5" md="3">
-                <v-select label="Gender*"
-                  v-model="data.gender"
-                  :rules="form.rules.gender"
-                  :items="genders"
-                  required
-                ></v-select>
-              </v-col>
-            <!--   <v-col cols="12" sm="5" md="3"> -->
-            <!--     <NodeDatePicker label="Date of Birth*" -->
-            <!--       :required="true" -->
-            <!--       :rules="form.rules.date.birth" -->
-            <!--       :value="data.dateOfBirth" -->
-            <!--       @date="data.dateOfBirth = $event" -->
-            <!--       :date="data.dateOfBirth" -->
-            <!--     /> -->
-            <!--   </v-col> -->
-            <!--   <v-col cols="12" sm="5" md="3"> -->
-            <!--     <NodeDatePicker label="Date Deceased" -->
-            <!--       :required="false" -->
-            <!--       :value="data.dateOfDeath" -->
-            <!--       @date="data.dateOfDeath = $event" -->
-            <!--     /> -->
-            <!--   </v-col> -->
-            </v-row>
-            <v-row>
-              <v-col cols="12" sm="5" md="3">
-                <v-select label="Relationship Type*"
-                  v-model="data.relationshipType"
-                  :rules="form.rules.relationshipType"
-                  :items="relationshipTypes"
-                  required
-                ></v-select>
-              </v-col>
-              <v-col v-if="showLegallyAdopted">
-                <v-checkbox label="Legally Adopted" v-model="data.legallyAdopted"/>
-              </v-col>
-            </v-row>
+  <div>
+    <Dialog :show="show" @close="close">
+      <v-form ref="form"
+        v-model="form.valid"
+        lazy-validation
+      >
+        <v-card>
+          <v-card-title>
+            <span class="headline">
+              Create a new Person
+            </span>
+          </v-card-title>
+          <v-card-text>
+            <v-container light>
+              <v-row>
+                <v-col cols="8" sm="5" md="7">
+                  <v-text-field label="Preferred Name*"
+                    v-model="data.preferredName"
+                    :rules="form.rules.name.preferred"
+                    hint="This is the name that will show on the whakapapa"
+                    required
+                  ></v-text-field>
+                </v-col>
 
-            <!-- <v-row>
+                <v-col cols="4" sm="12" md="5">
+                  <v-row class="py-4 d-flex column align-center">
+                    <Avatar class="mr-4" size="100px" v-if="data.avatarImage" :image="data.avatarImage" :alt="data.preferredName" />
+                    <clipper-upload accept="image/*" @input="toggleAvatar">
+                      <v-btn v-if="!avatar.new" class="toggle" fab color="white">
+                        <v-icon class="black--text">mdi-camera</v-icon>
+                      </v-btn>
+                      <span class="caption pt-4 pl-4">Upload profile photo</span>
+                    </clipper-upload>
+                  </v-row>
+                </v-col>
+              </v-row>
 
-              <v-btn class="mx-2" fab> -->
-                <!-- <v-icon>mdi-plus</v-icon> -->
-                <!-- insert photo picker here -->
-              <!-- </v-btn>
+              <v-row>
+                <v-col cols="12" sm="5" md="7">
+                  <v-text-field label="Legal Name*"
+                    v-model="data.legalName"
+                    :rules="form.rules.name.legal"
+                    hint="This is the name that appears on your birth certificate or ID"
+                    required
+                  ></v-text-field>
+                </v-col>
+              </v-row>
 
-            </v-row> -->
+              <v-row>
+                <!-- <v-col cols="12" sm="5" md="3"> -->
+                <!--   <v-select label="Title*" -->
+                <!--     :items="titles" -->
+                <!--     v-model="data.title" -->
+                <!--     :rules="form.rules.title" -->
+                <!--     required -->
+                <!--   ></v-select> -->
+                <!-- </v-col> -->
+                <v-col cols="12" sm="5" md="3">
+                  <v-select label="Gender*"
+                    v-model="data.gender"
+                    :rules="form.rules.gender"
+                    :items="genders"
+                    required
+                  />
+                </v-col>
+              <!--   <v-col cols="12" sm="5" md="3"> -->
+              <!--     <NodeDatePicker label="Date of Birth*" -->
+              <!--       :required="true" -->
+              <!--       :rules="form.rules.date.birth" -->
+              <!--       :value="data.dateOfBirth" -->
+              <!--       @date="data.dateOfBirth = $event" -->
+              <!--       :date="data.dateOfBirth" -->
+              <!--     /> -->
+              <!--   </v-col> -->
+              <!--   <v-col cols="12" sm="5" md="3"> -->
+              <!--     <NodeDatePicker label="Date Deceased" -->
+              <!--       :required="false" -->
+              <!--       :value="data.dateOfDeath" -->
+              <!--       @date="data.dateOfDeath = $event" -->
+              <!--     /> -->
+              <!--   </v-col> -->
+              </v-row>
 
-            <v-row class="actions">
-              <v-col cols="12" sm="5" md="9">
-                <small>*indicates required field</small>
-              </v-col>
-              <v-col>
-                <v-btn @click="close" fab text color="secondary" class="mr-4">
-                  <v-icon>mdi-cancel</v-icon>
-                </v-btn>
-                <v-btn @click="submit" :disabled="!form.valid"
-                  fab text color="success" class="mr-4">
-                  <v-icon>mdi-check</v-icon>
-                </v-btn>
-              </v-col>
-            </v-row>
-          </v-container>
-        </v-card-text>
-      </v-card>
-    </v-form>
-  </Dialog>
+              <v-row>
+                <v-col cols="12" sm="5" md="3">
+                  <v-select label="Relationship Type*"
+                    v-model="data.relationshipType"
+                    :rules="form.rules.relationshipType"
+                    :items="relationshipTypes"
+                    required
+                  ></v-select>
+                </v-col>
+                <v-col v-if="showLegallyAdopted">
+                  <v-checkbox label="Legally Adopted" v-model="data.legallyAdopted"/>
+                </v-col>
+              </v-row>
+
+              <v-row class="actions">
+                <v-col cols="12" sm="5" md="9">
+                  <small>*indicates required field</small>
+                </v-col>
+                <v-col>
+                  <v-btn @click="close" fab text color="secondary" class="mr-4">
+                    <v-icon>mdi-cancel</v-icon>
+                  </v-btn>
+                  <v-btn @click="submit" :disabled="!form.valid"
+                    fab text color="success" class="mr-4">
+                    <v-icon>mdi-check</v-icon>
+                  </v-btn>
+                </v-col>
+              </v-row>
+            </v-container>
+          </v-card-text>
+        </v-card>
+      </v-form>
+    </Dialog>
+
+    <Dialog :show='avatar.showEditor'>
+      <v-container style="background: black;">
+
+        <v-row justify="center">
+          <v-col style="max-width: 600px;">
+            <clipper-fixed
+              ref="avatar"
+              :grid="false"
+              :src="avatar.new"
+              :area="100"
+              bg-color="rgba(0, 0, 0, 0)"
+              :round="true"
+              shadow="rgba(0,0,0,0.5)"
+              :rotate="avatar.rotation"
+            />
+          </v-col>
+        </v-row>
+
+        <div class="px-8 py-4">
+          <h6 class="caption pt-8"><v-icon>mdi-gesture-tap-hold</v-icon> Ajust the image by zooming, scaling and moving it around before saving.</h6>
+          <h5 class="pt-8">rotate</h5>
+          <clipper-range v-model="avatar.rotation" style="max-width:300px" :min="0" :max="360"></clipper-range>
+
+          <v-row class="actions py-6">
+            <v-btn @click="toggleAvatar(null)" text color="secondary" class="mr-4" >
+              <v-icon>mdi-close</v-icon>
+            </v-btn>
+            <v-btn @click="handleImageUpload()" text color="secondary" >
+              <v-icon>mdi-check</v-icon>
+            </v-btn>
+          </v-row>
+
+        </div>
+      </v-container>
+    </Dialog>
+  </div>
 </template>
 
 <script>
+import gql from 'graphql-tag'
 import Dialog from '@/components/Dialog.vue'
+import Avatar from '@/components/Avatar.vue'
 // import NodeDatePicker from './NodeDatePicker.vue'
 import { GENDERS, RELATIONSHIPS } from '@/lib/constants'
 
@@ -122,7 +168,8 @@ function defaultData () {
     gender: '',
     relationshipType: '',
     legallyAdopted: false,
-    children: []
+    children: [],
+    avatarImage: null
     // title: '',
     // dateOfBirth: '',
     // dateOfDeath: '',
@@ -132,7 +179,8 @@ function defaultData () {
 export default {
   name: 'NewNodeDialog',
   components: {
-    Dialog
+    Dialog,
+    Avatar
     // NodeDatePicker
   },
   props: {
@@ -146,6 +194,11 @@ export default {
       genders: GENDERS,
       relationshipTypes: RELATIONSHIPS,
       data: defaultData(),
+      avatar: {
+        new: null,
+        showEditor: false,
+        rotation: 0
+      },
       form: {
         valid: true,
         rules: {
@@ -200,14 +253,57 @@ export default {
 
       this.$emit('close')
     },
+    toggleAvatar (file) {
+      this.avatar.new = this.avatar.new ? null : file
+      this.avatar.showEditor = !this.avatar.showEditor
+    },
+    async handleImageUpload () {
+      try {
+        const canvas = this.$refs.avatar.clip({ maxWPixel: 1920 })
+        canvas.toBlob(async blob => {
+          const file = new File([blob], 'avatar', { type: blob.type })
+
+          const result = await this.$apollo.mutate({
+            mutation: gql`mutation uploadFile($file: Upload!) {
+              uploadFile(file: $file) {
+                blob
+                mimeType
+                uri
+              }
+            }`,
+            variables: {
+              file
+            }
+          })
+
+          if (result.errors) throw result.errors
+
+          let cleanImage = {}
+          Object.entries(result.data.uploadFile).forEach(([key, value]) => {
+            if (key !== '__typename') cleanImage[key] = value
+          })
+          this.data.avatarImage = cleanImage
+
+          this.avatar.new = null
+          this.avatar.showEditor = false
+        })
+      } catch (error) {
+        throw error
+      }
+    },
     submit () {
       if (!this.$refs.form.validate()) {
         console.log('---->not validated')
         return
       }
 
+      const submission = Object.assign({}, this.data)
+      if (!submission.avatarImage) {
+        delete submission.avatarImage
+      }
+
       // send the data back to the parent component
-      this.$emit('submit', this.data)
+      this.$emit('submit', submission)
 
       // close this dialog
       this.close()

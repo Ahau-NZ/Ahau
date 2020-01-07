@@ -2,7 +2,7 @@
   <div class='wrapper'>
     <Header :preferredName="profile.preferredName" :headerImage="profile.headerImage" :avatarImage="profile.avatarImage"/>
     <v-container class="body-width white py-12 px-12">
-      <v-row>
+      <v-row class="pt-12">
         <v-col cols="8">
           <h1 class="primary--text">{{profile.preferredName}}</h1>
           <v-row>
@@ -85,9 +85,8 @@ export default {
   }
 }
 </script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
+  $formWidth: 600px;
   .wrapper {
     display: flex;
     flex-direction: column;
@@ -95,9 +94,9 @@ export default {
     // background: linear-gradient(to right, grey 0%,grey 50%,#000000 50%,white 50%,white 100%);
 
     .body-width {
-      min-width: 600px;
+      min-width: $formWidth;
       max-width: 60vw;
-      min-height: calc(100vh - 40vh);
+      min-height: 100vh;
       background: white;
     }
   }

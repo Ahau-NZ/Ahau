@@ -7,7 +7,7 @@
       :addImages="addChanges"
     />
     <v-container class='body px-12 pt-12'>
-      <v-row>
+      <v-row class="pt-12">
         <v-col>
           <v-form class="body white pt-0" ref="form" v-model="form.valid" lazy-validation>
             <v-row>
@@ -25,7 +25,7 @@
                 ></v-text-field>
               </v-col>
 
-              <v-col cols="12">
+              <v-col cols="12" md="12">
                 <v-textarea v-model="profile.description"
                   name="input-7-1"
                   label="Description"
@@ -39,7 +39,7 @@
         </v-col>
       </v-row>
 
-      <v-row>
+      <v-row class="pt-12">
         <v-col>
           <Actions :hasChanges="hasChanges"
             @cancel="$emit('cancel')"
@@ -154,44 +154,6 @@ export default {
       ]
       this.profile = Object.assign({}, this.profile, pick(changes, permitted))
     }
-    // async saveProfile () {
-    //   if (!this.hasChanges) return
-
-    //   const request = this.isNew
-    //     ? {
-    //       mutation: gql`mutation ($input: CreateProfileInput!) {
-    //         createProfile(input: $input)
-    //       }`,
-    //       variables: {
-    //         input: {
-    //           type: this.type,
-    //           ...this.profileChanges
-    //         }
-    //       }
-    //     }
-    //     : {
-    //       mutation: gql`mutation ($input: UpdateProfileInput!) {
-    //         updateProfile(input: $input)
-    //       }`,
-    //       variables: {
-    //         input: {
-    //           id: this.profile.id,
-    //           ...this.profileChanges
-    //         }
-    //       }
-    //     }
-
-    //   const result = await this.$apollo.mutate(request)
-
-    //   if (result.data) {
-    //     if (this.isNew) {
-    //       this.$router.push({ name: 'communityShow', params: { id: result.data.createProfile } })
-    //     } else {
-    //       this.$router.push({ name: 'communityShow', params: { id: result.data.updateProfile } })
-    //       // this.$router.go(-1)
-    //     }
-    //   }
-    // }
   },
   components: {
     Header,
@@ -199,8 +161,6 @@ export default {
   }
 }
 </script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 .wrapper {
   display: flex;
