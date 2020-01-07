@@ -22,20 +22,20 @@
                     required
                   ></v-text-field>
                 </v-col>
+
                 <v-col cols="4" sm="12" md="5">
                   <v-row class="py-4 d-flex column align-center">
-
--                  <Avatar class="mr-4" size="55px" v-if="data.avatarImage" :image="data.avatarImage" :alt="data.preferredName" />
+                    <Avatar class="mr-4" size="100px" v-if="data.avatarImage" :image="data.avatarImage" :alt="data.preferredName" />
                     <clipper-upload accept="image/*" @input="toggleAvatar">
                       <v-btn v-if="!avatar.new" class="toggle" fab color="white">
                         <v-icon class="black--text">mdi-camera</v-icon>
                       </v-btn>
                       <span class="caption pt-4 pl-4">Upload profile photo</span>
                     </clipper-upload>
-
                   </v-row>
                 </v-col>
               </v-row>
+
               <v-row>
                 <v-col cols="12" sm="5" md="7">
                   <v-text-field label="Legal Name*"
@@ -46,6 +46,7 @@
                   ></v-text-field>
                 </v-col>
               </v-row>
+
               <v-row>
                 <!-- <v-col cols="12" sm="5" md="3"> -->
                 <!--   <v-select label="Title*" -->
@@ -61,7 +62,7 @@
                     :rules="form.rules.gender"
                     :items="genders"
                     required
-                  ></v-select>
+                  />
                 </v-col>
               <!--   <v-col cols="12" sm="5" md="3"> -->
               <!--     <NodeDatePicker label="Date of Birth*" -->
@@ -80,6 +81,7 @@
               <!--     /> -->
               <!--   </v-col> -->
               </v-row>
+
               <v-row>
                 <v-col cols="12" sm="5" md="3">
                   <v-select label="Relationship Type*"
@@ -92,16 +94,6 @@
                 <v-col v-if="showLegallyAdopted">
                   <v-checkbox label="Legally Adopted" v-model="data.legallyAdopted"/>
                 </v-col>
-              </v-row>
-
-              <!-- <v-row>
-                <v-btn class="mx-2" fab> -->
-                  <!-- <v-icon>mdi-plus</v-icon> -->
-                  <!-- insert photo picker here -->
-                <!-- </v-btn>
-              </v-row> -->
-
-              <v-row class="py-4 d-flex align-center">
               </v-row>
 
               <v-row class="actions">
@@ -126,6 +118,7 @@
 
     <Dialog :show='avatar.showEditor'>
       <v-container style="background: black;">
+
         <v-row justify="center">
           <v-col style="max-width: 600px;">
             <clipper-fixed
@@ -202,8 +195,6 @@ export default {
       genders: GENDERS,
       relationshipTypes: RELATIONSHIPS,
       data: defaultData(),
-      uploadSrc: '',
-      avatarImage: undefined,
       avatar: {
         new: null,
         showEditor: false,
@@ -285,14 +276,17 @@ export default {
               file
             }
           })
+
           if (result.errors) throw result.errors
+
           let cleanImage = {}
           Object.entries(result.data.uploadFile).forEach(([key, value]) => {
             if (key !== '__typename') cleanImage[key] = value
           })
+          this.data.avatarImage = cleanImage
+
           this.avatar.new = null
           this.avatar.showEditor = false
-          this.data.avatarImage = cleanImage
         })
       } catch (error) {
         throw error
@@ -305,7 +299,7 @@ export default {
       }
 
       const submission = Object.assign({}, this.data)
-      if (!this.avatarImage) {
+      if (!submission.avatarImage) {
         delete submission.avatarImage
       }
 
