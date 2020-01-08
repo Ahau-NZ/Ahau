@@ -41,8 +41,10 @@ export default {
   },
   methods: {
     back () {
-      this.$router.push({ name: 'personShow', params: { id: this.profile.id } })
-
+      // Have commented this out as the only time you will edit a profile using this view is when you first create one. 
+      // All future edits to your profile will be handled in the new whakapapa dialogs 
+      // this.$router.push({ name: 'personShow', params: { id: this.profile.id } })
+      this.$router.push({ name: 'login' })    
       // TODO - to fix this need to stop using % in :id
       // add encode / decodeURIcomponent ?
       // this.$router.back()
