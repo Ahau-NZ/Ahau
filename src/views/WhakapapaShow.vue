@@ -296,7 +296,7 @@ export default {
         throw err
       }
     },
-    async createProfile ({ preferredName, legalName, gender }) {
+    async createProfile ({ preferredName, legalName, gender, avatarImage }) {
       const res = await this.$apollo.mutate({
         mutation: gql`mutation ($input: CreateProfileInput!) {
           createProfile(input: $input)
@@ -307,8 +307,8 @@ export default {
             preferredName,
             legalName,
             gender,
+            avatarImage,
             recps: this.whakapapaView.recps
-            // avatarImage: ImageInput
           }
         }
       })
