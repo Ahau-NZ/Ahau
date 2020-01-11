@@ -80,6 +80,9 @@ export default {
       // a dictionary which maps profileIds > profiles
       // this is a store for lookups, and from which we build up nestedWhakapapa
 
+      recordQueue: [],
+      processingQueue: false,
+
       selectedProfile: null,
       dialog: {
         new: false,
@@ -145,36 +148,56 @@ export default {
   },
   watch: {
     'whakapapaView.focus': async function (newFocus) {
-      this.loadDescendants(newFocus)
+      if (newFocus) this.loadDescendants(newFocus)
+    },
+    processingQueue: function (isProcessing) {
+      if (!isProcessing) return
+
+      while (this.recordQueue.length) {
+        const record = this.recordQueue.shift()
+
+        var output = Object.assign({}, this.profiles)
+
+        // flatten out record and merge into current profiles
+        Object.entries(tree.flatten(record))
+          .forEach(([ profileId, profile ]) => {
+            output[profileId] = Object.assign({}, output[profileId] || {}, profile)
+            // this merge might be overwriting a lot
+          })
+
+        // populate the "partners" field of each parent
+        const parentIds = record.parents.map(profile => profile.id)
+        parentIds.forEach(parentId => {
+          if (!output[parentId]) return
+
+          const currentPartners = output[parentId].partners || []
+          const partners = new Set([...currentPartners, ...parentIds])
+          partners.delete(parentId)
+          output[parentId].partners = Array.from(partners)
+        })
+
+        this.profiles = Object.assign({}, this.profiles, output)
+      }
+
+      this.processingQueue = false
     }
   },
   methods: {
     async loadDescendants (profileId) {
-      const result = await this.getCloseWhakapapa(profileId)
-      const record = result.data.closeWhakapapa
+      // fetch close whakapapa records for this profile
+      const record = await this.getCloseWhakapapa(profileId)
+      if (!record) return
 
+      // if (whakapapaView.mode === 'descendants')
+      // follow the child-links and load the next generation
       record.children.forEach(profile => {
         this.loadDescendants(profile.id)
       })
 
-      var output = Object.assign({}, this.profiles)
-      Object.entries(tree.flatten(record))
-        .forEach(([ profileId, profile ]) => {
-          output[profileId] = Object.assign({}, output[profileId] || {}, profile)
-          // this merge might be overwriting a lot
-        })
-
-      const parentIds = record.parents.map(profile => profile.id)
-      parentIds.map(parentId => {
-        if (!output[parentId]) return
-
-        const currentPartners = output[parentId].partners || []
-        const partners = new Set([...currentPartners, ...parentIds])
-        partners.delete(parentId)
-        output[parentId].partners = Array.from(partners)
-      })
-
-      this.profiles = output
+      // add this to queue of records to process and merge into graph
+      // so that we don't get collisions / overwrites
+      this.recordQueue = [...this.recordQueue, record]
+      if (!this.processingQueue) this.processingQueue = true
     },
     async getCloseWhakapapa (profileId) {
       const request = {
@@ -212,11 +235,16 @@ export default {
 
       try {
         const result = await this.$apollo.query(request)
-        return result
-      } catch (err) {
-        console.error('WARNING, something went wrong')
-        console.error(err)
-        return err
+        if (result.errors) {
+          console.error('WARNING, something went wrong')
+          console.error(result.errors)
+          return
+        }
+
+        return result.data.closeWhakapapa
+      } catch (e) {
+        console.error('WARNING, something went wrong, caught it')
+        console.error(e)
       }
     },
     collapseNode (profileId) {
