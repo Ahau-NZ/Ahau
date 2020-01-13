@@ -18,13 +18,8 @@
       </li>
     </vue-context>
 
-    <!--
-      <ViewNodeDialog v-if="dialog.show" :show="dialog.show" :node="node.selected"
-      @close="toggleShow"/>
-      // NOTE node.selected has changed
-    -->
-    <EditNodeDialog v-if="dialog.edit" :show="dialog.edit"
-      @close="toggleEdit"/>
+    <ViewEditNodeDialog v-if="dialog.view" :show="dialog.view" :profile="selectedProfile"
+      @close="toggleView" @new="toggleNewPerson($event)" @submit="updateProfile($event)" @delete="deleteProfile()"/>
     <NewNodeDialog v-if="dialog.new" :show="dialog.new"
       @close="toggleNew" @submit="addPerson($event)"/>
     <DeleteNodeDialog v-if="dialog.delete" :show="dialog.delete" :name="selectedProfile.preferredName"
@@ -38,12 +33,12 @@ import pick from 'lodash.pick'
 import { VueContext } from 'vue-context'
 
 import Tree from '@/components/Tree.vue'
-import tree from '@/lib/tree-helpers'
-
-// import ViewNodeDialog from '@/components/tree/Dialogs/ViewNodeDialog.vue'
-import EditNodeDialog from '@/components/tree/Dialogs/EditNodeDialog.vue'
+import ViewEditNodeDialog from '@/components/tree/Dialogs/ViewEditNodeDialog.vue'
 import NewNodeDialog from '@/components/tree/Dialogs/NewNodeDialog.vue'
 import DeleteNodeDialog from '@/components/tree/Dialogs/DeleteNodeDialog.vue'
+
+// const tree = require('@/lib/tree-helpers.js')
+import tree from '@/lib/tree-helpers'
 
 const saveWhakapapaRelMutation = (input) => ({
   mutation: gql`mutation ($input: WhakapapaRelationInput!) {
@@ -86,15 +81,14 @@ export default {
       selectedProfile: null,
       dialog: {
         new: false,
-        show: false,
-        edit: false,
+        view: false,
         delete: false,
         type: 'child'
       },
       contextMenuOpts: [
-        { title: 'Add Child', action: this.toggleNewChild },
-        { title: 'Add Parent', action: this.toggleNewParent },
-        { title: 'Edit Person', action: this.toggleEdit }
+        { title: 'View Person', action: this.toggleView },
+        { title: 'Add Child', action: this.toggleNew },
+        { title: 'Add Parent', action: this.toggleNew }
       ]
       // all the guff currently needed for context menus
     }
@@ -205,14 +199,18 @@ export default {
           closeWhakapapa(id: $id) {
             id
             gender
+            legalName
             preferredName
+            description
             avatarImage {
               uri
             }
             children {
               id
               gender
+              legalName
               preferredName
+              description
               avatarImage {
                 uri
               }
@@ -220,7 +218,9 @@ export default {
             parents {
               id
               gender
+              legalName
               preferredName
+              description
               avatarImage {
                 uri
               }
@@ -263,28 +263,23 @@ export default {
     // contextMenu //////////////////////////
     // TODO - extract all this
     openContextMenu ({ event, profileId }) {
-      this.selectedProfile = this.profiles[profileId]
+      this.setSelectedProfile(profileId)
       this.$refs.menu.open(event)
     },
-    // toggleShow (target) {
-    //   this.node.selected = target
-    //   this.dialog.show = !this.dialog.show
-    // },
-    toggleEdit () {
-      // TEMP - use the UI we have!
-      this.$router.push({ name: 'personEdit', params: { id: this.selectedProfile.id } })
-
-      // this.dialog.edit = !this.dialog.edit
+    toggleView () {
+      this.dialog.view = !this.dialog.view
     },
     toggleDelete () {
       this.dialog.delete = !this.dialog.delete
     },
     toggleNewChild () {
-      this.dialog.type = 'child'
-      this.toggleNew()
+      this.toggleNewPerson('child')
     },
     toggleNewParent () {
-      this.dialog.type = 'parent'
+      this.toggleNewPerson('parent')
+    },
+    toggleNewPerson (type) {
+      this.dialog.type = type
       this.toggleNew()
     },
     toggleNew () {
@@ -302,7 +297,7 @@ export default {
             child = profileId
             parent = this.selectedProfile.id
             await this.createChildLink({ child, parent, ...relationshipAttrs })
-            this.loadDescendants(parent)
+            await this.loadDescendants(parent)
             break
           case 'parent':
             child = this.selectedProfile.id
@@ -314,12 +309,15 @@ export default {
               // in this case we're updating the top of the graph, we update view.focus to that new top parent
               await this.updateFocus(parent)
             } else {
-              this.loadDescendants(child)
+              await this.loadDescendants(child)
             }
             break
           default: console.log('not built')
         }
         this.dialog.new = false
+        if (this.dialog.view) {
+          this.setSelectedProfile(this.selectedProfile.id)
+        }
       } catch (err) {
         throw err
       }
@@ -379,6 +377,25 @@ export default {
         throw err
       }
     },
+    async updateProfile (profileChanges) {
+      const profileId = this.selectedProfile.id
+      const res = await this.$apollo.mutate({
+        mutation: gql`mutation ($input: UpdateProfileInput!) {
+          updateProfile(input: $input)
+        }`,
+        variables: {
+          input: {
+            id: profileId,
+            ...profileChanges
+          }
+        }
+      })
+      if (res.errors) {
+        console.error('failed to update profile', res)
+        return
+      }
+      await this.loadDescendants(profileId)
+    },
     async deleteProfile () {
       if (!this.canDelete) return
       const profileId = this.selectedProfile.id
@@ -403,18 +420,18 @@ export default {
       this.profiles = {}
       this.loadDescendants(this.whakapapaView.focus)
       // TODO - find a smaller subset to reload!
+    },
+    setSelectedProfile (profileId) {
+      this.selectedProfile = this.profiles[profileId] // gets the value of the profile
+      this.selectedProfile = tree.hydrate(this.selectedProfile, this.profiles) // gets its hydrated value
     }
-    //
-    // contextMenu //////////////////////////
-
   },
   components: {
     Tree,
     VueContext,
-    EditNodeDialog,
     NewNodeDialog,
-    DeleteNodeDialog
-    // ViewNodeDialog
+    DeleteNodeDialog,
+    ViewEditNodeDialog
   }
 }
 </script>
