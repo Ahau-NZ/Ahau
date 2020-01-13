@@ -11,12 +11,15 @@
     >
       <template v-slot:activator="{ on }">
         <v-text-field
-          :label="label"
+          :disabled="makeDisabled"
+          flat
+          :solo="makeDisabled"
+          :label="makeDisabled ? label : ''"
           readonly
           :value="date"
           v-on="on"
-          prepend-icon="mdi-calendar"
-          color="pink"
+          :prepend-inner-icon="makeDisabled ? '' : 'mdi-calendar'"
+          color="secondary"
           required
           :rules="rules"
         >
@@ -36,8 +39,9 @@
 export default {
   computed: {
     date () {
-      this.$emit('date', this.value)
-      return this.value
+      var date = (this.value === null) ? this.label : this.value
+      this.$emit('date', date)
+      return date
     },
     /*
         gets todays date in YYYY-MM-DD format
@@ -61,7 +65,13 @@ export default {
     },
     label: {
       type: String,
-      required: true
+      required: false,
+      default: ''
+    },
+    makeDisabled: {
+      type: Boolean,
+      required: false,
+      default: false
     }
   }
 }

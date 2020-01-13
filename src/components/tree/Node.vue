@@ -1,9 +1,9 @@
 <template>
-    <g :id="node.index" :style="groupStyle">
+    <g :id="node.nodeId" :style="groupStyle">
       <!-- recursion of partners (first so they're drawing in background) -->
       <g v-if="!profile.isCollapsed">
-        <g v-for="partner in partners" :key="partner.index">
-          <Node :id="partner.index"
+        <g v-for="partner in partners" :key="partner.nodeId">
+          <Node :id="partner.nodeId"
             :radius="partnerRadius"
             :isPartner="true"
             :node="partner"
@@ -167,7 +167,7 @@ export default {
             ? ++leftCount
             : ++rightCount
           return {
-            index: `${this.node.index}-partner-${i}`,
+            index: `${this.node.nodeId}-partner-${i}`,
             x: sign * count * this.partnerRadius + offset,
             y: 10,
             data: d,

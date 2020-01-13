@@ -109,8 +109,8 @@
 
 <script>
 import Dialog from '@/components/Dialog.vue'
-// import NodeDatePicker from './NodeDatePicker.vue'
-import { GENDERS } from '@/lib/constants'
+// import NodeDatePicker from '@components/NodeDatePicker.vue'
+import { GENDERS, RULES } from '@/lib/constants'
 
 function defaultData () {
   return {
@@ -142,29 +142,7 @@ export default {
       data: defaultData(),
       form: {
         valid: true,
-        rules: {
-          // title: [
-          //   v => !!v || 'Title is required'
-          // ],
-          name: {
-            preferred: [
-              v => !!v || 'Preferred name is required',
-              v => (v && v.length <= 20) || 'Name must be less than 20 characters'
-            ],
-            legal: [
-              v => !!v || 'Legal name is required',
-              v => (v && v.length <= 50) || 'Name must be less than 50 characters'
-            ]
-          },
-          gender: [
-            v => !!v || 'Gender is required'
-          ]
-          // date: {
-          //   birth: [
-          //     v => !!v || 'Date of birth is required'
-          //   ]
-          // }
-        }
+        rules: RULES
       }
     }
   },

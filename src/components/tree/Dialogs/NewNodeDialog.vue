@@ -158,8 +158,8 @@
 import gql from 'graphql-tag'
 import Dialog from '@/components/Dialog.vue'
 import Avatar from '@/components/Avatar.vue'
-// import NodeDatePicker from './NodeDatePicker.vue'
-import { GENDERS, RELATIONSHIPS } from '@/lib/constants'
+// import NodeDatePicker from '@components/NodeDatePicker.vue'
+import { GENDERS, RELATIONSHIPS, RULES } from '@/lib/constants'
 
 function defaultData () {
   return {
@@ -201,32 +201,7 @@ export default {
       },
       form: {
         valid: true,
-        rules: {
-          // title: [
-          //   v => !!v || 'Title is required'
-          // ],
-          name: {
-            preferred: [
-              v => !!v || 'Preferred name is required',
-              v => (v && v.length <= 20) || 'Name must be less than 20 characters'
-            ],
-            legal: [
-              v => !!v || 'Legal name is required',
-              v => (v && v.length <= 50) || 'Name must be less than 50 characters'
-            ]
-          },
-          gender: [
-            v => !!v || 'Gender is required'
-          ],
-          relationshipType: [
-            v => !!v || 'Relationship type is required'
-          ]
-          // date: {
-          //   birth: [
-          //     v => !!v || 'Date of birth is required'
-          //   ]
-          // }
-        }
+        rules: RULES
       }
     }
   },
@@ -293,7 +268,6 @@ export default {
     },
     submit () {
       if (!this.$refs.form.validate()) {
-        console.log('---->not validated')
         return
       }
 

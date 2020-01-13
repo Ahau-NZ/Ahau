@@ -59,6 +59,7 @@ import pick from 'lodash.pick'
 import get from 'lodash.get'
 import Header from '@/components/profile-form/Header'
 import Actions from '@/components/profile-form/Actions'
+import { RULES, PERMITTED_PROFILE_ATTRS } from '@//lib/constants'
 
 export default {
   name: 'ProfileForm',
@@ -70,6 +71,7 @@ export default {
   },
   data () {
     return {
+      permitted: PERMITTED_PROFILE_ATTRS,
       profile: {
         id: '',
         preferredName: '',
@@ -80,29 +82,7 @@ export default {
       },
       form: {
         valid: true,
-        rules: {
-          // title: [
-          //   v => !!v || 'Title is required'
-          // ],
-          // gender: [
-          //   v => !!v || 'Gender is required'
-          // ],
-          name: {
-            preferred: [
-              v => !!v || 'Preferred name is required',
-              v => (v && v.length <= 20) || 'Name must be less than 20 characters'
-            ],
-            legal: [
-              v => !!v || 'Legal name is required',
-              v => (v && v.length <= 50) || 'Name must be less than 50 characters'
-            ]
-          }
-          // date: {
-          //   birth: [
-          //     v => !!v || 'Date of birth is required'
-          //   ]
-          // }
-        }
+        rules: RULES
       }
     }
   },
@@ -145,14 +125,7 @@ export default {
   },
   methods: {
     addChanges (changes) {
-      const permitted = [
-        'preferredName',
-        'legalName',
-        'description',
-        'avatarImage',
-        'headerImage'
-      ]
-      this.profile = Object.assign({}, this.profile, pick(changes, permitted))
+      this.profile = Object.assign({}, this.profile, pick(changes, this.permitted))
     }
   },
   components: {

@@ -156,7 +156,7 @@ export default {
         .descendants() // returns the array of descendants starting with the root node, then followed by each child in topological order
         .map((d, i) => { // returns a new custom object for each node
           return {
-            index: `node-${i}`,
+            nodeId: `node-${i}`,
             children: d.children,
             data: d.data,
             depth: d.depth,

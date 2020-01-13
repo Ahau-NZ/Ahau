@@ -33,18 +33,45 @@ function hydrate (node, flatStore) {
 
   if (output.children) {
     output.children = output.children
-      .map(profileId => hydrate(flatStore[profileId], flatStore))
+      .map(profileId => {
+        // look up the full record to replace the profileId
+        var profile = flatStore[profileId]
+        profile = hydrate(profile, flatStore)
+        return profile
+      })
+  }
+
+  if (output.parents) {
+    output.siblings = []
+    output.parents = output.parents
+      .map(profileId => {
+        // look up the full record to replace the profileId
+        var profile = flatStore[profileId]
+
+        if (profile.children) {
+          const currentSiblings = profile.children.map(d => {
+            return d
+          })
+
+          const siblings = new Set([...currentSiblings, ...output.siblings])
+          siblings.delete(output.id) // remove the current profile from this
+          output.siblings = Array.from(siblings)
+        }
+        return profile
+      })
+  }
+
+  if (output.siblings) {
+    output.siblings = output.siblings
+      .map(profileId => {
+        var profile = flatStore[profileId]
+        return profile
+      })
   }
 
   if (output.partners) {
     output.partners = output.partners
       .map(profileId => flatStore[profileId])
   }
-
-  // if (node.parents) {
-  //   careful, infinite recursion!
-  //   would need to add a "seen this" tracker
-  // }
-
   return output
 }
