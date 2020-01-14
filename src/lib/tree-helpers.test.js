@@ -157,3 +157,15 @@ test('sibling hydration', t => {
   t.deepEqual(actual, expected, 'hydration')
   t.end()
 })
+
+test('bornAt hydration', t => {
+  const profiles = {
+    A: {
+      bornAt: '2019-01-01T00:00:00.000Z'
+    }
+  }
+  const expected = { bornAt: '2019-01-01' }
+  const actual = tree.hydrate(profiles.A, profiles)
+  t.deepEqual(actual, expected, 'hydration')
+  t.end()
+})

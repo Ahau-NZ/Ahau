@@ -41,6 +41,10 @@ function hydrate (node, flatStore) {
       })
   }
 
+  if (output.bornAt) {
+    output.bornAt = output.bornAt.slice(0, 10)
+  }
+
   if (output.parents) {
     output.siblings = []
     output.parents = output.parents
