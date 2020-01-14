@@ -105,6 +105,7 @@ module.exports = gql`
     headerImage: ImageInput
     description: String
     gender: Gender
+    bornAt: Date
     tombstone: TombstoneInput
   }
 

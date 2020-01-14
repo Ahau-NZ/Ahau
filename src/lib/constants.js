@@ -48,7 +48,7 @@ export const RULES = {
 export const PERMITTED_PROFILE_ATTRS = [ // these are the properties that changes are permitted on
   'gender',
   'legalName',
-  // bornAt, disabled for now
+  'bornAt',
   'preferredName',
   'avatarImage',
   'description',
