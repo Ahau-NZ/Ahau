@@ -35,3 +35,13 @@ export const Enabled = () => ({
   }),
   components: { NodeDatePicker }
 })
+
+export const LongDate = () => ({
+  template: '<NodeDatePicker required :label="profile.bornAt" @date="profile.bornAt = $event" :makeDisabled="true" />',
+  data: () => ({
+    profile: {
+      bornAt: '2020-01-13T00:00:00.000Z'
+    }
+  }),
+  components: { NodeDatePicker }
+})

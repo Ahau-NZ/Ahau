@@ -39,7 +39,7 @@
 export default {
   computed: {
     date () {
-      var date = (this.value === null) ? this.label : this.value
+      var date = (this.value === null) ? this.label.slice(0, 10) : this.value
       this.$emit('date', date)
       return date
     },
