@@ -42,6 +42,8 @@ module.exports = (sbot, id) => new Promise((resolve, reject) => {
 
       addURIs(state)
 
+      fixDates(state)
+
       cache.set(id, state)
 
       resolve(state)
@@ -49,6 +51,22 @@ module.exports = (sbot, id) => new Promise((resolve, reject) => {
     // >>>>
   })
 })
+
+function fixDates (state) {
+  /*
+    The date type expects bornAt to be of type Date so 'null' breaks this.
+    We are making a hack which treats the year - 5000 as null.
+    NOTE: This means on the client side, developers will have to check for the year - 5000
+    and convert this back to null.
+  */
+  if (state.bornAt === null) {
+    state.bornAt = new Date(-5000, 0, 1)
+  }
+
+  if (typeof state.bornAt === 'number') {
+    state.bornAt = new Date(state.bornAt)
+  }
+}
 
 function addURIs (state) {
   if (get(state, 'avatarImage.blob')) {

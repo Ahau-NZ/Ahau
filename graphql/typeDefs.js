@@ -77,6 +77,7 @@ module.exports = gql`
     headerImage: Image
 
     gender: Gender
+    bornAt: Date
 
     tiaki: [Profile]
   }
@@ -91,6 +92,7 @@ module.exports = gql`
     headerImage: ImageInput
     description: String
     gender: Gender
+    bornAt: Date
     recps: [String]
   }
   input UpdateProfileInput {
@@ -126,7 +128,7 @@ module.exports = gql`
   }
 
   input WhakapapaViewInput {
-    viewId: String
+    id: ID
     name: String
     description: String
     focus: String
@@ -162,6 +164,7 @@ module.exports = gql`
     headerImage: Image
 
     gender: Gender
+    bornAt: Date
 
     relationshipType: RelationshipType
     legallyAdopted: Boolean
@@ -178,6 +181,7 @@ module.exports = gql`
     headerImage: Image
 
     gender: Gender
+    bornAt: Date
 
     parents: [WhakapapaNode]
     children: [WhakapapaNode]

@@ -50,7 +50,6 @@ module.exports = sbot => ({
 
     profile: async (_, { id }, { feedId, profileId }) => {
       const profile = await getProfile(sbot, id)
-
       return {
         ...profile,
         canEdit: profile.authors.includes(feedId) // WIP
@@ -175,12 +174,12 @@ module.exports = sbot => ({
       }
     },
     saveWhakapapaView: (_, { input }, { feedId, profileId }) => {
-      const { viewId } = input
+      const { id } = input
       const details = buildWhakakakaViewOpts(input)
 
-      if (viewId) {
+      if (id) {
         return new Promise((resolve, reject) => {
-          sbot.whakapapa.view.update(viewId, details, (err) => {
+          sbot.whakapapa.view.update(id, details, (err) => {
             if (err) reject(err)
             else resolve('Updated!')
           })
@@ -245,6 +244,9 @@ function buildTransformation (input) {
         T[key].set.date = Number(T[key].set.date)
         // graphql only allows 32bit signed Ints
         // so we're passing a Date and converting it to Int for ssb
+        return
+      case 'bornAt':
+        T[key] = { set: Number(value) }
         return
 
       case 'recps':

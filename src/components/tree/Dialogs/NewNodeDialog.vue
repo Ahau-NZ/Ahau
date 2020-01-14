@@ -64,16 +64,16 @@
                     required
                   />
                 </v-col>
-              <!--   <v-col cols="12" sm="5" md="3"> -->
-              <!--     <NodeDatePicker label="Date of Birth*" -->
-              <!--       :required="true" -->
-              <!--       :rules="form.rules.date.birth" -->
-              <!--       :value="data.dateOfBirth" -->
-              <!--       @date="data.dateOfBirth = $event" -->
-              <!--       :date="data.dateOfBirth" -->
-              <!--     /> -->
-              <!--   </v-col> -->
-              <!--   <v-col cols="12" sm="5" md="3"> -->
+                <v-col cols="12" sm="5" md="3">
+                  <NodeDatePicker label="Date of Birth*"
+                    :required="true"
+                    :rules="form.rules.date.birth"
+                    :value="data.bornAt"
+                    @date="data.bornAt = $event"
+                    :date="data.bornAt"
+                  />
+                </v-col>
+                <!-- <v-col cols="12" sm="5" md="3"> -->
               <!--     <NodeDatePicker label="Date Deceased" -->
               <!--       :required="false" -->
               <!--       :value="data.dateOfDeath" -->
@@ -158,7 +158,7 @@
 import gql from 'graphql-tag'
 import Dialog from '@/components/Dialog.vue'
 import Avatar from '@/components/Avatar.vue'
-// import NodeDatePicker from '@components/NodeDatePicker.vue'
+import NodeDatePicker from '@/components/NodeDatePicker.vue'
 import { GENDERS, RELATIONSHIPS, RULES } from '@/lib/constants'
 
 function defaultData () {
@@ -169,9 +169,9 @@ function defaultData () {
     relationshipType: '',
     legallyAdopted: false,
     children: [],
-    avatarImage: null
+    avatarImage: null,
     // title: '',
-    // dateOfBirth: '',
+    bornAt: ''
     // dateOfDeath: '',
   }
 }
@@ -180,8 +180,8 @@ export default {
   name: 'NewNodeDialog',
   components: {
     Dialog,
-    Avatar
-    // NodeDatePicker
+    Avatar,
+    NodeDatePicker
   },
   props: {
     show: {
