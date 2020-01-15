@@ -8,10 +8,7 @@
     <v-row>
       <v-col md="4" v-for="(profile, index) in profiles" :key="index">
         <v-row justify="center">
-          <Avatar size="80px" :image="profile.avatarImage" :alt="profile.preferredName" />
-        </v-row>
-        <v-row justify="center">
-          {{ profile.preferredName }}
+          <Avatar size="80px" :show-label="showLabels" :image="profile.avatarImage" :alt="profile.preferredName" />
         </v-row>
       </v-col>
       <v-col v-if="buttonLabel" md="4" class="pt-8" align="center">
@@ -39,8 +36,9 @@ export default {
   components: { Avatar }, // is this too hard to read?
   props: {
     profiles: { type: Array, required: true },
-    'button-label': { type: String, default: null },
-    'group-title': { type: String, default: null }
+    buttonLabel: { type: String, default: null },
+    groupTitle: { type: String, default: null },
+    showLabels: { type: Boolean, default: false }
   },
   methods: {
     click () {
