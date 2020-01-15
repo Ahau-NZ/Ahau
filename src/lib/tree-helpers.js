@@ -45,6 +45,10 @@ function hydrate (node, flatStore) {
     output.bornAt = output.bornAt.slice(0, 10)
   }
 
+  if (output.diedAt) {
+    output.diedAt = output.diedAt.slice(0, 10)
+  }
+
   if (output.parents) {
     output.siblings = []
     output.parents = output.parents

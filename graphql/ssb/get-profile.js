@@ -63,8 +63,16 @@ function fixDates (state) {
     state.bornAt = new Date(-5000, 0, 1)
   }
 
+  if (state.diedAt === null) {
+    state.diedAt = new Date(-5000, 0, 1)
+  }
+
   if (typeof state.bornAt === 'number') {
     state.bornAt = new Date(state.bornAt)
+  }
+
+  if (typeof state.diedAt === 'number') {
+    state.diedAt = new Date(state.diedAt)
   }
 }
 
