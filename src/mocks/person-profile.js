@@ -3,18 +3,66 @@ export const personMinimum = {
   canEdit: false,
   preferredName: 'Will',
   legalName: 'Will Smith',
-  bornAt: '01/02/03',
+  bornAt: '1980-02-01',
   description: null,
   gender: 'male',
   avatarImage: null,
   headerImage: null
 }
 
+export const personNoImages = {
+  id: '0',
+  preferredName: 'Kuia',
+  legalName: 'Kuia',
+  gender: 'female',
+  bornAt: '1950-01-01',
+  children: [
+    {
+      id: '1',
+      preferredName: 'Wahine',
+      gender: 'female',
+      bornAt: '1980-01-01',
+      children: [
+        {
+          id: '2',
+          preferredName: 'Kotiro',
+          legalName: 'Kotiro',
+          gender: 'female',
+          bornAt: '2008-01-01'
+        },
+        {
+          id: '3',
+          preferredName: 'Tama',
+          legalName: 'Tama',
+          gender: 'male',
+          bornAt: '2008-01-01'
+        }
+      ]
+    },
+    {
+      id: '4',
+      preferredName: 'Tane',
+      legalName: 'Tane',
+      gender: 'male',
+      bornAt: '1980-01-01'
+    }
+  ],
+  partners: [
+    {
+      id: '5',
+      preferredName: 'Koro',
+      legalName: 'Koro',
+      gender: 'male',
+      bornAt: '1950-01-01'
+    }
+  ]
+}
+
 export const personComplete = {
   'id': '%A',
   'gender': 'male',
   'legalName': 'Will Smith',
-  'bornAt': '01/02/03',
+  'bornAt': '2003-02-01',
   'preferredName': 'Will',
   'avatarImage': {
     uri: 'https://m.media-amazon.com/images/M/MV5BNTczMzk1MjU1MV5BMl5BanBnXkFtZTcwNDk2MzAyMg@@._V1_UY317_CR2,0,214,317_AL_.jpg'
@@ -64,6 +112,7 @@ export const personComplete = {
       'gender': 'female',
       'legalName': 'Caroline Bright',
       'preferredName': 'Caroline',
+      'bornAt': '1950-01-01',
       'avatarImage': {
         uri: ''
       }

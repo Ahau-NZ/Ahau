@@ -35,7 +35,7 @@ export default {
   name: 'AvatarGroup',
   components: { Avatar }, // is this too hard to read?
   props: {
-    profiles: { type: Array, required: true },
+    profiles: { type: Array, default: null },
     buttonLabel: { type: String, default: null },
     groupTitle: { type: String, default: null },
     showLabels: { type: Boolean, default: false }

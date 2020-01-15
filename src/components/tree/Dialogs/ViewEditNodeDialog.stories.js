@@ -1,6 +1,6 @@
 import { action } from '@storybook/addon-actions'
 import ViewEditNodeDialog from './ViewEditNodeDialog.vue'
-import { personMinimum, personComplete } from '@/mocks/person-profile'
+import { personMinimum, personComplete, personNoImages } from '@/mocks/person-profile'
 
 export default {
   title: 'ViewEditNodeDialog'
@@ -34,6 +34,19 @@ export const MinimumProfile = () => ({
       type: 'Child'
     },
     profile: personMinimum
+  }),
+  methods: defaultMethods,
+  components: { ViewEditNodeDialog }
+})
+
+export const NoImageProfile = () => ({
+  template: '<ViewEditNodeDialog v-if="dialog.show" :show="dialog.show" :profile="profile" @close="toggleView" @type="dialog.type = $event" @toggleNew="toggleNew()" @toggleDelete="toggleDelete()" @toggleSave="toggleSave()"/>',
+  data: () => ({
+    dialog: {
+      show: true,
+      type: 'Child'
+    },
+    profile: personNoImages
   }),
   methods: defaultMethods,
   components: { ViewEditNodeDialog }
