@@ -27,13 +27,33 @@ export default {
     alt: String,
     size: { type: String, default: '25vh' },
     showLabel: { type: Boolean, default: false },
-    gender: String
+    gender: String,
+    bornAt: String
   },
   computed: {
+    date () {
+      return new Date(this.bornAt)
+    },
+    age () {
+      var diffMs = Date.now() - this.date.getTime()
+      var ageDt = new Date(diffMs)
+
+      return Math.abs(ageDt.getUTCFullYear() - 1970)
+    },
     defaultImage () {
       switch (this.gender) {
-        case 'male': return tane
-        case 'female': return wahine
+        case 'male':
+          switch (true) {
+            case (this.age <= 12): return tama
+            case (this.age > 50): return koro
+            default: return tane
+          }
+        case 'female':
+          switch (true) {
+            case (this.age <= 12): return kotiro
+            case (this.age > 50): return kuia
+            default: return wahine
+          }
         default: return unknown
       }
     }
