@@ -9,7 +9,7 @@
           class="d-flex flex-column align-center"
         >
           <router-link :to="{ name: 'personShow', params: { id: profile.id }}">
-            <Avatar class="pointer" :image="profile.avatarImage" size="13vh" />
+            <Avatar class="pointer" :image="profile.avatarImage" :gender="profile.gender" size="13vh" />
             <h3 class="pointer">{{ profile.preferredName }}</h3>
           </router-link>
         </v-col>

@@ -6,7 +6,7 @@
           <img src="../assets/logo_red.svg" />
         </router-link>
         <!-- <v-btn icon :to="{ name: 'personShow', params: { id: profile.id } }"> -->
-          <Avatar size="50px" :image="profile.avatarImage" :alt="profile.preferredName" />
+          <Avatar size="50px" :image="profile.avatarImage" :alt="profile.preferredName" :gender="profile.gender"/>
         <!-- </v-btn> -->
       </v-toolbar-title>
 

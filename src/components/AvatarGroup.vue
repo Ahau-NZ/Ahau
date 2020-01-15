@@ -8,7 +8,7 @@
     <v-row>
       <v-col md="4" v-for="(profile, index) in profiles" :key="index">
         <v-row justify="center">
-          <Avatar size="80px" :show-label="showLabels" :image="profile.avatarImage" :alt="profile.preferredName" />
+          <Avatar size="80px" :show-label="showLabels" :image="profile.avatarImage" :alt="profile.preferredName" :gender="profile.gender"/>
         </v-row>
       </v-col>
       <v-col v-if="buttonLabel" md="4" class="pt-8" align="center">

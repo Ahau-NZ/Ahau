@@ -147,7 +147,7 @@
               <v-row>
                 <v-spacer/>
                 <v-col>
-                  <Avatar class="justify-center align-center" size="250px" :image="profile.avatarImage" :alt="profile.preferredName" />
+                  <Avatar class="justify-center align-center" size="250px" :image="profile.avatarImage" :alt="profile.preferredName" :gender="profile.gender" />
                 </v-col>
                 <v-spacer/>
               </v-row>
