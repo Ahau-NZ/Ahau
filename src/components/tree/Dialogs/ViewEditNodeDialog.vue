@@ -234,6 +234,7 @@ export default {
         gender: this.profile.gender,
         legalName: this.profile.legalName,
         bornAt: this.profile.bornAt,
+        diedAt: this.profile.diedAt,
         preferredName: this.profile.preferredName,
         avatarImage: this.profile.avatarImage,
         description: this.profile.description

@@ -200,6 +200,7 @@ export default {
             id
             gender
             bornAt
+            diedAt
             legalName
             preferredName
             description
@@ -210,6 +211,7 @@ export default {
               id
               gender
               bornAt
+              diedAt
               legalName
               preferredName
               description
@@ -221,6 +223,7 @@ export default {
               id
               gender
               bornAt
+              diedAt
               legalName
               preferredName
               description
