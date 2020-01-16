@@ -4,7 +4,7 @@ const express = require('express')
 const cors = require('cors')
 const typeDefs = require('./typeDefs')
 const Resolvers = require('./resolvers')
-const Context = require('./ssb/get-context')
+const Context = require('./ssb/queries/get-context')
 
 const PORT = 4000
 const app = express()
@@ -36,9 +36,7 @@ module.exports = sbot => {
         `🚀 Server ready at http://localhost:${PORT}${server.graphqlPath}`
       )
       console.log(
-        `🚀 Subscriptions ready at ws://localhost:${PORT}${
-          server.subscriptionsPath
-        }`
+        `🚀 Subscriptions ready at ws://localhost:${PORT}${server.subscriptionsPath}`
       )
     })
   })

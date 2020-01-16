@@ -35,6 +35,7 @@
     "lodash.clonedeep": "^4.5.0",
     "lodash.get": "^4.4.2",
     "lodash.pick": "^4.4.0",
+    "promisify-tuple": "^1.0.0",
     "pull-file": "^1.1.0",
     "pull-paramap": "^1.2.2",
     "pull-stream": "^3.6.14",

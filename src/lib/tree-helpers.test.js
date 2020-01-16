@@ -1,61 +1,118 @@
 import tree from './tree-helpers'
 const test = require('tape')
 
-test('missing profile', t => {
-  const profiles = {
+test('flatten', t => {
+  const person = {
+    id: 'A',
+    preferredName: 'dad',
+
+    parents: [
+      {
+        profile: {
+          id: 'B',
+          preferredName: 'grandad'
+        },
+        relationshipType: 'birth'
+      }
+    ],
+
+    children: [
+      {
+        profile: {
+          id: 'C',
+          preferredName: 'son'
+        },
+        relationshipType: 'birth'
+      },
+      {
+        profile: {
+          id: 'D',
+          preferredName: 'daughter'
+        },
+        relationshipType: 'whangai'
+      }
+    ]
+  }
+
+  // TODO
+  // currently relationshipType is totally lost in flattening
+  // changing this will likely require changing the data strucuture
+  // which may result in change to vue layer
+  const expected = {
     A: {
       id: 'A',
-      name: 'grandad',
-      parents: [],
-      children: ['B'],
-      siblings: []
+      preferredName: 'dad',
+      parents: ['B'],
+      children: ['C', 'D']
+    },
+    B: {
+      id: 'B',
+      preferredName: 'grandad'
+      // parents: [],
+      // children: ['A']
+    },
+    C: {
+      id: 'C',
+      preferredName: 'son'
+      // parents: ['A'],
+      // children: []
+    },
+    D: {
+      id: 'D',
+      preferredName: 'daughter'
+      // parents: ['A'],
+      // children: []
     }
   }
-  t.throws(
-    () => tree.hydrate(profiles.A, profiles),
-    'missing profile'
+
+  t.deepEqual(
+    tree.flatten(person),
+    expected,
+    'flattens the nesting!'
   )
+
   t.end()
 })
 
-test('parent hydration', t => {
-  const profiles = {
+test('hydrate', t => {
+  /* parent hydration */
+  const profilesParents = {
     A: {
       id: 'A',
-      name: 'grandad',
+      preferredName: 'grandad',
       parents: [],
       children: ['C'],
       siblings: []
     },
     B: {
       id: 'B',
-      name: 'grandma',
+      preferredName: 'grandma',
       parents: [],
       children: ['C'],
       siblings: []
     },
     C: {
       id: 'C',
-      name: 'mum',
+      preferredName: 'mum',
       parents: ['A', 'B'],
       children: [],
       siblings: []
     }
   }
-  const expected = {
+  const expectedParents = {
     id: 'C',
-    name: 'mum',
+    preferredName: 'mum',
     parents: [
       {
         id: 'A',
-        name: 'grandad',
+        preferredName: 'grandad',
         parents: [],
         children: ['C'],
         siblings: []
       },
       {
         id: 'B',
-        name: 'grandma',
+        preferredName: 'grandma',
         parents: [],
         children: ['C'],
         siblings: []
@@ -64,35 +121,36 @@ test('parent hydration', t => {
     children: [],
     siblings: []
   }
-  const actual = tree.hydrate(profiles.C, profiles)
-  t.deepEqual(actual, expected, 'hydration')
-  t.end()
-})
+  t.deepEqual(
+    tree.hydrate(profilesParents.C, profilesParents),
+    expectedParents,
+    'hydrates parents'
+  )
 
-test('child hydration', t => {
-  const profiles = {
+  /* child hydration */
+  const profilesChildren = {
     A: {
       id: 'A',
-      name: 'mum',
+      preferredName: 'mum',
       parents: [],
       children: ['B'],
       siblings: []
     },
     B: {
       id: 'B',
-      name: 'child1',
+      preferredName: 'child1',
       parents: ['A'],
       children: [],
       siblings: []
     }
   }
-  const expected = {
+  const expectedChildren = {
     id: 'B',
-    name: 'child1',
+    preferredName: 'child1',
     parents: [
       {
         id: 'A',
-        name: 'mum',
+        preferredName: 'mum',
         parents: [],
         children: [ 'B' ],
         siblings: []
@@ -101,42 +159,43 @@ test('child hydration', t => {
     children: [],
     siblings: []
   }
-  const actual = tree.hydrate(profiles.B, profiles)
-  t.deepEqual(actual, expected, 'hydration')
-  t.end()
-})
+  t.deepEqual(
+    tree.hydrate(profilesChildren.B, profilesChildren),
+    expectedChildren,
+    'hydrates children'
+  )
 
-test('sibling hydration', t => {
-  const profiles = {
+  /* sibling hydration */
+  const profilesSiblings = {
     A: {
       id: 'A',
-      name: 'mum',
+      preferredName: 'mum',
       parents: [],
       children: ['B', 'C'],
       siblings: []
     },
     B: {
       id: 'B',
-      name: 'child1',
+      preferredName: 'child1',
       parents: ['A'],
       children: [],
       siblings: ['C']
     },
     C: {
       id: 'C',
-      name: 'child2',
+      preferredName: 'child2',
       parents: ['A'],
       children: [],
       siblings: ['B']
     }
   }
-  const expected = {
+  const expectedSiblings = {
     id: 'B',
-    name: 'child1',
+    preferredName: 'child1',
     parents: [
       {
         id: 'A',
-        name: 'mum',
+        preferredName: 'mum',
         parents: [],
         children: ['B', 'C'],
         siblings: []
@@ -146,14 +205,33 @@ test('sibling hydration', t => {
     siblings: [
       {
         id: 'C',
-        name: 'child2',
+        preferredName: 'child2',
         parents: ['A'],
         children: [],
         siblings: ['B']
       }
     ]
   }
-  const actual = tree.hydrate(profiles.B, profiles)
-  t.deepEqual(actual, expected, 'hydration')
+  t.deepEqual(
+    tree.hydrate(profilesSiblings.B, profilesSiblings),
+    expectedSiblings,
+    'hydrates siblings'
+  )
+
+  /* missing profiles */
+  const profilesMissing = {
+    A: {
+      id: 'A',
+      preferredName: 'grandad',
+      parents: [],
+      children: ['B'],
+      siblings: []
+    }
+  }
+  t.throws(
+    () => tree.hydrate(profilesMissing.A, profilesMissing),
+    'throws if missing missing profile'
+  )
+
   t.end()
 })

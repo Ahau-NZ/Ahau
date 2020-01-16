@@ -7,22 +7,25 @@ export default {
 
 function flatten (node) {
   const { children, parents } = node
+  // NOTE ignore node.relationshipType, node.legallyAdopted
 
   const flatNode = Object.assign(
     {},
     node,
     {
-      children: node.children.map(p => p.id),
-      parents: node.parents.map(p => p.id)
+      children: children.map(p => p.profile.id),
+      parents: parents.map(p => p.profile.id)
     }
   )
-  // node.children = node.children.map(p => p.id)
-  // node.parents = node.parents.map(p => p.id)
 
-  var output = { [node.id]: flatNode }
-  children.forEach(node => { output[node.id] = node })
-  parents.forEach(node => { output[node.id] = node })
-  // NOTE these children + parent entries have profile data but not their own children / parent records (yet)
+  var output = {
+    [node.id]: flatNode
+  }
+  children.forEach(person => { output[person.profile.id] = person.profile })
+  parents.forEach(person => { output[person.profile.id] = person.profile })
+
+  // NOTE these children + parent entries have Person data aren't yet
+  // populated with their own children / parent records (yet)
   // we could pre-emptively add child / parent data about the current node to the
 
   return output
