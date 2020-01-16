@@ -1,6 +1,6 @@
 <template>
   <v-col>
-    <v-row justify="center">
+    <v-row :justify="row ? '' : 'center'" align="center">
       <v-btn @click="click"
         small
         fab
@@ -8,8 +8,9 @@
         >
         <v-icon class="black--text">mdi-plus</v-icon>
       </v-btn>
+      &nbsp; &nbsp; {{ row ? label : ''}}
     </v-row>
-    <v-row justify="center" class="pt-1">
+    <v-row v-if="label && !row" justify="center" class="pt-1">
       {{ label }}
     </v-row>
   </v-col>
@@ -19,7 +20,8 @@
 export default {
   name: 'AddButton',
   props: {
-    label: String
+    label: String,
+    row: { type: Boolean, default: false }
   }
 }
 </script>
