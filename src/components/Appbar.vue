@@ -46,10 +46,10 @@ export default {
     }
   },
   beforeMount () {
-    this.updateProfile()
+    this.getCurrentIdentity()
   },
   methods: {
-    async updateProfile () {
+    async getCurrentIdentity () {
       const result = await this.$apollo.query({
         query: gql` {
           whoami {
@@ -73,7 +73,7 @@ export default {
   watch: {
     $route (next, last) {
       if (last.name === 'personEdit' && last.params.id === this.profile.id) {
-        this.updateProfile()
+        this.getCurrentIdentity()
       }
     }
   },

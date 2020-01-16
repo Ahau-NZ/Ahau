@@ -59,8 +59,11 @@ export default {
     }
   },
   mounted () {
-    if (process.env.NODE_ENV === 'development') this.proceed()
-    else setTimeout(this.proceed, 2e3)
+    if (process.env.NODE_ENV === 'development') {
+      this.$router.push({ name: 'whakapapaIndex' })
+      return
+    }
+    setTimeout(this.proceed, 2e3)
   },
   methods: {
     proceed () {
