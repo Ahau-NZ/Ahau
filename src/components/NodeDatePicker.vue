@@ -14,7 +14,7 @@
           :disabled="makeDisabled"
           flat
           :solo="makeDisabled"
-          :label="makeDisabled ? (date ? label : '') : label"
+          :label="makeDisabled ? (date ? label : 'Living') : label"
           readonly
           :value="date"
           v-on="on"
