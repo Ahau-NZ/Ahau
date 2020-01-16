@@ -15,10 +15,12 @@
           flat
           :solo="makeDisabled"
           :label="makeDisabled ? (date ? label : 'Living') : label"
+          :placeholder="' '"
           readonly
           :value="date"
           v-on="on"
           :prepend-inner-icon="makeDisabled ? '' : 'mdi-calendar'"
+          :append-icon="makeDisabled ? '' : 'mdi-chevron-down'"
           color="secondary"
           required
           :rules="rules"
