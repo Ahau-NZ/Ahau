@@ -65,17 +65,17 @@
                   />
                 </v-col>
                 <v-col cols="12" sm="5" md="3" class="mr-5">
-                  <NodeDatePicker label="Date of Birth*"
+                  <NodeDatePicker
                     :required="true"
                     :rules="form.rules.date.birth"
                     :value="data.bornAt"
+                    label="Date of Birth"
                     @date="data.bornAt = $event"
-                    :date="data.bornAt"
                   />
                 </v-col>
                  <v-col cols="12" sm="5" md="3">
-                  <NodeDatePicker label="Date Deceased"
-                    :required="false"
+                  <NodeDatePicker
+                    label="Date Deceased"
                     :value="data.diedAt"
                     @date="data.diedAt = $event"
                   />
