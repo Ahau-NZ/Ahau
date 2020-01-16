@@ -64,22 +64,22 @@
                     required
                   />
                 </v-col>
-                <v-col cols="12" sm="5" md="3">
-                  <NodeDatePicker label="Date of Birth*"
+                <v-col cols="12" sm="5" md="3" class="mr-5">
+                  <NodeDatePicker
                     :required="true"
                     :rules="form.rules.date.birth"
                     :value="data.bornAt"
+                    label="Date of Birth"
                     @date="data.bornAt = $event"
-                    :date="data.bornAt"
                   />
                 </v-col>
-                <!-- <v-col cols="12" sm="5" md="3"> -->
-              <!--     <NodeDatePicker label="Date Deceased" -->
-              <!--       :required="false" -->
-              <!--       :value="data.dateOfDeath" -->
-              <!--       @date="data.dateOfDeath = $event" -->
-              <!--     /> -->
-              <!--   </v-col> -->
+                 <v-col cols="12" sm="5" md="3">
+                  <NodeDatePicker
+                    label="Date Deceased"
+                    :value="data.diedAt"
+                    @date="data.diedAt = $event"
+                  />
+                </v-col>
               </v-row>
 
               <v-row>
@@ -171,8 +171,8 @@ function defaultData () {
     children: [],
     avatarImage: null,
     // title: '',
-    bornAt: ''
-    // dateOfDeath: '',
+    bornAt: '',
+    diedAt: ''
   }
 }
 

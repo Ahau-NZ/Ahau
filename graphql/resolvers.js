@@ -249,6 +249,10 @@ function buildTransformation (input) {
         T[key] = { set: Number(value) }
         return
 
+      case 'diedAt':
+        T[key] = { set: Number(value) }
+        return
+
       case 'recps':
         T[key] = value
         return

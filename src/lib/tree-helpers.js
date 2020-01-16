@@ -41,8 +41,17 @@ function hydrate (node, flatStore) {
       })
   }
 
+  // TODO: This needs to go, just checks if its the date from the null issue
+  // SEE: ssb/get-profile.js
+
   if (output.bornAt) {
     output.bornAt = output.bornAt.slice(0, 10)
+    output.bornAt = (output.bornAt === '-005001-12') ? '' : output.bornAt
+  }
+
+  if (output.diedAt) {
+    output.diedAt = output.diedAt.slice(0, 10)
+    output.diedAt = (output.diedAt === '-005001-12') ? '' : output.diedAt
   }
 
   if (output.parents) {

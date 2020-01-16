@@ -200,6 +200,7 @@ export default {
             id
             gender
             bornAt
+            diedAt
             legalName
             preferredName
             description
@@ -210,6 +211,7 @@ export default {
               id
               gender
               bornAt
+              diedAt
               legalName
               preferredName
               description
@@ -221,6 +223,7 @@ export default {
               id
               gender
               bornAt
+              diedAt
               legalName
               preferredName
               description
@@ -325,7 +328,7 @@ export default {
         throw err
       }
     },
-    async createProfile ({ preferredName, legalName, gender, bornAt, avatarImage }) {
+    async createProfile ({ preferredName, legalName, gender, bornAt, diedAt, avatarImage }) {
       const res = await this.$apollo.mutate({
         mutation: gql`mutation ($input: CreateProfileInput!) {
           createProfile(input: $input)
@@ -337,6 +340,7 @@ export default {
             legalName,
             gender,
             bornAt,
+            diedAt,
             avatarImage,
             recps: this.whakapapaView.recps
           }

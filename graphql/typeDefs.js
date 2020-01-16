@@ -78,7 +78,7 @@ module.exports = gql`
 
     gender: Gender
     bornAt: Date
-
+    diedAt: Date
     tiaki: [Profile]
   }
 
@@ -93,6 +93,7 @@ module.exports = gql`
     description: String
     gender: Gender
     bornAt: Date
+    diedAt: Date
     recps: [String]
   }
   input UpdateProfileInput {
@@ -106,6 +107,7 @@ module.exports = gql`
     description: String
     gender: Gender
     bornAt: Date
+    diedAt: Date
     tombstone: TombstoneInput
   }
 
@@ -166,7 +168,7 @@ module.exports = gql`
 
     gender: Gender
     bornAt: Date
-
+    diedAt: Date
     relationshipType: RelationshipType
     legallyAdopted: Boolean
   }
@@ -183,7 +185,7 @@ module.exports = gql`
 
     gender: Gender
     bornAt: Date
-
+    diedAt: Date
     parents: [WhakapapaNode]
     children: [WhakapapaNode]
   }
