@@ -54,7 +54,7 @@ export default {
             case (this.age > 50): return kuia
             default: return wahine
           }
-        default: return unknown
+        default: return wahine
       }
     }
   }

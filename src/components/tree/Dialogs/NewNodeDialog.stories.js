@@ -1,5 +1,4 @@
 import NewNodeDialog from './NewNodeDialog.vue'
-import NewNodeDialog2 from './NewNodeDialog2.vue'
 import { action } from '@storybook/addon-actions'
 
 export default {
@@ -7,8 +6,8 @@ export default {
 }
 
 export const defaultDialog = () => ({
-  template: `<NewNodeDialog2 :show="true"/>`,
-  components: { NewNodeDialog2 }
+  template: `<NewNodeDialog :show="true"/>`,
+  components: { NewNodeDialog }
 })
 
 export const addAChild = () => ({

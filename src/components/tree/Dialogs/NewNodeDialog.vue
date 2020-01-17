@@ -13,7 +13,7 @@
               </v-card-title>
             </v-row>
             <v-row>
-              <v-col>
+              <v-col md="7">
                 <v-row>
                   <v-text-field
                     v-model="data.preferredName"
@@ -38,7 +38,7 @@
                 <v-row>
                   <v-col>
                     <NodeDatePicker
-                      :required="true"
+                      required
                       :rules="form.rules.date.birth"
                       :value="data.bornAt"
                       label="Date of birth"
@@ -84,21 +84,20 @@
                 </v-row>
               </v-col>
               <v-col>
-                <Avatar class="mr-4" size="100px" v-if="data.avatarImage" :image="data.avatarImage" :alt="data.preferredName" />
-                <clipper-upload accept="image/*" @input="toggleAvatar">
-                  <v-btn v-if="!avatar.new" class="toggle" fab color="white">
-                    <v-icon class="black--text">mdi-camera</v-icon>
+                <v-row>
+                  <Avatar size="200px" :image="data.avatarImage" :alt="data.preferredName" />
+                </v-row>
+                <v-row justify="center" align="center">
+                  <v-btn
+                    fab
+                    small
+                  >
+                  <v-icon>mdi-pencil</v-icon>
                   </v-btn>
-                  <span class="caption pt-4 pl-4">Upload profile photo</span>
-                </clipper-upload>
-
-
-
-
-
-
-
-
+                  <v-card-subtitle>
+                    Edit profile picture
+                  </v-card-subtitle>
+                </v-row>
               </v-col>
             </v-row>
             <v-row>
@@ -134,7 +133,7 @@ function defaultData () {
     relationshipType: '',
     legallyAdopted: false,
     children: [],
-    avatarImage: null,
+    avatarImage: {},
     // title: '',
     bornAt: '',
     diedAt: ''
@@ -199,6 +198,9 @@ export default {
         }
       })
       return submission
+    },
+    updatedData () {
+      return this.data
     }
   },
   watch: {
