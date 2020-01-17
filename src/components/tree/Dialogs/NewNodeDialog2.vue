@@ -6,26 +6,22 @@
         lazy-validation
       >
         <v-card>
+          <v-card-title>
+            <span class="headline">
+              Create a new Person
+            </span>
+          </v-card-title>
           <v-card-text>
             <v-container light>
               <v-row>
-                <v-card-title>
-                  <h3>
-                    Add DialogType to SelectedNode
-                  </h3>
-                </v-card-title>
-              </v-row>
-              <v-row>
-                <v-col md="8">
-                  <v-text-field
+                <v-col cols="8" sm="5" md="7">
+                  <v-text-field label="Preferred Name*"
                     v-model="data.preferredName"
-                    label="Preferred name. This is the name shown on your profile"
-                    :placeholder="' '"
                     :rules="form.rules.name.preferred"
+                    hint="This is the name that will show on the whakapapa"
                     required
                   ></v-text-field>
                 </v-col>
-              </v-row>
 
                 <v-col cols="4" sm="12" md="5">
                   <v-row class="py-4 d-flex column align-center">
@@ -38,42 +34,20 @@
                     </clipper-upload>
                   </v-row>
                 </v-col>
+              </v-row>
+
               <v-row>
-                <v-col md="8">
-                  <v-text-field
+                <v-col cols="12" sm="5" md="7">
+                  <v-text-field label="Legal Name*"
                     v-model="data.legalName"
                     :rules="form.rules.name.legal"
-                    label="Legal name"
-                    :placeholder="' '"
+                    hint="This is the name that appears on your birth certificate or ID"
                     required
                   ></v-text-field>
                 </v-col>
               </v-row>
-              <v-row>
-                <v-col md="2">
-                  <AddButton label="Add name" @click="" :row="true"/>
-                </v-col>
-              </v-row>
 
-              <v-row justify="center" align="center">
-                <v-col md="4">
-                  <NodeDatePicker
-                    :required="true"
-                    :rules="form.rules.date.birth"
-                    :value="data.bornAt"
-                    label="Date of birth"
-                    @date="data.bornAt = $event"
-                  />
-                </v-col>
-                <v-col md="4">
-                  <v-text-field
-                    type="number"
-                    label="Order of birth"
-                    :placeholder="' '"
-                    append-icon="mdi-chevron-down"
-                  />
-                </v-col>
-                <v-spacer/>
+              <v-row>
                 <!-- <v-col cols="12" sm="5" md="3"> -->
                 <!--   <v-select label="Title*" -->
                 <!--     :items="titles" -->
@@ -82,20 +56,32 @@
                 <!--     required -->
                 <!--   ></v-select> -->
                 <!-- </v-col> -->
-              </v-row>
-              <v-row justify="center" align="center">
-                <v-col md="4" >
-                  <v-radio label="No longer living"/>
-                </v-col>
-                <v-col md=4>
-                  <NodeDatePicker
-                    label="Date of death"
-                    :value="data.diedAt"
-                    @date="data.diedAt = $event"
+                <v-col cols="12" sm="5" md="3">
+                  <v-select label="Gender*"
+                    v-model="data.gender"
+                    :rules="form.rules.gender"
+                    :items="genders"
+                    required
                   />
                 </v-col>
-                <v-spacer/>
+              <!--   <v-col cols="12" sm="5" md="3"> -->
+              <!--     <NodeDatePicker label="Date of Birth*" -->
+              <!--       :required="true" -->
+              <!--       :rules="form.rules.date.birth" -->
+              <!--       :value="data.dateOfBirth" -->
+              <!--       @date="data.dateOfBirth = $event" -->
+              <!--       :date="data.dateOfBirth" -->
+              <!--     /> -->
+              <!--   </v-col> -->
+              <!--   <v-col cols="12" sm="5" md="3"> -->
+              <!--     <NodeDatePicker label="Date Deceased" -->
+              <!--       :required="false" -->
+              <!--       :value="data.dateOfDeath" -->
+              <!--       @date="data.dateOfDeath = $event" -->
+              <!--     /> -->
+              <!--   </v-col> -->
               </v-row>
+
               <v-row>
                 <v-col cols="12" sm="5" md="3">
                   <v-select label="Relationship Type*"
@@ -172,8 +158,7 @@
 import gql from 'graphql-tag'
 import Dialog from '@/components/Dialog.vue'
 import Avatar from '@/components/Avatar.vue'
-import AddButton from '@/components/AddButton.vue'
-import NodeDatePicker from '@/components/NodeDatePicker.vue'
+// import NodeDatePicker from '@components/NodeDatePicker.vue'
 import { GENDERS, RELATIONSHIPS, RULES } from '@/lib/constants'
 
 function defaultData () {
@@ -184,10 +169,10 @@ function defaultData () {
     relationshipType: '',
     legallyAdopted: false,
     children: [],
-    avatarImage: null,
+    avatarImage: null
     // title: '',
-    bornAt: '',
-    diedAt: ''
+    // dateOfBirth: '',
+    // dateOfDeath: '',
   }
 }
 
@@ -195,10 +180,8 @@ export default {
   name: 'NewNodeDialog',
   components: {
     Dialog,
-    Avatar,
-    NodeDatePicker,
-    AddButton
-
+    Avatar
+    // NodeDatePicker
   },
   props: {
     show: {

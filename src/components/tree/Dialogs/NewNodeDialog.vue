@@ -29,7 +29,7 @@
                     :rules="form.rules.name.legal"
                     label="Legal name"
                     :placeholder="' '"
-                    required
+                    
                   ></v-text-field>
                 </v-row>
                 <v-row>
@@ -38,7 +38,7 @@
                 <v-row>
                   <v-col>
                     <NodeDatePicker
-                      required
+                      
                       :rules="form.rules.date.birth"
                       :value="data.bornAt"
                       label="Date of birth"
@@ -50,7 +50,7 @@
                       type="number"
                       label="Order of birth"
                       :placeholder="' '"
-                      append-icon="mdi-chevron-down"
+                      append-icon="mdi-arrow-up-down"
                     />
                   </v-col>
                 </v-row>
@@ -73,10 +73,25 @@
                       Genders
                     </v-row>
                     <v-row>
-                      <v-radio-group row>
-                        <v-radio v-for="(gender, index) in genders" :key="index" :label="gender"/>
+                      <v-radio-group v-model="radios" row>
+                        <v-radio v-for="(gender, index) in genders"
+                          :key="index"
+                          :value="`radio-${index}`"
+                          :label="gender"
+                        />
                       </v-radio-group>
                     </v-row>
+                  </v-col>
+                  <v-col>
+                    Related By
+                    <v-select
+                      v-model="data.relationshipType"
+                      placeholder="birth"
+                      :rules="form.rules.relationshipType"
+                      :items="relationshipTypes"
+                      :menu-props="{ light: true }"
+                      append-icon="mdi-chevron-down"
+                    />
                   </v-col>
                 </v-row>
                 <v-row>
@@ -88,24 +103,28 @@
                   <Avatar size="200px" :image="data.avatarImage" :alt="data.preferredName" />
                 </v-row>
                 <v-row justify="center" align="center">
-                  <v-btn
+                  <!--<v-btn
                     fab
                     small
                   >
                   <v-icon>mdi-pencil</v-icon>
-                  </v-btn>
-                  <v-card-subtitle>
-                    Edit profile picture
-                  </v-card-subtitle>
+                  </v-btn>-->
+                  <clipper-upload accept="image/*" @input="toggleAvatar">
+                    <v-btn v-if="!avatar.new" class="toggle" fab small color="white">
+                      <v-icon class="black--text">mdi-pencil</v-icon>
+                    </v-btn>
+                    &nbsp; &nbsp; Upload profile photo
+                  </clipper-upload>
+                  <AvatarEditDialog :show="avatar.showEditor" :avatarImage="avatar.new" @submit="updateAvatar($event)" @close="toggleAvatar(null)"/>
                 </v-row>
               </v-col>
             </v-row>
             <v-row>
               <v-spacer/>
-              <v-btn @click="" text color="secondary" class="mr-4" >
+              <v-btn @click="close" text color="secondary" class="mr-4" >
                 <v-icon>mdi-close</v-icon>
               </v-btn>
-              <v-btn @click="" text color="blue" >
+              <v-btn @click="submit" text color="blue" >
                 <v-icon>mdi-check</v-icon>
               </v-btn>
             </v-row>
@@ -117,23 +136,23 @@
 </template>
 
 <script>
-import gql from 'graphql-tag'
 import Dialog from '@/components/Dialog.vue'
 import Avatar from '@/components/Avatar.vue'
 import AddButton from '@/components/AddButton.vue'
 import NodeDatePicker from '@/components/NodeDatePicker.vue'
+import AvatarEditDialog from './AvatarEditDialog.vue'
+
 import { GENDERS, RELATIONSHIPS, RULES, PERMITTED_PROFILE_ATTRS } from '@/lib/constants'
-import pick from 'lodash.pick'
 
 function defaultData () {
   return {
     preferredName: '',
     legalName: '',
-    gender: '',
-    relationshipType: '',
+    gender: 'female',
+    relationshipType: 'birth',
     legallyAdopted: false,
     children: [],
-    avatarImage: {},
+    avatarImage: null,
     // title: '',
     bornAt: '',
     diedAt: ''
@@ -146,8 +165,8 @@ export default {
     Dialog,
     Avatar,
     NodeDatePicker,
-    AddButton
-
+    AddButton,
+    AvatarEditDialog
   },
   props: {
     show: {
@@ -165,17 +184,16 @@ export default {
   },
   data () {
     return {
-      genders: GENDERS,
+      genders: ['male', 'female'],
       relationshipTypes: RELATIONSHIPS,
       permitted: PERMITTED_PROFILE_ATTRS,
       data: defaultData(),
       avatar: {
         new: null,
-        showEditor: false,
-        rotation: 0
+        showEditor: false
       },
       isDeceased: false,
-      altNameCount: 0,
+      radios: 'radio-1',
       form: {
         valid: true,
         rules: RULES
@@ -198,9 +216,6 @@ export default {
         }
       })
       return submission
-    },
-    updatedData () {
-      return this.data
     }
   },
   watch: {
@@ -221,42 +236,14 @@ export default {
       this.avatar.new = this.avatar.new ? null : file
       this.avatar.showEditor = !this.avatar.showEditor
     },
-    async handleImageUpload () {
-      try {
-        const canvas = this.$refs.avatar.clip({ maxWPixel: 1920 })
-        canvas.toBlob(async blob => {
-          const file = new File([blob], 'avatar', { type: blob.type })
-
-          const result = await this.$apollo.mutate({
-            mutation: gql`mutation uploadFile($file: Upload!) {
-              uploadFile(file: $file) {
-                blob
-                mimeType
-                uri
-              }
-            }`,
-            variables: {
-              file
-            }
-          })
-
-          if (result.errors) throw result.errors
-
-          let cleanImage = {}
-          Object.entries(result.data.uploadFile).forEach(([key, value]) => {
-            if (key !== '__typename') cleanImage[key] = value
-          })
-          this.data.avatarImage = cleanImage
-
-          this.avatar.new = null
-          this.avatar.showEditor = false
-        })
-      } catch (error) {
-        throw error
-      }
+    updateAvatar (avatarImage) {
+      this.data.avatarImage = avatarImage
+      this.toggleAvatar(null)
     },
     submit () {
       if (!this.$refs.form.validate()) {
+        alert('Empty form cannot be submitted')
+        console.log('not submitted')
         return
       }
 

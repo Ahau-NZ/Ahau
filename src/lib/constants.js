@@ -20,28 +20,28 @@ export const RELATIONSHIPS = [
 
 export const RULES = {
   title: [
-    v => !!v || 'Title is required'
+    // v => !!v || 'Title is required'
   ],
   gender: [
-    v => !!v || 'Gender is required'
+    // v => !!v || 'Gender is required'
   ],
   name: {
     preferred: [
-      v => !!v || 'Preferred name is required',
-      v => (v && v.length <= 20) || 'Name must be less than 20 characters'
+      // v => !!v || 'Preferred name is required',
+      // v => (v && v.length <= 20) || 'Name must be less than 20 characters'
     ],
     legal: [
-      v => !!v || 'Legal name is required',
-      v => (v && v.length <= 50) || 'Name must be less than 50 characters'
+      // v => !!v || 'Legal name is required',
+      // v => (v && v.length <= 50) || 'Name must be less than 50 characters'
     ]
   },
   date: {
     birth: [
-      v => !!v || 'Date of birth is required'
+      // v => !!v || 'Date of birth is required'
     ]
   },
   relationshipType: [
-    v => !!v || 'Relationship type is required'
+    // v => !!v || 'Relationship type is required'
   ]
 }
 
