@@ -1,9 +1,8 @@
 <template>
   <div>
     <Tree
-      :nestedWhakapapa="nestedWhakapapa"
       :view="whakapapaView"
-      :profiles="profiles"
+      :nestedWhakapapa="nestedWhakapapa"
       @load-descendants="loadDescendants($event)"
       @collapse-node="collapseNode($event)"
       @open-context-menu="openContextMenu($event)"
@@ -189,7 +188,7 @@ export default {
         })
 
         // populate the "partners" field of each parent
-        const parentIds = record.parents.map(profile => profile.id)
+        const parentIds = record.parents.map(link => link.profile.id)
         parentIds.forEach(parentId => {
           if (!output[parentId]) return
 
