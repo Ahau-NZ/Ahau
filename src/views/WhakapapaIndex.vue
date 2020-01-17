@@ -42,8 +42,8 @@ const saveWhakapapaViewQuery = gql`mutation ($input: WhakapapaViewInput) {
   saveWhakapapaView(input: $input)
 }`
 
-const createProfileQuery = gql`mutation ($input: CreateProfileInput!) {
-  createProfile(input: $input)
+const saveProfileQuery = gql`mutation ($input: ProfileInput!) {
+  saveProfile(input: $input)
 }`
 
 // TEMPORARY should be Query for all views
@@ -72,12 +72,13 @@ export default {
     },
     views: {
       query: gql` {
-        views {
+        whakapapaViews {
           id
           name
           description
         }
       }`,
+      update: data => data.whakapapaViews,
       fetchPolicy: 'no-cache'
     }
   },
@@ -126,7 +127,7 @@ export default {
     async handleDoubleStep ($event) {
       try {
         const res = await this.$apollo.mutate({
-          mutation: createProfileQuery,
+          mutation: saveProfileQuery,
           variables: {
             input: {
               ...$event,
@@ -141,7 +142,7 @@ export default {
 
         this.createView({
           ...this.newView,
-          focus: res.data.createProfile
+          focus: res.data.saveProfile
         })
       } catch (err) {
         throw err

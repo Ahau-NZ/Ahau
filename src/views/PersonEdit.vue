@@ -50,8 +50,8 @@ export default {
     },
     async save (profileChanges) {
       const result = await this.$apollo.mutate({
-        mutation: gql`mutation ($input: UpdateProfileInput!) {
-          updateProfile(input: $input)
+        mutation: gql`mutation ($input: ProfileInput!) {
+          saveProfile(input: $input)
         }`,
         variables: {
           input: {
