@@ -123,7 +123,8 @@ import Dialog from '@/components/Dialog.vue'
 import Avatar from '@/components/Avatar.vue'
 import AddButton from '@/components/AddButton.vue'
 import NodeDatePicker from '@/components/NodeDatePicker.vue'
-import { GENDERS, RELATIONSHIPS, RULES } from '@/lib/constants'
+import { GENDERS, RELATIONSHIPS, RULES, PERMITTED_PROFILE_ATTRS } from '@/lib/constants'
+import pick from 'lodash.pick'
 
 function defaultData () {
   return {
@@ -167,6 +168,7 @@ export default {
     return {
       genders: GENDERS,
       relationshipTypes: RELATIONSHIPS,
+      permitted: PERMITTED_PROFILE_ATTRS,
       data: defaultData(),
       avatar: {
         new: null,
@@ -188,6 +190,15 @@ export default {
         case 'adopted': return true
         default: return false
       }
+    },
+    submission () {
+      let submission = {}
+      Object.entries(this.data).map(([key, value]) => {
+        if (this.data[key] !== '') {
+          submission[key] = value
+        }
+      })
+      return submission
     }
   },
   watch: {
@@ -247,7 +258,8 @@ export default {
         return
       }
 
-      const submission = Object.assign({}, this.data)
+      var submission = Object.assign({}, this.submission)
+
       if (!submission.avatarImage) {
         delete submission.avatarImage
       }

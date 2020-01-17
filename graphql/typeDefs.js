@@ -5,12 +5,13 @@ const { gql } = require('apollo-server')
 module.exports = gql`
   scalar Date
 
+  """
+  Secure Scuttlebutt current identity
+  """
   type CurrentIdentity {
-    id: String
+    id: ID!
     feedId: String
-    profileId: String
-
-    profile: Profile
+    profile: Person
   }
 
   input ImageInput {
@@ -22,6 +23,9 @@ module.exports = gql`
     uri: String
   }
 
+  """
+  Fields used by ssb-profiles plugin for an image
+  """
   type Image {
     blob: String
     mimeType: String
@@ -38,11 +42,19 @@ module.exports = gql`
     unknown
   }
 
+  type Tombstone {
+    date: Date
+    reason: String
+  }
+
   input TombstoneInput {
     date: Date
     reason: String
   }
 
+  """
+  Secure Scuttlebutt's binary file
+  """
   type Blob {
     blob: String
     mimeType: String
@@ -50,41 +62,51 @@ module.exports = gql`
     uri: String
   }
 
-  # TODO: make Profile, Whakapapa, WhakapapaNode a implementation of Person
-  # interface Person {
-  #   id: String
-  #   type: String
-  #   preferredName: String
-  #   legalName: String
-  #   altNames: [String]
-  #   description: String
-  #   avatarImage: Image
-  #   headerImage: Image
-  #   gender: Gender
-  # }
-
-  type Profile {
-    id: String
+  """
+  Fields used by ssb-profiles plugin for a person's profile
+  """
+  type Person {
+    id: ID!
     type: String
-    authors: [String]
-    canEdit: Boolean
-
     preferredName: String
     legalName: String
     altNames: [String]
     description: String
     avatarImage: Image
     headerImage: Image
-
+    tombstone: Tombstone
+    canEdit: Boolean
     gender: Gender
     bornAt: Date
     diedAt: Date
-    tiaki: [Profile]
+    children: [WhakapapaLink]
+    parents: [WhakapapaLink]
   }
 
-  input CreateProfileInput {
-    type: String!
+  """
+  Fields used by ssb-profiles plugin for a communities's profile
+  """
+  type Community {
+    id: ID!
+    type: String
+    preferredName: String
+    legalName: String
+    altNames: [String]
+    description: String
+    gender: Gender
+    bornAt: Date
+    diedAt: Date
+    recps: [String]
+    avatarImage: Image
+    headerImage: Image
+    tombstone: Tombstone
+    canEdit: Boolean
+    tiaki: [Person]
+  }
 
+  input ProfileInput {
+    id: String
+    type: String
     preferredName: String
     legalName: String
     altNames: [String]
@@ -95,19 +117,6 @@ module.exports = gql`
     bornAt: Date
     diedAt: Date
     recps: [String]
-  }
-  input UpdateProfileInput {
-    id: String!
-
-    preferredName: String
-    legalName: String
-    altNames: [String]
-    avatarImage: ImageInput
-    headerImage: ImageInput
-    description: String
-    gender: Gender
-    bornAt: Date
-    diedAt: Date
     tombstone: TombstoneInput
   }
 
@@ -131,7 +140,7 @@ module.exports = gql`
   }
 
   input WhakapapaViewInput {
-    id: ID
+    id: ID!
     name: String
     description: String
     focus: String
@@ -151,47 +160,28 @@ module.exports = gql`
     unknown
   }
 
+  """
+  Secure Scuttlebutt's peer
+  """
   type Peer {
     id: String
     state: String
   }
 
-  type WhakapapaNode {
-    id: String
-
-    preferredName: String
-    legalName: String
-    altNames: [String]
-    description: String
-    avatarImage: Image
-    headerImage: Image
-
-    gender: Gender
-    bornAt: Date
-    diedAt: Date
+  """
+  Whakapapa link between two persons
+  """
+  type WhakapapaLink {
+    profile: Person
     relationshipType: RelationshipType
     legallyAdopted: Boolean
   }
 
-  type Whakapapa {
-    id: String
-
-    preferredName: String
-    legalName: String
-    altNames: [String]
-    description: String
-    avatarImage: Image
-    headerImage: Image
-
-    gender: Gender
-    bornAt: Date
-    diedAt: Date
-    parents: [WhakapapaNode]
-    children: [WhakapapaNode]
-  }
-
+  """
+  Whakapapa view entry with a focus on a Person and private, visible only to recps
+  """
   type WhakapapaView {
-    id: ID
+    id: ID!
     name: String
     description: String
     focus: ID
@@ -200,35 +190,60 @@ module.exports = gql`
   }
 
   type Query {
-    "Scuttlebutt Who am I"
+    """
+    Returns information about the default Person associated with this SSB identity
+    """
     whoami: CurrentIdentity
 
-    "List of person profiles"
-    persons: [Profile]
-    "List of community profiles"
-    communities: [Profile]
-    "List of whakapapa views"
-    views: [WhakapapaView]
+    """
+    Get every message of type profile/person and present a list of Persons
+    """
+    persons: [Person]
 
-    "Scuttlebutt identity profile"
-    profile(id: String!): Profile
+    """
+    Returns information about the profile/person associated with the Person of given id
+    """
+    person(id: String!): Person
 
-    "Scuttlebutt parent and child relations to a profile"
-    closeWhakapapa(id: String): Whakapapa
+    """
+    Get every message of type profile/community and present a list of Communities
+    """
+    communities: [Community]
 
-    "Whakapapa views from a perspective"
+    """
+    Return a list whakapapa/view records without duplicates
+    """
+    whakapapaViews: [WhakapapaView]
+
+    """
+    Return information about the whakapapa/view record with given id
+    """
     whakapapaView(id: String!): WhakapapaView
   }
 
   type Mutation {
-    createProfile(input: CreateProfileInput): String
-    updateProfile(input: UpdateProfileInput): String
+    """
+    Create or update an community or person profile
+    """
+    saveProfile(input: ProfileInput): String
+    """
+    Upload a file to the Secure Scuttlebutt network
+    """
     uploadFile(file: Upload!): Blob
+    """
+    Create or update a Whakapapa relation link entry
+    """
     saveWhakapapaRelation(input: WhakapapaRelationInput): String
+    """
+    Create or update a Whakapapa view entry
+    """
     saveWhakapapaView(input: WhakapapaViewInput): String
   }
 
   type Subscription {
+    """
+    Return information about the Secure Scuttlebutt peers
+    """
     peers: [Peer]
   }
 `

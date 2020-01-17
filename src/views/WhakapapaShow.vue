@@ -1,9 +1,9 @@
 <template>
   <div>
-    <Tree :nestedWhakapapa="nestedWhakapapa"
+    <Tree
+      :nestedWhakapapa="nestedWhakapapa"
       :view="whakapapaView"
       :profiles="profiles"
-
       @load-descendants="loadDescendants($event)"
       @collapse-node="collapseNode($event)"
       @open-context-menu="openContextMenu($event)"
@@ -11,19 +11,35 @@
 
     <vue-context ref="menu">
       <li v-for="(option, index) in contextMenuOpts" :key="index">
-        <a href="#" @click.prevent="option.action"> {{ option.title }} </a>
+        <a href="#" @click.prevent="option.action">{{ option.title }}</a>
       </li>
       <li v-if="canDelete">
-        <a href="#" @click.prevent="toggleDelete"> Delete Person </a>
+        <a href="#" @click.prevent="toggleDelete">Delete Person</a>
       </li>
     </vue-context>
 
-    <ViewEditNodeDialog v-if="dialog.view" :show="dialog.view" :profile="selectedProfile"
-      @close="toggleView" @new="toggleNewPerson($event)" @submit="updateProfile($event)" @delete="deleteProfile()"/>
-    <NewNodeDialog v-if="dialog.new" :show="dialog.new"
-      @close="toggleNew" @submit="addPerson($event)"/>
-    <DeleteNodeDialog v-if="dialog.delete" :show="dialog.delete" :name="selectedProfile.preferredName"
-      @close="toggleDelete" @submit="deleteProfile" />
+    <ViewEditNodeDialog
+      v-if="dialog.view"
+      :show="dialog.view"
+      :profile="selectedProfile"
+      @close="toggleView"
+      @new="toggleNewPerson($event)"
+      @submit="updateProfile($event)"
+      @delete="deleteProfile()"
+    />
+    <NewNodeDialog
+      v-if="dialog.new"
+      :show="dialog.new"
+      @close="toggleNew"
+      @submit="addPerson($event)"
+    />
+    <DeleteNodeDialog
+      v-if="dialog.delete"
+      :show="dialog.delete"
+      :name="selectedProfile.preferredName"
+      @close="toggleDelete"
+      @submit="deleteProfile"
+    />
   </div>
 </template>
 
@@ -40,17 +56,21 @@ import DeleteNodeDialog from '@/components/tree/Dialogs/DeleteNodeDialog.vue'
 // const tree = require('@/lib/tree-helpers.js')
 import tree from '@/lib/tree-helpers'
 
-const saveWhakapapaRelMutation = (input) => ({
-  mutation: gql`mutation ($input: WhakapapaRelationInput!) {
-    saveWhakapapaRelation(input: $input)
-  }`,
+const saveWhakapapaRelMutation = input => ({
+  mutation: gql`
+    mutation($input: WhakapapaRelationInput!) {
+      saveWhakapapaRelation(input: $input)
+    }
+  `,
   variables: { input }
 })
 
-const saveWhakapapaViewMutation = (input) => ({
-  mutation: gql`mutation ($input: WhakapapaViewInput) {
-    saveWhakapapaView(input: $input)
-  }`,
+const saveWhakapapaViewMutation = input => ({
+  mutation: gql`
+    mutation($input: WhakapapaViewInput) {
+      saveWhakapapaView(input: $input)
+    }
+  `,
   variables: { input }
 })
 
@@ -96,24 +116,30 @@ export default {
   apollo: {
     whakapapaView () {
       return {
-        query: gql` query ($id: String!) {
-          whakapapaView(id: $id) {
-            name
-            description
-            focus
-            recps
+        query: gql`
+          query($id: String!) {
+            whakapapaView(id: $id) {
+              name
+              description
+              focus
+              recps
+            }
           }
-        }`,
+        `,
         variables: { id: this.$route.params.id },
         fetchPolicy: 'no-cache'
       }
     },
     whoami: {
-      query: gql` {
-        whoami {
-          profile { id }
+      query: gql`
+        {
+          whoami {
+            profile {
+              id
+            }
+          }
         }
-      }`,
+      `,
       fetchPolicy: 'no-cache'
     }
   },
@@ -153,11 +179,14 @@ export default {
         var output = Object.assign({}, this.profiles)
 
         // flatten out record and merge into current profiles
-        Object.entries(tree.flatten(record))
-          .forEach(([ profileId, profile ]) => {
-            output[profileId] = Object.assign({}, output[profileId] || {}, profile)
-            // this merge might be overwriting a lot
-          })
+        Object.entries(tree.flatten(record)).forEach(([profileId, profile]) => {
+          output[profileId] = Object.assign(
+            {},
+            output[profileId] || {},
+            profile
+          )
+          // this merge might be overwriting a lot
+        })
 
         // populate the "partners" field of each parent
         const parentIds = record.parents.map(profile => profile.id)
@@ -179,13 +208,13 @@ export default {
   methods: {
     async loadDescendants (profileId) {
       // fetch close whakapapa records for this profile
-      const record = await this.getCloseWhakapapa(profileId)
+      const record = await this.getRelatives(profileId)
       if (!record) return
 
       // if (whakapapaView.mode === 'descendants')
       // follow the child-links and load the next generation
-      record.children.forEach(profile => {
-        this.loadDescendants(profile.id)
+      record.children.forEach(child => {
+        this.loadDescendants(child.profile.id)
       })
 
       // add this to queue of records to process and merge into graph
@@ -193,21 +222,11 @@ export default {
       this.recordQueue = [...this.recordQueue, record]
       if (!this.processingQueue) this.processingQueue = true
     },
-    async getCloseWhakapapa (profileId) {
+    async getRelatives (profileId) {
       const request = {
-        query: gql`query ($id: String) {
-          closeWhakapapa(id: $id) {
-            id
-            gender
-            bornAt
-            diedAt
-            legalName
-            preferredName
-            description
-            avatarImage {
-              uri
-            }
-            children {
+        query: gql`
+          query($id: String!) {
+            person(id: $id) {
               id
               gender
               bornAt
@@ -218,21 +237,40 @@ export default {
               avatarImage {
                 uri
               }
-            }
-            parents {
-              id
-              gender
-              bornAt
-              diedAt
-              legalName
-              preferredName
-              description
-              avatarImage {
-                uri
+              children {
+                profile {
+                  id
+                  gender
+                  legalName
+                  preferredName
+                  bornAt
+                  diedAt
+                  description
+                  avatarImage {
+                    uri
+                  }
+                }
+                relationshipType
+              }
+
+              parents {
+                profile {
+                  id
+                  gender
+                  legalName
+                  preferredName
+                  bornAt
+                  diedAt
+                  description
+                  avatarImage {
+                    uri
+                  }
+                }
+                relationshipType
               }
             }
           }
-        }`,
+        `,
         variables: {
           id: profileId
         },
@@ -246,8 +284,7 @@ export default {
           console.error(result.errors)
           return
         }
-
-        return result.data.closeWhakapapa
+        return result.data.person
       } catch (e) {
         console.error('WARNING, something went wrong, caught it')
         console.error(e)
@@ -297,7 +334,10 @@ export default {
         if (!profileId) return
 
         let child, parent
-        const relationshipAttrs = pick($event, ['relationshipType', 'legallyAdopted'])
+        const relationshipAttrs = pick($event, [
+          'relationshipType',
+          'legallyAdopted'
+        ])
         switch (this.dialog.type) {
           case 'child':
             child = profileId
@@ -308,7 +348,11 @@ export default {
           case 'parent':
             child = this.selectedProfile.id
             parent = profileId
-            const linkId = await this.createChildLink({ child, parent, ...relationshipAttrs })
+            const linkId = await this.createChildLink({
+              child,
+              parent,
+              ...relationshipAttrs
+            })
             if (!linkId) return
 
             if (child === this.whakapapaView.focus) {
@@ -318,7 +362,8 @@ export default {
               await this.loadDescendants(child)
             }
             break
-          default: console.log('not built')
+          default:
+            console.log('not built')
         }
         this.dialog.new = false
         if (this.dialog.view) {
@@ -330,9 +375,11 @@ export default {
     },
     async createProfile ({ preferredName, legalName, gender, bornAt, diedAt, avatarImage }) {
       const res = await this.$apollo.mutate({
-        mutation: gql`mutation ($input: CreateProfileInput!) {
-          createProfile(input: $input)
-        }`,
+        mutation: gql`
+          mutation($input: ProfileInput!) {
+            saveProfile(input: $input)
+          }
+        `,
         variables: {
           input: {
             type: 'person',
@@ -351,9 +398,12 @@ export default {
         console.error('failed to createProfile', res)
         return
       }
-      return res.data.createProfile // a profileId
+      return res.data.saveProfile // a profileId
     },
-    async createChildLink ({ child, parent, relationshipType, legallyAdopted }, view) {
+    async createChildLink (
+      { child, parent, relationshipType, legallyAdopted },
+      view
+    ) {
       const input = {
         child,
         parent,
@@ -388,9 +438,11 @@ export default {
     async updateProfile (profileChanges) {
       const profileId = this.selectedProfile.id
       const res = await this.$apollo.mutate({
-        mutation: gql`mutation ($input: UpdateProfileInput!) {
-          updateProfile(input: $input)
-        }`,
+        mutation: gql`
+          mutation($input: ProfileInput!) {
+            saveProfile(input: $input)
+          }
+        `,
         variables: {
           input: {
             id: profileId,
@@ -409,9 +461,11 @@ export default {
       const profileId = this.selectedProfile.id
 
       const res = await this.$apollo.mutate({
-        mutation: gql`mutation ($input: UpdateProfileInput!) {
-          updateProfile(input: $input)
-        }`,
+        mutation: gql`
+          mutation($input: ProfileInput!) {
+            saveProfile(input: $input)
+          }
+        `,
         variables: {
           input: {
             id: profileId,
@@ -446,7 +500,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
-  .body-width {
-    max-width: 900px;
-  }
+.body-width {
+  max-width: 900px;
+}
 </style>
