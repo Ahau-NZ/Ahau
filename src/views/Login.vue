@@ -60,7 +60,7 @@ export default {
   },
   mounted () {
     if (process.env.NODE_ENV === 'development') {
-      this.$router.push({ name: 'whakapapaIndex' })
+      this.proceed()
       return
     }
     setTimeout(this.proceed, 2e3)
@@ -77,7 +77,11 @@ export default {
         return setTimeout(this.proceed, 500)
       }
 
-      this.isSetup = this.profile.preferredName
+      this.isSetup = Boolean(this.profile.preferredName)
+      if (this.isSetup && process.env.NODE_ENV === 'development') {
+        this.$router.push({ name: 'whakapapaIndex' })
+      }
+
       this.isSplash = false
     }
   },
