@@ -135,12 +135,15 @@ function addURIs (state) {
 }
 
 function fixDates (state) {
-  /*
-    The date type expects bornAt to be of type Date so 'null' breaks this.
-    We are making a hack which treats the year - 5000 as null.
-    NOTE: This means on the client side, developers will have to check for the year - 5000
-    and convert this back to null.
-  */
+  // TODO: fix this Date hack
+  // https://app.asana.com/0/1139954823432348/1155904273421465/f
+  // the Date scalar we're using with graphql doesn't currently allow `null` as a valid date.
+  // this can be fixed, but for the moment we chose a specific date in the past to encode `null`
+  //
+  // files invovled:
+  // - src/lib/tree-helpers.js
+  // - graphql/ssb/queries/get-profile.js
+
   if (state.bornAt === null) {
     state.bornAt = new Date(-5000, 0, 1)
   }

@@ -160,7 +160,7 @@ import Dialog from '@/components/Dialog.vue'
 import Avatar from '@/components/Avatar.vue'
 import NodeDatePicker from '@/components/NodeDatePicker.vue'
 import { GENDERS, RELATIONSHIPS, RULES, PERMITTED_PROFILE_ATTRS } from '@/lib/constants'
-import pick from 'lodash.pick'
+import isEmpty from 'lodash.isempty'
 
 function defaultData () {
   return {
@@ -218,7 +218,7 @@ export default {
     submission () {
       let submission = {}
       Object.entries(this.data).map(([key, value]) => {
-        if (this.data[key] !== '') {
+        if (!isEmpty(this.data[key])) {
           submission[key] = value
         }
       })
@@ -283,14 +283,8 @@ export default {
       }
 
       var submission = Object.assign({}, this.submission)
-
-      if (!submission.avatarImage) {
-        delete submission.avatarImage
-      }
-
       // send the data back to the parent component
       this.$emit('submit', submission)
-
       // close this dialog
       this.close()
     }
