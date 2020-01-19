@@ -63,10 +63,6 @@ export default {
     view: {
       type: Object,
       required: true
-    },
-    profiles: {
-      type: Object,
-      required: true
     }
   },
   data () {
