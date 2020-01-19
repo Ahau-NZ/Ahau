@@ -266,7 +266,7 @@ test('bornAt DEFAULT hydration', t => {
       bornAt: '-005001-12'
     }
   }
-  const expected = { bornAt: '' }
+  const expected = { bornAt: null }
   const actual = tree.hydrate(profiles.A, profiles)
   t.deepEqual(actual, expected, 'hydration')
   t.end()
@@ -278,7 +278,7 @@ test('diedAt DEFAULT hydration', t => {
       diedAt: '-005001-12'
     }
   }
-  const expected = { diedAt: '' }
+  const expected = { diedAt: null }
   const actual = tree.hydrate(profiles.A, profiles)
   t.deepEqual(actual, expected, 'hydration')
   t.end()
