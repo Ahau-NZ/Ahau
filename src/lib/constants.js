@@ -1,8 +1,8 @@
 export const GENDERS = [
   'male',
-  'female',
-  'other',
-  'unknown'
+  'female'
+  // 'other', // disabled for now
+  // 'unknown' // disabled for now
 ]
 export const RELATIONSHIPS = [
   'birth',

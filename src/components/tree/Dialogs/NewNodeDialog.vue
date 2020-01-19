@@ -29,7 +29,7 @@
                     :rules="form.rules.name.legal"
                     label="Legal name"
                     :placeholder="' '"
-                    
+
                   ></v-text-field>
                 </v-row>
                 <v-row>
@@ -38,7 +38,7 @@
                 <v-row>
                   <v-col>
                     <NodeDatePicker
-                      
+
                       :rules="form.rules.date.birth"
                       :value="data.bornAt"
                       label="Date of birth"
@@ -143,6 +143,7 @@ import NodeDatePicker from '@/components/NodeDatePicker.vue'
 import AvatarEditDialog from './AvatarEditDialog.vue'
 
 import { GENDERS, RELATIONSHIPS, RULES, PERMITTED_PROFILE_ATTRS } from '@/lib/constants'
+import isEmpty from 'lodash.isempty'
 
 function defaultData () {
   return {
@@ -184,7 +185,7 @@ export default {
   },
   data () {
     return {
-      genders: ['male', 'female'],
+      genders: GENDERS,
       relationshipTypes: RELATIONSHIPS,
       permitted: PERMITTED_PROFILE_ATTRS,
       data: defaultData(),
@@ -211,7 +212,7 @@ export default {
     submission () {
       let submission = {}
       Object.entries(this.data).map(([key, value]) => {
-        if (this.data[key] !== '') {
+        if (!isEmpty(this.data[key])) {
           submission[key] = value
         }
       })
@@ -248,14 +249,8 @@ export default {
       }
 
       var submission = Object.assign({}, this.submission)
-
-      if (!submission.avatarImage) {
-        delete submission.avatarImage
-      }
-
       // send the data back to the parent component
       this.$emit('submit', submission)
-
       // close this dialog
       this.close()
     }
