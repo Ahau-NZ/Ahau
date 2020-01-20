@@ -14,7 +14,7 @@
           :disabled="makeDisabled"
           flat
           :solo="makeDisabled"
-          :label="makeDisabled ? label : ''"
+          :label="makeDisabled ? (date ? label : '') : label"
           readonly
           :value="date"
           v-on="on"
@@ -28,9 +28,10 @@
       <v-date-picker
         locale="en-in"
         :max="maxDate"
-        v-model="value"
+        v-model="updatedValue"
         no-title
         @input="menu = false"
+        hide-details
       ></v-date-picker>
     </v-menu>
   </v-layout>
@@ -39,7 +40,7 @@
 export default {
   computed: {
     date () {
-      var date = (this.value === null) ? this.label : this.value
+      var date = (this.updatedValue === null) ? this.value : this.updatedValue
       this.$emit('date', date)
       return date
     },
@@ -55,19 +56,13 @@ export default {
   data () {
     return {
       menu: false,
-      value: null
+      updatedValue: null
     }
   },
   props: {
-    rules: {
-      type: Array,
-      required: false
-    },
-    label: {
-      type: String,
-      required: false,
-      default: ''
-    },
+    rules: Array,
+    label: String,
+    value: { type: String, default: ' ' },
     makeDisabled: {
       type: Boolean,
       required: false,

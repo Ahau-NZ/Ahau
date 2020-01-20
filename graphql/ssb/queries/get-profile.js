@@ -51,6 +51,8 @@ module.exports = function GetProfile (sbot) {
 
         addURIs(state)
 
+        fixDates(state)
+
         cb(null, state)
       })
     })
@@ -130,4 +132,31 @@ function addURIs (state) {
   }
 
   return state
+}
+
+function fixDates (state) {
+  // TODO: fix this Date hack
+  // https://app.asana.com/0/1139954823432348/1155904273421465/f
+  // the Date scalar we're using with graphql doesn't currently allow `null` as a valid date.
+  // this can be fixed, but for the moment we chose a specific date in the past to encode `null`
+  //
+  // files invovled:
+  // - src/lib/tree-helpers.js
+  // - graphql/ssb/queries/get-profile.js
+
+  if (state.bornAt === null) {
+    state.bornAt = new Date(-5000, 0, 1)
+  }
+
+  if (state.diedAt === null) {
+    state.diedAt = new Date(-5000, 0, 1)
+  }
+
+  if (typeof state.bornAt === 'number') {
+    state.bornAt = new Date(state.bornAt)
+  }
+
+  if (typeof state.diedAt === 'number') {
+    state.diedAt = new Date(state.diedAt)
+  }
 }

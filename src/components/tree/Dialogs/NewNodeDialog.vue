@@ -64,22 +64,22 @@
                     required
                   />
                 </v-col>
-              <!--   <v-col cols="12" sm="5" md="3"> -->
-              <!--     <NodeDatePicker label="Date of Birth*" -->
-              <!--       :required="true" -->
-              <!--       :rules="form.rules.date.birth" -->
-              <!--       :value="data.dateOfBirth" -->
-              <!--       @date="data.dateOfBirth = $event" -->
-              <!--       :date="data.dateOfBirth" -->
-              <!--     /> -->
-              <!--   </v-col> -->
-              <!--   <v-col cols="12" sm="5" md="3"> -->
-              <!--     <NodeDatePicker label="Date Deceased" -->
-              <!--       :required="false" -->
-              <!--       :value="data.dateOfDeath" -->
-              <!--       @date="data.dateOfDeath = $event" -->
-              <!--     /> -->
-              <!--   </v-col> -->
+                <v-col cols="12" sm="5" md="3" class="mr-5">
+                  <NodeDatePicker
+                    :required="true"
+                    :rules="form.rules.date.birth"
+                    :value="data.bornAt"
+                    label="Date of Birth"
+                    @date="data.bornAt = $event"
+                  />
+                </v-col>
+                 <v-col cols="12" sm="5" md="3">
+                  <NodeDatePicker
+                    label="Date Deceased"
+                    :value="data.diedAt"
+                    @date="data.diedAt = $event"
+                  />
+                </v-col>
               </v-row>
 
               <v-row>
@@ -158,8 +158,9 @@
 import gql from 'graphql-tag'
 import Dialog from '@/components/Dialog.vue'
 import Avatar from '@/components/Avatar.vue'
-// import NodeDatePicker from '@components/NodeDatePicker.vue'
-import { GENDERS, RELATIONSHIPS, RULES } from '@/lib/constants'
+import NodeDatePicker from '@/components/NodeDatePicker.vue'
+import { GENDERS, RELATIONSHIPS, RULES, PERMITTED_PROFILE_ATTRS } from '@/lib/constants'
+import isEmpty from 'lodash.isempty'
 
 function defaultData () {
   return {
@@ -169,10 +170,10 @@ function defaultData () {
     relationshipType: '',
     legallyAdopted: false,
     children: [],
-    avatarImage: null
+    avatarImage: null,
     // title: '',
-    // dateOfBirth: '',
-    // dateOfDeath: '',
+    bornAt: '',
+    diedAt: ''
   }
 }
 
@@ -180,8 +181,8 @@ export default {
   name: 'NewNodeDialog',
   components: {
     Dialog,
-    Avatar
-    // NodeDatePicker
+    Avatar,
+    NodeDatePicker
   },
   props: {
     show: {
@@ -193,6 +194,7 @@ export default {
     return {
       genders: GENDERS,
       relationshipTypes: RELATIONSHIPS,
+      permitted: PERMITTED_PROFILE_ATTRS,
       data: defaultData(),
       avatar: {
         new: null,
@@ -212,6 +214,15 @@ export default {
         case 'adopted': return true
         default: return false
       }
+    },
+    submission () {
+      let submission = {}
+      Object.entries(this.data).map(([key, value]) => {
+        if (!isEmpty(this.data[key])) {
+          submission[key] = value
+        }
+      })
+      return submission
     }
   },
   watch: {
@@ -271,14 +282,9 @@ export default {
         return
       }
 
-      const submission = Object.assign({}, this.data)
-      if (!submission.avatarImage) {
-        delete submission.avatarImage
-      }
-
+      var submission = Object.assign({}, this.submission)
       // send the data back to the parent component
       this.$emit('submit', submission)
-
       // close this dialog
       this.close()
     }

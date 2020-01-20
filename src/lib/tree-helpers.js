@@ -44,6 +44,25 @@ function hydrate (node, flatStore) {
       })
   }
 
+  // TODO: fix this Date hack
+  // https://app.asana.com/0/1139954823432348/1155904273421465/f
+  // the Date scalar we're using with graphql doesn't currently allow `null` as a valid date.
+  // this can be fixed, but for the moment we chose a specific date in the past to encode `null`
+  //
+  // files invovled:
+  // - src/lib/tree-helpers.js
+  // - graphql/ssb/queries/get-profile.js
+
+  if (output.bornAt) {
+    output.bornAt = output.bornAt.slice(0, 10)
+    output.bornAt = (output.bornAt === '-005001-12') ? null : output.bornAt
+  }
+
+  if (output.diedAt) {
+    output.diedAt = output.diedAt.slice(0, 10)
+    output.diedAt = (output.diedAt === '-005001-12') ? null : output.diedAt
+  }
+
   if (output.parents) {
     output.siblings = []
     output.parents = output.parents

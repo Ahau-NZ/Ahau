@@ -106,8 +106,8 @@ export default {
       },
       contextMenuOpts: [
         { title: 'View Person', action: this.toggleView },
-        { title: 'Add Child', action: this.toggleNew },
-        { title: 'Add Parent', action: this.toggleNew }
+        { title: 'Add Child', action: this.toggleNewChild },
+        { title: 'Add Parent', action: this.toggleNewParent }
       ]
       // all the guff currently needed for context menus
     }
@@ -228,19 +228,22 @@ export default {
             person(id: $id) {
               id
               gender
+              bornAt
+              diedAt
               legalName
               preferredName
               description
               avatarImage {
                 uri
               }
-
               children {
                 profile {
                   id
                   gender
                   legalName
                   preferredName
+                  bornAt
+                  diedAt
                   description
                   avatarImage {
                     uri
@@ -255,6 +258,8 @@ export default {
                   gender
                   legalName
                   preferredName
+                  bornAt
+                  diedAt
                   description
                   avatarImage {
                     uri
@@ -367,7 +372,7 @@ export default {
         throw err
       }
     },
-    async createProfile ({ preferredName, legalName, gender, avatarImage }) {
+    async createProfile ({ preferredName, legalName, gender, bornAt, diedAt, avatarImage }) {
       const res = await this.$apollo.mutate({
         mutation: gql`
           mutation($input: ProfileInput!) {
@@ -380,6 +385,8 @@ export default {
             preferredName,
             legalName,
             gender,
+            bornAt,
+            diedAt,
             avatarImage,
             recps: this.whakapapaView.recps
           }
@@ -416,7 +423,7 @@ export default {
     },
     async updateFocus (focus) {
       const input = {
-        viewId: this.whakapapaView.id,
+        id: this.$route.params.id,
         focus
       }
       try {
@@ -472,7 +479,7 @@ export default {
       }
 
       this.profiles = {}
-      this.loadDescendants(this.whakapapaView.focus)
+      await this.loadDescendants(this.whakapapaView.focus)
       // TODO - find a smaller subset to reload!
     },
     setSelectedProfile (profileId) {

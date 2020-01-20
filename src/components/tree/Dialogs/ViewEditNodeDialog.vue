@@ -53,7 +53,7 @@
                     >
                     </v-select>
                   </v-col>-->
-                  <v-col class="pa-0" md="3">
+                  <v-col class="" md="3">
                     <v-select
                       v-model="data.gender"
                       :disabled="!isEditting"
@@ -64,23 +64,22 @@
                     >
                     </v-select>
                   </v-col>
-                  <v-col class="pa-0" md="3">
+                  <v-col class="mr-5" md="3">
                     <NodeDatePicker
                       required
-                      :label="data.bornAt"
+                      :value="data.bornAt"
+                      label="Date of Birth"
                       @date="data.bornAt = $event"
                       :makeDisabled="!isEditting"
                     />
                   </v-col>
-                  <v-col class="pa-0" md="3"> <!-- TODO: replace living with data when its available -->
-                    <v-select
-                      label="living"
-                      :disabled="!isEditting"
-                      flat
-                      solo
-                      :append-icon="isEditting ? '$dropdown' : ''"
-                    >
-                    </v-select>
+                  <v-col md="3">
+                    <NodeDatePicker
+                      :value="data.diedAt"
+                      label="Date Deceased"
+                      @date="data.diedAt = $event"
+                      :makeDisabled="!isEditting"
+                    />
                   </v-col>
                   <v-spacer/>
                 </v-row>
@@ -235,6 +234,7 @@ export default {
         gender: this.profile.gender,
         legalName: this.profile.legalName,
         bornAt: this.profile.bornAt,
+        diedAt: this.profile.diedAt,
         preferredName: this.profile.preferredName,
         avatarImage: this.profile.avatarImage,
         description: this.profile.description

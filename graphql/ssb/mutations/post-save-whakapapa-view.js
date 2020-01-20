@@ -2,13 +2,13 @@ const pick = require('lodash.pick')
 
 module.exports = function PostSaveWhakapapaView (sbot) {
   return function postSaveWhakapapaView (input, cb) {
-    const { viewId } = input
+    const { id } = input
     const details = buildWhakakakaViewOpts(input)
 
-    if (viewId) {
-      sbot.whakapapa.view.update(viewId, details, err => {
+    if (id) {
+      sbot.whakapapa.view.update(id, details, err => {
         if (err) cb(err)
-        else cb(null, viewId)
+        else cb(null, id)
       })
     } else {
       sbot.whakapapa.view.create(details, (err, id) => {
