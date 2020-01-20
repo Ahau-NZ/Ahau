@@ -19,7 +19,7 @@ export default {
   apollo: {
     profile: {
       query: gql`query ProfileData($id: String!) {
-        profile(id: $id) {
+        person(id: $id) {
           id
           preferredName
           legalName
@@ -29,6 +29,11 @@ export default {
           headerImage { uri }
         }
       }`,
+      update (data) {
+        return {
+          ...data.person
+        }
+      },
       variables () {
         return {
           id: this.$route.params.id
