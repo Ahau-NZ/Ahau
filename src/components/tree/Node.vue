@@ -79,13 +79,7 @@
 
 <script>
 import get from 'lodash.get'
-import koro from '@/assets/koro.svg'
-import kuia from '@/assets/kuia.svg'
-import tane from '@/assets/tane.svg'
-import wahine from '@/assets/wahine.svg'
-import tama from '@/assets/tama.svg'
-import kotiro from '@/assets/kotiro.svg'
-import unknown from '@/assets/unknown.svg' // TEMP
+import avatarHelper from '@/lib/avatar-helpers.js'
 
 export default {
   name: 'Node',
@@ -97,8 +91,7 @@ export default {
   data () {
     return {
       offsetSize: 15,
-      partnerRadius: 0.8 * this.radius,
-      basePartners: []
+      partnerRadius: 0.8 * this.radius
     }
   },
   computed: {
@@ -108,34 +101,11 @@ export default {
     diameter () {
       return this.radius * 2
     },
-    date () {
-      return new Date(this.profile.bornAt)
-    },
-    age () {
-      var diffMs = Date.now() - this.date.getTime()
-      var ageDt = new Date(diffMs)
-
-      return Math.abs(ageDt.getUTCFullYear() - 1970)
-    },
     imageSource () {
       const uri = get(this.node, 'data.avatarImage.uri')
       if (uri) return uri
 
-      switch (this.profile.gender) {
-        case 'male':
-          switch (true) {
-            case (this.age <= 12): return tama
-            case (this.age > 50): return koro
-            default: return tane
-          }
-        case 'female':
-          switch (true) {
-            case (this.age <= 12): return kotiro
-            case (this.age > 50): return kuia
-            default: return wahine
-          }
-        default: return unknown
-      }
+      return avatarHelper.defaultImage(this.profile.bornAt, this.profile.gender)
     },
     textWidth () {
       // const { x, y } = textElm.getBBox();
