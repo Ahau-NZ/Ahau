@@ -17,7 +17,7 @@ export default {
     profile () {
       return {
         query: gql`query ProfileData($id: String!) {
-          profile(id: $id) {
+          person(id: $id) {
             canEdit
 
             preferredName
@@ -41,7 +41,7 @@ export default {
         update (data) {
           return {
             id: this.$route.params.id,
-            ...data.profile
+            ...data.person
           }
         },
         fetchPolicy: 'no-cache'
