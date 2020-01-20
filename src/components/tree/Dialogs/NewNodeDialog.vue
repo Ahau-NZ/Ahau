@@ -37,6 +37,17 @@
                     ></v-text-field>
                   </v-col>
                 </v-row>
+                <v-row v-for="n in altNameCount" :key="n">
+                  <v-col>
+                    <v-text-field
+                      v-model="data.altNames[n-1]"
+                      :rules="form.rules.name.preferred"
+                      :label="`Alternative name ${n}`"
+                      :placeholder="' '"
+                      :hide-details="true"
+                    />
+                  </v-col>
+                </v-row>
                 <v-row>
                   <AddButton label="Add name" @click="toggleAltName" row/>
                 </v-row>
@@ -157,6 +168,7 @@ function defaultData () {
   return {
     preferredName: '',
     legalName: '',
+    altNames: [],
     gender: 'female',
     relationshipType: 'birth',
     legallyAdopted: false,
@@ -203,6 +215,7 @@ export default {
       },
       isDeceased: false,
       radios: 'radio-1',
+      count: 0,
       form: {
         valid: true,
         rules: RULES
@@ -210,6 +223,9 @@ export default {
     }
   },
   computed: {
+    altNameCount () {
+      return this.count
+    },
     showLegallyAdopted () {
       switch (this.data.relationshipType) {
         case 'whangai': return true
@@ -246,7 +262,7 @@ export default {
       this.toggleAvatar(null)
     },
     toggleAltName () {
-      console.log('toggle alt name')
+      this.count += 1
     },
     toggleDescription () {
       console.log('toggle description')

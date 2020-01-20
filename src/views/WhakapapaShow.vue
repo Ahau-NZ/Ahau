@@ -374,7 +374,7 @@ export default {
         throw err
       }
     },
-    async createProfile ({ preferredName, legalName, gender, bornAt, diedAt, avatarImage }) {
+    async createProfile ({ preferredName, legalName, gender, bornAt, diedAt, avatarImage, altNames }) {
       const res = await this.$apollo.mutate({
         mutation: gql`
           mutation($input: ProfileInput!) {
@@ -390,6 +390,7 @@ export default {
             bornAt,
             diedAt,
             avatarImage,
+            altNames,
             recps: this.whakapapaView.recps
           }
         }
@@ -399,6 +400,7 @@ export default {
         console.error('failed to createProfile', res)
         return
       }
+      debugger
       return res.data.saveProfile // a profileId
     },
     async createChildLink (
