@@ -21,7 +21,7 @@ Vue.use(Router)
 export default new Router({
   mode: 'history',
   routes: [
-    { path: '/', redirect: '/login' },
+    { path: '/', redirect: '/whakapapa/%25Ej6%2FBFXO2hrcauhLLR1QpyagE136eNM3P%2Fv+tLrYZq8=.sha256' },
     { path: '/login', name: 'login', component: Login },
     { path: '/logout', redirect: '/login' },
 

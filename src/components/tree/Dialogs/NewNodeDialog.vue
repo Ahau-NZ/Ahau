@@ -6,39 +6,43 @@
     >
       <v-card>
         <v-card-text>
-          <v-container>
+          <v-container class="ma-2">
             <v-row>
-              <v-card-title>
-                Add {{ type }} to {{ title }}
-              </v-card-title>
+                <v-card-title>
+                  Add {{ type }} to {{ title }}
+                </v-card-title>
             </v-row>
             <v-row>
               <v-col md="7">
                 <v-row>
-                  <v-text-field
-                    v-model="data.preferredName"
-                    label="Preferred name. This is the name shown on your profile"
-                    :placeholder="' '"
-                    :rules="form.rules.name.preferred"
-                    required
-                  ></v-text-field>
+                  <v-col>
+                    <v-text-field
+                      v-model="data.preferredName"
+                      label="Preferred name. This is the name shown on your profile"
+                      :placeholder="' '"
+                      :rules="form.rules.name.preferred"
+                      required
+                      :hide-details="true"
+                    ></v-text-field>
+                  </v-col>
                 </v-row>
                 <v-row>
-                  <v-text-field
-                    v-model="data.legalName"
-                    :rules="form.rules.name.legal"
-                    label="Legal name"
-                    :placeholder="' '"
-
-                  ></v-text-field>
+                  <v-col>
+                    <v-text-field
+                      v-model="data.legalName"
+                      :rules="form.rules.name.legal"
+                      label="Legal name"
+                      :placeholder="' '"
+                      :hide-details="true"
+                    ></v-text-field>
+                  </v-col>
                 </v-row>
                 <v-row>
-                  <AddButton label="Add name" @click="" row/>
+                  <AddButton label="Add name" @click="toggleAltName" row/>
                 </v-row>
                 <v-row>
                   <v-col>
                     <NodeDatePicker
-
                       :rules="form.rules.date.birth"
                       :value="data.bornAt"
                       label="Date of birth"
@@ -50,15 +54,16 @@
                       type="number"
                       label="Order of birth"
                       :placeholder="' '"
-                      append-icon="mdi-arrow-up-down"
+                      append-icon="mdi-chevron-down"
+                      :hide-details="true"
                     />
                   </v-col>
                 </v-row>
                 <v-row>
-                  <v-col>
-                    <v-checkbox v-model="isDeceased" label="No longer living"/>
+                  <v-col md="6">
+                    <v-checkbox v-model="isDeceased" label="No longer living" :hide-details="true"/>
                   </v-col>
-                  <v-col>
+                  <v-col md="6">
                     <NodeDatePicker
                       :makeDisabled="!isDeceased"
                       label="Date of death"
@@ -68,9 +73,9 @@
                   </v-col>
                 </v-row>
                 <v-row>
-                  <v-col>
+                  <v-col md="6">
                     <v-row>
-                      Genders
+                      Gender
                     </v-row>
                     <v-row>
                       <v-radio-group v-model="radios" row>
@@ -78,11 +83,13 @@
                           :key="index"
                           :value="`radio-${index}`"
                           :label="gender"
+                          :hide-details="true"
+                          class="pr-10"
                         />
                       </v-radio-group>
                     </v-row>
                   </v-col>
-                  <v-col>
+                  <v-col md="4">
                     Related By
                     <v-select
                       v-model="data.relationshipType"
@@ -91,11 +98,12 @@
                       :items="relationshipTypes"
                       :menu-props="{ light: true }"
                       append-icon="mdi-chevron-down"
+                      :hide-details="true"
                     />
                   </v-col>
                 </v-row>
                 <v-row>
-                  <AddButton label="Description" @click="" row/>
+                  <AddButton label="Description" @click="toggleDescription" row/>
                 </v-row>
               </v-col>
               <v-col>
@@ -227,10 +235,6 @@ export default {
   },
   methods: {
     close: function () {
-      // reset the form properties
-      // TODO: figure out when is a good time to reset these?
-      this.data = defaultData()
-
       this.$emit('close')
     },
     toggleAvatar (file) {
@@ -240,6 +244,12 @@ export default {
     updateAvatar (avatarImage) {
       this.data.avatarImage = avatarImage
       this.toggleAvatar(null)
+    },
+    toggleAltName () {
+      console.log('toggle alt name')
+    },
+    toggleDescription () {
+      console.log('toggle description')
     },
     submit () {
       if (!this.$refs.form.validate()) {

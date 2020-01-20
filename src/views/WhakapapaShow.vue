@@ -29,6 +29,8 @@
     <NewNodeDialog
       v-if="dialog.new"
       :show="dialog.new"
+      :type="dialog.type"
+      :title="selectedProfile.preferredName"
       @close="toggleNew"
       @submit="addPerson($event)"
     />

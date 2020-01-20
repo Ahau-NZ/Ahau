@@ -7,8 +7,8 @@ export const GENDERS = [
 export const RELATIONSHIPS = [
   'birth',
   'whangai',
-  'adopted',
-  'unknown'
+  'adopted'
+  // 'unknown'
 ]
 // export const TITLES = [
 //   'mr',

@@ -1,6 +1,6 @@
 <template>
   <v-col>
-    <v-row :justify="row ? '' : 'center'" align="center">
+    <v-row :justify="row ? null : 'center'" align="center">
       <v-btn @click="click"
         small
         fab
@@ -22,6 +22,11 @@ export default {
   props: {
     label: String,
     row: { type: Boolean, default: false }
+  },
+  methods: {
+    click () {
+      this.$emit('click')
+    }
   }
 }
 </script>

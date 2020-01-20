@@ -22,6 +22,7 @@
           :solo="makeDisabled"
           :prepend-inner-icon="makeDisabled ? '' : 'mdi-calendar'"
           :append-icon="makeDisabled ? '' : 'mdi-chevron-down'"
+          :hide-details="true"
         ></v-text-field>
       </template>
       <v-date-picker
