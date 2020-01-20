@@ -61,3 +61,13 @@ export const Unknown = () => ({
   template: `<Avatar gender="unknown"/>`,
   components: { Avatar }
 })
+
+export const NoGender = () => ({
+  template: `<Avatar bornAt="2010-01-01"/>`,
+  components: { Avatar }
+})
+
+export const NoBornAt = () => ({
+  template: `<Avatar gender="male"/>`,
+  components: { Avatar }
+})
