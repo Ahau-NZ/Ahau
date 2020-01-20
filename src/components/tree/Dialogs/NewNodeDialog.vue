@@ -113,8 +113,20 @@
                     />
                   </v-col>
                 </v-row>
-                <v-row>
+                <v-row v-if="!showDescription">
                   <AddButton label="Description" @click="toggleDescription" row/>
+                </v-row>
+                <v-row v-if="showDescription">
+                  Description
+                </v-row>
+                <v-row v-if="showDescription">
+                  <v-col>
+                    <v-textarea
+                      v-model="data.description"
+                      :no-resize="true"
+                    >
+                    </v-textarea>
+                  </v-col>
                 </v-row>
               </v-col>
               <v-col>
@@ -176,7 +188,8 @@ function defaultData () {
     avatarImage: null,
     // title: '',
     bornAt: '',
-    diedAt: ''
+    diedAt: '',
+    description: ''
   }
 }
 
@@ -214,6 +227,7 @@ export default {
         showEditor: false
       },
       isDeceased: false,
+      showDescription: false,
       radios: 'radio-1',
       count: 0,
       form: {
@@ -265,7 +279,7 @@ export default {
       this.count += 1
     },
     toggleDescription () {
-      console.log('toggle description')
+      this.showDescription = true
     },
     submit () {
       if (!this.$refs.form.validate()) {
