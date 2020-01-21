@@ -20,6 +20,7 @@
     "test": "npm run test:js && npm run lint"
   },
   "dependencies": {
+    "@apollo/federation": "^0.11.3",
     "@mdi/font": "^4.5.95",
     "apollo-server": "^2.9.3",
     "apollo-server-express": "^2.9.6",
@@ -30,7 +31,6 @@
     "d3": "^5.12.0",
     "express": "^4.17.1",
     "graphql-date": "^1.0.3",
-    "graphql-tag": "^2.9.0",
     "graphql-upload": "^8.0.7",
     "lodash.clonedeep": "^4.5.0",
     "lodash.get": "^4.4.2",
