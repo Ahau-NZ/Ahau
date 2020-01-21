@@ -131,6 +131,7 @@ export default {
             whakapapaView(id: $id) {
               name
               description
+              image { uri }
               focus
               recps
             }
@@ -515,6 +516,7 @@ export default {
         position: absolute;
         top: 20px;
         left: 30px;
+        right: 30px;
 
         .col {
           padding-top: 0;
@@ -540,5 +542,9 @@ export default {
     #lock-icon-margin {
      margin-left: 10px;
     }
+  }
+
+  svg {
+    max-height: calc(100vh - 64px);
   }
 </style>
