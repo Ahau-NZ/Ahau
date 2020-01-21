@@ -79,8 +79,7 @@
 
 <script>
 import get from 'lodash.get'
-import tane from '@/assets/tane.svg'
-import wahine from '@/assets/wahine.svg'
+import avatarHelper from '@/lib/avatar-helpers.js'
 
 export default {
   name: 'Node',
@@ -92,8 +91,7 @@ export default {
   data () {
     return {
       offsetSize: 15,
-      partnerRadius: 0.8 * this.radius,
-      basePartners: []
+      partnerRadius: 0.8 * this.radius
     }
   },
   computed: {
@@ -107,12 +105,7 @@ export default {
       const uri = get(this.node, 'data.avatarImage.uri')
       if (uri) return uri
 
-      // fallback
-      switch (this.profile.gender) {
-        case 'male': return tane
-        case 'female': return wahine
-        default: return wahine // TODO androgenous avatar
-      }
+      return avatarHelper.defaultImage(this.profile.bornAt, this.profile.gender)
     },
     textWidth () {
       // const { x, y } = textElm.getBBox();
