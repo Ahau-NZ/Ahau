@@ -12,6 +12,9 @@
       <div>
         <v-card-title v-text="view.name" class="" />
         <v-card-subtitle v-text="view.description" />
+        <v-card-text>
+          <slot></slot>
+        </v-card-text>
       </div>
     </div>
 
