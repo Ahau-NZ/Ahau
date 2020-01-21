@@ -1,46 +1,24 @@
 <template>
-  <div id="whakapapa-tree">
-    <v-container class="white px-0 py-0 mx-auto">
-      <!-- TODO extract this to WhakapapaShow, it's not part of the Tree -->
-        <v-container class='header px-0 py-0'>
-          <v-row>
-            <v-col> <h1>{{ view.name }}</h1> </v-col>
-          </v-row>
-          <v-row>
-            <v-col class='description'> {{ view.description }} </v-col>
-          </v-row>
-          <v-row class='lock-container'>
-             <v-col class='lock-icon'>
-              <v-icon small color='#555'>mdi-lock</v-icon>
-               <span id='lock-icon-margin'>Private record - Only visible by you</span>
-              </v-col>
-          </v-row>
-        </v-container>
+  <svg id="baseSvg" width="100%" :height="height" ref="baseSvg">
+    <g id="baseGroup">
+      <g :transform="`translate(${treeX} ${treeY})`">
+        <g v-for="link in links" :key="link.id" class="link">
+          <Link :link="link" :branch="branch" />
+        </g>
+      </g>
 
-      <v-row>
-        <svg id="baseSvg" width="100%" :height="height" ref="baseSvg">
-          <g id="baseGroup">
-            <g :transform="`translate(${treeX} ${treeY})`">
-              <g v-for="link in links" :key="link.id" class="link">
-                <Link :link="link" :branch="branch" />
-              </g>
-            </g>
-
-            <g :transform="`translate(${treeX - nodeRadius} ${treeY - nodeRadius})`"
-              ref="tree">
-              <g v-for="node in nodes" :key="node.data.id" class="node">
-                <Node :node="node" :radius="nodeRadius"
-                  @click="collapse(node)"
-                  @open-context-menu="$emit('open-context-menu', $event)"
-                  :showLabel="true"
-                />
-              </g>
-            </g>
-          </g>
-        </svg>
-      </v-row>
-    </v-container>
-  </div>
+      <g :transform="`translate(${treeX - nodeRadius} ${treeY - nodeRadius})`"
+        ref="tree">
+        <g v-for="node in nodes" :key="node.data.id" class="node">
+          <Node :node="node" :radius="nodeRadius"
+            @click="collapse(node)"
+            @open-context-menu="$emit('open-context-menu', $event)"
+            :showLabel="true"
+          />
+        </g>
+      </g>
+    </g>
+  </svg>
 </template>
 
 <script>
@@ -214,42 +192,6 @@ export default {
 </script>
 
 <style scoped lang="scss">
-  @import '~vue-context/dist/css/vue-context.css';
-
-  #whakapapa-tree {
-    .container {
-      position: relative;
-
-      .header {
-        position: absolute;
-        top: 20px;
-        left: 30px;
-
-        .col {
-          padding-top: 0;
-          padding-bottom: 0;
-        }
-      }
-    }
-  }
-  h1 {
-    color: black;
-  }
-  .description {
-    color: #555;
-  }
-  .lock-container {
-    margin-top: 20px;
-    .lock-icon {
-      display: flex;
-      align-items: center;
-      font-size: 0.8em;
-      color: #555;
-    }
-    #lock-icon-margin {
-     margin-left: 10px;
-    }
-  }
   svg#baseSvg {
     cursor: grab;
   }

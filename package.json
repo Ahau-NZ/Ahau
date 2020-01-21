@@ -67,7 +67,7 @@
     "vue-cli-plugin-apollo": "^0.21.0",
     "vue-context": "^5.0.0",
     "vue-router": "^3.0.3",
-    "vuejs-clipper": "^1.1.5",
+    "vuejs-clipper": "^1.1.6",
     "vuetify": "^2.1.0",
     "vuex": "^3.0.1"
   },

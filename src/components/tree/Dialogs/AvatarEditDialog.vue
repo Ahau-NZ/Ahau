@@ -10,7 +10,7 @@
               :src="avatarImage"
               :area="100"
               bg-color="rgba(0, 0, 0, 0)"
-              :round="true"
+              :round="round"
               shadow="rgba(0,0,0,0.5)"
               :rotate="rotation"
             />
@@ -18,7 +18,11 @@
         </v-row>
 
         <div class="px-8 py-4">
-          <h6 class="caption pt-8"><v-icon>mdi-gesture-tap-hold</v-icon> Ajust the image by zooming, scaling and moving it around before saving.</h6>
+          <h6 class="caption pt-8">
+            <v-icon>mdi-gesture-tap-hold</v-icon>
+            Ajust the image by zooming, scaling and moving it around before saving.
+          </h6>
+
           <h5 class="pt-8">rotate</h5>
           <clipper-range v-model="rotation" style="max-width:300px" :min="0" :max="360"></clipper-range>
 
@@ -47,7 +51,8 @@ export default {
   },
   props: {
     show: { type: Boolean, default: false },
-    avatarImage: String
+    avatarImage: String,
+    round: { type: Boolean, default: true }
   },
   data () {
     return {
