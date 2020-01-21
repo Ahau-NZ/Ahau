@@ -93,6 +93,7 @@ const saveWhakapapaViewMutation = input => ({
 })
 
 export default {
+  name: 'WhakapapaShow',
   data () {
     return {
       whakapapaView: {
@@ -248,19 +249,19 @@ export default {
           query($id: String!) {
             person(id: $id) {
               id
+              preferredName
+              legalName
               gender
               bornAt
               diedAt
-              legalName
-              preferredName
               description
               avatarImage { uri }
               children {
                 profile {
                   id
-                  gender
-                  legalName
                   preferredName
+                  legalName
+                  gender
                   bornAt
                   diedAt
                   description
@@ -272,9 +273,9 @@ export default {
               parents {
                 profile {
                   id
-                  gender
-                  legalName
                   preferredName
+                  legalName
+                  gender
                   bornAt
                   diedAt
                   description
