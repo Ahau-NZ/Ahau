@@ -33,6 +33,10 @@ export const RULES = {
     legal: [
       v => !!v || 'Legal name is required',
       v => (v && v.length <= 50) || 'Name must be less than 50 characters'
+    ],
+    whakapapaView: [
+      v => !!v || 'Name is required',
+      v => (v && v.length <= 50) || 'Name must be less than 50 characters'
     ]
   },
   date: {

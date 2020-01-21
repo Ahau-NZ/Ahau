@@ -1,12 +1,20 @@
 <template>
-  <div>
-    <Tree
-      :view="whakapapaView"
-      :nestedWhakapapa="nestedWhakapapa"
-      @load-descendants="loadDescendants($event)"
-      @collapse-node="collapseNode($event)"
-      @open-context-menu="openContextMenu($event)"
-    />
+  <div id="whakapapa-show">
+    <v-container class="white px-0 py-0 mx-auto">
+      <v-row class='header'>
+        <WhakapapaViewCard :view="whakapapaView" :shadow="false" />
+      </v-row>
+
+      <v-row>
+        <Tree
+          :view="whakapapaView"
+          :nestedWhakapapa="nestedWhakapapa"
+          @load-descendants="loadDescendants($event)"
+          @collapse-node="collapseNode($event)"
+          @open-context-menu="openContextMenu($event)"
+        />
+      </v-row>
+    </v-container>
 
     <vue-context ref="menu">
       <li v-for="(option, index) in contextMenuOpts" :key="index">
@@ -47,7 +55,9 @@ import gql from 'graphql-tag'
 import pick from 'lodash.pick'
 import { VueContext } from 'vue-context'
 
+import WhakapapaViewCard from '@/components/whakapapa-view/WhakapapaViewCard.vue'
 import Tree from '@/components/Tree.vue'
+
 import ViewEditNodeDialog from '@/components/tree/Dialogs/ViewEditNodeDialog.vue'
 import NewNodeDialog from '@/components/tree/Dialogs/NewNodeDialog.vue'
 import DeleteNodeDialog from '@/components/tree/Dialogs/DeleteNodeDialog.vue'
@@ -81,7 +91,8 @@ export default {
         description: '',
         focus: '',
         // mode: 'descendants',
-        recps: null
+        recps: null,
+        image: { uri: '' }
       },
       // the record which defines the starting point for a tree (the 'focus')
 
@@ -233,9 +244,7 @@ export default {
               legalName
               preferredName
               description
-              avatarImage {
-                uri
-              }
+              avatarImage { uri }
               children {
                 profile {
                   id
@@ -245,9 +254,7 @@ export default {
                   bornAt
                   diedAt
                   description
-                  avatarImage {
-                    uri
-                  }
+                  avatarImage { uri }
                 }
                 relationshipType
               }
@@ -261,9 +268,7 @@ export default {
                   bornAt
                   diedAt
                   description
-                  avatarImage {
-                    uri
-                  }
+                  avatarImage { uri }
                 }
                 relationshipType
               }
@@ -488,6 +493,7 @@ export default {
     }
   },
   components: {
+    WhakapapaViewCard,
     Tree,
     VueContext,
     NewNodeDialog,
@@ -499,7 +505,40 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
-.body-width {
-  max-width: 900px;
-}
+  @import '~vue-context/dist/css/vue-context.css';
+
+  #whakapapa-show {
+
+    &> .container {
+      position: relative;
+      &> .header {
+        position: absolute;
+        top: 20px;
+        left: 30px;
+
+        .col {
+          padding-top: 0;
+          padding-bottom: 0;
+        }
+      }
+    }
+  }
+  h1 {
+    color: black;
+  }
+  .description {
+    color: #555;
+  }
+  .lock-container {
+    margin-top: 20px;
+    .lock-icon {
+      display: flex;
+      align-items: center;
+      font-size: 0.8em;
+      color: #555;
+    }
+    #lock-icon-margin {
+     margin-left: 10px;
+    }
+  }
 </style>
