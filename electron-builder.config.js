@@ -42,11 +42,16 @@ module.exports = {
 
   files: [
     '**/*',
+
+    /* custom */
     '!src/*',
     '!public/*',
-    '!dist/installers',
-    '!**/node_modules/*/{CHANGELOG.md,README.md,README,readme.md,readme}',
-    '!**/node_modules/*/{test,__tests__,tests,powered-test,example,examples}',
+    '!dist/installers/*',
+    '!electron-builder.env',
+    '!**/node_modules/**/{CHANGELOG.md,README*,README,readme.md,readme}',
+    '!**/node_modules/**/{test,__tests__,tests,powered-test,example,examples}',
+    /* custom */
+
     '!**/node_modules/*.d.ts',
     '!**/node_modules/.bin',
     '!**/*.{iml,o,hprof,orig,pyc,pyo,rbc,swp,csproj,sln,xproj}',

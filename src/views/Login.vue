@@ -73,7 +73,7 @@ export default {
         return setTimeout(this.proceed, 500)
       }
 
-      if (!this.profile.id) {
+      if (!this.profile || !this.profile.id) {
         console.log('waiting for apollo!')
         return setTimeout(this.proceed, 500)
       }
