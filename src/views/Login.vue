@@ -16,7 +16,7 @@
     <router-link v-if="!isSplash && isSetup"
       :to="{ name: 'whakapapaIndex' }"
       class="d-flex flex-column align-center">
-      <Avatar :image="profile.avatarImage" size="13vh" />
+      <Avatar :image="profile.avatarImage" :gender="profile.gender" :bornAt="profile.bornAt" size="13vh" />
       <h3 class="name mt-2">{{ profile.preferredName }}</h3>
     </router-link>
 

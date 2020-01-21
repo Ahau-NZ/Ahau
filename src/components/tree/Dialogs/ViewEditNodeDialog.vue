@@ -146,7 +146,7 @@
               <v-row>
                 <v-spacer/>
                 <v-col>
-                  <Avatar class="justify-center align-center" size="250px" :image="profile.avatarImage" :alt="profile.preferredName" />
+                  <Avatar class="justify-center align-center" size="250px" :image="profile.avatarImage" :alt="profile.preferredName" :gender="profile.gender" :bornAt="profile.bornAt" />
                 </v-col>
                 <v-spacer/>
               </v-row>
@@ -155,15 +155,15 @@
             <v-divider/>
             <v-row>
               <v-col>
-                <AvatarGroup :profiles="parents" group-title="Parents" button-label="Add Parent" @button-click="toggleNew('parent')"/>
+                <AvatarGroup :show-labels="true" :profiles="parents" group-title="Parents" button-label="Add Parent" @button-click="toggleNew('parent')"/>
               </v-col>
               <v-divider v-if="hasSiblings" :vertical="true"></v-divider>
               <v-col v-if="hasSiblings">
-                <AvatarGroup :profiles="siblings" group-title="Sibling"/>
+                <AvatarGroup :show-labels="true" :profiles="siblings" group-title="Sibling"/>
               </v-col>
               <v-divider :vertical="true"/>
               <v-col>
-                <AvatarGroup :profiles="children" group-title="Children" button-label="Add Child" @button-click="toggleNew('child')"/>
+                <AvatarGroup :show-labels="true" :profiles="children" group-title="Children" button-label="Add Child" @button-click="toggleNew('child')"/>
               </v-col>
             </v-row>
             <v-divider />

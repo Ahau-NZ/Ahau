@@ -44,3 +44,17 @@ export const WithButton = () => ({
   },
   components: { AvatarGroup }
 })
+
+export const WithLabels = () => ({
+  template:
+    '<AvatarGroup :profiles="children" :groupTitle="title" :showLabels="true"/>',
+  data: () => ({
+    children: personComplete.children,
+    title: 'Children',
+    label: 'Add Child'
+  }),
+  methods: {
+    click: action('click')
+  },
+  components: { AvatarGroup }
+})

@@ -1,5 +1,5 @@
 import Tree from './Tree.vue'
-import { personMinimum, personComplete } from '@/mocks/person-profile.js'
+import { personMinimum, personComplete, personNoImages } from '@/mocks/person-profile.js'
 
 export default {
   title: 'Tree'
@@ -25,6 +25,19 @@ export const TreeWithoutChildren = () => ({
     whakapapaView: {
       name: 'Tree Without Children',
       description: 'This is a tree without children'
+    },
+    profiles: {}
+  }),
+  components: { Tree }
+})
+
+export const TreeWithoutImages = () => ({
+  template: '<Tree :nestedWhakapapa="nestedWhakapapa" :view="whakapapaView" :profiles="profiles"/>',
+  data: () => ({
+    nestedWhakapapa: personNoImages,
+    whakapapaView: {
+      name: 'Tree Without Images',
+      description: 'This is a tree without images -  therefore I should default images instead'
     },
     profiles: {}
   }),
