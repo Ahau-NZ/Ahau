@@ -21,7 +21,6 @@
                       label="Preferred name. This is the name shown on your profile"
                       :placeholder="' '"
                       :rules="form.rules.name.preferred"
-                      required
                       :hide-details="true"
                     ></v-text-field>
                   </v-col>
@@ -61,13 +60,13 @@
                     />
                   </v-col>
                   <v-col>
-                    <v-text-field
+                    <!-- <v-text-field
                       type="number"
                       label="Order of birth"
                       :placeholder="' '"
                       append-icon="mdi-chevron-down"
                       :hide-details="true"
-                    />
+                    /> -->
                   </v-col>
                 </v-row>
                 <v-row>

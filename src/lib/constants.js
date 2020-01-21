@@ -31,8 +31,8 @@ export const RULES = {
       // v => (v && v.length <= 20) || 'Name must be less than 20 characters'
     ],
     legal: [
-      v => !!v || 'Legal name is required',
-      v => (v && v.length <= 50) || 'Name must be less than 50 characters'
+      // v => !!v || 'Legal name is required',
+      // v => (v && v.length <= 50) || 'Name must be less than 50 characters'
     ],
     whakapapaView: [
       v => !!v || 'Name is required',

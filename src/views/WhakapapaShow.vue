@@ -414,7 +414,6 @@ export default {
         console.error('failed to createProfile', res)
         return
       }
-      debugger
       return res.data.saveProfile // a profileId
     },
     async createChildLink (
