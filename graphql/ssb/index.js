@@ -13,7 +13,7 @@ const GetTiaki = require('./queries/get-tiaki')
 
 const PostUploadFile = require('./mutations/post-upload-file')
 const PostSaveProfile = require('./mutations/post-save-profile')
-const PostSaveWhakapapaRelation = require('./mutations/post-save-whakapapa-relation')
+const PostSaveWhakapapaRelation = require('./mutations/post-save-whakapapa-link')
 const PostSaveWhakapapaView = require('./mutations/post-save-whakapapa-view')
 const StreamPeers = require('./subscriptions/stream-peers')
 
