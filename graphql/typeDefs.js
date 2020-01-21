@@ -140,10 +140,11 @@ module.exports = gql`
   }
 
   input WhakapapaViewInput {
-    id: ID!
+    id: ID
     name: String
     description: String
     focus: String
+    image: ImageInput
     mode: Mode
     recps: [String]
   }
@@ -186,6 +187,7 @@ module.exports = gql`
     description: String
     focus: ID
     mode: Mode
+    image: Image
     recps: [String]
   }
 

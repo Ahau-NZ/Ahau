@@ -1,20 +1,8 @@
 <template>
   <v-container class="body-width white mx-auto py-12 px-12">
-    <v-row v-for="view in views" :key="view.id" dense>
+    <v-row v-for="view in views" :key="view.id" dense class="mb-2">
       <v-col cols="12">
-        <v-card
-          :to="{ name: 'whakapapaShow', params: { id: view.id } }"
-          color="primary"
-        >
-          <v-card-title class="headline">{{ view.name }}</v-card-title>
-          <v-card-subtitle>{{ view.description }} </v-card-subtitle>
-
-<!--
-          <v-card-actions>
-            <v-btn text> Edit </v-btn>
-          </v-card-actions>
-          -->
-        </v-card>
+        <WhakapapaViewCard :view="view" />
       </v-col>
     </v-row>
 
@@ -26,7 +14,8 @@
       <span class="pointer black--text pl-4 subtitle">Create new whakapapa</span>
     </div>
 
-    <NewViewForm :show="showViewForm" @close="toggleViewForm" @submit="handleStepOne($event)" />
+    <NewViewDialog :show="showViewForm"
+      @close="toggleViewForm" @submit="handleStepOne($event)"/>
     <NewProfileDialog v-if="showProfileForm" :show="showProfileForm"
       @close="toggleProfileForm" @submit="handleDoubleStep($event)"/>
   </v-container>
@@ -35,7 +24,9 @@
 <script>
 import gql from 'graphql-tag'
 import pick from 'lodash.pick'
-import NewViewForm from '@/components/whakapapa-view/New.vue'
+import isEmpty from 'lodash.isempty'
+import WhakapapaViewCard from '@/components/whakapapa-view/WhakapapaViewCard.vue'
+import NewViewDialog from '@/components/whakapapa-view/NewViewDialog.vue'
 import NewProfileDialog from '@/components/profile-form/Dialog.vue'
 
 const saveWhakapapaViewQuery = gql`mutation ($input: WhakapapaViewInput) {
@@ -76,6 +67,7 @@ export default {
           id
           name
           description
+          image { uri }
         }
       }`,
       update: data => data.whakapapaViews,
@@ -90,27 +82,30 @@ export default {
       this.showViewForm = !this.showViewForm
     },
     async handleStepOne ($event) {
-      const input = pick($event, ['name', 'description', 'mode'])
+      this.newView = {
+        ...pick($event, ['name', 'description', 'image']),
+        focus: this.whoami.profile.id,
+        mode: 'descendants', // HARD coded at the moment
+        recps: [this.whoami.feedId] // TODO change this for groups
+      }
+
       switch ($event.focus) {
-        case 'self':
-          input.focus = this.whoami.profile.id
-          return this.createView(input)
-        case 'new':
-          this.newView = input
-          return this.toggleProfileForm()
+        case 'self': return this.createView(this.newView)
+        case 'new': return this.toggleProfileForm()
         default:
       }
     },
     async createView (input) {
+      const pruned = {}
+      Object.entries(input).forEach(([key, value]) => {
+        if (!isEmpty(value)) pruned[key] = value
+      })
+
       try {
         const result = await this.$apollo.mutate({
           mutation: saveWhakapapaViewQuery,
           variables: {
-            input: {
-              ...input,
-              mode: 'descendants', // HARD coded at the moment
-              recps: [this.whoami.feedId]
-            }
+            input: pruned
           }
         })
         if (!result.data) {
@@ -122,7 +117,6 @@ export default {
       } catch (err) {
         throw err
       }
-      // publish view, then navigate to it?
     },
     async handleDoubleStep ($event) {
       try {
@@ -150,7 +144,8 @@ export default {
     }
   },
   components: {
-    NewViewForm,
+    WhakapapaViewCard,
+    NewViewDialog,
     NewProfileDialog
   }
 }
@@ -163,6 +158,13 @@ export default {
   }
   .pointer {
     cursor: pointer;
+  }
+
+  .cover-image {
+    min-width: 150px;
+    width: 150px;
+    background-color: #fff;
+    background-position: center center;
   }
 
 </style>
