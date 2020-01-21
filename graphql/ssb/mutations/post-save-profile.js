@@ -48,6 +48,14 @@ function buildTransformation (input) {
         }
         return
 
+      case 'bornAt':
+        T[key] = { set: Number(value) }
+        return
+
+      case 'diedAt':
+        T[key] = { set: Number(value) }
+        return
+
       case 'tombstone':
         T[key] = { set: pick(value, ['date', 'reason']) }
         T[key].set.date = Number(T[key].set.date)

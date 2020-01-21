@@ -76,8 +76,9 @@ module.exports = gql`
     headerImage: Image
     tombstone: Tombstone
     canEdit: Boolean
-
     gender: Gender
+    bornAt: Date
+    diedAt: Date
     children: [WhakapapaLink]
     parents: [WhakapapaLink]
   }
@@ -92,18 +93,20 @@ module.exports = gql`
     legalName: String
     altNames: [String]
     description: String
+    gender: Gender
+    bornAt: Date
+    diedAt: Date
+    recps: [String]
     avatarImage: Image
     headerImage: Image
     tombstone: Tombstone
     canEdit: Boolean
-
     tiaki: [Person]
   }
 
   input ProfileInput {
     id: String
     type: String
-
     preferredName: String
     legalName: String
     altNames: [String]
@@ -111,6 +114,8 @@ module.exports = gql`
     headerImage: ImageInput
     description: String
     gender: Gender
+    bornAt: Date
+    diedAt: Date
     recps: [String]
     tombstone: TombstoneInput
   }
@@ -135,10 +140,11 @@ module.exports = gql`
   }
 
   input WhakapapaViewInput {
-    viewId: String
+    id: ID
     name: String
     description: String
     focus: String
+    image: ImageInput
     mode: Mode
     recps: [String]
   }
@@ -176,11 +182,12 @@ module.exports = gql`
   Whakapapa view entry with a focus on a Person and private, visible only to recps
   """
   type WhakapapaView {
-    id: ID
+    id: ID!
     name: String
     description: String
     focus: ID
     mode: Mode
+    image: Image
     recps: [String]
   }
 

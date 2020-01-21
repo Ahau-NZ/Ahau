@@ -53,7 +53,7 @@
                     >
                     </v-select>
                   </v-col>-->
-                  <v-col class="pa-0" md="3">
+                  <v-col class="" md="3">
                     <v-select
                       v-model="data.gender"
                       :disabled="!isEditting"
@@ -64,23 +64,22 @@
                     >
                     </v-select>
                   </v-col>
-                  <v-col class="pa-0" md="3">
+                  <v-col class="mr-5" md="3">
                     <NodeDatePicker
                       required
-                      :label="data.bornAt"
+                      :value="data.bornAt"
+                      label="Date of Birth"
                       @date="data.bornAt = $event"
                       :makeDisabled="!isEditting"
                     />
                   </v-col>
-                  <v-col class="pa-0" md="3"> <!-- TODO: replace living with data when its available -->
-                    <v-select
-                      label="living"
-                      :disabled="!isEditting"
-                      flat
-                      solo
-                      :append-icon="isEditting ? '$dropdown' : ''"
-                    >
-                    </v-select>
+                  <v-col md="3">
+                    <NodeDatePicker
+                      :value="data.diedAt"
+                      label="Date Deceased"
+                      @date="data.diedAt = $event"
+                      :makeDisabled="!isEditting"
+                    />
                   </v-col>
                   <v-spacer/>
                 </v-row>
@@ -147,7 +146,7 @@
               <v-row>
                 <v-spacer/>
                 <v-col>
-                  <Avatar class="justify-center align-center" size="250px" :image="profile.avatarImage" :alt="profile.preferredName" />
+                  <Avatar class="justify-center align-center" size="250px" :image="profile.avatarImage" :alt="profile.preferredName" :gender="profile.gender" :bornAt="profile.bornAt" />
                 </v-col>
                 <v-spacer/>
               </v-row>
@@ -156,15 +155,15 @@
             <v-divider/>
             <v-row>
               <v-col>
-                <AvatarGroup :profiles="parents" group-title="Parents" button-label="Add Parent" @button-click="toggleNew('parent')"/>
+                <AvatarGroup :show-labels="true" :profiles="parents" group-title="Parents" button-label="Add Parent" @button-click="toggleNew('parent')"/>
               </v-col>
               <v-divider v-if="hasSiblings" :vertical="true"></v-divider>
               <v-col v-if="hasSiblings">
-                <AvatarGroup :profiles="siblings" group-title="Sibling"/>
+                <AvatarGroup :show-labels="true" :profiles="siblings" group-title="Sibling"/>
               </v-col>
               <v-divider :vertical="true"/>
               <v-col>
-                <AvatarGroup :profiles="children" group-title="Children" button-label="Add Child" @button-click="toggleNew('child')"/>
+                <AvatarGroup :show-labels="true" :profiles="children" group-title="Children" button-label="Add Child" @button-click="toggleNew('child')"/>
               </v-col>
             </v-row>
             <v-divider />
@@ -235,6 +234,7 @@ export default {
         gender: this.profile.gender,
         legalName: this.profile.legalName,
         bornAt: this.profile.bornAt,
+        diedAt: this.profile.diedAt,
         preferredName: this.profile.preferredName,
         avatarImage: this.profile.avatarImage,
         description: this.profile.description

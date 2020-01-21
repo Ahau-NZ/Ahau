@@ -18,8 +18,9 @@ export default {
   },
   apollo: {
     profile: {
+      /* Needs a new community query */
       query: gql`query ProfileData($id: String!) {
-        profile(id: $id) {
+        person(id: $id) {
           id
           preferredName
           legalName
@@ -34,6 +35,11 @@ export default {
         return {
           id: this.$route.params.id
           // id: decodeURIComponent(this.$route.params.id)
+        }
+      },
+      update (data) {
+        return {
+          ...data.person
         }
       },
       fetchPolicy: 'no-cache'

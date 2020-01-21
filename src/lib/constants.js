@@ -33,6 +33,10 @@ export const RULES = {
     legal: [
       v => !!v || 'Legal name is required',
       v => (v && v.length <= 50) || 'Name must be less than 50 characters'
+    ],
+    whakapapaView: [
+      v => !!v || 'Name is required',
+      v => (v && v.length <= 50) || 'Name must be less than 50 characters'
     ]
   },
   date: {
@@ -48,7 +52,8 @@ export const RULES = {
 export const PERMITTED_PROFILE_ATTRS = [ // these are the properties that changes are permitted on
   'gender',
   'legalName',
-  // bornAt, disabled for now
+  'bornAt',
+  'diedAt',
   'preferredName',
   'avatarImage',
   'description',
