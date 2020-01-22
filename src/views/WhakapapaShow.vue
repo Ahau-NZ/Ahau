@@ -60,6 +60,7 @@
 <script>
 import gql from 'graphql-tag'
 import pick from 'lodash.pick'
+import get from 'lodash.get'
 import { VueContext } from 'vue-context'
 
 import WhakapapaViewCard from '@/components/whakapapa-view/WhakapapaViewCard.vue'
@@ -180,7 +181,14 @@ export default {
       if (!this.selectedProfile) return false
 
       if (this.selectedProfile.id === this.whoami.profile.id) return false
-      if (this.selectedProfile.id === this.whakapapaView.focus) return false
+      if (this.selectedProfile.id === this.whakapapaView.focus) {
+        if (this.selectedProfile.children.length === 1) return true
+        // this is only for covering the case where you accidentally added a parent
+        // it's more complex with > 1 children because then who is the new focus?
+
+        // TODO make this only doable within 10mins of creating a profile?
+        return false
+      }
 
       return true
     }
@@ -471,9 +479,12 @@ export default {
     },
     async deleteProfile () {
       if (!this.canDelete) return
-      const profileId = this.selectedProfile.id
 
-      const res = await this.$apollo.mutate({
+      if (this.selectedProfile.id === this.whakapapaView.focus) {
+        this.updateFocus(get(this.selectedProfile, 'children[0].id'))
+      }
+
+      const profileResult = await this.$apollo.mutate({
         mutation: gql`
           mutation($input: ProfileInput!) {
             saveProfile(input: $input)
@@ -481,14 +492,14 @@ export default {
         `,
         variables: {
           input: {
-            id: profileId,
+            id: this.selectedProfile.id,
             tombstone: { date: new Date() }
           }
         }
       })
 
-      if (res.errors) {
-        console.error('failed to delete profile', res)
+      if (profileResult.errors) {
+        console.error('failed to delete profile', profileResult)
         return
       }
 
