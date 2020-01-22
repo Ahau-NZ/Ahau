@@ -5,6 +5,9 @@ module.exports = {
   directories: {
     'output': 'dist/installers'
   },
+  asarUnpack: [
+    './node_modules/sodium-native/**' // needed for sodium-native/prebuilds trim, not sure why
+  ],
 
   linux: {
     category: 'Network',
@@ -17,7 +20,6 @@ module.exports = {
   mac: {
     category: 'public.app-category.social-networking',
     icon: 'build/mac/icon.icns',
-    background: 'build/mac/background.png',
     hardenedRuntime: true, // N
     gatekeeperAssess: false // N
     // entitlements: 'build/mac/entitlements.mac.plist', // N
@@ -25,6 +27,7 @@ module.exports = {
   },
   dmg: {
     artifactName: '${name}-Mac-${version}.${ext}', // eslint-disable-line
+    background: 'build/mac/background.png',
     icon: 'build/mac/dmg-icon.icns',
     sign: false // N
   },
@@ -51,8 +54,15 @@ module.exports = {
     '!public/*',
     '!dist/installers/*',
     '!electron-builder.env',
+
+    // sodium-native: only include needed prebuilds
+    '!node_modules/sodium-native/prebuilds/*',
+    'node_modules/sodium-native/prebuilds/${os}-${arch}', // eslint-disable-line
+
+    // README / tests: more aggressive exclusion than default
     '!**/node_modules/**/{CHANGELOG.md,README*,README,readme.md,readme}',
     '!**/node_modules/**/{test,__tests__,tests,powered-test,example,examples}',
+
     /* custom */
 
     '!**/node_modules/*.d.ts',
