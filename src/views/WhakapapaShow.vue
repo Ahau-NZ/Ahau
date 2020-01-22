@@ -60,7 +60,6 @@
 <script>
 import gql from 'graphql-tag'
 import pick from 'lodash.pick'
-import get from 'lodash.get'
 import { VueContext } from 'vue-context'
 
 import WhakapapaViewCard from '@/components/whakapapa-view/WhakapapaViewCard.vue'
@@ -70,8 +69,8 @@ import ViewEditNodeDialog from '@/components/tree/Dialogs/ViewEditNodeDialog.vue
 import NewNodeDialog from '@/components/tree/Dialogs/NewNodeDialog.vue'
 import DeleteNodeDialog from '@/components/tree/Dialogs/DeleteNodeDialog.vue'
 
-// const tree = require('@/lib/tree-helpers.js')
 import tree from '@/lib/tree-helpers'
+import findSuccessor from '@/lib/find-successor'
 
 const saveWhakapapaRelMutation = input => ({
   mutation: gql`
@@ -180,14 +179,13 @@ export default {
     canDelete () {
       if (!this.selectedProfile) return false
 
+      // not allowed to delete own profile
       if (this.selectedProfile.id === this.whoami.profile.id) return false
-      if (this.selectedProfile.id === this.whakapapaView.focus) {
-        if (this.selectedProfile.children.length === 1) return true
-        // this is only for covering the case where you accidentally added a parent
-        // it's more complex with > 1 children because then who is the new focus?
 
-        // TODO make this only doable within 10mins of creating a profile?
-        return false
+      // if deleting the focus (top ancestor)
+      if (this.selectedProfile.id === this.whakapapaView.focus) {
+        // can only proceed if can find a clear "successor" to be new focus
+        return Boolean(findSuccessor(this.selectedProfile))
       }
 
       return true
@@ -481,7 +479,8 @@ export default {
       if (!this.canDelete) return
 
       if (this.selectedProfile.id === this.whakapapaView.focus) {
-        this.updateFocus(get(this.selectedProfile, 'children[0].id'))
+        const successor = findSuccessor(this.selectedProfile)
+        this.updateFocus(successor.id)
       }
 
       const profileResult = await this.$apollo.mutate({
