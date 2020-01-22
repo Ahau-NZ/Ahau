@@ -1,7 +1,7 @@
 module.exports = {
   appId: 'io.ahau.ahau',
   productName: 'Ahau',
-  afterSign: 'build/notarize.js', // N
+  afterSign: 'build/mac/notarize.js', // N
   directories: {
     'output': 'dist/installers'
   },
@@ -16,20 +16,23 @@ module.exports = {
 
   mac: {
     category: 'public.app-category.social-networking',
+    icon: 'build/mac/icon.icns',
+    background: 'build/mac/background.png',
     hardenedRuntime: true, // N
     gatekeeperAssess: false // N
-    // entitlements: 'build/entitlements.mac.plist', // N
-    // entitlementsInherit: 'build/entitlements.mac.plist' // N
+    // entitlements: 'build/mac/entitlements.mac.plist', // N
+    // entitlementsInherit: 'build/mac/entitlements.mac.plist' // N
   },
   dmg: {
     artifactName: '${name}-Mac-${version}.${ext}', // eslint-disable-line
-    icon: 'build/dmg-icon.icns',
+    icon: 'build/mac/dmg-icon.icns',
     sign: false // N
   },
   // N = this settings requires for Apple notarization
   // https://kilianvalkhof.com/2019/electron/notarizing-your-electron-application/
 
   win: {
+    icon: 'build/win/icon.ico',
     publisherName: [
       'Āhau Limited',
       'Protozoa Limited'
@@ -37,7 +40,7 @@ module.exports = {
   },
   nsis: {
     artifactName: '${name}-Windows-${version}.${ext}', // eslint-disable-line
-    installerIcon: 'build/setup-icon.ico'
+    installerIcon: 'build/win/setup-icon.ico'
   },
 
   files: [
