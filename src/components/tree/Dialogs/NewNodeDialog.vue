@@ -71,11 +71,11 @@
                 </v-row>
                 <v-row>
                   <v-col md="6">
-                    <v-checkbox v-model="isDeceased" label="No longer living" :hide-details="true"/>
+                    <v-checkbox v-model="isDeceased" label="No longer living"  :hide-details="true"/>
                   </v-col>
                   <v-col md="6">
                     <NodeDatePicker
-                      :makeDisabled="!isDeceased"
+                      v-if="isDeceased"
                       label="Date of death"
                       :value="data.diedAt"
                       @date="data.diedAt = $event"
@@ -260,6 +260,11 @@ export default {
     'data.relationshipType' (newValue, oldValue) {
       // make sure adoption status can't be set true when relationship type is birth
       if (newValue === 'birth') this.data.legallyAdopted = false
+    },
+    isDeceased (newValue) {
+      if (newValue === false) {
+        this.data.diedAt = ''
+      }
     }
   },
   methods: {
