@@ -194,8 +194,7 @@
     </v-form>
 
     <DeleteNodeDialog v-if="deleteDialog" :show="deleteDialog"
-      :profile="profile"
-      :warnAboutChildren="warnAboutChildren"
+      :profile="profile" :warnAboutChildren="warnAboutChildren"
       @close="toggleDelete" @submit="deleteProfile()"
     />
   </Dialog>

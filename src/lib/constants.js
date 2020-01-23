@@ -39,11 +39,9 @@ export const RULES = {
       v => (v && v.length <= 50) || 'Name must be less than 50 characters'
     ]
   },
-  date: {
-    birth: [
-      // v => !!v || 'Date of birth is required'
-    ]
-  },
+  bornAt: [
+    // v => !!v || 'Date of birth is required'
+  ],
   relationshipType: [
     // v => !!v || 'Relationship type is required'
   ]

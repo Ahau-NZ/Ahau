@@ -38,13 +38,9 @@
       :warnAboutChildren="selectedProfile && (selectedProfile.id !== whakapapaView.focus)"
       @close="toggleView" @new="toggleNewPerson($event)" @submit="updateProfile($event)" @delete="deleteProfile()"
     />
-    <NewNodeDialog
-      v-if="dialog.new"
-      :show="dialog.new"
-      :type="dialog.type"
-      :title="selectedProfile.preferredName"
-      @close="toggleNew"
-      @submit="addPerson($event)"
+    <NewNodeDialog v-if="dialog.new" :show="dialog.new"
+      :type="dialog.type" :title="selectedProfile.preferredName"
+      @close="toggleNew" @submit="addPerson($event)"
     />
     <DeleteNodeDialog v-if="dialog.delete" :show="dialog.delete"
       :profile="selectedProfile"

@@ -12,18 +12,6 @@
         </v-row>
       </v-col>
       <v-col v-if="buttonLabel" md="4" class="pt-8" align="center">
-        <!-- <v-row justify="center">
-          <v-btn @click="click"
-            small
-            fab
-            color="white"
-            >
-            <v-icon class="black--text">mdi-plus</v-icon>
-          </v-btn>
-        </v-row>
-        <v-row justify="center" class="pt-1">
-          {{ buttonLabel }}
-        </v-row> -->
         <AddButton :label="buttonLabel" @click="click"/>
       </v-col>
     </v-row>

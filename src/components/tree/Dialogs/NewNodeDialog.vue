@@ -1,9 +1,6 @@
 <template>
   <Dialog :show="show" @close="close">
-    <v-form ref="form"
-      v-model="form.valid"
-      lazy-validation
-    >
+    <v-form ref="form" v-model="form.valid" lazy-validation>
       <v-card>
         <v-card-text>
           <v-container class="ma-2">
@@ -53,7 +50,7 @@
                 <v-row>
                   <v-col>
                     <NodeDatePicker
-                      :rules="form.rules.date.birth"
+                      :rules="form.rules.date.bornAt"
                       :value="data.bornAt"
                       label="Date of birth"
                       @date="data.bornAt = $event"
@@ -133,12 +130,6 @@
                   <Avatar size="200px" :image="data.avatarImage" :alt="data.preferredName" />
                 </v-row>
                 <v-row justify="center" align="center">
-                  <!--<v-btn
-                    fab
-                    small
-                  >
-                  <v-icon>mdi-pencil</v-icon>
-                  </v-btn>-->
                   <clipper-upload accept="image/*" @input="toggleAvatar">
                     <v-btn v-if="!avatar.new" class="toggle" fab small color="white">
                       <v-icon class="black--text">mdi-pencil</v-icon>
