@@ -6,8 +6,13 @@ export default {
 }
 
 export const defaultDialog = () => ({
-  template: `<NewNodeDialog :show="true"/>`,
-  components: { NewNodeDialog }
+  template: `<NewNodeDialog :show="true" @submit="log($event)"/>`,
+  components: { NewNodeDialog },
+  methods: {
+    log ($event) {
+      console.log($event)
+    }
+  }
 })
 
 export const addAChild = () => ({

@@ -88,10 +88,10 @@
                       Gender
                     </v-row>
                     <v-row>
-                      <v-radio-group v-model="radios" row>
+                      <v-radio-group v-model="data.gender" row>
                         <v-radio v-for="(gender, index) in genders"
                           :key="index"
-                          :value="`radio-${index}`"
+                          :value="gender"
                           :label="gender"
                           :hide-details="true"
                           class="pr-10"
