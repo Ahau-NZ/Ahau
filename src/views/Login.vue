@@ -1,19 +1,20 @@
 <template>
   <div class="container">
-    <div v-if='isSplash' class='image-container'>
+    <div v-if='isLoading' class='splash'>
       <img src='@/assets/logo_red.svg' />
       <h1>Āhau</h1>
     </div>
 
-    <v-btn v-if="!isSplash && !isSetup"
+    <v-btn v-if="!isLoading && !isSetup"
       text x-large color="#b12526"
       :to="{ name: 'personEdit', params: { id: profile.id }, query: { setup: true } }"
-      >
+    >
+      <!-- TODO change this for an EditProfile dialog -->
       <v-icon left>mdi-plus</v-icon>
       Create profile
     </v-btn>
 
-    <router-link v-if="!isSplash && isSetup"
+    <router-link v-if="!isLoading && isSetup"
       :to="{ name: 'whakapapaIndex' }"
       class="d-flex flex-column align-center">
       <Avatar :image="profile.avatarImage" :gender="profile.gender" :bornAt="profile.bornAt" size="13vh" />
@@ -30,7 +31,7 @@ import Avatar from '@/components/Avatar'
 export default {
   data () {
     return {
-      isSplash: true,
+      isLoading: true,
       isSetup: true, // has profile set up
       profile: {
         id: null,
@@ -82,7 +83,9 @@ export default {
         this.$router.push({ name: 'whakapapaIndex' })
       }
 
-      this.isSplash = false
+      this.isLoading = false
+    },
+    editProfile () {
     }
   },
   components: {
@@ -108,7 +111,7 @@ export default {
     align-items: center;
   }
 
-  .image-container {
+  .splash {
     height: 20vh;
     width: 20vh;
   }
