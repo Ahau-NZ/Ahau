@@ -184,7 +184,7 @@ export default {
         // flatten out record and merge into current profiles
         Object.entries(tree.flatten(record)).forEach(([profileId, profile]) => {
           output[profileId] = Object.assign(
-            {},
+            { partners: [] }, // NOTE - ensures all nodes have "partners" field
             output[profileId] || {},
             profile
           )
