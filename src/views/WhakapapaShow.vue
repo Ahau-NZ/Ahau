@@ -27,7 +27,7 @@
       <li v-for="(option, index) in contextMenuOpts" :key="index">
         <a href="#" @click.prevent="option.action">{{ option.title }}</a>
       </li>
-      <li v-if="canDelete">
+      <li v-if="canDelete(selectedProfile)">
         <a href="#" @click.prevent="toggleDelete">Delete Person</a>
       </li>
     </vue-context>
@@ -36,10 +36,11 @@
       v-if="dialog.view"
       :show="dialog.view"
       :profile="selectedProfile"
+      :deleteable="canDelete(selectedProfile)"
       @close="toggleView"
       @new="toggleNewPerson($event)"
       @submit="updateProfile($event)"
-      @delete="deleteProfile()"
+      @delete="deletePerson()"
     />
     <NewNodeDialog
       v-if="dialog.new"
@@ -175,20 +176,6 @@ export default {
       }
 
       return tree.hydrate(startingProfile, this.profiles)
-    },
-    canDelete () {
-      if (!this.selectedProfile) return false
-
-      // not allowed to delete own profile
-      if (this.selectedProfile.id === this.whoami.profile.id) return false
-
-      // if deleting the focus (top ancestor)
-      if (this.selectedProfile.id === this.whakapapaView.focus) {
-        // can only proceed if can find a clear "successor" to be new focus
-        return Boolean(findSuccessor(this.selectedProfile))
-      }
-
-      return true
     }
   },
   watch: {
@@ -321,6 +308,20 @@ export default {
         children: _children
       })
     },
+    canDelete (profile) {
+      if (!profile) return false
+
+      // not allowed to delete own profile
+      if (profile.id === this.whoami.profile.id) return false
+
+      // if deleting the focus (top ancestor)
+      if (profile.id === this.whakapapaView.focus) {
+        // can only proceed if can find a clear "successor" to be new focus
+        return Boolean(findSuccessor(profile))
+      }
+
+      return true
+    },
 
     // contextMenu //////////////////////////
     // TODO - extract all this
@@ -364,15 +365,11 @@ export default {
             await this.createChildLink({ child, parent, ...relationshipAttrs })
             await this.loadDescendants(parent)
             break
+
           case 'parent':
             child = this.selectedProfile.id
             parent = profileId
-            const linkId = await this.createChildLink({
-              child,
-              parent,
-              ...relationshipAttrs
-            })
-            if (!linkId) return
+            await this.createChildLink({ child, parent, ...relationshipAttrs })
 
             if (child === this.whakapapaView.focus) {
               // in this case we're updating the top of the graph, we update view.focus to that new top parent
@@ -387,6 +384,7 @@ export default {
         this.dialog.new = false
         if (this.dialog.view) {
           this.setSelectedProfile(this.selectedProfile.id)
+          // TODO - rm (not sure this does anything)
         }
       } catch (err) {
         throw err
@@ -419,10 +417,7 @@ export default {
       }
       return res.data.saveProfile // a profileId
     },
-    async createChildLink (
-      { child, parent, relationshipType, legallyAdopted },
-      view
-    ) {
+    async createChildLink ({ child, parent, relationshipType, legallyAdopted }, view) {
       const input = {
         child,
         parent,
@@ -476,7 +471,7 @@ export default {
       await this.loadDescendants(profileId)
     },
     async deleteProfile () {
-      if (!this.canDelete) return
+      if (!this.canDelete(this.selectedProfile)) return
 
       if (this.selectedProfile.id === this.whakapapaView.focus) {
         const successor = findSuccessor(this.selectedProfile)
@@ -507,8 +502,10 @@ export default {
       // TODO - find a smaller subset to reload!
     },
     setSelectedProfile (profileId) {
-      this.selectedProfile = this.profiles[profileId] // gets the value of the profile
-      this.selectedProfile = tree.hydrate(this.selectedProfile, this.profiles) // gets its hydrated value
+      this.selectedProfile = tree.hydrate(
+        this.profiles[profileId],
+        this.profiles
+      )
     }
   },
   components: {
