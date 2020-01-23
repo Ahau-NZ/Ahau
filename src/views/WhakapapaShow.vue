@@ -27,19 +27,16 @@
       <li v-for="(option, index) in contextMenuOpts" :key="index">
         <a href="#" @click.prevent="option.action">{{ option.title }}</a>
       </li>
-      <li v-if="canDelete">
+      <li v-if="canDelete(selectedProfile)">
         <a href="#" @click.prevent="toggleDelete">Delete Person</a>
       </li>
     </vue-context>
 
-    <ViewEditNodeDialog
-      v-if="dialog.view"
-      :show="dialog.view"
+    <ViewEditNodeDialog v-if="dialog.view" :show="dialog.view"
       :profile="selectedProfile"
-      @close="toggleView"
-      @new="toggleNewPerson($event)"
-      @submit="updateProfile($event)"
-      @delete="deleteProfile()"
+      :deleteable="canDelete(selectedProfile)"
+      :warnAboutChildren="selectedProfile && (selectedProfile.id !== whakapapaView.focus)"
+      @close="toggleView" @new="toggleNewPerson($event)" @submit="updateProfile($event)" @delete="deleteProfile()"
     />
     <NewNodeDialog
       v-if="dialog.new"
@@ -49,12 +46,10 @@
       @close="toggleNew"
       @submit="addPerson($event)"
     />
-    <DeleteNodeDialog
-      v-if="dialog.delete"
-      :show="dialog.delete"
-      :name="selectedProfile.preferredName"
-      @close="toggleDelete"
-      @submit="deleteProfile"
+    <DeleteNodeDialog v-if="dialog.delete" :show="dialog.delete"
+      :profile="selectedProfile"
+      :warnAboutChildren="selectedProfile && (selectedProfile.id !== whakapapaView.focus)"
+      @close="toggleDelete" @submit="deleteProfile"
     />
   </div>
 </template>
@@ -71,8 +66,8 @@ import ViewEditNodeDialog from '@/components/tree/Dialogs/ViewEditNodeDialog.vue
 import NewNodeDialog from '@/components/tree/Dialogs/NewNodeDialog.vue'
 import DeleteNodeDialog from '@/components/tree/Dialogs/DeleteNodeDialog.vue'
 
-// const tree = require('@/lib/tree-helpers.js')
 import tree from '@/lib/tree-helpers'
+import findSuccessor from '@/lib/find-successor'
 
 const saveWhakapapaRelMutation = input => ({
   mutation: gql`
@@ -177,14 +172,6 @@ export default {
       }
 
       return tree.hydrate(startingProfile, this.profiles)
-    },
-    canDelete () {
-      if (!this.selectedProfile) return false
-
-      if (this.selectedProfile.id === this.whoami.profile.id) return false
-      if (this.selectedProfile.id === this.whakapapaView.focus) return false
-
-      return true
     }
   },
   watch: {
@@ -202,7 +189,7 @@ export default {
         // flatten out record and merge into current profiles
         Object.entries(tree.flatten(record)).forEach(([profileId, profile]) => {
           output[profileId] = Object.assign(
-            {},
+            { partners: [] }, // NOTE - ensures all nodes have "partners" field
             output[profileId] || {},
             profile
           )
@@ -317,6 +304,20 @@ export default {
         children: _children
       })
     },
+    canDelete (profile) {
+      if (!profile) return false
+
+      // not allowed to delete own profile
+      if (profile.id === this.whoami.profile.id) return false
+
+      // if deleting the focus (top ancestor)
+      if (profile.id === this.whakapapaView.focus) {
+        // can only proceed if can find a clear "successor" to be new focus
+        return Boolean(findSuccessor(profile))
+      }
+
+      return true
+    },
 
     // contextMenu //////////////////////////
     // TODO - extract all this
@@ -360,15 +361,11 @@ export default {
             await this.createChildLink({ child, parent, ...relationshipAttrs })
             await this.loadDescendants(parent)
             break
+
           case 'parent':
             child = this.selectedProfile.id
             parent = profileId
-            const linkId = await this.createChildLink({
-              child,
-              parent,
-              ...relationshipAttrs
-            })
-            if (!linkId) return
+            await this.createChildLink({ child, parent, ...relationshipAttrs })
 
             if (child === this.whakapapaView.focus) {
               // in this case we're updating the top of the graph, we update view.focus to that new top parent
@@ -383,6 +380,7 @@ export default {
         this.dialog.new = false
         if (this.dialog.view) {
           this.setSelectedProfile(this.selectedProfile.id)
+          // TODO - rm (not sure this does anything)
         }
       } catch (err) {
         throw err
@@ -417,10 +415,7 @@ export default {
       }
       return res.data.saveProfile // a profileId
     },
-    async createChildLink (
-      { child, parent, relationshipType, legallyAdopted },
-      view
-    ) {
+    async createChildLink ({ child, parent, relationshipType, legallyAdopted }, view) {
       const input = {
         child,
         parent,
@@ -474,10 +469,14 @@ export default {
       await this.loadDescendants(profileId)
     },
     async deleteProfile () {
-      if (!this.canDelete) return
-      const profileId = this.selectedProfile.id
+      if (!this.canDelete(this.selectedProfile)) return
 
-      const res = await this.$apollo.mutate({
+      if (this.selectedProfile.id === this.whakapapaView.focus) {
+        const successor = findSuccessor(this.selectedProfile)
+        this.updateFocus(successor.id)
+      }
+
+      const profileResult = await this.$apollo.mutate({
         mutation: gql`
           mutation($input: ProfileInput!) {
             saveProfile(input: $input)
@@ -485,14 +484,14 @@ export default {
         `,
         variables: {
           input: {
-            id: profileId,
+            id: this.selectedProfile.id,
             tombstone: { date: new Date() }
           }
         }
       })
 
-      if (res.errors) {
-        console.error('failed to delete profile', res)
+      if (profileResult.errors) {
+        console.error('failed to delete profile', profileResult)
         return
       }
 
@@ -501,8 +500,10 @@ export default {
       // TODO - find a smaller subset to reload!
     },
     setSelectedProfile (profileId) {
-      this.selectedProfile = this.profiles[profileId] // gets the value of the profile
-      this.selectedProfile = tree.hydrate(this.selectedProfile, this.profiles) // gets its hydrated value
+      this.selectedProfile = tree.hydrate(
+        this.profiles[profileId],
+        this.profiles
+      )
     }
   },
   components: {

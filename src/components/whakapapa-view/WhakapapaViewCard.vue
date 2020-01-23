@@ -1,6 +1,6 @@
 <template>
   <v-card
-    :to="{ name: 'whakapapaShow', params: { id: view.id } }"
+    :to="view.id ? { name: 'whakapapaShow', params: { id: view.id } } : '#'"
     class="d-flex"
     min-height="100px"
     color="#fff"
