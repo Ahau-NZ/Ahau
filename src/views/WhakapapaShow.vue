@@ -32,28 +32,19 @@
       </li>
     </vue-context>
 
-    <ViewEditNodeDialog
-      v-if="dialog.view"
-      :show="dialog.view"
+    <ViewEditNodeDialog v-if="dialog.view" :show="dialog.view"
       :profile="selectedProfile"
       :deleteable="canDelete(selectedProfile)"
-      @close="toggleView"
-      @new="toggleNewPerson($event)"
-      @submit="updateProfile($event)"
-      @delete="deletePerson()"
+      :warnAboutChildren="selectedProfile && (selectedProfile.id !== whakapapaView.focus)"
+      @close="toggleView" @new="toggleNewPerson($event)" @submit="updateProfile($event)" @delete="deletePerson()"
     />
-    <NewNodeDialog
-      v-if="dialog.new"
-      :show="dialog.new"
-      @close="toggleNew"
-      @submit="addPerson($event)"
+    <NewNodeDialog v-if="dialog.new" :show="dialog.new"
+      @close="toggleNew" @submit="addPerson($event)"
     />
-    <DeleteNodeDialog
-      v-if="dialog.delete"
-      :show="dialog.delete"
-      :name="selectedProfile.preferredName"
-      @close="toggleDelete"
-      @submit="deleteProfile"
+    <DeleteNodeDialog v-if="dialog.delete" :show="dialog.delete"
+      :profile="selectedProfile"
+      :warnAboutChildren="selectedProfile && (selectedProfile.id !== whakapapaView.focus)"
+      @close="toggleDelete" @submit="deleteProfile"
     />
   </div>
 </template>

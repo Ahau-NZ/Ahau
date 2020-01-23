@@ -192,8 +192,11 @@
         </v-container>
       </v-card>
     </v-form>
-    <DeleteNodeDialog v-if="deleteDialog" :show="deleteDialog" :name="profile.preferredName"
-      close="toggleDelete" @submit="deleteProfile()"
+
+    <DeleteNodeDialog v-if="deleteDialog" :show="deleteDialog"
+      :profile="profile"
+      :warnAboutChildren="warnAboutChildren"
+      @close="toggleDelete" @submit="deleteProfile()"
     />
   </Dialog>
 </template>
@@ -221,7 +224,8 @@ export default {
   props: {
     show: { type: Boolean, required: true },
     profile: { type: Object, required: true },
-    deleteable: { type: Boolean, default: false }
+    deleteable: { type: Boolean, default: false },
+    warnAboutChildren: { type: Boolean, default: true }
   },
   data () {
     return {
