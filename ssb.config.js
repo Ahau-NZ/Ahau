@@ -8,6 +8,10 @@ const customConfig = {
     shs: 'LftKJZRB4nbBRnlJuFteWG9AP+gGboVEhibx016bR0s='
     // this is the "secret handshake" capability.
     // only devices using this exact same code can talk to each other
+  },
+  lan: {
+    legacy: false
+    // disables legacy UDP announce (which doesn't respect caps.shs!)
   }
 }
 
