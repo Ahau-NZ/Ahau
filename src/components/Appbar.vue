@@ -13,12 +13,15 @@
       <v-spacer></v-spacer>
 
       <v-toolbar-items>
+        
+        <!--  WIP links -->
         <v-btn text @click.stop="dialog = true" class="red--text text-uppercase ms-10">
           korero
         </v-btn>
         <v-btn text @click.stop="dialog = true" class="red--text text-uppercase ms-10">
           ngāti
         </v-btn>
+
         <v-btn text to='/whakapapa' class="white--text text-uppercase ms-10">
           whakapapa
         </v-btn>
@@ -31,11 +34,13 @@
         <v-btn text to="/logout" class="white--text text-uppercase">
           sign out
         </v-btn>
-        <v-dialog v-model="dialog" max-width="290">
+
+        <!-- coming soon dialog  -->
+        <v-dialog v-model="dialog" max-width="450">
           <v-card>
             <v-card-title class="headline">Aroha mai</v-card-title>
             <v-card-text>
-              These features are still under construction, but we can't wait to share this mahi with you soon</v-card-text>
+              These features are still under construction, but we can't wait to share this mahi with you soon in upcoming releases</v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn color="red darken-1" text @click="dialog = false">
@@ -44,6 +49,7 @@
             </v-card-actions>
           </v-card>
         </v-dialog>
+
       </v-toolbar-items>
     </v-toolbar>
      
