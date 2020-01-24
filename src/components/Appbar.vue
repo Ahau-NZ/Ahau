@@ -13,7 +13,13 @@
       <v-spacer></v-spacer>
 
       <v-toolbar-items>
-        <v-btn text to='/whakapapa' class="white--text text-uppercase">
+        <v-btn text to='/' class="red--text text-uppercase ms-10">
+          korero
+        </v-btn>
+        <v-btn text to='/' class="red--text text-uppercase ms-10">
+          ngāti
+        </v-btn>
+        <v-btn text to='/whakapapa' class="white--text text-uppercase ms-10">
           whakapapa
         </v-btn>
         <!-- <v-btn text to='/discovery?page=local' class="white--text text-uppercase">

@@ -10,6 +10,13 @@
             </v-col>
           </v-row>
         </WhakapapaViewCard>
+        <v-col>
+          <a href="https://forms.gle/jsD3qqVNn2QHBSLs6" target="_blank">
+           <v-btn rounded dark>
+            feedback
+            </v-btn>
+          </a>
+        </v-col>
       </v-row>
 
       <v-row>
