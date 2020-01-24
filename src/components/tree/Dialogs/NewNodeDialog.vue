@@ -5,9 +5,9 @@
         <v-card-text>
           <v-container class="ma-2">
             <v-row>
-                <v-card-title>
-                  Add {{ type }} to {{ title }}
-                </v-card-title>
+              <v-card-title>
+                Add {{ type }} to {{ title }}
+              </v-card-title>
             </v-row>
             <v-row>
               <v-col md="7">
@@ -50,7 +50,7 @@
                 <v-row>
                   <v-col>
                     <NodeDatePicker
-                      :rules="form.rules.date.bornAt"
+                      :rules="form.rules.bornAt"
                       :value="data.bornAt"
                       label="Date of birth"
                       @date="data.bornAt = $event"
