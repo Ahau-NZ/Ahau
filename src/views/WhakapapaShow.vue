@@ -12,6 +12,14 @@
         </WhakapapaViewCard>
       </v-row>
 
+      <v-row class='feedback'>
+        <v-col>
+          <a href="https://forms.gle/jsD3qqVNn2QHBSLs6" target="_blank">
+            <v-btn raised color="secondary">feedback</v-btn>
+          </a>
+        </v-col>
+      </v-row>
+
       <v-row>
         <Tree
           :view="whakapapaView"
@@ -525,6 +533,18 @@ export default {
         position: absolute;
         top: 20px;
         left: 30px;
+        // left: 30px;
+        right: 160px;
+
+        .col {
+          padding-top: 0;
+          padding-bottom: 0;
+        }
+      }
+
+      &> .feedback {
+        position: absolute;
+        top: 20px;
         right: 30px;
 
         .col {

@@ -71,7 +71,7 @@ export default {
       // background-size: cover;
     }
     &.page--personshow {
-      background-color: hotpink;
+      background-color: #303030;
     }
   }
 
