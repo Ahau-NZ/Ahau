@@ -53,6 +53,7 @@ export default {
         }
       }`,
       update (data) {
+        console.log("E te tangata   Whāia te māutauranga kai mārama   Kia whai take ngā mahi katoa   Tū māia, tū kaha   Aroha atu, aroha mai   Tātou i a tātou katoa")
         return data.whoami.profile
       },
       fetchPolicy: 'no-cache'
