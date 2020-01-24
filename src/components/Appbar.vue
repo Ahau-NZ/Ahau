@@ -13,7 +13,6 @@
       <v-spacer></v-spacer>
 
       <v-toolbar-items>
-        
         <!--  WIP links -->
         <v-btn text @click.stop="dialog = true" class="red--text text-uppercase ms-10">
           korero
@@ -52,7 +51,6 @@
 
       </v-toolbar-items>
     </v-toolbar>
-     
   </div>
 </template>
 
