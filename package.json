@@ -23,6 +23,9 @@
   "dependencies": {
     "@apollo/federation": "^0.11.3",
     "@mdi/font": "^4.5.95",
+    "@ssb-graphql/main": "^0.1.0",
+    "@ssb-graphql/profile": "^0.1.1",
+    "@ssb-graphql/whakapapa": "^0.1.2",
     "apollo-server": "^2.9.3",
     "apollo-server-express": "^2.9.6",
     "apollo-upload-client": "^10.0.1",
