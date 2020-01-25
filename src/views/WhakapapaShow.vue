@@ -12,6 +12,14 @@
         </WhakapapaViewCard>
       </v-row>
 
+      <v-row class='feedback'>
+        <v-col>
+          <a href="https://forms.gle/jsD3qqVNn2QHBSLs6" target="_blank">
+            <v-btn raised color="secondary">feedback</v-btn>
+          </a>
+        </v-col>
+      </v-row>
+
       <v-row>
         <Tree
           :view="whakapapaView"
@@ -39,6 +47,7 @@
       @close="toggleView" @new="toggleNewPerson($event)" @submit="updateProfile($event)" @delete="deleteProfile()"
     />
     <NewNodeDialog v-if="dialog.new" :show="dialog.new"
+      :type="dialog.type" :title="selectedProfile.preferredName"
       @close="toggleNew" @submit="addPerson($event)"
     />
     <DeleteNodeDialog v-if="dialog.delete" :show="dialog.delete"
@@ -381,7 +390,7 @@ export default {
         throw err
       }
     },
-    async createProfile ({ preferredName, legalName, gender, bornAt, diedAt, avatarImage }) {
+    async createProfile ({ preferredName, legalName, gender, bornAt, diedAt, avatarImage, altNames, description }) {
       const res = await this.$apollo.mutate({
         mutation: gql`
           mutation($input: ProfileInput!) {
@@ -397,6 +406,8 @@ export default {
             bornAt,
             diedAt,
             avatarImage,
+            altNames,
+            description,
             recps: this.whakapapaView.recps
           }
         }
@@ -522,6 +533,18 @@ export default {
         position: absolute;
         top: 20px;
         left: 30px;
+        // left: 30px;
+        right: 160px;
+
+        .col {
+          padding-top: 0;
+          padding-bottom: 0;
+        }
+      }
+
+      &> .feedback {
+        position: absolute;
+        top: 20px;
         right: 30px;
 
         .col {

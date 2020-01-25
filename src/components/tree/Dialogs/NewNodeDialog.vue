@@ -1,164 +1,168 @@
 <template>
-  <div>
-    <Dialog :show="show" @close="close">
-      <v-form ref="form"
-        v-model="form.valid"
-        lazy-validation
-      >
-        <v-card>
-          <v-card-title>
-            <span class="headline">
-              Create a new Person
-            </span>
-          </v-card-title>
-          <v-card-text>
-            <v-container light>
-              <v-row>
-                <v-col cols="8" sm="5" md="7">
-                  <v-text-field label="Preferred Name*"
-                    v-model="data.preferredName"
-                    :rules="form.rules.name.preferred"
-                    hint="This is the name that will show on the whakapapa"
-                    required
-                  ></v-text-field>
-                </v-col>
-
-                <v-col cols="4" sm="12" md="5">
-                  <v-row class="py-4 d-flex column align-center">
-                    <Avatar class="mr-4" size="100px" v-if="data.avatarImage" :image="data.avatarImage" :alt="data.preferredName" />
-                    <clipper-upload accept="image/*" @input="toggleAvatar">
-                      <v-btn v-if="!avatar.new" class="toggle" fab color="white">
-                        <v-icon class="black--text">mdi-camera</v-icon>
-                      </v-btn>
-                      <span class="caption pt-4 pl-4">Upload profile photo</span>
-                    </clipper-upload>
-                  </v-row>
-                </v-col>
-              </v-row>
-
-              <v-row>
-                <v-col cols="12" sm="5" md="7">
-                  <v-text-field label="Legal Name*"
-                    v-model="data.legalName"
-                    :rules="form.rules.name.legal"
-                    hint="This is the name that appears on your birth certificate or ID"
-                    required
-                  ></v-text-field>
-                </v-col>
-              </v-row>
-
-              <v-row>
-                <!-- <v-col cols="12" sm="5" md="3"> -->
-                <!--   <v-select label="Title*" -->
-                <!--     :items="titles" -->
-                <!--     v-model="data.title" -->
-                <!--     :rules="form.rules.title" -->
-                <!--     required -->
-                <!--   ></v-select> -->
-                <!-- </v-col> -->
-                <v-col cols="12" sm="5" md="3">
-                  <v-select label="Gender*"
-                    v-model="data.gender"
-                    :rules="form.rules.gender"
-                    :items="genders"
-                    required
-                  />
-                </v-col>
-                <v-col cols="12" sm="5" md="3" class="mr-5">
-                  <NodeDatePicker
-                    :required="true"
-                    :rules="form.rules.date.birth"
-                    :value="data.bornAt"
-                    label="Date of Birth"
-                    @date="data.bornAt = $event"
-                  />
-                </v-col>
-                 <v-col cols="12" sm="5" md="3">
-                  <NodeDatePicker
-                    label="Date Deceased"
-                    :value="data.diedAt"
-                    @date="data.diedAt = $event"
-                  />
-                </v-col>
-              </v-row>
-
-              <v-row>
-                <v-col cols="12" sm="5" md="3">
-                  <v-select label="Relationship Type*"
-                    v-model="data.relationshipType"
-                    :rules="form.rules.relationshipType"
-                    :items="relationshipTypes"
-                    required
-                  ></v-select>
-                </v-col>
-                <v-col v-if="showLegallyAdopted">
-                  <v-checkbox label="Legally Adopted" v-model="data.legallyAdopted"/>
-                </v-col>
-              </v-row>
-
-              <v-row class="actions">
-                <v-col cols="12" sm="5" md="9">
-                  <small>*indicates required field</small>
-                </v-col>
-                <v-col>
-                  <v-btn @click="close" fab text color="secondary" class="mr-4">
-                    <v-icon>mdi-cancel</v-icon>
-                  </v-btn>
-                  <v-btn @click="submit" :disabled="!form.valid"
-                    fab text color="success" class="mr-4">
-                    <v-icon>mdi-check</v-icon>
-                  </v-btn>
-                </v-col>
-              </v-row>
-            </v-container>
-          </v-card-text>
-        </v-card>
-      </v-form>
-    </Dialog>
-
-    <Dialog :show='avatar.showEditor'>
-      <v-container style="background: black;">
-
-        <v-row justify="center">
-          <v-col style="max-width: 600px;">
-            <clipper-fixed
-              ref="avatar"
-              :grid="false"
-              :src="avatar.new"
-              :area="100"
-              bg-color="rgba(0, 0, 0, 0)"
-              :round="true"
-              shadow="rgba(0,0,0,0.5)"
-              :rotate="avatar.rotation"
-            />
-          </v-col>
-        </v-row>
-
-        <div class="px-8 py-4">
-          <h6 class="caption pt-8"><v-icon>mdi-gesture-tap-hold</v-icon> Ajust the image by zooming, scaling and moving it around before saving.</h6>
-          <h5 class="pt-8">rotate</h5>
-          <clipper-range v-model="avatar.rotation" style="max-width:300px" :min="0" :max="360"></clipper-range>
-
-          <v-row class="actions py-6">
-            <v-btn @click="toggleAvatar(null)" text color="secondary" class="mr-4" >
-              <v-icon>mdi-close</v-icon>
-            </v-btn>
-            <v-btn @click="handleImageUpload()" text color="secondary" >
-              <v-icon>mdi-check</v-icon>
-            </v-btn>
-          </v-row>
-
-        </div>
-      </v-container>
-    </Dialog>
-  </div>
+  <Dialog :show="show" @close="close">
+    <v-form ref="form" v-model="form.valid" lazy-validation>
+      <v-card>
+        <v-card-text>
+          <v-container class="ma-2">
+            <v-row>
+              <v-card-title>
+                Add {{ type }} to {{ title }}
+              </v-card-title>
+            </v-row>
+            <v-row>
+              <v-col md="7">
+                <v-row>
+                  <v-col>
+                    <v-text-field
+                      v-model="data.preferredName"
+                      label="Preferred name. This is the name shown on your profile"
+                      :placeholder="' '"
+                      :rules="form.rules.name.preferred"
+                      :hide-details="true"
+                    ></v-text-field>
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col>
+                    <v-text-field
+                      v-model="data.legalName"
+                      :rules="form.rules.name.legal"
+                      label="Legal name"
+                      :placeholder="' '"
+                      :hide-details="true"
+                    ></v-text-field>
+                  </v-col>
+                </v-row>
+                <v-row v-for="n in altNameCount" :key="n">
+                  <v-col>
+                    <v-text-field
+                      v-model="data.altNames[n-1]"
+                      :rules="form.rules.name.preferred"
+                      :label="`Alternative name ${n}`"
+                      :placeholder="' '"
+                      :hide-details="true"
+                    />
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <AddButton label="Add name" @click="toggleAltName" row/>
+                </v-row>
+                <v-row>
+                  <v-col>
+                    <NodeDatePicker
+                      :rules="form.rules.bornAt"
+                      :value="data.bornAt"
+                      label="Date of birth"
+                      @date="data.bornAt = $event"
+                    />
+                  </v-col>
+                  <v-col>
+                    <!-- <v-text-field
+                      type="number"
+                      label="Order of birth"
+                      :placeholder="' '"
+                      append-icon="mdi-chevron-down"
+                      :hide-details="true"
+                    /> -->
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col md="6">
+                    <v-checkbox v-model="isDeceased" label="No longer living"  :hide-details="true"/>
+                  </v-col>
+                  <v-col md="6">
+                    <NodeDatePicker
+                      v-if="isDeceased"
+                      label="Date of death"
+                      :value="data.diedAt"
+                      @date="data.diedAt = $event"
+                    />
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col md="6">
+                    <v-row>
+                      Gender
+                    </v-row>
+                    <v-row>
+                      <v-radio-group v-model="data.gender" row>
+                        <v-radio v-for="(gender, index) in genders"
+                          :key="index"
+                          :value="gender"
+                          :label="gender"
+                          :hide-details="true"
+                          class="pr-10"
+                        />
+                      </v-radio-group>
+                    </v-row>
+                  </v-col>
+                  <v-col md="4">
+                    Related By
+                    <v-select
+                      v-model="data.relationshipType"
+                      placeholder="birth"
+                      :rules="form.rules.relationshipType"
+                      :items="relationshipTypes"
+                      :menu-props="{ light: true }"
+                      append-icon="mdi-chevron-down"
+                      :hide-details="true"
+                    />
+                  </v-col>
+                </v-row>
+                <v-row v-if="!showDescription">
+                  <AddButton label="Description" @click="toggleDescription" row/>
+                </v-row>
+                <v-row v-if="showDescription">
+                  Description
+                </v-row>
+                <v-row v-if="showDescription">
+                  <v-col>
+                    <v-textarea
+                      v-model="data.description"
+                      :no-resize="true"
+                    >
+                    </v-textarea>
+                  </v-col>
+                </v-row>
+              </v-col>
+              <v-col>
+                <v-row>
+                  <Avatar size="200px" :image="data.avatarImage" :alt="data.preferredName" />
+                </v-row>
+                <v-row justify="center" align="center">
+                  <clipper-upload accept="image/*" @input="toggleAvatar">
+                    <v-btn v-if="!avatar.new" class="toggle" fab small color="white">
+                      <v-icon class="black--text">mdi-pencil</v-icon>
+                    </v-btn>
+                    &nbsp; &nbsp; Upload profile photo
+                  </clipper-upload>
+                  <AvatarEditDialog :show="avatar.showEditor" :avatarImage="avatar.new" @submit="updateAvatar($event)" @close="toggleAvatar(null)"/>
+                </v-row>
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-spacer/>
+              <v-btn @click="close" text color="secondary" class="mr-4" >
+                <v-icon>mdi-close</v-icon>
+              </v-btn>
+              <v-btn @click="submit" text color="blue" >
+                <v-icon>mdi-check</v-icon>
+              </v-btn>
+            </v-row>
+          </v-container>
+        </v-card-text>
+      </v-card>
+    </v-form>
+  </Dialog>
 </template>
 
 <script>
-import gql from 'graphql-tag'
 import Dialog from '@/components/Dialog.vue'
 import Avatar from '@/components/Avatar.vue'
+import AddButton from '@/components/AddButton.vue'
 import NodeDatePicker from '@/components/NodeDatePicker.vue'
+import AvatarEditDialog from './AvatarEditDialog.vue'
+
 import { GENDERS, RELATIONSHIPS, RULES, PERMITTED_PROFILE_ATTRS } from '@/lib/constants'
 import isEmpty from 'lodash.isempty'
 
@@ -166,14 +170,16 @@ function defaultData () {
   return {
     preferredName: '',
     legalName: '',
-    gender: '',
-    relationshipType: '',
+    altNames: [],
+    gender: 'female',
+    relationshipType: 'birth',
     legallyAdopted: false,
     children: [],
     avatarImage: null,
     // title: '',
     bornAt: '',
-    diedAt: ''
+    diedAt: '',
+    description: ''
   }
 }
 
@@ -182,12 +188,22 @@ export default {
   components: {
     Dialog,
     Avatar,
-    NodeDatePicker
+    NodeDatePicker,
+    AddButton,
+    AvatarEditDialog
   },
   props: {
     show: {
       type: Boolean,
       required: true
+    },
+    type: {
+      type: String,
+      default: 'a new person'
+    },
+    title: {
+      type: String,
+      default: 'this Whakapapa'
     }
   },
   data () {
@@ -198,9 +214,12 @@ export default {
       data: defaultData(),
       avatar: {
         new: null,
-        showEditor: false,
-        rotation: 0
+        showEditor: false
       },
+      isDeceased: false,
+      showDescription: false,
+      radios: 'radio-1',
+      count: 0,
       form: {
         valid: true,
         rules: RULES
@@ -208,6 +227,9 @@ export default {
     }
   },
   computed: {
+    altNameCount () {
+      return this.count
+    },
     showLegallyAdopted () {
       switch (this.data.relationshipType) {
         case 'whangai': return true
@@ -229,56 +251,35 @@ export default {
     'data.relationshipType' (newValue, oldValue) {
       // make sure adoption status can't be set true when relationship type is birth
       if (newValue === 'birth') this.data.legallyAdopted = false
+    },
+    isDeceased (newValue) {
+      if (newValue === false) {
+        this.data.diedAt = ''
+      }
     }
   },
   methods: {
     close: function () {
-      // reset the form properties
-      // TODO: figure out when is a good time to reset these?
-      this.data = defaultData()
-
       this.$emit('close')
     },
     toggleAvatar (file) {
       this.avatar.new = this.avatar.new ? null : file
       this.avatar.showEditor = !this.avatar.showEditor
     },
-    async handleImageUpload () {
-      try {
-        const canvas = this.$refs.avatar.clip({ maxWPixel: 1920 })
-        canvas.toBlob(async blob => {
-          const file = new File([blob], 'avatar', { type: blob.type })
-
-          const result = await this.$apollo.mutate({
-            mutation: gql`mutation uploadFile($file: Upload!) {
-              uploadFile(file: $file) {
-                blob
-                mimeType
-                uri
-              }
-            }`,
-            variables: {
-              file
-            }
-          })
-
-          if (result.errors) throw result.errors
-
-          let cleanImage = {}
-          Object.entries(result.data.uploadFile).forEach(([key, value]) => {
-            if (key !== '__typename') cleanImage[key] = value
-          })
-          this.data.avatarImage = cleanImage
-
-          this.avatar.new = null
-          this.avatar.showEditor = false
-        })
-      } catch (error) {
-        throw error
-      }
+    updateAvatar (avatarImage) {
+      this.data.avatarImage = avatarImage
+      this.toggleAvatar(null)
+    },
+    toggleAltName () {
+      this.count += 1
+    },
+    toggleDescription () {
+      this.showDescription = true
     },
     submit () {
       if (!this.$refs.form.validate()) {
+        alert('Empty form cannot be submitted')
+        console.log('not submitted')
         return
       }
 

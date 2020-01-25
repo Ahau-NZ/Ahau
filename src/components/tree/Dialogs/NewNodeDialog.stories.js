@@ -4,13 +4,23 @@ import { action } from '@storybook/addon-actions'
 export default {
   title: 'NewNodeDialog'
 }
-export const CompleteProfile = () => ({
-  template: `<NewNodeDialog :show="true" @close="close" @submit="submit($event)"/>`,
+
+export const defaultDialog = () => ({
+  template: `<NewNodeDialog :show="true" @submit="log($event)"/>`,
+  components: { NewNodeDialog },
   methods: {
-    submit ($event) {
+    log ($event) {
       console.log($event)
-    },
-    close: action('close')
-  },
+    }
+  }
+})
+
+export const addAChild = () => ({
+  template: `<NewNodeDialog :show="true" type="child" title="Willard"/>`,
+  components: { NewNodeDialog }
+})
+
+export const addAParent = () => ({
+  template: `<NewNodeDialog :show="true" type="parent" title="Willard"/>`,
   components: { NewNodeDialog }
 })
