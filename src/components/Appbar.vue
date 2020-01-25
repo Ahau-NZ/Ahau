@@ -9,11 +9,8 @@
           <Avatar size="50px" :image="profile.avatarImage" :alt="profile.preferredName" :gender="profile.gender" :bornAt="profile.bornAt"/>
         <!-- </v-btn> -->
       </v-toolbar-title>
-
       <v-spacer></v-spacer>
-
       <v-toolbar-items>
-        
         <!--  WIP links -->
         <v-btn text @click.stop="dialog = true" class="red--text text-uppercase ms-10">
           korero
@@ -50,7 +47,7 @@
           </v-card>
         </v-dialog>
       </v-toolbar-items>
-    </v-toolbar>    
+    </v-toolbar>
   </div>
 </template>
 
@@ -74,7 +71,7 @@ export default {
   },
   methods: {
     karakiaWhakamutunga () {
-      console.log("---------------------------------",'\n',"Kia whakairia te tapu   Kia wātea ai te ara   Kia turuki whakataha ai   Kia turuki   whakataha ai   Haumi e. Hui e. Tāiki e!","\n","Restrictions are moved aside   So the pathway is clear   To return to everyday activities",'\n',"---------------------------------")
+      console.log('---------------------------------', '\n', 'Kia whakairia te tapu   Kia wātea ai te ara   Kia turuki whakataha ai   Kia turuki   whakataha ai   Haumi e. Hui e. Tāiki e!', '\n', 'Restrictions are moved aside   So the pathway is clear   To return to everyday activities', '\n', '---------------------------------')
     },
     async getCurrentIdentity () {
       const result = await this.$apollo.query({
