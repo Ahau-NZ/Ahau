@@ -15,7 +15,8 @@
 
     <router-link v-if="!isSplash && isSetup"
       :to="{ name: 'whakapapaIndex' }"
-      class="d-flex flex-column align-center">
+      class="d-flex flex-column align-center"
+      @click.native="karakiaTūwhera()">
       <Avatar :image="profile.avatarImage" :gender="profile.gender" :bornAt="profile.bornAt" size="13vh" />
       <h3 class="name mt-2">{{ profile.preferredName }}</h3>
     </router-link>
@@ -53,7 +54,6 @@ export default {
         }
       }`,
       update (data) {
-        console.log("E te tangata   Whāia te māutauranga kai mārama   Kia whai take ngā mahi katoa   Tū māia, tū kaha   Aroha atu, aroha mai   Tātou i a tātou katoa")
         return data.whoami.profile
       },
       fetchPolicy: 'no-cache'
@@ -67,6 +67,10 @@ export default {
     setTimeout(this.proceed, 2e3)
   },
   methods: {
+    karakiaTūwhera () {
+      // Opening karakia - do not remove
+      console.log("---------------------------------",'\n',"E te tangata   Whāia te māutauranga kai mārama   Kia whai take ngā mahi katoa   Tū māia, tū kaha   Aroha atu, aroha mai   Tātou i a tātou katoa",'\n',"For this person   Seek knowledge for understanding   Have purpose in all that you do   Stand tall, be strong   Lets us all show respect   For each other",'\n',"---------------------------------")
+    },
     proceed () {
       if (this.$apollo.loading) {
         console.log('$apollo.loading')
@@ -79,10 +83,9 @@ export default {
       }
 
       this.isSetup = Boolean(this.profile.preferredName)
-      if (this.isSetup && process.env.NODE_ENV === 'development') {
-        this.$router.push({ name: 'whakapapaIndex' })
-      }
-
+    //   if (this.isSetup && process.env.NODE_ENV === 'development') {
+    //     this.$router.push({ name: 'whakapapaIndex' })
+    //   }
       this.isSplash = false
     }
   },

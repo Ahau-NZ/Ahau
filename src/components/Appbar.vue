@@ -31,10 +31,10 @@
         <v-btn text :to="{ name: 'personShow', params: { id: profile.id } }" class="white--text text-uppercase">
           profile
         </v-btn> -->
-        <v-btn text to="/logout" class="white--text text-uppercase">
+        <!-- using click.native to handle event when there is also a router link -->
+        <v-btn @click.native='karakiaWhakamutunga()' to='/login' text class="white--text text-uppercase" >
           sign out
         </v-btn>
-
         <!-- coming soon dialog  -->
         <v-dialog v-model="dialog" max-width="450">
           <v-card>
@@ -49,10 +49,8 @@
             </v-card-actions>
           </v-card>
         </v-dialog>
-
       </v-toolbar-items>
-    </v-toolbar>
-     
+    </v-toolbar>    
   </div>
 </template>
 
@@ -75,6 +73,9 @@ export default {
     this.getCurrentIdentity()
   },
   methods: {
+    karakiaWhakamutunga () {
+      console.log("---------------------------------",'\n',"Kia whakairia te tapu   Kia wātea ai te ara   Kia turuki whakataha ai   Kia turuki   whakataha ai   Haumi e. Hui e. Tāiki e!","\n","Restrictions are moved aside   So the pathway is clear   To return to everyday activities",'\n',"---------------------------------")
+    },
     async getCurrentIdentity () {
       const result = await this.$apollo.query({
         query: gql` {
