@@ -7,7 +7,7 @@ export default {
 
 function flatten (node) {
   const { children, parents } = node
-  // NOTE ignore node.relationshipType, node.legallyAdopted
+  // currently ignores e.g. childNode.relationshipType childNode.legallyAdopted
 
   const flatNode = Object.assign(
     {},
@@ -24,9 +24,8 @@ function flatten (node) {
   children.forEach(person => { output[person.profile.id] = person.profile })
   parents.forEach(person => { output[person.profile.id] = person.profile })
 
-  // NOTE these children + parent entries have Person data aren't yet
-  // populated with their own children / parent records (yet)
-  // we could pre-emptively add child / parent data about the current node to the
+  // NOTE these children + parent entries have Person data, but dont't yet
+  // have associated children/ parent records
 
   return output
 }

@@ -34,7 +34,9 @@ function buildTransformation (input) {
         return
 
       case 'altNames':
-        // TODO
+        T[key] = {
+          add: value
+        }
         return
 
       case 'avatarImage':

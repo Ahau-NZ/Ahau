@@ -8,37 +8,36 @@
           <v-card-text>
             <v-row>
               <v-col md="8">
-                <h1 v-if="!isEditting">
-                  Profile Overview
-                </h1>
-                <h1 v-else>
-                  Edit {{ profile.preferredName }}
+                <h1>
+                  {{ isEditting ? `Edit ${profile.preferredName}` : 'Profile Overview' }}
                 </h1>
               </v-col>
-              <v-spacer/>
-              <v-col md="2">
-                <v-fab-transition>
-                  <v-btn
-                    @click="activeButton.action"
-                    :key="activeButton.icon"
-                    align="center"
-                    color="white"
-                    text
-                    large
-                    :class="activeButton.class"
-                  >
-                    <v-icon :class="activeButton.class" left>{{ activeButton.icon }}</v-icon>
-                    {{ activeButton.label }}
-                  </v-btn>
-                </v-fab-transition>
+
+              <v-col md="3">
+                <v-btn v-if="deleteable && isEditting"
+                  @click="this.toggleDelete" key="mdi-delete"
+                  align="center" color="white" text large class="secondary--text"
+                >
+                  <v-icon class="secondary--text" left>mdi-delete</v-icon>
+                  Delete this Person
+                </v-btn>
+
+                <v-btn v-if="!isEditting"
+                  @click="this.toggleEdit" key="mdi-pencil"
+                  align="center" color="white" text large class="blue--text"
+                >
+                  <v-icon class="blue--text" left>mdi-pencil</v-icon>
+                  Edit this Person
+                </v-btn>
               </v-col>
-              <v-col v-if="!isEditting" md="1" class="ma-0 pa-0 pl-2">
+
+              <v-col md="1" v-if="!isEditting" class="ma-0 pa-0 pl-2">
                 <v-btn @click="close" fab text large color="secondary">
                   <v-icon>mdi-close</v-icon>
                 </v-btn>
               </v-col>
-              <v-spacer v-else/>
             </v-row>
+
             <v-row>
               <v-col md="7">
                 <v-row>
@@ -193,8 +192,10 @@
         </v-container>
       </v-card>
     </v-form>
-    <DeleteNodeDialog v-if="deleteDialog" :show="deleteDialog" :name="profile.preferredName"
-      close="toggleDelete" @submit="deleteProfile()"
+
+    <DeleteNodeDialog v-if="deleteDialog" :show="deleteDialog"
+      :profile="profile" :warnAboutChildren="warnAboutChildren"
+      @close="toggleDelete" @submit="deleteProfile()"
     />
   </Dialog>
 </template>
@@ -221,14 +222,16 @@ export default {
   },
   props: {
     show: { type: Boolean, required: true },
-    profile: { type: Object, required: true }
+    profile: { type: Object, required: true },
+    deleteable: { type: Boolean, default: false },
+    warnAboutChildren: { type: Boolean, default: true }
   },
   data () {
     return {
       genders: GENDERS,
       // titles: TITLES,
       permitted: PERMITTED_PROFILE_ATTRS,
-      isEditting: false,
+      isEditting: false, // TODO spell-check 'Editing'
       data: {
         id: this.profile.id,
         gender: this.profile.gender,
@@ -247,23 +250,6 @@ export default {
     }
   },
   computed: {
-    activeButton () {
-      switch (!this.isEditting) {
-        case true: return {
-          icon: 'mdi-pencil',
-          class: 'blue--text',
-          label: 'Edit this Person',
-          action: this.toggleEdit
-        }
-        case false: return {
-          icon: 'mdi-delete',
-          class: 'secondary--text',
-          label: 'Delete this Person',
-          action: this.toggleDelete
-        }
-        default: return {}
-      }
-    },
     profileChanges () {
       let changes = {}
       Object.entries(this.data).map(([key, value]) => {

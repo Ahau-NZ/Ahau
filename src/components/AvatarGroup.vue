@@ -12,18 +12,7 @@
         </v-row>
       </v-col>
       <v-col v-if="buttonLabel" md="4" class="pt-8" align="center">
-        <v-row justify="center">
-          <v-btn @click="click"
-            small
-            fab
-            color="white"
-            >
-            <v-icon class="black--text">mdi-plus</v-icon>
-          </v-btn>
-        </v-row>
-        <v-row justify="center" class="pt-1">
-          {{ buttonLabel }}
-        </v-row>
+        <AddButton :label="buttonLabel" @click="click"/>
       </v-col>
     </v-row>
   </v-col>
@@ -31,9 +20,13 @@
 
 <script>
 import Avatar from './Avatar.vue'
+import AddButton from './AddButton.vue'
 export default {
   name: 'AvatarGroup',
-  components: { Avatar }, // is this too hard to read?
+  components: {
+    Avatar,
+    AddButton
+  },
   props: {
     profiles: { type: Array, default: null },
     buttonLabel: { type: String, default: null },

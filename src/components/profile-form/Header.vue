@@ -1,7 +1,10 @@
 <template>
-  <v-container class="full-width my-0 py-0">
-    <v-row class="header-bg">
-      <v-img v-if="!header.new" :src="headerImage ? headerImage.uri : ''" min-width="100%" />
+  <v-container class="header my-0 py-0">
+    <v-row class="header-row">
+      <v-img v-if="!header.new"
+        :src="headerImage ? headerImage.uri : ''"
+        class='header-image'
+      />
       <div v-if="header.overlay" class="header-editor">
         <clipper-fixed
           ref="headerClipper"
@@ -15,11 +18,16 @@
           :round="false"
           shadow="rgba(0,0,0,0.5)"
           :rotate="header.rotation"
-        ></clipper-fixed>
+        />
         <div class="controls px-4 py-4">
-          <h6 class="caption pt-8"><v-icon>mdi-gesture-tap-hold</v-icon> Ajust the image by zooming, scaling and moving it around before saving.</h6>
+          <h6 class="caption pt-8">
+            <v-icon>mdi-gesture-tap-hold</v-icon>
+            Ajust the image by zooming, scaling and moving it around before saving.
+          </h6>
+
           <h5 class="pt-4">rotate</h5>
           <clipper-range v-model="header.rotation" style="max-width:300px" :min="0" :max="360"></clipper-range>
+
           <v-row class="actions py-6">
             <v-btn @click="toggleUpdateHeader(null)" text color="secondary" class="mr-4" >
               <v-icon>mdi-close</v-icon>
@@ -30,6 +38,7 @@
           </v-row>
         </div>
       </div>
+
       <clipper-upload v-if="!header.new" @input="toggleUpdateHeader" accept="image/*" class="edit-header-button">
         <v-btn fab color="white">
           <v-icon class="black--text">mdi-pencil</v-icon>
@@ -46,7 +55,12 @@
           </v-btn>
           <span class="caption pt-4">Upload profile photo</span>
         </clipper-upload>
-        <Avatar v-if="!avatar.new" :image="avatarImage" :alt="preferredName" size="18vh" />
+
+        <Avatar v-if="!avatar.new"
+          :image="avatarImage" :alt="preferredName" size="18vh"
+          class="pa-0"
+        />
+
         <v-overlay :value="avatar.overlay" color="black" opacity="0.9">
           <div class="avatar-editor">
             <clipper-fixed
@@ -59,9 +73,14 @@
               shadow="rgba(0,0,0,0.5)"
               :rotate="avatar.rotation">
             </clipper-fixed>
+
             <div class="px-4 py-4">
-              <h6 class="caption pt-8"><v-icon>mdi-gesture-tap-hold</v-icon> Ajust the image by zooming, scaling and moving it around before saving.</h6>
+              <h6 class="caption pt-8">
+                <v-icon>mdi-gesture-tap-hold</v-icon>
+                Ajust the image by zooming, scaling and moving it around before saving.
+              </h6>
               <h5 class="pt-8">rotate</h5>
+
               <clipper-range v-model="avatar.rotation" style="max-width:300px" :min="0" :max="360"></clipper-range>
               <v-row class="actions py-6">
                 <v-btn @click="toggleUpdateAvatar(null)" text color="secondary" class="mr-4" >
@@ -163,42 +182,38 @@ export default {
   $headerHeight: 100vw / 5.33333;
   $formWidth: 600px;
 
-  .full-width {
+  .header {
     max-width: 100%;
+    height: $headerHeight;
     // @media
   }
-  .super-z {
-    z-index: 998;
-  }
-  .header-bg {
-    background: linear-gradient(45deg, hsl(0, 6%, 37.1%) 12%, transparent 0, transparent 88%, hsl(0, 6%, 37.1%) 0), linear-gradient(135deg, transparent 37%, hsl(13.5, 4%, 31%) 0, hsl(13.5, 4%, 31%) 63%, transparent 0), linear-gradient(45deg, transparent 37%, hsl(0, 6%, 37.1%) 0, hsl(0, 6%, 37.1%) 63%, transparent 0), hsl(0, 5.2%, 27.6%);
-    background-size: 50px 50px;
-  }
-  .header {
-    height: $headerHeight;
-    background: grey;
-    width: 100%;
-    margin-bottom: -$headerHeight;
-    position: relative;
-    top: -$headerHeight;
-    opacity: 0.6;
-  }
-  .header-editor {
-    width: 100vw;
-    height: $headerHeight;
-    margin-bottom: -1vw;
-    .controls {
-      position: absolute;
-      top: $headerHeight;
-      right: 0;
-      background: rgba(0, 0, 0, 0.8);
+
+  .header-row {
+    background-color: white;
+    .header-image {
+      background: linear-gradient(45deg, hsl(0, 6%, 37.1%) 12%, transparent 0, transparent 88%, hsl(0, 6%, 37.1%) 0), linear-gradient(135deg, transparent 37%, hsl(13.5, 4%, 31%) 0, hsl(13.5, 4%, 31%) 63%, transparent 0), linear-gradient(45deg, transparent 37%, hsl(0, 6%, 37.1%) 0, hsl(0, 6%, 37.1%) 63%, transparent 0), hsl(0, 5.2%, 27.6%);
+      height: $headerHeight;
+      width: 100%;
+      opacity: 0.6;
     }
-  }
-  .edit-header-button {
-    cursor: pointer;
-    position: absolute;
-    top: calc(#{-$headerHeight/3} + #{$headerHeight});
-    right: 5vw;
+
+    .header-editor {
+      width: 100vw;
+      height: $headerHeight;
+      margin-bottom: -1vw;
+      .controls {
+        position: absolute;
+        top: $headerHeight;
+        right: 0;
+        background: rgba(0, 0, 0, 0.8);
+      }
+    }
+    .edit-header-button {
+      cursor: pointer;
+      position: absolute;
+      top: calc(#{-$headerHeight/3} + #{$headerHeight});
+      right: 5vw;
+    }
   }
 
   .avatar-row {
@@ -216,6 +231,7 @@ export default {
 
       margin-bottom: -$avatarSize;
       width: $avatarSize;
+      height: $avatarSize;
 
       .avatar-picker {
         z-index: 1;
