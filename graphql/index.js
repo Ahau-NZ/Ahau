@@ -4,15 +4,19 @@ const http = require('http')
 const express = require('express')
 const cors = require('cors')
 
+const Main = require('@ssb-graphql/main')
+const Profile = require('@ssb-graphql/profile')
+const Whakapapa = require('@ssb-graphql/whakapapa')
+
 const PORT = 4000
 const app = express()
 app.options('*', cors())
 
 module.exports = sbot => {
-  const main = require('@ssb-graphql/main')(sbot)
-  const profile = require('@ssb-graphql/profile')(sbot)
-  const whakapapa = require('@ssb-graphql/whakapapa')(sbot)
-  profile.Context(sbot, (err, context) => {
+  const main = Main(sbot)
+  const profile = Profile(sbot)
+  const whakapapa = Whakapapa(sbot, profile.gettersWithCache)
+  profile.Context((err, context) => {
     if (err) throw err
 
     const server = new ApolloServer({
