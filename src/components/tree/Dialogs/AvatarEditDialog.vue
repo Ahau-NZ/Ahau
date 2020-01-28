@@ -30,7 +30,7 @@
             <v-btn @click="close" text color="secondary" class="mr-4" >
               <v-icon>mdi-close</v-icon>
             </v-btn>
-            <v-btn @click="submit" text color="secondary" >
+            <v-btn @click="submit" text color="blue" >
               <v-icon>mdi-check</v-icon>
             </v-btn>
           </v-row>

@@ -5,10 +5,10 @@
         <v-btn @click="$emit('cancel')" outlined text color="secondary" class="mr-4">
           <v-icon>mdi-close</v-icon>
         </v-btn>
-        <v-btn v-if="hasChanges" @click="$emit('save')" text color="secondary" class="mr-4">
+        <v-btn v-if="hasChanges" @click="$emit('save')" text color="blue" class="mr-4">
           <v-icon>mdi-check</v-icon>
         </v-btn>
-        <v-btn v-else outlined color="secondary" text class="mr-4">
+        <v-btn v-else outlined color="blue" text class="mr-4">
           <v-icon>mdi-check</v-icon>
         </v-btn>
       </v-col>

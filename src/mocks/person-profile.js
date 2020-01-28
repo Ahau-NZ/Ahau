@@ -10,6 +10,23 @@ export const personMinimum = {
   headerImage: null
 }
 
+export const personEmpty = {
+  id: '0',
+  preferredName: null,
+  legalName: null,
+  bornAt: null,
+  diedAt: null,
+  description: null,
+  gender: null,
+  avatarImage: null,
+  orderOfBirth: null,
+  headerImage: null,
+  children: null,
+  siblings: null,
+  parents: null,
+  partners: null
+}
+
 export const personNoImages = {
   id: '0',
   preferredName: 'Kuia',
@@ -64,6 +81,8 @@ export const personComplete = {
   'legalName': 'Will Smith',
   'bornAt': '2003-02-01',
   'preferredName': 'Will',
+  'relationshipType': 'birth',
+  'altNames': ['Willard', 'William'],
   'avatarImage': {
     uri: 'https://m.media-amazon.com/images/M/MV5BNTczMzk1MjU1MV5BMl5BanBnXkFtZTcwNDk2MzAyMg@@._V1_UY317_CR2,0,214,317_AL_.jpg'
   },

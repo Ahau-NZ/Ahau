@@ -44,7 +44,7 @@
       :profile="selectedProfile"
       :deleteable="canDelete(selectedProfile)"
       :warnAboutChildren="selectedProfile && (selectedProfile.id !== whakapapaView.focus)"
-      @close="toggleView" @new="toggleNewPerson($event)" @submit="updateProfile($event)" @delete="deleteProfile()"
+      @close="toggleView()" @new="toggleNewPerson($event)" @submit="updateProfile($event)" @delete="deleteProfile()"
     />
     <NewNodeDialog v-if="dialog.new" :show="dialog.new"
       :type="dialog.type" :title="selectedProfile.preferredName"
@@ -246,6 +246,7 @@ export default {
               bornAt
               diedAt
               description
+              altNames
               avatarImage { uri }
               children {
                 profile {
@@ -256,6 +257,7 @@ export default {
                   bornAt
                   diedAt
                   description
+                  altNames
                   avatarImage { uri }
                 }
                 relationshipType
@@ -270,6 +272,7 @@ export default {
                   bornAt
                   diedAt
                   description
+                  altNames
                   avatarImage { uri }
                 }
                 relationshipType

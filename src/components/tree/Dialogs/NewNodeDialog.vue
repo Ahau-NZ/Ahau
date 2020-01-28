@@ -171,7 +171,7 @@ function defaultData () {
     preferredName: '',
     legalName: '',
     altNames: [],
-    gender: 'female',
+    gender: '',
     relationshipType: 'birth',
     legallyAdopted: false,
     children: [],

@@ -1,175 +1,217 @@
 <template>
-  <Dialog :node="profile" :show="show" @close="close">
-    <v-form ref="form"
-      v-model="form.valid"
-    >
+  <Dialog :node="profile" :show="show" @close="close" width="720px">
+    <v-form ref="form" v-model="form.valid" >
       <v-card>
-        <v-container width="100%">
+        <v-container width="100%" class="pa-0">
           <v-card-text>
-            <v-row>
-              <v-col md="8">
-                <h1>
-                  {{ isEditting ? `Edit ${profile.preferredName}` : 'Profile Overview' }}
-                </h1>
-              </v-col>
-
-              <v-col md="3">
-                <v-btn v-if="deleteable && isEditting"
-                  @click="this.toggleDelete" key="mdi-delete"
-                  align="center" color="white" text large class="secondary--text"
-                >
-                  <v-icon class="secondary--text" left>mdi-delete</v-icon>
-                  Delete this Person
-                </v-btn>
-
-                <v-btn v-if="!isEditting"
-                  @click="this.toggleEdit" key="mdi-pencil"
-                  align="center" color="white" text large class="blue--text"
-                >
-                  <v-icon class="blue--text" left>mdi-pencil</v-icon>
-                  Edit this Person
-                </v-btn>
-              </v-col>
-
-              <v-col md="1" v-if="!isEditting" class="ma-0 pa-0 pl-2">
-                <v-btn @click="close" fab text large color="secondary">
-                  <v-icon>mdi-close</v-icon>
-                </v-btn>
-              </v-col>
-            </v-row>
-
-            <v-row>
-              <v-col md="7">
+            <v-row class="px-2">
+              <!-- Information Col -->
+              <v-col cols="7" class="border-right">
                 <v-row>
-                  <!--<v-col v-if="data.title" class="pa-0" md="3">
-                    <v-select
-                      :label="data.title"
-                      :disabled="toggled"
-                      flat
-                      solo
-                      :append-icon="!toggled ? '$dropdown' : ''"
-                      :items="titles"
-                    >
-                    </v-select>
-                  </v-col>-->
-                  <v-col class="" md="3">
-                    <v-select
-                      v-model="data.gender"
-                      :disabled="!isEditting"
-                      :items="genders"
-                      flat
-                      solo
-                      :append-icon="isEditting ? '$dropdown' : ''"
-                    >
-                    </v-select>
+                  <!-- View Mode Title -->
+                  <v-col v-if="!isEditing" cols="12" class="pa-0 pb-5">
+                    <h1> {{ formData.preferredName }}'s Information</h1>
+
+                     <v-btn v-if="!isEditing"
+                       @click="toggleEdit"
+                       align="right"
+                       color="white"
+                       text
+                       x-small
+                       class="blue--text pt-3"
+                     >
+                       <v-icon small class="blue--text" left>mdi-pencil</v-icon>
+                       Edit
+                     </v-btn>
                   </v-col>
-                  <v-col class="mr-5" md="3">
-                    <NodeDatePicker
-                      required
-                      :value="data.bornAt"
-                      label="Date of Birth"
-                      @date="data.bornAt = $event"
-                      :makeDisabled="!isEditting"
+                  <!-- Edit Mode Title -->
+                  <v-col v-else cols="12" class="pa-0 pb-5">
+                    <h1> Edit {{ formData.preferredName }}</h1>
+                  </v-col>
+                  <!-- Preferred Name -->
+                  <v-col cols="12" class="pa-1">
+                    <v-text-field
+                      v-model="formData.preferredName"
+                      label="Preferred name. This is the name shown on your profile"
+                      v-bind="customProps"
                     />
                   </v-col>
-                  <v-col md="3">
-                    <NodeDatePicker
-                      :value="data.diedAt"
-                      label="Date Deceased"
-                      @date="data.diedAt = $event"
-                      :makeDisabled="!isEditting"
+                  <!-- Legal Name -->
+                  <v-col cols="12" class="pa-1">
+                    <v-text-field
+                      v-model="formData.legalName"
+                      label="Legal name."
+                      v-bind="customProps"
                     />
                   </v-col>
-                  <v-spacer/>
-                </v-row>
-                <v-row>
-                    <small class="pa-0"> Preferred Name. This is the name that will show on the Whakapapa</small>
-                </v-row>
-                <v-row>
-                  <v-col class="pa-0">
-                    <v-card-title class="pa-0">
-                      <v-text-field class="pl-3"
-                        v-model="data.preferredName"
-                        :rules="form.rules.name.preferred"
-                        required
-                        :readonly="!isEditting"
-                        :flat="!isEditting"
-                        :solo="!isEditting"
-                        :append-icon="isEditting ? 'mdi-pencil' : ''"
-                        :hide-details="!isEditting"
-                      >
-                      </v-text-field>
-                    </v-card-title>
+                  <!-- Alt Names -->
+                  <v-col  v-for="(altName, index) in altNames" :key="altName" cols="6" class="pa-0">
+                    <v-col v-if="altName || isEditing"
+                      :class="(!altName && !isEditing) ? 'pt-0 pb-0' : 'pa-1'" cols="12"
+                    >
+                      <v-text-field
+                        v-model="altNames[index]"
+                        :label="`Alternative name ${(index+1)}`"
+                        v-bind="customProps"
+                      />
+                    </v-col>
                   </v-col>
-                </v-row>
-                <v-row>
-                  <small class="pa-0"> Legal Name</small>
-                </v-row>
-                <v-row>
-                  <v-col class="pa-0">
-                    <v-card-title class="pa-0">
-                      <v-text-field class="pl-3"
-                        v-model="data.legalName"
-                        :rules="form.rules.name.legal"
-                        required
-                        :readonly="!isEditting"
-                        :flat="!isEditting"
-                        :solo="!isEditting"
-                        :append-icon="isEditting ? 'mdi-pencil' : ''"
-                        :hide-details="!isEditting"
-                      >
-                      </v-text-field>
-                    </v-card-title>
+                  <!-- Add Alt Name Button -->
+                  <v-col v-if="isEditing" cols="12" class="pa-1">
+                    <AddButton label="Add name" @click="toggleAltName" row/>
                   </v-col>
-                </v-row>
-                <v-row v-if="data.description || isEditting">
-                  <small class="pa-0">Description</small>
-                </v-row>
-                <v-row v-if="data.description || isEditting">
-                  <v-col class="pa-0">
-                      <v-textarea class="pl-3"
-                        v-model="data.description"
-                        :readonly="!isEditting"
-                        :flat="!isEditting"
-                        :solo="!isEditting"
-                        :no-resize="true"
-                        :hide-details="!isEditting"
-                        :append-icon="isEditting ? 'mdi-pencil' : ''"
-                      >
-                      </v-textarea>
+                  <!-- Date of Birth -->
+                  <v-col cols="6" class="pa-1">
+                    <NodeDatePicker
+                      :rules="form.rules.bornAt"
+                      :value="formData.bornAt"
+                      label="Date of birth"
+                      @date="formData.bornAt = $event"
+                      :readonly="!isEditing"
+                    />
+                  </v-col>
+                  <!-- Order of Birth -->
+                  <v-col cols="6" class="pa-1" v-if="formData.orderOfBirth || isEditing">
+                    <v-text-field
+                      v-model="formData.orderOfBirth"
+                      type="number"
+                      label="Order of birth"
+                      v-bind="customProps"
+                      readonly
+                    />
+                  </v-col>
+                  <!-- diedAt checkbox -->
+                  <v-col cols="6" v-if="isEditing" class="pa-1">
+                    <v-checkbox v-model="formData.isDeceased"
+                      label="No longer living" :hide-details="true"
+                    />
+                  </v-col>
+                  <!-- diedAt datepicker -->
+                  <v-col cols="6" class="pa-1" v-if="formData.diedAt || isEditing">
+                    <NodeDatePicker
+                      v-if="formData.isDeceased"
+                      :readonly="!isEditing"
+                      label="Date of death"
+                      :value="formData.diedAt"
+                      @date="formData.diedAt = $event"
+                    />
+                  </v-col>
+                  <!-- Gender View Mode -->
+                  <v-col v-if="!isEditing" cols="6" class="pa-1">
+                    <v-text-field v-if="!isEditing"
+                      v-model="formData.gender"
+                      label="Gender"
+                      v-bind="customProps"
+                    />
+                  </v-col>
+                  <!-- Gender Edit Mode -->
+                  <v-col v-else cols="6" class="pa-1">
+                    <small>Gender</small>
+                    <v-radio-group v-model="formData.gender" row class="mt-0 pt-0" hide-details>
+                      <v-radio v-for="(gender, index) in genders"
+                      :value="gender" :key="index" :label="gender"
+                      class="ma-0 pa-0  pr-2"/>
+                    </v-radio-group>
+                  </v-col>
+                  <!-- Related By -->
+                  <v-col cols="6" class="pa-1" v-if="formData.relationshipType || isEditing">
+                    <v-select
+                      v-model="formData.relationshipType"
+                      label="Related By"
+                      placeholder=" "
+                      :rules="form.rules.relationshipType"
+                      :items="relationshipTypes"
+                      :menu-props="{ light: true }"
+                      :append-icon="!isEditing ? '' : 'mdi-chevron-down'"
+                      :hide-details="true"
+                      readonly
+                      :class="!isEditing ? 'custom' : ''"
+                    />
+                  </v-col>
+                  <!-- Description textarea -->
+                  <v-col cols="12" class="pa-1" v-if="formData.description || isEditing">
+                    <v-textarea v-if="formData.description || showDescription"
+                      v-model="formData.description"
+                      label="Description"
+                      placeholder=" "
+                      :hide-details="true"
+                      :readonly="!isEditing"
+                      :class="!isEditing ? 'custom' : ''"
+                      no-resize
+                      rows="1"
+                      auto-grow
+                    >
+                    </v-textarea>
+                  <!-- Description button -->
+                    <AddButton v-else label="Add description" @click="toggleDescription" row/>
                   </v-col>
                 </v-row>
               </v-col>
-              <v-divider :vertical="true"></v-divider>
-              <v-col class="ml-10" md="4">
-              <v-row>
-                <v-spacer/>
-                <v-col>
-                  <Avatar class="justify-center align-center" size="250px" :image="profile.avatarImage" :alt="profile.preferredName" :gender="profile.gender" :bornAt="profile.bornAt" />
-                </v-col>
-                <v-spacer/>
-              </v-row>
+
+              <v-col cols="5" class="">
+                <v-row class="pa-0">
+                  <v-col cols="offset-7 4 " class="pa-0" align="right">
+                    <!-- Dialog close button -->
+                    <v-btn @click="close" fab text top right color="secondary" class="close">
+                      <v-icon>mdi-close</v-icon>
+                    </v-btn>
+                  </v-col>
+                  <v-col cols="12" class="pa-0">
+                    <!-- Avatar -->
+                    <Avatar class="big-avatar" size="250px"
+                      :image="avatarImage" :alt="profile.preferredName"
+                      :gender="gender" :bornAt="bornAt"
+                    />
+                  </v-col>
+                  <v-col v-if="isEditing" cols="12" justify="center" align="center" class="pa-0">
+                    <ImagePicker @updateAvatar="formData.avatarImage = $event"/>
+                  </v-col>
+                    <!-- END of Avatar -->
+                </v-row>
               </v-col>
             </v-row>
-            <v-divider/>
-            <v-row>
-              <v-col>
-                <AvatarGroup :show-labels="true" :profiles="parents" group-title="Parents" button-label="Add Parent" @button-click="toggleNew('parent')"/>
+            <v-divider v-if="!isEditing" />
+            <v-row v-if="!isEditing">
+              <!-- Family Members -->
+              <v-col class="pa-0">
+                <AvatarGroup :profiles="parents"
+                  :show-labels="true" button-label="Add Parent" group-title="Parents"
+                  size="60px"
+                />
+                <AddButton @click="toggleNew('parent')"/>
               </v-col>
-              <v-divider v-if="hasSiblings" :vertical="true"></v-divider>
-              <v-col v-if="hasSiblings">
-                <AvatarGroup :show-labels="true" :profiles="siblings" group-title="Sibling"/>
+              <v-divider v-if="hasSiblings" :vertical="true"/>
+              <v-col v-if="hasSiblings" class="pa-0">
+                <AvatarGroup :profiles="siblings"
+                  :show-labels="true"  group-title="Siblings"
+                  size="60px"/>
               </v-col>
-              <v-divider :vertical="true"/>
-              <v-col>
-                <AvatarGroup :show-labels="true" :profiles="children" group-title="Children" button-label="Add Child" @button-click="toggleNew('child')"/>
+              <v-divider :vertical="true" />
+              <v-col class="pa-0">
+                <AvatarGroup :profiles="children"
+                  :show-labels="true" button-label="Add Child" group-title="Children"
+                  size="60px"
+                  />
+                <AddButton @click="toggleNew('child')"/>
               </v-col>
+              <!-- END Family Members -->
             </v-row>
-            <v-divider />
-            <v-row v-if="isEditting">
-              <v-spacer/>
-              <v-col md="3">
-                <v-btn @click="close"
+            <v-row >
+              <!-- Action buttons -->
+              <!-- Delete button -->
+              <v-btn v-if="isEditing"
+                @click="this.toggleDelete"
+                align="center"
+                color="white"
+                text
+                class="secondary--text pt-7 pl-5"
+              >
+                <v-icon small class="secondary--text" left>mdi-delete</v-icon>
+                Delete this person
+              </v-btn>
+              <v-spacer />
+              <v-col v-if="isEditing" align="right" class="pt-0 pb-o">
+                <v-btn @click="cancel"
                   text
                   large
                   fab
@@ -178,15 +220,16 @@
                   <v-icon color="secondary">mdi-close</v-icon>
                 </v-btn>
                 <v-btn @click="submit"
-                  :disabled="hasChanges"
                   text
-                  x-large
+                  large
                   fab
                   class="blue--text"
+                  color="blue"
                 >
-                  <v-icon color="blue">mdi-check</v-icon>
+                  <v-icon>mdi-check</v-icon>
                 </v-btn>
               </v-col>
+              <!-- END Action buttons -->
             </v-row>
           </v-card-text>
         </v-container>
@@ -204,12 +247,31 @@
 import Dialog from '@/components/Dialog.vue'
 import Avatar from '@/components/Avatar.vue'
 import AvatarGroup from '@/components/AvatarGroup.vue'
-import { GENDERS, RULES, PERMITTED_PROFILE_ATTRS } from '@/lib/constants'
+import { GENDERS, RULES, PERMITTED_PROFILE_ATTRS, RELATIONSHIPS } from '@/lib/constants'
 import DeleteNodeDialog from '@/components/tree/Dialogs/DeleteNodeDialog.vue'
 import NodeDatePicker from '@/components/NodeDatePicker.vue'
+import AddButton from '@/components/AddButton.vue'
+import ImagePicker from '@/components/ImagePicker.vue'
 
 import isEqual from 'lodash.isequal'
 import pick from 'lodash.pick'
+
+function defaultData (profile) {
+  return {
+    id: profile.id,
+    gender: profile.gender,
+    legalName: profile.legalName,
+    bornAt: profile.bornAt,
+    diedAt: profile.diedAt,
+    preferredName: profile.preferredName,
+    avatarImage: profile.avatarImage,
+    description: profile.description,
+    // orderOfBirth: .profile.orderOfBirth,
+    // relationshipType: this.profile.relationshipType, this isnt even in profile
+    altNames: profile.altNames,
+    isDeceased: !!profile.diedAt // set to true if this value is set
+  }
+}
 
 export default {
   name: 'ViewEditNodeDialog',
@@ -218,7 +280,9 @@ export default {
     Avatar,
     AvatarGroup,
     DeleteNodeDialog,
-    NodeDatePicker
+    NodeDatePicker,
+    AddButton,
+    ImagePicker
   },
   props: {
     show: { type: Boolean, required: true },
@@ -231,17 +295,10 @@ export default {
       genders: GENDERS,
       // titles: TITLES,
       permitted: PERMITTED_PROFILE_ATTRS,
-      isEditting: false, // TODO spell-check 'Editing'
-      data: {
-        id: this.profile.id,
-        gender: this.profile.gender,
-        legalName: this.profile.legalName,
-        bornAt: this.profile.bornAt,
-        diedAt: this.profile.diedAt,
-        preferredName: this.profile.preferredName,
-        avatarImage: this.profile.avatarImage,
-        description: this.profile.description
-      },
+      relationshipTypes: RELATIONSHIPS,
+      isEditing: false,
+      formData: defaultData(this.profile),
+      showDescription: false,
       deleteDialog: false,
       form: {
         valid: true,
@@ -250,17 +307,23 @@ export default {
     }
   },
   computed: {
+    avatarImage () {
+      return this.formData.avatarImage
+    },
+    gender () {
+      return this.formData.gender
+    },
+    bornAt () {
+      return this.formData.bornAt
+    },
     profileChanges () {
       let changes = {}
-      Object.entries(this.data).map(([key, value]) => {
-        if (this.data[key] !== this.profile[key]) {
+      Object.entries(this.formData).map(([key, value]) => {
+        if (!isEqual(this.formData[key], this.profile[key]) || key === 'altNames') {
           changes[key] = value
         }
       })
       return changes
-    },
-    hasChanges () {
-      return isEqual(this.data, this.profile)
     },
     hasSiblings () {
       return this.siblings ? this.siblings.length > 0 : false
@@ -273,24 +336,52 @@ export default {
     },
     children () {
       return this.profile.children
+    },
+    altNames () {
+      return this.formData.altNames
+    },
+    customProps () {
+      return {
+        readonly: !this.isEditing,
+        flat: !this.isEditing,
+        // appendIcon: this.isEditing ? '' ? 'mdi-delete' : 'mdi-pencil',
+        hideDetails: true,
+        placeholder: ' ',
+        class: !this.isEditing ? 'custom' : ''
+      }
+    }
+  },
+  watch: {
+    'formData.isDeceased' (newValue) {
+      if (!newValue) this.formData.diedAt = ''
+    },
+    profile (newVal) {
+      this.formData = defaultData(newVal)
     }
   },
   methods: {
     close () {
       this.$emit('close')
     },
+    cancel () {
+      // reset form values
+      this.formData = defaultData(this.profile)
+      this.toggleEdit()
+    },
     submit () {
-      if (!this.$refs.form.validate()) return
+      if (!this.$refs.form.validate()) {
+        return
+      }
 
       var output = Object.assign({}, pick(this.profileChanges, this.permitted))
       this.$emit('submit', output)
-      this.close()
+      this.toggleEdit()
     },
     toggleNew (type) {
       this.$emit('new', type)
     },
     toggleEdit () {
-      this.isEditting = !this.isEditting
+      this.isEditing = !this.isEditing
     },
     toggleDelete () {
       this.deleteDialog = !this.deleteDialog
@@ -299,7 +390,45 @@ export default {
       this.$emit('delete')
       this.toggleDelete()
       this.close()
+    },
+    toggleAltName () {
+      if (!this.formData.altNames) this.formData.altNames = []
+      this.formData.altNames.push(null)
+    },
+    toggleDescription () {
+      this.showDescription = !this.showDescription
+    },
+    deleteAltName (index) {
+      this.formData.altNames.splice(index, 1)
+    },
+    updateAltName (newValue, index) {
+      this.formData.altNames.splice(index, 1, newValue)
     }
   }
 }
 </script>
+
+<style>
+.custom.v-text-field>.v-input__control>.v-input__slot:before {
+    border-style: none;
+}
+.custom.v-text-field>.v-input__control>.v-input__slot:after {
+    border-style: none;
+}
+.close{
+  top: -25px;
+  right: -10px
+}
+.big-avatar{
+  position: relative;
+  left: -30px;
+  top: -20px
+}
+.v-input--checkbox label{
+  font-size: 14px;
+}
+
+.v-input--radio-group__input label{
+  font-size: 14px;
+}
+</style>
