@@ -5,16 +5,14 @@
         <v-card-text>
           <v-container class="ma-2">
             <v-row>
-              <v-card-title>
-                Add {{ type }} to {{ title }}
-              </v-card-title>
+              <v-card-title>{{ title }}</v-card-title>
             </v-row>
             <v-row>
               <v-col md="7">
                 <v-row>
                   <v-col>
                     <v-text-field
-                      v-model="data.preferredName"
+                      v-model="formData.preferredName"
                       label="Preferred name. This is the name shown on your profile"
                       :placeholder="' '"
                       :rules="form.rules.name.preferred"
@@ -25,7 +23,7 @@
                 <v-row>
                   <v-col>
                     <v-text-field
-                      v-model="data.legalName"
+                      v-model="formData.legalName"
                       :rules="form.rules.name.legal"
                       label="Legal name"
                       :placeholder="' '"
@@ -36,7 +34,7 @@
                 <v-row v-for="n in altNameCount" :key="n">
                   <v-col>
                     <v-text-field
-                      v-model="data.altNames[n-1]"
+                      v-model="formData.altNames[n-1]"
                       :rules="form.rules.name.preferred"
                       :label="`Alternative name ${n}`"
                       :placeholder="' '"
@@ -45,15 +43,15 @@
                   </v-col>
                 </v-row>
                 <v-row>
-                  <AddButton label="Add name" @click="toggleAltName" row/>
+                  <AddButton label="Add name" @click="addAltNameField" row/>
                 </v-row>
                 <v-row>
                   <v-col>
                     <NodeDatePicker
                       :rules="form.rules.bornAt"
-                      :value="data.bornAt"
+                      :value="formData.bornAt"
                       label="Date of birth"
-                      @date="data.bornAt = $event"
+                      @date="formData.bornAt = $event"
                     />
                   </v-col>
                   <v-col>
@@ -74,8 +72,8 @@
                     <NodeDatePicker
                       v-if="isDeceased"
                       label="Date of death"
-                      :value="data.diedAt"
-                      @date="data.diedAt = $event"
+                      :value="formData.diedAt"
+                      @date="formData.diedAt = $event"
                     />
                   </v-col>
                 </v-row>
@@ -85,7 +83,7 @@
                       Gender
                     </v-row>
                     <v-row>
-                      <v-radio-group v-model="data.gender" row>
+                      <v-radio-group v-model="formData.gender" row>
                         <v-radio v-for="(gender, index) in genders"
                           :key="index"
                           :value="gender"
@@ -96,10 +94,10 @@
                       </v-radio-group>
                     </v-row>
                   </v-col>
-                  <v-col md="4">
+                  <v-col md="4" v-if="withRelationships">
                     Related By
                     <v-select
-                      v-model="data.relationshipType"
+                      v-model="formData.relationshipType"
                       placeholder="birth"
                       :rules="form.rules.relationshipType"
                       :items="relationshipTypes"
@@ -107,7 +105,12 @@
                       append-icon="mdi-chevron-down"
                       :hide-details="true"
                     />
+
+                    <v-col v-if="showLegallyAdopted">
+                      <v-checkbox label="Legally Adopted" v-model="formData.legallyAdopted"/>
+                    </v-col>
                   </v-col>
+                  <v-col md="4" v-else />
                 </v-row>
                 <v-row v-if="!showDescription">
                   <AddButton label="Description" @click="toggleDescription" row/>
@@ -118,7 +121,7 @@
                 <v-row v-if="showDescription">
                   <v-col>
                     <v-textarea
-                      v-model="data.description"
+                      v-model="formData.description"
                       :no-resize="true"
                     >
                     </v-textarea>
@@ -127,7 +130,7 @@
               </v-col>
               <v-col>
                 <v-row>
-                  <Avatar size="200px" :image="data.avatarImage" :alt="data.preferredName" />
+                  <Avatar size="200px" :image="formData.avatarImage" :alt="formData.preferredName" />
                 </v-row>
                 <v-row justify="center" align="center">
                   <clipper-upload accept="image/*" @input="toggleAvatar">
@@ -136,7 +139,9 @@
                     </v-btn>
                     &nbsp; &nbsp; Upload profile photo
                   </clipper-upload>
-                  <AvatarEditDialog :show="avatar.showEditor" :avatarImage="avatar.new" @submit="updateAvatar($event)" @close="toggleAvatar(null)"/>
+                  <AvatarEditDialog :show="avatar.showEditor" :avatarImage="avatar.new" :round="true"
+                    @submit="updateAvatar($event)" @close="toggleAvatar(null)"
+                  />
                 </v-row>
               </v-col>
             </v-row>
@@ -159,15 +164,15 @@
 <script>
 import Dialog from '@/components/Dialog.vue'
 import Avatar from '@/components/Avatar.vue'
-import AddButton from '@/components/AddButton.vue'
-import NodeDatePicker from '@/components/NodeDatePicker.vue'
 import AvatarEditDialog from './AvatarEditDialog.vue'
+import NodeDatePicker from '@/components/NodeDatePicker.vue'
+import AddButton from '@/components/AddButton.vue'
 
 import { GENDERS, RELATIONSHIPS, RULES, PERMITTED_PROFILE_ATTRS } from '@/lib/constants'
 import isEmpty from 'lodash.isempty'
 
-function defaultData () {
-  return {
+function defaultForm (withRelationships) {
+  const formData = {
     preferredName: '',
     legalName: '',
     altNames: [],
@@ -181,6 +186,13 @@ function defaultData () {
     diedAt: '',
     description: ''
   }
+
+  if (!withRelationships) {
+    delete formData.relationshipType
+    delete formData.legallyAdopted
+  }
+
+  return formData
 }
 
 export default {
@@ -197,13 +209,13 @@ export default {
       type: Boolean,
       required: true
     },
-    type: {
-      type: String,
-      default: 'a new person'
+    withRelationships: {
+      type: Boolean,
+      default: true
     },
     title: {
       type: String,
-      default: 'this Whakapapa'
+      default: 'Create a new person'
     }
   },
   data () {
@@ -211,7 +223,7 @@ export default {
       genders: GENDERS,
       relationshipTypes: RELATIONSHIPS,
       permitted: PERMITTED_PROFILE_ATTRS,
-      data: defaultData(),
+      formData: defaultForm(this.withRelationships),
       avatar: {
         new: null,
         showEditor: false
@@ -219,7 +231,7 @@ export default {
       isDeceased: false,
       showDescription: false,
       radios: 'radio-1',
-      count: 0,
+      altNameCount: 0,
       form: {
         valid: true,
         rules: RULES
@@ -227,11 +239,8 @@ export default {
     }
   },
   computed: {
-    altNameCount () {
-      return this.count
-    },
     showLegallyAdopted () {
-      switch (this.data.relationshipType) {
+      switch (this.formData.relationshipType) {
         case 'whangai': return true
         case 'adopted': return true
         default: return false
@@ -239,8 +248,8 @@ export default {
     },
     submission () {
       let submission = {}
-      Object.entries(this.data).map(([key, value]) => {
-        if (!isEmpty(this.data[key])) {
+      Object.entries(this.formData).map(([key, value]) => {
+        if (!isEmpty(this.formData[key])) {
           submission[key] = value
         }
       })
@@ -248,18 +257,22 @@ export default {
     }
   },
   watch: {
-    'data.relationshipType' (newValue, oldValue) {
+    'formData.relationshipType' (newValue, oldValue) {
       // make sure adoption status can't be set true when relationship type is birth
-      if (newValue === 'birth') this.data.legallyAdopted = false
+      if (newValue === 'birth') this.formData.legallyAdopted = false
     },
     isDeceased (newValue) {
       if (newValue === false) {
-        this.data.diedAt = ''
+        this.formData.diedAt = ''
       }
     }
   },
   methods: {
     close: function () {
+      // reset the form properties
+      // this.formData = defaultForm()
+      // TODO: figure out when is a good time to reset these?
+
       this.$emit('close')
     },
     toggleAvatar (file) {
@@ -267,11 +280,11 @@ export default {
       this.avatar.showEditor = !this.avatar.showEditor
     },
     updateAvatar (avatarImage) {
-      this.data.avatarImage = avatarImage
+      this.formData.avatarImage = avatarImage
       this.toggleAvatar(null)
     },
-    toggleAltName () {
-      this.count += 1
+    addAltNameField () {
+      this.altNameCount += 1
     },
     toggleDescription () {
       this.showDescription = true
@@ -284,7 +297,8 @@ export default {
       }
 
       var submission = Object.assign({}, this.submission)
-      // send the data back to the parent component
+
+      // send the formData back to the parent component
       this.$emit('submit', submission)
       // close this dialog
       this.close()

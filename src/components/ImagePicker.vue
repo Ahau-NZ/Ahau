@@ -11,7 +11,8 @@
 </template>
 
 <script>
-import AvatarEditDialog from '@/components/tree/Dialogs/AvatarEditDialog.vue'
+import AvatarEditDialog from '@/components/dialog/AvatarEditDialog.vue'
+
 export default {
   name: 'ImagePicker',
   components: { AvatarEditDialog },

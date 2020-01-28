@@ -30,7 +30,6 @@ export default {
   },
   methods: {
     click () {
-      console.log('button-click')
       this.$emit('button-click')
     }
   }
