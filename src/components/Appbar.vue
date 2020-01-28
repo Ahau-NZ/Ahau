@@ -9,9 +9,7 @@
           <Avatar size="50px" :image="profile.avatarImage" :alt="profile.preferredName" :gender="profile.gender" :bornAt="profile.bornAt"/>
         <!-- </v-btn> -->
       </v-toolbar-title>
-
       <v-spacer></v-spacer>
-
       <v-toolbar-items>
         <!--  WIP links -->
         <v-btn text @click.stop="dialog = true" class="red--text text-uppercase ms-10">
@@ -30,10 +28,10 @@
         <v-btn text :to="{ name: 'personShow', params: { id: profile.id } }" class="white--text text-uppercase">
           profile
         </v-btn> -->
-        <v-btn text to="/logout" class="white--text text-uppercase">
+        <!-- using click.native to handle event when there is also a router link -->
+        <v-btn @click.native='karakiaWhakamutunga()' to='/login' text class="white--text text-uppercase" >
           sign out
         </v-btn>
-
         <!-- coming soon dialog  -->
         <v-dialog v-model="dialog" max-width="450">
           <v-card>
@@ -48,7 +46,6 @@
             </v-card-actions>
           </v-card>
         </v-dialog>
-
       </v-toolbar-items>
     </v-toolbar>
   </div>
@@ -57,6 +54,20 @@
 <script>
 import gql from 'graphql-tag'
 import Avatar from '@/components/Avatar'
+
+const karakia = `
+---------------------------------
+Kia whakairia te tapu
+Kia wātea ai te ara
+Kia turuki whakataha ai
+Kia turuki whakataha ai
+Haumi e. Hui e. Tāiki e!
+  
+Restrictions are moved aside
+So the pathway is clear
+To return to everyday activities
+---------------------------------
+`
 
 export default {
   name: 'Appbar',
@@ -73,6 +84,9 @@ export default {
     this.getCurrentIdentity()
   },
   methods: {
+    karakiaWhakamutunga () {
+      console.log(karakia)
+    },
     async getCurrentIdentity () {
       const result = await this.$apollo.query({
         query: gql` {

@@ -2,7 +2,7 @@
   <div id="whakapapa-show">
     <v-container class="white px-0 py-0 mx-auto">
       <v-row class='header'>
-        <WhakapapaViewCard :view="whakapapaView" :shadow="false">
+        <WhakapapaViewCard :view="whakapapaView" :shadow="false" >
           <v-row class='lock-container'>
             <v-col class='lock-icon'>
               <v-icon small color='#555'>mdi-lock</v-icon>
