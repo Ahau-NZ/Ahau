@@ -88,9 +88,9 @@
 
               <v-col>
                 <v-btn @click="close" fab text color="secondary" class="mr-4">
-                  <v-icon>mdi-cancel</v-icon>
+                  <v-icon>mdi-close</v-icon>
                 </v-btn>
-                <v-btn @click="submit" :disabled="!form.valid" fab text color="success" class="mr-4">
+                <v-btn @click="submit" :disabled="!form.valid" fab text color="blue" class="mr-4">
                   <v-icon>mdi-check</v-icon>
                 </v-btn>
               </v-col>
@@ -109,7 +109,7 @@
 
 <script>
 import Dialog from '@/components/Dialog.vue'
-import AvatarEditDialog from '@/components/tree/Dialogs/AvatarEditDialog.vue'
+import AvatarEditDialog from '@/components/dialog/AvatarEditDialog.vue'
 import { RULES } from '@/lib/constants'
 
 function defaultData () {

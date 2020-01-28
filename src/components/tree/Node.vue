@@ -109,7 +109,7 @@ export default {
     },
     textWidth () {
       // const { x, y } = textElm.getBBox();
-      const width = (this.profile.preferredName.length * 8)
+      const width = (this.profile.preferredName || '').length * 8
       return width
     },
     groupStyle () {

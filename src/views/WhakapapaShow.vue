@@ -10,11 +10,12 @@
             </v-col>
           </v-row>
         </WhakapapaViewCard>
+      </v-row>
+
+      <v-row class='feedback'>
         <v-col>
           <a href="https://forms.gle/jsD3qqVNn2QHBSLs6" target="_blank">
-           <v-btn raised color="secondary">
-            feedback
-            </v-btn>
+            <v-btn raised color="secondary">feedback</v-btn>
           </a>
         </v-col>
       </v-row>
@@ -43,9 +44,10 @@
       :profile="selectedProfile"
       :deleteable="canDelete(selectedProfile)"
       :warnAboutChildren="selectedProfile && (selectedProfile.id !== whakapapaView.focus)"
-      @close="toggleView" @new="toggleNewPerson($event)" @submit="updateProfile($event)" @delete="deleteProfile()"
+      @close="toggleView()" @new="toggleNewPerson($event)" @submit="updateProfile($event)" @delete="deleteProfile()"
     />
     <NewNodeDialog v-if="dialog.new" :show="dialog.new"
+      :title="`Add ${dialog.type} to ${selectedProfile.preferredName || '___'}`"
       @close="toggleNew" @submit="addPerson($event)"
     />
     <DeleteNodeDialog v-if="dialog.delete" :show="dialog.delete"
@@ -64,9 +66,9 @@ import { VueContext } from 'vue-context'
 import WhakapapaViewCard from '@/components/whakapapa-view/WhakapapaViewCard.vue'
 import Tree from '@/components/Tree.vue'
 
-import ViewEditNodeDialog from '@/components/tree/Dialogs/ViewEditNodeDialog.vue'
-import NewNodeDialog from '@/components/tree/Dialogs/NewNodeDialog.vue'
-import DeleteNodeDialog from '@/components/tree/Dialogs/DeleteNodeDialog.vue'
+import ViewEditNodeDialog from '@/components/dialog/ViewEditNodeDialog.vue'
+import NewNodeDialog from '@/components/dialog/NewNodeDialog.vue'
+import DeleteNodeDialog from '@/components/dialog/DeleteNodeDialog.vue'
 
 import tree from '@/lib/tree-helpers'
 import findSuccessor from '@/lib/find-successor'
@@ -244,6 +246,7 @@ export default {
               bornAt
               diedAt
               description
+              altNames
               avatarImage { uri }
               children {
                 profile {
@@ -254,6 +257,7 @@ export default {
                   bornAt
                   diedAt
                   description
+                  altNames
                   avatarImage { uri }
                 }
                 relationshipType
@@ -268,6 +272,7 @@ export default {
                   bornAt
                   diedAt
                   description
+                  altNames
                   avatarImage { uri }
                 }
                 relationshipType
@@ -388,7 +393,7 @@ export default {
         throw err
       }
     },
-    async createProfile ({ preferredName, legalName, gender, bornAt, diedAt, avatarImage }) {
+    async createProfile ({ preferredName, legalName, gender, bornAt, diedAt, avatarImage, altNames, description }) {
       const res = await this.$apollo.mutate({
         mutation: gql`
           mutation($input: ProfileInput!) {
@@ -404,6 +409,8 @@ export default {
             bornAt,
             diedAt,
             avatarImage,
+            altNames,
+            description,
             recps: this.whakapapaView.recps
           }
         }
@@ -529,6 +536,18 @@ export default {
         position: absolute;
         top: 20px;
         left: 30px;
+        // left: 30px;
+        right: 160px;
+
+        .col {
+          padding-top: 0;
+          padding-bottom: 0;
+        }
+      }
+
+      &> .feedback {
+        position: absolute;
+        top: 20px;
         right: 30px;
 
         .col {

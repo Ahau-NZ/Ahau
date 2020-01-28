@@ -16,7 +16,8 @@
 
     <NewViewDialog :show="showViewForm"
       @close="toggleViewForm" @submit="handleStepOne($event)"/>
-    <NewProfileDialog v-if="showProfileForm" :show="showProfileForm"
+    <NewNodeDialog v-if="showProfileForm" :show="showProfileForm"
+      title='Create new Person' :withRelationships="false"
       @close="toggleProfileForm" @submit="handleDoubleStep($event)"/>
   </v-container>
 </template>
@@ -26,8 +27,8 @@ import gql from 'graphql-tag'
 import pick from 'lodash.pick'
 import isEmpty from 'lodash.isempty'
 import WhakapapaViewCard from '@/components/whakapapa-view/WhakapapaViewCard.vue'
-import NewViewDialog from '@/components/whakapapa-view/NewViewDialog.vue'
-import NewProfileDialog from '@/components/profile-form/Dialog.vue'
+import NewViewDialog from '@/components/dialog/NewViewDialog.vue'
+import NewNodeDialog from '@/components/dialog/NewNodeDialog.vue'
 
 const saveWhakapapaViewQuery = gql`mutation ($input: WhakapapaViewInput) {
   saveWhakapapaView(input: $input)
@@ -146,7 +147,7 @@ export default {
   components: {
     WhakapapaViewCard,
     NewViewDialog,
-    NewProfileDialog
+    NewNodeDialog
   }
 }
 </script>

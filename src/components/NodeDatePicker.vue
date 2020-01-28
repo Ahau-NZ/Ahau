@@ -11,19 +11,17 @@
     >
       <template v-slot:activator="{ on }">
         <v-text-field
-          :disabled="makeDisabled"
-          flat
-          :solo="makeDisabled"
-          :label="makeDisabled ? (date ? label : '') : label"
-          readonly
-          :value="date"
-          v-on="on"
-          :prepend-inner-icon="makeDisabled ? '' : 'mdi-calendar'"
-          color="secondary"
-          required
+          v-on="readonly ? null : on"
           :rules="rules"
-        >
-        </v-text-field>
+          :label="label"
+          placeholder=" "
+          :value="date"
+          readonly
+          flat
+          :hide-details="true"
+          :class="getClass"
+          :clearable="!readonly"
+        ></v-text-field>
       </template>
       <v-date-picker
         locale="en-in"
@@ -32,15 +30,26 @@
         no-title
         @input="menu = false"
         hide-details
+        light
       ></v-date-picker>
     </v-menu>
   </v-layout>
 </template>
 <script>
+
 export default {
+  name: 'NodeDatePicker',
+  props: {
+    rules: Array,
+    label: String,
+    value: { type: String },
+    readonly: { type: Boolean, default: false }
+  },
   computed: {
     date () {
-      var date = (this.updatedValue === null) ? this.value : this.updatedValue
+      var date = (this.updatedValue === null)
+        ? this.value
+        : this.updatedValue
       this.$emit('date', date)
       return date
     },
@@ -51,22 +60,21 @@ export default {
     maxDate () {
       var currentDate = new Date().toJSON().slice(0, 10).replace(/-/g, '-')
       return currentDate
+    },
+    getClass () {
+      return this.readonly ? 'custom ml-3 mr-3' : 'ml-3 mr-3'
     }
   },
   data () {
     return {
       menu: false,
-      updatedValue: null
+      updatedValue: null,
+      on: false
     }
   },
-  props: {
-    rules: Array,
-    label: String,
-    value: { type: String, default: ' ' },
-    makeDisabled: {
-      type: Boolean,
-      required: false,
-      default: false
+  watch: {
+    value (newValue) {
+      this.updatedValue = newValue
     }
   }
 }

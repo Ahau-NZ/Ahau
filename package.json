@@ -15,6 +15,7 @@
     "serve": "vue-cli-service serve",
     "start:dev": "NODE_ENV=development electron index.js -- --title Āhau",
     "start:gql": "nodemon ./graphql/test/server.js",
+    "db:reset": "rm -rf ~/.ahau-dev",
     "storybook": "start-storybook -p 6001",
     "lint": "vue-cli-service lint",
     "test:js": "tape -r 'esm' 'src/**/*.test.js' | tap-spec",
