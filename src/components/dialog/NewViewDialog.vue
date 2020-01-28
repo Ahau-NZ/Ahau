@@ -109,7 +109,7 @@
 
 <script>
 import Dialog from '@/components/Dialog.vue'
-import AvatarEditDialog from '@/components/tree/Dialogs/AvatarEditDialog.vue'
+import AvatarEditDialog from '@/components/dialog/AvatarEditDialog.vue'
 import { RULES } from '@/lib/constants'
 
 function defaultData () {
