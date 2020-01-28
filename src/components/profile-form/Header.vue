@@ -32,7 +32,7 @@
             <v-btn @click="toggleUpdateHeader(null)" text color="secondary" class="mr-4" >
               <v-icon>mdi-close</v-icon>
             </v-btn>
-            <v-btn @click="handleImageUpload('header')" text color="secondary" >
+            <v-btn @click="handleImageUpload('header')" text color="blue" >
               <v-icon>mdi-check</v-icon>
             </v-btn>
           </v-row>
@@ -86,7 +86,7 @@
                 <v-btn @click="toggleUpdateAvatar(null)" text color="secondary" class="mr-4" >
                   <v-icon>mdi-close</v-icon>
                 </v-btn>
-                <v-btn @click="handleImageUpload('avatar')" text color="secondary" >
+                <v-btn @click="handleImageUpload('avatar')" text color="blue" >
                   <v-icon>mdi-check</v-icon>
                 </v-btn>
               </v-row>

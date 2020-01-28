@@ -11,18 +11,16 @@
     >
       <template v-slot:activator="{ on }">
         <v-text-field
-          v-on="on"
+          v-on="readonly ? null : on"
           :rules="rules"
           :label="label"
-          :placeholder="' '"
+          placeholder=" "
           :value="date"
-          :disabled="makeDisabled"
           readonly
           flat
-          :solo="makeDisabled"
-          :prepend-inner-icon="makeDisabled ? '' : 'mdi-calendar'"
-          :append-icon="makeDisabled ? '' : 'mdi-chevron-down'"
           :hide-details="true"
+          :class="getClass"
+          :clearable="!readonly"
         ></v-text-field>
       </template>
       <v-date-picker
@@ -32,12 +30,21 @@
         no-title
         @input="menu = false"
         hide-details
+        light
       ></v-date-picker>
     </v-menu>
   </v-layout>
 </template>
 <script>
+
 export default {
+  name: 'NodeDatePicker',
+  props: {
+    rules: Array,
+    label: String,
+    value: { type: String },
+    readonly: { type: Boolean, default: false }
+  },
   computed: {
     date () {
       var date = (this.updatedValue === null)
@@ -53,22 +60,21 @@ export default {
     maxDate () {
       var currentDate = new Date().toJSON().slice(0, 10).replace(/-/g, '-')
       return currentDate
+    },
+    getClass () {
+      return this.readonly ? 'custom ml-3 mr-3' : 'ml-3 mr-3'
     }
   },
   data () {
     return {
       menu: false,
-      updatedValue: null
+      updatedValue: null,
+      on: false
     }
   },
-  props: {
-    rules: Array,
-    label: String,
-    value: { type: String, default: ' ' },
-    makeDisabled: {
-      type: Boolean,
-      required: false,
-      default: false
+  watch: {
+    value (newValue) {
+      this.updatedValue = newValue
     }
   }
 }
