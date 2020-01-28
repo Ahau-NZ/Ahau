@@ -55,6 +55,20 @@
 import gql from 'graphql-tag'
 import Avatar from '@/components/Avatar'
 
+const karakia = `
+---------------------------------
+Kia whakairia te tapu
+Kia wātea ai te ara
+Kia turuki whakataha ai
+Kia turuki whakataha ai
+Haumi e. Hui e. Tāiki e!
+  
+Restrictions are moved aside
+So the pathway is clear
+To return to everyday activities
+---------------------------------
+`
+
 export default {
   name: 'Appbar',
   data () {
@@ -71,7 +85,7 @@ export default {
   },
   methods: {
     karakiaWhakamutunga () {
-      console.log('---------------------------------', '\n', 'Kia whakairia te tapu   Kia wātea ai te ara   Kia turuki whakataha ai   Kia turuki   whakataha ai   Haumi e. Hui e. Tāiki e!', '\n', 'Restrictions are moved aside   So the pathway is clear   To return to everyday activities', '\n', '---------------------------------')
+      console.log(karakia)
     },
     async getCurrentIdentity () {
       const result = await this.$apollo.query({
