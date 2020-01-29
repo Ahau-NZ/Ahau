@@ -8,7 +8,7 @@
     "rebuild": "electron-builder install-app-deps",
     "build": "vue-cli-service build",
     "icon": "./build/build-icon",
-    "start": "electron index.js -- --title Āhau karakia.js",
+    "start": "electron index.js -- --title Āhau",
     "pack": "electron-builder --config electron-builder.config.js --dir",
     "dist": "electron-builder --config electron-builder.config.js",
     "publish": "npm run build && npm run dist",
