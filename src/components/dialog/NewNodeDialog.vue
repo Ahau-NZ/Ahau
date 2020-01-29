@@ -34,7 +34,7 @@
                 <v-row v-for="n in altNameCount" :key="n">
                   <v-col>
                     <v-text-field
-                      v-model="formData.altNames[n-1]"
+                      v-model="formData.altNames.add[n-1]"
                       :rules="form.rules.name.preferred"
                       :label="`Alternative name ${n}`"
                       :placeholder="' '"
@@ -175,7 +175,9 @@ function defaultForm (withRelationships) {
   const formData = {
     preferredName: '',
     legalName: '',
-    altNames: [],
+    altNames: {
+      add: []
+    },
     gender: '',
     relationshipType: 'birth',
     legallyAdopted: false,

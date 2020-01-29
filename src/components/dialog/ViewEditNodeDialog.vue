@@ -1,6 +1,6 @@
 <template>
   <Dialog :node="profile" :show="show" @close="close" width="720px">
-    <v-form ref="form" v-model="form.valid" >
+    <v-form ref="form">
       <v-card>
         <v-container width="100%" class="pa-0">
           <v-card-text>
@@ -44,14 +44,31 @@
                       v-bind="customProps"
                     />
                   </v-col>
-                  <!-- Alt Names -->
-                  <v-col  v-for="(altName, index) in formData.altNames" :key="index" cols="6" class="pa-0">
+                  <!-- Alt Names Already Present THESE ARE READONLY SO THEY CAN ONLY BE DELETED -->
+                  <v-col  v-for="(altName, index) in formData.altNames.currentState" :key="`a-${index}`" cols="6" class="pa-0">
                     <v-col v-if="altName || isEditing"
                       :class="(!altName && !isEditing) ? 'pt-0 pb-0' : 'pa-1'" cols="12"
                     >
                       <v-text-field
-                        v-model="formData.altNames[index]"
+                        v-model="formData.altNames.currentState[index]"
                         :label="`Alternative name ${(index+1)}`"
+                        :append-icon="isEditing ? 'mdi-delete' : ''"
+                        @click:append="deleteFromState(altName, index)"
+                        v-bind="customProps"
+                        readonly
+                      />
+                    </v-col>
+                  </v-col>
+                  <!-- New Alt names to be added -->
+                  <v-col  v-for="(altName, index) in formData.altNames.add" :key="`b-${index}`" cols="6" class="pa-0">
+                    <v-col v-if="altName || isEditing"
+                      :class="(!altName && !isEditing) ? 'pt-0 pb-0' : 'pa-1'" cols="12"
+                    >
+                      <v-text-field
+                        v-model="formData.altNames.add[index]"
+                        :label="`Alternative name ${(index+1)}`"
+                        :append-icon="isEditing ? 'mdi-delete' : ''"
+                        @click:append="deleteFromDialog(index)"
                         v-bind="customProps"
                       />
                     </v-col>
@@ -180,8 +197,8 @@
                 </AvatarGroup>
               </v-col>
 
-              <v-divider v-if="hasSiblings" :vertical="true"/>
-              <v-col v-if="hasSiblings" class="pa-0">
+              <v-divider v-if="profile.siblings" :vertical="true"/>
+              <v-col v-if="profile.siblings" class="pa-0">
                 <AvatarGroup :profiles="profile.siblings" group-title="Siblings" size="60px" :show-labels="true"
                   @profile-click="openProfile($event)" />
               </v-col>
@@ -253,6 +270,7 @@ import ImagePicker from '@/components/ImagePicker.vue'
 
 import isEqual from 'lodash.isequal'
 import pick from 'lodash.pick'
+import clone from 'lodash.clonedeep'
 
 function defaultData (profile) {
   return {
@@ -266,7 +284,11 @@ function defaultData (profile) {
     description: profile.description,
     // orderOfBirth: .profile.orderOfBirth,
     // relationshipType: this.profile.relationshipType, this isnt even in profile
-    altNames: profile.altNames,
+    altNames: {
+      currentState: clone(profile.altNames),
+      add: [], // new altNames to add
+      remove: [] // altNames to remove
+    },
     isDeceased: !!profile.diedAt // set to true if this value is set
   }
 }
@@ -307,9 +329,14 @@ export default {
   computed: {
     profileChanges () {
       let changes = {}
-      Object.entries(this.formData).map(([key, value]) => {
-        if (!isEqual(this.formData[key], this.profile[key]) || key === 'altNames') {
-          changes[key] = value
+      Object.entries(this.formData).forEach(([key, value]) => {
+        if (!isEqual(this.formData[key], this.profile[key])) {
+          if (key === 'altNames') { // special case for altNames
+            changes[key] = pick(this.formData.altNames, ['add', 'remove'])
+            changes[key].add = changes[key].add.filter(Boolean)
+          } else {
+            changes[key] = value
+          }
         }
       })
       return changes
@@ -352,6 +379,7 @@ export default {
 
       var output = Object.assign({}, pick(this.profileChanges, this.permitted))
       this.$emit('submit', output)
+      this.formData = defaultData(this.profile)
       this.toggleEdit()
     },
     openProfile (profileId) {
@@ -372,17 +400,18 @@ export default {
       this.close()
     },
     toggleAltName () {
-      if (!this.formData.altNames) this.formData.altNames = []
-      this.formData.altNames.push(null)
+      if (!this.formData.altNames.currentState) this.formData.altNames.currentState = []
+      this.formData.altNames.add.push(null)
     },
     toggleDescription () {
       this.showDescription = !this.showDescription
     },
-    deleteAltName (index) {
-      this.formData.altNames.splice(index, 1)
+    deleteFromState (altName, index) {
+      this.deleteFromDialog(index) // removes it from the dialog
+      this.formData.altNames.remove.push(altName)
     },
-    updateAltName (newValue, index) {
-      this.formData.altNames.splice(index, 1, newValue)
+    deleteFromDialog (index) {
+      this.formData.altNames.currentState.splice(index, 1)
     }
   }
 }
@@ -401,7 +430,6 @@ export default {
 }
 .big-avatar{
   position: relative;
-  left: -30px;
   top: -20px
 }
 .v-input--checkbox label{

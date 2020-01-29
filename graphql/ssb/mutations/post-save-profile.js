@@ -35,7 +35,8 @@ function buildTransformation (input) {
 
       case 'altNames':
         T[key] = {
-          add: value
+          add: value.add,
+          remove: value.remove
         }
         return
 

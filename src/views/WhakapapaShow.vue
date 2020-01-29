@@ -475,6 +475,7 @@ export default {
         return
       }
       await this.loadDescendants(profileId)
+      this.setSelectedProfile(profileId)
     },
     async deleteProfile () {
       if (!this.canDelete(this.selectedProfile)) return

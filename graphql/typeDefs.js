@@ -23,6 +23,11 @@ module.exports = gql`
     uri: String
   }
 
+  input AltNamesInput {
+    add: [String]
+    remove: [String]
+  }
+
   """
   Fields used by ssb-profiles plugin for an image
   """
@@ -109,7 +114,7 @@ module.exports = gql`
     type: String
     preferredName: String
     legalName: String
-    altNames: [String]
+    altNames: AltNamesInput
     avatarImage: ImageInput
     headerImage: ImageInput
     description: String
@@ -123,7 +128,7 @@ module.exports = gql`
   input CommunityInput {
     preferredName: String
     legalName: String
-    altNames: [String]
+    altNames: AltNamesInput
     avatarImage: ImageInput
     headerImage: ImageInput
     description: String
