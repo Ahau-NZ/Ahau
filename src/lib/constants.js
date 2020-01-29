@@ -55,8 +55,8 @@ export const PERMITTED_PROFILE_ATTRS = [ // these are the properties that change
   'preferredName',
   'avatarImage',
   'description',
-  'headerImage'
-  // 'altNames', // these are disabled atm
+  'headerImage',
+  'altNames'
   // 'relationshipType'
   // 'orderOfBirth'
 ]
