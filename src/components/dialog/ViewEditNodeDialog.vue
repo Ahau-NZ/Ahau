@@ -45,12 +45,12 @@
                     />
                   </v-col>
                   <!-- Alt Names -->
-                  <v-col  v-for="(altName, index) in altNames" :key="altName" cols="6" class="pa-0">
+                  <v-col  v-for="(altName, index) in formData.altNames" :key="index" cols="6" class="pa-0">
                     <v-col v-if="altName || isEditing"
                       :class="(!altName && !isEditing) ? 'pt-0 pb-0' : 'pa-1'" cols="12"
                     >
                       <v-text-field
-                        v-model="altNames[index]"
+                        v-model="formData.altNames[index]"
                         :label="`Alternative name ${(index+1)}`"
                         v-bind="customProps"
                       />
@@ -159,8 +159,8 @@
                   <v-col cols="12" class="pa-0">
                     <!-- Avatar -->
                     <Avatar class="big-avatar" size="250px"
-                      :image="avatarImage" :alt="profile.preferredName"
-                      :gender="gender" :bornAt="bornAt"
+                      :image="formData.avatarImage" :alt="profile.preferredName"
+                      :gender="formData.gender" :bornAt="formData.bornAt"
                     />
                   </v-col>
                   <v-col v-if="isEditing" cols="12" justify="center" align="center" class="pa-0">
@@ -174,25 +174,23 @@
             <v-row v-if="!isEditing">
               <!-- Family Members -->
               <v-col class="pa-0">
-                <AvatarGroup :profiles="parents"
-                  :show-labels="true" button-label="Add Parent" group-title="Parents"
-                  size="60px"
-                />
-                <AddButton @click="toggleNew('parent')"/>
+                <AvatarGroup :profiles="profile.parents" group-title="Parents" size="60px" :show-labels="true"
+                  @profile-click="openProfile($event)">
+                  <AddButton @click="toggleNew('parent')"/>
+                </AvatarGroup>
               </v-col>
+
               <v-divider v-if="hasSiblings" :vertical="true"/>
               <v-col v-if="hasSiblings" class="pa-0">
-                <AvatarGroup :profiles="siblings"
-                  :show-labels="true"  group-title="Siblings"
-                  size="60px"/>
+                <AvatarGroup :profiles="profile.siblings" group-title="Siblings" size="60px" :show-labels="true"
+                  @profile-click="openProfile($event)" />
               </v-col>
               <v-divider :vertical="true" />
               <v-col class="pa-0">
-                <AvatarGroup :profiles="children"
-                  :show-labels="true" button-label="Add Child" group-title="Children"
-                  size="60px"
-                  />
-                <AddButton @click="toggleNew('child')"/>
+                <AvatarGroup :profiles="profile.children" group-title="Children" size="60px" :show-labels="true"
+                  @profile-click="openProfile($event)">
+                  <AddButton @click="toggleNew('child')"/>
+                </AvatarGroup>
               </v-col>
               <!-- END Family Members -->
             </v-row>
@@ -244,10 +242,10 @@
 </template>
 
 <script>
+import { GENDERS, RULES, PERMITTED_PROFILE_ATTRS, RELATIONSHIPS } from '@/lib/constants'
 import Dialog from '@/components/Dialog.vue'
 import Avatar from '@/components/Avatar.vue'
 import AvatarGroup from '@/components/AvatarGroup.vue'
-import { GENDERS, RULES, PERMITTED_PROFILE_ATTRS, RELATIONSHIPS } from '@/lib/constants'
 import DeleteNodeDialog from '@/components/dialog/DeleteNodeDialog.vue'
 import NodeDatePicker from '@/components/NodeDatePicker.vue'
 import AddButton from '@/components/AddButton.vue'
@@ -307,15 +305,6 @@ export default {
     }
   },
   computed: {
-    avatarImage () {
-      return this.formData.avatarImage
-    },
-    gender () {
-      return this.formData.gender
-    },
-    bornAt () {
-      return this.formData.bornAt
-    },
     profileChanges () {
       let changes = {}
       Object.entries(this.formData).map(([key, value]) => {
@@ -325,20 +314,8 @@ export default {
       })
       return changes
     },
-    hasSiblings () {
-      return this.siblings ? this.siblings.length > 0 : false
-    },
-    parents () {
-      return this.profile.parents
-    },
-    siblings () {
-      return this.profile.siblings
-    },
-    children () {
-      return this.profile.children
-    },
-    altNames () {
-      return this.formData.altNames
+    hasChanges () {
+      return isEqual(this.data, this.profile)
     },
     customProps () {
       return {
@@ -352,11 +329,11 @@ export default {
     }
   },
   watch: {
-    'formData.isDeceased' (newValue) {
-      if (!newValue) this.formData.diedAt = ''
-    },
     profile (newVal) {
       this.formData = defaultData(newVal)
+    },
+    'formData.isDeceased' (newValue) {
+      if (!newValue) this.formData.diedAt = ''
     }
   },
   methods: {
@@ -376,6 +353,9 @@ export default {
       var output = Object.assign({}, pick(this.profileChanges, this.permitted))
       this.$emit('submit', output)
       this.toggleEdit()
+    },
+    openProfile (profileId) {
+      this.$emit('open-profile', profileId)
     },
     toggleNew (type) {
       this.$emit('new', type)
