@@ -5,10 +5,22 @@
         <small> {{ groupTitle }} </small>
       </v-col>
     </v-row>
+
     <v-row>
       <v-col cols="4" class="pt-0 pb-0" v-for="profile in profiles" :key="profile.id">
         <v-row justify="center">
-          <Avatar :size="size" :show-label="showLabels" :image="profile.avatarImage" :alt="profile.preferredName" :gender="profile.gender" :bornAt="profile.bornAt"/>
+          <Avatar :size="size"
+            :image="profile.avatarImage" :alt="profile.preferredName"
+            :gender="profile.gender" :bornAt="profile.bornAt"
+            :show-label="showLabels" :clickable="true"
+            @click="profileClick(profile)"
+          />
+        </v-row>
+      </v-col>
+
+      <v-col cols="4">
+        <v-row justify="center">
+          <slot></slot>
         </v-row>
       </v-col>
     </v-row>
@@ -29,8 +41,8 @@ export default {
     size: { type: String, default: '80px' }
   },
   methods: {
-    click () {
-      this.$emit('button-click')
+    profileClick (profile) {
+      this.$emit('profile-click', profile.id)
     }
   }
 }

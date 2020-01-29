@@ -31,30 +31,34 @@ export const WithTitle = () => ({
   components: { AvatarGroup }
 })
 
-export const WithButton = () => ({
-  template:
-    '<AvatarGroup :profiles="children" :groupTitle="title" :buttonLabel="label"/>',
+export const WithSlot = () => ({
+  template: `
+    <AvatarGroup :profiles="children" :groupTitle="title">
+      @profile-click="click">
+      <div> Success </div>
+    </AvatarGroup>
+  `,
   data: () => ({
     children: personComplete.children,
     title: 'Children',
     label: 'Add Child'
   }),
-  methods: {
-    click: action('click')
-  },
   components: { AvatarGroup }
 })
 
 export const WithLabels = () => ({
-  template:
-    '<AvatarGroup :profiles="children" :groupTitle="title" :showLabels="true"/>',
+  template: `
+    <AvatarGroup :profiles="children" :groupTitle="title" :showLabels="true"
+      @profile-click="click"
+    />
+  `,
   data: () => ({
     children: personComplete.children,
     title: 'Children',
     label: 'Add Child'
   }),
   methods: {
-    click: action('click')
+    click: action('add clicked')
   },
   components: { AvatarGroup }
 })
