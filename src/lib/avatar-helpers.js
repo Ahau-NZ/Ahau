@@ -5,30 +5,26 @@ import wahine from '../assets/wahine.svg'
 import tama from '../assets/tama.svg'
 import kotiro from '../assets/kotiro.svg'
 
-export default {
-  calculateAge,
-  defaultImage
-}
+import calculateAge from './calculate-age'
 
-function calculateAge (bornAt) {
-  var date = new Date(bornAt)
-  var diffMs = Date.now() - date.getTime()
-  var ageDt = new Date(diffMs)
-  var age = Math.abs(ageDt.getUTCFullYear() - 1970)
-  return age
+export default {
+  defaultImage
 }
 
 function defaultImage (bornAt, gender) {
   var age = calculateAge(bornAt)
+
   switch (gender) {
     case 'male':
       switch (true) {
+        case (age === null): return tane
         case (age <= 12): return tama
         case (age > 50): return koro
         default: return tane
       }
     case 'female':
       switch (true) {
+        case (age === null): return wahine
         case (age <= 12): return kotiro
         case (age > 50): return kuia
         default: return wahine
