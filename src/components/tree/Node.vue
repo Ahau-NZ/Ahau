@@ -12,19 +12,21 @@
         </g>
       </g>
 
-      <g class='avatar -main' v-if="!isPartner" @click.left="click">
+      <g class='avatar -main' v-if="!isPartner" @click.left="click" >
         <defs>
           <clipPath id="myCircle">
             <circle :cx="radius" :cy="radius" :r="radius" />
           </clipPath>
         </defs>
+        <circle :style="{ fill: (profile.diedAt) ? colours.deceased : colours.alive }"
+          :cx="radius" :cy="radius" :r="radius-1"
+        />
         <image
           :xlink:href="imageSource"
-          :width="diameter"
-          :height="diameter"
+          :width="diameter" :height="diameter"
           clip-path="url(#myCircle)"
+          :style="{ opacity: (profile.diedAt) ? 0.5 : 1 }"
         />
-
         <g v-if="profile.isCollapsed" :style="collapsedStyle">
           <text> ... </text>
         </g>
@@ -45,11 +47,14 @@
             <circle :cx="radius" :cy="radius" :r="radius" />
           </clipPath>
         </defs>
+        <circle :style="{ fill: (profile.diedAt) ? colours.deceased : colours.alive }"
+          :cx="radius" :cy="radius" :r="radius-1"
+        />
         <image
           :xlink:href="imageSource"
-          :width="diameter"
-          :height="diameter"
+          :width="diameter" :height="diameter"
           clip-path="url(#myPartnerCircle)"
+          :style="{ opacity: (profile.diedAt) ? 0.5 : 1 }"
         />
 
         <g class='menu-button'
@@ -80,6 +85,8 @@
 <script>
 import get from 'lodash.get'
 import avatarHelper from '@/lib/avatar-helpers.js'
+import { DECEASED_COLOUR, ALIVE_COLOUR } from '@/lib/constants.js'
+// import flower.svg from '@/src/assets'
 
 export default {
   name: 'Node',
@@ -91,7 +98,11 @@ export default {
   data () {
     return {
       offsetSize: 15,
-      partnerRadius: 0.8 * this.radius
+      partnerRadius: 0.8 * this.radius,
+      colours: {
+        alive: ALIVE_COLOUR,
+        deceased: DECEASED_COLOUR
+      }
     }
   },
   computed: {
@@ -201,7 +212,6 @@ export default {
     }
     &:hover{
       cursor: pointer;
-
     }
   }
 </style>

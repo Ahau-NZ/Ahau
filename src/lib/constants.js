@@ -60,3 +60,6 @@ export const PERMITTED_PROFILE_ATTRS = [ // these are the properties that change
   // 'relationshipType'
   // 'orderOfBirth'
 ]
+
+export const DECEASED_COLOUR = '#bfbfbf' // TODO: is this the right place to put these?
+export const ALIVE_COLOUR = '#009999'
