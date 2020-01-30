@@ -54,8 +54,8 @@
                         :label="`Alternative name ${(index+1)}`"
                         :append-icon="isEditing ? 'mdi-delete' : ''"
                         @click:append="deleteFromState(altName, index)"
-                        v-bind="customProps"
                         readonly
+                        v-bind="customProps"
                       />
                     </v-col>
                   </v-col>
@@ -177,7 +177,7 @@
                     <!-- Avatar -->
                     <Avatar class="big-avatar" size="250px"
                       :image="formData.avatarImage" :alt="profile.preferredName"
-                      :gender="formData.gender" :bornAt="formData.bornAt"
+                      :gender="formData.gender" :bornAt="formData.bornAt" :diedAt="formData.diedAt"
                     />
                   </v-col>
                   <v-col v-if="isEditing" cols="12" justify="center" align="center" class="pa-0">

@@ -4,7 +4,10 @@
       <v-row justify="center">
         <v-avatar :size="size">
           <v-img v-if="image && image.uri" :src="image.uri" :alt="alt" />
-          <v-img v-else :src="getImage"/>
+          <v-img v-else :src="getImage"
+            :class="diedAt ? 'deceased' : 'alive'"
+            :style="{ opacity: (diedAt) ? 0.5 : 1 }"
+          />
         </v-avatar>
       </v-row>
       <v-row v-if="showLabel" justify="center">
@@ -18,7 +21,10 @@
       <v-row justify="center">
         <v-avatar :size="size">
           <v-img v-if="image && image.uri" :src="image.uri" :alt="alt" />
-          <v-img v-else :src="getImage"/>
+          <v-img v-else :src="getImage"
+            :class="diedAt ? 'deceased' : 'alive'"
+            :style="{ opacity: (diedAt) ? 0.5 : 1 }"
+          />
         </v-avatar>
       </v-row>
       <v-row v-if="showLabel" justify="center">
@@ -38,6 +44,7 @@ export default {
     alt: String,
     gender: String,
     bornAt: String,
+    diedAt: String, // in the future this should be changed to check if "isDeceased"
     size: { type: String, default: '25vh' },
     showLabel: { type: Boolean, default: false },
     clickable: { type: Boolean, default: false }
@@ -49,7 +56,3 @@ export default {
   }
 }
 </script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped lang="scss">
-</style>
