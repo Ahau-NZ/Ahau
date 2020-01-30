@@ -1,6 +1,6 @@
 const pull = require('pull-stream')
 const pullParamap = require('pull-paramap')
-const isRoot = require('ssb-whakapapa/lib/is-view-root')
+const isRoot = require('ssb-whakapapa/lib/is-view-root.js')
 
 module.exports = function GetWhakapapaViews (sbot, getWhakapapaView) {
   const query = [

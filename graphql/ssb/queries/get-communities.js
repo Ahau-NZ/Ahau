@@ -1,6 +1,6 @@
 const pull = require('pull-stream')
 const paraMap = require('pull-paramap')
-const isProfile = require('ssb-profile/lib/is-profile')
+const isProfile = require('ssb-profile/lib/is-profile.js')
 
 module.exports = function GetCommunities (sbot, getProfile) {
   const query = [

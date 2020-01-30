@@ -1,7 +1,7 @@
 const pull = require('pull-stream')
-const isProfile = require('ssb-profile/lib/is-profile')
+const isProfile = require('ssb-profile/lib/is-profile.js')
 const { isMsg } = require('ssb-ref')
-const blobToURI = require('ssb-serve-blobs/id-to-url')
+const blobToURI = require('ssb-serve-blobs/id-to-url.js')
 const get = require('lodash.get')
 
 module.exports = function GetProfile (sbot) {
