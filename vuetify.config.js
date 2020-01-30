@@ -1,3 +1,4 @@
+import { DECEASED_COLOUR, ALIVE_COLOUR } from '@/lib/constants.js'
 export default {
   theme: {
     dark: true,
@@ -6,8 +7,13 @@ export default {
         primary: '#383838',
         secondary: '#A80000',
         accent: '#A70000',
-        error: '#ff0000'
+        error: '#ff0000',
+        alive: ALIVE_COLOUR,
+        deceased: DECEASED_COLOUR
       }
+    },
+    options: {
+      customProperties: true
     }
   },
   icons: {

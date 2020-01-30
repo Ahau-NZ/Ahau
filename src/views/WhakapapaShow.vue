@@ -2,7 +2,7 @@
   <div id="whakapapa-show">
     <v-container class="white px-0 py-0 mx-auto">
       <v-row class='header'>
-        <WhakapapaViewCard :view="whakapapaView" :shadow="false">
+        <WhakapapaViewCard :view="whakapapaView" :shadow="false" >
           <v-row class='lock-container'>
             <v-col class='lock-icon'>
               <v-icon small color='#555'>mdi-lock</v-icon>
@@ -44,10 +44,11 @@
       :profile="selectedProfile"
       :deleteable="canDelete(selectedProfile)"
       :warnAboutChildren="selectedProfile && (selectedProfile.id !== whakapapaView.focus)"
-      @close="toggleView" @new="toggleNewPerson($event)" @submit="updateProfile($event)" @delete="deleteProfile()"
+      @close="toggleView()" @new="toggleNewPerson($event)" @submit="updateProfile($event)" @delete="deleteProfile()"
+      @open-profile="setSelectedProfile($event)"
     />
     <NewNodeDialog v-if="dialog.new" :show="dialog.new"
-      :type="dialog.type" :title="selectedProfile.preferredName"
+      :title="`Add ${dialog.type} to ${selectedProfile.preferredName || '___'}`"
       @close="toggleNew" @submit="addPerson($event)"
     />
     <DeleteNodeDialog v-if="dialog.delete" :show="dialog.delete"
@@ -66,9 +67,9 @@ import { VueContext } from 'vue-context'
 import WhakapapaViewCard from '@/components/whakapapa-view/WhakapapaViewCard.vue'
 import Tree from '@/components/Tree.vue'
 
-import ViewEditNodeDialog from '@/components/tree/Dialogs/ViewEditNodeDialog.vue'
-import NewNodeDialog from '@/components/tree/Dialogs/NewNodeDialog.vue'
-import DeleteNodeDialog from '@/components/tree/Dialogs/DeleteNodeDialog.vue'
+import ViewEditNodeDialog from '@/components/dialog/ViewEditNodeDialog.vue'
+import NewNodeDialog from '@/components/dialog/NewNodeDialog.vue'
+import DeleteNodeDialog from '@/components/dialog/DeleteNodeDialog.vue'
 
 import tree from '@/lib/tree-helpers'
 import findSuccessor from '@/lib/find-successor'
@@ -246,6 +247,7 @@ export default {
               bornAt
               diedAt
               description
+              altNames
               avatarImage { uri }
               children {
                 profile {
@@ -256,6 +258,7 @@ export default {
                   bornAt
                   diedAt
                   description
+                  altNames
                   avatarImage { uri }
                 }
                 relationshipType
@@ -270,6 +273,7 @@ export default {
                   bornAt
                   diedAt
                   description
+                  altNames
                   avatarImage { uri }
                 }
                 relationshipType
@@ -471,6 +475,7 @@ export default {
         return
       }
       await this.loadDescendants(profileId)
+      this.setSelectedProfile(profileId)
     },
     async deleteProfile () {
       if (!this.canDelete(this.selectedProfile)) return

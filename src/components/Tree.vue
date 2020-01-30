@@ -3,7 +3,12 @@
     <g id="baseGroup">
       <g :transform="`translate(${treeX} ${treeY})`">
         <g v-for="link in links" :key="link.id" class="link">
-          <Link :link="link" :branch="branch" />
+          <!-- TODO link.data.gender to link.data.relationshipType!=='birth' -->
+          <!-- <Link :link="link" :branch="branch"
+            :class="(link.data.gender !== 'male') ? 'nonbiological' : ''"
+          /> -->
+          <Link :link="link" :branch="branch"/>
+
         </g>
       </g>
 
@@ -151,6 +156,8 @@ export default {
           return {
             id: `link-${i}-${i + 1}`,
             index: i,
+            // TODO this is where we can pass through relationshipType
+            // data: d.target.data,
             // coordinates from drawing lines/links from Parent(x1,y1) to Child(x2,y2)
             x1: d.source.x, // centre x position of parent node
             x2: d.target.x, // centre x position of child node
@@ -195,4 +202,8 @@ export default {
   svg#baseSvg {
     cursor: grab;
   }
+
+  // .nonbiological{
+  //   stroke-dasharray: 2.5
+  // }
 </style>
