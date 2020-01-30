@@ -130,7 +130,7 @@
               </v-col>
               <v-col>
                 <v-row>
-                  <Avatar size="200px" :image="formData.avatarImage" :alt="formData.preferredName" />
+                  <Avatar size="200px" :image="formData.avatarImage" :alt="formData.preferredName" :gender="formData.gender" :bornAt="formData.bornAt" />
                 </v-row>
                 <v-row justify="center" align="center">
                   <clipper-upload accept="image/*" @input="toggleAvatar">
