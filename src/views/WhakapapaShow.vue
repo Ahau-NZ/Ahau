@@ -229,6 +229,9 @@ export default {
       record.children.forEach(child => {
         this.loadDescendants(child.profile.id)
       })
+      record.children.sort((a, b) => {
+        return a.profile.orderOfBirth - b.profile.orderOfBirth
+      })
 
       // add this to queue of records to process and merge into graph
       // so that we don't get collisions / overwrites
