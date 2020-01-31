@@ -94,7 +94,6 @@
                       type="number"
                       label="Order of birth"
                       v-bind="customProps"
-                      readonly
                     />
                   </v-col>
                   <!-- diedAt checkbox -->
@@ -282,7 +281,7 @@ function defaultData (profile) {
     preferredName: profile.preferredName,
     avatarImage: profile.avatarImage,
     description: profile.description,
-    // orderOfBirth: .profile.orderOfBirth,
+    orderOfBirth: profile.orderOfBirth,
     // relationshipType: this.profile.relationshipType, this isnt even in profile
     altNames: {
       currentState: clone(profile.altNames),
@@ -334,6 +333,8 @@ export default {
           if (key === 'altNames') { // special case for altNames
             changes[key] = pick(this.formData.altNames, ['add', 'remove'])
             changes[key].add = changes[key].add.filter(Boolean)
+          } else if (key === 'orderOfBirth') {
+            changes[key] = parseInt(value)
           } else {
             changes[key] = value
           }

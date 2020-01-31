@@ -246,6 +246,7 @@ export default {
               gender
               bornAt
               diedAt
+              orderOfBirth
               description
               altNames
               avatarImage { uri }
@@ -257,6 +258,7 @@ export default {
                   gender
                   bornAt
                   diedAt
+                  orderOfBirth
                   description
                   altNames
                   avatarImage { uri }
@@ -272,6 +274,7 @@ export default {
                   gender
                   bornAt
                   diedAt
+                  orderOfBirth
                   description
                   altNames
                   avatarImage { uri }
@@ -394,7 +397,7 @@ export default {
         throw err
       }
     },
-    async createProfile ({ preferredName, legalName, gender, bornAt, diedAt, avatarImage, altNames, description }) {
+    async createProfile ({ preferredName, legalName, gender, bornAt, diedAt, orderOfBirth, avatarImage, altNames, description }) {
       const res = await this.$apollo.mutate({
         mutation: gql`
           mutation($input: ProfileInput!) {
@@ -409,6 +412,7 @@ export default {
             gender,
             bornAt,
             diedAt,
+            orderOfBirth,
             avatarImage,
             altNames,
             description,

@@ -55,13 +55,14 @@
                     />
                   </v-col>
                   <v-col>
-                    <!-- <v-text-field
+                    <v-text-field
+                      v-model="formData.orderOfBirth"
                       type="number"
                       label="Order of birth"
                       :placeholder="' '"
                       append-icon="mdi-chevron-down"
                       :hide-details="true"
-                    /> -->
+                    />
                   </v-col>
                 </v-row>
                 <v-row>
@@ -186,6 +187,7 @@ function defaultForm (withRelationships) {
     // title: '',
     bornAt: '',
     diedAt: '',
+    orderOfBirth: '',
     description: ''
   }
 
@@ -252,7 +254,11 @@ export default {
       let submission = {}
       Object.entries(this.formData).map(([key, value]) => {
         if (!isEmpty(this.formData[key])) {
-          submission[key] = value
+          if (key === 'orderOfBirth') {
+            submission[key] = parseInt(value)
+          } else {
+            submission[key] = value
+          }
         }
       })
       return submission
@@ -299,7 +305,6 @@ export default {
       }
 
       var submission = Object.assign({}, this.submission)
-
       // send the formData back to the parent component
       this.$emit('submit', submission)
       // close this dialog
