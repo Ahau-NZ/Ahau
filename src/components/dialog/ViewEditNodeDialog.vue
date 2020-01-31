@@ -362,6 +362,9 @@ export default {
     },
     'formData.isDeceased' (newValue) {
       if (!newValue) this.formData.diedAt = ''
+    },
+    'profile.orderOfBirth' (newValue) {
+      console.log(newValue)
     }
   },
   methods: {
