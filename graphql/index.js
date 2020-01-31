@@ -1,28 +1,40 @@
 const { ApolloServer } = require('apollo-server-express')
+const { buildFederatedSchema } = require('@apollo/federation')
 const http = require('http')
 const express = require('express')
 const cors = require('cors')
-const typeDefs = require('./typeDefs')
-const Resolvers = require('./resolvers')
-const Context = require('./ssb/queries/get-context')
+
+const Main = require('@ssb-graphql/main')
+const Profile = require('@ssb-graphql/profile')
+const Whakapapa = require('@ssb-graphql/whakapapa')
 
 const PORT = 4000
 const app = express()
 app.options('*', cors())
 
 module.exports = sbot => {
-  Context(sbot, (err, context) => {
+  const main = Main(sbot)
+  const profile = Profile(sbot)
+  const whakapapa = Whakapapa(sbot, profile.gettersWithCache)
+  profile.Context((err, context) => {
     if (err) throw err
 
     const server = new ApolloServer({
-      typeDefs,
-      context, // feedId, profileId
-      resolvers: Resolvers(sbot)
-      // mockEntireSchema: false,
-      // mocks: process.env.NODE_ENV === 'production' ? false : require('./ssb/mocks')
-      // cacheControl: {
-      //   defaultMaxAge: 5
-      // }
+      schema: buildFederatedSchema([
+        {
+          typeDefs: main.typeDefs,
+          resolvers: main.resolvers
+        },
+        {
+          typeDefs: profile.typeDefs,
+          resolvers: profile.resolvers
+        },
+        {
+          typeDefs: whakapapa.typeDefs,
+          resolvers: whakapapa.resolvers
+        }
+      ]),
+      context
     })
 
     server.applyMiddleware({ app })
