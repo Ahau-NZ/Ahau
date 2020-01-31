@@ -11,7 +11,7 @@
         <v-row justify="center">
           <Avatar :size="size"
             :image="profile.avatarImage" :alt="profile.preferredName"
-            :gender="profile.gender" :bornAt="profile.bornAt"
+            :gender="profile.gender" :bornAt="profile.bornAt" :diedAt="profile.diedAt"
             :show-label="showLabels" :clickable="true"
             @click="profileClick(profile)"
           />

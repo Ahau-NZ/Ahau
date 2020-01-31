@@ -74,10 +74,10 @@ import DeleteNodeDialog from '@/components/dialog/DeleteNodeDialog.vue'
 import tree from '@/lib/tree-helpers'
 import findSuccessor from '@/lib/find-successor'
 
-const saveWhakapapaRelMutation = input => ({
+const saveWhakapapaLinkMutation = input => ({
   mutation: gql`
-    mutation($input: WhakapapaRelationInput!) {
-      saveWhakapapaRelation(input: $input)
+    mutation($input: WhakapapaLinkInput!) {
+      saveWhakapapaLink(input: $input)
     }
   `,
   variables: { input }
@@ -432,7 +432,7 @@ export default {
         recps: this.whakapapaView.recps
       }
       try {
-        const res = await this.$apollo.mutate(saveWhakapapaRelMutation(input))
+        const res = await this.$apollo.mutate(saveWhakapapaLinkMutation(input))
         if (res.errors) {
           console.error('failed to createChildLink', res)
           return
