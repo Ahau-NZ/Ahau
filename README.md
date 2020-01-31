@@ -63,7 +63,7 @@ Builds installer (using compiled clientside code + back end code), and outputs t
 NOTES
 - **Mac needs**
   - Application Installer + Apllication certificates set up in your apple keychain for signing
-  - an `electron-bundler.env` with environment variables `APPLE_ID`, `APPLE_ID_PASS` for notarization, e.g :
+  - an `electron-builder.env` with environment variables `APPLE_ID`, `APPLE_ID_PASS` for notarization, e.g :
      ```
      APPLE_ID=name@company.com
      APPLE_ID_PASS=asdl-tyan-osla-ttyb
@@ -72,9 +72,9 @@ NOTES
 
 - **Windows needs**
   - `build/win_csc.pfx` file
-  - an `electron-bundler.env` with environment variable `CSC_LINK` and `CSC_KEY_PASSWORD` (the password to the .pfx cert)
+  - an `electron-builder.env` with environment variable `CSC_LINK` and `CSC_KEY_PASSWORD` (the password to the .pfx cert)
     ```
-    CSC_LINK=build/win_csc.pfx
+    CSC_LINK=build/win/csc.pfx
     CSC_KEY_PASSWORD=anliushfdxbaejhbrsajxhelaser
     ```
 
