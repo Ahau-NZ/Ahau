@@ -42,7 +42,7 @@ function hydrate (node, flatStore) {
         return profile
       })
     output.children.sort((a, b) => {
-      return a.orderOfBirth - b.orderOfBirth
+      return a.birthOrder - b.birthOrder
     })
   }
 

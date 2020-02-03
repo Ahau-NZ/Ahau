@@ -56,7 +56,7 @@
                   </v-col>
                   <v-col>
                     <v-text-field
-                      v-model="formData.orderOfBirth"
+                      v-model="formData.birthOrder"
                       type="number"
                       label="Order of birth"
                       :placeholder="' '"
@@ -187,7 +187,7 @@ function defaultForm (withRelationships) {
     // title: '',
     bornAt: '',
     diedAt: '',
-    orderOfBirth: '',
+    birthOrder: '',
     description: ''
   }
 
@@ -254,7 +254,7 @@ export default {
       let submission = {}
       Object.entries(this.formData).map(([key, value]) => {
         if (!isEmpty(this.formData[key])) {
-          if (key === 'orderOfBirth') {
+          if (key === 'birthOrder') {
             submission[key] = parseInt(value)
           } else {
             submission[key] = value
