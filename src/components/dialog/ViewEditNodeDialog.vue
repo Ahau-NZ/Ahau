@@ -94,6 +94,7 @@
                       type="number"
                       label="Order of birth"
                       v-bind="customProps"
+                      min="1"
                     />
                   </v-col>
                   <!-- diedAt checkbox -->

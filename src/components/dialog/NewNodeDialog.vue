@@ -62,6 +62,7 @@
                       :placeholder="' '"
                       append-icon="mdi-chevron-down"
                       :hide-details="true"
+                      min="1"
                     />
                   </v-col>
                 </v-row>
