@@ -19,7 +19,7 @@ export const personEmpty = {
   description: null,
   gender: null,
   avatarImage: null,
-  orderOfBirth: null,
+  birthOrder: null,
   headerImage: null,
   children: null,
   siblings: null,

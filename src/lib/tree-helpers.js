@@ -41,6 +41,9 @@ function hydrate (node, flatStore) {
         profile = hydrate(profile, flatStore)
         return profile
       })
+    output.children.sort((a, b) => {
+      return a.birthOrder - b.birthOrder
+    })
   }
 
   // TODO: see fixDate function below
