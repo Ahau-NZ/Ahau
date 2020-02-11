@@ -12,7 +12,7 @@
                     <h1> {{ hasSelection ? `Add ${formData.preferredName} as a ${title}` : `Add ${title}` }} </h1>
                   </v-col>
 
-                  <!-- PREFERRED NAME -->
+                  <!-- PREFERRED NAME + Search -->
                   <v-col cols="12" class="pa-1">
                     <v-combobox
                         v-model="formData.preferredName"
@@ -32,18 +32,24 @@
                         <template v-slot:item="data">
                           <template>
                             <v-list-item @click="setFormData(data.item)">
-                              <v-list-item-content>
-                                <Avatar size="30px" :image="data.item.avatarImage" :alt="data.item.preferredName" :gender="data.item.gender" :bornAt="data.item.bornAt" />
-                              </v-list-item-content>
-                              <v-list-item-content>
-                                <small>{{ data.item.preferredName }}</small>
-                              </v-list-item-content>
-                              <v-list-item-content>
-                                <small>{{ data.item.legalName }}</small>
-                              </v-list-item-content>
-                              <v-list-item-content>
-                                <small>{{ data.item.bornAt }}</small>
-                              </v-list-item-content>
+                              <!-- <v-list-item-icon class="mt-0 mb-0">
+                                
+                              </v-list-item-icon> -->
+                              <v-row>
+                                <v-col class="pa-0" cols="2">
+                                  <Avatar size="40px" :image="data.item.avatarImage" :alt="data.item.preferredName" :gender="data.item.gender" :bornAt="data.item.bornAt" />
+                                </v-col>
+                                <v-col cols="2">
+                                  <small>{{ data.item.preferredName }}</small>
+                                </v-col>
+                                <v-col cols="5">
+                                  <small>{{ data.item.legalName }}</small>
+                                </v-col>
+                                <v-col cols="3">
+                                  <small>{{ data.item.bornAt }}</small>
+                                </v-col>
+                              </v-row>
+                              
                             </v-list-item>
                           </template>
                         </template>
