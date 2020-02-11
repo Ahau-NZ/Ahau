@@ -1,9 +1,8 @@
 <template>
   <div>
-    <Dialog :show="show" @close="close">
+    <Dialog :show="show" @close="close" enableMenu>
       <v-form ref="form" v-model="form.valid" lazy-validation>
         <v-card>
-          <Appbar v-if="mobile" />
           <v-card-title>
             <span
               :class="{
@@ -138,7 +137,6 @@
 
 <script>
 import Dialog from '@/components/Dialog.vue'
-import Appbar from '@/components/Appbar.vue'
 import AvatarEditDialog from '@/components/dialog/AvatarEditDialog.vue'
 import { RULES } from '@/lib/constants'
 
@@ -212,8 +210,7 @@ export default {
   },
   components: {
     AvatarEditDialog,
-    Dialog,
-    Appbar
+    Dialog
   }
 }
 </script>
