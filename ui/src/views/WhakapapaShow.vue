@@ -73,9 +73,9 @@
     <NewNodeDialog
       v-if="dialog.new"
       :show="dialog.new"
-      :title="`Add ${dialog.type} to ${selectedProfile.preferredName || '___'}`"
-      @close="toggleNew"
-      @submit="addPerson($event)"
+      :title="`${dialog.type} to ${selectedProfile.preferredName || '___'}`"
+      @close="toggleNew" @submit="addPerson($event)"
+      :suggestions="suggestions" @getSuggestions="getSuggestions($event)"
     />
     <DeleteNodeDialog
       v-if="dialog.delete"
@@ -98,6 +98,7 @@
 <script>
 import gql from 'graphql-tag'
 import pick from 'lodash.pick'
+import isEmpty from 'lodash.isempty'
 import { VueContext } from 'vue-context'
 
 import WhakapapaViewCard from '@/components/whakapapa-view/WhakapapaViewCard.vue'
@@ -112,6 +113,8 @@ import WhakapapaViewDialog from '@/components/dialog/WhakapapaViewDialog.vue'
 import tree from '@/lib/tree-helpers'
 import findSuccessor from '@/lib/find-successor'
 import avatarHelper from '@/lib/avatar-helpers.js'
+
+import * as d3 from 'd3'
 
 const saveWhakapapaLinkMutation = input => ({
   mutation: gql`
@@ -156,6 +159,8 @@ export default {
 
       recordQueue: [],
       processingQueue: false,
+
+      suggestions: [], // holds an array of suggested profiles
 
       selectedProfile: null,
       dialog: {
@@ -411,8 +416,12 @@ export default {
     },
     async addPerson ($event) {
       try {
-        const profileId = await this.createProfile($event)
-        if (!profileId) return
+        var { id } = $event
+
+        if (!id) {
+          id = await this.createProfile($event)
+          if (!id) return
+        }
 
         let child, parent
         const relationshipAttrs = pick($event, [
@@ -421,16 +430,34 @@ export default {
         ])
         switch (this.dialog.type) {
           case 'child':
-            child = profileId
+            child = id
             parent = this.selectedProfile.id
-            await this.createChildLink({ child, parent, ...relationshipAttrs })
+
+            // check the child doesnt already have a link
+            const childrenExists = this.selectedProfile.children.filter(existingChild => {
+              return existingChild.id === child
+            })
+
+            if (isEmpty(childrenExists)) {
+              await this.createChildLink({ child, parent, ...relationshipAttrs })
+            }
+
             await this.loadDescendants(parent)
             break
 
           case 'parent':
             child = this.selectedProfile.id
-            parent = profileId
-            await this.createChildLink({ child, parent, ...relationshipAttrs })
+            parent = id
+
+            // check the child doesnt already have a link
+            const parentExists = this.selectedProfile.parents.filter(existingParent => {
+              return existingParent.id === parent
+            })
+
+            if (isEmpty(parentExists)) {
+              // dont want to create a new link
+              await this.createChildLink({ child, parent, ...relationshipAttrs })
+            }
 
             if (child === this.whakapapaView.focus) {
               // in this case we're updating the top of the graph, we update view.focus to that new top parent
@@ -578,6 +605,142 @@ export default {
       this.profiles = {}
       await this.loadDescendants(this.whakapapaView.focus)
       // TODO - find a smaller subset to reload!
+    },
+    async getSuggestions ($event) {
+      if (!$event) {
+        this.suggestions = []
+        return
+      }
+
+      var records = await this.findByName($event)
+
+      if (isEmpty(records)) {
+        this.suggestions = []
+        return
+      }
+
+      var profiles = {} // flatStore for these suggestions
+
+      records.forEach(record => {
+        record.children = record.children.map(child => {
+          profiles[child.profile.id] = child.profile // add this records children to the flatStore
+          return child.profile.id // only want the childs ID
+        })
+        record.parents = record.parents.map(parent => {
+          profiles[parent.profile.id] = parent.profile // add this records parents to the flatStore
+          return parent.profile.id // only want the parents ID
+        })
+        profiles[record.id] = record // add this record to the flatStore
+      })
+
+      // now we have the flatStore for the suggestions we need to filter out the records
+      // so we cant add one that is already in the tree
+      records = records.filter(record => {
+        if (this.findInTree(record.id)) {
+          return false // dont include it
+        }
+        return true
+      })
+
+      // hydrate all the left over records
+      records = records.map(record => {
+        return tree.hydrate(record, profiles) // needed to hydrate to fix all dates
+      })
+
+      // sets suggestions which is passed into the dialogs
+      this.suggestions = Object.assign([], records)
+    },
+    /*
+      needed this function because this.profiles keeps track of more than just the nodes in this tree,
+      i only needed the nodes in this tree to be able to check if i can add them or not
+    */
+    findInTree (profileId) {
+      if (this.selectedProfile.id === profileId) return true // this is always in the tree
+
+      var root = d3.hierarchy(this.nestedWhakapapa)
+
+      var partners = []
+
+      var family = [...root.ancestors(), ...root.descendants()].map(node => {
+        node.data.partners.forEach(partner => {
+          partners.push(partner)
+        })
+        return node.data
+      }).filter(obj => obj.id !== this.selectedProfile.id) // take this out
+
+      family = [...family, ...partners] // combine them
+
+      if (family.find(obj => obj.id === profileId)) {
+        return true // was found
+      }
+      return false // wasnt found
+    },
+    async findByName (name) {
+      const request = {
+        query: gql`
+          query($name: String!) {
+            findPersons(name: $name) {
+              id
+              preferredName
+              legalName
+              gender
+              bornAt
+              diedAt
+              birthOrder
+              description
+              altNames
+              avatarImage { uri }
+              children {
+                profile {
+                  id
+                  preferredName
+                  legalName
+                  gender
+                  bornAt
+                  diedAt
+                  birthOrder
+                  description
+                  altNames
+                  avatarImage { uri }
+                }
+                relationshipType
+              }
+              parents {
+                profile {
+                  id
+                  preferredName
+                  legalName
+                  gender
+                  bornAt
+                  diedAt
+                  birthOrder
+                  description
+                  altNames
+                  avatarImage { uri }
+                }
+                relationshipType
+              }
+            }
+          }
+        `,
+        variables: {
+          name: name
+        },
+        fetchPolicy: 'no-cache'
+      }
+
+      try {
+        const result = await this.$apollo.query(request)
+        if (result.errors) {
+          console.error('WARNING, something went wrong')
+          console.error(result.errors)
+          return
+        }
+        return result.data.findPersons
+      } catch (e) {
+        console.error('WARNING, something went wrong, caught it')
+        console.error(e)
+      }
     },
     setSelectedProfile (profileId) {
       this.selectedProfile = tree.hydrate(
