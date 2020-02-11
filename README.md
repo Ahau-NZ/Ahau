@@ -13,18 +13,60 @@ For more info see ahau.io
 $ npm install
 ```
 
+### Desktop
+
+```bash
+$ npm run setup:desktop
+// Npm installs the desktop project
+```
+
+### Mobile
+
+- **IMPORTANT** Make sure you have all the necessary tools such as Git, Node.js, npm, Android SDK, Android NDK etc.
+- [Follow the Cordova guide](https://cordova.apache.org/docs/en/9.x/guide/cli/index.html#installing-the-cordova-cli)
+- [Follow the Cordova Android platform guide](https://cordova.apache.org/docs/en/9.x/guide/platforms/android/index.html#requirements-and-support)
+- [Follow the nodejs-mobile-cordova guide](https://github.com/JaneaSystems/nodejs-mobile-cordova)
+- [Apply this Android NDK hack for "mipsel-linux-android"](https://github.com/JaneaSystems/nodejs-mobile-cordova#android)
+
+
+```bash
+$ npm run setup:mobile
+// Installs dependencies and creates Cordova folders for the Android project
+```
+
 ## Development
 
 ```bash
-$ npm run serve
-// start a webpack dev-server which serves up live-updating UI
+$ npm run dev
+// start a webpack dev-server which serves up live-updating UI on the browser
+// and a live-updating GraphQL and scuttlebutt server
 ```
 
-Then in another terminal
+### Desktop
+
 ```bash
-$ npm run start:dev
+$ npm run dev:desktop
 // launches the scuttlebutt + graphql servers + electron
-// which then asks for UI from dev-server
+// and starts a webpack dev-server which serves up live-updating UI
+```
+
+### Mobile
+
+- Make sure you have a **real Android device**, not an emulator
+- Put your Android device in Developer Mode
+  - Open the Android settings, scroll down to "About phone"
+  - Scroll down to "Build number", and **tap it 7 times**
+- Plug your Android device to your computer via USB
+- On the Android device, **allow** your computer access to the device
+
+```bash
+$ npm run dev:android
+// compiles everything and runs the Android app on a device
+```
+
+```bash
+$ npm run dev:android-update
+// compiles just the frontend and runs the Android app on a device
 ```
 
 OTHER TOOLS
@@ -39,31 +81,33 @@ OTHER TOOLS
 NOTES
 - live-reload doesn't work for `ssb-server` (back end) code.
 - Windows sets env differently. Open 2 Powershell windows and run the following in each:
-  - `npm run serve`
-  - `$env:NODE_ENV="development"`, then `npm start` (set the env to development, then launch electron app)
+  - `npm run dev:ui`
+  - `$env:NODE_ENV="development"`, then `npm start:desktop` (set the env to development, then launch electron app)
 
 ## Production Build
 
 ```bash
-$ npm run build
+$ npm run build-ui:desktop
 ```
 
-Compiles and minifies code (and assets) for production, outputs to `./build`.
-You can try running the build with `npm run start`.
+Compiles and minifies code (and assets) for production, outputs to `./desktop/dist`.
+You can try running the build with `npm run start:desktop`.
 
 
 ## Publishing installers
 
+### Desktop
+
 ```bash
-$ npm run publish
+$ npm run release:desktop
 ```
 
-Builds installer (using compiled clientside code + back end code), and outputs to `./dist/installers`.
+Compiles and minifies code (and assets) for production, builds installer (using compiled clientside code + back end code), and outputs to `./release/desktop`.
 
 NOTES
 - **Mac needs**
   - Application Installer + Apllication certificates set up in your apple keychain for signing
-  - an `electron-builder.env` with environment variables `APPLE_ID`, `APPLE_ID_PASS` for notarization, e.g :
+  - an `desktop/electron-builder.env` with environment variables `APPLE_ID`, `APPLE_ID_PASS` for notarization, e.g :
      ```
      APPLE_ID=name@company.com
      APPLE_ID_PASS=asdl-tyan-osla-ttyb
@@ -72,7 +116,7 @@ NOTES
 
 - **Windows needs**
   - `build/win_csc.pfx` file
-  - an `electron-builder.env` with environment variable `CSC_LINK` and `CSC_KEY_PASSWORD` (the password to the .pfx cert)
+  - an `desktop/electron-builder.env` with environment variable `CSC_LINK` and `CSC_KEY_PASSWORD` (the password to the .pfx cert)
     ```
     CSC_LINK=build/win/csc.pfx
     CSC_KEY_PASSWORD=anliushfdxbaejhbrsajxhelaser
@@ -90,6 +134,6 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 see also:
 
 ```
-npm run test
-npm run lint
+npm run test:ui
+npm run lint:ui
 ```

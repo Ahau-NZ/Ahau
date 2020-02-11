@@ -1,15 +1,22 @@
 .DS_Store
 node_modules
-/dist
-/bundle
+dist
+bundle
+installers
+releases
+
+# Electron
+desktop/electron-builder.env
+desktop/build/win_csc.pfx
+
+# Cordova
+mobile/platforms
+mobile/plugins
+mobile/www
 
 # local env files
 .env.local
 .env.*.local
-
-# env + certificate files for building
-electron-builder.env
-build/win_csc.pfx
 
 # Log files
 npm-debug.log*

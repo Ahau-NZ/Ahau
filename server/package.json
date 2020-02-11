@@ -1,0 +1,29 @@
+{
+  "name": "ahau-server",
+  "version": "0.5.0",
+  "description": "An application for gathering and sharing whakapapa (family trees, traditional knowledge). Built using scuttlebutt",
+  "homepage": "https://gitlab.com/ahau/whakapapa-ora",
+  "main": "index.js",
+  "dependencies": {
+    "@apollo/federation": "^0.11.3",
+    "@ssb-graphql/main": "^0.1.1",
+    "@ssb-graphql/profile": "^0.2.0",
+    "@ssb-graphql/whakapapa": "^0.1.7",
+    "apollo-server": "^2.9.3",
+    "apollo-server-express": "^2.9.6",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "graphql": "^14.5.8",
+    "graphql-date": "^1.0.3",
+    "graphql-upload": "^8.0.7"
+  },
+  "devDependencies": {
+    "casual": "^1.6.2"
+  },
+  "author": "Āhau Ltd.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://gitlab.com/ahau/whakapapa-ora.git"
+  },
+  "license": "AGPL-3.0"
+}
