@@ -14,13 +14,7 @@
         :fullscreen="this.mobile"
       >
         <div>
-          <Appbar
-            v-if="mobile"
-            :enableMenu="enableMenu"
-            app
-            :goBack="goBack && mobile"
-            class="pb-6"
-          />
+          <Appbar v-if="mobile" :enableMenu="enableMenu" app :goBack="goBack" class="pb-12" />
           <slot></slot>
         </div>
       </v-dialog>
@@ -42,8 +36,7 @@ export default {
       default: '1000px'
     },
     goBack: {
-      type: Boolean,
-      default: false
+      type: Function
     },
     enableMenu: {
       type: Boolean,
