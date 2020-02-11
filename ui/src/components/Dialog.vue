@@ -3,7 +3,7 @@
     <v-row justify="center">
       <v-dialog
         :transition="
-          $vuetify.breakpoint.xs
+          mobile
             ? 'dialog-bottom-transition'
             : 'scale-transition'
         "
@@ -11,15 +11,25 @@
         light
         persistent
         :max-width="width"
-        :fullscreen="this.$vuetify.breakpoint.xs"
+        :fullscreen="this.mobile"
       >
-        <slot></slot>
+        <div>
+          <Appbar
+            v-if="mobile"
+            :enableMenu="enableMenu"
+            app
+            :goBack="goBack && mobile"
+            class="pb-6"
+          />
+          <slot></slot>
+        </div>
       </v-dialog>
     </v-row>
   </transition>
 </template>
 
 <script>
+import Appbar from '@/components/Appbar.vue'
 export default {
   props: {
     show: {
@@ -30,11 +40,24 @@ export default {
       type: String,
       required: false,
       default: '1000px'
+    },
+    goBack: {
+      type: Boolean,
+      default: false
+    },
+    enableMenu: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
     return {
       listener: null
+    }
+  },
+  computed: {
+    mobile () {
+      return this.$vuetify.breakpoint.xs
     }
   },
   methods: {
@@ -49,6 +72,9 @@ export default {
   },
   destroyed () {
     document.removeEventListener('keydown', this.listener)
+  },
+  components: {
+    Appbar
   }
 }
 </script>
