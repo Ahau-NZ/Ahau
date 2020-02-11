@@ -16,8 +16,8 @@ const customViewports = {
   medium: {
     name: 'Medium',
     styles: {
-      width: '768px',
-      height: '1024px'
+      width: '1024px',
+      height: '768px'
     }
   },
   large: {
