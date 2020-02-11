@@ -42,11 +42,5 @@
     "type": "git",
     "url": "git+https://gitlab.com/ahau/whakapapa-ora.git"
   },
-  "license": "AGPL-3.0",
-  "dependencies": {
-    "@ssb-graphql/profile": "^0.2.0",
-    "@ssb-graphql/whakapapa": "^0.1.7",
-    "ssb-profile": "^0.8.0",
-    "ssb-whakapapa": "^0.4.0"
-  }
+  "license": "AGPL-3.0"
 }
