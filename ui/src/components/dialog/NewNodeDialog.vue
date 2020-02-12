@@ -33,7 +33,7 @@
                           <template>
                             <v-list-item @click="setFormData(data.item)">
                               <!-- <v-list-item-icon class="mt-0 mb-0">
-                                
+
                               </v-list-item-icon> -->
                               <v-row>
                                 <v-col class="pa-0" cols="2">
@@ -49,7 +49,7 @@
                                   <small>{{ data.item.bornAt }}</small>
                                 </v-col>
                               </v-row>
-                              
+
                             </v-list-item>
                           </template>
                         </template>
