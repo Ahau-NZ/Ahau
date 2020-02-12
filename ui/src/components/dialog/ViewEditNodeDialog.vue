@@ -261,30 +261,24 @@
             <v-row>
               <!-- Action buttons -->
               <!-- Delete button -->
-              <v-btn
-                v-if="isEditing"
-                @click="this.toggleDelete"
-                align="center"
-                color="white"
-                text
-                class="secondary--text pt-7 pl-5"
-              >
-                <v-icon small class="secondary--text" left>mdi-delete</v-icon>
-                Delete this person
-              </v-btn>
+              <v-col cols="12" sm="auto">
+                <v-btn
+                  v-if="isEditing"
+                  @click="this.toggleDelete"
+                  align="center"
+                  color="white"
+                  text
+                  class="secondary--text pt-7 pl-5"
+                >
+                  <v-icon small class="secondary--text" left>mdi-delete</v-icon>Delete this person
+                </v-btn>
+              </v-col>
               <v-spacer />
-              <v-col v-if="isEditing" align="right" class="pt-0 pb-o">
+              <v-col v-if="isEditing" align-sm="right" class="pt-0 pb-o">
                 <v-btn @click="cancel" text large fab class="secondary--text">
                   <v-icon color="secondary">mdi-close</v-icon>
                 </v-btn>
-                <v-btn
-                  @click="submit"
-                  text
-                  large
-                  fab
-                  class="blue--text"
-                  color="blue"
-                >
+                <v-btn @click="submit" text large fab class="blue--text" color="blue">
                   <v-icon>mdi-check</v-icon>
                 </v-btn>
               </v-col>
