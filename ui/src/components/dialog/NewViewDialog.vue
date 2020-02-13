@@ -1,8 +1,8 @@
 <template>
   <div>
-    <Dialog :show="show" @close="close" enableMenu>
+    <Dialog :show="show" @close="close" enableMenu :goBack="close">
       <v-form ref="form" v-model="form.valid" lazy-validation>
-        <v-card>
+        <v-card :class="mobile ? 'pt-6' : ''">
           <v-card-title>
             <span
               :class="{
