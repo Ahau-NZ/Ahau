@@ -15,7 +15,7 @@
       >
         <div>
           <Appbar
-            v-if="!noBar && mobile"
+            v-if="enableBar && mobile"
             :enableMenu="enableMenu"
             app
             :goBack="goBack"
@@ -48,9 +48,9 @@ export default {
       type: Boolean,
       default: false
     },
-    noBar: {
+    enableBar: {
       type: Boolean,
-      default: false
+      default: true
     }
   },
   data () {

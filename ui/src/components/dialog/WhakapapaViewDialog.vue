@@ -1,5 +1,5 @@
 <template>
-  <Dialog :show="show" @close="close()" noBar>
+  <Dialog :show="show" @close="close()" :enableBar="false">
     <WhakapapaViewCard :view="view" :shadow="false">
       <v-row class="lock-container">
         <v-col class="lock-icon">

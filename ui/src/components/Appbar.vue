@@ -8,7 +8,9 @@
       color="#303030"
     >
       <div class="d-flex align-center">
-        <v-icon v-if="goBack && mobile" @click="goBack" dark>mdi-arrow-left</v-icon>
+        <v-btn v-if="goBack && mobile" @click="goBack" icon dark>
+          <v-icon>mdi-arrow-left</v-icon>
+        </v-btn>
         <div v-else>
           <router-link to="/" v-if="enableMenu" class="logo-link">
             <img src="@/assets/logo_red.svg" class="logo" />
