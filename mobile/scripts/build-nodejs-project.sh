@@ -50,7 +50,7 @@ find ./www/nodejs-project/node_modules -empty -type d -delete;
 
 # Move www/nodejs-project into the Android project
 echo "Cleaning Cordova files in the Android project...";
-cordova clean || true;
+cordova clean > /dev/null 2>&1 || true;
 
 echo "Moving www into the Android project...";
 cordova prepare android;

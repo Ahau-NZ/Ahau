@@ -1,8 +1,15 @@
 import NewNodeDialog from './NewNodeDialog.vue'
 import { action } from '@storybook/addon-actions'
+import VIEWPORTS from '../../../.storybook/VIEWPORTS'
 
 export default {
-  title: 'NewNodeDialog'
+  title: 'NewNodeDialog',
+  parameters: {
+    viewport: {
+      defaultViewport: 'extra_small',
+      viewports: VIEWPORTS
+    }
+  }
 }
 
 export const defaultDialog = () => ({

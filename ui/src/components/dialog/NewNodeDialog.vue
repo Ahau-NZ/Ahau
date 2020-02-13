@@ -1,5 +1,5 @@
 <template>
-  <Dialog :show="show" @close="close">
+  <Dialog :show="show" @close="close" :goBack="close" enableMenu>
     <v-form ref="form" v-model="form.valid" lazy-validation>
       <v-card>
         <v-card-text>
@@ -46,7 +46,7 @@
                   <AddButton label="Add name" @click="addAltNameField" row />
                 </v-row>
                 <v-row>
-                  <v-col>
+                  <v-col cols="12" sm="auto">
                     <NodeDatePicker
                       :rules="form.rules.bornAt"
                       :value="formData.bornAt"
@@ -54,7 +54,7 @@
                       @date="formData.bornAt = $event"
                     />
                   </v-col>
-                  <v-col>
+                  <v-col cols="12" sm="auto">
                     <v-text-field
                       v-model="formData.birthOrder"
                       type="number"
@@ -67,14 +67,10 @@
                   </v-col>
                 </v-row>
                 <v-row>
-                  <v-col md="6">
-                    <v-checkbox
-                      v-model="isDeceased"
-                      label="No longer living"
-                      :hide-details="true"
-                    />
+                  <v-col cols="12" sm="6">
+                    <v-checkbox v-model="isDeceased" label="No longer living" :hide-details="true" />
                   </v-col>
-                  <v-col md="6">
+                  <v-col cols="12" sm="6">
                     <NodeDatePicker
                       v-if="isDeceased"
                       label="Date of death"
@@ -84,10 +80,8 @@
                   </v-col>
                 </v-row>
                 <v-row>
-                  <v-col md="6">
-                    <v-row>
-                      Gender
-                    </v-row>
+                  <v-col cols="12" sm="6">
+                    <v-row>Gender</v-row>
                     <v-row>
                       <v-radio-group v-model="formData.gender" row>
                         <v-radio
@@ -101,7 +95,7 @@
                       </v-radio-group>
                     </v-row>
                   </v-col>
-                  <v-col md="4" v-if="withRelationships">
+                  <v-col cols="12" sm="4" v-if="withRelationships">
                     Related By
                     <v-select
                       v-model="formData.relationshipType"
@@ -175,8 +169,8 @@
                 </v-row>
               </v-col>
             </v-row>
-            <v-row>
-              <v-spacer />
+            <v-spacer />
+            <v-row justify="center" justify-sm="end" :class="mobile ? 'pt-12' : 'mt-n12 pr-12'">
               <v-btn @click="close" text color="secondary" class="mr-4">
                 <v-icon>mdi-close</v-icon>
               </v-btn>
@@ -277,6 +271,9 @@ export default {
     }
   },
   computed: {
+    mobile () {
+      return this.$vuetify.breakpoint.xs
+    },
     showLegallyAdopted () {
       switch (this.formData.relationshipType) {
         case 'whangai':

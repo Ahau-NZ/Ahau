@@ -6,9 +6,16 @@ import {
   personNoImages,
   personEmpty
 } from '@/mocks/person-profile'
+import VIEWPORTS from '../../../.storybook/VIEWPORTS'
 
 export default {
-  title: 'ViewEditNodeDialog'
+  title: 'ViewEditNodeDialog',
+  parameters: {
+    viewport: {
+      defaultViewport: 'extra_small',
+      viewports: VIEWPORTS
+    }
+  }
 }
 
 const defaultMethods = {
