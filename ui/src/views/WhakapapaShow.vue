@@ -433,30 +433,31 @@ export default {
             child = id
             parent = this.selectedProfile.id
 
-            // check the child doesnt already have a link
-            const childrenExists = this.selectedProfile.children.filter(existingChild => {
-              return existingChild.id === child
-            })
+            if (this.selectedProfile.children) {
+              const childrenExists = this.selectedProfile.children.filter(existingChild => {
+                return existingChild.id === child
+              })
 
-            if (isEmpty(childrenExists)) {
-              await this.createChildLink({ child, parent, ...relationshipAttrs })
+              if (isEmpty(childrenExists)) {
+                await this.createChildLink({ child, parent, ...relationshipAttrs })
+              }
             }
-
             await this.loadDescendants(parent)
             break
-
           case 'parent':
             child = this.selectedProfile.id
             parent = id
 
             // check the child doesnt already have a link
-            const parentExists = this.selectedProfile.parents.filter(existingParent => {
-              return existingParent.id === parent
-            })
+            if (this.selectedProfile.parents) {
+              const parentExists = this.selectedProfile.parents.filter(existingParent => {
+                return existingParent.id === parent
+              })
 
-            if (isEmpty(parentExists)) {
-              // dont want to create a new link
-              await this.createChildLink({ child, parent, ...relationshipAttrs })
+              if (isEmpty(parentExists)) {
+                // dont want to create a new link
+                await this.createChildLink({ child, parent, ...relationshipAttrs })
+              }
             }
 
             if (child === this.whakapapaView.focus) {
