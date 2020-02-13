@@ -1,12 +1,38 @@
 <template>
-  <Dialog :node="profile" :show="show" @close="close" width="720px">
+  <Dialog :node="profile" :show="show" @close="close" width="720px" :goBack="close" enableMenu>
     <v-form ref="form">
       <v-card>
         <v-container width="100%" class="pa-0">
           <v-card-text>
             <v-row class="px-2">
+              <v-col cols="12" sm="5" order-sm="2">
+                <v-row class="pa-0">
+                  <v-col v-if="!mobile" cols="offset-7 4 " class="pa-0" align="right">
+                    <!-- Dialog close button -->
+                    <v-btn @click="close" fab text top right color="secondary" class="close">
+                      <v-icon>mdi-close</v-icon>
+                    </v-btn>
+                  </v-col>
+                  <v-col cols="12" class="pa-0">
+                    <!-- Avatar -->
+                    <Avatar
+                      class="big-avatar"
+                      size="250px"
+                      :image="formData.avatarImage"
+                      :alt="profile.preferredName"
+                      :gender="formData.gender"
+                      :bornAt="formData.bornAt"
+                      :diedAt="formData.diedAt"
+                    />
+                  </v-col>
+                  <v-col v-if="isEditing" cols="12" justify="center" align="center" class="pa-0">
+                    <ImagePicker @updateAvatar="formData.avatarImage = $event" />
+                  </v-col>
+                  <!-- END of Avatar -->
+                </v-row>
+              </v-col>
               <!-- Information Col -->
-              <v-col cols="7" class="border-right">
+              <v-col cols="12" sm="7" class="border-right">
                 <v-row>
                   <!-- View Mode Title -->
                   <v-col v-if="!isEditing" cols="12" class="pa-0 pb-5">
@@ -21,8 +47,7 @@
                       x-small
                       class="blue--text pt-3"
                     >
-                      <v-icon small class="blue--text" left>mdi-pencil</v-icon>
-                      Edit
+                      <v-icon small class="blue--text" left>mdi-pencil</v-icon>Edit
                     </v-btn>
                   </v-col>
                   <!-- Edit Mode Title -->
@@ -49,7 +74,8 @@
                   <v-col
                     v-for="(altName, index) in formData.altNames.currentState"
                     :key="`a-${index}`"
-                    cols="6"
+                    cols="12"
+                    sm="6"
                     class="pa-0"
                   >
                     <v-col
@@ -71,7 +97,8 @@
                   <v-col
                     v-for="(altName, index) in formData.altNames.add"
                     :key="`b-${index}`"
-                    cols="6"
+                    cols="12"
+                    sm="6"
                     class="pa-0"
                   >
                     <v-col
@@ -93,7 +120,7 @@
                     <AddButton label="Add name" @click="toggleAltName" row />
                   </v-col>
                   <!-- Date of Birth -->
-                  <v-col cols="6" class="pa-1">
+                  <v-col cols="12" sm="6" class="pa-1">
                     <NodeDatePicker
                       :rules="form.rules.bornAt"
                       :value="formData.bornAt"
@@ -103,11 +130,7 @@
                     />
                   </v-col>
                   <!-- Order of Birth -->
-                  <v-col
-                    cols="6"
-                    class="pa-1"
-                    v-if="formData.birthOrder || isEditing"
-                  >
+                  <v-col cols="12" sm="6" class="pa-1" v-if="formData.birthOrder || isEditing">
                     <v-text-field
                       v-model="formData.birthOrder"
                       type="number"
@@ -117,7 +140,7 @@
                     />
                   </v-col>
                   <!-- diedAt checkbox -->
-                  <v-col cols="6" v-if="isEditing" class="pa-1">
+                  <v-col cols="12" sm="6" v-if="isEditing" class="pa-1">
                     <v-checkbox
                       v-model="formData.isDeceased"
                       label="No longer living"
@@ -125,11 +148,7 @@
                     />
                   </v-col>
                   <!-- diedAt datepicker -->
-                  <v-col
-                    cols="6"
-                    class="pa-1"
-                    v-if="formData.diedAt || isEditing"
-                  >
+                  <v-col cols="12" sm="6" class="pa-1" v-if="formData.diedAt || isEditing">
                     <NodeDatePicker
                       v-if="formData.isDeceased"
                       :readonly="!isEditing"
@@ -139,7 +158,7 @@
                     />
                   </v-col>
                   <!-- Gender View Mode -->
-                  <v-col v-if="!isEditing" cols="6" class="pa-1">
+                  <v-col v-if="!isEditing" cols="12" sm="6" class="pa-1">
                     <v-text-field
                       v-if="!isEditing"
                       v-model="formData.gender"
@@ -148,26 +167,22 @@
                     />
                   </v-col>
                   <!-- Gender Edit Mode -->
-                  <v-col v-else cols="6" class="pa-1">
+                  <v-col v-else cols="12" sm="6" class="pa-1">
                     <small>Gender</small>
-                    <v-radio-group
-                      v-model="formData.gender"
-                      row
-                      class="mt-0 pt-0"
-                      hide-details
-                    >
+                    <v-radio-group v-model="formData.gender" row class="mt-0 pt-0" hide-details>
                       <v-radio
                         v-for="(gender, index) in genders"
                         :value="gender"
                         :key="index"
                         :label="gender"
-                        class="ma-0 pa-0  pr-2"
+                        class="ma-0 pa-0 pr-2"
                       />
                     </v-radio-group>
                   </v-col>
                   <!-- Related By -->
                   <v-col
-                    cols="6"
+                    cols="12"
+                    sm="6"
                     class="pa-1"
                     v-if="formData.relationshipType || isEditing"
                   >
@@ -185,11 +200,7 @@
                     />
                   </v-col>
                   <!-- Description textarea -->
-                  <v-col
-                    cols="12"
-                    class="pa-1"
-                    v-if="formData.description || isEditing"
-                  >
+                  <v-col cols="12" class="pa-1" v-if="formData.description || isEditing">
                     <v-textarea
                       v-if="formData.description || showDescription"
                       v-model="formData.description"
@@ -201,66 +212,17 @@
                       no-resize
                       rows="1"
                       auto-grow
-                    >
-                    </v-textarea>
+                    ></v-textarea>
                     <!-- Description button -->
-                    <AddButton
-                      v-else
-                      label="Add description"
-                      @click="toggleDescription"
-                      row
-                    />
+                    <AddButton v-else label="Add description" @click="toggleDescription" row />
                   </v-col>
-                </v-row>
-              </v-col>
-
-              <v-col cols="5" class="">
-                <v-row class="pa-0">
-                  <v-col cols="offset-7 4 " class="pa-0" align="right">
-                    <!-- Dialog close button -->
-                    <v-btn
-                      @click="close"
-                      fab
-                      text
-                      top
-                      right
-                      color="secondary"
-                      class="close"
-                    >
-                      <v-icon>mdi-close</v-icon>
-                    </v-btn>
-                  </v-col>
-                  <v-col cols="12" class="pa-0">
-                    <!-- Avatar -->
-                    <Avatar
-                      class="big-avatar"
-                      size="250px"
-                      :image="formData.avatarImage"
-                      :alt="profile.preferredName"
-                      :gender="formData.gender"
-                      :bornAt="formData.bornAt"
-                      :diedAt="formData.diedAt"
-                    />
-                  </v-col>
-                  <v-col
-                    v-if="isEditing"
-                    cols="12"
-                    justify="center"
-                    align="center"
-                    class="pa-0"
-                  >
-                    <ImagePicker
-                      @updateAvatar="formData.avatarImage = $event"
-                    />
-                  </v-col>
-                  <!-- END of Avatar -->
                 </v-row>
               </v-col>
             </v-row>
             <v-divider v-if="!isEditing" />
-            <v-row v-if="!isEditing">
+            <v-row v-if="!isEditing" justify-sm="space-around">
               <!-- Family Members -->
-              <v-col class="pa-0">
+              <v-col :cols="mobile ? 12 : false" class="pa-0">
                 <AvatarGroup
                   :profiles="profile.parents"
                   group-title="Parents"
@@ -272,8 +234,8 @@
                 </AvatarGroup>
               </v-col>
 
-              <v-divider v-if="profile.siblings" :vertical="true" />
-              <v-col v-if="profile.siblings" class="pa-0">
+              <v-divider v-if="profile.siblings" :vertical="!mobile" :inset="mobile" />
+              <v-col :cols="mobile ? 12 : false" v-if="profile.siblings" class="pa-0">
                 <AvatarGroup
                   :profiles="profile.siblings"
                   group-title="Siblings"
@@ -282,8 +244,8 @@
                   @profile-click="openProfile($event)"
                 />
               </v-col>
-              <v-divider :vertical="true" />
-              <v-col class="pa-0">
+              <v-divider :vertical="!mobile" :inset="mobile" />
+              <v-col :cols="mobile ? 12 : false" class="pa-0">
                 <AvatarGroup
                   :profiles="profile.children"
                   group-title="Children"
@@ -299,30 +261,24 @@
             <v-row>
               <!-- Action buttons -->
               <!-- Delete button -->
-              <v-btn
-                v-if="isEditing"
-                @click="this.toggleDelete"
-                align="center"
-                color="white"
-                text
-                class="secondary--text pt-7 pl-5"
-              >
-                <v-icon small class="secondary--text" left>mdi-delete</v-icon>
-                Delete this person
-              </v-btn>
+              <v-col cols="12" sm="auto">
+                <v-btn
+                  v-if="isEditing"
+                  @click="this.toggleDelete"
+                  align="center"
+                  color="white"
+                  text
+                  class="secondary--text pt-7 pl-5"
+                >
+                  <v-icon small class="secondary--text" left>mdi-delete</v-icon>Delete this person
+                </v-btn>
+              </v-col>
               <v-spacer />
-              <v-col v-if="isEditing" align="right" class="pt-0 pb-o">
+              <v-col v-if="isEditing" align-sm="right" class="pt-0 pb-o">
                 <v-btn @click="cancel" text large fab class="secondary--text">
                   <v-icon color="secondary">mdi-close</v-icon>
                 </v-btn>
-                <v-btn
-                  @click="submit"
-                  text
-                  large
-                  fab
-                  class="blue--text"
-                  color="blue"
-                >
+                <v-btn @click="submit" text large fab class="blue--text" color="blue">
                   <v-icon>mdi-check</v-icon>
                 </v-btn>
               </v-col>
@@ -418,6 +374,9 @@ export default {
     }
   },
   computed: {
+    mobile () {
+      return this.$vuetify.breakpoint.xs
+    },
     profileChanges () {
       let changes = {}
       Object.entries(this.formData).forEach(([key, value]) => {
