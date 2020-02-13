@@ -1,5 +1,5 @@
 <template>
-  <Dialog :show="show" @close="close">
+  <Dialog :show="show" @close="close" :goBack="close" enableMenu>
     <v-form ref="form" v-model="form.valid" lazy-validation>
       <v-card>
         <v-card-text>
@@ -169,8 +169,8 @@
                 </v-row>
               </v-col>
             </v-row>
-            <v-row>
-              <v-spacer />
+            <v-spacer />
+            <v-row justify="center" justify-sm="end" :class="mobile ? 'pt-12' : 'mt-n12 pr-12'">
               <v-btn @click="close" text color="secondary" class="mr-4">
                 <v-icon>mdi-close</v-icon>
               </v-btn>
@@ -271,6 +271,9 @@ export default {
     }
   },
   computed: {
+    mobile () {
+      return this.$vuetify.breakpoint.xs
+    },
     showLegallyAdopted () {
       switch (this.formData.relationshipType) {
         case 'whangai':
