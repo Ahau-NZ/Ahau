@@ -15,6 +15,7 @@ import 'typeface-roboto'
 import Vue from 'vue'
 import * as _Vuetify from 'vuetify/lib'
 import config from '../vuetify.config.js'
+import VuejsClipper from 'vuejs-clipper'
 
 const Vuetify = _Vuetify.default
 const isVueComponent = obj => obj.name === 'VueComponent'
@@ -28,6 +29,8 @@ const VComponents = Object.keys(_Vuetify).reduce((acc, key) => {
 Vue.use(Vuetify, {
   components: { ...VComponents }
 })
+
+Vue.use(VuejsClipper)
 
 // Ensures every story is wrapped in a v-app tag (vuetify)
 addDecorator(() => ({
