@@ -11,6 +11,7 @@
   },
   "main": "index.js",
   "scripts": {
+    "build:icons": "./scripts/build-icons.js",
     "dev:android": "cross-env NODE_ENV=development cross-env ./scripts/run-android.sh",
     "dev:android-update": "cross-env NODE_ENV=development cross-env ./scripts/run-android-update.sh",
     "dev:server": "cd src/nodejs-project && npm i && cross-env NODE_ENV=development nodemon index.js",
@@ -40,7 +41,8 @@
     "nodemon": "^2.0.2",
     "ora": "^4.0.3",
     "patch-package": "^6.2.0",
-    "rimraf": "^3.0.0"
+    "rimraf": "^3.0.0",
+    "sharp": "^0.23.1"
   },
   "browserslist": [
     "Android >= 7",
