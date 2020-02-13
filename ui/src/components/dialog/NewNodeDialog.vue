@@ -1,11 +1,37 @@
 <template>
-  <Dialog :show="show" @close="close" width="720px">
-    <v-form ref="form">
+  <Dialog :show="show" @close="close" width="720px" :goBack="close" enableMenu>
+    <v-form ref="form" v-model="form.valid" lazy-validation>
       <v-card>
         <v-container width="100%" class="pa-0">
           <v-card-text>
             <v-row class="px-2">
-              <v-col cols="7" class="border-right">
+              <v-col cols="12" sm="5" order-sm="2">
+                <v-row class="pa-0">
+                  <v-col v-if="!mobile" cols="offset-7 4 " class="pa-0" align="right">
+                    <!-- Dialog close button -->
+                    <v-btn @click="close" fab text top right color="secondary" class="close">
+                      <v-icon>mdi-close</v-icon>
+                    </v-btn>
+                  </v-col>
+                  <v-col cols="12" class="pa-0">
+                    <!-- Avatar -->
+                    <Avatar
+                      class="big-avatar"
+                      size="250px"
+                      :image="formData.avatarImage"
+                      :alt="formData.preferredName"
+                      :gender="formData.gender"
+                      :bornAt="formData.bornAt"
+                      :diedAt="formData.diedAt"
+                    />
+                  </v-col>
+                  <v-col v-if="!hasSelection" cols="12" justify="center" align="center" class="pa-0">
+                    <ImagePicker @updateAvatar="formData.avatarImage = $event"/>
+                  </v-col>
+                    <!-- END of Avatar -->
+                </v-row>
+              </v-col>
+              <v-col cols="12" sm="7" class="border-right">
                 <v-row>
                   <!-- DIALOG TITLE -->
                   <v-col cols="12" class="pa-0 pb-5">
@@ -65,16 +91,27 @@
                     />
                   </v-col>
                   <template v-if="hasSelection">
-                    <v-col v-for="(altName, index) in formData.altNames" :key="`a-${index}`" cols="6" class="pa-1">
+                    <v-col v-for="(altName, index) in formData.altNames"
+                      :key="`a-${index}`"
+                      cols="12"
+                      sm="6"
+                      class="pa-1"
+                    >
                       <v-text-field
                         v-model="formData.altNames[index]"
                         :label="`Alternative name ${index + 1}`"
                         v-bind="customProps"
+                        cols="12"
                       />
                     </v-col>
                   </template>
                   <template v-else>
-                    <v-col v-for="(altName, index) in formData.altNames.add" :key="`b-${index}`" cols="6" class="pa-1">
+                    <v-col v-for="(altName, index) in formData.altNames.add"
+                      :key="`b-${index}`"
+                      cols="12"
+                      sm="6"
+                      class="pa-1"
+                    >
                       <v-text-field
                         v-model="formData.altNames.add[index]"
                         :label="`Alternative name ${ index + 1}`"
@@ -89,7 +126,7 @@
                   </template>
 
                   <!-- DATE OF BIRTH -->
-                  <v-col cols="6" class="pa-1">
+                  <v-col cols="12" sm="6" class="pa-1">
                     <NodeDatePicker
                       :value="formData.bornAt"
                       label="Date of birth"
@@ -99,7 +136,7 @@
                   </v-col>
 
                   <!-- ORDER OF BIRTH -->
-                  <v-col cols="6" class="pa-1">
+                  <v-col cols="12" sm="6" class="pa-1">
                     <v-text-field
                       v-model="formData.birthOrder"
                       type="number"
@@ -110,14 +147,14 @@
                   </v-col>
 
                   <!-- DIED AT CHECKBOX -->
-                  <v-col cols="6" class="pa-1" v-if="!hasSelection">
+                  <v-col cols="12" sm="6" class="pa-1" v-if="!hasSelection">
                     <v-checkbox v-model="formData.isDeceased"
                       label="No longer living" :hide-details="true"
                     />
                   </v-col>
 
                   <!-- DIED AT PICKER -->
-                  <v-col cols="6" class="pa-1">
+                  <v-col cols="12" sm="6" class="pa-1">
                     <NodeDatePicker
                       v-if="formData.isDeceased || hasSelection"
                       label="Date of death"
@@ -128,7 +165,7 @@
                   </v-col>
 
                   <!-- GENDER VIEW -->
-                  <v-col v-if="hasSelection" cols="6" class="pa-1">
+                  <v-col v-if="hasSelection" cols="6" sm="6" class="pa-1">
                     <v-text-field
                       v-model="formData.gender"
                       label="Gender"
@@ -137,7 +174,7 @@
                   </v-col>
 
                   <!-- GENDER EDIT -->
-                  <v-col v-else cols="6" class="pa-1">
+                  <v-col v-else cols="6"  sm="6" class="pa-1">
                     <small>Gender</small>
                     <v-radio-group v-model="formData.gender" row class="mt-0 pt-0" hide-details>
                       <v-radio v-for="(gender, index) in genders"
@@ -147,7 +184,7 @@
                   </v-col>
 
                   <!-- RELATED BY -->
-                  <v-col cols="6" class="pa-1">
+                  <v-col cols="12" sm="6" class="pa-1">
                     <v-select
                       v-model="formData.relationshipType"
                       label="Related By"
@@ -179,27 +216,6 @@
                     <!-- Description button -->
                     <AddButton v-else label="Add description" @click="toggleDescription" row/>
                   </v-col>
-                </v-row>
-              </v-col>
-              <v-col cols="5" class="">
-                <v-row class="pa-0">
-                  <v-col cols="offset-7 4 " class="pa-0" align="right">
-                    <!-- Dialog close button -->
-                    <v-btn @click="close" fab text top right color="secondary" class="close">
-                      <v-icon>mdi-close</v-icon>
-                    </v-btn>
-                  </v-col>
-                  <v-col cols="12" class="pa-0">
-                    <!-- Avatar -->
-                    <Avatar class="big-avatar" size="250px"
-                      :image="formData.avatarImage" :alt="formData.preferredName"
-                      :gender="formData.gender" :bornAt="formData.bornAt" :diedAt="formData.diedAt"
-                    />
-                  </v-col>
-                  <v-col v-if="!hasSelection" cols="12" justify="center" align="center" class="pa-0">
-                    <ImagePicker @updateAvatar="formData.avatarImage = $event"/>
-                  </v-col>
-                    <!-- END of Avatar -->
                 </v-row>
               </v-col>
             </v-row>
@@ -324,6 +340,9 @@ export default {
         placeholder: ' ',
         class: this.hasSelection ? 'custom' : ''
       }
+    },
+    mobile () {
+      return this.$vuetify.breakpoint.xs
     },
     showLegallyAdopted () {
       switch (this.formData.relationshipType) {
