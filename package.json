@@ -24,7 +24,7 @@
     "lint:js": "standard --verbose --fix 'desktop/**/*.js' 'mobile/**/*.js' 'scripts/**/*.js' 'server/**/*.js'",
     "lint:ui": "cd ui && npm run lint",
     "test:ui": "cd ui && npm run test",
-    "cleanupMac": "find . -name 'package-lock.json' -type f  -delete && find . -name 'node_modules' -exec rm -rf '{}' +"
+    "cleanup": "rm -rf **/node_modules && rm -rf node_modules && rm -rf **/package-lock.json && rm -rf package-lock.json"
   },
   "devDependencies": {
     "husky": "^4.2.1",
