@@ -536,8 +536,46 @@ export default {
         throw err
       }
     },
-    async updateProfile (profileChanges) {
+    async updateProfile ($event) {
+      const profileChanges = pick($event,
+        'preferredName',
+        'legalName',
+        'gender',
+        'bornAt',
+        'diedAt',
+        'birthOrder',
+        'avatarImage',
+        'altNames',
+        'description'
+      )
+
+      const relationshipAttrs = pick($event, [
+        'relationshipType',
+        'legallyAdopted'
+      ])
+
       const profileId = this.selectedProfile.id
+
+      if (relationshipAttrs) {
+        const input = {
+          relationshipId: this.selectedProfile.relationship.relationshipId,
+          child: profileId,
+          parent: this.selectedProfile.relationship.parent,
+          ...relationshipAttrs,
+          recps: this.whakapapaView.recps
+        }
+        try {
+          const linkRes = await this.$apollo.mutate(saveWhakapapaLinkMutation(input))
+          if (linkRes.errors) {
+            console.error('failed to update child link', linkRes)
+            return
+          }
+          this.loadDescendants(this.selectedProfile.relationship.parent)
+        } catch (err) {
+          throw err
+        }
+      }
+
       const res = await this.$apollo.mutate({
         mutation: gql`
           mutation($input: ProfileInput!) {
@@ -594,8 +632,8 @@ export default {
         this.profiles[profileId],
         this.profiles
       )
+      if (!this.selectedProfile.parents || this.selectedProfile.parents.length === 0) return
       var mainParent = this.selectedProfile.parents[0]
-      if (!mainParent) return
       this.selectedProfile.relationship = this.relationshipLinks[mainParent.id + '-' + this.selectedProfile.id]
     },
     getImage () {
