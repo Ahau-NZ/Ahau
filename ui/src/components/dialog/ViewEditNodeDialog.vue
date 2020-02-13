@@ -222,7 +222,7 @@
             <v-divider v-if="!isEditing" />
             <v-row v-if="!isEditing" justify-sm="space-around">
               <!-- Family Members -->
-              <v-col cols="12" sm="auto" class="pa-0">
+              <v-col cols="12" sm="3" class="pa-0">
                 <AvatarGroup
                   :profiles="profile.parents"
                   group-title="Parents"
@@ -235,7 +235,7 @@
               </v-col>
 
               <v-divider v-if="profile.siblings" :vertical="!mobile" :inset="mobile" />
-              <v-col cols="12" sm="auto" v-if="profile.siblings" class="pa-0">
+              <v-col cols="12" sm="3" v-if="profile.siblings" class="pa-0">
                 <AvatarGroup
                   :profiles="profile.siblings"
                   group-title="Siblings"
@@ -245,7 +245,7 @@
                 />
               </v-col>
               <v-divider :vertical="!mobile" :inset="mobile" />
-              <v-col cols="12" sm="auto" class="pa-0">
+              <v-col cols="12" sm="3" class="pa-0">
                 <AvatarGroup
                   :profiles="profile.children"
                   group-title="Children"
