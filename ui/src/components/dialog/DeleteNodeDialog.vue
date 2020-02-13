@@ -1,7 +1,7 @@
 <template>
-  <Dialog :show="show" @close="close" :width="`600px`">
-    <v-card>
-      <v-container light>
+  <Dialog :show="show" @close="close" :width="`600px`" enableMenu :goBack="close">
+    <v-card :min-height="height">
+      <v-container light :style="{minHeight: height}" :class="mobile ? 'pt-12' : ''">
         <v-card-title>
           <span class="headline"> Delete {{ profile.preferredName }} </span>
         </v-card-title>
@@ -39,6 +39,16 @@ export default {
     show: { type: Boolean, required: true },
     profile: { type: Object, required: true },
     warnAboutChildren: { type: Boolean, default: true }
+  },
+  computed: {
+    mobile () {
+      return this.$vuetify.breakpoint.xs
+    },
+    height () {
+      if (this.mobile) {
+        return 'calc(100vh - 50px)'
+      } else return 'auto'
+    }
   },
   methods: {
     close () {
