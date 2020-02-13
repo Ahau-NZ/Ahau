@@ -62,9 +62,7 @@
       :show="dialog.view"
       :profile="selectedProfile"
       :deleteable="canDelete(selectedProfile)"
-      :warnAboutChildren="
-        selectedProfile && selectedProfile.id !== whakapapaView.focus
-      "
+      :warnAboutChildren="selectedProfile && selectedProfile.id !== whakapapaView.focus"
       @close="toggleView()"
       @new="toggleNewPerson($event)"
       @submit="updateProfile($event)"
@@ -82,9 +80,7 @@
       v-if="dialog.delete"
       :show="dialog.delete"
       :profile="selectedProfile"
-      :warnAboutChildren="
-        selectedProfile && selectedProfile.id !== whakapapaView.focus
-      "
+      :warnAboutChildren="selectedProfile && selectedProfile.id !== whakapapaView.focus"
       @close="toggleDelete"
       @submit="deleteProfile"
     />
@@ -154,7 +150,8 @@ export default {
       profiles: {},
       // a dictionary which maps profileIds > profiles
       // this is a store for lookups, and from which we build up nestedWhakapapa
-      relationshipLinks: [],
+
+      relationshipLinks: [], // shows relationship information between two profiles -> reference using parentId-childId as the key
 
       recordQueue: [],
       processingQueue: false,
@@ -275,14 +272,15 @@ export default {
       // follow the child-links and load the next generation
       record.children.forEach(child => {
         // get their ids
-        var link = {
+        var info = {
           relationshipId: child.relationshipId,
           relationshipType: child.relationshipType,
           parent: record.id,
           child: child.profile.id
         }
-        this.relationshipLinks[record.id + '-' + child.profile.id] = link // puts a link into links which can be referenced using parentId-childId
-        return this.loadDescendants(child.profile.id)
+        this.relationshipLinks[record.id + '-' + child.profile.id] = info // puts a link into links which can be referenced using parentId-childId
+
+        this.loadDescendants(child.profile.id)
       })
 
       // add this to queue of records to process and merge into graph
@@ -596,6 +594,9 @@ export default {
         this.profiles[profileId],
         this.profiles
       )
+      var mainParent = this.selectedProfile.parents[0]
+      if (!mainParent) return
+      this.selectedProfile.relationship = this.relationshipLinks[mainParent.id + '-' + this.selectedProfile.id]
     },
     getImage () {
       return avatarHelper.defaultImage(this.bornAt, this.gender)

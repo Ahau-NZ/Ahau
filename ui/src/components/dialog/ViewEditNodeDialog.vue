@@ -165,12 +165,17 @@
                       />
                     </v-radio-group>
                   </v-col>
-                  <!-- Related By -->
-                  <v-col
-                    cols="6"
-                    class="pa-1"
-                    v-if="formData.relationshipType || isEditing"
-                  >
+                  <!-- Related By view mode-->
+                  <!-- TODO: hide if relationship is unknown -->
+                  <v-col v-if="!isEditing && formData.relationshipType" cols="6" class="pa-1">
+                    <v-text-field
+                      v-model="formData.relationshipType"
+                      label="Related By"
+                      v-bind="customProps"
+                    />
+                  </v-col>
+                  <!-- Related By edit mode-->
+                  <v-col v-if="isEditing && warnAboutChildren" cols="6" class="pa-1" >
                     <v-select
                       v-model="formData.relationshipType"
                       label="Related By"
@@ -180,7 +185,6 @@
                       :menu-props="{ light: true }"
                       :append-icon="!isEditing ? '' : 'mdi-chevron-down'"
                       :hide-details="true"
-                      readonly
                       :class="!isEditing ? 'custom' : ''"
                     />
                   </v-col>
@@ -374,7 +378,7 @@ function defaultData (profile) {
     avatarImage: profile.avatarImage,
     description: profile.description,
     birthOrder: profile.birthOrder,
-    // relationshipType: this.profile.relationshipType, this isnt even in profile
+    relationshipType: profile.relationship ? profile.relationship.relationshipType ? profile.relationship.relationshipType : '' : '',
     altNames: {
       currentState: clone(profile.altNames),
       add: [], // new altNames to add
@@ -399,7 +403,8 @@ export default {
     show: { type: Boolean, required: true },
     profile: { type: Object, required: true },
     deleteable: { type: Boolean, default: false },
-    warnAboutChildren: { type: Boolean, default: true }
+    warnAboutChildren: { type: Boolean, default: true },
+    relationshipLinks: { type: Array }
   },
   data () {
     return {
@@ -451,7 +456,7 @@ export default {
   },
   watch: {
     profile (newVal) {
-      this.formData = defaultData(newVal)
+      this.formData = defaultData(newVal, this.relationshipType)
     },
     'formData.isDeceased' (newValue) {
       if (!newValue) this.formData.diedAt = ''
