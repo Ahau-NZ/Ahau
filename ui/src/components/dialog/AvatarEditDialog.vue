@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Dialog :show="show" @close="close" width="500px">
+    <Dialog :show="show" @close="close" width="500px" :goBack="close" enableMenu>
       <v-container style="background: black;">
         <v-row justify="center">
           <v-col style="max-width: 600px;">
