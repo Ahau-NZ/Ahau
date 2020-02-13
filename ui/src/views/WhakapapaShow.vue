@@ -40,6 +40,7 @@
         <Tree
           :view="whakapapaView"
           :nestedWhakapapa="nestedWhakapapa"
+          :relationshipLinks="relationshipLinks"
           @load-descendants="loadDescendants($event)"
           @collapse-node="collapseNode($event)"
           @open-context-menu="openContextMenu($event)"
@@ -153,6 +154,7 @@ export default {
       profiles: {},
       // a dictionary which maps profileIds > profiles
       // this is a store for lookups, and from which we build up nestedWhakapapa
+      relationshipLinks: [],
 
       recordQueue: [],
       processingQueue: false,
@@ -272,7 +274,15 @@ export default {
       // if (whakapapaView.mode === 'descendants')
       // follow the child-links and load the next generation
       record.children.forEach(child => {
-        this.loadDescendants(child.profile.id)
+        // get their ids
+        var link = {
+          relationshipId: child.relationshipId,
+          relationshipType: child.relationshipType,
+          parent: record.id,
+          child: child.profile.id
+        }
+        this.relationshipLinks[record.id + '-' + child.profile.id] = link // puts a link into links which can be referenced using parentId-childId
+        return this.loadDescendants(child.profile.id)
       })
 
       // add this to queue of records to process and merge into graph
@@ -312,6 +322,7 @@ export default {
                     uri
                   }
                 }
+                relationshipId
                 relationshipType
               }
 
@@ -330,6 +341,7 @@ export default {
                     uri
                   }
                 }
+                relationshipId
                 relationshipType
               }
             }
