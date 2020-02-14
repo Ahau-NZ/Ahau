@@ -6,7 +6,7 @@
   "scripts": {
     "postinstall": "electron-builder install-app-deps",
     "start": "electron index.js -- --title Āhau",
-    "start:dev": "cross_env NODE_ENV=development electron index.js -- --title Āhau",
+    "start:dev": "cross-env NODE_ENV=development electron index.js -- --title Āhau",
     "build:icons": "./build/build-icons",
     "pack": "electron-builder --config build/electron-builder.config.js --dir",
     "dist": "electron-builder --config build/electron-builder.config.js"
