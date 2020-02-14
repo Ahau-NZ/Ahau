@@ -7,27 +7,25 @@
       :flat="!mobile"
       color="#303030"
     >
-      <div class="d-flex align-center">
-        <v-btn v-if="goBack && mobile" @click="goBack" icon dark>
-          <v-icon>mdi-arrow-left</v-icon>
-        </v-btn>
-        <div v-else>
-          <router-link to="/" v-if="enableMenu" class="logo-link">
-            <img src="@/assets/logo_red.svg" class="logo" />
-          </router-link>
-          <img v-else src="@/assets/logo_red.svg" class="logo" />
-        </div>
-        <!-- <v-btn icon :to="{ name: 'personShow', params: { id: profile.id } }"> -->
-        <Avatar
-          v-if="!mobile"
-          size="50px"
-          :image="profile.avatarImage"
-          :alt="profile.preferredName"
-          :gender="profile.gender"
-          :bornAt="profile.bornAt"
-        />
+      <v-btn v-if="goBack && mobile" @click="goBack" icon dark>
+        <v-icon>mdi-arrow-left</v-icon>
+      </v-btn>
+      <template v-else>
+        <router-link to="/" v-if="enableMenu" class="logo-link">
+          <img src="@/assets/logo_red.svg" class="logo" />
+        </router-link>
+        <img v-else src="@/assets/logo_red.svg" class="logo" />
+      </template>
+      <!-- <v-btn icon :to="{ name: 'personShow', params: { id: profile.id } }"> -->
+      <Avatar
+        v-if="!mobile"
+        size="50px"
+        :image="profile.avatarImage"
+        :alt="profile.preferredName"
+        :gender="profile.gender"
+        :bornAt="profile.bornAt"
+      />
         <!-- </v-btn> -->
-      </div>
       <v-spacer />
 
       <!-- Desktop doesn't use a drawer, it has the links directly in the app bar -->
