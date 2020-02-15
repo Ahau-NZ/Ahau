@@ -34,6 +34,7 @@ export default {
   },
   mounted () {
     if (process.env.VUE_APP_PLATFORM === 'cordova') {
+      navigator.splashscreen.hide();
       nodejsClient.hasStarted(() => {
         this.mobileServerLoaded = true
       })
