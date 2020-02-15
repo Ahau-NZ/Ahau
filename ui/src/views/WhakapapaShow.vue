@@ -556,7 +556,7 @@ export default {
 
       const profileId = this.selectedProfile.id
 
-      if (relationshipAttrs) {
+      if (relationshipAttrs && this.selectedProfile.id !== this.whakapapaView.focus) {
         const input = {
           relationshipId: this.selectedProfile.relationship.relationshipId,
           child: profileId,

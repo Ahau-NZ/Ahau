@@ -319,6 +319,7 @@ import AddButton from '@/components/AddButton.vue'
 import ImagePicker from '@/components/ImagePicker.vue'
 
 import isEqual from 'lodash.isequal'
+import isEmpty from 'lodash.isempty'
 import pick from 'lodash.pick'
 import clone from 'lodash.clonedeep'
 
@@ -333,7 +334,7 @@ function defaultData (profile) {
     avatarImage: profile.avatarImage,
     description: profile.description,
     birthOrder: profile.birthOrder,
-    relationshipType: profile.relationship ? profile.relationship.relationshipType ? profile.relationship.relationshipType : '' : '',
+    relationshipType: profile.relationship ? profile.relationship.relationshipType ? profile.relationship.relationshipType : null : null,
     altNames: {
       currentState: clone(profile.altNames),
       add: [], // new altNames to add
@@ -385,14 +386,23 @@ export default {
       let changes = {}
       Object.entries(this.formData).forEach(([key, value]) => {
         if (!isEqual(this.formData[key], this.profile[key])) {
-          if (key === 'altNames') {
-            // special case for altNames
-            changes[key] = pick(this.formData.altNames, ['add', 'remove'])
-            changes[key].add = changes[key].add.filter(Boolean)
-          } else if (key === 'birthOrder') {
-            changes[key] = parseInt(value)
-          } else {
-            changes[key] = value
+          switch (key) {
+            case 'altNames':
+              if (!isEqual(this.formData.altNames.add, this.profile.altNames)) {
+                changes[key] = pick(this.formData.altNames, ['add', 'remove'])
+                changes[key].add = changes[key].add.filter(Boolean)
+              }
+              break
+            case 'birthOrder':
+              changes[key] = parseInt(value)
+              break
+            case 'relationshipType':
+              if (value && value !== this.profile.relationship.relationshipType) {
+                changes[key] = value
+              }
+              break
+            default:
+              changes[key] = value
           }
         }
       })
@@ -414,7 +424,7 @@ export default {
   },
   watch: {
     profile (newVal) {
-      this.formData = defaultData(newVal, this.relationshipType)
+      this.formData = defaultData(newVal)
     },
     'formData.isDeceased' (newValue) {
       if (!newValue) this.formData.diedAt = ''
@@ -435,7 +445,11 @@ export default {
       }
 
       var output = Object.assign({}, pick(this.profileChanges, this.permitted))
-      this.$emit('submit', output)
+
+      if (!isEmpty(output)) {
+        this.$emit('submit', output)
+      }
+
       this.formData = defaultData(this.profile)
       this.toggleEdit()
     },

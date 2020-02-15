@@ -6,7 +6,7 @@
   "scripts": {
     "postinstall": "electron-builder install-app-deps",
     "start": "electron index.js -- --title Āhau",
-    "start:dev": "NODE_ENV=development electron index.js -- --title Āhau",
+    "start:dev": "cross-env NODE_ENV=development electron index.js -- --title Āhau",
     "build:icons": "./build/build-icons",
     "pack": "electron-builder --config build/electron-builder.config.js --dir",
     "dist": "electron-builder --config build/electron-builder.config.js"
@@ -36,12 +36,13 @@
     "ssb-whakapapa": "^0.4.0"
   },
   "devDependencies": {
-    "esm": "^3.2.25",
+    "@fiahfy/icns-convert": "0.0.6",
+    "cross-env": "^7.0.0",
     "electron-builder": "^21.2.0",
     "electron-notarize": "^0.2.1",
+    "esm": "^3.2.25",
     "sharp": "^0.23.1",
     "to-ico": "^1.1.5",
-    "@fiahfy/icns-convert": "0.0.6",
     "typescript": "^3.7.2"
   },
   "author": "Āhau Ltd.",
