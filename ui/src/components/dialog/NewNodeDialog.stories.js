@@ -13,7 +13,7 @@ export default {
 }
 
 export const defaultDialog = () => ({
-  template: `<NewNodeDialog :show="true" @submit="submit"/>`,
+  template: '<NewNodeDialog :show="true" @submit="submit"/>',
   components: { NewNodeDialog },
   methods: {
     submit: action('submit')
@@ -21,11 +21,11 @@ export const defaultDialog = () => ({
 })
 
 export const customTitle = () => ({
-  template: `<NewNodeDialog :show="true" title="Add a child of Willard"/>`,
+  template: '<NewNodeDialog :show="true" title="Add a child of Willard"/>',
   components: { NewNodeDialog }
 })
 
 export const withoutRelationships = () => ({
-  template: `<NewNodeDialog :show="true" :withtRelationships="false" />`,
+  template: '<NewNodeDialog :show="true" :withtRelationships="false" />',
   components: { NewNodeDialog }
 })

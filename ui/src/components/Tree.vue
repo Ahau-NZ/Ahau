@@ -3,11 +3,7 @@
     <g id="baseGroup">
       <g :transform="`translate(${treeX} ${treeY})`">
         <g v-for="link in links" :key="link.id" class="link">
-          <!-- TODO link.data.gender to link.data.relationshipType!=='birth' -->
-          <!-- <Link :link="link" :branch="branch"
-            :class="(link.data.gender !== 'male') ? 'nonbiological' : ''"
-          /> -->
-          <Link :link="link" :branch="branch" />
+          <Link :link="link" :branch="branch" :class="link.class"/>
         </g>
       </g>
 
@@ -49,6 +45,9 @@ export default {
     view: {
       type: Object,
       required: true
+    },
+    relationshipLinks: {
+      type: Array
     }
   },
   data () {
@@ -168,7 +167,8 @@ export default {
             x1: d.source.x, // centre x position of parent node
             x2: d.target.x, // centre x position of child node
             y1: d.source.y, // centre y position of the parent node
-            y2: d.target.y // centre y position of the child node
+            y2: d.target.y, // centre y position of the child node
+            class: this.relationshipLinks[d.source.data.id + '-' + d.target.data.id].relationshipType !== 'birth' ? 'nonbiological' : ''
           }
         })
     }
@@ -210,7 +210,7 @@ svg#baseSvg {
   cursor: grab;
 }
 
-// .nonbiological{
-//   stroke-dasharray: 2.5
-// }
+.nonbiological{
+  stroke-dasharray: 2.5
+}
 </style>

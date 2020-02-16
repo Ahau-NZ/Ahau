@@ -40,6 +40,7 @@
         <Tree
           :view="whakapapaView"
           :nestedWhakapapa="nestedWhakapapa"
+          :relationshipLinks="relationshipLinks"
           @load-descendants="loadDescendants($event)"
           @collapse-node="collapseNode($event)"
           @open-context-menu="openContextMenu($event)"
@@ -61,9 +62,7 @@
       :show="dialog.view"
       :profile="selectedProfile"
       :deleteable="canDelete(selectedProfile)"
-      :warnAboutChildren="
-        selectedProfile && selectedProfile.id !== whakapapaView.focus
-      "
+      :warnAboutChildren="selectedProfile && selectedProfile.id !== whakapapaView.focus"
       @close="toggleView()"
       @new="toggleNewPerson($event)"
       @submit="updateProfile($event)"
@@ -81,9 +80,7 @@
       v-if="dialog.delete"
       :show="dialog.delete"
       :profile="selectedProfile"
-      :warnAboutChildren="
-        selectedProfile && selectedProfile.id !== whakapapaView.focus
-      "
+      :warnAboutChildren="selectedProfile && selectedProfile.id !== whakapapaView.focus"
       @close="toggleDelete"
       @submit="deleteProfile"
     />
@@ -153,6 +150,8 @@ export default {
       profiles: {},
       // a dictionary which maps profileIds > profiles
       // this is a store for lookups, and from which we build up nestedWhakapapa
+
+      relationshipLinks: [], // shows relationship information between two profiles -> reference using parentId-childId as the key
 
       recordQueue: [],
       processingQueue: false,
@@ -272,6 +271,15 @@ export default {
       // if (whakapapaView.mode === 'descendants')
       // follow the child-links and load the next generation
       record.children.forEach(child => {
+        // get their ids
+        var info = {
+          relationshipId: child.relationshipId,
+          relationshipType: child.relationshipType,
+          parent: record.id,
+          child: child.profile.id
+        }
+        this.relationshipLinks[record.id + '-' + child.profile.id] = info // puts a link into links which can be referenced using parentId-childId
+
         this.loadDescendants(child.profile.id)
       })
 
@@ -312,6 +320,7 @@ export default {
                     uri
                   }
                 }
+                relationshipId
                 relationshipType
               }
 
@@ -330,6 +339,7 @@ export default {
                     uri
                   }
                 }
+                relationshipId
                 relationshipType
               }
             }
@@ -526,8 +536,46 @@ export default {
         throw err
       }
     },
-    async updateProfile (profileChanges) {
+    async updateProfile ($event) {
+      const profileChanges = pick($event,
+        'preferredName',
+        'legalName',
+        'gender',
+        'bornAt',
+        'diedAt',
+        'birthOrder',
+        'avatarImage',
+        'altNames',
+        'description'
+      )
+
+      const relationshipAttrs = pick($event, [
+        'relationshipType',
+        'legallyAdopted'
+      ])
+
       const profileId = this.selectedProfile.id
+
+      if (relationshipAttrs && this.selectedProfile.id !== this.whakapapaView.focus) {
+        const input = {
+          relationshipId: this.selectedProfile.relationship.relationshipId,
+          child: profileId,
+          parent: this.selectedProfile.relationship.parent,
+          ...relationshipAttrs,
+          recps: this.whakapapaView.recps
+        }
+        try {
+          const linkRes = await this.$apollo.mutate(saveWhakapapaLinkMutation(input))
+          if (linkRes.errors) {
+            console.error('failed to update child link', linkRes)
+            return
+          }
+          this.loadDescendants(this.selectedProfile.relationship.parent)
+        } catch (err) {
+          throw err
+        }
+      }
+
       const res = await this.$apollo.mutate({
         mutation: gql`
           mutation($input: ProfileInput!) {
@@ -584,6 +632,9 @@ export default {
         this.profiles[profileId],
         this.profiles
       )
+      if (!this.selectedProfile.parents || this.selectedProfile.parents.length === 0) return
+      var mainParent = this.selectedProfile.parents[0]
+      this.selectedProfile.relationship = this.relationshipLinks[mainParent.id + '-' + this.selectedProfile.id]
     },
     getImage () {
       return avatarHelper.defaultImage(this.bornAt, this.gender)
