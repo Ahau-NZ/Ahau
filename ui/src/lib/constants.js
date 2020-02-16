@@ -58,8 +58,8 @@ export const PERMITTED_PROFILE_ATTRS = [
   'description',
   'headerImage',
   'altNames',
-  'birthOrder'
-  // 'relationshipType'
+  'birthOrder',
+  'relationshipType'
 ]
 
 export const DECEASED_COLOUR = '#bfbfbf' // TODO: is this the right place to put these?

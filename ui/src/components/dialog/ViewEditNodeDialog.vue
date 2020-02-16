@@ -179,13 +179,17 @@
                       />
                     </v-radio-group>
                   </v-col>
-                  <!-- Related By -->
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    class="pa-1"
-                    v-if="formData.relationshipType || isEditing"
-                  >
+                  <!-- Related By view mode-->
+                  <!-- TODO: hide if relationship is unknown -->
+                  <v-col v-if="!isEditing && formData.relationshipType" cols="6" sm="6" class="pa-1">
+                    <v-text-field
+                      v-model="formData.relationshipType"
+                      label="Related By"
+                      v-bind="customProps"
+                    />
+                  </v-col>
+                  <!-- Related By edit mode-->
+                  <v-col v-if="isEditing && warnAboutChildren" cols="6" class="pa-1" >
                     <v-select
                       v-model="formData.relationshipType"
                       label="Related By"
@@ -195,7 +199,6 @@
                       :menu-props="{ light: true }"
                       :append-icon="!isEditing ? '' : 'mdi-chevron-down'"
                       :hide-details="true"
-                      readonly
                       :class="!isEditing ? 'custom' : ''"
                     />
                   </v-col>
@@ -316,6 +319,7 @@ import AddButton from '@/components/AddButton.vue'
 import ImagePicker from '@/components/ImagePicker.vue'
 
 import isEqual from 'lodash.isequal'
+import isEmpty from 'lodash.isempty'
 import pick from 'lodash.pick'
 import clone from 'lodash.clonedeep'
 
@@ -330,7 +334,7 @@ function defaultData (profile) {
     avatarImage: profile.avatarImage,
     description: profile.description,
     birthOrder: profile.birthOrder,
-    // relationshipType: this.profile.relationshipType, this isnt even in profile
+    relationshipType: profile.relationship ? profile.relationship.relationshipType ? profile.relationship.relationshipType : null : null,
     altNames: {
       currentState: clone(profile.altNames),
       add: [], // new altNames to add
@@ -355,7 +359,8 @@ export default {
     show: { type: Boolean, required: true },
     profile: { type: Object, required: true },
     deleteable: { type: Boolean, default: false },
-    warnAboutChildren: { type: Boolean, default: true }
+    warnAboutChildren: { type: Boolean, default: true },
+    relationshipLinks: { type: Array }
   },
   data () {
     return {
@@ -381,14 +386,23 @@ export default {
       let changes = {}
       Object.entries(this.formData).forEach(([key, value]) => {
         if (!isEqual(this.formData[key], this.profile[key])) {
-          if (key === 'altNames') {
-            // special case for altNames
-            changes[key] = pick(this.formData.altNames, ['add', 'remove'])
-            changes[key].add = changes[key].add.filter(Boolean)
-          } else if (key === 'birthOrder') {
-            changes[key] = parseInt(value)
-          } else {
-            changes[key] = value
+          switch (key) {
+            case 'altNames':
+              if (!isEqual(this.formData.altNames.add, this.profile.altNames)) {
+                changes[key] = pick(this.formData.altNames, ['add', 'remove'])
+                changes[key].add = changes[key].add.filter(Boolean)
+              }
+              break
+            case 'birthOrder':
+              changes[key] = parseInt(value)
+              break
+            case 'relationshipType':
+              if (value && value !== this.profile.relationship.relationshipType) {
+                changes[key] = value
+              }
+              break
+            default:
+              changes[key] = value
           }
         }
       })
@@ -431,7 +445,11 @@ export default {
       }
 
       var output = Object.assign({}, pick(this.profileChanges, this.permitted))
-      this.$emit('submit', output)
+
+      if (!isEmpty(output)) {
+        this.$emit('submit', output)
+      }
+
       this.formData = defaultData(this.profile)
       this.toggleEdit()
     },
