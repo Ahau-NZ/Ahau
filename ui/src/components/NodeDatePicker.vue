@@ -54,7 +54,7 @@ export default {
 
       var myDate = new Date(date)
 
-      return `${myDate.getDate()} ${MONTHS[myDate.getMonth()]} ${myDate.getFullYear()}`
+      return `${this.getOrdinalNum(myDate.getDate())} of ${MONTHS[myDate.getMonth()]} ${myDate.getFullYear()}`
     },
     /*
         gets todays date in YYYY-MM-DD format
@@ -76,6 +76,11 @@ export default {
       menu: false,
       updatedValue: null,
       on: false
+    }
+  },
+  methods: {
+    getOrdinalNum (n) {
+      return n + (n > 0 ? ['th', 'st', 'nd', 'rd'][(n > 3 && n < 21) || n % 10 > 3 ? 0 : n % 10] : '')
     }
   },
   watch: {
