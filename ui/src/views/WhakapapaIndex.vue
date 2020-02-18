@@ -47,6 +47,7 @@
         @close="toggleViewForm"
         @submit="handleStepOne($event)"
       />
+      <!-- TODO: add suggestions in here as well? -->
       <NewNodeDialog
         v-if="showProfileForm"
         :show="showProfileForm"
