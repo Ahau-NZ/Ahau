@@ -62,5 +62,20 @@ export const PERMITTED_PROFILE_ATTRS = [
   'relationshipType'
 ]
 
+export const MONTHS = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December'
+]
+
 export const DECEASED_COLOUR = '#bfbfbf' // TODO: is this the right place to put these?
 export const ALIVE_COLOUR = '#009999'
