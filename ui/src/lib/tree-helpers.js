@@ -118,7 +118,8 @@ function hydrate (node, flatStore) {
 // - src/lib/tree-helpers.js
 // - graphql/ssb/queries/get-profile.js
 function fixDate (date) {
-  date = date.slice(0, 10)
-  date = date === '-005001-12' ? null : date
+  if (date[0] === '-') {
+    date = null
+  }
   return date
 }
