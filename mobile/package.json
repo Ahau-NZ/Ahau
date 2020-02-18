@@ -11,10 +11,7 @@
   },
   "main": "index.js",
   "scripts": {
-<<<<<<< HEAD
-=======
     "build:res": "./scripts/build-res.js",
->>>>>>> da744573011f248c7066f76014fcd841a5a437cf
     "dev:android": "cross-env NODE_ENV=development cross-env ./scripts/run-android.sh",
     "dev:android-update": "cross-env NODE_ENV=development cross-env ./scripts/run-android-update.sh",
     "dev:server": "cd src/nodejs-project && npm i && cross-env NODE_ENV=development nodemon index.js",
