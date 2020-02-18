@@ -48,7 +48,7 @@ NOTES
 - live-reload doesn't work for `ssb-server` (back end) code.
 - Windows sets env differently. Open 2 Powershell windows and run the following in each:
   - `npm run dev:ui`
-  - `$env:NODE_ENV="development"`, then `npm start:desktop` (set the env to development, then launch electron app)
+  - `cd desktop`, then `npm run start:dev` (this sets the env to development and launches electron app)
 
 
 ### Mobile
