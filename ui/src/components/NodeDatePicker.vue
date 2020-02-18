@@ -36,6 +36,7 @@
   </v-layout>
 </template>
 <script>
+import { MONTHS } from '../lib/constants'
 export default {
   name: 'NodeDatePicker',
   props: {
@@ -48,7 +49,12 @@ export default {
     date () {
       var date = this.updatedValue === null ? this.value : this.updatedValue
       this.$emit('date', date)
-      return date
+
+      if (!date) return date
+
+      var myDate = new Date(date)
+
+      return `${myDate.getDate()} ${MONTHS[myDate.getMonth()]} ${myDate.getFullYear()}`
     },
     /*
         gets todays date in YYYY-MM-DD format
