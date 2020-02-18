@@ -26,7 +26,7 @@ function defaultImage (bornAt, gender) {
         default:
           return tane
       }
-    case 'female':
+    default:
       switch (true) {
         case age === null:
           return wahine
@@ -37,7 +37,5 @@ function defaultImage (bornAt, gender) {
         default:
           return wahine
       }
-    default:
-      return wahine
   }
 }
