@@ -36,12 +36,6 @@ $ npm run setup:mobile
 
 ## Development
 
-```bash
-$ npm run dev
-// start a webpack dev-server which serves up live-updating UI on the browser
-// and a live-updating GraphQL and scuttlebutt server
-```
-
 ### Desktop
 
 ```bash
@@ -49,6 +43,13 @@ $ npm run dev:desktop
 // launches the scuttlebutt + graphql servers + electron
 // and starts a webpack dev-server which serves up live-updating UI
 ```
+
+NOTES
+- live-reload doesn't work for `ssb-server` (back end) code.
+- Windows sets env differently. Open 2 Powershell windows and run the following in each:
+  - `npm run dev:ui`
+  - `cd desktop`, then `npm run start:dev` (this sets the env to development and launches electron app)
+
 
 ### Mobile
 
@@ -69,7 +70,7 @@ $ npm run dev:android-update
 // compiles just the frontend and runs the Android app on a device
 ```
 
-OTHER TOOLS
+### Other tools
 - [Graphiql](https://github.com/graphql/graphiql)
   - a sweet GraphQL tool for exploring generated doc and practicing queries/ mutations with the server
   - start the above dev environment then go to http://localhost:4000/graphql
@@ -77,12 +78,6 @@ OTHER TOOLS
   - a tool to help you build components in isolation
   - start it with `npm run storybook`
   - serves up `*.stories.js` files
-
-NOTES
-- live-reload doesn't work for `ssb-server` (back end) code.
-- Windows sets env differently. Open 2 Powershell windows and run the following in each:
-  - `npm run dev:ui`
-  - `$env:NODE_ENV="development"`, then `npm start:desktop` (set the env to development, then launch electron app)
 
 ## Production Build
 
@@ -131,9 +126,16 @@ NOTES
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
 
-see also:
+### see also:
 
 ```
-npm run test:ui
-npm run lint:ui
+npm run dev:web // starts the mobile server and a ui live-reload server
+
+npm run test:ui // test 
+
+npm run lint // lint whole project
+
+npm run lint:ui // lint only UI
+
+npm run cleanup // delete node_modules and package-lock.json files from all packages
 ```
