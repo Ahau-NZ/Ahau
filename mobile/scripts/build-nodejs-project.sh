@@ -42,9 +42,6 @@ find ./node_modules \
   -print0 | xargs -0 rm -rf; # delete everything in the list
 cd ../..;
 
-echo "Updating package-lock.json...";
-cp ./www/nodejs-project/package-lock.json ./src/nodejs-project/package-lock.json;
-
 echo "Deleting some definitely-not-necessary files from node_modules...";
 find ./www/nodejs-project/node_modules -empty -type d -delete;
 
