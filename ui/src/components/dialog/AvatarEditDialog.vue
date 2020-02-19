@@ -3,14 +3,14 @@
     <Dialog :show="show" @close="close" width="500px" :goBack="close" enableMenu>
       <v-container style="background: black;">
         <v-row justify="center">
-          <v-col style="max-width: 600px;">
+          <v-col style="max-width: 400px;">
             <clipper-fixed
               ref="avatar"
               :grid="false"
               :src="avatarImage"
               :area="100"
               bg-color="rgba(0, 0, 0, 0)"
-              :round="round"
+              :round="!isView"
               shadow="rgba(0,0,0,0.5)"
               :rotate="rotation"
             />
@@ -58,7 +58,7 @@ export default {
   props: {
     show: { type: Boolean, default: false },
     avatarImage: String,
-    round: { type: Boolean, default: true }
+    isView: { type: Boolean, default: false }
   },
   data () {
     return {

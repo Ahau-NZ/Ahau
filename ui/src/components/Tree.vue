@@ -156,13 +156,11 @@ export default {
     links () {
       return this.treeLayout(this.root)
         .links() // returns the array of links
-        .map((d, i) => {
-          // returns a new custom object for each link
+        .map((d, i) => { // returns a new custom object for each link
           return {
             id: `link-${i}-${i + 1}`,
             index: i,
-            // TODO this is where we can pass through relationshipType
-            // data: d.target.data,
+            relationshipType: d.target.data.relationshipType ? d.target.data.relationshipType[0] : '',
             // coordinates from drawing lines/links from Parent(x1,y1) to Child(x2,y2)
             x1: d.source.x, // centre x position of parent node
             x2: d.target.x, // centre x position of child node
