@@ -11,7 +11,7 @@
         light
         persistent
         :max-width="width"
-        :fullscreen="this.mobile"
+        :fullscreen="mobile"
       >
         <div>
           <Appbar

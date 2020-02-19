@@ -139,7 +139,7 @@ export default {
       const uri = get(this.node, 'data.avatarImage.uri')
       if (uri) return uri
 
-      return avatarHelper.defaultImage(this.profile.bornAt, this.profile.gender)
+      return avatarHelper.defaultImage(false, this.profile.bornAt, this.profile.gender)
     },
     textWidth () {
       // const { x, y } = textElm.getBBox();

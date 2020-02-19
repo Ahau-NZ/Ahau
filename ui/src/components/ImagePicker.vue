@@ -4,13 +4,14 @@
       <v-btn v-if="!avatar.new" class="toggle" fab small color="white">
         <v-icon class="black--text">mdi-pencil</v-icon>
       </v-btn>
-      &nbsp; &nbsp; Upload profile photo
+      &nbsp; &nbsp; {{ label }}
     </clipper-upload>
     <AvatarEditDialog
       :show="avatar.showEditor"
       :avatarImage="avatar.new"
       @submit="updateAvatar($event)"
       @close="toggleAvatar(null)"
+      :isView="isView"
     />
   </div>
 </template>
@@ -21,6 +22,13 @@ import AvatarEditDialog from '@/components/dialog/AvatarEditDialog.vue'
 export default {
   name: 'ImagePicker',
   components: { AvatarEditDialog },
+  props: {
+    label: {
+      type: String,
+      default: 'Upload profile photo'
+    },
+    isView: { type: Boolean, default: false }
+  },
   data () {
     return {
       avatar: {

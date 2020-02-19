@@ -5,13 +5,18 @@ import wahine from '../assets/wahine.svg'
 import tama from '../assets/tama.svg'
 import kotiro from '../assets/kotiro.svg'
 
+import whakapapa from '@/assets/whakapapa.svg'
+
 import calculateAge from './calculate-age'
 
 export default {
   defaultImage
 }
 
-function defaultImage (bornAt, gender) {
+function defaultImage (isView, bornAt, gender) {
+  if (isView) {
+    return whakapapa
+  }
   var age = calculateAge(bornAt)
 
   switch (gender) {

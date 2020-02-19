@@ -267,7 +267,7 @@
               <v-col cols="12" sm="auto">
                 <v-btn
                   v-if="isEditing"
-                  @click="this.toggleDelete"
+                  @click="toggleDelete"
                   align="center"
                   color="white"
                   text
@@ -310,6 +310,7 @@ import {
   PERMITTED_PROFILE_ATTRS,
   RELATIONSHIPS
 } from '@/lib/constants'
+
 import Dialog from '@/components/Dialog.vue'
 import Avatar from '@/components/Avatar.vue'
 import AvatarGroup from '@/components/AvatarGroup.vue'
@@ -362,6 +363,7 @@ export default {
     warnAboutChildren: { type: Boolean, default: true },
     relationshipLinks: { type: Array }
   },
+
   data () {
     return {
       genders: GENDERS,
@@ -443,7 +445,6 @@ export default {
       if (!this.$refs.form.validate()) {
         return
       }
-
       var output = Object.assign({}, pick(this.profileChanges, this.permitted))
 
       if (!isEmpty(output)) {

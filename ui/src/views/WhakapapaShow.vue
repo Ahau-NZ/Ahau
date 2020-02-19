@@ -11,24 +11,23 @@
               >
             </v-col>
           </v-row>
+          <v-row>
+            <v-btn
+              @click.prevent="toggleEditWhakapapa"
+              align="right"
+              color="white"
+              text
+              x-small
+              class="blue--text edit"
+            >
+              <v-icon small class="blue--text" left>mdi-pencil</v-icon>
+              Edit
+            </v-btn>
+          </v-row>
         </WhakapapaViewCard>
       </v-row>
-      <v-banner light v-if="mobile" single-line>
-        <v-avatar size="35">
-          <v-img
-            v-if="whakapapaView.image && whakapapaView.image.uri"
-            :src="whakapapaView.image.uri"
-            :alt="alt"
-          />
-          <v-img v-else :src="getImage()" />
-        </v-avatar>
-        <span>
-          {{ whakapapaView.name }}
-        </span>
-        <v-btn text color="primary" @click="toggleInformation()"
-          >More info</v-btn
-        >
-      </v-banner>
+
+      <WhakapapaBanner v-if="mobile" :view="whakapapaView" @edit="toggleEditWhakapapa" @more-info="toggleInformation()"/>
 
       <v-row v-if="!mobile" class="feedback">
         <v-col>
@@ -87,7 +86,16 @@
     <WhakapapaViewDialog
       :show="dialog.information"
       @close="toggleInformation()"
+      @edit="toggleEditWhakapapa()"
       :view="whakapapaView"
+    />
+    <WhakapapaEditDialog
+      v-if="dialog.editWhakapapa"
+      :show="dialog.editWhakapapa"
+      :view="whakapapaView"
+      @close="toggleEditWhakapapa()"
+      @submit="updateWhakapapa($event)"
+      @delete="deleteWhakapapa()"
     />
   </div>
 </template>
@@ -99,16 +107,20 @@ import isEmpty from 'lodash.isempty'
 import { VueContext } from 'vue-context'
 
 import WhakapapaViewCard from '@/components/whakapapa-view/WhakapapaViewCard.vue'
+import WhakapapaBanner from '@/components/whakapapa-view/WhakapapaBanner.vue'
+
 import Tree from '@/components/Tree.vue'
 import FeedbackButton from '@/components/FeedbackButton.vue'
 
 import ViewEditNodeDialog from '@/components/dialog/ViewEditNodeDialog.vue'
 import NewNodeDialog from '@/components/dialog/NewNodeDialog.vue'
 import DeleteNodeDialog from '@/components/dialog/DeleteNodeDialog.vue'
+import WhakapapaEditDialog from '@/components/dialog/WhakapapaEditDialog.vue'
 import WhakapapaViewDialog from '@/components/dialog/WhakapapaViewDialog.vue'
 
 import tree from '@/lib/tree-helpers'
 import findSuccessor from '@/lib/find-successor'
+import { PERMITTED_PROFILE_ATTRS } from '@/lib/constants'
 import avatarHelper from '@/lib/avatar-helpers.js'
 
 import * as d3 from 'd3'
@@ -122,19 +134,21 @@ const saveWhakapapaLinkMutation = input => ({
   variables: { input }
 })
 
-const saveWhakapapaViewMutation = input => ({
-  mutation: gql`
+const saveWhakapapaViewMutation = input => (
+  {
+    mutation: gql`
     mutation($input: WhakapapaViewInput) {
       saveWhakapapaView(input: $input)
     }
   `,
-  variables: { input }
-})
+    variables: { input }
+  })
 
 export default {
   name: 'WhakapapaShow',
   data () {
     return {
+      permitted: PERMITTED_PROFILE_ATTRS,
       whakapapaView: {
         name: 'Loading',
         description: '',
@@ -144,7 +158,6 @@ export default {
         image: { uri: '' }
       },
       // the record which defines the starting point for a tree (the 'focus')
-
       whoami: {
         profile: { id: '' }
       },
@@ -165,6 +178,7 @@ export default {
       dialog: {
         new: false,
         view: false,
+        editWhakapapa: false,
         delete: false,
         type: 'child',
         information: false
@@ -369,6 +383,7 @@ export default {
         console.error(e)
       }
     },
+
     collapseNode (profileId) {
       const profile = this.profiles[profileId]
       const { children, _children = [] } = profile
@@ -381,6 +396,7 @@ export default {
         children: _children
       })
     },
+
     canDelete (profile) {
       if (!profile) return false
 
@@ -401,6 +417,9 @@ export default {
     openContextMenu ({ event, profileId }) {
       this.setSelectedProfile(profileId)
       this.$refs.menu.open(event)
+    },
+    toggleEditWhakapapa () {
+      this.dialog.editWhakapapa = !this.dialog.editWhakapapa
     },
     toggleView () {
       this.dialog.view = !this.dialog.view
@@ -800,10 +819,70 @@ export default {
       var mainParent = this.selectedProfile.parents[0]
       this.selectedProfile.relationship = this.relationshipLinks[mainParent.id + '-' + this.selectedProfile.id]
     },
+
+    // save whakapapa changes
+    async updateWhakapapa (whakapapaChanges) {
+      const input = {
+        id: this.$route.params.id
+      }
+      Object.entries(whakapapaChanges).forEach(([key, value]) => {
+        if (!isEmpty(value)) input[key] = value
+      })
+      try {
+        const res = await this.$apollo.mutate(saveWhakapapaViewMutation(input))
+        // If saving changes works than set the new whakapapa information
+        // TODO: res has new whakapapa record information so we dont need to query it here
+        if (res.data) {
+          const updatedWhakapapa = await this.$apollo.query({
+            query: gql`
+              query($id: String!) {
+                whakapapaView(id: $id) {
+                  name
+                  description
+                  image { uri }
+                  focus
+                  recps
+                }
+              }
+            `,
+            variables: { id: res.data.saveWhakapapaView },
+            fetchPolicy: 'no-cache'
+          })
+          // update the whakapapaView with new record
+          if (updatedWhakapapa.data) {
+            this.whakapapaView = updatedWhakapapa.data.whakapapaView
+          }
+        } else console.error(res)
+      } catch (err) {
+        throw err
+      }
+    },
+    async deleteWhakapapa () {
+      const treeResult = await this.$apollo.mutate({
+        mutation: gql`
+          mutation($input: WhakapapaViewInput) {
+            saveWhakapapaView(input: $input)
+          }
+        `,
+        variables: {
+          input: {
+            id: this.$route.params.id,
+            tombstone: { date: new Date() }
+          }
+        }
+      })
+
+      if (treeResult.errors) {
+        console.error('failed to delete tree', treeResult)
+        return
+      }
+      this.$router.push({ name: 'whakapapaIndex', params: { id: this.whakapapaView.recps } })
+    },
     getImage () {
       return avatarHelper.defaultImage(this.bornAt, this.gender)
     }
   },
+
   components: {
     WhakapapaViewCard,
     FeedbackButton,
@@ -812,7 +891,9 @@ export default {
     NewNodeDialog,
     DeleteNodeDialog,
     ViewEditNodeDialog,
-    WhakapapaViewDialog
+    WhakapapaEditDialog,
+    WhakapapaViewDialog,
+    WhakapapaBanner
   }
 }
 </script>
