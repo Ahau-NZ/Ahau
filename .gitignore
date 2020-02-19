@@ -13,6 +13,8 @@ desktop/build/win_csc.pfx
 mobile/platforms
 mobile/plugins
 mobile/www
+mobile/build.json
+mobile/ahau-android-upload-key.keystore
 
 # local env files
 .env.local

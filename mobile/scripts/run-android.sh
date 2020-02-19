@@ -24,5 +24,25 @@ cd ../mobile;
 
 # Compile the mobile app
 cordova prepare android;
-NODEJS_MOBILE_BUILD_NATIVE_MODULES=1 cordova compile android;
-cordova run android --nobuild;
+
+if [ $NODE_ENV == "production" ]; then
+  echo "\n\nCompiling Android App for Google Play release...\n\n";
+
+  if [ ! -f './ahau-android-upload-key.keystore' ]; then
+    echo "Keystore file not found! It should be in the ./mobile folder";
+    exit 1;
+  fi
+  if [ ! -f './build.json' ]; then
+    echo "build.json file not found! It should be in the ./mobile folder";
+    exit 1;
+  fi
+
+  $(npm bin)/cordova-set-version;
+
+  NODEJS_MOBILE_BUILD_NATIVE_MODULES=1 cordova run android --release \
+    --buildConfig=build.json;
+else
+  echo "\n\nCompiling Android App for local development...\n\n";
+  NODEJS_MOBILE_BUILD_NATIVE_MODULES=1 cordova compile android;
+  cordova run android --nobuild;
+fi
