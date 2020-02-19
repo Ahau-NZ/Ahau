@@ -156,7 +156,7 @@ $ npm run release:android
 After it is done, you can find the APK file at
 
 ```
-./mobile/platforms/android/app/build/outputs/apk/release/app-release.apk
+./releases/android/app-release.apk
 ```
 
 Take that file and upload it in the Google Play developer console website.
