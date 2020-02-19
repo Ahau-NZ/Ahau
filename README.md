@@ -1,4 +1,4 @@
-# Āhau 
+# Āhau
 
 A whakapapa app that works peer-to-peer, and doesn't require internet.
 All data is held by you and those friends you connect with, and is cryptographically secured.
@@ -118,12 +118,50 @@ NOTES
     ```
 
   - Mix bought the Signing Cerificate [here](https://docs.microsoft.com/en-us/windows-hardware/drivers/dashboard/get-a-code-signing-certificate?redirectedfrom=MSDN)
-    - notes on aquiring + exporting :  
+    - notes on aquiring + exporting :
       - https://support.sectigo.com/Com_KnowledgeDetailPage?Id=kA01N000000zFK0#ie_export_certificate
       - this may need to be done from the same browser as you applied for the certificate from
 
+### Mobile (Android)
 
-### Customize configuration
+First, ask the project manager for these secrets:
+
+- The "keystore file" (`ahau-android-upload-key.keystore`)
+- The "keystore password" (40 characters long, full of special characters)
+
+Put the keystore file in the path `/mobile/ahau-android-upload-key.keystore`. **Warning: never git commit** this file! It is secret to team members only.
+
+Second, create a new file at `/mobile/build.json`, this file should also **never be git committed**. Fill the contents of the file with:
+
+```json
+{
+  "android": {
+    "release": {
+      "keystore": "ahau-android-upload-key.keystore",
+      "keystoreType": "pkcs12",
+      "alias": "ahau-whakapapa-app",
+      "storePassword": "PUT THE 40 CHARACTERS LONG PASSWORD HERE",
+      "password" : "PUT THE SAME 40 CHARACTERS LONG PASSWORD HERE"
+    }
+  }
+}
+```
+
+When all of that is set up, just run
+
+```bash
+$ npm run release:android
+```
+
+After it is done, you can find the APK file at
+
+```
+./mobile/platforms/android/app/build/outputs/apk/release/app-release.apk
+```
+
+Take that file and upload it in the Google Play developer console website.
+
+## Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
 
 ### see also:

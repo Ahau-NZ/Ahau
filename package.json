@@ -17,6 +17,7 @@
     "build-ui:desktop": "cd ui && npm run build:desktop",
     "build-ui:mobile": "cd ui && npm run build:mobile",
     "release:desktop": "npm run build-ui:desktop && cd desktop && npm run dist && cd .. && npm run move-release:desktop",
+    "release:android": "cd mobile && npm run dist",
     "move-release:desktop": "rimraf releases/desktop && mvy desktop/dist/installers releases/desktop",
     "postinstall": "cd ui && npm i && cd ../server && npm i",
     "db:reset": "rm -rf ~/.ahau-dev",
