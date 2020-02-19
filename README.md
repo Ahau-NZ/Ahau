@@ -127,11 +127,14 @@ NOTES
 First, ask the project manager for these secrets:
 
 - The "keystore file" (`ahau-android-upload-key.keystore`)
-- The "keystore password" (40 characters long, full of special characters)
+- The "build.json file" (contains the 40 character password)
 
-Put the keystore file in the path `/mobile/ahau-android-upload-key.keystore`. **Warning: never git commit** this file! It is secret to team members only.
+Put both files in:
 
-Second, create a new file at `/mobile/build.json`, this file should also **never be git committed**. Fill the contents of the file with:
+- `mobile/ahau-android-upload-key.keystore`
+- `mobile/build.json`
+
+**Warning! Never git commit** neither of those files! They are secret to team members only. Make sure the file `mobile/build.json` looks like this:
 
 ```json
 {
@@ -140,8 +143,8 @@ Second, create a new file at `/mobile/build.json`, this file should also **never
       "keystore": "ahau-android-upload-key.keystore",
       "keystoreType": "pkcs12",
       "alias": "ahau-whakapapa-app",
-      "storePassword": "PUT THE 40 CHARACTERS LONG PASSWORD HERE",
-      "password" : "PUT THE SAME 40 CHARACTERS LONG PASSWORD HERE"
+      "storePassword": "THE 40 CHARACTERS LONG PASSWORD IS HERE",
+      "password" : "THE 40 CHARACTERS LONG PASSWORD IS HERE"
     }
   }
 }
@@ -169,7 +172,7 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 ```
 npm run dev:web // starts the mobile server and a ui live-reload server
 
-npm run test:ui // test 
+npm run test:ui // test
 
 npm run lint // lint whole project
 
