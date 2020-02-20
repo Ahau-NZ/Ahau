@@ -64,7 +64,7 @@
       </clipper-upload>
     </v-row>
 
-    <v-row class="avatar-row" :class="{ 'py-4': mobile }">
+    <v-row class="avatar-row" :class="{ 'my-4': mobile }">
       <v-row class="avatar-box">
         <clipper-upload
           v-if="!header.overlay"
@@ -82,8 +82,8 @@
           v-if="!avatar.new"
           :image="avatarImage"
           :alt="preferredName"
-          size="18vh"
-          class="pa-0"
+          :size="mobile ? '25vh' : '18vh'"
+          class="my-n3"
         />
 
         <v-overlay :value="avatar.overlay" color="black" opacity="0.9">
