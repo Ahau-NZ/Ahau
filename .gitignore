@@ -1,20 +1,19 @@
 .DS_Store
 node_modules
-dist
-bundle
-installers
-releases
+
+/releases
 
 # Electron
-desktop/electron-builder.env
-desktop/build/win_csc.pfx
+/desktop/dist
+/desktop/electron-builder.env
+/desktop/build/win_csc.pfx
 
 # Cordova
-mobile/platforms
-mobile/plugins
-mobile/www
-mobile/build.json
-mobile/ahau-android-upload-key.keystore
+/mobile/platforms
+/mobile/plugins
+/mobile/www
+/mobile/build.json
+/mobile/ahau-android-upload-key.keystore
 
 # local env files
 .env.local
