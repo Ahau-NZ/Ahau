@@ -14,7 +14,7 @@
     "build:res": "./scripts/build-res.js",
     "dev:android": "cross-env NODE_ENV=development cross-env ./scripts/run-android.sh",
     "dev:android-update": "cross-env NODE_ENV=development cross-env ./scripts/run-android-update.sh",
-    "dev:server": "cd src/nodejs-project && npm install && cross-env NODE_ENV=development nodemon index.js",
+    "dev:server": "cd src/nodejs-project && npm install --no-package-lock && cross-env NODE_ENV=development nodemon index.js",
     "dist": "cross-env NODE_ENV=production cross-env ./scripts/run-android.sh",
     "postinstall": "./scripts/postinstall.sh",
     "setup": "cordova platform add android && cordova clean",
