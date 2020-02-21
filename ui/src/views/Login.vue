@@ -48,7 +48,7 @@ E te tangata
 Whāia te māutauranga kai mārama
 Kia whai take ngā mahi katoa
 Tū māia, tū kaha
-Aroha atu, aroha mai 
+Aroha atu, aroha mai
 Tātou i a tātou katoa
 
 For this person
@@ -106,7 +106,7 @@ export default {
             }
           }
         `,
-        fetchPolicy: 'nocache'
+        fetchPolicy: 'no-cache'
       })
 
       if (result.errors) throw result.errors
