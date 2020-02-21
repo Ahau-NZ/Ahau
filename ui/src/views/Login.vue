@@ -48,7 +48,7 @@ E te tangata
 Whāia te māutauranga kai mārama
 Kia whai take ngā mahi katoa
 Tū māia, tū kaha
-Aroha atu, aroha mai 
+Aroha atu, aroha mai
 Tātou i a tātou katoa
 
 For this person
@@ -67,7 +67,7 @@ export default {
   data () {
     return {
       isLoading: true,
-      isSetup: true, // has profile set up
+      isSetup: false, // has profile set up
       profile: {
         id: null,
         preferredName: null,
@@ -75,15 +75,20 @@ export default {
       }
     }
   },
+  watch: {
+    mobileServerLoaded: {
+      handler (nextValue) {
+        if (nextValue && process.env.VUE_APP_PLATFORM === 'cordova') {
+          this.getCurrentIdentity()
+        }
+      },
+      immediate: true
+    }
+  },
   mounted () {
     if (process.env.VUE_APP_PLATFORM !== 'cordova') {
       this.getCurrentIdentity()
     }
-    if (process.env.NODE_ENV === 'development') {
-      this.proceed()
-      return
-    }
-    setTimeout(this.proceed, 2e3)
   },
   methods: {
     async getCurrentIdentity () {
@@ -101,29 +106,30 @@ export default {
             }
           }
         `,
-        fetchPolicy: 'nocache'
+        fetchPolicy: 'no-cache'
       })
 
       if (result.errors) throw result.errors
 
-      this.profile = result.data.whoami.profile
+      if (result.data.whoami.profile) this.profile = result.data.whoami.profile
+
+      this.proceed()
     },
 
     karakiaTūwhera () {
       console.log(karakia)
     },
-    proceed () {
-      if (this.$apollo.loading) {
-        console.log('$apollo.loading')
-        return setTimeout(this.proceed, 500)
-      }
 
-      if (!this.profile || !this.profile.id) {
-        console.log('waiting for apollo!')
-        return setTimeout(this.proceed, 500)
+    proceed () {
+      if (this.$apollo.loading || !this.profile.id) {
+        console.log('waiting for apollo')
+        setTimeout(this.proceed, 300)
+        return
       }
 
       this.isSetup = Boolean(this.profile.preferredName)
+
+      // Shortcut in dev, that saves us from doing one click when testing
       if (this.isSetup && process.env.NODE_ENV === 'development') {
         this.karakiaTūwhera()
         this.$router.push({ name: 'whakapapaIndex' })
@@ -133,17 +139,6 @@ export default {
     }
   },
 
-  watch: {
-    mobileServerLoaded: {
-      handler (nextValue) {
-        if (nextValue && process.env.VUE_APP_PLATFORM === 'cordova') {
-          this.getCurrentIdentity()
-          this.proceed()
-        }
-      },
-      immediate: true
-    }
-  },
   components: {
     Avatar
   }
