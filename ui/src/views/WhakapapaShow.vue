@@ -7,7 +7,7 @@
             <v-col class="lock-icon">
               <v-icon small color="#555">mdi-lock</v-icon>
               <span id="lock-icon-margin"
-                >Private record - Only visible by you</span
+                >Private record - Only visible by you BRO</span
               >
             </v-col>
           </v-row>
@@ -47,6 +47,8 @@
       </v-row>
     </v-container>
 
+   
+
     <vue-context ref="menu">
       <li v-for="(option, index) in contextMenuOpts" :key="index">
         <a href="#" @click.prevent="option.action">{{ option.title }}</a>
@@ -56,7 +58,7 @@
       </li>
     </vue-context>
 
-    <ViewEditNodeDialog
+    <!-- <ViewEditNodeDialog
       v-if="dialog.view"
       :show="dialog.view"
       :profile="selectedProfile"
@@ -67,7 +69,7 @@
       @submit="updateProfile($event)"
       @delete="deleteProfile()"
       @open-profile="setSelectedProfile($event)"
-    />
+    /> -->
     <NewNodeDialog
       v-if="dialog.new"
       :show="dialog.new"
@@ -97,6 +99,22 @@
       @submit="updateWhakapapa($event)"
       @delete="deleteWhakapapa()"
     />
+
+     <!-- Side Menu -->
+     <div id="sideMenu" ref="sideMenu" style="position: absolute; top: 0px; right:-35%; width: 35%; height: 100vh; background-color: white;">
+      <SideViewEditNodeDialog
+          v-if="dialog.view"
+          :show="dialog.view"
+          :profile="selectedProfile"
+          :deleteable="canDelete(selectedProfile)"
+          :warnAboutChildren="selectedProfile && selectedProfile.id !== whakapapaView.focus"
+          @close="toggleView()"
+          @new="toggleNewPerson($event)"
+          @submit="updateProfile($event)"
+          @delete="deleteProfile()"
+          @open-profile="setSelectedProfile($event)"
+      />
+    </div>
   </div>
 </template>
 
@@ -112,6 +130,7 @@ import WhakapapaBanner from '@/components/whakapapa-view/WhakapapaBanner.vue'
 import Tree from '@/components/Tree.vue'
 import FeedbackButton from '@/components/FeedbackButton.vue'
 
+import SideViewEditNodeDialog from '@/components/dialog/SideViewEditNodeDialog.vue'
 import ViewEditNodeDialog from '@/components/dialog/ViewEditNodeDialog.vue'
 import NewNodeDialog from '@/components/dialog/NewNodeDialog.vue'
 import DeleteNodeDialog from '@/components/dialog/DeleteNodeDialog.vue'
@@ -422,7 +441,12 @@ export default {
       this.dialog.editWhakapapa = !this.dialog.editWhakapapa
     },
     toggleView () {
-      this.dialog.view = !this.dialog.view
+      this.dialog.view = !this.dialog.view;
+      if (this.dialog.view == true) {
+        this.$refs.sideMenu.style.right = "0px";
+      } else {
+        this.$refs.sideMenu.style.right = "-35%";
+      }
     },
     toggleDelete () {
       this.dialog.delete = !this.dialog.delete
@@ -891,6 +915,7 @@ export default {
     NewNodeDialog,
     DeleteNodeDialog,
     ViewEditNodeDialog,
+    SideViewEditNodeDialog,
     WhakapapaEditDialog,
     WhakapapaViewDialog,
     WhakapapaBanner
@@ -949,6 +974,10 @@ h1 {
   #lock-icon-margin {
     margin-left: 10px;
   }
+}
+
+#sideMenu {
+  transition: all 0.3s ease-in-out;
 }
 
 svg {
