@@ -810,11 +810,13 @@ export default {
         console.error(e)
       }
     },
-    setSelectedProfile (profileId) {
+    async setSelectedProfile (profileId) {
+      await this.loadDescendants(profileId)
       this.selectedProfile = tree.hydrate(
         this.profiles[profileId],
         this.profiles
       )
+
       if (!this.selectedProfile.parents || this.selectedProfile.parents.length === 0) return
       var mainParent = this.selectedProfile.parents[0]
       this.selectedProfile.relationship = this.relationshipLinks[mainParent.id + '-' + this.selectedProfile.id]
