@@ -8,20 +8,29 @@ import vuetify from './plugins/vuetify'
 import nodejsClient from './plugins/cordova-nodejs-client'
 import VuejsClipper from 'vuejs-clipper'
 
-// Initiate NodeJS if on Cordova
 if (process.env.VUE_APP_PLATFORM === 'cordova') {
-  nodejsClient.init()
+  document.addEventListener('deviceready', main, false)
+} else {
+  main()
 }
-// install
-Vue.use(VuejsClipper)
-Vue.config.productionTip = false
 
-new Vue({
-  router,
-  // store,
+function main () {
+  // Initiate NodeJS if on Cordova
+  if (process.env.VUE_APP_PLATFORM === 'cordova') {
+    nodejsClient.init()
+  }
 
-  apolloProvider: createProvider(),
-  vuetify,
+  // install
+  Vue.use(VuejsClipper)
+  Vue.config.productionTip = false
 
-  render: h => h(App)
-}).$mount('#app')
+  new Vue({
+    router,
+    // store,
+
+    apolloProvider: createProvider(),
+    vuetify,
+
+    render: h => h(App)
+  }).$mount('#app')
+}
