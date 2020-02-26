@@ -3,6 +3,13 @@
     <div v-if="isLoading" class="splash">
       <img src="@/assets/logo_red.svg" />
       <h1>Āhau</h1>
+      <v-progress-circular
+        v-if="mobile"
+        color="white"
+        :indeterminate="true"
+        size="16"
+        width="2"
+      />
     </div>
 
     <v-btn
@@ -73,6 +80,11 @@ export default {
         preferredName: null,
         avatarImage: null
       }
+    }
+  },
+  computed: {
+    mobile () {
+      return this.$vuetify.breakpoint.xs
     }
   },
   watch: {
@@ -163,8 +175,12 @@ h1 {
 }
 
 .splash {
-  height: 20vh;
+  min-height: 20vh;
   width: 20vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 .name {
   color: white;

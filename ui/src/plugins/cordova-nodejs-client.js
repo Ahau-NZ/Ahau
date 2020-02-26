@@ -3,16 +3,11 @@
 const noop = () => {}
 
 const nodejsClient = {
-  init ({ startupListener, channelListener } = {}) {
-    if (channelListener) nodejs.channel.setListener(channelListener)
+  start ({ onStartup, onReady, onAnyMessage } = {}) {
     console.log('Starting nodejs-mobile server')
-    nodejs.start('main.js', startupListener || noop)
-  },
-  hasStarted (cb) {
-    nodejs.channel.on('initialized', () => {
-      console.log('SERVER UP!')
-      cb()
-    })
+    if (onReady) nodejs.channel.on('initialized', onReady)
+    if (onAnyMessage) nodejs.channel.setListener(onAnyMessage)
+    nodejs.start('main.js', onStartup || noop)
   }
 }
 

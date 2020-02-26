@@ -5,7 +5,6 @@ import router from './router'
 
 import { createProvider } from './plugins/vue-apollo'
 import vuetify from './plugins/vuetify'
-import nodejsClient from './plugins/cordova-nodejs-client'
 import VuejsClipper from 'vuejs-clipper'
 
 if (process.env.VUE_APP_PLATFORM === 'cordova') {
@@ -15,11 +14,6 @@ if (process.env.VUE_APP_PLATFORM === 'cordova') {
 }
 
 function main () {
-  // Initiate NodeJS if on Cordova
-  if (process.env.VUE_APP_PLATFORM === 'cordova') {
-    nodejsClient.init()
-  }
-
   // install
   Vue.use(VuejsClipper)
   Vue.config.productionTip = false
