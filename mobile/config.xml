@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<widget id="io.ahau.whakapapa" version="1.0.3" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="io.ahau.whakapapa" version="1.0.3" xmlns="http://www.w3.org/ns/widgets" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:cdv="http://cordova.apache.org/ns/1.0">
   <name>Whakapapa</name>
   <description>
         A mobile app for gathering and sharing whakapapa (family trees, traditional knowledge). Built using scuttlebutt.
@@ -29,6 +29,9 @@
     <preference name="StatusBarOverlaysWebView" value="false"/>
     <preference name="android-minSdkVersion" value="21"/>
     <preference name="SplashMaintainAspectRatio" value="true"/>
+    <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest/application">
+      <application android:usesCleartextTraffic="true"/>
+    </edit-config>
     <splash density="land-hdpi" src="res/screen/android/drawable-hdpi/screen.png"/>
     <splash density="land-mdpi" src="res/screen/android/drawable-mdpi/screen.png"/>
     <splash density="land-xhdpi" src="res/screen/android/drawable-xhdpi/screen.png"/>
