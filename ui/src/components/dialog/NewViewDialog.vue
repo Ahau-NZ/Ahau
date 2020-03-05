@@ -9,10 +9,11 @@
                 'text-center': mobile,
                 headline: !mobile,
                 'subtitle-1': mobile,
-                'pt-4': mobile
+                'pt-4': mobile,
+                'pb-0': mobile
               }"
             >
-              {{ text || 'Create a new Whakapapa record' }}
+              {{ text || 'Create a new whakapapa record' }}
             </span>
           </v-card-title>
 
@@ -20,7 +21,7 @@
             <v-container light>
               <v-row class="d-flex">
                 <!-- left col -->
-                <v-col :cols="mobile ? 12 : 7">
+                <v-col :cols="mobile ? 12 : 6" :order="mobile ? 12:1">
                   <v-row>
                     <v-col cols="12" sm="12" md="12">
                       <v-text-field
@@ -34,6 +35,7 @@
                   </v-row>
 
                   <v-row>
+
                     <v-col cols="12" sm="12" md="12">
                       <v-textarea
                         label="Description"
@@ -42,12 +44,15 @@
                         required
                       ></v-textarea>
                     </v-col>
+
                   </v-row>
                   <v-row class="d-flex flex-column">
-                    <div class="black--text">
-                      Would you like to start with :
+                    <div  class="black--text">
+                      <!-- <v-icon small color="blue-grey" light @click.stop="helpertext = !helpertext"> mdi-information</v-icon> -->
+                      Would you like to start with
                     </div>
                     <v-radio-group v-model="formData.focus">
+
                       <v-radio :label="`Yourself`" value="self"></v-radio>
                       <v-radio :label="`Another person`" value="new"></v-radio>
                     </v-radio-group>
@@ -55,16 +60,15 @@
                 </v-col>
 
                 <!-- right col -->
-                <v-col :cols="mobile ? 12 : 5">
+                <v-col align="right" :cols="mobile ? 12 : 6" :order="mobile ? 1:12" class="py-0">
                   <!-- Whakapapa image upload -->
-                  <v-col cols="12" md="12" sm="12">
                     <v-row
-                      class="py-4 d-flex flex-column align-start justify-start"
+                      class="d-flex flex-column align-center justify-center"
                     >
                       <div v-if="formData.image" class="mr-4 mb-2">
                         <img
                           :src="formData.image.uri"
-                          style="width: 250px; height: 250px;"
+                          style="width: 350px; height: 350px;"
                         />
                       </div>
                       <!--
@@ -86,24 +90,18 @@
                         >
                       </clipper-upload>
                     </v-row>
-                  </v-col>
                   <!-- /Whakapapa image upload -->
                 </v-col>
               </v-row>
 
               <v-row class="actions">
-                <v-col cols="12" sm="5" md="4">
-                  <small>*indicates required field</small>
-                </v-col>
-
                 <v-col class="lock-icon" cols="12" sm="5" md="4">
                   <v-icon medium color="#555">mdi-lock</v-icon>
                   <span id="lock-icon-margin"
                     >Private record - Only visible by you</span
                   >
                 </v-col>
-
-                <v-col cols="12" sm="5" md="4">
+                <v-col  align="right" cols="12">
                   <v-btn @click="close" fab text color="secondary" class="mr-4">
                     <v-icon>mdi-close</v-icon>
                   </v-btn>
@@ -128,7 +126,7 @@
     <AvatarEditDialog
       :show="image.showEditor"
       :avatarImage="image.new"
-      :round="false"
+      :isView="true"
       @close="toggleImage(null)"
       @submit="handleNewImage($event)"
     />
@@ -161,6 +159,7 @@ export default {
   },
   data () {
     return {
+      helpertext: false,
       formData: defaultData(),
       form: {
         valid: true,

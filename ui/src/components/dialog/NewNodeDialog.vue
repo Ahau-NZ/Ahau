@@ -13,7 +13,7 @@
                       <v-icon>mdi-close</v-icon>
                     </v-btn>
                   </v-col>
-                  <v-col cols="12" class="pa-0">
+                  <v-col v-if="formData.gender !== '' || showAvatar" cols="12" class="pa-0">
                     <!-- Avatar -->
                     <Avatar
                       class="big-avatar"
@@ -26,7 +26,7 @@
                     />
                   </v-col>
                   <v-col v-if="!hasSelection" cols="12" justify="center" align="center" class="pa-0">
-                    <ImagePicker @updateAvatar="formData.avatarImage = $event"/>
+                    <ImagePicker @updateAvatar="formData.avatarImage = $event "/>
                   </v-col>
                     <!-- END of Avatar -->
                 </v-row>
@@ -35,7 +35,7 @@
                 <v-row>
                   <!-- DIALOG TITLE -->
                   <v-col cols="12" class="pa-0 pb-5">
-                    <h1> {{ hasSelection ? `Add ${formData.preferredName} as a ${title}` : `Add ${title}` }} </h1>
+                    <h1> {{ hasSelection ? `Add ${formData.preferredName} as a ${title}` : `${title}` }} </h1>
                   </v-col>
 
                   <!-- PREFERRED NAME + Search -->
@@ -320,6 +320,7 @@ export default {
         new: null,
         showEditor: false
       },
+      showAvatar: false,
       isDeceased: false,
       showDescription: false,
       radios: 'radio-1',
@@ -370,6 +371,12 @@ export default {
       // make sure adoption status can't be set true when relationship type is birth
       if (newValue === 'birth') this.formData.legallyAdopted = false
     },
+    // watch for changes to avatarImage to decide when to show avatar
+    'formData.avatarImage' (newValue) {
+      if (!isEmpty(this.formData.avatarImage)) {
+        this.showAvatar = true
+      }
+    },
     isDeceased (newValue) {
       if (newValue === false) {
         this.formData.diedAt = ''
@@ -390,6 +397,7 @@ export default {
         this.$emit('getSuggestions', null)
       }
     }
+
   },
   methods: {
     close: function () {
@@ -398,6 +406,9 @@ export default {
       // TODO: figure out when is a good time to reset these?
 
       this.$emit('close')
+    },
+    toggleShowAvatar () {
+      this.showAvatar = !this.showAvatar
     },
     toggleAvatar (file) {
       this.avatar.new = this.avatar.new ? null : file

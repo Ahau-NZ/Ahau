@@ -1,7 +1,23 @@
 <template>
   <Dialog :show="show" @close="close()" :enableBar="false">
     <v-card>
-      <v-container width="100%" height="100%" class="pa-0">
+          <v-row>
+            <v-col class="py-0" cols="10">
+              <v-card-title>
+                <span class="subtitle-2">Whakapapa record</span>
+              </v-card-title>
+          </v-col>
+           <v-col class="pb-0" align="right" cols="2">
+            <!-- Dialog close button -->
+            <v-btn @click="close" class="close" fab text color="secondary"
+            :class="{
+            'pt-4': mobile,
+            'pr-2': mobile
+            }">
+              <v-icon>mdi-close</v-icon>
+            </v-btn>
+          </v-col>
+          </v-row>
         <v-card-text>
           <Avatar
             class="big-avatar"
@@ -31,17 +47,13 @@
               {{ view.description }}
             </v-col>
           </v-row>
-          <v-row justify="center">
-            <v-btn @click="close">Hide</v-btn>
-          </v-row>
-          <v-row justify="center">
+          <v-row class="mx-1">
               <v-icon>
                 mdi-lock
               </v-icon>
-              <small class="mt-5"> Private record - Only visible by you</small>
+              <small class="ma-2"> Private record - Only visible by you</small>
           </v-row>
         </v-card-text>
-      </v-container>
     </v-card>
   </Dialog>
 </template>

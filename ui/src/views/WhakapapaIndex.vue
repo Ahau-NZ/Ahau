@@ -9,14 +9,26 @@
     <v-container
       :class="{
         'px-12': !mobile,
-        'py-12': !mobile,
-        'pa-0': mobile
+        'pa-0': mobile,
       }"
       class="body-width white mx-auto"
+      style="position:relative"
     >
+    <v-row class="pa-5" light>
+        <v-col class="headliner black--text pa-0">
+        Whakapapa records
+        </v-col>
+        <v-col align="right" class="pa-0">
+          <v-icon  color="blue-grey" light @click="toggleWhakapapaHelper">mdi-information</v-icon>
+        </v-col>
+    </v-row>
+
       <div
-        v-if="mobile && (!views || (views && views.length < 1))"
-        class="px-8 py-12 text-center headline grey--text"
+        v-if="!views || (views && views.length < 1)"
+        class="px-8 py-12 subtitle grey--text "
+        :class="{
+          'text-center': mobile
+        }"
       >
         No whakapapa record found
       </div>
@@ -34,7 +46,7 @@
         }"
         class="mt-8 mb-4"
       >
-        <v-btn fab :small="mobile">
+        <v-btn fab small>
           <v-icon>mdi-plus</v-icon>
         </v-btn>
         <span class="pointer black--text pl-4 subtitle"
@@ -56,6 +68,12 @@
         @close="toggleProfileForm"
         @submit="handleDoubleStep($event)"
       />
+
+      <WhakapapaListHelper
+        :show="showWhakapapaHelper"
+        @close="toggleWhakapapaHelper"
+      />
+
     </v-container>
   </div>
 </template>
@@ -67,6 +85,7 @@ import isEmpty from 'lodash.isempty'
 import WhakapapaViewCard from '@/components/whakapapa-view/WhakapapaViewCard.vue'
 import NewViewDialog from '@/components/dialog/NewViewDialog.vue'
 import NewNodeDialog from '@/components/dialog/NewNodeDialog.vue'
+import WhakapapaListHelper from '@/components/info-dialogs/WhakapapaListHelper.vue'
 
 const saveWhakapapaViewQuery = gql`
   mutation($input: WhakapapaViewInput) {
@@ -86,9 +105,14 @@ export default {
   name: 'WhakapapaIndex',
   data () {
     return {
+      items: [
+        { src: require('../assets/tree.jpg') },
+        { src: require('../assets/whakapapa-list.jpg') }
+      ],
       views: [],
 
       whoami: {},
+      showWhakapapaHelper: false,
       showProfileForm: false,
       showViewForm: false,
       newView: null
@@ -131,6 +155,9 @@ export default {
     }
   },
   methods: {
+    toggleWhakapapaHelper () {
+      this.showWhakapapaHelper = !this.showWhakapapaHelper
+    },
     toggleProfileForm () {
       this.showProfileForm = !this.showProfileForm
     },
@@ -214,7 +241,8 @@ export default {
   components: {
     WhakapapaViewCard,
     NewViewDialog,
-    NewNodeDialog
+    NewNodeDialog,
+    WhakapapaListHelper
   }
 }
 </script>
@@ -234,4 +262,5 @@ export default {
   background-color: #fff;
   background-position: center center;
 }
+
 </style>
