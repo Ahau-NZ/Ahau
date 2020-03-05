@@ -100,6 +100,7 @@ $ npm run release:desktop
 Compiles and minifies code (and assets) for production, builds installer (using compiled clientside code + back end code), and outputs to `./release/desktop`.
 
 NOTES
+- See : https://www.electron.build/code-signing for useful links
 - **Mac needs**
   - Application Installer + Apllication certificates set up in your apple keychain for signing
   - an `desktop/electron-builder.env` with environment variables `APPLE_ID`, `APPLE_ID_PASS` for notarization, e.g :
