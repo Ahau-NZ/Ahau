@@ -103,6 +103,10 @@ NOTES
 - See : https://www.electron.build/code-signing for useful links
 - **Mac needs**
   - Application Installer + Apllication certificates set up in your apple keychain for signing
+    - go to developer.apple.com , go into "account", sign in, look at "certificates"
+    - you need to buy / mint an "Developer ID Application" and "Developer ID Installer" certificate
+      - you might need to jump through CSR (code signing request) hoops at this point
+    - you might get some `altool` error ... duckduckgo this, it's some Xcode error
   - an `desktop/electron-builder.env` with environment variables `APPLE_ID`, `APPLE_ID_PASS` for notarization, e.g :
      ```
      APPLE_ID=name@company.com
