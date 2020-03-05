@@ -11,23 +11,19 @@
         width="2"
       />
     </div>
-
     <v-btn
       v-if="!isLoading && !isSetup"
       text
       x-large
       color="#b12526"
-      :to="{
-        name: 'personEdit',
-        params: { id: profile.id },
-        query: { setup: true }
-      }"
+      @click.prevent="toggleNew"
     >
       <!-- TODO change this for an EditProfile dialog -->
       <v-icon left>mdi-plus</v-icon>
-      Create profile
-    </v-btn>
+      <p class="mb-0">Ko wai koe --</p><p style="color:lightgrey" class="mb-0"> -- who are you?</p>
+      <!-- <p style="color:white;" class="mb-0"  >  Who are you?</p> -->
 
+    </v-btn>
     <router-link
       v-if="!isLoading && isSetup"
       :to="{ name: 'whakapapaIndex' }"
@@ -42,12 +38,21 @@
       />
       <h3 class="name mt-2">{{ profile.preferredName }}</h3>
     </router-link>
+     <NewNodeDialog
+      v-if="dialog"
+      :show="dialog"
+      :title="`Ko wai au? -- Who am I?`"
+      @close="toggleNew" @submit="save($event)"
+    />
   </div>
+
 </template>
 
 <script>
 import gql from 'graphql-tag'
 import Avatar from '@/components/Avatar'
+import NewNodeDialog from '@/components/dialog/NewNodeDialog.vue'
+import pick from 'lodash.pick'
 
 const karakia = `
 ---------------------------------
@@ -79,7 +84,8 @@ export default {
         id: null,
         preferredName: null,
         avatarImage: null
-      }
+      },
+      dialog: false
     }
   },
   computed: {
@@ -140,7 +146,6 @@ export default {
       }
 
       this.isSetup = Boolean(this.profile.preferredName)
-
       // Shortcut in dev, that saves us from doing one click when testing
       if (this.isSetup && process.env.NODE_ENV === 'development') {
         this.karakiaTūwhera()
@@ -148,11 +153,48 @@ export default {
       }
 
       this.isLoading = false
+    },
+
+    toggleNew () {
+      this.dialog = !this.dialog
+    },
+
+    async save (profileChanges) {
+      const newProfile = pick(profileChanges,
+        'preferredName',
+        'legalName',
+        'gender',
+        'bornAt',
+        'diedAt',
+        'birthOrder',
+        'avatarImage',
+        'altNames',
+        'description'
+      )
+      const result = await this.$apollo.mutate({
+        mutation: gql`
+          mutation($input: ProfileInput!) {
+            saveProfile(input: $input)
+          }
+        `,
+        variables: {
+          input: {
+            id: this.profile.id,
+            ...newProfile
+          }
+        }
+      })
+
+      if (result.errors) {
+        console.error('failed to update profile', result)
+        return
+      }
+      this.getCurrentIdentity()
     }
   },
-
   components: {
-    Avatar
+    Avatar,
+    NewNodeDialog
   }
 }
 </script>

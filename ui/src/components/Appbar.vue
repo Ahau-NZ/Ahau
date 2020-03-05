@@ -18,7 +18,6 @@
       </template>
       <!-- <v-btn icon :to="{ name: 'personShow', params: { id: profile.id } }"> -->
       <Avatar
-        v-if="!mobile"
         size="50px"
         :image="profile.avatarImage"
         :alt="profile.preferredName"
@@ -142,7 +141,10 @@ export default {
       dialog: false,
       profile: {
         id: null,
-        avatarImage: null
+        avatarImage: null,
+        gender: '',
+        bornAt: '',
+        preferredName: ''
       }
     }
   },
@@ -166,6 +168,8 @@ export default {
               profile {
                 id
                 preferredName
+                gender
+                bornAt
                 avatarImage {
                   uri
                 }
