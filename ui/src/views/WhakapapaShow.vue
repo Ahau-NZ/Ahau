@@ -101,8 +101,8 @@
     />
 
      <!-- Side Menu -->
-     <div id="sideMenu" ref="sideMenu" style="position: absolute; top: 0px; right:-35%; width: 35%; height: 100vh; background-color: white;">
-      <SideViewEditNodeDialog
+     <div >
+      <SideViewEditNodeDialog       
           v-if="dialog.view"
           :show="dialog.view"
           :profile="selectedProfile"
@@ -442,11 +442,7 @@ export default {
     },
     toggleView () {
       this.dialog.view = !this.dialog.view;
-      if (this.dialog.view == true) {
-        this.$refs.sideMenu.style.right = "0px";
-      } else {
-        this.$refs.sideMenu.style.right = "-35%";
-      }
+ 
     },
     toggleDelete () {
       this.dialog.delete = !this.dialog.delete
@@ -977,7 +973,13 @@ h1 {
 }
 
 #sideMenu {
-  transition: all 0.3s ease-in-out;
+  transition: all 0.1s ease-in-out;
+  position: absolute; 
+  top: 0px; 
+  right:-35%; 
+  width: 30%; 
+  height: 100vh; 
+  background-color: white;
 }
 
 svg {

@@ -1,7 +1,7 @@
 <template>
   <div style="background-color: white;" :node="profile" :show="show" @close="close" width="720px" :goBack="close" enableMenu>
     <v-form ref="form">
-      <v-card :light="true">
+      <v-card>
         <v-container width="100%" class="pa-0">
           <v-card-text>
             <v-row class="px-2">
@@ -287,18 +287,6 @@
               </v-col>
               <!-- END Action buttons -->
             </v-row>
-
-            <!-- other modules -->
-            <v-row style="width: 100%;"> 
-              <v-column style="width: 100%;">
-                <h1>Story</h1>
-                <div style="width: 100%; display: flex; justify-content: center; align-items: center;">
-                  <img v-bind:src="require('@/assets/story-mockup.png')" style="width: 300px; margin-top: 20px; margin-left:auto; margin-right: auto;">
-                </div>
-              </v-column>
-            </v-row>
-
-
           </v-card-text>
         </v-container>
       </v-card>
