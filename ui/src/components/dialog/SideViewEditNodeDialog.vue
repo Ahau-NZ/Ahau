@@ -1,14 +1,14 @@
 <template>
-  <div style="background-color: white;" :node="profile" :show="show" @close="close" width="720px" :goBack="close" enableMenu>
-    <v-form ref="form">
-      <v-card>
-        <v-container width="100%" class="pa-0">
-          <v-card-text>
+  <div style="background-color: white; height:100%" :node="profile" :show="show" @close="close" width="720px" :goBack="close" enableMenu >
+    <v-form ref="form" style="height:100%">
+      <v-card light style="height:100%">
+        <v-container class="pa-0" style="height:100%">
+          <v-card-text style="height:100%; overflow:scroll">
             <v-row class="px-2">
-              <v-col cols="12" sm="5" order-sm="2">
+              <v-col cols="12">
                 <v-row class="pa-0">
-                  <v-col v-if="!mobile" cols="offset-7 4 " class="pa-0" align="right">
-                    <!-- Dialog close button -->
+                  <!-- Dialog close button -->
+                  <v-col cols="offset-7 4 " class="pa-0" align="right">
                     <v-btn @click="close" fab text top right color="secondary" class="close">
                       <v-icon>mdi-close</v-icon>
                     </v-btn>
@@ -32,7 +32,7 @@
                 </v-row>
               </v-col>
               <!-- Information Col -->
-              <v-col cols="12" sm="7" class="border-right">
+              <v-col cols="12" class="border-right">
                 <v-row>
                   <!-- View Mode Title -->
                   <v-col v-if="!isEditing" cols="12" class="pa-0 pb-5">
@@ -225,11 +225,11 @@
             <v-divider v-if="!isEditing" />
             <v-row v-if="!isEditing" justify-sm="space-around">
               <!-- Family Members -->
-              <v-col :cols="mobile ? 12 : false" class="pa-0">
+              <v-col :cols="12" class="pa-0">
                 <AvatarGroup
                   :profiles="profile.parents"
                   group-title="Parents"
-                  size="60px"
+                  size="50px"
                   :show-labels="true"
                   @profile-click="openProfile($event)"
                 >
@@ -237,8 +237,8 @@
                 </AvatarGroup>
               </v-col>
 
-              <v-divider v-if="profile.siblings" :vertical="!mobile" :inset="mobile" />
-              <v-col :cols="mobile ? 12 : false" v-if="profile.siblings" class="pa-0">
+              <v-divider v-if="profile.siblings" inset />
+              <v-col :cols="12" v-if="profile.siblings" class="pa-0">
                 <AvatarGroup
                   :profiles="profile.siblings"
                   group-title="Siblings"
@@ -247,8 +247,8 @@
                   @profile-click="openProfile($event)"
                 />
               </v-col>
-              <v-divider :vertical="!mobile" :inset="mobile" />
-              <v-col :cols="mobile ? 12 : false" class="pa-0">
+              <v-divider inset />
+              <v-col :cols="12" class="pa-0">
                 <AvatarGroup
                   :profiles="profile.children"
                   group-title="Children"
@@ -276,7 +276,7 @@
                   <v-icon small class="secondary--text" left>mdi-delete</v-icon>Delete this person
                 </v-btn>
               </v-col>
-              <v-spacer />
+              <v-spacer v-if="isEditing"/>
               <v-col v-if="isEditing" align-sm="right" class="pt-0 pb-o">
                 <v-btn @click="cancel" text large fab class="secondary--text">
                   <v-icon color="secondary">mdi-close</v-icon>
@@ -510,5 +510,24 @@ export default {
 
 .v-input--radio-group__input label {
   font-size: 14px;
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1; 
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888; 
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555; 
 }
 </style>

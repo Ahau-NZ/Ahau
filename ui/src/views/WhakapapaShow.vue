@@ -58,18 +58,6 @@
       </li>
     </vue-context>
 
-    <!-- <ViewEditNodeDialog
-      v-if="dialog.view"
-      :show="dialog.view"
-      :profile="selectedProfile"
-      :deleteable="canDelete(selectedProfile)"
-      :warnAboutChildren="selectedProfile && selectedProfile.id !== whakapapaView.focus"
-      @close="toggleView()"
-      @new="toggleNewPerson($event)"
-      @submit="updateProfile($event)"
-      @delete="deleteProfile()"
-      @open-profile="setSelectedProfile($event)"
-    /> -->
     <NewNodeDialog
       v-if="dialog.new"
       :show="dialog.new"
@@ -101,7 +89,7 @@
     />
 
      <!-- Side Menu -->
-     <div >
+     <div v-if="!mobile" id="sideMenu" ref="sideMenu">
       <SideViewEditNodeDialog       
           v-if="dialog.view"
           :show="dialog.view"
@@ -115,6 +103,18 @@
           @open-profile="setSelectedProfile($event)"
       />
     </div>
+    <ViewEditNodeDialog
+      v-else
+      :show="dialog.view"
+      :profile="selectedProfile"
+      :deleteable="canDelete(selectedProfile)"
+      :warnAboutChildren="selectedProfile && selectedProfile.id !== whakapapaView.focus"
+      @close="toggleView()"
+      @new="toggleNewPerson($event)"
+      @submit="updateProfile($event)"
+      @delete="deleteProfile()"
+      @open-profile="setSelectedProfile($event)"
+    />
   </div>
 </template>
 
@@ -442,7 +442,13 @@ export default {
     },
     toggleView () {
       this.dialog.view = !this.dialog.view;
- 
+      if (this.dialog.view && this.mobile == true) {
+        this.$refs.sideMenu.style.right = "100vh";
+      } else if (this.dialog.view && !this.mobile == true) {
+        this.$refs.sideMenu.style.right = "0px";
+      }else {
+         this.$refs.sideMenu.style.right = "-30p%";
+      }
     },
     toggleDelete () {
       this.dialog.delete = !this.dialog.delete
@@ -976,13 +982,14 @@ h1 {
   transition: all 0.1s ease-in-out;
   position: absolute; 
   top: 0px; 
-  right:-35%; 
-  width: 30%; 
-  height: 100vh; 
+  right:-30%; 
+  width: 25%; 
+  height: 100%; 
   background-color: white;
 }
 
 svg {
   max-height: calc(100vh - 64px);
 }
+
 </style>
