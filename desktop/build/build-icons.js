@@ -1,5 +1,3 @@
-#! /usr/bin/env node
-
 const fs = require('fs')
 const path = require('path')
 const sharp = require('sharp')
@@ -23,12 +21,12 @@ function makeIcon (size) {
 
 function createIco (bufs) {
   toIco(bufs).then(buf => {
-    fs.writeFileSync(path.resolve(__dirname, '/win/icon.ico'), buf)
+    fs.writeFileSync(path.join(__dirname, '/win/icon.ico'), buf)
   })
 }
 
 function createIcns (bufs) {
   icnsConvert(bufs).then((data) => {
-    fs.writeFileSync(path.resolve(__dirname, 'mac/icon.icns'), data)
+    fs.writeFileSync(path.join(__dirname, 'mac/icon.icns'), data)
   })
 }
