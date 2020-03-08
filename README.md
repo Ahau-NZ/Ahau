@@ -115,7 +115,7 @@ NOTES
     - `APPLE_ID_PASS` is an application specific password created from your `APPLE_ID`
 
 - **Windows needs**
-  - `build/win_csc.pfx` file
+  - `desktop/build/win/win_csc.pfx` file
   - an `desktop/electron-builder.env` with environment variable `CSC_LINK` and `CSC_KEY_PASSWORD` (the password to the .pfx cert)
     ```
     CSC_LINK=build/win/csc.pfx
@@ -126,7 +126,7 @@ NOTES
     - notes on aquiring + exporting :
       - https://support.sectigo.com/Com_KnowledgeDetailPage?Id=kA01N000000zFK0#ie_export_certificate
       - this may need to be done from the same browser as you applied for the certificate from
-
+  - .exe file will be in releases/desktop
 ### Mobile (Android)
 
 First, ask the project manager for these secrets:

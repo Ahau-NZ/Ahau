@@ -6,7 +6,7 @@ node_modules
 # Electron
 /desktop/dist
 /desktop/electron-builder.env
-/desktop/build/win_csc.pfx
+/desktop/build/win/win_csc.pfx
 
 # Cordova
 /mobile/platforms
