@@ -47,8 +47,6 @@
       </v-row>
     </v-container>
 
-   
-
     <vue-context ref="menu">
       <li v-for="(option, index) in contextMenuOpts" :key="index">
         <a href="#" @click.prevent="option.action">{{ option.title }}</a>
@@ -89,10 +87,9 @@
     />
 
      <!-- Side Menu -->
-     <div v-if="!mobile" id="sideMenu" ref="sideMenu">
-      <SideViewEditNodeDialog       
+     <div :class="sideMenuClass">
+      <SideViewEditNodeDialog
           v-if="dialog.view"
-          :show="dialog.view"
           :profile="selectedProfile"
           :deleteable="canDelete(selectedProfile)"
           :warnAboutChildren="selectedProfile && selectedProfile.id !== whakapapaView.focus"
@@ -103,7 +100,7 @@
           @open-profile="setSelectedProfile($event)"
       />
     </div>
-    <ViewEditNodeDialog
+    <!-- <ViewEditNodeDialog
       v-else
       :show="dialog.view"
       :profile="selectedProfile"
@@ -114,7 +111,7 @@
       @submit="updateProfile($event)"
       @delete="deleteProfile()"
       @open-profile="setSelectedProfile($event)"
-    />
+    /> -->
   </div>
 </template>
 
@@ -244,9 +241,18 @@ export default {
     }
   },
   computed: {
+
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
+
+    sideMenuClass () {
+      if (this.dialog.view) {
+        return !this.mobile ? 'viewDesktop' : 'viewMobile'
+      }
+      return 'hideView'
+    },
+
     nestedWhakapapa () {
       var startingProfile = this.profiles[this.whakapapaView.focus]
       if (!startingProfile) {
@@ -441,14 +447,8 @@ export default {
       this.dialog.editWhakapapa = !this.dialog.editWhakapapa
     },
     toggleView () {
-      this.dialog.view = !this.dialog.view;
-      if (this.dialog.view && this.mobile == true) {
-        this.$refs.sideMenu.style.right = "100vh";
-      } else if (this.dialog.view && !this.mobile == true) {
-        this.$refs.sideMenu.style.right = "0px";
-      }else {
-         this.$refs.sideMenu.style.right = "-30p%";
-      }
+      this.dialog.view = !this.dialog.view
+      this.$emit('goBack')
     },
     toggleDelete () {
       this.dialog.delete = !this.dialog.delete
@@ -978,13 +978,26 @@ h1 {
   }
 }
 
-#sideMenu {
+.viewDesktop {
   transition: all 0.1s ease-in-out;
-  position: absolute; 
-  top: 0px; 
-  right:-30%; 
-  width: 25%; 
-  height: 100%; 
+  position: absolute;
+  top: 0px;
+  right:0px;
+  width: 25%;
+  height: 100%;
+  background-color: white;
+}
+.hideView {
+  right:-30%;
+}
+
+.viewMobile {
+  transition: all 0.1s ease-in-out;
+  position: absolute;
+  top: 0px;
+  right:0px;
+  width: 100%;
+  height: 100%;
   background-color: white;
 }
 

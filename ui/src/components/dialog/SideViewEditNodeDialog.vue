@@ -1,5 +1,6 @@
 <template>
-  <div style="background-color: white; height:100%" :node="profile" :show="show" @close="close" width="720px" :goBack="close" enableMenu >
+  <div style="background-color: white; height:100%" :node="profile" @close="close" width="720px" :fullscreen="mobile">
+    <Appbar v-if="mobile" enableMenu app :goBack="close" />
     <v-form ref="form" style="height:100%">
       <v-card light style="height:100%">
         <v-container class="pa-0" style="height:100%">
@@ -8,7 +9,7 @@
               <v-col cols="12">
                 <v-row class="pa-0">
                   <!-- Dialog close button -->
-                  <v-col cols="offset-7 4 " class="pa-0" align="right">
+                  <v-col v-if="!mobile" cols="offset-7 4 " class="pa-0" align="right">
                     <v-btn @click="close" fab text top right color="secondary" class="close">
                       <v-icon>mdi-close</v-icon>
                     </v-btn>
@@ -318,6 +319,7 @@ import DeleteNodeDialog from '@/components/dialog/DeleteNodeDialog.vue'
 import NodeDatePicker from '@/components/NodeDatePicker.vue'
 import AddButton from '@/components/AddButton.vue'
 import ImagePicker from '@/components/ImagePicker.vue'
+import Appbar from '@/components/Appbar.vue'
 
 import isEqual from 'lodash.isequal'
 import isEmpty from 'lodash.isempty'
@@ -354,10 +356,11 @@ export default {
     DeleteNodeDialog,
     NodeDatePicker,
     AddButton,
-    ImagePicker
+    ImagePicker,
+    Appbar
   },
   props: {
-    show: { type: Boolean, required: true },
+    goBack: { type: Function },
     profile: { type: Object, required: true },
     deleteable: { type: Boolean, default: false },
     warnAboutChildren: { type: Boolean, default: true },
@@ -518,16 +521,16 @@ export default {
 
 /* Track */
 ::-webkit-scrollbar-track {
-  background: #f1f1f1; 
+  background: #f1f1f1;
 }
- 
+
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: #888; 
+  background: #888;
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: #555; 
+  background: #555;
 }
 </style>
