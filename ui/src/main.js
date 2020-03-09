@@ -5,23 +5,26 @@ import router from './router'
 
 import { createProvider } from './plugins/vue-apollo'
 import vuetify from './plugins/vuetify'
-import nodejsClient from './plugins/cordova-nodejs-client'
 import VuejsClipper from 'vuejs-clipper'
 
-// Initiate NodeJS if on Cordova
 if (process.env.VUE_APP_PLATFORM === 'cordova') {
-  nodejsClient.init()
+  document.addEventListener('deviceready', main, false)
+} else {
+  main()
 }
-// install
-Vue.use(VuejsClipper)
-Vue.config.productionTip = false
 
-new Vue({
-  router,
-  // store,
+function main () {
+  // install
+  Vue.use(VuejsClipper)
+  Vue.config.productionTip = false
 
-  apolloProvider: createProvider(),
-  vuetify,
+  new Vue({
+    router,
+    // store,
 
-  render: h => h(App)
-}).$mount('#app')
+    apolloProvider: createProvider(),
+    vuetify,
+
+    render: h => h(App)
+  }).$mount('#app')
+}

@@ -1,5 +1,5 @@
 <template>
-  <Dialog :show="show" @close="close" width="720px" :goBack="close" :enableBar="false">
+  <Dialog :show="show" @close="close" width="720px" :goBack="close" enableBar enableMenu>
     <v-form ref="form" v-model="form.valid" lazy-validation>
       <v-card>
         <v-container width="100%" class="pa-0">

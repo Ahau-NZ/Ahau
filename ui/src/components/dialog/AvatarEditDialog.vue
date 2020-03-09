@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Dialog :show="show" @close="close" width="500px" :goBack="close" enableMenu>
+    <Dialog :show="show" @close="close" width="600px" :goBack="close" enableMenu>
       <v-container style="background: black;">
         <v-row justify="center">
           <v-col style="max-width: 400px;">
@@ -19,7 +19,7 @@
 
         <div class="px-8 py-4">
           <h6 class="caption pt-8">
-            <v-icon>mdi-gesture-tap-hold</v-icon>
+            <v-icon dark>mdi-gesture-tap</v-icon>
             Ajust the image by zooming, scaling and moving it around before
             saving.
           </h6>

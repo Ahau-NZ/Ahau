@@ -7,11 +7,11 @@
             <v-col class="lock-icon">
               <v-icon small color="#555">mdi-lock</v-icon>
               <span id="lock-icon-margin"
-                >Private record - Only visible by you BRO</span
+                >Private record - Only visible by you</span
               >
             </v-col>
           </v-row>
-          <v-row>
+          <v-row class="pt-5">
             <v-btn
               @click.prevent="toggleEditWhakapapa"
               align="right"
@@ -27,12 +27,14 @@
         </WhakapapaViewCard>
       </v-row>
 
-      <WhakapapaBanner v-if="mobile" :view="whakapapaView" @edit="toggleEditWhakapapa" @more-info="toggleInformation()"/>
+      <WhakapapaBanner v-if="mobile" :view="whakapapaView" @edit="toggleEditWhakapapa" @more-info="toggleInformation()" />
 
       <v-row v-if="!mobile" class="feedback">
         <v-col>
           <FeedbackButton />
         </v-col>
+        <v-icon  class="px-3" color="blue-grey" light @click="toggleWhakapapaHelper">mdi-information</v-icon>
+
       </v-row>
 
       <v-row>
@@ -59,7 +61,7 @@
     <NewNodeDialog
       v-if="dialog.new"
       :show="dialog.new"
-      :title="`${dialog.type} to ${selectedProfile.preferredName || '___'}`"
+      :title="`Add ${dialog.type} to ${selectedProfile.preferredName || '___'}`"
       @close="toggleNew" @submit="addPerson($event)"
       :suggestions="suggestions" @getSuggestions="getSuggestions($event)"
     />
@@ -75,6 +77,7 @@
       :show="dialog.information"
       @close="toggleInformation()"
       @edit="toggleEditWhakapapa()"
+      @viewHelper="toggleWhakapapaHelper()" 
       :view="whakapapaView"
     />
     <WhakapapaEditDialog
@@ -100,6 +103,10 @@
           @open-profile="setSelectedProfile($event)"
       />
     </div>
+    <WhakapapaShowHelper
+      :show="showWhakapapaHelper"
+      @close="toggleWhakapapaHelper"
+    />
   </div>
 </template>
 
@@ -120,6 +127,7 @@ import NewNodeDialog from '@/components/dialog/NewNodeDialog.vue'
 import DeleteNodeDialog from '@/components/dialog/DeleteNodeDialog.vue'
 import WhakapapaEditDialog from '@/components/dialog/WhakapapaEditDialog.vue'
 import WhakapapaViewDialog from '@/components/dialog/WhakapapaViewDialog.vue'
+import WhakapapaShowHelper from '@/components/info-dialogs/WhakapapaShowHelper.vue'
 
 import tree from '@/lib/tree-helpers'
 import findSuccessor from '@/lib/find-successor'
@@ -151,6 +159,7 @@ export default {
   name: 'WhakapapaShow',
   data () {
     return {
+      showWhakapapaHelper: false,
       permitted: PERMITTED_PROFILE_ATTRS,
       whakapapaView: {
         name: 'Loading',
@@ -294,6 +303,9 @@ export default {
     }
   },
   methods: {
+    toggleWhakapapaHelper () {
+      this.showWhakapapaHelper = !this.showWhakapapaHelper
+    },
     async loadDescendants (profileId) {
       // fetch close whakapapa records for this profile
       const record = await this.getRelatives(profileId)
@@ -823,11 +835,13 @@ export default {
         console.error(e)
       }
     },
-    setSelectedProfile (profileId) {
+    async setSelectedProfile (profileId) {
+      await this.loadDescendants(profileId)
       this.selectedProfile = tree.hydrate(
         this.profiles[profileId],
         this.profiles
       )
+
       if (!this.selectedProfile.parents || this.selectedProfile.parents.length === 0) return
       var mainParent = this.selectedProfile.parents[0]
       this.selectedProfile.relationship = this.relationshipLinks[mainParent.id + '-' + this.selectedProfile.id]
@@ -906,7 +920,8 @@ export default {
     SideViewEditNodeDialog,
     WhakapapaEditDialog,
     WhakapapaViewDialog,
-    WhakapapaBanner
+    WhakapapaBanner,
+    WhakapapaShowHelper
   }
 }
 </script>

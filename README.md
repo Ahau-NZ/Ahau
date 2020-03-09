@@ -100,8 +100,13 @@ $ npm run release:desktop
 Compiles and minifies code (and assets) for production, builds installer (using compiled clientside code + back end code), and outputs to `./release/desktop`.
 
 NOTES
+- See : https://www.electron.build/code-signing for useful links
 - **Mac needs**
   - Application Installer + Apllication certificates set up in your apple keychain for signing
+    - go to developer.apple.com , go into "account", sign in, look at "certificates"
+    - you need to buy / mint an "Developer ID Application" and "Developer ID Installer" certificate
+      - you might need to jump through CSR (code signing request) hoops at this point
+    - you might get some `altool` error ... duckduckgo this, it's some Xcode error
   - an `desktop/electron-builder.env` with environment variables `APPLE_ID`, `APPLE_ID_PASS` for notarization, e.g :
      ```
      APPLE_ID=name@company.com
@@ -110,7 +115,7 @@ NOTES
     - `APPLE_ID_PASS` is an application specific password created from your `APPLE_ID`
 
 - **Windows needs**
-  - `build/win_csc.pfx` file
+  - `desktop/build/win/win_csc.pfx` file
   - an `desktop/electron-builder.env` with environment variable `CSC_LINK` and `CSC_KEY_PASSWORD` (the password to the .pfx cert)
     ```
     CSC_LINK=build/win/csc.pfx
@@ -121,7 +126,7 @@ NOTES
     - notes on aquiring + exporting :
       - https://support.sectigo.com/Com_KnowledgeDetailPage?Id=kA01N000000zFK0#ie_export_certificate
       - this may need to be done from the same browser as you applied for the certificate from
-
+  - .exe file will be in releases/desktop
 ### Mobile (Android)
 
 First, ask the project manager for these secrets:

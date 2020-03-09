@@ -3,24 +3,27 @@
     <div v-if="isLoading" class="splash">
       <img src="@/assets/logo_red.svg" />
       <h1>Āhau</h1>
+      <v-progress-circular
+        v-if="mobile"
+        color="white"
+        :indeterminate="true"
+        size="16"
+        width="2"
+      />
     </div>
-
     <v-btn
       v-if="!isLoading && !isSetup"
       text
       x-large
       color="#b12526"
-      :to="{
-        name: 'personEdit',
-        params: { id: profile.id },
-        query: { setup: true }
-      }"
+      @click.prevent="toggleNew"
     >
       <!-- TODO change this for an EditProfile dialog -->
       <v-icon left>mdi-plus</v-icon>
-      Create profile
-    </v-btn>
+      <p class="mb-0">Ko wai koe --</p><p style="color:lightgrey" class="mb-0"> -- who are you?</p>
+      <!-- <p style="color:white;" class="mb-0"  >  Who are you?</p> -->
 
+    </v-btn>
     <router-link
       v-if="!isLoading && isSetup"
       :to="{ name: 'whakapapaIndex' }"
@@ -35,12 +38,21 @@
       />
       <h3 class="name mt-2">{{ profile.preferredName }}</h3>
     </router-link>
+     <NewNodeDialog
+      v-if="dialog"
+      :show="dialog"
+      :title="`Ko wai au? -- Who am I?`"
+      @close="toggleNew" @submit="save($event)"
+    />
   </div>
+
 </template>
 
 <script>
 import gql from 'graphql-tag'
 import Avatar from '@/components/Avatar'
+import NewNodeDialog from '@/components/dialog/NewNodeDialog.vue'
+import pick from 'lodash.pick'
 
 const karakia = `
 ---------------------------------
@@ -48,7 +60,7 @@ E te tangata
 Whāia te māutauranga kai mārama
 Kia whai take ngā mahi katoa
 Tū māia, tū kaha
-Aroha atu, aroha mai 
+Aroha atu, aroha mai
 Tātou i a tātou katoa
 
 For this person
@@ -67,23 +79,34 @@ export default {
   data () {
     return {
       isLoading: true,
-      isSetup: true, // has profile set up
+      isSetup: false, // has profile set up
       profile: {
         id: null,
         preferredName: null,
         avatarImage: null
-      }
+      },
+      dialog: false
+    }
+  },
+  computed: {
+    mobile () {
+      return this.$vuetify.breakpoint.xs
+    }
+  },
+  watch: {
+    mobileServerLoaded: {
+      handler (nextValue) {
+        if (nextValue && process.env.VUE_APP_PLATFORM === 'cordova') {
+          this.getCurrentIdentity()
+        }
+      },
+      immediate: true
     }
   },
   mounted () {
     if (process.env.VUE_APP_PLATFORM !== 'cordova') {
       this.getCurrentIdentity()
     }
-    if (process.env.NODE_ENV === 'development') {
-      this.proceed()
-      return
-    }
-    setTimeout(this.proceed, 2e3)
   },
   methods: {
     async getCurrentIdentity () {
@@ -101,51 +124,77 @@ export default {
             }
           }
         `,
-        fetchPolicy: 'nocache'
+        fetchPolicy: 'no-cache'
       })
 
       if (result.errors) throw result.errors
 
-      this.profile = result.data.whoami.profile
+      if (result.data.whoami.profile) this.profile = result.data.whoami.profile
+
+      this.proceed()
     },
 
     karakiaTūwhera () {
       console.log(karakia)
     },
-    proceed () {
-      if (this.$apollo.loading) {
-        console.log('$apollo.loading')
-        return setTimeout(this.proceed, 500)
-      }
 
-      if (!this.profile || !this.profile.id) {
-        console.log('waiting for apollo!')
-        return setTimeout(this.proceed, 500)
+    proceed () {
+      if (this.$apollo.loading || !this.profile.id) {
+        console.log('waiting for apollo')
+        setTimeout(this.proceed, 300)
+        return
       }
 
       this.isSetup = Boolean(this.profile.preferredName)
+      // Shortcut in dev, that saves us from doing one click when testing
       if (this.isSetup && process.env.NODE_ENV === 'development') {
         this.karakiaTūwhera()
         this.$router.push({ name: 'whakapapaIndex' })
       }
 
       this.isLoading = false
-    }
-  },
+    },
 
-  watch: {
-    mobileServerLoaded: {
-      handler (nextValue) {
-        if (nextValue && process.env.VUE_APP_PLATFORM === 'cordova') {
-          this.getCurrentIdentity()
-          this.proceed()
+    toggleNew () {
+      this.dialog = !this.dialog
+    },
+
+    async save (profileChanges) {
+      const newProfile = pick(profileChanges,
+        'preferredName',
+        'legalName',
+        'gender',
+        'bornAt',
+        'diedAt',
+        'birthOrder',
+        'avatarImage',
+        'altNames',
+        'description'
+      )
+      const result = await this.$apollo.mutate({
+        mutation: gql`
+          mutation($input: ProfileInput!) {
+            saveProfile(input: $input)
+          }
+        `,
+        variables: {
+          input: {
+            id: this.profile.id,
+            ...newProfile
+          }
         }
-      },
-      immediate: true
+      })
+
+      if (result.errors) {
+        console.error('failed to update profile', result)
+        return
+      }
+      this.getCurrentIdentity()
     }
   },
   components: {
-    Avatar
+    Avatar,
+    NewNodeDialog
   }
 }
 </script>
@@ -168,8 +217,12 @@ h1 {
 }
 
 .splash {
-  height: 20vh;
+  min-height: 20vh;
   width: 20vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 .name {
   color: white;
