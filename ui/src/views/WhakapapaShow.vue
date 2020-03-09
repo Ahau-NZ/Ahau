@@ -100,18 +100,6 @@
           @open-profile="setSelectedProfile($event)"
       />
     </div>
-    <!-- <ViewEditNodeDialog
-      v-else
-      :show="dialog.view"
-      :profile="selectedProfile"
-      :deleteable="canDelete(selectedProfile)"
-      :warnAboutChildren="selectedProfile && selectedProfile.id !== whakapapaView.focus"
-      @close="toggleView()"
-      @new="toggleNewPerson($event)"
-      @submit="updateProfile($event)"
-      @delete="deleteProfile()"
-      @open-profile="setSelectedProfile($event)"
-    /> -->
   </div>
 </template>
 
@@ -128,7 +116,6 @@ import Tree from '@/components/Tree.vue'
 import FeedbackButton from '@/components/FeedbackButton.vue'
 
 import SideViewEditNodeDialog from '@/components/dialog/SideViewEditNodeDialog.vue'
-import ViewEditNodeDialog from '@/components/dialog/ViewEditNodeDialog.vue'
 import NewNodeDialog from '@/components/dialog/NewNodeDialog.vue'
 import DeleteNodeDialog from '@/components/dialog/DeleteNodeDialog.vue'
 import WhakapapaEditDialog from '@/components/dialog/WhakapapaEditDialog.vue'
@@ -916,7 +903,6 @@ export default {
     VueContext,
     NewNodeDialog,
     DeleteNodeDialog,
-    ViewEditNodeDialog,
     SideViewEditNodeDialog,
     WhakapapaEditDialog,
     WhakapapaViewDialog,
