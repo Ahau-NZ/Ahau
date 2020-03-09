@@ -272,17 +272,18 @@
                   align="center"
                   color="white"
                   text
-                  class="secondary--text pt-7 pl-5"
+                  class="secondary--text"
                 >
-                  <v-icon small class="secondary--text" left>mdi-delete</v-icon>Delete this person
+                  <v-icon class="secondary--text" left>mdi-delete</v-icon>
+                  Delete this person 
                 </v-btn>
               </v-col>
               <v-spacer v-if="isEditing"/>
-              <v-col v-if="isEditing" align-sm="right" class="pt-0 pb-o">
-                <v-btn @click="cancel" text large fab class="secondary--text">
+              <v-col v-if="isEditing" class="pt-0" align="right">
+                <v-btn @click="cancel" text large fab class="secondary--text mr-10">
                   <v-icon color="secondary">mdi-close</v-icon>
                 </v-btn>
-                <v-btn @click="submit" text large fab class="blue--text" color="blue">
+                <v-btn @click="submit" text large fab class="blue--text" color="blue" >
                   <v-icon>mdi-check</v-icon>
                 </v-btn>
               </v-col>

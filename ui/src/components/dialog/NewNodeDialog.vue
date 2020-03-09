@@ -220,10 +220,10 @@
               </v-col>
             </v-row>
             <v-row>
-              <v-col :align="mobile ? '' : 'right'" class="pt-0 pb-o">
+              <v-col align="right" class="pt-0 pb-o">
                 <v-btn @click="close"
                   text large fab
-                  class="secondary--text"
+                  class="secondary--text mr-10"
                 >
                   <v-icon color="secondary">mdi-close</v-icon>
                 </v-btn>

@@ -46,7 +46,7 @@
           @click.native="karakiaWhakamutunga()"
           to="/login"
           text
-          class="white--text text-uppercase"
+          class="white--text text-uppercase ms-10"
         >sign out</v-btn>
       </template>
 
