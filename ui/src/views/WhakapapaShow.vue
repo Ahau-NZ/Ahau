@@ -29,16 +29,30 @@
 
       <WhakapapaBanner v-if="mobile" :view="whakapapaView" @edit="toggleEditWhakapapa" @more-info="toggleInformation()"/>
 
-      <v-row v-if="!mobile" class="feedback">
+      <v-row v-if="!mobile" class="select">
+        <v-col>
+          <TableButton @table="toggleTable()" />
+        </v-col>
+        <v-col>
+          <HelpButton @click="toggleWhakapapaHelper"/>
+        </v-col>
         <v-col>
           <FeedbackButton />
         </v-col>
-        <v-icon  class="px-3" color="blue-grey" light @click="toggleWhakapapaHelper">mdi-information</v-icon>
-
       </v-row>
 
       <v-row>
         <Tree
+          v-if="whakapapa.tree"
+          :view="whakapapaView"
+          :nestedWhakapapa="nestedWhakapapa"
+          :relationshipLinks="relationshipLinks"
+          @load-descendants="loadDescendants($event)"
+          @collapse-node="collapseNode($event)"
+          @open-context-menu="openContextMenu($event)"
+        />
+        <Table
+          v-if="whakapapa.table"
           :view="whakapapaView"
           :nestedWhakapapa="nestedWhakapapa"
           :relationshipLinks="relationshipLinks"
@@ -116,7 +130,10 @@ import WhakapapaViewCard from '@/components/whakapapa-view/WhakapapaViewCard.vue
 import WhakapapaBanner from '@/components/whakapapa-view/WhakapapaBanner.vue'
 
 import Tree from '@/components/Tree.vue'
-import FeedbackButton from '@/components/FeedbackButton.vue'
+import Table from '@/components/Table.vue'
+import FeedbackButton from '@/components/button/FeedbackButton.vue'
+import TableButton from '@/components/button/TableButton.vue'
+import HelpButton from '@/components/button/HelpButton.vue'
 
 import ViewEditNodeDialog from '@/components/dialog/ViewEditNodeDialog.vue'
 import NewNodeDialog from '@/components/dialog/NewNodeDialog.vue'
@@ -190,6 +207,10 @@ export default {
         delete: false,
         type: 'child',
         information: false
+      },
+      whakapapa: {
+        tree: true,
+        table: false
       },
       contextMenuOpts: [
         { title: 'View Person', action: this.toggleView },
@@ -290,9 +311,6 @@ export default {
     }
   },
   methods: {
-    toggleWhakapapaHelper () {
-      this.showWhakapapaHelper = !this.showWhakapapaHelper
-    },
     async loadDescendants (profileId) {
       // fetch close whakapapa records for this profile
       const record = await this.getRelatives(profileId)
@@ -428,6 +446,13 @@ export default {
     openContextMenu ({ event, profileId }) {
       this.setSelectedProfile(profileId)
       this.$refs.menu.open(event)
+    },
+    toggleTable () {
+      this.whakapapa.tree = !this.whakapapa.tree
+      this.whakapapa.table = !this.whakapapa.table
+    },
+    toggleWhakapapaHelper () {
+      this.showWhakapapaHelper = !this.showWhakapapaHelper
     },
     toggleEditWhakapapa () {
       this.dialog.editWhakapapa = !this.dialog.editWhakapapa
@@ -899,7 +924,10 @@ export default {
   components: {
     WhakapapaViewCard,
     FeedbackButton,
+    TableButton,
+    HelpButton,
     Tree,
+    Table,
     VueContext,
     NewNodeDialog,
     DeleteNodeDialog,
@@ -932,7 +960,7 @@ export default {
       }
     }
 
-    & > .feedback {
+    & > .select {
       position: absolute;
       top: 20px;
       right: 30px;

@@ -316,7 +316,7 @@ import Avatar from '@/components/Avatar.vue'
 import AvatarGroup from '@/components/AvatarGroup.vue'
 import DeleteNodeDialog from '@/components/dialog/DeleteNodeDialog.vue'
 import NodeDatePicker from '@/components/NodeDatePicker.vue'
-import AddButton from '@/components/AddButton.vue'
+import AddButton from '@/components/button/AddButton.vue'
 import ImagePicker from '@/components/ImagePicker.vue'
 
 import isEqual from 'lodash.isequal'

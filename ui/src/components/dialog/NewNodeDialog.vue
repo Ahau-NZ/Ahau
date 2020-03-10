@@ -247,7 +247,7 @@ import Dialog from '@/components/Dialog.vue'
 import Avatar from '@/components/Avatar.vue'
 import ImagePicker from '@/components/ImagePicker.vue'
 import NodeDatePicker from '@/components/NodeDatePicker.vue'
-import AddButton from '@/components/AddButton.vue'
+import AddButton from '@/components/button/AddButton.vue'
 
 import { GENDERS, RELATIONSHIPS, RULES, PERMITTED_PROFILE_ATTRS } from '@/lib/constants'
 import isEmpty from 'lodash.isempty'
