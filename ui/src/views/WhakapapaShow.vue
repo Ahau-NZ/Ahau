@@ -245,8 +245,8 @@ export default {
     sideMenuClass () {
       if (this.dialog.view) {
         return !this.mobile ? 'viewDesktop' : 'viewMobile'
-      }
-      return 'hideView'
+      } 
+      return !this.mobile ? 'hideViewDesktop' : 'hideViewMobile'
     },
 
     nestedWhakapapa () {
@@ -439,6 +439,9 @@ export default {
     // contextMenu //////////////////////////
     // TODO - extract all this
     openContextMenu ({ event, profileId }) {
+      if (this.dialog.view) {
+        this.toggleView()
+      }
       this.setSelectedProfile(profileId)
       this.$refs.menu.open(event)
     },
@@ -447,7 +450,6 @@ export default {
     },
     toggleView () {
       this.dialog.view = !this.dialog.view
-      this.$emit('goBack')
     },
     toggleDelete () {
       this.dialog.delete = !this.dialog.delete
@@ -988,8 +990,13 @@ h1 {
   height: 100%;
   background-color: white;
 }
-.hideView {
+
+.hideViewDesktop {
   right:-30%;
+}
+
+.hideViewMobile {
+  bottom:-100%;
 }
 
 .viewMobile {
