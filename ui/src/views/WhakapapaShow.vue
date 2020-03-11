@@ -6,9 +6,7 @@
           <v-row class="lock-container">
             <v-col class="lock-icon">
               <v-icon small color="#555">mdi-lock</v-icon>
-              <span id="lock-icon-margin"
-                >Private record - Only visible by you</span
-              >
+              <span id="lock-icon-margin">Private record - Only visible by you</span>
             </v-col>
           </v-row>
           <v-row class="pt-5">
@@ -20,21 +18,24 @@
               x-small
               class="blue--text edit"
             >
-              <v-icon small class="blue--text" left>mdi-pencil</v-icon>
-              Edit
+              <v-icon small class="blue--text" left>mdi-pencil</v-icon>Edit
             </v-btn>
           </v-row>
         </WhakapapaViewCard>
       </v-row>
 
-      <WhakapapaBanner v-if="mobile" :view="whakapapaView" @edit="toggleEditWhakapapa" @more-info="toggleInformation()"/>
+      <WhakapapaBanner
+        v-if="mobile"
+        :view="whakapapaView"
+        @edit="toggleEditWhakapapa"
+        @more-info="toggleInformation()"
+      />
 
       <v-row v-if="!mobile" class="feedback">
         <v-col>
           <FeedbackButton />
         </v-col>
-        <v-icon  class="px-3" color="blue-grey" light @click="toggleWhakapapaHelper">mdi-information</v-icon>
-
+        <v-icon class="px-3" color="blue-grey" light @click="toggleWhakapapaHelper">mdi-information</v-icon>
       </v-row>
 
       <v-row>
@@ -58,24 +59,14 @@
       </li>
     </vue-context>
 
-    <ViewEditNodeDialog
-      v-if="dialog.view"
-      :show="dialog.view"
-      :profile="selectedProfile"
-      :deleteable="canDelete(selectedProfile)"
-      :warnAboutChildren="selectedProfile && selectedProfile.id !== whakapapaView.focus"
-      @close="toggleView()"
-      @new="toggleNewPerson($event)"
-      @submit="updateProfile($event)"
-      @delete="deleteProfile()"
-      @open-profile="setSelectedProfile($event)"
-    />
     <NewNodeDialog
       v-if="dialog.new"
       :show="dialog.new"
       :title="`Add ${dialog.type} to ${selectedProfile.preferredName || '___'}`"
-      @close="toggleNew" @submit="addPerson($event)"
-      :suggestions="suggestions" @getSuggestions="getSuggestions($event)"
+      @close="toggleNew"
+      @submit="addPerson($event)"
+      :suggestions="suggestions"
+      @getSuggestions="getSuggestions($event)"
     />
     <DeleteNodeDialog
       v-if="dialog.delete"
@@ -89,6 +80,7 @@
       :show="dialog.information"
       @close="toggleInformation()"
       @edit="toggleEditWhakapapa()"
+      @viewHelper="toggleWhakapapaHelper()"
       :view="whakapapaView"
     />
     <WhakapapaEditDialog
@@ -99,10 +91,22 @@
       @submit="updateWhakapapa($event)"
       @delete="deleteWhakapapa()"
     />
-    <WhakapapaShowHelper
-      :show="showWhakapapaHelper"
-      @close="toggleWhakapapaHelper"
-    />
+
+    <!-- Side Menu -->
+    <div :class="sideMenuClass">
+      <SideViewEditNodeDialog
+        v-if="dialog.view"
+        :profile="selectedProfile"
+        :deleteable="canDelete(selectedProfile)"
+        :warnAboutChildren="selectedProfile && selectedProfile.id !== whakapapaView.focus"
+        @close="toggleView()"
+        @new="toggleNewPerson($event)"
+        @submit="updateProfile($event)"
+        @delete="deleteProfile()"
+        @open-profile="setSelectedProfile($event)"
+      />
+    </div>
+    <WhakapapaShowHelper :show="showWhakapapaHelper" @close="toggleWhakapapaHelper" />
   </div>
 </template>
 
@@ -118,7 +122,7 @@ import WhakapapaBanner from '@/components/whakapapa-view/WhakapapaBanner.vue'
 import Tree from '@/components/Tree.vue'
 import FeedbackButton from '@/components/FeedbackButton.vue'
 
-import ViewEditNodeDialog from '@/components/dialog/ViewEditNodeDialog.vue'
+import SideViewEditNodeDialog from '@/components/dialog/SideViewEditNodeDialog.vue'
 import NewNodeDialog from '@/components/dialog/NewNodeDialog.vue'
 import DeleteNodeDialog from '@/components/dialog/DeleteNodeDialog.vue'
 import WhakapapaEditDialog from '@/components/dialog/WhakapapaEditDialog.vue'
@@ -233,9 +237,18 @@ export default {
     }
   },
   computed: {
+
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
+
+    sideMenuClass () {
+      if (this.dialog.view) {
+        return !this.mobile ? 'viewDesktop' : 'viewMobile'
+      }
+      return !this.mobile ? 'hideViewDesktop' : 'hideViewMobile'
+    },
+
     nestedWhakapapa () {
       var startingProfile = this.profiles[this.whakapapaView.focus]
       if (!startingProfile) {
@@ -426,6 +439,9 @@ export default {
     // contextMenu //////////////////////////
     // TODO - extract all this
     openContextMenu ({ event, profileId }) {
+      if (this.dialog.view) {
+        this.toggleView()
+      }
       this.setSelectedProfile(profileId)
       this.$refs.menu.open(event)
     },
@@ -903,7 +919,7 @@ export default {
     VueContext,
     NewNodeDialog,
     DeleteNodeDialog,
-    ViewEditNodeDialog,
+    SideViewEditNodeDialog,
     WhakapapaEditDialog,
     WhakapapaViewDialog,
     WhakapapaBanner,
@@ -914,7 +930,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
-@import '~vue-context/dist/css/vue-context.css';
+@import "~vue-context/dist/css/vue-context.css";
 
 #whakapapa-show {
   & > .container {
@@ -963,6 +979,34 @@ h1 {
   #lock-icon-margin {
     margin-left: 10px;
   }
+}
+
+.viewDesktop {
+  transition: all 0.1s ease-in-out;
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  width: 25%;
+  height: 100%;
+  background-color: white;
+}
+
+.hideViewDesktop {
+  right: -30%;
+}
+
+.hideViewMobile {
+  bottom: -100%;
+}
+
+.viewMobile {
+  transition: all 0.1s ease-in-out;
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  width: 100%;
+  height: 100%;
+  background-color: white;
 }
 
 svg {

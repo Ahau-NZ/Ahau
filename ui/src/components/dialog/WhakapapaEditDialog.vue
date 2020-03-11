@@ -1,5 +1,5 @@
 <template>
-  <Dialog :show="show" @close="close" width="720px" :goBack="close" :enableBar="false">
+  <Dialog :show="show" @close="close" width="720px" :goBack="close" enableBar enableMenu>
     <v-form ref="form" v-model="form.valid" lazy-validation>
       <v-card>
         <v-container width="100%" class="pa-0">
@@ -72,14 +72,14 @@
                   align="center"
                   color="white"
                   text
-                  class="secondary--text pt-7 pl-5"
+                  class="secondary--text pl-5"
                 >
                   <v-icon small class="secondary--text" left>mdi-delete</v-icon>Delete this whakapapa record
                 </v-btn>
               </v-col>
               <v-spacer />
-              <v-col align-sm="right" class="pt-0 pb-o">
-                <v-btn @click="close" text large fab class="secondary--text">
+              <v-col align="right" class="pt-0 pb-0">
+                <v-btn @click="close" text large fab class="secondary--text mr-10">
                   <v-icon color="secondary">mdi-close</v-icon>
                 </v-btn>
                 <v-btn :disabled="!form.valid" @click="submit" text large fab class="blue--text" color="blue">

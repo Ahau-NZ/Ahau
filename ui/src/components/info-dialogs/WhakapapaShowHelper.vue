@@ -1,5 +1,5 @@
 <template>
-  <Dialog :show="show" @close="close" :width="`550px`" :goBack="close">
+  <Dialog :show="show" @close="close" :width="`650px`" enableMenu :goBack="close">
     <v-card>
       <v-row class="mr-0">
         <v-col class="py-0" cols="10">
@@ -7,8 +7,8 @@
             <span class="headline">Whakapapa tree</span>
           </v-card-title>
         </v-col>
-        <v-col class="pb-0" align="right" cols="2">
-          <!-- Dialog close button -->
+        <!-- Dialog close button -->
+        <v-col v-if="!mobile" class="pb-0" align="right" cols="2">
           <v-btn @click="close" class="close" fab text color="secondary">
             <v-icon>mdi-close</v-icon>
           </v-btn>
