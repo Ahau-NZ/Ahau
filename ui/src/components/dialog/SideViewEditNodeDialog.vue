@@ -1,5 +1,11 @@
 <template>
-  <div style="background-color: white; height:100%" :node="profile" @close="close" width="720px" :fullscreen="mobile">
+  <div
+    style="background-color: white; height:100%"
+    :node="profile"
+    @close="close"
+    width="720px"
+    :fullscreen="mobile"
+  >
     <Appbar v-if="mobile" enableMenu app :goBack="close" />
     <v-form ref="form" style="height:100%">
       <v-card light style="height:100%">
@@ -182,7 +188,12 @@
                   </v-col>
                   <!-- Related By view mode-->
                   <!-- TODO: hide if relationship is unknown -->
-                  <v-col v-if="!isEditing && formData.relationshipType" cols="6" sm="6" class="pa-1">
+                  <v-col
+                    v-if="!isEditing && formData.relationshipType"
+                    cols="6"
+                    sm="6"
+                    class="pa-1"
+                  >
                     <v-text-field
                       v-model="formData.relationshipType"
                       label="Related By"
@@ -190,7 +201,7 @@
                     />
                   </v-col>
                   <!-- Related By edit mode-->
-                  <v-col v-if="isEditing && warnAboutChildren" cols="6" class="pa-1" >
+                  <v-col v-if="isEditing && warnAboutChildren" cols="6" class="pa-1">
                     <v-select
                       v-model="formData.relationshipType"
                       label="Related By"
@@ -274,16 +285,15 @@
                   text
                   class="secondary--text"
                 >
-                  <v-icon class="secondary--text" left>mdi-delete</v-icon>
-                  Delete this person 
+                  <v-icon class="secondary--text" left>mdi-delete</v-icon>Delete this person
                 </v-btn>
               </v-col>
-              <v-spacer v-if="isEditing"/>
+              <v-spacer v-if="isEditing" />
               <v-col v-if="isEditing" class="pt-0" align="right">
                 <v-btn @click="cancel" text large fab class="secondary--text mr-10">
                   <v-icon color="secondary">mdi-close</v-icon>
                 </v-btn>
-                <v-btn @click="submit" text large fab class="blue--text" color="blue" >
+                <v-btn @click="submit" text large fab class="blue--text" color="blue">
                   <v-icon>mdi-check</v-icon>
                 </v-btn>
               </v-col>
@@ -313,7 +323,6 @@ import {
   RELATIONSHIPS
 } from '@/lib/constants'
 
-import Dialog from '@/components/Dialog.vue'
 import Avatar from '@/components/Avatar.vue'
 import AvatarGroup from '@/components/AvatarGroup.vue'
 import DeleteNodeDialog from '@/components/dialog/DeleteNodeDialog.vue'
@@ -351,7 +360,6 @@ function defaultData (profile) {
 export default {
   name: 'SideViewEditNodeDialog',
   components: {
-    Dialog,
     Avatar,
     AvatarGroup,
     DeleteNodeDialog,

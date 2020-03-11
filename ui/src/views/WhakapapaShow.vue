@@ -6,9 +6,7 @@
           <v-row class="lock-container">
             <v-col class="lock-icon">
               <v-icon small color="#555">mdi-lock</v-icon>
-              <span id="lock-icon-margin"
-                >Private record - Only visible by you</span
-              >
+              <span id="lock-icon-margin">Private record - Only visible by you</span>
             </v-col>
           </v-row>
           <v-row class="pt-5">
@@ -20,21 +18,24 @@
               x-small
               class="blue--text edit"
             >
-              <v-icon small class="blue--text" left>mdi-pencil</v-icon>
-              Edit
+              <v-icon small class="blue--text" left>mdi-pencil</v-icon>Edit
             </v-btn>
           </v-row>
         </WhakapapaViewCard>
       </v-row>
 
-      <WhakapapaBanner v-if="mobile" :view="whakapapaView" @edit="toggleEditWhakapapa" @more-info="toggleInformation()" />
+      <WhakapapaBanner
+        v-if="mobile"
+        :view="whakapapaView"
+        @edit="toggleEditWhakapapa"
+        @more-info="toggleInformation()"
+      />
 
       <v-row v-if="!mobile" class="feedback">
         <v-col>
           <FeedbackButton />
         </v-col>
-        <v-icon  class="px-3" color="blue-grey" light @click="toggleWhakapapaHelper">mdi-information</v-icon>
-
+        <v-icon class="px-3" color="blue-grey" light @click="toggleWhakapapaHelper">mdi-information</v-icon>
       </v-row>
 
       <v-row>
@@ -62,8 +63,10 @@
       v-if="dialog.new"
       :show="dialog.new"
       :title="`Add ${dialog.type} to ${selectedProfile.preferredName || '___'}`"
-      @close="toggleNew" @submit="addPerson($event)"
-      :suggestions="suggestions" @getSuggestions="getSuggestions($event)"
+      @close="toggleNew"
+      @submit="addPerson($event)"
+      :suggestions="suggestions"
+      @getSuggestions="getSuggestions($event)"
     />
     <DeleteNodeDialog
       v-if="dialog.delete"
@@ -77,7 +80,7 @@
       :show="dialog.information"
       @close="toggleInformation()"
       @edit="toggleEditWhakapapa()"
-      @viewHelper="toggleWhakapapaHelper()" 
+      @viewHelper="toggleWhakapapaHelper()"
       :view="whakapapaView"
     />
     <WhakapapaEditDialog
@@ -89,24 +92,21 @@
       @delete="deleteWhakapapa()"
     />
 
-     <!-- Side Menu -->
-     <div :class="sideMenuClass">
+    <!-- Side Menu -->
+    <div :class="sideMenuClass">
       <SideViewEditNodeDialog
-          v-if="dialog.view"
-          :profile="selectedProfile"
-          :deleteable="canDelete(selectedProfile)"
-          :warnAboutChildren="selectedProfile && selectedProfile.id !== whakapapaView.focus"
-          @close="toggleView()"
-          @new="toggleNewPerson($event)"
-          @submit="updateProfile($event)"
-          @delete="deleteProfile()"
-          @open-profile="setSelectedProfile($event)"
+        v-if="dialog.view"
+        :profile="selectedProfile"
+        :deleteable="canDelete(selectedProfile)"
+        :warnAboutChildren="selectedProfile && selectedProfile.id !== whakapapaView.focus"
+        @close="toggleView()"
+        @new="toggleNewPerson($event)"
+        @submit="updateProfile($event)"
+        @delete="deleteProfile()"
+        @open-profile="setSelectedProfile($event)"
       />
     </div>
-    <WhakapapaShowHelper
-      :show="showWhakapapaHelper"
-      @close="toggleWhakapapaHelper"
-    />
+    <WhakapapaShowHelper :show="showWhakapapaHelper" @close="toggleWhakapapaHelper" />
   </div>
 </template>
 
@@ -245,7 +245,7 @@ export default {
     sideMenuClass () {
       if (this.dialog.view) {
         return !this.mobile ? 'viewDesktop' : 'viewMobile'
-      } 
+      }
       return !this.mobile ? 'hideViewDesktop' : 'hideViewMobile'
     },
 
@@ -930,7 +930,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
-@import '~vue-context/dist/css/vue-context.css';
+@import "~vue-context/dist/css/vue-context.css";
 
 #whakapapa-show {
   & > .container {
@@ -985,25 +985,25 @@ h1 {
   transition: all 0.1s ease-in-out;
   position: absolute;
   top: 0px;
-  right:0px;
+  right: 0px;
   width: 25%;
   height: 100%;
   background-color: white;
 }
 
 .hideViewDesktop {
-  right:-30%;
+  right: -30%;
 }
 
 .hideViewMobile {
-  bottom:-100%;
+  bottom: -100%;
 }
 
 .viewMobile {
   transition: all 0.1s ease-in-out;
   position: absolute;
   top: 0px;
-  right:0px;
+  right: 0px;
   width: 100%;
   height: 100%;
   background-color: white;
@@ -1012,5 +1012,4 @@ h1 {
 svg {
   max-height: calc(100vh - 64px);
 }
-
 </style>
