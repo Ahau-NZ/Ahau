@@ -115,7 +115,18 @@ export const personComplete = {
       preferredName: 'Willow ',
       avatarImage: {
         uri: 'http://www.gstatic.com/tv/thumb/persons/512549/512549_v9_bb.jpg'
-      }
+      },
+      children: [
+        {
+          id: '%S',
+          gender: 'female',
+          legalName: 'Willow Smith',
+          preferredName: 'Willow ',
+          avatarImage: {
+            uri: 'http://www.gstatic.com/tv/thumb/persons/512549/512549_v9_bb.jpg'
+          }
+        }
+      ]
     }
   ],
   parents: [

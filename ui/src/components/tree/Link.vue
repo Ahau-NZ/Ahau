@@ -1,5 +1,5 @@
 <template>
-  <path class="link" :d="elbowV" />
+  <path class="link" :d="link.d" />
 </template>
 
 <script>
@@ -26,14 +26,6 @@ export default {
       generates a d attribute for the <path> which orientates the link vertically
       in an elbow shape
     */
-    elbowV () {
-      return `
-        M ${this.link.x1}, ${this.link.y1} 
-        v ${this.branch} 
-        H ${this.link.x2} 
-        V ${this.link.y2}
-      `
-    }
     /*
       generates a d attribute for the <path> which orientates the link horizontally
       in an elbow shape

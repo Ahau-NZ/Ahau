@@ -1,16 +1,15 @@
 <template>
-<h1>table tree</h1>
-  <!-- <svg id="baseSvg" width="100%" :height="height" ref="baseSvg">
+  <svg id="baseSvg" width="100%" :height="height" ref="baseSvg" style="background-color:white" >
     <h1>table view</h1>
     <g id="baseGroup">
-      <g :transform="`translate(${treeX} ${treeY})`">
+      <g :transform="`translate(${100} ${100})`">
         <g v-for="link in links" :key="link.id" class="link">
           <Link :link="link" :branch="branch" :class="link.class"/>
         </g>
       </g>
 
       <g
-        :transform="`translate(${treeX - nodeRadius} ${treeY - nodeRadius})`"
+        :transform="`translate(${100 - nodeRadius} ${100 - nodeRadius})`"
         ref="tree"
       >
         <g v-for="node in nodes" :key="node.data.id" class="node">
@@ -24,7 +23,7 @@
         </g>
       </g>
     </g>
-  </svg> -->
+  </svg>
 </template>
 
 <script>
@@ -61,6 +60,7 @@ export default {
       // },
 
       nodeRadius: 50, // use variable for zoom later on
+      nodeSize: 100,
       nodeSeparationX: 100,
       nodeSeparationY: 150
     }
@@ -136,9 +136,10 @@ export default {
       extra attributes
     */
     nodes () {
-      return this.treeLayout(this.root)
+      return this.root
         .descendants() // returns the array of descendants starting with the root node, then followed by each child in topological order
         .map((d, i) => {
+          console.log(d.depth)
           // returns a new custom object for each node
           return {
             nodeId: `node-${i}`,
@@ -147,10 +148,13 @@ export default {
             depth: d.depth,
             height: d.height,
             parent: d.parent,
-            x: d.x,
-            y: d.y
+            x: d.depth * this.nodeSize,
+            y: i * this.nodeSize,
+            transform: `translate(0,${i * this.nodeSize})`
           }
         })
+
+      // .attr("transform", d => `translate(0,${d.index * nodeSize})`);
     },
     /*
       returns an array of links which holds the X and Y coordinates of both the parent (source) and child (target) nodes
@@ -159,6 +163,7 @@ export default {
       return this.treeLayout(this.root)
         .links() // returns the array of links
         .map((d, i) => { // returns a new custom object for each link
+          console.log(d)
           return {
             id: `link-${i}-${i + 1}`,
             index: i,
@@ -168,10 +173,17 @@ export default {
             x2: d.target.x, // centre x position of child node
             y1: d.source.y, // centre y position of the parent node
             y2: d.target.y, // centre y position of the child node
-            class: this.relationshipLinks[d.source.data.id + '-' + d.target.data.id].relationshipType !== 'birth' ? 'nonbiological' : ''
+            d: `M${d.source.depth * this.nodeSize},${i * this.nodeSize}
+                V${(i + 1) * this.nodeSize}
+                h${this.nodeSize}
+            `
           }
         })
     }
+
+    // M${d.source.depth * nodeSize},${d.source.index * nodeSize}
+    //     V${d.target.index * nodeSize}
+    //     h${nodeSize}
   },
   methods: {
     loadDescendants (profileId) {

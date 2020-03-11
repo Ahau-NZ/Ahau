@@ -166,6 +166,12 @@ export default {
             x2: d.target.x, // centre x position of child node
             y1: d.source.y, // centre y position of the parent node
             y2: d.target.y, // centre y position of the child node
+            d: `
+              M ${d.source.x}, ${d.source.y} 
+              v ${this.branch} 
+              H ${d.target.x} 
+              V ${d.target.y}
+            `,
             class: this.relationshipLinks[d.source.data.id + '-' + d.target.data.id].relationshipType !== 'birth' ? 'nonbiological' : ''
           }
         })

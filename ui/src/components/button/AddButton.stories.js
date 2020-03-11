@@ -1,4 +1,4 @@
-import AddButton from './button/AddButton.vue'
+import AddButton from './AddButton.vue'
 
 export default {
   title: 'AddButton'
