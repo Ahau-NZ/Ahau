@@ -1,6 +1,11 @@
 <template>
   <svg id="baseSvg" width="100%" :height="height" ref="baseSvg" style="background-color:white" >
-    <h1>table view</h1>
+    <!-- for (const {label, value, format, x} of columns) { -->
+    <g v-for="column in columns" :key="column.label">
+      <text :transform="`translate(${column.x + (nodeSize * 2)} ${30})`">
+        {{ column.label }}
+      </text>
+    </g>
     <g id="baseGroup">
       <g :transform="`translate(${100} ${100})`">
         <g v-for="link in links" :key="link.id" class="link">
@@ -19,7 +24,13 @@
             @click="collapse(node)"
             @open-context-menu="$emit('open-context-menu', $event)"
             :showLabel="true"
-          />
+            />
+            <text  :transform="`translate(${columnX.count + (nodeSize * 2)} ${node.y + nodeRadius})`">
+              {{ node.children ? node.children.length : 0 }}
+            </text>
+            <text  :transform="`translate(${columnX.legalName + (nodeSize * 2)} ${node.y + nodeRadius})`">
+              {{ node.data.legalName }}
+            </text>
         </g>
       </g>
     </g>
@@ -62,14 +73,42 @@ export default {
       nodeRadius: 50, // use variable for zoom later on
       nodeSize: 100,
       nodeSeparationX: 100,
-      nodeSeparationY: 150
+      nodeSeparationY: 150,
+      columnX: {
+        size: 280,
+        count: 290,
+        legalName: 350
+      },
+      columns: [
+        {
+          label: 'Size',
+          value: d => d.value,
+          format: this.format,
+          x: 280
+        },
+        {
+          label: 'Count',
+          value: d => d.children ? 0 : 1,
+          format: (value, d) => d.children ? this.format(value) : '-',
+          x: 340
+        },
+        {
+          label: 'Legal Name',
+          value: d => d.data.legalName,
+          format: (value, d) => d.data.legalName ? this.format(value) : '-',
+          x: 400
+        }
+      ]
     }
   },
   mounted () {
     this.componentLoaded = true
-    this.zoom()
+    // this.zoom()
   },
   computed: {
+    format () {
+      return d3.format(',')
+    },
     branch () {
       return this.nodeSeparationY / 2 + this.nodeRadius
     },
