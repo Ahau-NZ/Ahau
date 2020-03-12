@@ -12,7 +12,6 @@
         />
       </g>
     </g> -->
-
     <g class="avatar -main" v-if="!isPartner" @click.left="click">
       <defs>
         <clipPath id="myCircle">
@@ -32,12 +31,11 @@
         clip-path="url(#myCircle)"
         :style="{ opacity: profile.diedAt ? 0.5 : 1 }"
       />
-      <g v-if="profile.isCollapsed" :style="collapsedStyle">
+      <!-- <g v-if="profile.isCollapsed" :style="collapsedStyle">
         <text> ... </text>
-      </g>
+      </g> -->
       <g
         class="menu-button"
-        v-else
         @click.stop="openMenu($event, profile.id)"
         :transform="`translate(${1.4 * radius}, ${1.4 * radius})`"
       >
@@ -53,7 +51,7 @@
       </g>
     </g>
 
-    <g v-else class="avatar -partner">
+    <!-- <g v-else class="avatar -partner">
       <defs>
         <clipPath id="myPartnerCircle">
           <circle :cx="radius" :cy="radius" :r="radius" />
@@ -88,10 +86,10 @@
         />
         <polygon points="15,0  25,0  20,6" style="fill:#000;" />
       </g>
-    </g>
+    </g> -->
 
     <g id="node-label" :style="textStyle">
-      <rect :width="textWidth" y="-16" height="10"></rect>
+      <!-- <rect :width="textWidth" y="-16" height="10"></rect> -->
       <text>{{ profile.preferredName }}</text>
     </g>
     <defs>
@@ -100,7 +98,7 @@
       </filter>
     </defs>
     <g v-if="profile.isCollapsed" :style="collapsedStyle">
-      <text> ... </text>
+      <text> + </text>
     </g>
   </g>
 </template>
@@ -160,10 +158,7 @@ export default {
     collapsedStyle () {
       // centers the text element under name
       return {
-        fontSize: '30px',
-        fontWeight: 600,
-        transform: `translate(${this.radius - 3}px, ${this.diameter +
-          25}px) rotate(90deg)`
+        transform: `translate(${this.radius - 30}px, ${this.radius + 5}px)`
         // calculate the transform to draw nodes vertically
       }
     },
@@ -210,8 +205,6 @@ g {
   transition: all ease-in 0.1s;
 
   g.avatar {
-    image {
-    }
 
     .menu-button {
       transition: opacity ease-in 0.2s;

@@ -3,23 +3,25 @@
     <!-- for (const {label, value, format, x} of columns) { -->    
     <line x1="60" y1="50" x2="90%" y2="50" style="stroke-width: 1; stroke: lightgrey;"/>
     <g v-for="column in columns" :key="column.label">
-      <text :transform="`translate(${column.x + (nodeSize * 5)} ${30})`">
+      <text :transform="`translate(${column.x + 10} ${40})`">
         {{ column.label }}
       </text>
-      <line :x1="column.x + (nodeSize*5)" y1="50" :x2="column.x + (nodeSize*5)" y2="100%" style="stroke-width: 1; stroke: lightgrey;"/>
+      <line :x1="column.x" y1="50" :x2="column.x" y2="100%" style="stroke-width: 1; stroke: lightgrey;"/>
     </g>
       <g id="baseGroup">
-        <g :transform="`translate(${100} ${100})`">
+        <g :transform="`translate(${60} ${80})`">
           <g v-for="link in links" :key="link.id" class="link">
             <Link :link="link" :branch="branch" :class="link.class"/>
           </g>
         </g>
 
         <g
-          :transform="`translate(${100 - nodeRadius} ${100 - nodeRadius})`"
+          :transform="`translate(${60 - nodeRadius} ${80 - nodeRadius})`"
           ref="tree"
         >
           <g v-for="node in nodes" :key="node.data.id" class="node">
+            <!-- <line x1="0" :y1="node.y-3" x2="90%" :y2="node.y-3" style="stroke-width: 1; stroke: lightgrey;"/> -->
+            <rect :x="node.x + nodeRadius" :y="node.y" width="100%" :height="nodeRadius*2" class="row" :style="node.color" />
             <Node
               :node="node"
               :radius="nodeRadius"
@@ -27,11 +29,11 @@
               @open-context-menu="$emit('open-context-menu', $event)"
               :showLabel="true"
               />
-              <text  :transform="`translate(${columnX.count + (nodeSize * 5)} ${node.y + nodeRadius})`">
-                {{ node.children ? node.children.length : 0 }}
-              </text>
-              <text  :transform="`translate(${columnX.legalName + (nodeSize * 5)} ${node.y + nodeRadius})`">
+              <text  :transform="`translate(${columnX.legalName - nodeSize + 10} ${node.y + nodeRadius})`">
                 {{ node.data.legalName }}
+              </text>
+              <text  :transform="`translate(${columnX.age - nodeSize + 10} ${node.y + nodeRadius})`">
+                {{ node.age }}
               </text>
           </g>
         </g>
@@ -67,39 +69,37 @@ export default {
   data () {
     return {
       componentLoaded: false, // need to ensure component is loaded before using $refs
-      // ?? think this is unused ??
-      // node: {
-      //   new: null
-      // },
-      nodeRadius: 25, // use variable for zoom later on
-      nodeSize: 50,
+      nodeRadius: 20, // use variable for zoom later on
+      nodeSize: 40,
       tableHeight: 0,
-      // nodeSeparationX: 100,
-      // nodeSeparationY: 150,
+      duration: 400,
       columnX: {
-        size: 280,
-        count: 290,
-        legalName: 350
+        legalName: 400,
+        age: 600,
+        children: 650
       },
       columns: [
         {
-          label: 'Size',
-          value: d => d.value,
-          format: this.format,
-          x: 280
-        },
-        {
-          label: 'Children',
-          value: d => d.children && d._children ? 0 : 1,
-          format: (value, d) => d.children ? this.format(value) : '-',
-          x: 340
-        },
-        {
           label: 'Legal Name',
-          value: d => d.data.legalName,
-          format: (value, d) => d.data.legalName ? this.format(value) : '-',
-          x: 410
-        }
+          x: 400
+        },
+        {
+          label: 'Age',
+          x: 600
+        },
+        {
+          label: 'Career',
+          x: 650
+        },
+        {
+          label: 'Location',
+          x: 800
+        },
+        {
+          label: 'Contact',
+          x: 1000
+        },
+        
       ]
     }
   },
@@ -115,52 +115,17 @@ export default {
       return this.nodeSeparationY / 2 + this.nodeRadius
       console.log(branch)
     },
-    /*
-      gets the X position of the tree based on the svg size
-      @TODO: change so it does it when the screen is resized, only displays changes when the page is
-      refreshed
-    */
-    treeX () {
-      if (!this.componentLoaded) return 0
-      return this.$refs.baseSvg.clientWidth / 2
-    },
-    /*
-      gets the Y position of the tree based on the svg size
-      @TODO: change so it does it when the screen is resized, only displays changes when the page is
-      refreshed
-    */
-    treeY () {
-      if (!this.componentLoaded) return 0
-      return this.$refs.baseSvg.clientHeight / 3
-    },
-    treeWidth () {
-      if (!this.componentLoaded) return null
-      return this.$refs.tree.clientWidth
-    },
-    treeHeight () {
-      if (!this.componentLoaded) return null
-      return this.$refs.tree.clientHeight
-    },
     width () {
       return screen.width
     },
-    height () {
-      var height = 0
-     this.tableLayout
-      return screen.height
-
-    },
-    /*
-      creates a new tree layout and sets the size depending on the separation
-      between nodes
-    */
-   tableLayout () {  
+    // creates a new table layout and sets the size depending on number of nodes
+    tableLayout () {  
       var index = -1
       var layout = this.root.eachBefore(function(n) {
-        n.y = ++index * 50
+        n.y = ++index * 30
         n.x = n.depth * 20
       })
-      this.tableHeight = (1 + index) * 100
+      this.tableHeight = (1 + index) * 60
       return layout
     },
     //  returns a nested data structure representing a tree based on the treeData object
@@ -172,6 +137,20 @@ export default {
       extra attributes
     */
     nodes () {
+      function getAge(bornAt) {
+        if (bornAt === null) return
+        var date = new Date(bornAt)
+        var diff_ms = Date.now() - date.getTime();
+        var age_dt = new Date(diff_ms); 
+        return Math.abs(age_dt.getUTCFullYear() - 1970);
+      }
+      function nodeColor(age) {
+        console.log(age)
+        var age = getAge(age)
+        if (age < 1) return "fill:yellow"
+        return "fill:lightblue"
+      }
+
       return this.tableLayout
         .descendants() // returns the array of descendants starting with the root node, then followed by each child in topological order
         .map((d, i) => {
@@ -185,7 +164,8 @@ export default {
             parent: d.parent,
             x: d.x,
             y: d.y*1.5,
-            // transform: `translate(0,${i * this.nodeSize})`
+            age: getAge(d.data.bornAt),
+            color: nodeColor(d.data.bornAt)
           }
         })
 
@@ -220,20 +200,13 @@ export default {
       // TODO
       // this one feels like perhaps it should be handled in this file
     },
-    visiblePartners (node) {
-      return get(node, 'data.isCollapsed')
-        ? 0
-        : get(node, 'data.partners.length', 0)
-    },
-
-    zoom () {
-      var svg = d3.select('#baseSvg')
-      var g = d3.select('#baseGroup')
-      svg.call(
-        d3.zoom().on('zoom', function () {
-          g.attr('transform', d3.event.transform)
-        })
-      )
+    age (date) {
+      new Date(d.data.bornAt)
+      year = date.getFullYear();
+      month = date.getMonth()+1;
+      dt = date.getDate();
+      dob = dt+'-' + month + '-'+yeay
+      return dob
     }
   },
   components: {
@@ -251,5 +224,10 @@ svg#baseSvg {
 
 .nonbiological{
   stroke-dasharray: 2.5
+}
+
+.row {
+  opacity: .2;
+  fill: lightblue
 }
 </style>

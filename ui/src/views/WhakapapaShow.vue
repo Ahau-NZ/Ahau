@@ -983,16 +983,6 @@ h1 {
 .fixed {
   position: fixed;
 }
-// .lock-container {
-//   .lock-icon {
-//     display: flex;
-//     font-size: 0.8em;
-//     color: #555;
-//   }
-//   #lock-icon-margin {
-//     margin-left: 10px;
-//   }
-// }
 
 .tree {
   max-height: calc(100vh - 64px);
