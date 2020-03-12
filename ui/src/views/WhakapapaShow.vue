@@ -2,27 +2,30 @@
   <div id="whakapapa-show">
     <v-container class="white px-0 py-0 mx-auto">
       <v-row v-if="!mobile" class="header">
-        <WhakapapaViewCard :view="whakapapaView" :shadow="false">
-          <v-row class="lock-container">
-            <v-col class="lock-icon">
-              <v-icon small color="#555">mdi-lock</v-icon>
-              <span id="lock-icon-margin"
-                >Private record - Only visible by you</span
-              >
-            </v-col>
-          </v-row>
-          <v-row class="pt-5">
-            <v-btn
-              @click.prevent="toggleEditWhakapapa"
-              align="right"
-              color="white"
-              text
-              x-small
-              class="blue--text edit"
-            >
-              <v-icon small class="blue--text" left>mdi-pencil</v-icon>
-              Edit
-            </v-btn>
+        <WhakapapaViewCard :view="whakapapaView" :shadow="false" height="60px" >
+          <v-row class="lock-container pl-3">
+             <v-tooltip bottom>
+              <template v-slot:activator="{ on }">
+                <v-icon v-on="on" small color="#555">mdi-lock</v-icon>
+              </template>
+              <span>Private record - Only visible by you</span>
+            </v-tooltip>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on }">
+                <v-btn
+                  v-on="on"
+                    @click.prevent="toggleEditWhakapapa"
+                    align="right"
+                    color="white"
+                    text
+                    x-small
+                    class="blue--text edit pl-5"
+                  >
+                  <v-icon small class="blue--text" left>mdi-pencil</v-icon>
+                </v-btn>
+              </template>
+              <span>Edit whakapapa description</span>
+            </v-tooltip>
           </v-row>
         </WhakapapaViewCard>
       </v-row>
@@ -43,6 +46,7 @@
 
       <v-row>
         <Tree
+          class="tree"
           v-if="whakapapa.tree"
           :view="whakapapaView"
           :nestedWhakapapa="nestedWhakapapa"
@@ -951,8 +955,6 @@ export default {
       position: absolute;
       top: 20px;
       left: 30px;
-      // left: 30px;
-      right: 160px;
 
       .col {
         padding-top: 0;
@@ -981,19 +983,18 @@ h1 {
 .fixed {
   position: fixed;
 }
-.lock-container {
-  .lock-icon {
-    display: flex;
-    align-items: center;
-    font-size: 0.8em;
-    color: #555;
-  }
-  #lock-icon-margin {
-    margin-left: 10px;
-  }
-}
+// .lock-container {
+//   .lock-icon {
+//     display: flex;
+//     font-size: 0.8em;
+//     color: #555;
+//   }
+//   #lock-icon-margin {
+//     margin-left: 10px;
+//   }
+// }
 
-svg {
+.tree {
   max-height: calc(100vh - 64px);
 }
 </style>

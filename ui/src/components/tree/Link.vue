@@ -44,7 +44,7 @@ export default {
 
 <style scoped lang="scss">
 path {
-  // transition: all ease-in .2s;
+  transition: all ease-in .6s;
   fill: none;
   stroke: black;
 }

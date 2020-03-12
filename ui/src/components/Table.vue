@@ -1,46 +1,48 @@
 <template>
-  <svg id="baseSvg" width="100%" :height="height" ref="baseSvg" style="background-color:white" >
-    <!-- for (const {label, value, format, x} of columns) { -->
+  <svg id="baseSvg" :width="width" :height="tableHeight" ref="baseSvg" style="background-color:white" overflow="auto" min-height="500px">
+    <!-- for (const {label, value, format, x} of columns) { -->    
+    <line x1="60" y1="50" x2="90%" y2="50" style="stroke-width: 1; stroke: lightgrey;"/>
     <g v-for="column in columns" :key="column.label">
-      <text :transform="`translate(${column.x + (nodeSize * 2)} ${30})`">
+      <text :transform="`translate(${column.x + (nodeSize * 5)} ${30})`">
         {{ column.label }}
       </text>
+      <line :x1="column.x + (nodeSize*5)" y1="50" :x2="column.x + (nodeSize*5)" y2="100%" style="stroke-width: 1; stroke: lightgrey;"/>
     </g>
-    <g id="baseGroup">
-      <g :transform="`translate(${100} ${100})`">
-        <g v-for="link in links" :key="link.id" class="link">
-          <Link :link="link" :branch="branch" :class="link.class"/>
+      <g id="baseGroup">
+        <g :transform="`translate(${100} ${100})`">
+          <g v-for="link in links" :key="link.id" class="link">
+            <Link :link="link" :branch="branch" :class="link.class"/>
+          </g>
         </g>
-      </g>
 
-      <g
-        :transform="`translate(${100 - nodeRadius} ${100 - nodeRadius})`"
-        ref="tree"
-      >
-        <g v-for="node in nodes" :key="node.data.id" class="node">
-          <Node
-            :node="node"
-            :radius="nodeRadius"
-            @click="collapse(node)"
-            @open-context-menu="$emit('open-context-menu', $event)"
-            :showLabel="true"
-            />
-            <text  :transform="`translate(${columnX.count + (nodeSize * 2)} ${node.y + nodeRadius})`">
-              {{ node.children ? node.children.length : 0 }}
-            </text>
-            <text  :transform="`translate(${columnX.legalName + (nodeSize * 2)} ${node.y + nodeRadius})`">
-              {{ node.data.legalName }}
-            </text>
+        <g
+          :transform="`translate(${100 - nodeRadius} ${100 - nodeRadius})`"
+          ref="tree"
+        >
+          <g v-for="node in nodes" :key="node.data.id" class="node">
+            <Node
+              :node="node"
+              :radius="nodeRadius"
+              @click="collapse(node)"
+              @open-context-menu="$emit('open-context-menu', $event)"
+              :showLabel="true"
+              />
+              <text  :transform="`translate(${columnX.count + (nodeSize * 5)} ${node.y + nodeRadius})`">
+                {{ node.children ? node.children.length : 0 }}
+              </text>
+              <text  :transform="`translate(${columnX.legalName + (nodeSize * 5)} ${node.y + nodeRadius})`">
+                {{ node.data.legalName }}
+              </text>
+          </g>
         </g>
       </g>
-    </g>
   </svg>
 </template>
 
 <script>
 import * as d3 from 'd3'
 import get from 'lodash.get'
-import Node from './tree/Node.vue'
+import Node from './table/Node.vue'
 import Link from './tree/Link.vue'
 
 export default {
@@ -69,11 +71,11 @@ export default {
       // node: {
       //   new: null
       // },
-
-      nodeRadius: 50, // use variable for zoom later on
-      nodeSize: 100,
-      nodeSeparationX: 100,
-      nodeSeparationY: 150,
+      nodeRadius: 25, // use variable for zoom later on
+      nodeSize: 50,
+      tableHeight: 0,
+      // nodeSeparationX: 100,
+      // nodeSeparationY: 150,
       columnX: {
         size: 280,
         count: 290,
@@ -87,8 +89,8 @@ export default {
           x: 280
         },
         {
-          label: 'Count',
-          value: d => d.children ? 0 : 1,
+          label: 'Children',
+          value: d => d.children && d._children ? 0 : 1,
           format: (value, d) => d.children ? this.format(value) : '-',
           x: 340
         },
@@ -96,7 +98,7 @@ export default {
           label: 'Legal Name',
           value: d => d.data.legalName,
           format: (value, d) => d.data.legalName ? this.format(value) : '-',
-          x: 400
+          x: 410
         }
       ]
     }
@@ -111,6 +113,7 @@ export default {
     },
     branch () {
       return this.nodeSeparationY / 2 + this.nodeRadius
+      console.log(branch)
     },
     /*
       gets the X position of the tree based on the svg size
@@ -142,29 +145,23 @@ export default {
       return screen.width
     },
     height () {
+      var height = 0
+     this.tableLayout
       return screen.height
+
     },
     /*
       creates a new tree layout and sets the size depending on the separation
       between nodes
     */
-    treeLayout () {
-      return d3
-        .tree()
-        .nodeSize([
-          this.nodeSeparationX + this.nodeRadius,
-          this.nodeSeparationY + this.nodeRadius
-        ])
-        .separation((a, b) => {
-          if (a.parent !== b.parent) return 1.3
-          // "how far cousins be spaced"  (I think)
-          // nodes have only one one "node.parent" (but multiple node.data.parents)
-
-          return 1 + 0.3 * (this.visiblePartners(a) + this.visiblePartners(b))
-          // "how far are siblings spaced" (I think)
-          // start with a baseline of 1, then add a proportion of the number of partners
-          // as partners take up less space than central node, are placed evenly to either side
-        })
+   tableLayout () {  
+      var index = -1
+      var layout = this.root.eachBefore(function(n) {
+        n.y = ++index * 50
+        n.x = n.depth * 20
+      })
+      this.tableHeight = (1 + index) * 100
+      return layout
     },
     //  returns a nested data structure representing a tree based on the treeData object
     root () {
@@ -175,10 +172,9 @@ export default {
       extra attributes
     */
     nodes () {
-      return this.root
+      return this.tableLayout
         .descendants() // returns the array of descendants starting with the root node, then followed by each child in topological order
         .map((d, i) => {
-          console.log(d.depth)
           // returns a new custom object for each node
           return {
             nodeId: `node-${i}`,
@@ -187,9 +183,9 @@ export default {
             depth: d.depth,
             height: d.height,
             parent: d.parent,
-            x: d.depth * this.nodeSize,
-            y: i * this.nodeSize,
-            transform: `translate(0,${i * this.nodeSize})`
+            x: d.x,
+            y: d.y*1.5,
+            // transform: `translate(0,${i * this.nodeSize})`
           }
         })
 
@@ -199,30 +195,21 @@ export default {
       returns an array of links which holds the X and Y coordinates of both the parent (source) and child (target) nodes
     */
     links () {
-      return this.treeLayout(this.root)
+      return this.tableLayout
         .links() // returns the array of links
         .map((d, i) => { // returns a new custom object for each link
-          console.log(d)
           return {
             id: `link-${i}-${i + 1}`,
             index: i,
             relationshipType: d.target.data.relationshipType ? d.target.data.relationshipType[0] : '',
-            // coordinates from drawing lines/links from Parent(x1,y1) to Child(x2,y2)
-            x1: d.source.x, // centre x position of parent node
-            x2: d.target.x, // centre x position of child node
-            y1: d.source.y, // centre y position of the parent node
-            y2: d.target.y, // centre y position of the child node
-            d: `M${d.source.depth * this.nodeSize},${i * this.nodeSize}
-                V${(i + 1) * this.nodeSize}
-                h${this.nodeSize}
-            `
+            d: `M${d.source.x - this.nodeRadius/2},${d.source.y*1.5}
+                V${d.target.y*1.5}
+                h${d.target.x/(d.target.x*.1)}
+            `,
+            class: this.relationshipLinks[d.source.data.id + '-' + d.target.data.id].relationshipType !== 'birth' ? 'nonbiological' : ''
           }
         })
-    }
-
-    // M${d.source.depth * nodeSize},${d.source.index * nodeSize}
-    //     V${d.target.index * nodeSize}
-    //     h${nodeSize}
+    },
   },
   methods: {
     loadDescendants (profileId) {
@@ -258,7 +245,8 @@ export default {
 
 <style scoped lang="scss">
 svg#baseSvg {
-  cursor: grab;
+  padding-top:100px;
+  min-height: calc(100vh - 68px);
 }
 
 .nonbiological{
