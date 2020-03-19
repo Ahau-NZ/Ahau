@@ -1,19 +1,11 @@
 <template>
-  <Dialog :show="show" @close="close" :width="`650px`" enableMenu :goBack="close">
-    <v-card>
-      <v-row class="mr-0">
-        <v-col class="py-0" cols="10">
-          <v-card-title>
-            <span class="headline">Whakapapa tree</span>
-          </v-card-title>
-        </v-col>
-        <!-- Dialog close button -->
-        <v-col v-if="!mobile" class="pb-0" align="right" cols="2">
-          <v-btn @click="close" class="close" fab text color="secondary">
-            <v-icon>mdi-close</v-icon>
-          </v-btn>
-        </v-col>
-      </v-row>
+  <Dialog :show="show" @close="close" :width="`550px`" :goBack="close">
+    <template v-slot:title>
+      <v-card-title>
+        <span class="headline">Whakapapa tree</span>
+      </v-card-title>
+    </template>
+    <template v-slot:content>
       <v-card-text class="pt-0">
         <p>
           This whakapapa tool has been designed to help you create,
@@ -52,11 +44,11 @@
           class="centerImage"
         ></v-carousel-item>
       </v-carousel>
-    </v-card>
+    </template>
   </Dialog>
 </template>
 <script>
-import Dialog from '@/components/Dialog.vue'
+import Dialog from '@/components/dialog/Dialog.vue'
 
 export default {
   props: {
@@ -66,10 +58,10 @@ export default {
   data () {
     return {
       items: [
-        { src: require('../../assets/menu.png') },
-        { src: require('../../assets/parent.png') },
-        { src: require('../../assets/view.png') },
-        { src: require('../../assets/example.png') }
+        { src: require('../../../assets/menu.png') },
+        { src: require('../../../assets/parent.png') },
+        { src: require('../../../assets/view.png') },
+        { src: require('../../../assets/example.png') }
       ]
     }
   },

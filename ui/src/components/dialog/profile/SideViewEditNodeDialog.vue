@@ -278,8 +278,8 @@
               <!-- Delete button -->
               <v-col cols="12" sm="auto">
                 <v-btn
-                  v-if="isEditing"
-                  @click="toggleDelete"
+                  v-if="isEditing && deleteable"
+                  @click="$emit('delete')"
                   align="center"
                   color="white"
                   text
@@ -288,7 +288,6 @@
                   <v-icon class="secondary--text" left>mdi-delete</v-icon>Delete this person
                 </v-btn>
               </v-col>
-              <v-spacer v-if="isEditing" />
               <v-col v-if="isEditing" class="pt-0" align="right">
                 <v-btn @click="cancel" text large fab class="secondary--text mr-10">
                   <v-icon color="secondary">mdi-close</v-icon>
@@ -303,15 +302,6 @@
         </v-container>
       </v-card>
     </v-form>
-
-    <DeleteNodeDialog
-      v-if="deleteDialog"
-      :show="deleteDialog"
-      :profile="profile"
-      :warnAboutChildren="warnAboutChildren"
-      @close="toggleDelete"
-      @submit="deleteProfile()"
-    />
   </div>
 </template>
 
@@ -319,13 +309,13 @@
 import {
   GENDERS,
   RULES,
-  PERMITTED_PROFILE_ATTRS,
   RELATIONSHIPS
 } from '@/lib/constants'
 
+import { PERMITTED_PROFILE_ATTRS, PERMITTED_RELATIONSHIP_ATTRS } from '@/lib/profile-helpers'
+
 import Avatar from '@/components/Avatar.vue'
 import AvatarGroup from '@/components/AvatarGroup.vue'
-import DeleteNodeDialog from '@/components/dialog/DeleteNodeDialog.vue'
 import NodeDatePicker from '@/components/NodeDatePicker.vue'
 import AddButton from '@/components/AddButton.vue'
 import ImagePicker from '@/components/ImagePicker.vue'
@@ -362,7 +352,6 @@ export default {
   components: {
     Avatar,
     AvatarGroup,
-    DeleteNodeDialog,
     NodeDatePicker,
     AddButton,
     ImagePicker,
@@ -457,7 +446,8 @@ export default {
       if (!this.$refs.form.validate()) {
         return
       }
-      var output = Object.assign({}, pick(this.profileChanges, this.permitted))
+
+      var output = Object.assign({}, pick(this.profileChanges, [...PERMITTED_PROFILE_ATTRS, ...PERMITTED_RELATIONSHIP_ATTRS]))
 
       if (!isEmpty(output)) {
         this.$emit('submit', output)
@@ -474,14 +464,6 @@ export default {
     },
     toggleEdit () {
       this.isEditing = !this.isEditing
-    },
-    toggleDelete () {
-      this.deleteDialog = !this.deleteDialog
-    },
-    deleteProfile () {
-      this.$emit('delete')
-      this.toggleDelete()
-      this.close()
     },
     toggleAltName () {
       if (!this.formData.altNames.currentState) { this.formData.altNames.currentState = [] }

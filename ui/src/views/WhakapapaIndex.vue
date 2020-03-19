@@ -64,9 +64,9 @@
         v-if="showProfileForm"
         :show="showProfileForm"
         title="Create new Person"
+        @create="handleDoubleStep($event)"
         :withRelationships="false"
         @close="toggleProfileForm"
-        @submit="handleDoubleStep($event)"
       />
 
       <WhakapapaListHelper
@@ -83,9 +83,9 @@ import gql from 'graphql-tag'
 import pick from 'lodash.pick'
 import isEmpty from 'lodash.isempty'
 import WhakapapaViewCard from '@/components/whakapapa-view/WhakapapaViewCard.vue'
-import NewViewDialog from '@/components/dialog/NewViewDialog.vue'
-import NewNodeDialog from '@/components/dialog/NewNodeDialog.vue'
-import WhakapapaListHelper from '@/components/info-dialogs/WhakapapaListHelper.vue'
+import NewViewDialog from '@/components/dialog/whakapapa/NewViewDialog.vue'
+import NewNodeDialog from '@/components/dialog/profile/NewNodeDialog.vue'
+import WhakapapaListHelper from '@/components/dialog/whakapapa/WhakapapaListHelper.vue'
 
 const saveWhakapapaViewQuery = gql`
   mutation($input: WhakapapaViewInput) {
