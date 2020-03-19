@@ -1,7 +1,7 @@
 import { action } from '@storybook/addon-actions'
 import DeleteNodeDialog from './DeleteNodeDialog'
 import { personComplete } from '@/mocks/person-profile'
-import VIEWPORTS from '../../../.storybook/VIEWPORTS'
+import VIEWPORTS from '../../../../.storybook/VIEWPORTS'
 
 export default {
   title: 'DeleteNodeDialog',

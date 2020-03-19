@@ -1,10 +1,10 @@
 import { action } from '@storybook/addon-actions'
-import WhakapapaViewDialog from './WhakapapaViewDialog'
+import WhakapapaEditDialog from './WhakapapaEditDialog'
 import { viewMinimum } from '@/mocks/whakapapa-view'
-import VIEWPORTS from '../../../.storybook/VIEWPORTS'
+import VIEWPORTS from '../../../../.storybook/VIEWPORTS'
 
 export default {
-  title: 'WhakapapaViewDialog',
+  title: 'WhakapapaEditDialog',
   parameters: {
     viewport: {
       defaultViewport: 'extra_small',
@@ -19,7 +19,7 @@ const defaultMethods = {
 
 export const CompleteViewDialog = () => ({
   template:
-    '<WhakapapaViewDialog :show="true" @close="close" :view="whakapapaView" Z/>',
+    '<WhakapapaEditDialog :show="true" @close="close" :view="whakapapaView" Z/>',
   data: () => ({
     whakapapaView: viewMinimum
   }),
@@ -27,5 +27,5 @@ export const CompleteViewDialog = () => ({
   close ($event) {
     console.log($event)
   },
-  components: { WhakapapaViewDialog }
+  components: { WhakapapaEditDialog }
 })

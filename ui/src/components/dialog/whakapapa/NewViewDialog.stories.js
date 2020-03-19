@@ -1,6 +1,6 @@
 import { action } from '@storybook/addon-actions'
 import NewViewDialog from './NewViewDialog'
-import VIEWPORTS from '../../../.storybook/VIEWPORTS'
+import VIEWPORTS from '../../../../.storybook/VIEWPORTS'
 
 export default {
   title: 'NewViewDialog',
