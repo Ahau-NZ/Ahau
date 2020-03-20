@@ -4,26 +4,26 @@
       <v-img v-if="view.image && view.image.uri" :src="view.image.uri" :alt="view.name" />
       <v-img v-else :src="getImage" />
     </v-avatar>
-    {{ view.name }}
+      <span class="title"> {{ view.name }} </span>
     <template v-slot:actions>
       <v-btn
         @click.prevent="$emit('edit')"
         align="right"
         color="white"
         text
+        class="px-0"
         small
-        class="blue--text edit"
       >
-        <v-icon small class="blue--text" left>mdi-pencil</v-icon>
-        Edit
+        <v-icon class="blue--text" left>mdi-pencil</v-icon>
       </v-btn>
       <v-btn
         color="primary"
         text
-        small
         @click="$emit('more-info')"
+        class="px-0"
+        small
       >
-        More info
+      <v-icon class="grey--text" left>mdi-information</v-icon>
       </v-btn>
     </template>
   </v-banner>

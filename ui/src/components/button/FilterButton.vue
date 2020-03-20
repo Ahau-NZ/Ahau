@@ -1,7 +1,7 @@
 <template> 
   <v-tooltip  v-if="!filter" bottom>
     <template v-slot:activator="{ on }">
-        <v-btn v-on="on" @click="toggle()" fab small color="blue-grey">
+        <v-btn v-on="on" @click="toggle()" fab x-small color="blue-grey">
            <v-icon light > mdi-account-multiple-minus </v-icon>
         </v-btn>
     </template>
@@ -10,7 +10,7 @@
 
   <v-tooltip v-else bottom>
     <template v-slot:activator="{ on }">
-        <v-btn v-on="on" @click="toggle()" fab small color="blue-grey">
+        <v-btn v-on="on" @click="toggle()" fab x-small color="blue-grey">
            <v-icon light > mdi-account-multiple-plus </v-icon>
         </v-btn>
     </template>

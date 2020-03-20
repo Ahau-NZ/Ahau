@@ -2,9 +2,9 @@
   <div id="whakapapa-show">
     <v-container class="white px-0 py-0 mx-auto">
       <v-row v-if="!mobile" class="header">
-        <WhakapapaViewCard :view="whakapapaView" :shadow="false" height="60px" >
+        <WhakapapaViewCard :view="whakapapaView" :shadow="false">
           <v-row class="lock-container pl-3">
-             <v-tooltip bottom>
+            <v-tooltip bottom>
               <template v-slot:activator="{ on }">
                 <v-icon v-on="on" small color="#555">mdi-lock</v-icon>
               </template>
@@ -14,13 +14,13 @@
               <template v-slot:activator="{ on }">
                 <v-btn
                   v-on="on"
-                    @click.prevent="toggleEditWhakapapa"
-                    align="right"
-                    color="white"
-                    text
-                    x-small
-                    class="blue--text edit pl-5"
-                  >
+                  @click.prevent="dialog.active = 'whakapapa-edit'"
+                  align="right"
+                  color="white"
+                  text
+                  x-small
+                  class="blue--text edit pl-8"
+                >
                   <v-icon small class="blue--text" left>mdi-pencil</v-icon>
                 </v-btn>
               </template>
@@ -30,7 +30,7 @@
         </WhakapapaViewCard>
       </v-row>
 
-      <WhakapapaBanner v-if="mobile" :view="whakapapaView" @edit="toggleEditWhakapapa" @more-info="toggleInformation()"/>
+      <WhakapapaBanner v-if="mobile" :view="whakapapaView" @edit="updateDialog('whakapapa-edit', null)" @more-info="updateDialog('whakapapa-view', null)"/>
 
       <v-row v-if="!mobile" class="select">
         <v-col v-if="whakapapa.table && flatten">
@@ -43,7 +43,7 @@
           <TableButton @table="toggleTable()" />
         </v-col>
         <v-col>
-          <HelpButton @click="toggleWhakapapaHelper"/>
+          <HelpButton @click="updateDialog('whakapapa-helper', null)" />
         </v-col>
         <v-col>
           <FeedbackButton />
@@ -77,64 +77,30 @@
 
     <vue-context ref="menu">
       <li v-for="(option, index) in contextMenuOpts" :key="index">
-        <a href="#" @click.prevent="option.action">{{ option.title }}</a>
+        <a href="#" @click.prevent="updateDialog(option.dialog, option.type)">{{ option.title }}</a>
       </li>
       <li v-if="canDelete(selectedProfile)">
-        <a href="#" @click.prevent="toggleDelete">Delete Person</a>
+        <a href="#" @click.prevent="updateDialog('delete-node', null)">Delete Person</a>
       </li>
     </vue-context>
-
-    <ViewEditNodeDialog
-      v-if="dialog.view"
-      :show="dialog.view"
-      :profile="selectedProfile"
-      :deleteable="canDelete(selectedProfile)"
-      :warnAboutChildren="selectedProfile && selectedProfile.id !== whakapapaView.focus"
-      @close="toggleView()"
-      @new="toggleNewPerson($event)"
-      @submit="updateProfile($event)"
-      @delete="deleteProfile()"
-      @open-profile="setSelectedProfile($event)"
-    />
-    <NewNodeDialog
-      v-if="dialog.new"
-      :show="dialog.new"
-      :title="`Add ${dialog.type} to ${selectedProfile.preferredName || '___'}`"
-      @close="toggleNew" @submit="addPerson($event)"
-      :suggestions="suggestions" @getSuggestions="getSuggestions($event)"
-    />
-    <DeleteNodeDialog
-      v-if="dialog.delete"
-      :show="dialog.delete"
-      :profile="selectedProfile"
-      :warnAboutChildren="selectedProfile && selectedProfile.id !== whakapapaView.focus"
-      @close="toggleDelete"
-      @submit="deleteProfile"
-    />
-    <WhakapapaViewDialog
-      :show="dialog.information"
-      @close="toggleInformation()"
-      @edit="toggleEditWhakapapa()"
+    <DialogHandler
+      :dialog.sync="dialog.active"
+      :type.sync="dialog.type"
+      :selectedProfile="selectedProfile"
       :view="whakapapaView"
-    />
-    <WhakapapaEditDialog
-      v-if="dialog.editWhakapapa"
-      :show="dialog.editWhakapapa"
-      :view="whakapapaView"
-      @close="toggleEditWhakapapa()"
-      @submit="updateWhakapapa($event)"
-      @delete="deleteWhakapapa()"
-    />
-    <WhakapapaShowHelper
-      :show="showWhakapapaHelper"
-      @close="toggleWhakapapaHelper"
+      @load="loadDescendants($event)"
+      @updateFocus="updateFocus($event)"
+      @set="setSelectedProfile($event)"
+      :nestedWhakapapa="nestedWhakapapa"
+      :profiles.sync="profiles"
+      @updateWhakapapa="updateWhakapapa($event)"
+      @deleteWhakapapa="deleteWhakapapa"
     />
   </div>
 </template>
 
 <script>
 import gql from 'graphql-tag'
-import pick from 'lodash.pick'
 import isEmpty from 'lodash.isempty'
 import { VueContext } from 'vue-context'
 
@@ -149,28 +115,11 @@ import HelpButton from '@/components/button/HelpButton.vue'
 import FlattenButton from '@/components/button/FlattenButton.vue'
 import FilterButton from '@/components/button/FilterButton.vue'
 
-import ViewEditNodeDialog from '@/components/dialog/ViewEditNodeDialog.vue'
-import NewNodeDialog from '@/components/dialog/NewNodeDialog.vue'
-import DeleteNodeDialog from '@/components/dialog/DeleteNodeDialog.vue'
-import WhakapapaEditDialog from '@/components/dialog/WhakapapaEditDialog.vue'
-import WhakapapaViewDialog from '@/components/dialog/WhakapapaViewDialog.vue'
-import WhakapapaShowHelper from '@/components/info-dialogs/WhakapapaShowHelper.vue'
-
 import tree from '@/lib/tree-helpers'
-import findSuccessor from '@/lib/find-successor'
-import { PERMITTED_PROFILE_ATTRS } from '@/lib/constants'
 import avatarHelper from '@/lib/avatar-helpers.js'
 
-import * as d3 from 'd3'
-
-const saveWhakapapaLinkMutation = input => ({
-  mutation: gql`
-    mutation($input: WhakapapaLinkInput!) {
-      saveWhakapapaLink(input: $input)
-    }
-  `,
-  variables: { input }
-})
+import DialogHandler from '@/components/dialog/DialogHandler.vue'
+import findSuccessor from '@/lib/find-successor'
 
 const saveWhakapapaViewMutation = input => (
   {
@@ -184,10 +133,23 @@ const saveWhakapapaViewMutation = input => (
 
 export default {
   name: 'WhakapapaShow',
+  components: {
+    WhakapapaViewCard,
+    FeedbackButton,
+    TableButton,
+    HelpButton,
+    FlattenButton,
+    FilterButton,
+    FeedbackButton,
+    Table,
+    Tree,
+    VueContext,
+    DialogHandler,
+    WhakapapaBanner
+  },
   data () {
     return {
       showWhakapapaHelper: false,
-      permitted: PERMITTED_PROFILE_ATTRS,
       whakapapaView: {
         name: 'Loading',
         description: '',
@@ -203,6 +165,7 @@ export default {
       // my profile id, to ensure we don't delete our own profile
 
       profiles: {},
+
       // a dictionary which maps profileIds > profiles
       // this is a store for lookups, and from which we build up nestedWhakapapa
 
@@ -214,12 +177,8 @@ export default {
       suggestions: [], // holds an array of suggested profiles
       selectedProfile: null,
       dialog: {
-        new: false,
-        view: false,
-        editWhakapapa: false,
-        delete: false,
-        type: 'child',
-        information: false
+        active: null,
+        type: null
       },
       filter: false,
       flatten: false,
@@ -228,11 +187,10 @@ export default {
         table: false
       },
       contextMenuOpts: [
-        { title: 'View Person', action: this.toggleView },
-        { title: 'Add Child', action: this.toggleNewChild },
-        { title: 'Add Parent', action: this.toggleNewParent }
+        { title: 'View Person', dialog: 'view-edit-node' },
+        { title: 'Add Child', dialog: 'new-node', type: 'child' },
+        { title: 'Add Parent', dialog: 'new-node', type: 'parent' }
       ]
-      // all the guff currently needed for context menus
     }
   },
   apollo: {
@@ -269,6 +227,7 @@ export default {
     }
   },
   computed: {
+
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -326,30 +285,23 @@ export default {
     }
   },
   methods: {
-    async loadDescendants (profileId) {
-      // fetch close whakapapa records for this profile
-      const record = await this.getRelatives(profileId)
-      if (!record) return
+    canDelete (profile) {
+      if (!profile) return false
 
-      // if (whakapapaView.mode === 'descendants')
-      // follow the child-links and load the next generation
-      record.children.forEach(child => {
-        // get their ids
-        var info = {
-          relationshipId: child.relationshipId,
-          relationshipType: child.relationshipType,
-          parent: record.id,
-          child: child.profile.id
-        }
-        this.relationshipLinks[record.id + '-' + child.profile.id] = info // puts a link into links which can be referenced using parentId-childId
+      // not allowed to delete own profile
+      if (profile.id === this.whoami.profile.id) return false
 
-        this.loadDescendants(child.profile.id)
-      })
+      // if deleting the focus (top ancestor)
+      if (profile.id === this.whakapapaView.focus) {
+        // can only proceed if can find a clear "successor" to be new focus
+        return Boolean(findSuccessor(profile))
+      }
 
-      // add this to queue of records to process and merge into graph
-      // so that we don't get collisions / overwrites
-      this.recordQueue = [...this.recordQueue, record]
-      if (!this.processingQueue) this.processingQueue = true
+      return true
+    },
+    updateDialog (dialog, type) {
+      this.dialog.type = type
+      this.dialog.active = dialog
     },
     async getRelatives (profileId) {
       const request = {
@@ -427,7 +379,31 @@ export default {
         console.error(e)
       }
     },
+    async loadDescendants (profileId) {
+      // fetch close whakapapa records for this profile
+      const record = await this.getRelatives(profileId)
+      if (!record) return
 
+      // if (whakapapaView.mode === 'descendants')
+      // follow the child-links and load the next generation
+      record.children.forEach(child => {
+        // get their ids
+        var info = {
+          relationshipId: child.relationshipId,
+          relationshipType: child.relationshipType,
+          parent: record.id,
+          child: child.profile.id
+        }
+        this.relationshipLinks[record.id + '-' + child.profile.id] = info // puts a link into links which can be referenced using parentId-childId
+
+        this.loadDescendants(child.profile.id)
+      })
+
+      // add this to queue of records to process and merge into graph
+      // so that we don't get collisions / overwrites
+      this.recordQueue = [...this.recordQueue, record]
+      if (!this.processingQueue) this.processingQueue = true
+    },
     collapseNode (profileId) {
       const profile = this.profiles[profileId]
       const { children, _children = [] } = profile
@@ -440,25 +416,12 @@ export default {
         children: _children
       })
     },
-
-    canDelete (profile) {
-      if (!profile) return false
-
-      // not allowed to delete own profile
-      if (profile.id === this.whoami.profile.id) return false
-
-      // if deleting the focus (top ancestor)
-      if (profile.id === this.whakapapaView.focus) {
-        // can only proceed if can find a clear "successor" to be new focus
-        return Boolean(findSuccessor(profile))
-      }
-
-      return true
-    },
-
     // contextMenu //////////////////////////
     // TODO - extract all this
     openContextMenu ({ event, profileId }) {
+      if (this.dialog.view) {
+        this.toggleView()
+      }
       this.setSelectedProfile(profileId)
       this.$refs.menu.open(event)
     },
@@ -476,158 +439,6 @@ export default {
     toggleWhakapapaHelper () {
       this.showWhakapapaHelper = !this.showWhakapapaHelper
     },
-    toggleEditWhakapapa () {
-      this.dialog.editWhakapapa = !this.dialog.editWhakapapa
-    },
-    toggleView () {
-      this.dialog.view = !this.dialog.view
-    },
-    toggleDelete () {
-      this.dialog.delete = !this.dialog.delete
-    },
-    toggleNewChild () {
-      this.toggleNewPerson('child')
-    },
-    toggleNewParent () {
-      this.toggleNewPerson('parent')
-    },
-    toggleNewPerson (type) {
-      this.dialog.type = type
-      this.toggleNew()
-    },
-    toggleNew () {
-      this.dialog.new = !this.dialog.new
-    },
-    toggleInformation () {
-      this.dialog.information = !this.dialog.information
-    },
-    async addPerson ($event) {
-      try {
-        var { id } = $event
-
-        if (!id) {
-          id = await this.createProfile($event)
-          if (!id) return
-        }
-
-        let child, parent
-        const relationshipAttrs = pick($event, [
-          'relationshipType',
-          'legallyAdopted'
-        ])
-        switch (this.dialog.type) {
-          case 'child':
-            child = id
-            parent = this.selectedProfile.id
-
-            if (this.selectedProfile.children) {
-              const childrenExists = this.selectedProfile.children.filter(existingChild => {
-                return existingChild.id === child
-              })
-
-              if (isEmpty(childrenExists)) {
-                await this.createChildLink({ child, parent, ...relationshipAttrs })
-              }
-            }
-            await this.loadDescendants(parent)
-            break
-          case 'parent':
-            child = this.selectedProfile.id
-            parent = id
-
-            // check the child doesnt already have a link
-            if (this.selectedProfile.parents) {
-              const parentExists = this.selectedProfile.parents.filter(existingParent => {
-                return existingParent.id === parent
-              })
-
-              if (isEmpty(parentExists)) {
-                // dont want to create a new link
-                await this.createChildLink({ child, parent, ...relationshipAttrs })
-              }
-            }
-
-            if (child === this.whakapapaView.focus) {
-              // in this case we're updating the top of the graph, we update view.focus to that new top parent
-              await this.updateFocus(parent)
-            } else {
-              await this.loadDescendants(child)
-            }
-            break
-          default:
-            console.log('not built')
-        }
-        this.dialog.new = false
-        if (this.dialog.view) {
-          this.setSelectedProfile(this.selectedProfile.id)
-          // TODO - rm (not sure this does anything)
-        }
-      } catch (err) {
-        throw err
-      }
-    },
-    async createProfile ({
-      preferredName,
-      legalName,
-      gender,
-      bornAt,
-      diedAt,
-      birthOrder,
-      avatarImage,
-      altNames,
-      description
-    }) {
-      const res = await this.$apollo.mutate({
-        mutation: gql`
-          mutation($input: ProfileInput!) {
-            saveProfile(input: $input)
-          }
-        `,
-        variables: {
-          input: {
-            type: 'person',
-            preferredName,
-            legalName,
-            gender,
-            bornAt,
-            diedAt,
-            birthOrder,
-            avatarImage,
-            altNames,
-            description,
-            recps: this.whakapapaView.recps
-          }
-        }
-      })
-
-      if (res.errors) {
-        console.error('failed to createProfile', res)
-        return
-      }
-      return res.data.saveProfile // a profileId
-    },
-    async createChildLink (
-      { child, parent, relationshipType, legallyAdopted },
-      view
-    ) {
-      const input = {
-        child,
-        parent,
-        relationshipType,
-        legallyAdopted,
-        recps: this.whakapapaView.recps
-      }
-      try {
-        const res = await this.$apollo.mutate(saveWhakapapaLinkMutation(input))
-        if (res.errors) {
-          console.error('failed to createChildLink', res)
-          return
-        }
-        return res // TODO return the linkId
-      } catch (err) {
-        throw err
-      }
-    },
     async updateFocus (focus) {
       const input = {
         id: this.$route.params.id,
@@ -639,233 +450,6 @@ export default {
         else console.error(res)
       } catch (err) {
         throw err
-      }
-    },
-    async updateProfile ($event) {
-      const profileChanges = pick($event,
-        'preferredName',
-        'legalName',
-        'gender',
-        'bornAt',
-        'diedAt',
-        'birthOrder',
-        'avatarImage',
-        'altNames',
-        'description'
-      )
-
-      const relationshipAttrs = pick($event, [
-        'relationshipType',
-        'legallyAdopted'
-      ])
-
-      const profileId = this.selectedProfile.id
-
-      if (relationshipAttrs && this.selectedProfile.id !== this.whakapapaView.focus) {
-        const input = {
-          relationshipId: this.selectedProfile.relationship.relationshipId,
-          child: profileId,
-          parent: this.selectedProfile.relationship.parent,
-          ...relationshipAttrs,
-          recps: this.whakapapaView.recps
-        }
-        try {
-          const linkRes = await this.$apollo.mutate(saveWhakapapaLinkMutation(input))
-          if (linkRes.errors) {
-            console.error('failed to update child link', linkRes)
-            return
-          }
-          this.loadDescendants(this.selectedProfile.relationship.parent)
-        } catch (err) {
-          throw err
-        }
-      }
-
-      const res = await this.$apollo.mutate({
-        mutation: gql`
-          mutation($input: ProfileInput!) {
-            saveProfile(input: $input)
-          }
-        `,
-        variables: {
-          input: {
-            id: profileId,
-            ...profileChanges
-          }
-        }
-      })
-      if (res.errors) {
-        console.error('failed to update profile', res)
-        return
-      }
-      await this.loadDescendants(profileId)
-      this.setSelectedProfile(profileId)
-    },
-    async deleteProfile () {
-      if (!this.canDelete(this.selectedProfile)) return
-
-      if (this.selectedProfile.id === this.whakapapaView.focus) {
-        const successor = findSuccessor(this.selectedProfile)
-        this.updateFocus(successor.id)
-      }
-
-      const profileResult = await this.$apollo.mutate({
-        mutation: gql`
-          mutation($input: ProfileInput!) {
-            saveProfile(input: $input)
-          }
-        `,
-        variables: {
-          input: {
-            id: this.selectedProfile.id,
-            tombstone: { date: new Date() }
-          }
-        }
-      })
-
-      if (profileResult.errors) {
-        console.error('failed to delete profile', profileResult)
-        return
-      }
-
-      this.profiles = {}
-      await this.loadDescendants(this.whakapapaView.focus)
-      // TODO - find a smaller subset to reload!
-    },
-    async getSuggestions ($event) {
-      if (!$event) {
-        this.suggestions = []
-        return
-      }
-
-      var records = await this.findByName($event)
-
-      if (isEmpty(records)) {
-        this.suggestions = []
-        return
-      }
-
-      var profiles = {} // flatStore for these suggestions
-
-      records.forEach(record => {
-        record.children = record.children.map(child => {
-          profiles[child.profile.id] = child.profile // add this records children to the flatStore
-          return child.profile.id // only want the childs ID
-        })
-        record.parents = record.parents.map(parent => {
-          profiles[parent.profile.id] = parent.profile // add this records parents to the flatStore
-          return parent.profile.id // only want the parents ID
-        })
-        profiles[record.id] = record // add this record to the flatStore
-      })
-
-      // now we have the flatStore for the suggestions we need to filter out the records
-      // so we cant add one that is already in the tree
-      records = records.filter(record => {
-        if (this.findInTree(record.id)) {
-          return false // dont include it
-        }
-        return true
-      })
-
-      // hydrate all the left over records
-      records = records.map(record => {
-        return tree.hydrate(record, profiles) // needed to hydrate to fix all dates
-      })
-
-      // sets suggestions which is passed into the dialogs
-      this.suggestions = Object.assign([], records)
-    },
-    /*
-      needed this function because this.profiles keeps track of more than just the nodes in this tree,
-      i only needed the nodes in this tree to be able to check if i can add them or not
-    */
-    findInTree (profileId) {
-      if (this.selectedProfile.id === profileId) return true // this is always in the tree
-
-      var root = d3.hierarchy(this.nestedWhakapapa)
-
-      var partners = []
-
-      var family = [...root.ancestors(), ...root.descendants()].map(node => {
-        node.data.partners.forEach(partner => {
-          partners.push(partner)
-        })
-        return node.data
-      }).filter(obj => obj.id !== this.selectedProfile.id) // take this out
-
-      family = [...family, ...partners] // combine them
-
-      if (family.find(obj => obj.id === profileId)) {
-        return true // was found
-      }
-      return false // wasnt found
-    },
-    async findByName (name) {
-      const request = {
-        query: gql`
-          query($name: String!) {
-            findPersons(name: $name) {
-              id
-              preferredName
-              legalName
-              gender
-              bornAt
-              diedAt
-              birthOrder
-              description
-              altNames
-              avatarImage { uri }
-              children {
-                profile {
-                  id
-                  preferredName
-                  legalName
-                  gender
-                  bornAt
-                  diedAt
-                  birthOrder
-                  description
-                  altNames
-                  avatarImage { uri }
-                }
-                relationshipType
-              }
-              parents {
-                profile {
-                  id
-                  preferredName
-                  legalName
-                  gender
-                  bornAt
-                  diedAt
-                  birthOrder
-                  description
-                  altNames
-                  avatarImage { uri }
-                }
-                relationshipType
-              }
-            }
-          }
-        `,
-        variables: {
-          name: name
-        },
-        fetchPolicy: 'no-cache'
-      }
-
-      try {
-        const result = await this.$apollo.query(request)
-        if (result.errors) {
-          console.error('WARNING, something went wrong')
-          console.error(result.errors)
-          return
-        }
-        return result.data.findPersons
-      } catch (e) {
-        console.error('WARNING, something went wrong, caught it')
-        console.error(e)
       }
     },
     async setSelectedProfile (profileId) {
@@ -942,31 +526,12 @@ export default {
       return avatarHelper.defaultImage(this.bornAt, this.gender)
     }
   },
-
-  components: {
-    WhakapapaViewCard,
-    FeedbackButton,
-    TableButton,
-    HelpButton,
-    FlattenButton,
-    FilterButton,
-    Tree,
-    Table,
-    VueContext,
-    NewNodeDialog,
-    DeleteNodeDialog,
-    ViewEditNodeDialog,
-    WhakapapaEditDialog,
-    WhakapapaViewDialog,
-    WhakapapaBanner,
-    WhakapapaShowHelper
-  }
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
-@import '~vue-context/dist/css/vue-context.css';
+@import "~vue-context/dist/css/vue-context.css";
 
 #whakapapa-show {
   & > .container {

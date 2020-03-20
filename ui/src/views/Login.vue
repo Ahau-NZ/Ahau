@@ -42,7 +42,7 @@
       v-if="dialog"
       :show="dialog"
       :title="`Ko wai au? -- Who am I?`"
-      @close="toggleNew" @submit="save($event)"
+      @close="toggleNew" @create="save($event)"
     />
   </div>
 
@@ -51,7 +51,7 @@
 <script>
 import gql from 'graphql-tag'
 import Avatar from '@/components/Avatar'
-import NewNodeDialog from '@/components/dialog/NewNodeDialog.vue'
+import NewNodeDialog from '@/components/dialog/profile/NewNodeDialog.vue'
 import pick from 'lodash.pick'
 
 const karakia = `

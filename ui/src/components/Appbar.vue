@@ -14,10 +14,10 @@
         <router-link to="/" v-if="enableMenu" class="logo-link">
           <img src="@/assets/logo_red.svg" class="logo" />
         </router-link>
-        <img v-else src="@/assets/logo_red.svg" class="logo" />
       </template>
       <!-- <v-btn icon :to="{ name: 'personShow', params: { id: profile.id } }"> -->
       <Avatar
+        v-if="!mobile"
         size="50px"
         :image="profile.avatarImage"
         :alt="profile.preferredName"
@@ -45,7 +45,7 @@
           @click.native="karakiaWhakamutunga()"
           to="/login"
           text
-          class="white--text text-uppercase"
+          class="white--text text-uppercase ms-10"
         >sign out</v-btn>
       </template>
 
@@ -61,6 +61,15 @@
     <v-navigation-drawer v-if="mobile && enableMenu" v-model="drawer" app dark right>
       <v-list nav class="text-uppercase">
         <!--  WIP links -->
+        <v-list-item link >
+          <Avatar
+            size="80px"
+            :image="profile.avatarImage"
+            :alt="profile.preferredName"
+            :gender="profile.gender"
+            :bornAt="profile.bornAt"
+          />
+        </v-list-item>
         <v-list-item link @click.stop="dialog = true">
           <v-list-item-title class="red--text">korero</v-list-item-title>
         </v-list-item>
@@ -141,10 +150,7 @@ export default {
       dialog: false,
       profile: {
         id: null,
-        avatarImage: null,
-        gender: '',
-        bornAt: '',
-        preferredName: ''
+        avatarImage: null
       }
     }
   },
@@ -168,8 +174,6 @@ export default {
               profile {
                 id
                 preferredName
-                gender
-                bornAt
                 avatarImage {
                   uri
                 }

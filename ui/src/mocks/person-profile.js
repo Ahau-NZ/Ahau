@@ -80,8 +80,12 @@ export const personComplete = {
   gender: 'male',
   legalName: 'Will Smith',
   bornAt: '2003-02-01',
+  diedAt: '',
+  isDeceased: false,
   preferredName: 'Will',
   relationshipType: 'birth',
+  legallyAdopted: false,
+  birthOrder: '',
   altNames: ['Willard', 'William'],
   avatarImage: {
     uri:

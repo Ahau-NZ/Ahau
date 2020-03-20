@@ -1,14 +1,21 @@
 <template>
-  <Dialog :node="profile" :show="show" @close="close" width="720px" :goBack="close" enableMenu>
-    <v-form ref="form">
-      <v-card>
-        <v-container width="100%" class="pa-0">
-          <v-card-text>
+  <div
+    style="background-color: white; height:100%"
+    :node="profile"
+    @close="close"
+    width="720px"
+    :fullscreen="mobile"
+  >
+    <Appbar v-if="mobile" enableMenu app :goBack="close" />
+    <v-form ref="form" style="height:100%">
+      <v-card light style="height:100%">
+        <v-container class="pa-0" style="height:100%">
+          <v-card-text style="height:100%; overflow:scroll">
             <v-row class="px-2">
-              <v-col cols="12" sm="5" order-sm="2">
+              <v-col cols="12">
                 <v-row class="pa-0">
+                  <!-- Dialog close button -->
                   <v-col v-if="!mobile" cols="offset-7 4 " class="pa-0" align="right">
-                    <!-- Dialog close button -->
                     <v-btn @click="close" fab text top right color="secondary" class="close">
                       <v-icon>mdi-close</v-icon>
                     </v-btn>
@@ -32,7 +39,7 @@
                 </v-row>
               </v-col>
               <!-- Information Col -->
-              <v-col cols="12" sm="7" class="border-right">
+              <v-col cols="12" class="border-right">
                 <v-row>
                   <!-- View Mode Title -->
                   <v-col v-if="!isEditing" cols="12" class="pa-0 pb-5">
@@ -181,7 +188,12 @@
                   </v-col>
                   <!-- Related By view mode-->
                   <!-- TODO: hide if relationship is unknown -->
-                  <v-col v-if="!isEditing && formData.relationshipType" cols="6" sm="6" class="pa-1">
+                  <v-col
+                    v-if="!isEditing && formData.relationshipType"
+                    cols="6"
+                    sm="6"
+                    class="pa-1"
+                  >
                     <v-text-field
                       v-model="formData.relationshipType"
                       label="Related By"
@@ -189,7 +201,7 @@
                     />
                   </v-col>
                   <!-- Related By edit mode-->
-                  <v-col v-if="isEditing && warnAboutChildren" cols="6" class="pa-1" >
+                  <v-col v-if="isEditing && warnAboutChildren" cols="6" class="pa-1">
                     <v-select
                       v-model="formData.relationshipType"
                       label="Related By"
@@ -225,11 +237,11 @@
             <v-divider v-if="!isEditing" />
             <v-row v-if="!isEditing" justify-sm="space-around">
               <!-- Family Members -->
-              <v-col :cols="mobile ? 12 : false" class="pa-0">
+              <v-col :cols="12" class="pa-0">
                 <AvatarGroup
                   :profiles="profile.parents"
                   group-title="Parents"
-                  size="60px"
+                  size="50px"
                   :show-labels="true"
                   @profile-click="openProfile($event)"
                 >
@@ -237,8 +249,8 @@
                 </AvatarGroup>
               </v-col>
 
-              <v-divider v-if="profile.siblings" :vertical="!mobile" :inset="mobile" />
-              <v-col :cols="mobile ? 12 : false" v-if="profile.siblings" class="pa-0">
+              <v-divider v-if="profile.siblings" inset />
+              <v-col :cols="12" v-if="profile.siblings" class="pa-0">
                 <AvatarGroup
                   :profiles="profile.siblings"
                   group-title="Siblings"
@@ -247,8 +259,8 @@
                   @profile-click="openProfile($event)"
                 />
               </v-col>
-              <v-divider :vertical="!mobile" :inset="mobile" />
-              <v-col :cols="mobile ? 12 : false" class="pa-0">
+              <v-divider inset />
+              <v-col :cols="12" class="pa-0">
                 <AvatarGroup
                   :profiles="profile.children"
                   group-title="Children"
@@ -266,19 +278,18 @@
               <!-- Delete button -->
               <v-col cols="12" sm="auto">
                 <v-btn
-                  v-if="isEditing"
-                  @click="toggleDelete"
+                  v-if="isEditing && deleteable"
+                  @click="$emit('delete')"
                   align="center"
                   color="white"
                   text
-                  class="secondary--text pt-7 pl-5"
+                  class="secondary--text"
                 >
-                  <v-icon small class="secondary--text" left>mdi-delete</v-icon>Delete this person
+                  <v-icon class="secondary--text" left>mdi-delete</v-icon>Delete this person
                 </v-btn>
               </v-col>
-              <v-spacer />
-              <v-col v-if="isEditing" align-sm="right" class="pt-0 pb-o">
-                <v-btn @click="cancel" text large fab class="secondary--text">
+              <v-col v-if="isEditing" class="pt-0" align="right">
+                <v-btn @click="cancel" text large fab class="secondary--text mr-10">
                   <v-icon color="secondary">mdi-close</v-icon>
                 </v-btn>
                 <v-btn @click="submit" text large fab class="blue--text" color="blue">
@@ -291,33 +302,24 @@
         </v-container>
       </v-card>
     </v-form>
-
-    <DeleteNodeDialog
-      v-if="deleteDialog"
-      :show="deleteDialog"
-      :profile="profile"
-      :warnAboutChildren="warnAboutChildren"
-      @close="toggleDelete"
-      @submit="deleteProfile()"
-    />
-  </Dialog>
+  </div>
 </template>
 
 <script>
 import {
   GENDERS,
   RULES,
-  PERMITTED_PROFILE_ATTRS,
   RELATIONSHIPS
 } from '@/lib/constants'
 
-import Dialog from '@/components/Dialog.vue'
+import { PERMITTED_PROFILE_ATTRS, PERMITTED_RELATIONSHIP_ATTRS } from '@/lib/profile-helpers'
+
 import Avatar from '@/components/Avatar.vue'
 import AvatarGroup from '@/components/AvatarGroup.vue'
-import DeleteNodeDialog from '@/components/dialog/DeleteNodeDialog.vue'
 import NodeDatePicker from '@/components/NodeDatePicker.vue'
 import AddButton from '@/components/button/AddButton.vue'
 import ImagePicker from '@/components/ImagePicker.vue'
+import Appbar from '@/components/Appbar.vue'
 
 import isEqual from 'lodash.isequal'
 import isEmpty from 'lodash.isempty'
@@ -346,18 +348,17 @@ function defaultData (profile) {
 }
 
 export default {
-  name: 'ViewEditNodeDialog',
+  name: 'SideViewEditNodeDialog',
   components: {
-    Dialog,
     Avatar,
     AvatarGroup,
-    DeleteNodeDialog,
     NodeDatePicker,
     AddButton,
-    ImagePicker
+    ImagePicker,
+    Appbar
   },
   props: {
-    show: { type: Boolean, required: true },
+    goBack: { type: Function },
     profile: { type: Object, required: true },
     deleteable: { type: Boolean, default: false },
     warnAboutChildren: { type: Boolean, default: true },
@@ -445,7 +446,8 @@ export default {
       if (!this.$refs.form.validate()) {
         return
       }
-      var output = Object.assign({}, pick(this.profileChanges, this.permitted))
+
+      var output = Object.assign({}, pick(this.profileChanges, [...PERMITTED_PROFILE_ATTRS, ...PERMITTED_RELATIONSHIP_ATTRS]))
 
       if (!isEmpty(output)) {
         this.$emit('submit', output)
@@ -462,14 +464,6 @@ export default {
     },
     toggleEdit () {
       this.isEditing = !this.isEditing
-    },
-    toggleDelete () {
-      this.deleteDialog = !this.deleteDialog
-    },
-    deleteProfile () {
-      this.$emit('delete')
-      this.toggleDelete()
-      this.close()
     },
     toggleAltName () {
       if (!this.formData.altNames.currentState) { this.formData.altNames.currentState = [] }
@@ -510,5 +504,24 @@ export default {
 
 .v-input--radio-group__input label {
   font-size: 14px;
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }
 </style>

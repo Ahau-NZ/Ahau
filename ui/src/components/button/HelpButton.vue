@@ -1,8 +1,8 @@
 <template>
   <v-tooltip bottom>
       <template v-slot:activator="{ on }">
-         <v-btn v-on="on" @click="toggle()" fab small color="blue-grey">
-           <v-icon light >mdi-help</v-icon>
+         <v-btn v-on="on" @click="toggle()" fab x-small color="blue-grey">
+           <v-icon >mdi-information</v-icon>
          </v-btn>
       </template>
       <span>Instructions</span>
@@ -11,7 +11,7 @@
 
 <script>
 export default {
-  name: 'HelpButton',
+  // name: 'HelpButton',
   methods: {
     toggle () {
       this.$emit('click')
