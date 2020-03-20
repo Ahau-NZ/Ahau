@@ -1,6 +1,5 @@
 <template>
   <svg id="baseSvg" :width="width" :height="tableHeight" ref="baseSvg" style="background-color:white" overflow="auto" min-height="500px">
-    <!-- for (const {label, value, format, x} of columns) { -->    
     <line x1="60" y1="50" x2="90%" y2="50" style="stroke-width: 1; stroke: lightgrey;"/>
     <g v-for="column in columns" :key="column.label">
       <text :transform="`translate(${column.x + 10} ${40})`">
@@ -11,7 +10,7 @@
       <g id="baseGroup">
         <g v-if="!flatten" :transform="`translate(${60} ${80})`">
           <g  v-for="link in links" :key="link.id" class="link">
-            <Link :link="link" :branch="branch" :class="link.class"/>
+            <Link :link="link" :class="link.class"/>
           </g>
         </g>
 
@@ -51,7 +50,9 @@
 import * as d3 from 'd3'
 import get from 'lodash.get'
 import Node from './table/Node.vue'
-import Link from './tree/Link.vue'
+import Link from './table/Link.vue'
+import FlattenButton from '@/components/button/FlattenButton.vue'
+
 
 export default {
   props: {
@@ -72,6 +73,10 @@ export default {
       type: Array
     },
     flatten: {
+      type : Boolean,
+      default: false
+    },
+    filter: {
       type : Boolean,
       default: false
     }
@@ -111,19 +116,17 @@ export default {
   },
   mounted () {
     this.componentLoaded = true
-    // this.zoom()
   },
   computed: {
-    format () {
-      return d3.format(',')
-    },
-    branch () {
-      return this.nodeSeparationY / 2 + this.nodeRadius
-      console.log(branch)
-    },
     width () {
       return screen.width
     },
+
+    //  returns a nested data structure representing a tree based on the treeData object
+    root () {
+      return d3.hierarchy(this.nestedWhakapapa)
+    },
+
     // creates a new table layout and sets the size depending on number of nodes
     tableLayout () {  
       var flatten = this.flatten
@@ -135,16 +138,13 @@ export default {
       this.tableHeight = (1 + index) * 60
       return layout
     },
-    //  returns a nested data structure representing a tree based on the treeData object
-    root () {
-      return d3.hierarchy(this.nestedWhakapapa)
-    },
-    /*
-      returns an array of nodes associated with the root node created from the treeData object, as well as
-      extra attributes
-    */
+
+    
+    // returns an array of nodes associated with the root node created from the treeData object, as well as extra attributes
     nodes () {
 
+      var index = -1
+      // turns bornAt to age
       function getAge(bornAt) {
         if (bornAt === null) return
         var date = new Date(bornAt)
@@ -153,6 +153,7 @@ export default {
         return Math.abs(age_dt.getUTCFullYear() - 1970);
       }
 
+      // changes row colour
       function nodeColor(data) {
         var age = getAge(data.bornAt)
         if (data.isCollapsed) {
@@ -166,9 +167,17 @@ export default {
 
 
       return this.tableLayout
-        .descendants() // returns the array of descendants starting with the root node, then followed by each child in topological order
+        // returns the array of descendants starting with the root node, then followed by each child in topological order
+        .descendants() 
+        // filter deceased
+        .filter(peeps => {
+          if (this.filter && peeps.data.diedAt !== null) {
+            return false;
+          }
+          return true;
+        })
+        // returns a new custom object for each node
         .map((d, i) => {
-          // returns a new custom object for each node
           return {
             nodeId: `node-${i}`,
             children: d.children,
@@ -177,14 +186,13 @@ export default {
             height: d.height,
             parent: d.parent,
             x: d.x,
-            y: d.y*1.5,
+            y: this.filter ? ++index * 45 : d.y*1.5,
             age: getAge(d.data.bornAt),
             color: nodeColor(d.data)
           }
         })
-
-      // .attr("transform", d => `translate(0,${d.index * nodeSize})`);
     },
+
     /*
       returns an array of links which holds the X and Y coordinates of both the parent (source) and child (target) nodes
     */
@@ -205,27 +213,18 @@ export default {
         })
     },
   },
+
   methods: {
-    loadDescendants (profileId) {
-      this.$emit('load-descendants', profileId)
-    },
     collapse (node) {
       this.$emit('collapse-node', node.data.id)
       // TODO
       // this one feels like perhaps it should be handled in this file
     },
-    age (date) {
-      new Date(d.data.bornAt)
-      year = date.getFullYear();
-      month = date.getMonth()+1;
-      dt = date.getDate();
-      dob = dt+'-' + month + '-'+yeay
-      return dob
-    }
   },
   components: {
     Node,
-    Link
+    Link,
+    FlattenButton
   }
 }
 </script>
@@ -247,6 +246,5 @@ svg#baseSvg {
 
 text {
     fill: #555;
-    opacity: 0.5;
   }
 </style>

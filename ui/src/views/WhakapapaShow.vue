@@ -33,7 +33,10 @@
       <WhakapapaBanner v-if="mobile" :view="whakapapaView" @edit="toggleEditWhakapapa" @more-info="toggleInformation()"/>
 
       <v-row v-if="!mobile" class="select">
-         <v-col v-if="whakapapa.table">
+        <v-col v-if="flatten">
+          <FilterButton @filter="toggleFilter()" />
+        </v-col>
+        <v-col v-if="whakapapa.table">
           <FlattenButton @flatten="toggleFlatten()" />
         </v-col>
         <v-col>
@@ -60,6 +63,7 @@
         />
         <Table
           v-if="whakapapa.table"
+          :filter="filter"
           :flatten="flatten"
           :view="whakapapaView"
           :nestedWhakapapa="nestedWhakapapa"
@@ -143,6 +147,7 @@ import FeedbackButton from '@/components/button/FeedbackButton.vue'
 import TableButton from '@/components/button/TableButton.vue'
 import HelpButton from '@/components/button/HelpButton.vue'
 import FlattenButton from '@/components/button/FlattenButton.vue'
+import FilterButton from '@/components/button/FilterButton.vue'
 
 import ViewEditNodeDialog from '@/components/dialog/ViewEditNodeDialog.vue'
 import NewNodeDialog from '@/components/dialog/NewNodeDialog.vue'
@@ -216,6 +221,7 @@ export default {
         type: 'child',
         information: false
       },
+      filter: false,
       flatten: false,
       whakapapa: {
         tree: true,
@@ -456,7 +462,11 @@ export default {
       this.setSelectedProfile(profileId)
       this.$refs.menu.open(event)
     },
+    toggleFilter () {
+      this.filter = !this.filter
+    },
     toggleFlatten () {
+      this.filter = false
       this.flatten = !this.flatten
     },
     toggleTable () {
@@ -939,6 +949,7 @@ export default {
     TableButton,
     HelpButton,
     FlattenButton,
+    FilterButton,
     Tree,
     Table,
     VueContext,

@@ -95,13 +95,6 @@
         <feDropShadow dx="1" dy="0.6" stdDeviation="0.8" />
       </filter>
     </defs>
-    <!-- <g v-if="profile.isCollapsed" :style="collapsedStyle">
-      <text> + </text>
-    </g>
-    <g v-if="profile.children.length > 0" :style="collapsedStyle">
-      <text> - </text>
-    </g> -->
-
   </g>
 </svg>
 </template>
@@ -156,14 +149,6 @@ export default {
       return {
         transform: `translate(${this.radius * 2.5}px, ${this
           .radius + 5}px)`
-      }
-    },
-    collapsedStyle () {
-      console.log(this.radius)
-      console.log(this.profile)
-
-      return {
-        transform: `translate(${this.radius - 30}px, ${this.radius + 5}px)`
       }
     },
     partners () {
