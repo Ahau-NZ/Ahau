@@ -14,6 +14,8 @@ import CommunityNew from '@/views/CommunityNew.vue'
 import CommunityShow from '@/views/CommunityShow.vue'
 import CommunityEdit from '@/views/CommunityEdit.vue'
 
+import Archive from '@/views/Archive.vue'
+
 import Login from '@/views/Login.vue'
 
 Vue.use(Router)
@@ -41,6 +43,8 @@ export default new Router({
       component: CommunityEdit
     },
     { path: '/community/:id', name: 'communityShow', component: CommunityShow },
+
+    { path: '/archive/:id', name: 'archive', component: Archive },
 
     { path: '*', redirect: '/' }
   ]
