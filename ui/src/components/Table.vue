@@ -22,6 +22,7 @@
           <g v-for="node in nodes" :key="node.data.id" class="node">
             <!-- <line x1="0" :y1="node.y-3" x2="90%" :y2="node.y-3" style="stroke-width: 1; stroke: lightgrey;"/> -->
             <rect :x="node.x + nodeRadius" :y="node.y" width="100%" :height="nodeRadius*2" class="row" :style="node.color" />
+            <svg width="400">
             <Node
               :node="node"
               :radius="nodeRadius"
@@ -29,10 +30,11 @@
               @open-context-menu="$emit('open-context-menu', $event)"
               :showLabel="true"
               />
-              <text  :transform="`translate(${columnX.legalName - nodeSize + 10} ${node.y + nodeRadius})`">
+            </svg>
+              <text  :transform="`translate(${columns[0].x - nodeSize + 10} ${node.y + nodeRadius})`">
                 {{ node.data.legalName }}
               </text>
-              <text  :transform="`translate(${columnX.age - nodeSize + 10} ${node.y + nodeRadius})`">
+              <text  :transform="`translate(${columns[1].x - nodeSize + 10} ${node.y + nodeRadius})`">
                 {{ node.age }}
               </text>
           </g>
@@ -64,36 +66,36 @@ export default {
     },
     relationshipLinks: {
       type: Array
+    },
+    flatten: {
+      type : Boolean,
+      default: false
     }
   },
   data () {
     return {
+
       componentLoaded: false, // need to ensure component is loaded before using $refs
       nodeRadius: 20, // use variable for zoom later on
       nodeSize: 40,
       tableHeight: 0,
       duration: 400,
-      columnX: {
-        legalName: 400,
-        age: 600,
-        children: 650
-      },
       columns: [
         {
           label: 'Legal Name',
-          x: 400
+          x: 350
         },
         {
           label: 'Age',
-          x: 600
+          x: 525 
         },
         {
           label: 'Career',
-          x: 650
+          x: 570
         },
         {
           label: 'Location',
-          x: 800
+          x: 700
         },
         {
           label: 'Contact',
@@ -120,10 +122,12 @@ export default {
     },
     // creates a new table layout and sets the size depending on number of nodes
     tableLayout () {  
+      var flatten = this.flatten
+      console.log("flatten: ",flatten)
       var index = -1
       var layout = this.root.eachBefore(function(n) {
         n.y = ++index * 30
-        n.x = n.depth * 20
+        n.x = flatten ? 0.1 : n.depth * 10 
       })
       this.tableHeight = (1 + index) * 60
       return layout
@@ -144,12 +148,23 @@ export default {
         var age_dt = new Date(diff_ms); 
         return Math.abs(age_dt.getUTCFullYear() - 1970);
       }
-      function nodeColor(age) {
-        console.log(age)
-        var age = getAge(age)
-        if (age < 1) return "fill:yellow"
-        return "fill:lightblue"
-      }
+      // function nodeColor(age) {
+      //   console.log(age)
+      //   var age = getAge(age)
+      //   if (age < 1) return "fill:yellow"
+      //   return "fill:lightblue"
+      // }
+      function nodeColor(data) {
+        var age = getAge(data.bornAt)
+        if (data.isCollapsed) {
+        return "fill:cadetblue"
+        }
+        else if (age < 1) {
+          return "fill:yellow"
+        }
+        else return "fill:lightblue"
+      } 
+
 
       return this.tableLayout
         .descendants() // returns the array of descendants starting with the root node, then followed by each child in topological order
@@ -165,7 +180,7 @@ export default {
             x: d.x,
             y: d.y*1.5,
             age: getAge(d.data.bornAt),
-            color: nodeColor(d.data.bornAt)
+            color: nodeColor(d.data)
           }
         })
 

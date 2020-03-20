@@ -33,6 +33,9 @@
       <WhakapapaBanner v-if="mobile" :view="whakapapaView" @edit="toggleEditWhakapapa" @more-info="toggleInformation()"/>
 
       <v-row v-if="!mobile" class="select">
+         <v-col v-if="whakapapa.table">
+          <FlattenButton @flatten="toggleFlatten()" />
+        </v-col>
         <v-col>
           <TableButton @table="toggleTable()" />
         </v-col>
@@ -57,6 +60,7 @@
         />
         <Table
           v-if="whakapapa.table"
+          :flatten="flatten"
           :view="whakapapaView"
           :nestedWhakapapa="nestedWhakapapa"
           :relationshipLinks="relationshipLinks"
@@ -138,6 +142,7 @@ import Table from '@/components/Table.vue'
 import FeedbackButton from '@/components/button/FeedbackButton.vue'
 import TableButton from '@/components/button/TableButton.vue'
 import HelpButton from '@/components/button/HelpButton.vue'
+import FlattenButton from '@/components/button/FlattenButton.vue'
 
 import ViewEditNodeDialog from '@/components/dialog/ViewEditNodeDialog.vue'
 import NewNodeDialog from '@/components/dialog/NewNodeDialog.vue'
@@ -202,7 +207,6 @@ export default {
       processingQueue: false,
 
       suggestions: [], // holds an array of suggested profiles
-
       selectedProfile: null,
       dialog: {
         new: false,
@@ -212,6 +216,7 @@ export default {
         type: 'child',
         information: false
       },
+      flatten: false,
       whakapapa: {
         tree: true,
         table: false
@@ -450,6 +455,10 @@ export default {
     openContextMenu ({ event, profileId }) {
       this.setSelectedProfile(profileId)
       this.$refs.menu.open(event)
+    },
+    toggleFlatten () {
+      this.flatten = !this.flatten
+      console.log(this.flatten)
     },
     toggleTable () {
       this.whakapapa.tree = !this.whakapapa.tree
@@ -930,6 +939,7 @@ export default {
     FeedbackButton,
     TableButton,
     HelpButton,
+    FlattenButton,
     Tree,
     Table,
     VueContext,
