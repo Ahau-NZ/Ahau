@@ -26,7 +26,7 @@
             <slot name="search">
               <v-text-field
                 v-model="formData.preferredName"
-                label="Preferred name. This is the name shown on your profile"
+                label="Preferred name"
                 v-bind="customProps"
               />
             </slot>

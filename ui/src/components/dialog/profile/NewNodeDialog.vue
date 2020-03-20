@@ -10,7 +10,7 @@
             <v-combobox
               v-model="formData.preferredName"
               :items="suggestions"
-              label="Preferred name. This is the name show on your profile"
+              label="Preferred name"
               item-text="preferredName"
               item-value="preferredName"
               :menu-props="{ light: true }"
