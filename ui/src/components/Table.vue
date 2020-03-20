@@ -40,6 +40,15 @@
               <text  :transform="`translate(${columns[1].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
                 {{ node.age }}
               </text>
+              <text  :transform="`translate(${columns[2].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
+                {{ node.profession }}
+              </text>
+              <text  :transform="`translate(${columns[3].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
+                {{ node.location }}
+              </text>
+              <text  :transform="`translate(${columns[4].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
+                {{ node.contact }}
+              </text>
           </g>
         </g>
       </g>
@@ -188,7 +197,11 @@ export default {
             x: d.x,
             y: this.filter ? ++index * 45 : d.y*1.5,
             age: getAge(d.data.bornAt),
-            color: nodeColor(d.data)
+            color: nodeColor(d.data),
+            profession: "developer",
+            location: "Raglan, New Zealand",
+            contact: "ben@ahau.io"
+
           }
         })
     },

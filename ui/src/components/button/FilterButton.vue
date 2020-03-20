@@ -1,5 +1,5 @@
 <template> 
-  <v-tooltip  v-if="filterIcon" bottom>
+  <v-tooltip  v-if="!filter" bottom>
     <template v-slot:activator="{ on }">
         <v-btn v-on="on" @click="toggle()" fab small color="blue-grey">
            <v-icon light > mdi-account-multiple-minus </v-icon>
@@ -21,14 +21,14 @@
 <script>
 export default {
   name: 'FilterButton',
-  data () {
-    return {
-      filterIcon : true
+  props: {
+    filter: {
+      type : Boolean,
+      default: false
     }
   },
   methods: {
       toggle() {
-      this.filterIcon = !this.filterIcon
       this.$emit('filter')
     }
   }

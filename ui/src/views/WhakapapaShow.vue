@@ -33,8 +33,8 @@
       <WhakapapaBanner v-if="mobile" :view="whakapapaView" @edit="toggleEditWhakapapa" @more-info="toggleInformation()"/>
 
       <v-row v-if="!mobile" class="select">
-        <v-col v-if="flatten">
-          <FilterButton @filter="toggleFilter()" />
+        <v-col v-if="whakapapa.table && flatten">
+          <FilterButton :filter="filter" @filter="toggleFilter()" />
         </v-col>
         <v-col v-if="whakapapa.table">
           <FlattenButton @flatten="toggleFlatten()" />
