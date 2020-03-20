@@ -9,7 +9,7 @@
     />
 
     <!-- Profile body (middle column) -->
-    <v-container :fluid="true" class="body-width white px-12">
+    <v-container :fluid="true" class="body-width white px-12 niho-bg">
       
       <v-row>
 
@@ -22,9 +22,11 @@
             </v-row>
           </v-row>
           <!-- Nav Icons -->
-          <v-row justify="start" align="center" class="nav-row" to="/archive">
+          <v-row justify="start" align="center" class="nav-row">
+            <v-btn light :to="{ name: 'archive', params: { id: profile.id } }">
               <img class="nav-icon" v-bind:src="require('@/assets/archive.svg')"/>
               <span class="ml-4 black--text nav-label">Archive</span>
+            </v-btn>
           </v-row>
           <v-row justify="start" align="center" class="nav-row">
               <img class="nav-icon" v-bind:src="require('@/assets/timeline.svg')"/>
@@ -265,6 +267,17 @@ v-card {
   margin: 0;
   padding: 0;
 }
+
+.niho-bg {
+  background:  linear-gradient(
+      rgba(255, 255, 255, 0.7), 
+      rgba(255, 255, 255, 0.7)
+    ), url(../assets/niho.svg);
+  background-position-x: 150%;
+  background-repeat: no-repeat;
+  
+}
+
 
 }
 </style>
