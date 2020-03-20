@@ -1,4 +1,5 @@
 <template>
+<svg width="400">
   <g :id="node.nodeId" :style="groupStyle">
     <!-- recursion of partners (first so they're drawing in background) -->
     <!-- <g v-if="!profile.isCollapsed">
@@ -31,9 +32,6 @@
         clip-path="url(#myCircle)"
         :style="{ opacity: profile.diedAt ? 0.5 : 1 }"
       />
-      <!-- <g v-if="profile.isCollapsed" :style="collapsedStyle">
-        <text> ... </text>
-      </g> -->
       <g
         class="menu-button"
         @click.stop="openMenu($event, profile.id)"
@@ -97,10 +95,15 @@
         <feDropShadow dx="1" dy="0.6" stdDeviation="0.8" />
       </filter>
     </defs>
-    <g v-if="profile.isCollapsed" :style="collapsedStyle">
+    <!-- <g v-if="profile.isCollapsed" :style="collapsedStyle">
       <text> + </text>
     </g>
+    <g v-if="profile.children.length > 0" :style="collapsedStyle">
+      <text> - </text>
+    </g> -->
+
   </g>
+</svg>
 </template>
 
 <script>
@@ -152,14 +155,15 @@ export default {
     textStyle () {
       return {
         transform: `translate(${this.radius * 2.5}px, ${this
-          .radius}px)`
+          .radius + 5}px)`
       }
     },
     collapsedStyle () {
-      // centers the text element under name
+      console.log(this.radius)
+      console.log(this.profile)
+
       return {
         transform: `translate(${this.radius - 30}px, ${this.radius + 5}px)`
-        // calculate the transform to draw nodes vertically
       }
     },
     partners () {

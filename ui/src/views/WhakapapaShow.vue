@@ -458,7 +458,6 @@ export default {
     },
     toggleFlatten () {
       this.flatten = !this.flatten
-      console.log(this.flatten)
     },
     toggleTable () {
       this.whakapapa.tree = !this.whakapapa.tree

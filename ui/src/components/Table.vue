@@ -9,8 +9,8 @@
       <line :x1="column.x" y1="50" :x2="column.x" y2="100%" style="stroke-width: 1; stroke: lightgrey;"/>
     </g>
       <g id="baseGroup">
-        <g :transform="`translate(${60} ${80})`">
-          <g v-for="link in links" :key="link.id" class="link">
+        <g v-if="!flatten" :transform="`translate(${60} ${80})`">
+          <g  v-for="link in links" :key="link.id" class="link">
             <Link :link="link" :branch="branch" :class="link.class"/>
           </g>
         </g>
@@ -22,7 +22,6 @@
           <g v-for="node in nodes" :key="node.data.id" class="node">
             <!-- <line x1="0" :y1="node.y-3" x2="90%" :y2="node.y-3" style="stroke-width: 1; stroke: lightgrey;"/> -->
             <rect :x="node.x + nodeRadius" :y="node.y" width="100%" :height="nodeRadius*2" class="row" :style="node.color" />
-            <svg width="400">
             <Node
               :node="node"
               :radius="nodeRadius"
@@ -30,11 +29,16 @@
               @open-context-menu="$emit('open-context-menu', $event)"
               :showLabel="true"
               />
-            </svg>
-              <text  :transform="`translate(${columns[0].x - nodeSize + 10} ${node.y + nodeRadius})`">
+              <g v-if="flatten && node.data.isCollapsed" :transform="`translate(${node.x - 10} ${node.y + nodeRadius + 5})`">
+                <text> + </text>
+              </g>
+              <g v-if="flatten && node.data.children.length > 0" :transform="`translate(${node.x - 10} ${node.y + nodeRadius + 5})`">
+                <text> - </text>
+              </g>
+              <text  :transform="`translate(${columns[0].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
                 {{ node.data.legalName }}
               </text>
-              <text  :transform="`translate(${columns[1].x - nodeSize + 10} ${node.y + nodeRadius})`">
+              <text  :transform="`translate(${columns[1].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
                 {{ node.age }}
               </text>
           </g>
@@ -123,11 +127,10 @@ export default {
     // creates a new table layout and sets the size depending on number of nodes
     tableLayout () {  
       var flatten = this.flatten
-      console.log("flatten: ",flatten)
       var index = -1
       var layout = this.root.eachBefore(function(n) {
         n.y = ++index * 30
-        n.x = flatten ? 0.1 : n.depth * 10 
+        n.x = flatten ? 0.1 : n.depth * 15 
       })
       this.tableHeight = (1 + index) * 60
       return layout
@@ -141,6 +144,7 @@ export default {
       extra attributes
     */
     nodes () {
+
       function getAge(bornAt) {
         if (bornAt === null) return
         var date = new Date(bornAt)
@@ -148,12 +152,7 @@ export default {
         var age_dt = new Date(diff_ms); 
         return Math.abs(age_dt.getUTCFullYear() - 1970);
       }
-      // function nodeColor(age) {
-      //   console.log(age)
-      //   var age = getAge(age)
-      //   if (age < 1) return "fill:yellow"
-      //   return "fill:lightblue"
-      // }
+
       function nodeColor(data) {
         var age = getAge(data.bornAt)
         if (data.isCollapsed) {
@@ -245,4 +244,9 @@ svg#baseSvg {
   opacity: .2;
   fill: lightblue
 }
+
+text {
+    fill: #555;
+    opacity: 0.5;
+  }
 </style>
