@@ -9,7 +9,7 @@
     />
 
     <!-- Profile body (middle column) -->
-    <v-container :fluid="true" class="body-width white px-12">
+    <v-container :fluid="true" class="body-width white px-12 niho-bg">
       
       <v-row>
 
@@ -276,6 +276,16 @@ $formWidth: 600px;
 v-card {
   margin: 0;
   padding: 0;
+}
+
+.niho-bg {
+  background:  linear-gradient(
+      rgba(255, 255, 255, 0.7), 
+      rgba(255, 255, 255, 0.7)
+    ), url(../assets/niho.svg);
+  background-position-x: 150%;
+  background-repeat: no-repeat;
+  
 }
 
 }
