@@ -22,23 +22,22 @@
             </v-row>
           </v-row>
           <!-- Nav Icons -->
-           <!-- Nav Icons -->
-           <v-row justify="start" align="center" class="nav-row" to="/archive">
-            <img class="nav-icon" v-bind:src="require('@/assets/archive.svg')"/>
-            <span class="ml-4 black--text nav-label">Archive</span>
-        </v-row>
-        <v-row justify="start" align="center" class="nav-row">
-            <img class="nav-icon" v-bind:src="require('@/assets/timeline.svg')"/>
-            <span class="ml-4 black--text nav-label">Story</span>
-        </v-row>
-        <v-row justify="start" align="center" class="nav-row">
-            <img class="nav-icon" v-bind:src="require('@/assets/tree.svg')"/>
-            <span class="ml-4 black--text nav-label">Whakapapa</span>
-        </v-row>
-        <v-row justify="start" align="center" class="nav-row">
-            <img class="nav-icon" v-bind:src="require('@/assets/activity.svg')"/>
-            <span class="ml-4 black--text nav-label">Activity</span>
-        </v-row>
+          <v-row justify="start" align="center" class="nav-row" to="/archive">
+              <img class="nav-icon" v-bind:src="require('@/assets/archive.svg')"/>
+              <span class="ml-4 black--text nav-label">Archive</span>
+          </v-row>
+          <v-row justify="start" align="center" class="nav-row">
+              <img class="nav-icon" v-bind:src="require('@/assets/timeline.svg')"/>
+              <span class="ml-4 black--text nav-label">Story</span>
+          </v-row>
+          <v-row justify="start" align="center" class="nav-row">
+              <img class="nav-icon" v-bind:src="require('@/assets/tree.svg')"/>
+              <span class="ml-4 black--text nav-label">Whakapapa</span>
+          </v-row>
+          <v-row justify="start" align="center" class="nav-row">
+              <img class="nav-icon" v-bind:src="require('@/assets/activity.svg')"/>
+              <span class="ml-4 black--text nav-label">Activity</span>
+          </v-row>
         </v-col>
 
         <!-- Middle column -->
