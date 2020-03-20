@@ -16,14 +16,7 @@
         </router-link>
       </template>
       <!-- <v-btn icon :to="{ name: 'personShow', params: { id: profile.id } }"> -->
-      <Avatar
-        v-if="!mobile"
-        size="50px"
-        :image="profile.avatarImage"
-        :alt="profile.preferredName"
-        :gender="profile.gender"
-        :bornAt="profile.bornAt"
-      />
+     
         <!-- </v-btn> -->
       <v-spacer />
 
@@ -34,19 +27,33 @@
         <v-btn text @click.stop="dialog = true" class="red--text text-uppercase ms-10">ngāti</v-btn>
 
         <v-btn text to="/whakapapa" class="white--text text-uppercase ms-10">whakapapa</v-btn>
+
         <!-- <v-btn text to='/discovery?page=local' class="white--text text-uppercase">
           discover
-        </v-btn>
-        <v-btn text :to="{ name: 'personShow', params: { id: profile.id } }" class="white--text text-uppercase">
+        </v-btn> -->
+
+        <v-btn text :to="{ name: 'personShow', params: { id: profile.id } }" class="white--text text-uppercase ms-10">
           profile
-        </v-btn>-->
+        </v-btn>
+
         <!-- using click.native to handle event when there is also a router link -->
-        <v-btn
+        <!-- <v-btn
           @click.native="karakiaWhakamutunga()"
           to="/login"
           text
           class="white--text text-uppercase ms-10"
-        >sign out</v-btn>
+        >sign out</v-btn> -->
+
+        <Avatar
+          v-if="!mobile"
+          size="50px"
+          :image="profile.avatarImage"
+          :alt="profile.preferredName"
+          :gender="profile.gender"
+          :bornAt="profile.bornAt"
+          class="ms-10"
+        />
+
       </template>
 
       <template v-if="mobile">
@@ -81,16 +88,19 @@
         <v-list-item link to="/whakapapa" class="white--text">
           <v-list-item-title>whakapapa</v-list-item-title>
         </v-list-item>
+        
         <!-- <v-list-item link to="/discovery?page=local" class="white-text">
           <v-list-item-title>
             discover
           </v-list-item-title>
         </v-list-item>
+
         <v-list-item link :to="{ name: 'personShow', params: { id: profile.id } }" class="white--text">
           <v-list-item-title>
             profile
           </v-list-item-title>
-        </v-list-item>-->
+        </v-list-item>  -->
+        
         <!-- using click.native to handle event when there is also a router link -->
         <v-list-item link @click.native="karakiaWhakamutunga()" to="/login" class="white--text">
           <v-list-item-title>sign out</v-list-item-title>

@@ -1,14 +1,15 @@
 <template>
   <v-container class="full-width my-0 py-0">
-    <v-row class="header-bg">
-      <v-img :src="headerImage ? headerImage.uri : ''" min-width="100%" />
+    <v-row class="header-bg" v-bind:style="{ backgroundImage: 'url(' + require('@/assets/nzheader.jpg') +')' }">
+      <!-- <v-img :src="headerImage ? headerImage.uri : require('@/assets/nzheader.jpg')" min-width="100%" /> -->
     </v-row>
 
-    <v-row class="avatar-row">
+    <!-- <v-row class="avatar-row">
       <v-row class="avatar-box">
-        <Avatar :image="avatarImage" :alt="preferredName" size="18vh" />
+          <Avatar :image="avatarImage" :alt="preferredName" size="25vh" />
       </v-row>
-    </v-row>
+    </v-row> -->
+    
   </v-container>
 </template>
 
@@ -28,7 +29,7 @@ export default {
 }
 </script>
 <style scoped lang="scss">
-$avatarSize: 18vh;
+$avatarSize: 25vh;
 $ratio: 5.33333;
 $headerHeight: 100vw / $ratio;
 $maxHeaderWidth: 1400px;
@@ -41,6 +42,7 @@ $formWidth: 600px;
   // }
 }
 .header-bg {
+  height: 250px;
   background: linear-gradient(
       45deg,
       hsl(0, 6%, 37.1%) 12%,
@@ -63,20 +65,22 @@ $formWidth: 600px;
       transparent 0
     ),
     hsl(0, 5.2%, 27.6%);
-  background-size: 50px 50px;
+  /* background-size: 50px 50px; */
+  background-size: cover;
 }
 
 .avatar-row {
   position: relative;
-  width: $formWidth;
+  /* width: $formWidth; */
+  width: 100%;
   max-width: 60vw;
 
-  margin: 0 auto;
+  margin: auto;
   // this seems like a bad way to be doing alignment here
 
   .avatar-box {
     position: absolute;
-    top: -$avatarSize/2;
+    top: -$avatarSize/1.5;
     // Not sure how to calculate this
     left: calc(-100vw / 3 + 2 * #{$avatarSize});
 
