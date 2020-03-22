@@ -1,5 +1,5 @@
 <template>
-  <path class="link" :d="elbowV" />
+  <path class="link" :style="link.style" :d="elbowV"/>
 </template>
 
 <script>
@@ -13,6 +13,9 @@ export default {
       type: Number,
       required: true
     }
+  },
+  mounted () {
+    console.log('link', this.link)
   },
   // data () {
   //   return {
@@ -49,11 +52,3 @@ export default {
   }
 }
 </script>
-
-<style scoped lang="scss">
-path {
-  // transition: all ease-in .2s;
-  fill: none;
-  stroke: black;
-}
-</style>

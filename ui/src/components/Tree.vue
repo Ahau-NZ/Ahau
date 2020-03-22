@@ -31,6 +31,9 @@ import get from 'lodash.get'
 import Node from './tree/Node.vue'
 import Link from './tree/Link.vue'
 
+import isEqual from 'lodash.isequal'
+import includes from 'lodash.includes'
+
 export default {
   props: {
     nestedWhakapapa: {
@@ -52,6 +55,7 @@ export default {
   },
   data () {
     return {
+      node: null,
       componentLoaded: false, // need to ensure component is loaded before using $refs
       // ?? think this is unused ??
       // node: {
@@ -166,12 +170,35 @@ export default {
             x2: d.target.x, // centre x position of child node
             y1: d.source.y, // centre y position of the parent node
             y2: d.target.y, // centre y position of the child node
-            class: this.relationshipLinks[d.source.data.id + '-' + d.target.data.id].relationshipType !== 'birth' ? 'nonbiological' : ''
+            class: this.relationshipLinks[d.source.data.id + '-' + d.target.data.id].relationshipType !== 'birth' ? 'nonbiological' : '',
+            style: {
+              fill: 'none',
+              stroke: this.pathStroke(d.source.data.id, d.target.data.id)
+            }
           }
         })
+    },
+    paths () {
+      if (!this.componentLoaded || !this.node) return []
+      return this.root.path(this.node).map(d => d.data.id)
     }
   },
   methods: {
+    pathStroke (sourceId, targetId) {
+      if (this.paths === []) return 'black'
+
+      var currentPath = [
+        sourceId,
+        targetId
+      ]
+
+      var pairs = d3.pairs(this.paths)
+        .filter(d => isEqual(d, currentPath))
+
+      if (pairs.length > 0) return 'red'
+
+      return 'black'
+    },
     loadDescendants (profileId) {
       this.$emit('load-descendants', profileId)
     },
