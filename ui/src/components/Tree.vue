@@ -60,7 +60,8 @@ export default {
 
       nodeRadius: 50, // use variable for zoom later on
       nodeSeparationX: 100,
-      nodeSeparationY: 150
+      nodeSeparationY: 150,
+      currentPosition: {}
     }
   },
   mounted () {
@@ -189,8 +190,11 @@ export default {
     zoom() {
       var svg = d3.select('#baseSvg')
       var g = d3.select('#baseGroup')
+
       svg.call(
-        d3.zoom().on('zoom', function () {
+        d3.zoom()
+        .scaleExtent([0.3,2])
+        .on('zoom', function () {
           g.attr('transform', d3.event.transform)
         })
       )
@@ -198,36 +202,16 @@ export default {
 
     centerNode(source) {
 
-      var zoomListener = d3.zoom().scaleExtent([0.1, 3]).on("zoom", function() {
-        if(d3.event.transform != null) {
-          g.attr("transform", d3.event.transform );
-        }
-      });
-
       var svg = d3.select('#baseSvg')
       var g = d3.select('#baseGroup')
 
-      // transition duration
-      var duration = 750;
-
-      // node x y coordinates
-      console.log(source.x)
-      console.log(source.y)
-
-      // not sure what this does, but used in scale()
-      var t = d3.zoomTransform(g.node());
-      console.log(t)
-
-      var x = -source.x;
-      var y = -source.y;
-
-      // some other centering calculations from other examples
-      // x = (this.$refs.baseSvg.clientWidth / 2) - x * t.k;
-      // y = (this.$refs.baseSvg.clientHeight / 2) - y * t.k;
-      // x = this.$refs.baseSvg.clientWidth / 2 - x;
-
-      //center the node
-      g.transition().duration(duration).call(zoomListener.transform, d3.zoomIdentity.translate(x,y).scale(t.k) );
+      var width = this.$refs.tree.clientWidth;
+      var height = this.$refs.tree.clientHeight;
+   
+        g.transition()
+        .duration(500)
+        .attr("transform", "translate(" + (width/2 - source.x) + "," + (height/2 - source.y) + ")scale(" + 1 + ")")
+        .on("end", function(){ d3.select('#baseGroup').call(d3.zoom().transform, d3.zoomIdentity.translate((width/2 - source.x),(height/2 - source.y)).scale(1))});
 
     }
   },
