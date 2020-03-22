@@ -300,8 +300,9 @@ export default {
       const profileChanges = pick($event, [...PERMITTED_PROFILE_ATTRS])
       const relationshipAttrs = pick($event, [...PERMITTED_RELATIONSHIP_ATTRS])
       const profileId = this.selectedProfile.id
+      console.log("selected profile", this.selectedProfile)
 
-      if (relationshipAttrs && this.selectedProfile.id !== this.view.focus) {
+      if (!isEmpty(relationshipAttrs) && this.selectedProfile.id !== this.view.focus) {
         const input = {
           relationshipId: this.selectedProfile.relationship.relationshipId,
           child: profileId,
@@ -309,6 +310,7 @@ export default {
           ...relationshipAttrs,
           recps: this.view.recps
         }
+        console.log("input: ", input)
         try {
           const linkRes = await this.$apollo.mutate(saveWhakapapaLink(input))
           if (linkRes.errors) {

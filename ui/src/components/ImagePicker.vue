@@ -1,10 +1,14 @@
 <template>
   <div>
     <clipper-upload accept="image/*" @input="toggleAvatar">
-      <v-btn v-if="!avatar.new" class="toggle" fab small color="white">
-        <v-icon class="black--text">mdi-pencil</v-icon>
-      </v-btn>
-      &nbsp; &nbsp; {{ label }}
+      <v-row justify="center">
+        <v-btn v-if="!avatar.new" class="toggle" fab small light>
+          <v-icon class="grey--text">mdi-camera</v-icon>
+        </v-btn>
+        <p class="pa-2 toggle" style="cursor: pointer;">
+          {{ label }}
+        </p>
+      </v-row>
     </clipper-upload>
     <AvatarEditDialog
       :show="avatar.showEditor"
