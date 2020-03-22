@@ -15,7 +15,7 @@
           <Node
             :node="node"
             :radius="nodeRadius"
-            @click="collapse(node)"
+            @click="centerNode(node)"
             @open-context-menu="$emit('open-context-menu', $event)"
             :showLabel="true"
           />
@@ -186,7 +186,7 @@ export default {
         : get(node, 'data.partners.length', 0)
     },
 
-    zoom () {
+    zoom() {
       var svg = d3.select('#baseSvg')
       var g = d3.select('#baseGroup')
       svg.call(
@@ -194,6 +194,41 @@ export default {
           g.attr('transform', d3.event.transform)
         })
       )
+    },
+
+    centerNode(source) {
+
+      var zoomListener = d3.zoom().scaleExtent([0.1, 3]).on("zoom", function() {
+        if(d3.event.transform != null) {
+          g.attr("transform", d3.event.transform );
+        }
+      });
+
+      var svg = d3.select('#baseSvg')
+      var g = d3.select('#baseGroup')
+
+      // transition duration
+      var duration = 750;
+
+      // node x y coordinates
+      console.log(source.x)
+      console.log(source.y)
+
+      // not sure what this does, but used in scale()
+      var t = d3.zoomTransform(g.node());
+      console.log(t)
+
+      var x = -source.x;
+      var y = -source.y;
+
+      // some other centering calculations from other examples
+      // x = (this.$refs.baseSvg.clientWidth / 2) - x * t.k;
+      // y = (this.$refs.baseSvg.clientHeight / 2) - y * t.k;
+      // x = this.$refs.baseSvg.clientWidth / 2 - x;
+
+      //center the node
+      g.transition().duration(duration).call(zoomListener.transform, d3.zoomIdentity.translate(x,y).scale(t.k) );
+
     }
   },
   components: {
