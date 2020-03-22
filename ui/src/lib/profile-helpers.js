@@ -10,7 +10,10 @@ export const PERMITTED_PROFILE_ATTRS = [
   'description',
   'headerImage',
   'altNames',
-  'birthOrder'
+  'birthOrder',
+  'location',
+  'contact',
+  'profession'
   // 'isDeceased'
 ]
 
@@ -39,7 +42,8 @@ export const getProfile = id => ({
         id
         preferredName legalName altNames
         bornAt diedAt birthOrder
-        gender description
+        gender description 
+        location contact profession
         avatarImage { uri }
         children {
           profile {
@@ -47,6 +51,7 @@ export const getProfile = id => ({
             preferredName legalName altNames
             bornAt diedAt birthOrder
             gender description
+            location contact profession
             avatarImage { uri }
           }
         }
@@ -56,6 +61,7 @@ export const getProfile = id => ({
             preferredName legalName altNames
             bornAt diedAt birthOrder
             gender description
+            location contact profession
             avatarImage { uri }
           }
         }

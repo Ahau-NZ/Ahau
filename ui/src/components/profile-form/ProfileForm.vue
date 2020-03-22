@@ -165,17 +165,17 @@
           v-bind="customProps"
         />
       </v-col>
-        <v-col cols="12" sm="6" class="pa-1">
-        <v-text-field
-          v-model="formData.location"
-          label="location"
-          v-bind="customProps"
-        />
-      </v-col>
-        <v-col cols="12" sm="6" class="pa-1">
+      <v-col cols="12" sm="6" class="pa-1">
         <v-text-field
           v-model="formData.contact"
           label="Contact"
+          v-bind="customProps"
+        />
+      </v-col>
+      <v-col cols="12" sm="6" class="pa-1">
+        <v-text-field
+          v-model="formData.location"
+          label="Region, Contry"
           v-bind="customProps"
         />
       </v-col>

@@ -120,7 +120,7 @@ export default {
 
     colWidth(){
       if (this.flatten){
-        this.width = 300
+        this.width = 250
       }
     },
 
