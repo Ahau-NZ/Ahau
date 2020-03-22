@@ -43,7 +43,8 @@
           <TableButton @table="toggleTable()" />
         </v-col>
         <v-col>
-          <HelpButton @click="updateDialog('whakapapa-helper', null)" />
+          <HelpButton v-if="whakapapa.tree" @click="updateDialog('whakapapa-helper', null)" />
+          <HelpButton v-else @click="updateDialog('whakapapa-table-helper', null)" />
         </v-col>
         <v-col>
           <FeedbackButton />

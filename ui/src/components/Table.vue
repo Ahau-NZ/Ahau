@@ -73,6 +73,7 @@ import get from 'lodash.get'
 import Node from './table/Node.vue'
 import Link from './table/Link.vue'
 import FlattenButton from '@/components/button/FlattenButton.vue'
+import calculateAge from '../lib/calculate-age.js'
 
 export default {
   props: {
@@ -132,26 +133,22 @@ export default {
         },
         {
           label: 'Age',
-          x: this.width + 175
+          x: this.width + 225
         },
         {
           label: 'Profession',
-          x: this.width + 220
+          x: this.width + 285
         },
         {
           label: 'Location',
-          x: this.width + 375
+          x: this.width + 420
         },
         {
           label: 'Contact',
-          x: this.width + 600
+          x: this.width + 650
         }
       ]
     },
-
-    // colData () {
-    //   return this.columns.map()
-    // },
 
     //  returns a nested data structure representing a tree based on the treeData object
     root () {
@@ -173,21 +170,13 @@ export default {
     // returns an array of nodes associated with the root node created from the treeData object, as well as extra attributes
     nodes () {
       var index = -1
-      // turns bornAt to age
-      function getAge (bornAt) {
-        if (bornAt === null) return
-        var date = new Date(bornAt)
-        var diff_ms = Date.now() - date.getTime()
-        var age_dt = new Date(diff_ms)
-        return Math.abs(age_dt.getUTCFullYear() - 1970)
-      }
 
       // changes row colour
       function nodeColor (data) {
-        var age = getAge(data.bornAt)
+        var age = calculateAge(data.bornAt)
         if (data.isCollapsed) {
           return 'fill:cadetblue'
-        } else if (age < 1) {
+        } else if (age !== null && age < 2) {
           return 'fill:yellow'
         } else return 'fill:lightblue'
       }
@@ -213,7 +202,7 @@ export default {
             parent: d.parent,
             x: d.x,
             y: this.filter ? ++index * 45 : d.y * 1.5,
-            age: getAge(d.data.bornAt),
+            age: calculateAge(d.data.bornAt),
             color: nodeColor(d.data),
             profession: d.data.profession,
             location: d.data.location,

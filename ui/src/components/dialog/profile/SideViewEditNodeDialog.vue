@@ -348,7 +348,6 @@ import pick from 'lodash.pick'
 import clone from 'lodash.clonedeep'
 
 function defaultData (profile) {
-  console.log("profile: ",profile)
   return {
     id: profile.id,
     gender: profile.gender,
@@ -475,7 +474,6 @@ export default {
       var output = Object.assign({}, pick(this.profileChanges, [...PERMITTED_PROFILE_ATTRS, ...PERMITTED_RELATIONSHIP_ATTRS]))
 
       if (!isEmpty(output)) {
-        console.log("output", output)
         this.$emit('submit', output)
       }
 

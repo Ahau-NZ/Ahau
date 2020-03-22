@@ -175,7 +175,7 @@
       <v-col cols="12" sm="6" class="pa-1">
         <v-text-field
           v-model="formData.location"
-          label="Region, Contry"
+          label="Region, Country"
           v-bind="customProps"
         />
       </v-col>
@@ -235,7 +235,6 @@ export default {
   watch: {
     profile: {
       handler (newVal) {
-        console.log(newVal)
         this.formData = newVal
       }
     },
