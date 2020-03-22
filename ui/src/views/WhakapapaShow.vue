@@ -316,6 +316,9 @@ export default {
               diedAt
               birthOrder
               description
+              contact
+              location
+              profession
               altNames
               avatarImage {
                 uri
@@ -330,6 +333,9 @@ export default {
                   diedAt
                   birthOrder
                   description
+                  contact
+                  location
+                  profession
                   altNames
                   avatarImage {
                     uri
@@ -349,6 +355,9 @@ export default {
                   diedAt
                   birthOrder
                   description
+                  contact
+                  location
+                  profession
                   altNames
                   avatarImage {
                     uri
@@ -525,7 +534,7 @@ export default {
     getImage () {
       return avatarHelper.defaultImage(this.bornAt, this.gender)
     }
-  },
+  }
 }
 </script>
 

@@ -60,7 +60,7 @@ export default {
         backgroundImage: `url(${whakapapa})`,
         backgroundSize: 'contain'
       }
-    },
+    }
   }
 }
 </script>

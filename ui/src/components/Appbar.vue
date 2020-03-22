@@ -19,7 +19,7 @@
       <Avatar
         v-if="!mobile"
         size="50px"
-        :image="profile.avatarImage"
+        :image="profile.Image"
         :alt="profile.preferredName"
         :gender="profile.gender"
         :bornAt="profile.bornAt"

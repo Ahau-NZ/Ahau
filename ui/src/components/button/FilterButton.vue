@@ -1,4 +1,4 @@
-<template> 
+<template>
   <v-tooltip  v-if="!filter" bottom>
     <template v-slot:activator="{ on }">
         <v-btn v-on="on" @click="toggle()" fab x-small color="blue-grey">
@@ -23,14 +23,14 @@ export default {
   name: 'FilterButton',
   props: {
     filter: {
-      type : Boolean,
+      type: Boolean,
       default: false
     }
   },
   methods: {
-      toggle() {
+    toggle () {
       this.$emit('filter')
     }
   }
-}  
+}
 </script>

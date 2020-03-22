@@ -1,5 +1,5 @@
 <template>
-  <svg id="baseSvg" :width="width" :height="tableHeight" ref="baseSvg" style="background-color:white" overflow="auto" min-height="500px">
+  <svg id="baseSvg" :width="2000" :height="tableHeight" ref="baseSvg" style="background-color:white" overflow="auto" min-height="500px">
     <line x1="60" y1="50" x2="90%" y2="50" style="stroke-width: 1; stroke: lightgrey;"/>
     <g v-for="column in columns" :key="column.label">
       <text :transform="`translate(${column.x + 10} ${40})`">
@@ -22,6 +22,7 @@
             <!-- <line x1="0" :y1="node.y-3" x2="90%" :y2="node.y-3" style="stroke-width: 1; stroke: lightgrey;"/> -->
             <rect :x="node.x + nodeRadius" :y="node.y" width="100%" :height="nodeRadius*2" class="row" :style="node.color" />
             <Node
+              :width="width"
               :node="node"
               :radius="nodeRadius"
               @click="collapse(node)"
@@ -34,21 +35,32 @@
               <g v-if="flatten && node.data.children.length > 0" :transform="`translate(${node.x - 10} ${node.y + nodeRadius + 5})`">
                 <text> - </text>
               </g>
-              <text  :transform="`translate(${columns[0].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ node.data.legalName }}
-              </text>
-              <text  :transform="`translate(${columns[1].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ node.age }}
-              </text>
-              <text  :transform="`translate(${columns[2].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ node.profession }}
-              </text>
-              <text  :transform="`translate(${columns[3].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ node.location }}
-              </text>
-              <text  :transform="`translate(${columns[4].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ node.contact }}
-              </text>
+              <svg :width="columns[1].x - 45" >  
+                <text  :transform="`translate(${columns[0].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
+                  {{ node.data.legalName }}
+                </text>
+              </svg>
+              <svg :width="columns[2].x - 45">  
+                <text  :transform="`translate(${columns[1].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
+                  {{ node.age }}
+                </text>
+              </svg>
+              <svg :width="columns[3].x - 45">  
+                <text  :transform="`translate(${columns[2].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
+                  {{ node.profession }}
+                </text>
+              </svg>
+              <svg :width="columns[4].x">  
+                <text  :transform="`translate(${columns[3].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
+                  {{ node.location }}
+                </text>
+              </svg>
+              <svg >  
+                <text  :transform="`translate(${columns[4].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
+                  {{ node.contact }}
+                </text>
+              </svg>
+              
           </g>
         </g>
       </g>
@@ -61,7 +73,6 @@ import get from 'lodash.get'
 import Node from './table/Node.vue'
 import Link from './table/Link.vue'
 import FlattenButton from '@/components/button/FlattenButton.vue'
-
 
 export default {
   props: {
@@ -82,54 +93,65 @@ export default {
       type: Array
     },
     flatten: {
-      type : Boolean,
+      type: Boolean,
       default: false
     },
     filter: {
-      type : Boolean,
+      type: Boolean,
       default: false
     }
   },
   data () {
     return {
-
+      // width used for to set max widths on columns and the text
+      width:350,
       componentLoaded: false, // need to ensure component is loaded before using $refs
       nodeRadius: 20, // use variable for zoom later on
       nodeSize: 40,
       tableHeight: 0,
       duration: 400,
-      columns: [
-        {
-          label: 'Legal Name',
-          x: 350
-        },
-        {
-          label: 'Age',
-          x: 525 
-        },
-        {
-          label: 'Career',
-          x: 570
-        },
-        {
-          label: 'Location',
-          x: 700
-        },
-        {
-          label: 'Contact',
-          x: 1000
-        },
-        
-      ]
+      
     }
   },
   mounted () {
     this.componentLoaded = true
   },
   computed: {
-    width () {
-      return screen.width
+
+    colWidth(){
+      if (this.flatten){
+        this.width = 300
+      }
     },
+
+    columns () {
+      return [
+        {
+          label: 'Legal Name',
+          x: this.width
+        },
+        {
+          label: 'Age',
+          x: this.width + 175
+        },
+        {
+          label: 'Profession',
+          x: this.width + 220
+        },
+        {
+          label: 'Location',
+          x: this.width + 375
+        },
+        {
+          label: 'Contact',
+          x: this.width + 600
+        }
+      ]
+    },
+
+    // colData () {
+    //   return this.columns.map()
+    // },
 
     //  returns a nested data structure representing a tree based on the treeData object
     root () {
@@ -137,53 +159,48 @@ export default {
     },
 
     // creates a new table layout and sets the size depending on number of nodes
-    tableLayout () {  
+    tableLayout () {
       var flatten = this.flatten
       var index = -1
-      var layout = this.root.eachBefore(function(n) {
+      var layout = this.root.eachBefore(function (n) {
         n.y = ++index * 30
-        n.x = flatten ? 0.1 : n.depth * 15 
+        n.x = flatten ? 0.1 : n.depth * 15
       })
       this.tableHeight = (1 + index) * 60
       return layout
     },
 
-    
     // returns an array of nodes associated with the root node created from the treeData object, as well as extra attributes
     nodes () {
-
       var index = -1
       // turns bornAt to age
-      function getAge(bornAt) {
+      function getAge (bornAt) {
         if (bornAt === null) return
         var date = new Date(bornAt)
-        var diff_ms = Date.now() - date.getTime();
-        var age_dt = new Date(diff_ms); 
-        return Math.abs(age_dt.getUTCFullYear() - 1970);
+        var diff_ms = Date.now() - date.getTime()
+        var age_dt = new Date(diff_ms)
+        return Math.abs(age_dt.getUTCFullYear() - 1970)
       }
 
       // changes row colour
-      function nodeColor(data) {
+      function nodeColor (data) {
         var age = getAge(data.bornAt)
         if (data.isCollapsed) {
-        return "fill:cadetblue"
-        }
-        else if (age < 1) {
-          return "fill:yellow"
-        }
-        else return "fill:lightblue"
-      } 
-
+          return 'fill:cadetblue'
+        } else if (age < 1) {
+          return 'fill:yellow'
+        } else return 'fill:lightblue'
+      }
 
       return this.tableLayout
         // returns the array of descendants starting with the root node, then followed by each child in topological order
-        .descendants() 
+        .descendants()
         // filter deceased
         .filter(peeps => {
           if (this.filter && peeps.data.diedAt !== null) {
-            return false;
+            return false
           }
-          return true;
+          return true
         })
         // returns a new custom object for each node
         .map((d, i) => {
@@ -195,12 +212,12 @@ export default {
             height: d.height,
             parent: d.parent,
             x: d.x,
-            y: this.filter ? ++index * 45 : d.y*1.5,
+            y: this.filter ? ++index * 45 : d.y * 1.5,
             age: getAge(d.data.bornAt),
             color: nodeColor(d.data),
-            profession: "developer",
-            location: "Raglan, New Zealand",
-            contact: "ben@ahau.io"
+            profession: d.data.profession,
+            location: d.data.location,
+            contact: d.data.contact
 
           }
         })
@@ -217,14 +234,23 @@ export default {
             id: `link-${i}-${i + 1}`,
             index: i,
             relationshipType: d.target.data.relationshipType ? d.target.data.relationshipType[0] : '',
-            d: `M${d.source.x - this.nodeRadius/2},${d.source.y*1.5}
-                V${d.target.y*1.5}
-                h${d.target.x/(d.target.x*.1)}
+            d: `M${d.source.x - this.nodeRadius / 2},${d.source.y * 1.5}
+                V${d.target.y * 1.5}
+                h${d.target.x / (d.target.x * 0.1)}
             `,
             class: this.relationshipLinks[d.source.data.id + '-' + d.target.data.id].relationshipType !== 'birth' ? 'nonbiological' : ''
           }
         })
-    },
+    }
+  },
+
+  watch:{
+    flatten(newVal){
+      if(newVal){
+        this.width = 250
+      }
+      else this.width = 350
+    }
   },
 
   methods: {
@@ -232,7 +258,7 @@ export default {
       this.$emit('collapse-node', node.data.id)
       // TODO
       // this one feels like perhaps it should be handled in this file
-    },
+    }
   },
   components: {
     Node,

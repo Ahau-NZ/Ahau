@@ -84,11 +84,13 @@ function setDefaultData (withRelationships) {
     legallyAdopted: false,
     children: [],
     avatarImage: {},
-    // title: '',
     bornAt: '',
     diedAt: '',
     birthOrder: '',
-    description: ''
+    description: '',
+    location: '',
+    profession: '',
+    contact: ''
   }
 
   formData.isDeceased = !!formData.diedAt

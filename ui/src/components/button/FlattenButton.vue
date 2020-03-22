@@ -1,4 +1,4 @@
-<template> 
+<template>
   <v-tooltip  v-if="flattenIcon" bottom>
     <template v-slot:activator="{ on }">
         <v-btn v-on="on" @click="toggle()" fab x-small color="blue-grey">
@@ -23,14 +23,14 @@ export default {
   name: 'FlattenButton',
   data () {
     return {
-      flattenIcon : true
+      flattenIcon: true
     }
   },
   methods: {
-      toggle() {
+    toggle () {
       this.flattenIcon = !this.flattenIcon
       this.$emit('flatten')
     }
   }
-}  
+}
 </script>

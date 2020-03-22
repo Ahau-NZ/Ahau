@@ -1,5 +1,5 @@
 <template>
-<svg width="400">
+<svg :width="width - 50">
   <g :id="node.nodeId" :style="groupStyle">
     <!-- recursion of partners (first so they're drawing in background) -->
     <!-- <g v-if="!profile.isCollapsed">
@@ -110,7 +110,8 @@ export default {
   props: {
     node: { type: Object, required: true },
     radius: { type: Number, required: true },
-    isPartner: { type: Boolean, default: false }
+    isPartner: { type: Boolean, default: false },
+    width: {type: Number, required: true},
   },
   data () {
     return {

@@ -3,7 +3,7 @@
     <!-- niho background picture -->
     <defs>
         <pattern id="img1" patternUnits="userSpaceOnUse" x="400" y="0" width="100%" height="100%">
-                    <image xlink:href="../assets/niho.svg" width="100%" height="100%" />             
+                    <image xlink:href="../assets/niho.svg" width="100%" height="100%" />
             </pattern>
     </defs>
     <path id="background" d="M5,5 l0,680 2980,0 l0,-680 l-980,0" fill="url(#img1)" />

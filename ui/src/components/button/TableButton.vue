@@ -1,4 +1,4 @@
-<template> 
+<template>
   <v-tooltip  v-if="tableIcon" bottom>
     <template v-slot:activator="{ on }">
         <v-btn v-on="on" @click="toggle()" fab x-small color="blue-grey">
@@ -23,14 +23,14 @@ export default {
   name: 'TableButton',
   data () {
     return {
-      tableIcon : true
+      tableIcon: true
     }
   },
   methods: {
-      toggle() {
+    toggle () {
       this.tableIcon = !this.tableIcon
       this.$emit('table')
     }
   }
-}  
+}
 </script>

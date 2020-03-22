@@ -243,8 +243,12 @@ export default {
       birthOrder,
       avatarImage,
       altNames,
-      description
+      description,
+      location,
+      profession,
+      contact
     }) {
+      console.log('dialoghandler: ', profession)
       const res = await this.$apollo.mutate({
         mutation: gql`
           mutation($input: ProfileInput!) {
@@ -263,6 +267,9 @@ export default {
             avatarImage,
             altNames,
             description,
+            location,
+            profession,
+            contact,
             recps: this.view.recps
           }
         }

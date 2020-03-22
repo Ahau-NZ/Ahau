@@ -10,15 +10,15 @@ export default {
       required: true
     },
     branch: {
-      type: Number,
+      type: Number
     }
-  },
+  }
 }
 </script>
 
 <style scoped lang="scss">
 path {
   fill: none;
-  stroke: black;
+  stroke: darkgrey;
 }
 </style>
