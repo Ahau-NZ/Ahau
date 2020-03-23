@@ -297,7 +297,7 @@
             <v-row>
               <!-- Action buttons -->
               <!-- Delete button -->
-              <v-col cols="12" sm="auto">
+              <v-col cols="12" sm="auto" class="mb-8">
                 <v-btn
                   v-if="isEditing && deleteable"
                   @click="$emit('delete')"
@@ -309,7 +309,15 @@
                   <v-icon class="secondary--text" left>mdi-delete</v-icon>Delete this person
                 </v-btn>
               </v-col>
-              <v-col v-if="isEditing" class="pt-0" align="right">
+              <v-col
+                v-if="isEditing"
+                :align="mobile ? '' : 'right'"
+                :class="{
+                  'pt-0': true,
+                  'd-flex': mobile,
+                  'justify-space-between': mobile
+                }"
+              >
                 <v-btn @click="cancel" text large fab class="secondary--text mr-10">
                   <v-icon color="secondary">mdi-close</v-icon>
                 </v-btn>
