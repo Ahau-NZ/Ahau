@@ -301,7 +301,7 @@ export default {
       const relationshipAttrs = pick($event, [...PERMITTED_RELATIONSHIP_ATTRS])
       const profileId = this.selectedProfile.id
 
-      if (relationshipAttrs && this.selectedProfile.id !== this.view.focus) {
+      if (!isEmpty(relationshipAttrs) && this.selectedProfile.id !== this.view.focus) {
         const input = {
           relationshipId: this.selectedProfile.relationship.relationshipId,
           child: profileId,

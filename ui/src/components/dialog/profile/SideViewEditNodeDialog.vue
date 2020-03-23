@@ -292,7 +292,7 @@
                 <v-btn @click="cancel" text large fab class="secondary--text mr-10">
                   <v-icon color="secondary">mdi-close</v-icon>
                 </v-btn>
-                <v-btn @click="submit" text large fab class="blue--text" color="blue">
+                <v-btn @click="submit" text large fab class="blue--text ml-5" color="blue">
                   <v-icon>mdi-check</v-icon>
                 </v-btn>
               </v-col>
