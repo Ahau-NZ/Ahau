@@ -24,14 +24,21 @@
         ></v-text-field>
       </template>
       <v-date-picker
+        reactive
         locale="en-in"
         :max="maxDate"
+        min="0000-01-01"
         v-model="updatedValue"
         no-title
-        @input="menu = false"
         hide-details
         light
-      ></v-date-picker>
+        ref="picker"
+        show-current="false"
+      >
+      <v-spacer></v-spacer>
+      <v-btn text color="primary" @click="menu = false">Cancel</v-btn>
+      <v-btn text color="primary" @click="menu = false">OK</v-btn>
+      </v-date-picker>
     </v-menu>
   </v-layout>
 </template>
@@ -86,7 +93,31 @@ export default {
   watch: {
     value (newValue) {
       this.updatedValue = newValue
+    },
+    menu (val) {
+      val && setTimeout(() => (this.$refs.picker.activePicker = 'YEAR'))
     }
   }
 }
 </script>
+<style>
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+</style>
