@@ -3,6 +3,7 @@
     <v-app-bar
       v-if="mobile || enableMenu"
       :app="mobile && app"
+      :absolute="mobile"
       :class="mobile ? 'mobile' : 'desktop'"
       :flat="!mobile"
       color="#303030"

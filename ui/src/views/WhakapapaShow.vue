@@ -30,7 +30,12 @@
         </WhakapapaViewCard>
       </v-row>
 
-      <WhakapapaBanner v-if="mobile" :view="whakapapaView" @edit="updateDialog('whakapapa-edit', null)" @more-info="updateDialog('whakapapa-view', null)"/>
+      <WhakapapaBanner
+        v-if="mobile"
+        :view="whakapapaView"
+        @edit="updateDialog('whakapapa-edit', null)"
+        @more-info="updateDialog('whakapapa-view', null)"
+      />
 
       <v-row v-if="!mobile" class="select">
         <v-col v-if="whakapapa.table && flatten">
@@ -53,7 +58,7 @@
 
       <v-row>
         <Tree
-          class="tree"
+          :class="{ tree: true, mobile }"
           v-if="whakapapa.tree"
           :view="whakapapaView"
           :nestedWhakapapa="nestedWhakapapa"
@@ -581,5 +586,8 @@ h1 {
 
 .tree {
   max-height: calc(100vh - 64px);
+}
+.tree.mobile {
+  max-height: calc(100vh - 56px - 55.5px);
 }
 </style>
