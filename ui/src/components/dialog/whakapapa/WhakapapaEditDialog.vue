@@ -138,6 +138,9 @@ export default {
     }
   },
   methods: {
+    cordovaBackButton () {
+      this.close()
+    },
     close () {
       this.$emit('close')
     },
