@@ -1,5 +1,13 @@
 <template>
   <svg id="baseSvg" width="100%" :height="height" ref="baseSvg">
+    <!-- niho background picture -->
+    <defs>
+        <pattern id="img1" patternUnits="userSpaceOnUse" x="400" y="0" width="100%" height="100%">
+                    <image xlink:href="../assets/niho.svg" width="100%" height="100%" />
+            </pattern>
+    </defs>
+    <path id="background" d="M5,5 l0,680 2980,0 l0,-680 l-980,0" fill="url(#img1)" />
+    <!-- whakapapa tree -->
     <g id="baseGroup">
       <g :transform="`translate(${treeX} ${treeY})`">
         <g v-for="link in links" :key="link.id" class="link">
@@ -166,6 +174,12 @@ export default {
             x2: d.target.x, // centre x position of child node
             y1: d.source.y, // centre y position of the parent node
             y2: d.target.y, // centre y position of the child node
+            d: `
+              M ${d.source.x}, ${d.source.y} 
+              v ${this.branch} 
+              H ${d.target.x} 
+              V ${d.target.y}
+            `,
             class: this.relationshipLinks[d.source.data.id + '-' + d.target.data.id].relationshipType !== 'birth' ? 'nonbiological' : ''
           }
         })
@@ -204,6 +218,10 @@ export default {
 </script>
 
 <style scoped lang="scss">
+#background {
+  opacity: 0.1
+}
+
 svg#baseSvg {
   cursor: grab;
 }

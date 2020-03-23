@@ -45,5 +45,8 @@
     "type": "git",
     "url": "git+https://gitlab.com/ahau/whakapapa-ora.git"
   },
-  "license": "AGPL-3.0"
+  "license": "AGPL-3.0",
+  "dependencies": {
+    "vue-country-region-select": "^2.0.13"
+  }
 }

@@ -41,7 +41,7 @@
      <NewNodeDialog
       v-if="dialog"
       :show="dialog"
-      :title="`Ko wai au? -- Who am I?`"
+      :title="`Ko wai au? Who am I?`"
       @close="toggleNew" @create="save($event)"
     />
   </div>
@@ -169,7 +169,10 @@ export default {
         'birthOrder',
         'avatarImage',
         'altNames',
-        'description'
+        'description',
+        'location',
+        'contact',
+        'profession'
       )
       const result = await this.$apollo.mutate({
         mutation: gql`

@@ -121,7 +121,7 @@
 <script>
 import gql from 'graphql-tag'
 import Avatar from '@/components/Avatar'
-import FeedbackButton from '@/components/FeedbackButton'
+import FeedbackButton from '@/components/button/FeedbackButton'
 
 const karakia = `
 ---------------------------------

@@ -97,7 +97,6 @@ export default {
   watch: {
     formData: {
       handler (newVal) {
-        console.log('formData', newVal)
       },
       deep: true
     }
@@ -115,7 +114,6 @@ export default {
       }
 
       const output = whakapapaSubmission(this.formData)
-      console.log(output)
       this.$emit('submit', output)
       this.close()
     },

@@ -49,6 +49,10 @@
       :show="isActive('whakapapa-helper')"
       @close="close"
     />
+    <WhakapapaTableHelper
+      :show="isActive('whakapapa-table-helper')"
+      @close="close"
+    />
   </div>
 </template>
 
@@ -60,6 +64,7 @@ import WhakapapaViewDialog from '@/components/dialog/whakapapa/WhakapapaViewDial
 import WhakapapaEditDialog from '@/components/dialog/whakapapa/WhakapapaEditDialog.vue'
 import WhakapapaDeleteDialog from '@/components/dialog/whakapapa/WhakapapaDeleteDialog.vue'
 import WhakapapaShowHelper from '@/components/dialog/whakapapa/WhakapapaShowHelper.vue'
+import WhakapapaTableHelper from '@/components/dialog/whakapapa/WhakapapaTableHelper.vue'
 
 import gql from 'graphql-tag'
 import { whoami } from '@/lib/profile-helpers.js'
@@ -83,7 +88,8 @@ export default {
     WhakapapaViewDialog,
     WhakapapaEditDialog,
     WhakapapaDeleteDialog,
-    WhakapapaShowHelper
+    WhakapapaShowHelper,
+    WhakapapaTableHelper,
   },
   props: {
     selectedProfile: {
@@ -104,7 +110,7 @@ export default {
       default: null,
       validator: (val) => [
         'new-node', 'view-edit-node', 'delete-node',
-        'whakapapa-view', 'whakapapa-edit', 'whakapapa-delete', 'whakapapa-helper'
+        'whakapapa-view', 'whakapapa-edit', 'whakapapa-delete', 'whakapapa-helper', 'whakapapa-table-helper'
       ].includes(val)
     },
     type: {
@@ -243,7 +249,10 @@ export default {
       birthOrder,
       avatarImage,
       altNames,
-      description
+      description,
+      location,
+      profession,
+      contact
     }) {
       const res = await this.$apollo.mutate({
         mutation: gql`
@@ -263,6 +272,9 @@ export default {
             avatarImage,
             altNames,
             description,
+            location,
+            profession,
+            contact,
             recps: this.view.recps
           }
         }

@@ -10,8 +10,7 @@ export default {
       required: true
     },
     branch: {
-      type: Number,
-      required: true
+      type: Number
     }
   }
 }
@@ -20,6 +19,6 @@ export default {
 <style scoped lang="scss">
 path {
   fill: none;
-  stroke: black;
+  stroke: darkgrey;
 }
 </style>
