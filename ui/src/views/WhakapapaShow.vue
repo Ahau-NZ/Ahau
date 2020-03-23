@@ -33,6 +33,9 @@
       <WhakapapaBanner v-if="mobile" :view="whakapapaView" @edit="updateDialog('whakapapa-edit', null)" @more-info="updateDialog('whakapapa-view', null)"/>
 
       <v-row v-if="!mobile" class="select">
+        <v-col>
+          <SearchBar :nestedWhakapapa="nestedWhakapapa" :searchNodeId.sync="searchNodeId"/>
+        </v-col>
         <v-col v-if="whakapapa.table && flatten">
           <FilterButton :filter="filter" @filter="toggleFilter()" />
         </v-col>
@@ -61,6 +64,7 @@
           @load-descendants="loadDescendants($event)"
           @collapse-node="collapseNode($event)"
           @open-context-menu="openContextMenu($event)"
+          :searchNodeId="searchNodeId"
         />
         <Table
           v-if="whakapapa.table"
@@ -115,6 +119,7 @@ import TableButton from '@/components/button/TableButton.vue'
 import HelpButton from '@/components/button/HelpButton.vue'
 import FlattenButton from '@/components/button/FlattenButton.vue'
 import FilterButton from '@/components/button/FilterButton.vue'
+import SearchBar from '@/components/button/SearchBar.vue'
 
 import tree from '@/lib/tree-helpers'
 import avatarHelper from '@/lib/avatar-helpers.js'
@@ -141,7 +146,7 @@ export default {
     HelpButton,
     FlattenButton,
     FilterButton,
-    FeedbackButton,
+    SearchBar,
     Table,
     Tree,
     VueContext,
@@ -150,6 +155,7 @@ export default {
   },
   data () {
     return {
+      searchNodeId: '',
       showWhakapapaHelper: false,
       whakapapaView: {
         name: 'Loading',

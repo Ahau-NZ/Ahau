@@ -40,6 +40,7 @@ import Node from './tree/Node.vue'
 import Link from './tree/Link.vue'
 
 import isEqual from 'lodash.isequal'
+import isEmpty from 'lodash.isempty'
 
 export default {
   props: {
@@ -58,6 +59,9 @@ export default {
     },
     relationshipLinks: {
       type: Array
+    },
+    searchNodeId: {
+      type: String
     }
   },
   data () {
@@ -79,6 +83,12 @@ export default {
     this.zoom()
   },
   computed: {
+    pathNode () {
+      if (this.searchNodeId === '') return null
+      return this.root.descendants().find(d => {
+        return d.data.id === this.searchNodeId
+      })
+    },
     branch () {
       return this.nodeSeparationY / 2 + this.nodeRadius
     },
@@ -190,15 +200,23 @@ export default {
             `
           }
         })
+        .sort((a, b) => {
+          var A = a.style.stroke
+          var B = b.style.stroke
+          if (A < B) return -1
+          if (A > B) return 1
+          return 0
+        })
     },
     paths () {
-      if (!this.componentLoaded || !this.node) return []
-      return this.root.path(this.node).map(d => d.data.id)
+      if (!this.componentLoaded || !this.pathNode) return null
+      return this.root.path(this.pathNode)
+        .map(d => d.data.id)
     }
   },
   methods: {
     pathStroke (sourceId, targetId) {
-      if (this.paths === []) return 'black'
+      if (!this.paths) return 'black'
 
       var currentPath = [
         sourceId,
@@ -206,10 +224,13 @@ export default {
       ]
 
       var pairs = d3.pairs(this.paths)
-        .filter(d => isEqual(d, currentPath))
+        .filter(d => {
+          return isEqual(d, currentPath)
+        })
 
-      if (pairs.length > 0) return 'red'
-
+      if (pairs.length > 0) {
+        return 'red'
+      }
       return 'black'
     },
     loadDescendants (profileId) {
