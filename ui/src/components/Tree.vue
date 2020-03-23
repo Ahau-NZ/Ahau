@@ -190,7 +190,8 @@ export default {
             class: this.relationshipLinks[d.source.data.id + '-' + d.target.data.id].relationshipType !== 'birth' ? 'nonbiological' : '',
             style: {
               fill: 'none',
-              stroke: this.pathStroke(d.source.data.id, d.target.data.id)
+              stroke: 'black',
+              opacity: this.pathStroke(d.source.data.id, d.target.data.id)
             },
             d: `
               M ${d.source.x}, ${d.source.y} 
@@ -216,7 +217,7 @@ export default {
   },
   methods: {
     pathStroke (sourceId, targetId) {
-      if (!this.paths) return 'black'
+      if (!this.paths) return 0.2
 
       var currentPath = [
         sourceId,
@@ -229,9 +230,9 @@ export default {
         })
 
       if (pairs.length > 0) {
-        return 'red'
+        return 1
       }
-      return 'black'
+      return 0.2
     },
     loadDescendants (profileId) {
       this.$emit('load-descendants', profileId)

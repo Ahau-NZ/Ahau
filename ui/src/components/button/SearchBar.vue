@@ -7,11 +7,17 @@
     :menu-props="{ light: true }"
     :clearable="hasSelection"
     hide-no-data
-    append-icon=""
+    append-icon="mdi-magnify"
+    placeholder="Search"
     @click:clear="reset()"
     no-data-text="no suggestions"
     :search-input.sync="searchString"
-    :filter="filter"
+    outlined
+    rounded
+    light
+    hide-selected
+    underlined
+    dense
   >
     <template v-slot:item="data">
       <template>
@@ -23,12 +29,12 @@
             <v-col cols="2">
               <small>{{ data.item.preferredName }}</small>
             </v-col>
-            <v-col cols="5">
+            <!-- <v-col cols="5">
               <small>{{ data.item.legalName }}</small>
             </v-col>
             <v-col cols="3">
               <small>{{ data.item.bornAt ? data.item.bornAt.slice(0, 10) : '' }}</small>
-            </v-col>
+            </v-col> -->
           </v-row>
         </v-list-item>
       </template>
@@ -81,17 +87,14 @@ export default {
   },
   methods: {
     setSearchNode (data) {
+      this.searchString = data.preferredName
+      this.hasSelection = true
       this.$emit('update:searchNodeId', data.id)
     },
-    filter (item, queryText, itemText) {
-      const hasValue = val => val != null ? val : ''
-
-      const text = hasValue(itemText)
-      const query = hasValue(queryText)
-
-      return text.toString()
-        .toLowerCase()
-        .indexOf(query.toString().toLowerCase()) > -1
+    reset () {
+      this.searchString = ''
+      this.hasSelected = false
+      this.$emit('update:searchNodeId', '')
     }
   },
   watch: {
