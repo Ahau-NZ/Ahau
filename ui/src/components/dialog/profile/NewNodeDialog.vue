@@ -56,7 +56,7 @@
       </v-btn>
       <v-btn @click="submit"
         text large fab
-        class="blue--text"
+        class="blue--text ml-5"
       >
         <v-icon>mdi-check</v-icon>
       </v-btn>
