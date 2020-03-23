@@ -201,6 +201,7 @@ export default {
     },
 
     centerNode(source) {
+      this.collapse(source)
 
       var svg = d3.select('#baseSvg')
       var g = d3.select('#baseGroup')
@@ -211,7 +212,7 @@ export default {
       g.transition()
       .duration(500)
       .attr("transform", "translate(" + (width/2 - source.x) + "," + (height/2 - source.y) + ")scale(" + 1 + ")")
-      .on("end", function(){ d3.select('#baseGroup').call(d3.zoom().transform, d3.zoomIdentity.translate((width/2 - source.x),(height/2 - source.y)).scale(1))});
+      .on("end", function(){ svg.call(d3.zoom().transform, d3.zoomIdentity.translate((width/2 - source.x),(height/2 - source.y)).scale(1))});
 
     }
   },
