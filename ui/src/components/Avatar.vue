@@ -18,7 +18,7 @@
     </v-col>
   </div>
 
-  <div v-else>
+  <div v-else-if="gender !== ''">
     <v-col>
       <v-row justify="center">
         <v-avatar :size="size" :tile="isView">

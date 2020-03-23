@@ -1,5 +1,13 @@
 <template>
   <svg id="baseSvg" width="100%" :height="height" ref="baseSvg">
+    <!-- niho background picture -->
+    <defs>
+        <pattern id="img1" patternUnits="userSpaceOnUse" x="400" y="0" width="100%" height="100%">
+                    <image xlink:href="../assets/niho.svg" width="100%" height="100%" />
+            </pattern>
+    </defs>
+    <path id="background" d="M5,5 l0,680 2980,0 l0,-680 l-980,0" fill="url(#img1)" />
+    <!-- whakapapa tree -->
     <g id="baseGroup">
       <g :transform="`translate(${treeX} ${treeY})`">
         <g v-for="link in links" :key="link.id" class="link">
@@ -32,7 +40,6 @@ import Node from './tree/Node.vue'
 import Link from './tree/Link.vue'
 
 import isEqual from 'lodash.isequal'
-import includes from 'lodash.includes'
 
 export default {
   props: {
@@ -174,7 +181,13 @@ export default {
             style: {
               fill: 'none',
               stroke: this.pathStroke(d.source.data.id, d.target.data.id)
-            }
+            },
+            d: `
+              M ${d.source.x}, ${d.source.y} 
+              v ${this.branch} 
+              H ${d.target.x} 
+              V ${d.target.y}
+            `
           }
         })
     },
@@ -231,6 +244,10 @@ export default {
 </script>
 
 <style scoped lang="scss">
+#background {
+  opacity: 0.1
+}
+
 svg#baseSvg {
   cursor: grab;
 }

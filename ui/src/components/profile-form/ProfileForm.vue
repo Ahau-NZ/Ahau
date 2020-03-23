@@ -26,7 +26,7 @@
             <slot name="search">
               <v-text-field
                 v-model="formData.preferredName"
-                label="Preferred name. This is the name shown on your profile"
+                label="Preferred name"
                 v-bind="customProps"
               />
             </slot>
@@ -154,22 +154,44 @@
                 hide-details class="pa-0"
               />
           </v-col>
-
-          <!-- Description textarea -->
-          <v-col cols="12" class="pa-1" v-if="form.showDescription || readonly">
-            <v-textarea
-              v-model="formData.description"
-              label="Description"
-              v-bind="customProps"
-              no-resize rows="1" auto-grow
-            >
-            </v-textarea>
-          </v-col>
-          <!-- Description button -->
-          <v-col v-else cols="12" class="pa-1">
-            <AddButton label="Add description" @click="form.showDescription = true" row/>
-          </v-col>
         </v-row>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col cols="12" sm="6"  class="pa-1">
+        <v-text-field
+          v-model="formData.profession"
+          label="Profession"
+          v-bind="customProps"
+        />
+      </v-col>
+      <v-col cols="12" sm="6" class="pa-1">
+        <v-text-field
+          v-model="formData.contact"
+          label="Contact"
+          v-bind="customProps"
+        />
+      </v-col>
+      <v-col cols="12" sm="6" class="pa-1">
+        <v-text-field
+          v-model="formData.location"
+          label="Region, Country"
+          v-bind="customProps"
+        />
+      </v-col>
+      <!-- Description textarea -->
+      <v-col cols="12" class="pa-1" v-if="form.showDescription || readonly">
+        <v-textarea
+          v-model="formData.description"
+          label="Description"
+          v-bind="customProps"
+          no-resize rows="1" auto-grow
+        >
+        </v-textarea>
+      </v-col>
+      <!-- Description button -->
+      <v-col v-else cols="12" class="pa-1">
+        <AddButton label="Add description" @click="form.showDescription = true" row/>
       </v-col>
     </v-row>
   </v-form>
@@ -178,8 +200,9 @@
 
 import Avatar from '@/components/Avatar.vue'
 import ImagePicker from '@/components/ImagePicker.vue'
-import AddButton from '@/components/AddButton.vue'
+import AddButton from '@/components/button/AddButton.vue'
 import NodeDatePicker from '@/components/NodeDatePicker.vue'
+import vueCountryRegionSelect from 'vue-country-region-select'
 
 import { GENDERS, RELATIONSHIPS } from '@/lib/constants'
 
