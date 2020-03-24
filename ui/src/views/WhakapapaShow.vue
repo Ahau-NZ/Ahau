@@ -79,6 +79,7 @@
           @load-descendants="loadDescendants($event)"
           @collapse-node="collapseNode($event)"
           @open-context-menu="openContextMenu($event)"
+          :searchNodeId="searchNodeId"
         />
       </v-row>
     </v-container>

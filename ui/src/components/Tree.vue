@@ -179,7 +179,7 @@ export default {
         .links() // returns the array of links
         .map((d, i) => { // returns a new custom object for each link
           return {
-            id: `link-${i}-${i + 1}`,
+            id: `tree-link-${i}-${i + 1}`,
             index: i,
             relationshipType: d.target.data.relationshipType ? d.target.data.relationshipType[0] : '',
             // coordinates from drawing lines/links from Parent(x1,y1) to Child(x2,y2)
@@ -190,8 +190,7 @@ export default {
             class: this.relationshipLinks[d.source.data.id + '-' + d.target.data.id].relationshipType !== 'birth' ? 'nonbiological' : '',
             style: {
               fill: 'none',
-              stroke: 'black',
-              opacity: this.pathStroke(d.source.data.id, d.target.data.id)
+              stroke: this.pathStroke(d.source.data.id, d.target.data.id)
             },
             d: `
               M ${d.source.x}, ${d.source.y} 
@@ -204,8 +203,8 @@ export default {
         .sort((a, b) => {
           var A = a.style.stroke
           var B = b.style.stroke
-          if (A < B) return -1
-          if (A > B) return 1
+          if (A > B) return -1
+          if (A < B) return 1
           return 0
         })
     },
@@ -217,7 +216,7 @@ export default {
   },
   methods: {
     pathStroke (sourceId, targetId) {
-      if (!this.paths) return 0.2
+      if (!this.paths) return 'lightgrey'
 
       var currentPath = [
         sourceId,
@@ -230,9 +229,9 @@ export default {
         })
 
       if (pairs.length > 0) {
-        return 1
+        return 'black'
       }
-      return 0.2
+      return 'lightgrey'
     },
     loadDescendants (profileId) {
       this.$emit('load-descendants', profileId)
