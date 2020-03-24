@@ -89,7 +89,7 @@ export default {
     WhakapapaEditDialog,
     WhakapapaDeleteDialog,
     WhakapapaShowHelper,
-    WhakapapaTableHelper,
+    WhakapapaTableHelper
   },
   props: {
     selectedProfile: {

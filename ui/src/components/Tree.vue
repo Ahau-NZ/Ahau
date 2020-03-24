@@ -40,7 +40,6 @@ import Node from './tree/Node.vue'
 import Link from './tree/Link.vue'
 
 import isEqual from 'lodash.isequal'
-import isEmpty from 'lodash.isempty'
 
 export default {
   props: {

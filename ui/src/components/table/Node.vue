@@ -111,7 +111,7 @@ export default {
     node: { type: Object, required: true },
     radius: { type: Number, required: true },
     isPartner: { type: Boolean, default: false },
-    width: {type: Number, required: true},
+    width: { type: Number, required: true }
   },
   data () {
     return {
