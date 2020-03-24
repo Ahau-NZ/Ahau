@@ -8,6 +8,7 @@
     :clearable="hasSelection"
     hide-no-data
     append-icon="mdi-magnify"
+    @click:append="close()"
     placeholder="Search"
     @click:clear="reset()"
     no-data-text="no suggestions"
@@ -29,12 +30,12 @@
             <v-col cols="2">
               <small>{{ data.item.preferredName }}</small>
             </v-col>
-            <!-- <v-col cols="5">
+            <v-col cols="5">
               <small>{{ data.item.legalName }}</small>
             </v-col>
             <v-col cols="3">
-              <small>{{ data.item.bornAt ? data.item.bornAt.slice(0, 10) : '' }}</small>
-            </v-col> -->
+              <small>{{ age(data.item.bornAt) }}</small>
+            </v-col>
           </v-row>
         </v-list-item>
       </template>
@@ -47,6 +48,7 @@ import * as d3 from 'd3'
 import Avatar from '@/components/Avatar.vue'
 
 import isEmpty from 'lodash.isempty'
+import calculateAge from '../../lib/calculate-age'
 
 export default {
   name: 'SearchBar',
@@ -86,6 +88,12 @@ export default {
     }
   },
   methods: {
+    age (bornAt) {
+      return calculateAge(bornAt)
+    },
+    close () {
+      this.$emit('close')
+    },
     setSearchNode (data) {
       this.searchString = data.preferredName
       this.hasSelection = true
