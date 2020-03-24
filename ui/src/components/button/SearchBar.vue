@@ -96,23 +96,6 @@ export default {
       this.hasSelected = false
       this.$emit('update:searchNodeId', '')
     }
-  },
-  watch: {
-    searchInput (newValue) {
-      if (!newValue) return
-      if (newValue.length > 2) {
-        if (!this.hasSelection) {
-          this.$emit('getSuggestions', newValue)
-        }
-      } else {
-        this.$emit('getSuggestions', null)
-      }
-    },
-    hasSelection (newValue) {
-      if (newValue) {
-        this.$emit('getSuggestions', null)
-      }
-    }
   }
 }
 </script>

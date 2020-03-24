@@ -65,7 +65,6 @@ export default {
   },
   data () {
     return {
-      node: null,
       componentLoaded: false, // need to ensure component is loaded before using $refs
       // ?? think this is unused ??
       // node: {
