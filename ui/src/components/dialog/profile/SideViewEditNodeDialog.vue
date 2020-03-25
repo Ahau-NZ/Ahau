@@ -127,7 +127,7 @@
                     <AddButton label="Add name" @click="toggleAltName" row />
                   </v-col>
                   <!-- Date of Birth -->
-                  <v-col cols="12" sm="6" class="pa-1">
+                  <v-col cols="12" class="pa-1">
                     <NodeDatePicker
                       :rules="form.rules.bornAt"
                       :value="formData.bornAt"
@@ -137,7 +137,7 @@
                     />
                   </v-col>
                   <!-- Order of Birth -->
-                  <v-col cols="12" sm="6" class="pa-1" v-if="formData.birthOrder || isEditing">
+                  <v-col cols="12" class="pa-1" v-if="formData.birthOrder || isEditing">
                     <v-text-field
                       v-model="formData.birthOrder"
                       type="number"
@@ -147,7 +147,7 @@
                     />
                   </v-col>
                   <!-- diedAt checkbox -->
-                  <v-col cols="12" sm="6" v-if="isEditing" class="pa-1">
+                  <v-col cols="12" v-if="isEditing" class="pa-1">
                     <v-checkbox
                       v-model="formData.isDeceased"
                       label="No longer living"
@@ -155,7 +155,7 @@
                     />
                   </v-col>
                   <!-- diedAt datepicker -->
-                  <v-col cols="12" sm="6" class="pa-1" v-if="formData.diedAt || isEditing">
+                  <v-col cols="12" class="pa-1" v-if="formData.diedAt || isEditing">
                     <NodeDatePicker
                       v-if="formData.isDeceased"
                       :readonly="!isEditing"
@@ -174,7 +174,7 @@
                     />
                   </v-col>
                   <!-- Gender Edit Mode -->
-                  <v-col v-else cols="12" sm="6" class="pa-1">
+                  <v-col v-else cols="12" sm="8" class="pa-1">
                     <small>Gender</small>
                     <v-radio-group v-model="formData.gender" row class="mt-0 pt-0" hide-details>
                       <v-radio
@@ -191,7 +191,7 @@
                   <v-col
                     v-if="!isEditing && formData.relationshipType"
                     cols="6"
-                    sm="6"
+                    sm="4"
                     class="pa-1"
                   >
                     <v-text-field
@@ -212,6 +212,27 @@
                       :append-icon="!isEditing ? '' : 'mdi-chevron-down'"
                       :hide-details="true"
                       :class="!isEditing ? 'custom' : ''"
+                    />
+                  </v-col>
+                  <v-col cols="12" class="pa-1">
+                    <v-text-field
+                      v-model="formData.profession"
+                      label="Profession"
+                      v-bind="customProps"
+                    />
+                  </v-col>
+                  <v-col v-if="!formData.isDeceased" cols="12" class="pa-1">
+                    <v-text-field
+                      v-model="formData.contact"
+                      label="Contact"
+                      v-bind="customProps"
+                    />
+                  </v-col>
+                  <v-col cols="12" class="pa-1">
+                    <v-text-field
+                      v-model="formData.location"
+                      label="Region, Country"
+                      v-bind="customProps"
                     />
                   </v-col>
                   <!-- Description textarea -->
@@ -292,7 +313,7 @@
                 <v-btn @click="cancel" text large fab class="secondary--text mr-10">
                   <v-icon color="secondary">mdi-close</v-icon>
                 </v-btn>
-                <v-btn @click="submit" text large fab class="blue--text" color="blue">
+                <v-btn @click="submit" text large fab class="blue--text ml-5" color="blue">
                   <v-icon>mdi-check</v-icon>
                 </v-btn>
               </v-col>
@@ -317,7 +338,7 @@ import { PERMITTED_PROFILE_ATTRS, PERMITTED_RELATIONSHIP_ATTRS } from '@/lib/pro
 import Avatar from '@/components/Avatar.vue'
 import AvatarGroup from '@/components/AvatarGroup.vue'
 import NodeDatePicker from '@/components/NodeDatePicker.vue'
-import AddButton from '@/components/AddButton.vue'
+import AddButton from '@/components/button/AddButton.vue'
 import ImagePicker from '@/components/ImagePicker.vue'
 import Appbar from '@/components/Appbar.vue'
 
@@ -338,6 +359,9 @@ function defaultData (profile) {
     description: profile.description,
     birthOrder: profile.birthOrder,
     relationshipType: profile.relationship ? profile.relationship.relationshipType ? profile.relationship.relationshipType : null : null,
+    location: profile.location,
+    contact: profile.contact,
+    profession: profile.profession,
     altNames: {
       currentState: clone(profile.altNames),
       add: [], // new altNames to add

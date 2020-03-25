@@ -2,37 +2,33 @@
   <Dialog :show="show" @close="close" :width="`700px`" :goBack="close">
     <template v-slot:title>
       <v-card-title>
-        <span class="headline">Whakapapa tree</span>
+        <span class="headline">Whakapapa registry</span>
       </v-card-title>
     </template>
     <template v-slot:content>
       <v-card-text class="pt-0">
         <p>
-          This whakapapa tool has been designed to help you create,
-          explore and update your whānanu whakapapa records. <br />
+          This whakapapa tool has been designed to help you easily explore and view whanau information. <br />
           To do this we have built in some core features and will continue to
           add more as requested by the community.
           <br />
-          <b>Pan : </b> Click and hold anywhere and move the mouse, to move
-          the tree around
-          <br />
-          <b>Zoom : </b> Use the mouse scroll to Zoom in or out. You can also
-          double click to Zoom in <br />
-          <b>View person: </b> Click on the arrow icon above a person and select view person to view information that has been recorded about this person
+          <b>Show/Hide relationships : </b> Select this option if you would like to show or hide the whanau links between parents and children<br />
+          <b>Show/Hide ancestors : </b> Select this option if you would like to show or hide whanau ancestors that are no longer living<br />
+          <b>View person: </b> Click on the arrow icon above a person and select view person to view more information that has been recorded about this person
           <br />
           <b>Add child: </b> Click on the arrow icon above a person and select add child to enter a childs information and update the record.
           <br />
           <b>Add parent: </b>  Click on the arrow icon above a person and select add child to enter a childs information and update the record.
           their information <br />
-          <b>Delete: </b> If someone has been added to the record incorrectly they can be either hidden from this record or deleted if the have been created in error. Click on the arrow icon above a person and select Delete to remove a person and their children from the tree. Please be careful
+          <b>Delete: </b> If someone has been added to the record incorrectly they can be deleted if the have been created in error. Click on the arrow icon above a person and select Delete to remove a person and their children from the tree. Please be careful
           when deleting someone as that information cannot be brought back and
           will have to be added again. <br />
           <b>Sort: </b> When adding a person, use order of birth to sort the
-          name in order from 1st born - last born. <br />
+          whanau members by order of birth. <br />
         </p>
         <p>
           Start by clicking on someone or adding a person in your family.<br />
-          Karawhiua
+          Karawhiua! 
         </p>
       </v-card-text>
       <v-divider />
@@ -58,10 +54,10 @@ export default {
   data () {
     return {
       items: [
-        { src: require('../../../assets/menu.png') },
-        { src: require('../../../assets/parent.png') },
-        { src: require('../../../assets/view.png') },
-        { src: require('../../../assets/example.png') }
+        { src: require('../../../assets/table.png') },
+        { src: require('../../../assets/relationships.png') },
+        { src: require('../../../assets/ancestors.png') },
+        { src: require('../../../assets/table-menu.png') }
       ]
     }
   },

@@ -1,19 +1,17 @@
 <template>
   <v-card
-    :to="
-      view.id
+    :to="view.id
         ? { name: 'whakapapaShow', params: { id: view.id } }
-        : '/whakapapa'
-    "
+        : '/whakapapa'"
     class="d-flex"
-    min-height="100px"
+    max-height="80px"
     color="#fff"
     :style="shadow ? '' : 'box-shadow: none;'"
   >
     <div class="body-width d-flex flex-no-wrap flex-start align-stretch">
       <div class="cover-image" :style="background(view)" />
       <div class="information">
-        <v-card-title v-text="view.name" />
+        <v-card-title v-text="view.name" class="pt-0"/>
         <v-card-subtitle v-text="description" />
         <v-card-text>
           <slot></slot>
@@ -58,7 +56,6 @@ export default {
           backgroundSize: 'cover'
         }
       }
-
       return {
         backgroundImage: `url(${whakapapa})`,
         backgroundSize: 'contain'

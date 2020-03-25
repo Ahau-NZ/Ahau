@@ -3,38 +3,69 @@
     <v-container class="white px-0 py-0 mx-auto">
       <v-row v-if="!mobile" class="header">
         <WhakapapaViewCard :view="whakapapaView" :shadow="false">
-          <v-row class="lock-container">
-            <v-col class="lock-icon">
-              <v-icon small color="#555">mdi-lock</v-icon>
-              <span id="lock-icon-margin">Private record - Only visible by you</span>
-            </v-col>
-          </v-row>
-          <v-row class="pt-5">
-            <v-btn
-              @click.prevent="dialog.active = 'whakapapa-edit'"
-              align="right"
-              color="white"
-              text
-              x-small
-              class="blue--text edit"
-            >
-              <v-icon small class="blue--text" left>mdi-pencil</v-icon>Edit
-            </v-btn>
+          <v-row class="lock-container pl-3">
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on }">
+                <v-icon v-on="on" small color="#555">mdi-lock</v-icon>
+              </template>
+              <span>Private record - Only visible by you</span>
+            </v-tooltip>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on }">
+                <v-btn
+                  v-on="on"
+                  @click.prevent="dialog.active = 'whakapapa-edit'"
+                  align="right"
+                  color="white"
+                  text
+                  x-small
+                  class="blue--text edit pl-8"
+                >
+                  <v-icon small class="blue--text" left>mdi-pencil</v-icon>
+                </v-btn>
+              </template>
+              <span>Edit whakapapa description</span>
+            </v-tooltip>
           </v-row>
         </WhakapapaViewCard>
       </v-row>
 
       <WhakapapaBanner v-if="mobile" :view="whakapapaView" @edit="updateDialog('whakapapa-edit', null)" @more-info="updateDialog('whakapapa-view', null)"/>
 
-      <v-row v-if="!mobile" class="feedback">
+      <v-row v-if="!mobile" class="select">
+        <v-col v-if="whakapapa.table && flatten">
+          <FilterButton :filter="filter" @filter="toggleFilter()" />
+        </v-col>
+        <v-col v-if="whakapapa.table">
+          <FlattenButton @flatten="toggleFlatten()" />
+        </v-col>
+        <v-col>
+          <TableButton @table="toggleTable()" />
+        </v-col>
+        <v-col>
+          <HelpButton v-if="whakapapa.tree" @click="updateDialog('whakapapa-helper', null)" />
+          <HelpButton v-else @click="updateDialog('whakapapa-table-helper', null)" />
+        </v-col>
         <v-col>
           <FeedbackButton />
         </v-col>
-        <v-icon  class="px-3" color="blue-grey" light @click="updateDialog('whakapapa-helper', null)">mdi-information</v-icon>
       </v-row>
 
       <v-row>
         <Tree
+          class="tree"
+          v-if="whakapapa.tree"
+          :view="whakapapaView"
+          :nestedWhakapapa="nestedWhakapapa"
+          :relationshipLinks="relationshipLinks"
+          @load-descendants="loadDescendants($event)"
+          @collapse-node="collapseNode($event)"
+          @open-context-menu="openContextMenu($event)"
+        />
+        <Table
+          v-if="whakapapa.table"
+          :filter="filter"
+          :flatten="flatten"
           :view="whakapapaView"
           :nestedWhakapapa="nestedWhakapapa"
           :relationshipLinks="relationshipLinks"
@@ -78,7 +109,12 @@ import WhakapapaViewCard from '@/components/whakapapa-view/WhakapapaViewCard.vue
 import WhakapapaBanner from '@/components/whakapapa-view/WhakapapaBanner.vue'
 
 import Tree from '@/components/Tree.vue'
-import FeedbackButton from '@/components/FeedbackButton.vue'
+import Table from '@/components/Table.vue'
+import FeedbackButton from '@/components/button/FeedbackButton.vue'
+import TableButton from '@/components/button/TableButton.vue'
+import HelpButton from '@/components/button/HelpButton.vue'
+import FlattenButton from '@/components/button/FlattenButton.vue'
+import FilterButton from '@/components/button/FilterButton.vue'
 
 import tree from '@/lib/tree-helpers'
 import avatarHelper from '@/lib/avatar-helpers.js'
@@ -101,6 +137,12 @@ export default {
   components: {
     WhakapapaViewCard,
     FeedbackButton,
+    TableButton,
+    HelpButton,
+    FlattenButton,
+    FilterButton,
+    FeedbackButton,
+    Table,
     Tree,
     VueContext,
     DialogHandler,
@@ -134,11 +176,16 @@ export default {
       processingQueue: false,
 
       suggestions: [], // holds an array of suggested profiles
-
       selectedProfile: null,
       dialog: {
         active: null,
         type: null
+      },
+      filter: false,
+      flatten: false,
+      whakapapa: {
+        tree: true,
+        table: false
       },
       contextMenuOpts: [
         { title: 'View Person', dialog: 'view-edit-node' },
@@ -270,6 +317,9 @@ export default {
               diedAt
               birthOrder
               description
+              contact
+              location
+              profession
               altNames
               avatarImage {
                 uri
@@ -284,6 +334,9 @@ export default {
                   diedAt
                   birthOrder
                   description
+                  contact
+                  location
+                  profession
                   altNames
                   avatarImage {
                     uri
@@ -303,6 +356,9 @@ export default {
                   diedAt
                   birthOrder
                   description
+                  contact
+                  location
+                  profession
                   altNames
                   avatarImage {
                     uri
@@ -378,6 +434,20 @@ export default {
       }
       this.setSelectedProfile(profileId)
       this.$refs.menu.open(event)
+    },
+    toggleFilter () {
+      this.filter = !this.filter
+    },
+    toggleFlatten () {
+      this.filter = false
+      this.flatten = !this.flatten
+    },
+    toggleTable () {
+      this.whakapapa.tree = !this.whakapapa.tree
+      this.whakapapa.table = !this.whakapapa.table
+    },
+    toggleWhakapapaHelper () {
+      this.showWhakapapaHelper = !this.showWhakapapaHelper
     },
     async updateFocus (focus) {
       const input = {
@@ -490,7 +560,7 @@ export default {
       }
     }
 
-    & > .feedback {
+    & > .select {
       position: absolute;
       top: 20px;
       right: 30px;
@@ -511,19 +581,8 @@ h1 {
 .fixed {
   position: fixed;
 }
-.lock-container {
-  .lock-icon {
-    display: flex;
-    align-items: center;
-    font-size: 0.8em;
-    color: #555;
-  }
-  #lock-icon-margin {
-    margin-left: 10px;
-  }
-}
 
-svg {
+.tree {
   max-height: calc(100vh - 64px);
 }
 </style>
