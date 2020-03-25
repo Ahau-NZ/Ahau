@@ -48,6 +48,8 @@ import * as d3 from 'd3'
 import Avatar from '@/components/Avatar.vue'
 
 import isEmpty from 'lodash.isempty'
+import isEqual from 'lodash.isequal'
+
 import calculateAge from '../../lib/calculate-age'
 
 export default {
@@ -81,9 +83,13 @@ export default {
         .descendants()
         .map(d => d.data)
         .filter(d => {
-          if (isEmpty(this.searchString)) return false
-          const search = this.searchString.toLowerCase()
-          return d.preferredName.toLowerCase().includes(search)
+          if (isEmpty(this.searchString) || isEmpty(d.preferredName)) return false
+          const search = this.searchString.toLowerCase().trim()
+          const preferredName = d.preferredName.toLowerCase().trim()
+          return (
+            isEqual(preferredName, search) ||
+            preferredName.includes(search)
+          )
         })
     }
   },
