@@ -141,7 +141,6 @@ export default {
     HelpButton,
     FlattenButton,
     FilterButton,
-    FeedbackButton,
     Table,
     Tree,
     VueContext,
@@ -550,6 +549,9 @@ export default {
       position: absolute;
       top: 20px;
       left: 30px;
+      // left: 30px;
+      right: 160px;
+      width: 35%;
 
       .col {
         padding-top: 0;
