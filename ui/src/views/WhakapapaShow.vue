@@ -147,7 +147,6 @@ export default {
   name: 'WhakapapaShow',
   components: {
     WhakapapaViewCard,
-    FeedbackButton,
     TableButton,
     HelpButton,
     FlattenButton,

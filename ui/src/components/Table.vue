@@ -28,38 +28,38 @@
               @click="collapse(node)"
               @open-context-menu="$emit('open-context-menu', $event)"
               :showLabel="true"
-              />
-              <g v-if="flatten && node.data.isCollapsed" :transform="`translate(${node.x - 10} ${node.y + nodeRadius + 5})`">
-                <text> + </text>
-              </g>
-              <g v-if="flatten && node.data.children.length > 0" :transform="`translate(${node.x - 10} ${node.y + nodeRadius + 5})`">
-                <text> - </text>
-              </g>
-              <svg :width="columns[1].x - 45" >
-                <text  :transform="`translate(${columns[0].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                  {{ node.data.legalName }}
-                </text>
-              </svg>
-              <svg :width="columns[2].x - 45">
-                <text  :transform="`translate(${columns[1].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                  {{ node.age }}
-                </text>
-              </svg>
-              <svg :width="columns[3].x - 45">
-                <text  :transform="`translate(${columns[2].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                  {{ node.data.profession }}
-                </text>
-              </svg>
-              <svg :width="columns[4].x">
-                <text  :transform="`translate(${columns[3].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                  {{ node.data.location }}
-                </text>
-              </svg>
-              <svg>
-                <text :transform="`translate(${columns[4].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                  {{ node.data.contact }}
-                </text>
-              </svg>
+            />
+            <g v-if="flatten && node.data.isCollapsed" :transform="`translate(${node.x - 10} ${node.y + nodeRadius + 5})`">
+              <text> + </text>
+            </g>
+            <g v-if="flatten && node.data.children.length > 0" :transform="`translate(${node.x - 10} ${node.y + nodeRadius + 5})`">
+              <text> - </text>
+            </g>
+            <svg :width="columns[1].x - 45" >
+              <text  :transform="`translate(${columns[0].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
+                {{ node.data.legalName }}
+              </text>
+            </svg>
+            <svg :width="columns[2].x - 45">
+              <text  :transform="`translate(${columns[1].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
+                {{ node.age }}
+              </text>
+            </svg>
+            <svg :width="columns[3].x - 45">
+              <text  :transform="`translate(${columns[2].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
+                {{ node.data.profession }}
+              </text>
+            </svg>
+            <svg :width="columns[4].x">
+              <text  :transform="`translate(${columns[3].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
+                {{ node.data.location }}
+              </text>
+            </svg>
+            <svg>
+              <text :transform="`translate(${columns[4].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
+                {{ node.data.contact }}
+              </text>
+            </svg>
           </g>
         </g>
       </g>
