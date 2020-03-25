@@ -53,10 +53,8 @@ export default {
   data () {
     return {
       componentLoaded: false, // need to ensure component is loaded before using $refs
-      // ?? think this is unused ??
-      // node: {
-      //   new: null
-      // },
+      nodeCentered: [], // hold centered node id
+      collapseNode: false, // if node is centered than we can show/collapse
 
       nodeRadius: 50, // use variable for zoom later on
       nodeSeparationX: 100,
@@ -172,48 +170,54 @@ export default {
         })
     }
   },
+
   methods: {
     loadDescendants (profileId) {
       this.$emit('load-descendants', profileId)
     },
     collapse (node) {
       this.$emit('collapse-node', node.data.id)
-      // TODO
-      // this one feels like perhaps it should be handled in this file
+      //  TODO smooth ease-in-out transitions of children using d3 transitions
     },
+
     visiblePartners (node) {
       return get(node, 'data.isCollapsed')
         ? 0
         : get(node, 'data.partners.length', 0)
     },
 
-    zoom() {
+    zoom () {
       var svg = d3.select('#baseSvg')
       var g = d3.select('#baseGroup')
 
       svg.call(
         d3.zoom()
-        .scaleExtent([0.3,2])
-        .on('zoom', function () {
-          g.attr('transform', d3.event.transform)
-        })
+          .scaleExtent([0.3, 2])
+          .on('zoom', function () {
+            g.attr('transform', d3.event.transform)
+          })
       )
+        .on('dblclick.zoom', null)
     },
 
-    centerNode(source) {
-      this.collapse(source)
+    centerNode (source) {
+      // if source node is already centered than collapse
+      if (this.nodeCentered === source.data.id) {
+        this.collapse(source)
+      }
+
+      this.nodeCentered = source.data.id
 
       var svg = d3.select('#baseSvg')
       var g = d3.select('#baseGroup')
 
-      var width = this.$refs.tree.clientWidth;
-      var height = this.$refs.tree.clientHeight;
-   
-      g.transition()
-      .duration(500)
-      .attr("transform", "translate(" + (width/2 - source.x) + "," + (height/2 - source.y) + ")scale(" + 1 + ")")
-      .on("end", function(){ svg.call(d3.zoom().transform, d3.zoomIdentity.translate((width/2 - source.x),(height/2 - source.y)).scale(1))});
+      var width = this.$refs.tree.clientWidth
+      var height = this.$refs.tree.clientHeight
 
+      g.transition()
+        .duration(400)
+        .attr('transform', 'translate(' + (width / 2 - source.x) + ',' + (height / 2 - source.y) + ')scale(' + 1 + ')')
+        .on('end', function () { svg.call(d3.zoom().transform, d3.zoomIdentity.translate((width / 2 - source.x), (height / 2 - source.y)).scale(1)) })
     }
   },
   components: {
