@@ -83,12 +83,12 @@ export default {
         .descendants()
         .map(d => d.data)
         .filter(d => {
-          if (isEmpty(this.searchString) || isEmpty(d.preferredName)) return false
+          if (isEmpty(this.searchString) || isEmpty(d.preferredName) || isEmpty(d.legalName)) return false
           const search = this.searchString.toLowerCase().trim()
-          const preferredName = d.preferredName.toLowerCase().trim()
+          const name = d.preferredName.toLowerCase().trim() + d.legalName.toLowerCase().trim()
           return (
-            isEqual(preferredName, search) ||
-            preferredName.includes(search)
+            isEqual(name, search) ||
+            name.includes(search)
           )
         })
     }
