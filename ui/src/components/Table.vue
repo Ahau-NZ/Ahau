@@ -9,7 +9,7 @@
     </g>
       <g id="baseGroup">
         <g v-if="!flatten" :transform="`translate(${60} ${80})`">
-          <g  v-for="link in links" :key="link.id" class="link">
+          <g v-for="link in links" :key="link.id" class="link">
             <Link :link="link" :class="link.class"/>
           </g>
         </g>
@@ -28,39 +28,38 @@
               @click="collapse(node)"
               @open-context-menu="$emit('open-context-menu', $event)"
               :showLabel="true"
-              />
-              <g v-if="flatten && node.data.isCollapsed" :transform="`translate(${node.x - 10} ${node.y + nodeRadius + 5})`">
-                <text> + </text>
-              </g>
-              <g v-if="flatten && node.data.children.length > 0" :transform="`translate(${node.x - 10} ${node.y + nodeRadius + 5})`">
-                <text> - </text>
-              </g>
-              <svg :width="columns[1].x - 45" >  
-                <text  :transform="`translate(${columns[0].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                  {{ node.data.legalName }}
-                </text>
-              </svg>
-              <svg :width="columns[2].x - 45">  
-                <text  :transform="`translate(${columns[1].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                  {{ node.age }}
-                </text>
-              </svg>
-              <svg :width="columns[3].x - 45">  
-                <text  :transform="`translate(${columns[2].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                  {{ node.profession }}
-                </text>
-              </svg>
-              <svg :width="columns[4].x">  
-                <text  :transform="`translate(${columns[3].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                  {{ node.location }}
-                </text>
-              </svg>
-              <svg >  
-                <text  :transform="`translate(${columns[4].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                  {{ node.contact }}
-                </text>
-              </svg>
-              
+            />
+            <g v-if="flatten && node.data.isCollapsed" :transform="`translate(${node.x - 10} ${node.y + nodeRadius + 5})`">
+              <text> + </text>
+            </g>
+            <g v-if="flatten && node.data.children.length > 0" :transform="`translate(${node.x - 10} ${node.y + nodeRadius + 5})`">
+              <text> - </text>
+            </g>
+            <svg :width="columns[1].x - 45" >
+              <text :transform="`translate(${columns[0].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
+                {{ node.data.legalName }}
+              </text>
+            </svg>
+            <svg :width="columns[2].x - 45">
+              <text :transform="`translate(${columns[1].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
+                {{ node.age }}
+              </text>
+            </svg>
+            <svg :width="columns[3].x - 45">
+              <text :transform="`translate(${columns[2].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
+                {{ node.profession }}
+              </text>
+            </svg>
+            <svg :width="columns[4].x">
+              <text :transform="`translate(${columns[3].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
+                {{ node.location }}
+              </text>
+            </svg>
+            <svg>
+              <text :transform="`translate(${columns[4].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
+                {{ node.contact }}
+              </text>
+            </svg>
           </g>
         </g>
       </g>
@@ -69,10 +68,8 @@
 
 <script>
 import * as d3 from 'd3'
-import get from 'lodash.get'
 import Node from './table/Node.vue'
 import Link from './table/Link.vue'
-import FlattenButton from '@/components/button/FlattenButton.vue'
 import calculateAge from '../lib/calculate-age.js'
 
 export default {
@@ -105,26 +102,18 @@ export default {
   data () {
     return {
       // width used for to set max widths on columns and the text
-      width:350,
+      width: 350,
       componentLoaded: false, // need to ensure component is loaded before using $refs
       nodeRadius: 20, // use variable for zoom later on
       nodeSize: 40,
       tableHeight: 0,
-      duration: 400,
-      
+      duration: 400
     }
   },
   mounted () {
     this.componentLoaded = true
   },
   computed: {
-
-    colWidth(){
-      if (this.flatten){
-        this.width = 250
-      }
-    },
-
     columns () {
       return [
         {
@@ -150,7 +139,7 @@ export default {
       ]
     },
 
-    //  returns a nested data structure representing a tree based on the treeData object
+    // returns a nested data structure representing a tree based on the treeData object
     root () {
       return d3.hierarchy(this.nestedWhakapapa)
     },
@@ -233,12 +222,11 @@ export default {
     }
   },
 
-  watch:{
-    flatten(newVal){
-      if(newVal){
+  watch: {
+    flatten (newVal) {
+      if (newVal) {
         this.width = 250
-      }
-      else this.width = 350
+      } else this.width = 350
     }
   },
 
@@ -251,8 +239,7 @@ export default {
   },
   components: {
     Node,
-    Link,
-    FlattenButton
+    Link
   }
 }
 </script>

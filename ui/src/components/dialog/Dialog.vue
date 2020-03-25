@@ -36,7 +36,15 @@
               <slot name="content"></slot>
               <v-row>
                 <slot name="before-actions" class="pt-0 pb-0"></slot>
-                <v-col :align="mobile ? '' : 'right'" class="pt-0 pb-0">
+                <v-col
+                  :align="mobile ? '' : 'right'"
+                  :class="{
+                    'pt-0': true,
+                    'pb-0': true,
+                    'd-flex': mobile,
+                    'justify-space-between': mobile
+                  }"
+                >
                   <slot name="actions"></slot>
                 </v-col>
               </v-row>
