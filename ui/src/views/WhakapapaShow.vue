@@ -141,7 +141,6 @@ export default {
     HelpButton,
     FlattenButton,
     FilterButton,
-    FeedbackButton,
     Table,
     Tree,
     VueContext,

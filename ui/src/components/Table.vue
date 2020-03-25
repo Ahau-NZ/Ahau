@@ -35,32 +35,32 @@
               <g v-if="flatten && node.data.children.length > 0" :transform="`translate(${node.x - 10} ${node.y + nodeRadius + 5})`">
                 <text> - </text>
               </g>
-              <svg :width="columns[1].x - 45" >  
+              <svg :width="columns[1].x - 45" >
                 <text  :transform="`translate(${columns[0].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
                   {{ node.data.legalName }}
                 </text>
               </svg>
-              <svg :width="columns[2].x - 45">  
+              <svg :width="columns[2].x - 45">
                 <text  :transform="`translate(${columns[1].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
                   {{ node.age }}
                 </text>
               </svg>
-              <svg :width="columns[3].x - 45">  
+              <svg :width="columns[3].x - 45">
                 <text  :transform="`translate(${columns[2].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
                   {{ node.profession }}
                 </text>
               </svg>
-              <svg :width="columns[4].x">  
+              <svg :width="columns[4].x">
                 <text  :transform="`translate(${columns[3].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
                   {{ node.location }}
                 </text>
               </svg>
-              <svg >  
+              <svg >
                 <text  :transform="`translate(${columns[4].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
                   {{ node.contact }}
                 </text>
               </svg>
-              
+
           </g>
         </g>
       </g>
@@ -69,10 +69,8 @@
 
 <script>
 import * as d3 from 'd3'
-import get from 'lodash.get'
 import Node from './table/Node.vue'
 import Link from './table/Link.vue'
-import FlattenButton from '@/components/button/FlattenButton.vue'
 import calculateAge from '../lib/calculate-age.js'
 
 export default {
@@ -105,13 +103,13 @@ export default {
   data () {
     return {
       // width used for to set max widths on columns and the text
-      width:350,
+      width: 350,
       componentLoaded: false, // need to ensure component is loaded before using $refs
       nodeRadius: 20, // use variable for zoom later on
       nodeSize: 40,
       tableHeight: 0,
-      duration: 400,
-      
+      duration: 400
+
     }
   },
   mounted () {
@@ -119,13 +117,13 @@ export default {
   },
   computed: {
 
-    colWidth(){
-      if (this.flatten){
-        this.width = 250
+    colWidth () {
+      if (this.flatten) {
+        return this.width = 250
       }
     },
 
-    columns () {
+    columns  () {
       return [
         {
           label: 'Legal Name',
@@ -233,12 +231,11 @@ export default {
     }
   },
 
-  watch:{
-    flatten(newVal){
-      if(newVal){
+  watch: {
+    flatten (newVal) {
+      if (newVal) {
         this.width = 250
-      }
-      else this.width = 350
+      } else this.width = 350
     }
   },
 
@@ -251,8 +248,7 @@ export default {
   },
   components: {
     Node,
-    Link,
-    FlattenButton
+    Link
   }
 }
 </script>
