@@ -2,9 +2,9 @@
   <svg id="baseSvg" width="100%" :height="height" ref="baseSvg">
     <!-- niho background picture -->
     <defs>
-        <pattern id="img1" patternUnits="userSpaceOnUse" x="400" y="0" width="100%" height="100%">
-                    <image xlink:href="../assets/niho.svg" width="100%" height="100%" />
-            </pattern>
+      <pattern id="img1" patternUnits="userSpaceOnUse" x="400" y="0" width="100%" height="100%">
+        <image xlink:href="../assets/niho.svg" width="100%" height="100%" />
+      </pattern>
     </defs>
     <path id="background" d="M5,5 l0,680 2980,0 l0,-680 l-980,0" fill="url(#img1)" />
     <!-- whakapapa tree -->
@@ -23,7 +23,7 @@
           <Node
             :node="node"
             :radius="nodeRadius"
-            @click="collapse(node)"
+            @click="centerNode(node)"
             @open-context-menu="$emit('open-context-menu', $event)"
             :showLabel="true"
           />
@@ -61,14 +61,13 @@ export default {
   data () {
     return {
       componentLoaded: false, // need to ensure component is loaded before using $refs
-      // ?? think this is unused ??
-      // node: {
-      //   new: null
-      // },
+      nodeCentered: [], // hold centered node id
+      collapseNode: false, // if node is centered than we can show/collapse
 
       nodeRadius: 50, // use variable for zoom later on
       nodeSeparationX: 100,
-      nodeSeparationY: 150
+      nodeSeparationY: 150,
+      currentPosition: {}
     }
   },
   mounted () {
@@ -185,15 +184,16 @@ export default {
         })
     }
   },
+
   methods: {
     loadDescendants (profileId) {
       this.$emit('load-descendants', profileId)
     },
     collapse (node) {
       this.$emit('collapse-node', node.data.id)
-      // TODO
-      // this one feels like perhaps it should be handled in this file
+      //  TODO smooth ease-in-out transitions of children using d3 transitions
     },
+
     visiblePartners (node) {
       return get(node, 'data.isCollapsed')
         ? 0
@@ -203,11 +203,35 @@ export default {
     zoom () {
       var svg = d3.select('#baseSvg')
       var g = d3.select('#baseGroup')
+
       svg.call(
-        d3.zoom().on('zoom', function () {
-          g.attr('transform', d3.event.transform)
-        })
+        d3.zoom()
+          .scaleExtent([0.3, 2])
+          .on('zoom', function () {
+            g.attr('transform', d3.event.transform)
+          })
       )
+        .on('dblclick.zoom', null)
+    },
+
+    centerNode (source) {
+      // if source node is already centered than collapse
+      if (this.nodeCentered === source.data.id) {
+        this.collapse(source)
+      }
+
+      this.nodeCentered = source.data.id
+
+      var svg = d3.select('#baseSvg')
+      var g = d3.select('#baseGroup')
+
+      var width = this.$refs.tree.clientWidth
+      var height = this.$refs.tree.clientHeight
+
+      g.transition()
+        .duration(400)
+        .attr('transform', 'translate(' + (width / 2 - source.x) + ',' + (height / 2 - source.y) + ')scale(' + 1 + ')')
+        .on('end', function () { svg.call(d3.zoom().transform, d3.zoomIdentity.translate((width / 2 - source.x), (height / 2 - source.y)).scale(1)) })
     }
   },
   components: {

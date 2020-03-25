@@ -28,7 +28,7 @@
         </p>
         <p>
           Start by clicking on someone or adding a person in your family.<br />
-          Karawhiua! 
+          Karawhiua!
         </p>
       </v-card-text>
       <v-divider />
