@@ -24,7 +24,7 @@
       :show="isActive('delete-node')"
       :profile="selectedProfile"
       :warnAboutChildren="selectedProfile && selectedProfile.id !== view.focus"
-      @submit="deleteProfile"
+      @submit="removeProfile"
       @close="close"
     />
     <WhakapapaViewDialog v-if="isActive('whakapapa-view')"
@@ -352,6 +352,38 @@ export default {
       }
       await this.$emit('load', profileId)
       this.$emit('set', profileId)
+    },
+    async removeProfile (deleteOrIgnore) {
+      if (deleteOrIgnore === 'delete') {
+        await this.deleteProfile()
+      } else {
+        await this.ignoreProfile()
+      }
+    },
+    async ignoreProfile () {
+      const input = {
+        id: this.$route.params.id,
+        ignoredProfiles: {
+          add: [this.selectedProfile.id]
+        }
+      }
+      try {
+        const res = await this.$apollo.mutate({
+          mutation: gql`
+          mutation($input: WhakapapaViewInput) {
+            saveWhakapapaView(input: $input)
+          }
+          `,
+          variables: { input }
+        })
+        if (res.data) {
+          this.$emit('refreshWhakapapa')
+        } else {
+          console.error(res)
+        }
+      } catch (err) {
+        throw err
+      }
     },
     async deleteProfile () {
       if (!this.canDelete(this.selectedProfile)) return

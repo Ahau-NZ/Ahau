@@ -96,6 +96,7 @@
       :profiles.sync="profiles"
       @updateWhakapapa="updateWhakapapa($event)"
       @deleteWhakapapa="deleteWhakapapa"
+      @refreshWhakapapa="refreshWhakapapa"
     />
   </div>
 </template>
@@ -520,6 +521,11 @@ export default {
       } catch (err) {
         throw err
       }
+    },
+    async refreshWhakapapa () {
+      this.profiles = {}
+      await this.$apollo.queries.whakapapaView.refresh()
+      await this.loadDescendants(this.whakapapaView.focus)
     },
     async deleteWhakapapa () {
       const treeResult = await this.$apollo.mutate({
