@@ -4,16 +4,15 @@
         ? { name: 'whakapapaShow', params: { id: view.id } }
         : '/whakapapa'"
     class="d-flex"
-    max-height="80px"
     color="#fff"
     :style="shadow ? '' : 'box-shadow: none;'"
   >
     <div class="body-width d-flex flex-no-wrap flex-start align-stretch">
       <div class="cover-image" :style="background(view)" />
       <div class="information">
-        <v-card-title v-text="view.name" class="pt-0"/>
-        <v-card-subtitle v-text="description" />
-        <v-card-text>
+        <v-card-title v-text="view.name" class="pt-3"/>
+        <v-card-subtitle v-text="description" class="pb-3"/>
+        <v-card-text v-if="hasSlotContent">
           <slot></slot>
         </v-card-text>
       </div>
@@ -34,6 +33,9 @@ export default {
   computed: {
     mobile () {
       return this.$vuetify.breakpoint.xs
+    },
+    hasSlotContent () {
+      return Boolean(this.$slots.default)
     },
     description () {
       const description = this.view.description

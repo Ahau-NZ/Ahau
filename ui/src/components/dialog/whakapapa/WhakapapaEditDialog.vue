@@ -56,7 +56,7 @@
       </v-row>
     </template>
     <template v-slot:before-actions>
-      <v-col cols="12" sm="auto">
+      <v-col cols="12" sm="auto" class="mb-8">
         <v-btn
           @click="$emit('delete')"
           align="center"
@@ -138,6 +138,9 @@ export default {
     }
   },
   methods: {
+    cordovaBackButton () {
+      this.close()
+    },
     close () {
       this.$emit('close')
     },
