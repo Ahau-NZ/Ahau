@@ -30,6 +30,22 @@
         </g>
       </g>
     </g>
+    <!-- zoom in, zoom out buttons -->
+    <g class="zoomControl">
+     <g @click="zoomReset()" :transform="`translate(${30} ${treeY*2.15})`">
+        <circle stroke="white" fill="white" filter="url(#shadow)" cx="20" cy="1" r="15"/>
+        <circle stroke="black" fill="white" filter="url(#shadow)" cx="20" cy="1" r="5"/>
+        <path d="M 20,-7 20,10 M 12,1 28,1" stroke="black" stroke-width="1.5" />
+      </g>
+     <g @click="zoomIn()" :transform="`translate(${30} ${treeY*2.4})`">
+        <circle stroke="white" fill="white" filter="url(#shadow)" cx="20" cy="1" r="15"/>
+        <path d="M 20,-5 20,7 M 14,1 26,1" stroke="black" stroke-width="1.5" />
+      </g>
+     <g @click="zoomOut()" :transform="`translate(${30} ${treeY*2.65})`">
+        <circle stroke="white" fill="white" filter="url(#shadow)" cx="20" cy="1" r="15"/>
+        <path d="M 14,1 26,1" stroke="black" stroke-width="1.5" />
+      </g>
+    </g>
   </svg>
 </template>
 
@@ -63,6 +79,7 @@ export default {
       componentLoaded: false, // need to ensure component is loaded before using $refs
       nodeCentered: [], // hold centered node id
       collapseNode: false, // if node is centered than we can show/collapse
+      scale: 1,
 
       nodeRadius: 50, // use variable for zoom later on
       nodeSeparationX: 100,
@@ -232,8 +249,47 @@ export default {
         .duration(400)
         .attr('transform', 'translate(' + (width / 2 - source.x) + ',' + (height / 2 - source.y) + ')scale(' + 1 + ')')
         .on('end', function () { svg.call(d3.zoom().transform, d3.zoomIdentity.translate((width / 2 - source.x), (height / 2 - source.y)).scale(1)) })
+    },
+
+    zoomIn () {
+      var svg = d3.select('#baseSvg')
+      var g = d3.select('#baseGroup')
+
+      var zoom = d3.zoom()
+        .scaleExtent([0.3, 2])
+        .on('zoom', function () {
+          g.attr('transform', d3.event.transform)
+        })
+
+      zoom.scaleBy(svg.transition().duration(150), 1.6)
+    },
+
+    zoomOut () {
+      var svg = d3.select('#baseSvg')
+      var g = d3.select('#baseGroup')
+
+      var zoom = d3.zoom()
+        .scaleExtent([0.3, 2])
+        .on('zoom', function () {
+          g.attr('transform', d3.event.transform)
+        })
+
+      zoom.scaleBy(svg.transition().duration(150), 1 / 1.6)
+    },
+
+    zoomReset () {
+      var svg = d3.select('#baseSvg')
+      var g = d3.select('#baseGroup')
+
+      var width = this.$refs.tree.clientWidth
+      var height = this.$refs.tree.clientHeight
+      g.transition()
+        .duration(400)
+        .attr('transform', 'translate(' + (width / 2) + ',' + (height / 2) + ')scale(' + 1 + ')')
+        .on('end', function () { svg.call(d3.zoom().transform, d3.zoomIdentity.translate((width / 2), (height / 2)).scale(1)) })
     }
   },
+
   components: {
     Node,
     Link
@@ -248,6 +304,10 @@ export default {
 
 svg#baseSvg {
   cursor: grab;
+}
+
+.zoomControl {
+  cursor: pointer;
 }
 
 .nonbiological{

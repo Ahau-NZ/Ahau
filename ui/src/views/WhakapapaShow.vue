@@ -51,6 +51,8 @@
         </v-col>
       </v-row>
 
+
+
       <v-row>
         <Tree
           class="tree"
@@ -551,7 +553,7 @@ export default {
       left: 30px;
       // left: 30px;
       right: 160px;
-      width: 35%;
+      width: 50%;
 
       .col {
         padding-top: 0;
