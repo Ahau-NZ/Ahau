@@ -185,6 +185,36 @@ export default {
           if (!id) return
         }
 
+        if (this.view.ignoredProfiles.includes(id)) {
+          const input = {
+            id: this.$route.params.id,
+            ignoredProfiles: {
+              remove: [id]
+            }
+          }
+          try {
+            const res = await this.$apollo.mutate({
+              mutation: gql`
+              mutation($input: WhakapapaViewInput) {
+                saveWhakapapaView(input: $input)
+              }
+              `,
+              variables: { input }
+            })
+            if (res.data) {
+              this.$emit('refreshWhakapapa')
+              if (this.isActive('view-edit-node')) {
+                this.$emit('set', this.selectedProfile.id)
+              }
+              return
+            } else {
+              console.error(res)
+            }
+          } catch (err) {
+            throw err
+          }
+        }
+
         let child, parent
         const relationshipAttrs = pick($event, [
           'relationshipType',
