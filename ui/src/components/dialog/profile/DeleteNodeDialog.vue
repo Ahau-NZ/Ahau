@@ -15,10 +15,19 @@
         </v-col>
         <div v-show="removeProfile == 'delete' " class="warning-blurb">
           Are you sure you want to delete this profile from all whakapapa records.
+          <span v-if="warnAboutChildren">
+            This will also remove all connected children from the whakapapa
+            record.
+        </span>
         </div>
         <div v-show="removeProfile == 'ignore' " class="warning-blurb">
-          Are you sure you want to hide this profile and any connected children from this whakapapa record.
+          Are you sure you want to hide this profile from this whakapapa record.
+          <span v-if="warnAboutChildren">
+            This will also remove all connected children from the whakapapa
+            record.
+        </span>
         </div>
+      
       </v-card-subtitle>
     </template>
     <template v-slot:actions>
