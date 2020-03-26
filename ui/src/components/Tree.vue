@@ -79,7 +79,6 @@ export default {
       componentLoaded: false, // need to ensure component is loaded before using $refs
       nodeCentered: [], // hold centered node id
       collapseNode: false, // if node is centered than we can show/collapse
-      scale: 1,
 
       nodeRadius: 50, // use variable for zoom later on
       nodeSeparationX: 100,
