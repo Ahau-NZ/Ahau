@@ -78,6 +78,17 @@ export default {
   mounted () {
     this.componentLoaded = true
     this.zoom()
+
+  },
+  watch: {
+    searchNodeId (newVal) {
+      if (newVal === '') return null
+      this.root.descendants().find(d => {
+        if (d.data.id === newVal) {
+          this.centerNode(d)
+        }
+      })
+    }
   },
   computed: {
     pathNode () {
@@ -227,7 +238,7 @@ export default {
         })
 
       if (pairs.length > 0) {
-        return 'black'
+        return '#b02425'
       }
       return 'lightgrey'
     },
@@ -274,7 +285,7 @@ export default {
       var height = this.$refs.tree.clientHeight
 
       g.transition()
-        .duration(400)
+        .duration(1000)
         .attr('transform', 'translate(' + (width / 2 - source.x) + ',' + (height / 2 - source.y) + ')scale(' + 1 + ')')
         .on('end', function () { svg.call(d3.zoom().transform, d3.zoomIdentity.translate((width / 2 - source.x), (height / 2 - source.y)).scale(1)) })
     }

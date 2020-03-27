@@ -33,28 +33,32 @@
       <WhakapapaBanner v-if="mobile" :view="whakapapaView" @edit="updateDialog('whakapapa-edit', null)" @more-info="updateDialog('whakapapa-view', null)"/>
 
       <v-row v-if="!mobile" class="select">
-        <v-col v-if="search" cols="7">
-          <SearchBar :nestedWhakapapa="nestedWhakapapa" :searchNodeId.sync="searchNodeId"/>
-        </v-col>
-        <v-col v-else>
+
+        <div v-if="search" class="icon-search">
+          <SearchBar :nestedWhakapapa="nestedWhakapapa" :searchNodeId.sync="searchNodeId" @close="clickedOff()"/>
+        </div>
+
+        <div v-else  class="icon-button">
+          <!-- <SearchBarOtherUI/> -->
           <SearchButton :search.sync="search"/>
-        </v-col>
-        <v-col v-if="whakapapa.table && flatten">
+        </div>
+
+        <div v-if="whakapapa.table && flatten" class="icon-button">
           <FilterButton :filter="filter" @filter="toggleFilter()" />
-        </v-col>
-        <v-col v-if="whakapapa.table">
+        </div>
+        <div v-if="whakapapa.table" class="icon-button">
           <FlattenButton @flatten="toggleFlatten()" />
-        </v-col>
-        <v-col>
+        </div>
+        <div class="icon-button">
           <TableButton @table="toggleTable()" />
-        </v-col>
-        <v-col>
+        </div>
+        <div class="icon-button">
           <HelpButton v-if="whakapapa.tree" @click="updateDialog('whakapapa-helper', null)" />
           <HelpButton v-else @click="updateDialog('whakapapa-table-helper', null)" />
-        </v-col>
-        <v-col>
+        </div>
+        <div class="icon-button">
           <FeedbackButton />
-        </v-col>
+        </div>
       </v-row>
 
       <v-row>
@@ -126,6 +130,7 @@ import FilterButton from '@/components/button/FilterButton.vue'
 
 import SearchBar from '@/components/button/SearchBar.vue'
 import SearchButton from '@/components/button/SearchButton.vue'
+import SearchBarOtherUI from '@/components/button/SearchBarOtherUI.vue'
 
 import tree from '@/lib/tree-helpers'
 import avatarHelper from '@/lib/avatar-helpers.js'
@@ -152,7 +157,9 @@ export default {
     FlattenButton,
     FilterButton,
     SearchBar,
+    SearchBarOtherUI,
     SearchButton,
+    FeedbackButton,
     Table,
     Tree,
     VueContext,
@@ -299,6 +306,9 @@ export default {
     }
   },
   methods: {
+    clickedOff() {
+      this.search = !this.search
+    },
     canDelete (profile) {
       if (!profile) return false
 
@@ -552,6 +562,15 @@ export default {
 }
 </script>
 
+<style>
+  .v-select.v-select--is-menu-active
+  .v-input__icon--append
+  .v-icon {
+    transform: rotate(0);
+  }
+
+</style>
+
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 @import "~vue-context/dist/css/vue-context.css";
@@ -576,7 +595,7 @@ export default {
     & > .select {
       position: absolute;
       top: 20px;
-      right: 30px;
+      right: 50px;
 
       .col {
         padding-top: 0;
@@ -598,4 +617,18 @@ h1 {
 .tree {
   max-height: calc(100vh - 64px);
 }
+
+.icon-button {
+  padding: 0px;
+  width: 50px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.icon-search {
+  width: 300px;
+  display: flex;
+  justify-items: flex-end;
+}
+
 </style>

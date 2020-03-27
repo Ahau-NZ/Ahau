@@ -5,20 +5,20 @@
     item-text="preferredName"
     item-value="preferredName"
     :menu-props="{ light: true }"
-    :clearable="hasSelection"
     hide-no-data
-    append-icon="mdi-magnify"
+    append-icon="mdi-close"
     @click:append="close()"
     placeholder="Search"
-    @click:clear="reset()"
     no-data-text="no suggestions"
     :search-input.sync="searchString"
-    outlined
+    solo
     rounded
     light
     hide-selected
     underlined
     dense
+    class="search-input"
+    autofocus
   >
     <template v-slot:item="data">
       <template>
@@ -74,7 +74,6 @@ export default {
   data () {
     return {
       searchString: '',
-      hasSelection: false
     }
   },
   computed: {
@@ -102,14 +101,30 @@ export default {
     },
     setSearchNode (data) {
       this.searchString = data.preferredName
-      this.hasSelection = true
       this.$emit('update:searchNodeId', data.id)
+      this.$emit('close')
     },
     reset () {
       this.searchString = ''
-      this.hasSelected = false
       this.$emit('update:searchNodeId', '')
+      this.$emit('close')
     }
   }
 }
 </script>
+
+<style>
+   .v-text-field.v-input--dense .v-input__append-inner .v-input__icon > .v-icon {
+     margin: 0px;
+   }
+</style>
+
+<style scoped lang="scss">
+  .search-input {
+    padding: 0;
+    margin: 0;
+    margin-top: -3px;
+  }
+
+ 
+</style>
