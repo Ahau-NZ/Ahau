@@ -54,7 +54,12 @@
             <v-radio-group v-model="formData.focus">
               <v-radio :label="`Yourself`" value="self"></v-radio>
               <v-radio :label="`Another person`" value="new"></v-radio>
+              <v-radio :label="`Build from file`" value="file"></v-radio>
             </v-radio-group>
+            <v-file-input v-if="formData.focus == 'file'" v-model="file" show-size accept=".csv" label="File input"></v-file-input>
+          </v-col>
+          <v-col>
+            
           </v-col>
         </v-row>
       </v-col>
@@ -102,7 +107,9 @@ export default {
       form: {
         valid: true,
         rules: RULES
-      }
+      },
+      file: null,
+      data: null
     }
   },
   computed: {
@@ -119,6 +126,7 @@ export default {
   },
   watch: {
     view (newVal) {
+      console.log("view", newVal)
       this.formData = newVal
     },
     'formData': {
@@ -126,6 +134,23 @@ export default {
         this.$emit('update:view', newVal)
       },
       deep: true
+    },
+    'file' : {
+      handler(newVal){
+        console.log("file: ", newVal)
+
+        var reader = new FileReader();
+        reader.readAsText(this.file);
+        reader.onload = () => {
+        this.data = reader.result;
+      }
+        console.log("data: ", this.data);
+      }
+    }
+  },
+  method: {
+    createInput(e){
+
     }
   }
 }
