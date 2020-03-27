@@ -30,6 +30,22 @@
         </g>
       </g>
     </g>
+    <!-- zoom in, zoom out buttons -->
+    <g class="zoomControl">
+     <g @click="zoomReset()" :transform="`translate(${30} ${treeY*2.15})`">
+        <circle stroke="white" fill="white" filter="url(#shadow)" cx="20" cy="1" r="15"/>
+        <circle stroke="black" fill="white" filter="url(#shadow)" cx="20" cy="1" r="5"/>
+        <path d="M 20,-7 20,10 M 12,1 28,1" stroke="black" stroke-width="1.5" />
+      </g>
+     <g @click="zoomInOut(1.6)" :transform="`translate(${30} ${treeY*2.4})`">
+        <circle stroke="white" fill="white" filter="url(#shadow)" cx="20" cy="1" r="15"/>
+        <path d="M 20,-5 20,7 M 14,1 26,1" stroke="black" stroke-width="1.5" />
+      </g>
+     <g @click="zoomInOut(1 / 1.6)" :transform="`translate(${30} ${treeY*2.65})`">
+        <circle stroke="white" fill="white" filter="url(#shadow)" cx="20" cy="1" r="15"/>
+        <path d="M 14,1 26,1" stroke="black" stroke-width="1.5" />
+      </g>
+    </g>
   </svg>
 </template>
 
@@ -232,8 +248,39 @@ export default {
         .duration(400)
         .attr('transform', 'translate(' + (width / 2 - source.x) + ',' + (height / 2 - source.y) + ')scale(' + 1 + ')')
         .on('end', function () { svg.call(d3.zoom().transform, d3.zoomIdentity.translate((width / 2 - source.x), (height / 2 - source.y)).scale(1)) })
+    },
+
+    zoomInOut (scale) {
+      var svg = d3.select('#baseSvg')
+      var g = d3.select('#baseGroup')
+
+      var zoom = d3.zoom()
+        .scaleExtent([0.3, 2])
+        .on('zoom', function () {
+          g.attr('transform', d3.event.transform)
+        })
+
+      zoom.scaleBy(svg.transition().duration(150), scale)
+    },
+    zoomReset () {
+      var svg = d3.select('#baseSvg')
+      var g = d3.select('#baseGroup')
+
+      var width = this.$refs.tree.clientWidth
+      var height = this.$refs.tree.clientHeight
+      g.transition()
+        .duration(400)
+        .attr('transform', 'translate(' + (width / 2) + ',' + (height / 2) + ')scale(' + 1 + ')')
+        .on('end', function () {
+          svg.call(
+            d3.zoom().transform,
+            d3.zoomIdentity.translate((width / 2), (height / 2))
+              .scale(1)
+          )
+        })
     }
   },
+
   components: {
     Node,
     Link
@@ -248,6 +295,10 @@ export default {
 
 svg#baseSvg {
   cursor: grab;
+}
+
+.zoomControl {
+  cursor: pointer;
 }
 
 .nonbiological{

@@ -96,6 +96,7 @@
       :profiles.sync="profiles"
       @updateWhakapapa="updateWhakapapa($event)"
       @deleteWhakapapa="deleteWhakapapa"
+      @refreshWhakapapa="refreshWhakapapa"
     />
   </div>
 </template>
@@ -156,7 +157,8 @@ export default {
         focus: '',
         // mode: 'descendants',
         recps: null,
-        image: { uri: '' }
+        image: { uri: '' },
+        ignoredProfiles: []
       },
       // the record which defines the starting point for a tree (the 'focus')
       whoami: {
@@ -206,6 +208,7 @@ export default {
               }
               focus
               recps
+              ignoredProfiles
             }
           }
         `,
@@ -285,6 +288,9 @@ export default {
     }
   },
   methods: {
+    isVisibleProfile (descendant) {
+      return this.whakapapaView.ignoredProfiles.indexOf(descendant.profile.id) === -1
+    },
     canDelete (profile) {
       if (!profile) return false
 
@@ -394,6 +400,11 @@ export default {
       if (!record) return
 
       // if (whakapapaView.mode === 'descendants')
+
+      // filter ignored profiles
+      record.children = record.children.filter(this.isVisibleProfile)
+      record.parents = record.parents.filter(this.isVisibleProfile)
+
       // follow the child-links and load the next generation
       record.children.forEach(child => {
         // get their ids
@@ -510,6 +521,11 @@ export default {
         throw err
       }
     },
+    async refreshWhakapapa () {
+      this.profiles = {}
+      await this.$apollo.queries.whakapapaView.refresh()
+      await this.loadDescendants(this.whakapapaView.focus)
+    },
     async deleteWhakapapa () {
       const treeResult = await this.$apollo.mutate({
         mutation: gql`
@@ -551,7 +567,7 @@ export default {
       left: 30px;
       // left: 30px;
       right: 160px;
-      width: 35%;
+      width: 50%;
 
       .col {
         padding-top: 0;
