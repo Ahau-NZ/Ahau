@@ -38,12 +38,20 @@
       />
       <h3 class="name mt-2">{{ profile.preferredName }}</h3>
     </router-link>
-     <NewNodeDialog
+
+     <!-- <NewNodeDialog
       v-if="dialog"
       :show="dialog"
-      :title="`Ko wai au? Who am I?`"
+      :title="`Ko wai au ---- Who am I`"
+      @close="toggleNew" @create="save($event)"
+    /> -->
+     <NewNodeDialogV2
+      v-if="dialog"
+      :show="dialog"
+      :title="`AHAU ---- I AM`"
       @close="toggleNew" @create="save($event)"
     />
+
   </div>
 
 </template>
@@ -52,6 +60,7 @@
 import gql from 'graphql-tag'
 import Avatar from '@/components/Avatar'
 import NewNodeDialog from '@/components/dialog/profile/NewNodeDialog.vue'
+import NewNodeDialogV2 from '@/components/dialog/profile/NewNodeDialogV2.vue'
 import pick from 'lodash.pick'
 
 const karakia = `
@@ -197,7 +206,8 @@ export default {
   },
   components: {
     Avatar,
-    NewNodeDialog
+    NewNodeDialog,
+    NewNodeDialogV2
   }
 }
 </script>

@@ -243,7 +243,7 @@
 </template>
 
 <script>
-import Dialog from '@/components/Dialog.vue'
+import Dialog from '@/components/dialog/Dialog.vue'
 import Avatar from '@/components/Avatar.vue'
 import ImagePicker from '@/components/ImagePicker.vue'
 import NodeDatePicker from '@/components/NodeDatePicker.vue'

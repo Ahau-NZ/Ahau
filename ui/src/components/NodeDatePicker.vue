@@ -21,6 +21,8 @@
           :hide-details="true"
           :class="getClass"
           :clearable="!readonly"
+          outlined
+          color="#BA041B"
         ></v-text-field>
       </template>
       <v-date-picker
