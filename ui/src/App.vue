@@ -63,17 +63,17 @@ export default {
 </script>
 
 <style lang="scss">
-// global styles
+/* // global styles */
 a {
   text-decoration: none;
 }
 
-//remove default vuetify dark theme background
+/* //remove default vuetify dark theme background */
 .v-application {
   background: none !important;
 }
 
-//custom backgrounds per route. see above 'watcher'
+/* //custom backgrounds per route. see above 'watcher' */
 body {
   --primary-background: #303030;
 

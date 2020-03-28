@@ -1,7 +1,6 @@
 import NewNodeDialogV2 from './NewNodeDialogV2.vue'
 import Dialog from '@/components/dialog/Dialog.vue'
 
-
 import { action } from '@storybook/addon-actions'
 import VIEWPORTS from '../../../../.storybook/VIEWPORTS'
 
@@ -17,7 +16,7 @@ export default {
 
 export const defaultDialog = () => ({
   template: '<NewNodeDialogV2 :show="true" @submit="submit"/>',
-  components: { NewNodeDialogV2, Dialog  },
+  components: { NewNodeDialogV2, Dialog },
   methods: {
     submit: action('submit')
   }
