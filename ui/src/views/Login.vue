@@ -45,7 +45,7 @@
       :title="`Ko wai au ---- Who am I`"
       @close="toggleNew" @create="save($event)"
     /> -->
-     <NewNodeDialogV2
+     <NewNodeDialog
       v-if="dialog"
       :show="dialog"
       :title="`AHAU ---- I AM`"
@@ -60,7 +60,6 @@
 import gql from 'graphql-tag'
 import Avatar from '@/components/Avatar'
 import NewNodeDialog from '@/components/dialog/profile/NewNodeDialog.vue'
-import NewNodeDialogV2 from '@/components/dialog/profile/NewNodeDialogV2.vue'
 import pick from 'lodash.pick'
 
 const karakia = `
@@ -206,8 +205,7 @@ export default {
   },
   components: {
     Avatar,
-    NewNodeDialog,
-    NewNodeDialogV2
+    NewNodeDialog
   }
 }
 </script>

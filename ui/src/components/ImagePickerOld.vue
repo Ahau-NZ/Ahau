@@ -1,14 +1,14 @@
 <template>
   <div>
     <clipper-upload accept="image/*" @input="toggleAvatar">
-
-      <v-row class="upload-pic-row">
-        <v-icon  v-if="!avatar.new" class="grey--text">mdi-camera</v-icon>
-        <p class="toggle" style="cursor: pointer;">
+      <v-row justify="center">
+        <v-btn v-if="!avatar.new" class="toggle" fab small light>
+          <v-icon class="grey--text">mdi-camera</v-icon>
+        </v-btn>
+        <p class="pa-2 toggle" style="cursor: pointer;">
           {{ label }}
         </p>
       </v-row>
-      
     </clipper-upload>
     <AvatarEditDialog
       :show="avatar.showEditor"
@@ -53,21 +53,3 @@ export default {
   }
 }
 </script>
-
-<style scoped lang="scss">
-  .upload-pic-row {
-    /* width: 200px;
-    height: 200px;
-    border: 1px solid rgba(0,0,0,0.6); */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    
-    p.toggle {
-      margin: 0px;
-      font-size: 0.8em;
-      color: rgba(0,0,0,0.6);
-    }
-  }
-</style>

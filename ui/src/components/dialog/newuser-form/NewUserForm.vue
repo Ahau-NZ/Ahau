@@ -21,7 +21,7 @@
             <!-- Upload Profile Photo Button -->
             <v-col v-if="!readonly" cols="12" justify="center" align="center" class="pa-0">
               <!-- <ImagePicker @updateAvatar="formData.avatarImage = $event"/> -->
-              <ImagePickerNew @updateAvatar="formData.avatarImage = $event" :avatarLoaded="formData.avatarImage"/>
+              <ImagePicker @updateAvatar="formData.avatarImage = $event" :avatarLoaded="formData.avatarImage"/>
             </v-col>
           </v-row>
         </v-col>
@@ -91,7 +91,7 @@
                 />
               </v-col>
               <v-col cols="12" class="pa-1">
-                <AddButtonNew :align="'flex-end'" label="Add name" @click="addAltNameField" row />
+                <AddButton :align="'flex-end'" label="Add name" @click="addAltNameField" row />
               </v-col>
             </template>
           </v-row>
@@ -172,7 +172,7 @@
         </v-col>
         <!-- Description button -->
         <!-- <v-col v-else cols="12" sm="6" class="pa-1 ml-4">
-          <AddButtonNew label="Add description" @click="form.showDescription = true" row />
+          <AddButton label="Add description" @click="form.showDescription = true" row />
         </v-col> -->
       </v-row>
 
@@ -230,10 +230,8 @@
 
 import Avatar from '@/components/Avatar.vue'
 import ImagePicker from '@/components/ImagePicker.vue'
-import ImagePickerNew from '@/components/ImagePickerNew.vue'
 import AddButton from '@/components/button/AddButton.vue'
 import GenderButton from '@/components/button/GenderButton.vue'
-import AddButtonNew from '@/components/button/AddButtonNew.vue'
 import NodeDatePicker from '@/components/NodeDatePicker.vue'
 
 import { GENDERS, RELATIONSHIPS } from '@/lib/constants'
@@ -243,9 +241,7 @@ export default {
   components: {
     Avatar,
     ImagePicker,
-    ImagePickerNew,
     AddButton,
-    AddButtonNew,
     NodeDatePicker,
     GenderButton
   },
@@ -318,12 +314,7 @@ export default {
 </script>
 
 <style>
-input #male {
-  background-color: red;
-  color: red;
-  width: 300px;
-  height: 300px;
-}
+
 </style>
 
 <style scoped>
@@ -357,10 +348,6 @@ input #male {
   color: rgba(0,0,0,0.6);
   font-size: 0.8em;
   margin: 0;
-}
-
-input #male {
-  background-color: red;
 }
 
 .radio-button  > input[type="radio"] {

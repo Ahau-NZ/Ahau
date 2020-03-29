@@ -2,7 +2,7 @@
     <v-row class="banner">
         <v-col>
           <!-- Dialog Title -->
-          <h1 class="banner-title"><span style="color: #BA041B;">{{formatTitle.maori}}</span>{{formatTitle.english}}<span></span></h1>
+          <h1 class="banner-title"><span style="color: #BA041B;">{{splitTitle.maori}}</span>{{splitTitle.english}}<span></span></h1>
         </v-col>
         <!-- Close Button -->
         <v-col cols="1" class="banner-buttons">
@@ -25,18 +25,29 @@ export default {
     }
   },
   computed: {
-    formatTitle() {
-      // split the Title into two parts (so maori can be styled red, and english styled in white)
+    // split the Title into two parts (so maori can be styled red, and english styled in white)
+    splitTitle() {
+      // check to see if is a maori & english title with the ---- in the middle
       var str = this.title;
-      var delimiter = '-';
-      var start = 2;
-      var maori = str.split(delimiter).slice(0, start + 1).join(delimiter);
-      var english = str.split(delimiter).slice(start).join(delimiter);
-      this.titleObj = {
-        maori: maori,
-        english: english,
+      var substr = "----";
+      if (str.indexOf(substr) !== -1) {
+        var delimiter = '-';
+        var start = 2;
+        var maori = str.split(delimiter).slice(0, start + 1).join(delimiter);
+        var english = str.split(delimiter).slice(start).join(delimiter);
+        this.titleObj = {
+          maori: maori,
+          english: english,
+        }
+        return this.titleObj
+      } 
+      // if no maori word in the title just return english
+      else {
+        return this.titleObj = {
+          maori: '',
+          english: this.title,
+        }
       }
-      return this.titleObj
     }
   },
   methods: {
@@ -68,7 +79,7 @@ export default {
     font-size: 1em;
     text-transform: uppercase;
     font-weight: 400;
-    letter-spacing: 5px;
+    letter-spacing: 3.5px;
   }
 
   .banner-buttons {

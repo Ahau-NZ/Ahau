@@ -1,11 +1,11 @@
 <template>
   <div>
-    <Dialog :show="show" @close="close" width="720px" :goBack="close" enableMenu>
-      <template v-slot:title>
+    <Dialog :show="show" :title="title" @close="close" width="720px" :goBack="close" enableMenu>
+      <!-- <template v-slot:title>
         <h1>
             {{ text || 'Create a new whakapapa record' }}
         </h1>
-      </template>
+      </template> -->
       <template v-slot:content>
         <WhakapapaForm ref="whakapapaForm" :view.sync="formData"/>
       </template>
@@ -77,7 +77,7 @@ export default {
     WhakapapaForm
   },
   props: {
-    text: String,
+    title: String,
     show: {
       type: Boolean,
       required: true

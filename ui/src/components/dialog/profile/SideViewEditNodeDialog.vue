@@ -20,7 +20,7 @@
                       <v-icon>mdi-close</v-icon>
                     </v-btn>
                   </v-col>
-                  <v-col cols="12" class="pa-0">
+                  <v-col cols="12" class="pa-0" >
                     <!-- Avatar -->
                     <Avatar
                       class="big-avatar"
@@ -97,6 +97,7 @@
                         @click:append="deleteFromState(altName, index)"
                         readonly
                         v-bind="customProps"
+
                       />
                     </v-col>
                   </v-col>
@@ -119,6 +120,7 @@
                         :append-icon="isEditing ? 'mdi-delete' : ''"
                         @click:append="deleteFromDialog(index)"
                         v-bind="customProps"
+
                       />
                     </v-col>
                   </v-col>
@@ -556,4 +558,5 @@ export default {
 ::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
+
 </style>

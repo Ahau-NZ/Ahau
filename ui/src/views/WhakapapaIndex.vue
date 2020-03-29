@@ -56,6 +56,7 @@
 
       <NewViewDialog
         :show="showViewForm"
+        title="Create a new whakapapa record"
         @close="toggleViewForm"
         @submit="handleStepOne($event)"
       />
@@ -63,7 +64,7 @@
       <NewNodeDialog
         v-if="showProfileForm"
         :show="showProfileForm"
-        title="Create new Person"
+        title="Create new Whakapapa"
         @create="handleDoubleStep($event)"
         :withRelationships="false"
         @close="toggleProfileForm"

@@ -1,11 +1,20 @@
 <template>
-  <Dialog :show="show" @close="close" width="720px" :goBack="close" enableMenu>
-    <template v-slot:title>
-      <h1>{{ title }}</h1>
-    </template>
+  <Dialog :show="show" :title="title" @close="close" width="720px" :goBack="close" enableMenu>
+    
+    <!-- Title now propped into Dialog. instead of using slot -->
+    <!-- <template v-slot:title>
+      <h1>{{title}}</h1>
+    </template> -->
+
+    <!-- Content Slot -->
     <template v-if="!hideDetails" v-slot:content>
-      <v-col class="pb-0 pt-0">
-        <ProfileForm :profile.sync="formData" :readonly="hasSelection" :editRelationship="hasSelection">
+      <v-col class="py-0">
+        <!-- <ProfileForm :profile.sync="formData" :readonly="hasSelection" :editRelationship="hasSelection"> -->
+        
+        <!-- Ian -->
+        <NewUserForm :profile.sync="formData" :readonly="hasSelection" :editRelationship="hasSelection">
+
+          <!-- Slot = Search -->
           <template v-slot:search>
             <v-combobox
               v-model="formData.preferredName"
@@ -22,6 +31,8 @@
               no-data-text="no suggestions"
               :search-input.sync="formData.preferredName"
             >
+
+              <!-- Slot:item = Data -->
               <template v-slot:item="data">
                 <template>
                   <v-list-item @click="setFormData(data.item)">
@@ -44,10 +55,15 @@
               </template>
             </v-combobox>
           </template>
-        </ProfileForm>
+        <!-- </ProfileForm> -->
+        </NewUserForm>
+
       </v-col>
     </template>
-    <template v-slot:actions>
+    <!-- End Content Slot -->
+    
+    <!-- Actions Slot -->
+    <template v-slot:actions  style="border: 2px solid orange;">
       <v-btn @click="close"
         text large fab
         class="secondary--text"
@@ -61,6 +77,8 @@
         <v-icon>mdi-check</v-icon>
       </v-btn>
     </template>
+    <!-- End Actions Slot -->
+
   </Dialog>
 </template>
 
@@ -68,6 +86,9 @@
 import Dialog from '@/components/dialog/Dialog.vue'
 
 import ProfileForm from '@/components/profile-form/ProfileForm.vue'
+
+import NewUserForm from '@/components/dialog/newuser-form/NewUserForm.vue'
+
 import Avatar from '@/components/Avatar.vue'
 import isEmpty from 'lodash.isempty'
 import pick from 'lodash.pick'
@@ -108,7 +129,8 @@ export default {
   components: {
     Avatar,
     Dialog,
-    ProfileForm
+    ProfileForm,
+    NewUserForm
   },
   props: {
     show: { type: Boolean, required: true },

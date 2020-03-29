@@ -13,6 +13,7 @@
         :fullscreen="mobile"
       >
         <div>
+          <!-- Mobile App Bar -->
           <Appbar
             v-if="enableBar && mobile"
             :enableMenu="enableMenu"
@@ -20,22 +21,27 @@
             :goBack="goBack"
             class="pb-12"
           />
+
+          <!-- Dialog Card -->
           <v-card :min-height="mobile ? height : 'auto'">
             <v-container width="100%" class="pa-5 pb-2" :style="`background: ${background};`">
-              <slot name="top"></slot>
-              <v-row class="px-2">
-                <v-col class="pa-0">
-                  <slot name="title"></slot>
-                </v-col>
-                <v-col v-if="!mobile" cols="3" class="pa-0 pt-2" align="right">
-                  <v-btn @click="close" small fab text top right color="secondary" class="close">
-                    <v-icon>mdi-close</v-icon>
-                  </v-btn>
-                </v-col>
-              </v-row>
+              
+              <!--=== TOP OF DIALOG CARD ===-->
+              <!-- Slot title -->
+              <!-- <slot name="title"></slot> -->
+              <DialogTitleBanner :title="title" @close="close"  style="transform: scale(1.05); margin-top: -15px; margin-bottom: 10px;"/>
+
+
+              <!--=== CONTENT OF DIALOG CARD ===-->
+              <!-- Slot = Content see: NewNodeDialogV2.vue for content -->
               <slot name="content"></slot>
+
+
+              <!--=== BOTTOM OF DIALOG CARD ===-->
               <v-row>
-                <slot name="before-actions" class="pt-0 pb-0"></slot>
+                <!-- Slot = before-actions -->
+                <slot name="before-actions" ></slot>
+
                 <v-col
                   :align="mobile ? '' : 'right'"
                   :class="{
@@ -45,8 +51,10 @@
                     'justify-space-between': mobile
                   }"
                 >
-                  <slot name="actions"></slot>
+                <!-- Slot = Actions (eg. close/submit buttons) -->
+                 <slot name="actions"></slot>
                 </v-col>
+
               </v-row>
             </v-container>
           </v-card>
@@ -57,7 +65,10 @@
 </template>
 
 <script>
+
 import Appbar from '@/components/Appbar.vue'
+import DialogTitleBanner from '@/components/dialog/DialogTitleBanner.vue'
+
 export default {
   props: {
     show: {
@@ -87,7 +98,8 @@ export default {
     enableBar: {
       type: Boolean,
       default: true
-    }
+    },
+    title: { type: String, default: 'Create a new person' },
   },
   data () {
     return {
@@ -113,7 +125,12 @@ export default {
     document.removeEventListener('keydown', this.listener)
   },
   components: {
-    Appbar
+    Appbar,
+    DialogTitleBanner
   }
 }
 </script>
+
+<style scoped lang="scss">
+
+</style>
