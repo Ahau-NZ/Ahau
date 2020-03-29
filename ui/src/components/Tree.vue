@@ -23,8 +23,10 @@
           <Node
             :node="node"
             :radius="nodeRadius"
+            :nonFocusedPartners="nonFocusedPartners"
             @click="centerNode(node)"
             @open-context-menu="$emit('open-context-menu', $event)"
+            @change-focus="changeFocus($event, node)"
             :showLabel="true"
           />
         </g>
@@ -63,8 +65,12 @@ export default {
         preferredName: 'Loading',
         gender: 'unknown',
         children: [],
-        parents: []
+        parents: [],
+        nonFocusedPartner: false
       })
+    },
+    currentFocus: {
+      type: String
     },
     view: {
       type: Object,
@@ -72,6 +78,15 @@ export default {
     },
     relationshipLinks: {
       type: Array
+    },
+    getRelatives: Function
+  },
+  watch: {
+    'nestedWhakapapa': function (newNestedWhakapapa) {
+      if (newNestedWhakapapa.preferredName !== 'Loading') {
+        this.nonFocusedPartners = []
+        this.checkNonFocusedPartner(this.nestedWhakapapa)
+      }
     }
   },
   data () {
@@ -83,7 +98,8 @@ export default {
       nodeRadius: 50, // use variable for zoom later on
       nodeSeparationX: 100,
       nodeSeparationY: 150,
-      currentPosition: {}
+      currentPosition: {},
+      nonFocusedPartners: []
     }
   },
   mounted () {
@@ -205,9 +221,31 @@ export default {
     loadDescendants (profileId) {
       this.$emit('load-descendants', profileId)
     },
+    async checkNonFocusedPartner (profile) {
+      if (profile.partners && profile.partners.length > 0) {
+        for await (const partner of profile.partners) {
+          const relatives = await this.getRelatives(partner.id)
+          if (relatives.parents && relatives.parents.length > 0) {
+            this.nonFocusedPartners = [...this.nonFocusedPartners, partner.id]
+          }
+        }
+      }
+      if (profile.children) {
+        for await (const child of profile.children) {
+          await this.checkNonFocusedPartner(child)
+        }
+      }
+    },
+
     collapse (node) {
       this.$emit('collapse-node', node.data.id)
       //  TODO smooth ease-in-out transitions of children using d3 transitions
+    },
+
+    changeFocus (profileId, node) {
+      node.data.id = profileId
+      this.centerNode(node)
+      this.$emit('change-focus', profileId)
     },
 
     visiblePartners (node) {
