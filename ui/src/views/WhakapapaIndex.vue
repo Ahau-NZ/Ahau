@@ -184,6 +184,8 @@ export default {
           return this.createView(this.newView)
         case 'new':
           return this.toggleProfileForm()
+        case 'build':
+          return this.buildFromFile()
         default:
       }
     },
@@ -214,6 +216,7 @@ export default {
       }
     },
     async handleDoubleStep ($event) {
+      console.log("handledoublestep: ", $event)
       try {
         const res = await this.$apollo.mutate({
           mutation: saveProfileQuery,
@@ -236,6 +239,9 @@ export default {
       } catch (err) {
         throw err
       }
+    },
+    async buildFromFile($event) {
+      return console.log ("buildfromfile :",$event)
     }
   },
   components: {

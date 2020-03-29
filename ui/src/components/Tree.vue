@@ -32,7 +32,7 @@
     </g>
     <!-- zoom in, zoom out buttons -->
     <g class="zoomControl">
-     <g @click="zoomReset()" :transform="`translate(${30} ${treeY*2.15})`">
+     <g @click="zoomReset()" :transform="`translate(${30} ${treeY*2.2})`">
         <circle stroke="white" fill="white" filter="url(#shadow)" cx="20" cy="1" r="15"/>
         <circle stroke="black" fill="white" filter="url(#shadow)" cx="20" cy="1" r="5"/>
         <path d="M 20,-7 20,10 M 12,1 28,1" stroke="black" stroke-width="1.5" />
@@ -41,7 +41,7 @@
         <circle stroke="white" fill="white" filter="url(#shadow)" cx="20" cy="1" r="15"/>
         <path d="M 20,-5 20,7 M 14,1 26,1" stroke="black" stroke-width="1.5" />
       </g>
-     <g @click="zoomInOut(1 / 1.6)" :transform="`translate(${30} ${treeY*2.65})`">
+     <g @click="zoomInOut(1 / 1.6)" :transform="`translate(${30} ${treeY*2.6})`">
         <circle stroke="white" fill="white" filter="url(#shadow)" cx="20" cy="1" r="15"/>
         <path d="M 14,1 26,1" stroke="black" stroke-width="1.5" />
       </g>
@@ -150,6 +150,7 @@ export default {
     },
     //  returns a nested data structure representing a tree based on the treeData object
     root () {
+      console.log("nestedWhakapapa: ", this.nestedWhakapapa)
       return d3.hierarchy(this.nestedWhakapapa)
     },
     /*
@@ -157,6 +158,7 @@ export default {
       extra attributes
     */
     nodes () {
+      console.log("tree root: ", this.root)
       return this.treeLayout(this.root)
         .descendants() // returns the array of descendants starting with the root node, then followed by each child in topological order
         .map((d, i) => {
@@ -195,7 +197,7 @@ export default {
               H ${d.target.x} 
               V ${d.target.y}
             `,
-            class: this.relationshipLinks[d.source.data.id + '-' + d.target.data.id].relationshipType !== 'birth' ? 'nonbiological' : ''
+            class: this.relationshipLinks[d.source.data.id + '-' + d.target.data.id].relationshipType !== 'birth' ? 'nonbiological' : '',
           }
         })
     }

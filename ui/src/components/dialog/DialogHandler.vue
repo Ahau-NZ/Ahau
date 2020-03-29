@@ -177,11 +177,14 @@ export default {
       return true
     },
     async addPerson ($event) {
+      console.log("add person event: ", $event)
       try {
         var { id } = $event
 
         if (!id) {
+          console.log("id:", id)
           id = await this.createProfile($event)
+          console.log("id after create: ", id)
           if (!id) return
         }
 
@@ -224,12 +227,15 @@ export default {
           case 'child':
             child = id
             parent = this.selectedProfile.id
+            console.log("selectedProfile parent: ", this.selectedProfile)
 
             if (this.selectedProfile.children) {
+              console.log("child: ", child)
+              console.log("parent: ", parent)
               const childrenExists = this.selectedProfile.children.filter(existingChild => {
                 return existingChild.id === child
               })
-
+              console.log("children exists: ", childrenExists)
               if (isEmpty(childrenExists)) {
                 await this.createChildLink({ child, parent, ...relationshipAttrs })
               }
