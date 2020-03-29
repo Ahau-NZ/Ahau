@@ -213,7 +213,11 @@ export default {
           }
         `,
         variables: { id: this.$route.params.id },
-        fetchPolicy: 'no-cache'
+        fetchPolicy: 'no-cache',
+        update (data) {
+          if (!data.whakapapaView.ignoredProfiles) data.whakapapaView.ignoredProfiles = []
+          return data.whakapapaView
+        }
       }
     },
     whoami: {
