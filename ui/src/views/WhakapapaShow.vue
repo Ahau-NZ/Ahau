@@ -142,6 +142,7 @@ export default {
     FlattenButton,
     FilterButton,
     Table,
+    FeedbackButton,
     Tree,
     VueContext,
     DialogHandler,
