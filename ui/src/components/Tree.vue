@@ -150,7 +150,7 @@ export default {
     },
     //  returns a nested data structure representing a tree based on the treeData object
     root () {
-      console.log("nestedWhakapapa: ", this.nestedWhakapapa)
+      console.log('nestedWhakapapa: ', this.nestedWhakapapa)
       return d3.hierarchy(this.nestedWhakapapa)
     },
     /*
@@ -158,7 +158,7 @@ export default {
       extra attributes
     */
     nodes () {
-      console.log("tree root: ", this.root)
+      console.log('tree root: ', this.root)
       return this.treeLayout(this.root)
         .descendants() // returns the array of descendants starting with the root node, then followed by each child in topological order
         .map((d, i) => {
@@ -197,7 +197,7 @@ export default {
               H ${d.target.x} 
               V ${d.target.y}
             `,
-            class: this.relationshipLinks[d.source.data.id + '-' + d.target.data.id].relationshipType !== 'birth' ? 'nonbiological' : '',
+            class: this.relationshipLinks[d.source.data.id + '-' + d.target.data.id].relationshipType !== 'birth' ? 'nonbiological' : ''
           }
         })
     }

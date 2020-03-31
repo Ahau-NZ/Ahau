@@ -59,12 +59,12 @@
           </v-col>
           <v-row v-if="formData.focus == 'file'">
             <v-col cols="9" class="py-0">
-              <v-file-input 
-              class="pt-0" 
-              v-model="file" 
-              show-size 
-              accept=".csv" 
-              label="File input" 
+              <v-file-input
+              class="pt-0"
+              v-model="file"
+              show-size
+              accept=".csv"
+              label="File input"
               :success="success"
               :success-messages="successMsg"
               :error="error"
@@ -83,11 +83,6 @@
 import Avatar from '@/components/Avatar.vue'
 import ImagePicker from '@/components/ImagePicker.vue'
 import { RULES } from '@/lib/constants'
-import * as d3 from 'd3'
-import pick from 'lodash.pick'
-import isEmpty from 'lodash.isempty'
-import gql from 'graphql-tag'
-
 
 const EMPTY_WHAKAPAPA = {
   name: '',
@@ -130,169 +125,35 @@ export default {
       success: false,
       error: false,
       errorMsg: [],
-      successMsg: [],
-      whoami : {}
+      successMsg: []
     }
   },
-  apollo: {
-    whoami: {
-      query: gql`
-        {
-          whoami {
-            profile {
-              id
-            }
-            feedId
-          }
-        }
-      `,
-      fetchPolicy: 'no-cache'
-    }
-  },
+
   methods: {
 
     checkFile (file) {
-      if(this.file.name.split(".").pop() != 'csv'){//check if file extension is csv
+      if (this.file.name.split('.').pop() != 'csv') { // check if file extension is csv
         this.error = true
         this.errorMsg = ['please upload a CSV file']
-      }
-      else {
-        var reader = new FileReader();
-        reader.readAsText(file);
+      } else {
+        var reader = new FileReader()
+        reader.readAsText(file)
         reader.onload = () => {
-          this.data = reader.result;
+          this.data = reader.result
         }
         this.success = true
       }
     },
 
-    resetFile(){
+    resetFile () {
       this.file = null,
+      this.data = null,
       this.error = false
       this.success = false
       this.errorMsg = []
-    },
-
-    async addPerson ($event) {
-      console.log("add person event: ", $event)
-
-      let person = {}
-      Object.entries($event.data).map(([key, value]) => {
-        if (!isEmpty($event.data[key])) {
-          person[key] = value
-        }
-      })
-
-      try {
-        var { id } = $event.data
-
-        if (!id) {
-          console.log("id:", id)
-          id = await this.createProfile(person)
-          console.log("id after create: ", id)
-          if (!id) return
-        }
-
-        let child = id
-        
-        const relationshipAttrs = pick($event, [
-          'relationshipType',
-          'legallyAdopted'
-        ])
-
-        if ($event.parent) {
-          let parent = $event.data.parent.id
-          console.log("child: ", child)
-          console.log("parent: ", parent)
-          const childrenExists = parent.children.filter(existingChild => {
-            return existingChild.id === child
-          })
-          if (isEmpty(childrenExists)) {
-            await this.createChildLink({ child, parent, ...relationshipAttrs })
-          }
-        }
-        else
-            console.log('not built')
-        }
-
-       catch (err) {
-        throw err
-      }
-    },
-
-    async createProfile ({
-      preferredName,
-      legalName,
-      gender,
-      bornAt,
-      diedAt,
-      birthOrder,
-      avatarImage,
-      altNames,
-      description,
-      location,
-      profession,
-      contact
-    }) {
-      const res = await this.$apollo.mutate({
-        mutation: gql`
-          mutation($input: ProfileInput!) {
-            saveProfile(input: $input)
-          }
-        `,
-        variables: {
-          input: {
-            type: 'person',
-            preferredName,
-            legalName,
-            gender,
-            bornAt,
-            diedAt,
-            birthOrder,
-            avatarImage,
-            altNames: {
-              add: []
-            },
-            description,
-            location,
-            profession,
-            contact,
-            recps: [this.whoami.feedId] // TODO change this for groups
-          }
-        }
-      })
-
-      if (res.errors) {
-        console.error('failed to createProfile', res)
-        return
-      }
-      return res.data.saveProfile // a profileId
-    },
-    
-    async createChildLink (
-      { child, parent, relationshipType, legallyAdopted },
-      view
-    ) {
-      const input = {
-        child,
-        parent,
-        relationshipType,
-        legallyAdopted,
-        recps: this.view.recps
-      }
-      try {
-        const res = await this.$apollo.mutate(saveWhakapapaLink(input))
-        if (res.errors) {
-          console.error('failed to createChildLink', res)
-          return
-        }
-        return res // TODO return the linkId
-      } catch (err) {
-        throw err
-      }
-    },
+    }
   },
-  
+
   watch: {
     view (newVal) {
       this.formData = newVal
@@ -304,43 +165,17 @@ export default {
       deep: true
     },
 
-    file (newValue){
+    file (newValue) {
       this.errorMsg = []
       this.error = false
       this.success = false
-      if (newValue != null)
-      this.checkFile(newValue)
+      if (newValue != null) { this.checkFile(newValue) }
     },
 
     data (newValue) {
-      if(newValue != null){
-        var csv = d3.csvParse(newValue)
-        console.log("csv array:", csv)
-
-        var root = d3.stratify()
-          .id(function(d) { return d.number; })
-          .parentId(function(d) { return d.parentNumber; })
-          (csv);
-          console.log("object: ", root)
-        
-
-
-        // var nestedData = d3.hierachy(root)
-        var data = root.descendants()
-
-        console.log("data: ", data)
-
-        data.forEach(person => {
-          console.log("adding person: ", person)
-          this.addPerson(pick(person, ['data', 'parent', 'children']))
-        })
-       
-        }
-
-      else  return this.file = null
-    } 
-  },
-    
+      this.$emit('update:data', newValue)
+    }
+  }
 }
 </script>
 

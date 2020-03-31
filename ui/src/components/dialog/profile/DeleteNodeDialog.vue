@@ -27,7 +27,7 @@
             record.
         </span>
         </div>
-      
+
       </v-card-subtitle>
     </template>
     <template v-slot:actions>

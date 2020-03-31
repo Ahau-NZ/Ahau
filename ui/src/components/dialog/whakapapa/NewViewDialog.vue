@@ -7,7 +7,7 @@
         </h1>
       </template>
       <template v-slot:content>
-        <WhakapapaForm ref="whakapapaForm" :view.sync="formData"/>
+        <WhakapapaForm ref="whakapapaForm" :view.sync="formData" :data.sync="csv"/>
       </template>
       <template v-slot:actions>
         <v-btn @click="close"
@@ -50,7 +50,7 @@ const PERMITTED_WHAKAPAPA_ATTRS = [
 ]
 
 function setDefaultWhakapapa (whakapapa) {
-  console.log("setting default whakapapa: ", whakapapa)
+  console.log('setting default whakapapa: ', whakapapa)
   return {
     name: whakapapa.name,
     description: whakapapa.description,
@@ -61,7 +61,7 @@ function setDefaultWhakapapa (whakapapa) {
 }
 
 function whakapapaSubmission (newWhakapapa) {
-  console.log("whakapapa submission: ", newWhakapapa)
+  console.log('whakapapa submission: ', newWhakapapa)
   var output = {}
   var whakapapa = pick(newWhakapapa, [...PERMITTED_WHAKAPAPA_ATTRS])
   Object.entries(whakapapa).forEach(([key, value]) => {
@@ -88,7 +88,8 @@ export default {
   data () {
     return {
       helpertext: false,
-      formData: setDefaultWhakapapa(EMPTY_WHAKAPAPA)
+      formData: setDefaultWhakapapa(EMPTY_WHAKAPAPA),
+      csv: ''
     }
   },
   computed: {
@@ -114,10 +115,14 @@ export default {
         console.error('not validated')
         return
       }
-
+      const csv = this.csv
       const output = whakapapaSubmission(this.formData)
-      console.log("submit output", output)
-      this.$emit('submit', output)
+      const newOutput = {
+        ...output,
+        csv: csv
+      }
+      console.log('submit output', newOutput)
+      this.$emit('submit', newOutput)
       this.close()
     },
     setFormData (whakapapa) {
