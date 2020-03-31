@@ -263,4 +263,11 @@ export default {
   background-position: center center;
 }
 
+.headliner {
+  font-size: 1em;
+  text-transform: uppercase;
+  font-weight: 400;
+  letter-spacing: 5px;
+}
+
 </style>
