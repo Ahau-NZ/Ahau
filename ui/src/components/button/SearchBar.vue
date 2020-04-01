@@ -59,13 +59,7 @@ export default {
   },
   props: {
     nestedWhakapapa: {
-      type: Object,
-      default: () => ({
-        preferredName: 'Loading',
-        gender: 'unknown',
-        children: [],
-        parents: []
-      })
+      type: Object
     },
     searchNodeId: {
       type: String
@@ -73,7 +67,7 @@ export default {
   },
   data () {
     return {
-      searchString: '',
+      searchString: ''
     }
   },
   computed: {
@@ -82,17 +76,24 @@ export default {
         .descendants()
         .map(d => d.data)
         .filter(d => {
-          if (isEmpty(this.searchString) || isEmpty(d.preferredName) || isEmpty(d.legalName)) return false
-          const search = this.searchString.toLowerCase().trim()
-          const name = d.preferredName.toLowerCase().trim() + d.legalName.toLowerCase().trim()
+          const search = this.setString(this.searchString)
+          const preferredName = this.setString(d.preferredName)
+          const legalName = this.setString(d.legalName)
+
           return (
-            isEqual(name, search) ||
-            name.includes(search)
+            isEqual(preferredName, search) ||
+            preferredName.includes(search) ||
+            isEqual(legalName, search) ||
+            legalName.includes(search)
           )
         })
     }
   },
   methods: {
+    setString (name) {
+      if (isEmpty(name)) return ''
+      return name.toLowerCase().trim()
+    },
     age (bornAt) {
       return calculateAge(bornAt)
     },
@@ -126,5 +127,4 @@ export default {
     margin-top: -3px;
   }
 
- 
 </style>

@@ -39,7 +39,6 @@
         </div>
 
         <div v-else  class="icon-button">
-          <!-- <SearchBarOtherUI/> -->
           <SearchButton :search.sync="search"/>
         </div>
 
@@ -130,7 +129,6 @@ import FilterButton from '@/components/button/FilterButton.vue'
 
 import SearchBar from '@/components/button/SearchBar.vue'
 import SearchButton from '@/components/button/SearchButton.vue'
-import SearchBarOtherUI from '@/components/button/SearchBarOtherUI.vue'
 
 import tree from '@/lib/tree-helpers'
 import avatarHelper from '@/lib/avatar-helpers.js'
@@ -157,7 +155,6 @@ export default {
     FlattenButton,
     FilterButton,
     SearchBar,
-    SearchBarOtherUI,
     SearchButton,
     FeedbackButton,
     Table,
@@ -306,7 +303,7 @@ export default {
     }
   },
   methods: {
-    clickedOff() {
+    clickedOff () {
       this.search = !this.search
     },
     canDelete (profile) {

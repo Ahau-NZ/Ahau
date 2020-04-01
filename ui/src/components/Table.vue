@@ -258,7 +258,7 @@ export default {
         })
 
       if (pairs.length > 0) {
-        return 'black'
+        return '#b02425'
       }
       return 'lightgrey'
     },

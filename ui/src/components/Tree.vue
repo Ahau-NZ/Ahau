@@ -11,7 +11,7 @@
     <g id="baseGroup">
       <g :transform="`translate(${treeX} ${treeY})`">
         <g v-for="link in links" :key="link.id" class="link">
-          <Link :link="link" :branch="branch" :class="link.class"/>
+          <Link :link="link" :class="link.class"/>
         </g>
       </g>
 
@@ -78,7 +78,6 @@ export default {
   mounted () {
     this.componentLoaded = true
     this.zoom()
-
   },
   watch: {
     searchNodeId (newVal) {
