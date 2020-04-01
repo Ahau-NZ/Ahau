@@ -96,6 +96,7 @@
       @updateFocus="updateFocus($event)"
       @set="setSelectedProfile($event)"
       @change-focus="changeFocus($event)"
+      @newAncestor="showNewAncestors($event)"
       :nestedWhakapapa="nestedWhakapapa"
       :profiles.sync="profiles"
       @updateWhakapapa="updateWhakapapa($event)"
@@ -305,6 +306,11 @@ export default {
     }
   },
   methods: {
+    // when adding a partner ancestor update the tree to load  
+    showNewAncestors(parent){
+      console.log("parent")
+      this.currentFocus = parent
+    },
     isVisibleProfile (descendant) {
       return this.whakapapaView.ignoredProfiles.indexOf(descendant.profile.id) === -1
     },

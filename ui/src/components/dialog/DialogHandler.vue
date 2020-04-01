@@ -254,6 +254,10 @@ export default {
             if (child === this.view.focus) {
               // in this case we're updating the top of the graph, we update view.focus to that new top parent
               this.$emit('updateFocus', parent)
+            } 
+            // load new parent on partner whakapapa links
+            else if (!parent.parent) {
+              this.$emit('change-focus', parent)
             } else {
               await this.$emit('load', child)
             }
