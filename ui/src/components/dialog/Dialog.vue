@@ -14,13 +14,13 @@
       >
         <div>
           <!-- Mobile App Bar -->
-          <Appbar
+          <!-- <Appbar
             v-if="enableBar && mobile"
             :enableMenu="enableMenu"
             app
             :goBack="goBack"
             class="pb-12"
-          />
+          /> -->
 
           <!-- Dialog Card -->
           <v-card :min-height="mobile ? height : 'auto'">
@@ -29,7 +29,7 @@
               <!--=== TOP OF DIALOG CARD ===-->
               <!-- Slot title -->
               <!-- <slot name="title"></slot> -->
-              <DialogTitleBanner :title="title" @close="close"  style="transform: scale(1.05); margin-top: -15px; margin-bottom: 10px;"/>
+              <DialogTitleBanner :title="title" :mobile="mobile" @close="close"  style=""/>
 
 
               <!--=== CONTENT OF DIALOG CARD ===-->

@@ -3,7 +3,8 @@
     <v-app-bar
       v-if="mobile || enableMenu"
       :app="mobile && app"
-      :class="mobile ? 'mobile' : 'desktop'"
+      :absolute="mobile"
+      :class="classObject"
       :flat="!mobile"
       color="#303030"
     >
@@ -142,6 +143,7 @@ export default {
   props: {
     enableMenu: { type: Boolean, default: true },
     app: { type: Boolean, default: false },
+    sideMenu: { type: Boolean, default: false },
     goBack: { type: Function }
   },
   data () {
@@ -151,10 +153,17 @@ export default {
       profile: {
         id: null,
         avatarImage: null
-      }
+      },
     }
   },
   computed: {
+    classObject: function() {
+      return {
+        'mobile': this.mobile, 
+        'desktop': !this.mobile,
+        'sideMenuAppBarStyle': this.sideMenu
+      }
+    },
     mobile () {
       return this.$vuetify.breakpoint.xs
     }
@@ -219,5 +228,9 @@ export default {
     height: 45px;
     padding: 0 25px;
   }
+}
+
+.sideMenuAppBarStyle {
+  margin-top: -56px !important;
 }
 </style>

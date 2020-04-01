@@ -1,6 +1,8 @@
 <template>
   <div id="whakapapa-show">
     <v-container class="white px-0 py-0 mx-auto">
+
+      <!-- Desktop Header -->
       <v-row v-if="!mobile" class="header">
         <WhakapapaViewCard :view="whakapapaView" :shadow="false">
           <v-row class="lock-container pl-3">
@@ -30,7 +32,13 @@
         </WhakapapaViewCard>
       </v-row>
 
-      <WhakapapaBanner v-if="mobile" :view="whakapapaView" @edit="updateDialog('whakapapa-edit', null)" @more-info="updateDialog('whakapapa-view', null)"/>
+      <!-- Mobile Header -->
+      <WhakapapaBanner
+        v-if="mobile"
+        :view="whakapapaView"
+        @edit="updateDialog('whakapapa-edit', null)"
+        @more-info="updateDialog('whakapapa-view', null)"
+      />
 
       <v-row v-if="!mobile" class="select">
 
@@ -63,7 +71,7 @@
 
       <v-row>
         <Tree
-          class="tree"
+          :style="isMobile()"
           v-if="whakapapa.tree"
           :view="whakapapaView"
           :nestedWhakapapa="nestedWhakapapa"
@@ -306,6 +314,14 @@ export default {
     }
   },
   methods: {
+    isMobile() {
+      // if(this.mobile) {
+      //   console.log('applying mobile style')
+      //   return {
+      //     maxHeight: 'calc(100vh - 56px - 55.5px)',
+      //   }
+      // }
+    },
     clickedOff() {
       this.search = !this.search
     },
@@ -615,7 +631,7 @@ h1 {
 }
 
 .tree {
-  max-height: calc(100vh - 64px);
+  /* max-height: calc(100vh - 64px); */
 }
 
 .icon-button {
@@ -629,6 +645,10 @@ h1 {
   width: 300px;
   display: flex;
   justify-items: flex-end;
+}
+
+.tree.mobile {
+  /* max-height: calc(100vh - 56px - 55.5px); */
 }
 
 </style>

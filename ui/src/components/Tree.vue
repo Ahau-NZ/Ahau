@@ -201,9 +201,9 @@ export default {
               stroke: this.pathStroke(d.source.data.id, d.target.data.id)
             },
             d: `
-              M ${d.source.x}, ${d.source.y} 
-              v ${this.branch} 
-              H ${d.target.x} 
+              M ${d.source.x}, ${d.source.y}
+              v ${this.branch}
+              H ${d.target.x}
               V ${d.target.y}
             `
           }

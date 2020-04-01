@@ -9,9 +9,12 @@
     <!-- Content Slot -->
     <template v-if="!hideDetails" v-slot:content>
       <v-col class="py-0">
+
+        <!-- Old -->
         <!-- <ProfileForm :profile.sync="formData" :readonly="hasSelection" :editRelationship="hasSelection"> -->
-        
+  
         <!-- Ian -->
+        <!-- this component replaces NewProfile component should probably be renamed--. More than just NewUserForm now. Style carried over to other dialogs.>
         <NewUserForm :profile.sync="formData" :readonly="hasSelection" :editRelationship="hasSelection">
 
           <!-- Slot = Search -->

@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <Appbar v-if="displayAppbar" :enableMenu="enableMenu" app />
-    <v-content>
+    <v-content :class="{ 'mobileWhakapapaTitleStyle': mobile }">
       <router-view :mobileServerLoaded="mobileServerLoaded" />
     </v-content>
   </v-app>
@@ -19,6 +19,9 @@ export default {
     }
   },
   computed: {
+    mobile () {
+      return this.$vuetify.breakpoint.xs
+    },
     displayAppbar () {
       if (this.$route.name === 'login') return false
       else return true
@@ -102,4 +105,10 @@ body {
     background-color: #303030;
   }
 }
+
+.mobileWhakapapaTitleStyle {
+  padding-top: 56px !important;
+  /* border: 5px solid yellow; */
+}
+
 </style>

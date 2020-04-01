@@ -1,12 +1,12 @@
 <template>
   <div
-    style="background-color: white; height:100%"
-    :node="profile"
-    @close="close"
-    width="720px"
-    :fullscreen="mobile"
+  :node="profile"
+  @close="close"
+  width="720px"
+  :fullscreen="mobile"
+  style="background-color: white; height:100%;"
   >
-    <Appbar v-if="mobile" enableMenu app :goBack="close" />
+    <Appbar v-if="mobile" enableMenu app :goBack="close" :sideMenu="sideMenu"  />
     <v-form ref="form" style="height:100%">
       <v-card light style="height:100%">
         <v-container class="pa-0" style="height:100%">
@@ -396,6 +396,7 @@ export default {
     profile: { type: Object, required: true },
     deleteable: { type: Boolean, default: false },
     warnAboutChildren: { type: Boolean, default: true },
+    sideMenu: { type: Boolean, default: false },
     relationshipLinks: { type: Array }
   },
 

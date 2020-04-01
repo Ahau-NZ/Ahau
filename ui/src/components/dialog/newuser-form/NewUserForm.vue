@@ -135,7 +135,7 @@
           />
         </v-col>
         <!-- GENDER EDIT -->
-        <v-col v-else class="pa-1">
+        <v-col v-else class="pa-1"  cols="12" sm="6" >
           <p class="text-field">Gender</p>
           <!-- <v-radio-group v-model="formData.gender" row class="mt-0 pt-0" hide-details>
             <v-radio v-for="(gender, index) in genders"
@@ -157,7 +157,7 @@
         <!-- DESCRIPTION -->
         <!-- Description textarea -->
         <!-- <v-col class="ml-4" v-if="form.showDescription || readonly"> -->
-        <v-col class="pa-1">
+        <v-col class="pa-1"  cols="12" sm="6" >
           <v-textarea
             v-model="formData.description"
             label="Description"
@@ -179,7 +179,7 @@
 
       
       <v-row> 
-        <v-col>
+        <v-col cols="12" sm="6" >
           <!-- Contact -->
           <v-row>
             <v-col cols="12" class="pa-1">
@@ -206,7 +206,7 @@
           </v-row>
         </v-col>
       
-        <v-col>
+        <v-col cols="12" sm="6" >
           <v-row>
             <v-col cols="12" class="pa-1">
               <!-- Location -->
@@ -273,6 +273,9 @@ export default {
     deep: true
   },
   computed: {
+    mobile () {
+      return this.$vuetify.breakpoint.xs
+    },
     customProps () {
       // readonly = hasSelected || !isEditing
       return {

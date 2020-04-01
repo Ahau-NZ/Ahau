@@ -1,14 +1,26 @@
 <template>
-    <v-row class="banner">
-        <v-col>
+  <div>
+    <v-row v-if="mobile" class="mobile-banner">
+      <!-- Close Button -->
+      <v-col cols="1" class="banner-buttons">
+          <v-icon class="close-button" @click="close">mdi-arrow-left</v-icon>
+      </v-col>
+      <v-col class="d-flex align-center justify-end">
           <!-- Dialog Title -->
           <h1 class="banner-title"><span style="color: #BA041B;">{{splitTitle.maori}}</span>{{splitTitle.english}}<span></span></h1>
         </v-col>
-        <!-- Close Button -->
-        <v-col cols="1" class="banner-buttons">
-            <v-icon class="close-button" @click="close">mdi-close</v-icon>
-        </v-col>
-      </v-row>
+    </v-row>
+    <v-row v-else class="banner">
+      <v-col>
+        <!-- Dialog Title -->
+        <h1 class="banner-title"><span style="color: #BA041B;">{{splitTitle.maori}}</span>{{splitTitle.english}}<span></span></h1>
+      </v-col>
+      <!-- Close Button -->
+      <v-col cols="1" class="banner-buttons">
+          <v-icon class="close-button" @click="close">mdi-close</v-icon>
+      </v-col>
+    </v-row>
+  </div>
 </template>
 
 <script>
@@ -18,6 +30,7 @@ export default {
   components: {},
   props: {
     title: { type: String, default: 'Create a new person' },
+    mobile: { type: Boolean, default: false },
   },
   data () {
     return {
@@ -59,10 +72,38 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 
+  .mobile-banner {
+    width: 100%;
+    padding: 10px 20px;
+    margin: 0px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background: #292929 url(../../assets/bg-tohu.png);
+    background-size: 80%;
+    background-position-x: 80%;
+    background-position-y: 5px;
+    background-repeat: no-repeat;
+
+    /* resize banner outside container */
+    transform: scale(1.15); 
+    margin-top: -15px; 
+    margin-bottom: 10px;
+
+    h1.banner-title {
+      color: white;
+      font-size: 0.8em;
+      text-transform: uppercase;
+      font-weight: 400;
+      letter-spacing: 3.5px;
+    }
+    
+  }
   .banner {
-    /* border: 2px solid yellow; */
     width: 100%;
     padding: 10px 20px;
     margin: 0px;
@@ -72,15 +113,22 @@ export default {
     background-position-y: -40px;
     background-repeat: no-repeat;
     
+    /* resize banner outside container */
+    transform: scale(1.05); 
+    margin-top: -15px; 
+    margin-bottom: 10px;
+
+    h1.banner-title {
+      color: white;
+      font-size: 1em;
+      text-transform: uppercase;
+      font-weight: 400;
+      letter-spacing: 3.5px;
+    }
+    
   }
 
-  h1.banner-title {
-    color: white;
-    font-size: 1em;
-    text-transform: uppercase;
-    font-weight: 400;
-    letter-spacing: 3.5px;
-  }
+ 
 
   .banner-buttons {
     display: flex;
