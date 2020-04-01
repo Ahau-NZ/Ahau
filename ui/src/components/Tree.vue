@@ -99,7 +99,8 @@ export default {
       nodeSeparationX: 100,
       nodeSeparationY: 150,
       currentPosition: {},
-      nonFocusedPartners: []
+      nonFocusedPartners: [],
+      changeFocusId: []
     }
   },
   mounted () {
@@ -176,7 +177,6 @@ export default {
       return this.treeLayout(this.root)
         .descendants() // returns the array of descendants starting with the root node, then followed by each child in topological order
         .map((d, i) => {
-          // returns a new custom object for each node
           return {
             nodeId: `node-${i}`,
             children: d.children,
@@ -242,10 +242,10 @@ export default {
       //  TODO smooth ease-in-out transitions of children using d3 transitions
     },
 
-    changeFocus (profileId, node) {
+   async changeFocus (profileId, node) {
       node.data.id = profileId
-      this.centerNode(node)
-      this.$emit('change-focus', profileId)
+      this.changeFocusId = profileId 
+      await this.$emit('change-focus', profileId)
     },
 
     visiblePartners (node) {
@@ -270,6 +270,7 @@ export default {
 
     centerNode (source) {
       // if source node is already centered than collapse
+
       if (this.nodeCentered === source.data.id) {
         this.collapse(source)
       }
@@ -282,10 +283,13 @@ export default {
       var width = this.$refs.tree.clientWidth
       var height = this.$refs.tree.clientHeight
 
+      var x = width / 2 - source.x
+      var y = height / 2 - source.y
+      
       g.transition()
         .duration(400)
-        .attr('transform', 'translate(' + (width / 2 - source.x) + ',' + (height / 2 - source.y) + ')scale(' + 1 + ')')
-        .on('end', function () { svg.call(d3.zoom().transform, d3.zoomIdentity.translate((width / 2 - source.x), (height / 2 - source.y)).scale(1)) })
+        .attr('transform', 'translate(' + (x) + ',' + (y) + ')scale(' + 1 + ')')
+        .on('end', function () { svg.call(d3.zoom().transform, d3.zoomIdentity.translate((x), (y)).scale(1)) })
     },
 
     zoomInOut (scale) {
@@ -316,6 +320,16 @@ export default {
               .scale(1)
           )
         })
+    }
+  },
+
+  watch: {
+    currentFocus(newValue){
+      this.nodes.map((d) => {
+        if (d.data.id === this.changeFocusId){
+          this.centerNode(d)
+        }
+      })
     }
   },
 

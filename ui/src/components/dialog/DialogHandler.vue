@@ -256,7 +256,6 @@ export default {
               this.$emit('updateFocus', parent)
             } else {
               await this.$emit('load', child)
-              await this.$emit('change-focus', parent)
             }
             break
           default:
