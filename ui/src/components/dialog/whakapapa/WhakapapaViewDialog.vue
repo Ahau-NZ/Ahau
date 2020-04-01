@@ -72,6 +72,9 @@ export default {
     }
   },
   methods: {
+    cordovaBackButton () {
+      this.close()
+    },
     close (e) {
       if (e) e.preventDefault()
       this.$emit('close')

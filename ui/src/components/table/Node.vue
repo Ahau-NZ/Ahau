@@ -92,7 +92,7 @@
     </g>
     <defs>
       <filter id="shadow">
-        <feDropShadow dx="1" dy="0.6" stdDeviation="0.8" />
+        <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="grey" flood-opacity="0.5"/>
       </filter>
     </defs>
   </g>
