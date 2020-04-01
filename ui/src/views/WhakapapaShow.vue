@@ -306,9 +306,9 @@ export default {
     }
   },
   methods: {
-    // when adding a partner ancestor update the tree to load  
-    showNewAncestors(parent){
-      console.log("parent")
+    // when adding a partner ancestor update the tree to load
+    showNewAncestors (parent) {
+      console.log('parent')
       this.currentFocus = parent
     },
     isVisibleProfile (descendant) {

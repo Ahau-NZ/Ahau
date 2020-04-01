@@ -37,15 +37,15 @@
      <g @click="zoomReset()" :transform="`translate(${30} ${treeY*2.15})`">
         <circle stroke="white" fill="white" filter="url(#shadow)" cx="20" cy="1" r="15"/>
         <circle stroke="black" fill="white" filter="url(#shadow)" cx="20" cy="1" r="5"/>
-        <path d="M 20,-7 20,10 M 12,1 28,1" stroke="black" stroke-width="1.5" />
+        <path d="M 20,-7 20,10 M 12,1 28,1" stroke="grey" stroke-width="1.5" />
       </g>
      <g @click="zoomInOut(1.6)" :transform="`translate(${30} ${treeY*2.4})`">
         <circle stroke="white" fill="white" filter="url(#shadow)" cx="20" cy="1" r="15"/>
-        <path d="M 20,-5 20,7 M 14,1 26,1" stroke="black" stroke-width="1.5" />
+        <path d="M 20,-5 20,7 M 14,1 26,1" stroke="grey" stroke-width="1.5" />
       </g>
      <g @click="zoomInOut(1 / 1.6)" :transform="`translate(${30} ${treeY*2.65})`">
         <circle stroke="white" fill="white" filter="url(#shadow)" cx="20" cy="1" r="15"/>
-        <path d="M 14,1 26,1" stroke="black" stroke-width="1.5" />
+        <path d="M 14,1 26,1" stroke="grey" stroke-width="1.5" />
       </g>
     </g>
     <!-- loading spinner when changing focus -->
@@ -93,29 +93,27 @@ export default {
         this.checkNonFocusedPartner(this.nestedWhakapapa)
       }
     },
-    
-    // watch for change of focus 
-    currentFocus (newValue){
-      if(this.changeFocusId != null){
+
+    // watch for change of focus
+    currentFocus (newValue) {
+      if (this.changeFocusId != null) {
         // if theres a change wait for the nodes to load than map through to find the change of focus
         setTimeout(() => {
           this.nodes.map((d) => {
-            if (d.data.id === this.changeFocusId){
-              console.log("match found")
+            if (d.data.id === this.changeFocusId) {
+              console.log('match found')
               this.centerNode(d)
             }
-          }) 
-        }, 500);
+          })
+        }, 500)
 
         // hide the grapgh until the tree has centered
         setTimeout(() => {
           this.loading = false
         }, 1000)
-
       }
-    },
+    }
 
-    
   },
   data () {
     return {
@@ -126,10 +124,9 @@ export default {
       nodeRadius: 50, // use variable for zoom later on
       nodeSeparationX: 100,
       nodeSeparationY: 150,
-      currentPosition: {},
       nonFocusedPartners: [],
       changeFocusId: null,
-      loading : false
+      loading: false
     }
   },
   mounted () {
@@ -202,7 +199,7 @@ export default {
       returns an array of nodes associated with the root node created from the treeData object, as well as
       extra attributes
     */
-   nodes () {
+    nodes () {
       return this.treeLayout(this.root)
         .descendants() // returns the array of descendants starting with the root node, then followed by each child in topological order
         .map((d, i) => {
@@ -271,10 +268,10 @@ export default {
       //  TODO smooth ease-in-out transitions of children using d3 transitions
     },
 
-   changeFocus (profileId, node) {
+    changeFocus (profileId, node) {
       this.loading = true
       node.data.id = profileId
-      this.changeFocusId = profileId 
+      this.changeFocusId = profileId
       this.$emit('change-focus', profileId)
     },
 
@@ -315,7 +312,7 @@ export default {
 
       var x = width / 2 - source.x
       var y = height / 2 - source.y
-      
+
       g.transition()
         .duration(400)
         .attr('transform', 'translate(' + (x) + ',' + (y) + ')scale(' + 1 + ')')
