@@ -56,11 +56,14 @@
           class="tree"
           v-if="whakapapa.tree"
           :view="whakapapaView"
+          :currentFocus="currentFocus"
+          :getRelatives="getRelatives"
           :nestedWhakapapa="nestedWhakapapa"
           :relationshipLinks="relationshipLinks"
           @load-descendants="loadDescendants($event)"
           @collapse-node="collapseNode($event)"
           @open-context-menu="openContextMenu($event)"
+          @change-focus="changeFocus($event)"
         />
         <Table
           v-if="whakapapa.table"
@@ -92,6 +95,8 @@
       @load="loadDescendants($event)"
       @updateFocus="updateFocus($event)"
       @set="setSelectedProfile($event)"
+      @change-focus="changeFocus($event)"
+      @newAncestor="showNewAncestors($event)"
       :nestedWhakapapa="nestedWhakapapa"
       :profiles.sync="profiles"
       @updateWhakapapa="updateWhakapapa($event)"
@@ -160,6 +165,7 @@ export default {
         image: { uri: '' },
         ignoredProfiles: []
       },
+      focus: null,
       // the record which defines the starting point for a tree (the 'focus')
       whoami: {
         profile: { id: '' }
@@ -234,8 +240,18 @@ export default {
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
+    currentFocus: {
+      get: function () {
+      // the current focused profile of the whakapapa tree
+        if (!this.focus) return this.whakapapaView.focus
+        return this.focus
+      },
+      set: function (newValue) {
+        this.focus = newValue
+      }
+    },
     nestedWhakapapa () {
-      var startingProfile = this.profiles[this.whakapapaView.focus]
+      var startingProfile = this.profiles[this.currentFocus]
       if (!startingProfile) {
         return {
           preferredName: 'Loading',
@@ -249,8 +265,10 @@ export default {
     }
   },
   watch: {
-    'whakapapaView.focus': async function (newFocus) {
-      if (newFocus) this.loadDescendants(newFocus)
+    'currentFocus': async function (newFocus) {
+      if (newFocus) {
+        await this.loadDescendants(newFocus)
+      }
     },
     processingQueue: function (isProcessing) {
       if (!isProcessing) return
@@ -288,6 +306,11 @@ export default {
     }
   },
   methods: {
+    // when adding a partner ancestor update the tree to load
+    showNewAncestors (parent) {
+      console.log('parent')
+      this.currentFocus = parent
+    },
     isVisibleProfile (descendant) {
       return this.whakapapaView.ignoredProfiles.indexOf(descendant.profile.id) === -1
     },
@@ -309,6 +332,23 @@ export default {
       this.dialog.type = type
       this.dialog.active = dialog
     },
+    async changeFocus (profileId) {
+      const newFocus = await this.getWhakapapaHead(profileId, 'newAmountParents')
+      this.currentFocus = newFocus
+    },
+    async getWhakapapaHead (profileId, type = 'temp') {
+      const record = await this.getRelatives(profileId)
+      if (!record || !record.parents || record.parents.length < 1) return profileId
+      // this.partnerFocus[type] = this.partnerFocus[type] + 1
+      for await (const parent of record.parents) {
+        // follow parent from the main branch
+        if (this.profiles[parent.profile.id] && this.profiles[parent.profile.id].parents) {
+          return this.getWhakapapaHead(parent.profile.id, type)
+        }
+      }
+      return this.getWhakapapaHead(record.parents[0].profile.id, type)
+    },
+
     async getRelatives (profileId) {
       const request = {
         query: gql`
@@ -466,7 +506,7 @@ export default {
       }
       try {
         const res = await this.$apollo.mutate(saveWhakapapaViewMutation(input))
-        if (res.data) this.whakapapaView.focus = focus
+        if (res.data) this.currentFocus = focus
         else console.error(res)
       } catch (err) {
         throw err
