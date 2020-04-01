@@ -14,7 +14,7 @@
         <!-- <ProfileForm :profile.sync="formData" :readonly="hasSelection" :editRelationship="hasSelection"> -->
   
         <!-- Ian -->
-        <!-- this component replaces NewProfile component should probably be renamed--. More than just NewUserForm now. Style carried over to other dialogs.>
+        <!-- this component replaces NewProfile component should probably be renamed--. More than just NewUserForm now. Style carried over to other dialogs.-->
         <NewUserForm :profile.sync="formData" :readonly="hasSelection" :editRelationship="hasSelection">
 
           <!-- Slot = Search -->

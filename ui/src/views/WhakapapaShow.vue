@@ -630,10 +630,6 @@ h1 {
   position: fixed;
 }
 
-.tree {
-  /* max-height: calc(100vh - 64px); */
-}
-
 .icon-button {
   padding: 0px;
   width: 50px;
@@ -645,10 +641,6 @@ h1 {
   width: 300px;
   display: flex;
   justify-items: flex-end;
-}
-
-.tree.mobile {
-  /* max-height: calc(100vh - 56px - 55.5px); */
 }
 
 </style>

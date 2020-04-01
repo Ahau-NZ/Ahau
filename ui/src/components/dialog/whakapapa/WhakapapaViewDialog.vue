@@ -1,5 +1,5 @@
 <template>
-  <Dialog :show="show" @close="close" width="720px" :goBack="close" :enableBar="false">
+  <Dialog :title="`Whakapapa ---- Family Tree`" :show="show" @close="close" width="720px" :goBack="close" :enableBar="false">
     <template v-slot:top>
       <Avatar
         class="big-avatar"

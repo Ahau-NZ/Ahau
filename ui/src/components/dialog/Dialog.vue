@@ -14,6 +14,7 @@
       >
         <div>
           <!-- Mobile App Bar -->
+          <!-- Removed Appbar. Using DialogTitleBanner as header with back button -->
           <!-- <Appbar
             v-if="enableBar && mobile"
             :enableMenu="enableMenu"
