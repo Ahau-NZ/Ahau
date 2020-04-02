@@ -258,7 +258,7 @@ export default {
 
       // create whakapapaLinks
       var finalArray = await this.createLinks(descendants)
-      console.log("final array created: ", finalArray)
+      console.log('final array created: ', finalArray)
 
       // create whakapapa with top ancestor as focus
       this.createView({
@@ -270,22 +270,22 @@ export default {
     async createProfiles (data) {
       // parse csv text into a an array
       // let csv = d3.csvParse(data)
-      var csv = d3.csvParse(data, function(d) {
+      var csv = d3.csvParse(data, function (d) {
         return {
-          parentNumber: d.parentNumber, 
-          number: d.number, 
-          preferredName: d.preferredName, 
-          legalName: d.legalName, 
-          gender: d.gender, 
-          bornAt: d.bornAt.split(/\//).reverse().join('/'), 
+          parentNumber: d.parentNumber,
+          number: d.number,
+          preferredName: d.preferredName,
+          legalName: d.legalName,
+          gender: d.gender,
+          bornAt: d.bornAt.split(/\//).reverse().join('/'),
           diedAt: d.diedAt.split(/\//).reverse().join('/'),
-          birthOrder: Number(d.birthOrder), 
-          contact: d.contact, 
-          location: d.location, 
-          profession: d.profession, 
-          relationshipType: d.relationshipType ? d.relationshipType : "birth",
-        };
-      });
+          birthOrder: Number(d.birthOrder),
+          contact: d.contact,
+          location: d.location,
+          profession: d.profession,
+          relationshipType: d.relationshipType ? d.relationshipType : 'birth'
+        }
+      })
       // store the titles of each column
       this.columns = csv.columns
 

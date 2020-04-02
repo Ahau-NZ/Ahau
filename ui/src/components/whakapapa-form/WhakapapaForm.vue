@@ -132,7 +132,7 @@ export default {
   methods: {
 
     checkFile (file) {
-      if (this.file.name.split('.').pop() != 'csv') { // check if file extension is csv
+      if (this.file.name.split('.').pop() !== 'csv') { // check if file extension is csv
         this.error = true
         this.errorMsg = ['please upload a CSV file']
       } else {
@@ -141,6 +141,7 @@ export default {
         reader.onload = () => {
           this.data = reader.result
         }
+        console.log("data: ", this.data)
         this.success = true
       }
     },
