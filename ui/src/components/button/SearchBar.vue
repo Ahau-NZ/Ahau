@@ -17,7 +17,7 @@
     class="search-input"
     autofocus
   >
-    <template v-slot:item="data" rounded>
+    <template v-slot:item="data">
       <template>
         <v-list-item @click="setSearchNode(data.item)">
           <Avatar class="mr-3" size="40px" :image="data.item.avatarImage" :alt="data.item.preferredName" :gender="data.item.gender" :bornAt="data.item.bornAt" />
