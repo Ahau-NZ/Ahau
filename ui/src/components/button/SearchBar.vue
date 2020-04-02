@@ -16,7 +16,6 @@
     dense
     class="search-input"
     autofocus
-    max-width="700px"
   >
     <template v-slot:item="data" rounded>
       <template>
@@ -30,10 +29,10 @@
             <v-list-item-title> {{ data.item.legalName }}</v-list-item-title>
             <v-list-item-subtitle>Legal name</v-list-item-subtitle>
           </v-list-item-content>
-          <v-list-item-content>
-            <v-list-item-title> {{ age(data.item.bornAt) }}</v-list-item-title>
+          <v-list-item-action>
+            <v-list-item-title>{{ age(data.item.bornAt) }}</v-list-item-title>
             <v-list-item-subtitle>Age</v-list-item-subtitle>
-          </v-list-item-content>
+          </v-list-item-action>
         </v-list-item>
       </template>
     </template>
