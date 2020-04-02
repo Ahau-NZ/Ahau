@@ -1,23 +1,29 @@
 <template>
   <div>
+
+    <!-- MOBILE top banner -->
     <v-row v-if="mobile" class="mobile-banner">
       <!-- Close Button -->
       <v-col cols="1" class="banner-buttons">
-          <v-icon class="close-button" @click="close">mdi-arrow-left</v-icon>
+          <v-icon class="close-button" color="white" @click="close">mdi-arrow-left</v-icon>
       </v-col>
-      <v-col class="d-flex align-center justify-end">
+      <v-col class="d-flex align-center justify-end" style="text-align: right;">
           <!-- Dialog Title -->
-          <h1 class="banner-title"><span style="color: #BA041B;">{{splitTitle.maori}}</span>{{splitTitle.english}}<span></span></h1>
+          <h1 v-if="!isEditing" class="banner-title"><span style="color: #BA041B;">{{splitTitle.maori}}</span>{{splitTitle.english}}<span></span></h1>
+          <h1 v-else class="banner-title">Edit <span style="color: #BA041B;">{{splitTitle.maori}}</span>{{splitTitle.english}}<span></span></h1>
         </v-col>
     </v-row>
+
+    <!-- DESKTOP top banner -->
     <v-row v-else class="banner">
       <v-col>
         <!-- Dialog Title -->
-        <h1 class="banner-title"><span style="color: #BA041B;">{{splitTitle.maori}}</span>{{splitTitle.english}}<span></span></h1>
+        <h1 v-if="!isEditing" class="banner-title"><span style="color: #BA041B;">{{splitTitle.maori}}</span>{{splitTitle.english}}<span></span></h1>
+        <h1 v-else class="banner-title"><span style="color: #BA041B;">Edit {{splitTitle.maori}}</span>{{splitTitle.english}}<span></span></h1>
       </v-col>
       <!-- Close Button -->
       <v-col cols="1" class="banner-buttons">
-          <v-icon class="close-button" @click="close">mdi-close</v-icon>
+          <v-icon class="close-button" color="white" @click="close">mdi-close</v-icon>
       </v-col>
     </v-row>
   </div>
@@ -31,6 +37,7 @@ export default {
   props: {
     title: { type: String, default: 'Create a new person' },
     mobile: { type: Boolean, default: false },
+    isEditing: { type: Boolean, default: false },
   },
   data () {
     return {

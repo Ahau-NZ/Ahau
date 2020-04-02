@@ -7,8 +7,9 @@
   style="background-color: white; height:100%;"
   >
     <!-- Mobile version of side menu -->
-    <Appbar v-if="mobile" enableMenu app :goBack="close" :sideMenu="sideMenu"  />
-    
+    <!-- <Appbar v-if="mobile" enableMenu app :goBack="close" :sideMenu="sideMenu"  /> -->
+    <DialogTitleBanner :title="formData.preferredName" :mobile="mobile" @close="close"  style=""/>
+
     <v-form ref="form" style="height:100%">
       <v-card light style="height:100%">
         <v-container class="pa-0" style="height:100%">
@@ -353,6 +354,7 @@ import NodeDatePicker from '@/components/NodeDatePicker.vue'
 import AddButton from '@/components/button/AddButton.vue'
 import ImagePicker from '@/components/ImagePicker.vue'
 import Appbar from '@/components/Appbar.vue'
+import DialogTitleBanner from '@/components/dialog/DialogTitleBanner.vue'
 
 import isEqual from 'lodash.isequal'
 import isEmpty from 'lodash.isempty'
@@ -391,7 +393,8 @@ export default {
     NodeDatePicker,
     AddButton,
     ImagePicker,
-    Appbar
+    Appbar,
+    DialogTitleBanner
   },
   props: {
     goBack: { type: Function },

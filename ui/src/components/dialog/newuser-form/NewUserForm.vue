@@ -26,7 +26,6 @@
           </v-row>
         </v-col>
       
-
         <!-- Names -->
         <v-col cols="12" sm="6" class="pt-4">
           <v-row>
@@ -37,7 +36,6 @@
                   label="Preferred name"
                   v-bind="customProps"
                   outlined
-                  color="#BA041B"
                 />
               <!-- </slot> -->
             </v-col>
@@ -47,7 +45,6 @@
                 label="Legal name."
                 v-bind="customProps"
                 outlined
-                color="#BA041B"
               />
             </v-col>
 
@@ -66,7 +63,6 @@
                   readonly
                   v-bind="customProps"
                   outlined
-                  color="#BA041B"
                 />
               </v-col>
             </template>
@@ -87,7 +83,6 @@
                   v-bind="customProps"
                   cols="12"
                   outlined
-                  color="#BA041B"
                 />
               </v-col>
               <v-col cols="12" class="pa-1">
@@ -117,7 +112,6 @@
                 min="1"
                 v-bind="customProps"
                 outlined
-                color="#BA041B"
               />
             </v-col>
           </v-row>
@@ -166,7 +160,6 @@
             rows="4" 
             auto-grow
             outlined
-            color="#BA041B"
           >
           </v-textarea>
         </v-col>
@@ -176,8 +169,6 @@
         </v-col> -->
       </v-row>
 
-
-      
       <v-row> 
         <v-col cols="12" sm="6" >
           <!-- Contact -->
@@ -188,7 +179,6 @@
                   label="Email"
                   v-bind="customProps"
                   outlined
-                  color="#BA041B"
                 />
               </v-col>
           </v-row>
@@ -200,7 +190,6 @@
                 label="Occupation"
                 v-bind="customProps"
                 outlined
-                color="#BA041B"
               />
             </v-col>
           </v-row>
@@ -215,14 +204,12 @@
                 label="Location"
                 v-bind="customProps"
                 outlined
-                color="#BA041B"
               />
             </v-col>
           </v-row>
         </v-col>
       </v-row>
       
-
     </v-col>
   </v-form>
 </template>

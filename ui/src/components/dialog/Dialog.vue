@@ -28,7 +28,7 @@
             <v-container width="100%" class="pa-5 pb-2" :style="`background: ${background};`">
               
               <!--=== TOP OF DIALOG CARD ===-->
-              <DialogTitleBanner :title="title" :mobile="mobile" @close="close"  style=""/>
+              <DialogTitleBanner :title="title" :mobile="mobile" @close="close"  :isEditing="isEditing"/>
               <!-- Slots -->
               <slot name="top"></slot>
               <slot name="title"></slot>
@@ -76,6 +76,10 @@ export default {
     show: {
       type: Boolean,
       required: true
+    },
+    isEditing: {
+      type: Boolean,
+      required: false
     },
     width: {
       type: String,
