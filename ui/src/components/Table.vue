@@ -269,8 +269,12 @@ export default {
         return 'fill:cadetblue'
       } else if (age !== null && age < 2) {
         return 'fill:yellow'
+      } else if (data.id === this.searchNodeId) {
+        console.log('found node: ', data)
+        return 'fill:red'
       } else return 'fill:lightblue'
     },
+
     collapse (node) {
       this.$emit('collapse-node', node.data.id)
       // TODO
