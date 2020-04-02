@@ -86,12 +86,6 @@ export default {
     }
   },
   methods: {
-    setName (name, limit) {
-      if (name.length > limit) {
-        return name.slice(0, limit) + '...'
-      }
-      return name
-    },
     setString (name) {
       if (isEmpty(name)) return ''
       return name.toLowerCase().trim()
