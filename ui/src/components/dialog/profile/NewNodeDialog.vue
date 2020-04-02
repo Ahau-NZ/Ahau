@@ -15,13 +15,33 @@
               item-value="preferredName"
               :menu-props="{ light: true }"
               :clearable="hasSelection"
-              hide-no-data
               append-icon=""
               v-bind="customProps"
               @click:clear="resetFormData()"
               no-data-text="no suggestions"
               :search-input.sync="formData.preferredName"
             >
+              <template v-slot:prepend-item>
+                <v-subheader>Suggested parents</v-subheader>
+                <v-list-item>
+                  <v-list-item-content>
+                    <v-list-item-title>
+                      None
+                    </v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+                <v-divider/>
+                <v-subheader>Suggested children</v-subheader>
+                <v-list-item>
+                  <v-list-item-content>
+                    <v-list-item-title>
+                      None
+                    </v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+                <v-divider/>
+                <v-subheader>Suggestions not in this whakapapa</v-subheader>
+              </template>
               <template v-slot:item="data">
                 <template>
                   <v-list-item @click="setFormData(data.item)">

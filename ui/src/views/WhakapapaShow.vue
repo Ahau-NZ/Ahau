@@ -182,7 +182,6 @@ export default {
       recordQueue: [],
       processingQueue: false,
 
-      suggestions: [], // holds an array of suggested profiles
       selectedProfile: null,
       dialog: {
         active: null,
