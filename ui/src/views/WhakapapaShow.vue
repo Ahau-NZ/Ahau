@@ -96,9 +96,12 @@
       </v-row>
     </v-container>
 
-    <vue-context ref="menu">
+    <vue-context ref="menu" class="px-0"  >
       <li v-for="(option, index) in contextMenuOpts" :key="index">
-        <a href="#" @click.prevent="updateDialog(option.dialog, option.type)">{{ option.title }}</a>
+        <a href="#" @click.prevent="updateDialog(option.dialog, option.type)" class="d-flex align-center px-4">
+          <img class="contextMenuIcon" :src="option.icon"/>
+          <p class="ma-0 pl-3">{{ option.title }}</p>
+        </a>
       </li>
       <li v-if="canDelete(selectedProfile)">
         <a href="#" @click.prevent="updateDialog('delete-node', null)">Delete Person</a>
@@ -216,9 +219,9 @@ export default {
         table: false
       },
       contextMenuOpts: [
-        { title: 'View Person', dialog: 'view-edit-node' },
-        { title: 'Add Child', dialog: 'new-node', type: 'child' },
-        { title: 'Add Parent', dialog: 'new-node', type: 'parent' }
+        { title: 'View Person', dialog: 'view-edit-node', icon: require('../assets/account-circle.svg')},
+        { title: 'Add Parent', dialog: 'new-node', type: 'parent', icon: require('../assets/node-parent.svg')},
+        { title: 'Add Child', dialog: 'new-node', type: 'child', icon: require('../assets/node-child.svg')}
       ]
     }
   },
@@ -641,6 +644,11 @@ h1 {
   width: 300px;
   display: flex;
   justify-items: flex-end;
+}
+
+.contextMenuIcon {
+  width: 20px;
+  height: 20px;
 }
 
 </style>

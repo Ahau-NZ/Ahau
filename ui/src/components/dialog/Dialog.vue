@@ -28,9 +28,10 @@
             <v-container width="100%" class="pa-5 pb-2" :style="`background: ${background};`">
               
               <!--=== TOP OF DIALOG CARD ===-->
-              <!-- Slot title -->
-              <!-- <slot name="title"></slot> -->
               <DialogTitleBanner :title="title" :mobile="mobile" @close="close"  style=""/>
+              <!-- Slots -->
+              <slot name="top"></slot>
+              <slot name="title"></slot>
 
 
               <!--=== CONTENT OF DIALOG CARD ===-->

@@ -6,7 +6,9 @@
   :fullscreen="mobile"
   style="background-color: white; height:100%;"
   >
+    <!-- Mobile version of side menu -->
     <Appbar v-if="mobile" enableMenu app :goBack="close" :sideMenu="sideMenu"  />
+    
     <v-form ref="form" style="height:100%">
       <v-card light style="height:100%">
         <v-container class="pa-0" style="height:100%">
