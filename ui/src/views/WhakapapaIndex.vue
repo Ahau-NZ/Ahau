@@ -250,15 +250,13 @@ export default {
       // create obj of children and parents
       var root = d3.stratify()
         .id(function (d) { return d.number })
-        .parentId(function (d) { return d.parentNumber })
-        (profilesArray)
+        .parentId(function (d) { return d.parentNumber })(profilesArray)
 
       // create new array now with child and parents data
       var descendants = root.descendants()
 
       // create whakapapaLinks
       var finalArray = await this.createLinks(descendants)
-      console.log('final array created: ', finalArray)
 
       // create whakapapa with top ancestor as focus
       this.createView({
@@ -290,8 +288,7 @@ export default {
       this.columns = csv.columns
 
       // create a profile for each person and add the created id to the person and parse back to profilesArray
-      return await Promise.all(csv.map
-      (async d => {
+      return Promise.all(csv.map(async d => {
         var id = await this.addPerson(d)
         const person = {
           id: id,
@@ -326,8 +323,7 @@ export default {
       // skip top ancestor
       descendants.shift()
       // create a whakapapaLink between child and parent for each person
-      return await Promise.all(descendants.map
-      (async d => {
+      return Promise.all(descendants.map(async d => {
         let relationship = {
           child: d.data.id,
           parent: d.parent.data.id,
@@ -411,7 +407,6 @@ export default {
           return
         }
         return res // TODO return the linkId
-        console.log('child link created: ', res)
       } catch (err) {
         throw err
       }

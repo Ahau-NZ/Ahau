@@ -50,7 +50,6 @@ const PERMITTED_WHAKAPAPA_ATTRS = [
 ]
 
 function setDefaultWhakapapa (whakapapa) {
-  console.log('setting default whakapapa: ', whakapapa)
   return {
     name: whakapapa.name,
     description: whakapapa.description,
@@ -61,7 +60,6 @@ function setDefaultWhakapapa (whakapapa) {
 }
 
 function whakapapaSubmission (newWhakapapa) {
-  console.log('whakapapa submission: ', newWhakapapa)
   var output = {}
   var whakapapa = pick(newWhakapapa, [...PERMITTED_WHAKAPAPA_ATTRS])
   Object.entries(whakapapa).forEach(([key, value]) => {
@@ -121,7 +119,6 @@ export default {
         ...output,
         csv: csv
       }
-      console.log('submit output', newOutput)
       this.$emit('submit', newOutput)
       this.close()
     },

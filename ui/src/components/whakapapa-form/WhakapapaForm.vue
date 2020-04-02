@@ -141,14 +141,14 @@ export default {
         reader.onload = () => {
           this.data = reader.result
         }
-        console.log("data: ", this.data)
+        console.log('data: ', this.data)
         this.success = true
       }
     },
 
     resetFile () {
-      this.file = null,
-      this.data = null,
+      this.file = null
+      this.data = null
       this.error = false
       this.success = false
       this.errorMsg = []

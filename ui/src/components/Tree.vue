@@ -106,7 +106,7 @@ export default {
         }
       })
     },
-    // watch for change of focus
+    // watch for change of focus to center on that node
     currentFocus (newValue) {
       if (this.changeFocusId !== null) {
         // if theres a change wait for the nodes to load than map through to find the change of focus
@@ -121,18 +121,19 @@ export default {
         // hide the grapgh until the tree has centered
         setTimeout(() => {
           this.loading = false
+          this.changeFocusId = null
         }, 1000)
       }
     },
 
-    // watch node and if the previous node is the same last node is the same  
-    node (newValue){
+    // watch node and if the previous node is the same last node is the same
+    node (newValue) {
       this.lastNode = newValue
       setTimeout(() => {
-        if (this.lastNode === newValue){
+        if (this.lastNode === newValue) {
           this.loading = false
         }
-      }, 1000) 
+      }, 1000)
     }
   },
   data () {
@@ -153,7 +154,7 @@ export default {
   },
   mounted () {
     this.componentLoaded = true
-    // set loader until all the nodes have been loaded 
+    // set loader until all the nodes have been loaded
     this.loading = true
     this.zoom()
   },
@@ -229,11 +230,11 @@ export default {
       returns an array of nodes associated with the root node created from the treeData object, as well as
       extra attributes
     */
-    nodes () {    
+    nodes () {
       return this.treeLayout(this.root)
         .descendants() // returns the array of descendants starting with the root node, then followed by each child in topological order
         .map((d, i) => {
-          this.node = d.data.id
+          this.updateNode(d.data.id)
           return {
             nodeId: `node-${i}`,
             children: d.children,
@@ -244,7 +245,7 @@ export default {
             x: d.x,
             y: d.y
           }
-        })  
+        })
     },
     /*
       returns an array of links which holds the X and Y coordinates of both the parent (source) and child (target) nodes
@@ -290,13 +291,10 @@ export default {
     }
   },
 
-  // lastNode () {
-  //   setTimeout(() => {
-  //   return  this.node
-  //   }, 100)
-  // },
-
   methods: {
+    updateNode (id) {
+      this.node = id
+    },
 
     pathStroke (sourceId, targetId) {
       if (!this.paths) return 'lightgrey'

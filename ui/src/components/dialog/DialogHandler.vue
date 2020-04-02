@@ -177,14 +177,11 @@ export default {
       return true
     },
     async addPerson ($event) {
-      console.log('add person event: ', $event)
       try {
         var { id } = $event
 
         if (!id) {
-          console.log('id:', id)
           id = await this.createProfile($event)
-          console.log('id after create: ', id)
           if (!id) return
         }
 
@@ -261,7 +258,7 @@ export default {
               // in this case we're updating the top of the graph, we update view.focus to that new top parent
               this.$emit('updateFocus', parent)
             // load new parent on partner whakapapa links
-            } else if (!parent.parent) {
+            } else if (this.selectedProfile.parents.length < 1) {
               this.$emit('change-focus', parent)
             } else {
               await this.$emit('load', child)
