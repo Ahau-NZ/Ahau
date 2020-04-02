@@ -33,22 +33,31 @@
       <WhakapapaBanner v-if="mobile" :view="whakapapaView" @edit="updateDialog('whakapapa-edit', null)" @more-info="updateDialog('whakapapa-view', null)"/>
 
       <v-row v-if="!mobile" class="select">
-        <v-col v-if="whakapapa.table && flatten">
+
+        <div v-if="search" class="icon-search">
+          <SearchBar :nestedWhakapapa="nestedWhakapapa" :searchNodeId.sync="searchNodeId" @close="clickedOff()"/>
+        </div>
+
+        <div v-else  class="icon-button">
+          <SearchButton :search.sync="search"/>
+        </div>
+
+        <div v-if="whakapapa.table && flatten" class="icon-button">
           <FilterButton :filter="filter" @filter="toggleFilter()" />
-        </v-col>
-        <v-col v-if="whakapapa.table">
+        </div>
+        <div v-if="whakapapa.table" class="icon-button">
           <FlattenButton @flatten="toggleFlatten()" />
-        </v-col>
-        <v-col>
+        </div>
+        <div class="icon-button">
           <TableButton @table="toggleTable()" />
-        </v-col>
-        <v-col>
+        </div>
+        <div class="icon-button">
           <HelpButton v-if="whakapapa.tree" @click="updateDialog('whakapapa-helper', null)" />
           <HelpButton v-else @click="updateDialog('whakapapa-table-helper', null)" />
-        </v-col>
-        <v-col>
+        </div>
+        <div class="icon-button">
           <FeedbackButton />
-        </v-col>
+        </div>
       </v-row>
 
       <v-row>
@@ -56,11 +65,15 @@
           class="tree"
           v-if="whakapapa.tree"
           :view="whakapapaView"
+          :currentFocus="currentFocus"
+          :getRelatives="getRelatives"
           :nestedWhakapapa="nestedWhakapapa"
           :relationshipLinks="relationshipLinks"
           @load-descendants="loadDescendants($event)"
           @collapse-node="collapseNode($event)"
           @open-context-menu="openContextMenu($event)"
+          :searchNodeId="searchNodeId"
+          @change-focus="changeFocus($event)"
         />
         <Table
           v-if="whakapapa.table"
@@ -72,6 +85,7 @@
           @load-descendants="loadDescendants($event)"
           @collapse-node="collapseNode($event)"
           @open-context-menu="openContextMenu($event)"
+          :searchNodeId="searchNodeId"
         />
       </v-row>
     </v-container>
@@ -92,6 +106,8 @@
       @load="loadDescendants($event)"
       @updateFocus="updateFocus($event)"
       @set="setSelectedProfile($event)"
+      @change-focus="changeFocus($event)"
+      @newAncestor="showNewAncestors($event)"
       :nestedWhakapapa="nestedWhakapapa"
       :profiles.sync="profiles"
       @updateWhakapapa="updateWhakapapa($event)"
@@ -117,6 +133,9 @@ import HelpButton from '@/components/button/HelpButton.vue'
 import FlattenButton from '@/components/button/FlattenButton.vue'
 import FilterButton from '@/components/button/FilterButton.vue'
 
+import SearchBar from '@/components/button/SearchBar.vue'
+import SearchButton from '@/components/button/SearchButton.vue'
+
 import tree from '@/lib/tree-helpers'
 import avatarHelper from '@/lib/avatar-helpers.js'
 
@@ -141,6 +160,8 @@ export default {
     HelpButton,
     FlattenButton,
     FilterButton,
+    SearchBar,
+    SearchButton,
     FeedbackButton,
     Table,
     Tree,
@@ -150,6 +171,8 @@ export default {
   },
   data () {
     return {
+      search: false,
+      searchNodeId: '',
       showWhakapapaHelper: false,
       whakapapaView: {
         name: 'Loading',
@@ -160,6 +183,7 @@ export default {
         image: { uri: '' },
         ignoredProfiles: []
       },
+      focus: null,
       // the record which defines the starting point for a tree (the 'focus')
       whoami: {
         profile: { id: '' }
@@ -234,8 +258,18 @@ export default {
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
+    currentFocus: {
+      get: function () {
+      // the current focused profile of the whakapapa tree
+        if (!this.focus) return this.whakapapaView.focus
+        return this.focus
+      },
+      set: function (newValue) {
+        this.focus = newValue
+      }
+    },
     nestedWhakapapa () {
-      var startingProfile = this.profiles[this.whakapapaView.focus]
+      var startingProfile = this.profiles[this.currentFocus]
       if (!startingProfile) {
         return {
           preferredName: 'Loading',
@@ -249,8 +283,10 @@ export default {
     }
   },
   watch: {
-    'whakapapaView.focus': async function (newFocus) {
-      if (newFocus) this.loadDescendants(newFocus)
+    'currentFocus': async function (newFocus) {
+      if (newFocus) {
+        await this.loadDescendants(newFocus)
+      }
     },
     processingQueue: function (isProcessing) {
       if (!isProcessing) return
@@ -288,6 +324,13 @@ export default {
     }
   },
   methods: {
+    clickedOff () {
+      this.search = !this.search
+    },
+    // when adding a partner ancestor update the tree to load
+    showNewAncestors (parent) {
+      this.currentFocus = parent
+    },
     isVisibleProfile (descendant) {
       return this.whakapapaView.ignoredProfiles.indexOf(descendant.profile.id) === -1
     },
@@ -309,6 +352,23 @@ export default {
       this.dialog.type = type
       this.dialog.active = dialog
     },
+    async changeFocus (profileId) {
+      const newFocus = await this.getWhakapapaHead(profileId, 'newAmountParents')
+      this.currentFocus = newFocus
+    },
+    async getWhakapapaHead (profileId, type = 'temp') {
+      const record = await this.getRelatives(profileId)
+      if (!record || !record.parents || record.parents.length < 1) return profileId
+      // this.partnerFocus[type] = this.partnerFocus[type] + 1
+      for await (const parent of record.parents) {
+        // follow parent from the main branch
+        if (this.profiles[parent.profile.id] && this.profiles[parent.profile.id].parents) {
+          return this.getWhakapapaHead(parent.profile.id, type)
+        }
+      }
+      return this.getWhakapapaHead(record.parents[0].profile.id, type)
+    },
+
     async getRelatives (profileId) {
       const request = {
         query: gql`
@@ -466,7 +526,7 @@ export default {
       }
       try {
         const res = await this.$apollo.mutate(saveWhakapapaViewMutation(input))
-        if (res.data) this.whakapapaView.focus = focus
+        if (res.data) this.currentFocus = focus
         else console.error(res)
       } catch (err) {
         throw err
@@ -554,6 +614,15 @@ export default {
 }
 </script>
 
+<style>
+  .v-select.v-select--is-menu-active
+  .v-input__icon--append
+  .v-icon {
+    transform: rotate(0);
+  }
+
+</style>
+
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 @import "~vue-context/dist/css/vue-context.css";
@@ -578,7 +647,7 @@ export default {
     & > .select {
       position: absolute;
       top: 20px;
-      right: 30px;
+      right: 50px;
 
       .col {
         padding-top: 0;
@@ -600,4 +669,18 @@ h1 {
 .tree {
   max-height: calc(100vh - 64px);
 }
+
+.icon-button {
+  padding: 0px;
+  width: 50px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.icon-search {
+  width: 300px;
+  display: flex;
+  justify-items: flex-end;
+}
+
 </style>

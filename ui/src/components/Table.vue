@@ -36,28 +36,28 @@
               <text> - </text>
             </g>
             <svg :width="columns[1].x - 45" >
-              <text :transform="`translate(${columns[0].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
+              <text  :transform="`translate(${columns[0].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
                 {{ node.data.legalName }}
               </text>
             </svg>
             <svg :width="columns[2].x - 45">
-              <text :transform="`translate(${columns[1].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
+              <text  :transform="`translate(${columns[1].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
                 {{ node.age }}
               </text>
             </svg>
             <svg :width="columns[3].x - 45">
-              <text :transform="`translate(${columns[2].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ node.profession }}
+              <text  :transform="`translate(${columns[2].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
+                {{ node.data.profession }}
               </text>
             </svg>
             <svg :width="columns[4].x">
-              <text :transform="`translate(${columns[3].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ node.location }}
+              <text  :transform="`translate(${columns[3].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
+                {{ node.data.location }}
               </text>
             </svg>
             <svg>
               <text :transform="`translate(${columns[4].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ node.contact }}
+                {{ node.data.contact }}
               </text>
             </svg>
           </g>
@@ -69,8 +69,10 @@
 <script>
 import * as d3 from 'd3'
 import Node from './table/Node.vue'
-import Link from './table/Link.vue'
+import Link from './tree/Link.vue'
 import calculateAge from '../lib/calculate-age.js'
+
+import isEqual from 'lodash.isequal'
 
 export default {
   props: {
@@ -97,6 +99,9 @@ export default {
     filter: {
       type: Boolean,
       default: false
+    },
+    searchNodeId: {
+      type: String
     }
   },
   data () {
@@ -106,7 +111,6 @@ export default {
       componentLoaded: false, // need to ensure component is loaded before using $refs
       nodeRadius: 20, // use variable for zoom later on
       nodeSize: 40,
-      tableHeight: 0,
       duration: 400
     }
   },
@@ -114,6 +118,12 @@ export default {
     this.componentLoaded = true
   },
   computed: {
+    pathNode () {
+      if (this.searchNodeId === '') return null
+      return this.root.descendants().find(d => {
+        return d.data.id === this.searchNodeId
+      })
+    },
     columns () {
       return [
         {
@@ -152,24 +162,16 @@ export default {
         n.y = ++index * 30
         n.x = flatten ? 0.1 : n.depth * 15
       })
-      this.tableHeight = (1 + index) * 60
       return layout
+    },
+
+    tableHeight () {
+      if (!this.componentLoaded) return 0
+      return (this.nodes.length + 1) * 60
     },
 
     // returns an array of nodes associated with the root node created from the treeData object, as well as extra attributes
     nodes () {
-      var index = -1
-
-      // changes row colour
-      function nodeColor (data) {
-        var age = calculateAge(data.bornAt)
-        if (data.isCollapsed) {
-          return 'fill:cadetblue'
-        } else if (age !== null && age < 2) {
-          return 'fill:yellow'
-        } else return 'fill:lightblue'
-      }
-
       return this.tableLayout
         // returns the array of descendants starting with the root node, then followed by each child in topological order
         .descendants()
@@ -190,13 +192,9 @@ export default {
             height: d.height,
             parent: d.parent,
             x: d.x,
-            y: this.filter ? ++index * 45 : d.y * 1.5,
+            y: this.filter ? i * 45 : d.y * 1.5,
             age: calculateAge(d.data.bornAt),
-            color: nodeColor(d.data),
-            profession: d.data.profession,
-            location: d.data.location,
-            contact: d.data.contact
-
+            color: this.nodeColor(d.data)
           }
         })
     },
@@ -209,28 +207,73 @@ export default {
         .links() // returns the array of links
         .map((d, i) => { // returns a new custom object for each link
           return {
-            id: `link-${i}-${i + 1}`,
+            id: `table-link-${i}-${i + 1}`,
             index: i,
             relationshipType: d.target.data.relationshipType ? d.target.data.relationshipType[0] : '',
-            d: `M${d.source.x - this.nodeRadius / 2},${d.source.y * 1.5}
-                V${d.target.y * 1.5}
-                h${d.target.x / (d.target.x * 0.1)}
-            `,
-            class: this.relationshipLinks[d.source.data.id + '-' + d.target.data.id].relationshipType !== 'birth' ? 'nonbiological' : ''
+            class: this.relationshipLinks[d.source.data.id + '-' + d.target.data.id].relationshipType !== 'birth' ? 'nonbiological' : '',
+            style: {
+              fill: 'none',
+              stroke: this.pathStroke(d.source.data.id, d.target.data.id)
+            },
+            d: `
+              M${d.source.x - this.nodeRadius / 2},${d.source.y * 1.5}
+              V${d.target.y * 1.5}
+              h${d.target.x / (d.target.x * 0.1)}
+            `
           }
         })
+        .sort((a, b) => {
+          var A = a.style.stroke
+          var B = b.style.stroke
+          if (A > B) return -1
+          if (A < B) return 1
+          return 0
+        })
+    },
+    paths () {
+      if (!this.componentLoaded || !this.pathNode) return null
+      return this.root.path(this.pathNode)
+        .map(d => d.data.id)
     }
   },
 
   watch: {
     flatten (newVal) {
-      if (newVal) {
-        this.width = 250
-      } else this.width = 350
+      if (newVal) this.width = 250
+      else this.width = 350
     }
   },
-
   methods: {
+    pathStroke (sourceId, targetId) {
+      if (!this.paths) return 'lightgrey'
+
+      var currentPath = [
+        sourceId,
+        targetId
+      ]
+
+      var pairs = d3.pairs(this.paths)
+        .filter(d => {
+          return isEqual(d, currentPath)
+        })
+
+      if (pairs.length > 0) {
+        return '#b02425'
+      }
+      return 'lightgrey'
+    },
+    // changes row colour
+    nodeColor (data) {
+      var age = calculateAge(data.bornAt)
+      if (data.isCollapsed) {
+        return 'fill:cadetblue'
+      } else if (age !== null && age < 2) {
+        return 'fill:yellow'
+      } else if (data.id === this.searchNodeId) {
+        return 'fill:red'
+      } else return 'fill:lightblue'
+    },
+
     collapse (node) {
       this.$emit('collapse-node', node.data.id)
       // TODO
@@ -249,17 +292,14 @@ svg#baseSvg {
   padding-top:100px;
   min-height: calc(100vh - 68px);
 }
-
 .nonbiological{
   stroke-dasharray: 2.5
 }
-
 .row {
   opacity: .2;
   fill: lightblue
 }
-
 text {
-    fill: #555;
-  }
+  fill: #555;
+}
 </style>
