@@ -3,8 +3,10 @@
     <NewNodeDialog v-if="isActive('new-node')"
       :show="isActive('new-node')"
       :title="`Add ${type} to ${selectedProfile.preferredName}`"
+      :type="type"
       @create="addPerson($event)"
       @close="close"
+      :selectedProfile="selectedProfile"
       :suggestions="suggestions" @getSuggestions="getSuggestions($event)"
     />
     <div :class="sideMenuClass">

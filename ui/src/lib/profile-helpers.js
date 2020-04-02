@@ -54,6 +54,8 @@ export const getProfile = id => ({
             location contact profession
             avatarImage { uri }
           }
+          relationshipId
+          relationshipType
         }
         parents {
           profile {
@@ -64,9 +66,10 @@ export const getProfile = id => ({
             location contact profession
             avatarImage { uri }
           }
+          relationshipId
+          relationshipType
         }
-        relationshipId
-        relationshipType
+        
       }
     }
   `,

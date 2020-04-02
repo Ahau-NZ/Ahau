@@ -22,16 +22,8 @@
               :search-input.sync="formData.preferredName"
             >
               <template v-slot:prepend-item>
-                <v-subheader>Suggested parents</v-subheader>
-                <v-list-item>
-                  <v-list-item-content>
-                    <v-list-item-title>
-                      None
-                    </v-list-item-title>
-                  </v-list-item-content>
-                </v-list-item>
-                <v-divider/>
-                <v-subheader>Suggested children</v-subheader>
+                <v-subheader v-if="type === 'parent'">Suggested parents</v-subheader>
+                <v-subheader v-if="type === 'child'">Suggested children</v-subheader>
                 <v-list-item>
                   <v-list-item-content>
                     <v-list-item-title>
@@ -90,7 +82,9 @@ import ProfileForm from '@/components/profile-form/ProfileForm.vue'
 import Avatar from '@/components/Avatar.vue'
 import isEmpty from 'lodash.isempty'
 import pick from 'lodash.pick'
-import calculateAge from '../../../lib/calculate-age'
+import calculateAge from '@/lib/calculate-age'
+
+import { getProfile } from '@/lib/profile-helpers'
 
 function setDefaultData (withRelationships) {
   const formData = {
@@ -136,7 +130,13 @@ export default {
     title: { type: String, default: 'Create a new person' },
     suggestions: { type: Array },
     hideDetails: { type: Boolean, default: false },
-    selectedProfile: { type: Object }
+    selectedProfile: { type: Object },
+    type: {
+      type: String,
+      validator: (val) => [
+        'child', 'parent'
+      ].includes(val)
+    }
   },
   data () {
     return {
@@ -145,6 +145,16 @@ export default {
     }
   },
   computed: {
+    suggestedFamily () {
+      switch (this.type) {
+        case 'child':
+          return this.findChildren()
+        case 'parent':
+          return this.findParents()
+        default:
+          return []
+      }
+    },
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -172,7 +182,48 @@ export default {
       return submission
     }
   },
+  mounted () {
+    console.log(this.suggestedFamily)
+  },
   methods: {
+    findChildren () {
+      var currentChildren = []
+      var children = []
+
+      this.selectedProfile.children.forEach(d => {
+        currentChildren[d.id] = d
+      })
+
+      // children of your partners that arent currently your children
+      this.selectedProfile.partners.forEach(async child => {
+        const result = await this.$apollo.query(getProfile(child.id))
+
+        if (result.data) {
+          result.data.person.children.forEach(d => {
+            if (!currentChildren[d.profile.id]) {
+              children.push(d.profile)
+            }
+          })
+        }
+      })
+
+      return children
+    },
+    findParents () {
+      var currentParents = []
+      var currentSiblings = []
+      var children = []
+
+      this.selectedProfile.parents.forEach(d => {
+        currentParents[d.id] = d
+
+      })
+
+      // parents of your siblings that arent currently your parent
+      
+
+      return children
+    },
     age (bornAt) {
       return calculateAge(bornAt)
     },
