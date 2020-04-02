@@ -25,20 +25,19 @@
               <template v-slot:item="data">
                 <template>
                   <v-list-item @click="setFormData(data.item)">
-                    <v-row>
-                      <v-col class="pa-0" cols="2">
-                        <Avatar size="40px" :image="data.item.avatarImage" :alt="data.item.preferredName" :gender="data.item.gender" :bornAt="data.item.bornAt" />
-                      </v-col>
-                      <v-col cols="2">
-                        <small>{{ data.item.preferredName }}</small>
-                      </v-col>
-                      <v-col cols="5">
-                        <small>{{ data.item.legalName }}</small>
-                      </v-col>
-                      <v-col cols="3">
-                        <small>{{ data.item.bornAt ? data.item.bornAt.slice(0, 10) : '' }}</small>
-                      </v-col>
-                    </v-row>
+                    <Avatar class="mr-3" size="40px" :image="data.item.avatarImage" :alt="data.item.preferredName" :gender="data.item.gender" :bornAt="data.item.bornAt" />
+                    <v-list-item-content>
+                      <v-list-item-title> {{ data.item.preferredName }}</v-list-item-title>
+                      <v-list-item-subtitle>Preferred name</v-list-item-subtitle>
+                    </v-list-item-content>
+                    <v-list-item-content>
+                      <v-list-item-title> {{ data.item.legalName }}</v-list-item-title>
+                      <v-list-item-subtitle>Legal name</v-list-item-subtitle>
+                    </v-list-item-content>
+                    <v-list-item-action>
+                      <v-list-item-title>{{ age(data.item.bornAt) }}</v-list-item-title>
+                      <v-list-item-subtitle>Age</v-list-item-subtitle>
+                    </v-list-item-action>
                   </v-list-item>
                 </template>
               </template>
@@ -71,6 +70,7 @@ import ProfileForm from '@/components/profile-form/ProfileForm.vue'
 import Avatar from '@/components/Avatar.vue'
 import isEmpty from 'lodash.isempty'
 import pick from 'lodash.pick'
+import calculateAge from '../../../lib/calculate-age'
 
 function setDefaultData (withRelationships) {
   const formData = {
@@ -153,6 +153,9 @@ export default {
     }
   },
   methods: {
+    age (bornAt) {
+      return calculateAge(bornAt)
+    },
     submit () {
       var submission = Object.assign({}, this.submission)
       this.hasSelection
