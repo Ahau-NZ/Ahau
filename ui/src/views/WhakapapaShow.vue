@@ -104,7 +104,10 @@
         </a>
       </li>
       <li v-if="canDelete(selectedProfile)">
-        <a href="#" @click.prevent="updateDialog('delete-node', null)">Delete Person</a>
+        <a href="#" @click.prevent="updateDialog('delete-node', null)" class="d-flex align-center px-4">
+          <v-icon class="contextMenuIcon">mdi-delete</v-icon>
+          <p class="ma-0 pl-3">Delete Person</p>
+        </a>
       </li>
     </vue-context>
     <DialogHandler
@@ -649,6 +652,7 @@ h1 {
 .contextMenuIcon {
   width: 20px;
   height: 20px;
+  color: black;
 }
 
 </style>
