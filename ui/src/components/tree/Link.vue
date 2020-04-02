@@ -1,5 +1,5 @@
 <template>
-  <path class="link" :d="link.d" />
+  <path class="link" :d="link.d" :style="link.style"/>
 </template>
 
 <script>
@@ -8,18 +8,7 @@ export default {
     link: {
       type: Object,
       required: true
-    },
-    branch: {
-      type: Number,
-      required: true
     }
   }
 }
 </script>
-
-<style scoped lang="scss">
-path {
-  fill: none;
-  stroke: black;
-}
-</style>

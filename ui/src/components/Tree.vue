@@ -11,7 +11,7 @@
     <g id="baseGroup" >
       <g :transform="`translate(${treeX} ${treeY})`">
         <g v-for="link in links" :key="link.id" class="link">
-          <Link :link="link" :branch="branch" :class="link.class"/>
+          <Link :link="link" :class="link.class"/>
         </g>
       </g>
 
@@ -62,6 +62,8 @@ import get from 'lodash.get'
 import Node from './tree/Node.vue'
 import Link from './tree/Link.vue'
 
+import isEqual from 'lodash.isequal'
+
 export default {
   props: {
     nestedWhakapapa: {
@@ -84,6 +86,9 @@ export default {
     relationshipLinks: {
       type: Array
     },
+    searchNodeId: {
+      type: String
+    },
     getRelatives: Function
   },
   watch: {
@@ -93,7 +98,14 @@ export default {
         this.checkNonFocusedPartner(this.nestedWhakapapa)
       }
     },
-
+    searchNodeId (newVal) {
+      if (newVal === '') return null
+      this.root.descendants().find(d => {
+        if (d.data.id === newVal) {
+          this.centerNode(d)
+        }
+      })
+    },
     // watch for change of focus
     currentFocus (newValue) {
       if (this.changeFocusId != null) {
@@ -113,7 +125,6 @@ export default {
         }, 1000)
       }
     }
-
   },
   data () {
     return {
@@ -134,6 +145,12 @@ export default {
     this.zoom()
   },
   computed: {
+    pathNode () {
+      if (this.searchNodeId === '') return null
+      return this.root.descendants().find(d => {
+        return d.data.id === this.searchNodeId
+      })
+    },
     branch () {
       return this.nodeSeparationY / 2 + this.nodeRadius
     },
@@ -223,7 +240,7 @@ export default {
         .links() // returns the array of links
         .map((d, i) => { // returns a new custom object for each link
           return {
-            id: `link-${i}-${i + 1}`,
+            id: `tree-link-${i}-${i + 1}`,
             index: i,
             relationshipType: d.target.data.relationshipType ? d.target.data.relationshipType[0] : '',
             // coordinates from drawing lines/links from Parent(x1,y1) to Child(x2,y2)
@@ -231,19 +248,53 @@ export default {
             x2: d.target.x, // centre x position of child node
             y1: d.source.y, // centre y position of the parent node
             y2: d.target.y, // centre y position of the child node
+            class: this.relationshipLinks[d.source.data.id + '-' + d.target.data.id].relationshipType !== 'birth' ? 'nonbiological' : '',
+            style: {
+              fill: 'none',
+              stroke: this.pathStroke(d.source.data.id, d.target.data.id)
+            },
             d: `
               M ${d.source.x}, ${d.source.y} 
               v ${this.branch} 
               H ${d.target.x} 
               V ${d.target.y}
-            `,
-            class: this.relationshipLinks[d.source.data.id + '-' + d.target.data.id].relationshipType !== 'birth' ? 'nonbiological' : ''
+            `
           }
         })
+        .sort((a, b) => {
+          var A = a.style.stroke
+          var B = b.style.stroke
+          if (A > B) return -1
+          if (A < B) return 1
+          return 0
+        })
+    },
+    paths () {
+      if (!this.componentLoaded || !this.pathNode) return null
+      return this.root.path(this.pathNode)
+        .map(d => d.data.id)
     }
   },
 
   methods: {
+    pathStroke (sourceId, targetId) {
+      if (!this.paths) return 'lightgrey'
+
+      var currentPath = [
+        sourceId,
+        targetId
+      ]
+
+      var pairs = d3.pairs(this.paths)
+        .filter(d => {
+          return isEqual(d, currentPath)
+        })
+
+      if (pairs.length > 0) {
+        return '#b02425'
+      }
+      return 'lightgrey'
+    },
     loadDescendants (profileId) {
       this.$emit('load-descendants', profileId)
     },
@@ -262,25 +313,21 @@ export default {
         }
       }
     },
-
     collapse (node) {
       this.$emit('collapse-node', node.data.id)
       //  TODO smooth ease-in-out transitions of children using d3 transitions
     },
-
     changeFocus (profileId, node) {
       this.loading = true
       node.data.id = profileId
       this.changeFocusId = profileId
       this.$emit('change-focus', profileId)
     },
-
     visiblePartners (node) {
       return get(node, 'data.isCollapsed')
         ? 0
         : get(node, 'data.partners.length', 0)
     },
-
     zoom () {
       var svg = d3.select('#baseSvg')
       var g = d3.select('#baseGroup')
@@ -294,7 +341,6 @@ export default {
       )
         .on('dblclick.zoom', null)
     },
-
     centerNode (source) {
       // if source node is already centered than collapse
 
@@ -314,11 +360,10 @@ export default {
       var y = height / 2 - source.y
 
       g.transition()
-        .duration(400)
+        .duration(1000)
         .attr('transform', 'translate(' + (x) + ',' + (y) + ')scale(' + 1 + ')')
         .on('end', function () { svg.call(d3.zoom().transform, d3.zoomIdentity.translate((x), (y)).scale(1)) })
     },
-
     zoomInOut (scale) {
       var svg = d3.select('#baseSvg')
       var g = d3.select('#baseGroup')
@@ -349,7 +394,6 @@ export default {
         })
     }
   },
-
   components: {
     Node,
     Link
