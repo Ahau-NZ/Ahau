@@ -33,22 +33,31 @@
       <WhakapapaBanner v-if="mobile" :view="whakapapaView" @edit="updateDialog('whakapapa-edit', null)" @more-info="updateDialog('whakapapa-view', null)"/>
 
       <v-row v-if="!mobile" class="select">
-        <v-col v-if="whakapapa.table && flatten">
+
+        <div v-if="search" class="icon-search">
+          <SearchBar :nestedWhakapapa="nestedWhakapapa" :searchNodeId.sync="searchNodeId" @close="clickedOff()"/>
+        </div>
+
+        <div v-else  class="icon-button">
+          <SearchButton :search.sync="search"/>
+        </div>
+
+        <div v-if="whakapapa.table && flatten" class="icon-button">
           <FilterButton :filter="filter" @filter="toggleFilter()" />
-        </v-col>
-        <v-col v-if="whakapapa.table">
+        </div>
+        <div v-if="whakapapa.table" class="icon-button">
           <FlattenButton @flatten="toggleFlatten()" />
-        </v-col>
-        <v-col>
+        </div>
+        <div class="icon-button">
           <TableButton @table="toggleTable()" />
-        </v-col>
-        <v-col>
+        </div>
+        <div class="icon-button">
           <HelpButton v-if="whakapapa.tree" @click="updateDialog('whakapapa-helper', null)" />
           <HelpButton v-else @click="updateDialog('whakapapa-table-helper', null)" />
-        </v-col>
-        <v-col>
+        </div>
+        <div class="icon-button">
           <FeedbackButton />
-        </v-col>
+        </div>
       </v-row>
 
       <v-row>
@@ -63,6 +72,7 @@
           @load-descendants="loadDescendants($event)"
           @collapse-node="collapseNode($event)"
           @open-context-menu="openContextMenu($event)"
+          :searchNodeId="searchNodeId"
           @change-focus="changeFocus($event)"
         />
         <Table
@@ -75,6 +85,7 @@
           @load-descendants="loadDescendants($event)"
           @collapse-node="collapseNode($event)"
           @open-context-menu="openContextMenu($event)"
+          :searchNodeId="searchNodeId"
         />
       </v-row>
     </v-container>
@@ -122,6 +133,9 @@ import HelpButton from '@/components/button/HelpButton.vue'
 import FlattenButton from '@/components/button/FlattenButton.vue'
 import FilterButton from '@/components/button/FilterButton.vue'
 
+import SearchBar from '@/components/button/SearchBar.vue'
+import SearchButton from '@/components/button/SearchButton.vue'
+
 import tree from '@/lib/tree-helpers'
 import avatarHelper from '@/lib/avatar-helpers.js'
 
@@ -146,8 +160,10 @@ export default {
     HelpButton,
     FlattenButton,
     FilterButton,
-    Table,
+    SearchBar,
+    SearchButton,
     FeedbackButton,
+    Table,
     Tree,
     VueContext,
     DialogHandler,
@@ -155,6 +171,8 @@ export default {
   },
   data () {
     return {
+      search: false,
+      searchNodeId: '',
       showWhakapapaHelper: false,
       whakapapaView: {
         name: 'Loading',
@@ -306,9 +324,11 @@ export default {
     }
   },
   methods: {
+    clickedOff () {
+      this.search = !this.search
+    },
     // when adding a partner ancestor update the tree to load
     showNewAncestors (parent) {
-      console.log('parent')
       this.currentFocus = parent
     },
     isVisibleProfile (descendant) {
@@ -594,6 +614,15 @@ export default {
 }
 </script>
 
+<style>
+  .v-select.v-select--is-menu-active
+  .v-input__icon--append
+  .v-icon {
+    transform: rotate(0);
+  }
+
+</style>
+
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 @import "~vue-context/dist/css/vue-context.css";
@@ -618,7 +647,7 @@ export default {
     & > .select {
       position: absolute;
       top: 20px;
-      right: 30px;
+      right: 50px;
 
       .col {
         padding-top: 0;
@@ -640,4 +669,18 @@ h1 {
 .tree {
   max-height: calc(100vh - 64px);
 }
+
+.icon-button {
+  padding: 0px;
+  width: 50px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.icon-search {
+  width: 300px;
+  display: flex;
+  justify-items: flex-end;
+}
+
 </style>
