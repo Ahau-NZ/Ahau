@@ -193,7 +193,6 @@ export default {
       }
     },
     async createView (input) {
-      console.log('create view input: ', input)
       const pruned = {}
       Object.entries(input).forEach(([key, value]) => {
         if (!isEmpty(value)) pruned[key] = value
@@ -220,7 +219,6 @@ export default {
       }
     },
     async handleDoubleStep ($event) {
-      console.log('handledoublestep: ', $event)
       try {
         const res = await this.$apollo.mutate({
           mutation: saveProfileQuery,
@@ -260,6 +258,7 @@ export default {
 
       // create whakapapaLinks
       var finalArray = await this.createLinks(descendants)
+      console.log("final array created: ", finalArray)
 
       // create whakapapa with top ancestor as focus
       this.createView({
@@ -270,9 +269,23 @@ export default {
 
     async createProfiles (data) {
       // parse csv text into a an array
-      var csv = d3.csvParse(data)
-      console.log('csv array:', csv)
-
+      // let csv = d3.csvParse(data)
+      var csv = d3.csvParse(data, function(d) {
+        return {
+          parentNumber: d.parentNumber, 
+          number: d.number, 
+          preferredName: d.preferredName, 
+          legalName: d.legalName, 
+          gender: d.gender, 
+          bornAt: d.bornAt.split(/\//).reverse().join('/'), 
+          diedAt: d.diedAt.split(/\//).reverse().join('/'),
+          birthOrder: Number(d.birthOrder), 
+          contact: d.contact, 
+          location: d.location, 
+          profession: d.profession, 
+          relationshipType: d.relationshipType ? d.relationshipType : "birth",
+        };
+      });
       // store the titles of each column
       this.columns = csv.columns
 
@@ -296,7 +309,6 @@ export default {
           person[key] = value
         }
       })
-
       try {
         var { id } = $event
         id = await this.createProfile(person)
