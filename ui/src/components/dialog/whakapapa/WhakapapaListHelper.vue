@@ -42,6 +42,9 @@ export default {
     Dialog
   },
   methods: {
+    cordovaBackButton () {
+      this.close()
+    },
     close () {
       this.$emit('close')
     }

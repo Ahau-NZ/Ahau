@@ -8,10 +8,10 @@
     </defs>
     <path id="background" d="M5,5 l0,680 2980,0 l0,-680 l-980,0" fill="url(#img1)" />
     <!-- whakapapa tree -->
-    <g id="baseGroup">
+    <g id="baseGroup" >
       <g :transform="`translate(${treeX} ${treeY})`">
         <g v-for="link in links" :key="link.id" class="link">
-          <Link :link="link" :branch="branch" :class="link.class"/>
+          <Link :link="link" :class="link.class"/>
         </g>
       </g>
 
@@ -23,12 +23,35 @@
           <Node
             :node="node"
             :radius="nodeRadius"
+            :nonFocusedPartners="nonFocusedPartners"
             @click="centerNode(node)"
             @open-context-menu="$emit('open-context-menu', $event)"
+            @change-focus="changeFocus($event, node)"
             :showLabel="true"
           />
         </g>
       </g>
+    </g>
+    <!-- zoom in, zoom out buttons -->
+    <g class="zoomControl">
+     <g @click="zoomReset()" :transform="`translate(${30} ${treeY*2.15})`">
+        <circle stroke="white" fill="white" filter="url(#shadow)" cx="20" cy="1" r="15"/>
+        <circle stroke="black" fill="white" filter="url(#shadow)" cx="20" cy="1" r="5"/>
+        <path d="M 20,-7 20,10 M 12,1 28,1" stroke="grey" stroke-width="1.5" />
+      </g>
+     <g @click="zoomInOut(1.6)" :transform="`translate(${30} ${treeY*2.4})`">
+        <circle stroke="white" fill="white" filter="url(#shadow)" cx="20" cy="1" r="15"/>
+        <path d="M 20,-5 20,7 M 14,1 26,1" stroke="grey" stroke-width="1.5" />
+      </g>
+     <g @click="zoomInOut(1 / 1.6)" :transform="`translate(${30} ${treeY*2.65})`">
+        <circle stroke="white" fill="white" filter="url(#shadow)" cx="20" cy="1" r="15"/>
+        <path d="M 14,1 26,1" stroke="grey" stroke-width="1.5" />
+      </g>
+    </g>
+    <!-- loading spinner when changing focus -->
+    <g v-if="loading">
+      <rect width="100%" height="100%" style="fill:#fff; opacity:0.95" />
+      <image :transform="`translate(${width/2 - 100} ${height/3})`" href="../assets/grid-loader.svg" width="30" height="30" />
     </g>
   </svg>
 </template>
@@ -49,8 +72,12 @@ export default {
         preferredName: 'Loading',
         gender: 'unknown',
         children: [],
-        parents: []
+        parents: [],
+        nonFocusedPartner: false
       })
+    },
+    currentFocus: {
+      type: String
     },
     view: {
       type: Object,
@@ -61,6 +88,42 @@ export default {
     },
     searchNodeId: {
       type: String
+    },
+    getRelatives: Function
+  },
+  watch: {
+    'nestedWhakapapa': function (newNestedWhakapapa) {
+      if (newNestedWhakapapa.preferredName !== 'Loading') {
+        this.nonFocusedPartners = []
+        this.checkNonFocusedPartner(this.nestedWhakapapa)
+      }
+    },
+    searchNodeId (newVal) {
+      if (newVal === '') return null
+      this.root.descendants().find(d => {
+        if (d.data.id === newVal) {
+          this.centerNode(d)
+        }
+      })
+    },
+    // watch for change of focus
+    currentFocus (newValue) {
+      if (this.changeFocusId != null) {
+        // if theres a change wait for the nodes to load than map through to find the change of focus
+        setTimeout(() => {
+          this.nodes.map((d) => {
+            if (d.data.id === this.changeFocusId) {
+              console.log('match found')
+              this.centerNode(d)
+            }
+          })
+        }, 500)
+
+        // hide the grapgh until the tree has centered
+        setTimeout(() => {
+          this.loading = false
+        }, 1000)
+      }
     }
   },
   data () {
@@ -72,23 +135,14 @@ export default {
       nodeRadius: 50, // use variable for zoom later on
       nodeSeparationX: 100,
       nodeSeparationY: 150,
-      currentPosition: {}
+      nonFocusedPartners: [],
+      changeFocusId: null,
+      loading: false
     }
   },
   mounted () {
     this.componentLoaded = true
     this.zoom()
-
-  },
-  watch: {
-    searchNodeId (newVal) {
-      if (newVal === '') return null
-      this.root.descendants().find(d => {
-        if (d.data.id === newVal) {
-          this.centerNode(d)
-        }
-      })
-    }
   },
   computed: {
     pathNode () {
@@ -166,7 +220,6 @@ export default {
       return this.treeLayout(this.root)
         .descendants() // returns the array of descendants starting with the root node, then followed by each child in topological order
         .map((d, i) => {
-          // returns a new custom object for each node
           return {
             nodeId: `node-${i}`,
             children: d.children,
@@ -245,17 +298,36 @@ export default {
     loadDescendants (profileId) {
       this.$emit('load-descendants', profileId)
     },
+    async checkNonFocusedPartner (profile) {
+      if (profile.partners && profile.partners.length > 0) {
+        for await (const partner of profile.partners) {
+          const relatives = await this.getRelatives(partner.id)
+          if (relatives.parents && relatives.parents.length > 0) {
+            this.nonFocusedPartners = [...this.nonFocusedPartners, partner.id]
+          }
+        }
+      }
+      if (profile.children) {
+        for await (const child of profile.children) {
+          await this.checkNonFocusedPartner(child)
+        }
+      }
+    },
     collapse (node) {
       this.$emit('collapse-node', node.data.id)
       //  TODO smooth ease-in-out transitions of children using d3 transitions
     },
-
+    changeFocus (profileId, node) {
+      this.loading = true
+      node.data.id = profileId
+      this.changeFocusId = profileId
+      this.$emit('change-focus', profileId)
+    },
     visiblePartners (node) {
       return get(node, 'data.isCollapsed')
         ? 0
         : get(node, 'data.partners.length', 0)
     },
-
     zoom () {
       var svg = d3.select('#baseSvg')
       var g = d3.select('#baseGroup')
@@ -269,9 +341,9 @@ export default {
       )
         .on('dblclick.zoom', null)
     },
-
     centerNode (source) {
       // if source node is already centered than collapse
+
       if (this.nodeCentered === source.data.id) {
         this.collapse(source)
       }
@@ -284,10 +356,42 @@ export default {
       var width = this.$refs.tree.clientWidth
       var height = this.$refs.tree.clientHeight
 
+      var x = width / 2 - source.x
+      var y = height / 2 - source.y
+
       g.transition()
         .duration(1000)
-        .attr('transform', 'translate(' + (width / 2 - source.x) + ',' + (height / 2 - source.y) + ')scale(' + 1 + ')')
-        .on('end', function () { svg.call(d3.zoom().transform, d3.zoomIdentity.translate((width / 2 - source.x), (height / 2 - source.y)).scale(1)) })
+        .attr('transform', 'translate(' + (x) + ',' + (y) + ')scale(' + 1 + ')')
+        .on('end', function () { svg.call(d3.zoom().transform, d3.zoomIdentity.translate((x), (y)).scale(1)) })
+    },
+    zoomInOut (scale) {
+      var svg = d3.select('#baseSvg')
+      var g = d3.select('#baseGroup')
+
+      var zoom = d3.zoom()
+        .scaleExtent([0.3, 2])
+        .on('zoom', function () {
+          g.attr('transform', d3.event.transform)
+        })
+
+      zoom.scaleBy(svg.transition().duration(150), scale)
+    },
+    zoomReset () {
+      var svg = d3.select('#baseSvg')
+      var g = d3.select('#baseGroup')
+
+      var width = this.$refs.tree.clientWidth
+      var height = this.$refs.tree.clientHeight
+      g.transition()
+        .duration(400)
+        .attr('transform', 'translate(' + (width / 2) + ',' + (height / 2) + ')scale(' + 1 + ')')
+        .on('end', function () {
+          svg.call(
+            d3.zoom().transform,
+            d3.zoomIdentity.translate((width / 2), (height / 2))
+              .scale(1)
+          )
+        })
     }
   },
   components: {
@@ -304,6 +408,10 @@ export default {
 
 svg#baseSvg {
   cursor: grab;
+}
+
+.zoomControl {
+  cursor: pointer;
 }
 
 .nonbiological{

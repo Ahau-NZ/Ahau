@@ -2,8 +2,6 @@
   <v-combobox
     v-model="searchString"
     :items="nodes"
-    item-text="preferredName"
-    item-value="preferredName"
     :menu-props="{ light: true }"
     hide-no-data
     append-icon="mdi-close"
@@ -15,7 +13,6 @@
     rounded
     light
     hide-selected
-    underlined
     dense
     class="search-input"
     autofocus
@@ -23,20 +20,19 @@
     <template v-slot:item="data">
       <template>
         <v-list-item @click="setSearchNode(data.item)">
-          <v-row>
-            <v-col class="pa-0" cols="2">
-              <Avatar size="40px" :image="data.item.avatarImage" :alt="data.item.preferredName" :gender="data.item.gender" :bornAt="data.item.bornAt" />
-            </v-col>
-            <v-col cols="2">
-              <small>{{ data.item.preferredName }}</small>
-            </v-col>
-            <v-col cols="5">
-              <small>{{ data.item.legalName }}</small>
-            </v-col>
-            <v-col cols="3">
-              <small>{{ age(data.item.bornAt) }}</small>
-            </v-col>
-          </v-row>
+          <Avatar class="mr-3" size="40px" :image="data.item.avatarImage" :alt="data.item.preferredName" :gender="data.item.gender" :bornAt="data.item.bornAt" />
+          <v-list-item-content>
+            <v-list-item-title> {{ data.item.preferredName }}</v-list-item-title>
+            <v-list-item-subtitle>Preferred name</v-list-item-subtitle>
+          </v-list-item-content>
+          <v-list-item-content>
+            <v-list-item-title> {{ data.item.legalName }}</v-list-item-title>
+            <v-list-item-subtitle>Legal name</v-list-item-subtitle>
+          </v-list-item-content>
+          <v-list-item-action>
+            <v-list-item-title>{{ age(data.item.bornAt) }}</v-list-item-title>
+            <v-list-item-subtitle>Age</v-list-item-subtitle>
+          </v-list-item-action>
         </v-list-item>
       </template>
     </template>
@@ -59,13 +55,7 @@ export default {
   },
   props: {
     nestedWhakapapa: {
-      type: Object,
-      default: () => ({
-        preferredName: 'Loading',
-        gender: 'unknown',
-        children: [],
-        parents: []
-      })
+      type: Object
     },
     searchNodeId: {
       type: String
@@ -73,7 +63,7 @@ export default {
   },
   data () {
     return {
-      searchString: '',
+      searchString: ''
     }
   },
   computed: {
@@ -82,17 +72,24 @@ export default {
         .descendants()
         .map(d => d.data)
         .filter(d => {
-          if (isEmpty(this.searchString) || isEmpty(d.preferredName) || isEmpty(d.legalName)) return false
-          const search = this.searchString.toLowerCase().trim()
-          const name = d.preferredName.toLowerCase().trim() + d.legalName.toLowerCase().trim()
+          const search = this.setString(this.searchString)
+          const preferredName = this.setString(d.preferredName)
+          const legalName = this.setString(d.legalName)
+
           return (
-            isEqual(name, search) ||
-            name.includes(search)
+            isEqual(preferredName, search) ||
+            preferredName.includes(search) ||
+            isEqual(legalName, search) ||
+            legalName.includes(search)
           )
         })
     }
   },
   methods: {
+    setString (name) {
+      if (isEmpty(name)) return ''
+      return name.toLowerCase().trim()
+    },
     age (bornAt) {
       return calculateAge(bornAt)
     },
@@ -126,5 +123,4 @@ export default {
     margin-top: -3px;
   }
 
- 
 </style>

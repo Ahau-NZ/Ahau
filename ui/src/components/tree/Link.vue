@@ -8,10 +8,6 @@ export default {
     link: {
       type: Object,
       required: true
-    },
-    branch: {
-      type: Number,
-      required: true
     }
   }
 }

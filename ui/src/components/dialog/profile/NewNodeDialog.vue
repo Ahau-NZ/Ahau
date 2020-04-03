@@ -185,6 +185,9 @@ export default {
         : this.$emit('create', submission)
       this.close()
     },
+    cordovaBackButton () {
+      this.close()
+    },
     close () {
       this.$emit('close')
     },
