@@ -70,7 +70,6 @@
 
       <v-row>
         <Tree
-          :style="isMobile()"
           v-if="whakapapa.tree"
           :view="whakapapaView"
           :currentFocus="currentFocus"
