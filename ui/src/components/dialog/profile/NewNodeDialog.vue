@@ -24,12 +24,26 @@
               <template v-slot:prepend-item>
                 <v-subheader v-if="type === 'parent'">Suggested parents</v-subheader>
                 <v-subheader v-if="type === 'child'">Suggested children</v-subheader>
-                <v-list-item>
+                <v-list-item v-for="person in suggestedFamily" :key="`suggestion-${person.id}`"
+                  @click="setFormData(person)"
+                >
+                  <Avatar class="mr-3" size="40px"
+                    :image="person.avatarImage"
+                    :alt="person.preferredName"
+                    :gender="person.gender" :bornAt="person.bornAt"
+                  />
                   <v-list-item-content>
-                    <v-list-item-title>
-                      None
-                    </v-list-item-title>
+                    <v-list-item-title> {{ person.preferredName }}</v-list-item-title>
+                    <v-list-item-subtitle>Preferred name</v-list-item-subtitle>
                   </v-list-item-content>
+                  <v-list-item-content>
+                    <v-list-item-title> {{ person.legalName }}</v-list-item-title>
+                    <v-list-item-subtitle>Legal name</v-list-item-subtitle>
+                  </v-list-item-content>
+                  <v-list-item-action>
+                    <v-list-item-title>{{ age(person.bornAt) }}</v-list-item-title>
+                    <v-list-item-subtitle>Age</v-list-item-subtitle>
+                  </v-list-item-action>
                 </v-list-item>
                 <v-divider/>
                 <v-subheader>Suggestions not in this whakapapa</v-subheader>
@@ -211,18 +225,24 @@ export default {
     },
     findParents () {
       var currentParents = []
-      var currentSiblings = []
-      var children = []
+      var parents = []
 
       this.selectedProfile.parents.forEach(d => {
         currentParents[d.id] = d
-
       })
 
-      // parents of your siblings that arent currently your parent
-      
+      this.selectedProfile.siblings.forEach(async sibling => {
+        const result = await this.$apollo.query(getProfile(sibling.id))
 
-      return children
+        if (result.data) {
+          result.data.person.parents.forEach(d => {
+            if (!currentParents[d.profile.id]) {
+              parents.push(d.profile)
+            }
+          })
+        }
+      })
+      return parents
     },
     age (bornAt) {
       return calculateAge(bornAt)
