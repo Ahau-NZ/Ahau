@@ -57,7 +57,7 @@
               <v-radio :label="`Build from file`" value="file"></v-radio>
             </v-radio-group>
           </v-col>
-          <v-row v-if="formData.focus == 'file'">
+          <v-row v-if="formData.focus == 'file'" transition="scroll-y-transition">
             <v-col cols="1" class="mx-1" >
               <v-tooltip bottom>
                 <template v-slot:activator="{ on }">

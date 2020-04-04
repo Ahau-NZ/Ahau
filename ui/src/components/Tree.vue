@@ -51,7 +51,7 @@
     <!-- loading spinner when changing focus -->
     <g v-if="loading">
       <rect width="100%" height="100%" style="fill:#fff; opacity:0.95" />
-      <image :transform="`translate(${width/2.5} ${height/4})`" href="../assets/Animated_Logo.svg" width="300" height="300" />
+      <image :transform="`translate(${width/2.5} ${height/4})`" href="../assets/Animated_Logo.svg" width="200" height="200" />
     </g>
   </svg>
 </template>
