@@ -9,7 +9,7 @@
           <template v-slot:search>
             <v-combobox
               v-model="formData.preferredName"
-              :items="suggestions"
+              :items="generateSuggestions"
               label="Preferred name"
               item-text="preferredName"
               item-value="preferredName"
@@ -20,35 +20,12 @@
               @click:clear="resetFormData()"
               no-data-text="no suggestions"
               :search-input.sync="formData.preferredName"
+              placeholder="Enter or search a preferred name"
             >
-              <template v-slot:prepend-item>
-                <v-subheader v-if="type === 'parent'">Suggested parents</v-subheader>
-                <v-subheader v-if="type === 'child'">Suggested children</v-subheader>
-                <v-list-item v-for="person in suggestedFamily" :key="`suggestion-${person.id}`"
-                  @click="setFormData(person)"
-                >
-                  <Avatar class="mr-3" size="40px"
-                    :image="person.avatarImage"
-                    :alt="person.preferredName"
-                    :gender="person.gender" :bornAt="person.bornAt"
-                  />
-                  <v-list-item-content>
-                    <v-list-item-title> {{ person.preferredName }}</v-list-item-title>
-                    <v-list-item-subtitle>Preferred name</v-list-item-subtitle>
-                  </v-list-item-content>
-                  <v-list-item-content>
-                    <v-list-item-title> {{ person.legalName }}</v-list-item-title>
-                    <v-list-item-subtitle>Legal name</v-list-item-subtitle>
-                  </v-list-item-content>
-                  <v-list-item-action>
-                    <v-list-item-title>{{ age(person.bornAt) }}</v-list-item-title>
-                    <v-list-item-subtitle>Age</v-list-item-subtitle>
-                  </v-list-item-action>
-                </v-list-item>
-                <v-divider/>
-                <v-subheader>Suggestions not in this whakapapa</v-subheader>
-              </template>
               <template v-slot:item="data">
+                <template v-if="typeof data.item !== 'object'">
+                  <v-list-item-content v-text="data.item"></v-list-item-content>
+                </template>
                 <template>
                   <v-list-item @click="setFormData(data.item)">
                     <Avatar class="mr-3" size="40px" :image="data.item.avatarImage" :alt="data.item.preferredName" :gender="data.item.gender" :bornAt="data.item.bornAt" />
@@ -159,7 +136,16 @@ export default {
     }
   },
   computed: {
-    suggestedFamily () {
+    generateSuggestions () {
+      return [
+        { header: this.type === 'child' ? 'Suggested children' : 'Suggested parents' },
+        ...this.closeSuggestions,
+        { divider: true },
+        { header: 'Suggestions not in this whakapapa' },
+        ...this.suggestions
+      ]
+    },
+    closeSuggestions () {
       switch (this.type) {
         case 'child':
           return this.findChildren()
@@ -200,6 +186,10 @@ export default {
     console.log(this.suggestedFamily)
   },
   methods: {
+    get (array) {
+      if (isEmpty(array)) return [ { 'header': 'None' } ]
+      return array
+    },
     findChildren () {
       var currentChildren = []
       var children = []
