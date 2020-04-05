@@ -185,9 +185,6 @@ export default {
       return submission
     }
   },
-  mounted () {
-    console.log(this.suggestedFamily)
-  },
   methods: {
     get (array) {
       if (isEmpty(array)) return [ { 'header': 'None' } ]

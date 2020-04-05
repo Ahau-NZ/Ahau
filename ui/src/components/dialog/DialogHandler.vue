@@ -501,7 +501,6 @@ export default {
 
       // if they are a sibling
       if (this.selectedProfile.siblings.find(sibling => {
-        // console.log('sibling ' + sibling.preferredName, sibling)
         return sibling.id === profileId
       })) return true // filter them out
 
