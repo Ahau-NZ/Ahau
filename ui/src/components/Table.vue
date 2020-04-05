@@ -1,13 +1,14 @@
 <template>
-  <svg id="baseSvg" :width="2000" :height="tableHeight" ref="baseSvg" style="background-color:white" overflow="auto" min-height="500px">
-    <line x1="60" y1="50" x2="90%" y2="50" style="stroke-width: 1; stroke: lightgrey;"/>
+<div class="fixed-scrollbar-container" style="overflow-x:scroll">
+  <svg id="baseSvg" width="1600" :height="tableHeight" ref="baseSvg" style="background-color:white"  min-height="500px">
+    <line x1="60" y1="55" x2="100%" y2="55" style="stroke-width: 1; stroke: lightgrey;"/>
     <g v-for="column in columns" :key="column.label">
-      <text :transform="`translate(${column.x + 10} ${40})`">
+      <text :transform="`translate(${column.x + 10} ${50})`">
         {{ column.label }}
       </text>
-      <line :x1="column.x" y1="50" :x2="column.x" y2="100%" style="stroke-width: 1; stroke: lightgrey;"/>
+      <line :x1="column.x" y1="55" :x2="column.x" y2="100%" style="stroke-width: 1; stroke: lightgrey;"/>
     </g>
-      <g id="baseGroup">
+      <svg id="baseGroup" >
         <g v-if="!flatten" :transform="`translate(${60} ${80})`">
           <g v-for="link in links" :key="link.id" class="link">
             <Link :link="link" :class="link.class"/>
@@ -19,10 +20,9 @@
           ref="tree"
         >
           <g v-for="node in nodes" :key="node.data.id" class="node">
-            <!-- <line x1="0" :y1="node.y-3" x2="90%" :y2="node.y-3" style="stroke-width: 1; stroke: lightgrey;"/> -->
             <rect :x="node.x + nodeRadius" :y="node.y" width="100%" :height="nodeRadius*2" class="row" :style="node.color" />
             <Node
-              :width="width"
+              :width="colWidth"
               :node="node"
               :radius="nodeRadius"
               @click="collapse(node)"
@@ -52,26 +52,39 @@
             </svg>
             <svg :width="columns[4].x">
               <text  :transform="`translate(${columns[3].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
+                {{ node.data.address }}
+              </text>
+            </svg>
+            <svg :width="columns[5].x">
+              <text  :transform="`translate(${columns[4].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
                 {{ node.data.location }}
               </text>
             </svg>
+            <svg :width="columns[6].x">
+              <text :transform="`translate(${columns[5].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
+                {{ node.data.email }}
+              </text>
+            </svg>
             <svg>
-              <text :transform="`translate(${columns[4].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ node.data.contact }}
+              <text :transform="`translate(${columns[6].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
+                {{ node.data.phone }}
               </text>
             </svg>
           </g>
         </g>
-      </g>
-  </svg>
+      </svg>
+    </svg>
+  </div>
+
 </template>
 
 <script>
+
 import * as d3 from 'd3'
 import Node from './table/Node.vue'
 import Link from './tree/Link.vue'
 import calculateAge from '../lib/calculate-age.js'
-
+import $ from 'jquery'
 import isEqual from 'lodash.isequal'
 
 export default {
@@ -107,7 +120,8 @@ export default {
   data () {
     return {
       // width used for to set max widths on columns and the text
-      width: 350,
+      // width:0,
+      colWidth: 350,
       componentLoaded: false, // need to ensure component is loaded before using $refs
       nodeRadius: 20, // use variable for zoom later on
       nodeSize: 40,
@@ -116,37 +130,77 @@ export default {
   },
   mounted () {
     this.componentLoaded = true
+
+    // jquery fix x-scroll to the bottom of the window - fixes scroll bar but doesnt show scroll thumb or position
+    // $(function($){
+    //   var fixedBarTemplate = '<div class="fixed-scrollbar"><div></div></div>';
+    //   var fixedBarCSS = { display: 'none', overflowX: 'scroll', position: 'fixed',  width: '100%', bottom: 0 };
+      
+    //   $('.fixed-scrollbar-container').each(function() {
+    //     var $container = $(this);
+    //     var $bar = $(fixedBarTemplate).appendTo($container).css(fixedBarCSS);
+        
+    //     console.log($container)
+        
+    //     $bar.scroll(function() {
+    //       $container.scrollLeft($bar.scrollLeft());
+    //     });
+        
+    //     $bar.data("status", "off");
+    //   });
+      
+    //   var fixSize = function() {
+    //     $('.fixed-scrollbar').each(function() {
+    //       var $bar = $(this);
+    //       var $container = $bar.parent();
+          
+    //       $bar.children('div').height(1).width($container[0].scrollWidth);
+    //       $bar.width($container.width()).scrollLeft($container.scrollLeft());
+    //     });
+    //   };
+      
+    //   $(window).on("load.fixedbar resize.fixedbar", function() {
+    //     fixSize();
+    //   });
+      
+    //   var scrollTimeout = null;
+      
+    //   $(window).on("scroll.fixedbar", function() { 
+    //     clearTimeout(scrollTimeout);
+    //     scrollTimeout = setTimeout(function() {
+    //       $('.fixed-scrollbar-container').each(function() {
+    //         var $container = $(this);
+    //         var $bar = $container.children('.fixed-scrollbar');
+            
+    //         if($bar.length) {
+    //           var containerOffset = {top: $container.offset().top, bottom: $container.offset().top + $container.height() };
+    //           var windowOffset = {top: $(window).scrollTop(), bottom: $(window).scrollTop() + $(window).height() };
+              
+    //           if((containerOffset.top > windowOffset.bottom) || (windowOffset.bottom > containerOffset.bottom)) {
+    //             if($bar.data("status") == "on") {
+    //               $bar.hide().data("status", "off");
+    //             }
+    //           } else {
+    //             if($bar.data("status") == "off") {
+    //               $bar.show().data("status", "on");
+    //               $bar.scrollLeft($container.scrollLeft());
+    //             }
+    //           }
+    //         }
+    //       });
+    //     }, 50);
+    //   });
+      
+    //   $(window).trigger("scroll.fixedbar");
+    // });
   },
+
   computed: {
     pathNode () {
       if (this.searchNodeId === '') return null
       return this.root.descendants().find(d => {
         return d.data.id === this.searchNodeId
       })
-    },
-    columns () {
-      return [
-        {
-          label: 'Legal Name',
-          x: this.width
-        },
-        {
-          label: 'Age',
-          x: this.width + 225
-        },
-        {
-          label: 'Profession',
-          x: this.width + 285
-        },
-        {
-          label: 'Location',
-          x: this.width + 420
-        },
-        {
-          label: 'Contact',
-          x: this.width + 650
-        }
-      ]
     },
 
     // returns a nested data structure representing a tree based on the treeData object
@@ -184,6 +238,8 @@ export default {
         })
         // returns a new custom object for each node
         .map((d, i) => {
+          // set width of first column
+          this.setWidth(d.depth)
           return {
             nodeId: `node-${i}`,
             children: d.children,
@@ -234,16 +290,55 @@ export default {
       if (!this.componentLoaded || !this.pathNode) return null
       return this.root.path(this.pathNode)
         .map(d => d.data.id)
-    }
+    },
+
+    columns () {
+      return [
+        {
+          label: 'Legal Name',
+          x: this.colWidth
+        },
+        {
+          label: 'Age',
+          x: this.colWidth + 200
+        },
+        {
+          label: 'Profession',
+          x: this.colWidth + 265
+        },
+        {
+          label: 'Address',
+          x: this.colWidth + 400
+        },
+        {
+          label: 'City, Country',
+          x: this.colWidth + 590
+        },
+        {
+          label: 'Email',
+          x: this.colWidth + 740
+        },
+        {
+          label: 'Phone',
+          x: this.colWidth + 890
+        }
+      ]
+    },
+
   },
 
   watch: {
     flatten (newVal) {
-      if (newVal) this.width = 250
-      else this.width = 350
+      if (newVal === true) this.colWidth = 250
+      else this.colWidth = 350
     }
   },
   methods: {
+    setWidth (depth) {
+      if (!this.flatten && depth > 10) {
+        this.colWidth = depth * 45 - 100
+      } 
+    },
     pathStroke (sourceId, targetId) {
       if (!this.paths) return 'lightgrey'
 
@@ -270,15 +365,12 @@ export default {
       } else if (age !== null && age < 2) {
         return 'fill:yellow'
       } else if (data.id === this.searchNodeId) {
-        console.log('found node: ', data)
         return 'fill:red'
       } else return 'fill:lightblue'
     },
 
     collapse (node) {
       this.$emit('collapse-node', node.data.id)
-      // TODO
-      // this one feels like perhaps it should be handled in this file
     }
   },
   components: {
@@ -303,4 +395,5 @@ svg#baseSvg {
 text {
   fill: #555;
 }
+
 </style>

@@ -171,7 +171,9 @@ export default {
         'altNames',
         'description',
         'location',
-        'contact',
+        'email',
+        'address',
+        'phone',
         'profession'
       )
       const result = await this.$apollo.mutate({

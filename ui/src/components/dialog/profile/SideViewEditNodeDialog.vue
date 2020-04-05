@@ -223,8 +223,15 @@
                   </v-col>
                   <v-col v-if="!formData.isDeceased" cols="12" class="pa-1">
                     <v-text-field
-                      v-model="formData.contact"
-                      label="Contact"
+                      v-model="formData.email"
+                      label="Email"
+                      v-bind="customProps"
+                    />
+                  </v-col>
+                  <v-col v-if="!formData.isDeceased" cols="12" class="pa-1">
+                    <v-text-field
+                      v-model="formData.phone"
+                      label="Phone"
                       v-bind="customProps"
                     />
                   </v-col>
@@ -232,6 +239,13 @@
                     <v-text-field
                       v-model="formData.location"
                       label="Region, Country"
+                      v-bind="customProps"
+                    />
+                  </v-col>
+                  <v-col cols="12" class="pa-1">
+                    <v-text-field
+                      v-model="formData.address"
+                      label="Address"
                       v-bind="customProps"
                     />
                   </v-col>
@@ -368,7 +382,9 @@ function defaultData (profile) {
     birthOrder: profile.birthOrder,
     relationshipType: profile.relationship ? profile.relationship.relationshipType ? profile.relationship.relationshipType : null : null,
     location: profile.location,
-    contact: profile.contact,
+    email: profile.email,
+    phone: profile.phone,
+    address: profile.address,
     profession: profile.profession,
     altNames: {
       currentState: clone(profile.altNames),
@@ -541,22 +557,26 @@ export default {
   font-size: 14px;
 }
 
-::-webkit-scrollbar {
-  width: 5px;
-}
+/* ::-webkit-scrollbar {
+  width: 12px;
+} 
 
 /* Track */
-::-webkit-scrollbar-track {
+ /* ::-webkit-scrollbar-track {
   background: #f1f1f1;
-}
+  border-radius: 10px; 
+} */
 
 /* Handle */
-::-webkit-scrollbar-thumb {
+/* ::-webkit-scrollbar-thumb {
   background: #888;
-}
+  border-radius: 10px; 
+  box-shadow: inset 0 0 6px rgba(0,0,0,0.5);  
+}*/
 
 /* Handle on hover */
-::-webkit-scrollbar-thumb:hover {
+/* ::-webkit-scrollbar-thumb:hover {
   background: #555;
-}
+} */
+
 </style>

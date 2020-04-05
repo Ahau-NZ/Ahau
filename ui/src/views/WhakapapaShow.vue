@@ -382,7 +382,9 @@ export default {
               diedAt
               birthOrder
               description
-              contact
+              address
+              email
+              phone
               location
               profession
               altNames
@@ -399,7 +401,9 @@ export default {
                   diedAt
                   birthOrder
                   description
-                  contact
+                  address
+                  email
+                  phone
                   location
                   profession
                   altNames
@@ -421,7 +425,9 @@ export default {
                   diedAt
                   birthOrder
                   description
-                  contact
+                  address
+                  phone
+                  email
                   location
                   profession
                   altNames

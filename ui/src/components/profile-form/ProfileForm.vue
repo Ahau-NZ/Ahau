@@ -167,8 +167,22 @@
       </v-col>
       <v-col cols="12" sm="6" class="pa-1">
         <v-text-field
-          v-model="formData.contact"
-          label="Contact"
+          v-model="formData.email"
+          label="Email"
+          v-bind="customProps"
+        />
+      </v-col>
+      <v-col cols="12" sm="6" class="pa-1">
+        <v-text-field
+          v-model="formData.phone"
+          label="Phone"
+          v-bind="customProps"
+        />
+      </v-col>
+      <v-col cols="12" sm="6" class="pa-1">
+        <v-text-field
+          v-model="formData.address"
+          label="Address"
           v-bind="customProps"
         />
       </v-col>

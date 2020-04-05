@@ -90,7 +90,9 @@ function setDefaultData (withRelationships) {
     description: '',
     location: '',
     profession: '',
-    contact: ''
+    address: '',
+    email: '',
+    phone: '',
   }
 
   formData.isDeceased = !!formData.diedAt
