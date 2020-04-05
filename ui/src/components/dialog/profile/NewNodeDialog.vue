@@ -22,10 +22,7 @@
               placeholder="Enter or search a preferred name"
             >
               <template v-slot:item="data">
-                <template v-if="typeof data.item !== 'object'">
-                  <v-list-item-content v-text="data.item"></v-list-item-content>
-                </template>
-                <template>
+                <template v-if="typeof data.item === 'object'">
                   <v-list-item @click="setFormData(data.item)">
                     <Avatar class="mr-3" size="40px" :image="data.item.avatarImage" :alt="data.item.preferredName" :gender="data.item.gender" :bornAt="data.item.bornAt" />
                     <v-list-item-content>
@@ -137,16 +134,16 @@ export default {
   computed: {
     generateSuggestions () {
       return [
-        { header: this.type === 'child' ? 'Suggested children' : 'Suggested parents' },
+        this.type ? (this.type === 'child' ? { header: 'Suggested children' } : { header: 'Suggested parents' }) : null,
         ...this.closeSuggestions,
-        { divider: true },
-        { header: 'Suggestions not in this whakapapa' },
+        this.type ? { divider: true } : null,
+        this.type ? { header: 'Suggestions not in this whakapapa' } : null,
         ...this.suggestions.filter(suggestion => {
           return !this.closeSuggestions.find(closeSuggestion => {
             return suggestion.id === closeSuggestion
           })
         })
-      ]
+      ].filter(Boolean)
     },
     closeSuggestions () {
       switch (this.type) {
