@@ -480,9 +480,7 @@ export default {
       // now we have the flatStore for the suggestions we need to filter out the records
       // so we cant add one that is already in the tree
       records = records.filter(record => {
-        if (this.findInTree(record.id)) {
-          return false // dont include it
-        }
+        if (this.findInTree(record.id)) return false // dont include it
         return true
       })
 
@@ -500,6 +498,19 @@ export default {
     */
     findInTree (profileId) {
       if (this.selectedProfile.id === profileId) return true // this is always in the tree
+
+      // if they are a sibling
+      if (this.selectedProfile.siblings.find(sibling => {
+        // console.log('sibling ' + sibling.preferredName, sibling)
+        return sibling.id === profileId
+      })) return true // filter them out
+
+      // if they are a parents partner
+      if (this.selectedProfile.parents.find(parent => {
+        return parent.partners.find(partnerId => {
+          return partnerId === profileId
+        })
+      })) return true // filter them out
 
       var root = d3.hierarchy(this.nestedWhakapapa)
 

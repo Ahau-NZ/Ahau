@@ -10,15 +10,14 @@
             <v-combobox
               v-model="formData.preferredName"
               :items="generateSuggestions"
+              item-value="id"
+              item-text="id"
               label="Preferred name"
-              item-text="preferredName"
-              item-value="preferredName"
               :menu-props="{ light: true }"
               :clearable="hasSelection"
               append-icon=""
               v-bind="customProps"
               @click:clear="resetFormData()"
-              no-data-text="no suggestions"
               :search-input.sync="formData.preferredName"
               placeholder="Enter or search a preferred name"
             >
@@ -142,7 +141,11 @@ export default {
         ...this.closeSuggestions,
         { divider: true },
         { header: 'Suggestions not in this whakapapa' },
-        ...this.suggestions
+        ...this.suggestions.filter(suggestion => {
+          return !this.closeSuggestions.find(closeSuggestion => {
+            return suggestion.id === closeSuggestion
+          })
+        })
       ]
     },
     closeSuggestions () {
