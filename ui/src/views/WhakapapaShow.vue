@@ -59,7 +59,7 @@
           <FeedbackButton />
         </div>
       </v-row>
-      <v-row v-if="whakapapa.table && tableWidth > screen.width" class="navigate">
+      <v-row v-if="tableOverflow" class="navigate">
         <div class="icon-button">
           <v-btn fab x-small light @click="togglePan(-200)">
             <v-icon>mdi-arrow-left</v-icon>
@@ -185,6 +185,7 @@ export default {
   },
   data () {
     return {
+      tableWidth: '',
       pan: 0,
       search: false,
       searchNodeId: '',
@@ -269,7 +270,9 @@ export default {
     }
   },
   computed: {
-
+    tableOverflow () {
+      return this.whakapapa.table && this.tableWidth > screen.width
+    },
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
