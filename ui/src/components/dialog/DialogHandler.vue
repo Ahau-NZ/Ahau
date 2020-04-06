@@ -8,7 +8,7 @@
       :suggestions="suggestions" @getSuggestions="getSuggestions($event)"
     />
     <div :class="sideMenuClass">
-      <SideViewEditNodeDialogV2
+      <SideViewEditNodeDialog
         v-if="isActive('view-edit-node')"
         :show="isActive('view-edit-node')"
         :profile="selectedProfile"
@@ -63,7 +63,6 @@
 <script>
 import NewNodeDialog from '@/components/dialog/profile/NewNodeDialog.vue'
 import SideViewEditNodeDialog from '@/components/dialog/profile/SideViewEditNodeDialog.vue'
-import SideViewEditNodeDialogV2 from '@/components/dialog/profile/SideViewEditNodeDialogV2.vue'
 import DeleteNodeDialog from '@/components/dialog/profile/DeleteNodeDialog.vue'
 import WhakapapaViewDialog from '@/components/dialog/whakapapa/WhakapapaViewDialog.vue'
 import WhakapapaEditDialog from '@/components/dialog/whakapapa/WhakapapaEditDialog.vue'
@@ -89,7 +88,6 @@ export default {
   components: {
     NewNodeDialog,
     SideViewEditNodeDialog,
-    SideViewEditNodeDialogV2,
     DeleteNodeDialog,
     WhakapapaViewDialog,
     WhakapapaEditDialog,

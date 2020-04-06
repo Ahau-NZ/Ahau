@@ -54,7 +54,7 @@ export default {
     }
 
     .gender-image:hover {
-      border: 2px solid #BA041B;
+      border: 2px solid rgba(0,0,0,0.87);
     }
   
 </style>

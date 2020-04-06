@@ -3,7 +3,7 @@
     <v-container class="white px-0 py-0 mx-auto">
 
       <!-- Desktop Header -->
-      <v-row v-if="!mobile" class="header">
+      <!-- <v-row v-if="!mobile" class="header">
         <WhakapapaViewCard :view="whakapapaView" :shadow="false">
           <v-row class="lock-container pl-3">
             <v-tooltip bottom>
@@ -30,12 +30,12 @@
             </v-tooltip>
           </v-row>
         </WhakapapaViewCard>
-      </v-row>
+      </v-row> -->
 
         <!-- Whakapapa Title Card -->  
-        <!-- <v-row v-if="!mobile" class="header""> -->
+        <v-row v-if="!mobile" class="header"">
         <!-- Whakapapa"SHOW"ViewCard -->
-        <!-- <WhakapapaShowViewCard :view="whakapapaView" :shadow="false">
+        <WhakapapaShowViewCard :view="whakapapaView" :shadow="false">
           <template v-slot:edit>
               <v-tooltip bottom>
                 <template v-slot:activator="{ on }">
@@ -53,32 +53,8 @@
             </template>
         </WhakapapaShowViewCard> -->
 
-        <!-- <WhakapapaViewCard :view="whakapapaView" :shadow="false">
-            <v-row class="lock-container pl-3">
-              <v-tooltip bottom>
-                <template v-slot:activator="{ on }">
-                  <v-icon v-on="on" small color="#555">mdi-lock</v-icon>
-                </template>
-                <span>Private record - Only visible by you</span>
-              </v-tooltip>
-              <v-tooltip bottom>
-                <template v-slot:activator="{ on }">
-                  <v-btn
-                    v-on="on"
-                    @click.prevent="dialog.active = 'whakapapa-edit'"
-                    align="right"
-                    color="white"
-                    text
-                    x-small
-                    class="blue--text edit pl-8"
-                  >
-                    <v-icon small class="blue--text" left>mdi-pencil</v-icon>
-                  </v-btn>
-                </template>
-                <span>Edit whakapapa description</span>
-              </v-tooltip>
-            </v-row>
-          </WhakapapaViewCard> -->
+
+        </v-row>
 
       
 

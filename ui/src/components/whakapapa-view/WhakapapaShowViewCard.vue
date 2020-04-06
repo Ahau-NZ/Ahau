@@ -1,8 +1,13 @@
 <template>
   <v-card
+    :to="view.id
+      ? { name: 'whakapapaShow', params: { id: view.id } }
+      : '/whakapapa'"
     style="width: 100%;"
     light
     outlined
+
+    :ripple="false"
   >
     
     <!-- Whakapapa Image and Title -->
@@ -36,9 +41,10 @@
             <template v-slot:activator="{ on }">
             <v-btn
               v-on="on"
-              @click="show = !show"
+              @click.prevent="show = !show"
               icon
               class="pa-0 px-3"
+              
             >
               <v-icon>{{ show ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
             </v-btn>
