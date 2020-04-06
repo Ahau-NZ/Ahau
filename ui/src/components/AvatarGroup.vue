@@ -6,7 +6,7 @@
       </v-col>
     </v-row>
 
-    <v-row>
+    <v-row class="d-flex align-center"> 
       <v-col
         cols="4"
         class="pt-0 pb-0"
@@ -28,7 +28,7 @@
         </v-row>
       </v-col>
 
-      <v-col cols="4">
+      <v-col cols="4" class="d-flex justify-center align-center">
         <v-row justify="center">
           <slot></slot>
         </v-row>

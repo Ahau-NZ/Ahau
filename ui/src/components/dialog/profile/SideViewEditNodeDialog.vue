@@ -19,7 +19,7 @@
         />
       </template>
 
-      <!-- Slot Title -->
+      <!-- Mobile: Slot Title -->
       <template v-slot:title >
         <v-row class="justify-center" style="margin-top: -20px;">
           <v-btn
@@ -36,7 +36,7 @@
 
       
 
-      <!-- Slot Content -->
+      <!-- Mobile: Slot Content -->
       <template v-slot:content>
 
         <div v-if="!isEditing">
@@ -89,13 +89,13 @@
         
           <v-row class="px-2">
             
-            <!-- Information Col -->
+            <!-- Mobile: Information Col -->
             <v-col cols="12" class="border-right">
               
               <!--===== Family Members =====-->
-              <v-row v-if="!isEditing" justify-sm="space-around">
+              <v-row v-if="!isEditing" class="d-flex flex-column justify-center align-center">
 
-                <!-- Parents -->
+                <!-- Mobile: Parents -->
                 <v-col :cols="12" class="pa-0">
                   <AvatarGroup
                     :profiles="profile.parents"
@@ -108,9 +108,9 @@
                   </AvatarGroup>
                 </v-col>
 
-                <v-divider v-if="profile.siblings" inset />
+                <hr v-if="profile.siblings" class="family-divider"/>
 
-                <!-- Siblings -->
+                <!-- Mobile: Siblings -->
                 <v-col :cols="12" v-if="profile.siblings" class="pa-0">
                   <AvatarGroup
                     :profiles="profile.siblings"
@@ -121,9 +121,9 @@
                   />
                 </v-col>
 
-                <v-divider inset />
+                <hr v-if="profile.siblings" class="family-divider"/>
 
-                <!-- Children -->
+                <!-- Mobile: Children -->
                 <v-col :cols="12" class="pa-0">
                   <AvatarGroup
                     :profiles="profile.children"
@@ -162,7 +162,7 @@
                       <v-col cols="12" class="pa-1">
                         <!-- <slot name="search"> -->
 
-                        <!-- Perferred Name -->
+                        <!-- Mobile: Editing: Perferred Name -->
                         <v-text-field
                           v-model="formData.preferredName"
                           label="Preferred name"
@@ -172,7 +172,7 @@
                         <!-- </slot> -->
                       </v-col>
                       
-                      <!-- Legal Name -->
+                      <!-- Mobile: Editing: Legal Name -->
                       <v-col cols="12" class="pa-1">
                         <v-text-field
                           v-model="formData.legalName"
@@ -182,7 +182,7 @@
                         />
                       </v-col>
           
-                      <!-- Alternative Names -->
+                      <!-- Mobile: Editing: Alternative Names -->
                       <template>
                         <v-col v-for="(altName, index) in formData.altNames.value"
                           :key="`value-alt-name-${index}`"
@@ -202,7 +202,7 @@
                         </v-col>
                       </template>
           
-                      <!-- Add Names -->
+                      <!-- Mobile: Editing: Add Names -->
                       <template v-if="!readonly">
                         <v-col v-for="(altName, index) in formData.altNames.add"
                           :key="`add-alt-name-${index}`"
@@ -226,7 +226,7 @@
                       </template>
                     </v-row>
           
-                      <!-- DATE OF BIRTH -->
+                      <!-- Mobile: Editing: DATE OF BIRTH -->
                     <v-row>
                       <v-col cols="12" class="pa-1">
                         <NodeDatePicker
@@ -237,7 +237,7 @@
                         />
                       </v-col>
                     </v-row>
-                    <!-- ORDER OF BIRTH -->
+                    <!-- Mobile: Editing: ORDER OF BIRTH -->
                     <v-row>
                       <v-col v-if="!readonly || formData.birthOrder" cols="12" class="pa-1">
                         <v-text-field
@@ -263,7 +263,7 @@
                       v-bind="customProps"
                     />
                   </v-col>
-                  <!-- GENDER EDIT -->
+                  <!-- Mobile: Editing: GENDER EDIT -->
                   <v-col v-else class="pa-1"  cols="12">
                     <p class="text-field">Gender</p>
                     <!-- <v-radio-group v-model="formData.gender" row class="mt-0 pt-0" hide-details>
@@ -283,7 +283,7 @@
                     </v-row>
                   </v-col>
           
-                  <!-- DESCRIPTION -->
+                  <!-- Mobile: Editing: DESCRIPTION -->
                   <!-- Description textarea -->
                   <!-- <v-col class="ml-4" v-if="form.showDescription || readonly"> -->
                   <v-col class="pa-1"  cols="12">
@@ -309,7 +309,7 @@
                 
                 <v-row class="pa-2"> 
                   <v-col cols="12">
-                    <!-- Contact -->
+                    <!-- Mobile: Editing: Contact -->
                     <v-row>
                       <v-col cols="12" class="pa-1">
                           <v-text-field
@@ -321,7 +321,7 @@
                           />
                         </v-col>
                     </v-row>
-                    <!-- Profession -->
+                    <!-- Mobile: Editing: Profession -->
                     <v-row>
                       <v-col cols="12" class="pa-1">
                         <v-text-field
@@ -349,9 +349,9 @@
                   </v-col>
                 </v-row>
 
-                  <!-- Action buttons -->
+                  <!-- Mobile: Editing: Action buttons -->
                   <v-row>
-                      <!-- Delete button -->
+                      <!-- Mobile: Editing: Delete button -->
                       <v-col cols="12" sm="auto" class="mb-8">
                         <v-btn
                           v-if="isEditing && deleteable"
@@ -516,11 +516,12 @@
                       :show-labels="true"
                       @profile-click="openProfile($event)"
                     >
-                      <AddButton @click="toggleNew('parent')" />
+                      <AddButton @click="toggleNew('parent')"/>
                     </AvatarGroup>
                   </v-col>
     
-                  <v-divider v-if="profile.siblings" inset />
+                  <!-- <v-divider v-if="profile.siblings" /> -->
+                  <hr v-if="profile.siblings" class="family-divider"/>
     
                   <!-- Siblings -->
                   <v-col :cols="12" v-if="profile.siblings" class="pa-0">
@@ -533,7 +534,7 @@
                     />
                   </v-col>
     
-                  <v-divider inset />
+                  <hr class="family-divider">
     
                   <!-- Children -->
                   <v-col :cols="12" class="pa-0">
@@ -565,7 +566,7 @@
           <!-- Desktop Editing -->
           <v-col v-else>
               <v-row>
-                  <v-row class="pa-2">
+                  <v-row class="pa-4">
                     <!-- Names -->
                     <v-col class="pt-4">
                       <v-row>
@@ -614,7 +615,7 @@
                           </v-col>
                         </template>
             
-                        <!-- Add Names -->
+                        <!-- Desktop: Add Names -->
                         <template v-if="!readonly">
                           <v-col v-for="(altName, index) in formData.altNames.add"
                             :key="`add-alt-name-${index}`"
@@ -638,7 +639,7 @@
                         </template>
                       </v-row>
             
-                        <!-- DATE OF BIRTH -->
+                        <!-- Desktop: DATE OF BIRTH -->
                       <v-row>
                         <v-col cols="12" class="pa-1">
                           <NodeDatePicker
@@ -649,7 +650,7 @@
                           />
                         </v-col>
                       </v-row>
-                      <!-- ORDER OF BIRTH -->
+                      <!-- Desktop: ORDER OF BIRTH -->
                       <v-row>
                         <v-col v-if="!readonly || formData.birthOrder" cols="12" class="pa-1">
                           <v-text-field
@@ -667,8 +668,8 @@
                     </v-col>
                   </v-row>
             
-                  <v-row class="pa-2">  
-                    <!-- GENDER VIEW -->
+                  <v-row class="pa-4">  
+                    <!-- Desktop: GENDER VIEW -->
                     <v-col  v-if="readonly" cols="12" class="pa-1">
                       <v-text-field
                         v-model="formData.gender"
@@ -676,7 +677,7 @@
                         v-bind="customProps"
                       />
                     </v-col>
-                    <!-- GENDER EDIT -->
+                    <!-- Desktop: GENDER EDIT -->
                     <v-col v-else class="pa-1"  cols="12">
                       <p class="text-field">Gender</p>
                       <!-- <v-radio-group v-model="formData.gender" row class="mt-0 pt-0" hide-details>
@@ -696,7 +697,7 @@
                       </v-row>
                     </v-col>
             
-                    <!-- DESCRIPTION -->
+                    <!-- Desktop: DESCRIPTION -->
                     <!-- Description textarea -->
                     <!-- <v-col class="ml-4" v-if="form.showDescription || readonly"> -->
                     <v-col class="pa-1"  cols="12">
@@ -720,9 +721,9 @@
             
             
                   
-                  <v-row class="pa-2"> 
+                  <v-row class="pa-4"> 
                     <v-col cols="12">
-                      <!-- Contact -->
+                      <!-- Desktop: Contact -->
                       <v-row>
                         <v-col cols="12" class="pa-1">
                             <v-text-field
@@ -734,7 +735,7 @@
                             />
                           </v-col>
                       </v-row>
-                      <!-- Profession -->
+                      <!-- Desktop: Profession -->
                       <v-row>
                         <v-col cols="12" class="pa-1">
                           <v-text-field
@@ -751,7 +752,7 @@
                     <v-col cols="12" >
                       <v-row>
                         <v-col cols="12" class="pa-1">
-                          <!-- Location -->
+                          <!-- Desktop: Location -->
                           <v-text-field
                             v-model="formData.location"
                             label="Location"
@@ -764,7 +765,7 @@
                     </v-col>
                   </v-row>
 
-                    <!-- Action buttons -->
+                    <!-- Desktop: Action buttons -->
                     <v-row>
                         <!-- Delete button -->
                         <v-col cols="12" sm="auto" class="mb-8">
@@ -971,6 +972,7 @@
       },
       age(born) {
         var age = calculateAge(born)
+        console.log("Age is: ", age)
         return age
       },
       close () {
@@ -1088,6 +1090,11 @@
   overflow-x: hidden; 
   overflow-y: scroll;
   max-height: 100%;
+}
+
+.family-divider {
+  width: 80%;
+  border: 0.5px solid rgba(0, 0, 0, 0.12);
 }
 
   </style>

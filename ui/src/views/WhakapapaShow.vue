@@ -1,62 +1,29 @@
 <template>
-  <div id="whakapapa-show">
-    <v-container class="white px-0 py-0 mx-auto">
+  <div id="whakapapa-show" >
+    <v-container fluid class="pa-0" :style="[ mobile ? 'width:100vw' : 'width:95vw' ]">
 
       <!-- Desktop Header -->
-      <!-- <v-row v-if="!mobile" class="header">
-        <WhakapapaViewCard :view="whakapapaView" :shadow="false">
-          <v-row class="lock-container pl-3">
-            <v-tooltip bottom>
-              <template v-slot:activator="{ on }">
-                <v-icon v-on="on" small color="#555">mdi-lock</v-icon>
-              </template>
-              <span>Private record - Only visible by you</span>
-            </v-tooltip>
+      <!-- Whakapapa Title Card -->  
+      <v-row v-if="!mobile" class="header"">
+        <!-- Whakapapa"SHOW"ViewCard -->
+        <WhakapapaShowViewCard :view="whakapapaView" :shadow="false">
+          <template v-slot:edit>
             <v-tooltip bottom>
               <template v-slot:activator="{ on }">
                 <v-btn
                   v-on="on"
-                  @click.prevent="dialog.active = 'whakapapa-edit'"
-                  align="right"
-                  color="white"
-                  text
-                  x-small
-                  class="blue--text edit pl-8"
+                  @click.prevent="dialog.active = 'whakapapa-edit'" 
+                  icon
+                  class="pa-0 px-3"
                 >
-                  <v-icon small class="blue--text" left>mdi-pencil</v-icon>
+                  <v-icon small class="blue--text">mdi-pencil</v-icon>
                 </v-btn>
               </template>
               <span>Edit whakapapa description</span>
             </v-tooltip>
-          </v-row>
-        </WhakapapaViewCard>
-      </v-row> -->
-
-        <!-- Whakapapa Title Card -->  
-        <v-row v-if="!mobile" class="header"">
-        <!-- Whakapapa"SHOW"ViewCard -->
-        <WhakapapaShowViewCard :view="whakapapaView" :shadow="false">
-          <template v-slot:edit>
-              <v-tooltip bottom>
-                <template v-slot:activator="{ on }">
-                  <v-btn
-                    v-on="on"
-                    @click.prevent="dialog.active = 'whakapapa-edit'" 
-                    icon
-                    class="pa-0 px-3"
-                  >
-                    <v-icon small class="blue--text">mdi-pencil</v-icon>
-                  </v-btn>
-                </template>
-                <span>Edit whakapapa description</span>
-              </v-tooltip>
-            </template>
-        </WhakapapaShowViewCard> -->
-
-
-        </v-row>
-
-      
+          </template>
+        </WhakapapaShowViewCard>
+      </v-row>
 
       <!-- Mobile Header -->
       <WhakapapaBanner
@@ -94,34 +61,36 @@
         </div>
       </v-row>
 
-      <v-row>
-        <Tree
-          v-if="whakapapa.tree"
-          :view="whakapapaView"
-          :currentFocus="currentFocus"
-          :getRelatives="getRelatives"
-          :nestedWhakapapa="nestedWhakapapa"
-          :relationshipLinks="relationshipLinks"
-          @load-descendants="loadDescendants($event)"
-          @collapse-node="collapseNode($event)"
-          @open-context-menu="openContextMenu($event)"
-          :searchNodeId="searchNodeId"
-          @change-focus="changeFocus($event)"
-        />
-        <Table
-          v-if="whakapapa.table"
-          :filter="filter"
-          :flatten="flatten"
-          :view="whakapapaView"
-          :nestedWhakapapa="nestedWhakapapa"
-          :relationshipLinks="relationshipLinks"
-          @load-descendants="loadDescendants($event)"
-          @collapse-node="collapseNode($event)"
-          @open-context-menu="openContextMenu($event)"
-          :searchNodeId="searchNodeId"
-        />
-      </v-row>
-    </v-container>
+      
+      <Tree
+        class="tree"
+        v-if="whakapapa.tree"
+        :view="whakapapaView"
+        :currentFocus="currentFocus"
+        :getRelatives="getRelatives"
+        :nestedWhakapapa="nestedWhakapapa"
+        :relationshipLinks="relationshipLinks"
+        @load-descendants="loadDescendants($event)"
+        @collapse-node="collapseNode($event)"
+        @open-context-menu="openContextMenu($event)"
+        :searchNodeId="searchNodeId"
+        @change-focus="changeFocus($event)"
+      />
+      <Table
+        v-if="whakapapa.table"
+        :filter="filter"
+        :flatten="flatten"
+        :view="whakapapaView"
+        :nestedWhakapapa="nestedWhakapapa"
+        :relationshipLinks="relationshipLinks"
+        @load-descendants="loadDescendants($event)"
+        @collapse-node="collapseNode($event)"
+        @open-context-menu="openContextMenu($event)"
+        :searchNodeId="searchNodeId"
+      />
+      
+
+    </v-container >
 
     <vue-context ref="menu" class="px-0"  >
       <li v-for="(option, index) in contextMenuOpts" :key="index">
@@ -669,14 +638,17 @@ export default {
 @import "~vue-context/dist/css/vue-context.css";
 
 #whakapapa-show {
+
   & > .container {
     position: relative;
+    /* width: 95vw; */
+    /* border: 2px solid red; */
+    
     & > .header {
       position: absolute;
-      top: 20px;
-      left: 30px;
-      // left: 30px;
-      right: 160px;
+      top: 10px;
+      left: 22px;
+      /* right: 160px; */
       width: 30%;
 
       .col {
@@ -697,12 +669,15 @@ export default {
     }
   }
 }
+
 h1 {
   color: black;
 }
+
 .description {
   color: #555;
 }
+
 .fixed {
   position: fixed;
 }
@@ -725,5 +700,12 @@ h1 {
   height: 20px;
   color: black;
 }
+
+.tree {
+  max-height: calc(100vh - 64px);
+  
+}
+
+
 
 </style>
