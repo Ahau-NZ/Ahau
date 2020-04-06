@@ -93,9 +93,8 @@ function setDefaultData (withRelationships) {
     address: '',
     email: '',
     phone: '',
+    deceased: false
   }
-
-  formData.isDeceased = !!formData.diedAt
 
   if (!withRelationships) {
     delete formData.relationshipType
@@ -149,6 +148,8 @@ export default {
           } else {
             submission[key] = value
           }
+        } else if (key === 'deceased') {
+          submission[key] = value
         }
       })
       return submission
@@ -193,7 +194,7 @@ export default {
         this.showAvatar = true
       }
     },
-    'formData.isDeceased' (newValue) {
+    'formData.deceased' (newValue) {
       if (newValue === false) {
         this.formData.diedAt = ''
       }
@@ -212,6 +213,10 @@ export default {
       if (newValue) {
         this.$emit('getSuggestions', null)
       }
+    },
+
+    formData (newVal) {
+      console.log(newVal)
     }
 
   }

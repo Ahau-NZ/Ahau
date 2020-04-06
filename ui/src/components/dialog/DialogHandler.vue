@@ -286,7 +286,8 @@ export default {
       location,
       profession,
       email,
-      phone
+      phone,
+      deceased
     }) {
       const res = await this.$apollo.mutate({
         mutation: gql`
@@ -311,6 +312,7 @@ export default {
             address,
             email,
             phone,
+            deceased,
             recps: this.view.recps
           }
         }
@@ -345,6 +347,8 @@ export default {
       }
     },
     async updateProfile ($event) {
+      console.log('update profile: ', $event)
+
       const profileChanges = pick($event, [...PERMITTED_PROFILE_ATTRS])
       const relationshipAttrs = pick($event, [...PERMITTED_RELATIONSHIP_ATTRS])
       const profileId = this.selectedProfile.id

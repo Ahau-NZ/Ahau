@@ -174,7 +174,8 @@ export default {
         'email',
         'address',
         'phone',
-        'profession'
+        'profession',
+        'deceased'
       )
       const result = await this.$apollo.mutate({
         mutation: gql`

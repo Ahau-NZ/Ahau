@@ -1,26 +1,25 @@
 <template>
-<div class="fixed-scrollbar-container" style="overflow-x:scroll">
-  <svg id="baseSvg" width="1600" :height="tableHeight" ref="baseSvg" style="background-color:white"  min-height="500px">
-    <line x1="60" y1="55" x2="100%" y2="55" style="stroke-width: 1; stroke: lightgrey;"/>
-    <g v-for="column in columns" :key="column.label">
-      <text :transform="`translate(${column.x + 10} ${50})`">
-        {{ column.label }}
-      </text>
-      <line :x1="column.x" y1="55" :x2="column.x" y2="100%" style="stroke-width: 1; stroke: lightgrey;"/>
-    </g>
-      <svg id="baseGroup" >
+  <svg id="baseSvg" :width="tableWidth" :height="tableHeight" ref="baseSvg" style="background-color:white"  min-height="500px">
+    <g id="zoomable">
+      <line x1="60" y1="55" :x2="tableWidth" y2="55" style="stroke-width: 1; stroke: lightgrey;"/>
+      <g class="headers" v-for="column in columns" :key="column.label">
+        <text :transform="`translate(${column.x + 10} ${50})`">
+          {{ column.label }}
+        </text>
+        <line :x1="column.x" y1="55" :x2="column.x" :y2="tableWidth" style="stroke-width: 1; stroke: lightgrey;"/>
+      </g>
+      <svg id="baseGroup" :width="tableWidth">
         <g v-if="!flatten" :transform="`translate(${60} ${80})`">
           <g v-for="link in links" :key="link.id" class="link">
             <Link :link="link" :class="link.class"/>
           </g>
         </g>
-
         <g
           :transform="`translate(${60 - nodeRadius} ${80 - nodeRadius})`"
           ref="tree"
         >
           <g v-for="node in nodes" :key="node.data.id" class="node">
-            <rect :x="node.x + nodeRadius" :y="node.y" width="100%" :height="nodeRadius*2" class="row" :style="node.color" />
+            <rect :x="node.x + nodeRadius" :y="node.y" :width="tableWidth" :height="nodeRadius*2" class="row" :style="node.color" />
             <Node
               :width="colWidth"
               :node="node"
@@ -50,17 +49,17 @@
                 {{ node.data.profession }}
               </text>
             </svg>
-            <svg :width="columns[4].x">
+            <svg :width="columns[4].x - 45">
               <text  :transform="`translate(${columns[3].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
                 {{ node.data.address }}
               </text>
             </svg>
-            <svg :width="columns[5].x">
+            <svg :width="columns[5].x - 45">
               <text  :transform="`translate(${columns[4].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
                 {{ node.data.location }}
               </text>
             </svg>
-            <svg :width="columns[6].x">
+            <svg :width="columns[6].x - 45">
               <text :transform="`translate(${columns[5].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
                 {{ node.data.email }}
               </text>
@@ -73,9 +72,8 @@
           </g>
         </g>
       </svg>
-    </svg>
-  </div>
-
+    </g>
+  </svg>
 </template>
 
 <script>
@@ -84,7 +82,6 @@ import * as d3 from 'd3'
 import Node from './table/Node.vue'
 import Link from './tree/Link.vue'
 import calculateAge from '../lib/calculate-age.js'
-import $ from 'jquery'
 import isEqual from 'lodash.isequal'
 
 export default {
@@ -115,84 +112,23 @@ export default {
     },
     searchNodeId: {
       type: String
+    },
+    pan: {
+      type: Number,
+      default: 0
     }
   },
   data () {
     return {
-      // width used for to set max widths on columns and the text
-      // width:0,
       colWidth: 350,
       componentLoaded: false, // need to ensure component is loaded before using $refs
       nodeRadius: 20, // use variable for zoom later on
       nodeSize: 40,
-      duration: 400
+      duration: 400,
     }
   },
   mounted () {
     this.componentLoaded = true
-
-    // jquery fix x-scroll to the bottom of the window - fixes scroll bar but doesnt show scroll thumb or position
-    // $(function($){
-    //   var fixedBarTemplate = '<div class="fixed-scrollbar"><div></div></div>';
-    //   var fixedBarCSS = { display: 'none', overflowX: 'scroll', position: 'fixed',  width: '100%', bottom: 0 };
-      
-    //   $('.fixed-scrollbar-container').each(function() {
-    //     var $container = $(this);
-    //     var $bar = $(fixedBarTemplate).appendTo($container).css(fixedBarCSS);
-        
-    //     console.log($container)
-        
-    //     $bar.scroll(function() {
-    //       $container.scrollLeft($bar.scrollLeft());
-    //     });
-        
-    //     $bar.data("status", "off");
-    //   });
-      
-    //   var fixSize = function() {
-    //     $('.fixed-scrollbar').each(function() {
-    //       var $bar = $(this);
-    //       var $container = $bar.parent();
-          
-    //       $bar.children('div').height(1).width($container[0].scrollWidth);
-    //       $bar.width($container.width()).scrollLeft($container.scrollLeft());
-    //     });
-    //   };
-      
-    //   $(window).on("load.fixedbar resize.fixedbar", function() {
-    //     fixSize();
-    //   });
-      
-    //   var scrollTimeout = null;
-      
-    //   $(window).on("scroll.fixedbar", function() { 
-    //     clearTimeout(scrollTimeout);
-    //     scrollTimeout = setTimeout(function() {
-    //       $('.fixed-scrollbar-container').each(function() {
-    //         var $container = $(this);
-    //         var $bar = $container.children('.fixed-scrollbar');
-            
-    //         if($bar.length) {
-    //           var containerOffset = {top: $container.offset().top, bottom: $container.offset().top + $container.height() };
-    //           var windowOffset = {top: $(window).scrollTop(), bottom: $(window).scrollTop() + $(window).height() };
-              
-    //           if((containerOffset.top > windowOffset.bottom) || (windowOffset.bottom > containerOffset.bottom)) {
-    //             if($bar.data("status") == "on") {
-    //               $bar.hide().data("status", "off");
-    //             }
-    //           } else {
-    //             if($bar.data("status") == "off") {
-    //               $bar.show().data("status", "on");
-    //               $bar.scrollLeft($container.scrollLeft());
-    //             }
-    //           }
-    //         }
-    //       });
-    //     }, 50);
-    //   });
-      
-    //   $(window).trigger("scroll.fixedbar");
-    // });
   },
 
   computed: {
@@ -218,10 +154,10 @@ export default {
       })
       return layout
     },
-
+    // table height based on number of nodes on table
     tableHeight () {
       if (!this.componentLoaded) return 0
-      return (this.nodes.length + 1) * 60
+      return (this.nodes.length + 1) * 51
     },
 
     // returns an array of nodes associated with the root node created from the treeData object, as well as extra attributes
@@ -231,7 +167,7 @@ export default {
         .descendants()
         // filter deceased
         .filter(peeps => {
-          if (this.filter && peeps.data.diedAt !== null) {
+          if (this.filter && peeps.data.deceased === true) {
             return false
           }
           return true
@@ -292,6 +228,7 @@ export default {
         .map(d => d.data.id)
     },
 
+    // the headers for the columns - width currently hardcoded
     columns () {
       return [
         {
@@ -308,23 +245,29 @@ export default {
         },
         {
           label: 'Address',
-          x: this.colWidth + 400
+          x: this.colWidth + 465
         },
         {
           label: 'City, Country',
-          x: this.colWidth + 590
+          x: this.colWidth + 665
         },
         {
           label: 'Email',
-          x: this.colWidth + 740
+          x: this.colWidth + 865
         },
         {
           label: 'Phone',
-          x: this.colWidth + 890
+          x: this.colWidth + 1065
         }
       ]
     },
 
+    // sets the width of the table
+    tableWidth () {
+      var tablewidth = this.colWidth + this.columns[this.columns.length - 1].x
+      this.$emit('update:tableWidth', tablewidth)
+      return tablewidth
+    }
   },
 
   watch: {
@@ -334,11 +277,29 @@ export default {
     }
   },
   methods: {
+    // function to control left and right scroll buttons in table
+    panAction (x) {
+      console.log("tableWidth: ", this.tableWidth)
+      console.log("screen width: ", screen.width)
+      var svg = d3.select('#baseSvg')
+      var g = d3.select('#zoomable')
+
+      var zoom = d3.zoom()
+        .translateExtent([[0, 0], [2400, 1600]])
+        .on('zoom', function () {
+          g.attr('transform', d3.event.transform)
+        })
+
+      zoom.translateBy(svg.transition().duration(100), (x), 0)
+    },
+
+    // set the width for the first column which needs to be dynamic when showing whakapapa links
     setWidth (depth) {
       if (!this.flatten && depth > 10) {
         this.colWidth = depth * 45 - 100
-      } 
+      }
     },
+
     pathStroke (sourceId, targetId) {
       if (!this.paths) return 'lightgrey'
 
@@ -357,6 +318,7 @@ export default {
       }
       return 'lightgrey'
     },
+
     // changes row colour
     nodeColor (data) {
       var age = calculateAge(data.bornAt)
@@ -394,6 +356,15 @@ svg#baseSvg {
 }
 text {
   fill: #555;
+}
+
+svg#baseSvg {
+  cursor: grab;
+}
+
+.headers {
+  position:fixed;
+  top: 100px
 }
 
 </style>

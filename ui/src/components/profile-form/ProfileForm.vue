@@ -12,7 +12,7 @@
               :alt="formData.preferredName"
               :gender="formData.gender"
               :bornAt="formData.bornAt"
-              :diedAt="formData.diedAt"
+              :deceased="formData.deceased"
             />
           </v-col>
           <v-col v-if="!readonly" cols="12" justify="center" align="center" class="pa-0">
@@ -97,14 +97,14 @@
           </v-col>
           <!-- DIED AT CHECKBOX -->
           <v-col cols="12" sm="6" class="pa-1" v-if="!readonly">
-            <v-checkbox v-model="formData.isDeceased"
+            <v-checkbox v-model="formData.deceased"
               label="No longer living" :hide-details="true"
             />
           </v-col>
           <!-- DIED AT PICKER -->
           <v-col cols="12" sm="6" class="pa-1" v-if="readonly ? hideDetails : true">
             <NodeDatePicker
-              v-if="formData.isDeceased || readonly"
+              v-if="formData.deceased || readonly"
               label="Date of death"
               :value="formData.diedAt"
               @date="formData.diedAt = $event"
