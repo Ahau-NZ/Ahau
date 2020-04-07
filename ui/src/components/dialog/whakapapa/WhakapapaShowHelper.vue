@@ -1,10 +1,5 @@
 <template>
   <Dialog :title="title" :show="show" @close="close" :width="`700px`" :goBack="close">
-    <!-- <template v-slot:title>
-      <v-card-title>
-        <span class="headline">Whakapapa tree</span>
-      </v-card-title>
-    </template> -->
     <template v-slot:content>
       <v-card-text class="pt-0">
         <p>

@@ -1,8 +1,5 @@
 <template>
   <Dialog :title="`Edit ${ formData.name } Whakapapa`" :show="show" @close="close" width="720px" :goBack="close" :enableBar="false">
-    <!-- <template v-slot:title>
-      <h1>Edit {{ formData.name }}</h1>
-    </template> -->
     <template v-slot:content>
       <v-row class="px-2">
         <v-col cols="12" sm="5" order-sm="2">

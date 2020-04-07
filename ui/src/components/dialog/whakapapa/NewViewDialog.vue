@@ -1,11 +1,6 @@
 <template>
   <div>
     <Dialog :show="show" :title="title" @close="close" width="720px" :goBack="close" enableMenu>
-      <!-- <template v-slot:title>
-        <h1>
-            {{ text || 'Create a new whakapapa record' }}
-        </h1>
-      </template> -->
       <template v-slot:content>
         <WhakapapaForm ref="whakapapaForm" :view.sync="formData"/>
       </template>

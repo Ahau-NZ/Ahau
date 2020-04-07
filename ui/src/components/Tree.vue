@@ -1,5 +1,4 @@
 <template>
-  <!-- <div class="svgContainer"  style="border: 2px solid red;"> -->
     <svg id="baseSvg" width="100%" :height="height" ref="baseSvg">
       <!-- niho background picture -->
       <defs>
@@ -55,7 +54,6 @@
         <image :transform="`translate(${width/2 - 100} ${height/3})`" href="../assets/grid-loader.svg" width="30" height="30" />
       </g>
     </svg>
-  <!-- </div> -->
 </template>
 
 <script>
@@ -421,7 +419,4 @@ svg#baseSvg {
   stroke-dasharray: 2.5
 }
 
-.svgContainer {
-
-}
 </style>

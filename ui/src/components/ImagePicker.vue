@@ -56,9 +56,6 @@ export default {
 
 <style scoped lang="scss">
   .upload-pic-row {
-    /* width: 200px;
-    height: 200px;
-    border: 1px solid rgba(0,0,0,0.6); */
     display: flex;
     align-items: center;
     justify-content: center;

@@ -20,7 +20,6 @@
               </v-col>
               <!-- Upload Profile Photo Button -->
               <v-col v-if="!readonly" cols="12" justify="center" align="center" class="pa-0">
-                <!-- <ImagePicker @updateAvatar="formData.avatarImage = $event"/> -->
                 <ImagePicker @updateAvatar="formData.avatarImage = $event" :avatarLoaded="formData.avatarImage"/>
               </v-col>
             </v-row>
@@ -148,9 +147,7 @@
             </v-row>
           </v-col>
   
-          <!-- DESCRIPTION -->
           <!-- Description textarea -->
-          <!-- <v-col class="ml-4" v-if="form.showDescription || readonly"> -->
           <v-col class="pa-1"  cols="12" sm="6" >
             <v-textarea
               v-model="formData.description"
@@ -163,10 +160,6 @@
             >
             </v-textarea>
           </v-col>
-          <!-- Description button -->
-          <!-- <v-col v-else cols="12" sm="6" class="pa-1 ml-4">
-            <AddButton label="Add description" @click="form.showDescription = true" row />
-          </v-col> -->
         </v-row>
   
         <v-row>
