@@ -7,6 +7,8 @@
       :class="classObject"
       :flat="!mobile"
       color="#303030"
+      fixed
+      dense
     >
       <v-btn v-if="goBack && mobile" @click="goBack" icon dark>
         <v-icon>mdi-arrow-left</v-icon>

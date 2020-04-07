@@ -8,7 +8,7 @@
 
 <script>
 import gql from 'graphql-tag'
-import ProfileForm from '@/components/ProfileForm'
+// import ProfileForm from '@/components/ProfileForm' file deprecated
 
 export default {
   name: 'PersonEdit',
@@ -88,7 +88,7 @@ export default {
     }
   },
   components: {
-    ProfileForm
+    // ProfileForm
   }
 }
 </script>

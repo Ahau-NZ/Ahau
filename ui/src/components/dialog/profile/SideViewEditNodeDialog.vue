@@ -286,7 +286,6 @@
 
                   <!-- Mobile: Editing: DESCRIPTION -->
                   <!-- Description textarea -->
-                  <!-- <v-col class="ml-4" v-if="form.showDescription || readonly"> -->
                   <v-col class="pa-1"  cols="12">
                     <v-textarea
                       v-model="formData.description"
@@ -299,10 +298,6 @@
                     >
                     </v-textarea>
                   </v-col>
-                  <!-- Description button -->
-                  <!-- <v-col v-else cols="12" sm="6" class="pa-1 ml-4">
-                    <AddButton label="Add description" @click="form.showDescription = true" row />
-                  </v-col> -->
                 </v-row>
 
                 <v-row class="pa-2">
@@ -833,14 +828,16 @@ function defaultData (profile) {
     birthOrder: profile.birthOrder,
     relationshipType: profile.relationship ? profile.relationship.relationshipType ? profile.relationship.relationshipType : null : null,
     location: profile.location,
-    contact: profile.contact,
+    email: profile.email,
+    phone: profile.phone,
+    deceased: profile.deceased,
+    address: profile.address,
     profession: profile.profession,
     altNames: {
       currentState: clone(profile.altNames),
       add: [], // new altNames to add
       remove: [] // altNames to remove
-    },
-    isDeceased: !!profile.diedAt // set to true if this value is set
+    }
   }
 }
 
@@ -935,7 +932,7 @@ export default {
     profile (newVal) {
       this.formData = defaultData(newVal)
     },
-    'formData.isDeceased' (newValue) {
+    'formData.deceased' (newValue) {
       if (!newValue) this.formData.diedAt = ''
     }
   },

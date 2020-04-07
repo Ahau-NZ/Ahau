@@ -101,10 +101,11 @@ function setDefaultData (withRelationships) {
     description: '',
     location: '',
     profession: '',
-    contact: ''
+    address: '',
+    email: '',
+    phone: '',
+    deceased: false
   }
-
-  formData.isDeceased = !!formData.diedAt
 
   if (!withRelationships) {
     delete formData.relationshipType
@@ -158,6 +159,8 @@ export default {
           } else {
             submission[key] = value
           }
+        } else if (key === 'deceased') {
+          submission[key] = value
         }
       })
       return submission
@@ -202,7 +205,7 @@ export default {
         this.showAvatar = true
       }
     },
-    'formData.isDeceased' (newValue) {
+    'formData.deceased' (newValue) {
       if (newValue === false) {
         this.formData.diedAt = ''
       }
@@ -222,7 +225,6 @@ export default {
         this.$emit('getSuggestions', null)
       }
     }
-
   }
 }
 </script>

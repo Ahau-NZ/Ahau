@@ -52,7 +52,7 @@ export default {
     alt: String,
     gender: String,
     bornAt: String,
-    diedAt: String, // in the future this should be changed to check if "isDeceased"
+    deceased: { type: Boolean, default: false },
     size: { type: String, default: '25vh' },
     showLabel: { type: Boolean, default: false },
     clickable: { type: Boolean, default: false },
@@ -69,12 +69,12 @@ export default {
     },
     customClass () {
       if (this.isView) return ''
-      return this.diedAt ? 'deceased' : 'alive'
+      return this.deceased ? 'deceased' : 'alive'
     },
     customStyle () {
       if (this.isView) return ''
       return {
-        opacity: this.diedAt ? 0.5 : 1
+        opacity: this.deceased ? 0.5 : 1
       }
     }
 

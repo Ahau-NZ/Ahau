@@ -20,7 +20,7 @@
             :alt="profile.preferredName"
             :gender="profile.gender"
             :bornAt="profile.bornAt"
-            :diedAt="profile.diedAt"
+            :deceased="profile.deceased"
             :show-label="showLabels"
             :clickable="true"
             @click="profileClick(profile)"

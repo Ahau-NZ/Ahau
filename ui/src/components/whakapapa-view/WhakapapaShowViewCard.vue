@@ -6,7 +6,6 @@
     style="width: 100%;"
     light
     outlined
-
     :ripple="false"
   >
 
@@ -14,7 +13,8 @@
     <div class="d-flex pa-3" style="width: 100%;">
 
       <!-- Whakapapa Image -->
-      <div :style="background(view)" style="width: 20%;"></div>
+      <div :style="background(view)" style="width: 20%;"/>
+      <div class="information d-flex flex-column justify-center align-center"  style="width: 80%;">
 
       <div class="information d-flex flex-column justify-center align-center"  style="width: 80%;">
         <!-- Whakapapa Title -->
@@ -51,18 +51,19 @@
             </template>
             <span>Show whakapapa description</span>
           </v-tooltip>
-      </v-card-text>
-
+        </v-card-text>
       </div>
     </div>
-
     <v-expand-transition>
       <div v-show="show">
         <v-divider></v-divider>
         <v-card-subtitle v-text="description" class="pa-3"/>
       </div>
     </v-expand-transition>
+<<<<<<< HEAD
 
+=======
+>>>>>>> 28dc9995a3a3cec56f2be11e65815cffc23154a0
   </v-card>
 </template>
 
@@ -113,9 +114,7 @@ export default {
       return {
         backgroundImage: `url(${whakapapa})`,
         backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        border: '2px solid pink'
-
+        backgroundPosition: 'center'
       }
     }
   }
