@@ -8,6 +8,8 @@
           :radius="partnerRadius"
           :isPartner="true"
           :node="partner"
+          :nonFocusedPartners="nonFocusedPartners"
+          @change-focus="$emit('change-focus', partner.data.id)"
           @open-context-menu="$emit('open-context-menu', $event)"
         />
       </g>
@@ -53,7 +55,7 @@
       </g>
     </g>
 
-    <g v-else class="avatar -partner">
+    <g v-else class="avatar -partner" @click="$emit('change-focus', $event)">
       <defs>
         <clipPath id="myPartnerCircle">
           <circle :cx="radius" :cy="radius" :r="radius" />
@@ -94,6 +96,19 @@
       <rect :width="textWidth" y="-16" height="20"></rect>
       <text>{{ profile.preferredName }}</text>
     </g>
+    <!-- Changes focus -->
+    <g
+      v-if="nonFocusedPartners.includes(profile.id)"
+      :transform="`translate(${1 * radius}, ${radius * -0.5})`"
+    >
+      <text
+        font-size="30"
+        font-weight="600"
+        cursor="initial"
+        style="fill:#000;"
+        transform="rotate(90)"
+      >..</text>
+    </g>
     <defs>
       <filter id="shadow">
         <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="grey" flood-opacity="0.5"/>
@@ -116,7 +131,9 @@ export default {
   props: {
     node: { type: Object, required: true },
     radius: { type: Number, required: true },
-    isPartner: { type: Boolean, default: false }
+    isPartner: { type: Boolean, default: false },
+    nonFocusedPartners: { type: Array }
+
   },
   data () {
     return {
@@ -131,6 +148,9 @@ export default {
   computed: {
     profile () {
       return this.node.data
+    },
+    nonFocusedPartner () {
+      return this.node.data.nonFocusedPartner
     },
     diameter () {
       return this.radius * 2
