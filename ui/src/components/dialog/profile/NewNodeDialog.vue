@@ -20,21 +20,22 @@
               @click:clear="resetFormData()"
               :search-input.sync="formData.preferredName"
               placeholder="Enter or search a preferred name"
+              return-object
             >
               <template v-slot:item="data">
                 <template v-if="typeof data.item === 'object'">
                   <v-list-item @click="setFormData(data.item)">
                     <Avatar class="mr-3" size="40px" :image="data.item.avatarImage" :alt="data.item.preferredName" :gender="data.item.gender" :bornAt="data.item.bornAt" />
                     <v-list-item-content>
-                      <v-list-item-title> {{ data.item.preferredName }}</v-list-item-title>
+                      <v-list-item-title> {{ data.item.preferredName }} </v-list-item-title>
                       <v-list-item-subtitle>Preferred name</v-list-item-subtitle>
                     </v-list-item-content>
                     <v-list-item-content>
-                      <v-list-item-title> {{ data.item.legalName }}</v-list-item-title>
+                      <v-list-item-title> {{ data.item.legalName }} </v-list-item-title>
                       <v-list-item-subtitle>Legal name</v-list-item-subtitle>
                     </v-list-item-content>
                     <v-list-item-action>
-                      <v-list-item-title>{{ age(data.item.bornAt) }}</v-list-item-title>
+                      <v-list-item-title> {{ age(data.item.bornAt) }} </v-list-item-title>
                       <v-list-item-subtitle>Age</v-list-item-subtitle>
                     </v-list-item-action>
                   </v-list-item>
@@ -128,8 +129,12 @@ export default {
   data () {
     return {
       formData: setDefaultData(this.withRelationships),
-      hasSelection: false
+      hasSelection: false,
+      closeSuggestions: []
     }
+  },
+  mounted () {
+    this.closeSuggestions = this.getCloseSuggestions()
   },
   computed: {
     generateSuggestions () {
@@ -144,16 +149,6 @@ export default {
           })
         })
       ].filter(Boolean)
-    },
-    closeSuggestions () {
-      switch (this.type) {
-        case 'child':
-          return this.findChildren()
-        case 'parent':
-          return this.findParents()
-        default:
-          return []
-      }
     },
     mobile () {
       return this.$vuetify.breakpoint.xs
@@ -183,9 +178,15 @@ export default {
     }
   },
   methods: {
-    get (array) {
-      if (isEmpty(array)) return [ { 'header': 'None' } ]
-      return array
+    getCloseSuggestions () {
+      switch (this.type) {
+        case 'child':
+          return this.findChildren()
+        case 'parent':
+          return this.findParents()
+        default:
+          return []
+      }
     },
     findChildren () {
       var currentChildren = []
@@ -286,6 +287,9 @@ export default {
       } else {
         this.$emit('getSuggestions', null)
       }
+    },
+    generateSuggestions (newValue) {
+      console.log(newValue)
     },
     hasSelection (newValue) {
       if (newValue) {
