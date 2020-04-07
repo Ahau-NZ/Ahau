@@ -89,6 +89,7 @@
       />
       <Table
         v-if="whakapapa.table"
+        ref="table"
         :filter="filter"
         :flatten="flatten"
         :view="whakapapaView"
@@ -694,7 +695,7 @@ export default {
 
     & > .navigate {
       position: fixed;
-      top: 110px;
+      top: 130px;
       right: 110px;
     }
   }
