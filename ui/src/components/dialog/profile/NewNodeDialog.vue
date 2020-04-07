@@ -20,7 +20,9 @@
               @click:clear="resetFormData()"
               :search-input.sync="formData.preferredName"
               placeholder="Enter or search a preferred name"
-              return-object
+              hide-no-data
+              hide-selected
+              class="search-input"
             >
               <template v-slot:item="data">
                 <template v-if="typeof data.item === 'object'">
@@ -31,7 +33,7 @@
                       <v-list-item-subtitle>Preferred name</v-list-item-subtitle>
                     </v-list-item-content>
                     <v-list-item-content>
-                      <v-list-item-title> {{ data.item.legalName }} </v-list-item-title>
+                      <v-list-item-title> {{ data.item.legalName ? data.item.legalName :  '&nbsp;' }} </v-list-item-title>
                       <v-list-item-subtitle>Legal name</v-list-item-subtitle>
                     </v-list-item-content>
                     <v-list-item-action>
