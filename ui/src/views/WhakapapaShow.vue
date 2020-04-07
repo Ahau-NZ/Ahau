@@ -1,7 +1,7 @@
 <template>
   <div id="whakapapa-show">
     <v-container class="white px-0 py-0 mx-auto">
-      <v-row v-if="!mobile" class="header"">
+      <v-row v-if="!mobile" class="header">
         <!-- Whakapapa Title Card -->
 
         <!-- Whakapapa"SHOW"ViewCard -->
@@ -11,7 +11,7 @@
                 <template v-slot:activator="{ on }">
                   <v-btn
                     v-on="on"
-                    @click.prevent="dialog.active = 'whakapapa-edit'" 
+                    @click.prevent="dialog.active = 'whakapapa-edit'"
                     icon
                     class="pa-0 px-3"
                   >
@@ -22,34 +22,6 @@
               </v-tooltip>
             </template>
         </WhakapapaShowViewCard>
-
-        <!-- <WhakapapaViewCard :view="whakapapaView" :shadow="false">
-            <v-row class="lock-container pl-3">
-              <v-tooltip bottom>
-                <template v-slot:activator="{ on }">
-                  <v-icon v-on="on" small color="#555">mdi-lock</v-icon>
-                </template>
-                <span>Private record - Only visible by you</span>
-              </v-tooltip>
-              <v-tooltip bottom>
-                <template v-slot:activator="{ on }">
-                  <v-btn
-                    v-on="on"
-                    @click.prevent="dialog.active = 'whakapapa-edit'"
-                    align="right"
-                    color="white"
-                    text
-                    x-small
-                    class="blue--text edit pl-8"
-                  >
-                    <v-icon small class="blue--text" left>mdi-pencil</v-icon>
-                  </v-btn>
-                </template>
-                <span>Edit whakapapa description</span>
-              </v-tooltip>
-            </v-row>
-          </WhakapapaViewCard> -->
-
       </v-row>
 
       <WhakapapaBanner v-if="mobile" :view="whakapapaView" @edit="updateDialog('whakapapa-edit', null)" @more-info="updateDialog('whakapapa-view', null)"/>
@@ -144,7 +116,6 @@ import gql from 'graphql-tag'
 import isEmpty from 'lodash.isempty'
 import { VueContext } from 'vue-context'
 
-import WhakapapaViewCard from '@/components/whakapapa-view/WhakapapaViewCard.vue'
 import WhakapapaShowViewCard from '@/components/whakapapa-view/WhakapapaShowViewCard.vue'
 import WhakapapaBanner from '@/components/whakapapa-view/WhakapapaBanner.vue'
 
@@ -178,7 +149,6 @@ const saveWhakapapaViewMutation = input => (
 export default {
   name: 'WhakapapaShow',
   components: {
-    WhakapapaViewCard,
     WhakapapaShowViewCard,
     TableButton,
     HelpButton,

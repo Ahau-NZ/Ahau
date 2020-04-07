@@ -1,20 +1,17 @@
 <template>
   <v-card
-    style="width: 100%;"
-    light
-    outlined
+    style="width: 100%;" light outlined
   >
-    
     <!-- Whakapapa Image and Title -->
     <div class="d-flex pa-3" style="width: 100%;">
 
       <!-- Whakapapa Image -->
-      <div :style="background(view)" style="width: 20%;"></div>
+      <div :style="background(view)" style="width: 20%;"/>
+      <div class="information d-flex flex-column justify-center align-center"  style="width: 80%;">
 
-      <div class="information d-flex flex-column justify-center align-center"  style="width: 80%;">        
         <!-- Whakapapa Title -->
         <v-card-title v-text="view.name" class="py-0 pl-3 justify-start" style="width: 100%;"/>
-        
+
         <!-- Whakapapa Title Icons -->
         <v-card-text class="pa-0 d-flex justify-start align-center" style="width: 100%;">
           <!-- Lock icon -->
@@ -45,19 +42,15 @@
             </template>
             <span>Show whakapapa description</span>
           </v-tooltip>
-      </v-card-text>
-
+        </v-card-text>
       </div>
     </div>
-
     <v-expand-transition>
       <div v-show="show">
         <v-divider></v-divider>
         <v-card-subtitle v-text="description" class="pa-3"/>
       </div>
     </v-expand-transition>
-    
-
   </v-card>
 </template>
 
@@ -71,9 +64,9 @@ export default {
     shadow: { type: Boolean, default: true },
     cropDescription: { type: Boolean, default: false }
   },
-  data() {
+  data () {
     return {
-      show: false,
+      show: false
     }
   },
   computed: {
