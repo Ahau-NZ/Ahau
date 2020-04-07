@@ -121,8 +121,7 @@ export default {
         // hide the grapgh until the tree has centered
         setTimeout(() => {
           this.loading = false
-          this.changeFocusId = null
-        }, 1000)
+        }, 1500)
       }
     },
 
@@ -379,7 +378,7 @@ export default {
       var y = height / 2 - source.y
 
       g.transition()
-        .duration(1000)
+        .duration(700)
         .attr('transform', 'translate(' + (x) + ',' + (y) + ')scale(' + 1 + ')')
         .on('end', function () { svg.call(d3.zoom().transform, d3.zoomIdentity.translate((x), (y)).scale(1)) })
     },

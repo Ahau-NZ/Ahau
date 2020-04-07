@@ -3,8 +3,10 @@
     <NewNodeDialog v-if="isActive('new-node')"
       :show="isActive('new-node')"
       :title="`Add ${type} to ${selectedProfile.preferredName}`"
+      :type="type"
       @create="addPerson($event)"
       @close="close"
+      :selectedProfile="selectedProfile"
       :suggestions="suggestions" @getSuggestions="getSuggestions($event)"
     />
     <div :class="sideMenuClass">
@@ -285,9 +287,12 @@ export default {
       avatarImage,
       altNames,
       description,
+      address,
       location,
       profession,
-      contact
+      email,
+      phone,
+      deceased
     }) {
       const res = await this.$apollo.mutate({
         mutation: gql`
@@ -309,7 +314,10 @@ export default {
             description,
             location,
             profession,
-            contact,
+            address,
+            email,
+            phone,
+            deceased,
             recps: this.view.recps
           }
         }
@@ -481,9 +489,7 @@ export default {
       // now we have the flatStore for the suggestions we need to filter out the records
       // so we cant add one that is already in the tree
       records = records.filter(record => {
-        if (this.findInTree(record.id)) {
-          return false // dont include it
-        }
+        if (this.findInTree(record.id)) return false // dont include it
         return true
       })
 
@@ -501,6 +507,18 @@ export default {
     */
     findInTree (profileId) {
       if (this.selectedProfile.id === profileId) return true // this is always in the tree
+
+      // if they are a sibling
+      if (this.selectedProfile.siblings.find(sibling => {
+        return sibling.id === profileId
+      })) return true // filter them out
+
+      // if they are a parents partner
+      if (this.selectedProfile.parents.find(parent => {
+        return parent.partners.find(partnerId => {
+          return partnerId === profileId
+        })
+      })) return true // filter them out
 
       var root = d3.hierarchy(this.nestedWhakapapa)
 

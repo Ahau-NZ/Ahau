@@ -2,10 +2,12 @@
   <div>
     <v-app-bar
       v-if="mobile || enableMenu"
-      :app="mobile && app"
+      app
       :class="mobile ? 'mobile' : 'desktop'"
       :flat="!mobile"
       color="#303030"
+      fixed
+      dense
     >
       <v-btn v-if="goBack && mobile" @click="goBack" icon dark>
         <v-icon>mdi-arrow-left</v-icon>

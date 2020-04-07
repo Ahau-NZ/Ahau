@@ -1,33 +1,27 @@
 <template>
-  <div id="whakapapa-show">
-    <v-container class="white px-0 py-0 mx-auto">
+  <div id="whakapapa-show" style="overflow:none">
+    <v-container fixed class="white px-0 py-0 mx-auto">
       <v-row v-if="!mobile" class="header">
-        <WhakapapaViewCard :view="whakapapaView" :shadow="false">
-          <v-row class="lock-container pl-3">
-            <v-tooltip bottom>
-              <template v-slot:activator="{ on }">
-                <v-icon v-on="on" small color="#555">mdi-lock</v-icon>
-              </template>
-              <span>Private record - Only visible by you</span>
-            </v-tooltip>
-            <v-tooltip bottom>
-              <template v-slot:activator="{ on }">
-                <v-btn
-                  v-on="on"
-                  @click.prevent="dialog.active = 'whakapapa-edit'"
-                  align="right"
-                  color="white"
-                  text
-                  x-small
-                  class="blue--text edit pl-8"
-                >
-                  <v-icon small class="blue--text" left>mdi-pencil</v-icon>
-                </v-btn>
-              </template>
-              <span>Edit whakapapa description</span>
-            </v-tooltip>
-          </v-row>
-        </WhakapapaViewCard>
+        <!-- Whakapapa Title Card -->
+
+        <!-- Whakapapa"SHOW"ViewCard -->
+        <WhakapapaShowViewCard :view="whakapapaView" :shadow="false">
+          <template v-slot:edit>
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on }">
+                  <v-btn
+                    v-on="on"
+                    @click.prevent="dialog.active = 'whakapapa-edit'"
+                    icon
+                    class="pa-0 px-3"
+                  >
+                    <v-icon small class="blue--text">mdi-pencil</v-icon>
+                  </v-btn>
+                </template>
+                <span>Edit whakapapa description</span>
+              </v-tooltip>
+            </template>
+        </WhakapapaShowViewCard>
       </v-row>
 
       <WhakapapaBanner v-if="mobile" :view="whakapapaView" @edit="updateDialog('whakapapa-edit', null)" @more-info="updateDialog('whakapapa-view', null)"/>
@@ -59,6 +53,18 @@
           <FeedbackButton />
         </div>
       </v-row>
+      <v-row v-if="whakapapa.table && overflow" class="navigate">
+        <div class="icon-button">
+          <v-btn fab x-small light @click="togglePan(200)">
+            <v-icon>mdi-arrow-left</v-icon>
+          </v-btn>
+        </div>
+        <div class="icon-button">
+          <v-btn fab x-small light @click.stop="togglePan(-200)">
+            <v-icon>mdi-arrow-right</v-icon>
+          </v-btn>
+        </div>
+      </v-row>
 
       <v-row>
         <Tree
@@ -77,6 +83,7 @@
         />
         <Table
           v-if="whakapapa.table"
+          ref="table"
           :filter="filter"
           :flatten="flatten"
           :view="whakapapaView"
@@ -86,6 +93,7 @@
           @collapse-node="collapseNode($event)"
           @open-context-menu="openContextMenu($event)"
           :searchNodeId="searchNodeId"
+          @update="tableOverflow($event)"
         />
       </v-row>
     </v-container>
@@ -122,7 +130,7 @@ import gql from 'graphql-tag'
 import isEmpty from 'lodash.isempty'
 import { VueContext } from 'vue-context'
 
-import WhakapapaViewCard from '@/components/whakapapa-view/WhakapapaViewCard.vue'
+import WhakapapaShowViewCard from '@/components/whakapapa-view/WhakapapaShowViewCard.vue'
 import WhakapapaBanner from '@/components/whakapapa-view/WhakapapaBanner.vue'
 
 import Tree from '@/components/Tree.vue'
@@ -155,7 +163,7 @@ const saveWhakapapaViewMutation = input => (
 export default {
   name: 'WhakapapaShow',
   components: {
-    WhakapapaViewCard,
+    WhakapapaShowViewCard,
     TableButton,
     HelpButton,
     FlattenButton,
@@ -171,6 +179,8 @@ export default {
   },
   data () {
     return {
+      overflow: 'false',
+      pan: 0,
       search: false,
       searchNodeId: '',
       showWhakapapaHelper: false,
@@ -200,7 +210,6 @@ export default {
       recordQueue: [],
       processingQueue: false,
 
-      suggestions: [], // holds an array of suggested profiles
       selectedProfile: null,
       dialog: {
         active: null,
@@ -254,7 +263,6 @@ export default {
     }
   },
   computed: {
-
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -324,6 +332,13 @@ export default {
     }
   },
   methods: {
+    tableOverflow (width) {
+      var show = width > screen.width
+      this.overflow = show
+    },
+    togglePan (x) {
+      this.$refs.table.panAction(x)
+    },
     clickedOff () {
       this.search = !this.search
     },
@@ -382,9 +397,12 @@ export default {
               diedAt
               birthOrder
               description
-              contact
+              address
+              email
+              phone
               location
               profession
+              deceased
               altNames
               avatarImage {
                 uri
@@ -399,9 +417,12 @@ export default {
                   diedAt
                   birthOrder
                   description
-                  contact
+                  address
+                  email
+                  phone
                   location
                   profession
+                  deceased
                   altNames
                   avatarImage {
                     uri
@@ -421,9 +442,12 @@ export default {
                   diedAt
                   birthOrder
                   description
-                  contact
+                  address
+                  phone
+                  email
                   location
                   profession
+                  deceased
                   altNames
                   avatarImage {
                     uri
@@ -534,16 +558,31 @@ export default {
     },
     async setSelectedProfile (profileId) {
       await this.loadDescendants(profileId)
+
+      // populates children, parents, siblings, partners from what ever is in this.profiles
       this.selectedProfile = tree.hydrate(
         this.profiles[profileId],
         this.profiles
       )
-
+      console.log('selectedProfile: ', this.selectedProfile)
       if (!this.selectedProfile.parents || this.selectedProfile.parents.length === 0) return
+
+      this.selectedProfile.parents = await Promise.all(
+        this.selectedProfile.parents.map(async parent => {
+          await this.loadDescendants(parent.id)
+          var profile = this.profiles[parent.id]
+          return profile
+        })
+      )
+
       var mainParent = this.selectedProfile.parents[0]
       this.selectedProfile.relationship = this.relationshipLinks[mainParent.id + '-' + this.selectedProfile.id]
-    },
 
+      this.selectedProfile = tree.hydrate(
+        this.profiles[profileId],
+        this.profiles
+      )
+    },
     // save whakapapa changes
     async updateWhakapapa (whakapapaChanges) {
       const input = {
@@ -636,7 +675,7 @@ export default {
       left: 30px;
       // left: 30px;
       right: 160px;
-      width: 50%;
+      width: 30%;
 
       .col {
         padding-top: 0;
@@ -645,14 +684,20 @@ export default {
     }
 
     & > .select {
-      position: absolute;
-      top: 20px;
-      right: 50px;
+      position: fixed;
+      top: 60px;
+      right: 110px;
 
       .col {
         padding-top: 0;
         padding-bottom: 0;
       }
+    }
+
+    & > .navigate {
+      position: fixed;
+      top: 110px;
+      right: 110px;
     }
   }
 }
@@ -682,5 +727,4 @@ h1 {
   display: flex;
   justify-items: flex-end;
 }
-
 </style>

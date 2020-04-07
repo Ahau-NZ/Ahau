@@ -22,7 +22,7 @@
         </clipPath>
       </defs>
       <circle
-        :style="{ fill: profile.diedAt ? colours.deceased : colours.alive }"
+        :style="{ fill: profile.deceased ? colours.deceased : colours.alive }"
         :cx="radius"
         :cy="radius"
         :r="radius - 1"
@@ -32,7 +32,7 @@
         :width="diameter"
         :height="diameter"
         clip-path="url(#myCircle)"
-        :style="{ opacity: profile.diedAt ? 0.5 : 1 }"
+        :style="{ opacity: profile.deceased ? 0.5 : 1 }"
       />
       <g v-if="profile.isCollapsed" :style="collapsedStyle">
         <text> ... </text>
@@ -62,7 +62,7 @@
         </clipPath>
       </defs>
       <circle
-        :style="{ fill: profile.diedAt ? colours.deceased : colours.alive }"
+        :style="{ fill: profile.deceased ? colours.deceased : colours.alive }"
         :cx="radius"
         :cy="radius"
         :r="radius - 1"
@@ -72,7 +72,7 @@
         :width="diameter"
         :height="diameter"
         clip-path="url(#myPartnerCircle)"
-        :style="{ opacity: profile.diedAt ? 0.5 : 1 }"
+        :style="{ opacity: profile.deceased ? 0.5 : 1 }"
       />
 
       <g

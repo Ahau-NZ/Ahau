@@ -150,7 +150,7 @@ export default {
   methods: {
 
     downloadCsv () {
-      var csv = 'parentNumber,number,preferredName,legalName,gender,bornAt,diedAt,birthOrder,contact,location,profession,relationshipType\n'
+      var csv = 'parentNumber,number,preferredName,legalName,gender,bornAt,diedAt,birthOrder,relationshipType,profession,phone,email,address,location\n'
 
       var hiddenElement = document.createElement('a')
       hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(csv)
@@ -213,14 +213,17 @@ export default {
               bornAt: d.bornAt.split(/\//).reverse().join('/'),
               diedAt: d.diedAt.split(/\//).reverse().join('/'),
               birthOrder: Number(d.birthOrder),
-              contact: d.contact,
+              phone: d.phone,
+              email: d.email,
+              address: d.address,
+              phone: d.phone,
               location: d.location,
               profession: d.profession,
               relationshipType: d.relationshipType ? d.relationshipType : 'birth'
             }
           }
         })
-        // keep console.log for user support
+        // keep console.log for debugging user support
         console.log(csv)
         this.successMsg = ['Expected result = Top ancestor: ' + csv[0].preferredName + '. First child: ' + csv[1].preferredName]
         this.$emit('update:data', csv)
