@@ -12,9 +12,11 @@ export const PERMITTED_PROFILE_ATTRS = [
   'altNames',
   'birthOrder',
   'location',
-  'contact',
-  'profession'
-  // 'isDeceased'
+  'email',
+  'phone',
+  'address',
+  'profession',
+  'deceased'
 ]
 
 export const PERMITTED_RELATIONSHIP_ATTRS = [
@@ -43,7 +45,8 @@ export const getProfile = id => ({
         preferredName legalName altNames
         bornAt diedAt birthOrder
         gender description 
-        location contact profession
+        location  address email
+        phone profession deceased
         avatarImage { uri }
         children {
           profile {
@@ -51,7 +54,8 @@ export const getProfile = id => ({
             preferredName legalName altNames
             bornAt diedAt birthOrder
             gender description
-            location contact profession
+            location  address deceased
+            email phone profession
             avatarImage { uri }
           }
           relationshipId
@@ -63,7 +67,8 @@ export const getProfile = id => ({
             preferredName legalName altNames
             bornAt diedAt birthOrder
             gender description
-            location contact profession
+            location address email
+            phone profession deceased
             avatarImage { uri }
           }
           relationshipId

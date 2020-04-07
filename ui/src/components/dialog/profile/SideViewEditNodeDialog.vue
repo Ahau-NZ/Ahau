@@ -1,6 +1,6 @@
 <template>
   <div
-    style="background-color: white; height:100%"
+    style="background-color: white; height:100%; position:fixed; top:32;"
     :node="profile"
     @close="close"
     width="720px"
@@ -29,7 +29,7 @@
                       :alt="profile.preferredName"
                       :gender="formData.gender"
                       :bornAt="formData.bornAt"
-                      :diedAt="formData.diedAt"
+                      :deceased="formData.deceased"
                     />
                   </v-col>
                   <v-col v-if="isEditing" cols="12" justify="center" align="center" class="pa-0">
@@ -44,7 +44,6 @@
                   <!-- View Mode Title -->
                   <v-col v-if="!isEditing" cols="12" class="pa-0 pb-5">
                     <h1>{{ formData.preferredName }}'s Information</h1>
-
                     <v-btn
                       v-if="!isEditing"
                       @click="toggleEdit"
@@ -146,10 +145,10 @@
                       min="1"
                     />
                   </v-col>
-                  <!-- diedAt checkbox -->
+                  <!-- deceased checkbox -->
                   <v-col cols="12" v-if="isEditing" class="pa-1">
                     <v-checkbox
-                      v-model="formData.isDeceased"
+                      v-model="formData.deceased"
                       label="No longer living"
                       :hide-details="true"
                     />
@@ -157,7 +156,7 @@
                   <!-- diedAt datepicker -->
                   <v-col cols="12" class="pa-1" v-if="formData.diedAt || isEditing">
                     <NodeDatePicker
-                      v-if="formData.isDeceased"
+                      v-if="formData.deceased"
                       :readonly="!isEditing"
                       label="Date of death"
                       :value="formData.diedAt"
@@ -221,10 +220,17 @@
                       v-bind="customProps"
                     />
                   </v-col>
-                  <v-col v-if="!formData.isDeceased" cols="12" class="pa-1">
+                  <v-col cols="12" class="pa-1">
                     <v-text-field
-                      v-model="formData.contact"
-                      label="Contact"
+                      v-model="formData.email"
+                      label="Email"
+                      v-bind="customProps"
+                    />
+                  </v-col>
+                  <v-col cols="12" class="pa-1">
+                    <v-text-field
+                      v-model="formData.phone"
+                      label="Phone"
                       v-bind="customProps"
                     />
                   </v-col>
@@ -232,6 +238,13 @@
                     <v-text-field
                       v-model="formData.location"
                       label="Region, Country"
+                      v-bind="customProps"
+                    />
+                  </v-col>
+                  <v-col cols="12" class="pa-1">
+                    <v-text-field
+                      v-model="formData.address"
+                      label="Address"
                       v-bind="customProps"
                     />
                   </v-col>
@@ -368,14 +381,16 @@ function defaultData (profile) {
     birthOrder: profile.birthOrder,
     relationshipType: profile.relationship ? profile.relationship.relationshipType ? profile.relationship.relationshipType : null : null,
     location: profile.location,
-    contact: profile.contact,
+    email: profile.email,
+    phone: profile.phone,
+    deceased: profile.deceased,
+    address: profile.address,
     profession: profile.profession,
     altNames: {
       currentState: clone(profile.altNames),
       add: [], // new altNames to add
       remove: [] // altNames to remove
-    },
-    isDeceased: !!profile.diedAt // set to true if this value is set
+    }
   }
 }
 
@@ -461,7 +476,7 @@ export default {
     profile (newVal) {
       this.formData = defaultData(newVal)
     },
-    'formData.isDeceased' (newValue) {
+    'formData.deceased' (newValue) {
       if (!newValue) this.formData.diedAt = ''
     }
   },
@@ -541,22 +556,4 @@ export default {
   font-size: 14px;
 }
 
-::-webkit-scrollbar {
-  width: 5px;
-}
-
-/* Track */
-::-webkit-scrollbar-track {
-  background: #f1f1f1;
-}
-
-/* Handle */
-::-webkit-scrollbar-thumb {
-  background: #888;
-}
-
-/* Handle on hover */
-::-webkit-scrollbar-thumb:hover {
-  background: #555;
-}
 </style>

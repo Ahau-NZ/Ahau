@@ -284,9 +284,12 @@ export default {
       avatarImage,
       altNames,
       description,
+      address,
       location,
       profession,
-      contact
+      email,
+      phone,
+      deceased
     }) {
       const res = await this.$apollo.mutate({
         mutation: gql`
@@ -308,7 +311,10 @@ export default {
             description,
             location,
             profession,
-            contact,
+            address,
+            email,
+            phone,
+            deceased,
             recps: this.view.recps
           }
         }
