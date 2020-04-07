@@ -221,9 +221,10 @@
                             outlined
                           />
                         </v-col>
-                        <v-col class="pa-1">
-                          <AddButton :align="'flex-end'" label="Add name" @click="addAltNameField" row />
-                        </v-col>
+                        <v-row class="mx-1">
+                          <v-col cols="8"></v-col>
+                          <AddButton :align="'flex-end'" :width="'50px'" label="Add name" @click="addAltNameField" row/>
+                        </v-row>
                       </template>
                     </v-row>
 
@@ -444,7 +445,7 @@
         </v-row>
 
         <!-- DESKTOP person description -->
-        <v-row v-if="formData.description">
+        <v-row v-if="formData.description" class="px-3">
             <v-col cols="12">
                 <!-- Location -->
                 <v-row>
@@ -632,9 +633,10 @@
                               outlined
                             />
                           </v-col>
-                          <v-col class="pa-1">
-                            <AddButton :align="'flex-end'" label="Add name" @click="addAltNameField" row />
-                          </v-col>
+                          <v-row class="mx-1">
+                            <v-col cols="8"></v-col>
+                            <AddButton :align="'flex-end'" :width="'50px'" label="Add name" @click="addAltNameField" row/>
+                          </v-row>
                         </template>
                       </v-row>
 
