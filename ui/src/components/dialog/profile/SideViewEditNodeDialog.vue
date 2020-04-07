@@ -32,6 +32,20 @@
             <v-icon small class="blue--text" left>mdi-pencil</v-icon>Edit
           </v-btn>
         </v-row>
+
+        <!-- MOBILE person description -->
+        <v-row v-if="formData.description" class="mb-2">
+            <v-col cols="12">
+                <!-- Location -->
+                <v-row>
+                  <v-col class="py-1 px-0 profile-label"><small>Description</small></v-col>
+                </v-row>
+                <v-row class="py-0 justify-center">
+                  <p class="ma-0 profile-info" style="font-size: 0.8em">{{formData.description}}</p>
+                </v-row>
+              </v-col>
+        </v-row>
+
       </template>
 
       <!-- Mobile: Slot Content -->
@@ -137,13 +151,6 @@
               <!-- END Family Members -->
 
               </v-col>
-          </v-row>
-
-          <v-row justify="center" align="center" class="mt-5">
-            <v-icon>
-                mdi-lock
-            </v-icon>
-            <small> Private record - Only visible by you</small>
           </v-row>
 
         </div>
@@ -436,7 +443,20 @@
           </v-row>
         </v-row>
 
-          <!-- Desktop Content -->
+        <!-- DESKTOP person description -->
+        <v-row v-if="formData.description">
+            <v-col cols="12">
+                <!-- Location -->
+                <v-row>
+                  <v-col class="py-1 px-0 profile-label"><small>Description</small></v-col>
+                </v-row>
+                <v-row class="py-0 justify-center">
+                  <p class="ma-0 profile-info" style="font-size: 0.8em">{{formData.description}}</p>
+                </v-row>
+              </v-col>
+        </v-row>
+
+        <!-- Desktop Content -->
         <v-row>
 
           <v-col v-if="!isEditing">
@@ -486,6 +506,8 @@
                   </v-col>
                 </v-row>
             </v-row>
+
+            
 
             <v-row class="px-2">
 
@@ -540,13 +562,6 @@
                 <!-- END Family Members -->
 
               </v-col>
-            </v-row>
-
-            <v-row justify="center" align="center" class="mt-5">
-              <v-icon>
-                  mdi-lock
-              </v-icon>
-              <small> Private record - Only visible by you</small>
             </v-row>
 
           </v-col>
@@ -758,12 +773,9 @@
                         </v-col>
                         <v-col
                           v-if="isEditing"
+                          col="12"
                           :align="mobile ? '' : 'right'"
-                          :class="{
-                            'pt-0': true,
-                            'd-flex': mobile,
-                            'justify-space-between': mobile
-                          }"
+                          class="pt-0 d-flex justify-space-between"
                         >
                           <v-btn @click="cancel" text large fab class="secondary--text mr-10">
                             <v-icon color="secondary">mdi-close</v-icon>
