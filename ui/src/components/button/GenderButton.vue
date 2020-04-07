@@ -26,7 +26,6 @@ export default {
   },
   methods: {
     updateSelectedGender() {
-      console.log(this.gender)
       this.$emit('updateSelectedGender', this.gender)
     }
   }

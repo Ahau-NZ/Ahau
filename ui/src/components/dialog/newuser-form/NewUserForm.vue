@@ -286,7 +286,6 @@ export default {
   },
   methods: {
     updateGender(gender) {
-      console.log("got gender: ", gender)
       this.formData.gender = gender;
     },
     addAltNameField () {

@@ -240,11 +240,11 @@
                     <!-- Mobile: Editing: ORDER OF BIRTH -->
                     <v-row>
                       <v-col v-if="!readonly || formData.birthOrder" cols="12" class="pa-1">
-                        <v-text-field
+                        <v-select
                           v-model="formData.birthOrder"
                           type="number"
                           label="Order of birth"
-                          min="1"
+                          :items="orderNumbers"
                           v-bind="customProps"
                           outlined
                         />
@@ -255,7 +255,7 @@
                 </v-row>
           
                 <v-row class="pa-2">  
-                  <!-- GENDER VIEW -->
+                  <!-- Mobile: GENDER VIEW -->
                   <v-col  v-if="readonly" cols="12" class="pa-1">
                     <v-text-field
                       v-model="formData.gender"
@@ -264,15 +264,8 @@
                     />
                   </v-col>
                   <!-- Mobile: Editing: GENDER EDIT -->
-                  <v-col v-else class="pa-1"  cols="12">
+                  <v-col v-else class="pa-1 mb-6"  cols="12">
                     <p class="text-field">Gender</p>
-                    <!-- <v-radio-group v-model="formData.gender" row class="mt-0 pt-0" hide-details>
-                      <v-radio v-for="(gender, index) in genders"
-                        :value="gender" :key="index" :label="gender"
-                        class="ma-0 pa-0  pr-2 radio-button"
-                        :id="gender"
-                      />
-                    </v-radio-group> -->
                     <v-row class="gender-button-row">
                       <GenderButton v-for="(gender, index) in genders" 
                         :key="index" 
@@ -471,7 +464,7 @@
                     </v-row>
                     <v-row class="py-0 justify-center">
 
-                      <p class="ma-0 profile-info">{{formData.bornAt}}</p>
+                      <p class="ma-0 profile-info">{{age(formData.bornAt)}}</p>
                     </v-row>
                   </v-col>         
                 </v-row>
@@ -678,15 +671,8 @@
                       />
                     </v-col>
                     <!-- Desktop: GENDER EDIT -->
-                    <v-col v-else class="pa-1"  cols="12">
+                    <v-col v-else class="pa-1 mb-6"  cols="12">
                       <p class="text-field">Gender</p>
-                      <!-- <v-radio-group v-model="formData.gender" row class="mt-0 pt-0" hide-details>
-                        <v-radio v-for="(gender, index) in genders"
-                          :value="gender" :key="index" :label="gender"
-                          class="ma-0 pa-0  pr-2 radio-button"
-                          :id="gender"
-                        />
-                      </v-radio-group> -->
                       <v-row class="gender-button-row">
                         <GenderButton v-for="(gender, index) in genders" 
                           :key="index" 
@@ -904,6 +890,11 @@
       }
     },
     computed: {
+      orderNumbers() {
+        var orderNumbers = [...Array(31).keys()];
+        orderNumbers.splice(0,1)
+        return orderNumbers 
+      },
       mobile () {
         return this.$vuetify.breakpoint.xs
       },
@@ -960,7 +951,6 @@
         this.formData.altNames.add.splice(index, 1)
       },
       updateGender(gender) {
-        console.log("got gender: ", gender)
         this.formData.gender = gender;
       },
       addAltNameField () {
@@ -972,7 +962,6 @@
       },
       age(born) {
         var age = calculateAge(born)
-        console.log("Age is: ", age)
         return age
       },
       close () {
@@ -1004,7 +993,6 @@
         this.$emit('new', type)
       },
       toggleEdit () {
-        console.log("editing mode is: ", this.isEditing)
         this.isEditing = !this.isEditing
       },
       toggleAltName () {
@@ -1097,5 +1085,11 @@
   border: 0.5px solid rgba(0, 0, 0, 0.12);
 }
 
-  </style>
+.text-field {
+  margin-left: 5px !important;
+  margin-bottom: 0 !important;
+  font-size: 0.8em;
+}
+
+</style>
   

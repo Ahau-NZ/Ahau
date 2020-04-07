@@ -186,7 +186,6 @@ export default {
       return screen.width
     },
     height () {
-      console.log(screen.height)
       return screen.height
     },
     /*

@@ -18,7 +18,7 @@
     </v-col>
   </div>
 
-  <div v-else-if="gender !== ''">
+  <div v-else-if="gender !== '' || (image && image.uri)">
     <v-col>
       <v-row justify="center">
         <v-avatar :size="size" :tile="isView" class="avatar-container" :class="{'isEditing': isEditing}">
