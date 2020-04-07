@@ -210,7 +210,6 @@ export default {
       recordQueue: [],
       processingQueue: false,
 
-      suggestions: [], // holds an array of suggested profiles
       selectedProfile: null,
       dialog: {
         active: null,
@@ -559,16 +558,31 @@ export default {
     },
     async setSelectedProfile (profileId) {
       await this.loadDescendants(profileId)
+
+      // populates children, parents, siblings, partners from what ever is in this.profiles
       this.selectedProfile = tree.hydrate(
         this.profiles[profileId],
         this.profiles
       )
       console.log('selectedProfile: ', this.selectedProfile)
       if (!this.selectedProfile.parents || this.selectedProfile.parents.length === 0) return
+
+      this.selectedProfile.parents = await Promise.all(
+        this.selectedProfile.parents.map(async parent => {
+          await this.loadDescendants(parent.id)
+          var profile = this.profiles[parent.id]
+          return profile
+        })
+      )
+
       var mainParent = this.selectedProfile.parents[0]
       this.selectedProfile.relationship = this.relationshipLinks[mainParent.id + '-' + this.selectedProfile.id]
-    },
 
+      this.selectedProfile = tree.hydrate(
+        this.profiles[profileId],
+        this.profiles
+      )
+    },
     // save whakapapa changes
     async updateWhakapapa (whakapapaChanges) {
       const input = {
