@@ -140,16 +140,31 @@ export default {
     generateSuggestions () {
       if (this.hasSelection) return []
 
-      return [
-        this.type ? (this.type === 'child' ? { header: 'Suggested children' } : { header: 'Suggested parents' }) : null,
-        ...this.closeSuggestions,
-        this.type ? { divider: true } : null,
-        this.type ? { header: 'Suggestions not in this whakapapa' } : null,
-        ...this.suggestions.filter(suggestion => {
-          return !this.closeSuggestions.find(closeSuggestion => {
-            return suggestion.id === closeSuggestion
+      let otherSuggestions = []
+      let closeSuggestions = []
+
+      if (this.suggestions && this.suggestions.length > 0) {
+        otherSuggestions = [
+          this.type ? { header: 'Suggestions not in this whakapapa' } : null,
+          ...this.suggestions.filter(suggestion => {
+            return !this.closeSuggestions.find(closeSuggestion => {
+              return suggestion.id === closeSuggestion
+            })
           })
-        })
+        ]
+      }
+
+      if (this.closeSuggestions && this.closeSuggestions.length > 0) {
+        closeSuggestions = [
+          this.type ? (this.type === 'child' ? { header: 'Suggested children' } : { header: 'Suggested parents' }) : null,
+          ...this.closeSuggestions,
+          this.type ? { divider: true } : null
+        ]
+      }
+
+      return [
+        ...closeSuggestions,
+        ...otherSuggestions
       ].filter(Boolean)
     },
     mobile () {
