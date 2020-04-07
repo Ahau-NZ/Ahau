@@ -1,5 +1,6 @@
 <template>
   <div class="side-menu" style="border-left: 0.5px solid rgba(0,0,0,0.1);">
+    
     <!-- Mobile version of side menu is a Dialog -->
     <Dialog v-if="mobile" :title="formData.preferredName" :show="show" @close="close" width="720px" :goBack="close" :enableBar="false" :isEditing="isEditing">
       <!-- Slot Top -->
@@ -383,7 +384,7 @@
     </Dialog>
 
     <!-- DESKTOP -->
-    <v-form v-else ref="form" style="height:100%;">
+    <v-form v-else ref="form" style="height:100%; margin-top: 64px;">
       <v-card
         @close="close"
         :node="profile"

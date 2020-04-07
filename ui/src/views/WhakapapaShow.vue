@@ -1,6 +1,6 @@
 <template>
   <div id="whakapapa-show" >
-    <v-container fluid class="pa-0" :style="[ mobile ? 'width:100vw' : 'width:95vw' ]">
+    <v-container fluid class="pa-0" :style="[ mobile ? 'width:100vw' : 'width:95vw; margin-top:64px;' ]">
 
       <!-- Desktop Header -->
       <!-- Whakapapa Title Card -->
@@ -573,7 +573,6 @@ export default {
         this.profiles[profileId],
         this.profiles
       )
-      console.log('selectedProfile: ', this.selectedProfile)
       if (!this.selectedProfile.parents || this.selectedProfile.parents.length === 0) return
       var mainParent = this.selectedProfile.parents[0]
       this.selectedProfile.relationship = this.relationshipLinks[mainParent.id + '-' + this.selectedProfile.id]
@@ -684,7 +683,7 @@ export default {
 
     & > .select {
       position: fixed;
-      top: 60px;
+      top: 80px;
       right: 110px;
 
       .col {

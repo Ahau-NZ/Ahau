@@ -14,7 +14,6 @@
 
       <!-- Whakapapa Image -->
       <div :style="background(view)" style="width: 20%;"/>
-      <div class="information d-flex flex-column justify-center align-center"  style="width: 80%;">
 
       <div class="information d-flex flex-column justify-center align-center"  style="width: 80%;">
         <!-- Whakapapa Title -->
@@ -60,10 +59,6 @@
         <v-card-subtitle v-text="description" class="pa-3"/>
       </div>
     </v-expand-transition>
-<<<<<<< HEAD
-
-=======
->>>>>>> 28dc9995a3a3cec56f2be11e65815cffc23154a0
   </v-card>
 </template>
 

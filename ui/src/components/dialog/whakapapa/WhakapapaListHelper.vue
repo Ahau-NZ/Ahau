@@ -1,5 +1,5 @@
 <template>
-  <Dialog :title="`Whakapapa ---- Family tree`" :show="show" @close="close" :width="`550px`" :goBack="close">
+  <Dialog :title="'Whakapapa ---- Family tree'" :show="show" @close="close" :width="`550px`" :goBack="close">
     <template v-slot:content>
       <v-card-text class="pt-0">
         In Āhau a whakapapa record is a genealogy graph. You can create as many whakapapa records as you like to represent the many different family lines that you belong to.

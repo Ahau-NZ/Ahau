@@ -15,7 +15,7 @@
     </v-row>
 
     <!-- DESKTOP top banner -->
-    <v-row v-else class="banner">
+    <v-row v-else class="desktop-banner">
       <v-col>
         <!-- Dialog Title -->
         <h1 v-if="!isEditing" class="banner-title"><span style="color: #BA041B;">{{splitTitle.maori}}</span>{{splitTitle.english}}<span></span></h1>
@@ -44,11 +44,7 @@ export default {
       titleObj: {}
     }
   },
-  computed: {},
-  methods: {
-    close () {
-      this.$emit('close')
-    },
+  computed: {
     // split the Title into two parts (so maori can be styled red, and english styled in white)
     splitTitle () {
       // check to see if is a maori & english title with the ---- in the middle
@@ -72,6 +68,11 @@ export default {
         }
         return this.titleObj
       }
+    }
+  },
+  methods: {
+    close () {
+      this.$emit('close')
     }
   },
   watch: {}
@@ -109,7 +110,7 @@ export default {
     }
 
   }
-  .banner {
+  .desktop-banner {
     width: 100%;
     padding: 10px 20px;
     margin: 0px;
