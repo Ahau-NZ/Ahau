@@ -1,11 +1,11 @@
 <template>
   <div class="side-menu" style="border-left: 0.5px solid rgba(0,0,0,0.1);">
     
-    <!-- Mobile version of side menu is a Dialog -->
+    <!--===== MOBILE VERSION of side menu is a Dialog =====-->
     <Dialog v-if="mobile" :title="formData.preferredName" :show="show" @close="close" width="720px" :goBack="close" :enableBar="false" :isEditing="isEditing">
       <!-- Slot Top -->
       <template v-slot:top>
-        <!-- Avatar -->
+        <!-- Mobile: Avatar -->
         <Avatar
           class="big-avatar"
           size="250px"
@@ -34,7 +34,7 @@
           </v-btn>
         </v-row>
 
-        <!-- MOBILE person description -->
+        <!-- Mobile: Person description -->
         <v-row v-if="formData.description" class="mb-2">
             <v-col cols="12">
                 <!-- Location -->
@@ -57,7 +57,7 @@
           <v-row style="border: 0.5px solid rgba(0,0,0,0.12); border-radius: 10px;" class="flex-column ma-0" >
               <v-row style="border-bottom: 0.5px solid rgba(0,0,0,0.12);" class="ma-0">
                 <v-col cols="6">
-                  <!-- Legal Name -->
+                  <!-- Mobile: Legal Name -->
                   <v-row>
                     <v-col class="py-1 px-0 profile-label"><small>Legal Name</small></v-col>
                   </v-row>
@@ -67,7 +67,7 @@
                 </v-col>
 
                 <v-col cols="6">
-                  <!-- Born At -->
+                  <!-- Mobile: Born At -->
                   <v-row>
                     <v-col class="py-1 px-0 profile-label"><small>Age</small></v-col>
                   </v-row>
@@ -79,7 +79,7 @@
 
               <v-row class="ma-0">
                 <v-col cols="6">
-                  <!-- Profession -->
+                  <!-- Mobile: Profession -->
                   <v-row>
                     <v-col class="py-1 px-0 profile-label"><small>Occupation</small></v-col>
                   </v-row>
@@ -89,7 +89,7 @@
                 </v-col>
 
                 <v-col cols="6">
-                  <!-- Location -->
+                  <!-- Mobile: Location -->
                   <v-row>
                     <v-col class="py-1 px-0 profile-label"><small>Location</small></v-col>
                   </v-row>
@@ -258,63 +258,55 @@
                 </v-row>
 
                 <v-row class="pa-2">
-                  <!-- Mobile: GENDER VIEW -->
-                  <v-col  v-if="readonly" cols="12" class="pa-1">
-                    <v-text-field
-                      v-model="formData.gender"
-                      label="Gender"
-                      v-bind="customProps"
-                    />
-                  </v-col>
-                  <!-- Mobile: Editing: GENDER EDIT -->
-                  <v-col v-else class="pa-1 mb-6"  cols="12">
-                    <p class="text-field">Gender</p>
-                    <v-row class="gender-button-row">
-                      <!-- TANE -->
-                      <v-col>
-                        <div class="gender-button" @click="updateSelectedGender('male')">
-                          <img ref="taneImg" :src="require('@/assets/tane-outlined.svg')" class="gender-image">
-                        </div>
-                      </v-col>
-                      <!-- WAHINE -->
-                      <v-col>
-                        <div class="gender-button" @click="updateSelectedGender('female')">
-                          <img ref="wahineImg" :src="require('@/assets/wahine-outlined.svg')" class="gender-image">
-                        </div>
-                      </v-col>
-                    </v-row>
-                  </v-col>
-
-                  <!-- Mobile: Editing: DESCRIPTION -->
-                  <!-- Description textarea -->
-                  <v-col class="pa-1"  cols="12">
-                    <v-textarea
-                      v-model="formData.description"
-                      label="Description"
-                      v-bind="customProps"
-                      no-resize
-                      rows="4"
-                      auto-grow
-                      outlined
-                    >
-                    </v-textarea>
-                  </v-col>
-                </v-row>
-
-                <v-row class="pa-2">
                   <v-col cols="12">
-                    <!-- Mobile: Editing: Contact -->
                     <v-row>
-                      <v-col cols="12" class="pa-1">
-                          <v-text-field
-                            v-model="formData.contact"
-                            label="Email"
-                            v-bind="customProps"
-                            outlined
-                          />
-                        </v-col>
+                      <!-- Mobile: Editing: GENDER VIEW -->
+                      <v-col  v-if="readonly" class="pa-1">
+                        <v-text-field
+                          v-model="formData.gender"
+                          label="Gender"
+                          v-bind="customProps"
+                        />
+                      </v-col>
+                      <!-- Mobile: Editing: GENDER EDIT -->
+                      <v-col v-else class="pa-1">
+                        <p class="text-field">Gender</p>
+            
+                        <v-row class="gender-button-row">
+                          <!-- Mobile: Editing: TANE -->
+                          <v-col>
+                            <div class="gender-button" @click="updateSelectedGender('male')">
+                              <img ref="taneImg" :src="require('@/assets/tane-outlined.svg')" class="gender-image">
+                            </div>
+                          </v-col>
+                          <!-- Mobile: Editing: WAHINE -->
+                          <v-col>
+                            <div class="gender-button" @click="updateSelectedGender('female')">
+                              <img ref="wahineImg" :src="require('@/assets/wahine-outlined.svg')" class="gender-image">
+                            </div>
+                          </v-col>
+                        </v-row>
+                      </v-col>
                     </v-row>
-                    <!-- Mobile: Editing: Profession -->
+                  </v-col>
+                  
+                  <v-col cols="12">
+                    <v-row>
+                      <!-- Mobile: Editing: Description textarea -->
+                      <v-col cols="12" class="pa-1">
+                        <v-textarea
+                          v-model="formData.description"
+                          label="Description"
+                          v-bind="customProps"
+                          no-resize
+                          rows="4"
+                          auto-grow
+                          outlined
+                        >
+                        </v-textarea>
+                      </v-col>
+                    </v-row>
+                    <!-- Mobile: Editing: Occupation -->
                     <v-row>
                       <v-col cols="12" class="pa-1">
                         <v-text-field
@@ -325,15 +317,53 @@
                         />
                       </v-col>
                     </v-row>
-                  </v-col>
-
-                  <v-col cols="12" >
+                  </v-col>     
+                </v-row>
+        
+                <v-row class="pa-2">
+                  <v-col cols="12">
+                    <!-- Mobile: Editing: Email -->
                     <v-row>
                       <v-col cols="12" class="pa-1">
-                        <!-- Location -->
+                          <v-text-field
+                            v-model="formData.email"
+                            label="Email"
+                            v-bind="customProps"
+                            outlined
+                          />
+                        </v-col>
+                    </v-row>
+                    <!-- Mobile: Editing: Phone -->
+                    <v-row>
+                      <v-col cols="12" class="pa-1">
+                        <v-text-field
+                          v-model="formData.phone"
+                          label="Phone"
+                          v-bind="customProps"
+                          outlined
+                        />
+                      </v-col>
+                    </v-row>
+                  </v-col>
+        
+                  <v-col cols="12">
+                    <v-row>
+                      <v-col cols="12" class="pa-1">
+                        <!-- Mobile: Editing: Address -->
+                        <v-text-field
+                          v-model="formData.address"
+                          label="Address"
+                          v-bind="customProps"
+                          outlined
+                        />
+                      </v-col>
+                    </v-row>
+                    <v-row>
+                      <v-col cols="12" class="pa-1">
+                        <!-- Mobile: Editing: City, Country -->
                         <v-text-field
                           v-model="formData.location"
-                          label="Location"
+                          label="City, Country"
                           v-bind="customProps"
                           outlined
                         />
@@ -383,7 +413,7 @@
 
     </Dialog>
 
-    <!-- DESKTOP -->
+    <!--===== DESKTOP VERSION of side menu =====-->
     <v-form v-else ref="form" style="height:100%; margin-top: 64px;">
       <v-card
         @close="close"
@@ -392,19 +422,16 @@
         flat
         class="pa-3"
       >
-        <!-- Mobile version of side menu -->
-        <!-- <Appbar v-if="mobile" enableMenu app :goBack="close" :sideMenu="sideMenu"  /> -->
-
-        <!-- <DialogTitleBanner :title="formData.preferredName" :mobile="mobile" @close="close"  style=""/> -->
+      
+      <!-- Banner here if we wanna use it on the side menu -->
+      <!-- <DialogTitleBanner :title="formData.preferredName" :mobile="mobile" @close="close"  style=""/> -->
 
         <v-row class="ma-0 pa-0 flex-column">
-          <!-- Dialog close button -->
+          <!-- Desktop: Dialog close button -->
           <v-row class="justify-end pr-2">
-
               <v-icon @click="close" color="secondary">mdi-close</v-icon>
-
           </v-row>
-          <!-- Avatar -->
+          <!-- Desktop: Avatar -->
           <v-row class="justify-center">
             <Avatar
               class="big-avatar"
@@ -419,10 +446,9 @@
             />
           </v-row>
         </v-row>
-        <!-- END of Avatar -->
+        <!-- END of Desktop: Avatar -->
 
         <!-- Desktop Title -->
-
         <v-row class="d-flex justify-center flex-column" style="margin-top: -20px;">
           <h1 v-if="!isEditing" style="text-align: center;">{{ formData.preferredName }}</h1>
           <!-- Editing Name -->
@@ -440,7 +466,7 @@
           </v-row>
         </v-row>
 
-        <!-- DESKTOP person description -->
+        <!-- Desktop: Person description -->
         <v-row v-if="formData.description" class="px-3">
             <v-col cols="12">
                 <!-- Location -->
@@ -453,14 +479,14 @@
               </v-col>
         </v-row>
 
-        <!-- Desktop Content -->
+        <!-- Desktop: Content -->
         <v-row>
 
           <v-col v-if="!isEditing">
             <v-row style="border: 0.5px solid rgba(0,0,0,0.12); border-radius: 10px;" class="flex-column ma-0" >
                 <v-row style="border-bottom: 0.5px solid rgba(0,0,0,0.12);" class="ma-0">
                   <v-col cols="6">
-                    <!-- Legal Name -->
+                    <!-- Desktop: Legal Name -->
                     <v-row>
                       <v-col class="py-1 px-0 profile-label"><small>Legal Name</small></v-col>
                     </v-row>
@@ -470,7 +496,7 @@
                   </v-col>
 
                   <v-col cols="6">
-                    <!-- Born At -->
+                    <!-- Desktop: Born At -->
                     <v-row>
                       <v-col class="py-1 px-0 profile-label"><small>Age</small></v-col>
                     </v-row>
@@ -483,7 +509,7 @@
 
                 <v-row class="ma-0">
                   <v-col cols="6">
-                    <!-- Profession -->
+                    <!-- Desktop: Profession -->
                     <v-row>
                       <v-col class="py-1 px-0 profile-label"><small>Occupation</small></v-col>
                     </v-row>
@@ -493,7 +519,7 @@
                   </v-col>
 
                   <v-col cols="6">
-                    <!-- Location -->
+                    <!-- Desktop: Location -->
                     <v-row>
                       <v-col class="py-1 px-0 profile-label"><small>Location</small></v-col>
                     </v-row>
@@ -506,13 +532,13 @@
 
             <v-row class="px-2">
 
-              <!-- Information Col -->
+              <!-- Desktop: Information Col -->
               <v-col cols="12" class="border-right">
 
                 <!--===== Family Members =====-->
                 <v-row v-if="!isEditing" justify-sm="space-around">
 
-                  <!-- Parents -->
+                  <!-- Desktop: Parents -->
                   <v-col :cols="12" class="pa-0">
                     <AvatarGroup
                       :profiles="profile.parents"
@@ -525,10 +551,9 @@
                     </AvatarGroup>
                   </v-col>
 
-                  <!-- <v-divider v-if="profile.siblings" /> -->
                   <hr v-if="profile.siblings" class="family-divider"/>
 
-                  <!-- Siblings -->
+                  <!-- Desktop: Siblings -->
                   <v-col :cols="12" v-if="profile.siblings" class="pa-0">
                     <AvatarGroup
                       :profiles="profile.siblings"
@@ -541,7 +566,7 @@
 
                   <hr class="family-divider">
 
-                  <!-- Children -->
+                  <!-- Desktop: Children -->
                   <v-col :cols="12" class="pa-0">
                     <AvatarGroup
                       :profiles="profile.children"
@@ -554,24 +579,24 @@
                     </AvatarGroup>
                   </v-col>
                 </v-row>
-                <!-- END Family Members -->
+                <!-- END Desktop: Family Members -->
 
               </v-col>
             </v-row>
 
           </v-col>
 
-          <!-- Desktop Editing -->
+          <!-- Desktop: Editing: START -->
           <v-col v-else>
               <v-row>
                   <v-row class="pa-4">
-                    <!-- Names -->
+                    <!-- Desktop: Editing: Names -->
                     <v-col class="pt-4">
                       <v-row>
                         <v-col cols="12" class="pa-1">
                           <!-- <slot name="search"> -->
 
-                          <!-- Perferred Name -->
+                          <!-- Desktop: Editing: Perferred Name -->
                           <v-text-field
                             v-model="formData.preferredName"
                             label="Preferred name"
@@ -581,7 +606,7 @@
                           <!-- </slot> -->
                         </v-col>
 
-                        <!-- Legal Name -->
+                        <!-- Desktop: Editing: Legal Name -->
                         <v-col cols="12" class="pa-1">
                           <v-text-field
                             v-model="formData.legalName"
@@ -591,7 +616,7 @@
                           />
                         </v-col>
 
-                        <!-- Alternative Names -->
+                        <!-- Desktop: Alternative Names -->
                         <template>
                           <v-col v-for="(altName, index) in formData.altNames.value"
                             :key="`value-alt-name-${index}`"
@@ -610,7 +635,7 @@
                           </v-col>
                         </template>
 
-                        <!-- Desktop: Add Names -->
+                        <!-- Desktop: Editing: Add Alt Names -->
                         <template v-if="!readonly">
                           <v-col v-for="(altName, index) in formData.altNames.add"
                             :key="`add-alt-name-${index}`"
@@ -634,7 +659,7 @@
                         </template>
                       </v-row>
 
-                        <!-- Desktop: DATE OF BIRTH -->
+                        <!-- Desktop: Editing: DATE OF BIRTH -->
                       <v-row>
                         <v-col cols="12" class="pa-1">
                           <NodeDatePicker
@@ -645,7 +670,7 @@
                           />
                         </v-col>
                       </v-row>
-                      <!-- Desktop: ORDER OF BIRTH -->
+                      <!-- Desktop: Editing: ORDER OF BIRTH -->
                       <v-row>
                         <v-col v-if="!readonly || formData.birthOrder" cols="12" class="pa-1">
                           <v-select
@@ -663,99 +688,124 @@
                   </v-row>
 
                   <v-row class="pa-4">
-                    <!-- Desktop: GENDER VIEW -->
-                    <v-col  v-if="readonly" cols="12" class="pa-1">
-                      <v-text-field
-                        v-model="formData.gender"
-                        label="Gender"
-                        v-bind="customProps"
-                      />
-                    </v-col>
-                    <!-- Desktop: GENDER EDIT -->
-                    <v-col v-else class="pa-1 mb-6"  cols="12">
-                      <p class="text-field">Gender</p>
-                      <v-row class="gender-button-row">
-                          <!-- TANE -->
-                          <v-col>
-                            <div class="gender-button" @click="updateSelectedGender('male')">
-                              <img ref="taneImg" :src="require('@/assets/tane-outlined.svg')" class="gender-image">
-                            </div>
+                      <v-col cols="12">
+                        <v-row>
+                          <!-- Desktop: Editing: GENDER VIEW -->
+                          <v-col  v-if="readonly" class="pa-1">
+                            <v-text-field
+                              v-model="formData.gender"
+                              label="Gender"
+                              v-bind="customProps"
+                            />
                           </v-col>
-                          <!-- WAHINE -->
-                          <v-col>
-                            <div class="gender-button" @click="updateSelectedGender('female')">
-                              <img ref="wahineImg" :src="require('@/assets/wahine-outlined.svg')" class="gender-image">
-                            </div>
+                          <!-- Desktop: Editing: GENDER EDIT -->
+                          <v-col v-else class="pa-1">
+                            <p class="text-field">Gender</p>
+                
+                            <v-row class="gender-button-row">
+                              <!-- Desktop: Editing: TANE -->
+                              <v-col>
+                                <div class="gender-button" @click="updateSelectedGender('male')">
+                                  <img ref="taneImg" :src="require('@/assets/tane-outlined.svg')" class="gender-image">
+                                </div>
+                              </v-col>
+                              <!-- Desktop: Editing: WAHINE -->
+                              <v-col>
+                                <div class="gender-button" @click="updateSelectedGender('female')">
+                                  <img ref="wahineImg" :src="require('@/assets/wahine-outlined.svg')" class="gender-image">
+                                </div>
+                              </v-col>
+                            </v-row>
                           </v-col>
                         </v-row>
-                    </v-col>
-
-                    <!-- Desktop: DESCRIPTION -->
-                    <!-- Description textarea -->
-                    <!-- <v-col class="ml-4" v-if="form.showDescription || readonly"> -->
-                    <v-col class="pa-1"  cols="12">
-                      <v-textarea
-                        v-model="formData.description"
-                        label="Description"
-                        v-bind="customProps"
-                        no-resize
-                        rows="4"
-                        auto-grow
-                        outlined
-                      >
-                      </v-textarea>
-                    </v-col>
-                    <!-- Description button -->
-                    <!-- <v-col v-else cols="12" sm="6" class="pa-1 ml-4">
-                      <AddButton label="Add description" @click="form.showDescription = true" row />
-                    </v-col> -->
-                  </v-row>
-
-                  <v-row class="pa-4">
-                    <v-col cols="12">
-                      <!-- Desktop: Contact -->
-                      <v-row>
-                        <v-col cols="12" class="pa-1">
+                      </v-col>
+                      
+                      <v-col cols="12">
+                        <v-row>
+                          <!-- Desktop: Editing: Description textarea -->
+                          <v-col cols="12" class="pa-1">
+                            <v-textarea
+                              v-model="formData.description"
+                              label="Description"
+                              v-bind="customProps"
+                              no-resize
+                              rows="4"
+                              auto-grow
+                              outlined
+                            >
+                            </v-textarea>
+                          </v-col>
+                        </v-row>
+                        <!-- Desktop: Editing: Occupation -->
+                        <v-row>
+                          <v-col cols="12" class="pa-1">
                             <v-text-field
-                              v-model="formData.contact"
-                              label="Email"
+                              v-model="formData.profession"
+                              label="Occupation"
                               v-bind="customProps"
                               outlined
                             />
                           </v-col>
-                      </v-row>
-                      <!-- Desktop: Profession -->
-                      <v-row>
-                        <v-col cols="12" class="pa-1">
-                          <v-text-field
-                            v-model="formData.profession"
-                            label="Occupation"
-                            v-bind="customProps"
-                            outlined
-                          />
-                        </v-col>
-                      </v-row>
-                    </v-col>
+                        </v-row>
+                      </v-col>     
+                    </v-row>
+            
+                    <v-row class="pa-4">
+                      <v-col cols="12">
+                        <!-- Desktop: Editing: Email -->
+                        <v-row>
+                          <v-col cols="12" class="pa-1">
+                              <v-text-field
+                                v-model="formData.email"
+                                label="Email"
+                                v-bind="customProps"
+                                outlined
+                              />
+                            </v-col>
+                        </v-row>
+                        <!-- Desktop: Editing: Phone -->
+                        <v-row>
+                          <v-col cols="12" class="pa-1">
+                            <v-text-field
+                              v-model="formData.phone"
+                              label="Phone"
+                              v-bind="customProps"
+                              outlined
+                            />
+                          </v-col>
+                        </v-row>
+                      </v-col>
+            
+                      <v-col cols="12">
+                        <v-row>
+                          <v-col cols="12" class="pa-1">
+                            <!-- Desktop: Editing: Address -->
+                            <v-text-field
+                              v-model="formData.address"
+                              label="Address"
+                              v-bind="customProps"
+                              outlined
+                            />
+                          </v-col>
+                        </v-row>
+                        <v-row>
+                          <v-col cols="12" class="pa-1">
+                            <!-- Desktop: Editing: City, Country -->
+                            <v-text-field
+                              v-model="formData.location"
+                              label="City, Country"
+                              v-bind="customProps"
+                              outlined
+                            />
+                          </v-col>
+                        </v-row>
+                      </v-col>
+                    </v-row>
 
-                    <v-col cols="12" >
-                      <v-row>
-                        <v-col cols="12" class="pa-1">
-                          <!-- Desktop: Location -->
-                          <v-text-field
-                            v-model="formData.location"
-                            label="Location"
-                            v-bind="customProps"
-                            outlined
-                          />
-                        </v-col>
-                      </v-row>
-                    </v-col>
-                  </v-row>
-
-                    <!-- Desktop: Action buttons -->
+                    <!-- Desktop: Editing: Action buttons -->
                     <v-row>
-                        <!-- Delete button -->
-                        <v-col cols="12" sm="auto" class="mb-8">
+                      <v-col cols="12" sm="auto" class="mb-8">
+                          <!-- Delete: Editing: Delete button -->
                           <v-btn
                             v-if="isEditing && deleteable"
                             @click="$emit('delete')"
@@ -773,15 +823,17 @@
                           :align="mobile ? '' : 'right'"
                           class="pt-0 d-flex justify-space-between"
                         >
+                          <!-- Delete: Editing: Cancel (x) button -->
                           <v-btn @click="cancel" text large fab class="secondary--text mr-10">
                             <v-icon color="secondary">mdi-close</v-icon>
                           </v-btn>
+                          <!-- Delete: Editing: Save (tick) button -->
                           <v-btn @click="submit" text large fab class="blue--text ml-5" color="blue">
                             <v-icon>mdi-check</v-icon>
                           </v-btn>
                         </v-col>
                       </v-row>
-                      <!-- END Action buttons -->
+                      <!-- END Delete: Editing: Action buttons -->
                   </v-row>
           </v-col>
 
