@@ -3,12 +3,12 @@
     :to="view.id
         ? { name: 'whakapapaShow', params: { id: view.id } }
         : '/whakapapa'"
-    class="d-flex"
+    class="d-flex pa-2"
     color="#fff"
     :style="shadow ? '' : 'box-shadow: none;'"
   >
     <div class="body-width d-flex flex-no-wrap flex-start align-stretch">
-      <div class="cover-image" :style="background(view)" />
+      <div class="cover-image" :style="background(view)"></div>
       <div class="information">
         <v-card-title v-text="view.name" class="pt-3"/>
         <v-card-subtitle v-text="description" class="pb-3"/>
@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import whakapapa from '@/assets/whakapapa.svg'
+import whakapapa from '@/assets/whakapapa.png'
 
 export default {
   name: 'WhakapapaViewCard',
@@ -60,7 +60,7 @@ export default {
       }
       return {
         backgroundImage: `url(${whakapapa})`,
-        backgroundSize: 'contain'
+        backgroundSize: 'cover'
       }
     }
   }
@@ -81,11 +81,11 @@ export default {
 }
 
 .cover-image {
-  width: 30%;
+  min-width: 15%;
   background-color: #fff;
   background-position: center center;
   @media screen and (min-width: 420px) {
-    width: 150px;
+    width: 84px;
   }
 }
 
