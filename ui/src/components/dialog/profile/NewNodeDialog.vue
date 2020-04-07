@@ -20,9 +20,7 @@
               @click:clear="resetFormData()"
               :search-input.sync="formData.preferredName"
               placeholder="Enter or search a preferred name"
-              hide-no-data
-              hide-selected
-              class="search-input"
+              :readonly="hasSelection"
             >
               <template v-slot:item="data">
                 <template v-if="typeof data.item === 'object'">
@@ -140,6 +138,8 @@ export default {
   },
   computed: {
     generateSuggestions () {
+      if (this.hasSelection) return []
+
       return [
         this.type ? (this.type === 'child' ? { header: 'Suggested children' } : { header: 'Suggested parents' }) : null,
         ...this.closeSuggestions,

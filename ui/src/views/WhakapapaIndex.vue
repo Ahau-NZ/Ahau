@@ -323,7 +323,7 @@ export default {
     async handleDoubleStep ($event) {
       try {
         var { id } = $event
-        
+
         if (!id) {
           const res = await this.$apollo.mutate({
             mutation: saveProfileQuery,
