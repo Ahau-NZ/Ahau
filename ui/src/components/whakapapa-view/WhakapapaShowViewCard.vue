@@ -9,17 +9,17 @@
 
     :ripple="false"
   >
-    
+
     <!-- Whakapapa Image and Title -->
     <div class="d-flex pa-3" style="width: 100%;">
 
       <!-- Whakapapa Image -->
       <div :style="background(view)" style="width: 20%;"></div>
 
-      <div class="information d-flex flex-column justify-center align-center"  style="width: 80%;">        
+      <div class="information d-flex flex-column justify-center align-center"  style="width: 80%;">
         <!-- Whakapapa Title -->
         <v-card-title v-text="view.name" class="py-0 pl-3 justify-start" style="width: 100%;"/>
-        
+
         <!-- Whakapapa Title Icons -->
         <v-card-text class="pa-0 d-flex justify-start align-center" style="width: 100%;">
           <!-- Lock icon -->
@@ -44,7 +44,7 @@
               @click.prevent="show = !show"
               icon
               class="pa-0 px-3"
-              
+
             >
               <v-icon>{{ show ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
             </v-btn>
@@ -62,7 +62,6 @@
         <v-card-subtitle v-text="description" class="pa-3"/>
       </div>
     </v-expand-transition>
-    
 
   </v-card>
 </template>
@@ -77,9 +76,9 @@ export default {
     shadow: { type: Boolean, default: true },
     cropDescription: { type: Boolean, default: false }
   },
-  data() {
+  data () {
     return {
-      show: false,
+      show: false
     }
   },
   computed: {

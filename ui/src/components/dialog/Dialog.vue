@@ -26,18 +26,16 @@
           <!-- Dialog Card -->
           <v-card :min-height="mobile ? height : 'auto'">
             <v-container width="100%" class="pa-5 pb-2" :style="`background: ${background};`">
-              
+
               <!--=== TOP OF DIALOG CARD ===-->
               <DialogTitleBanner :title="title" :mobile="mobile" @close="close"  :isEditing="isEditing"/>
               <!-- Slots -->
               <slot name="top"></slot>
               <slot name="title"></slot>
 
-
               <!--=== CONTENT OF DIALOG CARD ===-->
               <!-- Slot = Content see: NewNodeDialogV2.vue for content -->
               <slot name="content"></slot>
-
 
               <!--=== BOTTOM OF DIALOG CARD ===-->
               <v-row>
@@ -105,7 +103,7 @@ export default {
       type: Boolean,
       default: true
     },
-    title: { type: String, default: 'Create a new person' },
+    title: { type: String, default: 'Create a new person' }
   },
   data () {
     return {

@@ -6,7 +6,7 @@
       </v-col>
     </v-row>
 
-    <v-row class="d-flex align-center"> 
+    <v-row class="d-flex align-center">
       <v-col
         cols="4"
         class="pt-0 pb-0"

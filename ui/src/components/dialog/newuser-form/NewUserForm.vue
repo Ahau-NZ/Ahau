@@ -25,7 +25,7 @@
             </v-col>
           </v-row>
         </v-col>
-      
+
         <!-- Names -->
         <v-col cols="12" sm="6" class="pt-4">
           <v-row>
@@ -119,7 +119,7 @@
         </v-col>
       </v-row>
 
-      <v-row>  
+      <v-row>
         <!-- GENDER VIEW -->
         <v-col  v-if="readonly" cols="12" sm="6" class="pa-1">
           <v-text-field
@@ -139,11 +139,11 @@
             />
           </v-radio-group> -->
           <v-row class="gender-button-row">
-            <GenderButton v-for="(gender, index) in genders" 
-              :key="index" 
-              :gender="gender" 
+            <GenderButton v-for="(gender, index) in genders"
+              :key="index"
+              :gender="gender"
               @updateSelectedGender="updateGender"
-              class="pa-0" 
+              class="pa-0"
             />
           </v-row>
         </v-col>
@@ -156,8 +156,8 @@
             v-model="formData.description"
             label="Description"
             v-bind="customProps"
-            no-resize 
-            rows="4" 
+            no-resize
+            rows="4"
             auto-grow
             outlined
           >
@@ -169,7 +169,7 @@
         </v-col> -->
       </v-row>
 
-      <v-row> 
+      <v-row>
         <v-col cols="12" sm="6" >
           <!-- Contact -->
           <v-row>
@@ -194,7 +194,7 @@
             </v-col>
           </v-row>
         </v-col>
-      
+
         <v-col cols="12" sm="6" >
           <v-row>
             <v-col cols="12" class="pa-1">
@@ -209,7 +209,7 @@
           </v-row>
         </v-col>
       </v-row>
-      
+
     </v-col>
   </v-form>
 </template>
@@ -285,8 +285,8 @@ export default {
     }
   },
   methods: {
-    updateGender(gender) {
-      this.formData.gender = gender;
+    updateGender (gender) {
+      this.formData.gender = gender
     },
     addAltNameField () {
       this.formData.altNames.add.push(null)
@@ -342,7 +342,7 @@ export default {
 .radio-button  > input[type="radio"] {
   opacity: 0;
   position: fixed;
-  width: 0;  
+  width: 0;
 }
 
 .radio-button >  label {

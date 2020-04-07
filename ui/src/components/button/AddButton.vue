@@ -4,28 +4,28 @@
           <span class="add-label" v-if="row">{{ label }}</span>
       </v-col>
   </template>
-  
-  <script>
-  export default {
-    name: 'AddButton',
-    props: {
-      label: String,
-      align: { type: String, default: "center"},
-      row: { type: Boolean, default: false }
-    },
-    methods: {
-      click () {
-        this.$emit('click')
-      }
+
+<script>
+export default {
+  name: 'AddButton',
+  props: {
+    label: String,
+    align: { type: String, default: 'center' },
+    row: { type: Boolean, default: false }
+  },
+  methods: {
+    click () {
+      this.$emit('click')
     }
   }
-  </script>
-  
+}
+</script>
+
   <style scoped lang="scss">
     .add-row {
       display: flex;
       align-items: center;
-      cursor: pointer;  
+      cursor: pointer;
       padding: 0px;
     }
 
@@ -44,4 +44,3 @@
       color: rgba(0, 0, 0, 0.6);
     }
   </style>
-  

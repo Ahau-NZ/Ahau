@@ -1,6 +1,6 @@
 <template>
   <Dialog :show="show" :title="title" @close="close" width="720px" :goBack="close" enableMenu>
-    
+
     <!-- Title now propped into Dialog. instead of using slot -->
     <!-- <template v-slot:title>
       <h1>{{title}}</h1>
@@ -12,7 +12,7 @@
 
         <!-- Old -->
         <!-- <ProfileForm :profile.sync="formData" :readonly="hasSelection" :editRelationship="hasSelection"> -->
-  
+
         <!-- Ian -->
         <!-- this component replaces NewProfile component should probably be renamed--. More than just NewUserForm now. Style carried over to other dialogs.-->
         <NewUserForm :profile.sync="formData" :readonly="hasSelection" :editRelationship="hasSelection">
@@ -64,7 +64,7 @@
       </v-col>
     </template>
     <!-- End Content Slot -->
-    
+
     <!-- Actions Slot -->
     <template v-slot:actions  style="border: 2px solid orange;">
       <v-btn @click="close"

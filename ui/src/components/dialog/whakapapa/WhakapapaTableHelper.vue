@@ -44,7 +44,7 @@ import Dialog from '@/components/dialog/Dialog.vue'
 export default {
   props: {
     show: { type: Boolean, required: true },
-    title: { type: String, default: "" }
+    title: { type: String, default: '' }
   },
   name: 'WhakapapaShowHelper',
   data () {

@@ -30,7 +30,7 @@
           {{ view.description }}
         </v-col>
       </v-row>
-      
+
       <v-row justify="center" align="center" class="mt-5">
         <v-icon>
            mdi-lock

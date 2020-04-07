@@ -8,7 +8,7 @@
           {{ label }}
         </p>
       </v-row>
-      
+
     </clipper-upload>
     <AvatarEditDialog
       :show="avatar.showEditor"
@@ -63,7 +63,7 @@ export default {
     align-items: center;
     justify-content: center;
     border-radius: 50%;
-    
+
     p.toggle {
       margin: 0px;
       font-size: 0.8em;

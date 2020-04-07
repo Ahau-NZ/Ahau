@@ -57,8 +57,8 @@ export default {
     showLabel: { type: Boolean, default: false },
     clickable: { type: Boolean, default: false },
     isView: { type: Boolean, default: false },
-    isEditing: { type: Boolean, default: false },
-    
+    isEditing: { type: Boolean, default: false }
+
   },
   components: {
     ImagePicker
@@ -93,13 +93,11 @@ export default {
   text-align: center;
   color: white;
 
- 
 }
 
 .isEditing {
     opacity: 0.2;
   }
-
 
 .avatar-overlay {
   position: absolute;

@@ -34,13 +34,11 @@
         </v-row>
       </template>
 
-      
-
       <!-- Mobile: Slot Content -->
       <template v-slot:content>
 
         <div v-if="!isEditing">
-        
+
           <v-row style="border: 0.5px solid rgba(0,0,0,0.12); border-radius: 10px;" class="flex-column ma-0" >
               <v-row style="border-bottom: 0.5px solid rgba(0,0,0,0.12);" class="ma-0">
                 <v-col cols="6">
@@ -61,7 +59,7 @@
                   <v-row class="py-0 justify-center">
                     <p class="ma-0 profile-info">{{age(formData.bornAt)}}</p>
                   </v-row>
-                </v-col>         
+                </v-col>
               </v-row>
 
               <v-row class="ma-0">
@@ -83,15 +81,15 @@
                   <v-row class="py-0 justify-center">
                     <p class="ma-0 profile-info" style="font-size: 0.8em">{{formData.location}}</p>
                   </v-row>
-                </v-col>  
+                </v-col>
               </v-row>
           </v-row>
-        
+
           <v-row class="px-2">
-            
+
             <!-- Mobile: Information Col -->
             <v-col cols="12" class="border-right">
-              
+
               <!--===== Family Members =====-->
               <v-row v-if="!isEditing" class="d-flex flex-column justify-center align-center">
 
@@ -138,11 +136,9 @@
               </v-row>
               <!-- END Family Members -->
 
-
               </v-col>
-          </v-row>   
-          
-          
+          </v-row>
+
           <v-row justify="center" align="center" class="mt-5">
             <v-icon>
                 mdi-lock
@@ -171,7 +167,7 @@
                         />
                         <!-- </slot> -->
                       </v-col>
-                      
+
                       <!-- Mobile: Editing: Legal Name -->
                       <v-col cols="12" class="pa-1">
                         <v-text-field
@@ -181,7 +177,7 @@
                           outlined
                         />
                       </v-col>
-          
+
                       <!-- Mobile: Editing: Alternative Names -->
                       <template>
                         <v-col v-for="(altName, index) in formData.altNames.value"
@@ -201,7 +197,7 @@
                           />
                         </v-col>
                       </template>
-          
+
                       <!-- Mobile: Editing: Add Names -->
                       <template v-if="!readonly">
                         <v-col v-for="(altName, index) in formData.altNames.add"
@@ -225,7 +221,7 @@
                         </v-col>
                       </template>
                     </v-row>
-          
+
                       <!-- Mobile: Editing: DATE OF BIRTH -->
                     <v-row>
                       <v-col cols="12" class="pa-1">
@@ -250,11 +246,11 @@
                         />
                       </v-col>
                     </v-row>
-          
+
                   </v-col>
                 </v-row>
-          
-                <v-row class="pa-2">  
+
+                <v-row class="pa-2">
                   <!-- Mobile: GENDER VIEW -->
                   <v-col  v-if="readonly" cols="12" class="pa-1">
                     <v-text-field
@@ -267,15 +263,15 @@
                   <v-col v-else class="pa-1 mb-6"  cols="12">
                     <p class="text-field">Gender</p>
                     <v-row class="gender-button-row">
-                      <GenderButton v-for="(gender, index) in genders" 
-                        :key="index" 
-                        :gender="gender" 
+                      <GenderButton v-for="(gender, index) in genders"
+                        :key="index"
+                        :gender="gender"
                         @updateSelectedGender="updateGender"
-                        class="pa-0" 
+                        class="pa-0"
                       />
                     </v-row>
                   </v-col>
-          
+
                   <!-- Mobile: Editing: DESCRIPTION -->
                   <!-- Description textarea -->
                   <!-- <v-col class="ml-4" v-if="form.showDescription || readonly"> -->
@@ -284,8 +280,8 @@
                       v-model="formData.description"
                       label="Description"
                       v-bind="customProps"
-                      no-resize 
-                      rows="4" 
+                      no-resize
+                      rows="4"
                       auto-grow
                       outlined
                       color="#BA041B"
@@ -297,10 +293,8 @@
                     <AddButton label="Add description" @click="form.showDescription = true" row />
                   </v-col> -->
                 </v-row>
-          
-          
-                
-                <v-row class="pa-2"> 
+
+                <v-row class="pa-2">
                   <v-col cols="12">
                     <!-- Mobile: Editing: Contact -->
                     <v-row>
@@ -326,7 +320,7 @@
                       </v-col>
                     </v-row>
                   </v-col>
-                
+
                   <v-col cols="12" >
                     <v-row>
                       <v-col cols="12" class="pa-1">
@@ -375,12 +369,12 @@
                       </v-col>
                     </v-row>
                     <!-- END Action buttons -->
-                </v-row>  
+                </v-row>
               </v-form>
 
-      </template> 
+      </template>
       <!-- End of mobile content -->
-      
+
     </Dialog>
 
     <!-- DESKTOP -->
@@ -400,9 +394,9 @@
         <v-row class="ma-0 pa-0 flex-column">
           <!-- Dialog close button -->
           <v-row class="justify-end pr-2">
-            
+
               <v-icon @click="close" color="secondary">mdi-close</v-icon>
-            
+
           </v-row>
           <!-- Avatar -->
           <v-row class="justify-center">
@@ -420,9 +414,9 @@
           </v-row>
         </v-row>
         <!-- END of Avatar -->
-    
+
         <!-- Desktop Title -->
-      
+
         <v-row class="d-flex justify-center flex-column" style="margin-top: -20px;">
           <h1 v-if="!isEditing" style="text-align: center;">{{ formData.preferredName }}</h1>
           <!-- Editing Name -->
@@ -439,8 +433,7 @@
             </v-btn>
           </v-row>
         </v-row>
-    
-    
+
           <!-- Desktop Content -->
         <v-row>
 
@@ -456,7 +449,7 @@
                       <p class="ma-0 profile-info">{{formData.legalName}}</p>
                     </v-row>
                   </v-col>
-    
+
                   <v-col cols="6">
                     <!-- Born At -->
                     <v-row>
@@ -466,9 +459,9 @@
 
                       <p class="ma-0 profile-info">{{age(formData.bornAt)}}</p>
                     </v-row>
-                  </v-col>         
+                  </v-col>
                 </v-row>
-    
+
                 <v-row class="ma-0">
                   <v-col cols="6">
                     <!-- Profession -->
@@ -479,7 +472,7 @@
                       <p class="ma-0 profile-info" style="font-size: 0.8em">{{formData.profession}}</p>
                     </v-row>
                   </v-col>
-    
+
                   <v-col cols="6">
                     <!-- Location -->
                     <v-row>
@@ -488,18 +481,18 @@
                     <v-row class="py-0 justify-center">
                       <p class="ma-0 profile-info" style="font-size: 0.8em">{{formData.location}}</p>
                     </v-row>
-                  </v-col>  
+                  </v-col>
                 </v-row>
             </v-row>
-          
+
             <v-row class="px-2">
-              
+
               <!-- Information Col -->
               <v-col cols="12" class="border-right">
-                
+
                 <!--===== Family Members =====-->
                 <v-row v-if="!isEditing" justify-sm="space-around">
-    
+
                   <!-- Parents -->
                   <v-col :cols="12" class="pa-0">
                     <AvatarGroup
@@ -512,10 +505,10 @@
                       <AddButton @click="toggleNew('parent')"/>
                     </AvatarGroup>
                   </v-col>
-    
+
                   <!-- <v-divider v-if="profile.siblings" /> -->
                   <hr v-if="profile.siblings" class="family-divider"/>
-    
+
                   <!-- Siblings -->
                   <v-col :cols="12" v-if="profile.siblings" class="pa-0">
                     <AvatarGroup
@@ -526,9 +519,9 @@
                       @profile-click="openProfile($event)"
                     />
                   </v-col>
-    
+
                   <hr class="family-divider">
-    
+
                   <!-- Children -->
                   <v-col :cols="12" class="pa-0">
                     <AvatarGroup
@@ -543,17 +536,17 @@
                   </v-col>
                 </v-row>
                 <!-- END Family Members -->
-    
+
               </v-col>
-            </v-row>     
-            
+            </v-row>
+
             <v-row justify="center" align="center" class="mt-5">
               <v-icon>
                   mdi-lock
               </v-icon>
               <small> Private record - Only visible by you</small>
             </v-row>
-          
+
           </v-col>
 
           <!-- Desktop Editing -->
@@ -576,7 +569,7 @@
                           />
                           <!-- </slot> -->
                         </v-col>
-                        
+
                         <!-- Legal Name -->
                         <v-col cols="12" class="pa-1">
                           <v-text-field
@@ -587,7 +580,7 @@
                             color="#BA041B"
                           />
                         </v-col>
-            
+
                         <!-- Alternative Names -->
                         <template>
                           <v-col v-for="(altName, index) in formData.altNames.value"
@@ -607,7 +600,7 @@
                             />
                           </v-col>
                         </template>
-            
+
                         <!-- Desktop: Add Names -->
                         <template v-if="!readonly">
                           <v-col v-for="(altName, index) in formData.altNames.add"
@@ -631,7 +624,7 @@
                           </v-col>
                         </template>
                       </v-row>
-            
+
                         <!-- Desktop: DATE OF BIRTH -->
                       <v-row>
                         <v-col cols="12" class="pa-1">
@@ -657,11 +650,11 @@
                           />
                         </v-col>
                       </v-row>
-            
+
                     </v-col>
                   </v-row>
-            
-                  <v-row class="pa-4">  
+
+                  <v-row class="pa-4">
                     <!-- Desktop: GENDER VIEW -->
                     <v-col  v-if="readonly" cols="12" class="pa-1">
                       <v-text-field
@@ -674,15 +667,15 @@
                     <v-col v-else class="pa-1 mb-6"  cols="12">
                       <p class="text-field">Gender</p>
                       <v-row class="gender-button-row">
-                        <GenderButton v-for="(gender, index) in genders" 
-                          :key="index" 
-                          :gender="gender" 
+                        <GenderButton v-for="(gender, index) in genders"
+                          :key="index"
+                          :gender="gender"
                           @updateSelectedGender="updateGender"
-                          class="pa-0" 
+                          class="pa-0"
                         />
                       </v-row>
                     </v-col>
-            
+
                     <!-- Desktop: DESCRIPTION -->
                     <!-- Description textarea -->
                     <!-- <v-col class="ml-4" v-if="form.showDescription || readonly"> -->
@@ -691,8 +684,8 @@
                         v-model="formData.description"
                         label="Description"
                         v-bind="customProps"
-                        no-resize 
-                        rows="4" 
+                        no-resize
+                        rows="4"
                         auto-grow
                         outlined
                         color="#BA041B"
@@ -704,10 +697,8 @@
                       <AddButton label="Add description" @click="form.showDescription = true" row />
                     </v-col> -->
                   </v-row>
-            
-            
-                  
-                  <v-row class="pa-4"> 
+
+                  <v-row class="pa-4">
                     <v-col cols="12">
                       <!-- Desktop: Contact -->
                       <v-row>
@@ -734,7 +725,7 @@
                         </v-col>
                       </v-row>
                     </v-col>
-                  
+
                     <v-col cols="12" >
                       <v-row>
                         <v-col cols="12" class="pa-1">
@@ -784,7 +775,7 @@
                         </v-col>
                       </v-row>
                       <!-- END Action buttons -->
-                  </v-row>  
+                  </v-row>
           </v-col>
 
         </v-row>
@@ -792,227 +783,225 @@
       </v-card>
     </v-form>
 
-
-
   </div>
 </template>
-  
-  <script>
-  import {
-    GENDERS,
-    RULES,
-    RELATIONSHIPS
-  } from '@/lib/constants'
 
-  import calculateAge from '../../../lib/calculate-age'
-  
-  import { PERMITTED_PROFILE_ATTRS, PERMITTED_RELATIONSHIP_ATTRS } from '@/lib/profile-helpers'
-  
-  import Avatar from '@/components/Avatar.vue'
-  import AvatarGroup from '@/components/AvatarGroup.vue'
-  import NodeDatePicker from '@/components/NodeDatePicker.vue'
-  import AddButton from '@/components/button/AddButton.vue'
-  import ImagePicker from '@/components/ImagePicker.vue'
-  import Appbar from '@/components/Appbar.vue'
-  import GenderButton from '@/components/button/GenderButton.vue'
+<script>
+import {
+  GENDERS,
+  RULES,
+  RELATIONSHIPS
+} from '@/lib/constants'
 
-  import Dialog from '@/components/dialog/Dialog.vue'
-  import DialogTitleBanner from '@/components/dialog/DialogTitleBanner.vue'
-  
-  import isEqual from 'lodash.isequal'
-  import isEmpty from 'lodash.isempty'
-  import pick from 'lodash.pick'
-  import clone from 'lodash.clonedeep'
-  
-  function defaultData (profile) {
+import calculateAge from '../../../lib/calculate-age'
+
+import { PERMITTED_PROFILE_ATTRS, PERMITTED_RELATIONSHIP_ATTRS } from '@/lib/profile-helpers'
+
+import Avatar from '@/components/Avatar.vue'
+import AvatarGroup from '@/components/AvatarGroup.vue'
+import NodeDatePicker from '@/components/NodeDatePicker.vue'
+import AddButton from '@/components/button/AddButton.vue'
+import ImagePicker from '@/components/ImagePicker.vue'
+import Appbar from '@/components/Appbar.vue'
+import GenderButton from '@/components/button/GenderButton.vue'
+
+import Dialog from '@/components/dialog/Dialog.vue'
+import DialogTitleBanner from '@/components/dialog/DialogTitleBanner.vue'
+
+import isEqual from 'lodash.isequal'
+import isEmpty from 'lodash.isempty'
+import pick from 'lodash.pick'
+import clone from 'lodash.clonedeep'
+
+function defaultData (profile) {
+  return {
+    id: profile.id,
+    gender: profile.gender,
+    legalName: profile.legalName,
+    bornAt: profile.bornAt,
+    diedAt: profile.diedAt,
+    preferredName: profile.preferredName,
+    avatarImage: profile.avatarImage,
+    description: profile.description,
+    birthOrder: profile.birthOrder,
+    relationshipType: profile.relationship ? profile.relationship.relationshipType ? profile.relationship.relationshipType : null : null,
+    location: profile.location,
+    contact: profile.contact,
+    profession: profile.profession,
+    altNames: {
+      currentState: clone(profile.altNames),
+      add: [], // new altNames to add
+      remove: [] // altNames to remove
+    },
+    isDeceased: !!profile.diedAt // set to true if this value is set
+  }
+}
+
+export default {
+  name: 'SideViewEditNodeDialogV2',
+  components: {
+    Avatar,
+    AvatarGroup,
+    NodeDatePicker,
+    AddButton,
+    ImagePicker,
+    Appbar,
+    Dialog,
+    DialogTitleBanner,
+    GenderButton
+  },
+  props: {
+    goBack: { type: Function },
+    profile: { type: Object, required: true },
+    deleteable: { type: Boolean, default: false },
+    warnAboutChildren: { type: Boolean, default: true },
+    sideMenu: { type: Boolean, default: false },
+    relationshipLinks: { type: Array },
+    show: { type: Boolean, required: true },
+    readonly: { type: Boolean, default: false }
+  },
+
+  data () {
     return {
-      id: profile.id,
-      gender: profile.gender,
-      legalName: profile.legalName,
-      bornAt: profile.bornAt,
-      diedAt: profile.diedAt,
-      preferredName: profile.preferredName,
-      avatarImage: profile.avatarImage,
-      description: profile.description,
-      birthOrder: profile.birthOrder,
-      relationshipType: profile.relationship ? profile.relationship.relationshipType ? profile.relationship.relationshipType : null : null,
-      location: profile.location,
-      contact: profile.contact,
-      profession: profile.profession,
-      altNames: {
-        currentState: clone(profile.altNames),
-        add: [], // new altNames to add
-        remove: [] // altNames to remove
-      },
-      isDeceased: !!profile.diedAt // set to true if this value is set
+      testmapimage: require('../../../assets/map-test.png'),
+      genders: GENDERS,
+      // titles: TITLES,
+      permitted: PERMITTED_PROFILE_ATTRS,
+      relationshipTypes: RELATIONSHIPS,
+      isEditing: false,
+      formData: defaultData(this.profile),
+      showDescription: false,
+      deleteDialog: false,
+      form: {
+        valid: true,
+        rules: RULES
+      }
+    }
+  },
+  computed: {
+    orderNumbers () {
+      var orderNumbers = [...Array(31).keys()]
+      orderNumbers.splice(0, 1)
+      return orderNumbers
+    },
+    mobile () {
+      return this.$vuetify.breakpoint.xs
+    },
+    profileChanges () {
+      let changes = {}
+      Object.entries(this.formData).forEach(([key, value]) => {
+        if (!isEqual(this.formData[key], this.profile[key])) {
+          switch (key) {
+            case 'altNames':
+              if (!isEqual(this.formData.altNames.add, this.profile.altNames)) {
+                changes[key] = pick(this.formData.altNames, ['add', 'remove'])
+                changes[key].add = changes[key].add.filter(Boolean)
+              }
+              break
+            case 'birthOrder':
+              changes[key] = parseInt(value)
+              break
+            case 'relationshipType':
+              if (value && value !== this.profile.relationship.relationshipType) {
+                changes[key] = value
+              }
+              break
+            default:
+              changes[key] = value
+          }
+        }
+      })
+      return changes
+    },
+    hasChanges () {
+      return isEqual(this.data, this.profile)
+    },
+    customProps () {
+      return {
+        readonly: !this.isEditing,
+        flat: !this.isEditing,
+        // appendIcon: this.isEditing ? '' ? 'mdi-delete' : 'mdi-pencil',
+        hideDetails: true,
+        placeholder: ' ',
+        class: !this.isEditing ? 'custom' : ''
+      }
+    }
+  },
+  watch: {
+    profile (newVal) {
+      this.formData = defaultData(newVal)
+    },
+    'formData.isDeceased' (newValue) {
+      if (!newValue) this.formData.diedAt = ''
+    }
+  },
+  methods: {
+    removeAltNameField (index) {
+      this.formData.altNames.add.splice(index, 1)
+    },
+    updateGender (gender) {
+      this.formData.gender = gender
+    },
+    addAltNameField () {
+      this.formData.altNames.add.push(null)
+    },
+    updateAvatar (avatarImage) {
+      this.formData.avatarImage = avatarImage
+      // this.toggleAvatar(null)
+    },
+    age (born) {
+      var age = calculateAge(born)
+      return age
+    },
+    close () {
+      this.$emit('close')
+    },
+    cancel () {
+      // reset form values
+      this.formData = defaultData(this.profile)
+      this.toggleEdit()
+    },
+    submit () {
+      if (!this.$refs.form.validate()) {
+        return
+      }
+
+      var output = Object.assign({}, pick(this.profileChanges, [...PERMITTED_PROFILE_ATTRS, ...PERMITTED_RELATIONSHIP_ATTRS]))
+
+      if (!isEmpty(output)) {
+        this.$emit('submit', output)
+      }
+
+      this.formData = defaultData(this.profile)
+      this.toggleEdit()
+    },
+    openProfile (profileId) {
+      this.$emit('open-profile', profileId)
+    },
+    toggleNew (type) {
+      this.$emit('new', type)
+    },
+    toggleEdit () {
+      this.isEditing = !this.isEditing
+    },
+    toggleAltName () {
+      if (!this.formData.altNames.currentState) { this.formData.altNames.currentState = [] }
+      this.formData.altNames.add.push(null)
+    },
+    toggleDescription () {
+      this.showDescription = !this.showDescription
+    },
+    deleteFromState (altName, index) {
+      this.deleteFromDialog(index) // removes it from the dialog
+      this.formData.altNames.remove.push(altName)
+    },
+    deleteFromDialog (index) {
+      this.formData.altNames.currentState.splice(index, 1)
     }
   }
-  
-  export default {
-    name: 'SideViewEditNodeDialogV2',
-    components: {
-      Avatar,
-      AvatarGroup,
-      NodeDatePicker,
-      AddButton,
-      ImagePicker,
-      Appbar,
-      Dialog,
-      DialogTitleBanner,
-      GenderButton
-    },
-    props: {
-      goBack: { type: Function },
-      profile: { type: Object, required: true },
-      deleteable: { type: Boolean, default: false },
-      warnAboutChildren: { type: Boolean, default: true },
-      sideMenu: { type: Boolean, default: false },
-      relationshipLinks: { type: Array },
-      show: {type: Boolean,required: true},
-      readonly: { type: Boolean, default: false },
-    },
-  
-    data () {
-      return {
-        testmapimage: require('../../../assets/map-test.png'),
-        genders: GENDERS,
-        // titles: TITLES,
-        permitted: PERMITTED_PROFILE_ATTRS,
-        relationshipTypes: RELATIONSHIPS,
-        isEditing: false,
-        formData: defaultData(this.profile),
-        showDescription: false,
-        deleteDialog: false,
-        form: {
-          valid: true,
-          rules: RULES
-        },
-      }
-    },
-    computed: {
-      orderNumbers() {
-        var orderNumbers = [...Array(31).keys()];
-        orderNumbers.splice(0,1)
-        return orderNumbers 
-      },
-      mobile () {
-        return this.$vuetify.breakpoint.xs
-      },
-      profileChanges () {
-        let changes = {}
-        Object.entries(this.formData).forEach(([key, value]) => {
-          if (!isEqual(this.formData[key], this.profile[key])) {
-            switch (key) {
-              case 'altNames':
-                if (!isEqual(this.formData.altNames.add, this.profile.altNames)) {
-                  changes[key] = pick(this.formData.altNames, ['add', 'remove'])
-                  changes[key].add = changes[key].add.filter(Boolean)
-                }
-                break
-              case 'birthOrder':
-                changes[key] = parseInt(value)
-                break
-              case 'relationshipType':
-                if (value && value !== this.profile.relationship.relationshipType) {
-                  changes[key] = value
-                }
-                break
-              default:
-                changes[key] = value
-            }
-          }
-        })
-        return changes
-      },
-      hasChanges () {
-        return isEqual(this.data, this.profile)
-      },
-      customProps () {
-        return {
-          readonly: !this.isEditing,
-          flat: !this.isEditing,
-          // appendIcon: this.isEditing ? '' ? 'mdi-delete' : 'mdi-pencil',
-          hideDetails: true,
-          placeholder: ' ',
-          class: !this.isEditing ? 'custom' : ''
-        }
-      }
-    },
-    watch: {
-      profile (newVal) {
-        this.formData = defaultData(newVal)
-      },
-      'formData.isDeceased' (newValue) {
-        if (!newValue) this.formData.diedAt = ''
-      }
-    },
-    methods: {
-      removeAltNameField (index) {
-        this.formData.altNames.add.splice(index, 1)
-      },
-      updateGender(gender) {
-        this.formData.gender = gender;
-      },
-      addAltNameField () {
-        this.formData.altNames.add.push(null)
-      },
-      updateAvatar (avatarImage) {
-        this.formData.avatarImage = avatarImage
-        // this.toggleAvatar(null)
-      },
-      age(born) {
-        var age = calculateAge(born)
-        return age
-      },
-      close () {
-        this.$emit('close')
-      },
-      cancel () {
-        // reset form values
-        this.formData = defaultData(this.profile)
-        this.toggleEdit()
-      },
-      submit () {
-        if (!this.$refs.form.validate()) {
-          return
-        }
-  
-        var output = Object.assign({}, pick(this.profileChanges, [...PERMITTED_PROFILE_ATTRS, ...PERMITTED_RELATIONSHIP_ATTRS]))
-  
-        if (!isEmpty(output)) {
-          this.$emit('submit', output)
-        }
-  
-        this.formData = defaultData(this.profile)
-        this.toggleEdit()
-      },
-      openProfile (profileId) {
-        this.$emit('open-profile', profileId)
-      },
-      toggleNew (type) {
-        this.$emit('new', type)
-      },
-      toggleEdit () {
-        this.isEditing = !this.isEditing
-      },
-      toggleAltName () {
-        if (!this.formData.altNames.currentState) { this.formData.altNames.currentState = [] }
-        this.formData.altNames.add.push(null)
-      },
-      toggleDescription () {
-        this.showDescription = !this.showDescription
-      },
-      deleteFromState (altName, index) {
-        this.deleteFromDialog(index) // removes it from the dialog
-        this.formData.altNames.remove.push(altName)
-      },
-      deleteFromDialog (index) {
-        this.formData.altNames.currentState.splice(index, 1)
-      }
-    },
-  }
-  </script>
-  
+}
+</script>
+
 <style lang="scss">
 @import url('https://fonts.googleapis.com/css2?family=Forum&display=swap');
 
@@ -1033,25 +1022,25 @@
   .v-input--checkbox label {
     font-size: 14px;
   }
-  
+
   .v-input--radio-group__input label {
     font-size: 14px;
   }
-  
+
   ::-webkit-scrollbar {
     width: 5px;
   }
-  
+
   /* Track */
   ::-webkit-scrollbar-track {
     background: #f1f1f1;
   }
-  
+
   /* Handle */
   ::-webkit-scrollbar-thumb {
     background: #888;
   }
-  
+
   /* Handle on hover */
   ::-webkit-scrollbar-thumb:hover {
     background: #555;
@@ -1069,13 +1058,13 @@
 }
 
 .side-menu {
-  background-color: white; 
+  background-color: white;
   height:100%;
-  overflow-x: hidden; 
+  overflow-x: hidden;
 }
 
 .scroll {
-  overflow-x: hidden; 
+  overflow-x: hidden;
   overflow-y: scroll;
   max-height: 100%;
 }
@@ -1092,4 +1081,3 @@
 }
 
 </style>
-  

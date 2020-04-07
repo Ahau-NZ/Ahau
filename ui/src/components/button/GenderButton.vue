@@ -11,21 +11,20 @@ export default {
   name: 'GenderButton',
   props: {
     gender: String,
-    image: String,
+    image: String
   },
   data () {
     return {
-     
+
     }
   },
   computed: {
-    getImage() {
-      if (this.gender == 'male') {return 'tane-outlined'}
-      else if (this.gender == 'female') {return 'wahine-outlined'}
+    getImage () {
+      if (this.gender == 'male') { return 'tane-outlined' } else if (this.gender == 'female') { return 'wahine-outlined' }
     }
   },
   methods: {
-    updateSelectedGender() {
+    updateSelectedGender () {
       this.$emit('updateSelectedGender', this.gender)
     }
   }
@@ -55,6 +54,5 @@ export default {
     .gender-image:hover {
       border: 2px solid rgba(0,0,0,0.87);
     }
-  
+
 </style>
-  

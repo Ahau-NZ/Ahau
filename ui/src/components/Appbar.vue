@@ -153,13 +153,13 @@ export default {
       profile: {
         id: null,
         avatarImage: null
-      },
+      }
     }
   },
   computed: {
-    classObject: function() {
+    classObject: function () {
       return {
-        'mobile': this.mobile, 
+        'mobile': this.mobile,
         'desktop': !this.mobile,
         'sideMenuAppBarStyle': this.sideMenu
       }

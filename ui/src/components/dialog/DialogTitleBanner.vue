@@ -37,35 +37,35 @@ export default {
   props: {
     title: { type: String, default: 'Create a new person' },
     mobile: { type: Boolean, default: false },
-    isEditing: { type: Boolean, default: false },
+    isEditing: { type: Boolean, default: false }
   },
   data () {
     return {
-      titleObj: {},
+      titleObj: {}
     }
   },
   computed: {
     // split the Title into two parts (so maori can be styled red, and english styled in white)
-    splitTitle() {
+    splitTitle () {
       // check to see if is a maori & english title with the ---- in the middle
-      var str = this.title;
-      var substr = "----";
+      var str = this.title
+      var substr = '----'
       if (str.indexOf(substr) !== -1) {
-        var delimiter = '-';
-        var start = 2;
-        var maori = str.split(delimiter).slice(0, start + 1).join(delimiter);
-        var english = str.split(delimiter).slice(start).join(delimiter);
+        var delimiter = '-'
+        var start = 2
+        var maori = str.split(delimiter).slice(0, start + 1).join(delimiter)
+        var english = str.split(delimiter).slice(start).join(delimiter)
         this.titleObj = {
           maori: maori,
-          english: english,
+          english: english
         }
         return this.titleObj
-      } 
+      }
       // if no maori word in the title just return english
       else {
         return this.titleObj = {
           maori: '',
-          english: this.title,
+          english: this.title
         }
       }
     }
@@ -73,7 +73,7 @@ export default {
   methods: {
     close () {
       this.$emit('close')
-    },
+    }
   },
   watch: {}
 }
@@ -97,8 +97,8 @@ export default {
     background-repeat: no-repeat;
 
     /* resize banner outside container */
-    transform: scale(1.15); 
-    margin-top: -15px; 
+    transform: scale(1.15);
+    margin-top: -15px;
     margin-bottom: 10px;
 
     h1.banner-title {
@@ -108,7 +108,7 @@ export default {
       font-weight: 400;
       letter-spacing: 3.5px;
     }
-    
+
   }
   .banner {
     width: 100%;
@@ -119,10 +119,10 @@ export default {
     background-position-x: 80%;
     background-position-y: -40px;
     background-repeat: no-repeat;
-    
+
     /* resize banner outside container */
-    transform: scale(1.05); 
-    margin-top: -15px; 
+    transform: scale(1.05);
+    margin-top: -15px;
     margin-bottom: 10px;
 
     h1.banner-title {
@@ -132,10 +132,8 @@ export default {
       font-weight: 400;
       letter-spacing: 3.5px;
     }
-    
-  }
 
- 
+  }
 
   .banner-buttons {
     display: flex;
@@ -148,5 +146,5 @@ export default {
     color: white;
 
   }
-    
+
 </style>

@@ -3,7 +3,7 @@
     <v-container fluid class="pa-0" :style="[ mobile ? 'width:100vw' : 'width:95vw' ]">
 
       <!-- Desktop Header -->
-      <!-- Whakapapa Title Card -->  
+      <!-- Whakapapa Title Card -->
       <v-row v-if="!mobile" class="header"">
         <!-- Whakapapa"SHOW"ViewCard -->
         <WhakapapaShowViewCard :view="whakapapaView" :shadow="false">
@@ -12,7 +12,7 @@
               <template v-slot:activator="{ on }">
                 <v-btn
                   v-on="on"
-                  @click.prevent="dialog.active = 'whakapapa-edit'" 
+                  @click.prevent="dialog.active = 'whakapapa-edit'"
                   icon
                   class="pa-0 px-3"
                 >
@@ -61,7 +61,6 @@
         </div>
       </v-row>
 
-      
       <Tree
         class="tree"
         v-if="whakapapa.tree"
@@ -88,7 +87,6 @@
         @open-context-menu="openContextMenu($event)"
         :searchNodeId="searchNodeId"
       />
-      
 
     </v-container >
 
@@ -223,9 +221,9 @@ export default {
         table: false
       },
       contextMenuOpts: [
-        { title: 'View Person', dialog: 'view-edit-node', icon: require('../assets/account-circle.svg')},
-        { title: 'Add Parent', dialog: 'new-node', type: 'parent', icon: require('../assets/node-parent.svg')},
-        { title: 'Add Child', dialog: 'new-node', type: 'child', icon: require('../assets/node-child.svg')}
+        { title: 'View Person', dialog: 'view-edit-node', icon: require('../assets/account-circle.svg') },
+        { title: 'Add Parent', dialog: 'new-node', type: 'parent', icon: require('../assets/node-parent.svg') },
+        { title: 'Add Child', dialog: 'new-node', type: 'child', icon: require('../assets/node-child.svg') }
       ]
     }
   },
@@ -643,7 +641,7 @@ export default {
     position: relative;
     /* width: 95vw; */
     /* border: 2px solid red; */
-    
+
     & > .header {
       position: absolute;
       top: 10px;
@@ -703,9 +701,7 @@ h1 {
 
 .tree {
   max-height: calc(100vh - 64px);
-  
+
 }
-
-
 
 </style>
