@@ -120,6 +120,7 @@ export default {
   },
   data () {
     return {
+      tableWidth: 0,
       colWidth: 350,
       componentLoaded: false, // need to ensure component is loaded before using $refs
       nodeRadius: 20, // use variable for zoom later on
@@ -129,6 +130,7 @@ export default {
   },
   mounted () {
     this.componentLoaded = true
+    this.tableOverflow()
   },
 
   computed: {
@@ -261,26 +263,23 @@ export default {
         }
       ]
     },
-
-    // sets the width of the table
-    tableWidth () {
-      var tablewidth = this.colWidth + this.columns[this.columns.length - 1].x
-      this.$emit('update:tableWidth', tablewidth)
-      return tablewidth
-    }
   },
 
   watch: {
     flatten (newVal) {
       if (newVal === true) this.colWidth = 250
       else this.colWidth = 350
-    }
+    },
   },
   methods: {
+     // sets the width of the table
+    async tableOverflow () {
+      var width = await this.colWidth + this.columns[this.columns.length - 1].x
+      this.tableWidth = width
+      this.$emit('update', this.tableWidth)
+    },
     // function to control left and right scroll buttons in table
     panAction (x) {
-      console.log("tableWidth: ", this.tableWidth)
-      console.log("screen width: ", screen.width)
       var svg = d3.select('#baseSvg')
       var g = d3.select('#zoomable')
 

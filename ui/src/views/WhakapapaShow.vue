@@ -59,7 +59,7 @@
           <FeedbackButton />
         </div>
       </v-row>
-      <v-row v-if="tableOverflow" class="navigate">
+      <v-row v-if="whakapapa.table && overflow" class="navigate">
         <div class="icon-button">
           <v-btn fab x-small light @click="togglePan(-200)">
             <v-icon>mdi-arrow-left</v-icon>
@@ -99,7 +99,7 @@
           @collapse-node="collapseNode($event)"
           @open-context-menu="openContextMenu($event)"
           :searchNodeId="searchNodeId"
-          :tableWidth.sync="tableWidth"
+          @update="tableOverflow($event)"
         />
       </v-row>
     </v-container>
@@ -185,7 +185,7 @@ export default {
   },
   data () {
     return {
-      tableWidth: '',
+      overflow: 'false',
       pan: 0,
       search: false,
       searchNodeId: '',
@@ -270,9 +270,6 @@ export default {
     }
   },
   computed: {
-    tableOverflow () {
-      return this.whakapapa.table && this.tableWidth > screen.width
-    },
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -342,6 +339,10 @@ export default {
     }
   },
   methods: {
+     tableOverflow (width) {
+      var show = width > screen.width
+      this.overflow = show
+    },
     togglePan (x) {
       this.$refs.table.panAction(x)
     },
