@@ -193,7 +193,6 @@
                             readonly
                             v-bind="customProps"
                             outlined
-                            color="#BA041B"
                           />
                         </v-col>
                       </template>
@@ -213,7 +212,6 @@
                             v-bind="customProps"
                             cols="12"
                             outlined
-                            color="#BA041B"
                           />
                         </v-col>
                         <v-col class="pa-1">
@@ -284,7 +282,6 @@
                       rows="4"
                       auto-grow
                       outlined
-                      color="#BA041B"
                     >
                     </v-textarea>
                   </v-col>
@@ -304,7 +301,6 @@
                             label="Email"
                             v-bind="customProps"
                             outlined
-                            color="#BA041B"
                           />
                         </v-col>
                     </v-row>
@@ -565,7 +561,6 @@
                             label="Preferred name"
                             v-bind="customProps"
                             outlined
-                            color="#BA041B"
                           />
                           <!-- </slot> -->
                         </v-col>
@@ -577,7 +572,6 @@
                             label="Legal name."
                             v-bind="customProps"
                             outlined
-                            color="#BA041B"
                           />
                         </v-col>
 
@@ -596,7 +590,6 @@
                               readonly
                               v-bind="customProps"
                               outlined
-                              color="#BA041B"
                             />
                           </v-col>
                         </template>
@@ -616,7 +609,6 @@
                               v-bind="customProps"
                               cols="12"
                               outlined
-                              color="#BA041B"
                             />
                           </v-col>
                           <v-col class="pa-1">
@@ -646,7 +638,6 @@
                             min="1"
                             v-bind="customProps"
                             outlined
-                            color="#BA041B"
                           />
                         </v-col>
                       </v-row>
@@ -688,7 +679,6 @@
                         rows="4"
                         auto-grow
                         outlined
-                        color="#BA041B"
                       >
                       </v-textarea>
                     </v-col>
@@ -708,7 +698,6 @@
                               label="Email"
                               v-bind="customProps"
                               outlined
-                              color="#BA041B"
                             />
                           </v-col>
                       </v-row>
@@ -720,7 +709,6 @@
                             label="Occupation"
                             v-bind="customProps"
                             outlined
-                            color="#BA041B"
                           />
                         </v-col>
                       </v-row>
@@ -735,7 +723,6 @@
                             label="Location"
                             v-bind="customProps"
                             outlined
-                            color="#BA041B"
                           />
                         </v-col>
                       </v-row>
