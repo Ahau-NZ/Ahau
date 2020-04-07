@@ -339,7 +339,7 @@ export default {
     }
   },
   methods: {
-     tableOverflow (width) {
+    tableOverflow (width) {
       var show = width > screen.width
       this.overflow = show
     },

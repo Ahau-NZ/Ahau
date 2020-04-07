@@ -556,26 +556,4 @@ export default {
   font-size: 14px;
 }
 
-/* ::-webkit-scrollbar {
-  width: 12px;
-}
-
-/* Track */
- /* ::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 10px;
-} */
-
-/* Handle */
-/* ::-webkit-scrollbar-thumb {
-  background: #888;
-  border-radius: 10px;
-  box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
-}*/
-
-/* Handle on hover */
-/* ::-webkit-scrollbar-thumb:hover {
-  background: #555;
-} */
-
 </style>

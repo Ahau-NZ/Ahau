@@ -347,8 +347,6 @@ export default {
       }
     },
     async updateProfile ($event) {
-      console.log('update profile: ', $event)
-
       const profileChanges = pick($event, [...PERMITTED_PROFILE_ATTRS])
       const relationshipAttrs = pick($event, [...PERMITTED_RELATIONSHIP_ATTRS])
       const profileId = this.selectedProfile.id

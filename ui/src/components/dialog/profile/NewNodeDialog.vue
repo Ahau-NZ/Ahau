@@ -213,12 +213,7 @@ export default {
       if (newValue) {
         this.$emit('getSuggestions', null)
       }
-    },
-
-    formData (newVal) {
-      console.log(newVal)
     }
-
   }
 }
 </script>

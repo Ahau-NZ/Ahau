@@ -125,7 +125,7 @@ export default {
       componentLoaded: false, // need to ensure component is loaded before using $refs
       nodeRadius: 20, // use variable for zoom later on
       nodeSize: 40,
-      duration: 400,
+      duration: 400
     }
   },
   mounted () {
@@ -169,7 +169,7 @@ export default {
         .descendants()
         // filter deceased
         .filter(peeps => {
-          if (this.filter && peeps.data.deceased === true) {
+          if (this.filter && peeps.data.deceased) {
             return false
           }
           return true
@@ -259,20 +259,20 @@ export default {
         },
         {
           label: 'Phone',
-          x: this.colWidth + 1065
+          x: this.colWidth + 1165
         }
       ]
-    },
+    }
   },
 
   watch: {
     flatten (newVal) {
       if (newVal === true) this.colWidth = 250
       else this.colWidth = 350
-    },
+    }
   },
   methods: {
-     // sets the width of the table
+    // sets the width of the table
     async tableOverflow () {
       var width = await this.colWidth + this.columns[this.columns.length - 1].x
       this.tableWidth = width
