@@ -3,7 +3,7 @@
     :to="view.id
         ? { name: 'whakapapaShow', params: { id: view.id } }
         : '/whakapapa'"
-    class="d-flex pa-4"
+    class="d-flex pa-2"
     color="#fff"
     :style="shadow ? '' : 'box-shadow: none;'"
   >
@@ -81,11 +81,11 @@ export default {
 }
 
 .cover-image {
-  min-width: 20%;
+  min-width: 15%;
   background-color: #fff;
   background-position: center center;
   @media screen and (min-width: 420px) {
-    width: 150px;
+    width: 84px;
   }
 }
 

@@ -101,8 +101,7 @@ export default {
       return {
         backgroundImage: `url(${whakapapa})`,
         backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        border: '2px solid pink'
+        backgroundPosition: 'center'
 
       }
     }
