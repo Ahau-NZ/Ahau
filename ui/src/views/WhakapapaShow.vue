@@ -55,12 +55,12 @@
       </v-row>
       <v-row v-if="whakapapa.table && overflow" class="navigate">
         <div class="icon-button">
-          <v-btn fab x-small light @click="togglePan(-200)">
+          <v-btn fab x-small light @click="togglePan(200)">
             <v-icon>mdi-arrow-left</v-icon>
           </v-btn>
         </div>
         <div class="icon-button">
-          <v-btn fab x-small light @click.stop="togglePan(200)">
+          <v-btn fab x-small light @click.stop="togglePan(-200)">
             <v-icon>mdi-arrow-right</v-icon>
           </v-btn>
         </div>
