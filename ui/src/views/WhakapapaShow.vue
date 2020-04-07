@@ -1,6 +1,6 @@
 <template>
-  <div id="whakapapa-show">
-    <v-container class="white px-0 py-0 mx-auto">
+  <div id="whakapapa-show" style="overflow:none">
+    <v-container fixed class="white px-0 py-0 mx-auto">
       <v-row v-if="!mobile" class="header">
         <!-- Whakapapa Title Card -->
 
@@ -53,6 +53,18 @@
           <FeedbackButton />
         </div>
       </v-row>
+      <v-row v-if="whakapapa.table && overflow" class="navigate">
+        <div class="icon-button">
+          <v-btn fab x-small light @click="togglePan(200)">
+            <v-icon>mdi-arrow-left</v-icon>
+          </v-btn>
+        </div>
+        <div class="icon-button">
+          <v-btn fab x-small light @click.stop="togglePan(-200)">
+            <v-icon>mdi-arrow-right</v-icon>
+          </v-btn>
+        </div>
+      </v-row>
 
       <v-row>
         <Tree
@@ -71,6 +83,7 @@
         />
         <Table
           v-if="whakapapa.table"
+          ref="table"
           :filter="filter"
           :flatten="flatten"
           :view="whakapapaView"
@@ -80,6 +93,7 @@
           @collapse-node="collapseNode($event)"
           @open-context-menu="openContextMenu($event)"
           :searchNodeId="searchNodeId"
+          @update="tableOverflow($event)"
         />
       </v-row>
     </v-container>
@@ -165,6 +179,8 @@ export default {
   },
   data () {
     return {
+      overflow: 'false',
+      pan: 0,
       search: false,
       searchNodeId: '',
       showWhakapapaHelper: false,
@@ -248,7 +264,6 @@ export default {
     }
   },
   computed: {
-
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -318,6 +333,13 @@ export default {
     }
   },
   methods: {
+    tableOverflow (width) {
+      var show = width > screen.width
+      this.overflow = show
+    },
+    togglePan (x) {
+      this.$refs.table.panAction(x)
+    },
     clickedOff () {
       this.search = !this.search
     },
@@ -376,9 +398,12 @@ export default {
               diedAt
               birthOrder
               description
-              contact
+              address
+              email
+              phone
               location
               profession
+              deceased
               altNames
               avatarImage {
                 uri
@@ -393,9 +418,12 @@ export default {
                   diedAt
                   birthOrder
                   description
-                  contact
+                  address
+                  email
+                  phone
                   location
                   profession
+                  deceased
                   altNames
                   avatarImage {
                     uri
@@ -415,9 +443,12 @@ export default {
                   diedAt
                   birthOrder
                   description
-                  contact
+                  address
+                  phone
+                  email
                   location
                   profession
+                  deceased
                   altNames
                   avatarImage {
                     uri
@@ -532,7 +563,7 @@ export default {
         this.profiles[profileId],
         this.profiles
       )
-
+      console.log('selectedProfile: ', this.selectedProfile)
       if (!this.selectedProfile.parents || this.selectedProfile.parents.length === 0) return
       var mainParent = this.selectedProfile.parents[0]
       this.selectedProfile.relationship = this.relationshipLinks[mainParent.id + '-' + this.selectedProfile.id]
@@ -639,14 +670,20 @@ export default {
     }
 
     & > .select {
-      position: absolute;
-      top: 20px;
-      right: 50px;
+      position: fixed;
+      top: 60px;
+      right: 110px;
 
       .col {
         padding-top: 0;
         padding-bottom: 0;
       }
+    }
+
+    & > .navigate {
+      position: fixed;
+      top: 110px;
+      right: 110px;
     }
   }
 }
@@ -676,5 +713,4 @@ h1 {
   display: flex;
   justify-items: flex-end;
 }
-
 </style>

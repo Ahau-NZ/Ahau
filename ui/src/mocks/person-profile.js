@@ -81,7 +81,7 @@ export const personComplete = {
   legalName: 'Will Smith',
   bornAt: '2003-02-01',
   diedAt: '',
-  isDeceased: false,
+  deceased: false,
   preferredName: 'Will',
   relationshipType: 'birth',
   legallyAdopted: false,
