@@ -1,21 +1,11 @@
 <template>
   <Dialog :show="show" :title="title" @close="close" width="720px" :goBack="close" enableMenu>
 
-    <!-- Title now propped into Dialog. instead of using slot -->
-    <!-- <template v-slot:title>
-      <h1>{{title}}</h1>
-    </template> -->
-
     <!-- Content Slot -->
     <template v-if="!hideDetails" v-slot:content>
       <v-col class="py-0">
 
-        <!-- Old -->
-        <!-- <ProfileForm :profile.sync="formData" :readonly="hasSelection" :editRelationship="hasSelection"> -->
-
-        <!-- Ian -->
-        <!-- this component replaces NewProfile component should probably be renamed--. More than just NewUserForm now. Style carried over to other dialogs.-->
-        <NewUserForm :profile.sync="formData" :readonly="hasSelection" :editRelationship="hasSelection">
+        <ProfileForm :profile.sync="formData" :readonly="hasSelection" :editRelationship="hasSelection">
 
           <!-- Slot = Search -->
           <template v-slot:search>
@@ -58,8 +48,7 @@
               </template>
             </v-combobox>
           </template>
-        <!-- </ProfileForm> -->
-        </NewUserForm>
+        </ProfileForm>
 
       </v-col>
     </template>
@@ -89,8 +78,6 @@
 import Dialog from '@/components/dialog/Dialog.vue'
 
 import ProfileForm from '@/components/profile-form/ProfileForm.vue'
-
-import NewUserForm from '@/components/dialog/newuser-form/NewUserForm.vue'
 
 import Avatar from '@/components/Avatar.vue'
 import isEmpty from 'lodash.isempty'
@@ -132,8 +119,7 @@ export default {
   components: {
     Avatar,
     Dialog,
-    ProfileForm,
-    NewUserForm
+    ProfileForm
   },
   props: {
     show: { type: Boolean, required: true },

@@ -4,7 +4,7 @@
 
       <!-- Desktop Header -->
       <!-- Whakapapa Title Card -->
-      <v-row v-if="!mobile" class="header"">
+      <v-row v-if="!mobile" class="header">
         <!-- Whakapapa"SHOW"ViewCard -->
         <WhakapapaShowViewCard :view="whakapapaView" :shadow="false">
           <template v-slot:edit>

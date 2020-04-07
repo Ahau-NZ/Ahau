@@ -261,12 +261,18 @@
                   <v-col v-else class="pa-1 mb-6"  cols="12">
                     <p class="text-field">Gender</p>
                     <v-row class="gender-button-row">
-                      <GenderButton v-for="(gender, index) in genders"
-                        :key="index"
-                        :gender="gender"
-                        @updateSelectedGender="updateGender"
-                        class="pa-0"
-                      />
+                      <!-- TANE -->
+                      <v-col>
+                        <div class="gender-button" @click="updateSelectedGender('male')">
+                          <img ref="taneImg" :src="require('@/assets/tane-outlined.svg')" class="gender-image">
+                        </div>
+                      </v-col>
+                      <!-- WAHINE -->
+                      <v-col>
+                        <div class="gender-button" @click="updateSelectedGender('female')">
+                          <img ref="wahineImg" :src="require('@/assets/wahine-outlined.svg')" class="gender-image">
+                        </div>
+                      </v-col>
                     </v-row>
                   </v-col>
 
@@ -631,11 +637,11 @@
                       <!-- Desktop: ORDER OF BIRTH -->
                       <v-row>
                         <v-col v-if="!readonly || formData.birthOrder" cols="12" class="pa-1">
-                          <v-text-field
+                          <v-select
                             v-model="formData.birthOrder"
                             type="number"
                             label="Order of birth"
-                            min="1"
+                            :items="orderNumbers"
                             v-bind="customProps"
                             outlined
                           />
@@ -658,13 +664,19 @@
                     <v-col v-else class="pa-1 mb-6"  cols="12">
                       <p class="text-field">Gender</p>
                       <v-row class="gender-button-row">
-                        <GenderButton v-for="(gender, index) in genders"
-                          :key="index"
-                          :gender="gender"
-                          @updateSelectedGender="updateGender"
-                          class="pa-0"
-                        />
-                      </v-row>
+                          <!-- TANE -->
+                          <v-col>
+                            <div class="gender-button" @click="updateSelectedGender('male')">
+                              <img ref="taneImg" :src="require('@/assets/tane-outlined.svg')" class="gender-image">
+                            </div>
+                          </v-col>
+                          <!-- WAHINE -->
+                          <v-col>
+                            <div class="gender-button" @click="updateSelectedGender('female')">
+                              <img ref="wahineImg" :src="require('@/assets/wahine-outlined.svg')" class="gender-image">
+                            </div>
+                          </v-col>
+                        </v-row>
                     </v-col>
 
                     <!-- Desktop: DESCRIPTION -->
@@ -790,7 +802,6 @@ import NodeDatePicker from '@/components/NodeDatePicker.vue'
 import AddButton from '@/components/button/AddButton.vue'
 import ImagePicker from '@/components/ImagePicker.vue'
 import Appbar from '@/components/Appbar.vue'
-import GenderButton from '@/components/button/GenderButton.vue'
 
 import Dialog from '@/components/dialog/Dialog.vue'
 import DialogTitleBanner from '@/components/dialog/DialogTitleBanner.vue'
@@ -834,8 +845,7 @@ export default {
     ImagePicker,
     Appbar,
     Dialog,
-    DialogTitleBanner,
-    GenderButton
+    DialogTitleBanner
   },
   props: {
     goBack: { type: Function },
@@ -862,7 +872,8 @@ export default {
       form: {
         valid: true,
         rules: RULES
-      }
+      },
+      genderSelected: '',
     }
   },
   computed: {
@@ -923,11 +934,23 @@ export default {
     }
   },
   methods: {
+    updateSelectedGender (genderClicked) {
+      //reset images to outlined
+      this.$refs.taneImg.src = require('@/assets/tane-outlined.svg')
+      this.$refs.wahineImg.src = require('@/assets/wahine-outlined.svg')
+      //hightlight selected image
+      this.genderSelected = genderClicked
+      if (this.genderSelected == 'male') {
+        this.$refs.taneImg.src = require('@/assets/tane.svg')
+      }
+      if (this.genderSelected == 'female') {
+        this.$refs.wahineImg.src = require('@/assets/wahine.svg')
+      }
+      // update the gender
+      this.formData.gender = this.genderSelected
+    },
     removeAltNameField (index) {
       this.formData.altNames.add.splice(index, 1)
-    },
-    updateGender (gender) {
-      this.formData.gender = gender
     },
     addAltNameField () {
       this.formData.altNames.add.push(null)
@@ -1065,6 +1088,28 @@ export default {
   margin-left: 5px !important;
   margin-bottom: 0 !important;
   font-size: 0.8em;
+}
+
+.gender-button {
+    width: auto;
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 5px;
+
+    .gender-image {
+      width: 6em;
+      height: 6em;
+      border: 0.5px solid rgba(0,0,0,0.6);
+      border-radius: 50%;
+      cursor: pointer;
+      transition: all 0.3s;
+
+      &:hover {
+        border: 2px solid rgba(0,0,0,0.87);
+      }
+    }
 }
 
 </style>
