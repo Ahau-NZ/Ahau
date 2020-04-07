@@ -508,8 +508,6 @@
                 </v-row>
             </v-row>
 
-            
-
             <v-row class="px-2">
 
               <!-- Information Col -->
@@ -814,11 +812,8 @@ import Avatar from '@/components/Avatar.vue'
 import AvatarGroup from '@/components/AvatarGroup.vue'
 import NodeDatePicker from '@/components/NodeDatePicker.vue'
 import AddButton from '@/components/button/AddButton.vue'
-import ImagePicker from '@/components/ImagePicker.vue'
-import Appbar from '@/components/Appbar.vue'
 
 import Dialog from '@/components/dialog/Dialog.vue'
-import DialogTitleBanner from '@/components/dialog/DialogTitleBanner.vue'
 
 import isEqual from 'lodash.isequal'
 import isEmpty from 'lodash.isempty'
@@ -856,10 +851,7 @@ export default {
     AvatarGroup,
     NodeDatePicker,
     AddButton,
-    ImagePicker,
-    Appbar,
-    Dialog,
-    DialogTitleBanner
+    Dialog
   },
   props: {
     goBack: { type: Function },
@@ -887,7 +879,7 @@ export default {
         valid: true,
         rules: RULES
       },
-      genderSelected: '',
+      genderSelected: ''
     }
   },
   computed: {
@@ -949,15 +941,15 @@ export default {
   },
   methods: {
     updateSelectedGender (genderClicked) {
-      //reset images to outlined
+      // reset images to outlined
       this.$refs.taneImg.src = require('@/assets/tane-outlined.svg')
       this.$refs.wahineImg.src = require('@/assets/wahine-outlined.svg')
-      //hightlight selected image
+      // hightlight selected image
       this.genderSelected = genderClicked
-      if (this.genderSelected == 'male') {
+      if (this.genderSelected === 'male') {
         this.$refs.taneImg.src = require('@/assets/tane.svg')
       }
-      if (this.genderSelected == 'female') {
+      if (this.genderSelected === 'female') {
         this.$refs.wahineImg.src = require('@/assets/wahine.svg')
       }
       // update the gender

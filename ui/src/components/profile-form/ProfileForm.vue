@@ -2,7 +2,7 @@
     <v-form ref="form" light >
       <v-col>
         <v-row>
-  
+
           <!-- Upload profile photo -->
           <v-col order-sm="2" class="mt-5">
             <v-row >
@@ -24,7 +24,7 @@
               </v-col>
             </v-row>
           </v-col>
-  
+
           <!-- Names -->
           <v-col cols="12" sm="6" class="pt-4">
             <v-row>
@@ -46,7 +46,7 @@
                   outlined
                 />
               </v-col>
-  
+
               <template>
                 <v-col v-for="(altName, index) in formData.altNames.value"
                   :key="`value-alt-name-${index}`"
@@ -65,7 +65,7 @@
                   />
                 </v-col>
               </template>
-  
+
               <!-- Add Names -->
               <template v-if="!readonly">
                 <v-col v-for="(altName, index) in formData.altNames.add"
@@ -89,7 +89,7 @@
                 </v-col>
               </template>
             </v-row>
-  
+
               <!-- DATE OF BIRTH -->
             <v-row>
               <v-col cols="12" class="pa-1">
@@ -114,10 +114,10 @@
                 />
               </v-col>
             </v-row>
-  
+
           </v-col>
         </v-row>
-  
+
         <v-row>
           <!-- GENDER VIEW -->
           <v-col  v-if="readonly" cols="12" sm="6" class="pa-1">
@@ -146,7 +146,7 @@
               </v-col>
             </v-row>
           </v-col>
-  
+
           <!-- Description textarea -->
           <v-col class="pa-1"  cols="12" sm="6" >
             <v-textarea
@@ -161,7 +161,7 @@
             </v-textarea>
           </v-col>
         </v-row>
-  
+
         <v-row>
           <v-col cols="12" sm="6" >
             <!-- Contact -->
@@ -187,7 +187,7 @@
               </v-col>
             </v-row>
           </v-col>
-  
+
           <v-col cols="12" sm="6" >
             <v-row>
               <v-col cols="12" class="pa-1">
@@ -202,113 +202,113 @@
             </v-row>
           </v-col>
         </v-row>
-  
+
       </v-col>
     </v-form>
   </template>
-  <script>
-  
-  import Avatar from '@/components/Avatar.vue'
-  import ImagePicker from '@/components/ImagePicker.vue'
-  import AddButton from '@/components/button/AddButton.vue'
-  import NodeDatePicker from '@/components/NodeDatePicker.vue'
-  
-  import { GENDERS, RELATIONSHIPS } from '@/lib/constants'
-  
-  export default {
-    name: 'ProfileForm',
-    components: {
-      Avatar,
-      ImagePicker,
-      AddButton,
-      NodeDatePicker
+<script>
+
+import Avatar from '@/components/Avatar.vue'
+import ImagePicker from '@/components/ImagePicker.vue'
+import AddButton from '@/components/button/AddButton.vue'
+import NodeDatePicker from '@/components/NodeDatePicker.vue'
+
+import { GENDERS, RELATIONSHIPS } from '@/lib/constants'
+
+export default {
+  name: 'ProfileForm',
+  components: {
+    Avatar,
+    ImagePicker,
+    AddButton,
+    NodeDatePicker
+  },
+  props: {
+    profile: { type: Object, required: true },
+    withRelationships: { type: Boolean, default: true },
+    readonly: { type: Boolean, default: false },
+    hideDetails: { type: Boolean, default: false },
+    editRelationship: { type: Boolean, default: false }
+  },
+  data () {
+    return {
+      genders: GENDERS,
+      relationshipTypes: RELATIONSHIPS,
+      formData: this.profile,
+      form: {
+        valid: true,
+        showDescription: false
+      },
+      selectedGender: ''
+    }
+  },
+  watch: {
+    profile: {
+      handler (newVal) {
+        this.formData = newVal
+      }
     },
-    props: {
-      profile: { type: Object, required: true },
-      withRelationships: { type: Boolean, default: true },
-      readonly: { type: Boolean, default: false },
-      hideDetails: { type: Boolean, default: false },
-      editRelationship: { type: Boolean, default: false }
+    deep: true
+  },
+  computed: {
+    mobile () {
+      return this.$vuetify.breakpoint.xs
     },
-    data () {
+    customProps () {
+      // readonly = hasSelected || !isEditing
       return {
-        genders: GENDERS,
-        relationshipTypes: RELATIONSHIPS,
-        formData: this.profile,
-        form: {
-          valid: true,
-          showDescription: false
-        },
-        selectedGender: ''
+        readonly: this.readonly,
+        flat: this.readonly,
+        hideDetails: true,
+        placeholder: ' ',
+        class: this.readonly ? 'custom' : ''
       }
     },
-    watch: {
-      profile: {
-        handler (newVal) {
-          this.formData = newVal
-        }
-      },
-      deep: true
-    },
-    computed: {
-      mobile () {
-        return this.$vuetify.breakpoint.xs
-      },
-      customProps () {
-        // readonly = hasSelected || !isEditing
-        return {
-          readonly: this.readonly,
-          flat: this.readonly,
-          hideDetails: true,
-          placeholder: ' ',
-          class: this.readonly ? 'custom' : ''
-        }
-      },
-      showLegallyAdopted () {
-        switch (this.formData.relationshipType) {
-          case 'whangai': return true
-          case 'adopted': return true
-          default: return false
-        }
-      },
-      altNames () {
-        return [...this.formData.altNames.value, ...this.formData.altNames.add]
+    showLegallyAdopted () {
+      switch (this.formData.relationshipType) {
+        case 'whangai': return true
+        case 'adopted': return true
+        default: return false
       }
     },
-    methods: {
-      updateSelectedGender (genderClicked) {
-        //reset images to outlined
-        this.$refs.taneImg.src = require('@/assets/tane-outlined.svg')
-        this.$refs.wahineImg.src = require('@/assets/wahine-outlined.svg')
-        //hightlight selected image
-        this.genderSelected = genderClicked
-        if (this.genderSelected == 'male') {
-          this.$refs.taneImg.src = require('@/assets/tane.svg')
-        }
-        if (this.genderSelected == 'female') {
-          this.$refs.wahineImg.src = require('@/assets/wahine.svg')
-        }
-        // update the gender
-        this.formData.gender = this.genderSelected
-      },
-      addAltNameField () {
-        this.formData.altNames.add.push(null)
-      },
-      removeAltName (altName, index) {
-        this.formData.altNames.value.splice(index, 1)
-        this.formData.altNames.remove.push(altName)
-      },
-      removeAltNameField (index) {
-        this.formData.altNames.add.splice(index, 1)
+    altNames () {
+      return [...this.formData.altNames.value, ...this.formData.altNames.add]
+    }
+  },
+  methods: {
+    updateSelectedGender (genderClicked) {
+      // reset images to outlined
+      this.$refs.taneImg.src = require('@/assets/tane-outlined.svg')
+      this.$refs.wahineImg.src = require('@/assets/wahine-outlined.svg')
+      // hightlight selected image
+      this.genderSelected = genderClicked
+      if (this.genderSelected === 'male') {
+        this.$refs.taneImg.src = require('@/assets/tane.svg')
       }
+      if (this.genderSelected === 'female') {
+        this.$refs.wahineImg.src = require('@/assets/wahine.svg')
+      }
+      // update the gender
+      this.formData.gender = this.genderSelected
+    },
+    addAltNameField () {
+      this.formData.altNames.add.push(null)
+    },
+    removeAltName (altName, index) {
+      this.formData.altNames.value.splice(index, 1)
+      this.formData.altNames.remove.push(altName)
+    },
+    removeAltNameField (index) {
+      this.formData.altNames.add.splice(index, 1)
     }
   }
-  </script>
-  
+}
+</script>
+
   <style>
-  
+
   </style>
-  
+
   <style scoped>
   .custom.v-text-field > .v-input__control > .v-input__slot:before {
     border-style: none;
@@ -327,27 +327,27 @@
   .v-input--checkbox label {
     font-size: 14px;
   }
-  
+
   .v-input--radio-group__input label {
     font-size: 14px;
   }
-  
+
   .v-text-field input {
     text-align: center !important;
   }
-  
+
   .text-field {
     color: rgba(0,0,0,0.6);
     font-size: 0.8em;
     margin: 0;
   }
-  
+
   .radio-button  > input[type="radio"] {
     opacity: 0;
     position: fixed;
     width: 0;
   }
-  
+
   .radio-button >  label {
       display: inline-block;
       background-color: #ddd;
@@ -357,20 +357,20 @@
       border: 2px solid #444;
       border-radius: 4px;
   }
-  
+
   .radio-button >  label:hover {
     background-color: #dfd;
   }
-  
+
   .radio-button >  input[type="radio"]:focus + label {
       border: 2px dashed #444;
   }
-  
+
   .radio-button >  input[type="radio"]:checked + label {
       background-color: #bfb;
       border-color: #4c4;
   }
-  
+
   .gender-button-row {
     width: 100%;
     margin: 0px;
@@ -398,6 +398,4 @@
     }
   }
 
-  
 </style>
-  

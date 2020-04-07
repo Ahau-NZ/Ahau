@@ -44,7 +44,11 @@ export default {
       titleObj: {}
     }
   },
-  computed: {
+  computed: {},
+  methods: {
+    close () {
+      this.$emit('close')
+    },
     // split the Title into two parts (so maori can be styled red, and english styled in white)
     splitTitle () {
       // check to see if is a maori & english title with the ---- in the middle
@@ -60,19 +64,14 @@ export default {
           english: english
         }
         return this.titleObj
-      }
-      // if no maori word in the title just return english
-      else {
-        return this.titleObj = {
+      } else {
+        // if no maori word in the title just return english
+        this.titleObj = {
           maori: '',
           english: this.title
         }
+        return this.titleObj
       }
-    }
-  },
-  methods: {
-    close () {
-      this.$emit('close')
     }
   },
   watch: {}

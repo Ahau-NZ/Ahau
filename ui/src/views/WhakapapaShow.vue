@@ -128,7 +128,6 @@ import gql from 'graphql-tag'
 import isEmpty from 'lodash.isempty'
 import { VueContext } from 'vue-context'
 
-import WhakapapaViewCard from '@/components/whakapapa-view/WhakapapaViewCard.vue'
 import WhakapapaShowViewCard from '@/components/whakapapa-view/WhakapapaShowViewCard.vue'
 import WhakapapaBanner from '@/components/whakapapa-view/WhakapapaBanner.vue'
 
@@ -162,7 +161,6 @@ const saveWhakapapaViewMutation = input => (
 export default {
   name: 'WhakapapaShow',
   components: {
-    WhakapapaViewCard,
     WhakapapaShowViewCard,
     TableButton,
     HelpButton,

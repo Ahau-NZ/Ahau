@@ -66,7 +66,6 @@
 
 <script>
 
-import Appbar from '@/components/Appbar.vue'
 import DialogTitleBanner from '@/components/dialog/DialogTitleBanner.vue'
 
 export default {
@@ -129,7 +128,6 @@ export default {
     document.removeEventListener('keydown', this.listener)
   },
   components: {
-    Appbar,
     DialogTitleBanner
   }
 }
