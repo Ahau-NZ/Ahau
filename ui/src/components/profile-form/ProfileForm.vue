@@ -84,9 +84,10 @@
                     outlined
                   />
                 </v-col>
-                <v-col cols="12" class="pa-1">
-                  <AddButton :align="'flex-end'" label="Add name" @click="addAltNameField" row />
-                </v-col>
+                <v-row class="mx-1">
+                  <v-col cols="8"></v-col>
+                  <AddButton :align="'flex-end'" :width="'50px'" label="Add name" @click="addAltNameField" row/>
+                </v-row>
               </template>
             </v-row>
 
@@ -119,63 +120,55 @@
         </v-row>
 
         <v-row>
-          <!-- GENDER VIEW -->
-          <v-col  v-if="readonly" cols="12" sm="6" class="pa-1">
-            <v-text-field
-              v-model="formData.gender"
-              label="Gender"
-              v-bind="customProps"
-            />
-          </v-col>
-          <!-- GENDER EDIT -->
-          <v-col v-else class="pa-1"  cols="12" sm="6" >
-            <p class="text-field">Gender</p>
-
-            <v-row class="gender-button-row">
-              <!-- TANE -->
-              <v-col>
-                <div class="gender-button" @click="updateSelectedGender('male')">
-                  <img ref="taneImg" :src="require('@/assets/tane-outlined.svg')" class="gender-image">
-                </div>
-              </v-col>
-              <!-- WAHINE -->
-              <v-col>
-                <div class="gender-button" @click="updateSelectedGender('female')">
-                  <img ref="wahineImg" :src="require('@/assets/wahine-outlined.svg')" class="gender-image">
-                </div>
-              </v-col>
-            </v-row>
-          </v-col>
-
-          <!-- Description textarea -->
-          <v-col class="pa-1"  cols="12" sm="6" >
-            <v-textarea
-              v-model="formData.description"
-              label="Description"
-              v-bind="customProps"
-              no-resize
-              rows="4"
-              auto-grow
-              outlined
-            >
-            </v-textarea>
-          </v-col>
-        </v-row>
-
-        <v-row>
-          <v-col cols="12" sm="6" >
-            <!-- Contact -->
+          <v-col cols="12" sm="6">
             <v-row>
-              <v-col cols="12" class="pa-1">
-                  <v-text-field
-                    v-model="formData.contact"
-                    label="Email"
-                    v-bind="customProps"
-                    outlined
-                  />
-                </v-col>
+              <!-- GENDER VIEW -->
+              <v-col  v-if="readonly" class="pa-1">
+                <v-text-field
+                  v-model="formData.gender"
+                  label="Gender"
+                  v-bind="customProps"
+                />
+              </v-col>
+              <!-- GENDER EDIT -->
+              <v-col v-else class="pa-1">
+                <p class="text-field">Gender</p>
+    
+                <v-row class="gender-button-row">
+                  <!-- TANE -->
+                  <v-col>
+                    <div class="gender-button" @click="updateSelectedGender('male')">
+                      <img ref="taneImg" :src="require('@/assets/tane-outlined.svg')" class="gender-image">
+                    </div>
+                  </v-col>
+                  <!-- WAHINE -->
+                  <v-col>
+                    <div class="gender-button" @click="updateSelectedGender('female')">
+                      <img ref="wahineImg" :src="require('@/assets/wahine-outlined.svg')" class="gender-image">
+                    </div>
+                  </v-col>
+                </v-row>
+              </v-col>
             </v-row>
-            <!-- Profession -->
+          </v-col>
+          
+          <v-col cols="12" sm="6">
+            <v-row>
+              <!-- Description textarea -->
+              <v-col cols="12" class="pa-1">
+                <v-textarea
+                  v-model="formData.description"
+                  label="Description"
+                  v-bind="customProps"
+                  no-resize
+                  rows="4"
+                  auto-grow
+                  outlined
+                >
+                </v-textarea>
+              </v-col>
+            </v-row>
+            <!-- Occupation -->
             <v-row>
               <v-col cols="12" class="pa-1">
                 <v-text-field
@@ -186,15 +179,53 @@
                 />
               </v-col>
             </v-row>
+          </v-col>     
+        </v-row>
+
+        <v-row>
+          <v-col cols="12" sm="6" >
+            <!-- Email -->
+            <v-row>
+              <v-col cols="12" class="pa-1">
+                  <v-text-field
+                    v-model="formData.email"
+                    label="Email"
+                    v-bind="customProps"
+                    outlined
+                  />
+                </v-col>
+            </v-row>
+            <!-- Phone -->
+            <v-row>
+              <v-col cols="12" class="pa-1">
+                <v-text-field
+                  v-model="formData.phone"
+                  label="Phone"
+                  v-bind="customProps"
+                  outlined
+                />
+              </v-col>
+            </v-row>
           </v-col>
 
           <v-col cols="12" sm="6" >
             <v-row>
               <v-col cols="12" class="pa-1">
-                <!-- Location -->
+                <!-- Address -->
+                <v-text-field
+                  v-model="formData.address"
+                  label="Address"
+                  v-bind="customProps"
+                  outlined
+                />
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col cols="12" class="pa-1">
+                <!-- City, Country -->
                 <v-text-field
                   v-model="formData.location"
-                  label="Location"
+                  label="City, Country"
                   v-bind="customProps"
                   outlined
                 />
