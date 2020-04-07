@@ -290,9 +290,6 @@ export default {
         this.$emit('getSuggestions', null)
       }
     },
-    generateSuggestions (newValue) {
-      console.log(newValue)
-    },
     hasSelection (newValue) {
       if (newValue) {
         this.$emit('getSuggestions', null)
