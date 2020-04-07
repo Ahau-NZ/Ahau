@@ -171,8 +171,11 @@ export default {
         'altNames',
         'description',
         'location',
-        'contact',
-        'profession'
+        'email',
+        'address',
+        'phone',
+        'profession',
+        'deceased'
       )
       const result = await this.$apollo.mutate({
         mutation: gql`

@@ -1,28 +1,27 @@
 <template>
-  <svg id="baseSvg" :width="2000" :height="tableHeight" ref="baseSvg" style="background-color:white" overflow="auto" min-height="500px">
-    <line x1="60" y1="50" x2="90%" y2="50" style="stroke-width: 1; stroke: lightgrey;"/>
-    <g v-for="column in columns" :key="column.label">
-      <text :transform="`translate(${column.x + 10} ${40})`">
-        {{ column.label }}
-      </text>
-      <line :x1="column.x" y1="50" :x2="column.x" y2="100%" style="stroke-width: 1; stroke: lightgrey;"/>
-    </g>
-      <g id="baseGroup">
+  <svg id="baseSvg" :width="tableWidth" :height="tableHeight" ref="baseSvg" style="background-color:white"  min-height="500px">
+    <g id="zoomable">
+      <line x1="60" y1="55" :x2="tableWidth" y2="55" style="stroke-width: 1; stroke: lightgrey;"/>
+      <g class="headers" v-for="column in columns" :key="column.label">
+        <text :transform="`translate(${column.x + 10} ${50})`">
+          {{ column.label }}
+        </text>
+        <line :x1="column.x" y1="55" :x2="column.x" :y2="tableWidth" style="stroke-width: 1; stroke: lightgrey;"/>
+      </g>
+      <svg id="baseGroup" :width="tableWidth">
         <g v-if="!flatten" :transform="`translate(${60} ${80})`">
           <g v-for="link in links" :key="link.id" class="link">
             <Link :link="link" :class="link.class"/>
           </g>
         </g>
-
         <g
           :transform="`translate(${60 - nodeRadius} ${80 - nodeRadius})`"
           ref="tree"
         >
           <g v-for="node in nodes" :key="node.data.id" class="node">
-            <!-- <line x1="0" :y1="node.y-3" x2="90%" :y2="node.y-3" style="stroke-width: 1; stroke: lightgrey;"/> -->
-            <rect :x="node.x + nodeRadius" :y="node.y" width="100%" :height="nodeRadius*2" class="row" :style="node.color" />
+            <rect :x="node.x + nodeRadius" :y="node.y" :width="tableWidth" :height="nodeRadius*2" class="row" :style="node.color" />
             <Node
-              :width="width"
+              :width="colWidth"
               :node="node"
               :radius="nodeRadius"
               @click="collapse(node)"
@@ -50,28 +49,39 @@
                 {{ node.data.profession }}
               </text>
             </svg>
-            <svg :width="columns[4].x">
+            <svg :width="columns[4].x - 45">
               <text  :transform="`translate(${columns[3].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
+                {{ node.data.address }}
+              </text>
+            </svg>
+            <svg :width="columns[5].x - 45">
+              <text  :transform="`translate(${columns[4].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
                 {{ node.data.location }}
               </text>
             </svg>
+            <svg :width="columns[6].x - 45">
+              <text :transform="`translate(${columns[5].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
+                {{ node.data.email }}
+              </text>
+            </svg>
             <svg>
-              <text :transform="`translate(${columns[4].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ node.data.contact }}
+              <text :transform="`translate(${columns[6].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
+                {{ node.data.phone }}
               </text>
             </svg>
           </g>
         </g>
-      </g>
+      </svg>
+    </g>
   </svg>
 </template>
 
 <script>
+
 import * as d3 from 'd3'
 import Node from './table/Node.vue'
 import Link from './tree/Link.vue'
 import calculateAge from '../lib/calculate-age.js'
-
 import isEqual from 'lodash.isequal'
 
 export default {
@@ -102,12 +112,16 @@ export default {
     },
     searchNodeId: {
       type: String
+    },
+    pan: {
+      type: Number,
+      default: 0
     }
   },
   data () {
     return {
-      // width used for to set max widths on columns and the text
-      width: 350,
+      tableWidth: 0,
+      colWidth: 350,
       componentLoaded: false, // need to ensure component is loaded before using $refs
       nodeRadius: 20, // use variable for zoom later on
       nodeSize: 40,
@@ -116,37 +130,15 @@ export default {
   },
   mounted () {
     this.componentLoaded = true
+    this.tableOverflow()
   },
+
   computed: {
     pathNode () {
       if (this.searchNodeId === '') return null
       return this.root.descendants().find(d => {
         return d.data.id === this.searchNodeId
       })
-    },
-    columns () {
-      return [
-        {
-          label: 'Legal Name',
-          x: this.width
-        },
-        {
-          label: 'Age',
-          x: this.width + 225
-        },
-        {
-          label: 'Profession',
-          x: this.width + 285
-        },
-        {
-          label: 'Location',
-          x: this.width + 420
-        },
-        {
-          label: 'Contact',
-          x: this.width + 650
-        }
-      ]
     },
 
     // returns a nested data structure representing a tree based on the treeData object
@@ -164,10 +156,10 @@ export default {
       })
       return layout
     },
-
+    // table height based on number of nodes on table
     tableHeight () {
       if (!this.componentLoaded) return 0
-      return (this.nodes.length + 1) * 60
+      return (this.nodes.length + 1) * 51
     },
 
     // returns an array of nodes associated with the root node created from the treeData object, as well as extra attributes
@@ -177,13 +169,15 @@ export default {
         .descendants()
         // filter deceased
         .filter(peeps => {
-          if (this.filter && peeps.data.diedAt !== null) {
+          if (this.filter && peeps.data.deceased) {
             return false
           }
           return true
         })
         // returns a new custom object for each node
         .map((d, i) => {
+          // set width of first column
+          this.setWidth(d.depth)
           return {
             nodeId: `node-${i}`,
             children: d.children,
@@ -234,16 +228,77 @@ export default {
       if (!this.componentLoaded || !this.pathNode) return null
       return this.root.path(this.pathNode)
         .map(d => d.data.id)
+    },
+
+    // the headers for the columns - width currently hardcoded
+    columns () {
+      return [
+        {
+          label: 'Legal Name',
+          x: this.colWidth
+        },
+        {
+          label: 'Age',
+          x: this.colWidth + 200
+        },
+        {
+          label: 'Profession',
+          x: this.colWidth + 265
+        },
+        {
+          label: 'Address',
+          x: this.colWidth + 465
+        },
+        {
+          label: 'City, Country',
+          x: this.colWidth + 665
+        },
+        {
+          label: 'Email',
+          x: this.colWidth + 865
+        },
+        {
+          label: 'Phone',
+          x: this.colWidth + 1165
+        }
+      ]
     }
   },
 
   watch: {
     flatten (newVal) {
-      if (newVal) this.width = 250
-      else this.width = 350
+      if (newVal === true) this.colWidth = 250
+      else this.colWidth = 350
     }
   },
   methods: {
+    // sets the width of the table
+    async tableOverflow () {
+      var width = await this.colWidth + this.columns[this.columns.length - 1].x
+      this.tableWidth = width
+      this.$emit('update', this.tableWidth)
+    },
+    // function to control left and right scroll buttons in table
+    panAction (x) {
+      var svg = d3.select('#baseSvg')
+      var g = d3.select('#zoomable')
+
+      var zoom = d3.zoom()
+        .translateExtent([[0, 0], [2400, 1600]])
+        .on('zoom', function () {
+          g.attr('transform', d3.event.transform)
+        })
+
+      zoom.translateBy(svg.transition().duration(100), (x), 0)
+    },
+
+    // set the width for the first column which needs to be dynamic when showing whakapapa links
+    setWidth (depth) {
+      if (!this.flatten && depth > 10) {
+        this.colWidth = depth * 45 - 100
+      }
+    },
+
     pathStroke (sourceId, targetId) {
       if (!this.paths) return 'lightgrey'
 
@@ -262,6 +317,7 @@ export default {
       }
       return 'lightgrey'
     },
+
     // changes row colour
     nodeColor (data) {
       var age = calculateAge(data.bornAt)
@@ -270,15 +326,12 @@ export default {
       } else if (age !== null && age < 2) {
         return 'fill:yellow'
       } else if (data.id === this.searchNodeId) {
-        console.log('found node: ', data)
         return 'fill:red'
       } else return 'fill:lightblue'
     },
 
     collapse (node) {
       this.$emit('collapse-node', node.data.id)
-      // TODO
-      // this one feels like perhaps it should be handled in this file
     }
   },
   components: {
@@ -303,4 +356,14 @@ svg#baseSvg {
 text {
   fill: #555;
 }
+
+svg#baseSvg {
+  cursor: grab;
+}
+
+.headers {
+  position:fixed;
+  top: 100px
+}
+
 </style>
