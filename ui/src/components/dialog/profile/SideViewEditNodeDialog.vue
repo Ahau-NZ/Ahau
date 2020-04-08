@@ -131,7 +131,9 @@
                     size="60px"
                     :show-labels="true"
                     @profile-click="openProfile($event)"
-                  />
+                  >
+                   <AddButton v-if="view.focus !== profile.id" @click="toggleNew('sibling')" />
+                  </AvatarGroup>
                 </v-col>
 
                 <hr v-if="profile.siblings" class="family-divider"/>
@@ -561,7 +563,9 @@
                       size="60px"
                       :show-labels="true"
                       @profile-click="openProfile($event)"
-                    />
+                    >
+                      <AddButton v-if="view.focus !== profile.id" @click="toggleNew('sibling')" />
+                    </AvatarGroup>
                   </v-col>
 
                   <hr class="family-divider">
@@ -908,6 +912,7 @@ export default {
     profile: { type: Object, required: true },
     deleteable: { type: Boolean, default: false },
     warnAboutChildren: { type: Boolean, default: true },
+    view: { type: Object },
     sideMenu: { type: Boolean, default: false },
     relationshipLinks: { type: Array },
     show: { type: Boolean, required: true },

@@ -38,15 +38,6 @@
                   />
                 </slot>
               </v-col>
-              <v-col cols="12" class="pa-1">
-                <v-text-field
-                  v-model="formData.preferredName"
-                  label="Preferred name"
-                  v-bind="customProps"
-                  outlined
-                />
-              <!-- </slot> -->
-            </v-col>
             <v-col cols="12" class="pa-1">
               <v-text-field
                 v-model="formData.legalName"
@@ -344,7 +335,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
   .custom.v-text-field > .v-input__control > .v-input__slot:before {
     border-style: none;
   }

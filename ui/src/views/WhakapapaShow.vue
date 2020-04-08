@@ -110,6 +110,12 @@
           <p class="ma-0 pl-3">{{ option.title }}</p>
         </a>
       </li>
+      <li v-if="canAddSibling(selectedProfile)">
+        <a href="#" @click.prevent="updateDialog('new-node', 'sibling')"  class="d-flex align-center px-4">
+          <img class="contextMenuIcon" :src="require('../assets/node-sibling.svg')"/>
+          <p class="ma-0 pl-3">Add Sibling</p>
+        </a>
+      </li>
       <li v-if="canDelete(selectedProfile)">
         <a href="#" @click.prevent="updateDialog('delete-node', null)" class="d-flex align-center px-4">
           <v-icon class="contextMenuIcon">mdi-delete</v-icon>
@@ -370,6 +376,16 @@ export default {
       if (profile.id === this.whakapapaView.focus) {
         // can only proceed if can find a clear "successor" to be new focus
         return Boolean(findSuccessor(profile))
+      }
+
+      return true
+    },
+    canAddSibling (profile) {
+      if (!profile) return false
+
+      // if adding a sibling to the focus
+      if (profile.id === this.whakapapaView.focus) {
+        return false
       }
 
       return true
