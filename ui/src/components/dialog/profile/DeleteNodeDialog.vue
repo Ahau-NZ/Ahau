@@ -1,10 +1,5 @@
 <template>
-  <Dialog :show="show" @close="close" width="600px" height="calc(100vh - 50px)" :goBack="close" enableMenu>
-    <template v-slot:title>
-      <v-card-title>
-        <span class="headline">Delete {{ profile.preferredName }}</span>
-      </v-card-title>
-    </template>
+  <Dialog :title="`Delete ${ profile.preferredName }`" :show="show" @close="close" width="720px" :goBack="close" enableMenu>
     <template v-slot:content>
       <v-card-subtitle>
         <v-col cols="12" sm="5" md="8">

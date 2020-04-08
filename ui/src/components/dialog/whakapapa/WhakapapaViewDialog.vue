@@ -1,5 +1,5 @@
 <template>
-  <Dialog :show="show" @close="close" width="720px" :goBack="close" :enableBar="false">
+  <Dialog :title="`${view.name} Whakapapa`" :show="show" @close="close" width="720px" :goBack="close" :enableBar="false">
     <template v-slot:top>
       <Avatar
         class="big-avatar"
@@ -8,6 +8,7 @@
         :alt="view.name"
         :view="view"
         isView
+        style="margin-top: 20px;"
       />
     </template>
     <template v-slot:title>
@@ -29,9 +30,7 @@
           {{ view.description }}
         </v-col>
       </v-row>
-      <v-row justify="center">
-        <v-btn @click="close">Hide</v-btn>
-      </v-row>
+
       <v-row justify="center" align="center" class="mt-5">
         <v-icon>
            mdi-lock

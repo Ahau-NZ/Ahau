@@ -1,11 +1,13 @@
 <template>
-  <Dialog :show="show" @close="close" width="720px" :goBack="close" enableMenu>
-    <template v-slot:title>
-      <h1>{{ title }}</h1>
-    </template>
+  <Dialog :show="show" :title="title" @close="close" width="720px" :goBack="close" enableMenu>
+
+    <!-- Content Slot -->
     <template v-if="!hideDetails" v-slot:content>
-      <v-col class="pb-0 pt-0">
+      <v-col class="py-0">
+
         <ProfileForm :profile.sync="formData" :readonly="hasSelection" :editRelationship="hasSelection">
+
+          <!-- Slot = Search -->
           <template v-slot:search>
             <v-combobox
               v-model="formData.preferredName"
@@ -19,9 +21,11 @@
               v-bind="customProps"
               @click:clear="resetFormData()"
               :search-input.sync="formData.preferredName"
-              placeholder="Enter or search a preferred name"
               :readonly="hasSelection"
+              outlined
             >
+
+              <!-- Slot:item = Data -->
               <template v-slot:item="data">
                 <template v-if="typeof data.item === 'object'">
                   <v-list-item @click="setFormData(data.item)">
@@ -44,9 +48,13 @@
             </v-combobox>
           </template>
         </ProfileForm>
+
       </v-col>
     </template>
-    <template v-slot:actions>
+    <!-- End Content Slot -->
+
+    <!-- Actions Slot -->
+    <template v-slot:actions  style="border: 2px solid orange;">
       <v-btn @click="close"
         text large fab
         class="secondary--text"
@@ -60,6 +68,8 @@
         <v-icon>mdi-check</v-icon>
       </v-btn>
     </template>
+    <!-- End Actions Slot -->
+
   </Dialog>
 </template>
 
@@ -67,6 +77,7 @@
 import Dialog from '@/components/dialog/Dialog.vue'
 
 import ProfileForm from '@/components/profile-form/ProfileForm.vue'
+
 import Avatar from '@/components/Avatar.vue'
 import isEmpty from 'lodash.isempty'
 import pick from 'lodash.pick'
@@ -123,7 +134,7 @@ export default {
     type: {
       type: String,
       validator: (val) => [
-        'child', 'parent'
+        'child', 'parent', 'sibling'
       ].includes(val)
     }
   },

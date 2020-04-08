@@ -1,10 +1,5 @@
 <template>
-  <Dialog :show="show" @close="close" :width="`700px`" :goBack="close">
-    <template v-slot:title>
-      <v-card-title>
-        <span class="headline">Whakapapa tree</span>
-      </v-card-title>
-    </template>
+  <Dialog :title="title" :show="show" @close="close" :width="`700px`" :goBack="close">
     <template v-slot:content>
       <v-card-text class="pt-0">
         <p>
@@ -52,7 +47,8 @@ import Dialog from '@/components/dialog/Dialog.vue'
 
 export default {
   props: {
-    show: { type: Boolean, required: true }
+    show: { type: Boolean, required: true },
+    title: { type: String, default: '' }
   },
   name: 'WhakapapaShowHelper',
   data () {

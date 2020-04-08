@@ -1,22 +1,16 @@
 <template>
-  <v-col justify="center" align="center">
-    <v-row :justify="row ? null : 'center'" align="center">
-      <v-btn @click="click" x-small fab color="white">
-        <v-icon class="darkgrey--text">mdi-plus</v-icon>
-      </v-btn>
-      <span class="ml-4" v-if="row">{{ label }}</span>
-    </v-row>
-    <v-row v-if="label && !row" justify="center" align="center" class="pt-1">
-      <span> {{ label }} </span>
-    </v-row>
-  </v-col>
-</template>
+      <v-col class="add-row" @click="click" :style="{ justifyContent: align }" >
+          <v-icon class="add-button">mdi-plus</v-icon>
+          <span class="add-label" v-if="row">{{ label }}</span>
+      </v-col>
+  </template>
 
 <script>
 export default {
   name: 'AddButton',
   props: {
     label: String,
+    align: { type: String, default: 'center' },
     row: { type: Boolean, default: false }
   },
   methods: {
@@ -26,3 +20,27 @@ export default {
   }
 }
 </script>
+
+  <style scoped lang="scss">
+    .add-row {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      padding: 0px;
+    }
+
+    .v-btn.add-button {
+      border-radius: 5px;
+      width: 20px;
+      height: 20px;
+      padding: 0px;
+      font-size: 0.6em;
+      color: rgba(0, 0, 0, 0.6);
+      margin-right: 10px;
+    }
+
+    .add-label {
+      font-size: 0.8em;
+      color: rgba(0, 0, 0, 0.6);
+    }
+  </style>

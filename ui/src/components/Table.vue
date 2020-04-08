@@ -6,7 +6,7 @@
         <text :transform="`translate(${column.x + 10} ${50})`">
           {{ column.label }}
         </text>
-        <line :x1="column.x" y1="55" :x2="column.x" :y2="tableWidth" style="stroke-width: 1; stroke: lightgrey;"/>
+        <line :x1="column.x" y1="55" :x2="column.x" :y2="tableHeight" style="stroke-width: 1; stroke: lightgrey;"/>
       </g>
       <svg id="baseGroup" :width="tableWidth">
         <g v-if="!flatten" :transform="`translate(${60} ${80})`">

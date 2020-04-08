@@ -1,59 +1,59 @@
 <template>
-  <svg id="baseSvg" width="100%" :height="height" ref="baseSvg">
-    <!-- niho background picture -->
-    <defs>
-      <pattern id="img1" patternUnits="userSpaceOnUse" x="400" y="0" width="100%" height="100%">
-        <image xlink:href="../assets/niho.svg" width="100%" height="100%" />
-      </pattern>
-    </defs>
-    <path id="background" d="M5,5 l0,680 2980,0 l0,-680 l-980,0" fill="url(#img1)" />
-    <!-- whakapapa tree -->
-    <g id="baseGroup" >
-      <g :transform="`translate(${treeX} ${treeY})`">
-        <g v-for="link in links" :key="link.id" class="link">
-          <Link :link="link" :class="link.class"/>
+    <svg id="baseSvg" width="100%" :height="height" ref="baseSvg">
+      <!-- niho background picture -->
+      <defs>
+        <pattern id="img1" patternUnits="userSpaceOnUse" x="400" y="0" width="100%" height="100%">
+          <image xlink:href="../assets/niho.svg" width="100%" height="100%" />
+        </pattern>
+      </defs>
+      <path id="background" d="M5,5 l0,680 2980,0 l0,-680 l-980,0" fill="url(#img1)" />
+      <!-- whakapapa tree -->
+      <g id="baseGroup" >
+        <g :transform="`translate(${treeX} ${treeY})`">
+          <g v-for="link in links" :key="link.id" class="link">
+            <Link :link="link" :class="link.class"/>
+          </g>
         </g>
-      </g>
 
-      <g
-        :transform="`translate(${treeX - nodeRadius} ${treeY - nodeRadius})`"
-        ref="tree"
-      >
-        <g v-for="node in nodes" :key="node.data.id" class="node">
-          <Node
-            :node="node"
-            :radius="nodeRadius"
-            :nonFocusedPartners="nonFocusedPartners"
-            @click="centerNode(node)"
-            @open-context-menu="$emit('open-context-menu', $event)"
-            @change-focus="changeFocus($event, node)"
-            :showLabel="true"
-          />
+        <g
+          :transform="`translate(${treeX - nodeRadius} ${treeY - nodeRadius})`"
+          ref="tree"
+        >
+          <g v-for="node in nodes" :key="node.data.id" class="node">
+            <Node
+              :node="node"
+              :radius="nodeRadius"
+              :nonFocusedPartners="nonFocusedPartners"
+              @click="centerNode(node)"
+              @open-context-menu="$emit('open-context-menu', $event)"
+              @change-focus="changeFocus($event, node)"
+              :showLabel="true"
+            />
+          </g>
         </g>
       </g>
-    </g>
-    <!-- zoom in, zoom out buttons -->
-    <g class="zoomControl">
-     <g @click="zoomReset()" :transform="`translate(${30} ${treeY*2.2})`">
-        <circle stroke="white" fill="white" filter="url(#shadow)" cx="20" cy="1" r="15"/>
-        <circle stroke="black" fill="white" filter="url(#shadow)" cx="20" cy="1" r="5"/>
-        <path d="M 20,-7 20,10 M 12,1 28,1" stroke="grey" stroke-width="1.5" />
+      <!-- zoom in, zoom out buttons -->
+      <g class="zoomControl">
+        <g @click="zoomReset()" :transform="`translate(${30} ${treeY*2.15})`">
+          <circle stroke="white" fill="white" filter="url(#shadow)" cx="20" cy="1" r="15"/>
+          <circle stroke="black" fill="white" filter="url(#shadow)" cx="20" cy="1" r="5"/>
+          <path d="M 20,-7 20,10 M 12,1 28,1" stroke="grey" stroke-width="1.5" />
+        </g>
+        <g @click="zoomInOut(1.6)" :transform="`translate(${30} ${treeY*2.4})`">
+          <circle stroke="white" fill="white" filter="url(#shadow)" cx="20" cy="1" r="15"/>
+          <path d="M 20,-5 20,7 M 14,1 26,1" stroke="grey" stroke-width="1.5" />
+        </g>
+        <g @click="zoomInOut(1 / 1.6)" :transform="`translate(${30} ${treeY*2.65})`">
+          <circle stroke="white" fill="white" filter="url(#shadow)" cx="20" cy="1" r="15"/>
+          <path d="M 14,1 26,1" stroke="grey" stroke-width="1.5" />
+        </g>
       </g>
-     <g @click="zoomInOut(1.6)" :transform="`translate(${30} ${treeY*2.4})`">
-        <circle stroke="white" fill="white" filter="url(#shadow)" cx="20" cy="1" r="15"/>
-        <path d="M 20,-5 20,7 M 14,1 26,1" stroke="grey" stroke-width="1.5" />
+      <!-- loading spinner when changing focus -->
+      <g v-if="loading">
+        <rect width="100%" height="100%" style="fill:#fff; opacity:0.95" />
+        <image :transform="`translate(${width/2 - 100} ${height/3})`" href="../assets/grid-loader.svg" width="30" height="30" />
       </g>
-     <g @click="zoomInOut(1 / 1.6)" :transform="`translate(${30} ${treeY*2.6})`">
-        <circle stroke="white" fill="white" filter="url(#shadow)" cx="20" cy="1" r="15"/>
-        <path d="M 14,1 26,1" stroke="grey" stroke-width="1.5" />
-      </g>
-    </g>
-    <!-- loading spinner when changing focus -->
-    <g v-if="loading">
-      <rect width="100%" height="100%" style="fill:#fff; opacity:0.95" />
-      <image :transform="`translate(${width/2.5} ${height/4})`" href="../assets/Animated_Logo.svg" width="200" height="200" />
-    </g>
-  </svg>
+    </svg>
 </template>
 
 <script>
@@ -268,9 +268,9 @@ export default {
               stroke: this.pathStroke(d.source.data.id, d.target.data.id)
             },
             d: `
-              M ${d.source.x}, ${d.source.y} 
-              v ${this.branch} 
-              H ${d.target.x} 
+              M ${d.source.x}, ${d.source.y}
+              v ${this.branch}
+              H ${d.target.x}
               V ${d.target.y}
             `
           }
@@ -426,6 +426,7 @@ export default {
 
 svg#baseSvg {
   cursor: grab;
+  background: white;
 }
 
 .zoomControl {
@@ -435,4 +436,5 @@ svg#baseSvg {
 .nonbiological{
   stroke-dasharray: 2.5
 }
+
 </style>
