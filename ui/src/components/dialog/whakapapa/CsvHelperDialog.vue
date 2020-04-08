@@ -1,5 +1,5 @@
 <template>
-  <Dialog :title="'Upload CSV Instructions'" :show="show" @close="close" :width="`80%`" :goBack="close">
+  <Dialog :title="'Upload CSV Instructions'" :show="show" @close="close" :width="`720px`" :goBack="close">
 
     <template v-slot:content>
       <v-card-text class="pt-0">
@@ -100,7 +100,7 @@ export default {
 }
 
 .video-player {
-  width: 80%;
+  width: 100%;
   margin: 20px auto;
 }
 
