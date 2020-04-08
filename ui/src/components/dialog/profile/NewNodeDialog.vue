@@ -1,53 +1,60 @@
 <template>
-  <Dialog :show="show" @close="close" width="720px" :goBack="close" enableMenu>
-    <template v-slot:title>
-      <h1>{{ title }}</h1>
-    </template>
+  <Dialog :show="show" :title="title" @close="close" width="720px" :goBack="close" enableMenu>
+
+    <!-- Content Slot -->
     <template v-if="!hideDetails" v-slot:content>
-      <v-col class="pb-0 pt-0">
+      <v-col class="py-0">
+
         <ProfileForm :profile.sync="formData" :readonly="hasSelection" :editRelationship="hasSelection">
+
+          <!-- Slot = Search -->
           <template v-slot:search>
             <v-combobox
               v-model="formData.preferredName"
-              :items="suggestions"
+              :items="generateSuggestions"
+              item-value="id"
+              item-text="id"
               label="Preferred name"
-              item-text="preferredName"
-              item-value="preferredName"
               :menu-props="{ light: true }"
               :clearable="hasSelection"
-              hide-no-data
               append-icon=""
               v-bind="customProps"
               @click:clear="resetFormData()"
-              no-data-text="no suggestions"
               :search-input.sync="formData.preferredName"
+              :readonly="hasSelection"
+              outlined
             >
+
+              <!-- Slot:item = Data -->
               <template v-slot:item="data">
-                <template>
+                <template v-if="typeof data.item === 'object'">
                   <v-list-item @click="setFormData(data.item)">
-                    <v-row>
-                      <v-col class="pa-0" cols="2">
-                        <Avatar size="40px" :image="data.item.avatarImage" :alt="data.item.preferredName" :gender="data.item.gender" :bornAt="data.item.bornAt" />
-                      </v-col>
-                      <v-col cols="2">
-                        <small>{{ data.item.preferredName }}</small>
-                      </v-col>
-                      <v-col cols="5">
-                        <small>{{ data.item.legalName }}</small>
-                      </v-col>
-                      <v-col cols="3">
-                        <small>{{ data.item.bornAt ? data.item.bornAt.slice(0, 10) : '' }}</small>
-                      </v-col>
-                    </v-row>
+                    <Avatar class="mr-3" size="40px" :image="data.item.avatarImage" :alt="data.item.preferredName" :gender="data.item.gender" :bornAt="data.item.bornAt" />
+                    <v-list-item-content>
+                      <v-list-item-title> {{ data.item.preferredName }} </v-list-item-title>
+                      <v-list-item-subtitle>Preferred name</v-list-item-subtitle>
+                    </v-list-item-content>
+                    <v-list-item-content>
+                      <v-list-item-title> {{ data.item.legalName ? data.item.legalName :  '&nbsp;' }} </v-list-item-title>
+                      <v-list-item-subtitle>Legal name</v-list-item-subtitle>
+                    </v-list-item-content>
+                    <v-list-item-action>
+                      <v-list-item-title> {{ age(data.item.bornAt) }} </v-list-item-title>
+                      <v-list-item-subtitle>Age</v-list-item-subtitle>
+                    </v-list-item-action>
                   </v-list-item>
                 </template>
               </template>
             </v-combobox>
           </template>
         </ProfileForm>
+
       </v-col>
     </template>
-    <template v-slot:actions>
+    <!-- End Content Slot -->
+
+    <!-- Actions Slot -->
+    <template v-slot:actions  style="border: 2px solid orange;">
       <v-btn @click="close"
         text large fab
         class="secondary--text"
@@ -61,6 +68,8 @@
         <v-icon>mdi-check</v-icon>
       </v-btn>
     </template>
+    <!-- End Actions Slot -->
+
   </Dialog>
 </template>
 
@@ -68,9 +77,13 @@
 import Dialog from '@/components/dialog/Dialog.vue'
 
 import ProfileForm from '@/components/profile-form/ProfileForm.vue'
+
 import Avatar from '@/components/Avatar.vue'
 import isEmpty from 'lodash.isempty'
 import pick from 'lodash.pick'
+import calculateAge from '@/lib/calculate-age'
+
+import { getProfile } from '@/lib/profile-helpers'
 
 function setDefaultData (withRelationships) {
   const formData = {
@@ -117,15 +130,55 @@ export default {
     title: { type: String, default: 'Create a new person' },
     suggestions: { type: Array },
     hideDetails: { type: Boolean, default: false },
-    selectedProfile: { type: Object }
+    selectedProfile: { type: Object },
+    type: {
+      type: String,
+      validator: (val) => [
+        'child', 'parent'
+      ].includes(val)
+    }
   },
   data () {
     return {
       formData: setDefaultData(this.withRelationships),
-      hasSelection: false
+      hasSelection: false,
+      closeSuggestions: []
     }
   },
+  mounted () {
+    this.closeSuggestions = this.getCloseSuggestions()
+  },
   computed: {
+    generateSuggestions () {
+      if (this.hasSelection) return []
+
+      let otherSuggestions = []
+      let closeSuggestions = []
+
+      if (this.suggestions && this.suggestions.length > 0) {
+        otherSuggestions = [
+          this.type ? { header: 'Suggestions not in this whakapapa' } : null,
+          ...this.suggestions.filter(suggestion => {
+            return !this.closeSuggestions.find(closeSuggestion => {
+              return suggestion.id === closeSuggestion
+            })
+          })
+        ]
+      }
+
+      if (this.closeSuggestions && this.closeSuggestions.length > 0) {
+        closeSuggestions = [
+          this.type ? (this.type === 'child' ? { header: 'Suggested children' } : { header: 'Suggested parents' }) : null,
+          ...this.closeSuggestions,
+          this.type ? { divider: true } : null
+        ]
+      }
+
+      return [
+        ...closeSuggestions,
+        ...otherSuggestions
+      ].filter(Boolean)
+    },
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -156,6 +209,63 @@ export default {
     }
   },
   methods: {
+    getCloseSuggestions () {
+      switch (this.type) {
+        case 'child':
+          return this.findChildren()
+        case 'parent':
+          return this.findParents()
+        default:
+          return []
+      }
+    },
+    findChildren () {
+      var currentChildren = []
+      var children = []
+
+      this.selectedProfile.children.forEach(d => {
+        currentChildren[d.id] = d
+      })
+
+      // children of your partners that arent currently your children
+      this.selectedProfile.partners.forEach(async child => {
+        const result = await this.$apollo.query(getProfile(child.id))
+
+        if (result.data) {
+          result.data.person.children.forEach(d => {
+            if (!currentChildren[d.profile.id]) {
+              children.push(d.profile)
+            }
+          })
+        }
+      })
+
+      return children
+    },
+    findParents () {
+      var currentParents = []
+      var parents = []
+
+      this.selectedProfile.parents.forEach(d => {
+        currentParents[d.id] = d
+      })
+
+      this.selectedProfile.siblings.forEach(async sibling => {
+        const result = await this.$apollo.query(getProfile(sibling.id))
+
+        if (result.data) {
+          result.data.person.parents.forEach(d => {
+            if (!currentParents[d.profile.id]) {
+              parents.push(d.profile)
+            }
+          })
+        }
+      })
+      return parents
+    },
+    age (bornAt) {
+      return calculateAge(bornAt)
+    },
     submit () {
       var submission = Object.assign({}, this.submission)
       this.hasSelection

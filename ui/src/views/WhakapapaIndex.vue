@@ -8,8 +8,8 @@
   >
     <v-container
       :class="{
-        'px-12': !mobile,
-        'pa-0': mobile,
+        'desktopContainer': !mobile,
+        'mobileContainer': mobile
       }"
       class="body-width white mx-auto"
       style="position:relative"
@@ -56,6 +56,7 @@
 
       <NewViewDialog
         :show="showViewForm"
+        title="Create a new whakapapa"
         @close="toggleViewForm"
         @submit="handleStepOne($event)"
       />
@@ -63,6 +64,8 @@
       <NewNodeDialog
         v-if="showProfileForm"
         :show="showProfileForm"
+        :suggestions="suggestions"
+        @getSuggestions="getSuggestions"
         title="Create new Person"
         @create="handleDoubleStep($event)"
         :withRelationships="false"
@@ -87,6 +90,8 @@ import NewViewDialog from '@/components/dialog/whakapapa/NewViewDialog.vue'
 import NewNodeDialog from '@/components/dialog/profile/NewNodeDialog.vue'
 import WhakapapaListHelper from '@/components/dialog/whakapapa/WhakapapaListHelper.vue'
 
+import tree from '@/lib/tree-helpers'
+
 const saveWhakapapaViewQuery = gql`
   mutation($input: WhakapapaViewInput) {
     saveWhakapapaView(input: $input)
@@ -105,6 +110,7 @@ export default {
   name: 'WhakapapaIndex',
   data () {
     return {
+      suggestions: [],
       items: [
         { src: require('../assets/tree.jpg') },
         { src: require('../assets/whakapapa-list.jpg') }
@@ -155,6 +161,108 @@ export default {
     }
   },
   methods: {
+    async getSuggestions ($event) {
+      if (!$event) {
+        this.suggestions = []
+        return
+      }
+
+      var records = await this.findByName($event)
+
+      if (isEmpty(records)) {
+        this.suggestions = []
+        return
+      }
+
+      var profiles = {} // flatStore for these suggestions
+
+      records.forEach(record => {
+        record.children = record.children.map(child => {
+          profiles[child.profile.id] = child.profile // add this records children to the flatStore
+          return child.profile.id // only want the childs ID
+        })
+        record.parents = record.parents.map(parent => {
+          profiles[parent.profile.id] = parent.profile // add this records parents to the flatStore
+          return parent.profile.id // only want the parents ID
+        })
+        profiles[record.id] = record // add this record to the flatStore
+      })
+
+      // hydrate all the left over records
+      records = records.map(record => {
+        return tree.hydrate(record, profiles) // needed to hydrate to fix all dates
+      })
+
+      // sets suggestions which is passed into the dialogs
+      this.suggestions = Object.assign([], records)
+    },
+    async findByName (name) {
+      const request = {
+        query: gql`
+          query($name: String!) {
+            findPersons(name: $name) {
+              id
+              preferredName
+              legalName
+              gender
+              bornAt
+              diedAt
+              birthOrder
+              description
+              altNames
+              avatarImage { uri }
+              children {
+                profile {
+                  id
+                  preferredName
+                  legalName
+                  gender
+                  bornAt
+                  diedAt
+                  birthOrder
+                  description
+                  altNames
+                  avatarImage { uri }
+                }
+                relationshipType
+              }
+              parents {
+                profile {
+                  id
+                  preferredName
+                  legalName
+                  gender
+                  bornAt
+                  diedAt
+                  birthOrder
+                  description
+                  altNames
+                  avatarImage { uri }
+                }
+                relationshipType
+              }
+            }
+          }
+        `,
+        variables: {
+          name: name
+        },
+        fetchPolicy: 'no-cache'
+      }
+
+      try {
+        const result = await this.$apollo.query(request)
+        if (result.errors) {
+          console.error('WARNING, something went wrong')
+          console.error(result.errors)
+          return
+        }
+        return result.data.findPersons
+      } catch (e) {
+        console.error('WARNING, something went wrong, caught it')
+        console.error(e)
+      }
+    },
     toggleWhakapapaHelper () {
       this.showWhakapapaHelper = !this.showWhakapapaHelper
     },
@@ -215,23 +323,29 @@ export default {
     },
     async handleDoubleStep ($event) {
       try {
-        const res = await this.$apollo.mutate({
-          mutation: saveProfileQuery,
-          variables: {
-            input: {
-              ...$event,
-              type: 'person'
+        var { id } = $event
+
+        if (!id) {
+          const res = await this.$apollo.mutate({
+            mutation: saveProfileQuery,
+            variables: {
+              input: {
+                ...$event,
+                type: 'person'
+              }
             }
+          })
+          if (res.errors) {
+            console.log('failed to create profile', res)
+            return
           }
-        })
-        if (res.errors) {
-          console.log('failed to create profile', res)
-          return
+
+          id = res.data.saveProfile
         }
 
         this.createView({
           ...this.newView,
-          focus: res.data.saveProfile
+          focus: id
         })
       } catch (err) {
         throw err
@@ -268,6 +382,15 @@ export default {
   text-transform: uppercase;
   font-weight: 400;
   letter-spacing: 5px;
+}
+
+.desktopContainer {
+  margin-top: 64px;
+  border: 3px solid red;
+}
+
+.mobileContainer {
+  padding: 0px;
 }
 
 </style>

@@ -2,12 +2,12 @@
   <div>
     <v-app-bar
       v-if="mobile || enableMenu"
-      app
-      :class="mobile ? 'mobile' : 'desktop'"
+      :app="mobile && app"
+      :absolute="mobile"
+      :class="classObject"
       :flat="!mobile"
       color="#303030"
       fixed
-      dense
     >
       <v-btn v-if="goBack && mobile" @click="goBack" icon dark>
         <v-icon>mdi-arrow-left</v-icon>
@@ -144,6 +144,7 @@ export default {
   props: {
     enableMenu: { type: Boolean, default: true },
     app: { type: Boolean, default: false },
+    sideMenu: { type: Boolean, default: false },
     goBack: { type: Function }
   },
   data () {
@@ -157,6 +158,13 @@ export default {
     }
   },
   computed: {
+    classObject: function () {
+      return {
+        'mobile': this.mobile,
+        'desktop': !this.mobile,
+        'sideMenuAppBarStyle': this.sideMenu
+      }
+    },
     mobile () {
       return this.$vuetify.breakpoint.xs
     }
@@ -221,5 +229,9 @@ export default {
     height: 45px;
     padding: 0 25px;
   }
+}
+
+.sideMenuAppBarStyle {
+  margin-top: -56px !important;
 }
 </style>

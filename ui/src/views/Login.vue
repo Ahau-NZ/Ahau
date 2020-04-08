@@ -38,12 +38,20 @@
       />
       <h3 class="name mt-2">{{ profile.preferredName }}</h3>
     </router-link>
+
+     <!-- <NewNodeDialog
+      v-if="dialog"
+      :show="dialog"
+      :title="`Ko wai au ---- Who am I`"
+      @close="toggleNew" @create="save($event)"
+    /> -->
      <NewNodeDialog
       v-if="dialog"
       :show="dialog"
-      :title="`Ko wai au? Who am I?`"
+      :title="`AHAU ---- I AM`"
       @close="toggleNew" @create="save($event)"
     />
+
   </div>
 
 </template>

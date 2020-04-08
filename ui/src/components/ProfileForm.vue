@@ -1,5 +1,5 @@
 
-// ----------------- WARINING ----------------------- 
+// ----------------- WARINING -----------------------
 // File has been replaced by profile-form/ProfileForm.vue
 // DO NOT UPDATE WITHOUT RENAMING
 <template>

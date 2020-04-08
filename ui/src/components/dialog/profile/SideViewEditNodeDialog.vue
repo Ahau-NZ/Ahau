@@ -1,349 +1,847 @@
 <template>
-  <div
-    style="background-color: white; height:100%; position:fixed; top:32;"
-    :node="profile"
-    @close="close"
-    width="720px"
-    :fullscreen="mobile"
-  >
-    <Appbar v-if="mobile" enableMenu app :goBack="close" />
-    <v-form ref="form" style="height:100%">
-      <v-card light style="height:100%">
-        <v-container class="pa-0" style="height:100%">
-          <v-card-text style="height:100%; overflow:scroll">
-            <v-row class="px-2">
-              <v-col cols="12">
-                <v-row class="pa-0">
-                  <!-- Dialog close button -->
-                  <v-col v-if="!mobile" cols="offset-7 4 " class="pa-0" align="right">
-                    <v-btn @click="close" fab text top right color="secondary" class="close">
-                      <v-icon>mdi-close</v-icon>
-                    </v-btn>
-                  </v-col>
-                  <v-col cols="12" class="pa-0">
-                    <!-- Avatar -->
-                    <Avatar
-                      class="big-avatar"
-                      size="250px"
-                      :image="formData.avatarImage"
-                      :alt="profile.preferredName"
-                      :gender="formData.gender"
-                      :bornAt="formData.bornAt"
-                      :deceased="formData.deceased"
-                    />
-                  </v-col>
-                  <v-col v-if="isEditing" cols="12" justify="center" align="center" class="pa-0">
-                    <ImagePicker @updateAvatar="formData.avatarImage = $event" />
-                  </v-col>
-                  <!-- END of Avatar -->
-                </v-row>
-              </v-col>
-              <!-- Information Col -->
-              <v-col cols="12" class="border-right">
-                <v-row>
-                  <!-- View Mode Title -->
-                  <v-col v-if="!isEditing" cols="12" class="pa-0 pb-5">
-                    <h1>{{ formData.preferredName }}'s Information</h1>
-                    <v-btn
-                      v-if="!isEditing"
-                      @click="toggleEdit"
-                      align="right"
-                      color="white"
-                      text
-                      x-small
-                      class="blue--text pt-3"
-                    >
-                      <v-icon small class="blue--text" left>mdi-pencil</v-icon>Edit
-                    </v-btn>
-                  </v-col>
-                  <!-- Edit Mode Title -->
-                  <v-col v-else cols="12" class="pa-0 pb-5">
-                    <h1>Edit {{ formData.preferredName }}</h1>
-                  </v-col>
-                  <!-- Preferred Name -->
-                  <v-col cols="12" class="pa-1">
-                    <v-text-field
-                      v-model="formData.preferredName"
-                      label="Preferred name. This is the name shown on your profile"
-                      v-bind="customProps"
-                    />
-                  </v-col>
-                  <!-- Legal Name -->
-                  <v-col cols="12" class="pa-1">
-                    <v-text-field
-                      v-model="formData.legalName"
-                      label="Legal name."
-                      v-bind="customProps"
-                    />
-                  </v-col>
-                  <!-- Alt Names Already Present THESE ARE READONLY SO THEY CAN ONLY BE DELETED -->
-                  <v-col
-                    v-for="(altName, index) in formData.altNames.currentState"
-                    :key="`a-${index}`"
-                    cols="12"
-                    sm="6"
-                    class="pa-0"
-                  >
-                    <v-col
-                      v-if="altName || isEditing"
-                      :class="!altName && !isEditing ? 'pt-0 pb-0' : 'pa-1'"
-                      cols="12"
-                    >
-                      <v-text-field
-                        v-model="formData.altNames.currentState[index]"
-                        :label="`Alternative name ${index + 1}`"
-                        :append-icon="isEditing ? 'mdi-delete' : ''"
-                        @click:append="deleteFromState(altName, index)"
-                        readonly
-                        v-bind="customProps"
-                      />
-                    </v-col>
-                  </v-col>
-                  <!-- New Alt names to be added -->
-                  <v-col
-                    v-for="(altName, index) in formData.altNames.add"
-                    :key="`b-${index}`"
-                    cols="12"
-                    sm="6"
-                    class="pa-0"
-                  >
-                    <v-col
-                      v-if="altName || isEditing"
-                      :class="!altName && !isEditing ? 'pt-0 pb-0' : 'pa-1'"
-                      cols="12"
-                    >
-                      <v-text-field
-                        v-model="formData.altNames.add[index]"
-                        :label="`Alternative name ${index + 1}`"
-                        :append-icon="isEditing ? 'mdi-delete' : ''"
-                        @click:append="deleteFromDialog(index)"
-                        v-bind="customProps"
-                      />
-                    </v-col>
-                  </v-col>
-                  <!-- Add Alt Name Button -->
-                  <v-col v-if="isEditing" cols="12" class="pa-1">
-                    <AddButton label="Add name" @click="toggleAltName" row />
-                  </v-col>
-                  <!-- Date of Birth -->
-                  <v-col cols="12" class="pa-1">
-                    <NodeDatePicker
-                      :rules="form.rules.bornAt"
-                      :value="formData.bornAt"
-                      label="Date of birth"
-                      @date="formData.bornAt = $event"
-                      :readonly="!isEditing"
-                    />
-                  </v-col>
-                  <!-- Order of Birth -->
-                  <v-col cols="12" class="pa-1" v-if="formData.birthOrder || isEditing">
-                    <v-text-field
-                      v-model="formData.birthOrder"
-                      type="number"
-                      label="Order of birth"
-                      v-bind="customProps"
-                      min="1"
-                    />
-                  </v-col>
-                  <!-- deceased checkbox -->
-                  <v-col cols="12" v-if="isEditing" class="pa-1">
-                    <v-checkbox
-                      v-model="formData.deceased"
-                      label="No longer living"
-                      :hide-details="true"
-                    />
-                  </v-col>
-                  <!-- diedAt datepicker -->
-                  <v-col cols="12" class="pa-1" v-if="formData.diedAt || isEditing">
-                    <NodeDatePicker
-                      v-if="formData.deceased"
-                      :readonly="!isEditing"
-                      label="Date of death"
-                      :value="formData.diedAt"
-                      @date="formData.diedAt = $event"
-                    />
-                  </v-col>
-                  <!-- Gender View Mode -->
-                  <v-col v-if="!isEditing" cols="12" sm="6" class="pa-1">
-                    <v-text-field
-                      v-if="!isEditing"
-                      v-model="formData.gender"
-                      label="Gender"
-                      v-bind="customProps"
-                    />
-                  </v-col>
-                  <!-- Gender Edit Mode -->
-                  <v-col v-else cols="12" sm="8" class="pa-1">
-                    <small>Gender</small>
-                    <v-radio-group v-model="formData.gender" row class="mt-0 pt-0" hide-details>
-                      <v-radio
-                        v-for="(gender, index) in genders"
-                        :value="gender"
-                        :key="index"
-                        :label="gender"
-                        class="ma-0 pa-0 pr-2"
-                      />
-                    </v-radio-group>
-                  </v-col>
-                  <!-- Related By view mode-->
-                  <!-- TODO: hide if relationship is unknown -->
-                  <v-col
-                    v-if="!isEditing && formData.relationshipType"
-                    cols="6"
-                    sm="4"
-                    class="pa-1"
-                  >
-                    <v-text-field
-                      v-model="formData.relationshipType"
-                      label="Related By"
-                      v-bind="customProps"
-                    />
-                  </v-col>
-                  <!-- Related By edit mode-->
-                  <v-col v-if="isEditing && warnAboutChildren" cols="6" class="pa-1">
-                    <v-select
-                      v-model="formData.relationshipType"
-                      label="Related By"
-                      placeholder=" "
-                      :rules="form.rules.relationshipType"
-                      :items="relationshipTypes"
-                      :menu-props="{ light: true }"
-                      :append-icon="!isEditing ? '' : 'mdi-chevron-down'"
-                      :hide-details="true"
-                      :class="!isEditing ? 'custom' : ''"
-                    />
-                  </v-col>
-                  <v-col cols="12" class="pa-1">
-                    <v-text-field
-                      v-model="formData.profession"
-                      label="Profession"
-                      v-bind="customProps"
-                    />
-                  </v-col>
-                  <v-col cols="12" class="pa-1">
-                    <v-text-field
-                      v-model="formData.email"
-                      label="Email"
-                      v-bind="customProps"
-                    />
-                  </v-col>
-                  <v-col cols="12" class="pa-1">
-                    <v-text-field
-                      v-model="formData.phone"
-                      label="Phone"
-                      v-bind="customProps"
-                    />
-                  </v-col>
-                  <v-col cols="12" class="pa-1">
-                    <v-text-field
-                      v-model="formData.location"
-                      label="Region, Country"
-                      v-bind="customProps"
-                    />
-                  </v-col>
-                  <v-col cols="12" class="pa-1">
-                    <v-text-field
-                      v-model="formData.address"
-                      label="Address"
-                      v-bind="customProps"
-                    />
-                  </v-col>
-                  <!-- Description textarea -->
-                  <v-col cols="12" class="pa-1" v-if="formData.description || isEditing">
-                    <v-textarea
-                      v-if="formData.description || showDescription"
-                      v-model="formData.description"
-                      label="Description"
-                      placeholder=" "
-                      :hide-details="true"
-                      :readonly="!isEditing"
-                      :class="!isEditing ? 'custom' : ''"
-                      no-resize
-                      rows="1"
-                      auto-grow
-                    ></v-textarea>
-                    <!-- Description button -->
-                    <AddButton v-else label="Add description" @click="toggleDescription" row />
-                  </v-col>
-                </v-row>
-              </v-col>
-            </v-row>
-            <v-divider v-if="!isEditing" />
-            <v-row v-if="!isEditing" justify-sm="space-around">
-              <!-- Family Members -->
-              <v-col :cols="12" class="pa-0">
-                <AvatarGroup
-                  :profiles="profile.parents"
-                  group-title="Parents"
-                  size="50px"
-                  :show-labels="true"
-                  @profile-click="openProfile($event)"
-                >
-                  <AddButton @click="toggleNew('parent')" />
-                </AvatarGroup>
-              </v-col>
+  <div class="side-menu" style="border-left: 0.5px solid rgba(0,0,0,0.1);">
 
-              <v-divider v-if="profile.siblings" inset />
-              <v-col :cols="12" v-if="profile.siblings" class="pa-0">
-                <AvatarGroup
-                  :profiles="profile.siblings"
-                  group-title="Siblings"
-                  size="60px"
-                  :show-labels="true"
-                  @profile-click="openProfile($event)"
-                />
+    <!--===== MOBILE VERSION of side menu is a Dialog =====-->
+    <Dialog v-if="mobile" :title="formData.preferredName" :show="show" @close="close" width="720px" :goBack="close" :enableBar="false" :isEditing="isEditing">
+      <!-- Slot Top -->
+      <template v-slot:top>
+        <!-- Mobile: Avatar -->
+        <Avatar
+          class="big-avatar"
+          size="250px"
+          :image="formData.avatarImage"
+          :alt="profile.preferredName"
+          :gender="formData.gender"
+          :bornAt="formData.bornAt"
+          :diedAt="formData.diedAt"
+          :isEditing="isEditing"
+          style="margin-top: 20px;"
+          @updateAvatar="formData.avatarImage = $event"
+        />
+      </template>
+
+      <!-- Mobile: Slot Title -->
+      <template v-slot:title >
+        <v-row class="justify-center" style="margin-top: -20px;">
+          <v-btn
+            @click="toggleEdit"
+            color="white"
+            text
+            medium
+            class="blue--text"
+          >
+            <v-icon small class="blue--text" left>mdi-pencil</v-icon>Edit
+          </v-btn>
+        </v-row>
+
+        <!-- Mobile: Person description -->
+        <v-row v-if="formData.description" class="mb-2">
+            <v-col cols="12">
+                <!-- Location -->
+                <v-row>
+                  <v-col class="py-1 px-0 profile-label"><small>Description</small></v-col>
+                </v-row>
+                <v-row class="py-0 justify-center">
+                  <p class="ma-0 profile-info" style="font-size: 0.8em">{{formData.description}}</p>
+                </v-row>
               </v-col>
-              <v-divider inset />
-              <v-col :cols="12" class="pa-0">
-                <AvatarGroup
-                  :profiles="profile.children"
-                  group-title="Children"
-                  size="60px"
-                  :show-labels="true"
-                  @profile-click="openProfile($event)"
-                >
-                  <AddButton @click="toggleNew('child')" />
-                </AvatarGroup>
-              </v-col>
+        </v-row>
+
+      </template>
+
+      <!-- Mobile: Slot Content -->
+      <template v-slot:content>
+
+        <div v-if="!isEditing">
+
+          <v-row style="border: 0.5px solid rgba(0,0,0,0.12); border-radius: 10px;" class="flex-column ma-0" >
+              <v-row style="border-bottom: 0.5px solid rgba(0,0,0,0.12);" class="ma-0">
+                <v-col cols="6">
+                  <!-- Mobile: Legal Name -->
+                  <v-row>
+                    <v-col class="py-1 px-0 profile-label"><small>Legal Name</small></v-col>
+                  </v-row>
+                  <v-row class="py-0 justify-center">
+                    <p class="ma-0 profile-info">{{formData.legalName}}</p>
+                  </v-row>
+                </v-col>
+
+                <v-col cols="6">
+                  <!-- Mobile: Born At -->
+                  <v-row>
+                    <v-col class="py-1 px-0 profile-label"><small>Age</small></v-col>
+                  </v-row>
+                  <v-row class="py-0 justify-center">
+                    <p class="ma-0 profile-info">{{age(formData.bornAt)}}</p>
+                  </v-row>
+                </v-col>
+              </v-row>
+
+              <v-row class="ma-0">
+                <v-col cols="6">
+                  <!-- Mobile: Profession -->
+                  <v-row>
+                    <v-col class="py-1 px-0 profile-label"><small>Occupation</small></v-col>
+                  </v-row>
+                  <v-row class="py-0 justify-center">
+                    <p class="ma-0 profile-info" style="font-size: 0.8em">{{formData.profession}}</p>
+                  </v-row>
+                </v-col>
+
+                <v-col cols="6">
+                  <!-- Mobile: Location -->
+                  <v-row>
+                    <v-col class="py-1 px-0 profile-label"><small>Location</small></v-col>
+                  </v-row>
+                  <v-row class="py-0 justify-center">
+                    <p class="ma-0 profile-info" style="font-size: 0.8em">{{formData.location}}</p>
+                  </v-row>
+                </v-col>
+              </v-row>
+          </v-row>
+
+          <v-row class="px-2">
+
+            <!-- Mobile: Information Col -->
+            <v-col cols="12" class="border-right">
+
+              <!--===== Family Members =====-->
+              <v-row v-if="!isEditing" class="d-flex flex-column justify-center align-center">
+
+                <!-- Mobile: Parents -->
+                <v-col :cols="12" class="pa-0">
+                  <AvatarGroup
+                    :profiles="profile.parents"
+                    group-title="Parents"
+                    size="50px"
+                    :show-labels="true"
+                    @profile-click="openProfile($event)"
+                  >
+                    <AddButton @click="toggleNew('parent')" />
+                  </AvatarGroup>
+                </v-col>
+
+                <hr v-if="profile.siblings" class="family-divider"/>
+
+                <!-- Mobile: Siblings -->
+                <v-col :cols="12" v-if="profile.siblings" class="pa-0">
+                  <AvatarGroup
+                    :profiles="profile.siblings"
+                    group-title="Siblings"
+                    size="60px"
+                    :show-labels="true"
+                    @profile-click="openProfile($event)"
+                  />
+                </v-col>
+
+                <hr v-if="profile.siblings" class="family-divider"/>
+
+                <!-- Mobile: Children -->
+                <v-col :cols="12" class="pa-0">
+                  <AvatarGroup
+                    :profiles="profile.children"
+                    group-title="Children"
+                    size="60px"
+                    :show-labels="true"
+                    @profile-click="openProfile($event)"
+                  >
+                    <AddButton @click="toggleNew('child')" />
+                  </AvatarGroup>
+                </v-col>
+              </v-row>
               <!-- END Family Members -->
-            </v-row>
+
+              </v-col>
+          </v-row>
+
+        </div>
+
+        <!-- Start of Mobile editing -->
+        <v-form v-else ref="form">
             <v-row>
-              <!-- Action buttons -->
-              <!-- Delete button -->
-              <v-col cols="12" sm="auto" class="mb-8">
-                <v-btn
-                  v-if="isEditing && deleteable"
-                  @click="$emit('delete')"
-                  align="center"
-                  color="white"
-                  text
-                  class="secondary--text"
-                >
-                  <v-icon class="secondary--text" left>mdi-delete</v-icon>Delete this person
-                </v-btn>
+                <v-row class="pa-2">
+                  <!-- Names -->
+                  <v-col class="pt-4">
+                    <v-row>
+                      <v-col cols="12" class="pa-1">
+                        <!-- <slot name="search"> -->
+
+                        <!-- Mobile: Editing: Perferred Name -->
+                        <v-text-field
+                          v-model="formData.preferredName"
+                          label="Preferred name"
+                          v-bind="customProps"
+                          outlined
+                        />
+                        <!-- </slot> -->
+                      </v-col>
+
+                      <!-- Mobile: Editing: Legal Name -->
+                      <v-col cols="12" class="pa-1">
+                        <v-text-field
+                          v-model="formData.legalName"
+                          label="Legal name."
+                          v-bind="customProps"
+                          outlined
+                        />
+                      </v-col>
+
+                      <!-- Mobile: Editing: Alternative Names -->
+                      <template>
+                        <v-col v-for="(altName, index) in formData.altNames.value"
+                          :key="`value-alt-name-${index}`"
+                          cols="12"
+                          class="pa-1"
+                        >
+                          <v-text-field
+                            v-model="formData.altNames.value[index]"
+                            :label="`Alternative name ${index + 1}`"
+                            :append-icon="readonly ? '' : 'mdi-delete'"
+                            @click:append="removeAltName(formData.altNames.value[index], index)"
+                            readonly
+                            v-bind="customProps"
+                            outlined
+                          />
+                        </v-col>
+                      </template>
+
+                      <!-- Mobile: Editing: Add Names -->
+                      <template v-if="!readonly">
+                        <v-col v-for="(altName, index) in formData.altNames.add"
+                          :key="`add-alt-name-${index}`"
+                          cols="12"
+                          class="pa-1"
+                        >
+                          <v-text-field
+                            v-model="formData.altNames.add[index]"
+                            :label="`Alternative name ${index + 1}`"
+                            append-icon="mdi-delete"
+                            @click:append="removeAltNameField(index)"
+                            v-bind="customProps"
+                            cols="12"
+                            outlined
+                          />
+                        </v-col>
+                        <v-row class="mx-1">
+                          <v-col cols="8"></v-col>
+                          <AddButton :align="'flex-end'" :width="'50px'" label="Add name" @click="addAltNameField" row/>
+                        </v-row>
+                      </template>
+                    </v-row>
+
+                      <!-- Mobile: Editing: DATE OF BIRTH -->
+                    <v-row>
+                      <v-col cols="12" class="pa-1">
+                        <NodeDatePicker
+                          :value="formData.bornAt"
+                          label="Date of birth"
+                          @date="formData.bornAt = $event"
+                          :readonly="readonly"
+                        />
+                      </v-col>
+                    </v-row>
+                    <!-- Mobile: Editing: ORDER OF BIRTH -->
+                    <v-row>
+                      <v-col v-if="!readonly || formData.birthOrder" cols="12" class="pa-1">
+                        <v-select
+                          v-model="formData.birthOrder"
+                          type="number"
+                          label="Order of birth"
+                          :items="orderNumbers"
+                          v-bind="customProps"
+                          outlined
+                        />
+                      </v-col>
+                    </v-row>
+
+                  </v-col>
+                </v-row>
+
+                <v-row class="pa-2">
+                  <v-col cols="12">
+                    <v-row>
+                      <!-- Mobile: Editing: GENDER VIEW -->
+                      <v-col  v-if="readonly" class="pa-1">
+                        <v-text-field
+                          v-model="formData.gender"
+                          label="Gender"
+                          v-bind="customProps"
+                        />
+                      </v-col>
+                      <!-- Mobile: Editing: GENDER EDIT -->
+                      <v-col v-else class="pa-1">
+                        <p class="text-field">Gender</p>
+
+                        <v-row class="gender-button-row">
+                          <!-- Mobile: Editing: TANE -->
+                          <v-col>
+                            <div class="gender-button" @click="updateSelectedGender('male')">
+                              <img ref="taneImg" :src="require('@/assets/tane-outlined.svg')" class="gender-image">
+                            </div>
+                          </v-col>
+                          <!-- Mobile: Editing: WAHINE -->
+                          <v-col>
+                            <div class="gender-button" @click="updateSelectedGender('female')">
+                              <img ref="wahineImg" :src="require('@/assets/wahine-outlined.svg')" class="gender-image">
+                            </div>
+                          </v-col>
+                        </v-row>
+                      </v-col>
+                    </v-row>
+                  </v-col>
+
+                  <v-col cols="12">
+                    <v-row>
+                      <!-- Mobile: Editing: Description textarea -->
+                      <v-col cols="12" class="pa-1">
+                        <v-textarea
+                          v-model="formData.description"
+                          label="Description"
+                          v-bind="customProps"
+                          no-resize
+                          rows="4"
+                          auto-grow
+                          outlined
+                        >
+                        </v-textarea>
+                      </v-col>
+                    </v-row>
+                    <!-- Mobile: Editing: Occupation -->
+                    <v-row>
+                      <v-col cols="12" class="pa-1">
+                        <v-text-field
+                          v-model="formData.profession"
+                          label="Occupation"
+                          v-bind="customProps"
+                          outlined
+                        />
+                      </v-col>
+                    </v-row>
+                  </v-col>
+                </v-row>
+
+                <v-row class="pa-2">
+                  <v-col cols="12">
+                    <!-- Mobile: Editing: Email -->
+                    <v-row>
+                      <v-col cols="12" class="pa-1">
+                          <v-text-field
+                            v-model="formData.email"
+                            label="Email"
+                            v-bind="customProps"
+                            outlined
+                          />
+                        </v-col>
+                    </v-row>
+                    <!-- Mobile: Editing: Phone -->
+                    <v-row>
+                      <v-col cols="12" class="pa-1">
+                        <v-text-field
+                          v-model="formData.phone"
+                          label="Phone"
+                          v-bind="customProps"
+                          outlined
+                        />
+                      </v-col>
+                    </v-row>
+                  </v-col>
+
+                  <v-col cols="12">
+                    <v-row>
+                      <v-col cols="12" class="pa-1">
+                        <!-- Mobile: Editing: Address -->
+                        <v-text-field
+                          v-model="formData.address"
+                          label="Address"
+                          v-bind="customProps"
+                          outlined
+                        />
+                      </v-col>
+                    </v-row>
+                    <v-row>
+                      <v-col cols="12" class="pa-1">
+                        <!-- Mobile: Editing: City, Country -->
+                        <v-text-field
+                          v-model="formData.location"
+                          label="City, Country"
+                          v-bind="customProps"
+                          outlined
+                        />
+                      </v-col>
+                    </v-row>
+                  </v-col>
+                </v-row>
+
+                  <!-- Mobile: Editing: Action buttons -->
+                  <v-row>
+                      <!-- Mobile: Editing: Delete button -->
+                      <v-col cols="12" sm="auto" class="mb-8">
+                        <v-btn
+                          v-if="isEditing && deleteable"
+                          @click="$emit('delete')"
+                          align="center"
+                          color="white"
+                          text
+                          class="secondary--text"
+                        >
+                          <v-icon class="secondary--text" left>mdi-delete</v-icon>Delete this person
+                        </v-btn>
+                      </v-col>
+                      <v-col
+                        v-if="isEditing"
+                        :align="mobile ? '' : 'right'"
+                        :class="{
+                          'pt-0': true,
+                          'd-flex': mobile,
+                          'justify-space-between': mobile
+                        }"
+                      >
+                        <v-btn @click="cancel" text large fab class="secondary--text mr-10">
+                          <v-icon color="secondary">mdi-close</v-icon>
+                        </v-btn>
+                        <v-btn @click="submit" text large fab class="blue--text ml-5" color="blue">
+                          <v-icon>mdi-check</v-icon>
+                        </v-btn>
+                      </v-col>
+                    </v-row>
+                    <!-- END Action buttons -->
+                </v-row>
+              </v-form>
+
+      </template>
+      <!-- End of mobile content -->
+
+    </Dialog>
+
+    <!--===== DESKTOP VERSION of side menu =====-->
+    <v-form v-else ref="form" style="height:100%; margin-top: 64px;">
+      <v-card
+        @close="close"
+        :node="profile"
+        light
+        flat
+        class="pa-3"
+      >
+
+      <!-- Banner here if we wanna use it on the side menu -->
+      <!-- <DialogTitleBanner :title="formData.preferredName" :mobile="mobile" @close="close"  style=""/> -->
+
+        <v-row class="ma-0 pa-0 flex-column">
+          <!-- Desktop: Dialog close button -->
+          <v-row class="justify-end pr-2">
+              <v-icon @click="close" color="secondary">mdi-close</v-icon>
+          </v-row>
+          <!-- Desktop: Avatar -->
+          <v-row class="justify-center">
+            <Avatar
+              class="big-avatar"
+              size="250px"
+              :image="formData.avatarImage"
+              :alt="profile.preferredName"
+              :gender="formData.gender"
+              :bornAt="formData.bornAt"
+              :diedAt="formData.diedAt"
+              :isEditing="isEditing"
+              @updateAvatar="formData.avatarImage = $event"
+            />
+          </v-row>
+        </v-row>
+        <!-- END of Desktop: Avatar -->
+
+        <!-- Desktop Title -->
+        <v-row class="d-flex justify-center flex-column" style="margin-top: -20px;">
+          <h1 v-if="!isEditing" style="text-align: center;">{{ formData.preferredName }}</h1>
+          <!-- Editing Name -->
+          <h1 v-else style="text-align: center;">Edit {{ formData.preferredName }}</h1>
+          <v-row v-if="!isEditing" class="justify-center">
+            <v-btn @click="toggleEdit" text medium class="blue--text">
+              <v-icon small class="blue--text" left>mdi-pencil</v-icon>Edit
+            </v-btn>
+          </v-row>
+          <!-- Editing buttons -->
+          <v-row v-else class="justify-center">
+            <v-btn @click="toggleEdit" text medium class="blue--text">
+              <v-icon small class="blue--text" left>mdi-close</v-icon>Cancel
+            </v-btn>
+          </v-row>
+        </v-row>
+
+        <!-- Desktop: Person description -->
+        <v-row v-if="formData.description" class="px-3">
+            <v-col cols="12">
+                <!-- Location -->
+                <v-row>
+                  <v-col class="py-1 px-0 profile-label"><small>Description</small></v-col>
+                </v-row>
+                <v-row class="py-0 justify-center">
+                  <p class="ma-0 profile-info" style="font-size: 0.8em">{{formData.description}}</p>
+                </v-row>
               </v-col>
-              <v-col
-                v-if="isEditing"
-                :align="mobile ? '' : 'right'"
-                :class="{
-                  'pt-0': true,
-                  'd-flex': mobile,
-                  'justify-space-between': mobile
-                }"
-              >
-                <v-btn @click="cancel" text large fab class="secondary--text mr-10">
-                  <v-icon color="secondary">mdi-close</v-icon>
-                </v-btn>
-                <v-btn @click="submit" text large fab class="blue--text ml-5" color="blue">
-                  <v-icon>mdi-check</v-icon>
-                </v-btn>
-              </v-col>
-              <!-- END Action buttons -->
+        </v-row>
+
+        <!-- Desktop: Content -->
+        <v-row>
+
+          <v-col v-if="!isEditing">
+            <v-row style="border: 0.5px solid rgba(0,0,0,0.12); border-radius: 10px;" class="flex-column ma-0" >
+                <v-row style="border-bottom: 0.5px solid rgba(0,0,0,0.12);" class="ma-0">
+                  <v-col cols="6">
+                    <!-- Desktop: Legal Name -->
+                    <v-row>
+                      <v-col class="py-1 px-0 profile-label"><small>Legal Name</small></v-col>
+                    </v-row>
+                    <v-row class="py-0 justify-center">
+                      <p class="ma-0 profile-info">{{formData.legalName}}</p>
+                    </v-row>
+                  </v-col>
+
+                  <v-col cols="6">
+                    <!-- Desktop: Born At -->
+                    <v-row>
+                      <v-col class="py-1 px-0 profile-label"><small>Age</small></v-col>
+                    </v-row>
+                    <v-row class="py-0 justify-center">
+
+                      <p class="ma-0 profile-info">{{age(formData.bornAt)}}</p>
+                    </v-row>
+                  </v-col>
+                </v-row>
+
+                <v-row class="ma-0">
+                  <v-col cols="6">
+                    <!-- Desktop: Profession -->
+                    <v-row>
+                      <v-col class="py-1 px-0 profile-label"><small>Occupation</small></v-col>
+                    </v-row>
+                    <v-row class="py-0 justify-center">
+                      <p class="ma-0 profile-info" style="font-size: 0.8em">{{formData.profession}}</p>
+                    </v-row>
+                  </v-col>
+
+                  <v-col cols="6">
+                    <!-- Desktop: Location -->
+                    <v-row>
+                      <v-col class="py-1 px-0 profile-label"><small>Location</small></v-col>
+                    </v-row>
+                    <v-row class="py-0 justify-center">
+                      <p class="ma-0 profile-info" style="font-size: 0.8em">{{formData.location}}</p>
+                    </v-row>
+                  </v-col>
+                </v-row>
             </v-row>
-          </v-card-text>
-        </v-container>
+
+            <v-row class="px-2">
+
+              <!-- Desktop: Information Col -->
+              <v-col cols="12" class="border-right">
+
+                <!--===== Family Members =====-->
+                <v-row v-if="!isEditing" justify-sm="space-around">
+
+                  <!-- Desktop: Parents -->
+                  <v-col :cols="12" class="pa-0">
+                    <AvatarGroup
+                      :profiles="profile.parents"
+                      group-title="Parents"
+                      size="50px"
+                      :show-labels="true"
+                      @profile-click="openProfile($event)"
+                    >
+                      <AddButton @click="toggleNew('parent')"/>
+                    </AvatarGroup>
+                  </v-col>
+
+                  <hr v-if="profile.siblings" class="family-divider"/>
+
+                  <!-- Desktop: Siblings -->
+                  <v-col :cols="12" v-if="profile.siblings" class="pa-0">
+                    <AvatarGroup
+                      :profiles="profile.siblings"
+                      group-title="Siblings"
+                      size="60px"
+                      :show-labels="true"
+                      @profile-click="openProfile($event)"
+                    />
+                  </v-col>
+
+                  <hr class="family-divider">
+
+                  <!-- Desktop: Children -->
+                  <v-col :cols="12" class="pa-0">
+                    <AvatarGroup
+                      :profiles="profile.children"
+                      group-title="Children"
+                      size="60px"
+                      :show-labels="true"
+                      @profile-click="openProfile($event)"
+                    >
+                      <AddButton @click="toggleNew('child')" />
+                    </AvatarGroup>
+                  </v-col>
+                </v-row>
+                <!-- END Desktop: Family Members -->
+
+              </v-col>
+            </v-row>
+
+          </v-col>
+
+          <!-- Desktop: Editing: START -->
+          <v-col v-else>
+              <v-row>
+                  <v-row class="pa-4">
+                    <!-- Desktop: Editing: Names -->
+                    <v-col class="pt-4">
+                      <v-row>
+                        <v-col cols="12" class="pa-1">
+                          <!-- <slot name="search"> -->
+
+                          <!-- Desktop: Editing: Perferred Name -->
+                          <v-text-field
+                            v-model="formData.preferredName"
+                            label="Preferred name"
+                            v-bind="customProps"
+                            outlined
+                          />
+                          <!-- </slot> -->
+                        </v-col>
+
+                        <!-- Desktop: Editing: Legal Name -->
+                        <v-col cols="12" class="pa-1">
+                          <v-text-field
+                            v-model="formData.legalName"
+                            label="Legal name."
+                            v-bind="customProps"
+                            outlined
+                          />
+                        </v-col>
+
+                        <!-- Desktop: Alternative Names -->
+                        <template>
+                          <v-col v-for="(altName, index) in formData.altNames.value"
+                            :key="`value-alt-name-${index}`"
+                            cols="12"
+                            class="pa-1"
+                          >
+                            <v-text-field
+                              v-model="formData.altNames.value[index]"
+                              :label="`Alternative name ${index + 1}`"
+                              :append-icon="readonly ? '' : 'mdi-delete'"
+                              @click:append="removeAltName(formData.altNames.value[index], index)"
+                              readonly
+                              v-bind="customProps"
+                              outlined
+                            />
+                          </v-col>
+                        </template>
+
+                        <!-- Desktop: Editing: Add Alt Names -->
+                        <template v-if="!readonly">
+                          <v-col v-for="(altName, index) in formData.altNames.add"
+                            :key="`add-alt-name-${index}`"
+                            cols="12"
+                            class="pa-1"
+                          >
+                            <v-text-field
+                              v-model="formData.altNames.add[index]"
+                              :label="`Alternative name ${index + 1}`"
+                              append-icon="mdi-delete"
+                              @click:append="removeAltNameField(index)"
+                              v-bind="customProps"
+                              cols="12"
+                              outlined
+                            />
+                          </v-col>
+                          <v-row class="mx-1">
+                            <v-col cols="8"></v-col>
+                            <AddButton :align="'flex-end'" :width="'50px'" label="Add name" @click="addAltNameField" row/>
+                          </v-row>
+                        </template>
+                      </v-row>
+
+                        <!-- Desktop: Editing: DATE OF BIRTH -->
+                      <v-row>
+                        <v-col cols="12" class="pa-1">
+                          <NodeDatePicker
+                            :value="formData.bornAt"
+                            label="Date of birth"
+                            @date="formData.bornAt = $event"
+                            :readonly="readonly"
+                          />
+                        </v-col>
+                      </v-row>
+                      <!-- Desktop: Editing: ORDER OF BIRTH -->
+                      <v-row>
+                        <v-col v-if="!readonly || formData.birthOrder" cols="12" class="pa-1">
+                          <v-select
+                            v-model="formData.birthOrder"
+                            type="number"
+                            label="Order of birth"
+                            :items="orderNumbers"
+                            v-bind="customProps"
+                            outlined
+                          />
+                        </v-col>
+                      </v-row>
+
+                    </v-col>
+                  </v-row>
+
+                  <v-row class="pa-4">
+                      <v-col cols="12">
+                        <v-row>
+                          <!-- Desktop: Editing: GENDER VIEW -->
+                          <v-col  v-if="readonly" class="pa-1">
+                            <v-text-field
+                              v-model="formData.gender"
+                              label="Gender"
+                              v-bind="customProps"
+                            />
+                          </v-col>
+                          <!-- Desktop: Editing: GENDER EDIT -->
+                          <v-col v-else class="pa-1">
+                            <p class="text-field">Gender</p>
+
+                            <v-row class="gender-button-row">
+                              <!-- Desktop: Editing: TANE -->
+                              <v-col>
+                                <div class="gender-button" @click="updateSelectedGender('male')">
+                                  <img ref="taneImg" :src="require('@/assets/tane-outlined.svg')" class="gender-image">
+                                </div>
+                              </v-col>
+                              <!-- Desktop: Editing: WAHINE -->
+                              <v-col>
+                                <div class="gender-button" @click="updateSelectedGender('female')">
+                                  <img ref="wahineImg" :src="require('@/assets/wahine-outlined.svg')" class="gender-image">
+                                </div>
+                              </v-col>
+                            </v-row>
+                          </v-col>
+                        </v-row>
+                      </v-col>
+
+                      <v-col cols="12">
+                        <v-row>
+                          <!-- Desktop: Editing: Description textarea -->
+                          <v-col cols="12" class="pa-1">
+                            <v-textarea
+                              v-model="formData.description"
+                              label="Description"
+                              v-bind="customProps"
+                              no-resize
+                              rows="4"
+                              auto-grow
+                              outlined
+                            >
+                            </v-textarea>
+                          </v-col>
+                        </v-row>
+                        <!-- Desktop: Editing: Occupation -->
+                        <v-row>
+                          <v-col cols="12" class="pa-1">
+                            <v-text-field
+                              v-model="formData.profession"
+                              label="Occupation"
+                              v-bind="customProps"
+                              outlined
+                            />
+                          </v-col>
+                        </v-row>
+                      </v-col>
+                    </v-row>
+
+                    <v-row class="pa-4">
+                      <v-col cols="12">
+                        <!-- Desktop: Editing: Email -->
+                        <v-row>
+                          <v-col cols="12" class="pa-1">
+                              <v-text-field
+                                v-model="formData.email"
+                                label="Email"
+                                v-bind="customProps"
+                                outlined
+                              />
+                            </v-col>
+                        </v-row>
+                        <!-- Desktop: Editing: Phone -->
+                        <v-row>
+                          <v-col cols="12" class="pa-1">
+                            <v-text-field
+                              v-model="formData.phone"
+                              label="Phone"
+                              v-bind="customProps"
+                              outlined
+                            />
+                          </v-col>
+                        </v-row>
+                      </v-col>
+
+                      <v-col cols="12">
+                        <v-row>
+                          <v-col cols="12" class="pa-1">
+                            <!-- Desktop: Editing: Address -->
+                            <v-text-field
+                              v-model="formData.address"
+                              label="Address"
+                              v-bind="customProps"
+                              outlined
+                            />
+                          </v-col>
+                        </v-row>
+                        <v-row>
+                          <v-col cols="12" class="pa-1">
+                            <!-- Desktop: Editing: City, Country -->
+                            <v-text-field
+                              v-model="formData.location"
+                              label="City, Country"
+                              v-bind="customProps"
+                              outlined
+                            />
+                          </v-col>
+                        </v-row>
+                      </v-col>
+                    </v-row>
+
+                    <!-- Desktop: Editing: Action buttons -->
+                    <v-row>
+                      <v-col cols="12" sm="auto" class="mb-8">
+                          <!-- Delete: Editing: Delete button -->
+                          <v-btn
+                            v-if="isEditing && deleteable"
+                            @click="$emit('delete')"
+                            align="center"
+                            color="white"
+                            text
+                            class="secondary--text"
+                          >
+                            <v-icon class="secondary--text" left>mdi-delete</v-icon>Delete this person
+                          </v-btn>
+                        </v-col>
+                        <v-col
+                          v-if="isEditing"
+                          col="12"
+                          :align="mobile ? '' : 'right'"
+                          class="pt-0 d-flex justify-space-between"
+                        >
+                          <!-- Delete: Editing: Cancel (x) button -->
+                          <v-btn @click="cancel" text large fab class="secondary--text mr-10">
+                            <v-icon color="secondary">mdi-close</v-icon>
+                          </v-btn>
+                          <!-- Delete: Editing: Save (tick) button -->
+                          <v-btn @click="submit" text large fab class="blue--text ml-5" color="blue">
+                            <v-icon>mdi-check</v-icon>
+                          </v-btn>
+                        </v-col>
+                      </v-row>
+                      <!-- END Delete: Editing: Action buttons -->
+                  </v-row>
+          </v-col>
+
+        </v-row>
+
       </v-card>
     </v-form>
+
   </div>
 </template>
 
@@ -354,14 +852,16 @@ import {
   RELATIONSHIPS
 } from '@/lib/constants'
 
+import calculateAge from '../../../lib/calculate-age'
+
 import { PERMITTED_PROFILE_ATTRS, PERMITTED_RELATIONSHIP_ATTRS } from '@/lib/profile-helpers'
 
 import Avatar from '@/components/Avatar.vue'
 import AvatarGroup from '@/components/AvatarGroup.vue'
 import NodeDatePicker from '@/components/NodeDatePicker.vue'
 import AddButton from '@/components/button/AddButton.vue'
-import ImagePicker from '@/components/ImagePicker.vue'
-import Appbar from '@/components/Appbar.vue'
+
+import Dialog from '@/components/dialog/Dialog.vue'
 
 import isEqual from 'lodash.isequal'
 import isEmpty from 'lodash.isempty'
@@ -395,25 +895,28 @@ function defaultData (profile) {
 }
 
 export default {
-  name: 'SideViewEditNodeDialog',
+  name: 'SideViewEditNodeDialogV2',
   components: {
     Avatar,
     AvatarGroup,
     NodeDatePicker,
     AddButton,
-    ImagePicker,
-    Appbar
+    Dialog
   },
   props: {
     goBack: { type: Function },
     profile: { type: Object, required: true },
     deleteable: { type: Boolean, default: false },
     warnAboutChildren: { type: Boolean, default: true },
-    relationshipLinks: { type: Array }
+    sideMenu: { type: Boolean, default: false },
+    relationshipLinks: { type: Array },
+    show: { type: Boolean, required: true },
+    readonly: { type: Boolean, default: false }
   },
 
   data () {
     return {
+      testmapimage: require('../../../assets/map-test.png'),
       genders: GENDERS,
       // titles: TITLES,
       permitted: PERMITTED_PROFILE_ATTRS,
@@ -425,10 +928,16 @@ export default {
       form: {
         valid: true,
         rules: RULES
-      }
+      },
+      genderSelected: ''
     }
   },
   computed: {
+    orderNumbers () {
+      var orderNumbers = [...Array(31).keys()]
+      orderNumbers.splice(0, 1)
+      return orderNumbers
+    },
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -481,8 +990,34 @@ export default {
     }
   },
   methods: {
-    cordovaBackButton () {
-      this.close()
+    updateSelectedGender (genderClicked) {
+      // reset images to outlined
+      this.$refs.taneImg.src = require('@/assets/tane-outlined.svg')
+      this.$refs.wahineImg.src = require('@/assets/wahine-outlined.svg')
+      // hightlight selected image
+      this.genderSelected = genderClicked
+      if (this.genderSelected === 'male') {
+        this.$refs.taneImg.src = require('@/assets/tane.svg')
+      }
+      if (this.genderSelected === 'female') {
+        this.$refs.wahineImg.src = require('@/assets/wahine.svg')
+      }
+      // update the gender
+      this.formData.gender = this.genderSelected
+    },
+    removeAltNameField (index) {
+      this.formData.altNames.add.splice(index, 1)
+    },
+    addAltNameField () {
+      this.formData.altNames.add.push(null)
+    },
+    updateAvatar (avatarImage) {
+      this.formData.avatarImage = avatarImage
+      // this.toggleAvatar(null)
+    },
+    age (born) {
+      var age = calculateAge(born)
+      return age
     },
     close () {
       this.$emit('close')
@@ -533,27 +1068,104 @@ export default {
 }
 </script>
 
-<style>
-.custom.v-text-field > .v-input__control > .v-input__slot:before {
-  border-style: none;
-}
-.custom.v-text-field > .v-input__control > .v-input__slot:after {
-  border-style: none;
-}
-.close {
-  top: -25px;
-  right: -10px;
-}
-.big-avatar {
-  position: relative;
-  top: -20px;
-}
-.v-input--checkbox label {
-  font-size: 14px;
+<style lang="scss">
+@import url('https://fonts.googleapis.com/css2?family=Forum&display=swap');
+
+  .custom.v-text-field > .v-input__control > .v-input__slot:before {
+    border-style: none;
+  }
+  .custom.v-text-field > .v-input__control > .v-input__slot:after {
+    border-style: none;
+  }
+  .close {
+    top: -25px;
+    right: -10px;
+  }
+  .big-avatar {
+    position: relative;
+    top: -20px;
+  }
+  .v-input--checkbox label {
+    font-size: 14px;
+  }
+
+  .v-input--radio-group__input label {
+    font-size: 14px;
+  }
+
+  ::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: #888;
+  }
+
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
+
+.profile-label {
+  color: rgba(0,0,0,0.6);
+  display: flex;
+  justify-content: center;
 }
 
-.v-input--radio-group__input label {
-  font-size: 14px;
+.profile-info {
+  /* font-family: 'Forum', cursive; */
+  text-align: center;
+}
+
+.side-menu {
+  background-color: white;
+  height:100%;
+  overflow-x: hidden;
+}
+
+.scroll {
+  overflow-x: hidden;
+  overflow-y: scroll;
+  max-height: 100%;
+}
+
+.family-divider {
+  width: 80%;
+  border: 0.5px solid rgba(0, 0, 0, 0.12);
+}
+
+.text-field {
+  margin-left: 5px !important;
+  margin-bottom: 0 !important;
+  font-size: 0.8em;
+}
+
+.gender-button {
+    width: auto;
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 5px;
+
+    .gender-image {
+      width: 6em;
+      height: 6em;
+      border: 0.5px solid rgba(0,0,0,0.6);
+      border-radius: 50%;
+      cursor: pointer;
+      transition: all 0.3s;
+
+      &:hover {
+        border: 2px solid rgba(0,0,0,0.87);
+      }
+    }
 }
 
 </style>

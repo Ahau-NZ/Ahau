@@ -22,7 +22,7 @@
                       :alt="formData.preferredName"
                       :gender="formData.gender"
                       :bornAt="formData.bornAt"
-                      :deceased="formData.deceased"
+                      :diedAt="formData.diedAt"
                     />
                   </v-col>
                   <v-col v-if="!hasSelection" cols="12" justify="center" align="center" class="pa-0">
@@ -148,7 +148,7 @@
 
                   <!-- DIED AT CHECKBOX -->
                   <v-col cols="12" sm="6" class="pa-1" v-if="!hasSelection">
-                    <v-checkbox v-model="formData.deceased"
+                    <v-checkbox v-model="formData.isDeceased"
                       label="No longer living" :hide-details="true"
                     />
                   </v-col>
@@ -156,7 +156,7 @@
                   <!-- DIED AT PICKER -->
                   <v-col cols="12" sm="6" class="pa-1">
                     <NodeDatePicker
-                      v-if="formData.deceased || hasSelection"
+                      v-if="formData.isDeceased || hasSelection"
                       label="Date of death"
                       :value="formData.diedAt"
                       @date="formData.diedAt = $event"
@@ -272,7 +272,7 @@ function defaultData (withRelationships, profile) {
     description: ''
   }
 
-  formData.deceased = !!formData.diedAt
+  formData.isDeceased = !!formData.diedAt
 
   if (!withRelationships) {
     delete formData.relationshipType
@@ -321,7 +321,7 @@ export default {
         showEditor: false
       },
       showAvatar: false,
-      deceased: false,
+      isDeceased: false,
       showDescription: false,
       radios: 'radio-1',
       altNameCount: 0,
@@ -377,7 +377,7 @@ export default {
         this.showAvatar = true
       }
     },
-    deceased (newValue) {
+    isDeceased (newValue) {
       if (newValue === false) {
         this.formData.diedAt = ''
       }
