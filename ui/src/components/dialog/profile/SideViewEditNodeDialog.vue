@@ -1,6 +1,6 @@
 <template>
   <div class="side-menu" style="border-left: 0.5px solid rgba(0,0,0,0.1);">
-    
+
     <!--===== MOBILE VERSION of side menu is a Dialog =====-->
     <Dialog v-if="mobile" :title="formData.preferredName" :show="show" @close="close" width="720px" :goBack="close" :enableBar="false" :isEditing="isEditing">
       <!-- Slot Top -->
@@ -271,7 +271,7 @@
                       <!-- Mobile: Editing: GENDER EDIT -->
                       <v-col v-else class="pa-1">
                         <p class="text-field">Gender</p>
-            
+
                         <v-row class="gender-button-row">
                           <!-- Mobile: Editing: TANE -->
                           <v-col>
@@ -289,7 +289,7 @@
                       </v-col>
                     </v-row>
                   </v-col>
-                  
+
                   <v-col cols="12">
                     <v-row>
                       <!-- Mobile: Editing: Description textarea -->
@@ -317,9 +317,9 @@
                         />
                       </v-col>
                     </v-row>
-                  </v-col>     
+                  </v-col>
                 </v-row>
-        
+
                 <v-row class="pa-2">
                   <v-col cols="12">
                     <!-- Mobile: Editing: Email -->
@@ -345,7 +345,7 @@
                       </v-col>
                     </v-row>
                   </v-col>
-        
+
                   <v-col cols="12">
                     <v-row>
                       <v-col cols="12" class="pa-1">
@@ -422,7 +422,7 @@
         flat
         class="pa-3"
       >
-      
+
       <!-- Banner here if we wanna use it on the side menu -->
       <!-- <DialogTitleBanner :title="formData.preferredName" :mobile="mobile" @close="close"  style=""/> -->
 
@@ -701,7 +701,7 @@
                           <!-- Desktop: Editing: GENDER EDIT -->
                           <v-col v-else class="pa-1">
                             <p class="text-field">Gender</p>
-                
+
                             <v-row class="gender-button-row">
                               <!-- Desktop: Editing: TANE -->
                               <v-col>
@@ -719,7 +719,7 @@
                           </v-col>
                         </v-row>
                       </v-col>
-                      
+
                       <v-col cols="12">
                         <v-row>
                           <!-- Desktop: Editing: Description textarea -->
@@ -747,9 +747,9 @@
                             />
                           </v-col>
                         </v-row>
-                      </v-col>     
+                      </v-col>
                     </v-row>
-            
+
                     <v-row class="pa-4">
                       <v-col cols="12">
                         <!-- Desktop: Editing: Email -->
@@ -775,7 +775,7 @@
                           </v-col>
                         </v-row>
                       </v-col>
-            
+
                       <v-col cols="12">
                         <v-row>
                           <v-col cols="12" class="pa-1">

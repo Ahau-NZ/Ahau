@@ -21,7 +21,6 @@
               v-bind="customProps"
               @click:clear="resetFormData()"
               :search-input.sync="formData.preferredName"
-              placeholder="Enter or search a preferred name"
               :readonly="hasSelection"
               outlined
             >
