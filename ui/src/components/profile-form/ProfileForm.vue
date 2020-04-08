@@ -29,14 +29,14 @@
           <v-col cols="12" sm="6" class="pt-4">
             <v-row>
               <v-col cols="12" class="pa-1">
-                <!-- <slot name="search"> -->
+                <slot name="search">
                   <v-text-field
                     v-model="formData.preferredName"
                     label="Preferred name"
                     v-bind="customProps"
                     outlined
                   />
-                <!-- </slot> -->
+                </slot>
               </v-col>
               <v-col cols="12" class="pa-1">
                 <v-text-field

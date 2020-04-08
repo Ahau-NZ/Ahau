@@ -23,6 +23,7 @@
               :search-input.sync="formData.preferredName"
               placeholder="Enter or search a preferred name"
               :readonly="hasSelection"
+              outlined
             >
 
               <!-- Slot:item = Data -->
