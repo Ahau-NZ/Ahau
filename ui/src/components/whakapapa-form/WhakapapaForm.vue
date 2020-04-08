@@ -101,6 +101,7 @@ import { RULES } from '@/lib/constants'
 import CsvHelperDialog from '@/components/dialog/whakapapa/CsvHelperDialog.vue'
 import isEmpty from 'lodash.isempty'
 import * as d3 from 'd3'
+import validate from '@/lib/validate-csv'
 
 const EMPTY_WHAKAPAPA = {
   name: '',
@@ -143,6 +144,7 @@ export default {
       data: null,
       errorMsg: [],
       successMsg: [],
+      success: false,
       csvHelper: false
     }
   },
@@ -201,9 +203,19 @@ export default {
     },
 
     data (newValue) {
+      var error = []
       if (newValue !== null) {
-        var csv = d3.csvParse(newValue, function (d) {
-          if (!isEmpty(d.number)) {
+        var csv = d3.csvParse(newValue, (d) => {
+          const errorObj = validate.person(d)
+
+          console.log(errorObj)
+
+          if (errorObj.isError) {
+            this.errorMsg = errorObj.msg
+            this.form.valid = false
+            this.success = false
+            console.log('form: ', this.form.valid)
+          } else {
             return {
               parentNumber: d.parentNumber,
               number: d.number,
@@ -223,11 +235,11 @@ export default {
             }
           }
         })
-        // keep console.log for debugging user support
-        console.log(csv)
+        console.log('csv: ', csv)
+        this.success = true
         this.successMsg = ['Expected result = Top ancestor: ' + csv[0].preferredName + '. First child: ' + csv[1].preferredName]
         this.$emit('update:data', csv)
-      } else this.success = false
+      }
     }
   }
 }

@@ -15,7 +15,7 @@
         <p>2. It is important to note that you must not edit the first row. If you do, the file upload will not work. We understand that this may mean that there are columns missing that you would like to have. If this is the case, please let us know via the feedback button or send us an email at info@ahau.io </p>
         <p>3. Type in or copy the information from your existing spreadsheet into the template making sure that the information provided in each cell aligns correctly under each column heading, and that each person is on a single row. Leave the columns 'parentNumber' and 'number' blank for this step. If you dont have the information to put in for each header it is ok to just leave it blank.
   i.e **insert picture of example** </p>
-        <p>   
+        <p>
           4. For each field the software expects certain types of answers. Please note that no field is required to be filled out, (with the exception of number and parentNumber, but we will get to that). If any information is not yet known or you do not wish to put it into the software you can just leave it empty.
           <ul>
             <li>preferredName : the name the person is known by, can be one name or more, but it looks better in the graph if just the first name is provided </li>
@@ -31,7 +31,7 @@
             <li>relationshipType : use this field, if the person if by related birth, whangai or adoption. If left blank it will add the person by birth otherwise put whangai or adopted </li>
           </ul>
         </p>
-        <p>5. Once you have each cell correctly aligned under each heading we will now need to populate the 'parentNumber' and 'number' columns to tell the software who is the parent of each person. Please note for the file to successfully upload to work these fields must be completed. </p>  
+        <p>5. Once you have each cell correctly aligned under each heading we will now need to populate the 'parentNumber' and 'number' columns to tell the software who is the parent of each person. Please note for the file to successfully upload to work these fields must be completed. </p>
         <p>5.1 In the number column give each person a different number. The easiest way to do this is to give them a number, starting from '1', the next person '2', the next person '3' and so on, continuning until the list is complete. There is currently no limit to the number of people you can have. Please note that there are a number of ways to do this easily in excel, and be careful to give each person a different number. </p>
         <p>5.2 Now in the parentNumber column, you will put the number given in the 'number' column that persons parent.</p>
         <p>for example **insert picture of sheet with number column filled **
@@ -40,12 +40,12 @@
             <li> Will's number is '1', so Jaden, Trey and Willow's parentNumber will be 1. </li>
             <li> Continue this process untill every person has a their corressponding 'parentNumber' </li>
           </ul>
-          Please note the if the parentNumber field is missing, that person will not appear in the created whakapapa graph 
-        </p> 
+          Please note the if the parentNumber field is missing, that person will not appear in the created whakapapa graph
+        </p>
         <P>6. Once all feilds have been completed click 'file' -> 'save as' and select where you would like to save the file. Make sure that below the file name you select 'CSV (comma delimited)(*.csv)' from the 'save as type'.</P>
         <P>7. Back in Āhau select build from CSV file and select the field to upload the file that you have just created.</P>
         <p>8. The software will run a quick check and if everything looks right the field will turn green you should expect to see a message below the file showing the top ancestors first name and the name of their first child.
-          **upload example** 
+          **upload example**
         </p>
         <p>9. Select the blue tick to confirm and and the software will automatically take you to your newly created whakapapa graph</p>
       </v-card-text>
