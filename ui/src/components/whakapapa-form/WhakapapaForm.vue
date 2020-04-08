@@ -54,7 +54,7 @@
             <v-radio-group v-model="formData.focus">
               <v-radio :label="`Yourself`" value="self"></v-radio>
               <v-radio :label="`Another person`" value="new"></v-radio>
-              <v-radio :label="`Build from file`" value="file"></v-radio>
+              <v-radio :label="`Import from CSV file`" value="file"></v-radio>
             </v-radio-group>
           </v-col>
           <v-row v-if="formData.focus == 'file'" transition="scroll-y-transition">
@@ -71,26 +71,29 @@
                 <v-icon class="pr-2" color="blue-grey">
                   mdi-file-download
                 </v-icon>
-                whakapapa-template.csv
+                Download CSV Template
               </v-btn>
             </v-col>
             <v-col cols="12" class="py-0">
               <v-file-input
-              class="pt-0"
-              v-model="file"
-              show-size
-              accept=".csv"
-              label="CSV file input"
-              :success-messages="successMsg"
-              :error-messages="errorMsg"
-              @click:clear="resetFile()"
+                ref="csvFileInput"
+                class="pt-0"
+                v-model="file"
+                show-size
+                accept=".csv"
+                label="Upload CSV File"
+                :success-messages="successMsg"
+                :rules="form.rules.csvFile"
+                @click:clear="resetFile()"
               ></v-file-input>
+              <!-- :error-messages="errorMsg" -->
             </v-col>
           </v-row>
         </v-row>
       </v-col>
     </v-row>
-    <CsvHelperDialog :show="this.csvHelper" @click="csvInfo()" @close="csvInfo()"/>
+    <CsvHelperDialog :show="csvHelper" @click="csvInfo()" @close="csvInfo()"/>
+    <CsvErrorDialog :show="csvErrorShow" :errorMsg="errorMsg" @click="csvErrorClose()" @close="csvErrorClose()"/>
   </v-form>
 </template>
 <script>
@@ -99,7 +102,7 @@ import Avatar from '@/components/Avatar.vue'
 import ImagePicker from '@/components/ImagePicker.vue'
 import { RULES } from '@/lib/constants'
 import CsvHelperDialog from '@/components/dialog/whakapapa/CsvHelperDialog.vue'
-import isEmpty from 'lodash.isempty'
+import CsvErrorDialog from '@/components/dialog/whakapapa/CsvErrorDialog.vue'
 import * as d3 from 'd3'
 import validate from '@/lib/validate-csv'
 
@@ -126,7 +129,8 @@ export default {
   components: {
     Avatar,
     ImagePicker,
-    CsvHelperDialog
+    CsvHelperDialog,
+    CsvErrorDialog
   },
   props: {
     view: { type: Object, default () { return setDefaultWhakapapa(EMPTY_WHAKAPAPA) } },
@@ -144,11 +148,80 @@ export default {
       data: null,
       errorMsg: [],
       successMsg: [],
-      success: false,
-      csvHelper: false
+      noErrorsInCSV: true,
+      csvHelper: false,
+      csvErrorShow: false
     }
   },
+  watch: {
+    view (newVal) {
+      this.formData = newVal
+    },
+    'formData': {
+      handler (newVal) {
+        this.$emit('update:view', newVal)
+      },
+      deep: true
+    },
+    file (newValue) {
+      // this.errorMsg = []
+      // this.successMsg = []
+      if (newValue != null) { this.checkFile(newValue) }
+    },
+    data (newValue) {
+      if (newValue !== null) {
+        var count = 0
 
+        var csv = d3.csvParse(newValue, (d) => {
+          count++
+
+          // validate each row (aka d)
+          const errorObj = validate.person(d)
+
+          // error detected
+          if (errorObj.isError) {
+            // push errorMsg
+            this.errorMsg.push(errorObj.msg)
+            // flag there is error in CSV
+            this.noErrorsInCSV = false
+            // show error dialog with what the error is
+            this.csvError()
+          } else {
+            return {
+              parentNumber: d.parentNumber,
+              number: d.number,
+              preferredName: d.preferredName,
+              legalName: d.legalName,
+              gender: d.gender,
+              bornAt: d.bornAt.split(/\//).reverse().join('/'),
+              diedAt: d.diedAt.split(/\//).reverse().join('/'),
+              birthOrder: Number(d.birthOrder),
+              phone: d.phone,
+              email: d.email,
+              address: d.address,
+              location: d.location,
+              profession: d.profession,
+              relationshipType: d.relationshipType ? d.relationshipType : 'birth'
+            }
+          }
+        })
+
+        // csv equals count means no errors
+        if (count === csv.length) {
+          this.noErrorsInCSV = true
+        }
+
+        if (this.noErrorsInCSV === false) {
+          console.log('CSV had an error')
+          // if there is an error clear csv
+          csv = ''
+        } else {
+          this.successMsg = ['Expected result = Top ancestor: ' + csv[0].preferredName + '. First child: ' + csv[1].preferredName]
+          this.$emit('update:data', csv)
+        }
+      }
+    }
+  },
   methods: {
 
     downloadCsv () {
@@ -164,6 +237,13 @@ export default {
     csvInfo () {
       this.csvHelper = !this.csvHelper
     },
+    csvError () {
+      this.csvErrorShow = true
+    },
+    csvErrorClose () {
+      this.resetFile()
+      this.csvErrorShow = false
+    },
 
     checkFile (file) {
       if (this.file.name.split('.').pop() !== 'csv') { // check if file extension is csv
@@ -176,70 +256,11 @@ export default {
         }
       }
     },
-
     resetFile () {
       this.file = null
       this.data = null
       this.errorMsg = []
       this.successMsg = []
-    }
-  },
-
-  watch: {
-    view (newVal) {
-      this.formData = newVal
-    },
-    'formData': {
-      handler (newVal) {
-        this.$emit('update:view', newVal)
-      },
-      deep: true
-    },
-
-    file (newValue) {
-      this.errorMsg = []
-      this.successMsg = []
-      if (newValue != null) { this.checkFile(newValue) }
-    },
-
-    data (newValue) {
-      var error = []
-      if (newValue !== null) {
-        var csv = d3.csvParse(newValue, (d) => {
-          const errorObj = validate.person(d)
-
-          console.log(errorObj)
-
-          if (errorObj.isError) {
-            this.errorMsg = errorObj.msg
-            this.form.valid = false
-            this.success = false
-            console.log('form: ', this.form.valid)
-          } else {
-            return {
-              parentNumber: d.parentNumber,
-              number: d.number,
-              preferredName: d.preferredName,
-              legalName: d.legalName,
-              gender: d.gender,
-              bornAt: d.bornAt.split(/\//).reverse().join('/'),
-              diedAt: d.diedAt.split(/\//).reverse().join('/'),
-              birthOrder: Number(d.birthOrder),
-              phone: d.phone,
-              email: d.email,
-              address: d.address,
-              phone: d.phone,
-              location: d.location,
-              profession: d.profession,
-              relationshipType: d.relationshipType ? d.relationshipType : 'birth'
-            }
-          }
-        })
-        console.log('csv: ', csv)
-        this.success = true
-        this.successMsg = ['Expected result = Top ancestor: ' + csv[0].preferredName + '. First child: ' + csv[1].preferredName]
-        this.$emit('update:data', csv)
-      }
     }
   }
 }

@@ -104,7 +104,8 @@ export default {
       this.$emit('close')
     },
     submit () {
-      if (!this.$refs.whakapapaForm.$refs.form.validate()) {
+      console.log('submitting to following csv: ', this.csv)
+      if (!this.$refs.whakapapaForm.$refs.form.validate() || this.csv === '') {
         console.error('not validated')
         return
       }
