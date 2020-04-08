@@ -1,14 +1,21 @@
 <template>
   <v-card
-    style="width: 100%;" light outlined
+    :to="view.id
+      ? { name: 'whakapapaShow', params: { id: view.id } }
+      : '/whakapapa'"
+    style="width: 100%;"
+    light
+    outlined
+    :ripple="false"
   >
+
     <!-- Whakapapa Image and Title -->
     <div class="d-flex pa-3" style="width: 100%;">
 
       <!-- Whakapapa Image -->
       <div :style="background(view)" style="width: 20%;"/>
-      <div class="information d-flex flex-column justify-center align-center"  style="width: 80%;">
 
+      <div class="information d-flex flex-column justify-center align-center"  style="width: 80%;">
         <!-- Whakapapa Title -->
         <v-card-title v-text="view.name" class="py-0 pl-3 justify-start" style="width: 100%;"/>
 
@@ -33,9 +40,10 @@
             <template v-slot:activator="{ on }">
             <v-btn
               v-on="on"
-              @click="show = !show"
+              @click.prevent="show = !show"
               icon
               class="pa-0 px-3"
+
             >
               <v-icon>{{ show ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
             </v-btn>

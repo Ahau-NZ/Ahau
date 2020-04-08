@@ -12,9 +12,11 @@
     <div :class="sideMenuClass">
       <SideViewEditNodeDialog
         v-if="isActive('view-edit-node')"
+        :show="isActive('view-edit-node')"
         :profile="selectedProfile"
         :deleteable="canDelete(selectedProfile)"
         :warnAboutChildren="selectedProfile && selectedProfile.id !== view.focus"
+        :sideMenu="true"
         @close="close"
         @new="toggleDialog('new-node', $event, 'view-edit-node')"
         @submit="updateProfile($event)"
@@ -50,10 +52,12 @@
     />
     <WhakapapaShowHelper
       :show="isActive('whakapapa-helper')"
+      :title="`Whakapapa ---- Family tree`"
       @close="close"
     />
     <WhakapapaTableHelper
       :show="isActive('whakapapa-table-helper')"
+      :title="`Whakapapa registry`"
       @close="close"
     />
   </div>

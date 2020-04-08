@@ -5,7 +5,9 @@
         : '/whakapapa'"
     class="d-flex pa-2"
     color="#fff"
-    :style="shadow ? '' : 'box-shadow: none;'"
+    :style="`
+      shadow ? '' : 'box-shadow: none;'
+      `"
   >
     <div class="body-width d-flex flex-no-wrap flex-start align-stretch">
       <div class="cover-image" :style="background(view)"></div>
