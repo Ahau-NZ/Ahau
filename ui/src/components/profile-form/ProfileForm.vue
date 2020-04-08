@@ -15,7 +15,7 @@
                 :alt="formData.preferredName"
                 :gender="formData.gender"
                 :bornAt="formData.bornAt"
-                :diedAt="formData.diedAt"
+                :deceased="formData.deceased"
               />
             </v-col>
             <!-- Upload Profile Photo Button -->
@@ -115,7 +115,26 @@
               />
             </v-col>
           </v-row>
-
+          <!-- DECEASED PICKER -->
+          <v-row>
+           <v-col  v-if="!readonly || formData.deceased" cols="12" class="pa-1">
+              <v-checkbox v-model="formData.deceased"
+                label="No longer living" :hide-details="true"
+                v-bind="customProps"
+                outlined
+              />
+            </v-col>
+            <!-- DIED AT PICKER -->
+            <v-col cols="12" sm="12" class="pa-1">
+              <NodeDatePicker
+                v-if="formData.deceased"
+                label="Date of death"
+                :value="formData.diedAt"
+                @date="formData.diedAt = $event"
+                :readonly="readonly"
+              />
+            </v-col>
+          </v-row>
         </v-col>
       </v-row>
 

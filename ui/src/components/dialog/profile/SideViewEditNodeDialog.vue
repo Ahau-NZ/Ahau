@@ -13,7 +13,7 @@
           :alt="profile.preferredName"
           :gender="formData.gender"
           :bornAt="formData.bornAt"
-          :diedAt="formData.diedAt"
+          :deceased="formData.deceased"
           :isEditing="isEditing"
           style="margin-top: 20px;"
           @updateAvatar="formData.avatarImage = $event"
@@ -255,6 +255,26 @@
                         />
                       </v-col>
                     </v-row>
+                    <!-- Mobile: Editing: DECEASED PICKER-->
+                     <v-row>
+                      <v-col  v-if="!readonly || formData.deceased" cols="12" class="pa-1">
+                          <v-checkbox v-model="formData.deceased"
+                            label="No longer living" :hide-details="true"
+                            v-bind="customProps"
+                            outlined
+                          />
+                        </v-col>
+                        <!-- Desktop: Editing: DIED AT PICKER -->
+                        <v-col cols="12" class="pa-1">
+                          <NodeDatePicker
+                            v-if="formData.deceased"
+                            label="Date of death"
+                            :value="formData.diedAt"
+                            @date="formData.diedAt = $event"
+                            :readonly="readonly"
+                          />
+                        </v-col>
+                      </v-row>
 
                   </v-col>
                 </v-row>
@@ -442,7 +462,7 @@
               :alt="profile.preferredName"
               :gender="formData.gender"
               :bornAt="formData.bornAt"
-              :diedAt="formData.diedAt"
+              :deceased="formData.deceased"
               :isEditing="isEditing"
               @updateAvatar="formData.avatarImage = $event"
             />
@@ -592,102 +612,118 @@
 
           <!-- Desktop: Editing: START -->
           <v-col v-else>
-              <v-row>
-                  <v-row class="pa-4">
-                    <!-- Desktop: Editing: Names -->
-                    <v-col class="pt-4">
-                      <v-row>
-                        <v-col cols="12" class="pa-1">
-                          <!-- <slot name="search"> -->
+            <v-row>
+                <v-row class="pa-4">
+                  <!-- Desktop: Editing: Names -->
+                  <v-col class="pt-4">
+                    <v-row>
+                      <v-col cols="12" class="pa-1">
+                        <!-- Desktop: Editing: Perferred Name -->
+                        <v-text-field
+                          v-model="formData.preferredName"
+                          label="Preferred name"
+                          v-bind="customProps"
+                          outlined
+                        />
+                      </v-col>
 
-                          <!-- Desktop: Editing: Perferred Name -->
+                      <!-- Desktop: Editing: Legal Name -->
+                      <v-col cols="12" class="pa-1">
+                        <v-text-field
+                          v-model="formData.legalName"
+                          label="Legal name."
+                          v-bind="customProps"
+                          outlined
+                        />
+                      </v-col>
+
+                      <!-- Desktop: Alternative Names -->
+                      <template>
+                        <v-col v-for="(altName, index) in formData.altNames.value"
+                          :key="`value-alt-name-${index}`"
+                          cols="12"
+                          class="pa-1"
+                        >
                           <v-text-field
-                            v-model="formData.preferredName"
-                            label="Preferred name"
+                            v-model="formData.altNames.value[index]"
+                            :label="`Alternative name ${index + 1}`"
+                            :append-icon="readonly ? '' : 'mdi-delete'"
+                            @click:append="removeAltName(formData.altNames.value[index], index)"
+                            readonly
                             v-bind="customProps"
                             outlined
                           />
-                          <!-- </slot> -->
                         </v-col>
+                      </template>
 
-                        <!-- Desktop: Editing: Legal Name -->
-                        <v-col cols="12" class="pa-1">
+                      <!-- Desktop: Editing: Add Alt Names -->
+                      <template v-if="!readonly">
+                        <v-col v-for="(altName, index) in formData.altNames.add"
+                          :key="`add-alt-name-${index}`"
+                          cols="12"
+                          class="pa-1"
+                        >
                           <v-text-field
-                            v-model="formData.legalName"
-                            label="Legal name."
+                            v-model="formData.altNames.add[index]"
+                            :label="`Alternative name ${index + 1}`"
+                            append-icon="mdi-delete"
+                            @click:append="removeAltNameField(index)"
+                            v-bind="customProps"
+                            cols="12"
+                            outlined
+                          />
+                        </v-col>
+                        <v-row class="mx-1">
+                          <v-col cols="8"></v-col>
+                          <AddButton :align="'flex-end'" :width="'50px'" label="Add name" @click="addAltNameField" row/>
+                        </v-row>
+                      </template>
+                    </v-row>
+
+                      <!-- Desktop: Editing: DATE OF BIRTH -->
+                    <v-row>
+                      <v-col cols="12" class="pa-1">
+                        <NodeDatePicker
+                          :value="formData.bornAt"
+                          label="Date of birth"
+                          @date="formData.bornAt = $event"
+                          :readonly="readonly"
+                        />
+                      </v-col>
+                    </v-row>
+                    <!-- Desktop: Editing: ORDER OF BIRTH -->
+                    <v-row>
+                      <v-col v-if="!readonly || formData.birthOrder" cols="12" class="pa-1">
+                        <v-select
+                          v-model="formData.birthOrder"
+                          type="number"
+                          label="Order of birth"
+                          :items="orderNumbers"
+                          v-bind="customProps"
+                          outlined
+                        />
+                      </v-col>
+                    </v-row>
+                    <!-- Desktop: Editing : DECEASED PICKER -->
+                    <v-row>
+                      <v-col  v-if="!readonly || formData.deceased" cols="12" class="pa-1">
+                          <v-checkbox v-model="formData.deceased"
+                            label="No longer living" :hide-details="true"
                             v-bind="customProps"
                             outlined
                           />
                         </v-col>
-
-                        <!-- Desktop: Alternative Names -->
-                        <template>
-                          <v-col v-for="(altName, index) in formData.altNames.value"
-                            :key="`value-alt-name-${index}`"
-                            cols="12"
-                            class="pa-1"
-                          >
-                            <v-text-field
-                              v-model="formData.altNames.value[index]"
-                              :label="`Alternative name ${index + 1}`"
-                              :append-icon="readonly ? '' : 'mdi-delete'"
-                              @click:append="removeAltName(formData.altNames.value[index], index)"
-                              readonly
-                              v-bind="customProps"
-                              outlined
-                            />
-                          </v-col>
-                        </template>
-
-                        <!-- Desktop: Editing: Add Alt Names -->
-                        <template v-if="!readonly">
-                          <v-col v-for="(altName, index) in formData.altNames.add"
-                            :key="`add-alt-name-${index}`"
-                            cols="12"
-                            class="pa-1"
-                          >
-                            <v-text-field
-                              v-model="formData.altNames.add[index]"
-                              :label="`Alternative name ${index + 1}`"
-                              append-icon="mdi-delete"
-                              @click:append="removeAltNameField(index)"
-                              v-bind="customProps"
-                              cols="12"
-                              outlined
-                            />
-                          </v-col>
-                          <v-row class="mx-1">
-                            <v-col cols="8"></v-col>
-                            <AddButton :align="'flex-end'" :width="'50px'" label="Add name" @click="addAltNameField" row/>
-                          </v-row>
-                        </template>
-                      </v-row>
-
-                        <!-- Desktop: Editing: DATE OF BIRTH -->
-                      <v-row>
+                        <!-- Desktop: Editing: DIED AT PICKER -->
                         <v-col cols="12" class="pa-1">
                           <NodeDatePicker
-                            :value="formData.bornAt"
-                            label="Date of birth"
-                            @date="formData.bornAt = $event"
+                            v-if="formData.deceased"
+                            label="Date of death"
+                            :value="formData.diedAt"
+                            @date="formData.diedAt = $event"
                             :readonly="readonly"
                           />
                         </v-col>
                       </v-row>
-                      <!-- Desktop: Editing: ORDER OF BIRTH -->
-                      <v-row>
-                        <v-col v-if="!readonly || formData.birthOrder" cols="12" class="pa-1">
-                          <v-select
-                            v-model="formData.birthOrder"
-                            type="number"
-                            label="Order of birth"
-                            :items="orderNumbers"
-                            v-bind="customProps"
-                            outlined
-                          />
-                        </v-col>
-                      </v-row>
-
                     </v-col>
                   </v-row>
 
@@ -990,9 +1026,9 @@ export default {
     profile (newVal) {
       this.formData = defaultData(newVal)
     },
-    'formData.deceased' (newValue) {
-      if (!newValue) this.formData.diedAt = ''
-    }
+    // 'formData.deceased' (newValue) {
+    //   if (!newValue) this.formData.diedAt = ''
+    // }
   },
   methods: {
     updateSelectedGender (genderClicked) {
