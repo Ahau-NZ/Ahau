@@ -18,22 +18,15 @@
         </router-link>
       </template>
       <!-- <v-btn icon :to="{ name: 'personShow', params: { id: profile.id } }"> -->
-      <Avatar
-        v-if="!mobile"
-        size="50px"
-        :image="profile.avatarImage"
-        :alt="profile.preferredName"
-        :gender="profile.gender"
-        :bornAt="profile.bornAt"
-      />
+
         <!-- </v-btn> -->
       <v-spacer />
 
       <!-- Desktop doesn't use a drawer, it has the links directly in the app bar -->
       <template v-if="!mobile">
         <!--  WIP links -->
-        <v-btn text @click.stop="dialog = true" class="red--text text-uppercase ms-10">korero</v-btn>
-        <v-btn text @click.stop="dialog = true" class="red--text text-uppercase ms-10">ngāti</v-btn>
+        <v-btn text @click.stop="dialog = true" class="red--text text-uppercase ms-10">Archive</v-btn>
+        <v-btn text @click.stop="dialog = true" class="red--text text-uppercase ms-10">Tribes</v-btn>
 
         <v-btn text to="/whakapapa" class="white--text text-uppercase ms-10">whakapapa</v-btn>
         <!-- <v-btn text to='/discovery?page=local' class="white--text text-uppercase">
@@ -49,6 +42,16 @@
           text
           class="white--text text-uppercase ms-10"
         >sign out</v-btn>
+
+        <Avatar
+        v-if="!mobile"
+        size="50px"
+        :image="profile.avatarImage"
+        :alt="profile.preferredName"
+        :gender="profile.gender"
+        :bornAt="profile.bornAt"
+      />
+
       </template>
 
       <template v-if="mobile">

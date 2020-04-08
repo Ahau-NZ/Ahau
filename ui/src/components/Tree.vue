@@ -106,9 +106,9 @@ export default {
         }
       })
     },
-    // watch for change of focus
+    // watch for change of focus to center on that node
     currentFocus (newValue) {
-      if (this.changeFocusId != null) {
+      if (this.changeFocusId !== null) {
         // if theres a change wait for the nodes to load than map through to find the change of focus
         setTimeout(() => {
           this.nodes.map((d) => {
@@ -123,6 +123,16 @@ export default {
           this.loading = false
         }, 1500)
       }
+    },
+
+    // watch node and if the previous node is the same last node is the same
+    node (newValue) {
+      this.lastNode = newValue
+      setTimeout(() => {
+        if (this.lastNode === newValue) {
+          this.loading = false
+        }
+      }, 1000)
     }
   },
   data () {
@@ -136,11 +146,15 @@ export default {
       nodeSeparationY: 150,
       nonFocusedPartners: [],
       changeFocusId: null,
-      loading: false
+      loading: false,
+      node: null,
+      lastNode: null
     }
   },
   mounted () {
     this.componentLoaded = true
+    // set loader until all the nodes have been loaded
+    this.loading = true
     this.zoom()
   },
   computed: {
@@ -219,6 +233,7 @@ export default {
       return this.treeLayout(this.root)
         .descendants() // returns the array of descendants starting with the root node, then followed by each child in topological order
         .map((d, i) => {
+          this.updateNode(d.data.id)
           return {
             nodeId: `node-${i}`,
             children: d.children,
@@ -276,6 +291,10 @@ export default {
   },
 
   methods: {
+    updateNode (id) {
+      this.node = id
+    },
+
     pathStroke (sourceId, targetId) {
       if (!this.paths) return 'lightgrey'
 
@@ -333,7 +352,7 @@ export default {
 
       svg.call(
         d3.zoom()
-          .scaleExtent([0.3, 2])
+          .scaleExtent([0.05, 2])
           .on('zoom', function () {
             g.attr('transform', d3.event.transform)
           })

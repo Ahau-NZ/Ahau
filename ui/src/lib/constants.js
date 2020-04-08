@@ -44,6 +44,9 @@ export const RULES = {
   ],
   relationshipType: [
     // v => !!v || 'Relationship type is required'
+  ],
+  csvFile: [
+    v => !!v || 'No CSV Uploaded'
   ]
 }
 

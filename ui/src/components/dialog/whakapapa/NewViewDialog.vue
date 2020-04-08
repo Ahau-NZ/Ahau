@@ -2,7 +2,7 @@
   <div>
     <Dialog :show="show" :title="title" @close="close" width="720px" :goBack="close" enableMenu>
       <template v-slot:content>
-        <WhakapapaForm ref="whakapapaForm" :view.sync="formData"/>
+        <WhakapapaForm ref="whakapapaForm" :view.sync="formData" :data.sync="csv"/>
       </template>
       <template v-slot:actions>
         <v-btn @click="close"
@@ -81,7 +81,8 @@ export default {
   data () {
     return {
       helpertext: false,
-      formData: setDefaultWhakapapa(EMPTY_WHAKAPAPA)
+      formData: setDefaultWhakapapa(EMPTY_WHAKAPAPA),
+      csv: ''
     }
   },
   computed: {
@@ -103,13 +104,18 @@ export default {
       this.$emit('close')
     },
     submit () {
-      if (!this.$refs.whakapapaForm.$refs.form.validate()) {
+      console.log('submitting to following csv: ', this.csv)
+      if (!this.$refs.whakapapaForm.$refs.form.validate() || this.csv === '') {
         console.error('not validated')
         return
       }
-
+      const csv = this.csv
       const output = whakapapaSubmission(this.formData)
-      this.$emit('submit', output)
+      const newOutput = {
+        ...output,
+        csv: csv
+      }
+      this.$emit('submit', newOutput)
       this.close()
     },
     setFormData (whakapapa) {
