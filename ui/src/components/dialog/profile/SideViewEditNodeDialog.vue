@@ -132,7 +132,7 @@
                     :show-labels="true"
                     @profile-click="openProfile($event)"
                   >
-                   <AddButton @click="toggleNew('sibling')" />
+                   <AddButton v-if="view.focus !== profile.id" @click="toggleNew('sibling')" />
                   </AvatarGroup>
                 </v-col>
 
@@ -564,7 +564,7 @@
                       :show-labels="true"
                       @profile-click="openProfile($event)"
                     >
-                      <AddButton @click="toggleNew('sibling')" />
+                      <AddButton v-if="view.focus !== profile.id" @click="toggleNew('sibling')" />
                     </AvatarGroup>
                   </v-col>
 
