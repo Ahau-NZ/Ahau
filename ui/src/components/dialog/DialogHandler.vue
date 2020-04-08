@@ -20,6 +20,7 @@
         @submit="updateProfile($event)"
         @delete="toggleDialog('delete-node', null, null)"
         @open-profile="$emit('set', $event)"
+        :view="view"
       />
     </div>
     <DeleteNodeDialog v-if="isActive('delete-node')"

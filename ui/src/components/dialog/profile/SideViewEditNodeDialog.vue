@@ -291,7 +291,9 @@
                   size="60px"
                   :show-labels="true"
                   @profile-click="openProfile($event)"
-                />
+                >
+                  <AddButton v-if="view.focus !== profile.id" @click="toggleNew('sibling')" />
+                </AvatarGroup>
               </v-col>
               <v-divider inset />
               <v-col :cols="12" class="pa-0">
@@ -409,7 +411,8 @@ export default {
     profile: { type: Object, required: true },
     deleteable: { type: Boolean, default: false },
     warnAboutChildren: { type: Boolean, default: true },
-    relationshipLinks: { type: Array }
+    relationshipLinks: { type: Array },
+    view: { type: Object }
   },
 
   data () {
