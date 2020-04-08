@@ -1,244 +1,243 @@
 <template>
-    <v-form ref="form" light >
-      <v-col>
-        <v-row>
+  <v-form ref="form" light >
+    <v-col>
+      <v-row>
 
-          <!-- Upload profile photo -->
-          <v-col order-sm="2" class="mt-5">
-            <v-row >
-              <v-col cols="12" class="pa-0" >
-                <!-- Avatar -->
-                <Avatar
-                  class="big-avatar"
-                  size="200px"
-                  :image="formData.avatarImage"
-                  :alt="formData.preferredName"
-                  :gender="formData.gender"
-                  :bornAt="formData.bornAt"
-                  :diedAt="formData.diedAt"
-                />
-              </v-col>
-              <!-- Upload Profile Photo Button -->
-              <v-col v-if="!readonly" cols="12" justify="center" align="center" class="pa-0">
-                <ImagePicker @updateAvatar="formData.avatarImage = $event" :avatarLoaded="formData.avatarImage"/>
-              </v-col>
-            </v-row>
-          </v-col>
+        <!-- Upload profile photo -->
+        <v-col order-sm="2" class="mt-5">
+          <v-row >
+            <v-col cols="12" class="pa-0" >
+              <!-- Avatar -->
+              <Avatar
+                class="big-avatar"
+                size="200px"
+                :image="formData.avatarImage"
+                :alt="formData.preferredName"
+                :gender="formData.gender"
+                :bornAt="formData.bornAt"
+                :diedAt="formData.diedAt"
+              />
+            </v-col>
+            <!-- Upload Profile Photo Button -->
+            <v-col v-if="!readonly" cols="12" justify="center" align="center" class="pa-0">
+              <ImagePicker @updateAvatar="formData.avatarImage = $event" :avatarLoaded="formData.avatarImage"/>
+            </v-col>
+          </v-row>
+        </v-col>
 
-          <!-- Names -->
-          <v-col cols="12" sm="6" class="pt-4">
-            <v-row>
-              <v-col cols="12" class="pa-1">
-                <!-- <slot name="search"> -->
-                  <v-text-field
-                    v-model="formData.preferredName"
-                    label="Preferred name"
-                    v-bind="customProps"
-                    outlined
-                  />
-                <!-- </slot> -->
-              </v-col>
-              <v-col cols="12" class="pa-1">
+        <!-- Names -->
+        <v-col cols="12" sm="6" class="pt-4">
+          <v-row>
+            <v-col cols="12" class="pa-1">
+              <!-- <slot name="search"> -->
                 <v-text-field
-                  v-model="formData.legalName"
-                  label="Legal name."
+                  v-model="formData.preferredName"
+                  label="Preferred name"
+                  v-bind="customProps"
+                  outlined
+                />
+              <!-- </slot> -->
+            </v-col>
+            <v-col cols="12" class="pa-1">
+              <v-text-field
+                v-model="formData.legalName"
+                label="Legal name."
+                v-bind="customProps"
+                outlined
+              />
+            </v-col>
+
+            <template>
+              <v-col v-for="(altName, index) in formData.altNames.value"
+                :key="`value-alt-name-${index}`"
+                cols="12"
+                sm="6"
+                class="pa-1"
+              >
+                <v-text-field
+                  v-model="formData.altNames.value[index]"
+                  :label="`Alternative name ${index + 1}`"
+                  :append-icon="readonly ? '' : 'mdi-delete'"
+                  @click:append="removeAltName(formData.altNames.value[index], index)"
+                  readonly
                   v-bind="customProps"
                   outlined
                 />
               </v-col>
+            </template>
 
-              <template>
-                <v-col v-for="(altName, index) in formData.altNames.value"
-                  :key="`value-alt-name-${index}`"
+            <!-- Add Names -->
+            <template v-if="!readonly">
+              <v-col v-for="(altName, index) in formData.altNames.add"
+                :key="`add-alt-name-${index}`"
+                cols="12"
+                sm="6"
+                class="pa-1"
+              >
+                <v-text-field
+                  v-model="formData.altNames.add[index]"
+                  :label="`Alternative name ${index + 1}`"
+                  append-icon="mdi-delete"
+                  @click:append="removeAltNameField(index)"
+                  v-bind="customProps"
                   cols="12"
-                  sm="6"
-                  class="pa-1"
-                >
-                  <v-text-field
-                    v-model="formData.altNames.value[index]"
-                    :label="`Alternative name ${index + 1}`"
-                    :append-icon="readonly ? '' : 'mdi-delete'"
-                    @click:append="removeAltName(formData.altNames.value[index], index)"
-                    readonly
-                    v-bind="customProps"
-                    outlined
-                  />
+                  outlined
+                />
+              </v-col>
+              <v-row class="mx-1">
+                <v-col cols="8"></v-col>
+                <AddButton :align="'flex-end'" :width="'50px'" label="Add name" @click="addAltNameField" row/>
+              </v-row>
+            </template>
+          </v-row>
+
+            <!-- DATE OF BIRTH -->
+          <v-row>
+            <v-col cols="12" class="pa-1">
+              <NodeDatePicker
+                :value="formData.bornAt"
+                label="Date of birth"
+                @date="formData.bornAt = $event"
+                :readonly="readonly"
+              />
+            </v-col>
+          </v-row>
+          <!-- ORDER OF BIRTH -->
+          <v-row>
+            <v-col v-if="!readonly || formData.birthOrder" cols="12" class="pa-1">
+              <v-text-field
+                v-model="formData.birthOrder"
+                type="number"
+                label="Order of birth"
+                min="1"
+                v-bind="customProps"
+                outlined
+              />
+            </v-col>
+          </v-row>
+
+        </v-col>
+      </v-row>
+
+      <v-row>
+        <v-col cols="12" sm="6">
+          <v-row>
+            <!-- GENDER VIEW -->
+            <v-col  v-if="readonly" class="pa-1">
+              <v-text-field
+                v-model="formData.gender"
+                label="Gender"
+                v-bind="customProps"
+              />
+            </v-col>
+            <!-- GENDER EDIT -->
+            <v-col v-else class="pa-1">
+              <p class="text-field">Gender</p>
+
+              <v-row class="gender-button-row">
+                <!-- TANE -->
+                <v-col>
+                  <div class="gender-button" @click="updateSelectedGender('male')">
+                    <img ref="taneImg" :src="require('@/assets/tane-outlined.svg')" class="gender-image">
+                  </div>
                 </v-col>
-              </template>
-
-              <!-- Add Names -->
-              <template v-if="!readonly">
-                <v-col v-for="(altName, index) in formData.altNames.add"
-                  :key="`add-alt-name-${index}`"
-                  cols="12"
-                  sm="6"
-                  class="pa-1"
-                >
-                  <v-text-field
-                    v-model="formData.altNames.add[index]"
-                    :label="`Alternative name ${index + 1}`"
-                    append-icon="mdi-delete"
-                    @click:append="removeAltNameField(index)"
-                    v-bind="customProps"
-                    cols="12"
-                    outlined
-                  />
+                <!-- WAHINE -->
+                <v-col>
+                  <div class="gender-button" @click="updateSelectedGender('female')">
+                    <img ref="wahineImg" :src="require('@/assets/wahine-outlined.svg')" class="gender-image">
+                  </div>
                 </v-col>
-                <v-row class="mx-1">
-                  <v-col cols="8"></v-col>
-                  <AddButton :align="'flex-end'" :width="'50px'" label="Add name" @click="addAltNameField" row/>
-                </v-row>
-              </template>
-            </v-row>
+              </v-row>
+            </v-col>
+          </v-row>
+        </v-col>
 
-              <!-- DATE OF BIRTH -->
-            <v-row>
-              <v-col cols="12" class="pa-1">
-                <NodeDatePicker
-                  :value="formData.bornAt"
-                  label="Date of birth"
-                  @date="formData.bornAt = $event"
-                  :readonly="readonly"
-                />
-              </v-col>
-            </v-row>
-            <!-- ORDER OF BIRTH -->
-            <v-row>
-              <v-col v-if="!readonly || formData.birthOrder" cols="12" class="pa-1">
+        <v-col cols="12" sm="6">
+          <v-row>
+            <!-- Description textarea -->
+            <v-col cols="12" class="pa-1">
+              <v-textarea
+                v-model="formData.description"
+                label="Description"
+                v-bind="customProps"
+                no-resize
+                rows="4"
+                auto-grow
+                outlined
+              >
+              </v-textarea>
+            </v-col>
+          </v-row>
+          <!-- Occupation -->
+          <v-row>
+            <v-col cols="12" class="pa-1">
+              <v-text-field
+                v-model="formData.profession"
+                label="Occupation"
+                v-bind="customProps"
+                outlined
+              />
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
+
+      <v-row>
+        <v-col cols="12" sm="6" >
+          <!-- Email -->
+          <v-row>
+            <v-col cols="12" class="pa-1">
                 <v-text-field
-                  v-model="formData.birthOrder"
-                  type="number"
-                  label="Order of birth"
-                  min="1"
+                  v-model="formData.email"
+                  label="Email"
                   v-bind="customProps"
                   outlined
                 />
               </v-col>
-            </v-row>
+          </v-row>
+          <!-- Phone -->
+          <v-row>
+            <v-col cols="12" class="pa-1">
+              <v-text-field
+                v-model="formData.phone"
+                label="Phone"
+                v-bind="customProps"
+                outlined
+              />
+            </v-col>
+          </v-row>
+        </v-col>
 
-          </v-col>
-        </v-row>
+        <v-col cols="12" sm="6" >
+          <v-row>
+            <v-col cols="12" class="pa-1">
+              <!-- Address -->
+              <v-text-field
+                v-model="formData.address"
+                label="Address"
+                v-bind="customProps"
+                outlined
+              />
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col cols="12" class="pa-1">
+              <!-- City, Country -->
+              <v-text-field
+                v-model="formData.location"
+                label="City, Country"
+                v-bind="customProps"
+                outlined
+              />
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
+    </v-col>
+  </v-form>
+</template>
 
-        <v-row>
-          <v-col cols="12" sm="6">
-            <v-row>
-              <!-- GENDER VIEW -->
-              <v-col  v-if="readonly" class="pa-1">
-                <v-text-field
-                  v-model="formData.gender"
-                  label="Gender"
-                  v-bind="customProps"
-                />
-              </v-col>
-              <!-- GENDER EDIT -->
-              <v-col v-else class="pa-1">
-                <p class="text-field">Gender</p>
-
-                <v-row class="gender-button-row">
-                  <!-- TANE -->
-                  <v-col>
-                    <div class="gender-button" @click="updateSelectedGender('male')">
-                      <img ref="taneImg" :src="require('@/assets/tane-outlined.svg')" class="gender-image">
-                    </div>
-                  </v-col>
-                  <!-- WAHINE -->
-                  <v-col>
-                    <div class="gender-button" @click="updateSelectedGender('female')">
-                      <img ref="wahineImg" :src="require('@/assets/wahine-outlined.svg')" class="gender-image">
-                    </div>
-                  </v-col>
-                </v-row>
-              </v-col>
-            </v-row>
-          </v-col>
-
-          <v-col cols="12" sm="6">
-            <v-row>
-              <!-- Description textarea -->
-              <v-col cols="12" class="pa-1">
-                <v-textarea
-                  v-model="formData.description"
-                  label="Description"
-                  v-bind="customProps"
-                  no-resize
-                  rows="4"
-                  auto-grow
-                  outlined
-                >
-                </v-textarea>
-              </v-col>
-            </v-row>
-            <!-- Occupation -->
-            <v-row>
-              <v-col cols="12" class="pa-1">
-                <v-text-field
-                  v-model="formData.profession"
-                  label="Occupation"
-                  v-bind="customProps"
-                  outlined
-                />
-              </v-col>
-            </v-row>
-          </v-col>
-        </v-row>
-
-        <v-row>
-          <v-col cols="12" sm="6" >
-            <!-- Email -->
-            <v-row>
-              <v-col cols="12" class="pa-1">
-                  <v-text-field
-                    v-model="formData.email"
-                    label="Email"
-                    v-bind="customProps"
-                    outlined
-                  />
-                </v-col>
-            </v-row>
-            <!-- Phone -->
-            <v-row>
-              <v-col cols="12" class="pa-1">
-                <v-text-field
-                  v-model="formData.phone"
-                  label="Phone"
-                  v-bind="customProps"
-                  outlined
-                />
-              </v-col>
-            </v-row>
-          </v-col>
-
-          <v-col cols="12" sm="6" >
-            <v-row>
-              <v-col cols="12" class="pa-1">
-                <!-- Address -->
-                <v-text-field
-                  v-model="formData.address"
-                  label="Address"
-                  v-bind="customProps"
-                  outlined
-                />
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col cols="12" class="pa-1">
-                <!-- City, Country -->
-                <v-text-field
-                  v-model="formData.location"
-                  label="City, Country"
-                  v-bind="customProps"
-                  outlined
-                />
-              </v-col>
-            </v-row>
-          </v-col>
-        </v-row>
-
-      </v-col>
-    </v-form>
-  </template>
 <script>
-
 import Avatar from '@/components/Avatar.vue'
 import ImagePicker from '@/components/ImagePicker.vue'
 import AddButton from '@/components/button/AddButton.vue'
@@ -336,11 +335,7 @@ export default {
 }
 </script>
 
-  <style>
-
-  </style>
-
-  <style scoped>
+<style scoped>
   .custom.v-text-field > .v-input__control > .v-input__slot:before {
     border-style: none;
   }
@@ -428,5 +423,4 @@ export default {
       }
     }
   }
-
 </style>

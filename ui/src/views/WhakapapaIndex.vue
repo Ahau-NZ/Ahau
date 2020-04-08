@@ -66,7 +66,7 @@
         :show="showProfileForm"
         :suggestions="suggestions"
         @getSuggestions="getSuggestions"
-        title="Create new Person"
+        title="Create a new person"
         @create="handleDoubleStep($event)"
         :withRelationships="false"
         @close="toggleProfileForm"
