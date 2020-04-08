@@ -85,10 +85,12 @@
 import gql from 'graphql-tag'
 import pick from 'lodash.pick'
 import isEmpty from 'lodash.isempty'
+import * as d3 from 'd3'
 import WhakapapaViewCard from '@/components/whakapapa-view/WhakapapaViewCard.vue'
 import NewViewDialog from '@/components/dialog/whakapapa/NewViewDialog.vue'
 import NewNodeDialog from '@/components/dialog/profile/NewNodeDialog.vue'
 import WhakapapaListHelper from '@/components/dialog/whakapapa/WhakapapaListHelper.vue'
+import { saveWhakapapaLink } from '@/lib/link-helpers.js'
 
 import tree from '@/lib/tree-helpers'
 
@@ -121,7 +123,8 @@ export default {
       showWhakapapaHelper: false,
       showProfileForm: false,
       showViewForm: false,
-      newView: null
+      newView: null,
+      columns: []
     }
   },
   computed: {
@@ -292,6 +295,8 @@ export default {
           return this.createView(this.newView)
         case 'new':
           return this.toggleProfileForm()
+        case 'file':
+          return this.buildFromFile($event.csv)
         default:
       }
     },
@@ -350,7 +355,177 @@ export default {
       } catch (err) {
         throw err
       }
+    },
+    async buildFromFile (csv) {
+      // create profile for each person
+      var profilesArray = await this.createProfiles(csv)
+      profilesArray['columns'] = this.columns
+
+      // create obj of children and parents
+      var root = d3.stratify()
+        .id(function (d) { return d.number })
+        .parentId(function (d) { return d.parentNumber })(profilesArray)
+
+      // create new array now with child and parents data
+      var descendants = root.descendants()
+
+      // create whakapapaLinks
+      var finalArray = await this.createLinks(descendants)
+
+      // create whakapapa with top ancestor as focus
+      this.createView({
+        ...this.newView,
+        focus: finalArray[0].parent.data.id
+      })
+    },
+
+    async createProfiles (csv) {
+      // parse csv text into a an array
+      // var csv = d3.csvParse(data, function (d) {
+      //   if (!isEmpty(d.number))
+      //   return {
+      //     parentNumber: d.parentNumber,
+      //     number: d.number,
+      //     preferredName: d.preferredName,
+      //     legalName: d.legalName,
+      //     gender: d.gender,
+      //     bornAt: d.bornAt.split(/\//).reverse().join('/'),
+      //     diedAt: d.diedAt.split(/\//).reverse().join('/'),
+      //     birthOrder: Number(d.birthOrder),
+      //     contact: d.contact,
+      //     location: d.location,
+      //     profession: d.profession,
+      //     relationshipType: d.relationshipType ? d.relationshipType : 'birth'
+      //   }
+      // })
+      // store the titles of each column
+      this.columns = csv.columns
+
+      // create a profile for each person and add the created id to the person and parse back to profilesArray
+      return Promise.all(csv.map(async d => {
+        var id = await this.addPerson(d)
+        const person = {
+          id: id,
+          ...d
+        }
+        return person
+      })
+      )
+    },
+
+    async addPerson ($event) {
+      let person = {}
+      Object.entries($event).map(([key, value]) => {
+        if (!isEmpty($event[key])) {
+          person[key] = value
+        }
+      })
+      try {
+        var { id } = $event
+        id = await this.createProfile(person)
+        if (id.errors) {
+          console.error('failed to create profile', id)
+          return
+        }
+        return id
+      } catch (err) {
+        throw err
+      }
+    },
+
+    async createLinks (descendants) {
+      // skip top ancestor
+      descendants.shift()
+      // create a whakapapaLink between child and parent for each person
+      return Promise.all(descendants.map(async d => {
+        let relationship = {
+          child: d.data.id,
+          parent: d.parent.data.id,
+          relationshipType: d.data.relationshipType
+        }
+        var link = await this.createChildLink(relationship)
+
+        var person = {
+          ...d,
+          link: link
+        }
+        return person
+      })
+      )
+    },
+
+    async createProfile ({
+      preferredName,
+      legalName,
+      gender,
+      bornAt,
+      diedAt,
+      birthOrder,
+      avatarImage,
+      altNames,
+      description,
+      location,
+      profession,
+      contact
+    }) {
+      const res = await this.$apollo.mutate({
+        mutation: gql`
+          mutation($input: ProfileInput!) {
+            saveProfile(input: $input)
+          }
+        `,
+        variables: {
+          input: {
+            type: 'person',
+            preferredName,
+            legalName,
+            gender,
+            bornAt,
+            diedAt,
+            birthOrder,
+            avatarImage,
+            altNames: {
+              add: []
+            },
+            description,
+            location,
+            profession,
+            contact,
+            recps: [this.whoami.feedId] // TODO change this for groups
+          }
+        }
+      })
+
+      if (res.errors) {
+        console.error('failed to createProfile', res)
+        return
+      }
+      return res.data.saveProfile // a profileId
+    },
+
+    async createChildLink (
+      { child, parent, relationshipType, legallyAdopted },
+      view
+    ) {
+      const input = {
+        child,
+        parent,
+        relationshipType,
+        legallyAdopted,
+        recps: this.newView.recps
+      }
+      try {
+        const res = await this.$apollo.mutate(saveWhakapapaLink(input))
+        if (res.errors) {
+          console.error('failed to createChildLink', res)
+          return
+        }
+        return res // TODO return the linkId
+      } catch (err) {
+        throw err
+      }
     }
+
   },
   components: {
     WhakapapaViewCard,

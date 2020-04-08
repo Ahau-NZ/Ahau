@@ -22,6 +22,7 @@
         @submit="updateProfile($event)"
         @delete="toggleDialog('delete-node', null, null)"
         @open-profile="$emit('set', $event)"
+        :view="view"
       />
     </div>
     <DeleteNodeDialog v-if="isActive('delete-node')"
@@ -123,7 +124,7 @@ export default {
       type: String,
       default: null,
       validator: (val) => [
-        'parent', 'child'
+        'parent', 'child', 'sibling'
       ].includes(val)
     }
   },
@@ -230,12 +231,15 @@ export default {
           case 'child':
             child = id
             parent = this.selectedProfile.id
+            console.log('selectedProfile parent: ', this.selectedProfile)
 
             if (this.selectedProfile.children) {
+              console.log('child: ', child)
+              console.log('parent: ', parent)
               const childrenExists = this.selectedProfile.children.filter(existingChild => {
                 return existingChild.id === child
               })
-
+              console.log('children exists: ', childrenExists)
               if (isEmpty(childrenExists)) {
                 await this.createChildLink({ child, parent, ...relationshipAttrs })
               }
@@ -261,11 +265,19 @@ export default {
               // in this case we're updating the top of the graph, we update view.focus to that new top parent
               this.$emit('updateFocus', parent)
             // load new parent on partner whakapapa links
-            } else if (!parent.parent) {
+            } else if (this.selectedProfile.parents.length < 1) {
               this.$emit('change-focus', parent)
             } else {
               await this.$emit('load', child)
             }
+            break
+          case 'sibling':
+            if (!this.selectedProfile.parents) break
+            parent = this.selectedProfile.parents[0].id
+            child = id
+            await this.createChildLink({ child, parent, ...relationshipAttrs })
+
+            await this.$emit('load', parent)
             break
           default:
             console.log('not built')
