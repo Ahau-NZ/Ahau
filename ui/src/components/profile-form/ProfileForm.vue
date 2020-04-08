@@ -335,7 +335,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
   .custom.v-text-field > .v-input__control > .v-input__slot:before {
     border-style: none;
   }
