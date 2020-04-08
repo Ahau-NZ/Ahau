@@ -102,6 +102,9 @@
       <li v-for="(option, index) in contextMenuOpts" :key="index">
         <a href="#" @click.prevent="updateDialog(option.dialog, option.type)">{{ option.title }}</a>
       </li>
+      <li v-if="canAddSibling(selectedProfile)">
+        <a href="#" @click.prevent="updateDialog('new-node', 'sibling')">Add Sibling</a>
+      </li>
       <li v-if="canDelete(selectedProfile)">
         <a href="#" @click.prevent="updateDialog('delete-node', null)">Delete Person</a>
       </li>
@@ -363,6 +366,16 @@ export default {
 
       return true
     },
+    canAddSibling (profile) {
+      if (!profile) return false
+
+      // if adding a sibling to the focus
+      if (profile.id === this.whakapapaView.focus) {
+        return false
+      }
+
+      return true
+    },
     updateDialog (dialog, type) {
       this.dialog.type = type
       this.dialog.active = dialog
@@ -564,7 +577,7 @@ export default {
         this.profiles[profileId],
         this.profiles
       )
-      console.log('selectedProfile: ', this.selectedProfile)
+
       if (!this.selectedProfile.parents || this.selectedProfile.parents.length === 0) return
 
       this.selectedProfile.parents = await Promise.all(

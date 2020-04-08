@@ -119,7 +119,7 @@ export default {
       type: String,
       default: null,
       validator: (val) => [
-        'parent', 'child'
+        'parent', 'child', 'sibling'
       ].includes(val)
     }
   },
@@ -262,6 +262,14 @@ export default {
             } else {
               await this.$emit('load', child)
             }
+            break
+          case 'sibling':
+            if (!this.selectedProfile.parents) break
+            parent = this.selectedProfile.parents[0].id
+            child = id
+            await this.createChildLink({ child, parent, ...relationshipAttrs })
+
+            await this.$emit('load', parent)
             break
           default:
             console.log('not built')

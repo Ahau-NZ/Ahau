@@ -123,7 +123,7 @@ export default {
     type: {
       type: String,
       validator: (val) => [
-        'child', 'parent'
+        'child', 'parent', 'sibling'
       ].includes(val)
     }
   },
