@@ -8,8 +8,8 @@
   >
     <v-container
       :class="{
-        'px-12': !mobile,
-        'pa-0': mobile,
+        'desktopContainer': !mobile,
+        'mobileContainer': mobile
       }"
       class="body-width white mx-auto"
       style="position:relative"
@@ -56,6 +56,7 @@
 
       <NewViewDialog
         :show="showViewForm"
+        title="Create a new whakapapa"
         @close="toggleViewForm"
         @submit="handleStepOne($event)"
       />
@@ -381,6 +382,15 @@ export default {
   text-transform: uppercase;
   font-weight: 400;
   letter-spacing: 5px;
+}
+
+.desktopContainer {
+  margin-top: 64px;
+  border: 3px solid red;
+}
+
+.mobileContainer {
+  padding: 0px;
 }
 
 </style>

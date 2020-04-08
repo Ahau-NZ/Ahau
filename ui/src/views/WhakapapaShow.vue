@@ -1,30 +1,37 @@
 <template>
-  <div id="whakapapa-show" style="overflow:none">
-    <v-container fixed class="white px-0 py-0 mx-auto">
-      <v-row v-if="!mobile" class="header">
-        <!-- Whakapapa Title Card -->
+  <div id="whakapapa-show" >
+    <v-container fluid class="pa-0" :style="[ mobile ? 'width:100vw' : 'width:95vw; margin-top:64px;' ]">
 
+      <!-- Desktop Header -->
+      <!-- Whakapapa Title Card -->
+      <v-row v-if="!mobile" class="header">
         <!-- Whakapapa"SHOW"ViewCard -->
         <WhakapapaShowViewCard :view="whakapapaView" :shadow="false">
           <template v-slot:edit>
-              <v-tooltip bottom>
-                <template v-slot:activator="{ on }">
-                  <v-btn
-                    v-on="on"
-                    @click.prevent="dialog.active = 'whakapapa-edit'"
-                    icon
-                    class="pa-0 px-3"
-                  >
-                    <v-icon small class="blue--text">mdi-pencil</v-icon>
-                  </v-btn>
-                </template>
-                <span>Edit whakapapa description</span>
-              </v-tooltip>
-            </template>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on }">
+                <v-btn
+                  v-on="on"
+                  @click.prevent="dialog.active = 'whakapapa-edit'"
+                  icon
+                  class="pa-0 px-3"
+                >
+                  <v-icon small class="blue--text">mdi-pencil</v-icon>
+                </v-btn>
+              </template>
+              <span>Edit whakapapa description</span>
+            </v-tooltip>
+          </template>
         </WhakapapaShowViewCard>
       </v-row>
 
-      <WhakapapaBanner v-if="mobile" :view="whakapapaView" @edit="updateDialog('whakapapa-edit', null)" @more-info="updateDialog('whakapapa-view', null)"/>
+      <!-- Mobile Header -->
+      <WhakapapaBanner
+        v-if="mobile"
+        :view="whakapapaView"
+        @edit="updateDialog('whakapapa-edit', null)"
+        @more-info="updateDialog('whakapapa-view', null)"
+      />
 
       <v-row v-if="!mobile" class="select">
 
@@ -66,44 +73,48 @@
         </div>
       </v-row>
 
-      <v-row>
-        <Tree
-          class="tree"
-          v-if="whakapapa.tree"
-          :view="whakapapaView"
-          :currentFocus="currentFocus"
-          :getRelatives="getRelatives"
-          :nestedWhakapapa="nestedWhakapapa"
-          :relationshipLinks="relationshipLinks"
-          @load-descendants="loadDescendants($event)"
-          @collapse-node="collapseNode($event)"
-          @open-context-menu="openContextMenu($event)"
-          :searchNodeId="searchNodeId"
-          @change-focus="changeFocus($event)"
-        />
-        <Table
-          v-if="whakapapa.table"
-          ref="table"
-          :filter="filter"
-          :flatten="flatten"
-          :view="whakapapaView"
-          :nestedWhakapapa="nestedWhakapapa"
-          :relationshipLinks="relationshipLinks"
-          @load-descendants="loadDescendants($event)"
-          @collapse-node="collapseNode($event)"
-          @open-context-menu="openContextMenu($event)"
-          :searchNodeId="searchNodeId"
-          @update="tableOverflow($event)"
-        />
-      </v-row>
-    </v-container>
+      <Tree
+        class="tree"
+        v-if="whakapapa.tree"
+        :view="whakapapaView"
+        :currentFocus="currentFocus"
+        :getRelatives="getRelatives"
+        :nestedWhakapapa="nestedWhakapapa"
+        :relationshipLinks="relationshipLinks"
+        @load-descendants="loadDescendants($event)"
+        @collapse-node="collapseNode($event)"
+        @open-context-menu="openContextMenu($event)"
+        :searchNodeId="searchNodeId"
+        @change-focus="changeFocus($event)"
+      />
+      <Table
+        v-if="whakapapa.table"
+        ref="table"
+        :filter="filter"
+        :flatten="flatten"
+        :view="whakapapaView"
+        :nestedWhakapapa="nestedWhakapapa"
+        :relationshipLinks="relationshipLinks"
+        @load-descendants="loadDescendants($event)"
+        @collapse-node="collapseNode($event)"
+        @open-context-menu="openContextMenu($event)"
+        :searchNodeId="searchNodeId"
+      />
 
-    <vue-context ref="menu">
+    </v-container >
+
+    <vue-context ref="menu" class="px-0"  >
       <li v-for="(option, index) in contextMenuOpts" :key="index">
-        <a href="#" @click.prevent="updateDialog(option.dialog, option.type)">{{ option.title }}</a>
+        <a href="#" @click.prevent="updateDialog(option.dialog, option.type)" class="d-flex align-center px-4">
+          <img class="contextMenuIcon" :src="option.icon"/>
+          <p class="ma-0 pl-3">{{ option.title }}</p>
+        </a>
       </li>
       <li v-if="canDelete(selectedProfile)">
-        <a href="#" @click.prevent="updateDialog('delete-node', null)">Delete Person</a>
+        <a href="#" @click.prevent="updateDialog('delete-node', null)" class="d-flex align-center px-4">
+          <v-icon class="contextMenuIcon">mdi-delete</v-icon>
+          <p class="ma-0 pl-3">Delete Person</p>
+        </a>
       </li>
     </vue-context>
     <DialogHandler
@@ -222,9 +233,9 @@ export default {
         table: false
       },
       contextMenuOpts: [
-        { title: 'View Person', dialog: 'view-edit-node' },
-        { title: 'Add Child', dialog: 'new-node', type: 'child' },
-        { title: 'Add Parent', dialog: 'new-node', type: 'parent' }
+        { title: 'View Person', dialog: 'view-edit-node', icon: require('../assets/account-circle.svg') },
+        { title: 'Add Parent', dialog: 'new-node', type: 'parent', icon: require('../assets/node-parent.svg') },
+        { title: 'Add Child', dialog: 'new-node', type: 'child', icon: require('../assets/node-child.svg') }
       ]
     }
   },
@@ -564,7 +575,6 @@ export default {
         this.profiles[profileId],
         this.profiles
       )
-      console.log('selectedProfile: ', this.selectedProfile)
       if (!this.selectedProfile.parents || this.selectedProfile.parents.length === 0) return
 
       this.selectedProfile.parents = await Promise.all(
@@ -667,14 +677,17 @@ export default {
 @import "~vue-context/dist/css/vue-context.css";
 
 #whakapapa-show {
+
   & > .container {
     position: relative;
+    /* width: 95vw; */
+    /* border: 2px solid red; */
+
     & > .header {
       position: absolute;
-      top: 20px;
-      left: 30px;
-      // left: 30px;
-      right: 160px;
+      top: 10px;
+      left: 22px;
+      /* right: 160px; */
       width: 30%;
 
       .col {
@@ -685,7 +698,7 @@ export default {
 
     & > .select {
       position: fixed;
-      top: 60px;
+      top: 80px;
       right: 110px;
 
       .col {
@@ -696,23 +709,22 @@ export default {
 
     & > .navigate {
       position: fixed;
-      top: 110px;
+      top: 130px;
       right: 110px;
     }
   }
 }
+
 h1 {
   color: black;
 }
+
 .description {
   color: #555;
 }
+
 .fixed {
   position: fixed;
-}
-
-.tree {
-  max-height: calc(100vh - 64px);
 }
 
 .icon-button {
@@ -727,4 +739,16 @@ h1 {
   display: flex;
   justify-items: flex-end;
 }
+
+.contextMenuIcon {
+  width: 20px;
+  height: 20px;
+  color: black;
+}
+
+.tree {
+  max-height: calc(100vh - 64px);
+
+}
+
 </style>
