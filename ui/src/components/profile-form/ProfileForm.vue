@@ -133,7 +133,7 @@
               <!-- GENDER EDIT -->
               <v-col v-else class="pa-1">
                 <p class="text-field">Gender</p>
-    
+
                 <v-row class="gender-button-row">
                   <!-- TANE -->
                   <v-col>
@@ -151,7 +151,7 @@
               </v-col>
             </v-row>
           </v-col>
-          
+
           <v-col cols="12" sm="6">
             <v-row>
               <!-- Description textarea -->
@@ -179,7 +179,7 @@
                 />
               </v-col>
             </v-row>
-          </v-col>     
+          </v-col>
         </v-row>
 
         <v-row>

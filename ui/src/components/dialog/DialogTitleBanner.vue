@@ -39,14 +39,10 @@ export default {
     mobile: { type: Boolean, default: false },
     isEditing: { type: Boolean, default: false }
   },
-  data () {
-    return {
-      titleObj: {}
-    }
-  },
   computed: {
     // split the Title into two parts (so maori can be styled red, and english styled in white)
     splitTitle () {
+      let titleObj = {}
       // check to see if is a maori & english title with the ---- in the middle
       var str = this.title
       var substr = '----'
@@ -55,18 +51,18 @@ export default {
         var start = 2
         var maori = str.split(delimiter).slice(0, start + 1).join(delimiter)
         var english = str.split(delimiter).slice(start).join(delimiter)
-        this.titleObj = {
+        titleObj = {
           maori: maori,
           english: english
         }
-        return this.titleObj
+        return titleObj
       } else {
         // if no maori word in the title just return english
-        this.titleObj = {
+        titleObj = {
           maori: '',
-          english: this.title
+          english: str
         }
-        return this.titleObj
+        return titleObj
       }
     }
   },

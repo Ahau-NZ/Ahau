@@ -34,16 +34,16 @@
       </g>
       <!-- zoom in, zoom out buttons -->
       <g class="zoomControl">
-      <g @click="zoomReset()" :transform="`translate(${30} ${treeY*2.15})`">
+        <g @click="zoomReset()" :transform="`translate(${30} ${treeY*2.15})`">
           <circle stroke="white" fill="white" filter="url(#shadow)" cx="20" cy="1" r="15"/>
           <circle stroke="black" fill="white" filter="url(#shadow)" cx="20" cy="1" r="5"/>
           <path d="M 20,-7 20,10 M 12,1 28,1" stroke="grey" stroke-width="1.5" />
         </g>
-      <g @click="zoomInOut(1.6)" :transform="`translate(${30} ${treeY*2.4})`">
+        <g @click="zoomInOut(1.6)" :transform="`translate(${30} ${treeY*2.4})`">
           <circle stroke="white" fill="white" filter="url(#shadow)" cx="20" cy="1" r="15"/>
           <path d="M 20,-5 20,7 M 14,1 26,1" stroke="grey" stroke-width="1.5" />
         </g>
-      <g @click="zoomInOut(1 / 1.6)" :transform="`translate(${30} ${treeY*2.65})`">
+        <g @click="zoomInOut(1 / 1.6)" :transform="`translate(${30} ${treeY*2.65})`">
           <circle stroke="white" fill="white" filter="url(#shadow)" cx="20" cy="1" r="15"/>
           <path d="M 14,1 26,1" stroke="grey" stroke-width="1.5" />
         </g>

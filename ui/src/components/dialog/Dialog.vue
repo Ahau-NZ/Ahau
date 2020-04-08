@@ -102,9 +102,9 @@ export default {
       type: Boolean,
       default: true
     },
-    title: { 
-      type: String, 
-      default: 'Create a new person' 
+    title: {
+      type: String,
+      default: 'Create a new person'
     }
   },
   data () {
