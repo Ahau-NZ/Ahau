@@ -691,6 +691,18 @@
                         />
                       </v-col>
                     </v-row>
+                    <!-- Desktop: Editing: relationship type-->
+                    <v-row>
+                      <v-col v-if="!readonly || formData.relationshipType" cols="12" class="pa-1">
+                        <v-select
+                          v-model="formData.relationshipType"
+                          label="Related by"
+                          :items="relationshipTypes"
+                          v-bind="customProps"
+                          outlined
+                        />
+                      </v-col>
+                    </v-row>
                     <!-- Desktop: Editing: ORDER OF BIRTH -->
                     <v-row>
                       <v-col v-if="!readonly || formData.birthOrder" cols="12" class="pa-1">
@@ -1026,9 +1038,9 @@ export default {
     profile (newVal) {
       this.formData = defaultData(newVal)
     },
-    // 'formData.deceased' (newValue) {
-    //   if (!newValue) this.formData.diedAt = ''
-    // }
+    'formData.deceased' (newValue) {
+      if (!newValue) this.formData.diedAt = ''
+    }
   },
   methods: {
     updateSelectedGender (genderClicked) {

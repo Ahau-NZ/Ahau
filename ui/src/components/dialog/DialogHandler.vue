@@ -231,15 +231,11 @@ export default {
           case 'child':
             child = id
             parent = this.selectedProfile.id
-            console.log('selectedProfile parent: ', this.selectedProfile)
 
             if (this.selectedProfile.children) {
-              console.log('child: ', child)
-              console.log('parent: ', parent)
               const childrenExists = this.selectedProfile.children.filter(existingChild => {
                 return existingChild.id === child
               })
-              console.log('children exists: ', childrenExists)
               if (isEmpty(childrenExists)) {
                 await this.createChildLink({ child, parent, ...relationshipAttrs })
               }
