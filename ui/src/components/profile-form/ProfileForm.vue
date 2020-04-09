@@ -102,6 +102,18 @@
               />
             </v-col>
           </v-row>
+
+          <!-- Editing: relationship type-->
+          <v-row>
+            <v-col cols="12" class="pa-1">
+              <v-select
+                v-model="formData.relationshipType"
+                label="Related by"
+                :items="relationshipTypes"
+                outlined
+              />
+            </v-col>
+          </v-row>
           <!-- ORDER OF BIRTH -->
           <v-row>
             <v-col v-if="!readonly || formData.birthOrder" cols="12" class="pa-1">

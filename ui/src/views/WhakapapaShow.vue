@@ -601,13 +601,13 @@ export default {
         })
       )
 
-      var mainParent = this.selectedProfile.parents[0]
-      this.selectedProfile.relationship = this.relationshipLinks[mainParent.id + '-' + this.selectedProfile.id]
-
       this.selectedProfile = tree.hydrate(
         this.profiles[profileId],
         this.profiles
       )
+      var mainParent = this.selectedProfile.parents[0]
+
+      this.selectedProfile.relationship = this.relationshipLinks[mainParent.id + '-' + this.selectedProfile.id]
     },
     // save whakapapa changes
     async updateWhakapapa (whakapapaChanges) {
