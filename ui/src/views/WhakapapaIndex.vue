@@ -404,7 +404,7 @@ export default {
             person[key] = parseInt(value)
           } else if (key === 'deceased' && value === 'yes') {
             person[key] = true
-          } else {  
+          } else {
             person[key] = value
           }
         }
