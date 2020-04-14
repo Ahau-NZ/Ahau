@@ -121,6 +121,7 @@ export default {
         // hide the grapgh until the tree has centered
         setTimeout(() => {
           this.loading = false
+          this.changeFocusId = null
         }, 1500)
       }
     },

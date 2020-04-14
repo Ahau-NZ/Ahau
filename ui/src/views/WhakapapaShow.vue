@@ -328,6 +328,10 @@ export default {
             output[profileId] || {},
             profile
           )
+          // if profile isCollapsed dont load children when change focus
+          if (output[profileId].isCollapsed) {
+            output[profileId].children = []
+          }
           // this merge might be overwriting a lot
         })
 
@@ -341,7 +345,6 @@ export default {
           partners.delete(parentId)
           output[parentId].partners = Array.from(partners)
         })
-
         this.profiles = Object.assign({}, this.profiles, output)
       }
 
