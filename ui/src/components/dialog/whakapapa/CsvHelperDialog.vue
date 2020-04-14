@@ -23,6 +23,7 @@
             <li>gender : the persons gender, put m for male or f for female </li>
             <li>bornAt : the persons date of birth, use the dd/mm/yyyy format for instance 01/12/1987
           This can be easily set in excel. Unders ‘home’ tab in the number section, select ‘short date’ from the drop down menu. </li>
+            <li>deceased: whether the person is still living or not. Enter yes if the person is no longer living, else leave it blank.</li>
             <li>diedAt : if the person has passed away put the date the person passed using the dd/mm/yyyy format for instance 01-12-2019 </li>
             <li>birthOrder : the persons order of birth, put 1 for the first born, 2 for the 2nd born, and so on. </li>
             <li>contact : you can put any text into this field this could be phone number e.g 022 0022 0022 or email </li>

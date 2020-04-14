@@ -195,19 +195,21 @@ export default {
               gender: d.gender,
               bornAt: d.bornAt.split(/\//).reverse().join('/'),
               diedAt: d.diedAt.split(/\//).reverse().join('/'),
-              birthOrder: Number(d.birthOrder),
+              birthOrder: d.birthOrder,
               phone: d.phone,
               email: d.email,
               address: d.address,
               location: d.location,
               profession: d.profession,
-              relationshipType: d.relationshipType ? d.relationshipType : 'birth'
+              relationshipType: d.relationshipType ? d.relationshipType : 'birth',
+              deceased: d.deceased
             }
           }
         })
 
         // csv equals count means no errors
         if (count === csv.length) {
+          console.log(csv)
           this.noErrorsInCSV = true
         }
 
@@ -225,7 +227,7 @@ export default {
   methods: {
 
     downloadCsv () {
-      var csv = 'parentNumber,number,preferredName,legalName,gender,bornAt,diedAt,birthOrder,relationshipType,profession,phone,email,address,location\n'
+      var csv = 'parentNumber,number,preferredName,legalName,gender,bornAt,deceased,diedAt,birthOrder,relationshipType,profession,phone,email,address,location\n'
 
       var hiddenElement = document.createElement('a')
       hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(csv)
