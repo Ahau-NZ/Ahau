@@ -32,7 +32,7 @@
                 <slot name="search">
                   <v-text-field
                     v-model="formData.preferredName"
-                    label="Preferred name"
+                    label="First name / Preferred name"
                     v-bind="customProps"
                     outlined
                   />
@@ -56,7 +56,7 @@
               >
                 <v-text-field
                   v-model="formData.altNames.value[index]"
-                  :label="`Alternative name ${index + 1}`"
+                  :label="`Nick name / Alternative name`"
                   :append-icon="readonly ? '' : 'mdi-delete'"
                   @click:append="removeAltName(formData.altNames.value[index], index)"
                   readonly
@@ -76,7 +76,7 @@
               >
                 <v-text-field
                   v-model="formData.altNames.add[index]"
-                  :label="`Alternative name ${index + 1}`"
+                  :label="`Nick name / Alternative name ${index + 1}`"
                   append-icon="mdi-delete"
                   @click:append="removeAltNameField(index)"
                   v-bind="customProps"
