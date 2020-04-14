@@ -44,6 +44,12 @@ function person (d) {
     errorObj.isError = true
     return errorObj
   }
+  if (!isEmpty(d.deceased) && (d.deceased !== 'yes')) {
+    console.log('deceased entered incorrectly for ' + d.preferredName)
+    errorObj.msg = 'deceased entered incorretly for ' + d.preferredName
+    errorObj.isError = true
+    return errorObj
+  }
   // no errors
   errorObj = {
     msg: [],

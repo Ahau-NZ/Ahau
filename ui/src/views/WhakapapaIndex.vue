@@ -357,6 +357,7 @@ export default {
       }
     },
     async buildFromFile (csv) {
+      console.log('csv: ', csv)
       // create profile for each person
       var profilesArray = await this.createProfiles(csv)
       profilesArray['columns'] = this.columns
@@ -380,25 +381,6 @@ export default {
     },
 
     async createProfiles (csv) {
-      // parse csv text into a an array
-      // var csv = d3.csvParse(data, function (d) {
-      //   if (!isEmpty(d.number))
-      //   return {
-      //     parentNumber: d.parentNumber,
-      //     number: d.number,
-      //     preferredName: d.preferredName,
-      //     legalName: d.legalName,
-      //     gender: d.gender,
-      //     bornAt: d.bornAt.split(/\//).reverse().join('/'),
-      //     diedAt: d.diedAt.split(/\//).reverse().join('/'),
-      //     birthOrder: Number(d.birthOrder),
-      //     contact: d.contact,
-      //     location: d.location,
-      //     profession: d.profession,
-      //     relationshipType: d.relationshipType ? d.relationshipType : 'birth'
-      //   }
-      // })
-      // store the titles of each column
       this.columns = csv.columns
 
       // create a profile for each person and add the created id to the person and parse back to profilesArray
@@ -414,12 +396,20 @@ export default {
     },
 
     async addPerson ($event) {
+      console.log($event)
       let person = {}
       Object.entries($event).map(([key, value]) => {
         if (!isEmpty($event[key])) {
-          person[key] = value
+          if (key === 'birthOrder') {
+            person[key] = parseInt(value)
+          } else if (key === 'deceased' && value === 'yes') {
+            person[key] = true
+          } else {  
+            person[key] = value
+          }
         }
       })
+      console.log('person: ', person)
       try {
         var { id } = $event
         id = await this.createProfile(person)
@@ -466,7 +456,8 @@ export default {
       description,
       location,
       profession,
-      contact
+      contact,
+      deceased
     }) {
       const res = await this.$apollo.mutate({
         mutation: gql`
@@ -491,6 +482,7 @@ export default {
             location,
             profession,
             contact,
+            deceased,
             recps: [this.whoami.feedId] // TODO change this for groups
           }
         }
