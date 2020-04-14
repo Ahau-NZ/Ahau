@@ -171,7 +171,7 @@
                         <!-- Mobile: Editing: Perferred Name -->
                         <v-text-field
                           v-model="formData.preferredName"
-                          label="Preferred name"
+                          label="First name / Preferred name"
                           v-bind="customProps"
                           outlined
                         />
@@ -621,7 +621,7 @@
                         <!-- Desktop: Editing: Perferred Name -->
                         <v-text-field
                           v-model="formData.preferredName"
-                          label="Preferred name"
+                          label="First name / Preferred name"
                           v-bind="customProps"
                           outlined
                         />

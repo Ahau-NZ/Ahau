@@ -14,7 +14,7 @@
               :items="generateSuggestions"
               item-value="id"
               item-text="id"
-              label="Preferred name"
+              label="First name / Preferred name"
               :menu-props="{ light: true }"
               :clearable="hasSelection"
               append-icon=""
