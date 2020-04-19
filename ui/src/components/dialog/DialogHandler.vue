@@ -21,7 +21,7 @@
         @new="toggleDialog('new-node', $event, 'view-edit-node')"
         @submit="updateProfile($event)"
         @delete="toggleDialog('delete-node', null, null)"
-        @open-profile="$emit('set', $event)"
+        @open-profile="setSelectedProfile($event)"
         :view="view"
       />
     </div>
@@ -126,7 +126,9 @@ export default {
       validator: (val) => [
         'parent', 'child', 'sibling'
       ].includes(val)
-    }
+    },
+    loadDescendants: Function,
+    setSelectedProfile: Function
   },
   data () {
     return {
@@ -211,7 +213,8 @@ export default {
             if (res.data) {
               this.$emit('refreshWhakapapa')
               if (this.isActive('view-edit-node')) {
-                this.$emit('set', this.selectedProfile.id)
+                const profile = await this.loadDescendants(this.selectedProfile.id)
+                this.setSelectedProfile(profile)
               }
               return
             } else {
@@ -280,7 +283,8 @@ export default {
         }
 
         if (this.isActive('view-edit-node')) {
-          this.$emit('set', this.selectedProfile.id)
+          const profile = await this.loadDescendants(this.selectedProfile.id)
+          this.setSelectedProfile(profile)
         }
       } catch (err) {
         throw err
@@ -402,8 +406,8 @@ export default {
         console.error('failed to update profile', res)
         return
       }
-      await this.$emit('load', profileId)
-      this.$emit('set', profileId)
+      const profile = await this.loadDescendants(profileId)
+      this.setSelectedProfile(profile)
     },
     async removeProfile (deleteOrIgnore) {
       if (deleteOrIgnore === 'delete') {

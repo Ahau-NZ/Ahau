@@ -10,7 +10,7 @@
           :node="partner"
           :nonFocusedPartners="nonFocusedPartners"
           @change-focus="$emit('change-focus', partner.data.id)"
-          @open-context-menu="$emit('open-context-menu', $event)"
+          @open-context-menu="openMenu($event, partner.data)"
         />
       </g>
     </g>
@@ -40,7 +40,7 @@
       <g
         class="menu-button"
         v-else
-        @click.stop="openMenu($event, profile.id)"
+        @click.stop="openMenu($event, profile)"
         :transform="`translate(${1.4 * radius}, ${1.4 * radius})`"
       >
         <circle
@@ -77,7 +77,7 @@
 
       <g
         class="menu-button"
-        @click.stop="openMenu($event, profile.id)"
+        @click.stop="openMenu($event, profile)"
         :transform="partnerMenuTranslate"
       >
         <circle
@@ -200,8 +200,8 @@ export default {
     click () {
       this.$emit('click')
     },
-    openMenu ($event, profileId) {
-      this.$emit('open-context-menu', { event, profileId })
+    openMenu ($event, profile) {
+      this.$emit('open-context-menu', { event, profile })
     },
     getPartners () {
       var leftCount = 0

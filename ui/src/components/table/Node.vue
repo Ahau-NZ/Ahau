@@ -1,6 +1,6 @@
 <template>
 <svg :width="width - 50">
-  <g :id="node.nodeId" :style="groupStyle">
+  <g :id="node.id" :style="groupStyle">
     <!-- recursion of partners (first so they're drawing in background) -->
     <!-- <g v-if="!profile.isCollapsed">
       <g v-for="partner in partners" :key="partner.nodeId">
@@ -34,7 +34,7 @@
       />
       <g
         class="menu-button"
-        @click.stop="openMenu($event, profile.id)"
+        @click.stop="openMenu($event, profile)"
         :transform="`translate(${1.4 * radius}, ${1.4 * radius})`"
       >
         <circle
@@ -165,8 +165,8 @@ export default {
     click () {
       this.$emit('click')
     },
-    openMenu ($event, profileId) {
-      this.$emit('open-context-menu', { event, profileId })
+    openMenu ($event, profile) {
+      this.$emit('open-context-menu', { event, profile })
     },
     getPartners () {
       var leftCount = 0

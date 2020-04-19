@@ -152,6 +152,7 @@ export default {
           whakapapaViews {
             id
             name
+            focus
             description
             image {
               uri

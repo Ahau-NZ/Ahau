@@ -1094,8 +1094,8 @@ export default {
       this.formData = defaultData(this.profile)
       this.toggleEdit()
     },
-    openProfile (profileId) {
-      this.$emit('open-profile', profileId)
+    openProfile (profile) {
+      this.$emit('open-profile', profile)
     },
     toggleNew (type) {
       this.$emit('new', type)

@@ -75,7 +75,7 @@
 
       <Tree
         class="tree"
-        v-if="whakapapa.tree"
+        v-if="whakapapa.tree && !loading"
         :view="whakapapaView"
         :currentFocus="currentFocus"
         :getRelatives="getRelatives"
@@ -88,7 +88,7 @@
         @change-focus="changeFocus($event)"
       />
       <Table
-        v-if="whakapapa.table"
+        v-if="whakapapa.table && !loading"
         ref="table"
         :filter="filter"
         :flatten="flatten"
@@ -100,7 +100,6 @@
         @open-context-menu="openContextMenu($event)"
         :searchNodeId="searchNodeId"
       />
-
     </v-container >
 
     <vue-context ref="menu" class="px-0"  >
@@ -128,9 +127,9 @@
       :type.sync="dialog.type"
       :selectedProfile="selectedProfile"
       :view="whakapapaView"
-      @load="loadDescendants($event)"
+      :loadDescendants="loadDescendants"
       @updateFocus="updateFocus($event)"
-      @set="setSelectedProfile($event)"
+      :setSelectedProfile="setSelectedProfile"
       @change-focus="changeFocus($event)"
       @newAncestor="showNewAncestors($event)"
       :nestedWhakapapa="nestedWhakapapa"
@@ -196,6 +195,8 @@ export default {
   },
   data () {
     return {
+      loading: true,
+      nestedWhakapapa: {},
       overflow: 'false',
       pan: 0,
       search: false,
@@ -222,7 +223,7 @@ export default {
       // a dictionary which maps profileIds > profiles
       // this is a store for lookups, and from which we build up nestedWhakapapa
 
-      relationshipLinks: [], // shows relationship information between two profiles -> reference using parentId-childId as the key
+      relationshipLinks: new Map(), // shows relationship information between two profiles -> reference using parentId-childId as the key
 
       recordQueue: [],
       processingQueue: false,
@@ -293,28 +294,39 @@ export default {
         this.focus = newValue
       }
     },
-    nestedWhakapapa () {
-      var startingProfile = this.profiles[this.currentFocus]
-      if (!startingProfile) {
-        return {
-          preferredName: 'Loading',
-          gender: 'unknown',
-          children: [],
-          parents: []
-        }
-      }
+    // nestedWhakapapa () {
+    //   var startingProfile = this.profiles[this.currentFocus]
+    //   if (!startingProfile) {
+    //     return {
+    //       preferredName: 'Loading',
+    //       gender: 'unknown',
+    //       children: [],
+    //       parents: []
+    //     }
+    //   }
 
-      return tree.hydrate(startingProfile, this.profiles)
-    }
+    //   return tree.hydrate(startingProfile, this.profiles)
+    // }
   },
   watch: {
     'currentFocus': async function (newFocus) {
       if (newFocus) {
-        await this.loadDescendants(newFocus)
+        this.loading = true
+        var startTime = Date.now()
+        console.log('start ', startTime)
+        this.nestedWhakapapa = await this.loadDescendants(newFocus)
+        this.loading = false
+        var endTime = Date.now()
+        console.log('end ', endTime)
+
+        var timeElapsed = (endTime - startTime) / 1000
+        console.log('timeElapsed (sec)', timeElapsed)
       }
     },
     processingQueue: function (isProcessing) {
       if (!isProcessing) return
+
+      console.log('START')
 
       while (this.recordQueue.length) {
         const record = this.recordQueue.shift()
@@ -348,6 +360,7 @@ export default {
         this.profiles = Object.assign({}, this.profiles, output)
       }
 
+      console.log('END')
       this.processingQueue = false
     }
   },
@@ -508,55 +521,124 @@ export default {
         console.error(e)
       }
     },
+    // async loadDescendants (profileId) {
+    //   // fetch close whakapapa records for this profile
+    //   const record = await this.getRelatives(profileId)
+    //   if (!record) return
+
+    //   // if (whakapapaView.mode === 'descendants')
+
+    //   // filter ignored profiles
+    //   record.children = record.children.filter(this.isVisibleProfile)
+    //   record.parents = record.parents.filter(this.isVisibleProfile)
+
+    //   // follow the child-links and load the next generation
+    //   record.children.forEach(child => {
+    //     // get their ids
+    //     var info = {
+    //       relationshipId: child.relationshipId,
+    //       relationshipType: child.relationshipType,
+    //       parent: record.id,
+    //       child: child.profile.id
+    //     }
+    //     this.relationshipLinks[record.id + '-' + child.profile.id] = info // puts a link into links which can be referenced using parentId-childId
+
+    //     this.loadDescendants(child.profile.id)
+    //   })
+
+    //   // add this to queue of records to process and merge into graph
+    //   // so that we don't get collisions / overwrites
+    //   this.recordQueue = [...this.recordQueue, record]
+    //   if (!this.processingQueue) this.processingQueue = true
+    // },
     async loadDescendants (profileId) {
-      // fetch close whakapapa records for this profile
-      const record = await this.getRelatives(profileId)
-      if (!record) return
+      // calls person.fetchPerson which gets info about this person from the db
+      var person = await this.getRelatives(profileId)
 
-      // if (whakapapaView.mode === 'descendants')
+      // make sure every person has a partners and siblings array
+      person.partners = []
+      person.siblings = []
 
-      // filter ignored profiles
-      record.children = record.children.filter(this.isVisibleProfile)
-      record.parents = record.parents.filter(this.isVisibleProfile)
+      person.relationshipType = 'birth'
 
-      // follow the child-links and load the next generation
-      record.children.forEach(child => {
-        // get their ids
-        var info = {
-          relationshipId: child.relationshipId,
-          relationshipType: child.relationshipType,
-          parent: record.id,
-          child: child.profile.id
-        }
-        this.relationshipLinks[record.id + '-' + child.profile.id] = info // puts a link into links which can be referenced using parentId-childId
+      // filter out ignored profiles
+      person.children = person.children.filter(this.isVisibleProfile)
+      person.parents = person.parents.filter(this.isVisibleProfile)
 
-        this.loadDescendants(child.profile.id)
+      // for each of my children
+      person.children = await Promise.all(person.children.map(async child => {
+        // load their descendants
+        const childProfile = await this.loadDescendants(child.profile.id)
+
+        // look at their parents
+        childProfile.parents.forEach(parent => {
+          // only look at ones that arent me OR i havent already seen
+          if (parent.id !== person.id && !person.partners.find(d => d.id === parent.id)) {
+            person.partners.push(parent)
+          }
+        })
+
+        this.relationshipLinks.set(
+          person.id + '-' + childProfile.id, {
+            parent: person.id,
+            child: childProfile.id,
+            relationshipId: child.relationshipId,
+            relationshipType: child.relationshipType
+          }
+        )
+
+        return childProfile
+      }))
+
+      person.children = person.children.sort((a, b) => {
+        return a.birthOrder - b.birthOrder
       })
 
-      // add this to queue of records to process and merge into graph
-      // so that we don't get collisions / overwrites
-      this.recordQueue = [...this.recordQueue, record]
-      if (!this.processingQueue) this.processingQueue = true
-    },
-    collapseNode (profileId) {
-      const profile = this.profiles[profileId]
-      const { children, _children = [] } = profile
+      person.parents = await Promise.all(person.parents.map(async parent => {
+        // load their profile
+        const parentProfile = await this.getRelatives(parent.profile.id)
 
-      if (children.length === 0 && _children.length === 0) return
+        // look at their children
+        parentProfile.children.forEach(child => {
+          // only look at ones that arent me OR i havent already seen
+          if (child.profile.id !== person.id && !person.siblings.find(d => d.id === child.profile.id)) {
+            person.siblings.push(child.profile)
+          }
+        })
 
-      this.profiles[profileId] = Object.assign(profile, {
-        isCollapsed: !profile.isCollapsed,
-        _children: children,
-        children: _children
-      })
+        this.relationshipLinks.set(
+          parentProfile.id + '-' + person.id, {
+            parent: parentProfile.id,
+            child: person.id,
+            relationshipId: parent.relationshipId,
+            relationshipType: parent.relationshipType
+          }
+        )
+
+        return parentProfile
+      }))
+
+      person.partners = await Promise.all(person.partners.map(async partner => {
+        const partnerProfile = await this.getRelatives(partner.id)
+
+        partnerProfile.children = partnerProfile.children.map(child => {
+          const exists = person.children.find(d => d.id === child.profile.id)
+          if (exists) return exists
+          return child.profile
+        })
+
+        return partnerProfile
+      }))
+
+      return person
     },
     // contextMenu //////////////////////////
     // TODO - extract all this
-    openContextMenu ({ event, profileId }) {
+    openContextMenu ({ event, profile }) {
       if (this.dialog.view) {
         this.toggleView()
       }
-      this.setSelectedProfile(profileId)
+      this.setSelectedProfile(profile)
       this.$refs.menu.open(event)
     },
     toggleFilter () {
@@ -586,31 +668,10 @@ export default {
         throw err
       }
     },
-    async setSelectedProfile (profileId) {
-      await this.loadDescendants(profileId)
+    async setSelectedProfile (profile) {
+      console.log('selectedProfile', profile)
 
-      // populates children, parents, siblings, partners from what ever is in this.profiles
-      this.selectedProfile = tree.hydrate(
-        this.profiles[profileId],
-        this.profiles
-      )
-      if (!this.selectedProfile.parents || this.selectedProfile.parents.length === 0) return
-
-      this.selectedProfile.parents = await Promise.all(
-        this.selectedProfile.parents.map(async parent => {
-          await this.loadDescendants(parent.id)
-          var profile = this.profiles[parent.id]
-          return profile
-        })
-      )
-
-      this.selectedProfile = tree.hydrate(
-        this.profiles[profileId],
-        this.profiles
-      )
-      var mainParent = this.selectedProfile.parents[0]
-
-      this.selectedProfile.relationship = this.relationshipLinks[mainParent.id + '-' + this.selectedProfile.id]
+      this.selectedProfile = profile
     },
     // save whakapapa changes
     async updateWhakapapa (whakapapaChanges) {

@@ -19,7 +19,7 @@
           :transform="`translate(${treeX - nodeRadius} ${treeY - nodeRadius})`"
           ref="tree"
         >
-          <g v-for="node in nodes" :key="node.data.id" class="node">
+          <g v-for="node in nodes" :key="node.id" class="node">
             <Node
               :node="node"
               :radius="nodeRadius"
@@ -84,7 +84,7 @@ export default {
       required: true
     },
     relationshipLinks: {
-      type: Array
+      type: Map
     },
     searchNodeId: {
       type: String
@@ -236,7 +236,7 @@ export default {
         .map((d, i) => {
           this.updateNode(d.data.id)
           return {
-            nodeId: `node-${i}`,
+            id: `tree-node-${i}-${this.view.id}-${d.data.id}`,
             children: d.children,
             data: d.data,
             depth: d.depth,
@@ -255,7 +255,7 @@ export default {
         .links() // returns the array of links
         .map((d, i) => { // returns a new custom object for each link
           return {
-            id: `tree-link-${i}-${i + 1}`,
+            id: `tree-link-${i}-${this.view.id}-${d.source.data.id}-${d.target.data.id}`,
             index: i,
             relationshipType: d.target.data.relationshipType ? d.target.data.relationshipType[0] : '',
             // coordinates from drawing lines/links from Parent(x1,y1) to Child(x2,y2)
@@ -263,7 +263,7 @@ export default {
             x2: d.target.x, // centre x position of child node
             y1: d.source.y, // centre y position of the parent node
             y2: d.target.y, // centre y position of the child node
-            class: this.relationshipLinks[d.source.data.id + '-' + d.target.data.id].relationshipType !== 'birth' ? 'nonbiological' : '',
+            class: this.relationshipLinks.get(d.source.data.id + '-' + d.target.data.id).relationshipType !== 'birth' ? 'nonbiological' : '',
             style: {
               fill: 'none',
               stroke: this.pathStroke(d.source.data.id, d.target.data.id)
@@ -333,8 +333,15 @@ export default {
       }
     },
     collapse (node) {
-      this.$emit('collapse-node', node.data.id)
-      //  TODO smooth ease-in-out transitions of children using d3 transitions
+      const { children, _children = [] } = node.data
+
+      if (children.length === 0 && _children.length === 0) return
+
+      node = Object.assign(node, {
+        isCollapsed: !node.isCollapsed,
+        _children: children,
+        children: _children
+      })
     },
     changeFocus (profileId, node) {
       this.loading = true
