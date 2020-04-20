@@ -413,9 +413,9 @@ export default {
       }
 
       // what do we do with this node if its a partner?
-
+      console.log('SELECT', this.selectedProfile)
       // reload the selectedProfiles personal details
-      const node = await this.loadKnownFamily(true, this.selectedProfile)
+      var node = await this.loadKnownFamily(true, this.selectedProfile)
 
       // apply the changes to the nestedWhakapapa
       if (this.selectedProfile.isPartner) {

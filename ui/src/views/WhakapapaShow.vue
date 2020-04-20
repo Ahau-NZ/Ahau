@@ -431,6 +431,8 @@ export default {
         profile = person
       }
 
+      console.log('children', children)
+
       // populate it with what we do know about family members
       profile = Object.assign(profile, {
         children: children || [],
@@ -439,10 +441,11 @@ export default {
         partners: partners || []
       })
 
-      if (profile.children.length === 0) return profile
+      if (!profile.children || profile.children.length === 0) return profile
 
       // // change my profile in all of my children
       profile.children = await Promise.all(profile.children.map(async child => {
+        if (!child.parents) return child
         child.parents = child.parents.map(parent => {
           if (parent.id === person.id) {
             return profile
@@ -702,6 +705,7 @@ export default {
       }
     },
     async setSelectedProfile (profile) {
+      console.log('setselected', profile)
       // check the type of profile we received
       if (typeof profile === 'object') {
         // set it directly
