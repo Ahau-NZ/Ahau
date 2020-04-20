@@ -29,9 +29,6 @@ export default new Vuex.Store({
 function update (nestedWhakapapa, node) {
   if (!nestedWhakapapa) return null
   if (nestedWhakapapa.id === node.id) {
-    console.log('found')
-    console.log('nestedWhakapapa', nestedWhakapapa)
-    console.log('node', node)
     nestedWhakapapa = node
     return nestedWhakapapa
   }
@@ -45,3 +42,20 @@ function update (nestedWhakapapa, node) {
 
   return nestedWhakapapa
 }
+
+// function find (nestedWhakapapa, id) {
+//   if (!nestedWhakapapa) return null
+//   if (nestedWhakapapa.id === node.id) {
+//     nestedWhakapapa = node
+//     return nestedWhakapapa
+//   }
+
+//   nestedWhakapapa.children = nestedWhakapapa.children.map(child => {
+//     var found = update(child, node)
+//     if (found) return found
+
+//     return child
+//   })
+
+//   return nestedWhakapapa
+// }

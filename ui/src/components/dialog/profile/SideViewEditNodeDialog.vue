@@ -1095,7 +1095,7 @@ export default {
       this.toggleEdit()
     },
     openProfile (profile) {
-      this.$emit('open-profile', profile)
+      this.$emit('open-profile', profile.id)
     },
     toggleNew (type) {
       this.$emit('new', type)

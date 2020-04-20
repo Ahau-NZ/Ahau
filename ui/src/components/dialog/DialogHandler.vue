@@ -387,7 +387,8 @@ export default {
             console.error('failed to update child link', linkRes)
             return
           }
-          this.$emit('load', this.selectedProfile.relationship.parent)
+          // this.$emit('load', this.selectedProfile.relationship.parent)
+          console.error('not loading changes') // temporary message so i know to fix this
         } catch (err) {
           throw err
         }

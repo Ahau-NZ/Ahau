@@ -451,8 +451,8 @@ export default {
         })
 
         // do the same for there children and so on...
-        const c = await this.loadKnownFamily(false, child)
-        return c
+        // const c = await this.loadKnownFamily(false, child)
+        return child
       }))
 
       return profile
@@ -702,9 +702,39 @@ export default {
       }
     },
     async setSelectedProfile (profile) {
-      console.log('selectedProfile', profile)
+      if (typeof profile === 'object') {
+        // set it directly
+        this.selectedProfile = profile
+        console.log('direct set', profile)
+      } else if (typeof profile === 'string') {
+        // need to find the profile in this whakapapa
+        var profileFound = this.find(this.nestedWhakapapa, profile)
+        console.log('profileFound', profileFound)
 
-      this.selectedProfile = profile
+        if (!profileFound) {
+          // lets load descendants of them instead
+          this.selectedProfile = await this.loadDescendants(profile)
+          
+          // incase any details are updated we dont want to do 
+          // unnecessary computations
+          this.selectedProfile.fromOtherWhakapapa = true
+          return
+        }
+        this.selectedProfile = profileFound
+      }
+    },
+    find (nestedWhakapapa, id) {
+      if (!nestedWhakapapa) return null
+      if (nestedWhakapapa.id === id) {
+        return nestedWhakapapa
+      }
+
+      for (var child of nestedWhakapapa.children) {
+        var found = this.find(child, id)
+        if (found) return found
+      }
+
+      return null
     },
     // save whakapapa changes
     async updateWhakapapa (whakapapaChanges) {
