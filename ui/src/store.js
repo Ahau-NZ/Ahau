@@ -19,14 +19,20 @@ export default new Vuex.Store({
     }
   },
   actions: {
-    updateNestedWhakapapa ({ state, commit }, node) {
-      const whakapapa = update(state.nestedWhakapapa, node)
+    updateNode ({ state, commit }, node) {
+      const whakapapa = updateNode(state.nestedWhakapapa, node)
       commit('setNestedWhakapapa', whakapapa)
+    },
+    deleteNode ({ state, commit }, id) {
+      const whakapapa = deleteNode(state.nestedWhakapapa, id)
+      console.log(whakapapa)
+
+      //commit('setNestedWhakapapa', whakapapa)
     }
   }
 })
 
-function update (nestedWhakapapa, node) {
+function updateNode (nestedWhakapapa, node) {
   if (!nestedWhakapapa) return null
   if (nestedWhakapapa.id === node.id) {
     nestedWhakapapa = node
@@ -34,11 +40,35 @@ function update (nestedWhakapapa, node) {
   }
 
   nestedWhakapapa.children = nestedWhakapapa.children.map(child => {
-    var found = update(child, node)
+    var found = updateNode(child, node)
     if (found) return found
 
     return child
   })
+
+  return nestedWhakapapa
+}
+
+function deleteNode (nestedWhakapapa, id) {
+  if (!nestedWhakapapa) return null
+  if (nestedWhakapapa.id === id) {
+    // found the node we need to delete
+    return null
+  }
+
+  var childToDelete = null
+
+  nestedWhakapapa.children.some((child, i) => {
+    var node = deleteNode(child, id)
+    if (!node) {
+      childToDelete = i
+      return true
+    }
+  })
+
+  if (childToDelete) {
+    nestedWhakapapa.children.splice(childToDelete, 1)
+  }
 
   return nestedWhakapapa
 }

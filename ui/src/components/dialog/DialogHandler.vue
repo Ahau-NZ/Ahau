@@ -154,7 +154,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['updateNestedWhakapapa']),
+    ...mapActions(['updateNode', 'deleteNode']),
     isActive (type) {
       if (type === this.dialog) {
         return true
@@ -411,10 +411,14 @@ export default {
         console.error('failed to update profile', res)
         return
       }
+
+      // reload the selectedProfiles personal details
       const node = await this.loadKnownFamily(true, this.selectedProfile)
 
-      this.updateNestedWhakapapa(node)
+      // apply the changes to the nestedWhakapapa
+      this.updateNode(node)
 
+      // reset the selectedProfile to the newly changed one
       this.setSelectedProfile(node)
     },
     async removeProfile (deleteOrIgnore) {
@@ -476,9 +480,7 @@ export default {
         return
       }
 
-      this.$emit('update:profiles', {})
-      this.$emit('load', this.view.focus)
-      // TODO - find a smaller subset to reload!
+      this.deleteNode(this.selectedProfile.id)
     },
     async getSuggestions ($event) {
       if (!$event) {
