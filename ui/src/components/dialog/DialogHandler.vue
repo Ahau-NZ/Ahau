@@ -85,6 +85,7 @@ import { PERMITTED_PROFILE_ATTRS, PERMITTED_RELATIONSHIP_ATTRS } from '@/lib/pro
 import tree from '@/lib/tree-helpers'
 
 import * as d3 from 'd3'
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   name: 'DialogHandler',
@@ -103,9 +104,6 @@ export default {
       type: Object
     },
     view: {
-      type: Object
-    },
-    nestedWhakapapa: {
       type: Object
     },
     profiles: {
@@ -128,6 +126,7 @@ export default {
       ].includes(val)
     },
     loadDescendants: Function,
+    loadKnownFamily: Function,
     setSelectedProfile: Function
   },
   data () {
@@ -143,6 +142,7 @@ export default {
     whoami: whoami
   },
   computed: {
+    ...mapGetters(['nestedWhakapapa']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -154,6 +154,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['updateNestedWhakapapa']),
     isActive (type) {
       if (type === this.dialog) {
         return true
@@ -213,8 +214,10 @@ export default {
             if (res.data) {
               this.$emit('refreshWhakapapa')
               if (this.isActive('view-edit-node')) {
-                const profile = await this.loadDescendants(this.selectedProfile.id)
-                this.setSelectedProfile(profile)
+                const nestedWhakapapa = await this.loadDescendants(this.view.focus)
+
+                // WARNING: this is going to set the top of the tree to this profile
+                this.setNestedWhakapapa(nestedWhakapapa)
               }
               return
             } else {
@@ -283,8 +286,9 @@ export default {
         }
 
         if (this.isActive('view-edit-node')) {
-          const profile = await this.loadDescendants(this.selectedProfile.id)
-          this.setSelectedProfile(profile)
+          const nestedWhakapapa = await this.loadDescendants(this.view.focus)
+          // WARNING: this is going to set the top of the tree to this profile
+          this.setNestedWhakapapa(nestedWhakapapa)
         }
       } catch (err) {
         throw err
@@ -406,8 +410,11 @@ export default {
         console.error('failed to update profile', res)
         return
       }
-      const profile = await this.loadDescendants(profileId)
-      this.setSelectedProfile(profile)
+      const node = await this.loadKnownFamily(true, this.selectedProfile)
+
+      this.updateNestedWhakapapa(node)
+
+      this.setSelectedProfile(node)
     },
     async removeProfile (deleteOrIgnore) {
       if (deleteOrIgnore === 'delete') {

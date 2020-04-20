@@ -79,7 +79,6 @@
         :view="whakapapaView"
         :currentFocus="currentFocus"
         :getRelatives="getRelatives"
-        :nestedWhakapapa="nestedWhakapapa"
         :relationshipLinks="relationshipLinks"
         @load-descendants="loadDescendants($event)"
         @collapse-node="collapseNode($event)"
@@ -128,11 +127,11 @@
       :selectedProfile="selectedProfile"
       :view="whakapapaView"
       :loadDescendants="loadDescendants"
+      :loadKnownFamily="loadKnownFamily"
       @updateFocus="updateFocus($event)"
       :setSelectedProfile="setSelectedProfile"
       @change-focus="changeFocus($event)"
       @newAncestor="showNewAncestors($event)"
-      :nestedWhakapapa="nestedWhakapapa"
       :profiles.sync="profiles"
       @updateWhakapapa="updateWhakapapa($event)"
       @deleteWhakapapa="deleteWhakapapa"
@@ -166,6 +165,8 @@ import avatarHelper from '@/lib/avatar-helpers.js'
 import DialogHandler from '@/components/dialog/DialogHandler.vue'
 import findSuccessor from '@/lib/find-successor'
 
+import { mapGetters, mapMutations } from 'vuex'
+
 const saveWhakapapaViewMutation = input => (
   {
     mutation: gql`
@@ -196,7 +197,6 @@ export default {
   data () {
     return {
       loading: true,
-      nestedWhakapapa: {},
       overflow: 'false',
       pan: 0,
       search: false,
@@ -281,6 +281,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['nestedWhakapapa']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -293,20 +294,7 @@ export default {
       set: function (newValue) {
         this.focus = newValue
       }
-    },
-    // nestedWhakapapa () {
-    //   var startingProfile = this.profiles[this.currentFocus]
-    //   if (!startingProfile) {
-    //     return {
-    //       preferredName: 'Loading',
-    //       gender: 'unknown',
-    //       children: [],
-    //       parents: []
-    //     }
-    //   }
-
-    //   return tree.hydrate(startingProfile, this.profiles)
-    // }
+    }
   },
   watch: {
     'currentFocus': async function (newFocus) {
@@ -314,7 +302,9 @@ export default {
         this.loading = true
         var startTime = Date.now()
         console.log('start ', startTime)
-        this.nestedWhakapapa = await this.loadDescendants(newFocus)
+        const nestedWhakapapa = await this.loadDescendants(newFocus)
+        this.setNestedWhakapapa(nestedWhakapapa)
+
         this.loading = false
         var endTime = Date.now()
         console.log('end ', endTime)
@@ -365,6 +355,7 @@ export default {
     }
   },
   methods: {
+    ...mapMutations(['setNestedWhakapapa']),
     tableOverflow (width) {
       var show = width > screen.width
       this.overflow = show
@@ -425,6 +416,46 @@ export default {
         }
       }
       return this.getWhakapapaHead(record.parents[0].profile.id, type)
+    },
+    /*
+      makes changes of a person to all their decendants
+      without making calls to the db
+    */
+    async loadKnownFamily (loadProfile, person) {
+      const { children, parents, partners, siblings } = person
+      var profile = {}
+
+      if (loadProfile) {
+        profile = await this.getRelatives(person.id)
+      } else {
+        profile = person
+      }
+
+      // populate it with what we do know about family members
+      profile = Object.assign(profile, {
+        children: children || [],
+        parents: parents || [],
+        siblings: siblings || [],
+        partners: partners || []
+      })
+
+      if (profile.children.length === 0) return profile
+
+      // // change my profile in all of my children
+      profile.children = await Promise.all(profile.children.map(async child => {
+        child.parents = child.parents.map(parent => {
+          if (parent.id === person.id) {
+            return profile
+          }
+          return parent
+        })
+
+        // do the same for there children and so on...
+        const c = await this.loadKnownFamily(false, child)
+        return c
+      }))
+
+      return profile
     },
 
     async getRelatives (profileId) {
@@ -629,6 +660,8 @@ export default {
 
         return partnerProfile
       }))
+
+      if (this.selectedProfile && this.selectedProfile.id === person.id) this.selectedProfile = person
 
       return person
     },

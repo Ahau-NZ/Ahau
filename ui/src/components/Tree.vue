@@ -21,7 +21,7 @@
         >
           <g v-for="node in nodes" :key="node.id" class="node">
             <Node
-              :node="node"
+              :node.sync="node"
               :radius="nodeRadius"
               :nonFocusedPartners="nonFocusedPartners"
               @click="centerNode(node)"
@@ -64,18 +64,20 @@ import Link from './tree/Link.vue'
 
 import isEqual from 'lodash.isequal'
 
+import { mapGetters } from 'vuex'
+
 export default {
   props: {
-    nestedWhakapapa: {
-      type: Object,
-      default: () => ({
-        preferredName: 'Loading',
-        gender: 'unknown',
-        children: [],
-        parents: [],
-        nonFocusedPartner: false
-      })
-    },
+    // nestedWhakapapa: {
+    //   type: Object,
+    //   default: () => ({
+    //     preferredName: 'Loading',
+    //     gender: 'unknown',
+    //     children: [],
+    //     parents: [],
+    //     nonFocusedPartner: false
+    //   })
+    // },
     currentFocus: {
       type: String
     },
@@ -159,6 +161,7 @@ export default {
     this.zoom()
   },
   computed: {
+    ...mapGetters(['nestedWhakapapa']),
     pathNode () {
       if (this.searchNodeId === '') return null
       return this.root.descendants().find(d => {
@@ -243,7 +246,8 @@ export default {
             height: d.height,
             parent: d.parent,
             x: d.x,
-            y: d.y
+            y: d.y,
+            index: i
           }
         })
     },
@@ -333,15 +337,7 @@ export default {
       }
     },
     collapse (node) {
-      const { children, _children = [] } = node.data
-
-      if (children.length === 0 && _children.length === 0) return
-
-      node = Object.assign(node, {
-        isCollapsed: !node.isCollapsed,
-        _children: children,
-        children: _children
-      })
+      
     },
     changeFocus (profileId, node) {
       this.loading = true
@@ -372,6 +368,7 @@ export default {
 
       if (this.nodeCentered === source.data.id) {
         this.collapse(source)
+        return
       }
 
       this.nodeCentered = source.data.id

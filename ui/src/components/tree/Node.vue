@@ -125,6 +125,7 @@ import get from 'lodash.get'
 import avatarHelper from '@/lib/avatar-helpers.js'
 import { DECEASED_COLOUR, ALIVE_COLOUR } from '@/lib/constants.js'
 // import flower.svg from '@/src/assets'
+import clone from 'lodash.clonedeep'
 
 export default {
   name: 'Node',
