@@ -154,7 +154,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['updateNode', 'deleteNode']),
+    ...mapActions(['updateNode', 'deleteNode', 'updatePartnerNode']),
     isActive (type) {
       if (type === this.dialog) {
         return true
@@ -412,11 +412,17 @@ export default {
         return
       }
 
+      // what do we do with this node if its a partner?
+
       // reload the selectedProfiles personal details
       const node = await this.loadKnownFamily(true, this.selectedProfile)
 
       // apply the changes to the nestedWhakapapa
-      this.updateNode(node)
+      if (this.selectedProfile.isPartner) {
+        this.updatePartnerNode(node)
+      } else {
+        this.updateNode(node)
+      }
 
       // reset the selectedProfile to the newly changed one
       this.setSelectedProfile(node)

@@ -19,7 +19,13 @@ export default new Vuex.Store({
     }
   },
   actions: {
+    updatePartnerNode ({ state, commit }, node) {
+      console.log('updatePartnerNode')
+      const whakapapa = updatePartnerNode(state.nestedWhakapapa, node)
+      commit('setNestedWhakapapa', whakapapa)
+    },
     updateNode ({ state, commit }, node) {
+      console.log('updateNode')
       const whakapapa = updateNode(state.nestedWhakapapa, node)
       commit('setNestedWhakapapa', whakapapa)
     },
@@ -27,7 +33,7 @@ export default new Vuex.Store({
       const whakapapa = deleteNode(state.nestedWhakapapa, id)
       console.log(whakapapa)
 
-      //commit('setNestedWhakapapa', whakapapa)
+      // commit('setNestedWhakapapa', whakapapa)
     }
   }
 })
@@ -96,6 +102,47 @@ function deleteNode (nestedWhakapapa, id) {
     // remove that child
     nestedWhakapapa.children.splice(childIndex, 1)
   }
+
+  return nestedWhakapapa
+}
+
+function updatePartnerNode (nestedWhakapapa, node) {
+  // if the nestedWhakapapa has no value
+  // then we can search it
+  if (!nestedWhakapapa) return null
+
+  // if the nestedWhakapapa matches the node we are
+  // looking for, then look no further
+  var partnerIndex = -1
+  nestedWhakapapa.partners.some((d, i) => {
+    if (d.id === node.id) {
+      partnerIndex = i
+      return true
+    }
+  })
+
+  if (partnerIndex > -1) {
+    // partner was found so lets update their value
+    nestedWhakapapa.partners[partnerIndex] = node
+
+    // need to update the children as well
+    nestedWhakapapa.children = nestedWhakapapa.children.map(child => {
+      child.parents = child.parents.map(parent => {
+        if (parent.id === node.id) return node
+        return parent
+      })
+      return child
+    })
+
+    return nestedWhakapapa
+  }
+
+  // if this nestedWhakapapa partners didnt have the one we are looking for,
+  // try searching its children
+  nestedWhakapapa.children = nestedWhakapapa.children.map(child => {
+    // do the same for each child
+    return updatePartnerNode(child, node) // will either return a changed value or the same one
+  })
 
   return nestedWhakapapa
 }

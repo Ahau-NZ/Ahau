@@ -702,6 +702,7 @@ export default {
       }
     },
     async setSelectedProfile (profile) {
+      // check the type of profile we received
       if (typeof profile === 'object') {
         // set it directly
         this.selectedProfile = profile
@@ -709,17 +710,18 @@ export default {
       } else if (typeof profile === 'string') {
         // need to find the profile in this whakapapa
         var profileFound = this.find(this.nestedWhakapapa, profile)
-        console.log('profileFound', profileFound)
 
         if (!profileFound) {
           // lets load descendants of them instead
           this.selectedProfile = await this.loadDescendants(profile)
-          
-          // incase any details are updated we dont want to do 
+
+          // incase any details are updated we dont want to do
           // unnecessary computations
           this.selectedProfile.fromOtherWhakapapa = true
+          console.log('nonexisting set', this.selectedProfile)
           return
         }
+        console.log('existing set', profileFound)
         this.selectedProfile = profileFound
       }
     },

@@ -337,7 +337,7 @@ export default {
       }
     },
     collapse (node) {
-      
+
     },
     changeFocus (profileId, node) {
       this.loading = true
