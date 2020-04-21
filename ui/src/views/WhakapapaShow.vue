@@ -128,6 +128,7 @@
       :view="whakapapaView"
       :loadDescendants="loadDescendants"
       :loadKnownFamily="loadKnownFamily"
+      :getRelatives="getRelatives"
       @updateFocus="updateFocus($event)"
       :setSelectedProfile="setSelectedProfile"
       @change-focus="changeFocus($event)"
@@ -302,7 +303,7 @@ export default {
         this.loading = true
         var startTime = Date.now()
         console.log('start ', startTime)
-        const nestedWhakapapa = await this.loadDescendants(newFocus)
+        const nestedWhakapapa = await this.loadDescendants(newFocus, '')
         this.setNestedWhakapapa(nestedWhakapapa)
 
         this.loading = false
@@ -460,7 +461,6 @@ export default {
 
       return profile
     },
-
     async getRelatives (profileId) {
       const request = {
         query: gql`
@@ -585,13 +585,15 @@ export default {
     //   this.recordQueue = [...this.recordQueue, record]
     //   if (!this.processingQueue) this.processingQueue = true
     // },
-    async loadDescendants (profileId) {
+    async loadDescendants (profileId, path) {
       // calls person.fetchPerson which gets info about this person from the db
       var person = await this.getRelatives(profileId)
 
       // make sure every person has a partners and siblings array
       person.partners = []
       person.siblings = []
+
+      person.path = path
 
       person.relationshipType = 'birth'
 
@@ -600,10 +602,12 @@ export default {
       person.parents = person.parents.filter(this.isVisibleProfile)
 
       // for each of my children
-      person.children = await Promise.all(person.children.map(async child => {
-        // load their descendants
-        const childProfile = await this.loadDescendants(child.profile.id)
+      person.children = await Promise.all(person.children.map(async (child, i) => {
+        var childPath = `children[${i}]`
+        if (path) childPath = person.path + '.' + childPath
 
+        // load their descendants
+        const childProfile = await this.loadDescendants(child.profile.id, childPath)
         // look at their parents
         childProfile.parents.forEach(parent => {
           // only look at ones that arent me OR i havent already seen
@@ -652,9 +656,11 @@ export default {
         return parentProfile
       }))
 
-      person.partners = await Promise.all(person.partners.map(async partner => {
+      person.partners = await Promise.all(person.partners.map(async (partner, i) => {
+        var partnerPath = `partners[${i}]`
+        if (path) partnerPath = person.path + '.' + partnerPath
         const partnerProfile = await this.getRelatives(partner.id)
-
+        partnerProfile.path = partnerPath
         partnerProfile.children = partnerProfile.children.map(child => {
           const exists = person.children.find(d => d.id === child.profile.id)
           if (exists) return exists
@@ -665,7 +671,6 @@ export default {
       }))
 
       if (this.selectedProfile && this.selectedProfile.id === person.id) this.selectedProfile = person
-
       return person
     },
     // contextMenu //////////////////////////

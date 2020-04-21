@@ -238,6 +238,7 @@ export default {
         .descendants() // returns the array of descendants starting with the root node, then followed by each child in topological order
         .map((d, i) => {
           this.updateNode(d.data.id)
+
           return {
             id: `tree-node-${i}-${this.view.id}-${d.data.id}`,
             children: d.children,
@@ -247,7 +248,8 @@ export default {
             parent: d.parent,
             x: d.x,
             y: d.y,
-            index: i
+            index: i,
+            path: d.data.path
           }
         })
     },

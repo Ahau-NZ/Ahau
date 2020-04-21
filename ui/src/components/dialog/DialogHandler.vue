@@ -85,7 +85,7 @@ import { PERMITTED_PROFILE_ATTRS, PERMITTED_RELATIONSHIP_ATTRS } from '@/lib/pro
 import tree from '@/lib/tree-helpers'
 
 import * as d3 from 'd3'
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters, mapActions, mapMutations } from 'vuex'
 
 export default {
   name: 'DialogHandler',
@@ -127,7 +127,8 @@ export default {
     },
     loadDescendants: Function,
     loadKnownFamily: Function,
-    setSelectedProfile: Function
+    setSelectedProfile: Function,
+    getRelatives: Function
   },
   data () {
     return {
@@ -154,7 +155,8 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['updateNode', 'deleteNode', 'updatePartnerNode', 'addChild']),
+    ...mapMutations(['setNestedWhakapapa']),
+    ...mapActions(['updateNode', 'deleteNode', 'updatePartnerNode', 'addChild', 'addParent']),
     isActive (type) {
       if (type === this.dialog) {
         return true
@@ -250,7 +252,6 @@ export default {
 
             var profile = await this.loadDescendants(child)
 
-            // add as a sibling
             profile.parents[0] = this.selectedProfile
 
             // add child to parent
@@ -272,13 +273,23 @@ export default {
               }
             }
             if (child === this.view.focus) {
+              console.log('updateFocus')
               // in this case we're updating the top of the graph, we update view.focus to that new top parent
               this.$emit('updateFocus', parent)
             // load new parent on partner whakapapa links
             } else if (this.selectedProfile.parents.length < 1) {
+              console.log('changeFocus')
               this.$emit('change-focus', parent)
             } else {
-              await this.$emit('load', child)
+              // takes too long to use load descendants so we are going to
+              // load the profile insteaad
+              const profile = await this.getRelatives(parent)
+              console.log('parent profile', profile)
+              if (profile.children.length === 1) {
+                profile.children[0] = this.selectedProfile
+              }
+
+              this.addParent({ child: this.selectedProfile, parent: profile })
             }
             break
           case 'sibling':
@@ -429,7 +440,7 @@ export default {
       if (this.selectedProfile.isPartner) {
         this.updatePartnerNode(node)
       } else {
-        this.updateNode(node)
+        this.updateNode({ node, path: this.selectedProfile.path })
       }
 
       // reset the selectedProfile to the newly changed one

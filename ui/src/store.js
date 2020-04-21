@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import set from 'lodash.set'
 
 Vue.use(Vuex)
 
@@ -24,9 +25,14 @@ export default new Vuex.Store({
       const whakapapa = updatePartnerNode(state.nestedWhakapapa, node)
       commit('setNestedWhakapapa', whakapapa)
     },
-    updateNode ({ state, commit }, node) {
-      console.log('updateNode')
-      const whakapapa = updateNode(state.nestedWhakapapa, node)
+    updateNode ({ state, commit }, { node, path }) {
+      // var whakapapa
+      // if (path) {
+      //  whakapapa = set(state.nestedWhakapapa, path, node)
+      // } else {
+      //  console.log('no path')
+      var whakapapa = updateNode(state.nestedWhakapapa, node)
+      // }
       commit('setNestedWhakapapa', whakapapa)
     },
     deleteNode ({ state, commit }, id) {
@@ -41,6 +47,14 @@ export default new Vuex.Store({
         addChildToPartner(state.nestedWhakapapa, child, parent)
       } else {
         addChild(state.nestedWhakapapa, child, parent)
+      }
+    },
+    addParent ({ state, commit }, { child, parent }) {
+      console.log('addParent')
+      if (child.isPartner) {
+        // add parent to partner
+      } else {
+        addParent(state.nestedWhakapapa, child, parent)
       }
     }
   }
@@ -158,6 +172,11 @@ function updatePartnerNode (nestedWhakapapa, node) {
 function addChild (nestedWhakapapa, child, parent) {
   if (!nestedWhakapapa) return null
   if (nestedWhakapapa.id === parent.id) {
+    nestedWhakapapa.children = nestedWhakapapa.children.map(d=> {
+      if (!d.siblings) d.siblings = []
+      d.siblings.push(child)
+      return d
+    })
     nestedWhakapapa.children.push(child)
     return nestedWhakapapa
   }
@@ -179,6 +198,11 @@ function addChildToPartner (nestedWhakapapa, child, partner) {
   // looking for, then look no further
   nestedWhakapapa.partners = nestedWhakapapa.partners.map((d, i) => {
     if (d.id === partner.id) {
+      d.children = d.children.map(c => {
+        if (!c.siblings) c.siblings = []
+        c.siblings.push(child)
+        return c
+      })
       d.children.push(child)
     }
     return d
@@ -190,6 +214,31 @@ function addChildToPartner (nestedWhakapapa, child, partner) {
     // do the same for each child
     return addChildToPartner(c, child, partner) // will either return a changed value or the same one
   })
+
+  return nestedWhakapapa
+}
+
+function addParent (nestedWhakapapa, child, parent) {
+  if (!nestedWhakapapa) return null
+  if (nestedWhakapapa.id === child.id) {
+    nestedWhakapapa.parents = nestedWhakapapa.parents.map(d => {
+      if (!d.partners) d.partners = []
+      d.partners.push(parent)
+      return d
+    })
+    nestedWhakapapa.parents.push(parent)
+    return nestedWhakapapa
+  }
+
+  var found = false
+  nestedWhakapapa.children = nestedWhakapapa.children.map(c => {
+    if (c.id === child.id) found = true
+    return addParent(c, child, parent)
+  })
+
+  if (found) {
+    nestedWhakapapa.partners.push(parent)
+  }
 
   return nestedWhakapapa
 }
