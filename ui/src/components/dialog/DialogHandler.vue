@@ -154,7 +154,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['updateNode', 'deleteNode', 'updatePartnerNode']),
+    ...mapActions(['updateNode', 'deleteNode', 'updatePartnerNode', 'addChild']),
     isActive (type) {
       if (type === this.dialog) {
         return true
@@ -214,10 +214,11 @@ export default {
             if (res.data) {
               this.$emit('refreshWhakapapa')
               if (this.isActive('view-edit-node')) {
-                const nestedWhakapapa = await this.loadDescendants(this.view.focus)
+                // const nestedWhakapapa = await this.loadDescendants(this.view.focus)
 
                 // WARNING: this is going to set the top of the tree to this profile
-                this.setNestedWhakapapa(nestedWhakapapa)
+                // this.setNestedWhakapapa(nestedWhakapapa)
+                console.error('didnt implement this...')
               }
               return
             } else {
@@ -246,7 +247,12 @@ export default {
                 await this.createChildLink({ child, parent, ...relationshipAttrs })
               }
             }
-            this.$emit('load', parent)
+
+            var profile = await this.loadDescendants(child)
+            profile.parents[0] = this.selectedProfile
+
+            // add child to parent
+            this.addChild({ child: profile, parent: this.selectedProfile })
             break
           case 'parent':
             child = this.selectedProfile.id

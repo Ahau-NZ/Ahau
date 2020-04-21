@@ -34,6 +34,11 @@ export default new Vuex.Store({
       console.log(whakapapa)
 
       // commit('setNestedWhakapapa', whakapapa)
+    },
+    addChild ({ state, commit }, { child, parent }) {
+      console.log('addChild')
+      const whakapapa = addChild(state.nestedWhakapapa, child, parent)
+      console.log('whakapapa', whakapapa)
     }
   }
 })
@@ -142,6 +147,21 @@ function updatePartnerNode (nestedWhakapapa, node) {
   nestedWhakapapa.children = nestedWhakapapa.children.map(child => {
     // do the same for each child
     return updatePartnerNode(child, node) // will either return a changed value or the same one
+  })
+
+  return nestedWhakapapa
+}
+
+function addChild (nestedWhakapapa, child, parent) {
+  if (!nestedWhakapapa) return null
+  if (nestedWhakapapa.id === parent.id) {
+    nestedWhakapapa.children.push(child)
+    return nestedWhakapapa
+  }
+
+  nestedWhakapapa.children = nestedWhakapapa.children.map(c => {
+    // do the same for each child
+    return addChild(c, child, parent) // will either return a changed value or the same one
   })
 
   return nestedWhakapapa
