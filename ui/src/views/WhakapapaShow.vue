@@ -608,22 +608,11 @@ export default {
 
         // load their descendants
         const childProfile = await this.loadDescendants(child.profile.id, childPath)
-        // look at their parents
-        childProfile.parents.forEach(parent => {
-          // only look at ones that arent me OR i havent already seen
-          if (parent.id !== person.id && !person.partners.find(d => d.id === parent.id)) {
-            person.partners.push(parent)
-          }
-        })
 
-        this.relationshipLinks.set(
-          person.id + '-' + childProfile.id, {
-            parent: person.id,
-            child: childProfile.id,
-            relationshipId: child.relationshipId,
-            relationshipType: child.relationshipType
-          }
-        )
+        person = tree.getPartners(person, childProfile)
+
+        const r = tree.getRelationship(person, childProfile, child)
+        this.relationshipLinks.set(r.index, r.attrs)
 
         return childProfile
       }))
@@ -637,21 +626,10 @@ export default {
         const parentProfile = await this.getRelatives(parent.profile.id)
 
         // look at their children
-        parentProfile.children.forEach(child => {
-          // only look at ones that arent me OR i havent already seen
-          if (child.profile.id !== person.id && !person.siblings.find(d => d.id === child.profile.id)) {
-            person.siblings.push(child.profile)
-          }
-        })
+        person = tree.getSiblings(parentProfile, person)
 
-        this.relationshipLinks.set(
-          parentProfile.id + '-' + person.id, {
-            parent: parentProfile.id,
-            child: person.id,
-            relationshipId: parent.relationshipId,
-            relationshipType: parent.relationshipType
-          }
-        )
+        const r = tree.getRelationship(parentProfile, person, parent)
+        this.relationshipLinks.set(r.index, r.attrs)
 
         return parentProfile
       }))
@@ -659,15 +637,27 @@ export default {
       person.partners = await Promise.all(person.partners.map(async (partner, i) => {
         var partnerPath = `partners[${i}]`
         if (path) partnerPath = person.path + '.' + partnerPath
-        const partnerProfile = await this.getRelatives(partner.id)
-        partnerProfile.path = partnerPath
-        partnerProfile.children = partnerProfile.children.map(child => {
-          const exists = person.children.find(d => d.id === child.profile.id)
+        partner.path = partnerPath
+
+        partner.children = partner.children.map(child => {
+          const exists = person.children.find(d => {
+            var id = (child.profile) ? child.profile.id : child.id
+            return d.id === id
+          })
           if (exists) return exists
+          // TODO: doesnt save this relationship
           return child.profile
         })
 
-        return partnerProfile
+        partner.parents = partner.parents.map(d => {
+          // TODO: doesnt save this relationship
+          return d.profile
+        })
+
+        partner.partners = [person]
+        partner.siblings = []
+
+        return partner
       }))
 
       if (this.selectedProfile && this.selectedProfile.id === person.id) this.selectedProfile = person

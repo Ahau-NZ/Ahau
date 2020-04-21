@@ -224,11 +224,14 @@ export default {
       var currentChildren = []
       var children = []
 
-      this.selectedProfile.children.forEach(d => {
-        currentChildren[d.id] = d
-      })
+      if (this.selectedProfile.children) {
+        this.selectedProfile.children.forEach(d => {
+          currentChildren[d.id] = d
+        })
+      }
 
       // children of your partners that arent currently your children
+      // if (this.selectedProfile.partners) {
       this.selectedProfile.partners.forEach(async child => {
         const result = await this.$apollo.query(getProfile(child.id))
 
@@ -240,6 +243,7 @@ export default {
           })
         }
       })
+      // }
 
       return children
     },
@@ -247,21 +251,26 @@ export default {
       var currentParents = []
       var parents = []
 
-      this.selectedProfile.parents.forEach(d => {
-        currentParents[d.id] = d
-      })
+      if (this.selectedProfile.parents) {
+        this.selectedProfile.parents.forEach(d => {
+          currentParents[d.id] = d
+        })
+      }
 
-      this.selectedProfile.siblings.forEach(async sibling => {
-        const result = await this.$apollo.query(getProfile(sibling.id))
+      if (this.selectedProfile.siblings) {
+        this.selectedProfile.siblings.forEach(async sibling => {
+          const result = await this.$apollo.query(getProfile(sibling.id))
 
-        if (result.data) {
-          result.data.person.parents.forEach(d => {
-            if (!currentParents[d.profile.id]) {
-              parents.push(d.profile)
-            }
-          })
-        }
-      })
+          if (result.data) {
+            result.data.person.parents.forEach(d => {
+              if (!currentParents[d.profile.id]) {
+                parents.push(d.profile)
+              }
+            })
+          }
+        })
+      }
+
       return parents
     },
     age (bornAt) {

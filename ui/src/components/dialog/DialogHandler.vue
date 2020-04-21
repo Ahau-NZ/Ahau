@@ -506,7 +506,7 @@ export default {
         return
       }
 
-      this.deleteNode(this.selectedProfile.id)
+      this.deleteNode(this.selectedProfile)
       this.setSelectedProfile(null)
     },
     async getSuggestions ($event) {
@@ -559,17 +559,21 @@ export default {
       if (this.selectedProfile.id === profileId) return true // this is always in the tree
 
       // if they are a sibling
-      if (this.selectedProfile.siblings.find(sibling => {
-        return sibling.id === profileId
-      })) return true // filter them out
+      if (this.selectedProfile.siblings) {
+        if (this.selectedProfile.siblings.find(sibling => {
+          return sibling.id === profileId
+        })) return true // filter them out
+      }
 
-      // if they are a parents partner
-      if (this.selectedProfile.parents.find(parent => {
-        if (!parent.partners) return false // this parent doesnt have parters
-        return parent.partners.find(partnerId => {
-          return partnerId === profileId
-        })
-      })) return true // filter them out
+      if (this.selectedProfile.parents) {
+        // if they are a parents partner
+        if (this.selectedProfile.parents.find(parent => {
+          if (!parent.partners) return false // this parent doesnt have parters
+          return parent.partners.find(partnerId => {
+            return partnerId === profileId
+          })
+        })) return true // filter them out
+      }
 
       var root = d3.hierarchy(this.nestedWhakapapa)
 
