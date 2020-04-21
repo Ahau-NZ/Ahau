@@ -37,8 +37,11 @@ export default new Vuex.Store({
     },
     addChild ({ state, commit }, { child, parent }) {
       console.log('addChild')
-      const whakapapa = addChild(state.nestedWhakapapa, child, parent)
-      console.log('whakapapa', whakapapa)
+      if (parent.isPartner) {
+        addChildToPartner(state.nestedWhakapapa, child, parent)
+      } else {
+        addChild(state.nestedWhakapapa, child, parent)
+      }
     }
   }
 })
@@ -162,6 +165,30 @@ function addChild (nestedWhakapapa, child, parent) {
   nestedWhakapapa.children = nestedWhakapapa.children.map(c => {
     // do the same for each child
     return addChild(c, child, parent) // will either return a changed value or the same one
+  })
+
+  return nestedWhakapapa
+}
+
+function addChildToPartner (nestedWhakapapa, child, partner) {
+  // if the nestedWhakapapa has no value
+  // then we can search it
+  if (!nestedWhakapapa) return null
+
+  // if the nestedWhakapapa matches the node we are
+  // looking for, then look no further
+  nestedWhakapapa.partners = nestedWhakapapa.partners.map((d, i) => {
+    if (d.id === partner.id) {
+      d.children.push(child)
+    }
+    return d
+  })
+
+  // if this nestedWhakapapa partners didnt have the one we are looking for,
+  // try searching its children
+  nestedWhakapapa.children = nestedWhakapapa.children.map(c => {
+    // do the same for each child
+    return addChildToPartner(c, child, partner) // will either return a changed value or the same one
   })
 
   return nestedWhakapapa
