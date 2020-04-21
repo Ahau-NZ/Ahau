@@ -732,6 +732,8 @@ export default {
         }
         console.log('existing set', profileFound)
         this.selectedProfile = profileFound
+      } else {
+        this.selectedProfile = {}
       }
     },
     find (nestedWhakapapa, id) {

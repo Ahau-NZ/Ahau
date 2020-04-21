@@ -324,6 +324,7 @@ export default {
       this.$emit('load-descendants', profileId)
     },
     async checkNonFocusedPartner (profile) {
+      console.log('checkNonFocusedPartner')
       if (profile.partners && profile.partners.length > 0) {
         for await (const partner of profile.partners) {
           const relatives = await this.getRelatives(partner.id)

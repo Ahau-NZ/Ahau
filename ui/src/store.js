@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import set from 'lodash.set'
+// import set from 'lodash.set'
 
 Vue.use(Vuex)
 

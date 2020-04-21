@@ -470,7 +470,8 @@ export default {
           variables: { input }
         })
         if (res.data) {
-          this.$emit('refreshWhakapapa')
+          this.deleteNode(this.selectedProfile.id)
+          this.setSelectedProfile(null)
         } else {
           console.error(res)
         }
@@ -506,6 +507,7 @@ export default {
       }
 
       this.deleteNode(this.selectedProfile.id)
+      this.setSelectedProfile(null)
     },
     async getSuggestions ($event) {
       if (!$event) {
