@@ -90,6 +90,10 @@ function hydrate (node, flatStore) {
   return output
 }
 
+/*
+  calculates the siblings of a given child based on children of the given parent
+  and returns the child with the new siblings
+*/
 function getSiblings (parent, child) {
   if (!child.siblings) child.siblings = []
   if (parent.children) {
@@ -102,6 +106,10 @@ function getSiblings (parent, child) {
   return child
 }
 
+/*
+  calculates the partners of a given parent based on the parents of the given child
+  and returns the parent with the new partners
+*/
 function getPartners (parent, child) {
   if (!parent.partners) parent.partners = []
   if (child.parents) {
@@ -114,9 +122,14 @@ function getPartners (parent, child) {
   return parent
 }
 
+/*
+  calulates a relationship object for the given parent and child. The index
+  stating what index in the tree it goes in and the attrs are what attributes
+  to store at that index
+*/
 function getRelationship (parent, child, relationship) {
   return {
-    index: parent.id + '-' + child.id,
+    index: parent.id + '-' + child.id, // index in the relationshipLinks map
     attrs: {
       relationshipId: relationship.relationshipId,
       relationshipType: relationship.relationshipType,
@@ -127,9 +140,10 @@ function getRelationship (parent, child, relationship) {
 }
 
 /*
-  searches through the nestedWhakapap to find
+  searches through the nestedWhakapapa to find
   the profile by id and updates their personal
   details but not their children
+  NOTE: cannot be used for partners see below
 */
 function updateNode (nestedWhakapapa, node) {
   // if the nestedWhakapapa has no value
@@ -194,29 +208,37 @@ function deleteNode (nestedWhakapapa, id) {
   return nestedWhakapapa
 }
 
-function deletePartnerNode (nestedWhakapapa, node) {
+/*
+  searches the nestedWhakapapa for the parent with matching id
+  and removes them
+*/
+function deletePartnerNode (nestedWhakapapa, id) {
   if (!nestedWhakapapa) return null
 
   var partnerIndex = -1
-  nestedWhakapapa.partners.some((d, i) => {
-    if (d.id === node.id) {
-      partnerIndex = i
-      return true
-    }
-  })
-
-  if (partnerIndex > -1) {
-    nestedWhakapapa.partners.slice(partnerIndex, 1)
-
-    // need to remove from the children as well
-    nestedWhakapapa.children = nestedWhakapapa.children.map(child => {
-      child.parents = child.parents.map(parent => {
-        if (parent.id === node.id) return node
-        return parent
-      })
-      return child
+  // check the partners of the current nestedWhakapapa
+  if (nestedWhakapapa.partners) {
+    nestedWhakapapa.partners.some((partner, i) => {
+      if (partner.id === id) {
+        partnerIndex = i
+        return true
+      }
     })
   }
+
+  if (partnerIndex > -1) {
+    // the partner was found here
+    nestedWhakapapa.partners.splice(partnerIndex, 1)
+    return nestedWhakapapa
+  }
+
+  // didnt find them here so look in children instead
+  nestedWhakapapa.children = nestedWhakapapa.children.map(child => {
+    // do the same for each child
+    return deletePartnerNode(child, id) // will either return a changed value or the same one
+  })
+
+  return nestedWhakapapa
 }
 
 function updatePartnerNode (nestedWhakapapa, node) {

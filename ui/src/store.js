@@ -39,7 +39,7 @@ export default new Vuex.Store({
     deleteNode ({ state, commit }, profile) {
       var whakapapa = {}
       if (profile.isPartner) {
-        console.error('deletePartnerNode not implemented')
+        whakapapa = tree.deletePartnerNode(state.nestedWhakapapa, profile.id)
       } else {
         whakapapa = tree.deleteNode(state.nestedWhakapapa, profile.id)
       }
