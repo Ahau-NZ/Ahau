@@ -249,6 +249,8 @@ export default {
             }
 
             var profile = await this.loadDescendants(child)
+
+            // add as a sibling
             profile.parents[0] = this.selectedProfile
 
             // add child to parent
