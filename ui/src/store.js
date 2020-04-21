@@ -172,7 +172,7 @@ function updatePartnerNode (nestedWhakapapa, node) {
 function addChild (nestedWhakapapa, child, parent) {
   if (!nestedWhakapapa) return null
   if (nestedWhakapapa.id === parent.id) {
-    nestedWhakapapa.children = nestedWhakapapa.children.map(d=> {
+    nestedWhakapapa.children = nestedWhakapapa.children.map(d => {
       if (!d.siblings) d.siblings = []
       d.siblings.push(child)
       return d

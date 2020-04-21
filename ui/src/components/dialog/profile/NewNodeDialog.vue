@@ -158,11 +158,12 @@ export default {
       if (this.suggestions && this.suggestions.length > 0) {
         otherSuggestions = [
           this.type ? { header: 'Suggestions not in this whakapapa' } : null,
-          ...this.suggestions.filter(suggestion => {
-            return !this.closeSuggestions.find(closeSuggestion => {
-              return suggestion.id === closeSuggestion
-            })
-          })
+          // ...this.suggestions.filter(suggestion => {
+          // return !this.closeSuggestions.find(closeSuggestion => {
+          //  return suggestion.id === closeSuggestion
+          // })
+          // })
+          ...this.suggestions
         ]
       }
 

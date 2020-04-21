@@ -565,6 +565,7 @@ export default {
 
       // if they are a parents partner
       if (this.selectedProfile.parents.find(parent => {
+        if (!parent.partners) return false // this parent doesnt have parters
         return parent.partners.find(partnerId => {
           return partnerId === profileId
         })
