@@ -1,21 +1,20 @@
 <template>
   <v-card
-    :to="
-      view.id
+    :to="view.id
         ? { name: 'whakapapaShow', params: { id: view.id } }
-        : '/whakapapa'
-    "
-    class="d-flex"
-    min-height="100px"
+        : '/whakapapa'"
+    class="d-flex pa-2"
     color="#fff"
-    :style="shadow ? '' : 'box-shadow: none;'"
+    :style="`
+      shadow ? '' : 'box-shadow: none;'
+      `"
   >
     <div class="body-width d-flex flex-no-wrap flex-start align-stretch">
-      <div class="cover-image" :style="background(view)" />
+      <div class="cover-image" :style="background(view)"></div>
       <div class="information">
-        <v-card-title v-text="view.name" />
-        <v-card-subtitle v-text="description" />
-        <v-card-text>
+        <v-card-title v-text="view.name" class="pt-3"/>
+        <v-card-subtitle v-text="description" class="pb-3"/>
+        <v-card-text v-if="hasSlotContent">
           <slot></slot>
         </v-card-text>
       </div>
@@ -24,7 +23,7 @@
 </template>
 
 <script>
-import whakapapa from '@/assets/whakapapa.svg'
+import whakapapa from '@/assets/whakapapa.png'
 
 export default {
   name: 'WhakapapaViewCard',
@@ -36,6 +35,9 @@ export default {
   computed: {
     mobile () {
       return this.$vuetify.breakpoint.xs
+    },
+    hasSlotContent () {
+      return Boolean(this.$slots.default)
     },
     description () {
       const description = this.view.description
@@ -58,10 +60,9 @@ export default {
           backgroundSize: 'cover'
         }
       }
-
       return {
         backgroundImage: `url(${whakapapa})`,
-        backgroundSize: 'contain'
+        backgroundSize: 'cover'
       }
     }
   }
@@ -82,11 +83,11 @@ export default {
 }
 
 .cover-image {
-  width: 30%;
+  min-width: 15%;
   background-color: #fff;
   background-position: center center;
   @media screen and (min-width: 420px) {
-    width: 150px;
+    width: 84px;
   }
 }
 

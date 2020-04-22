@@ -44,23 +44,11 @@ export const RULES = {
   ],
   relationshipType: [
     // v => !!v || 'Relationship type is required'
+  ],
+  csvFile: [
+    v => !!v || 'No CSV Uploaded'
   ]
 }
-
-export const PERMITTED_PROFILE_ATTRS = [
-  // these are the properties that changes are permitted on
-  'gender',
-  'legalName',
-  'bornAt',
-  'diedAt',
-  'preferredName',
-  'avatarImage',
-  'description',
-  'headerImage',
-  'altNames',
-  'birthOrder',
-  'relationshipType'
-]
 
 export const MONTHS = [
   'January',

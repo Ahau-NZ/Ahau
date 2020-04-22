@@ -80,8 +80,12 @@ export const personComplete = {
   gender: 'male',
   legalName: 'Will Smith',
   bornAt: '2003-02-01',
+  diedAt: '',
+  deceased: false,
   preferredName: 'Will',
   relationshipType: 'birth',
+  legallyAdopted: false,
+  birthOrder: '',
   altNames: ['Willard', 'William'],
   avatarImage: {
     uri:
@@ -115,7 +119,18 @@ export const personComplete = {
       preferredName: 'Willow ',
       avatarImage: {
         uri: 'http://www.gstatic.com/tv/thumb/persons/512549/512549_v9_bb.jpg'
-      }
+      },
+      children: [
+        {
+          id: '%S',
+          gender: 'female',
+          legalName: 'Willow Smith',
+          preferredName: 'Willow ',
+          avatarImage: {
+            uri: 'http://www.gstatic.com/tv/thumb/persons/512549/512549_v9_bb.jpg'
+          }
+        }
+      ]
     }
   ],
   parents: [

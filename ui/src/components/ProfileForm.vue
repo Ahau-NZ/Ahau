@@ -1,3 +1,7 @@
+
+// ----------------- WARINING -----------------------
+// File has been replaced by profile-form/ProfileForm.vue
+// DO NOT UPDATE WITHOUT RENAMING
 <template>
   <div :class="mobile ? null : 'desktop-wrapper'">
     <Header
@@ -63,7 +67,8 @@ import pick from 'lodash.pick'
 import get from 'lodash.get'
 import Header from '@/components/profile-form/Header'
 import Actions from '@/components/profile-form/Actions'
-import { RULES, PERMITTED_PROFILE_ATTRS } from '@//lib/constants'
+import { RULES } from '@/lib/constants'
+import { PERMITTED_PROFILE_ATTRS } from '@/lib/profile-helpers'
 
 export default {
   name: 'ProfileForm',

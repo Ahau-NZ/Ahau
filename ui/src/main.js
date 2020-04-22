@@ -6,6 +6,7 @@ import router from './router'
 import { createProvider } from './plugins/vue-apollo'
 import vuetify from './plugins/vuetify'
 import VuejsClipper from 'vuejs-clipper'
+import CordovaBackButton from './plugins/cordova-back-button'
 
 if (process.env.VUE_APP_PLATFORM === 'cordova') {
   document.addEventListener('deviceready', main, false)
@@ -16,6 +17,7 @@ if (process.env.VUE_APP_PLATFORM === 'cordova') {
 function main () {
   // install
   Vue.use(VuejsClipper)
+  Vue.use(CordovaBackButton, { router })
   Vue.config.productionTip = false
 
   new Vue({
