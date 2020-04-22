@@ -470,7 +470,7 @@ export default {
           variables: { input }
         })
         if (res.data) {
-          this.deleteNode(this.selectedProfile.id)
+          this.deleteNode(this.selectedProfile)
           this.setSelectedProfile(null)
         } else {
           console.error(res)
