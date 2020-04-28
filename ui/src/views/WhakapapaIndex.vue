@@ -66,7 +66,7 @@
         :show="showProfileForm"
         :suggestions="suggestions"
         @getSuggestions="getSuggestions"
-        title="Create new Person"
+        title="Add a Person"
         @create="handleDoubleStep($event)"
         :withRelationships="false"
         @close="toggleProfileForm"
@@ -93,6 +93,7 @@ import WhakapapaListHelper from '@/components/dialog/whakapapa/WhakapapaListHelp
 import { saveWhakapapaLink } from '@/lib/link-helpers.js'
 
 import tree from '@/lib/tree-helpers'
+import { mapMutations } from 'vuex'
 
 const saveWhakapapaViewQuery = gql`
   mutation($input: WhakapapaViewInput) {
@@ -126,6 +127,10 @@ export default {
       newView: null,
       columns: []
     }
+  },
+  mounted () {
+    // reset nestedWhakapapa
+    this.setNestedWhakapapa([])
   },
   computed: {
     mobile () {
@@ -165,6 +170,7 @@ export default {
     }
   },
   methods: {
+    ...mapMutations(['setNestedWhakapapa', 'setLoading']),
     async getSuggestions ($event) {
       if (!$event) {
         this.suggestions = []
@@ -190,6 +196,13 @@ export default {
           return parent.profile.id // only want the parents ID
         })
         profiles[record.id] = record // add this record to the flatStore
+      })
+
+      records = records.map(record => {
+        let obj = {}
+        let profile = record
+        obj = { profile }
+        return obj
       })
 
       // hydrate all the left over records
@@ -358,6 +371,7 @@ export default {
       }
     },
     async buildFromFile (csv) {
+      this.setLoading(true)
       console.log('csv: ', csv)
       // create profile for each person
       var profilesArray = await this.createProfiles(csv)

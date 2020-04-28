@@ -7,33 +7,32 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    nestedWhakapapa: {}
+    nestedWhakapapa: {},
+    loading: false
   },
   getters: {
     nestedWhakapapa: state => {
       return state.nestedWhakapapa
+    },
+    loadingState: state => {
+      return state.loading
     }
   },
   mutations: {
     setNestedWhakapapa (state, nestedWhakapapa) {
-      console.log('nestedWhakapapa', nestedWhakapapa)
       state.nestedWhakapapa = nestedWhakapapa
+    },
+    setLoading (state, loading) {
+      state.loading = loading
     }
   },
   actions: {
     updatePartnerNode ({ state, commit }, node) {
-      console.log('updatePartnerNode')
       const whakapapa = tree.updatePartnerNode(state.nestedWhakapapa, node)
       commit('setNestedWhakapapa', whakapapa)
     },
     updateNode ({ state, commit }, { node, path }) {
-      // var whakapapa
-      // if (path) {
-      // const whakapapa = set(state.nestedWhakapapa, path, node)
-      // } else {
-      //  console.log('no path')
       var whakapapa = tree.updateNode(state.nestedWhakapapa, node)
-      // }
       commit('setNestedWhakapapa', whakapapa)
     },
     deleteNode ({ state, commit }, profile) {
@@ -46,7 +45,6 @@ export default new Vuex.Store({
       commit('setNestedWhakapapa', whakapapa)
     },
     addChild ({ state, commit }, { child, parent }) {
-      console.log('addChild')
       var whakapapa = {}
       if (parent.isPartner) {
         whakapapa = tree.addChildToPartner(state.nestedWhakapapa, child, parent)
@@ -56,7 +54,6 @@ export default new Vuex.Store({
       commit('setNestedWhakapapa', whakapapa)
     },
     addParent ({ state, commit }, { child, parent }) {
-      console.log('addParent')
       var whakapapa = {}
       if (child.isPartner) {
         console.error('addParentToPartner hasnt been implemented yet')
@@ -64,6 +61,9 @@ export default new Vuex.Store({
         whakapapa = tree.addParent(state.nestedWhakapapa, child, parent)
       }
       commit('setNestedWhakapapa', whakapapa)
+    },
+    loading ({ commit }, loading) {
+      commit('setLoading', loading)
     }
   }
 })

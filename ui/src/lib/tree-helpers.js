@@ -1,4 +1,5 @@
 import clone from 'lodash.clonedeep'
+import uniqby from 'lodash.uniqby'
 
 export default {
   flatten,
@@ -12,7 +13,8 @@ export default {
   deletePartnerNode,
   addChild,
   addChildToPartner,
-  addParent
+  addParent,
+  find
 }
 
 function flatten (node) {
@@ -95,7 +97,8 @@ function hydrate (node, flatStore) {
   and returns the child with the new siblings
 */
 function getSiblings (parent, child) {
-  if (!child.siblings) child.siblings = []
+  // if (!child.siblings) child.siblings = []
+  child.siblings = []
   if (parent.children) {
     parent.children.forEach(sibling => {
       if (sibling.profile.id !== child.id && !child.siblings.find(d => d.id === child.id)) {
@@ -103,6 +106,8 @@ function getSiblings (parent, child) {
       }
     })
   }
+  // do not allow duplicates
+  child.siblings = uniqby(child.siblings, 'id')
   return child
 }
 
@@ -114,11 +119,16 @@ function getPartners (parent, child) {
   if (!parent.partners) parent.partners = []
   if (child.parents) {
     child.parents.forEach(partner => {
+      if (partner.profile) {
+        partner = partner.profile
+      }
       if (partner.id !== parent.id && !parent.partners.find(d => d.id === partner.id)) {
         parent.partners.push(partner)
       }
     })
   }
+  // do not allow duplicates
+  parent.partners = uniqby(parent.partners, 'id')
   return parent
 }
 
@@ -183,6 +193,7 @@ function deleteNode (nestedWhakapapa, id) {
     // found the node we need to delete
     // so returning null will set its value to null
     return null
+    // return nestedWhakapapa.children[0]
   }
 
   // if this nestedWhakapap isnt the one we are looking for,
@@ -192,7 +203,6 @@ function deleteNode (nestedWhakapapa, id) {
 
   nestedWhakapapa.children.some((child, i) => {
     var node = deleteNode(child, id)
-    console.log('node', node)
     if (node === null) {
       childIndex = i
       return true
@@ -334,11 +344,6 @@ function addChildToPartner (nestedWhakapapa, child, partner) {
 function addParent (nestedWhakapapa, child, parent) {
   if (!nestedWhakapapa) return null
   if (nestedWhakapapa.id === child.id) {
-    // nestedWhakapapa.parents = nestedWhakapapa.parents.map(d => {
-    //   if (!d.partners) d.partners = []
-    //   d.partners.push(parent)
-    //   return d
-    // })
     nestedWhakapapa.parents.push(parent)
     return nestedWhakapapa
   }
@@ -350,25 +355,28 @@ function addParent (nestedWhakapapa, child, parent) {
   })
 
   if (found) {
-    nestedWhakapapa.partners.push(parent)
+    if (nestedWhakapapa.partners.length === 0) nestedWhakapapa.partners.push(parent)
+    else {
+      nestedWhakapapa.partners.map(p => {
+        if (p.id !== parent.id) nestedWhakapapa.partners.push(parent)
+      })
+    }
   }
 
   return nestedWhakapapa
 }
 
-// function find (nestedWhakapapa, id) {
-//   if (!nestedWhakapapa) return null
-//   if (nestedWhakapapa.id === node.id) {
-//     nestedWhakapapa = node
-//     return nestedWhakapapa
-//   }
+// TODO: rename is function
+function find (nestedWhakapapa, node) {
+  if (!nestedWhakapapa) return null
+  if (nestedWhakapapa.id === node) {
+    return nestedWhakapapa
+  }
 
-//   nestedWhakapapa.children = nestedWhakapapa.children.map(child => {
-//     var found = update(child, node)
-//     if (found) return found
+  for (var child of nestedWhakapapa.children) {
+    var found = this.find(child, node)
+    if (found) return found
+  }
 
-//     return child
-//   })
-
-//   return nestedWhakapapa
-// }
+  return null
+}
