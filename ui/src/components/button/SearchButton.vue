@@ -1,7 +1,7 @@
 <template>
   <v-tooltip bottom>
       <template v-slot:activator="{ on }">
-         <v-btn v-on="on" @click="$emit('update:search', true)" fab x-small color="blue-grey">
+         <v-btn v-on="on" @click.stop="$emit('update:search', true)" fab x-small color="#12355b">
            <v-icon >mdi-magnify</v-icon>
          </v-btn>
       </template>

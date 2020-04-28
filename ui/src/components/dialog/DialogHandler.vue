@@ -7,7 +7,8 @@
       @create="addPerson($event)"
       @close="close"
       :selectedProfile="selectedProfile"
-      :suggestions="suggestions" @getSuggestions="getSuggestions($event)"
+      :suggestions="suggestions"
+      @getSuggestions="getSuggestions($event)"
     />
     <div :class="sideMenuClass">
       <SideViewEditNodeDialog
@@ -100,6 +101,9 @@ export default {
     WhakapapaTableHelper
   },
   props: {
+    relationshipLinks: {
+      type: Map
+    },
     selectedProfile: {
       type: Object
     },
@@ -192,11 +196,6 @@ export default {
       try {
         var { id } = $event
 
-        if (!id) {
-          id = await this.createProfile($event)
-          if (!id) return
-        }
-
         if (this.view.ignoredProfiles.includes(id)) {
           const input = {
             id: this.$route.params.id,
@@ -215,13 +214,54 @@ export default {
             })
             if (res.data) {
               this.$emit('refreshWhakapapa')
-              if (this.isActive('view-edit-node')) {
-                // const nestedWhakapapa = await this.loadDescendants(this.view.focus)
 
-                // WARNING: this is going to set the top of the tree to this profile
-                // this.setNestedWhakapapa(nestedWhakapapa)
-                console.error('didnt implement this...')
+              let child, parent
+
+              switch (this.type) {
+                case 'child':
+                  child = id
+                  parent = this.selectedProfile.id
+
+                  var profile = await this.loadDescendants(child)
+                  profile.parents[0] = this.selectedProfile
+
+                  // add child to parent
+                  this.addChild({ child: profile, parent: this.selectedProfile })
+
+                  break
+                case 'parent':
+                  child = this.selectedProfile.id
+                  parent = id
+
+                  if (child === this.view.focus) {
+                    // in this case we're updating the top of the graph, we update view.focus to that new top parent
+                    this.$emit('updateFocus', parent)
+                    this.addParent({ child: this.selectedProfile, parent: profile })
+                  } else {
+                    // load the profile insteaad
+                    const profile = await this.getRelatives(parent)
+                    if (profile.children.length === 1) {
+                      profile.children[0] = this.selectedProfile
+                    }
+
+                    this.addParent({ child: this.selectedProfile, parent: profile })
+                  }
+                  break
+                case 'sibling':
+                  if (!this.selectedProfile.parents) break
+                  parent = this.selectedProfile.parents[0].id
+                  child = id
+
+                  var profileSibling = await this.loadDescendants(child)
+                  profileSibling.parents[0] = this.selectedProfile.parents[0]
+
+                  // add child to parent
+                  this.addChild({ child: profileSibling, parent: this.selectedProfile.parents[0] })
+                  break
+                default:
+                  console.log('not built')
               }
+
               return
             } else {
               console.error(res)
@@ -229,86 +269,80 @@ export default {
           } catch (err) {
             throw err
           }
+        } else {
+          // if person doesnt exisit create one
+          if (!id) {
+            id = await this.createProfile($event)
+            if (!id) return
+          }
+
+          let child, parent
+          const relationshipAttrs = pick($event, [
+            'relationshipType',
+            'legallyAdopted'
+          ])
+
+          switch (this.type) {
+            case 'child':
+              child = id
+              parent = this.selectedProfile.id
+              await this.createChildLink({ child, parent, ...relationshipAttrs })
+
+              const profile = await this.loadDescendants(child)
+
+              profile.parents[0] = this.selectedProfile
+
+              // add child to parent
+              this.addChild({ child: profile, parent: this.selectedProfile })
+
+              break
+            case 'parent':
+              child = this.selectedProfile.id
+              parent = id
+
+              await this.createChildLink({ child, parent, ...relationshipAttrs })
+
+              if (child === this.view.focus) {
+                // in this case we're updating the top of the graph, we update view.focus to that new top parent
+                this.$emit('updateFocus', parent)
+              } else {
+                // load the profile instead
+                const profile = await this.getRelatives(parent)
+                if (profile.children.length === 1) {
+                  profile.children[0] = this.selectedProfile
+                }
+
+                this.addParent({ child: this.selectedProfile, parent: profile })
+
+                // if the parent is the new head of the tree and is being added on a partner family line that update the tree
+                if (this.selectedProfile.parents.length === 1) {
+                  this.$emit('change-focus', profile.id)
+                }
+              }
+              break
+            case 'sibling':
+              if (!this.selectedProfile.parents) break
+              parent = this.selectedProfile.parents[0].id
+              child = id
+              await this.createChildLink({ child, parent, ...relationshipAttrs })
+
+              const profileSibling = await this.loadDescendants(child)
+
+              profileSibling.parents[0] = this.selectedProfile.parents[0]
+
+              // add child to parent
+              this.addChild({ child: profileSibling, parent: this.selectedProfile.parents[0] })
+              break
+            default:
+              console.log('not built')
+          }
         }
 
-        let child, parent
-        const relationshipAttrs = pick($event, [
-          'relationshipType',
-          'legallyAdopted'
-        ])
-        switch (this.type) {
-          case 'child':
-            child = id
-            parent = this.selectedProfile.id
-
-            if (this.selectedProfile.children) {
-              const childrenExists = this.selectedProfile.children.filter(existingChild => {
-                return existingChild.id === child
-              })
-              if (isEmpty(childrenExists)) {
-                await this.createChildLink({ child, parent, ...relationshipAttrs })
-              }
-            }
-
-            var profile = await this.loadDescendants(child)
-
-            profile.parents[0] = this.selectedProfile
-
-            // add child to parent
-            this.addChild({ child: profile, parent: this.selectedProfile })
-            break
-          case 'parent':
-            child = this.selectedProfile.id
-            parent = id
-
-            // check the child doesnt already have a link
-            if (this.selectedProfile.parents) {
-              const parentExists = this.selectedProfile.parents.filter(existingParent => {
-                return existingParent.id === parent
-              })
-
-              if (isEmpty(parentExists)) {
-                // dont want to create a new link
-                await this.createChildLink({ child, parent, ...relationshipAttrs })
-              }
-            }
-            if (child === this.view.focus) {
-              console.log('updateFocus')
-              // in this case we're updating the top of the graph, we update view.focus to that new top parent
-              this.$emit('updateFocus', parent)
-            // load new parent on partner whakapapa links
-            } else if (this.selectedProfile.parents.length < 1) {
-              console.log('changeFocus')
-              this.$emit('change-focus', parent)
-            } else {
-              // takes too long to use load descendants so we are going to
-              // load the profile insteaad
-              const profile = await this.getRelatives(parent)
-              console.log('parent profile', profile)
-              if (profile.children.length === 1) {
-                profile.children[0] = this.selectedProfile
-              }
-
-              this.addParent({ child: this.selectedProfile, parent: profile })
-            }
-            break
-          case 'sibling':
-            if (!this.selectedProfile.parents) break
-            parent = this.selectedProfile.parents[0].id
-            child = id
-            await this.createChildLink({ child, parent, ...relationshipAttrs })
-
-            await this.$emit('load', parent)
-            break
-          default:
-            console.log('not built')
-        }
-
-        if (this.isActive('view-edit-node')) {
-          const nestedWhakapapa = await this.loadDescendants(this.view.focus)
-          // WARNING: this is going to set the top of the tree to this profile
-          this.setNestedWhakapapa(nestedWhakapapa)
-        }
+        // if (this.isActive('view-edit-node')) {
+        //   const nestedWhakapapa = await this.loadDescendants(this.view.focus)
+        //   // WARNING: this is going to set the top of the tree to this profile
+        //   this.setNestedWhakapapa(nestedWhakapapa)
+        // }
       } catch (err) {
         throw err
       }
@@ -388,15 +422,22 @@ export default {
       }
     },
     async updateProfile ($event) {
+      Object.entries($event).map(([key, value]) => {
+        if (value === '') {
+          delete $event[key]
+        }
+      })
+
       const profileChanges = pick($event, [...PERMITTED_PROFILE_ATTRS])
       const relationshipAttrs = pick($event, [...PERMITTED_RELATIONSHIP_ATTRS])
       const profileId = this.selectedProfile.id
 
       if (!isEmpty(relationshipAttrs) && this.selectedProfile.id !== this.view.focus) {
+        const relationship = this.selectedProfile.relationship
         const input = {
-          relationshipId: this.selectedProfile.relationship.relationshipId,
-          child: profileId,
-          parent: this.selectedProfile.relationship.parent,
+          relationshipId: relationship.relationshipId,
+          child: relationship.child,
+          parent: relationship.parent,
           ...relationshipAttrs,
           recps: this.view.recps
         }
@@ -405,9 +446,9 @@ export default {
           if (linkRes.errors) {
             console.error('failed to update child link', linkRes)
             return
+          } else {
+            this.relationshipLinks[relationship.parent + '-' + relationship.child] = input
           }
-          // this.$emit('load', this.selectedProfile.relationship.parent)
-          console.error('not loading changes') // temporary message so i know to fix this
         } catch (err) {
           throw err
         }
@@ -431,8 +472,6 @@ export default {
         return
       }
 
-      // what do we do with this node if its a partner?
-      console.log('SELECT', this.selectedProfile)
       // reload the selectedProfiles personal details
       var node = await this.loadKnownFamily(true, this.selectedProfile)
 
@@ -440,7 +479,16 @@ export default {
       if (this.selectedProfile.isPartner) {
         this.updatePartnerNode(node)
       } else {
-        this.updateNode({ node, path: this.selectedProfile.path })
+        this.updateNode({ node })
+      }
+
+      // reorder children if there is a change in birthorder
+      if (profileChanges.birthOrder) {
+        var nestedParent = tree.find(this.nestedWhakapapa, this.selectedProfile.parents[0].id)
+        nestedParent.children = nestedParent.children.sort((a, b) => {
+          return a.birthOrder - b.birthOrder
+        })
+        this.updateNode({ node: nestedParent })
       }
 
       // reset the selectedProfile to the newly changed one
@@ -470,8 +518,14 @@ export default {
           variables: { input }
         })
         if (res.data) {
-          this.deleteNode(this.selectedProfile)
-          this.setSelectedProfile(null)
+          if (this.selectedProfile.id === this.view.focus) {
+            const successor = findSuccessor(this.selectedProfile)
+            console.log('successor :', successor)
+            this.$emit('updateFocus', successor.id)
+          } else {
+            this.deleteNode(this.selectedProfile)
+            this.setSelectedProfile(null)
+          }
         } else {
           console.error(res)
         }
@@ -485,6 +539,9 @@ export default {
       if (this.selectedProfile.id === this.view.focus) {
         const successor = findSuccessor(this.selectedProfile)
         this.$emit('updateFocus', successor.id)
+      } else {
+        // remove node from the nested whakapapa if not the whakapapa head
+        this.deleteNode(this.selectedProfile)
       }
 
       const profileResult = await this.$apollo.mutate({
@@ -506,7 +563,6 @@ export default {
         return
       }
 
-      this.deleteNode(this.selectedProfile)
       this.setSelectedProfile(null)
     },
     async getSuggestions ($event) {
@@ -548,7 +604,15 @@ export default {
         return tree.hydrate(record, profiles) // needed to hydrate to fix all dates
       })
 
+      records = records.map(record => {
+        let obj = {}
+        let profile = record
+        obj = { profile }
+        return obj
+      })
+
       // sets suggestions which is passed into the dialogs
+
       this.suggestions = Object.assign([], records)
     },
     /*

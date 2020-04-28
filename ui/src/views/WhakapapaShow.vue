@@ -34,15 +34,12 @@
       />
 
       <v-row v-if="!mobile" class="select">
-
         <div v-if="search" class="icon-search">
           <SearchBar :nestedWhakapapa="nestedWhakapapa" :searchNodeId.sync="searchNodeId" @close="clickedOff()"/>
         </div>
-
         <div v-else  class="icon-button">
           <SearchButton :search.sync="search"/>
         </div>
-
         <div v-if="whakapapa.table && flatten" class="icon-button">
           <FilterButton :filter="filter" @filter="toggleFilter()" />
         </div>
@@ -60,6 +57,53 @@
           <FeedbackButton />
         </div>
       </v-row>
+
+    <!-- speed dial menu for mobile -->
+      <v-card v-if="mobile" id="create">
+        <v-speed-dial
+          v-model="fab"
+          top
+          left
+          direction="right"
+          transition="slide-y-transition"
+        >
+          <template v-slot:activator>
+            <v-btn
+              v-model="fab"
+              color="black"
+              dark
+              fab
+              x-small
+            >
+              <v-icon v-if="fab">mdi-close</v-icon>
+              <v-icon v-else>mdi-hexagon-multiple</v-icon>
+            </v-btn>
+          </template>
+          <div v-if="search" class="icon-search" @click.stop>
+            <SearchBar :nestedWhakapapa="nestedWhakapapa" :searchNodeId.sync="searchNodeId" @close="clickedOff()"/>
+          </div>
+          <div v-else  class="icon-button">
+            <SearchButton  @click.stop :search.sync="search"/>
+          </div>
+          <div v-if="whakapapa.table && flatten" class="icon-button">
+            <FilterButton :filter="filter" @filter="toggleFilter()" />
+          </div>
+          <div v-if="whakapapa.table" class="icon-button">
+            <FlattenButton @flatten="toggleFlatten()" />
+          </div>
+          <div class="icon-button">
+            <TableButton @table="toggleTable()" />
+          </div>
+          <div class="icon-button">
+            <HelpButton v-if="whakapapa.tree" @click="updateDialog('whakapapa-helper', null)" />
+            <HelpButton v-else @click="updateDialog('whakapapa-table-helper', null)" />
+          </div>
+          <div class="icon-button">
+            <FeedbackButton />
+          </div>
+        </v-speed-dial>
+      </v-card>
+
       <v-row v-if="whakapapa.table && overflow" class="navigate">
         <div class="icon-button">
           <v-btn fab x-small light @click="togglePan(200)">
@@ -75,19 +119,21 @@
 
       <Tree
         class="tree"
-        v-if="whakapapa.tree && !loading"
-        :view="whakapapaView"
-        :currentFocus="currentFocus"
+        v-if="whakapapa.tree"
         :getRelatives="getRelatives"
         :relationshipLinks="relationshipLinks"
         @load-descendants="loadDescendants($event)"
         @collapse-node="collapseNode($event)"
         @open-context-menu="openContextMenu($event)"
-        :searchNodeId="searchNodeId"
         @change-focus="changeFocus($event)"
+        @loading='load($event)'
+        :view="whakapapaView"
+        :focus="focus"
+        :currentFocus="currentFocus"
+        :searchNodeId="searchNodeId"
       />
       <Table
-        v-if="whakapapa.table && !loading"
+        v-if="whakapapa.table"
         ref="table"
         :filter="filter"
         :flatten="flatten"
@@ -129,6 +175,7 @@
       :loadDescendants="loadDescendants"
       :loadKnownFamily="loadKnownFamily"
       :getRelatives="getRelatives"
+      :relationshipLinks="relationshipLinks"
       @updateFocus="updateFocus($event)"
       :setSelectedProfile="setSelectedProfile"
       @change-focus="changeFocus($event)"
@@ -166,7 +213,7 @@ import avatarHelper from '@/lib/avatar-helpers.js'
 import DialogHandler from '@/components/dialog/DialogHandler.vue'
 import findSuccessor from '@/lib/find-successor'
 
-import { mapGetters, mapMutations } from 'vuex'
+import { mapGetters, mapMutations, mapActions } from 'vuex'
 
 const saveWhakapapaViewMutation = input => (
   {
@@ -197,7 +244,8 @@ export default {
   },
   data () {
     return {
-      loading: true,
+      fab: false,
+      // loading: true,
       overflow: 'false',
       pan: 0,
       search: false,
@@ -226,8 +274,8 @@ export default {
 
       relationshipLinks: new Map(), // shows relationship information between two profiles -> reference using parentId-childId as the key
 
-      recordQueue: [],
-      processingQueue: false,
+      // recordQueue: [],
+      // processingQueue: false,
 
       selectedProfile: null,
       dialog: {
@@ -300,63 +348,15 @@ export default {
   watch: {
     'currentFocus': async function (newFocus) {
       if (newFocus) {
-        this.loading = true
-        var startTime = Date.now()
-        console.log('start ', startTime)
+        this.loading(true)
         const nestedWhakapapa = await this.loadDescendants(newFocus, '')
         this.setNestedWhakapapa(nestedWhakapapa)
-
-        this.loading = false
-        var endTime = Date.now()
-        console.log('end ', endTime)
-
-        var timeElapsed = (endTime - startTime) / 1000
-        console.log('timeElapsed (sec)', timeElapsed)
       }
-    },
-    processingQueue: function (isProcessing) {
-      if (!isProcessing) return
-
-      console.log('START')
-
-      while (this.recordQueue.length) {
-        const record = this.recordQueue.shift()
-
-        var output = Object.assign({}, this.profiles)
-
-        // flatten out record and merge into current profiles
-        Object.entries(tree.flatten(record)).forEach(([profileId, profile]) => {
-          output[profileId] = Object.assign(
-            { partners: [] }, // NOTE - ensures all nodes have "partners" field
-            output[profileId] || {},
-            profile
-          )
-          // if profile isCollapsed dont load children when change focus
-          if (output[profileId].isCollapsed) {
-            output[profileId].children = []
-          }
-          // this merge might be overwriting a lot
-        })
-
-        // populate the "partners" field of each parent
-        const parentIds = record.parents.map(link => link.profile.id)
-        parentIds.forEach(parentId => {
-          if (!output[parentId]) return
-
-          const currentPartners = output[parentId].partners || []
-          const partners = new Set([...currentPartners, ...parentIds])
-          partners.delete(parentId)
-          output[parentId].partners = Array.from(partners)
-        })
-        this.profiles = Object.assign({}, this.profiles, output)
-      }
-
-      console.log('END')
-      this.processingQueue = false
     }
   },
   methods: {
     ...mapMutations(['setNestedWhakapapa']),
+    ...mapActions(['loading']),
     tableOverflow (width) {
       var show = width > screen.width
       this.overflow = show
@@ -408,7 +408,7 @@ export default {
     },
     async getWhakapapaHead (profileId, type = 'temp') {
       const record = await this.getRelatives(profileId)
-      if (!record || !record.parents || record.parents.length < 1) return profileId
+      if (!record || !record.parents || record.parents.length < 1 || this.whakapapaView.focus === profileId) return profileId
       // this.partnerFocus[type] = this.partnerFocus[type] + 1
       for await (const parent of record.parents) {
         // follow parent from the main branch
@@ -423,7 +423,7 @@ export default {
       without making calls to the db
     */
     async loadKnownFamily (loadProfile, person) {
-      const { children, parents, partners, siblings } = person
+      const { children, parents, partners, siblings, relationship } = person
       var profile = {}
 
       if (loadProfile) {
@@ -432,15 +432,16 @@ export default {
         profile = person
       }
 
-      console.log('children', children)
-
       // populate it with what we do know about family members
       profile = Object.assign(profile, {
         children: children || [],
         parents: parents || [],
         siblings: siblings || [],
-        partners: partners || []
+        partners: partners || [],
+        relationship: relationship
       })
+
+      if (profile.relationship) profile.relationship = this.relationshipLinks[profile.parents[0].id + '-' + profile.id]
 
       if (!profile.children || profile.children.length === 0) return profile
 
@@ -454,13 +455,12 @@ export default {
           return parent
         })
 
-        // do the same for there children and so on...
-        // const c = await this.loadKnownFamily(false, child)
         return child
       }))
 
       return profile
     },
+
     async getRelatives (profileId) {
       const request = {
         query: gql`
@@ -541,9 +541,9 @@ export default {
         },
         fetchPolicy: 'no-cache'
       }
-
       try {
         const result = await this.$apollo.query(request)
+
         if (result.errors) {
           console.error('WARNING, something went wrong')
           console.error(result.errors)
@@ -555,36 +555,6 @@ export default {
         console.error(e)
       }
     },
-    // async loadDescendants (profileId) {
-    //   // fetch close whakapapa records for this profile
-    //   const record = await this.getRelatives(profileId)
-    //   if (!record) return
-
-    //   // if (whakapapaView.mode === 'descendants')
-
-    //   // filter ignored profiles
-    //   record.children = record.children.filter(this.isVisibleProfile)
-    //   record.parents = record.parents.filter(this.isVisibleProfile)
-
-    //   // follow the child-links and load the next generation
-    //   record.children.forEach(child => {
-    //     // get their ids
-    //     var info = {
-    //       relationshipId: child.relationshipId,
-    //       relationshipType: child.relationshipType,
-    //       parent: record.id,
-    //       child: child.profile.id
-    //     }
-    //     this.relationshipLinks[record.id + '-' + child.profile.id] = info // puts a link into links which can be referenced using parentId-childId
-
-    //     this.loadDescendants(child.profile.id)
-    //   })
-
-    //   // add this to queue of records to process and merge into graph
-    //   // so that we don't get collisions / overwrites
-    //   this.recordQueue = [...this.recordQueue, record]
-    //   if (!this.processingQueue) this.processingQueue = true
-    // },
     async loadDescendants (profileId, path) {
       // calls person.fetchPerson which gets info about this person from the db
       var person = await this.getRelatives(profileId)
@@ -595,7 +565,7 @@ export default {
 
       person.path = path
 
-      person.relationshipType = 'birth'
+      // if focus is ign
 
       // filter out ignored profiles
       person.children = person.children.filter(this.isVisibleProfile)
@@ -631,6 +601,9 @@ export default {
         const r = tree.getRelationship(parentProfile, person, parent)
         this.relationshipLinks.set(r.index, r.attrs)
 
+        // person.relationshipType = r.attrs.relationshipType
+        // person.relationshipId = r.attrs.relationshipId
+
         return parentProfile
       }))
 
@@ -659,6 +632,10 @@ export default {
 
         return partner
       }))
+
+      if (person.parents.length > 0) {
+        person.relationship = this.relationshipLinks.get(person.parents[0].id + '-' + person.id)
+      }
 
       if (this.selectedProfile && this.selectedProfile.id === person.id) this.selectedProfile = person
       return person
@@ -689,56 +666,39 @@ export default {
     async updateFocus (focus) {
       const input = {
         id: this.$route.params.id,
-        focus
+        focus: focus
       }
       try {
         const res = await this.$apollo.mutate(saveWhakapapaViewMutation(input))
-        if (res.data) this.currentFocus = focus
-        else console.error(res)
+        if (res.data) {
+          this.refreshWhakapapa()
+        } else console.error(res)
       } catch (err) {
         throw err
       }
     },
     async setSelectedProfile (profile) {
-      console.log('setselected', profile)
       // check the type of profile we received
-      if (typeof profile === 'object') {
-        // set it directly
+      if (profile === null) this.selectedProfile = {}
+      else if (typeof profile === 'object') {
         this.selectedProfile = profile
-        console.log('direct set', profile)
       } else if (typeof profile === 'string') {
         // need to find the profile in this whakapapa
-        var profileFound = this.find(this.nestedWhakapapa, profile)
+        var profileFound = tree.find(this.nestedWhakapapa, profile)
 
         if (!profileFound) {
           // lets load descendants of them instead
           this.selectedProfile = await this.loadDescendants(profile)
-
-          // incase any details are updated we dont want to do
-          // unnecessary computations
+          console.warn('could potentially be loading a large amount of data')
           this.selectedProfile.fromOtherWhakapapa = true
-          console.log('nonexisting set', this.selectedProfile)
           return
         }
-        console.log('existing set', profileFound)
         this.selectedProfile = profileFound
       } else {
         this.selectedProfile = {}
       }
     },
-    find (nestedWhakapapa, id) {
-      if (!nestedWhakapapa) return null
-      if (nestedWhakapapa.id === id) {
-        return nestedWhakapapa
-      }
 
-      for (var child of nestedWhakapapa.children) {
-        var found = this.find(child, id)
-        if (found) return found
-      }
-
-      return null
-    },
     // save whakapapa changes
     async updateWhakapapa (whakapapaChanges) {
       const input = {
@@ -776,10 +736,9 @@ export default {
         throw err
       }
     },
+
     async refreshWhakapapa () {
-      this.profiles = {}
       await this.$apollo.queries.whakapapaView.refresh()
-      await this.loadDescendants(this.whakapapaView.focus)
     },
     async deleteWhakapapa () {
       const treeResult = await this.$apollo.mutate({
@@ -897,4 +856,11 @@ h1 {
 
 }
 
+#create .v-speed-dial {
+  position: absolute;
+}
+
+#create .v-btn--floating {
+  position: relative;
+}
 </style>
