@@ -371,8 +371,6 @@ export default {
       }
     },
     async buildFromFile (csv) {
-      this.setLoading(true)
-      // console.log('csv: ', csv)
       // create profile for each person
       var profilesArray = await this.createProfiles(csv)
       profilesArray['columns'] = this.columns
@@ -397,17 +395,40 @@ export default {
 
     async createProfiles (csv) {
       this.columns = csv.columns
+      var items = []
 
-      // create a profile for each person and add the created id to the person and parse back to profilesArray
-      return Promise.all(csv.map(async d => {
-        var id = await this.addPerson(d)
-        const person = {
-          id: id,
-          ...d
+      var currentLen = csv.length
+      while (currentLen > 0) {
+        let portion = []
+        var len = currentLen % 500
+        if (len === 0) {
+          // take out 500 items
+          portion = csv.splice(0, 500)
+          currentLen -= 500
+        } else {
+          // take out n items
+          portion = csv.splice(0, len)
+          currentLen -= len
         }
-        return person
-      })
-      )
+
+        // process the portion
+        portion = await Promise.all(portion.map(async d => {
+          var id = await this.addPerson(d)
+
+          const person = {
+            id: id,
+            ...d
+          }
+
+          return person
+        }))
+
+        // add that portion to an array?
+        items = items.concat(portion)
+      }
+
+      console.log(items)
+      return items
     },
 
     async addPerson ($event) {
@@ -424,7 +445,7 @@ export default {
           }
         }
       })
-      // console.log('person: ', person)
+
       try {
         var { id } = $event
         id = await this.createProfile(person)

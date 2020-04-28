@@ -209,7 +209,6 @@ export default {
 
         // csv equals count means no errors
         if (count === csv.length) {
-          console.log(csv)
           this.noErrorsInCSV = true
         }
 
@@ -220,9 +219,7 @@ export default {
         } else {
           this.successMsg = ['Expected result = Top ancestor: ' + csv[0].preferredName + '. First child: ' + csv[1].preferredName]
           if (csv.lenght > 200) {
-            console.log('more than 200')
             this.successMsg.push(['This will take a few moments'])
-            console.log(this.successMsg)
           }
           if (csv.lenght > 4999) this.successMsg.push(['Ka Rawe! Thats a big whānau'])
           this.$emit('update:data', csv)
