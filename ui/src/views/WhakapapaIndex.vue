@@ -372,7 +372,7 @@ export default {
     },
     async buildFromFile (csv) {
       this.setLoading(true)
-      console.log('csv: ', csv)
+      // console.log('csv: ', csv)
       // create profile for each person
       var profilesArray = await this.createProfiles(csv)
       profilesArray['columns'] = this.columns
@@ -411,7 +411,7 @@ export default {
     },
 
     async addPerson ($event) {
-      console.log($event)
+      // console.log($event)
       let person = {}
       Object.entries($event).map(([key, value]) => {
         if (!isEmpty($event[key])) {
@@ -424,7 +424,7 @@ export default {
           }
         }
       })
-      console.log('person: ', person)
+      // console.log('person: ', person)
       try {
         var { id } = $event
         id = await this.createProfile(person)
