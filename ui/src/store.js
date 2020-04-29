@@ -8,7 +8,9 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     nestedWhakapapa: {},
-    loading: false
+    loading: false,
+    profileQueue: []
+
   },
   getters: {
     nestedWhakapapa: state => {
@@ -16,6 +18,9 @@ export default new Vuex.Store({
     },
     loadingState: state => {
       return state.loading
+    },
+    profileQueue: state => {
+      return state.profileQueue
     }
   },
   mutations: {
@@ -24,6 +29,12 @@ export default new Vuex.Store({
     },
     setLoading (state, loading) {
       state.loading = loading
+    },
+    addToProfileQueue (state, profile) {
+      state.profileQueue = [...state.profileQueue, profile]
+    },
+    shiftFromProfileQueue (state) {
+      state.profileQueue.shift()
     }
   },
   actions: {

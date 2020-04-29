@@ -95,6 +95,8 @@ import { saveWhakapapaLink } from '@/lib/link-helpers.js'
 import tree from '@/lib/tree-helpers'
 import { mapMutations } from 'vuex'
 
+import clone from 'lodash.clonedeep'
+
 const saveWhakapapaViewQuery = gql`
   mutation($input: WhakapapaViewInput) {
     saveWhakapapaView(input: $input)
@@ -125,8 +127,7 @@ export default {
       showProfileForm: false,
       showViewForm: false,
       newView: null,
-      columns: [],
-      processingQueue: false
+      columns: []
     }
   },
   mounted () {
@@ -168,17 +169,6 @@ export default {
       `,
       update: data => data.whakapapaViews,
       fetchPolicy: 'no-cache'
-    }
-  },
-  watch: {
-    processingQueue: function (isProcessing) {
-      if (!isProcessing) return
-      while (this.recordQueue.length) {
-        const record = this.recordQueue.shift()
-
-      }
-
-      this.processingQueue = false
     }
   },
   methods: {
@@ -383,10 +373,12 @@ export default {
       }
     },
     async buildFromFile (csv) {
+      this.setLoading(true)
+      // console.log('csv: ', csv)
       // create profile for each person
       var profilesArray = await this.createProfiles(csv)
       profilesArray['columns'] = this.columns
-
+      console.log('HERE')
       // create obj of children and parents
       var root = d3.stratify()
         .id(function (d) { return d.number })
@@ -406,50 +398,34 @@ export default {
     },
 
     async createProfiles (csv) {
-      // csv.forEach(d => {
-      //   this.recordQueue = [...this.recordQueue, d]
-      //   if (!this.processingQueue) this.processingQueue = true
-      // })
-      // function sleep (ms) {
-      //   return new Promise(resolve => setTimeout(resolve, ms))
-      // }
       this.columns = csv.columns
-      var items = []
+      console.log('csv', csv)
 
-      var currentLen = csv.length
-      while (currentLen > 0) {
-        let portion = []
-        var len = currentLen % 100
-        if (len === 0) {
-          // take out 500 items
-          portion = csv.splice(0, 100)
-          currentLen -= 100
-        } else {
-          // take out n items
-          portion = csv.splice(0, len)
-          currentLen -= len
+      var array = clone(csv)
+      // create a profile for each person and add the created id to the person and parse back to profilesArray
+      // return Promise.all(csv.map(async d => {
+      //   var id = await this.addPerson(d)
+      //   const person = {
+      //     id: id,
+      //     ...d
+      //   }
+      //   return person
+      // })
+      // )
+
+      var profiles = []
+
+      while (array.length > 0) {
+        const person = array.shift()
+        var id = await this.addPerson(person)
+        const profile = {
+          id: id,
+          ...person
         }
-
-        // process the portion
-        portion = await Promise.all(portion.map(async d => {
-          var id = await this.addPerson(d)
-
-          const person = {
-            id: id,
-            ...d
-          }
-
-          return person
-        }))
-
-        // add that portion to an array?
-
-        // await sleep(500)
-        items = items.concat(portion)
+        profiles.push(profile)
       }
-
-      console.log(items)
-      return items
+      console.log('profiles', profiles)
+      return profiles
     },
 
     async addPerson ($event) {
@@ -466,7 +442,7 @@ export default {
           }
         }
       })
-
+      // console.log('person: ', person)
       try {
         var { id } = $event
         id = await this.createProfile(person)
@@ -479,47 +455,35 @@ export default {
         throw err
       }
     },
+
     async createLinks (descendants) {
-      console.log('createLinks')
-      descendants.shift()
+      var array = clone(descendants)
 
-      var items = []
+      array.shift()
 
-      var currentLen = descendants.length
-      while (currentLen > 0) {
-        let portion = []
-        var len = currentLen % 100
-        if (len === 0) {
-          // take out 500 items
-          portion = descendants.splice(0, 100)
-          currentLen -= 100
-        } else {
-          // take out n items
-          portion = descendants.splice(0, len)
-          currentLen -= len
+      var links = []
+
+      while (array.length > 0) {
+        const d = array.shift()
+
+        let relationship = {
+          child: d.data.id,
+          parent: d.parent.data.id,
+          relationshipType: d.data.relationshipType
         }
 
-        portion = await Promise.all(descendants.map(async d => {
-          let relationship = {
-            child: d.data.id,
-            parent: d.parent.data.id,
-            relationshipType: d.data.relationshipType
-          }
-          var link = await this.createChildLink(relationship)
+        var link = await this.createChildLink(relationship)
 
-          var person = {
-            ...d,
-            link: link
-          }
-          return person
-        }))
-
-        items = items.concat(portion)
+        var person = {
+          ...d,
+          link: link
+        }
+        links.push(person)
       }
-
-      console.log('links')
-      return items
+      console.log('links', links)
+      return links
     },
+
     async createProfile ({
       preferredName,
       legalName,
@@ -590,9 +554,6 @@ export default {
         }
         return res // TODO return the linkId
       } catch (err) {
-        console.error(err)
-        console.error('child', child)
-        console.error('parent', parent)
         throw err
       }
     }
