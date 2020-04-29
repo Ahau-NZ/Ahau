@@ -125,7 +125,8 @@ export default {
       showProfileForm: false,
       showViewForm: false,
       newView: null,
-      columns: []
+      columns: [],
+      processingQueue: false
     }
   },
   mounted () {
@@ -167,6 +168,17 @@ export default {
       `,
       update: data => data.whakapapaViews,
       fetchPolicy: 'no-cache'
+    }
+  },
+  watch: {
+    processingQueue: function (isProcessing) {
+      if (!isProcessing) return
+      while (this.recordQueue.length) {
+        const record = this.recordQueue.shift()
+
+      }
+
+      this.processingQueue = false
     }
   },
   methods: {
@@ -394,17 +406,24 @@ export default {
     },
 
     async createProfiles (csv) {
+      // csv.forEach(d => {
+      //   this.recordQueue = [...this.recordQueue, d]
+      //   if (!this.processingQueue) this.processingQueue = true
+      // })
+      // function sleep (ms) {
+      //   return new Promise(resolve => setTimeout(resolve, ms))
+      // }
       this.columns = csv.columns
       var items = []
 
       var currentLen = csv.length
       while (currentLen > 0) {
         let portion = []
-        var len = currentLen % 500
+        var len = currentLen % 100
         if (len === 0) {
           // take out 500 items
-          portion = csv.splice(0, 500)
-          currentLen -= 500
+          portion = csv.splice(0, 100)
+          currentLen -= 100
         } else {
           // take out n items
           portion = csv.splice(0, len)
@@ -424,6 +443,8 @@ export default {
         }))
 
         // add that portion to an array?
+
+        // await sleep(500)
         items = items.concat(portion)
       }
 
@@ -458,28 +479,47 @@ export default {
         throw err
       }
     },
-
     async createLinks (descendants) {
-      // skip top ancestor
+      console.log('createLinks')
       descendants.shift()
-      // create a whakapapaLink between child and parent for each person
-      return Promise.all(descendants.map(async d => {
-        let relationship = {
-          child: d.data.id,
-          parent: d.parent.data.id,
-          relationshipType: d.data.relationshipType
-        }
-        var link = await this.createChildLink(relationship)
 
-        var person = {
-          ...d,
-          link: link
+      var items = []
+
+      var currentLen = descendants.length
+      while (currentLen > 0) {
+        let portion = []
+        var len = currentLen % 100
+        if (len === 0) {
+          // take out 500 items
+          portion = descendants.splice(0, 100)
+          currentLen -= 100
+        } else {
+          // take out n items
+          portion = descendants.splice(0, len)
+          currentLen -= len
         }
-        return person
-      })
-      )
+
+        portion = await Promise.all(descendants.map(async d => {
+          let relationship = {
+            child: d.data.id,
+            parent: d.parent.data.id,
+            relationshipType: d.data.relationshipType
+          }
+          var link = await this.createChildLink(relationship)
+
+          var person = {
+            ...d,
+            link: link
+          }
+          return person
+        }))
+
+        items = items.concat(portion)
+      }
+
+      console.log('links')
+      return items
     },
-
     async createProfile ({
       preferredName,
       legalName,
@@ -550,6 +590,9 @@ export default {
         }
         return res // TODO return the linkId
       } catch (err) {
+        console.error(err)
+        console.error('child', child)
+        console.error('parent', parent)
         throw err
       }
     }
