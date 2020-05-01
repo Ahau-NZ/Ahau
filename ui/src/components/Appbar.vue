@@ -38,7 +38,7 @@
         </v-btn>
 
         <!-- using click.native to handle event when there is also a router link -->
-        <!-- <v-btn
+       <v-btn
           @click.native="karakiaWhakamutunga()"
           to="/login"
           text
@@ -62,13 +62,14 @@
           <v-icon>mdi-menu</v-icon>
         </v-btn>
       </template>
+      
     </v-app-bar>
 
     <!-- The drawer shows only on mobile -->
     <v-navigation-drawer v-if="mobile && enableMenu" v-model="drawer" app dark right>
       <v-list nav class="text-uppercase">
         <!--  WIP links -->
-        <v-list-item link >
+        <v-list-item :to="{ name: 'personShow', params: { id: profile.id } }" >
           <Avatar
             size="80px"
             :image="profile.avatarImage"

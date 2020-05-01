@@ -1,6 +1,6 @@
 <template>
   <v-container class="full-width my-0 py-0">
-    <v-row class="header-bg" v-bind:style="{ backgroundImage: 'url(' + require('@/assets/nzheader.jpg') +')' }">
+    <v-row class="header-bg" v-bind:style="{ backgroundImage: 'url(' + require('@/assets/nzheader.jpg') +')', height: headerHeight }">
       <!-- <v-img :src="headerImage ? headerImage.uri : require('@/assets/nzheader.jpg')" min-width="100%" /> -->
     </v-row>
 
@@ -21,7 +21,8 @@ export default {
   props: {
     preferredName: String,
     headerImage: Object,
-    avatarImage: Object
+    avatarImage: Object,
+    headerHeight: String
   },
   components: {
     Avatar
