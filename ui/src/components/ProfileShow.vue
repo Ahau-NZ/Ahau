@@ -1,11 +1,12 @@
 <template>
-    <component :is="getComponent()" :profile="profile"></component>
+    <component :is="getComponent()" :profile="profile" :type="type" @dialogTrigger="updateDialog($event)"></component>
 </template>
 
 <script>
   import ProfileShowDesktop from '@/components/ProfileShowDesktop.vue'
   import ProfileShowTablet from '@/components/ProfileShowTablet.vue'
   import ProfileShowMobile from '@/components/ProfileShowMobile.vue'
+
 
   export default {
     name: 'ProfileShow',
@@ -40,6 +41,9 @@
           case 'xl': return 'ProfileShowDesktop'
         }
       },
+      updateDialog (dialogObj) {
+        this.$emit('dialogTrigger', dialogObj)
+      }
     },
     components: {
       ProfileShowDesktop,

@@ -9,6 +9,13 @@
       :selectedProfile="selectedProfile"
       :suggestions="suggestions" @getSuggestions="getSuggestions($event)"
     />
+    <EditNodeDialog v-if="isActive('edit-node')"
+      :show="isActive('edit-node')"
+      :title="`Edit ${selectedProfile.preferredName}`"
+      @submit="updateProfile($event)"
+      @close="close"
+      :selectedProfile="selectedProfile"
+    />
     <div :class="sideMenuClass">
       <SideViewEditNodeDialog
         v-if="isActive('view-edit-node')"
@@ -65,6 +72,7 @@
 
 <script>
 import NewNodeDialog from '@/components/dialog/profile/NewNodeDialog.vue'
+import EditNodeDialog from '@/components/dialog/profile/EditNodeDialog.vue'
 import SideViewEditNodeDialog from '@/components/dialog/profile/SideViewEditNodeDialog.vue'
 import DeleteNodeDialog from '@/components/dialog/profile/DeleteNodeDialog.vue'
 import WhakapapaViewDialog from '@/components/dialog/whakapapa/WhakapapaViewDialog.vue'
@@ -90,6 +98,7 @@ export default {
   name: 'DialogHandler',
   components: {
     NewNodeDialog,
+    EditNodeDialog,
     SideViewEditNodeDialog,
     DeleteNodeDialog,
     WhakapapaViewDialog,
@@ -116,7 +125,7 @@ export default {
       required: false,
       default: null,
       validator: (val) => [
-        'new-node', 'view-edit-node', 'delete-node',
+        'new-node', 'edit-node', 'view-edit-node', 'delete-node',
         'whakapapa-view', 'whakapapa-edit', 'whakapapa-delete', 'whakapapa-helper', 'whakapapa-table-helper'
       ].includes(val)
     },

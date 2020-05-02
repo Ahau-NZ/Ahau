@@ -1,16 +1,27 @@
 <template>
-  <ProfileShow type="person" :profile="profile" :editProfile="edit" />
+<div>
+  <ProfileShow type="person" :profile="profile" @dialogTrigger="updateDialog($event)"/>
+  <DialogHandler
+      :dialog.sync="dialog.active"
+      :selectedProfile="profile"
+    />
+</div>
 </template>
 
 <script>
 import gql from 'graphql-tag'
 import ProfileShow from '@/components/ProfileShow'
+import DialogHandler from '@/components/dialog/DialogHandler.vue'
 
 export default {
   name: 'PersonShow',
   data () {
     return {
-      profile: {}
+      profile: {},
+      dialog: {
+          active: null,
+          type: null
+      },
     }
   },
   apollo: {
@@ -19,18 +30,74 @@ export default {
         query: gql`
           query ProfileData($id: String!) {
             person(id: $id) {
-              canEdit
-
+              id
               preferredName
               legalName
+              gender
+              bornAt
+              diedAt
+              birthOrder
               description
-
-              headerImage {
-                uri
-              }
+              address
+              email
+              phone
+              location
+              profession
+              deceased
+              altNames
               avatarImage {
                 uri
               }
+              children {
+                profile {
+                  id
+                  preferredName
+                  legalName
+                  gender
+                  bornAt
+                  diedAt
+                  birthOrder
+                  description
+                  address
+                  email
+                  phone
+                  location
+                  profession
+                  deceased
+                  altNames
+                  avatarImage {
+                    uri
+                  }
+                }
+                relationshipId
+                relationshipType
+              }
+
+              parents {
+                profile {
+                  id
+                  preferredName
+                  legalName
+                  gender
+                  bornAt
+                  diedAt
+                  birthOrder
+                  description
+                  address
+                  phone
+                  email
+                  location
+                  profession
+                  deceased
+                  altNames
+                  avatarImage {
+                    uri
+                  }
+                }
+                relationshipId
+                relationshipType
+              }
+              canEdit
             }
           }
         `,
@@ -50,15 +117,20 @@ export default {
     }
   },
   methods: {
-    edit () {
-      this.$router.push({
-        name: 'personEdit',
-        params: { id: this.$route.params.id }
-      })
-    }
+    // edit () {
+    //   this.$router.push({
+    //     name: 'personEdit',
+    //     params: { id: this.$route.params.id }
+    //   })
+    // }
+    updateDialog(dialogObj) {
+      this.dialog.type = dialogObj.type
+      this.dialog.active = dialogObj.dialog
+    },
   },
   components: {
-    ProfileShow
+    ProfileShow,
+    DialogHandler
   }
 }
 </script>
