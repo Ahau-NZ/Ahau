@@ -17,6 +17,7 @@
     "@mdi/font": "^4.5.95",
     "apollo-upload-client": "^10.0.1",
     "graphql": "^14.5.8",
+    "lodash.chunk": "^4.2.0",
     "lodash.clonedeep": "^4.5.0",
     "lodash.get": "^4.4.2",
     "lodash.isempty": "^4.4.0",

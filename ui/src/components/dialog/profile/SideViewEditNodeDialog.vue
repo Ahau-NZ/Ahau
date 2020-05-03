@@ -252,7 +252,7 @@
                         />
                       </v-col>
                     </v-row>
-                    <!-- Desktop: Editing: relationship type-->
+                    <!-- Mobile: Editing: relationship type-->
                     <v-row>
                       <v-col v-if="!readonly || formData.relationshipType" cols="12" class="pa-1">
                         <v-select

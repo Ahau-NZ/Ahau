@@ -182,7 +182,7 @@ export default {
           // set width of first column
           this.setWidth(d.depth)
           return {
-            nodeId: `node-${i}`,
+            nodeId: `table-node-${i}-${d.data.id}`,
             children: d.children,
             data: d.data,
             depth: d.depth,
@@ -204,7 +204,7 @@ export default {
         .links() // returns the array of links
         .map((d, i) => { // returns a new custom object for each link
           return {
-            id: `table-link-${i}-${i + 1}`,
+            id: `table-link-${i}-${d.target.data.id}`,
             index: i,
             relationshipType: d.target.data.relationship.relationshipType ? d.target.data.relationship.relationshipType : '',
             class: d.target.data.relationship.relationshipType !== 'birth' ? 'nonbiological' : '',

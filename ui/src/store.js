@@ -10,7 +10,6 @@ export default new Vuex.Store({
     nestedWhakapapa: {},
     loading: false,
     profileQueue: []
-
   },
   getters: {
     nestedWhakapapa: state => {

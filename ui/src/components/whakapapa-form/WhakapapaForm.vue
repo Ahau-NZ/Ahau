@@ -86,7 +86,6 @@
                 :rules="form.rules.csvFile"
                 @click:clear="resetFile()"
               ></v-file-input>
-              <!-- :error-messages="errorMsg" -->
             </v-col>
           </v-row>
         </v-row>
@@ -168,11 +167,12 @@ export default {
       // this.successMsg = []
       if (newValue != null) { this.checkFile(newValue) }
     },
-    data (newValue) {
+    async data (newValue) {
       if (newValue !== null) {
         var count = 0
 
-        var csv = d3.csvParse(newValue, (d) => {
+        var csv = await d3.csvParse(newValue, (d) => {
+          console.log('Parsing csv')
           count++
 
           // validate each row (aka d)
@@ -211,17 +211,20 @@ export default {
         if (count === csv.length) {
           this.noErrorsInCSV = true
         }
+        console.log('csv: ', csv.length)
 
-        if (this.noErrorsInCSV === false) {
+        if (csv.length > 200) {
+          this.errorMsg.push('Aroha mai, we are currently experiencing issues processing large files. We are currently working on this and hope to have this working soon')
+          // flag there is error in CSV
+          this.noErrorsInCSV = false
+          // show error dialog with what the error is
+          this.csvError()
+        } else if (this.noErrorsInCSV === false) {
           console.log('CSV had an error')
           // if there is an error clear csv
           csv = ''
         } else {
           this.successMsg = ['Expected result = Top ancestor: ' + csv[0].preferredName + '. First child: ' + csv[1].preferredName]
-          if (csv.lenght > 200) {
-            this.successMsg.push(['This will take a few moments'])
-          }
-          if (csv.lenght > 4999) this.successMsg.push(['Ka Rawe! Thats a big whānau'])
           this.$emit('update:data', csv)
         }
       }

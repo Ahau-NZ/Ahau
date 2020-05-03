@@ -101,6 +101,9 @@ export default {
     WhakapapaTableHelper
   },
   props: {
+    focus: {
+      type: String
+    },
     relationshipLinks: {
       type: Map
     },
@@ -222,7 +225,7 @@ export default {
                   child = id
                   parent = this.selectedProfile.id
 
-                  var profile = await this.loadDescendants(child)
+                  var profile = await this.loadDescendants(child, '', [])
                   profile.parents[0] = this.selectedProfile
 
                   // add child to parent
@@ -245,6 +248,11 @@ export default {
                     }
 
                     this.addParent({ child: this.selectedProfile, parent: profile })
+
+                    // if the parent is the new head of the tree and is being added on a partner family line that update the tree
+                    if (this.selectedProfile.parents.length === 1) {
+                      this.$emit('change-focus', profile.id)
+                    }
                   }
                   break
                 case 'sibling':
@@ -252,7 +260,7 @@ export default {
                   parent = this.selectedProfile.parents[0].id
                   child = id
 
-                  var profileSibling = await this.loadDescendants(child)
+                  var profileSibling = await this.loadDescendants(child, '', [])
                   profileSibling.parents[0] = this.selectedProfile.parents[0]
 
                   // add child to parent
@@ -288,7 +296,7 @@ export default {
               parent = this.selectedProfile.id
               await this.createChildLink({ child, parent, ...relationshipAttrs })
 
-              const profile = await this.loadDescendants(child)
+              const profile = await this.loadDescendants(child, '', [])
 
               profile.parents[0] = this.selectedProfile
 
@@ -326,7 +334,7 @@ export default {
               child = id
               await this.createChildLink({ child, parent, ...relationshipAttrs })
 
-              const profileSibling = await this.loadDescendants(child)
+              const profileSibling = await this.loadDescendants(child, '', [])
 
               profileSibling.parents[0] = this.selectedProfile.parents[0]
 
@@ -416,6 +424,7 @@ export default {
           console.error('failed to createChildLink', res)
           return
         }
+        console.log('child link created: ', res)
         return res // TODO return the linkId
       } catch (err) {
         throw err
@@ -517,11 +526,16 @@ export default {
           `,
           variables: { input }
         })
+        this.$emit('refreshWhakapapa')
         if (res.data) {
+          // if removing top ancestor on main whanau line, update the whakapapa view focus with child/partner
           if (this.selectedProfile.id === this.view.focus) {
             const successor = findSuccessor(this.selectedProfile)
-            console.log('successor :', successor)
             this.$emit('updateFocus', successor.id)
+          // if removing top ancestor on a partner line show the new top ancestor
+          } else if (this.selectedProfile.id === this.focus) {
+            const successor = findSuccessor(this.selectedProfile)
+            this.$emit('setFocus', successor.id)
           } else {
             this.deleteNode(this.selectedProfile)
             this.setSelectedProfile(null)
@@ -535,12 +549,16 @@ export default {
     },
     async deleteProfile () {
       if (!this.canDelete(this.selectedProfile)) return
-
+      // if removing top ancestor on main whanau line, update the whakapapa view focus with child/partner
       if (this.selectedProfile.id === this.view.focus) {
         const successor = findSuccessor(this.selectedProfile)
         this.$emit('updateFocus', successor.id)
+      // if removing top ancestor on a partner line show the new top ancestor
+      } else if (this.selectedProfile.id === this.focus) {
+        const successor = findSuccessor(this.selectedProfile)
+        this.$emit('setFocus', successor.id)
       } else {
-        // remove node from the nested whakapapa if not the whakapapa head
+        // remove node from the nested whakapapa if not the top ancestor
         this.deleteNode(this.selectedProfile)
       }
 

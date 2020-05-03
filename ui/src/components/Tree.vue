@@ -184,6 +184,7 @@ export default {
       return this.treeLayout(this.root)
         .descendants() // returns the array of descendants starting with the root node, then followed by each child in topological order
         .map((d, i) => {
+          console.log('mapping nodes')
           return {
             id: `tree-node-${i}-${d.data.id}`,
             children: d.children,
@@ -205,6 +206,7 @@ export default {
       return this.treeLayout(this.root)
         .links() // returns the array of links
         .map((d, i) => { // returns a new custom object for each link
+          console.log('mapping links')
           return {
             id: `tree-link-${i}-${d.source.data.id}-${d.target.data.id}`,
             index: i,
@@ -277,7 +279,7 @@ export default {
     ...mapActions(['updateNode', 'loading']),
 
     pathStroke (sourceId, targetId) {
-      if (!this.paths) return 'lightgrey'
+      if (!this.paths) return 'darkgrey'
 
       var currentPath = [
         sourceId,
@@ -292,7 +294,7 @@ export default {
       if (pairs.length > 0) {
         return '#b02425'
       }
-      return 'lightgrey'
+      return 'darkgrey'
     },
 
     loadDescendants (profileId) {
