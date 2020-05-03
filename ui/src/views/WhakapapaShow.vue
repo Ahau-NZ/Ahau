@@ -553,7 +553,12 @@ export default {
           console.error(result.errors)
           return
         }
-        return result.data.person
+        else {
+          if (result.data.person.id === this.currentFocus && result.data.person.parents.length){
+            result.data.person.parents = []
+          } 
+          return result.data.person
+        }
       } catch (e) {
         console.error('WARNING, something went wrong, caught it')
         console.error(e)
@@ -688,7 +693,7 @@ export default {
     async setSelectedProfile (profile) {
       // check the type of profile we received
       if (typeof profile === 'object') {
-        if (profile.parents.length) {
+        if (profile.id !== this.currentFocus) {
            // find parent to get any changes to siblings
           var person = await tree.find(this.nestedWhakapapa, profile.parents[0].id)
           var updatedProfile = tree.getSiblings(person, profile)
@@ -698,15 +703,14 @@ export default {
       } else if (typeof profile === 'string') {
         // need to find the profile in this whakapapa
         var profileFound = await tree.find(this.nestedWhakapapa, profile)
-
         if (!profileFound) {
           // lets load descendants of them instead
-          this.selectedProfile = await this.loadDescendants(profile)
+          this.selectedProfile = await this.loadDescendants(profile, '', [])
           console.warn('could potentially be loading a large amount of data')
           this.selectedProfile.fromOtherWhakapapa = true
           return
         }
-        if (profileFound.parents.length){
+        if (profileFound.id !== this.currentFocus) {
           // find parent to get any changes to siblings
           var parent = await tree.find(this.nestedWhakapapa, profileFound.parents[0].id)
           var newUpdatedProfile = tree.getSiblings(parent, profileFound)
