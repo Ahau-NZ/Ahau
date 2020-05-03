@@ -1,73 +1,11 @@
 <template>
-  <div class="wrapper">
-    <Header
-      :preferredName="profile.preferredName"
-      :headerImage="profile.headerImage"
-      :avatarImage="profile.avatarImage"
-    />
-    <v-container class="body-width white py-12 px-12">
-      <v-row class="pt-12">
-        <v-col cols="8">
-          <h1 class="primary--text">{{ profile.preferredName }}</h1>
-          <v-row>
-            <v-col v-if="profile.legalName" cols="6">
-              <h3 class="primary--text caption">Legal name</h3>
-              <p class="primary--text body-1">{{ profile.legalName }}</p>
-            </v-col>
-            <!-- <v-col cols="6"> -->
-            <!--   <h3 class="primary--text caption">Other names</h3> -->
-            <!--   <p class="primary--text body-1">{{altNames}}</p> -->
-            <!-- </v-col> -->
-          </v-row>
-        </v-col>
-
-        <v-col cols="4" class="d-flex justify-end">
-          <v-btn
-            v-if="profile.canEdit"
-            class="my-2"
-            fab
-            color="white"
-            @click="editProfile()"
-          >
-            <v-icon class="black--text">mdi-pencil</v-icon>
-          </v-btn>
-          <span class="ml-4 subtitle">Edit</span>
-        </v-col>
-      </v-row>
-
-      <v-row>
-        <v-col cols="8">
-          <v-card light min-height="200px">
-            <v-card-title class="headline font-weight-bold">About</v-card-title>
-            <v-card-text>
-              <p
-                v-for="(p, i) in splitParagraphs(profile.description)"
-                :key="i + p"
-              >
-                {{ p }}
-              </p>
-            </v-card-text>
-          </v-card>
-        </v-col>
-        <v-col cols="4">
-          <Kaitiaki :profile="profile" v-if="type === 'community'" />
-        </v-col>
-      </v-row>
-
-      <!-- <v-row> -->
-      <!-- <v-card min-height="200px" light > -->
-      <!--   <v-card-title class="headline">Communities</v-card-title> -->
-      <!-- </v-card> -->
-      <!-- </v-row> -->
-    </v-container>
-  </div>
+    <component :is="getComponent()" :profile="profile" :type="type" @dialogTrigger="updateDialog($event)"></component>
 </template>
 
 <script>
-import Header from '@/components/profile/Header.vue'
-import Kaitiaki from '@/components/profile/Kaitiaki.vue'
-
-// const get = require('lodash.get')
+import ProfileShowDesktop from '@/components/ProfileShowDesktop.vue'
+import ProfileShowTablet from '@/components/ProfileShowTablet.vue'
+import ProfileShowMobile from '@/components/ProfileShowMobile.vue'
 
 export default {
   name: 'ProfileShow',
@@ -90,27 +28,41 @@ export default {
       if (!text) return
 
       return text.split('\n\n')
+    },
+
+    getComponent () {
+      // isMobile would be some check to determine the validity of that, how ever you check for that
+      switch (this.$vuetify.breakpoint.name) {
+        case 'xs': return 'ProfileShowMobile'
+        case 'sm':
+        case 'md': return 'ProfileShowTablet'
+        case 'lg':
+        case 'xl': return 'ProfileShowDesktop'
+      }
+    },
+    updateDialog (dialogObj) {
+      this.$emit('dialogTrigger', dialogObj)
     }
   },
   components: {
-    Header,
-    Kaitiaki
+    ProfileShowDesktop,
+    ProfileShowTablet,
+    ProfileShowMobile
   }
 }
 </script>
 <style scoped lang="scss">
-$formWidth: 600px;
-.wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  // background: linear-gradient(to right, grey 0%,grey 50%,#000000 50%,white 50%,white 100%);
+  .wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 
-  .body-width {
-    min-width: $formWidth;
-    max-width: 60vw;
-    min-height: 100vh;
-    background: white;
+    .niho-bg {
+      background: linear-gradient(rgba(255, 255, 255, 0.7),
+          rgba(255, 255, 255, 0.7)), url(../assets/niho.svg);
+      background-position-x: 150%;
+      background-repeat: no-repeat;
+
+    }
   }
-}
 </style>

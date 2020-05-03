@@ -1,24 +1,24 @@
 <template>
-  <div id="whakapapa-show" >
-    <v-container fluid class="pa-0" :style="[ mobile ? 'width:100vw' : 'width:95vw; margin-top:64px;' ]">
+    <div id="whakapapa-show">
+        <v-container fluid class="pa-0" :style="[ mobile ? 'width:100vw' : 'width:95vw; margin-top:64px;' ]">
 
-      <!-- Desktop Header -->
-      <!-- Whakapapa Title Card -->
-      <v-row v-if="!mobile" class="header">
-        <!-- Whakapapa"SHOW"ViewCard -->
-        <WhakapapaShowViewCard :view="whakapapaView" :shadow="false">
-          <template v-slot:edit>
-            <v-tooltip bottom>
-              <template v-slot:activator="{ on }">
-                <v-btn
-                  v-on="on"
-                  @click.prevent="dialog.active = 'whakapapa-edit'"
-                  icon
-                  class="pa-0 px-3"
-                >
-                  <v-icon small class="blue--text">mdi-pencil</v-icon>
-                </v-btn>
-              </template>
+            <!-- Desktop Header -->
+            <!-- Whakapapa Title Card -->
+            <v-row v-if="!mobile" class="header">
+                <!-- Whakapapa"SHOW"ViewCard -->
+                <WhakapapaShowViewCard :view="whakapapaView" :shadow="false">
+                    <template v-slot:edit>
+                <v-tooltip bottom>
+                  <template v-slot:activator="{ on }">
+                    <v-btn
+                      v-on="on"
+                      @click.prevent="dialog.active = 'whakapapa-edit'"
+                      icon
+                      class="pa-0 px-3"
+                    >
+                      <v-icon small class="blue--text">mdi-pencil</v-icon>
+                    </v-btn>
+</template>
               <span>Edit whakapapa description</span>
             </v-tooltip>
           </template>
@@ -401,7 +401,6 @@ export default {
       if (profile.id === this.whakapapaView.focus) {
         return false
       }
-
       return true
     },
     updateDialog (dialog, type) {
@@ -547,7 +546,6 @@ export default {
       }
       try {
         const result = await this.$apollo.query(request)
-
         if (result.errors) {
           console.error('WARNING, something went wrong')
           console.error(result.errors)
@@ -559,174 +557,177 @@ export default {
         console.error(e)
       }
     },
-    async loadDescendants (profileId, path, temp) {
-      console.log('loading descendants')
-      // calls person.fetchPerson which gets info about this person from the db
-      var person = await this.getRelatives(profileId)
+    fetchPolicy: 'no-cache'
+  },
+  async loadDescendants (profileId, path, temp) {
+    console.log('loading descendants')
+    // calls person.fetchPerson which gets info about this person from the db
+    var person = await this.getRelatives(profileId)
 
-      if (temp[profileId]) console.log('profile exists: ', profileId)
-      else temp[profileId] = profileId
+    if (temp[profileId]) console.log('profile exists: ', profileId)
+    else temp[profileId] = profileId
 
-      // make sure every person has a partners and siblings array
-      person.partners = []
-      person.siblings = []
+    // make sure every person has a partners and siblings array
+    person.partners = []
+    person.siblings = []
 
-      person.path = path
+    person.path = path
 
-      // if focus is ign
+    // if focus is ign
 
-      // filter out ignored profiles
-      person.children = person.children.filter(this.isVisibleProfile)
-      person.parents = person.parents.filter(this.isVisibleProfile)
+    // filter out ignored profiles
+    person.children = person.children.filter(this.isVisibleProfile)
+    person.parents = person.parents.filter(this.isVisibleProfile)
 
-      // for each of my children
-      person.children = await Promise.all(person.children.map(async (child, i) => {
-        var childPath = `children[${i}]`
-        if (path) childPath = person.path + '.' + childPath
+    // for each of my children
+    person.children = await Promise.all(person.children.map(async (child, i) => {
+      var childPath = `children[${i}]`
+      if (path) childPath = person.path + '.' + childPath
 
-        // load their descendants
-        const childProfile = await this.loadDescendants(child.profile.id, childPath, temp)
+      // load their descendants
+      const childProfile = await this.loadDescendants(child.profile.id, childPath, temp)
 
-        person = tree.getPartners(person, childProfile)
+      person = tree.getPartners(person, childProfile)
 
-        const r = tree.getRelationship(person, childProfile, child)
-        this.relationshipLinks.set(r.index, r.attrs)
+      const r = tree.getRelationship(person, childProfile, child)
+      this.relationshipLinks.set(r.index, r.attrs)
 
-        return childProfile
-      }))
+      return childProfile
+    }))
 
-      person.children = person.children.sort((a, b) => {
-        return a.birthOrder - b.birthOrder
+    person.children = person.children.sort((a, b) => {
+      return a.birthOrder - b.birthOrder
+    })
+
+    person.parents = await Promise.all(person.parents.map(async parent => {
+      // load their profile
+      const parentProfile = await this.getRelatives(parent.profile.id)
+
+      // look at their children
+      person = tree.getSiblings(parentProfile, person)
+
+      const r = tree.getRelationship(parentProfile, person, parent)
+      this.relationshipLinks.set(r.index, r.attrs)
+
+      // person.relationshipType = r.attrs.relationshipType
+      // person.relationshipId = r.attrs.relationshipId
+
+      return parentProfile
+    }))
+
+    person.partners = await Promise.all(person.partners.map(async (partner, i) => {
+      var partnerPath = `partners[${i}]`
+      if (path) partnerPath = person.path + '.' + partnerPath
+      partner.path = partnerPath
+
+      partner.children = partner.children.map(child => {
+        const exists = person.children.find(d => {
+          var id = (child.profile) ? child.profile.id : child.id
+          return d.id === id
+        })
+        if (exists) return exists
+        // TODO: doesnt save this relationship
+        return child.profile
       })
 
-      person.parents = await Promise.all(person.parents.map(async parent => {
-        // load their profile
-        const parentProfile = await this.getRelatives(parent.profile.id)
-
-        // look at their children
-        person = tree.getSiblings(parentProfile, person)
-
-        const r = tree.getRelationship(parentProfile, person, parent)
-        this.relationshipLinks.set(r.index, r.attrs)
-
-        // person.relationshipType = r.attrs.relationshipType
-        // person.relationshipId = r.attrs.relationshipId
-
-        return parentProfile
-      }))
-
-      person.partners = await Promise.all(person.partners.map(async (partner, i) => {
-        var partnerPath = `partners[${i}]`
-        if (path) partnerPath = person.path + '.' + partnerPath
-        partner.path = partnerPath
-
-        partner.children = partner.children.map(child => {
-          const exists = person.children.find(d => {
-            var id = (child.profile) ? child.profile.id : child.id
-            return d.id === id
-          })
-          if (exists) return exists
-          // TODO: doesnt save this relationship
-          return child.profile
-        })
-
-        partner.parents = partner.parents.map(d => {
-          // TODO: doesnt save this relationship
-          return d.profile
-        })
-
-        partner.partners = [person]
-        partner.siblings = []
-
-        return partner
-      }))
-
-      if (person.parents.length > 0) {
-        person.relationship = this.relationshipLinks.get(person.parents[0].id + '-' + person.id)
-      }
-
-      if (this.selectedProfile && this.selectedProfile.id === person.id) this.selectedProfile = person
-      return person
-    },
-    // contextMenu //////////////////////////
-    // TODO - extract all this
-    openContextMenu ({ event, profile }) {
-      if (this.dialog.view) {
-        this.toggleView()
-      }
-      this.setSelectedProfile(profile)
-      this.$refs.menu.open(event)
-    },
-    toggleFilter () {
-      this.filter = !this.filter
-    },
-    toggleFlatten () {
-      this.filter = false
-      this.flatten = !this.flatten
-    },
-    toggleTable () {
-      this.whakapapa.tree = !this.whakapapa.tree
-      this.whakapapa.table = !this.whakapapa.table
-    },
-    toggleWhakapapaHelper () {
-      this.showWhakapapaHelper = !this.showWhakapapaHelper
-    },
-    async updateFocus (focus) {
-      const input = {
-        id: this.$route.params.id,
-        focus: focus
-      }
-      try {
-        const res = await this.$apollo.mutate(saveWhakapapaViewMutation(input))
-        if (res.data) {
-          this.refreshWhakapapa()
-        } else console.error(res)
-      } catch (err) {
-        throw err
-      }
-    },
-    async setSelectedProfile (profile) {
-      // check the type of profile we received
-      if (typeof profile === 'object') {
-        // find parent to get any changes to siblings
-        var person = await tree.find(this.nestedWhakapapa, profile.parents[0].id)
-        var updatedProfile = tree.getSiblings(person, profile)
-        this.selectedProfile = updatedProfile
-      } else if (typeof profile === 'string') {
-        // need to find the profile in this whakapapa
-        var profileFound = await tree.find(this.nestedWhakapapa, profile)
-
-        if (!profileFound) {
-          // lets load descendants of them instead
-          this.selectedProfile = await this.loadDescendants(profile)
-          console.warn('could potentially be loading a large amount of data')
-          this.selectedProfile.fromOtherWhakapapa = true
-          return
-        }
-        // find parent to get any changes to siblings
-        var parent = await tree.find(this.nestedWhakapapa, profileFound.parents[0].id)
-        var newUpdatedProfile = tree.getSiblings(parent, profileFound)
-        this.selectedProfile = newUpdatedProfile
-      } else {
-        this.selectedProfile = {}
-      }
-    },
-
-    // save whakapapa changes
-    async updateWhakapapa (whakapapaChanges) {
-      const input = {
-        id: this.$route.params.id
-      }
-      Object.entries(whakapapaChanges).forEach(([key, value]) => {
-        if (!isEmpty(value)) input[key] = value
+      partner.parents = partner.parents.map(d => {
+        // TODO: doesnt save this relationship
+        return d.profile
       })
-      try {
-        const res = await this.$apollo.mutate(saveWhakapapaViewMutation(input))
-        // If saving changes works than set the new whakapapa information
-        // TODO: res has new whakapapa record information so we dont need to query it here
-        if (res.data) {
-          const updatedWhakapapa = await this.$apollo.query({
-            query: gql`
+
+      partner.partners = [person]
+      partner.siblings = []
+
+      return partner
+    }))
+
+    if (person.parents.length > 0) {
+      person.relationship = this.relationshipLinks.get(person.parents[0].id + '-' + person.id)
+    }
+
+    if (this.selectedProfile && this.selectedProfile.id === person.id) this.selectedProfile = person
+    return person
+  },
+  // contextMenu //////////////////////////
+  // TODO - extract all this
+  openContextMenu ({ event, profile }) {
+    if (this.dialog.view) {
+      this.toggleView()
+    }
+    this.setSelectedProfile(profile)
+    this.$refs.menu.open(event)
+  },
+  toggleFilter () {
+    this.filter = !this.filter
+  },
+  toggleFlatten () {
+    this.filter = false
+    this.flatten = !this.flatten
+  },
+  toggleTable () {
+    this.whakapapa.tree = !this.whakapapa.tree
+    this.whakapapa.table = !this.whakapapa.table
+  },
+  toggleWhakapapaHelper () {
+    this.showWhakapapaHelper = !this.showWhakapapaHelper
+  },
+  async updateFocus (focus) {
+    const input = {
+      id: this.$route.params.id,
+      focus: focus
+    }
+    try {
+      const res = await this.$apollo.mutate(saveWhakapapaViewMutation(input))
+      if (res.data) {
+        this.refreshWhakapapa()
+      } else console.error(res)
+    } catch (err) {
+      throw err
+    }
+  },
+
+  async setSelectedProfile (profile) {
+    // check the type of profile we received
+    if (typeof profile === 'object') {
+      // find parent to get any changes to siblings
+      var person = await tree.find(this.nestedWhakapapa, profile.parents[0].id)
+      var updatedProfile = tree.getSiblings(person, profile)
+      this.selectedProfile = updatedProfile
+    } else if (typeof profile === 'string') {
+      // need to find the profile in this whakapapa
+      var profileFound = await tree.find(this.nestedWhakapapa, profile)
+
+      if (!profileFound) {
+        // lets load descendants of them instead
+        this.selectedProfile = await this.loadDescendants(profile)
+        console.warn('could potentially be loading a large amount of data')
+        this.selectedProfile.fromOtherWhakapapa = true
+        return
+      }
+      // find parent to get any changes to siblings
+      var parent = await tree.find(this.nestedWhakapapa, profileFound.parents[0].id)
+      var newUpdatedProfile = tree.getSiblings(parent, profileFound)
+      this.selectedProfile = newUpdatedProfile
+    } else {
+      this.selectedProfile = {}
+    }
+  },
+
+  // save whakapapa changes
+  async updateWhakapapa (whakapapaChanges) {
+    const input = {
+      id: this.$route.params.id
+    }
+    Object.entries(whakapapaChanges).forEach(([key, value]) => {
+      if (!isEmpty(value)) input[key] = value
+    })
+    try {
+      const res = await this.$apollo.mutate(saveWhakapapaViewMutation(input))
+      // If saving changes works than set the new whakapapa information
+      // TODO: res has new whakapapa record information so we dont need to query it here
+      if (res.data) {
+        const updatedWhakapapa = await this.$apollo.query({
+          query: gql`
               query($id: String!) {
                 whakapapaView(id: $id) {
                   name
@@ -737,137 +738,125 @@ export default {
                 }
               }
             `,
-            variables: { id: res.data.saveWhakapapaView },
-            fetchPolicy: 'no-cache'
-          })
-          // update the whakapapaView with new record
-          if (updatedWhakapapa.data) {
-            this.whakapapaView = updatedWhakapapa.data.whakapapaView
-          }
-        } else console.error(res)
-      } catch (err) {
-        throw err
-      }
-    },
+          variables: { id: res.data.saveWhakapapaView },
+          fetchPolicy: 'no-cache'
+        })
+        // update the whakapapaView with new record
+        if (updatedWhakapapa.data) {
+          this.whakapapaView = updatedWhakapapa.data.whakapapaView
+        }
+      } else console.error(res)
+    } catch (err) {
+      throw err
+    }
+  },
 
-    async refreshWhakapapa () {
-      console.log('refreshing whakapapa')
-      await this.$apollo.queries.whakapapaView.refresh()
-    },
-    async deleteWhakapapa () {
-      const treeResult = await this.$apollo.mutate({
-        mutation: gql`
+  async refreshWhakapapa () {
+    await this.$apollo.queries.whakapapaView.refresh()
+  },
+
+  async deleteWhakapapa () {
+    const treeResult = await this.$apollo.mutate({
+      mutation: gql`
           mutation($input: WhakapapaViewInput) {
             saveWhakapapaView(input: $input)
           }
         `,
-        variables: {
-          input: {
-            id: this.$route.params.id,
-            tombstone: { date: new Date() }
-          }
+      variables: {
+        input: {
+          id: this.$route.params.id,
+          tombstone: { date: new Date() }
         }
-      })
-
-      if (treeResult.errors) {
-        console.error('failed to delete tree', treeResult)
-        return
       }
-      this.$router.push({ name: 'whakapapaIndex', params: { id: this.whakapapaView.recps } })
-    },
-    getImage () {
-      return avatarHelper.defaultImage(this.bornAt, this.gender)
+    })
+
+    if (treeResult.errors) {
+      console.error('failed to delete tree', treeResult)
+      return
     }
+    this.$router.push({ name: 'whakapapaIndex', params: { id: this.whakapapaView.recps } })
+  },
+  getImage () {
+    return avatarHelper.defaultImage(this.bornAt, this.gender)
   }
 }
 </script>
 
 <style>
-  .v-select.v-select--is-menu-active
-  .v-input__icon--append
-  .v-icon {
+.v-select.v-select--is-menu-active .v-input__icon--append .v-icon {
     transform: rotate(0);
-  }
-
+}
 </style>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 @import "~vue-context/dist/css/vue-context.css";
-
 #whakapapa-show {
-
-  & > .container {
-    position: relative;
-    /* width: 95vw; */
-    /* border: 2px solid red; */
-
-    & > .header {
-      position: absolute;
-      top: 10px;
-      left: 22px;
-      /* right: 160px; */
-      width: 30%;
-
-      .col {
-        padding-top: 0;
-        padding-bottom: 0;
-      }
+    &>.container {
+        position: relative;
+        /* width: 95vw; */
+        /* border: 2px solid red; */
+        &>.header {
+            position: absolute;
+            top: 10px;
+            left: 22px;
+            /* right: 160px; */
+            width: 30%;
+            .col {
+                padding-top: 0;
+                padding-bottom: 0;
+            }
+        }
+        &>.select {
+            position: fixed;
+            top: 80px;
+            right: 110px;
+            .col {
+                padding-top: 0;
+                padding-bottom: 0;
+            }
+        }
+        &>.navigate {
+            position: fixed;
+            top: 130px;
+            right: 110px;
+        }
     }
-
-    & > .select {
-      position: fixed;
-      top: 80px;
-      right: 110px;
-
-      .col {
-        padding-top: 0;
-        padding-bottom: 0;
-      }
-    }
-
-    & > .navigate {
-      position: fixed;
-      top: 130px;
-      right: 110px;
-    }
-  }
 }
 
 h1 {
-  color: black;
+    color: black;
 }
 
 .description {
-  color: #555;
+    color: #555;
 }
 
 .fixed {
-  position: fixed;
+    position: fixed;
 }
 
 .icon-button {
-  padding: 0px;
-  width: 50px;
-  display: flex;
-  justify-content: flex-end;
+    padding: 0px;
+    width: 50px;
+    display: flex;
+    justify-content: flex-end;
 }
 
 .icon-search {
-  width: 300px;
-  display: flex;
-  justify-items: flex-end;
+    width: 300px;
+    display: flex;
+    justify-items: flex-end;
 }
 
 .contextMenuIcon {
-  width: 20px;
-  height: 20px;
-  color: black;
+    width: 20px;
+    height: 20px;
+    color: black;
 }
 
 .tree {
-  max-height: calc(100vh - 64px);
-
+    max-height: calc(100vh - 64px);
 }
 
 #create .v-speed-dial {

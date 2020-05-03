@@ -10,6 +10,13 @@
       :suggestions="suggestions"
       @getSuggestions="getSuggestions($event)"
     />
+    <EditNodeDialog v-if="isActive('edit-node')"
+      :show="isActive('edit-node')"
+      :title="`Edit ${selectedProfile.preferredName}`"
+      @submit="updateProfile($event)"
+      @close="close"
+      :selectedProfile="selectedProfile"
+    />
     <div :class="sideMenuClass">
       <SideViewEditNodeDialog
         v-if="isActive('view-edit-node')"
@@ -66,6 +73,7 @@
 
 <script>
 import NewNodeDialog from '@/components/dialog/profile/NewNodeDialog.vue'
+import EditNodeDialog from '@/components/dialog/profile/EditNodeDialog.vue'
 import SideViewEditNodeDialog from '@/components/dialog/profile/SideViewEditNodeDialog.vue'
 import DeleteNodeDialog from '@/components/dialog/profile/DeleteNodeDialog.vue'
 import WhakapapaViewDialog from '@/components/dialog/whakapapa/WhakapapaViewDialog.vue'
@@ -92,6 +100,7 @@ export default {
   name: 'DialogHandler',
   components: {
     NewNodeDialog,
+    EditNodeDialog,
     SideViewEditNodeDialog,
     DeleteNodeDialog,
     WhakapapaViewDialog,
@@ -121,7 +130,7 @@ export default {
       required: false,
       default: null,
       validator: (val) => [
-        'new-node', 'view-edit-node', 'delete-node',
+        'new-node', 'edit-node', 'view-edit-node', 'delete-node',
         'whakapapa-view', 'whakapapa-edit', 'whakapapa-delete', 'whakapapa-helper', 'whakapapa-table-helper'
       ].includes(val)
     },
@@ -440,6 +449,9 @@ export default {
       const profileChanges = pick($event, [...PERMITTED_PROFILE_ATTRS])
       const relationshipAttrs = pick($event, [...PERMITTED_RELATIONSHIP_ATTRS])
       const profileId = this.selectedProfile.id
+      console.log(' $event: ', $event)
+      console.log(' profileChanges: ', profileChanges)
+      console.log(' profileId: ', profileId)
 
       if (!isEmpty(relationshipAttrs) && this.selectedProfile.id !== this.view.focus) {
         const relationship = this.selectedProfile.relationship
@@ -452,6 +464,7 @@ export default {
         }
         try {
           const linkRes = await this.$apollo.mutate(saveWhakapapaLink(input))
+          console.log('apollo savewhakapapalink: ')
           if (linkRes.errors) {
             console.error('failed to update child link', linkRes)
             return
@@ -459,6 +472,7 @@ export default {
             this.relationshipLinks[relationship.parent + '-' + relationship.child] = input
           }
         } catch (err) {
+          console.log('error:', err)
           throw err
         }
       }

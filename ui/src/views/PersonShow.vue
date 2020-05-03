@@ -1,36 +1,210 @@
 <template>
-  <ProfileShow type="person" :profile="profile" :editProfile="edit" />
+<div>
+  <ProfileShow type="person" :profile="profile" @dialogTrigger="updateDialog($event)"/>
+  <!-- TODO: get profile from store instead of graphql. make sure dialog update updates profile page. -->
+  <DialogHandler
+      :dialog.sync="dialog.active"
+      :selectedProfile="profile"
+      @set="refresh()"
+    />
+</div>
 </template>
 
 <script>
 import gql from 'graphql-tag'
 import ProfileShow from '@/components/ProfileShow'
+import DialogHandler from '@/components/dialog/DialogHandler.vue'
 
 export default {
   name: 'PersonShow',
   data () {
     return {
-      profile: {}
+      profile: {},
+      dialog: {
+        active: null,
+        type: null
+      }
     }
   },
   apollo: {
     profile () {
+      console.log('go apollo')
       return {
         query: gql`
           query ProfileData($id: String!) {
             person(id: $id) {
-              canEdit
-
+              id
               preferredName
               legalName
+              gender
+              bornAt
+              diedAt
+              birthOrder
               description
-
-              headerImage {
-                uri
-              }
+              address
+              email
+              phone
+              location
+              profession
+              deceased
+              altNames
               avatarImage {
                 uri
               }
+              children {
+                profile {
+                  id
+                  preferredName
+                  legalName
+                  gender
+                  bornAt
+                  diedAt
+                  birthOrder
+                  description
+                  address
+                  email
+                  phone
+                  location
+                  profession
+                  deceased
+                  altNames
+                  avatarImage {
+                    uri
+                  }
+                }
+                relationshipId
+                relationshipType
+              }
+
+              parents {
+                profile {
+                  id
+                  preferredName
+                  legalName
+                  gender
+                  bornAt
+                  diedAt
+                  birthOrder
+                  description
+                  address
+                  phone
+                  email
+                  location
+                  profession
+                  deceased
+                  altNames
+                  avatarImage {
+                    uri
+                  }
+                }
+                relationshipId
+                relationshipType
+              }
+              canEdit
+            }
+          }
+        `,
+        variables: {
+          id: this.$route.params.id
+        },
+        // TODO this only exists to inject profile.id
+        // make sure graphql resolver has the id so we don't need this
+        update (data) {
+          console.log('from apollo', data)
+          return {
+            id: this.$route.params.id,
+            ...data.person
+          }
+        },
+        fetchPolicy: 'no-cache'
+      }
+    }
+  },
+  methods: {
+    // edit () {
+    //   this.$router.push({
+    //     name: 'personEdit',
+    //     params: { id: this.$route.params.id }
+    //   })
+    // }
+    updateDialog (dialogObj) {
+      this.dialog.type = dialogObj.type
+      this.dialog.active = dialogObj.dialog
+    },
+    refresh () {
+      console.log('hit refresh')
+      const res = {
+        query: gql`
+          query ProfileData($id: String!) {
+            person(id: $id) {
+              id
+              preferredName
+              legalName
+              gender
+              bornAt
+              diedAt
+              birthOrder
+              description
+              address
+              email
+              phone
+              location
+              profession
+              deceased
+              altNames
+              avatarImage {
+                uri
+              }
+              children {
+                profile {
+                  id
+                  preferredName
+                  legalName
+                  gender
+                  bornAt
+                  diedAt
+                  birthOrder
+                  description
+                  address
+                  email
+                  phone
+                  location
+                  profession
+                  deceased
+                  altNames
+                  avatarImage {
+                    uri
+                  }
+                }
+                relationshipId
+                relationshipType
+              }
+
+              parents {
+                profile {
+                  id
+                  preferredName
+                  legalName
+                  gender
+                  bornAt
+                  diedAt
+                  birthOrder
+                  description
+                  address
+                  phone
+                  email
+                  location
+                  profession
+                  deceased
+                  altNames
+                  avatarImage {
+                    uri
+                  }
+                }
+                relationshipId
+                relationshipType
+              }
+              canEdit
             }
           }
         `,
@@ -47,18 +221,12 @@ export default {
         },
         fetchPolicy: 'no-cache'
       }
-    }
-  },
-  methods: {
-    edit () {
-      this.$router.push({
-        name: 'personEdit',
-        params: { id: this.$route.params.id }
-      })
+      this.profile = res
     }
   },
   components: {
-    ProfileShow
+    ProfileShow,
+    DialogHandler
   }
 }
 </script>
