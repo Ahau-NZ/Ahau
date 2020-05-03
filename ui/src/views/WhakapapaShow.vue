@@ -688,10 +688,13 @@ export default {
     async setSelectedProfile (profile) {
       // check the type of profile we received
       if (typeof profile === 'object') {
-        // find parent to get any changes to siblings
-        var person = await tree.find(this.nestedWhakapapa, profile.parents[0].id)
-        var updatedProfile = tree.getSiblings(person, profile)
-        this.selectedProfile = updatedProfile
+        if (profile.parents.length) {
+           // find parent to get any changes to siblings
+          var person = await tree.find(this.nestedWhakapapa, profile.parents[0].id)
+          var updatedProfile = tree.getSiblings(person, profile)
+          this.selectedProfile = updatedProfile
+        }
+        else this.selectedProfile = profile 
       } else if (typeof profile === 'string') {
         // need to find the profile in this whakapapa
         var profileFound = await tree.find(this.nestedWhakapapa, profile)
@@ -703,10 +706,13 @@ export default {
           this.selectedProfile.fromOtherWhakapapa = true
           return
         }
-        // find parent to get any changes to siblings
-        var parent = await tree.find(this.nestedWhakapapa, profileFound.parents[0].id)
-        var newUpdatedProfile = tree.getSiblings(parent, profileFound)
-        this.selectedProfile = newUpdatedProfile
+        if (profileFound.parents.length){
+          // find parent to get any changes to siblings
+          var parent = await tree.find(this.nestedWhakapapa, profileFound.parents[0].id)
+          var newUpdatedProfile = tree.getSiblings(parent, profileFound)
+          this.selectedProfile = newUpdatedProfile
+        }
+        else this.selectedProfile = profileFound 
       } else {
         this.selectedProfile = {}
       }
