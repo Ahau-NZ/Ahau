@@ -12,13 +12,13 @@
             <!-- Middle column -->
             <v-col cols="8">
 
-              <!-- Collections -->
-              <h1 class="title my-6">Collections</h1>
-              <v-row>
-                <CollectionCard :collections="mockCollections"/>
-              </v-row>
+                <!-- Collections -->
+                <h1 class="title my-6">Collections</h1>
+                <v-row>
+                    <CollectionCard :collections="mockCollections" />
+                </v-row>
 
-              <v-divider class="mt-6 mb-12" light></v-divider>
+                <v-divider class="mt-6 mb-12" light></v-divider>
 
                 <!-- Name row -->
                 <v-row justify="center">
@@ -34,7 +34,7 @@
                     <v-col>
                         <!-- Add icon -->
                         <v-row justify="center" align="center">
-                            <v-btn v-if="profile.canEdit" large class="my-2" fab color="white" @click="editProfile()">
+                            <v-btn v-if="profile.canEdit" large class="my-2" fab color="white" @click="openContextMenu($event)">
                                 <v-icon large class="black--text">mdi-plus</v-icon>
                             </v-btn>
                         </v-row>
@@ -52,63 +52,95 @@
         </v-row>
 
     </v-container>
+
+    <vue-context ref="menu">
+        <li v-for="(option, index) in contextMenuOpts" :key="index">
+            <a href="#" @click.prevent="option.action">{{ option.title }}</a>
+        </li>
+    </vue-context>
+
+    <NewCollectionDialog :show="showCollectionDialog" @close="toggleCollectionDialog" @submit="handleStepOne($event)" />
+
+    <!-- <NewEntryDialog
+          :show="showEntryForm"
+          @close="toggleEntryForm"
+          @submit="handleStepOne($event)"
+        /> -->
 </div>
 </template>
 
 <script>
+import {
+    VueContext
+} from 'vue-context'
+
 import Kaitiaki from '@/components/profile/Kaitiaki.vue'
 
 import SideNavMenu from '@/components/SideNavMenu.vue'
 import ArchiveStory from '@/components/ArchiveStory.vue'
 import CollectionCard from '@/components/CollectionCard.vue'
 
+import NewCollectionDialog from '@/components/dialog/NewCollectionDialog.vue'
+// import NewEntryDialog from '@/components/dialog/NewCollectionDialog.vue'
+
 // const get = require('lodash.get')
 
 export default {
     name: 'ArchiveShow',
-    data () {
-      return {
-        mockCollections: [
-          {
-            image: require('@/assets/mock1.jpg'),
-            title: 'Life Lessons',
-            description: 'Lessons that I have learned in life',
-            stories: ['storyid1','storyid2','storyid3','storyid4'],
-            lastSubmissionDate: new Date(),
-            hasAccess: [
-              {
-                id: 123,
-                preferredName: 'Ian',
-                avatarImage: require('@/assets/koro.svg')
-              },
-              {
-                id: 456,
-                preferredName: 'Ben',
-                avatarImage: require('@/assets/kuia.svg')
-              },
-            ]
-          },
-          {
-            image: require('@/assets/mock3.jpg'),
-            title: 'Private Records',
-            description: 'Private records that I want to remember',
-            stories: ['storyid9','storyid10','storyid11','storyid12'],
-            lastSubmissionDate: new Date(),
-            hasAccess: [
-              {
-                id: 123,
-                preferredName: 'Ian',
-                avatarImage: require('@/assets/koro.svg')
-              },
-              {
-                id: 456,
-                preferredName: 'Ben',
-                avatarImage: require('@/assets/kuia.svg')
-              },
-            ]
-          }
-        ]
-      }
+    data() {
+        return {
+            mockCollections: [{
+                    image: require('@/assets/mock1.jpg'),
+                    title: 'Life Lessons',
+                    description: 'Lessons that I have learned in life',
+                    stories: ['storyid1', 'storyid2', 'storyid3', 'storyid4'],
+                    lastSubmissionDate: new Date(),
+                    hasAccess: [{
+                            id: 123,
+                            preferredName: 'Ian',
+                            avatarImage: require('@/assets/koro.svg')
+                        },
+                        {
+                            id: 456,
+                            preferredName: 'Ben',
+                            avatarImage: require('@/assets/kuia.svg')
+                        },
+                    ]
+                },
+                {
+                    image: require('@/assets/mock3.jpg'),
+                    title: 'Private Records',
+                    description: 'Private records that I want to remember',
+                    stories: ['storyid9', 'storyid10', 'storyid11', 'storyid12'],
+                    lastSubmissionDate: new Date(),
+                    hasAccess: [{
+                            id: 123,
+                            preferredName: 'Ian',
+                            avatarImage: require('@/assets/koro.svg')
+                        },
+                        {
+                            id: 456,
+                            preferredName: 'Ben',
+                            avatarImage: require('@/assets/kuia.svg')
+                        },
+                    ]
+                }
+            ],
+            showCollectionDialog: false,
+            showEntryDialog: false,
+            contextMenuOpts: [{
+                    title: 'Create new Collection',
+                    action: this.toggleCollectionDialog
+                },
+                {
+                    title: 'Create new Entry',
+                    action: this.toggleEntryDialog
+                },
+            ],
+            dialog: {
+                view: false,
+            }
+        }
     },
     props: {
         type: {
@@ -125,25 +157,37 @@ export default {
         }
     },
     methods: {
-        splitParagraphs(text) {
-            if (!text) return
-
-            return text.split('\n\n')
-        }
+        toggleCollectionDialog() {
+            this.showCollectionDialog = !this.showCollectionDialog
+        },
+        toggleEntryDialog() {
+            this.showEntryDialog = !this.showEntryDialog
+        },
+        openContextMenu(event) {
+            console.log("plus click:", event)
+            if (this.dialog.view) {
+                this.toggleView()
+            }
+            this.$refs.menu.open(event)
+        },
+        toggleView() {
+            this.dialog.view = !this.dialog.view
+        },
     },
     components: {
         Kaitiaki,
         SideNavMenu,
         ArchiveStory,
-        CollectionCard
+        CollectionCard,
+        NewCollectionDialog,
+        VueContext
     }
 }
 </script>
 
 <style lang="scss" scoped>
-
 h1 {
-  color: black;
+    color: black;
 }
 
 $avatarSize: 25vh;
