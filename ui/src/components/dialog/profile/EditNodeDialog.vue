@@ -74,6 +74,9 @@
 </template>
 
 <script>
+
+import { PERMITTED_PROFILE_ATTRS, PERMITTED_RELATIONSHIP_ATTRS } from '@/lib/profile-helpers'
+
 import Dialog from '@/components/dialog/Dialog.vue'
 
 import ProfileForm from '@/components/profile-form/ProfileForm.vue'
@@ -90,6 +93,7 @@ import { getProfile } from '@/lib/profile-helpers'
 
 
 function defaultData (profile) {
+  console.log("in editnodedialog:", profile)
   return {
     id: profile.id,
     gender: profile.gender,
@@ -190,21 +194,32 @@ export default {
         class: this.readonly ? 'custom' : ''
       }
     },
-    submission () {
-      let submission = {}
-      Object.entries(this.formData).map(([key, value]) => {
-        if (!isEmpty(this.formData[key])) {
-          if (key === 'birthOrder') {
-            submission[key] = parseInt(value)
-          } else {
-            submission[key] = value
+   profileChanges () {
+      let changes = {}
+      Object.entries(this.formData).forEach(([key, value]) => {
+        if (!isEqual(this.formData[key], this.selectedProfile[key])) {
+          switch (key) {
+            case 'altNames':
+              if (!isEqual(this.formData.altNames.add, this.selectedProfile.altNames)) {
+                changes[key] = pick(this.formData.altNames, ['add', 'remove'])
+                changes[key].add = changes[key].add.filter(Boolean)
+              }
+              break
+            case 'birthOrder':
+              changes[key] = parseInt(value)
+              break
+            case 'relationshipType':
+              if (value && value !== this.selectedProfile.relationship.relationshipType) {
+                changes[key] = value
+              }
+              break
+            default:
+              changes[key] = value
           }
-        } else if (key === 'deceased') {
-          submission[key] = value
         }
       })
-      return submission
-    }
+      return changes
+    },
   },
   methods: {
     getCloseSuggestions () {
@@ -272,14 +287,9 @@ export default {
       // this.close()
     // },
     submit () {
-      var submission = Object.assign({}, this.submission)
-
-      this.hasSelection
-        ? this.$emit('submit', pick(this.formData, ['id', 'relationshipType', 'legallyAdopted']))
-        : this.$emit('submit', submission)
-
+      var output = Object.assign({}, pick(this.profileChanges, [...PERMITTED_PROFILE_ATTRS, ...PERMITTED_RELATIONSHIP_ATTRS]))
+      this.$emit('submit', output)
       this.close()
-      this.formData = defaultData(this.profile)
     },
     cordovaBackButton () {
       this.close()

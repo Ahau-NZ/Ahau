@@ -19,7 +19,7 @@
                     </v-row>
                     <!-- Nav Icons -->
                     <v-row>
-                        <v-col>
+                        <v-col class="ml-4">
                             <v-row justify="start" align="center" class="nav-row" to="/archive">
                                 <img class="nav-icon" v-bind:src="require('@/assets/archive.svg')" />
                                 <span class="ml-4 black--text nav-label">Archive</span>

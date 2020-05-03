@@ -373,8 +373,12 @@ export default {
       const profileChanges = pick($event, [...PERMITTED_PROFILE_ATTRS])
       const relationshipAttrs = pick($event, [...PERMITTED_RELATIONSHIP_ATTRS])
       const profileId = this.selectedProfile.id
+      console.log(" $event: ", $event)
+      console.log(" profileChanges: ", profileChanges)
+      console.log(" profileId: ", profileId)
 
       if (!isEmpty(relationshipAttrs) && this.selectedProfile.id !== this.view.focus) {
+        console.log("relationships: ",relationshipAttrs )
         const input = {
           relationshipId: this.selectedProfile.relationship.relationshipId,
           child: profileId,
@@ -384,12 +388,14 @@ export default {
         }
         try {
           const linkRes = await this.$apollo.mutate(saveWhakapapaLink(input))
+          console.log("apollo savewhakapapalink: ")
           if (linkRes.errors) {
             console.error('failed to update child link', linkRes)
             return
           }
           this.$emit('load', this.selectedProfile.relationship.parent)
         } catch (err) {
+          console.log("error:", err)
           throw err
         }
       }
