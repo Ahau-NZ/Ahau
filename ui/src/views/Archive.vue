@@ -1,6 +1,6 @@
 <template>
     <ArchiveShow type="person" :profile="profile" :editProfile="edit" />
-  </template>
+</template>
   
   <script>
   import gql from 'graphql-tag'
