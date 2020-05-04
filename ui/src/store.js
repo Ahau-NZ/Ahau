@@ -24,7 +24,6 @@ export default new Vuex.Store({
   },
   mutations: {
     setNestedWhakapapa (state, nestedWhakapapa) {
-      console.log('setting: ', nestedWhakapapa)
       state.nestedWhakapapa = nestedWhakapapa
     },
     setLoading (state, loading) {
@@ -53,7 +52,6 @@ export default new Vuex.Store({
       } else {
         whakapapa = tree.deleteNode(state.nestedWhakapapa, profile.id)
       }
-      console.log('returned whakapapa:', whakapapa)
       commit('setNestedWhakapapa', whakapapa)
     },
     addChild ({ state, commit }, { child, parent }) {
@@ -67,11 +65,7 @@ export default new Vuex.Store({
     },
     addParent ({ state, commit }, { child, parent }) {
       var whakapapa = {}
-      if (child.isPartner) {
-        console.error('addParentToPartner hasnt been implemented yet')
-      } else {
-        whakapapa = tree.addParent(state.nestedWhakapapa, child, parent)
-      }
+      whakapapa = tree.addParent(state.nestedWhakapapa, child, parent)
       commit('setNestedWhakapapa', whakapapa)
     },
     loading ({ commit }, loading) {

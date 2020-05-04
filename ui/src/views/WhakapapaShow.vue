@@ -449,7 +449,7 @@ export default {
         relationship: relationship
       })
 
-      if (profile.relationship) profile.relationship = this.relationshipLinks[profile.parents[0].id + '-' + profile.id]
+      if (!profile.relationship && profile.parents.length) profile.relationship = this.relationshipLinks[profile.parents[0].id + '-' + profile.id]
 
       if (!profile.children || profile.children.length === 0) return profile
 
