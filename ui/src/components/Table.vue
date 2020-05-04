@@ -292,7 +292,7 @@ export default {
       var g = d3.select('#zoomable')
 
       var zoom = d3.zoom()
-        .translateExtent([[0, 0], [2400, 1600]])
+        .translateExtent([[0, 0], [2400, Infinity]])
         .on('zoom', function () {
           g.attr('transform', d3.event.transform)
         })

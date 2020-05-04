@@ -191,14 +191,19 @@ function deleteNode (nestedWhakapapa, id) {
   // if the nestedWhakapapa has no value
   // then we can search it
   if (!nestedWhakapapa) return null
-
   // if the nestedWhakapapa matches the id we are
   // looking for, then look no further
   if (nestedWhakapapa.id === id) {
     // found the node we need to delete
-    // so returning null will set its value to null
-    return null
-    // return nestedWhakapapa.children[0]
+    if (nestedWhakapapa.parents.length) return null
+    else if (nestedWhakapapa.partners.length) {
+      nestedWhakapapa.partners[0].partners.forEach((d, i) => {
+        if (id === d.id) {
+          nestedWhakapapa.partners[0].partners.splice(i, 1)
+        }
+      })
+      return nestedWhakapapa.partners[0]
+    } else return nestedWhakapapa.children[0]
   }
   // if this nestedWhakapap isnt the one we are looking for,
   // try searching its children
@@ -240,6 +245,15 @@ function deletePartnerNode (nestedWhakapapa, id) {
   if (partnerIndex > -1) {
     // the partner was found here
     nestedWhakapapa.partners.splice(partnerIndex, 1)
+    // remove this parent from the children
+    nestedWhakapapa.children.forEach(child => {
+      child.parents.forEach((parent, i) => {
+        if (parent.id === id) {
+          child.parents.splice(i, 1)
+        }
+      })
+      return child
+    })
     return nestedWhakapapa
   }
 

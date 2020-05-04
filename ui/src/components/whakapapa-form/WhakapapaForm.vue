@@ -213,13 +213,15 @@ export default {
         }
         console.log('csv: ', csv.length)
 
-        if (csv.length > 200) {
-          this.errorMsg.push('Aroha mai, we are currently experiencing issues processing large files. We are currently working on this and hope to have this working soon')
-          // flag there is error in CSV
-          this.noErrorsInCSV = false
-          // show error dialog with what the error is
-          this.csvError()
-        } else if (this.noErrorsInCSV === false) {
+        // if (csv.length > 200) {
+        //   this.errorMsg.push('Aroha mai, we are currently experiencing issues processing large files. We are currently working on this and hope to have this working soon')
+        //   // flag there is error in CSV
+        //   this.noErrorsInCSV = false
+        //   // show error dialog with what the error is
+        //   this.csvError()
+        // }
+        // else
+        if (this.noErrorsInCSV === false) {
           console.log('CSV had an error')
           // if there is an error clear csv
           csv = ''
