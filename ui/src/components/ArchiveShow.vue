@@ -34,7 +34,7 @@
                     <v-col>
                         <!-- Add icon -->
                         <v-row justify="center" align="center">
-                            <v-btn v-if="profile.canEdit" large class="my-2" fab color="white" @click="openContextMenu($event)">
+                            <v-btn v-if="profile.canEdit" large class="my-2" fab color="white" @click.stop="openContextMenu($event)">
                                 <v-icon large class="black--text">mdi-plus</v-icon>
                             </v-btn>
                         </v-row>
@@ -53,13 +53,23 @@
 
     </v-container>
 
-    <vue-context ref="menu">
+    <vue-context ref="menu" style="border: 2px solid red;">
+        <a href="#" @click.prevent="updateDialog(option.dialog, option.type)" class="d-flex align-center px-4">
+          <v-icon>{{ option.icon }}</v-icon>
+          <p class="ma-0 pl-3">{{ option.title }}</p>
+        </a>
         <li v-for="(option, index) in contextMenuOpts" :key="index">
             <a href="#" @click.prevent="option.action">{{ option.title }}</a>
         </li>
     </vue-context>
+<!-- 
+    <DialogHandler
+      :dialog.sync="dialog.active"
+      :type.sync="dialog.type"
+    /> -->
 
-    <NewCollectionDialog :show="showCollectionDialog" @close="toggleCollectionDialog" @submit="handleStepOne($event)" />
+
+    <!-- <NewCollectionDialog :show="showCollectionDialog" @close="toggleCollectionDialog" @submit="handleStepOne($event)" /> -->
 
     <!-- <NewEntryDialog
           :show="showEntryForm"
@@ -80,8 +90,7 @@ import SideNavMenu from '@/components/SideNavMenu.vue'
 import ArchiveStory from '@/components/ArchiveStory.vue'
 import CollectionCard from '@/components/CollectionCard.vue'
 
-import NewCollectionDialog from '@/components/dialog/NewCollectionDialog.vue'
-// import NewEntryDialog from '@/components/dialog/NewCollectionDialog.vue'
+// import DialogHandler from '@/components/dialog/DialogHandler.vue'
 
 // const get = require('lodash.get')
 
@@ -126,20 +135,23 @@ export default {
                     ]
                 }
             ],
+            dialog: {
+                view: false,
+            },
             showCollectionDialog: false,
             showEntryDialog: false,
             contextMenuOpts: [{
                     title: 'Create new Collection',
-                    action: this.toggleCollectionDialog
+                    action: this.toggleCollectionDialog,
+                    icon: 'mdi-folder-multiple-outline'
                 },
                 {
                     title: 'Create new Entry',
-                    action: this.toggleEntryDialog
+                    action: this.toggleEntryDialog,
+                    icon: 'mdi-file-multiple-outline'
                 },
             ],
-            dialog: {
-                view: false,
-            }
+            
         }
     },
     props: {
@@ -168,6 +180,7 @@ export default {
             if (this.dialog.view) {
                 this.toggleView()
             }
+            console.log(this.$refs.menu)
             this.$refs.menu.open(event)
         },
         toggleView() {
@@ -186,6 +199,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import "~vue-context/dist/css/vue-context.css";
+
 h1 {
     color: black;
 }

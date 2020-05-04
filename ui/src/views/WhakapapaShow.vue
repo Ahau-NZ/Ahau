@@ -443,6 +443,7 @@ export default {
         this.toggleView()
       }
       this.setSelectedProfile(profileId)
+      console.log(this.$refs.menu)
       this.$refs.menu.open(event)
     },
     toggleEditWhakapapa () {
