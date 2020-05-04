@@ -23,23 +23,24 @@
               :search-input.sync="formData.preferredName"
               :readonly="hasSelection"
               outlined
+              @blur.native="clearSuggestions"
             >
 
               <!-- Slot:item = Data -->
               <template v-slot:item="data">
                 <template v-if="typeof data.item === 'object'">
                   <v-list-item @click="setFormData(data.item)">
-                    <Avatar class="mr-3" size="40px" :image="data.item.avatarImage" :alt="data.item.preferredName" :gender="data.item.gender" :bornAt="data.item.bornAt" />
+                    <Avatar class="mr-3" size="40px" :image="data.item.profile.avatarImage" :alt="data.item.profile.preferredName" :gender="data.item.profile.gender" :bornAt="data.item.profile.bornAt" />
                     <v-list-item-content>
-                      <v-list-item-title> {{ data.item.preferredName }} </v-list-item-title>
+                      <v-list-item-title> {{ data.item.profile.preferredName }} </v-list-item-title>
                       <v-list-item-subtitle>Preferred name</v-list-item-subtitle>
                     </v-list-item-content>
                     <v-list-item-content>
-                      <v-list-item-title> {{ data.item.legalName ? data.item.legalName :  '&nbsp;' }} </v-list-item-title>
+                      <v-list-item-title> {{ data.item.profile.legalName ? data.item.profile.legalName :  '&nbsp;' }} </v-list-item-title>
                       <v-list-item-subtitle>Legal name</v-list-item-subtitle>
                     </v-list-item-content>
                     <v-list-item-action>
-                      <v-list-item-title> {{ age(data.item.bornAt) }} </v-list-item-title>
+                      <v-list-item-title> {{ age(data.item.profile.bornAt) }} </v-list-item-title>
                       <v-list-item-subtitle>Age</v-list-item-subtitle>
                     </v-list-item-action>
                   </v-list-item>
@@ -80,13 +81,14 @@ import ProfileForm from '@/components/profile-form/ProfileForm.vue'
 
 import Avatar from '@/components/Avatar.vue'
 import isEmpty from 'lodash.isempty'
-import pick from 'lodash.pick'
 import calculateAge from '@/lib/calculate-age'
 
 import { getProfile } from '@/lib/profile-helpers'
+import uniqby from 'lodash.uniqby'
 
 function setDefaultData (withRelationships) {
   const formData = {
+    id: '',
     preferredName: '',
     legalName: '',
     altNames: {
@@ -146,7 +148,7 @@ export default {
     }
   },
   mounted () {
-    this.closeSuggestions = this.getCloseSuggestions()
+    this.getCloseSuggestions()
   },
   computed: {
     generateSuggestions () {
@@ -157,16 +159,12 @@ export default {
 
       if (this.suggestions && this.suggestions.length > 0) {
         otherSuggestions = [
-          this.type ? { header: 'Suggestions not in this whakapapa' } : null,
-          ...this.suggestions.filter(suggestion => {
-            return !this.closeSuggestions.find(closeSuggestion => {
-              return suggestion.id === closeSuggestion
-            })
-          })
+          this.type ? { header: 'Are you looking for:' } : null,
+          ...this.suggestions
         ]
       }
 
-      if (this.closeSuggestions && this.closeSuggestions.length > 0) {
+      if (this.closeSuggestions && this.closeSuggestions.length > 0 && this.suggestions.length < 1) {
         closeSuggestions = [
           this.type ? (this.type === 'child' ? { header: 'Suggested children' } : { header: 'Suggested parents' }) : null,
           ...this.closeSuggestions,
@@ -209,6 +207,9 @@ export default {
     }
   },
   methods: {
+    clearSuggestions () {
+      this.$emit('getSuggestions', null)
+    },
     getCloseSuggestions () {
       switch (this.type) {
         case 'child':
@@ -219,70 +220,106 @@ export default {
           return []
       }
     },
-    findChildren () {
+    async findChildren () {
       var currentChildren = []
       var children = []
 
-      this.selectedProfile.children.forEach(d => {
-        currentChildren[d.id] = d
-      })
+      if (this.selectedProfile.children) {
+        this.selectedProfile.children.forEach(d => {
+          currentChildren[d.id] = d
+        })
+      }
 
       // children of your partners that arent currently your children
-      this.selectedProfile.partners.forEach(async child => {
-        const result = await this.$apollo.query(getProfile(child.id))
+      if (this.selectedProfile.partners) {
+        this.selectedProfile.partners.forEach(async partner => {
+          const result = await this.$apollo.query(getProfile(partner.id))
+          if (result.data) {
+            result.data.person.children.forEach(d => {
+              if (!currentChildren[d.profile.id]) {
+                children.push(d)
+              }
+            })
+          }
+        })
+      }
 
-        if (result.data) {
-          result.data.person.children.forEach(d => {
-            if (!currentChildren[d.profile.id]) {
-              children.push(d.profile)
-            }
-          })
-        }
-      })
+      // get ignored children
+      const ignored = await this.$apollo.query(getProfile(this.selectedProfile.id))
+      if (ignored.data) {
+        ignored.data.person.children.forEach(d => {
+          if (!currentChildren[d.profile.id]) {
+            children.push(d)
+          }
+        })
+      }
+      children = uniqby(children, 'relationshipId')
 
-      return children
+      // eslint-disable-next-line no-return-assign
+      return this.closeSuggestions = children
     },
-    findParents () {
+
+    async findParents () {
       var currentParents = []
       var parents = []
 
-      this.selectedProfile.parents.forEach(d => {
-        currentParents[d.id] = d
-      })
+      if (this.selectedProfile.parents) {
+        this.selectedProfile.parents.forEach(d => {
+          currentParents[d.id] = d
+        })
+      }
 
-      this.selectedProfile.siblings.forEach(async sibling => {
-        const result = await this.$apollo.query(getProfile(sibling.id))
+      if (this.selectedProfile.siblings) {
+        this.selectedProfile.siblings.forEach(async sibling => {
+          const result = await this.$apollo.query(getProfile(sibling.id))
 
-        if (result.data) {
-          result.data.person.parents.forEach(d => {
-            if (!currentParents[d.profile.id]) {
-              parents.push(d.profile)
-            }
-          })
-        }
-      })
-      return parents
+          if (result.data) {
+            result.data.person.parents.forEach(d => {
+              if (!currentParents[d.profile.id]) {
+                parents.push(d)
+              }
+            })
+          }
+        })
+      }
+
+      // get ignored parents
+      const ignored = await this.$apollo.query(getProfile(this.selectedProfile.id))
+      if (ignored.data) {
+        ignored.data.person.parents.forEach(d => {
+          if (!currentParents[d.profile.id]) {
+            parents.push(d)
+          }
+        })
+      }
+
+      parents = uniqby(parents, 'realtionshipId')
+
+      // eslint-disable-next-line no-return-assign
+      return this.closeSuggestions = parents
     },
     age (bornAt) {
       return calculateAge(bornAt)
     },
     submit () {
       var submission = Object.assign({}, this.submission)
-      this.hasSelection
-        ? this.$emit('create', pick(this.formData, ['id', 'relationshipType', 'legallyAdopted']))
-        : this.$emit('create', submission)
+      this.$emit('create', submission)
+      // this.hasSelection
+      //   ? this.$emit('create', pick(this.formData, ['id', 'relationshipType', 'legallyAdopted']))
+      //   : this.$emit('create', submission)
       this.close()
     },
     cordovaBackButton () {
       this.close()
     },
     close () {
+      this.resetFormData()
       this.$emit('close')
     },
-    setFormData (profile) {
+    async setFormData (person) {
       this.hasSelection = true
-      this.formData = profile
-      this.formData.relationshipType = 'birth'
+      this.formData = person.profile
+      this.formData.relationshipType = person.relationshipType
       this.formData.legallyAdopted = false
     },
     resetFormData () {

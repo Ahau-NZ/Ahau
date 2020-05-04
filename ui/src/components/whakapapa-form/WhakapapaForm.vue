@@ -86,7 +86,6 @@
                 :rules="form.rules.csvFile"
                 @click:clear="resetFile()"
               ></v-file-input>
-              <!-- :error-messages="errorMsg" -->
             </v-col>
           </v-row>
         </v-row>
@@ -168,11 +167,11 @@ export default {
       // this.successMsg = []
       if (newValue != null) { this.checkFile(newValue) }
     },
-    data (newValue) {
+    async data (newValue) {
       if (newValue !== null) {
         var count = 0
 
-        var csv = d3.csvParse(newValue, (d) => {
+        var csv = await d3.csvParse(newValue, (d) => {
           count++
 
           // validate each row (aka d)
@@ -209,12 +208,16 @@ export default {
 
         // csv equals count means no errors
         if (count === csv.length) {
-          console.log(csv)
           this.noErrorsInCSV = true
         }
 
-        if (this.noErrorsInCSV === false) {
-          console.log('CSV had an error')
+        if (csv.length > 200) {
+          this.errorMsg.push('Aroha mai, we are currently experiencing issues processing large files. We are currently working on this and hope to have this working soon')
+          // flag there is error in CSV
+          this.noErrorsInCSV = false
+          // show error dialog with what the error is
+          this.csvError()
+        } else if (this.noErrorsInCSV === false) {
           // if there is an error clear csv
           csv = ''
         } else {
