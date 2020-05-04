@@ -97,15 +97,25 @@ function hydrate (node, flatStore) {
   and returns the child with the new siblings
 */
 function getSiblings (parent, child) {
-  child.siblings = []
+  if (!child.siblings) child.siblings = []
   if (parent.children) {
     parent.children.forEach(sibling => {
       if (sibling.profile) {
-        if (sibling.profile.id !== child.id && !child.siblings.find(d => d.id === child.id)) {
+        if (sibling.profile.id !== child.id) {
+          child.siblings.map((d, i) => {
+            if (d.id === sibling.profile.id) {
+              child.siblings.splice(i, 1)
+            }
+          })
           child.siblings.push(sibling.profile)
         }
       } else {
-        if (sibling.id !== child.id && !child.siblings.find(d => d.id === child.id)) {
+        if (sibling.id !== child.id) {
+          child.siblings.map((d, i) => {
+            if (d.id === sibling.id) {
+              child.siblings.splice(i, 1)
+            }
+          })
           child.siblings.push(sibling)
         }
       }
@@ -172,14 +182,12 @@ function updateNode (nestedWhakapapa, node) {
     nestedWhakapapa = node
     return nestedWhakapapa
   }
-
   // if this nestedWhakapap isnt the one we are looking for,
   // try searching its children
   nestedWhakapapa.children = nestedWhakapapa.children.map(child => {
     // do the same for each child
     return updateNode(child, node) // will either return a changed value or the same one
   })
-
   return nestedWhakapapa
 }
 
@@ -262,7 +270,6 @@ function deletePartnerNode (nestedWhakapapa, id) {
     // do the same for each child
     return deletePartnerNode(child, id) // will either return a changed value or the same one
   })
-
   return nestedWhakapapa
 }
 

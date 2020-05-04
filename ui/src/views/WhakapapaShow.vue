@@ -430,7 +430,6 @@ export default {
       without making calls to the db
     */
     async loadKnownFamily (loadProfile, person) {
-      console.log("loadKnwnfamily: ", person)
       const { children, parents, partners, siblings, relationship } = person
       var profile = {}
 
@@ -449,7 +448,7 @@ export default {
         relationship: relationship
       })
 
-      if (!profile.relationship) profile.relationship = this.relationshipLinks[profile.parents[0].id + '-' + profile.id]
+      if (!profile.relationship && profile.parents.length) profile.relationship = this.relationshipLinks[profile.parents[0].id + '-' + profile.id]
 
       if (!profile.children || profile.children.length === 0) return profile
 

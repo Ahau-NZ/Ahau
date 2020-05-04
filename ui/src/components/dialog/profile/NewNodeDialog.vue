@@ -236,7 +236,8 @@ export default {
           const result = await this.$apollo.query(getProfile(partner.id))
           if (result.data) {
             result.data.person.children.forEach(d => {
-              if (!currentChildren[d.profile.id] && !children[d.id]) {
+              console.log('suggested child: ', d)
+              if (!currentChildren[d.profile.id]) {
                 children.push(d)
               }
             })
@@ -248,12 +249,12 @@ export default {
       const ignored = await this.$apollo.query(getProfile(this.selectedProfile.id))
       if (ignored.data) {
         ignored.data.person.children.forEach(d => {
-          if (!currentChildren[d.profile.id] && !children[d.id]) {
+          if (!currentChildren[d.profile.id]) {
             children.push(d)
           }
         })
       }
-      children = uniqby(children, 'id')
+      children = uniqby(children, 'relationshipId')
 
       // eslint-disable-next-line no-return-assign
       return this.closeSuggestions = children
@@ -293,7 +294,7 @@ export default {
         })
       }
 
-      parents = uniqby(parents, 'id')
+      parents = uniqby(parents, 'realtionshipId')
 
       // eslint-disable-next-line no-return-assign
       return this.closeSuggestions = parents

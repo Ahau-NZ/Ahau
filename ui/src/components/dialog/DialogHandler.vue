@@ -496,7 +496,7 @@ export default {
       // reload the selectedProfiles personal details
       var node = await Profile.loadKnownFamily(true, this.selectedProfile)
       // apply the changes to the nestedWhakapapa
-      if (this.selectedProfile.isPartner) {
+      if (this.selectedProfile.isPartner && this.selectedProfile.id !== this.focus) {
         this.updatePartnerNode(node)
       } else {
         this.updateNode({ node })
