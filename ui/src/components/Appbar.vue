@@ -3,9 +3,11 @@
     <v-app-bar
       v-if="mobile || enableMenu"
       :app="mobile && app"
-      :class="mobile ? 'mobile' : 'desktop'"
+      :absolute="mobile"
+      :class="classObject"
       :flat="!mobile"
       color="#303030"
+      fixed
     >
       <v-btn v-if="goBack && mobile" @click="goBack" icon dark>
         <v-icon>mdi-arrow-left</v-icon>
@@ -16,15 +18,14 @@
         </router-link>
       </template>
       <!-- <v-btn icon :to="{ name: 'personShow', params: { id: profile.id } }"> -->
-     
         <!-- </v-btn> -->
       <v-spacer />
 
       <!-- Desktop doesn't use a drawer, it has the links directly in the app bar -->
       <template v-if="!mobile">
         <!--  WIP links -->
-        <v-btn text @click.stop="dialog = true" class="red--text text-uppercase ms-10">korero</v-btn>
-        <v-btn text @click.stop="dialog = true" class="red--text text-uppercase ms-10">ngāti</v-btn>
+        <v-btn text @click.stop="dialog = true" class="red--text text-uppercase ms-10">Archive</v-btn>
+        <v-btn text @click.stop="dialog = true" class="red--text text-uppercase ms-10">Tribes</v-btn>
 
         <v-btn text to="/whakapapa" class="white--text text-uppercase ms-10">whakapapa</v-btn>
 
@@ -42,17 +43,16 @@
           to="/login"
           text
           class="white--text text-uppercase ms-10"
-        >sign out</v-btn> -->
+        >sign out</v-btn>
 
         <Avatar
-          v-if="!mobile"
-          size="50px"
-          :image="profile.avatarImage"
-          :alt="profile.preferredName"
-          :gender="profile.gender"
-          :bornAt="profile.bornAt"
-          class="ms-10"
-        />
+        v-if="!mobile"
+        size="50px"
+        :image="profile.avatarImage"
+        :alt="profile.preferredName"
+        :gender="profile.gender"
+        :bornAt="profile.bornAt"
+      />
 
       </template>
 
@@ -131,7 +131,7 @@
 <script>
 import gql from 'graphql-tag'
 import Avatar from '@/components/Avatar'
-import FeedbackButton from '@/components/FeedbackButton'
+import FeedbackButton from '@/components/button/FeedbackButton'
 
 const karakia = `
 ---------------------------------
@@ -152,6 +152,7 @@ export default {
   props: {
     enableMenu: { type: Boolean, default: true },
     app: { type: Boolean, default: false },
+    sideMenu: { type: Boolean, default: false },
     goBack: { type: Function }
   },
   data () {
@@ -165,6 +166,13 @@ export default {
     }
   },
   computed: {
+    classObject: function () {
+      return {
+        'mobile': this.mobile,
+        'desktop': !this.mobile,
+        'sideMenuAppBarStyle': this.sideMenu
+      }
+    },
     mobile () {
       return this.$vuetify.breakpoint.xs
     }
@@ -229,5 +237,9 @@ export default {
     height: 45px;
     padding: 0 25px;
   }
+}
+
+.sideMenuAppBarStyle {
+  margin-top: -56px !important;
 }
 </style>

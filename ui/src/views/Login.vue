@@ -38,12 +38,20 @@
       />
       <h3 class="name mt-2">{{ profile.preferredName }}</h3>
     </router-link>
+
+     <!-- <NewNodeDialog
+      v-if="dialog"
+      :show="dialog"
+      :title="`Ko wai au ---- Who am I`"
+      @close="toggleNew" @create="save($event)"
+    /> -->
      <NewNodeDialog
       v-if="dialog"
       :show="dialog"
-      :title="`Ko wai au? -- Who am I?`"
-      @close="toggleNew" @submit="save($event)"
+      :title="`AHAU ---- I AM`"
+      @close="toggleNew" @create="save($event)"
     />
+
   </div>
 
 </template>
@@ -51,7 +59,7 @@
 <script>
 import gql from 'graphql-tag'
 import Avatar from '@/components/Avatar'
-import NewNodeDialog from '@/components/dialog/NewNodeDialog.vue'
+import NewNodeDialog from '@/components/dialog/profile/NewNodeDialog.vue'
 import pick from 'lodash.pick'
 
 const karakia = `
@@ -169,7 +177,13 @@ export default {
         'birthOrder',
         'avatarImage',
         'altNames',
-        'description'
+        'description',
+        'location',
+        'email',
+        'address',
+        'phone',
+        'profession',
+        'deceased'
       )
       const result = await this.$apollo.mutate({
         mutation: gql`

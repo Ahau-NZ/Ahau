@@ -1,6 +1,6 @@
 {
   "name": "ahau",
-  "version": "0.5.0",
+  "version": "0.6.1",
   "description": "Desktop and mobile applications for gathering and sharing whakapapa (family trees, traditional knowledge). Built using Scuttlebutt",
   "homepage": "https://gitlab.com/ahau/whakapapa-ora",
   "scripts": {
@@ -45,5 +45,8 @@
     "type": "git",
     "url": "git+https://gitlab.com/ahau/whakapapa-ora.git"
   },
-  "license": "AGPL-3.0"
+  "license": "AGPL-3.0",
+  "dependencies": {
+    "vue-country-region-select": "^2.0.13"
+  }
 }
