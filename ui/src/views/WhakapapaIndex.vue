@@ -69,7 +69,7 @@
         title="Add a Person"
         @create="handleDoubleStep($event)"
         :withRelationships="false"
-        @close="toggleProfileForm"
+        @close="close"
       />
 
       <WhakapapaListHelper
@@ -190,14 +190,6 @@ export default {
       var profiles = {} // flatStore for these suggestions
 
       records.forEach(record => {
-        record.children = record.children.map(child => {
-          profiles[child.profile.id] = child.profile // add this records children to the flatStore
-          return child.profile.id // only want the childs ID
-        })
-        record.parents = record.parents.map(parent => {
-          profiles[parent.profile.id] = parent.profile // add this records parents to the flatStore
-          return parent.profile.id // only want the parents ID
-        })
         profiles[record.id] = record // add this record to the flatStore
       })
 
@@ -289,6 +281,10 @@ export default {
     toggleProfileForm () {
       this.showProfileForm = !this.showProfileForm
     },
+    close () {
+      this.setLoading(false)
+      this.toggleProfileForm()
+    },
     toggleViewForm () {
       if (!this.showViewForm && this.mobile) {
         window.scrollTo({
@@ -331,7 +327,7 @@ export default {
           }
         })
         if (!result.data) {
-          console.log('Something bad happened here...')
+          console.error('Creating Whakapapa was unsuccessful')
           return
         }
 
@@ -358,7 +354,7 @@ export default {
             }
           })
           if (res.errors) {
-            console.log('failed to create profile', res)
+            console.error('failed to create profile', res)
             return
           }
 
@@ -439,7 +435,7 @@ export default {
       // console.log('profiles', merged)
       // return merged
 
-      // ----------PROMISE AND MAPS : 458 NODES, 26sec : LIMIT to 1000 nodes
+      // ----------PROMISE AND MAPS : 458 NODES, 26sec : LIMIT to 200 nodes
       // create a profile for each person and add the created id to the person and parse back to profilesArray
       return Promise.all(csv.map(async d => {
         var id = await this.addPerson(d)
@@ -481,7 +477,6 @@ export default {
           }
         }
       })
-      // console.log('person: ', person)
       try {
         var { id } = $event
         id = await this.createProfile(person)
@@ -563,8 +558,6 @@ export default {
           parent: d.parent.data.id,
           relationshipType: d.data.relationshipType
         }
-        console.log('realtionship: ', relationship)
-
         var link = await this.createChildLink(relationship)
 
         var person = {

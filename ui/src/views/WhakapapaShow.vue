@@ -363,6 +363,9 @@ export default {
   methods: {
     ...mapMutations(['setNestedWhakapapa']),
     ...mapActions(['loading']),
+    load (status) {
+      this.loading(status)
+    },
     tableOverflow (width) {
       var show = width > screen.width
       this.overflow = show
@@ -398,7 +401,7 @@ export default {
       if (!profile) return false
 
       // if adding a sibling to the focus
-      if (profile.id === this.whakapapaView.focus) {
+      if (profile.id === this.currentFocus) {
         return false
       }
 
@@ -415,6 +418,7 @@ export default {
     // Used when adding top ancestor on a partner line & swapping between partner lines
     async changeFocus (profileId) {
       const newFocus = await this.getWhakapapaHead(profileId, 'newAmountParents')
+      this.setSelectedProfile(profileId)
       this.currentFocus = newFocus
     },
     async getWhakapapaHead (profileId, type = 'temp') {
@@ -552,11 +556,10 @@ export default {
           console.error('WARNING, something went wrong')
           console.error(result.errors)
           return
-        }
-        else {
-          if (result.data.person.id === this.currentFocus && result.data.person.parents.length){
+        } else {
+          if (result.data.person.id === this.currentFocus && result.data.person.parents.length) {
             result.data.person.parents = []
-          } 
+          }
           return result.data.person
         }
       } catch (e) {
@@ -565,7 +568,6 @@ export default {
       }
     },
     async loadDescendants (profileId, path, temp) {
-      console.log('loading descendants')
       // calls person.fetchPerson which gets info about this person from the db
       var person = await this.getRelatives(profileId)
 
@@ -578,8 +580,6 @@ export default {
 
       person.path = path
 
-      // if focus is ign
-
       // filter out ignored profiles
       person.children = person.children.filter(this.isVisibleProfile)
       person.parents = person.parents.filter(this.isVisibleProfile)
@@ -591,7 +591,6 @@ export default {
 
         // load their descendants
         const childProfile = await this.loadDescendants(child.profile.id, childPath, temp)
-
         person = tree.getPartners(person, childProfile)
 
         const r = tree.getRelationship(person, childProfile, child)
@@ -614,9 +613,6 @@ export default {
         const r = tree.getRelationship(parentProfile, person, parent)
         this.relationshipLinks.set(r.index, r.attrs)
 
-        // person.relationshipType = r.attrs.relationshipType
-        // person.relationshipId = r.attrs.relationshipId
-
         return parentProfile
       }))
 
@@ -633,11 +629,6 @@ export default {
           if (exists) return exists
           // TODO: doesnt save this relationship
           return child.profile
-        })
-
-        partner.parents = partner.parents.map(d => {
-          // TODO: doesnt save this relationship
-          return d.profile
         })
 
         partner.partners = [person]
@@ -691,15 +682,23 @@ export default {
       }
     },
     async setSelectedProfile (profile) {
+      if (profile === null) {
+        this.selectedProfile = {}
+        return
+      }
       // check the type of profile we received
       if (typeof profile === 'object') {
-        if (profile.id !== this.currentFocus) {
-           // find parent to get any changes to siblings
+        profile = await this.loadKnownFamily(true, profile)
+        if (profile.parents.length) {
+          // find parent to get any changes to siblings
           var person = await tree.find(this.nestedWhakapapa, profile.parents[0].id)
+          if (!person) {
+            this.selectedProfile = profile
+            return
+          }
           var updatedProfile = tree.getSiblings(person, profile)
           this.selectedProfile = updatedProfile
-        }
-        else this.selectedProfile = profile 
+        } else this.selectedProfile = profile
       } else if (typeof profile === 'string') {
         // need to find the profile in this whakapapa
         var profileFound = await tree.find(this.nestedWhakapapa, profile)
@@ -707,16 +706,20 @@ export default {
           // lets load descendants of them instead
           this.selectedProfile = await this.loadDescendants(profile, '', [])
           console.warn('could potentially be loading a large amount of data')
-          this.selectedProfile.fromOtherWhakapapa = true
+          this.selectedProfile.isPartner = true
           return
         }
-        if (profileFound.id !== this.currentFocus) {
+        if (profileFound.parents.length) {
           // find parent to get any changes to siblings
           var parent = await tree.find(this.nestedWhakapapa, profileFound.parents[0].id)
+          // if parent not found is becuase that parent is not in this nestedWhakapapa
+          if (!parent) {
+            this.selectedProfile = profileFound
+            return
+          }
           var newUpdatedProfile = tree.getSiblings(parent, profileFound)
           this.selectedProfile = newUpdatedProfile
-        }
-        else this.selectedProfile = profileFound 
+        } else this.selectedProfile = profileFound
       } else {
         this.selectedProfile = {}
       }
@@ -761,7 +764,6 @@ export default {
     },
 
     async refreshWhakapapa () {
-      console.log('refreshing whakapapa')
       await this.$apollo.queries.whakapapaView.refresh()
     },
     async deleteWhakapapa () {

@@ -84,6 +84,7 @@ import isEmpty from 'lodash.isempty'
 import calculateAge from '@/lib/calculate-age'
 
 import { getProfile } from '@/lib/profile-helpers'
+import uniqby from 'lodash.uniqby'
 
 function setDefaultData (withRelationships) {
   const formData = {
@@ -252,6 +253,7 @@ export default {
           }
         })
       }
+      children = uniqby(children, 'id')
 
       // eslint-disable-next-line no-return-assign
       return this.closeSuggestions = children
@@ -290,6 +292,8 @@ export default {
           }
         })
       }
+
+      parents = uniqby(parents, 'id')
 
       // eslint-disable-next-line no-return-assign
       return this.closeSuggestions = parents

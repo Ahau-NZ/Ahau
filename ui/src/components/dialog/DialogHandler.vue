@@ -16,7 +16,7 @@
         :show="isActive('view-edit-node')"
         :profile="selectedProfile"
         :deleteable="canDelete(selectedProfile)"
-        :warnAboutChildren="selectedProfile && selectedProfile.id !== view.focus"
+        :warnAboutChildren="selectedProfile && selectedProfile.id !== nestedWhakapapa.id"
         :sideMenu="true"
         @close="close"
         @new="toggleDialog('new-node', $event, 'view-edit-node')"
@@ -29,7 +29,7 @@
     <DeleteNodeDialog v-if="isActive('delete-node')"
       :show="isActive('delete-node')"
       :profile="selectedProfile"
-      :warnAboutChildren="selectedProfile && selectedProfile.id !== view.focus"
+      :warnAboutChildren="selectedProfile && selectedProfile.id !== nestedWhakapapa.id"
       @submit="removeProfile"
       @close="close"
     />
@@ -163,7 +163,7 @@ export default {
   },
   methods: {
     ...mapMutations(['setNestedWhakapapa']),
-    ...mapActions(['updateNode', 'deleteNode', 'updatePartnerNode', 'addChild', 'addParent']),
+    ...mapActions(['updateNode', 'deleteNode', 'updatePartnerNode', 'addChild', 'addParent', 'loading']),
     isActive (type) {
       if (type === this.dialog) {
         return true
@@ -176,6 +176,7 @@ export default {
         return
       }
       this.toggleDialog(this.source, null, null)
+      this.$emit('setloading', false)
     },
     toggleDialog (dialog, type, source) {
       this.source = source
@@ -267,7 +268,7 @@ export default {
                   this.addChild({ child: profileSibling, parent: this.selectedProfile.parents[0] })
                   break
                 default:
-                  console.log('not built')
+                  console.error('Add person was unsuccessful. Could not detect the relationship type')
               }
 
               return
@@ -307,24 +308,33 @@ export default {
             case 'parent':
               child = this.selectedProfile.id
               parent = id
+              var childExsists = false
 
-              await this.createChildLink({ child, parent, ...relationshipAttrs })
+              // load the parent profile
+              const parentProfile = await this.getRelatives(parent)
+
+              // if the child is already a child in another whakapapa dont create a new link
+              parentProfile.children.map(d => {
+                if (d.profile.id === child) {
+                  childExsists = true
+                }
+              })
+              // if the child doesnt exsist than create the whakapapa link
+              if (!childExsists) await this.createChildLink({ child, parent, ...relationshipAttrs })
 
               if (child === this.view.focus) {
                 // in this case we're updating the top of the graph, we update view.focus to that new top parent
                 this.$emit('updateFocus', parent)
               } else {
-                // load the profile instead
-                const profile = await this.getRelatives(parent)
-                if (profile.children.length === 1) {
-                  profile.children[0] = this.selectedProfile
-                }
+                // if (parentProfile.children.length === 1) {
+                //   parentProfile.children[0] = this.selectedProfile
+                // }
 
-                this.addParent({ child: this.selectedProfile, parent: profile })
+                this.addParent({ child: this.selectedProfile, parent: parentProfile })
 
                 // if the parent is the new head of the tree and is being added on a partner family line that update the tree
                 if (this.selectedProfile.parents.length === 1) {
-                  this.$emit('change-focus', profile.id)
+                  this.$emit('change-focus', parentProfile.id)
                 }
               }
               break
@@ -342,7 +352,7 @@ export default {
               this.addChild({ child: profileSibling, parent: this.selectedProfile.parents[0] })
               break
             default:
-              console.log('not built')
+              console.error('not built')
           }
         }
 
@@ -424,7 +434,6 @@ export default {
           console.error('failed to createChildLink', res)
           return
         }
-        console.log('child link created: ', res)
         return res // TODO return the linkId
       } catch (err) {
         throw err
@@ -462,7 +471,6 @@ export default {
           throw err
         }
       }
-
       const res = await this.$apollo.mutate({
         mutation: gql`
           mutation($input: ProfileInput!) {
@@ -480,10 +488,8 @@ export default {
         console.error('failed to update profile', res)
         return
       }
-
       // reload the selectedProfiles personal details
       var node = await this.loadKnownFamily(true, this.selectedProfile)
-
       // apply the changes to the nestedWhakapapa
       if (this.selectedProfile.isPartner) {
         this.updatePartnerNode(node)
@@ -532,14 +538,15 @@ export default {
           if (this.selectedProfile.id === this.view.focus) {
             const successor = findSuccessor(this.selectedProfile)
             this.$emit('updateFocus', successor.id)
+            return
           // if removing top ancestor on a partner line show the new top ancestor
           } else if (this.selectedProfile.id === this.focus) {
             const successor = findSuccessor(this.selectedProfile)
             this.$emit('setFocus', successor.id)
           } else {
             this.deleteNode(this.selectedProfile)
-            this.setSelectedProfile(null)
           }
+          this.setSelectedProfile(null)
         } else {
           console.error(res)
         }
@@ -549,18 +556,6 @@ export default {
     },
     async deleteProfile () {
       if (!this.canDelete(this.selectedProfile)) return
-      // if removing top ancestor on main whanau line, update the whakapapa view focus with child/partner
-      if (this.selectedProfile.id === this.view.focus) {
-        const successor = findSuccessor(this.selectedProfile)
-        this.$emit('updateFocus', successor.id)
-      // if removing top ancestor on a partner line show the new top ancestor
-      } else if (this.selectedProfile.id === this.focus) {
-        const successor = findSuccessor(this.selectedProfile)
-        this.$emit('setFocus', successor.id)
-      } else {
-        // remove node from the nested whakapapa if not the top ancestor
-        this.deleteNode(this.selectedProfile)
-      }
 
       const profileResult = await this.$apollo.mutate({
         mutation: gql`
@@ -575,12 +570,20 @@ export default {
           }
         }
       })
-
       if (profileResult.errors) {
         console.error('failed to delete profile', profileResult)
         return
       }
+      // if removing top ancestor on main whanau line, update the whakapapa view focus with child/partner
+      if (this.selectedProfile.id === this.view.focus) {
+        const successor = findSuccessor(this.selectedProfile)
+        this.$emit('updateFocus', successor.id)
 
+      // if removing top ancestor on a partner line show the new top ancestor
+      } else if (this.selectedProfile.id === this.focus) {
+        const successor = findSuccessor(this.selectedProfile)
+        this.$emit('setFocus', successor.id)
+      } else this.deleteNode(this.selectedProfile)
       this.setSelectedProfile(null)
     },
     async getSuggestions ($event) {
