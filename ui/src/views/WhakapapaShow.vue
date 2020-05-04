@@ -350,12 +350,12 @@ export default {
     'currentFocus': async function (newFocus) {
       if (newFocus) {
         this.loading(true)
-        var startTime = Date.now()
+        // var startTime = Date.now()
 
         const nestedWhakapapa = await this.loadDescendants(newFocus, '', [])
         this.setNestedWhakapapa(nestedWhakapapa)
-        var endTime = Date.now()
-        var eclipsedTime = (endTime - startTime) / 1000
+        // var endTime = Date.now()
+        // var eclipsedTime = (endTime - startTime) / 1000
         // console.log('build whakapapa time: ', eclipsedTime)
       }
     }

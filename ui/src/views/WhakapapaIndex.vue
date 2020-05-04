@@ -371,7 +371,7 @@ export default {
     },
     async buildFromFile (csv) {
       this.setLoading(true)
-      var startTime = Date.now()
+      // var startTime = Date.now()
       // create profile for each person
 
       var profilesArray = await this.createProfiles(csv)
@@ -389,14 +389,14 @@ export default {
       // create whakapapaLinks
       var finalArray = await this.createLinks(descendants)
 
-      var endTime = Date.now()
-      var eclipsedTime = (endTime - startTime) / 1000
+      // var endTime = Date.now()
+      // var eclipsedTime = (endTime - startTime) / 1000
       // console.log('csv build time: ', eclipsedTime)
 
       // create whakapapa with top ancestor as focus
       this.createView({
         ...this.newView,
-        focus: root.data.id
+        focus: finalArray[0].parent.data.id
       })
     },
 
