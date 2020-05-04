@@ -236,7 +236,6 @@ export default {
           const result = await this.$apollo.query(getProfile(partner.id))
           if (result.data) {
             result.data.person.children.forEach(d => {
-              console.log('suggested child: ', d)
               if (!currentChildren[d.profile.id]) {
                 children.push(d)
               }

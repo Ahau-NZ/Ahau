@@ -370,72 +370,38 @@ export default {
       }
     },
     async buildFromFile (csv) {
-      console.log('buildingFromFile: ', csv.length)
       this.setLoading(true)
-      var startTime = Date.now()
+      // var startTime = Date.now()
       // create profile for each person
 
       var profilesArray = await this.createProfiles(csv)
 
       profilesArray['columns'] = this.columns
-      console.log('------Create profiles finsihed-------: ', profilesArray.length)
 
       // create obj of children and parents
       var root = await d3.stratify()
         .id(function (d) { return d.number })
         .parentId(function (d) { return d.parentNumber })(profilesArray)
-      console.log('----Assign parent numbers finsihed------')
 
       // create new array now with child and parents data
       var descendants = await root.descendants()
-      console.log('----Build Descendants object finsihed------')
 
       // create whakapapaLinks
       var finalArray = await this.createLinks(descendants)
 
-      console.log('-----Create childlinks finished------: ', finalArray)
-
-      var endTime = Date.now()
-      var eclipsedTime = (endTime - startTime) / 1000
-      console.log('csv build time: ', eclipsedTime)
+      // var endTime = Date.now()
+      // var eclipsedTime = (endTime - startTime) / 1000
+      // console.log('csv build time: ', eclipsedTime)
 
       // create whakapapa with top ancestor as focus
       this.createView({
         ...this.newView,
-        focus: root.data.id
+        focus: finalArray[0].parent.data.id
       })
     },
 
     async createProfiles (csv) {
       this.columns = csv.columns
-      console.log('creating profiles', csv.length)
-
-      // ---------------SPLIT INTO CHUNKS OF 100 : 468 nodes 28sec--------------------
-      // var chunks = await _.chunk(csv, 100)
-      // var profiles = []
-
-      // while (chunks.length > 0) {
-      //   var chunk = chunks.shift()
-      //   console.log('starting chunk: ', chunk.length)
-
-      //   var profileChunk = await Promise.all(chunk.map(async d => {
-      //     console.log('mapping person')
-      //     var id = await this.addPerson(d)
-
-      //     const person = {
-      //       id: id,
-      //       ...d
-      //     }
-      //     return person
-      //   }))
-      //   console.log('chunk completed: ', profileChunk.length)
-      //   profiles.push(profileChunk)
-      // }
-      // var merged = await [].concat.apply([], profiles)
-      // console.log('profiles', merged)
-      // return merged
-
-      // ----------PROMISE AND MAPS : 458 NODES, 26sec : LIMIT to 200 nodes
       // create a profile for each person and add the created id to the person and parse back to profilesArray
       return Promise.all(csv.map(async d => {
         var id = await this.addPerson(d)
@@ -446,22 +412,6 @@ export default {
         return person
       })
       )
-
-      // ---------------SPLIT ONE BY ONE : 468 nodes 157sec--------------------
-      // var array = clone(csv)
-      // var profiles = []
-
-      // while (array.length > 0) {
-      //   const person = array.shift()
-      //   var id = await this.addPerson(person)
-      //   const profile = {
-      //     id: id,
-      //     ...person
-      //   }
-      //   profiles.push(profile)
-      // }
-      // console.log('profiles', profiles)
-      // return profiles
     },
 
     async addPerson ($event) {
@@ -491,67 +441,7 @@ export default {
     },
 
     async createLinks (descendants) {
-      console.log('adding links: ', descendants.length)
-
-      // ---------------SPLIT INTO CHUNKS OF 100 : 468 nodes 28sec--------------------
-      // var array = clone(descendants)
-      // array.shift()
-      // var chunks = _.chunk(array, 100)
-      // var links = []
-
-      // while (chunks.length > 0) {
-      //   var chunk = chunks.shift()
-      //   console.log('starting link chunk: ', chunk.length)
-
-      //   var linkChunk = await Promise.all(chunk.map(async d => {
-      //     console.log('mapping links')
-      //     let relationship = {
-      //       child: d.data.id,
-      //       parent: d.parent.data.id,
-      //       relationshipType: d.data.relationshipType
-      //     }
-
-      //     var link = await this.createChildLink(relationship)
-
-      //     var person = {
-      //       ...d,
-      //       link: link
-      //     }
-      //     return person
-      //   }))
-      //   console.log('link chunk completed', linkChunk.length)
-      //   links.push(linkChunk)
-      // }
-      // var merged = [].concat.apply([], links)
-      // console.log('Links', merged)
-      // return merged
-
-      // -------- SPLIT ONE BY ONE : NO LIMIT : 128sec-----------
-
-      // var array = clone(descendants)
-      // array.shift()
-      // var links = []
-      // while (array.length > 0) {
-      //   const d = array.shift()
-      //   let relationship = {
-      //     child: d.data.id,
-      //     parent: d.parent.data.id,
-      //     relationshipType: d.data.relationshipType
-      //   }
-      //   var link = await this.createChildLink(relationship)
-      //   var person = {
-      //     ...d,
-      //     link: link
-      //   }
-      //   links.push(person)
-      // }
-      // console.log('links', links)
-      // return links
-
-      // --------- PROMISE MAP : LIMIT : 25sec ------------
-
       descendants.shift()
-
       return Promise.all(descendants.map(async d => {
         let relationship = {
           child: d.data.id,
@@ -615,7 +505,6 @@ export default {
       if (res.errors) {
         console.error('failed to createProfile', res)
       } else {
-        console.log('Profile made')
         return res.data.saveProfile // a profileId
       }
     },
@@ -637,7 +526,6 @@ export default {
           console.error('failed to createChildLink', res)
           return
         } else {
-          console.log('Link made')
           return res.data.saveWhakapapaLink // TODO return the linkId
         }
       } catch (err) {

@@ -172,7 +172,6 @@ export default {
         var count = 0
 
         var csv = await d3.csvParse(newValue, (d) => {
-          console.log('Parsing csv')
           count++
 
           // validate each row (aka d)
@@ -211,18 +210,14 @@ export default {
         if (count === csv.length) {
           this.noErrorsInCSV = true
         }
-        console.log('csv: ', csv.length)
 
-        // if (csv.length > 200) {
-        //   this.errorMsg.push('Aroha mai, we are currently experiencing issues processing large files. We are currently working on this and hope to have this working soon')
-        //   // flag there is error in CSV
-        //   this.noErrorsInCSV = false
-        //   // show error dialog with what the error is
-        //   this.csvError()
-        // }
-        // else
-        if (this.noErrorsInCSV === false) {
-          console.log('CSV had an error')
+        if (csv.length > 200) {
+          this.errorMsg.push('Aroha mai, we are currently experiencing issues processing large files. We are currently working on this and hope to have this working soon')
+          // flag there is error in CSV
+          this.noErrorsInCSV = false
+          // show error dialog with what the error is
+          this.csvError()
+        } else if (this.noErrorsInCSV === false) {
           // if there is an error clear csv
           csv = ''
         } else {
