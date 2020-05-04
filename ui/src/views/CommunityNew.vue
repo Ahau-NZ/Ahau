@@ -3,12 +3,12 @@
 </template>
 
 <script>
-import ProfileForm from '@/components/ProfileForm'
+// import ProfileForm from '@/components/ProfileForm' file deprecated
 
 export default {
   name: 'CommunityNew',
   components: {
-    ProfileForm
+    // ProfileForm
   }
 }
 </script>

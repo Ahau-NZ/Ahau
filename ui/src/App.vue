@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <Appbar v-if="displayAppbar" :enableMenu="enableMenu" app />
-    <v-content>
+    <v-content :class="{ 'mobileWhakapapaTitleStyle': mobile }">
       <router-view :mobileServerLoaded="mobileServerLoaded" />
     </v-content>
   </v-app>
@@ -19,6 +19,9 @@ export default {
     }
   },
   computed: {
+    mobile () {
+      return this.$vuetify.breakpoint.xs
+    },
     displayAppbar () {
       if (this.$route.name === 'login') return false
       else return true
@@ -63,17 +66,17 @@ export default {
 </script>
 
 <style lang="scss">
-// global styles
+/* // global styles */
 a {
   text-decoration: none;
 }
 
-//remove default vuetify dark theme background
+/* //remove default vuetify dark theme background */
 .v-application {
   background: none !important;
 }
 
-//custom backgrounds per route. see above 'watcher'
+/* //custom backgrounds per route. see above 'watcher' */
 body {
   --primary-background: #303030;
 
@@ -101,5 +104,18 @@ body {
   &.page--personshow {
     background-color: #303030;
   }
+  &.page--profileshow {
+    background: url(./assets/niho.svg);
+    background-color: var(--primary-background);
+    background-position-x: -300px;
+    /* background-repeat: no-repeat;
+    background-size: cover; */
+  }
 }
+
+.mobileWhakapapaTitleStyle {
+  padding-top: 56px !important;
+  /* border: 5px solid yellow; */
+}
+
 </style>

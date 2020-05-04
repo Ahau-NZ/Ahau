@@ -1,10 +1,12 @@
 <template>
   <v-banner light single-line>
-    <v-avatar size="35" tile>
-      <v-img v-if="view.image && view.image.uri" :src="view.image.uri" :alt="view.name" />
-      <v-img v-else :src="getImage" />
-    </v-avatar>
+    <router-link :to="view.id ? { name: 'whakapapaShow', params: { id: view.id } } : '/whakapapa'">
+      <v-avatar size="35" tile >
+        <v-img v-if="view.image && view.image.uri" :src="view.image.uri" :alt="view.name" :to="view.id ? { name: 'whakapapaShow', params: { id: view.id } } : '/whakapapa'"/>
+        <v-img v-else :src="getImage" />
+      </v-avatar>
       <span class="title"> {{ view.name }} </span>
+    </router-link>
     <template v-slot:actions>
       <v-btn
         @click.prevent="$emit('edit')"

@@ -6,7 +6,7 @@
       </v-col>
     </v-row>
 
-    <v-row>
+    <v-row class="d-flex align-center">
       <v-col
         cols="4"
         class="pt-0 pb-0"
@@ -20,7 +20,7 @@
             :alt="profile.preferredName"
             :gender="profile.gender"
             :bornAt="profile.bornAt"
-            :diedAt="profile.diedAt"
+            :deceased="profile.deceased"
             :show-label="showLabels"
             :clickable="true"
             @click="profileClick(profile)"
@@ -28,7 +28,7 @@
         </v-row>
       </v-col>
 
-      <v-col cols="4">
+      <v-col cols="4" class="d-flex justify-center align-center">
         <v-row justify="center">
           <slot></slot>
         </v-row>

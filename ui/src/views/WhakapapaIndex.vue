@@ -8,8 +8,8 @@
   >
     <v-container
       :class="{
-        'px-12': !mobile,
-        'pa-0': mobile,
+        'desktopContainer': !mobile,
+        'mobileContainer': mobile
       }"
       class="body-width white mx-auto"
       style="position:relative"
@@ -56,6 +56,7 @@
 
       <NewViewDialog
         :show="showViewForm"
+        title="Create a new whakapapa"
         @close="toggleViewForm"
         @submit="handleStepOne($event)"
       />
@@ -63,10 +64,12 @@
       <NewNodeDialog
         v-if="showProfileForm"
         :show="showProfileForm"
+        :suggestions="suggestions"
+        @getSuggestions="getSuggestions"
         title="Create new Person"
+        @create="handleDoubleStep($event)"
         :withRelationships="false"
         @close="toggleProfileForm"
-        @submit="handleDoubleStep($event)"
       />
 
       <WhakapapaListHelper
@@ -82,10 +85,14 @@
 import gql from 'graphql-tag'
 import pick from 'lodash.pick'
 import isEmpty from 'lodash.isempty'
+import * as d3 from 'd3'
 import WhakapapaViewCard from '@/components/whakapapa-view/WhakapapaViewCard.vue'
-import NewViewDialog from '@/components/dialog/NewViewDialog.vue'
-import NewNodeDialog from '@/components/dialog/NewNodeDialog.vue'
-import WhakapapaListHelper from '@/components/info-dialogs/WhakapapaListHelper.vue'
+import NewViewDialog from '@/components/dialog/whakapapa/NewViewDialog.vue'
+import NewNodeDialog from '@/components/dialog/profile/NewNodeDialog.vue'
+import WhakapapaListHelper from '@/components/dialog/whakapapa/WhakapapaListHelper.vue'
+import { saveWhakapapaLink } from '@/lib/link-helpers.js'
+
+import tree from '@/lib/tree-helpers'
 
 const saveWhakapapaViewQuery = gql`
   mutation($input: WhakapapaViewInput) {
@@ -105,6 +112,7 @@ export default {
   name: 'WhakapapaIndex',
   data () {
     return {
+      suggestions: [],
       items: [
         { src: require('../assets/tree.jpg') },
         { src: require('../assets/whakapapa-list.jpg') }
@@ -115,7 +123,8 @@ export default {
       showWhakapapaHelper: false,
       showProfileForm: false,
       showViewForm: false,
-      newView: null
+      newView: null,
+      columns: []
     }
   },
   computed: {
@@ -155,6 +164,108 @@ export default {
     }
   },
   methods: {
+    async getSuggestions ($event) {
+      if (!$event) {
+        this.suggestions = []
+        return
+      }
+
+      var records = await this.findByName($event)
+
+      if (isEmpty(records)) {
+        this.suggestions = []
+        return
+      }
+
+      var profiles = {} // flatStore for these suggestions
+
+      records.forEach(record => {
+        record.children = record.children.map(child => {
+          profiles[child.profile.id] = child.profile // add this records children to the flatStore
+          return child.profile.id // only want the childs ID
+        })
+        record.parents = record.parents.map(parent => {
+          profiles[parent.profile.id] = parent.profile // add this records parents to the flatStore
+          return parent.profile.id // only want the parents ID
+        })
+        profiles[record.id] = record // add this record to the flatStore
+      })
+
+      // hydrate all the left over records
+      records = records.map(record => {
+        return tree.hydrate(record, profiles) // needed to hydrate to fix all dates
+      })
+
+      // sets suggestions which is passed into the dialogs
+      this.suggestions = Object.assign([], records)
+    },
+    async findByName (name) {
+      const request = {
+        query: gql`
+          query($name: String!) {
+            findPersons(name: $name) {
+              id
+              preferredName
+              legalName
+              gender
+              bornAt
+              diedAt
+              birthOrder
+              description
+              altNames
+              avatarImage { uri }
+              children {
+                profile {
+                  id
+                  preferredName
+                  legalName
+                  gender
+                  bornAt
+                  diedAt
+                  birthOrder
+                  description
+                  altNames
+                  avatarImage { uri }
+                }
+                relationshipType
+              }
+              parents {
+                profile {
+                  id
+                  preferredName
+                  legalName
+                  gender
+                  bornAt
+                  diedAt
+                  birthOrder
+                  description
+                  altNames
+                  avatarImage { uri }
+                }
+                relationshipType
+              }
+            }
+          }
+        `,
+        variables: {
+          name: name
+        },
+        fetchPolicy: 'no-cache'
+      }
+
+      try {
+        const result = await this.$apollo.query(request)
+        if (result.errors) {
+          console.error('WARNING, something went wrong')
+          console.error(result.errors)
+          return
+        }
+        return result.data.findPersons
+      } catch (e) {
+        console.error('WARNING, something went wrong, caught it')
+        console.error(e)
+      }
+    },
     toggleWhakapapaHelper () {
       this.showWhakapapaHelper = !this.showWhakapapaHelper
     },
@@ -184,6 +295,8 @@ export default {
           return this.createView(this.newView)
         case 'new':
           return this.toggleProfileForm()
+        case 'file':
+          return this.buildFromFile($event.csv)
         default:
       }
     },
@@ -215,28 +328,196 @@ export default {
     },
     async handleDoubleStep ($event) {
       try {
-        const res = await this.$apollo.mutate({
-          mutation: saveProfileQuery,
-          variables: {
-            input: {
-              ...$event,
-              type: 'person'
+        var { id } = $event
+
+        if (!id) {
+          const res = await this.$apollo.mutate({
+            mutation: saveProfileQuery,
+            variables: {
+              input: {
+                ...$event,
+                type: 'person'
+              }
             }
+          })
+          if (res.errors) {
+            console.log('failed to create profile', res)
+            return
           }
-        })
-        if (res.errors) {
-          console.log('failed to create profile', res)
-          return
+
+          id = res.data.saveProfile
         }
 
         this.createView({
           ...this.newView,
-          focus: res.data.saveProfile
+          focus: id
         })
       } catch (err) {
         throw err
       }
+    },
+    async buildFromFile (csv) {
+      console.log('csv: ', csv)
+      // create profile for each person
+      var profilesArray = await this.createProfiles(csv)
+      profilesArray['columns'] = this.columns
+
+      // create obj of children and parents
+      var root = d3.stratify()
+        .id(function (d) { return d.number })
+        .parentId(function (d) { return d.parentNumber })(profilesArray)
+
+      // create new array now with child and parents data
+      var descendants = root.descendants()
+
+      // create whakapapaLinks
+      var finalArray = await this.createLinks(descendants)
+
+      // create whakapapa with top ancestor as focus
+      this.createView({
+        ...this.newView,
+        focus: finalArray[0].parent.data.id
+      })
+    },
+
+    async createProfiles (csv) {
+      this.columns = csv.columns
+
+      // create a profile for each person and add the created id to the person and parse back to profilesArray
+      return Promise.all(csv.map(async d => {
+        var id = await this.addPerson(d)
+        const person = {
+          id: id,
+          ...d
+        }
+        return person
+      })
+      )
+    },
+
+    async addPerson ($event) {
+      console.log($event)
+      let person = {}
+      Object.entries($event).map(([key, value]) => {
+        if (!isEmpty($event[key])) {
+          if (key === 'birthOrder') {
+            person[key] = parseInt(value)
+          } else if (key === 'deceased' && value === 'yes') {
+            person[key] = true
+          } else {
+            person[key] = value
+          }
+        }
+      })
+      console.log('person: ', person)
+      try {
+        var { id } = $event
+        id = await this.createProfile(person)
+        if (id.errors) {
+          console.error('failed to create profile', id)
+          return
+        }
+        return id
+      } catch (err) {
+        throw err
+      }
+    },
+
+    async createLinks (descendants) {
+      // skip top ancestor
+      descendants.shift()
+      // create a whakapapaLink between child and parent for each person
+      return Promise.all(descendants.map(async d => {
+        let relationship = {
+          child: d.data.id,
+          parent: d.parent.data.id,
+          relationshipType: d.data.relationshipType
+        }
+        var link = await this.createChildLink(relationship)
+
+        var person = {
+          ...d,
+          link: link
+        }
+        return person
+      })
+      )
+    },
+
+    async createProfile ({
+      preferredName,
+      legalName,
+      gender,
+      bornAt,
+      diedAt,
+      birthOrder,
+      avatarImage,
+      altNames,
+      description,
+      location,
+      profession,
+      contact,
+      deceased
+    }) {
+      const res = await this.$apollo.mutate({
+        mutation: gql`
+          mutation($input: ProfileInput!) {
+            saveProfile(input: $input)
+          }
+        `,
+        variables: {
+          input: {
+            type: 'person',
+            preferredName,
+            legalName,
+            gender,
+            bornAt,
+            diedAt,
+            birthOrder,
+            avatarImage,
+            altNames: {
+              add: []
+            },
+            description,
+            location,
+            profession,
+            contact,
+            deceased,
+            recps: [this.whoami.feedId] // TODO change this for groups
+          }
+        }
+      })
+
+      if (res.errors) {
+        console.error('failed to createProfile', res)
+        return
+      }
+      return res.data.saveProfile // a profileId
+    },
+
+    async createChildLink (
+      { child, parent, relationshipType, legallyAdopted },
+      view
+    ) {
+      const input = {
+        child,
+        parent,
+        relationshipType,
+        legallyAdopted,
+        recps: this.newView.recps
+      }
+      try {
+        const res = await this.$apollo.mutate(saveWhakapapaLink(input))
+        if (res.errors) {
+          console.error('failed to createChildLink', res)
+          return
+        }
+        return res // TODO return the linkId
+      } catch (err) {
+        throw err
+      }
     }
+
   },
   components: {
     WhakapapaViewCard,
@@ -261,6 +542,22 @@ export default {
   width: 150px;
   background-color: #fff;
   background-position: center center;
+}
+
+.headliner {
+  font-size: 1em;
+  text-transform: uppercase;
+  font-weight: 400;
+  letter-spacing: 5px;
+}
+
+.desktopContainer {
+  margin-top: 64px;
+  border: 3px solid red;
+}
+
+.mobileContainer {
+  padding: 0px;
 }
 
 </style>
