@@ -66,44 +66,4 @@
 
     }
   }
-<<<<<<< HEAD
-}
-
-.col-subtitle {
-  color: black;
-  text-align: center;
-}
-
-.nav-row {
-  margin: 20px;
-}
-
-.nav-icon {
-  width: 30px;
-}
-
-.nav-label {
-  font-size: 1.3em;
-}
-
-v-card {
-  margin: 0;
-  padding: 0;
-}
-
-.niho-bg {
-  background:  linear-gradient(
-      rgba(255, 255, 255, 0.7), 
-      rgba(255, 255, 255, 0.7)
-    ), url(../assets/niho.svg);
-  background-position-x: 150%;
-  background-repeat: no-repeat;
-  
-}
-
-
-}
 </style>
-=======
-</style>
->>>>>>> 5a35f9e983b2fbfaf2507144de44e13d49a82fcb

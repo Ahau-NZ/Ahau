@@ -542,89 +542,90 @@ export default {
 
             if (children.length === 0 && _children.length === 0) return
 
-            this.profiles[profileId] = Object.assign(profile, {
-                isCollapsed: !profile.isCollapsed,
-                _children: children,
-                children: _children
-            })
-        },
-        // contextMenu //////////////////////////
-        // TODO - extract all this
-        openContextMenu({ event, profileId }) {
-            if (this.dialog.view) {
-                this.toggleView()
-            }
-            this.setSelectedProfile(profileId)
-            this.$refs.menu.open(event)
-        },
-        toggleFilter() {
-            this.filter = !this.filter
-        },
-        toggleFlatten() {
-            this.filter = false
-            this.flatten = !this.flatten
-        },
-        toggleTable() {
-            this.whakapapa.tree = !this.whakapapa.tree
-            this.whakapapa.table = !this.whakapapa.table
-        },
-        toggleWhakapapaHelper() {
-            this.showWhakapapaHelper = !this.showWhakapapaHelper
-        },
-        async updateFocus(focus) {
-            const input = {
-                id: this.$route.params.id,
-                focus
-            }
-            try {
-                const res = await this.$apollo.mutate(saveWhakapapaViewMutation(input))
-                if (res.data) this.currentFocus = focus
-                else console.error(res)
-            } catch (err) {
-                throw err
-            }
-        },
-        async setSelectedProfile(profileId) {
-            await this.loadDescendants(profileId)
+      this.profiles[profileId] = Object.assign(profile, {
+        isCollapsed: !profile.isCollapsed,
+        _children: children,
+        children: _children
+      })
+    },
+    // contextMenu //////////////////////////
+    // TODO - extract all this
+    openContextMenu ({ event, profileId }) {
+      if (this.dialog.view) {
+        this.toggleView()
+      }
+      this.setSelectedProfile(profileId)
+      console.log(this.$refs.menu)
+      this.$refs.menu.open(event)
+    },
+    toggleFilter () {
+      this.filter = !this.filter
+    },
+    toggleFlatten () {
+      this.filter = false
+      this.flatten = !this.flatten
+    },
+    toggleTable () {
+      this.whakapapa.tree = !this.whakapapa.tree
+      this.whakapapa.table = !this.whakapapa.table
+    },
+    toggleWhakapapaHelper () {
+      this.showWhakapapaHelper = !this.showWhakapapaHelper
+    },
+    async updateFocus (focus) {
+      const input = {
+        id: this.$route.params.id,
+        focus
+      }
+      try {
+        const res = await this.$apollo.mutate(saveWhakapapaViewMutation(input))
+        if (res.data) this.currentFocus = focus
+        else console.error(res)
+      } catch (err) {
+        throw err
+      }
+    },
+    async setSelectedProfile (profileId) {
+      await this.loadDescendants(profileId)
 
-            // populates children, parents, siblings, partners from what ever is in this.profiles
-            this.selectedProfile = tree.hydrate(
-                this.profiles[profileId],
-                this.profiles
-            )
-            if (!this.selectedProfile.parents || this.selectedProfile.parents.length === 0) return
+      // populates children, parents, siblings, partners from what ever is in this.profiles
+      this.selectedProfile = tree.hydrate(
+        this.profiles[profileId],
+        this.profiles
+      )
+      if (!this.selectedProfile.parents || this.selectedProfile.parents.length === 0) return
 
-            this.selectedProfile.parents = await Promise.all(
-                this.selectedProfile.parents.map(async parent => {
-                    await this.loadDescendants(parent.id)
-                    var profile = this.profiles[parent.id]
-                    return profile
-                })
-            )
+      this.selectedProfile.parents = await Promise.all(
+        this.selectedProfile.parents.map(async parent => {
+          await this.loadDescendants(parent.id)
+          var profile = this.profiles[parent.id]
+          return profile
+        })
+      )
 
-            this.selectedProfile = tree.hydrate(
-                this.profiles[profileId],
-                this.profiles
-            )
-            var mainParent = this.selectedProfile.parents[0]
+      this.selectedProfile = tree.hydrate(
+        this.profiles[profileId],
+        this.profiles
+      )
+      var mainParent = this.selectedProfile.parents[0]
 
-            this.selectedProfile.relationship = this.relationshipLinks[mainParent.id + '-' + this.selectedProfile.id]
-        },
-        // save whakapapa changes
-        async updateWhakapapa(whakapapaChanges) {
-            const input = {
-                id: this.$route.params.id
-            }
-            Object.entries(whakapapaChanges).forEach(([key, value]) => {
-                if (!isEmpty(value)) input[key] = value
-            })
-            try {
-                const res = await this.$apollo.mutate(saveWhakapapaViewMutation(input))
-                // If saving changes works than set the new whakapapa information
-                // TODO: res has new whakapapa record information so we dont need to query it here
-                if (res.data) {
-                    const updatedWhakapapa = await this.$apollo.query({
-                        query: gql `
+      this.selectedProfile.relationship = this.relationshipLinks[mainParent.id + '-' + this.selectedProfile.id]
+    },
+    // save whakapapa changes
+    async updateWhakapapa (whakapapaChanges) {
+      const input = {
+        id: this.$route.params.id
+      }
+      Object.entries(whakapapaChanges).forEach(([key, value]) => {
+        if (!isEmpty(value)) input[key] = value
+      })
+      try {
+        const res = await this.$apollo.mutate(saveWhakapapaViewMutation(input))
+        // If saving changes works than set the new whakapapa information
+        // TODO: res has new whakapapa record information so we dont need to query it here
+        if (res.data) {
+          const updatedWhakapapa = await this.$apollo.query({
+            query: gql`
               query($id: String!) {
                 whakapapaView(id: $id) {
                   name
