@@ -494,7 +494,7 @@ export default {
       if (this.selectedProfile.isPartner && this.selectedProfile.id !== this.focus) {
         this.updatePartnerNode(node)
       } else {
-        this.updateNode({node})
+        this.updateNode({ node })
       }
 
       // reorder children if there is a change in birthorder
