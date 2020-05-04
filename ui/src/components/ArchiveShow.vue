@@ -53,29 +53,23 @@
 
     </v-container>
 
-    <vue-context ref="menu" style="border: 2px solid red;">
-        <a href="#" @click.prevent="updateDialog(option.dialog, option.type)" class="d-flex align-center px-4">
-          <v-icon>{{ option.icon }}</v-icon>
-          <p class="ma-0 pl-3">{{ option.title }}</p>
-        </a>
+    <vue-context ref="menu" class="pa-4">
         <li v-for="(option, index) in contextMenuOpts" :key="index">
-            <a href="#" @click.prevent="option.action">{{ option.title }}</a>
+            <a href="#" @click.prevent="updateDialog(option.dialog)" class="d-flex align-center px-4">
+                <v-icon light>{{ option.icon }}</v-icon>
+                <p class="ma-0 pl-3">{{ option.title }}</p>
+            </a>
         </li>
+        <!-- <li v-for="(option, index) in contextMenuOpts" :key="index">
+            <a href="#" @click.prevent="option.action">{{ option.title }}</a>
+        </li> -->
     </vue-context>
-<!-- 
-    <DialogHandler
-      :dialog.sync="dialog.active"
-      :type.sync="dialog.type"
-    /> -->
 
+    <DialogHandler 
+        :dialog.sync="dialog.active" 
+        :type.sync="dialog.type" 
+    />
 
-    <!-- <NewCollectionDialog :show="showCollectionDialog" @close="toggleCollectionDialog" @submit="handleStepOne($event)" /> -->
-
-    <!-- <NewEntryDialog
-          :show="showEntryForm"
-          @close="toggleEntryForm"
-          @submit="handleStepOne($event)"
-        /> -->
 </div>
 </template>
 
@@ -90,7 +84,7 @@ import SideNavMenu from '@/components/SideNavMenu.vue'
 import ArchiveStory from '@/components/ArchiveStory.vue'
 import CollectionCard from '@/components/CollectionCard.vue'
 
-// import DialogHandler from '@/components/dialog/DialogHandler.vue'
+import DialogHandler from '@/components/dialog/DialogHandler.vue'
 
 // const get = require('lodash.get')
 
@@ -136,22 +130,21 @@ export default {
                 }
             ],
             dialog: {
-                view: false,
+                active: null,
+                type: null
             },
-            showCollectionDialog: false,
-            showEntryDialog: false,
             contextMenuOpts: [{
-                    title: 'Create new Collection',
-                    action: this.toggleCollectionDialog,
+                    title: 'Create a new Collection',
+                    dialog: 'new-collection',
                     icon: 'mdi-folder-multiple-outline'
                 },
                 {
-                    title: 'Create new Entry',
-                    action: this.toggleEntryDialog,
-                    icon: 'mdi-file-multiple-outline'
+                    title: 'Create a new Record',
+                    dialog: 'new-entry',
+                    icon: 'mdi-file-outline'
                 },
             ],
-            
+
         }
     },
     props: {
@@ -169,22 +162,17 @@ export default {
         }
     },
     methods: {
-        toggleCollectionDialog() {
-            this.showCollectionDialog = !this.showCollectionDialog
-        },
-        toggleEntryDialog() {
-            this.showEntryDialog = !this.showEntryDialog
-        },
         openContextMenu(event) {
-            console.log("plus click:", event)
             if (this.dialog.view) {
                 this.toggleView()
             }
-            console.log(this.$refs.menu)
             this.$refs.menu.open(event)
         },
         toggleView() {
             this.dialog.view = !this.dialog.view
+        },
+        updateDialog (dialog) {
+            this.dialog.active = dialog
         },
     },
     components: {
@@ -192,8 +180,8 @@ export default {
         SideNavMenu,
         ArchiveStory,
         CollectionCard,
-        NewCollectionDialog,
-        VueContext
+        VueContext,
+        DialogHandler
     }
 }
 </script>
@@ -212,6 +200,7 @@ $maxHeaderWidth: 1400px;
 $formWidth: 600px;
 
 .wrapper {
+    margin-top: 64px;
     display: flex;
     flex-direction: column;
     align-items: center;

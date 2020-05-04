@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Dialog :show="show" :title="title" @close="close" width="70%" :goBack="close" enableMenu>
+    <Dialog :show="show" :title="title" @close="close" width="720px" :goBack="close" enableMenu>
       <template v-slot:content>
         <CollectionForm ref="collectionForm" :view.sync="formData" :data.sync="csv"/>
       </template>
@@ -67,7 +67,7 @@ function collectionSubmission (newCollection) {
 }
 
 export default {
-  name: 'NewCollectionDialog',
+  name: 'NewEntryDialog',
   components: {
     Dialog,
     CollectionForm

@@ -44,6 +44,7 @@
           text
           class="white--text text-uppercase ms-10"
         >sign out</v-btn>
+        -->
 
         <Avatar
         v-if="!mobile"

@@ -1,5 +1,5 @@
 <template>
-<div class="wrapper">
+<div class="container">
     <v-card class="mx-auto" light width="100%">
 
         <v-row>
