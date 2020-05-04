@@ -205,6 +205,7 @@ export default {
       return this.treeLayout(this.root)
         .links() // returns the array of links
         .map((d, i) => { // returns a new custom object for each link
+        console.log('d: ', d.target.data)
           return {
             id: `tree-link-${i}-${d.source.data.id}-${d.target.data.id}`,
             index: i,

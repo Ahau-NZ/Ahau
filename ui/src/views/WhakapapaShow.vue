@@ -1,24 +1,24 @@
 <template>
-    <div id="whakapapa-show">
-        <v-container fluid class="pa-0" :style="[ mobile ? 'width:100vw' : 'width:95vw; margin-top:64px;' ]">
+  <div id="whakapapa-show">
+    <v-container fluid class="pa-0" :style="[ mobile ? 'width:100vw' : 'width:95vw; margin-top:64px;' ]">
 
-            <!-- Desktop Header -->
-            <!-- Whakapapa Title Card -->
-            <v-row v-if="!mobile" class="header">
-                <!-- Whakapapa"SHOW"ViewCard -->
-                <WhakapapaShowViewCard :view="whakapapaView" :shadow="false">
-                    <template v-slot:edit>
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ on }">
-                    <v-btn
-                      v-on="on"
-                      @click.prevent="dialog.active = 'whakapapa-edit'"
-                      icon
-                      class="pa-0 px-3"
-                    >
-                      <v-icon small class="blue--text">mdi-pencil</v-icon>
-                    </v-btn>
-</template>
+      <!-- Desktop Header -->
+      <!-- Whakapapa Title Card -->
+      <v-row v-if="!mobile" class="header">
+        <!-- Whakapapa"SHOW"ViewCard -->
+        <WhakapapaShowViewCard :view="whakapapaView" :shadow="false">
+          <template v-slot:edit>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on }">
+                <v-btn
+                  v-on="on"
+                  @click.prevent="dialog.active = 'whakapapa-edit'"
+                  icon
+                  class="pa-0 px-3"
+                >
+                  <v-icon small class="blue--text">mdi-pencil</v-icon>
+                </v-btn>
+              </template>
               <span>Edit whakapapa description</span>
             </v-tooltip>
           </template>
@@ -430,6 +430,7 @@ export default {
       without making calls to the db
     */
     async loadKnownFamily (loadProfile, person) {
+      console.log("loadKnwnfamily: ", person)
       const { children, parents, partners, siblings, relationship } = person
       var profile = {}
 
@@ -448,7 +449,7 @@ export default {
         relationship: relationship
       })
 
-      if (profile.relationship) profile.relationship = this.relationshipLinks[profile.parents[0].id + '-' + profile.id]
+      if (!profile.relationship) profile.relationship = this.relationshipLinks[profile.parents[0].id + '-' + profile.id]
 
       if (!profile.children || profile.children.length === 0) return profile
 

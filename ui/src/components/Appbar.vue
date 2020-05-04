@@ -13,7 +13,7 @@
         <v-icon>mdi-arrow-left</v-icon>
       </v-btn>
       <template v-else>
-        <router-link to="/" v-if="enableMenu" class="logo-link">
+        <router-link to="/" v-if="enableMenu" class="logo-link"  @click.native="karakiaWhakamutunga()">
           <img src="@/assets/logo_red.svg" class="logo" />
         </router-link>
       </template>
@@ -38,21 +38,23 @@
         </v-btn>
 
         <!-- using click.native to handle event when there is also a router link -->
-       <v-btn
+       <!-- <v-btn
           @click.native="karakiaWhakamutunga()"
           to="/login"
           text
           class="white--text text-uppercase ms-10"
-        >sign out</v-btn>
-
-        <Avatar
-        v-if="!mobile"
-        size="50px"
-        :image="profile.avatarImage"
-        :alt="profile.preferredName"
-        :gender="profile.gender"
-        :bornAt="profile.bornAt"
-      />
+        >sign out</v-btn> -->
+        <router-link :to="{ name: 'personShow', params: { id: profile.id } }">
+          <Avatar
+            v-if="!mobile"
+            size="50px"
+            class="ms-10"
+            :image="profile.avatarImage"
+            :alt="profile.preferredName"
+            :gender="profile.gender"
+            :bornAt="profile.bornAt"
+          />
+        </router-link>
 
       </template>
 
@@ -79,11 +81,11 @@
           />
         </v-list-item>
         <v-list-item link @click.stop="dialog = true">
-          <v-list-item-title class="red--text">korero</v-list-item-title>
+          <v-list-item-title class="red--text">Archive</v-list-item-title>
         </v-list-item>
 
         <v-list-item link @click.stop="dialog = true">
-          <v-list-item-title class="red--text">ngāti</v-list-item-title>
+          <v-list-item-title class="red--text">Tribes</v-list-item-title>
         </v-list-item>
 
         <v-list-item link to="/whakapapa" class="white--text">

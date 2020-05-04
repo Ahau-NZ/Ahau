@@ -83,14 +83,15 @@ import WhakapapaShowHelper from '@/components/dialog/whakapapa/WhakapapaShowHelp
 import WhakapapaTableHelper from '@/components/dialog/whakapapa/WhakapapaTableHelper.vue'
 
 import gql from 'graphql-tag'
-import { whoami } from '@/lib/profile-helpers.js'
+// import { whoami } from '@/lib/profile-helpers.js'
+import Profile from '@/lib/profile-helpers2.js'
 import { saveWhakapapaLink } from '@/lib/link-helpers.js'
 import pick from 'lodash.pick'
 import isEmpty from 'lodash.isempty'
 
 import findSuccessor from '@/lib/find-successor'
 
-import { PERMITTED_PROFILE_ATTRS, PERMITTED_RELATIONSHIP_ATTRS } from '@/lib/profile-helpers'
+// import { PERMITTED_PROFILE_ATTRS, PERMITTED_RELATIONSHIP_ATTRS } from '@/lib/profile-helpers'
 import tree from '@/lib/tree-helpers'
 
 import * as d3 from 'd3'
@@ -156,7 +157,7 @@ export default {
     }
   },
   apollo: {
-    whoami: whoami
+    whoami: Profile.whoami
   },
   computed: {
     ...mapGetters(['nestedWhakapapa']),
@@ -449,22 +450,20 @@ export default {
       }
     },
     async updateProfile ($event) {
+      console.log("addperson: ", $event)
       Object.entries($event).map(([key, value]) => {
         if (value === '') {
           delete $event[key]
         }
       })
 
-      const profileChanges = pick($event, [...PERMITTED_PROFILE_ATTRS])
-      const relationshipAttrs = pick($event, [...PERMITTED_RELATIONSHIP_ATTRS])
+      const profileChanges = pick($event, [...Profile.PERMITTED_PROFILE_ATTRS])
+      const relationshipAttrs = pick($event, [...Profile.PERMITTED_RELATIONSHIP_ATTRS])
       const profileId = this.selectedProfile.id
-      console.log(' $event: ', $event)
-      console.log(' profileChanges: ', profileChanges)
-      console.log(' profileId: ', profileId)
 
       if (!isEmpty(relationshipAttrs) && this.selectedProfile.id !== this.view.focus) {
         const relationship = this.selectedProfile.relationship
-        const input = {
+        let input = {
           relationshipId: relationship.relationshipId,
           child: relationship.child,
           parent: relationship.parent,
@@ -473,7 +472,6 @@ export default {
         }
         try {
           const linkRes = await this.$apollo.mutate(saveWhakapapaLink(input))
-          console.log('apollo savewhakapapalink: ')
           if (linkRes.errors) {
             console.error('failed to update child link', linkRes)
             return
@@ -485,25 +483,18 @@ export default {
           throw err
         }
       }
-      const res = await this.$apollo.mutate({
-        mutation: gql`
-          mutation($input: ProfileInput!) {
-            saveProfile(input: $input)
-          }
-        `,
-        variables: {
-          input: {
-            id: profileId,
-            ...profileChanges
-          }
-        }
-      })
+
+      let input = {
+         id: profileId,
+          ...profileChanges
+      }
+      const res = await this.$apollo.mutate(Profile.saveProfile(input))
       if (res.errors) {
         console.error('failed to update profile', res)
         return
-      }
+      } 
       // reload the selectedProfiles personal details
-      var node = await this.loadKnownFamily(true, this.selectedProfile)
+      var node = await Profile.loadKnownFamily(true, this.selectedProfile)
       // apply the changes to the nestedWhakapapa
       if (this.selectedProfile.isPartner) {
         this.updatePartnerNode(node)
