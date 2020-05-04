@@ -15,37 +15,31 @@ function person (d) {
   }
 
   if (isEmpty(d.number)) {
-    // console.log('no number entered for ' + d.preferredName)
     errorObj.msg = 'no number entered for ' + d.preferredName
     errorObj.isError = true
     return errorObj
   }
   if (!isEmpty(d.bornAt) && !date.test(d.bornAt)) {
-    // console.log('bornAt entered incorretly for ' + d.preferredName)
     errorObj.msg = 'bornAt entered incorretly for ' + d.preferredName
     errorObj.isError = true
     return errorObj
   }
   if (!isEmpty(d.diedAt) && !date.test(d.diedAt)) {
-    // console.log('diedAt entered incorretly for ' + d.preferredName)
     errorObj.msg = 'diedAt entered incorretly for ' + d.preferredName
     errorObj.isError = true
     return errorObj
   }
   if (!isEmpty(d.birthOrder) && !val.test(d.birthOrder)) {
-    // console.log('birthOrder entered incorretly for ' + d.preferredName)
     errorObj.msg = 'birthOrder entered incorretly for ' + d.preferredName
     errorObj.isError = true
     return errorObj
   }
   if (!isEmpty(d.relationshipType) && (d.relationshipType !== 'birth' && d.relationshipType !== 'adopted' && d.relationshipType !== 'whangai')) {
-    // console.log('relationshipType entered incorrectly for ' + d.preferredName)
     errorObj.msg = 'relationshipType entered incorretly for ' + d.preferredName
     errorObj.isError = true
     return errorObj
   }
   if (!isEmpty(d.deceased) && (d.deceased !== 'yes')) {
-    // console.log('deceased entered incorrectly for ' + d.preferredName)
     errorObj.msg = 'deceased entered incorretly for ' + d.preferredName
     errorObj.isError = true
     return errorObj

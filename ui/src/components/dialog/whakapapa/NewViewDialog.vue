@@ -117,7 +117,6 @@ export default {
         ...output,
         csv: csv
       }
-      console.log('submit build: ', newOutput)
       this.$emit('submit', newOutput)
       this.close()
     },

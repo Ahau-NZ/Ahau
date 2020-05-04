@@ -356,7 +356,7 @@ export default {
         this.setNestedWhakapapa(nestedWhakapapa)
         var endTime = Date.now()
         var eclipsedTime = (endTime - startTime) / 1000
-        console.log('build whakapapa time: ', eclipsedTime)
+        // console.log('build whakapapa time: ', eclipsedTime)
       }
     }
   },
@@ -571,8 +571,8 @@ export default {
       // calls person.fetchPerson which gets info about this person from the db
       var person = await this.getRelatives(profileId)
 
-      if (temp[profileId]) console.log('profile exists: ', profileId)
-      else temp[profileId] = profileId
+      // if (temp[profileId]) console.log('profile exists: ', profileId)
+      // else temp[profileId] = profileId
 
       // make sure every person has a partners and siblings array
       person.partners = []
