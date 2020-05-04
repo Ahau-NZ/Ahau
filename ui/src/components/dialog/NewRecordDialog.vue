@@ -1,9 +1,13 @@
 <template>
   <div>
-    <Dialog :show="show" :title="title" @close="close" width="720px" :goBack="close" enableMenu>
+    <Dialog :show="show" :title="title" @close="close" width="70%" :goBack="close" enableMenu>
+
+      <!-- FORM -->
       <template v-slot:content>
-        <CollectionForm ref="collectionForm" :view.sync="formData" :data.sync="csv"/>
+        <RecordForm ref="recordForm" :view.sync="formData" :data.sync="csv"/>
       </template>
+
+      <!-- x ✓ BUTTONS -->
       <template v-slot:actions>
         <v-btn @click="close"
           text large fab
@@ -18,6 +22,7 @@
           <v-icon>mdi-check</v-icon>
         </v-btn>
       </template>
+
     </Dialog>
   </div>
 </template>
@@ -27,9 +32,9 @@ import pick from 'lodash.pick'
 import isEmpty from 'lodash.isempty'
 
 import Dialog from '@/components/dialog/Dialog.vue'
-import CollectionForm from '@/components/collection-form/CollectionForm.vue'
+import RecordForm from '@/components/record-form/RecordForm.vue'
 
-const EMPTY_COLLECTION = {
+const EMPTY_RECORD = {
   name: '',
   description: '',
   mode: 'descendants',
@@ -37,7 +42,7 @@ const EMPTY_COLLECTION = {
   image: null
 }
 
-const PERMITTED_COLLECTION_ATTRS = [
+const PERMITTED_RECORD_ATTRS = [
   'name',
   'description',
   'mode',
@@ -45,21 +50,21 @@ const PERMITTED_COLLECTION_ATTRS = [
   'image'
 ]
 
-function setDefaultCollection (whakapapa) {
+function setDefaultRecord (record) {
   return {
-    name: whakapapa.name,
-    description: whakapapa.description,
-    mode: whakapapa.mode,
-    focus: whakapapa.focus,
-    image: whakapapa.image
+    name: record.name,
+    description: record.description,
+    mode: record.mode,
+    focus: record.focus,
+    image: record.image
   }
 }
 
-function collectionSubmission (newCollection) {
+function recordSubmission (newRecord) {
   var output = {}
-  var collection = pick(newCollection, [...PERMITTED_COLLECTION_ATTRS])
-  Object.entries(collection).forEach(([key, value]) => {
-    if (!isEmpty(collection[key])) {
+  var record = pick(newRecord, [...PERMITTED_RECORD_ATTRS])
+  Object.entries(record).forEach(([key, value]) => {
+    if (!isEmpty(record[key])) {
       output[key] = value
     }
   })
@@ -67,10 +72,10 @@ function collectionSubmission (newCollection) {
 }
 
 export default {
-  name: 'NewEntryDialog',
+  name: 'NewRecordDialog',
   components: {
     Dialog,
-    CollectionForm
+    RecordForm
   },
   props: {
     title: String,
@@ -82,7 +87,7 @@ export default {
   data () {
     return {
       helpertext: false,
-      formData: setDefaultCollection(EMPTY_COLLECTION),
+      formData: setDefaultRecord(EMPTY_RECORD),
       csv: ''
     }
   },
@@ -100,25 +105,25 @@ export default {
   },
   methods: {
     close () {
-      this.formData = setDefaultCollection(EMPTY_COLLECTION)
-      this.$refs.collectionForm.$refs.form.reset()
+      this.formData = setDefaultRecord(EMPTY_RECORD)
+      // this.$refs.recordForm.$refs.form.reset()
       this.$emit('close')
     },
     submit () {
-      if (!this.$refs.collectionForm.$refs.form.validate()) {
+      if (!this.$refs.recordForm.$refs.form.validate()) {
         console.error('not validated')
         return
       }
       const csv = this.csv
-      const output = collectionSubmission(this.formData)
+      const output = recordSubmission(this.formData)
       const newOutput = {
         ...output,
       }
       this.$emit('submit', newOutput)
       this.close()
     },
-    setFormData (collection) {
-      this.formData = collection
+    setFormData (record) {
+      this.formData = record
     }
   }
 }

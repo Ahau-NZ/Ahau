@@ -73,11 +73,11 @@
       @close="close"
       @submit="console.log('TODO: add collection to profile')" 
     />
-    <NewEntryDialog
-      :show="isActive('new-entry')"
+    <NewRecordDialog
+      :show="isActive('new-record')"
       :title="'Create a new Record'"
       @close="close"
-      @submit="console.log('TODO: add entry to profile')" 
+      @submit="console.log('TODO: add record to profile')" 
       />
   </div>
 </template>
@@ -93,7 +93,7 @@ import WhakapapaDeleteDialog from '@/components/dialog/whakapapa/WhakapapaDelete
 import WhakapapaShowHelper from '@/components/dialog/whakapapa/WhakapapaShowHelper.vue'
 import WhakapapaTableHelper from '@/components/dialog/whakapapa/WhakapapaTableHelper.vue'
 import NewCollectionDialog from '@/components/dialog/NewCollectionDialog.vue'
-import NewEntryDialog from '@/components/dialog/NewEntryDialog.vue'
+import NewRecordDialog from '@/components/dialog/NewRecordDialog.vue'
 
 import gql from 'graphql-tag'
 import { whoami } from '@/lib/profile-helpers.js'
@@ -121,7 +121,7 @@ export default {
     WhakapapaShowHelper,
     WhakapapaTableHelper,
     NewCollectionDialog,
-    NewEntryDialog
+    NewRecordDialog
   },
   props: {
     selectedProfile: {
@@ -141,7 +141,7 @@ export default {
       required: false,
       default: null,
       validator: (val) => [
-        'new-node', 'view-edit-node', 'delete-node', 'new-collection', 'new-entry',
+        'new-node', 'view-edit-node', 'delete-node', 'new-collection', 'new-record',
         'whakapapa-view', 'whakapapa-edit', 'whakapapa-delete', 'whakapapa-helper', 'whakapapa-table-helper'
       ].includes(val)
     },

@@ -14,7 +14,7 @@
 
                 <!-- Collections -->
                 <h1 class="title my-6">Collections</h1>
-                <v-row>
+                <v-row class="mx-0">
                     <CollectionCard :collections="mockCollections" />
                 </v-row>
 
@@ -140,7 +140,7 @@ export default {
                 },
                 {
                     title: 'Create a new Record',
-                    dialog: 'new-entry',
+                    dialog: 'new-record',
                     icon: 'mdi-file-outline'
                 },
             ],

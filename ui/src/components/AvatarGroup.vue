@@ -6,7 +6,7 @@
       </v-col>
     </v-row>
 
-    <v-row class="d-flex align-center">
+    <v-row class="d-flex justify-center align-center pt-2">
       <v-col
         cols="4"
         class="pt-0 pb-0"
@@ -28,7 +28,7 @@
         </v-row>
       </v-col>
 
-      <v-col cols="4" class="d-flex justify-center align-center">
+      <v-col v-if="addButtonSlot" cols="4" class="d-flex justify-center align-center">
         <v-row justify="center">
           <slot></slot>
         </v-row>
@@ -48,7 +48,8 @@ export default {
     profiles: { type: Array, default: null },
     groupTitle: { type: String, default: null },
     showLabels: { type: Boolean, default: false },
-    size: { type: String, default: '80px' }
+    size: { type: String, default: '80px' },
+    addButtonSlot: { type: Boolean, default: true },
   },
   methods: {
     profileClick (profile) {

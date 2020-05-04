@@ -21,8 +21,8 @@
           <!-- Nav Icons -->
           <v-row>
             <v-col class="ml-4">
-              <!-- <router-link router-link :to="{ name: 'archive', params: { id: profile.id } }"> -->
-              <router-link router-link :to="{ name: 'archive' }">
+              <!-- <router-link :to="{ name: 'archive', params: { id: profile.id } }"> -->
+              <router-link :to="{ name: 'archive' }">
                 <v-row justify="start" align="center" class="nav-row" to="/archive">
                   <img class="nav-icon" v-bind:src="require('@/assets/archive.svg')" />
                   <span class="ml-4 black--text nav-label">Archive</span>
@@ -105,7 +105,7 @@
 
                 </v-row>
 
-                <v-row style="border-bottom: 0.5px solid rgba(0,0,0,0.12);" class="ma-0">
+                <v-row style="border-bottom: 0.5px solid rgba(0,0,0,0.12)" class="ma-0">
                   <!-- Desktop: Information Col -->
                   <!-- <v-col cols="12" class="border-right"  v-if="!isEditing" justify-sm="space-around"> -->
                   <!--===== Family Members =====-->
