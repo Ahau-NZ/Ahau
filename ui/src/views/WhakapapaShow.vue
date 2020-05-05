@@ -691,7 +691,7 @@ export default {
         return
       }
       // check the type of profile we received
-      if (typeof profile === 'object') {
+      if (typeof profile === 'object') {     
         profile = await this.loadKnownFamily(true, profile)
         if (profile.parents.length) {
           // find parent to get any changes to siblings

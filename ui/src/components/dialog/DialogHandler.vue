@@ -494,7 +494,7 @@ export default {
         return
       } 
       // reload the selectedProfiles personal details
-      var node = await Profile.loadKnownFamily(true, this.selectedProfile)
+      var node = await this.loadKnownFamily(true, this.selectedProfile)
       // apply the changes to the nestedWhakapapa
       if (this.selectedProfile.isPartner && this.selectedProfile.id !== this.focus) {
         this.updatePartnerNode(node)
@@ -760,7 +760,7 @@ export default {
   position: absolute;
   top: 0px;
   right: 0px;
-  width: 25%;
+  width: 20%;
   height: 100%;
   background-color: white;
 }
