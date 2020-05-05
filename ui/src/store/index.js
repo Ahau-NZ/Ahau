@@ -13,8 +13,7 @@ const store = new Vuex.Store({
   state: {
     value: 0,
     nestedWhakapapa: {},
-    loading: false,
-    profileQueue: []
+    loading: false
   },
   // modules: {
   //   whakapapa
@@ -25,9 +24,6 @@ const store = new Vuex.Store({
     },
     loadingState: state => {
       return state.loading
-    },
-    profileQueue: state => {
-      return state.profileQueue
     }
   },
   mutations: {
@@ -36,12 +32,6 @@ const store = new Vuex.Store({
     },
     setLoading (state, loading) {
       state.loading = loading
-    },
-    addToProfileQueue (state, profile) {
-      state.profileQueue = [...state.profileQueue, profile]
-    },
-    shiftFromProfileQueue (state) {
-      state.profileQueue.shift()
     }
   },
   actions: {

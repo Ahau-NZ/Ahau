@@ -218,7 +218,7 @@ export default {
       if (last.name === 'personEdit' && last.params.id === this.profile.id) {
         this.getCurrentIdentity()
       }
-    }, 
+    }
   },
   components: {
     Avatar,

@@ -450,7 +450,7 @@ export default {
       }
     },
     async updateProfile ($event) {
-      console.log("addperson: ", $event)
+      console.log('addperson: ', $event)
       Object.entries($event).map(([key, value]) => {
         if (value === '') {
           delete $event[key]
@@ -485,14 +485,14 @@ export default {
       }
 
       let input = {
-         id: profileId,
-          ...profileChanges
+        id: profileId,
+        ...profileChanges
       }
       const res = await this.$apollo.mutate(Profile.saveProfile(input))
       if (res.errors) {
         console.error('failed to update profile', res)
         return
-      } 
+      }
       // reload the selectedProfiles personal details
       var node = await this.loadKnownFamily(true, this.selectedProfile)
       // apply the changes to the nestedWhakapapa
