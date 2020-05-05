@@ -31,7 +31,7 @@ function parse (fileContent) {
   var errors = []
 
   return new Promise((resolve, reject) => {
-    d3.csvParse(fileContent, (d) => {
+    const csv = d3.csvParse(fileContent, (d) => {
       count++
 
       // validate each row (aka d)
@@ -59,20 +59,18 @@ function parse (fileContent) {
         }
       }
     })
-      .then(csv => {
-        if (count !== csv.length && errors.length === 0) {
-          throw new Error('missed some entries, but do not have errors for them')
-          // this code should never be reached
-        }
 
-        if (csv.length > 200) {
-          errors.push('Aroha mai, we are currently experiencing issues processing large files. We are currently working on this and hope to have this working soon')
-        }
+    if (count !== csv.length && errors.length === 0) {
+      throw new Error('missed some entries, but do not have errors for them')
+      // this code should never be reached
+    }
 
-        if (errors.length) reject(errors)
-        else resolve(csv)
-      })
-      .catch(err => reject(err))
+    if (csv.length > 200) {
+      errors.push('Aroha mai, we are currently experiencing issues processing large files. We are currently working on this and hope to have this working soon')
+    }
+
+    if (errors.length) reject(errors)
+    else resolve(csv)
   })
 }
 var date = /^(0?[1-9]|[12][0-9]|3[01])[/-](0?[1-9]|1[012])[/-]\d{4}$/
