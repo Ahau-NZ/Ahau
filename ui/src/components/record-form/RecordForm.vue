@@ -19,7 +19,7 @@
           <!-- Preferred Name -->
           <v-col cols="12" class="pa-1">
             <v-text-field v-model="formData.name" label="Title *" placeholder=" " hide-details
-              :rules="form.rules.name.whakapapaView" outlined />
+              :rules="form.rules.name.record" outlined />
           </v-col>
           <!-- Description textarea -->
           <v-col cols="12" class="pa-1">
@@ -41,13 +41,15 @@
           </v-col>
           <v-col cols="12">
             <v-row>
+              <!-- Mentions -->
               <v-col cols="3" class="px-1">
-                <AddButtonMini :label="'Mention'" class="pb-2"/>
+                <AddButtonMini :label="'Mention'" class="pb-2" />
                 <AvatarGroup :profiles="mockdata" size="40px" :show-labels="false" @profile-click="openProfile($event)"
                   :addButtonSlot="false" />
               </v-col>
+              <!-- Category -->
               <v-col cols="3" class="px-1">
-                <AddButtonMini :label="'Category'" class="pb-2"/>
+                <AddButtonMini :label="'Category'" class="pb-2" />
                 <v-chip class="my-1" small outlined close close-icon="mdi-close" label>
                   Documents
                 </v-chip>
@@ -55,8 +57,9 @@
                   Whenua
                 </v-chip>
               </v-col>
+              <!-- Collection -->
               <v-col cols="6" class="px-1">
-                <AddButtonMini :label="'Collection'" class="pb-2"/>
+                <AddButtonMini :label="'Collection'" class="pb-2" />
                 <v-col v-for="(item, i) in mockdata" :key="i" cols="12" class="px-0 py-1">
                   <v-card light outlined class="d-flex">
                     <v-avatar class="ma-0" size="50" tile>
@@ -72,15 +75,124 @@
                 </v-col>
               </v-col>
             </v-row>
+            <v-row>
+              <!-- Access -->
+              <v-col cols="3" class="px-1">
+                <AddButtonMini :label="'Access'" class="pb-2" />
+                <AvatarGroup :profiles="mockdata" size="40px" :show-labels="false" @profile-click="openProfile($event)"
+                  :addButtonSlot="false" />
+              </v-col>
+              <!-- Protocols -->
+              <v-col cols="3" class="px-1">
+                <AddButtonMini :label="'Protocols'" class="pb-2" />
+                <AvatarGroup :profiles="mockdata" size="40px" :show-labels="false" @profile-click="openProfile($event)"
+                  :addButtonSlot="false" />
+              </v-col>
+            </v-row>
           </v-col>
-
-
-
-
-
         </v-row>
       </v-col>
     </v-row>
+
+    <v-divider light></v-divider>
+
+    <v-row>
+      <!-- Additional info expansion panel -->
+      <v-expansion-panels v-model="panel" flat>
+        <v-expansion-panel>
+          <v-expansion-panel-header class="body-2 field">Additional info</v-expansion-panel-header>
+          <v-expansion-panel-content>
+            <v-row>
+              <!-- Contributor -->
+              <v-col cols="2" class="px-1">
+                <AddButtonMini :label="'Contributor'" class="pb-2" />
+                <AvatarGroup :profiles="mockdata" size="40px" :show-labels="false" @profile-click="openProfile($event)"
+                  :addButtonSlot="false" />
+              </v-col>
+              <!-- Creator -->
+              <v-col cols="2" class="px-1">
+                <AddButtonMini :label="'Creator'" class="pb-2" />
+                <AvatarGroup :profiles="mockdata" size="40px" :show-labels="false" @profile-click="openProfile($event)"
+                  :addButtonSlot="false" />
+              </v-col>
+              <!-- Related records -->
+              <v-col cols="3" class="px-1">
+                <AddButtonMini :label="'Related Records'" class="pb-2" />
+                <v-col v-for="(item, i) in mockdata" :key="i" cols="12" class="px-0 py-1">
+                  <v-card light outlined class="d-flex">
+                    <v-avatar class="ma-0" size="50" tile>
+                      <v-img :src="item.image.uri"></v-img>
+                    </v-avatar>
+                    <div class="d-flex flex-no-wrap justify-space-between">
+                      <div>
+                        <v-card-title class="body-2" v-text="item.whakapapaName"></v-card-title>
+                        <!-- <v-card-subtitle v-text="item.artist"></v-card-subtitle> -->
+                      </div>
+                    </div>
+                  </v-card>
+                </v-col>
+              </v-col>
+              <!-- Submission date -->
+              <v-col cols="3" class="px-1">
+                <NodeDatePicker :value="formData.submissionDate" label="Submission date"
+                  @date="formData.startDate = $event" class="mt-8" />
+              </v-col>
+            </v-row>
+            <v-row>
+              <!-- Contribution notes -->
+              <v-col cols="12" class="pa-1">
+                <v-textarea v-model="formData.contributionNotes" label="Contribution notes" placeholder=" " hide-details
+                  no-resize rows="1" auto-grow outlined></v-textarea>
+              </v-col>
+              <!-- Location description -->
+              <v-col cols="12" class="pa-1">
+                <v-textarea v-model="formData.locationDescription" label="Location description" placeholder=" "
+                  hide-details no-resize rows="1" auto-grow outlined></v-textarea>
+              </v-col>
+              <!-- Cultural narative -->
+              <v-col cols="12" class="pa-1">
+                <v-textarea v-model="formData.culturalNarrative" label="Cultural narative" placeholder=" " hide-details
+                  no-resize rows="1" auto-grow outlined></v-textarea>
+              </v-col>
+            </v-row>
+            <v-row>
+              <!-- Format -->
+              <v-col cols="3" class="pa-1">
+                <v-text-field v-model="formData.fileFormat" label="Format" placeholder=" " hide-details
+                  :rules="form.rules.name.record" outlined />
+              </v-col>
+              <!-- Identifier -->
+              <v-col cols="3" class="pa-1">
+                <v-text-field v-model="formData.identifier" label="Identifier" placeholder=" " hide-details
+                  :rules="form.rules.name.record" outlined />
+              </v-col>
+              <!-- Source -->
+              <v-col cols="3" class="pa-1">
+                <v-text-field v-model="formData.source" label="Source" placeholder=" " hide-details
+                  :rules="form.rules.name.record" outlined />
+              </v-col>
+              <!-- Language -->
+              <v-col cols="3" class="pa-1">
+                <v-text-field v-model="formData.language" label="Language" placeholder=" " hide-details
+                  :rules="form.rules.name.record" outlined />
+              </v-col>
+            </v-row>
+            <v-row>
+              <!-- Translation -->
+              <v-col cols="12" class="pa-1">
+                <v-textarea v-model="formData.translation" label="Translation" placeholder=" " hide-details
+                  no-resize rows="1" auto-grow outlined></v-textarea>
+              </v-col>
+            </v-row>
+          </v-expansion-panel-content>
+        </v-expansion-panel>
+      </v-expansion-panels>
+    </v-row>
+
+    <v-divider light></v-divider>
+
+
+
   </v-form>
 </template>
 
@@ -137,10 +249,24 @@
       return {
         // formData: setDefaultWhakapapa(this.view),
         formData: {
-          title: '',
-          description: '',
-          startDate: '',
-          endDate: '',
+          title: null,
+          description: null,
+          startDate: null,
+          endDate: null,
+          mentions: [],
+          category: [],
+          collection: null,
+          access: [],
+          protocols: [],
+          submissionDate: null,
+          contributionNotes: null,
+          locationDescription: null,
+          culturalNarrative: null,
+          fileFormat: null,
+          identifier: null,
+          source: null,
+          language: null,
+          translation: null,
         },
         form: {
           valid: true,
@@ -168,7 +294,8 @@
               uri: require('@/assets/mock2.jpg')
             }
           }
-        ]
+        ],
+        panel: [0, 1],
       }
     },
     watch: {
@@ -207,5 +334,9 @@
 
   .v-chip__close {
     font-size: 16px !important;
+  }
+
+  .field {
+    color: rgba(0, 0, 0, 0.6);
   }
 </style>
