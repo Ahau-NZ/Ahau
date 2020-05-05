@@ -2,15 +2,25 @@
   <v-form ref="form" v-model="form.valid" lazy-validation>
     <v-row class="px-2">
       <v-col cols="12" sm="5" order-sm="2">
-        <v-row class="pa-0">
+        <v-row>
+          <!-- Upload Media and files -->
           <v-col cols="12" class="pa-0">
-            <!-- Avatar -->
-            <Avatar class="big-avatar" size="250px" :image="formData.image" :alt="formData.name" isView />
+            <AvatarGroup :profiles="mockdata" size="40px" :show-labels="false" @profile-click="openProfile($event)"
+            :addButtonSlot="false" />
+            <AddButtonMini :label="'Attach media or files'" class="pb-2" />
+            <!-- <Avatar class="big-avatar" size="250px" :image="formData.image" :alt="formData.name" isView />
           </v-col>
           <v-col cols="12" justify="center" align="center" class="pa-0">
-            <ImagePicker label="Edit collection image" @updateAvatar="formData.image = $event" isView />
+            <ImagePicker label="Edit collection image" @updateAvatar="formData.image = $event" isView /> -->
           </v-col>
-          <!-- END of Avatar -->
+        </v-row>
+        <v-row class="py-12">
+          <!-- Add Location -->
+          <v-col cols="12" class="pa-0">
+            <AvatarGroup :profiles="mockdata" size="40px" :show-labels="false" @profile-click="openProfile($event)"
+            :addButtonSlot="false" />
+            <AddButtonMini :label="'Add Location'" class="pb-2" />
+          </v-col>
         </v-row>
       </v-col>
       <!-- Information Col -->
