@@ -9,6 +9,7 @@ import Discovery from '@/views/Discovery.vue'
 import People from '@/views/People.vue'
 import PersonShow from '@/views/PersonShow.vue'
 import PersonEdit from '@/views/PersonEdit.vue'
+import StoryShow from '@/views/StoryShow.vue'
 
 import CommunityNew from '@/views/CommunityNew.vue'
 import CommunityShow from '@/views/CommunityShow.vue'
@@ -35,6 +36,8 @@ export default new Router({
     { path: '/person', name: 'personIndex', component: People },
     { path: '/person/:id/edit', name: 'personEdit', component: PersonEdit },
     { path: '/person/:id', name: 'personShow', component: PersonShow },
+
+    { path: '/story/:id', name: 'story', component: StoryShow },
 
     { path: '/community/new', name: 'communityNew', component: CommunityNew },
     {

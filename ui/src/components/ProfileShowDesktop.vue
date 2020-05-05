@@ -20,27 +20,7 @@
           </v-row>
           <!-- Nav Icons -->
           <v-row>
-            <v-col class="ml-4">
-              <!-- <router-link :to="{ name: 'archive', params: { id: profile.id } }"> -->
-              <router-link :to="{ name: 'archive' }">
-                <v-row justify="start" align="center" class="nav-row" to="/archive">
-                  <img class="nav-icon" v-bind:src="require('@/assets/archive.svg')" />
-                  <span class="ml-4 black--text nav-label">Archive</span>
-                </v-row>
-              </router-link>
-              <v-row justify="start" align="center" class="nav-row">
-                <img class="nav-icon" v-bind:src="require('@/assets/timeline.svg')" />
-                <span class="ml-4 black--text nav-label">Story</span>
-              </v-row>
-              <v-row justify="start" align="center" class="nav-row">
-                <img class="nav-icon" v-bind:src="require('@/assets/tree.svg')" />
-                <span class="ml-4 black--text nav-label">Whakapapa</span>
-              </v-row>
-              <v-row justify="start" align="center" class="nav-row">
-                <img class="nav-icon" v-bind:src="require('@/assets/activity.svg')" />
-                <span class="ml-4 black--text nav-label">Activity</span>
-              </v-row>
-            </v-col>
+              <SideNavMenu :profile:="profile" :noAvatar="true"/>              
           </v-row>
 
         </v-col>
@@ -234,6 +214,7 @@
 
 <script>
   import Header from '@/components/profile/Header.vue'
+  import SideNavMenu from '@/components/SideNavMenu.vue'
   import Kaitiaki from '@/components/profile/Kaitiaki.vue'
   import Avatar from '@/components/Avatar.vue'
   import AvatarGroup from '@/components/AvatarGroup.vue'
@@ -293,6 +274,7 @@
     },
     components: {
       Header,
+      SideNavMenu,
       Kaitiaki,
       Avatar,
       AvatarGroup,

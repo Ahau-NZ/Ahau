@@ -1,17 +1,17 @@
 <template>
 <!-- TODO: v-for Contributors -->
 <div>
-    <v-row>
+    <v-row class="ma-1">
         <v-col class="pa-0" style="text-align: right;">
-            <h4><small>Contribution</small></h4>
+            <p><small class="caption">Contribution</small></p>
         </v-col>
         <v-col class="pa-0">
-            <v-row class="justify-center ma-0">
-                <img v-for="(item, index) in mockdata" :key="index" class="people-circle" v-bind:src="item.avatarImage" />
+            <v-row class="justify-center ma-0" style="flex-wrap: nowrap;">
+                <img v-for="(item, index) in mockdata" :key="index" class="people-circle" v-bind:src="item.avatarImage" :width="width"/>
             </v-row>
         </v-col>
     </v-row>
-    <v-row>
+    <v-row v-if="!hideDate">
         <v-col class="pa-0">
         </v-col>
         <v-col class="pa-0">
@@ -28,6 +28,14 @@ export default {
     name: 'Contributors',
     props: {
         //TODO prop in real contributor data
+        width: {
+            type: String,
+            default: '50px'
+        },
+        hideDate: {
+            type: Boolean,
+            default: false,
+        }
     },
     data: () => ({
         mockdata: [{
@@ -53,7 +61,7 @@ export default {
 
 <style lang="scss">
 .people-circle {
-    width: 50px;
+    /* width: 50px; */
     margin: 5px;
     border-radius: 50%;
     background-color: lightgrey;
