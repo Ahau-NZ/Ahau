@@ -52,13 +52,13 @@ function person (d) {
   return errorObj
 }
 
-function csv (csv) {
+function csv (data) {
   // - check for correct columns
   // console.log('validate csv')
-  // switch (csv) {  //   case (csv.columns.length > 14) :
+  // switch (data) {  //   case (data.columns.length > 14) :
   //     alert("An extra column has been dectected. Unforetunately columns cannot be added to the csv and the data will not be included in the whakapapa")
   //     break
-  //   case (typeof csv[0] === "undefined") :
+  //   case (typeof data[0] === "undefined") :
   //     alert("no data detected")
   //     break
   //   case ()
