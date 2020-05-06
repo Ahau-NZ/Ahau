@@ -2,14 +2,14 @@
 <div class="mt-8">
         <v-row>
             <!-- Middle column -->
-            <v-col cols="10">
+            <v-col cols="12" lg="10">
                 <!-- Collections -->
                 <h1 class="title my-6">Collections</h1>
-                <v-row class="mx-0">
+                <v-row class="mx-0 overflow">
                     <CollectionCard :collections="mockCollections" />
                 </v-row>
 
-                <v-divider class="mt-6 mb-12" light></v-divider>
+                <v-divider class="mt-6 mb-8" light></v-divider>
 
                 <!-- Name row -->
                 <v-row justify="center">
@@ -19,7 +19,7 @@
             <!-- End Middle column -->
 
             <!-- Right column -->
-            <v-col cols="2" class="px-12">
+            <v-col cols="12" lg="2" class="px-12">
                 <!-- Communities Card -->
                 <v-row>
                     <v-col>
@@ -178,5 +178,15 @@ export default {
 
 <style lang="scss" scoped>
 @import "~vue-context/dist/css/vue-context.css";
+
+.overflow {
+    width: 100vw;
+    overflow-y: scroll;
+    -ms-overflow-style: none;
+}
+/* this hides overflow scrollbar */
+.overflow::-webkit-scrollbar {
+  display: none;
+}
 
 </style>

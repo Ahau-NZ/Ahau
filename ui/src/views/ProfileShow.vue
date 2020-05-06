@@ -2,13 +2,36 @@
   <div class="wrapper">
     <!-- Header for Profile page only -->
     <Header v-if="header" :preferredName="selectedProfile.preferredName"
-      :headerImage="selectedProfile.headerImage" :avatarImage="selectedProfile.avatarImage" />
+      :headerImage="selectedProfile.headerImage" :avatarImage="selectedProfile.avatarImage" :headerHeight="headerHeight" />
 
     <!-- Profile Container -->
     <v-container :fluid="true" class="body-width white px-6 niho-bg">
       <v-row>
         <!--======== Side Menu ========-->
-        <v-col cols="2">
+        <!-- |Mobile| -->
+        <v-col v-if="mobile" cols="12">
+          <!-- Pofile pic -->
+          <v-row v-if="bigAvatar" class="avatar-row first-row">
+            <v-col class="avatar-box">
+              <Avatar :image="selectedProfile.avatarImage" :alt="selectedProfile.preferredName" size="200" />
+            </v-col>
+          </v-row>
+          <!-- Nav Icons -->
+          <v-row justify="center">
+            <v-col>
+              <div v-if="bigAvatar" style="margin-top: 100px;">
+                <h1 class="primary--text" align="center">{{ selectedProfile.preferredName }}</h1>
+                <!-- if  on profile page show larger avatar above instead of sidemenu avatar image -->
+                <SideNavMenu :profile:="selectedProfile" :noAvatar="true"
+                  @setPageComponent="setPageComponent($event)"/>
+              </div>
+              <SideNavMenu v-else :profile="selectedProfile" @setPageComponent="setPageComponent($event)"/>
+            </v-col>
+          </v-row>
+        </v-col>
+
+        <!-- |Desktop| -->
+        <v-col v-else cols="2">
           <!-- Pofile pic -->
           <v-row v-if="bigAvatar" class="avatar-row first-row">
             <v-col class="avatar-box">
@@ -25,7 +48,7 @@
         </v-col>
 
         <!--======== Main content ========-->
-        <v-col cols="10">
+        <v-col xs="12" sm="12" md="12" lg="10" class="pt-0">
           <Profile v-if="pageComponents.profile" :profile="selectedProfile" :type="'person'"/>
           <Archive v-if="pageComponents.archive" :profile="selectedProfile" :type="'person'"/>
           <StoryTimeline v-if="pageComponents.storyTimeline" :profile="selectedProfile"/>
@@ -99,7 +122,20 @@
       this.setupProfile(this.$route.params.id)
     },
     computed: {
-      ...mapGetters(['selectedProfile', 'whoami'])
+      ...mapGetters(['selectedProfile', 'whoami']),
+      mobile: function () {
+        console.log("mobile = ", this.$vuetify.breakpoint.xsOnly)
+        return this.$vuetify.breakpoint.xsOnly
+      },
+      headerHeight() {
+        switch (this.$vuetify.breakpoint.name) {
+          case 'xs': return '150px'
+          case 'sm': return '150px'
+          case 'md': return '250px'
+          case 'lg': return '250px'
+          case 'xl': return '250px'
+        }
+      }
     },
 
     methods: {
@@ -170,7 +206,7 @@
     align-items: center; // background: linear-gradient(to right, grey 0%,grey 50%,#000000 50%,white 50%,white 100%);
 
     .body-width {
-      min-width: $formWidth;
+      /* min-width: $formWidth; */
       max-width: 100vw;
       min-height: 100vh;
       background: white;
