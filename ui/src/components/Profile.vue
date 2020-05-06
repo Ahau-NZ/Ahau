@@ -2,16 +2,16 @@
   <div>
     <v-row>
       <!--======== Main column ========-->
-      <v-col cols="10" class="pt-0">
+      <v-col cols="12" sm="12" lg="10" >
         <!-- Name row -->
-        <v-row justify="center" class="pl-10">
+        <v-row v-if="!mobile" justify="center" class="first-row">
           <v-col>
             <h1 class="primary--text">{{ profile.legalName }}</h1>
           </v-col>
         </v-row>
 
         <!-- square info hub -->
-        <v-row>
+        <v-row v-if="!mobile">
           <v-col v-if="!isEditing">
             <v-row style="border: 0.5px solid rgba(0,0,0,0.12); border-radius: 10px; background-color: white;"
               class="flex-column ma-0">
@@ -133,10 +133,10 @@
       </v-col>
 
       <!--======== Side column ========-->
-      <v-col cols="2" class="px-6 pt-0">
+      <v-col xs="12" sm="12" lg="2"  class="px-6">
 
         <!-- Edit Card -->
-        <v-row class="first-row">
+        <v-row v-if="!mobile" class="first-row">
           <!-- Edit icon -->
           <v-col justify="center" align="center">
             <v-btn small class="my-2" fab color="white" @click="updateDialog('edit-node')">
@@ -148,7 +148,7 @@
 
         <!-- Kaitiaki Card -->
         <v-row>
-          <v-card min-height="200px" light class="my-3 rounded-card">
+          <v-card min-height="200px" light class="my-3 rounded-card" width="100%">
             <h4 class="ma-3 mb-0">Kaitiaki</h4>
             <v-card-text>
               <p>These are the people who have administrative rights on this profile</p>
@@ -162,7 +162,7 @@
 
         <!-- Communities Card -->
         <v-row>
-          <v-card min-height="200px" light class="my-3 rounded-card">
+          <v-card min-height="200px" light class="my-3 rounded-card" width="100%">
             <h4 class="ma-3 mb-0">Communities</h4>
             <v-card-text>
               <p>These are the communities connected to this profile</p>

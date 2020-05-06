@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- Pofile pic -->
-    <v-row v-if="!noAvatar" class="mt-8">
+    <v-row v-if="!noAvatar" :style="{ marginTop: mobile ? '-30px' : '50px' }">
       <v-col class="pa-0">
         <v-row class="pa-0" justify="center" align="center">
           <v-btn @click="$emit('setPageComponent', 'profile')" light text class="px-0" style="height: auto;">
@@ -13,8 +13,31 @@
         </v-row>
       </v-col>
     </v-row>
+    <!-- Nav Icons |Mobile| -->
+    <v-row v-if="mobile" class="icon-bar ma-0">
+      <v-col class="nav-row-mobile">
+        <v-btn @click="$emit('setPageComponent', 'archive')" light text class="px-0">
+          <img class="nav-icon-mobile" v-bind:src="require('@/assets/archive.svg')" />
+          <!-- <span class="ml-4 black--text nav-label">Archive</span> -->
+        </v-btn>
+      </v-col>
+      <v-col class="nav-row-mobile">
+        <v-btn @click="$emit('setPageComponent', 'storyTimeline')" light text class="px-0">
+          <img class="nav-icon-mobile" v-bind:src="require('@/assets/timeline.svg')" />
+          <!-- <span class="ml-4 black--text nav-label">Story</span> -->
+        </v-btn>
+      </v-col>
+      <v-col class="nav-row-mobile">
+        <img class="nav-icon-mobile" v-bind:src="require('@/assets/tree.svg')" />
+        <!-- <span class="ml-4 black--text nav-label">Whakapapa</span> -->
+      </v-col>
+      <v-col class="nav-row-mobile">
+        <img class="nav-icon-mobile" v-bind:src="require('@/assets/activity.svg')" />
+        <!-- <span class="ml-4 black--text nav-label">Activity</span> -->
+      </v-col>
+    </v-row>
     <!-- Nav Icons -->
-    <v-row>
+    <v-row v-else>
       <v-col class="pl-8">
         <v-row justify="start" align="center" class="nav-row">
           <v-btn @click="$emit('setPageComponent', 'archive')" light text class="px-0">
@@ -50,7 +73,7 @@ export default {
   name: 'SideNavMenu',
   props: {
     profile: {
-      type: Object
+      type: Object,
     },
     editProfile: {
       type: Function
@@ -58,32 +81,48 @@ export default {
     },
     noAvatar: {
       type: Boolean,
-      default: false
+      default: false,
+    },
+  },
+  data() {
+    return {
+      
     }
   },
-  data () {
-    return {}
+  computed: {
+    mobile: function () {
+      console.log("mobile = ", this.$vuetify.breakpoint.xsOnly)
+      return this.$vuetify.breakpoint.xsOnly
+    },
   },
-  beforeMount () {},
-  mounted () {},
   methods: {},
   components: {
-    Avatar
+    Avatar,
   }
 }
 </script>
 
 <style lang="scss" scoped>
-
   .nav-row {
     margin: 20px;
+
+    .nav-icon {
+      width: 30px;
+    }
   }
 
-  .nav-icon {
-    width: 30px;
+  .nav-row-mobile {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .nav-icon-mobile {
+      width: 30px;
+    }
   }
 
-  .nav-label {
-    // font-size: 1.2em;
+  .icon-bar {
+    border: 0.5px solid rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
   }
 </style>
