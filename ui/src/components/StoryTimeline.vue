@@ -2,8 +2,7 @@
   <div>
     <v-timeline align-top dense light>
       <v-timeline-item v-for="(item, index) in data" :key="index" fillDot :icon="item.storyTypeIcon"
-        :color="getDotColour(item.storyTypeIcon)" :icon-color="getIconColour(item.storyTypeIcon)" :left="left"
-        :right="right" :small="small">
+        :color="getDotColour(item.storyTypeIcon)" :icon-color="getIconColour(item.storyTypeIcon)">
         <template v-slot:icon>
           <!-- <v-avatar v-if="item.img">
             <img :src="item.img">

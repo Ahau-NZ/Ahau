@@ -1,16 +1,16 @@
 <template>
   <div class="wrapper">
     <!-- Header for Profile page only -->
-    <Header v-if="this.$route.name === 'profileShow'" :preferredName="selectedProfile.preferredName"
+    <Header v-if="header" :preferredName="selectedProfile.preferredName"
       :headerImage="selectedProfile.headerImage" :avatarImage="selectedProfile.avatarImage" />
 
     <!-- Profile Container -->
     <v-container :fluid="true" class="body-width white px-6 niho-bg">
       <v-row>
         <!--======== Side Menu ========-->
-        <v-col cols="2" style="border: 2px solid red;">
+        <v-col cols="2">
           <!-- Pofile pic -->
-          <v-row v-if="this.$route.name === 'profileShow'" class="avatar-row first-row">
+          <v-row v-if="bigAvatar" class="avatar-row first-row">
             <v-col class="avatar-box">
               <Avatar :image="selectedProfile.avatarImage" :alt="selectedProfile.preferredName" size="200" />
             </v-col>
@@ -18,17 +18,17 @@
           <!-- Nav Icons -->
           <v-row justify="center">
             <!-- if  on profile page show larger avatar above instead of sidemenu avatar image -->
-            <SideNavMenu v-if="this.$route.name === 'profileShow'" :profile:="selectedProfile" :noAvatar="true"
-              @setPageComponent="setPageComponent($event)"  style="margin-top: 100px; border: 2px solid yellow;"/>
-            <SideNavMenu v-else :profile:="selectedProfile" @setPageComponent="setPageComponent($event)" />
+            <SideNavMenu v-if="bigAvatar" :profile:="selectedProfile" :noAvatar="true"
+              @setPageComponent="setPageComponent($event)"  style="margin-top: 100px;"/>
+            <SideNavMenu v-else :profile="selectedProfile" @setPageComponent="setPageComponent($event)" />
           </v-row>
         </v-col>
 
         <!--======== Main content ========-->
-        <v-col cols="10" style="border: 2px solid blue;">
+        <v-col cols="10">
           <Profile v-if="pageComponents.profile" :profile="selectedProfile" :type="'person'"/>
-          <Archive v-if="pageComponents.archive" :profile="selectedProfile"/>
-          <StoryTimeline v-if="pageComponents.timeline" :profile="selectedProfile"/>
+          <Archive v-if="pageComponents.archive" :profile="selectedProfile" :type="'person'"/>
+          <StoryTimeline v-if="pageComponents.storyTimeline" :profile="selectedProfile"/>
         </v-col>
 
       </v-row>
@@ -52,7 +52,7 @@
   
   import Profile from '@/components/Profile'
   import Archive from '@/components/Archive'
-  import StoryTimeline from '@/components/StoryTimeline'
+  import StoryTimeline from '@/views/StoryShow'
 
 
   import {
@@ -64,9 +64,9 @@
   } from 'vuex'
 
   const NULL_PAGE_COMPONENTS = {
-    profile: null,
-    archive: null,
-    storyTimeline: null,
+    profile: false,
+    archive: false,
+    storyTimeline: false,
   }
 
   export default {
@@ -91,6 +91,8 @@
           archive: false,
           storyTimeline: false,
         },
+        header: true,
+        bigAvatar: true,
       }
     },
     mounted() {
@@ -103,17 +105,24 @@
     methods: {
       setPageComponent(component) {
         //set all to false
-        this.pageComponents = NULL_PAGE_COMPONENTS;
+        this.pageComponents.profile = false;
+        this.pageComponents.archive = false;
+        this.pageComponents.storyTimeline = false;
+
+        this.header = false
+        this.bigAvatar = false
 
         switch (component) {
           case "profile":
+            this.header = true
+            this.bigAvatar = true
             this.pageComponents.profile = true;
             break;
           case "archive":
             this.pageComponents.archive = true;
             break;
-          case "timeline":
-            this.pageComponents.timeline = true;
+          case "storyTimeline":
+            this.pageComponents.storyTimeline = true;
             break;
           default:
             this.pageComponents.profile = true;
@@ -170,7 +179,8 @@
     .niho-bg {
       background: linear-gradient(rgba(255, 255, 255, 0.7),
           rgba(255, 255, 255, 0.7)), url(../assets/niho.svg);
-      background-position-x: 150%;
+      background-position-x: 800px;
+      background-attachment: fixed;
       background-repeat: no-repeat;
 
     }

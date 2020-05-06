@@ -1,16 +1,11 @@
 <template>
-<div class="wrapper">
+<div class="mt-8">
     <!-- Profile body (middle column) -->
-    <v-container :fluid="true" class="body-width white px-12 niho-bg">
 
         <v-row>
-            <!-- Left column -->
-            <v-col cols="2">
-                <SideNavMenu :profile="profile" />
-            </v-col>
 
             <!-- Middle column -->
-            <v-col cols="8">
+            <v-col cols="10">
                 <h1 class="title my-6">Timeline</h1>
                 <StoryTimeline :data="mockTimelineData"/>
                
@@ -24,13 +19,13 @@
                     <v-col>
                         <!-- Add icon -->
                         <v-row justify="center" align="center">
-                            <v-btn v-if="profile.canEdit" large class="my-2" fab color="white" @click.stop="openContextMenu($event)">
+                            <v-btn large class="my-2" fab color="white" @click.stop="openContextMenu($event)">
                                 <v-icon large class="black--text">mdi-plus</v-icon>
                             </v-btn>
                         </v-row>
                         <!-- Search icon -->
                         <v-row justify="center" align="center">
-                            <v-btn v-if="profile.canEdit" small class="my-2" fab color="white" @click="editProfile()">
+                            <v-btn small class="my-2" fab color="white" @click="alert('todo')">
                                 <v-icon small class="black--text">mdi-magnify</v-icon>
                             </v-btn>
                         </v-row>
@@ -155,44 +150,6 @@ export default {
             ],
 
         }
-    },
-    props: {
-    },
-    apollo: {
-      profile () {
-        return {
-          query: gql`
-            query ProfileData($id: String!) {
-              person(id: $id) {
-                canEdit
-  
-                preferredName
-                legalName
-                description
-  
-                headerImage {
-                  uri
-                }
-                avatarImage {
-                  uri
-                }
-              }
-            }
-          `,
-          variables: {
-            id: this.$route.params.id
-          },
-          // TODO this only exists to inject profile.id
-          // make sure graphql resolver has the id so we don't need this
-          update (data) {
-            return {
-              id: this.$route.params.id,
-              ...data.person
-            }
-          },
-          fetchPolicy: 'no-cache'
-        }
-      }
     },
     methods: {
         openContextMenu(event) {

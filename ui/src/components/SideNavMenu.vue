@@ -1,10 +1,12 @@
 <template>
   <div>
     <!-- Pofile pic -->
-    <v-row v-if="!noAvatar" class="avatar-row">
+    <v-row v-if="!noAvatar" class="mt-8">
       <v-col class="pa-0">
-        <v-row class="avatar-box pa-0" justify="center" align="center">
-          <Avatar :image="profile.avatarImage" :alt="profile.preferredName" size="15vh" />
+        <v-row class="pa-0" justify="center" align="center">
+          <v-btn @click="$emit('setPageComponent', 'profile')" light text class="px-0" style="height: auto;">
+            <Avatar :image="profile.avatarImage" :alt="profile.preferredName" size="15vh" />
+          </v-btn>
         </v-row>
         <v-row justify="center" align="center">
           <h1 class="primary--text">{{ profile.preferredName }}</h1>
@@ -14,14 +16,18 @@
     <!-- Nav Icons -->
     <v-row>
       <v-col class="pl-8">
-          <v-row justify="start" align="center" class="nav-row">
+        <v-row justify="start" align="center" class="nav-row">
+          <v-btn @click="$emit('setPageComponent', 'archive')" light text class="px-0">
             <img class="nav-icon" v-bind:src="require('@/assets/archive-red.svg')" />
             <span class="ml-4 black--text nav-label subtitle-1">Archive</span>
-          </v-row>
-          <v-row justify="start" align="center" class="nav-row">
+          </v-btn>
+        </v-row>
+        <v-row justify="start" align="center" class="nav-row">
+          <v-btn @click="$emit('setPageComponent', 'storyTimeline')" light text class="px-0">
             <img class="nav-icon" v-bind:src="require('@/assets/timeline.svg')" />
             <span class="ml-4 black--text nav-label subtitle-1">Story</span>
-          </v-row>
+          </v-btn>
+        </v-row>
         <v-row justify="start" align="center" class="nav-row">
           <img class="nav-icon" v-bind:src="require('@/assets/tree.svg')" />
           <span class="ml-4 black--text nav-label subtitle-1">Whakapapa</span>
@@ -68,6 +74,7 @@
 </script>
 
 <style lang="scss" scoped>
+
   .nav-row {
     margin: 20px;
   }
