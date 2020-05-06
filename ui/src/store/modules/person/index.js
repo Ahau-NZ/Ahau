@@ -1,9 +1,11 @@
 // import gql from 'graphql-tag'
 // import { createProvider } from '@/plugins/vue-apollo'
+import getRelatives from '@/lib/profile-helpers'
+import tree from '@/lib/tree-helpers'
 /*
   this is needed in order to run queries and mutations
   TODO: is this okay?
-*/
+// */
 // const apolloProvider = createProvider()
 // const apolloClient = apolloProvider.defaultClient
 
@@ -38,8 +40,27 @@ const mutations = {
   which make changes to the state
 */
 const actions = {
-  async setProfile ({ commit }, profile) {
-    commit('updateProfile', profile)
+  setProfile ({ commit }, person) {
+    commit('updateProfile', person)
+  },
+  async setProfileById ({ commit }, id) {
+    var person = await getRelatives(id)
+    if (person.children) {
+      person.children = await Promise.all(person.children.map(async (child) => {
+        const childProfile = await getRelatives(child.profile.id)
+        person = tree.getPartners(person, childProfile)
+        return childProfile
+      }))
+    }
+    if (person.parents) {
+      person.parents = await Promise.all(person.parents.map(async parent => {
+        const parentProfile = await getRelatives(parent.profile.id)
+        person = tree.getSiblings(parentProfile, person)
+        return parentProfile
+      }))
+      console.log('person: ', person)
+      commit('updateProfile', person)
+    }
   }
 }
 

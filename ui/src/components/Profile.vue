@@ -64,32 +64,36 @@
 
               </v-row>
 
-              <v-row style="border-bottom: 0.5px solid rgba(0,0,0,0.12)" class="ma-0">
+              <v-row style="border-bottom: 0.5px solid rgba(0,0,0,0.12)" class="ma-0 pb-5">
                 <!-- Desktop: Information Col -->
                 <!-- <v-col cols="12" class="border-right"  v-if="!isEditing" justify-sm="space-around"> -->
                 <!--===== Family Members =====-->
 
                 <!-- Desktop: Parents -->
                 <v-col class="pa-0">
-                  <AvatarGroup :profiles="profile.parents" group-title="Parents" size="50px" :show-labels="true"
+                  <AvatarGroup v-if="profile.parents" :profiles="profile.parents" group-title="Parents" size="50px" :show-labels="true"
                     @profile-click="openProfile($event)">
                   </AvatarGroup>
                 </v-col>
+                <v-divider vertical light />
+
 
                 <!-- <hr v-if="profile.siblings" class="family-divider" /> -->
 
                 <!-- Desktop: Siblings -->
                 <v-col class="pa-0">
-                  <AvatarGroup :profiles="profile.siblings" group-title="Siblings" size="50px" :show-labels="true"
+                  <AvatarGroup v-if="profile.siblings" :profiles="profile.siblings" group-title="Siblings" size="50px" :show-labels="true"
                     @profile-click="openProfile($event)">
                   </AvatarGroup>
                 </v-col>
+                <v-divider vertical light />
+
 
                 <!-- <hr class="family-divider"> -->
 
                 <!-- Desktop: Children -->
                 <v-col class="pa-0">
-                  <AvatarGroup :profiles="profile.children" group-title="Children" size="50px" :show-labels="true"
+                  <AvatarGroup v-if="profile.children" :profiles="profile.children" group-title="Children" size="50px" :show-labels="true"
                     @profile-click="openProfile($event)">
                   </AvatarGroup>
                 </v-col>
@@ -101,7 +105,7 @@
         <!-- End of Name row -->
 
         <!-- About row -->
-        <v-row>
+        <v-row >
           <v-col cols="12">
             <v-card light min-height="100px">
               <v-card-title class="headline font-weight-bold">About</v-card-title>
@@ -129,16 +133,16 @@
       </v-col>
 
       <!--======== Side column ========-->
-      <v-col cols="2" class="px-6">
+      <v-col cols="2" class="px-6 pt-0">
 
         <!-- Edit Card -->
         <v-row class="first-row">
           <!-- Edit icon -->
           <v-col justify="center" align="center">
-            <v-btn small class="my-2" fab color="white" @click="updateDialog('edit-node', '')">
+            <v-btn small class="my-2" fab color="white" @click="updateDialog('edit-node')">
               <v-icon small class="black--text">mdi-pencil</v-icon>
             </v-btn>
-            <span class="ml-4 black--text subtitle">Edit Profile</span>
+            <!-- <span class="ml-4 black--text subtitle">Edit Profile</span> -->
           </v-col>
         </v-row>
 
@@ -236,8 +240,8 @@ export default {
       }
       return formattedDate
     },
-    updateDialog (dialogObj) {
-      this.$emit('dialogTrigger', dialogObj)
+    updateDialog (dialog) {
+      this.$emit('setDialog', dialog)
     }
   },
   components: {

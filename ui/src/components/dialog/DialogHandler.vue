@@ -140,7 +140,7 @@ export default {
       required: false,
       default: null,
       validator: (val) => [
-        'new-node', 'view-edit-node', 'delete-node', 'new-collection', 'new-record',
+        'new-node', 'view-edit-node', 'delete-node', 'new-collection', 'new-record', 'edit-node', 
         'whakapapa-view', 'whakapapa-edit', 'whakapapa-delete', 'whakapapa-helper', 'whakapapa-table-helper'
       ].includes(val)
     },
@@ -512,10 +512,10 @@ export default {
         return
       }
 
-      console.log('didnt stop')
       // reload the selectedProfiles personal details
       var node = await this.loadKnownFamily(true, this.selectedProfile)
       // apply the changes to the nestedWhakapapa
+      console.log('load des ', node)
       if (this.selectedProfile.isPartner && this.selectedProfile.id !== this.focus) {
         this.updatePartnerNode(node)
       } else {

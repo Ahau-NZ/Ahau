@@ -23,15 +23,15 @@
         <v-btn text @click.stop="dialog = true" class="red--text text-uppercase ms-10">Tribes</v-btn>
 
         <v-btn text to="/whakapapa" class="white--text text-uppercase ms-10">whakapapa</v-btn>
-        <router-link :to="{ name: 'profileShow', params: { id: whoami.profile.id } }">
+        <router-link :to="{ name: 'profileShow', params: { id: profile.id } }">
           <Avatar
             v-if="!mobile"
             size="50px"
             class="ms-10"
-            :image="whoami.profile.avatarImage"
-            :alt="whoami.profile.preferredName"
-            :gender="whoami.profile.gender"
-            :bornAt="whoami.profile.bornAt"
+            :image="profile.avatarImage"
+            :alt="profile.preferredName"
+            :gender="profile.gender"
+            :bornAt="profile.bornAt"
           />
         </router-link>
 
@@ -50,13 +50,13 @@
     <v-navigation-drawer v-if="mobile && enableMenu" v-model="drawer" app dark right>
       <v-list nav class="text-uppercase">
         <!--  WIP links -->
-        <v-list-item :to="{ name: 'profileShow', params: { id: whoami.profile.id } }" >
+        <v-list-item :to="{ name: 'profileShow', params: { id: profile.id } }" >
           <Avatar
             size="80px"
-            :image="whoami.profile.avatarImage"
-            :alt="whoami.profile.preferredName"
-            :gender="whoami.profile.gender"
-            :bornAt="whoami.profile.bornAt"
+            :image="profile.avatarImage"
+            :alt="profile.preferredName"
+            :gender="profile.gender"
+            :bornAt="profile.bornAt"
           />
         </v-list-item>
         <v-list-item link @click.stop="dialog = true">
@@ -128,32 +128,58 @@ export default {
   data () {
     return {
       drawer: false,
-      dialog: false
+      dialog: false,
+      profile: {
+        id: null,
+        avatarImage: null
+      }
     }
   },
   computed: {
-    ...mapGetters(['whoami']),
     classObject: function () {
       return {
-        drawer: false,
-        dialog: false,
-        profile: {
-          id: null,
-          avatarImage: null
-        }
+        'mobile': this.mobile,
+        'desktop': !this.mobile,
+        'sideMenuAppBarStyle': this.sideMenu
       }
     },
     mobile () {
       return this.$vuetify.breakpoint.xs
     }
   },
+    beforeMount () {
+    this.getCurrentIdentity()
+  },
   methods: {
     karakiaWhakamutunga () {
       console.log(karakia)
     },
+    async getCurrentIdentity () {
+      const result = await this.$apollo.query({
+        query: gql`
+          {
+            whoami {
+              profile {
+                id
+                preferredName
+                avatarImage {
+                  uri
+                }
+              }
+            }
+          }
+        `,
+        fetchPolicy: 'no-cache'
+      })
+
+      if (result.errors) throw result.errors
+
+      this.profile = result.data.whoami.profile
+    },
     toggleDrawer () {
       this.drawer = !this.drawer
-    }
+    },
+
   },
   components: {
     Avatar,

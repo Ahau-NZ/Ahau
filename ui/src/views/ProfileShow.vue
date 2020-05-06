@@ -26,7 +26,7 @@
 
         <!--======== Main content ========-->
         <v-col cols="10">
-          <Profile v-if="pageComponents.profile" :profile="selectedProfile" :type="'person'"/>
+          <Profile v-if="pageComponents.profile" :profile="selectedProfile" :type="'person'" @setDialog="setDialog($event)"/>
           <Archive v-if="pageComponents.archive" :profile="selectedProfile" :type="'person'"/>
           <StoryTimeline v-if="pageComponents.storyTimeline" :profile="selectedProfile"/>
         </v-col>
@@ -39,7 +39,6 @@
       :dialog.sync="dialog.active"
       :selectedProfile="selectedProfile"
       @setupProfile="setupProfile($event)"
-      @dialogTrigger="dialog = ($event)"
     />
   </div>
 </template>
@@ -49,6 +48,7 @@ import DialogHandler from '@/components/dialog/DialogHandler.vue'
 import Header from '@/components/profile/Header.vue'
 import Avatar from '@/components/Avatar.vue'
 import SideNavMenu from '@/components/SideNavMenu.vue'
+import tree from '@/lib/tree-helpers'
 
 import Profile from '@/components/Profile'
 import Archive from '@/components/Archive'
@@ -102,6 +102,10 @@ export default {
   },
 
   methods: {
+    ...mapActions(['setProfileById', 'setProfile', 'setWhoami',]),
+    setDialog (dialog) {
+      return this.dialog.active = dialog
+    },
     setPageComponent (component) {
       // set all to false
       this.pageComponents.profile = false
@@ -127,17 +131,9 @@ export default {
           this.pageComponents.profile = true
       }
     },
-    ...mapActions(['setProfile', 'setWhoami']),
 
     async setupProfile (id) {
-      const result = await this.$apollo.query(getProfile(id))
-      if (result.errors) {
-        console.error('Failed to get profile in ProfileShow')
-        console.error(result.errors)
-        return
-      } else {
-        if (result.data.person) this.setProfile(result.data.person)
-      }
+      this.setProfileById(id)
       if (this.dialog.active) this.dialog.active = null
       if (id === this.whoami.profile.id) await this.setWhoami()
     },
