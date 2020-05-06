@@ -16,7 +16,7 @@
             </v-col>
           </v-row>
           <!-- Nav Icons -->
-          <v-row>
+          <v-row justify="center">
             <!-- if  on profile page show larger avatar above instead of sidemenu avatar image -->
             <SideNavMenu v-if="this.$route.name === 'profileShow'" :profile:="selectedProfile" :noAvatar="true"
               @setPageComponent="setPageComponent($event)"  style="margin-top: 100px; border: 2px solid yellow;"/>

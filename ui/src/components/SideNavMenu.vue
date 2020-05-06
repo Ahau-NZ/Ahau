@@ -14,19 +14,14 @@
     <!-- Nav Icons -->
     <v-row>
       <v-col class="pl-8">
-          <!-- TODO: somethings up passing id as router paramter. dont like that using graphql in sidemenu. but profile prop not givind id for some reason? -->
-        <router-link :to="{ name: 'archive', params: { id: getID() }  }">
           <v-row justify="start" align="center" class="nav-row">
             <img class="nav-icon" v-bind:src="require('@/assets/archive-red.svg')" />
             <span class="ml-4 black--text nav-label subtitle-1">Archive</span>
           </v-row>
-        </router-link>
-        <router-link :to="{ name: 'story', params: { id: getID() }  }">
           <v-row justify="start" align="center" class="nav-row">
             <img class="nav-icon" v-bind:src="require('@/assets/timeline.svg')" />
             <span class="ml-4 black--text nav-label subtitle-1">Story</span>
           </v-row>
-        </router-link>
         <v-row justify="start" align="center" class="nav-row">
           <img class="nav-icon" v-bind:src="require('@/assets/tree.svg')" />
           <span class="ml-4 black--text nav-label subtitle-1">Whakapapa</span>
@@ -48,6 +43,9 @@
   export default {
     name: 'SideNavMenu',
     props: {
+      profile: {
+        type: Object,
+      },
       editProfile: {
         type: Function
         // default: () => console.log('need to define editProfile!')
@@ -58,47 +56,11 @@
       }
     },
     data() {
-      return {
-        profile: {
-          id: null,
-          avatarImage: null
-        }
-      }
+      return {}
     },
-    beforeMount() {
-      this.getCurrentIdentity()
-    },
-    mounted() {
-      console.log("from sidemenu nav: ", this.profile)
-    },
-    methods: {
-      getID() {
-        console.log("sidemenu got id: ", this.profile.id)  
-        return this.profile.id
-      },
-      async getCurrentIdentity() {
-        const result = await this.$apollo.query({
-          query: gql `
-          {
-            whoami {
-              profile {
-                id
-                preferredName
-                avatarImage {
-                  uri
-                }
-              }
-            }
-          }
-        `,
-          fetchPolicy: 'no-cache'
-        })
-
-        if (result.errors) throw result.errors
-
-        this.profile = result.data.whoami.profile
-      },
-    },
+    beforeMount() {},
+    mounted() {},
+    methods: {},
     components: {
       Avatar,
     }

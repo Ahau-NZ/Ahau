@@ -215,6 +215,9 @@
         isEditing: false,
       }
     },
+    mounted() {
+      console.log("mounted. profile is: " , this.profile)
+    },
     computed: {},
     methods: {
       splitParagraphs(text) {

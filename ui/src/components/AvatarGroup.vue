@@ -21,7 +21,7 @@
             :gender="profile.gender"
             :bornAt="profile.bornAt"
             :deceased="profile.deceased"
-            :show-label="showLabels"
+            :showLabel="showLabels"
             :clickable="true"
             @click="profileClick(profile)"
           />
