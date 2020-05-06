@@ -1,8 +1,6 @@
 <template>
 <div>
   <Profile type="person" :profile="selectedProfile" @dialogTrigger="updateDialog($event)"/>
-  <!-- <SideNav v-if="!mobile" :profile="selectedProfile"  /> -->
-  <!-- TODO: get profile from store instead of graphql. make sure dialog update updates profile page. -->
   <DialogHandler
       :dialog.sync="dialog.active"
       :selectedProfile="selectedProfile"
@@ -14,7 +12,6 @@
 <script>
 import Profile from '@/components/Profile'
 import DialogHandler from '@/components/dialog/DialogHandler.vue'
-// import SideNav from '@/components/SideNav.vue'
 
 import { getProfile } from '@/lib/profile-helpers'
 import { mapActions, mapGetters } from 'vuex'

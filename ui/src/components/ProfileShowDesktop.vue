@@ -72,10 +72,10 @@
                                             <v-col class="py-1 px-0 profile-label"><small>Age</small></v-col>
                                         </v-row>
                                         <v-row class="py-0 justify-center">
-                                            <p class="ma-0 profile-info">{{age(profile.bornAt)}}</p>
+                                            <p v-if="profile.bornAt" class="ma-0 profile-info">{{age(profile.bornAt)}}</p>
                                         </v-row>
                                         <v-row class="py-0 justify-center">
-                                            <p class="ma-0 profile-info"><small>{{formatDob(profile.bornAt)}}</small></p>
+                                            <p v-if="profile.bornAt" class="ma-0 profile-info"><small>{{formatDob(profile.bornAt)}}</small></p>
                                         </v-row>
                                     </v-col>
                                     <v-divider vertical light />

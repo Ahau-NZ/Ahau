@@ -6,10 +6,9 @@
       </v-col>
     </v-row>
 
-    <v-row class="d-flex align-center">
+    <v-row class="d-flex justify-center align-center">
       <v-col
-        cols="4"
-        class="pt-0 pb-0"
+        class="pt-0 pb-0 pr-10"
         v-for="profile in profiles"
         :key="profile.id"
       >
@@ -28,7 +27,7 @@
         </v-row>
       </v-col>
 
-      <v-col cols="4" class="d-flex justify-center align-center">
+      <v-col class="d-flex justify-center align-center">
         <v-row justify="center">
           <slot></slot>
         </v-row>
@@ -54,7 +53,6 @@ export default {
     profileClick (profile) {
       this.$emit('profile-click', profile)
     }
-  }
+  },
 }
-// NOTE: this component stretchs to the parent. Can be changes later on as needed to adapt to different sizes
 </script>
