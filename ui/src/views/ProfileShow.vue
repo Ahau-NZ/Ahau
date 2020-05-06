@@ -76,25 +76,11 @@ import DialogHandler from '@/components/dialog/DialogHandler.vue'
 import Header from '@/components/profile/Header.vue'
 import Avatar from '@/components/Avatar.vue'
 import SideNavMenu from '@/components/SideNavMenu.vue'
-import tree from '@/lib/tree-helpers'
-
 import Profile from '@/components/Profile'
 import Archive from '@/components/Archive'
 import StoryTimeline from '@/views/StoryShow'
 
-import {
-  getProfile
-} from '@/lib/profile-helpers'
-import {
-  mapActions,
-  mapGetters
-} from 'vuex'
-
-const NULL_PAGE_COMPONENTS = {
-  profile: false,
-  archive: false,
-  storyTimeline: false
-}
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
   name: 'ProfileShow',
@@ -138,13 +124,15 @@ export default {
         case 'md': return '250px'
         case 'lg': return '250px'
         case 'xl': return '250px'
+        default:
+          return '250px'
       }
     }
   },
   methods: {
     ...mapActions(['setProfileById', 'setProfile', 'setWhoami']),
     setDialog (dialog) {
-      return this.dialog.active = dialog
+      this.dialog.active = dialog
     },
     setPageComponent (component) {
       // set all to false

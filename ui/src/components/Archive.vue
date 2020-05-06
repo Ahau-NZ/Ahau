@@ -67,9 +67,6 @@ import {
   VueContext
 } from 'vue-context'
 
-import Kaitiaki from '@/components/profile/Kaitiaki.vue'
-
-import SideNavMenu from '@/components/SideNavMenu.vue'
 import ArchiveStory from '@/components/ArchiveStory.vue'
 import CollectionCard from '@/components/CollectionCard.vue'
 
@@ -165,8 +162,6 @@ export default {
     }
   },
   components: {
-    Kaitiaki,
-    SideNavMenu,
     ArchiveStory,
     CollectionCard,
     VueContext,

@@ -65,8 +65,6 @@
 </template>
 
 <script>
-import gql from 'graphql-tag'
-
 import Avatar from '@/components/Avatar.vue'
 
 export default {

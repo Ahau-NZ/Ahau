@@ -136,6 +136,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['whoami']),
     classObject: function () {
       return {
         'mobile': this.mobile,
@@ -149,6 +150,11 @@ export default {
   },
   beforeMount () {
     this.getCurrentIdentity()
+  },
+  watch: {
+    whoami (newVal) {
+      this.profile.avatarImage = newVal.profile.avatarImage
+    }
   },
   methods: {
     karakiaWhakamutunga () {

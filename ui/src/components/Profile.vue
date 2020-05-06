@@ -177,11 +177,7 @@
 </template>
 
 <script>
-import Kaitiaki from '@/components/profile/Kaitiaki.vue'
-import Avatar from '@/components/Avatar.vue'
 import AvatarGroup from '@/components/AvatarGroup.vue'
-import AddButton from '@/components/button/AddButton.vue'
-
 import calculateAge from '@/lib/calculate-age'
 import formatDate from '@/lib/format-date'
 
@@ -251,8 +247,7 @@ export default {
     }
   },
   components: {
-    AvatarGroup,
-    AddButton
+    AvatarGroup
   }
 }
 </script>
