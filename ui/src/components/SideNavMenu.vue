@@ -42,35 +42,35 @@
 </template>
 
 <script>
-  import gql from 'graphql-tag'
+import gql from 'graphql-tag'
 
-  import Avatar from '@/components/Avatar.vue'
+import Avatar from '@/components/Avatar.vue'
 
-  export default {
-    name: 'SideNavMenu',
-    props: {
-      profile: {
-        type: Object,
-      },
-      editProfile: {
-        type: Function
-        // default: () => console.log('need to define editProfile!')
-      },
-      noAvatar: {
-        type: Boolean,
-        default: false,
-      }
+export default {
+  name: 'SideNavMenu',
+  props: {
+    profile: {
+      type: Object
     },
-    data() {
-      return {}
+    editProfile: {
+      type: Function
+      // default: () => console.log('need to define editProfile!')
     },
-    beforeMount() {},
-    mounted() {},
-    methods: {},
-    components: {
-      Avatar,
+    noAvatar: {
+      type: Boolean,
+      default: false
     }
+  },
+  data () {
+    return {}
+  },
+  beforeMount () {},
+  mounted () {},
+  methods: {},
+  components: {
+    Avatar
   }
+}
 </script>
 
 <style lang="scss" scoped>

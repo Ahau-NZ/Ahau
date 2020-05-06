@@ -20,7 +20,7 @@
           </v-row>
           <!-- Nav Icons -->
           <v-row>
-              <SideNavMenu :profile:="profile" :noAvatar="true"/>              
+              <SideNavMenu :profile:="profile" :noAvatar="true"/>
           </v-row>
 
         </v-col>
@@ -134,7 +134,6 @@
           </v-row>
           <!-- End of Name row -->
 
-
           <!-- About row -->
           <v-row>
             <v-col cols="12">
@@ -213,74 +212,74 @@
 </template>
 
 <script>
-  import Header from '@/components/profile/Header.vue'
-  import SideNavMenu from '@/components/SideNavMenu.vue'
-  import Kaitiaki from '@/components/profile/Kaitiaki.vue'
-  import Avatar from '@/components/Avatar.vue'
-  import AvatarGroup from '@/components/AvatarGroup.vue'
-  import AddButton from '@/components/button/AddButton.vue'
-  import calculateAge from '@/lib/calculate-age'
-  import formatDate from '@/lib/format-date'
+import Header from '@/components/profile/Header.vue'
+import SideNavMenu from '@/components/SideNavMenu.vue'
+import Kaitiaki from '@/components/profile/Kaitiaki.vue'
+import Avatar from '@/components/Avatar.vue'
+import AvatarGroup from '@/components/AvatarGroup.vue'
+import AddButton from '@/components/button/AddButton.vue'
+import calculateAge from '@/lib/calculate-age'
+import formatDate from '@/lib/format-date'
 
-  // const get = require('lodash.get')
+// const get = require('lodash.get')
 
-  export default {
-    name: 'ProfileShowDesktop',
-    props: {
-      type: {
-        type: String, // person / community?
-        required: true
-      },
-      profile: {
-        type: Object,
-        default: () => ({})
-      },
-      editProfile: {
-        type: Function
-        // default: () => console.log('need to define editProfile!')
-      }
+export default {
+  name: 'ProfileShowDesktop',
+  props: {
+    type: {
+      type: String, // person / community?
+      required: true
     },
-    data() {
-      return {
-        isEditing: false,
-      }
+    profile: {
+      type: Object,
+      default: () => ({})
     },
-    methods: {
-      splitParagraphs(text) {
-        if (!text) return
-
-        return text.split('\n\n')
-      },
-      age(born) {
-        var age = calculateAge(born)
-        if (age == null) {
-          return "age not entered"
-        }
-        return age
-      },
-      formatDob(born) {
-        var formattedDate = formatDate(born)
-        if (formattedDate == null) {
-          return "no dob"
-        }
-        return formattedDate;
-      },
-      updateDialog(dialog, type) {
-        this.$emit('dialogTrigger', {
-          dialog: dialog,
-          type: type
-        })
-      }
-    },
-    components: {
-      Header,
-      SideNavMenu,
-      Kaitiaki,
-      Avatar,
-      AvatarGroup,
-      AddButton
+    editProfile: {
+      type: Function
+      // default: () => console.log('need to define editProfile!')
     }
+  },
+  data () {
+    return {
+      isEditing: false
+    }
+  },
+  methods: {
+    splitParagraphs (text) {
+      if (!text) return
+
+      return text.split('\n\n')
+    },
+    age (born) {
+      var age = calculateAge(born)
+      if (age == null) {
+        return 'age not entered'
+      }
+      return age
+    },
+    formatDob (born) {
+      var formattedDate = formatDate(born)
+      if (formattedDate == null) {
+        return 'no dob'
+      }
+      return formattedDate
+    },
+    updateDialog (dialog, type) {
+      this.$emit('dialogTrigger', {
+        dialog: dialog,
+        type: type
+      })
+    }
+  },
+  components: {
+    Header,
+    SideNavMenu,
+    Kaitiaki,
+    Avatar,
+    AvatarGroup,
+    AddButton
   }
+}
 </script>
 
 <style scoped lang="scss">

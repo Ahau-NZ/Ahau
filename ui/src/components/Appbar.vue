@@ -103,7 +103,7 @@ import Avatar from '@/components/Avatar'
 import FeedbackButton from '@/components/button/FeedbackButton'
 import { mapGetters } from 'vuex'
 
-  const karakia = `
+const karakia = `
 ---------------------------------
 Kia whakairia te tapu
 Kia wātea ai te ara

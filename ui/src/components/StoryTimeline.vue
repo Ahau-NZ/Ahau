@@ -72,24 +72,24 @@
 </template>
 
 <script>
-  import Contributors from '@/components/Contributors.vue'
-  export default {
-    props: ['data'],
-    components: {
-      Contributors,
+import Contributors from '@/components/Contributors.vue'
+export default {
+  props: ['data'],
+  components: {
+    Contributors
+  },
+  data: () => ({
+    show: false
+  }),
+  methods: {
+    getDotColour (iconType) {
+      return '#FF9800'
     },
-    data: () => ({
-      show: false,
-    }),
-    methods: {
-      getDotColour(iconType) {
-        return "#FF9800"
-      },
-      getIconColour(iconType) {
-        return "#ffffff"
-      }
+    getIconColour (iconType) {
+      return '#ffffff'
     }
   }
+}
 </script>
 
 <style scoped>

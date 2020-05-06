@@ -112,7 +112,7 @@ export default {
       const csv = this.csv
       const output = collectionSubmission(this.formData)
       const newOutput = {
-        ...output,
+        ...output
       }
       this.$emit('submit', newOutput)
       this.close()

@@ -35,120 +35,119 @@
     </v-container>
 
     <!-- <SideNav v-if="!mobile" :profile="selectedProfile"  /> -->
-    <!-- TODO: get profile from store instead of graphql. make sure dialog update updates profile page. -->
-    <DialogHandler 
-      :dialog.sync="dialog.active" 
+    <DialogHandler
+      :dialog.sync="dialog.active"
       :selectedProfile="selectedProfile"
-      @setupProfile="setupProfile($event)" 
+      @setupProfile="setupProfile($event)"
+      @dialogTrigger="dialog = ($event)"
     />
   </div>
 </template>
 
 <script>
-  import DialogHandler from '@/components/dialog/DialogHandler.vue'
-  import Header from '@/components/profile/Header.vue'
-  import Avatar from '@/components/Avatar.vue'
-  import SideNavMenu from '@/components/SideNavMenu.vue'
-  
-  import Profile from '@/components/Profile'
-  import Archive from '@/components/Archive'
-  import StoryTimeline from '@/views/StoryShow'
+import DialogHandler from '@/components/dialog/DialogHandler.vue'
+import Header from '@/components/profile/Header.vue'
+import Avatar from '@/components/Avatar.vue'
+import SideNavMenu from '@/components/SideNavMenu.vue'
 
+import Profile from '@/components/Profile'
+import Archive from '@/components/Archive'
+import StoryTimeline from '@/views/StoryShow'
 
-  import {
-    getProfile
-  } from '@/lib/profile-helpers'
-  import {
-    mapActions,
-    mapGetters
-  } from 'vuex'
+import {
+  getProfile
+} from '@/lib/profile-helpers'
+import {
+  mapActions,
+  mapGetters
+} from 'vuex'
 
-  const NULL_PAGE_COMPONENTS = {
-    profile: false,
-    archive: false,
-    storyTimeline: false,
-  }
+const NULL_PAGE_COMPONENTS = {
+  profile: false,
+  archive: false,
+  storyTimeline: false
+}
 
-  export default {
-    name: 'ProfileShow',
-    components: {
-      DialogHandler,
-      Header,
-      Avatar,
-      SideNavMenu,
-      Profile,
-      Archive,
-      StoryTimeline,
-    },
-    data() {
-      return {
-        dialog: {
-          active: null,
-          type: null
-        },
-        pageComponents: {
-          profile: true,
-          archive: false,
-          storyTimeline: false,
-        },
-        header: true,
-        bigAvatar: true,
+export default {
+  name: 'ProfileShow',
+  components: {
+    DialogHandler,
+    Header,
+    Avatar,
+    SideNavMenu,
+    Profile,
+    Archive,
+    StoryTimeline
+  },
+  data () {
+    return {
+      dialog: {
+        active: null,
+        type: null
+      },
+      pageComponents: {
+        profile: true,
+        archive: false,
+        storyTimeline: false
+      },
+      header: true,
+      bigAvatar: true
+    }
+  },
+  mounted () {
+    this.setupProfile(this.$route.params.id)
+  },
+  computed: {
+    ...mapGetters(['selectedProfile', 'whoami'])
+  },
+
+  methods: {
+    setPageComponent (component) {
+      // set all to false
+      this.pageComponents.profile = false
+      this.pageComponents.archive = false
+      this.pageComponents.storyTimeline = false
+
+      this.header = false
+      this.bigAvatar = false
+
+      switch (component) {
+        case 'profile':
+          this.header = true
+          this.bigAvatar = true
+          this.pageComponents.profile = true
+          break
+        case 'archive':
+          this.pageComponents.archive = true
+          break
+        case 'storyTimeline':
+          this.pageComponents.storyTimeline = true
+          break
+        default:
+          this.pageComponents.profile = true
       }
     },
-    mounted() {
-      this.setupProfile(this.$route.params.id)
-    },
-    computed: {
-      ...mapGetters(['selectedProfile', 'whoami'])
-    },
+    ...mapActions(['setProfile', 'setWhoami']),
 
-    methods: {
-      setPageComponent(component) {
-        //set all to false
-        this.pageComponents.profile = false;
-        this.pageComponents.archive = false;
-        this.pageComponents.storyTimeline = false;
-
-        this.header = false
-        this.bigAvatar = false
-
-        switch (component) {
-          case "profile":
-            this.header = true
-            this.bigAvatar = true
-            this.pageComponents.profile = true;
-            break;
-          case "archive":
-            this.pageComponents.archive = true;
-            break;
-          case "storyTimeline":
-            this.pageComponents.storyTimeline = true;
-            break;
-          default:
-            this.pageComponents.profile = true;
-        }
-      },
-      ...mapActions(['setProfile', 'setWhoami']),
-
-      async setupProfile(id) {
-        const result = await this.$apollo.query(getProfile(id))
-        if (result.errors) {
-          console.error('Failed to get profile in ProfileShow')
-          console.error(result.errors)
-          return
-        } else {
-          if (result.data.person) this.setProfile(result.data.person)
-        }
-        if (this.dialog.active) this.dialog.active = null
-        if (id === this.whoami.profile.id) await this.setWhoami()
-      },
-
-      updateDialog(dialogObj) {
-        this.dialog.type = dialogObj.type
-        this.dialog.active = dialogObj.dialog
+    async setupProfile (id) {
+      const result = await this.$apollo.query(getProfile(id))
+      if (result.errors) {
+        console.error('Failed to get profile in ProfileShow')
+        console.error(result.errors)
+        return
+      } else {
+        if (result.data.person) this.setProfile(result.data.person)
       }
+      if (this.dialog.active) this.dialog.active = null
+      if (id === this.whoami.profile.id) await this.setWhoami()
     },
+
+    updateDialog (dialogObj) {
+      this.dialog.type = dialogObj.type
+      this.dialog.active = dialogObj.dialog
+    }
   }
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

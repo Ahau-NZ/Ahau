@@ -117,7 +117,7 @@ export default {
       const csv = this.csv
       const output = recordSubmission(this.formData)
       const newOutput = {
-        ...output,
+        ...output
       }
       this.$emit('submit', newOutput)
       this.close()

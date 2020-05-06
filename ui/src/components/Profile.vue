@@ -2,11 +2,11 @@
   <div>
     <v-row>
       <!--======== Main column ========-->
-      <v-col cols="10">
+      <v-col cols="10" class="pt-0">
         <!-- Name row -->
-        <v-row justify="center" class="first-row">
+        <v-row justify="center" class="pl-10">
           <v-col>
-            <h1 class="primary--text">{{ profile.preferredName }}</h1>
+            <h1 class="primary--text">{{ profile.legalName }}</h1>
           </v-col>
         </v-row>
 
@@ -15,29 +15,31 @@
           <v-col v-if="!isEditing">
             <v-row style="border: 0.5px solid rgba(0,0,0,0.12); border-radius: 10px; background-color: white;"
               class="flex-column ma-0">
-              <v-row style="border-bottom: 0.5px solid rgba(0,0,0,0.12);" class="ma-0 py-6">
+              <v-row style="border-bottom: 0.5px solid rgba(0,0,0,0.12);" class="ma-0 py-2">
                 <v-col cols="3">
                   <!-- Desktop: Legal Name -->
                   <v-row>
-                    <v-col class="py-1 px-0 profile-label"><small>Legal Name</small></v-col>
+                    <v-col class="py-1 px-0 profile-label"><small>Preferred Name</small></v-col>
                   </v-row>
                   <v-row class="py-0 justify-center">
-                    <p class="ma-0 profile-info">{{profile.legalName}}</p>
+                    <p class="ma-0 profile-info">{{profile.preferredName}}</p>
                   </v-row>
                 </v-col>
+                <v-divider vertical light />
 
                 <v-col cols="3">
                   <!-- Desktop: Age -->
                   <v-row>
                     <v-col class="py-1 px-0 profile-label"><small>Age</small></v-col>
                   </v-row>
-                  <v-row class="py-0 justify-center">
+                  <v-row v-if="profile.bornAt" class="py-0 justify-center">
                     <p class="ma-0 profile-info">{{age(profile.bornAt)}}</p>
                   </v-row>
-                  <v-row class="py-0 justify-center">
+                  <v-row v-if="profile.bornAt" class="py-0 justify-center">
                     <p class="ma-0 profile-info"><small>{{formatDob(profile.bornAt)}}</small></p>
                   </v-row>
                 </v-col>
+                <v-divider vertical light />
 
                 <v-col cols="3">
                   <!-- Desktop: Profession -->
@@ -48,8 +50,9 @@
                     <p class="ma-0 profile-info" style="font-size: 0.8em">{{profile.profession}}</p>
                   </v-row>
                 </v-col>
+                <v-divider vertical light />
 
-                <v-col cols="3">
+                <v-col cols="2">
                   <!-- Desktop: Location -->
                   <v-row>
                     <v-col class="py-1 px-0 profile-label"><small>Location</small></v-col>
@@ -70,17 +73,15 @@
                 <v-col class="pa-0">
                   <AvatarGroup :profiles="profile.parents" group-title="Parents" size="50px" :show-labels="true"
                     @profile-click="openProfile($event)">
-                    <AddButton @click="toggleNew('parent')" />
                   </AvatarGroup>
                 </v-col>
 
                 <!-- <hr v-if="profile.siblings" class="family-divider" /> -->
 
                 <!-- Desktop: Siblings -->
-                <v-col v-if="profile.siblings" class="pa-0">
-                  <AvatarGroup :profiles="profile.siblings" group-title="Siblings" size="60px" :show-labels="true"
+                <v-col class="pa-0">
+                  <AvatarGroup :profiles="profile.siblings" group-title="Siblings" size="50px" :show-labels="true"
                     @profile-click="openProfile($event)">
-                    <AddButton v-if="view.focus !== profile.id" @click="toggleNew('sibling')" />
                   </AvatarGroup>
                 </v-col>
 
@@ -88,21 +89,10 @@
 
                 <!-- Desktop: Children -->
                 <v-col class="pa-0">
-                  <AvatarGroup :profiles="profile.children" group-title="Children" size="60px" :show-labels="true"
+                  <AvatarGroup :profiles="profile.children" group-title="Children" size="50px" :show-labels="true"
                     @profile-click="openProfile($event)">
-                    <AddButton @click="toggleNew('child')" />
                   </AvatarGroup>
                 </v-col>
-
-                <!-- Desktop: Go to whakapapa -->
-                <v-col class="pa-0" style="display: flex; justify-content: center; align-items: center;">
-                  <v-btn color=""><img class="nav-icon mr-3" v-bind:src="require('@/assets/tree-white.svg')" />View
-                    this persons whakapapa</v-btn>
-                </v-col>
-
-                <!-- END Desktop: Family Members -->
-
-                <!-- </v-col> -->
               </v-row>
 
             </v-row>
@@ -110,11 +100,10 @@
         </v-row>
         <!-- End of Name row -->
 
-
         <!-- About row -->
         <v-row>
           <v-col cols="12">
-            <v-card light min-height="150px">
+            <v-card light min-height="100px">
               <v-card-title class="headline font-weight-bold">About</v-card-title>
               <v-card-text>
                 <p v-for="(p, i) in splitParagraphs(profile.description)" :key="i + p">
@@ -186,80 +175,76 @@
 </template>
 
 <script>
-  import Kaitiaki from '@/components/profile/Kaitiaki.vue'
-  import Avatar from '@/components/Avatar.vue'
-  import AvatarGroup from '@/components/AvatarGroup.vue'
-  import AddButton from '@/components/button/AddButton.vue'
+import Kaitiaki from '@/components/profile/Kaitiaki.vue'
+import Avatar from '@/components/Avatar.vue'
+import AvatarGroup from '@/components/AvatarGroup.vue'
+import AddButton from '@/components/button/AddButton.vue'
 
-  import calculateAge from '@/lib/calculate-age'
-  import formatDate from '@/lib/format-date'
+import calculateAge from '@/lib/calculate-age'
+import formatDate from '@/lib/format-date'
 
-  export default {
-    name: 'Profile',
-    props: {
-      type: {
-        type: String, // person / community?
-        required: true
-      },
-      profile: {
-        type: Object,
-        default: () => ({})
-      },
-      editProfile: {
-        type: Function
-        // default: () => console.log('need to define editProfile!')
-      }
+export default {
+  name: 'Profile',
+  props: {
+    type: {
+      type: String, // person / community?
+      required: true
     },
-    data() {
-      return {
-        isEditing: false,
-      }
+    profile: {
+      type: Object,
+      default: () => ({})
     },
-    mounted() {
-      console.log("mounted. profile is: " , this.profile)
-    },
-    computed: {},
-    methods: {
-      splitParagraphs(text) {
-        if (!text) return
-
-        return text.split('\n\n')
-      },
-      getComponent() {
-        // isMobile would be some check to determine the validity of that, how ever you check for that
-        switch (this.$vuetify.breakpoint.name) {
-          case 'xs':
-            return 'ProfileShowMobile'
-          case 'sm':
-          case 'md':
-          case 'lg':
-          case 'xl':
-            return 'ProfileShowDesktop'
-        }
-      },
-      age(born) {
-        var age = calculateAge(born)
-        if (age == null) {
-          return "age not entered"
-        }
-        return age
-      },
-      formatDob(born) {
-        var formattedDate = formatDate(born)
-        if (formattedDate == null) {
-          return "no dob"
-        }
-        return formattedDate;
-      },
-      updateDialog(dialogObj) {
-        this.$emit('dialogTrigger', dialogObj)
-      }
-    },
-    components: {
-      AvatarGroup,
-      AddButton,
+    editProfile: {
+      type: Function
+      // default: () => console.log('need to define editProfile!')
     }
+  },
+  data () {
+    return {
+      isEditing: false
+    }
+  },
+  methods: {
+    splitParagraphs (text) {
+      if (!text) return
+      return text.split('\n\n')
+    },
+    getComponent () {
+      // isMobile would be some check to determine the validity of that, how ever you check for that
+      switch (this.$vuetify.breakpoint.name) {
+        case 'xs':
+          return 'ProfileShowMobile'
+        case 'sm':
+        case 'md':
+        case 'lg':
+        case 'xl':
+          return 'ProfileShowDesktop'
+      }
+    },
+    age (born) {
+      console.log("dob: ", born)
+      var age = calculateAge(born)
+      if (age == null) {
+        return 'age not entered'
+      }
+      return age
+    },
+    formatDob (born) {
+      var formattedDate = formatDate(born)
+      if (formattedDate == null) {
+        return 'no dob'
+      }
+      return formattedDate
+    },
+    updateDialog (dialogObj) {
+      this.$emit('dialogTrigger', dialogObj)
+    }
+  },
+  components: {
+    AvatarGroup,
+    AddButton
   }
+}
 </script>
 <style scoped lang="scss">
   .wrapper {
@@ -270,7 +255,6 @@
 
   .rounded-card {
     border-radius: 10px;
-
     p {
       font-size: 0.8em;
       line-height: 1.6;

@@ -201,118 +201,116 @@
 
     <v-divider light></v-divider>
 
-
-
   </v-form>
 </template>
 
 <script>
-  import Avatar from '@/components/Avatar.vue'
-  import ImagePicker from '@/components/ImagePicker.vue'
-  import NodeDatePicker from '@/components/NodeDatePicker.vue'
-  import AddButtonMini from '@/components/button/AddButtonMini.vue'
-  import AvatarGroup from '@/components/AvatarGroup.vue'
+import Avatar from '@/components/Avatar.vue'
+import ImagePicker from '@/components/ImagePicker.vue'
+import NodeDatePicker from '@/components/NodeDatePicker.vue'
+import AddButtonMini from '@/components/button/AddButtonMini.vue'
+import AvatarGroup from '@/components/AvatarGroup.vue'
 
-  import {
-    RULES
-  } from '@/lib/constants'
+import {
+  RULES
+} from '@/lib/constants'
 
-  // const EMPTY_WHAKAPAPA = {
-  //   name: '',
-  //   description: '',
-  //   mode: 'descendants',
-  //   focus: 'self',
-  //   image: null
-  // }
+// const EMPTY_WHAKAPAPA = {
+//   name: '',
+//   description: '',
+//   mode: 'descendants',
+//   focus: 'self',
+//   image: null
+// }
 
-  // function setDefaultWhakapapa (whakapapa) {
-  //   return {
-  //     name: whakapapa.name,
-  //     description: whakapapa.description,
-  //     mode: whakapapa.mode,
-  //     focus: whakapapa.focus,
-  //     image: whakapapa.image
-  //   }
-  // }
+// function setDefaultWhakapapa (whakapapa) {
+//   return {
+//     name: whakapapa.name,
+//     description: whakapapa.description,
+//     mode: whakapapa.mode,
+//     focus: whakapapa.focus,
+//     image: whakapapa.image
+//   }
+// }
 
-  export default {
-    name: 'CollectionForm',
-    components: {
-      Avatar,
-      ImagePicker,
-      NodeDatePicker,
-      AddButtonMini,
-      AvatarGroup
+export default {
+  name: 'CollectionForm',
+  components: {
+    Avatar,
+    ImagePicker,
+    NodeDatePicker,
+    AddButtonMini,
+    AvatarGroup
+  },
+  props: {
+    // view: { type: Object, default () { return setDefaultWhakapapa(EMPTY_WHAKAPAPA) } },
+    readonly: {
+      type: Boolean,
+      default: false
     },
-    props: {
-      // view: { type: Object, default () { return setDefaultWhakapapa(EMPTY_WHAKAPAPA) } },
-      readonly: {
-        type: Boolean,
-        default: false
+    hideDetails: {
+      type: Boolean,
+      default: false
+    }
+  },
+  data () {
+    return {
+      // formData: setDefaultWhakapapa(this.view),
+      formData: {
+        title: null,
+        description: null,
+        startDate: null,
+        endDate: null,
+        mentions: [],
+        category: [],
+        collection: null,
+        access: [],
+        protocols: [],
+        submissionDate: null,
+        contributionNotes: null,
+        locationDescription: null,
+        culturalNarrative: null,
+        fileFormat: null,
+        identifier: null,
+        source: null,
+        language: null,
+        translation: null
       },
-      hideDetails: {
-        type: Boolean,
-        default: false
-      }
-    },
-    data() {
-      return {
-        // formData: setDefaultWhakapapa(this.view),
-        formData: {
-          title: null,
-          description: null,
-          startDate: null,
-          endDate: null,
-          mentions: [],
-          category: [],
-          collection: null,
-          access: [],
-          protocols: [],
-          submissionDate: null,
-          contributionNotes: null,
-          locationDescription: null,
-          culturalNarrative: null,
-          fileFormat: null,
-          identifier: null,
-          source: null,
-          language: null,
-          translation: null,
+      form: {
+        valid: true,
+        rules: RULES
+      },
+      mockdata: [{
+        id: 123,
+        preferredName: 'Ian',
+        whakapapaName: 'Tairea whanau',
+        avatarImage: {
+          uri: require('@/assets/koro.svg')
         },
-        form: {
-          valid: true,
-          rules: RULES
+        image: {
+          uri: require('@/assets/mock1.jpg')
+        }
+      },
+      {
+        id: 456,
+        preferredName: 'Ben',
+        whakapapaName: 'Horne whanau',
+        avatarImage: {
+          uri: require('@/assets/kuia.svg')
         },
-        mockdata: [{
-            id: 123,
-            preferredName: 'Ian',
-            whakapapaName: 'Tairea whanau',
-            avatarImage: {
-              uri: require('@/assets/koro.svg')
-            },
-            image: {
-              uri: require('@/assets/mock1.jpg')
-            }
-          },
-          {
-            id: 456,
-            preferredName: 'Ben',
-            whakapapaName: 'Horne whanau',
-            avatarImage: {
-              uri: require('@/assets/kuia.svg')
-            },
-            image: {
-              uri: require('@/assets/mock2.jpg')
-            }
-          }
-        ],
-        panel: [0, 1],
+        image: {
+          uri: require('@/assets/mock2.jpg')
+        }
       }
-    },
-    watch: {
+      ],
+      panel: [0, 1]
+    }
+  },
+  watch: {
 
-    },
-    methods: {}
-  }
+  },
+  methods: {}
+}
 </script>
 
 <style scoped>

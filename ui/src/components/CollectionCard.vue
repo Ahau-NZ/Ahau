@@ -47,21 +47,21 @@
 <script>
 import formatDate from '@/lib/format-date.js'
 export default {
-    name: 'CollectionCard',
-    props: ['collections'],
-    // data() { 
-    //     return {
+  name: 'CollectionCard',
+  props: ['collections'],
+  // data() {
+  //     return {
 
-    //     }
-    // },
-    methods: {
-        formatSubmissionDate(date) {
-            return formatDate(date)
-        }
-    },
-    components: {
-
+  //     }
+  // },
+  methods: {
+    formatSubmissionDate (date) {
+      return formatDate(date)
     }
+  },
+  components: {
+
+  }
 }
 </script>
 

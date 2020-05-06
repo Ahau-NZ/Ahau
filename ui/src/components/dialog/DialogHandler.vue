@@ -68,17 +68,17 @@
       :title="`Whakapapa registry`"
       @close="close"
     />
-    <NewCollectionDialog 
+    <NewCollectionDialog
       :show="isActive('new-collection')"
       :title="'Create a new Collection'"
       @close="close"
-      @submit="console.log('TODO: add collection to profile')" 
+      @submit="console.log('TODO: add collection to profile')"
     />
     <NewRecordDialog
       :show="isActive('new-record')"
       :title="'Create a new Record'"
       @close="close"
-      @submit="console.log('TODO: add record to profile')" 
+      @submit="console.log('TODO: add record to profile')"
       />
   </div>
 </template>

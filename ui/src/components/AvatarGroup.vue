@@ -49,7 +49,7 @@ export default {
     groupTitle: { type: String, default: null },
     showLabels: { type: Boolean, default: false },
     size: { type: String, default: '80px' },
-    addButtonSlot: { type: Boolean, default: true },
+    addButtonSlot: { type: Boolean, default: true }
   },
   methods: {
     profileClick (profile) {

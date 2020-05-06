@@ -12,7 +12,7 @@ export default {
     label: String,
     align: { type: String, default: 'center' },
     row: { type: Boolean, default: false },
-    height: { type: String}
+    height: { type: String }
   },
   methods: {
     click () {

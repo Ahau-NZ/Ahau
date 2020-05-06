@@ -8,7 +8,7 @@
             <v-col cols="10">
                 <h1 class="title my-6">Timeline</h1>
                 <StoryTimeline :data="mockTimelineData"/>
-               
+
             </v-col>
             <!-- End Middle column -->
 
@@ -50,9 +50,9 @@
         </li> -->
     </vue-context>
 
-    <DialogHandler 
-        :dialog.sync="dialog.active" 
-        :type.sync="dialog.type" 
+    <DialogHandler
+        :dialog.sync="dialog.active"
+        :type.sync="dialog.type"
     />
 
 </div>
@@ -63,7 +63,7 @@
 import gql from 'graphql-tag'
 
 import {
-    VueContext
+  VueContext
 } from 'vue-context'
 
 import Kaitiaki from '@/components/profile/Kaitiaki.vue'
@@ -76,102 +76,102 @@ import DialogHandler from '@/components/dialog/DialogHandler.vue'
 // const get = require('lodash.get')
 
 export default {
-    name: 'StoryShow',
-    data() {
-        return {
-            profile: {},
-            mockTimelineData: [
-                {
-                    title: 'Ukurau was born',
-                    description: 'In Aatea, Tangaroa had a son called Ukurau',
-                    img: 'https://picsum.photos/200/300',
-                    people: [{
-                            id: 123,
-                            preferredName: 'Ian',
-                            avatarImage: require('@/assets/koro.svg')
-                        },
-                        {
-                            id: 456,
-                            preferredName: 'Ben',
-                            avatarImage: require('@/assets/kuia.svg')
-                        },
-                    ],
-                    storyTypeIcon: 'mdi-diamond-outline'
-                },
-                {
-                    title: 'Ukurau travelled to Rarotonga',
-                    description: 'Ukurau landed in Rarotonga and picked up his wife Puera',
-                    img: 'https://picsum.photos/200/300',
-                    people: [{
-                            id: 123,
-                            preferredName: 'Ian',
-                            avatarImage: require('@/assets/koro.svg')
-                        },
-                        {
-                            id: 456,
-                            preferredName: 'Ben',
-                            avatarImage: require('@/assets/kuia.svg')
-                        },
-                    ],
-                    storyTypeIcon: 'mdi-creation'
-                },
-                {
-                    title: 'Ukurau arrived in Ma\'uke',
-                    description: 'Ukurau arrived in Ma\'uke',
-                    img: 'https://picsum.photos/200/300',
-                    people: [{
-                            id: 123,
-                            preferredName: 'Ian',
-                            avatarImage: require('@/assets/koro.svg')
-                        },
-                        {
-                            id: 456,
-                            preferredName: 'Ben',
-                            avatarImage: require('@/assets/kuia.svg')
-                        },
-                    ],
-                    storyTypeIcon: 'mdi-account-circle'
-                }
-            ],
-            dialog: {
-                active: null,
-                type: null
-            },
-            contextMenuOpts: [{
-                    title: 'Create a new Collection',
-                    dialog: 'new-collection',
-                    icon: 'mdi-folder-multiple-outline'
-                },
-                {
-                    title: 'Create a new Record',
-                    dialog: 'new-record',
-                    icon: 'mdi-file-outline'
-                },
-            ],
-
+  name: 'StoryShow',
+  data () {
+    return {
+      profile: {},
+      mockTimelineData: [
+        {
+          title: 'Ukurau was born',
+          description: 'In Aatea, Tangaroa had a son called Ukurau',
+          img: 'https://picsum.photos/200/300',
+          people: [{
+            id: 123,
+            preferredName: 'Ian',
+            avatarImage: require('@/assets/koro.svg')
+          },
+          {
+            id: 456,
+            preferredName: 'Ben',
+            avatarImage: require('@/assets/kuia.svg')
+          }
+          ],
+          storyTypeIcon: 'mdi-diamond-outline'
+        },
+        {
+          title: 'Ukurau travelled to Rarotonga',
+          description: 'Ukurau landed in Rarotonga and picked up his wife Puera',
+          img: 'https://picsum.photos/200/300',
+          people: [{
+            id: 123,
+            preferredName: 'Ian',
+            avatarImage: require('@/assets/koro.svg')
+          },
+          {
+            id: 456,
+            preferredName: 'Ben',
+            avatarImage: require('@/assets/kuia.svg')
+          }
+          ],
+          storyTypeIcon: 'mdi-creation'
+        },
+        {
+          title: 'Ukurau arrived in Ma\'uke',
+          description: 'Ukurau arrived in Ma\'uke',
+          img: 'https://picsum.photos/200/300',
+          people: [{
+            id: 123,
+            preferredName: 'Ian',
+            avatarImage: require('@/assets/koro.svg')
+          },
+          {
+            id: 456,
+            preferredName: 'Ben',
+            avatarImage: require('@/assets/kuia.svg')
+          }
+          ],
+          storyTypeIcon: 'mdi-account-circle'
         }
-    },
-    methods: {
-        openContextMenu(event) {
-            if (this.dialog.view) {
-                this.toggleView()
-            }
-            this.$refs.menu.open(event)
-        },
-        toggleView() {
-            this.dialog.view = !this.dialog.view
-        },
-        updateDialog (dialog) {
-            this.dialog.active = dialog
-        },
-    },
-    components: {
-        Kaitiaki,
-        SideNavMenu,
-        StoryTimeline,
-        VueContext,
-        DialogHandler
+      ],
+      dialog: {
+        active: null,
+        type: null
+      },
+      contextMenuOpts: [{
+        title: 'Create a new Collection',
+        dialog: 'new-collection',
+        icon: 'mdi-folder-multiple-outline'
+      },
+      {
+        title: 'Create a new Record',
+        dialog: 'new-record',
+        icon: 'mdi-file-outline'
+      }
+      ]
+
     }
+  },
+  methods: {
+    openContextMenu (event) {
+      if (this.dialog.view) {
+        this.toggleView()
+      }
+      this.$refs.menu.open(event)
+    },
+    toggleView () {
+      this.dialog.view = !this.dialog.view
+    },
+    updateDialog (dialog) {
+      this.dialog.active = dialog
+    }
+  },
+  components: {
+    Kaitiaki,
+    SideNavMenu,
+    StoryTimeline,
+    VueContext,
+    DialogHandler
+  }
 }
 </script>
 

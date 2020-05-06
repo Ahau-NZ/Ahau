@@ -72,30 +72,30 @@
 import Contributors from '@/components/Contributors.vue'
 
 export default {
-    name: 'ArchiveStory',
-    props: {
-        // type: {
-        //     type: String, // person / community?
-        //     required: true
-        // },
-        profile: {
-            type: Object,
-            default: () => ({})
-        },
-        // editProfile: {
-        //   type: Function
-        //   // default: () => console.log('need to define editProfile!')
-        // }
-    },
-    data: () => ({
-        show: false,
-    }),
-    methods: {
-
-    },
-    components: {
-        Contributors
+  name: 'ArchiveStory',
+  props: {
+    // type: {
+    //     type: String, // person / community?
+    //     required: true
+    // },
+    profile: {
+      type: Object,
+      default: () => ({})
     }
+    // editProfile: {
+    //   type: Function
+    //   // default: () => console.log('need to define editProfile!')
+    // }
+  },
+  data: () => ({
+    show: false
+  }),
+  methods: {
+
+  },
+  components: {
+    Contributors
+  }
 }
 </script>
 

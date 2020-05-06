@@ -25,7 +25,7 @@
                 <img class="nav-icon" v-bind:src="require('@/assets/archive.svg')" />
                 <!-- <span class="ml-4 black--text nav-label">Archive</span> -->
               </router-link>
-            </v-col> 
+            </v-col>
             <v-col justify="start" align="center" class="nav-row">
               <img class="nav-icon" v-bind:src="require('@/assets/timeline.svg')" />
               <!-- <span class="ml-4 black--text nav-label">Story</span> -->

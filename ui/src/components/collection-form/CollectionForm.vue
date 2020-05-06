@@ -47,7 +47,7 @@
               auto-grow
             ></v-textarea>
           </v-col>
-          
+
         </v-row>
       </v-col>
     </v-row>
@@ -82,7 +82,7 @@ export default {
   name: 'CollectionForm',
   components: {
     Avatar,
-    ImagePicker,
+    ImagePicker
   },
   props: {
     // view: { type: Object, default () { return setDefaultWhakapapa(EMPTY_WHAKAPAPA) } },
@@ -96,11 +96,11 @@ export default {
       form: {
         valid: true,
         rules: RULES
-      },
+      }
     }
   },
   watch: {
-    
+
   },
   methods: {
   }

@@ -25,37 +25,37 @@
 
 <script>
 export default {
-    name: 'Contributors',
-    props: {
-        //TODO prop in real contributor data
-        width: {
-            type: String,
-            default: '50px'
-        },
-        hideDate: {
-            type: Boolean,
-            default: false,
-        }
+  name: 'Contributors',
+  props: {
+    // TODO prop in real contributor data
+    width: {
+      type: String,
+      default: '50px'
     },
-    data: () => ({
-        mockdata: [{
-                id: 123,
-                preferredName: 'Ian',
-                avatarImage: require('@/assets/koro.svg')
-            },
-            {
-                id: 456,
-                preferredName: 'Ben',
-                avatarImage: require('@/assets/kuia.svg')
-            }
-        ]
-    }),
-    methods: {
-
-    },
-    components: {
-
+    hideDate: {
+      type: Boolean,
+      default: false
     }
+  },
+  data: () => ({
+    mockdata: [{
+      id: 123,
+      preferredName: 'Ian',
+      avatarImage: require('@/assets/koro.svg')
+    },
+    {
+      id: 456,
+      preferredName: 'Ben',
+      avatarImage: require('@/assets/kuia.svg')
+    }
+    ]
+  }),
+  methods: {
+
+  },
+  components: {
+
+  }
 }
 </script>
 

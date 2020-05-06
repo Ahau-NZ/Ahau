@@ -9,9 +9,9 @@
 export default {
   name: 'AddButtonMini',
   props: {
-    label: { type: String},
+    label: { type: String },
     align: { type: String, default: 'center' },
-    height: { type: String}
+    height: { type: String }
   },
   methods: {
     click () {
