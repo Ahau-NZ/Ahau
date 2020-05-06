@@ -12,7 +12,7 @@
           <!-- Pofile pic -->
           <v-row v-if="bigAvatar" class="avatar-row first-row">
             <v-col class="avatar-box">
-              <Avatar :image="selectedProfile.avatarImage" :alt="selectedProfile.preferredName" size="200" />
+              <Avatar :image="selectedProfile.avatarImage" :alt="selectedProfile.preferredName" :gender="selectedProfile.gender" :bornAt="selectedProfile.bornAt" size="200" />
             </v-col>
           </v-row>
           <!-- Nav Icons -->
@@ -26,7 +26,12 @@
 
         <!--======== Main content ========-->
         <v-col cols="10">
-          <Profile v-if="pageComponents.profile" :profile="selectedProfile" :type="'person'" @setDialog="setDialog($event)"/>
+          <Profile v-if="pageComponents.profile" 
+          :profile="selectedProfile" 
+          :type="'person'" 
+          @setDialog="setDialog($event)"
+          @setupProfile="setupProfile($event)"
+          />
           <Archive v-if="pageComponents.archive" :profile="selectedProfile" :type="'person'"/>
           <StoryTimeline v-if="pageComponents.storyTimeline" :profile="selectedProfile"/>
         </v-col>

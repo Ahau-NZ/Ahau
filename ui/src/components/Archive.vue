@@ -1,64 +1,58 @@
 <template>
 <div class="mt-8">
-        <v-row>
-            <!-- Middle column -->
-            <v-col cols="10">
-                <!-- Collections -->
-                <h1 class="title my-6">Collections</h1>
-                <v-row class="mx-0">
-                    <CollectionCard :collections="mockCollections" />
-                </v-row>
-
-                <v-divider class="mt-6 mb-12" light></v-divider>
-
-                <!-- Name row -->
-                <v-row justify="center">
-                    <ArchiveStory />
-                </v-row>
-            </v-col>
+  <v-row>
+    <!-- Middle column -->
+    <v-col cols="10">
+      <!-- Collections -->
+      <h1 class="title my-6">Collections</h1>
+      <v-row class="mx-0">
+        <CollectionCard :collections="mockCollections" />
+      </v-row>
+      <v-divider class="mt-6 mb-12" light></v-divider>
+      <!-- Name row -->
+      <v-row justify="center">
+        <ArchiveStory />
+      </v-row>
+    </v-col>
             <!-- End Middle column -->
 
-            <!-- Right column -->
-            <v-col cols="2" class="px-12">
-                <!-- Communities Card -->
-                <v-row>
-                    <v-col>
-                        <!-- Add icon -->
-                        <v-row justify="center" align="center">
-                            <v-btn large class="my-2" fab color="white" @click.stop="openContextMenu($event)">
-                                <v-icon large class="black--text">mdi-plus</v-icon>
-                            </v-btn>
-                        </v-row>
-                        <!-- Search icon -->
-                        <v-row justify="center" align="center">
-                            <v-btn small class="my-2" fab color="white" @click="editProfile()">
-                                <v-icon small class="black--text">mdi-magnify</v-icon>
-                            </v-btn>
-                        </v-row>
-                    </v-col>
-                </v-row>
-            </v-col>
-            <!-- End Right column -->
-
-        </v-row>
-
-    <vue-context ref="menu" class="pa-4">
-        <li v-for="(option, index) in contextMenuOpts" :key="index">
-            <a href="#" @click.prevent="updateDialog(option.dialog)" class="d-flex align-center px-4">
-                <v-icon light>{{ option.icon }}</v-icon>
-                <p class="ma-0 pl-3">{{ option.title }}</p>
-            </a>
-        </li>
-        <!-- <li v-for="(option, index) in contextMenuOpts" :key="index">
-            <a href="#" @click.prevent="option.action">{{ option.title }}</a>
-        </li> -->
-    </vue-context>
-
-    <DialogHandler
-        :dialog.sync="dialog.active"
-        :type.sync="dialog.type"
-    />
-
+    <!-- Right column -->
+    <v-col cols="2" class="px-12">
+      <!-- Communities Card -->
+      <v-row>
+        <v-col>
+          <!-- Add icon -->
+          <v-row justify="center" align="center">
+            <v-btn large class="my-2" fab color="white" @click.stop="openContextMenu($event)">
+              <v-icon large class="black--text">mdi-plus</v-icon>
+            </v-btn>
+          </v-row>
+          <!-- Search icon -->
+          <v-row justify="center" align="center">
+            <v-btn small class="my-2" fab color="white" @click="editProfile()">
+              <v-icon small class="black--text">mdi-magnify</v-icon>
+            </v-btn>
+          </v-row>
+        </v-col>
+      </v-row>
+    </v-col>
+    <!-- End Right column -->
+  </v-row>
+  <vue-context ref="menu" class="pa-4">
+    <li v-for="(option, index) in contextMenuOpts" :key="index">
+      <a href="#" @click.prevent="updateDialog(option.dialog)" class="d-flex align-center px-4">
+        <v-icon light>{{ option.icon }}</v-icon>
+        <p class="ma-0 pl-3">{{ option.title }}</p>
+      </a>
+    </li>
+    <!-- <li v-for="(option, index) in contextMenuOpts" :key="index">
+        <a href="#" @click.prevent="option.action">{{ option.title }}</a>
+    </li> -->
+  </vue-context>
+  <DialogHandler
+    :dialog.sync="dialog.active"
+    :type.sync="dialog.type"
+  />
 </div>
 </template>
 

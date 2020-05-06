@@ -8,8 +8,8 @@
 
     <v-row class="d-flex justify-center align-center pt-2">
       <v-col
-        cols="4"
-        class="pt-0 pb-0"
+        width="100%"
+        class="pt-0 pb-0 pr-5"
         v-for="profile in profiles"
         :key="profile.id"
       >
@@ -28,7 +28,7 @@
         </v-row>
       </v-col>
 
-      <v-col v-if="addButtonSlot" cols="4" class="d-flex justify-center align-center">
+      <v-col v-if="addButtonSlot" class="d-flex justify-center align-center">
         <v-row justify="center">
           <slot></slot>
         </v-row>
@@ -50,6 +50,11 @@ export default {
     showLabels: { type: Boolean, default: false },
     size: { type: String, default: '80px' },
     addButtonSlot: { type: Boolean, default: true }
+  },
+  computed : {
+    columns () {
+      return this.profiles.length
+    }
   },
   methods: {
     profileClick (profile) {
