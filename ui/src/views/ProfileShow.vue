@@ -49,9 +49,9 @@
 
         <!--======== Main content ========-->
         <v-col xs="12" sm="12" md="12" lg="10" class="pt-0">
-          <Profile v-if="pageComponents.profile" 
-          :profile="selectedProfile" 
-          :type="'person'" 
+          <Profile v-if="pageComponents.profile"
+          :profile="selectedProfile"
+          :type="'person'"
           @setDialog="setDialog($event)"
           @setupProfile="setupProfile($event)"
           />
@@ -122,16 +122,16 @@ export default {
       bigAvatar: true
     }
   },
-  mounted() {
-      this.setupProfile(this.$route.params.id)
+  mounted () {
+    this.setupProfile(this.$route.params.id)
   },
   computed: {
     ...mapGetters(['selectedProfile', 'whoami']),
     mobile: function () {
-      console.log("mobile = ", this.$vuetify.breakpoint.xsOnly)
+      console.log('mobile = ', this.$vuetify.breakpoint.xsOnly)
       return this.$vuetify.breakpoint.xsOnly
     },
-    headerHeight() {
+    headerHeight () {
       switch (this.$vuetify.breakpoint.name) {
         case 'xs': return '150px'
         case 'sm': return '150px'
@@ -142,7 +142,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setProfileById', 'setProfile', 'setWhoami',]),
+    ...mapActions(['setProfileById', 'setProfile', 'setWhoami']),
     setDialog (dialog) {
       return this.dialog.active = dialog
     },

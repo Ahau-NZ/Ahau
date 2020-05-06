@@ -147,7 +147,7 @@ export default {
       return this.$vuetify.breakpoint.xs
     }
   },
-    beforeMount () {
+  beforeMount () {
     this.getCurrentIdentity()
   },
   methods: {
@@ -178,7 +178,7 @@ export default {
     },
     toggleDrawer () {
       this.drawer = !this.drawer
-    },
+    }
 
   },
   components: {

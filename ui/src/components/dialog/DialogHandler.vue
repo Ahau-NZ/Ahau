@@ -140,7 +140,7 @@ export default {
       required: false,
       default: null,
       validator: (val) => [
-        'new-node', 'view-edit-node', 'delete-node', 'new-collection', 'new-record', 'edit-node', 
+        'new-node', 'view-edit-node', 'delete-node', 'new-collection', 'new-record', 'edit-node',
         'whakapapa-view', 'whakapapa-edit', 'whakapapa-delete', 'whakapapa-helper', 'whakapapa-table-helper'
       ].includes(val)
     },
@@ -485,7 +485,7 @@ export default {
             console.error('failed to update child link', linkRes)
             return
           } else {
-            // this.relationshipLinks[relationship.parent + '-' + relationship.child] = input
+            this.relationshipLinks.set(relationship.parent + '-' + relationship.child, input)
             this.selectedProfile.relationship = input
             var node = this.selectedProfile
             this.updateNode({ node })

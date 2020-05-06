@@ -70,33 +70,31 @@
                 <!--===== Family Members =====-->
 
                 <!-- Desktop: Parents -->
-                <v-col class="pa-0" :cols="profile.parents.length*1.2">
-                  <AvatarGroup v-if="profile.parents" :profiles="profile.parents" group-title="Parents" size="50px" :show-labels="true"
+                <div v-if="profile.parents" class="pa-0" >
+                  <AvatarGroup :profiles="profile.parents" group-title="Parents" size="50px" :show-labels="true"
                     :addButtonSlot="false" @profile-click="openProfile($event)">
                   </AvatarGroup>
-                </v-col>
+                </div>
                 <v-divider vertical light />
-
 
                 <!-- <hr v-if="profile.siblings" class="family-divider" /> -->
 
                 <!-- Desktop: Siblings -->
-                <v-col class="pa-0" :cols="profile.siblings.length*1.2">
-                  <AvatarGroup v-if="profile.siblings" :profiles="profile.siblings" group-title="Siblings" size="50px" :show-labels="true"
+                <div v-if="profile.siblings" class="pa-0" >
+                  <AvatarGroup :profiles="profile.siblings" group-title="Siblings" size="50px" :show-labels="true"
                     :addButtonSlot="false" @profile-click="openProfile($event)">
                   </AvatarGroup>
-                </v-col>
+                </div>
                 <v-divider vertical light />
-
 
                 <!-- <hr class="family-divider"> -->
 
                 <!-- Desktop: Children -->
-                <v-col class="pa-0" :cols="profile.children.length*1.2">
-                  <AvatarGroup v-if="profile.children" :profiles="profile.children" group-title="Children" size="50px" :show-labels="true"
+                <div v-if="profile.children" class="pa-0" >
+                  <AvatarGroup :profiles="profile.children" group-title="Children" size="50px" :show-labels="true"
                    :addButtonSlot="false" @profile-click="openProfile($event)">
                   </AvatarGroup>
-                </v-col>
+                </div>
               </v-row>
 
             </v-row>
@@ -210,10 +208,10 @@ export default {
   },
   computed: {
     mobile: function () {
-        console.log("mobile = ", this.$vuetify.breakpoint.xsOnly)
-        return this.$vuetify.breakpoint.xsOnly
-      },
-  },  
+      console.log('mobile = ', this.$vuetify.breakpoint.xsOnly)
+      return this.$vuetify.breakpoint.xsOnly
+    }
+  },
   methods: {
     splitParagraphs (text) {
       if (!text) return
