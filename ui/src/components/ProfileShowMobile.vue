@@ -65,7 +65,6 @@
               </v-col>
             </v-row>
 
-
           </v-row>
           <!-- End of Name row -->
 
@@ -97,7 +96,6 @@
           </v-row>
 
           <!-- Edit Card -->
-
 
           <!-- Kaitiaki Card -->
           <v-row>
@@ -137,42 +135,42 @@
 </template>
 
 <script>
-  import Header from '@/components/profile/Header.vue'
-  import Kaitiaki from '@/components/profile/Kaitiaki.vue'
+import Header from '@/components/profile/Header.vue'
+import Kaitiaki from '@/components/profile/Kaitiaki.vue'
 
-  import Avatar from '@/components/Avatar.vue'
+import Avatar from '@/components/Avatar.vue'
 
-  // const get = require('lodash.get')
+// const get = require('lodash.get')
 
-  export default {
-    name: 'ProfileShowMobile',
-    props: {
-      type: {
-        type: String, // person / community?
-        required: true
-      },
-      profile: {
-        type: Object,
-        default: () => ({})
-      },
-      editProfile: {
-        type: Function
-        // default: () => console.log('need to define editProfile!')
-      }
+export default {
+  name: 'ProfileShowMobile',
+  props: {
+    type: {
+      type: String, // person / community?
+      required: true
     },
-    methods: {
-      splitParagraphs(text) {
-        if (!text) return
-
-        return text.split('\n\n')
-      }
+    profile: {
+      type: Object,
+      default: () => ({})
     },
-    components: {
-      Header,
-      Kaitiaki,
-      Avatar
+    editProfile: {
+      type: Function
+      // default: () => console.log('need to define editProfile!')
     }
+  },
+  methods: {
+    splitParagraphs (text) {
+      if (!text) return
+
+      return text.split('\n\n')
+    }
+  },
+  components: {
+    Header,
+    Kaitiaki,
+    Avatar
   }
+}
 </script>
 <style scoped lang="scss">
   $avatarSize: 25vh;
@@ -246,7 +244,5 @@
     border: 0.5px solid rgba(0,0,0,0.2);
     border-radius: 10px;
   }
-
-
 
 </style>

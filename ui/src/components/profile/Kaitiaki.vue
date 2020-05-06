@@ -5,7 +5,7 @@
       text
       v-for="t in profile.tiaki"
       :key="t.id"
-      :to="{ name: 'personShow', params: { id: t.id } }"
+      :to="{ name: '', params: { id: t.id } }"
     >
       {{ t.preferredName }}
     </v-btn>

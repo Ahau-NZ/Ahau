@@ -24,6 +24,15 @@
       <template v-slot:title >
         <v-row class="justify-center" style="margin-top: -20px;">
           <v-btn
+            :to="{ name: 'profileShow', params: { id: profile.id } }"
+            color="white"
+            text
+            medium
+            class="blue--text"
+          >
+            <v-icon small class="blue--text" left>mdi-pencil</v-icon>Profile
+          </v-btn>
+          <v-btn
             @click="toggleEdit"
             color="white"
             text
@@ -140,13 +149,24 @@
 
                 <!-- Mobile: Children -->
                 <v-col :cols="12" class="pa-0">
-                  <AvatarGroup
-                    :profiles="profile.children"
-                    group-title="Children"
-                    size="60px"
-                    :show-labels="true"
-                    @profile-click="openProfile($event)"
-                  >
+                     <AvatarGroup
+                      v-if="profile.children.length"
+                      :profiles="profile.children"
+                      group-title="Children"
+                      size="60px"
+                      :show-labels="true"
+                      @profile-click="openProfile($event)"
+                    >
+                      <AddButton @click="toggleNew('child')" />
+                    </AvatarGroup>
+                    <AvatarGroup
+                      v-else
+                      :profiles="profile._children"
+                      group-title="Children"
+                      size="60px"
+                      :show-labels="true"
+                      @profile-click="openProfile($event)"
+                    >
                     <AddButton @click="toggleNew('child')" />
                   </AvatarGroup>
                 </v-col>
@@ -230,8 +250,7 @@
                         </v-row>
                       </template>
                     </v-row>
-
-                      <!-- Mobile: Editing: DATE OF BIRTH -->
+                    <!-- Mobile: Editing: DATE OF BIRTH -->
                     <v-row>
                       <v-col cols="12" class="pa-1">
                         <NodeDatePicker
@@ -239,6 +258,18 @@
                           label="Date of birth"
                           @date="formData.bornAt = $event"
                           :readonly="readonly"
+                        />
+                      </v-col>
+                    </v-row>
+                    <!-- Mobile: Editing: relationship type-->
+                    <v-row>
+                      <v-col v-if="!readonly || formData.relationshipType" cols="12" class="pa-1">
+                        <v-select
+                          v-model="formData.relationshipType"
+                          label="Related by"
+                          :items="relationshipTypes"
+                          v-bind="customProps"
+                          outlined
                         />
                       </v-col>
                     </v-row>
@@ -476,6 +507,14 @@
           <!-- Editing Name -->
           <h1 v-else style="text-align: center;">Edit {{ formData.preferredName }}</h1>
           <v-row v-if="!isEditing" class="justify-center">
+            <v-btn
+            :to="{ name: 'profileShow', params: { id: profile.id } }"
+            text
+            medium
+            class="blue--text"
+          >
+            <v-icon small class="blue--text" left>mdi-account-circle</v-icon>Profile
+          </v-btn>
             <v-btn @click="toggleEdit" text medium class="blue--text">
               <v-icon small class="blue--text" left>mdi-pencil</v-icon>Edit
             </v-btn>
@@ -593,7 +632,18 @@
                   <!-- Desktop: Children -->
                   <v-col :cols="12" class="pa-0">
                     <AvatarGroup
+                      v-if="profile.children.length"
                       :profiles="profile.children"
+                      group-title="Children"
+                      size="60px"
+                      :show-labels="true"
+                      @profile-click="openProfile($event)"
+                    >
+                      <AddButton @click="toggleNew('child')" />
+                    </AvatarGroup>
+                    <AvatarGroup
+                      v-else
+                      :profiles="profile._children"
                       group-title="Children"
                       size="60px"
                       :show-labels="true"
@@ -931,7 +981,7 @@ function defaultData (profile) {
     avatarImage: profile.avatarImage,
     description: profile.description,
     birthOrder: profile.birthOrder,
-    relationshipType: profile.relationship ? profile.relationship.relationshipType ? profile.relationship.relationshipType : null : null,
+    relationshipType: profile.relationship ? profile.relationship.relationshipType : null,
     location: profile.location,
     email: profile.email,
     phone: profile.phone,
@@ -947,7 +997,7 @@ function defaultData (profile) {
 }
 
 export default {
-  name: 'SideViewEditNodeDialogV2',
+  name: 'SideViewEditNodeDialog',
   components: {
     Avatar,
     AvatarGroup,
@@ -971,7 +1021,6 @@ export default {
     return {
       testmapimage: require('../../../assets/map-test.png'),
       genders: GENDERS,
-      // titles: TITLES,
       permitted: PERMITTED_PROFILE_ATTRS,
       relationshipTypes: RELATIONSHIPS,
       isEditing: false,
@@ -1009,7 +1058,7 @@ export default {
               changes[key] = parseInt(value)
               break
             case 'relationshipType':
-              if (value && value !== this.profile.relationship.relationshipType) {
+              if (value && value !== this.profile.relationshipType) {
                 changes[key] = value
               }
               break
@@ -1084,9 +1133,7 @@ export default {
       if (!this.$refs.form.validate()) {
         return
       }
-
       var output = Object.assign({}, pick(this.profileChanges, [...PERMITTED_PROFILE_ATTRS, ...PERMITTED_RELATIONSHIP_ATTRS]))
-
       if (!isEmpty(output)) {
         this.$emit('submit', output)
       }
@@ -1094,8 +1141,8 @@ export default {
       this.formData = defaultData(this.profile)
       this.toggleEdit()
     },
-    openProfile (profileId) {
-      this.$emit('open-profile', profileId)
+    openProfile (profile) {
+      this.$emit('open-profile', profile.id)
     },
     toggleNew (type) {
       this.$emit('new', type)

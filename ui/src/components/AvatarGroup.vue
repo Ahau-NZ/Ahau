@@ -53,7 +53,7 @@ export default {
   },
   methods: {
     profileClick (profile) {
-      this.$emit('profile-click', profile.id)
+      this.$emit('profile-click', profile)
     }
   }
 }

@@ -6,13 +6,15 @@
         <v-icon>mdi-arrow-left</v-icon>
       </v-btn>
       <template v-else>
-        <router-link to="/" v-if="enableMenu" class="logo-link">
+        <router-link to="/" v-if="enableMenu" class="logo-link"  @click.native="karakiaWhakamutunga()">
           <img src="@/assets/logo_red.svg" class="logo" />
         </router-link>
       </template>
-      <!-- <v-btn icon :to="{ name: 'personShow', params: { id: profile.id } }"> -->
-      <!-- </v-btn> -->
       <v-spacer />
+      <!-- TODO this takes you back to previous view -->
+      <!-- <v-btn v-if="!mobile" @click="$router.go(-1)" icon dark>
+        <v-icon>mdi-arrow-left</v-icon>
+      </v-btn> -->
 
       <!-- Desktop doesn't use a drawer, it has the links directly in the app bar -->
       <template v-if="!mobile">
@@ -21,22 +23,16 @@
         <v-btn text @click.stop="dialog = true" class="red--text text-uppercase ms-10">Tribes</v-btn>
 
         <v-btn text to="/whakapapa" class="white--text text-uppercase ms-10">whakapapa</v-btn>
-
-        <!-- <v-btn text to='/discovery?page=local' class="white--text text-uppercase">
-          discover
-        </v-btn> -->
-
-        <!-- <v-btn text :to="{ name: 'personShow', params: { id: profile.id } }" class="white--text text-uppercase ms-10">
-          profile
-        </v-btn> -->
-
-        <!-- using click.native to handle event when there is also a router link -->
-        <v-btn @click.native="karakiaWhakamutunga()" to="/login" text class="white--text text-uppercase ms-10">sign out
-        </v-btn>
-
-        <router-link :to="{ name: 'personShow', params: { id: profile.id } }">
-          <Avatar v-if="!mobile" size="50px" :image="profile.avatarImage" :alt="profile.preferredName"
-            :gender="profile.gender" :bornAt="profile.bornAt" />
+        <router-link :to="{ name: 'profileShow', params: { id: whoami.profile.id } }">
+          <Avatar
+            v-if="!mobile"
+            size="50px"
+            class="ms-10"
+            :image="whoami.profile.avatarImage"
+            :alt="whoami.profile.preferredName"
+            :gender="whoami.profile.gender"
+            :bornAt="whoami.profile.bornAt"
+          />
         </router-link>
 
       </template>
@@ -54,34 +50,26 @@
     <v-navigation-drawer v-if="mobile && enableMenu" v-model="drawer" app dark right>
       <v-list nav class="text-uppercase">
         <!--  WIP links -->
-        <v-list-item :to="{ name: 'personShow', params: { id: profile.id } }">
-          <Avatar size="80px" :image="profile.avatarImage" :alt="profile.preferredName" :gender="profile.gender"
-            :bornAt="profile.bornAt" />
+        <v-list-item :to="{ name: 'profileShow', params: { id: whoami.profile.id } }" >
+          <Avatar
+            size="80px"
+            :image="whoami.profile.avatarImage"
+            :alt="whoami.profile.preferredName"
+            :gender="whoami.profile.gender"
+            :bornAt="whoami.profile.bornAt"
+          />
         </v-list-item>
         <v-list-item link @click.stop="dialog = true">
-          <v-list-item-title class="red--text">korero</v-list-item-title>
+          <v-list-item-title class="red--text">Archive</v-list-item-title>
         </v-list-item>
 
         <v-list-item link @click.stop="dialog = true">
-          <v-list-item-title class="red--text">ngāti</v-list-item-title>
+          <v-list-item-title class="red--text">Tribes</v-list-item-title>
         </v-list-item>
 
         <v-list-item link to="/whakapapa" class="white--text">
           <v-list-item-title>whakapapa</v-list-item-title>
         </v-list-item>
-
-        <!-- <v-list-item link to="/discovery?page=local" class="white-text">
-          <v-list-item-title>
-            discover
-          </v-list-item-title>
-        </v-list-item>
-
-        <v-list-item link :to="{ name: 'personShow', params: { id: profile.id } }" class="white--text">
-          <v-list-item-title>
-            profile
-          </v-list-item-title>
-        </v-list-item>  -->
-
         <!-- using click.native to handle event when there is also a router link -->
         <v-list-item link @click.native="karakiaWhakamutunga()" to="/login" class="white--text">
           <v-list-item-title>sign out</v-list-item-title>
@@ -110,9 +98,10 @@
 </template>
 
 <script>
-  import gql from 'graphql-tag'
-  import Avatar from '@/components/Avatar'
-  import FeedbackButton from '@/components/button/FeedbackButton'
+import gql from 'graphql-tag'
+import Avatar from '@/components/Avatar'
+import FeedbackButton from '@/components/button/FeedbackButton'
+import { mapGetters } from 'vuex'
 
   const karakia = `
 ---------------------------------
@@ -128,26 +117,23 @@ To return to everyday activities
 ---------------------------------
 `
 
-  export default {
-    name: 'Appbar',
-    props: {
-      enableMenu: {
-        type: Boolean,
-        default: true
-      },
-      app: {
-        type: Boolean,
-        default: false
-      },
-      sideMenu: {
-        type: Boolean,
-        default: false
-      },
-      goBack: {
-        type: Function
-      }
-    },
-    data() {
+export default {
+  name: 'Appbar',
+  props: {
+    enableMenu: { type: Boolean, default: true },
+    app: { type: Boolean, default: false },
+    sideMenu: { type: Boolean, default: false },
+    goBack: { type: Function }
+  },
+  data () {
+    return {
+      drawer: false,
+      dialog: false
+    }
+  },
+  computed: {
+    ...mapGetters(['whoami']),
+    classObject: function () {
       return {
         drawer: false,
         dialog: false,
@@ -157,63 +143,23 @@ To return to everyday activities
         }
       }
     },
-    computed: {
-      classObject: function () {
-        return {
-          'mobile': this.mobile,
-          'desktop': !this.mobile,
-          'sideMenuAppBarStyle': this.sideMenu
-        }
-      },
-      mobile() {
-        return this.$vuetify.breakpoint.xs
-      }
-    },
-    beforeMount() {
-      this.getCurrentIdentity()
-    },
-    methods: {
-      karakiaWhakamutunga() {
-        console.log(karakia)
-      },
-      async getCurrentIdentity() {
-        const result = await this.$apollo.query({
-          query: gql `
-          {
-            whoami {
-              profile {
-                id
-                preferredName
-                avatarImage {
-                  uri
-                }
-              }
-            }
-          }
-        `,
-          fetchPolicy: 'no-cache'
-        })
-
-        if (result.errors) throw result.errors
-
-        this.profile = result.data.whoami.profile
-      },
-      toggleDrawer() {
-        this.drawer = !this.drawer
-      }
-    },
-    watch: {
-      $route(next, last) {
-        if (last.name === 'personEdit' && last.params.id === this.profile.id) {
-          this.getCurrentIdentity()
-        }
-      }
-    },
-    components: {
-      Avatar,
-      FeedbackButton
+    mobile () {
+      return this.$vuetify.breakpoint.xs
     }
+  },
+  methods: {
+    karakiaWhakamutunga () {
+      console.log(karakia)
+    },
+    toggleDrawer () {
+      this.drawer = !this.drawer
+    }
+  },
+  components: {
+    Avatar,
+    FeedbackButton
   }
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

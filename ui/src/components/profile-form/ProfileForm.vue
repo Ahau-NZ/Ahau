@@ -104,7 +104,7 @@
           </v-row>
 
           <!-- Editing: relationship type-->
-          <v-row>
+          <v-row v-if="withRelationships">
             <v-col cols="12" class="pa-1">
               <v-select
                 v-model="formData.relationshipType"

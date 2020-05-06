@@ -2,6 +2,7 @@
   <v-app>
     <Appbar v-if="displayAppbar" :enableMenu="enableMenu" app />
     <v-content :class="{ 'mobileWhakapapaTitleStyle': mobile }">
+      <Spinner />
       <router-view :mobileServerLoaded="mobileServerLoaded" />
     </v-content>
   </v-app>
@@ -10,6 +11,7 @@
 <script>
 import Appbar from '@/components/Appbar.vue'
 import nodejsClient from '@/plugins/cordova-nodejs-client.js'
+import Spinner from '@/components/Spinner.vue'
 
 export default {
   name: 'App',
@@ -18,7 +20,9 @@ export default {
       mobileServerLoaded: false
     }
   },
+
   computed: {
+
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -28,7 +32,7 @@ export default {
     },
     enableMenu () {
       if (
-        this.$route.name === 'personEdit' &&
+        this.$route.name === 'profileEdit' &&
         this.$route.query.setup === true
       ) {
         return false
@@ -47,7 +51,8 @@ export default {
     }
   },
   components: {
-    Appbar
+    Appbar,
+    Spinner
   },
   // this watch add class to body depending on the route clicked.
   // used for changing body backgrounds, unique to each route.
@@ -101,10 +106,10 @@ body {
     // background-repeat: no-repeat;
     // background-size: cover;
   }
-  &.page--personshow {
+  &.page--profileshow {
     background-color: #303030;
   }
-  &.page--profileshow {
+  &.page--profile {
     background: url(./assets/niho.svg);
     background-color: var(--primary-background);
     background-position-x: -300px;

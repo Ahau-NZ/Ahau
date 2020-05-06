@@ -9,7 +9,7 @@
           <Avatar :image="avatarImage" :alt="preferredName" size="25vh" />
       </v-row>
     </v-row> -->
-    
+
   </v-container>
 </template>
 

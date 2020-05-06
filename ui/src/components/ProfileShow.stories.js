@@ -1,8 +1,8 @@
 import { action } from '@storybook/addon-actions'
-import ProfileShow from './ProfileShow.vue'
+import Profile from './Profile.vue'
 
 export default {
-  title: 'ProfileShow'
+  title: 'Profile'
 }
 
 const avatarImage = {
@@ -40,7 +40,7 @@ const mixProfile = {
 // profile/community ////////////////////
 export const CompleteCommunityProfile = () => ({
   template:
-    '<ProfileShow :profile="profile" type="community" :editProfile="editProfile"/>',
+    '<Profile :profile="profile" type="community" :editProfile="editProfile"/>',
   data: () => ({
     type: 'community',
     profile: {
@@ -62,13 +62,13 @@ export const CompleteCommunityProfile = () => ({
   methods: {
     editProfile: action('edit profile')
   },
-  components: { ProfileShow }
+  components: { Profile }
 })
 
 // profile/person ////////////////////
 export const CompleteProfile = () => ({
   template:
-    '<ProfileShow :profile="profile" type="person" :editProfile="editProfile"/>',
+    '<Profile :profile="profile" type="person" :editProfile="editProfile"/>',
   data: () => ({
     type: 'person',
     profile: mixProfile
@@ -76,11 +76,11 @@ export const CompleteProfile = () => ({
   methods: {
     editProfile: action('edit profile')
   },
-  components: { ProfileShow }
+  components: { Profile }
 })
 
 export const EmptyProfile = () => ({
-  template: '<ProfileShow :profile="profile" type="person"/>',
+  template: '<Profile :profile="profile" type="person"/>',
   data: () => ({
     type: 'person',
     profile: {
@@ -95,7 +95,7 @@ export const EmptyProfile = () => ({
       headerImage: null
     }
   }),
-  components: { ProfileShow }
+  components: { Profile }
 })
 
 // profile/community ////////////////////

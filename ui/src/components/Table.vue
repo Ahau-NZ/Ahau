@@ -83,24 +83,25 @@ import Node from './table/Node.vue'
 import Link from './tree/Link.vue'
 import calculateAge from '../lib/calculate-age.js'
 import isEqual from 'lodash.isequal'
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   props: {
-    nestedWhakapapa: {
-      type: Object,
-      default: () => ({
-        preferredName: 'Loading',
-        gender: 'unknown',
-        children: [],
-        parents: []
-      })
-    },
+    // nestedWhakapapa: {
+    //   type: Object,
+    //   default: () => ({
+    //     preferredName: 'Loading',
+    //     gender: 'unknown',
+    //     children: [],
+    //     parents: []
+    //   })
+    // },
     view: {
       type: Object,
       required: true
     },
     relationshipLinks: {
-      type: Array
+      type: Map
     },
     flatten: {
       type: Boolean,
@@ -134,6 +135,8 @@ export default {
   },
 
   computed: {
+    ...mapGetters(['nestedWhakapapa']),
+
     pathNode () {
       if (this.searchNodeId === '') return null
       return this.root.descendants().find(d => {
@@ -179,7 +182,7 @@ export default {
           // set width of first column
           this.setWidth(d.depth)
           return {
-            nodeId: `node-${i}`,
+            nodeId: `table-node-${i}-${d.data.id}`,
             children: d.children,
             data: d.data,
             depth: d.depth,
@@ -201,10 +204,10 @@ export default {
         .links() // returns the array of links
         .map((d, i) => { // returns a new custom object for each link
           return {
-            id: `table-link-${i}-${i + 1}`,
+            id: `table-link-${i}-${d.target.data.id}`,
             index: i,
-            relationshipType: d.target.data.relationshipType ? d.target.data.relationshipType[0] : '',
-            class: this.relationshipLinks[d.source.data.id + '-' + d.target.data.id].relationshipType !== 'birth' ? 'nonbiological' : '',
+            relationshipType: d.target.data.relationship.relationshipType ? d.target.data.relationship.relationshipType : '',
+            class: d.target.data.relationship.relationshipType !== 'birth' ? 'nonbiological' : '',
             style: {
               fill: 'none',
               stroke: this.pathStroke(d.source.data.id, d.target.data.id)
@@ -269,9 +272,14 @@ export default {
     flatten (newVal) {
       if (newVal === true) this.colWidth = 250
       else this.colWidth = 350
+    },
+
+    nodes (newValue) {
+      this.setLoading(false)
     }
   },
   methods: {
+    ...mapActions(['updateNode', 'setLoading']),
     // sets the width of the table
     async tableOverflow () {
       var width = await this.colWidth + this.columns[this.columns.length - 1].x
@@ -284,7 +292,7 @@ export default {
       var g = d3.select('#zoomable')
 
       var zoom = d3.zoom()
-        .translateExtent([[0, 0], [2400, 1600]])
+        .translateExtent([[0, 0], [2400, Infinity]])
         .on('zoom', function () {
           g.attr('transform', d3.event.transform)
         })
@@ -330,8 +338,19 @@ export default {
       } else return 'fill:lightblue'
     },
 
-    collapse (node) {
-      this.$emit('collapse-node', node.data.id)
+    async collapse (node) {
+      const profile = node.data
+      const { children, _children = [] } = profile
+
+      if (children.length === 0 && _children.length === 0) return
+
+      Object.assign(profile, {
+        isCollapsed: !profile.isCollapsed,
+        _children: children,
+        children: _children
+      })
+
+      // this.updateNode({ is, path: endNode.path })
     }
   },
   components: {
