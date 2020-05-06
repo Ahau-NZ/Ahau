@@ -1,17 +1,16 @@
 <template>
       <v-col class="add-row" @click="click" :style="{ justifyContent: align, height: height }" >
-          <v-icon class="add-button" light>mdi-plus</v-icon>
-          <span class="add-label" v-if="row">{{ label }}</span>
+          <v-icon size="16" class="add-button pr-1" light>mdi-plus</v-icon>
+          <span class="add-label">{{ label }}</span>
       </v-col>
   </template>
 
 <script>
 export default {
-  name: 'AddButton',
+  name: 'AddButtonMini',
   props: {
-    label: String,
+    label: { type: String },
     align: { type: String, default: 'center' },
-    row: { type: Boolean, default: false },
     height: { type: String }
   },
   methods: {
@@ -25,12 +24,13 @@ export default {
   <style scoped lang="scss">
     .add-row {
       display: flex;
+      justify-content: center;
       align-items: center;
       cursor: pointer;
       padding: 0px;
     }
 
-    .v-btn.add-button {
+    v-icon.add-button {
       border-radius: 5px;
       width: 20px;
       height: 20px;

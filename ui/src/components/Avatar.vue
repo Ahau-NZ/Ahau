@@ -1,6 +1,6 @@
 <template>
   <div v-if="clickable" @click="$emit('click')" style="cursor: pointer;" >
-    <v-col>
+    <v-col class="py-0">
       <v-row justify="center">
         <v-avatar :size="size" :tile="isView">
           <v-img v-if="image && image.uri" :src="image.uri" :alt="alt" />

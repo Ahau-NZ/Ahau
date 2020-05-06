@@ -4,21 +4,10 @@ import actions from './actions'
 
 const state = {
   nestedWhakapapa: {}
-  // whakapapaView: {
-  //   id: '',
-  //   name: 'Loading',
-  //   description: '',
-  //   focus: '',
-  //   // mode: 'descendants',
-  //   recps: null,
-  //   image: { uri: '' },
-  //   ignoredProfiles: []
-  // }
 }
 
 const getters = {
   nestedWhakapapa: state => {
-    console.log('whakapapa state module')
     return state.nestedWhakapapa
   }
 }

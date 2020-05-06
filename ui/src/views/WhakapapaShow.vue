@@ -245,7 +245,6 @@ export default {
   data () {
     return {
       fab: false,
-      // loading: true,
       overflow: 'false',
       pan: 0,
       search: false,
@@ -305,7 +304,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['nestedWhakapapa', 'selectedProfile', 'whoami']),
+    ...mapGetters(['nestedWhakapapa', 'selectedProfile', 'whoami', 'loadingState']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -318,7 +317,7 @@ export default {
       set: function (newValue) {
         this.focus = newValue
       }
-    }
+    },
   },
   watch: {
     'currentFocus': async function (newFocus) {
@@ -335,7 +334,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setLoading', 'setProfile', 'setWhakapapa']),
+    ...mapActions(['setLoading', 'setProfile', 'setWhakapapa', 'setProfileById']),
     load (status) {
       this.setLoading(status)
     },

@@ -12,6 +12,7 @@
 import Appbar from '@/components/Appbar.vue'
 import nodejsClient from '@/plugins/cordova-nodejs-client.js'
 import Spinner from '@/components/Spinner.vue'
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   name: 'App',
@@ -22,7 +23,7 @@ export default {
   },
 
   computed: {
-
+    ...mapGetters(['selectedProfile']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -40,6 +41,7 @@ export default {
     }
   },
   mounted () {
+    this.setWhoami()
     if (process.env.VUE_APP_PLATFORM === 'cordova') {
       navigator.splashscreen.hide()
       nodejsClient.start({
@@ -49,6 +51,9 @@ export default {
         }
       })
     }
+  },
+  methods : {
+    ...mapActions(['setWhoami'])
   },
   components: {
     Appbar,

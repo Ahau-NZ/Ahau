@@ -20,9 +20,11 @@
           </v-row>
           <!-- Nav Icons -->
           <v-row>
-            <v-col justify="start" align="center" class="nav-row" to="/archive">
-              <img class="nav-icon" v-bind:src="require('@/assets/archive.svg')" />
-              <!-- <span class="ml-4 black--text nav-label">Archive</span> -->
+            <v-col justify="start" align="center" class="nav-row">
+              <router-link :to="{ name: 'archive' }">
+                <img class="nav-icon" v-bind:src="require('@/assets/archive.svg')" />
+                <!-- <span class="ml-4 black--text nav-label">Archive</span> -->
+              </router-link>
             </v-col>
             <v-col justify="start" align="center" class="nav-row">
               <img class="nav-icon" v-bind:src="require('@/assets/timeline.svg')" />
@@ -48,7 +50,7 @@
                 <h1 class="primary--text">{{ profile.preferredName }}</h1>
                 <!-- Edit icon -->
                 <v-btn v-if="profile.canEdit" text small class="" color="white" @click="editProfile()">
-                  <v-icon small=true class="black--text">mdi-pencil</v-icon>
+                  <v-icon class="black--text">mdi-pencil</v-icon>
                 </v-btn>
               </v-row>
               <v-row>

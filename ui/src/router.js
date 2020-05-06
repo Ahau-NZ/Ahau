@@ -14,6 +14,10 @@ import CommunityNew from '@/views/CommunityNew.vue'
 import CommunityShow from '@/views/CommunityShow.vue'
 import CommunityEdit from '@/views/CommunityEdit.vue'
 
+import StoryShow from '@/views/StoryShow.vue'
+
+import Archive from '@/components/Archive.vue'
+
 import Login from '@/views/Login.vue'
 
 Vue.use(Router)
@@ -34,6 +38,8 @@ export default new Router({
     { path: '/profile/:id/edit', name: 'profileEdit', component: ProfileEdit },
     { path: '/profile/:id', name: 'profileShow', component: ProfileShow },
 
+    { path: '/story/:id', name: 'story', component: StoryShow },
+
     { path: '/community/new', name: 'communityNew', component: CommunityNew },
     {
       path: '/community/:id/edit',
@@ -41,6 +47,8 @@ export default new Router({
       component: CommunityEdit
     },
     { path: '/community/:id', name: 'communityShow', component: CommunityShow },
+
+    { path: '/archive/:id', name: 'archive', component: Archive },
 
     { path: '*', redirect: '/' }
   ]

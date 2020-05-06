@@ -205,17 +205,17 @@ export default {
       return this.treeLayout(this.root)
         .links() // returns the array of links
         .map((d, i) => { // returns a new custom object for each link
+        console.log("links: ", this.relationshipLinks.get(d.source.data.id + '-' + d.target.data.id).relationshipType)
           return {
             id: `tree-link-${i}-${d.source.data.id}-${d.target.data.id}`,
             index: i,
-            relationshipType: d.target.data.relationship.relationshipType ? d.target.data.relationship.relationshipType : '',
-            // coordinates from drawing lines/links from Parent(x1,y1) to Child(x2,y2)
+            relationshipType: this.relationshipLinks.get(d.source.data.id + '-' + d.target.data.id).relationshipType,            // coordinates from drawing lines/links from Parent(x1,y1) to Child(x2,y2)
             x1: d.source.x, // centre x position of parent node
             x2: d.target.x, // centre x position of child node
             y1: d.source.y, // centre y position of the parent node
             y2: d.target.y, // centre y position of the child node
-            // class: this.relationshipLinks.get(d.source.data.id + '-' + d.target.data.id).relationshipType !== 'birth' ? 'nonbiological' : '',
-            class: d.target.data.relationship.relationshipType !== 'birth' ? 'nonbiological' : '',
+            class: this.relationshipLinks.get(d.source.data.id + '-' + d.target.data.id).relationshipType !== 'birth' ? 'nonbiological' : '',
+            // class: d.target.data.relationship.relationshipType !== 'birth' ? 'nonbiological' : '',
             style: {
               fill: 'none',
               stroke: this.pathStroke(d.source.data.id, d.target.data.id)

@@ -6,9 +6,10 @@
       </v-col>
     </v-row>
 
-    <v-row class="d-flex justify-center align-center">
+    <v-row class="d-flex justify-center align-center pt-2">
       <v-col
-        class="pt-0 pb-0 pr-10"
+        width="100%"
+        class="pt-0 pb-0 pr-5"
         v-for="profile in profiles"
         :key="profile.id"
       >
@@ -20,14 +21,14 @@
             :gender="profile.gender"
             :bornAt="profile.bornAt"
             :deceased="profile.deceased"
-            :show-label="showLabels"
+            :showLabel="showLabels"
             :clickable="true"
             @click="profileClick(profile)"
           />
         </v-row>
       </v-col>
 
-      <v-col class="d-flex justify-center align-center">
+      <v-col v-if="addButtonSlot" class="d-flex justify-center align-center">
         <v-row justify="center">
           <slot></slot>
         </v-row>
@@ -47,7 +48,13 @@ export default {
     profiles: { type: Array, default: null },
     groupTitle: { type: String, default: null },
     showLabels: { type: Boolean, default: false },
-    size: { type: String, default: '80px' }
+    size: { type: String, default: '80px' },
+    addButtonSlot: { type: Boolean, default: true }
+  },
+  computed : {
+    columns () {
+      return this.profiles.length
+    }
   },
   methods: {
     profileClick (profile) {

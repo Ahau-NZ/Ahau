@@ -1,4 +1,8 @@
 import gql from 'graphql-tag'
+import { createProvider } from '@/plugins/vue-apollo'
+
+const apolloProvider = createProvider()
+const apolloClient = apolloProvider.defaultClient
 
 export const PERMITTED_PROFILE_ATTRS = [
   'gender',
@@ -82,6 +86,18 @@ export const getProfile = id => ({
   fetchPolicy: 'no-cache'
 })
 
+// get person with parents and children from DB
+export default async function getRelatives (profileId) {
+  const request = getProfile(profileId)
+  const result = await apolloClient.query(request)
+  if (result.errors) {
+    console.error('WARNING, something went wrong')
+    console.error(result.errors)
+  } else {
+    return result.data.person
+  }
+}
+
 export const saveProfile = input => ({
   mutation: gql`
     mutation($input: ProfileInput!) {
@@ -90,12 +106,6 @@ export const saveProfile = input => ({
   `,
   variables: { input }
 })
-
-// import gql from 'graphql-tag'
-// import { createProvider } from '@/plugins/vue-apollo'
-
-// const apolloProvider = createProvider()
-// const apolloClient = apolloProvider.defaultClient
 
 // export const PERMITTED_PROFILE_ATTRS = [
 //   'gender',
@@ -174,19 +184,6 @@ export const saveProfile = input => ({
 //   `,
 //   variables: { input }
 // })
-
-// // get person with parents and children from DB
-// async function getRelatives (profileId) {
-//   const request = getProfile(profileId)
-//   const result = await apolloClient.query(request)
-//   if (result.errors) {
-//     console.error('WARNING, something went wrong')
-//     console.error(result.errors)
-//   } else {
-//     console.log('get relatives: ', result.data)
-//     return result.data.person
-//   }
-// }
 
 // export default {
 //   getProfile,

@@ -68,6 +68,18 @@
       :title="`Whakapapa registry`"
       @close="close"
     />
+    <NewCollectionDialog
+      :show="isActive('new-collection')"
+      :title="'Create a new Collection'"
+      @close="close"
+      @submit="console.log('TODO: add collection to profile')"
+    />
+    <NewRecordDialog
+      :show="isActive('new-record')"
+      :title="'Create a new Record'"
+      @close="close"
+      @submit="console.log('TODO: add record to profile')"
+      />
   </div>
 </template>
 
@@ -81,6 +93,8 @@ import WhakapapaEditDialog from '@/components/dialog/whakapapa/WhakapapaEditDial
 import WhakapapaDeleteDialog from '@/components/dialog/whakapapa/WhakapapaDeleteDialog.vue'
 import WhakapapaShowHelper from '@/components/dialog/whakapapa/WhakapapaShowHelper.vue'
 import WhakapapaTableHelper from '@/components/dialog/whakapapa/WhakapapaTableHelper.vue'
+import NewCollectionDialog from '@/components/dialog/NewCollectionDialog.vue'
+import NewRecordDialog from '@/components/dialog/NewRecordDialog.vue'
 
 import gql from 'graphql-tag'
 
@@ -107,7 +121,9 @@ export default {
     WhakapapaEditDialog,
     WhakapapaDeleteDialog,
     WhakapapaShowHelper,
-    WhakapapaTableHelper
+    WhakapapaTableHelper,
+    NewCollectionDialog,
+    NewRecordDialog
   },
   props: {
     focus: {
@@ -124,7 +140,7 @@ export default {
       required: false,
       default: null,
       validator: (val) => [
-        'new-node', 'edit-node', 'view-edit-node', 'delete-node',
+        'new-node', 'view-edit-node', 'delete-node', 'new-collection', 'new-record', 'edit-node', 
         'whakapapa-view', 'whakapapa-edit', 'whakapapa-delete', 'whakapapa-helper', 'whakapapa-table-helper'
       ].includes(val)
     },
@@ -496,10 +512,10 @@ export default {
         return
       }
 
-      console.log('didnt stop')
       // reload the selectedProfiles personal details
       var node = await this.loadKnownFamily(true, this.selectedProfile)
       // apply the changes to the nestedWhakapapa
+      console.log('load des ', node)
       if (this.selectedProfile.isPartner && this.selectedProfile.id !== this.focus) {
         this.updatePartnerNode(node)
       } else {
