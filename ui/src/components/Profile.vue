@@ -208,6 +208,12 @@ export default {
       isEditing: false
     }
   },
+  computed: {
+    mobile: function () {
+        console.log("mobile = ", this.$vuetify.breakpoint.xsOnly)
+        return this.$vuetify.breakpoint.xsOnly
+      },
+  },  
   methods: {
     splitParagraphs (text) {
       if (!text) return
@@ -226,7 +232,6 @@ export default {
       }
     },
     age (born) {
-      console.log("dob: ", born)
       var age = calculateAge(born)
       if (age == null) {
         return 'age not entered'

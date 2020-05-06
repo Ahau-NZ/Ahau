@@ -122,13 +122,25 @@ export default {
       bigAvatar: true
     }
   },
-  mounted () {
-    this.setupProfile(this.$route.params.id)
+  mounted() {
+      this.setupProfile(this.$route.params.id)
   },
   computed: {
-    ...mapGetters(['selectedProfile', 'whoami'])
+    ...mapGetters(['selectedProfile', 'whoami']),
+    mobile: function () {
+      console.log("mobile = ", this.$vuetify.breakpoint.xsOnly)
+      return this.$vuetify.breakpoint.xsOnly
+    },
+    headerHeight() {
+      switch (this.$vuetify.breakpoint.name) {
+        case 'xs': return '150px'
+        case 'sm': return '150px'
+        case 'md': return '250px'
+        case 'lg': return '250px'
+        case 'xl': return '250px'
+      }
+    }
   },
-
   methods: {
     ...mapActions(['setProfileById', 'setProfile', 'setWhoami',]),
     setDialog (dialog) {
@@ -159,26 +171,6 @@ export default {
           this.pageComponents.profile = true
       }
     },
-    mounted() {
-      this.setupProfile(this.$route.params.id)
-    },
-    computed: {
-      ...mapGetters(['selectedProfile', 'whoami']),
-      mobile: function () {
-        console.log("mobile = ", this.$vuetify.breakpoint.xsOnly)
-        return this.$vuetify.breakpoint.xsOnly
-      },
-      headerHeight() {
-        switch (this.$vuetify.breakpoint.name) {
-          case 'xs': return '150px'
-          case 'sm': return '150px'
-          case 'md': return '250px'
-          case 'lg': return '250px'
-          case 'xl': return '250px'
-        }
-      }
-    },
-
     async setupProfile (id) {
       this.setProfileById(id)
       if (this.dialog.active) this.dialog.active = null
