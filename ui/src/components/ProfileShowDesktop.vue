@@ -1,21 +1,49 @@
 <template>
-    <div class="wrapper">
+  <div class="wrapper">
 
-        <!-- Header & Profile Pic -->
-        <Header :preferredName="profile.preferredName" :headerImage="profile.headerImage" :avatarImage="profile.avatarImage" />
+    <!-- Header & Profile Pic -->
+    <Header :preferredName="profile.preferredName" :headerImage="profile.headerImage"
+      :avatarImage="profile.avatarImage" />
 
-        <!-- Profile body (middle column) -->
-        <v-container :fluid="true" class="body-width white px-6 niho-bg">
+    <!-- Profile body (middle column) -->
+    <v-container :fluid="true" class="body-width white px-6 niho-bg">
 
-            <v-row>
+      <v-row>
 
-                <!-- Left column -->
-                <v-col cols="2">
-                    <!-- Pofile pic -->
-                    <v-row class="avatar-row first-row">
-                        <v-col class="avatar-box">
-                            <Avatar :image="profile.avatarImage" :alt="profile.preferredName" :gender="profile.gender" size="200" />
-                        </v-col>
+        <!-- Left column -->
+        <v-col cols="2">
+          <!-- Pofile pic -->
+          <v-row class="avatar-row first-row">
+            <v-col class="avatar-box">
+              <Avatar :image="profile.avatarImage" :alt="profile.preferredName" size="200" />
+            </v-col>
+          </v-row>
+          <!-- Nav Icons -->
+          <v-row>
+              <SideNavMenu :profile:="profile" :noAvatar="true"/>              
+          </v-row>
+
+        </v-col>
+
+        <!-- Middle column -->
+        <v-col cols="8">
+          <!-- Name row -->
+          <v-row justify="center" class="first-row">
+            <v-col>
+              <h1 class="primary--text">{{ profile.preferredName }}</h1>
+            </v-col>
+          </v-row>
+
+          <!-- square info hub -->
+          <v-row>
+            <v-col v-if="!isEditing">
+              <v-row style="border: 0.5px solid rgba(0,0,0,0.12); border-radius: 10px; background-color: white;"
+                class="flex-column ma-0">
+                <v-row style="border-bottom: 0.5px solid rgba(0,0,0,0.12);" class="ma-0 py-6">
+                  <v-col cols="3">
+                    <!-- Desktop: Legal Name -->
+                    <v-row>
+                      <v-col class="py-1 px-0 profile-label"><small>Legal Name</small></v-col>
                     </v-row>
                     <v-row class="py-0 justify-center">
                       <p class="ma-0 profile-info">{{profile.legalName}}</p>
@@ -27,184 +55,78 @@
                     <v-row>
                       <v-col class="py-1 px-0 profile-label"><small>Age</small></v-col>
                     </v-row>
-
-                </v-col>
-
-                <!-- Middle column -->
-                <v-col cols="8">
-                    <!-- Name row -->
-                    <v-row justify="center" class="first-row">
-                        <v-col>
-                            <h1 class="primary--text">{{ profile.preferredName }}</h1>
-                        </v-col>
+                    <v-row class="py-0 justify-center">
+                      <p class="ma-0 profile-info">{{age(profile.bornAt)}}</p>
                     </v-row>
+                    <v-row class="py-0 justify-center">
+                      <p class="ma-0 profile-info"><small>{{formatDob(profile.bornAt)}}</small></p>
+                    </v-row>
+                  </v-col>
 
-                    <!-- square info hub -->
+                  <v-col cols="3">
+                    <!-- Desktop: Profession -->
                     <v-row>
-                        <v-col v-if="!isEditing">
-                            <v-row style="border: 0.5px solid rgba(0,0,0,0.12); border-radius: 10px; background-color: white;" class="flex-column ma-0">
-                                <v-row style="border-bottom: 0.5px solid rgba(0,0,0,0.12);" class="ma-0 py-6">
-                                    <v-col cols="3" class="px-0">
-                                        <!-- Desktop: Legal Name -->
-                                        <v-row>
-                                            <v-col class="py-1 px-0 profile-label"><small>Legal Name</small></v-col>
-                                        </v-row>
-                                        <v-row class="py-0 justify-center">
-                                            <p class="ma-0 profile-info">{{profile.legalName}}</p>
-                                        </v-row>
-                                    </v-col>
-                                    <v-divider vertical light />
-
-                                    <v-col cols="3" class="px-0">
-                                        <!-- Desktop: Age -->
-                                        <v-row>
-                                            <v-col class="py-1 px-0 profile-label"><small>Age</small></v-col>
-                                        </v-row>
-                                        <v-row class="py-0 justify-center">
-                                            <p class="ma-0 profile-info">{{age(profile.bornAt)}}</p>
-                                        </v-row>
-                                        <v-row class="py-0 justify-center">
-                                            <p class="ma-0 profile-info"><small>{{formatDob(profile.bornAt)}}</small></p>
-                                        </v-row>
-                                    </v-col>
-                                    <v-divider vertical light />
-
-                                    <v-col cols="3" class="px-0">
-                                        <!-- Desktop: Profession -->
-                                        <v-row>
-                                            <v-col class="py-1 px-0 profile-label"><small>Occupation</small></v-col>
-                                        </v-row>
-                                        <v-row class="py-0 justify-center">
-                                            <p class="ma-0 profile-info" style="font-size: 0.8em">{{profile.profession}}</p>
-                                        </v-row>
-                                    </v-col>
-                                    <v-divider vertical light />
-
-                                    <v-col cols="2" class="px-0">
-                                        <!-- Desktop: Location -->
-                                        <v-row>
-                                            <v-col class="py-1 px-0 profile-label"><small>Location</small></v-col>
-                                        </v-row>
-                                        <v-row class="py-0 justify-center">
-                                            <p class="ma-0 profile-info" style="font-size: 0.8em">{{profile.location}}</p>
-                                        </v-row>
-                                    </v-col>
-
-                                </v-row>
-
-                                <v-row style="border-bottom: 0.5px solid rgba(0,0,0,0.12);" class="ma-0">
-                                    <!-- Desktop: Information Col -->
-                                    <!-- <v-col cols="12" class="border-right"  v-if="!isEditing" justify-sm="space-around"> -->
-                                    <!--===== Family Members =====-->
-
-                                    <!-- Desktop: Parents -->
-                                    <v-col cols="4" class="pa-0">
-                                        <AvatarGroup :profiles="profile.parents" group-title="Parents" size="50px" :show-labels="true" @profile-click="openProfile($event)">
-                                            <AddButton @click="toggleNew('parent')" />
-                                        </AvatarGroup>
-                                    </v-col>
-
-                                    <!-- <hr v-if="profile.siblings" class="family-divider" /> -->
-
-                                    <!-- Desktop: Siblings -->
-                                    <v-col  cols="8" v-if="profile.siblings" class="pa-0">
-                                        <AvatarGroup :profiles="profile.siblings" group-title="Siblings" size="60px" :show-labels="true" @profile-click="openProfile($event)">
-                                            <AddButton v-if="view.focus !== profile.id" @click="toggleNew('sibling')" />
-                                        </AvatarGroup>
-                                    </v-col>
-
-                                    <!-- <hr class="family-divider"> -->
-
-                                    <!-- Desktop: Children -->
-                                    <v-col class="pa-0">
-                                        <AvatarGroup :profiles="profile.children" group-title="Children" size="60px" :show-labels="true" @profile-click="openProfile($event)">
-                                            <AddButton @click="toggleNew('child')" />
-                                        </AvatarGroup>
-                                    </v-col>
-
-                                    <!-- Desktop: Go to whakapapa -->
-                                    <!-- <v-col class="pa-0" style="display: flex; justify-content: center; align-items: center;">
-                                        <v-btn color=""><img class="nav-icon mr-3" v-bind:src="require('@/assets/tree-white.svg')" />View this persons whakapapa</v-btn>
-                                    </v-col> -->
-
-                                    <!-- END Desktop: Family Members -->
-
-                                    <!-- </v-col> -->
-                                </v-row>
-
-                            </v-row>
-                        </v-col>
+                      <v-col class="py-1 px-0 profile-label"><small>Occupation</small></v-col>
                     </v-row>
-            <!-- End of Name row -->
+                    <v-row class="py-0 justify-center">
+                      <p class="ma-0 profile-info" style="font-size: 0.8em">{{profile.profession}}</p>
+                    </v-row>
+                  </v-col>
 
-            <!-- About row -->
-            <v-row>
-                <v-col cols="12">
-                    <v-card light min-height="150px">
-                        <v-card-title class="headline font-weight-bold">About</v-card-title>
-                        <v-card-text>
-                            <p v-for="(p, i) in splitParagraphs(profile.description)" :key="i + p">
-                                {{ p }}
-                            </p>
-                        </v-card-text>
-                    </v-card>
-                </v-col>
-            </v-row>
-            <!-- Contact row -->
-            <v-row>
-                <v-col cols="12">
-                    <v-card light min-height="200px">
-                        <v-card-title class="headline font-weight-bold">Contact</v-card-title>
-                        <v-card-text>
-                            <p>
-                                TODO: Contact fields
-                            </p>
-                        </v-card-text>
-                    </v-card>
-                </v-col>
-            </v-row>
-            </v-col>
+                  <v-col cols="3">
+                    <!-- Desktop: Location -->
+                    <v-row>
+                      <v-col class="py-1 px-0 profile-label"><small>Location</small></v-col>
+                    </v-row>
+                    <v-row class="py-0 justify-center">
+                      <p class="ma-0 profile-info" style="font-size: 0.8em">{{profile.location}}</p>
+                    </v-row>
+                  </v-col>
 
-            <!-- Right column -->
-            <v-col cols="2" class="px-6">
-
-                <!-- Edit Card -->
-                <v-row class="first-row">
-                    <!-- Edit icon -->
-                    <v-col justify="center" align="center">
-                        <v-btn small class="my-2" fab color="white" @click="updateDialog('edit-node', '')">
-                            <v-icon small class="black--text">mdi-pencil</v-icon>
-                        </v-btn>
-                        <span class="ml-4 black--text subtitle">Edit Profile</span>
-                    </v-col>
                 </v-row>
 
-                <!-- Kaitiaki Card -->
-                <v-row>
-                    <v-card min-height="200px" light class="my-3 rounded-card">
-                        <h4 class="col-subtitle mt-3">Kaitiaki</h4>
-                        <v-card-text>
-                            <p>These are the people who have administrative rights on this profile</p>
-                        </v-card-text>
-                        <!-- TODO: v-for Kaitiaki -->
-                        <div>
-                            <p style="color: lightgrey; text-align: center;">TODO: v-for Kaitiaki Component</p>
-                        </div>
-                    </v-card>
-                </v-row>
+                <v-row style="border-bottom: 0.5px solid rgba(0,0,0,0.12)" class="ma-0">
+                  <!-- Desktop: Information Col -->
+                  <!-- <v-col cols="12" class="border-right"  v-if="!isEditing" justify-sm="space-around"> -->
+                  <!--===== Family Members =====-->
 
-                <!-- Communities Card -->
-                <v-row>
-                    <v-card min-height="200px" light class="my-3 rounded-card">
-                        <h4 class="col-subtitle mt-3">Communities</h4>
-                        <v-card-text>
-                            <p>These are the communities connected to this profile</p>
-                        </v-card-text>
-                        <!-- TODO: v-for Communities -->
-                        <div>
-                            <p style="color: lightgrey; text-align: center">TODO: v-for Communities Component</p>
-                        </div>
-                    </v-card>
+                  <!-- Desktop: Parents -->
+                  <v-col class="pa-0">
+                    <AvatarGroup :profiles="profile.parents" group-title="Parents" size="50px" :show-labels="true"
+                      @profile-click="openProfile($event)">
+                      <AddButton @click="toggleNew('parent')" />
+                    </AvatarGroup>
+                  </v-col>
+
+                  <!-- <hr v-if="profile.siblings" class="family-divider" /> -->
+
+                  <!-- Desktop: Siblings -->
+                  <v-col v-if="profile.siblings" class="pa-0">
+                    <AvatarGroup :profiles="profile.siblings" group-title="Siblings" size="60px" :show-labels="true"
+                      @profile-click="openProfile($event)">
+                      <AddButton v-if="view.focus !== profile.id" @click="toggleNew('sibling')" />
+                    </AvatarGroup>
+                  </v-col>
+
+                  <!-- <hr class="family-divider"> -->
+
+                  <!-- Desktop: Children -->
+                  <v-col class="pa-0">
+                    <AvatarGroup :profiles="profile.children" group-title="Children" size="60px" :show-labels="true"
+                      @profile-click="openProfile($event)">
+                      <AddButton @click="toggleNew('child')" />
+                    </AvatarGroup>
+                  </v-col>
+
+                  <!-- Desktop: Go to whakapapa -->
+                  <v-col class="pa-0" style="display: flex; justify-content: center; align-items: center;">
+                    <v-btn color=""><img class="nav-icon mr-3" v-bind:src="require('@/assets/tree-white.svg')" />View
+                      this persons whakapapa</v-btn>
+                  </v-col>
+
+                  <!-- END Desktop: Family Members -->
+
+                  <!-- </v-col> -->
                 </v-row>
 
               </v-row>
@@ -253,7 +175,6 @@
               </v-btn>
               <span class="ml-4 black--text subtitle">Edit Profile</span>
             </v-col>
-<<<<<<< HEAD
           </v-row>
 
           <!-- Kaitiaki Card -->
@@ -289,13 +210,6 @@
     </v-container>
 
   </div>
-=======
-
-            </v-row>
-        </v-container>
-
-    </div>
->>>>>>> e65892680f64a70ed71c52244ae973733fa80347
 </template>
 
 <script>
@@ -310,7 +224,6 @@
 
   // const get = require('lodash.get')
 
-<<<<<<< HEAD
   export default {
     name: 'ProfileShowDesktop',
     props: {
@@ -368,60 +281,6 @@
       AddButton
     }
   }
-=======
-export default {
-  name: 'ProfileShowDesktop',
-  props: {
-    type: {
-      type: String, // person / community?
-      required: true
-    },
-    profile: {
-      type: Object,
-      default: () => ({})
-    },
-    editProfile: {
-      type: Function
-      // default: () => console.log('need to define editProfile!')
-    }
-  },
-  data () {
-    return {
-      isEditing: false
-    }
-  },
-  methods: {
-    splitParagraphs (text) {
-      if (!text) return
-
-      return text.split('\n\n')
-    },
-    age (born) {
-      var age = calculateAge(born)
-      if (age == null) { return 'age not entered' }
-      return age
-    },
-    formatDob (born) {
-      var formattedDate = formatDate(born)
-      if (formattedDate == null) { return 'no dob' }
-      return formattedDate
-    },
-    updateDialog (dialog, type) {
-      this.$emit('dialogTrigger', {
-        dialog: dialog,
-        type: type
-      })
-    }
-  },
-  components: {
-    Header,
-    Kaitiaki,
-    Avatar,
-    AvatarGroup,
-    AddButton
-  }
-}
->>>>>>> e65892680f64a70ed71c52244ae973733fa80347
 </script>
 
 <style scoped lang="scss">
@@ -501,10 +360,5 @@ export default {
 
   .first-row {
     height: 70px;
-<<<<<<< HEAD
   }
 </style>
-=======
-}
-</style>
->>>>>>> e65892680f64a70ed71c52244ae973733fa80347

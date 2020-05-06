@@ -14,7 +14,9 @@ import CommunityNew from '@/views/CommunityNew.vue'
 import CommunityShow from '@/views/CommunityShow.vue'
 import CommunityEdit from '@/views/CommunityEdit.vue'
 
-import Archive from '@/views/Archive.vue'
+import StoryShow from '@/views/StoryShow.vue'
+
+import Archive from '@/components/Archive.vue'
 
 import Login from '@/views/Login.vue'
 

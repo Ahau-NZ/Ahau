@@ -3,9 +3,9 @@
 </template>
 
 <script>
-  import ProfileShowDesktop from '@/components/ProfileShowDesktop.vue'
-  import ProfileShowTablet from '@/components/ProfileShowTablet.vue'
-  import ProfileShowMobile from '@/components/ProfileShowMobile.vue'
+  // import ProfileShowDesktop from '@/components/ProfileShowDesktop.vue'
+  // import ProfileShowTablet from '@/components/ProfileShowTablet.vue'
+  // import ProfileShowMobile from '@/components/ProfileShowMobile.vue'
 
 
   export default {
@@ -46,9 +46,9 @@
       }
     },
     components: {
-      ProfileShowDesktop,
-      ProfileShowTablet,
-      ProfileShowMobile
+      // ProfileShowDesktop,
+      // ProfileShowTablet,
+      // ProfileShowMobile
     }
   }
 </script>
