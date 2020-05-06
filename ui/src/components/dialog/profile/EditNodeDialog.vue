@@ -31,13 +31,10 @@
 
 <script>
 
-import Profile from '@/lib/profile-helpers'
 import { PERMITTED_PROFILE_ATTRS } from '@/lib/profile-helpers.js'
 
 import Dialog from '@/components/dialog/Dialog.vue'
 import ProfileForm from '@/components/profile-form/ProfileForm.vue'
-
-import Avatar from '@/components/Avatar.vue'
 import isEmpty from 'lodash.isempty'
 import calculateAge from '@/lib/calculate-age'
 import pick from 'lodash.pick'
@@ -73,7 +70,6 @@ function defaultData (profile) {
 export default {
   name: 'EditNodeDialog',
   components: {
-    Avatar,
     Dialog,
     ProfileForm
   },

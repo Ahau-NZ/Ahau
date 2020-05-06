@@ -2,7 +2,7 @@
   <div>
     <Dialog :show="show" :title="title" @close="close" width="70%" :goBack="close" enableMenu>
       <template v-slot:content>
-        <CollectionForm ref="collectionForm" :view.sync="formData" :data.sync="csv"/>
+        <CollectionForm ref="collectionForm" :view.sync="formData"/>
       </template>
       <template v-slot:actions>
         <v-btn @click="close"
@@ -83,7 +83,6 @@ export default {
     return {
       helpertext: false,
       formData: setDefaultCollection(EMPTY_COLLECTION),
-      csv: ''
     }
   },
   computed: {
@@ -109,7 +108,6 @@ export default {
         console.error('not validated')
         return
       }
-      const csv = this.csv
       const output = collectionSubmission(this.formData)
       const newOutput = {
         ...output
