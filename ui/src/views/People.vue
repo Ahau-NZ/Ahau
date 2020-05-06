@@ -8,7 +8,7 @@
           cols="3"
           class="d-flex flex-column align-center"
         >
-          <router-link :to="{ name: 'personShow', params: { id: profile.id } }">
+          <router-link :to="{ name: 'profileShow', params: { id: profile.id } }">
             <Avatar
               class="pointer"
               :image="profile.avatarImage"

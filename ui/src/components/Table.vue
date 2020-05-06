@@ -275,11 +275,11 @@ export default {
     },
 
     nodes (newValue) {
-      this.loading(false)
+      this.setLoading(false)
     }
   },
   methods: {
-    ...mapActions(['updateNode', 'loading']),
+    ...mapActions(['updateNode', 'setLoading']),
     // sets the width of the table
     async tableOverflow () {
       var width = await this.colWidth + this.columns[this.columns.length - 1].x

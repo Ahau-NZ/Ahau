@@ -8,7 +8,7 @@ import ProfileShowTablet from '@/components/ProfileShowTablet.vue'
 import ProfileShowMobile from '@/components/ProfileShowMobile.vue'
 
 export default {
-  name: 'ProfileShow',
+  name: 'Profile',
   props: {
     type: {
       type: String, // person / community?
@@ -35,7 +35,7 @@ export default {
       switch (this.$vuetify.breakpoint.name) {
         case 'xs': return 'ProfileShowMobile'
         case 'sm':
-        case 'md': return 'ProfileShowTablet'
+        case 'md':
         case 'lg':
         case 'xl': return 'ProfileShowDesktop'
       }

@@ -170,7 +170,6 @@
     <DialogHandler
       :dialog.sync="dialog.active"
       :type.sync="dialog.type"
-      :selectedProfile="selectedProfile"
       :view="whakapapaView"
       :loadDescendants="loadDescendants"
       :loadKnownFamily="loadKnownFamily"
@@ -214,7 +213,7 @@ import avatarHelper from '@/lib/avatar-helpers.js'
 import DialogHandler from '@/components/dialog/DialogHandler.vue'
 import findSuccessor from '@/lib/find-successor'
 
-import { mapGetters, mapMutations, mapActions } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 
 const saveWhakapapaViewMutation = input => (
   {
@@ -263,22 +262,9 @@ export default {
       },
       focus: null,
       // the record which defines the starting point for a tree (the 'focus')
-      whoami: {
-        profile: { id: '' }
-      },
-      // my profile id, to ensure we don't delete our own profile
-
-      profiles: {},
-
-      // a dictionary which maps profileIds > profiles
-      // this is a store for lookups, and from which we build up nestedWhakapapa
 
       relationshipLinks: new Map(), // shows relationship information between two profiles -> reference using parentId-childId as the key
 
-      // recordQueue: [],
-      // processingQueue: false,
-
-      selectedProfile: null,
       dialog: {
         active: null,
         type: null
@@ -316,22 +302,10 @@ export default {
         variables: { id: this.$route.params.id },
         fetchPolicy: 'no-cache'
       }
-    },
-    whoami: {
-      query: gql`
-        {
-          whoami {
-            profile {
-              id
-            }
-          }
-        }
-      `,
-      fetchPolicy: 'no-cache'
     }
   },
   computed: {
-    ...mapGetters(['nestedWhakapapa']),
+    ...mapGetters(['nestedWhakapapa', 'selectedProfile', 'whoami']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -349,11 +323,11 @@ export default {
   watch: {
     'currentFocus': async function (newFocus) {
       if (newFocus) {
-        this.loading(true)
+        this.setLoading(true)
         // var startTime = Date.now()
 
         const nestedWhakapapa = await this.loadDescendants(newFocus, '', [])
-        this.setNestedWhakapapa(nestedWhakapapa)
+        this.setWhakapapa(nestedWhakapapa)
         // var endTime = Date.now()
         // var eclipsedTime = (endTime - startTime) / 1000
         // console.log('build whakapapa time: ', eclipsedTime)
@@ -361,10 +335,9 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['setNestedWhakapapa']),
-    ...mapActions(['loading']),
+    ...mapActions(['setLoading', 'setProfile', 'setWhakapapa']),
     load (status) {
-      this.loading(status)
+      this.setLoading(status)
     },
     tableOverflow (width) {
       var show = width > screen.width
@@ -644,7 +617,7 @@ export default {
       if (person.parents.length > 0) {
         person.relationship = this.relationshipLinks.get(person.parents[0].id + '-' + person.id)
       }
-      if (this.selectedProfile && this.selectedProfile.id === person.id) this.selectedProfile = person
+      if (this.selectedProfile && this.selectedProfile.id === person.id) this.setProfile(person)
       return person
     },
 
@@ -687,7 +660,7 @@ export default {
     },
     async setSelectedProfile (profile) {
       if (profile === null) {
-        this.selectedProfile = {}
+        this.setProfile({})
         return
       }
       // check the type of profile we received
@@ -697,20 +670,21 @@ export default {
           // find parent to get any changes to siblings
           var person = await tree.find(this.nestedWhakapapa, profile.parents[0].id)
           if (!person) {
-            this.selectedProfile = profile
+            this.setProfile(profile)
             return
           }
           var updatedProfile = tree.getSiblings(person, profile)
-          this.selectedProfile = updatedProfile
-        } else this.selectedProfile = profile
+          this.setProfile(updatedProfile)
+        } else this.setProfile(profile)
       } else if (typeof profile === 'string') {
         // need to find the profile in this whakapapa
         var profileFound = await tree.find(this.nestedWhakapapa, profile)
         if (!profileFound) {
           // lets load descendants of them instead
-          this.selectedProfile = await this.loadDescendants(profile, '', [])
+          let partner = await this.loadDescendants(profile, '', [])
+          partner.isPartner = true
           console.warn('could potentially be loading a large amount of data')
-          this.selectedProfile.isPartner = true
+          this.setProfile(partner)
           return
         }
         if (profileFound.parents.length) {
@@ -718,14 +692,14 @@ export default {
           var parent = await tree.find(this.nestedWhakapapa, profileFound.parents[0].id)
           // if parent not found is becuase that parent is not in this nestedWhakapapa
           if (!parent) {
-            this.selectedProfile = profileFound
+            this.setProfile(profileFound)
             return
           }
           var newUpdatedProfile = tree.getSiblings(parent, profileFound)
-          this.selectedProfile = newUpdatedProfile
-        } else this.selectedProfile = profileFound
+          this.setProfile(newUpdatedProfile)
+        } else this.setProfile(profileFound)
       } else {
-        this.selectedProfile = {}
+        this.setProfile({})
       }
     },
 

@@ -269,12 +269,12 @@ export default {
     },
 
     nodes (newValue) {
-      this.loading(false)
+      this.setLoading(false)
     }
   },
 
   methods: {
-    ...mapActions(['updateNode', 'loading']),
+    ...mapActions(['updateNode', 'setLoading']),
 
     pathStroke (sourceId, targetId) {
       if (!this.paths) return 'darkgrey'
@@ -316,7 +316,7 @@ export default {
     },
 
     async collapse (node) {
-      // this.loading(true)
+      this.setLoading(true)
       const profile = node.data
       const { children, _children = [] } = profile
 

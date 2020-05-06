@@ -5,7 +5,7 @@
     <template v-if="!hideDetails" v-slot:content>
       <v-col class="py-0">
 
-        <ProfileForm :profile.sync="formData" :readonly="hasSelection" :editRelationship="hasSelection">
+        <ProfileForm :profile.sync="formData" :readonly="hasSelection" :editRelationship="hasSelection" :withRelationships="withRelationships">
 
           <!-- Slot = Search -->
           <template v-slot:search>

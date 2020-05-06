@@ -7,8 +7,8 @@ import WhakapapaShow from '@/views/WhakapapaShow.vue'
 import Discovery from '@/views/Discovery.vue'
 
 import People from '@/views/People.vue'
-import PersonShow from '@/views/PersonShow.vue'
-import PersonEdit from '@/views/PersonEdit.vue'
+import ProfileShow from '@/views/ProfileShow.vue'
+import ProfileEdit from '@/views/ProfileEdit.vue'
 
 import CommunityNew from '@/views/CommunityNew.vue'
 import CommunityShow from '@/views/CommunityShow.vue'
@@ -31,8 +31,8 @@ export default new Router({
     { path: '/discovery', name: 'discovery', component: Discovery },
 
     { path: '/person', name: 'personIndex', component: People },
-    { path: '/person/:id/edit', name: 'personEdit', component: PersonEdit },
-    { path: '/person/:id', name: 'personShow', component: PersonShow },
+    { path: '/profile/:id/edit', name: 'profileEdit', component: ProfileEdit },
+    { path: '/profile/:id', name: 'profileShow', component: ProfileShow },
 
     { path: '/community/new', name: 'communityNew', component: CommunityNew },
     {

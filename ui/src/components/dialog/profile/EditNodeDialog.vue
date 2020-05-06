@@ -4,51 +4,7 @@
     <!-- Content Slot -->
     <template v-if="!hideDetails" v-slot:content>
       <v-col class="py-0">
-
-        <ProfileForm :profile.sync="formData" :readonly="hasSelection" :editRelationship="hasSelection">
-
-          <!-- Slot = Search -->
-          <template v-slot:search>
-            <v-combobox
-              v-model="formData.preferredName"
-              :items="generateSuggestions"
-              item-value="id"
-              item-text="id"
-              label="First name / Preferred name"
-              :menu-props="{ light: true }"
-              :clearable="hasSelection"
-              append-icon=""
-              v-bind="customProps"
-              @click:clear="resetFormData()"
-              :search-input.sync="formData.preferredName"
-              :readonly="hasSelection"
-              outlined
-            >
-
-              <!-- Slot:item = Data -->
-              <template v-slot:item="data">
-                <template v-if="typeof data.item === 'object'">
-                  <v-list-item @click="setFormData(data.item)">
-                    <Avatar class="mr-3" size="40px" :image="data.item.avatarImage" :alt="data.item.preferredName" :gender="data.item.gender" :bornAt="data.item.bornAt" />
-                    <v-list-item-content>
-                      <v-list-item-title> {{ data.item.preferredName }} </v-list-item-title>
-                      <v-list-item-subtitle>Preferred name</v-list-item-subtitle>
-                    </v-list-item-content>
-                    <v-list-item-content>
-                      <v-list-item-title> {{ data.item.legalName ? data.item.legalName :  '&nbsp;' }} </v-list-item-title>
-                      <v-list-item-subtitle>Legal name</v-list-item-subtitle>
-                    </v-list-item-content>
-                    <v-list-item-action>
-                      <v-list-item-title> {{ age(data.item.bornAt) }} </v-list-item-title>
-                      <v-list-item-subtitle>Age</v-list-item-subtitle>
-                    </v-list-item-action>
-                  </v-list-item>
-                </template>
-              </template>
-            </v-combobox>
-          </template>
-        </ProfileForm>
-
+        <ProfileForm :profile.sync="formData" :withRelationships="false" />
       </v-col>
     </template>
     <!-- End Content Slot -->
@@ -75,10 +31,10 @@
 
 <script>
 
-import { PERMITTED_PROFILE_ATTRS, PERMITTED_RELATIONSHIP_ATTRS, getProfile } from '@/lib/profile-helpers'
+import Profile from '@/lib/profile-helpers'
+import { PERMITTED_PROFILE_ATTRS } from '@/lib/profile-helpers.js'
 
 import Dialog from '@/components/dialog/Dialog.vue'
-
 import ProfileForm from '@/components/profile-form/ProfileForm.vue'
 
 import Avatar from '@/components/Avatar.vue'
@@ -100,7 +56,6 @@ function defaultData (profile) {
     avatarImage: profile.avatarImage,
     description: profile.description,
     birthOrder: profile.birthOrder,
-    relationshipType: profile.relationship ? profile.relationship.relationshipType ? profile.relationship.relationshipType : null : null,
     location: profile.location,
     email: profile.email,
     phone: profile.phone,
@@ -124,9 +79,7 @@ export default {
   },
   props: {
     show: { type: Boolean, required: true },
-    withRelationships: { type: Boolean, default: true },
     title: { type: String, default: 'Create a new person' },
-    suggestions: { type: Array },
     hideDetails: { type: Boolean, default: false },
     selectedProfile: { type: Object }
     // type: {
@@ -139,59 +92,14 @@ export default {
   data () {
     return {
       formData: defaultData(this.selectedProfile),
-      hasSelection: false,
-      closeSuggestions: []
+      hasSelection: false
     }
   },
-  mounted () {
-    this.closeSuggestions = this.getCloseSuggestions()
-  },
+
   computed: {
-    generateSuggestions () {
-      if (this.hasSelection) return []
-
-      let otherSuggestions = []
-      let closeSuggestions = []
-
-      if (this.suggestions && this.suggestions.length > 0) {
-        otherSuggestions = [
-          this.type ? { header: 'Suggestions not in this whakapapa' } : null,
-          ...this.suggestions.filter(suggestion => {
-            return !this.closeSuggestions.find(closeSuggestion => {
-              return suggestion.id === closeSuggestion
-            })
-          })
-        ]
-      }
-
-      if (this.closeSuggestions && this.closeSuggestions.length > 0) {
-        closeSuggestions = [
-          this.type ? (this.type === 'child' ? { header: 'Suggested children' } : { header: 'Suggested parents' }) : null,
-          ...this.closeSuggestions,
-          this.type ? { divider: true } : null
-        ]
-      }
-
-      return [
-        ...closeSuggestions,
-        ...otherSuggestions
-      ].filter(Boolean)
-    },
-    mobile () {
-      return this.$vuetify.breakpoint.xs
-    },
-    customProps () {
-      // readonly = hasSelected || !isEditing
-      return {
-        readonly: this.readonly,
-        flat: this.readonly,
-        hideDetails: true,
-        placeholder: ' ',
-        class: this.readonly ? 'custom' : ''
-      }
-    },
     profileChanges () {
       let changes = {}
+      console.log('formdata:', this.formData)
       Object.entries(this.formData).forEach(([key, value]) => {
         if (!isEqual(this.formData[key], this.selectedProfile[key])) {
           switch (key) {
@@ -204,139 +112,58 @@ export default {
             case 'birthOrder':
               changes[key] = parseInt(value)
               break
-            case 'relationshipType':
-              if (value && value !== this.selectedProfile.relationship.relationshipType) {
-                changes[key] = value
-              }
-              break
             default:
               changes[key] = value
           }
         }
       })
       return changes
+    },
+    hasChanges () {
+      return isEqual(this.data, this.selectedProfile)
+    }
+  },
+  watch: {
+    profile (newVal) {
+      this.formData = defaultData(newVal)
+    },
+    'formData.deceased' (newValue) {
+      if (!newValue) this.formData.diedAt = ''
     }
   },
   methods: {
-    getCloseSuggestions () {
-      switch (this.type) {
-        case 'child':
-          return this.findChildren()
-        case 'parent':
-          return this.findParents()
-        default:
-          return []
-      }
+    updateAvatar (avatarImage) {
+      this.formData.avatarImage = avatarImage
+      // this.toggleAvatar(null)
     },
-    findChildren () {
-      var currentChildren = []
-      var children = []
-
-      this.selectedProfile.children.forEach(d => {
-        currentChildren[d.id] = d
-      })
-
-      // children of your partners that arent currently your children
-      this.selectedProfile.partners.forEach(async child => {
-        const result = await this.$apollo.query(getProfile(child.id))
-
-        if (result.data) {
-          result.data.person.children.forEach(d => {
-            if (!currentChildren[d.profile.id]) {
-              children.push(d.profile)
-            }
-          })
-        }
-      })
-
-      return children
-    },
-    findParents () {
-      var currentParents = []
-      var parents = []
-
-      this.selectedProfile.parents.forEach(d => {
-        currentParents[d.id] = d
-      })
-
-      this.selectedProfile.siblings.forEach(async sibling => {
-        const result = await this.$apollo.query(getProfile(sibling.id))
-
-        if (result.data) {
-          result.data.person.parents.forEach(d => {
-            if (!currentParents[d.profile.id]) {
-              parents.push(d.profile)
-            }
-          })
-        }
-      })
-      return parents
-    },
-    age (bornAt) {
-      return calculateAge(bornAt)
-    },
-    // submit () {
-    //   var submission = Object.assign({}, this.submission)
-    // this.hasSelection
-    //   ? this.$emit('update', pick(this.formData, ['id', 'relationshipType', 'legallyAdopted']))
-    //   : this.$emit('update', submission)
-    // this.close()
-    // },
-    submit () {
-      var output = Object.assign({}, pick(this.profileChanges, [...PERMITTED_PROFILE_ATTRS, ...PERMITTED_RELATIONSHIP_ATTRS]))
-      this.$emit('submit', output)
-      this.close()
-    },
-    cordovaBackButton () {
-      this.close()
+    age (born) {
+      var age = calculateAge(born)
+      return age
     },
     close () {
       this.$emit('close')
     },
-    setFormData (profile) {
-      this.hasSelection = true
-      this.formData = profile
-      this.formData.relationshipType = 'birth'
-      this.formData.legallyAdopted = false
-    },
-    resetFormData () {
-      if (this.hasSelection) {
-        this.hasSelection = false
-        this.formData = setDefaultData(this.withRelationships)
-      }
-    }
 
-  },
-  watch: {
-    'formData.relationshipType' (newValue, oldValue) {
-      // make sure adoption status can't be set true when relationship type is birth
-      if (newValue === 'birth') this.formData.legallyAdopted = false
-    },
-    // watch for changes to avatarImage to decide when to show avatar
-    'formData.avatarImage' (newValue) {
-      if (!isEmpty(this.formData.avatarImage)) {
-        this.showAvatar = true
+    submit () {
+      var output = Object.assign({}, pick(this.profileChanges, [...PERMITTED_PROFILE_ATTRS]))
+      if (!isEmpty(output)) {
+        this.$emit('submit', output)
       }
     },
-    'formData.deceased' (newValue) {
-      if (newValue === false) {
-        this.formData.diedAt = ''
-      }
+
+    toggleAltName () {
+      if (!this.formData.altNames.currentState) { this.formData.altNames.currentState = [] }
+      this.formData.altNames.add.push(null)
     },
-    'formData.preferredName' (newValue) {
-      if (!newValue) return
-      if (newValue.length > 2) {
-        if (!this.hasSelection) {
-          this.$emit('getSuggestions', newValue)
-        }
-      } else {
-        this.$emit('getSuggestions', null)
-      }
+    toggleDescription () {
+      this.showDescription = !this.showDescription
     },
-    hasSelection (newValue) {
-      if (newValue) {
-        this.$emit('getSuggestions', null)
-      }
+    deleteFromState (altName, index) {
+      this.deleteFromDialog(index) // removes it from the dialog
+      this.formData.altNames.remove.push(altName)
+    },
+    deleteFromDialog (index) {
+      this.formData.altNames.currentState.splice(index, 1)
     }
   }
 }

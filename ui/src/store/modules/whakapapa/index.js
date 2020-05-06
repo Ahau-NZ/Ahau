@@ -1,29 +1,37 @@
-import state from './state'
-import getters from './getters'
-import mutations from './mutations'
+// import gql from 'graphql-tag'
+// import { createProvider } from '@/plugins/vue-apollo'
 import actions from './actions'
+
+const state = {
+  nestedWhakapapa: {}
+  // whakapapaView: {
+  //   id: '',
+  //   name: 'Loading',
+  //   description: '',
+  //   focus: '',
+  //   // mode: 'descendants',
+  //   recps: null,
+  //   image: { uri: '' },
+  //   ignoredProfiles: []
+  // }
+}
+
+const getters = {
+  nestedWhakapapa: state => {
+    console.log('whakapapa state module')
+    return state.nestedWhakapapa
+  }
+}
+
+const mutations = {
+  setNestedWhakapapa (state, nestedWhakapapa) {
+    state.nestedWhakapapa = nestedWhakapapa
+  }
+}
 
 export default {
   state,
-  getters,
   mutations,
   actions,
-  namespaced: true
+  getters
 }
-
-/*
-  USAGE
-
-  Using getters and actions:
-    Import the following
-    `import { mapActions, mapGetters } from 'vuex'`
-
-    In the components computed property
-    `computed: {
-      ...mapGetters('artefact', ['artefacts']) // FORMAT: ('<module-name>', ['<getter-1-name>', '<getter-2-name>', ...])
-    }`
-    In the components methods property
-    `methods: {
-      ...mapActions('artefact', ['getArtefacts']) // FORMAT: ('<module-name>', ['<action-1-name>', '<action-2-name>', ...])
-    }`
-*/

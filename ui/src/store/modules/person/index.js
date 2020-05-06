@@ -1,29 +1,51 @@
-import state from './state'
-import getters from './getters'
-import mutations from './mutations'
-import actions from './actions'
+// import gql from 'graphql-tag'
+// import { createProvider } from '@/plugins/vue-apollo'
+/*
+  this is needed in order to run queries and mutations
+  TODO: is this okay?
+*/
+// const apolloProvider = createProvider()
+// const apolloClient = apolloProvider.defaultClient
 
-export default {
-  state,
-  getters,
-  mutations,
-  actions,
-  namespaced: true
+/*
+  holds current value of the artefact state
+*/
+const state = {
+  selectedProfile: {}
 }
 
 /*
-  USAGE
-
-  Using getters and actions:
-    Import the following
-    `import { mapActions, mapGetters } from 'vuex'`
-
-    In the components computed property
-    `computed: {
-      ...mapGetters('artefact', ['artefacts']) // FORMAT: ('<module-name>', ['<getter-1-name>', '<getter-2-name>', ...])
-    }`
-    In the components methods property
-    `methods: {
-      ...mapActions('artefact', ['getArtefacts']) // FORMAT: ('<module-name>', ['<action-1-name>', '<action-2-name>', ...])
-    }`
+  these map getters to whats in the state, then we can use those getters
+  within components
 */
+const getters = {
+  selectedProfile: state => {
+    return state.selectedProfile
+  }
+}
+
+/*
+  These are what makes changes to the state
+*/
+const mutations = {
+  updateProfile (state, profile) {
+    state.selectedProfile = profile
+  }
+}
+
+/*
+  These do not like directly change the state, but they commit mutations (changes),
+  which make changes to the state
+*/
+const actions = {
+  async setProfile ({ commit }, profile) {
+    commit('updateProfile', profile)
+  }
+}
+
+export default {
+  state,
+  mutations,
+  actions,
+  getters
+}

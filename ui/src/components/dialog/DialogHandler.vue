@@ -83,15 +83,14 @@ import WhakapapaShowHelper from '@/components/dialog/whakapapa/WhakapapaShowHelp
 import WhakapapaTableHelper from '@/components/dialog/whakapapa/WhakapapaTableHelper.vue'
 
 import gql from 'graphql-tag'
-// import { whoami } from '@/lib/profile-helpers.js'
-import Profile from '@/lib/profile-helpers2.js'
+
+import Profile, { PERMITTED_PROFILE_ATTRS, PERMITTED_RELATIONSHIP_ATTRS, saveProfile } from '@/lib/profile-helpers.js'
 import { saveWhakapapaLink } from '@/lib/link-helpers.js'
 import pick from 'lodash.pick'
 import isEmpty from 'lodash.isempty'
 
 import findSuccessor from '@/lib/find-successor'
 
-// import { PERMITTED_PROFILE_ATTRS, PERMITTED_RELATIONSHIP_ATTRS } from '@/lib/profile-helpers'
 import tree from '@/lib/tree-helpers'
 
 import * as d3 from 'd3'
@@ -117,13 +116,7 @@ export default {
     relationshipLinks: {
       type: Map
     },
-    selectedProfile: {
-      type: Object
-    },
     view: {
-      type: Object
-    },
-    profiles: {
       type: Object
     },
     dialog: {
@@ -150,17 +143,17 @@ export default {
   data () {
     return {
       suggestions: [],
-      source: null,
-      whoami: {
-        profile: { id: '' }
-      }
+      source: null
+      // whoami: {
+      //   profile: { id: '' }
+      // }
     }
   },
-  apollo: {
-    whoami: Profile.whoami
-  },
+  // apollo: {
+  //   whoami: Profile.whoami
+  // },
   computed: {
-    ...mapGetters(['nestedWhakapapa']),
+    ...mapGetters(['nestedWhakapapa', 'selectedProfile', 'whoami']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -172,7 +165,6 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['setNestedWhakapapa']),
     ...mapActions(['updateNode', 'deleteNode', 'updatePartnerNode', 'addChild', 'addParent', 'loading']),
     isActive (type) {
       if (type === this.dialog) {
@@ -450,18 +442,19 @@ export default {
       }
     },
     async updateProfile ($event) {
-      console.log('addperson: ', $event)
+      console.log('updatePerson', $event)
       Object.entries($event).map(([key, value]) => {
         if (value === '') {
           delete $event[key]
         }
       })
 
-      const profileChanges = pick($event, [...Profile.PERMITTED_PROFILE_ATTRS])
-      const relationshipAttrs = pick($event, [...Profile.PERMITTED_RELATIONSHIP_ATTRS])
+      const profileChanges = pick($event, [...PERMITTED_PROFILE_ATTRS])
+      const relationshipAttrs = pick($event, [...PERMITTED_RELATIONSHIP_ATTRS])
       const profileId = this.selectedProfile.id
 
       if (!isEmpty(relationshipAttrs) && this.selectedProfile.id !== this.view.focus) {
+        console.log('updating relationship: ', relationshipAttrs)
         const relationship = this.selectedProfile.relationship
         let input = {
           relationshipId: relationship.relationshipId,
@@ -476,7 +469,10 @@ export default {
             console.error('failed to update child link', linkRes)
             return
           } else {
-            this.relationshipLinks[relationship.parent + '-' + relationship.child] = input
+            // this.relationshipLinks[relationship.parent + '-' + relationship.child] = input
+            this.selectedProfile.relationship = input
+            var node = this.selectedProfile
+            this.updateNode({ node })
           }
         } catch (err) {
           console.log('error:', err)
@@ -488,11 +484,19 @@ export default {
         id: profileId,
         ...profileChanges
       }
-      const res = await this.$apollo.mutate(Profile.saveProfile(input))
+      const res = await this.$apollo.mutate(saveProfile(input))
       if (res.errors) {
         console.error('failed to update profile', res)
         return
       }
+
+      if (this.$route.name === 'profileShow') {
+        console.log('profile is me')
+        this.$emit('setupProfile', res.data.saveProfile)
+        return
+      }
+
+      console.log('didnt stop')
       // reload the selectedProfiles personal details
       var node = await this.loadKnownFamily(true, this.selectedProfile)
       // apply the changes to the nestedWhakapapa

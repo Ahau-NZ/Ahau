@@ -24,6 +24,15 @@
       <template v-slot:title >
         <v-row class="justify-center" style="margin-top: -20px;">
           <v-btn
+            :to="{ name: 'profileShow', params: { id: profile.id } }"
+            color="white"
+            text
+            medium
+            class="blue--text"
+          >
+            <v-icon small class="blue--text" left>mdi-pencil</v-icon>Profile
+          </v-btn>
+          <v-btn
             @click="toggleEdit"
             color="white"
             text
@@ -498,6 +507,14 @@
           <!-- Editing Name -->
           <h1 v-else style="text-align: center;">Edit {{ formData.preferredName }}</h1>
           <v-row v-if="!isEditing" class="justify-center">
+            <v-btn
+            :to="{ name: 'profileShow', params: { id: profile.id } }"
+            text
+            medium
+            class="blue--text"
+          >
+            <v-icon small class="blue--text" left>mdi-account-circle</v-icon>Profile
+          </v-btn>
             <v-btn @click="toggleEdit" text medium class="blue--text">
               <v-icon small class="blue--text" left>mdi-pencil</v-icon>Edit
             </v-btn>
@@ -1116,9 +1133,7 @@ export default {
       if (!this.$refs.form.validate()) {
         return
       }
-
       var output = Object.assign({}, pick(this.profileChanges, [...PERMITTED_PROFILE_ATTRS, ...PERMITTED_RELATIONSHIP_ATTRS]))
-
       if (!isEmpty(output)) {
         this.$emit('submit', output)
       }

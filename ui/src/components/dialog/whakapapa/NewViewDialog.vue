@@ -99,7 +99,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['loading']),
+    ...mapActions(['setLoading']),
     close () {
       this.formData = setDefaultWhakapapa(EMPTY_WHAKAPAPA)
       this.$refs.whakapapaForm.$refs.form.reset()
@@ -110,7 +110,7 @@ export default {
         console.error('not validated')
         return
       }
-      this.loading(true)
+      this.setLoading(true)
       const csv = this.csv
       const output = whakapapaSubmission(this.formData)
       const newOutput = {

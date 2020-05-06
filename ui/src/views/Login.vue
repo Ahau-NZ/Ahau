@@ -31,12 +31,12 @@
       @click.native="karakiaTūwhera()"
     >
       <Avatar
-        :image="profile.avatarImage"
-        :gender="profile.gender"
-        :bornAt="profile.bornAt"
+        :image="whoami.profile.avatarImage"
+        :gender="whoami.profile.gender"
+        :bornAt="whoami.profile.bornAt"
         size="13vh"
       />
-      <h3 class="name mt-2">{{ profile.preferredName }}</h3>
+      <h3 class="name mt-2">{{ whoami.profile.preferredName }}</h3>
     </router-link>
 
      <!-- <NewNodeDialog
@@ -61,6 +61,7 @@ import gql from 'graphql-tag'
 import Avatar from '@/components/Avatar'
 import NewNodeDialog from '@/components/dialog/profile/NewNodeDialog.vue'
 import pick from 'lodash.pick'
+import { mapGetters, mapActions } from 'vuex'
 
 const karakia = `
 ---------------------------------
@@ -88,15 +89,11 @@ export default {
     return {
       isLoading: true,
       isSetup: false, // has profile set up
-      profile: {
-        id: null,
-        preferredName: null,
-        avatarImage: null
-      },
       dialog: false
     }
   },
   computed: {
+    ...mapGetters(['whoami']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     }
@@ -117,28 +114,9 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['setWhoami']),
     async getCurrentIdentity () {
-      const result = await this.$apollo.query({
-        query: gql`
-          {
-            whoami {
-              profile {
-                id
-                preferredName
-                avatarImage {
-                  uri
-                }
-              }
-            }
-          }
-        `,
-        fetchPolicy: 'no-cache'
-      })
-
-      if (result.errors) throw result.errors
-
-      if (result.data.whoami.profile) this.profile = result.data.whoami.profile
-
+      await this.setWhoami()
       this.proceed()
     },
 
@@ -147,13 +125,13 @@ export default {
     },
 
     proceed () {
-      if (this.$apollo.loading || !this.profile.id) {
+      if (this.$apollo.loading || !this.whoami.profile.id) {
         console.log('waiting for apollo')
         setTimeout(this.proceed, 300)
         return
       }
 
-      this.isSetup = Boolean(this.profile.preferredName)
+      this.isSetup = Boolean(this.whoami.profile.preferredName)
       // Shortcut in dev, that saves us from doing one click when testing
       if (this.isSetup && process.env.NODE_ENV === 'development') {
         this.karakiaTūwhera()
@@ -193,7 +171,7 @@ export default {
         `,
         variables: {
           input: {
-            id: this.profile.id,
+            id: this.whoami.profile.id,
             ...newProfile
           }
         }

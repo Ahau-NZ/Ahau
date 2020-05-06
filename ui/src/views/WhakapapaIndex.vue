@@ -93,7 +93,7 @@ import WhakapapaListHelper from '@/components/dialog/whakapapa/WhakapapaListHelp
 import { saveWhakapapaLink } from '@/lib/link-helpers.js'
 
 import tree from '@/lib/tree-helpers'
-import { mapMutations } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 
 // import clone from 'lodash.clonedeep'
 // import _ from 'lodash'
@@ -122,8 +122,6 @@ export default {
         { src: require('../assets/whakapapa-list.jpg') }
       ],
       views: [],
-
-      whoami: {},
       showWhakapapaHelper: false,
       showProfileForm: false,
       showViewForm: false,
@@ -133,27 +131,15 @@ export default {
   },
   mounted () {
     // reset nestedWhakapapa
-    this.setNestedWhakapapa([])
+    this.setWhakapapa([])
   },
   computed: {
+    ...mapGetters(['whoami']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     }
   },
   apollo: {
-    whoami: {
-      query: gql`
-        {
-          whoami {
-            profile {
-              id
-            }
-            feedId
-          }
-        }
-      `,
-      fetchPolicy: 'no-cache'
-    },
     views: {
       query: gql`
         {
@@ -173,7 +159,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['setNestedWhakapapa', 'setLoading']),
+    ...mapActions(['setWhakapapa', 'setLoading']),
     async getSuggestions ($event) {
       if (!$event) {
         this.suggestions = []

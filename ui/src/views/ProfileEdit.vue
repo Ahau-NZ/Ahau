@@ -11,7 +11,7 @@ import gql from 'graphql-tag'
 // import ProfileForm from '@/components/ProfileForm' file deprecated
 
 export default {
-  name: 'PersonEdit',
+  name: 'ProfileEdit',
   data () {
     return {
       profile: {}

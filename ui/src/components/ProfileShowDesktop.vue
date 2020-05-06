@@ -14,7 +14,7 @@
                     <!-- Pofile pic -->
                     <v-row class="avatar-row first-row">
                         <v-col class="avatar-box">
-                            <Avatar :image="profile.avatarImage" :alt="profile.preferredName" size="200" />
+                            <Avatar :image="profile.avatarImage" :alt="profile.preferredName" :gender="profile.gender" size="200" />
                         </v-col>
                     </v-row>
                     <!-- Nav Icons -->
@@ -55,7 +55,7 @@
                         <v-col v-if="!isEditing">
                             <v-row style="border: 0.5px solid rgba(0,0,0,0.12); border-radius: 10px; background-color: white;" class="flex-column ma-0">
                                 <v-row style="border-bottom: 0.5px solid rgba(0,0,0,0.12);" class="ma-0 py-6">
-                                    <v-col cols="3">
+                                    <v-col cols="3" class="px-0">
                                         <!-- Desktop: Legal Name -->
                                         <v-row>
                                             <v-col class="py-1 px-0 profile-label"><small>Legal Name</small></v-col>
@@ -64,8 +64,9 @@
                                             <p class="ma-0 profile-info">{{profile.legalName}}</p>
                                         </v-row>
                                     </v-col>
+                                    <v-divider vertical light />
 
-                                    <v-col cols="3">
+                                    <v-col cols="3" class="px-0">
                                         <!-- Desktop: Age -->
                                         <v-row>
                                             <v-col class="py-1 px-0 profile-label"><small>Age</small></v-col>
@@ -77,8 +78,9 @@
                                             <p class="ma-0 profile-info"><small>{{formatDob(profile.bornAt)}}</small></p>
                                         </v-row>
                                     </v-col>
+                                    <v-divider vertical light />
 
-                                    <v-col cols="3">
+                                    <v-col cols="3" class="px-0">
                                         <!-- Desktop: Profession -->
                                         <v-row>
                                             <v-col class="py-1 px-0 profile-label"><small>Occupation</small></v-col>
@@ -87,8 +89,9 @@
                                             <p class="ma-0 profile-info" style="font-size: 0.8em">{{profile.profession}}</p>
                                         </v-row>
                                     </v-col>
+                                    <v-divider vertical light />
 
-                                    <v-col cols="3">
+                                    <v-col cols="2" class="px-0">
                                         <!-- Desktop: Location -->
                                         <v-row>
                                             <v-col class="py-1 px-0 profile-label"><small>Location</small></v-col>
@@ -106,7 +109,7 @@
                                     <!--===== Family Members =====-->
 
                                     <!-- Desktop: Parents -->
-                                    <v-col class="pa-0">
+                                    <v-col cols="4" class="pa-0">
                                         <AvatarGroup :profiles="profile.parents" group-title="Parents" size="50px" :show-labels="true" @profile-click="openProfile($event)">
                                             <AddButton @click="toggleNew('parent')" />
                                         </AvatarGroup>
@@ -115,7 +118,7 @@
                                     <!-- <hr v-if="profile.siblings" class="family-divider" /> -->
 
                                     <!-- Desktop: Siblings -->
-                                    <v-col v-if="profile.siblings" class="pa-0">
+                                    <v-col  cols="8" v-if="profile.siblings" class="pa-0">
                                         <AvatarGroup :profiles="profile.siblings" group-title="Siblings" size="60px" :show-labels="true" @profile-click="openProfile($event)">
                                             <AddButton v-if="view.focus !== profile.id" @click="toggleNew('sibling')" />
                                         </AvatarGroup>
@@ -131,9 +134,9 @@
                                     </v-col>
 
                                     <!-- Desktop: Go to whakapapa -->
-                                    <v-col class="pa-0" style="display: flex; justify-content: center; align-items: center;">
+                                    <!-- <v-col class="pa-0" style="display: flex; justify-content: center; align-items: center;">
                                         <v-btn color=""><img class="nav-icon mr-3" v-bind:src="require('@/assets/tree-white.svg')" />View this persons whakapapa</v-btn>
-                                    </v-col>
+                                    </v-col> -->
 
                                     <!-- END Desktop: Family Members -->
 
@@ -180,7 +183,7 @@
                 <v-row class="first-row">
                     <!-- Edit icon -->
                     <v-col justify="center" align="center">
-                        <v-btn v-if="profile.canEdit" small class="my-2" fab color="white" @click="updateDialog('edit-node', '')">
+                        <v-btn small class="my-2" fab color="white" @click="updateDialog('edit-node', '')">
                             <v-icon small class="black--text">mdi-pencil</v-icon>
                         </v-btn>
                         <span class="ml-4 black--text subtitle">Edit Profile</span>

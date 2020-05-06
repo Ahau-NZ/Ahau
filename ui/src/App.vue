@@ -32,7 +32,7 @@ export default {
     },
     enableMenu () {
       if (
-        this.$route.name === 'personEdit' &&
+        this.$route.name === 'profileEdit' &&
         this.$route.query.setup === true
       ) {
         return false
@@ -106,10 +106,10 @@ body {
     // background-repeat: no-repeat;
     // background-size: cover;
   }
-  &.page--personshow {
+  &.page--profileshow {
     background-color: #303030;
   }
-  &.page--profileshow {
+  &.page--profile {
     background: url(./assets/niho.svg);
     background-color: var(--primary-background);
     background-position-x: -300px;

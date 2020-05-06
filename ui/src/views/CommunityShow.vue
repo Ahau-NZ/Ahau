@@ -1,10 +1,10 @@
 <template>
-  <ProfileShow type="community" :profile="profile" :editProfile="edit" />
+  <Profile type="community" :profile="profile" :editProfile="edit" />
 </template>
 
 <script>
 import gql from 'graphql-tag'
-import ProfileShow from '@/components/ProfileShow'
+import Profile from '@/components/Profile'
 
 export default {
   name: 'CommmunityShow',
@@ -63,7 +63,7 @@ export default {
     }
   },
   components: {
-    ProfileShow
+    Profile
   }
 }
 </script>
