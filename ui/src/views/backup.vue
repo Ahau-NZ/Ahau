@@ -4,25 +4,24 @@
     <Header v-if="header" :preferredName="selectedProfile.preferredName"
       :headerImage="selectedProfile.headerImage" :avatarImage="selectedProfile.avatarImage" :headerHeight="headerHeight" />
 
+    <!-- Profile Container -->
     <v-container :fluid="true" class="body-width white px-6 niho-bg">
-
-      <v-row :justify="mobile ? 'center' : 'start'">
-        <h1 class="primary--text" :style="[ mobile ? { marginTop: '120px' } : { marginLeft: '210px' }]">{{ selectedProfile.legalName }}</h1>
-      </v-row>
-      <v-row class="content-top-margin">
-        <v-col cols="12" xs="12" sm="2" md="2">
-          <SideNavMenu :profile="selectedProfile" />
-        </v-col>
-        <v-col cols="12" sx="12" sm="10" md="10">
-          <Profile :profile="selectedProfile"/>
-        </v-col>
-      </v-row>
-      <!-- <v-row>
+      <v-row>
+        <!--======== Side Menu ========-->
+        <!-- |Mobile| -->
         <v-col v-if="mobile" cols="12">
+          <!-- Pofile pic -->
+          <v-row v-if="bigAvatar" class="avatar-row first-row">
+            <v-col class="avatar-box">
+              <Avatar :image="selectedProfile.avatarImage" :alt="selectedProfile.preferredName" size="200" />
+            </v-col>
+          </v-row>
+          <!-- Nav Icons -->
           <v-row justify="center">
             <v-col>
               <div v-if="bigAvatar" style="margin-top: 100px;">
-                
+                <h1 class="primary--text" align="center">{{ selectedProfile.preferredName }}</h1>
+                <!-- if  on profile page show larger avatar above instead of sidemenu avatar image -->
                 <SideNavMenu :profile:="selectedProfile" :noAvatar="true"
                   @setPageComponent="setPageComponent($event)"/>
               </div>
@@ -31,14 +30,24 @@
           </v-row>
         </v-col>
 
+        <!-- |Desktop| -->
         <v-col v-else cols="2">
+          <!-- Pofile pic -->
+          <v-row v-if="bigAvatar" class="avatar-row first-row">
+            <v-col class="avatar-box">
+              <Avatar :image="selectedProfile.avatarImage" :alt="selectedProfile.preferredName" :gender="selectedProfile.gender" :bornAt="selectedProfile.bornAt" size="200" />
+            </v-col>
+          </v-row>
+          <!-- Nav Icons -->
           <v-row justify="center">
+            <!-- if  on profile page show larger avatar above instead of sidemenu avatar image -->
             <SideNavMenu v-if="bigAvatar" :profile:="selectedProfile" :noAvatar="true"
               @setPageComponent="setPageComponent($event)"  style="margin-top: 100px;"/>
             <SideNavMenu v-else :profile="selectedProfile" @setPageComponent="setPageComponent($event)" />
           </v-row>
         </v-col>
 
+        <!--======== Main content ========-->
         <v-col>
           <Profile v-if="pageComponents.profile"
             :profile="selectedProfile"
@@ -50,9 +59,10 @@
           <StoryTimeline v-if="pageComponents.storyTimeline" :profile="selectedProfile"/>
         </v-col>
 
-      </v-row> -->
+      </v-row>
     </v-container>
 
+    <!-- <SideNav v-if="!mobile" :profile="selectedProfile"  /> -->
     <DialogHandler
       :dialog.sync="dialog.active"
       :selectedProfile="selectedProfile"
@@ -71,8 +81,6 @@ import tree from '@/lib/tree-helpers'
 import Profile from '@/components/Profile'
 import Archive from '@/components/Archive'
 import StoryTimeline from '@/views/StoryShow'
-
-import ProfileInfoCard from '@/components/profile/ProfileInfoCard'
 
 import {
   getProfile
@@ -98,8 +106,7 @@ export default {
     SideNavMenu,
     Profile,
     Archive,
-    StoryTimeline,
-    ProfileInfoCard
+    StoryTimeline
   },
   data () {
     return {
@@ -193,10 +200,6 @@ export default {
     color: black;
   }
 
-  .border {
-    border-style: 1px solid lightgrey;
-  }
-
   .wrapper {
     display: flex;
     flex-direction: column;
@@ -240,9 +243,5 @@ export default {
 
 .mobileContainer {
   padding: 0px;
-}
-
-.content-top-margin {
-  margin-top: 5vw;
 }
 </style>
