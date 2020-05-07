@@ -1,27 +1,23 @@
 <template>
   <v-row fluid :class="mobile ? 'rounded-border' : ''">
-    <!-- <v-card light flat :outlined="mobile"> -->
-      <v-row>
-        <v-col v-if="showAvatar">
-          <v-btn @click="$emit('setPageComponent', 'profile')" light text style="height: auto;">
-            <Avatar :image="profile.avatarImage" :alt="profile.preferredName" size="15vh" />
-            <h1 class="primary--text">{{ profile.preferredName }}</h1>
-          </v-btn>
-        </v-col>
-        <v-col v-for="(item, i) in menuItems" :key="i" :cols="mobile ? '3' : '12'">
-          <v-btn @click="$emit('setPageComponent', item.page)" light :fab="mobile" text>
-            <v-img justify-start max-width="30" max-height="30" :src="item.icon" />
-            <span v-if="!mobile && !isOverflowing" ref="text" class="ml-4 black--text nav-label subtitle-1">{{ item.label }}</span>
-          </v-btn>
-        </v-col>
-      </v-row>
-    <!-- </v-card> -->
+    <v-row>
+      <v-col v-if="showAvatar">
+        <v-btn @click="$emit('setPageComponent', 'profile')" light text style="height: auto;">
+          <Avatar :image="profile.avatarImage" :alt="profile.preferredName" size="15vh" />
+          <h1 class="primary--text">{{ profile.preferredName }}</h1>
+        </v-btn>
+      </v-col>
+      <v-col v-for="(item, i) in menuItems" :key="i" :cols="mobile ? '3' : '12'">
+        <v-btn @click="$emit('setPageComponent', item.page)" light :fab="mobile" text>
+          <v-img justify-start max-width="30" max-height="30" :src="item.icon" />
+          <span v-if="!mobile && !isOverflowing" ref="text" class="ml-4 black--text nav-label subtitle-1">{{ item.label }}</span>
+        </v-btn>
+      </v-col>
+    </v-row>
   </v-row>
 </template>
 
 <script>
-
-import Avatar from '@/components/Avatar.vue'
 
 import archive from '@/assets/archive-red.svg'
 import timeline from '@/assets/timeline.svg'
@@ -32,7 +28,7 @@ export default {
   name: 'SideNavMenu',
   props: {
     profile: {
-      type: Object,
+      type: Object
     },
     editProfile: {
       type: Function
@@ -82,10 +78,6 @@ export default {
       var element = this.$refs.text
       return (element.offsetHeight < element.scrollHeight || element.offsetWidth < element.scrollWidth)
     }
-  },
-  methods: {},
-  components: {
-    Avatar,
   }
 }
 </script>
