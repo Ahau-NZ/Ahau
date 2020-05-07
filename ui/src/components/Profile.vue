@@ -1,15 +1,10 @@
 <template>
   <div>
-    <ProfileInfoCard :profile="profile"/>
+    <ProfileInfoCard :profile="profile" />
   </div>
 </template>
 
 <script>
-import Kaitiaki from '@/components/profile/Kaitiaki.vue'
-import Avatar from '@/components/Avatar.vue'
-import AvatarGroup from '@/components/AvatarGroup.vue'
-import AddButton from '@/components/button/AddButton.vue'
-
 import ProfileInfoCard from '@/components/profile/ProfileInfoCard.vue'
 
 import calculateAge from '@/lib/calculate-age'
@@ -34,10 +29,10 @@ export default {
   },
   computed: {
     mobile: function () {
-        console.log("mobile = ", this.$vuetify.breakpoint.xsOnly)
-        return this.$vuetify.breakpoint.xsOnly
-      },
-  },  
+      console.log('mobile = ', this.$vuetify.breakpoint.xsOnly)
+      return this.$vuetify.breakpoint.xsOnly
+    }
+  },
   methods: {
     splitParagraphs (text) {
       if (!text) return
@@ -77,7 +72,6 @@ export default {
     }
   },
   components: {
-    AvatarGroup,
     ProfileInfoCard
   }
 }

@@ -136,6 +136,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['whoami']),
     classObject: function () {
       return {
         'mobile': this.mobile,
@@ -147,8 +148,13 @@ export default {
       return this.$vuetify.breakpoint.xs
     }
   },
-    beforeMount () {
+  beforeMount () {
     this.getCurrentIdentity()
+  },
+  watch: {
+    whoami (newVal) {
+      this.profile.avatarImage = newVal.profile.avatarImage
+    }
   },
   methods: {
     karakiaWhakamutunga () {
@@ -178,7 +184,7 @@ export default {
     },
     toggleDrawer () {
       this.drawer = !this.drawer
-    },
+    }
 
   },
   components: {

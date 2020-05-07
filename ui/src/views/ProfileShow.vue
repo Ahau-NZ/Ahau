@@ -13,8 +13,21 @@
         <v-col cols="12" xs="12" sm="2" md="2">
           <SideNavMenu :profile="selectedProfile" />
         </v-col>
-        <v-col cols="12" sx="12" sm="10" md="10">
+        <v-col cols="12" sx="12" sm="8" md="8">
           <Profile :profile="selectedProfile"/>
+        </v-col>
+        <v-col cols="12" sx="12" sm="2" md="2" :class="mobile ? 'pl-0 pr-0' : ''">
+          <Kaitiaki
+            title="Kaitiaki"
+            subtitle="These are the people who have administrative rights on this profile"
+            :profiles="selectedProfile.tiaki"
+          />
+          <Kaitiaki
+            class="mt-3"
+            title="Communities"
+            subtitle="These are the communities connected to this profile"
+            :profiles="selectedProfile.tiaki"
+          />
         </v-col>
       </v-row>
       <!-- <v-row>
@@ -66,11 +79,10 @@ import DialogHandler from '@/components/dialog/DialogHandler.vue'
 import Header from '@/components/profile/Header.vue'
 import Avatar from '@/components/Avatar.vue'
 import SideNavMenu from '@/components/SideNavMenu.vue'
-import tree from '@/lib/tree-helpers'
-
 import Profile from '@/components/Profile'
 import Archive from '@/components/Archive'
 import StoryTimeline from '@/views/StoryShow'
+import Kaitiaki from '@/components/profile/Kaitiaki.vue'
 
 import ProfileInfoCard from '@/components/profile/ProfileInfoCard'
 
@@ -99,7 +111,8 @@ export default {
     Profile,
     Archive,
     StoryTimeline,
-    ProfileInfoCard
+    ProfileInfoCard,
+    Kaitiaki
   },
   data () {
     return {
@@ -126,20 +139,22 @@ export default {
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
-    headerHeight() {
+    headerHeight () {
       switch (this.$vuetify.breakpoint.name) {
         case 'xs': return '150px'
         case 'sm': return '150px'
         case 'md': return '250px'
         case 'lg': return '250px'
         case 'xl': return '250px'
+        default:
+          return '250px'
       }
     }
   },
   methods: {
     // ...mapActions(['setProfileById', 'setProfile', 'setWhoami',]),
     setDialog (dialog) {
-      return this.dialog.active = dialog
+      this.dialog.active = dialog
     },
     setPageComponent (component) {
       // set all to false

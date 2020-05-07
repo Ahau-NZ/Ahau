@@ -52,7 +52,7 @@ export default {
       })
     }
   },
-  methods : {
+  methods: {
     ...mapActions(['setWhoami'])
   },
   components: {

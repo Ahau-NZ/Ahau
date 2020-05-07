@@ -67,16 +67,17 @@ export default {
 
 <style>
 .rounded-border {
-  border: 1px solid lightgrey;
+  border: 0.5px solid rgba(0,0,0,0.12);
   border-radius: 10px;
+  background-color: white;
 }
 
 .br {
-  border-right: 1px solid lightgrey;
+  border-right: 0.5px solid rgba(0,0,0,0.12);
 }
 
 .bb {
-  border-bottom: 1px solid lightgrey;
+  border-bottom: 0.5px solid rgba(0,0,0,0.12);
 }
 
 </style>

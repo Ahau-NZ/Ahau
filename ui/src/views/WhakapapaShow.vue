@@ -317,7 +317,7 @@ export default {
       set: function (newValue) {
         this.focus = newValue
       }
-    },
+    }
   },
   watch: {
     'currentFocus': async function (newFocus) {

@@ -37,4 +37,10 @@ export default {
 .divider-horizontal {
   border-bottom: 1px solid lightgrey;
 }
+
+.profile-label {
+  color: rgba(0,0,0,0.6);
+  display: flex;
+  justify-content: center;
+}
 </style>

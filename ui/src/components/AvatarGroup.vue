@@ -6,14 +6,14 @@
       </v-col>
     </v-row>
 
-    <v-row class="d-flex justify-center align-center pt-2">
-      <v-col
+    <v-row class="d-flex justify-start align-center pa-2">
+      <div
         width="100%"
         class="pt-0 pb-0 pr-5"
         v-for="profile in profiles"
         :key="profile.id"
       >
-        <v-row justify="center">
+        <div justify="center" class="pt-2">
           <Avatar
             :size="size"
             :image="profile.avatarImage"
@@ -25,8 +25,8 @@
             :clickable="true"
             @click="profileClick(profile)"
           />
-        </v-row>
-      </v-col>
+        </div>
+      </div>
 
       <v-col v-if="addButtonSlot" class="d-flex justify-center align-center">
         <v-row justify="center">
@@ -51,7 +51,7 @@ export default {
     size: { type: String, default: '80px' },
     addButtonSlot: { type: Boolean, default: true }
   },
-  computed : {
+  computed: {
     columns () {
       return this.profiles.length
     }
@@ -60,6 +60,6 @@ export default {
     profileClick (profile) {
       this.$emit('profile-click', profile)
     }
-  },
+  }
 }
 </script>

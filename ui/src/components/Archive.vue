@@ -42,7 +42,6 @@
 
         </v-row>
 
-
     <vue-context ref="menu" class="pa-4">
         <li v-for="(option, index) in contextMenuOpts" :key="index">
             <a href="#" @click.prevent="updateDialog(option.dialog)" class="d-flex align-center px-4">
@@ -55,9 +54,9 @@
         </li> -->
     </vue-context>
 
-    <DialogHandler 
-        :dialog.sync="dialog.active" 
-        :type.sync="dialog.type" 
+    <DialogHandler
+        :dialog.sync="dialog.active"
+        :type.sync="dialog.type"
     />
 
 </div>
@@ -68,9 +67,6 @@ import {
   VueContext
 } from 'vue-context'
 
-import Kaitiaki from '@/components/profile/Kaitiaki.vue'
-
-import SideNavMenu from '@/components/SideNavMenu.vue'
 import ArchiveStory from '@/components/ArchiveStory.vue'
 import CollectionCard from '@/components/CollectionCard.vue'
 
@@ -166,8 +162,6 @@ export default {
     }
   },
   components: {
-    Kaitiaki,
-    SideNavMenu,
     ArchiveStory,
     CollectionCard,
     VueContext,
