@@ -98,7 +98,7 @@ import NewRecordDialog from '@/components/dialog/NewRecordDialog.vue'
 
 import gql from 'graphql-tag'
 
-import Profile, { PERMITTED_PROFILE_ATTRS, PERMITTED_RELATIONSHIP_ATTRS, saveProfile } from '@/lib/profile-helpers.js'
+import { PERMITTED_PROFILE_ATTRS, PERMITTED_RELATIONSHIP_ATTRS, saveProfile } from '@/lib/profile-helpers.js'
 import { saveWhakapapaLink } from '@/lib/link-helpers.js'
 import pick from 'lodash.pick'
 import isEmpty from 'lodash.isempty'
@@ -108,7 +108,7 @@ import findSuccessor from '@/lib/find-successor'
 import tree from '@/lib/tree-helpers'
 
 import * as d3 from 'd3'
-import { mapGetters, mapActions, mapMutations } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   name: 'DialogHandler',
@@ -140,7 +140,7 @@ export default {
       required: false,
       default: null,
       validator: (val) => [
-        'new-node', 'view-edit-node', 'delete-node', 'new-collection', 'new-record', 'edit-node', 
+        'new-node', 'view-edit-node', 'delete-node', 'new-collection', 'new-record', 'edit-node',
         'whakapapa-view', 'whakapapa-edit', 'whakapapa-delete', 'whakapapa-helper', 'whakapapa-table-helper'
       ].includes(val)
     },
@@ -485,9 +485,9 @@ export default {
             console.error('failed to update child link', linkRes)
             return
           } else {
-            // this.relationshipLinks[relationship.parent + '-' + relationship.child] = input
+            this.relationshipLinks.set(relationship.parent + '-' + relationship.child, input)
             this.selectedProfile.relationship = input
-            var node = this.selectedProfile
+            let node = this.selectedProfile
             this.updateNode({ node })
           }
         } catch (err) {

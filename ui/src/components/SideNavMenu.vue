@@ -65,15 +65,13 @@
 </template>
 
 <script>
-import gql from 'graphql-tag'
-
 import Avatar from '@/components/Avatar.vue'
 
 export default {
   name: 'SideNavMenu',
   props: {
     profile: {
-      type: Object,
+      type: Object
     },
     editProfile: {
       type: Function
@@ -81,23 +79,23 @@ export default {
     },
     noAvatar: {
       type: Boolean,
-      default: false,
-    },
+      default: false
+    }
   },
-  data() {
+  data () {
     return {
-      
+
     }
   },
   computed: {
     mobile: function () {
-      console.log("mobile = ", this.$vuetify.breakpoint.xsOnly)
+      console.log('mobile = ', this.$vuetify.breakpoint.xsOnly)
       return this.$vuetify.breakpoint.xsOnly
-    },
+    }
   },
   methods: {},
   components: {
-    Avatar,
+    Avatar
   }
 }
 </script>

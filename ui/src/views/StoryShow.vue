@@ -1,76 +1,56 @@
 <template>
 <div class="mt-8">
     <!-- Profile body (middle column) -->
-
+    <v-row>
+      <!-- Middle column -->
+      <v-col cols="10">
+        <h1 class="title my-6">Timeline</h1>
+        <StoryTimeline :data="mockTimelineData"/>
+      </v-col>
+      <!-- End Middle column -->
+      <!-- Right column -->
+      <v-col cols="2" class="px-12">
+        <!-- Communities Card -->
         <v-row>
-
-            <!-- Middle column -->
-            <v-col cols="10">
-                <h1 class="title my-6">Timeline</h1>
-                <StoryTimeline :data="mockTimelineData"/>
-
-            </v-col>
-            <!-- End Middle column -->
-
-            <!-- Right column -->
-            <v-col cols="2" class="px-12">
-                <!-- Communities Card -->
-                <v-row>
-                    <v-col>
-                        <!-- Add icon -->
-                        <v-row justify="center" align="center">
-                            <v-btn large class="my-2" fab color="white" @click.stop="openContextMenu($event)">
-                                <v-icon large class="black--text">mdi-plus</v-icon>
-                            </v-btn>
-                        </v-row>
-                        <!-- Search icon -->
-                        <v-row justify="center" align="center">
-                            <v-btn small class="my-2" fab color="white" @click="alert('todo')">
-                                <v-icon small class="black--text">mdi-magnify</v-icon>
-                            </v-btn>
-                        </v-row>
-                    </v-col>
-                </v-row>
-            </v-col>
-            <!-- End Right column -->
-
+          <v-col>
+            <!-- Add icon -->
+            <v-row justify="center" align="center">
+              <v-btn large class="my-2" fab color="white" @click.stop="openContextMenu($event)">
+                  <v-icon large class="black--text">mdi-plus</v-icon>
+              </v-btn>
+            </v-row>
+            <!-- Search icon -->
+            <v-row justify="center" align="center">
+              <v-btn small class="my-2" fab color="white" @click="alert('todo')">
+                  <v-icon small class="black--text">mdi-magnify</v-icon>
+              </v-btn>
+            </v-row>
+          </v-col>
         </v-row>
-
-    </v-container>
-
+      </v-col>
+      <!-- End Right column -->
+    </v-row>
     <vue-context ref="menu" class="pa-4">
-        <li v-for="(option, index) in contextMenuOpts" :key="index">
-            <a href="#" @click.prevent="updateDialog(option.dialog)" class="d-flex align-center px-4">
-                <v-icon light>{{ option.icon }}</v-icon>
-                <p class="ma-0 pl-3">{{ option.title }}</p>
-            </a>
-        </li>
-        <!-- <li v-for="(option, index) in contextMenuOpts" :key="index">
-            <a href="#" @click.prevent="option.action">{{ option.title }}</a>
-        </li> -->
+      <li v-for="(option, index) in contextMenuOpts" :key="index">
+        <a href="#" @click.prevent="updateDialog(option.dialog)" class="d-flex align-center px-4">
+          <v-icon light>{{ option.icon }}</v-icon>
+          <p class="ma-0 pl-3">{{ option.title }}</p>
+        </a>
+      </li>
+      <!-- <li v-for="(option, index) in contextMenuOpts" :key="index">
+          <a href="#" @click.prevent="option.action">{{ option.title }}</a>
+      </li> -->
     </vue-context>
-
     <DialogHandler
         :dialog.sync="dialog.active"
         :type.sync="dialog.type"
     />
-
 </div>
 </template>
-
 <script>
 
-import gql from 'graphql-tag'
-
-import {
-  VueContext
-} from 'vue-context'
-
-import Kaitiaki from '@/components/profile/Kaitiaki.vue'
-
-import SideNavMenu from '@/components/SideNavMenu.vue'
+import { VueContext } from 'vue-context'
 import StoryTimeline from '@/components/StoryTimeline.vue'
-
 import DialogHandler from '@/components/dialog/DialogHandler.vue'
 
 // const get = require('lodash.get')
@@ -166,8 +146,6 @@ export default {
     }
   },
   components: {
-    Kaitiaki,
-    SideNavMenu,
     StoryTimeline,
     VueContext,
     DialogHandler
