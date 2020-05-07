@@ -20,7 +20,7 @@ export default {
   },
   computed: {
     mobile () {
-      return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.md
+      return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
     small () {
       return this.$vuetify.breakpoint.sm
@@ -97,7 +97,7 @@ $formWidth: 600px;
 }
 
 .avatar-desktop {
-  margin-top: 13vw;
+  margin-top: 7vw;
   margin-left: 1vw
 }
 

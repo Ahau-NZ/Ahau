@@ -6,7 +6,7 @@
     <v-container :fluid="true" class="body-width white px-6 niho-bg">
 
       <v-row :justify="mobile ? 'center' : 'start'">
-        <h1 class="primary--text" :style="[ mobile ? { marginTop: '120px' } : { marginLeft: '210px' }]">{{ profile.legalName }}</h1>
+        <h1 class="primary--text" :style="[ mobile ? { marginTop: '100px' } : { marginLeft: '210px' }]">{{ profile.legalName }}</h1>
       </v-row>
       <v-row class="content-top-margin">
         <!-- LEFT SIDE COLUMN -->
