@@ -1,13 +1,10 @@
 import * as d3 from 'd3'
-import isEmpty from 'lodash.isempty'
+import { GENDERS, RELATIONSHIPS } from './constants'
 
-export {
-  importCsv,
-  parse,
-  validatePerson
-}
+const dateRegex = /^([0-2][0-9]|(3)[0-1])(\/|-)(((0)[0-9])|((1)[0-2]))(\/|-)\d{4}$/
+const emailRegex = /^\w+([\\.-]?\w+)*@\w+([\\.-]?\w+)*(\.\w{2,3})+$/
 
-export default function importCsv (file) {
+function importCsv (file) {
   return new Promise((resolve, reject) => {
     if (!file.name.endsWith('.csv')) { // check if file extension is csv
       reject(new Error('please upload a CSV file'))
@@ -31,14 +28,12 @@ function parse (fileContent) {
   var errors = []
 
   return new Promise((resolve, reject) => {
-    const csv = d3.csvParse(fileContent, (d) => {
+    const csv = d3.csvParse(fileContent, (d, i) => {
       count++
 
-      // validate each row (aka d)
-      const error = validatePerson(d)
+      const errs = personErrors(d, i)
 
-      // error detected
-      if (error) errors.push(error)
+      if (errs) errors = [...errors, ...errs]
       else {
         return {
           parentNumber: d.parentNumber,
@@ -73,35 +68,86 @@ function parse (fileContent) {
     else resolve(csv)
   })
 }
-var date = /^(0?[1-9]|[12][0-9]|3[01])[/-](0?[1-9]|1[012])[/-]\d{4}$/
-var val = /^\d+$/
-function validatePerson (d) {
+
+function personErrors (d, i) {
+  // d = a particular rows data
+  // i = row number
+
   var errors = []
+  // loops through the schema and validates the relevant fields
+  Object.keys(schema)
+    .filter(key => !schema[key].action(d[key])) // the action is the validation function for this key
+    .forEach(key => {
+      if (key === 'parentNumber' && i === 0) return
+      errors.push(`[ROW-${i + 2}] ${schema[key].msg} [VALUE]: ${d[key]}`)
+      // CHECK is (i+2) the row or line in the file?
+    })
 
-  if (isEmpty(d.number)) errors.push('no "number" entered')
-  if (!isEmpty(d.bornAt) && !date.test(d.bornAt)) errors.push('bornAt entered incorretly')
-  if (!isEmpty(d.diedAt) && !date.test(d.diedAt)) errors.push('diedAt entered incorretly')
-  if (!isEmpty(d.birthOrder) && !val.test(d.birthOrder)) errors.push('birthOrder entered incorretly')
-  if (!isEmpty(d.relationshipType) && (d.relationshipType !== 'birth' && d.relationshipType !== 'adopted' && d.relationshipType !== 'whangai')) {
-    errors.push('relationshipType entered incorretly')
-  }
-  if (!isEmpty(d.deceased) && (d.deceased !== 'yes')) errors.push('deceased entered incorretly')
-
-  if (!errors.length) return
-
-  return new Error(`${d.preferredName}: ${errors.join(', ')}`)
+  if (errors.length) return errors
 }
 
-// function csv (data) {
-//   // check for correct columns
-//   console.log('validate csv')
-//   switch (data) {  //   case (data.columns.length > 14) :
-//       alert("An extra column has been dectected. Unforetunately columns cannot be added to the csv and the data will not be included in the whakapapa")
-//       break
-//     case (typeof data[0] === "undefined") :
-//       alert("no data detected")
-//       break
-//     case ()
-//     }
-//   }
-// }
+const schema = {
+  parentNumber: {
+    action: d => isValidNumber(d) || isEmpty(d),
+    msg: '[parentNumber] must be either a number or empty'
+  },
+  number: {
+    action: d => isValidNumber(d) && d != null,
+    msg: '[number] is required and must be a number'
+  },
+  preferredName: {
+    action: d => isString(d) || isEmpty(d),
+    msg: '[preferredName] must be a string or empty'
+  },
+  gender: {
+    action: d => GENDERS.includes(d) || isEmpty(d),
+    msg: '[gender] only accepts the following: ' + GENDERS
+  },
+  bornAt: {
+    action: d => isValidDate(d),
+    msg: '[bornAt] should be of format DD/MM/YYYY or DD-MM-YYYY'
+  },
+  diedAt: {
+    action: d => isValidDate(d),
+    msg: '[diedAt] should be of format DD/MM/YYYY or DD-MM-YYYY'
+  },
+  birthOrder: {
+    action: d => isValidNumber(d) || isEmpty(d),
+    msg: '[birthOrder] must be either a number or empty'
+  },
+  relationshipType: {
+    action: d => RELATIONSHIPS.includes(d) || isEmpty(d),
+    msg: '[relationshipType] only accepts the following: ' + RELATIONSHIPS
+  },
+  email: {
+    action: d => emailRegex.test(d) || isEmpty(d),
+    msg: '[email] only accepts valid email address with @ and domain name extension. '
+  }
+}
+
+function isEmpty (d) {
+  return d === null || d === '' || d === undefined
+}
+
+function isString (d) {
+  return typeof d === 'string'
+}
+
+function isValidDate (d) {
+  return dateRegex.test(d) || isEmpty(d)
+}
+
+function isValidNumber (d) {
+  if (d === null) return false
+  if (d === '') return false
+  if (isNaN(d)) return false
+  if (Number(d) % 1 !== 0) return false
+  if (Number(d) < 0) return false
+  return true
+}
+
+export {
+  importCsv,
+  parse,
+  schema
+}
