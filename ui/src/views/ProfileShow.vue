@@ -1,7 +1,7 @@
 <template>
   <div class="wrapper">
     <!-- Header for Profile page only -->
-    <Header v-if="header" :preferredName="selectedProfile.preferredName"
+    <Header v-if="header" :preferredName="selectedProfile.preferredName" @setupProfile="setupProfile($event)"
       :headerImage="selectedProfile.headerImage" :avatarImage="selectedProfile.avatarImage" :headerHeight="headerHeight" />
 
     <!-- Profile Container -->
@@ -119,13 +119,13 @@ export default {
     },
     headerHeight () {
       switch (this.$vuetify.breakpoint.name) {
-        case 'xs': return '150px'
-        case 'sm': return '150px'
-        case 'md': return '250px'
-        case 'lg': return '250px'
-        case 'xl': return '250px'
+        case 'xs': return '200'
+        case 'sm': return '200'
+        case 'md': return '250'
+        case 'lg': return '300'
+        case 'xl': return '300'
         default:
-          return '250px'
+          return '300'
       }
     }
   },

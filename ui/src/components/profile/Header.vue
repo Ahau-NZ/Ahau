@@ -1,49 +1,77 @@
 <template>
-  <v-container class="full-width my-0 py-0">
-    <v-row class="header-bg" v-bind:style="{ backgroundImage: 'url(' + require('@/assets/nzheader.jpg') +')', height: headerHeight }">
-      <!-- <v-img :src="headerImage ? headerImage.uri : require('@/assets/nzheader.jpg')" min-width="100%" /> -->
-    </v-row>
-
-    <!-- <v-row class="avatar-row">
-      <v-row class="avatar-box">
-          <Avatar :image="avatarImage" :alt="preferredName" size="25vh" />
-      </v-row>
-    </v-row> -->
-
+  <v-container class="full-width my-0 py-0 px-0">
+    <v-parallax class="header-bg py-0 px-0" :src="headerImage.uri" :height="headerHeight" >
+      <ImagePicker class="edit-header pb-2 " label=" " type="header" :isView="true" @updateAvatar="updateHeader($event)" :avatarLoaded="headerImage"/> 
+    </v-parallax>
   </v-container>
 </template>
 
 <script>
-import Avatar from '@/components/Avatar.vue'
+import ImagePicker from '@/components/ImagePicker.vue'
+import { mapGetters } from 'vuex'
+import gql from 'graphql-tag'
 
 export default {
   name: 'ProfileHeader',
   props: {
-    preferredName: String,
-    headerImage: Object,
-    avatarImage: Object,
+    headerImage: {type: Object, default: {uri:require('@/assets/nzheader.jpg')}},
     headerHeight: String
   },
+  computed: {
+    ...mapGetters(['selectedProfile']),
+    // headerPic () {
+    //   if (this.headerImage) return this.headerImage.uri
+    //   else return require('@/assets/nzheader.jpg')
+    // }
+  },
+  methods : {
+    async updateHeader (image) {
+      console.log("new header :", image)
+      const res =  await this.$apollo.mutate({
+        mutation: gql`
+          mutation($input: ProfileInput!) {
+            saveProfile(input: $input)
+          }
+        `,
+        variables: {
+          input: {
+            id: this.selectedProfile.id,
+            headerImage : image
+          }
+        }
+      })
+      console.log("res: ", res)
+      if (res.errors) {
+        console.error('failed to update header photo', res)
+        return
+      }   
+      if (res.data) {
+        console.log("return: ", res.data)
+        // this.$emit('setupProfile', res.data.saveProfile)
+        // return
+        this.$emit('setupProfile', this.selectedProfile.id)
+      }
+    }
+  },
   components: {
-    Avatar
+    ImagePicker
   }
 }
 </script>
 <style scoped lang="scss">
-$avatarSize: 25vh;
-$ratio: 5.33333;
-$headerHeight: 100vw / $ratio;
-$maxHeaderWidth: 1400px;
-$formWidth: 600px;
 .full-width {
   max-width: 100%;
-  // @media screen and (min-width: $maxHeaderWidth) {
-  //   width: $maxHeaderWidth;
-  //   height: $maxHeaderWidth / $ratio;
-  // }
 }
+.edit-header {
+  position: absolute;
+  right:20px;
+  bottom: 0;
+  cursor: pointer;
+  text-decoration-color: white;
+}
+
 .header-bg {
-  height: 250px;
+  // height: 200px;
   background: linear-gradient(
       45deg,
       hsl(0, 6%, 37.1%) 12%,
@@ -70,23 +98,4 @@ $formWidth: 600px;
   background-size: cover;
 }
 
-.avatar-row {
-  position: relative;
-  /* width: $formWidth; */
-  width: 100%;
-  max-width: 60vw;
-
-  margin: auto;
-  // this seems like a bad way to be doing alignment here
-
-  .avatar-box {
-    position: absolute;
-    top: -$avatarSize/1.5;
-    // Not sure how to calculate this
-    left: calc(-100vw / 3 + 2 * #{$avatarSize});
-
-    margin-bottom: -$avatarSize;
-    width: $avatarSize;
-  }
-}
 </style>
