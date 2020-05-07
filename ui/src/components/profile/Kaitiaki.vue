@@ -8,7 +8,6 @@
       <p style="color: lightgrey; text-align: center;">TODO: v-for</p>
     </div>
   </v-card>
-
 </template>
 
 <script>

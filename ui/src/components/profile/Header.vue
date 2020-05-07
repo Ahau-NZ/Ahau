@@ -20,7 +20,7 @@ export default {
   },
   computed: {
     mobile () {
-      return this.$vuetify.breakpoint.xs
+      return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.md
     },
     small () {
       return this.$vuetify.breakpoint.sm

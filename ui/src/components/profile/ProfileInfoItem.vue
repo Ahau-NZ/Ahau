@@ -1,5 +1,5 @@
 <template>
-  <v-col :cols="mobile ? '6' : '12'" sm="3" md="3">
+  <v-col :cols="mobile ? '6' : '12'" sm="6" md="3">
     <v-row>
       <v-col class=" ma-0 profile-label"><small>{{ title }}</small></v-col>
     </v-row>
@@ -23,7 +23,7 @@ export default {
   },
   computed: {
     mobile () {
-      return this.$vuetify.breakpoint.xs
+      return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     }
   }
 }

@@ -1,6 +1,5 @@
 <template>
   <v-row fluid :class="mobile ? 'rounded-border' : ''">
-    <v-row>
       <v-col v-if="showAvatar">
         <v-btn @click="$emit('setPageComponent', 'profile')" light text style="height: auto;">
           <Avatar :image="profile.avatarImage" :alt="profile.preferredName" size="15vh" />
@@ -9,11 +8,10 @@
       </v-col>
       <v-col v-for="(item, i) in menuItems" :key="i" :cols="mobile ? '3' : '12'">
         <v-btn @click="$emit('setPageComponent', item.page)" light :fab="mobile" text>
-          <v-img justify-start max-width="30" max-height="30" :src="item.icon" />
+          <v-img justify-start max-width="30" max-height="30" :src="item.icon" justify-center/>
           <span v-if="!mobile && !isOverflowing" ref="text" class="ml-4 black--text nav-label subtitle-1">{{ item.label }}</span>
         </v-btn>
       </v-col>
-    </v-row>
   </v-row>
 </template>
 
@@ -71,7 +69,7 @@ export default {
   },
   computed: {
     mobile () {
-      return this.$vuetify.breakpoint.xs
+      return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
     isOverflowing () {
       if (!this.componentLoaded) return false

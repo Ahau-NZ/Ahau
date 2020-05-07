@@ -1,35 +1,12 @@
 <template>
-  <div class="wrapper">
+  <div>
     <!-- Header for Profile page only -->
-    <Header v-if="header" :preferredName="selectedProfile.preferredName"
-      :headerImage="selectedProfile.headerImage" :avatarImage="selectedProfile.avatarImage" :headerHeight="headerHeight" />
+    <Profile :profile="selectedProfile">
+      <template v-slot:nav>
+        <SideNavMenu :profile="selectedProfile" />
+      </template>
+    </Profile>
 
-    <v-container :fluid="true" class="body-width white px-6 niho-bg">
-
-      <v-row :justify="mobile ? 'center' : 'start'">
-        <h1 class="primary--text" :style="[ mobile ? { marginTop: '120px' } : { marginLeft: '210px' }]">{{ selectedProfile.legalName }}</h1>
-      </v-row>
-      <v-row class="content-top-margin">
-        <v-col cols="12" xs="12" sm="2" md="2">
-          <SideNavMenu :profile="selectedProfile" />
-        </v-col>
-        <v-col cols="12" sx="12" sm="8" md="8">
-          <Profile :profile="selectedProfile"/>
-        </v-col>
-        <v-col cols="12" sx="12" sm="2" md="2" :class="mobile ? 'pl-0 pr-0' : ''">
-          <Kaitiaki
-            title="Kaitiaki"
-            subtitle="These are the people who have administrative rights on this profile"
-            :profiles="selectedProfile.tiaki"
-          />
-          <Kaitiaki
-            class="mt-3"
-            title="Communities"
-            subtitle="These are the communities connected to this profile"
-            :profiles="selectedProfile.tiaki"
-          />
-        </v-col>
-      </v-row>
       <!-- <v-row>
         <v-col v-if="mobile" cols="12">
           <v-row justify="center">
@@ -138,17 +115,6 @@ export default {
     // ...mapGetters(['selectedProfile', 'whoami']),
     mobile () {
       return this.$vuetify.breakpoint.xs
-    },
-    headerHeight () {
-      switch (this.$vuetify.breakpoint.name) {
-        case 'xs': return '150px'
-        case 'sm': return '150px'
-        case 'md': return '250px'
-        case 'lg': return '250px'
-        case 'xl': return '250px'
-        default:
-          return '250px'
-      }
     }
   },
   methods: {
