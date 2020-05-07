@@ -1,47 +1,21 @@
 <template>
   <div>
-    <!-- Header for Profile page only -->
-    <Profile :profile="selectedProfile">
+    <!-- Profile Page -->
+    <Profile v-if="pageComponents.profile" :profile="selectedProfile" :setupProfile="setupProfile">
       <template v-slot:nav>
-        <SideNavMenu :profile="selectedProfile" />
+        <SideNavMenu :profile="selectedProfile" @setPageComponent="setPageComponent($event)"/>
       </template>
     </Profile>
 
-      <!-- <v-row>
-        <v-col v-if="mobile" cols="12">
-          <v-row justify="center">
-            <v-col>
-              <div v-if="bigAvatar" style="margin-top: 100px;">
-                
-                <SideNavMenu :profile:="selectedProfile" :noAvatar="true"
-                  @setPageComponent="setPageComponent($event)"/>
-              </div>
-              <SideNavMenu v-else :profile="selectedProfile" @setPageComponent="setPageComponent($event)"/>
-            </v-col>
-          </v-row>
-        </v-col>
+    <!-- Archive Page -->
+    <Archive v-if="pageComponents.archive" :profile="{...selectedProfile, type: 'person'}">
+      <template v-slot:nav>
+        <SideNavMenu :profile="selectedProfile" @setPageComponent="setPageComponent($event)" :show-avatar="true" />
+      </template>
+    </Archive>
 
-        <v-col v-else cols="2">
-          <v-row justify="center">
-            <SideNavMenu v-if="bigAvatar" :profile:="selectedProfile" :noAvatar="true"
-              @setPageComponent="setPageComponent($event)"  style="margin-top: 100px;"/>
-            <SideNavMenu v-else :profile="selectedProfile" @setPageComponent="setPageComponent($event)" />
-          </v-row>
-        </v-col>
-
-        <v-col>
-          <Profile v-if="pageComponents.profile"
-            :profile="selectedProfile"
-            :type="'person'"
-            @setDialog="setDialog($event)"
-            @setupProfile="setupProfile($event)"
-          />
-          <Archive v-if="pageComponents.archive" :profile="selectedProfile" :type="'person'"/>
-          <StoryTimeline v-if="pageComponents.storyTimeline" :profile="selectedProfile"/>
-        </v-col>
-
-      </v-row> -->
-    </v-container>
+    <!-- Timeline Page -->
+    <StoryTimeline v-if="pageComponents.storyTimeline" :profile="selectedProfile"/>
 
     <DialogHandler
       :dialog.sync="dialog.active"
@@ -53,23 +27,18 @@
 
 <script>
 import DialogHandler from '@/components/dialog/DialogHandler.vue'
-import Header from '@/components/profile/Header.vue'
-import Avatar from '@/components/Avatar.vue'
 import SideNavMenu from '@/components/SideNavMenu.vue'
 import Profile from '@/components/Profile'
 import Archive from '@/components/Archive'
 import StoryTimeline from '@/views/StoryShow'
-import Kaitiaki from '@/components/profile/Kaitiaki.vue'
-
-import ProfileInfoCard from '@/components/profile/ProfileInfoCard'
 
 import {
   getProfile
 } from '@/lib/profile-helpers'
-// import {
-//   mapActions,
-//   mapGetters
-// } from 'vuex'
+import {
+  mapActions,
+  mapGetters
+} from 'vuex'
 
 const NULL_PAGE_COMPONENTS = {
   profile: false,
@@ -79,20 +48,17 @@ const NULL_PAGE_COMPONENTS = {
 
 export default {
   name: 'ProfileShow',
-  props: ['selectedProfile'],
+  // props: ['selectedProfile'],
   components: {
     DialogHandler,
-    Header,
-    Avatar,
     SideNavMenu,
     Profile,
     Archive,
-    StoryTimeline,
-    ProfileInfoCard,
-    Kaitiaki
+    StoryTimeline
   },
   data () {
     return {
+      loaded: false,
       dialog: {
         active: null,
         type: null
@@ -107,18 +73,16 @@ export default {
     }
   },
   mounted () {
-    if (this.$route) {
-      this.setupProfile(this.$route.params.id)
-    }
+    this.setupProfile(this.$route.params.id)
   },
   computed: {
-    // ...mapGetters(['selectedProfile', 'whoami']),
+    ...mapGetters(['selectedProfile', 'whoami']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     }
   },
   methods: {
-    // ...mapActions(['setProfileById', 'setProfile', 'setWhoami',]),
+    ...mapActions(['setProfileById', 'setProfile', 'setWhoami']),
     setDialog (dialog) {
       this.dialog.active = dialog
     },
@@ -132,15 +96,15 @@ export default {
       this.bigAvatar = false
 
       switch (component) {
-        case 'profile':
+        case 'Profile':
           this.header = true
           this.bigAvatar = true
           this.pageComponents.profile = true
           break
-        case 'archive':
+        case 'Archive':
           this.pageComponents.archive = true
           break
-        case 'storyTimeline':
+        case 'Timeline':
           this.pageComponents.storyTimeline = true
           break
         default:
@@ -150,7 +114,7 @@ export default {
     async setupProfile (id) {
       this.setProfileById(id)
       if (this.dialog.active) this.dialog.active = null
-      if (id === this.whoami.profile.id) await this.setWhoami()
+      // if (id === this.whoami.profile.id) await this.setWhoami()
     },
 
     updateDialog (dialogObj) {
@@ -177,53 +141,25 @@ export default {
   .border {
     border-style: 1px solid lightgrey;
   }
-
-  .wrapper {
-    display: flex;
-    flex-direction: column;
-    align-items: center; // background: linear-gradient(to right, grey 0%,grey 50%,#000000 50%,white 50%,white 100%);
-
-    .body-width {
-      /* min-width: $formWidth; */
-      max-width: 100vw;
-      min-height: 100vh;
-      background: white;
-    }
-
-    .niho-bg {
-      background: linear-gradient(rgba(255, 255, 255, 0.7),
-          rgba(255, 255, 255, 0.7)), url(../assets/niho.svg);
-      background-position-x: 800px;
-      background-attachment: fixed;
-      background-repeat: no-repeat;
-
-    }
-
-    .avatar-row {
-      position: relative;
-      width: 100%;
-      /* height: 20%; */
-      margin: auto;
-
-      .avatar-box {
-        position: absolute;
-        /* left: calc(-100vw / 3 + 3 * #{$avatarSize}); */
-        top: -$avatarSize/1.5;
-        width: 100%;
-      }
-    }
-  }
-
-.desktopContainer {
-  margin-top: 64px;
-  border: 3px solid red;
-}
-
-.mobileContainer {
-  padding: 0px;
-}
-
 .content-top-margin {
   margin-top: 5vw;
+}
+
+.wrapper {
+  .body-width {
+    /* min-width: $formWidth; */
+    max-width: 100vw;
+    min-height: 100vh;
+    background: white;
+  }
+
+  .niho-bg {
+    background: linear-gradient(rgba(255, 255, 255, 0.7),
+        rgba(255, 255, 255, 0.7)), url(../assets/niho.svg);
+    background-position-x: 800px;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+
+  }
 }
 </style>

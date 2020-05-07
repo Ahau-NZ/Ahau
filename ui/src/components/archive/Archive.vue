@@ -1,51 +1,6 @@
 <template>
   <div>
-    <Header
-      :preferredName="profile.preferredName"
-      :headerImage="profile.headerImage"
-      :avatarImage="profile.avatarImage"
-      :headerHeight="headerHeight"
-    />
-
-      <v-container fluid class="body-width white pa-5 niho-bg">
-
-      <v-row :justify="mobile ? 'center' : 'start'">
-        <h1 class="primary--text" :style="[ mobile ? { marginTop: '100px' } : { marginLeft: '210px' }]">{{ profile.legalName }}</h1>
-      </v-row>
-      <v-row class="content-top-margin">
-        <!-- LEFT SIDE COLUMN -->
-        <v-col cols="12" xs="12" sm="12" md="2">
-          <slot name="nav"></slot>
-        </v-col>
-        <!-- MIDDLE COLUMN -->
-        <v-col cols="12" sx="12" sm="12" md="8">
-          <ProfileInfoCard :profile="profile" @setupProfile="setupProfile($event)" />
-          <ProfileCard title="About">
-            <template v-slot:content>
-              <p style="color: lightgrey; text-align: center;">TODO</p>
-            </template>
-          </ProfileCard>
-          <ProfileCard title="Contact">
-            <template v-slot:content>
-              <p style="color: lightgrey; text-align: center;">TODO</p>
-            </template>
-          </ProfileCard>
-        </v-col>
-        <!-- RIGHT SIDE COLUMN -->
-        <v-col cols="12" sx="12" sm="12" md="2" :class="mobile ? 'pl-0 pr-0' : ''">
-          <Kaitiaki
-            title="Kaitiaki"
-            subtitle="These are the people who have administrative rights on this profile"
-            :profiles="profile.tiaki"
-          />
-          <Kaitiaki
-            class="mt-3"
-            title="Communities"
-            subtitle="These are the communities connected to this profile"
-            :profiles="profile.tiaki"
-          />
-        </v-col>
-      </v-row>
+    <v-container fluid class="body-width white pa-5 niho-bg">
     </v-container>
   </div>
 </template>
@@ -161,13 +116,5 @@ export default {
       font-size: 0.8em;
       line-height: 1.6;
     }
-  }
-
-  .first-row {
-    height: 70px;
-  }
-
-  .nav-icon {
-    width: 30px;
   }
 </style>

@@ -3,11 +3,13 @@
       <v-col v-if="showAvatar">
         <v-btn @click="$emit('setPageComponent', 'profile')" light text style="height: auto;">
           <Avatar :image="profile.avatarImage" :alt="profile.preferredName" size="15vh" />
-          <h1 class="primary--text">{{ profile.preferredName }}</h1>
+          <v-col>
+            <h1 justify-center class="primary--text">{{ profile.preferredName }}</h1>
+          </v-col>
         </v-btn>
       </v-col>
       <v-col v-for="(item, i) in menuItems" :key="i" :cols="mobile ? '3' : '12'">
-        <v-btn @click="$emit('setPageComponent', item.page)" light :fab="mobile" text>
+        <v-btn @click="$emit('setPageComponent', item.label)" light :fab="mobile" text>
           <v-img justify-start max-width="30" max-height="30" :src="item.icon" justify-center/>
           <span v-if="!mobile && !isOverflowing" ref="text" class="ml-4 black--text nav-label subtitle-1">{{ item.label }}</span>
         </v-btn>
@@ -22,8 +24,13 @@ import timeline from '@/assets/timeline.svg'
 import whakapapa from '@/assets/tree.svg'
 import activity from '@/assets/activity.svg'
 
+import Avatar from '@/components/Avatar.vue'
+
 export default {
   name: 'SideNavMenu',
+  components: {
+    Avatar
+  },
   props: {
     profile: {
       type: Object
@@ -43,23 +50,19 @@ export default {
       menuItems: [
         {
           icon: archive,
-          label: 'Archive',
-          page: 'archive'
+          label: 'Archive'
         },
         {
           icon: timeline,
-          label: 'Story',
-          page: 'Story'
+          label: 'Timeline'
         },
         {
           icon: whakapapa,
-          label: 'Whakapapa',
-          page: 'whakapapa'
+          label: 'Whakapapa'
         },
         {
           icon: activity,
-          label: 'Activity',
-          page: 'activity'
+          label: 'Activity'
         }
       ]
     }

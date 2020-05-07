@@ -1,65 +1,55 @@
 <template>
-<div class="mt-8">
-        <v-row>
-            <!-- Middle column -->
-            <v-col cols="12" lg="10">
-                <!-- Collections -->
-                <h1 class="title my-6">Collections</h1>
-                <v-row class="mx-0 overflow">
-                    <CollectionCard :collections="mockCollections" />
-                </v-row>
-
-                <v-divider class="mt-6 mb-8" light></v-divider>
-
-                <!-- Name row -->
-                <v-row justify="center">
-                    <ArchiveStory />
-                </v-row>
-            </v-col>
-            <!-- End Middle column -->
-
-            <!-- Right column -->
-            <v-col cols="12" lg="2" class="px-12">
-                <!-- Communities Card -->
-                <v-row>
-                    <v-col>
-                        <!-- Add icon -->
-                        <v-row justify="center" align="center">
-                            <v-btn large class="my-2" fab color="white" @click.stop="openContextMenu($event)">
-                                <v-icon large class="black--text">mdi-plus</v-icon>
-                            </v-btn>
-                        </v-row>
-                        <!-- Search icon -->
-                        <v-row justify="center" align="center">
-                            <v-btn small class="my-2" fab color="white" @click="editProfile()">
-                                <v-icon small class="black--text">mdi-magnify</v-icon>
-                            </v-btn>
-                        </v-row>
-                    </v-col>
-                </v-row>
-            </v-col>
-            <!-- End Right column -->
-
-        </v-row>
-
+<div class="wrapper">
+  <v-container fluid class="body-width white niho-bg top-padding">
+    <v-row>
+        <v-col>
+          <slot name="nav"></slot>
+        </v-col>
+        <v-col cols="12" lg="10">
+            <h1 class="title my-6">Collections</h1>
+            <v-row class="mx-0 overflow">
+              <CollectionCard :collections="mockCollections" />
+            </v-row>
+            <v-divider class="mt-6 mb-8" light></v-divider>
+            <v-row justify="center">
+              <ArchiveStory />
+            </v-row>
+        </v-col>
+        <v-col cols="12" lg="2" class="px-12">
+            <v-row>
+                <v-col>
+                    <v-row justify="center" align="center">
+                      <v-btn large class="my-2" fab color="white" @click.stop="openContextMenu($event)">
+                        <v-icon large class="black--text">mdi-plus</v-icon>
+                      </v-btn>
+                    </v-row>
+                    <v-row justify="center" align="center">
+                      <v-btn small class="my-2" fab color="white" @click="editProfile()">
+                        <v-icon small class="black--text">mdi-magnify</v-icon>
+                      </v-btn>
+                    </v-row>
+                </v-col>
+            </v-row>
+        </v-col>
+      </v-row>
+    </v-container>
     <vue-context ref="menu" class="pa-4">
-        <li v-for="(option, index) in contextMenuOpts" :key="index">
-            <a href="#" @click.prevent="updateDialog(option.dialog)" class="d-flex align-center px-4">
-                <v-icon light>{{ option.icon }}</v-icon>
-                <p class="ma-0 pl-3">{{ option.title }}</p>
-            </a>
-        </li>
-        <!-- <li v-for="(option, index) in contextMenuOpts" :key="index">
-            <a href="#" @click.prevent="option.action">{{ option.title }}</a>
-        </li> -->
+      <li v-for="(option, index) in contextMenuOpts" :key="index">
+          <a href="#" @click.prevent="updateDialog(option.dialog)" class="d-flex align-center px-4">
+              <v-icon light>{{ option.icon }}</v-icon>
+              <p class="ma-0 pl-3">{{ option.title }}</p>
+          </a>
+      </li>
+      <li v-for="(option, index) in contextMenuOpts" :key="index">
+          <a href="#" @click.prevent="option.action">{{ option.title }}</a>
+      </li>
     </vue-context>
 
     <DialogHandler
         :dialog.sync="dialog.active"
         :type.sync="dialog.type"
     />
-
-</div>
+  </div>
 </template>
 
 <script>
@@ -68,7 +58,7 @@ import {
 } from 'vue-context'
 
 import ArchiveStory from '@/components/ArchiveStory.vue'
-import CollectionCard from '@/components/CollectionCard.vue'
+import CollectionCard from '@/components/archive/CollectionCard.vue'
 
 import DialogHandler from '@/components/dialog/DialogHandler.vue'
 
@@ -83,6 +73,96 @@ export default {
         title: 'Life Lessons',
         description: 'Lessons that I have learned in life',
         stories: ['storyid1', 'storyid2', 'storyid3', 'storyid4'],
+        lastSubmissionDate: new Date(),
+        hasAccess: [{
+          id: 123,
+          preferredName: 'Ian',
+          avatarImage: require('@/assets/koro.svg')
+        },
+        {
+          id: 456,
+          preferredName: 'Ben',
+          avatarImage: require('@/assets/kuia.svg')
+        }
+        ]
+      },
+      {
+        image: require('@/assets/mock3.jpg'),
+        title: 'Private Records',
+        description: 'Private records that I want to remember',
+        stories: ['storyid9', 'storyid10', 'storyid11', 'storyid12'],
+        lastSubmissionDate: new Date(),
+        hasAccess: [{
+          id: 123,
+          preferredName: 'Ian',
+          avatarImage: require('@/assets/koro.svg')
+        },
+        {
+          id: 456,
+          preferredName: 'Ben',
+          avatarImage: require('@/assets/kuia.svg')
+        }
+        ]
+      },
+      {
+        image: require('@/assets/mock3.jpg'),
+        title: 'Private Records',
+        description: 'Private records that I want to remember',
+        stories: ['storyid9', 'storyid10', 'storyid11', 'storyid12'],
+        lastSubmissionDate: new Date(),
+        hasAccess: [{
+          id: 123,
+          preferredName: 'Ian',
+          avatarImage: require('@/assets/koro.svg')
+        },
+        {
+          id: 456,
+          preferredName: 'Ben',
+          avatarImage: require('@/assets/kuia.svg')
+        }
+        ]
+      },
+      {
+        image: require('@/assets/mock3.jpg'),
+        title: 'Private Records',
+        description: 'Private records that I want to remember',
+        stories: ['storyid9', 'storyid10', 'storyid11', 'storyid12'],
+        lastSubmissionDate: new Date(),
+        hasAccess: [{
+          id: 123,
+          preferredName: 'Ian',
+          avatarImage: require('@/assets/koro.svg')
+        },
+        {
+          id: 456,
+          preferredName: 'Ben',
+          avatarImage: require('@/assets/kuia.svg')
+        }
+        ]
+      },
+      {
+        image: require('@/assets/mock3.jpg'),
+        title: 'Private Records',
+        description: 'Private records that I want to remember',
+        stories: ['storyid9', 'storyid10', 'storyid11', 'storyid12'],
+        lastSubmissionDate: new Date(),
+        hasAccess: [{
+          id: 123,
+          preferredName: 'Ian',
+          avatarImage: require('@/assets/koro.svg')
+        },
+        {
+          id: 456,
+          preferredName: 'Ben',
+          avatarImage: require('@/assets/kuia.svg')
+        }
+        ]
+      },
+      {
+        image: require('@/assets/mock3.jpg'),
+        title: 'Private Records',
+        description: 'Private records that I want to remember',
+        stories: ['storyid9', 'storyid10', 'storyid11', 'storyid12'],
         lastSubmissionDate: new Date(),
         hasAccess: [{
           id: 123,
@@ -183,4 +263,13 @@ export default {
   display: none;
 }
 
+.top-padding {
+  padding-top: 75px;
+}
+
+.overflow-x {
+  width:'100vw';
+  height:200px;
+  overflow-y:scroll;
+}
 </style>

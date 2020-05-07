@@ -61,6 +61,11 @@ export default {
       }
       return formattedDate
     }
+  },
+  methods: {
+    openProfile (profile) {
+      this.$emit('setupProfile', profile.id)
+    }
   }
 }
 </script>
