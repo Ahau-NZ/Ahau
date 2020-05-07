@@ -3,7 +3,7 @@
     <clipper-upload accept="image/*" @input="toggleAvatar">
 
       <v-row class="upload-pic-row">
-        <v-icon  v-if="!avatar.new" class="grey--text">mdi-camera</v-icon>
+        <v-icon  v-if="!avatar.new" :class="color">mdi-camera</v-icon>
         <p class="toggle" style="cursor: pointer;">
           {{ label }}
         </p>
@@ -16,6 +16,7 @@
       @submit="updateAvatar($event)"
       @close="toggleAvatar(null)"
       :isView="isView"
+      :type="type"
     />
   </div>
 </template>
@@ -31,7 +32,8 @@ export default {
       type: String,
       default: 'Upload profile photo'
     },
-    isView: { type: Boolean, default: false }
+    isView: { type: Boolean, default: false },
+    type: String
   },
   data () {
     return {
@@ -39,6 +41,12 @@ export default {
         new: null,
         showEditor: false
       }
+    }
+  },
+  computed: {
+    colour () {
+      if (this.$route.name === profileShow) "white"
+      "grey--text"
     }
   },
   methods: {

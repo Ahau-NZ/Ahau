@@ -500,7 +500,7 @@ export default {
         id: profileId,
         ...profileChanges
       }
-      console.log("update: ", input)
+      console.log('update: ', input)
       const res = await this.$apollo.mutate(saveProfile(input))
       if (res.errors) {
         console.error('failed to update profile', res)
