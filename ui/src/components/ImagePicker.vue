@@ -44,9 +44,9 @@ export default {
     }
   },
   computed: {
-    colour () {
-      if (this.$route.name === profileShow) "white"
-      "grey--text"
+    color () {
+      if (this.$route.name === "profileShow") "white"
+      else "grey--text"
     }
   },
   methods: {
