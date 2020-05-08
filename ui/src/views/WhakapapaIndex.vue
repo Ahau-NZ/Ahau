@@ -131,7 +131,7 @@ export default {
   },
   mounted () {
     // reset nestedWhakapapa
-    this.setWhakapapa([])
+    this.addWhakapapa([])
   },
   computed: {
     ...mapGetters(['whoami']),
@@ -159,7 +159,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setWhakapapa', 'setLoading']),
+    ...mapActions(['addWhakapapa', 'setLoading']),
     async getSuggestions ($event) {
       if (!$event) {
         this.suggestions = []

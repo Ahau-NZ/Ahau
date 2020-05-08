@@ -48,7 +48,7 @@
         </v-col>
 
         <!--======== Main content ========-->
-        <v-col xs="12" sm="12" md="12" lg="10" class="pt-0">
+        <v-col xs="12" sm="12" md="10" lg="10" class="pt-0">
           <Profile v-if="pageComponents.profile"
           :profile="selectedProfile"
           :type="'person'"
@@ -114,8 +114,7 @@ export default {
   computed: {
     ...mapGetters(['selectedProfile', 'whoami']),
     mobile: function () {
-      console.log('mobile = ', this.$vuetify.breakpoint.xsOnly)
-      return this.$vuetify.breakpoint.xsOnly
+      return this.$vuetify.breakpoint.xs
     },
     headerHeight () {
       switch (this.$vuetify.breakpoint.name) {

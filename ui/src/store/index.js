@@ -27,6 +27,9 @@ const store = new Vuex.Store({
     },
     whoami: state => {
       return state.whoami
+    },
+    route: state => {
+      return state.route
     }
   },
   mutations: {

@@ -326,15 +326,19 @@ export default {
         // var startTime = Date.now()
 
         const nestedWhakapapa = await this.loadDescendants(newFocus, '', [])
-        this.setWhakapapa(nestedWhakapapa)
+        this.addNestedWhakapapa(nestedWhakapapa)
         // var endTime = Date.now()
         // var eclipsedTime = (endTime - startTime) / 1000
         // console.log('build whakapapa time: ', eclipsedTime)
       }
+    },
+    whakapapaView (newVal) {
+      console.log("new whakapapa: ", newVal)
+      this.addWhakapapa(newVal)
     }
   },
   methods: {
-    ...mapActions(['setLoading', 'setProfile', 'setWhakapapa', 'setProfileById']),
+    ...mapActions(['setLoading', 'setProfile', 'addNestedWhakapapa', 'setProfileById', 'addWhakapapa']),
     load (status) {
       this.setLoading(status)
     },

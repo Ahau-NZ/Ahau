@@ -104,6 +104,7 @@ export default {
   },
   mounted () {
     this.componentLoaded = true
+    console.log("component loaded: ", this.componentLoaded)
     // set loader until all the nodes have been loaded
     this.zoom()
   },

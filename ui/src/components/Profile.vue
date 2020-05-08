@@ -2,7 +2,7 @@
   <div>
     <v-row>
       <!--======== Main column ========-->
-      <v-col cols="12" sm="12" lg="10" >
+      <v-col cols="12" xs="12" sm="10" md="10" >
         <!-- Name row -->
         <v-row v-if="!mobile" justify="center" class="first-row">
           <v-col>
@@ -131,7 +131,7 @@
       </v-col>
 
       <!--======== Side column ========-->
-      <v-col xs="12" sm="12" lg="2"  class="px-6">
+      <v-col xs="12" sm="12" md="2" lg="2"  class="px-6">
 
         <!-- Edit Card -->
         <v-row v-if="!mobile" class="first-row">
