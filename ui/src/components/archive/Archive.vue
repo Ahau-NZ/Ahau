@@ -169,6 +169,11 @@ export default {
       // default: () => console.log('need to define editProfile!')
     }
   },
+  computed: {
+    mobile () {
+      return this.$vuetify.breakpoint.xs
+    }
+  },
   methods: {
     openContextMenu (event) {
       if (this.dialog.view) {

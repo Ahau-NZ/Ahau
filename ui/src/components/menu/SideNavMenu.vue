@@ -1,8 +1,8 @@
 <template>
-  <v-row fluid cols="12">
+  <v-row cols="12" :class="mobile ? '' : 'pl-12'">
       <v-col v-if="showAvatar" cols="12">
         <v-btn @click="$emit('setPageComponent', 'profile')" light text style="height: auto;">
-          <Avatar :image="profile.avatarImage" :alt="profile.preferredName" size="15vh" />
+          <Avatar :class="mobile ? 'avatar-mobile' : 'avatar-desktop'" :image="profile.avatarImage" :alt="profile.preferredName" size="200px" />
         </v-btn>
       </v-col>
       <v-col v-if="showAvatar" cols="12">
@@ -109,5 +109,13 @@ export default {
     background-color: white;
     margin-left: 3px;
     margin-right: 3px;
+  }
+  .avatar-mobile {
+    justify: 'center';
+  }
+
+  .avatar-desktop {
+    margin-top: 7vw;
+    margin-left: 1vw
   }
 </style>

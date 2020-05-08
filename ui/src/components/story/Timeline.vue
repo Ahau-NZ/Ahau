@@ -8,6 +8,7 @@
         </v-col>
         <!-- RIGHT SIDE COLUMN -->
         <v-col cols="12" sx="12" sm="12" md="8">
+          <h1>Timeline</h1>
           <StoryTimeline :data="mockTimelineData"/>
         </v-col>
       </v-row>
