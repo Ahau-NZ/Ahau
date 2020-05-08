@@ -1,26 +1,163 @@
 <template>
-  <div>
-    <v-container fluid class="body-width white pa-5 niho-bg">
+<div :class="['wrapper', mobile ? '' : 'top-padding']">
+  <v-container fluid class="body-width white niho-bg">
+    <v-row>
+        <v-col>
+          <slot name="nav"></slot>
+        </v-col>
+        <v-col cols="12" lg="10">
+            <h1 class="title black--text my-6">Collections</h1>
+            <v-row class="mx-0 overflow">
+              <CollectionCard :collections="mockCollections" />
+            </v-row>
+            <v-divider class="mt-6 mb-8" light></v-divider>
+            <v-row justify="center">
+              <ArchiveStory />
+            </v-row>
+        </v-col>
+        <v-col cols="12" lg="2" class="px-12">
+            <v-row>
+                <v-col>
+                    <v-row justify="center" align="center">
+                      <v-btn large class="my-2" fab color="white" @click.stop="openContextMenu($event)">
+                        <v-icon large class="black--text">mdi-plus</v-icon>
+                      </v-btn>
+                    </v-row>
+                    <v-row justify="center" align="center">
+                      <v-btn small class="my-2" fab color="white" @click="editProfile()">
+                        <v-icon small class="black--text">mdi-magnify</v-icon>
+                      </v-btn>
+                    </v-row>
+                </v-col>
+            </v-row>
+        </v-col>
+      </v-row>
     </v-container>
+    <vue-context ref="menu" class="pa-4">
+      <li v-for="(option, index) in contextMenuOpts" :key="index">
+          <a href="#" @click.prevent="updateDialog(option.dialog)" class="d-flex align-center px-4">
+              <v-icon light>{{ option.icon }}</v-icon>
+              <p class="ma-0 pl-3">{{ option.title }}</p>
+          </a>
+      </li>
+      <li v-for="(option, index) in contextMenuOpts" :key="index">
+          <a href="#" @click.prevent="option.action">{{ option.title }}</a>
+      </li>
+    </vue-context>
+
+    <DialogHandler
+        :dialog.sync="dialog.active"
+        :type.sync="dialog.type"
+    />
   </div>
 </template>
 
 <script>
-import ProfileInfoCard from '@/components/profile/ProfileInfoCard.vue'
-import ProfileCard from '@/components/profile/ProfileCard.vue'
-import Header from '@/components/profile/Header.vue'
-import Kaitiaki from '@/components/profile/Kaitiaki.vue'
+import {
+  VueContext
+} from 'vue-context'
 
-import calculateAge from '@/lib/calculate-age'
-import formatDate from '@/lib/format-date'
+import ArchiveStory from '@/components/ArchiveStory.vue'
+import CollectionCard from '@/components/archive/CollectionCard.vue'
+
+import DialogHandler from '@/components/dialog/DialogHandler.vue'
+
+// const get = require('lodash.get')
 
 export default {
-  name: 'Profile',
-  components: {
-    Header,
-    ProfileInfoCard,
-    ProfileCard,
-    Kaitiaki
+  name: 'ArchiveShow',
+  data () {
+    return {
+      mockCollections: [{
+        image: require('@/assets/mock1.jpg'),
+        title: 'Life Lessons',
+        description: 'Lessons that I have learned in life',
+        stories: ['storyid1', 'storyid2', 'storyid3', 'storyid4'],
+        lastSubmissionDate: new Date(),
+        hasAccess: [{
+          id: 123,
+          preferredName: 'Ian',
+          avatarImage: require('@/assets/koro.svg')
+        },
+        {
+          id: 456,
+          preferredName: 'Ben',
+          avatarImage: require('@/assets/kuia.svg')
+        }
+        ]
+      },
+      {
+        image: require('@/assets/mock3.jpg'),
+        title: 'Private Records',
+        description: 'Private records that I want to remember',
+        stories: ['storyid9', 'storyid10', 'storyid11', 'storyid12'],
+        lastSubmissionDate: new Date(),
+        hasAccess: [{
+          id: 123,
+          preferredName: 'Ian',
+          avatarImage: require('@/assets/koro.svg')
+        },
+        {
+          id: 456,
+          preferredName: 'Ben',
+          avatarImage: require('@/assets/kuia.svg')
+        }
+        ]
+      },
+      {
+        image: require('@/assets/mock3.jpg'),
+        title: 'Private Records',
+        description: 'Private records that I want to remember',
+        stories: ['storyid9', 'storyid10', 'storyid11', 'storyid12'],
+        lastSubmissionDate: new Date(),
+        hasAccess: [{
+          id: 123,
+          preferredName: 'Ian',
+          avatarImage: require('@/assets/koro.svg')
+        },
+        {
+          id: 456,
+          preferredName: 'Ben',
+          avatarImage: require('@/assets/kuia.svg')
+        }
+        ]
+      },
+      {
+        image: require('@/assets/mock3.jpg'),
+        title: 'Private Records',
+        description: 'Private records that I want to remember',
+        stories: ['storyid9', 'storyid10', 'storyid11', 'storyid12'],
+        lastSubmissionDate: new Date(),
+        hasAccess: [{
+          id: 123,
+          preferredName: 'Ian',
+          avatarImage: require('@/assets/koro.svg')
+        },
+        {
+          id: 456,
+          preferredName: 'Ben',
+          avatarImage: require('@/assets/kuia.svg')
+        }
+        ]
+      }
+      ],
+      dialog: {
+        active: null,
+        type: null
+      },
+      contextMenuOpts: [{
+        title: 'Create a new Collection',
+        dialog: 'new-collection',
+        icon: 'mdi-folder-multiple-outline'
+      },
+      {
+        title: 'Create a new Record',
+        dialog: 'new-record',
+        icon: 'mdi-file-outline'
+      }
+      ]
+
+    }
   },
   props: {
     profile: {
@@ -30,91 +167,47 @@ export default {
     editProfile: {
       type: Function
       // default: () => console.log('need to define editProfile!')
-    },
-    setupProfile: Function
-  },
-  data () {
-    return {
-      isEditing: false
-    }
-  },
-  computed: {
-    mobile () {
-      return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
-    },
-    headerHeight () {
-      switch (this.$vuetify.breakpoint.name) {
-        case 'xs': return '150px'
-        case 'sm': return '150px'
-        case 'md': return '250px'
-        case 'lg': return '250px'
-        case 'xl': return '250px'
-        default:
-          return '250px'
-      }
     }
   },
   methods: {
-    splitParagraphs (text) {
-      if (!text) return
-      return text.split('\n\n')
-    },
-    getComponent () {
-      // isMobile would be some check to determine the validity of that, how ever you check for that
-      switch (this.$vuetify.breakpoint.name) {
-        case 'xs':
-          return 'ProfileShowMobile'
-        case 'sm':
-        case 'md':
-        case 'lg':
-        case 'xl':
-          return 'ProfileShowDesktop'
+    openContextMenu (event) {
+      if (this.dialog.view) {
+        this.toggleView()
       }
+      this.$refs.menu.open(event)
     },
-    age (born) {
-      var age = calculateAge(born)
-      if (age == null) {
-        return 'age not entered'
-      }
-      return age
-    },
-    formatDob (born) {
-      var formattedDate = formatDate(born)
-      if (formattedDate == null) {
-        return 'no dob'
-      }
-      return formattedDate
+    toggleView () {
+      this.dialog.view = !this.dialog.view
     },
     updateDialog (dialog) {
-      this.$emit('setDialog', dialog)
+      this.dialog.active = dialog
     }
+  },
+  components: {
+    ArchiveStory,
+    CollectionCard,
+    VueContext,
+    DialogHandler
   }
 }
 </script>
-<style scoped lang="scss">
-  .wrapper {
-    .body-width {
-      /* min-width: $formWidth; */
-      max-width: 100vw;
-      min-height: 100vh;
-      background: white;
-    }
 
-    .niho-bg {
-      background: linear-gradient(rgba(255, 255, 255, 0.7),
-          rgba(255, 255, 255, 0.7)), url(../assets/niho.svg);
-      background-position-x: 800px;
-      background-attachment: fixed;
-      background-repeat: no-repeat;
+<style lang="scss" scoped>
+@import "~vue-context/dist/css/vue-context.css";
 
-    }
-  }
+.overflow {
+    width: 100vw;
+    overflow-y: scroll;
+    -ms-overflow-style: none;
+}
+/* this hides overflow scrollbar */
+.overflow::-webkit-scrollbar {
+  display: none;
+}
 
-  .rounded-card {
-    border-radius: 10px;
-    p {
-      font-size: 0.8em;
-      line-height: 1.6;
-    }
-  }
+.overflow-x {
+  width:'100vw';
+  height:200px;
+  overflow-y:scroll;
+}
 </style>

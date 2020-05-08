@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div :class="['wrapper', mobile ? '' : 'top-padding']">
     <Header
       :preferredName="profile.preferredName"
       :headerImage="profile.headerImage"
@@ -10,7 +10,7 @@
       <v-container fluid class="body-width white pa-5 niho-bg">
 
       <v-row :justify="mobile ? 'center' : 'start'">
-        <h1 class="primary--text" :style="[ mobile ? { marginTop: '100px' } : { marginLeft: '210px' }]">{{ profile.legalName }}</h1>
+        <h1 class="primary--text" :style="[ mobile ? { marginTop: '100px' } : { marginLeft: '210px' }]">{{ profile.legalName ? profile.legalName : profile.preferredName }}</h1>
       </v-row>
       <v-row class="content-top-margin">
         <!-- LEFT SIDE COLUMN -->
@@ -137,24 +137,6 @@ export default {
 }
 </script>
 <style scoped lang="scss">
-  .wrapper {
-    .body-width {
-      /* min-width: $formWidth; */
-      max-width: 100vw;
-      min-height: 100vh;
-      background: white;
-    }
-
-    .niho-bg {
-      background: linear-gradient(rgba(255, 255, 255, 0.7),
-          rgba(255, 255, 255, 0.7)), url(../assets/niho.svg);
-      background-position-x: 800px;
-      background-attachment: fixed;
-      background-repeat: no-repeat;
-
-    }
-  }
-
   .rounded-card {
     border-radius: 10px;
     p {

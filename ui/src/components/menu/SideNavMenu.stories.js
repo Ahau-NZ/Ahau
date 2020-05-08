@@ -1,26 +1,26 @@
-import Archive from './Archive.vue'
+import SideNavMenu from './SideNavMenu.vue'
 import { personComplete, personMinimum } from '@/mocks/person-profile'
 
 export default {
-  title: 'Archive'
+  title: 'SideNavMenu'
 }
 
 export const Complete = () => ({
-  template: '<Archive :profile="selectedProfile"/>',
+  template: '<SideNavMenu :profile="selectedProfile" show-avatar/>',
   data () {
     return {
       selectedProfile: personComplete
     }
   },
-  components: { Archive }
+  components: { SideNavMenu }
 })
 
 export const Minimum = () => ({
-  template: '<Archive :profile="selectedProfile"/>',
+  template: '<SideNavMenu :profile="selectedProfile"/>',
   data () {
     return {
       selectedProfile: personMinimum
     }
   },
-  components: { Archive }
+  components: { SideNavMenu }
 })

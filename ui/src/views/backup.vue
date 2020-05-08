@@ -75,12 +75,11 @@
 import DialogHandler from '@/components/dialog/DialogHandler.vue'
 import Header from '@/components/profile/Header.vue'
 import Avatar from '@/components/Avatar.vue'
-import SideNavMenu from '@/components/SideNavMenu.vue'
+import SideNavMenu from '@/components/menu/SideNavMenu.vue'
 import tree from '@/lib/tree-helpers'
 
 import Profile from '@/components/Profile'
 import Archive from '@/components/Archive'
-import StoryTimeline from '@/views/StoryShow'
 
 import {
   getProfile
@@ -105,8 +104,7 @@ export default {
     Avatar,
     SideNavMenu,
     Profile,
-    Archive,
-    StoryTimeline
+    Archive
   },
   data () {
     return {
@@ -133,7 +131,7 @@ export default {
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
-    headerHeight() {
+    headerHeight () {
       switch (this.$vuetify.breakpoint.name) {
         case 'xs': return '150px'
         case 'sm': return '150px'
@@ -141,6 +139,7 @@ export default {
         case 'lg': return '250px'
         case 'xl': return '250px'
       }
+      return ''
     }
   },
   methods: {

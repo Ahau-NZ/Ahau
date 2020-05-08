@@ -14,8 +14,11 @@
       </template>
     </Archive>
 
-    <!-- Timeline Page -->
-    <StoryTimeline v-if="pageComponents.storyTimeline" :profile="selectedProfile"/>
+    <Timeline v-if="pageComponents.timeline" :profile="selectedProfile">
+      <template v-slot:nav>
+        <SideNavMenu :profile="selectedProfile" @setPageComponent="setPageComponent($event)" :show-avatar="true"/>
+      </template>
+    </Timeline>
 
     <DialogHandler
       :dialog.sync="dialog.active"
@@ -27,10 +30,10 @@
 
 <script>
 import DialogHandler from '@/components/dialog/DialogHandler.vue'
-import SideNavMenu from '@/components/SideNavMenu.vue'
+import SideNavMenu from '@/components/menu/SideNavMenu.vue'
 import Profile from '@/components/Profile'
-import Archive from '@/components/Archive'
-import StoryTimeline from '@/views/StoryShow'
+import Archive from '@/components/archive/Archive'
+import Timeline from '@/components/story/Timeline.vue'
 
 import {
   getProfile
@@ -43,7 +46,7 @@ import {
 const NULL_PAGE_COMPONENTS = {
   profile: false,
   archive: false,
-  storyTimeline: false
+  timeline: false
 }
 
 export default {
@@ -54,7 +57,7 @@ export default {
     SideNavMenu,
     Profile,
     Archive,
-    StoryTimeline
+    Timeline
   },
   data () {
     return {
@@ -66,7 +69,7 @@ export default {
       pageComponents: {
         profile: true,
         archive: false,
-        storyTimeline: false
+        timeline: false
       },
       header: true,
       bigAvatar: true
@@ -90,10 +93,11 @@ export default {
       // set all to false
       this.pageComponents.profile = false
       this.pageComponents.archive = false
-      this.pageComponents.storyTimeline = false
+      this.pageComponents.timeline = false
 
       this.header = false
       this.bigAvatar = false
+      console.log(component)
 
       switch (component) {
         case 'Profile':
@@ -105,7 +109,7 @@ export default {
           this.pageComponents.archive = true
           break
         case 'Timeline':
-          this.pageComponents.storyTimeline = true
+          this.pageComponents.timeline = true
           break
         default:
           this.pageComponents.profile = true
@@ -126,26 +130,9 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped lang="scss">
-
-  $avatarSize: 25vh;
-  $ratio: 5.33333;
-  $headerHeight: 100vw / $ratio;
-  $maxHeaderWidth: 1400px;
-  $formWidth: 600px;
-
-  * {
-    color: black;
-  }
-
-  .border {
-    border-style: 1px solid lightgrey;
-  }
-.content-top-margin {
-  margin-top: 5vw;
-}
-
+<style lang="scss">
 .wrapper {
+  color: black;
   .body-width {
     /* min-width: $formWidth; */
     max-width: 100vw;
@@ -159,7 +146,9 @@ export default {
     background-position-x: 800px;
     background-attachment: fixed;
     background-repeat: no-repeat;
-
   }
+}
+.top-padding {
+  margin-top: 64px;
 }
 </style>

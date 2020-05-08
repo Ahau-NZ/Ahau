@@ -16,7 +16,7 @@ import CommunityEdit from '@/views/CommunityEdit.vue'
 
 import StoryShow from '@/views/StoryShow.vue'
 
-import Archive from '@/components/Archive.vue'
+import Archive from '@/components/archive/Archive.vue'
 
 import Login from '@/views/Login.vue'
 
