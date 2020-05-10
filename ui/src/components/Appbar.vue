@@ -143,12 +143,12 @@ export default {
       dialog: false,
       profile: {
         id: null,
-        avatarImage: null
-      },
+        avatarImage: {}
+      }
     }
   },
   computed: {
-    ...mapGetters(['whoami','whakapapa', 'route']),
+    ...mapGetters(['whoami', 'whakapapa', 'route']),
     classObject: function () {
       return {
         'mobile': this.mobile,
@@ -160,8 +160,8 @@ export default {
       return this.$vuetify.breakpoint.xs
     },
     goWhakapapa () {
-      if (this.route.from){
-        return this.route.from.name === "whakapapaShow" && this.route.name === "profileShow"
+      if (this.route.from) {
+        return this.route.from.name === 'whakapapaShow' && this.route.name === 'profileShow'
       }
     }
   },

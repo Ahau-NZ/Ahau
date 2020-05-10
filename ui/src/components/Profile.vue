@@ -204,7 +204,6 @@ export default {
   },
   computed: {
     mobile: function () {
-      console.log('mobile = ', this.$vuetify.breakpoint.xsOnly)
       return this.$vuetify.breakpoint.xsOnly
     }
   },

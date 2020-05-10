@@ -1,11 +1,10 @@
-// import gql from 'graphql-tag'
-// import { createProvider } from '@/plugins/vue-apollo'
-// import actions from './actions'
 import tree from '@/lib/tree-helpers'
 
 const state = {
   nestedWhakapapa: {},
-  whakapapa: {}
+  whakapapa: {},
+  relationshipLinks: new Map(),
+  currentFocus: ''
 }
 
 const getters = {
@@ -14,6 +13,12 @@ const getters = {
   },
   whakapapa: state => {
     return state.whakapapa
+  },
+  relationshipLinks: state => {
+    return state.relationshipLinks
+  },
+  currentFoucs: state => {
+    return state.currentFocus
   }
 }
 
@@ -23,6 +28,9 @@ const mutations = {
   },
   setWhakapapa (state, whakapapa) {
     state.whakapapa = whakapapa
+  },
+  setRelationshipLinks (state, link) {
+    state.relationshipLinks = link
   }
 }
 
@@ -32,7 +40,6 @@ const actions = {
     commit('setNestedWhakapapa', whakapapa)
   },
   updateNode ({ state, commit }, { node, path }) {
-    console.log('store whakapapa module')
     var whakapapa = tree.updateNode(state.nestedWhakapapa, node)
     commit('setNestedWhakapapa', whakapapa)
   },
@@ -64,6 +71,9 @@ const actions = {
   },
   addWhakapapa ({ commit }, whakapapa) {
     commit('setWhakapapa', whakapapa)
+  },
+  addRelationshipLinks ({ commit }, link) {
+    commit('setRelationshipLinks', link)
   }
 }
 

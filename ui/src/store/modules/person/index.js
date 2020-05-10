@@ -58,7 +58,6 @@ const actions = {
         person = tree.getSiblings(parentProfile, person)
         return parentProfile
       }))
-      console.log('person: ', person)
       commit('updateProfile', person)
     }
   }
