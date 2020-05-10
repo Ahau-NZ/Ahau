@@ -14,7 +14,6 @@
         <v-row>
           <v-icon large>mdi-chevron-left</v-icon>
           <Avatar
-            v-if="!mobile"
             size="50px"
             class="ma-0"
             :image="whakapapa.image"
@@ -24,9 +23,6 @@
       </router-link>
       <v-spacer />
       <!-- TODO this takes you back to previous view -->
-      <!-- <v-btn v-if="!mobile" @click="$router.go(-1)" icon dark>
-        <v-icon>mdi-arrow-left</v-icon>
-      </v-btn> -->
 
       <!-- Desktop doesn't use a drawer, it has the links directly in the app bar -->
       <template v-if="!mobile">
