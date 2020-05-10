@@ -1,20 +1,22 @@
 <template>
-  <v-row cols="12" :class="mobile ? '' : 'pl-12'">
-      <v-col v-if="showAvatar" cols="12">
+  <v-row cols="12" xs="2">
+    <v-col cols="12">
+      <v-row v-if="showAvatar" cols="12" xs="12" sm="12" :justify="mobile ? 'center' : ''">
         <v-btn @click="$emit('setPageComponent', 'profile')" light text style="height: auto;">
-          <Avatar :class="mobile ? 'avatar-mobile' : 'avatar-desktop'" :image="profile.avatarImage" :alt="profile.preferredName" size="200px" />
+          <Avatar :image="profile.avatarImage" :alt="profile.preferredName" size="200px" />
         </v-btn>
-      </v-col>
-      <v-col v-if="showAvatar" cols="12">
+      </v-row>
+      <v-row v-if="showAvatar" justify="center" align="center" cols="12" xs="12">
         <h1 class="primary--text">{{ profile.preferredName }}</h1>
-      </v-col>
+      </v-row>
+    </v-col>
       <!-- <v-row :class="mobile ? 'rounded-border w' : ''"> -->
-        <v-col v-for="(item, i) in menuItems" :key="i" :cols="mobile ? '3' : '12'">
-          <v-btn @click="$emit('setPageComponent', item.label)" light :fab="mobile" text>
-            <v-img justify-start max-width="30" max-height="30" :src="item.icon" justify-center/>
-            <span v-if="!mobile && !isOverflowing" ref="text" class="ml-4 black--text nav-label subtitle-1">{{ item.label }}</span>
-          </v-btn>
-        </v-col>
+    <v-col v-for="(item, i) in menuItems" :key="i" :cols="mobile ? '3' : '12'">
+      <v-btn @click="$emit('setPageComponent', item.label)" light :fab="mobile" text>
+        <v-img justify-start max-width="30" max-height="30" :src="item.icon" justify-center/>
+        <span v-if="!mobile && !isOverflowing" ref="text" class="ml-4 black--text nav-label subtitle-1">{{ item.label }}</span>
+      </v-btn>
+    </v-col>
       <!-- </v-row> -->
   </v-row>
 </template>

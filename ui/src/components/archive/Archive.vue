@@ -2,10 +2,10 @@
 <div :class="['wrapper', mobile ? '' : 'top-padding']">
   <v-container fluid class="body-width white niho-bg">
     <v-row>
-        <v-col>
+        <v-col cols="12" xs="12" sm="12" md="2">
           <slot name="nav"></slot>
         </v-col>
-        <v-col cols="12" lg="10">
+        <v-col cols="12" xs="12" sm="12" md="8">
             <h1 class="title black--text my-6">Collections</h1>
             <v-row class="mx-0 overflow">
               <CollectionCard :collections="mockCollections" />
@@ -39,9 +39,6 @@
               <v-icon light>{{ option.icon }}</v-icon>
               <p class="ma-0 pl-3">{{ option.title }}</p>
           </a>
-      </li>
-      <li v-for="(option, index) in contextMenuOpts" :key="index">
-          <a href="#" @click.prevent="option.action">{{ option.title }}</a>
       </li>
     </vue-context>
 
