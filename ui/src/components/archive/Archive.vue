@@ -7,8 +7,8 @@
         </v-col>
         <v-col cols="12" xs="12" sm="12" md="8">
             <h1 class="title black--text my-6">Collections</h1>
-            <v-row class="mx-0 overflow">
-              <CollectionCard :collections="mockCollections" />
+            <v-row class="mx-0">
+              <CollectionGroup :collections="mockCollections" />
             </v-row>
             <v-divider class="mt-6 mb-8" light></v-divider>
             <v-row justify="center">
@@ -55,7 +55,7 @@ import {
 } from 'vue-context'
 
 import ArchiveStory from '@/components/ArchiveStory.vue'
-import CollectionCard from '@/components/archive/CollectionCard.vue'
+import CollectionGroup from '@/components/archive/CollectionGroup.vue'
 
 import DialogHandler from '@/components/dialog/DialogHandler.vue'
 
@@ -65,78 +65,93 @@ export default {
   name: 'ArchiveShow',
   data () {
     return {
-      mockCollections: [{
-        image: require('@/assets/mock1.jpg'),
-        title: 'Life Lessons',
-        description: 'Lessons that I have learned in life',
-        stories: ['storyid1', 'storyid2', 'storyid3', 'storyid4'],
-        lastSubmissionDate: new Date(),
-        hasAccess: [{
-          id: 123,
-          preferredName: 'Ian',
-          avatarImage: require('@/assets/koro.svg')
+      mockCollections: [
+        {
+          image: require('@/assets/mock3.jpg'),
+          title: 'Private Records',
+          description: 'Private records that I want to remember',
+          stories: ['storyid9', 'storyid10', 'storyid11', 'storyid12'],
+          lastSubmissionDate: new Date(),
+          hasAccess: [{
+            id: 123,
+            preferredName: 'Ian'
+            // avatarImage: require('@/assets/koro.svg')
+          },
+          {
+            id: 456,
+            preferredName: 'Ben'
+            // avatarImage: require('@/assets/kuia.svg')
+          }
+          ]
         },
         {
-          id: 456,
-          preferredName: 'Ben',
-          avatarImage: require('@/assets/kuia.svg')
-        }
-        ]
-      },
-      {
-        image: require('@/assets/mock3.jpg'),
-        title: 'Private Records',
-        description: 'Private records that I want to remember',
-        stories: ['storyid9', 'storyid10', 'storyid11', 'storyid12'],
-        lastSubmissionDate: new Date(),
-        hasAccess: [{
-          id: 123,
-          preferredName: 'Ian',
-          avatarImage: require('@/assets/koro.svg')
+          image: require('@/assets/mock3.jpg'),
+          title: 'Private Records',
+          description: 'Private records that I want to remember',
+          stories: ['storyid9', 'storyid10', 'storyid11', 'storyid12'],
+          lastSubmissionDate: new Date(),
+          hasAccess: [{
+            id: 123,
+            preferredName: 'Ian'
+            // avatarImage: require('@/assets/koro.svg')
+          },
+          {
+            id: 456,
+            preferredName: 'Ben'
+            // avatarImage: require('@/assets/kuia.svg')
+          }]
         },
         {
-          id: 456,
-          preferredName: 'Ben',
-          avatarImage: require('@/assets/kuia.svg')
-        }
-        ]
-      },
-      {
-        image: require('@/assets/mock3.jpg'),
-        title: 'Private Records',
-        description: 'Private records that I want to remember',
-        stories: ['storyid9', 'storyid10', 'storyid11', 'storyid12'],
-        lastSubmissionDate: new Date(),
-        hasAccess: [{
-          id: 123,
-          preferredName: 'Ian',
-          avatarImage: require('@/assets/koro.svg')
+          image: require('@/assets/mock3.jpg'),
+          title: 'Private Records',
+          description: 'Private records that I want to remember',
+          stories: ['storyid9', 'storyid10', 'storyid11', 'storyid12'],
+          lastSubmissionDate: new Date(),
+          hasAccess: [{
+            id: 123,
+            preferredName: 'Ian',
+            avatarImage: { uri: require('@/assets/koro.svg') }
+          },
+          {
+            id: 456,
+            preferredName: 'Ben',
+            avatarImage: { uri: require('@/assets/kuia.svg') }
+          }]
         },
         {
-          id: 456,
-          preferredName: 'Ben',
-          avatarImage: require('@/assets/kuia.svg')
-        }
-        ]
-      },
-      {
-        image: require('@/assets/mock3.jpg'),
-        title: 'Private Records',
-        description: 'Private records that I want to remember',
-        stories: ['storyid9', 'storyid10', 'storyid11', 'storyid12'],
-        lastSubmissionDate: new Date(),
-        hasAccess: [{
-          id: 123,
-          preferredName: 'Ian',
-          avatarImage: require('@/assets/koro.svg')
+          image: require('@/assets/mock3.jpg'),
+          title: 'Private Records',
+          description: 'Private records that I want to remember',
+          stories: ['storyid9', 'storyid10', 'storyid11', 'storyid12'],
+          lastSubmissionDate: new Date(),
+          hasAccess: [{
+            id: 123,
+            preferredName: 'Ian',
+            avatarImage: { uri: require('@/assets/koro.svg') }
+          },
+          {
+            id: 456,
+            preferredName: 'Ben',
+            avatarImage: { uri: require('@/assets/kuia.svg') }
+          }]
         },
         {
-          id: 456,
-          preferredName: 'Ben',
-          avatarImage: require('@/assets/kuia.svg')
+          image: require('@/assets/mock3.jpg'),
+          title: 'Private Records',
+          description: 'Private records that I want to remember',
+          stories: ['storyid9', 'storyid10', 'storyid11', 'storyid12'],
+          lastSubmissionDate: new Date(),
+          hasAccess: [{
+            id: 123,
+            preferredName: 'Ian',
+            avatarImage: { uri: require('@/assets/koro.svg') }
+          },
+          {
+            id: 456,
+            preferredName: 'Ben',
+            avatarImage: { uri: require('@/assets/kuia.svg') }
+          }]
         }
-        ]
-      }
       ],
       dialog: {
         active: null,
@@ -187,7 +202,7 @@ export default {
   },
   components: {
     ArchiveStory,
-    CollectionCard,
+    CollectionGroup,
     VueContext,
     DialogHandler
   }

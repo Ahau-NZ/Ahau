@@ -8,6 +8,7 @@
     </Profile>
 
     <!-- Archive Page -->
+
     <Archive v-if="pageComponents.archive" :profile="{...selectedProfile, type: 'person'}">
       <template v-slot:nav>
         <SideNavMenu v-if="!pageComponents.profile" :profile="selectedProfile" @setPageComponent="setPageComponent($event)" :show-avatar="true"/>
