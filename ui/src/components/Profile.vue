@@ -48,14 +48,23 @@
         <v-col cols="12" sx="12" sm="12" md="2" :class="mobile ? 'pl-0 pr-0' : ''">
           <Kaitiaki
             title="Kaitiaki"
-            subtitle="These are the people who have administrative rights on this profile"
-            :profiles="profile.tiaki"
-          />
+            helperText="Caretakers of this profile"
+          >
+            <template v-slot:content>
+              <v-row class="ml-2">
+                <v-col cols="3" class="pt-0">
+                  <Avatar size="40px" :image="whoami.profile.avatarImage" :gender="whoami.profile.gender" :bornAt="whoami.profile.bornAt" :alt="whoami.profile.preferredName" />
+                </v-col>
+                <v-col cols="9" class="d-flex justify-start align-center">
+                  <p> {{ whoami.profile.preferredName }} </p>
+                </v-col>
+              </v-row>
+            </template>
+          </Kaitiaki>
           <Kaitiaki
             class="mt-3"
             title="Communities"
-            subtitle="These are the communities connected to this profile"
-            :profiles="profile.tiaki"
+            helperText="Communities connected to this profile"
           />
         </v-col>
       </v-row>
@@ -69,9 +78,10 @@ import ProfileInfoItem from '@/components/profile/ProfileInfoItem.vue'
 import ProfileCard from '@/components/profile/ProfileCard.vue'
 import Header from '@/components/profile/Header.vue'
 import Kaitiaki from '@/components/profile/Kaitiaki.vue'
-
+import { mapGetters } from 'vuex'
 import calculateAge from '@/lib/calculate-age'
 import formatDate from '@/lib/format-date'
+import Avatar from '@/components/Avatar.vue'
 
 export default {
   name: 'Profile',
@@ -80,7 +90,8 @@ export default {
     ProfileInfoCard,
     ProfileCard,
     Kaitiaki,
-    ProfileInfoItem
+    ProfileInfoItem,
+    Avatar
   },
   props: {
     profile: {
@@ -99,6 +110,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['whoami']),
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
@@ -164,7 +176,4 @@ export default {
     height: 70px;
   }
 
-  .nav-icon {
-    width: 30px;
-  }
 </style>
