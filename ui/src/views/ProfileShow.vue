@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- Profile Page -->
-    <Profile v-if="pageComponents.profile" :profile="selectedProfile" :setupProfile="setupProfile">
+    <Profile v-if="pageComponents.profile" :profile="selectedProfile" :setupProfile="setupProfile" @setDialog="setDialog($event)">
       <template v-slot:nav>
         <SideNavMenu :profile="selectedProfile" @setPageComponent="setPageComponent($event)"/>
       </template>

@@ -10,7 +10,7 @@
           :addButtonSlot="false" @profile-click="openProfile($event)">
         </AvatarGroup>
       </div>
-      <div v-if="profile.siblings.length" :class="mobile ? 'bb' : 'br'">
+      <div v-if="profile.siblings && profile.siblings.length" :class="mobile ? 'bb' : 'br'">
         <AvatarGroup v-if="profile.siblings" :profiles="profile.siblings" group-title="Siblings" size="50px" :show-labels="true"
           :addButtonSlot="false" @profile-click="openProfile($event)">
         </AvatarGroup>
