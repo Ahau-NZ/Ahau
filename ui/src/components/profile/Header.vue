@@ -1,15 +1,9 @@
 <template>
   <v-container class="full-width my-0 py-0">
-    <v-row class="header-bg" v-bind:style="{ backgroundImage: 'url(' + require('@/assets/nzheader.jpg') +')', height: headerHeight }">
+    <v-row :justify="mobile ? 'center' : 'start'" class="header-bg flex-columns" v-bind:style="{ backgroundImage: 'url(' + require('@/assets/nzheader.jpg') +')', height: headerHeight }">
       <!-- <v-img :src="headerImage ? headerImage.uri : require('@/assets/nzheader.jpg')" min-width="100%" /> -->
+      <Avatar :class="mobile ? 'avatar-mobile' : 'avatar-desktop'" :image="avatarImage" :alt="preferredName" :size="size" />
     </v-row>
-
-    <!-- <v-row class="avatar-row">
-      <v-row class="avatar-box">
-          <Avatar :image="avatarImage" :alt="preferredName" size="25vh" />
-      </v-row>
-    </v-row> -->
-
   </v-container>
 </template>
 
@@ -23,6 +17,20 @@ export default {
     headerImage: Object,
     avatarImage: Object,
     headerHeight: String
+  },
+  computed: {
+    mobile () {
+      return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
+    },
+    small () {
+      return this.$vuetify.breakpoint.sm
+    },
+    size () {
+      if (this.small) {
+        return '150'
+      }
+      return '200'
+    }
   },
   components: {
     Avatar
@@ -72,21 +80,29 @@ $formWidth: 600px;
 
 .avatar-row {
   position: relative;
-  /* width: $formWidth; */
   width: 100%;
-  max-width: 60vw;
-
+  /* height: 20%; */
   margin: auto;
-  // this seems like a bad way to be doing alignment here
 
   .avatar-box {
     position: absolute;
+    /* left: calc(-100vw / 3 + 3 * #{$avatarSize}); */
     top: -$avatarSize/1.5;
-    // Not sure how to calculate this
-    left: calc(-100vw / 3 + 2 * #{$avatarSize});
-
-    margin-bottom: -$avatarSize;
-    width: $avatarSize;
+    width: 100%;
   }
+}
+
+.avatar-mobile {
+  margin-top: 5vw;
+}
+
+.avatar-desktop {
+  margin-top: 7vw;
+  margin-left: 1vw
+}
+
+.avatar {
+  margin-top: 100px;
+  margin-left: 100px;
 }
 </style>

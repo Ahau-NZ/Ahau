@@ -16,7 +16,7 @@ import CommunityEdit from '@/views/CommunityEdit.vue'
 
 import StoryShow from '@/views/StoryShow.vue'
 
-import Archive from '@/components/Archive.vue'
+import Archive from '@/components/archive/Archive.vue'
 
 import Login from '@/views/Login.vue'
 
@@ -25,7 +25,7 @@ Vue.use(Router)
 export default new Router({
   mode: 'history',
   routes: [
-    { path: '/', redirect: '/login' },
+    { path: '/', redirect: '/profile/%25v+Bp+g7WS4ZR8h30vSulwWSzA5Ni3rVVv5x%2Fom7lQco=.sha256' },
     { path: '/login', name: 'login', component: Login },
     { path: '/logout', redirect: '/login' },
 

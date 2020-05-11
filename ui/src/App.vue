@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import Appbar from '@/components/Appbar.vue'
+import Appbar from '@/components/menu/Appbar.vue'
 import nodejsClient from '@/plugins/cordova-nodejs-client.js'
 import Spinner from '@/components/Spinner.vue'
 import { mapGetters, mapActions } from 'vuex'
