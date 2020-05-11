@@ -92,7 +92,7 @@
       </v-col>
     </v-row>
     <CsvHelperDialog :show="csvHelper" @click="csvInfo()" @close="csvInfo()"/>
-    <CsvErrorDialog :show="csvErrorShow" :errorMsg="errorMsg" @click="csvErrorClose()" @close="csvErrorClose()"/>
+    <CsvErrorDialog :show="csvErrorShow" :errorMsgs="errorMsgs" @click="csvErrorClose()" @close="csvErrorClose()"/>
   </v-form>
 </template>
 <script>
@@ -143,8 +143,7 @@ export default {
         rules: RULES
       },
       file: null,
-      csvData: null,
-      errorMsg: [],
+      errorMsgs: [],
       successMsg: [],
       noErrorsInCSV: true,
       csvHelper: false,
@@ -162,18 +161,18 @@ export default {
       deep: true
     },
     file (newFile) {
-      if (newFile === null) return
+      if (newFile == null) return
 
-      this.errorMsg = []
+      this.errorMsgs = []
       this.successMsg = []
 
       csv.importCsv(newFile)
         .then(csv => {
-          this.csvData = csv
           this.successMsg = ['Expected result = Top ancestor: ' + csv[0].preferredName + '. First child: ' + csv[1].preferredName]
+          this.$emit('update:data', csv)
         })
         .catch(errs => {
-          this.errorMsg = errs
+          this.errorMsgs = errs
           this.csvErrorShow = true
         })
     }
@@ -199,8 +198,7 @@ export default {
     },
     resetFile () {
       this.file = null
-      this.csvData = null
-      this.errorMsg = []
+      this.errorMsgs = []
       this.successMsg = []
     }
   }
