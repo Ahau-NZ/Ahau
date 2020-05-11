@@ -1,5 +1,5 @@
 <template>
-  <v-col :cols="mobile ? '6' : '12'" sm="6" md="3">
+  <v-col :cols="mobile ? smCols : '12'" :sm="smCols" :md="mdCols">
     <v-row>
       <v-col class=" ma-0 profile-label"><small>{{ title }}</small></v-col>
     </v-row>
@@ -19,7 +19,15 @@ export default {
   props: {
     title: String,
     value: String,
-    subValue: String
+    subValue: String,
+    smCols: {
+      type: String,
+      default: '6'
+    },
+    mdCols: {
+      type: String,
+      default: '3'
+    }
   },
   computed: {
     mobile () {

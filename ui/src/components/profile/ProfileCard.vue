@@ -1,9 +1,9 @@
 <template>
   <v-row cols="12" class="rounded-border">
     <v-col cols="12">
-      <h4 class="pa-3 mb-0"> {{ title }}</h4>
+      <h4 class="mb-0"> {{ title }}</h4>
     </v-col>
-    <v-col>
+    <v-col class="pt-0">
       <slot name="content"></slot>
     </v-col>
   </v-row>

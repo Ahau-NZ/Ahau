@@ -129,10 +129,6 @@ export default {
       columns: []
     }
   },
-  mounted () {
-    // reset nestedWhakapapa
-    this.setWhakapapa([])
-  },
   computed: {
     ...mapGetters(['whoami']),
     mobile () {
@@ -159,7 +155,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setWhakapapa', 'setLoading']),
+    ...mapActions(['addNestedWhakapapa', 'setLoading']),
     async getSuggestions ($event) {
       if (!$event) {
         this.suggestions = []

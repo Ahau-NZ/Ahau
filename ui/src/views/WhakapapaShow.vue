@@ -121,7 +121,6 @@
         class="tree"
         v-if="whakapapa.tree"
         :getRelatives="getRelatives"
-        :relationshipLinks="relationshipLinks"
         @load-descendants="loadDescendants($event)"
         @collapse-node="collapseNode($event)"
         @open-context-menu="openContextMenu($event)"
@@ -304,7 +303,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['nestedWhakapapa', 'selectedProfile', 'whoami', 'loadingState']),
+    ...mapGetters(['currentFocus', 'nestedWhakapapa', 'selectedProfile', 'whoami', 'loadingState', 'route']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -326,15 +325,22 @@ export default {
         // var startTime = Date.now()
 
         const nestedWhakapapa = await this.loadDescendants(newFocus, '', [])
-        this.setWhakapapa(nestedWhakapapa)
+        this.addNestedWhakapapa(nestedWhakapapa)
+        this.addRelationshipLinks(this.relationshipLinks)
         // var endTime = Date.now()
         // var eclipsedTime = (endTime - startTime) / 1000
         // console.log('build whakapapa time: ', eclipsedTime)
       }
+    },
+    whakapapaView (newVal) {
+      this.addWhakapapa(newVal)
+    },
+    relationshipLinks (newVal) {
+      this.addRelationshipLinks(newVal)
     }
   },
   methods: {
-    ...mapActions(['setLoading', 'setProfile', 'setWhakapapa', 'setProfileById']),
+    ...mapActions(['setLoading', 'setProfile', 'addNestedWhakapapa', 'setProfileById', 'addWhakapapa', 'addRelationshipLinks']),
     load (status) {
       this.setLoading(status)
     },
@@ -767,8 +773,14 @@ export default {
     getImage () {
       return avatarHelper.defaultImage(this.bornAt, this.gender)
     }
+  },
+  destroyed () {
+    // reset whakapapa and relationships when leaving the tree
+    this.addNestedWhakapapa([])
+    this.addRelationshipLinks([])
   }
 }
+
 </script>
 <style>
 .v-select.v-select--is-menu-active .v-input__icon--append .v-icon {
