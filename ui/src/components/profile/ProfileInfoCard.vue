@@ -1,25 +1,25 @@
 <template>
     <v-row cols="12" class="rounded-border">
-      <ProfileInfoItem :class="mobile ? 'bb' : 'br bb'" :title="'Preferred Name'" :value="profile.preferredName"/>
-      <ProfileInfoItem :class="mobile ? 'bb' : 'br bb'" :title="'Age'" :value="age" :sub-value="dob" />
-      <ProfileInfoItem :class="mobile ? 'bb' : 'br bb'" :title="'Occupation'" :value="profile.occupation" />
+      <ProfileInfoItem class="br bb" :title="'Preferred Name'" :value="profile.preferredName"/>
+      <ProfileInfoItem class="br bb" :title="'Age'" :value="age" :sub-value="dob" />
+      <ProfileInfoItem class="br bb" :title="'Occupation'" :value="profile.occupation" />
       <ProfileInfoItem class="bb" :title="'Location'" :value="profile.location" />
 
-      <v-col cols="12" xs="12" sm="12" md="4" :class="mobile ? 'bb' : 'br'">
+      <div v-if="profile.parents.length" :class="mobile ? 'bb' : 'br'">
         <AvatarGroup v-if="profile.parents" :profiles="profile.parents" group-title="Parents" size="50px" :show-labels="true"
           :addButtonSlot="false" @profile-click="openProfile($event)">
         </AvatarGroup>
-      </v-col>
-      <v-col cols="12" xs="12" sm="12" md="4" :class="mobile ? 'bb' : 'br'">
+      </div>
+      <div v-if="profile.siblings.length" :class="mobile ? 'bb' : 'br'">
         <AvatarGroup v-if="profile.siblings" :profiles="profile.siblings" group-title="Siblings" size="50px" :show-labels="true"
           :addButtonSlot="false" @profile-click="openProfile($event)">
         </AvatarGroup>
-      </v-col>
-      <v-col cols="12" xs="12" sm="12" md="4">
+      </div>
+      <div v-if="profile.children.length">
         <AvatarGroup v-if="profile.children" :profiles="profile.children" group-title="Children" size="50px" :show-labels="true"
           :addButtonSlot="false" @profile-click="openProfile($event)">
         </AvatarGroup>
-      </v-col>
+      </div>
     </v-row>
 </template>
 
@@ -48,18 +48,16 @@ export default {
       return 'divider-vertical'
     },
     age () {
-      var age = calculateAge(this.profile.bornAt)
-      if (age == null) {
-        return 'age not entered'
+      if (this.profile.bornAt) {
+        var age = calculateAge(this.profile.bornAt)
+        return String(age)
       }
-      return String(age)
     },
     dob () {
-      var formattedDate = formatDate(this.profile.bornAt)
-      if (formattedDate == null) {
-        return 'no dob'
+      if (this.profile.bornAt) {
+        var formattedDate = formatDate(this.profile.bornAt)
+        return formattedDate
       }
-      return formattedDate
     }
   },
   methods: {
@@ -83,6 +81,9 @@ export default {
 
 .bb {
   border-bottom: 0.5px solid rgba(0,0,0,0.12);
+}
+.bt {
+  border-top: 0.5px solid rgba(0,0,0,0.12);
 }
 
 </style>
