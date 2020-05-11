@@ -13,8 +13,8 @@
       <!-- <v-row :class="mobile ? 'rounded-border w' : ''"> -->
     <v-row cols="12" ref="sideNav">
       <v-col v-for="(item, i) in menuItems" :key="i" :cols="mobile ? '3' : '12'">
-        <v-btn @click="$emit('setPageComponent', item.label)" light :fab="mobile" text color="red">
-          <img justify="start" max-width="30" max-height="30" :src="item.icon" />
+        <v-btn @click="$emit('setPageComponent', item.label)" light :fab="mobile" text >
+          <v-img justify="start" max-width="30" max-height="30" :src="item.icon" />
           <span v-if="!mobile && !isOverflowing" ref="text" class="ml-2 black--text nav-label subtitle-1">{{ item.label }}</span>
         </v-btn>
       </v-col>
