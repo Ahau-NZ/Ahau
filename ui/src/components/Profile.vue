@@ -6,9 +6,20 @@
     />
 
       <v-container fluid class="body-width white pa-5 niho-bg">
-
-      <v-row :justify="mobile ? 'center' : 'start'">
-        <h1 class="primary--text" :style="[ mobile ? { marginTop: '100px' } : { marginLeft: '210px' }]">{{ profile.legalName ? profile.legalName : profile.preferredName }}</h1>
+      <v-row>
+       <v-col cols="12" offset-md="2" md="8" sm="12" class="py-0" :align="mobile ? 'center' : 'start'">
+          <h1 class="primary--text" >{{ profile.legalName ? profile.legalName : profile.preferredName }}</h1>
+        </v-col>
+        <v-col :order="mobile ? 'first' : 'last'" :align="mobile ? 'end' : 'center'" cols="12" md="2" sm="12"  class="py-0">
+         <v-tooltip left>
+            <template v-slot:activator="{ on }">
+                <v-btn v-on="on" x-small class="my-2" fab color="white" @click="updateDialog('edit-node')">
+                  <v-icon small class="black--text">mdi-pencil</v-icon>
+                </v-btn>
+            </template>
+            <span>Edit profile</span>
+          </v-tooltip>
+        </v-col>
       </v-row>
       <v-row class="content-top-margin">
         <!-- LEFT SIDE COLUMN -->
