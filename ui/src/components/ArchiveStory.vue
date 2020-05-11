@@ -45,11 +45,11 @@
                             <h4>People</h4>
                             <!-- TODO: v-for People -->
                             <v-row>
-                                <img class="people-circle" v-bind:src="require('@/assets/koro.svg')" />
+                                <!-- <img class="people-circle" v-bind:src="require('@/assets/koro.svg')" />
                                 <img class="people-circle" v-bind:src="require('@/assets/kuia.svg')" />
                                 <img class="people-circle" v-bind:src="require('@/assets/tama.svg')" />
                                 <img class="people-circle" v-bind:src="require('@/assets/tane.svg')" />
-                                <img class="people-circle" v-bind:src="require('@/assets/wahine.svg')" />
+                                <img class="people-circle" v-bind:src="require('@/assets/wahine.svg')" /> -->
                             </v-row>
                         </v-col>
 

@@ -213,7 +213,7 @@
 
 <script>
 import Header from '@/components/profile/Header.vue'
-import SideNavMenu from '@/components/SideNavMenu.vue'
+import SideNavMenu from '@/components/menu/SideNavMenu.vue'
 import Kaitiaki from '@/components/profile/Kaitiaki.vue'
 import Avatar from '@/components/Avatar.vue'
 import AvatarGroup from '@/components/AvatarGroup.vue'

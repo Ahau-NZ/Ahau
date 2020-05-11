@@ -1,32 +1,33 @@
 <template>
-  <v-container class="full-width my-0 py-0 px-0">
-    <v-img class="header-bg py-0 px-0" :src="headerPic" :height="headerHeight" >
-      <ImagePicker class="edit-header pb-2 " label=" " type="header" :isView="true" @updateAvatar="updateHeader($event)" :avatarLoaded="headerImage"/>
-    </v-img>
+  <v-container class="header-bg full-width my-0 py-0 px-0" v-bind:style="{ backgroundImage: 'url(' + headerImage +')', height: headerHeight }">
+    <v-row>
+      <v-col>
+        <Avatar :class="mobile ? 'avatar-mobile' : 'avatar-desktop'" :image="profile.avatarImage" :alt="profile.preferredName" :size="size"/>
+      </v-col>
+      <v-col>
+        <ImagePicker class="picker" label=" " type="header" :isView="true" @updateAvatar="updateHeader($event)" :avatarLoaded="headerImage"/>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 
 <script>
 import ImagePicker from '@/components/ImagePicker.vue'
-import { mapGetters } from 'vuex'
+import Avatar from '@/components/Avatar.vue'
+
 import gql from 'graphql-tag'
 
 export default {
   name: 'ProfileHeader',
   props: {
-    headerImage: { type: Object, default: null },
-    headerHeight: String
+    profile: Object
   },
-  computed: {
-    ...mapGetters(['selectedProfile']),
-    headerPic () {
-      if (this.headerImage) return this.headerImage.uri
-      else return require('@/assets/nzheader.jpg')
-    }
+  components: {
+    ImagePicker,
+    Avatar
   },
   methods: {
     async updateHeader (image) {
-      console.log('new header :', image)
       const res = await this.$apollo.mutate({
         mutation: gql`
           mutation($input: ProfileInput!) {
@@ -35,26 +36,48 @@ export default {
         `,
         variables: {
           input: {
-            id: this.selectedProfile.id,
+            id: this.profile.id,
             headerImage: image
           }
         }
       })
-      console.log('res: ', res)
       if (res.errors) {
         console.error('failed to update header photo', res)
         return
       }
       if (res.data) {
-        console.log('return: ', res.data)
-        // this.$emit('setupProfile', res.data.saveProfile)
-        // return
-        this.$emit('setupProfile', this.selectedProfile.id)
+        this.$emit('setupProfile', this.profile.id)
       }
     }
   },
-  components: {
-    ImagePicker
+  computed: {
+    headerImage () {
+      if (this.profile.headerImage) return this.profile.headerImage.uri
+      else return require('@/assets/nzheader.jpg')
+    },
+    mobile () {
+      return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
+    },
+    small () {
+      return this.$vuetify.breakpoint.sm
+    },
+    size () {
+      if (this.small) {
+        return '150'
+      }
+      return '200'
+    },
+    headerHeight () {
+      switch (this.$vuetify.breakpoint.name) {
+        case 'xs': return '200'
+        case 'sm': return '200'
+        case 'md': return '250'
+        case 'lg': return '300'
+        case 'xl': return '300'
+        default:
+          return '300'
+      }
+    }
   }
 }
 </script>
@@ -62,17 +85,10 @@ export default {
 .full-width {
   max-width: 100%;
 }
-.edit-header {
-  position: absolute;
-  right:30px;
-  bottom: 5px;
-  cursor: pointer;
-  text-decoration-color: white;
-}
 
 .header-bg {
-  // height: 200px;
-  opacity: 0.5;
+  position: relative;
+  height: 200px;
   background: linear-gradient(
       45deg,
       hsl(0, 6%, 37.1%) 12%,
@@ -99,4 +115,32 @@ export default {
   background-size: cover;
 }
 
+.picker {
+  position: absolute;
+  right: 30px;
+  bottom: 20px;
+  cursor: pointer;
+}
+
+.avatar-desktop {
+  position: absolute;
+  left: 30px;
+  top: 60px;
+}
+
+.header-mobile {
+  cursor: pointer;
+  text-decoration-color: white;
+  margin-left: 90vw;
+}
+
+.avatar-mobile {
+  margin-left: 50vw;
+  margin-right: 50vw;
+}
+
+.avatar {
+  margin-top: 100px;
+  margin-left: 100px;
+}
 </style>

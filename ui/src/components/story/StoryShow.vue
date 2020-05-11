@@ -5,7 +5,7 @@
       <!-- Middle column -->
       <v-col cols="10">
         <h1 class="title my-6">Timeline</h1>
-        <Timeline :data="mockTimelineData"/>
+        <StoryTimeline :data="mockTimelineData"/>
       </v-col>
       <!-- End Middle column -->
       <!-- Right column -->
@@ -50,7 +50,7 @@
 <script>
 
 import { VueContext } from 'vue-context'
-import Timeline from '@/components/story/Timeline.vue'
+import StoryTimeline from './StoryTimeline.vue'
 import DialogHandler from '@/components/dialog/DialogHandler.vue'
 
 // const get = require('lodash.get')
@@ -60,59 +60,6 @@ export default {
   data () {
     return {
       profile: {},
-      mockTimelineData: [
-        {
-          title: 'Ukurau was born',
-          description: 'In Aatea, Tangaroa had a son called Ukurau',
-          img: 'https://picsum.photos/200/300',
-          people: [{
-            id: 123,
-            preferredName: 'Ian',
-            avatarImage: require('@/assets/koro.svg')
-          },
-          {
-            id: 456,
-            preferredName: 'Ben',
-            avatarImage: require('@/assets/kuia.svg')
-          }
-          ],
-          storyTypeIcon: 'mdi-diamond-outline'
-        },
-        {
-          title: 'Ukurau travelled to Rarotonga',
-          description: 'Ukurau landed in Rarotonga and picked up his wife Puera',
-          img: 'https://picsum.photos/200/300',
-          people: [{
-            id: 123,
-            preferredName: 'Ian',
-            avatarImage: require('@/assets/koro.svg')
-          },
-          {
-            id: 456,
-            preferredName: 'Ben',
-            avatarImage: require('@/assets/kuia.svg')
-          }
-          ],
-          storyTypeIcon: 'mdi-creation'
-        },
-        {
-          title: 'Ukurau arrived in Ma\'uke',
-          description: 'Ukurau arrived in Ma\'uke',
-          img: 'https://picsum.photos/200/300',
-          people: [{
-            id: 123,
-            preferredName: 'Ian',
-            avatarImage: require('@/assets/koro.svg')
-          },
-          {
-            id: 456,
-            preferredName: 'Ben',
-            avatarImage: require('@/assets/kuia.svg')
-          }
-          ],
-          storyTypeIcon: 'mdi-account-circle'
-        }
-      ],
       dialog: {
         active: null,
         type: null
@@ -146,7 +93,7 @@ export default {
     }
   },
   components: {
-    Timeline,
+    StoryTimeline,
     VueContext,
     DialogHandler
   }
@@ -214,7 +161,7 @@ $formWidth: 600px;
 
     .niho-bg {
         background: linear-gradient(rgba(255, 255, 255, 0.7),
-                rgba(255, 255, 255, 0.7)), url(../assets/niho.svg);
+                rgba(255, 255, 255, 0.7)), url(../../assets/niho.svg);
         background-position-x: 150%;
         background-repeat: no-repeat;
         background-attachment: fixed;

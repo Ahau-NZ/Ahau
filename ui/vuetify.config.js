@@ -1,4 +1,5 @@
 import { DECEASED_COLOUR, ALIVE_COLOUR } from '@/lib/constants.js'
+
 export default {
   theme: {
     dark: true,
