@@ -1,57 +1,94 @@
 <template>
-  <v-container class="full-width my-0 py-0">
-    <v-row :justify="mobile ? 'center' : 'start'" class="header-bg flex-columns" v-bind:style="{ backgroundImage: 'url(' + require('@/assets/nzheader.jpg') +')', height: headerHeight }">
-      <!-- <v-img :src="headerImage ? headerImage.uri : require('@/assets/nzheader.jpg')" min-width="100%" /> -->
-      <Avatar :class="mobile ? 'avatar-mobile' : 'avatar-desktop'" :image="avatarImage" :alt="preferredName" :size="size" />
+  <v-container class="header-bg full-width my-0 py-0 px-0" v-bind:style="{ backgroundImage: 'url(' + headerImage +')', height: headerHeight }">
+    <v-row>
+      <!-- <v-col cols="2">
+        <Avatar :class="mobile ? 'avatar-mobile' : 'avatar-desktop'" class="ml-2" :image="profile.avatarImage" :alt="profile.preferredName" size="200"/>
+      </v-col> -->
+      <v-col>
+        <ImagePicker class="picker" label=" " type="header" :isView="true" @updateAvatar="updateHeader($event)" :avatarLoaded="headerImage"/>
+      </v-col>
     </v-row>
   </v-container>
 </template>
 
 <script>
+import ImagePicker from '@/components/ImagePicker.vue'
 import Avatar from '@/components/Avatar.vue'
+
+import gql from 'graphql-tag'
 
 export default {
   name: 'ProfileHeader',
   props: {
-    preferredName: String,
-    headerImage: Object,
-    avatarImage: Object,
-    headerHeight: String
+    profile: Object
+  },
+  components: {
+    ImagePicker,
+    Avatar
+  },
+  methods: {
+    async updateHeader (image) {
+      const res = await this.$apollo.mutate({
+        mutation: gql`
+          mutation($input: ProfileInput!) {
+            saveProfile(input: $input)
+          }
+        `,
+        variables: {
+          input: {
+            id: this.profile.id,
+            headerImage: image
+          }
+        }
+      })
+      if (res.errors) {
+        console.error('failed to update header photo', res)
+        return
+      }
+      if (res.data) {
+        this.$emit('setupProfile', this.profile.id)
+      }
+    }
   },
   computed: {
+    headerImage () {
+      if (this.profile.headerImage) return this.profile.headerImage.uri
+      else return require('@/assets/nzheader.jpg')
+    },
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
-    small () {
-      return this.$vuetify.breakpoint.sm
-    },
-    size () {
-      if (this.small) {
-        return '150'
+    // small () {
+    //   return this.$vuetify.breakpoint.sm
+    // },
+    // size () {
+    //   if (this.small) {
+    //     return '150'
+    //   }
+    //   return '200'
+    // },
+    headerHeight () {
+      switch (this.$vuetify.breakpoint.name) {
+        case 'xs': return '200'
+        case 'sm': return '200'
+        case 'md': return '250'
+        case 'lg': return '300'
+        case 'xl': return '300'
+        default:
+          return '300'
       }
-      return '200'
     }
-  },
-  components: {
-    Avatar
   }
 }
 </script>
 <style scoped lang="scss">
-$avatarSize: 25vh;
-$ratio: 5.33333;
-$headerHeight: 100vw / $ratio;
-$maxHeaderWidth: 1400px;
-$formWidth: 600px;
 .full-width {
   max-width: 100%;
-  // @media screen and (min-width: $maxHeaderWidth) {
-  //   width: $maxHeaderWidth;
-  //   height: $maxHeaderWidth / $ratio;
-  // }
 }
+
 .header-bg {
-  height: 250px;
+  position: relative;
+  height: 200px;
   background: linear-gradient(
       45deg,
       hsl(0, 6%, 37.1%) 12%,
@@ -78,31 +115,32 @@ $formWidth: 600px;
   background-size: cover;
 }
 
-.avatar-row {
-  position: relative;
-  width: 100%;
-  /* height: 20%; */
-  margin: auto;
-
-  .avatar-box {
-    position: absolute;
-    /* left: calc(-100vw / 3 + 3 * #{$avatarSize}); */
-    top: -$avatarSize/1.5;
-    width: 100%;
-  }
-}
-
-.avatar-mobile {
-  margin-top: 5vw;
+.picker {
+  position: absolute;
+  right: 30px;
+  bottom: 20px;
+  cursor: pointer;
 }
 
 .avatar-desktop {
-  margin-top: 7vw;
-  margin-left: 1vw
+  position: absolute;
+  left: 30px;
+  top: 60px;
 }
 
-.avatar {
-  margin-top: 100px;
-  margin-left: 100px;
+.header-mobile {
+  cursor: pointer;
+  text-decoration-color: white;
+  margin-left: 90vw;
 }
+
+.avatar-mobile {
+  margin-left: 50vw;
+  margin-right: 50vw;
+}
+
+// .avatar {
+//   margin-top: 100px;
+//   margin-left: 100px;
+// }
 </style>

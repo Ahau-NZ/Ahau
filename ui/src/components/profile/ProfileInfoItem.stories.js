@@ -1,5 +1,5 @@
 import ProfileInfoItem from './ProfileInfoItem.vue'
-import { personComplete, personMinimum } from '@/mocks/person-profile'
+import { personComplete } from '@/mocks/person-profile'
 export default {
   title: 'ProfileInfoItem'
 }
