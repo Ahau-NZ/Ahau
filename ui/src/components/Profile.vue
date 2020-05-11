@@ -1,10 +1,8 @@
 <template>
   <div :class="['wrapper', mobile ? '' : 'top-padding']">
     <Header
-      :preferredName="profile.preferredName"
-      :headerImage="profile.headerImage"
-      :avatarImage="profile.avatarImage"
-      :headerHeight="headerHeight"
+      :profile="profile"
+      @setupProfile="setupProfile($event)"
     />
 
       <v-container fluid class="body-width white pa-5 niho-bg">
