@@ -36,7 +36,11 @@
           </ProfileCard>
           <ProfileCard title="Contact">
             <template v-slot:content>
-              <p style="color: lightgrey; text-align: center;">TODO</p>
+              <v-row cols="12" class="pt-0">
+                <ProfileInfoItem smCols="12" mdCols="4" title="Phone" :value="profile.phone"/>
+                <ProfileInfoItem smCols="12" mdCols="4" title="Email" :value="profile.email"/>
+                <ProfileInfoItem smCols="12" mdCols="4" title="Address" :value="profile.address"/>
+              </v-row>
             </template>
           </ProfileCard>
         </v-col>
@@ -61,6 +65,7 @@
 
 <script>
 import ProfileInfoCard from '@/components/profile/ProfileInfoCard.vue'
+import ProfileInfoItem from '@/components/profile/ProfileInfoItem.vue'
 import ProfileCard from '@/components/profile/ProfileCard.vue'
 import Header from '@/components/profile/Header.vue'
 import Kaitiaki from '@/components/profile/Kaitiaki.vue'
@@ -74,7 +79,8 @@ export default {
     Header,
     ProfileInfoCard,
     ProfileCard,
-    Kaitiaki
+    Kaitiaki,
+    ProfileInfoItem
   },
   props: {
     profile: {
