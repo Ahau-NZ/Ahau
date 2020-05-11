@@ -10,11 +10,19 @@
           <img src="@/assets/logo_red.svg" class="logo" />
         </router-link>
       </template>
+      <router-link v-if="goWhakapapa" :to="{ path: route.from.fullPath }" class="ms-10">
+        <v-row>
+          <v-icon large>mdi-chevron-left</v-icon>
+          <Avatar
+            size="50px"
+            class="ma-0"
+            :image="whakapapa.image"
+            :alt="whakapapa.name"
+          />
+        </v-row>
+      </router-link>
       <v-spacer />
       <!-- TODO this takes you back to previous view -->
-      <!-- <v-btn v-if="!mobile" @click="$router.go(-1)" icon dark>
-        <v-icon>mdi-arrow-left</v-icon>
-      </v-btn> -->
 
       <!-- Desktop doesn't use a drawer, it has the links directly in the app bar -->
       <template v-if="!mobile">
@@ -131,12 +139,12 @@ export default {
       dialog: false,
       profile: {
         id: null,
-        avatarImage: null
+        avatarImage: {}
       }
     }
   },
   computed: {
-    ...mapGetters(['whoami']),
+    ...mapGetters(['whoami', 'whakapapa', 'route']),
     classObject: function () {
       return {
         'mobile': this.mobile,
@@ -146,6 +154,11 @@ export default {
     },
     mobile () {
       return this.$vuetify.breakpoint.xs
+    },
+    goWhakapapa () {
+      if (this.route.from) {
+        return this.route.from.name === 'whakapapaShow' && this.route.name === 'profileShow'
+      }
     }
   },
   beforeMount () {
