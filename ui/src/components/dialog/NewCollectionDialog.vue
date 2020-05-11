@@ -82,7 +82,7 @@ export default {
   data () {
     return {
       helpertext: false,
-      formData: setDefaultCollection(EMPTY_COLLECTION),
+      formData: setDefaultCollection(EMPTY_COLLECTION)
     }
   },
   computed: {
