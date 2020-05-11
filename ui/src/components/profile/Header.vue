@@ -58,29 +58,16 @@ export default {
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
-    // small () {
-    //   return this.$vuetify.breakpoint.sm
-    // },
-    // size () {
-    //   if (this.small) {
-    //     return '150'
-    //   }
-    //   return '200'
-    // },
-    headerHeight () {
-      switch (this.$vuetify.breakpoint.name) {
-        case 'xs': return '200'
-        case 'sm': return '200'
-        case 'md': return '250'
-        case 'lg': return '300'
-        case 'xl': return '300'
-        default:
-          return '300'
+    small () {
+      return this.$vuetify.breakpoint.sm
+    },
+    size () {
+      if (this.small) {
+        return '150'
       }
-<<<<<<< HEAD
-=======
       return '200'
     },
+
     headerHeight () {
       switch (this.$vuetify.breakpoint.name) {
         case 'xs': return '200'
@@ -91,7 +78,6 @@ export default {
         default:
           return '300'
       }
->>>>>>> 55dda9a2b0d3e1e03d0f51e060cb33d62fa731c9
     }
   }
 }
@@ -135,7 +121,6 @@ export default {
   right: 30px;
   bottom: 20px;
   cursor: pointer;
-<<<<<<< HEAD
 }
 
 .avatar-desktop {
@@ -148,25 +133,6 @@ export default {
   cursor: pointer;
   text-decoration-color: white;
   margin-left: 90vw;
-=======
-}
-
-.avatar-desktop {
-  position: absolute;
-  left: 30px;
-  top: 60px;
-}
-
-.header-mobile {
-  cursor: pointer;
-  text-decoration-color: white;
-  margin-left: 90vw;
-}
-
-.avatar-mobile {
-  margin-left: 50vw;
-  margin-right: 50vw;
->>>>>>> 55dda9a2b0d3e1e03d0f51e060cb33d62fa731c9
 }
 
 .avatar-mobile {
