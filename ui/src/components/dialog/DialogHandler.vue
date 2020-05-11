@@ -500,12 +500,12 @@ export default {
         id: profileId,
         ...profileChanges
       }
+      console.log('update: ', input)
       const res = await this.$apollo.mutate(saveProfile(input))
       if (res.errors) {
         console.error('failed to update profile', res)
         return
       }
-
       if (this.$route.name === 'profileShow') {
         console.log('profile is me')
         this.$emit('setupProfile', res.data.saveProfile)

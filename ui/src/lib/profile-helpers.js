@@ -51,7 +51,7 @@ export const getProfile = id => ({
         gender description 
         location  address email
         phone profession deceased
-        avatarImage { uri }
+        avatarImage { uri } headerImage { uri }
         children {
           profile {
             id

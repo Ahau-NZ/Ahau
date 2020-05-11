@@ -38,18 +38,9 @@ import Archive from '@/components/archive/Archive'
 import Timeline from '@/components/story/Timeline.vue'
 
 import {
-  getProfile
-} from '@/lib/profile-helpers'
-import {
   mapActions,
   mapGetters
 } from 'vuex'
-
-const NULL_PAGE_COMPONENTS = {
-  profile: false,
-  archive: false,
-  timeline: false
-}
 
 export default {
   name: 'ProfileShow',

@@ -1,12 +1,8 @@
 <template>
-  <v-container class="header-bg full-width my-0 py-0 px-0" v-bind:style="{ backgroundImage: 'url(' + headerImage +')', height: headerHeight }">
-    <v-row>
-      <v-col>
-        <Avatar :class="mobile ? 'avatar-mobile' : 'avatar-desktop'" :image="profile.avatarImage" :alt="profile.preferredName" :size="size"/>
-      </v-col>
-      <v-col>
-        <ImagePicker class="picker" label=" " type="header" :isView="true" @updateAvatar="updateHeader($event)" :avatarLoaded="headerImage"/>
-      </v-col>
+  <v-container class="full-width my-0 py-0 px-0">
+    <v-row class="header-bg flex-columns" v-bind:style="{ backgroundImage: 'url(' + headerImage +')', height: headerHeight }">
+      <Avatar :class="mobile ? 'avatar-mobile' : 'avatar-desktop'" :image="profile.avatarImage" :alt="profile.preferredName" :size="size"/>
+      <ImagePicker class="header-mobile" label=" " type="header" :isView="true" @updateAvatar="updateHeader($event)" :avatarLoaded="headerImage"/>
     </v-row>
   </v-container>
 </template>
@@ -86,9 +82,14 @@ export default {
   max-width: 100%;
 }
 
+.edit-header {
+  justify: end;
+  cursor: pointer;
+  text-decoration-color: white;
+}
+
 .header-bg {
-  position: relative;
-  height: 200px;
+  display: flex;
   background: linear-gradient(
       45deg,
       hsl(0, 6%, 37.1%) 12%,
@@ -115,28 +116,19 @@ export default {
   background-size: cover;
 }
 
-.picker {
-  position: absolute;
-  right: 30px;
-  bottom: 20px;
-  cursor: pointer;
-}
-
-.avatar-desktop {
-  position: absolute;
-  left: 30px;
-  top: 60px;
+.avatar-mobile {
+  margin-top: 5vw;
 }
 
 .header-mobile {
   cursor: pointer;
   text-decoration-color: white;
-  margin-left: 90vw;
+  margin-left: 97vw;
 }
 
-.avatar-mobile {
-  margin-left: 50vw;
-  margin-right: 50vw;
+.avatar-desktop {
+  margin-top: 7vw;
+  margin-left: 1vw
 }
 
 .avatar {
