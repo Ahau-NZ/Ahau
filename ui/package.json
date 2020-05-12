@@ -27,7 +27,6 @@
     "lodash.uniqby": "^4.7.0"
   },
   "devDependencies": {
-    "@mdi/font": "^4.5.95",
     "@storybook/addon-actions": "^5.2.8",
     "@storybook/addon-viewport": "^5.3.12",
     "@storybook/vue": "^5.2.8",
@@ -44,7 +43,6 @@
     "esm": "^3.2.25",
     "fibers": "^4.0.2",
     "graphql-tag": "^2.9.it 0",
-    "lodash.isempty": "^4.4.0",
     "sass": "^1.23.7",
     "sass-loader": "^7.3.1",
     "tap-spec": "^5.0.0",
