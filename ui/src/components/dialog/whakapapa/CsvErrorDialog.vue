@@ -7,7 +7,7 @@
       </v-card-text>
 
       <v-card-text class="pt-0">
-        <p v-for="(error, i) in errorMsg" class="errorMsg ma-0" :key="i">
+        <p v-for="(error, i) in errorMsgs" class="errorMsg ma-0" :key="i">
           <i>{{error}}</i>
         </p>
       </v-card-text>
@@ -32,7 +32,7 @@ import Dialog from '@/components/dialog/Dialog.vue'
 export default {
   props: {
     show: { type: Boolean, required: true },
-    errorMsg: { type: Array }
+    errorMsgs: { type: Array }
   },
   name: 'CsvErrorDialog',
   data () {

@@ -92,7 +92,7 @@
       </v-col>
     </v-row>
     <CsvHelperDialog :show="csvHelper" @click="csvInfo()" @close="csvInfo()"/>
-    <CsvErrorDialog :show="csvErrorShow" :errorMsg="errorMsg" @click="csvErrorClose()" @close="csvErrorClose()"/>
+    <CsvErrorDialog :show="csvErrorShow" :errorMsgs="errorMsgs" @click="csvErrorClose()" @close="csvErrorClose()"/>
   </v-form>
 </template>
 <script>
@@ -102,8 +102,7 @@ import ImagePicker from '@/components/ImagePicker.vue'
 import { RULES } from '@/lib/constants'
 import CsvHelperDialog from '@/components/dialog/whakapapa/CsvHelperDialog.vue'
 import CsvErrorDialog from '@/components/dialog/whakapapa/CsvErrorDialog.vue'
-import * as d3 from 'd3'
-import validate from '@/lib/validate-csv'
+import * as csv from '@/lib/csv'
 
 const EMPTY_WHAKAPAPA = {
   name: '',
@@ -144,8 +143,7 @@ export default {
         rules: RULES
       },
       file: null,
-      data: null,
-      errorMsg: [],
+      errorMsgs: [],
       successMsg: [],
       noErrorsInCSV: true,
       csvHelper: false,
@@ -162,69 +160,21 @@ export default {
       },
       deep: true
     },
-    file (newValue) {
-      // this.errorMsg = []
-      // this.successMsg = []
-      if (newValue != null) { this.checkFile(newValue) }
-    },
-    async data (newValue) {
-      if (newValue !== null) {
-        var count = 0
+    file (newFile) {
+      if (newFile == null) return
 
-        var csv = await d3.csvParse(newValue, (d) => {
-          count++
+      this.errorMsgs = []
+      this.successMsg = []
 
-          // validate each row (aka d)
-          const errorObj = validate.person(d)
-
-          // error detected
-          if (errorObj.isError) {
-            // push errorMsg
-            this.errorMsg.push(errorObj.msg)
-            // flag there is error in CSV
-            this.noErrorsInCSV = false
-            // show error dialog with what the error is
-            this.csvError()
-          } else {
-            return {
-              parentNumber: d.parentNumber,
-              number: d.number,
-              preferredName: d.preferredName,
-              legalName: d.legalName,
-              gender: d.gender,
-              bornAt: d.bornAt.split(/\//).reverse().join('/'),
-              diedAt: d.diedAt.split(/\//).reverse().join('/'),
-              birthOrder: d.birthOrder,
-              phone: d.phone,
-              email: d.email,
-              address: d.address,
-              location: d.location,
-              profession: d.profession,
-              relationshipType: d.relationshipType ? d.relationshipType : 'birth',
-              deceased: d.deceased
-            }
-          }
-        })
-
-        // csv equals count means no errors
-        if (count === csv.length) {
-          this.noErrorsInCSV = true
-        }
-
-        if (csv.length > 200) {
-          this.errorMsg.push('Aroha mai, we are currently experiencing issues processing large files. We are currently working on this and hope to have this working soon')
-          // flag there is error in CSV
-          this.noErrorsInCSV = false
-          // show error dialog with what the error is
-          this.csvError()
-        } else if (this.noErrorsInCSV === false) {
-          // if there is an error clear csv
-          csv = ''
-        } else {
+      csv.importCsv(newFile)
+        .then(csv => {
           this.successMsg = ['Expected result = Top ancestor: ' + csv[0].preferredName + '. First child: ' + csv[1].preferredName]
           this.$emit('update:data', csv)
-        }
-      }
+        })
+        .catch(errs => {
+          this.errorMsgs = errs
+          this.csvErrorShow = true
+        })
     }
   },
   methods: {
@@ -242,29 +192,13 @@ export default {
     csvInfo () {
       this.csvHelper = !this.csvHelper
     },
-    csvError () {
-      this.csvErrorShow = true
-    },
     csvErrorClose () {
       this.resetFile()
       this.csvErrorShow = false
     },
-
-    checkFile (file) {
-      if (this.file.name.split('.').pop() !== 'csv') { // check if file extension is csv
-        this.errorMsg = ['please upload a CSV file']
-      } else {
-        var reader = new FileReader()
-        reader.readAsText(file)
-        reader.onload = () => {
-          this.data = reader.result
-        }
-      }
-    },
     resetFile () {
       this.file = null
-      this.data = null
-      this.errorMsg = []
+      this.errorMsgs = []
       this.successMsg = []
     }
   }
