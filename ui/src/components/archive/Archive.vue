@@ -2,59 +2,56 @@
 <div :class="['wrapper', mobile ? '' : 'top-padding']">
   <v-container fluid class="body-width white niho-bg">
     <v-row>
-        <v-col cols="12" xs="12" sm="12" md="2">
-          <slot name="nav"></slot>
-        </v-col>
-        <v-col cols="12" xs="12" sm="12" md="8">
-            <h1 class="title black--text my-6">Collections</h1>
-            <v-row class="mx-0">
-              <CollectionGroup :collections="mockCollections" />
-            </v-row>
-            <v-divider class="mt-6 mb-8" light></v-divider>
-            <v-row justify="center">
-              <ArchiveStory />
-            </v-row>
-            <v-row justify="center">
-              <ArchiveStory />
-            </v-row>
-            <v-row justify="center">
-              <ArchiveStory />
-            </v-row>
-            <v-row justify="center">
-              <ArchiveStory />
-            </v-row>
-        </v-col>
-        <v-col cols="12" lg="2" class="px-12">
-            <v-row>
-                <v-col>
-                    <v-row justify="center" align="center">
-                      <v-btn large class="my-2" fab color="white" @click.stop="openContextMenu($event)">
-                        <v-icon large class="black--text">mdi-plus</v-icon>
-                      </v-btn>
-                    </v-row>
-                    <v-row justify="center" align="center">
-                      <v-btn small class="my-2" fab color="white" @click="editProfile()">
-                        <v-icon small class="black--text">mdi-magnify</v-icon>
-                      </v-btn>
-                    </v-row>
-                </v-col>
-            </v-row>
-        </v-col>
-      </v-row>
-    </v-container>
-    <vue-context ref="menu" class="pa-4">
-      <li v-for="(option, index) in contextMenuOpts" :key="index">
-          <a href="#" @click.prevent="updateDialog(option.dialog)" class="d-flex align-center px-4">
-              <v-icon light>{{ option.icon }}</v-icon>
-              <p class="ma-0 pl-3">{{ option.title }}</p>
-          </a>
-      </li>
-    </vue-context>
+      <v-col cols="12" xs="12" sm="12" md="10">
+          <h1 class="title black--text pt-10 my-6">Collections</h1>
+          <v-row class="mx-0">
+            <CollectionGroup :collections="mockCollections" />
+          </v-row>
+          <v-divider class="mt-6 mb-8" light></v-divider>
+          <v-row justify="center">
+            <ArchiveStory />
+          </v-row>
+          <v-row justify="center">
+            <ArchiveStory />
+          </v-row>
+          <v-row justify="center">
+            <ArchiveStory />
+          </v-row>
+          <v-row justify="center">
+            <ArchiveStory />
+          </v-row>
+      </v-col>
+      <v-col cols="12" lg="2" class="px-12">
+          <v-row>
+              <v-col>
+                  <v-row justify="center" align="center">
+                    <v-btn large class="my-2" fab color="white" @click.stop="openContextMenu($event)">
+                      <v-icon large class="black--text">mdi-plus</v-icon>
+                    </v-btn>
+                  </v-row>
+                  <v-row justify="center" align="center">
+                    <v-btn small class="my-2" fab color="white" @click="editProfile()">
+                      <v-icon small class="black--text">mdi-magnify</v-icon>
+                    </v-btn>
+                  </v-row>
+              </v-col>
+          </v-row>
+      </v-col>
+    </v-row>
+  </v-container>
+  <vue-context ref="menu" class="pa-4">
+    <li v-for="(option, index) in contextMenuOpts" :key="index">
+        <a href="#" @click.prevent="updateDialog(option.dialog)" class="d-flex align-center px-4">
+            <v-icon light>{{ option.icon }}</v-icon>
+            <p class="ma-0 pl-3">{{ option.title }}</p>
+        </a>
+    </li>
+  </vue-context>
 
-    <DialogHandler
-        :dialog.sync="dialog.active"
-        :type.sync="dialog.type"
-    />
+  <DialogHandler
+      :dialog.sync="dialog.active"
+      :type.sync="dialog.type"
+  />
   </div>
 </template>
 

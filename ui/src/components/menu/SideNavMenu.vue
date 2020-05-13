@@ -1,5 +1,5 @@
 <template>
-  <v-row ref="sideNav" :class="position" v-scroll="onScroll">
+  <v-row ref="sideNav" class="sideNav" :class="position" v-scroll="onScroll">
     <v-col cols="12" md="2">
       <v-col align="center" v-if="!mobile" class="pa-2 ml-5" cols="12">
         <v-row cols="12" xs="12" sm="12">
@@ -124,14 +124,15 @@ export default {
     },
     position () {
       return {
-        high: !this.mobile && !this.sticky && this.active.user
+        user: !this.mobile && this.active.user,
+        sticky: !this.mobile && !this.active.user,
+        sideNav: !this.active.user, 
       }
     }
 
   },
   methods : {
     setActive (component) {
-      console.log("set active: ", component )
       // set all to false
       this.active.user = false
       this.active.activity = false
@@ -156,18 +157,19 @@ export default {
           this.active.whakapapa = true
           break
       }
-      // this.$emit("setPageComponent", component)
+      this.$emit("setPageComponent", component)
     },
     onScroll () {
       var scroll = window.pageYOffset
       var sideNav = this.$refs.sideNav 
-      if (!this.mobile) {
+      if (!this.mobile && this.active.user) {
         if (scroll > this.offset) {
           sideNav.classList.add("sticky");
-          sideNav.classList.remove("high");
+          sideNav.classList.remove("user");
+          sideNav.classList.remove("sideNav");
         } else {
           sideNav.classList.remove("sticky")
-          sideNav.classList.add("high")
+          sideNav.classList.add("user")
         }
       }
     }
@@ -214,12 +216,16 @@ export default {
     margin-left: 1vw
   }
 
+  .sideNav {
+    transition: top 0.2s ease;
+  }
+  
   .sticky {
     position: fixed; /* Allocates space for the element, but moves it with you when you scroll */
     top: 40px
   }
 
-  .high {
+  .user {
     position: absolute;
     top: 150px
   }

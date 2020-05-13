@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <v-row>
       <v-col cols="12" sx="12" sm="12" md="10" :class="mobile ? 'py-5' : '' ">
         <ProfileInfoCard :profile="profile" @setupProfile="setupProfile($event)" />
         <ProfileCard title="About">
@@ -18,7 +18,7 @@
         </ProfileCard>
       </v-col>
       <!-- RIGHT SIDE COLUMN -->
-      <v-col cols="12" sx="12" sm="12" md="2" :class="mobile ? 'py-5' : ''">
+      <v-col cols="12" sx="12" md="2" :class="mobile ? 'py-5' : 'pr-5'">
         <Kaitiaki
           title="Kaitiaki"
           subtitle="These are the people who have administrative rights on this profile"
@@ -31,7 +31,7 @@
           :profiles="profile.tiaki"
         />
       </v-col>
-    </div>
+    </v-row>
 </template>
 
 <script>

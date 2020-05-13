@@ -66,7 +66,6 @@ export default {
     },
 
     headerHeight () {
-      console.log(this.$vuetify.breakpoint.name)
       switch (this.$vuetify.breakpoint.name) {
         case 'xs': return '200'
         case 'sm': return '200'

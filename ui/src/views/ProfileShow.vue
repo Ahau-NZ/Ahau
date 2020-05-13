@@ -9,7 +9,7 @@
       <v-col cols="12" offset-md="2" md="8" sm="12" :class="!mobile ? 'pl-12' : '' " :align="mobile ? 'center' : 'start'">
         <h1 class="primary--text" >{{ selectedProfile.legalName ? selectedProfile.legalName : selectedProfile.preferredName }}</h1>
       </v-col>
-      <v-col :order="mobile ? 'first' : 'last'" :align="mobile ? 'end' : 'center'" cols="12" md="2" sm="12"  class="py-0">
+      <v-col :order="mobile ? 'first' : 'last'" :align="mobile ? 'end' : 'center'" cols="12" md="2" sm="12"  class="px-5">
         <v-tooltip left>
           <template v-slot:activator="{ on }">
               <v-btn v-on="on" x-small class="my-2" fab color="white" @click="updateDialog('edit-node')">
@@ -21,15 +21,20 @@
       </v-col>
     </v-row>
     <v-row>
-        <!-- SideNav -->
-      <v-col cols="12" xs="12" sm="12" md="2" :class="!mobile ? 'pr-0' : 'px-5 py-0'">
-        <SideNavMenu :profile="selectedProfile" @setPageComponent="setPageComponent($event)" />
-      </v-col>
+      <!-- SideNav -->
+        <v-col cols="12" xs="12" sm="12" md="2" :class="!mobile ? 'pr-0' : 'px-5 py-0'">
+          <SideNavMenu :profile="selectedProfile" @setPageComponent="setPageComponent($event)" />
+        </v-col>
       <!-- Content -->
       <v-col cols="12" xs="12" sm="12" md="10" :class="mobile ? 'px-6 py-0' : 'pl-0'">
+        <transition
+          name="fade"
+          mode="out-in"
+       >
         <Profile v-if="pageComponents.profile" :profile="selectedProfile" :setupProfile="setupProfile" @setDialog="setDialog($event)"/>
         <Archive v-if="pageComponents.archive" :profile="{...selectedProfile, type: 'person'}"/>
         <Timeline v-if="pageComponents.timeline" :profile="selectedProfile"/>
+      </transition>
       </v-col>
     </v-row>  
 
@@ -67,6 +72,7 @@ export default {
   },
   data () {
     return {
+      prevHeight: 0,
       loaded: false,
       dialog: {
         active: null,
@@ -92,9 +98,11 @@ export default {
   },
   methods: {
     ...mapActions(['setProfileById', 'setProfile', 'setWhoami']),
+  
     setDialog (dialog) {
       this.dialog.active = dialog
     },
+
     setPageComponent (component) {
       // set all to false
       this.pageComponents.profile = false
@@ -146,9 +154,17 @@ export default {
 
 .niho-bg {
   background: linear-gradient(rgba(255, 255, 255, 0.99),
-      rgba(255, 255, 255, 0.7)), url(../assets/niho.svg);
+  rgba(255, 255, 255, 0.7)), url(../assets/niho.svg);
   background-position-x: 400px;
   background-attachment: fixed;
   background-repeat: no-repeat;
 }
+
+.fade-enter-active,
+.fade-leave-active {
+  transition-duration: 0.2;
+  transition-property: opacity;
+  transition-timing-function: ease;
+ }
+
 </style>
