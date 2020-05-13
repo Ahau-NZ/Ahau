@@ -31,7 +31,7 @@
           name="fade"
           mode="out-in"
        >
-        <Profile v-if="pageComponents.profile" :profile="selectedProfile" :setupProfile="setupProfile" @setDialog="setDialog($event)"/>
+        <Profile v-if="pageComponents.profile" :profile="selectedProfile" :setupProfile="setupProfile"/>
         <Archive v-if="pageComponents.archive" :profile="{...selectedProfile, type: 'person'}"/>
         <Timeline v-if="pageComponents.timeline" :profile="selectedProfile"/>
       </transition>
@@ -96,10 +96,6 @@ export default {
   },
   methods: {
     ...mapActions(['setProfileById', 'setProfile', 'setWhoami']),
-  
-    setDialog (dialog) {
-      this.dialog.active = dialog
-    },
 
     setPageComponent (component) {
       // set all to false
@@ -128,8 +124,7 @@ export default {
     },
 
     updateDialog (dialogObj) {
-      this.dialog.type = dialogObj.type
-      this.dialog.active = dialogObj.dialog
+      this.dialog.active = dialogObj
     }
   }
 }
