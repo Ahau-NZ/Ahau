@@ -12,7 +12,7 @@
         <v-col align="center" :class="mobile ? 'py-0 px-0' : 'py-1'">
           <v-btn @click="setActive('Profile')" light :fab="mobile" text>
             <v-col class="pa-0" :cols="mobile ? '12' : '2'">
-              <UserIcon size="medium" :color="active.user ? 'red' : scroll ? 'white' : 'black'"/>
+              <UserIcon size="medium" :color="active.user ? 'red' : 'black'"/>
             </v-col>
             <v-col class="py-0" v-if="!mobile && !isOverflowing">
               <span ref="text" :style="active.user ? 'color:#B02425;' : ''" class="ml-2 nav-label subtitle-1">
@@ -24,7 +24,7 @@
         <v-col :class="mobile ? 'py-0 px-0' : 'py-1'">
           <v-btn @click="setActive('Activity')" light :fab="mobile" text>
             <v-col class="pa-0" :cols="mobile ? '12' : '2'">
-              <ActivityIcon size="medium" :color="active.activity ? 'red' : scroll ? 'white' : 'black'"/>
+              <ActivityIcon size="medium" :color="active.activity ? 'red' : 'black'"/>
             </v-col>
             <v-col class="py-0" v-if="!mobile && !isOverflowing">
               <span ref="text" :style="active.activity ? 'color:#B02425;' : ''" class="ml-2 nav-label subtitle-1">
@@ -36,7 +36,7 @@
         <v-col :class="mobile ? 'py-0 px-0' : 'py-1'">
           <v-btn @click="setActive('Archive')" light :fab="mobile" text>
             <v-col class="pa-0" :cols="mobile ? '12' : '2'">
-              <ArchiveIcon :size="mobile ? 'large' : 'medium'" :color="active.archive ? 'red' : scroll ? 'white' : 'black'" />
+              <ArchiveIcon :size="mobile ? 'large' : 'medium'" :color="active.archive ? 'red' : 'black'" />
             </v-col>
             <v-col class="py-0" v-if="!mobile && !isOverflowing">
               <span ref="text" :style="active.archive ? 'color:#B02425;' : ''" class="ml-2 nav-label subtitle-1">
@@ -48,7 +48,7 @@
         <v-col :class="mobile ? 'py-0 px-0' : 'py-1'">
           <v-btn @click="setActive('Timeline')" light :fab="mobile" text>
             <v-col class="pa-0" :cols="mobile ? '12' : '2'">
-              <TimelineIcon size="medium" :color="active.timeline ? 'red' : scroll ? 'white' : 'black'"/>
+              <TimelineIcon size="medium" :color="active.timeline ? 'red' : 'black'"/>
             </v-col>
             <v-col class="py-0" v-if="!mobile && !isOverflowing">
               <span ref="text" :style="active.timeline ? 'color:#B02425;' : ''" class="ml-2 nav-label subtitle-1">
@@ -60,7 +60,7 @@
         <v-col :class="mobile ? 'py-0 px-0' : 'py-1'">
           <v-btn @click="setActive('Whakapapa')" light :fab="mobile" text>
             <v-col class="pa-0" :cols="mobile ? '12' : '2'">
-              <WhakapapaIcon :size="mobile ? 'large' : 'medium'" :color="active.whakapapa ? 'red' : scroll ? 'white' : 'black'"/>
+              <WhakapapaIcon :size="mobile ? 'large' : 'medium'" :color="active.whakapapa ? 'red' : 'black'"/>
             </v-col>
             <v-col class="py-0" v-if="!mobile && !isOverflowing">
               <span ref="text" :style="active.whakapapa ? 'color:#B02425;' : ''" class="ml-2 subtitle-1">
@@ -157,6 +157,7 @@ export default {
           this.active.whakapapa = true
           break
       }
+      window.scrollTo(0,0)
       this.$emit("setPageComponent", component)
     },
     onScroll () {
@@ -217,7 +218,7 @@ export default {
   }
 
   .sideNav {
-    transition: top 0.2s ease;
+    transition: all 0.2s ease;
   }
   
   .sticky {

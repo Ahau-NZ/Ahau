@@ -1,9 +1,21 @@
 <template>
-<div :class="['wrapper', mobile ? '' : 'top-padding']">
+<div>
   <v-container fluid class="body-width white niho-bg">
-    <v-row>
-      <v-col cols="12" xs="12" sm="12" md="10">
-          <h1 class="title black--text pt-10 my-6">Collections</h1>
+      <v-row :class="mobile ? 'my-0':'mt-10'">
+        <v-col cols="12" md="10" sm="10" :class="!mobile ? 'pl-12 my-6' : 'pa-0 ma-0'" align="start">
+          <h1 class="title black--text ">Collections</h1>        
+        </v-col>
+        <div>
+          <!-- <v-btn :class="mobile ? 'searchBtnMob' : 'searchBtn'" :small="!mobile" :x-small="mobile" class="my-2" fab flat color="white" @click="editProfile()">
+            <v-icon small class="black--text">mdi-magnify</v-icon>
+          </v-btn>            -->
+          <v-btn :large="!mobile" :x-small="mobile" :class="mobile ? 'addBtnMob' : 'addBtn'" class="my-2" fab color="white" @click.stop="openContextMenu($event)">
+            <v-icon class="black--text">mdi-plus</v-icon>
+          </v-btn>
+        </div>
+      </v-row>
+      <v-row>
+        <v-col cols="12" xs="12" sm="12" md="10">    
           <v-row class="mx-0">
             <CollectionGroup :collections="mockCollections" />
           </v-row>
@@ -19,22 +31,6 @@
           </v-row>
           <v-row justify="center">
             <ArchiveStory />
-          </v-row>
-      </v-col>
-      <v-col cols="12" lg="2" class="px-12">
-          <v-row>
-              <v-col>
-                  <v-row justify="center" align="center">
-                    <v-btn large class="my-2" fab color="white" @click.stop="openContextMenu($event)">
-                      <v-icon large class="black--text">mdi-plus</v-icon>
-                    </v-btn>
-                  </v-row>
-                  <v-row justify="center" align="center">
-                    <v-btn small class="my-2" fab color="white" @click="editProfile()">
-                      <v-icon small class="black--text">mdi-magnify</v-icon>
-                    </v-btn>
-                  </v-row>
-              </v-col>
           </v-row>
       </v-col>
     </v-row>
@@ -188,6 +184,13 @@ export default {
     }
   },
   computed: {
+    classObj () {
+      if (mobile) {
+        return {
+
+        }
+      }
+    },
     mobile () {
       return this.$vuetify.breakpoint.xs
     }
@@ -233,4 +236,30 @@ export default {
   height:200px;
   overflow-y:scroll;
 }
+
+.searchBtn {
+  position: fixed;
+  top:90px; 
+  right:160px
+}
+
+.searchBtnMob {
+  position: absolute;
+  top: 80px; 
+  right:80px;
+}
+
+.addBtn {
+  position: fixed;
+  top: 80px; 
+  right:70px
+}
+
+.addBtnMob {
+  position: absolute;
+  top: 80px; 
+  right:20px
+}
+
+
 </style>

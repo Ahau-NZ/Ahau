@@ -83,8 +83,6 @@ export default {
         archive: false,
         timeline: false
       },
-      header: true,
-      bigAvatar: true
     }
   },
   mounted () {
@@ -109,14 +107,8 @@ export default {
       this.pageComponents.archive = false
       this.pageComponents.timeline = false
 
-      this.header = false
-      this.bigAvatar = false
-      console.log(component)
-
       switch (component) {
         case 'Profile':
-          this.header = true
-          this.bigAvatar = true
           this.pageComponents.profile = true
           break
         case 'Archive':
