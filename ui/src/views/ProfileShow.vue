@@ -1,33 +1,44 @@
 <template>
-  <div>
-    <!-- Profile Page -->
-    <Profile v-if="pageComponents.profile" :profile="selectedProfile" :setupProfile="setupProfile" @setDialog="setDialog($event)">
-      <template v-slot:nav>
+  <v-container fluid class="body-width pa-0 niho-bg white">
+    <!-- Header and Title -->
+    <Header v-if="pageComponents.profile"
+      :profile="selectedProfile"
+      @setupProfile="setupProfile($event)"
+    />
+    <v-row v-if="pageComponents.profile">
+      <v-col cols="12" offset-md="2" md="8" sm="12" :class="!mobile ? 'pl-12' : '' " :align="mobile ? 'center' : 'start'">
+        <h1 class="primary--text" >{{ selectedProfile.legalName ? selectedProfile.legalName : selectedProfile.preferredName }}</h1>
+      </v-col>
+      <v-col :order="mobile ? 'first' : 'last'" :align="mobile ? 'end' : 'center'" cols="12" md="2" sm="12"  class="py-0">
+        <v-tooltip left>
+          <template v-slot:activator="{ on }">
+              <v-btn v-on="on" x-small class="my-2" fab color="white" @click="updateDialog('edit-node')">
+                <v-icon small class="black--text">mdi-pencil</v-icon>
+              </v-btn>
+          </template>
+          <span>Edit profile</span>
+        </v-tooltip>
+      </v-col>
+    </v-row>
+    <v-row>
+        <!-- SideNav -->
+      <v-col cols="12" xs="12" sm="12" md="2" :class="!mobile ? 'pr-0' : 'px-5 py-0'">
         <SideNavMenu :profile="selectedProfile" @setPageComponent="setPageComponent($event)" />
-      </template>
-    </Profile>
-
-    <!-- Archive Page -->
-
-    <Archive v-if="pageComponents.archive" :profile="{...selectedProfile, type: 'person'}">
-      <template v-slot:nav>
-        <SideNavMenu v-if="!pageComponents.profile" :profile="selectedProfile" @setPageComponent="setPageComponent($event)" :show-avatar="true"/>
-      </template>
-    </Archive>
-
-    <!-- Timeline Page -->
-    <Timeline v-if="pageComponents.timeline" :profile="selectedProfile">
-      <template v-slot:nav>
-        <SideNavMenu v-if="!pageComponents.profile" :profile="selectedProfile" @setPageComponent="setPageComponent($event)" :show-avatar="true"/>
-      </template>
-    </Timeline>
+      </v-col>
+      <!-- Content -->
+      <v-col cols="12" xs="12" sm="12" md="10" :class="mobile ? 'px-6 py-0' : 'pl-0'">
+        <Profile v-if="pageComponents.profile" :profile="selectedProfile" :setupProfile="setupProfile" @setDialog="setDialog($event)"/>
+        <Archive v-if="pageComponents.archive" :profile="{...selectedProfile, type: 'person'}"/>
+        <Timeline v-if="pageComponents.timeline" :profile="selectedProfile"/>
+      </v-col>
+    </v-row>  
 
     <DialogHandler
       :dialog.sync="dialog.active"
       :selectedProfile="selectedProfile"
       @setupProfile="setupProfile($event)"
     />
-  </div>
+  </v-container>
 </template>
 
 <script>
@@ -36,6 +47,7 @@ import SideNavMenu from '@/components/menu/SideNavMenu.vue'
 import Profile from '@/components/Profile'
 import Archive from '@/components/archive/Archive'
 import Timeline from '@/components/story/Timeline.vue'
+import Header from '@/components/profile/Header.vue'
 
 import {
   mapActions,
@@ -50,7 +62,8 @@ export default {
     SideNavMenu,
     Profile,
     Archive,
-    Timeline
+    Timeline,
+    Header
   },
   data () {
     return {
@@ -111,7 +124,7 @@ export default {
     async setupProfile (id) {
       this.setProfileById(id)
       if (this.dialog.active) this.dialog.active = null
-      // if (id === this.whoami.profile.id) await this.setWhoami()
+      if (id === this.whoami.profile.id) await this.setWhoami()
     },
 
     updateDialog (dialogObj) {
@@ -124,24 +137,18 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss">
-.wrapper {
-  color: black;
-  .body-width {
-    /* min-width: $formWidth; */
-    max-width: 100vw;
-    min-height: 100vh;
-    background: white;
-  }
-
-  .niho-bg {
-    background: linear-gradient(rgba(255, 255, 255, 0.7),
-        rgba(255, 255, 255, 0.7)), url(../assets/niho.svg);
-    background-position-x: 800px;
-    background-attachment: fixed;
-    background-repeat: no-repeat;
-  }
+.body-width {
+  /* min-width: $formWidth; */
+  max-width: 100vw;
+  min-height: 100vh;
+  background: white;
 }
-.top-padding {
-  margin-top: 64px;
+
+.niho-bg {
+  background: linear-gradient(rgba(255, 255, 255, 0.99),
+      rgba(255, 255, 255, 0.7)), url(../assets/niho.svg);
+  background-position-x: 400px;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
 }
 </style>

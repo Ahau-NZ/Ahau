@@ -298,12 +298,6 @@ export default {
     flex-direction: column;
     align-items: center; // background: linear-gradient(to right, grey 0%,grey 50%,#000000 50%,white 50%,white 100%);
 
-    .body-width {
-      min-width: $formWidth;
-      max-width: 100vw;
-      min-height: 100vh;
-      background: white;
-    }
 
     .rounded-card {
       border-radius: 10px;

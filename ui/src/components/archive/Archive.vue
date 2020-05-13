@@ -14,6 +14,15 @@
             <v-row justify="center">
               <ArchiveStory />
             </v-row>
+            <v-row justify="center">
+              <ArchiveStory />
+            </v-row>
+            <v-row justify="center">
+              <ArchiveStory />
+            </v-row>
+            <v-row justify="center">
+              <ArchiveStory />
+            </v-row>
         </v-col>
         <v-col cols="12" lg="2" class="px-12">
             <v-row>

@@ -5,7 +5,7 @@
       <ProfileInfoItem class="br bb" :title="'Occupation'" :value="profile.profession" />
       <ProfileInfoItem class="bb" :title="'Location'" :value="profile.location" />
 
-      <div v-if="profile.parents.length" :class="mobile ? 'bb' : 'br'">
+      <div v-if="profile.parents && profile.parents.length" :class="mobile ? 'bb' : 'br'">
         <AvatarGroup v-if="profile.parents" :profiles="profile.parents" group-title="Parents" size="50px" :show-labels="true"
           :addButtonSlot="false" @profile-click="openProfile($event)">
         </AvatarGroup>
@@ -15,7 +15,7 @@
           :addButtonSlot="false" @profile-click="openProfile($event)">
         </AvatarGroup>
       </div>
-      <div v-if="profile.children.length">
+      <div v-if="profile.children && profile.children.length">
         <AvatarGroup v-if="profile.children" :profiles="profile.children" group-title="Children" size="50px" :show-labels="true"
           :addButtonSlot="false" @profile-click="openProfile($event)">
         </AvatarGroup>

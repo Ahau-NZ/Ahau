@@ -112,7 +112,9 @@ body {
     // background-size: cover;
   }
   &.page--profileshow {
-    background-color: #303030;
+    background: url(./assets/niho.svg);
+    background-color: var(--primary-background);
+    background-position-x: 0px;
   }
   &.page--profile {
     background: url(./assets/niho.svg);
