@@ -79,9 +79,9 @@
 <script>
 
 import * as d3 from 'd3'
-import Node from './table/Node.vue'
-import Link from './tree/Link.vue'
-import calculateAge from '../lib/calculate-age.js'
+import Node from './Node.vue'
+import Link from '../tree/Link.vue'
+import calculateAge from '../../lib/calculate-age.js'
 import isEqual from 'lodash.isequal'
 import { mapGetters, mapActions } from 'vuex'
 

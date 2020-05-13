@@ -54,7 +54,7 @@ import {
   VueContext
 } from 'vue-context'
 
-import ArchiveStory from '@/components/ArchiveStory.vue'
+import ArchiveStory from '@/components/archive/ArchiveStory.vue'
 import CollectionGroup from '@/components/archive/CollectionGroup.vue'
 
 import DialogHandler from '@/components/dialog/DialogHandler.vue'

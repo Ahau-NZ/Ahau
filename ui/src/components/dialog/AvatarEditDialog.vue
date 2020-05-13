@@ -80,6 +80,7 @@ export default {
         case 'avatar': return 1
         case 'whakapapa': return 2
         case 'header': return 6
+        default:
           return 1
       }
     },
@@ -89,6 +90,7 @@ export default {
         case 'avatar': return '500px'
         case 'whakapapa': return '600px'
         case 'header': return '1000px'
+        default:
           return 1
       }
     }

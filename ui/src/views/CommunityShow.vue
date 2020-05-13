@@ -4,7 +4,7 @@
 
 <script>
 import gql from 'graphql-tag'
-import Profile from '@/components/Profile'
+import Profile from '@/components/profile/Profile.vue'
 
 export default {
   name: 'CommmunityShow',

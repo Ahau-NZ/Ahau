@@ -52,12 +52,14 @@ export default {
         var age = calculateAge(this.profile.bornAt)
         return String(age)
       }
+      return ' '
     },
     dob () {
       if (this.profile.bornAt) {
         var formattedDate = formatDate(this.profile.bornAt)
         return formattedDate
       }
+      return ' '
     }
   },
   methods: {

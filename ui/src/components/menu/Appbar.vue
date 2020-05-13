@@ -159,6 +159,7 @@ export default {
       if (this.route.from) {
         return this.route.from.name === 'whakapapaShow' && this.route.name === 'profileShow'
       }
+      return false
     }
   },
   beforeMount () {

@@ -33,7 +33,7 @@
 <script>
 import DialogHandler from '@/components/dialog/DialogHandler.vue'
 import SideNavMenu from '@/components/menu/SideNavMenu.vue'
-import Profile from '@/components/Profile'
+import Profile from '@/components/profile/Profile.vue'
 import Archive from '@/components/archive/Archive'
 import Timeline from '@/components/story/Timeline.vue'
 
