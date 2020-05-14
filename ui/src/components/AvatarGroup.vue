@@ -6,12 +6,12 @@
       </v-col>
     </v-row>
 
-    <v-row class="d-flex justify-start align-center pa-2 pl-4">
+    <v-row :class="customClass">
       <div
         width="100%"
-        class="pt-0 pb-0 pr-5"
-        v-for="profile in profiles"
-        :key="profile.id"
+        :class="spacing"
+        v-for="(profile, i) in profiles"
+        :key="`${groupTitle}-${profile.id}-${i}`"
       >
         <div justify="center" class="pt-2">
           <Avatar
@@ -28,7 +28,7 @@
         </div>
       </div>
 
-      <v-col v-if="addButtonSlot" class="d-flex justify-center align-center">
+      <v-col v-if="addButtonSlot" :class="customClass">
         <v-row justify="center">
           <slot></slot>
         </v-row>
@@ -49,7 +49,9 @@ export default {
     groupTitle: { type: String, default: null },
     showLabels: { type: Boolean, default: false },
     size: { type: String, default: '80px' },
-    addButtonSlot: { type: Boolean, default: true }
+    addButtonSlot: { type: Boolean, default: true },
+    customClass: { type: String, default: 'd-flex justify-start align-center pa-2 pl-4' },
+    spacing: { type: String, default: 'pr-5' }
   },
   computed: {
     columns () {

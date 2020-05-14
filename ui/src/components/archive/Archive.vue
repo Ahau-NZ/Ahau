@@ -11,8 +11,8 @@
               <CollectionGroup :collections="mockCollections" />
             </v-row>
             <v-divider class="mt-6 mb-8" light></v-divider>
-            <v-row justify="center">
-              <ArchiveStory />
+            <v-row v-for="(story, i) in stories" :key="`story-${i}-id-${story.id}`" class="mt-10">
+              <StoryCard :story="story" />
             </v-row>
         </v-col>
         <v-col cols="12" lg="2" class="px-12">
@@ -54,17 +54,26 @@ import {
   VueContext
 } from 'vue-context'
 
-import ArchiveStory from '@/components/archive/ArchiveStory.vue'
+import StoryCard from '@/components/archive/StoryCard.vue'
 import CollectionGroup from '@/components/archive/CollectionGroup.vue'
 
 import DialogHandler from '@/components/dialog/DialogHandler.vue'
+
+import { STORIES } from '@/mocks/stories'
 
 // const get = require('lodash.get')
 
 export default {
   name: 'ArchiveShow',
+  components: {
+    StoryCard,
+    CollectionGroup,
+    VueContext,
+    DialogHandler
+  },
   data () {
     return {
+      stories: STORIES,
       mockCollections: [
         {
           image: require('@/assets/mock3.jpg'),
@@ -199,12 +208,6 @@ export default {
     updateDialog (dialog) {
       this.dialog.active = dialog
     }
-  },
-  components: {
-    ArchiveStory,
-    CollectionGroup,
-    VueContext,
-    DialogHandler
   }
 }
 </script>
