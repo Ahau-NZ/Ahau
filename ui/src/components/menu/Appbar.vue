@@ -16,8 +16,9 @@
           <Avatar
             size="50px"
             class="ma-0"
-            :image="whakapapa.image"
+            :image="whakapapa.image ? whakapapa.image : null"
             :alt="whakapapa.name"
+            :isView="!whakapapa.image"
           />
         </v-row>
       </router-link>
@@ -108,6 +109,7 @@
 <script>
 import gql from 'graphql-tag'
 import Avatar from '@/components/Avatar'
+import whakapapaSvg from '@/assets/whakapapa.svg'
 import FeedbackButton from '@/components/button/FeedbackButton'
 import { mapGetters, mapActions } from 'vuex'
 
@@ -145,6 +147,12 @@ export default {
   },
   computed: {
     ...mapGetters(['whoami', 'whakapapa', 'route']),
+    // image () {
+    //   if (this.whakapapa.image) return this.whakapapa.image 
+    //   else return {
+    //     uri: '@/assets/whakapapa.svg'
+    //   }
+    // },
     classObject: function () {
       return {
         'mobile': this.mobile,
