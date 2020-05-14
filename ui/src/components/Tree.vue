@@ -19,9 +19,9 @@
           :transform="`translate(${treeX - nodeRadius} ${treeY - nodeRadius})`"
           ref="tree"
         >
-          <g v-for="node in nodes" :key="node.data.id" class="node">
+          <g v-for="node in nodes" :key="node.id" class="node">
             <Node
-              :node="node"
+              :node.sync="node"
               :radius="nodeRadius"
               :nonFocusedPartners="nonFocusedPartners"
               @click="centerNode(node)"
@@ -49,10 +49,11 @@
         </g>
       </g>
       <!-- loading spinner when changing focus -->
-      <g v-if="loading">
+      <!-- <Spinner v-if="loadingState" /> -->
+      <!-- <g v-if="loadingState">
         <rect width="100%" height="100%" style="fill:#fff; opacity:0.95" />
         <image :transform="`translate(${width/2 - 100} ${height/3})`" href="../assets/grid-loader.svg" width="30" height="30" />
-      </g>
+      </g> -->
     </svg>
 </template>
 
@@ -64,17 +65,12 @@ import Link from './tree/Link.vue'
 
 import isEqual from 'lodash.isequal'
 
+import { mapGetters, mapActions } from 'vuex'
+
 export default {
   props: {
-    nestedWhakapapa: {
-      type: Object,
-      default: () => ({
-        preferredName: 'Loading',
-        gender: 'unknown',
-        children: [],
-        parents: [],
-        nonFocusedPartner: false
-      })
+    find: {
+      type: Function
     },
     currentFocus: {
       type: String
@@ -84,56 +80,12 @@ export default {
       required: true
     },
     relationshipLinks: {
-      type: Array
+      type: Map
     },
     searchNodeId: {
       type: String
     },
     getRelatives: Function
-  },
-  watch: {
-    'nestedWhakapapa': function (newNestedWhakapapa) {
-      if (newNestedWhakapapa.preferredName !== 'Loading') {
-        this.nonFocusedPartners = []
-        this.checkNonFocusedPartner(this.nestedWhakapapa)
-      }
-    },
-    searchNodeId (newVal) {
-      if (newVal === '') return null
-      this.root.descendants().find(d => {
-        if (d.data.id === newVal) {
-          this.centerNode(d)
-        }
-      })
-    },
-    // watch for change of focus to center on that node
-    currentFocus (newValue) {
-      if (this.changeFocusId !== null) {
-        // if theres a change wait for the nodes to load than map through to find the change of focus
-        setTimeout(() => {
-          this.nodes.map((d) => {
-            if (d.data.id === this.changeFocusId) {
-              this.centerNode(d)
-            }
-          })
-        }, 500)
-
-        // hide the grapgh until the tree has centered
-        setTimeout(() => {
-          this.loading = false
-        }, 1500)
-      }
-    },
-
-    // watch node and if the previous node is the same last node is the same
-    node (newValue) {
-      this.lastNode = newValue
-      setTimeout(() => {
-        if (this.lastNode === newValue) {
-          this.loading = false
-        }
-      }, 1000)
-    }
   },
   data () {
     return {
@@ -146,18 +98,17 @@ export default {
       nodeSeparationY: 150,
       nonFocusedPartners: [],
       changeFocusId: null,
-      loading: false,
-      node: null,
+      nodeId: '',
       lastNode: null
     }
   },
   mounted () {
     this.componentLoaded = true
     // set loader until all the nodes have been loaded
-    this.loading = true
     this.zoom()
   },
   computed: {
+    ...mapGetters(['nestedWhakapapa']),
     pathNode () {
       if (this.searchNodeId === '') return null
       return this.root.descendants().find(d => {
@@ -233,16 +184,17 @@ export default {
       return this.treeLayout(this.root)
         .descendants() // returns the array of descendants starting with the root node, then followed by each child in topological order
         .map((d, i) => {
-          this.updateNode(d.data.id)
           return {
-            nodeId: `node-${i}`,
+            id: `tree-node-${i}-${d.data.id}`,
             children: d.children,
             data: d.data,
             depth: d.depth,
             height: d.height,
             parent: d.parent,
             x: d.x,
-            y: d.y
+            y: d.y,
+            index: i,
+            path: d.data.path
           }
         })
     },
@@ -254,15 +206,16 @@ export default {
         .links() // returns the array of links
         .map((d, i) => { // returns a new custom object for each link
           return {
-            id: `tree-link-${i}-${i + 1}`,
+            id: `tree-link-${i}-${d.source.data.id}-${d.target.data.id}`,
             index: i,
-            relationshipType: d.target.data.relationshipType ? d.target.data.relationshipType[0] : '',
+            relationshipType: d.target.data.relationship.relationshipType ? d.target.data.relationship.relationshipType : '',
             // coordinates from drawing lines/links from Parent(x1,y1) to Child(x2,y2)
             x1: d.source.x, // centre x position of parent node
             x2: d.target.x, // centre x position of child node
             y1: d.source.y, // centre y position of the parent node
             y2: d.target.y, // centre y position of the child node
-            class: this.relationshipLinks[d.source.data.id + '-' + d.target.data.id].relationshipType !== 'birth' ? 'nonbiological' : '',
+            // class: this.relationshipLinks.get(d.source.data.id + '-' + d.target.data.id).relationshipType !== 'birth' ? 'nonbiological' : '',
+            class: d.target.data.relationship.relationshipType !== 'birth' ? 'nonbiological' : '',
             style: {
               fill: 'none',
               stroke: this.pathStroke(d.source.data.id, d.target.data.id)
@@ -289,14 +242,42 @@ export default {
         .map(d => d.data.id)
     }
   },
-
-  methods: {
-    updateNode (id) {
-      this.node = id
+  watch: {
+    'nestedWhakapapa': function (newValue) {
+      // Check for partners parents dots
+      if (newValue.preferredName !== 'Loading') {
+        this.nonFocusedPartners = []
+        this.checkNonFocusedPartner(this.nestedWhakapapa)
+      }
+      if (this.changeFocusId !== null) {
+        this.nodes.find(d => {
+          if (d.data.id === this.changeFocusId) {
+            this.centerNode(d)
+            this.changeFocusId = null
+          }
+        })
+      }
     },
 
+    searchNodeId (newVal) {
+      if (newVal === '') return null
+      this.root.descendants().find(d => {
+        if (d.data.id === newVal) {
+          this.centerNode(d)
+        }
+      })
+    },
+
+    nodes (newValue) {
+      this.loading(false)
+    }
+  },
+
+  methods: {
+    ...mapActions(['updateNode', 'loading']),
+
     pathStroke (sourceId, targetId) {
-      if (!this.paths) return 'lightgrey'
+      if (!this.paths) return 'darkgrey'
 
       var currentPath = [
         sourceId,
@@ -311,11 +292,13 @@ export default {
       if (pairs.length > 0) {
         return '#b02425'
       }
-      return 'lightgrey'
+      return 'darkgrey'
     },
+
     loadDescendants (profileId) {
       this.$emit('load-descendants', profileId)
     },
+
     async checkNonFocusedPartner (profile) {
       if (profile.partners && profile.partners.length > 0) {
         for await (const partner of profile.partners) {
@@ -331,16 +314,26 @@ export default {
         }
       }
     },
-    collapse (node) {
-      this.$emit('collapse-node', node.data.id)
-      //  TODO smooth ease-in-out transitions of children using d3 transitions
+
+    async collapse (node) {
+      // this.loading(true)
+      const profile = node.data
+      const { children, _children = [] } = profile
+
+      if (children.length === 0 && _children.length === 0) return
+
+      Object.assign(profile, {
+        isCollapsed: !profile.isCollapsed,
+        _children: children,
+        children: _children
+      })
     },
-    changeFocus (profileId, node) {
-      this.loading = true
-      node.data.id = profileId
+
+    changeFocus (profileId) {
       this.changeFocusId = profileId
       this.$emit('change-focus', profileId)
     },
+
     visiblePartners (node) {
       return get(node, 'data.isCollapsed')
         ? 0
@@ -364,6 +357,7 @@ export default {
 
       if (this.nodeCentered === source.data.id) {
         this.collapse(source)
+        return
       }
 
       this.nodeCentered = source.data.id
@@ -377,10 +371,15 @@ export default {
       var x = width / 2 - source.x
       var y = height / 2 - source.y
 
+      // g.transition()
+      //   .duration(700)
+      //   .attr('transform', 'translate(' + (x) + ',' + (y) + ')scale(' + 1 + ')')
+      //   .on('end', function () { svg.call(d3.zoom().transform, d3.zoomIdentity.translate((x), (y)).scale(1)) })
+
       g.transition()
         .duration(700)
-        .attr('transform', 'translate(' + (x) + ',' + (y) + ')scale(' + 1 + ')')
-        .on('end', function () { svg.call(d3.zoom().transform, d3.zoomIdentity.translate((x), (y)).scale(1)) })
+        .attr('transform', 'translate(' + (x) + ',' + (y) + ')')
+        .on('end', function () { svg.call(d3.zoom().transform, d3.zoomIdentity.translate((x), (y))) })
     },
     zoomInOut (scale) {
       var svg = d3.select('#baseSvg')

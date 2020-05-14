@@ -47,6 +47,7 @@ import isEmpty from 'lodash.isempty'
 import isEqual from 'lodash.isequal'
 
 import calculateAge from '../../lib/calculate-age'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'SearchBar',
@@ -54,9 +55,9 @@ export default {
     Avatar
   },
   props: {
-    nestedWhakapapa: {
-      type: Object
-    },
+    // nestedWhakapapa: {
+    //   type: Object
+    // },
     searchNodeId: {
       type: String
     }
@@ -67,6 +68,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['nestedWhakapapa']),
     nodes () {
       return d3.hierarchy(this.nestedWhakapapa)
         .descendants()

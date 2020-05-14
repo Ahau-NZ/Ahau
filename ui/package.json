@@ -17,11 +17,14 @@
     "@mdi/font": "^4.5.95",
     "apollo-upload-client": "^10.0.1",
     "graphql": "^14.5.8",
+    "lodash.chunk": "^4.2.0",
     "lodash.clonedeep": "^4.5.0",
     "lodash.get": "^4.4.2",
     "lodash.isempty": "^4.4.0",
     "lodash.isequal": "^4.5.0",
-    "lodash.pick": "^4.4.0"
+    "lodash.pick": "^4.4.0",
+    "lodash.set": "^4.3.2",
+    "lodash.uniqby": "^4.7.0"
   },
   "devDependencies": {
     "@mdi/font": "^4.5.95",

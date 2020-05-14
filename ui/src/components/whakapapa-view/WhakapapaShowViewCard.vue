@@ -1,8 +1,6 @@
 <template>
   <v-card
-    :to="view.id
-      ? { name: 'whakapapaShow', params: { id: view.id } }
-      : '/whakapapa'"
+    :to="'/whakapapa'"
     style="width: 100%;"
     light
     outlined

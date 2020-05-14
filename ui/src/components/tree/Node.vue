@@ -1,5 +1,5 @@
 <template>
-  <g :id="node.nodeId" :style="groupStyle">
+  <g :id="node.nodeId" :style="groupStyle" @mouseover="hover = true" @mouseleave="hover = false">
     <!-- recursion of partners (first so they're drawing in background) -->
     <g v-if="!profile.isCollapsed">
       <g v-for="partner in partners" :key="partner.nodeId">
@@ -10,7 +10,7 @@
           :node="partner"
           :nonFocusedPartners="nonFocusedPartners"
           @change-focus="$emit('change-focus', partner.data.id)"
-          @open-context-menu="$emit('open-context-menu', $event)"
+          @open-context-menu="openMenu($event, partner.data, true)"
         />
       </g>
     </g>
@@ -39,8 +39,8 @@
       </g>
       <g
         class="menu-button"
-        v-else
-        @click.stop="openMenu($event, profile.id)"
+        v-if="!profile.isCollapsed && hover "
+        @click.stop="openMenu($event, profile, false)"
         :transform="`translate(${1.4 * radius}, ${1.4 * radius})`"
       >
         <circle
@@ -74,22 +74,6 @@
         clip-path="url(#myPartnerCircle)"
         :style="{ opacity: profile.deceased ? 0.5 : 1 }"
       />
-
-      <g
-        class="menu-button"
-        @click.stop="openMenu($event, profile.id)"
-        :transform="partnerMenuTranslate"
-      >
-        <circle
-          stroke="white"
-          fill="white"
-          filter="url(#shadow)"
-          cx="20"
-          cy="1"
-          r="10"
-        />
-        <polygon points="15,0  25,0  20,6" style="fill:#000;" />
-      </g>
     </g>
 
     <g id="node-label" :style="textStyle">
@@ -137,6 +121,7 @@ export default {
   },
   data () {
     return {
+      hover: false,
       offsetSize: 15,
       partnerRadius: 0.8 * this.radius,
       colours: {
@@ -200,8 +185,9 @@ export default {
     click () {
       this.$emit('click')
     },
-    openMenu ($event, profileId) {
-      this.$emit('open-context-menu', { event, profileId })
+    openMenu ($event, profile, isPartner) {
+      profile.isPartner = isPartner
+      this.$emit('open-context-menu', { event, profile })
     },
     getPartners () {
       var leftCount = 0

@@ -13,7 +13,7 @@
           :alt="profile.preferredName"
           :gender="formData.gender"
           :bornAt="formData.bornAt"
-          :diedAt="formData.diedAt"
+          :deceased="formData.deceased"
           :isEditing="isEditing"
           style="margin-top: 20px;"
           @updateAvatar="formData.avatarImage = $event"
@@ -140,13 +140,24 @@
 
                 <!-- Mobile: Children -->
                 <v-col :cols="12" class="pa-0">
-                  <AvatarGroup
-                    :profiles="profile.children"
-                    group-title="Children"
-                    size="60px"
-                    :show-labels="true"
-                    @profile-click="openProfile($event)"
-                  >
+                     <AvatarGroup
+                      v-if="profile.children.length"
+                      :profiles="profile.children"
+                      group-title="Children"
+                      size="60px"
+                      :show-labels="true"
+                      @profile-click="openProfile($event)"
+                    >
+                      <AddButton @click="toggleNew('child')" />
+                    </AvatarGroup>
+                    <AvatarGroup
+                      v-else
+                      :profiles="profile._children"
+                      group-title="Children"
+                      size="60px"
+                      :show-labels="true"
+                      @profile-click="openProfile($event)"
+                    >
                     <AddButton @click="toggleNew('child')" />
                   </AvatarGroup>
                 </v-col>
@@ -171,7 +182,7 @@
                         <!-- Mobile: Editing: Perferred Name -->
                         <v-text-field
                           v-model="formData.preferredName"
-                          label="Preferred name"
+                          label="First name / Preferred name"
                           v-bind="customProps"
                           outlined
                         />
@@ -230,8 +241,7 @@
                         </v-row>
                       </template>
                     </v-row>
-
-                      <!-- Mobile: Editing: DATE OF BIRTH -->
+                    <!-- Mobile: Editing: DATE OF BIRTH -->
                     <v-row>
                       <v-col cols="12" class="pa-1">
                         <NodeDatePicker
@@ -239,6 +249,18 @@
                           label="Date of birth"
                           @date="formData.bornAt = $event"
                           :readonly="readonly"
+                        />
+                      </v-col>
+                    </v-row>
+                    <!-- Mobile: Editing: relationship type-->
+                    <v-row>
+                      <v-col v-if="!readonly || formData.relationshipType" cols="12" class="pa-1">
+                        <v-select
+                          v-model="formData.relationshipType"
+                          label="Related by"
+                          :items="relationshipTypes"
+                          v-bind="customProps"
+                          outlined
                         />
                       </v-col>
                     </v-row>
@@ -255,6 +277,26 @@
                         />
                       </v-col>
                     </v-row>
+                    <!-- Mobile: Editing: DECEASED PICKER-->
+                     <v-row>
+                      <v-col  v-if="!readonly || formData.deceased" cols="12" class="pa-1">
+                          <v-checkbox v-model="formData.deceased"
+                            label="No longer living" :hide-details="true"
+                            v-bind="customProps"
+                            outlined
+                          />
+                        </v-col>
+                        <!-- Desktop: Editing: DIED AT PICKER -->
+                        <v-col cols="12" class="pa-1">
+                          <NodeDatePicker
+                            v-if="formData.deceased"
+                            label="Date of death"
+                            :value="formData.diedAt"
+                            @date="formData.diedAt = $event"
+                            :readonly="readonly"
+                          />
+                        </v-col>
+                      </v-row>
 
                   </v-col>
                 </v-row>
@@ -442,7 +484,7 @@
               :alt="profile.preferredName"
               :gender="formData.gender"
               :bornAt="formData.bornAt"
-              :diedAt="formData.diedAt"
+              :deceased="formData.deceased"
               :isEditing="isEditing"
               @updateAvatar="formData.avatarImage = $event"
             />
@@ -573,7 +615,18 @@
                   <!-- Desktop: Children -->
                   <v-col :cols="12" class="pa-0">
                     <AvatarGroup
+                      v-if="profile.children.length"
                       :profiles="profile.children"
+                      group-title="Children"
+                      size="60px"
+                      :show-labels="true"
+                      @profile-click="openProfile($event)"
+                    >
+                      <AddButton @click="toggleNew('child')" />
+                    </AvatarGroup>
+                    <AvatarGroup
+                      v-else
+                      :profiles="profile._children"
                       group-title="Children"
                       size="60px"
                       :show-labels="true"
@@ -592,102 +645,130 @@
 
           <!-- Desktop: Editing: START -->
           <v-col v-else>
-              <v-row>
-                  <v-row class="pa-4">
-                    <!-- Desktop: Editing: Names -->
-                    <v-col class="pt-4">
-                      <v-row>
-                        <v-col cols="12" class="pa-1">
-                          <!-- <slot name="search"> -->
+            <v-row>
+                <v-row class="pa-4">
+                  <!-- Desktop: Editing: Names -->
+                  <v-col class="pt-4">
+                    <v-row>
+                      <v-col cols="12" class="pa-1">
+                        <!-- Desktop: Editing: Perferred Name -->
+                        <v-text-field
+                          v-model="formData.preferredName"
+                          label="First name / Preferred name"
+                          v-bind="customProps"
+                          outlined
+                        />
+                      </v-col>
 
-                          <!-- Desktop: Editing: Perferred Name -->
+                      <!-- Desktop: Editing: Legal Name -->
+                      <v-col cols="12" class="pa-1">
+                        <v-text-field
+                          v-model="formData.legalName"
+                          label="Legal name."
+                          v-bind="customProps"
+                          outlined
+                        />
+                      </v-col>
+
+                      <!-- Desktop: Alternative Names -->
+                      <template>
+                        <v-col v-for="(altName, index) in formData.altNames.value"
+                          :key="`value-alt-name-${index}`"
+                          cols="12"
+                          class="pa-1"
+                        >
                           <v-text-field
-                            v-model="formData.preferredName"
-                            label="Preferred name"
+                            v-model="formData.altNames.value[index]"
+                            :label="`Alternative name ${index + 1}`"
+                            :append-icon="readonly ? '' : 'mdi-delete'"
+                            @click:append="removeAltName(formData.altNames.value[index], index)"
+                            readonly
                             v-bind="customProps"
                             outlined
                           />
-                          <!-- </slot> -->
                         </v-col>
+                      </template>
 
-                        <!-- Desktop: Editing: Legal Name -->
-                        <v-col cols="12" class="pa-1">
+                      <!-- Desktop: Editing: Add Alt Names -->
+                      <template v-if="!readonly">
+                        <v-col v-for="(altName, index) in formData.altNames.add"
+                          :key="`add-alt-name-${index}`"
+                          cols="12"
+                          class="pa-1"
+                        >
                           <v-text-field
-                            v-model="formData.legalName"
-                            label="Legal name."
+                            v-model="formData.altNames.add[index]"
+                            :label="`Alternative name ${index + 1}`"
+                            append-icon="mdi-delete"
+                            @click:append="removeAltNameField(index)"
+                            v-bind="customProps"
+                            cols="12"
+                            outlined
+                          />
+                        </v-col>
+                        <v-row class="mx-1">
+                          <v-col cols="8"></v-col>
+                          <AddButton :align="'flex-end'" :width="'50px'" label="Add name" @click="addAltNameField" row/>
+                        </v-row>
+                      </template>
+                    </v-row>
+
+                      <!-- Desktop: Editing: DATE OF BIRTH -->
+                    <v-row>
+                      <v-col cols="12" class="pa-1">
+                        <NodeDatePicker
+                          :value="formData.bornAt"
+                          label="Date of birth"
+                          @date="formData.bornAt = $event"
+                          :readonly="readonly"
+                        />
+                      </v-col>
+                    </v-row>
+                    <!-- Desktop: Editing: relationship type-->
+                    <v-row>
+                      <v-col v-if="!readonly || formData.relationshipType" cols="12" class="pa-1">
+                        <v-select
+                          v-model="formData.relationshipType"
+                          label="Related by"
+                          :items="relationshipTypes"
+                          v-bind="customProps"
+                          outlined
+                        />
+                      </v-col>
+                    </v-row>
+                    <!-- Desktop: Editing: ORDER OF BIRTH -->
+                    <v-row>
+                      <v-col v-if="!readonly || formData.birthOrder" cols="12" class="pa-1">
+                        <v-select
+                          v-model="formData.birthOrder"
+                          type="number"
+                          label="Order of birth"
+                          :items="orderNumbers"
+                          v-bind="customProps"
+                          outlined
+                        />
+                      </v-col>
+                    </v-row>
+                    <!-- Desktop: Editing : DECEASED PICKER -->
+                    <v-row>
+                      <v-col  v-if="!readonly || formData.deceased" cols="12" class="pa-1">
+                          <v-checkbox v-model="formData.deceased"
+                            label="No longer living" :hide-details="true"
                             v-bind="customProps"
                             outlined
                           />
                         </v-col>
-
-                        <!-- Desktop: Alternative Names -->
-                        <template>
-                          <v-col v-for="(altName, index) in formData.altNames.value"
-                            :key="`value-alt-name-${index}`"
-                            cols="12"
-                            class="pa-1"
-                          >
-                            <v-text-field
-                              v-model="formData.altNames.value[index]"
-                              :label="`Alternative name ${index + 1}`"
-                              :append-icon="readonly ? '' : 'mdi-delete'"
-                              @click:append="removeAltName(formData.altNames.value[index], index)"
-                              readonly
-                              v-bind="customProps"
-                              outlined
-                            />
-                          </v-col>
-                        </template>
-
-                        <!-- Desktop: Editing: Add Alt Names -->
-                        <template v-if="!readonly">
-                          <v-col v-for="(altName, index) in formData.altNames.add"
-                            :key="`add-alt-name-${index}`"
-                            cols="12"
-                            class="pa-1"
-                          >
-                            <v-text-field
-                              v-model="formData.altNames.add[index]"
-                              :label="`Alternative name ${index + 1}`"
-                              append-icon="mdi-delete"
-                              @click:append="removeAltNameField(index)"
-                              v-bind="customProps"
-                              cols="12"
-                              outlined
-                            />
-                          </v-col>
-                          <v-row class="mx-1">
-                            <v-col cols="8"></v-col>
-                            <AddButton :align="'flex-end'" :width="'50px'" label="Add name" @click="addAltNameField" row/>
-                          </v-row>
-                        </template>
-                      </v-row>
-
-                        <!-- Desktop: Editing: DATE OF BIRTH -->
-                      <v-row>
+                        <!-- Desktop: Editing: DIED AT PICKER -->
                         <v-col cols="12" class="pa-1">
                           <NodeDatePicker
-                            :value="formData.bornAt"
-                            label="Date of birth"
-                            @date="formData.bornAt = $event"
+                            v-if="formData.deceased"
+                            label="Date of death"
+                            :value="formData.diedAt"
+                            @date="formData.diedAt = $event"
                             :readonly="readonly"
                           />
                         </v-col>
                       </v-row>
-                      <!-- Desktop: Editing: ORDER OF BIRTH -->
-                      <v-row>
-                        <v-col v-if="!readonly || formData.birthOrder" cols="12" class="pa-1">
-                          <v-select
-                            v-model="formData.birthOrder"
-                            type="number"
-                            label="Order of birth"
-                            :items="orderNumbers"
-                            v-bind="customProps"
-                            outlined
-                          />
-                        </v-col>
-                      </v-row>
-
                     </v-col>
                   </v-row>
 
@@ -883,7 +964,7 @@ function defaultData (profile) {
     avatarImage: profile.avatarImage,
     description: profile.description,
     birthOrder: profile.birthOrder,
-    relationshipType: profile.relationship ? profile.relationship.relationshipType ? profile.relationship.relationshipType : null : null,
+    relationshipType: profile.relationship ? profile.relationship.relationshipType : null,
     location: profile.location,
     email: profile.email,
     phone: profile.phone,
@@ -899,7 +980,7 @@ function defaultData (profile) {
 }
 
 export default {
-  name: 'SideViewEditNodeDialogV2',
+  name: 'SideViewEditNodeDialog',
   components: {
     Avatar,
     AvatarGroup,
@@ -923,7 +1004,6 @@ export default {
     return {
       testmapimage: require('../../../assets/map-test.png'),
       genders: GENDERS,
-      // titles: TITLES,
       permitted: PERMITTED_PROFILE_ATTRS,
       relationshipTypes: RELATIONSHIPS,
       isEditing: false,
@@ -961,7 +1041,7 @@ export default {
               changes[key] = parseInt(value)
               break
             case 'relationshipType':
-              if (value && value !== this.profile.relationship.relationshipType) {
+              if (value && value !== this.profile.relationshipType) {
                 changes[key] = value
               }
               break
@@ -1046,8 +1126,8 @@ export default {
       this.formData = defaultData(this.profile)
       this.toggleEdit()
     },
-    openProfile (profileId) {
-      this.$emit('open-profile', profileId)
+    openProfile (profile) {
+      this.$emit('open-profile', profile.id)
     },
     toggleNew (type) {
       this.$emit('new', type)

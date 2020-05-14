@@ -15,7 +15,7 @@
                 :alt="formData.preferredName"
                 :gender="formData.gender"
                 :bornAt="formData.bornAt"
-                :diedAt="formData.diedAt"
+                :deceased="formData.deceased"
               />
             </v-col>
             <!-- Upload Profile Photo Button -->
@@ -32,7 +32,7 @@
                 <slot name="search">
                   <v-text-field
                     v-model="formData.preferredName"
-                    label="Preferred name"
+                    label="First name / Preferred name"
                     v-bind="customProps"
                     outlined
                   />
@@ -56,7 +56,7 @@
               >
                 <v-text-field
                   v-model="formData.altNames.value[index]"
-                  :label="`Alternative name ${index + 1}`"
+                  :label="`Nick name / Alternative name`"
                   :append-icon="readonly ? '' : 'mdi-delete'"
                   @click:append="removeAltName(formData.altNames.value[index], index)"
                   readonly
@@ -76,7 +76,7 @@
               >
                 <v-text-field
                   v-model="formData.altNames.add[index]"
-                  :label="`Alternative name ${index + 1}`"
+                  :label="`Nick name / Alternative name ${index + 1}`"
                   append-icon="mdi-delete"
                   @click:append="removeAltNameField(index)"
                   v-bind="customProps"
@@ -102,6 +102,18 @@
               />
             </v-col>
           </v-row>
+
+          <!-- Editing: relationship type-->
+          <v-row>
+            <v-col cols="12" class="pa-1">
+              <v-select
+                v-model="formData.relationshipType"
+                label="Related by"
+                :items="relationshipTypes"
+                outlined
+              />
+            </v-col>
+          </v-row>
           <!-- ORDER OF BIRTH -->
           <v-row>
             <v-col v-if="!readonly || formData.birthOrder" cols="12" class="pa-1">
@@ -115,7 +127,26 @@
               />
             </v-col>
           </v-row>
-
+          <!-- DECEASED PICKER -->
+          <v-row>
+           <v-col  v-if="!readonly || formData.deceased" cols="12" class="pa-1">
+              <v-checkbox v-model="formData.deceased"
+                label="No longer living" :hide-details="true"
+                v-bind="customProps"
+                outlined
+              />
+            </v-col>
+            <!-- DIED AT PICKER -->
+            <v-col cols="12" sm="12" class="pa-1">
+              <NodeDatePicker
+                v-if="formData.deceased"
+                label="Date of death"
+                :value="formData.diedAt"
+                @date="formData.diedAt = $event"
+                :readonly="readonly"
+              />
+            </v-col>
+          </v-row>
         </v-col>
       </v-row>
 

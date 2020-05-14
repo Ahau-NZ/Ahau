@@ -4,7 +4,7 @@
       <v-card-text class="pt-0">
         <p>
           This whakapapa tool has been designed to help you create,
-          explore and update your whānanu whakapapa records. <br />
+          explore and update your whānau whakapapa records. <br />
           To do this we have built in some core features and will continue to
           add more as requested by the community.
           <br />
@@ -31,13 +31,22 @@
         </p>
       </v-card-text>
       <v-divider />
+      <p>
+          Example images
+      </p>
       <v-carousel hide-delimiters>
-        <v-carousel-item
-          v-for="(item,i) in items"
-          :key="i"
-          :src="item.src"
-          class="centerImage"
-        ></v-carousel-item>
+        <v-tooltip v-for="(item,i) in items"
+              :key="i" top>
+          <template v-slot:activator="{ on }">
+            <v-carousel-item
+              v-on="on"
+              :src="item.src"
+              class="centerImage"
+            >
+            </v-carousel-item>
+          </template>
+          <span>{{item.text}}</span>
+        </v-tooltip>
       </v-carousel>
     </template>
   </Dialog>
@@ -54,10 +63,14 @@ export default {
   data () {
     return {
       items: [
-        { src: require('../../../assets/menu.png') },
-        { src: require('../../../assets/parent.png') },
-        { src: require('../../../assets/view.png') },
-        { src: require('../../../assets/example.png') }
+        { src: require('../../../assets/menu.png'),
+          text: 'actions menu' },
+        { src: require('../../../assets/parent.png'),
+          text: 'adding a person' },
+        { src: require('../../../assets/view.png'),
+          text: 'a persons profile' },
+        { src: require('../../../assets/example.png'),
+          text: 'an example whakapapa' }
       ]
     }
   },

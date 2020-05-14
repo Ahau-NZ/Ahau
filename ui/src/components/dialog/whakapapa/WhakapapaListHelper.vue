@@ -5,13 +5,22 @@
         In Āhau a whakapapa record is a genealogy graph. You can create as many whakapapa records as you like to represent the many different family lines that you belong to.
       </v-card-text>
       <v-divider />
+      <p>
+          Example images
+      </p>
       <v-carousel hide-delimiters>
-        <v-carousel-item
+        <v-tooltip
           v-for="(item,i) in items"
-          :key="i"
-          :src="item.src"
-          class="centerImage"
-        ></v-carousel-item>
+          :key="i" top>
+          <template v-slot:activator="{ on }">
+            <v-carousel-item
+              v-on="on"
+              :src="item.src"
+              class="centerImage"
+            ></v-carousel-item>
+          </template>
+          <span> {{item.text}} </span>
+        </v-tooltip>
       </v-carousel>
     </template>
   </Dialog>
@@ -28,8 +37,10 @@ export default {
   data () {
     return {
       items: [
-        { src: require('../../../assets/tree.jpg') },
-        { src: require('../../../assets/whakapapa-list.jpg') }
+        { src: require('../../../assets/tree.jpg'),
+          text: 'an example whakapapa' },
+        { src: require('../../../assets/whakapapa-list.jpg'),
+          text: 'list of whakapapa records' }
       ]
     }
   },
