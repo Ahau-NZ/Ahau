@@ -9,14 +9,14 @@
           <!-- <v-btn :class="mobile ? 'searchBtnMob' : 'searchBtn'" :small="!mobile" :x-small="mobile" class="my-2" fab flat color="white" @click="editProfile()">
             <v-icon small class="black--text">mdi-magnify</v-icon>
           </v-btn>            -->
-          <v-btn :large="!mobile" :x-small="mobile" :class="mobile ? 'addBtnMob' : 'addBtn'" class="my-2" fab color="white" @click.stop="openContextMenu($event)">
+          <v-btn :small="!mobile" :x-small="mobile" :class="mobile ? 'addBtnMob' : 'addBtn'" class="my-2" fab color="white" @click.stop="openContextMenu($event)">
             <v-icon class="black--text">mdi-plus</v-icon>
           </v-btn>
         </div>
       </v-row>
       <v-row>
         <v-col cols="12" xs="12" sm="12" md="10">
-          <v-row class="mx-0">
+          <v-row>
             <CollectionGroup :collections="mockCollections" />
           </v-row>
           <v-divider class="mt-6 mb-8" light></v-divider>

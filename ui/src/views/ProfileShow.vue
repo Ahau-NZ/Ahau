@@ -26,7 +26,7 @@
           <SideNavMenu :profile="selectedProfile" @setPageComponent="setPageComponent($event)" />
         </v-col>
       <!-- Content -->
-      <v-col cols="12" xs="12" sm="12" md="10" :class="mobile ? 'px-6 py-0' : 'pl-0'">
+      <v-col cols="12" xs="12" sm="12" md="10" :class="mobile ? 'px-6 py-0' : 'pl-0 py-0'">
         <transition
           name="fade"
           mode="out-in"

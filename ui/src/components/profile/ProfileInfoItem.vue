@@ -1,7 +1,7 @@
 <template>
   <v-col :cols="mobile ? smCols : '12'" :sm="smCols" :md="mdCols">
     <v-row>
-      <v-col class=" ma-0 profile-label"><small>{{ title }}</small></v-col>
+      <v-col v-if="title" class=" ma-0 profile-label"><small>{{ title }}</small></v-col>
     </v-row>
     <v-row v-if="value" class="justify-center">
       <p class="ma-0 profile-info">{{ value }}</p>

@@ -1,6 +1,6 @@
 <template>
   <v-row ref="sideNav" class="sideNav" :class="position" v-scroll="onScroll">
-    <v-col cols="12" md="2">
+    <v-col cols="12" md="2" :class="mobile ? 'px-6':''">
       <v-col align="center" v-if="!mobile" class="pa-2 ml-5" cols="12">
         <v-row cols="12" xs="12" sm="12">
           <v-btn @click="setActive('Profile')" light text style="height: auto;">
@@ -208,8 +208,6 @@ export default {
     border: 0.5px solid rgba(0,0,0,0.12);
     border-radius: 10px;
     background-color: white;
-    margin-left: 3px;
-    margin-right: 3px;
   }
 
   .avatar-desktop {

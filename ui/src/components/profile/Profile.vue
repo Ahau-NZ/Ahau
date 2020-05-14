@@ -1,35 +1,43 @@
 <template>
     <v-row>
-      <v-col cols="12" sx="12" sm="12" md="10" :class="mobile ? 'py-5' : '' ">
+      <v-col cols="12" sx="12" sm="12" md="10" :class="mobile ? 'py-5 px-5' : 'px-5' ">
         <ProfileInfoCard :profile="profile" @setupProfile="setupProfile($event)" />
-        <ProfileCard title="About">
+        <ProfileCard>
           <template v-slot:content>
-            <p style="color: lightgrey; text-align: center;">TODO</p>
+            <ProfileInfoItem title="About" smCols="12" mdCols="12" :value="profile.description"/>
           </template>
         </ProfileCard>
-        <ProfileCard title="Contact">
+        <ProfileCard>
           <template v-slot:content>
-            <v-row cols="12" class="pt-0">
-              <ProfileInfoItem smCols="12" mdCols="4" title="Phone" :value="profile.phone"/>
-              <ProfileInfoItem smCols="12" mdCols="4" title="Email" :value="profile.email"/>
+            <v-row cols="12" class="pt-0" >
+              <ProfileInfoItem class="br" smCols="12" mdCols="4" title="Phone" :value="profile.phone"/>
+              <ProfileInfoItem class="br" smCols="12" mdCols="4" title="Email" :value="profile.email"/>
               <ProfileInfoItem smCols="12" mdCols="4" title="Address" :value="profile.address"/>
             </v-row>
           </template>
         </ProfileCard>
       </v-col>
       <!-- RIGHT SIDE COLUMN -->
-      <v-col cols="12" sx="12" md="2" :class="mobile ? 'py-5' : 'pr-5'">
-        <Kaitiaki
-          title="Kaitiaki"
-          subtitle="These are the people who have administrative rights on this profile"
-          :profiles="profile.tiaki"
-        />
-        <Kaitiaki
+      <v-col cols="12" sx="12" md="2" :class="mobile ? 'py-5 px-5' : 'pr-8'">
+        <!-- update profiles to profiles.tiaki -->
+        <ProfileCard title="Kaitiaki" class="mt-0">
+          <template v-slot:content>
+            <v-row class="justify-center align-center ma-0">
+              <v-col cols="3" class="pt-0 pl-0">
+                <Avatar size="30px" :image="whoami.profile.avatarImage" :alt="whoami.profile.preferredName" />
+              </v-col>
+              <v-col>
+                <p style="color:black">{{whoami.profile.preferredName}}</p>
+              </v-col>
+            </v-row>
+          </template>
+        </ProfileCard>
+        <!-- <Kaitiaki
           class="mt-3"
           title="Communities"
           subtitle="These are the communities connected to this profile"
           :profiles="profile.tiaki"
-        />
+        /> -->
       </v-col>
     </v-row>
 </template>
@@ -38,7 +46,7 @@
 import ProfileInfoCard from '@/components/profile/ProfileInfoCard.vue'
 import ProfileInfoItem from '@/components/profile/ProfileInfoItem.vue'
 import ProfileCard from '@/components/profile/ProfileCard.vue'
-import Kaitiaki from '@/components/profile/Kaitiaki.vue'
+// import Kaitiaki from '@/components/profile/Kaitiaki.vue'
 import { mapGetters } from 'vuex'
 import calculateAge from '@/lib/calculate-age'
 import formatDate from '@/lib/format-date'
@@ -49,7 +57,7 @@ export default {
   components: {
     ProfileInfoCard,
     ProfileCard,
-    Kaitiaki,
+    // Kaitiaki,
     ProfileInfoItem,
     Avatar
   },
@@ -135,6 +143,10 @@ export default {
 
   .first-row {
     height: 70px;
+  }
+
+  .br {
+  border-right: 0.5px solid rgba(0,0,0,0.12);
   }
 
 </style>
