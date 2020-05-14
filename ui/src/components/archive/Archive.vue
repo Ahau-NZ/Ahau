@@ -1,8 +1,8 @@
 <template>
 <div>
-  <v-container fluid class="body-width white niho-bg">
+  <v-container fluid class="body-width white niho-bg px-0">
       <v-row :class="mobile ? 'my-0':'mt-10'">
-        <v-col cols="12" md="10" sm="10" :class="!mobile ? 'pl-12 my-6' : 'pa-0 ma-0'" align="start">
+        <v-col cols="12" md="10" sm="10" :class="!mobile ? 'pl-12 my-6' : 'py-0 ma-0'" align="start">
           <h1 class="title black--text ">Collections</h1>
         </v-col>
         <div>

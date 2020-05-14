@@ -10,14 +10,7 @@
         <h1 class="primary--text" >{{ selectedProfile.legalName ? selectedProfile.legalName : selectedProfile.preferredName }}</h1>
       </v-col>
       <v-col :order="mobile ? 'first' : 'last'" :align="mobile ? 'end' : 'center'" cols="12" md="2" sm="12"  class="px-5">
-        <v-tooltip left>
-          <template v-slot:activator="{ on }">
-              <v-btn v-on="on" x-small class="my-2" fab color="white" @click="updateDialog('edit-node')">
-                <v-icon small class="black--text">mdi-pencil</v-icon>
-              </v-btn>
-          </template>
-          <span>Edit profile</span>
-        </v-tooltip>
+        <EditProfileButton @click="updateDialog('edit-node')" />
       </v-col>
     </v-row>
     <v-row>
@@ -53,6 +46,7 @@ import Profile from '@/components/profile/Profile.vue'
 import Archive from '@/components/archive/Archive'
 import Timeline from '@/components/story/Timeline.vue'
 import Header from '@/components/profile/Header.vue'
+import EditProfileButton from '@/components/button/EditProfileButton.vue'
 
 import {
   mapActions,
@@ -68,7 +62,8 @@ export default {
     Profile,
     Archive,
     Timeline,
-    Header
+    Header,
+    EditProfileButton
   },
   data () {
     return {

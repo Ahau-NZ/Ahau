@@ -1,5 +1,5 @@
 <template>
-    <v-row>
+    <v-row class="mb-12"> 
       <v-col cols="12" sx="12" sm="12" md="10" :class="mobile ? 'py-5 px-5' : 'px-5' ">
         <ProfileInfoCard :profile="profile" @setupProfile="setupProfile($event)" />
         <ProfileCard>
@@ -23,8 +23,8 @@
         <ProfileCard title="Kaitiaki" class="mt-0">
           <template v-slot:content>
             <v-row class="justify-center align-center ma-0">
-              <v-col cols="3" class="pt-0 pl-0">
-                <Avatar size="30px" :image="whoami.profile.avatarImage" :alt="whoami.profile.preferredName" />
+              <v-col cols="2" class="pt-0 pl-0">
+                <Avatar :size="mobile ? '50px' : '40px'" :image="whoami.profile.avatarImage" :alt="whoami.profile.preferredName" />
               </v-col>
               <v-col>
                 <p style="color:black">{{whoami.profile.preferredName}}</p>
