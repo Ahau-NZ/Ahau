@@ -45,10 +45,12 @@
           <v-row>
             <v-col>
               <h4>People</h4>
-              <AvatarGroup :profiles="story.mentions" show-labels size="40px"/>
-              <AddButton @click="addMention()" />
+              <AvatarGroup :profiles="story.mentions" show-labels size="40px">
+                <template v-slot:action>
+                  <AddButton @click="addMention" />
+                </template>
+              </AvatarGroup>
             </v-col>
-
             <v-col>
               <h4>Location</h4>
             </v-col>

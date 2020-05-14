@@ -27,12 +27,9 @@
           />
         </div>
       </div>
-
-      <v-col v-if="addButtonSlot" :class="customClass">
-        <v-row justify="center">
-          <slot></slot>
-        </v-row>
-      </v-col>
+      <div>
+        <slot name="action"></slot>
+      </div>
     </v-row>
   </v-col>
 </template>
@@ -49,7 +46,6 @@ export default {
     groupTitle: { type: String, default: null },
     showLabels: { type: Boolean, default: false },
     size: { type: String, default: '80px' },
-    addButtonSlot: { type: Boolean, default: true },
     customClass: { type: String, default: 'd-flex justify-start align-center pa-2 pl-4' },
     spacing: { type: String, default: 'pr-5' }
   },

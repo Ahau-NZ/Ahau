@@ -7,17 +7,17 @@
 
       <div v-if="profile.parents.length" :class="mobile ? 'bb' : 'br'">
         <AvatarGroup v-if="profile.parents" :profiles="profile.parents" group-title="Parents" size="50px" :show-labels="true"
-          :addButtonSlot="false" @profile-click="openProfile($event)">
+          @profile-click="openProfile($event)">
         </AvatarGroup>
       </div>
       <div v-if="profile.siblings && profile.siblings.length" :class="mobile ? 'bb' : 'br'">
         <AvatarGroup v-if="profile.siblings" :profiles="profile.siblings" group-title="Siblings" size="50px" :show-labels="true"
-          :addButtonSlot="false" @profile-click="openProfile($event)">
+          @profile-click="openProfile($event)">
         </AvatarGroup>
       </div>
       <div v-if="profile.children.length">
         <AvatarGroup v-if="profile.children" :profiles="profile.children" group-title="Children" size="50px" :show-labels="true"
-          :addButtonSlot="false" @profile-click="openProfile($event)">
+          @profile-click="openProfile($event)">
         </AvatarGroup>
       </div>
     </v-row>

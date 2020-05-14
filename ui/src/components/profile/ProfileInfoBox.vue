@@ -61,7 +61,10 @@
                     <!-- Desktop: Parents -->
                     <v-col class="pa-0">
                         <AvatarGroup :profiles="profile.parents" group-title="Parents" size="50px" :show-labels="true" @profile-click="openProfile($event)">
-                            <AddButton @click="toggleNew('parent')" />
+                            <template v-slot:action>
+                                <AddButton @click="toggleNew('parent')" />
+                            </template>
+                            
                         </AvatarGroup>
                     </v-col>
 
@@ -70,7 +73,9 @@
                     <!-- Desktop: Siblings -->
                     <v-col v-if="profile.siblings" class="pa-0">
                         <AvatarGroup :profiles="profile.siblings" group-title="Siblings" size="60px" :show-labels="true" @profile-click="openProfile($event)">
-                            <AddButton v-if="view.focus !== profile.id" @click="toggleNew('sibling')" />
+                            <template v-slot:action>
+                                <AddButton v-if="view.focus !== profile.id" @click="toggleNew('sibling')" />
+                            </template>
                         </AvatarGroup>
                     </v-col>
 

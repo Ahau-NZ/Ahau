@@ -1,9 +1,9 @@
 <template>
-      <v-col class="add-row" @click="click" :style="{ justifyContent: align, height: height }" >
-          <v-icon class="add-button" light>mdi-plus</v-icon>
-          <span class="add-label" v-if="row">{{ label }}</span>
-      </v-col>
-  </template>
+  <v-col class="add-row" @click="click" :style="{ justifyContent: align, height: height }">
+    <v-icon :size="size" class="add-button pr-1" light>mdi-plus</v-icon>
+    <span class="add-label">{{ label }}</span>
+  </v-col>
+</template>
 
 <script>
 export default {
@@ -12,7 +12,8 @@ export default {
     label: String,
     align: { type: String, default: 'center' },
     row: { type: Boolean, default: false },
-    height: { type: String }
+    height: { type: String },
+    size: { type: String, default: '20px' }
   },
   methods: {
     click () {

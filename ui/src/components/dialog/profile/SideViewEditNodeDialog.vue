@@ -126,7 +126,9 @@
                     :show-labels="true"
                     @profile-click="openProfile($event)"
                   >
-                    <AddButton @click="toggleNew('parent')" />
+                    <template v-slot:action>
+                      <AddButton @click="toggleNew('parent')" />
+                    </template>
                   </AvatarGroup>
                 </v-col>
 
@@ -141,7 +143,9 @@
                     :show-labels="true"
                     @profile-click="openProfile($event)"
                   >
-                   <AddButton v-if="view.focus !== profile.id" @click="toggleNew('sibling')" />
+                    <template v-slot:action>
+                      <AddButton v-if="view.focus !== profile.id" @click="toggleNew('sibling')" />
+                    </template>
                   </AvatarGroup>
                 </v-col>
 
@@ -157,7 +161,9 @@
                       :show-labels="true"
                       @profile-click="openProfile($event)"
                     >
-                      <AddButton @click="toggleNew('child')" />
+                      <template v-slot:action>
+                        <AddButton @click="toggleNew('child')" />
+                      </template>
                     </AvatarGroup>
                     <AvatarGroup
                       v-else
@@ -167,7 +173,9 @@
                       :show-labels="true"
                       @profile-click="openProfile($event)"
                     >
-                    <AddButton @click="toggleNew('child')" />
+                      <template v-slot:action>
+                        <AddButton @click="toggleNew('child')" />
+                      </template>
                   </AvatarGroup>
                 </v-col>
               </v-row>
@@ -608,7 +616,9 @@
                       :show-labels="true"
                       @profile-click="openProfile($event)"
                     >
-                      <AddButton @click="toggleNew('parent')"/>
+                      <template v-slot:action>
+                        <AddButton @click="toggleNew('parent')"/>
+                      </template>
                     </AvatarGroup>
                   </v-col>
 
@@ -623,7 +633,9 @@
                       :show-labels="true"
                       @profile-click="openProfile($event)"
                     >
-                      <AddButton v-if="view.focus !== profile.id" @click="toggleNew('sibling')" />
+                      <template v-slot:action>
+                        <AddButton v-if="view.focus !== profile.id" @click="toggleNew('sibling')" />
+                      </template>
                     </AvatarGroup>
                   </v-col>
 
@@ -639,7 +651,9 @@
                       :show-labels="true"
                       @profile-click="openProfile($event)"
                     >
-                      <AddButton @click="toggleNew('child')" />
+                      <template v-slot:action>
+                        <AddButton @click="toggleNew('child')" />
+                      </template>
                     </AvatarGroup>
                     <AvatarGroup
                       v-else
@@ -649,7 +663,9 @@
                       :show-labels="true"
                       @profile-click="openProfile($event)"
                     >
-                      <AddButton @click="toggleNew('child')" />
+                      <template v-slot:action>
+                        <AddButton @click="toggleNew('child')" />
+                      </template>
                     </AvatarGroup>
                   </v-col>
                 </v-row>

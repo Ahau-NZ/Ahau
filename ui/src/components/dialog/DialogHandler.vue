@@ -93,8 +93,8 @@ import WhakapapaEditDialog from '@/components/dialog/whakapapa/WhakapapaEditDial
 import WhakapapaDeleteDialog from '@/components/dialog/whakapapa/WhakapapaDeleteDialog.vue'
 import WhakapapaShowHelper from '@/components/dialog/whakapapa/WhakapapaShowHelper.vue'
 import WhakapapaTableHelper from '@/components/dialog/whakapapa/WhakapapaTableHelper.vue'
-import NewCollectionDialog from '@/components/dialog/NewCollectionDialog.vue'
-import NewRecordDialog from '@/components/dialog/NewRecordDialog.vue'
+import NewCollectionDialog from '@/components/dialog/archive/NewCollectionDialog.vue'
+import NewRecordDialog from '@/components/dialog/archive/NewRecordDialog.vue'
 
 import gql from 'graphql-tag'
 
