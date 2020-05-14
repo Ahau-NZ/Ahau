@@ -36,7 +36,7 @@
         <Timeline v-if="pageComponents.timeline" :profile="selectedProfile"/>
       </transition>
       </v-col>
-    </v-row>  
+    </v-row>
 
     <DialogHandler
       :dialog.sync="dialog.active"
@@ -49,7 +49,7 @@
 <script>
 import DialogHandler from '@/components/dialog/DialogHandler.vue'
 import SideNavMenu from '@/components/menu/SideNavMenu.vue'
-import Profile from '@/components/Profile'
+import Profile from '@/components/profile/Profile.vue'
 import Archive from '@/components/archive/Archive'
 import Timeline from '@/components/story/Timeline.vue'
 import Header from '@/components/profile/Header.vue'
@@ -82,7 +82,7 @@ export default {
         profile: true,
         archive: false,
         timeline: false
-      },
+      }
     }
   },
   mounted () {

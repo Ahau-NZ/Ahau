@@ -21,7 +21,7 @@
             </v-col>
           </v-btn>
         </v-col>
-        <v-col :class="mobile ? 'py-0 px-0' : 'py-1'">
+        <!-- <v-col :class="mobile ? 'py-0 px-0' : 'py-1'">
           <v-btn @click="setActive('Activity')" light :fab="mobile" text>
             <v-col class="pa-0" :cols="mobile ? '12' : '2'">
               <ActivityIcon size="medium" :color="active.activity ? 'red' : 'black'"/>
@@ -32,7 +32,7 @@
               </span>
             </v-col>
           </v-btn>
-        </v-col>
+        </v-col> -->
         <v-col :class="mobile ? 'py-0 px-0' : 'py-1'">
           <v-btn @click="setActive('Archive')" light :fab="mobile" text>
             <v-col class="pa-0" :cols="mobile ? '12' : '2'">
@@ -89,7 +89,7 @@ export default {
   props: {
     profile: {
       type: Object
-    },
+    }
     // component: {
     //   type: String,
     //   default: "profile"
@@ -98,15 +98,15 @@ export default {
   data () {
     return {
       offset: 0,
-      scroll: false, 
+      scroll: false,
       componentLoaded: false,
       active: {
         user: true,
         activity: false,
         archive: false,
         timeline: false,
-        whakapapa: false,
-      },
+        whakapapa: false
+      }
     }
   },
   mounted () {
@@ -126,12 +126,12 @@ export default {
       return {
         user: !this.mobile && this.active.user,
         sticky: !this.mobile && !this.active.user,
-        sideNav: !this.active.user, 
+        sideNav: !this.active.user
       }
     }
 
   },
-  methods : {
+  methods: {
     setActive (component) {
       // set all to false
       this.active.user = false
@@ -157,20 +157,20 @@ export default {
           this.active.whakapapa = true
           break
       }
-      window.scrollTo(0,0)
-      this.$emit("setPageComponent", component)
+      window.scrollTo(0, 0)
+      this.$emit('setPageComponent', component)
     },
     onScroll () {
       var scroll = window.pageYOffset
-      var sideNav = this.$refs.sideNav 
+      var sideNav = this.$refs.sideNav
       if (!this.mobile && this.active.user) {
         if (scroll > this.offset) {
-          sideNav.classList.add("sticky");
-          sideNav.classList.remove("user");
-          sideNav.classList.remove("sideNav");
+          sideNav.classList.add('sticky')
+          sideNav.classList.remove('user')
+          sideNav.classList.remove('sideNav')
         } else {
-          sideNav.classList.remove("sticky")
-          sideNav.classList.add("user")
+          sideNav.classList.remove('sticky')
+          sideNav.classList.add('user')
         }
       }
     }
@@ -211,7 +211,7 @@ export default {
     margin-left: 3px;
     margin-right: 3px;
   }
-  
+
   .avatar-desktop {
     margin-top: 7vw;
     margin-left: 1vw
@@ -220,7 +220,7 @@ export default {
   .sideNav {
     transition: all 0.2s ease;
   }
-  
+
   .sticky {
     position: fixed; /* Allocates space for the element, but moves it with you when you scroll */
     top: 40px
@@ -230,6 +230,5 @@ export default {
     position: absolute;
     top: 150px
   }
-
 
 </style>

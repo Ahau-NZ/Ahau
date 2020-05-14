@@ -24,12 +24,12 @@ export default {
   name: 'ActivityIcon',
   props: {
     size: String,
-    color: String,
+    color: String
   },
   computed: {
-    styleClasses() {
-      return [this.size, this.color].map(val => val && `is-${val}`);
-    },
-  },
-};
+    styleClasses () {
+      return [this.size, this.color].map(val => val && `is-${val}`)
+    }
+  }
+}
 </script>

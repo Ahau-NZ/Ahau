@@ -205,8 +205,8 @@
 </template>
 
 <script>
-import Avatar from '@/components/Avatar.vue'
-import ImagePicker from '@/components/ImagePicker.vue'
+// import Avatar from '@/components/Avatar.vue'
+// import ImagePicker from '@/components/ImagePicker.vue'
 import NodeDatePicker from '@/components/NodeDatePicker.vue'
 import AddButtonMini from '@/components/button/AddButtonMini.vue'
 import AvatarGroup from '@/components/AvatarGroup.vue'
@@ -236,8 +236,8 @@ import {
 export default {
   name: 'CollectionForm',
   components: {
-    Avatar,
-    ImagePicker,
+    // Avatar,
+    // ImagePicker,
     NodeDatePicker,
     AddButtonMini,
     AvatarGroup

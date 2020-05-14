@@ -77,7 +77,7 @@
 <script>
 import Dialog from '@/components/dialog/Dialog.vue'
 
-import ProfileForm from '@/components/profile-form/ProfileForm.vue'
+import ProfileForm from '@/components/profile/ProfileForm.vue'
 
 import Avatar from '@/components/Avatar.vue'
 import isEmpty from 'lodash.isempty'

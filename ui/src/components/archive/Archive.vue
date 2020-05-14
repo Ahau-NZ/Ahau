@@ -3,7 +3,7 @@
   <v-container fluid class="body-width white niho-bg">
       <v-row :class="mobile ? 'my-0':'mt-10'">
         <v-col cols="12" md="10" sm="10" :class="!mobile ? 'pl-12 my-6' : 'pa-0 ma-0'" align="start">
-          <h1 class="title black--text ">Collections</h1>        
+          <h1 class="title black--text ">Collections</h1>
         </v-col>
         <div>
           <!-- <v-btn :class="mobile ? 'searchBtnMob' : 'searchBtn'" :small="!mobile" :x-small="mobile" class="my-2" fab flat color="white" @click="editProfile()">
@@ -15,7 +15,7 @@
         </div>
       </v-row>
       <v-row>
-        <v-col cols="12" xs="12" sm="12" md="10">    
+        <v-col cols="12" xs="12" sm="12" md="10">
           <v-row class="mx-0">
             <CollectionGroup :collections="mockCollections" />
           </v-row>
@@ -56,7 +56,7 @@ import {
   VueContext
 } from 'vue-context'
 
-import ArchiveStory from '@/components/ArchiveStory.vue'
+import ArchiveStory from '@/components/archive/ArchiveStory.vue'
 import CollectionGroup from '@/components/archive/CollectionGroup.vue'
 
 import DialogHandler from '@/components/dialog/DialogHandler.vue'
@@ -239,27 +239,26 @@ export default {
 
 .searchBtn {
   position: fixed;
-  top:90px; 
+  top:90px;
   right:160px
 }
 
 .searchBtnMob {
   position: absolute;
-  top: 80px; 
+  top: 80px;
   right:80px;
 }
 
 .addBtn {
   position: fixed;
-  top: 80px; 
+  top: 80px;
   right:70px
 }
 
 .addBtnMob {
   position: absolute;
-  top: 80px; 
+  top: 80px;
   right:20px
 }
-
 
 </style>

@@ -24,13 +24,13 @@ export default {
   },
   computed: {
     isActive () {
-      console.log("active: ", this.active)
-      if (this.active) this.color = "red"
-      else this.color = "black"
+      console.log('active: ', this.active)
+      if (this.active) this.color = 'red'
+      else this.color = 'black'
     },
-    styleClasses() {
-      return [this.size, this.color].map(val => val && `is-${val}`);
-    },
-  },
-};
+    styleClasses () {
+      return [this.size, this.color].map(val => val && `is-${val}`)
+    }
+  }
+}
 </script>

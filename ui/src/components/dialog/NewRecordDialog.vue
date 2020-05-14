@@ -32,7 +32,7 @@ import pick from 'lodash.pick'
 import isEmpty from 'lodash.isempty'
 
 import Dialog from '@/components/dialog/Dialog.vue'
-import RecordForm from '@/components/record-form/RecordForm.vue'
+import RecordForm from '@/components/archive/RecordForm.vue'
 
 const EMPTY_RECORD = {
   name: '',
@@ -114,7 +114,6 @@ export default {
         console.error('not validated')
         return
       }
-      const csv = this.csv
       const output = recordSubmission(this.formData)
       const newOutput = {
         ...output

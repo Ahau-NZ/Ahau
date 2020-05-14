@@ -34,7 +34,7 @@
 import { PERMITTED_PROFILE_ATTRS } from '@/lib/profile-helpers.js'
 
 import Dialog from '@/components/dialog/Dialog.vue'
-import ProfileForm from '@/components/profile-form/ProfileForm.vue'
+import ProfileForm from '@/components/profile/ProfileForm.vue'
 import isEmpty from 'lodash.isempty'
 import calculateAge from '@/lib/calculate-age'
 import pick from 'lodash.pick'
