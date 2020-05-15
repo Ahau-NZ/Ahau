@@ -1,5 +1,5 @@
 <template>
-  <v-card min-height="200px" light class="rounded-card" width="100%">
+  <ProfileCard title="kaitiaki">
     <v-tooltip left>
       <template v-slot:activator="{ on }">
         <h4 v-on="on" class="pa-3 mb-0"> {{ title }} </h4>
@@ -9,7 +9,7 @@
     <div>
       <slot name="content"></slot>
     </div>
-  </v-card>
+  </ProfileCard>
 </template>
 
 <script>
@@ -24,10 +24,10 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .rounded-card {
     border-radius: 10px;
-    p {
+    .p {
       font-size: 0.8em;
       line-height: 1.6;
     }

@@ -1,8 +1,8 @@
 <template>
-  <v-container class="header-bg full-width my-0 py-0 px-0" v-bind:style="{ backgroundImage: 'url(' + headerImage +')', height: headerHeight }">
+  <v-container class="header-bg full-width my-0 py-0 px-0" :class="headerHeight" v-bind:style="{ backgroundImage: 'url(' + headerImage +')', height: headerHeight + 'px'}">
     <v-row>
-      <v-col>
-        <Avatar :class="mobile ? 'avatar-mobile' : 'avatar-desktop'" :image="profile.avatarImage" :alt="profile.preferredName" :size="size"/>
+      <v-col v-if="mobile" class="mt-12">
+        <Avatar class="avatar-mobile" :image="profile.avatarImage" :alt="profile.preferredName" size="180"/>
       </v-col>
       <v-col>
         <ImagePicker class="picker" label=" " type="header" :isView="true" @updateAvatar="updateHeader($event)" :avatarLoaded="headerImage"/>
@@ -58,15 +58,13 @@ export default {
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
-    small () {
-      return this.$vuetify.breakpoint.sm
-    },
     size () {
       if (this.small) {
-        return '150'
+        return '100'
       }
       return '200'
     },
+
     headerHeight () {
       switch (this.$vuetify.breakpoint.name) {
         case 'xs': return '200'
@@ -122,12 +120,6 @@ export default {
   cursor: pointer;
 }
 
-.avatar-desktop {
-  position: absolute;
-  left: 30px;
-  top: 60px;
-}
-
 .header-mobile {
   cursor: pointer;
   text-decoration-color: white;
@@ -139,8 +131,4 @@ export default {
   margin-right: 50vw;
 }
 
-.avatar {
-  margin-top: 100px;
-  margin-left: 100px;
-}
 </style>
