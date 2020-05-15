@@ -1,3 +1,4 @@
+ /* eslint-disable */
 <template>
   <svg
     viewBox="0 0 210 178.4"

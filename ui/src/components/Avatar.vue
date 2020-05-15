@@ -57,7 +57,7 @@ export default {
     showLabel: { type: Boolean, default: false },
     clickable: { type: Boolean, default: false },
     isView: { type: Boolean, default: false },
-    isEditing: { type: Boolean, default: false },
+    isEditing: { type: Boolean, default: false }
   },
   components: {
     ImagePicker

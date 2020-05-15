@@ -1,5 +1,5 @@
 <template>
-    <v-row class="mb-12"> 
+    <v-row class="mb-12" :class="mobile ? 'mt-10':''">
       <v-col cols="12" sx="12" sm="12" md="10" :class="mobile ? 'py-5 px-5' : 'px-5' ">
         <ProfileInfoCard :profile="profile" @setupProfile="setupProfile($event)" />
         <ProfileCard>
@@ -19,7 +19,7 @@
       </v-col>
       <!-- RIGHT SIDE COLUMN -->
       <v-col cols="12" sx="12" md="2" :class="mobile ? 'py-5 px-5' : 'pr-8'">
-        <!-- update profiles to profiles.tiaki -->
+        <!-- TODO: update profiles to profiles.tiaki -->
         <ProfileCard title="Kaitiaki" class="mt-0">
           <template v-slot:content>
             <v-row class="justify-center align-center ma-0">

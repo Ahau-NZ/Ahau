@@ -109,7 +109,6 @@
 <script>
 import gql from 'graphql-tag'
 import Avatar from '@/components/Avatar'
-import whakapapaSvg from '@/assets/whakapapa.svg'
 import FeedbackButton from '@/components/button/FeedbackButton'
 import { mapGetters, mapActions } from 'vuex'
 
@@ -147,12 +146,6 @@ export default {
   },
   computed: {
     ...mapGetters(['whoami', 'whakapapa', 'route']),
-    // image () {
-    //   if (this.whakapapa.image) return this.whakapapa.image 
-    //   else return {
-    //     uri: '@/assets/whakapapa.svg'
-    //   }
-    // },
     classObject: function () {
       return {
         'mobile': this.mobile,

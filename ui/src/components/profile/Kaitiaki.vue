@@ -20,7 +20,7 @@ export default {
     title: String,
     subtitle: String,
     helperText: String
-  },
+  }
 }
 </script>
 

@@ -145,8 +145,8 @@ export default {
 .fade-enter-active,
 .fade-leave-active {
   transition-duration: 0.2;
-  transition-property: opacity;
-  transition-timing-function: ease;
+  transition-property: top;
+  transition-timing-function: ease-in-out;
  }
 
 </style>

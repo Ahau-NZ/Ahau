@@ -1,7 +1,7 @@
 <template>
 <div>
   <v-container fluid class="body-width white niho-bg px-0">
-      <v-row :class="mobile ? 'my-0':'mt-10'">
+      <v-row :class="mobile ? 'top-margin':'mt-10'">
         <v-col cols="12" md="10" sm="10" :class="!mobile ? 'pl-12 my-6' : 'py-0 ma-0'" align="start">
           <h1 class="title black--text ">Collections</h1>
         </v-col>
@@ -184,13 +184,6 @@ export default {
     }
   },
   computed: {
-    classObj () {
-      if (mobile) {
-        return {
-
-        }
-      }
-    },
     mobile () {
       return this.$vuetify.breakpoint.xs
     }
@@ -220,6 +213,10 @@ export default {
 
 <style lang="scss" scoped>
 @import "~vue-context/dist/css/vue-context.css";
+
+.top-margin {
+  margin-top : 80px
+}
 
 .overflow {
     width: 100vw;
