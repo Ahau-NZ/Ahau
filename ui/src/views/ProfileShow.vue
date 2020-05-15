@@ -72,7 +72,7 @@ export default {
       dialog: {
         active: null,
         type: null
-      },
+      }
     }
   },
   mounted () {

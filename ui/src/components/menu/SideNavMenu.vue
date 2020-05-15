@@ -12,6 +12,7 @@
         <v-col align="center" :class="mobile ? 'py-0 px-0' : 'py-1'">
           <v-btn @click="setActive('profile')" light :fab="mobile" text>
             <v-col class="pa-0" :cols="mobile ? '12' : '2'">
+              <!-- <Avatar :image="selectedProfile.avatarImage" size="35px"/> -->
               <UserIcon size="medium" :color="activeComponent === 'profile' ? 'red' : 'black'"/>
             </v-col>
             <v-col class="py-0" v-if="!mobile && !isOverflowing">
@@ -106,7 +107,7 @@ export default {
     this.offset = this.$refs.sideNav.offsetTop - 40
   },
   computed: {
-    ...mapGetters(['activeComponent']),
+    ...mapGetters(['activeComponent', 'selectedProfile']),
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
@@ -255,6 +256,10 @@ export default {
     width: 102%;
     z-index: 1;
     top : -50px
+  }
+
+  .v-btn::before {
+  opacity: 0 !important;
   }
 
 </style>

@@ -2,7 +2,7 @@
 // import { createProvider } from '@/plugins/vue-apollo'
 
 const state = {
-  activeComponent: ''
+  activeComponent: 'profile'
 }
 
 const getters = {
