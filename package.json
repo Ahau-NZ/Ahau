@@ -7,10 +7,10 @@
     "start:desktop": "cd desktop && npm start",
     "setup:mobile": "cd mobile && npm install && npm run setup",
     "setup:desktop": "cd desktop && npm install",
-    "dev:web": "npm run dev:mobile-server & npm run dev:ui",
+    "dev:web": "npm run dev:mobile-server 1>&2 | npm run dev:ui",
     "dev:mobile-server": "cd mobile && npm run dev:server",
     "dev:ui": "kill-port 8080 && cd ui && npm run dev",
-    "dev:desktop": "npm run dev:ui & cd desktop && npm run start:dev",
+    "dev:desktop": "npm run dev:ui 1>&2 | npm --prefix desktop run start:dev",
     "dev:android": "cd mobile && npm run dev:android",
     "dev:android-update": "cd mobile && npm run dev:android-update",
     "storybook": "cd ui && npm run storybook",
@@ -48,5 +48,8 @@
   "license": "AGPL-3.0",
   "dependencies": {
     "vue-country-region-select": "^2.0.13"
+  },
+  "bugs": {
+    "url": "https://gitlab.com/ahau/whakapapa-ora/issues"
   }
 }
