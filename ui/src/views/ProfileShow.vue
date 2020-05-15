@@ -1,11 +1,11 @@
 <template>
   <v-container fluid class="body-width pa-0 niho-bg white">
     <!-- Header and Title -->
-    <Header v-if="pageComponents.profile"
+    <Header v-if="activeComponent === 'profile'"
       :profile="selectedProfile"
       @setupProfile="setupProfile($event)"
     />
-    <v-row v-if="pageComponents.profile">
+    <v-row v-if="activeComponent === 'profile'">
       <v-col cols="12" offset-md="2" md="8" sm="12" :class="!mobile ? 'pl-12' : '' " :align="mobile ? 'center' : 'start'">
         <h1 class="primary--text" >{{ selectedProfile.legalName ? selectedProfile.legalName : selectedProfile.preferredName }}</h1>
       </v-col>
@@ -16,7 +16,7 @@
     <v-row>
       <!-- SideNav -->
         <v-col cols="12" xs="12" sm="12" md="2" :class="!mobile ? 'pr-0' : 'px-5 py-0'">
-          <SideNavMenu :profile="selectedProfile" @setPageComponent="setPageComponent($event)" />
+          <SideNavMenu :profile="selectedProfile" />
         </v-col>
       <!-- Content -->
       <v-col cols="12" xs="12" sm="12" md="10" :class="mobile ? 'px-6 py-0' : 'pl-0 py-0'">
@@ -24,9 +24,9 @@
           name="fade"
           mode="out-in"
        >
-        <Profile v-if="pageComponents.profile" :profile="selectedProfile" :setupProfile="setupProfile"/>
-        <Archive v-if="pageComponents.archive" :profile="{...selectedProfile, type: 'person'}"/>
-        <Timeline v-if="pageComponents.timeline" :profile="selectedProfile"/>
+        <Profile v-if="activeComponent === 'profile'" :profile="selectedProfile" :setupProfile="setupProfile"/>
+        <Archive v-if="activeComponent === 'archive'" :profile="{...selectedProfile, type: 'person'}"/>
+        <Timeline v-if="activeComponent === 'timeline'" :profile="selectedProfile"/>
       </transition>
       </v-col>
     </v-row>
@@ -73,18 +73,13 @@ export default {
         active: null,
         type: null
       },
-      pageComponents: {
-        profile: true,
-        archive: false,
-        timeline: false
-      }
     }
   },
   mounted () {
     this.setupProfile(this.$route.params.id)
   },
   computed: {
-    ...mapGetters(['selectedProfile', 'whoami']),
+    ...mapGetters(['selectedProfile', 'whoami', 'activeComponent']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     }
@@ -92,26 +87,6 @@ export default {
   methods: {
     ...mapActions(['setProfileById', 'setProfile', 'setWhoami']),
 
-    setPageComponent (component) {
-      // set all to false
-      this.pageComponents.profile = false
-      this.pageComponents.archive = false
-      this.pageComponents.timeline = false
-
-      switch (component) {
-        case 'Profile':
-          this.pageComponents.profile = true
-          break
-        case 'Archive':
-          this.pageComponents.archive = true
-          break
-        case 'Timeline':
-          this.pageComponents.timeline = true
-          break
-        default:
-          this.pageComponents.profile = true
-      }
-    },
     async setupProfile (id) {
       this.setProfileById(id)
       if (this.dialog.active) this.dialog.active = null
