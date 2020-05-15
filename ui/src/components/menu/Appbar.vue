@@ -28,8 +28,8 @@
       <!-- Desktop doesn't use a drawer, it has the links directly in the app bar -->
       <template v-if="!mobile">
         <!--  WIP links -->
-        <v-btn text @click.stop="dialog = true" class="red--text text-uppercase ms-10">Archive</v-btn>
         <v-btn text @click.stop="dialog = true" class="red--text text-uppercase ms-10">Tribes</v-btn>
+        <v-btn text :to="{ name: 'profileShow', params: { id: profile.id, nav:'archive' } }" class="red--text text-uppercase ms-10">Archive</v-btn>
 
         <v-btn text to="/whakapapa" class="white--text text-uppercase ms-10">whakapapa</v-btn>
         <router-link @click.native="setProfileById(profile.id)" :to="{ name: 'profileShow', params: { id: profile.id } }">

@@ -82,6 +82,9 @@ export default {
   },
   mounted () {
     this.setupProfile(this.$route.params.id)
+    if (this.$route.params.nav) {
+      setPageComponent(this.$route.params.nav)
+    }
   },
   computed: {
     ...mapGetters(['selectedProfile', 'whoami']),
@@ -130,7 +133,7 @@ export default {
 .body-width {
   /* min-width: $formWidth; */
   max-width: 100vw;
-  min-height: 100vh;
+  min-height: 140vh;
   background: white;
 }
 
