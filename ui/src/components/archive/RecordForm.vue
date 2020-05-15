@@ -2,79 +2,66 @@
   <v-card light>
     <v-form ref="form" v-model="form.valid" lazy-validation>
       <v-row>
-        <v-col cols="6">
-          <v-row>
-          <v-col cols="12">
-            <v-text-field v-model="formData.title"
-              label="Title *"
-              placeholder=" "
-              hide-details
-              :rules="form.rules.name.record"
-              outlined
-            />
-          </v-col>
-          <v-col cols="12">
-            <v-text-field v-model="formData.description"
-              label="Description"
-              placeholder=" "
-              hide-details
-              :rules="form.rules.name.record"
-              outlined
-            />
-          </v-col>
-          <v-col cols="6">
-            <v-text-field v-model="formData.recordStartDate"
-              label="Record Start Date"
-              placeholder=" "
-              hide-details
-              :rules="form.rules.name.record"
-              outlined
-            />
-          </v-col>
-          <v-col cols="6">
-            <v-checkbox v-if="!hasEndDate" v-model="hasEndDate" label="include an end date" hide-details outlined />
-            <v-text-field
-              v-else
-              v-model="formData.recordDate"
-              label="Record End Date"
-              placeholder=" "
-              hide-details
-              outlined
-              :clearable="!readonly"
-              @click:clear="hasEndDate = false"
-            />
-          </v-col>
-          <v-col cols="3">
-            <AvatarGroup :profiles="formData.mentions" group-title="People" size="40px">
-              <template v-slot:action>
-                <AddButton @click="addMention" />
-              </template>
-            </AvatarGroup>
-          </v-col>
-          <v-col cols="3">
-            <AvatarGroup :profiles="formData.mentions" group-title="Contribution" size="40px">
-              <template v-slot:action>
-                <AddButton @click="addMention" />
-              </template>
-            </AvatarGroup>
-          </v-col>
-          </v-row>
-        </v-col>
-        <v-col cols="6">
+        <v-col cols="12" sm="12" md="6">
           <v-row>
             <v-col cols="12">
-              <v-select
-                v-model="formData.type"
-                label="Record Type"
-                :items="['Life Event', 'Historic Event', 'Etc']"
-                outlined
+              <v-text-field
+                v-model="formData.title"
+                label="Title"
+                v-bind="customProps"
               />
             </v-col>
             <v-col cols="12">
-              <AddButton label="Attach media or files" @click="addMedia"/>
+              <v-text-field
+                v-model="formData.description"
+                label="Description"
+                v-bind="customProps"
+              />
+            </v-col>
+            <v-col cols="12" sm="12" md="6">
+              <v-text-field
+                v-model="formData.recordDate"
+                label="Record Start Date"
+                v-bind="customProps"
+              />
+            </v-col>
+            <v-col cols="12" sm="12" md="6">
+              <v-checkbox
+                v-if="!hasEndDate"
+                v-model="hasEndDate"
+                label="Include an end date"
+              />
+              <v-text-field
+                v-else
+                v-model="formData.recordEndDate"
+                label="Record End Date"
+                v-bind="customProps"
+                clearable
+                @click:clear="hasEndDate = false"
+              />
+            </v-col>
+          </v-row>
+        </v-col>
+        <v-col cols="12" sm="12" md="6">
+          <v-row>
+            <v-spacer/>
+            <v-col cols="12" sm="12" md="6">
+              <v-select
+                v-model="formData.type"
+                label="Record Type"
+                :items="recordTypes"
+                v-bind="customProps"
+              />
+            </v-col>
+            <v-spacer/>
+            <v-col cols="12">
+              <AddButton @click="$refs.fileInput.click()" label="Attact media or files"/>
+              <input v-show="false" ref="fileInput" type="file" accept="audio/*,video/*,image/*" multiple @change="processMediaFiles($event)" />
             </v-col>
             <v-col cols="12">
-              <AddButton label="Add location" @click="addMedia"/>
+              <div v-for="(file, i) in formData.artefacts" :key="`file-${i}`">
+                <MediaCard :file="file"/>
+              </div>
             </v-col>
           </v-row>
         </v-col>
@@ -91,6 +78,8 @@ import AddButton from '@/components/button/AddButton.vue'
 import AddItemCard from '@/components/archive/AddItemCard.vue'
 import AvatarGroup from '@/components/AvatarGroup.vue'
 import Avatar from '@/components/Avatar.vue'
+
+import MediaCard from '@/components/archive/MediaCard.vue'
 
 import {
   RULES
@@ -113,6 +102,9 @@ import {
 //     image: whakapapa.image
 //   }
 // }
+const imageRegex = /^image\//
+const audioRegex = /^audio\//
+const videoRegex = /^video\//
 
 export default {
   name: 'CollectionForm',
@@ -123,7 +115,8 @@ export default {
     AddButton,
     AddItemCard,
     AvatarGroup,
-    Avatar
+    Avatar,
+    MediaCard
   },
   props: {
     // view: { type: Object, default () { return setDefaultWhakapapa(EMPTY_WHAKAPAPA) } },
@@ -158,7 +151,8 @@ export default {
         identifier: null,
         source: null,
         language: null,
-        translation: null
+        translation: null,
+        artefacts: []
       },
       form: {
         valid: true,
@@ -190,10 +184,125 @@ export default {
       panel: [0, 1]
     }
   },
-  watch: {
-
+  computed: {
+    mobile () {
+      return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
+    },
+    customProps () {
+      return {
+        outlined: true,
+        hideDetails: true
+      }
+    }
   },
   methods: {
+    processMediaFiles ($event) {
+      this.formData.artefacts = []
+      const { files } = $event.target
+
+      files.forEach((file, i) => {
+        this.formData.artefacts[i] = this.processFile(file)
+      })
+
+      console.log('artefacts', this.formData.artefacts)
+    },
+    processFile (file) {
+      var attrs = {}
+      const type = this.getFileType(file.type)
+      const title = this.getFileName(file.name)
+      const format = this.getFormat(file.type)
+      const blob = new Blob([file], { type: file.type })
+      const url = URL.createObjectURL(file)
+
+      if (type === 'video' || type === 'audio') {
+        attrs = {
+          duration: '',
+          size: file.size,
+          transcription: ''
+        }
+      }
+
+      attrs = {
+        ...attrs,
+        type,
+        fileType: file.type,
+        blob,
+        title,
+        description: '',
+        format,
+        identifier: '',
+        language: '',
+        licence: '',
+        rights: '',
+        source: '',
+        translation: '',
+        url
+      }
+
+      return attrs
+    },
+    getFileType (type) {
+      /*
+        Video, Audio {
+          type: String,
+          blob: String,
+          recps: Recps,
+          title: String,
+          description: String,
+          format: String,
+          identifier: String,
+          language: String,
+          licence: String,
+          rights: String,
+          source: String,
+          tombstone: Tombstone,
+          translation: String,
+          duration: Number,
+          size: Integer,
+          transcription: String
+        }
+
+        Photo {
+          type: String, YES
+          blob: String, ?
+          title: String, FILENAME
+          description: String, ?
+          format: String, YES
+          identifier: String, ?
+          language: String, ?
+          licence: String, ?
+          recps: Recps, ?
+          rights: String, ?
+          source: String, ?
+          tombstone: Tombstone, ?
+          translation: String ?
+        }
+
+      */
+      var type
+      switch (true) {
+        case imageRegex.test(type):
+          type = 'photo'
+          break
+        case audioRegex.test(type):
+          type = 'audio'
+          break
+        case videoRegex.test(type):
+          type = 'video'
+          break
+        default:
+          type = ''
+          break
+      }
+
+      return type
+    },
+    getFormat (fileType) {
+      return fileType.replace(/.*\//, '')
+    },
+    getFileName (fileName) {
+      return fileName.replace(/\.[^/.]+$/, '')
+    },
     addMention () {
       console.warn('add mention not implemented yet')
     }
@@ -202,6 +311,9 @@ export default {
 </script>
 
 <style scoped>
+.video-player {
+  width: 500px;
+}
   .custom.v-text-field>.v-input__control>.v-input__slot:before {
     border-style: none;
   }
