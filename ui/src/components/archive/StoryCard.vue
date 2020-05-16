@@ -2,7 +2,7 @@
   <v-card class="mx-auto" light width="100%">
     <v-list-item class="px-0" style="min-height:0; height:10px">
       <v-list-item-icon class="pt-0 mt-0" style="position:absolute; top:5px; right:1px; margin-right:0px">
-        <small v-if="contributorLabel">contributors</small>
+        <v-list-item-subtitle v-if="contributorLabel" class="no-flex">contributors</v-list-item-subtitle>
         <AvatarGroup :profiles="story.contributors" customClass="ma-0 pa-0" style="position:relative; bottom:10px;" size="28px" spacing="pr-1"/>
       </v-list-item-icon>
     </v-list-item>
@@ -24,46 +24,22 @@
       </v-list-item-content>
     </v-list-item>
 
-    <v-list-item>
+    <v-list-item @click="showText()">
       <v-list-item-content>
-        <v-list-item-subtitle>
+        <p :class="turncateText ? 'description' : ''">
           {{ story.description }}
-        </v-list-item-subtitle>
+        </p>
       </v-list-item-content>
     </v-list-item>
-
-    <v-card-actions class="pt-0">
-      <v-btn text>Share</v-btn>
-
-      <v-btn color="#b02425" text>
-        Explore
-      </v-btn>
-
-      <v-spacer></v-spacer>
-
-      <v-btn icon @click="show = !show">
-        <v-icon>{{ show ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
-      </v-btn>
-  </v-card-actions>
-
-    <v-expand-transition>
-      <div v-show="show">
-        <v-divider></v-divider>
-        <v-card-text>
-          <v-row>
-            <v-col>
-              <h4>People</h4>
-              <AvatarGroup :profiles="story.mentions" show-labels size="40px"/>
-              <AddButton @click="addMention()" />
-            </v-col>
-
-            <v-col>
-              <h4>Location</h4>
-            </v-col>
-          </v-row>
-        </v-card-text>
-      </div>
-    </v-expand-transition>
+    <v-row>
+      <v-col :cols="mobile ? '12' : '8'">
+        <v-list-item-subtitle> Mentions </v-list-item-subtitle>
+        <AvatarGroup :profiles="story.mentions" show-labels size="40px"/>
+      </v-col>
+      <v-col :cols="mobile ? '12' : '4'">
+        <h4>Location</h4>
+      </v-col>
+    </v-row>
   </v-card>
 </template>
 
@@ -82,7 +58,8 @@ export default {
   },
   data () {
     return {
-      show: false
+      show: false,
+      turncateText : true
     }
   },
   computed: {
@@ -92,11 +69,14 @@ export default {
     contributorLabel () {
       if (this.mobile && this.story.contributors.length > 6) return false
       return true
-    }
+    },
   },
   methods: {
-    addMention () {
-      console.warn('StoryCard.vue: Add mention not implemented yet')
+    showStory () {
+      this.$emit('showStory')
+    },
+    showText () {
+      this.turncateText = !this.turncateText
     }
   }
 }
@@ -115,7 +95,28 @@ export default {
     background-position-y: 10px;
 }
 
+// Need to keep many contributors in single row
+.no-flex {
+  flex: unset !important;
+}
+
+// Dont cut off a long title 
 .wrap-text {
   white-space: unset !important;
+}
+
+p {
+  font-size: 0.9em;
+  line-height: 1.6;
+  color: #383838;
+  margin-bottom: 0 !important;
+
+  &.description {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3; /* number of lines to show */
+    -webkit-box-orient: vertical;
+  }
 }
 </style>

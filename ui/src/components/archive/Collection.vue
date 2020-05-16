@@ -65,7 +65,7 @@ export default {
   float: none;
 }
 .small-text {
-  font-size: 0.6rem;
-  line-height: 0.6rem;
+  font-size: 0.8rem;
+  line-height: 0.8rem;
 }
 </style>

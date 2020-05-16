@@ -27,7 +27,7 @@
                 <Avatar :size="mobile ? '50px' : '40px'" :image="whoami.profile.avatarImage" :alt="whoami.profile.preferredName" />
               </v-col>
               <v-col>
-                <p style="color:black">{{whoami.profile.preferredName}}</p>
+                <p style="color:black;">{{whoami.profile.preferredName}}</p>
               </v-col>
             </v-row>
           </template>
@@ -134,7 +134,7 @@ export default {
 <style lang="scss">
   .rounded-card {
     border-radius: 10px;
-    p {
+    &p {
       font-size: 0.8em;
       line-height: 1.6;
       color: #383838

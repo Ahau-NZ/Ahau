@@ -28,10 +28,10 @@
   </v-container>
   <vue-context ref="menu" class="pa-4">
     <li v-for="(option, index) in contextMenuOpts" :key="index">
-        <a href="#" @click.prevent="updateDialog(option.dialog)" class="d-flex align-center px-4">
-            <v-icon light>{{ option.icon }}</v-icon>
-            <p class="ma-0 pl-3">{{ option.title }}</p>
-        </a>
+      <a href="#" @click.prevent="updateDialog(option.dialog)" class="d-flex align-center px-4">
+        <v-icon light>{{ option.icon }}</v-icon>
+        <p class="ma-0 pl-3">{{ option.title }}</p>
+      </a>
     </li>
   </vue-context>
 
