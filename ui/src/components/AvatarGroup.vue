@@ -2,7 +2,7 @@
   <v-col class="pt-0 pb-0">
     <v-row>
       <v-col class="pt-1 pb-0">
-        <small> {{ groupTitle }} </small>
+        <small class="label"> {{ groupTitle }} </small>
       </v-col>
     </v-row>
 
@@ -65,3 +65,12 @@ export default {
   }
 }
 </script>
+<style scoped lang="scss">
+.label {
+  color: #9b9b9b
+}
+* {
+  color: #383838
+}
+
+</style>

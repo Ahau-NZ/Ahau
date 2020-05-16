@@ -1019,7 +1019,6 @@ export default {
 
   data () {
     return {
-      testmapimage: require('../../../assets/map-test.png'),
       genders: GENDERS,
       permitted: PERMITTED_PROFILE_ATTRS,
       relationshipTypes: RELATIONSHIPS,
@@ -1221,6 +1220,7 @@ export default {
 .profile-info {
   /* font-family: 'Forum', cursive; */
   text-align: center;
+  color: black
 }
 
 .side-menu {

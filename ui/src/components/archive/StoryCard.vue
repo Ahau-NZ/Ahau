@@ -1,18 +1,26 @@
 <template>
   <v-card class="mx-auto" light width="100%">
-    <v-list-item>
-      <v-list-item-content>
-        <v-list-item-subtitle>{{ story.recordDate }}</v-list-item-subtitle>
-        <v-list-item-title class="headline mb-1">{{ story.title }}</v-list-item-title>
-      </v-list-item-content>
-
-      <v-list-item-icon class="pt-0 mt-0">
-        <AvatarGroup group-title="Contribution" :profiles="story.contributors" customClass="ma-0 pa-0 justify-end" size="20px" spacing=" "/>
+    <v-list-item class="px-0" style="min-height:0; height:10px">
+      <v-list-item-icon class="pt-0 mt-0" style="position:absolute; top:5px; right:1px; margin-right:0px">
+        <small v-if="contributorLabel">contributors</small>
+        <AvatarGroup :profiles="story.contributors" customClass="ma-0 pa-0" style="position:relative; bottom:10px;" size="28px" spacing="pr-1"/>
       </v-list-item-icon>
     </v-list-item>
     <v-list-item>
+      <v-list-item-content class="pb-0">
+        <v-list-item-subtitle>{{ story.recordDate }}</v-list-item-subtitle>
+        <v-list-item-title class="headline mb-1 wrap-text">{{ story.title }}</v-list-item-title>
+      </v-list-item-content>
+      <!-- BEFORE -->
+      <!-- <v-list-item-icon class="pt-0 mt-0">
+        <small>contributors</small>
+        <AvatarGroup group-title="Contribution" :profiles="story.contributors" customClass="ma-0 pa-0 justify-end" size="20px" spacing=" "/>
+      </v-list-item-icon> -->
+    </v-list-item>
+    <v-list-item class="px-0">
       <v-list-item-content>
-        <v-img src="../../assets/enuamanu.png" height="300px"></v-img>
+        <!-- TODO Artefact and Artefact group component -->
+        <v-img src="../../assets/mocks/enuamanu.png" :height="mobile ? '300px' : '400px'"></v-img>
       </v-list-item-content>
     </v-list-item>
 
@@ -80,6 +88,10 @@ export default {
   computed: {
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
+    },
+    contributorLabel () {
+      if (this.mobile && this.story.contributors.length > 6) return false
+      return true
     }
   },
   methods: {
@@ -101,5 +113,9 @@ export default {
     border-radius: 50%;
     background-color: lightgrey;
     background-position-y: 10px;
+}
+
+.wrap-text {
+  white-space: unset !important;
 }
 </style>

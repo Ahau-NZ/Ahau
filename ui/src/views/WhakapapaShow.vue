@@ -104,7 +104,7 @@
         </v-speed-dial>
       </v-card>
 
-      <v-row v-if="whakapapa.table && overflow" class="navigate">
+      <v-row v-if="whakapapa.table && overflow" :class="mobile ? 'navigateMobile' : 'navigate'">
         <div class="icon-button">
           <v-btn fab x-small light @click="togglePan(200)">
             <v-icon>mdi-arrow-left</v-icon>
@@ -820,6 +820,11 @@ export default {
       position: fixed;
       top: 130px;
       right: 110px;
+    }
+    &>.navigateMobile {
+      position: fixed;
+      top: 130px;
+      right: 50px;
     }
   }
 }

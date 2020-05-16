@@ -288,7 +288,7 @@ export default {
           uri: require('@/assets/koro.svg')
         },
         image: {
-          uri: require('@/assets/mock1.jpg')
+          uri: require('@/assets/mocks/mock1.jpg')
         }
       },
       {
@@ -299,7 +299,7 @@ export default {
           uri: require('@/assets/kuia.svg')
         },
         image: {
-          uri: require('@/assets/mock2.jpg')
+          uri: require('@/assets/mocks/mock2.jpg')
         }
       }
       ],

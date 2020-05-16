@@ -23,6 +23,8 @@ export const story1 = {
     ...personComplete.parents,
     ...personComplete.children,
     ...personComplete.siblings
+  ],
+  artefacts: [
   ]
 }
 
@@ -54,7 +56,7 @@ export const story2 = {
 export const story3 = {
   id: '%Story3',
   type: '',
-  title: 'Story 3',
+  title: 'Story 3 this is a really long story title about a really cool story',
   description: 'This is the description of story3',
   recordDate: '14 May 2020',
   recordEndDate: '14 May 2020',
