@@ -33,11 +33,12 @@
     </v-list-item>
     <v-row>
       <v-col :cols="mobile ? '12' : '8'">
-        <v-list-item-subtitle> Mentions </v-list-item-subtitle>
+        <v-list-item-subtitle class="ml-5"> Mentions </v-list-item-subtitle>
         <AvatarGroup :profiles="story.mentions" show-labels size="40px"/>
       </v-col>
       <v-col :cols="mobile ? '12' : '4'">
-        <h4>Location</h4>
+        <v-list-item-subtitle> Location </v-list-item-subtitle>
+        <p>{{story.location}}</p>
       </v-col>
     </v-row>
   </v-card>
