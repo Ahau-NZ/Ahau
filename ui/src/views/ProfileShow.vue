@@ -132,6 +132,7 @@ export default {
   max-width: 100vw;
   min-height: 100vh;
   background: white;
+  margin-bottom: 200px;
 }
 
 .niho-bg {

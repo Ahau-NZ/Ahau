@@ -134,6 +134,7 @@ export default {
 <style lang="scss">
   .rounded-card {
     border-radius: 10px;
+
     &p {
       font-size: 0.8em;
       line-height: 1.6;
