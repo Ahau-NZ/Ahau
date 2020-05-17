@@ -8,6 +8,7 @@
     </v-list-item>
     <v-list-item>
       <v-list-item-content class="pb-0">
+        <v-list-item-subtitle>{{ story.recordDate }}</v-list-item-subtitle>
         <v-list-item-title class="headline mb-1 wrap-text">{{ story.title }}</v-list-item-title>
       </v-list-item-content>
     </v-list-item>
@@ -31,11 +32,11 @@
     </v-list-item>
     <v-row>
       <v-col class="py-0" :cols="mobile ? '12' : '8'">
-        <v-list-item-subtitle style="color:grey" class="ml-5"> mentions </v-list-item-subtitle>
+        <v-list-item-subtitle style="color:grey" class="ml-5"> Mentions </v-list-item-subtitle>
         <AvatarGroup style="position:relative; bottom:15px;" :profiles="story.mentions" show-labels size="30px" spacing="pr-2"/>
       </v-col>
       <v-col class="py-0" v-if="story.location" :cols="mobile ? '12' : '4'">
-        <v-list-item-subtitle style="color:grey" class="ms-5"> location </v-list-item-subtitle>
+        <v-list-item-subtitle style="color:grey" class="ms-5"> Location </v-list-item-subtitle>
         <p class="mt-2 ms-5">{{story.location}}</p>
       </v-col>
     </v-row>
@@ -51,13 +52,12 @@ export default {
     story: Object
   },
   components: {
-    AvatarGroup,
-    AddButton
+    AvatarGroup
   },
   data () {
     return {
       show: false,
-      turncateText: true,
+      turncateText : true,
       textHeight: 0
     }
   },
@@ -106,7 +106,7 @@ export default {
   flex: unset !important;
 }
 
-// Dont cut off a long title
+// Dont cut off a long title 
 .wrap-text {
   white-space: unset !important;
 }
@@ -125,4 +125,5 @@ p {
     -webkit-box-orient: vertical;
   }
 }
+
 </style>

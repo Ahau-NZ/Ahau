@@ -79,7 +79,12 @@
       :title="'Create a new Record'"
       @close="close"
       @submit="console.log('TODO: add record to profile')"
-      />
+    />
+    <ViewRecordDialog
+      :show="isActive('view-record')"
+      :title="currentStory.title"
+      @close="close"
+    />
   </div>
 </template>
 
@@ -95,6 +100,7 @@ import WhakapapaShowHelper from '@/components/dialog/whakapapa/WhakapapaShowHelp
 import WhakapapaTableHelper from '@/components/dialog/whakapapa/WhakapapaTableHelper.vue'
 import NewCollectionDialog from '@/components/dialog/NewCollectionDialog.vue'
 import NewRecordDialog from '@/components/dialog/NewRecordDialog.vue'
+import ViewRecordDialog from '@/components/dialog/archive/ViewRecordDialog.vue'
 
 import gql from 'graphql-tag'
 
@@ -123,7 +129,8 @@ export default {
     WhakapapaShowHelper,
     WhakapapaTableHelper,
     NewCollectionDialog,
-    NewRecordDialog
+    NewRecordDialog,
+    ViewRecordDialog
   },
   props: {
     focus: {
@@ -140,7 +147,7 @@ export default {
       required: false,
       default: null,
       validator: (val) => [
-        'new-node', 'view-edit-node', 'delete-node', 'new-collection', 'new-record', 'edit-node',
+        'new-node', 'view-edit-node', 'delete-node', 'new-collection', 'new-record', 'edit-node', 'view-record',
         'whakapapa-view', 'whakapapa-edit', 'whakapapa-delete', 'whakapapa-helper', 'whakapapa-table-helper'
       ].includes(val)
     },
@@ -774,7 +781,7 @@ export default {
   position: absolute;
   top: 0px;
   right: 0px;
-  width: 20%;
+  width: 25%;
   height: 100%;
   background-color: white;
 }

@@ -17,11 +17,11 @@
     <v-row>
       <v-col cols="12" xs="12" sm="12" md="10">
         <v-row>
-          <CollectionGroup :collections="mockCollections" />
+          <CollectionGroup :collections="collections" />
         </v-row>
         <v-divider class="mt-6 mb-8" light></v-divider>
         <v-row v-for="(story, i) in stories" :key="`story-${i}-id-${story.id}`" class="mt-10">
-          <StoryCard :story="story" />
+          <StoryCard @click="updateDialog('view-record')" :story="story" />
         </v-row>
       </v-col>
     </v-row>
@@ -53,6 +53,7 @@ import CollectionGroup from '@/components/archive/CollectionGroup.vue'
 import DialogHandler from '@/components/dialog/DialogHandler.vue'
 
 import { STORIES } from '@/mocks/stories'
+import { mockCollections } from '@/mocks/collections'
 
 // const get = require('lodash.get')
 
@@ -67,94 +68,7 @@ export default {
   data () {
     return {
       stories: STORIES,
-      mockCollections: [
-        {
-          image: require('@/assets/mocks/mock3.jpg'),
-          title: 'Private Records',
-          description: 'Private records that I want to remember',
-          stories: ['storyid9', 'storyid10', 'storyid11', 'storyid12'],
-          lastSubmissionDate: new Date(),
-          hasAccess: [{
-            id: 123,
-            preferredName: 'Ian'
-            // avatarImage: require('@/assets/koro.svg')
-          },
-          {
-            id: 456,
-            preferredName: 'Ben'
-            // avatarImage: require('@/assets/kuia.svg')
-          }
-          ]
-        },
-        {
-          image: require('@/assets/mocks/mock3.jpg'),
-          title: 'Private Records',
-          description: 'Private records that I want to remember',
-          stories: ['storyid9', 'storyid10', 'storyid11', 'storyid12'],
-          lastSubmissionDate: new Date(),
-          hasAccess: [{
-            id: 123,
-            preferredName: 'Ian'
-            // avatarImage: require('@/assets/koro.svg')
-          },
-          {
-            id: 456,
-            preferredName: 'Ben'
-            // avatarImage: require('@/assets/kuia.svg')
-          }]
-        },
-        {
-          image: require('@/assets/mocks/mock3.jpg'),
-          title: 'Private Records',
-          description: 'Private records that I want to remember',
-          stories: ['storyid9', 'storyid10', 'storyid11', 'storyid12'],
-          lastSubmissionDate: new Date(),
-          hasAccess: [{
-            id: 123,
-            preferredName: 'Ian',
-            avatarImage: { uri: require('@/assets/koro.svg') }
-          },
-          {
-            id: 456,
-            preferredName: 'Ben',
-            avatarImage: { uri: require('@/assets/kuia.svg') }
-          }]
-        },
-        {
-          image: require('@/assets/mocks/mock3.jpg'),
-          title: 'Private Records',
-          description: 'Private records that I want to remember',
-          stories: ['storyid9', 'storyid10', 'storyid11', 'storyid12'],
-          lastSubmissionDate: new Date(),
-          hasAccess: [{
-            id: 123,
-            preferredName: 'Ian',
-            avatarImage: { uri: require('@/assets/koro.svg') }
-          },
-          {
-            id: 456,
-            preferredName: 'Ben',
-            avatarImage: { uri: require('@/assets/kuia.svg') }
-          }]
-        },
-        {
-          image: require('@/assets/mocks/mock3.jpg'),
-          title: 'Private Records',
-          description: 'Private records that I want to remember',
-          stories: ['storyid9', 'storyid10', 'storyid11', 'storyid12'],
-          lastSubmissionDate: new Date(),
-          hasAccess: [{
-            id: 123,
-            preferredName: 'Ian',
-            avatarImage: { uri: require('@/assets/koro.svg') }
-          },
-          {
-            id: 456,
-            preferredName: 'Ben',
-            avatarImage: { uri: require('@/assets/kuia.svg') }
-          }]
-        }
-      ],
+      collections: mockCollections,
       dialog: {
         active: null,
         type: null
@@ -199,6 +113,7 @@ export default {
       this.dialog.view = !this.dialog.view
     },
     updateDialog (dialog) {
+      console.log("open dialog")
       this.dialog.active = dialog
     }
   }
