@@ -42,7 +42,6 @@ import isEqual from 'lodash.isequal'
 import clone from 'lodash.clonedeep'
 
 function defaultData (profile) {
-  console.log('in editnodedialog:', profile)
   return {
     id: profile.id,
     gender: profile.gender,
@@ -78,12 +77,6 @@ export default {
     title: { type: String, default: 'Create a new person' },
     hideDetails: { type: Boolean, default: false },
     selectedProfile: { type: Object }
-    // type: {
-    //   type: String,
-    //   validator: (val) => [
-    //     'child', 'parent', 'sibling'
-    //   ].includes(val)
-    // }
   },
   data () {
     return {
@@ -95,7 +88,6 @@ export default {
   computed: {
     profileChanges () {
       let changes = {}
-      console.log('formdata:', this.formData)
       Object.entries(this.formData).forEach(([key, value]) => {
         if (!isEqual(this.formData[key], this.selectedProfile[key])) {
           switch (key) {

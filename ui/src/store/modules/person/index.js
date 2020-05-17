@@ -2,43 +2,23 @@
 // import { createProvider } from '@/plugins/vue-apollo'
 import getRelatives from '@/lib/profile-helpers'
 import tree from '@/lib/tree-helpers'
-/*
-  this is needed in order to run queries and mutations
-  TODO: is this okay?
-// */
-// const apolloProvider = createProvider()
-// const apolloClient = apolloProvider.defaultClient
 
-/*
-  holds current value of the artefact state
-*/
 const state = {
   selectedProfile: {}
 }
 
-/*
-  these map getters to whats in the state, then we can use those getters
-  within components
-*/
 const getters = {
   selectedProfile: state => {
     return state.selectedProfile
   }
 }
 
-/*
-  These are what makes changes to the state
-*/
 const mutations = {
   updateProfile (state, profile) {
     state.selectedProfile = profile
   }
 }
 
-/*
-  These do not like directly change the state, but they commit mutations (changes),
-  which make changes to the state
-*/
 const actions = {
   setProfile ({ commit }, person) {
     commit('updateProfile', person)
