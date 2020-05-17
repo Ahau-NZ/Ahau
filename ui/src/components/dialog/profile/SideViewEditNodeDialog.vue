@@ -1237,6 +1237,7 @@ export default {
 .profile-info {
   /* font-family: 'Forum', cursive; */
   text-align: center;
+  color: black
 }
 
 .side-menu {

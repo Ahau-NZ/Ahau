@@ -49,7 +49,7 @@
               <v-select
                 v-model="formData.type"
                 label="Record Type"
-                :items="recordTypes"
+                :items="['Life Event']"
                 v-bind="customProps"
               />
             </v-col>
@@ -58,10 +58,8 @@
               <AddButton @click="$refs.fileInput.click()" label="Attact media or files"/>
               <input v-show="false" ref="fileInput" type="file" accept="audio/*,video/*,image/*" multiple @change="processMediaFiles($event)" />
             </v-col>
-            <v-col cols="12">
-              <div v-for="(file, i) in formData.artefacts" :key="`file-${i}`">
-                <MediaCard :file="file"/>
-              </div>
+            <v-col>
+              <MediaCard :artefacts.sync="formData.artefacts"/>
             </v-col>
           </v-row>
         </v-col>
@@ -127,6 +125,14 @@ export default {
     hideDetails: {
       type: Boolean,
       default: false
+    }
+  },
+  watch: {
+    'formData.artefacts': {
+      deep: true,
+      handler (newValue) {
+        console.log(newValue)
+      }
     }
   },
   data () {
@@ -197,11 +203,10 @@ export default {
   },
   methods: {
     processMediaFiles ($event) {
-      this.formData.artefacts = []
       const { files } = $event.target
 
       files.forEach((file, i) => {
-        this.formData.artefacts[i] = this.processFile(file)
+        this.formData.artefacts.push(this.processFile(file))
       })
 
       console.log('artefacts', this.formData.artefacts)

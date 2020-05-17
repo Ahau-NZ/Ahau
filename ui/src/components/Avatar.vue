@@ -58,7 +58,6 @@ export default {
     clickable: { type: Boolean, default: false },
     isView: { type: Boolean, default: false },
     isEditing: { type: Boolean, default: false }
-
   },
   components: {
     ImagePicker

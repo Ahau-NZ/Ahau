@@ -1,51 +1,53 @@
 <template>
-<div :class="['wrapper', mobile ? '' : 'top-padding']">
-  <v-container fluid class="body-width white niho-bg">
-    <v-row>
-        <v-col cols="12" xs="12" sm="12" md="2">
-          <slot name="nav"></slot>
+<div>
+  <v-container fluid class="body-width white niho-bg px-0">
+      <v-row :class="mobile ? 'top-margin':'mt-10'">
+        <v-col cols="12" md="10" sm="10" :class="!mobile ? 'pl-12 my-6' : 'py-0 ma-0'" align="start">
+          <h1 class="title black--text ">Collections</h1>
         </v-col>
-        <v-col cols="12" xs="12" sm="12" md="8">
-            <h1 class="title black--text my-6">Collections</h1>
-            <v-row class="mx-0">
-              <CollectionGroup :collections="mockCollections" />
-            </v-row>
-            <v-divider class="mt-6 mb-8" light></v-divider>
-            <v-row v-for="(story, i) in stories" :key="`story-${i}-id-${story.id}`" class="mt-10">
-              <StoryCard :story="story" />
-            </v-row>
-        </v-col>
-        <v-col cols="12" lg="2" class="px-12">
-            <v-row>
-                <v-col>
-                    <v-row justify="center" align="center">
-                      <v-btn large class="my-2" fab color="white" @click.stop="openContextMenu($event)">
-                        <v-icon large class="black--text">mdi-plus</v-icon>
-                      </v-btn>
-                    </v-row>
-                    <v-row justify="center" align="center">
-                      <v-btn small class="my-2" fab color="white" @click="editProfile()">
-                        <v-icon small class="black--text">mdi-magnify</v-icon>
-                      </v-btn>
-                    </v-row>
-                </v-col>
-            </v-row>
-        </v-col>
+        <div>
+          <!-- <v-btn :class="mobile ? 'searchBtnMob' : 'searchBtn'" :small="!mobile" :x-small="mobile" class="my-2" fab flat color="white" @click="editProfile()">
+            <v-icon small class="black--text">mdi-magnify</v-icon>
+          </v-btn>            -->
+          <v-btn :small="!mobile" :x-small="mobile" :class="mobile ? 'addBtnMob' : 'addBtn'" class="my-2" fab color="white" @click.stop="openContextMenu($event)">
+            <v-icon class="black--text">mdi-plus</v-icon>
+          </v-btn>
+        </div>
       </v-row>
-    </v-container>
-    <vue-context ref="menu" class="pa-4">
-      <li v-for="(option, index) in contextMenuOpts" :key="index">
-          <a href="#" @click.prevent="updateDialog(option.dialog)" class="d-flex align-center px-4">
-              <v-icon light>{{ option.icon }}</v-icon>
-              <p class="ma-0 pl-3">{{ option.title }}</p>
-          </a>
-      </li>
-    </vue-context>
+      <v-row>
+        <v-col cols="12" xs="12" sm="12" md="10">
+          <v-row>
+            <CollectionGroup :collections="mockCollections" />
+          </v-row>
+          <v-divider class="mt-6 mb-8" light></v-divider>
+          <v-row justify="center">
+            <ArchiveStory />
+          </v-row>
+          <v-row justify="center">
+            <ArchiveStory />
+          </v-row>
+          <v-row justify="center">
+            <ArchiveStory />
+          </v-row>
+          <v-row justify="center">
+            <ArchiveStory />
+          </v-row>
+      </v-col>
+    </v-row>
+  </v-container>
+  <vue-context ref="menu" class="pa-4">
+    <li v-for="(option, index) in contextMenuOpts" :key="index">
+        <a href="#" @click.prevent="updateDialog(option.dialog)" class="d-flex align-center px-4">
+            <v-icon light>{{ option.icon }}</v-icon>
+            <p class="ma-0 pl-3">{{ option.title }}</p>
+        </a>
+    </li>
+  </vue-context>
 
-    <DialogHandler
-        :dialog.sync="dialog.active"
-        :type.sync="dialog.type"
-    />
+  <DialogHandler
+      :dialog.sync="dialog.active"
+      :type.sync="dialog.type"
+  />
   </div>
 </template>
 
@@ -215,6 +217,10 @@ export default {
 <style lang="scss" scoped>
 @import "~vue-context/dist/css/vue-context.css";
 
+.top-margin {
+  margin-top : 80px
+}
+
 .overflow {
     width: 100vw;
     overflow-y: scroll;
@@ -230,4 +236,29 @@ export default {
   height:200px;
   overflow-y:scroll;
 }
+
+.searchBtn {
+  position: fixed;
+  top:90px;
+  right:160px
+}
+
+.searchBtnMob {
+  position: absolute;
+  top: 80px;
+  right:80px;
+}
+
+.addBtn {
+  position: fixed;
+  top: 80px;
+  right:70px
+}
+
+.addBtnMob {
+  position: absolute;
+  top: 80px;
+  right:20px
+}
+
 </style>

@@ -3,7 +3,9 @@
     <Appbar v-if="displayAppbar" :enableMenu="enableMenu" app />
     <v-content :class="{ 'mobileWhakapapaTitleStyle': mobile }">
       <Spinner />
-      <router-view :mobileServerLoaded="mobileServerLoaded" />
+      <transition name="fade" mode="out-in">
+        <router-view :mobileServerLoaded="mobileServerLoaded" />
+      </transition>
     </v-content>
   </v-app>
 </template>
@@ -81,6 +83,18 @@ a {
   text-decoration: none;
 }
 
+.fade-enter-active,
+.fade-leave-active {
+  transition-duration: 0.15s;
+  transition-property: opacity;
+  transition-timing-function: ease;
+}
+
+.fade-enter,
+.fade-leave-active {
+  opacity: 0
+}
+
 /* //remove default vuetify dark theme background */
 .v-application {
   background: none !important;
@@ -89,6 +103,7 @@ a {
 /* //custom backgrounds per route. see above 'watcher' */
 body {
   --primary-background: #303030;
+  // --primary-background: white;
 
   &.page--login {
     background: url(./assets/niho.svg);
@@ -104,23 +119,25 @@ body {
     background-position-x: 150%;
     // background-size: cover;
   }
-  &.page--whakapapashow {
-    background: url(./assets/niho.svg);
-    background-color: var(--primary-background);
-    background-position-x: -300px;
-    // background-repeat: no-repeat;
-    // background-size: cover;
-  }
-  &.page--profileshow {
-    background-color: #303030;
-  }
-  &.page--profile {
-    background: url(./assets/niho.svg);
-    background-color: var(--primary-background);
-    background-position-x: -300px;
-    /* background-repeat: no-repeat;
-    background-size: cover; */
-  }
+  // &.page--whakapapashow {
+  //   background: url(./assets/niho.svg);
+  //   background-color: var(--primary-background);
+  //   background-position-x: -300px;
+  //   // background-repeat: no-repeat;
+  //   // background-size: cover;
+  // }
+  // &.page--profileshow {
+  //   background: url(./assets/niho.svg);
+  //   background-color: var(--primary-background);
+  //   background-position-x: 0px;
+  // }
+  // &.page--profile {
+  //   background: url(./assets/niho.svg);
+  //   background-color: var(--primary-background);
+  //   background-position-x: -300px;
+  //   /* background-repeat: no-repeat;
+  //   background-size: cover; */
+  // }
 }
 
 .mobileWhakapapaTitleStyle {

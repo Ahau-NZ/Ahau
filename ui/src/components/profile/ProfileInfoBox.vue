@@ -90,7 +90,7 @@
 
                     <!-- Desktop: Go to whakapapa -->
                     <v-col class="pa-0" style="display: flex; justify-content: center; align-items: center;">
-                        <v-btn color=""><img class="nav-icon mr-3" v-bind:src="require('@/assets/tree-white.svg')" />View this persons whakapapa</v-btn>
+                        <v-btn color=""><img class="nav-icon mr-3" v-bind:src="require('@/assets/icons/tree-white.svg')" />View this persons whakapapa</v-btn>
                     </v-col>
 
                     <!-- END Desktop: Family Members -->
@@ -142,5 +142,8 @@ export default {
 <style scoped lang="scss">
 * {
     color: black;
+}
+p {
+    color: black
 }
 </style>

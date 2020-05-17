@@ -160,14 +160,8 @@ export default {
     return {
       suggestions: [],
       source: null
-      // whoami: {
-      //   profile: { id: '' }
-      // }
     }
   },
-  // apollo: {
-  //   whoami: Profile.whoami
-  // },
   computed: {
     ...mapGetters(['nestedWhakapapa', 'selectedProfile', 'whoami']),
     mobile () {

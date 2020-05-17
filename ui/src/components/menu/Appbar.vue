@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-app-bar v-if="mobile || enableMenu" :app="mobile && app" :absolute="mobile" :class="classObject" :flat="!mobile"
+    <v-app-bar v-if="mobile || enableMenu" :app="mobile && app" :class="classObject" :flat="!mobile"
       color="#303030" fixed>
       <v-btn v-if="goBack && mobile" @click="goBack" icon dark>
         <v-icon>mdi-arrow-left</v-icon>
@@ -16,8 +16,9 @@
           <Avatar
             size="50px"
             class="ma-0"
-            :image="whakapapa.image"
+            :image="whakapapa.image ? whakapapa.image : null"
             :alt="whakapapa.name"
+            :isView="!whakapapa.image"
           />
         </v-row>
       </router-link>
@@ -31,7 +32,7 @@
         <v-btn text @click.stop="dialog = true" class="red--text text-uppercase ms-10">Tribes</v-btn>
 
         <v-btn text to="/whakapapa" class="white--text text-uppercase ms-10">whakapapa</v-btn>
-        <router-link :to="{ name: 'profileShow', params: { id: profile.id } }">
+        <router-link @click.native="setProfileById(profile.id)" :to="{ name: 'profileShow', params: { id: profile.id } }">
           <Avatar
             v-if="!mobile"
             size="50px"
@@ -109,7 +110,7 @@
 import gql from 'graphql-tag'
 import Avatar from '@/components/Avatar'
 import FeedbackButton from '@/components/button/FeedbackButton'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 
 const karakia = `
 ---------------------------------
@@ -171,6 +172,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['setProfileById']),
     karakiaWhakamutunga () {
       console.log(karakia)
     },

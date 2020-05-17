@@ -1,83 +1,52 @@
 <template>
-  <div :class="['wrapper', mobile ? '' : 'top-padding']">
-    <Header
-      :profile="profile"
-      @setupProfile="setupProfile($event)"
-    />
-
-      <v-container fluid class="body-width white pa-5 niho-bg">
-      <v-row>
-       <v-col cols="12" offset-md="2" md="8" sm="12" class="py-0" :align="mobile ? 'center' : 'start'">
-          <h1 class="primary--text" >{{ profile.legalName ? profile.legalName : profile.preferredName }}</h1>
-        </v-col>
-        <v-col :order="mobile ? 'first' : 'last'" :align="mobile ? 'end' : 'center'" cols="12" md="2" sm="12"  class="py-0">
-         <v-tooltip left>
-            <template v-slot:activator="{ on }">
-                <v-btn v-on="on" x-small class="my-2" fab color="white" @click="updateDialog('edit-node')">
-                  <v-icon small class="black--text">mdi-pencil</v-icon>
-                </v-btn>
-            </template>
-            <span>Edit profile</span>
-          </v-tooltip>
-        </v-col>
-      </v-row>
-      <v-row class="content-top-margin">
-        <!-- LEFT SIDE COLUMN -->
-        <v-col cols="12" xs="12" sm="12" md="2">
-          <slot name="nav"></slot>
-        </v-col>
-        <!-- MIDDLE COLUMN -->
-        <v-col cols="12" sx="12" sm="12" md="8">
-          <ProfileInfoCard :profile="profile" @setupProfile="setupProfile($event)" />
-          <ProfileCard title="About">
-            <template v-slot:content>
-              <p style="color: lightgrey; text-align: center;">TODO</p>
-            </template>
-          </ProfileCard>
-          <ProfileCard title="Contact">
-            <template v-slot:content>
-              <v-row cols="12" class="pt-0">
-                <ProfileInfoItem smCols="12" mdCols="4" title="Phone" :value="profile.phone"/>
-                <ProfileInfoItem smCols="12" mdCols="4" title="Email" :value="profile.email"/>
-                <ProfileInfoItem smCols="12" mdCols="4" title="Address" :value="profile.address"/>
-              </v-row>
-            </template>
-          </ProfileCard>
-        </v-col>
-        <!-- RIGHT SIDE COLUMN -->
-        <v-col cols="12" sx="12" sm="12" md="2" :class="mobile ? 'pl-0 pr-0' : ''">
-          <Kaitiaki
-            title="Kaitiaki"
-            helperText="Caretakers of this profile"
-          >
-            <template v-slot:content>
-              <v-row class="ml-2">
-                <v-col cols="3" class="pt-0">
-                  <Avatar size="40px" :image="whoami.profile.avatarImage" :gender="whoami.profile.gender" :bornAt="whoami.profile.bornAt" :alt="whoami.profile.preferredName" />
-                </v-col>
-                <v-col cols="9" class="d-flex justify-start align-center">
-                  <p> {{ whoami.profile.preferredName }} </p>
-                </v-col>
-              </v-row>
-            </template>
-          </Kaitiaki>
-          <Kaitiaki
-            class="mt-3"
-            title="Communities"
-            helperText="Communities connected to this profile"
-          />
-        </v-col>
-      </v-row>
-    </v-container>
-  </div>
+    <v-row class="mb-12" :class="mobile ? 'mt-10':''">
+      <v-col cols="12" sx="12" sm="12" md="10" :class="mobile ? 'py-5 px-5' : 'px-5' ">
+        <ProfileInfoCard :profile="profile" @setupProfile="setupProfile($event)" />
+        <ProfileCard>
+          <template v-slot:content>
+            <ProfileInfoItem title="About" smCols="12" mdCols="12" :value="profile.description"/>
+          </template>
+        </ProfileCard>
+        <ProfileCard>
+          <template v-slot:content>
+            <v-row cols="12" class="pt-0" >
+              <ProfileInfoItem class="br" smCols="12" mdCols="4" title="Phone" :value="profile.phone"/>
+              <ProfileInfoItem class="br" smCols="12" mdCols="4" title="Email" :value="profile.email"/>
+              <ProfileInfoItem smCols="12" mdCols="4" title="Address" :value="profile.address"/>
+            </v-row>
+          </template>
+        </ProfileCard>
+      </v-col>
+      <!-- RIGHT SIDE COLUMN -->
+      <v-col cols="12" sx="12" md="2" :class="mobile ? 'py-5 px-5' : 'pr-8'">
+        <!-- TODO: update profiles to profiles.tiaki -->
+        <ProfileCard title="Kaitiaki" class="mt-0">
+          <template v-slot:content>
+            <v-row class="justify-center align-center ma-0">
+              <v-col cols="2" class="pt-0 pl-0">
+                <Avatar :size="mobile ? '50px' : '40px'" :image="whoami.profile.avatarImage" :alt="whoami.profile.preferredName" />
+              </v-col>
+              <v-col>
+                <p style="color:black">{{whoami.profile.preferredName}}</p>
+              </v-col>
+            </v-row>
+          </template>
+        </ProfileCard>
+        <!-- <Kaitiaki
+          class="mt-3"
+          title="Communities"
+          subtitle="These are the communities connected to this profile"
+          :profiles="profile.tiaki"
+        /> -->
+      </v-col>
+    </v-row>
 </template>
 
 <script>
 import ProfileInfoCard from '@/components/profile/ProfileInfoCard.vue'
 import ProfileInfoItem from '@/components/profile/ProfileInfoItem.vue'
 import ProfileCard from '@/components/profile/ProfileCard.vue'
-import Header from '@/components/profile/Header.vue'
-import Kaitiaki from '@/components/profile/Kaitiaki.vue'
+// import Kaitiaki from '@/components/profile/Kaitiaki.vue'
 import { mapGetters } from 'vuex'
 import calculateAge from '@/lib/calculate-age'
 import formatDate from '@/lib/format-date'
@@ -86,10 +55,9 @@ import Avatar from '@/components/Avatar.vue'
 export default {
   name: 'Profile',
   components: {
-    Header,
     ProfileInfoCard,
     ProfileCard,
-    Kaitiaki,
+    // Kaitiaki,
     ProfileInfoItem,
     Avatar
   },
@@ -163,17 +131,22 @@ export default {
   }
 }
 </script>
-<style scoped lang="scss">
+<style lang="scss">
   .rounded-card {
     border-radius: 10px;
     p {
       font-size: 0.8em;
       line-height: 1.6;
+      color: #383838
     }
   }
 
   .first-row {
     height: 70px;
+  }
+
+  .br {
+  border-right: 0.5px solid rgba(0,0,0,0.12);
   }
 
 </style>
