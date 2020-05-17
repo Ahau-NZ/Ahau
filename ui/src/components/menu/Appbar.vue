@@ -28,11 +28,11 @@
       <!-- Desktop doesn't use a drawer, it has the links directly in the app bar -->
       <template v-if="!mobile">
         <!--  WIP links -->
-        <v-btn text @click.stop="dialog = true" class="red--text text-uppercase ms-10">Archive</v-btn>
-        <v-btn text @click.stop="dialog = true" class="red--text text-uppercase ms-10">Tribes</v-btn>
+        <v-btn text @click.stop="dialog = true" active-class="no-active" class="red--text text-uppercase ms-10">Tribes</v-btn>
+        <v-btn active-class="no-active" text @click.native="setComponent('archive')" :to="{ name: 'profileShow', params: { id: profile.id } }" class="white--text text-uppercase ms-10">Archive</v-btn>
 
-        <v-btn text to="/whakapapa" class="white--text text-uppercase ms-10">whakapapa</v-btn>
-        <router-link @click.native="setProfileById(profile.id)" :to="{ name: 'profileShow', params: { id: profile.id } }">
+        <v-btn active-class="no-active" text to="/whakapapa" class="white--text text-uppercase ms-10">whakapapa</v-btn>
+        <router-link @click.native="goProfile()" :to="{ name: 'profileShow', params: { id: profile.id } }">
           <Avatar
             v-if="!mobile"
             size="50px"
@@ -58,8 +58,7 @@
     <!-- The drawer shows only on mobile -->
     <v-navigation-drawer v-if="mobile && enableMenu" v-model="drawer" app dark right>
       <v-list nav class="text-uppercase">
-        <!--  WIP links -->
-        <v-list-item :to="{ name: 'profileShow', params: { id: profile.id } }" >
+        <v-list-item active-class="no-active" @click.native="goProfile()" :to="{ name: 'profileShow', params: { id: profile.id } }" >
           <Avatar
             size="80px"
             :image="profile.avatarImage"
@@ -68,20 +67,14 @@
             :bornAt="profile.bornAt"
           />
         </v-list-item>
-        <v-list-item link @click.stop="dialog = true">
-          <v-list-item-title class="red--text">Archive</v-list-item-title>
-        </v-list-item>
-
-        <v-list-item link @click.stop="dialog = true">
-          <v-list-item-title class="red--text">Tribes</v-list-item-title>
-        </v-list-item>
-
-        <v-list-item link to="/whakapapa" class="white--text">
+        <v-list-item active-class="no-active" link to="/whakapapa" class="white--text">
           <v-list-item-title>whakapapa</v-list-item-title>
         </v-list-item>
-        <!-- using click.native to handle event when there is also a router link -->
-        <v-list-item link @click.native="karakiaWhakamutunga()" to="/login" class="white--text">
-          <v-list-item-title>sign out</v-list-item-title>
+        <v-list-item active-class="no-active" link @click.native="setComponent('archive') && toggleDrawer()" :to="{ name: 'profileShow', params: { id: profile.id } }" >
+          <v-list-item-title class="white--text" >Archive</v-list-item-title>
+        </v-list-item>
+        <v-list-item active-class="no-active" link @click.stop="dialog = true">
+          <v-list-item-title class="red--text">Tribes</v-list-item-title>
         </v-list-item>
         <v-list-item class="pt-12">
           <FeedbackButton />
@@ -172,7 +165,12 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setProfileById']),
+    ...mapActions(['setProfileById', 'setComponent']),
+    goProfile () {
+      this.setComponent('profile')
+      this.setProfileById(this.profile.id)
+      if (this.drawer) this.drawer = false
+    },
     karakiaWhakamutunga () {
       console.log(karakia)
     },
@@ -230,4 +228,13 @@ export default {
   .sideMenuAppBarStyle {
     margin-top: -56px !important;
   }
+
+  .v-btn--active.no-active::before {
+  opacity: 0 !important;
+  }
+
+  .v-list-item--active.no-active::before {
+  opacity: 0 !important;
+  }
+
 </style>
