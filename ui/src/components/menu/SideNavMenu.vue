@@ -35,9 +35,10 @@
           </v-btn>
         </v-col> -->
         <v-col :class="mobile ? 'py-0 px-0' : 'py-1'">
-          <v-btn @click="setActive('archive')" light :fab="mobile" text>
+          <v-btn @click="goArchive()" light :fab="mobile" text>
             <v-col class="pa-0" :cols="mobile ? '12' : '2'">
-              <ArchiveIcon :size="mobile ? 'large' : 'medium'" :color="activeComponent === 'archive' ? 'red' : 'black'" />
+              <ArchiveIcon v-if="!showStory" :size="mobile ? 'large' : 'medium'" :color="activeComponent === 'archive' ? 'red' : 'black'" />
+              <v-icon v-else color="#B02425">mdi-arrow-left</v-icon>
             </v-col>
             <v-col class="py-0" v-if="!mobile && !isOverflowing">
               <span ref="text" :style="activeComponent === 'archive' ? 'color:#B02425;' : ''" class="ml-2 nav-label subtitle-1">
@@ -99,7 +100,8 @@ export default {
       componentLoaded: false,
       stickyMobile: false,
       prevScroll: 0,
-      scroll: 0
+      scroll: 0,
+      storyPosition: null
     }
   },
   mounted () {
@@ -107,7 +109,7 @@ export default {
     this.offset = this.$refs.sideNav.offsetTop - 40
   },
   computed: {
-    ...mapGetters(['activeComponent', 'selectedProfile']),
+    ...mapGetters(['activeComponent', 'selectedProfile', 'showStory']),
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
@@ -127,7 +129,12 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setComponent']),
+    ...mapActions(['setComponent', 'setShowStory']),
+    goArchive () {
+      if (this.showStory) {
+        this.setShowStory()
+      } else this.setActive('archive')
+    },
     setActive (component) {
       this.setComponent(component)
       window.scrollTo(0, 0)

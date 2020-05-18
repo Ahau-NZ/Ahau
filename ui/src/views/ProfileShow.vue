@@ -15,7 +15,7 @@
     </v-row>
     <v-row>
       <!-- SideNav -->
-        <v-col cols="12" xs="12" sm="12" md="2" :class="!mobile ? 'pr-0' : 'px-5 py-0'">
+        <v-col  v-if="!hideNav" cols="12" xs="12" sm="12" md="2" :class="!mobile ? 'pr-0' : 'px-5 py-0'">
           <SideNavMenu :profile="selectedProfile" />
         </v-col>
       <!-- Content -->
@@ -30,6 +30,7 @@
       </transition>
       </v-col>
     </v-row>
+    <v-spacer style="height:200px"></v-spacer>
 
     <DialogHandler
       :dialog.sync="dialog.active"
@@ -77,14 +78,15 @@ export default {
   },
   mounted () {
     this.setupProfile(this.$route.params.id)
-    if (this.$route.params.nav) {
-      setPageComponent(this.$route.params.nav)
-    }
   },
   computed: {
-    ...mapGetters(['selectedProfile', 'whoami', 'activeComponent']),
+    ...mapGetters(['selectedProfile', 'whoami', 'activeComponent', 'showStory']),
     mobile () {
       return this.$vuetify.breakpoint.xs
+    },
+    hideNav () {
+      if (this.mobile && this.showStory) return true
+      else return false
     }
   },
   methods: {
@@ -108,15 +110,15 @@ export default {
 .body-width {
   /* min-width: $formWidth; */
   max-width: 100vw;
-  min-height: 140vh;
-  background: white;
-  margin-bottom: 200px;
+  // padding-bottom: 500px;
+  // background: white;
+  // margin-bottom: 200px;
 }
 
 .niho-bg {
   background: linear-gradient(rgba(255, 255, 255, 0.99),
   rgba(255, 255, 255, 0.7)), url(../assets/niho.svg);
-  background-position-x: 400px;
+  background-position-x: 100px;
   background-attachment: fixed;
   background-repeat: no-repeat;
 }

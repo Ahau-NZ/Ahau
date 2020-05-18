@@ -2,13 +2,9 @@
   <div :class="['wrapper', mobile ? '' : 'top-padding']">
     <v-container fluid class="body-width white pa-5 niho-bg">
       <v-row class="content-top-margin">
-        <!-- LEFT SIDE COLUMN -->
-        <v-col cols="12" xs="12" sm="12" md="2">
-          <slot name="nav"></slot>
-        </v-col>
         <!-- RIGHT SIDE COLUMN -->
-        <v-col cols="12" sx="12" sm="12" md="8">
-          <h1>Timeline</h1>
+        <v-col cols="12" sx="12" sm="12" md="10" class="mt-12">
+          <h1 class="text--black">Timeline</h1>
           <StoryTimeline :data="mockTimelineData"/>
         </v-col>
       </v-row>

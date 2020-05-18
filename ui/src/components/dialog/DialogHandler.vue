@@ -82,7 +82,7 @@
     />
     <ViewRecordDialog
       :show="isActive('view-record')"
-      :title="currentStory.title"
+      :title="'View Story'"
       @close="close"
     />
   </div>
@@ -133,6 +133,9 @@ export default {
     ViewRecordDialog
   },
   props: {
+    story: {
+      type: Object
+    },
     focus: {
       type: String
     },

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-timeline align-top dense light>
+    <v-timeline align-start justify-start dense light>
       <v-timeline-item v-for="(item, index) in data" :key="index" fillDot :icon="item.storyTypeIcon"
         :color="getDotColour(item.storyTypeIcon)" :icon-color="getIconColour(item.storyTypeIcon)">
         <template v-slot:icon>

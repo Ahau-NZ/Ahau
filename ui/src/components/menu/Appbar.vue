@@ -5,6 +5,9 @@
       <v-btn v-if="goBack && mobile" @click="goBack" icon dark>
         <v-icon>mdi-arrow-left</v-icon>
       </v-btn>
+       <v-btn v-if="showStory && mobile" @click="setShowStory" icon dark>
+        <v-icon>mdi-arrow-left</v-icon>
+      </v-btn>
       <template v-else>
         <router-link to="/" v-if="enableMenu" class="logo-link"  @click.native="karakiaWhakamutunga()">
           <img src="@/assets/logo_red.svg" class="logo" />
@@ -31,7 +34,7 @@
         <v-btn text @click.stop="dialog = true" active-class="no-active" class="red--text text-uppercase ms-10">Tribes</v-btn>
         <v-btn active-class="no-active" text @click.native="setComponent('archive')" :to="{ name: 'profileShow', params: { id: profile.id } }" class="white--text text-uppercase ms-10">Archive</v-btn>
 
-        <v-btn active-class="no-active" text to="/whakapapa" class="white--text text-uppercase ms-10">whakapapa</v-btn>
+        <v-btn active-class="no-active" text @click.native="resetWindow" to="/whakapapa" class="white--text text-uppercase ms-10">whakapapa</v-btn>
         <router-link @click.native="goProfile()" :to="{ name: 'profileShow', params: { id: profile.id } }">
           <Avatar
             v-if="!mobile"
@@ -70,7 +73,7 @@
         <v-list-item active-class="no-active" link to="/whakapapa" class="white--text">
           <v-list-item-title>whakapapa</v-list-item-title>
         </v-list-item>
-        <v-list-item active-class="no-active" link @click.native="setComponent('archive') && toggleDrawer()" :to="{ name: 'profileShow', params: { id: profile.id } }" >
+        <v-list-item active-class="no-active" link @click.native="goArchive()" :to="{ name: 'profileShow', params: { id: profile.id } }" >
           <v-list-item-title class="white--text" >Archive</v-list-item-title>
         </v-list-item>
         <v-list-item active-class="no-active" link @click.stop="dialog = true">
@@ -138,7 +141,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['whoami', 'whakapapa', 'route']),
+    ...mapGetters(['whoami', 'whakapapa', 'route', 'showStory']),
     classObject: function () {
       return {
         'mobile': this.mobile,
@@ -165,10 +168,17 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setProfileById', 'setComponent']),
+    ...mapActions(['setProfileById', 'setComponent', 'setShowStory']),
+    resetWindow () {
+      window.scrollTo(0, 0)
+    },
     goProfile () {
       this.setComponent('profile')
       this.setProfileById(this.profile.id)
+      if (this.drawer) this.drawer = false
+    },
+    goArchive () {
+      this.setComponent('archive')
       if (this.drawer) this.drawer = false
     },
     karakiaWhakamutunga () {

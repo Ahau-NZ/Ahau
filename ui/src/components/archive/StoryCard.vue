@@ -1,7 +1,7 @@
 <template>
-  <v-card class="mx-auto" light width="100%">
+  <v-card @click="showStory" :class="fullStoryClass" :flat="fullStory" :ripple="false" class="mx-auto" light width="100%">
     <v-list-item class="px-0" style="min-height:0; height:10px">
-      <v-list-item-icon class="pt-0 mt-0" style="position:absolute; top:5px; right:1px; margin-right:0px">
+      <v-list-item-icon v-if="!fullStory" class="pt-0 mt-0" style="position:absolute; top:5px; right:1px; margin-right:0px">
         <v-list-item-subtitle v-if="contributorLabel" class="no-flex">contributors</v-list-item-subtitle>
         <AvatarGroup :profiles="story.contributors" customClass="ma-0 pa-0" style="position:relative; bottom:10px;" size="28px" spacing="pr-1"/>
       </v-list-item-icon>
@@ -33,23 +33,37 @@
     <v-row>
       <v-col class="py-0" :cols="mobile ? '12' : '8'">
         <v-list-item-subtitle style="color:grey" class="ml-5"> Mentions </v-list-item-subtitle>
-        <AvatarGroup style="position:relative; bottom:15px;" :profiles="story.mentions" show-labels size="30px" spacing="pr-2"/>
+        <AvatarGroup style="position:relative; bottom:15px;" :profiles="story.mentions" show-labels :size="fullStory ? '50px': '30px'" spacing="pr-2"/>
       </v-col>
       <v-col class="py-0" v-if="story.location" :cols="mobile ? '12' : '4'">
         <v-list-item-subtitle style="color:grey" class="ms-5"> Location </v-list-item-subtitle>
         <p class="mt-2 ms-5">{{story.location}}</p>
       </v-col>
     </v-row>
+    <div v-if="fullStory">
+      <v-row>
+        <v-col class="py-0" :cols="mobile ? '12' : '6'">
+          <v-list-item-subtitle style="color:grey" class="ml-5"> Contributors </v-list-item-subtitle>
+          <AvatarGroup style="position:relative; bottom:15px;" :profiles="story.contributors" show-labels size="30px" spacing="pr-2"/>
+        </v-col>
+        <v-col class="py-0" v-if="story.location" :cols="mobile ? '12' : '4'">
+          <v-list-item-subtitle style="color:grey" class="ms-5"> Collections </v-list-item-subtitle>
+          <p class="mt-2 ms-5">{{story.location}}</p>
+        </v-col>
+      </v-row>
+    </div>
   </v-card>
 </template>
 
 <script>
 import AvatarGroup from '@/components/AvatarGroup.vue'
+import { mapActions } from 'vuex'
 
 export default {
   name: 'StoryCard',
   props: {
-    story: Object
+    story: Object,
+    fullStory: Boolean
   },
   components: {
     AvatarGroup
@@ -57,7 +71,7 @@ export default {
   data () {
     return {
       show: false,
-      turncateText : true,
+      turncateText: true,
       textHeight: 0
     }
   },
@@ -73,12 +87,19 @@ export default {
       return true
     },
     disableClick () {
-      if (this.textHeight > 60) return false
+      if (this.fullStory) {
+        return true
+      } else if (this.textHeight > 60) return false
       return true
+    },
+    fullStoryClass () {
+      if (this.fullStory) { return 'disableCard' }
     }
   },
   methods: {
+    ...mapActions(['setStory']),
     showStory () {
+      this.setStory(this.story)
       this.$emit('showStory')
     },
     showText () {
@@ -106,7 +127,7 @@ export default {
   flex: unset !important;
 }
 
-// Dont cut off a long title 
+// Dont cut off a long title
 .wrap-text {
   white-space: unset !important;
 }
@@ -126,4 +147,11 @@ p {
   }
 }
 
+.disableCard {
+  pointer-events: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
 </style>
