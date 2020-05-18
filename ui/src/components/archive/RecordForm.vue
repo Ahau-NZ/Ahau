@@ -1,5 +1,5 @@
 <template>
-  <v-card light>
+  <!-- <v-card light> -->
     <v-form ref="form" v-model="form.valid" lazy-validation>
       <v-row>
         <v-col cols="12" sm="12" md="6">
@@ -65,7 +65,7 @@
         </v-col>
       </v-row>
     </v-form>
-  </v-card>
+  <!-- </v-card> -->
 </template>
 
 <script>
@@ -105,7 +105,7 @@ const audioRegex = /^audio\//
 const videoRegex = /^video\//
 
 export default {
-  name: 'CollectionForm',
+  name: 'RecordForm',
   components: {
     // Avatar,
     // ImagePicker,
@@ -203,6 +203,7 @@ export default {
   },
   methods: {
     processMediaFiles ($event) {
+      console.log($event)
       const { files } = $event.target
 
       files.forEach((file, i) => {

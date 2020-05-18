@@ -79,7 +79,7 @@
       :title="'Create a new Record'"
       @close="close"
       @submit="console.log('TODO: add record to profile')"
-      />
+    />
   </div>
 </template>
 
