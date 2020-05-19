@@ -15,6 +15,8 @@
       outlined
       deletable-chips
       :searchInput.sync="searchInput"
+      @blur.stop="closeMenu($event)"
+      :autofocus="openMenu"
     >
       <template v-slot:selection="data">
         <slot name="selection" :data="data"></slot>
@@ -94,6 +96,10 @@ export default {
     }
   },
   methods: {
+    closeMenu ($event) {
+      console.log($event)
+      this.$emit('update:openMenu', false)
+    },
     addSelectedItem (item) {
       if (Array.isArray(this.chips)) {
         this.chips.push(item)
@@ -101,7 +107,7 @@ export default {
         this.chips = item
       }
 
-      this.$emit('update:openMenu', false)
+      // this.$emit('update:openMenu', false)
     },
     removeSelectedItem (item) {
       this.chips.slice(item, 1)

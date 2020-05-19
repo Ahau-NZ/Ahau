@@ -1,5 +1,6 @@
 <template>
   <!-- <v-card light> -->
+  <div>
     <v-form ref="form" v-model="form.valid" lazy-validation>
       <v-row>
         <v-col cols="12" sm="12" md="6">
@@ -196,7 +197,7 @@
             <v-col :cols="mobile ? '12' : formData.relatedRecords.length > 0 ? 'auto' : '2'">
               <AddButton label="Related Records" @click="showCreator = true" />
             </v-col>
-            <v-col cols="6" class="pt-0">
+            <v-col :cols="mobile ? '12' : '6'" class="pt-0">
               <v-text-field
                 v-model="formData.submissionDate"
                 label="Submission Date"
@@ -280,6 +281,7 @@
       </v-expand-transition>
     </v-form>
   <!-- </v-card> -->
+  </div>
 </template>
 
 <script>

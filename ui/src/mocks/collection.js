@@ -24,5 +24,9 @@ export const collectionMinimum = {
 
 export const COLLECTIONS = [
   collectionComplete,
+  collectionMinimum,
+  collectionComplete,
+  collectionMinimum,
+  collectionComplete,
   collectionMinimum
 ]
