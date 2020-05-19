@@ -1,5 +1,5 @@
 <template>
-  <v-card @click="showStory" :class="fullStoryClass" :flat="fullStory" :ripple="false" class="mx-auto" light width="100%">
+  <v-card @click="showStory($event)" :class="dynamicCard" :flat="fullStory" :ripple="false" class="mx-auto" :light="!this.showArtefact" width="100%">
     <v-list-item class="px-0" style="min-height:0; height:10px">
       <v-list-item-icon v-if="!fullStory" class="pt-0 mt-0" style="position:absolute; top:5px; right:1px; margin-right:0px">
         <v-list-item-subtitle v-if="contributorLabel" class="no-flex">contributors</v-list-item-subtitle>
@@ -12,14 +12,16 @@
         <v-list-item-title class="headline mb-1 wrap-text">{{ story.title }}</v-list-item-title>
       </v-list-item-content>
     </v-list-item>
-    <v-list-item class="px-0">
+    <v-list-item v-if="story.artefacts && story.artefacts.length" class="px-0">
       <v-list-item-content>
-        <!-- <v-carousel>
-          <v-carousel-item v-for="artefact in story.artefacts" :key="artefact.id" v-html="artefact.content">
+        <!-- <v-carousel hide-delimiters :show-arrows="!mobile && fullStory" :show-arrows-on-hover="!mobile" style="min-height:200px;max-height:60vh" :height="fullStory ? 'auto': mobile ? '300px' : '500px'"> -->
+        <v-carousel hide-delimiters :show-arrows="!mobile && fullStory" :show-arrows-on-hover="!mobile" :height="mobile ? '300px' : '500px'">
+          <v-carousel-item v-for="artefact in story.artefacts" :key="artefact.id">
+            <Artefact @showArtefact="toggleShowArtefact($event)" :artefact="artefact" />
           </v-carousel-item>
-        </v-carousel> -->
+        </v-carousel>
         <!-- TODO Artefact and Artefact group component -->
-        <v-img src="../../assets/mocks/enuamanu.png" :height="mobile ? '300px' : '400px'"></v-img>
+        <!-- <v-img src="../../assets/mocks/enuamanu.png" :height="mobile ? '300px' : '400px'"></v-img> -->
       </v-list-item-content>
     </v-list-item>
 
@@ -57,7 +59,8 @@
 
 <script>
 import AvatarGroup from '@/components/AvatarGroup.vue'
-import { mapActions } from 'vuex'
+import Artefact from '@/components/artefacts/Artefact.vue'
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
   name: 'StoryCard',
@@ -66,41 +69,66 @@ export default {
     fullStory: Boolean
   },
   components: {
-    AvatarGroup
+    AvatarGroup,
+    Artefact
   },
   data () {
     return {
       show: false,
       turncateText: true,
-      textHeight: 0
+      textHeight: 0,
+      artefact: {}
     }
   },
   mounted () {
     this.textHeight = this.$refs.text.offsetHeight
+     if (this.fullStory) {
+       return this.turncateText = false
+     }
   },
   computed: {
+    ...mapGetters(['showArtefact']),
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
+    // show contributor label unless its getting too close to the title
     contributorLabel () {
       if (this.mobile && this.story.contributors.length > 6) return false
       return true
     },
+
+    // disable textTurncate click event when not needed
     disableClick () {
       if (this.fullStory) {
         return true
       } else if (this.textHeight > 60) return false
       return true
     },
-    fullStoryClass () {
-      if (this.fullStory) { return 'disableCard' }
+
+    // style card based on current view
+    dynamicCard () {
+      if (this.fullStory) {
+       if (this.showArtefact) {
+         return 'ontop ' + 'disableCard'
+       }
+       return 'disableCard'
+      }
     }
   },
   methods: {
-    ...mapActions(['setStory']),
-    showStory () {
-      this.setStory(this.story)
-      this.$emit('showStory')
+    ...mapActions(['setStory', 'setShowArtefact']),
+    toggleShowArtefact (artefact) {
+      if (this.fullStory){
+        this.artefact = artefact
+        this.setShowArtefact()
+        this.$emit('artefactView')
+      }
+    },
+    showStory (e) {
+      if (!this.fullStory) {
+        this.setStory(this.story)
+        this.$emit('showStory')
+      }
     },
     showText () {
       this.turncateText = !this.turncateText
@@ -148,10 +176,16 @@ p {
 }
 
 .disableCard {
-  pointer-events: none;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
   user-select: none;
+  cursor: default;
 }
+
+.v-card::before {
+  opacity: 0 !important;
+}
+
+.ontop {
+  z-index:6
+}
+
 </style>

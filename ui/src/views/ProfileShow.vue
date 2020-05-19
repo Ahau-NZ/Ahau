@@ -1,5 +1,7 @@
 <template>
   <v-container fluid class="body-width pa-0 niho-bg white">
+    <v-overlay dark :value="showArtefact" z-index="6" opacity="1" color="rgba(30,30,30)">
+    </v-overlay>
     <!-- Header and Title -->
     <Header v-if="activeComponent === 'profile'"
       :profile="selectedProfile"
@@ -80,7 +82,7 @@ export default {
     this.setupProfile(this.$route.params.id)
   },
   computed: {
-    ...mapGetters(['selectedProfile', 'whoami', 'activeComponent', 'showStory']),
+    ...mapGetters(['selectedProfile', 'whoami', 'activeComponent', 'showStory', 'showArtefact']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },

@@ -4,7 +4,8 @@
 const state = {
   activeComponent: 'profile',
   currentStory: {},
-  showStory: false
+  showStory: false,
+  showArtefact: false
 }
 
 const getters = {
@@ -16,6 +17,9 @@ const getters = {
   },
   showStory: state => {
     return state.showStory
+  },
+  showArtefact: state => {
+    return state.showArtefact
   }
 }
 
@@ -28,6 +32,9 @@ const mutations = {
   },
   updateShowStory (state) {
     state.showStory = !state.showStory
+  },
+  updateShowArtefact (state) {
+    state.showArtefact = !state.showArtefact
   }
 }
 
@@ -40,6 +47,9 @@ const actions = {
   },
   setShowStory ({ commit }) {
     commit('updateShowStory')
+  },
+  setShowArtefact ({ commit }) {
+    commit('updateShowArtefact')
   }
 }
 

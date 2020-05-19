@@ -94,7 +94,7 @@ export default {
         icon: 'mdi-file-outline'
       }
       ],
-      scrollPosition: 0
+      scrollPosition: 0,
     }
   },
   props: {
@@ -104,7 +104,6 @@ export default {
     },
     editProfile: {
       type: Function
-      // default: () => console.log('need to define editProfile!')
     }
   },
   computed: {
@@ -120,7 +119,6 @@ export default {
   watch: {
     showStory (newVal) {
       if (newVal === false) {
-        console.log('take me to : ', this.scrollPosition)
         setTimeout(() => {
           window.scrollTo({
             top: this.scrollPosition
@@ -132,8 +130,8 @@ export default {
   methods: {
     ...mapActions(['setComponent', 'setShowStory']),
     toggleStory () {
+      console.log("showStory")
       this.scrollPosition = window.pageYOffset
-      console.log('scollPosition: ', this.scrollPosition)
       this.setShowStory()
       window.scrollTo(0, 0)
     },
@@ -149,7 +147,7 @@ export default {
     updateDialog (dialog) {
       console.log('open dialog')
       this.dialog.active = dialog
-    }
+    },
   }
 }
 </script>

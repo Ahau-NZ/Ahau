@@ -136,6 +136,7 @@ export default {
       } else this.setActive('archive')
     },
     setActive (component) {
+      if (this.showStory) this.setShowStory()
       this.setComponent(component)
       window.scrollTo(0, 0)
     },
