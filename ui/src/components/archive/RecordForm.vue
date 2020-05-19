@@ -12,11 +12,15 @@
               />
             </v-col>
             <v-col cols="12">
-              <v-text-field
+              <v-textarea
                 v-model="formData.description"
                 label="Description"
                 v-bind="customProps"
-              />
+                no-resize
+                rows="3"
+                auto-grow
+              >
+              </v-textarea>
             </v-col>
             <v-col cols="12" sm="12" md="6">
               <v-text-field
@@ -29,33 +33,33 @@
               <v-checkbox v-model="hasEndDate" v-if="!hasEndDate"
                 label="include an end date" :hide-details="true"
                 v-bind="customProps"
-                outlined
               />
               <v-text-field
                 v-else
                 v-model="formData.recordEndDate"
                 label="End Date"
                 v-bind="customProps"
-                clearable
                 @click:clear="hasEndDate = false"
               />
             </v-col>
-            <v-col cols="auto">
+            <v-col :cols="mobile ? '12' : formData.mentions.length > 0 ? 'auto' : '4'">
               <AddButton label="Mention" @click="showMentions = true" />
               <ProfileSearchBar
                 :selectedItems.sync="formData.mentions"
                 :items="items"
                 :searchString.sync="searchString"
                 :openMenu.sync="showMentions"
+                type="profile"
               />
-              <AvatarGroup :profiles="formData.mentions"
+              <AvatarGroup v-if="formData.mentions.length > 0"
+                :profiles="formData.mentions"
                 show-labels
                 size="50px"
                 deletable
                 @delete="removeMention($event)"
               />
             </v-col>
-            <v-col cols="auto" style="width: 200px;">
+            <v-col :cols="mobile ? '12' : formData.categories.length > 0 ? 'auto' : '4'">
               <AddButton label="Category" @click="showCategories = true" />
               <ProfileSearchBar
                 :selectedItems.sync="formData.categories"
@@ -65,6 +69,7 @@
               />
               <v-chip-group
                 column
+                v-if="formData.categories.length > 0"
               >
                 <v-chip v-for="category in formData.categories" :key="category"
                   label
@@ -77,8 +82,30 @@
                 </v-chip>
               </v-chip-group>
             </v-col>
-            <v-col cols="auto">
-              <AddButton @click="" label="Collection"/>
+            <v-col :cols="mobile ? '12' : formData.collections.length > 0 ? 'auto' : '4'">
+              <AddButton label="Collection" @click="showCollections = true" />
+              <ProfileSearchBar
+                :selectedItems.sync="formData.collections"
+                :items="collections"
+                :searchString.sync="searchString"
+                :openMenu.sync="showCollections"
+                type="collection"
+              />
+              <!-- <v-card>
+                <v-container fluid>
+                  <v-row>
+                    <v-col
+                      v-for="collection in formData.collections"
+                      :key="collection.title"
+                    >
+                      <v-card flat tile class="d-flex">
+                        <v-img :src="collection.image.uri" />
+                        <v-card-title>{{ collection.title }}</v-card-title>
+                      </v-card>
+                    </v-col>
+                  </v-row>
+                </v-container>
+              </v-card> -->
             </v-col>
           </v-row>
         </v-col>
@@ -107,6 +134,150 @@
           </v-row>
         </v-col>
       </v-row>
+      <v-divider/>
+      <v-card-actions class="pt-2 pb-2">
+        <v-row>
+          <v-col>
+            <span class="pa-0 ma-0">Advanced</span>
+          </v-col>
+          <!-- <v-col> -->
+            <v-btn icon @click="show = !show" right>
+              <v-icon>{{ show ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
+            </v-btn>
+          <!-- </v-col> -->
+        </v-row>
+      </v-card-actions>
+      <v-divider v-if="!show"/>
+      <v-expand-transition>
+        <div v-show="show">
+          <v-row>
+            <v-col :cols="mobile ? '12' : formData.contributors.length > 0 ? 'auto' : '2'">
+              <AddButton label="Contributor" @click="showContributors = true" />
+              <ProfileSearchBar
+                :selectedItems.sync="formData.contributors"
+                :items="items"
+                :searchString.sync="searchString"
+                :openMenu.sync="showContributors"
+                type="profile"
+              />
+              <AvatarGroup v-if="formData.contributors.length > 0"
+                :profiles="formData.contributors"
+                show-labels
+                size="50px"
+                deletable
+                @delete="removeContributor($event)"
+              />
+            </v-col>
+            <v-col :cols="mobile ? '12' : formData.creator.id ? 'auto' : '2'">
+              <AddButton label="Creator" @click="showCreator = true" />
+              <ProfileSearchBar
+                :selectedItems.sync="formData.creator"
+                :items="items"
+                :searchString.sync="searchString"
+                :openMenu.sync="showCreator"
+                single
+                type="profile"
+              />
+              <div v-if="formData.creator.id" class="pt-5">
+                <Avatar
+                  style="width:50px"
+                  size="50px"
+                  :image="formData.creator.avatarImage"
+                  :alt="formData.creator.preferredName"
+                  :gender="formData.creator.gender"
+                  :bornAt="formData.creator.bornAt"
+                  :deceased="formData.creator.deceased"
+                  showLabel
+                  deletable
+                  @delete="formData.creator = {}"
+                />
+              </div>
+            </v-col>
+            <v-col :cols="mobile ? '12' : formData.relatedRecords.length > 0 ? 'auto' : '2'">
+              <AddButton label="Related Records" @click="showCreator = true" />
+            </v-col>
+            <v-col cols="6" class="pt-0">
+              <v-text-field
+                v-model="formData.submissionDate"
+                label="Submission Date"
+                v-bind="customProps"
+              />
+            </v-col>
+            <v-col cols="12">
+              <v-textarea
+                v-model="formData.contributionNotes"
+                label="Contribution notes"
+                v-bind="customProps"
+                no-resize
+                rows="3"
+                auto-grow
+              >
+              </v-textarea>
+            </v-col>
+            <v-col cols="12">
+              <v-textarea
+                v-model="formData.locationDescription"
+                label="Location description"
+                v-bind="customProps"
+                no-resize
+                rows="3"
+                auto-grow
+              >
+              </v-textarea>
+            </v-col>
+            <v-col cols="12">
+              <v-textarea
+                v-model="formData.culturalNarrative"
+                label="Cultural Narrative"
+                v-bind="customProps"
+                no-resize
+                rows="3"
+                auto-grow
+              >
+              </v-textarea>
+            </v-col>
+            <v-col :cols="mobile ? '6' : '3'">
+              <v-text-field
+                v-model="formData.format"
+                label="Format"
+                v-bind="customProps"
+              />
+            </v-col>
+            <v-col :cols="mobile ? '6' : '3'">
+              <v-text-field
+                v-model="formData.identifier"
+                label="Identifier"
+                v-bind="customProps"
+              />
+            </v-col>
+            <v-col :cols="mobile ? '6' : '3'">
+              <v-text-field
+                v-model="formData.source"
+                label="Source"
+                v-bind="customProps"
+              />
+            </v-col>
+            <v-col :cols="mobile ? '6' : '3'">
+              <v-text-field
+                v-model="formData.language"
+                label="Language"
+                v-bind="customProps"
+              />
+            </v-col>
+            <v-col cols="12">
+              <v-textarea
+                v-model="formData.translation"
+                label="Translation/Transcription"
+                v-bind="customProps"
+                no-resize
+                rows="3"
+                auto-grow
+              >
+              </v-textarea>
+            </v-col>
+          </v-row>
+        </div>
+      </v-expand-transition>
     </v-form>
   <!-- </v-card> -->
 </template>
@@ -125,6 +296,8 @@ import ProfileSearchBar from '@/components/archive/ProfileSearchBar.vue'
 
 import MediaCard from '@/components/archive/MediaCard.vue'
 import { personComplete } from '@/mocks/person-profile'
+
+import { COLLECTIONS } from '@/mocks/collection'
 
 import {
   RULES
@@ -154,7 +327,7 @@ const videoRegex = /^video\//
 export default {
   name: 'RecordForm',
   components: {
-    // Avatar,
+    Avatar,
     // ImagePicker,
     AddButton,
     ProfileSearchBar,
@@ -181,10 +354,14 @@ export default {
   },
   data () {
     return {
+      show: false,
       categories: ['one', 'two', 'three', 'four', 'five', 'six', 'seven'],
+      collections: COLLECTIONS,
       showMentions: false,
       showCategories: false,
       showContributors: false,
+      showCreator: false,
+      showCollections: false,
       searchString: '',
       items: [...personComplete.children, ...personComplete.parents, ...personComplete.siblings],
       hasEndDate: false,
@@ -196,8 +373,9 @@ export default {
         endDate: null,
         mentions: [],
         categories: [],
-        collection: null,
+        collections: [],
         contributors: [],
+        relatedRecords: [],
         protocols: [],
         submissionDate: null,
         contributionNotes: null,
@@ -208,7 +386,8 @@ export default {
         source: null,
         language: null,
         translation: null,
-        artefacts: []
+        artefacts: [],
+        creator: {}
       },
       form: {
         valid: true,
@@ -248,8 +427,10 @@ export default {
       return {
         outlined: true,
         hideDetails: true,
-        dense: true,
-        placeholder: ' '
+        placeholder: ' ',
+        class: 'mt-3',
+        clearable: true,
+        dense: true
       }
     }
   },
@@ -376,6 +557,9 @@ export default {
     },
     removeCategory ($event) {
       this.formData.categories.splice(this.formData.categories.findIndex(category => category === $event), 1)
+    },
+    removeContributor ($event) {
+      this.formData.contributors.splice(this.formData.mentions.findIndex(person => person.id === $event.id), 1)
     }
   }
 }

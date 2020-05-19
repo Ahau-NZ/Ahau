@@ -1,5 +1,5 @@
 <template>
-  <div v-if="clickable" @click="$emit('click')" style="cursor: pointer;" >
+  <div v-if="clickable" @click="$emit('click')" style="cursor: pointer;">
     <v-col class="py-0">
       <v-row justify="center" class="wrap">
         <v-btn v-if="deletable" class="delete" @click="$emit('delete')" icon x-small light max-width="20px" max-height="20px">
@@ -22,7 +22,7 @@
   </div>
 
   <div v-else-if="gender !== '' || (image && image.uri)">
-    <v-col>
+    <v-col class="py-0">
       <v-row justify="center" class="wrap">
         <v-btn v-if="deletable" class="delete" @click="$emit('delete')" icon x-small light max-width="20px" max-height="20px">
           <v-icon>mdi-close</v-icon>

@@ -5,7 +5,7 @@
       v-if="openMenu"
       :items="items"
       item-value="preferredName"
-      multiple
+      :multiple="!single"
       :menu-props="{ light: true, value: openMenu }"
       hide-selected
       append-icon=""
@@ -15,55 +15,34 @@
       outlined
       deletable-chips
       :searchInput.sync="searchInput"
-      @blur.native="$emit('hide')"
-
     >
-      <!-- <template v-slot:selection="data"> -->
-        <!-- <v-chip
-          :key="JSON.stringify(data.item)"
-          v-bind="data.attrs"
-          :input-value="data.selected"
-          :disabled="data.disabled"
-          @click:close="data.parent.selectItem(data.item)"
-          large
-          color="white"
-        > -->
-          <!-- <Avatar size="50px" class="mr-3"
-            show-label
-            :image="data.item.avatarImage"
-            :alt="data.item.preferredName"
-            :gender="data.item.gender"
-            :bornAt="data.item.bornAt"
-          />
-      </template> -->
       <template v-slot:selection="data">
         <slot name="selection" :data="data"></slot>
       </template>
       <template v-slot:item="data">
-        <slot name="item" :data="data">
-          <template v-if="typeof data.item === 'object'">
-            <v-list-item @click="addSelectedItem(data.item)">
-              <Avatar class="mr-3" size="40px" :image="data.item.avatarImage" :alt="data.item.preferredName" :gender="data.item.gender" :bornAt="data.item.bornAt" />
-              <!-- <v-list-item-content>
-                <v-list-item-title> {{ data.item.preferredName }} </v-list-item-title>
-                <v-list-item-subtitle>Preferred name</v-list-item-subtitle>
-              </v-list-item-content> -->
-              <v-list-item-content>
-                <v-list-item-title> {{ data.item.legalName ? data.item.legalName :  '&nbsp;' }} </v-list-item-title>
-                <!-- <v-list-item-subtitle>Legal name</v-list-item-subtitle> -->
-              </v-list-item-content>
-              <!-- <v-list-item-action>
-                <v-list-item-title> {{ age(data.item.profile.bornAt) }} </v-list-item-title>
-                <v-list-item-subtitle>Age</v-list-item-subtitle>
-              </v-list-item-action> -->
-            </v-list-item>
-          </template>
-          <template v-else>
-            <v-list-item @click="addSelectedItem(data.item)">
-              {{ data.item }}
-            </v-list-item>
-          </template>
-        </slot>
+        <template v-if="type === 'profile'">
+          <v-list-item @click="addSelectedItem(data.item)">
+            <Avatar class="mr-3" size="40px" :image="data.item.avatarImage" :alt="data.item.preferredName" :gender="data.item.gender" :bornAt="data.item.bornAt" />
+            <v-list-item-content>
+              <v-list-item-title> {{ data.item.legalName ? data.item.legalName :  '&nbsp;' }} </v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </template>
+        <template v-else-if="type === 'collection'">
+          <v-list-item @click="addSelectedItem(data.item)">
+            <Avatar class="mr-3" size="40px" isView :image="data.item.image"/>
+            <v-list-item-content>
+              <v-list-item-title>
+                {{ data.item.title }}
+              </v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </template>
+        <template v-else>
+          <v-list-item @click="addSelectedItem(data.item)">
+            {{ data.item }}
+          </v-list-item>
+        </template>
       </template>
       <template v-slot:no-data></template>
     </v-combobox>
@@ -83,17 +62,19 @@ export default {
       default: false
     },
     selectedItems: {
-      type: Array,
-      default () {
-        return []
-      }
+      type: [Object, Array]
     },
     items: {
       type: Array,
       default () {
         return []
       }
-    }
+    },
+    single: {
+      type: Boolean,
+      default: false
+    },
+    type: String
   },
   data () {
     return {
@@ -114,7 +95,12 @@ export default {
   },
   methods: {
     addSelectedItem (item) {
-      this.chips.push(item)
+      if (Array.isArray(this.chips)) {
+        this.chips.push(item)
+      } else {
+        this.chips = item
+      }
+
       this.$emit('update:openMenu', false)
     },
     removeSelectedItem (item) {
