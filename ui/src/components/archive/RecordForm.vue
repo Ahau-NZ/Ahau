@@ -21,45 +21,95 @@
             <v-col cols="12" sm="12" md="6">
               <v-text-field
                 v-model="formData.recordDate"
-                label="Record Start Date"
+                label="Date"
                 v-bind="customProps"
               />
             </v-col>
             <v-col cols="12" sm="12" md="6">
-              <v-checkbox
-                v-if="!hasEndDate"
-                v-model="hasEndDate"
-                label="Include an end date"
+              <v-checkbox v-model="hasEndDate" v-if="!hasEndDate"
+                label="include an end date" :hide-details="true"
+                v-bind="customProps"
+                outlined
               />
               <v-text-field
                 v-else
                 v-model="formData.recordEndDate"
-                label="Record End Date"
+                label="End Date"
                 v-bind="customProps"
                 clearable
                 @click:clear="hasEndDate = false"
               />
             </v-col>
+            <v-col cols="12">
+              <v-row>
+                <v-col cols="12">
+                  <!-- <AddButton v-if="!showMentions" @click="showMentions = true" label="Mention"/> -->
+                  <ProfileSearchBar
+                    label="Mentions"
+                    :selectedItems.sync="formData.mentions"
+                    :items="items"
+                    :searchString.sync="searchString"
+                    :openMenu.sync="showMentions"
+                  >
+                    <template v-slot:prepend-inner>
+                      <AddButton label="Mentions" @click="showMentions = true" />
+                    </template>
+                    <template>
+                      <AvatarGroup :profiles="formData.mentions"
+                        show-labels
+                        size="50px"
+                        deletable
+                        @delete="removeMention($event)"
+                      />
+                    </template>
+                  </ProfileSearchBar>
+                </v-col>
+                <v-col cols="12">
+                  <AddButton v-if="!showContributors" @click="showContributors = true" label="Contributors"/>
+                  <div v-else>
+                    <ProfileSearchBar
+                      label="Contributors"
+                      :selectedItems.sync="formData.contributors"
+                      :items="items"
+                      :searchString.sync="searchString"
+                    ></ProfileSearchBar>
+                  </div>
+                </v-col>
+                <!-- <v-col cols="6">
+                  <AddButton v-if="!showCategories" @click="showCategories = true" label="Category"/>
+                </v-col> -->
+              </v-row>
+            </v-col>
+            <v-col cols="6">
+              <v-row>
+                <v-col>
+                  <AddButton @click="" label="Collection"/>
+                </v-col>
+              </v-row>
+            </v-col>
           </v-row>
         </v-col>
         <v-col cols="12" sm="12" md="6">
           <v-row>
-            <v-spacer/>
-            <v-col cols="12" sm="12" md="6">
+            <!-- <v-spacer/> -->
+            <!-- <v-col cols="12" sm="12" md="6">
               <v-select
                 v-model="formData.type"
                 label="Record Type"
                 :items="['Life Event']"
                 v-bind="customProps"
               />
-            </v-col>
-            <v-spacer/>
+            </v-col> -->
+            <!-- <v-spacer/> -->
             <v-col cols="12">
               <AddButton @click="$refs.fileInput.click()" label="Attact media or files"/>
               <input v-show="false" ref="fileInput" type="file" accept="audio/*,video/*,image/*" multiple @change="processMediaFiles($event)" />
             </v-col>
-            <v-col>
+            <!-- <v-col>
               <MediaCard :artefacts.sync="formData.artefacts"/>
+            </v-col> -->
+            <v-col cols="12">
+              <AddButton @click="" label="Add location"/>
             </v-col>
           </v-row>
         </v-col>
@@ -77,7 +127,11 @@ import AddItemCard from '@/components/archive/AddItemCard.vue'
 import AvatarGroup from '@/components/AvatarGroup.vue'
 import Avatar from '@/components/Avatar.vue'
 
+import SearchBar from '@/components/button/SearchBar.vue'
+import ProfileSearchBar from '@/components/archive/ProfileSearchBar.vue'
+
 import MediaCard from '@/components/archive/MediaCard.vue'
+import { personComplete } from '@/mocks/person-profile'
 
 import {
   RULES
@@ -109,12 +163,9 @@ export default {
   components: {
     // Avatar,
     // ImagePicker,
-    NodeDatePicker,
     AddButton,
-    AddItemCard,
-    AvatarGroup,
-    Avatar,
-    MediaCard
+    ProfileSearchBar,
+    AvatarGroup
   },
   props: {
     // view: { type: Object, default () { return setDefaultWhakapapa(EMPTY_WHAKAPAPA) } },
@@ -131,12 +182,16 @@ export default {
     'formData.artefacts': {
       deep: true,
       handler (newValue) {
-        console.log(newValue)
+        // console.log(newValue)
       }
     }
   },
   data () {
     return {
+      showMentions: false,
+      showContributors: false,
+      searchString: '',
+      items: [...personComplete.children, ...personComplete.parents, ...personComplete.siblings],
       hasEndDate: false,
       // formData: setDefaultWhakapapa(this.view),
       formData: {
@@ -147,7 +202,7 @@ export default {
         mentions: [],
         category: [],
         collection: null,
-        access: [],
+        contributors: [],
         protocols: [],
         submissionDate: null,
         contributionNotes: null,
@@ -197,20 +252,22 @@ export default {
     customProps () {
       return {
         outlined: true,
-        hideDetails: true
+        hideDetails: true,
+        dense: true,
+        placeholder: ' '
       }
     }
   },
   methods: {
+    doSomething (data) {
+      console.log(data)
+    },
     processMediaFiles ($event) {
-      console.log($event)
       const { files } = $event.target
 
       files.forEach((file, i) => {
         this.formData.artefacts.push(this.processFile(file))
       })
-
-      console.log('artefacts', this.formData.artefacts)
     },
     processFile (file) {
       var attrs = {}
@@ -310,7 +367,17 @@ export default {
       return fileName.replace(/\.[^/.]+$/, '')
     },
     addMention () {
+      this.formData.mentions.push({
+        id: 1,
+        preferredName: 'Temp',
+        avatarImage: {
+          uri: require('@/assets/kuia.svg')
+        }
+      })
       console.warn('add mention not implemented yet')
+    },
+    removeMention ($event) {
+      this.formData.mentions.splice(this.formData.mentions.findIndex(person => person.id === $event.id), 1)
     }
   }
 }

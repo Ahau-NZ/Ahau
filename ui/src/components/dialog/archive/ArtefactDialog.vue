@@ -1,15 +1,30 @@
 <template>
   <div>
-    <Dialog :show="show" :title="artefact.title" @close="close" width="500px" :goBack="close" enableMenu>
-
-      <!-- FORM -->
+    <Dialog :show="show" title="Media" @close="close" width="700px" :goBack="close" enableMenu>
       <template v-slot:content>
-        <ArtefactForm :artefact.sync="artefact"/>
+        <v-row>
+          <v-col cols="1">
+            <v-btn icon @click="step--" :disabled="step === 0">
+              <v-icon>mdi-chevron-left</v-icon>
+            </v-btn>
+          </v-col>
+          <v-col>
+            <v-window v-model="step">
+              <v-window-item v-for="(artefact, i) in artefacts" :key="`window-${i}`" :value="i">
+                <ArtefactForm :artefact.sync="artefact"/>
+              </v-window-item>
+            </v-window>
+          </v-col>
+          <v-col cols="1">
+            <v-btn icon @click="step++" :disabled="step === artefacts.length - 1">
+              <v-icon>mdi-chevron-right</v-icon>
+            </v-btn>
+          </v-col>
+        </v-row>
       </template>
-      <ArtefactForm />
 
       <!-- x ✓ BUTTONS -->
-      <template v-slot:actions>
+      <!-- <template v-slot:actions>
         <v-btn @click="close"
           text large fab
           class="secondary--text"
@@ -22,7 +37,7 @@
         >
           <v-icon>mdi-check</v-icon>
         </v-btn>
-      </template>
+      </template> -->
 
     </Dialog>
   </div>
@@ -39,14 +54,19 @@ export default {
     ArtefactForm
   },
   props: {
-    artefact: Object,
+    artefacts: Array,
     show: {
       type: Boolean,
       required: true
+    },
+    selectedIndex: {
+      type: Number,
+      default: 0
     }
   },
   data () {
     return {
+      step: this.selectedIndex
     }
   },
   computed: {
@@ -57,9 +77,6 @@ export default {
   methods: {
     close () {
       this.$emit('close')
-    },
-    submit () {
-      this.$emit('submit', this.formData)
     }
   }
 }

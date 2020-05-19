@@ -24,6 +24,8 @@
             :showLabel="showLabels"
             :clickable="true"
             @click="profileClick(profile)"
+            :deletable="deletable"
+            @delete="$emit('delete', profile)"
           />
         </div>
       </div>
@@ -47,7 +49,8 @@ export default {
     showLabels: { type: Boolean, default: false },
     size: { type: String, default: '80px' },
     customClass: { type: String, default: 'd-flex justify-start align-center pa-2 pl-4' },
-    spacing: { type: String, default: 'pr-5' }
+    spacing: { type: String, default: 'pr-5' },
+    deletable: { type: Boolean, default: false }
   },
   computed: {
     columns () {

@@ -1,7 +1,10 @@
 <template>
   <div v-if="clickable" @click="$emit('click')" style="cursor: pointer;" >
     <v-col class="py-0">
-      <v-row justify="center">
+      <v-row justify="center" class="wrap">
+        <v-btn v-if="deletable" class="delete" @click="$emit('delete')" icon x-small light max-width="20px" max-height="20px">
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
         <v-avatar :size="size" :tile="isView">
           <v-img v-if="image && image.uri" :src="image.uri" :alt="alt" />
           <v-img
@@ -20,7 +23,10 @@
 
   <div v-else-if="gender !== '' || (image && image.uri)">
     <v-col>
-      <v-row justify="center">
+      <v-row justify="center" class="wrap">
+        <v-btn v-if="deletable" class="delete" @click="$emit('delete')" icon x-small light max-width="20px" max-height="20px">
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
         <v-avatar :size="size" :tile="isView" class="avatar-container" :class="{'isEditing': isEditing}">
           <v-img v-if="image && image.uri" :src="image.uri" :alt="alt" />
           <v-img
@@ -31,7 +37,7 @@
           />
         </v-avatar>
         <div v-if="isEditing" class="avatar-overlay">
-              <ImagePicker @updateAvatar="updateAvatar($event)" />
+          <ImagePicker @updateAvatar="updateAvatar($event)" />
         </div>
       </v-row>
       <v-row v-if="showLabel" justify="center">
@@ -57,7 +63,8 @@ export default {
     showLabel: { type: Boolean, default: false },
     clickable: { type: Boolean, default: false },
     isView: { type: Boolean, default: false },
-    isEditing: { type: Boolean, default: false }
+    isEditing: { type: Boolean, default: false },
+    deletable: { type: Boolean, default: false }
   },
   components: {
     ImagePicker
@@ -87,6 +94,17 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.wrap {
+  position: relative;
+}
+
+.wrap .delete {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  z-index: 100;
+}
+
 .avatar-container {
   position: relative;
   text-align: center;

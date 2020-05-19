@@ -11,6 +11,8 @@
             :label="field.text"
             outlined
             hide-details
+            :clearable="true"
+            height=5
           />
         </v-col>
       </v-row>

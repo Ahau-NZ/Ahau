@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Dialog :show="show" :title="title" @close="close" width="70%" :goBack="close" enableMenu>
+    <Dialog :show="show" title="Create a new Story" @close="close" width="70%" :goBack="close" enableMenu>
 
       <!-- FORM -->
       <template v-slot:content>

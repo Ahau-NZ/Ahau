@@ -1,5 +1,6 @@
 
 <template>
+  <div>
   <v-data-table
     :headers="headers"
     :items="artefacts"
@@ -7,30 +8,24 @@
     :hide-default-footer="true"
     id="datatable"
   >
-    <template v-slot:item=" { item, index, select }">
+    <template v-slot:item=" { item, index }">
       <tr>
-        <td style="width:40%; height:100%;" class="pt-2 pb-2">
-          <!-- <div>
-            <audio class="fit" v-if="item.type === 'audio'">
-            <source :src="item.url" :type="item.fileType"/>
-            </audio>
-            <video class="fit" v-if="item.type === 'video'">
-              <source :src="item.url"/>
-            </video>
-            <img class="fit" v-if="item.type === 'photo'" :src="item.url"/>
-          </div> -->
+        <td style="width:30%; height:100%;" class="pt-2 pb-2">
           <Media :type="item.type" :src="item.url" :format="item.format" />
-          
         </td>
-        <!-- <td style="width: 100px">
-          {{ item.type }}
-        </td> -->
-        <td style="width:50%;">
+        <td style="width:65%;">
           <div>
-            <v-text-field :style="`width: 100%`" hide-details solo flat v-model="artefacts[index].title" :readonly="item.readonly"></v-text-field>
+            <v-text-field
+              v-model="artefacts[index].title"
+              :style="`width: 100%`" hide-details solo flat
+              :readonly="item.readonly"
+              :clearable="isSelected[index]"
+              @focus="isSelected[index] = true"
+              @blur="isSelected[index] = false"
+            />
           </div>
         </td>
-        <td style="width: 10%">
+        <td style="width: 5%" class="ma-0 pa-0">
           <v-btn icon @click="editArtefact(item)">
             <v-icon small class="blue--text">mdi-pencil</v-icon>
           </v-btn>
@@ -39,9 +34,15 @@
           </v-btn>
         </td>
       </tr>
-      <ArtefactDialog v-if="dialog" :title="selectedArtefact.title" :artefact="selectedArtefact" @close="close" @submit="save($event)" :show="dialog" />
+      <ArtefactDialog v-if="dialog" :title="selectedArtefact.title" :selectedIndex="selectedIndex" :artefacts.sync="artefacts" @close="close" @submit="save($event)" :show="dialog" />
     </template>
   </v-data-table>
+  <v-card-actions v-if="artefacts.length > 0" class="justify-center">
+    <v-btn text @click="clearArtefacts">
+      Clear
+    </v-btn>
+  </v-card-actions>
+  </div>
 </template>
 
 <script>
@@ -58,7 +59,7 @@ export default {
       { text: 'File', value: 'file', sortable: false },
       // { text: 'Type', value: 'type', sortable: false },
       { text: 'Title', value: 'title', sortable: false },
-      { text: 'Edit', value: 'edit', sortable: false }
+      { text: '', value: 'edit', sortable: false }
       // { text: 'Description', value: 'decription', sortable: false },
       // { text: 'Format', value: 'format', sortable: false }
       // { text: 'Identifier', value: 'identifier', sortable: false },
@@ -71,7 +72,8 @@ export default {
       // { text: 'Size', value: 'size', sortable: false },
       // { text: 'Transcription', value: 'transcription', sortable: false }
     ],
-    selectedIndex: -1,
+    isSelected: [],
+    selectedIndex: 0,
     selectedArtefact: {
       title: '',
       description: '',
@@ -113,6 +115,9 @@ export default {
     }
   },
   methods: {
+    clearArtefacts () {
+      confirm('Are you sure you want to clear all uploaded media?') && this.$emit('update:artefacts', [])
+    },
     editArtefact (artefact) {
       this.selectedIndex = this.artefacts.indexOf(artefact)
       this.selectedArtefact = Object.assign({}, artefact)
@@ -130,6 +135,7 @@ export default {
       })
     },
     save ($event) {
+      console.log('save', $event)
       if (this.selectedIndex > -1) {
         Object.assign(this.artefacts[this.selectedIndex], this.selectedArtefact)
       } else {
