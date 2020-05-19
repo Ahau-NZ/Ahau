@@ -29,9 +29,6 @@
           />
         </div>
       </div>
-      <div>
-        <slot name="action"></slot>
-      </div>
     </v-row>
   </v-col>
 </template>

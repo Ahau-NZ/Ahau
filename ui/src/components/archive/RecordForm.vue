@@ -40,52 +40,45 @@
                 @click:clear="hasEndDate = false"
               />
             </v-col>
-            <v-col cols="12">
-              <v-row>
-                <v-col cols="12">
-                  <!-- <AddButton v-if="!showMentions" @click="showMentions = true" label="Mention"/> -->
-                  <ProfileSearchBar
-                    label="Mentions"
-                    :selectedItems.sync="formData.mentions"
-                    :items="items"
-                    :searchString.sync="searchString"
-                    :openMenu.sync="showMentions"
-                  >
-                    <template v-slot:prepend-inner>
-                      <AddButton label="Mentions" @click="showMentions = true" />
-                    </template>
-                    <template>
-                      <AvatarGroup :profiles="formData.mentions"
-                        show-labels
-                        size="50px"
-                        deletable
-                        @delete="removeMention($event)"
-                      />
-                    </template>
-                  </ProfileSearchBar>
-                </v-col>
-                <v-col cols="12">
-                  <AddButton v-if="!showContributors" @click="showContributors = true" label="Contributors"/>
-                  <div v-else>
-                    <ProfileSearchBar
-                      label="Contributors"
-                      :selectedItems.sync="formData.contributors"
-                      :items="items"
-                      :searchString.sync="searchString"
-                    ></ProfileSearchBar>
-                  </div>
-                </v-col>
-                <!-- <v-col cols="6">
-                  <AddButton v-if="!showCategories" @click="showCategories = true" label="Category"/>
-                </v-col> -->
-              </v-row>
+            <v-col cols="auto">
+              <AddButton label="Mention" @click="showMentions = true" />
+              <ProfileSearchBar
+                :selectedItems.sync="formData.mentions"
+                :items="items"
+                :searchString.sync="searchString"
+                :openMenu.sync="showMentions"
+              />
+              <AvatarGroup :profiles="formData.mentions"
+                show-labels
+                size="50px"
+                deletable
+                @delete="removeMention($event)"
+              />
             </v-col>
-            <v-col cols="6">
-              <v-row>
-                <v-col>
-                  <AddButton @click="" label="Collection"/>
-                </v-col>
-              </v-row>
+            <v-col cols="auto" style="width: 200px;">
+              <AddButton label="Category" @click="showCategories = true" />
+              <ProfileSearchBar
+                :selectedItems.sync="formData.categories"
+                :items="categories"
+                :searchString.sync="searchString"
+                :openMenu.sync="showCategories"
+              />
+              <v-chip-group
+                column
+              >
+                <v-chip v-for="category in formData.categories" :key="category"
+                  label
+                  outlined
+                  close
+                  close-icon="mdi-close"
+                  @click:close="removeCategory(category)"
+                >
+                  {{ category }}
+                </v-chip>
+              </v-chip-group>
+            </v-col>
+            <v-col cols="auto">
+              <AddButton @click="" label="Collection"/>
             </v-col>
           </v-row>
         </v-col>
@@ -188,7 +181,9 @@ export default {
   },
   data () {
     return {
+      categories: ['one', 'two', 'three', 'four', 'five', 'six', 'seven'],
       showMentions: false,
+      showCategories: false,
       showContributors: false,
       searchString: '',
       items: [...personComplete.children, ...personComplete.parents, ...personComplete.siblings],
@@ -200,7 +195,7 @@ export default {
         startDate: null,
         endDate: null,
         mentions: [],
-        category: [],
+        categories: [],
         collection: null,
         contributors: [],
         protocols: [],
@@ -378,6 +373,9 @@ export default {
     },
     removeMention ($event) {
       this.formData.mentions.splice(this.formData.mentions.findIndex(person => person.id === $event.id), 1)
+    },
+    removeCategory ($event) {
+      this.formData.categories.splice(this.formData.categories.findIndex(category => category === $event), 1)
     }
   }
 }

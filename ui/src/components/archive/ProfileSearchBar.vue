@@ -1,6 +1,5 @@
 <template>
   <div>
-    <slot name="prepend-inner"></slot>
     <v-combobox
       v-model="chips"
       v-if="openMenu"
@@ -38,25 +37,33 @@
           />
       </template> -->
       <template v-slot:selection="data">
+        <slot name="selection" :data="data"></slot>
       </template>
       <template v-slot:item="data">
-        <template v-if="typeof data.item === 'object'">
-          <v-list-item @click="addSelectedItem(data.item)">
-            <Avatar class="mr-3" size="40px" :image="data.item.avatarImage" :alt="data.item.preferredName" :gender="data.item.gender" :bornAt="data.item.bornAt" />
-            <!-- <v-list-item-content>
-              <v-list-item-title> {{ data.item.preferredName }} </v-list-item-title>
-              <v-list-item-subtitle>Preferred name</v-list-item-subtitle>
-            </v-list-item-content> -->
-            <v-list-item-content>
-              <v-list-item-title> {{ data.item.legalName ? data.item.legalName :  '&nbsp;' }} </v-list-item-title>
-              <!-- <v-list-item-subtitle>Legal name</v-list-item-subtitle> -->
-            </v-list-item-content>
-            <!-- <v-list-item-action>
-              <v-list-item-title> {{ age(data.item.profile.bornAt) }} </v-list-item-title>
-              <v-list-item-subtitle>Age</v-list-item-subtitle>
-            </v-list-item-action> -->
-          </v-list-item>
-        </template>
+        <slot name="item" :data="data">
+          <template v-if="typeof data.item === 'object'">
+            <v-list-item @click="addSelectedItem(data.item)">
+              <Avatar class="mr-3" size="40px" :image="data.item.avatarImage" :alt="data.item.preferredName" :gender="data.item.gender" :bornAt="data.item.bornAt" />
+              <!-- <v-list-item-content>
+                <v-list-item-title> {{ data.item.preferredName }} </v-list-item-title>
+                <v-list-item-subtitle>Preferred name</v-list-item-subtitle>
+              </v-list-item-content> -->
+              <v-list-item-content>
+                <v-list-item-title> {{ data.item.legalName ? data.item.legalName :  '&nbsp;' }} </v-list-item-title>
+                <!-- <v-list-item-subtitle>Legal name</v-list-item-subtitle> -->
+              </v-list-item-content>
+              <!-- <v-list-item-action>
+                <v-list-item-title> {{ age(data.item.profile.bornAt) }} </v-list-item-title>
+                <v-list-item-subtitle>Age</v-list-item-subtitle>
+              </v-list-item-action> -->
+            </v-list-item>
+          </template>
+          <template v-else>
+            <v-list-item @click="addSelectedItem(data.item)">
+              {{ data.item }}
+            </v-list-item>
+          </template>
+        </slot>
       </template>
       <template v-slot:no-data></template>
     </v-combobox>
