@@ -58,7 +58,7 @@
                 show-labels
                 size="50px"
                 deletable
-                @delete="removeMention($event)"
+                @delete="removeItem(formData.mentions, $event)"
               />
             </v-col>
             <v-col :cols="mobile ? '12' : formData.categories.length > 0 ? 'auto' : '4'">
@@ -95,7 +95,7 @@
                 type="collection"
                 item="title"
               />
-              <ChipGroup :chips="formData.collections" />
+              <ChipGroup :chips="formData.collections" @delete="removeItem(formData.collections, $event)" />
             </v-col>
           </v-row>
         </v-col>
@@ -156,7 +156,7 @@
                 show-labels
                 size="50px"
                 deletable
-                @delete="removeContributor($event)"
+                @delete="removeItem(formData.contributors, $event)"
               />
             </v-col>
             <v-col :cols="mobile ? '12' : formData.creator.id ? 'auto' : '2'">
@@ -195,7 +195,7 @@
                 type="collection"
                 item="title"
               />
-              <ChipGroup :chips="formData.relatedRecords" />
+              <ChipGroup :chips="formData.relatedRecords" @delete="removeItem(formData.relatedRecords, $event)" />
             </v-col>
             <v-col :cols="mobile ? '12' : '6'" class="pt-0">
               <v-text-field
@@ -468,14 +468,11 @@ export default {
       })
       console.warn('add mention not implemented yet')
     },
-    removeMention ($event) {
-      this.formData.mentions.splice(this.formData.mentions.findIndex(person => person.id === $event.id), 1)
+    removeItem (array, $event) {
+      array.splice(this.formData.mentions.findIndex(item => item.id === $event.id), 1)
     },
     removeCategory ($event) {
       this.formData.categories.splice(this.formData.categories.findIndex(category => category === $event), 1)
-    },
-    removeContributor ($event) {
-      this.formData.contributors.splice(this.formData.mentions.findIndex(person => person.id === $event.id), 1)
     }
   }
 }
