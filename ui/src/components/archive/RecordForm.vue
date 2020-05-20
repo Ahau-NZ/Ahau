@@ -3,7 +3,7 @@
   <div>
     <v-form ref="form" v-model="form.valid" lazy-validation>
       <v-row>
-        <v-col cols="6">
+        <v-col cols="12" sm="12" md="6">
           <v-row>
             <v-col cols="12">
               <v-text-field
@@ -439,7 +439,7 @@ export default {
     processMediaFiles ($event) {
       const { files } = $event.target
 
-      files.forEach((file, i) => {
+      Array.from(files).forEach((file, i) => {
         this.formData.artefacts.push(this.processFile(file))
       })
     },
