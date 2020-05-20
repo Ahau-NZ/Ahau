@@ -1,5 +1,5 @@
 <template>
-  <v-card light class="d-inline-block" justify="center" min-width="300" max-width="310" max-height="300" style="overflow-y: scroll;">
+  <v-card flat light class="d-inline-block" justify="center" :min-width="mobile ? '100%' : '300'" :max-width="mobile ? '100%' : '310'" :max-height="mobile ? '' : '300'" :style="mobile ? '' : 'overflow-y: auto;'">
     <v-container class="pa-0">
       <v-list class="pa-0">
         <v-list-item class="pa-1" v-for="(chip, i) in chips" :key="`chip-group-item-${i}-${chip.id}`">
@@ -24,6 +24,11 @@ export default {
   },
   components: {
     Chip
+  },
+  computed: {
+    mobile () {
+      return this.$vuetify.breakpoint.xs
+    }
   }
 }
 </script>

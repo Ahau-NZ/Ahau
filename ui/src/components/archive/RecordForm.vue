@@ -51,6 +51,7 @@
                 :searchString.sync="searchString"
                 :openMenu.sync="showMentions"
                 type="profile"
+                item="preferredName"
               />
               <AvatarGroup v-if="formData.mentions.length > 0"
                 :profiles="formData.mentions"
@@ -67,6 +68,7 @@
                 :items="categories"
                 :searchString.sync="searchString"
                 :openMenu.sync="showCategories"
+                item=""
               />
               <v-chip-group
                 column
@@ -91,22 +93,9 @@
                 :searchString.sync="searchString"
                 :openMenu.sync="showCollections"
                 type="collection"
+                item="title"
               />
-              <!-- <v-card>
-                <v-container fluid>
-                  <v-row>
-                    <v-col
-                      v-for="collection in formData.collections"
-                      :key="collection.title"
-                    >
-                      <v-card flat tile class="d-flex">
-                        <v-img :src="collection.image.uri" />
-                        <v-card-title>{{ collection.title }}</v-card-title>
-                      </v-card>
-                    </v-col>
-                  </v-row>
-                </v-container>
-              </v-card> -->
+              <ChipGroup :chips="formData.collections" />
             </v-col>
           </v-row>
         </v-col>
@@ -126,9 +115,9 @@
               <AddButton @click="$refs.fileInput.click()" label="Attact media or files"/>
               <input v-show="false" ref="fileInput" type="file" accept="audio/*,video/*,image/*" multiple @change="processMediaFiles($event)" />
             </v-col>
-            <!-- <v-col>
+            <v-col v-if="formData.artefacts.length > 0">
               <MediaCard :artefacts.sync="formData.artefacts"/>
-            </v-col> -->
+            </v-col>
             <v-col cols="12">
               <AddButton @click="" label="Add location"/>
             </v-col>
@@ -160,6 +149,7 @@
                 :searchString.sync="searchString"
                 :openMenu.sync="showContributors"
                 type="profile"
+                item="preferredName"
               />
               <AvatarGroup v-if="formData.contributors.length > 0"
                 :profiles="formData.contributors"
@@ -178,6 +168,7 @@
                 :openMenu.sync="showCreator"
                 single
                 type="profile"
+                item="preferredName"
               />
               <div v-if="formData.creator.id" class="pt-5">
                 <Avatar
@@ -194,8 +185,17 @@
                 />
               </div>
             </v-col>
-            <v-col :cols="mobile ? '12' : formData.relatedRecords.length > 0 ? 'auto' : '2'">
-              <AddButton label="Related Records" @click="showCreator = true" />
+            <v-col :cols="mobile ? '12' : formData.relatedRecords.length > 0 ? 'auto' : '4'">
+              <AddButton label="Related records" @click="showRecords = true" />
+              <ProfileSearchBar
+                :selectedItems.sync="formData.relatedRecords"
+                :items="collections"
+                :searchString.sync="searchString"
+                :openMenu.sync="showRecords"
+                type="collection"
+                item="title"
+              />
+              <ChipGroup :chips="formData.relatedRecords" />
             </v-col>
             <v-col :cols="mobile ? '12' : '6'" class="pt-0">
               <v-text-field
@@ -287,13 +287,12 @@
 <script>
 // import Avatar from '@/components/Avatar.vue'
 // import ImagePicker from '@/components/ImagePicker.vue'
-import NodeDatePicker from '@/components/NodeDatePicker.vue'
+// import NodeDatePicker from '@/components/NodeDatePicker.vue'
 import AddButton from '@/components/button/AddButton.vue'
-import AddItemCard from '@/components/archive/AddItemCard.vue'
 import AvatarGroup from '@/components/AvatarGroup.vue'
 import Avatar from '@/components/Avatar.vue'
+import ChipGroup from '@/components/archive/ChipGroup.vue'
 
-import SearchBar from '@/components/button/SearchBar.vue'
 import ProfileSearchBar from '@/components/archive/ProfileSearchBar.vue'
 
 import MediaCard from '@/components/archive/MediaCard.vue'
@@ -305,23 +304,6 @@ import {
   RULES
 } from '@/lib/constants'
 
-// const EMPTY_WHAKAPAPA = {
-//   name: '',
-//   description: '',
-//   mode: 'descendants',
-//   focus: 'self',
-//   image: null
-// }
-
-// function setDefaultWhakapapa (whakapapa) {
-//   return {
-//     name: whakapapa.name,
-//     description: whakapapa.description,
-//     mode: whakapapa.mode,
-//     focus: whakapapa.focus,
-//     image: whakapapa.image
-//   }
-// }
 const imageRegex = /^image\//
 const audioRegex = /^audio\//
 const videoRegex = /^video\//
@@ -333,7 +315,9 @@ export default {
     // ImagePicker,
     AddButton,
     ProfileSearchBar,
-    AvatarGroup
+    AvatarGroup,
+    ChipGroup,
+    MediaCard
   },
   props: {
     // view: { type: Object, default () { return setDefaultWhakapapa(EMPTY_WHAKAPAPA) } },
@@ -364,6 +348,7 @@ export default {
       showContributors: false,
       showCreator: false,
       showCollections: false,
+      showRecords: false,
       searchString: '',
       items: [...personComplete.children, ...personComplete.parents, ...personComplete.siblings],
       hasEndDate: false,
@@ -394,31 +379,7 @@ export default {
       form: {
         valid: true,
         rules: RULES
-      },
-      mockdata: [{
-        id: 123,
-        preferredName: 'Ian',
-        whakapapaName: 'Tairea whanau',
-        avatarImage: {
-          uri: require('@/assets/koro.svg')
-        },
-        image: {
-          uri: require('@/assets/mock1.jpg')
-        }
-      },
-      {
-        id: 456,
-        preferredName: 'Ben',
-        whakapapaName: 'Horne whanau',
-        avatarImage: {
-          uri: require('@/assets/kuia.svg')
-        },
-        image: {
-          uri: require('@/assets/mock2.jpg')
-        }
       }
-      ],
-      panel: [0, 1]
     }
   },
   computed: {
@@ -437,9 +398,6 @@ export default {
     }
   },
   methods: {
-    doSomething (data) {
-      console.log(data)
-    },
     processMediaFiles ($event) {
       const { files } = $event.target
 
@@ -483,60 +441,16 @@ export default {
       return attrs
     },
     getFileType (type) {
-      /*
-        Video, Audio {
-          type: String,
-          blob: String,
-          recps: Recps,
-          title: String,
-          description: String,
-          format: String,
-          identifier: String,
-          language: String,
-          licence: String,
-          rights: String,
-          source: String,
-          tombstone: Tombstone,
-          translation: String,
-          duration: Number,
-          size: Integer,
-          transcription: String
-        }
-
-        Photo {
-          type: String, YES
-          blob: String, ?
-          title: String, FILENAME
-          description: String, ?
-          format: String, YES
-          identifier: String, ?
-          language: String, ?
-          licence: String, ?
-          recps: Recps, ?
-          rights: String, ?
-          source: String, ?
-          tombstone: Tombstone, ?
-          translation: String ?
-        }
-
-      */
-      var type
       switch (true) {
         case imageRegex.test(type):
-          type = 'photo'
-          break
+          return 'photo'
         case audioRegex.test(type):
-          type = 'audio'
-          break
+          return 'audio'
         case videoRegex.test(type):
-          type = 'video'
-          break
+          return 'video'
         default:
-          type = ''
-          break
+          return ''
       }
-
-      return type
     },
     getFormat (fileType) {
       return fileType.replace(/.*\//, '')

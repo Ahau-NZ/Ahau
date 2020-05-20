@@ -4,9 +4,10 @@
       v-model="chips"
       v-if="openMenu"
       :items="items"
-      item-value="preferredName"
+      :item-text="item"
+      :item-value="item"
       :multiple="!single"
-      :menu-props="{ light: true, value: openMenu }"
+      :menu-props="{ light: true, value: openMenu, closeOnClick: true, openOnClick: true }"
       hide-selected
       append-icon=""
       placeholder=" "
@@ -15,8 +16,9 @@
       outlined
       deletable-chips
       :searchInput.sync="searchInput"
-      @blur.stop="closeMenu($event)"
       :autofocus="openMenu"
+      id="combobox"
+      ref="combobox"
     >
       <template v-slot:selection="data">
         <slot name="selection" :data="data"></slot>
@@ -31,7 +33,7 @@
           </v-list-item>
         </template>
         <template v-else-if="type === 'collection'">
-          <v-list-item @click="addSelectedItem(data.item)">
+          <v-list-item @click="addSelectedItem(data.item, $event)">
             <Avatar class="mr-3" size="40px" isView :image="data.item.image"/>
             <v-list-item-content>
               <v-list-item-title>
@@ -41,7 +43,7 @@
           </v-list-item>
         </template>
         <template v-else>
-          <v-list-item @click="addSelectedItem(data.item)">
+          <v-list-item @click="addSelectedItem(data.item, $event)">
             {{ data.item }}
           </v-list-item>
         </template>
@@ -54,6 +56,7 @@
 
 <script>
 import Avatar from '@/components/Avatar.vue'
+import * as d3 from 'd3'
 
 export default {
   name: 'ProfileSearchBar',
@@ -63,6 +66,7 @@ export default {
       type: Boolean,
       default: false
     },
+    item: String,
     selectedItems: {
       type: [Object, Array]
     },
@@ -81,7 +85,10 @@ export default {
   data () {
     return {
       chips: this.selectedItems,
-      searchInput: ''
+      searchInput: '',
+      parentElement: null,
+      childElement: null,
+      disableFocus: false
     }
   },
   components: {
@@ -96,9 +103,13 @@ export default {
     }
   },
   methods: {
-    closeMenu ($event) {
-      console.log($event)
-      this.$emit('update:openMenu', false)
+    close () {
+      console.log('close')
+      return true
+    },
+    open () {
+      console.log('open')
+      return true
     },
     addSelectedItem (item) {
       if (Array.isArray(this.chips)) {
@@ -107,7 +118,7 @@ export default {
         this.chips = item
       }
 
-      // this.$emit('update:openMenu', false)
+      this.$emit('update:openMenu', false)
     },
     removeSelectedItem (item) {
       this.chips.slice(item, 1)
