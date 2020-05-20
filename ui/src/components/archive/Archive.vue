@@ -2,6 +2,7 @@
 <div>
   <v-container fluid class="body-width px-2">
     <v-row v-if="!showStory" :class="mobile ? 'top-margin':'mt-10'">
+      <!-- TODO Bring in Collections -->
       <!-- <v-col cols="12" md="10" sm="10" :class="!mobile ? 'pl-12 my-6' : 'py-0 ma-0'" align="start">
         <h1 class="title black--text ">Collections</h1>
       </v-col> -->
@@ -57,7 +58,7 @@ import {
 } from 'vue-context'
 
 import StoryCard from '@/components/archive/StoryCard.vue'
-import CollectionGroup from '@/components/archive/CollectionGroup.vue'
+// import CollectionGroup from '@/components/archive/CollectionGroup.vue'
 
 import DialogHandler from '@/components/dialog/DialogHandler.vue'
 
@@ -71,7 +72,7 @@ export default {
   name: 'Archive',
   components: {
     StoryCard,
-    CollectionGroup,
+    // CollectionGroup,
     VueContext,
     DialogHandler
   },
@@ -94,7 +95,7 @@ export default {
         icon: 'mdi-file-outline'
       }
       ],
-      scrollPosition: 0,
+      scrollPosition: 0
     }
   },
   props: {
@@ -114,6 +115,7 @@ export default {
     topMargin () {
       if (this.mobile && !this.showStory) return 'top-margin'
       else if (!this.mobile) return 'mt-10'
+      return
     }
   },
   watch: {
@@ -130,7 +132,6 @@ export default {
   methods: {
     ...mapActions(['setComponent', 'setShowStory']),
     toggleStory () {
-      console.log("showStory")
       this.scrollPosition = window.pageYOffset
       this.setShowStory()
       window.scrollTo(0, 0)
@@ -145,9 +146,8 @@ export default {
       this.dialog.view = !this.dialog.view
     },
     updateDialog (dialog) {
-      console.log('open dialog')
       this.dialog.active = dialog
-    },
+    }
   }
 }
 </script>

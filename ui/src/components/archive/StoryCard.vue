@@ -8,31 +8,33 @@
     </v-list-item>
     <v-list-item>
       <v-list-item-content class="pb-0">
-        <v-list-item-subtitle>{{ story.recordDate }}</v-list-item-subtitle>
-        <v-list-item-title class="headline mb-1 wrap-text">{{ story.title }}</v-list-item-title>
+        <v-list-item-subtitle v-if="!showArtefact">{{ story.recordDate }}</v-list-item-subtitle>
+        <v-list-item-title v-if="!showArtefact" class="headline mb-1 wrap-text">{{ story.title }}</v-list-item-title>
+        <v-list-item-title v-else class="headline mb-1 wrap-text">{{ artefact.title }}</v-list-item-title>
       </v-list-item-content>
     </v-list-item>
     <v-list-item v-if="story.artefacts && story.artefacts.length" class="px-0">
       <v-list-item-content>
-        <!-- <v-carousel hide-delimiters :show-arrows="!mobile && fullStory" :show-arrows-on-hover="!mobile" style="min-height:200px;max-height:60vh" :height="fullStory ? 'auto': mobile ? '300px' : '500px'"> -->
-        <v-carousel hide-delimiters :show-arrows="!mobile && fullStory" :show-arrows-on-hover="!mobile" :height="mobile ? '300px' : '500px'">
-          <v-carousel-item v-for="artefact in story.artefacts" :key="artefact.id">
-            <Artefact @showArtefact="toggleShowArtefact($event)" :artefact="artefact" />
+        <v-carousel v-model="model" hide-delimiters :show-arrows="!mobile && fullStory" :show-arrows-on-hover="!mobile" :height="showArtefact ? 'auto' : mobile ? '300px' : '500px'">
+          <v-carousel-item v-for="(artefact,i) in story.artefacts" :key="artefact.id">
+            <Artefact :model="model" :index="i" @showArtefact="toggleShowArtefact($event)" :artefact="artefact" />
           </v-carousel-item>
         </v-carousel>
-        <!-- TODO Artefact and Artefact group component -->
-        <!-- <v-img src="../../assets/mocks/enuamanu.png" :height="mobile ? '300px' : '400px'"></v-img> -->
+        <!-- Artefact group component -->
       </v-list-item-content>
     </v-list-item>
 
     <v-list-item :disabled="disableClick" :ripple="false" @click.stop="showText()">
       <v-list-item-content>
-        <p ref="text" :class="turncateText ? 'description' : ''">
+        <p v-if="!showArtefact" ref="text" :class="turncateText ? 'description' : ''">
           {{ story.description }}
+        </p>
+        <p v-else ref="text" style="color:white" :class="turncateText ? 'description' : ''">
+          {{ artefact.description }}
         </p>
       </v-list-item-content>
     </v-list-item>
-    <v-row>
+    <v-row v-if="!showArtefact">
       <v-col class="py-0" :cols="mobile ? '12' : '8'">
         <v-list-item-subtitle style="color:grey" class="ml-5"> Mentions </v-list-item-subtitle>
         <AvatarGroup style="position:relative; bottom:15px;" :profiles="story.mentions" show-labels :size="fullStory ? '50px': '30px'" spacing="pr-2"/>
@@ -42,7 +44,7 @@
         <p class="mt-2 ms-5">{{story.location}}</p>
       </v-col>
     </v-row>
-    <div v-if="fullStory">
+    <div v-if="fullStory && !showArtefact">
       <v-row>
         <v-col class="py-0" :cols="mobile ? '12' : '6'">
           <v-list-item-subtitle style="color:grey" class="ml-5"> Contributors </v-list-item-subtitle>
@@ -77,14 +79,16 @@ export default {
       show: false,
       turncateText: true,
       textHeight: 0,
-      artefact: {}
+      artefact: {},
+      model: 0
     }
   },
   mounted () {
+    // grab text height to figure out if we need to hide it or not
     this.textHeight = this.$refs.text.offsetHeight
-     if (this.fullStory) {
-       return this.turncateText = false
-     }
+    if (this.fullStory) {
+      return this.turncateText = false
+    }
   },
   computed: {
     ...mapGetters(['showArtefact']),
@@ -105,25 +109,35 @@ export default {
       return true
     },
 
-    // style card based on current view
+    // style card based on current stories, story or artefact view
     dynamicCard () {
       if (this.fullStory) {
-       if (this.showArtefact) {
-         return 'ontop ' + 'disableCard'
-       }
-       return 'disableCard'
+        if (this.showArtefact) {
+          return 'ontop disableCard'
+        }
+        return 'disableCard'
+      }
+      return ''
+    }
+  },
+  watch: {
+    model (newVal) {
+      // show artefact details when viewing in carousel
+      if (this.showArtefact) {
+        this.artefact = this.story.artefacts[newVal]
       }
     }
   },
   methods: {
     ...mapActions(['setStory', 'setShowArtefact']),
+    // toggle artefact view
     toggleShowArtefact (artefact) {
-      if (this.fullStory){
+      if (this.fullStory) {
         this.artefact = artefact
         this.setShowArtefact()
-        this.$emit('artefactView')
       }
     },
+    // toggle story view
     showStory (e) {
       if (!this.fullStory) {
         this.setStory(this.story)
@@ -175,15 +189,16 @@ p {
   }
 }
 
+// disable click events on v-card when viewing single story
 .disableCard {
   user-select: none;
   cursor: default;
 }
-
 .v-card::before {
   opacity: 0 !important;
 }
 
+// put ontop of overlay for artefact view
 .ontop {
   z-index:6
 }
