@@ -7,7 +7,7 @@
             :title="chip.title"
             :description="chip.description"
             :image="chip.image"
-            @delete="$emit('delete', chip)"
+            @delete="$emit('delete', i)"
           />
         </v-list-item>
       </v-list>

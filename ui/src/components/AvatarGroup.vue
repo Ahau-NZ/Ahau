@@ -25,7 +25,8 @@
             :clickable="true"
             @click="profileClick(profile)"
             :deletable="deletable"
-            @delete="$emit('delete', profile)"
+            @delete="$emit('delete', i)"
+            :isView="isView"
           />
         </div>
       </div>
@@ -47,7 +48,8 @@ export default {
     size: { type: String, default: '80px' },
     customClass: { type: String, default: 'd-flex justify-start align-center pa-2 pl-4' },
     spacing: { type: String, default: 'pr-5' },
-    deletable: { type: Boolean, default: false }
+    deletable: { type: Boolean, default: false },
+    isView: { type: Boolean, default: false }
   },
   computed: {
     columns () {

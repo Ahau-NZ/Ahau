@@ -74,12 +74,12 @@
                 column
                 v-if="formData.categories.length > 0"
               >
-                <v-chip v-for="category in formData.categories" :key="category"
+                <v-chip v-for="(category, i) in formData.categories" :key="category"
                   label
                   outlined
                   close
                   close-icon="mdi-close"
-                  @click:close="removeCategory(category)"
+                  @click:close="removeItem(formData.categories, i)"
                 >
                   {{ category }}
                 </v-chip>
@@ -96,6 +96,43 @@
                 item="title"
               />
               <ChipGroup :chips="formData.collections" @delete="removeItem(formData.collections, $event)" />
+            </v-col>
+            <v-col :cols="mobile ? '12' : formData.access.length > 0 ? 'auto' : '4'">
+              <AddButton label="Access" @click="showAccess = true" />
+              <ProfileSearchBar
+                :selectedItems.sync="formData.access"
+                :items="items"
+                :searchString.sync="searchString"
+                :openMenu.sync="showAccess"
+                type="profile"
+                item="preferredName"
+              />
+              <AvatarGroup v-if="formData.access.length > 0"
+                :profiles="formData.access"
+                show-labels
+                size="50px"
+                deletable
+                @delete="removeItem(formData.access, $event)"
+              />
+            </v-col>
+            <v-col :cols="mobile ? '12' : formData.protocols.length > 0 ? 'auto' : '4'">
+              <AddButton label="Protocol" @click="showProtocols = true" />
+              <ProfileSearchBar
+                :selectedItems.sync="formData.protocols"
+                :items="items"
+                :searchString.sync="searchString"
+                :openMenu.sync="showProtocols"
+                type="profile"
+                item="preferredName"
+              />
+              <AvatarGroup v-if="formData.protocols.length > 0"
+                :profiles="formData.protocols"
+                show-labels
+                size="50px"
+                deletable
+                isView
+                @delete="removeItem(formData.protocols, $event)"
+              />
             </v-col>
           </v-row>
         </v-col>
@@ -348,6 +385,8 @@ export default {
       showContributors: false,
       showCreator: false,
       showCollections: false,
+      showAccess: false,
+      showProtocols: false,
       showRecords: false,
       searchString: '',
       items: [...personComplete.children, ...personComplete.parents, ...personComplete.siblings],
@@ -361,6 +400,7 @@ export default {
         mentions: [],
         categories: [],
         collections: [],
+        access: [],
         contributors: [],
         relatedRecords: [],
         protocols: [],
@@ -368,7 +408,7 @@ export default {
         contributionNotes: null,
         locationDescription: null,
         culturalNarrative: null,
-        fileFormat: null,
+        format: null,
         identifier: null,
         source: null,
         language: null,
@@ -458,21 +498,8 @@ export default {
     getFileName (fileName) {
       return fileName.replace(/\.[^/.]+$/, '')
     },
-    addMention () {
-      this.formData.mentions.push({
-        id: 1,
-        preferredName: 'Temp',
-        avatarImage: {
-          uri: require('@/assets/kuia.svg')
-        }
-      })
-      console.warn('add mention not implemented yet')
-    },
     removeItem (array, $event) {
-      array.splice(this.formData.mentions.findIndex(item => item.id === $event.id), 1)
-    },
-    removeCategory ($event) {
-      this.formData.categories.splice(this.formData.categories.findIndex(category => category === $event), 1)
+      array.splice($event, 1)
     }
   }
 }
