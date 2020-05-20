@@ -3,7 +3,7 @@
   <div>
     <v-form ref="form" v-model="form.valid" lazy-validation>
       <v-row>
-        <v-col cols="12" sm="12" md="6">
+        <v-col cols="6">
           <v-row>
             <v-col cols="12">
               <v-text-field
@@ -44,7 +44,7 @@
               />
             </v-col>
             <v-col :cols="mobile ? '12' : formData.mentions.length > 0 ? 'auto' : '4'">
-              <AddButton label="Mention" @click="showMentions = true" />
+              <AddButton class="right: 0;" label="Mention" @click="showMentions = true" />
               <ProfileSearchBar
                 :selectedItems.sync="formData.mentions"
                 :items="items"
@@ -56,7 +56,7 @@
               <AvatarGroup v-if="formData.mentions.length > 0"
                 :profiles="formData.mentions"
                 show-labels
-                size="50px"
+                size="40px"
                 deletable
                 @delete="removeItem(formData.mentions, $event)"
               />
@@ -110,7 +110,7 @@
               <AvatarGroup v-if="formData.access.length > 0"
                 :profiles="formData.access"
                 show-labels
-                size="50px"
+                size="40px"
                 deletable
                 @delete="removeItem(formData.access, $event)"
               />
@@ -128,7 +128,7 @@
               <AvatarGroup v-if="formData.protocols.length > 0"
                 :profiles="formData.protocols"
                 show-labels
-                size="50px"
+                size="40px"
                 deletable
                 isView
                 @delete="removeItem(formData.protocols, $event)"
@@ -136,29 +136,27 @@
             </v-col>
           </v-row>
         </v-col>
-        <v-col cols="12" sm="12" md="6">
-          <v-row>
-            <!-- <v-spacer/> -->
-            <!-- <v-col cols="12" sm="12" md="6">
-              <v-select
-                v-model="formData.type"
-                label="Record Type"
-                :items="['Life Event']"
-                v-bind="customProps"
-              />
-            </v-col> -->
-            <!-- <v-spacer/> -->
-            <v-col cols="12">
-              <AddButton @click="$refs.fileInput.click()" label="Attact media or files"/>
-              <input v-show="false" ref="fileInput" type="file" accept="audio/*,video/*,image/*" multiple @change="processMediaFiles($event)" />
-            </v-col>
-            <v-col v-if="formData.artefacts.length > 0">
-              <MediaCard :artefacts.sync="formData.artefacts"/>
-            </v-col>
-            <v-col cols="12">
-              <AddButton @click="" label="Add location"/>
-            </v-col>
-          </v-row>
+        <v-col>
+          <!-- <v-spacer/> -->
+          <!-- <v-col cols="12" sm="12" md="6">
+            <v-select
+              v-model="formData.type"
+              label="Record Type"
+              :items="['Life Event']"
+              v-bind="customProps"
+            />
+          </v-col> -->
+          <!-- <v-spacer/> -->
+          <v-col cols="12">
+            <AddButton @click="$refs.fileInput.click()" label="Attact media or files"/>
+            <input v-show="false" ref="fileInput" type="file" accept="audio/*,video/*,image/*" multiple @change="processMediaFiles($event)" />
+          </v-col>
+          <v-col cols="12">
+            <MediaCard :artefacts.sync="formData.artefacts"/>
+          </v-col>
+          <v-col cols="12">
+            <AddButton @click="" label="Add location"/>
+          </v-col>
         </v-col>
       </v-row>
       <v-divider/>
@@ -191,7 +189,7 @@
               <AvatarGroup v-if="formData.contributors.length > 0"
                 :profiles="formData.contributors"
                 show-labels
-                size="50px"
+                size="40px"
                 deletable
                 @delete="removeItem(formData.contributors, $event)"
               />
@@ -210,7 +208,7 @@
               <div v-if="formData.creator.id" class="pt-5">
                 <Avatar
                   style="width:50px"
-                  size="50px"
+                  size="40px"
                   :image="formData.creator.avatarImage"
                   :alt="formData.creator.preferredName"
                   :gender="formData.creator.gender"

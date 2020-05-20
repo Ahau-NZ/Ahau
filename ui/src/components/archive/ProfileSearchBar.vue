@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-combobox
+    <v-autocomplete
       v-model="chips"
       v-if="openMenu"
       :items="items"
@@ -19,6 +19,7 @@
       :autofocus="openMenu"
       id="combobox"
       ref="combobox"
+      bottom
     >
       <template v-slot:selection="data">
         <slot name="selection" :data="data"></slot>
@@ -49,14 +50,13 @@
         </template>
       </template>
       <template v-slot:no-data></template>
-    </v-combobox>
+    </v-autocomplete>
     <slot></slot>
   </div>
 </template>
 
 <script>
 import Avatar from '@/components/Avatar.vue'
-import * as d3 from 'd3'
 
 export default {
   name: 'ProfileSearchBar',
