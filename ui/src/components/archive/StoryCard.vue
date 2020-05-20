@@ -8,7 +8,7 @@
     </v-list-item>
     <v-list-item>
       <v-list-item-content class="pb-0">
-        <v-list-item-subtitle v-if="!showArtefact">{{ story.recordDate }}</v-list-item-subtitle>
+        <v-list-item-subtitle v-if="story.recordDate">{{ story.recordDate }} <span v-if="story.recordEndDate.length"> - {{story.recordEndDate}} </span> </v-list-item-subtitle>
         <v-list-item-title v-if="!showArtefact" class="headline mb-1 wrap-text">{{ story.title }}</v-list-item-title>
         <v-list-item-title v-else class="headline mb-1 wrap-text">{{ artefact.title }}</v-list-item-title>
       </v-list-item-content>
@@ -24,8 +24,8 @@
       </v-list-item-content>
     </v-list-item>
 
-    <v-list-item :disabled="disableClick" :ripple="false" @click.stop="showText()">
-      <v-list-item-content>
+    <v-list-item :disabled="disableClick" :ripple="false" @click.stop="showText()" >
+      <v-list-item-content class="rounded-border px-2">
         <p v-if="!showArtefact" ref="text" :class="turncateText ? 'description' : ''">
           {{ story.description }}
         </p>
@@ -39,17 +39,37 @@
         <v-list-item-subtitle style="color:grey" class="ml-5"> Mentions </v-list-item-subtitle>
         <AvatarGroup style="position:relative; bottom:15px;" :profiles="story.mentions" show-labels :size="fullStory ? '50px': '30px'" spacing="pr-2"/>
       </v-col>
-      <v-col class="py-0" v-if="story.location" :cols="mobile ? '12' : '4'">
+      <v-col class="pt-0" v-if="story.location" :cols="mobile ? '12' : '4'">
         <v-list-item-subtitle style="color:grey" class="ms-5"> Location </v-list-item-subtitle>
         <p class="mt-2 ms-5">{{story.location}}</p>
       </v-col>
     </v-row>
     <div v-if="fullStory && !showArtefact">
       <v-row>
-        <v-col class="py-0" :cols="mobile ? '12' : '6'">
+        <v-col :cols="mobile ? '12' : '6'">
           <v-list-item-subtitle style="color:grey" class="ml-5"> Contributors </v-list-item-subtitle>
-          <AvatarGroup style="position:relative; bottom:15px;" :profiles="story.contributors" show-labels size="30px" spacing="pr-2"/>
+          <AvatarGroup style="position:relative; bottom:15px;" :profiles="story.contributors" show-labels size="50px" spacing="pr-2"/>
         </v-col>
+        <v-col :cols="mobile ? '12' : story.categories.length > 0 ? 'auto' : '4'">
+          <v-list-item-subtitle style="color:grey" class="ml-5"> Categories </v-list-item-subtitle>
+          <v-chip-group column v-if="story.categories.length > 0">
+            <v-chip v-for="category in story.categories" :key="category"
+              label
+              outlined
+              close
+            >
+              {{ category.title }}
+            </v-chip>
+          </v-chip-group>
+        </v-col>
+        <v-col :cols="mobile ? '12' : story.collections.length > 0 ? 'auto' : '4'">
+          <v-list-item-subtitle style="color:grey" class="ml-5"> Collections </v-list-item-subtitle>
+          <ChipGroup :chips="story.collections" />
+        </v-col>
+
+
+
+
         <v-col class="py-0" v-if="story.location" :cols="mobile ? '12' : '4'">
           <v-list-item-subtitle style="color:grey" class="ms-5"> Collections </v-list-item-subtitle>
           <p class="mt-2 ms-5">{{story.location}}</p>
@@ -201,6 +221,13 @@ p {
 // put ontop of overlay for artefact view
 .ontop {
   z-index:6
+}
+
+.rounded-border {
+  border: 0.5px solid rgba(0,0,0,0.12);
+  border-radius: 10px;
+  background-color: white;
+  margin-top: 20px;
 }
 
 </style>
