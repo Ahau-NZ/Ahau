@@ -63,13 +63,13 @@ export default {
   data () {
     return {
       items: [
-        { src: require('../../../assets/menu.png'),
+        { src: require('../../../assets/images/menu.png'),
           text: 'actions menu' },
-        { src: require('../../../assets/parent.png'),
+        { src: require('../../../assets/images/parent.png'),
           text: 'adding a person' },
-        { src: require('../../../assets/view.png'),
+        { src: require('../../../assets/images/view.png'),
           text: 'a persons profile' },
-        { src: require('../../../assets/example.png'),
+        { src: require('../../../assets/images/example.png'),
           text: 'an example whakapapa' }
       ]
     }

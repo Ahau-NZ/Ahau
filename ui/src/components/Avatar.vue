@@ -13,7 +13,7 @@
         </v-avatar>
       </v-row>
       <v-row v-if="showLabel" justify="center">
-        {{ alt }}
+        <p style="font-size:0.8em"> {{ alt }} </p>
       </v-row>
     </v-col>
   </div>
@@ -35,7 +35,7 @@
         </div>
       </v-row>
       <v-row v-if="showLabel" justify="center">
-        {{ alt }}
+        <p style="font-size:0.8em"> {{ alt }} </p>
       </v-row>
     </v-col>
   </div>
@@ -58,7 +58,6 @@ export default {
     clickable: { type: Boolean, default: false },
     isView: { type: Boolean, default: false },
     isEditing: { type: Boolean, default: false }
-
   },
   components: {
     ImagePicker

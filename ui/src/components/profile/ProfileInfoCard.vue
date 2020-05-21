@@ -2,10 +2,10 @@
     <v-row cols="12" class="rounded-border">
       <ProfileInfoItem class="br bb" :title="'Preferred Name'" :value="profile.preferredName"/>
       <ProfileInfoItem class="br bb" :title="'Age'" :value="age" :sub-value="dob" />
-      <ProfileInfoItem class="br bb" :title="'Occupation'" :value="profile.occupation" />
+      <ProfileInfoItem class="br bb" :title="'Occupation'" :value="profile.profession" />
       <ProfileInfoItem class="bb" :title="'Location'" :value="profile.location" />
 
-      <div v-if="profile.parents.length" :class="mobile ? 'bb' : 'br'">
+      <div v-if="profile.parents && profile.parents.length" :class="mobile ? 'bb' : 'br'">
         <AvatarGroup v-if="profile.parents" :profiles="profile.parents" group-title="Parents" size="50px" :show-labels="true"
           :addButtonSlot="false" @profile-click="openProfile($event)">
         </AvatarGroup>
@@ -15,7 +15,7 @@
           :addButtonSlot="false" @profile-click="openProfile($event)">
         </AvatarGroup>
       </div>
-      <div v-if="profile.children.length">
+      <div v-if="profile.children && profile.children.length">
         <AvatarGroup v-if="profile.children" :profiles="profile.children" group-title="Children" size="50px" :show-labels="true"
           :addButtonSlot="false" @profile-click="openProfile($event)">
         </AvatarGroup>
@@ -70,7 +70,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
 .rounded-border {
   border: 0.5px solid rgba(0,0,0,0.12);
   border-radius: 10px;
