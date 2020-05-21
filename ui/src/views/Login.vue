@@ -114,7 +114,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setWhoami']),
+    ...mapActions(['setWhoami','setComponent']),
     async getCurrentIdentity () {
       await this.setWhoami()
       this.proceed()
@@ -135,7 +135,8 @@ export default {
       // Shortcut in dev, that saves us from doing one click when testing
       if (this.isSetup && process.env.NODE_ENV === 'development') {
         this.karakiaTūwhera()
-        this.$router.push({ name: 'whakapapaIndex' })
+        this.setComponent('archive')
+        this.$router.push({ name: 'profileShow' })
       }
 
       this.isLoading = false

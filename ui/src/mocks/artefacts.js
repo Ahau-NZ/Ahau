@@ -48,7 +48,7 @@ export const artefacts = [
     __typename: 'Video',
     id: '%ArtefactIdForMyVideo',
     title: 'My Video',
-    blob: '4',
+    blob: '',
     description: 'How to build a whakapapa from a CSV file in Āhau',
     format: 'mp4',
     identifier: 'Identifier for my Video',

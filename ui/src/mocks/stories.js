@@ -19,24 +19,25 @@ export const story1 = {
   language: '',
   source: '',
   transcription: '',
-  contributors: [
-    personComplete.parents
-  ],
+  contributors: [...personComplete.parents],
   mentions: [
     ...personComplete.parents,
     ...personComplete.children,
     ...personComplete.siblings
   ],
-  artefacts: [
-    ...artefacts
-  ]
+  artefacts: [...artefacts],
+  collections: [],
+  access: [...personComplete.parents],
+  categories: [],
+  relatedRecords: [],
+  protocols: []
 
 }
 
 export const story2 = {
   id: '%Story2',
   type: 'story',
-  title: 'Story 2',
+  title: 'testing porposes',
   description: 'This is the description of story2',
   recordDate: '14 May 2020',
   recordEndDate: '',
@@ -53,12 +54,13 @@ export const story2 = {
   contributors: [
     personComplete
   ],
-  mentions: [
-    ...personComplete.siblings
-  ],
-  artefacts: [
-    ...artefacts
-  ]
+  mentions: [...personComplete.siblings],
+  artefacts: [artefacts[2]],
+  collections: [],
+  access: [...personComplete.parents],
+  categories: [],
+  relatedRecords: [],
+  protocols: []
 }
 
 export const story3 = {
@@ -70,7 +72,7 @@ export const story3 = {
   recordEndDate: '14 May 2020',
   location: 'Raglan, New Zealand',
   creator: personComplete.parents[0],
-  submissionDate: new Date(),
+  submissionDate: '14 May 2020',
   contributionNotes: '',
   locationDescription: '',
   format: '',
@@ -79,14 +81,17 @@ export const story3 = {
   source: '',
   transcription: '',
   contributors: [
-    ...personComplete.parents,
     ...personComplete.siblings
   ],
   mentions: [
-    ...personComplete.parents,
-    ...personComplete.children,
     ...personComplete.siblings
-  ]
+  ],
+  artefacts: [],
+  collections: [],
+  access: [personComplete.parents],
+  categories: [],
+  relatedRecords: [],
+  protocols: []
 }
 
 export const story4 = {
@@ -98,10 +103,11 @@ export const story4 = {
   recordEndDate: '14 May 2020',
   location: 'Raglan, New Zealand',
   creator: personComplete.parents[0],
-  submissionDate: new Date(),
-  contributionNotes: 'This information has been made available for all our Ngāti Nūrou members but does not directly effect all whānau. This application is on behalf of the Tairea whānau and the descendats of Auru and Ngametua Tairea. For further information regarding this applicaion or the information provided in the record please feel free to contact Sara or myslef directly.',
+  submissionDate: '14 May 2020',
+  contributionNotes: 'This information has been made available for all our Ngāti Nūrou members but does not directly effect all whānau. This application is on behalf of the Tairea whānau and the descendats of Auru and Ngametua Tairea. For further information regarding this applicaion or the information provided in the record please feel free to contact Sara or myself directly.',
   locationDescription: 'This application is in regard to the succession of the Onehunga block in Mauke by children and descendants of Auru and Ngametua Tairea. This land block has a number of significant sites including the burial site for Tairea and ',
-  format: ['photos', 'media'],
+  culturalNarrative: 'This application is in regard to the succession of the Onehunga block in Mauke by children and descendants of Auru and Ngametua Tairea. This land block has a number of significant sites including the burial site for Tairea and ',
+  format: 'photos taken from the land block and digital copies of documents from the meetings and applications',
   identifier: 'Ref#1000',
   language: 'English',
   source: 'Hapū administration',
@@ -115,21 +121,27 @@ export const story4 = {
     ...personComplete.siblings
   ],
   artefacts: [
-    ...artefacts
+    artefacts[4],
+    artefacts[2],
+    artefacts[3]
   ],
   collections: [
     collectionComplete,
     collectionMinimum
   ],
-  community: [
-    personComplete.parents
+  access: [
+    ...personComplete.parents
   ],
   categories: [
-    story1, story2
+    story1, story2, story1, story2
   ],
   relatedRecords: [
     story1, story2
+  ],
+  protocols: [
+    ...personComplete.parents
   ]
+
 }
 
 export const STORIES = [
