@@ -36,7 +36,6 @@
 
     <DialogHandler
       :dialog.sync="dialog.active"
-      :selectedProfile="selectedProfile"
       @setupProfile="setupProfile($event)"
     />
   </v-container>

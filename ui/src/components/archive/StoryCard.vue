@@ -3,14 +3,14 @@
     <v-list-item class="px-0" style="min-height:0; height:10px">
       <v-list-item-icon v-if="!fullStory" class="pt-0 mt-0" style="position:absolute; top:5px; right:1px; margin-right:0px">
         <v-list-item-subtitle v-if="!mobile" class="no-flex">contributors</v-list-item-subtitle>
-        <AvatarGroup :profiles="story.contributors" customClass="ma-0 pa-0" style="position:relative; bottom:10px;" size="28px" spacing="pr-1"/>
+        <AvatarGroup :clickable="false" :profiles="story.contributors" customClass="ma-0 pa-0" style="position:relative; bottom:10px;" size="28px" spacing="pr-1"/>
       </v-list-item-icon>
     </v-list-item>
     <v-list-item>
       <v-list-item-content class="pb-0">
         <v-list-item-subtitle v-if="story.recordDate">
-          {{ story.recordDate }} 
-          <span v-if="story.recordEndDate.length"> - {{story.recordEndDate}} </span> 
+          {{ story.recordDate }}
+          <span v-if="story.recordEndDate.length"> - {{story.recordEndDate}} </span>
         </v-list-item-subtitle>
         <v-list-item-title v-if="!showArtefact" class="headline mb-1 wrap-text">{{ story.title }}</v-list-item-title>
         <v-list-item-title v-else class="headline mb-1 wrap-text">{{ artefact.title }}</v-list-item-title>
@@ -22,8 +22,19 @@
           <v-carousel-item v-for="(artefact,i) in story.artefacts" :key="artefact.id">
             <Artefact :model="model" :index="i" @showArtefact="toggleShowArtefact($event)" :artefact="artefact" />
           </v-carousel-item>
+          <ArtefactGroup
+            v-if="!showArtefact && story.artefacts.length > 1"
+            :artefacts="story.artefacts"
+            :model="model"
+            @updateModel="updateModel($event)"
+          />
         </v-carousel>
-        <!-- Artefact group component -->
+        <ArtefactGroup
+          v-if="mobile && !showArtefact && story.artefacts.length > 1"
+          :artefacts="story.artefacts"
+          :model="model"
+          @updateModel="updateModel($event)"
+        />
       </v-list-item-content>
     </v-list-item>
 
@@ -47,10 +58,10 @@
     <v-row v-if="!showArtefact">
       <v-col v-if="story.mentions.length" class="py-0" :cols="mobile ? '12' : 'auto'">
         <v-list-item-subtitle style="color:grey" class="ml-5 pb-1"> Mentions </v-list-item-subtitle>
-        <AvatarGroup 
-          style="position:relative; bottom:15px;" 
-          :profiles="story.mentions" 
-          show-labels :size="fullStory ? '50px': '30px'" 
+        <AvatarGroup :clickable="false"
+          style="position:relative; bottom:15px;"
+          :profiles="story.mentions"
+          show-labels :size="fullStory ? '50px': '30px'"
           spacing="pr-2"
         />
       </v-col>
@@ -85,7 +96,7 @@
       <v-row class="px-4">
         <div class="py-0 px-0">
           <v-list-item-subtitle style="color:grey" class="ml-5 pb-1"> Access </v-list-item-subtitle>
-          <AvatarGroup  
+          <AvatarGroup :clickable="false"
             v-if="story.access.length"
             :profiles="story.access"
             show-labels
@@ -95,7 +106,12 @@
         </div>
         <div class="py-0 px-0">
           <v-list-item-subtitle style="color:grey" class="ml-5 pb-1"> Contributors </v-list-item-subtitle>
-          <AvatarGroup style="position:relative; bottom:15px;" :profiles="story.contributors" show-labels size="50px" spacing="pr-2"/>
+          <AvatarGroup :clickable="false"
+            style="position:relative; bottom:15px;"
+            show-labels size="50px"
+            spacing="pr-2"
+            :profiles="story.contributors"
+          />
         </div>
         <v-col class="pt-0" style="min-width:188px; max-width:188px">
           <v-list-item-subtitle class="pb-1" style="color:grey">Submission date </v-list-item-subtitle>
@@ -103,7 +119,7 @@
         </v-col>
         <div class="py-0 px-0" v-if="story.protocols.length" :cols="mobile ? '6' : '4'">
           <v-list-item-subtitle style="color:grey" class="ml-5 pb-1"> Protocol </v-list-item-subtitle>
-          <AvatarGroup
+          <AvatarGroup :clickable="false"
             :profiles="story.protocols"
             show-labels
             size="50px"
@@ -196,7 +212,7 @@ import ChipGroup from '@/components/archive/ChipGroup.vue'
 import { mapActions, mapGetters } from 'vuex'
 import EditStoryButton from '@/components/button/EditStoryButton.vue'
 import EditArtefactButton from '@/components/button/EditArtefactButton.vue'
-
+import ArtefactGroup from '@/components/artefacts/ArtefactGroup.vue'
 
 export default {
   name: 'StoryCard',
@@ -210,7 +226,8 @@ export default {
     Artefact,
     ChipGroup,
     EditStoryButton,
-    EditArtefactButton
+    EditArtefactButton,
+    ArtefactGroup
   },
   data () {
     return {
@@ -222,7 +239,6 @@ export default {
     }
   },
   mounted () {
-    console.log("story: ", this.story)
     // grab text height to figure out if we need to hide it or not
     this.textHeight = this.$refs.text.offsetHeight
     if (this.fullStory) {
@@ -231,12 +247,6 @@ export default {
   },
   computed: {
     ...mapGetters(['showArtefact']),
-    customProps () {
-      return {
-        dense: false,
-        readonly: true,
-      }
-    },
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
@@ -269,7 +279,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setStory', 'setShowArtefact']),
+    ...mapActions(['setStory', 'setShowArtefact', 'setProfile', 'setDialog']),
     toggleStoryEdit () {
       this.$emit('updateDialog', 'editStoryDialog')
     },
@@ -292,6 +302,16 @@ export default {
     },
     showText () {
       this.turncateText = !this.turncateText
+    },
+    openProfile (profile) {
+      // link to profileshow
+      this.$router.push({ name: 'profileShow', params: { id: profile.id } })
+    },
+    toggleSideDialog (profile) {
+      console.log('TODO - need to connect side view dialog')
+    },
+    updateModel (event) {
+      this.model = event
     }
   }
 }

@@ -3,7 +3,7 @@
     <v-col cols="12" md="2" :class="mobile ? 'px-6':''">
       <v-col align="center" v-if="!mobile" class="pa-2 ml-5" cols="12">
         <v-row cols="12" xs="12" sm="12">
-          <v-btn @click="setActive('Profile')" light text style="height: auto;">
+          <v-btn @click="goProfile()" light text style="height: auto;">
             <Avatar :image="profile.avatarImage" :alt="profile.preferredName" :size="this.activeComponent === 'profile' ? '12vw' : '12vw'" />
           </v-btn>
         </v-row>
@@ -109,7 +109,7 @@ export default {
     this.offset = this.$refs.sideNav.offsetTop - 40
   },
   computed: {
-    ...mapGetters(['activeComponent', 'selectedProfile', 'showStory']),
+    ...mapGetters(['activeComponent', 'selectedProfile', 'showStory', 'whoami']),
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
@@ -130,6 +130,10 @@ export default {
   },
   methods: {
     ...mapActions(['setComponent', 'setShowStory']),
+    goProfile () {
+      this.setActive('profile')
+      this.$router.push({ name: 'profileShow', params: { id: this.whoami.profile.id } })
+    },
     goArchive () {
       if (this.showStory) {
         this.setShowStory()

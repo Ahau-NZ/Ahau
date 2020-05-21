@@ -95,7 +95,7 @@ export const story3 = {
 }
 
 export const story4 = {
-  id: '%Story3',
+  id: '%Story4',
   type: 'story',
   title: 'Whanau land succession application ',
   description: 'Here are the files that Ngāti have submitted to the land courts for consideration for Onehunga block. This application was completed by Sara Tairea on behalf of the hapū. The application was approved by hapū trustees ',

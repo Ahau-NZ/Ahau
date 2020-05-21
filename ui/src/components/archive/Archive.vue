@@ -115,7 +115,6 @@ export default {
     topMargin () {
       if (this.mobile && !this.showStory) return 'top-margin'
       else if (!this.mobile) return 'mt-10'
-      return
     }
   },
   watch: {

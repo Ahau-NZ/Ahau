@@ -2,10 +2,7 @@
   <div>
     <v-app-bar  v-if="mobile || enableMenu" :app="mobile && app" :class="classObject" :flat="!mobile"
       color="#303030" fixed>
-      <v-btn v-if="goBack && mobile" @click="goBack" icon dark>
-        <v-icon>mdi-arrow-left</v-icon>
-      </v-btn>
-       <v-btn v-if="showStory && mobile" @click="setShowStory" icon dark>
+      <v-btn v-if="showStory && mobile" @click="setShowStory" icon dark>
         <v-icon>mdi-arrow-left</v-icon>
       </v-btn>
       <template v-else>
@@ -13,7 +10,7 @@
           <img src="@/assets/logo_red.svg" class="logo" />
         </router-link>
       </template>
-      <router-link v-if="goWhakapapa" :to="{ path: route.from.fullPath }" class="ms-10">
+      <v-btn v-if="goWhakapapa && !showStory" text :to="{ path: route.from.fullPath }" class="ms-10">
         <v-row>
           <v-icon large>mdi-chevron-left</v-icon>
           <Avatar
@@ -24,7 +21,7 @@
             :isView="!whakapapa.image"
           />
         </v-row>
-      </router-link>
+      </v-btn>
       <v-spacer />
       <!-- TODO this takes you back to previous view -->
 
@@ -127,8 +124,8 @@ export default {
   props: {
     enableMenu: { type: Boolean, default: true },
     app: { type: Boolean, default: false },
-    sideMenu: { type: Boolean, default: false },
-    goBack: { type: Function }
+    sideMenu: { type: Boolean, default: false }
+    // goBack: { type: Function }
   },
   data () {
     return {
@@ -141,7 +138,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['whoami', 'whakapapa', 'route', 'showStory']),
+    ...mapGetters(['whoami', 'whakapapa', 'route', 'showStory', 'goBack']),
     classObject: function () {
       return {
         'mobile': this.mobile,

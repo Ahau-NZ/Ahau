@@ -22,7 +22,7 @@
             :bornAt="profile.bornAt"
             :deceased="profile.deceased"
             :showLabel="showLabels"
-            :clickable="true"
+            :clickable="clickable"
             @click="profileClick(profile)"
           />
         </div>
@@ -51,7 +51,8 @@ export default {
     size: { type: String, default: '80px' },
     addButtonSlot: { type: Boolean, default: true },
     customClass: { type: String, default: 'd-flex justify-start align-center pa-2 pl-4' },
-    spacing: { type: String, default: 'pr-5' }
+    spacing: { type: String, default: 'pr-5' },
+    clickable: { type: Boolean, default: true }
   },
   computed: {
     columns () {

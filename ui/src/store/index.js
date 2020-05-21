@@ -15,7 +15,15 @@ Vue.use(Vuex)
 const store = new Vuex.Store({
   state: {
     whoami: {},
-    loading: false
+    loading: false,
+    goBack: {
+      show: false,
+      location: ''
+    },
+    dialog: {
+      active: '',
+      type: ''
+    }
   },
   modules: {
     whakapapa,
@@ -31,6 +39,10 @@ const store = new Vuex.Store({
     },
     route: state => {
       return state.route
+    },
+    // TODO-implement goBack to previous profile &| component
+    goBack: state => {
+      return state.goBack
     }
   },
   mutations: {
@@ -39,6 +51,9 @@ const store = new Vuex.Store({
     },
     updateWhoami (state, whoami) {
       state.whoami = whoami
+    },
+    updateGoBack (state, go) {
+      state.goBack = go
     }
   },
   actions: {
@@ -67,6 +82,9 @@ const store = new Vuex.Store({
       if (result.errors) throw result.errors
 
       commit('updateWhoami', result.data.whoami)
+    },
+    goBack ({ commit }, go) {
+      commit('updateGoBack', go)
     }
   }
 })

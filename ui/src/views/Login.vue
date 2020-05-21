@@ -114,7 +114,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setWhoami','setComponent']),
+    ...mapActions(['setWhoami', 'setComponent']),
     async getCurrentIdentity () {
       await this.setWhoami()
       this.proceed()
@@ -136,7 +136,7 @@ export default {
       if (this.isSetup && process.env.NODE_ENV === 'development') {
         this.karakiaTūwhera()
         this.setComponent('archive')
-        this.$router.push({ name: 'profileShow' })
+        this.$router.push({ name: 'profileShow', params: { id: this.whoami.profile.id } })
       }
 
       this.isLoading = false

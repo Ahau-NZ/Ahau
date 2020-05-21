@@ -35,7 +35,7 @@ export default {
     // image: Object,
     deletable: Boolean,
     type: String,
-    chip: Object,
+    chip: Object
   },
   computed: {
     mobile () {
