@@ -79,6 +79,9 @@ export default {
   },
   mounted () {
     this.setupProfile(this.$route.params.id)
+    if (this.$route.params.nav) {
+      setPageComponent(this.$route.params.nav)
+    }
   },
   computed: {
     ...mapGetters(['selectedProfile', 'whoami', 'activeComponent', 'showStory', 'showArtefact']),
@@ -105,7 +108,6 @@ export default {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss">
 .body-width {
   /* min-width: $formWidth; */
