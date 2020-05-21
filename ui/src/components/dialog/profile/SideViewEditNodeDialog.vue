@@ -1019,7 +1019,6 @@ export default {
 
   data () {
     return {
-      testmapimage: require('../../../assets/map-test.png'),
       genders: GENDERS,
       permitted: PERMITTED_PROFILE_ATTRS,
       relationshipTypes: RELATIONSHIPS,

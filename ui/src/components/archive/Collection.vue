@@ -1,5 +1,5 @@
 <template>
-  <v-card max-width="200px" max-height="370px" class="collection ma-2" light>
+  <v-card max-width="250px" max-height="370px" class="collection ma-2" light>
     <v-img
       :src="collection.image"
       class="white--text align-end"
@@ -10,10 +10,10 @@
     </v-img>
     <v-card-subtitle class="py-2" v-text="collection.description"></v-card-subtitle>
     <v-card-text class="pb-0">
-      <v-row >
+      <v-row>
         <v-col class="small-text pl-6 pb-0" cols="5">
           <v-row>
-            <div >
+            <div>
               Records:
             </div>
           </v-row>
@@ -65,7 +65,7 @@ export default {
   float: none;
 }
 .small-text {
-  font-size: 0.6rem;
-  line-height: 0.6rem;
+  font-size: 0.8rem;
+  line-height: 0.8rem;
 }
 </style>

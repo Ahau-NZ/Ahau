@@ -28,12 +28,17 @@
       </v-card-text>
       <v-divider />
       <v-carousel hide-delimiters>
-        <v-carousel-item
-          v-for="(item,i) in items"
-          :key="i"
-          :src="item.src"
-          class="centerImage"
-        ></v-carousel-item>
+        <v-tooltip v-for="(item,i) in items" :key="i" top>
+          <template v-slot:activator="{ on }">
+            <v-carousel-item
+              v-on="on"
+              :src="item.src"
+              class="centerImage"
+            >
+            </v-carousel-item>
+          </template>
+          <span>{{item.text}}</span>
+        </v-tooltip>
       </v-carousel>
     </template>
   </Dialog>
@@ -50,10 +55,14 @@ export default {
   data () {
     return {
       items: [
-        { src: require('../../../assets/table.png') },
-        { src: require('../../../assets/relationships.png') },
-        { src: require('../../../assets/ancestors.png') },
-        { src: require('../../../assets/table-menu.png') }
+        { src: require('../../../assets/images/table.png'),
+          text: 'Example whakapapa registry' },
+        { src: require('../../../assets/images/relationships.png'),
+          text: 'Users can hide whakapapa links' },
+        { src: require('../../../assets/images/ancestors.png'),
+          text: 'Users can hide ancestors that have passed' },
+        { src: require('../../../assets/images/table-menu.png'),
+          text: 'Update ancestor information' }
       ]
     }
   },
