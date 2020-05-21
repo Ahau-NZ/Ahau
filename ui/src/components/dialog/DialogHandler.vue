@@ -76,9 +76,16 @@
     />
     <NewRecordDialog
       :show="isActive('new-record')"
-      :title="'Create a new Record'"
+      :title="'Create a new Story'"
       @close="close"
-      @submit="console.log('TODO: add record to profile')"
+      @submit="console.error('Cannot create a new record yet')"
+    />
+    <NewRecordDialog
+      :show="isActive('edit-record')"
+      :title="'Edit Story'"
+      editing
+      @close="close"
+      @submit="console.error('Cannot edit a record yet')"
     />
   </div>
 </template>
@@ -140,7 +147,7 @@ export default {
       required: false,
       default: null,
       validator: (val) => [
-        'new-node', 'view-edit-node', 'delete-node', 'new-collection', 'new-record', 'edit-node',
+        'new-node', 'view-edit-node', 'delete-node', 'new-collection', 'new-record', 'edit-record', 'edit-node',
         'whakapapa-view', 'whakapapa-edit', 'whakapapa-delete', 'whakapapa-helper', 'whakapapa-table-helper'
       ].includes(val)
     },
