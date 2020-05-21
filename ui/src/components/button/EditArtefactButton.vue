@@ -1,9 +1,9 @@
 <template>
   <v-tooltip left>
     <template v-slot:activator="{ on }">
-        <v-btn v-on="on"  dark @click="toggle()" small :class="mobile ? 'my-2 mr-2': 'my-2'" text>
+        <v-btn v-on="on"  dark @click="toggle()" class="pr-0" text>
           Update media
-          <v-icon small class="ml-3">mdi-image-edit-outline</v-icon>
+          <v-icon class="ml-3">mdi-image-edit-outline</v-icon>
         </v-btn>
     </template>
     <span>Update Artefact</span>

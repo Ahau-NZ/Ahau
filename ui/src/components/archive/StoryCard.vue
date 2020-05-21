@@ -1,11 +1,13 @@
 <template>
   <v-card @click="showStory($event)" :class="customClass" :flat="fullStory" :ripple="false" class="mx-auto" :light="!this.showArtefact" width="100%">
+    <!-- RECORD CONTRUBUTORS-STORY PREVIEW -->
     <v-list-item class="px-0" style="min-height:0; height:10px">
       <v-list-item-icon v-if="!fullStory" class="pt-0 mt-0" style="position:absolute; top:5px; right:1px; margin-right:0px">
         <v-list-item-subtitle v-if="!mobile" class="no-flex">contributors</v-list-item-subtitle>
         <AvatarGroup :clickable="false" :profiles="story.contributors" customClass="ma-0 pa-0" style="position:relative; bottom:10px;" size="28px" spacing="pr-1"/>
       </v-list-item-icon>
     </v-list-item>
+    <!-- RECORD HEADER -->
     <v-list-item>
       <v-list-item-content class="pb-0">
         <v-list-item-subtitle v-if="story.recordDate">
@@ -16,12 +18,14 @@
         <v-list-item-title v-else class="headline mb-1 wrap-text">{{ artefact.title }}</v-list-item-title>
       </v-list-item-content>
     </v-list-item>
+    <!-- ARTEFACT CAROUSEL -->
     <v-list-item v-if="story.artefacts && story.artefacts.length" class="px-0">
       <v-list-item-content>
         <v-carousel v-model="model" hide-delimiters :show-arrows="!mobile && fullStory" :show-arrows-on-hover="!mobile" :height="showArtefact ? 'auto' : mobile ? '300px' : '500px'">
           <v-carousel-item v-for="(artefact,i) in story.artefacts" :key="artefact.id">
             <Artefact :model="model" :index="i" @showArtefact="toggleShowArtefact($event)" :artefact="artefact" />
           </v-carousel-item>
+          <!-- ARTEFACTGROUP DESKTOP -->
           <ArtefactGroup
             v-if="!showArtefact && story.artefacts.length > 1"
             :artefacts="story.artefacts"
@@ -29,6 +33,7 @@
             @updateModel="updateModel($event)"
           />
         </v-carousel>
+        <!-- ARTEFACT GROUP MOBILE -->
         <ArtefactGroup
           v-if="mobile && !showArtefact && story.artefacts.length > 1"
           :artefacts="story.artefacts"
@@ -37,16 +42,10 @@
         />
       </v-list-item-content>
     </v-list-item>
-
     <v-list-item :disabled="disableClick" :ripple="false" @click.stop="showText()">
-      <v-list-item-icon v-if="fullStory && !showArtefact" class="pt-0 mt-0" style="position:absolute; top:5px; right:1px; margin-right:0px">
-        <EditStoryButton @click="toggleStoryEdit()"/>
-      </v-list-item-icon>
-      <v-list-item-icon v-if="showArtefact" class="pt-0 mt-0" style="position:absolute; top:5px; right:1px; margin-right:0px">
-        <EditArtefactButton @click="toggleArtefactEdit()"/>
-      </v-list-item-icon>
+       <!-- STORY AND ARTEFACT INFORMATION FIELDS -->
       <v-list-item-content>
-        <v-list-item-subtitle class="pb-1" style="color:grey"> Description </v-list-item-subtitle>
+        <v-list-item-subtitle v-if="fullStory || showArtefact" class="pb-1" style="color:grey"> Description </v-list-item-subtitle>
         <p v-if="!showArtefact" ref="text" :class="turncateText ? 'description' : ''">
           {{ story.description }}
         </p>
@@ -195,12 +194,26 @@
           <v-list-item-subtitle class="pb-1" style="color:grey"> Language </v-list-item-subtitle>
           <p style="color:white">{{ artefact.language }}</p>
         </v-col>
-        <v-col v-if="artefact.translation" cols="12" class="pb-6">
+        <v-col v-if="artefact.translation" cols="12">
           <v-list-item-subtitle class="pb-1" style="color:grey"> Translation / Transcription </v-list-item-subtitle>
           <p style="color:white">{{ artefact.translation }}</p>
         </v-col>
       </v-row>
     </div>
+    <v-card-actions class="justify-end">
+      <!-- UPDATE RECORD BUTTON -->
+      <v-list-item-icon v-if="fullStory && !showArtefact" class="pt-0 mt-0">
+        <EditStoryButton @click="toggleStoryEdit()"/>
+      </v-list-item-icon>
+      <v-list-item-icon v-if="showArtefact" class="pt-0 mt-0">
+        <EditArtefactButton @click="toggleArtefactEdit()"/>
+      </v-list-item-icon>
+      <v-list-item-icon v-if="showArtefact" class="pt-0 mt-0" style="position:absolute; top:-58px; right:3px; margin-right:0px">
+        <v-btn dark text @click="setShowArtefact()">
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
+      </v-list-item-icon>
+    </v-card-actions>
   </v-card>
 </template>
 
