@@ -1,10 +1,10 @@
 <template>
   <div>
-    <Dialog :show="show" title="Create a new Story" @close="close" width="70%" :goBack="close" enableMenu>
+    <Dialog :show="show" :title="title" @close="close" width="70%" :goBack="close" enableMenu>
 
       <!-- FORM -->
       <template v-slot:content>
-        <RecordForm ref="recordForm" :view.sync="formData" :data.sync="csv"/>
+        <RecordForm ref="recordForm" :formData.sync="formData"/>
       </template>
 
       <!-- x ✓ BUTTONS -->
@@ -30,41 +30,106 @@
 <script>
 import pick from 'lodash.pick'
 import isEmpty from 'lodash.isempty'
+import isEqual from 'lodash.isequal'
 
 import Dialog from '@/components/dialog/Dialog.vue'
 import RecordForm from '@/components/archive/RecordForm.vue'
 
-const EMPTY_RECORD = {
-  name: '',
+const EMPTY_STORY = {
+  title: '',
   description: '',
-  mode: 'descendants',
-  focus: 'self',
-  image: null
+  startDate: '',
+  endDate: '',
+  location: '',
+  locationDescription: '',
+  creator: {},
+  submissionDate: '',
+  contributionNotes: '',
+
+  format: '',
+  identifier: '',
+  source: '',
+  language: '',
+  translation: '',
+  culturalNarrative: '',
+
+  mentions: [],
+  categories: [],
+  collections: [],
+  access: [],
+  contributors: [],
+  protocols: [],
+  relatedRecords: [],
+  artefacts: []
 }
 
-const PERMITTED_RECORD_ATTRS = [
-  'name',
-  'description',
-  'mode',
-  'focus',
-  'image'
-]
-
-function setDefaultRecord (record) {
+function setDefaultStory (story) {
   return {
-    name: record.name,
-    description: record.description,
-    mode: record.mode,
-    focus: record.focus,
-    image: record.image
+    title: story.title,
+    description: story.description,
+    startDate: story.startDate,
+    endDate: story.endDate,
+    location: story.location,
+    locationDescription: story.locationDescription,
+    creator: story.creator,
+    submissionDate: story.submissionDate,
+    contributionNotes: story.contributionNotes,
+
+    format: story.format,
+    identifier: story.identifier,
+    source: story.source,
+    language: story.language,
+    translation: story.translation,
+    culturalNarrative: story.culturalNarrative,
+
+    mentions: story.mentions,
+    categories: story.categories,
+    collections: story.collections,
+    access: story.access,
+    contributors: story.contributors,
+    protocols: story.protocols,
+    relatedRecords: story.relatedRecords,
+    artefacts: story.artefacts
   }
 }
 
-function recordSubmission (newRecord) {
+function storyChanges (initial, updated) {
+  let changes = []
+  Object.entries(updated).forEach(([key, value]) => {
+    if (!isEqual(updated[key], initial[key])) {
+      switch (true) {
+        case Array.isArray(updated[key]) && key !== 'artefacts':
+          changes[key] = { add: [], remove: [] }
+          changes[key].add = arrayChanges(updated[key], initial[key])
+          changes[key].remove = arrayChanges(initial[key], updated[key])
+
+          if (changes[key].add.length === 0) delete changes[key].add
+          if (changes[key].remove.length === 0) delete changes[key].remove
+
+          // means the same item was remove then added back in
+          if (isEmpty(changes[key])) delete changes[key]
+          break
+        default:
+          changes[key] = updated[key]
+          break
+      }
+    }
+  })
+  return changes
+}
+
+function arrayChanges (array1, array2) {
+  return array1.filter(item => !array2.some(item2 => item.id === item2.id))
+    .map(item => item.id) // map it to id
+}
+
+const PERMITTED_STORY_ATTRS = Object.keys(setDefaultStory(EMPTY_STORY))
+
+function storySubmission (newStory) {
   var output = {}
-  var record = pick(newRecord, [...PERMITTED_RECORD_ATTRS])
-  Object.entries(record).forEach(([key, value]) => {
-    if (!isEmpty(record[key])) {
+  var story = pick(newStory, [...PERMITTED_STORY_ATTRS])
+  Object.entries(story).forEach(([key, value]) => {
+    if (!isEmpty(story[key])) {
       output[key] = value
     }
   })
@@ -78,17 +143,14 @@ export default {
     RecordForm
   },
   props: {
+    show: { type: Boolean, required: true },
+    story: { type: Object, default () { return EMPTY_STORY } },
     title: String,
-    show: {
-      type: Boolean,
-      required: true
-    }
+    editing: { type: Boolean, default: false }
   },
   data () {
     return {
-      helpertext: false,
-      formData: setDefaultRecord(EMPTY_RECORD),
-      csv: ''
+      formData: setDefaultStory(this.story)
     }
   },
   computed: {
@@ -99,30 +161,27 @@ export default {
   watch: {
     formData: {
       handler (newVal) {
+        // console.log(newVal)
       },
       deep: true
     }
   },
   methods: {
     close () {
-      this.formData = setDefaultRecord(EMPTY_RECORD)
-      // this.$refs.recordForm.$refs.form.reset()
       this.$emit('close')
     },
     submit () {
-      if (!this.$refs.recordForm.$refs.form.validate()) {
-        console.error('not validated')
-        return
+      var output = {}
+      if (this.editing) {
+        // get all changes
+        output = storyChanges(this.story, this.formData)
+      } else {
+        output = storySubmission(this.formData)
       }
-      const output = recordSubmission(this.formData)
-      const newOutput = {
-        ...output
-      }
-      this.$emit('submit', newOutput)
-      this.close()
-    },
-    setFormData (record) {
-      this.formData = record
+      console.log('output', output)
+
+      // this.$emit('submit', output)
+      // this.close()
     }
   }
 }
