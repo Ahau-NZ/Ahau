@@ -121,19 +121,19 @@
         </div>
       </v-row>
       <v-row class="px-4 mb-12">
-        <v-col cols="12" class="pb-6">
+        <v-col v-if="story.contributionNotes" cols="12" class="pb-6">
           <v-list-item-subtitle class="pb-1" style="color:grey"> Contribution notes </v-list-item-subtitle>
           <p>{{ story.contributionNotes }}</p>
         </v-col>
-        <v-col cols="12" class="pb-6">
+        <v-col v-if="story.locationDescription" cols="12" class="pb-6">
           <v-list-item-subtitle class="pb-1" style="color:grey"> Location description </v-list-item-subtitle>
           <p>{{ story.locationDescription }}</p>
         </v-col>
-        <v-col cols="12" class="pb-6">
+        <v-col v-if="story.culturalNarrative" cols="12" class="pb-6">
           <v-list-item-subtitle class="pb-1" style="color:grey"> Cultural narrative </v-list-item-subtitle>
           <p>{{ story.culturalNarrative }}</p>
         </v-col>
-        <v-col :cols="mobile ? '6' : '3'">
+        <v-col v-if="story.format" :cols="mobile ? '6' : '3'">
           <v-list-item-subtitle class="pb-1" style="color:grey"> Format </v-list-item-subtitle>
           <p>{{ story.format }}</p>
         </v-col>
