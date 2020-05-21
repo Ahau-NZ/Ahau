@@ -24,7 +24,7 @@
           <v-divider class="mt-6 mb-8" light></v-divider> -->
           <div v-if="!showStory">
             <v-row v-for="(story, i) in stories" :key="`story-${i}-id-${story.id}`" class="mt-10">
-              <StoryCard @showStory="toggleStory()" :story="story" />
+              <StoryCard @updateDialog="updateDialog(dialog)" @showStory="toggleStory()" :story="story" />
             </v-row>
           </div>
           <div v-else>

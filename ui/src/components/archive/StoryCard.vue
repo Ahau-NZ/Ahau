@@ -28,12 +28,18 @@
     </v-list-item>
 
     <v-list-item :disabled="disableClick" :ripple="false" @click.stop="showText()">
+      <v-list-item-icon v-if="fullStory && !showArtefact" class="pt-0 mt-0" style="position:absolute; top:5px; right:1px; margin-right:0px">
+        <EditStoryButton @click="toggleStoryEdit()"/>
+      </v-list-item-icon>
+      <v-list-item-icon v-if="showArtefact" class="pt-0 mt-0" style="position:absolute; top:5px; right:1px; margin-right:0px">
+        <EditArtefactButton @click="toggleArtefactEdit()"/>
+      </v-list-item-icon>
       <v-list-item-content>
         <v-list-item-subtitle class="pb-1" style="color:grey"> Description </v-list-item-subtitle>
         <p v-if="!showArtefact" ref="text" :class="turncateText ? 'description' : ''">
           {{ story.description }}
         </p>
-        <p v-else ref="text" style="color:white" :class="turncateText ? 'description' : ''">
+        <p v-if="artefact.description" ref="text" style="color:white" :class="turncateText ? 'description' : ''">
           {{ artefact.description }}
         </p>
       </v-list-item-content>
@@ -137,21 +143,45 @@
           <v-list-item-subtitle class="pb-1" style="color:grey"> Format </v-list-item-subtitle>
           <p>{{ story.format }}</p>
         </v-col>
-        <v-col :cols="mobile ? '6' : '3'">
+        <v-col v-if="story.identifier" :cols="mobile ? '6' : '3'">
           <v-list-item-subtitle class="pb-1" style="color:grey"> Identifier </v-list-item-subtitle>
-          <p>{{ story.Identifier }}</p>
+          <p>{{ story.identifier }}</p>
         </v-col>
-        <v-col :cols="mobile ? '6' : '3'">
+        <v-col v-if="story.source" :cols="mobile ? '6' : '3'">
           <v-list-item-subtitle class="pb-1" style="color:grey"> Source </v-list-item-subtitle>
           <p>{{ story.source }}</p>
         </v-col>
-        <v-col :cols="mobile ? '6' : '3'">
+        <v-col v-if="story.language" :cols="mobile ? '6' : '3'">
           <v-list-item-subtitle class="pb-1" style="color:grey"> Language </v-list-item-subtitle>
           <p>{{ story.language }}</p>
         </v-col>
-        <v-col cols="12" class="pb-6">
+        <v-col v-if="story.transcription" cols="12" class="pb-6">
           <v-list-item-subtitle class="pb-1" style="color:grey"> Translation / Transcription </v-list-item-subtitle>
           <p>{{ story.transcription }}</p>
+        </v-col>
+      </v-row>
+    </div>
+    <div v-if="showArtefact">
+      <v-row class="px-4">
+        <v-col v-if="artefact.format" :cols="mobile ? '6' : '3'" class="pb-6">
+          <v-list-item-subtitle class="pb-1" style="color:grey"> Format </v-list-item-subtitle>
+          <p style="color:white">{{ artefact.format }}</p>
+        </v-col>
+        <v-col v-if="artefact.identifier" :cols="mobile ? '6' : '3'">
+          <v-list-item-subtitle class="pb-1" style="color:grey"> Identifier </v-list-item-subtitle>
+          <p style="color:white">{{ artefact.identifier }}</p>
+        </v-col>
+        <v-col v-if="artefact.source" :cols="mobile ? '6' : '3'">
+          <v-list-item-subtitle class="pb-1" style="color:grey"> Source </v-list-item-subtitle>
+          <p style="color:white">{{ artefact.source }}</p>
+        </v-col>
+        <v-col v-if="artefact.language" :cols="mobile ? '6' : '3'">
+          <v-list-item-subtitle class="pb-1" style="color:grey"> Language </v-list-item-subtitle>
+          <p style="color:white">{{ artefact.language }}</p>
+        </v-col>
+        <v-col v-if="artefact.translation" cols="12" class="pb-6">
+          <v-list-item-subtitle class="pb-1" style="color:grey"> Translation / Transcription </v-list-item-subtitle>
+          <p style="color:white">{{ artefact.translation }}</p>
         </v-col>
       </v-row>
     </div>
@@ -164,6 +194,9 @@ import Avatar from '@/components/Avatar.vue'
 import Artefact from '@/components/artefacts/Artefact.vue'
 import ChipGroup from '@/components/archive/ChipGroup.vue'
 import { mapActions, mapGetters } from 'vuex'
+import EditStoryButton from '@/components/button/EditStoryButton.vue'
+import EditArtefactButton from '@/components/button/EditArtefactButton.vue'
+
 
 export default {
   name: 'StoryCard',
@@ -175,7 +208,9 @@ export default {
     AvatarGroup,
     Avatar,
     Artefact,
-    ChipGroup
+    ChipGroup,
+    EditStoryButton,
+    EditArtefactButton
   },
   data () {
     return {
@@ -235,6 +270,12 @@ export default {
   },
   methods: {
     ...mapActions(['setStory', 'setShowArtefact']),
+    toggleStoryEdit () {
+      this.$emit('updateDialog', 'editStoryDialog')
+    },
+    toggleArtefactEdit (artefact) {
+      this.$emit('updateDialog', 'editArtefactDialog')
+    },
     // toggle artefact view
     toggleShowArtefact (artefact) {
       if (this.fullStory) {

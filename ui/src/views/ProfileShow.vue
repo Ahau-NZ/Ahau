@@ -92,8 +92,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setProfileById', 'setProfile', 'setWhoami']),
-
+    ...mapActions(['setProfileById', 'setProfile', 'setWhoami', 'setShowArtefact']),
     async setupProfile (id) {
       this.setProfileById(id)
       if (this.dialog.active) this.dialog.active = null
