@@ -151,7 +151,7 @@
             <AddButton @click="$refs.fileInput.click()" label="Attact media or files"/>
             <input v-show="false" ref="fileInput" type="file" accept="audio/*,video/*,image/*" multiple @change="processMediaFiles($event)" />
           </v-col>
-          <v-col cols="12">
+          <v-col cols="12" v-if="formData.artefacts.length > 0">
             <MediaCard :artefacts.sync="formData.artefacts"/>
           </v-col>
           <v-col cols="12">
@@ -355,22 +355,8 @@ export default {
     MediaCard
   },
   props: {
-    // view: { type: Object, default () { return setDefaultWhakapapa(EMPTY_WHAKAPAPA) } },
-    readonly: {
-      type: Boolean,
-      default: false
-    },
-    hideDetails: {
-      type: Boolean,
-      default: false
-    }
-  },
-  watch: {
-    'formData.artefacts': {
-      deep: true,
-      handler (newValue) {
-        // console.log(newValue)
-      }
+    formData: {
+      type: Object
     }
   },
   data () {
@@ -389,31 +375,6 @@ export default {
       searchString: '',
       items: [...personComplete.children, ...personComplete.parents, ...personComplete.siblings],
       hasEndDate: false,
-      // formData: setDefaultWhakapapa(this.view),
-      formData: {
-        title: null,
-        description: null,
-        startDate: null,
-        endDate: null,
-        mentions: [],
-        categories: [],
-        collections: [],
-        access: [],
-        contributors: [],
-        relatedRecords: [],
-        protocols: [],
-        submissionDate: null,
-        contributionNotes: null,
-        locationDescription: null,
-        culturalNarrative: null,
-        format: null,
-        identifier: null,
-        source: null,
-        language: null,
-        translation: null,
-        artefacts: [],
-        creator: {}
-      },
       form: {
         valid: true,
         rules: RULES
