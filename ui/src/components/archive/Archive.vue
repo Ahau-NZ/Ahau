@@ -2,11 +2,12 @@
 <div>
   <v-container fluid class="body-width px-2">
     <v-row v-if="!showStory" :class="mobile ? 'top-margin':'mt-10'">
-      <!-- TODO Bring in Collections -->
+      <!-- TODO: Add Collections -->
       <!-- <v-col cols="12" md="10" sm="10" :class="!mobile ? 'pl-12 my-6' : 'py-0 ma-0'" align="start">
         <h1 class="title black--text ">Collections</h1>
       </v-col> -->
       <div>
+        <!-- TODO: Search records -->
         <!-- <v-btn :class="mobile ? 'searchBtnMob' : 'searchBtn'" :small="!mobile" :x-small="mobile" class="my-2" fab flat color="white" @click="editProfile()">
           <v-icon small class="black--text">mdi-magnify</v-icon>
         </v-btn>            -->
@@ -115,16 +116,17 @@ export default {
     topMargin () {
       if (this.mobile && !this.showStory) return 'top-margin'
       else if (!this.mobile) return 'mt-10'
+      return ''
     }
   },
   watch: {
     showStory (newVal) {
       if (newVal === false) {
-        setTimeout(() => {
+        setTimeout(() => (
           window.scrollTo({
             top: this.scrollPosition
-          }), 100
-        })
+          }), 100)
+        )
       }
     }
   },

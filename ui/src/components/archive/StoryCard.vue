@@ -255,7 +255,7 @@ export default {
     // grab text height to figure out if we need to hide it or not
     this.textHeight = this.$refs.text.offsetHeight
     if (this.fullStory) {
-      return this.turncateText = false
+      this.turncateText = false
     }
   },
   computed: {

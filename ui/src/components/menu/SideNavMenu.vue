@@ -128,6 +128,12 @@ export default {
       }
     }
   },
+  watch: {
+    activeComponent (newVal) {
+      if (newVal === "profile" && this.mobile ) this.offset = 290
+      else if (newVal === 'profile') this.offset = 110
+    }
+  },
   methods: {
     ...mapActions(['setComponent', 'setShowStory']),
     goProfile () {
