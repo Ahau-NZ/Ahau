@@ -2,7 +2,7 @@
     <!-- <v-form ref="form" v-model="form.valid" lazy-validation> -->
       <v-row>
         <v-col cols="12">
-          <Media :type="artefact.type" :src="artefact.url" :format="artefact.format" />
+          <Media :type="artefact.type" :src="artefact.blob" :format="artefact.format" />
         </v-col>
         <v-col v-for="(field, i) in fields" :key="`${field.text}-${i}`" :cols="field.cols">
           <v-text-field

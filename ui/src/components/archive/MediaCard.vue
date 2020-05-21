@@ -1,47 +1,16 @@
 
 <template>
-  <div>
-  <v-data-table
-    :headers="headers"
-    :items="artefacts"
-    v-if="artefacts.length > 0"
-    :hide-default-footer="true"
-    id="datatable"
-  >
-    <template v-slot:item=" { item, index }">
-      <tr>
-        <td style="width:30%; height:100%;" class="pt-2 pb-2">
-          <Media :type="item.type" :src="item.url" :format="item.format" />
-        </td>
-        <td style="width:65%;">
-          <div>
-            <v-text-field
-              v-model="artefacts[index].title"
-              :style="`width: 100%`" hide-details solo flat
-              :readonly="item.readonly"
-              :clearable="isSelected[index]"
-              @focus="isSelected[index] = true"
-              @blur="isSelected[index] = false"
-            />
-          </div>
-        </td>
-        <td style="width: 5%" class="ma-0 pa-0">
-          <v-btn icon @click="editArtefact(item)">
-            <v-icon small class="blue--text">mdi-pencil</v-icon>
-          </v-btn>
-          <v-btn icon @click="deleteArtefact(index)">
-            <v-icon small class="secondary--text">mdi-delete</v-icon>
-          </v-btn>
-        </td>
-      </tr>
-      <ArtefactDialog v-if="dialog" :title="selectedArtefact.title" :selectedIndex="selectedIndex" :artefacts.sync="artefacts" @close="close" @submit="save($event)" :show="dialog" />
-    </template>
-  </v-data-table>
-  <v-card-actions v-if="artefacts.length > 0" class="justify-center">
-    <v-btn text @click="clearArtefacts">
-      Clear
-    </v-btn>
-  </v-card-actions>
+  <div class="pa-0 ma-0">
+    <Media @mouseover.native="toggleActions()" width="300px" height="auto" :artefact="displayArtefact"/>
+    <div class="media-group">
+      <Media class="thumbnail" v-for="(artefact, i) in artefacts"
+        :key="`artefact-${artefact.id}-${i}`"
+        :artefact="artefact"
+        width="100px"
+        height="auto"
+        @click="display(artefact)"
+      />
+    </div>
   </div>
 </template>
 
@@ -51,9 +20,20 @@ import Media from '@/components/archive/Media.vue'
 
 export default {
   name: 'MediaCard',
-  props: ['artefacts'],
+  props: {
+    artefacts: {
+      type: Array,
+      default () {
+        return []
+      }
+    }
+  },
+  mounted () {
+    this.displayArtefact = this.artefacts[0]
+  },
   components: { ArtefactDialog, Media },
   data: () => ({
+    displayArtefact: {},
     dialog: false,
     headers: [
       { text: 'File', value: 'file', sortable: false },
@@ -115,6 +95,12 @@ export default {
     }
   },
   methods: {
+    toggleActions () {
+      console.log('hover')
+    },
+    display (artefact) {
+      this.displayArtefact = artefact
+    },
     clearArtefacts () {
       confirm('Are you sure you want to clear all uploaded media?') && this.$emit('update:artefacts', [])
     },
@@ -148,39 +134,39 @@ export default {
 </script>
 
 <style scoped>
-.fit {
-  object-fit: cover;
-  width: 100%;
-  height: 100%;
-}
-tr:hover td {
-  background-color: #fff;
+
+.media-group {
+  width: 300px;
+  height: 60px;
+  display: flex;
+  flex-direction: row;
+  overflow-x: auto;
 }
 
-#datatable ::-webkit-scrollbar {
+.thumbnail {
+  width: 100px;
+  height: 60px;
+  padding: 0px;
+}
+
+::-webkit-scrollbar {
   height: 5px;
-  /* display: none; */
+  display: none;
 }
 
 /* Track */
-#datatable ::-webkit-scrollbar-track {
+::-webkit-scrollbar-track {
   background: #f1f1f1;
 }
 
 /* Handle */
-#datatable ::-webkit-scrollbar-thumb {
+::-webkit-scrollbar-thumb {
   background: #888;
 }
 
 /* Handle on hover */
-#datatable ::-webkit-scrollbar-thumb:hover {
+::-webkit-scrollbar-thumb:hover {
   background: #555;
-}
-
-#datatable {
-  overflow-y: scroll;
-  white-space: nowrap;
-  max-height: 300px;
 }
 
 </style>

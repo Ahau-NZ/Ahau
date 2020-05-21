@@ -34,6 +34,7 @@ import isEqual from 'lodash.isequal'
 
 import Dialog from '@/components/dialog/Dialog.vue'
 import RecordForm from '@/components/archive/RecordForm.vue'
+import clone from 'lodash.clonedeep'
 
 const EMPTY_STORY = {
   title: '',
@@ -63,7 +64,8 @@ const EMPTY_STORY = {
   artefacts: []
 }
 
-function setDefaultStory (story) {
+function setDefaultStory (newStory) {
+  var story = clone(newStory)
   return {
     title: story.title,
     description: story.description,
@@ -159,15 +161,16 @@ export default {
     }
   },
   watch: {
-    formData: {
+    story: {
       handler (newVal) {
-        // console.log(newVal)
+        console.log(newVal)
       },
       deep: true
     }
   },
   methods: {
     close () {
+      this.formData = setDefaultStory(this.story)
       this.$emit('close')
     },
     submit () {

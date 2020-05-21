@@ -3,22 +3,12 @@
     <Dialog :show="show" title="Media" @close="close" width="700px" :goBack="close" enableMenu>
       <template v-slot:content>
         <v-row>
-          <v-col cols="1">
-            <v-btn icon @click="step--" :disabled="step === 0">
-              <v-icon>mdi-chevron-left</v-icon>
-            </v-btn>
-          </v-col>
           <v-col>
             <v-window v-model="step">
               <v-window-item v-for="(artefact, i) in artefacts" :key="`window-${i}`" :value="i">
                 <ArtefactForm :artefact.sync="artefact"/>
               </v-window-item>
             </v-window>
-          </v-col>
-          <v-col cols="1">
-            <v-btn icon @click="step++" :disabled="step === artefacts.length - 1">
-              <v-icon>mdi-chevron-right</v-icon>
-            </v-btn>
           </v-col>
         </v-row>
       </template>

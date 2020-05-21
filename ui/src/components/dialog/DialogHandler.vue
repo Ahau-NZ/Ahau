@@ -75,15 +75,16 @@
       @submit="console.log('TODO: add collection to profile')"
     />
     <NewRecordDialog
-      :show="isActive('new-record')"
+      :show="isActive('edit-record')"
       :title="'Create a new Story'"
       @close="close"
       @submit="console.error('Cannot create a new record yet')"
     />
     <NewRecordDialog
-      :show="isActive('edit-record')"
+      :show="isActive('new-record')"
       :title="'Edit Story'"
       editing
+      :story="sampleStory"
       @close="close"
       @submit="console.error('Cannot edit a record yet')"
     />
@@ -117,6 +118,7 @@ import tree from '@/lib/tree-helpers'
 import * as d3 from 'd3'
 import { mapGetters, mapActions } from 'vuex'
 
+import { story1 } from '@/mocks/stories'
 export default {
   name: 'DialogHandler',
   components: {
@@ -166,7 +168,8 @@ export default {
   data () {
     return {
       suggestions: [],
-      source: null
+      source: null,
+      sampleStory: story1
     }
   },
   computed: {

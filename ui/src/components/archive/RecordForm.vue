@@ -148,8 +148,10 @@
           </v-col> -->
           <!-- <v-spacer/> -->
           <v-col cols="12">
-            <AddButton @click="$refs.fileInput.click()" label="Attact media or files"/>
+            
             <input v-show="false" ref="fileInput" type="file" accept="audio/*,video/*,image/*" multiple @change="processMediaFiles($event)" />
+            <AddButton @click="$refs.fileInput.click()" label="Attact media or files"/>
+
           </v-col>
           <v-col cols="12" v-if="formData.artefacts.length > 0">
             <MediaCard :artefacts.sync="formData.artefacts"/>
@@ -399,7 +401,6 @@ export default {
   methods: {
     processMediaFiles ($event) {
       const { files } = $event.target
-
       Array.from(files).forEach((file, i) => {
         this.formData.artefacts.push(this.processFile(file))
       })
@@ -409,8 +410,7 @@ export default {
       const type = this.getFileType(file.type)
       const title = this.getFileName(file.name)
       const format = this.getFormat(file.type)
-      const blob = new Blob([file], { type: file.type })
-      const url = URL.createObjectURL(file)
+      const blob = URL.createObjectURL(file)
 
       if (type === 'video' || type === 'audio') {
         attrs = {
@@ -423,7 +423,6 @@ export default {
       attrs = {
         ...attrs,
         type,
-        fileType: file.type,
         blob,
         title,
         description: '',
@@ -433,8 +432,7 @@ export default {
         licence: '',
         rights: '',
         source: '',
-        translation: '',
-        url
+        translation: ''
       }
 
       return attrs

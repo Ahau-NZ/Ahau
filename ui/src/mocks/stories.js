@@ -1,8 +1,10 @@
 import { personComplete } from './person-profile'
 import { COLLECTIONS } from './collection'
+import { ARTEFACTS } from './artefacts'
+import clone from 'lodash.clonedeep'
 
 const family = [
-  personComplete,
+  clone(personComplete),
   ...personComplete.children,
   ...personComplete.parents,
   ...personComplete.siblings
@@ -17,7 +19,7 @@ export const story1 = {
   endDate: '14 May 2020',
   location: '',
   locationDescription: '',
-  creator: {},
+  creator: clone(personComplete),
   submissionDate: '14 May 2020',
   contributionNotes: '',
 
@@ -28,14 +30,14 @@ export const story1 = {
   translation: '',
   culturalNarrative: '',
 
-  mentions: family,
+  mentions: clone(family),
   categories: ['category1', 'category2'],
-  collections: COLLECTIONS,
-  access: family,
-  contributors: family,
+  collections: clone(COLLECTIONS),
+  access: clone(family),
+  contributors: clone(family),
   protocols: [],
-  relatedRecords: COLLECTIONS,
-  artefacts: []
+  relatedRecords: clone(COLLECTIONS),
+  artefacts: clone(ARTEFACTS)
 }
 
 export const STORIES = [
