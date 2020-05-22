@@ -1,5 +1,5 @@
 <template>
-  <div :style="`width:${width};height:${height};background-color:black;`">
+  <div :style="`width:${width};height:${height};`">
     <v-img
       v-if="artefact.type === 'photo'"
       :src="artefact.blob"
@@ -24,9 +24,12 @@
         </v-row>
       </template>
     </v-img>
-    <video :style="`width:${width};height:${height};background-color:black;`" v-if="artefact.type === 'video'">
+    <video v-if="artefact.type === 'video'" :style="`width:${width};height:${height};`">
       <source :src="artefact.blob" :type="'video/' + artefact.format"/>
     </video>
+    <audio>
+      <source :src="artefact.blob" :type="'audio/' + artefact.format"/>
+    </audio>
   </div>
 </template>
 

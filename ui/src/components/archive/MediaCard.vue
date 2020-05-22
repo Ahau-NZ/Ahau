@@ -11,7 +11,7 @@
         @click="display(artefact)"
       />
     </div>
-  </div>
+    </div>
 </template>
 
 <script>
@@ -33,6 +33,13 @@ export default {
   },
   components: { ArtefactDialog, Media },
   data: () => ({
+    index: null,
+    images: [
+      'https://dummyimage.com/800/ffffff/000000',
+      'https://dummyimage.com/1600/ffffff/000000',
+      'https://dummyimage.com/1280/000000/ffffff',
+      'https://dummyimage.com/400/000000/ffffff',
+    ],
     displayArtefact: {},
     dialog: false,
     headers: [

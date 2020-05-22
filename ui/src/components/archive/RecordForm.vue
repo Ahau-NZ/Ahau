@@ -136,7 +136,7 @@
             </v-col>
           </v-row>
         </v-col>
-        <v-col>
+        <v-col xs="12" sm="12" md="6" >
           <!-- <v-spacer/> -->
           <!-- <v-col cols="12" sm="12" md="6">
             <v-select
@@ -148,12 +148,14 @@
           </v-col> -->
           <!-- <v-spacer/> -->
           <v-col cols="12">
-            <!-- <input v-show="false" ref="fileInput" type="file" accept="audio/*,video/*,image/*" multiple @change="processMediaFiles($event)" /> -->
-            <!-- <AddButton @click="$refs.fileInput.click()" label="Attact media or files"/> -->
-            <AddButton @click="warn('artefact')" label="Attact media or files"/>
+            <input v-show="false" ref="fileInput" type="file" accept="audio/*,video/*,image/*" multiple @change="processMediaFiles($event)" />
+            <AddButton @click="$refs.fileInput.click()" label="Attact media or files"/>
+            <!-- <AddButton @click="warn('artefact')" label="Attact media or files"/> -->
           </v-col>
-          <v-col cols="12" v-if="formData.artefacts.length > 0">
-            <MediaCard :artefacts.sync="formData.artefacts"/>
+          <v-col v-if="formData.artefacts.length > 0" cols="12" class="pl-0 pr-0">
+            <ArtefactCarousel :artefacts="formData.artefacts"
+              @delete="removeItem(formData.artefacts, $event)"
+            />
           </v-col>
           <v-col cols="12">
             <AddButton @click="warn('location')" label="Add location"/>
@@ -328,13 +330,18 @@ import AddButton from '@/components/button/AddButton.vue'
 import AvatarGroup from '@/components/AvatarGroup.vue'
 import Avatar from '@/components/Avatar.vue'
 import ChipGroup from '@/components/archive/ChipGroup.vue'
-
+import Artefact from '@/components/artefacts/Artefact.vue'
+import ArtefactGroup from '@/components/artefacts/ArtefactGroup.vue'
 import ProfileSearchBar from '@/components/archive/ProfileSearchBar.vue'
+
+import ArtefactCarousel from '@/components/archive/ArtefactCarousel.vue'
 
 import MediaCard from '@/components/archive/MediaCard.vue'
 import { personComplete } from '@/mocks/person-profile'
 
 import { firstMocks } from '@/mocks/collections'
+
+import { artefacts } from '@/mocks/artefacts'
 
 import {
   RULES
@@ -353,7 +360,10 @@ export default {
     ProfileSearchBar,
     AvatarGroup,
     ChipGroup,
-    MediaCard
+    MediaCard,
+    Artefact,
+    ArtefactGroup,
+    ArtefactCarousel
   },
   props: {
     formData: {
@@ -362,6 +372,8 @@ export default {
   },
   data () {
     return {
+      ARTEFACTS: artefacts,
+      model: 0,
       show: false,
       categories: ['one', 'two', 'three', 'four', 'five', 'six', 'seven'],
       collections: firstMocks,
@@ -403,12 +415,14 @@ export default {
     },
     processMediaFiles ($event) {
       const { files } = $event.target
+
       Array.from(files).forEach((file, i) => {
         this.formData.artefacts.push(this.processFile(file))
       })
     },
     processFile (file) {
       var attrs = {}
+
       const type = this.getFileType(file.type)
       const title = this.getFileName(file.name)
       const format = this.getFormat(file.type)
