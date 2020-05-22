@@ -23,7 +23,14 @@ const actions = {
   setProfile ({ commit }, person) {
     commit('updateProfile', person)
   },
-  async setProfileById ({ commit }, id) {
+  async setProfileById ({ commit, rootState, dispatch }, id) {
+    console.log('rootState: ', rootState)
+    if (id === rootState.whoami.profile.id) {
+      dispatch('setWhoami', id)
+    }
+    if (rootState.dialog.dialog) {
+      dispatch('setDialog', null)
+    }
     var person = await getRelatives(id)
     if (person.children) {
       person.children = await Promise.all(person.children.map(async (child) => {

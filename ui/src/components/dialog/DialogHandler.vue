@@ -173,7 +173,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['nestedWhakapapa', 'selectedProfile', 'whoami']),
+    ...mapGetters(['nestedWhakapapa', 'selectedProfile', 'whoami','thisDialog']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -185,9 +185,9 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['updateNode', 'deleteNode', 'updatePartnerNode', 'addChild', 'addParent', 'loading']),
+    ...mapActions(['updateNode', 'deleteNode', 'updatePartnerNode', 'addChild', 'addParent', 'loading','setDialog', 'setProfileById']),
     isActive (type) {
-      if (type === this.dialog) {
+      if (type === this.dialog || type === this.thisDialog) {
         return true
       }
       return false
@@ -202,6 +202,7 @@ export default {
     },
     toggleDialog (dialog, type, source) {
       this.source = source
+      this.setDialog(dialog) 
       this.$emit('update:dialog', dialog)
       this.$emit('update:type', type)
     },
@@ -504,15 +505,13 @@ export default {
         id: profileId,
         ...profileChanges
       }
-      console.log('update: ', input)
       const res = await this.$apollo.mutate(saveProfile(input))
       if (res.errors) {
         console.error('failed to update profile', res)
         return
       }
       if (this.$route.name === 'profileShow') {
-        console.log('profile is me')
-        this.$emit('setupProfile', res.data.saveProfile)
+        this.setProfileById(res.data.saveProfile)
         return
       }
 

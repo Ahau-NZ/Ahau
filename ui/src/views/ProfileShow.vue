@@ -12,7 +12,7 @@
         <h1 class="primary--text" >{{ selectedProfile.legalName ? selectedProfile.legalName : selectedProfile.preferredName }}</h1>
       </v-col>
       <v-col :order="mobile ? 'first' : 'last'" :align="mobile ? 'end' : 'center'" cols="12" md="2" sm="12"  class="px-5">
-        <EditProfileButton @click="updateDialog('edit-node')" />
+        <EditProfileButton @click="setDialog('edit-node')" />
       </v-col>
     </v-row>
     <v-row>
@@ -33,11 +33,7 @@
       </v-col>
     </v-row>
     <v-spacer style="height:200px"></v-spacer>
-
-    <DialogHandler
-      :dialog.sync="dialog.active"
-      @setupProfile="setupProfile($event)"
-    />
+    <DialogHandler/>
   </v-container>
 </template>
 
@@ -71,17 +67,10 @@ export default {
     return {
       prevHeight: 0,
       loaded: false,
-      dialog: {
-        active: null,
-        type: null
-      }
     }
   },
   mounted () {
     this.setupProfile(this.$route.params.id)
-    if (this.$route.params.nav) {
-      setPageComponent(this.$route.params.nav)
-    }
   },
   computed: {
     ...mapGetters(['selectedProfile', 'whoami', 'activeComponent', 'showStory', 'showArtefact']),
@@ -94,16 +83,11 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setProfileById', 'setProfile', 'setWhoami', 'setShowArtefact']),
+    ...mapActions(['setProfileById', 'setProfile', 'setWhoami', 'setShowArtefact', 'setDialog']),
     async setupProfile (id) {
       this.setProfileById(id)
-      if (this.dialog.active) this.dialog.active = null
       if (id === this.whoami.profile.id) await this.setWhoami()
     },
-
-    updateDialog (dialogObj) {
-      this.dialog.active = dialogObj
-    }
   }
 }
 </script>

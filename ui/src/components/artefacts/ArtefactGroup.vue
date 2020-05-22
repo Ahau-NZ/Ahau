@@ -60,7 +60,7 @@ export default {
 .highlight {
   border-style: solid;
   border-width: 5px !important;
-  border-color: rgba(0,0,0,0.5) !important;
+  border-color: white !important;
 
 }
 </style>

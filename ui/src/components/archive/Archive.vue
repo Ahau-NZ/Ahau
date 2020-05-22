@@ -122,11 +122,11 @@ export default {
   watch: {
     showStory (newVal) {
       if (newVal === false) {
-        setTimeout(() => (
+        setTimeout(() => {
           window.scrollTo({
             top: this.scrollPosition
-          }), 100)
-        )
+          })
+        }, 100)
       }
     }
   },
