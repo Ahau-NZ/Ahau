@@ -4,7 +4,7 @@
     <v-list-item class="px-0" style="min-height:0; height:10px">
       <v-list-item-icon v-if="!fullStory" class="pt-0 mt-0" style="position:absolute; top:5px; right:1px; margin-right:0px">
         <v-list-item-subtitle v-if="!mobile" class="no-flex">contributors</v-list-item-subtitle>
-        <AvatarGroup :clickable="false" :profiles="story.contributors" customClass="ma-0 pa-0" style="position:relative; bottom:10px;" size="28px" spacing="pr-1"/>
+        <AvatarGroup :profiles="story.contributors" customClass="ma-0 pa-0" style="position:relative; bottom:10px;" size="28px" spacing="pr-1"/>
       </v-list-item-icon>
     </v-list-item>
     <!-- RECORD HEADER -->
@@ -55,13 +55,16 @@
       </v-list-item-content>
     </v-list-item>
     <v-row v-if="!showArtefact">
+
       <v-col v-if="story.mentions.length" class="py-0" :cols="mobile ? '12' : 'auto'">
         <v-list-item-subtitle style="color:grey" class="ml-5 pb-1"> Mentions </v-list-item-subtitle>
-        <AvatarGroup :clickable="false"
+         <!--  TODO: changed to story.mentions when grapql is plugged in -->
+        <AvatarGroup
           style="position:relative; bottom:15px;"
-          :profiles="story.mentions"
+          :profiles="currentProfile.siblings"
           show-labels :size="fullStory ? '50px': '30px'"
           spacing="pr-2"
+          @profile-click="openProfile($event)"
         />
       </v-col>
       <v-col v-if="story.location" class="pt-0" :cols="mobile ? '12' : '4'">
@@ -95,21 +98,23 @@
       <v-row class="px-4">
         <div class="py-0 px-0">
           <v-list-item-subtitle style="color:grey" class="ml-5 pb-1"> Access </v-list-item-subtitle>
-          <AvatarGroup :clickable="false"
+          <AvatarGroup
             v-if="story.access.length"
             :profiles="story.access"
             show-labels
             size="50px"
             style="position:relative; bottom:15px;"
+            @profile-click="openProfile($event)"
           />
         </div>
         <div class="py-0 px-0">
           <v-list-item-subtitle style="color:grey" class="ml-5 pb-1"> Contributors </v-list-item-subtitle>
-          <AvatarGroup :clickable="false"
+          <AvatarGroup
             style="position:relative; bottom:15px;"
             show-labels size="50px"
             spacing="pr-2"
             :profiles="story.contributors"
+            @profile-click="openProfile($event)"
           />
         </div>
         <v-col class="pt-0" style="min-width:188px; max-width:188px">
@@ -118,12 +123,13 @@
         </v-col>
         <div class="py-0 px-0" v-if="story.protocols.length" :cols="mobile ? '6' : '4'">
           <v-list-item-subtitle style="color:grey" class="ml-5 pb-1"> Protocol </v-list-item-subtitle>
-          <AvatarGroup :clickable="false"
+          <AvatarGroup
             :profiles="story.protocols"
             show-labels
             size="50px"
             isView
             style="position:relative; bottom:15px;"
+            @profile-click="openProfile($event)"
           />
         </div>
         <div class="pt-0" v-if="story.creator" :cols="mobile ? '3' : '3'">
@@ -138,6 +144,7 @@
               showLabel
               style="position:relative; bottom:8px;"
               class="ml-5"
+              @profile-click="openProfile($event)"
             />
         </div>
       </v-row>
@@ -259,7 +266,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['showArtefact']),
+    ...mapGetters(['showArtefact', 'currentProfile']),
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
@@ -292,7 +299,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setStory', 'setShowArtefact', 'setProfile', 'setDialog']),
+    ...mapActions(['setStory', 'setShowArtefact', 'setProfile', 'setDialog', 'setProfileById', 'setShowStory']),
     toggleStoryEdit () {
       this.$emit('updateDialog', 'editStoryDialog')
     },
@@ -317,14 +324,8 @@ export default {
       this.turncateText = !this.turncateText
     },
     openProfile (profile) {
-      var dialog = {
-        active: 'side-vew-edit'
-      }
-      // link to profileshow
-      this.setDialog('side-view-dialog')
-    },
-    toggleSideDialog (profile) {
-      console.log('TODO - need to connect side view dialog')
+      this.setProfileById({ id: profile.id, type: 'preview' })
+      this.setDialog({ active: 'view-edit-node', preview: true })
     },
     updateModel (event) {
       this.model = event

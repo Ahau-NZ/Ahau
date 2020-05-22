@@ -1,5 +1,5 @@
 <template>
-  <div class="side-menu" style="border-left: 0.5px solid rgba(0,0,0,0.1);">
+  <div class="side-menu" style="border-left: 0.5px solid rgba(0,0,0,0.1);" :style="preview ? 'position:fixed':''">
 
     <!--===== MOBILE VERSION of side menu is a Dialog =====-->
     <Dialog v-if="mobile" :title="formData.preferredName" :show="show" @close="close" width="720px" :goBack="close" :enableBar="false" :isEditing="isEditing">
@@ -1143,7 +1143,7 @@ export default {
       this.toggleEdit()
     },
     openProfile (profile) {
-      if (this.preview) this.setProfileById({id:profile.id, type:'setWhanau'})
+      if (this.preview) this.setProfileById({ id: profile.id, type: 'setWhanau' })
       else this.$emit('open-profile', profile.id)
     },
     toggleNew (type) {

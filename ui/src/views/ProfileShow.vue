@@ -79,7 +79,7 @@ export default {
     }
   },
   watch: {
-    // update profile information routing to profileShow with new Id 
+    // update profile information routing to profileShow with new Id
     '$route.params.id': function (id) {
       this.setProfileById({ id })
     }
