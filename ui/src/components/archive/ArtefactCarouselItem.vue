@@ -45,6 +45,18 @@
         >
           <v-icon>mdi-delete</v-icon>
         </v-btn>
+        <v-btn v-if="controls && hover" :disabled="start" class="left white--text"
+          icon small
+          @click="$emit('previous')"
+        >
+          <v-icon>mdi-chevron-left</v-icon>
+        </v-btn>
+        <v-btn v-if="controls && hover" :disabled="end" class="right white--text"
+          icon small
+          @click="$emit('next')"
+        >
+          <v-icon>mdi-chevron-right</v-icon>
+        </v-btn>
       </v-card>
     </v-hover>
   </div>
@@ -58,6 +70,7 @@ export default {
     width: { type: String, default: '100px' },
     height: { type: String, default: '100px' },
     controls: { type: Boolean },
+    start: { type: Boolean },
     end: { type: Boolean }
   },
   data () {
@@ -107,6 +120,22 @@ export default {
   position: absolute;
   top: 2px;
   right: 40px;
+  /* transform: translate(-50%, -50%);
+  -webkit-transform: translate(-50%, -50%); */
+}
+
+.left {
+  position: absolute;
+  top: 50%;
+  left: 2px;
+  /* transform: translate(-50%, -50%);
+  -webkit-transform: translate(-50%, -50%); */
+}
+
+.right {
+  position: absolute;
+  top: 50%;
+  right: 2px;
   /* transform: translate(-50%, -50%);
   -webkit-transform: translate(-50%, -50%); */
 }

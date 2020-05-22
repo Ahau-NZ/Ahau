@@ -5,13 +5,17 @@
         width="100%" height="300px"
         controls
         @delete="removeItem()"
-        @update="$emit('update', displayArtefact)"
+        @update="$emit('update', displayedArtefact)"
+        @previous="previous()"
+        @next="next()"
+        :end="isEndItem(displayedIndex)"
+        :start="isStartItem(displayedIndex)"
       />
     </div>
     <div class="carousel-thumbnail-group">
       <ArtefactCarouselItem v-for="(artefact, i) in artefacts" :key="`carousel-item-${i}-${artefact.id}`"
         :artefact="artefact"
-        :end="i === (artefacts.length - 1)"
+        :end="isEndItem(i)"
         @click="showArtefact(artefact, i)"
       />
     </div>
@@ -34,6 +38,7 @@ export default {
   data () {
     return {
       displayedArtefact: this.artefacts[0],
+      displayedIndex: 0,
       componentLoaded: false
     }
   },
@@ -48,6 +53,24 @@ export default {
     removeItem () {
       this.$emit('delete', this.displayedIndex)
       this.showArtefact(this.artefacts[0], 0)
+    },
+    previous () {
+      // if (this.isStartItem(this.displayedIndex)) return
+      this.displayedIndex--
+      this.showArtefact(this.artefacts[this.displayedIndex], this.displayedIndex)
+    },
+    next () {
+      // if (this.isStartItem(this.displayedIndex)) return
+      this.displayedIndex++
+      this.showArtefact(this.artefacts[this.displayedIndex], this.displayedIndex)
+    },
+    isEndItem (i) {
+      if (i === (this.artefacts.length - 1)) return true
+      return false
+    },
+    isStartItem (i) {
+      if (i === 0) return true
+      return false
     }
   }
 }
