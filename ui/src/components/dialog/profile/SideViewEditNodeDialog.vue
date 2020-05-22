@@ -32,7 +32,7 @@
           >
             <v-icon small class="blue--text" left>mdi-pencil</v-icon>Profile
           </v-btn>
-          <v-btn 
+          <v-btn
             v-if="!preview"
             @click="toggleEdit"
             color="white"
@@ -954,22 +954,21 @@ import {
   RULES,
   RELATIONSHIPS
 } from '@/lib/constants'
-
 import calculateAge from '../../../lib/calculate-age'
-
 import { PERMITTED_PROFILE_ATTRS, PERMITTED_RELATIONSHIP_ATTRS } from '@/lib/profile-helpers'
 
 import Avatar from '@/components/Avatar.vue'
 import AvatarGroup from '@/components/AvatarGroup.vue'
 import NodeDatePicker from '@/components/NodeDatePicker.vue'
 import AddButton from '@/components/button/AddButton.vue'
-
 import Dialog from '@/components/dialog/Dialog.vue'
 
 import isEqual from 'lodash.isequal'
 import isEmpty from 'lodash.isempty'
 import pick from 'lodash.pick'
 import clone from 'lodash.clonedeep'
+
+import { mapActions } from 'vuex'
 
 function defaultData (profile) {
   return {
@@ -1016,7 +1015,7 @@ export default {
     relationshipLinks: { type: Array },
     show: { type: Boolean, required: true },
     readonly: { type: Boolean, default: false },
-    preview: {type: Boolean, default: false}
+    preview: { type: Boolean, default: false }
   },
 
   data () {
@@ -1093,6 +1092,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['setProfileById']),
     updateSelectedGender (genderClicked) {
       // reset images to outlined
       this.$refs.taneImg.src = require('@/assets/tane-outlined.svg')
@@ -1143,7 +1143,8 @@ export default {
       this.toggleEdit()
     },
     openProfile (profile) {
-      this.$emit('open-profile', profile.id)
+      if (this.preview) this.setProfileById({id:profile.id, type:'setWhanau'})
+      else this.$emit('open-profile', profile.id)
     },
     toggleNew (type) {
       this.$emit('new', type)

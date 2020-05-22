@@ -67,7 +67,7 @@ export default {
   components: {
     StoryCard,
     // CollectionGroup,
-    VueContext,
+    VueContext
   },
   data () {
     return {
@@ -131,7 +131,7 @@ export default {
     },
     openContextMenu (event) {
       this.$refs.menu.open(event)
-    },
+    }
   }
 }
 </script>

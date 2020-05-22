@@ -29,12 +29,10 @@ const actions = {
     if (dialog === null) {
       commit('updateDialog', dialog)
       commit('updatePreview', false)
-    }
-    else if (typeof dialog === 'object') {
+    } else if (typeof dialog === 'object') {
       commit('updateDialog', dialog.active)
       commit('updatePreview', dialog.preview)
-    }
-    else {
+    } else {
       commit('updateDialog', dialog)
     }
   }

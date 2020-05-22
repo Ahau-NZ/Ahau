@@ -174,7 +174,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['nestedWhakapapa', 'selectedProfile', 'whoami','storeDialog', 'previewProfile', 'currentProfile']),
+    ...mapGetters(['nestedWhakapapa', 'selectedProfile', 'whoami', 'storeDialog', 'previewProfile', 'currentProfile']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -186,7 +186,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['updateNode', 'deleteNode', 'updatePartnerNode', 'addChild', 'addParent', 'loading','setDialog', 'setProfileById']),
+    ...mapActions(['updateNode', 'deleteNode', 'updatePartnerNode', 'addChild', 'addParent', 'loading', 'setDialog', 'setProfileById']),
     isActive (type) {
       if (type === this.dialog || type === this.storeDialog) {
         return true
@@ -203,7 +203,7 @@ export default {
     },
     toggleDialog (dialog, type, source) {
       this.source = source
-      this.setDialog(dialog) 
+      this.setDialog(dialog)
       this.$emit('update:dialog', dialog)
       this.$emit('update:type', type)
     },
@@ -513,7 +513,7 @@ export default {
         return
       }
       if (this.storeDialog === 'edit-node') {
-        this.setProfileById({id:res.data.saveProfile})
+        this.setProfileById({ id: res.data.saveProfile })
         return
       }
 

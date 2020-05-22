@@ -37,7 +37,7 @@ const actions = {
     if (id === rootState.whoami.profile.id) {
       dispatch('setWhoami', id)
     }
-    if (rootState.dialog.dialog) {
+    if (type !== 'setWhanau' && rootState.dialog.dialog) {
       console.log('closing dialog')
       dispatch('setDialog', null)
     }
@@ -56,7 +56,7 @@ const actions = {
         return parentProfile
       }))
     }
-    if (type !== 'preview') commit('updateCurrentProfile', person)
+    if (!type) commit('updateCurrentProfile', person)
     commit('updateSelectedProfile', person)
   }
 }

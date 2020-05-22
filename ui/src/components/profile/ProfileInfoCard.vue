@@ -66,8 +66,8 @@ export default {
     ...mapActions(['setProfileById', 'setDialog']),
 
     openProfile (profile) {
-      this.setProfileById({id:profile.id, type:'preview'})
-      this.setDialog({active:'view-edit-node', preview:true})
+      this.setProfileById({ id: profile.id, type: 'preview' })
+      this.setDialog({ active: 'view-edit-node', preview: true })
       // this.$emit('setupProfile', profile.id)
     }
   }

@@ -62,14 +62,14 @@ export default {
   data () {
     return {
       prevHeight: 0,
-      loaded: false,
+      loaded: false
     }
   },
   mounted () {
     this.setupProfile(this.$route.params.id)
   },
   computed: {
-    ...mapGetters(['currentProfile', 'whoami', 'activeComponent', 'showStory', 'showArtefact', 'storeDialog']),
+    ...mapGetters(['currentProfile', 'activeComponent', 'showStory', 'showArtefact']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -79,16 +79,16 @@ export default {
     }
   },
   watch: {
+    // update profile information routing to profileShow with new Id 
     '$route.params.id': function (id) {
-      console.log("changed params opening profile")
-      this.setProfileById({id})
+      this.setProfileById({ id })
     }
   },
   methods: {
     ...mapActions(['setProfileById', 'setProfile', 'setWhoami', 'setShowArtefact', 'setDialog']),
     async setupProfile (id) {
-      this.setProfileById({id})
-    },
+      this.setProfileById({ id })
+    }
   }
 }
 </script>
