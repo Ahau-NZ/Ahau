@@ -75,18 +75,25 @@
       @submit="console.log('TODO: add collection to profile')"
     />
     <NewRecordDialog
-      :show="isActive('edit-record')"
+      v-if="isActive('new-story')"
+      :show="isActive('new-story')"
       :title="'Create a new Story'"
       @close="close"
-      @submit="console.error('Cannot create a new record yet')"
+      @submit="addStory($event)"
     />
     <NewRecordDialog
-      :show="isActive('new-record')"
-      :title="'Edit Story'"
+      v-if="isActive('edit-story')"
+      :show="isActive('edit-story')"
+      :title="`Edit ${currentStory.title}`"
       editing
-      :story="sampleStory"
+      :story="currentStory"
       @close="close"
-      @submit="console.error('Cannot edit a record yet')"
+      @submit="editStory($event)"
+    />
+    <ViewRecordDialog
+      :show="isActive('view-record')"
+      :title="'View Story'"
+      @close="close"
     />
   </div>
 </template>
@@ -103,6 +110,7 @@ import WhakapapaShowHelper from '@/components/dialog/whakapapa/WhakapapaShowHelp
 import WhakapapaTableHelper from '@/components/dialog/whakapapa/WhakapapaTableHelper.vue'
 import NewCollectionDialog from '@/components/dialog/archive/NewCollectionDialog.vue'
 import NewRecordDialog from '@/components/dialog/archive/NewRecordDialog.vue'
+import ViewRecordDialog from '@/components/dialog/archive/ViewRecordDialog.vue'
 
 import gql from 'graphql-tag'
 
@@ -132,9 +140,13 @@ export default {
     WhakapapaShowHelper,
     WhakapapaTableHelper,
     NewCollectionDialog,
-    NewRecordDialog
+    NewRecordDialog,
+    ViewRecordDialog
   },
   props: {
+    story: {
+      type: Object
+    },
     focus: {
       type: String
     },
@@ -149,7 +161,7 @@ export default {
       required: false,
       default: null,
       validator: (val) => [
-        'new-node', 'view-edit-node', 'delete-node', 'new-collection', 'new-record', 'edit-record', 'edit-node',
+        'new-node', 'view-edit-node', 'delete-node', 'new-collection', 'new-story', 'edit-story', 'edit-node', 'view-record',
         'whakapapa-view', 'whakapapa-edit', 'whakapapa-delete', 'whakapapa-helper', 'whakapapa-table-helper'
       ].includes(val)
     },
@@ -173,7 +185,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['nestedWhakapapa', 'selectedProfile', 'whoami']),
+    ...mapGetters(['nestedWhakapapa', 'selectedProfile', 'whoami', 'currentStory']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -217,6 +229,12 @@ export default {
         return Boolean(findSuccessor(profile))
       }
       return true
+    },
+    addStory ($event) {
+      console.error('Add story not implemented yet', $event)
+    },
+    editStory ($event) {
+      console.error('Edit story not implemented yet', $event)
     },
     async addPerson ($event) {
       try {
@@ -784,7 +802,7 @@ export default {
   position: absolute;
   top: 0px;
   right: 0px;
-  width: 20%;
+  width: 25%;
   height: 100%;
   background-color: white;
 }

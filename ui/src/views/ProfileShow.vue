@@ -1,5 +1,7 @@
 <template>
   <v-container fluid class="body-width pa-0 niho-bg white">
+    <v-overlay dark :value="showArtefact" z-index="6" opacity="1" color="rgba(30,30,30)">
+    </v-overlay>
     <!-- Header and Title -->
     <Header v-if="activeComponent === 'profile'"
       :profile="selectedProfile"
@@ -15,7 +17,7 @@
     </v-row>
     <v-row>
       <!-- SideNav -->
-        <v-col cols="12" xs="12" sm="12" md="2" :class="!mobile ? 'pr-0' : 'px-5 py-0'">
+        <v-col  v-if="!hideNav" cols="12" xs="12" sm="12" md="2" :class="!mobile ? 'pr-0' : 'px-5 py-0'">
           <SideNavMenu :profile="selectedProfile" />
         </v-col>
       <!-- Content -->
@@ -30,10 +32,10 @@
       </transition>
       </v-col>
     </v-row>
+    <v-spacer style="height:200px"></v-spacer>
 
     <DialogHandler
       :dialog.sync="dialog.active"
-      :selectedProfile="selectedProfile"
       @setupProfile="setupProfile($event)"
     />
   </v-container>
@@ -82,14 +84,17 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['selectedProfile', 'whoami', 'activeComponent']),
+    ...mapGetters(['selectedProfile', 'whoami', 'activeComponent', 'showStory', 'showArtefact']),
     mobile () {
       return this.$vuetify.breakpoint.xs
+    },
+    hideNav () {
+      if (this.mobile && this.showStory) return true
+      else return false
     }
   },
   methods: {
-    ...mapActions(['setProfileById', 'setProfile', 'setWhoami']),
-
+    ...mapActions(['setProfileById', 'setProfile', 'setWhoami', 'setShowArtefact']),
     async setupProfile (id) {
       this.setProfileById(id)
       if (this.dialog.active) this.dialog.active = null
@@ -103,19 +108,19 @@ export default {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss">
 .body-width {
   /* min-width: $formWidth; */
   max-width: 100vw;
-  min-height: 140vh;
-  background: white;
+  // padding-bottom: 500px;
+  // background: white;
+  // margin-bottom: 200px;
 }
 
 .niho-bg {
   background: linear-gradient(rgba(255, 255, 255, 0.99),
   rgba(255, 255, 255, 0.7)), url(../assets/niho.svg);
-  background-position-x: 400px;
+  background-position-x: 100px;
   background-attachment: fixed;
   background-repeat: no-repeat;
 }

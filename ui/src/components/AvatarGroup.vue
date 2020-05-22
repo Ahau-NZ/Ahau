@@ -22,7 +22,7 @@
             :bornAt="profile.bornAt"
             :deceased="profile.deceased"
             :showLabel="showLabels"
-            :clickable="true"
+            :clickable="clickable"
             @click="profileClick(profile)"
             :deletable="deletable"
             @delete="$emit('delete', i)"
@@ -49,7 +49,8 @@ export default {
     customClass: { type: String, default: 'd-flex justify-start align-center pa-2 pl-4' },
     spacing: { type: String, default: 'pr-5' },
     deletable: { type: Boolean, default: false },
-    isView: { type: Boolean, default: false }
+    isView: { type: Boolean, default: false },
+    clickable: { type: Boolean, default: true }
   },
   computed: {
     columns () {

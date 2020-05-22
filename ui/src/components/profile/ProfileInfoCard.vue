@@ -70,7 +70,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
 .rounded-border {
   border: 0.5px solid rgba(0,0,0,0.12);
   border-radius: 10px;

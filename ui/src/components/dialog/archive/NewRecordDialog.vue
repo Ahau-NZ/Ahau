@@ -37,6 +37,7 @@ import RecordForm from '@/components/archive/RecordForm.vue'
 import clone from 'lodash.clonedeep'
 
 const EMPTY_STORY = {
+  id: '',
   title: '',
   description: '',
   startDate: '',
@@ -67,6 +68,7 @@ const EMPTY_STORY = {
 function setDefaultStory (newStory) {
   var story = clone(newStory)
   return {
+    id: story.id,
     title: story.title,
     description: story.description,
     startDate: story.startDate,
@@ -160,6 +162,9 @@ export default {
       return this.$vuetify.breakpoint.xs
     }
   },
+  mounted () {
+    console.log('the story', this.story)
+  },
   watch: {
     story: {
       handler (newVal) {
@@ -181,10 +186,11 @@ export default {
       } else {
         output = storySubmission(this.formData)
       }
+
       console.log('output', output)
 
-      // this.$emit('submit', output)
-      // this.close()
+      this.$emit('submit', output)
+      this.close()
     }
   }
 }

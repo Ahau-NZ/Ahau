@@ -6,7 +6,9 @@
           <Chip
             :title="chip.title"
             :description="chip.description"
-            :image="chip.image"
+            :deletable="deletable"
+            :type="type"
+            :chip="chip"
             @delete="$emit('delete', i)"
           />
         </v-list-item>
@@ -21,7 +23,9 @@ import Chip from './Chip.vue'
 export default {
   name: 'ChipGroup',
   props: {
-    chips: Array
+    chips: Array,
+    deletable: Boolean,
+    type: String
   },
   components: {
     Chip

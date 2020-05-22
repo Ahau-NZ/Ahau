@@ -95,7 +95,7 @@
                 type="collection"
                 item="title"
               />
-              <ChipGroup :chips="formData.collections" @delete="removeItem(formData.collections, $event)" />
+              <ChipGroup :chips="formData.collections" deletable @delete="removeItem(formData.collections, $event)" />
             </v-col>
             <v-col :cols="mobile ? '12' : formData.access.length > 0 ? 'auto' : '4'">
               <AddButton label="Access" @click="showAccess = true" />
@@ -148,16 +148,15 @@
           </v-col> -->
           <!-- <v-spacer/> -->
           <v-col cols="12">
-            
-            <input v-show="false" ref="fileInput" type="file" accept="audio/*,video/*,image/*" multiple @change="processMediaFiles($event)" />
-            <AddButton @click="$refs.fileInput.click()" label="Attact media or files"/>
-
+            <!-- <input v-show="false" ref="fileInput" type="file" accept="audio/*,video/*,image/*" multiple @change="processMediaFiles($event)" /> -->
+            <!-- <AddButton @click="$refs.fileInput.click()" label="Attact media or files"/> -->
+            <AddButton @click="warn('artefact')" label="Attact media or files"/>
           </v-col>
           <v-col cols="12" v-if="formData.artefacts.length > 0">
             <MediaCard :artefacts.sync="formData.artefacts"/>
           </v-col>
           <v-col cols="12">
-            <AddButton @click="" label="Add location"/>
+            <AddButton @click="warn('location')" label="Add location"/>
           </v-col>
         </v-col>
       </v-row>
@@ -335,7 +334,7 @@ import ProfileSearchBar from '@/components/archive/ProfileSearchBar.vue'
 import MediaCard from '@/components/archive/MediaCard.vue'
 import { personComplete } from '@/mocks/person-profile'
 
-import { COLLECTIONS } from '@/mocks/collection'
+import { firstMocks } from '@/mocks/collections'
 
 import {
   RULES
@@ -365,7 +364,7 @@ export default {
     return {
       show: false,
       categories: ['one', 'two', 'three', 'four', 'five', 'six', 'seven'],
-      collections: COLLECTIONS,
+      collections: firstMocks,
       showMentions: false,
       showCategories: false,
       showContributors: false,
@@ -399,6 +398,9 @@ export default {
     }
   },
   methods: {
+    warn (field) {
+      alert(`Cannot add ${field} yet`)
+    },
     processMediaFiles ($event) {
       const { files } = $event.target
       Array.from(files).forEach((file, i) => {

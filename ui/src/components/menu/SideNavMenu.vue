@@ -3,7 +3,7 @@
     <v-col cols="12" md="2" :class="mobile ? 'px-6':''">
       <v-col align="center" v-if="!mobile" class="pa-2 ml-5" cols="12">
         <v-row cols="12" xs="12" sm="12">
-          <v-btn @click="setActive('Profile')" light text style="height: auto;">
+          <v-btn @click="goProfile()" light text style="height: auto;">
             <Avatar :image="profile.avatarImage" :alt="profile.preferredName" :size="this.activeComponent === 'profile' ? '12vw' : '12vw'" />
           </v-btn>
         </v-row>
@@ -35,9 +35,10 @@
           </v-btn>
         </v-col> -->
         <v-col :class="mobile ? 'py-0 px-0' : 'py-1'">
-          <v-btn @click="setActive('archive')" light :fab="mobile" text>
+          <v-btn @click="goArchive()" light :fab="mobile" text>
             <v-col class="pa-0" :cols="mobile ? '12' : '2'">
-              <ArchiveIcon :size="mobile ? 'large' : 'medium'" :color="activeComponent === 'archive' ? 'red' : 'black'" />
+              <ArchiveIcon v-if="!showStory" :size="mobile ? 'large' : 'medium'" :color="activeComponent === 'archive' ? 'red' : 'black'" />
+              <v-icon v-else color="#B02425">mdi-arrow-left</v-icon>
             </v-col>
             <v-col class="py-0" v-if="!mobile && !isOverflowing">
               <span ref="text" :style="activeComponent === 'archive' ? 'color:#B02425;' : ''" class="ml-2 nav-label subtitle-1">
@@ -99,7 +100,8 @@ export default {
       componentLoaded: false,
       stickyMobile: false,
       prevScroll: 0,
-      scroll: 0
+      scroll: 0,
+      storyPosition: null
     }
   },
   mounted () {
@@ -107,7 +109,7 @@ export default {
     this.offset = this.$refs.sideNav.offsetTop - 40
   },
   computed: {
-    ...mapGetters(['activeComponent', 'selectedProfile']),
+    ...mapGetters(['activeComponent', 'selectedProfile', 'showStory', 'whoami']),
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
@@ -126,9 +128,25 @@ export default {
       }
     }
   },
+  watch: {
+    activeComponent (newVal) {
+      if (newVal === "profile" && this.mobile ) this.offset = 290
+      else if (newVal === 'profile') this.offset = 110
+    }
+  },
   methods: {
-    ...mapActions(['setComponent']),
+    ...mapActions(['setComponent', 'setShowStory']),
+    goProfile () {
+      this.setActive('profile')
+      this.$router.push({ name: 'profileShow', params: { id: this.whoami.profile.id } })
+    },
+    goArchive () {
+      if (this.showStory) {
+        this.setShowStory()
+      } else this.setActive('archive')
+    },
     setActive (component) {
+      if (this.showStory) this.setShowStory()
       this.setComponent(component)
       window.scrollTo(0, 0)
     },

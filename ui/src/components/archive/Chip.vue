@@ -1,5 +1,5 @@
 <template>
-  <v-card light tile outlined class="d-inline-block" :min-width="mobile ? '100%' : '300'" :max-width="mobile ? '100%' : '300'" max-height="60" min-height="60" style="overflow: hidden;">
+  <v-card light tile outlined class="d-inline-block rounded-corners" :min-width="mobile ? '100%' : '300'" :max-width="mobile ? '100%' : '300px'" max-height="60" min-height="60" style="overflow: hidden;">
     <v-container class="pa-0">
       <v-row >
         <v-col cols="auto" class="pa-0 pl-3">
@@ -17,7 +17,7 @@
           cols="auto"
           class="pa-0"
         >
-          <v-btn @click="$emit('delete')" class="mr-2" small top right icon>
+          <v-btn v-if="deletable" @click="$emit('delete')" class="mr-2" small top right icon>
             <v-icon small>mdi-close</v-icon>
           </v-btn>
         </v-col>
@@ -32,15 +32,18 @@ export default {
   props: {
     title: String,
     description: String,
-    image: Object
+    deletable: Boolean,
+    type: String,
+    chip: Object
   },
   computed: {
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
     src () {
-      if (this.image && this.image.uri) return this.image.uri
-      return this.image
+      if (this.chip.image && this.chip.image.uri) return this.chip.image.uri
+      else if (this.type === 'story') return this.chip.artefacts[0].blob
+      return this.chip.image
     }
   }
 }
@@ -63,5 +66,9 @@ export default {
   font-size: 10px;
   width: 170px;
   overflow: hidden;
+}
+
+.rounded-corners {
+  border-radius: 10px;
 }
 </style>

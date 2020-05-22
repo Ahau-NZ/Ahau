@@ -1,5 +1,5 @@
 import Chip from './Chip.vue'
-import { collectionComplete } from '@/mocks/collection'
+import { collectionComplete } from '@/mocks/collections'
 
 export default {
   title: 'Chip'

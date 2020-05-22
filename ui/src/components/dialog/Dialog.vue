@@ -7,7 +7,7 @@
             ? 'dialog-bottom-transition'
             : 'scale-transition'"
         v-model="show"
-        light
+        :light="!dark"
         persistent
         :max-width="width"
         :fullscreen="mobile"
@@ -105,6 +105,10 @@ export default {
     title: {
       type: String,
       default: 'Create a new person'
+    },
+    dark: {
+      type: Boolean,
+      default: false
     }
   },
   data () {

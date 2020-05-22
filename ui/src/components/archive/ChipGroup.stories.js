@@ -1,5 +1,5 @@
 import ChipGroup from './ChipGroup.vue'
-import { COLLECTIONS } from '@/mocks/collection'
+import { firstMocks } from '@/mocks/collections'
 
 export default {
   title: 'ChipGroup'
@@ -9,7 +9,7 @@ export const CollectionChip = () => ({
   template: '<ChipGroup :chips="collections"/>',
   data () {
     return {
-      collections: COLLECTIONS
+      collections: firstMocks
     }
   },
   components: { ChipGroup }

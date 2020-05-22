@@ -5,7 +5,7 @@
       v-if="openMenu"
       :items="items"
       :item-text="item"
-      :item-value="item"
+      item-value="id"
       :multiple="!single"
       :menu-props="{ light: true, value: openMenu, closeOnClick: true, openOnClick: true }"
       hide-selected

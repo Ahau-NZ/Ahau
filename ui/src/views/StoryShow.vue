@@ -124,7 +124,7 @@ export default {
       },
       {
         title: 'Create a new Record',
-        dialog: 'new-record',
+        dialog: 'new-story',
         icon: 'mdi-file-outline'
       }
       ]
