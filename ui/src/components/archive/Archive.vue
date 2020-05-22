@@ -39,17 +39,12 @@
   </v-container>
   <vue-context ref="menu" class="pa-4">
     <li v-for="(option, index) in contextMenuOpts" :key="index">
-      <a href="#" @click.prevent="updateDialog(option.dialog)" class="d-flex align-center px-4">
+      <a href="#" @click.prevent="setDialog(option.dialog)" class="d-flex align-center px-4">
         <v-icon light>{{ option.icon }}</v-icon>
         <p class="ma-0 pl-3">{{ option.title }}</p>
       </a>
     </li>
   </vue-context>
-
-  <DialogHandler
-      :dialog.sync="dialog.active"
-      :type.sync="dialog.type"
-  />
   </div>
 </template>
 
@@ -60,8 +55,6 @@ import {
 
 import StoryCard from '@/components/archive/StoryCard.vue'
 // import CollectionGroup from '@/components/archive/CollectionGroup.vue'
-
-import DialogHandler from '@/components/dialog/DialogHandler.vue'
 
 import { STORIES } from '@/mocks/stories'
 import { mockCollections } from '@/mocks/collections'
@@ -75,7 +68,6 @@ export default {
     StoryCard,
     // CollectionGroup,
     VueContext,
-    DialogHandler
   },
   data () {
     return {
@@ -131,24 +123,15 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setComponent', 'setShowStory']),
+    ...mapActions(['setComponent', 'setShowStory', 'setDialog']),
     toggleStory () {
       this.scrollPosition = window.pageYOffset
       this.setShowStory()
       window.scrollTo(0, 0)
     },
     openContextMenu (event) {
-      if (this.dialog.view) {
-        this.toggleView()
-      }
       this.$refs.menu.open(event)
     },
-    toggleView () {
-      this.dialog.view = !this.dialog.view
-    },
-    updateDialog (dialog) {
-      this.dialog.active = dialog
-    }
   }
 }
 </script>

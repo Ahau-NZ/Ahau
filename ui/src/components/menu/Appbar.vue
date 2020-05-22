@@ -138,7 +138,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['whoami', 'whakapapa', 'route', 'showStory', 'goBack']),
+    ...mapGetters(['whoami', 'whakapapa', 'route', 'showStory', 'goBack', 'storeDialog']),
     classObject: function () {
       return {
         'mobile': this.mobile,
@@ -162,16 +162,19 @@ export default {
   watch: {
     whoami (newVal) {
       this.profile.avatarImage = newVal.profile.avatarImage
+    },
+    route (newVal) {
+      if (this.storeDialog) this.setDialog(null)
     }
   },
   methods: {
-    ...mapActions(['setProfileById', 'setComponent', 'setShowStory']),
+    ...mapActions(['setProfileById', 'setComponent', 'setShowStory', 'setDialog']),
     resetWindow () {
       window.scrollTo(0, 0)
     },
     goProfile () {
       this.setComponent('profile')
-      this.setProfileById(this.profile.id)
+      // this.setProfileById(this.profile.id)
       if (this.drawer) this.drawer = false
     },
     goArchive () {

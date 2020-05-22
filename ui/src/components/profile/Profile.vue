@@ -124,9 +124,6 @@ export default {
         return 'no dob'
       }
       return formattedDate
-    },
-    updateDialog (dialog) {
-      this.$emit('setDialog', dialog)
     }
   }
 }

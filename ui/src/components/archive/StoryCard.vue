@@ -317,8 +317,11 @@ export default {
       this.turncateText = !this.turncateText
     },
     openProfile (profile) {
+      var dialog = {
+        active: 'side-vew-edit'
+      }
       // link to profileshow
-      this.$router.push({ name: 'profileShow', params: { id: profile.id } })
+      this.setDialog('side-view-dialog')
     },
     toggleSideDialog (profile) {
       console.log('TODO - need to connect side view dialog')

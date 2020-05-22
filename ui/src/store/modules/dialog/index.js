@@ -2,25 +2,41 @@
 // import { createProvider } from '@/plugins/vue-apollo'
 
 const state = {
-  dialog: null
+  dialog: null,
+  preview: false
 }
 
 const getters = {
-  thisDialog: state => {
+  storeDialog: state => {
     return state.dialog
+  },
+  previewProfile: state => {
+    return state.preview
   }
 }
 
 const mutations = {
   updateDialog (state, dialog) {
     state.dialog = dialog
+  },
+  updatePreview (state, preview) {
+    state.preview = preview
   }
 }
 
 const actions = {
   setDialog ({ commit }, dialog) {
-    console.log('setting dialog', dialog)
-    commit('updateDialog', dialog)
+    if (dialog === null) {
+      commit('updateDialog', dialog)
+      commit('updatePreview', false)
+    }
+    else if (typeof dialog === 'object') {
+      commit('updateDialog', dialog.active)
+      commit('updatePreview', dialog.preview)
+    }
+    else {
+      commit('updateDialog', dialog)
+    }
   }
 }
 

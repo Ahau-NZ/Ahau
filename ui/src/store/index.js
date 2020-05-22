@@ -59,7 +59,6 @@ const store = new Vuex.Store({
       commit('updateLoading', loading)
     },
     async setWhoami ({ commit }) {
-      console.log('setting who am i')
       const result = await apolloClient.query({
         query: gql`
           {

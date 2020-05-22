@@ -340,7 +340,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setLoading', 'setProfile', 'addNestedWhakapapa', 'setProfileById', 'addWhakapapa', 'addRelationshipLinks']),
+    ...mapActions(['setLoading', 'setProfile', 'addNestedWhakapapa', 'addWhakapapa', 'addRelationshipLinks']),
     load (status) {
       this.setLoading(status)
     },

@@ -27,8 +27,8 @@
 import calculateAge from '@/lib/calculate-age'
 import formatDate from '@/lib/format-date'
 import AvatarGroup from '@/components/AvatarGroup.vue'
-
 import ProfileInfoItem from './ProfileInfoItem'
+import { mapActions } from 'vuex'
 
 export default {
   name: 'ProfileInfoCard',
@@ -63,8 +63,12 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['setProfileById', 'setDialog']),
+
     openProfile (profile) {
-      this.$emit('setupProfile', profile.id)
+      this.setProfileById({id:profile.id, type:'preview'})
+      this.setDialog({active:'view-edit-node', preview:true})
+      // this.$emit('setupProfile', profile.id)
     }
   }
 }

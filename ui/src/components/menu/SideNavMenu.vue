@@ -4,7 +4,7 @@
       <v-col align="center" v-if="!mobile" class="pa-2 ml-5" cols="12">
         <v-row cols="12" xs="12" sm="12">
           <v-btn @click="goProfile()" light text style="height: auto;">
-            <Avatar :image="profile.avatarImage" :alt="profile.preferredName" :size="this.activeComponent === 'profile' ? '12vw' : '12vw'" />
+            <Avatar :image="profile.avatarImage" :gender="profile.gender" :alt="profile.preferredName" :size="this.activeComponent === 'profile' ? '12vw' : '12vw'" />
           </v-btn>
         </v-row>
       </v-col>
@@ -12,8 +12,8 @@
         <v-col align="center" :class="mobile ? 'py-0 px-0' : 'py-1'">
           <v-btn @click="setActive('profile')" light :fab="mobile" text>
             <v-col class="pa-0" :cols="mobile ? '12' : '2'">
-              <!-- <Avatar :image="selectedProfile.avatarImage" size="35px"/> -->
-              <UserIcon size="medium" :color="activeComponent === 'profile' ? 'red' : 'black'"/>
+              <Avatar v-if="mobile && activeComponent !=='profile'" :image="profile.avatarImage" size="40px"/>
+              <UserIcon v-else size="medium" :color="activeComponent === 'profile' ? 'red' : 'black'"/>
             </v-col>
             <v-col class="py-0" v-if="!mobile && !isOverflowing">
               <span ref="text" :style="activeComponent === 'profile' ? 'color:#B02425;' : ''" class="ml-2 nav-label subtitle-1">
@@ -109,7 +109,7 @@ export default {
     this.offset = this.$refs.sideNav.offsetTop - 40
   },
   computed: {
-    ...mapGetters(['activeComponent', 'selectedProfile', 'showStory', 'whoami']),
+    ...mapGetters(['activeComponent', 'showStory', 'whoami', 'storeDialog']),
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
@@ -135,10 +135,10 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setComponent', 'setShowStory']),
+    ...mapActions(['setComponent', 'setShowStory', 'setDialog']),
     goProfile () {
       this.setActive('profile')
-      this.$router.push({ name: 'profileShow', params: { id: this.whoami.profile.id } })
+      this.$router.push({ name: 'profileShow', params: { id: this.profile.id } })
     },
     goArchive () {
       if (this.showStory) {
@@ -147,6 +147,7 @@ export default {
     },
     setActive (component) {
       if (this.showStory) this.setShowStory()
+      // if (this.storeDialog) this.setDialog(null)
       this.setComponent(component)
       window.scrollTo(0, 0)
     },

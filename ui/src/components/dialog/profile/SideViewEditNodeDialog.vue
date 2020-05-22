@@ -32,7 +32,8 @@
           >
             <v-icon small class="blue--text" left>mdi-pencil</v-icon>Profile
           </v-btn>
-          <v-btn
+          <v-btn 
+            v-if="!preview"
             @click="toggleEdit"
             color="white"
             text
@@ -126,7 +127,7 @@
                     :show-labels="true"
                     @profile-click="openProfile($event)"
                   >
-                    <AddButton @click="toggleNew('parent')" />
+                    <AddButton v-if="!preview" @click="toggleNew('parent')" />
                   </AvatarGroup>
                 </v-col>
 
@@ -141,7 +142,7 @@
                     :show-labels="true"
                     @profile-click="openProfile($event)"
                   >
-                   <AddButton v-if="view.focus !== profile.id" @click="toggleNew('sibling')" />
+                   <AddButton v-if="!preview && view.focus !== profile.id" @click="toggleNew('sibling')" />
                   </AvatarGroup>
                 </v-col>
 
@@ -157,7 +158,7 @@
                       :show-labels="true"
                       @profile-click="openProfile($event)"
                     >
-                      <AddButton @click="toggleNew('child')" />
+                      <AddButton v-if="!preview" @click="toggleNew('child')" />
                     </AvatarGroup>
                     <AvatarGroup
                       v-else
@@ -167,7 +168,7 @@
                       :show-labels="true"
                       @profile-click="openProfile($event)"
                     >
-                    <AddButton @click="toggleNew('child')" />
+                    <AddButton v-if="!preview" @click="toggleNew('child')" />
                   </AvatarGroup>
                 </v-col>
               </v-row>
@@ -246,7 +247,7 @@
                         </v-col>
                         <v-row class="mx-1">
                           <v-col cols="8"></v-col>
-                          <AddButton :align="'flex-end'" :width="'50px'" label="Add name" @click="addAltNameField" row/>
+                          <AddButton v-if="!preview" :align="'flex-end'" :width="'50px'" label="Add name" @click="addAltNameField" row/>
                         </v-row>
                       </template>
                     </v-row>
@@ -515,7 +516,7 @@
           >
             <v-icon small class="blue--text" left>mdi-account-circle</v-icon>Profile
           </v-btn>
-            <v-btn @click="toggleEdit" text medium class="blue--text">
+            <v-btn v-if="!preview" @click="toggleEdit" text medium class="blue--text">
               <v-icon small class="blue--text" left>mdi-pencil</v-icon>Edit
             </v-btn>
           </v-row>
@@ -608,7 +609,7 @@
                       :show-labels="true"
                       @profile-click="openProfile($event)"
                     >
-                      <AddButton @click="toggleNew('parent')"/>
+                      <AddButton v-if="!preview" @click="toggleNew('parent')"/>
                     </AvatarGroup>
                   </v-col>
 
@@ -623,7 +624,7 @@
                       :show-labels="true"
                       @profile-click="openProfile($event)"
                     >
-                      <AddButton v-if="view.focus !== profile.id" @click="toggleNew('sibling')" />
+                      <AddButton v-if="!preview && view.focus !== profile.id" @click="toggleNew('sibling')" />
                     </AvatarGroup>
                   </v-col>
 
@@ -639,7 +640,7 @@
                       :show-labels="true"
                       @profile-click="openProfile($event)"
                     >
-                      <AddButton @click="toggleNew('child')" />
+                      <AddButton v-if="!preview" @click="toggleNew('child')" />
                     </AvatarGroup>
                     <AvatarGroup
                       v-else
@@ -649,7 +650,7 @@
                       :show-labels="true"
                       @profile-click="openProfile($event)"
                     >
-                      <AddButton @click="toggleNew('child')" />
+                      <AddButton v-if="!preview" @click="toggleNew('child')" />
                     </AvatarGroup>
                   </v-col>
                 </v-row>
@@ -725,7 +726,7 @@
                         </v-col>
                         <v-row class="mx-1">
                           <v-col cols="8"></v-col>
-                          <AddButton :align="'flex-end'" :width="'50px'" label="Add name" @click="addAltNameField" row/>
+                          <AddButton v-if="!preview" :align="'flex-end'" :width="'50px'" label="Add name" @click="addAltNameField" row/>
                         </v-row>
                       </template>
                     </v-row>
@@ -1014,7 +1015,8 @@ export default {
     sideMenu: { type: Boolean, default: false },
     relationshipLinks: { type: Array },
     show: { type: Boolean, required: true },
-    readonly: { type: Boolean, default: false }
+    readonly: { type: Boolean, default: false },
+    preview: {type: Boolean, default: false}
   },
 
   data () {
