@@ -86,8 +86,9 @@
           <v-list-item-subtitle  class="pb-1" style="color:grey"> Categories </v-list-item-subtitle>
           <v-chip-group column v-if="story.categories.length > 0">
             <v-chip v-for="(category, i) in story.categories" :key="i"
-              label
+              pill
               outlined
+              :color="colour(i)"
               width="30px"
             >
               {{ category.title }}
@@ -233,6 +234,7 @@ import { mapActions, mapGetters } from 'vuex'
 import EditStoryButton from '@/components/button/EditStoryButton.vue'
 import EditArtefactButton from '@/components/button/EditArtefactButton.vue'
 import ArtefactGroup from '@/components/artefacts/ArtefactGroup.vue'
+import { colours } from '@/lib/colours.js'
 
 export default {
   name: 'StoryCard',
@@ -300,6 +302,9 @@ export default {
   },
   methods: {
     ...mapActions(['setStory', 'setShowArtefact', 'setProfile', 'setDialog', 'setProfileById', 'setShowStory']),
+    colour (index) {
+      return colours[index]
+    },
     toggleStoryEdit () {
       this.$emit('updateDialog', 'editStoryDialog')
     },

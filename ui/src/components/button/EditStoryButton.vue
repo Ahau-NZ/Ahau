@@ -1,13 +1,8 @@
 <template>
-  <v-tooltip left>
-    <template v-slot:activator="{ on }">
-        <v-btn v-on="on"  @click="toggle()" class="pr-0" text color="#383838">
-          Edit story
-          <v-icon class="black--text ml-3">mdi-file-document-edit-outline</v-icon>
-        </v-btn>
-    </template>
-    <span>Update record</span>
-  </v-tooltip>
+  <v-btn v-on="on"  @click="toggle()" class="pr-0" text color="#2f4f4f">
+    Update record
+    <v-icon class="ml-3" color="#2f4f4f">mdi-file-document-edit-outline</v-icon>
+  </v-btn>
 </template>
 <script>
 export default {

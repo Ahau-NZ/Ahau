@@ -30,7 +30,7 @@
             medium
             class="blue--text"
           >
-            <v-icon small class="blue--text" left>mdi-pencil</v-icon>Profile
+            <v-icon small class="blue--text" left>mdi-account-circle</v-icon>Profile
           </v-btn>
           <v-btn
             v-if="!preview"
@@ -483,7 +483,7 @@
         <v-row class="ma-0 pa-0 flex-column">
           <!-- Desktop: Dialog close button -->
           <v-row class="justify-end pr-2">
-              <v-icon @click="close" color="secondary">mdi-close</v-icon>
+              <v-icon @click="close" style="z-index:2" color="secondary">mdi-close</v-icon>
           </v-row>
           <!-- Desktop: Avatar -->
           <v-row class="justify-center">

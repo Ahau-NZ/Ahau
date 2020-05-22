@@ -143,6 +143,7 @@ export default {
     goArchive () {
       if (this.showStory) {
         this.setShowStory()
+        this.setDialog(null)
       } else this.setActive('archive')
     },
     setActive (component) {
