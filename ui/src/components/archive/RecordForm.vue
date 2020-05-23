@@ -5,14 +5,14 @@
       <v-row>
         <v-col cols="12" sm="12" md="6">
           <v-row>
-            <v-col cols="12">
+            <v-col cols="12" class="pa-1">
               <v-text-field
                 v-model="formData.title"
                 label="Title"
                 v-bind="customProps"
               />
             </v-col>
-            <v-col cols="12">
+            <v-col cols="12" class="pa-1">
               <v-textarea
                 v-model="formData.description"
                 label="Description"
@@ -23,14 +23,14 @@
               >
               </v-textarea>
             </v-col>
-            <v-col cols="12" sm="12" md="6">
+            <v-col cols="12" sm="12" md="6" class="pa-1">
               <v-text-field
                 v-model="formData.recordDate"
                 label="Date"
                 v-bind="customProps"
               />
             </v-col>
-            <v-col cols="12" sm="12" md="6">
+            <v-col cols="12" sm="12" md="6" class="pa-1">
               <v-checkbox v-model="hasEndDate" v-if="!hasEndDate"
                 label="include an end date" :hide-details="true"
                 v-bind="customProps"
@@ -233,14 +233,14 @@
               />
               <ChipGroup :chips="formData.relatedRecords" @delete="removeItem(formData.relatedRecords, $event)" />
             </v-col>
-            <v-col :cols="mobile ? '12' : '6'" class="pt-0">
+            <v-col :cols="mobile ? '12' : '4'" class="pt-0 pa-1">
               <v-text-field
                 v-model="formData.submissionDate"
                 label="Submission Date"
                 v-bind="customProps"
               />
             </v-col>
-            <v-col cols="12">
+            <v-col cols="12" class="pa-1">
               <v-textarea
                 v-model="formData.contributionNotes"
                 label="Contribution notes"
@@ -251,7 +251,7 @@
               >
               </v-textarea>
             </v-col>
-            <v-col cols="12">
+            <v-col cols="12" class="pa-1">
               <v-textarea
                 v-model="formData.locationDescription"
                 label="Location description"
@@ -262,7 +262,7 @@
               >
               </v-textarea>
             </v-col>
-            <v-col cols="12">
+            <v-col cols="12" class="pa-1">
               <v-textarea
                 v-model="formData.culturalNarrative"
                 label="Cultural Narrative"
@@ -273,35 +273,35 @@
               >
               </v-textarea>
             </v-col>
-            <v-col :cols="mobile ? '6' : '3'">
+            <v-col :cols="mobile ? '6' : '3'" class="pa-1">
               <v-text-field
                 v-model="formData.format"
                 label="Format"
                 v-bind="customProps"
               />
             </v-col>
-            <v-col :cols="mobile ? '6' : '3'">
+            <v-col :cols="mobile ? '6' : '3'" class="pa-1">
               <v-text-field
                 v-model="formData.identifier"
                 label="Identifier"
                 v-bind="customProps"
               />
             </v-col>
-            <v-col :cols="mobile ? '6' : '3'">
+            <v-col :cols="mobile ? '6' : '3'" class="pa-1">
               <v-text-field
                 v-model="formData.source"
                 label="Source"
                 v-bind="customProps"
               />
             </v-col>
-            <v-col :cols="mobile ? '6' : '3'">
+            <v-col :cols="mobile ? '6' : '3'" class="pa-1">
               <v-text-field
                 v-model="formData.language"
                 label="Language"
                 v-bind="customProps"
               />
             </v-col>
-            <v-col cols="12">
+            <v-col cols="12" class="pa-1">
               <v-textarea
                 v-model="formData.translation"
                 label="Translation/Transcription"
@@ -391,9 +391,8 @@ export default {
         outlined: true,
         hideDetails: true,
         placeholder: ' ',
-        class: 'mt-3',
+        class: 'custom' ,
         clearable: true,
-        dense: true
       }
     }
   },
