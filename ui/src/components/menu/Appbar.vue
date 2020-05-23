@@ -28,7 +28,7 @@
       <!-- Desktop doesn't use a drawer, it has the links directly in the app bar -->
       <template v-if="!mobile">
         <!--  WIP links -->
-        <v-btn text @click.stop="dialog = true" active-class="no-active" class="red--text text-uppercase ms-10">Tribes</v-btn>
+        <v-btn text @click.stop="setDialog('coming-soon')" active-class="no-active" class="red--text text-uppercase ms-10">Tribes</v-btn>
         <v-btn active-class="no-active" text @click.native="setComponent('archive')" :to="{ name: 'profileShow', params: { id: profile.id } }" class="white--text text-uppercase ms-10">Archive</v-btn>
 
         <v-btn active-class="no-active" text @click.native="resetWindow" to="/whakapapa" class="white--text text-uppercase ms-10">whakapapa</v-btn>
@@ -73,7 +73,7 @@
         <v-list-item active-class="no-active" link @click.native="goArchive()" :to="{ name: 'profileShow', params: { id: profile.id } }" >
           <v-list-item-title class="white--text" >Archive</v-list-item-title>
         </v-list-item>
-        <v-list-item active-class="no-active" link @click.stop="dialog = true">
+        <v-list-item active-class="no-active" link @click.stop="setDialog('coming-soon')">
           <v-list-item-title class="red--text">Tribes</v-list-item-title>
         </v-list-item>
         <v-list-item class="pt-12">
@@ -81,21 +81,6 @@
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
-
-    <!-- coming soon dialog  -->
-    <v-dialog v-model="dialog" max-width="450">
-      <v-card>
-        <v-card-title class="headline">Aroha mai</v-card-title>
-        <v-card-text>
-          These features are still under construction, but we can't wait to
-          share this mahi with you soon in upcoming releases
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="red darken-1" text @click="dialog = false">Ka pai</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
   </div>
 </template>
 

@@ -13,11 +13,11 @@
         elevation="0"
         style="min-width:80px;"
         @click.prevent="updateModel(i)"
-      > 
+      >
         <v-img v-if="artefact.__typename === 'Photo'" :src="artefact.blob" height="80px" width="80px">
         </v-img>
-        <v-icon class="pt-4 pl-4" large v-if="artefact.__typename === 'Video'" style="justify-self:center">mdi-movie</v-icon>
-        <v-icon class="pt-4 pl-4" large v-if="artefact.__typename === 'Audio'" height="80px" width="80px">mdi-music</v-icon>
+        <v-icon class="pt-4 pl-4" dark large v-if="artefact.__typename === 'Video'" style="justify-self:center">mdi-movie</v-icon>
+        <v-icon class="pt-4 pl-4" dark large v-if="artefact.__typename === 'Audio'" height="80px" width="80px">mdi-music</v-icon>
         <v-fade-transition>
           <v-overlay :absolute="true" opacity="0.6" :value="!match(i)"/>
         </v-fade-transition>

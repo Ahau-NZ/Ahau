@@ -48,24 +48,28 @@
           </v-btn>
         </v-col>
         <v-col :class="mobile ? 'py-0 px-0' : 'py-1'">
-          <v-btn @click="setActive('timeline')" light :fab="mobile" text>
+          <!-- TODO: connect timeline -->
+          <!-- <v-btn @click="setActive('timeline')" light :fab="mobile" text> -->
+          <v-btn @click="setDialog('coming-soon')" light :fab="mobile" text>
             <v-col class="pa-0" :cols="mobile ? '12' : '2'">
-              <TimelineIcon size="medium" :color="activeComponent === 'timeline' ? 'red' : 'black'"/>
+              <TimelineIcon size="medium" :color="activeComponent === 'timeline' ? 'red' : 'disabled'"/>
             </v-col>
             <v-col class="py-0" v-if="!mobile && !isOverflowing">
-              <span ref="text" :style="activeComponent === 'timeline' ? 'color:#B02425;' : ''" class="ml-2 nav-label subtitle-1">
+              <span ref="text" :style="activeComponent === 'timeline' ? 'color:#B02425;' : 'black'" class="ml-2 nav-label subtitle-1">
                 Timeline
               </span>
             </v-col>
           </v-btn>
         </v-col>
         <v-col :class="mobile ? 'py-0 px-0' : 'py-1'">
-          <v-btn @click="setActive('whakapapa')" light :fab="mobile" text>
+          <!-- TODO: connect whakapapa -->
+          <!-- <v-btn @click="setActive('whakapapa')" light :fab="mobile" text> -->
+          <v-btn @click="setDialog('coming-soon')" light :fab="mobile" text>
             <v-col class="pa-0" :cols="mobile ? '12' : '2'">
-              <WhakapapaIcon :size="mobile ? 'large' : 'medium'" :color="activeComponent === 'whakapapa' ? 'red' : 'black'"/>
+              <WhakapapaIcon :size="mobile ? 'large' : 'medium'" :color="activeComponent === 'whakapapa' ? 'red' : 'disabled'"/>
             </v-col>
             <v-col class="py-0" v-if="!mobile && !isOverflowing">
-              <span ref="text" :style="activeComponent === 'whakapapa' ? 'color:#B02425;' : ''" class="ml-2 subtitle-1">
+              <span ref="text" :style="activeComponent === 'whakapapa' ? 'color:#B02425;' : 'black'" class="ml-2 subtitle-1">
                 Whakapapa
               </span>
             </v-col>

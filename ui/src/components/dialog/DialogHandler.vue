@@ -86,6 +86,10 @@
       :title="'View Story'"
       @close="close"
     />
+    <ComingSoonDialog
+      :show="isActive('coming-soon')"
+      @close="close"
+    />
   </div>
 </template>
 
@@ -102,6 +106,7 @@ import WhakapapaTableHelper from '@/components/dialog/whakapapa/WhakapapaTableHe
 import NewCollectionDialog from '@/components/dialog/NewCollectionDialog.vue'
 import NewRecordDialog from '@/components/dialog/NewRecordDialog.vue'
 import ViewRecordDialog from '@/components/dialog/archive/ViewRecordDialog.vue'
+import ComingSoonDialog from '@/components/dialog/ComingSoonDialog.vue'
 
 import gql from 'graphql-tag'
 
@@ -131,7 +136,8 @@ export default {
     WhakapapaTableHelper,
     NewCollectionDialog,
     NewRecordDialog,
-    ViewRecordDialog
+    ViewRecordDialog,
+    ComingSoonDialog
   },
   props: {
     story: {

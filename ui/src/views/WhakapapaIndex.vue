@@ -2,16 +2,23 @@
   <div
     :class="{
       'body-width': mobile,
-      'fill-height': mobile,
+      'top-margin' : mobile,
       white: mobile
     }"
   >
+  <!-- <div
+    :class="{
+      'body-width': mobile,
+      'fill-height': mobile,
+      white: mobile
+    }"
+  > -->
     <v-container
       :class="{
         'desktopContainer': !mobile,
         'mobileContainer': mobile
       }"
-      class="body-width white mx-auto"
+      class="body-width white mx-auto ml-0"
       style="position:relative"
     >
       <v-row class="pa-5" light>
@@ -555,6 +562,10 @@ export default {
 
 .mobileContainer {
   padding: 0px;
+}
+
+.top-margin {
+  margin-top: 80px;
 }
 
 </style>

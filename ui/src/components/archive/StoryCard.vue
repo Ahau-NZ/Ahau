@@ -1,5 +1,5 @@
 <template>
-  <v-card @click="showStory($event)" :class="customClass" :flat="fullStory" :ripple="false" class="mx-auto" :light="!this.showArtefact" width="100%">
+  <v-card @click="showStory()" :class="customClass" :flat="fullStory" :ripple="false" class="mx-auto" :light="!this.showArtefact" width="100%">
     <!-- RECORD CONTRUBUTORS-STORY PREVIEW -->
     <v-list-item class="px-0" style="min-height:0; height:10px">
       <v-list-item-icon v-if="!fullStory" class="pt-0 mt-0" style="position:absolute; top:5px; right:1px; margin-right:0px">
@@ -20,22 +20,16 @@
     </v-list-item>
     <!-- ARTEFACT CAROUSEL -->
     <v-list-item v-if="story.artefacts && story.artefacts.length" class="px-0">
-      <v-list-item-content>
+      <v-list-item-content :style="!mobile && !showArtefact && story.artefacts.length > 1 ? 'margin-bottom:-80px':''">
+        <!-- <v-carousel v-model="model" hide-delimiters :show-arrows="!mobile && fullStory" :show-arrows-on-hover="!mobile" :height="showArtefact ? 'auto' : mobile ? '300px' : '500px'"> -->
         <v-carousel v-model="model" hide-delimiters :show-arrows="!mobile && fullStory" :show-arrows-on-hover="!mobile" :height="showArtefact ? 'auto' : mobile ? '300px' : '500px'">
           <v-carousel-item v-for="(artefact,i) in story.artefacts" :key="artefact.id">
             <Artefact :model="model" :index="i" @showArtefact="toggleShowArtefact($event)" :artefact="artefact" />
           </v-carousel-item>
-          <!-- ARTEFACTGROUP DESKTOP -->
-          <ArtefactGroup
-            v-if="!showArtefact && story.artefacts.length > 1"
-            :artefacts="story.artefacts"
-            :model="model"
-            @updateModel="updateModel($event)"
-          />
         </v-carousel>
-        <!-- ARTEFACT GROUP MOBILE -->
+        <!-- ARTEFACT GROUP  -->
         <ArtefactGroup
-          v-if="mobile && !showArtefact && story.artefacts.length > 1"
+          v-if="!showArtefact && story.artefacts.length > 1"
           :artefacts="story.artefacts"
           :model="model"
           @updateModel="updateModel($event)"
@@ -306,10 +300,10 @@ export default {
       return colours[index]
     },
     toggleStoryEdit () {
-      this.$emit('updateDialog', 'editStoryDialog')
+      console.log('connect story edit dialog')
     },
     toggleArtefactEdit (artefact) {
-      this.$emit('updateDialog', 'editArtefactDialog')
+      console.log('connect artefact edit dialog')
     },
     // toggle artefact view
     toggleShowArtefact (artefact) {
@@ -319,10 +313,10 @@ export default {
       }
     },
     // toggle story view
-    showStory (e) {
+    showStory () {
       if (!this.fullStory) {
         this.setStory(this.story)
-        this.$emit('showStory')
+        this.$emit('toggleStory')
       }
     },
     showText () {

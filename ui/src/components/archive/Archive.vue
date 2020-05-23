@@ -34,12 +34,12 @@
           <v-divider class="mt-6 mb-8" light></v-divider> -->
           <div v-if="!showStory">
             <v-row v-for="(story, i) in stories" :key="`story-${i}-id-${story.id}`" class="mb-10">
-              <StoryCard @updateDialog="updateDialog(dialog)" @showStory="toggleStory()" :story="story" />
+              <StoryCard @updateDialog="updateDialog(dialog)" @toggleStory="toggleStory()" :story="story" />
             </v-row>
           </div>
           <div v-else>
             <v-row :class="mobile ? 'pa-0': 'px-6 top-margin'">
-              <StoryCard :fullStory="true" @showStory="toggleStory()" :story="currentStory" />
+              <StoryCard :fullStory="true" @toggleStory="toggleStory()" :story="currentStory" />
             </v-row>
           </div>
         </v-col>
