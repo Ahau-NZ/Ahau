@@ -90,11 +90,6 @@
       @close="close"
       @submit="editStory($event)"
     />
-    <ViewRecordDialog
-      :show="isActive('view-record')"
-      :title="'View Story'"
-      @close="close"
-    />
   </div>
 </template>
 
@@ -110,7 +105,6 @@ import WhakapapaShowHelper from '@/components/dialog/whakapapa/WhakapapaShowHelp
 import WhakapapaTableHelper from '@/components/dialog/whakapapa/WhakapapaTableHelper.vue'
 import NewCollectionDialog from '@/components/dialog/archive/NewCollectionDialog.vue'
 import NewRecordDialog from '@/components/dialog/archive/NewRecordDialog.vue'
-import ViewRecordDialog from '@/components/dialog/archive/ViewRecordDialog.vue'
 
 import gql from 'graphql-tag'
 
@@ -141,7 +135,6 @@ export default {
     WhakapapaTableHelper,
     NewCollectionDialog,
     NewRecordDialog,
-    ViewRecordDialog
   },
   props: {
     story: {
@@ -161,7 +154,7 @@ export default {
       required: false,
       default: null,
       validator: (val) => [
-        'new-node', 'view-edit-node', 'delete-node', 'new-collection', 'new-story', 'edit-story', 'edit-node', 'view-record',
+        'new-node', 'view-edit-node', 'delete-node', 'new-collection', 'new-story', 'edit-story', 'edit-node',
         'whakapapa-view', 'whakapapa-edit', 'whakapapa-delete', 'whakapapa-helper', 'whakapapa-table-helper'
       ].includes(val)
     },
