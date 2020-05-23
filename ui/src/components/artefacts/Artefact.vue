@@ -1,11 +1,11 @@
 <template>
-  <v-sheet @click="toggleArtefact">
+  <v-sheet @click="toggleArtefact" style="background-color:grey">
     <div v-if="artefact.__typename === 'Video'" :style="showArtefact ? mobile ? 'height:300px' : 'height:500px;' : 'height:auto'" >
       <video ref="video" class="video" controls>
         <source src="@/assets/buildCSV.mp4" type="video/mp4">
       </video>
     </div>
-    <div v-if="artefact.__typename === 'Audio'" :style="showArtefact ? 'height:300px': mobile ? 'background-color:dimgray;height:300px' : 'background-color:dimgray;height:500px'">
+    <div v-if="artefact.__typename === 'Audio'" :style="showArtefact ? 'height:300px': mobile ? 'height:300px' : 'height:500px'">
       <audio ref="audio" class="audio" controls>
           <source src="@/assets/ignore/audio.mp3" type="audio/mpeg"/>
       </audio>

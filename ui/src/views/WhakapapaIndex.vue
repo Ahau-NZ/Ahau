@@ -1,24 +1,24 @@
 <template>
-  <div
+  <!-- <div
     :class="{
       'body-width': mobile,
       'top-margin' : mobile,
       white: mobile
     }"
-  >
-  <!-- <div
+  > -->
+  <div
     :class="{
       'body-width': mobile,
       'fill-height': mobile,
       white: mobile
     }"
-  > -->
+  >
     <v-container
       :class="{
         'desktopContainer': !mobile,
         'mobileContainer': mobile
       }"
-      class="body-width white mx-auto ml-0"
+      class="body-width white mx-auto"
       style="position:relative"
     >
       <v-row class="pa-5" light>

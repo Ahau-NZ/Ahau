@@ -2,9 +2,12 @@
   <div>
     <v-app-bar  v-if="mobile || enableMenu" :app="mobile && app" :class="classObject" :flat="!mobile"
       color="#303030" fixed>
-      <v-btn v-if="showStory && mobile" @click="setShowStory" icon dark>
+      <v-btn v-if="isgoBack" @click="goBack" icon dark>
         <v-icon>mdi-arrow-left</v-icon>
       </v-btn>
+      <!-- <v-btn v-if="showStory && mobile" @click="setShowStory" icon dark>
+        <v-icon>mdi-arrow-left</v-icon>
+      </v-btn> -->
       <template v-else>
         <router-link to="/" v-if="enableMenu" class="logo-link"  @click.native="karakiaWhakamutunga()">
           <img src="@/assets/logo_red.svg" class="logo" />
@@ -123,7 +126,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['whoami', 'whakapapa', 'route', 'showStory', 'goBack', 'storeDialog']),
+    ...mapGetters(['whoami', 'whakapapa', 'route', 'showStory', 'storeDialog']),
     classObject: function () {
       return {
         'mobile': this.mobile,
@@ -139,6 +142,12 @@ export default {
         return this.route.from.name === 'whakapapaShow' && this.route.name === 'profileShow'
       }
       return false
+    },
+    isgoBack () {
+      if (this.mobile) {
+        if (this.route.name === 'whakapapaShow') return true
+        else if (this.showStory) return true
+      } return false
     }
   },
   beforeMount () {
@@ -193,6 +202,10 @@ export default {
     },
     toggleDrawer () {
       this.drawer = !this.drawer
+    },
+    goBack () {
+      if (this.route.name === 'whakapapaShow') return this.$router.push({ name: 'whakapapaIndex' })
+      else if (this.showStory) return this.setShowStory()
     }
 
   },
