@@ -91,7 +91,7 @@ export default {
         icon: 'mdi-folder-multiple-outline'
       },
       {
-        title: 'Create a new Record',
+        title: 'Add new record',
         dialog: 'new-story',
         icon: 'mdi-file-outline'
       }

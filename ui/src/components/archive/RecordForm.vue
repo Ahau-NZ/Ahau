@@ -3,7 +3,7 @@
   <div>
     <v-form ref="form" v-model="form.valid" lazy-validation>
       <v-row>
-        <v-col cols="12" sm="12" md="6">
+        <v-col cols="12" sm="12" md="12">
           <v-row>
             <v-col cols="12" class="pa-1">
               <v-text-field
@@ -12,6 +12,20 @@
                 v-bind="customProps"
               />
             </v-col>
+         
+            <v-col cols="12">
+              <!-- <input v-show="false" ref="fileInput" type="file" accept="audio/*,video/*,image/*" multiple @change="processMediaFiles($event)" /> -->
+              <!-- <AddButton @click="$refs.fileInput.click()" label="Attact media or files"/> -->
+              <AddButton @click="warn('artefact')" label="Attact media or files"/>
+            </v-col>
+            <v-col cols="12" v-if="formData.artefacts.length > 0">
+              <MediaCard :artefacts.sync="formData.artefacts"/>
+            </v-col>
+            <v-col cols="12">
+              <AddButton @click="warn('location')" label="Add location"/>
+            </v-col>
+           
+
             <v-col cols="12" class="pa-1">
               <v-textarea
                 v-model="formData.description"
@@ -43,8 +57,9 @@
                 @click:clear="hasEndDate = false"
               />
             </v-col>
-            <v-col :cols="mobile ? '12' : formData.mentions.length > 0 ? 'auto' : '4'">
-              <AddButton class="right: 0;" label="Mention" @click="showMentions = true" />
+            
+            <v-col :cols="mobile ? '12' : formData.mentions.length > 2 ? 'auto' : '4'">
+              <AddButton size="20px" icon="mdi-account-multiple-plus" iconClass="pr-3" class="right: 0;" label="Mention" @click="showMentions = true" />
               <ProfileSearchBar
                 :selectedItems.sync="formData.mentions"
                 :items="items"
@@ -81,7 +96,7 @@
                   close-icon="mdi-close"
                   @click:close="removeItem(formData.categories, i)"
                 >
-                  {{ category }}
+                  {{ category.title }}
                 </v-chip>
               </v-chip-group>
             </v-col>
@@ -147,27 +162,27 @@
             />
           </v-col> -->
           <!-- <v-spacer/> -->
-          <v-col cols="12">
+          <!-- <v-col cols="12"> -->
             <!-- <input v-show="false" ref="fileInput" type="file" accept="audio/*,video/*,image/*" multiple @change="processMediaFiles($event)" /> -->
             <!-- <AddButton @click="$refs.fileInput.click()" label="Attact media or files"/> -->
-            <AddButton @click="warn('artefact')" label="Attact media or files"/>
+            <!-- <AddButton @click="warn('artefact')" label="Attact media or files"/>
           </v-col>
           <v-col cols="12" v-if="formData.artefacts.length > 0">
             <MediaCard :artefacts.sync="formData.artefacts"/>
           </v-col>
           <v-col cols="12">
             <AddButton @click="warn('location')" label="Add location"/>
-          </v-col>
+          </v-col> -->
         </v-col>
       </v-row>
       <v-divider/>
       <v-card-actions class="pt-2 pb-2">
-        <v-row>
+        <v-row @click="show = !show" ripple class="clickable">
           <v-col>
             <span class="pa-0 ma-0">Advanced</span>
           </v-col>
           <!-- <v-col> -->
-            <v-btn icon @click="show = !show" right>
+            <v-btn icon right>
               <v-icon>{{ show ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
             </v-btn>
           <!-- </v-col> -->
@@ -231,7 +246,7 @@
                 type="collection"
                 item="title"
               />
-              <ChipGroup :chips="formData.relatedRecords" @delete="removeItem(formData.relatedRecords, $event)" />
+              <ChipGroup :chips="formData.relatedRecords" deletable @delete="removeItem(formData.relatedRecords, $event)" />
             </v-col>
             <v-col :cols="mobile ? '12' : '4'" class="pt-0 pa-1">
               <v-text-field
@@ -242,6 +257,7 @@
             </v-col>
             <v-col cols="12" class="pa-1">
               <v-textarea
+                v-if="show"
                 v-model="formData.contributionNotes"
                 label="Contribution notes"
                 v-bind="customProps"
@@ -253,6 +269,7 @@
             </v-col>
             <v-col cols="12" class="pa-1">
               <v-textarea
+                v-if="show"
                 v-model="formData.locationDescription"
                 label="Location description"
                 v-bind="customProps"
@@ -264,6 +281,7 @@
             </v-col>
             <v-col cols="12" class="pa-1">
               <v-textarea
+                v-if="show"
                 v-model="formData.culturalNarrative"
                 label="Cultural Narrative"
                 v-bind="customProps"
@@ -363,7 +381,7 @@ export default {
   data () {
     return {
       show: false,
-      categories: ['one', 'two', 'three', 'four', 'five', 'six', 'seven'],
+      categories: [{title: 'one'}, {title: 'two'}, {title: 'three'}, {title: 'four'}, {title: 'five'} , {title: 'six'}, {title: 'seven'}],
       collections: firstMocks,
       showMentions: false,
       showCategories: false,
@@ -499,5 +517,9 @@ export default {
 
   .field {
     color: rgba(0, 0, 0, 0.6);
+  }
+
+  .clickable {
+    cursor: pointer;
   }
 </style>

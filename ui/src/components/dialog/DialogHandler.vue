@@ -77,7 +77,7 @@
     <NewRecordDialog
       v-if="isActive('new-story')"
       :show="isActive('new-story')"
-      :title="'Create a new Story'"
+      :title="'Add new Record'"
       @close="close"
       @submit="addStory($event)"
     />
