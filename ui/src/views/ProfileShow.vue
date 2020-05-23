@@ -29,6 +29,7 @@
         <Profile v-if="activeComponent === 'profile'" :profile="currentProfile" :setupProfile="setupProfile"/>
         <Archive v-if="activeComponent === 'archive'" :profile="{...currentProfile, type: 'person'}"/>
         <Timeline v-if="activeComponent === 'timeline'" :profile="currentProfile"/>
+        <WhakapapaIndex v-if="activeComponent === 'whakapapa'"/>
       </transition>
       </v-col>
     </v-row>
@@ -43,6 +44,7 @@ import Archive from '@/components/archive/Archive'
 import Timeline from '@/components/story/Timeline.vue'
 import Header from '@/components/profile/Header.vue'
 import EditProfileButton from '@/components/button/EditProfileButton.vue'
+import WhakapapaIndex from '@/views/WhakapapaIndex.vue'
 
 import {
   mapActions,
@@ -57,7 +59,8 @@ export default {
     Archive,
     Timeline,
     Header,
-    EditProfileButton
+    EditProfileButton,
+    WhakapapaIndex
   },
   data () {
     return {

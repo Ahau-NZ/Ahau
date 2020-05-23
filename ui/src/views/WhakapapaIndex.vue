@@ -14,14 +14,14 @@
       class="body-width white mx-auto"
       style="position:relative"
     >
-    <v-row class="pa-5" light>
-        <v-col class="headliner black--text pa-0">
-        Whakapapa records
-        </v-col>
-        <v-col align="right" class="pa-0">
-          <v-icon  color="blue-grey" light @click="toggleWhakapapaHelper">mdi-information</v-icon>
-        </v-col>
-    </v-row>
+      <v-row class="pa-5" light>
+          <v-col class="headliner black--text pa-0">
+          Whakapapa records
+          </v-col>
+          <v-col align="right" class="pa-0">
+            <v-icon  color="blue-grey" light @click="toggleWhakapapaHelper">mdi-information</v-icon>
+          </v-col>
+      </v-row>
 
       <div
         v-if="!views || (views && views.length < 1)"
