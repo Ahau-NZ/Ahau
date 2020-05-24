@@ -30,6 +30,7 @@
           />
         </div>
       </div>
+      <slot name="action"></slot>
     </v-row>
   </v-col>
 </template>

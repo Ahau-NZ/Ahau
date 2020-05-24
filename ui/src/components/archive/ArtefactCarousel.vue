@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="carousel">
     <div class="carousel-show">
       <ArtefactCarouselItem :artefact="displayedArtefact"
         width="100%" height="300px"
@@ -10,13 +10,16 @@
         @next="next()"
         :end="isEndItem(displayedIndex)"
         :start="isStartItem(displayedIndex)"
+        selected
+        @click=""
       />
     </div>
-    <div class="carousel-thumbnail-group">
+    <div class="carousel-thumbnail-group mt-2" style="background-color: grey;">
       <ArtefactCarouselItem v-for="(artefact, i) in artefacts" :key="`carousel-item-${i}-${artefact.id}`"
         :artefact="artefact"
         :end="isEndItem(i)"
         @click="showArtefact(artefact, i)"
+        :selected="(displayedIndex === i)"
       />
     </div>
   </div>
@@ -76,6 +79,9 @@ export default {
 }
 </script>
 <style scoped>
+.carousel {
+  width: 100%;
+}
 .container {
   position: relative;
   padding: 0;
@@ -128,7 +134,7 @@ export default {
   flex-direction: row;
   overflow-x: auto;
   width: 100%;
-  height: 130px;
+  height: 105px;
 }
 .v-card {
   transition: opacity .4s ease-in-out;
