@@ -6,7 +6,7 @@ export default {
 }
 
 export const Complete = () => ({
-  template: '<NewArtefactDialog :story="story" />',
+  template: '<NewArtefactDialog :show="true" :story="story" />',
   data () {
     return {
       story: story1

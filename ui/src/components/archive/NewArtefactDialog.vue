@@ -25,7 +25,25 @@
               />
             </v-col>
             <v-col class="px-0">
-              <ArtefactCarousel :artefacts="story.artefacts" :index.sync="selectedIndex"/>
+              <ArtefactCarousel :artefacts="formData.artefacts" :index.sync="selectedIndex" :editing="editing"/>
+            </v-col>
+            <v-col cols="12">
+              <AddButton size="20px" icon="mdi-account-multiple-plus" dark iconClass="pr-3" class="right: 0;" label="Mention" @click="showMentions = true" />
+              <ProfileSearchBar
+                :selectedItems.sync="artefact.mentions"
+                :items="items"
+                :searchString.sync="searchString"
+                :openMenu.sync="showMentions"
+                type="profile"
+                item="preferredName"
+              />
+              <AvatarGroup v-if="artefact.mentions.length > 0"
+                :profiles="artefact.mentions"
+                show-labels
+                size="40px"
+                deletable
+                @delete="removeItem(artefact.mentions, $event)"
+              />
             </v-col>
             <v-col cols="12" class="py-2 px-1">
               <v-textarea
@@ -115,6 +133,29 @@
 import ArtefactCarousel from '@/components/archive/ArtefactCarousel.vue'
 import clone from 'lodash.clonedeep'
 import { personComplete } from '@/mocks/person-profile'
+import AddButton from '@/components/button/AddButton.vue'
+import ProfileSearchBar from '@/components/archive/ProfileSearchBar.vue'
+import AvatarGroup from '@/components/AvatarGroup.vue'
+
+const EMPTY_ARTEFACT = {
+  type: '',
+  id: '',
+  title: '',
+  blob: '',
+  description: '',
+  format: '',
+  identifier: '',
+  language: '',
+  licence: '',
+  // "recps" // [String] Is this needed?
+  rights: '',
+  source: '',
+  translation: '',
+  duration: 0,
+  size: 0,
+  transcription: '',
+  mentions: []
+}
 
 export default {
   name: 'NewArtefactDialog',
@@ -124,26 +165,33 @@ export default {
     index: Number
   },
   components: {
-    ArtefactCarousel
+    ArtefactCarousel,
+    AddButton,
+    ProfileSearchBar,
+    AvatarGroup
   },
   data () {
     return {
       items: [...personComplete.children, ...personComplete.parents, ...personComplete.siblings],
       showMentions: false,
       editing: true,
-      artefact: this.story.artefacts.length > 0 ? clone(this.story.artefacts[0]) : {},
-      selectedIndex: this.index
+      artefact: EMPTY_ARTEFACT,
+      selectedIndex: 0,
+      formData: clone(this.story)
     }
   },
+  mounted () {
+    this.artefact = this.formData.artefacts[0]
+  },
   watch: {
-    index (newIndex) {
-      this.artefact = this.story.artefacts[newIndex]
+    selectedIndex (newIndex) {
+      if (newIndex) this.artefact = this.formData.artefacts[newIndex]
     }
   },
   computed: {
     storyDate () {
-      var start = this.story.recordDate
-      var end = this.story.recordEndDate
+      var start = this.formData.recordDate
+      var end = this.formData.recordEndDate
       if (start && end) {
         return start + '-' + end
       }
@@ -170,7 +218,7 @@ export default {
   },
   methods: {
     selectedArtefact (index) {
-      this.artefact = this.story.artefacts[index]
+      this.artefact = this.formData.artefacts[index]
       this.selectedIndex = index
     },
     close () {

@@ -34,13 +34,13 @@
         />
         <v-icon size="50" class="center">mdi-music</v-icon>
       </div>
-      <v-btn v-if="controls && hover" class="edit mr-2 mt-2"
+      <v-btn v-if="controls && hover && editing" class="edit mr-2 mt-2"
         fab x-small
         @click="$emit('update')"
       >
         <v-icon>mdi-pencil</v-icon>
       </v-btn>
-      <v-btn v-if="controls && hover" class="close mr-2 mt-2"
+      <v-btn v-if="controls && hover && editing" class="close mr-2 mt-2"
         fab x-small
         @click="$emit('delete')"
       >
@@ -58,7 +58,8 @@ export default {
     width: { type: String, default: '100px' },
     height: { type: String, default: '100px' },
     controls: { type: Boolean },
-    selected: { type: Boolean, default: false }
+    selected: { type: Boolean, default: false },
+    editing: { type: Boolean }
   },
   data () {
     return {

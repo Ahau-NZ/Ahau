@@ -7,6 +7,7 @@
           :height="height"
           controls
           @update="$emit('update', i)"
+          :editing="editing"
         />
       </v-carousel-item>
     </v-carousel>
@@ -51,21 +52,19 @@ export default {
         return []
       }
     },
+    editing: Boolean,
     index: Number
   },
   components: { ArtefactCarouselItem },
   data () {
     return {
-      selectedIndex: this.index,
-      width: '100%'
+      width: '100%',
+      selectedIndex: this.index
     }
   },
   watch: {
     selectedIndex (index) {
       this.$emit('update:index', index)
-    },
-    index (index) {
-      this.selectedIndex = index
     }
   },
   computed: {
@@ -84,10 +83,6 @@ export default {
     }
   },
   methods: {
-    showArtefact (index) {
-      console.log('updating')
-      this.$emit('update:index', index)
-    },
     removeItem () {
       this.$emit('delete', this.index)
       this.showArtefact(this.artefacts[0], 0)
