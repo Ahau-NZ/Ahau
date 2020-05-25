@@ -15,7 +15,8 @@ export const artefacts = [
     translation: '',
     duration: 1234.56,
     size: 123456,
-    transcription: ''
+    transcription: '',
+    mentions: []
   },
   {
     type: 'video',
@@ -33,7 +34,8 @@ export const artefacts = [
     translation: '',
     duration: 1234.56,
     size: 123456,
-    transcription: ''
+    transcription: '',
+    mentions: []
   },
   {
     type: 'audio',
@@ -51,7 +53,8 @@ export const artefacts = [
     translation: '',
     duration: 1234.56,
     size: 123456,
-    transcription: ''
+    transcription: '',
+    mentions: []
   },
   {
     type: 'photo',
@@ -66,7 +69,8 @@ export const artefacts = [
     // recps: // [String] Is this needed?
     rights: '',
     source: '',
-    translation: ''
+    translation: '',
+    mentions: []
   },
   {
     type: 'photo',
@@ -81,7 +85,8 @@ export const artefacts = [
     // recps: // [String] Is this needed?
     rights: '',
     source: '',
-    translation: ''
+    translation: '',
+    mentions: []
   },
   {
     type: 'photo',
@@ -96,7 +101,8 @@ export const artefacts = [
     // recps: // [String] Is this needed?
     rights: '',
     source: '',
-    translation: ''
+    translation: '',
+    mentions: []
   },
   {
     type: 'photo',
@@ -111,7 +117,8 @@ export const artefacts = [
     // recps: // [String] Is this needed?
     rights: '',
     source: '',
-    translation: ''
+    translation: '',
+    mentions: []
   },
   {
     type: 'photo',
@@ -126,8 +133,9 @@ export const artefacts = [
     // recps: // [String] Is this needed?
     rights: '',
     source: '',
-    translation: ''
-  },
+    translation: '',
+    mentions: []
+  }
   // {
   //   type: 'Photo',
   //   id: '%ArtefactIdForMyPhoto6',

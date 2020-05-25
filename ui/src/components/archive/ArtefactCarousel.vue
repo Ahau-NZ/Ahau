@@ -1,32 +1,47 @@
 <template>
-  <div class="carousel">
-    <div class="carousel-show">
-      <ArtefactCarouselItem :artefact="displayedArtefact"
-        width="100%" height="300px"
-        controls
-        @delete="removeItem()"
-        @update="$emit('update', displayedArtefact)"
-        @previous="previous()"
-        @next="next()"
-        :end="isEndItem(displayedIndex)"
-        :start="isStartItem(displayedIndex)"
-        selected
-        @click=""
-      />
-    </div>
-    <div class="carousel-thumbnail-group mt-2" style="background-color: grey;">
-      <ArtefactCarouselItem v-for="(artefact, i) in artefacts" :key="`carousel-item-${i}-${artefact.id}`"
-        :artefact="artefact"
-        :end="isEndItem(i)"
-        @click="showArtefact(artefact, i)"
-        :selected="(displayedIndex === i)"
-      />
-    </div>
-  </div>
+  <v-container class="pa-0">
+    <v-carousel v-model="selectedIndex" hide-delimiters :style="dimensions">
+      <v-carousel-item v-for="(artefact, i) in artefacts" :key="`a-c-${i}`" :style="dimensions" transition="fade-transition">
+        <ArtefactCarouselItem :artefact="artefact"
+          :width="width"
+          :height="height"
+          controls
+          @update="$emit('update', i)"
+        />
+      </v-carousel-item>
+    </v-carousel>
+    <v-sheet
+      class="mx-auto"
+      elevation="1"
+      max-width="100%"
+    >
+    <v-slide-group
+      v-model="selectedIndex"
+      class="pa-0"
+      light
+      center-active
+    >
+      <v-slide-item
+        v-for="(artefact, i) in artefacts"
+        :key="`a-s-g-${i}`"
+        v-slot:default="{ active, toggle }"
+        transition="fade-transition"
+      >
+        <v-scale-transition>
+          <ArtefactCarouselItem :artefact="artefact"
+            :selected="active"
+            @click="toggle"
+          />
+        </v-scale-transition>
+      </v-slide-item>
+    </v-slide-group>
+    </v-sheet>
+  </v-container>
 </template>
 
 <script>
 import ArtefactCarouselItem from '@/components/archive/ArtefactCarouselItem.vue'
+
 export default {
   name: 'ArtefactCarousel',
   props: {
@@ -35,114 +50,62 @@ export default {
       default () {
         return []
       }
-    }
+    },
+    index: Number
   },
   components: { ArtefactCarouselItem },
   data () {
     return {
-      displayedArtefact: this.artefacts[0],
-      displayedIndex: 0,
-      componentLoaded: false
+      selectedIndex: this.index,
+      width: '100%'
     }
   },
-  mounted () {
-    this.componentLoaded = true
+  watch: {
+    selectedIndex (index) {
+      this.$emit('update:index', index)
+    },
+    index (index) {
+      this.selectedIndex = index
+    }
+  },
+  computed: {
+    mobile () {
+      return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
+    },
+    height () {
+      if (this.mobile) return '300px'
+      return '300px'
+    },
+    dimensions () {
+      return {
+        width: this.width,
+        height: this.height
+      }
+    }
   },
   methods: {
-    showArtefact (artefact, i) {
-      this.displayedArtefact = artefact
-      this.displayedIndex = i
+    showArtefact (index) {
+      console.log('updating')
+      this.$emit('update:index', index)
     },
     removeItem () {
-      this.$emit('delete', this.displayedIndex)
+      this.$emit('delete', this.index)
       this.showArtefact(this.artefacts[0], 0)
-    },
-    previous () {
-      // if (this.isStartItem(this.displayedIndex)) return
-      this.displayedIndex--
-      this.showArtefact(this.artefacts[this.displayedIndex], this.displayedIndex)
-    },
-    next () {
-      // if (this.isStartItem(this.displayedIndex)) return
-      this.displayedIndex++
-      this.showArtefact(this.artefacts[this.displayedIndex], this.displayedIndex)
-    },
-    isEndItem (i) {
-      if (i === (this.artefacts.length - 1)) return true
-      return false
-    },
-    isStartItem (i) {
-      if (i === 0) return true
-      return false
     }
   }
 }
 </script>
 <style scoped>
-.carousel {
+.carousel-item {
   width: 100%;
-}
-.container {
-  position: relative;
-  padding: 0;
-  margin: 0;
-  height: 100%;
-  width: 100%;
-  background-color: #121212;
-}
-
-.center {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  -webkit-transform: translate(-50%, -50%);
-}
-.close {
-  position: absolute;
-  top: 2px;
-  right: 2px;
-  /* transform: translate(-50%, -50%);
-  -webkit-transform: translate(-50%, -50%); */
-}
-.edit {
-  position: absolute;
-  top: 2px;
-  right: 40px;
-  /* transform: translate(-50%, -50%);
-  -webkit-transform: translate(-50%, -50%); */
-}
-.constraints {
-  width: 100px;
-  height: 100px;
-  background-color: #121212;
-}
-
-.center-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.carousel-show {
-  width: 100%;
-  height: 300px;
+  height: 200px;
 }
 
 .carousel-thumbnail-group {
   display: flex;
   flex-direction: row;
   overflow-x: auto;
-  width: 100%;
-  height: 105px;
 }
-.v-card {
-  transition: opacity .4s ease-in-out;
-}
-
-.v-card:not(.on-hover) {
-  opacity: 0.8;
- }
 
 .show-btns {
   color: rgba(255, 255, 255, 1) !important;

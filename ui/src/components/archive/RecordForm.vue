@@ -19,6 +19,7 @@
           <v-col v-if="formData.artefacts.length > 0" cols="12" class="pl-0 pr-0">
             <ArtefactCarousel :artefacts="formData.artefacts"
               @delete="removeItem(formData.artefacts, $event)"
+              @update="toggleDialog($event)"
             />
           </v-col>
             <v-col cols="12">
@@ -335,6 +336,7 @@
       </v-expand-transition>
     </v-form>
   <!-- </v-card> -->
+  <NewArtefactDialog v-if="dialog" :show="dialog" :index="index" :story="formData" @close="dialog = false"/>
   </div>
 </template>
 
@@ -358,6 +360,7 @@ import { personComplete } from '@/mocks/person-profile'
 import { firstMocks } from '@/mocks/collections'
 
 import { artefacts } from '@/mocks/artefacts'
+import NewArtefactDialog from '@/components/archive/NewArtefactDialog.vue'
 
 import {
   RULES
@@ -376,9 +379,7 @@ export default {
     ProfileSearchBar,
     AvatarGroup,
     ChipGroup,
-    MediaCard,
-    Artefact,
-    ArtefactGroup,
+    NewArtefactDialog,
     ArtefactCarousel
   },
   props: {
@@ -388,6 +389,8 @@ export default {
   },
   data () {
     return {
+      dialog: false,
+      index: 0,
       ARTEFACTS: artefacts,
       model: 0,
       show: false,
@@ -419,12 +422,16 @@ export default {
         outlined: true,
         hideDetails: true,
         placeholder: ' ',
-        class: 'custom' ,
-        clearable: true,
+        class: 'custom',
+        clearable: true
       }
     }
   },
   methods: {
+    toggleDialog ($event) {
+      this.index = $event
+      this.dialog = true
+    },
     warn (field) {
       alert(`Cannot add ${field} yet`)
     },
@@ -434,6 +441,8 @@ export default {
       Array.from(files).forEach((file, i) => {
         this.formData.artefacts.push(this.processFile(file))
       })
+
+      this.dialog = true
     },
     processFile (file) {
       var attrs = {}
