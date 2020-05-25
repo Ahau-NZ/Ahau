@@ -18,8 +18,9 @@
           </v-col>
           <v-col v-if="formData.artefacts.length > 0" cols="12" class="pl-0 pr-0">
             <ArtefactCarousel :artefacts="formData.artefacts"
-              @delete="removeItem(formData.artefacts, $event)"
+              @delete="removeArtefact($event)"
               @update="toggleDialog($event)"
+              editing
             />
           </v-col>
             <v-col cols="12">
@@ -150,31 +151,6 @@
             </v-col>
           </v-row>
         </v-col>
-        <v-col xs="12" sm="12" md="6" >
-          <!-- <v-spacer/> -->
-          <!-- <v-col cols="12" sm="12" md="6">
-            <v-select
-              v-model="formData.type"
-              label="Record Type"
-              :items="['Life Event']"
-              v-bind="customProps"
-            />
-          </v-col> -->
-          <!-- <v-spacer/> -->
-          <!-- <v-col cols="12"> -->
-            <!-- <input v-show="false" ref="fileInput" type="file" accept="audio/*,video/*,image/*" multiple @change="processMediaFiles($event)" /> -->
-            <!-- <AddButton @click="$refs.fileInput.click()" label="Attact media or files"/> -->
-            <!-- <AddButton @click="warn('artefact')" label="Attact media or files"/>
-          </v-col>
-          <v-col v-if="formData.artefacts.length > 0" cols="12" class="pl-0 pr-0">
-            <ArtefactCarousel :artefacts="formData.artefacts"
-              @delete="removeItem(formData.artefacts, $event)"
-            />
-          </v-col>
-          <v-col cols="12">
-            <AddButton @click="warn('location')" label="Add location"/>
-          </v-col> -->
-        </v-col>
       </v-row>
       <v-divider/>
       <v-card-actions class="pt-2 pb-2">
@@ -182,11 +158,9 @@
           <v-col>
             <span class="pa-0 ma-0">Advanced</span>
           </v-col>
-          <!-- <v-col> -->
-            <v-btn icon right>
-              <v-icon>{{ show ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
-            </v-btn>
-          <!-- </v-col> -->
+          <v-btn icon right>
+            <v-icon>{{ show ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
+          </v-btn>
         </v-row>
       </v-card-actions>
       <v-divider v-if="!show"/>
@@ -336,7 +310,7 @@
       </v-expand-transition>
     </v-form>
   <!-- </v-card> -->
-  <NewArtefactDialog v-if="dialog" :show="dialog" :index="index" :story="formData" @close="dialog = false"/>
+  <NewArtefactDialog v-if="dialog" :show="dialog" :index="index" :artefacts="formData.artefacts" @close="dialog = false" @delete="removeArtefact($event)"/>
   </div>
 </template>
 
@@ -378,7 +352,8 @@ export default {
   props: {
     formData: {
       type: Object
-    }
+    },
+    editing: Boolean
   },
   data () {
     return {
@@ -429,6 +404,7 @@ export default {
       alert(`Cannot add ${field} yet`)
     },
     processMediaFiles ($event) {
+      this.index = this.formData.artefacts.length
       const { files } = $event.target
 
       Array.from(files).forEach((file, i) => {
@@ -465,7 +441,8 @@ export default {
         licence: '',
         rights: '',
         source: '',
-        translation: ''
+        translation: '',
+        mentions: []
       }
 
       return attrs
@@ -490,6 +467,13 @@ export default {
     },
     removeItem (array, $event) {
       array.splice($event, 1)
+    },
+    removeArtefact ($event) {
+      console.error('deleting an artefact not fully implemented')
+      // either remove from the database or from formData
+      confirm('Are you sure you want to delete this artefact?') && this.removeItem(this.formData.artefacts, $event)
+
+      if (this.formData.artefacts.length === 0) this.dialog = false
     }
   }
 }

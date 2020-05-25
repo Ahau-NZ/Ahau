@@ -9,7 +9,7 @@
           <v-row>
             <v-col cols="12">
               <v-card-actions>
-                <v-btn absolute right icon>
+                <v-btn absolute right icon @click="close">
                   <v-icon>mdi-close</v-icon>
                 </v-btn>
               </v-card-actions>
@@ -24,7 +24,7 @@
               </h1>
             </v-col>
             <v-col class="px-0">
-              <ArtefactCarousel :artefacts="formData.artefacts" :index.sync="selectedIndex" :editing="editing"/>
+              <ArtefactCarousel :artefacts="formData" :index.sync="selectedIndex" :editing="!editing" @delete="$emit('delete', $event)"/>
             </v-col>
             <v-col cols="12">
               <AddButton size="20px" icon="mdi-account-multiple-plus" dark iconClass="pr-3" class="right: 0;" label="Mention" @click="showMentions = true" />
@@ -122,6 +122,14 @@
                 rows="3"
                 auto-grow
               />
+            </v-col>
+            <v-col cols="12">
+              <v-spacer/>
+              <v-btn text @click="$emit('delete', selectedIndex)">
+                Delete this artefact
+                <v-icon class="pl-2">mdi-delete</v-icon>
+              </v-btn>
+              <v-spacer/>
             </v-col>
             <v-col cols="10"/>
             <v-col cols="1">
@@ -231,7 +239,7 @@ export default {
   name: 'NewArtefactDialog',
   props: {
     show: Boolean,
-    story: Object,
+    artefacts: Array,
     index: Number
   },
   components: {
@@ -244,18 +252,25 @@ export default {
     return {
       items: [...personComplete.children, ...personComplete.parents, ...personComplete.siblings],
       showMentions: false,
+      searchString: '',
       editing: true,
-      artefact: EMPTY_ARTEFACT,
-      selectedIndex: 0,
-      formData: clone(this.story)
+      artefact: this.formData[this.index],
+      selectedIndex: this.index,
+      formData: clone(this.artefacts)
     }
-  },
-  mounted () {
-    this.artefact = this.formData.artefacts[0]
   },
   watch: {
     selectedIndex (newIndex) {
-      if (newIndex) this.artefact = this.formData.artefacts[newIndex]
+      if (newIndex) this.artefact = this.formData[newIndex]
+    },
+    index (newIndex) {
+      this.selectedIndex = newIndex
+    },
+    artefacts: {
+      deep: true,
+      handler (newValue) {
+        this.formData = clone(newValue)
+      }
     }
   },
   computed: {
@@ -287,18 +302,15 @@ export default {
     }
   },
   methods: {
-    selectedArtefact (index) {
-      this.artefact = this.formData.artefacts[index]
-      this.selectedIndex = index
-    },
     close () {
+      console.log('closing!')
       confirm('Are you sure you want to close without saving? All changes will be lost!') && this.$emit('close')
     },
     submit () {
       var output = {}
       if (this.editing) {
         // get all changes
-        output = artefactChanges(this.story.artefacts, this.formData.artefacts, true)
+        output = artefactChanges(this.artefacts, this.formData, true)
       } else {
         output = artefactSubmission(this.formData)
       }

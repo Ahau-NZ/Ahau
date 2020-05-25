@@ -7,6 +7,8 @@
           :height="height"
           controls
           @update="$emit('update', i)"
+          @delete="$emit('delete', i)"
+          :editing="editing"
         />
       </v-carousel-item>
     </v-carousel>

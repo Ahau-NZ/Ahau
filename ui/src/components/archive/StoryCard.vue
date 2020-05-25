@@ -214,6 +214,7 @@
         </v-btn>
       </v-list-item-icon>
     </v-card-actions>
+    <NewArtefactDialog v-if="dialog.edit" :show="dialog.edit" :index="0" :story="story" editing @close="dialog.edit = false"/>
   </v-card>
 </template>
 
@@ -226,6 +227,7 @@ import { mapActions, mapGetters } from 'vuex'
 import EditStoryButton from '@/components/button/EditStoryButton.vue'
 import EditArtefactButton from '@/components/button/EditArtefactButton.vue'
 import ArtefactGroup from '@/components/artefacts/ArtefactGroup.vue'
+import NewArtefactDialog from '@/components/archive/NewArtefactDialog.vue'
 
 export default {
   name: 'StoryCard',
@@ -240,7 +242,8 @@ export default {
     ChipGroup,
     EditStoryButton,
     EditArtefactButton,
-    ArtefactGroup
+    ArtefactGroup,
+    NewArtefactDialog
   },
   data () {
     return {
@@ -302,7 +305,7 @@ export default {
       this.$emit('updateDialog', 'edit-story')
     },
     toggleArtefactEdit (artefact) {
-      this.$emit('updateDialog', 'editArtefactDialog')
+      this.dialog = true
     },
     // toggle artefact view
     toggleShowArtefact (artefact) {
