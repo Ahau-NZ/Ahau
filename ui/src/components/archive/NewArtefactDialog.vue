@@ -3,26 +3,25 @@
       transition="dialog-bottom-transition"
       class="pa-0 ma-0"
       fullscreen
-      style="width: 100%;"
     >
-      <v-card class="pa-0 ma-0" style="width: 100%;">
-        <v-row>
-          <v-col>
-            <v-card-title>Edit Artefacts
-              <v-btn icon absolute right top @click="close">
-                <v-icon>mdi-close</v-icon>
-              </v-btn>
-            </v-card-title>
-          </v-col>
-        </v-row>
-        <v-container>
+      <v-card tile flat>
+        <v-container style="width: 900px" class="pa-0">
           <v-row>
-            <v-col cols="12" class="pt-12 pb-0 px-1">
-              <v-text-field
-                v-model="artefact.title"
-                label="Title"
-                v-bind="customProps"
-              />
+            <v-col cols="12">
+              <v-card-actions>
+                <v-btn absolute right icon>
+                  <v-icon>mdi-close</v-icon>
+                </v-btn>
+              </v-card-actions>
+            </v-col>
+            <v-col cols="12">
+              <h1>
+                <v-text-field
+                  v-model="artefact.title"
+                  label="Title"
+                  v-bind="customProps"
+                />
+              </h1>
             </v-col>
             <v-col class="px-0">
               <ArtefactCarousel :artefacts="formData.artefacts" :index.sync="selectedIndex" :editing="editing"/>
@@ -43,9 +42,10 @@
                 size="40px"
                 deletable
                 @delete="removeItem(artefact.mentions, $event)"
+                dark
               />
             </v-col>
-            <v-col cols="12" class="py-2 px-1">
+            <v-col cols="12">
               <v-textarea
                 v-model="artefact.description"
                 label="Description"
@@ -55,49 +55,49 @@
                 auto-grow
               />
             </v-col>
-            <v-col cols="6" sm="12" md="3" class="py-2 px-1">
+            <v-col cols="6" sm="12" md="3">
               <v-text-field
                 v-model="artefact.format"
                 label="Format"
                 v-bind="customProps"
               />
             </v-col>
-            <v-col cols="6" sm="12" md="3" class="py-2 px-1">
+            <v-col cols="6" sm="12" md="3">
               <v-text-field
                 v-model="artefact.identifier"
                 label="Identifier"
                 v-bind="customProps"
               />
             </v-col>
-            <v-col cols="6" sm="12" md="3" class="py-2 px-1">
+            <v-col cols="6" sm="12" md="3">
               <v-text-field
                 v-model="artefact.language"
                 label="Language"
                 v-bind="customProps"
               />
             </v-col>
-            <v-col cols="6" sm="12" md="3" class="py-2 px-1">
+            <v-col cols="6" sm="12" md="3">
               <v-text-field
                 v-model="artefact.licence"
                 label="Licence"
                 v-bind="customProps"
               />
             </v-col>
-            <v-col cols="6" sm="12" md="3" class="py-2 px-1">
+            <v-col cols="6" sm="12" md="3">
               <v-text-field
                 v-model="artefact.rights"
                 label="Rights"
                 v-bind="customProps"
               />
             </v-col>
-            <v-col cols="6" sm="12" md="3" class="py-2 px-1">
+            <v-col cols="6" sm="12" md="3">
               <v-text-field
                 v-model="artefact.source"
                 label="Source"
                 v-bind="customProps"
               />
             </v-col>
-            <v-col cols="6" sm="12" md="3" class="py-2 px-1">
+            <v-col cols="6" sm="12" md="3">
               <v-text-field
                 v-model="artefact.duration"
                 label="Duration"
@@ -105,7 +105,7 @@
                 v-bind="customProps"
               />
             </v-col>
-            <v-col cols="6" sm="12" md="3" class="py-2 px-1">
+            <v-col cols="6" sm="12" md="3">
               <v-text-field
                 v-model="artefact.size"
                 label="Size"
@@ -113,7 +113,7 @@
                 v-bind="customProps"
               />
             </v-col>
-            <v-col cols="12" class="py-2 px-1">
+            <v-col cols="12">
               <v-textarea
                 v-model="artefact.translation"
                 label="Translation / Transcription"
@@ -123,6 +123,23 @@
                 auto-grow
               />
             </v-col>
+            <v-col cols="10"/>
+            <v-col cols="1">
+              <v-card-actions>
+                <v-btn @click="close"
+                  text large fab
+                  class="secondary--text"
+                >
+                  <v-icon color="secondary">mdi-close</v-icon>
+                </v-btn>
+                <v-btn @click="submit"
+                  text large fab
+                  class="blue--text"
+                >
+                  <v-icon>mdi-check</v-icon>
+                </v-btn>
+              </v-card-actions>
+            </v-col>
           </v-row>
         </v-container>
       </v-card>
@@ -131,7 +148,12 @@
 
 <script>
 import ArtefactCarousel from '@/components/archive/ArtefactCarousel.vue'
+
 import clone from 'lodash.clonedeep'
+import isEmpty from 'lodash.isempty'
+import isEqual from 'lodash.isequal'
+import pick from 'lodash.pick'
+
 import { personComplete } from '@/mocks/person-profile'
 import AddButton from '@/components/button/AddButton.vue'
 import ProfileSearchBar from '@/components/archive/ProfileSearchBar.vue'
@@ -155,6 +177,54 @@ const EMPTY_ARTEFACT = {
   size: 0,
   transcription: '',
   mentions: []
+}
+
+const PERMITTED_ARTEFACT_ATTRS = Object.keys(EMPTY_ARTEFACT)
+
+function artefactChanges (initial, updated, searchNested) {
+  let changes = []
+  Object.entries(updated).forEach(([key, value]) => {
+    if (!isEqual(updated[key], initial[key])) {
+      switch (true) {
+        case Array.isArray(updated[key]):
+          changes[key] = { add: [], remove: [] }
+          changes[key].add = arrayChanges(updated[key], initial[key])
+          changes[key].remove = arrayChanges(initial[key], updated[key])
+
+          if (changes[key].add.length === 0) delete changes[key].add
+          if (changes[key].remove.length === 0) delete changes[key].remove
+
+          // means the same item was remove then added back in
+          if (isEmpty(changes[key])) delete changes[key]
+
+          break
+        default:
+          if (searchNested) {
+            changes[key] = artefactChanges(initial[key], updated[key], false)
+          } else {
+            changes[key] = updated[key]
+          }
+          break
+      }
+    }
+  })
+  return changes
+}
+
+function arrayChanges (array1, array2) {
+  return array1.filter(item => !array2.some(item2 => item.id === item2.id))
+    .map(item => item.id) // map it to id
+}
+
+function artefactSubmission (newArtefact) {
+  var output = {}
+  var artefact = pick(newArtefact, [...PERMITTED_ARTEFACT_ATTRS])
+  Object.entries(artefact).forEach(([key, value]) => {
+    if (!isEmpty(artefact[key])) {
+      output[key] = value
+    }
+  })
+  return Object.assign({}, output)
 }
 
 export default {
@@ -222,6 +292,20 @@ export default {
       this.selectedIndex = index
     },
     close () {
+      confirm('Are you sure you want to close without saving? All changes will be lost!') && this.$emit('close')
+    },
+    submit () {
+      var output = {}
+      if (this.editing) {
+        // get all changes
+        output = artefactChanges(this.story.artefacts, this.formData.artefacts, true)
+      } else {
+        output = artefactSubmission(this.formData)
+      }
+
+      console.log('output', output)
+
+      this.$emit('submit', output)
       this.$emit('close')
     }
   }

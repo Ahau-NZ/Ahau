@@ -7,13 +7,11 @@
           :height="height"
           controls
           @update="$emit('update', i)"
-          :editing="editing"
         />
       </v-carousel-item>
     </v-carousel>
     <v-sheet
       class="mx-auto"
-      elevation="1"
       max-width="100%"
     >
     <v-slide-group

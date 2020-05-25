@@ -56,7 +56,7 @@
                 @click:clear="hasEndDate = false"
               />
             </v-col>
-            
+
             <v-col :cols="mobile ? '12' : formData.mentions.length > 2 ? 'auto' : '4'">
               <AddButton size="20px" icon="mdi-account-multiple-plus" iconClass="pr-3" class="right: 0;" label="Mention" @click="showMentions = true" />
               <ProfileSearchBar
@@ -341,26 +341,20 @@
 </template>
 
 <script>
-// import Avatar from '@/components/Avatar.vue'
-// import ImagePicker from '@/components/ImagePicker.vue'
-// import NodeDatePicker from '@/components/NodeDatePicker.vue'
-import AddButton from '@/components/button/AddButton.vue'
 import AvatarGroup from '@/components/AvatarGroup.vue'
 import Avatar from '@/components/Avatar.vue'
+
 import ChipGroup from '@/components/archive/ChipGroup.vue'
-import Artefact from '@/components/artefacts/Artefact.vue'
-import ArtefactGroup from '@/components/artefacts/ArtefactGroup.vue'
+
 import ProfileSearchBar from '@/components/archive/ProfileSearchBar.vue'
+import AddButton from '@/components/button/AddButton.vue'
 
-import ArtefactCarousel from '@/components/archive/ArtefactCarousel.vue'
-
-import MediaCard from '@/components/archive/MediaCard.vue'
 import { personComplete } from '@/mocks/person-profile'
-
 import { firstMocks } from '@/mocks/collections'
-
 import { artefacts } from '@/mocks/artefacts'
+
 import NewArtefactDialog from '@/components/archive/NewArtefactDialog.vue'
+import ArtefactCarousel from '@/components/archive/ArtefactCarousel.vue'
 
 import {
   RULES
@@ -374,7 +368,6 @@ export default {
   name: 'RecordForm',
   components: {
     Avatar,
-    // ImagePicker,
     AddButton,
     ProfileSearchBar,
     AvatarGroup,
