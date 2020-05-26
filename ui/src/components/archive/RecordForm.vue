@@ -3,16 +3,57 @@
   <div>
     <v-form ref="form" v-model="form.valid" lazy-validation>
       <v-row>
-        <v-col cols="12" sm="12" md="6">
+        <v-col cols="12" sm="12" md="12">
           <v-row>
-            <v-col cols="12">
+            <v-col cols="12" class="pa-1">
               <v-text-field
                 v-model="formData.title"
                 label="Title"
                 v-bind="customProps"
+                class="title-input"
               />
             </v-col>
-            <v-col cols="12">
+
+            <v-col v-if="!formData.artefacts.length" cols="6" class="my-2">
+              <input v-show="false" ref="fileInput" type="file" accept="audio/*,video/*,image/*" multiple @change="processMediaFiles($event)" />
+              <AddButton size="40px" icon="mdi-image-plus" iconClass="pr-3" class="right: 0;" @click="$refs.fileInput.click()" label="Attach media or files"/>
+            </v-col>
+
+            <v-col v-if="formData.artefacts.length" cols="12" class="pl-0 pr-0">
+              <ArtefactCarousel :artefacts="formData.artefacts"
+                @delete="removeItem(formData.artefacts, $event)"
+                @processMediaFiles="processMediaFiles($event)"
+              />
+            </v-col>
+
+            <v-col v-if="!showLocation" cols="6" class="my-2">
+              <AddButton size="40px" icon="mdi-map" iconClass="pr-3" class="right: 0;" @click="showLocation = true" label="Add location information`"/>
+            </v-col>
+
+            <v-row v-if="showLocation" cols="12" class="px-3">
+              <v-col cols="12" sm="12" md="6" class="pa-1">
+                <v-textarea
+                  v-model="formData.location"
+                  label="Location"
+                  v-bind="customProps"
+                  no-resize
+                  rows="3"
+                  auto-grow
+                />
+              </v-col>
+              <v-col cols="12" sm="12" md="6" class="pa-1">
+                <v-textarea
+                  v-model="formData.locationDescription"
+                  label="Location description"
+                  v-bind="customProps"
+                  no-resize
+                  rows="3"
+                  auto-grow
+                />
+              </v-col>
+            </v-row>
+
+            <v-col cols="12" class="pa-1">
               <v-textarea
                 v-model="formData.description"
                 label="Description"
@@ -23,14 +64,14 @@
               >
               </v-textarea>
             </v-col>
-            <v-col cols="12" sm="12" md="6">
+            <v-col cols="12" sm="12" md="6" class="pa-1">
               <v-text-field
                 v-model="formData.recordDate"
                 label="Date"
                 v-bind="customProps"
               />
             </v-col>
-            <v-col cols="12" sm="12" md="6">
+            <v-col cols="12" sm="12" md="6" class="pa-1">
               <v-checkbox v-model="hasEndDate" v-if="!hasEndDate"
                 label="include an end date" :hide-details="true"
                 v-bind="customProps"
@@ -43,8 +84,12 @@
                 @click:clear="hasEndDate = false"
               />
             </v-col>
-            <v-col :cols="mobile ? '12' : formData.mentions.length > 0 ? 'auto' : '4'">
-              <AddButton class="right: 0;" label="Mention" @click="showMentions = true" />
+
+            <v-col :cols="mobile ? formData.mentions.length > 2 ? 'auto' : '6' : formData.mentions.length > 1 ? 'auto' : '3'">
+              <v-row class="pl-2 pt-2">
+                <v-icon small>mdi-plus</v-icon>
+                <AddButton size="20px" icon="mdi-account" iconClass="pr-3" class="right: 0;" label="Mention" @click="showMentions = true" justify="start"/>
+              </v-row>
               <ProfileSearchBar
                 :selectedItems.sync="formData.mentions"
                 :items="items"
@@ -61,8 +106,34 @@
                 @delete="removeItem(formData.mentions, $event)"
               />
             </v-col>
-            <v-col :cols="mobile ? '12' : formData.categories.length > 0 ? 'auto' : '4'">
-              <AddButton label="Category" @click="showCategories = true" />
+
+            <v-col :cols="mobile ? formData.access.length > 2 ? 'auto' : '6' : formData.access.length > 1 ? 'auto' : '3'">
+              <v-row @click="showAccess = true" class="pl-2 pt-2">
+                <v-icon small>mdi-plus</v-icon>
+                <AddButton size="20px" icon="mdi-file-key" iconClass="pr-3" label="Access" justify="start"/>
+              </v-row>
+              <ProfileSearchBar
+                :selectedItems.sync="formData.access"
+                :items="items"
+                :searchString.sync="searchString"
+                :openMenu.sync="showAccess"
+                type="profile"
+                item="preferredName"
+              />
+              <AvatarGroup v-if="formData.access.length > 0"
+                :profiles="formData.access"
+                show-labels
+                size="40px"
+                deletable
+                @delete="removeItem(formData.access, $event)"
+              />
+            </v-col>
+
+           <v-col :cols="mobile ? formData.categories.length > 2 ? 'auto' : '6' : formData.categories.length > 1 ? 'auto' : '3'">
+              <v-row @click="showCategories = true" class="pl-2 pt-2">
+                <v-icon small>mdi-plus</v-icon>
+                <AddButton size="20px" icon="mdi-label" iconClass="pr-3"  label="Category" justify="start" />
+              </v-row>
               <ProfileSearchBar
                 :selectedItems.sync="formData.categories"
                 :items="categories"
@@ -81,12 +152,15 @@
                   close-icon="mdi-close"
                   @click:close="removeItem(formData.categories, i)"
                 >
-                  {{ category }}
+                  {{ category.title }}
                 </v-chip>
               </v-chip-group>
             </v-col>
-            <v-col :cols="mobile ? '12' : formData.collections.length > 0 ? 'auto' : '4'">
-              <AddButton label="Collection" @click="showCollections = true" />
+            <v-col :cols="mobile ? formData.categories.length > 2 ? 'auto' : '6' : formData.categories.length > 1 ? 'auto' : '3'">
+              <v-row class="pl-2 pt-2">
+                <v-icon small>mdi-plus</v-icon>
+                <AddButton size="20px" icon="mdi-folder-multiple-image" iconClass="pr-3" label="Collection" @click="showCollections = true" justify="start"/>
+              </v-row>
               <ProfileSearchBar
                 :selectedItems.sync="formData.collections"
                 :items="collections"
@@ -97,25 +171,8 @@
               />
               <ChipGroup :chips="formData.collections" deletable @delete="removeItem(formData.collections, $event)" />
             </v-col>
-            <v-col :cols="mobile ? '12' : formData.access.length > 0 ? 'auto' : '4'">
-              <AddButton label="Access" @click="showAccess = true" />
-              <ProfileSearchBar
-                :selectedItems.sync="formData.access"
-                :items="items"
-                :searchString.sync="searchString"
-                :openMenu.sync="showAccess"
-                type="profile"
-                item="preferredName"
-              />
-              <AvatarGroup v-if="formData.access.length > 0"
-                :profiles="formData.access"
-                show-labels
-                size="40px"
-                deletable
-                @delete="removeItem(formData.access, $event)"
-              />
-            </v-col>
-            <v-col :cols="mobile ? '12' : formData.protocols.length > 0 ? 'auto' : '4'">
+           <!-- </v-row> -->
+            <!-- <v-col :cols="mobile ? '12' : formData.protocols.length > 0 ? 'auto' : '4'">
               <AddButton label="Protocol" @click="showProtocols = true" />
               <ProfileSearchBar
                 :selectedItems.sync="formData.protocols"
@@ -133,43 +190,29 @@
                 isView
                 @delete="removeItem(formData.protocols, $event)"
               />
-            </v-col>
+            </v-col> -->
+        <!-- <v-col xs="12" sm="12" md="6" > -->
+          <!-- <v-spacer/> -->
+            <!-- <v-col cols="12" sm="12" md="6">
+              <v-select
+                v-model="formData.type"
+                label="Record Type"
+                :items="['Life Event']"
+                v-bind="customProps"
+              />
+            </v-col> -->
+          <!-- <v-spacer/> -->
           </v-row>
-        </v-col>
-        <v-col xs="12" sm="12" md="6" >
-          <!-- <v-spacer/> -->
-          <!-- <v-col cols="12" sm="12" md="6">
-            <v-select
-              v-model="formData.type"
-              label="Record Type"
-              :items="['Life Event']"
-              v-bind="customProps"
-            />
-          </v-col> -->
-          <!-- <v-spacer/> -->
-          <v-col cols="12">
-            <input v-show="false" ref="fileInput" type="file" accept="audio/*,video/*,image/*" multiple @change="processMediaFiles($event)" />
-            <AddButton @click="$refs.fileInput.click()" label="Attact media or files"/>
-            <!-- <AddButton @click="warn('artefact')" label="Attact media or files"/> -->
-          </v-col>
-          <v-col v-if="formData.artefacts.length > 0" cols="12" class="pl-0 pr-0">
-            <ArtefactCarousel :artefacts="formData.artefacts"
-              @delete="removeItem(formData.artefacts, $event)"
-            />
-          </v-col>
-          <v-col cols="12">
-            <AddButton @click="warn('location')" label="Add location"/>
-          </v-col>
         </v-col>
       </v-row>
       <v-divider/>
       <v-card-actions class="pt-2 pb-2">
-        <v-row>
+        <v-row @click="show = !show" ripple class="clickable">
           <v-col>
             <span class="pa-0 ma-0">Advanced</span>
           </v-col>
           <!-- <v-col> -->
-            <v-btn icon @click="show = !show" right>
+            <v-btn icon right>
               <v-icon>{{ show ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
             </v-btn>
           <!-- </v-col> -->
@@ -179,8 +222,12 @@
       <v-expand-transition>
         <div v-show="show">
           <v-row>
-            <v-col :cols="mobile ? '12' : formData.contributors.length > 0 ? 'auto' : '2'">
-              <AddButton label="Contributor" @click="showContributors = true" />
+            <v-col :cols="mobile ? '12' : formData.contributors.length > 0 ? 'auto' : '3'">
+
+             <v-row class="pl-2">
+              <v-icon small>mdi-plus</v-icon>
+                <AddButton size="20px" icon="mdi-library" iconClass="pr-3" class="right: 0;" label="Contributor" @click="showContributors = true" justify="start"/>
+              </v-row>
               <ProfileSearchBar
                 :selectedItems.sync="formData.contributors"
                 :items="items"
@@ -197,8 +244,12 @@
                 @delete="removeItem(formData.contributors, $event)"
               />
             </v-col>
-            <v-col :cols="mobile ? '12' : formData.creator.id ? 'auto' : '2'">
-              <AddButton label="Creator" @click="showCreator = true" />
+            <v-col :cols="mobile ? '12' : formData.creator.id ? 'auto' : '3'">
+              <v-row>
+                <v-icon small>mdi-plus</v-icon>
+                <AddButton size="20px" icon="mdi-account-circle" iconClass="pr-3" class="right: 0;" label="Creator" @click="showCreator = true" justify="start"/>
+              </v-row>
+              <!-- <AddButton label="Creator" @click="showCreator = true" /> -->
               <ProfileSearchBar
                 :selectedItems.sync="formData.creator"
                 :items="items"
@@ -223,8 +274,11 @@
                 />
               </div>
             </v-col>
-            <v-col :cols="mobile ? '12' : formData.relatedRecords.length > 0 ? 'auto' : '4'">
-              <AddButton label="Related records" @click="showRecords = true" />
+            <v-col :cols="mobile ? '12' : formData.relatedRecords.length > 0 ? 'auto' : '3'">
+              <v-row>
+                <v-icon small>mdi-plus</v-icon>
+                <AddButton size="20px" icon="mdi-book-multiple" iconClass="pr-3" class="right: 0;" label="Related records" @click="showRecords = true" justify="start"/>
+              </v-row>
               <ProfileSearchBar
                 :selectedItems.sync="formData.relatedRecords"
                 :items="collections"
@@ -233,17 +287,18 @@
                 type="collection"
                 item="title"
               />
-              <ChipGroup :chips="formData.relatedRecords" @delete="removeItem(formData.relatedRecords, $event)" />
+              <ChipGroup :chips="formData.relatedRecords" deletable @delete="removeItem(formData.relatedRecords, $event)" />
             </v-col>
-            <v-col :cols="mobile ? '12' : '6'" class="pt-0">
+            <v-col :cols="mobile ? '12' : '3'" class="pt-0 pa-1">
               <v-text-field
                 v-model="formData.submissionDate"
                 label="Submission Date"
                 v-bind="customProps"
               />
             </v-col>
-            <v-col cols="12">
+            <v-col cols="12" class="pa-1">
               <v-textarea
+                v-if="show"
                 v-model="formData.contributionNotes"
                 label="Contribution notes"
                 v-bind="customProps"
@@ -253,8 +308,9 @@
               >
               </v-textarea>
             </v-col>
-            <v-col cols="12">
+            <v-col cols="12" class="pa-1">
               <v-textarea
+                v-if="show"
                 v-model="formData.locationDescription"
                 label="Location description"
                 v-bind="customProps"
@@ -264,8 +320,9 @@
               >
               </v-textarea>
             </v-col>
-            <v-col cols="12">
+            <v-col cols="12" class="pa-1">
               <v-textarea
+                v-if="show"
                 v-model="formData.culturalNarrative"
                 label="Cultural Narrative"
                 v-bind="customProps"
@@ -275,35 +332,35 @@
               >
               </v-textarea>
             </v-col>
-            <v-col :cols="mobile ? '6' : '3'">
+            <v-col :cols="mobile ? '6' : '3'" class="pa-1">
               <v-text-field
                 v-model="formData.format"
                 label="Format"
                 v-bind="customProps"
               />
             </v-col>
-            <v-col :cols="mobile ? '6' : '3'">
+            <v-col :cols="mobile ? '6' : '3'" class="pa-1">
               <v-text-field
                 v-model="formData.identifier"
                 label="Identifier"
                 v-bind="customProps"
               />
             </v-col>
-            <v-col :cols="mobile ? '6' : '3'">
+            <v-col :cols="mobile ? '6' : '3'" class="pa-1">
               <v-text-field
                 v-model="formData.source"
                 label="Source"
                 v-bind="customProps"
               />
             </v-col>
-            <v-col :cols="mobile ? '6' : '3'">
+            <v-col :cols="mobile ? '6' : '3'" class="pa-1">
               <v-text-field
                 v-model="formData.language"
                 label="Language"
                 v-bind="customProps"
               />
             </v-col>
-            <v-col cols="12">
+            <v-col cols="12" class="pa-1">
               <v-textarea
                 v-model="formData.translation"
                 label="Translation/Transcription"
@@ -334,6 +391,9 @@ import Artefact from '@/components/artefacts/Artefact.vue'
 import ArtefactGroup from '@/components/artefacts/ArtefactGroup.vue'
 import ProfileSearchBar from '@/components/archive/ProfileSearchBar.vue'
 
+import SearchBar from '@/components/button/SearchBar.vue'
+import SearchButton from '@/components/button/SearchButton.vue'
+
 import ArtefactCarousel from '@/components/archive/ArtefactCarousel.vue'
 
 import MediaCard from '@/components/archive/MediaCard.vue'
@@ -363,7 +423,9 @@ export default {
     MediaCard,
     Artefact,
     ArtefactGroup,
-    ArtefactCarousel
+    ArtefactCarousel,
+    SearchBar,
+    SearchButton
   },
   props: {
     formData: {
@@ -373,10 +435,12 @@ export default {
   data () {
     return {
       ARTEFACTS: artefacts,
+      search: false,
       model: 0,
       show: false,
-      categories: ['one', 'two', 'three', 'four', 'five', 'six', 'seven'],
+      categories: [{ title: 'one' }, { title: 'two' }, { title: 'three' }, { title: 'four' }, { title: 'five' }, { title: 'six' }, { title: 'seven' }],
       collections: firstMocks,
+      showLocation: false,
       showMentions: false,
       showCategories: false,
       showContributors: false,
@@ -403,13 +467,15 @@ export default {
         outlined: true,
         hideDetails: true,
         placeholder: ' ',
-        class: 'mt-3',
-        clearable: true,
-        dense: true
+        class: 'custom',
+        clearable: true
       }
     }
   },
   methods: {
+    clickedOff () {
+      this.search = !this.search
+    },
     warn (field) {
       alert(`Cannot add ${field} yet`)
     },
@@ -478,18 +544,17 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .video-player {
   width: 500px;
 }
-  .custom.v-text-field>.v-input__control>.v-input__slot:before {
-    border-style: none;
-  }
 
-  .custom.v-text-field>.v-input__control>.v-input__slot:after {
-    border-style: none;
-  }
+.title-input >>> input{
+  text-align: start !important;
+  font-size: 1.2em;
+  font-weight: 500;
 
+}
   .close {
     top: -25px;
     right: -10px;
@@ -515,4 +580,41 @@ export default {
   .field {
     color: rgba(0, 0, 0, 0.6);
   }
+
+  .clickable {
+    cursor: pointer;
+  }
+
+.rounded-border {
+  border: 0.5px solid rgba(0,0,0,0.8);
+  border-radius: 5px;
+  background-color: white;
+}
+
+.box-title {
+  position: relative;
+  bottom: 25px;
+  left: 100px;
+  background-color: white;
+  width: 100px;
+  padding-right: 0px;
+}
+
+.br {
+  border-right: 0.5px solid rgba(0,0,0,0.8);
+  width:100%
+}
+
+.icon-button {
+    padding: 0px;
+    width: 50px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.icon-search {
+    width: 300px;
+    display: flex;
+    justify-items: flex-end;
+}
 </style>

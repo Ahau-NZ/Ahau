@@ -3,7 +3,7 @@ export const artefacts = [
     type: 'video',
     id: '%4',
     title: 'Test Video 1',
-    blob: require('../assets/ignore/video1.mp4'),
+    blob: require('../assets/buildCSV.mp4'),
     description: "Big Buck Bunny tells the story of a giant rabbit with a heart bigger than himself. When one sunny day three rodents rudely harass him, something snaps... and the rabbit ain't no bunny anymore! In the typical cartoon tradition he prepares the nasty rodents a comical revenge.\n\nLicensed under the Creative Commons Attribution license\nhttp://www.bigbuckbunny.org",
     format: 'mp4',
     identifier: '123122342',
@@ -21,7 +21,7 @@ export const artefacts = [
     type: 'video',
     id: '%5',
     title: 'Big Buck Bunny',
-    blob: require('../assets/ignore/big_buck_bunny.mp4'),
+    blob: require('../assets/buildCSV.mp4'),
     description: 'The first Blender Open Movie from 2006',
     format: 'mp4',
     identifier: '123123123',
@@ -100,7 +100,7 @@ export const artefacts = [
   },
   {
     type: 'photo',
-    id: '%6',
+    id: '%7',
     title: '100 x 300 photo',
     blob: 'https://picsum.photos/100/300',
     description: 'Tall Photo of size 100 x 300',
@@ -115,7 +115,7 @@ export const artefacts = [
   },
   {
     type: 'photo',
-    id: '%6',
+    id: '%8',
     title: '1000 x 300 photo',
     blob: 'https://picsum.photos/1000/300',
     description: 'Wide Photo of size 1000 x 300',
@@ -127,7 +127,7 @@ export const artefacts = [
     rights: '',
     source: '',
     translation: ''
-  },
+  }
   // {
   //   type: 'Photo',
   //   id: '%ArtefactIdForMyPhoto6',

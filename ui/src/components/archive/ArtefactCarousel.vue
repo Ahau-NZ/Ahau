@@ -18,12 +18,19 @@
         :end="isEndItem(i)"
         @click="showArtefact(artefact, i)"
       />
+      <div class="mt-10 ml-10">
+        <input v-show="false" ref="fileInput" type="file" accept="audio/*,video/*,image/*" multiple @change="processMediaFiles($event)" />
+        <AddButton size="30px" icon="mdi-image-plus" iconClass="pr-3" class="right: 0;" @click="$refs.fileInput.click()" label=""/>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 import ArtefactCarouselItem from '@/components/archive/ArtefactCarouselItem.vue'
+import ArtefactSVG from '@/assets/icons/addArtefact-min.svg'
+import AddButton from '@/components/button/AddButton.vue'
+
 export default {
   name: 'ArtefactCarousel',
   props: {
@@ -34,7 +41,10 @@ export default {
       }
     }
   },
-  components: { ArtefactCarouselItem },
+  components: {
+    ArtefactCarouselItem,
+    AddButton
+  },
   data () {
     return {
       displayedArtefact: this.artefacts[0],
@@ -46,6 +56,9 @@ export default {
     this.componentLoaded = true
   },
   methods: {
+    processMediaFiles (event) {
+      this.$emit('processMediaFiles', event)
+    },
     showArtefact (artefact, i) {
       this.displayedArtefact = artefact
       this.displayedIndex = i

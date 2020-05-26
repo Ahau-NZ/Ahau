@@ -78,6 +78,9 @@ export default {
       hover: false
     }
   },
+  mounted () {
+    console.log('artefact: ', this.artefact)
+  },
   computed: {
     customStyle () {
       return {
