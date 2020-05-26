@@ -2,10 +2,10 @@
     <v-dialog v-model="show"
       transition="dialog-bottom-transition"
       class="pa-0 ma-0"
-      fullscreen
+      :fullscreen="mobile"
     >
       <v-card tile flat>
-        <v-container style="width: 900px" class="pa-0">
+        <v-container class="pa-0" :style="`width:${width};`">
           <v-row>
             <v-col cols="12">
               <v-card-actions>
@@ -23,7 +23,7 @@
                 />
               </h1>
             </v-col>
-            <v-col class="px-0">
+            <v-col cols="12" class="px-0">
               <ArtefactCarousel :artefacts="formData" :index.sync="selectedIndex" :editing="!editing" @delete="$emit('delete', $event)"/>
             </v-col>
             <v-col cols="12">
@@ -131,8 +131,7 @@
               </v-btn>
               <v-spacer/>
             </v-col>
-            <v-col cols="10"/>
-            <v-col cols="1">
+            <v-col>
               <v-card-actions>
                 <v-btn @click="close"
                   text large fab
@@ -272,6 +271,9 @@ export default {
     this.artefact = this.formData[this.selectedIndex]
   },
   computed: {
+    mobile () {
+      return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
+    },
     artefact: {
       get () {
         return this.formData[this.selectedIndex]
@@ -287,9 +289,6 @@ export default {
         return start + '-' + end
       }
       return start
-    },
-    mobile () {
-      return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
     width () {
       if (this.mobile) return '100%'

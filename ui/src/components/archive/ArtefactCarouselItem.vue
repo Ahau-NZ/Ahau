@@ -2,18 +2,19 @@
   <v-hover v-slot:default="{ hover }" class="pa-0 ma-0">
     <v-card
       tile
+      flat
       :class="{ 'on-hover': hover, 'highlight': selected }"
-      :style="{...dimensions }"
       @click="$emit('click')"
       :outlined="selected"
+      class="container"
     >
       <v-img
         v-if="artefact.type === 'photo'"
         :src="artefact.blob"
-        :style="dimensions"
         contain
+        class="media"
+        tile
         flat
-        class="container"
       >
         <template v-slot:placeholder>
           <v-row
@@ -25,12 +26,12 @@
           </v-row>
         </template>
       </v-img>
-      <div v-if="artefact.type === 'video'" class="container">
-        <video :src="artefact.blob" :style="dimensions" :controls="hover && controls"/>
+      <div v-if="artefact.type === 'video'" class="media">
+        <video :src="artefact.blob" :controls="hover && controls" class="media"/>
       </div>
-      <div v-if="artefact.type === 'audio'" class="container">
-        <audio :src="artefact.blob" :style="dimensions"
-          :controls="hover && controls"
+      <div v-if="artefact.type === 'audio'" class="media">
+        <audio :src="artefact.blob"
+          :controls="hover && controls" class="media"
         />
         <v-icon size="50" class="center">mdi-music</v-icon>
       </div>
@@ -65,25 +66,20 @@ export default {
     return {
       hover: false
     }
-  },
-  computed: {
-    dimensions () {
-      return {
-        width: this.width,
-        height: this.height
-      }
-    }
   }
 }
 </script>
-<style scoped>
-.container {
-  position: relative;
-  padding: 0;
-  margin: 0;
-  height: 100%;
+<style scoped lang="scss">
+/* set to parent dimensions */
+.media {
   width: 100%;
+  height: 100%;
   background-color: #1E1E1E;
+
+}
+.container {
+  width: 100%;
+  height: 100%;
 }
 .center {
   position: absolute;

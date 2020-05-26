@@ -1,10 +1,10 @@
 <template>
   <v-container class="pa-0">
-    <v-carousel v-model="selectedIndex" hide-delimiters :style="dimensions">
-      <v-carousel-item v-for="(artefact, i) in artefacts" :key="`a-c-${i}`" :style="dimensions" transition="fade-transition">
+    <v-carousel v-model="selectedIndex" hide-delimiters style="width: 100vw;">
+      <v-carousel-item v-for="(artefact, i) in artefacts" :key="`a-c-${i}`" transition="fade-transition"
+        style="width:100%;"
+      >
         <ArtefactCarouselItem :artefact="artefact"
-          :width="width"
-          :height="height"
           controls
           @update="$emit('update', i)"
           @delete="$emit('delete', i)"
@@ -12,21 +12,19 @@
         />
       </v-carousel-item>
     </v-carousel>
-    <v-sheet
-      class="mx-auto"
-      max-width="100%"
-    >
     <v-slide-group
       v-model="selectedIndex"
-      class="pa-0"
+      class="pa-0 background"
       light
       center-active
+      style="width:100vw;"
     >
       <v-slide-item
         v-for="(artefact, i) in artefacts"
         :key="`a-s-g-${i}`"
         v-slot:default="{ active, toggle }"
         transition="fade-transition"
+        style="width:100px;height:100px"
       >
         <v-scale-transition>
           <ArtefactCarouselItem :artefact="artefact"
@@ -36,7 +34,6 @@
         </v-scale-transition>
       </v-slide-item>
     </v-slide-group>
-    </v-sheet>
   </v-container>
 </template>
 
@@ -58,7 +55,6 @@ export default {
   components: { ArtefactCarouselItem },
   data () {
     return {
-      width: '100%',
       selectedIndex: this.index
     }
   },
@@ -70,16 +66,6 @@ export default {
   computed: {
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
-    },
-    height () {
-      if (this.mobile) return '300px'
-      return '300px'
-    },
-    dimensions () {
-      return {
-        width: this.width,
-        height: this.height
-      }
     }
   },
   methods: {
@@ -91,19 +77,8 @@ export default {
 }
 </script>
 <style scoped>
-.carousel-item {
-  width: 100%;
-  height: 200px;
-}
-
-.carousel-thumbnail-group {
-  display: flex;
-  flex-direction: row;
-  overflow-x: auto;
-}
-
-.show-btns {
-  color: rgba(255, 255, 255, 1) !important;
+.background {
+  background-color: #1E1E1E;
 }
 
 ::-webkit-scrollbar {
