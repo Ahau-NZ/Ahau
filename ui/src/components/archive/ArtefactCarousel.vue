@@ -1,5 +1,5 @@
 <template>
-  <v-container class="pa-0">
+  <v-container class="pa-0 background">
     <v-carousel v-model="selectedIndex" hide-delimiters style="width: 100vw;">
       <v-carousel-item v-for="(artefact, i) in artefacts" :key="`a-c-${i}`" transition="fade-transition"
         style="width:100%;"
