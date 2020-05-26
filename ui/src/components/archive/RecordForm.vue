@@ -57,16 +57,28 @@
                 @click:clear="hasEndDate = false"
               />
             </v-col>
+<<<<<<< Updated upstream
             
             <v-col :cols="mobile ? '12' : formData.mentions.length > 2 ? 'auto' : '4'">
               <AddButton size="20px" icon="mdi-account-multiple-plus" iconClass="pr-3" class="right: 0;" label="Mention" @click="showMentions = true" />
+=======
+
+            <!-- ADD MENTIONS -->
+            <v-col :cols="mobile ? formData.mentions.length > 2 ? 'auto' : '6' : formData.mentions.length > 2 ? 'auto' : '3'" class="pr-0">
+              <v-row v-if="!showMentions" class="pl-10 pt-2" @click="showMentions = true" >
+                <v-icon small>mdi-plus</v-icon>
+                <AddButton size="20px" icon="mdi-account" iconClass="pr-3" class="right: 0;" label="Mention" justify="start"/>
+              </v-row>
+>>>>>>> Stashed changes
               <ProfileSearchBar
                 :selectedItems.sync="formData.mentions"
-                :items="items"
+                :items="suggestions"
                 :searchString.sync="searchString"
                 :openMenu.sync="showMentions"
+                placeholder="add mention"
                 type="profile"
                 item="preferredName"
+                @getSuggestions="getSuggestions"
               />
               <AvatarGroup v-if="formData.mentions.length > 0"
                 :profiles="formData.mentions"
@@ -76,20 +88,55 @@
                 @delete="removeItem(formData.mentions, $event)"
               />
             </v-col>
+<<<<<<< Updated upstream
             <v-col :cols="mobile ? '12' : formData.categories.length > 0 ? 'auto' : '4'">
               <AddButton label="Category" @click="showCategories = true" />
+=======
+
+            <!-- ADD ACCESS -->
+            <v-col :cols="mobile ? formData.access.length > 2 ? 'auto' : '6' : formData.access.length > 1 ? 'auto' : '3'">
+              <v-row v-if="!showAccess" @click="showAccess = true" class="pl-10 pt-2">
+                <v-icon small>mdi-plus</v-icon>
+                <AddButton size="20px" icon="mdi-file-key" iconClass="pr-3" label="Access" justify="start"/>
+              </v-row>
+              <ProfileSearchBar
+                :selectedItems.sync="formData.access"
+                :items="suggestions"
+                :searchString.sync="searchString"
+                :openMenu.sync="showAccess"
+                type="profile"
+                item="preferredName"
+                placeholder="add community"
+              />
+              <AvatarGroup v-if="formData.access.length > 0"
+                :profiles="formData.access"
+                show-labels
+                size="40px"
+                deletable
+                @delete="removeItem(formData.access, $event)"
+              />
+            </v-col>
+
+            <!-- ADD CATEGORIES -->
+           <v-col :cols="mobile ? formData.categories.length > 2 ? 'auto' : '6' : formData.categories.length > 1 ? 'auto' : '3'">
+              <v-row v-if="!showCategories" @click="showCategories = true" class="pl-10 pt-2">
+                <v-icon small>mdi-plus</v-icon>
+                <AddButton size="20px" icon="mdi-label" iconClass="pr-3"  label="Category" justify="start" />
+              </v-row>
+>>>>>>> Stashed changes
               <ProfileSearchBar
                 :selectedItems.sync="formData.categories"
                 :items="categories"
                 :searchString.sync="searchString"
                 :openMenu.sync="showCategories"
                 item=""
+                placeholder="add category"
               />
               <v-chip-group
                 column
                 v-if="formData.categories.length > 0"
               >
-                <v-chip v-for="(category, i) in formData.categories" :key="category"
+                <v-chip v-for="(category, i) in formData.categories" :key="i"
                   label
                   outlined
                   close
@@ -100,8 +147,17 @@
                 </v-chip>
               </v-chip-group>
             </v-col>
+<<<<<<< Updated upstream
             <v-col :cols="mobile ? '12' : formData.collections.length > 0 ? 'auto' : '4'">
               <AddButton label="Collection" @click="showCollections = true" />
+=======
+            <!-- ADD COLLECTIONS -->            
+            <v-col :cols="mobile ? formData.categories.length > 0 ? '12' : '6' : formData.categories.length > 0 ? 'auto' : '3'">
+              <v-row v-if="!showCollections" class="pl-10 pt-2" @click="showCollections = true">
+                <v-icon small>mdi-plus</v-icon>
+                <AddButton size="20px" icon="mdi-folder-multiple-image" iconClass="pr-3" label="Collection" justify="start"/>
+              </v-row>
+>>>>>>> Stashed changes
               <ProfileSearchBar
                 :selectedItems.sync="formData.collections"
                 :items="collections"
@@ -109,6 +165,7 @@
                 :openMenu.sync="showCollections"
                 type="collection"
                 item="title"
+                placeholder="add collection"
               />
               <ChipGroup :chips="formData.collections" deletable @delete="removeItem(formData.collections, $event)" />
             </v-col>
@@ -177,7 +234,7 @@
       </v-row>
       <v-divider/>
       <v-card-actions class="pt-2 pb-2">
-        <v-row @click="show = !show" ripple class="clickable">
+        <v-row @click="show = !show" class="clickable">
           <v-col>
             <span class="pa-0 ma-0">Advanced</span>
           </v-col>
@@ -192,8 +249,17 @@
       <v-expand-transition>
         <div v-show="show">
           <v-row>
+<<<<<<< Updated upstream
             <v-col :cols="mobile ? '12' : formData.contributors.length > 0 ? 'auto' : '2'">
               <AddButton label="Contributor" @click="showContributors = true" />
+=======
+            <v-col :cols="mobile ? '12' : formData.contributors.length > 0 ? 'auto' : '3'">
+
+             <v-row v-if="!showContributors" @click="showContributors = true" class="pl-10">
+              <v-icon small>mdi-plus</v-icon>
+                <AddButton size="20px" icon="mdi-library" iconClass="pr-3" class="right: 0;" label="Contributor"  justify="start"/>
+              </v-row>
+>>>>>>> Stashed changes
               <ProfileSearchBar
                 :selectedItems.sync="formData.contributors"
                 :items="items"
@@ -201,6 +267,7 @@
                 :openMenu.sync="showContributors"
                 type="profile"
                 item="preferredName"
+                placeholder="add contributor"
               />
               <AvatarGroup v-if="formData.contributors.length > 0"
                 :profiles="formData.contributors"
@@ -210,8 +277,17 @@
                 @delete="removeItem(formData.contributors, $event)"
               />
             </v-col>
+<<<<<<< Updated upstream
             <v-col :cols="mobile ? '12' : formData.creator.id ? 'auto' : '2'">
               <AddButton label="Creator" @click="showCreator = true" />
+=======
+            <v-col :cols="mobile ? '12' : formData.creator.id ? 'auto' : '3'">
+              <v-row v-if="!showCreator" @click="showCreator = true" class="pl-10">
+                <v-icon small>mdi-plus</v-icon>
+                <AddButton size="20px" icon="mdi-account-circle" iconClass="pr-3" class="right: 0;" label="Creator" justify="start"/>
+              </v-row>
+              <!-- <AddButton label="Creator" @click="showCreator = true" /> -->
+>>>>>>> Stashed changes
               <ProfileSearchBar
                 :selectedItems.sync="formData.creator"
                 :items="items"
@@ -220,6 +296,7 @@
                 single
                 type="profile"
                 item="preferredName"
+                placeholder="add creator"
               />
               <div v-if="formData.creator.id" class="pt-5">
                 <Avatar
@@ -237,7 +314,14 @@
               </div>
             </v-col>
             <v-col :cols="mobile ? '12' : formData.relatedRecords.length > 0 ? 'auto' : '4'">
+<<<<<<< Updated upstream
               <AddButton label="Related records" @click="showRecords = true" />
+=======
+              <v-row v-if="!showRecords" @click="showRecords = true" class="pl-10">
+                <v-icon small>mdi-plus</v-icon>
+                <AddButton size="20px" icon="mdi-book-multiple" iconClass="pr-3" class="right: 0;" label="Related records"  justify="start"/>
+              </v-row>
+>>>>>>> Stashed changes
               <ProfileSearchBar
                 :selectedItems.sync="formData.relatedRecords"
                 :items="collections"
@@ -245,6 +329,7 @@
                 :openMenu.sync="showRecords"
                 type="collection"
                 item="title"
+                placeholder="add related records"
               />
               <ChipGroup :chips="formData.relatedRecords" deletable @delete="removeItem(formData.relatedRecords, $event)" />
             </v-col>
@@ -346,17 +431,32 @@ import AddButton from '@/components/button/AddButton.vue'
 import AvatarGroup from '@/components/AvatarGroup.vue'
 import Avatar from '@/components/Avatar.vue'
 import ChipGroup from '@/components/archive/ChipGroup.vue'
+<<<<<<< Updated upstream
 
 import ProfileSearchBar from '@/components/archive/ProfileSearchBar.vue'
 
+=======
+import Artefact from '@/components/artefacts/Artefact.vue'
+import ArtefactGroup from '@/components/artefacts/ArtefactGroup.vue'
+import ProfileSearchBar from '@/components/archive/ProfileSearchBar.vue'
+import ArtefactCarousel from '@/components/archive/ArtefactCarousel.vue'
+>>>>>>> Stashed changes
 import MediaCard from '@/components/archive/MediaCard.vue'
-import { personComplete } from '@/mocks/person-profile'
 
-import { firstMocks } from '@/mocks/collections'
+import { findByName } from '@/lib/search-helpers.js'
+import tree from '@/lib/tree-helpers'
 
+<<<<<<< Updated upstream
 import {
   RULES
 } from '@/lib/constants'
+=======
+import { personComplete } from '@/mocks/person-profile'
+import { firstMocks } from '@/mocks/collections'
+import { artefacts } from '@/mocks/artefacts'
+
+import { RULES } from '@/lib/constants'
+>>>>>>> Stashed changes
 
 const imageRegex = /^image\//
 const audioRegex = /^audio\//
@@ -371,7 +471,14 @@ export default {
     ProfileSearchBar,
     AvatarGroup,
     ChipGroup,
+<<<<<<< Updated upstream
     MediaCard
+=======
+    MediaCard,
+    Artefact,
+    ArtefactGroup,
+    ArtefactCarousel,
+>>>>>>> Stashed changes
   },
   props: {
     formData: {
@@ -380,6 +487,11 @@ export default {
   },
   data () {
     return {
+<<<<<<< Updated upstream
+=======
+      ARTEFACTS: artefacts,
+      model: 0,
+>>>>>>> Stashed changes
       show: false,
       categories: [{title: 'one'}, {title: 'two'}, {title: 'three'}, {title: 'four'}, {title: 'five'} , {title: 'six'}, {title: 'seven'}],
       collections: firstMocks,
@@ -393,6 +505,7 @@ export default {
       showRecords: false,
       searchString: '',
       items: [...personComplete.children, ...personComplete.parents, ...personComplete.siblings],
+      suggestions: [],
       hasEndDate: false,
       form: {
         valid: true,
@@ -415,6 +528,15 @@ export default {
     }
   },
   methods: {
+<<<<<<< Updated upstream
+=======
+    async getSuggestions (name) {
+      if (name) this.suggestions = await findByName(name)
+      else this.suggestions = []
+      console.log('suggestions = ', this.suggestions)
+    },
+
+>>>>>>> Stashed changes
     warn (field) {
       alert(`Cannot add ${field} yet`)
     },
@@ -489,9 +611,17 @@ export default {
     border-style: none;
   }
 
+<<<<<<< Updated upstream
   .custom.v-text-field>.v-input__control>.v-input__slot:after {
     border-style: none;
   }
+=======
+.title-input >>> input{
+  text-align: start !important;
+  font-size: 1.2em;
+  font-weight: 500;
+}
+>>>>>>> Stashed changes
 
   .close {
     top: -25px;
@@ -522,4 +652,28 @@ export default {
   .clickable {
     cursor: pointer;
   }
+<<<<<<< Updated upstream
+=======
+
+.rounded-border {
+  border: 0.5px solid rgba(0,0,0,0.8);
+  border-radius: 5px;
+  background-color: white;
+}
+
+.box-title {
+  position: relative;
+  bottom: 25px;
+  left: 100px;
+  background-color: white;
+  width: 100px;
+  padding-right: 0px;
+}
+
+.br {
+  border-right: 0.5px solid rgba(0,0,0,0.8);
+  width:100%
+}
+
+>>>>>>> Stashed changes
 </style>

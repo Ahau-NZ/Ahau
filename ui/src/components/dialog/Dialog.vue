@@ -24,7 +24,7 @@
           /> -->
 
           <!-- Dialog Card -->
-          <v-card :min-height="mobile ? height : 'auto'">
+          <v-card :min-height="mobile ? height : 'auto'" style="overflow-x:hidden !important">
             <v-container width="100%" class="pa-5 pb-2" :style="`background: ${background};`">
 
               <!--=== TOP OF DIALOG CARD ===-->
