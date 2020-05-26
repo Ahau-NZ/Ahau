@@ -64,7 +64,7 @@ export default {
   },
   watch: {
     selectedIndex (index) {
-      this.$emit('update:index', index)
+      if (index) this.$emit('update:index', index)
     }
   },
   computed: {

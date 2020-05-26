@@ -189,12 +189,12 @@ const EMPTY_ARTEFACT = {
 
 const PERMITTED_ARTEFACT_ATTRS = Object.keys(EMPTY_ARTEFACT)
 
-function artefactChanges (initial, updated, searchNested) {
+function artefactChanges (initial, updated) {
   let changes = []
   Object.entries(updated).forEach(([key, value]) => {
     if (!isEqual(updated[key], initial[key])) {
-      switch (true) {
-        case Array.isArray(updated[key]):
+      if (typeof updated[key] === 'object') {
+        if (Array.isArray(updated[key])) {
           changes[key] = { add: [], remove: [] }
           changes[key].add = arrayChanges(updated[key], initial[key])
           changes[key].remove = arrayChanges(initial[key], updated[key])
@@ -204,15 +204,11 @@ function artefactChanges (initial, updated, searchNested) {
 
           // means the same item was remove then added back in
           if (isEmpty(changes[key])) delete changes[key]
-
-          break
-        default:
-          if (searchNested) {
-            changes[key] = artefactChanges(initial[key], updated[key], false)
-          } else {
-            changes[key] = updated[key]
-          }
-          break
+        } else {
+          changes[key] = artefactChanges(initial[key], updated[key])
+        }
+      } else {
+        changes[key] = updated[key]
       }
     }
   })
@@ -254,7 +250,6 @@ export default {
       showMentions: false,
       searchString: '',
       editing: true,
-      artefact: this.formData[this.index],
       selectedIndex: this.index,
       formData: clone(this.artefacts)
     }
@@ -264,7 +259,7 @@ export default {
       if (newIndex) this.artefact = this.formData[newIndex]
     },
     index (newIndex) {
-      this.selectedIndex = newIndex
+      if (newIndex) this.selectedIndex = newIndex
     },
     artefacts: {
       deep: true,
@@ -273,7 +268,18 @@ export default {
       }
     }
   },
+  mounted () {
+    this.artefact = this.formData[this.selectedIndex]
+  },
   computed: {
+    artefact: {
+      get () {
+        return this.formData[this.selectedIndex]
+      },
+      set (artefact) {
+        this.formData[this.selectedIndex] = artefact
+      }
+    },
     storyDate () {
       var start = this.formData.recordDate
       var end = this.formData.recordEndDate
@@ -302,15 +308,17 @@ export default {
     }
   },
   methods: {
+    removeItem (array, index) {
+      array.splice(index, 1)
+    },
     close () {
-      console.log('closing!')
       confirm('Are you sure you want to close without saving? All changes will be lost!') && this.$emit('close')
     },
     submit () {
       var output = {}
       if (this.editing) {
         // get all changes
-        output = artefactChanges(this.artefacts, this.formData, true)
+        output = artefactChanges(this.artefacts, this.formData)
       } else {
         output = artefactSubmission(this.formData)
       }

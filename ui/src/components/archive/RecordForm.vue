@@ -310,7 +310,7 @@
       </v-expand-transition>
     </v-form>
   <!-- </v-card> -->
-  <NewArtefactDialog v-if="dialog" :show="dialog" :index="index" :artefacts="formData.artefacts" @close="dialog = false" @delete="removeArtefact($event)"/>
+  <NewArtefactDialog v-if="dialog" :show="dialog" :index="index" :artefacts="formData.artefacts" @close="dialog = false" @delete="removeArtefact($event)" @submit="updateArtefacts($event)"/>
   </div>
 </template>
 
@@ -396,6 +396,9 @@ export default {
     }
   },
   methods: {
+    updateArtefacts (changes) {
+      alert('WARNING, submission doesnt currently update artefacts')
+    },
     toggleDialog ($event) {
       this.index = $event
       this.dialog = true

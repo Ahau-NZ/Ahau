@@ -15,7 +15,7 @@
 </template>
 
 <script>
-// import { mapGetters } from 'vuex'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'Artefact',
@@ -25,7 +25,7 @@ export default {
     index: Number
   },
   computed: {
-    // ...mapGetters(['showArtefact']),
+    ...mapGetters(['showArtefact']),
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     }

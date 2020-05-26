@@ -22,7 +22,7 @@
     <v-list-item v-if="story.artefacts && story.artefacts.length" class="px-0">
       <v-list-item-content>
         <v-carousel v-model="model" hide-delimiters :show-arrows="!mobile && fullStory" :show-arrows-on-hover="!mobile" :height="showArtefact ? 'auto' : mobile ? '300px' : '500px'">
-          <v-carousel-item v-for="(artefact,i) in story.artefacts" :key="artefact.id">
+          <v-carousel-item v-for="(artefact,i) in story.artefacts" :key="`story-card-artefact-${i}`">
             <Artefact :model="model" :index="i" @showArtefact="toggleShowArtefact($event)" :artefact="artefact" />
           </v-carousel-item>
           <!-- ARTEFACTGROUP DESKTOP -->
@@ -82,7 +82,7 @@
         <v-col class="pt-0 pb-8 " v-if="story.categories.length" :cols="mobile ? '12' : ''">
           <v-list-item-subtitle  class="pb-1" style="color:grey"> Categories </v-list-item-subtitle>
           <v-chip-group column v-if="story.categories.length > 0">
-            <v-chip v-for="(category, i) in story.categories" :key="i"
+            <v-chip v-for="(category, i) in story.categories" :key="`story-card-categories-${i}`"
               label
               outlined
               width="30px"
