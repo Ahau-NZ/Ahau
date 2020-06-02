@@ -15,7 +15,8 @@ export const artefacts = [
     translation: '',
     duration: 1234.56,
     size: 123456,
-    transcription: ''
+    transcription: '',
+    mentions: []
   },
   {
     type: 'video',
@@ -33,32 +34,34 @@ export const artefacts = [
     translation: '',
     duration: 1234.56,
     size: 123456,
-    transcription: ''
+    transcription: '',
+    mentions: []
   },
   {
     type: 'audio',
     id: '%6',
     title: 'Sample Audio',
     blob: require('../assets/ignore/audio.mp3'),
-    description: 'The first Blender Open Movie from 2006',
+    description: 'This is some audio recording',
     format: 'mp4',
     identifier: '123123123',
     language: 'English',
     licence: 'LICENCE10212',
     // "recps" // [String] Is this needed?
     rights: '',
-    source: 'sample clip',
+    source: 'audiosounds',
     translation: '',
-    duration: 1234.56,
-    size: 123456,
-    transcription: ''
+    duration: 12356,
+    size: 312,
+    transcription: '',
+    mentions: []
   },
   {
     type: 'photo',
     id: '%1',
-    title: '200 x 200 photo',
-    blob: 'https://picsum.photos/200/200',
-    description: 'Sample photo of size 200 x 200',
+    title: 'mock 1',
+    blob: require('../assets/mocks/mock1.jpg'),
+    description: 'this is mock',
     format: 'jpg',
     identifier: '',
     language: '',
@@ -66,14 +69,15 @@ export const artefacts = [
     // recps: // [String] Is this needed?
     rights: '',
     source: '',
-    translation: ''
+    translation: '',
+    mentions: []
   },
   {
     type: 'photo',
     id: '%2',
-    title: '500 x 500 photo',
-    blob: 'https://picsum.photos/500/500',
-    description: 'Sample photo of size 500 x 500',
+    title: 'mock 2',
+    blob: require('../assets/mocks/mock2.jpg'),
+    description: 'this is mock 2',
     format: 'jpg',
     identifier: '',
     language: '',
@@ -81,14 +85,15 @@ export const artefacts = [
     // recps: // [String] Is this needed?
     rights: '',
     source: '',
-    translation: ''
+    translation: '',
+    mentions: []
   },
   {
     type: 'photo',
     id: '%3',
-    title: '1000 x 1000 Image',
-    blob: 'https://picsum.photos/1000/1000',
-    description: 'Sample photo of size 1000 x 1000',
+    title: 'Mock 3',
+    blob: require('../assets/mocks/mock3.jpg'),
+    description: 'this is mock 3',
     format: 'jpg',
     identifier: '',
     language: '',
@@ -96,37 +101,40 @@ export const artefacts = [
     // recps: // [String] Is this needed?
     rights: '',
     source: '',
-    translation: ''
+    translation: '',
+    mentions: []
   },
   {
     type: 'photo',
-    id: '%7',
-    title: '100 x 300 photo',
-    blob: 'https://picsum.photos/100/300',
-    description: 'Tall Photo of size 100 x 300',
-    format: 'jpg',
+    id: '%6',
+    title: 'Map Test',
+    blob: require('../assets/mocks/map-test.png'),
+    description: 'this is a map test image',
+    format: 'png',
     identifier: '',
     language: '',
     licence: '',
     // recps: // [String] Is this needed?
     rights: '',
     source: '',
-    translation: ''
+    translation: '',
+    mentions: []
   },
   {
     type: 'photo',
-    id: '%8',
-    title: '1000 x 300 photo',
-    blob: 'https://picsum.photos/1000/300',
-    description: 'Wide Photo of size 1000 x 300',
-    format: 'jpg',
+    id: '%6',
+    title: 'Story Mockup',
+    blob: require('../assets/mocks/story-mockup.png'),
+    description: 'this is a story mock up',
+    format: 'png',
     identifier: '',
     language: '',
     licence: '',
     // recps: // [String] Is this needed?
     rights: '',
     source: '',
-    translation: ''
+    translation: '',
+    mentions: []
   }
   // {
   //   type: 'Photo',

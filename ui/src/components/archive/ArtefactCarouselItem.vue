@@ -1,65 +1,54 @@
 <template>
-  <div>
-    <v-hover v-slot:default="{ hover }" class="pa-0">
-      <v-card
-        :elevation="hover ? 12 : 2"
-        :class="{ 'on-hover': hover, 'mr-2': !end}"
-        :style="customStyle"
-        class="mt-2"
-        @click="$emit('click')"
+  <v-hover v-slot:default="{ hover }" class="pa-0 ma-0">
+    <v-card
+      tile
+      flat
+      :class="{ 'on-hover': hover, 'highlight': selected }"
+      @click="$emit('click')"
+      :outlined="selected"
+      class="container"
+    >
+      <v-img
+        v-if="artefact.type === 'photo'"
+        :src="artefact.blob"
+        contain
+        class="media"
+        tile
+        flat
       >
-        <v-img
-          v-if="artefact.type === 'photo'"
-          :src="artefact.blob"
-          :style="customStyle"
-          contain
-        >
-          <template v-slot:placeholder>
-            <v-row
-              class="fill-height ma-0"
-              align="center"
-              justify="center"
-            >
-              <v-progress-circular indeterminate color="secondary"></v-progress-circular>
-            </v-row>
-          </template>
-        </v-img>
-        <v-card v-if="artefact.type === 'video'" class="container">
-          <video :src="artefact.blob" :style="customStyle" :controls="hover && controls"/>
-        </v-card>
-        <v-card v-if="artefact.type === 'audio'" class="container">
-          <audio :src="artefact.blob" :style="customStyle"
-            :controls="hover && controls"
-          />
-          <v-icon  :style="hover ? 'opacity: 0.1' : ''" size="50" class="center">mdi-music</v-icon>
-        </v-card>
-        <v-btn v-if="controls && hover" class="edit mr-2 mt-2"
-          fab x-small
-          @click="$emit('update')"
-        >
-          <v-icon>mdi-pencil</v-icon>
-        </v-btn>
-        <v-btn v-if="controls && hover" class="close mr-2 mt-2"
-          fab x-small
-          @click="$emit('delete')"
-        >
-          <v-icon>mdi-delete</v-icon>
-        </v-btn>
-        <v-btn v-if="controls && hover" :disabled="start" class="left white--text"
-          icon small
-          @click="$emit('previous')"
-        >
-          <v-icon>mdi-chevron-left</v-icon>
-        </v-btn>
-        <v-btn v-if="controls && hover" :disabled="end" class="right white--text"
-          icon small
-          @click="$emit('next')"
-        >
-          <v-icon>mdi-chevron-right</v-icon>
-        </v-btn>
-      </v-card>
-    </v-hover>
-  </div>
+        <template v-slot:placeholder>
+          <v-row
+            class="fill-height ma-0"
+            align="center"
+            justify="center"
+          >
+            <v-progress-circular indeterminate color="secondary"></v-progress-circular>
+          </v-row>
+        </template>
+      </v-img>
+      <div v-if="artefact.type === 'video'" class="media">
+        <video :src="artefact.blob" :controls="hover && controls" class="media"/>
+      </div>
+      <div v-if="artefact.type === 'audio'" class="media">
+        <audio :src="artefact.blob"
+          :controls="hover && controls" class="media"
+        />
+        <v-icon size="50" class="center">mdi-music</v-icon>
+      </div>
+      <v-btn v-if="controls && hover && editing" class="edit mr-2 mt-2"
+        fab x-small
+        @click="$emit('update')"
+      >
+        <v-icon>mdi-pencil</v-icon>
+      </v-btn>
+      <v-btn v-if="controls && hover && editing" class="close mr-2 mt-2"
+        fab x-small
+        @click="$emit('delete')"
+      >
+        <v-icon>mdi-delete</v-icon>
+      </v-btn>
+    </v-card>
+  </v-hover>
 </template>
 
 <script>
@@ -70,36 +59,27 @@ export default {
     width: { type: String, default: '100px' },
     height: { type: String, default: '100px' },
     controls: { type: Boolean },
-    start: { type: Boolean },
-    end: { type: Boolean }
+    selected: { type: Boolean, default: false },
+    editing: { type: Boolean }
   },
   data () {
     return {
       hover: false
     }
-  },
-  mounted () {
-    console.log('artefact: ', this.artefact)
-  },
-  computed: {
-    customStyle () {
-      return {
-        width: this.width,
-        height: this.height,
-        backgroundColor: '#121212'
-      }
-    }
   }
 }
 </script>
-<style scoped>
-.container {
-  position: relative;
-  padding: 0;
-  margin: 0;
-  height: 100%;
+<style scoped lang="scss">
+/* set to parent dimensions */
+.media {
   width: 100%;
-  background-color: #121212;
+  height: 100%;
+  background-color: #1E1E1E;
+
+}
+.container {
+  width: 100%;
+  height: 100%;
 }
 .center {
   position: absolute;
@@ -115,31 +95,29 @@ export default {
   position: absolute;
   top: 2px;
   right: 2px;
-  /* transform: translate(-50%, -50%);
-  -webkit-transform: translate(-50%, -50%); */
 }
 
 .edit {
   position: absolute;
   top: 2px;
   right: 40px;
-  /* transform: translate(-50%, -50%);
-  -webkit-transform: translate(-50%, -50%); */
 }
 
 .left {
   position: absolute;
   top: 50%;
   left: 2px;
-  /* transform: translate(-50%, -50%);
-  -webkit-transform: translate(-50%, -50%); */
 }
 
 .right {
   position: absolute;
   top: 50%;
   right: 2px;
-  /* transform: translate(-50%, -50%);
-  -webkit-transform: translate(-50%, -50%); */
+}
+
+.highlight {
+  overflow: hidden;
+  border: 5px solid rgba(0, 0, 0, 0.5)
+
 }
 </style>
