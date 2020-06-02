@@ -60,7 +60,7 @@
           <v-col v-if="formData.artefacts.length > 0" cols="12" class="pl-0 pr-0">
             <ArtefactCarousel :artefacts="formData.artefacts"
               @delete="removeArtefact($event)"
-              @update="toggleDialog($event)"
+              @update="toggleDialog($event, 'new-artefact')"
               editing
             />
           </v-col>
@@ -377,7 +377,20 @@
       </v-expand-transition>
     </v-form>
   <!-- </v-card> -->
-  <NewArtefactDialog v-if="dialog" :show="dialog" :index="index" :artefacts="formData.artefacts" @close="dialog = false" @delete="removeArtefact($event)" @submit="updateArtefacts($event)"/>
+    <NewArtefactDialog 
+      v-if="dialog === 'new-artefact'" 
+      :index="index" 
+      :artefacts="formData.artefacts" 
+      @close="dialog = false" 
+      @delete="removeArtefact($event)" 
+      @submit="updateArtefacts($event)"
+    />
+    <DeleteArtefactDialog v-if="dialog === 'delete-artefact'"
+      :show="dialog"
+      :index="index"
+      @close="dialog = false" 
+      @submit="deleteArtefact($event)"/>
+    />
   </div>
 </template>
 
@@ -424,7 +437,7 @@ export default {
   },
   data () {
     return {
-      dialog: false,
+      dialog: null,
       index: 0,
       ARTEFACTS: artefacts,
       search: false,
@@ -471,9 +484,9 @@ export default {
     updateArtefacts (changes) {
       alert('WARNING, submission doesnt currently update artefacts')
     },
-    toggleDialog ($event) {
+    toggleDialog ($event, dialog) {
       this.index = $event
-      this.dialog = true
+      this.dialog = dialog
     },
     warn (field) {
       alert(`Cannot add ${field} yet`)
