@@ -255,12 +255,10 @@ export default {
   },
   watch: {
     selectedIndex (newIndex) {
-      console.log('selectedIndex:', newIndex)
       if (newIndex) this.artefact = this.formData[newIndex]
     },
     index (newIndex) {
       if (newIndex) this.selectedIndex = newIndex
-      console.log('index:', newIndex)
     },
     artefacts: {
       deep: true,
@@ -324,9 +322,6 @@ export default {
       } else {
         output = artefactSubmission(this.formData)
       }
-
-      console.log('output', output)
-
       this.$emit('submit', output)
       this.$emit('close')
     }
