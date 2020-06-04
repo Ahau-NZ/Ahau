@@ -33,7 +33,6 @@ export default {
   props: {
     title: String,
     description: String,
-    // image: Object,
     deletable: Boolean,
     type: String,
     chip: Object,
@@ -42,7 +41,6 @@ export default {
   },
   computed: {
     colour () {
-      // var number = Math.floor(Math.random() * 11)
       return colours[this.index]
     },
     mobile () {

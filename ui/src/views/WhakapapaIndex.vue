@@ -1,11 +1,4 @@
 <template>
-  <!-- <div
-    :class="{
-      'body-width': mobile,
-      'top-margin' : mobile,
-      white: mobile
-    }"
-  > -->
   <div
     :class="{
       'body-width': mobile,

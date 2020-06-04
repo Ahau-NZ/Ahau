@@ -1,5 +1,5 @@
 <template>
-  <v-card @click="showStory()" :class="customClass" :flat="fullStory" :ripple="false" class="mx-auto" :light="!this.showArtefact" width="100%">
+  <v-card @click="showStory()" :class="customClass" :flat="fullStory" :ripple="false" class="mx-auto" :light="!showArtefact" width="100%">
     <!-- RECORD CONTRUBUTORS-STORY PREVIEW -->
     <v-list-item class="px-0" style="min-height:0; height:10px">
       <v-list-item-icon v-if="!fullStory" class="pt-0 mt-0" style="position:absolute; top:5px; right:1px; margin-right:0px">
