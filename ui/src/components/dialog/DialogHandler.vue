@@ -134,7 +134,7 @@ export default {
     WhakapapaShowHelper,
     WhakapapaTableHelper,
     NewCollectionDialog,
-    NewRecordDialog,
+    NewRecordDialog
   },
   props: {
     story: {

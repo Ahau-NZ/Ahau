@@ -10,16 +10,19 @@
                 v-model="formData.title"
                 label="Title"
                 v-bind="customProps"
+                class="title-input"
               />
             </v-col>
-            <v-col cols="12">
-              <input v-show="false" ref="fileInput" type="file" accept="audio/*,video/*,image/*" multiple @change="processMediaFiles($event)" />
-              <AddButton @click="$refs.fileInput.click()" label="Attact media or files"/>
+          </v-row>
+
+          <v-col cols="12">
+            <input v-show="false" ref="fileInput" type="file" accept="audio/*,video/*,image/*" multiple @change="processMediaFiles($event)" />
+            <AddButton @click="$refs.fileInput.click()" label="Attact media or files"/>
           </v-col>
           <v-col v-if="formData.artefacts.length > 0" cols="12" class="pl-0 pr-0">
             <ArtefactCarousel :artefacts="formData.artefacts"
-              @delete="removeArtefact($event)"
-              @update="toggleDialog($event)"
+              @delete="toggleDialog($event, 'delete')"
+              @update="toggleDialog($event, 'new')"
               editing
             />
           </v-col>
@@ -58,8 +61,11 @@
               />
             </v-col>
 
-            <v-col :cols="mobile ? '12' : formData.mentions.length > 2 ? 'auto' : '4'">
-              <AddButton size="20px" icon="mdi-account-multiple-plus" iconClass="pr-3" class="right: 0;" label="Mention" @click="showMentions = true" />
+            <v-col :cols="mobile ? formData.mentions.length > 2 ? 'auto' : '6' : formData.mentions.length > 1 ? 'auto' : '3'">
+              <v-row class="pl-2 pt-2">
+                <v-icon small>mdi-plus</v-icon>
+                <AddButton size="20px" icon="mdi-account" iconClass="pr-3" class="right: 0;" label="Mention" @click="showMentions = true" justify="start"/>
+              </v-row>
               <ProfileSearchBar
                 :selectedItems.sync="formData.mentions"
                 :items="items"
@@ -76,8 +82,34 @@
                 @delete="removeItem(formData.mentions, $event)"
               />
             </v-col>
-            <v-col :cols="mobile ? '12' : formData.categories.length > 0 ? 'auto' : '4'">
-              <AddButton label="Category" @click="showCategories = true" />
+
+            <v-col :cols="mobile ? formData.access.length > 2 ? 'auto' : '6' : formData.access.length > 1 ? 'auto' : '3'">
+              <v-row @click="showAccess = true" class="pl-2 pt-2">
+                <v-icon small>mdi-plus</v-icon>
+                <AddButton size="20px" icon="mdi-file-key" iconClass="pr-3" label="Access" justify="start"/>
+              </v-row>
+              <ProfileSearchBar
+                :selectedItems.sync="formData.access"
+                :items="items"
+                :searchString.sync="searchString"
+                :openMenu.sync="showAccess"
+                type="profile"
+                item="preferredName"
+              />
+              <AvatarGroup v-if="formData.access.length > 0"
+                :profiles="formData.access"
+                show-labels
+                size="40px"
+                deletable
+                @delete="removeItem(formData.access, $event)"
+              />
+            </v-col>
+
+           <v-col :cols="mobile ? formData.categories.length > 2 ? 'auto' : '6' : formData.categories.length > 1 ? 'auto' : '3'">
+              <v-row @click="showCategories = true" class="pl-2 pt-2">
+                <v-icon small>mdi-plus</v-icon>
+                <AddButton size="20px" icon="mdi-label" iconClass="pr-3"  label="Category" justify="start" />
+              </v-row>
               <ProfileSearchBar
                 :selectedItems.sync="formData.categories"
                 :items="categories"
@@ -100,8 +132,11 @@
                 </v-chip>
               </v-chip-group>
             </v-col>
-            <v-col :cols="mobile ? '12' : formData.collections.length > 0 ? 'auto' : '4'">
-              <AddButton label="Collection" @click="showCollections = true" />
+            <v-col :cols="mobile ? formData.categories.length > 2 ? 'auto' : '6' : formData.categories.length > 1 ? 'auto' : '3'">
+              <v-row class="pl-2 pt-2">
+                <v-icon small>mdi-plus</v-icon>
+                <AddButton size="20px" icon="mdi-folder-multiple-image" iconClass="pr-3" label="Collection" @click="showCollections = true" justify="start"/>
+              </v-row>
               <ProfileSearchBar
                 :selectedItems.sync="formData.collections"
                 :items="collections"
@@ -112,25 +147,8 @@
               />
               <ChipGroup :chips="formData.collections" deletable @delete="removeItem(formData.collections, $event)" />
             </v-col>
-            <v-col :cols="mobile ? '12' : formData.access.length > 0 ? 'auto' : '4'">
-              <AddButton label="Access" @click="showAccess = true" />
-              <ProfileSearchBar
-                :selectedItems.sync="formData.access"
-                :items="items"
-                :searchString.sync="searchString"
-                :openMenu.sync="showAccess"
-                type="profile"
-                item="preferredName"
-              />
-              <AvatarGroup v-if="formData.access.length > 0"
-                :profiles="formData.access"
-                show-labels
-                size="40px"
-                deletable
-                @delete="removeItem(formData.access, $event)"
-              />
-            </v-col>
-            <v-col :cols="mobile ? '12' : formData.protocols.length > 0 ? 'auto' : '4'">
+           <!-- </v-row> -->
+            <!-- <v-col :cols="mobile ? '12' : formData.protocols.length > 0 ? 'auto' : '4'">
               <AddButton label="Protocol" @click="showProtocols = true" />
               <ProfileSearchBar
                 :selectedItems.sync="formData.protocols"
@@ -149,7 +167,7 @@
                 @delete="removeItem(formData.protocols, $event)"
               />
             </v-col>
-          </v-row>
+          </v-row> -->
         </v-col>
       </v-row>
       <v-divider/>
@@ -167,8 +185,12 @@
       <v-expand-transition>
         <div v-show="show">
           <v-row>
-            <v-col :cols="mobile ? '12' : formData.contributors.length > 0 ? 'auto' : '2'">
-              <AddButton label="Contributor" @click="showContributors = true" />
+            <v-col :cols="mobile ? '12' : formData.contributors.length > 0 ? 'auto' : '3'">
+
+             <v-row class="pl-2">
+              <v-icon small>mdi-plus</v-icon>
+                <AddButton size="20px" icon="mdi-library" iconClass="pr-3" class="right: 0;" label="Contributor" @click="showContributors = true" justify="start"/>
+              </v-row>
               <ProfileSearchBar
                 :selectedItems.sync="formData.contributors"
                 :items="items"
@@ -185,7 +207,11 @@
                 @delete="removeItem(formData.contributors, $event)"
               />
             </v-col>
-            <v-col :cols="mobile ? '12' : formData.creator.id ? 'auto' : '2'">
+            <v-col :cols="mobile ? '12' : formData.creator.id ? 'auto' : '3'">
+              <v-row>
+                <v-icon small>mdi-plus</v-icon>
+                <AddButton size="20px" icon="mdi-account-circle" iconClass="pr-3" class="right: 0;" label="Creator" @click="showCreator = true" justify="start"/>
+              </v-row>
               <AddButton label="Creator" @click="showCreator = true" />
               <ProfileSearchBar
                 :selectedItems.sync="formData.creator"
@@ -211,8 +237,11 @@
                 />
               </div>
             </v-col>
-            <v-col :cols="mobile ? '12' : formData.relatedRecords.length > 0 ? 'auto' : '4'">
-              <AddButton label="Related records" @click="showRecords = true" />
+            <v-col :cols="mobile ? '12' : formData.relatedRecords.length > 0 ? 'auto' : '3'">
+              <v-row>
+                <v-icon small>mdi-plus</v-icon>
+                <AddButton size="20px" icon="mdi-book-multiple" iconClass="pr-3" class="right: 0;" label="Related records" @click="showRecords = true" justify="start"/>
+              </v-row>
               <ProfileSearchBar
                 :selectedItems.sync="formData.relatedRecords"
                 :items="collections"
@@ -223,7 +252,7 @@
               />
               <ChipGroup :chips="formData.relatedRecords" deletable @delete="removeItem(formData.relatedRecords, $event)" />
             </v-col>
-            <v-col :cols="mobile ? '12' : '4'" class="pt-0 pa-1">
+            <v-col :cols="mobile ? '12' : '3'" class="pt-0 pa-1">
               <v-text-field
                 v-model="formData.submissionDate"
                 label="Submission Date"
@@ -310,7 +339,22 @@
       </v-expand-transition>
     </v-form>
   <!-- </v-card> -->
-  <NewArtefactDialog v-if="dialog" :show="dialog" :index="index" :artefacts="formData.artefacts" @close="dialog = false" @delete="removeArtefact($event)" @submit="updateArtefacts($event)"/>
+    <NewArtefactDialog
+      v-if="newDialog"
+      :show="newDialog"
+      :index="index"
+      :artefacts="formData.artefacts"
+      @close="newDialog = false"
+      @delete="toggleDialog($event, 'delete')"
+      @submit="updateArtefacts($event)"
+    />
+    <DeleteArtefactDialog
+      v-if="deleteDialog"
+      :show="deleteDialog"
+      :index="index"
+      @close="deleteDialog = false"
+      @submit="removeArtefact($event)"
+    />
   </div>
 </template>
 
@@ -329,6 +373,7 @@ import { artefacts } from '@/mocks/artefacts'
 
 import NewArtefactDialog from '@/components/archive/NewArtefactDialog.vue'
 import ArtefactCarousel from '@/components/archive/ArtefactCarousel.vue'
+import DeleteArtefactDialog from '@/components/dialog/archive/DeleteArtefactDialog.vue'
 
 import {
   RULES
@@ -347,7 +392,8 @@ export default {
     AvatarGroup,
     ChipGroup,
     NewArtefactDialog,
-    ArtefactCarousel
+    ArtefactCarousel,
+    DeleteArtefactDialog
   },
   props: {
     formData: {
@@ -357,13 +403,16 @@ export default {
   },
   data () {
     return {
-      dialog: false,
+      newDialog: false,
+      deleteDialog: false,
       index: 0,
       ARTEFACTS: artefacts,
+      search: false,
       model: 0,
       show: false,
-      categories: [{title: 'one'}, {title: 'two'}, {title: 'three'}, {title: 'four'}, {title: 'five'} , {title: 'six'}, {title: 'seven'}],
+      categories: [{ title: 'one' }, { title: 'two' }, { title: 'three' }, { title: 'four' }, { title: 'five' }, { title: 'six' }, { title: 'seven' }],
       collections: firstMocks,
+      showLocation: false,
       showMentions: false,
       showCategories: false,
       showContributors: false,
@@ -396,12 +445,16 @@ export default {
     }
   },
   methods: {
+    // clickedOff () {
+    //   this.search = !this.search
+    // },
     updateArtefacts (changes) {
       alert('WARNING, submission doesnt currently update artefacts')
     },
-    toggleDialog ($event) {
+    toggleDialog ($event, dialog) {
       this.index = $event
-      this.dialog = true
+      if (dialog === 'new') this.newDialog = !this.newDialog
+      if (dialog === 'delete') this.deleteDialog = !this.deleteDialog
     },
     warn (field) {
       alert(`Cannot add ${field} yet`)
@@ -414,7 +467,7 @@ export default {
         this.formData.artefacts.push(this.processFile(file))
       })
 
-      this.dialog = true
+      this.newDialog = true
     },
     processFile (file) {
       var attrs = {}
@@ -471,29 +524,29 @@ export default {
     removeItem (array, $event) {
       array.splice($event, 1)
     },
+
     removeArtefact ($event) {
       console.error('deleting an artefact not fully implemented')
       // either remove from the database or from formData
-      confirm('Are you sure you want to delete this artefact?') && this.removeItem(this.formData.artefacts, $event)
+      this.removeItem(this.formData.artefacts, this.index)
 
-      if (this.formData.artefacts.length === 0) this.dialog = false
+      if (this.formData.artefacts.length === 0) this.newDialog = false
     }
   }
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .video-player {
   width: 500px;
 }
-  .custom.v-text-field>.v-input__control>.v-input__slot:before {
-    border-style: none;
-  }
 
-  .custom.v-text-field>.v-input__control>.v-input__slot:after {
-    border-style: none;
-  }
+.title-input >>> input{
+  text-align: start !important;
+  font-size: 1.2em;
+  font-weight: 500;
 
+}
   .close {
     top: -25px;
     right: -10px;
@@ -523,4 +576,37 @@ export default {
   .clickable {
     cursor: pointer;
   }
+
+.rounded-border {
+  border: 0.5px solid rgba(0,0,0,0.8);
+  border-radius: 5px;
+  background-color: white;
+}
+
+.box-title {
+  position: relative;
+  bottom: 25px;
+  left: 100px;
+  background-color: white;
+  width: 100px;
+  padding-right: 0px;
+}
+
+.br {
+  border-right: 0.5px solid rgba(0,0,0,0.8);
+  width:100%
+}
+
+.icon-button {
+    padding: 0px;
+    width: 50px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.icon-search {
+    width: 300px;
+    display: flex;
+    justify-items: flex-end;
+}
 </style>

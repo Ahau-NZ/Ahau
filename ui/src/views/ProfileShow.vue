@@ -79,9 +79,6 @@ export default {
   },
   mounted () {
     this.setupProfile(this.$route.params.id)
-    if (this.$route.params.nav) {
-      setPageComponent(this.$route.params.nav)
-    }
   },
   computed: {
     ...mapGetters(['selectedProfile', 'whoami', 'activeComponent', 'showStory', 'showArtefact']),

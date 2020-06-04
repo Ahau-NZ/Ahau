@@ -52,15 +52,17 @@ export default {
     editing: Boolean,
     index: Number
   },
-  components: { ArtefactCarouselItem },
+  components: {
+    ArtefactCarouselItem
+  },
   data () {
     return {
       selectedIndex: this.index
     }
   },
   watch: {
-    selectedIndex (index) {
-      if (index) this.$emit('update:index', index)
+    selectedIndex (n, o) {
+      if (n !== o) this.$emit('update:index', n)
     }
   },
   computed: {

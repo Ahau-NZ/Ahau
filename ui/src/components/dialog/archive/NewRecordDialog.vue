@@ -162,9 +162,6 @@ export default {
       return this.$vuetify.breakpoint.xs
     }
   },
-  mounted () {
-    console.log('the story', this.story)
-  },
   watch: {
     story: {
       handler (newVal) {
