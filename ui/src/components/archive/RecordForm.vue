@@ -13,49 +13,11 @@
                 class="title-input"
               />
             </v-col>
+          </v-row>
 
-            <!-- <v-col v-if="!formData.artefacts.length" cols="6" class="my-2">
-              <input v-show="false" ref="fileInput" type="file" accept="audio/*,video/*,image/*" multiple @change="processMediaFiles($event)" />
-              <AddButton size="40px" icon="mdi-image-plus" iconClass="pr-3" class="right: 0;" @click="$refs.fileInput.click()" label="Attach media or files"/>
-            </v-col>
-
-            <v-col v-if="formData.artefacts.length" cols="12" class="pl-0 pr-0">
-              <ArtefactCarousel :artefacts="formData.artefacts"
-                @delete="removeItem(formData.artefacts, $event)"
-                @processMediaFiles="processMediaFiles($event)"
-              />
-            </v-col>
-
-            <v-col v-if="!showLocation" cols="6" class="my-2">
-              <AddButton size="40px" icon="mdi-map" iconClass="pr-3" class="right: 0;" @click="showLocation = true" label="Add location information`"/>
-            </v-col>
-
-            <v-row v-if="showLocation" cols="12" class="px-3">
-              <v-col cols="12" sm="12" md="6" class="pa-1">
-                <v-textarea
-                  v-model="formData.location"
-                  label="Location"
-                  v-bind="customProps"
-                  no-resize
-                  rows="3"
-                  auto-grow
-                />
-              </v-col>
-              <v-col cols="12" sm="12" md="6" class="pa-1">
-                <v-textarea
-                  v-model="formData.locationDescription"
-                  label="Location description"
-                  v-bind="customProps"
-                  no-resize
-                  rows="3"
-                  auto-grow
-                />
-              </v-col> -->
-            </v-row>
-
-            <v-col cols="12">
-              <input v-show="false" ref="fileInput" type="file" accept="audio/*,video/*,image/*" multiple @change="processMediaFiles($event)" />
-              <AddButton @click="$refs.fileInput.click()" label="Attact media or files"/>
+          <v-col cols="12">
+            <input v-show="false" ref="fileInput" type="file" accept="audio/*,video/*,image/*" multiple @change="processMediaFiles($event)" />
+            <AddButton @click="$refs.fileInput.click()" label="Attact media or files"/>
           </v-col>
           <v-col v-if="formData.artefacts.length > 0" cols="12" class="pl-0 pr-0">
             <ArtefactCarousel :artefacts="formData.artefacts"
