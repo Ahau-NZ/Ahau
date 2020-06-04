@@ -59,8 +59,8 @@
           </v-col>
           <v-col v-if="formData.artefacts.length > 0" cols="12" class="pl-0 pr-0">
             <ArtefactCarousel :artefacts="formData.artefacts"
-              @delete="removeArtefact($event)"
-              @update="toggleDialog($event, 'new-artefact')"
+              @delete="toggleDialog($event, 'delete')"
+              @update="toggleDialog($event, 'new')"
               editing
             />
           </v-col>
@@ -378,18 +378,20 @@
     </v-form>
   <!-- </v-card> -->
     <NewArtefactDialog 
-      v-if="dialog === 'new-artefact'" 
+      v-if="newDialog"
+      :show="newDialog"
       :index="index" 
       :artefacts="formData.artefacts" 
-      @close="dialog = false" 
-      @delete="removeArtefact($event)" 
+      @close="newDialog = false" 
+      @delete="toggleDialog($event, 'delete')" 
       @submit="updateArtefacts($event)"
     />
-    <DeleteArtefactDialog v-if="dialog === 'delete-artefact'"
-      :show="dialog"
+    <DeleteArtefactDialog 
+      v-if="deleteDialog"
+      :show="deleteDialog"
       :index="index"
-      @close="dialog = false" 
-      @submit="deleteArtefact($event)"/>
+      @close="deleteDialog = false" 
+      @submit="removeArtefact($event)"
     />
   </div>
 </template>
@@ -409,6 +411,7 @@ import { artefacts } from '@/mocks/artefacts'
 
 import NewArtefactDialog from '@/components/archive/NewArtefactDialog.vue'
 import ArtefactCarousel from '@/components/archive/ArtefactCarousel.vue'
+import DeleteArtefactDialog from '@/components/dialog/archive/DeleteArtefactDialog.vue'
 
 import {
   RULES
@@ -427,7 +430,8 @@ export default {
     AvatarGroup,
     ChipGroup,
     NewArtefactDialog,
-    ArtefactCarousel
+    ArtefactCarousel,
+    DeleteArtefactDialog
   },
   props: {
     formData: {
@@ -437,7 +441,8 @@ export default {
   },
   data () {
     return {
-      dialog: null,
+      newDialog: false,
+      deleteDialog: false,
       index: 0,
       ARTEFACTS: artefacts,
       search: false,
@@ -486,7 +491,8 @@ export default {
     },
     toggleDialog ($event, dialog) {
       this.index = $event
-      this.dialog = dialog
+      if (dialog === 'new') this.newDialog = !this.newDialog
+      if (dialog === 'delete') this.deleteDialog = !this.deleteDialog
     },
     warn (field) {
       alert(`Cannot add ${field} yet`)
@@ -499,7 +505,7 @@ export default {
         this.formData.artefacts.push(this.processFile(file))
       })
 
-      this.dialog = true
+      this.newDialog = true
     },
     processFile (file) {
       var attrs = {}
@@ -556,12 +562,14 @@ export default {
     removeItem (array, $event) {
       array.splice($event, 1)
     },
+
+
     removeArtefact ($event) {
       console.error('deleting an artefact not fully implemented')
       // either remove from the database or from formData
-      confirm('Are you sure you want to delete this artefact?') && this.removeItem(this.formData.artefacts, $event)
+      this.removeItem(this.formData.artefacts, this.index)
 
-      if (this.formData.artefacts.length === 0) this.dialog = false
+      if (this.formData.artefacts.length === 0) this.newDialog = false
     }
   }
 }

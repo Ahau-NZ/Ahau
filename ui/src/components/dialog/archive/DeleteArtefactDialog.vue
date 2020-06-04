@@ -1,9 +1,9 @@
 <template>
-  <Dialog :title="`Delete ${ profile.preferredName }`" :show="show" @close="close" width="720px" :goBack="close" enableMenu>
+  <Dialog :title="`Remove artefact from record`" :show="show" @close="close" width="720px" :goBack="close" enableMenu>
     <template v-slot:content>
       <v-card-subtitle>
         <div class="warning-blurb">
-          Are you sure you want to delete this artefact from this record?
+          Are you sure you want to remove this artefact from this record?
         </div>
       </v-card-subtitle>
     </template>
@@ -30,7 +30,6 @@ import Dialog from '@/components/dialog/Dialog.vue'
 export default {
   props: {
     show: { type: Boolean, required: true },
-    profile: { type: Object, required: true },
   },
   computed: {
     mobile () {
@@ -50,7 +49,7 @@ export default {
       this.$emit('close')
     },
     submit () {
-      this.$emit('submit', this.removeDialog)
+      this.$emit('submit')
       this.close()
     }
   },

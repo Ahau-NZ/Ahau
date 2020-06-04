@@ -1,5 +1,5 @@
 <template>
-  <v-col class="add-row" @click="click" :style="{ justifyContent: align, height: height }">
+  <v-col class="add-row" @click="click" :style="{ justifyContent: justify, height: height }">
     <v-icon :size="size" :class="iconClass" class="add-button pr-1" :dark="dark">{{icon}}</v-icon>
     <span :class="`add-label ${dark ? 'white--text' : ''}`">{{ label }}</span>
   </v-col>

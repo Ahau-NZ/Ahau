@@ -1,13 +1,14 @@
 <template>
-    <v-dialog v-model="show"
+    <Dialog :show="show" :title="title" @close="close" width="70%" :goBack="close" enableMenu>
+    <!-- <v-dialog v-model="show"
       transition="dialog-bottom-transition"
+      class=""
       :fullscreen="mobile"
-      width="900px"
-    >
-      <v-card tile flat  style="overflow-x:hidden">
-        <v-container :class="mobile ? 'px-1':'pa-0'" :style="`width:${width};`">
+    > -->
+      <v-card tile flat>
+        <v-container class="pa-0" :style="`width:${width};`">
           <v-row>
-            <v-col cols="12" >
+            <v-col cols="12">
               <v-card-actions>
                 <v-btn absolute right icon @click="close">
                   <v-icon>mdi-close</v-icon>
@@ -27,7 +28,7 @@
               <ArtefactCarousel :artefacts="formData" :index.sync="selectedIndex" :editing="!editing" @delete="$emit('delete', $event)"/>
             </v-col>
             <v-col cols="12">
-              <AddButton size="20px" icon="mdi-account-multiple-plus" dark iconClass="pr-3" class="right: 0;" label="Mention" @click="showMentions = true"  justify="start"/>
+              <AddButton size="20px" icon="mdi-account-multiple-plus" dark iconClass="pr-3" class="right: 0;" label="Mention" @click="showMentions = true" />
               <ProfileSearchBar
                 :selectedItems.sync="artefact.mentions"
                 :items="items"
@@ -45,7 +46,7 @@
                 dark
               />
             </v-col>
-            <v-col cols="12" class=py-1>
+            <v-col cols="12">
               <v-textarea
                 v-model="artefact.description"
                 label="Description"
@@ -55,49 +56,49 @@
                 auto-grow
               />
             </v-col>
-            <v-col cols="12" sm="12" md="3" class=py-1>
+            <v-col cols="6" sm="12" md="3">
               <v-text-field
                 v-model="artefact.format"
                 label="Format"
                 v-bind="customProps"
               />
             </v-col>
-            <v-col class=py-1 cols="12" sm="12" md="3">
+            <v-col cols="6" sm="12" md="3">
               <v-text-field
                 v-model="artefact.identifier"
                 label="Identifier"
                 v-bind="customProps"
               />
             </v-col>
-            <v-col class=py-1 cols="12" sm="12" md="3">
+            <v-col cols="6" sm="12" md="3">
               <v-text-field
                 v-model="artefact.language"
                 label="Language"
                 v-bind="customProps"
               />
             </v-col>
-            <v-col class=py-1 cols="12" sm="12" md="3">
+            <v-col cols="6" sm="12" md="3">
               <v-text-field
                 v-model="artefact.licence"
                 label="Licence"
                 v-bind="customProps"
               />
             </v-col>
-            <v-col class=py-1 cols="12" sm="12" md="3">
+            <v-col cols="6" sm="12" md="3">
               <v-text-field
                 v-model="artefact.rights"
                 label="Rights"
                 v-bind="customProps"
               />
             </v-col>
-            <v-col class=py-1 cols="12" sm="12" md="3">
+            <v-col cols="6" sm="12" md="3">
               <v-text-field
                 v-model="artefact.source"
                 label="Source"
                 v-bind="customProps"
               />
             </v-col>
-            <v-col class=py-1 cols="12" sm="12" md="3">
+            <v-col cols="6" sm="12" md="3">
               <v-text-field
                 v-model="artefact.duration"
                 label="Duration"
@@ -105,7 +106,7 @@
                 v-bind="customProps"
               />
             </v-col>
-            <v-col class=py-1 cols="12" sm="12" md="3">
+            <v-col cols="6" sm="12" md="3">
               <v-text-field
                 v-model="artefact.size"
                 label="Size"
@@ -113,7 +114,7 @@
                 v-bind="customProps"
               />
             </v-col>
-            <v-col class=py-1 cols="12">
+            <v-col cols="12">
               <v-textarea
                 v-model="artefact.translation"
                 label="Translation / Transcription"
@@ -150,7 +151,7 @@
           </v-row>
         </v-container>
       </v-card>
-    </v-dialog>
+    </Dialog>
 </template>
 
 <script>
@@ -255,18 +256,15 @@ export default {
   },
   watch: {
     selectedIndex (newIndex) {
-      console.log("selectedIndex:", newIndex)
       if (newIndex) this.artefact = this.formData[newIndex]
     },
     index (newIndex) {
       if (newIndex) this.selectedIndex = newIndex
-            console.log("index:", newIndex)
     },
     artefacts: {
       deep: true,
       handler (newValue) {
         this.formData = clone(newValue)
-        if (newValue.length  === this.selectedIndex) this.selectedIndex--      
       }
     }
   },
@@ -295,7 +293,7 @@ export default {
     },
     width () {
       if (this.mobile) return '100%'
-      return '880px'
+      return '700px'
     },
     customProps () {
       return {
@@ -314,7 +312,7 @@ export default {
       array.splice(index, 1)
     },
     close () {
-      this.$emit('close')
+      confirm('Are you sure you want to close without saving? Any changes to this artefact will be lost') && this.$emit('close')
     },
     submit () {
       var output = {}

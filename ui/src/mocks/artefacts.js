@@ -41,7 +41,7 @@ export const artefacts = [
     type: 'audio',
     id: '%6',
     title: 'Sample Audio',
-    blob: require('../assets/ignore/audio.mp3'),
+    blob: require('../assets/buildCSV.mp4'),
     description: 'This is some audio recording',
     format: 'mp4',
     identifier: '123123123',
