@@ -29,7 +29,7 @@ import Dialog from '@/components/dialog/Dialog.vue'
 
 export default {
   props: {
-    show: { type: Boolean, required: true },
+    show: { type: Boolean, required: true }
   },
   computed: {
     mobile () {
@@ -39,7 +39,7 @@ export default {
       if (this.mobile) {
         return 'calc(100vh - 50px)'
       } else return 'auto'
-    },
+    }
   },
   methods: {
     cordovaBackButton () {

@@ -255,18 +255,18 @@ export default {
   },
   watch: {
     selectedIndex (newIndex) {
-      console.log("selectedIndex:", newIndex)
+      console.log('selectedIndex:', newIndex)
       if (newIndex) this.artefact = this.formData[newIndex]
     },
     index (newIndex) {
       if (newIndex) this.selectedIndex = newIndex
-            console.log("index:", newIndex)
+      console.log('index:', newIndex)
     },
     artefacts: {
       deep: true,
       handler (newValue) {
         this.formData = clone(newValue)
-        if (newValue.length  === this.selectedIndex) this.selectedIndex--      
+        if (newValue.length === this.selectedIndex) this.selectedIndex--
       }
     }
   },

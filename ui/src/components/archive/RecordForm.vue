@@ -377,20 +377,20 @@
       </v-expand-transition>
     </v-form>
   <!-- </v-card> -->
-    <NewArtefactDialog 
+    <NewArtefactDialog
       v-if="newDialog"
       :show="newDialog"
-      :index="index" 
-      :artefacts="formData.artefacts" 
-      @close="newDialog = false" 
-      @delete="toggleDialog($event, 'delete')" 
+      :index="index"
+      :artefacts="formData.artefacts"
+      @close="newDialog = false"
+      @delete="toggleDialog($event, 'delete')"
       @submit="updateArtefacts($event)"
     />
-    <DeleteArtefactDialog 
+    <DeleteArtefactDialog
       v-if="deleteDialog"
       :show="deleteDialog"
       :index="index"
-      @close="deleteDialog = false" 
+      @close="deleteDialog = false"
       @submit="removeArtefact($event)"
     />
   </div>
@@ -562,7 +562,6 @@ export default {
     removeItem (array, $event) {
       array.splice($event, 1)
     },
-
 
     removeArtefact ($event) {
       console.error('deleting an artefact not fully implemented')

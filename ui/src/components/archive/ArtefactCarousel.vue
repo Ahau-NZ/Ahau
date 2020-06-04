@@ -53,7 +53,7 @@ export default {
     index: Number
   },
   components: {
-    ArtefactCarouselItem,
+    ArtefactCarouselItem
   },
   data () {
     return {
@@ -63,7 +63,6 @@ export default {
   watch: {
     selectedIndex (n, o) {
       if (n !== o) this.$emit('update:index', n)
-
     }
   },
   computed: {
