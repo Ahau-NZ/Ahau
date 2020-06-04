@@ -295,7 +295,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setStory', 'setShowArtefact', 'setProfile', 'setDialog', 'setProfileById', 'setShowStory']),
+    ...mapActions(['setStory', 'setShowArtefact', 'setDialog', 'setProfileById', 'setShowStory']),
     colour (index) {
       return colours[index]
     },

@@ -27,12 +27,6 @@ const mutations = {
 }
 
 const actions = {
-  setCurrentProfile ({ commit }, person) {
-    commit('updateCurrentProfile', person)
-  },
-  setProfile ({ commit }, person) {
-    commit('updateSelectedProfile', person)
-  },
   async setProfileById ({ commit, rootState, dispatch }, { id, type }) {
     if (id === rootState.whoami.profile.id) {
       dispatch('setWhoami', id)

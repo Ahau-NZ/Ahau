@@ -212,7 +212,7 @@ import avatarHelper from '@/lib/avatar-helpers.js'
 import DialogHandler from '@/components/dialog/DialogHandler.vue'
 import findSuccessor from '@/lib/find-successor'
 
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters, mapActions, mapMutations } from 'vuex'
 
 const saveWhakapapaViewMutation = input => (
   {
@@ -340,7 +340,8 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setLoading', 'setProfile', 'addNestedWhakapapa', 'addWhakapapa', 'addRelationshipLinks']),
+    ...mapMutations(['updateSelectedProfile']),
+    ...mapActions(['setLoading', 'addNestedWhakapapa', 'addWhakapapa', 'addRelationshipLinks']),
     load (status) {
       this.setLoading(status)
     },
@@ -622,7 +623,7 @@ export default {
       if (person.parents.length > 0) {
         person.relationship = this.relationshipLinks.get(person.parents[0].id + '-' + person.id)
       }
-      if (this.selectedProfile && this.selectedProfile.id === person.id) this.setProfile(person)
+      if (this.selectedProfile && this.selectedProfile.id === person.id) this.updateSelectedProfile(person)
       return person
     },
 
@@ -665,7 +666,7 @@ export default {
     },
     async setSelectedProfile (profile) {
       if (profile === null) {
-        this.setProfile({})
+        this.updateSelectedProfile({})
         return
       }
       // check the type of profile we received
@@ -675,12 +676,12 @@ export default {
           // find parent to get any changes to siblings
           var person = await tree.find(this.nestedWhakapapa, profile.parents[0].id)
           if (!person) {
-            this.setProfile(profile)
+            this.updateSelectedProfile(profile)
             return
           }
           var updatedProfile = tree.getSiblings(person, profile)
-          this.setProfile(updatedProfile)
-        } else this.setProfile(profile)
+          this.updateSelectedProfile(updatedProfile)
+        } else this.updateSelectedProfile(profile)
       } else if (typeof profile === 'string') {
         // need to find the profile in this whakapapa
         var profileFound = await tree.find(this.nestedWhakapapa, profile)
@@ -689,7 +690,7 @@ export default {
           let partner = await this.loadDescendants(profile, '', [])
           partner.isPartner = true
           console.warn('could potentially be loading a large amount of data')
-          this.setProfile(partner)
+          this.updateSelectedProfile(partner)
           return
         }
         if (profileFound.parents.length) {
@@ -697,14 +698,14 @@ export default {
           var parent = await tree.find(this.nestedWhakapapa, profileFound.parents[0].id)
           // if parent not found is becuase that parent is not in this nestedWhakapapa
           if (!parent) {
-            this.setProfile(profileFound)
+            this.updateSelectedProfile(profileFound)
             return
           }
           var newUpdatedProfile = tree.getSiblings(parent, profileFound)
-          this.setProfile(newUpdatedProfile)
-        } else this.setProfile(profileFound)
+          this.updateSelectedProfile(newUpdatedProfile)
+        } else this.updateSelectedProfile(profileFound)
       } else {
-        this.setProfile({})
+        this.updateSelectedProfile({})
       }
     },
 

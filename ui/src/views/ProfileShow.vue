@@ -88,7 +88,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setProfileById', 'setProfile', 'setWhoami', 'setShowArtefact', 'setDialog']),
+    ...mapActions(['setProfileById', 'setWhoami', 'setShowArtefact', 'setDialog']),
     async setupProfile (id) {
       this.setProfileById({ id })
     }
