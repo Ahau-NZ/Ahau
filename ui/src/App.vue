@@ -2,11 +2,12 @@
   <v-app>
     <Appbar v-if="displayAppbar" :enableMenu="enableMenu" app />
     <v-content :class="{ 'mobileWhakapapaTitleStyle': mobile }">
-      <Spinner />
       <transition name="fade" mode="out-in">
         <router-view :mobileServerLoaded="mobileServerLoaded" />
       </transition>
+      <Spinner />
     </v-content>
+    <DialogHandler />
   </v-app>
 </template>
 
@@ -15,6 +16,7 @@ import Appbar from '@/components/menu/Appbar.vue'
 import nodejsClient from '@/plugins/cordova-nodejs-client.js'
 import Spinner from '@/components/Spinner.vue'
 import { mapGetters, mapActions } from 'vuex'
+import DialogHandler from '@/components/dialog/DialogHandler.vue'
 
 export default {
   name: 'App',
@@ -59,7 +61,8 @@ export default {
   },
   components: {
     Appbar,
-    Spinner
+    Spinner,
+    DialogHandler
   },
   // this watch add class to body depending on the route clicked.
   // used for changing body backgrounds, unique to each route.

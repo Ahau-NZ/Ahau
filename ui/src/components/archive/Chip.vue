@@ -1,5 +1,5 @@
 <template>
-  <v-card light tile outlined class="d-inline-block rounded-corners" :min-width="mobile ? '100%' : '300'" :max-width="mobile ? '100%' : '300px'" max-height="60" min-height="60" style="overflow: hidden;">
+  <v-card :color="colour" dark tile class="d-inline-block related-tile" :min-width="mobile ? '100%' : '300'" :max-width="mobile ? '100%' : '300px'" max-height="60" min-height="60" style="overflow: hidden;">
     <v-container class="pa-0">
       <v-row >
         <v-col cols="auto" class="pa-0 pl-3">
@@ -27,17 +27,22 @@
 </template>
 
 <script>
+import { colours } from '@/lib/colours.js'
 export default {
   name: 'Chip',
   props: {
     title: String,
     description: String,
-    // image: Object,
     deletable: Boolean,
     type: String,
-    chip: Object
+    chip: Object,
+    index: Number
+
   },
   computed: {
+    colour () {
+      return colours[this.index]
+    },
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -69,7 +74,8 @@ export default {
   overflow: hidden;
 }
 
-.rounded-corners {
+.related-tile {
   border-radius: 10px;
+  text-decoration-color: white;
 }
 </style>

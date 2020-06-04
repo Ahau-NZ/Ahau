@@ -8,6 +8,7 @@
             :description="chip.description"
             :image="chip.image"
             :deletable="deletable"
+            :index="i"
             :type="type"
             :chip="chip"
             @delete="$emit('delete', i)"

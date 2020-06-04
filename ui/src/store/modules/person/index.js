@@ -4,26 +4,37 @@ import getRelatives from '@/lib/profile-helpers'
 import tree from '@/lib/tree-helpers'
 
 const state = {
-  selectedProfile: {}
+  selectedProfile: {},
+  currentProfile: {}
 }
 
 const getters = {
   selectedProfile: state => {
     return state.selectedProfile
+  },
+  currentProfile: state => {
+    return state.currentProfile
   }
 }
 
 const mutations = {
-  updateProfile (state, profile) {
+  updateSelectedProfile (state, profile) {
     state.selectedProfile = profile
+  },
+  updateCurrentProfile (state, profile) {
+    state.currentProfile = profile
   }
 }
 
 const actions = {
-  setProfile ({ commit }, person) {
-    commit('updateProfile', person)
-  },
-  async setProfileById ({ commit }, id) {
+  async setProfileById ({ commit, rootState, dispatch }, { id, type }) {
+    if (id === rootState.whoami.profile.id) {
+      dispatch('setWhoami', id)
+    }
+    if (type !== 'setWhanau' && rootState.dialog.dialog) {
+      console.log('closing dialog')
+      dispatch('setDialog', null)
+    }
     var person = await getRelatives(id)
     if (person.children) {
       person.children = await Promise.all(person.children.map(async (child) => {
@@ -38,8 +49,9 @@ const actions = {
         person = tree.getSiblings(parentProfile, person)
         return parentProfile
       }))
-      commit('updateProfile', person)
     }
+    if (!type) commit('updateCurrentProfile', person)
+    commit('updateSelectedProfile', person)
   }
 }
 

@@ -6,6 +6,7 @@ import gql from 'graphql-tag'
 import whakapapa from './modules/whakapapa'
 import person from './modules/person'
 import archive from './modules/archive'
+import dialog from './modules/dialog'
 
 const apolloProvider = createProvider()
 const apolloClient = apolloProvider.defaultClient
@@ -19,16 +20,13 @@ const store = new Vuex.Store({
     goBack: {
       show: false,
       location: ''
-    },
-    dialog: {
-      active: '',
-      type: ''
     }
   },
   modules: {
     whakapapa,
     person,
-    archive
+    archive,
+    dialog
   },
   getters: {
     loadingState: state => {

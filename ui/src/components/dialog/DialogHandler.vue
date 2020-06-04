@@ -12,10 +12,10 @@
     />
     <EditNodeDialog v-if="isActive('edit-node')"
       :show="isActive('edit-node')"
-      :title="`Edit ${selectedProfile.preferredName}`"
+      :title="`Edit ${currentProfile.preferredName}`"
       @submit="updateProfile($event)"
       @close="close"
-      :selectedProfile="selectedProfile"
+      :selectedProfile="currentProfile"
     />
     <div :class="sideMenuClass">
       <SideViewEditNodeDialog
@@ -31,6 +31,7 @@
         @delete="toggleDialog('delete-node', null, null)"
         @open-profile="setSelectedProfile($event)"
         :view="view"
+        :preview ="previewProfile"
       />
     </div>
     <DeleteNodeDialog v-if="isActive('delete-node')"
@@ -85,6 +86,10 @@
       :title="'View Story'"
       @close="close"
     />
+    <ComingSoonDialog
+      :show="isActive('coming-soon')"
+      @close="close"
+    />
   </div>
 </template>
 
@@ -101,6 +106,7 @@ import WhakapapaTableHelper from '@/components/dialog/whakapapa/WhakapapaTableHe
 import NewCollectionDialog from '@/components/dialog/NewCollectionDialog.vue'
 import NewRecordDialog from '@/components/dialog/NewRecordDialog.vue'
 import ViewRecordDialog from '@/components/dialog/archive/ViewRecordDialog.vue'
+import ComingSoonDialog from '@/components/dialog/ComingSoonDialog.vue'
 
 import gql from 'graphql-tag'
 
@@ -130,7 +136,8 @@ export default {
     WhakapapaTableHelper,
     NewCollectionDialog,
     NewRecordDialog,
-    ViewRecordDialog
+    ViewRecordDialog,
+    ComingSoonDialog
   },
   props: {
     story: {
@@ -173,7 +180,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['nestedWhakapapa', 'selectedProfile', 'whoami']),
+    ...mapGetters(['nestedWhakapapa', 'selectedProfile', 'whoami', 'storeDialog', 'previewProfile', 'currentProfile']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -185,9 +192,9 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['updateNode', 'deleteNode', 'updatePartnerNode', 'addChild', 'addParent', 'loading']),
+    ...mapActions(['updateNode', 'deleteNode', 'updatePartnerNode', 'addChild', 'addParent', 'loading', 'setDialog', 'setProfileById']),
     isActive (type) {
-      if (type === this.dialog) {
+      if (type === this.dialog || type === this.storeDialog) {
         return true
       }
       return false
@@ -202,11 +209,13 @@ export default {
     },
     toggleDialog (dialog, type, source) {
       this.source = source
+      this.setDialog(dialog)
       this.$emit('update:dialog', dialog)
       this.$emit('update:type', type)
     },
     canDelete (profile) {
       if (!profile) return false
+      if (this.previewProfile) return false
 
       // not allowed to delete own profile
       if (profile.id === this.whoami.profile.id) return false
@@ -504,15 +513,13 @@ export default {
         id: profileId,
         ...profileChanges
       }
-      console.log('update: ', input)
       const res = await this.$apollo.mutate(saveProfile(input))
       if (res.errors) {
         console.error('failed to update profile', res)
         return
       }
-      if (this.$route.name === 'profileShow') {
-        console.log('profile is me')
-        this.$emit('setupProfile', res.data.saveProfile)
+      if (this.storeDialog === 'edit-node') {
+        this.setProfileById({ id: res.data.saveProfile })
         return
       }
 
@@ -784,7 +791,7 @@ export default {
   position: absolute;
   top: 0px;
   right: 0px;
-  width: 25%;
+  width: 20.7%;
   height: 100%;
   background-color: white;
 }

@@ -9,15 +9,18 @@
         v-for="(artefact, i) in artefacts"
         :key="i"
         class="pa-0 art-group"
-        :class="match(i) ? 'highlight':''"
         tile
         elevation="0"
         style="min-width:80px;"
         @click.prevent="updateModel(i)"
       >
-        <v-img v-if="artefact.__typename === 'Photo'" :src="artefact.blob" height="80px" width="80px"></v-img>
-        <v-icon class="pt-4 pl-4" large v-if="artefact.__typename === 'Video'" style="justify-self:center">mdi-movie</v-icon>
-        <v-icon class="pt-4 pl-4" large v-if="artefact.__typename === 'Audio'" height="80px" width="80px">mdi-music</v-icon>
+        <v-img v-if="artefact.__typename === 'Photo'" :src="artefact.blob" height="80px" width="80px">
+        </v-img>
+        <v-icon class="pt-4 pl-4" dark large v-if="artefact.__typename === 'Video'" style="justify-self:center">mdi-movie</v-icon>
+        <v-icon class="pt-4 pl-4" dark large v-if="artefact.__typename === 'Audio'" height="80px" width="80px">mdi-music</v-icon>
+        <v-fade-transition>
+          <v-overlay :absolute="true" opacity="0.6" :value="!match(i)"/>
+        </v-fade-transition>
       </v-card>
     </v-card>
   </div>
@@ -60,7 +63,7 @@ export default {
 .highlight {
   border-style: solid;
   border-width: 5px !important;
-  border-color: rgba(0,0,0,0.5) !important;
+  border-color: white !important;
 
 }
 </style>

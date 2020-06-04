@@ -1,21 +1,30 @@
 <template>
 <div>
   <v-container fluid class="body-width px-2">
-    <v-row v-if="!showStory" :class="mobile ? 'top-margin':'mt-10'">
+    <v-row v-if="!showStory" :class="mobile ? 'top-margin':'top-margin'">
+      <v-col class="headliner black--text pa-0">
+        Archive records
+      </v-col>
+      <v-col align="right" class="pa-0">
+        <v-btn :medium="!mobile" :x-small="mobile" :class="mobile ? 'addBtnMob' : 'addBtn'" class="my-2" fab color="white" @click.stop="openContextMenu($event)">
+          <v-icon :large="!mobile" class="black--text">mdi-plus</v-icon>
+        </v-btn>
+      </v-col>
+    </v-row>
       <!-- TODO: Add Collections -->
       <!-- <v-col cols="12" md="10" sm="10" :class="!mobile ? 'pl-12 my-6' : 'py-0 ma-0'" align="start">
         <h1 class="title black--text ">Collections</h1>
       </v-col> -->
-      <div>
+      <!-- <div> -->
         <!-- TODO: Search records -->
         <!-- <v-btn :class="mobile ? 'searchBtnMob' : 'searchBtn'" :small="!mobile" :x-small="mobile" class="my-2" fab flat color="white" @click="editProfile()">
           <v-icon small class="black--text">mdi-magnify</v-icon>
         </v-btn>            -->
-        <v-btn :medium="!mobile" :x-small="mobile" :class="mobile ? 'addBtnMob' : 'addBtn'" class="my-2" fab color="white" @click.stop="openContextMenu($event)">
+        <!-- <v-btn :medium="!mobile" :x-small="mobile" :class="mobile ? 'addBtnMob' : 'addBtn'" class="my-2" fab color="white" @click.stop="openContextMenu($event)">
           <v-icon :large="!mobile" class="black--text">mdi-plus</v-icon>
         </v-btn>
       </div>
-    </v-row>
+    </v-row> -->
     <v-row>
       <transition name="change" mode="out-in">
         <v-col cols="12" xs="12" sm="12" md="9" :class="!showStory ? '':'pa-0'">
@@ -24,13 +33,13 @@
           </v-row>
           <v-divider class="mt-6 mb-8" light></v-divider> -->
           <div v-if="!showStory">
-            <v-row v-for="(story, i) in stories" :key="`story-${i}-id-${story.id}`" class="mt-10">
-              <StoryCard @updateDialog="updateDialog(dialog)" @showStory="toggleStory()" :story="story" />
+            <v-row v-for="(story, i) in stories" :key="`story-${i}-id-${story.id}`" class="mb-10">
+              <StoryCard @updateDialog="updateDialog(dialog)" @toggleStory="toggleStory()" :story="story" />
             </v-row>
           </div>
           <div v-else>
             <v-row :class="mobile ? 'pa-0': 'px-6 top-margin'">
-              <StoryCard :fullStory="true" @showStory="toggleStory()" :story="currentStory" />
+              <StoryCard :fullStory="true" @toggleStory="toggleStory()" :story="currentStory" />
             </v-row>
           </div>
         </v-col>
@@ -39,17 +48,12 @@
   </v-container>
   <vue-context ref="menu" class="pa-4">
     <li v-for="(option, index) in contextMenuOpts" :key="index">
-      <a href="#" @click.prevent="updateDialog(option.dialog)" class="d-flex align-center px-4">
+      <a href="#" @click.prevent="setDialog(option.dialog)" class="d-flex align-center px-4">
         <v-icon light>{{ option.icon }}</v-icon>
         <p class="ma-0 pl-3">{{ option.title }}</p>
       </a>
     </li>
   </vue-context>
-
-  <DialogHandler
-      :dialog.sync="dialog.active"
-      :type.sync="dialog.type"
-  />
   </div>
 </template>
 
@@ -60,8 +64,6 @@ import {
 
 import StoryCard from '@/components/archive/StoryCard.vue'
 // import CollectionGroup from '@/components/archive/CollectionGroup.vue'
-
-import DialogHandler from '@/components/dialog/DialogHandler.vue'
 
 import { STORIES } from '@/mocks/stories'
 import { mockCollections } from '@/mocks/collections'
@@ -74,8 +76,7 @@ export default {
   components: {
     StoryCard,
     // CollectionGroup,
-    VueContext,
-    DialogHandler
+    VueContext
   },
   data () {
     return {
@@ -122,32 +123,23 @@ export default {
   watch: {
     showStory (newVal) {
       if (newVal === false) {
-        setTimeout(() => (
+        setTimeout(() => {
           window.scrollTo({
             top: this.scrollPosition
-          }), 100)
-        )
+          })
+        }, 100)
       }
     }
   },
   methods: {
-    ...mapActions(['setComponent', 'setShowStory']),
+    ...mapActions(['setComponent', 'setShowStory', 'setDialog']),
     toggleStory () {
       this.scrollPosition = window.pageYOffset
       this.setShowStory()
       window.scrollTo(0, 0)
     },
     openContextMenu (event) {
-      if (this.dialog.view) {
-        this.toggleView()
-      }
       this.$refs.menu.open(event)
-    },
-    toggleView () {
-      this.dialog.view = !this.dialog.view
-    },
-    updateDialog (dialog) {
-      this.dialog.active = dialog
     }
   }
 }
@@ -212,5 +204,12 @@ export default {
   background-position-x: 0px;
   background-attachment: fixed;
   // background-repeat: no-repeat;
+}
+
+.headliner {
+  font-size: 1em;
+  text-transform: uppercase;
+  font-weight: 400;
+  letter-spacing: 5px;
 }
 </style>
