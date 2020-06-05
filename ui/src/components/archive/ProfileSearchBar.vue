@@ -131,9 +131,6 @@ export default {
     Avatar
   },
   watch: {
-    selectedItems (newValue) {
-      console.log('selectedItems: ', newValue)
-    },
     chips: {
       deep: true,
       handler (newValue) {

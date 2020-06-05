@@ -12,21 +12,23 @@
                 v-bind="customProps"
                 class="title-input"
               />
+            </v-col>             
+            <v-col v-if="!formData.artefacts.length > 0" cols="6" >
+              <div @click="$refs.fileInput.click()">
+                <AddButton size="50px" icon="mdi-image-plus" iconClass="pr-3"/>
+                <p class="add-label clickable" >Add artefact</p>
+              </div>
+              <input v-show="false" ref="fileInput" type="file" accept="audio/*,video/*,image/*" multiple @change="processMediaFiles($event)" />
             </v-col>
-          </v-row>
-
-          <v-col cols="12">
-            <input v-show="false" ref="fileInput" type="file" accept="audio/*,video/*,image/*" multiple @change="processMediaFiles($event)" />
-            <AddButton @click="$refs.fileInput.click()" label="Attact media or files"/>
-          </v-col>
-          <v-col v-if="formData.artefacts.length > 0" cols="12" class="pl-0 pr-0">
-            <ArtefactCarousel :artefacts="formData.artefacts"
-              @delete="toggleDialog($event, 'delete')"
-              @update="toggleDialog($event, 'new')"
-              editing
-            />
-          </v-col>
-            <v-col cols="12">
+            <v-col v-if="formData.artefacts.length > 0" cols="12" class="pl-0 pr-0">
+              <ArtefactCarousel :artefacts="formData.artefacts"
+                @delete="toggleDialog($event, 'delete')"
+                @update="toggleDialog($event, 'new')"
+                @processMediaFiles="processMediaFiles($event)"
+                editing
+              />
+            </v-col>
+            <v-col cols="6">
               <AddButton @click="warn('location')" label="Add location"/>
             </v-col>
             <v-col cols="12" class="pa-1">
@@ -109,9 +111,9 @@
                 @delete="removeItem(formData.access, $event)"
               />
             </v-col>
-
-            <!-- ADD CATEGORIES -->
-           <v-col :cols="mobile ? formData.categories.length > 2 ? 'auto' : '6' : formData.categories.length > 1 ? 'auto' : '3'">
+           </v-row>
+            <!-- TODO: ADD CATEGORIES -->
+           <!-- <v-col :cols="mobile ? formData.categories.length > 2 ? 'auto' : '6' : formData.categories.length > 1 ? 'auto' : '3'">
               <v-row v-if="!showCategories" @click="showCategories = true" class="pl-10 pt-2">
                 <v-icon small>mdi-plus</v-icon>
                 <AddButton size="20px" icon="mdi-label" iconClass="pr-3"  label="Category" justify="start" />
@@ -138,9 +140,9 @@
                   {{ category.title }}
                 </v-chip>
               </v-chip-group>
-            </v-col>
-            <!-- ADD COLLECTIONS -->
-            <v-col :cols="mobile ? formData.categories.length > 0 ? '12' : '6' : formData.categories.length > 0 ? 'auto' : '3'">
+            </v-col> -->
+            <!-- TODO: ADD COLLECTIONS -->
+            <!-- <v-col :cols="mobile ? formData.categories.length > 0 ? '12' : '6' : formData.categories.length > 0 ? 'auto' : '3'">
               <v-row v-if="!showCollections" class="pl-10 pt-2" @click="showCollections = true">
                 <v-icon small>mdi-plus</v-icon>
                 <AddButton size="20px" icon="mdi-folder-multiple-image" iconClass="pr-3" label="Collection" justify="start"/>
@@ -155,9 +157,9 @@
                 placeholder="add collection"
               />
               <ChipGroup :chips="formData.collections" deletable @delete="removeItem(formData.collections, $event)" />
-            </v-col>
-           <!-- </v-row> -->
-            <!-- <v-col :cols="mobile ? '12' : formData.protocols.length > 0 ? 'auto' : '4'">
+            </v-col>-->
+          <!-- TODO: ADD PROTOCOLS -->
+          <!-- <v-col :cols="mobile ? '12' : formData.protocols.length > 0 ? 'auto' : '4'">
               <AddButton label="Protocol" @click="showProtocols = true" />
               <ProfileSearchBar
                 :selectedItems.sync="formData.protocols"
@@ -359,6 +361,7 @@
       @close="newDialog = false"
       @delete="toggleDialog($event, 'delete')"
       @submit="updateArtefacts($event)"
+      @processMediaFiles="processMediaFiles($event)"
     />
     <DeleteArtefactDialog
       v-if="deleteDialog"
@@ -555,6 +558,13 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.add-label {
+  text-align: center;
+  font-size: 0.8em;
+  color: rgba(0, 0, 0, 0.6);
+  padding-top: 4px;
+}
+
 .video-player {
   width: 500px;
 }

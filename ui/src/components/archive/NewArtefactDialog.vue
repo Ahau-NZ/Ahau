@@ -2,7 +2,7 @@
     <v-dialog v-model="show"
       transition="dialog-bottom-transition"
       :fullscreen="mobile"
-      width="900px"
+      width="70%"
     >
       <v-card tile flat  style="overflow-x:hidden">
         <v-container :class="mobile ? 'px-1':'pa-0'" :style="`width:${width};`">
@@ -24,7 +24,7 @@
               </h1>
             </v-col>
             <v-col cols="12" class="px-0">
-              <ArtefactCarousel :artefacts="formData" :index.sync="selectedIndex" :editing="!editing" @delete="$emit('delete', $event)"/>
+              <ArtefactCarousel :artefacts="formData" :index.sync="selectedIndex" :editing="!editing" @processMediaFiles="$emit('processMediaFiles',$event)" @delete="$emit('delete', $event)"/>
             </v-col>
             <v-col cols="12">
               <AddButton size="20px" icon="mdi-account-multiple-plus" dark iconClass="pr-3" class="right: 0;" label="Mention" @click="showMentions = true"  justify="start"/>
@@ -293,7 +293,7 @@ export default {
     },
     width () {
       if (this.mobile) return '100%'
-      return '880px'
+      return '99%'
     },
     customProps () {
       return {
@@ -308,6 +308,16 @@ export default {
     }
   },
   methods: {
+    processMediaFiles ($event) {
+    this.index = this.formData.artefacts.length
+    const { files } = $event.target
+
+    Array.from(files).forEach((file, i) => {
+      this.formData.artefacts.push(this.processFile(file))
+    })
+
+    // this.newDialog = true
+    },
     removeItem (array, index) {
       array.splice(index, 1)
     },

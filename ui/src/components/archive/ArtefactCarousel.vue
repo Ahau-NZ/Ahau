@@ -1,29 +1,4 @@
 <template>
-  <!-- <div>
-    <div class="carousel-show">
-      <ArtefactCarouselItem :artefact="displayedArtefact"
-        width="100%" height="300px"
-        controls
-        @delete="removeItem()"
-        @update="$emit('update', displayedArtefact)"
-        @previous="previous()"
-        @next="next()"
-        :end="isEndItem(displayedIndex)"
-        :start="isStartItem(displayedIndex)"
-      />
-    </div>
-    <div class="carousel-thumbnail-group">
-      <ArtefactCarouselItem v-for="(artefact, i) in artefacts" :key="`carousel-item-${i}-${artefact.id}`"
-        :artefact="artefact"
-        :end="isEndItem(i)"
-        @click="showArtefact(artefact, i)"
-      />
-      <div class="mt-10 ml-10">
-        <input v-show="false" ref="fileInput" type="file" accept="audio/*,video/*,image/*" multiple @change="processMediaFiles($event)" />
-        <AddButton size="30px" icon="mdi-image-plus" iconClass="pr-3" class="right: 0;" @click="$refs.fileInput.click()" label=""/>
-      </div>
-    </div>
-  </div> -->
   <v-container class="pa-0 background">
     <v-carousel v-model="selectedIndex" hide-delimiters style="width: 100vw;">
       <v-carousel-item v-for="(artefact, i) in artefacts" :key="`a-c-${i}`" transition="fade-transition"
@@ -58,13 +33,17 @@
           />
         </v-scale-transition>
       </v-slide-item>
+      <div class="mt-10 ml-10">
+        <input v-show="false" ref="fileInput" type="file" accept="audio/*,video/*,image/*" multiple @change="processMediaFiles($event)" />
+        <AddButton dark size="30px" icon="mdi-image-plus" iconClass="pr-3" class="right: 0;" @click="$refs.fileInput.click()" label=""/>
+      </div>
     </v-slide-group>
   </v-container>
 </template>
 
 <script>
 import ArtefactCarouselItem from '@/components/archive/ArtefactCarouselItem.vue'
-// import AddButton from '@/components/button/AddButton.vue'
+import AddButton from '@/components/button/AddButton.vue'
 
 export default {
   name: 'ArtefactCarousel',
@@ -74,57 +53,13 @@ export default {
       default () {
         return []
       }
-      //   }
-      // },
-      // components: {
-      //   ArtefactCarouselItem,
-      //   AddButton
-      // },
-      // data () {
-      //   return {
-      //     displayedArtefact: this.artefacts[0],
-      //     displayedIndex: 0,
-      //     componentLoaded: false
-      //   }
-      // },
-      // mounted () {
-      //   this.componentLoaded = true
-      // },
-      // methods: {
-      //   processMediaFiles (event) {
-      //     this.$emit('processMediaFiles', event)
-      //   },
-      //   showArtefact (artefact, i) {
-      //     this.displayedArtefact = artefact
-      //     this.displayedIndex = i
-      //   },
-      //   removeItem () {
-      //     this.$emit('delete', this.displayedIndex)
-      //     this.showArtefact(this.artefacts[0], 0)
-      //   },
-      //   previous () {
-      //     // if (this.isStartItem(this.displayedIndex)) return
-      //     this.displayedIndex--
-      //     this.showArtefact(this.artefacts[this.displayedIndex], this.displayedIndex)
-      //   },
-      //   next () {
-      //     // if (this.isStartItem(this.displayedIndex)) return
-      //     this.displayedIndex++
-      //     this.showArtefact(this.artefacts[this.displayedIndex], this.displayedIndex)
-      //   },
-      //   isEndItem (i) {
-      //     if (i === (this.artefacts.length - 1)) return true
-      //     return false
-      //   },
-      //   isStartItem (i) {
-      //     if (i === 0) return true
-      //     return false
     },
     editing: Boolean,
     index: Number
   },
   components: {
-    ArtefactCarouselItem
+    ArtefactCarouselItem,
+    AddButton
   },
   data () {
     return {
@@ -132,6 +67,9 @@ export default {
     }
   },
   watch: {
+    index (newValue) {
+      this.selectedIndex = newValue
+    },
     selectedIndex (n, o) {
       if (n !== o) this.$emit('update:index', n)
     }
@@ -142,6 +80,9 @@ export default {
     }
   },
   methods: {
+    processMediaFiles (event) {
+      this.$emit('processMediaFiles', event)
+    },
     removeItem () {
       this.$emit('delete', this.index)
       this.showArtefact(this.artefacts[0], 0)
