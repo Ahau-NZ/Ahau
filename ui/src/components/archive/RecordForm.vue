@@ -10,22 +10,25 @@
                 v-model="formData.title"
                 label="Title"
                 v-bind="customProps"
+                class="title-input"
               />
             </v-col>
-         
-            <v-col cols="12">
-              <!-- <input v-show="false" ref="fileInput" type="file" accept="audio/*,video/*,image/*" multiple @change="processMediaFiles($event)" /> -->
-              <!-- <AddButton @click="$refs.fileInput.click()" label="Attact media or files"/> -->
-              <AddButton @click="warn('artefact')" label="Attact media or files"/>
-            </v-col>
-            <v-col cols="12" v-if="formData.artefacts.length > 0">
-              <MediaCard :artefacts.sync="formData.artefacts"/>
-            </v-col>
+          </v-row>
+
+          <v-col cols="12">
+            <input v-show="false" ref="fileInput" type="file" accept="audio/*,video/*,image/*" multiple @change="processMediaFiles($event)" />
+            <AddButton @click="$refs.fileInput.click()" label="Attact media or files"/>
+          </v-col>
+          <v-col v-if="formData.artefacts.length > 0" cols="12" class="pl-0 pr-0">
+            <ArtefactCarousel :artefacts="formData.artefacts"
+              @delete="toggleDialog($event, 'delete')"
+              @update="toggleDialog($event, 'new')"
+              editing
+            />
+          </v-col>
             <v-col cols="12">
               <AddButton @click="warn('location')" label="Add location"/>
             </v-col>
-           
-
             <v-col cols="12" class="pa-1">
               <v-textarea
                 v-model="formData.description"
@@ -136,7 +139,7 @@
                 </v-chip>
               </v-chip-group>
             </v-col>
-            <!-- ADD COLLECTIONS -->            
+            <!-- ADD COLLECTIONS -->
             <v-col :cols="mobile ? formData.categories.length > 0 ? '12' : '6' : formData.categories.length > 0 ? 'auto' : '3'">
               <v-row v-if="!showCollections" class="pl-10 pt-2" @click="showCollections = true">
                 <v-icon small>mdi-plus</v-icon>
@@ -153,25 +156,8 @@
               />
               <ChipGroup :chips="formData.collections" deletable @delete="removeItem(formData.collections, $event)" />
             </v-col>
-            <v-col :cols="mobile ? '12' : formData.access.length > 0 ? 'auto' : '4'">
-              <AddButton label="Access" @click="showAccess = true" />
-              <ProfileSearchBar
-                :selectedItems.sync="formData.access"
-                :items="items"
-                :searchString.sync="searchString"
-                :openMenu.sync="showAccess"
-                type="profile"
-                item="preferredName"
-              />
-              <AvatarGroup v-if="formData.access.length > 0"
-                :profiles="formData.access"
-                show-labels
-                size="40px"
-                deletable
-                @delete="removeItem(formData.access, $event)"
-              />
-            </v-col>
-            <v-col :cols="mobile ? '12' : formData.protocols.length > 0 ? 'auto' : '4'">
+           <!-- </v-row> -->
+            <!-- <v-col :cols="mobile ? '12' : formData.protocols.length > 0 ? 'auto' : '4'">
               <AddButton label="Protocol" @click="showProtocols = true" />
               <ProfileSearchBar
                 :selectedItems.sync="formData.protocols"
@@ -190,30 +176,7 @@
                 @delete="removeItem(formData.protocols, $event)"
               />
             </v-col>
-          </v-row>
-        </v-col>
-        <v-col>
-          <!-- <v-spacer/> -->
-          <!-- <v-col cols="12" sm="12" md="6">
-            <v-select
-              v-model="formData.type"
-              label="Record Type"
-              :items="['Life Event']"
-              v-bind="customProps"
-            />
-          </v-col> -->
-          <!-- <v-spacer/> -->
-          <!-- <v-col cols="12"> -->
-            <!-- <input v-show="false" ref="fileInput" type="file" accept="audio/*,video/*,image/*" multiple @change="processMediaFiles($event)" /> -->
-            <!-- <AddButton @click="$refs.fileInput.click()" label="Attact media or files"/> -->
-            <!-- <AddButton @click="warn('artefact')" label="Attact media or files"/>
-          </v-col>
-          <v-col cols="12" v-if="formData.artefacts.length > 0">
-            <MediaCard :artefacts.sync="formData.artefacts"/>
-          </v-col>
-          <v-col cols="12">
-            <AddButton @click="warn('location')" label="Add location"/>
-          </v-col> -->
+          </v-row> -->
         </v-col>
       </v-row>
       <v-divider/>
@@ -222,11 +185,9 @@
           <v-col>
             <span class="pa-0 ma-0">Advanced</span>
           </v-col>
-          <!-- <v-col> -->
-            <v-btn icon right>
-              <v-icon>{{ show ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
-            </v-btn>
-          <!-- </v-col> -->
+          <v-btn icon right>
+            <v-icon>{{ show ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
+          </v-btn>
         </v-row>
       </v-card-actions>
       <v-divider v-if="!show"/>
@@ -303,7 +264,7 @@
               />
               <ChipGroup :chips="formData.relatedRecords" deletable @delete="removeItem(formData.relatedRecords, $event)" />
             </v-col>
-            <v-col :cols="mobile ? '12' : '4'" class="pt-0 pa-1">
+            <v-col :cols="mobile ? '12' : '3'" class="pt-0 pa-1">
               <v-text-field
                 v-model="formData.submissionDate"
                 label="Submission Date"
@@ -390,29 +351,42 @@
       </v-expand-transition>
     </v-form>
   <!-- </v-card> -->
+    <NewArtefactDialog
+      v-if="newDialog"
+      :show="newDialog"
+      :index="index"
+      :artefacts="formData.artefacts"
+      @close="newDialog = false"
+      @delete="toggleDialog($event, 'delete')"
+      @submit="updateArtefacts($event)"
+    />
+    <DeleteArtefactDialog
+      v-if="deleteDialog"
+      :show="deleteDialog"
+      :index="index"
+      @close="deleteDialog = false"
+      @submit="removeArtefact($event)"
+    />
   </div>
 </template>
 
 <script>
-// import Avatar from '@/components/Avatar.vue'
-// import ImagePicker from '@/components/ImagePicker.vue'
-// import NodeDatePicker from '@/components/NodeDatePicker.vue'
-import AddButton from '@/components/button/AddButton.vue'
 import AvatarGroup from '@/components/AvatarGroup.vue'
 import Avatar from '@/components/Avatar.vue'
+import AddButton from '@/components/button/AddButton.vue'
+
 import ChipGroup from '@/components/archive/ChipGroup.vue'
-import Artefact from '@/components/artefacts/Artefact.vue'
-import ArtefactGroup from '@/components/artefacts/ArtefactGroup.vue'
 import ProfileSearchBar from '@/components/archive/ProfileSearchBar.vue'
-import ArtefactCarousel from '@/components/archive/ArtefactCarousel.vue'
-import MediaCard from '@/components/archive/MediaCard.vue'
 
 import { findByName } from '@/lib/search-helpers.js'
-import tree from '@/lib/tree-helpers'
 
 import { personComplete } from '@/mocks/person-profile'
 import { firstMocks } from '@/mocks/collections'
 import { artefacts } from '@/mocks/artefacts'
+
+import NewArtefactDialog from '@/components/archive/NewArtefactDialog.vue'
+import ArtefactCarousel from '@/components/archive/ArtefactCarousel.vue'
+import DeleteArtefactDialog from '@/components/dialog/archive/DeleteArtefactDialog.vue'
 
 import { RULES } from '@/lib/constants'
 
@@ -424,28 +398,32 @@ export default {
   name: 'RecordForm',
   components: {
     Avatar,
-    // ImagePicker,
     AddButton,
     ProfileSearchBar,
     AvatarGroup,
     ChipGroup,
-    MediaCard,
-    Artefact,
-    ArtefactGroup,
+    NewArtefactDialog,
     ArtefactCarousel,
+    DeleteArtefactDialog
   },
   props: {
     formData: {
       type: Object
-    }
+    },
+    editing: Boolean
   },
   data () {
     return {
+      newDialog: false,
+      deleteDialog: false,
+      index: 0,
       ARTEFACTS: artefacts,
+      search: false,
       model: 0,
       show: false,
-      categories: [{title: 'one'}, {title: 'two'}, {title: 'three'}, {title: 'four'}, {title: 'five'} , {title: 'six'}, {title: 'seven'}],
+      categories: [{ title: 'one' }, { title: 'two' }, { title: 'three' }, { title: 'four' }, { title: 'five' }, { title: 'six' }, { title: 'seven' }],
       collections: firstMocks,
+      showLocation: false,
       showMentions: false,
       showCategories: false,
       showContributors: false,
@@ -473,8 +451,8 @@ export default {
         outlined: true,
         hideDetails: true,
         placeholder: ' ',
-        class: 'custom' ,
-        clearable: true,
+        class: 'custom',
+        clearable: true
       }
     }
   },
@@ -485,17 +463,33 @@ export default {
       console.log('suggestions = ', this.suggestions)
     },
 
+    // clickedOff () {
+    //   this.search = !this.search
+    // },
+    updateArtefacts (changes) {
+      alert('WARNING, submission doesnt currently update artefacts')
+    },
+    toggleDialog ($event, dialog) {
+      this.index = $event
+      if (dialog === 'new') this.newDialog = !this.newDialog
+      if (dialog === 'delete') this.deleteDialog = !this.deleteDialog
+    },
     warn (field) {
       alert(`Cannot add ${field} yet`)
     },
     processMediaFiles ($event) {
+      this.index = this.formData.artefacts.length
       const { files } = $event.target
+
       Array.from(files).forEach((file, i) => {
         this.formData.artefacts.push(this.processFile(file))
       })
+
+      this.newDialog = true
     },
     processFile (file) {
       var attrs = {}
+
       const type = this.getFileType(file.type)
       const title = this.getFileName(file.name)
       const format = this.getFormat(file.type)
@@ -521,7 +515,8 @@ export default {
         licence: '',
         rights: '',
         source: '',
-        translation: ''
+        translation: '',
+        mentions: []
       }
 
       return attrs
@@ -546,12 +541,20 @@ export default {
     },
     removeItem (array, $event) {
       array.splice($event, 1)
+    },
+
+    removeArtefact ($event) {
+      console.error('deleting an artefact not fully implemented')
+      // either remove from the database or from formData
+      this.removeItem(this.formData.artefacts, this.index)
+
+      if (this.formData.artefacts.length === 0) this.newDialog = false
     }
   }
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .video-player {
   width: 500px;
 }
@@ -569,35 +572,35 @@ export default {
   font-weight: 500;
 }
 
-  .close {
-    top: -25px;
-    right: -10px;
-  }
+.close {
+  top: -25px;
+  right: -10px;
+}
 
-  .big-avatar {
-    position: relative;
-    top: -20px;
-  }
+.big-avatar {
+  position: relative;
+  top: -20px;
+}
 
-  .v-input--checkbox label {
-    font-size: 14px;
-  }
+.v-input--checkbox label {
+  font-size: 14px;
+}
 
-  .v-input--radio-group__input label {
-    font-size: 14px;
-  }
+.v-input--radio-group__input label {
+  font-size: 14px;
+}
 
-  .v-chip__close {
-    font-size: 16px !important;
-  }
+.v-chip__close {
+  font-size: 16px !important;
+}
 
-  .field {
-    color: rgba(0, 0, 0, 0.6);
-  }
+.field {
+  color: rgba(0, 0, 0, 0.6);
+}
 
-  .clickable {
-    cursor: pointer;
-  }
+.clickable {
+  cursor: pointer;
+}
 
 .rounded-border {
   border: 0.5px solid rgba(0,0,0,0.8);
@@ -619,4 +622,16 @@ export default {
   width:100%
 }
 
+.icon-button {
+    padding: 0px;
+    width: 50px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.icon-search {
+    width: 300px;
+    display: flex;
+    justify-items: flex-end;
+}
 </style>

@@ -23,7 +23,7 @@ export const story1 = {
     ...personComplete.children,
     ...personComplete.siblings
   ],
-  artefacts: [...artefacts],
+  artefacts: artefacts,
   collections: [],
   access: [...personComplete.parents],
   categories: [],

@@ -29,10 +29,10 @@
         <slot name="selection" :data="data"></slot>
       </template>
       <template v-slot:item="data">
-        
+
         <!-- MENTIONS + CONTRIBUTORS + CREATOR -->
         <template v-if="type === 'profile'">
-          <v-list-item @click="addSelectedItem(data.item)">  
+          <v-list-item @click="addSelectedItem(data.item)">
             <Avatar class="mr-3" size="40px" :image="data.item.avatarImage" :alt="data.item.preferredName" :gender="data.item.gender" :bornAt="data.item.bornAt" />
             <v-list-item-content>
               <v-list-item-title> {{ data.item.preferredName }} </v-list-item-title>
@@ -45,13 +45,13 @@
             <v-list-item-action>
               <v-list-item-title> {{ age(data.item.bornAt) }} </v-list-item-title>
               <v-list-item-subtitle>Age</v-list-item-subtitle>
-            </v-list-item-action> 
+            </v-list-item-action>
           </v-list-item>
         </template>
-      
+
         <!-- ACCESS -->
         <template v-else-if="type === 'commuinty'">
-          <v-list-item @click="addSelectedItem(data.item)">  
+          <v-list-item @click="addSelectedItem(data.item)">
             <Avatar class="mr-3" size="40px" :image="data.item.avatarImage" :alt="data.item.preferredName" :gender="data.item.gender" :bornAt="data.item.bornAt" />
             <v-list-item-content>
               <v-list-item-title> {{ data.item.preferredName }} </v-list-item-title>
@@ -60,7 +60,7 @@
             <v-list-item-action>
               <v-list-item-title> {{ age(data.item.bornAt) }} </v-list-item-title>
               <v-list-item-subtitle>Members</v-list-item-subtitle>
-            </v-list-item-action> 
+            </v-list-item-action>
           </v-list-item>
         </template>
 
@@ -116,7 +116,7 @@ export default {
       default: false
     },
     type: String,
-    placeholder: { type: String, default: ' '}
+    placeholder: { type: String, default: ' ' }
   },
   data () {
     return {
@@ -132,26 +132,26 @@ export default {
   },
   watch: {
     selectedItems (newValue) {
-      console.log( "selectedItems: ", newValue)
+      console.log('selectedItems: ', newValue)
     },
     chips: {
       deep: true,
       handler (newValue) {
-        console.log("chips: ", newValue)
+        console.log('chips: ', newValue)
         this.$emit('update:selectedItems', newValue)
-      },
+      }
     },
     searchInput (newValue) {
-      console.log("search: ", newValue)  
+      console.log('search: ', newValue)
       if (!newValue) return
-      if (newValue.length > 2) {  
+      if (newValue.length > 2) {
         this.$emit('getSuggestions', newValue)
       }
     }
   },
   methods: {
     clearSuggestions () {
-      console.log("clearing")
+      console.log('clearing')
       this.$emit('getSuggestions', null)
     },
     age (bornAt) {
@@ -167,7 +167,7 @@ export default {
       return true
     },
     addSelectedItem (item) {
-      console.log("adding: ", item)
+      console.log('adding: ', item)
       if (Array.isArray(this.chips)) {
         this.chips.push(item)
       } else {

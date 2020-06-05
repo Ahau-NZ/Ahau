@@ -11,7 +11,8 @@
         <!-- <v-btn :class="mobile ? 'searchBtnMob' : 'searchBtn'" :small="!mobile" :x-small="mobile" class="my-2" fab flat color="white" @click="editProfile()">
           <v-icon small class="black--text">mdi-magnify</v-icon>
         </v-btn>            -->
-        <v-btn :medium="!mobile" :x-small="mobile" :class="mobile ? 'addBtnMob' : 'addBtn'" class="my-2" fab color="white" @click.stop="openContextMenu($event)">
+        <!-- <v-btn :medium="!mobile" :x-small="mobile" :class="mobile ? 'addBtnMob' : 'addBtn'" class="my-2" fab color="white" @click.stop="openContextMenu($event)"> -->
+        <v-btn :medium="!mobile" :x-small="mobile" :class="mobile ? 'addBtnMob' : 'addBtn'" class="my-2" fab color="white" @click.prevent="updateDialog('new-story')">
           <v-icon :large="!mobile" class="black--text">mdi-plus</v-icon>
         </v-btn>
       </div>
@@ -37,14 +38,14 @@
       </transition>
     </v-row>
   </v-container>
-  <vue-context ref="menu" class="pa-4">
+  <!-- <vue-context ref="menu" class="pa-4">
     <li v-for="(option, index) in contextMenuOpts" :key="index">
       <a href="#" @click.prevent="updateDialog(option.dialog)" class="d-flex align-center px-4">
         <v-icon light>{{ option.icon }}</v-icon>
         <p class="ma-0 pl-3">{{ option.title }}</p>
       </a>
     </li>
-  </vue-context>
+  </vue-context> -->
 
   <DialogHandler
     :dialog.sync="dialog.active"
@@ -54,9 +55,9 @@
 </template>
 
 <script>
-import {
-  VueContext
-} from 'vue-context'
+// import {
+//   VueContext
+// } from 'vue-context'
 
 import StoryCard from '@/components/archive/StoryCard.vue'
 // import CollectionGroup from '@/components/archive/CollectionGroup.vue'
@@ -74,7 +75,7 @@ export default {
   components: {
     StoryCard,
     // CollectionGroup,
-    VueContext,
+    // VueContext,
     DialogHandler
   },
   data () {

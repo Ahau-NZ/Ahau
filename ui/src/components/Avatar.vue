@@ -2,8 +2,8 @@
   <div v-if="clickable" @click="$emit('click')" style="cursor: pointer;">
     <v-col class="py-0">
       <v-row justify="center" class="wrap">
-        <v-btn v-if="deletable" class="delete" @click="$emit('delete')" icon x-small light max-width="20px" max-height="20px">
-          <v-icon>mdi-close</v-icon>
+        <v-btn :dark="dark" v-if="deletable" class="delete" @click="$emit('delete')" icon x-small light max-width="20px" max-height="20px">
+          <v-icon :dark="dark">mdi-close</v-icon>
         </v-btn>
         <v-avatar :size="size" :tile="isView">
           <v-img v-if="image && image.uri" :src="image.uri" :alt="alt" />
@@ -16,7 +16,7 @@
         </v-avatar>
       </v-row>
       <v-row v-if="showLabel" justify="center">
-        <p style="font-size:0.8em"> {{ alt }} </p>
+        <p :style="`font-size:0.8em; ${theme}`"> {{ alt }} </p>
       </v-row>
     </v-col>
   </div>
@@ -41,7 +41,7 @@
         </div>
       </v-row>
       <v-row v-if="showLabel" justify="center">
-        <p style="font-size:0.8em"> {{ alt }} </p>
+        <p :style="`font-size:0.8em ${theme}`"> {{ alt }} </p>
       </v-row>
     </v-col>
   </div>
@@ -64,12 +64,17 @@ export default {
     clickable: { type: Boolean, default: false },
     isView: { type: Boolean, default: false },
     isEditing: { type: Boolean, default: false },
-    deletable: { type: Boolean, default: false }
+    deletable: { type: Boolean, default: false },
+    dark: { type: Boolean, default: false }
   },
   components: {
     ImagePicker
   },
   computed: {
+    theme () {
+      if (this.dark) return 'color: white;'
+      return ''
+    },
     getImage () {
       return avatarHelper.defaultImage(this.isView, this.bornAt, this.gender)
     },

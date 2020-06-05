@@ -27,6 +27,7 @@
             :deletable="deletable"
             @delete="$emit('delete', i)"
             :isView="isView"
+            :dark="dark"
           />
         </div>
       </div>
@@ -51,7 +52,8 @@ export default {
     spacing: { type: String, default: 'pr-5' },
     deletable: { type: Boolean, default: false },
     isView: { type: Boolean, default: false },
-    clickable: { type: Boolean, default: true }
+    clickable: { type: Boolean, default: true },
+    dark: { type: Boolean, default: false }
   },
   computed: {
     columns () {
