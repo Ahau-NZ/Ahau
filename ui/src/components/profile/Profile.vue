@@ -32,6 +32,18 @@
             </v-row>
           </template>
         </ProfileCard>
+        <ProfileCard title="Communities" class="mt-3">
+          <template v-slot:content>
+            <v-row class="justify-center align-center ma-0">
+              <v-col cols="2" class="pt-0 pl-0">
+                <Avatar :size="mobile ? '50px' : '40px'" :image="whoami.profile.avatarImage" :alt="whoami.profile.preferredName" />
+              </v-col>
+              <v-col>
+                <p style="color:black;">{{whoami.profile.preferredName}}</p>
+              </v-col>
+            </v-row>
+          </template>
+        </ProfileCard>
         <!-- <Kaitiaki
           class="mt-3"
           title="Communities"

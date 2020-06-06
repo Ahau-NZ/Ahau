@@ -7,7 +7,7 @@
     </div>
     <div v-if="artefact.__typename === 'Audio'" :style="showArtefact ? 'height:300px': mobile ? 'background-color:dimgray;height:300px' : 'background-color:dimgray;height:500px'">
       <audio ref="audio" class="audio" controls>
-          <source src="@/assets/ignore/audio.mp3" type="audio/mpeg"/>
+          <!-- <source src="@/assets/ignore/audio.mp3" type="audio/mpeg"/> -->
       </audio>
     </div>
     <v-img v-if="artefact.__typename === 'Photo'" :src="artefact.blob" style="height:100%"></v-img>

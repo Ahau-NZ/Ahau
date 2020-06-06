@@ -31,7 +31,7 @@
       <!-- Desktop doesn't use a drawer, it has the links directly in the app bar -->
       <template v-if="!mobile">
         <!--  WIP links -->
-        <v-btn text @click.stop="setDialog('coming-soon')" active-class="no-active" class="red--text text-uppercase ms-10">Tribes</v-btn>
+        <v-btn text active-class="no-active" :to="{ name: 'discovery' }" class="red--text text-uppercase ms-10">Tribes</v-btn>
         <v-btn active-class="no-active" text @click.native="setComponent('archive')" :to="{ name: 'profileShow', params: { id: profile.id } }" class="white--text text-uppercase ms-10">Archive</v-btn>
 
         <v-btn active-class="no-active" text @click.native="resetWindow" to="/whakapapa" class="white--text text-uppercase ms-10">whakapapa</v-btn>

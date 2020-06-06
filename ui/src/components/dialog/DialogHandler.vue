@@ -10,6 +10,13 @@
       :suggestions="suggestions"
       @getSuggestions="getSuggestions($event)"
     />
+    <NewCommunityDialog v-if="isActive('new-community')"
+      :show="isActive('new-community')"
+      :title="`Ko Wai Mātou ---- Create New Community`"
+      :type="type"
+      @create="addCommunity($event)"
+      @close="close"
+    />
     <EditNodeDialog v-if="isActive('edit-node')"
       :show="isActive('edit-node')"
       :title="`Edit ${currentProfile.preferredName}`"
@@ -95,6 +102,7 @@
 
 <script>
 import NewNodeDialog from '@/components/dialog/profile/NewNodeDialog.vue'
+import NewCommunityDialog from '@/components/dialog/community/NewCommunityDialog.vue'
 import EditNodeDialog from '@/components/dialog/profile/EditNodeDialog.vue'
 import SideViewEditNodeDialog from '@/components/dialog/profile/SideViewEditNodeDialog.vue'
 import DeleteNodeDialog from '@/components/dialog/profile/DeleteNodeDialog.vue'
@@ -126,6 +134,7 @@ export default {
   name: 'DialogHandler',
   components: {
     NewNodeDialog,
+    NewCommunityDialog,
     EditNodeDialog,
     SideViewEditNodeDialog,
     DeleteNodeDialog,
@@ -157,7 +166,7 @@ export default {
       required: false,
       default: null,
       validator: (val) => [
-        'new-node', 'view-edit-node', 'delete-node', 'new-collection', 'new-record', 'edit-node', 'view-record',
+        'new-node','new-community', 'view-edit-node', 'delete-node', 'new-collection', 'new-record', 'edit-node', 'view-record',
         'whakapapa-view', 'whakapapa-edit', 'whakapapa-delete', 'whakapapa-helper', 'whakapapa-table-helper'
       ].includes(val)
     },
@@ -226,6 +235,10 @@ export default {
         return Boolean(findSuccessor(profile))
       }
       return true
+    },
+    addCommunity(community) {
+      alert('TODO: add community')
+      console.log("TODO: add this community:", community)
     },
     async addPerson ($event) {
       try {
