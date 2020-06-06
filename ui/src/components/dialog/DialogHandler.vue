@@ -166,7 +166,7 @@ export default {
       required: false,
       default: null,
       validator: (val) => [
-        'new-node','new-community', 'view-edit-node', 'delete-node', 'new-collection', 'new-record', 'edit-node', 'view-record',
+        'new-node', 'new-community', 'view-edit-node', 'delete-node', 'new-collection', 'new-record', 'edit-node', 'view-record',
         'whakapapa-view', 'whakapapa-edit', 'whakapapa-delete', 'whakapapa-helper', 'whakapapa-table-helper'
       ].includes(val)
     },
@@ -236,9 +236,9 @@ export default {
       }
       return true
     },
-    addCommunity(community) {
+    addCommunity (community) {
       alert('TODO: add community')
-      console.log("TODO: add this community:", community)
+      console.log('TODO: add this community:', community)
     },
     async addPerson ($event) {
       try {

@@ -36,66 +36,66 @@
       <v-spacer style="height:200px"></v-spacer>
     </v-container>
   </template>
-  
-  <script>
-  import SideNavMenu from '@/components/menu/SideNavMenu.vue'
-  import Profile from '@/components/profile/Profile.vue'
-  import Archive from '@/components/archive/Archive'
-  import Timeline from '@/components/story/Timeline.vue'
-  import Header from '@/components/profile/Header.vue'
-  import EditProfileButton from '@/components/button/EditProfileButton.vue'
-  import WhakapapaIndex from '@/views/WhakapapaIndex.vue'
-  
-  import {
-    mapActions,
-    mapGetters
-  } from 'vuex'
-  
-  export default {
-    name: 'CommunityShow',
-    components: {
-      SideNavMenu,
-      Profile,
-      Archive,
-      Timeline,
-      Header,
-      EditProfileButton,
-      WhakapapaIndex
+
+<script>
+import SideNavMenu from '@/components/menu/SideNavMenu.vue'
+import Profile from '@/components/profile/Profile.vue'
+import Archive from '@/components/archive/Archive'
+import Timeline from '@/components/story/Timeline.vue'
+import Header from '@/components/profile/Header.vue'
+import EditProfileButton from '@/components/button/EditProfileButton.vue'
+import WhakapapaIndex from '@/views/WhakapapaIndex.vue'
+
+import {
+  mapActions,
+  mapGetters
+} from 'vuex'
+
+export default {
+  name: 'CommunityShow',
+  components: {
+    SideNavMenu,
+    Profile,
+    Archive,
+    Timeline,
+    Header,
+    EditProfileButton,
+    WhakapapaIndex
+  },
+  data () {
+    return {
+      prevHeight: 0,
+      loaded: false
+    }
+  },
+  mounted () {
+    this.setupProfile(this.$route.params.id)
+  },
+  computed: {
+    ...mapGetters(['currentProfile', 'activeComponent', 'showStory', 'showArtefact']),
+    mobile () {
+      return this.$vuetify.breakpoint.xs
     },
-    data () {
-      return {
-        prevHeight: 0,
-        loaded: false
-      }
-    },
-    mounted () {
-      this.setupProfile(this.$route.params.id)
-    },
-    computed: {
-      ...mapGetters(['currentProfile', 'activeComponent', 'showStory', 'showArtefact']),
-      mobile () {
-        return this.$vuetify.breakpoint.xs
-      },
-      hideNav () {
-        if (this.mobile && this.showStory) return true
-        else return false
-      }
-    },
-    watch: {
-      // update profile information routing to profileShow with new Id
-      '$route.params.id': function (id) {
-        this.setProfileById({ id })
-      }
-    },
-    methods: {
-      ...mapActions(['setProfileById', 'setWhoami', 'setShowArtefact', 'setDialog']),
-      async setupProfile (id) {
-        this.setProfileById({ id })
-      }
+    hideNav () {
+      if (this.mobile && this.showStory) return true
+      else return false
+    }
+  },
+  watch: {
+    // update profile information routing to profileShow with new Id
+    '$route.params.id': function (id) {
+      this.setProfileById({ id })
+    }
+  },
+  methods: {
+    ...mapActions(['setProfileById', 'setWhoami', 'setShowArtefact', 'setDialog']),
+    async setupProfile (id) {
+      this.setProfileById({ id })
     }
   }
-  </script>
-  
+}
+</script>
+
   <style lang="scss">
   .body-width {
     /* min-width: $formWidth; */
@@ -104,7 +104,7 @@
     // background: white;
     // margin-bottom: 200px;
   }
-  
+
   .niho-bg {
     background: linear-gradient(rgba(255, 255, 255, 0.99),
     rgba(255, 255, 255, 0.7)), url(../assets/niho.svg);
@@ -112,13 +112,12 @@
     background-attachment: fixed;
     background-repeat: no-repeat;
   }
-  
+
   .fade-enter-active,
   .fade-leave-active {
     transition-duration: 0.2;
     transition-property: top;
     transition-timing-function: ease-in-out;
    }
-  
+
   </style>
-  

@@ -92,122 +92,122 @@
 </template>
 
 <script>
-  import Avatar from '@/components/Avatar.vue'
-  import ImagePicker from '@/components/ImagePicker.vue'
-  import AddButton from '@/components/button/AddButton.vue'
-  import NodeDatePicker from '@/components/NodeDatePicker.vue'
+import Avatar from '@/components/Avatar.vue'
+import ImagePicker from '@/components/ImagePicker.vue'
+import AddButton from '@/components/button/AddButton.vue'
+import NodeDatePicker from '@/components/NodeDatePicker.vue'
 
-  import {
-    GENDERS,
-    RELATIONSHIPS
-  } from '@/lib/constants'
+import {
+  GENDERS,
+  RELATIONSHIPS
+} from '@/lib/constants'
 
-  export default {
-    name: 'ProfileForm',
-    components: {
-      Avatar,
-      ImagePicker,
-      AddButton,
-      NodeDatePicker
+export default {
+  name: 'ProfileForm',
+  components: {
+    Avatar,
+    ImagePicker,
+    AddButton,
+    NodeDatePicker
+  },
+  props: {
+    profile: {
+      type: Object,
+      required: true
     },
-    props: {
-      profile: {
-        type: Object,
-        required: true
+    withRelationships: {
+      type: Boolean,
+      default: true
+    },
+    readonly: {
+      type: Boolean,
+      default: false
+    },
+    hideDetails: {
+      type: Boolean,
+      default: false
+    },
+    editRelationship: {
+      type: Boolean,
+      default: false
+    }
+  },
+  data () {
+    return {
+      genders: GENDERS,
+      relationshipTypes: RELATIONSHIPS,
+      formData: this.profile,
+      form: {
+        valid: true,
+        showDescription: false
       },
-      withRelationships: {
-        type: Boolean,
-        default: true
-      },
-      readonly: {
-        type: Boolean,
-        default: false
-      },
-      hideDetails: {
-        type: Boolean,
-        default: false
-      },
-      editRelationship: {
-        type: Boolean,
-        default: false
+      selectedGender: ''
+    }
+  },
+  watch: {
+    profile: {
+      handler (newVal) {
+        this.formData = newVal
       }
     },
-    data() {
+    deep: true
+  },
+  computed: {
+    mobile () {
+      return this.$vuetify.breakpoint.xs
+    },
+    customProps () {
+      // readonly = hasSelected || !isEditing
       return {
-        genders: GENDERS,
-        relationshipTypes: RELATIONSHIPS,
-        formData: this.profile,
-        form: {
-          valid: true,
-          showDescription: false
-        },
-        selectedGender: ''
+        readonly: this.readonly,
+        flat: this.readonly,
+        hideDetails: true,
+        placeholder: ' ',
+        class: this.readonly ? 'custom' : ''
       }
     },
-    watch: {
-      profile: {
-        handler(newVal) {
-          this.formData = newVal
-        }
-      },
-      deep: true
-    },
-    computed: {
-      mobile() {
-        return this.$vuetify.breakpoint.xs
-      },
-      customProps() {
-        // readonly = hasSelected || !isEditing
-        return {
-          readonly: this.readonly,
-          flat: this.readonly,
-          hideDetails: true,
-          placeholder: ' ',
-          class: this.readonly ? 'custom' : ''
-        }
-      },
-      showLegallyAdopted() {
-        switch (this.formData.relationshipType) {
-          case 'whangai':
-            return true
-          case 'adopted':
-            return true
-          default:
-            return false
-        }
-      },
-      altNames() {
-        return [...this.formData.altNames.value, ...this.formData.altNames.add]
+    showLegallyAdopted () {
+      switch (this.formData.relationshipType) {
+        case 'whangai':
+          return true
+        case 'adopted':
+          return true
+        default:
+          return false
       }
     },
-    methods: {
-      updateSelectedGender(genderClicked) {
-        // reset images to outlined
-        this.$refs.taneImg.src = require('@/assets/tane-outlined.svg')
-        this.$refs.wahineImg.src = require('@/assets/wahine-outlined.svg')
-        // hightlight selected image
-        this.genderSelected = genderClicked
-        if (this.genderSelected === 'male') {
-          this.$refs.taneImg.src = require('@/assets/tane.svg')
-        }
-        if (this.genderSelected === 'female') {
-          this.$refs.wahineImg.src = require('@/assets/wahine.svg')
-        }
-        // update the gender
-        this.formData.gender = this.genderSelected
-      },
-      addAltNameField() {
-        this.formData.altNames.add.push(null)
-      },
-      removeAltName(altName, index) {
-        this.formData.altNames.value.splice(index, 1)
-        this.formData.altNames.remove.push(altName)
-      },
-      removeAltNameField(index) {
-        this.formData.altNames.add.splice(index, 1)
+    altNames () {
+      return [...this.formData.altNames.value, ...this.formData.altNames.add]
+    }
+  },
+  methods: {
+    updateSelectedGender (genderClicked) {
+      // reset images to outlined
+      this.$refs.taneImg.src = require('@/assets/tane-outlined.svg')
+      this.$refs.wahineImg.src = require('@/assets/wahine-outlined.svg')
+      // hightlight selected image
+      this.genderSelected = genderClicked
+      if (this.genderSelected === 'male') {
+        this.$refs.taneImg.src = require('@/assets/tane.svg')
       }
+      if (this.genderSelected === 'female') {
+        this.$refs.wahineImg.src = require('@/assets/wahine.svg')
+      }
+      // update the gender
+      this.formData.gender = this.genderSelected
+    },
+    addAltNameField () {
+      this.formData.altNames.add.push(null)
+    },
+    removeAltName (altName, index) {
+      this.formData.altNames.value.splice(index, 1)
+      this.formData.altNames.remove.push(altName)
+    },
+    removeAltNameField (index) {
+      this.formData.altNames.add.splice(index, 1)
     }
   }
+}
 </script>
 
 <style scoped lang="scss">

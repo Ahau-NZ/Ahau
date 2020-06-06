@@ -26,33 +26,33 @@
 </template>
 
 <script>
-  // import CommunitiesNav from '@/components/CommunitiesNav'
-  import CommunitiesPeople from '@/components/CommunitiesPeople'
-  import CommunitiesList from '@/components/CommunitiesList'
-  import DialogHandler from '@/components/dialog/DialogHandler.vue'
+// import CommunitiesNav from '@/components/CommunitiesNav'
+import CommunitiesPeople from '@/components/CommunitiesPeople'
+import CommunitiesList from '@/components/CommunitiesList'
+import DialogHandler from '@/components/dialog/DialogHandler.vue'
 
-  import { mapActions } from 'vuex'
+import { mapActions } from 'vuex'
 
-  export default {
-    name: 'Discovery',
-    components: {
-      // CommunitiesNav,
-      CommunitiesPeople,
-      CommunitiesList
-    },
-    computed: {
-      mobile() {
-        return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
-      },
-    },
-    methods: {
-      ...mapActions(['setDialog']),
-      addCommunityDialog() {
-        console.log("setting dialog to new-communtiy")
-        this.setDialog({ active:'new-community'})
-      }
+export default {
+  name: 'Discovery',
+  components: {
+    // CommunitiesNav,
+    CommunitiesPeople,
+    CommunitiesList
+  },
+  computed: {
+    mobile () {
+      return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
+    }
+  },
+  methods: {
+    ...mapActions(['setDialog']),
+    addCommunityDialog () {
+      console.log('setting dialog to new-communtiy')
+      this.setDialog({ active: 'new-community' })
     }
   }
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

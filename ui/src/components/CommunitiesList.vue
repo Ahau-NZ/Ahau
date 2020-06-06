@@ -40,54 +40,52 @@
       </v-col>
     </v-row>
 
-    
   </div>
 </template>
 
 <script>
-  import gql from 'graphql-tag'
+import gql from 'graphql-tag'
 
-import {communityBasic01, communityBasic02} from '../mocks/community'
+import { communityBasic01, communityBasic02 } from '../mocks/community'
 
-  const get = require('lodash.get')
+const get = require('lodash.get')
 
-
-  export default {
-    name: 'CommunitiesList',
-    data() {
-      return {
-        communities: [],
-        patakaCode: null,
-        communities: [communityBasic01, communityBasic02],
-      }
+export default {
+  name: 'CommunitiesList',
+  data () {
+    return {
+      communities: [],
+      patakaCode: null,
+      communities: [communityBasic01, communityBasic02]
+    }
+  },
+  // apollo: {
+  //   communities: {
+  //     query: gql `
+  //     query {
+  //       communities {
+  //         id
+  //         preferredName
+  //         description
+  //         headerImage {
+  //           uri
+  //         }
+  //       }
+  //     }
+  //   `,
+  //     fetchPolicy: 'no-cache'
+  //   }
+  // },
+  methods: {
+    getImage (community) {
+      return get(community, 'headerImage.uri') || ''
     },
-    // apollo: {
-    //   communities: {
-    //     query: gql `
-    //     query {
-    //       communities {
-    //         id
-    //         preferredName
-    //         description
-    //         headerImage {
-    //           uri
-    //         }
-    //       }
-    //     }
-    //   `,
-    //     fetchPolicy: 'no-cache'
-    //   }
-    // },
-    methods: {
-      getImage(community) {
-        return get(community, 'headerImage.uri') || ''
-      },
-      shortDescrciption(community) {
-        if (!community.description) return
-        return community.description.substring(0, 180)
-      }
+    shortDescrciption (community) {
+      if (!community.description) return
+      return community.description.substring(0, 180)
     }
   }
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
@@ -134,8 +132,7 @@ import {communityBasic01, communityBasic02} from '../mocks/community'
   }
 
   .title {
-    
-  }
 
+  }
 
 </style>
