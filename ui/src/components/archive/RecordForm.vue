@@ -12,7 +12,7 @@
                 v-bind="customProps"
                 class="title-input"
               />
-            </v-col>             
+            </v-col>
             <v-col v-if="!formData.artefacts.length > 0" cols="6" >
               <div @click="$refs.fileInput.click()">
                 <AddButton size="60px" icon="mdi-image-plus"/>
@@ -32,8 +32,8 @@
               <div v-if="!showLocation" @click="showLocation = true">
                 <AddButton size="60px" icon="mdi-map-plus"/>
                 <p class="add-label clickable" >Add location</p>
-              </div>  
-              <v-row v-if="showLocation">        
+              </div>
+              <v-row v-if="showLocation">
                 <v-col :cols="formData.artefacts.length > 0 ? '6':'12'" class="pa-1">
                   <v-textarea
                     v-model="formData.location"
@@ -56,9 +56,9 @@
                   >
                   </v-textarea>
                 </v-col>
-              </v-row>     
-            </v-col>  
-  
+              </v-row>
+            </v-col>
+
             <v-col cols="12" class="pa-1">
               <v-textarea
                 v-model="formData.description"
@@ -173,8 +173,6 @@
               </div>
             </v-col>
 
-         
-           
            </v-row>
             <!-- TODO: ADD CATEGORIES -->
            <!-- <v-col :cols="mobile ? formData.categories.length > 2 ? 'auto' : '6' : formData.categories.length > 1 ? 'auto' : '3'">
@@ -260,7 +258,7 @@
       <v-expand-transition>
         <div v-show="show">
           <v-row>
-                     
+
             <!-- RELATED RECORDS -->
             <v-col :cols="mobile ? '12' : formData.relatedRecords.length > 0 ? 'auto' : '3'">
               <v-row v-if="!showRecords" @click="showRecords = true" class="pl-10">

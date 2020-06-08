@@ -309,12 +309,12 @@ export default {
   },
   methods: {
     processMediaFiles ($event) {
-    this.index = this.formData.artefacts.length
-    const { files } = $event.target
+      this.index = this.formData.artefacts.length
+      const { files } = $event.target
 
-    Array.from(files).forEach((file, i) => {
-      this.formData.artefacts.push(this.processFile(file))
-    })
+      Array.from(files).forEach((file, i) => {
+        this.formData.artefacts.push(this.processFile(file))
+      })
 
     // this.newDialog = true
     },

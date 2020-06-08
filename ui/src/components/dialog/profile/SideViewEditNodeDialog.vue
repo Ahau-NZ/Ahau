@@ -1,5 +1,5 @@
 <template>
-  <div class="side-menu" style="border-left: 0.5px solid rgba(0,0,0,0.1);">
+  <div class="side-menu" style="border-left: 0.5px solid rgba(0,0,0,0.1);" :style="preview ? 'position:fixed':''">
 
     <!--===== MOBILE VERSION of side menu is a Dialog =====-->
     <Dialog v-if="mobile" :title="formData.preferredName" :show="show" @close="close" width="720px" :goBack="close" :enableBar="false" :isEditing="isEditing">
@@ -30,9 +30,10 @@
             medium
             class="blue--text"
           >
-            <v-icon small class="blue--text" left>mdi-pencil</v-icon>Profile
+            <v-icon small class="blue--text" left>mdi-account-circle</v-icon>Profile
           </v-btn>
           <v-btn
+            v-if="!preview"
             @click="toggleEdit"
             color="white"
             text
@@ -126,9 +127,10 @@
                     :show-labels="true"
                     @profile-click="openProfile($event)"
                   >
-                    <template v-slot:action>
+                    <!-- <template v-slot:action>
                       <AddButton @click="toggleNew('parent')" style="justify-content:start; padding-bottom:30px" />
-                    </template>
+                    </template> -->
+                    <AddButton v-if="!preview" @click="toggleNew('parent')" />
                   </AvatarGroup>
                 </v-col>
 
@@ -143,9 +145,7 @@
                     :show-labels="true"
                     @profile-click="openProfile($event)"
                   >
-                    <template v-slot:action>
-                      <AddButton v-if="view.focus !== profile.id" @click="toggleNew('sibling')" style="justify-content:start; padding-bottom:30px"/>
-                    </template>
+                   <AddButton v-if="!preview && view.focus !== profile.id" @click="toggleNew('sibling')" />
                   </AvatarGroup>
                 </v-col>
 
@@ -161,9 +161,7 @@
                       :show-labels="true"
                       @profile-click="openProfile($event)"
                     >
-                      <template v-slot:action>
-                        <AddButton @click="toggleNew('child')" style="justify-content:start; padding-bottom:30px"/>
-                      </template>
+                      <AddButton v-if="!preview" @click="toggleNew('child')" />
                     </AvatarGroup>
                     <AvatarGroup
                       v-else
@@ -173,9 +171,7 @@
                       :show-labels="true"
                       @profile-click="openProfile($event)"
                     >
-                      <template v-slot:action>
-                        <AddButton @click="toggleNew('child')" style="justify-content:start; padding-bottom:30px" />
-                      </template>
+                    <AddButton v-if="!preview" @click="toggleNew('child')" />
                   </AvatarGroup>
                 </v-col>
               </v-row>
@@ -254,7 +250,7 @@
                         </v-col>
                         <v-row class="mx-1">
                           <v-col cols="8"></v-col>
-                          <AddButton :align="'flex-end'" :width="'50px'" label="Add name" @click="addAltNameField" row/>
+                          <AddButton v-if="!preview" :align="'flex-end'" :width="'50px'" label="Add name" @click="addAltNameField" row/>
                         </v-row>
                       </template>
                     </v-row>
@@ -490,7 +486,7 @@
         <v-row class="ma-0 pa-0 flex-column">
           <!-- Desktop: Dialog close button -->
           <v-row class="justify-end pr-2">
-              <v-icon @click="close" color="secondary">mdi-close</v-icon>
+              <v-icon @click="close" style="z-index:2" color="secondary">mdi-close</v-icon>
           </v-row>
           <!-- Desktop: Avatar -->
           <v-row class="justify-center">
@@ -523,7 +519,7 @@
           >
             <v-icon small class="blue--text" left>mdi-account-circle</v-icon>Profile
           </v-btn>
-            <v-btn @click="toggleEdit" text medium class="blue--text">
+            <v-btn v-if="!preview" @click="toggleEdit" text medium class="blue--text">
               <v-icon small class="blue--text" left>mdi-pencil</v-icon>Edit
             </v-btn>
           </v-row>
@@ -616,9 +612,7 @@
                       :show-labels="true"
                       @profile-click="openProfile($event)"
                     >
-                      <template v-slot:action>
-                        <AddButton @click="toggleNew('parent')" style="justify-content:start; padding-bottom:30px" />
-                      </template>
+                      <AddButton v-if="!preview" @click="toggleNew('parent')"/>
                     </AvatarGroup>
                   </v-col>
 
@@ -633,9 +627,7 @@
                       :show-labels="true"
                       @profile-click="openProfile($event)"
                     >
-                      <template v-slot:action>
-                        <AddButton  v-if="view.focus !== profile.id" @click="toggleNew('sibling')" style="justify-content:start; padding-bottom:30px" />
-                      </template>
+                      <AddButton v-if="!preview && view.focus !== profile.id" @click="toggleNew('sibling')" />
                     </AvatarGroup>
                   </v-col>
 
@@ -651,9 +643,7 @@
                       :show-labels="true"
                       @profile-click="openProfile($event)"
                     >
-                      <template v-slot:action>
-                        <AddButton @click="toggleNew('child')" style="justify-content:start; padding-bottom:30px" />
-                      </template>
+                      <AddButton v-if="!preview" @click="toggleNew('child')" />
                     </AvatarGroup>
                     <AvatarGroup
                       v-else
@@ -663,9 +653,7 @@
                       :show-labels="true"
                       @profile-click="openProfile($event)"
                     >
-                      <template v-slot:action>
-                        <AddButton @click="toggleNew('child')" style="justify-content:start; padding-bottom:30px"/>
-                      </template>
+                      <AddButton v-if="!preview" @click="toggleNew('child')" />
                     </AvatarGroup>
                   </v-col>
                 </v-row>
@@ -741,7 +729,7 @@
                         </v-col>
                         <v-row class="mx-1">
                           <v-col cols="8"></v-col>
-                          <AddButton :align="'flex-end'" :width="'50px'" label="Add name" @click="addAltNameField" row/>
+                          <AddButton v-if="!preview" :align="'flex-end'" :width="'50px'" label="Add name" @click="addAltNameField" row/>
                         </v-row>
                       </template>
                     </v-row>
@@ -969,22 +957,21 @@ import {
   RULES,
   RELATIONSHIPS
 } from '@/lib/constants'
-
 import calculateAge from '../../../lib/calculate-age'
-
 import { PERMITTED_PROFILE_ATTRS, PERMITTED_RELATIONSHIP_ATTRS } from '@/lib/profile-helpers'
 
 import Avatar from '@/components/Avatar.vue'
 import AvatarGroup from '@/components/AvatarGroup.vue'
 import NodeDatePicker from '@/components/NodeDatePicker.vue'
 import AddButton from '@/components/button/AddButton.vue'
-
 import Dialog from '@/components/dialog/Dialog.vue'
 
 import isEqual from 'lodash.isequal'
 import isEmpty from 'lodash.isempty'
 import pick from 'lodash.pick'
 import clone from 'lodash.clonedeep'
+
+import { mapActions } from 'vuex'
 
 function defaultData (profile) {
   return {
@@ -1030,7 +1017,8 @@ export default {
     sideMenu: { type: Boolean, default: false },
     relationshipLinks: { type: Array },
     show: { type: Boolean, required: true },
-    readonly: { type: Boolean, default: false }
+    readonly: { type: Boolean, default: false },
+    preview: { type: Boolean, default: false }
   },
 
   data () {
@@ -1107,6 +1095,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['setProfileById']),
     updateSelectedGender (genderClicked) {
       // reset images to outlined
       this.$refs.taneImg.src = require('@/assets/tane-outlined.svg')
@@ -1157,7 +1146,8 @@ export default {
       this.toggleEdit()
     },
     openProfile (profile) {
-      this.$emit('open-profile', profile.id)
+      if (this.preview) this.setProfileById({ id: profile.id, type: 'setWhanau' })
+      else this.$emit('open-profile', profile.id)
     },
     toggleNew (type) {
       this.$emit('new', type)

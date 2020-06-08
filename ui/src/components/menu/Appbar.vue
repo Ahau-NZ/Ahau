@@ -2,9 +2,12 @@
   <div>
     <v-app-bar  v-if="mobile || enableMenu" :app="mobile && app" :class="classObject" :flat="!mobile"
       color="#303030" fixed>
-      <v-btn v-if="showStory && mobile" @click="setShowStory" icon dark>
+      <v-btn v-if="isgoBack" @click="goBack" icon dark>
         <v-icon>mdi-arrow-left</v-icon>
       </v-btn>
+      <!-- <v-btn v-if="showStory && mobile" @click="setShowStory" icon dark>
+        <v-icon>mdi-arrow-left</v-icon>
+      </v-btn> -->
       <template v-else>
         <router-link to="/" v-if="enableMenu" class="logo-link"  @click.native="karakiaWhakamutunga()">
           <img src="@/assets/logo_red.svg" class="logo" />
@@ -28,7 +31,7 @@
       <!-- Desktop doesn't use a drawer, it has the links directly in the app bar -->
       <template v-if="!mobile">
         <!--  WIP links -->
-        <v-btn text @click.stop="dialog = true" active-class="no-active" class="red--text text-uppercase ms-10">Tribes</v-btn>
+        <v-btn text @click.stop="setDialog('coming-soon')" active-class="no-active" class="red--text text-uppercase ms-10">Tribes</v-btn>
         <v-btn active-class="no-active" text @click.native="setComponent('archive')" :to="{ name: 'profileShow', params: { id: profile.id } }" class="white--text text-uppercase ms-10">Archive</v-btn>
 
         <v-btn active-class="no-active" text @click.native="resetWindow" to="/whakapapa" class="white--text text-uppercase ms-10">whakapapa</v-btn>
@@ -73,7 +76,7 @@
         <v-list-item active-class="no-active" link @click.native="goArchive()" :to="{ name: 'profileShow', params: { id: profile.id } }" >
           <v-list-item-title class="white--text" >Archive</v-list-item-title>
         </v-list-item>
-        <v-list-item active-class="no-active" link @click.stop="dialog = true">
+        <v-list-item active-class="no-active" link @click.stop="setDialog('coming-soon')">
           <v-list-item-title class="red--text">Tribes</v-list-item-title>
         </v-list-item>
         <v-list-item class="pt-12">
@@ -81,21 +84,6 @@
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
-
-    <!-- coming soon dialog  -->
-    <v-dialog v-model="dialog" max-width="450">
-      <v-card>
-        <v-card-title class="headline">Aroha mai</v-card-title>
-        <v-card-text>
-          These features are still under construction, but we can't wait to
-          share this mahi with you soon in upcoming releases
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="red darken-1" text @click="dialog = false">Ka pai</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
   </div>
 </template>
 
@@ -138,7 +126,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['whoami', 'whakapapa', 'route', 'showStory', 'goBack']),
+    ...mapGetters(['whoami', 'whakapapa', 'route', 'showStory', 'storeDialog']),
     classObject: function () {
       return {
         'mobile': this.mobile,
@@ -154,6 +142,12 @@ export default {
         return this.route.from.name === 'whakapapaShow' && this.route.name === 'profileShow'
       }
       return false
+    },
+    isgoBack () {
+      if (this.mobile) {
+        if (this.route.name === 'whakapapaShow') return true
+        else if (this.showStory) return true
+      } return false
     }
   },
   beforeMount () {
@@ -162,16 +156,19 @@ export default {
   watch: {
     whoami (newVal) {
       this.profile.avatarImage = newVal.profile.avatarImage
+    },
+    route (newVal) {
+      if (this.storeDialog) this.setDialog(null)
     }
   },
   methods: {
-    ...mapActions(['setProfileById', 'setComponent', 'setShowStory']),
+    ...mapActions(['setProfileById', 'setComponent', 'setShowStory', 'setDialog']),
     resetWindow () {
       window.scrollTo(0, 0)
     },
     goProfile () {
       this.setComponent('profile')
-      this.setProfileById(this.profile.id)
+      // this.setProfileById(this.profile.id)
       if (this.drawer) this.drawer = false
     },
     goArchive () {
@@ -205,6 +202,10 @@ export default {
     },
     toggleDrawer () {
       this.drawer = !this.drawer
+    },
+    goBack () {
+      if (this.route.name === 'whakapapaShow') return this.$router.push({ name: 'whakapapaIndex' })
+      else if (this.showStory) return this.setShowStory()
     }
 
   },

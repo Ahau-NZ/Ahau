@@ -1,10 +1,10 @@
 <template>
-  <v-card @click="showStory($event)" :class="customClass" :flat="fullStory" :ripple="false" class="mx-auto" :light="!this.showArtefact" width="100%">
+  <v-card @click="showStory()" :class="customClass" :flat="fullStory" :ripple="false" class="mx-auto" :light="!showArtefact" width="100%">
     <!-- RECORD CONTRUBUTORS-STORY PREVIEW -->
     <v-list-item class="px-0" style="min-height:0; height:10px">
       <v-list-item-icon v-if="!fullStory" class="pt-0 mt-0" style="position:absolute; top:5px; right:1px; margin-right:0px">
         <v-list-item-subtitle v-if="!mobile" class="no-flex">contributors</v-list-item-subtitle>
-        <AvatarGroup :clickable="false" :profiles="story.contributors" customClass="ma-0 pa-0" style="position:relative; bottom:10px;" size="28px" spacing="pr-1"/>
+        <AvatarGroup :profiles="story.contributors" customClass="ma-0 pa-0" style="position:relative; bottom:10px;" size="28px" spacing="pr-1"/>
       </v-list-item-icon>
     </v-list-item>
     <!-- RECORD HEADER -->
@@ -18,32 +18,34 @@
         <v-list-item-title v-else class="headline mb-1 wrap-text">{{ artefact.title }}</v-list-item-title>
       </v-list-item-content>
     </v-list-item>
+
     <!-- ARTEFACT CAROUSEL -->
     <v-list-item v-if="story.artefacts && story.artefacts.length" class="px-0">
       <v-list-item-content>
-        <v-carousel v-model="model" hide-delimiters :show-arrows="!mobile && fullStory" :show-arrows-on-hover="!mobile" :height="showArtefact ? 'auto' : mobile ? '300px' : '500px'">
+        <v-carousel v-model="model" hide-delimiters :show-arrows="!mobile && fullStory" :show-arrows-on-hover="!mobile" :height="showArtefact ? 'auto' : mobile ? '300px' : '500px'" style="background-color:#1E1E1E">
           <v-carousel-item v-for="(artefact,i) in story.artefacts" :key="`story-card-artefact-${i}`">
             <Artefact :model="model" :index="i" @showArtefact="toggleShowArtefact($event)" :artefact="artefact" />
           </v-carousel-item>
-          <!-- ARTEFACTGROUP DESKTOP -->
-          <ArtefactGroup
-            v-if="!showArtefact && story.artefacts.length > 1"
-            :artefacts="story.artefacts"
-            :model="model"
-            @updateModel="updateModel($event)"
-          />
         </v-carousel>
-        <!-- ARTEFACT GROUP MOBILE -->
+        <!-- ARTEFACT GROUP  -->
         <ArtefactGroup
-          v-if="mobile && !showArtefact && story.artefacts.length > 1"
+          v-if="!showArtefact && story.artefacts.length > 1"
           :artefacts="story.artefacts"
           :model="model"
           @updateModel="updateModel($event)"
         />
       </v-list-item-content>
+
+      <!-- <ArtefactCarousel :artefacts="story.artefacts"
+        @delete="toggleDialog($event, 'delete')"
+        @update="toggleDialog($event, 'new')"
+        @processMediaFiles="processMediaFiles($event)"
+        editing
+      /> -->
     </v-list-item>
+
+    <!-- STORY AND ARTEFACT INFORMATION FIELDS -->
     <v-list-item :disabled="disableClick" :ripple="false" @click.stop="showText()">
-       <!-- STORY AND ARTEFACT INFORMATION FIELDS -->
       <v-list-item-content>
         <v-list-item-subtitle v-if="fullStory || showArtefact" class="pb-1" style="color:grey"> Description </v-list-item-subtitle>
         <p v-if="!showArtefact" ref="text" :class="turncateText ? 'description' : ''">
@@ -55,13 +57,17 @@
       </v-list-item-content>
     </v-list-item>
     <v-row v-if="!showArtefact">
+
       <v-col v-if="story.mentions.length" class="py-0" :cols="mobile ? '12' : 'auto'">
         <v-list-item-subtitle style="color:grey" class="ml-5 pb-1"> Mentions </v-list-item-subtitle>
-        <AvatarGroup :clickable="false"
+         <!--  TODO: changed to story.mentions when grapql is plugged in -->
+        <AvatarGroup
           style="position:relative; bottom:15px;"
-          :profiles="story.mentions"
+          :profiles="currentProfile.siblings"
           show-labels :size="fullStory ? '50px': '30px'"
           spacing="pr-2"
+          @profile-click="openProfile($event)"
+          :clickable="fullStory"
         />
       </v-col>
       <v-col v-if="story.location" class="pt-0" :cols="mobile ? '12' : '4'">
@@ -82,9 +88,12 @@
         <v-col class="pt-0 pb-8 " v-if="story.categories.length" :cols="mobile ? '12' : ''">
           <v-list-item-subtitle  class="pb-1" style="color:grey"> Categories </v-list-item-subtitle>
           <v-chip-group column v-if="story.categories.length > 0">
-            <v-chip v-for="(category, i) in story.categories" :key="`story-card-categories-${i}`"
-              label
+            <!-- <v-chip v-for="(category, i) in story.categories" :key="`story-card-categories-${i}`"
+              label -->
+            <v-chip v-for="(category, i) in story.categories" :key="i"
+              pill
               outlined
+              :color="colour(i)"
               width="30px"
             >
               {{ category.title }}
@@ -95,21 +104,23 @@
       <v-row class="px-4">
         <div class="py-0 px-0">
           <v-list-item-subtitle style="color:grey" class="ml-5 pb-1"> Access </v-list-item-subtitle>
-          <AvatarGroup :clickable="false"
+          <AvatarGroup
             v-if="story.access.length"
             :profiles="story.access"
             show-labels
             size="50px"
             style="position:relative; bottom:15px;"
+            @profile-click="openProfile($event)"
           />
         </div>
         <div class="py-0 px-0">
           <v-list-item-subtitle style="color:grey" class="ml-5 pb-1"> Contributors </v-list-item-subtitle>
-          <AvatarGroup :clickable="false"
+          <AvatarGroup
             style="position:relative; bottom:15px;"
             show-labels size="50px"
             spacing="pr-2"
             :profiles="story.contributors"
+            @profile-click="openProfile($event)"
           />
         </div>
         <v-col class="pt-0" style="min-width:188px; max-width:188px">
@@ -118,12 +129,13 @@
         </v-col>
         <div class="py-0 px-0" v-if="story.protocols.length" :cols="mobile ? '6' : '4'">
           <v-list-item-subtitle style="color:grey" class="ml-5 pb-1"> Protocol </v-list-item-subtitle>
-          <AvatarGroup :clickable="false"
+          <AvatarGroup
             :profiles="story.protocols"
             show-labels
             size="50px"
             isView
             style="position:relative; bottom:15px;"
+            @profile-click="openProfile($event)"
           />
         </div>
         <div class="pt-0" v-if="story.creator" :cols="mobile ? '3' : '3'">
@@ -138,6 +150,7 @@
               showLabel
               style="position:relative; bottom:8px;"
               class="ml-5"
+              @profile-click="openProfile($event)"
             />
         </div>
       </v-row>
@@ -228,6 +241,8 @@ import EditStoryButton from '@/components/button/EditStoryButton.vue'
 import EditArtefactButton from '@/components/button/EditArtefactButton.vue'
 import ArtefactGroup from '@/components/artefacts/ArtefactGroup.vue'
 import NewArtefactDialog from '@/components/archive/NewArtefactDialog.vue'
+import { colours } from '@/lib/colours.js'
+import ArtefactCarousel from '@/components/archive/ArtefactCarousel.vue'
 
 export default {
   name: 'StoryCard',
@@ -243,7 +258,8 @@ export default {
     EditStoryButton,
     EditArtefactButton,
     ArtefactGroup,
-    NewArtefactDialog
+    NewArtefactDialog,
+    ArtefactCarousel
   },
   data () {
     return {
@@ -266,7 +282,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['showArtefact']),
+    ...mapGetters(['showArtefact', 'currentProfile']),
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
@@ -299,14 +315,17 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setStory', 'setShowArtefact', 'setProfile', 'setDialog']),
-    toggleDialog (dialog) {
-      console.log('1', dialog)
-      this.$emit('updateDialog', 'edit-story')
+    ...mapActions(['setStory', 'setShowArtefact', 'setDialog', 'setProfileById', 'setShowStory']),
+    colour (index) {
+      return colours[index]
     },
     toggleArtefactEdit (artefact) {
       this.dialog = true
     },
+    toggleDialog (dialog) {
+      this.setDialog({ active: 'edit-story' })
+    },
+
     // toggle artefact view
     toggleShowArtefact (artefact) {
       if (this.fullStory) {
@@ -315,21 +334,18 @@ export default {
       }
     },
     // toggle story view
-    showStory (e) {
+    showStory () {
       if (!this.fullStory) {
         this.setStory(this.story)
-        this.$emit('showStory')
+        this.$emit('toggleStory')
       }
     },
     showText () {
       this.turncateText = !this.turncateText
     },
     openProfile (profile) {
-      // link to profileshow
-      this.$router.push({ name: 'profileShow', params: { id: profile.id } })
-    },
-    toggleSideDialog (profile) {
-      console.log('TODO - need to connect side view dialog')
+      this.setProfileById({ id: profile.id, type: 'preview' })
+      this.setDialog({ active: 'view-edit-node', preview: true })
     },
     updateModel (event) {
       this.model = event

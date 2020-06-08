@@ -39,7 +39,9 @@ const mutations = {
 }
 
 const actions = {
-  setComponent ({ commit }, component) {
+  setComponent ({ commit, dispatch, rootState }, component) {
+    if (rootState.dialog.dialog) dispatch('setDialog', null)
+    if (state.showStory) commit('updateShowStory')
     commit('updateComponent', component)
   },
   setStory ({ commit }, story) {

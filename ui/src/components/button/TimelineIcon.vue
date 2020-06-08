@@ -86,4 +86,8 @@ export default {
 .icon.is-white  {
   fill: #fff
 }
+
+.icon.is-disabled  {
+  fill: rgba(0, 0, 0, 0.5)
+}
 </style>

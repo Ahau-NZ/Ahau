@@ -1,7 +1,16 @@
 <template>
 <div>
   <v-container fluid class="body-width px-2">
-    <v-row v-if="!showStory" :class="mobile ? 'top-margin':'mt-10'">
+    <v-row v-if="!showStory" :class="mobile ? 'top-margin':'top-margin'">
+      <v-col class="headliner black--text pa-0">
+        Archive records
+      </v-col>
+      <v-col align="right" class="pa-0">
+        <v-btn :medium="!mobile" :x-small="mobile" :class="mobile ? 'addBtnMob' : 'addBtn'" class="my-2" fab color="white" @click.stop="openContextMenu($event)">
+          <v-icon :large="!mobile" class="black--text">mdi-plus</v-icon>
+        </v-btn>
+      </v-col>
+    <!-- </v-row> -->
       <!-- TODO: Add Collections -->
       <!-- <v-col cols="12" md="10" sm="10" :class="!mobile ? 'pl-12 my-6' : 'py-0 ma-0'" align="start">
         <h1 class="title black--text ">Collections</h1>
@@ -26,12 +35,12 @@
           <v-divider class="mt-6 mb-8" light></v-divider> -->
           <div v-if="!showStory">
             <v-row v-for="(story, i) in stories" :key="`story-${i}-id-${story.id}`" class="mt-10">
-              <StoryCard @updateDialog="updateDialog($event)" @showStory="toggleStory()" :story="story" />
+              <StoryCard @updateDialog="updateDialog($event)" @toggleStory="toggleStory()" :story="story" />
             </v-row>
           </div>
           <div v-else>
             <v-row :class="mobile ? 'pa-0': 'px-6 top-margin'">
-              <StoryCard @updateDialog="updateDialog($event)" :fullStory="true" @showStory="toggleStory()" :story="currentStory" />
+              <StoryCard @updateDialog="updateDialog($event)" :fullStory="true" @toggleStory="toggleStory()" :story="currentStory" />
             </v-row>
           </div>
         </v-col>
@@ -40,17 +49,17 @@
   </v-container>
   <!-- <vue-context ref="menu" class="pa-4">
     <li v-for="(option, index) in contextMenuOpts" :key="index">
-      <a href="#" @click.prevent="updateDialog(option.dialog)" class="d-flex align-center px-4">
+      <a href="#" @click.prevent="setDialog(option.dialog)" class="d-flex align-center px-4">
         <v-icon light>{{ option.icon }}</v-icon>
         <p class="ma-0 pl-3">{{ option.title }}</p>
       </a>
     </li>
   </vue-context> -->
 
-  <DialogHandler
+  <!-- <DialogHandler
     :dialog.sync="dialog.active"
     :type.sync="dialog.type"
-  />
+  /> -->
   </div>
 </template>
 
@@ -62,8 +71,6 @@
 import StoryCard from '@/components/archive/StoryCard.vue'
 // import CollectionGroup from '@/components/archive/CollectionGroup.vue'
 
-import DialogHandler from '@/components/dialog/DialogHandler.vue'
-
 import { STORIES } from '@/mocks/stories'
 import { firstMocks } from '@/mocks/collections'
 import { mapGetters, mapActions } from 'vuex'
@@ -73,10 +80,10 @@ import { mapGetters, mapActions } from 'vuex'
 export default {
   name: 'Archive',
   components: {
-    StoryCard,
+    StoryCard
     // CollectionGroup,
     // VueContext,
-    DialogHandler
+    // DialogHandler
   },
   data () {
     return {
@@ -132,24 +139,16 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setComponent', 'setShowStory']),
+    ...mapActions(['setComponent', 'setShowStory', 'setDialog']),
     toggleStory () {
       this.scrollPosition = window.pageYOffset
       this.setShowStory()
       window.scrollTo(0, 0)
     },
     openContextMenu (event) {
-      if (this.dialog.view) {
-        this.toggleView()
-      }
       this.$refs.menu.open(event)
-    },
-    toggleView () {
-      this.dialog.view = !this.dialog.view
-    },
-    updateDialog (dialog) {
-      this.dialog.active = dialog
     }
+
   }
 }
 </script>
@@ -213,5 +212,12 @@ export default {
   background-position-x: 0px;
   background-attachment: fixed;
   // background-repeat: no-repeat;
+}
+
+.headliner {
+  font-size: 1em;
+  text-transform: uppercase;
+  font-weight: 400;
+  letter-spacing: 5px;
 }
 </style>
