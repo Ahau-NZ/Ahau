@@ -15,7 +15,7 @@
             </v-col>
             <v-col v-if="!formData.artefacts.length > 0" cols="6" >
               <div @click="$refs.fileInput.click()">
-                <AddButton size="60px" icon="mdi-image-plus"/>
+                <AddButton :size="mobile ? '40px' : '60px'" icon="mdi-image-plus"/>
                 <p class="add-label clickable" >Add artefact</p>
               </div>
               <input v-show="false" ref="fileInput" type="file" accept="audio/*,video/*,image/*" multiple @change="processMediaFiles($event)" />
@@ -29,8 +29,8 @@
               />
             </v-col>
             <v-col :cols="showLocation ? '12':'6'" class="py-0">
-              <div v-if="!showLocation" @click="showLocation = true">
-                <AddButton size="60px" icon="mdi-map-plus"/>
+              <div v-if="!showLocation" @click="showLocation = true" class="pt-3">
+                <AddButton :size="mobile ? '40px' : '60px'" icon="mdi-map-plus"/>
                 <p class="add-label clickable" >Add location</p>
               </div>
               <v-row v-if="showLocation">

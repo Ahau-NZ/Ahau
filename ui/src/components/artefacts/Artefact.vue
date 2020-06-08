@@ -1,5 +1,5 @@
 <template>
-  <v-sheet @click="toggleArtefact">
+  <v-sheet @click.prevent="toggleArtefact">
     <div v-if="artefact.type === 'video'" :style="showArtefact ? mobile ? 'height:300px' : 'height:500px' : 'height:auto'" >
     <!-- <div v-if="artefact.__typename === 'Video'" :style="showArtefact ? mobile ? 'height:300px' : 'height:500px;' : 'height:auto'" > -->
       <video ref="video" class="video" controls>
@@ -58,6 +58,16 @@ export default {
       }
     }
   },
+  // beforeDestroy () {
+    
+  //   if (this.artefact.type === 'audio') {
+  //     if (this.$refs.audio.play) { this.$refs.audio.pause() }
+  //   } else if (this.artefact.type === 'video') {
+  //     console.log(this.artefact.title)
+  //     // if (this.$refs.video.play) { this.$refs.video.pause() }
+  //     this.$refs.video.pause()
+  //   }
+  // },
   methods: {
     toggleArtefact () {
       this.$emit('showArtefact', this.artefact)
