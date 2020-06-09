@@ -92,13 +92,12 @@ import Avatar from '@/components/Avatar.vue'
 import ImagePicker from '@/components/ImagePicker.vue'
 import AddButton from '@/components/button/AddButton.vue'
 
-
 export default {
   name: 'CommunityForm',
   components: {
     Avatar,
     ImagePicker,
-    AddButton,
+    AddButton
   },
   props: {
     profile: {
@@ -112,7 +111,7 @@ export default {
     hideDetails: {
       type: Boolean,
       default: false
-    },
+    }
   },
   data () {
     return {
@@ -145,7 +144,7 @@ export default {
         placeholder: ' ',
         class: this.readonly ? 'custom' : ''
       }
-    },
+    }
   },
   methods: {
 

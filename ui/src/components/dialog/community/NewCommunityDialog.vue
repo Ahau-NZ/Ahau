@@ -97,7 +97,7 @@ function setDefaultData () {
     location: '',
     address: '',
     email: '',
-    phone: '',
+    phone: ''
   }
   return formData
 }
@@ -113,8 +113,8 @@ export default {
     show: { type: Boolean, required: true },
     title: { type: String, default: 'Create a new community' },
     hideDetails: { type: Boolean, default: false },
-    selectedProfile: { type: Object },
-   
+    selectedProfile: { type: Object }
+
   },
   data () {
     return {
@@ -312,7 +312,7 @@ export default {
       if (!isEmpty(this.formData.avatarImage)) {
         this.showAvatar = true
       }
-    },
+    }
     // 'formData.preferredName' (newValue) {
     //   if (!newValue) return
     //   if (newValue.length > 2) {

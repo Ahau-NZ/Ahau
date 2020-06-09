@@ -99,7 +99,7 @@ export default {
     },
     community: {
       type: Boolean,
-      default: false,
+      default: false
     }
   },
   data () {

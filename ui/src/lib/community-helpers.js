@@ -26,7 +26,7 @@ export const PERMITTED_COMMUNITY_ATTRS = [
 // eg: getCommunity() *single community
 
 export const saveCommunityProfile = input => ({
-  mutation: gql `
+  mutation: gql`
       mutation($input: ProfileInput!) {
         saveProfile(input: $input)
       }
@@ -36,12 +36,12 @@ export const saveCommunityProfile = input => ({
   }
 })
 
-export default async function saveCommunity(input) {
-  console.log("input:", input)
+export default async function saveCommunity (input) {
+  console.log('input:', input)
   const request = saveCommunityProfile(input)
-  console.log("request:", request)
+  console.log('request:', request)
   const result = await apolloClient.mutate(request)
-  console.log("result:", result)
+  console.log('result:', result)
   if (result.errors) {
     console.error('WARNING, something went wrong')
     console.error(result.errors)
@@ -51,7 +51,7 @@ export default async function saveCommunity(input) {
 }
 
 export const getCommunities = () => ({
-  query: gql `
+  query: gql`
       query {
         communities {
           id
@@ -64,8 +64,8 @@ export const getCommunities = () => ({
         }
       }
     `,
-  variables: {
-    id: id
-  },
+  // variables: {
+  //   id: id
+  // },
   fetchPolicy: 'no-cache'
 })

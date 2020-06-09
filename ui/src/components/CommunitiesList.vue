@@ -55,17 +55,17 @@ export default {
   data () {
     return {
       communities: [],
-      patakaCode: null,
+      patakaCode: null
     }
   },
   watch: {
-    communities() {
+    communities () {
 
     }
   },
   apollo: {
     communities: {
-      query: gql `
+      query: gql`
       query {
         communities {
           id
