@@ -25,7 +25,7 @@
           <v-row justify="start">
               <v-col v-for="community in communities" :item="community" :key="community.id" justify-self="start">
                 <router-link :to="{ name: 'communityShow', params: { id: community.id } }">
-                  <v-card light height="280px" width="200px">
+                  <v-card light width="200px">
                     <v-img height="150px" :src="getImage(community)" class="card-image" />
                     <v-card-title class="subtitle font-weight-bold pb-2">{{
                       community.preferredName
@@ -46,7 +46,7 @@
 <script>
 import gql from 'graphql-tag'
 
-import { communityBasic01, communityBasic02 } from '../mocks/community'
+// import { communityBasic01, communityBasic02 } from '../mocks/community'
 
 const get = require('lodash.get')
 
@@ -56,29 +56,36 @@ export default {
     return {
       communities: [],
       patakaCode: null,
-      communities: [communityBasic01, communityBasic02]
     }
   },
-  // apollo: {
-  //   communities: {
-  //     query: gql `
-  //     query {
-  //       communities {
-  //         id
-  //         preferredName
-  //         description
-  //         headerImage {
-  //           uri
-  //         }
-  //       }
-  //     }
-  //   `,
-  //     fetchPolicy: 'no-cache'
-  //   }
-  // },
+  watch: {
+    communities() {
+
+    }
+  },
+  apollo: {
+    communities: {
+      query: gql `
+      query {
+        communities {
+          id
+          preferredName
+          description
+          headerImage {
+            uri
+          }
+          avatarImage {
+            uri
+          }
+        }
+      }
+    `,
+      fetchPolicy: 'no-cache'
+    }
+  },
   methods: {
     getImage (community) {
-      return get(community, 'headerImage.uri') || ''
+      return get(community, 'avatarImage.uri') || ''
     },
     shortDescrciption (community) {
       if (!community.description) return

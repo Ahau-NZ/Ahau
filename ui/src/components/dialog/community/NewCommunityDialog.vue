@@ -5,10 +5,10 @@
     <template v-if="!hideDetails" v-slot:content>
       <v-col class="py-0">
 
-        <CommunityForm :profile.sync="formData" :readonly="hasSelection" :editRelationship="hasSelection" :withRelationships="withRelationships">
+        <CommunityForm :profile.sync="formData">
 
           <!-- Slot = Search -->
-          <template v-slot:search>
+          <!-- <template v-slot:search>
             <v-combobox
               v-model="formData.preferredName"
               :items="generateSuggestions"
@@ -26,7 +26,7 @@
               @blur.native="clearSuggestions"
             >
 
-              <!-- Slot:item = Data -->
+              Slot:item = Data
               <template v-slot:item="data">
                 <template v-if="typeof data.item === 'object'">
                   <v-list-item @click="setFormData(data.item)">
@@ -47,7 +47,7 @@
                 </template>
               </template>
             </v-combobox>
-          </template>
+          </template> -->
         </CommunityForm>
 
       </v-col>
@@ -86,36 +86,19 @@ import calculateAge from '@/lib/calculate-age'
 import { getProfile } from '@/lib/profile-helpers'
 import uniqby from 'lodash.uniqby'
 
-function setDefaultData (withRelationships) {
+function setDefaultData () {
   const formData = {
+    type: 'community',
     id: '',
     preferredName: '',
     legalName: '',
-    altNames: {
-      add: []
-    },
-    gender: '',
-    relationshipType: 'birth',
-    legallyAdopted: false,
-    children: [],
     avatarImage: {},
-    bornAt: '',
-    diedAt: '',
-    birthOrder: '',
     description: '',
     location: '',
-    profession: '',
     address: '',
     email: '',
     phone: '',
-    deceased: false
   }
-
-  if (!withRelationships) {
-    delete formData.relationshipType
-    delete formData.legallyAdopted
-  }
-
   return formData
 }
 
@@ -128,17 +111,10 @@ export default {
   },
   props: {
     show: { type: Boolean, required: true },
-    withRelationships: { type: Boolean, default: true },
-    title: { type: String, default: 'Create a new person' },
-    suggestions: { type: Array },
+    title: { type: String, default: 'Create a new community' },
     hideDetails: { type: Boolean, default: false },
     selectedProfile: { type: Object },
-    type: {
-      type: String,
-      validator: (val) => [
-        'child', 'parent', 'sibling'
-      ].includes(val)
-    }
+   
   },
   data () {
     return {
@@ -325,42 +301,33 @@ export default {
     resetFormData () {
       if (this.hasSelection) {
         this.hasSelection = false
-        this.formData = setDefaultData(this.withRelationships)
+        this.formData = setDefaultData()
       }
     }
 
   },
   watch: {
-    'formData.relationshipType' (newValue, oldValue) {
-      // make sure adoption status can't be set true when relationship type is birth
-      if (newValue === 'birth') this.formData.legallyAdopted = false
-    },
     // watch for changes to avatarImage to decide when to show avatar
     'formData.avatarImage' (newValue) {
       if (!isEmpty(this.formData.avatarImage)) {
         this.showAvatar = true
       }
     },
-    'formData.deceased' (newValue) {
-      if (newValue === false) {
-        this.formData.diedAt = ''
-      }
-    },
-    'formData.preferredName' (newValue) {
-      if (!newValue) return
-      if (newValue.length > 2) {
-        if (!this.hasSelection) {
-          this.$emit('getSuggestions', newValue)
-        }
-      } else {
-        this.$emit('getSuggestions', null)
-      }
-    },
-    hasSelection (newValue) {
-      if (newValue) {
-        this.$emit('getSuggestions', null)
-      }
-    }
+    // 'formData.preferredName' (newValue) {
+    //   if (!newValue) return
+    //   if (newValue.length > 2) {
+    //     if (!this.hasSelection) {
+    //       this.$emit('getSuggestions', newValue)
+    //     }
+    //   } else {
+    //     this.$emit('getSuggestions', null)
+    //   }
+    // },
+    // hasSelection (newValue) {
+    //   if (newValue) {
+    //     this.$emit('getSuggestions', null)
+    //   }
+    // }
   }
 }
 </script>

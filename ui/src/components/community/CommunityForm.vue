@@ -8,13 +8,12 @@
           <v-row>
             <v-col cols="12" class="pa-0">
               <!-- Avatar -->
-              <Avatar class="big-avatar" size="200px" :image="formData.avatarImage" :alt="formData.preferredName"
-                :gender="formData.gender" :bornAt="formData.bornAt" :deceased="formData.deceased" />
+              <Avatar class="big-avatar" size="200px" :image="formData.avatarImage" :alt="formData.preferredName" isView />
             </v-col>
             <!-- Upload Profile Photo Button -->
             <v-col v-if="!readonly" cols="12" justify="center" align="center" class="pa-0">
               <ImagePicker @updateAvatar="formData.avatarImage = $event" :avatarLoaded="formData.avatarImage"
-                type="avatar" />
+                type="avatar" isView />
             </v-col>
           </v-row>
         </v-col>
@@ -23,10 +22,10 @@
         <v-col cols="12" sm="6" class="pt-4">
           <v-row>
             <v-col cols="12" class="pa-1">
-              <slot name="search">
+              <!-- <slot name="search"> -->
                 <v-text-field v-model="formData.preferredName" label="Community preferred name" v-bind="customProps"
                   outlined />
-              </slot>
+              <!-- </slot> -->
             </v-col>
             <v-col cols="12" class="pa-1">
               <v-text-field v-model="formData.legalName" label="Community legal name" v-bind="customProps" outlined />
@@ -63,30 +62,27 @@
               </v-row>
             </v-col>
           </v-row>
-        </v-col>
-      </v-row>
-
-      <div class="divider"></div>
-      <v-row class="pl-1">
-        <p>Kaitiaki</p>
-      </v-row>
-      <v-row>
-        <v-col cols="12" sm="6">
-          <!-- Email -->
           <v-row>
-            <v-col cols="12" class="pa-1">
-              <v-text-field v-model="formData.email" label="Email" v-bind="customProps" outlined />
+            <v-col cols="12" sm="6" class="py-0">
+              <v-row>
+                <v-col cols="12" class="pa-1">
+                  <!-- Email -->
+                  <v-text-field v-model="formData.email" label="Email" v-bind="customProps" outlined />
+                </v-col>
+              </v-row>
             </v-col>
-          </v-row>
-          <!-- Phone -->
-          <v-row>
-            <v-col cols="12" class="pa-1">
-              <v-text-field v-model="formData.phone" label="Phone" v-bind="customProps" outlined />
+            <v-col cols="12" sm="6" class="py-0">
+              <v-row>
+                <v-col cols="12" class="pa-1">
+                  <!-- Phone -->
+                  <v-text-field v-model="formData.phone" label="Phone" v-bind="customProps" outlined />
+                </v-col>
+              </v-row>
             </v-col>
           </v-row>
         </v-col>
-
       </v-row>
+
     </v-col>
   </v-form>
 </template>
@@ -95,29 +91,19 @@
 import Avatar from '@/components/Avatar.vue'
 import ImagePicker from '@/components/ImagePicker.vue'
 import AddButton from '@/components/button/AddButton.vue'
-import NodeDatePicker from '@/components/NodeDatePicker.vue'
 
-import {
-  GENDERS,
-  RELATIONSHIPS
-} from '@/lib/constants'
 
 export default {
-  name: 'ProfileForm',
+  name: 'CommunityForm',
   components: {
     Avatar,
     ImagePicker,
     AddButton,
-    NodeDatePicker
   },
   props: {
     profile: {
       type: Object,
       required: true
-    },
-    withRelationships: {
-      type: Boolean,
-      default: true
     },
     readonly: {
       type: Boolean,
@@ -127,15 +113,9 @@ export default {
       type: Boolean,
       default: false
     },
-    editRelationship: {
-      type: Boolean,
-      default: false
-    }
   },
   data () {
     return {
-      genders: GENDERS,
-      relationshipTypes: RELATIONSHIPS,
       formData: this.profile,
       form: {
         valid: true,
@@ -166,46 +146,9 @@ export default {
         class: this.readonly ? 'custom' : ''
       }
     },
-    showLegallyAdopted () {
-      switch (this.formData.relationshipType) {
-        case 'whangai':
-          return true
-        case 'adopted':
-          return true
-        default:
-          return false
-      }
-    },
-    altNames () {
-      return [...this.formData.altNames.value, ...this.formData.altNames.add]
-    }
   },
   methods: {
-    updateSelectedGender (genderClicked) {
-      // reset images to outlined
-      this.$refs.taneImg.src = require('@/assets/tane-outlined.svg')
-      this.$refs.wahineImg.src = require('@/assets/wahine-outlined.svg')
-      // hightlight selected image
-      this.genderSelected = genderClicked
-      if (this.genderSelected === 'male') {
-        this.$refs.taneImg.src = require('@/assets/tane.svg')
-      }
-      if (this.genderSelected === 'female') {
-        this.$refs.wahineImg.src = require('@/assets/wahine.svg')
-      }
-      // update the gender
-      this.formData.gender = this.genderSelected
-    },
-    addAltNameField () {
-      this.formData.altNames.add.push(null)
-    },
-    removeAltName (altName, index) {
-      this.formData.altNames.value.splice(index, 1)
-      this.formData.altNames.remove.push(altName)
-    },
-    removeAltNameField (index) {
-      this.formData.altNames.add.splice(index, 1)
-    }
+
   }
 }
 </script>

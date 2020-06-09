@@ -96,6 +96,10 @@ export default {
   props: {
     profile: {
       type: Object
+    },
+    community: {
+      type: Boolean,
+      default: false,
     }
   },
   data () {
@@ -142,7 +146,11 @@ export default {
     ...mapActions(['setComponent', 'setShowStory', 'setDialog']),
     goProfile () {
       this.setActive('profile')
-      this.$router.push({ name: 'profileShow', params: { id: this.profile.id } })
+      if (this.community) {
+        this.$router.push({ name: 'communityShow', params: { id: this.profile.id } })
+      } else {
+        this.$router.push({ name: 'profileShow', params: { id: this.profile.id } })
+      }
     },
     goArchive () {
       if (this.showStory) {

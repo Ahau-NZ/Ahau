@@ -7,18 +7,18 @@
         :profile="currentProfile"
         @setupProfile="setupProfile($event)"
       />
-      <v-row v-if="activeComponent === 'profile'">
+      <v-row>
         <v-col cols="12" offset-md="2" md="8" sm="12" :class="!mobile ? 'pl-12' : '' " :align="mobile ? 'center' : 'start'">
           <h1 class="primary--text" >{{ currentProfile.legalName ? currentProfile.legalName : currentProfile.preferredName }}</h1>
         </v-col>
         <v-col :order="mobile ? 'first' : 'last'" :align="mobile ? 'end' : 'center'" cols="12" md="2" sm="12"  class="px-5">
-          <EditProfileButton @click="setDialog('edit-node')" />
+          <EditProfileButton @click="setDialog('edit-community')" />
         </v-col>
       </v-row>
       <v-row>
         <!-- SideNav -->
           <v-col  v-if="!hideNav" cols="12" xs="12" sm="12" md="2" :class="!mobile ? 'pr-0' : 'px-5 py-0'">
-            <SideNavMenu :profile="currentProfile" />
+            <SideNavMenu :profile="currentProfile" community />
           </v-col>
         <!-- Content -->
         <v-col cols="12" xs="12" sm="12" md="10" :class="mobile ? 'px-6 py-0' : 'pl-0 py-0'">
@@ -26,7 +26,7 @@
             name="fade"
             mode="out-in"
          >
-          <Profile v-if="activeComponent === 'profile'" :profile="currentProfile" :setupProfile="setupProfile"/>
+          <Community v-if="activeComponent === 'profile'" :profile="currentProfile" :setupProfile="setupProfile"/>
           <Archive v-if="activeComponent === 'archive'" :profile="{...currentProfile, type: 'person'}"/>
           <Timeline v-if="activeComponent === 'timeline'" :profile="currentProfile"/>
           <WhakapapaIndex v-if="activeComponent === 'whakapapa'"/>
@@ -39,7 +39,7 @@
 
 <script>
 import SideNavMenu from '@/components/menu/SideNavMenu.vue'
-import Profile from '@/components/profile/Profile.vue'
+import Community from '@/components/profile/Community.vue'
 import Archive from '@/components/archive/Archive'
 import Timeline from '@/components/story/Timeline.vue'
 import Header from '@/components/profile/Header.vue'
@@ -55,7 +55,7 @@ export default {
   name: 'CommunityShow',
   components: {
     SideNavMenu,
-    Profile,
+    Community,
     Archive,
     Timeline,
     Header,

@@ -1,7 +1,6 @@
 <template>
     <v-row class="mb-12" :class="mobile ? 'mt-10':''">
-      <v-col cols="12" sx="12" sm="12" md="9" :class="mobile ? 'py-5 px-5' : 'px-5' ">
-        <ProfileInfoCard :profile="profile" @setupProfile="setupProfile($event)" />
+      <v-col cols="12" sx="12" sm="12" md="9" :class="mobile ? 'py-5 px-5' : 'px-5 py-0' " style="margin-top: -8px;">
         <ProfileCard>
           <template v-slot:content>
             <ProfileInfoItem title="About" smCols="12" mdCols="12" :value="profile.description"/>
@@ -10,9 +9,10 @@
         <ProfileCard>
           <template v-slot:content>
             <v-row cols="12" class="pt-0" >
-              <ProfileInfoItem class="br" smCols="12" mdCols="4" title="Phone" :value="profile.phone"/>
-              <ProfileInfoItem class="br" smCols="12" mdCols="4" title="Email" :value="profile.email"/>
-              <ProfileInfoItem smCols="12" mdCols="4" title="Address" :value="profile.address"/>
+              <ProfileInfoItem class="br" smCols="12" mdCols="3" title="Phone" :value="profile.phone"/>
+              <ProfileInfoItem class="br" smCols="12" mdCols="3" title="Email" :value="profile.email"/>
+              <ProfileInfoItem class="br" smCols="12" mdCols="3" title="Address" :value="profile.address"/>
+              <ProfileInfoItem smCols="12" mdCols="3" title="Location" :value="profile.location"/>
             </v-row>
           </template>
         </ProfileCard>
@@ -32,7 +32,7 @@
             </v-row>
           </template>
         </ProfileCard>
-        <ProfileCard title="Communities" class="mt-3">
+        <ProfileCard title="Whānau" class="mt-3">
           <template v-slot:content>
             <v-row class="justify-center align-center ma-0">
               <v-col cols="2" class="pt-0 pl-0">
@@ -87,6 +87,23 @@ export default {
   data () {
     return {
       isEditing: false
+    }
+  },
+  computed: {
+    ...mapGetters(['whoami']),
+    mobile () {
+      return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
+    },
+    headerHeight () {
+      switch (this.$vuetify.breakpoint.name) {
+        case 'xs': return '150px'
+        case 'sm': return '150px'
+        case 'md': return '250px'
+        case 'lg': return '250px'
+        case 'xl': return '250px'
+        default:
+          return '250px'
+      }
     }
   },
   methods: {
