@@ -3,8 +3,9 @@
       transition="dialog-bottom-transition"
       :fullscreen="mobile"
       width="70%"
+      content-class="artefact-dialog"
     >
-      <v-card tile flat  style="overflow-x:hidden">
+      <v-card tile flat style="overflow-x:hidden">
         <v-container :class="mobile ? 'px-1':'pa-0'" :style="`width:${width};`">
           <v-row>
             <v-col cols="12" >
@@ -338,11 +339,17 @@ export default {
   }
 }
 </script>
-<style scoped>
-.custom.v-text-field > .v-input__control > .v-input__slot:before {
+<style>
+/* .custom.v-text-field > .v-input__control > .v-input__slot:before {
   border-style: none;
 }
 .custom.v-text-field > .v-input__control > .v-input__slot:after {
   border-style: none;
+} */
+
+.artefact-dialog {
+    max-height: 91% !important;
 }
+
+
 </style>

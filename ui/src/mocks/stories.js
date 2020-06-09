@@ -4,7 +4,7 @@ import { collectionComplete, collectionMinimum } from './collections'
 
 export const story1 = {
   id: '%Story1',
-  type: '',
+  type: 'story',
   title: 'Story 1',
   description: 'This is the description of story1',
   recordDate: '14 May 2020',

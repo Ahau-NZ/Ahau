@@ -35,7 +35,7 @@
       </v-slide-item>
       <div class="mt-10 ml-10">
         <input v-show="false" ref="fileInput" type="file" accept="audio/*,video/*,image/*" multiple @change="processMediaFiles($event)" />
-        <AddButton dark size="30px" icon="mdi-image-plus" iconClass="pr-3" class="right: 0;" @click="$refs.fileInput.click()" label=""/>
+        <AddButton dark size="30px" icon="mdi-image-plus" iconClass="pr-12" class="right: 0;" @click="$refs.fileInput.click()" label=""/>
       </div>
     </v-slide-group>
   </v-container>

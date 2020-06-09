@@ -1,6 +1,6 @@
 <template>
   <!-- <div :class="!mobile ? 'transparent':''" :style="!mobile ? 'position:relative; bottom:80px':'max-height:70px'"> -->
-  <div style="max-height:70px">
+  <div style="max-height:70px;margin-top:-2px">
     <v-card
       class="d-flex flex-row justify-end art-group pa-0"
       flat
@@ -13,7 +13,7 @@
         tile
         elevation="0"
         style="min-width:80px;"
-        @click.prevent="updateModel(i)"
+        @click.stop="updateModel(i)"
       >
         <v-img v-if="artefact.type === 'photo'" :src="artefact.blob" height="80px" width="80px"></v-img>
         <v-icon class="pt-4 pl-4" dark large v-if="artefact.type === 'video'" style="justify-self:center">mdi-movie</v-icon>
@@ -57,7 +57,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .art-group {
-   background-color: rgba(0,0,0,0.5);
+   background-color:#1e1e1e;
 }
 
 .highlight {

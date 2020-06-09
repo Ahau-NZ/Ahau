@@ -1,5 +1,5 @@
 <template>
-  <v-sheet @click.prevent="toggleArtefact">
+  <v-sheet @click.prevent="toggleArtefact" class="container pa-0">
     <div v-if="artefact.type === 'video'" :style="showArtefact ? mobile ? 'height:300px' : 'height:500px' : 'height:auto'" >
     <!-- <div v-if="artefact.__typename === 'Video'" :style="showArtefact ? mobile ? 'height:300px' : 'height:500px;' : 'height:auto'" > -->
       <video ref="video" class="video" controls>
@@ -8,11 +8,11 @@
     </div>
     <div v-if="artefact.type === 'audio'" :style="showArtefact ? 'height:300px': mobile ? 'height:300px' : 'height:500px'">
     <!-- <div v-if="artefact.__typename === 'Audio'" :style="showArtefact ? 'height:300px': mobile ? 'background-color:dimgray;height:300px' : 'background-color:dimgray;height:500px'"> -->
-      <audio ref="audio" class="audio" controls>
+      <audio ref="audio" class="audio" controls style="width:80%">
           <source src="'@/assets/buildCSV.mp4'" type="audio/mpeg"/>
       </audio>
     </div>
-    <v-img v-if="artefact.type === 'photo'" :src="artefact.blob"></v-img>
+    <v-img ref="photo" v-if="artefact.type === 'photo'" class="media center" :src="artefact.blob" contain></v-img>
     <!-- <v-img v-if="artefact.__typename === 'Photo'" :src="artefact.blob" style="height:100%"></v-img> -->
   </v-sheet>
 </template>
@@ -58,16 +58,9 @@ export default {
       }
     }
   },
-  // beforeDestroy () {
-    
-  //   if (this.artefact.type === 'audio') {
-  //     if (this.$refs.audio.play) { this.$refs.audio.pause() }
-  //   } else if (this.artefact.type === 'video') {
-  //     console.log(this.artefact.title)
-  //     // if (this.$refs.video.play) { this.$refs.video.pause() }
-  //     this.$refs.video.pause()
-  //   }
-  // },
+  mounted () {
+    if (this.artefact.type === 'photo') console.log("photo: ", this.$refs.photo)
+  },
   methods: {
     toggleArtefact () {
       this.$emit('showArtefact', this.artefact)
@@ -84,6 +77,7 @@ export default {
   top:40%;
   left:10%;
   width:80%;
+  display: block;
 }
 
 .video {
@@ -93,9 +87,21 @@ export default {
   width:100%;
 }
 
+.media {
+  width: 100%;
+  height: 100%;
+  background-color: #1E1E1E;
+
+}
+
 .center {
   justify-items: center;
   align-items: center;
+}
+
+.container {
+  width: 100%;
+  height: 100%;
 }
 
 </style>

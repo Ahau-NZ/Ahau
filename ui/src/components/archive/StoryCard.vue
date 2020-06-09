@@ -81,15 +81,15 @@
           <v-list-item-subtitle class="pb-1" style="color:grey"> Related records </v-list-item-subtitle>
           <ChipGroup :chips="story.relatedRecords" type="story"/>
         </v-col>
-        <v-col class="pt-0 pb-8 pr-1" v-if="story.collections.length" :cols="mobile ? '12' : ''">
+      <!-- TODO: Collections -->
+        <!-- <v-col class="pt-0 pb-8 pr-1" v-if="story.collections.length" :cols="mobile ? '12' : ''">
           <v-list-item-subtitle class="pb-1" style="color:grey"> Collections </v-list-item-subtitle>
           <ChipGroup :chips="story.collections" />
-        </v-col>
-        <v-col class="pt-0 pb-8 " v-if="story.categories.length" :cols="mobile ? '12' : ''">
+        </v-col> -->
+        <!-- TODO: Categories -->
+        <!-- <v-col class="pt-0 pb-8 " v-if="story.categories.length" :cols="mobile ? '12' : ''">
           <v-list-item-subtitle  class="pb-1" style="color:grey"> Categories </v-list-item-subtitle>
           <v-chip-group column v-if="story.categories.length > 0">
-            <!-- <v-chip v-for="(category, i) in story.categories" :key="`story-card-categories-${i}`"
-              label -->
             <v-chip v-for="(category, i) in story.categories" :key="i"
               pill
               outlined
@@ -99,7 +99,7 @@
               {{ category.title }}
             </v-chip>
           </v-chip-group>
-        </v-col>
+        </v-col> -->
       </v-row>
       <v-row class="px-4">
         <div class="py-0 px-0">
@@ -123,11 +123,12 @@
             @profile-click="openProfile($event)"
           />
         </div>
-        <v-col class="pt-0" style="min-width:188px; max-width:188px">
+        <v-col :class="mobile ? 'pt-0': 'pt-0 pl-12'" style="min-width:188px; max-width:188px">
           <v-list-item-subtitle class="pb-1" style="color:grey">Submission date </v-list-item-subtitle>
             <p class="mt-3">{{story.submissionDate}}</p>
         </v-col>
-        <div class="py-0 px-0" v-if="story.protocols.length" :cols="mobile ? '6' : '4'">
+        <!-- TODO Protocols -->
+        <!-- <div class="py-0 px-0" v-if="story.protocols.length" :cols="mobile ? '6' : '4'">
           <v-list-item-subtitle style="color:grey" class="ml-5 pb-1"> Protocol </v-list-item-subtitle>
           <AvatarGroup
             :profiles="story.protocols"
@@ -137,8 +138,8 @@
             style="position:relative; bottom:15px;"
             @profile-click="openProfile($event)"
           />
-        </div>
-        <div class="pt-0" v-if="story.creator" :cols="mobile ? '3' : '3'">
+        </div> -->
+        <div class="py-0 px-0" v-if="story.creator.length" cols="3">
           <v-list-item-subtitle style="color:grey" class="ml-5 pb-1"> Creator </v-list-item-subtitle>
             <Avatar
               size="50px"
@@ -149,7 +150,7 @@
               :deceased="story.creator.deceased"
               showLabel
               style="position:relative; bottom:8px;"
-              class="ml-5"
+              class="ml-5 pt-4"
               @profile-click="openProfile($event)"
             />
         </div>
@@ -218,16 +219,16 @@
       <v-list-item-icon v-if="fullStory && !showArtefact" class="pt-0 mt-0">
         <EditStoryButton @click="toggleDialog('edit-story')"/>
       </v-list-item-icon>
-      <v-list-item-icon v-if="showArtefact" class="pt-0 mt-0">
-        <EditArtefactButton @click="toggleArtefactEdit()"/>
-      </v-list-item-icon>
+      <!-- NOT SURE IF WE NEED THIS -->
+      <!-- <v-list-item-icon v-if="showArtefact" class="pt-0 mt-0">
+        <EditArtefactButton @click="toggleDialog('edit-story')"/>
+      </v-list-item-icon> -->
       <v-list-item-icon v-if="showArtefact" class="pt-0 mt-0" style="position:absolute; top:-58px; right:3px; margin-right:0px">
         <v-btn dark text @click="setShowArtefact()">
           <v-icon>mdi-close</v-icon>
         </v-btn>
       </v-list-item-icon>
     </v-card-actions>
-    <NewArtefactDialog v-if="dialog.edit" :show="dialog.edit" :index="0" :story="story" editing @close="dialog.edit = false"/>
   </v-card>
 </template>
 
@@ -240,7 +241,6 @@ import { mapActions, mapGetters } from 'vuex'
 import EditStoryButton from '@/components/button/EditStoryButton.vue'
 import EditArtefactButton from '@/components/button/EditArtefactButton.vue'
 import ArtefactGroup from '@/components/artefacts/ArtefactGroup.vue'
-import NewArtefactDialog from '@/components/archive/NewArtefactDialog.vue'
 import { colours } from '@/lib/colours.js'
 import ArtefactCarousel from '@/components/archive/ArtefactCarousel.vue'
 
@@ -258,15 +258,10 @@ export default {
     EditStoryButton,
     EditArtefactButton,
     ArtefactGroup,
-    NewArtefactDialog,
-    ArtefactCarousel
+    ArtefactCarousel,
   },
   data () {
     return {
-      dialog: {
-        edit: false,
-        new: false
-      },
       show: false,
       turncateText: true,
       textHeight: 0,
@@ -318,9 +313,6 @@ export default {
     ...mapActions(['setStory', 'setShowArtefact', 'setDialog', 'setProfileById', 'setShowStory']),
     colour (index) {
       return colours[index]
-    },
-    toggleArtefactEdit (artefact) {
-      this.dialog = true
     },
     toggleDialog (dialog) {
       this.setDialog({ active: 'edit-story' })
