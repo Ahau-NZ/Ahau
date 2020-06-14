@@ -15,7 +15,8 @@
               v-bind="customProps"
               @focus="focused = true"
               @blur="focused = false"
-            ></v-combobox>
+            >
+            </v-combobox>
           </v-col>
           <v-col class="pa-0">
             <v-combobox
@@ -117,12 +118,29 @@ export default {
       ]
     },
     days () {
-      // console.log('month',)
-      // var numbDays = this.daysInMonth(this.month, this.year)
-      // console.log(numbDays)
-      // var days = [...Array(numbDays).keys()]
-      // days.splice(0, 1)
-      return []
+      return [
+        ...Array(32)
+          .fill('')
+          .map((v, i) => {
+              if (i === 0) {
+                return {
+                  value: 'XX',
+                  text: 'Unknown'
+                }
+              }
+              if (i < 10) {
+                return {
+                  value: ('0' + i).toString(),
+                  text: ('0' + i).toString()
+                }
+              }
+
+              return {
+                value: i.toString(),
+                text: i.toString()
+              }
+          })
+      ]
     },
     /*
         gets todays date in YYYY-MM-DD format
@@ -144,9 +162,9 @@ export default {
       menu: false,
       updatedValue: null,
       on: false,
-      day: '',
-      month: '',
-      year: '',
+      day: 'XX',
+      month: 'XX',
+      year: 'XXXX',
       focused: false
     }
   },
@@ -185,9 +203,6 @@ export default {
     }
   },
   watch: {
-    focused (newValue) {
-      console.log(newValue)
-    },
     value (newValue) {
       this.updatedValue = newValue
     },
