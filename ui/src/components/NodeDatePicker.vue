@@ -7,7 +7,7 @@
         <v-row>
           <v-col class="pa-0 pl-6">
             <v-combobox
-              :search-input.sync="year"
+              :search-input.sync="date.year"
               hide-no-data
               :items="years"
               label="Year"
@@ -15,12 +15,13 @@
               v-bind="customProps"
               @focus="focused = true"
               @blur="focused = false"
+              :value="date.year"
             >
             </v-combobox>
           </v-col>
           <v-col class="pa-0">
             <v-combobox
-              :search-input.sync="month"
+              :search-input.sync="date.month"
               hide-no-data
               :items="months"
               label="Month"
@@ -28,11 +29,12 @@
               v-bind="customProps"
               @focus="focused = true"
               @blur="focused = false"
+              :value="date.month"
             ></v-combobox>
           </v-col>
           <v-col class="pa-0 pr-3">
             <v-combobox
-              :search-input.sync="day"
+              :search-input.sync="date.day"
               hide-no-data
               :items="days"
               label="Day"
@@ -40,6 +42,7 @@
               v-bind="customProps"
               @focus="focused = true"
               @blur="focused = false"
+              :value="date.day"
             ></v-combobox>
           </v-col>
         </v-row>
@@ -47,15 +50,30 @@
   </div>
 </template>
 <script>
-import { MONTHS } from '../lib/constants'
+import edtf from 'edtf'
 
 export default {
   name: 'NodeDatePicker',
   props: {
-    rules: Array,
     label: String,
-    value: { type: String },
+    value: { type: String, default: 'XXXX-XX-XX' },
     readonly: { type: Boolean, default: false }
+  },
+  data () {
+    return {
+      focused: false,
+      date: {
+        year: '',
+        month: '',
+        day: ''
+      }
+    }
+  },
+  mounted () {
+    var valueToEdtf = edtf(this.value)
+    this.date.year = valueToEdtf.getUTCFullYear().toString()
+    this.date.month = this.months[valueToEdtf.getUTCMonth() + 1].text
+    this.date.day = this.days[valueToEdtf.getUTCDate()].text
   },
   computed: {
     customProps () {
@@ -71,7 +89,7 @@ export default {
       return this.focused ? 'custom-fieldset-focused' : 'custom-fieldset-default'
     },
     years () {
-      var year = parseInt(this.year)
+      var year = parseInt(this.date.year)
       const now = new Date().getUTCFullYear()
 
       var res = [
@@ -80,41 +98,35 @@ export default {
 
       switch (true) {
         case year > 0 && year < 10:
-          res = [...res, ...this.getOptions(year, 1000, 'XXX')]
-          break
+          return [...res, ...this.getOptions(year, 1000, 'XXX')]
         case year >= 10 && year < 100:
-          res = [...res, ...this.getOptions(year, 100, 'XX')]
-          break
+          return [...res, ...this.getOptions(year, 100, 'XX')]
         case year >= 100 && year < 1000:
-          res = [...res, ...this.getOptions(year, 10, 'X')]
-          break
+          return [...res, ...this.getOptions(year, 10, 'X')]
         case year >= 1000 && year <= now:
-          res = [...res, ...this.getOptions(year, 1, '')]
-          break
+          return [...res, ...this.getOptions(year, 1, '')]
         default:
-          res = [
+          return [
             ...res,
-            ...Array(1000 + ((now + 1) % 1000)).fill('').map((v, idx) => (now - idx).toString())
+            ...Array(1000 + ((now + 1) % 1000)).fill('').map((v, i) => (now - i).toString())
           ]
-          break
       }
-      return res
     },
     months () {
       return [
         { text: 'Unknown', value: 'XX' },
-        { text: '01 - January', value: '00' },
-        { text: '02 - Feb', value: '01' },
-        { text: '03 - Mar', value: '02' },
-        { text: '04 - Apr', value: '03' },
-        { text: '05 - May', value: '04' },
-        { text: '06 - Jun', value: '05' },
-        { text: '07 - Jul', value: '06' },
-        { text: '08 - Aug', value: '07' },
-        { text: '09 - Sep', value: '08' },
-        { text: '10 - Oct', value: '09' },
-        { text: '11 - Nov', value: '10' },
-        { text: '12 - Dec', value: '11' }
+        { text: '01', value: '01' },
+        { text: '02', value: '02' },
+        { text: '03', value: '03' },
+        { text: '04', value: '04' },
+        { text: '05', value: '05' },
+        { text: '06', value: '06' },
+        { text: '07', value: '07' },
+        { text: '08', value: '08' },
+        { text: '09', value: '09' },
+        { text: '10', value: '10' },
+        { text: '11', value: '11' },
+        { text: '12', value: '12' }
       ]
     },
     days () {
@@ -122,23 +134,17 @@ export default {
         ...Array(32)
           .fill('')
           .map((v, i) => {
-              if (i === 0) {
-                return {
-                  value: 'XX',
-                  text: 'Unknown'
-                }
-              }
-              if (i < 10) {
-                return {
-                  value: ('0' + i).toString(),
-                  text: ('0' + i).toString()
-                }
-              }
-
+            if (i === 0) {
               return {
-                value: i.toString(),
-                text: i.toString()
+                value: 'XX',
+                text: 'Unknown'
               }
+            }
+            var val = this.intToDDString(i)
+            return {
+              text: val,
+              value: val
+            }
           })
       ]
     },
@@ -157,21 +163,7 @@ export default {
       return this.readonly ? 'custom ml-3 mr-3' : 'ml-3 mr-3'
     }
   },
-  data () {
-    return {
-      menu: false,
-      updatedValue: null,
-      on: false,
-      day: 'XX',
-      month: 'XX',
-      year: 'XXXX',
-      focused: false
-    }
-  },
   methods: {
-    daysInMonth(month, year) {
-    return new Date(year, month, 0).getDate();
-    },
     getOptions (value, multiplier, edtf) {
       const now = new Date().getUTCFullYear()
       var numb = value * multiplier
@@ -181,10 +173,10 @@ export default {
           { text: `${numb}'s`, value: `${value}${edtf}` },
           ...Array((now - numb) + 1)
             .fill('')
-            .map((v, idx) => {
+            .map((v, i) => {
               return {
-                value: (numb + idx).toString(),
-                text: (numb + idx).toString()
+                value: (numb + i).toString(),
+                text: (numb + i).toString()
               }
             })
         ]
@@ -198,13 +190,22 @@ export default {
         ...generatedValues
       ]
     },
-    getOrdinalNum (n) {
-      return n + (n > 0 ? ['th', 'st', 'nd', 'rd'][(n > 3 && n < 21) || n % 10 > 3 ? 0 : n % 10] : '')
+    intToDDString (int) {
+      if (int < 10) {
+        return ('0' + int).toString()
+      }
+      return int.toString()
     }
   },
   watch: {
+    date: {
+      deep: true,
+      handler (newValue) {
+        this.$emit('update:value', this.date.year, this.date.month, this.date.day)
+      }
+    },
     value (newValue) {
-      this.updatedValue = newValue
+      console.log(newValue)
     },
     menu (val) {
       val && setTimeout(() => (this.$refs.picker.activePicker = 'YEAR'))
@@ -268,6 +269,5 @@ export default {
   .custom-label {
     color: #4b4b4b;
   }
-  
 }
 </style>

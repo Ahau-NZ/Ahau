@@ -6,7 +6,7 @@ export default {
 
 export const bornAtEnabled = () => ({
   template:
-    '<NodeDatePicker required label="Date of Birth" :value="profile.bornAt" @date="profile.bornAt = $event" :makeDisabled="false" />',
+    '<NodeDatePicker label="Date of Birth" :value.sync="profile.bornAt" />',
   data: () => ({
     profile: {
       bornAt: '2020-01-13'
