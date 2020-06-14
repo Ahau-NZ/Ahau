@@ -12,12 +12,17 @@ export const bornAtEnabled = () => ({
       bornAt: '2020-01-13'
     }
   }),
+  watch: {
+    'profile.bornAt' (newValue) {
+      console.log(newValue)
+    }
+  },
   components: { NodeDatePicker }
 })
 
 export const bornAtDisabled = () => ({
   template:
-    '<NodeDatePicker required label="Date of Birth" :value="profile.bornAt" @date="profile.bornAt = $event" :makeDisabled="true" />',
+    '<NodeDatePicker required label="Date of Birth" :value="profile.bornAt" @date="profile.bornAt = $event" :readonly="true" />',
   data: () => ({
     profile: {
       bornAt: '2020-01-13'

@@ -6,8 +6,8 @@
       </legend>
         <v-row>
           <v-col class="pa-0 pl-6">
-            <v-combobox
-              :search-input.sync="date.year"
+            <v-autocomplete
+              v-model="date.year"
               hide-no-data
               :items="years"
               label="Year"
@@ -15,9 +15,8 @@
               v-bind="customProps"
               @focus="focused = true"
               @blur="focused = false"
-              :value="date.year"
             >
-            </v-combobox>
+            </v-autocomplete>
           </v-col>
           <v-col class="pa-0">
             <v-combobox
@@ -82,35 +81,45 @@ export default {
         class: 'customInput',
         flat: true,
         hideNoData: true,
-        appendIcon: ''
+        appendIcon: '',
+        readonly: this.readonly
       }
     },
     customClass () {
       return this.focused ? 'custom-fieldset-focused' : 'custom-fieldset-default'
     },
     years () {
-      var year = parseInt(this.date.year)
       const now = new Date().getUTCFullYear()
+      var years = []
 
-      var res = [
-        'Unknown'
-      ]
+      Array(1000 + ((now + 1) % 1000)).fill('').map((v, i) => {
+        var newYear
 
-      switch (true) {
-        case year > 0 && year < 10:
-          return [...res, ...this.getOptions(year, 1000, 'XXX')]
-        case year >= 10 && year < 100:
-          return [...res, ...this.getOptions(year, 100, 'XX')]
-        case year >= 100 && year < 1000:
-          return [...res, ...this.getOptions(year, 10, 'X')]
-        case year >= 1000 && year <= now:
-          return [...res, ...this.getOptions(year, 1, '')]
-        default:
-          return [
-            ...res,
-            ...Array(1000 + ((now + 1) % 1000)).fill('').map((v, i) => (now - i).toString())
-          ]
-      }
+        var val = (now - i)
+
+        switch (true) {
+          case val % 1000 === 0:
+            newYear = (val / 1000).toString() + 'XXX'
+            years.push({ value: newYear, text: val + "'s" })
+
+            break
+          case val % 100 === 0:
+            newYear = (val / 100).toString() + 'XX'
+            years.push({ value: newYear, text: val + "'s" })
+            break
+          case val % 10 === 0:
+            newYear = (val / 10).toString() + 'X'
+            years.push({ value: newYear, text: val + "'s" })
+            break
+          default:
+            years.push({ value: val, text: val })
+            break
+        }
+
+        years.push({ value: val, text: val })
+      })
+
+      return years
     },
     months () {
       return [
@@ -201,7 +210,8 @@ export default {
     date: {
       deep: true,
       handler (newValue) {
-        this.$emit('update:value', this.date.year, this.date.month, this.date.day)
+        var date = `${this.date.year}-${this.date.month}-${this.date.day}`
+        this.$emit('update:value', date)
       }
     },
     value (newValue) {
