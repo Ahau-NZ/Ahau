@@ -3,21 +3,38 @@
       <v-row>
         <!-- Upload profile photo -->
         <v-col :order="mobile ? '' : '2'" class="mt-5">
-          <v-row >
-            <v-col cols="12" class="pa-0" >
+          <v-row class="justify-center">
+            <!-- <v-col cols="12" class="pa-0" > -->
               <!-- Avatar -->
-              <Avatar
-                class="big-avatar"
-                size="200px"
-                :image="formData.avatarImage"
-                :alt="formData.preferredName"
-                :gender="formData.gender"
-                :aliveInterval="formData.aliveInterval"
-                :deceased="formData.deceased"
-              />
-            </v-col>
+            <Avatar
+              class="big-avatar"
+              size="200px"
+              :image="formData.avatarImage"
+              :alt="formData.preferredName"
+              :gender="formData.gender"
+              :aliveInterval="formData.aliveInterval"
+              :deceased="formData.deceased"
+              :isEditing="isEditing"
+            />
+          </v-row>
+          <v-row v-if="isEditing" class="justify-center">
+            <h1>Edit {{ formData.preferredName }}</h1>
+          </v-row>
+          <v-row v-if="isEditing" class="justify-center">
+            <v-btn
+              @click="$emit('cancel')"
+              color="white"
+              text
+              medium
+              class="blue--text"
+            >
+              <v-icon small class="blue--text" left>mdi-close</v-icon>Cancel
+            </v-btn>
+          </v-row>
+          <v-row>
+            <!-- </v-col> -->
             <!-- Upload Profile Photo Button -->
-            <v-col v-if="!readonly" cols="12" justify="center" align="center" class="pa-0">
+            <v-col v-if="!readonly && !isEditing" cols="12" justify="center" align="center" class="pa-0">
               <ImagePicker @updateAvatar="formData.avatarImage = $event" :avatarLoaded="formData.avatarImage"/>
             </v-col>
           </v-row>
@@ -287,7 +304,8 @@ export default {
     readonly: { type: Boolean, default: false },
     hideDetails: { type: Boolean, default: false },
     editRelationship: { type: Boolean, default: false },
-    mobile: { type: Boolean, default: false }
+    mobile: { type: Boolean, default: false },
+    isEditing: { type: Boolean, default: false }
   },
   data () {
     return {
