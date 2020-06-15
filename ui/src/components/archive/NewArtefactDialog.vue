@@ -21,6 +21,7 @@
                   v-model="artefact.title"
                   label="Title"
                   v-bind="customProps"
+                  dark
                 />
               </h1>
             </v-col>
@@ -339,7 +340,7 @@ export default {
   }
 }
 </script>
-<style>
+<style lang="scss">
 /* .custom.v-text-field > .v-input__control > .v-input__slot:before {
   border-style: none;
 }
@@ -349,6 +350,18 @@ export default {
 
 .artefact-dialog {
     max-height: 91% !important;
+}
+
+ .v-input--is-focused {
+  color: yellow !important;
+  
+} 
+// .v-input--is-focused {
+//   border-color: yellow !important;
+// }
+
+.v-text-field .primary--text {
+    // color: yellow !important;
 }
 
 

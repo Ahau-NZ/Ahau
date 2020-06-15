@@ -91,10 +91,10 @@
       @close="close"
       @submit="editStory($event)"
     />
-    <!-- <ComingSoonDialog
+    <ComingSoonDialog
       :show="isActive('coming-soon')"
       @close="close"
-    /> -->
+    />
   </div>
 </template>
 
@@ -110,6 +110,7 @@ import WhakapapaShowHelper from '@/components/dialog/whakapapa/WhakapapaShowHelp
 import WhakapapaTableHelper from '@/components/dialog/whakapapa/WhakapapaTableHelper.vue'
 import NewCollectionDialog from '@/components/dialog/archive/NewCollectionDialog.vue'
 import NewRecordDialog from '@/components/dialog/archive/NewRecordDialog.vue'
+import ComingSoonDialog from '@/components/dialog/ComingSoonDialog.vue'
 
 import gql from 'graphql-tag'
 
@@ -139,7 +140,8 @@ export default {
     WhakapapaShowHelper,
     WhakapapaTableHelper,
     NewCollectionDialog,
-    NewRecordDialog
+    NewRecordDialog,
+    ComingSoonDialog
   },
   props: {
     story: {

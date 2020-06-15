@@ -4,10 +4,14 @@
       <v-row >
         <v-col cols="auto" class="pa-0 pl-3">
           <v-img
+            v-if="thumbnail"
             height=60
             width="80"
             :src="src"
           ></v-img>
+          <v-card height=60 width="80" v-else style="background-color:#383838">
+            <v-icon x-large class="pl-5 pt-2">mdi-book-open</v-icon>
+          </v-card>
         </v-col>
         <v-col class="py-0">
           <span class="truncated-x">{{ title }}</span>
@@ -37,15 +41,33 @@ export default {
     type: String,
     chip: Object,
     index: Number
-
   },
   computed: {
     colour () {
-      return colours[this.index]
+      var i = Math.round(Math.random() * 10)
+         return colours[i]
     },
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
+    thumbnail () {
+      if (this.chip.image) return true
+      else if (this.type === 'story' && this.chip.artefacts.length && this.chip.artefacts[0].type === 'photo') return true
+      else return false  
+    },
+    // src () {
+    //   if (this.chip.image && this.chip.image.uri) return this.chip.image.uri
+    //   else if (this.type === 'story') {
+    //     console.log("story")
+    //     let artefacts = this.chip.artefacts
+    //     console.log(artefacts)
+    //     if (artefacts[0].type === 'photo') {
+    //       this.thumbnail = true
+    //       return artefacts[0].blob
+    //     }
+    //   }
+    //   return this.chip.image
+    // }
     src () {
       if (this.chip.image && this.chip.image.uri) return this.chip.image.uri
       else if (this.type === 'story') return this.chip.artefacts[0].blob
@@ -77,5 +99,10 @@ export default {
 .related-tile {
   border-radius: 10px;
   text-decoration-color: white;
+}
+
+.center {
+  justify-content: center;
+  align-content: center;
 }
 </style>

@@ -1,6 +1,8 @@
 <template>
 <div>
   <v-container fluid class="body-width px-2">
+    <!-- VIEW STORY OVERLAY -->
+    <div :class="{ 'showOverlay': showStory }"></div>
     <v-row v-if="!showStory" :class="mobile ? 'top-margin':'top-margin'">
       <v-col class="headliner black--text pa-0">
         Archive records
@@ -40,7 +42,7 @@
           </div>
           <div v-else>
             <v-row :class="mobile ? 'pa-0': 'px-6 top-margin'">
-              <StoryCard @updateDialog="updateDialog($event)" :fullStory="true" @toggleStory="toggleStory()" :story="currentStory" />
+              <StoryCard @updateDialog="updateDialog($event)" :fullStory="true" @toggleStory="toggleStory()" :story="currentStory" @close="toggleStory()"  />
             </v-row>
           </div>
         </v-col>
@@ -219,5 +221,16 @@ export default {
   text-transform: uppercase;
   font-weight: 400;
   letter-spacing: 5px;
+}
+
+.showOverlay {
+  z-index: 1;
+    height: 100%;
+    width: 100%;
+    position: fixed;
+    overflow: auto;
+    top: 0px;
+    left: 0px;
+    background: rgba(0, 0, 0, 0.81);
 }
 </style>

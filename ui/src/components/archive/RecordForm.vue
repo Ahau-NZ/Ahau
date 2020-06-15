@@ -274,7 +274,7 @@
                 item="title"
                 placeholder="add related records"
               />
-              <ChipGroup :chips="formData.relatedRecords" deletable @delete="removeItem(formData.relatedRecords, $event)" />
+              <ChipGroup type="story" :chips="formData.relatedRecords" deletable @delete="removeItem(formData.relatedRecords, $event)" />
             </v-col>
 
             <!-- ADD CONTRIBUTORS -->
@@ -428,6 +428,7 @@ import ArtefactCarousel from '@/components/archive/ArtefactCarousel.vue'
 import DeleteArtefactDialog from '@/components/dialog/archive/DeleteArtefactDialog.vue'
 
 import { RULES } from '@/lib/constants'
+import { mapGetters } from 'vuex'
 
 const imageRegex = /^image\//
 const audioRegex = /^audio\//
@@ -481,7 +482,11 @@ export default {
       }
     }
   },
+  mounted () {
+    this.showAdvanced()
+  },
   computed: {
+    ...mapGetters(['showStory']),
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
@@ -496,6 +501,9 @@ export default {
     }
   },
   methods: {
+    showAdvanced () {
+      if (this.showStory) return this.show = true
+    },
     async getSuggestions (name) {
       if (name) this.suggestions = await findByName(name)
       else this.suggestions = []
