@@ -3,12 +3,13 @@
     :to="view.id
         ? { name: 'whakapapaShow', params: { id: view.id } }
         : '/whakapapa'"
-    class="d-flex pa-2"
+    class="pa-2"
     color="#fff"
     :style="`
       shadow ? '' : 'box-shadow: none;'
       `"
   >
+    <!-- <div class="d-flex flex-no-wrap flex-start align-stretch"> -->
     <div class="d-flex flex-no-wrap flex-start align-stretch">
       <div class="cover-image" :style="background(view)"></div>
       <div class="information">

@@ -45,7 +45,7 @@ export default {
   computed: {
     colour () {
       var i = Math.round(Math.random() * 10)
-         return colours[i]
+      return colours[i]
     },
     mobile () {
       return this.$vuetify.breakpoint.xs
@@ -53,7 +53,7 @@ export default {
     thumbnail () {
       if (this.chip.image) return true
       else if (this.type === 'story' && this.chip.artefacts.length && this.chip.artefacts[0].type === 'photo') return true
-      else return false  
+      else return false
     },
     // src () {
     //   if (this.chip.image && this.chip.image.uri) return this.chip.image.uri

@@ -1,5 +1,5 @@
 <template>
-  <v-card @click.prevent="showStory()" :class="customClass" :flat="fullStory" :ripple="false" class="mx-auto" :light="!showArtefact" width="100%" :elevation="!showArtefact ? '24':''">
+  <v-card @click.prevent="showStory()" :class="customClass" :flat="fullStory" :ripple="false" class="mx-auto" :light="!showArtefact" width="100%" :elevation="!mobile ? !showArtefact ? '24':'' : ''">
     <!-- RECORD CONTRUBUTORS-STORY PREVIEW -->
     <v-list-item class="px-0" style="min-height:0; height:10px">
       <v-list-item-icon v-if="!fullStory" class="pt-0 mt-0" style="position:absolute; top:5px; right:1px; margin-right:0px">
@@ -8,7 +8,7 @@
       </v-list-item-icon>
     </v-list-item>
     <!-- CLOSE BUTTON -->
-    <v-btn v-if="fullStory && !showArtefact" @click="close"
+    <v-btn v-if="fullStory && !showArtefact && !mobile" @click="close"
       text large fab
       class="secondary--text recordCloseButton"
     >
@@ -29,9 +29,9 @@
     <!-- ARTEFACT CAROUSEL -->
     <v-list-item v-if="story.artefacts && story.artefacts.length" class="px-0">
       <v-list-item-content>
-        <v-carousel 
-          v-model="model" 
-          hide-delimiters 
+        <v-carousel
+          v-model="model"
+          hide-delimiters
           :show-arrows="!mobile && fullStory && story.artefacts.length > 1" :show-arrows-on-hover="!mobile" :height="showArtefact ? 'auto' : mobile ? '300px' : '500px'" style="background-color:#1E1E1E">
           <v-carousel-item v-for="(artefact,i) in story.artefacts" :key="`story-card-artefact-${i}`">
             <Artefact :model="model" :index="i" @showArtefact="toggleShowArtefact($event)" :artefact="artefact" />
@@ -78,7 +78,7 @@
         <p class="mt-3 mb-5 ms-5">{{story.location}}</p>
       </v-col>
     </v-row>
-    <div v-if="fullStory && !showArtefact">    
+    <div v-if="fullStory && !showArtefact">
       <v-row class="px-4">
         <div class="py-0 px-0">
           <v-list-item-subtitle style="color:grey" class="ml-5 pb-1"> Access </v-list-item-subtitle>
@@ -226,7 +226,7 @@
       <!-- <v-list-item-icon v-if="showArtefact" class="pt-0 mt-0">
         <EditArtefactButton @click="toggleDialog('edit-story')"/>
       </v-list-item-icon> -->
-      <v-list-item-icon v-if="showArtefact" class="pt-0 mt-0" 
+      <v-list-item-icon v-if="showArtefact" class="pt-0 mt-0"
       style="position:absolute; top:0px; right:-30px;">
         <v-btn dark text large fab @click="setShowArtefact()">
           <v-icon>mdi-close</v-icon>
@@ -262,7 +262,7 @@ export default {
     EditStoryButton,
     EditArtefactButton,
     ArtefactGroup,
-    ArtefactCarousel,
+    ArtefactCarousel
   },
   data () {
     return {
@@ -348,7 +348,7 @@ export default {
     },
     close () {
       this.$emit('close')
-    },
+    }
   }
 }
 </script>

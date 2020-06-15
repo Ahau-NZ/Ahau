@@ -2,7 +2,7 @@
 <div>
   <v-container fluid class="body-width px-2">
     <!-- VIEW STORY OVERLAY -->
-    <div :class="{ 'showOverlay': showStory }"></div>
+    <div :class="{ 'showOverlay': showStory && !mobile }"></div>
     <v-row v-if="!showStory" :class="mobile ? 'top-margin':'top-margin'">
       <v-col class="headliner black--text pa-0">
         Archive records

@@ -354,8 +354,8 @@ export default {
 
  .v-input--is-focused {
   color: yellow !important;
-  
-} 
+
+}
 // .v-input--is-focused {
 //   border-color: yellow !important;
 // }
@@ -363,6 +363,5 @@ export default {
 .v-text-field .primary--text {
     // color: yellow !important;
 }
-
 
 </style>

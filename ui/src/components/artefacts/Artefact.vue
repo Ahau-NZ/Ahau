@@ -1,5 +1,5 @@
 <template>
-  <v-sheet @click.prevent="toggleArtefact" class="container pa-0">
+  <v-sheet @click="toggleArtefact" class="container pa-0">
     <div v-if="artefact.type === 'video'" :style="showArtefact ? mobile ? 'height:300px' : 'height:500px' : 'height:auto'" >
     <!-- <div v-if="artefact.__typename === 'Video'" :style="showArtefact ? mobile ? 'height:300px' : 'height:500px;' : 'height:auto'" > -->
       <video ref="video" class="video" controls>
@@ -57,9 +57,6 @@ export default {
         }
       }
     }
-  },
-  mounted () {
-    if (this.artefact.type === 'photo') console.log("photo: ", this.$refs.photo)
   },
   methods: {
     toggleArtefact () {

@@ -360,7 +360,7 @@ export default {
       this.currentFocus = parent
     },
     isVisibleProfile (descendant) {
-      return this.whakapapaView.ignoredProfiles.indexOf(descendant.profile.id) === -1
+      if (this.whakapapaView.ignoredProfiles) { return this.whakapapaView.ignoredProfiles.indexOf(descendant.profile.id) === -1 }
     },
     canDelete (profile) {
       if (!profile) return false

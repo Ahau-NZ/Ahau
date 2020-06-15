@@ -133,7 +133,7 @@ export const story4 = {
     story1, story2, story1, story2
   ],
   relatedRecords: [
-    story1, story2, story3, story1, story2, story3, story1, story2, story3, story1, story2, story3, story1, story2, story3, story1, story2, story3, story1, story2, story3, story1, story2, story3, 
+    story1, story2, story3, story1, story2, story3, story1, story2, story3, story1, story2, story3, story1, story2, story3, story1, story2, story3, story1, story2, story3, story1, story2, story3
   ],
   protocols: [
     ...personComplete.parents
