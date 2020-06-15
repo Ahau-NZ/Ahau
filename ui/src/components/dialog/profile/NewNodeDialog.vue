@@ -5,7 +5,7 @@
     <template v-if="!hideDetails" v-slot:content>
       <v-col class="py-0">
 
-        <ProfileForm :profile.sync="formData" :readonly="hasSelection" :editRelationship="hasSelection">
+        <ProfileForm :profile.sync="formData" :readonly="hasSelection" :editRelationship="hasSelection" :mobile="mobile">
 
           <!-- Slot = Search -->
           <template v-slot:search>
@@ -30,7 +30,7 @@
               <template v-slot:item="data">
                 <template v-if="typeof data.item === 'object'">
                   <v-list-item @click="setFormData(data.item)">
-                    <Avatar class="mr-3" size="40px" :image="data.item.profile.avatarImage" :alt="data.item.profile.preferredName" :gender="data.item.profile.gender" :bornAt="data.item.profile.bornAt" />
+                    <Avatar class="mr-3" size="40px" :image="data.item.profile.avatarImage" :alt="data.item.profile.preferredName" :gender="data.item.profile.gender" :aliveInterval="data.item.profile.aliveInterval" />
                     <v-list-item-content>
                       <v-list-item-title> {{ data.item.profile.preferredName }} </v-list-item-title>
                       <v-list-item-subtitle>Preferred name</v-list-item-subtitle>
@@ -40,7 +40,7 @@
                       <v-list-item-subtitle>Legal name</v-list-item-subtitle>
                     </v-list-item-content>
                     <v-list-item-action>
-                      <v-list-item-title> {{ age(data.item.profile.bornAt) }} </v-list-item-title>
+                      <v-list-item-title> {{ age(data.item.profile.aliveInterval) }} </v-list-item-title>
                       <v-list-item-subtitle>Age</v-list-item-subtitle>
                     </v-list-item-action>
                   </v-list-item>
@@ -99,6 +99,7 @@ function setDefaultData (withRelationships) {
     legallyAdopted: false,
     children: [],
     avatarImage: {},
+    aliveInterval: '',
     bornAt: '',
     diedAt: '',
     birthOrder: '',
@@ -298,11 +299,12 @@ export default {
       // eslint-disable-next-line no-return-assign
       return this.closeSuggestions = parents
     },
-    age (bornAt) {
-      return calculateAge(bornAt)
+    age (aliveInterval) {
+      return calculateAge(aliveInterval)
     },
     submit () {
       var submission = Object.assign({}, this.submission)
+      console.log(submission)
       this.$emit('create', submission)
       // this.hasSelection
       //   ? this.$emit('create', pick(this.formData, ['id', 'relationshipType', 'legallyAdopted']))

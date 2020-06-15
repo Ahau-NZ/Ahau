@@ -33,7 +33,7 @@
       <Avatar
         :image="profile.avatarImage"
         :gender="profile.gender"
-        :bornAt="profile.bornAt"
+        :aliveInterval="profile.aliveInterval"
         size="13vh"
       />
       <h3 class="name mt-2">{{ profile.preferredName }}</h3>
@@ -172,8 +172,7 @@ export default {
         'preferredName',
         'legalName',
         'gender',
-        'bornAt',
-        'diedAt',
+        'aliveInterval',
         'birthOrder',
         'avatarImage',
         'altNames',

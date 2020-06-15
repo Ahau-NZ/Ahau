@@ -31,7 +31,7 @@
             ></v-autocomplete>
           </v-col>
           <v-col class="pa-0 pr-3">
-            <v-combobox
+            <v-autocomplete
               v-model="date.day"
               hide-no-data
               :items="days"
@@ -40,7 +40,7 @@
               v-bind="customProps"
               @focus="focused = true"
               @blur="focused = false"
-            ></v-combobox>
+            ></v-autocomplete>
           </v-col>
         </v-row>
     </fieldset>
@@ -61,17 +61,11 @@ export default {
     return {
       focused: false,
       date: {
-        year: '',
-        month: '',
-        day: ''
+        year: 'XXXX',
+        month: 'XX',
+        day: 'XX'
       }
     }
-  },
-  mounted () {
-    var valueToEdtf = edtf(this.value)
-    this.date.year = valueToEdtf.getUTCFullYear().toString()
-    this.date.month = this.months[valueToEdtf.getUTCMonth() + 1].text
-    this.date.day = this.days[valueToEdtf.getUTCDate()].text
   },
   computed: {
     customProps () {
@@ -81,7 +75,8 @@ export default {
         flat: true,
         hideNoData: true,
         appendIcon: '',
-        readonly: this.readonly
+        readonly: this.readonly,
+        menuProps: { light: true }
       }
     },
     customClass () {
@@ -89,40 +84,47 @@ export default {
     },
     years () {
       const now = new Date().getUTCFullYear()
-      var years = []
+      var years = [
+        { value: 'XXXX', text: 'XXXX' }
+      ]
 
-      Array(1000 + ((now + 1) % 1000)).fill('').map((v, i) => {
+      Array(1000 + ((now + 1) % 1000)).fill('').forEach((v, i) => {
         var newYear
 
         var val = (now - i)
 
+        if (val === now) {
+          years.push({ value: val.toString(), text: val.toString() })
+          return
+        }
+
         switch (true) {
           case val % 1000 === 0:
             newYear = (val / 1000).toString() + 'XXX'
-            years.push({ value: newYear, text: val + "'s" })
+            years.push({ value: newYear, text: newYear })
 
             break
           case val % 100 === 0:
             newYear = (val / 100).toString() + 'XX'
-            years.push({ value: newYear, text: val + "'s" })
+            years.push({ value: newYear, text: newYear })
             break
           case val % 10 === 0:
             newYear = (val / 10).toString() + 'X'
-            years.push({ value: newYear, text: val + "'s" })
+            years.push({ value: newYear, text: newYear })
             break
           default:
-            years.push({ value: val, text: val })
+            years.push({ value: val.toString(), text: val.toString() })
             break
         }
 
-        years.push({ value: val, text: val })
+        years.push({ value: val.toString(), text: val.toString() })
       })
 
       return years
     },
     months () {
       return [
-        { text: 'Unknown', value: 'XX' },
+        { text: 'XX', value: 'XX' },
         { text: '01', value: '01' },
         { text: '02', value: '02' },
         { text: '03', value: '03' },
@@ -134,53 +136,50 @@ export default {
         { text: '09', value: '09' },
         { text: '10', value: '10' },
         { text: '11', value: '11' },
-        { text: '12', value: '12' },
-        { text: 'January', value: 1 },
-        { text: 'February', value: 2 },
-        { text: 'March', value: 3 },
-        { text: 'April', value: 4 },
-        { text: 'May', value: 5 },
-        { text: 'June', value: 6 },
-        { text: 'July', value: 7 },
-        { text: 'August', value: 8 },
-        { text: 'September', value: 9 },
-        { text: 'October', value: 10 },
-        { text: 'November', value: 11 },
-        { text: 'December', value: 12 }
+        { text: '12', value: '12' }
+        // { text: 'January', value: 1 },
+        // { text: 'February', value: 2 },
+        // { text: 'March', value: 3 },
+        // { text: 'April', value: 4 },
+        // { text: 'May', value: 5 },
+        // { text: 'June', value: 6 },
+        // { text: 'July', value: 7 },
+        // { text: 'August', value: 8 },
+        // { text: 'September', value: 9 },
+        // { text: 'October', value: 10 },
+        // { text: 'November', value: 11 },
+        // { text: 'December', value: 12 }
       ]
     },
     days () {
-      return [
-        ...Array(32)
-          .fill('')
-          .map((v, i) => {
-            if (i === 0) {
-              return {
-                value: 'XX',
-                text: 'Unknown'
-              }
-            }
-            var val = this.intToDDString(i)
-            return {
-              text: val,
-              value: val
-            }
-          })
+      var days = [
+        { value: 'XX', text: 'XX' }
       ]
+      Array(32)
+        .fill('')
+        .forEach((v, i) => {
+          if (i === 0) return
+          if (i % 10 !== 0) {
+            days.push({ value: i, text: this.intToDDString(i) })
+            return
+          }
+          var newDay = (i / 10).toString() + 'X'
+          days.push({ value: i, text: this.intToDDString(i) })
+          days.push({ value: newDay, text: newDay })
+        })
+
+      return days
     },
     /*
-        gets todays date in YYYY-MM-DD format
-        TODO: change to get date in NZ
-      */
+      gets todays date in YYYY-MM-DD format
+      TODO: change to get date in NZ
+    */
     maxDate () {
       var currentDate = new Date()
         .toJSON()
         .slice(0, 10)
         .replace(/-/g, '-')
       return currentDate
-    },
-    getClass () {
-      return this.readonly ? 'custom ml-3 mr-3' : 'ml-3 mr-3'
     }
   },
   methods: {
@@ -221,28 +220,19 @@ export default {
     date: {
       deep: true,
       handler (newValue) {
-        var month = this.date.month
-        if (typeof this.date.month === 'number') {
-          month = this.months[month].value
-          console.log(month)
-        }
-        var date = `${this.date.year}-${month}-${this.date.day}`
+        var date = `${this.date.year}-${this.date.month}-${this.date.day}`
+        console.log(date)
         this.$emit('update:value', date)
       }
     },
     value: {
       immediate: true,
       handler (value) {
-        if (edtf.parse(value)) {
-          console.log(edtf(value).getUTCFullYear())
-        }
-        // this.date.year = valueToEdtf.year
-        // this.date.month = this.months[valueToEdtf.getUTCMonth() + 1].text
-        // this.date.day = this.days[valueToEdtf.getUTCDate()].text
+        var date = value.split('-')
+        this.date.year = date[0]
+        this.date.month = date[1]
+        this.date.day = date[2]
       }
-    },
-    menu (val) {
-      val && setTimeout(() => (this.$refs.picker.activePicker = 'YEAR'))
     }
   }
 }
@@ -275,7 +265,7 @@ export default {
 }
 
 .rounded-border {
-  border: 1px solid #4b4b4b;
+  border: 1px solid #9e9e9e;
   border-radius: 4px;
 }
 
@@ -287,21 +277,22 @@ export default {
 }
 
 .custom-label {
-  font-size: 13px;
+  font-size: 12px;
   margin-left: 8px;
-  color: #aaaaaa;
+  color: #858585;
   padding-left: 3px;
   padding-right: 3px;
 }
 
 .custom-fieldset-default:hover {
-  border-color: white;
+  border-color: #242424;
 }
 
 .custom-fieldset-focused {
   border-width: 2px;
+  border-color: black;
   .custom-label {
-    color: #4b4b4b;
+    color: black;
   }
 }
 </style>
