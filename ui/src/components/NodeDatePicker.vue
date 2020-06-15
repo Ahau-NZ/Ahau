@@ -19,8 +19,8 @@
             </v-autocomplete>
           </v-col>
           <v-col class="pa-0">
-            <v-combobox
-              :search-input.sync="date.month"
+            <v-autocomplete
+              v-model="date.month"
               hide-no-data
               :items="months"
               label="Month"
@@ -28,12 +28,11 @@
               v-bind="customProps"
               @focus="focused = true"
               @blur="focused = false"
-              :value="date.month"
-            ></v-combobox>
+            ></v-autocomplete>
           </v-col>
           <v-col class="pa-0 pr-3">
             <v-combobox
-              :search-input.sync="date.day"
+              v-model="date.day"
               hide-no-data
               :items="days"
               label="Day"
@@ -41,7 +40,6 @@
               v-bind="customProps"
               @focus="focused = true"
               @blur="focused = false"
-              :value="date.day"
             ></v-combobox>
           </v-col>
         </v-row>
@@ -49,7 +47,8 @@
   </div>
 </template>
 <script>
-import edtf from 'edtf'
+
+const edtf = require('edtf')
 
 export default {
   name: 'NodeDatePicker',
@@ -135,7 +134,19 @@ export default {
         { text: '09', value: '09' },
         { text: '10', value: '10' },
         { text: '11', value: '11' },
-        { text: '12', value: '12' }
+        { text: '12', value: '12' },
+        { text: 'January', value: 1 },
+        { text: 'February', value: 2 },
+        { text: 'March', value: 3 },
+        { text: 'April', value: 4 },
+        { text: 'May', value: 5 },
+        { text: 'June', value: 6 },
+        { text: 'July', value: 7 },
+        { text: 'August', value: 8 },
+        { text: 'September', value: 9 },
+        { text: 'October', value: 10 },
+        { text: 'November', value: 11 },
+        { text: 'December', value: 12 }
       ]
     },
     days () {
@@ -210,12 +221,25 @@ export default {
     date: {
       deep: true,
       handler (newValue) {
-        var date = `${this.date.year}-${this.date.month}-${this.date.day}`
+        var month = this.date.month
+        if (typeof this.date.month === 'number') {
+          month = this.months[month].value
+          console.log(month)
+        }
+        var date = `${this.date.year}-${month}-${this.date.day}`
         this.$emit('update:value', date)
       }
     },
-    value (newValue) {
-      console.log(newValue)
+    value: {
+      immediate: true,
+      handler (value) {
+        if (edtf.parse(value)) {
+          console.log(edtf(value).getUTCFullYear())
+        }
+        // this.date.year = valueToEdtf.year
+        // this.date.month = this.months[valueToEdtf.getUTCMonth() + 1].text
+        // this.date.day = this.days[valueToEdtf.getUTCDate()].text
+      }
     },
     menu (val) {
       val && setTimeout(() => (this.$refs.picker.activePicker = 'YEAR'))
