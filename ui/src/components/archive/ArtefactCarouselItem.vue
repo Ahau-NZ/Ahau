@@ -5,18 +5,17 @@
       flat
       :class="{ 'on-hover': hover, 'highlight': selected }"
       @click="$emit('click')"
-      :outlined="selected"
       class="container"
     >
       <v-img
         v-if="artefact.type === 'photo'"
         :src="artefact.blob"
-        contain
+        :contain='controls'
         class="media"
         tile
         flat
       >
-        <template v-slot:placeholder>
+        <!-- <template v-slot:placeholder>
           <v-row
             class="fill-height ma-0"
             align="center"
@@ -24,14 +23,14 @@
           >
             <v-progress-circular indeterminate color="secondary"></v-progress-circular>
           </v-row>
-        </template>
+        </template> -->
       </v-img>
       <div v-if="artefact.type === 'video'" class="media">
         <video :src="artefact.blob" :controls="hover && controls" class="media"/>
       </div>
-      <div v-if="artefact.type === 'audio'" class="media">
+      <div v-if="artefact.type === 'audio'" class="media" >
         <audio :src="artefact.blob"
-          :controls="hover && controls" class="media"
+          :controls="controls" class="px-12" style="width:100%;height:80%;"
         />
         <v-icon size="50" class="center">mdi-music</v-icon>
       </div>
@@ -47,6 +46,9 @@
       >
         <v-icon>mdi-delete</v-icon>
       </v-btn>
+      <v-fade-transition>
+        <v-overlay :absolute="true" opacity="0.6" :value="!selected && !controls"/>
+      </v-fade-transition>
     </v-card>
   </v-hover>
 </template>
@@ -60,11 +62,24 @@ export default {
     height: { type: String, default: '100px' },
     controls: { type: Boolean },
     selected: { type: Boolean, default: false },
+    selectedIndex: {type: Boolean, default: 0},
     editing: { type: Boolean }
+  },
+  watch: {
+    selected ( n) {
+      console.log("selected: ", n)
+    }
   },
   data () {
     return {
       hover: false
+    }
+  }, 
+  methods: {
+    match (i) {
+      if (this.selectedIndex === i) {
+        return true
+      }
     }
   }
 }
@@ -75,6 +90,7 @@ export default {
   width: 100%;
   height: 100%;
   background-color: #1E1E1E;
+  object-fit: cover;
 
 }
 .container {
@@ -115,9 +131,8 @@ export default {
   right: 2px;
 }
 
-.highlight {
-  overflow: hidden;
-  border: 5px solid rgba(0, 0, 0, 0.5)
-
-}
+// .highlight {
+//   overflow: hidden;
+//   border: 5px solid rgba(0, 0, 0, 0.5)
+// }
 </style>

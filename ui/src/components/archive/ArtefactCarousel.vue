@@ -4,7 +4,8 @@
       <v-carousel-item v-for="(artefact, i) in artefacts" :key="`a-c-${i}`" transition="fade-transition"
         style="width:100%;"
       >
-        <ArtefactCarouselItem :artefact="artefact"
+        <ArtefactCarouselItem 
+          :artefact="artefact"
           controls
           @update="$emit('update', i)"
           @delete="$emit('delete', i)"
@@ -24,7 +25,8 @@
         :key="`a-s-g-${i}`"
         v-slot:default="{ active, toggle }"
         transition="fade-transition"
-        style="width:100px;height:100px"
+        style="width:100px;height:100px; background-color:rgba(30,30,30)"
+        class="pa-1"
       >
         <v-scale-transition>
           <ArtefactCarouselItem :artefact="artefact"
