@@ -38,12 +38,40 @@
           </v-carousel-item>
         </v-carousel>
         <!-- ARTEFACT GROUP  -->
-        <ArtefactGroup
+        <!-- <ArtefactGroup
           v-if="!showArtefact && story.artefacts.length > 1"
           :artefacts="story.artefacts"
           :model="model"
           @updateModel="updateModel($event)"
-        />
+        /> -->
+
+
+        <v-slide-group
+          v-if="!showArtefact && story.artefacts.length > 1"
+          v-model="model"
+          class="pa-0 background"
+          dark
+          center-active
+          style="width:100vw;margin-top:-2px"
+        >
+          <v-slide-item
+            v-for="(artefact, i) in story.artefacts"
+            :key="`a-s-g-${i}`"
+            v-slot:default="{ active, toggle }"
+            transition="fade-transition"
+            style="width:100px;height:100px; background-color:rgba(30,30,30)"
+            class="pa-1"
+          >
+            <v-scale-transition>
+              <ArtefactCarouselItem :artefact="artefact"
+                :selected="active"
+                @click="toggle"
+              />
+            </v-scale-transition>
+          </v-slide-item>
+        </v-slide-group>
+
+
       </v-list-item-content>
     </v-list-item>
 
@@ -247,6 +275,7 @@ import EditArtefactButton from '@/components/button/EditArtefactButton.vue'
 import ArtefactGroup from '@/components/artefacts/ArtefactGroup.vue'
 import { colours } from '@/lib/colours.js'
 import ArtefactCarousel from '@/components/archive/ArtefactCarousel.vue'
+import ArtefactCarouselItem from '@/components/archive/ArtefactCarouselItem.vue'
 
 export default {
   name: 'StoryCard',
@@ -262,7 +291,8 @@ export default {
     EditStoryButton,
     EditArtefactButton,
     ArtefactGroup,
-    ArtefactCarousel
+    ArtefactCarousel,
+    ArtefactCarouselItem
   },
   data () {
     return {
@@ -426,5 +456,9 @@ v-list-item-subtitle {
   top: 0;
   cursor: pointer;
   z-index: 3;
+}
+
+.background {
+  background-color: #1E1E1E;
 }
 </style>

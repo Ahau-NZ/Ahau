@@ -25,8 +25,8 @@
           </v-row>
         </template> -->
       </v-img>
-      <div v-if="artefact.type === 'video'" class="media">
-        <video :src="artefact.blob" :controls="hover && controls" class="media"/>
+      <div v-if="artefact.type === 'video'">
+        <video ref="video" :src="artefact.blob" :controls="hover && controls" class="video"/>
       </div>
       <div v-if="artefact.type === 'audio'" class="media" >
         <audio :src="artefact.blob"
@@ -62,25 +62,20 @@ export default {
     height: { type: String, default: '100px' },
     controls: { type: Boolean },
     selected: { type: Boolean, default: false },
-    selectedIndex: {type: Boolean, default: 0},
+    selectedIndex: {type: Number, default: 0},
     editing: { type: Boolean }
-  },
-  watch: {
-    selected ( n) {
-      console.log("selected: ", n)
-    }
   },
   data () {
     return {
       hover: false
     }
-  }, 
+  },
   methods: {
     match (i) {
       if (this.selectedIndex === i) {
         return true
       }
-    }
+    },
   }
 }
 </script>
@@ -91,7 +86,6 @@ export default {
   height: 100%;
   background-color: #1E1E1E;
   object-fit: cover;
-
 }
 .container {
   width: 100%;
@@ -111,6 +105,13 @@ export default {
   position: absolute;
   top: 2px;
   right: 2px;
+}
+
+.video {
+  position:absolute;
+  top:10%;
+  left:0%;
+  width:100%;
 }
 
 .edit {

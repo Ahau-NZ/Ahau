@@ -13,13 +13,6 @@
                 class="title-input"
               />
             </v-col>
-            <v-col v-if="!formData.artefacts.length > 0" cols="6" >
-              <div @click="$refs.fileInput.click()">
-                <AddButton :size="mobile ? '40px' : '60px'" icon="mdi-image-plus"/>
-                <p class="add-label clickable" >Add artefact</p>
-              </div>
-              <input v-show="false" ref="fileInput" type="file" accept="audio/*,video/*,image/*" multiple @change="processMediaFiles($event)" />
-            </v-col>
             <v-col v-if="formData.artefacts.length > 0" cols="12" class="pl-0 pr-0">
               <ArtefactCarousel :artefacts="formData.artefacts"
                 @delete="toggleDialog($event, 'delete')"
@@ -27,6 +20,13 @@
                 @processMediaFiles="processMediaFiles($event)"
                 editing
               />
+            </v-col>
+            <v-col cols="6" >
+              <div @click="$refs.fileInput.click()">
+                <AddButton :size="mobile ? '40px' : '60px'" icon="mdi-image-plus"/>
+                <p class="add-label clickable" >Add artefact</p>
+              </div>
+              <input v-show="false" ref="fileInput" type="file" accept="audio/*,video/*,image/*" multiple @change="processMediaFiles($event)" />
             </v-col>
             <v-col :cols="showLocation ? '12':'6'" class="py-0">
               <div v-if="!showLocation" @click="showLocation = true" class="pt-3">
@@ -302,7 +302,7 @@
             </v-col>
 
             <!-- ADD SUBMISSION DATE -->
-            <v-col :cols="mobile ? '12' : '3'" class="pt-0 pa-1">
+            <v-col :cols="mobile ? '12' : '3'" class="pt-5 pa-1">
               <v-text-field
                 v-model="formData.submissionDate"
                 label="Submission Date"
