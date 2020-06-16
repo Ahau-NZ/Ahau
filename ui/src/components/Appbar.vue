@@ -49,7 +49,7 @@
         :image="profile.avatarImage"
         :alt="profile.preferredName"
         :gender="profile.gender"
-        :bornAt="profile.bornAt"
+        :aliveInterval="profile.aliveInterval"
       />
 
       </template>
@@ -72,7 +72,7 @@
             :image="profile.avatarImage"
             :alt="profile.preferredName"
             :gender="profile.gender"
-            :bornAt="profile.bornAt"
+            :aliveInterval="profile.aliveInterval"
           />
         </v-list-item>
         <v-list-item link @click.stop="dialog = true">

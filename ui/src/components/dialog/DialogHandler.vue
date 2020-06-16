@@ -10,22 +10,20 @@
       :suggestions="suggestions"
       @getSuggestions="getSuggestions($event)"
     />
-    <div :class="sideMenuClass">
-      <SideViewEditNodeDialog
-        v-if="isActive('view-edit-node')"
-        :show="isActive('view-edit-node')"
-        :profile="selectedProfile"
-        :deleteable="canDelete(selectedProfile)"
-        :warnAboutChildren="selectedProfile && selectedProfile.id !== nestedWhakapapa.id"
-        :sideMenu="true"
-        @close="close"
-        @new="toggleDialog('new-node', $event, 'view-edit-node')"
-        @submit="updateProfile($event)"
-        @delete="toggleDialog('delete-node', null, null)"
-        @open-profile="setSelectedProfile($event)"
-        :view="view"
-      />
-    </div>
+    <SideViewEditNodeDialog
+      v-if="isActive('view-edit-node')"
+      :show="isActive('view-edit-node')"
+      :profile="selectedProfile"
+      :deleteable="canDelete(selectedProfile)"
+      :warnAboutChildren="selectedProfile && selectedProfile.id !== nestedWhakapapa.id"
+      :sideMenu="true"
+      @close="close"
+      @new="toggleDialog('new-node', $event, 'view-edit-node')"
+      @submit="updateProfile($event)"
+      @delete="toggleDialog('delete-node', null, null)"
+      @open-profile="setSelectedProfile($event)"
+      :view="view"
+    />
     <DeleteNodeDialog v-if="isActive('delete-node')"
       :show="isActive('delete-node')"
       :profile="selectedProfile"
@@ -153,12 +151,6 @@ export default {
     ...mapGetters(['nestedWhakapapa']),
     mobile () {
       return this.$vuetify.breakpoint.xs
-    },
-    sideMenuClass () {
-      if (this.isActive('view-edit-node')) {
-        return !this.mobile ? 'viewDesktop' : 'viewMobile'
-      }
-      return !this.mobile ? 'hideViewDesktop' : 'hideViewMobile'
     }
   },
   methods: {
@@ -369,8 +361,7 @@ export default {
       preferredName,
       legalName,
       gender,
-      bornAt,
-      diedAt,
+      aliveInterval,
       birthOrder,
       avatarImage,
       altNames,
@@ -394,8 +385,7 @@ export default {
             preferredName,
             legalName,
             gender,
-            bornAt,
-            diedAt,
+            aliveInterval,
             birthOrder,
             avatarImage,
             altNames,
@@ -687,8 +677,7 @@ export default {
               preferredName
               legalName
               gender
-              bornAt
-              diedAt
+              aliveInterval
               birthOrder
               description
               altNames
@@ -699,8 +688,7 @@ export default {
                   preferredName
                   legalName
                   gender
-                  bornAt
-                  diedAt
+                  aliveInterval
                   birthOrder
                   description
                   altNames
@@ -714,8 +702,7 @@ export default {
                   preferredName
                   legalName
                   gender
-                  bornAt
-                  diedAt
+                  aliveInterval
                   birthOrder
                   description
                   altNames
@@ -750,31 +737,5 @@ export default {
 </script>
 
 <style scoped>
-.viewDesktop {
-  transition: all 0.1s ease-in-out;
-  position: absolute;
-  top: 0px;
-  right: 0px;
-  width: 25%;
-  height: 100%;
-  background-color: white;
-}
 
-.hideViewDesktop {
-  right: -30%;
-}
-
-.hideViewMobile {
-  bottom: -100%;
-}
-
-.viewMobile {
-  transition: all 0.1s ease-in-out;
-  position: absolute;
-  top: 0px;
-  right: 0px;
-  width: 100%;
-  height: 100%;
-  background-color: white;
-}
 </style>

@@ -190,7 +190,7 @@ export default {
             parent: d.parent,
             x: d.x,
             y: this.filter ? i * 45 : d.y * 1.5,
-            age: calculateAge(d.data.bornAt),
+            age: calculateAge(d.data.aliveInterval),
             color: this.nodeColor(d.data)
           }
         })
@@ -328,7 +328,7 @@ export default {
 
     // changes row colour
     nodeColor (data) {
-      var age = calculateAge(data.bornAt)
+      var age = calculateAge(data.aliveInterval)
       if (data.isCollapsed) {
         return 'fill:cadetblue'
       } else if (age !== null && age < 2) {
