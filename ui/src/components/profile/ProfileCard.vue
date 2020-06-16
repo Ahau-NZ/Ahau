@@ -24,7 +24,7 @@ h4 {
   color : #383838
 }
 .rounded-border {
-  border: 0.5px solid rgba(0,0,0,0.12);
+  border: 0.5px solid rgba(0,0,0,0.5);
   border-radius: 10px;
   background-color: white;
   margin-top: 20px;

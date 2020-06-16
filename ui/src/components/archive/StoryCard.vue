@@ -1,5 +1,5 @@
 <template>
-  <v-card @click.prevent="showStory()" :class="customClass" :flat="fullStory" :ripple="false" class="mx-auto" :light="!showArtefact" width="100%" :elevation="!mobile && !showArtefact && fullStory ? '24':''">
+  <v-card @click.prevent="showStory()" :class="customClass" :flat="!fullStory" :ripple="false" class="mx-auto" :light="!showArtefact" width="100%" :elevation="!mobile && !showArtefact && fullStory ? '24':''">
     <!-- RECORD CONTRUBUTORS-STORY PREVIEW -->
     <v-list-item class="px-0" style="min-height:0; height:10px">
       <v-list-item-icon v-if="!fullStory" class="pt-0 mt-0" style="position:absolute; top:5px; right:1px; margin-right:0px">
@@ -57,7 +57,7 @@
             <v-scale-transition>
               <ArtefactCarouselItem :artefact="artefact"
                 :selected="active"
-                @click="toggle"
+                @click.capture="toggle"
               />
             </v-scale-transition>
           </v-slide-item>
@@ -321,7 +321,7 @@ export default {
         }
         return 'disableCard recordView'
       }
-      return ''
+      return 'rounded-border'
     }
   },
   watch: {
@@ -412,7 +412,7 @@ p {
 
 // disable click events on v-card when viewing single story
 .disableCard {
-  user-select: none;
+  // user-select: none;
   cursor: default;
 }
 .v-card::before {
@@ -425,10 +425,9 @@ p {
 }
 
 .rounded-border {
-  border: 0.5px solid rgba(0,0,0,0.12);
+  border: 0.5px solid rgba(0,0,0,0.3);
   border-radius: 10px;
   background-color: white;
-  margin-top: 20px;
 }
 
 v-list-item-subtitle {
