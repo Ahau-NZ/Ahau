@@ -9,6 +9,12 @@
 
       <!-- x ✓ BUTTONS -->
       <template v-slot:actions>
+        <v-row class="mt-4" align="center">
+        <v-btn text @click="$emit('delete', selectedIndex)">
+          Delete this record
+          <v-icon class="pl-2">mdi-delete</v-icon>
+        </v-btn>
+        <v-spacer/>
         <v-btn @click="close"
           text large fab
           class="secondary--text"
@@ -21,6 +27,7 @@
         >
           <v-icon>mdi-check</v-icon>
         </v-btn>
+        </v-row>
       </template>
 
     </Dialog>

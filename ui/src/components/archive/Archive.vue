@@ -3,8 +3,8 @@
   <v-container fluid class="body-width px-2">
     <!-- VIEW STORY OVERLAY -->
     <div :class="{ 'showOverlay': showStory && !mobile }"></div>
-    <v-row v-if="!showStory" :class="mobile ? 'top-margin':'top-margin'">
-      <v-col class="headliner black--text pa-0">
+    <v-row v-if="!showStory" class="top-margin mb-5">
+      <v-col class="headliner black--text pa-0 pl-4">
         Archive records
       </v-col>
       <v-col align="right" class="pa-0">
@@ -36,7 +36,7 @@
           </v-row>
           <v-divider class="mt-6 mb-8" light></v-divider> -->
           <div v-if="!showStory">
-            <v-row v-for="(story, i) in stories" :key="`story-${i}-id-${story.id}`" class="mt-10">
+            <v-row v-for="(story, i) in stories" :key="`story-${i}-id-${story.id}`" class="mb-10">
               <StoryCard @updateDialog="updateDialog($event)" @toggleStory="toggleStory()" :story="story" />
             </v-row>
           </div>
@@ -146,6 +146,7 @@ export default {
       this.scrollPosition = window.pageYOffset
       this.setShowStory()
       window.scrollTo(0, 0)
+      this.setDialog(null)
     },
     openContextMenu (event) {
       this.$refs.menu.open(event)

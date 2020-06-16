@@ -1,5 +1,5 @@
 <template>
-  <v-card @click.prevent="showStory()" :class="customClass" :flat="!fullStory" :ripple="false" class="mx-auto" :light="!showArtefact" width="100%" :elevation="!mobile && !showArtefact && fullStory ? '24':''">
+  <v-card @click.prevent="showStory()" :class="customClass" :flat="!fullStory || showArtefact" :ripple="false" class="mx-auto" :light="!showArtefact" width="100%" :elevation="!mobile && !showArtefact && fullStory ? '24':''">
     <!-- RECORD CONTRUBUTORS-STORY PREVIEW -->
     <v-list-item class="px-0" style="min-height:0; height:10px">
       <v-list-item-icon v-if="!fullStory" class="pt-0 mt-0" style="position:absolute; top:5px; right:1px; margin-right:0px">
@@ -242,11 +242,11 @@
         <EditStoryButton @click="toggleDialog('edit-story')"/>
       </v-list-item-icon>
       <!-- NOT SURE IF WE NEED THIS -->
-      <!-- <v-list-item-icon v-if="showArtefact" class="pt-0 mt-0">
+      <v-list-item-icon v-if="showArtefact" class="pt-0 mt-12">
         <EditArtefactButton @click="toggleDialog('edit-story')"/>
-      </v-list-item-icon> -->
+      </v-list-item-icon>
       <v-list-item-icon v-if="showArtefact" class="pt-0 mt-0"
-      style="position:absolute; top:0px; right:-30px;">
+      style="position:absolute; top:0px; right:0px;">
         <v-btn dark text large fab @click="setShowArtefact()">
           <v-icon>mdi-close</v-icon>
         </v-btn>

@@ -407,6 +407,13 @@
       @close="deleteDialog = false"
       @submit="removeArtefact($event)"
     />
+    <DeleteRecordDialog
+      v-if="deleteRecordDialog"
+      :show="deleteRecordDialog"
+      :artefact="artefact"
+      @close="deleteRecordDialog = false"
+      @submit="removeReord($event)"
+    />
   </div>
 </template>
 
@@ -424,7 +431,7 @@ import { personComplete } from '@/mocks/person-profile'
 import { firstMocks } from '@/mocks/collections'
 import { artefacts } from '@/mocks/artefacts'
 
-import NewArtefactDialog from '@/components/archive/NewArtefactDialog.vue'
+import NewArtefactDialog from '@/components/dialog/artefact/NewArtefactDialog.vue'
 import ArtefactCarousel from '@/components/artefact/ArtefactCarousel.vue'
 import DeleteArtefactDialog from '@/components/dialog/archive/DeleteArtefactDialog.vue'
 
@@ -503,12 +510,11 @@ export default {
   },
   methods: {
     showAdvanced () {
-      if (this.showStory) return this.show = true
+      if (this.showStory) this.show = true
     },
     async getSuggestions (name) {
       if (name) this.suggestions = await findByName(name)
       else this.suggestions = []
-      console.log('suggestions = ', this.suggestions)
     },
 
     // clickedOff () {

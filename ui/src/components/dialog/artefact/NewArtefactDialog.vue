@@ -125,16 +125,13 @@
                 auto-grow
               />
             </v-col>
-            <v-col cols="12">
-              <v-spacer/>
-              <v-btn text @click="$emit('delete', selectedIndex)">
-                Delete this artefact
-                <v-icon class="pl-2">mdi-delete</v-icon>
-              </v-btn>
-              <v-spacer/>
-            </v-col>
             <v-col>
               <v-card-actions>
+                <v-btn text @click="$emit('delete', selectedIndex)">
+                  Delete this artefact
+                  <v-icon class="pl-2">mdi-delete</v-icon>
+                </v-btn>
+                <v-spacer/>
                 <v-btn @click="close"
                   text large fab
                   class="secondary--text"

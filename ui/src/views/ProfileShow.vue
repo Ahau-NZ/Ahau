@@ -17,7 +17,7 @@
     </v-row>
     <v-row>
       <!-- SideNav -->
-        <v-col  v-if="!hideNav" cols="12" xs="12" sm="12" md="2" :class="!mobile ? 'pr-0' : 'px-5 py-0'">
+        <v-col  v-if="!hideNav" cols="12" xs="12" sm="12" md="2" :class="!mobile ? 'pr-0 ' : 'px-5 py-0'">
           <SideNavMenu :profile="currentProfile" />
         </v-col>
       <!-- Content -->
