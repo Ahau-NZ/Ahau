@@ -52,7 +52,7 @@ export default {
   name: 'NodeDatePicker',
   props: {
     label: String,
-    value: { type: String, default: 'XXXX-XX-XX' },
+    value: { type: [Date, String], default: 'XXXX-XX-XX' },
     readonly: { type: Boolean, default: false },
     min: { type: String }
   },
@@ -125,6 +125,8 @@ export default {
         years.push({ value: val.toString(), text: val.toString() })
       })
 
+      if (years.length > 1) years.push({ value: 'XXXX', text: 'XXXX' })
+
       return years
     },
     months () {
@@ -142,18 +144,6 @@ export default {
         { text: '10', value: '10' },
         { text: '11', value: '11' },
         { text: '12', value: '12' }
-        // { text: 'January', value: 1 },
-        // { text: 'February', value: 2 },
-        // { text: 'March', value: 3 },
-        // { text: 'April', value: 4 },
-        // { text: 'May', value: 5 },
-        // { text: 'June', value: 6 },
-        // { text: 'July', value: 7 },
-        // { text: 'August', value: 8 },
-        // { text: 'September', value: 9 },
-        // { text: 'October', value: 10 },
-        // { text: 'November', value: 11 },
-        // { text: 'December', value: 12 }
       ]
     },
     days () {
@@ -227,33 +217,49 @@ export default {
     date: {
       deep: true,
       handler (newValue) {
-        // var year = this.date.year || ''
-        // var month = this.date.month || ''
-        // var day = this.date.day || ''
+        var year = this.date.year || 'XXXX'
+        var month = this.date.month || 'XX'
+        var day = this.date.day || 'XX'
 
-        
-        // this.$emit('update:value', date)
+        this.$emit('update:value', `${year}-${month}-${day}`)
       }
     },
     value: {
       deep: true,
       immediate: true,
       handler (value) {
-        var date = value.split('-')
-        this.date.year = date[0]
-        this.date.month = date[1]
-        this.date.day = date[2]
+        if (value) {
+          if (typeof value === 'object') {
+            value = value.edtf
+          }
+          var date = value.split('-')
+          this.date.year = date[0]
+          this.date.month = date[1]
+          this.date.day = date[2]
+        } else {
+          this.date.year = ''
+          this.date.month = ''
+          this.date.day = ''
+        }
       }
     },
     min: {
       deep: true,
       immediate: true,
       handler (value) {
-        console.log(value)
-        var date = value.split('-')
-        this.minDate.year = parseInt(date[0]) || 1000
-        this.minDate.month = parseInt(date[1]) || 1
-        this.minDate.day = parseInt(date[2]) || 1
+        if (value) {
+          if (typeof value === 'object') {
+            value = value.edtf
+          }
+          var date = value.split('-')
+          this.minDate.year = parseInt(date[0]) || 1000
+          this.minDate.month = parseInt(date[1]) || 1
+          this.minDate.day = parseInt(date[2]) || 1
+        } else {
+          this.minDate.year = ''
+          this.minDate.month = ''
+          this.minDate.day = ''
+        }
       }
     }
   }

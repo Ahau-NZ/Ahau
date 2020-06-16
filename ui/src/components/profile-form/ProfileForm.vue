@@ -159,7 +159,7 @@
                 label="Date of death"
                 :value.sync="formData.diedAt"
                 :readonly="readonly"
-                :min="formData.bornAt || '0001-01-01'"
+                :min="formData.bornAt || '1000-01-01'"
               />
             </v-col>
           </v-row>

@@ -222,6 +222,8 @@ import isEmpty from 'lodash.isempty'
 import pick from 'lodash.pick'
 import clone from 'lodash.clonedeep'
 
+import edtf from 'edtf'
+
 import ProfileForm from '@/components/profile-form/ProfileForm.vue'
 
 import Avatar from '@/components/Avatar.vue'
@@ -304,7 +306,7 @@ export default {
     },
     profileChanges () {
       let changes = {}
-      changes['aliveInterval'] = this.formData.bornAt + '/' + this.formData.diedAt
+
       Object.entries(this.formData).forEach(([key, value]) => {
         if (!isEqual(this.formData[key], this.profile[key])) {
           switch (key) {
@@ -321,8 +323,6 @@ export default {
               if (value && value !== this.profile.relationshipType) {
                 changes[key] = value
               }
-              break
-            case 'aliveInterval':
               break
             default:
               changes[key] = value
@@ -353,14 +353,33 @@ export default {
         this.formData = defaultData(newVal)
 
         if (this.formData.aliveInterval) {
-          var dates = this.formData.aliveInterval.split('/')
-          this.formData.bornAt = dates[0] || ''
-          this.formData.diedAt = dates[1] || ''
+          var v = edtf(this.formData.aliveInterval)
+          this.formData.bornAt = v.lower || ''
+          this.formData.diedAt = v.upper || ''
+        } else {
+          this.formData.bornAt = ''
+          this.formData.diedAt = ''
         }
       }
     },
     'formData.deceased' (newValue) {
       if (!newValue) this.formData.diedAt = ''
+    },
+    'formData.bornAt' (newVal) {
+      if (this.formData.aliveInterval) {
+        var dates = this.formData.aliveInterval.split('/')
+        this.formData.aliveInterval = (newVal || '') + '/' + (dates[1] || '')
+      } else {
+        this.formData.aliveInterval = (newVal || '') + '/'
+      }
+    },
+    'formData.diedAt' (newVal) {
+      if (this.formData.aliveInterval) {
+        var dates = this.formData.aliveInterval.split('/')
+        this.formData.aliveInterval = (dates[0] || '') + '/' + (newVal || '')
+      } else {
+        this.formData.aliveInterval = '/' + (newVal || '')
+      }
     }
   },
   methods: {
@@ -403,7 +422,7 @@ export default {
     },
     submit () {
       var output = Object.assign({}, pick(this.profileChanges, [...PERMITTED_PROFILE_ATTRS, ...PERMITTED_RELATIONSHIP_ATTRS]))
-      console.log(output)
+      console.log('output', output)
 
       if (!isEmpty(output)) {
         this.$emit('submit', output)

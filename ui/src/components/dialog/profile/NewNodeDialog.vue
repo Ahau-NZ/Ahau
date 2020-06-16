@@ -83,8 +83,10 @@ import Avatar from '@/components/Avatar.vue'
 import isEmpty from 'lodash.isempty'
 import calculateAge from '@/lib/calculate-age'
 
-import { getProfile } from '@/lib/profile-helpers'
 import uniqby from 'lodash.uniqby'
+import pick from 'lodash.pick'
+
+import { PERMITTED_PROFILE_ATTRS, getProfile } from '@/lib/profile-helpers'
 
 function setDefaultData (withRelationships) {
   const formData = {
@@ -195,15 +197,27 @@ export default {
       let submission = {}
       Object.entries(this.formData).map(([key, value]) => {
         if (!isEmpty(this.formData[key])) {
-          if (key === 'birthOrder') {
-            submission[key] = parseInt(value)
-          } else {
-            submission[key] = value
+          switch (key) {
+            case 'birthOrder':
+              submission[key] = parseInt(value)
+              break
+            case 'altNames':
+              if (!isEmpty(this.formData[key].add)) {
+                submission[key] = value
+              }
+              break
+            default:
+              submission[key] = value
           }
         } else if (key === 'deceased') {
           submission[key] = value
         }
       })
+
+      var aliveInterval = this.formData.bornAt + '/' + this.formData.diedAt
+
+      submission['aliveInterval'] = aliveInterval
+
       return submission
     }
   },
@@ -303,7 +317,7 @@ export default {
       return calculateAge(aliveInterval)
     },
     submit () {
-      var submission = Object.assign({}, this.submission)
+      var submission = pick(this.submission, [...PERMITTED_PROFILE_ATTRS])
       console.log(submission)
       this.$emit('create', submission)
       // this.hasSelection
@@ -333,6 +347,13 @@ export default {
 
   },
   watch: {
+    'formData': {
+      deep: true,
+      immediate: true,
+      handler (newVal) {
+        console.log('formData', newVal)
+      }
+    },
     'formData.relationshipType' (newValue, oldValue) {
       // make sure adoption status can't be set true when relationship type is birth
       if (newValue === 'birth') this.formData.legallyAdopted = false
