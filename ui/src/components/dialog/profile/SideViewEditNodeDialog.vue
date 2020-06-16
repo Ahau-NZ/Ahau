@@ -1,212 +1,209 @@
 <template>
-  <!-- <v-card light height="100%"> -->
-    <v-navigation-drawer
-      light
-      width="450px"
-      height="93.6%"
-      :style="mobile ? '' : 'margin-top:64px;'"
-      v-model="drawer"
-      absolute
-      permanent
-      right
-      class="scroll"
-    >
-      <v-card height="100%" class="scroll">
-        <v-row class="justify-end pr-4">
-          <v-btn icon>
-            <v-icon @click="close" color="secondary">mdi-close</v-icon>
-          </v-btn>
-        </v-row>
-        <v-row v-if="isEditing">
-          <v-col>
-            <ProfileForm :profile.sync="formData" :readonly="!isEditing" mobile @cancel="cancel" isEditing>
-              <template v-slot:top>
-                <v-row class="justify-center">
-                  <h1>Edit {{ formData.preferredName }}</h1>
-                </v-row>
-                <v-row class="justify-center">
-                  <v-btn
-                    @click="toggleEdit"
-                    color="white"
-                    text
-                    medium
-                    class="blue--text"
-                  >
-                    <v-icon small class="blue--text" left>mdi-close</v-icon>Cancel
-                  </v-btn>
-                </v-row>
-              </template>
-            </ProfileForm>
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-col cols="12" sm="auto" class="mb-8">
-            <v-btn
-              v-if="isEditing && deleteable"
-              @click="$emit('delete')"
-              align="center"
-              color="white"
-              text
-              class="secondary--text"
-            >
-              <v-icon class="secondary--text" left>mdi-delete</v-icon>Delete this person
-            </v-btn>
-          </v-col>
-          <v-col
-            v-if="isEditing"
-            col="12"
-            :align="mobile ? '' : 'right'"
-            class="pt-0 d-flex justify-space-between"
-          >
-            <!-- Delete: Editing: Cancel (x) button -->
-            <v-btn @click="cancel" text large fab class="secondary--text mr-10">
-              <v-icon color="secondary">mdi-close</v-icon>
-            </v-btn>
-            <!-- Delete: Editing: Save (tick) button -->
-            <v-btn @click="submit" text large fab class="blue--text ml-5" color="blue">
-              <v-icon>mdi-check</v-icon>
-            </v-btn>
-          </v-col>
-        </v-row>
-        <v-row v-if="!isEditing"  class="justify-center">
-          <Avatar
-            class="big-avatar"
-            size="250px"
-            :image="formData.avatarImage"
-            :alt="profile.preferredName"
-            :gender="formData.gender"
-            :bornAt="formData.bornAt"
-            :deceased="formData.deceased"
-            :isEditing="isEditing"
-            style="margin-top: 20px;"
-            @updateAvatar="formData.avatarImage = $event"
-          />
-        </v-row>
-        <v-row class="justify-center">
-          <!-- <v-col> -->
-            <h1 v-if="!isEditing">{{ formData.preferredName }}</h1>
-          <!-- </v-col> -->
-        </v-row>
-        <v-row v-if="!isEditing"  class="justify-center">
+  <v-navigation-drawer
+    light
+    width="450px"
+    height="93.6%"
+    :style="mobile ? '' : 'margin-top:64px;'"
+    v-model="drawer"
+    absolute
+    permanent
+    right
+    class="scroll"
+    :temporary="mobile ? true : false"
+  >
+    <v-card height="100%" class="scroll">
+      <v-row class="justify-end pr-4">
+        <v-btn icon>
+          <v-icon @click="close" color="secondary">mdi-close</v-icon>
+        </v-btn>
+      </v-row>
+      <v-row v-if="isEditing">
+        <v-col>
+          <ProfileForm :profile.sync="formData" :readonly="!isEditing" mobile @cancel="cancel" isEditing>
+            <template v-slot:top>
+              <v-row class="justify-center">
+                <h1>Edit {{ formData.preferredName }}</h1>
+              </v-row>
+              <v-row class="justify-center">
+                <v-btn
+                  @click="toggleEdit"
+                  color="white"
+                  text
+                  medium
+                  class="blue--text"
+                >
+                  <v-icon small class="blue--text" left>mdi-close</v-icon>Cancel
+                </v-btn>
+              </v-row>
+            </template>
+          </ProfileForm>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col cols="12" sm="auto" class="mb-8">
           <v-btn
-            @click="toggleEdit"
+            v-if="isEditing && deleteable"
+            @click="$emit('delete')"
+            align="center"
             color="white"
             text
-            medium
-            class="blue--text"
+            class="secondary--text"
           >
-            <v-icon small class="blue--text" left>mdi-pencil</v-icon>Edit
+            <v-icon class="secondary--text" left>mdi-delete</v-icon>Delete this person
           </v-btn>
-        </v-row>
-        <v-row v-if="formData.description && !isEditing" class="mb-2">
-          <v-col cols="12">
-            <v-row>
-              <v-col class="py-1 px-0 profile-label"><small>Description</small></v-col>
-            </v-row>
-            <v-row class="py-0 justify-center">
-              <p class="ma-0 profile-info" style="font-size: 0.8em">{{formData.description}}</p>
-            </v-row>
-          </v-col>
-        </v-row>
-        <v-row v-if="!isEditing"  style="border: 0.5px solid rgba(0,0,0,0.12); border-radius: 10px;" class="flex-column mx-2">
-          <v-col>
-            <v-row style="border-bottom: 0.5px solid rgba(0,0,0,0.12);" class="ma-0">
-              <v-col cols="6">
-                <v-row>
-                  <v-col class="py-1 px-0 profile-label"><small>Legal Name</small></v-col>
-                </v-row>
-                <v-row class="py-0 justify-center">
-                  <p class="ma-0 profile-info">{{formData.legalName}}</p>
-                </v-row>
-              </v-col>
-              <v-col cols="6">
-                <v-row>
-                  <v-col class="py-1 px-0 profile-label"><small>Age</small></v-col>
-                </v-row>
-                <v-row class="py-0 justify-center">
-                  <p class="ma-0 profile-info">{{age(formData.bornAt)}}</p>
-                </v-row>
-              </v-col>
-            </v-row>
-            <v-row class="ma-0">
-              <v-col cols="6">
-                <v-row>
-                  <v-col class="py-1 px-0 profile-label"><small>Occupation</small></v-col>
-                </v-row>
-                <v-row class="py-0 justify-center">
-                  <p class="ma-0 profile-info" style="font-size: 0.8em">{{formData.profession}}</p>
-                </v-row>
-              </v-col>
-              <v-col cols="6">
-                <v-row>
-                  <v-col class="py-1 px-0 profile-label"><small>Location</small></v-col>
-                </v-row>
-                <v-row class="py-0 justify-center">
-                  <p class="ma-0 profile-info" style="font-size: 0.8em">{{formData.location}}</p>
-                </v-row>
-              </v-col>
-            </v-row>
-          </v-col>
-        </v-row>
-        <v-row v-if="!isEditing"  class="px-2">
-          <v-col cols="12" class="border-right">
-            <v-row class="d-flex flex-column justify-center align-center">
-              <v-col :cols="12" class="pa-0">
-                <AvatarGroup
-                  :profiles="profile.parents"
-                  group-title="Parents"
-                  size="50px"
-                  :show-labels="true"
-                  @profile-click="openProfile($event)"
-                >
-                  <AddButton @click="toggleNew('parent')" />
-                </AvatarGroup>
-              </v-col>
+        </v-col>
+        <v-col
+          v-if="isEditing"
+          col="12"
+          :align="mobile ? '' : 'right'"
+          class="pt-0 d-flex justify-space-between"
+        >
+          <v-btn @click="cancel" text large fab class="secondary--text mr-10">
+            <v-icon color="secondary">mdi-close</v-icon>
+          </v-btn>
+          <v-btn @click="submit" text large fab class="blue--text ml-5" color="blue">
+            <v-icon>mdi-check</v-icon>
+          </v-btn>
+        </v-col>
+      </v-row>
+      <v-row v-if="!isEditing"  class="justify-center">
+        <Avatar
+          class="big-avatar"
+          size="250px"
+          :image="formData.avatarImage"
+          :alt="profile.preferredName"
+          :gender="formData.gender"
+          :bornAt="formData.bornAt"
+          :deceased="formData.deceased"
+          :isEditing="isEditing"
+          style="margin-top: 20px;"
+          @updateAvatar="formData.avatarImage = $event"
+        />
+      </v-row>
+      <v-row class="justify-center">
+        <!-- <v-col> -->
+          <h1 v-if="!isEditing">{{ formData.preferredName }}</h1>
+        <!-- </v-col> -->
+      </v-row>
+      <v-row v-if="!isEditing"  class="justify-center">
+        <v-btn
+          @click="toggleEdit"
+          color="white"
+          text
+          medium
+          class="blue--text"
+        >
+          <v-icon small class="blue--text" left>mdi-pencil</v-icon>Edit
+        </v-btn>
+      </v-row>
+      <v-row v-if="formData.description && !isEditing" class="mb-2">
+        <v-col cols="12">
+          <v-row>
+            <v-col class="py-1 px-0 profile-label"><small>Description</small></v-col>
+          </v-row>
+          <v-row class="py-0 justify-center">
+            <p class="ma-0 profile-info" style="font-size: 0.8em">{{formData.description}}</p>
+          </v-row>
+        </v-col>
+      </v-row>
+      <v-row v-if="!isEditing"  style="border: 0.5px solid rgba(0,0,0,0.12); border-radius: 10px;" class="flex-column mx-2">
+        <v-col>
+          <v-row style="border-bottom: 0.5px solid rgba(0,0,0,0.12);" class="ma-0">
+            <v-col cols="6">
+              <v-row>
+                <v-col class="py-1 px-0 profile-label"><small>Legal Name</small></v-col>
+              </v-row>
+              <v-row class="py-0 justify-center">
+                <p class="ma-0 profile-info">{{formData.legalName}}</p>
+              </v-row>
+            </v-col>
+            <v-col cols="6">
+              <v-row>
+                <v-col class="py-1 px-0 profile-label"><small>Age</small></v-col>
+              </v-row>
+              <v-row class="py-0 justify-center">
+                <p class="ma-0 profile-info">{{age(formData.bornAt)}}</p>
+              </v-row>
+            </v-col>
+          </v-row>
+          <v-row class="ma-0">
+            <v-col cols="6">
+              <v-row>
+                <v-col class="py-1 px-0 profile-label"><small>Occupation</small></v-col>
+              </v-row>
+              <v-row class="py-0 justify-center">
+                <p class="ma-0 profile-info" style="font-size: 0.8em">{{formData.profession}}</p>
+              </v-row>
+            </v-col>
+            <v-col cols="6">
+              <v-row>
+                <v-col class="py-1 px-0 profile-label"><small>Location</small></v-col>
+              </v-row>
+              <v-row class="py-0 justify-center">
+                <p class="ma-0 profile-info" style="font-size: 0.8em">{{formData.location}}</p>
+              </v-row>
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
+      <v-row v-if="!isEditing"  class="px-2">
+        <v-col cols="12" class="border-right">
+          <v-row class="d-flex flex-column justify-center align-center">
+            <v-col :cols="12" class="pa-0">
+              <AvatarGroup
+                :profiles="profile.parents"
+                group-title="Parents"
+                size="50px"
+                :show-labels="true"
+                @profile-click="openProfile($event)"
+              >
+                <AddButton @click="toggleNew('parent')" />
+              </AvatarGroup>
+            </v-col>
 
-              <hr v-if="profile.siblings" class="family-divider"/>
+            <hr v-if="profile.siblings" class="family-divider"/>
 
-              <v-col :cols="12" v-if="profile.siblings" class="pa-0">
-                <AvatarGroup
-                  :profiles="profile.siblings"
-                  group-title="Siblings"
-                  size="60px"
-                  :show-labels="true"
-                  @profile-click="openProfile($event)"
-                >
-                  <AddButton v-if="view.focus !== profile.id" @click="toggleNew('sibling')" />
-                </AvatarGroup>
-              </v-col>
+            <v-col :cols="12" v-if="profile.siblings" class="pa-0">
+              <AvatarGroup
+                :profiles="profile.siblings"
+                group-title="Siblings"
+                size="60px"
+                :show-labels="true"
+                @profile-click="openProfile($event)"
+              >
+                <AddButton v-if="view.focus !== profile.id" @click="toggleNew('sibling')" />
+              </AvatarGroup>
+            </v-col>
 
-              <hr v-if="profile.siblings" class="family-divider"/>
+            <hr v-if="profile.siblings" class="family-divider"/>
 
-              <v-col :cols="12" class="pa-0">
-                <AvatarGroup
-                  v-if="profile.children.length"
-                  :profiles="profile.children"
-                  group-title="Children"
-                  size="60px"
-                  :show-labels="true"
-                  @profile-click="openProfile($event)"
-                >
-                  <AddButton @click="toggleNew('child')" />
-                </AvatarGroup>
-                <AvatarGroup
-                  v-else
-                  :profiles="profile._children"
-                  group-title="Children"
-                  size="60px"
-                  :show-labels="true"
-                  @profile-click="openProfile($event)"
-                >
-                  <AddButton @click="toggleNew('child')" />
-                </AvatarGroup>
-              </v-col>
-            </v-row>
-          </v-col>
-        </v-row>
-      </v-card>
-    </v-navigation-drawer>
-  <!-- </v-card> -->
+            <v-col :cols="12" class="pa-0">
+              <AvatarGroup
+                v-if="profile.children.length"
+                :profiles="profile.children"
+                group-title="Children"
+                size="60px"
+                :show-labels="true"
+                @profile-click="openProfile($event)"
+              >
+                <AddButton @click="toggleNew('child')" />
+              </AvatarGroup>
+              <AvatarGroup
+                v-else
+                :profiles="profile._children"
+                group-title="Children"
+                size="60px"
+                :show-labels="true"
+                @profile-click="openProfile($event)"
+              >
+                <AddButton @click="toggleNew('child')" />
+              </AvatarGroup>
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
+    </v-card>
+  </v-navigation-drawer>
 </template>
 
 <script>
@@ -307,6 +304,7 @@ export default {
     },
     profileChanges () {
       let changes = {}
+      changes['aliveInterval'] = this.formData.bornAt + '/' + this.formData.diedAt
       Object.entries(this.formData).forEach(([key, value]) => {
         if (!isEqual(this.formData[key], this.profile[key])) {
           switch (key) {
@@ -323,6 +321,8 @@ export default {
               if (value && value !== this.profile.relationshipType) {
                 changes[key] = value
               }
+              break
+            case 'aliveInterval':
               break
             default:
               changes[key] = value
@@ -346,8 +346,18 @@ export default {
     }
   },
   watch: {
-    profile (newVal) {
-      this.formData = defaultData(newVal)
+    profile: {
+      deep: true,
+      immediate: true,
+      handler (newVal) {
+        this.formData = defaultData(newVal)
+
+        if (this.formData.aliveInterval) {
+          var dates = this.formData.aliveInterval.split('/')
+          this.formData.bornAt = dates[0] || ''
+          this.formData.diedAt = dates[1] || ''
+        }
+      }
     },
     'formData.deceased' (newValue) {
       if (!newValue) this.formData.diedAt = ''
@@ -392,11 +402,8 @@ export default {
       this.toggleEdit()
     },
     submit () {
-      if (!this.$refs.form.validate()) {
-        return
-      }
-
       var output = Object.assign({}, pick(this.profileChanges, [...PERMITTED_PROFILE_ATTRS, ...PERMITTED_RELATIONSHIP_ATTRS]))
+      console.log(output)
 
       if (!isEmpty(output)) {
         this.$emit('submit', output)

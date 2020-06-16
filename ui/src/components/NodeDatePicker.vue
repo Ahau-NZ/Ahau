@@ -48,22 +48,26 @@
 </template>
 <script>
 
-const edtf = require('edtf')
-
 export default {
   name: 'NodeDatePicker',
   props: {
     label: String,
     value: { type: String, default: 'XXXX-XX-XX' },
-    readonly: { type: Boolean, default: false }
+    readonly: { type: Boolean, default: false },
+    min: { type: String }
   },
   data () {
     return {
       focused: false,
       date: {
-        year: 'XXXX',
-        month: 'XX',
-        day: 'XX'
+        year: '',
+        month: '',
+        day: ''
+      },
+      minDate: {
+        year: '',
+        month: '',
+        day: ''
       }
     }
   },
@@ -83,17 +87,18 @@ export default {
       return this.focused ? 'custom-fieldset-focused' : 'custom-fieldset-default'
     },
     years () {
-      const now = new Date().getUTCFullYear()
+      const max = new Date().getUTCFullYear()
+      const min = this.minDate.year
+      var maxYears = (max - min) + 1
       var years = [
-        { value: 'XXXX', text: 'XXXX' }
       ]
 
-      Array(1000 + ((now + 1) % 1000)).fill('').forEach((v, i) => {
+      Array(maxYears).fill('').forEach((v, i) => {
         var newYear
 
-        var val = (now - i)
+        var val = (max - i)
 
-        if (val === now) {
+        if (val === max) {
           years.push({ value: val.toString(), text: val.toString() })
           return
         }
@@ -158,13 +163,15 @@ export default {
       Array(32)
         .fill('')
         .forEach((v, i) => {
+          var indexString = this.intToDDString(i)
           if (i === 0) return
+
           if (i % 10 !== 0) {
-            days.push({ value: i, text: this.intToDDString(i) })
+            days.push({ value: indexString, text: indexString })
             return
           }
           var newDay = (i / 10).toString() + 'X'
-          days.push({ value: i, text: this.intToDDString(i) })
+          days.push({ value: indexString, text: indexString })
           days.push({ value: newDay, text: newDay })
         })
 
@@ -220,18 +227,33 @@ export default {
     date: {
       deep: true,
       handler (newValue) {
-        var date = `${this.date.year}-${this.date.month}-${this.date.day}`
-        console.log(date)
-        this.$emit('update:value', date)
+        // var year = this.date.year || ''
+        // var month = this.date.month || ''
+        // var day = this.date.day || ''
+
+        
+        // this.$emit('update:value', date)
       }
     },
     value: {
+      deep: true,
       immediate: true,
       handler (value) {
         var date = value.split('-')
         this.date.year = date[0]
         this.date.month = date[1]
         this.date.day = date[2]
+      }
+    },
+    min: {
+      deep: true,
+      immediate: true,
+      handler (value) {
+        console.log(value)
+        var date = value.split('-')
+        this.minDate.year = parseInt(date[0]) || 1000
+        this.minDate.month = parseInt(date[1]) || 1
+        this.minDate.day = parseInt(date[2]) || 1
       }
     }
   }

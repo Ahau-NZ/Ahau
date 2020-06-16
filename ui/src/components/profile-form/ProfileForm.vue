@@ -113,6 +113,7 @@
                 :value.sync="formData.bornAt"
                 label="Date of birth"
                 :readonly="readonly"
+                min="1000-01-01"
               />
             </v-col>
           </v-row>
@@ -158,6 +159,7 @@
                 label="Date of death"
                 :value.sync="formData.diedAt"
                 :readonly="readonly"
+                :min="formData.bornAt || '0001-01-01'"
               />
             </v-col>
           </v-row>
@@ -325,13 +327,6 @@ export default {
       immediate: true,
       handler (newVal) {
         this.formData = newVal
-
-        if (this.formData.aliveInterval) {
-          var dates = this.formData.aliveInterval.split('/')
-
-          this.formData.bornAt = dates[0]
-          this.formData.diedAt = dates[1]
-        }
       }
     }
   },
