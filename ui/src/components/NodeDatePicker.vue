@@ -80,7 +80,8 @@ export default {
         hideNoData: true,
         appendIcon: '',
         readonly: this.readonly,
-        menuProps: { light: true }
+        menuProps: { light: true },
+        light: true
       }
     },
     customClass () {
@@ -217,11 +218,19 @@ export default {
     date: {
       deep: true,
       handler (newValue) {
-        var year = this.date.year || 'XXXX'
-        var month = this.date.month || 'XX'
-        var day = this.date.day || 'XX'
+        var year = this.date.year || ''
+        var month = this.date.month || ''
+        var day = this.date.day || ''
 
-        this.$emit('update:value', `${year}-${month}-${day}`)
+        if (year && month && day) {
+          this.$emit('update:value', `${year}-${month}-${day}`)
+        } else if (year && month && !day) {
+          this.$emit('update:value', `${year}-${month}`)
+        } else if (year && !month && !day) {
+          this.$emit('update:value', year)
+        } else {
+          this.$emit('update:value', '')
+        }
       }
     },
     value: {
