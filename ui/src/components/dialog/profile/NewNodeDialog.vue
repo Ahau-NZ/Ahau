@@ -86,7 +86,7 @@ import calculateAge from '@/lib/calculate-age'
 import uniqby from 'lodash.uniqby'
 import pick from 'lodash.pick'
 
-import { PERMITTED_PROFILE_ATTRS, getProfile } from '@/lib/profile-helpers'
+import { PERMITTED_PROFILE_ATTRS, PERMITTED_RELATIONSHIP_ATTRS, getProfile } from '@/lib/profile-helpers'
 
 function setDefaultData (withRelationships) {
   const formData = {
@@ -196,6 +196,7 @@ export default {
     submission () {
       let submission = {}
       Object.entries(this.formData).map(([key, value]) => {
+        console.log(key, this.formData[key])
         if (!isEmpty(this.formData[key])) {
           switch (key) {
             case 'birthOrder':
@@ -317,7 +318,7 @@ export default {
       return calculateAge(aliveInterval)
     },
     submit () {
-      var submission = pick(this.submission, [...PERMITTED_PROFILE_ATTRS])
+      var submission = pick(this.submission, [...PERMITTED_PROFILE_ATTRS, ...PERMITTED_RELATIONSHIP_ATTRS])
       console.log(submission)
       this.$emit('create', submission)
       // this.hasSelection
@@ -347,13 +348,6 @@ export default {
 
   },
   watch: {
-    'formData': {
-      deep: true,
-      immediate: true,
-      handler (newVal) {
-        console.log('formData', newVal)
-      }
-    },
     'formData.relationshipType' (newValue, oldValue) {
       // make sure adoption status can't be set true when relationship type is birth
       if (newValue === 'birth') this.formData.legallyAdopted = false
@@ -377,6 +371,22 @@ export default {
         }
       } else {
         this.$emit('getSuggestions', null)
+      }
+    },
+    'formData.bornAt' (newVal) {
+      if (this.formData.aliveInterval) {
+        var dates = this.formData.aliveInterval.split('/')
+        this.formData.aliveInterval = (newVal || '') + '/' + (dates[1] || '')
+      } else {
+        this.formData.aliveInterval = (newVal || '') + '/'
+      }
+    },
+    'formData.diedAt' (newVal) {
+      if (this.formData.aliveInterval) {
+        var dates = this.formData.aliveInterval.split('/')
+        this.formData.aliveInterval = (dates[0] || '') + '/' + (newVal || '')
+      } else {
+        this.formData.aliveInterval = '/' + (newVal || '')
       }
     },
     hasSelection (newValue) {

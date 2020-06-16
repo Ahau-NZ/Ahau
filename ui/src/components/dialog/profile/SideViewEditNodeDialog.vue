@@ -422,7 +422,6 @@ export default {
     },
     submit () {
       var output = Object.assign({}, pick(this.profileChanges, [...PERMITTED_PROFILE_ATTRS, ...PERMITTED_RELATIONSHIP_ATTRS]))
-      console.log('output', output)
 
       if (!isEmpty(output)) {
         this.$emit('submit', output)
