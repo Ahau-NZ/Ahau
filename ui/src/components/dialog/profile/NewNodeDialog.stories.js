@@ -1,5 +1,4 @@
 import NewNodeDialog from './NewNodeDialog.vue'
-import { action } from '@storybook/addon-actions'
 import VIEWPORTS from '../../../../.storybook/VIEWPORTS'
 
 export default {

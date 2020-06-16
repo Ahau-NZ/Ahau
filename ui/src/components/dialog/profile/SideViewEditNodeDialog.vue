@@ -122,7 +122,7 @@
                 <v-col class="py-1 px-0 profile-label"><small>Age</small></v-col>
               </v-row>
               <v-row class="py-0 justify-center">
-                <p class="ma-0 profile-info">{{age(formData.bornAt)}}</p>
+                <p class="ma-0 profile-info">{{age(formData.aliveInterval)}}</p>
               </v-row>
             </v-col>
           </v-row>
