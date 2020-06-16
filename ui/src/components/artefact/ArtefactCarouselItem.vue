@@ -62,7 +62,7 @@ export default {
     height: { type: String, default: '100px' },
     controls: { type: Boolean },
     selected: { type: Boolean, default: false },
-    selectedIndex: {type: Number, default: 0},
+    selectedIndex: { type: Number, default: 0 },
     editing: { type: Boolean }
   },
   data () {
@@ -75,7 +75,7 @@ export default {
       if (this.selectedIndex === i) {
         return true
       }
-    },
+    }
   }
 }
 </script>

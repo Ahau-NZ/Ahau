@@ -4,7 +4,7 @@
       <v-carousel-item v-for="(artefact, i) in artefacts" :key="`a-c-${i}`"
         style="width:100%;"
       >
-        <ArtefactCarouselItem 
+        <ArtefactCarouselItem
           :artefact="artefact"
           controls
           @update="$emit('update', i)"
@@ -44,7 +44,7 @@
 </template>
 
 <script>
-import ArtefactCarouselItem from '@/components/archive/ArtefactCarouselItem.vue'
+import ArtefactCarouselItem from '@/components/artefact/ArtefactCarouselItem.vue'
 import AddButton from '@/components/button/AddButton.vue'
 
 export default {

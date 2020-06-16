@@ -14,7 +14,8 @@
               />
             </v-col>
             <v-col v-if="formData.artefacts.length > 0" cols="12" class="pl-0 pr-0">
-              <ArtefactCarousel :artefacts="formData.artefacts"
+              <ArtefactCarousel
+                :artefacts="formData.artefacts"
                 @delete="toggleDialog($event, 'delete')"
                 @update="toggleDialog($event, 'new')"
                 @processMediaFiles="processMediaFiles($event)"
@@ -424,7 +425,7 @@ import { firstMocks } from '@/mocks/collections'
 import { artefacts } from '@/mocks/artefacts'
 
 import NewArtefactDialog from '@/components/archive/NewArtefactDialog.vue'
-import ArtefactCarousel from '@/components/archive/ArtefactCarousel.vue'
+import ArtefactCarousel from '@/components/artefact/ArtefactCarousel.vue'
 import DeleteArtefactDialog from '@/components/dialog/archive/DeleteArtefactDialog.vue'
 
 import { RULES } from '@/lib/constants'

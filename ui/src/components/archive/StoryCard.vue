@@ -1,5 +1,5 @@
 <template>
-  <v-card @click.prevent="showStory()" :class="customClass" :flat="fullStory" :ripple="false" class="mx-auto" :light="!showArtefact" width="100%" :elevation="!mobile ? !showArtefact ? '24':'' : ''">
+  <v-card @click.prevent="showStory()" :class="customClass" :flat="fullStory" :ripple="false" class="mx-auto" :light="!showArtefact" width="100%" :elevation="!mobile && !showArtefact && fullStory ? '24':''">
     <!-- RECORD CONTRUBUTORS-STORY PREVIEW -->
     <v-list-item class="px-0" style="min-height:0; height:10px">
       <v-list-item-icon v-if="!fullStory" class="pt-0 mt-0" style="position:absolute; top:5px; right:1px; margin-right:0px">
@@ -38,14 +38,6 @@
           </v-carousel-item>
         </v-carousel>
         <!-- ARTEFACT GROUP  -->
-        <!-- <ArtefactGroup
-          v-if="!showArtefact && story.artefacts.length > 1"
-          :artefacts="story.artefacts"
-          :model="model"
-          @updateModel="updateModel($event)"
-        /> -->
-
-
         <v-slide-group
           v-if="!showArtefact && story.artefacts.length > 1"
           v-model="model"
@@ -70,7 +62,6 @@
             </v-scale-transition>
           </v-slide-item>
         </v-slide-group>
-
 
       </v-list-item-content>
     </v-list-item>
@@ -267,15 +258,14 @@
 <script>
 import AvatarGroup from '@/components/AvatarGroup.vue'
 import Avatar from '@/components/Avatar.vue'
-import Artefact from '@/components/artefacts/Artefact.vue'
+import Artefact from '@/components/artefact/Artefact.vue'
 import ChipGroup from '@/components/archive/ChipGroup.vue'
 import { mapActions, mapGetters } from 'vuex'
 import EditStoryButton from '@/components/button/EditStoryButton.vue'
 import EditArtefactButton from '@/components/button/EditArtefactButton.vue'
-import ArtefactGroup from '@/components/artefacts/ArtefactGroup.vue'
 import { colours } from '@/lib/colours.js'
-import ArtefactCarousel from '@/components/archive/ArtefactCarousel.vue'
-import ArtefactCarouselItem from '@/components/archive/ArtefactCarouselItem.vue'
+import ArtefactCarousel from '@/components/artefact/ArtefactCarousel.vue'
+import ArtefactCarouselItem from '@/components/artefact/ArtefactCarouselItem.vue'
 
 export default {
   name: 'StoryCard',
@@ -290,7 +280,6 @@ export default {
     ChipGroup,
     EditStoryButton,
     EditArtefactButton,
-    ArtefactGroup,
     ArtefactCarousel,
     ArtefactCarouselItem
   },

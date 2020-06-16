@@ -156,7 +156,7 @@
 </template>
 
 <script>
-import ArtefactCarousel from '@/components/archive/ArtefactCarousel.vue'
+import ArtefactCarousel from '@/components/artefact/ArtefactCarousel.vue'
 
 import clone from 'lodash.clonedeep'
 import isEmpty from 'lodash.isempty'
