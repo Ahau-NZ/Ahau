@@ -44,7 +44,7 @@ module.exports = {
           },
           {
             typeDefs: whakapapa.typeDefs,
-            resolvers: whakapapa.rsesolvers
+            resolvers: whakapapa.resolvers
           }
         ]),
         context,
