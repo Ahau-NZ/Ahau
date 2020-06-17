@@ -25,7 +25,7 @@
 
           <!-- Dialog Card -->
           <v-card :min-height="mobile ? height : 'auto'" style="overflow-x:hidden !important">
-            <v-container width="100%" class="pa-5 pb-2" :style="`background: ${background};`">
+            <v-container width="100%" class="pa-1 pb-2" :style="`background: ${background};`">
 
               <!--=== TOP OF DIALOG CARD ===-->
               <DialogTitleBanner :title="title" :mobile="mobile" @close="close"  :isEditing="isEditing"/>

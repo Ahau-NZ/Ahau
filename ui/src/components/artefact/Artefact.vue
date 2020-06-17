@@ -2,13 +2,15 @@
   <v-sheet @click="toggleArtefact" class="container pa-0">
     <div v-if="artefact.type === 'video'" :style="showArtefact ? mobile ? 'height:300px' : 'height:500px' : 'height:auto'" >
     <!-- <div v-if="artefact.__typename === 'Video'" :style="showArtefact ? mobile ? 'height:300px' : 'height:500px;' : 'height:auto'" > -->
-      <video ref="video" class="video" controls>
-        <source src="@/assets/buildCSV.mp4" type="video/mp4">
-      </video>
+      <v-hover v-slot:default="{ hover }">
+        <video ref="video" class="video" :controls="hover">
+          <source src="@/assets/buildCSV.mp4" type="video/mp4">
+        </video>
+      </v-hover>
     </div>
     <div v-if="artefact.type === 'audio'" :style="showArtefact ? 'height:300px': mobile ? 'height:300px' : 'height:500px'">
     <!-- <div v-if="artefact.__typename === 'Audio'" :style="showArtefact ? 'height:300px': mobile ? 'background-color:dimgray;height:300px' : 'background-color:dimgray;height:500px'"> -->
-      <audio ref="audio" class="audio" controls style="width:80%">
+      <audio ref="audio" class="audio" style="width:80%">
           <source src="'@/assets/buildCSV.mp4'" type="audio/mpeg"/>
       </audio>
     </div>
@@ -27,6 +29,11 @@ export default {
     model: { type: Number, default: -1 },
     index: Number
   },
+  // data () {
+  //   return {
+  //     hover: false
+  //   }
+  // },
   computed: {
     ...mapGetters(['showArtefact']),
     mobile () {

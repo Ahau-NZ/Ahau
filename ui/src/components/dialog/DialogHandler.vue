@@ -91,10 +91,17 @@
       @close="close"
       @submit="editStory($event)"
     />
+    <DeleteRecordDialog
+      v-if="isActive('delete-story')"
+      :show="isActive('delete-story')"
+      @close="close"
+      @submit="deleteStory($event)"
+    />
     <ComingSoonDialog
       :show="isActive('coming-soon')"
       @close="close"
     />
+
   </div>
 </template>
 
@@ -110,6 +117,7 @@ import WhakapapaShowHelper from '@/components/dialog/whakapapa/WhakapapaShowHelp
 import WhakapapaTableHelper from '@/components/dialog/whakapapa/WhakapapaTableHelper.vue'
 import NewCollectionDialog from '@/components/dialog/archive/NewCollectionDialog.vue'
 import NewRecordDialog from '@/components/dialog/archive/NewRecordDialog.vue'
+import DeleteRecordDialog from '@/components/dialog/archive/DeleteRecordDialog.vue'
 import ComingSoonDialog from '@/components/dialog/ComingSoonDialog.vue'
 
 import gql from 'graphql-tag'
@@ -141,6 +149,7 @@ export default {
     WhakapapaTableHelper,
     NewCollectionDialog,
     NewRecordDialog,
+    DeleteRecordDialog,
     ComingSoonDialog
   },
   props: {
@@ -161,7 +170,7 @@ export default {
       required: false,
       default: null,
       validator: (val) => [
-        'new-node', 'view-edit-node', 'delete-node', 'new-collection', 'new-story', 'edit-story', 'edit-node',
+        'new-node', 'view-edit-node', 'delete-node', 'new-collection', 'new-story', 'edit-story', 'edit-node', 'delete-story',
         'whakapapa-view', 'whakapapa-edit', 'whakapapa-delete', 'whakapapa-helper', 'whakapapa-table-helper'
       ].includes(val)
     },
@@ -237,6 +246,9 @@ export default {
     },
     editStory ($event) {
       console.error('Edit story not implemented yet', $event)
+    },
+    deleteStory ($event) {
+      console.error('Delete story not implemented yet', $event)
     },
     async addPerson ($event) {
       try {

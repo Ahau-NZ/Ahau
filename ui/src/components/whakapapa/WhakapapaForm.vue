@@ -1,5 +1,5 @@
 <template>
-  <v-form ref="form"  v-model="form.valid" lazy-validation>
+  <v-form ref="form" v-model="form.valid" lazy-validation>
     <v-row class="px-2">
       <v-col cols="12" sm="5" order-sm="2">
         <v-row class="pa-0">

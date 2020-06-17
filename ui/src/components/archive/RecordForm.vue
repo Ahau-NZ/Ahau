@@ -2,7 +2,7 @@
   <!-- <v-card light> -->
   <div>
     <v-form ref="form" v-model="form.valid" lazy-validation>
-      <v-row>
+      <v-row class="px-5">
         <v-col cols="12" sm="12" md="12">
           <v-row>
             <v-col cols="12" class="pa-1">
@@ -13,7 +13,7 @@
                 class="title-input"
               />
             </v-col>
-            <v-col v-if="formData.artefacts.length > 0" cols="12" class="pl-0 pr-0">
+            <v-col v-if="formData.artefacts.length > 0" cols="12" class="pl-0 pr-0 carousel">
               <ArtefactCarousel
                 :artefacts="formData.artefacts"
                 @delete="toggleDialog($event, 'delete')"
@@ -245,7 +245,7 @@
         </v-col>
       </v-row>
       <v-divider/>
-      <v-card-actions class="pt-2 pb-2">
+      <v-card-actions class="pt-2 pb-2 px-5">
         <v-row @click="show = !show" class="clickable">
           <v-col>
             <span class="pa-0 ma-0">Advanced</span>
@@ -258,7 +258,7 @@
       <v-divider v-if="!show"/>
       <v-expand-transition>
         <div v-show="show">
-          <v-row>
+          <v-row class="px-5">
 
             <!-- RELATED RECORDS -->
             <v-col :cols="mobile ? '12' : formData.relatedRecords.length > 0 ? 'auto' : '3'">
@@ -407,13 +407,6 @@
       @close="deleteDialog = false"
       @submit="removeArtefact($event)"
     />
-    <DeleteRecordDialog
-      v-if="deleteRecordDialog"
-      :show="deleteRecordDialog"
-      :artefact="artefact"
-      @close="deleteRecordDialog = false"
-      @submit="removeReord($event)"
-    />
   </div>
 </template>
 
@@ -433,7 +426,7 @@ import { artefacts } from '@/mocks/artefacts'
 
 import NewArtefactDialog from '@/components/dialog/artefact/NewArtefactDialog.vue'
 import ArtefactCarousel from '@/components/artefact/ArtefactCarousel.vue'
-import DeleteArtefactDialog from '@/components/dialog/archive/DeleteArtefactDialog.vue'
+import DeleteArtefactDialog from '@/components/dialog/artefact/DeleteArtefactDialog.vue'
 
 import { RULES } from '@/lib/constants'
 import { mapGetters } from 'vuex'
@@ -464,6 +457,7 @@ export default {
     return {
       newDialog: false,
       deleteDialog: false,
+      deleteRecordDialog: false,
       index: 0,
       ARTEFACTS: artefacts,
       search: false,
@@ -694,5 +688,11 @@ export default {
     width: 300px;
     display: flex;
     justify-items: flex-end;
+}
+
+.carousel {
+  position: relative;
+  left: -8PX;
+  min-width: 102%;
 }
 </style>

@@ -6,7 +6,7 @@
       content-class="artefact-dialog"
     >
       <v-card tile flat style="overflow-x:hidden">
-        <v-container :class="mobile ? 'px-1':'pa-0'" :style="`width:${width};`">
+        <v-container :class="mobile ? 'px-1':'px-2'" :style="`width:${width};`">
           <v-row>
             <v-col cols="12" >
               <v-card-actions>

@@ -37,7 +37,8 @@ export default {
   props: {
     title: { type: String, default: 'Create a new person' },
     mobile: { type: Boolean, default: false },
-    isEditing: { type: Boolean, default: false }
+    isEditing: { type: Boolean, default: false },
+    width: { type: String, default: '100%' }
   },
   computed: {
     // split the Title into two parts (so maori can be styled red, and english styled in white)
@@ -107,19 +108,29 @@ export default {
 
   }
   .desktop-banner {
+    // width: 100%;
+    // padding: 10px 20px;
+    // margin: 0px;
+    // background: #292929 url(../../assets/bg-tohu.png);
+    // background-size: 50%;
+    // background-position-x: 80%;
+    // background-position-y: -40px;
+    // background-repeat: no-repeat;
+
+    // /* resize banner outside container */
+    // transform: scale(1.05);
+    // margin-top: -15px;
+    // margin-bottom: 10px;
+    position: relative;;
     width: 100%;
     padding: 10px 20px;
     margin: 0px;
+
     background: #292929 url(../../assets/bg-tohu.png);
     background-size: 50%;
     background-position-x: 80%;
     background-position-y: -40px;
     background-repeat: no-repeat;
-
-    /* resize banner outside container */
-    transform: scale(1.05);
-    margin-top: -15px;
-    margin-bottom: 10px;
 
     h1.banner-title {
       color: white;

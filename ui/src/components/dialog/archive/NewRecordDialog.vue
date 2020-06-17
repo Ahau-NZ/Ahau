@@ -9,24 +9,24 @@
 
       <!-- x ✓ BUTTONS -->
       <template v-slot:actions>
-        <v-row class="mt-4" align="center">
-        <v-btn text @click="$emit('delete', selectedIndex)">
-          Delete this record
-          <v-icon class="pl-2">mdi-delete</v-icon>
-        </v-btn>
-        <v-spacer/>
-        <v-btn @click="close"
-          text large fab
-          class="secondary--text"
-        >
-          <v-icon color="secondary">mdi-close</v-icon>
-        </v-btn>
-        <v-btn @click="submit"
-          text large fab
-          class="blue--text"
-        >
-          <v-icon>mdi-check</v-icon>
-        </v-btn>
+        <v-row class="mt-4 px-5" align="center">
+          <v-btn text @click="setDialog('delete-story')">
+            Delete this record
+            <v-icon class="pl-2">mdi-delete</v-icon>
+          </v-btn>
+          <v-spacer/>
+          <v-btn @click="close"
+            text large fab
+            class="secondary--text"
+          >
+            <v-icon color="secondary">mdi-close</v-icon>
+          </v-btn>
+          <v-btn @click="submit"
+            text large fab
+            class="blue--text"
+          >
+            <v-icon>mdi-check</v-icon>
+          </v-btn>
         </v-row>
       </template>
 
@@ -42,6 +42,7 @@ import isEqual from 'lodash.isequal'
 import Dialog from '@/components/dialog/Dialog.vue'
 import RecordForm from '@/components/archive/RecordForm.vue'
 import clone from 'lodash.clonedeep'
+import { mapActions } from 'vuex'
 
 const EMPTY_STORY = {
   id: '',
@@ -178,6 +179,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['setDialog']),
     close () {
       this.formData = setDefaultStory(this.story)
       this.$emit('close')
