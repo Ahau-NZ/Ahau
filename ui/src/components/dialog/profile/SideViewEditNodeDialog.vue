@@ -1,14 +1,13 @@
 <template>
   <v-navigation-drawer
-    light
-    width="450px"
-    height="93.6%"
-    :style="mobile ? '' : 'margin-top:64px;'"
     v-model="drawer"
+    class="side-menu"
+    :style="mobile ? '' : 'margin-top:64px;'"
     absolute
+    light
     permanent
     right
-    class="scroll"
+    :width="mobile ? '100%' : '25%'"
     :temporary="mobile ? true : false"
   >
     <v-card height="100%" class="scroll">
@@ -39,10 +38,10 @@
           </ProfileForm>
         </v-col>
       </v-row>
-      <v-row>
+      <v-row v-if="isEditing">
         <v-col cols="12" sm="auto" class="mb-8">
           <v-btn
-            v-if="isEditing && deleteable"
+            v-if="deleteable"
             @click="$emit('delete')"
             align="center"
             color="white"
@@ -53,7 +52,6 @@
           </v-btn>
         </v-col>
         <v-col
-          v-if="isEditing"
           col="12"
           :align="mobile ? '' : 'right'"
           class="pt-0 d-flex justify-space-between"
@@ -66,7 +64,7 @@
           </v-btn>
         </v-col>
       </v-row>
-      <v-row v-if="!isEditing"  class="justify-center">
+      <v-row v-if="!isEditing"  class="justify-center" style="margin-bottom: -20px">
         <Avatar
           class="big-avatar"
           size="250px"
@@ -76,13 +74,12 @@
           :aliveInterval="formData.aliveInterval"
           :deceased="formData.deceased"
           :isEditing="isEditing"
-          style="margin-top: 20px;"
           @updateAvatar="formData.avatarImage = $event"
         />
       </v-row>
-      <v-row class="justify-center">
+      <v-row v-if="!isEditing" class="justify-center">
         <!-- <v-col> -->
-          <h1 v-if="!isEditing">{{ formData.preferredName }}</h1>
+          <h1 >{{ formData.preferredName }}</h1>
         <!-- </v-col> -->
       </v-row>
       <v-row v-if="!isEditing"  class="justify-center">
@@ -96,8 +93,8 @@
           <v-icon small class="blue--text" left>mdi-pencil</v-icon>Edit
         </v-btn>
       </v-row>
-      <v-row v-if="formData.description && !isEditing" class="mb-2">
-        <v-col cols="12">
+      <v-row v-if="formData.description && !isEditing" class="ma-2">
+        <v-col cols="12" class="pt-0">
           <v-row>
             <v-col class="py-1 px-0 profile-label"><small>Description</small></v-col>
           </v-row>
@@ -207,12 +204,6 @@
 </template>
 
 <script>
-import {
-  GENDERS,
-  RULES,
-  RELATIONSHIPS
-} from '@/lib/constants'
-
 import calculateAge from '../../../lib/calculate-age'
 
 import { PERMITTED_PROFILE_ATTRS, PERMITTED_RELATIONSHIP_ATTRS } from '@/lib/profile-helpers'
@@ -280,29 +271,15 @@ export default {
   data () {
     return {
       testmapimage: require('../../../assets/map-test.png'),
-      genders: GENDERS,
-      permitted: PERMITTED_PROFILE_ATTRS,
-      relationshipTypes: RELATIONSHIPS,
       isEditing: false,
       formData: defaultData(this.profile),
       showDescription: false,
-      deleteDialog: false,
-      form: {
-        valid: true,
-        rules: RULES
-      },
-      genderSelected: '',
       drawer: this.show
     }
   },
   computed: {
     mobile () {
       return this.$vuetify.breakpoint.xs
-    },
-    orderNumbers () {
-      var orderNumbers = [...Array(31).keys()]
-      orderNumbers.splice(0, 1)
-      return orderNumbers
     },
     profileChanges () {
       let changes = {}
@@ -330,9 +307,6 @@ export default {
         }
       })
       return changes
-    },
-    hasChanges () {
-      return isEqual(this.data, this.profile)
     },
     customProps () {
       return {
@@ -362,9 +336,6 @@ export default {
         }
       }
     },
-    'formData.deceased' (newValue) {
-      if (!newValue) this.formData.diedAt = ''
-    },
     'formData.bornAt' (newVal) {
       if (this.formData.aliveInterval) {
         var dates = this.formData.aliveInterval.split('/')
@@ -383,31 +354,6 @@ export default {
     }
   },
   methods: {
-    updateSelectedGender (genderClicked) {
-      // reset images to outlined
-      this.$refs.taneImg.src = require('@/assets/tane-outlined.svg')
-      this.$refs.wahineImg.src = require('@/assets/wahine-outlined.svg')
-      // hightlight selected image
-      this.genderSelected = genderClicked
-      if (this.genderSelected === 'male') {
-        this.$refs.taneImg.src = require('@/assets/tane.svg')
-      }
-      if (this.genderSelected === 'female') {
-        this.$refs.wahineImg.src = require('@/assets/wahine.svg')
-      }
-      // update the gender
-      this.formData.gender = this.genderSelected
-    },
-    removeAltNameField (index) {
-      this.formData.altNames.add.splice(index, 1)
-    },
-    addAltNameField () {
-      this.formData.altNames.add.push(null)
-    },
-    updateAvatar (avatarImage) {
-      this.formData.avatarImage = avatarImage
-      // this.toggleAvatar(null)
-    },
     age (born) {
       var age = calculateAge(born)
       return age
@@ -438,20 +384,6 @@ export default {
     },
     toggleEdit () {
       this.isEditing = !this.isEditing
-    },
-    toggleAltName () {
-      if (!this.formData.altNames.currentState) { this.formData.altNames.currentState = [] }
-      this.formData.altNames.add.push(null)
-    },
-    toggleDescription () {
-      this.showDescription = !this.showDescription
-    },
-    deleteFromState (altName, index) {
-      this.deleteFromDialog(index) // removes it from the dialog
-      this.formData.altNames.remove.push(altName)
-    },
-    deleteFromDialog (index) {
-      this.formData.altNames.currentState.splice(index, 1)
     }
   }
 }
@@ -459,10 +391,18 @@ export default {
 
 <style lang="scss">
 @import url('https://fonts.googleapis.com/css2?family=Forum&display=swap');
+  .side-menu {
+    transition: all 0.1s ease-in-out;
+    background-color: white;
+    height:100%;
+    max-height: calc(100vh - 64px);
+    overflow-x: hidden;
+  }
 
   .scroll {
     overflow-x: hidden;
-    overflow-y: auto;
+    overflow-y: scroll;
+    max-height: 100%;
   }
 
   .custom.v-text-field > .v-input__control > .v-input__slot:before {

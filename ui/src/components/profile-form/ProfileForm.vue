@@ -1,8 +1,8 @@
 <template>
-  <v-form ref="form" light class="pa-4">
+  <v-form ref="form" light class="px-4">
       <v-row>
         <!-- Upload profile photo -->
-        <v-col :order="mobile ? '' : '2'" class="mt-5">
+        <v-col :order="mobile ? '' : '2'" class="py-0">
           <v-row class="justify-center">
             <!-- <v-col cols="12" class="pa-0" > -->
               <!-- Avatar -->
@@ -15,6 +15,7 @@
               :aliveInterval="formData.aliveInterval"
               :deceased="formData.deceased"
               :isEditing="isEditing"
+              @updateAvatar="formData.avatarImage = $event"
             />
           </v-row>
           <v-row v-if="isEditing" class="justify-center">
@@ -167,7 +168,7 @@
       </v-row>
 
       <v-row>
-        <v-col cols="12" :sm="mobile ? '12' : '6'">
+        <v-col cols="12" :sm="mobile ? '12' : '6'" class="py-0">
           <v-row>
             <!-- GENDER VIEW -->
             <v-col  v-if="readonly" class="pa-1">
@@ -184,13 +185,13 @@
 
               <v-row class="gender-button-row">
                 <!-- TANE -->
-                <v-col>
+                <v-col class="pa-0">
                   <div class="gender-button" @click="updateSelectedGender('male')">
                     <img ref="taneImg" :src="require('@/assets/tane-outlined.svg')" class="gender-image">
                   </div>
                 </v-col>
                 <!-- WAHINE -->
-                <v-col>
+                <v-col class="pa-0">
                   <div class="gender-button" @click="updateSelectedGender('female')">
                     <img ref="wahineImg" :src="require('@/assets/wahine-outlined.svg')" class="gender-image">
                   </div>
