@@ -76,20 +76,20 @@ export default {
 
 <style>
 .rounded-border {
-  border: 0.5px solid rgba(0,0,0,0.5);
+  border: 0.5px solid rgba(0,0,0,0.3);
   border-radius: 10px;
   background-color: white;
 }
 
 .br {
-  border-right: 0.5px solid rgba(0,0,0,0.5);
+  border-right: 0.5px solid rgba(0,0,0,0.3);
 }
 
 .bb {
-  border-bottom: 0.5px solid rgba(0,0,0,0.5);
+  border-bottom: 0.5px solid rgba(0,0,0,0.3);
 }
 .bt {
-  border-top: 0.5px solid rgba(0,0,0,0.5);
+  border-top: 0.5px solid rgba(0,0,0,0.3);
 }
 
 </style>

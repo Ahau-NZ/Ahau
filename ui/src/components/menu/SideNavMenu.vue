@@ -216,12 +216,12 @@ export default {
 
 <style lang="scss" scoped>
   .icon-bar {
-    border: 0.5px solid rgba(0, 0, 0, 0.2);
+    border: 0.5px solid rgba(0, 0, 0, 0.3);
     border-radius: 10px;
   }
 
   .border {
-    border-style: 1px solid lightgrey;
+    border-style: 0.5px solid rgba(0,0,0,0.3);
   }
 
   .side-padding {
@@ -233,7 +233,7 @@ export default {
     height: 80px;
   }
   .rounded-border {
-    border: 0.5px solid rgba(0,0,0,0.12);
+    border: 0.5px solid rgba(0,0,0,0.3);
     border-radius: 10px;
     background-color: white ;
   }

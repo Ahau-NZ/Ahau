@@ -658,7 +658,7 @@ export default {
 }
 
 .rounded-border {
-  border: 0.5px solid rgba(0,0,0,0.8);
+  border: 0.5px solid rgba(0,0,0,0.3);
   border-radius: 5px;
   background-color: white;
 }

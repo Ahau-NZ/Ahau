@@ -64,8 +64,8 @@
 
         <div v-if="!isEditing" class="px-1">
 
-          <v-row style="border: 0.5px solid rgba(0,0,0,0.12); border-radius: 10px;" class="flex-column ma-0" >
-              <v-row style="border-bottom: 0.5px solid rgba(0,0,0,0.12);" class="ma-0">
+          <v-row style="border: 0.5px solid rgba(0,0,0,0.3); border-radius: 10px;" class="flex-column ma-0" >
+              <v-row style="border-bottom: 0.5px solid rgba(0,0,0,0.3);" class="ma-0">
                 <v-col cols="6">
                   <!-- Mobile: Legal Name -->
                   <v-row>
@@ -548,8 +548,8 @@
         <v-row>
 
           <v-col v-if="!isEditing">
-            <v-row style="border: 0.5px solid rgba(0,0,0,0.12); border-radius: 10px;" class="flex-column ma-0" >
-                <v-row style="border-bottom: 0.5px solid rgba(0,0,0,0.12);" class="ma-0">
+            <v-row style="border: 0.5px solid rgba(0,0,0,0.3); border-radius: 10px;" class="flex-column ma-0" >
+                <v-row style="border-bottom: 0.5px solid rgba(0,0,0,0.3);" class="ma-0">
                   <v-col cols="6">
                     <!-- Desktop: Legal Name -->
                     <v-row>
@@ -1243,7 +1243,7 @@ export default {
 
 .family-divider {
   width: 80%;
-  border: 0.5px solid rgba(0, 0, 0, 0.12);
+  border: 0.5px solid rgba(0, 0, 0, 0.15);
 }
 
 .text-field {

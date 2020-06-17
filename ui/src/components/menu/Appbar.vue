@@ -121,7 +121,8 @@ export default {
       dialog: false,
       profile: {
         id: null,
-        avatarImage: {}
+        avatarImage: {},
+        gender: null
       }
     }
   },
@@ -189,6 +190,7 @@ export default {
                 avatarImage {
                   uri
                 }
+                gender
               }
             }
           }
