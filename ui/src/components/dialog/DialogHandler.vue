@@ -494,7 +494,6 @@ export default {
       }
     },
     async updateProfile ($event) {
-      console.log('updatePerson', $event)
       Object.entries($event).map(([key, value]) => {
         if (value === '') {
           delete $event[key]

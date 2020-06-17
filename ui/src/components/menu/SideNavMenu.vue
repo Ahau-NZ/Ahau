@@ -3,7 +3,7 @@
     <v-col cols="12" md="2" :class="mobile ? 'px-6': tablet ? 'pt-12':''">
       <v-col align="center" v-if="!mobile" class="pa-2 ml-5" cols="12">
         <v-row cols="12" xs="12" sm="12">
-          <v-btn :class="tablet ? 'pl-2':''" @click="goProfile()" light text style="height: auto;">
+          <v-btn :class="tablet ? 'pl-2':''" @click="setActive('profile')" light text style="height: auto;">
             <Avatar :image="profile.avatarImage" :gender="profile.gender" :alt="profile.preferredName" :size="tablet ? '120px':'160px'" />
           </v-btn>
         </v-row>
