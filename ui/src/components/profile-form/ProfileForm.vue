@@ -3,7 +3,7 @@
       <v-row>
         <!-- Upload profile photo -->
         <v-col :order="mobile ? '' : '2'" class="py-0">
-          <v-row class="justify-center">
+          <v-row class="justify-center pt-3">
             <!-- <v-col cols="12" class="pa-0" > -->
               <!-- Avatar -->
             <Avatar
