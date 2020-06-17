@@ -10,5 +10,6 @@ test('calculate-age', t => {
   t.equal(calculateAge('1960-XX-01/', now), 60, '50+')
   t.equal(calculateAge('19XX-01-01/', now), 120, 'Really old')
   t.equal(calculateAge('/2020-06-16', now), null, 'no date of birth')
+  t.equal(calculateAge('1995/', now), 25, 'just a year')
   t.end()
 })
