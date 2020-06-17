@@ -1,10 +1,10 @@
 import edtf from 'edtf'
 
 export default function calculateAge (aliveInterval, now = new Date()) {
-  if (!aliveInterval) return aliveInterval
-  console.log(aliveInterval)
+  if (!aliveInterval || aliveInterval === '/') return null
+
   var interval = edtf(aliveInterval)
-  var diffMs = 0
+  var diffMs = null
 
   if (interval.lower && interval.upper) {
     diffMs = interval.upper.getTime() - interval.lower.getTime()

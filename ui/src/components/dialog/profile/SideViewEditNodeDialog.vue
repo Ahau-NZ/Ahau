@@ -73,7 +73,7 @@
           :image="formData.avatarImage"
           :alt="profile.preferredName"
           :gender="formData.gender"
-          :bornAt="formData.bornAt"
+          :aliveInterval="formData.aliveInterval"
           :deceased="formData.deceased"
           :isEditing="isEditing"
           style="margin-top: 20px;"

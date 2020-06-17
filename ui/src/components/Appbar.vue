@@ -156,7 +156,8 @@ export default {
       dialog: false,
       profile: {
         id: null,
-        avatarImage: null
+        avatarImage: null,
+        aliveInterval: null
       }
     }
   },
@@ -187,6 +188,7 @@ export default {
               profile {
                 id
                 preferredName
+                aliveInterval
                 avatarImage {
                   uri
                 }
