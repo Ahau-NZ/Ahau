@@ -122,10 +122,8 @@ export default {
     },
     isOverflowing () {
       if (!this.componentLoaded) return false
-      if (this.tablet) return true
-      // var element = this.$refs.text
-      // console.log(element.offsetWidth, element.scrollWidth)
-      // return (element.offsetHeight < element.scrollHeight || element.offsetWidth < element.scrollWidth)
+      else if (this.tablet) return true
+      return false
     },
     position () {
       return {
