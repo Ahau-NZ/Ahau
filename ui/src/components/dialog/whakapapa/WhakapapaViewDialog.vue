@@ -12,17 +12,19 @@
       />
     </template>
     <template v-slot:title>
-      <h1>{{ view.name }}</h1>
-      <v-btn
-        @click="$emit('edit')"
-        align="right"
-        color="white"
-        text
-        x-small
-        class="blue--text"
-      >
-        <v-icon small class="blue--text" left>mdi-pencil</v-icon>Edit
-      </v-btn>
+      <div class="px-4">
+        <h1>{{ view.name }}</h1>
+        <v-btn
+          @click="$emit('edit')"
+          align="right"
+          color="white"
+          text
+          x-small
+          class="blue--text"
+        >
+          <v-icon small class="blue--text" left>mdi-pencil</v-icon>Edit
+        </v-btn>
+      </div>
     </template>
     <template v-slot:content>
       <v-row justify="center">

@@ -2,7 +2,7 @@
   <!-- <v-card light> -->
   <div>
     <v-form ref="form" v-model="form.valid" lazy-validation>
-      <v-row class="px-5">
+      <v-row class="px-3">
         <v-col cols="12" sm="12" md="12">
           <v-row>
             <v-col cols="12" class="pa-1">
@@ -258,7 +258,7 @@
       <v-divider v-if="!show"/>
       <v-expand-transition>
         <div v-show="show">
-          <v-row class="px-5">
+          <v-row class="px-3">
 
             <!-- RELATED RECORDS -->
             <v-col :cols="mobile ? '12' : formData.relatedRecords.length > 0 ? 'auto' : '3'">

@@ -7,11 +7,11 @@
       <v-col class="headliner black--text pa-0 pl-4">
         Archive records
       </v-col>
-      <v-col align="right" class="pa-0">
-        <v-btn :medium="!mobile" :x-small="mobile" :class="mobile ? 'addBtnMob' : 'addBtn'" class="my-2" fab color="white" @click.stop="openContextMenu($event)">
+      <!-- <v-col align="right" class="pa-0">
+        <v-btn outlined flat :medium="!mobile" :x-small="mobile" :class="mobile ? 'addBtnMob' : 'addBtn'" class="my-2" fab color="white" @click.stop="openContextMenu($event)">
           <v-icon :large="!mobile" class="black--text">mdi-plus</v-icon>
         </v-btn>
-      </v-col>
+      </v-col> -->
     <!-- </v-row> -->
       <!-- TODO: Add Collections -->
       <!-- <v-col cols="12" md="10" sm="10" :class="!mobile ? 'pl-12 my-6' : 'py-0 ma-0'" align="start">

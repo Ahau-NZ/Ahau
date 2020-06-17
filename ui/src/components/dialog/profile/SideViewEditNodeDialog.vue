@@ -45,7 +45,7 @@
         </v-row>
 
         <!-- Mobile: Person description -->
-        <v-row v-if="formData.description" class="mb-2">
+        <v-row v-if="formData.description && !isEditing" class="mb-2 px-4">
             <v-col cols="12">
                 <!-- Location -->
                 <v-row>
@@ -62,7 +62,7 @@
       <!-- Mobile: Slot Content -->
       <template v-slot:content>
 
-        <div v-if="!isEditing">
+        <div v-if="!isEditing" class="px-1">
 
           <v-row style="border: 0.5px solid rgba(0,0,0,0.12); border-radius: 10px;" class="flex-column ma-0" >
               <v-row style="border-bottom: 0.5px solid rgba(0,0,0,0.12);" class="ma-0">
@@ -184,7 +184,7 @@
 
         <!-- Start of Mobile editing -->
         <v-form v-else ref="form">
-            <v-row>
+            <v-row class="px-4">
                 <v-row class="pa-2">
                   <!-- Names -->
                   <v-col class="pt-4">

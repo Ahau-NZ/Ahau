@@ -6,15 +6,16 @@
       content-class="artefact-dialog"
     >
       <v-card tile flat style="overflow-x:hidden">
-        <v-container :class="mobile ? 'px-1':'px-2'" :style="`width:${width};`">
+        <DialogTitleBanner title="edit artefact" :mobile="mobile" @close="close"  :isEditing="isEditing"/>
+        <v-container :class="mobile ? 'px-2':'px-2'" :style="`width:${width};`">
           <v-row>
-            <v-col cols="12" >
+            <!-- <v-col cols="12" >
               <v-card-actions>
                 <v-btn absolute right icon @click="close">
                   <v-icon>mdi-close</v-icon>
                 </v-btn>
               </v-card-actions>
-            </v-col>
+            </v-col> -->
             <v-col cols="12">
               <h1>
                 <v-text-field
@@ -153,6 +154,7 @@
 </template>
 
 <script>
+import DialogTitleBanner from '@/components/dialog/DialogTitleBanner.vue'
 import ArtefactCarousel from '@/components/artefact/ArtefactCarousel.vue'
 
 import clone from 'lodash.clonedeep'
@@ -240,7 +242,8 @@ export default {
     ArtefactCarousel,
     AddButton,
     ProfileSearchBar,
-    AvatarGroup
+    AvatarGroup,
+    DialogTitleBanner
   },
   data () {
     return {

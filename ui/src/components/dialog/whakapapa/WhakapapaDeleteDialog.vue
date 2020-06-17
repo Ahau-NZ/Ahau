@@ -1,5 +1,5 @@
 <template>
-  <Dialog :title="`Delete ${ view.name }`" :show="show" @close="close" width="600px" height="calc(100vh - 50px)" :goBack="close" enableMenu>
+  <Dialog :title="`Delete ${ view.name }`" :show="show" @close="close" width="600px" :goBack="close" enableMenu>
     <template v-slot:content>
       <v-card-subtitle>
         <div>

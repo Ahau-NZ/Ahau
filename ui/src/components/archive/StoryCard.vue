@@ -1,5 +1,5 @@
 <template>
-  <v-card @click.prevent="showStory()" :class="customClass" :flat="!fullStory || showArtefact" :ripple="false" class="mx-auto" :light="!showArtefact" width="100%" :elevation="!mobile && !showArtefact && fullStory ? '24':''">
+  <v-card @click.prevent="showStory()" :class="customClass" flat :ripple="false" class="mx-auto" :light="!showArtefact" width="100%" :elevation="!mobile && !showArtefact && fullStory ? '24':''">
     <!-- RECORD CONTRUBUTORS-STORY PREVIEW -->
     <v-list-item class="px-0" style="min-height:0; height:10px">
       <v-list-item-icon v-if="!fullStory" class="pt-0 mt-0" style="position:absolute; top:5px; right:1px; margin-right:0px">
@@ -245,10 +245,16 @@
       <v-list-item-icon v-if="showArtefact" class="pt-0 mt-12">
         <EditArtefactButton @click="toggleDialog('edit-story')"/>
       </v-list-item-icon>
-      <v-list-item-icon v-if="showArtefact" class="pt-0 mt-0"
+      <v-list-item-icon v-if="showArtefact && !mobile" class="pt-0 mt-0"
       style="position:absolute; top:0px; right:0px;">
         <v-btn dark text large fab @click="setShowArtefact()">
           <v-icon>mdi-close</v-icon>
+        </v-btn>
+      </v-list-item-icon>
+      <v-list-item-icon v-else-if="showArtefact && mobile" class="pt-0 mt-0"
+      style="position:absolute; top:-68px; left:-12px;">
+        <v-btn dark text fab @click="setShowArtefact()">
+          <v-icon>mdi-arrow-left</v-icon>
         </v-btn>
       </v-list-item-icon>
     </v-card-actions>
@@ -264,7 +270,6 @@ import { mapActions, mapGetters } from 'vuex'
 import EditStoryButton from '@/components/button/EditStoryButton.vue'
 import EditArtefactButton from '@/components/button/EditArtefactButton.vue'
 import { colours } from '@/lib/colours.js'
-import ArtefactCarousel from '@/components/artefact/ArtefactCarousel.vue'
 import ArtefactCarouselItem from '@/components/artefact/ArtefactCarouselItem.vue'
 
 export default {
@@ -280,7 +285,6 @@ export default {
     ChipGroup,
     EditStoryButton,
     EditArtefactButton,
-    ArtefactCarousel,
     ArtefactCarouselItem
   },
   data () {

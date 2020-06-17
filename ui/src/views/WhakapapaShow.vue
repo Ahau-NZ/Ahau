@@ -799,7 +799,7 @@ export default {
     /* border: 2px solid red; */
     &>.header {
       position: absolute;
-      top: 10px;
+      top: 70px;
       left: 22px;
       /* right: 160px; */
       width: 30%;
