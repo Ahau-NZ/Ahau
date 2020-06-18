@@ -63,6 +63,8 @@ SecretStack({ appKey: 'LftKJZRB4nbBRnlJuFteWG9AP+gGboVEhibx016bR0s=' })
   .use(require('ssb-backlinks')) // needs: db
   .use(require('ssb-whakapapa'))
   .use(require('ssb-profile'))
+  .use(require('ssb-artefact'))
+  .use(require('ssb-story'))
   // Blobs
   .use(require('ssb-blobs'))
   .use(require('ssb-serve-blobs')) // needs: blobs
