@@ -133,10 +133,11 @@ export default {
       return this.$vuetify.breakpoint.xs
     },
     goWhakapapa () {
-      // if (this.route.from) {
-      //   return this.route.from.name === 'whakapapaShow' && this.route.name === 'profileShow'
-      // }
-      // return false
+      if (this.route.from) {
+        console.log(this.route.from)
+        return this.route.from.name === 'whakapapaShow' && this.route.name === 'profileShow'
+      }
+      return false
     },
     isgoBack () {
       if (this.mobile) {

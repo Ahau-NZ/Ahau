@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid class="body-width pa-0 niho-bg white">
+  <v-container light fluid class="body-width pa-0 niho-bg white">
     <v-overlay dark :value="showArtefact" z-index="6" opacity="1" color="rgba(30,30,30)">
     </v-overlay>
     <!-- Header and Title -->
