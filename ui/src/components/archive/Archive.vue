@@ -23,7 +23,7 @@
           <v-icon small class="black--text">mdi-magnify</v-icon>
         </v-btn>            -->
         <!-- <v-btn :medium="!mobile" :x-small="mobile" :class="mobile ? 'addBtnMob' : 'addBtn'" class="my-2" fab color="white" @click.stop="openContextMenu($event)"> -->
-        <v-btn :medium="!mobile" flat text :x-small="mobile" :class="mobile ? 'addBtnMob' : 'addBtn'" class="my-2" fab color="white" @click.prevent="setDialog('new-story')">
+        <v-btn :medium="!mobile" fab :x-small="mobile" :class="mobile ? 'addBtnMob' : 'addBtn'" class="my-2"  color="white" elevation="1" @click.prevent="setDialog('new-story')">
           <v-icon :large="!mobile" class="black--text">mdi-plus</v-icon>
         </v-btn>
       </div>
