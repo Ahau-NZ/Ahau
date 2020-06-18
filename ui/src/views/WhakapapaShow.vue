@@ -456,8 +456,7 @@ export default {
               preferredName
               legalName
               gender
-              bornAt
-              diedAt
+              aliveInterval
               birthOrder
               description
               address
@@ -476,8 +475,7 @@ export default {
                   preferredName
                   legalName
                   gender
-                  bornAt
-                  diedAt
+                  aliveInterval
                   birthOrder
                   description
                   address
@@ -501,8 +499,7 @@ export default {
                   preferredName
                   legalName
                   gender
-                  bornAt
-                  diedAt
+                  aliveInterval     
                   birthOrder
                   description
                   address
@@ -772,7 +769,7 @@ export default {
       this.$router.push({ name: 'whakapapaIndex', params: { id: this.whakapapaView.recps } })
     },
     getImage () {
-      return avatarHelper.defaultImage(this.bornAt, this.gender)
+      return avatarHelper.defaultImage(this.aliveInterval, this.gender)
     }
   },
   destroyed () {

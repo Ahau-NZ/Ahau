@@ -20,7 +20,7 @@
             class="pointer"
             :image="profile.avatarImage"
             :gender="profile.gender"
-            :bornAt="profile.bornAt"
+            :aliveInterval="profile.aliveInterval"
             size="13vh"
           />
           <h3 class="pointer">{{ profile.preferredName }}</h3>
@@ -58,7 +58,7 @@ export default {
           persons {
             id
             preferredName
-            bornAt
+            aliveInterval
             gender
             avatarImage {
               uri

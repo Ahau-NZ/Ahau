@@ -13,11 +13,11 @@ export default {
   defaultImage
 }
 
-function defaultImage (isView, bornAt, gender) {
+function defaultImage (isView, aliveInterval, gender) {
   if (isView) {
     return whakapapa
   }
-  var age = calculateAge(bornAt)
+  var age = calculateAge(aliveInterval)
 
   switch (gender) {
     case 'male':

@@ -39,7 +39,7 @@ export const RULES = {
       v => (v && v.length <= 50) || 'Name must be less than 50 characters'
     ]
   },
-  bornAt: [
+  aliveInterval: [
     // v => !!v || 'Date of birth is required'
   ],
   relationshipType: [

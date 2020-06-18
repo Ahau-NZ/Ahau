@@ -4,46 +4,18 @@ export default {
   title: 'NodeDatePicker'
 }
 
-export const bornAtEnabled = () => ({
+export const aliveIntervalEnabled = () => ({
   template:
-    '<NodeDatePicker required label="Date of Birth" :value="profile.bornAt" @date="profile.bornAt = $event" :makeDisabled="false" />',
+    '<NodeDatePicker label="Date of Birth" :value.sync="profile.aliveInterval" />',
   data: () => ({
     profile: {
-      bornAt: '2020-01-13'
+      aliveInterval: '2020-01-13/'
     }
   }),
-  components: { NodeDatePicker }
-})
-
-export const bornAtDisabled = () => ({
-  template:
-    '<NodeDatePicker required label="Date of Birth" :value="profile.bornAt" @date="profile.bornAt = $event" :makeDisabled="true" />',
-  data: () => ({
-    profile: {
-      bornAt: '2020-01-13'
+  watch: {
+    'profile.aliveInterval' (newValue) {
+      console.log(newValue)
     }
-  }),
-  components: { NodeDatePicker }
-})
-
-export const emptyEnabled = () => ({
-  template:
-    '<NodeDatePicker required label="Date of Birth" :value="profile.bornAt" @date="profile.bornAt = $event" :makeDisabled="false" />',
-  data: () => ({
-    profile: {
-      bornAt: null
-    }
-  }),
-  components: { NodeDatePicker }
-})
-
-export const emptyDisabled = () => ({
-  template:
-    '<NodeDatePicker required label="Date of Birth" :value="profile.bornAt" @date="profile.bornAt = $event" :makeDisabled="true" />',
-  data: () => ({
-    profile: {
-      bornAt: null
-    }
-  }),
+  },
   components: { NodeDatePicker }
 })
