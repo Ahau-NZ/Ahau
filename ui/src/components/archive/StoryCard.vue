@@ -143,7 +143,7 @@
               :image="story.creator.avatarImage"
               :alt="story.creator.preferredName"
               :gender="story.creator.gender"
-              :bornAt="story.creator.bornAt"
+              :aliveInterval="story.creator.aliveInterval"
               :deceased="story.creator.deceased"
               showLabel
               style="position:relative; bottom:8px;"

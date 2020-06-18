@@ -41,13 +41,16 @@ import pick from 'lodash.pick'
 import isEqual from 'lodash.isequal'
 import clone from 'lodash.clonedeep'
 
-function defaultData (profile) {
+function defaultData (input) {
+  var profile = clone(input)
+  var aliveInterval = profile.aliveInterval.split('/')
   return {
     id: profile.id,
     gender: profile.gender,
     legalName: profile.legalName,
-    bornAt: profile.bornAt,
-    diedAt: profile.diedAt,
+    aliveInterval: profile.aliveInterval,
+    bornAt: aliveInterval[0],
+    diedAt: aliveInterval[1],
     preferredName: profile.preferredName,
     avatarImage: profile.avatarImage,
     description: profile.description,

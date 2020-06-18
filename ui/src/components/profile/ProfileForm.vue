@@ -120,7 +120,7 @@
           </v-row>
 
           <!-- Editing: relationship type-->
-          <v-row v-if="withRelationships">
+          <v-row>
             <v-col cols="12" class="pa-1">
               <v-select
                 v-model="formData.relationshipType"
@@ -384,7 +384,7 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style scoped lang="scss">
   .custom.v-text-field > .v-input__control > .v-input__slot:before {
     border-style: none;
   }

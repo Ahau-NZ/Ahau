@@ -28,16 +28,6 @@
                   </v-row>
                   <v-row class="justify-center">
                     <v-btn
-                      :to="{ name: 'profileShow', params: { id: profile.id } }"
-                      color="white"
-                      text
-                      medium
-                      class="blue--text"
-                    >
-                      <v-icon small class="blue--text" left>mdi-account-circle</v-icon>Profile
-                    </v-btn>
-                    <v-btn
-                      v-if="!preview"
                       @click="toggleEdit"
                       color="white"
                       text
@@ -165,7 +155,7 @@
                     :show-labels="true"
                     @profile-click="openProfile($event)"
                   >
-                    <AddButton v-if="!preview" @click="toggleNew('parent')" />
+                    <AddButton @click="toggleNew('parent')" />
                   </AvatarGroup>
                 </v-col>
 
@@ -179,7 +169,7 @@
                     :show-labels="true"
                     @profile-click="openProfile($event)"
                   >
-                   <AddButton v-if="!preview && view.focus !== profile.id" @click="toggleNew('sibling')" />
+                    <AddButton v-if="view.focus !== profile.id" @click="toggleNew('sibling')" />
                   </AvatarGroup>
                 </v-col>
 
@@ -218,6 +208,7 @@
 
 <script>
 import calculateAge from '../../../lib/calculate-age'
+
 import { PERMITTED_PROFILE_ATTRS, PERMITTED_RELATIONSHIP_ATTRS } from '@/lib/profile-helpers'
 
 import isEqual from 'lodash.isequal'
@@ -225,18 +216,21 @@ import isEmpty from 'lodash.isempty'
 import pick from 'lodash.pick'
 import clone from 'lodash.clonedeep'
 
-import ProfileForm from '@/components/profile-form/ProfileForm.vue'
+import ProfileForm from '@/components/profile/ProfileForm.vue'
 
 import Avatar from '@/components/Avatar.vue'
 import AvatarGroup from '@/components/AvatarGroup.vue'
 import AddButton from '@/components/button/AddButton.vue'
 import DialogTitleBanner from '@/components/dialog/DialogTitleBanner.vue'
-import { mapActions } from 'vuex'
 
 function defaultData (input) {
   var profile = clone(input)
 
-  var aliveInterval = profile.aliveInterval.split('/')
+  var aliveInterval = ['', '']
+
+  if (profile.aliveInterval) {
+    aliveInterval = profile.aliveInterval.split('/')
+  }
 
   return {
     id: profile.id,
@@ -282,13 +276,11 @@ export default {
     sideMenu: { type: Boolean, default: false },
     relationshipLinks: { type: Array },
     show: { type: Boolean, required: true },
-    readonly: { type: Boolean, default: false },
-    preview: { type: Boolean, default: false }
+    readonly: { type: Boolean, default: false }
   },
 
   data () {
     return {
-      testmapimage: require('../../../assets/map-test.png'),
       isEditing: false,
       formData: {},
       showDescription: false,
@@ -350,9 +342,12 @@ export default {
       handler (newVal) {
         if (!newVal) return
         this.formData = defaultData(newVal)
-        var dates = this.formData.aliveInterval.split('/')
-        this.formData.bornAt = dates[0]
-        this.formData.diedAt = dates[1]
+
+        if (this.formData.aliveInterval) {
+          var dates = this.formData.aliveInterval.split('/')
+          this.formData.bornAt = dates[0]
+          this.formData.diedAt = dates[1]
+        }
       }
     },
     'formData.bornAt' (newVal) {
@@ -363,7 +358,6 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setProfileById']),
     age (born) {
       var age = calculateAge(born)
       return age
@@ -378,6 +372,7 @@ export default {
     },
     submit () {
       var output = Object.assign({}, pick(this.profileChanges, [...PERMITTED_PROFILE_ATTRS, ...PERMITTED_RELATIONSHIP_ATTRS]))
+
       if (!isEmpty(output)) {
         this.$emit('submit', output)
       }
@@ -386,8 +381,7 @@ export default {
       this.toggleEdit()
     },
     openProfile (profile) {
-      if (this.preview) this.setProfileById({ id: profile.id, type: 'setWhanau' })
-      else this.$emit('open-profile', profile.id)
+      this.$emit('open-profile', profile.id)
     },
     toggleNew (type) {
       this.$emit('new', type)
@@ -438,12 +432,11 @@ export default {
 .profile-info {
   /* font-family: 'Forum', cursive; */
   text-align: center;
-  color: black
 }
 
 .family-divider {
   width: 80%;
-  border: 0.5px solid rgba(0, 0, 0, 0.15);
+  border: 0.5px solid rgba(0, 0, 0, 0.12);
 }
 
 .up-enter-active {

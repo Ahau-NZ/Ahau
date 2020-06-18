@@ -1,7 +1,6 @@
 <template>
   <div>
-    <v-app-bar  v-if="mobile || enableMenu" :app="mobile && app" :class="classObject" flat
-      color="#303030" fixed>
+    <v-app-bar  v-if="mobile || enableMenu" :app="mobile && app" :class="classObject" flat color="#303030" fixed>
       <v-btn v-if="isgoBack" @click="goBack" icon dark>
         <v-icon>mdi-arrow-left</v-icon>
       </v-btn>
@@ -32,18 +31,18 @@
       <template v-if="!mobile">
         <!--  WIP links -->
         <v-btn text @click.stop="setDialog('coming-soon')" active-class="no-active" class="red--text text-uppercase ms-10">Tribes</v-btn>
-        <v-btn active-class="no-active" text @click.native="setComponent('archive')" :to="{ name: 'profileShow', params: { id: profile.id } }" class="white--text text-uppercase ms-10">Archive</v-btn>
+        <v-btn active-class="no-active" text @click.native="setComponent('archive')" :to="{ name: 'profileShow', params: { id: whoami.profile.id } }" class="white--text text-uppercase ms-10">Archive</v-btn>
 
         <v-btn active-class="no-active" text @click.native="resetWindow" to="/whakapapa" class="white--text text-uppercase ms-10">whakapapa</v-btn>
-        <router-link @click.native="goProfile()" :to="{ name: 'profileShow', params: { id: profile.id } }">
+        <router-link @click.native="goProfile()" :to="{ name: 'profileShow', params: { id: whoami.profile.id } }">
           <Avatar
             v-if="!mobile"
             size="50px"
             class="ms-10"
-            :image="profile.avatarImage"
-            :alt="profile.preferredName"
-            :gender="profile.gender"
-            :bornAt="profile.bornAt"
+            :image="whoami.profile.avatarImage"
+            :alt="whoami.profile.preferredName"
+            :gender="whoami.profile.gender"
+            :bornAt="whoami.profile.bornAt"
           />
         </router-link>
 
@@ -61,19 +60,19 @@
     <!-- The drawer shows only on mobile -->
     <v-navigation-drawer v-if="mobile && enableMenu" v-model="drawer" app dark right>
       <v-list nav class="text-uppercase">
-        <v-list-item active-class="no-active" @click.native="goProfile()" :to="{ name: 'profileShow', params: { id: profile.id } }" >
+        <v-list-item active-class="no-active" @click.native="goProfile()" :to="{ name: 'profileShow', params: { id: whoami.profile.id } }" >
           <Avatar
             size="80px"
-            :image="profile.avatarImage"
-            :alt="profile.preferredName"
-            :gender="profile.gender"
-            :bornAt="profile.bornAt"
+            :image="whoami.profile.avatarImage"
+            :alt="whoami.profile.preferredName"
+            :gender="whoami.profile.gender"
+            :bornAt="whoami.profile.bornAt"
           />
         </v-list-item>
         <v-list-item active-class="no-active" link to="/whakapapa" class="white--text">
           <v-list-item-title>whakapapa</v-list-item-title>
         </v-list-item>
-        <v-list-item active-class="no-active" link @click.native="goArchive()" :to="{ name: 'profileShow', params: { id: profile.id } }" >
+        <v-list-item active-class="no-active" link @click.native="goArchive()" :to="{ name: 'profileShow', params: { id: whoami.profile.id } }" >
           <v-list-item-title class="white--text" >Archive</v-list-item-title>
         </v-list-item>
         <v-list-item active-class="no-active" link @click.stop="setDialog('coming-soon')">
@@ -118,12 +117,7 @@ export default {
   data () {
     return {
       drawer: false,
-      dialog: false,
-      profile: {
-        id: null,
-        avatarImage: {},
-        gender: null
-      }
+      dialog: false
     }
   },
   computed: {
@@ -139,10 +133,10 @@ export default {
       return this.$vuetify.breakpoint.xs
     },
     goWhakapapa () {
-      if (this.route.from) {
-        return this.route.from.name === 'whakapapaShow' && this.route.name === 'profileShow'
-      }
-      return false
+      // if (this.route.from) {
+      //   return this.route.from.name === 'whakapapaShow' && this.route.name === 'profileShow'
+      // }
+      // return false
     },
     isgoBack () {
       if (this.mobile) {
@@ -151,21 +145,23 @@ export default {
       } return false
     }
   },
-  beforeMount () {
-    this.getCurrentIdentity()
-  },
   watch: {
-    whoami (newVal) {
-      this.profile.avatarImage = newVal.profile.avatarImage
-    },
     route (newVal) {
       if (this.storeDialog) this.setDialog(null)
     }
   },
+  mounted () {
+    if (process.env.VUE_APP_PLATFORM !== 'cordova') {
+      this.getCurrentIdentity()
+    }
+  },
   methods: {
-    ...mapActions(['setProfileById', 'setComponent', 'setShowStory', 'setDialog']),
+    ...mapActions(['setWhoami', 'setProfileById', 'setComponent', 'setShowStory', 'setDialog']),
     resetWindow () {
       window.scrollTo(0, 0)
+    },
+    async getCurrentIdentity () {
+      await this.setWhoami()
     },
     goProfile () {
       this.setComponent('profile')
@@ -178,29 +174,6 @@ export default {
     },
     karakiaWhakamutunga () {
       console.log(karakia)
-    },
-    async getCurrentIdentity () {
-      const result = await this.$apollo.query({
-        query: gql`
-          {
-            whoami {
-              profile {
-                id
-                preferredName
-                avatarImage {
-                  uri
-                }
-                gender
-              }
-            }
-          }
-        `,
-        fetchPolicy: 'no-cache'
-      })
-
-      if (result.errors) throw result.errors
-
-      this.profile = result.data.whoami.profile
     },
     toggleDrawer () {
       this.drawer = !this.drawer

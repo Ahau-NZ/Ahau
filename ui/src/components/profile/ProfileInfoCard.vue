@@ -48,15 +48,15 @@ export default {
       return 'divider-vertical'
     },
     age () {
-      if (this.profile.bornAt) {
-        var age = calculateAge(this.profile.bornAt)
+      if (this.profile.aliveInterval) {
+        var age = calculateAge(this.profile.aliveInterval)
         return String(age)
       }
       return ' '
     },
     dob () {
-      if (this.profile.bornAt) {
-        var formattedDate = formatDate(this.profile.bornAt)
+      if (this.profile.aliveInterval) {
+        var formattedDate = formatDate(this.profile.aliveInterval)
         return formattedDate
       }
       return ' '
