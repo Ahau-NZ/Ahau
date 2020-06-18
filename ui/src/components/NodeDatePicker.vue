@@ -47,6 +47,7 @@
   </div>
 </template>
 <script>
+import edtf from 'edtf'
 
 export default {
   name: 'NodeDatePicker',
@@ -87,49 +88,47 @@ export default {
     customClass () {
       return this.focused ? 'custom-fieldset-focused' : 'custom-fieldset-default'
     },
+    // generates the years available to the user
     years () {
+      // get the current year
       const max = new Date().getUTCFullYear()
+
+      // make sure the years only up to the minimum allowed year (given as a prop)
       const min = this.minDate.year
       var maxYears = (max - min) + 1
+
+      // array to return
       var years = [
       ]
 
+      // generates an array from 0 to max years
       Array(maxYears).fill('').forEach((v, i) => {
-        var newYear
-
+        // calculate the value of the current index e.g. (2020 - 0) = 2020, (2020 - 1) = 2019
         var val = (max - i)
 
+        // if the current value is the current year
         if (val === max) {
+          // only add that year and move on
           years.push({ value: val.toString(), text: val.toString() })
           return
         }
 
-        switch (true) {
-          case val % 1000 === 0:
-            newYear = (val / 1000).toString() + 'XXX'
-            years.push({ value: newYear, text: newYear })
+        var unspecified = this.unspecified(val)
+        var normalized = this.normalize(val)
 
-            break
-          case val % 100 === 0:
-            newYear = (val / 100).toString() + 'XX'
-            years.push({ value: newYear, text: newYear })
-            break
-          case val % 10 === 0:
-            newYear = (val / 10).toString() + 'X'
-            years.push({ value: newYear, text: newYear })
-            break
-          default:
-            years.push({ value: val.toString(), text: val.toString() })
-            break
+        if (unspecified) {
+          years.push({ value: unspecified, text: unspecified })
         }
 
-        years.push({ value: val.toString(), text: val.toString() })
+        years.push({ value: normalized, text: normalized })
       })
 
+      // if there were more than one date, we can use a fully unspecified date too
       if (years.length > 1) years.push({ value: 'XXXX', text: 'XXXX' })
 
       return years
     },
+    // generates an array of months
     months () {
       return [
         { text: 'XX', value: 'XX' },
@@ -147,20 +146,31 @@ export default {
         { text: '12', value: '12' }
       ]
     },
+    // generates an array of days
     days () {
+      // the array to return will always have the unspecified option
       var days = [
         { value: 'XX', text: 'XX' }
       ]
+
+      // generates a array of 31 indexes
       Array(32)
         .fill('')
         .forEach((v, i) => {
+          // turns the current index into a double digit string e.g. 1 -> '01'
           var indexString = this.intToDDString(i)
+
+          // make sure we dont add 0
           if (i === 0) return
 
+          // if the number is not a multiple of 10
           if (i % 10 !== 0) {
+            // it doesnt need an unspecified value
             days.push({ value: indexString, text: indexString })
             return
           }
+
+          // otherwise, it does
           var newDay = (i / 10).toString() + 'X'
           days.push({ value: indexString, text: indexString })
           days.push({ value: newDay, text: newDay })
@@ -181,37 +191,60 @@ export default {
     }
   },
   methods: {
-    getOptions (value, multiplier, edtf) {
-      const now = new Date().getUTCFullYear()
-      var numb = value * multiplier
-      var generatedValues = []
-      if (edtf) {
-        generatedValues = [
-          { text: `${numb}'s`, value: `${value}${edtf}` },
-          ...Array((now - numb) + 1)
-            .fill('')
-            .map((v, i) => {
-              return {
-                value: (numb + i).toString(),
-                text: (numb + i).toString()
-              }
-            })
-        ]
-      } else {
-        generatedValues = [
-          { text: numb.toString(), value: numb.toString() }
-        ]
-      }
-
-      return [
-        ...generatedValues
-      ]
-    },
+    // turns an integer into a double digit string
     intToDDString (int) {
       if (int < 10) {
         return ('0' + int).toString()
       }
       return int.toString()
+    },
+    // turns an integer into a 4 digit string e.g. 1 => 0001
+    fill (n) {
+      n = n.toString()
+      if (n.length === 4) return n
+      if (n.length === 3) return '0' + n
+      if (n.length === 2) return '00' + n
+      if (n.length === 1) return '000' + n
+      if (n.length === 0) return ''
+    },
+    normalize (n) {
+      var sign = ''
+      if (n < 0) {
+        n *= -1
+        sign = '-'
+      }
+      switch (true) {
+        case n === 0:
+          return '0000'
+        case n < 10:
+          return sign + this.fill(n)
+        case n < 100:
+          return sign + this.fill(n)
+        case n < 1000:
+          return sign + this.fill(n)
+        default:
+          return sign + n
+      }
+    },
+    unspecified (n) {
+      var sign = ''
+      if (n < 0) {
+        n *= -1
+        sign = '-'
+      }
+
+      switch (true) {
+        case n === 0:
+          return 'XXXX'
+        case n % 1000 === 0:
+          return sign + (n / 1000 + 'XXX')
+        case n % 100 === 0:
+          return sign + this.fill(n / 100 + 'XX')
+        case n % 10 === 0:
+          return sign + this.fill(n / 10 + 'X')
+        default:
+          return null
+      }
     }
   },
   watch: {
@@ -238,13 +271,22 @@ export default {
       immediate: true,
       handler (value) {
         if (value) {
-          if (typeof value === 'object') {
-            value = value.edtf
+          if (typeof value !== 'object') {
+            value = edtf(value)
           }
-          var date = value.split('-')
-          this.date.year = date[0]
-          this.date.month = date[1]
-          this.date.day = date[2]
+
+          var str = value.edtf
+          var date = str.split('-')
+
+          if (str.charAt(0) === '-') {
+            this.date.year = '-' + date[1]
+            this.date.month = date[2]
+            this.date.day = date[3]
+          } else {
+            this.date.year = date[0]
+            this.date.month = date[1]
+            this.date.day = date[2]
+          }
         } else {
           this.date.year = ''
           this.date.month = ''
@@ -257,13 +299,22 @@ export default {
       immediate: true,
       handler (value) {
         if (value) {
-          if (typeof value === 'object') {
-            value = value.edtf
+          if (typeof value !== 'object') {
+            value = edtf(value)
           }
-          var date = value.split('-')
-          this.minDate.year = parseInt(date[0]) || 1000
-          this.minDate.month = parseInt(date[1]) || 1
-          this.minDate.day = parseInt(date[2]) || 1
+
+          var str = value.edtf
+          var date = str.split('-')
+
+          if (str.charAt(0) === '-') {
+            this.minDate.year = '-' + date[1]
+            this.minDate.month = date[2]
+            this.minDate.day = date[3]
+          } else {
+            this.minDate.year = date[0]
+            this.minDate.month = date[1]
+            this.minDate.day = date[2]
+          }
         } else {
           this.minDate.year = ''
           this.minDate.month = ''

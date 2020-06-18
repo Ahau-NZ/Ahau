@@ -196,7 +196,6 @@ export default {
     submission () {
       let submission = {}
       Object.entries(this.formData).map(([key, value]) => {
-        console.log(key, this.formData[key])
         if (!isEmpty(this.formData[key])) {
           switch (key) {
             case 'birthOrder':
@@ -319,7 +318,6 @@ export default {
     },
     submit () {
       var submission = pick(this.submission, [...PERMITTED_PROFILE_ATTRS, ...PERMITTED_RELATIONSHIP_ATTRS])
-      console.log(submission)
       this.$emit('create', submission)
       // this.hasSelection
       //   ? this.$emit('create', pick(this.formData, ['id', 'relationshipType', 'legallyAdopted']))
