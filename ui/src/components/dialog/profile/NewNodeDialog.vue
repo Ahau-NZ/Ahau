@@ -3,7 +3,7 @@
 
     <!-- Content Slot -->
     <template v-if="!hideDetails" v-slot:content>
-      <v-col class="py-0">
+      <v-col class="py-0 px-0">
 
         <ProfileForm :profile.sync="formData" :readonly="hasSelection" :editRelationship="hasSelection" :withRelationships="withRelationships">
 

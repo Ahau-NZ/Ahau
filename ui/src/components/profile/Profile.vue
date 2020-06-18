@@ -144,7 +144,7 @@ export default {
   }
 
   .br {
-  border-right: 0.5px solid rgba(0,0,0,0.12);
+  border-right: 0.5px solid rgba(0,0,0,0.3);
   }
 
 </style>

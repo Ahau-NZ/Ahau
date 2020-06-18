@@ -1,6 +1,6 @@
 <template>
-  <v-form ref="form"  v-model="form.valid" lazy-validation>
-    <v-row class="px-2">
+  <v-form ref="form" v-model="form.valid" lazy-validation>
+    <v-row class="px-4">
       <v-col cols="12" sm="5" order-sm="2">
         <v-row class="pa-0">
           <v-col cols="12" class="pa-0">

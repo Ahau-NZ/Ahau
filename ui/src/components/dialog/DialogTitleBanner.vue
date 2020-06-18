@@ -4,7 +4,7 @@
     <!-- MOBILE top banner -->
     <v-row v-if="mobile" class="mobile-banner">
       <!-- Close Button -->
-      <v-col cols="1" class="banner-buttons">
+      <v-col cols="1" class="banner-buttons pl-5">
           <v-icon class="close-button" color="white" @click="close">mdi-arrow-left</v-icon>
       </v-col>
       <v-col class="d-flex align-center justify-end" style="text-align: right;">
@@ -37,7 +37,8 @@ export default {
   props: {
     title: { type: String, default: 'Create a new person' },
     mobile: { type: Boolean, default: false },
-    isEditing: { type: Boolean, default: false }
+    isEditing: { type: Boolean, default: false },
+    width: { type: String, default: '100%' }
   },
   computed: {
     // split the Title into two parts (so maori can be styled red, and english styled in white)
@@ -78,13 +79,12 @@ export default {
 <style scoped lang="scss">
 
   .mobile-banner {
-    width: 100%;
-    padding: 10px 20px;
+    width: 100vw;
+    position: relative;
+    right:5px;
+    bottom:5px;
+    padding: 5px 5px;
     margin: 0px;
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
 
     background: #292929 url(../../assets/bg-tohu.png);
     background-size: 80%;
@@ -92,14 +92,9 @@ export default {
     background-position-y: 5px;
     background-repeat: no-repeat;
 
-    /* resize banner outside container */
-    transform: scale(1.15);
-    margin-top: -15px;
-    margin-bottom: 10px;
-
     h1.banner-title {
       color: white;
-      font-size: 0.8em;
+      font-size: 0.9em;
       text-transform: uppercase;
       font-weight: 400;
       letter-spacing: 3.5px;
@@ -107,19 +102,16 @@ export default {
 
   }
   .desktop-banner {
+    position: relative;;
     width: 100%;
     padding: 10px 20px;
     margin: 0px;
+
     background: #292929 url(../../assets/bg-tohu.png);
     background-size: 50%;
     background-position-x: 80%;
     background-position-y: -40px;
     background-repeat: no-repeat;
-
-    /* resize banner outside container */
-    transform: scale(1.05);
-    margin-top: -15px;
-    margin-bottom: 10px;
 
     h1.banner-title {
       color: white;

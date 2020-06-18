@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-app-bar  v-if="mobile || enableMenu" :app="mobile && app" :class="classObject" :flat="!mobile"
+    <v-app-bar  v-if="mobile || enableMenu" :app="mobile && app" :class="classObject" flat
       color="#303030" fixed>
       <v-btn v-if="isgoBack" @click="goBack" icon dark>
         <v-icon>mdi-arrow-left</v-icon>
@@ -121,7 +121,8 @@ export default {
       dialog: false,
       profile: {
         id: null,
-        avatarImage: {}
+        avatarImage: {},
+        gender: null
       }
     }
   },
@@ -189,6 +190,7 @@ export default {
                 avatarImage {
                   uri
                 }
+                gender
               }
             }
           }

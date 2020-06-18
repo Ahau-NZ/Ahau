@@ -76,20 +76,32 @@
       @submit="console.log('TODO: add collection to profile')"
     />
     <NewRecordDialog
-      :show="isActive('new-record')"
-      :title="'Create a new Record'"
+      v-if="isActive('new-story')"
+      :show="isActive('new-story')"
+      :title="'Add new Record'"
       @close="close"
-      @submit="console.log('TODO: add record to profile')"
+      @submit="addStory($event)"
     />
-    <ViewRecordDialog
-      :show="isActive('view-record')"
-      :title="'View Story'"
+    <NewRecordDialog
+      v-if="isActive('edit-story')"
+      :show="isActive('edit-story')"
+      :title="`Edit ${currentStory.title}`"
+      editing
+      :story="currentStory"
       @close="close"
+      @submit="editStory($event)"
+    />
+    <DeleteRecordDialog
+      v-if="isActive('delete-story')"
+      :show="isActive('delete-story')"
+      @close="close"
+      @submit="deleteStory($event)"
     />
     <ComingSoonDialog
       :show="isActive('coming-soon')"
       @close="close"
     />
+
   </div>
 </template>
 
@@ -103,9 +115,9 @@ import WhakapapaEditDialog from '@/components/dialog/whakapapa/WhakapapaEditDial
 import WhakapapaDeleteDialog from '@/components/dialog/whakapapa/WhakapapaDeleteDialog.vue'
 import WhakapapaShowHelper from '@/components/dialog/whakapapa/WhakapapaShowHelper.vue'
 import WhakapapaTableHelper from '@/components/dialog/whakapapa/WhakapapaTableHelper.vue'
-import NewCollectionDialog from '@/components/dialog/NewCollectionDialog.vue'
-import NewRecordDialog from '@/components/dialog/NewRecordDialog.vue'
-import ViewRecordDialog from '@/components/dialog/archive/ViewRecordDialog.vue'
+import NewCollectionDialog from '@/components/dialog/archive/NewCollectionDialog.vue'
+import NewRecordDialog from '@/components/dialog/archive/NewRecordDialog.vue'
+import DeleteRecordDialog from '@/components/dialog/archive/DeleteRecordDialog.vue'
 import ComingSoonDialog from '@/components/dialog/ComingSoonDialog.vue'
 
 import gql from 'graphql-tag'
@@ -122,6 +134,7 @@ import tree from '@/lib/tree-helpers'
 import * as d3 from 'd3'
 import { mapGetters, mapActions } from 'vuex'
 
+import { story1 } from '@/mocks/stories'
 export default {
   name: 'DialogHandler',
   components: {
@@ -136,7 +149,7 @@ export default {
     WhakapapaTableHelper,
     NewCollectionDialog,
     NewRecordDialog,
-    ViewRecordDialog,
+    DeleteRecordDialog,
     ComingSoonDialog
   },
   props: {
@@ -157,7 +170,7 @@ export default {
       required: false,
       default: null,
       validator: (val) => [
-        'new-node', 'view-edit-node', 'delete-node', 'new-collection', 'new-record', 'edit-node', 'view-record',
+        'new-node', 'view-edit-node', 'delete-node', 'new-collection', 'new-story', 'edit-story', 'edit-node', 'delete-story',
         'whakapapa-view', 'whakapapa-edit', 'whakapapa-delete', 'whakapapa-helper', 'whakapapa-table-helper'
       ].includes(val)
     },
@@ -176,11 +189,12 @@ export default {
   data () {
     return {
       suggestions: [],
-      source: null
+      source: null,
+      sampleStory: story1
     }
   },
   computed: {
-    ...mapGetters(['nestedWhakapapa', 'selectedProfile', 'whoami', 'storeDialog', 'previewProfile', 'currentProfile']),
+    ...mapGetters(['nestedWhakapapa', 'selectedProfile', 'whoami', 'storeDialog', 'previewProfile', 'currentProfile', 'currentStory']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -226,6 +240,15 @@ export default {
         return Boolean(findSuccessor(profile))
       }
       return true
+    },
+    addStory ($event) {
+      console.error('Add story not implemented yet', $event)
+    },
+    editStory ($event) {
+      console.error('Edit story not implemented yet', $event)
+    },
+    deleteStory ($event) {
+      console.error('Delete story not implemented yet', $event)
     },
     async addPerson ($event) {
       try {
@@ -471,7 +494,6 @@ export default {
       }
     },
     async updateProfile ($event) {
-      console.log('updatePerson', $event)
       Object.entries($event).map(([key, value]) => {
         if (value === '') {
           delete $event[key]

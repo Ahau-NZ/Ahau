@@ -7,17 +7,17 @@
 
       <div v-if="profile.parents && profile.parents.length" :class="mobile ? 'bb' : 'br'">
         <AvatarGroup v-if="profile.parents" :profiles="profile.parents" group-title="Parents" size="50px" :show-labels="true"
-          :addButtonSlot="false" @profile-click="openProfile($event)">
+          @profile-click="openProfile($event)">
         </AvatarGroup>
       </div>
       <div v-if="profile.siblings && profile.siblings.length" :class="mobile ? 'bb' : 'br'">
         <AvatarGroup v-if="profile.siblings" :profiles="profile.siblings" group-title="Siblings" size="50px" :show-labels="true"
-          :addButtonSlot="false" @profile-click="openProfile($event)">
+          @profile-click="openProfile($event)">
         </AvatarGroup>
       </div>
       <div v-if="profile.children && profile.children.length">
         <AvatarGroup v-if="profile.children" :profiles="profile.children" group-title="Children" size="50px" :show-labels="true"
-          :addButtonSlot="false" @profile-click="openProfile($event)">
+          @profile-click="openProfile($event)">
         </AvatarGroup>
       </div>
     </v-row>
@@ -76,20 +76,20 @@ export default {
 
 <style>
 .rounded-border {
-  border: 0.5px solid rgba(0,0,0,0.12);
+  border: 0.5px solid rgba(0,0,0,0.3);
   border-radius: 10px;
   background-color: white;
 }
 
 .br {
-  border-right: 0.5px solid rgba(0,0,0,0.12);
+  border-right: 0.5px solid rgba(0,0,0,0.3);
 }
 
 .bb {
-  border-bottom: 0.5px solid rgba(0,0,0,0.12);
+  border-bottom: 0.5px solid rgba(0,0,0,0.3);
 }
 .bt {
-  border-top: 0.5px solid rgba(0,0,0,0.12);
+  border-top: 0.5px solid rgba(0,0,0,0.3);
 }
 
 </style>

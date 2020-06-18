@@ -128,9 +128,9 @@ export const personComplete = {
       },
       children: [
         {
-          id: '%S',
+          id: '%J',
           gender: 'female',
-          legalName: 'Willow Smith',
+          legalName: 'Willow Smith JNR',
           preferredName: 'Willow ',
           avatarImage: {
             uri: 'http://www.gstatic.com/tv/thumb/persons/512549/512549_v9_bb.jpg'
@@ -163,7 +163,7 @@ export const personComplete = {
   ],
   siblings: [
     {
-      id: '%F',
+      id: '%G',
       gender: 'female',
       legalName: 'Pam Smith',
       preferredName: 'Pam',
@@ -173,7 +173,7 @@ export const personComplete = {
       }
     },
     {
-      id: '%G',
+      id: '%H',
       gender: 'female',
       legalName: 'Ellen Smith',
       preferredName: 'Ellen',
@@ -183,7 +183,7 @@ export const personComplete = {
       }
     },
     {
-      id: '%H',
+      id: '%I',
       gender: 'male',
       legalName: 'Harry Smith',
       preferredName: 'Harry',

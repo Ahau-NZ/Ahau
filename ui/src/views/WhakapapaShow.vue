@@ -360,7 +360,7 @@ export default {
       this.currentFocus = parent
     },
     isVisibleProfile (descendant) {
-      return this.whakapapaView.ignoredProfiles.indexOf(descendant.profile.id) === -1
+      if (this.whakapapaView.ignoredProfiles) { return this.whakapapaView.ignoredProfiles.indexOf(descendant.profile.id) === -1 }
     },
     canDelete (profile) {
       if (!profile) return false
@@ -799,7 +799,7 @@ export default {
     /* border: 2px solid red; */
     &>.header {
       position: absolute;
-      top: 10px;
+      top: 70px;
       left: 22px;
       /* right: 160px; */
       width: 30%;

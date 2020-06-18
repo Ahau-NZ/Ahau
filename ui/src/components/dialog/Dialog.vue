@@ -13,19 +13,9 @@
         :fullscreen="mobile"
       >
         <div>
-          <!-- Mobile App Bar -->
-          <!-- Removed Appbar. Using DialogTitleBanner as header with back button -->
-          <!-- <Appbar
-            v-if="enableBar && mobile"
-            :enableMenu="enableMenu"
-            app
-            :goBack="goBack"
-            class="pb-12"
-          /> -->
-
           <!-- Dialog Card -->
-          <v-card :min-height="mobile ? height : 'auto'">
-            <v-container width="100%" class="pa-5 pb-2" :style="`background: ${background};`">
+          <v-card :min-height="mobile ? height : 'auto'" style="overflow-x:hidden !important">
+            <v-container width="100%" class="pa-1 pb-2" :style="`background: ${background};`">
 
               <!--=== TOP OF DIALOG CARD ===-->
               <DialogTitleBanner :title="title" :mobile="mobile" @close="close"  :isEditing="isEditing"/>

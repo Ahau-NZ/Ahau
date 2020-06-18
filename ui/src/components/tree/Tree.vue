@@ -314,7 +314,6 @@ export default {
     },
 
     async collapse (node) {
-      this.setLoading(true)
       const profile = node.data
       const { children, _children = [] } = profile
 

@@ -25,6 +25,7 @@
     "lodash.pick": "^4.4.0",
     "lodash.set": "^4.3.2",
     "lodash.uniqby": "^4.7.0",
+    "vue-gallery": "^2.0.1",
     "vuetify-media-player": "^0.8.1",
     "vuex-router-sync": "^5.0.0"
   },

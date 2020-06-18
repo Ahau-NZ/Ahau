@@ -1,5 +1,5 @@
 <template>
-  <div class="side-menu" style="border-left: 0.5px solid rgba(0,0,0,0.1);" :style="preview ? 'position:fixed':''">
+  <div class="side-menu" style="border-left: 0.5px solid rgba(0,0,0,0.1);" :style="preview ? 'position:fixed; z-index:2;':''">
 
     <!--===== MOBILE VERSION of side menu is a Dialog =====-->
     <Dialog v-if="mobile" :title="formData.preferredName" :show="show" @close="close" width="720px" :goBack="close" :enableBar="false" :isEditing="isEditing">
@@ -15,7 +15,7 @@
           :bornAt="formData.bornAt"
           :deceased="formData.deceased"
           :isEditing="isEditing"
-          style="margin-top: 20px;"
+          style="margin-top: 40px;"
           @updateAvatar="formData.avatarImage = $event"
         />
       </template>
@@ -45,7 +45,7 @@
         </v-row>
 
         <!-- Mobile: Person description -->
-        <v-row v-if="formData.description" class="mb-2">
+        <v-row v-if="formData.description && !isEditing" class="mb-2 px-4">
             <v-col cols="12">
                 <!-- Location -->
                 <v-row>
@@ -62,10 +62,10 @@
       <!-- Mobile: Slot Content -->
       <template v-slot:content>
 
-        <div v-if="!isEditing">
+        <div v-if="!isEditing" class="px-1">
 
-          <v-row style="border: 0.5px solid rgba(0,0,0,0.12); border-radius: 10px;" class="flex-column ma-0" >
-              <v-row style="border-bottom: 0.5px solid rgba(0,0,0,0.12);" class="ma-0">
+          <v-row style="border: 0.5px solid rgba(0,0,0,0.3); border-radius: 10px;" class="flex-column ma-0" >
+              <v-row style="border-bottom: 0.5px solid rgba(0,0,0,0.3);" class="ma-0">
                 <v-col cols="6">
                   <!-- Mobile: Legal Name -->
                   <v-row>
@@ -127,6 +127,9 @@
                     :show-labels="true"
                     @profile-click="openProfile($event)"
                   >
+                    <!-- <template v-slot:action>
+                      <AddButton @click="toggleNew('parent')" style="justify-content:start; padding-bottom:30px" />
+                    </template> -->
                     <AddButton v-if="!preview" @click="toggleNew('parent')" />
                   </AvatarGroup>
                 </v-col>
@@ -181,7 +184,7 @@
 
         <!-- Start of Mobile editing -->
         <v-form v-else ref="form">
-            <v-row>
+            <v-row class="px-4">
                 <v-row class="pa-2">
                   <!-- Names -->
                   <v-col class="pt-4">
@@ -545,8 +548,8 @@
         <v-row>
 
           <v-col v-if="!isEditing">
-            <v-row style="border: 0.5px solid rgba(0,0,0,0.12); border-radius: 10px;" class="flex-column ma-0" >
-                <v-row style="border-bottom: 0.5px solid rgba(0,0,0,0.12);" class="ma-0">
+            <v-row style="border: 0.5px solid rgba(0,0,0,0.3); border-radius: 10px;" class="flex-column ma-0" >
+                <v-row style="border-bottom: 0.5px solid rgba(0,0,0,0.3);" class="ma-0">
                   <v-col cols="6">
                     <!-- Desktop: Legal Name -->
                     <v-row>
@@ -1240,7 +1243,7 @@ export default {
 
 .family-divider {
   width: 80%;
-  border: 0.5px solid rgba(0, 0, 0, 0.12);
+  border: 0.5px solid rgba(0, 0, 0, 0.15);
 }
 
 .text-field {

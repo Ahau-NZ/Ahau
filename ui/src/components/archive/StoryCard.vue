@@ -1,5 +1,5 @@
 <template>
-  <v-card @click="showStory()" :class="customClass" :flat="fullStory" :ripple="false" class="mx-auto" :light="!showArtefact" width="100%">
+  <v-card @click.prevent="showStory()" :class="customClass" flat :ripple="false" class="mx-auto" :light="!showArtefact" width="100%" :elevation="!mobile && !showArtefact && fullStory ? '24':''">
     <!-- RECORD CONTRUBUTORS-STORY PREVIEW -->
     <v-list-item class="px-0" style="min-height:0; height:10px">
       <v-list-item-icon v-if="!fullStory" class="pt-0 mt-0" style="position:absolute; top:5px; right:1px; margin-right:0px">
@@ -7,6 +7,13 @@
         <AvatarGroup :profiles="story.contributors" customClass="ma-0 pa-0" style="position:relative; bottom:10px;" size="28px" spacing="pr-1"/>
       </v-list-item-icon>
     </v-list-item>
+    <!-- CLOSE BUTTON -->
+    <v-btn v-if="fullStory && !showArtefact && !mobile" @click="close"
+      text large fab
+      class="secondary--text recordCloseButton"
+    >
+      <v-icon color="secondary">mdi-close</v-icon>
+    </v-btn>
     <!-- RECORD HEADER -->
     <v-list-item>
       <v-list-item-content class="pb-0">
@@ -18,25 +25,49 @@
         <v-list-item-title v-else class="headline mb-1 wrap-text">{{ artefact.title }}</v-list-item-title>
       </v-list-item-content>
     </v-list-item>
+
     <!-- ARTEFACT CAROUSEL -->
     <v-list-item v-if="story.artefacts && story.artefacts.length" class="px-0">
-      <v-list-item-content :style="!mobile && !showArtefact && story.artefacts.length > 1 ? 'margin-bottom:-80px':''">
-        <v-carousel v-model="model" hide-delimiters :show-arrows="!mobile && fullStory" :show-arrows-on-hover="!mobile" :height="showArtefact ? 'auto' : mobile ? '300px' : '500px'">
-          <v-carousel-item v-for="(artefact,i) in story.artefacts" :key="artefact.id">
+      <v-list-item-content>
+        <v-carousel
+          v-model="model"
+          hide-delimiters
+          :show-arrows="!mobile && fullStory && story.artefacts.length > 1" :show-arrows-on-hover="!mobile" :height="showArtefact ? 'auto' : mobile ? '300px' : '500px'" style="background-color:#1E1E1E">
+          <v-carousel-item v-for="(artefact,i) in story.artefacts" :key="`story-card-artefact-${i}`">
             <Artefact :model="model" :index="i" @showArtefact="toggleShowArtefact($event)" :artefact="artefact" />
           </v-carousel-item>
         </v-carousel>
         <!-- ARTEFACT GROUP  -->
-        <ArtefactGroup
+        <v-slide-group
           v-if="!showArtefact && story.artefacts.length > 1"
-          :artefacts="story.artefacts"
-          :model="model"
-          @updateModel="updateModel($event)"
-        />
+          v-model="model"
+          class="pa-0 background"
+          dark
+          center-active
+          style="width:100vw;margin-top:-2px"
+        >
+          <v-slide-item
+            v-for="(artefact, i) in story.artefacts"
+            :key="`a-s-g-${i}`"
+            v-slot:default="{ active, toggle }"
+            transition="fade-transition"
+            style="width:100px;height:100px; background-color:rgba(30,30,30)"
+            class="pa-1"
+          >
+            <v-scale-transition>
+              <ArtefactCarouselItem :artefact="artefact"
+                :selected="active"
+                @click.capture="toggle"
+              />
+            </v-scale-transition>
+          </v-slide-item>
+        </v-slide-group>
+
       </v-list-item-content>
     </v-list-item>
+
+    <!-- STORY AND ARTEFACT INFORMATION FIELDS -->
     <v-list-item :disabled="disableClick" :ripple="false" @click.stop="showText()">
-       <!-- STORY AND ARTEFACT INFORMATION FIELDS -->
       <v-list-item-content>
         <v-list-item-subtitle v-if="fullStory || showArtefact" class="pb-1" style="color:grey"> Description </v-list-item-subtitle>
         <p v-if="!showArtefact" ref="text" :class="turncateText ? 'description' : ''">
@@ -68,29 +99,6 @@
     </v-row>
     <div v-if="fullStory && !showArtefact">
       <v-row class="px-4">
-        <v-col class="pt-0 pr-1" v-if="story.relatedRecords.length" :cols="mobile ? '12':''">
-          <v-list-item-subtitle class="pb-1" style="color:grey"> Related records </v-list-item-subtitle>
-          <ChipGroup :chips="story.relatedRecords" type="story"/>
-        </v-col>
-        <v-col class="pt-0 pb-8 pr-1" v-if="story.collections.length" :cols="mobile ? '12' : ''">
-          <v-list-item-subtitle class="pb-1" style="color:grey"> Collections </v-list-item-subtitle>
-          <ChipGroup :chips="story.collections" />
-        </v-col>
-        <v-col class="pt-0 pb-8 " v-if="story.categories.length" :cols="mobile ? '12' : ''">
-          <v-list-item-subtitle  class="pb-1" style="color:grey"> Categories </v-list-item-subtitle>
-          <v-chip-group column v-if="story.categories.length > 0">
-            <v-chip v-for="(category, i) in story.categories" :key="i"
-              pill
-              outlined
-              :color="colour(i)"
-              width="30px"
-            >
-              {{ category.title }}
-            </v-chip>
-          </v-chip-group>
-        </v-col>
-      </v-row>
-      <v-row class="px-4">
         <div class="py-0 px-0">
           <v-list-item-subtitle style="color:grey" class="ml-5 pb-1"> Access </v-list-item-subtitle>
           <AvatarGroup
@@ -112,11 +120,12 @@
             @profile-click="openProfile($event)"
           />
         </div>
-        <v-col class="pt-0" style="min-width:188px; max-width:188px">
+        <v-col :class="mobile ? 'pt-0': 'pt-0 pl-12'" style="min-width:188px; max-width:188px">
           <v-list-item-subtitle class="pb-1" style="color:grey">Submission date </v-list-item-subtitle>
             <p class="mt-3">{{story.submissionDate}}</p>
         </v-col>
-        <div class="py-0 px-0" v-if="story.protocols.length" :cols="mobile ? '6' : '4'">
+        <!-- TODO Protocols -->
+        <!-- <div class="py-0 px-0" v-if="story.protocols.length" :cols="mobile ? '6' : '4'">
           <v-list-item-subtitle style="color:grey" class="ml-5 pb-1"> Protocol </v-list-item-subtitle>
           <AvatarGroup
             :profiles="story.protocols"
@@ -126,8 +135,8 @@
             style="position:relative; bottom:15px;"
             @profile-click="openProfile($event)"
           />
-        </div>
-        <div class="pt-0" v-if="story.creator" :cols="mobile ? '3' : '3'">
+        </div> -->
+        <div class="py-0 px-0" v-if="story.creator.length" cols="3">
           <v-list-item-subtitle style="color:grey" class="ml-5 pb-1"> Creator </v-list-item-subtitle>
             <Avatar
               size="50px"
@@ -138,10 +147,35 @@
               :deceased="story.creator.deceased"
               showLabel
               style="position:relative; bottom:8px;"
-              class="ml-5"
+              class="ml-5 pt-4"
               @profile-click="openProfile($event)"
             />
         </div>
+      </v-row>
+      <v-row class="px-4">
+        <v-col class="pt-0 pr-1" v-if="story.relatedRecords.length" :cols="mobile ? '12':'12'">
+          <v-list-item-subtitle class="pb-1" style="color:grey"> Related records </v-list-item-subtitle>
+          <ChipGroup :chips="story.relatedRecords" type="story"/>
+        </v-col>
+      <!-- TODO: Collections -->
+        <!-- <v-col class="pt-0 pb-8 pr-1" v-if="story.collections.length" :cols="mobile ? '12' : ''">
+          <v-list-item-subtitle class="pb-1" style="color:grey"> Collections </v-list-item-subtitle>
+          <ChipGroup :chips="story.collections" />
+        </v-col> -->
+        <!-- TODO: Categories -->
+        <!-- <v-col class="pt-0 pb-8 " v-if="story.categories.length" :cols="mobile ? '12' : ''">
+          <v-list-item-subtitle  class="pb-1" style="color:grey"> Categories </v-list-item-subtitle>
+          <v-chip-group column v-if="story.categories.length > 0">
+            <v-chip v-for="(category, i) in story.categories" :key="i"
+              pill
+              outlined
+              :color="colour(i)"
+              width="30px"
+            >
+              {{ category.title }}
+            </v-chip>
+          </v-chip-group>
+        </v-col> -->
       </v-row>
       <v-row class="px-4 mb-12">
         <v-col v-if="story.contributionNotes" cols="12" class="pb-6">
@@ -205,14 +239,22 @@
     <v-card-actions class="justify-end">
       <!-- UPDATE RECORD BUTTON -->
       <v-list-item-icon v-if="fullStory && !showArtefact" class="pt-0 mt-0">
-        <EditStoryButton @click="toggleStoryEdit()"/>
+        <EditStoryButton @click="toggleDialog('edit-story')"/>
       </v-list-item-icon>
-      <v-list-item-icon v-if="showArtefact" class="pt-0 mt-0">
-        <EditArtefactButton @click="toggleArtefactEdit()"/>
+      <!-- NOT SURE IF WE NEED THIS -->
+      <v-list-item-icon v-if="showArtefact" class="pt-0 mt-12">
+        <EditArtefactButton @click="toggleDialog('edit-story')"/>
       </v-list-item-icon>
-      <v-list-item-icon v-if="showArtefact" class="pt-0 mt-0" style="position:absolute; top:-58px; right:3px; margin-right:0px">
-        <v-btn dark text @click="setShowArtefact()">
+      <v-list-item-icon v-if="showArtefact && !mobile" class="pt-0 mt-0"
+      style="position:absolute; top:0px; right:0px;">
+        <v-btn dark text large fab @click="setShowArtefact()">
           <v-icon>mdi-close</v-icon>
+        </v-btn>
+      </v-list-item-icon>
+      <v-list-item-icon v-else-if="showArtefact && mobile" class="pt-0 mt-0"
+      style="position:absolute; top:-68px; left:-12px;">
+        <v-btn dark text fab @click="setShowArtefact()">
+          <v-icon>mdi-arrow-left</v-icon>
         </v-btn>
       </v-list-item-icon>
     </v-card-actions>
@@ -222,13 +264,13 @@
 <script>
 import AvatarGroup from '@/components/AvatarGroup.vue'
 import Avatar from '@/components/Avatar.vue'
-import Artefact from '@/components/artefacts/Artefact.vue'
+import Artefact from '@/components/artefact/Artefact.vue'
 import ChipGroup from '@/components/archive/ChipGroup.vue'
 import { mapActions, mapGetters } from 'vuex'
 import EditStoryButton from '@/components/button/EditStoryButton.vue'
 import EditArtefactButton from '@/components/button/EditArtefactButton.vue'
-import ArtefactGroup from '@/components/artefacts/ArtefactGroup.vue'
 import { colours } from '@/lib/colours.js'
+import ArtefactCarouselItem from '@/components/artefact/ArtefactCarouselItem.vue'
 
 export default {
   name: 'StoryCard',
@@ -243,7 +285,7 @@ export default {
     ChipGroup,
     EditStoryButton,
     EditArtefactButton,
-    ArtefactGroup
+    ArtefactCarouselItem
   },
   data () {
     return {
@@ -281,9 +323,9 @@ export default {
         if (this.showArtefact) {
           return 'ontop disableCard'
         }
-        return 'disableCard'
+        return 'disableCard recordView'
       }
-      return ''
+      return 'rounded-border'
     }
   },
   watch: {
@@ -299,12 +341,10 @@ export default {
     colour (index) {
       return colours[index]
     },
-    toggleStoryEdit () {
-      console.log('connect story edit dialog')
+    toggleDialog (dialog) {
+      this.setDialog({ active: 'edit-story' })
     },
-    toggleArtefactEdit (artefact) {
-      console.log('connect artefact edit dialog')
-    },
+
     // toggle artefact view
     toggleShowArtefact (artefact) {
       if (this.fullStory) {
@@ -328,6 +368,9 @@ export default {
     },
     updateModel (event) {
       this.model = event
+    },
+    close () {
+      this.$emit('close')
     }
   }
 }
@@ -373,7 +416,7 @@ p {
 
 // disable click events on v-card when viewing single story
 .disableCard {
-  user-select: none;
+  // user-select: none;
   cursor: default;
 }
 .v-card::before {
@@ -386,13 +429,28 @@ p {
 }
 
 .rounded-border {
-  border: 0.5px solid rgba(0,0,0,0.12);
+  border: 0.5px solid rgba(0,0,0,0.3);
   border-radius: 10px;
   background-color: white;
-  margin-top: 20px;
 }
 
 v-list-item-subtitle {
   color: grey
+}
+
+.recordView {
+  z-index: 2;
+}
+
+.recordCloseButton {
+  position: absolute;
+  right: 0;
+  top: 0;
+  cursor: pointer;
+  z-index: 3;
+}
+
+.background {
+  background-color: #1E1E1E;
 }
 </style>

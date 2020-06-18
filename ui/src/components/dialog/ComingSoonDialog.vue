@@ -17,7 +17,7 @@
 <script>
 
 export default {
-  name: 'ComingSoon',
+  name: 'ComingSoonDialog',
   props: {
     show: { type: Boolean, required: true }
   },
