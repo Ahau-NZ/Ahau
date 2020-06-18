@@ -225,14 +225,18 @@ import AvatarGroup from '@/components/AvatarGroup.vue'
 import AddButton from '@/components/button/AddButton.vue'
 import DialogTitleBanner from '@/components/dialog/DialogTitleBanner.vue'
 
-function defaultData (profile) {
+function defaultData (input) {
+  var profile = clone(input)
+
+  var aliveInterval = profile.aliveInterval.split('/')
+
   return {
     id: profile.id,
     gender: profile.gender,
     legalName: profile.legalName,
     aliveInterval: profile.aliveInterval,
-    bornAt: '',
-    diedAt: '',
+    bornAt: aliveInterval[0],
+    diedAt: aliveInterval[1],
     preferredName: profile.preferredName,
     avatarImage: profile.avatarImage,
     description: profile.description,
@@ -337,32 +341,16 @@ export default {
       handler (newVal) {
         if (!newVal) return
         this.formData = defaultData(newVal)
-
-        if (this.formData.aliveInterval) {
-          var v = edtf(this.formData.aliveInterval)
-          this.formData.bornAt = v.lower || ''
-          this.formData.diedAt = v.upper || ''
-        } else {
-          this.formData.bornAt = ''
-          this.formData.diedAt = ''
-        }
+        var dates = this.formData.aliveInterval.split('/')
+        this.formData.bornAt = dates[0]
+        this.formData.diedAt = dates[1]
       }
     },
     'formData.bornAt' (newVal) {
-      if (this.formData.aliveInterval) {
-        var dates = this.formData.aliveInterval.split('/')
-        this.formData.aliveInterval = (newVal || '') + '/' + (dates[1] || '')
-      } else {
-        this.formData.aliveInterval = (newVal || '') + '/'
-      }
+      this.formData.aliveInterval = this.formData.bornAt + '/' + this.formData.diedAt
     },
     'formData.diedAt' (newVal) {
-      if (this.formData.aliveInterval) {
-        var dates = this.formData.aliveInterval.split('/')
-        this.formData.aliveInterval = (dates[0] || '') + '/' + (newVal || '')
-      } else {
-        this.formData.aliveInterval = '/' + (newVal || '')
-      }
+      this.formData.aliveInterval = this.formData.bornAt + '/' + this.formData.diedAt
     }
   },
   methods: {
