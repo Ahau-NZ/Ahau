@@ -29,32 +29,32 @@ export const Small = () => ({
 })
 
 export const Koro = () => ({
-  template: `<Avatar gender="male" bornAt="1950-01-01"/>`,
+  template: `<Avatar gender="male" aliveInterval="1950-01-01/"/>`,
   components: { Avatar }
 })
 
 export const Kuia = () => ({
-  template: `<Avatar gender="female" bornAt="1950-01-01"/>`,
+  template: `<Avatar gender="female" aliveInterval="1950-01-01/"/>`,
   components: { Avatar }
 })
 
 export const Tane = () => ({
-  template: `<Avatar gender="male" bornAt="1980-01-01"/>`,
+  template: `<Avatar gender="male" aliveInterval="1950-01-01/"/>`,
   components: { Avatar }
 })
 
 export const Wahine = () => ({
-  template: `<Avatar gender="female" bornAt="1980-01-01"/>`,
+  template: `<Avatar gender="female" aliveInterval="1950-01-01/"/>`,
   components: { Avatar }
 })
 
 export const Tama = () => ({
-  template: `<Avatar gender="male" bornAt="2010-01-01"/>`,
+  template: `<Avatar gender="male" aliveInterval="1950-01-01/"/>`,
   components: { Avatar }
 })
 
 export const Kotiro = () => ({
-  template: `<Avatar gender="female" bornAt="2010-01-01"/>`,
+  template: `<Avatar gender="female" aliveInterval="1950-01-01/"/>`,
   components: { Avatar }
 })
 
@@ -64,7 +64,7 @@ export const Unknown = () => ({
 })
 
 export const NoGender = () => ({
-  template: `<Avatar bornAt="2010-01-01"/>`,
+  template: `<Avatar aliveInterval="1950-01-01/"/>`,
   components: { Avatar }
 })
 

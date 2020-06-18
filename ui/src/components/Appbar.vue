@@ -49,7 +49,7 @@
         :image="profile.avatarImage"
         :alt="profile.preferredName"
         :gender="profile.gender"
-        :bornAt="profile.bornAt"
+        :aliveInterval="profile.aliveInterval"
       />
 
       </template>
@@ -72,7 +72,7 @@
             :image="profile.avatarImage"
             :alt="profile.preferredName"
             :gender="profile.gender"
-            :bornAt="profile.bornAt"
+            :aliveInterval="profile.aliveInterval"
           />
         </v-list-item>
         <v-list-item link @click.stop="dialog = true">
@@ -156,7 +156,8 @@ export default {
       dialog: false,
       profile: {
         id: null,
-        avatarImage: null
+        avatarImage: null,
+        aliveInterval: null
       }
     }
   },
@@ -187,6 +188,7 @@ export default {
               profile {
                 id
                 preferredName
+                aliveInterval
                 avatarImage {
                   uri
                 }

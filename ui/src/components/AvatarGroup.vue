@@ -19,7 +19,7 @@
             :image="profile.avatarImage"
             :alt="profile.preferredName"
             :gender="profile.gender"
-            :bornAt="profile.bornAt"
+            :aliveInterval="profile.aliveInterval"
             :deceased="profile.deceased"
             :show-label="showLabels"
             :clickable="true"
