@@ -29,11 +29,6 @@ export default {
     model: { type: Number, default: -1 },
     index: Number
   },
-  // data () {
-  //   return {
-  //     hover: false
-  //   }
-  // },
   computed: {
     ...mapGetters(['showArtefact']),
     mobile () {

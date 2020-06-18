@@ -93,66 +93,6 @@ export default {
 }
 </script>
 <style scoped>
-/* .container {
-  position: relative;
-  padding: 0;
-  margin: 0;
-  height: 100%;
-  width: 100%;
-  background-color: #121212;
-}
-
-.center {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  -webkit-transform: translate(-50%, -50%);
-}
-.close {
-  position: absolute;
-  top: 2px;
-  right: 2px;
-}
-.edit {
-  position: absolute;
-  top: 2px;
-  right: 40px;
-}
-.constraints {
-  width: 100px;
-  height: 100px;
-  background-color: #121212;
-}
-
-.center-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.carousel-show {
-  width: 100%;
-  height: 300px;
-}
-
-.carousel-thumbnail-group {
-  display: flex;
-  flex-direction: row;
-  overflow-x: auto;
-  width: 100%;
-  height: 130px;
-}
-.v-card {
-  transition: opacity .4s ease-in-out;
-}
-
-.v-card:not(.on-hover) {
-  opacity: 0.8;
- }
-
-.show-btns {
-  color: rgba(255, 255, 255, 1) !important; */
 
 .background {
   background-color: #1E1E1E;

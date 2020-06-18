@@ -55,19 +55,6 @@ export default {
       else if (this.type === 'story' && this.chip.artefacts.length && this.chip.artefacts[0].type === 'photo') return true
       else return false
     },
-    // src () {
-    //   if (this.chip.image && this.chip.image.uri) return this.chip.image.uri
-    //   else if (this.type === 'story') {
-    //     console.log("story")
-    //     let artefacts = this.chip.artefacts
-    //     console.log(artefacts)
-    //     if (artefacts[0].type === 'photo') {
-    //       this.thumbnail = true
-    //       return artefacts[0].blob
-    //     }
-    //   }
-    //   return this.chip.image
-    // }
     src () {
       if (this.chip.image && this.chip.image.uri) return this.chip.image.uri
       else if (this.type === 'story') return this.chip.artefacts[0].blob

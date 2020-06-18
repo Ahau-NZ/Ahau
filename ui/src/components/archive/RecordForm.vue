@@ -13,7 +13,7 @@
                 class="title-input"
               />
             </v-col>
-            <v-col v-if="formData.artefacts.length > 0" cols="12" class="pl-0 pr-0 carousel">
+            <v-col v-if="formData.artefacts.length > 0" cols="12" class="pl-0 pr-0">
               <ArtefactCarousel
                 :artefacts="formData.artefacts"
                 @delete="toggleDialog($event, 'delete')"
@@ -690,9 +690,4 @@ export default {
     justify-items: flex-end;
 }
 
-.carousel {
-  position: relative;
-  left: -8PX;
-  min-width: 102%;
-}
 </style>
