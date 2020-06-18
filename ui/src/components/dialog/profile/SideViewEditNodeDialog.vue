@@ -11,7 +11,7 @@
       :height="mobile ? 'auto' : 'calc(100vh - 64px)'"
       class="side-menu"
     >
-      <v-card light class="scroll" height="100%">
+      <v-card light min-height="100%">
         <DialogTitleBanner v-if="mobile" :title="formData.preferredName" mobile @close="close"  :isEditing="isEditing" class="px-5 pt-5"/>
         <v-row v-else class="justify-end">
           <v-btn icon class="mr-3">
@@ -409,13 +409,7 @@ export default {
 
 .side-menu {
   background-color: white;
-  overflow-x: hidden;
-}
-
-.scroll {
-  overflow-x: hidden;
-  overflow-y: scroll;
-  max-height: 100%;
+  overflow: none;
 }
 
 ::-webkit-scrollbar {
