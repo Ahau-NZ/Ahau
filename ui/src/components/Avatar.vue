@@ -57,7 +57,7 @@ export default {
     image: Object,
     alt: String,
     gender: String,
-    bornAt: String,
+    aliveInterval: String,
     deceased: { type: Boolean, default: false },
     size: { type: String, default: '25vh' },
     showLabel: { type: Boolean, default: false },
@@ -76,7 +76,7 @@ export default {
       return ''
     },
     getImage () {
-      return avatarHelper.defaultImage(this.isView, this.bornAt, this.gender)
+      return avatarHelper.defaultImage(this.isView, this.aliveInterval, this.gender)
     },
     customClass () {
       if (this.isView) return ''

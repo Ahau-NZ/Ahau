@@ -13,8 +13,7 @@ export async function findByName (name) {
           preferredName
           legalName
           gender
-          bornAt
-          diedAt
+          aliveInterval
           birthOrder
           description
           altNames
@@ -25,8 +24,7 @@ export async function findByName (name) {
               preferredName
               legalName
               gender
-              bornAt
-              diedAt
+              aliveInterval
               birthOrder
               description
               altNames
@@ -40,8 +38,7 @@ export async function findByName (name) {
               preferredName
               legalName
               gender
-              bornAt
-              diedAt
+              aliveInterval
               birthOrder
               description
               altNames

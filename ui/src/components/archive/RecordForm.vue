@@ -165,7 +165,7 @@
                   :image="formData.creator.avatarImage"
                   :alt="formData.creator.preferredName"
                   :gender="formData.creator.gender"
-                  :bornAt="formData.creator.bornAt"
+                  :diedAt="formData.creator.diedAt"
                   :deceased="formData.creator.deceased"
                   showLabel
                   deletable

@@ -1,32 +1,48 @@
 <template>
-  <v-form ref="form" light >
-    <v-col>
+  <v-form ref="form" light class="px-4">
       <v-row>
-
         <!-- Upload profile photo -->
-        <v-col order-sm="2" class="mt-5">
-          <v-row >
-            <v-col cols="12" class="pa-0" >
+        <v-col :order="mobile ? '' : '2'" class="py-0">
+          <v-row class="justify-center pt-3">
+            <!-- <v-col cols="12" class="pa-0" > -->
               <!-- Avatar -->
-              <Avatar
-                class="big-avatar"
-                size="200px"
-                :image="formData.avatarImage"
-                :alt="formData.preferredName"
-                :gender="formData.gender"
-                :bornAt="formData.bornAt"
-                :deceased="formData.deceased"
-              />
-            </v-col>
+            <Avatar
+              class="big-avatar"
+              size="200px"
+              :image="formData.avatarImage"
+              :alt="formData.preferredName"
+              :gender="formData.gender"
+              :aliveInterval="formData.aliveInterval"
+              :deceased="formData.deceased"
+              :isEditing="isEditing"
+              @updateAvatar="formData.avatarImage = $event"
+            />
+          </v-row>
+          <v-row v-if="isEditing" class="justify-center">
+            <h1>Edit {{ formData.preferredName }}</h1>
+          </v-row>
+          <v-row v-if="isEditing" class="justify-center">
+            <v-btn
+              @click="$emit('cancel')"
+              color="white"
+              text
+              medium
+              class="blue--text"
+            >
+              <v-icon small class="blue--text" left>mdi-close</v-icon>Cancel
+            </v-btn>
+          </v-row>
+          <v-row>
+            <!-- </v-col> -->
             <!-- Upload Profile Photo Button -->
-            <v-col v-if="!readonly" cols="12" justify="center" align="center" class="pa-0">
-              <ImagePicker @updateAvatar="formData.avatarImage = $event" :avatarLoaded="formData.avatarImage" type="avatar"/>
+            <v-col v-if="!readonly && !isEditing" cols="12" justify="center" align="center" class="pa-0">
+              <ImagePicker @updateAvatar="formData.avatarImage = $event" :avatarLoaded="formData.avatarImage"/>
             </v-col>
           </v-row>
         </v-col>
 
           <!-- Names -->
-          <v-col cols="12" sm="6" class="pt-4">
+          <v-col cols="12" :sm="mobile ? '12' : '6'" class="pt-4">
             <v-row>
               <v-col cols="12" class="pa-1">
                 <slot name="search">
@@ -51,7 +67,7 @@
               <v-col v-for="(altName, index) in formData.altNames.value"
                 :key="`value-alt-name-${index}`"
                 cols="12"
-                sm="6"
+                :sm="mobile ? '12' : '6'"
                 class="pa-1"
               >
                 <v-text-field
@@ -71,7 +87,7 @@
               <v-col v-for="(altName, index) in formData.altNames.add"
                 :key="`add-alt-name-${index}`"
                 cols="12"
-                sm="6"
+                :sm="mobile ? '12' : '6'"
                 class="pa-1"
               >
                 <v-text-field
@@ -95,22 +111,23 @@
           <v-row>
             <v-col cols="12" class="pa-1">
               <NodeDatePicker
-                :value="formData.bornAt"
+                :value.sync="formData.bornAt"
                 label="Date of birth"
-                @date="formData.bornAt = $event"
                 :readonly="readonly"
+                min="-3000-01-01"
               />
             </v-col>
           </v-row>
 
           <!-- Editing: relationship type-->
-          <v-row v-if="withRelationships">
+          <v-row>
             <v-col cols="12" class="pa-1">
               <v-select
                 v-model="formData.relationshipType"
                 label="Related by"
                 :items="relationshipTypes"
                 outlined
+                v-bind="customProps"
               />
             </v-col>
           </v-row>
@@ -137,13 +154,13 @@
               />
             </v-col>
             <!-- DIED AT PICKER -->
-            <v-col cols="12" sm="12" class="pa-1">
+            <v-col cols="12" class="pa-1">
               <NodeDatePicker
                 v-if="formData.deceased"
                 label="Date of death"
-                :value="formData.diedAt"
-                @date="formData.diedAt = $event"
+                :value.sync="formData.diedAt"
                 :readonly="readonly"
+                :min="formData.bornAt || '-3000-01-01'"
               />
             </v-col>
           </v-row>
@@ -151,7 +168,7 @@
       </v-row>
 
       <v-row>
-        <v-col cols="12" sm="6">
+        <v-col cols="12" :sm="mobile ? '12' : '6'" class="py-0">
           <v-row>
             <!-- GENDER VIEW -->
             <v-col  v-if="readonly" class="pa-1">
@@ -159,6 +176,7 @@
                 v-model="formData.gender"
                 label="Gender"
                 v-bind="customProps"
+                outlined
               />
             </v-col>
             <!-- GENDER EDIT -->
@@ -167,13 +185,13 @@
 
               <v-row class="gender-button-row">
                 <!-- TANE -->
-                <v-col>
+                <v-col class="pa-0">
                   <div class="gender-button" @click="updateSelectedGender('male')">
                     <img ref="taneImg" :src="require('@/assets/tane-outlined.svg')" class="gender-image">
                   </div>
                 </v-col>
                 <!-- WAHINE -->
-                <v-col>
+                <v-col class="pa-0">
                   <div class="gender-button" @click="updateSelectedGender('female')">
                     <img ref="wahineImg" :src="require('@/assets/wahine-outlined.svg')" class="gender-image">
                   </div>
@@ -183,7 +201,7 @@
           </v-row>
         </v-col>
 
-        <v-col cols="12" sm="6">
+        <v-col cols="12" :sm="mobile ? '12' : '6'">
           <v-row>
             <!-- Description textarea -->
             <v-col cols="12" class="pa-1">
@@ -214,7 +232,7 @@
       </v-row>
 
       <v-row>
-        <v-col cols="12" sm="6" >
+        <v-col cols="12" :sm="mobile ? '12' : '6'">
           <!-- Email -->
           <v-row>
             <v-col cols="12" class="pa-1">
@@ -239,7 +257,7 @@
           </v-row>
         </v-col>
 
-        <v-col cols="12" sm="6" >
+        <v-col cols="12" :sm="mobile ? '12' : '6'">
           <v-row>
             <v-col cols="12" class="pa-1">
               <!-- Address -->
@@ -264,7 +282,6 @@
           </v-row>
         </v-col>
       </v-row>
-    </v-col>
   </v-form>
 </template>
 
@@ -289,7 +306,9 @@ export default {
     withRelationships: { type: Boolean, default: true },
     readonly: { type: Boolean, default: false },
     hideDetails: { type: Boolean, default: false },
-    editRelationship: { type: Boolean, default: false }
+    editRelationship: { type: Boolean, default: false },
+    mobile: { type: Boolean, default: false },
+    isEditing: { type: Boolean, default: false }
   },
   data () {
     return {
@@ -305,16 +324,14 @@ export default {
   },
   watch: {
     profile: {
+      deep: true,
+      immediate: true,
       handler (newVal) {
         this.formData = newVal
       }
-    },
-    deep: true
+    }
   },
   computed: {
-    mobile () {
-      return this.$vuetify.breakpoint.xs
-    },
     customProps () {
       // readonly = hasSelected || !isEditing
       return {
@@ -322,7 +339,8 @@ export default {
         flat: this.readonly,
         hideDetails: true,
         placeholder: ' ',
-        class: this.readonly ? 'custom' : ''
+        class: this.readonly ? 'custom' : '',
+        light: true
       }
     },
     showLegallyAdopted () {
@@ -366,7 +384,7 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style scoped lang="scss">
   .custom.v-text-field > .v-input__control > .v-input__slot:before {
     border-style: none;
   }

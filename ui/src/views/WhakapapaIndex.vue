@@ -199,8 +199,7 @@ export default {
               preferredName
               legalName
               gender
-              bornAt
-              diedAt
+              aliveInterval
               birthOrder
               description
               altNames
@@ -211,8 +210,7 @@ export default {
                   preferredName
                   legalName
                   gender
-                  bornAt
-                  diedAt
+                  aliveInterval
                   birthOrder
                   description
                   altNames
@@ -226,8 +224,7 @@ export default {
                   preferredName
                   legalName
                   gender
-                  bornAt
-                  diedAt
+                  aliveInterval
                   birthOrder
                   description
                   altNames
@@ -444,8 +441,7 @@ export default {
       preferredName,
       legalName,
       gender,
-      bornAt,
-      diedAt,
+      aliveInterval,
       birthOrder,
       avatarImage,
       altNames,
@@ -467,8 +463,7 @@ export default {
             preferredName,
             legalName,
             gender,
-            bornAt,
-            diedAt,
+            aliveInterval,
             birthOrder,
             avatarImage,
             altNames: {

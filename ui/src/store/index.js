@@ -15,7 +15,15 @@ Vue.use(Vuex)
 
 const store = new Vuex.Store({
   state: {
-    whoami: {},
+    whoami: {
+      profile: {
+        id: '',
+        preferredName: '',
+        aliveInterval: '',
+        avatarImage: { uri: '' }
+      },
+      feedId: ''
+    },
     loading: false,
     goBack: {
       show: false,
@@ -66,7 +74,7 @@ const store = new Vuex.Store({
               profile {
                 id
                 preferredName
-                bornAt 
+                aliveInterval
                 gender 
                 avatarImage { uri }
               }
