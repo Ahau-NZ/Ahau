@@ -1,4 +1,6 @@
 <template>
+  <!-- <div id="whakapapa-show" >
+    <v-container fluid class="pa-0" :style="mobile ? '':'max-height:100vh'"> -->
   <div id="whakapapa-show">
     <v-container fluid class="pa-0" :style="[ mobile ? 'width:100vw' : 'width:95vw; margin-top:64px;' ]">
 
@@ -79,7 +81,7 @@
               <v-icon v-else>mdi-hexagon-multiple</v-icon>
             </v-btn>
           </template>
-          <div v-if="search" class="icon-search" @click.stop>
+          <div v-if="search" class="icon-search ml-n12 pt-7" @click.stop>
             <SearchBar :nestedWhakapapa="nestedWhakapapa" :searchNodeId.sync="searchNodeId" @close="clickedOff()"/>
           </div>
           <div v-else  class="icon-button">
@@ -91,9 +93,9 @@
           <div v-if="whakapapa.table" class="icon-button">
             <FlattenButton @flatten="toggleFlatten()" />
           </div>
-          <div class="icon-button">
+          <!-- <div class="icon-button">
             <TableButton @table="toggleTable()" />
-          </div>
+          </div> -->
           <div class="icon-button">
             <HelpButton v-if="whakapapa.tree" @click="updateDialog('whakapapa-helper', null)" />
             <HelpButton v-else @click="updateDialog('whakapapa-table-helper', null)" />
@@ -118,7 +120,7 @@
       </v-row>
 
       <Tree
-        class="tree"
+        :class="mobile? 'mobile-tree':'tree'"
         v-if="whakapapa.tree"
         :getRelatives="getRelatives"
         @load-descendants="loadDescendants($event)"
@@ -792,8 +794,8 @@ export default {
 #whakapapa-show {
   &>.container {
     position: relative;
-    /* width: 95vw; */
-    /* border: 2px solid red; */
+    max-height:100vh;
+
     &>.header {
       position: absolute;
       top: 70px;
@@ -859,7 +861,13 @@ h1 {
 }
 
 .tree {
-    max-height: calc(100vh - 64px);
+  max-height: calc(100vh)
+}
+
+.mobile-tree {
+  position:absolute;
+  height: calc(100vh - 43px);
+  margin-top: -68px;
 }
 
 #create .v-speed-dial {

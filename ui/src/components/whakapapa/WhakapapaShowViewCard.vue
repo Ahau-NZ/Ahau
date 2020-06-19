@@ -1,12 +1,11 @@
 <template>
   <v-card
     :to="'/whakapapa'"
-    style="width: 100%;"
+    style="width: 100%"
     light
     outlined
     :ripple="false"
   >
-
     <!-- Whakapapa Image and Title -->
     <div class="d-flex pa-3" style="width: 100%;">
 
@@ -34,14 +33,13 @@
           <!-- Pencil icon -->
           <slot name="edit"></slot>
           <!-- Dropdown icon -->
-          <v-tooltip bottom>
+          <v-tooltip v-if="description" bottom>
             <template v-slot:activator="{ on }">
             <v-btn
               v-on="on"
               @click.prevent="show = !show"
               icon
               class="pa-0 px-3"
-
             >
               <v-icon>{{ show ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
             </v-btn>

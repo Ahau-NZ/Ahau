@@ -85,6 +85,20 @@
           </v-row>
           <v-row v-if="!isEditing"  class="justify-center">
             <v-btn
+              :to="{ name: 'profileShow', params: { id: profile.id } }"
+              color="white"
+              text
+              medium
+              class="blue--text"
+            >
+              <ArchiveIcon size="normal"/>
+              <span class="pl-2 "> Archive</span>
+
+
+              <!-- <v-icon small class="blue--text" left>mdi-account-circle</v-icon>Archive -->
+            </v-btn>
+            <v-btn
+              v-if="!preview"
               @click="toggleEdit"
               color="white"
               text
@@ -155,6 +169,7 @@
                     :show-labels="true"
                     @profile-click="openProfile($event)"
                   >
+                  
                     <AddButton @click="toggleNew('parent')" />
                   </AvatarGroup>
                 </v-col>
@@ -169,7 +184,9 @@
                     :show-labels="true"
                     @profile-click="openProfile($event)"
                   >
-                    <AddButton v-if="view.focus !== profile.id" @click="toggleNew('sibling')" />
+                  <template v-slot:actions >
+                    <AddButton v-if="view && view.focus !== profile.id" @click="toggleNew('sibling')" />
+                  </template>
                   </AvatarGroup>
                 </v-col>
 
@@ -215,6 +232,7 @@ import isEqual from 'lodash.isequal'
 import isEmpty from 'lodash.isempty'
 import pick from 'lodash.pick'
 import clone from 'lodash.clonedeep'
+import ArchiveIcon from '@/components/button/ArchiveIcon.vue'
 
 import ProfileForm from '@/components/profile/ProfileForm.vue'
 
@@ -265,7 +283,8 @@ export default {
     AddButton,
     Avatar,
     AvatarGroup,
-    DialogTitleBanner
+    DialogTitleBanner,
+    ArchiveIcon
   },
   props: {
     goBack: { type: Function },
@@ -276,7 +295,8 @@ export default {
     sideMenu: { type: Boolean, default: false },
     relationshipLinks: { type: Array },
     show: { type: Boolean, required: true },
-    readonly: { type: Boolean, default: false }
+    readonly: { type: Boolean, default: false },
+    preview: { type: Boolean, default: false }
   },
 
   data () {
@@ -436,7 +456,7 @@ export default {
 
 .family-divider {
   width: 80%;
-  border: 0.5px solid rgba(0, 0, 0, 0.12);
+  border: 0.5px solid rgba(0, 0, 0, 0.3);
 }
 
 .up-enter-active {
