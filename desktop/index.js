@@ -17,6 +17,8 @@ const plugins = [
   'ssb-backlinks',
   'ssb-whakapapa',
   'ssb-profile',
+  'ssb-artefact',
+  'ssb-story',
 
   'ssb-query',
   'ssb-serve-blobs',

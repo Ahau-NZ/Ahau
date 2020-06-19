@@ -456,7 +456,7 @@ export default {
 
 .family-divider {
   width: 80%;
-  border: 0.5px solid rgba(0, 0, 0, 0.12);
+  border: 0.5px solid rgba(0, 0, 0, 0.3);
 }
 
 .up-enter-active {

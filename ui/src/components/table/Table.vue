@@ -162,7 +162,7 @@ export default {
     // table height based on number of nodes on table
     tableHeight () {
       if (!this.componentLoaded) return 0
-      return (this.nodes.length + 1) * 51
+      return (this.nodes.length + 1) * 52 + 100
     },
 
     // returns an array of nodes associated with the root node created from the treeData object, as well as extra attributes
@@ -362,7 +362,7 @@ export default {
 
 <style scoped lang="scss">
 svg#baseSvg {
-  padding-top:100px;
+  padding-top:150px;
   min-height: calc(100vh - 68px);
 }
 .nonbiological{
