@@ -68,7 +68,6 @@ export default {
     openProfile (profile) {
       this.setProfileById({ id: profile.id, type: 'preview' })
       this.setDialog({ active: 'view-edit-node', preview: true })
-      // this.$emit('setupProfile', profile.id)
     }
   }
 }

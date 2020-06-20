@@ -4,7 +4,7 @@
     <!-- MOBILE top banner -->
     <v-row v-if="mobile" class="mobile-banner">
       <!-- Close Button -->
-      <v-col cols="1" class="banner-buttons pl-5">
+      <v-col cols="1" class="banner-buttons pl-6">
           <v-icon class="close-button" color="white" @click="close">mdi-arrow-left</v-icon>
       </v-col>
       <v-col class="d-flex align-center justify-end" style="text-align: right;">
