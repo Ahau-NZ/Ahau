@@ -1,6 +1,6 @@
 <template>
   <div>
-    <fieldset :class="`rounded-border ${customClass}`">
+    <fieldset :class="`rounded-input ${customClass}`">
       <legend class="ml-2 custom-label">
         Date of birth
       </legend>
@@ -352,8 +352,8 @@ export default {
   pointer-events: none;
 }
 
-.rounded-border {
-  border: 1px solid #9e9e9e;
+.rounded-input {
+  border: 1px solid rgba(0,0,0,0.3);
   border-radius: 4px;
 }
 

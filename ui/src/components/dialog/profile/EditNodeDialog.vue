@@ -4,7 +4,7 @@
     <!-- Content Slot -->
     <template v-if="!hideDetails" v-slot:content>
       <v-col class="py-0 px-0">
-        <ProfileForm :profile.sync="formData" :withRelationships="false" />
+        <ProfileForm :profile.sync="formData" :withRelationships="false" :mobile="mobile"/>
       </v-col>
     </template>
     <!-- End Content Slot -->
@@ -89,6 +89,9 @@ export default {
   },
 
   computed: {
+    mobile () {
+      return this.$vuetify.breakpoint.xs
+    },
     profileChanges () {
       let changes = {}
       Object.entries(this.formData).forEach(([key, value]) => {
