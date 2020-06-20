@@ -187,13 +187,13 @@
                 <!-- TANE -->
                 <v-col class="pa-0">
                   <div class="gender-button" @click="updateSelectedGender('male')">
-                    <img ref="taneImg" :src="require('@/assets/tane-outlined.svg')" class="gender-image">
+                    <img ref="taneImg" :src="require('@/assets/tane-outlined.svg')" :class="mobile ? 'gender-image-mobile':'gender-image'">
                   </div>
                 </v-col>
                 <!-- WAHINE -->
                 <v-col class="pa-0">
                   <div class="gender-button" @click="updateSelectedGender('female')">
-                    <img ref="wahineImg" :src="require('@/assets/wahine-outlined.svg')" class="gender-image">
+                    <img ref="wahineImg" :src="require('@/assets/wahine-outlined.svg')" :class="mobile ? 'gender-image-mobile':'gender-image'">
                   </div>
                 </v-col>
               </v-row>
@@ -459,6 +459,20 @@ export default {
       margin: 5px;
 
       .gender-image {
+        margin-top:80px;
+        width: 8em;
+        height: 8em;
+        border: 0.5px solid rgba(0,0,0,0.6);
+        border-radius: 50%;
+        cursor: pointer;
+        transition: all 0.3s;
+
+        &:hover {
+          border: 2px solid rgba(0,0,0,0.87);
+        }
+      }
+
+      .gender-image-mobile {
         width: 6em;
         height: 6em;
         border: 0.5px solid rgba(0,0,0,0.6);
