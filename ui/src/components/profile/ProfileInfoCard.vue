@@ -5,12 +5,12 @@
       <ProfileInfoItem class="br bb" :title="'Occupation'" :value="profile.profession" />
       <ProfileInfoItem class="bb" :title="'Location'" :value="profile.location" />
 
-      <div v-if="profile.parents && profile.parents.length" :class="mobile ? 'bb' : 'br'">
+      <div v-if="profile.parents && profile.parents.length" :class="mobile ? '' : 'br'">
         <AvatarGroup v-if="profile.parents" :profiles="profile.parents" group-title="Parents" size="50px" :show-labels="true"
           @profile-click="openProfile($event)">
         </AvatarGroup>
       </div>
-      <div v-if="profile.siblings && profile.siblings.length" :class="mobile ? 'bb' : 'br'">
+      <div v-if="profile.siblings && profile.siblings.length" :class="mobile ? '' : 'br'">
         <AvatarGroup v-if="profile.siblings" :profiles="profile.siblings" group-title="Siblings" size="50px" :show-labels="true"
           @profile-click="openProfile($event)">
         </AvatarGroup>

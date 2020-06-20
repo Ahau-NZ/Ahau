@@ -9,7 +9,7 @@
     />
     <v-row v-if="activeComponent === 'profile'">
       <v-col cols="12" offset-md="2" md="8" sm="12" :class="!mobile ? 'pl-12' : '' " :align="mobile ? 'center' : 'start'">
-        <h1 class="primary--text" >{{ currentProfile.legalName ? currentProfile.legalName : currentProfile.preferredName }}</h1>
+        <h1 ref="title" class="primary--text" :style="mobile ? length: ''">{{ currentProfile.legalName ? currentProfile.legalName : currentProfile.preferredName }}</h1>
       </v-col>
       <v-col :order="mobile ? 'first' : 'last'" :align="mobile ? 'end' : 'center'" cols="12" md="2" sm="12"  class="px-5">
         <EditProfileButton @click="setDialog('edit-node')" />
@@ -17,11 +17,11 @@
     </v-row>
     <v-row>
       <!-- SideNav -->
-        <v-col  v-if="!hideNav" cols="12" xs="12" sm="12" md="2" :class="!mobile ? 'pr-0' : 'px-5 py-0'">
+        <v-col  v-if="!hideNav" cols="12" xs="12" sm="12" md="2" lg="20p" :class="!mobile ? 'pr-0' : 'px-5 py-0'">
           <SideNavMenu :profile="currentProfile" />
         </v-col>
       <!-- Content -->
-      <v-col cols="12" xs="12" sm="12" md="10" :class="mobile ? 'px-6 py-0' : 'pl-0 py-0'">
+      <v-col cols="12" xs="12" sm="12" md="10" lg="80p" :class="mobile ? 'px-6 py-0' : 'pl-0 py-0'">
         <transition
           name="fade"
           mode="out-in"
@@ -76,6 +76,15 @@ export default {
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
+    length () {
+      if (this.currentProfile.legalName) {
+        if (this.currentProfile.legalName.length > 30) return "font-size:6vw"
+        if (this.currentProfile.legalName.length > 25) return "font-size:7vw"
+        if (this.currentProfile.legalName.length > 20) return "font-size:8vw"
+        else return "font-size: 10vw"
+      }
+      else return "font-size: 10vw"
+    },
     hideNav () {
       if (this.mobile && this.showStory) return true
       else return false
@@ -89,6 +98,7 @@ export default {
   },
   methods: {
     ...mapActions(['setProfileById', 'setWhoami', 'setShowArtefact', 'setDialog']),
+
     async setupProfile (id) {
       this.setProfileById({ id })
     }
@@ -97,6 +107,25 @@ export default {
 </script>
 
 <style lang="scss">
+@media (min-width: 1264px) and (max-width: 1903px) {
+  .col-lg-20p {
+    width: 20%;
+    max-width: 20%;
+    flex-basis: 20%;
+  }
+  .col-lg-60p {
+    width: 60%;
+    max-width: 60%;
+    flex-basis: 60%;
+  }
+  .col-lg-80p {
+    width: 80%;
+    max-width: 80%;
+    flex-basis: 80%;
+  }
+}
+
+
 .body-width {
   /* min-width: $formWidth; */
   max-width: 100vw;

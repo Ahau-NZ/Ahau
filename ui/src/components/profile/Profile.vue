@@ -1,5 +1,5 @@
 <template>
-    <v-row class="mb-12" :class="mobile ? 'mt-10':''">
+    <v-row class="mb-12" :class="mobile ? 'mobile-profile':''">
       <v-col cols="12" sx="12" sm="12" md="9" :class="mobile ? 'py-5 px-5' : 'px-5' ">
         <ProfileInfoCard :profile="profile" @setupProfile="setupProfile($event)" />
         <ProfileCard>
@@ -129,6 +129,11 @@ export default {
 }
 </script>
 <style lang="scss">
+  .mobile-profile {
+    position: absolute;
+    top: 390px;
+    max-width: 99.5%;
+  }
   .rounded-card {
     border-radius: 10px;
 

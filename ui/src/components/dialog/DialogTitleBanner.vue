@@ -22,7 +22,7 @@
         <h1 v-else class="banner-title"><span style="color: #BA041B;">Edit {{splitTitle.maori}}</span>{{splitTitle.english}}<span></span></h1>
       </v-col>
       <!-- Close Button -->
-      <v-col cols="1" class="banner-buttons">
+      <v-col cols="1" class="banner-buttons pl-10">
           <v-icon class="close-button" color="white" @click="close">mdi-close</v-icon>
       </v-col>
     </v-row>
