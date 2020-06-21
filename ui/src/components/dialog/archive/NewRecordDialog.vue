@@ -189,6 +189,8 @@ export default {
       if (this.editing) {
         // get all changes
         output = storyChanges(this.story, this.formData)
+        
+        output = { id: this.story.id, ...output }
       } else {
         output = storySubmission(this.formData)
       }

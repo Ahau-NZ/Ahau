@@ -19,7 +19,7 @@
       <v-list-item-content class="pb-0">
         <v-list-item-subtitle v-if="story.recordDate">
           {{ story.recordDate }}
-          <span v-if="story.recordEndDate.length"> - {{story.recordEndDate}} </span>
+          <span v-if="story.recordEndDate"> - {{ story.recordEndDate }} </span>
         </v-list-item-subtitle>
         <v-list-item-title v-if="!showArtefact" class="headline mb-1 wrap-text">{{ story.title }}</v-list-item-title>
         <v-list-item-title v-else class="headline mb-1 wrap-text">{{ artefact.title }}</v-list-item-title>
@@ -27,19 +27,19 @@
     </v-list-item>
 
     <!-- ARTEFACT CAROUSEL -->
-    <v-list-item v-if="story.artefacts && story.artefacts.length" class="px-0">
+    <v-list-item v-if="story.artefacts && story.artefacts.length > 0" class="px-0">
       <v-list-item-content>
         <v-carousel
           v-model="model"
           hide-delimiters
-          :show-arrows="!mobile && fullStory && story.artefacts.length > 1" :show-arrows-on-hover="!mobile" :height="showArtefact ? 'auto' : mobile ? '300px' : '500px'" style="background-color:#1E1E1E">
+          :show-arrows="!mobile && fullStory && story.artefacts && story.artefacts.length > 1" :show-arrows-on-hover="!mobile" :height="showArtefact ? 'auto' : mobile ? '300px' : '500px'" style="background-color:#1E1E1E">
           <v-carousel-item v-for="(artefact,i) in story.artefacts" :key="`story-card-artefact-${i}`">
             <Artefact :model="model" :index="i" @showArtefact="toggleShowArtefact($event)" :artefact="artefact" />
           </v-carousel-item>
         </v-carousel>
         <!-- ARTEFACT GROUP  -->
         <v-slide-group
-          v-if="!showArtefact && story.artefacts.length > 1"
+          v-if="!showArtefact && story.artefacts && story.artefacts.length > 1"
           v-model="model"
           class="pa-0 background"
           dark
@@ -80,7 +80,7 @@
     </v-list-item>
     <v-row v-if="!showArtefact">
 
-      <v-col v-if="story.mentions.length" class="py-0" :cols="mobile ? '12' : 'auto'">
+      <v-col v-if="story.mentions && story.mentions.length > 0" class="py-0" :cols="mobile ? '12' : 'auto'">
         <v-list-item-subtitle style="color:grey" class="ml-5 pb-1"> Mentions </v-list-item-subtitle>
          <!--  TODO: changed to story.mentions when grapql is plugged in -->
         <AvatarGroup
@@ -102,7 +102,7 @@
         <div class="py-0 px-0">
           <v-list-item-subtitle style="color:grey" class="ml-5 pb-1"> Access </v-list-item-subtitle>
           <AvatarGroup
-            v-if="story.access.length"
+            v-if="story.access && story.access.length > 0"
             :profiles="story.access"
             show-labels
             size="50px"
@@ -136,7 +136,7 @@
             @profile-click="openProfile($event)"
           />
         </div> -->
-        <div class="py-0 px-0" v-if="story.creator.length" cols="3">
+        <div class="py-0 px-0" v-if="story.creator" cols="3">
           <v-list-item-subtitle style="color:grey" class="ml-5 pb-1"> Creator </v-list-item-subtitle>
             <Avatar
               size="50px"
@@ -153,7 +153,7 @@
         </div>
       </v-row>
       <v-row class="px-4">
-        <v-col class="pt-0 pr-1" v-if="story.relatedRecords.length" :cols="mobile ? '12':'12'">
+        <v-col class="pt-0 pr-1" v-if="story.relatedRecords && story.relatedRecords.length > 0" :cols="mobile ? '12':'12'">
           <v-list-item-subtitle class="pb-1" style="color:grey"> Related records </v-list-item-subtitle>
           <ChipGroup :chips="story.relatedRecords" type="story"/>
         </v-col>
@@ -298,7 +298,7 @@ export default {
   },
   mounted () {
     // grab text height to figure out if we need to hide it or not
-    this.textHeight = this.$refs.text.offsetHeight
+    // this.textHeight = this.$refs.text.offsetHeight
     if (this.fullStory) {
       this.turncateText = false
     }

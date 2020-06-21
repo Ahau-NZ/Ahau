@@ -23,7 +23,7 @@
           <v-icon small class="black--text">mdi-magnify</v-icon>
         </v-btn>            -->
         <!-- <v-btn :medium="!mobile" :x-small="mobile" :class="mobile ? 'addBtnMob' : 'addBtn'" class="my-2" fab color="white" @click.stop="openContextMenu($event)"> -->
-        <v-btn :medium="!mobile" flat text :x-small="mobile" :class="mobile ? 'addBtnMob' : 'addBtn'" class="my-2" fab color="white" @click.prevent="setDialog('new-story')">
+        <v-btn :medium="!mobile" text :x-small="mobile" :class="mobile ? 'addBtnMob' : 'addBtn'" class="my-2" fab color="white" @click.prevent="setDialog('new-story')">
           <v-icon :large="!mobile" class="black--text">mdi-plus</v-icon>
         </v-btn>
       </div>
@@ -36,7 +36,7 @@
           </v-row>
           <v-divider class="mt-6 mb-8" light></v-divider> -->
           <div v-if="!showStory">
-            <v-row v-for="(story, i) in stories" :key="`story-${i}-id-${story.id}`" class="mb-10">
+            <v-row v-for="(story, i) in stories.slice().reverse()" :key="`story-${i}-id-${story.id}`" class="mb-10">
               <StoryCard @updateDialog="updateDialog($event)" @toggleStory="toggleStory()" :story="story" />
             </v-row>
           </div>
@@ -72,8 +72,7 @@
 
 import StoryCard from '@/components/archive/StoryCard.vue'
 // import CollectionGroup from '@/components/archive/CollectionGroup.vue'
-
-import { STORIES } from '@/mocks/stories'
+import { GET_ALL_STORIES } from '@/lib/story-helpers'
 import { firstMocks } from '@/mocks/collections'
 import { mapGetters, mapActions } from 'vuex'
 
@@ -89,7 +88,7 @@ export default {
   },
   data () {
     return {
-      stories: STORIES,
+      stories: [],
       collections: firstMocks,
       dialog: {
         active: null,
@@ -108,6 +107,9 @@ export default {
       ],
       scrollPosition: 0
     }
+  },
+  apollo: {
+    stories: GET_ALL_STORIES
   },
   props: {
     profile: {

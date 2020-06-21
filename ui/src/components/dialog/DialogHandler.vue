@@ -87,7 +87,7 @@
       editing
       :story="currentStory"
       @close="close"
-      @submit="editStory($event)"
+      @submit="updateStory($event)"
     />
     <DeleteRecordDialog
       v-if="isActive('delete-story')"
@@ -121,6 +121,8 @@ import ComingSoonDialog from '@/components/dialog/ComingSoonDialog.vue'
 import gql from 'graphql-tag'
 
 import { PERMITTED_PROFILE_ATTRS, PERMITTED_RELATIONSHIP_ATTRS, saveProfile } from '@/lib/profile-helpers.js'
+import { PERMITTED_STORY_ATTRS, SAVE_STORY, GET_STORY } from '@/lib/story-helpers.js'
+
 import { saveWhakapapaLink } from '@/lib/link-helpers.js'
 import pick from 'lodash.pick'
 import isEmpty from 'lodash.isempty'
@@ -236,8 +238,38 @@ export default {
     addStory ($event) {
       console.error('Add story not implemented yet', $event)
     },
-    editStory ($event) {
-      console.error('Edit story not implemented yet', $event)
+    async createStory ($event) {
+      const res = await this.$apollo.mutate(SAVE_STORY($event))
+
+      if (res.errors) {
+        console.error('faile to createStory', res)
+        return
+      }
+      return res.data.saveStory
+    },
+    async updateStory ($event) {
+      if ($event) {
+        var { id } = $event
+
+        if (!id) {
+          console.error('edit story missin id')
+          return
+        }
+
+        const res = await this.$apollo.mutate(SAVE_STORY($event))
+        if (res.errors) {
+          console.error('failed to update story', res.errors)
+          return
+        }
+
+        // set the story to its new value....?
+        console.log(res.data)
+
+        // get the updated story from the db
+        var updatedStory = await this.$apollo.query(GET_STORY(id))
+
+        console.log(updatedStory)
+      }
     },
     deleteStory ($event) {
       console.error('Delete story not implemented yet', $event)
