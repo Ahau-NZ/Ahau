@@ -75,7 +75,7 @@ export default {
         document.body.classList.add('page--' + to.toLowerCase())
       },
       immediate: true
-    },
+    }
   }
 }
 </script>

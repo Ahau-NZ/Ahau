@@ -78,12 +78,11 @@ export default {
     },
     length () {
       if (this.currentProfile.legalName) {
-        if (this.currentProfile.legalName.length > 30) return "font-size:6vw"
-        if (this.currentProfile.legalName.length > 25) return "font-size:7vw"
-        if (this.currentProfile.legalName.length > 20) return "font-size:8vw"
-        else return "font-size: 10vw"
-      }
-      else return "font-size: 10vw"
+        if (this.currentProfile.legalName.length > 30) return 'font-size:6vw'
+        if (this.currentProfile.legalName.length > 25) return 'font-size:7vw'
+        if (this.currentProfile.legalName.length > 20) return 'font-size:8vw'
+        else return 'font-size: 10vw'
+      } else return 'font-size: 10vw'
     },
     hideNav () {
       if (this.mobile && this.showStory) return true
@@ -124,7 +123,6 @@ export default {
     flex-basis: 80%;
   }
 }
-
 
 .body-width {
   /* min-width: $formWidth; */

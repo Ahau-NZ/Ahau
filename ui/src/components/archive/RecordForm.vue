@@ -280,10 +280,11 @@
                 placeholder="add related records"
               />
               <ChipGroup type="story" :chips="formData.relatedRecords" deletable @delete="removeItem(formData.relatedRecords, $event)" />
+              <v-divider v-if="mobile" light class="mt-6 mr-4"></v-divider>
             </v-col>
-
             <!-- ADD CONTRIBUTORS -->
-            <v-col :cols="mobile ? formData.contributors.length > 2 ? 'auto' : '6' : formData.access.length > 1 ? 'auto' : '3'">
+            <!-- <v-col :cols="mobile ? formData.contributors.length > 2 ? 'auto' : '6' : formData.contributors.length > 1 ? 'auto' : '3'"> -->
+            <v-col :cols="mobile ? '12' : formData.contributors.length > 1 ? 'auto' : '3'">
               <v-row v-if="!showContributors" @click="showContributors = true" class="pl-10">
                 <v-icon small>mdi-plus</v-icon>
                   <AddButton size="20px" icon="mdi-library" iconClass="pr-3" class="right: 0;" label="Contributor"  justify="start"/>
@@ -511,7 +512,7 @@ export default {
       if (this.showStory) this.show = true
     },
     async getSuggestions (name) {
-      console.log("name: ", name)
+      console.log('name: ', name)
       if (name) this.suggestions = await findByName(name)
       else this.suggestions = []
     },

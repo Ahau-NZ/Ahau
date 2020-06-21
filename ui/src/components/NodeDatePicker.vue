@@ -22,7 +22,7 @@
               v-model="date.month"
               hide-no-data
               :items="months"
-              label="Month" 
+              label="Month"
               placeholder="MM"
               v-bind="customProps"
               @focus="focused = true"

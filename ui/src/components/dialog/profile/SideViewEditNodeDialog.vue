@@ -95,7 +95,6 @@
               <ArchiveIcon size="normal"/>
               <span class="pl-2 "> Archive</span>
 
-
               <!-- <v-icon small class="blue--text" left>mdi-account-circle</v-icon>Archive -->
             </v-btn>
             <v-btn
@@ -172,7 +171,7 @@
                   >
                     <template v-slot:action >
                       <AddButton v-if="!preview" @click="toggleNew('parent')" class="pb-4" justify="start"/>
-                    </template>                  
+                    </template>
                   </AvatarGroup>
                 </v-col>
 
@@ -205,7 +204,7 @@
                   >
                     <template v-slot:action >
                       <AddButton v-if="!preview" @click="toggleNew('child')" class="pb-4" justify="start"/>
-                    </template>         
+                    </template>
                   </AvatarGroup>
                   <AvatarGroup
                     v-else
@@ -217,7 +216,7 @@
                   >
                     <template v-slot:action >
                       <AddButton v-if="!preview" @click="toggleNew('child')" class="pb-6" />
-                    </template>         
+                    </template>
                   </AvatarGroup>
                 </v-col>
               </v-row>
