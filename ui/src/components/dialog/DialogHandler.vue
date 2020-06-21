@@ -266,9 +266,8 @@ export default {
         console.log(res.data)
 
         // get the updated story from the db
-        var updatedStory = await this.$apollo.query(GET_STORY(id))
-
-        console.log(updatedStory)
+        // var updatedStory = await this.$apollo.query(GET_STORY(id))
+        // this.updateStories(updatedStory)
       }
     },
     deleteStory ($event) {
