@@ -15,7 +15,7 @@
           @profile-click="openProfile($event)">
         </AvatarGroup>
       </div>
-      <div v-if="profile.children && profile.children.length">
+      <div v-if="profile.children && profile.children.length" class="bt">
         <AvatarGroup v-if="profile.children" :profiles="profile.children" group-title="Children" size="50px" :show-labels="true"
           @profile-click="openProfile($event)">
         </AvatarGroup>
@@ -75,6 +75,7 @@ export default {
 
 <style>
 .rounded-border {
+  color: black;
   border: 0.5px solid rgba(0,0,0,0.3);
   border-radius: 10px;
   background-color: white;

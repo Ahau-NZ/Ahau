@@ -2,10 +2,34 @@
   <div>
     <fieldset :class="`rounded-input ${customClass}`">
       <legend class="ml-2 custom-label">
-        Date of birth
+        {{label}}
       </legend>
         <v-row>
           <v-col class="pa-0 pl-6">
+            <v-autocomplete
+              v-model="date.day"
+              hide-no-data
+              :items="days"
+              label="Day"
+              placeholder="DD"
+              v-bind="customProps"
+              @focus="focused = true"
+              @blur="focused = false"
+            ></v-autocomplete>
+          </v-col>
+          <v-col class="pa-0">
+            <v-autocomplete
+              v-model="date.month"
+              hide-no-data
+              :items="months"
+              label="Month" 
+              placeholder="MM"
+              v-bind="customProps"
+              @focus="focused = true"
+              @blur="focused = false"
+            ></v-autocomplete>
+          </v-col>
+          <v-col class="pa-0 pr-3">
             <v-autocomplete
               v-model="date.year"
               hide-no-data
@@ -17,30 +41,6 @@
               @blur="focused = false"
             >
             </v-autocomplete>
-          </v-col>
-          <v-col class="pa-0">
-            <v-autocomplete
-              v-model="date.month"
-              hide-no-data
-              :items="months"
-              label="Month"
-              placeholder="MM"
-              v-bind="customProps"
-              @focus="focused = true"
-              @blur="focused = false"
-            ></v-autocomplete>
-          </v-col>
-          <v-col class="pa-0 pr-3">
-            <v-autocomplete
-              v-model="date.day"
-              hide-no-data
-              :items="days"
-              label="Day"
-              placeholder="DD"
-              v-bind="customProps"
-              @focus="focused = true"
-              @blur="focused = false"
-            ></v-autocomplete>
           </v-col>
         </v-row>
     </fieldset>

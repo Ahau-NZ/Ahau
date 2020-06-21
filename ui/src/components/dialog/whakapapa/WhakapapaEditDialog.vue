@@ -53,7 +53,7 @@
       </v-row>
     </template>
     <template v-slot:before-actions>
-      <v-col cols="12" sm="auto" class="mb-8">
+      <v-col cols="12" sm="auto">
         <v-btn
           @click="$emit('delete')"
           align="center"
@@ -61,7 +61,7 @@
           text
           class="secondary--text pl-5"
         >
-          <v-icon small class="secondary--text" left>mdi-delete</v-icon>Delete this whakapapa record
+          <v-icon small class="secondary--text" left>mdi-delete</v-icon>Delete whakapapa record
         </v-btn>
       </v-col>
     </template>

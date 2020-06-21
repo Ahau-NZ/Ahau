@@ -1,12 +1,13 @@
 <template>
   <transition appear :name="mobile ? 'up' : 'left'">
     <v-navigation-drawer
-      :style="mobile ? 'top: -64px;' : 'top: 64px;'"
+      :style="mobile ? preview ? 'top: -7px ' : 'top: -64px;' : 'top: 64px;'"
       v-model="drawer"
-      absolute
+      :absolute="mobile"
+      :fixed="!mobile"
       :right="!mobile"
       light
-      :width="mobile ? '100%' : '25%'"
+      :width="mobile ? '100%' : '21%'"
       permanent
       :height="mobile ? 'auto' : 'calc(100vh - 64px)'"
       class="side-menu"
@@ -169,14 +170,15 @@
                     :show-labels="true"
                     @profile-click="openProfile($event)"
                   >
-                  
-                    <AddButton @click="toggleNew('parent')" />
+                    <template v-slot:action >
+                      <AddButton v-if="!preview" @click="toggleNew('parent')" class="pb-4" justify="start"/>
+                    </template>                  
                   </AvatarGroup>
                 </v-col>
 
-                <hr v-if="profile.siblings" class="family-divider"/>
+                <hr v-if="profile.parents" class="family-divider"/>
 
-                <v-col :cols="12" v-if="profile.siblings" class="pa-0">
+                <v-col :cols="12" v-if="profile.siblings && profile.siblings.length" class="pa-0">
                   <AvatarGroup
                     :profiles="profile.siblings"
                     group-title="Siblings"
@@ -184,13 +186,13 @@
                     :show-labels="true"
                     @profile-click="openProfile($event)"
                   >
-                  <template v-slot:actions >
-                    <AddButton v-if="view && view.focus !== profile.id" @click="toggleNew('sibling')" />
+                  <template v-slot:action >
+                    <AddButton v-if="!preview && view && view.focus !== profile.id" @click="toggleNew('sibling')" class="pb-4" justify="start"/>
                   </template>
                   </AvatarGroup>
                 </v-col>
 
-                <hr v-if="profile.siblings" class="family-divider"/>
+                <hr v-if="profile.siblings && profile.siblings.length" class="family-divider"/>
 
                 <v-col :cols="12" class="pa-0">
                   <AvatarGroup
@@ -201,7 +203,9 @@
                     :show-labels="true"
                     @profile-click="openProfile($event)"
                   >
-                    <AddButton @click="toggleNew('child')" />
+                    <template v-slot:action >
+                      <AddButton v-if="!preview" @click="toggleNew('child')" class="pb-4" justify="start"/>
+                    </template>         
                   </AvatarGroup>
                   <AvatarGroup
                     v-else
@@ -211,7 +215,9 @@
                     :show-labels="true"
                     @profile-click="openProfile($event)"
                   >
-                    <AddButton @click="toggleNew('child')" />
+                    <template v-slot:action >
+                      <AddButton v-if="!preview" @click="toggleNew('child')" class="pb-6" />
+                    </template>         
                   </AvatarGroup>
                 </v-col>
               </v-row>

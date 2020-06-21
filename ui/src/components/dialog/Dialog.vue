@@ -8,7 +8,6 @@
             : 'scale-transition'"
         v-model="show"
         :light="!dark"
-        persistent
         :max-width="width"
         :fullscreen="mobile"
       >
@@ -35,7 +34,7 @@
                 <v-col
                   :align="mobile ? '' : 'right'"
                   :class="{
-                    'pt-0': true,
+                    'pt-3': true,
                     'pb-0': true,
                     'd-flex': mobile,
                     'justify-space-between': mobile

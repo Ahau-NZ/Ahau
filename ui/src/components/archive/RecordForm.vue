@@ -11,6 +11,7 @@
                 label="Title"
                 v-bind="customProps"
                 class="title-input"
+                style="text-align: start; font-size: 1.2em; font-weight: 500;"
               />
             </v-col>
             <v-col v-if="formData.artefacts.length > 0" cols="12" class="pl-0 pr-0">
@@ -93,7 +94,8 @@
             </v-col>
 
             <!-- ADD MENTIONS -->
-            <v-col :cols="mobile ? formData.mentions.length > 2 ? 'auto' : '6' : formData.mentions.length > 2 ? 'auto' : '3'" class="pr-0">
+            <!-- <v-col :cols="mobile ? formData.mentions.length > 2 ? 'auto' : '6' : formData.mentions.length > 2 ? 'auto' : '3'" class="pr-0"> -->
+            <v-col :cols="mobile ? '12' : formData.mentions.length > 2 ? 'auto' : '3'" class="pr-0">
               <v-row v-if="!showMentions" class="pl-10 pt-2" @click="showMentions = true" >
                 <v-icon small>mdi-plus</v-icon>
                 <AddButton size="20px" icon="mdi-account" iconClass="pr-3" class="right: 0;" label="Mention" justify="start"/>
@@ -115,10 +117,11 @@
                 deletable
                 @delete="removeItem(formData.mentions, $event)"
               />
+              <v-divider v-if="mobile" light class="mt-6 mr-4"></v-divider>
             </v-col>
 
             <!-- ADD ACCESS -->
-            <v-col :cols="mobile ? formData.access.length > 2 ? 'auto' : '6' : formData.access.length > 1 ? 'auto' : '3'">
+            <v-col :cols="mobile ? '12' : formData.access.length > 1 ? 'auto' : '3'">
               <v-row v-if="!showAccess" @click="showAccess = true" class="pl-10 pt-2">
                 <v-icon small>mdi-plus</v-icon>
                 <AddButton size="20px" icon="mdi-file-key" iconClass="pr-3" label="Access" justify="start"/>
@@ -139,10 +142,11 @@
                 deletable
                 @delete="removeItem(formData.access, $event)"
               />
+              <v-divider v-if="mobile" light class="mt-6 mr-4"></v-divider>
             </v-col>
 
             <!-- ADD CREATOR -->
-            <v-col :cols="mobile ? formData.creator.id ? 'auto' : '6' : formData.creator.id ? 'auto' : '3'">
+            <v-col :cols="mobile ? '12' : formData.creator.id ? 'auto' : '3'">
               <v-row v-if="!showCreator" @click="showCreator = true" class="pl-10 pt-2">
                 <v-icon small>mdi-plus</v-icon>
                 <AddButton size="20px" icon="mdi-account-circle" iconClass="pr-3" class="right: 0;" label="Creator" justify="start"/>
@@ -507,6 +511,7 @@ export default {
       if (this.showStory) this.show = true
     },
     async getSuggestions (name) {
+      console.log("name: ", name)
       if (name) this.suggestions = await findByName(name)
       else this.suggestions = []
     },
