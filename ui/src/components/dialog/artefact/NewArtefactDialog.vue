@@ -4,6 +4,7 @@
       :fullscreen="mobile"
       width="70%"
       content-class="artefact-dialog"
+      overlay-opacity="0.8"
     >
       <v-card tile flat style="overflow-x:hidden">
         <DialogTitleBanner title="edit artefact" :mobile="mobile" @close="close"  :isEditing="isEditing"/>
@@ -29,7 +30,7 @@
             <v-col cols="12" class="px-0">
               <ArtefactCarousel :artefacts="formData" :index.sync="selectedIndex" :editing="!editing" @processMediaFiles="$emit('processMediaFiles',$event)" @delete="$emit('delete', $event)"/>
             </v-col>
-            <v-col cols="12">
+            <v-col cols="12" class="pl-10 py-6">
               <AddButton size="20px" icon="mdi-account-multiple-plus" dark iconClass="pr-3" class="right: 0;" label="Mention" @click="showMentions = true"  justify="start"/>
               <ProfileSearchBar
                 :selectedItems.sync="artefact.mentions"

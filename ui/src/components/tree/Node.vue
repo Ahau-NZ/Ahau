@@ -39,7 +39,7 @@
       </g>
       <g
         class="menu-button"
-        v-if="!profile.isCollapsed && hover "
+        v-if="showMenu"
         @click.stop="openMenu($event, profile, false)"
         :transform="`translate(${1.4 * radius}, ${1.4 * radius})`"
       >
@@ -116,8 +116,8 @@ export default {
     node: { type: Object, required: true },
     radius: { type: Number, required: true },
     isPartner: { type: Boolean, default: false },
-    nonFocusedPartners: { type: Array }
-
+    nonFocusedPartners: { type: Array },
+    nodeCentered: {type: String}
   },
   data () {
     return {
@@ -131,6 +131,13 @@ export default {
     }
   },
   computed: {
+    showMenu () {
+      if (!this.profile.isCollapsed) {
+        if (this.hover) return true
+        if (this.nodeCentered === this.node.data.id) return true
+      }
+      return false
+    },
     profile () {
       return this.node.data
     },
@@ -221,7 +228,7 @@ g {
 
     .menu-button {
       transition: opacity ease-in 0.2s;
-      opacity: 0;
+      opacity: 1;
     }
 
     &:hover {

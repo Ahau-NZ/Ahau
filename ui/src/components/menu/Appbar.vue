@@ -7,12 +7,12 @@
       <!-- <v-btn v-if="showStory && mobile" @click="setShowStory" icon dark>
         <v-icon>mdi-arrow-left</v-icon>
       </v-btn> -->
-      <template v-else>
+      <template v-if="!isgoBack">
         <router-link to="/" v-if="enableMenu" class="logo-link"  @click.native="karakiaWhakamutunga()">
           <img src="@/assets/logo_red.svg" class="logo" />
         </router-link>
       </template>
-      <v-btn v-if="isgoWhakapapa && !showStory" text @click="goWhakapapa" class="ms-10">
+      <v-btn v-if="isgoWhakapapa && !showStory" text @click="goWhakapapa" :class="mobile ? 'ms-4':'ms-10'">
         <v-row>
           <v-icon large>mdi-chevron-left</v-icon>
           <Avatar
