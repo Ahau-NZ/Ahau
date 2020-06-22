@@ -10,8 +10,8 @@
         <ProfileCard>
           <template v-slot:content>
             <v-row cols="12" class="pt-0" >
-              <ProfileInfoItem class="br" smCols="12" mdCols="4" title="Phone" :value="profile.phone"/>
-              <ProfileInfoItem class="br" smCols="12" mdCols="4" title="Email" :value="profile.email"/>
+              <ProfileInfoItem :class="mobile ? 'bb':'br bb'" smCols="12" mdCols="4" title="Phone" :value="profile.phone"/>
+              <ProfileInfoItem :class="mobile ? 'bb':'br bb'" smCols="12" mdCols="4" title="Email" :value="profile.email"/>
               <ProfileInfoItem smCols="12" mdCols="4" title="Address" :value="profile.address"/>
             </v-row>
           </template>
