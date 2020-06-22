@@ -1,5 +1,6 @@
 .DS_Store
 node_modules
+yarn.lock
 
 /releases
 
@@ -7,6 +8,10 @@ node_modules
 /desktop/dist
 /desktop/electron-builder.env
 /desktop/build/win/win_csc.pfx
+
+/pataka/dist
+/pataka/electron-builder.env
+/pataka/build/win/win_csc.pfx
 
 # Cordova
 /mobile/platforms

@@ -1,0 +1,62 @@
+{
+  "name": "ahau-pataka",
+  "version": "0.0.1",
+  "description": "A pub application for the Ahau ecosystem. Built using scuttlebutt",
+  "homepage": "https://gitlab.com/ahau/whakapapa-ora",
+  "scripts": {
+    "postinstall": "electron-builder install-app-deps && npm run ui:setup",
+    "start": "npm run ui:dev 1>&2 | electron index.js -- --title Pātaka",
+    "start:dev": "npm run ui:dev 1>&2 | cross-env NODE_ENV=development electron index.js -- --title Pātaka",
+    "ui:setup": "cd ui && npm install",
+    "ui:dev": "cd ui && npm run dev",
+    "build:ui": "cd ui && npm run build",
+    "build:icons": "node build/build-icons.js",
+    "pack": "electron-builder --config build/electron-builder.config.js --dir",
+    "dist": "electron-builder --config build/electron-builder.config.js",
+    "lint": "cd ui && npm run lint"
+  },
+  "dependencies": {
+    "ahau-server": "file:../server",
+    "secret-stack": "^6.3.1",
+    "sodium-native": "^2.4.9",
+    "ssb-ahoy": "^3.0.0",
+    "ssb-backlinks": "^0.7.3",
+    "ssb-blobs": "^1.2.2",
+    "ssb-config": "^3.4.3",
+    "ssb-conn": "^0.11.2",
+    "ssb-db": "^19.3.1",
+    "ssb-friends": "^4.1.4",
+    "ssb-invite": "^2.1.4",
+    "ssb-lan": "^0.2.0",
+    "ssb-legacy-conn": "^1.0.25",
+    "ssb-master": "^1.0.3",
+    "ssb-no-auth": "^1.0.0",
+    "ssb-private": "^0.2.3",
+    "ssb-profile": "^1.0.0",
+    "ssb-promiscuous": "^1.1.0",
+    "ssb-query": "^2.4.3",
+    "ssb-replicate": "^1.3.1",
+    "ssb-serve-blobs": "^2.3.0",
+    "ssb-unix-socket": "^1.0.0",
+    "ssb-whakapapa": "^0.6.0",
+    "ssb-story": "^1.0.0",
+    "ssb-artefact": "^0.4.0"
+  },
+  "devDependencies": {
+    "@fiahfy/icns-convert": "0.0.6",
+    "cross-env": "^7.0.0",
+    "electron-builder": "^21.2.0",
+    "electron-notarize": "^0.2.1",
+    "electron-rebuild": "^1.11.0",
+    "esm": "^3.2.25",
+    "sharp": "^0.23.1",
+    "to-ico": "^1.1.5",
+    "typescript": "^3.7.2"
+  },
+  "author": "Āhau Ltd.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://gitlab.com/ahau/whakapapa-ora.git"
+  },
+  "license": "AGPL-3.0"
+}

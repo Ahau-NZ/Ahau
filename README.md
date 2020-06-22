@@ -34,6 +34,14 @@ $ npm run setup:mobile
 // Installs dependencies and creates Cordova folders for the Android project
 ```
 
+### Pātaka
+
+```bash
+$ npm run setup:pataka
+// Npm installs the pātaka project
+```
+
+
 ## Development
 
 ### Desktop
@@ -70,6 +78,15 @@ $ npm run dev:android-update
 // compiles just the frontend and runs the Android app on a device
 ```
 
+### Pātaka
+
+```bash
+$ npm run dev:pataka
+// launches the scuttlebutt + graphql servers + electron
+// and starts a webpack dev-server which serves up live-updating UI
+```
+NOTES: same as desktop
+
 ### Other tools
 - [Graphiql](https://github.com/graphql/graphiql)
   - a sweet GraphQL tool for exploring generated doc and practicing queries/ mutations with the server
@@ -83,10 +100,11 @@ $ npm run dev:android-update
 
 ```bash
 $ npm run build-ui:desktop
+$ npm run build-ui:pataka
 ```
 
-Compiles and minifies code (and assets) for production, outputs to `./desktop/dist`.
-You can try running the build with `npm run start:desktop`.
+Compiles and minifies code (and assets) for production, outputs to `./desktop/dist` and `./pataka/dist`.
+You can try running the build with `npm run start:desktop` or `npm run start:pataka`.
 
 
 ## Publishing installers
@@ -169,6 +187,17 @@ After it is done, you can find the APK file at
 
 Take that file and upload it in the Google Play developer console website.
 
+### Pataka
+
+```bash
+$ npm run release:pataka
+```
+
+Compiles and minifies code (and assets) for production, builds installer (using compiled clientside code + back end code), and outputs to `./release/pataka`.
+
+Notes: same as desktop
+
+
 ## Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
 
@@ -182,6 +211,8 @@ npm run test:ui // test
 npm run lint // lint whole project
 
 npm run lint:ui // lint only UI
+
+npm run lint:pataka // lint only pataka UI
 
 npm run cleanup // delete node_modules and package-lock.json files from all packages
 ```
