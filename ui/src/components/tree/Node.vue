@@ -117,7 +117,7 @@ export default {
     radius: { type: Number, required: true },
     isPartner: { type: Boolean, default: false },
     nonFocusedPartners: { type: Array },
-    nodeCentered: {type: String}
+    nodeCentered: { type: String }
   },
   data () {
     return {

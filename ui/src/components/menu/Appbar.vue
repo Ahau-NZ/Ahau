@@ -87,7 +87,6 @@
 </template>
 
 <script>
-import gql from 'graphql-tag'
 import Avatar from '@/components/Avatar'
 import FeedbackButton from '@/components/button/FeedbackButton'
 import { mapGetters, mapActions } from 'vuex'

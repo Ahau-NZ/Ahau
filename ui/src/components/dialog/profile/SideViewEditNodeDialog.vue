@@ -374,7 +374,7 @@ export default {
           this.formData.bornAt = dates[0]
           this.formData.diedAt = dates[1]
         }
-      },
+      }
     },
     'formData.bornAt' (newVal) {
       this.formData.aliveInterval = this.formData.bornAt + '/' + this.formData.diedAt
