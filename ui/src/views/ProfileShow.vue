@@ -33,7 +33,7 @@
       </transition>
       </v-col>
     </v-row>
-    <v-spacer style="height:200px"></v-spacer>
+    <v-spacer v-if="!mobile" style="height:200px"></v-spacer>
   </v-container>
 </template>
 

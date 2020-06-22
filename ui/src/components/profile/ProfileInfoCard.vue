@@ -43,10 +43,6 @@ export default {
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
-    divider () {
-      if (this.mobile) return 'divider-horizontal'
-      return 'divider-vertical'
-    },
     age () {
       if (this.profile.aliveInterval) {
         var age = calculateAge(this.profile.aliveInterval)

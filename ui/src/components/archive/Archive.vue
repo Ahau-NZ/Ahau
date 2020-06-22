@@ -4,7 +4,7 @@
     <!-- VIEW STORY OVERLAY -->
     <div :class="{ 'showOverlay': showStory && !mobile }"></div>
     <v-row v-if="!showStory" class="top-margin mb-5">
-      <v-col class="headliner black--text pa-0 pl-4">
+      <v-col class="headliner black--text pa-0 pl-4 pt-2">
         Archive records
       </v-col>
       <!-- <v-col align="right" class="pa-0">
@@ -23,7 +23,7 @@
           <v-icon small class="black--text">mdi-magnify</v-icon>
         </v-btn>            -->
         <!-- <v-btn :medium="!mobile" :x-small="mobile" :class="mobile ? 'addBtnMob' : 'addBtn'" class="my-2" fab color="white" @click.stop="openContextMenu($event)"> -->
-        <v-btn :medium="!mobile" fab :x-small="mobile" :class="mobile ? 'addBtnMob' : 'addBtn'" class="my-2"  color="white" elevation="1" @click.prevent="setDialog('new-story')">
+        <v-btn :medium="!mobile" fab :small="mobile" :class="mobile ? 'addBtnMob' : 'addBtn'" class="my-2"  color="white" elevation="1" @click.prevent="setDialog('new-story')">
           <v-icon :large="!mobile" class="black--text">mdi-plus</v-icon>
         </v-btn>
       </div>
@@ -36,7 +36,7 @@
           </v-row>
           <v-divider class="mt-6 mb-8" light></v-divider> -->
           <div v-if="!showStory">
-            <v-row v-for="(story, i) in stories" :key="`story-${i}-id-${story.id}`" class="mb-10">
+            <v-row v-for="(story, i) in stories" :key="`story-${i}-id-${story.id}`" class="mb-5">
               <StoryCard @updateDialog="updateDialog($event)" @toggleStory="toggleStory()" :story="story" />
             </v-row>
           </div>

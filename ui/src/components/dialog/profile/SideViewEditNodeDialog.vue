@@ -359,6 +359,7 @@ export default {
       immediate: true,
       handler (newVal) {
         this.drawer = newVal
+        if (this.mobile) window.scrollTo(0, 0)
       }
     },
     profile: {
@@ -373,7 +374,7 @@ export default {
           this.formData.bornAt = dates[0]
           this.formData.diedAt = dates[1]
         }
-      }
+      },
     },
     'formData.bornAt' (newVal) {
       this.formData.aliveInterval = this.formData.bornAt + '/' + this.formData.diedAt

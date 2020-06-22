@@ -12,7 +12,7 @@
           <img src="@/assets/logo_red.svg" class="logo" />
         </router-link>
       </template>
-      <v-btn v-if="goWhakapapa && !showStory" text :to="{ path: route.from.fullPath }" class="ms-10">
+      <v-btn v-if="isgoWhakapapa && !showStory" text @click="goWhakapapa" class="ms-10">
         <v-row>
           <v-icon large>mdi-chevron-left</v-icon>
           <Avatar
@@ -132,9 +132,8 @@ export default {
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
-    goWhakapapa () {
+    isgoWhakapapa () {
       if (this.route.from) {
-        console.log(this.route.from)
         return this.route.from.name === 'whakapapaShow' && this.route.name === 'profileShow'
       }
       return false
@@ -182,6 +181,9 @@ export default {
     goBack () {
       if (this.route.name === 'whakapapaShow') return this.$router.push({ name: 'whakapapaIndex' })
       else if (this.showStory) return this.setShowStory()
+    },
+    goWhakapapa () {
+      this.$router.push({ path: this.route.from.fullPath })
     }
 
   },
