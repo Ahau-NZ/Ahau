@@ -462,7 +462,11 @@ export default {
 
 .family-divider {
   width: 80%;
-  border: 0.5px solid rgba(0, 0, 0, 0.3);
+  height:0.5px;
+  border-width:0;
+  color:gray;
+  background-color:gray;
+  opacity:0.3
 }
 
 .up-enter-active {

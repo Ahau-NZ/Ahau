@@ -15,7 +15,7 @@
           @profile-click="openProfile($event)">
         </AvatarGroup>
       </div>
-      <div v-if="profile.children && profile.children.length" class="bt">
+      <div v-if="profile.children && profile.children.length">
         <AvatarGroup v-if="profile.children" :profiles="profile.children" group-title="Children" size="50px" :show-labels="true"
           @profile-click="openProfile($event)">
         </AvatarGroup>
