@@ -32,6 +32,13 @@ const getters = {
 }
 
 const mutations = {
+  addStoryToStories (state, story) {
+    state.stories.push(story)
+  },
+  deleteStoryFromStories (state, deletedStory) {
+    const index = state.stories.findIndex(story => story.id === deletedStory.id)
+    if (index !== -1) state.stories.splice(index, 1)
+  },
   updateComponent (state, component) {
     state.activeComponent = component
   },
@@ -48,11 +55,8 @@ const mutations = {
     state.stories = stories
   },
   updateStoryInStories (state, updatedStory) {
-    console.log('updateStoryInStories', updatedStory)
     const index = state.stories.findIndex(story => story.id === updatedStory.id)
     if (index !== -1) state.stories.splice(index, 1, updatedStory)
-    // const index = state.stories.findIndexOf(story => story.id === updatedStory.id)
-    // Vue.set(state.stories[index], updatedStory)
   }
 }
 

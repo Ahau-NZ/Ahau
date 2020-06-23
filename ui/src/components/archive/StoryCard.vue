@@ -224,7 +224,14 @@
       editing
       :story="story"
       @close="dialog = null"
+      @delete="dialog = 'delete-story'"
       @submit="updateStory($event)"
+    />
+    <DeleteRecordDialog
+      v-if="dialog === 'delete-story'"
+      :show="dialog === 'delete-story'"
+      @close="dialog = null"
+      @submit="deleteStory()"
     />
   </v-card>
 </div>
@@ -241,7 +248,8 @@ import EditArtefactButton from '@/components/button/EditArtefactButton.vue'
 import { colours } from '@/lib/colours.js'
 import ArtefactCarouselItem from '@/components/artefact/ArtefactCarouselItem.vue'
 import NewRecordDialog from '@/components/dialog/archive/NewRecordDialog.vue'
-import { SAVE_STORY, GET_STORY } from '@/lib/story-helpers.js'
+import DeleteRecordDialog from '@/components/dialog/archive/DeleteRecordDialog.vue'
+import { SAVE_STORY, GET_STORY, DELETE_STORY } from '@/lib/story-helpers.js'
 
 export default {
   name: 'StoryCard',
@@ -257,7 +265,8 @@ export default {
     EditStoryButton,
     EditArtefactButton,
     ArtefactCarouselItem,
-    NewRecordDialog
+    NewRecordDialog,
+    DeleteRecordDialog
   },
   data () {
     return {
@@ -310,7 +319,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['setStory', 'updateStoryInStories']),
+    ...mapMutations(['setStory', 'updateStoryInStories', 'deleteStoryFromStories']),
     ...mapActions(['setShowArtefact', 'setDialog', 'setProfileById', 'setShowStory']),
     async updateStory ($event) {
       if ($event) {
@@ -337,6 +346,18 @@ export default {
         this.updateStoryInStories(newStoryRes.data.story)
         this.$emit('update:story', newStoryRes.data.story)
       }
+    },
+    async deleteStory () {
+      console.log('delete...')
+      const res = await this.$apollo.mutate(DELETE_STORY(this.story.id, new Date()))
+
+      if (res.errors) {
+        console.error('failed to delete story', res.errors)
+        return
+      }
+
+      this.deleteStoryFromStories(this.story)
+      this.$emit('close', null)
     },
     colour (index) {
       return colours[index]

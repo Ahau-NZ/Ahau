@@ -23,7 +23,7 @@
           <v-icon small class="black--text">mdi-magnify</v-icon>
         </v-btn>            -->
         <!-- <v-btn :medium="!mobile" :x-small="mobile" :class="mobile ? 'addBtnMob' : 'addBtn'" class="my-2" fab color="white" @click.stop="openContextMenu($event)"> -->
-        <v-btn :medium="!mobile" text :x-small="mobile" :class="mobile ? 'addBtnMob' : 'addBtn'" class="my-2" fab color="white" @click.prevent="setDialog('new-story')">
+        <v-btn :medium="!mobile" text :x-small="mobile" :class="mobile ? 'addBtnMob' : 'addBtn'" class="my-2" fab color="white" @click.prevent="dialog = 'new-story'">
           <v-icon :large="!mobile" class="black--text">mdi-plus</v-icon>
         </v-btn>
       </div>
@@ -42,7 +42,7 @@
           </div>
           <div v-else>
             <v-row :class="mobile ? 'pa-0': 'px-6 top-margin'">
-              <StoryCard @updateDialog="updateDialog($event)" :fullStory="true" :story.sync="currentStory" @close="toggleStory(null)" />
+              <StoryCard @updateDialog="updateDialog($event)" :fullStory="true" :story.sync="currentStory" @close="toggleStory($event)" />
             </v-row>
           </div>
         </v-col>
@@ -62,6 +62,13 @@
     :dialog.sync="dialog.active"
     :type.sync="dialog.type"
   /> -->
+    <NewRecordDialog
+      v-if="dialog === 'new-story'"
+      :show="dialog === 'new-story'"
+      :title="'Add new Record'"
+      @close="dialog = null"
+      @submit="addStory($event)"
+    />
   </div>
 </template>
 
@@ -72,16 +79,18 @@
 
 import StoryCard from '@/components/archive/StoryCard.vue'
 // import CollectionGroup from '@/components/archive/CollectionGroup.vue'
-import { GET_ALL_STORIES } from '@/lib/story-helpers'
+import { SAVE_STORY, GET_STORY } from '@/lib/story-helpers.js'
 import { firstMocks } from '@/mocks/collections'
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters, mapActions, mapMutations } from 'vuex'
+import NewRecordDialog from '@/components/dialog/archive/NewRecordDialog.vue'
 
 // const get = require('lodash.get')
 
 export default {
   name: 'Archive',
   components: {
-    StoryCard
+    StoryCard,
+    NewRecordDialog
     // CollectionGroup,
     // VueContext,
     // DialogHandler
@@ -140,7 +149,26 @@ export default {
     }
   },
   methods: {
+    ...mapMutations(['addStoryToStories', 'removeStoryFromStories']),
     ...mapActions(['setComponent', 'setShowStory', 'setDialog']),
+    async addStory ($event) {
+      if ($event) {
+        const res = await this.$apollo.mutate(SAVE_STORY($event))
+        if (res.errors) {
+          console.error('failed to create story', res.errors)
+          return
+        }
+
+        var newStoryRes = await this.$apollo.query(GET_STORY(res.data.saveStory))
+
+        if (newStoryRes.errors) {
+          console.error('error fetching story', newStoryRes.errors)
+          return
+        }
+
+        this.addStoryToStories(newStoryRes.data.story)
+      }
+    },
     toggleStory (story) {
       this.currentStory = story
       this.scrollPosition = window.pageYOffset

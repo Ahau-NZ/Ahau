@@ -88,6 +88,20 @@ export const GET_ALL_STORIES = ({
   fetchPolicy: 'no-cache'
 })
 
+export const DELETE_STORY = (id, date) => ({
+  mutation: gql`
+    mutation ($input: StoryInput!) {
+      saveStory (input: $input)
+    }
+  `,
+  variables: {
+    input: {
+      id,
+      tombstone: { date }
+    }
+  }
+})
+
 export const SAVE_STORY = input => {
   input = {
     type: '*', // TODO: sort out types

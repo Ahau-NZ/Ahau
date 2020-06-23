@@ -10,7 +10,7 @@
       <!-- x ✓ BUTTONS -->
       <template v-slot:actions>
         <v-row class="mt-4 px-5" align="center">
-          <v-btn text @click="setDialog('delete-story')">
+          <v-btn text @click="$emit('delete')">
             Delete this record
             <v-icon class="pl-2">mdi-delete</v-icon>
           </v-btn>
@@ -188,15 +188,10 @@ export default {
       var output = {}
       if (this.editing) {
         // get all changes
-        output = storyChanges(this.story, this.formData)
-        
-        output = { id: this.story.id, ...output }
+        output = { id: this.story.id, ...storyChanges(this.story, this.formData) }
       } else {
         output = storySubmission(this.formData)
       }
-
-      console.log('output', output)
-
       this.$emit('submit', output)
       this.close()
     }
