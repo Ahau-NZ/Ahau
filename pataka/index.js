@@ -26,7 +26,7 @@ const plugins = [
   // 'ssb-invite',
   // 'ssb-about',
   // 'ssb-suggest'
-  'ahau-server'
+  'ahau-pataka-server'
 ]
 
 // Karakia tūwhera - dont not remove
