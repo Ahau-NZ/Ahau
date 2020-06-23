@@ -3,7 +3,7 @@
       transition="dialog-bottom-transition"
       :fullscreen="mobile"
       width="70%"
-      content-class="artefact-dialog"
+      :content-class="mobile ? '':'artefact-dialog'"
       overlay-opacity="0.8"
     >
       <v-card tile flat style="overflow-x:hidden">
@@ -129,24 +129,56 @@
             </v-col>
             <v-col>
               <v-card-actions>
-                <v-btn text @click="$emit('delete', selectedIndex)">
-                  Delete this artefact
-                  <v-icon class="pl-2">mdi-delete</v-icon>
-                </v-btn>
-                <v-spacer/>
-                <v-btn @click="close"
-                  text large fab
-                  class="secondary--text"
-                >
-                  <v-icon color="secondary">mdi-close</v-icon>
-                </v-btn>
-                <v-btn @click="submit"
-                  text large fab
-                  class="blue--text"
-                >
-                  <v-icon>mdi-check</v-icon>
-                </v-btn>
+                <v-row>
+                  <v-btn text @click="$emit('delete', selectedIndex)">
+                    Delete this artefact
+                    <v-icon class="pl-2">mdi-delete</v-icon>
+                  </v-btn>
+
+                  <v-col
+                    :align="mobile ? '' : 'right'"
+                    :class="{
+                      'pt-3': true,
+                      'pb-0': true,
+                      'd-flex': mobile,
+                      'justify-space-between': mobile
+                    }"
+                  >
+                    <v-btn @click="close"
+                      text large fab
+                      class="secondary--text"
+                    >
+                      <v-icon color="secondary">mdi-close</v-icon>
+                    </v-btn>
+                    <v-btn @click="submit"
+                      text large fab
+                      class="blue--text"
+                    >
+                      <v-icon>mdi-check</v-icon>
+                    </v-btn>
+                  </v-col>
+                 
+                </v-row>
               </v-card-actions>
+              <!-- <v-card-actions>
+                  <v-btn text @click="$emit('delete', selectedIndex)">
+                    Delete this artefact
+                    <v-icon class="pl-2">mdi-delete</v-icon>
+                  </v-btn>
+                  <v-spacer/>
+                  <v-btn @click="close"
+                    text large fab
+                    class="secondary--text"
+                  >
+                    <v-icon color="secondary">mdi-close</v-icon>
+                  </v-btn>
+                  <v-btn @click="submit"
+                    text large fab
+                    class="blue--text"
+                  >
+                    <v-icon>mdi-check</v-icon>
+                  </v-btn>
+              </v-card-actions> -->
             </v-col>
           </v-row>
         </v-container>
