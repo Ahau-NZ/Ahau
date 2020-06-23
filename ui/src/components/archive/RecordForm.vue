@@ -305,15 +305,6 @@
                 @delete="removeItem(formData.contributors, $event)"
               />
             </v-col>
-
-            <!-- ADD SUBMISSION DATE -->
-            <v-col :cols="mobile ? '12' : '3'" class="pt-5 pa-1">
-              <v-text-field
-                v-model="formData.submissionDate"
-                label="Submission Date"
-                v-bind="customProps"
-              />
-            </v-col>
             <v-col cols="12" class="pa-1">
               <v-textarea
                 v-if="show"

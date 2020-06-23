@@ -52,7 +52,6 @@ const EMPTY_STORY = {
   location: '',
   locationDescription: '',
   creator: {},
-  submissionDate: '',
   contributionNotes: '',
 
   format: '',
