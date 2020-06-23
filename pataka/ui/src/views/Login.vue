@@ -1,12 +1,25 @@
 <template>
   <div class="container">
-    <v-col class="py-0">
-      <h1>Set pub info</h1>
-    </v-col>
+    <div v-if="isLoading" class="splash">
+      <img src="@/assets/logo_red.svg" />
+      <h1>Āhau Pātaka</h1>
+    </div>
+    <v-btn v-if="!isLoading && !isSetup" text x-large color="#b12526" @click.prevent="toggleNew">
+      <v-icon left>mdi-plus</v-icon>
+      <p class="mb-0">Create Pātaka</p>
+    </v-btn>
+    <NewNodeDialog
+      v-if="dialog"
+      :show="dialog"
+      :title="`Āhau Pātaka`"
+      @close="toggleNew"
+      @create="save($event)"
+    />
   </div>
 </template>
 
 <script>
+import NewNodeDialog from '@/components/NewNodeDialog.vue'
 import gql from 'graphql-tag'
 import pick from 'lodash.pick'
 
@@ -90,6 +103,10 @@ export default {
       this.isLoading = false
     },
 
+    toggleNew () {
+      this.dialog = !this.dialog
+    },
+
     async save (profileChanges) {
       const newProfile = pick(profileChanges,
         'preferredName',
@@ -118,6 +135,7 @@ export default {
     }
   },
   components: {
+    NewNodeDialog
   }
 }
 </script>
