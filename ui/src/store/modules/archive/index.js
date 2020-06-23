@@ -1,9 +1,6 @@
 // import gql from 'graphql-tag'
 import { createProvider } from '@/plugins/vue-apollo'
-import { getStories } from '@/lib/story-helpers'
 import { GET_ALL_STORIES } from '../../../lib/story-helpers'
-
-import Vue from 'vue'
 
 const apolloProvider = createProvider()
 const apollo = apolloProvider.defaultClient
