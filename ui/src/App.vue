@@ -1,12 +1,12 @@
 <template>
   <v-app>
     <Appbar v-if="displayAppbar" :enableMenu="enableMenu" app />
-    <v-content :class="{ 'mobileWhakapapaTitleStyle': mobile }">
+    <v-main v-if="!mobile || mobile && !storeDialog" :class="{ 'mobileWhakapapaTitleStyle': mobile }">
       <transition name="fade" mode="out-in">
         <router-view :mobileServerLoaded="mobileServerLoaded" />
       </transition>
       <Spinner />
-    </v-content>
+    </v-main>
     <DialogHandler />
   </v-app>
 </template>
@@ -27,7 +27,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters(['selectedProfile']),
+    ...mapGetters(['selectedProfile', 'storeDialog']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },

@@ -305,7 +305,8 @@ export default {
         if (this.showArtefact) {
           return 'ontop disableCard'
         }
-        return 'disableCard recordView'
+        if (this.storeDialog === 'edit-story') return 'disableCard'
+        else return 'disableCard recordView'
       }
       return 'rounded-border'
     }

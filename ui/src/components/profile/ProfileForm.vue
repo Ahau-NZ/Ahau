@@ -3,7 +3,7 @@
       <v-row>
         <!-- Upload profile photo -->
         <v-col :order="mobile ? '' : '2'" class="py-0">
-          <v-row class="justify-center pt-3">
+          <v-row class="justify-center pt-12">
             <!-- <v-col cols="12" class="pa-0" > -->
               <!-- Avatar -->
             <Avatar
@@ -187,14 +187,32 @@
                 <!-- TANE -->
                 <v-col class="pa-0">
                   <div class="gender-button" @click="updateSelectedGender('male')">
-                    <img ref="taneImg" :src="require('@/assets/tane-outlined.svg')" class="gender-image">
+                    <img ref="taneImg" :src="require('@/assets/tane-outlined.svg')" :class="mobile ? 'gender-image-mobile':'gender-image'">
                   </div>
                 </v-col>
                 <!-- WAHINE -->
                 <v-col class="pa-0">
                   <div class="gender-button" @click="updateSelectedGender('female')">
-                    <img ref="wahineImg" :src="require('@/assets/wahine-outlined.svg')" class="gender-image">
+                    <img ref="wahineImg" :src="require('@/assets/wahine-outlined.svg')" :class="mobile ? 'gender-image-mobile':'gender-image'">
                   </div>
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col  v-if="!readonly || formData.gender === 'other'" cols="6" class="pl-4 py-0">
+                  <v-checkbox v-model="formData.gender"
+                    value="other"
+                    label="other" :hide-details="true"
+                    v-bind="customProps"
+                    outlined
+                  />
+                </v-col>
+                <v-col  v-if="!readonly || formData.gender === 'unkown'" cols="6" class="pa-4 py-0">
+                  <v-checkbox v-model="formData.gender"
+                    value="unkown"
+                    label="unknown" :hide-details="true"
+                    v-bind="customProps"
+                    outlined
+                  />
                 </v-col>
               </v-row>
             </v-col>
@@ -459,6 +477,20 @@ export default {
       margin: 5px;
 
       .gender-image {
+        margin-top:80px;
+        width: 8em;
+        height: 8em;
+        border: 0.5px solid rgba(0,0,0,0.6);
+        border-radius: 50%;
+        cursor: pointer;
+        transition: all 0.3s;
+
+        &:hover {
+          border: 2px solid rgba(0,0,0,0.87);
+        }
+      }
+
+      .gender-image-mobile {
         width: 6em;
         height: 6em;
         border: 0.5px solid rgba(0,0,0,0.6);

@@ -1,37 +1,36 @@
 <template>
-  <div>
-    <Dialog :show="show" :title="title" @close="close" width="70%" :goBack="close" enableMenu>
+  <Dialog :show="show" :title="title" @close="close" width="70%" :goBack="close" enableMenu>
 
       <!-- FORM -->
       <template v-slot:content>
         <RecordForm ref="recordForm" :formData.sync="formData"/>
       </template>
 
-      <!-- x ✓ BUTTONS -->
-      <template v-slot:actions>
-        <v-row class="mt-4 px-5" align="center">
-          <v-btn text @click="$emit('delete')">
+      <template v-if="editing" v-slot:before-actions>
+        <v-col cols="12" sm="auto" class="mt-4">
+          <v-btn text @click="setDialog('delete-story')">
             Delete this record
             <v-icon class="pl-2">mdi-delete</v-icon>
           </v-btn>
-          <v-spacer/>
-          <v-btn @click="close"
-            text large fab
-            class="secondary--text"
-          >
-            <v-icon color="secondary">mdi-close</v-icon>
-          </v-btn>
-          <v-btn @click="submit"
+        </v-col>
+      </template>
+
+      <template v-slot:actions>
+        <v-btn @click="close"
+          text large fab
+          class="secondary--text"
+          :class="mobile ? 'mr-4':''"
+        >
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
+        <v-btn @click="submit"
             text large fab
             class="blue--text"
           >
             <v-icon>mdi-check</v-icon>
           </v-btn>
-        </v-row>
       </template>
-
     </Dialog>
-  </div>
 </template>
 
 <script>

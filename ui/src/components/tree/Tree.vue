@@ -24,6 +24,7 @@
               :node.sync="node"
               :radius="nodeRadius"
               :nonFocusedPartners="nonFocusedPartners"
+              :nodeCentered="nodeCentered"
               @click="centerNode(node)"
               @open-context-menu="$emit('open-context-menu', $event)"
               @change-focus="changeFocus($event, node)"
@@ -81,7 +82,7 @@ export default {
   data () {
     return {
       componentLoaded: false, // need to ensure component is loaded before using $refs
-      nodeCentered: [], // hold centered node id
+      nodeCentered: '', // hold centered node id
       collapseNode: false, // if node is centered than we can show/collapse
 
       nodeRadius: 50, // use variable for zoom later on
