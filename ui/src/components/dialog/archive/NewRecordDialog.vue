@@ -19,6 +19,7 @@
         <v-btn @click="close"
           text large fab
           class="secondary--text"
+          :class="mobile ? 'mr-4':''"
         >
           <v-icon>mdi-close</v-icon>
         </v-btn>
