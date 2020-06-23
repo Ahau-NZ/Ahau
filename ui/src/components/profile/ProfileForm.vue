@@ -197,6 +197,24 @@
                   </div>
                 </v-col>
               </v-row>
+              <v-row>
+                <v-col  v-if="!readonly || formData.gender === 'other'" cols="6" class="pl-4 py-0">
+                  <v-checkbox v-model="formData.gender"
+                    value="other"
+                    label="other" :hide-details="true"
+                    v-bind="customProps"
+                    outlined
+                  />
+                </v-col>
+                <v-col  v-if="!readonly || formData.gender === 'unkown'" cols="6" class="pa-4 py-0">
+                  <v-checkbox v-model="formData.gender"
+                    value="unkown"
+                    label="unknown" :hide-details="true"
+                    v-bind="customProps"
+                    outlined
+                  />
+                </v-col>
+              </v-row>
             </v-col>
           </v-row>
         </v-col>
