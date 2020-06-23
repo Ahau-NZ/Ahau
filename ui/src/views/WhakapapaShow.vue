@@ -369,7 +369,8 @@ export default {
       if (!profile) return false
 
       // not allowed to delete own profile
-      if (profile.id === this.whoami.profile.id) return false
+      if (profile.id === this.whoami.public.profile.id) return false
+      if (profile.id === this.whoami.personal.profile.id) return false
 
       // if deleting the focus (top ancestor)
       if (profile.id === this.whakapapaView.focus) {

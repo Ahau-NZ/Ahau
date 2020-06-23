@@ -119,19 +119,19 @@ export default {
     },
 
     proceed () {
-      if (this.$apollo.loading || !this.whoami.profile.id) {
+      if (this.$apollo.loading || !this.whoami.personal.profile.id) {
         console.log('waiting for apollo')
         setTimeout(this.proceed, 300)
         return
       }
 
-      this.isSetup = Boolean(this.whoami.profile.preferredName)
+      this.isSetup = Boolean(this.whoami.personal.profile.preferredName)
       // Shortcut in dev, that saves us from doing one click when testing
       if (this.isSetup && process.env.NODE_ENV === 'development') {
         this.karakiaTūwhera()
         this.setComponent('profile')
-        this.setProfileById({ id: this.whoami.profile.id })
-        this.$router.push({ name: 'profileShow', params: { id: this.whoami.profile.id } })
+        this.setProfileById({ id: this.whoami.personal.profile.id })
+        this.$router.push({ name: 'profileShow', params: { id: this.whoami.personal.profile.id } })
       }
 
       this.isLoading = false
@@ -142,7 +142,32 @@ export default {
     },
 
     async save (profileChanges) {
-      const newProfile = pick(profileChanges,
+      const publicDetails = pick(profileChanges,
+        'preferredName',
+        'avatarImage'
+      )
+      const publicResult = await this.$apollo.mutate({
+        mutation: gql`
+          mutation($input: ProfileInput!) {
+            saveProfile(input: $input)
+          }
+        `,
+        variables: {
+          input: {
+            id: this.whoami.personal.profile.id,
+            ...publicDetails
+          }
+        }
+      })
+
+      if (publicResult.errors) {
+        console.error('failed to update profile', publicResult)
+        return
+      }
+      // TODO 2020-07-06
+      // might be possible to do these two mutations in one?
+
+      const personalDetails = pick(profileChanges,
         'preferredName',
         'legalName',
         'gender',
@@ -166,8 +191,8 @@ export default {
         `,
         variables: {
           input: {
-            id: this.whoami.profile.id,
-            ...newProfile
+            id: this.whoami.personal.profile.id,
+            ...personalDetails
           }
         }
       })

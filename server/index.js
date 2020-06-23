@@ -4,6 +4,7 @@ const http = require('http')
 const express = require('express')
 const cors = require('cors')
 const Main = require('@ssb-graphql/main')
+const Tribes = require('@ssb-graphql/tribes')
 const Profile = require('@ssb-graphql/profile')
 const Whakapapa = require('@ssb-graphql/whakapapa')
 const Artefact = require('@ssb-graphql/artefact')
@@ -17,18 +18,26 @@ module.exports = {
     const app = express()
     app.options('*', cors())
     const main = Main(sbot)
+    const tribes = Tribes(sbot)
     const profile = Profile(sbot)
     const story = Story(sbot)
     const artefact = Artefact(sbot)
     const whakapapa = Whakapapa(sbot, { ...profile.gettersWithCache, ...story.gettersWithCache, ...artefact.gettersWithCache })
-    profile.Context((err, context) => {
+
+    main.loadContext((err, context) => {
       if (err) throw err
+
+      console.log('context', context)
 
       const server = new ApolloServer({
         schema: buildFederatedSchema([
           {
             typeDefs: main.typeDefs,
             resolvers: main.resolvers
+          },
+          {
+            typeDefs: tribes.typeDefs,
+            resolvers: tribes.resolvers
           },
           {
             typeDefs: profile.typeDefs,

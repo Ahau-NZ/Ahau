@@ -16,13 +16,24 @@ Vue.use(Vuex)
 const store = new Vuex.Store({
   state: {
     whoami: {
-      profile: {
-        id: '',
-        preferredName: '',
-        aliveInterval: '',
-        avatarImage: { uri: '' }
+      public: {
+        feedId: '',
+        profile: {
+          id: '',
+          preferredName: '',
+          aliveInterval: '',
+          avatarImage: { uri: '' }
+        }
       },
-      feedId: ''
+      personal: {
+        groupId: '',
+        profile: {
+          id: '',
+          preferredName: '',
+          aliveInterval: '',
+          avatarImage: { uri: '' }
+        }
+      }
     },
     loading: false,
     goBack: {
@@ -71,14 +82,26 @@ const store = new Vuex.Store({
         query: gql`
           {
             whoami {
-              profile {
-                id
-                preferredName
-                aliveInterval
-                gender 
-                avatarImage { uri }
+              public {
+                feedId
+                profile {
+                  id
+                  preferredName
+                  aliveInterval
+                  gender 
+                  avatarImage { uri }
+                }
               }
-              feedId
+              personal {
+                groupId
+                profile {
+                  id
+                  preferredName
+                  aliveInterval
+                  gender 
+                  avatarImage { uri }
+                }
+              }
             }
           }
         `,

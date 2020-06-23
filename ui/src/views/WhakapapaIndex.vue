@@ -278,9 +278,9 @@ export default {
     async handleStepOne ($event) {
       this.newView = {
         ...pick($event, ['name', 'description', 'image']),
-        focus: this.whoami.profile.id,
+        focus: this.whoami.personal.profile.id,
         mode: 'descendants', // HARD coded at the moment
-        recps: [this.whoami.feedId] // TODO change this for groups
+        recps: [this.whoami.personal.groupId]
       }
 
       switch ($event.focus) {
@@ -475,7 +475,7 @@ export default {
             profession,
             contact,
             deceased,
-            recps: [this.whoami.feedId] // TODO change this for groups
+            recps: [this.whoami.personal.groupId]
           }
         }
       })

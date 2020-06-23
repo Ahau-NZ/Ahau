@@ -2,6 +2,7 @@ const ahoy = require('ssb-ahoy')
 const Config = require('./ssb.config')
 
 const plugins = [
+  'ssb-recps-guard',
   'ssb-master',
   'ssb-unix-socket',
   'ssb-no-auth',
@@ -13,19 +14,20 @@ const plugins = [
   'ssb-promiscuous', // temporary?
 
   'ssb-blobs',
-
-  'ssb-backlinks',
-  'ssb-whakapapa',
-  'ssb-profile',
-  'ssb-artefact',
-  'ssb-story',
+  'ssb-serve-blobs',
 
   'ssb-query',
-  'ssb-serve-blobs',
+  'ssb-backlinks',
+
+  'ssb-tribes',
+
+  'ssb-profile',
+  'ssb-story',
+  'ssb-artefact',
+  'ssb-whakapapa',
+
   // 'ssb-private',
-  // 'ssb-invite',
-  // 'ssb-about',
-  // 'ssb-suggest'
+  'ssb-invite',
   'ahau-server'
 ]
 

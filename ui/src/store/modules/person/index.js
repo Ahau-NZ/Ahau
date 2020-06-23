@@ -1,6 +1,6 @@
 // import gql from 'graphql-tag'
 // import { createProvider } from '@/plugins/vue-apollo'
-import getRelatives from '@/lib/profile-helpers'
+import { getRelatives } from '@/lib/profile-helpers'
 import tree from '@/lib/tree-helpers'
 
 const state = {
@@ -28,7 +28,10 @@ const mutations = {
 
 const actions = {
   async setProfileById ({ commit, rootState, dispatch }, { id, type }) {
-    if (id === rootState.whoami.profile.id) {
+    if (id === rootState.whoami.public.profile.id) {
+      dispatch('setWhoami', id)
+    }
+    if (id === rootState.whoami.personal.profile.id) {
       dispatch('setWhoami', id)
     }
     // if viewing a story and sideview is open and you want to jump to another profile > close the story
