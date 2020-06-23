@@ -14,7 +14,7 @@
                 style="text-align: start; font-size: 1.2em; font-weight: 500;"
               />
             </v-col>
-            <v-col v-if="formData.artefacts.length > 0" cols="12" class="pl-0 pr-0">
+            <v-col v-if="formData.artefacts && formData.artefacts.length > 0" cols="12" class="pl-0 pr-0">
               <ArtefactCarousel
                 :artefacts="formData.artefacts"
                 @delete="toggleDialog($event, 'delete')"
@@ -36,7 +36,7 @@
                 <p class="add-label clickable" >Add location</p>
               </div>
               <v-row v-if="showLocation">
-                <v-col :cols="formData.artefacts.length > 0 ? '6':'12'" class="pa-1">
+                <v-col :cols="formData.artefacts && formData.artefacts.length > 0 ? '6':'12'" class="pa-1">
                   <v-textarea
                     v-model="formData.location"
                     label="Location"
@@ -47,7 +47,7 @@
                   >
                   </v-textarea>
                 </v-col>
-                <v-col :cols="formData.artefacts.length > 0 ? '6':'12'" class="pa-1">
+                <v-col :cols="formData.artefacts && formData.artefacts.length > 0 ? '6':'12'" class="pa-1">
                   <v-textarea
                     v-model="formData.locationDescription"
                     label="Location description"
@@ -94,8 +94,7 @@
             </v-col>
 
             <!-- ADD MENTIONS -->
-            <!-- <v-col :cols="mobile ? formData.mentions.length > 2 ? 'auto' : '6' : formData.mentions.length > 2 ? 'auto' : '3'" class="pr-0"> -->
-            <v-col :cols="mobile ? '12' : formData.mentions.length > 2 ? 'auto' : '3'" class="pr-0">
+            <v-col :cols="mobile ? '12' : formData.mentions && formData.mentions.length > 2 ? 'auto' : '3'" class="pr-0">
               <v-row v-if="!showMentions" class="pl-10 pt-2" @click="showMentions = true" >
                 <v-icon small>mdi-plus</v-icon>
                 <AddButton size="20px" icon="mdi-account" iconClass="pr-3" class="right: 0;" label="Mention" justify="start"/>
@@ -110,7 +109,7 @@
                 item="preferredName"
                 @getSuggestions="getSuggestions"
               />
-              <AvatarGroup v-if="formData.mentions.length > 0"
+              <AvatarGroup v-if="formData.mentions && formData.mentions.length > 0"
                 :profiles="formData.mentions"
                 show-labels
                 size="40px"
@@ -121,7 +120,7 @@
             </v-col>
 
             <!-- ADD ACCESS -->
-            <v-col :cols="mobile ? '12' : formData.access.length > 1 ? 'auto' : '3'">
+            <v-col :cols="mobile ? '12' : formData.access && formData.access.length > 1 ? 'auto' : '3'">
               <v-row v-if="!showAccess" @click="showAccess = true" class="pl-10 pt-2">
                 <v-icon small>mdi-plus</v-icon>
                 <AddButton size="20px" icon="mdi-file-key" iconClass="pr-3" label="Access" justify="start"/>
@@ -135,7 +134,7 @@
                 item="preferredName"
                 placeholder="add access"
               />
-              <AvatarGroup v-if="formData.access.length > 0"
+              <AvatarGroup v-if="formData.access && formData.access.length > 0"
                 :profiles="formData.access"
                 show-labels
                 size="40px"
@@ -146,7 +145,7 @@
             </v-col>
 
             <!-- ADD CREATOR -->
-            <v-col :cols="mobile ? '12' : formData.creator.id ? 'auto' : '3'">
+            <v-col :cols="mobile ? '12' : formData.creator ? 'auto' : '3'">
               <v-row v-if="!showCreator" @click="showCreator = true" class="pl-10 pt-2">
                 <v-icon small>mdi-plus</v-icon>
                 <AddButton size="20px" icon="mdi-account-circle" iconClass="pr-3" class="right: 0;" label="Creator" justify="start"/>
@@ -162,7 +161,7 @@
                 item="preferredName"
                 placeholder="add creator"
               />
-              <div v-if="formData.creator.id" class="pt-5 pl-5">
+              <div v-if="formData.creator" class="pt-5 pl-5">
                 <Avatar
                   style="width:50px"
                   size="40px"
@@ -265,7 +264,7 @@
           <v-row class="px-3">
 
             <!-- RELATED RECORDS -->
-            <v-col :cols="mobile ? '12' : formData.relatedRecords.length > 0 ? 'auto' : '3'">
+            <v-col :cols="mobile ? '12' : formData.relatedRecords && formData.relatedRecords.length > 0 ? 'auto' : '3'">
               <v-row v-if="!showRecords" @click="showRecords = true" class="pl-10">
                 <v-icon small>mdi-plus</v-icon>
                 <AddButton size="20px" icon="mdi-book-multiple" iconClass="pr-3" class="right: 0;" label="Related records"  justify="start"/>
@@ -284,7 +283,7 @@
             </v-col>
             <!-- ADD CONTRIBUTORS -->
             <!-- <v-col :cols="mobile ? formData.contributors.length > 2 ? 'auto' : '6' : formData.contributors.length > 1 ? 'auto' : '3'"> -->
-            <v-col :cols="mobile ? '12' : formData.contributors.length > 1 ? 'auto' : '3'">
+            <v-col :cols="mobile ? '12' : formData.contributors && formData.contributors.length > 1 ? 'auto' : '3'">
               <v-row v-if="!showContributors" @click="showContributors = true" class="pl-10">
                 <v-icon small>mdi-plus</v-icon>
                   <AddButton size="20px" icon="mdi-library" iconClass="pr-3" class="right: 0;" label="Contributor"  justify="start"/>
@@ -298,21 +297,12 @@
                 item="preferredName"
                 placeholder="contributors"
               />
-              <AvatarGroup v-if="formData.contributors.length > 0"
+              <AvatarGroup v-if="formData.contributors && formData.contributors.length > 0"
                 :profiles="formData.contributors"
                 show-labels
                 size="40px"
                 deletable
                 @delete="removeItem(formData.contributors, $event)"
-              />
-            </v-col>
-
-            <!-- ADD SUBMISSION DATE -->
-            <v-col :cols="mobile ? '12' : '3'" class="pt-5 pa-1">
-              <v-text-field
-                v-model="formData.submissionDate"
-                label="Submission Date"
-                v-bind="customProps"
               />
             </v-col>
             <v-col cols="12" class="pa-1">
@@ -532,7 +522,7 @@ export default {
       alert(`Cannot add ${field} yet`)
     },
     processMediaFiles ($event) {
-      this.index = this.formData.artefacts.length
+      this.index = this.formData.artefacts ? this.formData.artefacts.length : 0
       const { files } = $event.target
 
       Array.from(files).forEach((file, i) => {
@@ -602,7 +592,7 @@ export default {
       // either remove from the database or from formData
       this.removeItem(this.formData.artefacts, this.index)
 
-      if (this.formData.artefacts.length === 0) this.newDialog = false
+      if (this.formData.artefacts && this.formData.artefacts.length === 0) this.newDialog = false
     }
   }
 }

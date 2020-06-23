@@ -23,7 +23,7 @@
           <v-icon small class="black--text">mdi-magnify</v-icon>
         </v-btn>            -->
         <!-- <v-btn :medium="!mobile" :x-small="mobile" :class="mobile ? 'addBtnMob' : 'addBtn'" class="my-2" fab color="white" @click.stop="openContextMenu($event)"> -->
-        <v-btn :medium="!mobile" fab :small="mobile" :class="mobile ? 'addBtnMob' : 'addBtn'" class="my-2"  color="white" elevation="1" @click.prevent="setDialog('new-story')">
+        <v-btn :medium="!mobile" text :x-small="mobile" :class="mobile ? 'addBtnMob' : 'addBtn'" class="my-2" fab color="white" @click.prevent="dialog = 'new-story'">
           <v-icon :large="!mobile" class="black--text">mdi-plus</v-icon>
         </v-btn>
       </div>
@@ -37,12 +37,12 @@
           <v-divider class="mt-6 mb-8" light></v-divider> -->
           <div v-if="!showStory">
             <v-row v-for="(story, i) in stories" :key="`story-${i}-id-${story.id}`" class="mb-5">
-              <StoryCard @updateDialog="updateDialog($event)" @toggleStory="toggleStory()" :story="story" />
+              <StoryCard @updateDialog="updateDialog($event)" @toggleStory="toggleStory($event)" :story="story" />
             </v-row>
           </div>
           <div v-else>
             <v-row :class="mobile ? 'pa-0': 'px-6 top-margin'">
-              <StoryCard @updateDialog="updateDialog($event)" :fullStory="true" @toggleStory="toggleStory()" :story="currentStory" @close="toggleStory()"  />
+              <StoryCard @updateDialog="updateDialog($event)" :fullStory="true" :story.sync="currentStory" @close="toggleStory($event)" />
             </v-row>
           </div>
         </v-col>
@@ -62,6 +62,13 @@
     :dialog.sync="dialog.active"
     :type.sync="dialog.type"
   /> -->
+    <NewRecordDialog
+      v-if="dialog === 'new-story'"
+      :show="dialog === 'new-story'"
+      :title="'Add new Record'"
+      @close="dialog = null"
+      @submit="addStory($event)"
+    />
   </div>
 </template>
 
@@ -72,24 +79,25 @@
 
 import StoryCard from '@/components/archive/StoryCard.vue'
 // import CollectionGroup from '@/components/archive/CollectionGroup.vue'
-
-import { STORIES } from '@/mocks/stories'
+import { SAVE_STORY, GET_STORY } from '@/lib/story-helpers.js'
 import { firstMocks } from '@/mocks/collections'
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters, mapActions, mapMutations } from 'vuex'
+import NewRecordDialog from '@/components/dialog/archive/NewRecordDialog.vue'
 
 // const get = require('lodash.get')
 
 export default {
   name: 'Archive',
   components: {
-    StoryCard
+    StoryCard,
+    NewRecordDialog
     // CollectionGroup,
     // VueContext,
     // DialogHandler
   },
   data () {
     return {
-      stories: STORIES,
+      currentStory: null,
       collections: firstMocks,
       dialog: {
         active: null,
@@ -119,7 +127,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['currentStory', 'showStory']),
+    ...mapGetters(['stories', 'showStory']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -141,8 +149,28 @@ export default {
     }
   },
   methods: {
+    ...mapMutations(['addStoryToStories', 'removeStoryFromStories']),
     ...mapActions(['setComponent', 'setShowStory', 'setDialog']),
-    toggleStory () {
+    async addStory ($event) {
+      if ($event) {
+        const res = await this.$apollo.mutate(SAVE_STORY($event))
+        if (res.errors) {
+          console.error('failed to create story', res.errors)
+          return
+        }
+
+        var newStoryRes = await this.$apollo.query(GET_STORY(res.data.saveStory))
+
+        if (newStoryRes.errors) {
+          console.error('error fetching story', newStoryRes.errors)
+          return
+        }
+
+        this.addStoryToStories(newStoryRes.data.story)
+      }
+    },
+    toggleStory (story) {
+      this.currentStory = story
       this.scrollPosition = window.pageYOffset
       this.setShowStory()
       window.scrollTo(0, 0)
@@ -151,7 +179,6 @@ export default {
     openContextMenu (event) {
       this.$refs.menu.open(event)
     }
-
   }
 }
 </script>

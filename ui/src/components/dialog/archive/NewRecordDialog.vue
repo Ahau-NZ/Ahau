@@ -8,7 +8,7 @@
 
       <template v-if="editing" v-slot:before-actions>
         <v-col cols="12" sm="auto" class="mt-4">
-          <v-btn text @click="setDialog('delete-story')">
+          <v-btn text @click="$emit('delete')">
             Delete this record
             <v-icon class="pl-2">mdi-delete</v-icon>
           </v-btn>
@@ -52,7 +52,6 @@ const EMPTY_STORY = {
   location: '',
   locationDescription: '',
   creator: {},
-  submissionDate: '',
   contributionNotes: '',
 
   format: '',
@@ -187,13 +186,10 @@ export default {
       var output = {}
       if (this.editing) {
         // get all changes
-        output = storyChanges(this.story, this.formData)
+        output = { id: this.story.id, ...storyChanges(this.story, this.formData) }
       } else {
         output = storySubmission(this.formData)
       }
-
-      console.log('output', output)
-
       this.$emit('submit', output)
       this.close()
     }

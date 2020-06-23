@@ -72,28 +72,6 @@
       @close="close"
       @submit="console.log('TODO: add collection to profile')"
     />
-    <NewRecordDialog
-      v-if="isActive('new-story')"
-      :show="isActive('new-story')"
-      :title="'Add new Record'"
-      @close="close"
-      @submit="addStory($event)"
-    />
-    <NewRecordDialog
-      v-if="isActive('edit-story')"
-      :show="isActive('edit-story')"
-      :title="`Edit ${currentStory.title}`"
-      editing
-      :story="currentStory"
-      @close="close"
-      @submit="editStory($event)"
-    />
-    <DeleteRecordDialog
-      v-if="isActive('delete-story')"
-      :show="isActive('delete-story')"
-      @close="close"
-      @submit="deleteStory($event)"
-    />
     <ComingSoonDialog
       :show="isActive('coming-soon')"
       @close="close"
@@ -113,13 +91,12 @@ import WhakapapaDeleteDialog from '@/components/dialog/whakapapa/WhakapapaDelete
 import WhakapapaShowHelper from '@/components/dialog/whakapapa/WhakapapaShowHelper.vue'
 import WhakapapaTableHelper from '@/components/dialog/whakapapa/WhakapapaTableHelper.vue'
 import NewCollectionDialog from '@/components/dialog/archive/NewCollectionDialog.vue'
-import NewRecordDialog from '@/components/dialog/archive/NewRecordDialog.vue'
-import DeleteRecordDialog from '@/components/dialog/archive/DeleteRecordDialog.vue'
 import ComingSoonDialog from '@/components/dialog/ComingSoonDialog.vue'
 
 import gql from 'graphql-tag'
 
 import { PERMITTED_PROFILE_ATTRS, PERMITTED_RELATIONSHIP_ATTRS, saveProfile } from '@/lib/profile-helpers.js'
+
 import { saveWhakapapaLink } from '@/lib/link-helpers.js'
 import pick from 'lodash.pick'
 import isEmpty from 'lodash.isempty'
@@ -145,8 +122,6 @@ export default {
     WhakapapaShowHelper,
     WhakapapaTableHelper,
     NewCollectionDialog,
-    NewRecordDialog,
-    DeleteRecordDialog,
     ComingSoonDialog
   },
   props: {
@@ -231,15 +206,6 @@ export default {
         return Boolean(findSuccessor(profile))
       }
       return true
-    },
-    addStory ($event) {
-      console.error('Add story not implemented yet', $event)
-    },
-    editStory ($event) {
-      console.error('Edit story not implemented yet', $event)
-    },
-    deleteStory ($event) {
-      console.error('Delete story not implemented yet', $event)
     },
     async addPerson ($event) {
       try {

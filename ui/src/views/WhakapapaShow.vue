@@ -146,7 +146,7 @@
         @open-context-menu="openContextMenu($event)"
         :searchNodeId="searchNodeId"
       />
-    </v-container >
+    </v-container>
 
     <vue-context ref="menu" class="px-0"  >
       <li v-for="(option, index) in contextMenuOpts" :key="index">
