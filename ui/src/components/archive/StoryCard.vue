@@ -348,7 +348,6 @@ export default {
       }
     },
     async deleteStory () {
-      console.log('delete...')
       const res = await this.$apollo.mutate(DELETE_STORY(this.story.id, new Date()))
 
       if (res.errors) {
