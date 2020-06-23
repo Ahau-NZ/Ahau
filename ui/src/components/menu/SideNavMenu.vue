@@ -1,14 +1,14 @@
 <template>
   <v-row ref="sideNav" class="sideNav" :class="position"  v-scroll="onScroll">
     <v-col cols="12" md="2" :class="mobile ? 'px-6': tablet ? 'pt-12':''">
-      <v-col align="center" v-if="!mobile" class="pa-2 ml-5" cols="12">
+      <v-col align="center" v-if="!mobile" class="pa-2 ml-12" cols="12">
         <v-row cols="12" xs="12" sm="12">
           <v-btn :class="tablet ? 'pl-2':''" @click="setActive('profile')" light text style="height: auto;">
-            <Avatar :image="profile.avatarImage" :gender="profile.gender" :alt="profile.preferredName" :size="tablet ? '120px':'160px'" />
+            <Avatar :image="profile.avatarImage" :gender="profile.gender" :alt="profile.preferredName" :size="tablet ? '110px':'170px'" />
           </v-btn>
         </v-row>
       </v-col>
-      <v-row :class="mobile ? 'rounded-border' : 'ml-5'" >
+      <v-row :class="mobile ? 'rounded-border' : 'ml-12'" >
         <v-col align="center" :class="mobile ? 'py-0 px-0' : tablet ? 'py-4 px-0' : 'py-1'">
           <v-btn @click="setActive('profile')" light :fab="mobile" text>
             <v-col class="pa-0" :cols="mobile ? '12' : '2'">
@@ -258,17 +258,17 @@ export default {
   .userMobile {
     position: absolute;
     top: 330px;
-    width: 102%
+    width: 101.5%;
   }
   .archiveMobile {
     position: absolute;
     top: 0px;
-    width: 102%
+    width: 101.5%
   }
   .stickyMobile {
     position: fixed; /* Allocates space for the element, but moves it with you when you scroll */
     top: 50px;
-    width: 102%;
+    width: 101.5%;
     z-index: 1;
     background: linear-gradient(rgba(255, 255, 255, 0.9),rgba(255, 255, 255, 0.2) );
   }

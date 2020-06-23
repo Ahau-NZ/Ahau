@@ -304,7 +304,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['showArtefact', 'currentProfile']),
+    ...mapGetters(['showArtefact', 'currentProfile', 'storeDialog']),
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
@@ -323,7 +323,8 @@ export default {
         if (this.showArtefact) {
           return 'ontop disableCard'
         }
-        return 'disableCard recordView'
+        if (this.storeDialog === 'edit-story') return 'disableCard'
+        else return 'disableCard recordView'
       }
       return 'rounded-border'
     }
