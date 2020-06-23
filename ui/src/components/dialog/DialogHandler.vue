@@ -73,28 +73,6 @@
       @close="close"
       @submit="console.log('TODO: add collection to profile')"
     />
-    <!-- <NewRecordDialog
-      v-if="isActive('new-story')"
-      :show="isActive('new-story')"
-      :title="'Add new Record'"
-      @close="close"
-      @submit="addStory($event)"
-    />
-    <NewRecordDialog
-      v-if="isActive('edit-story')"
-      :show="isActive('edit-story')"
-      :title="`Edit ${currentStory.title}`"
-      editing
-      :story="currentStory"
-      @close="close"
-      @submit="updateStory($event)"
-    /> -->
-    <DeleteRecordDialog
-      v-if="isActive('delete-story')"
-      :show="isActive('delete-story')"
-      @close="close"
-      @submit="deleteStory($event)"
-    />
     <ComingSoonDialog
       :show="isActive('coming-soon')"
       @close="close"
@@ -114,14 +92,11 @@ import WhakapapaDeleteDialog from '@/components/dialog/whakapapa/WhakapapaDelete
 import WhakapapaShowHelper from '@/components/dialog/whakapapa/WhakapapaShowHelper.vue'
 import WhakapapaTableHelper from '@/components/dialog/whakapapa/WhakapapaTableHelper.vue'
 import NewCollectionDialog from '@/components/dialog/archive/NewCollectionDialog.vue'
-import NewRecordDialog from '@/components/dialog/archive/NewRecordDialog.vue'
-import DeleteRecordDialog from '@/components/dialog/archive/DeleteRecordDialog.vue'
 import ComingSoonDialog from '@/components/dialog/ComingSoonDialog.vue'
 
 import gql from 'graphql-tag'
 
 import { PERMITTED_PROFILE_ATTRS, PERMITTED_RELATIONSHIP_ATTRS, saveProfile } from '@/lib/profile-helpers.js'
-import { PERMITTED_STORY_ATTRS, SAVE_STORY, GET_STORY } from '@/lib/story-helpers.js'
 
 import { saveWhakapapaLink } from '@/lib/link-helpers.js'
 import pick from 'lodash.pick'
@@ -148,8 +123,6 @@ export default {
     WhakapapaShowHelper,
     WhakapapaTableHelper,
     NewCollectionDialog,
-    NewRecordDialog,
-    DeleteRecordDialog,
     ComingSoonDialog
   },
   props: {
@@ -234,44 +207,6 @@ export default {
         return Boolean(findSuccessor(profile))
       }
       return true
-    },
-    addStory ($event) {
-      console.error('Add story not implemented yet', $event)
-    },
-    async createStory ($event) {
-      const res = await this.$apollo.mutate(SAVE_STORY($event))
-
-      if (res.errors) {
-        console.error('faile to createStory', res)
-        return
-      }
-      return res.data.saveStory
-    },
-    async updateStory ($event) {
-      if ($event) {
-        var { id } = $event
-
-        if (!id) {
-          console.error('edit story missin id')
-          return
-        }
-
-        const res = await this.$apollo.mutate(SAVE_STORY($event))
-        if (res.errors) {
-          console.error('failed to update story', res.errors)
-          return
-        }
-
-        // set the story to its new value....?
-        console.log(res.data)
-
-        // get the updated story from the db
-        // var updatedStory = await this.$apollo.query(GET_STORY(id))
-        // this.updateStories(updatedStory)
-      }
-    },
-    deleteStory ($event) {
-      console.error('Delete story not implemented yet', $event)
     },
     async addPerson ($event) {
       try {
