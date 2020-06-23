@@ -1,6 +1,27 @@
 import gql from 'graphql-tag'
 import pick from 'lodash.pick'
 
+export const SUBSCRIPTION_STORIES = gql`
+   subscription stories {
+    stories (type: "*") {
+      id
+      type
+      title
+      description
+      timeInterval
+      submissionDate
+      location
+      contributionNotes
+      locationDescription
+      format
+      identifier
+      language
+      source
+      transcription
+     }
+   }
+ `
+
 export const PERMITTED_STORY_ATTRS = [
   'id',
   'type',
@@ -43,10 +64,10 @@ export const GET_STORY = id => ({
   fetchPolicy: 'no-cache'
 })
 
-export const GET_STORIES = type => ({
+export const GET_ALL_STORIES = ({
   query: gql`
-    query($type: String!) {
-      stories(type: $type) {
+    query {
+      stories {
         id
         type
         title
@@ -64,11 +85,8 @@ export const GET_STORIES = type => ({
       }
     }
   `,
-  variables: { type },
   fetchPolicy: 'no-cache'
 })
-
-export const GET_ALL_STORIES = GET_STORIES('*')
 
 export const SAVE_STORY = input => {
   input = {

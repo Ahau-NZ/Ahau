@@ -70,6 +70,7 @@ export default {
   },
   mounted () {
     this.setupProfile(this.$route.params.id)
+    this.getAllStories()
   },
   computed: {
     ...mapGetters(['currentProfile', 'activeComponent', 'showStory', 'showArtefact']),
@@ -88,7 +89,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setProfileById', 'setWhoami', 'setShowArtefact', 'setDialog']),
+    ...mapActions(['getAllStories', 'setProfileById', 'setWhoami', 'setShowArtefact', 'setDialog']),
     async setupProfile (id) {
       this.setProfileById({ id })
     }

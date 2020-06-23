@@ -73,7 +73,7 @@
       @close="close"
       @submit="console.log('TODO: add collection to profile')"
     />
-    <NewRecordDialog
+    <!-- <NewRecordDialog
       v-if="isActive('new-story')"
       :show="isActive('new-story')"
       :title="'Add new Record'"
@@ -88,7 +88,7 @@
       :story="currentStory"
       @close="close"
       @submit="updateStory($event)"
-    />
+    /> -->
     <DeleteRecordDialog
       v-if="isActive('delete-story')"
       :show="isActive('delete-story')"

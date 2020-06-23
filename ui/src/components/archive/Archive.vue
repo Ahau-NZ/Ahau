@@ -36,13 +36,13 @@
           </v-row>
           <v-divider class="mt-6 mb-8" light></v-divider> -->
           <div v-if="!showStory">
-            <v-row v-for="(story, i) in stories.slice().reverse()" :key="`story-${i}-id-${story.id}`" class="mb-10">
-              <StoryCard @updateDialog="updateDialog($event)" @toggleStory="toggleStory()" :story="story" />
+            <v-row v-for="(story, i) in stories" :key="`story-${i}-id-${story.id}`" class="mb-10">
+              <StoryCard @updateDialog="updateDialog($event)" @toggleStory="toggleStory($event)" :story="story" />
             </v-row>
           </div>
           <div v-else>
             <v-row :class="mobile ? 'pa-0': 'px-6 top-margin'">
-              <StoryCard @updateDialog="updateDialog($event)" :fullStory="true" @toggleStory="toggleStory()" :story="currentStory" @close="toggleStory()"  />
+              <StoryCard @updateDialog="updateDialog($event)" :fullStory="true" :story.sync="currentStory" @close="toggleStory(null)" />
             </v-row>
           </div>
         </v-col>
@@ -88,7 +88,7 @@ export default {
   },
   data () {
     return {
-      stories: [],
+      currentStory: null,
       collections: firstMocks,
       dialog: {
         active: null,
@@ -108,9 +108,6 @@ export default {
       scrollPosition: 0
     }
   },
-  apollo: {
-    stories: GET_ALL_STORIES
-  },
   props: {
     profile: {
       type: Object,
@@ -121,7 +118,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['currentStory', 'showStory']),
+    ...mapGetters(['stories', 'showStory']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -144,7 +141,8 @@ export default {
   },
   methods: {
     ...mapActions(['setComponent', 'setShowStory', 'setDialog']),
-    toggleStory () {
+    toggleStory (story) {
+      this.currentStory = story
       this.scrollPosition = window.pageYOffset
       this.setShowStory()
       window.scrollTo(0, 0)
@@ -153,7 +151,6 @@ export default {
     openContextMenu (event) {
       this.$refs.menu.open(event)
     }
-
   }
 }
 </script>
