@@ -1,6 +1,6 @@
 module.exports = {
   appId: 'io.ahau.pataka',
-  productName: 'Pātaka',
+  productName: 'Pataka',
   afterSign: 'build/mac/notarize.js', // N
   directories: {
     output: 'dist/installers'
