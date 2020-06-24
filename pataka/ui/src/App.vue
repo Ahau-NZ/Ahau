@@ -1,5 +1,6 @@
 <template>
   <v-app>
+    <Appbar v-if="displayAppbar" />
     <v-content>
       <router-view />
     </v-content>
@@ -7,8 +8,16 @@
 </template>
 
 <script>
+import Appbar from '@/components/Appbar.vue'
+
 export default {
   name: 'App',
+  computed: {
+    displayAppbar () {
+      if (this.$route.name === 'login') return false
+      else return true
+    }
+  },
   watch: {
     '$route.name': {
       handler (to, from) {
@@ -19,6 +28,9 @@ export default {
       },
       immediate: true
     }
+  },
+  components: {
+    Appbar
   }
 }
 </script>
@@ -43,6 +55,13 @@ body {
     background-repeat: no-repeat;
     background-size: cover;
     background-position-y: -110%;
+  }
+  &.page--dashboard {
+    background: url(./assets/niho.svg);
+    background-color: var(--primary-background);
+    background-repeat: no-repeat;
+    background-size: 100vh;
+    background-position: 60vw 15vh;
   }
 }
 </style>

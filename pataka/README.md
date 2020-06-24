@@ -8,7 +8,7 @@ UI:
   - `ui/src/App.vue`
   - `ui/src/views/Dashboard.vue`
   - `ui/src/views/PortForwarding.vue`
-
+  - `ui/src/components/Appbar.vue`
 
 ### Tweaked parts
 
