@@ -1,5 +1,4 @@
 import NewNodeDialog from './NewNodeDialog.vue'
-import { action } from '@storybook/addon-actions'
 import VIEWPORTS from '../../../../.storybook/VIEWPORTS'
 
 export default {
@@ -13,10 +12,12 @@ export default {
 }
 
 export const defaultDialog = () => ({
-  template: '<NewNodeDialog :show="true" @submit="submit"/>',
+  template: '<NewNodeDialog :show="true" @submit="submit($event)"/>',
   components: { NewNodeDialog },
   methods: {
-    submit: action('submit')
+    submit ($event) {
+      console.log($event)
+    }
   }
 })
 

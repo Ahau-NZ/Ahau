@@ -1,107 +1,331 @@
 <template>
-  <v-layout row wrap>
-    <v-menu
-      v-model="menu"
-      :close-on-content-click="false"
-      :nudge-right="40"
-      transition="scale-transition"
-      offset-y
-      max-width="290px"
-      min-width="290px"
-    >
-      <template v-slot:activator="{ on }">
-        <v-text-field
-          v-on="readonly ? null : on"
-          :rules="rules"
-          :label="label"
-          placeholder=" "
-          :value="date"
-          readonly
-          flat
-          :hide-details="true"
-          :class="getClass"
-          :clearable="!readonly"
-          outlined
-        ></v-text-field>
-      </template>
-      <v-date-picker
-        reactive
-        locale="en-in"
-        :max="maxDate"
-        min="0000-01-01"
-        v-model="updatedValue"
-        no-title
-        hide-details
-        light
-        ref="picker"
-        show-current="false"
-      >
-      <v-spacer></v-spacer>
-      <v-btn text color="primary" @click="menu = false">Cancel</v-btn>
-      <v-btn text color="primary" @click="menu = false">OK</v-btn>
-      </v-date-picker>
-    </v-menu>
-  </v-layout>
+  <div>
+    <fieldset :class="`rounded-input ${customClass}`">
+      <legend class="ml-2 custom-label">
+        {{label}}
+      </legend>
+        <v-row>
+          <v-col class="pa-0 pl-6">
+            <v-autocomplete
+              v-model="date.day"
+              hide-no-data
+              :items="days"
+              label="Day"
+              placeholder="DD"
+              v-bind="customProps"
+              @focus="focused = true"
+              @blur="focused = false"
+            ></v-autocomplete>
+          </v-col>
+          <v-col class="pa-0">
+            <v-autocomplete
+              v-model="date.month"
+              hide-no-data
+              :items="months"
+              label="Month"
+              placeholder="MM"
+              v-bind="customProps"
+              @focus="focused = true"
+              @blur="focused = false"
+            ></v-autocomplete>
+          </v-col>
+          <v-col class="pa-0 pr-3">
+            <v-autocomplete
+              v-model="date.year"
+              hide-no-data
+              :items="years"
+              label="Year"
+              placeholder="YYYY"
+              v-bind="customProps"
+              @focus="focused = true"
+              @blur="focused = false"
+            >
+            </v-autocomplete>
+          </v-col>
+        </v-row>
+    </fieldset>
+  </div>
 </template>
 <script>
-import { MONTHS } from '../lib/constants'
+import edtf from 'edtf'
+
 export default {
   name: 'NodeDatePicker',
   props: {
-    rules: Array,
     label: String,
-    value: { type: String },
-    readonly: { type: Boolean, default: false }
+    value: { type: [Date, String], default: 'XXXX-XX-XX' },
+    readonly: { type: Boolean, default: false },
+    min: { type: String }
+  },
+  data () {
+    return {
+      focused: false,
+      date: {
+        year: '',
+        month: '',
+        day: ''
+      },
+      minDate: {
+        year: '',
+        month: '',
+        day: ''
+      }
+    }
   },
   computed: {
-    date () {
-      var date = this.updatedValue === null ? this.value : this.updatedValue
-      this.$emit('date', date)
+    customProps () {
+      return {
+        hideDetails: true,
+        class: 'customInput',
+        flat: true,
+        hideNoData: true,
+        appendIcon: '',
+        readonly: this.readonly,
+        menuProps: { light: true },
+        light: true
+      }
+    },
+    customClass () {
+      return this.focused ? 'custom-fieldset-focused' : 'custom-fieldset-default'
+    },
+    // generates the years available to the user
+    years () {
+      // get the current year
+      const max = new Date().getUTCFullYear()
 
-      if (!date) return date
+      // make sure the years only up to the minimum allowed year (given as a prop)
+      const min = this.minDate.year
+      var maxYears = (max - min) + 1
 
-      var myDate = new Date(date)
+      // array to return
+      var years = [
+      ]
 
-      return `${this.getOrdinalNum(myDate.getDate())} of ${MONTHS[myDate.getMonth()]} ${myDate.getFullYear()}`
+      // generates an array from 0 to max years
+      Array(maxYears).fill('').forEach((v, i) => {
+        // calculate the value of the current index e.g. (2020 - 0) = 2020, (2020 - 1) = 2019
+        var val = (max - i)
+
+        // if the current value is the current year
+        if (val === max) {
+          // only add that year and move on
+          years.push({ value: val.toString(), text: val.toString() })
+          return
+        }
+
+        var unspecified = this.unspecified(val)
+        var normalized = this.normalize(val)
+
+        if (unspecified) {
+          years.push({ value: unspecified, text: unspecified })
+        }
+
+        years.push({ value: normalized, text: normalized })
+      })
+
+      // if there were more than one date, we can use a fully unspecified date too
+      if (years.length > 1) years.push({ value: 'XXXX', text: 'XXXX' })
+
+      return years
+    },
+    // generates an array of months
+    months () {
+      return [
+        { text: 'XX', value: 'XX' },
+        { text: '01', value: '01' },
+        { text: '02', value: '02' },
+        { text: '03', value: '03' },
+        { text: '04', value: '04' },
+        { text: '05', value: '05' },
+        { text: '06', value: '06' },
+        { text: '07', value: '07' },
+        { text: '08', value: '08' },
+        { text: '09', value: '09' },
+        { text: '10', value: '10' },
+        { text: '11', value: '11' },
+        { text: '12', value: '12' }
+      ]
+    },
+    // generates an array of days
+    days () {
+      // the array to return will always have the unspecified option
+      var days = [
+        { value: 'XX', text: 'XX' }
+      ]
+
+      // generates a array of 31 indexes
+      Array(32)
+        .fill('')
+        .forEach((v, i) => {
+          // turns the current index into a double digit string e.g. 1 -> '01'
+          var indexString = this.intToDDString(i)
+
+          // make sure we dont add 0
+          if (i === 0) return
+
+          // if the number is not a multiple of 10
+          if (i % 10 !== 0) {
+            // it doesnt need an unspecified value
+            days.push({ value: indexString, text: indexString })
+            return
+          }
+
+          // otherwise, it does
+          var newDay = (i / 10).toString() + 'X'
+          days.push({ value: indexString, text: indexString })
+          days.push({ value: newDay, text: newDay })
+        })
+
+      return days
     },
     /*
-        gets todays date in YYYY-MM-DD format
-        TODO: change to get date in NZ
-      */
+      gets todays date in YYYY-MM-DD format
+      TODO: change to get date in NZ
+    */
     maxDate () {
       var currentDate = new Date()
         .toJSON()
         .slice(0, 10)
         .replace(/-/g, '-')
       return currentDate
-    },
-    getClass () {
-      return this.readonly ? 'custom ml-3 mr-3' : 'ml-3 mr-3'
-    }
-  },
-  data () {
-    return {
-      menu: false,
-      updatedValue: null,
-      on: false
     }
   },
   methods: {
-    getOrdinalNum (n) {
-      return n + (n > 0 ? ['th', 'st', 'nd', 'rd'][(n > 3 && n < 21) || n % 10 > 3 ? 0 : n % 10] : '')
+    // turns an integer into a double digit string
+    intToDDString (int) {
+      if (int < 10) {
+        return ('0' + int).toString()
+      }
+      return int.toString()
+    },
+    // turns an integer into a 4 digit string e.g. 1 => 0001
+    fill (n) {
+      n = n.toString()
+      if (n.length === 4) return n
+      if (n.length === 3) return '0' + n
+      if (n.length === 2) return '00' + n
+      if (n.length === 1) return '000' + n
+      if (n.length === 0) return ''
+    },
+    normalize (n) {
+      var sign = ''
+      if (n < 0) {
+        n *= -1
+        sign = '-'
+      }
+      switch (true) {
+        case n === 0:
+          return '0000'
+        case n < 10:
+          return sign + this.fill(n)
+        case n < 100:
+          return sign + this.fill(n)
+        case n < 1000:
+          return sign + this.fill(n)
+        default:
+          return sign + n
+      }
+    },
+    unspecified (n) {
+      var sign = ''
+      if (n < 0) {
+        n *= -1
+        sign = '-'
+      }
+
+      switch (true) {
+        case n === 0:
+          return 'XXXX'
+        case n % 1000 === 0:
+          return sign + (n / 1000 + 'XXX')
+        case n % 100 === 0:
+          return sign + this.fill(n / 100 + 'XX')
+        case n % 10 === 0:
+          return sign + this.fill(n / 10 + 'X')
+        default:
+          return null
+      }
     }
   },
   watch: {
-    value (newValue) {
-      this.updatedValue = newValue
+    date: {
+      deep: true,
+      handler (newValue) {
+        var year = this.date.year || ''
+        var month = this.date.month || ''
+        var day = this.date.day || ''
+
+        if (year && month && day) {
+          this.$emit('update:value', `${year}-${month}-${day}`)
+        } else if (year && month && !day) {
+          this.$emit('update:value', `${year}-${month}`)
+        } else if (year && !month && !day) {
+          this.$emit('update:value', year)
+        } else {
+          this.$emit('update:value', '')
+        }
+      }
     },
-    menu (val) {
-      val && setTimeout(() => (this.$refs.picker.activePicker = 'YEAR'))
+    value: {
+      deep: true,
+      immediate: true,
+      handler (value) {
+        if (value) {
+          if (typeof value !== 'object') {
+            value = edtf(value)
+          }
+
+          var str = value.edtf
+          var date = str.split('-')
+
+          if (str.charAt(0) === '-') {
+            this.date.year = '-' + date[1]
+            this.date.month = date[2]
+            this.date.day = date[3]
+          } else {
+            this.date.year = date[0]
+            this.date.month = date[1]
+            this.date.day = date[2]
+          }
+        } else {
+          this.date.year = ''
+          this.date.month = ''
+          this.date.day = ''
+        }
+      }
+    },
+    min: {
+      deep: true,
+      immediate: true,
+      handler (value) {
+        if (value) {
+          if (typeof value !== 'object') {
+            value = edtf(value)
+          }
+
+          var str = value.edtf
+          var date = str.split('-')
+
+          if (str.charAt(0) === '-') {
+            this.minDate.year = '-' + date[1]
+            this.minDate.month = date[2]
+            this.minDate.day = date[3]
+          } else {
+            this.minDate.year = date[0]
+            this.minDate.month = date[1]
+            this.minDate.day = date[2]
+          }
+        } else {
+          this.minDate.year = ''
+          this.minDate.month = ''
+          this.minDate.day = ''
+        }
+      }
     }
   }
 }
 </script>
-<style>
+<style lang="scss">
 ::-webkit-scrollbar {
   width:12px;
 }
@@ -122,5 +346,41 @@ export default {
 ::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
+.__divider {
+  padding-top: 0.75em;
+  padding-bottom: 0.75em;
+  pointer-events: none;
+}
 
+.rounded-input {
+  border: 1px solid rgba(0,0,0,0.3);
+  border-radius: 4px;
+}
+
+.customInput.v-text-field > .v-input__control > .v-input__slot:before {
+  border-style: none;
+}
+.customInput.v-text-field > .v-input__control > .v-input__slot:after {
+  border-style: none;
+}
+
+.custom-label {
+  font-size: 12px;
+  margin-left: 8px;
+  color: #858585;
+  padding-left: 3px;
+  padding-right: 3px;
+}
+
+.custom-fieldset-default:hover {
+  border-color: #242424;
+}
+
+.custom-fieldset-focused {
+  border-width: 2px;
+  border-color: black;
+  .custom-label {
+    color: black;
+  }
+}
 </style>

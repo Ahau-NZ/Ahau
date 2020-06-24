@@ -1,6 +1,6 @@
 <template>
-    <v-row class="mb-12" :class="mobile ? 'mt-10':''">
-      <v-col cols="12" sx="12" sm="12" md="9" :class="mobile ? 'py-5 px-5' : 'px-5' ">
+    <v-row class="mb-12" :class="mobile ? 'mobile-profile':''">
+      <v-col cols="12" sx="12" sm="12" md="9" :class="mobile ? 'pt-7 pb-5 px-5' : 'px-5' ">
         <ProfileInfoCard :profile="profile" @setupProfile="setupProfile($event)" />
         <ProfileCard>
           <template v-slot:content>
@@ -10,15 +10,15 @@
         <ProfileCard>
           <template v-slot:content>
             <v-row cols="12" class="pt-0" >
-              <ProfileInfoItem class="br" smCols="12" mdCols="4" title="Phone" :value="profile.phone"/>
-              <ProfileInfoItem class="br" smCols="12" mdCols="4" title="Email" :value="profile.email"/>
+              <ProfileInfoItem :class="mobile ? 'bb':'br'" smCols="12" mdCols="4" title="Phone" :value="profile.phone"/>
+              <ProfileInfoItem :class="mobile ? 'bb':'br'" smCols="12" mdCols="4" title="Email" :value="profile.email"/>
               <ProfileInfoItem smCols="12" mdCols="4" title="Address" :value="profile.address"/>
             </v-row>
           </template>
         </ProfileCard>
       </v-col>
       <!-- RIGHT SIDE COLUMN -->
-      <v-col cols="12" sx="12" md="3" :class="mobile ? 'py-5 px-5' : 'pr-8'">
+      <v-col cols="12" sx="12" md="3" :class="mobile ? 'pt-0 px-5' : 'pr-8'">
         <!-- TODO: update profiles to profiles.tiaki -->
         <ProfileCard title="Kaitiaki" class="mt-0">
           <template v-slot:content>
@@ -44,12 +44,6 @@
             </v-row>
           </template>
         </ProfileCard>
-        <!-- <Kaitiaki
-          class="mt-3"
-          title="Communities"
-          subtitle="These are the communities connected to this profile"
-          :profiles="profile.tiaki"
-        /> -->
       </v-col>
     </v-row>
 </template>
@@ -58,7 +52,6 @@
 import ProfileInfoCard from '@/components/profile/ProfileInfoCard.vue'
 import ProfileInfoItem from '@/components/profile/ProfileInfoItem.vue'
 import ProfileCard from '@/components/profile/ProfileCard.vue'
-// import Kaitiaki from '@/components/profile/Kaitiaki.vue'
 import { mapGetters } from 'vuex'
 import calculateAge from '@/lib/calculate-age'
 import formatDate from '@/lib/format-date'
@@ -69,7 +62,6 @@ export default {
   components: {
     ProfileInfoCard,
     ProfileCard,
-    // Kaitiaki,
     ProfileInfoItem,
     Avatar
   },
@@ -80,7 +72,6 @@ export default {
     },
     editProfile: {
       type: Function
-      // default: () => console.log('need to define editProfile!')
     },
     setupProfile: Function
   },
@@ -124,6 +115,11 @@ export default {
 }
 </script>
 <style lang="scss">
+  .mobile-profile {
+    position: absolute;
+    top: 390px;
+    max-width: 99.5%;
+  }
   .rounded-card {
     border-radius: 10px;
 
@@ -139,7 +135,7 @@ export default {
   }
 
   .br {
-  border-right: 0.5px solid rgba(0,0,0,0.12);
+  border-right: 0.5px solid rgba(0,0,0,0.3);
   }
 
 </style>

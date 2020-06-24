@@ -6,6 +6,8 @@ const cors = require('cors')
 const Main = require('@ssb-graphql/main')
 const Profile = require('@ssb-graphql/profile')
 const Whakapapa = require('@ssb-graphql/whakapapa')
+const Artefact = require('@ssb-graphql/artefact')
+const Story = require('@ssb-graphql/story')
 
 module.exports = {
   name: 'graphql-http-server',
@@ -16,6 +18,8 @@ module.exports = {
     app.options('*', cors())
     const main = Main(sbot)
     const profile = Profile(sbot)
+    const story = Story(sbot)
+    const artefact = Artefact(sbot)
     const whakapapa = Whakapapa(sbot, profile.gettersWithCache)
     profile.Context((err, context) => {
       if (err) throw err
@@ -29,6 +33,14 @@ module.exports = {
           {
             typeDefs: profile.typeDefs,
             resolvers: profile.resolvers
+          },
+          {
+            typeDefs: artefact.typeDefs,
+            resolvers: artefact.resolvers
+          },
+          {
+            typeDefs: story.typeDefs,
+            resolvers: story.resolvers
           },
           {
             typeDefs: whakapapa.typeDefs,

@@ -162,7 +162,7 @@ export default {
     // table height based on number of nodes on table
     tableHeight () {
       if (!this.componentLoaded) return 0
-      return (this.nodes.length + 1) * 51
+      return (this.nodes.length + 1) * 52 + 100
     },
 
     // returns an array of nodes associated with the root node created from the treeData object, as well as extra attributes
@@ -190,7 +190,7 @@ export default {
             parent: d.parent,
             x: d.x,
             y: this.filter ? i * 45 : d.y * 1.5,
-            age: calculateAge(d.data.bornAt),
+            age: calculateAge(d.data.aliveInterval),
             color: this.nodeColor(d.data)
           }
         })
@@ -328,7 +328,7 @@ export default {
 
     // changes row colour
     nodeColor (data) {
-      var age = calculateAge(data.bornAt)
+      var age = calculateAge(data.aliveInterval)
       if (data.isCollapsed) {
         return 'fill:cadetblue'
       } else if (age !== null && age < 2) {
@@ -362,7 +362,7 @@ export default {
 
 <style scoped lang="scss">
 svg#baseSvg {
-  padding-top:100px;
+  padding-top:150px;
   min-height: calc(100vh - 68px);
 }
 .nonbiological{

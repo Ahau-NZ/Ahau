@@ -1,23 +1,23 @@
 <template>
     <v-row cols="12" class="rounded-border">
       <ProfileInfoItem class="br bb" :title="'Preferred Name'" :value="profile.preferredName"/>
-      <ProfileInfoItem class="br bb" :title="'Age'" :value="age" :sub-value="dob" />
+      <ProfileInfoItem :class="mobile ? 'bb':'br bb'" :title="'Age'" :value="age" :sub-value="dob" />
       <ProfileInfoItem class="br bb" :title="'Occupation'" :value="profile.profession" />
       <ProfileInfoItem class="bb" :title="'Location'" :value="profile.location" />
 
-      <div v-if="profile.parents && profile.parents.length" :class="mobile ? 'bb' : 'br'">
+      <div v-if="profile.parents && profile.parents.length" :class="mobile ? '' : 'br'">
         <AvatarGroup v-if="profile.parents" :profiles="profile.parents" group-title="Parents" size="50px" :show-labels="true"
-          :addButtonSlot="false" @profile-click="openProfile($event)">
+          @profile-click="openProfile($event)">
         </AvatarGroup>
       </div>
-      <div v-if="profile.siblings && profile.siblings.length" :class="mobile ? 'bb' : 'br'">
+      <div v-if="profile.siblings && profile.siblings.length" :class="mobile ? '' : 'br'">
         <AvatarGroup v-if="profile.siblings" :profiles="profile.siblings" group-title="Siblings" size="50px" :show-labels="true"
-          :addButtonSlot="false" @profile-click="openProfile($event)">
+          @profile-click="openProfile($event)">
         </AvatarGroup>
       </div>
       <div v-if="profile.children && profile.children.length">
         <AvatarGroup v-if="profile.children" :profiles="profile.children" group-title="Children" size="50px" :show-labels="true"
-          :addButtonSlot="false" @profile-click="openProfile($event)">
+          @profile-click="openProfile($event)">
         </AvatarGroup>
       </div>
     </v-row>
@@ -43,20 +43,16 @@ export default {
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
-    divider () {
-      if (this.mobile) return 'divider-horizontal'
-      return 'divider-vertical'
-    },
     age () {
-      if (this.profile.bornAt) {
-        var age = calculateAge(this.profile.bornAt)
+      if (this.profile.aliveInterval) {
+        var age = calculateAge(this.profile.aliveInterval)
         return String(age)
       }
       return ' '
     },
     dob () {
-      if (this.profile.bornAt) {
-        var formattedDate = formatDate(this.profile.bornAt)
+      if (this.profile.aliveInterval) {
+        var formattedDate = formatDate(this.profile.aliveInterval)
         return formattedDate
       }
       return ' '
@@ -68,7 +64,6 @@ export default {
     openProfile (profile) {
       this.setProfileById({ id: profile.id, type: 'preview' })
       this.setDialog({ active: 'view-edit-node', preview: true })
-      // this.$emit('setupProfile', profile.id)
     }
   }
 }
@@ -76,20 +71,21 @@ export default {
 
 <style>
 .rounded-border {
-  border: 0.5px solid rgba(0,0,0,0.12);
+  color: black;
+  border: 0.5px solid rgba(0,0,0,0.3);
   border-radius: 10px;
   background-color: white;
 }
 
 .br {
-  border-right: 0.5px solid rgba(0,0,0,0.12);
+  border-right: 0.5px solid rgba(0,0,0,0.3);
 }
 
 .bb {
-  border-bottom: 0.5px solid rgba(0,0,0,0.12);
+  border-bottom: 0.5px solid rgba(0,0,0,0.3);
 }
 .bt {
-  border-top: 0.5px solid rgba(0,0,0,0.12);
+  border-top: 0.5px solid rgba(0,0,0,0.3);
 }
 
 </style>

@@ -1,6 +1,6 @@
 import Collection from './Collection.vue'
 import CollectionGroup from './CollectionGroup.vue'
-import { collectionComplete, collectionMinimum } from '@/mocks/collection'
+import { collectionComplete, collectionMinimum } from '@/mocks/collections'
 
 export default {
   title: 'Collection'

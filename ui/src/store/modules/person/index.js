@@ -32,7 +32,6 @@ const actions = {
       dispatch('setWhoami', id)
     }
     if (type !== 'setWhanau' && rootState.dialog.dialog) {
-      console.log('closing dialog')
       dispatch('setDialog', null)
     }
     var person = await getRelatives(id)

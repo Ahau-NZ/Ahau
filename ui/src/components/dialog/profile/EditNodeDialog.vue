@@ -3,8 +3,8 @@
 
     <!-- Content Slot -->
     <template v-if="!hideDetails" v-slot:content>
-      <v-col class="py-0">
-        <ProfileForm :profile.sync="formData" :withRelationships="false" />
+      <v-col class="py-0 px-0">
+        <ProfileForm :profile.sync="formData" :withRelationships="false" :mobile="mobile"/>
       </v-col>
     </template>
     <!-- End Content Slot -->
@@ -41,13 +41,16 @@ import pick from 'lodash.pick'
 import isEqual from 'lodash.isequal'
 import clone from 'lodash.clonedeep'
 
-function defaultData (profile) {
+function defaultData (input) {
+  var profile = clone(input)
+  var aliveInterval = profile.aliveInterval.split('/')
   return {
     id: profile.id,
     gender: profile.gender,
     legalName: profile.legalName,
-    bornAt: profile.bornAt,
-    diedAt: profile.diedAt,
+    aliveInterval: profile.aliveInterval,
+    bornAt: aliveInterval[0],
+    diedAt: aliveInterval[1],
     preferredName: profile.preferredName,
     avatarImage: profile.avatarImage,
     description: profile.description,
@@ -86,6 +89,9 @@ export default {
   },
 
   computed: {
+    mobile () {
+      return this.$vuetify.breakpoint.xs
+    },
     profileChanges () {
       let changes = {}
       Object.entries(this.formData).forEach(([key, value]) => {

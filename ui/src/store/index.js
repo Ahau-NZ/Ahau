@@ -9,13 +9,21 @@ import archive from './modules/archive'
 import dialog from './modules/dialog'
 
 const apolloProvider = createProvider()
-const apolloClient = apolloProvider.defaultClient
+const apollo = apolloProvider.defaultClient
 
 Vue.use(Vuex)
 
 const store = new Vuex.Store({
   state: {
-    whoami: {},
+    whoami: {
+      profile: {
+        id: '',
+        preferredName: '',
+        aliveInterval: '',
+        avatarImage: { uri: '' }
+      },
+      feedId: ''
+    },
     loading: false,
     goBack: {
       show: false,
@@ -59,14 +67,14 @@ const store = new Vuex.Store({
       commit('updateLoading', loading)
     },
     async setWhoami ({ commit }) {
-      const result = await apolloClient.query({
+      const result = await apollo.query({
         query: gql`
           {
             whoami {
               profile {
                 id
                 preferredName
-                bornAt 
+                aliveInterval
                 gender 
                 avatarImage { uri }
               }

@@ -24,6 +24,7 @@
               :node.sync="node"
               :radius="nodeRadius"
               :nonFocusedPartners="nonFocusedPartners"
+              :nodeCentered="nodeCentered"
               @click="centerNode(node)"
               @open-context-menu="$emit('open-context-menu', $event)"
               @change-focus="changeFocus($event, node)"
@@ -34,26 +35,20 @@
       </g>
       <!-- zoom in, zoom out buttons -->
       <g class="zoomControl">
-        <g @click="zoomReset()" :transform="`translate(${30} ${treeY*2.15})`">
+        <g @click="zoomReset()" :transform="mobile ? `translate(${15} ${treeY*3})` : `translate(${30} ${treeY*3.1})`">
           <circle stroke="white" fill="white" filter="url(#shadow)" cx="20" cy="1" r="15"/>
           <circle stroke="black" fill="white" filter="url(#shadow)" cx="20" cy="1" r="5"/>
           <path d="M 20,-7 20,10 M 12,1 28,1" stroke="grey" stroke-width="1.5" />
         </g>
-        <g @click="zoomInOut(1.6)" :transform="`translate(${30} ${treeY*2.4})`">
+        <g @click="zoomInOut(1.6)" :transform="mobile ? `translate(${15} ${treeY*3.35})` : `translate(${30} ${treeY*3.4})`">
           <circle stroke="white" fill="white" filter="url(#shadow)" cx="20" cy="1" r="15"/>
           <path d="M 20,-5 20,7 M 14,1 26,1" stroke="grey" stroke-width="1.5" />
         </g>
-        <g @click="zoomInOut(1 / 1.6)" :transform="`translate(${30} ${treeY*2.65})`">
+        <g @click="zoomInOut(1 / 1.6)" :transform="mobile ? `translate(${15} ${treeY*3.7})` : `translate(${30} ${treeY*3.7})`">
           <circle stroke="white" fill="white" filter="url(#shadow)" cx="20" cy="1" r="15"/>
           <path d="M 14,1 26,1" stroke="grey" stroke-width="1.5" />
         </g>
       </g>
-      <!-- loading spinner when changing focus -->
-      <!-- <Spinner v-if="loadingState" /> -->
-      <!-- <g v-if="loadingState">
-        <rect width="100%" height="100%" style="fill:#fff; opacity:0.95" />
-        <image :transform="`translate(${width/2 - 100} ${height/3})`" href="../assets/grid-loader.svg" width="30" height="30" />
-      </g> -->
     </svg>
 </template>
 
@@ -79,9 +74,6 @@ export default {
       type: Object,
       required: true
     },
-    // relationshipLinks: {
-    //   type: Map,
-    // },
     searchNodeId: {
       type: String
     },
@@ -90,7 +82,7 @@ export default {
   data () {
     return {
       componentLoaded: false, // need to ensure component is loaded before using $refs
-      nodeCentered: [], // hold centered node id
+      nodeCentered: '', // hold centered node id
       collapseNode: false, // if node is centered than we can show/collapse
 
       nodeRadius: 50, // use variable for zoom later on
@@ -106,9 +98,13 @@ export default {
     this.componentLoaded = true
     // set loader until all the nodes have been loaded
     this.zoom()
+    this.scale()
   },
   computed: {
     ...mapGetters(['nestedWhakapapa', 'relationshipLinks']),
+    mobile () {
+      return this.$vuetify.breakpoint.xs
+    },
     pathNode () {
       if (this.searchNodeId === '') return null
       return this.root.descendants().find(d => {
@@ -134,7 +130,7 @@ export default {
     */
     treeY () {
       if (!this.componentLoaded) return 0
-      return this.$refs.baseSvg.clientHeight / 3
+      return this.$refs.baseSvg.clientHeight / 4
     },
     treeWidth () {
       if (!this.componentLoaded) return null
@@ -205,17 +201,14 @@ export default {
       return this.treeLayout(this.root)
         .links() // returns the array of links
         .map((d, i) => { // returns a new custom object for each link
-          // console.log('links: ', this.relationshipLinks.get(d.source.data.id + '-' + d.target.data.id).relationshipType)
           return {
             id: `tree-link-${i}-${d.source.data.id}-${d.target.data.id}`,
             index: i,
-            // relationshipType: this.relationshipLinks.get(d.source.data.id + '-' + d.target.data.id).relationshipType, // coordinates from drawing lines/links from Parent(x1,y1) to Child(x2,y2)
             x1: d.source.x, // centre x position of parent node
             x2: d.target.x, // centre x position of child node
             y1: d.source.y, // centre y position of the parent node
             y2: d.target.y, // centre y position of the child node
             class: this.relationshipLinks.get(d.source.data.id + '-' + d.target.data.id).relationshipType !== 'birth' ? 'nonbiological' : '',
-            // class: d.target.data.relationship.relationshipType !== 'birth' ? 'nonbiological' : '',
             style: {
               fill: 'none',
               stroke: this.pathStroke(d.source.data.id, d.target.data.id)
@@ -314,7 +307,6 @@ export default {
     },
 
     async collapse (node) {
-      this.setLoading(true)
       const profile = node.data
       const { children, _children = [] } = profile
 
@@ -350,6 +342,16 @@ export default {
       )
         .on('dblclick.zoom', null)
     },
+    scale () {
+      var svg = d3.select('#baseSvg')
+      var g = d3.select('#baseGroup')
+      var zoom = d3.zoom()
+        .on('zoom', function () {
+          g.attr('transform', d3.event.transform)
+        })
+      zoom.scaleBy(svg.transition().duration(0), 0.8)
+    },
+
     centerNode (source) {
       // if source node is already centered than collapse
 
@@ -384,7 +386,7 @@ export default {
       var g = d3.select('#baseGroup')
 
       var zoom = d3.zoom()
-        .scaleExtent([0.3, 2])
+        .scaleExtent([0.05, 2])
         .on('zoom', function () {
           g.attr('transform', d3.event.transform)
         })
@@ -418,7 +420,7 @@ export default {
 
 <style scoped lang="scss">
 #background {
-  opacity: 0.1
+  opacity: 0.1;
 }
 
 svg#baseSvg {

@@ -7,8 +7,7 @@ const apolloClient = apolloProvider.defaultClient
 export const PERMITTED_PROFILE_ATTRS = [
   'gender',
   'legalName',
-  'bornAt',
-  'diedAt',
+  'aliveInterval',
   'preferredName',
   'avatarImage',
   'description',
@@ -47,7 +46,7 @@ export const getProfile = id => ({
       person(id: $id){
         id
         preferredName legalName altNames
-        bornAt diedAt birthOrder
+        aliveInterval birthOrder
         gender description 
         location  address email
         phone profession deceased
@@ -56,7 +55,7 @@ export const getProfile = id => ({
           profile {
             id
             preferredName legalName altNames
-            bornAt diedAt birthOrder
+            aliveInterval birthOrder
             gender description
             location  address deceased
             email phone profession
@@ -69,7 +68,7 @@ export const getProfile = id => ({
           profile {
             id
             preferredName legalName altNames
-            bornAt diedAt birthOrder
+            aliveInterval birthOrder
             gender description
             location address email
             phone profession deceased

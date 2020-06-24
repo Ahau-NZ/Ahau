@@ -3,9 +3,9 @@
 
     <!-- Content Slot -->
     <template v-if="!hideDetails" v-slot:content>
-      <v-col class="py-0">
+      <v-col class="py-0 px-0">
 
-        <ProfileForm :profile.sync="formData" :readonly="hasSelection" :editRelationship="hasSelection" :withRelationships="withRelationships">
+        <ProfileForm :profile.sync="formData" :readonly="hasSelection" :editRelationship="hasSelection" :withRelationships="withRelationships" :mobile="mobile">
 
           <!-- Slot = Search -->
           <template v-slot:search>
@@ -30,7 +30,7 @@
               <template v-slot:item="data">
                 <template v-if="typeof data.item === 'object'">
                   <v-list-item @click="setFormData(data.item)">
-                    <Avatar class="mr-3" size="40px" :image="data.item.profile.avatarImage" :alt="data.item.profile.preferredName" :gender="data.item.profile.gender" :bornAt="data.item.profile.bornAt" />
+                    <Avatar class="mr-3" size="40px" :image="data.item.profile.avatarImage" :alt="data.item.profile.preferredName" :gender="data.item.profile.gender" :aliveInterval="data.item.profile.aliveInterval" />
                     <v-list-item-content>
                       <v-list-item-title> {{ data.item.profile.preferredName }} </v-list-item-title>
                       <v-list-item-subtitle>Preferred name</v-list-item-subtitle>
@@ -40,7 +40,7 @@
                       <v-list-item-subtitle>Legal name</v-list-item-subtitle>
                     </v-list-item-content>
                     <v-list-item-action>
-                      <v-list-item-title> {{ age(data.item.profile.bornAt) }} </v-list-item-title>
+                      <v-list-item-title> {{ age(data.item.profile.aliveInterval) }} </v-list-item-title>
                       <v-list-item-subtitle>Age</v-list-item-subtitle>
                     </v-list-item-action>
                   </v-list-item>
@@ -83,8 +83,10 @@ import Avatar from '@/components/Avatar.vue'
 import isEmpty from 'lodash.isempty'
 import calculateAge from '@/lib/calculate-age'
 
-import { getProfile } from '@/lib/profile-helpers'
 import uniqby from 'lodash.uniqby'
+import pick from 'lodash.pick'
+
+import { PERMITTED_PROFILE_ATTRS, PERMITTED_RELATIONSHIP_ATTRS, getProfile } from '@/lib/profile-helpers'
 
 function setDefaultData (withRelationships) {
   const formData = {
@@ -99,6 +101,7 @@ function setDefaultData (withRelationships) {
     legallyAdopted: false,
     children: [],
     avatarImage: {},
+    aliveInterval: '',
     bornAt: '',
     diedAt: '',
     birthOrder: '',
@@ -194,15 +197,27 @@ export default {
       let submission = {}
       Object.entries(this.formData).map(([key, value]) => {
         if (!isEmpty(this.formData[key])) {
-          if (key === 'birthOrder') {
-            submission[key] = parseInt(value)
-          } else {
-            submission[key] = value
+          switch (key) {
+            case 'birthOrder':
+              submission[key] = parseInt(value)
+              break
+            case 'altNames':
+              if (!isEmpty(this.formData[key].add)) {
+                submission[key] = value
+              }
+              break
+            default:
+              submission[key] = value
           }
         } else if (key === 'deceased') {
           submission[key] = value
         }
       })
+
+      var aliveInterval = this.formData.bornAt + '/' + this.formData.diedAt
+
+      submission['aliveInterval'] = aliveInterval
+
       return submission
     }
   },
@@ -298,11 +313,11 @@ export default {
       // eslint-disable-next-line no-return-assign
       return this.closeSuggestions = parents
     },
-    age (bornAt) {
-      return calculateAge(bornAt)
+    age (aliveInterval) {
+      return calculateAge(aliveInterval)
     },
     submit () {
-      var submission = Object.assign({}, this.submission)
+      var submission = pick(this.submission, [...PERMITTED_PROFILE_ATTRS, ...PERMITTED_RELATIONSHIP_ATTRS])
       this.$emit('create', submission)
       // this.hasSelection
       //   ? this.$emit('create', pick(this.formData, ['id', 'relationshipType', 'legallyAdopted']))
@@ -354,6 +369,22 @@ export default {
         }
       } else {
         this.$emit('getSuggestions', null)
+      }
+    },
+    'formData.bornAt' (newVal) {
+      if (this.formData.aliveInterval) {
+        var dates = this.formData.aliveInterval.split('/')
+        this.formData.aliveInterval = (newVal || '') + '/' + (dates[1] || '')
+      } else {
+        this.formData.aliveInterval = (newVal || '') + '/'
+      }
+    },
+    'formData.diedAt' (newVal) {
+      if (this.formData.aliveInterval) {
+        var dates = this.formData.aliveInterval.split('/')
+        this.formData.aliveInterval = (dates[0] || '') + '/' + (newVal || '')
+      } else {
+        this.formData.aliveInterval = '/' + (newVal || '')
       }
     },
     hasSelection (newValue) {

@@ -1,5 +1,5 @@
 <template>
-  <v-banner light single-line>
+  <v-banner light single-line color="white" style="z-index:1">
     <router-link :to="view.id ? { name: 'whakapapaShow', params: { id: view.id } } : '/whakapapa'">
       <v-avatar size="35" tile >
         <v-img v-if="view.image && view.image.uri" :src="view.image.uri" :alt="view.name" :to="view.id ? { name: 'whakapapaShow', params: { id: view.id } } : '/whakapapa'"/>

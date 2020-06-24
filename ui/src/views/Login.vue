@@ -33,18 +33,12 @@
       <Avatar
         :image="whoami.profile.avatarImage"
         :gender="whoami.profile.gender"
-        :bornAt="whoami.profile.bornAt"
+        :aliveInterval="whoami.profile.aliveInterval"
         size="13vh"
       />
       <h3 class="name mt-2">{{ whoami.profile.preferredName }}</h3>
     </router-link>
 
-     <!-- <NewNodeDialog
-      v-if="dialog"
-      :show="dialog"
-      :title="`Ko wai au ---- Who am I`"
-      @close="toggleNew" @create="save($event)"
-    /> -->
      <NewNodeDialog
       v-if="dialog"
       :show="dialog"
@@ -135,7 +129,7 @@ export default {
       // Shortcut in dev, that saves us from doing one click when testing
       if (this.isSetup && process.env.NODE_ENV === 'development') {
         this.karakiaTūwhera()
-        this.setComponent('archive')
+        this.setComponent('profile')
         this.$router.push({ name: 'profileShow', params: { id: this.whoami.profile.id } })
       }
 
@@ -151,8 +145,7 @@ export default {
         'preferredName',
         'legalName',
         'gender',
-        'bornAt',
-        'diedAt',
+        'aliveInterval',
         'birthOrder',
         'avatarImage',
         'altNames',

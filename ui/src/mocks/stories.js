@@ -4,20 +4,18 @@ import { collectionComplete, collectionMinimum } from './collections'
 
 export const story1 = {
   id: '%Story1',
-  type: '',
+  type: 'story',
   title: 'Story 1',
   description: 'This is the description of story1',
   recordDate: '14 May 2020',
   recordEndDate: '20 May 2020',
   location: '',
-  creator: '',
-  submissionDate: '14 May 2020',
-  contributionNotes: '',
   locationDescription: '',
   format: '',
   identifier: '',
   language: '',
   source: '',
+  creator: {},
   transcription: '',
   contributors: [...personComplete.parents],
   mentions: [
@@ -25,7 +23,7 @@ export const story1 = {
     ...personComplete.children,
     ...personComplete.siblings
   ],
-  artefacts: [...artefacts],
+  artefacts: artefacts,
   collections: [],
   access: [...personComplete.parents],
   categories: [],
@@ -42,7 +40,7 @@ export const story2 = {
   recordDate: '14 May 2020',
   recordEndDate: '',
   location: '',
-  creator: '',
+  creator: {},
   submissionDate: '14 May 2020',
   contributionNotes: '',
   locationDescription: '',
@@ -77,7 +75,6 @@ export const story3 = {
   locationDescription: '',
   format: '',
   identifier: '',
-  language: '',
   source: '',
   transcription: '',
   contributors: [
@@ -105,8 +102,8 @@ export const story4 = {
   creator: personComplete.parents[0],
   submissionDate: '14 May 2020',
   contributionNotes: 'This information has been made available for all our Ngāti Nūrou members but does not directly effect all whānau. This application is on behalf of the Tairea whānau and the descendats of Auru and Ngametua Tairea. For further information regarding this applicaion or the information provided in the record please feel free to contact Sara or myself directly.',
-  locationDescription: 'This application is in regard to the succession of the Onehunga block in Mauke by children and descendants of Auru and Ngametua Tairea. This land block has a number of significant sites including the burial site for Tairea and ',
-  culturalNarrative: 'This application is in regard to the succession of the Onehunga block in Mauke by children and descendants of Auru and Ngametua Tairea. This land block has a number of significant sites including the burial site for Tairea and ',
+  locationDescription: 'This application is in regard to the succession of the Onehunga block in Mauke by children and descendants of Auru and Ngametua Tairea. This land block has a number of significant sites including the burial site for Tairea and sites of significance to the families from this area. Should this applicatoin be successful it will be up to the families what will happen next with this land',
+  culturalNarrative: 'This application is in regard to the succession of the Onehunga block in Mauke by children and descendants of Auru and Ngametua Tairea. This land block has a number of significant sites including the burial site for Tairea. ',
   format: 'photos taken from the land block and digital copies of documents from the meetings and applications',
   identifier: 'Ref#1000',
   language: 'English',
@@ -136,7 +133,7 @@ export const story4 = {
     story1, story2, story1, story2
   ],
   relatedRecords: [
-    story1, story2
+    story1, story2, story3, story1, story2, story3, story1, story2, story3, story1, story2, story3, story1, story2, story3, story1, story2, story3, story1, story2, story3, story1, story2, story3
   ],
   protocols: [
     ...personComplete.parents

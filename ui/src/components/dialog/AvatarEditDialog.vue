@@ -124,7 +124,7 @@ export default {
 
           let cleanImage = {}
           Object.entries(result.data.uploadFile).forEach(([key, value]) => {
-            if (key !== '__typename') cleanImage[key] = value
+            if (key !== 'type') cleanImage[key] = value
           })
           this.$emit('submit', cleanImage)
         })

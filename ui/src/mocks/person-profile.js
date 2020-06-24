@@ -3,7 +3,7 @@ export const personMinimum = {
   canEdit: false,
   preferredName: 'Will',
   legalName: 'Will Smith',
-  bornAt: '1980-02-01',
+  aliveInterval: '1980-02-01/',
   description: null,
   gender: 'male',
   avatarImage: null,
@@ -18,8 +18,7 @@ export const personEmpty = {
   id: '0',
   preferredName: null,
   legalName: null,
-  bornAt: null,
-  diedAt: null,
+  aliveInterval: null,
   description: null,
   gender: null,
   avatarImage: null,
@@ -36,27 +35,27 @@ export const personNoImages = {
   preferredName: 'Kuia',
   legalName: 'Kuia',
   gender: 'female',
-  bornAt: '1950-01-01',
+  aliveInterval: '1950-01-01/',
   children: [
     {
       id: '1',
       preferredName: 'Wahine',
       gender: 'female',
-      bornAt: '1980-01-01',
+      aliveInterval: '1980-01-01/',
       children: [
         {
           id: '2',
           preferredName: 'Kotiro',
           legalName: 'Kotiro',
           gender: 'female',
-          bornAt: '2008-01-01'
+          aliveInterval: '2008-01-01/'
         },
         {
           id: '3',
           preferredName: 'Tama',
           legalName: 'Tama',
           gender: 'male',
-          bornAt: '2008-01-01'
+          aliveInterval: '2008-01-01/'
         }
       ]
     },
@@ -65,7 +64,7 @@ export const personNoImages = {
       preferredName: 'Tane',
       legalName: 'Tane',
       gender: 'male',
-      bornAt: '1980-01-01'
+      aliveInterval: '1980-01-01/'
     }
   ],
   partners: [
@@ -74,7 +73,7 @@ export const personNoImages = {
       preferredName: 'Koro',
       legalName: 'Koro',
       gender: 'male',
-      bornAt: '1950-01-01'
+      aliveInterval: '1950-01-01/'
     }
   ]
 }
@@ -83,8 +82,7 @@ export const personComplete = {
   id: '%A',
   gender: 'male',
   legalName: 'Will Smith',
-  bornAt: '2003-02-01',
-  diedAt: '',
+  aliveInterval: '1995-07-2X/',
   deceased: false,
   preferredName: 'Will',
   relationshipType: 'birth',
@@ -128,9 +126,9 @@ export const personComplete = {
       },
       children: [
         {
-          id: '%S',
+          id: '%J',
           gender: 'female',
-          legalName: 'Willow Smith',
+          legalName: 'Willow Smith JNR',
           preferredName: 'Willow ',
           avatarImage: {
             uri: 'http://www.gstatic.com/tv/thumb/persons/512549/512549_v9_bb.jpg'
@@ -155,7 +153,7 @@ export const personComplete = {
       gender: 'female',
       legalName: 'Caroline Bright',
       preferredName: 'Caroline',
-      bornAt: '1950-01-01',
+      aliveInterval: '1950-01-01/',
       avatarImage: {
         uri: ''
       }
@@ -163,7 +161,7 @@ export const personComplete = {
   ],
   siblings: [
     {
-      id: '%F',
+      id: '%G',
       gender: 'female',
       legalName: 'Pam Smith',
       preferredName: 'Pam',
@@ -173,7 +171,7 @@ export const personComplete = {
       }
     },
     {
-      id: '%G',
+      id: '%H',
       gender: 'female',
       legalName: 'Ellen Smith',
       preferredName: 'Ellen',
@@ -183,7 +181,7 @@ export const personComplete = {
       }
     },
     {
-      id: '%H',
+      id: '%I',
       gender: 'male',
       legalName: 'Harry Smith',
       preferredName: 'Harry',

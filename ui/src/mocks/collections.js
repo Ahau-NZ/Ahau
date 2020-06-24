@@ -24,8 +24,9 @@ export const collectionMinimum = {
 
 export const firstMocks = [
   {
-    image: require('@/assets/mocks/mock3.jpg'),
-    title: 'Private Records',
+    id: '1',
+    image: { uri: require('@/assets/mocks/mock3.jpg') },
+    title: '1',
     description: 'Private records that I want to remember',
     stories: ['storyid9', 'storyid10', 'storyid11', 'storyid12'],
     lastSubmissionDate: new Date(),
@@ -42,8 +43,9 @@ export const firstMocks = [
     ]
   },
   {
-    image: require('@/assets/mocks/mock3.jpg'),
-    title: 'Private Records',
+    id: '2',
+    image: { uri: require('@/assets/mocks/mock3.jpg') },
+    title: '2',
     description: 'Private records that I want to remember',
     stories: ['storyid9', 'storyid10', 'storyid11', 'storyid12'],
     lastSubmissionDate: new Date(),
@@ -59,8 +61,9 @@ export const firstMocks = [
     }]
   },
   {
-    image: require('@/assets/mocks/mock3.jpg'),
-    title: 'Private Records',
+    id: '3',
+    image: { uri: require('@/assets/mocks/mock3.jpg') },
+    title: '3',
     description: 'Private records that I want to remember',
     stories: ['storyid9', 'storyid10', 'storyid11', 'storyid12'],
     lastSubmissionDate: new Date(),
@@ -76,8 +79,9 @@ export const firstMocks = [
     }]
   },
   {
-    image: require('@/assets/mocks/mock3.jpg'),
-    title: 'Private Records',
+    id: '4',
+    image: { uri: require('@/assets/mocks/mock3.jpg') },
+    title: '4',
     description: 'Private records that I want to remember',
     stories: ['storyid9', 'storyid10', 'storyid11', 'storyid12'],
     lastSubmissionDate: new Date(),
@@ -93,8 +97,9 @@ export const firstMocks = [
     }]
   },
   {
-    image: require('@/assets/mocks/mock3.jpg'),
-    title: 'Private Records',
+    id: '5',
+    image: { uri: require('@/assets/mocks/mock3.jpg') },
+    title: '5',
     description: 'Private records that I want to remember',
     stories: ['storyid9', 'storyid10', 'storyid11', 'storyid12'],
     lastSubmissionDate: new Date(),

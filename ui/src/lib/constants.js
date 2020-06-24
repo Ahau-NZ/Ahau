@@ -39,7 +39,7 @@ export const RULES = {
       v => (v && v.length <= 50) || 'Name must be less than 50 characters'
     ]
   },
-  bornAt: [
+  aliveInterval: [
     // v => !!v || 'Date of birth is required'
   ],
   relationshipType: [
@@ -66,4 +66,5 @@ export const MONTHS = [
 ]
 
 export const DECEASED_COLOUR = '#bfbfbf' // TODO: is this the right place to put these?
-export const ALIVE_COLOUR = '#009999'
+// export const ALIVE_COLOUR = '#009999'
+export const ALIVE_COLOUR = '#427979'

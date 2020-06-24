@@ -38,14 +38,6 @@ export default {
 </script>
 
 <style>
-.divider-vertical {
-  border-right: 1px solid lightgrey;
-}
-
-.divider-horizontal {
-  border-bottom: 1px solid lightgrey;
-}
-
 .profile-label {
   color: rgba(0,0,0,0.6);
   display: flex;

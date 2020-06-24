@@ -1,42 +1,88 @@
 <template>
   <div id="container">
-    <NewNodeDialog v-if="isActive('new-node')" :show="isActive('new-node')"
-      :title="`Add ${type} to ${selectedProfile.preferredName}`" :type="type" @create="addPerson($event)" @close="close"
-      :selectedProfile="selectedProfile" :suggestions="suggestions" @getSuggestions="getSuggestions($event)" />
     <NewCommunityDialog v-if="isActive('new-community')" :show="isActive('new-community')"
       :title="`Ko Wai Mātou ---- Create New Community`" :type="type" @create="addCommunity($event)" @close="close" />
-    <EditNodeDialog v-if="isActive('edit-node')" :show="isActive('edit-node')"
-      :title="`Edit ${currentProfile.preferredName}`" @submit="updateProfile($event)" @close="close"
-      :selectedProfile="currentProfile" />
+
     <EditCommunityDialog v-if="isActive('edit-community')" :show="isActive('edit-community')"
       :title="`Edit ${currentProfile.preferredName}`" @submit="updateCommunity($event)" @close="close"
-      :selectedProfile="currentProfile" />
-    <div :class="sideMenuClass">
-      <SideViewEditNodeDialog v-if="isActive('view-edit-node')" :show="isActive('view-edit-node')"
-        :profile="selectedProfile" :deleteable="canDelete(selectedProfile)"
-        :warnAboutChildren="selectedProfile && selectedProfile.id !== nestedWhakapapa.id" :sideMenu="true"
-        @close="close" @new="toggleDialog('new-node', $event, 'view-edit-node')" @submit="updateProfile($event)"
-        @delete="toggleDialog('delete-node', null, null)" @open-profile="setSelectedProfile($event)" :view="view"
-        :preview="previewProfile" />
-    </div>
-    <DeleteNodeDialog v-if="isActive('delete-node')" :show="isActive('delete-node')" :profile="selectedProfile"
-      :warnAboutChildren="selectedProfile && selectedProfile.id !== nestedWhakapapa.id" @submit="removeProfile"
-      @close="close" />
-    <WhakapapaViewDialog v-if="isActive('whakapapa-view')" :show="isActive('whakapapa-view')" :view="view"
-      @edit="toggleDialog('whakapapa-edit', null, 'whakapapa-view')" @close="close" />
-    <WhakapapaEditDialog v-if="isActive('whakapapa-edit')" :show="isActive('whakapapa-edit')" :view="view"
-      @delete="toggleDialog('whakapapa-delete', null, 'whakapapa-edit')" @close="close"
-      @submit="$emit('updateWhakapapa', $event)" />
-    <WhakapapaDeleteDialog v-if="isActive('whakapapa-delete')" :show="isActive('whakapapa-delete')" :view="view"
-      @close="close" @submit="$emit('deleteWhakapapa')" />
-    <WhakapapaShowHelper :show="isActive('whakapapa-helper')" :title="`Whakapapa ---- Family tree`" @close="close" />
-    <WhakapapaTableHelper :show="isActive('whakapapa-table-helper')" :title="`Whakapapa registry`" @close="close" />
-    <NewCollectionDialog :show="isActive('new-collection')" :title="'Create a new Collection'" @close="close"
-      @submit="console.log('TODO: add collection to profile')" />
-    <NewRecordDialog :show="isActive('new-record')" :title="'Create a new Record'" @close="close"
-      @submit="console.log('TODO: add record to profile')" />
-    <ViewRecordDialog :show="isActive('view-record')" :title="'View Story'" @close="close" />
-    <ComingSoonDialog :show="isActive('coming-soon')" @close="close" />
+      :selectedProfile="currentProfile" /> 
+    <NewNodeDialog v-if="isActive('new-node')"
+      :show="isActive('new-node')"
+      :title="`Add ${type} to ${selectedProfile.preferredName}`"
+      @create="addPerson($event)"
+      @close="close"
+      :selectedProfile="selectedProfile"
+      :suggestions="suggestions"
+      @getSuggestions="getSuggestions($event)"
+    />
+    <EditNodeDialog v-if="isActive('edit-node')"
+      :show="isActive('edit-node')"
+      :title="`Edit ${currentProfile.preferredName}`"
+      @submit="updateProfile($event)"
+      @close="close"
+      :selectedProfile="currentProfile"
+    />
+    <SideViewEditNodeDialog
+      v-if="isActive('view-edit-node')"
+      :show="isActive('view-edit-node')"
+      :profile="selectedProfile"
+      :deleteable="canDelete(selectedProfile)"
+      :warnAboutChildren="selectedProfile && selectedProfile.id !== nestedWhakapapa.id"
+      :sideMenu="true"
+      @close="close"
+      @new="toggleDialog('new-node', $event, 'view-edit-node')"
+      @submit="updateProfile($event)"
+      @delete="toggleDialog('delete-node', null, null)"
+      @open-profile="setSelectedProfile($event)"
+      :view="view"
+      :preview ="previewProfile"
+    />
+    <DeleteNodeDialog v-if="isActive('delete-node')"
+      :show="isActive('delete-node')"
+      :profile="selectedProfile"
+      :warnAboutChildren="selectedProfile && selectedProfile.id !== nestedWhakapapa.id"
+      @submit="removeProfile"
+      @close="close"
+    />
+    <WhakapapaViewDialog v-if="isActive('whakapapa-view')"
+      :show="isActive('whakapapa-view')"
+      :view="view"
+      @edit="toggleDialog('whakapapa-edit', null, 'whakapapa-view')"
+      @close="close"
+    />
+    <WhakapapaEditDialog v-if="isActive('whakapapa-edit')"
+      :show="isActive('whakapapa-edit')"
+      :view="view"
+      @delete="toggleDialog('whakapapa-delete', null, 'whakapapa-edit')"
+      @close="close"
+      @submit="$emit('updateWhakapapa', $event)"
+    />
+    <WhakapapaDeleteDialog v-if="isActive('whakapapa-delete')"
+      :show="isActive('whakapapa-delete')"
+      :view="view" @close="close"
+      @submit="$emit('deleteWhakapapa')"
+    />
+    <WhakapapaShowHelper
+      :show="isActive('whakapapa-helper')"
+      :title="`Whakapapa ---- Family tree`"
+      @close="close"
+    />
+    <WhakapapaTableHelper
+      :show="isActive('whakapapa-table-helper')"
+      :title="`Whakapapa registry`"
+      @close="close"
+    />
+    <NewCollectionDialog
+      :show="isActive('new-collection')"
+      :title="'Create a new Collection'"
+      @close="close"
+      @submit="console.log('TODO: add collection to profile')"
+    />
+    <ComingSoonDialog
+      :show="isActive('coming-soon')"
+      @close="close"
+    />
+
   </div>
 </template>
 
@@ -52,21 +98,14 @@ import WhakapapaEditDialog from '@/components/dialog/whakapapa/WhakapapaEditDial
 import WhakapapaDeleteDialog from '@/components/dialog/whakapapa/WhakapapaDeleteDialog.vue'
 import WhakapapaShowHelper from '@/components/dialog/whakapapa/WhakapapaShowHelper.vue'
 import WhakapapaTableHelper from '@/components/dialog/whakapapa/WhakapapaTableHelper.vue'
-import NewCollectionDialog from '@/components/dialog/NewCollectionDialog.vue'
-import NewRecordDialog from '@/components/dialog/NewRecordDialog.vue'
-import ViewRecordDialog from '@/components/dialog/archive/ViewRecordDialog.vue'
+import NewCollectionDialog from '@/components/dialog/archive/NewCollectionDialog.vue'
 import ComingSoonDialog from '@/components/dialog/ComingSoonDialog.vue'
 
 import gql from 'graphql-tag'
 
-import {
-  PERMITTED_PROFILE_ATTRS,
-  PERMITTED_RELATIONSHIP_ATTRS,
-  saveProfile
-} from '@/lib/profile-helpers.js'
-import {
-  saveWhakapapaLink
-} from '@/lib/link-helpers.js'
+import { PERMITTED_PROFILE_ATTRS, PERMITTED_RELATIONSHIP_ATTRS, saveProfile } from '@/lib/profile-helpers.js'
+
+import { saveWhakapapaLink } from '@/lib/link-helpers.js'
 import pick from 'lodash.pick'
 import isEmpty from 'lodash.isempty'
 
@@ -82,6 +121,7 @@ import {
   mapActions
 } from 'vuex'
 
+import { story1 } from '@/mocks/stories'
 export default {
   name: 'DialogHandler',
   components: {
@@ -96,10 +136,8 @@ export default {
     WhakapapaShowHelper,
     WhakapapaTableHelper,
     NewCollectionDialog,
-    NewRecordDialog,
-    ViewRecordDialog,
-    ComingSoonDialog,
-    EditCommunityDialog
+    EditCommunityDialog,
+    ComingSoonDialog
   },
   props: {
     story: {
@@ -119,8 +157,7 @@ export default {
       required: false,
       default: null,
       validator: (val) => [
-        'new-node', 'new-community', 'view-edit-node', 'delete-node', 'new-collection', 'new-record', 'edit-node',
-        'view-record', 'edit-community',
+        'edit-community', 'new-community', 'new-node', 'view-edit-node', 'delete-node', 'new-collection', 'new-story', 'edit-story', 'edit-node', 'delete-story',
         'whakapapa-view', 'whakapapa-edit', 'whakapapa-delete', 'whakapapa-helper', 'whakapapa-table-helper'
       ].includes(val)
     },
@@ -139,20 +176,14 @@ export default {
   data () {
     return {
       suggestions: [],
-      source: null
+      source: null,
+      sampleStory: story1
     }
   },
   computed: {
-    ...mapGetters(['nestedWhakapapa', 'selectedProfile', 'whoami', 'storeDialog', 'previewProfile',
-      'currentProfile']),
+    ...mapGetters(['nestedWhakapapa', 'selectedProfile', 'whoami', 'storeDialog', 'previewProfile', 'currentProfile']),
     mobile () {
       return this.$vuetify.breakpoint.xs
-    },
-    sideMenuClass () {
-      if (this.isActive('view-edit-node')) {
-        return !this.mobile ? 'viewDesktop' : 'viewMobile'
-      }
-      return !this.mobile ? 'hideViewDesktop' : 'hideViewMobile'
     }
   },
   methods: {
@@ -466,8 +497,7 @@ export default {
       preferredName,
       legalName,
       gender,
-      bornAt,
-      diedAt,
+      aliveInterval,
       birthOrder,
       avatarImage,
       altNames,
@@ -491,8 +521,7 @@ export default {
             preferredName,
             legalName,
             gender,
-            bornAt,
-            diedAt,
+            aliveInterval,
             birthOrder,
             avatarImage,
             altNames,
@@ -568,7 +597,6 @@ export default {
       }
     },
     async updateProfile ($event) {
-      console.log('updatePerson', $event)
       Object.entries($event).map(([key, value]) => {
         if (value === '') {
           delete $event[key]
@@ -834,8 +862,7 @@ export default {
               preferredName
               legalName
               gender
-              bornAt
-              diedAt
+              aliveInterval
               birthOrder
               description
               altNames
@@ -846,8 +873,7 @@ export default {
                   preferredName
                   legalName
                   gender
-                  bornAt
-                  diedAt
+                  aliveInterval
                   birthOrder
                   description
                   altNames
@@ -861,8 +887,7 @@ export default {
                   preferredName
                   legalName
                   gender
-                  bornAt
-                  diedAt
+                  aliveInterval
                   birthOrder
                   description
                   altNames
@@ -895,33 +920,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-  .viewDesktop {
-    transition: all 0.1s ease-in-out;
-    position: absolute;
-    top: 0px;
-    right: 0px;
-    width: 20.7%;
-    height: 100%;
-    background-color: white;
-  }
-
-  .hideViewDesktop {
-    right: -30%;
-  }
-
-  .hideViewMobile {
-    bottom: -100%;
-  }
-
-  .viewMobile {
-    transition: all 0.1s ease-in-out;
-    position: absolute;
-    top: 0px;
-    right: 0px;
-    width: 100%;
-    height: 100%;
-    background-color: white;
-  }
-</style>

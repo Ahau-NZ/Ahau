@@ -4,6 +4,7 @@ import tane from '../assets/tane.svg'
 import wahine from '../assets/wahine.svg'
 import tama from '../assets/tama.svg'
 import kotiro from '../assets/kotiro.svg'
+import diverse from '../assets/diverse.svg'
 
 import whakapapa from '@/assets/whakapapa.svg'
 
@@ -13,11 +14,11 @@ export default {
   defaultImage
 }
 
-function defaultImage (isView, bornAt, gender) {
+function defaultImage (isView, aliveInterval, gender) {
   if (isView) {
     return whakapapa
   }
-  var age = calculateAge(bornAt)
+  var age = calculateAge(aliveInterval)
 
   switch (gender) {
     case 'male':
@@ -31,6 +32,7 @@ function defaultImage (isView, bornAt, gender) {
         default:
           return tane
       }
+    case 'other': return diverse
     default:
       switch (true) {
         case age === null:

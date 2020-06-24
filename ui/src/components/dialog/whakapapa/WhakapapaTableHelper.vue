@@ -1,7 +1,7 @@
 <template>
   <Dialog :title="title" :show="show" @close="close" :width="`700px`" :goBack="close">
     <template v-slot:content>
-      <v-card-text class="pt-0">
+      <v-card-text class="pt-5">
         <p>
           This whakapapa tool has been designed to help you easily explore and view whanau information. <br />
           To do this we have built in some core features and will continue to
