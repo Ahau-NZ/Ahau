@@ -3,87 +3,61 @@
     <v-container class="px-12" fluid>
       <v-row>
         <v-col cols="4">
-          <v-btn>Generate join code</v-btn>
+          <v-row justify="center">
+            <v-btn color="grey" outlined tile>Generate join code</v-btn>
+          </v-row>
         </v-col>
         <v-col cols="4">
-          <v-row>Single use code</v-row>
-          <v-row justify="center">
-            <v-col>askdhasjdkahskd</v-col>
-            <v-col>
-              <v-btn>COPY</v-btn>
-            </v-col>
+          <v-row>
+            <h3 class="text-uppercase subtitle-1">Pātaka single use code</h3>
+          </v-row>
+          <v-row align="center" class="mt-4">
+            <div class="grey--text subtitle-2">askdhasjdkahskd</div>
+            <v-btn color="grey" outlined tile class="ml-8 text-uppercase">copy</v-btn>
           </v-row>
         </v-col>
       </v-row>
       <v-row justify="center">
-        <v-col cols="3">
-          <Avatar size="40px" alt="name" />
-          <h2>Name of Pataka</h2>
-          <h3>Pataka SSB ID</h3>
-          <v-row class="py-4">
-            <div class="dot orange mr-4" />
-            <h4>Offline</h4>
-          </v-row>
-          <v-row>
-            <div class="dot green mr-4" />
-            <h4>Local</h4>
-          </v-row>
-          <template>
-            <v-card class="mt-4" max-width="400">
-              <v-sheet class="v-sheet--offset mx-auto" elevation="12">
-                <v-card-text class="pt-0">
-                  <div class="title font-weight-light mb-2">CPU</div>
-                </v-card-text>
-                <v-sparkline
-                  :labels="labels"
-                  :value="value"
-                  color="cyan"
-                  line-width="2"
-                  padding="16"
-                ></v-sparkline>
-              </v-sheet>
-            </v-card>
-          </template>
-          <template>
-            <v-card class="mt-4" max-width="400">
-              <v-sheet class="v-sheet--offset mx-auto" elevation="12">
-                <v-card-text class="pt-0">
-                  <div class="title font-weight-light mb-2">RAM</div>
-                </v-card-text>
-                <v-sparkline
-                  :labels="labels"
-                  :value="value"
-                  color="cyan"
-                  line-width="2"
-                  padding="16"
-                ></v-sparkline>
-              </v-sheet>
-            </v-card>
-          </template>
-          <v-col class="mt-8">
-            <h3>Disk Usage</h3>
-            <v-progress-linear class="mt-4" v-model="storage" height="25" color="blue-grey">
-              <strong>{{ Math.ceil(storage) }}%</strong>
-            </v-progress-linear>
+        <v-col cols="4">
+          <Avatar size="180px" alt="name" class="pb-4" />
+          <h2 class="subtitle-1 text-uppercase text-center">Name of Pataka</h2>
+          <p class="subtitle-2 grey--text text-center">Pataka SSB ID</p>
+          <v-col cols="8" class="mx-auto">
+            <v-row justify="center">
+              <div class="dot orange mr-4" />
+              <p class="body-1 text-uppercase text-center">Offline</p>
+            </v-row>
+            <v-row justify="center">
+              <div class="dot green mr-4" />
+              <p class="body-1 text-uppercase">Local</p>
+            </v-row>
+            <Meter title="CPU" :labels="labels" :values="values" />
+            <Meter title="RAM" :labels="labels" :values="values" />
+            <v-col class="mt-8">
+              <h3>Disk Usage</h3>
+              <v-progress-linear class="mt-4" v-model="storage" height="25" color="blue-grey">
+                <strong>{{ Math.ceil(storage) }}%</strong>
+              </v-progress-linear>
+            </v-col>
           </v-col>
         </v-col>
-        <v-col cols="3">
-          <h2>People</h2>
-          <h3>64 people online</h3>
-          <v-row>
+        <v-col cols="3" class="stat-column">
+          <h2 class="h2 text-uppercase pb-12">People</h2>
+          <h3 class="py-2 text-uppercase subtitle-1 grey--text">64 people online</h3>
+          <v-row class="pb-4">
             <Avatar size="40px" alt="name" />
           </v-row>
-          <v-btn>View people</v-btn>
+          <v-btn color="grey" outlined tile>View people</v-btn>
         </v-col>
-        <v-col cols="3">
-          <h2>Summary</h2>
-          <h3>213 Records</h3>
-          <h3>28 Whakapapa Records</h3>
-          <h3>7 communities</h3>
+        <v-col cols="2" class="stat-column">
+          <h2 class="h2 text-uppercase pb-12">Summary</h2>
+          <h3 class="py-2 text-uppercase subtitle-1 grey--text">213 Records</h3>
+          <h3 class="py-2 text-uppercase subtitle-1 grey--text">28 Whakapapa Records</h3>
+          <h3 class="py-2 text-uppercase subtitle-1 grey--text">7 communities</h3>
         </v-col>
-        <v-col cols="3">
-          <h2>Activity log</h2>
-          <p>
+        <v-col cols="3" class="stat-column">
+          <h2 class="h2 text-uppercase pb-12">Activity log</h2>
+          <p class="log-box">
             warning: Pulling without specifying how to reconcile divergent branches is
             discouraged. You can squelch this message by running one of the following
             commands sometime before your next pull:
@@ -106,6 +80,8 @@
 
 <script>
 import Avatar from '@/components/Avatar.vue'
+import Meter from '@/components/Meter.vue'
+
 export default {
   name: 'Dashboard',
   data: () => ({
@@ -120,7 +96,7 @@ export default {
       '6pm',
       '9pm'
     ],
-    value: [
+    values: [
       200,
       675,
       410,
@@ -132,7 +108,8 @@ export default {
     ]
   }),
   components: {
-    Avatar
+    Avatar,
+    Meter
   }
 }
 </script>
@@ -159,5 +136,14 @@ export default {
 }
 .red {
   background-color: red;
+}
+.stat-column {
+  padding-top: 240px;
+}
+.log-box {
+  background: var(--v-primary-base);
+  opacity: 0.8;
+  padding: 45px 25px 15px;
+  min-height: 90%;
 }
 </style>

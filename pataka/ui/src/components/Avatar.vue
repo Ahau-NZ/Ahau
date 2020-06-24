@@ -11,7 +11,7 @@
     </v-col>
   </div>
 
-  <div v-else-if="(image && image.uri)">
+  <div v-else>
     <v-col>
       <v-row justify="center">
         <v-avatar
@@ -21,7 +21,7 @@
           :class="{'isEditing': isEditing}"
         >
           <v-img v-if="image && image.uri" :src="image.uri" :alt="alt" />
-          <v-img v-else :src="getImage" :style="customStyle" />
+          <v-img v-else src="../assets/logo_black.svg" class="no-pic" :style="customStyle" />
         </v-avatar>
         <div v-if="isEditing" class="avatar-overlay">
           <ImagePicker @updateAvatar="updateAvatar($event)" />
@@ -44,7 +44,18 @@ export default {
     showLabel: { type: Boolean, default: false },
     clickable: { type: Boolean, default: false },
     isView: { type: Boolean, default: false },
-    isEditing: { type: Boolean, default: false }
+    isEditing: { type: Boolean, default: false },
+    offline: { type: Boolean, default: false }
+
+  },
+  computed: {
+    // customClass () {
+    // },
+    customStyle () {
+      return {
+        opacity: this.offline ? 0.5 : 1
+      }
+    }
 
   },
   components: {
@@ -67,6 +78,11 @@ export default {
 
 .isEditing {
   opacity: 0.2;
+}
+
+.no-pic {
+  background: grey;
+  padding: 15px;
 }
 
 .avatar-overlay {
