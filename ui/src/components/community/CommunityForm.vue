@@ -90,14 +90,12 @@
 <script>
 import Avatar from '@/components/Avatar.vue'
 import ImagePicker from '@/components/ImagePicker.vue'
-import AddButton from '@/components/button/AddButton.vue'
 
 export default {
   name: 'CommunityForm',
   components: {
     Avatar,
-    ImagePicker,
-    AddButton
+    ImagePicker
   },
   props: {
     profile: {

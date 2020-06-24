@@ -27,17 +27,12 @@
 
 <script>
 // import CommunitiesNav from '@/components/CommunitiesNav'
-import CommunitiesPeople from '@/components/CommunitiesPeople'
 import CommunitiesList from '@/components/CommunitiesList'
-import DialogHandler from '@/components/dialog/DialogHandler.vue'
-
 import { mapActions } from 'vuex'
 
 export default {
   name: 'Discovery',
   components: {
-    // CommunitiesNav,
-    CommunitiesPeople,
     CommunitiesList
   },
   computed: {

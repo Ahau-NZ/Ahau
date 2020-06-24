@@ -1,11 +1,21 @@
 <template>
   <div id="container">
-    <NewCommunityDialog v-if="isActive('new-community')" :show="isActive('new-community')"
-      :title="`Ko Wai Mātou ---- Create New Community`" :type="type" @create="addCommunity($event)" @close="close" />
-
-    <EditCommunityDialog v-if="isActive('edit-community')" :show="isActive('edit-community')"
-      :title="`Edit ${currentProfile.preferredName}`" @submit="updateCommunity($event)" @close="close"
-      :selectedProfile="currentProfile" /> 
+    <NewCommunityDialog
+      v-if="isActive('new-community')"
+      :show="isActive('new-community')"
+      :title="`Ko Wai Mātou ---- Create New Community`"
+      :type="type"
+      @create="addCommunity($event)"
+      @close="close"
+    />
+    <EditCommunityDialog
+      v-if="isActive('edit-community')"
+      :show="isActive('edit-community')"
+      :title="`Edit ${currentProfile.preferredName}`"
+      @submit="updateCommunity($event)"
+      @close="close"
+      :selectedProfile="currentProfile"
+    />
     <NewNodeDialog v-if="isActive('new-node')"
       :show="isActive('new-node')"
       :title="`Add ${type} to ${selectedProfile.preferredName}`"
@@ -82,7 +92,6 @@
       :show="isActive('coming-soon')"
       @close="close"
     />
-
   </div>
 </template>
 
@@ -493,56 +502,7 @@ export default {
         throw err
       }
     },
-    async createProfile ({
-      preferredName,
-      legalName,
-      gender,
-      aliveInterval,
-      birthOrder,
-      avatarImage,
-      altNames,
-      description,
-      address,
-      location,
-      profession,
-      email,
-      phone,
-      deceased
-    }) {
-      const res = await this.$apollo.mutate({
-        mutation: gql`
-          mutation($input: ProfileInput!) {
-            saveProfile(input: $input)
-          }
-        `,
-        variables: {
-          input: {
-            type: 'person',
-            preferredName,
-            legalName,
-            gender,
-            aliveInterval,
-            birthOrder,
-            avatarImage,
-            altNames,
-            description,
-            location,
-            profession,
-            address,
-            email,
-            phone,
-            deceased,
-            recps: this.view.recps
-          }
-        }
-      })
 
-      if (res.errors) {
-        console.error('failed to createProfile', res)
-        return
-      }
-      return res.data.saveProfile // a profileId
-    },
     async createChildLink ({
       child,
       parent,

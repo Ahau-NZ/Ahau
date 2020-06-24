@@ -4,52 +4,8 @@
     <!-- Content Slot -->
     <template v-if="!hideDetails" v-slot:content>
       <v-col class="py-0">
-
         <CommunityForm :profile.sync="formData">
-
-          <!-- Slot = Search -->
-          <!-- <template v-slot:search>
-            <v-combobox
-              v-model="formData.preferredName"
-              :items="generateSuggestions"
-              item-value="id"
-              item-text="id"
-              label="Community preferred name"
-              :menu-props="{ light: true }"
-              :clearable="hasSelection"
-              append-icon=""
-              v-bind="customProps"
-              @click:clear="resetFormData()"
-              :search-input.sync="formData.preferredName"
-              :readonly="hasSelection"
-              outlined
-              @blur.native="clearSuggestions"
-            >
-
-              Slot:item = Data
-              <template v-slot:item="data">
-                <template v-if="typeof data.item === 'object'">
-                  <v-list-item @click="setFormData(data.item)">
-                    <Avatar class="mr-3" size="40px" :image="data.item.profile.avatarImage" :alt="data.item.profile.preferredName" :gender="data.item.profile.gender" :bornAt="data.item.profile.bornAt" />
-                    <v-list-item-content>
-                      <v-list-item-title> {{ data.item.profile.preferredName }} </v-list-item-title>
-                      <v-list-item-subtitle>Preferred name</v-list-item-subtitle>
-                    </v-list-item-content>
-                    <v-list-item-content>
-                      <v-list-item-title> {{ data.item.profile.legalName ? data.item.profile.legalName :  '&nbsp;' }} </v-list-item-title>
-                      <v-list-item-subtitle>Legal name</v-list-item-subtitle>
-                    </v-list-item-content>
-                    <v-list-item-action>
-                      <v-list-item-title> {{ age(data.item.profile.bornAt) }} </v-list-item-title>
-                      <v-list-item-subtitle>Age</v-list-item-subtitle>
-                    </v-list-item-action>
-                  </v-list-item>
-                </template>
-              </template>
-            </v-combobox>
-          </template> -->
         </CommunityForm>
-
       </v-col>
     </template>
     <!-- End Content Slot -->
@@ -79,7 +35,6 @@ import Dialog from '@/components/dialog/Dialog.vue'
 
 import CommunityForm from '@/components/community/CommunityForm.vue'
 
-import Avatar from '@/components/Avatar.vue'
 import isEmpty from 'lodash.isempty'
 import calculateAge from '@/lib/calculate-age'
 
@@ -105,7 +60,6 @@ function setDefaultData () {
 export default {
   name: 'NewCommunityDialog',
   components: {
-    Avatar,
     Dialog,
     CommunityForm
   },

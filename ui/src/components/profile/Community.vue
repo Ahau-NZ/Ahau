@@ -55,10 +55,8 @@
 </template>
 
 <script>
-import ProfileInfoCard from '@/components/profile/ProfileInfoCard.vue'
 import ProfileInfoItem from '@/components/profile/ProfileInfoItem.vue'
 import ProfileCard from '@/components/profile/ProfileCard.vue'
-// import Kaitiaki from '@/components/profile/Kaitiaki.vue'
 import { mapGetters } from 'vuex'
 import calculateAge from '@/lib/calculate-age'
 import formatDate from '@/lib/format-date'
@@ -67,9 +65,7 @@ import Avatar from '@/components/Avatar.vue'
 export default {
   name: 'Profile',
   components: {
-    ProfileInfoCard,
     ProfileCard,
-    // Kaitiaki,
     ProfileInfoItem,
     Avatar
   },

@@ -1,42 +1,40 @@
 <template>
-    <Dialog :show="show" :title="title" @close="close" width="720px" :goBack="close" enableMenu>
+  <Dialog :show="show" :title="title" @close="close" width="720px" :goBack="close" enableMenu>
 
-      <!-- Content Slot -->
-      <template v-if="!hideDetails" v-slot:content>
-        <v-col class="py-0">
-          <CommunityForm :profile.sync="formData" />
-        </v-col>
-      </template>
-      <!-- End Content Slot -->
+    <!-- Content Slot -->
+    <template v-if="!hideDetails" v-slot:content>
+      <v-col class="py-0">
+        <CommunityForm :profile.sync="formData" />
+      </v-col>
+    </template>
+    <!-- End Content Slot -->
 
-      <!-- Actions Slot -->
-      <template v-slot:actions >
-        <v-btn @click="close"
-          text large fab
-          class="secondary--text"
-        >
-          <v-icon color="secondary">mdi-close</v-icon>
-        </v-btn>
-        <v-btn @click="submit"
-          text large fab
-          class="blue--text ml-5"
-        >
-          <v-icon>mdi-check</v-icon>
-        </v-btn>
-      </template>
-      <!-- End Actions Slot -->
+    <!-- Actions Slot -->
+    <template v-slot:actions >
+      <v-btn @click="close"
+        text large fab
+        class="secondary--text"
+      >
+        <v-icon color="secondary">mdi-close</v-icon>
+      </v-btn>
+      <v-btn @click="submit"
+        text large fab
+        class="blue--text ml-5"
+      >
+        <v-icon>mdi-check</v-icon>
+      </v-btn>
+    </template>
+    <!-- End Actions Slot -->
 
-    </Dialog>
-  </template>
+  </Dialog>
+</template>
 
 <script>
 
 import { PERMITTED_PROFILE_ATTRS } from '@/lib/profile-helpers.js'
-
 import Dialog from '@/components/dialog/Dialog.vue'
 import CommunityForm from '@/components/community/CommunityForm.vue'
 import isEmpty from 'lodash.isempty'
-import calculateAge from '@/lib/calculate-age'
 import pick from 'lodash.pick'
 import isEqual from 'lodash.isequal'
 import clone from 'lodash.clonedeep'
@@ -136,8 +134,7 @@ export default {
   }
 }
 </script>
-
-  <style scoped>
+<style scoped>
   .custom.v-text-field > .v-input__control > .v-input__slot:before {
     border-style: none;
   }
@@ -159,4 +156,4 @@ export default {
   .v-input--radio-group__input label {
     font-size: 14px;
   }
-  </style>
+</style>
