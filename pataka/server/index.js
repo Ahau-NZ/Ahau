@@ -5,6 +5,7 @@ const express = require('express')
 const cors = require('cors')
 const Main = require('@ssb-graphql/main')
 const Profile = require('@ssb-graphql/profile')
+const Invite = require('@ssb-graphql/invite')
 
 module.exports = {
   name: 'graphql-http-server',
@@ -15,6 +16,8 @@ module.exports = {
     app.options('*', cors())
     const main = Main(sbot)
     const profile = Profile(sbot)
+    const invite = Invite(sbot)
+
     profile.Context((err, context) => {
       if (err) throw err
 
@@ -28,9 +31,13 @@ module.exports = {
             typeDefs: profile.typeDefs,
             resolvers: profile.resolvers
           },
+          {
+            typeDefs: invite.typeDefs,
+            resolvers: invite.resolvers
+          }
         ]),
         context,
-        mockEntireSchema: false,
+        mockEntireSchema: false
       })
       server.applyMiddleware({ app })
 

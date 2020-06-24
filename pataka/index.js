@@ -23,7 +23,7 @@ const plugins = [
   'ssb-query',
   'ssb-serve-blobs',
   // 'ssb-private',
-  // 'ssb-invite',
+  'ssb-invite',
   // 'ssb-about',
   // 'ssb-suggest'
   'ahau-pataka-server'

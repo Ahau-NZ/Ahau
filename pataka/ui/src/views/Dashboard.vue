@@ -4,18 +4,25 @@
       <v-row>
         <v-col cols="4">
           <v-row justify="center">
-            <v-btn color="grey" outlined tile>Generate join code</v-btn>
+            <v-btn color="grey" outlined tile @click="generateInviteCode">Generate join code</v-btn>
           </v-row>
         </v-col>
-        <v-col cols="4">
+        <v-col v-if="generatedInvite" class="generated-code">
           <v-row>
             <h3 class="text-uppercase subtitle-1">Pātaka single use code</h3>
           </v-row>
-          <v-row align="center" class="mt-4">
-            <div class="grey--text subtitle-2">askdhasjdkahskd</div>
-            <v-btn color="grey" outlined tile class="ml-8 text-uppercase">copy</v-btn>
+          <v-row align="center" class="mt-2">
+            <p class="grey--text caption mb-0" id="inviteCode">{{generatedInvite}}</p>
+            <v-btn
+              color="grey"
+              outlined
+              tile
+              class="ml-8 text-uppercase"
+              @click="copyCode"
+            >{{copyText}}</v-btn>
           </v-row>
         </v-col>
+        <v-col v-else class="generated-code"></v-col>
       </v-row>
       <v-row justify="center">
         <v-col cols="4">
@@ -81,6 +88,7 @@
 <script>
 import Avatar from '@/components/Avatar.vue'
 import Meter from '@/components/Meter.vue'
+import gql from 'graphql-tag'
 
 export default {
   name: 'Dashboard',
@@ -105,8 +113,37 @@ export default {
       460,
       250,
       240
-    ]
+    ],
+    copyText: 'Copy',
+    generatedInvite: null
   }),
+  methods: {
+    async generateInviteCode () {
+      try {
+        const res = await this.$apollo.mutate({
+          mutation: gql`
+              mutation {
+                createInvite
+              }
+              `
+        })
+        this.generatedInvite = res.data.createInvite
+        this.copyText = 'Copy'
+      } catch (err) {
+        throw err
+      }
+    },
+    async copyCode () {
+      navigator.clipboard.writeText(this.generatedInvite)
+        .then(() => {
+          this.copyText = 'Copied'
+        })
+        .catch(err => {
+          // This can happen if the user denies clipboard permissions:
+          console.error('Could not copy text: ', err)
+        })
+    }
+  },
   components: {
     Avatar,
     Meter
@@ -120,6 +157,9 @@ export default {
   // background-color: white;
   width: 100%;
   height: 100%;
+}
+.generated-code {
+  height: 70px;
 }
 .dot {
   height: 25px;
