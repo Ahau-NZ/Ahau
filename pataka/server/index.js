@@ -6,6 +6,7 @@ const cors = require('cors')
 const Main = require('@ssb-graphql/main')
 const Profile = require('@ssb-graphql/profile')
 const Invite = require('@ssb-graphql/invite')
+const stats = require('@ssb-graphql/stats')
 
 module.exports = {
   name: 'graphql-http-server',
@@ -34,6 +35,10 @@ module.exports = {
           {
             typeDefs: invite.typeDefs,
             resolvers: invite.resolvers
+          },
+          {
+            typeDefs: stats.typeDefs,
+            resolvers: stats.resolvers
           }
         ]),
         context,

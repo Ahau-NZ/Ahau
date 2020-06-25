@@ -31,19 +31,29 @@
           <p class="subtitle-2 grey--text text-center">Pataka SSB ID</p>
           <v-col cols="8" class="mx-auto">
             <v-row justify="center">
-              <div class="dot orange mr-4" />
-              <p class="body-1 text-uppercase text-center">Offline</p>
+              <div class="dot mr-4" :class="network.internetLatency ? 'green' : 'grey'" />
+              <p
+                class="body-1 text-uppercase text-center"
+              >{{ network.internetLatency ? 'Online' : 'Checking'}}</p>
             </v-row>
             <v-row justify="center">
-              <div class="dot green mr-4" />
-              <p class="body-1 text-uppercase">Local</p>
+              <div class="dot mr-4" :class="network.ipv4 ? 'green' : 'grey'" />
+              <p class="body-1 text-uppercase">{{network.ipv4 ? 'Local' : 'Checking'}}</p>
             </v-row>
-            <Meter title="CPU" :labels="labels" :values="values" />
-            <Meter title="RAM" :labels="labels" :values="values" />
+            <Meter title="CPU" :values="cpuLoad" />
+            <Meter title="RAM" :values="memoryLoad" />
             <v-col class="mt-8">
               <h3>Disk Usage</h3>
-              <v-progress-linear class="mt-4" v-model="storage" height="25" color="blue-grey">
-                <strong>{{ Math.ceil(storage) }}%</strong>
+              <v-progress-linear
+                v-for="disk in diskUsage"
+                :key="disk.fs"
+                class="mt-4"
+                :value="disk.use"
+                height="25"
+                color="blue-grey"
+              >
+                <strong class="pr-2">{{ Math.ceil(disk.use) }}%</strong>
+                <span class="caption">{{disk.fs}}</span>
               </v-progress-linear>
             </v-col>
           </v-col>
@@ -93,34 +103,87 @@ import gql from 'graphql-tag'
 export default {
   name: 'Dashboard',
   data: () => ({
-    storage: 33,
-    labels: [
-      '12am',
-      '3am',
-      '6am',
-      '9am',
-      '12pm',
-      '3pm',
-      '6pm',
-      '9pm'
-    ],
-    values: [
-      200,
-      675,
-      410,
-      390,
-      310,
-      460,
-      250,
-      240
-    ],
     copyText: 'Copy',
-    generatedInvite: null
+    generatedInvite: null,
+    network: {
+      internetLatency: null,
+      ipv4: null
+    },
+    diskUsage: [],
+    cpuLoad: [],
+    memoryLoad: []
   }),
+  apollo: {
+    network: {
+      query: gql`query {
+      network {
+        ipv4
+        internetLatency
+      }
+    }`,
+      update (data) {
+        return data.network
+      }
+    },
+    cpuLoad: {
+      query: gql`query {
+      cpuLoad
+    }`,
+      update (data) {
+        return [ ...this.cpuLoad, data.cpuLoad ]
+      }
+    },
+    memoryLoad: {
+      query: gql`query {
+      memoryLoad
+    }`,
+      update (data) {
+        return [ ...this.memoryLoad, data.memoryLoad ]
+      }
+    },
+    diskUsage: {
+      query: gql`query {
+      diskUsage {
+        use
+        fs
+      }
+    }`,
+      update (data) {
+        console.log('update -> DISAK', data)
+        return data.diskUsage
+      }
+    }
+  },
+  watch: {
+    'cpuLoad' (newValue) {
+      if (newValue.length === 1) this.$apollo.queries.cpuLoad.startPolling(5000)
+    },
+    'memoryLoad' (newValue) {
+      if (newValue.length === 1) this.$apollo.queries.memoryLoad.startPolling(5000)
+    },
+    'diskUsage' (newValue) {
+      this.$apollo.queries.diskUsage.startPolling(5000)
+    }
+  },
   methods: {
     async generateInviteCode () {
       try {
         const res = await this.$apollo.mutate({
+          mutation: gql`
+              mutation {
+                createInvite
+              }
+              `
+        })
+        this.generatedInvite = res.data.createInvite
+        this.copyText = 'Copy'
+      } catch (err) {
+        throw err
+      }
+    },
+    async getDiskUsage () {
+      try {
+        const res = await this.$apollo.query({
           mutation: gql`
               mutation {
                 createInvite
@@ -164,7 +227,7 @@ export default {
 .dot {
   height: 25px;
   width: 25px;
-  background-color: #bbb;
+  background-color: grey;
   border-radius: 50%;
   display: inline-block;
 }
@@ -176,6 +239,9 @@ export default {
 }
 .red {
   background-color: red;
+}
+.grey {
+  background-color: grey;
 }
 .stat-column {
   padding-top: 240px;
