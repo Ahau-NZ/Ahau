@@ -183,7 +183,7 @@
             <v-col v-else class="pa-1">
               <p class="text-field">Gender</p>
 
-              <v-row class="gender-button-row">
+              <v-row class="gender-button-row" :class="mobile ? '':'pb-12'">
                 <!-- TANE -->
                 <v-col class="pa-0">
                   <div class="gender-button" @click="updateSelectedGender('male')">

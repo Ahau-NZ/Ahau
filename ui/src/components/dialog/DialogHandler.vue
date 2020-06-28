@@ -16,6 +16,11 @@
       @close="close"
       :selectedProfile="currentProfile"
     />
+    <DeleteCommunityDialog v-if="isActive('delete-community')"
+      :show="isActive('delete-community')"
+      :view="view" @close="close"
+      @submit="$emit('deleteCommunity')"
+    />
     <NewNodeDialog v-if="isActive('new-node')"
       :show="isActive('new-node')"
       :title="`Add ${type} to ${selectedProfile.preferredName}`"
@@ -99,6 +104,7 @@
 import NewNodeDialog from '@/components/dialog/profile/NewNodeDialog.vue'
 import NewCommunityDialog from '@/components/dialog/community/NewCommunityDialog.vue'
 import EditCommunityDialog from '@/components/dialog/community/EditCommunityDialog.vue'
+import DeleteCommunityDialog from '@/components/dialog/community/DeleteCommunityDialog.vue'
 import EditNodeDialog from '@/components/dialog/profile/EditNodeDialog.vue'
 import SideViewEditNodeDialog from '@/components/dialog/profile/SideViewEditNodeDialog.vue'
 import DeleteNodeDialog from '@/components/dialog/profile/DeleteNodeDialog.vue'
@@ -146,7 +152,8 @@ export default {
     WhakapapaTableHelper,
     NewCollectionDialog,
     EditCommunityDialog,
-    ComingSoonDialog
+    ComingSoonDialog,
+    DeleteCommunityDialog
   },
   props: {
     story: {
@@ -234,15 +241,18 @@ export default {
       return true
     },
     async addCommunity ($event) {
+      console.log($event)
       // if person doesnt exisit create one
       if (!$event.id) {
-        const res = await saveCommunity($event)
-        if (res.saveProfile) {
-          this.$router.push({ name: 'community', params: { id: res.saveProfile } })
+        const id = await this.createProfile($event)
+        console.log("res: ", id)
+        if (id) {
+          this.$router.push({ name: 'profileShow', params: { id: id } })
         }
       }
     },
     async createProfile ({
+      type,
       preferredName,
       legalName,
       gender,
@@ -259,6 +269,7 @@ export default {
       phone,
       deceased
     }) {
+      console.log("creating person: ", preferredName, type)
       const res = await this.$apollo.mutate({
         mutation: gql`
           mutation($input: ProfileInput!) {
@@ -267,7 +278,7 @@ export default {
         `,
         variables: {
           input: {
-            type: 'person',
+            type,
             preferredName,
             legalName,
             gender,
@@ -283,7 +294,7 @@ export default {
             email,
             phone,
             deceased,
-            recps: this.view.recps
+            recps: type === 'community' ? [this.whoami.feedId] : this.view.recps
           }
         }
       })

@@ -1,41 +1,41 @@
 <template>
-    <v-container fluid class="body-width pa-0 niho-bg white">
-      <v-overlay dark :value="showArtefact" z-index="6" opacity="1" color="rgba(30,30,30)">
-      </v-overlay>
-      <!-- Header and Title -->
-      <Header v-if="activeComponent === 'profile'"
-        :profile="currentProfile"
-        @setupProfile="setupProfile($event)"
-      />
-      <v-row>
-        <v-col cols="12" offset-md="2" md="8" sm="12" :class="!mobile ? 'pl-12' : '' " :align="mobile ? 'center' : 'start'">
-          <h1 class="primary--text" >{{ currentProfile.legalName ? currentProfile.legalName : currentProfile.preferredName }}</h1>
+  <v-container fluid class="body-width pa-0 niho-bg white">
+    <v-overlay dark :value="showArtefact" z-index="6" opacity="1" color="rgba(30,30,30)">
+    </v-overlay>
+    <!-- Header and Title -->
+    <Header v-if="activeComponent === 'profile'"
+      :profile="currentProfile"
+      @setupProfile="setupProfile($event)"
+    />
+    <v-row>
+      <v-col cols="12" offset-md="2" md="8" sm="12" :class="!mobile ? 'pl-12' : '' " :align="mobile ? 'center' : 'start'">
+        <h1 class="primary--text" :style="mobile ? length: ''">{{ currentProfile.legalName ? currentProfile.legalName : currentProfile.preferredName }}</h1>
+      </v-col>
+      <v-col :order="mobile ? 'first' : 'last'" :align="mobile ? 'end' : 'center'" cols="12" md="2" sm="12"  class="px-5">
+        <EditProfileButton @click="setDialog('edit-community')" />
+      </v-col>
+    </v-row>
+    <v-row>
+      <!-- SideNav -->
+        <v-col  v-if="!hideNav" cols="12" xs="12" sm="12" md="2" :class="!mobile ? 'pr-0' : 'px-5 py-0'">
+          <SideNavMenu :profile="currentProfile" community />
         </v-col>
-        <v-col :order="mobile ? 'first' : 'last'" :align="mobile ? 'end' : 'center'" cols="12" md="2" sm="12"  class="px-5">
-          <EditProfileButton @click="setDialog('edit-community')" />
-        </v-col>
-      </v-row>
-      <v-row>
-        <!-- SideNav -->
-          <v-col  v-if="!hideNav" cols="12" xs="12" sm="12" md="2" :class="!mobile ? 'pr-0' : 'px-5 py-0'">
-            <SideNavMenu :profile="currentProfile" community />
-          </v-col>
-        <!-- Content -->
-        <v-col cols="12" xs="12" sm="12" md="10" :class="mobile ? 'px-6 py-0' : 'pl-0 py-0'">
-          <transition
-            name="fade"
-            mode="out-in"
-         >
-          <Community v-if="activeComponent === 'profile'" :profile="currentProfile" :setupProfile="setupProfile"/>
-          <Archive v-if="activeComponent === 'archive'" :profile="{...currentProfile, type: 'person'}"/>
-          <Timeline v-if="activeComponent === 'timeline'" :profile="currentProfile"/>
-          <WhakapapaIndex v-if="activeComponent === 'whakapapa'"/>
-        </transition>
-        </v-col>
-      </v-row>
-      <v-spacer style="height:200px"></v-spacer>
-    </v-container>
-  </template>
+      <!-- Content -->
+      <v-col cols="12" xs="12" sm="12" md="10" :class="mobile ? 'px-6 py-0' : 'pl-0 py-0'">
+        <transition
+          name="fade"
+          mode="out-in"
+        >
+        <Community v-if="activeComponent === 'profile'" :profile="currentProfile" :setupProfile="setupProfile"/>
+        <Archive v-if="activeComponent === 'archive'" :profile="{...currentProfile, type: 'person'}"/>
+        <Timeline v-if="activeComponent === 'timeline'" :profile="currentProfile"/>
+        <WhakapapaIndex v-if="activeComponent === 'whakapapa'"/>
+      </transition>
+      </v-col>
+    </v-row>
+    <v-spacer style="height:200px"></v-spacer>
+  </v-container>
+</template>
 
 <script>
 import SideNavMenu from '@/components/menu/SideNavMenu.vue'
@@ -75,6 +75,14 @@ export default {
     ...mapGetters(['currentProfile', 'activeComponent', 'showStory', 'showArtefact']),
     mobile () {
       return this.$vuetify.breakpoint.xs
+    },
+    length () {
+      if (this.currentProfile.legalName) {
+        if (this.currentProfile.legalName.length > 30) return 'font-size:6vw'
+        if (this.currentProfile.legalName.length > 25) return 'font-size:7vw'
+        if (this.currentProfile.legalName.length > 20) return 'font-size:8vw'
+        else return 'font-size: 10vw'
+      } else return 'font-size: 10vw'
     },
     hideNav () {
       if (this.mobile && this.showStory) return true

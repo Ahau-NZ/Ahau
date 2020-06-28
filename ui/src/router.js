@@ -34,21 +34,21 @@ export default new Router({
 
     { path: '/discovery', name: 'discovery', component: Discovery },
 
-    { path: '/person', name: 'personIndex', component: People },
-    { path: '/profile/:id/edit', name: 'profileEdit', component: ProfileEdit },
+    // { path: '/person', name: 'personIndex', component: People },
+    // { path: '/profile/:id/edit', name: 'profileEdit', component: ProfileEdit },
     { path: '/profile/:id', name: 'profileShow', component: ProfileShow },
 
-    { path: '/story/:id', name: 'story', component: StoryShow },
+    // { path: '/story/:id', name: 'story', component: StoryShow },
 
-    { path: '/community/new', name: 'communityNew', component: CommunityNew },
-    {
-      path: '/community/:id/edit',
-      name: 'communityEdit',
-      component: CommunityEdit
-    },
-    { path: '/community/:id', name: 'communityShow', component: CommunityShow },
+    // { path: '/community/new', name: 'communityNew', component: CommunityNew },
+    // {
+    //   path: '/community/:id/edit',
+    //   name: 'communityEdit',
+    //   component: CommunityEdit
+    // },
+    // { path: '/community/:id', name: 'communityShow', component: CommunityShow },
 
-    { path: '/archive/:id', name: 'archive', component: Archive },
+    // { path: '/archive/:id', name: 'archive', component: Archive },
 
     { path: '*', redirect: '/' }
   ]

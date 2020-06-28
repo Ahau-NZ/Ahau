@@ -1,7 +1,7 @@
 <template>
     <v-row class="mb-12" :class="mobile ? 'mobile-profile':''">
       <v-col cols="12" sx="12" sm="12" md="9" :class="mobile ? 'pt-7 pb-5 px-5' : 'px-5' ">
-        <ProfileInfoCard :profile="profile" @setupProfile="setupProfile($event)" />
+        <ProfileInfoCard v-if="profile.type === 'person'" :profile="profile" @setupProfile="setupProfile($event)" />
         <ProfileCard>
           <template v-slot:content>
             <ProfileInfoItem title="About" smCols="12" mdCols="12" :value="profile.description"/>
@@ -32,7 +32,19 @@
             </v-row>
           </template>
         </ProfileCard>
-        <ProfileCard title="Communities" class="mt-3">
+        <ProfileCard v-if="profile.type === 'person'" title="Communities" class="mt-3">
+          <template v-slot:content>
+            <v-row class="justify-center align-center ma-0">
+              <v-col cols="2" class="pt-0 pl-0">
+                <Avatar :size="mobile ? '50px' : '40px'" :image="whoami.profile.avatarImage" :alt="whoami.profile.preferredName" />
+              </v-col>
+              <v-col>
+                <p style="color:black;">{{whoami.profile.preferredName}}</p>
+              </v-col>
+            </v-row>
+          </template>
+        </ProfileCard>
+        <ProfileCard v-else title="Members" class="mt-3">
           <template v-slot:content>
             <v-row class="justify-center align-center ma-0">
               <v-col cols="2" class="pt-0 pl-0">
@@ -55,6 +67,7 @@ import ProfileCard from '@/components/profile/ProfileCard.vue'
 import calculateAge from '@/lib/calculate-age'
 import formatDate from '@/lib/format-date'
 import Avatar from '@/components/Avatar.vue'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'Profile',
@@ -79,22 +92,16 @@ export default {
       isEditing: false
     }
   },
+  computed : {
+    ...mapGetters(['whoami']),
+     mobile () {
+      return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
+    }
+  },
   methods: {
     splitParagraphs (text) {
       if (!text) return
       return text.split('\n\n')
-    },
-    getComponent () {
-      // isMobile would be some check to determine the validity of that, how ever you check for that
-      switch (this.$vuetify.breakpoint.name) {
-        case 'xs':
-          return 'ProfileShowMobile'
-        case 'sm':
-        case 'md':
-        case 'lg':
-        case 'xl':
-          return 'ProfileShowDesktop'
-      }
     },
     age (born) {
       var age = calculateAge(born)

@@ -9,6 +9,15 @@
     </template>
     <!-- End Content Slot -->
 
+    <template v-slot:before-actions>
+      <v-col cols="12" sm="auto" class="mt-4">
+        <v-btn text @click="$emit('delete')">
+          Delete community
+          <v-icon class="pl-2">mdi-delete</v-icon>
+        </v-btn>
+      </v-col>
+    </template>
+
     <!-- Actions Slot -->
     <template v-slot:actions >
       <v-btn @click="close"

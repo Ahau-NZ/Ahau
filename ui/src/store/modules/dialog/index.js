@@ -26,7 +26,6 @@ const mutations = {
 
 const actions = {
   setDialog ({ commit }, dialog) {
-    console.log('setDialog', dialog)
     if (dialog === null) {
       commit('updateDialog', dialog)
       commit('updatePreview', false)

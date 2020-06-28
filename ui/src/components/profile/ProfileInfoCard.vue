@@ -75,6 +75,7 @@ export default {
   border: 0.5px solid rgba(0,0,0,0.3);
   border-radius: 10px;
   background-color: white;
+  margin-bottom:20px;
 }
 
 .br {

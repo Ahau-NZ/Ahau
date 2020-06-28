@@ -9,10 +9,10 @@
     />
     <v-row v-if="activeComponent === 'profile'">
       <v-col cols="12" offset-md="2" md="8" sm="12" :class="!mobile ? 'pl-12' : '' " :align="mobile ? 'center' : 'start'">
-        <h1 ref="title" class="primary--text" :style="mobile ? length: ''">{{ currentProfile.legalName ? currentProfile.legalName : currentProfile.preferredName }}</h1>
+        <h1 class="primary--text" :style="mobile ? length: ''">{{ currentProfile.legalName ? currentProfile.legalName : currentProfile.preferredName }}</h1>
       </v-col>
       <v-col :order="mobile ? 'first' : 'last'" :align="mobile ? 'end' : 'center'" cols="12" md="2" sm="12"  class="px-5">
-        <EditProfileButton @click="setDialog('edit-node')" />
+        <EditProfileButton @click="currentProfile.type === 'person' ? setDialog('edit-node'):setDialog('edit-community')" />
       </v-col>
     </v-row>
     <v-row>
@@ -26,6 +26,7 @@
           name="fade"
           mode="out-in"
        >
+        <!-- <Community v-if="activeComponent === 'profile'" :profile="currentProfile" :setupProfile="setupProfile"/> -->
         <Profile v-if="activeComponent === 'profile'" :profile="currentProfile" :setupProfile="setupProfile"/>
         <Archive v-if="activeComponent === 'archive'" :profile="{...currentProfile, type: 'person'}"/>
         <Timeline v-if="activeComponent === 'timeline'" :profile="currentProfile"/>

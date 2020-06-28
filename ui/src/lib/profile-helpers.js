@@ -5,6 +5,7 @@ const apolloProvider = createProvider()
 const apolloClient = apolloProvider.defaultClient
 
 export const PERMITTED_PROFILE_ATTRS = [
+  'type',
   'gender',
   'legalName',
   'aliveInterval',
@@ -44,7 +45,7 @@ export const getProfile = id => ({
   query: gql`
     query($id: String!) {
       person(id: $id){
-        id
+        id type
         preferredName legalName altNames
         aliveInterval birthOrder
         gender description 

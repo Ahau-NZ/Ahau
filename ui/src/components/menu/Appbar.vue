@@ -58,7 +58,7 @@
     </v-app-bar>
 
     <!-- The drawer shows only on mobile -->
-    <v-navigation-drawer v-if="mobile && enableMenu" v-model="drawer" app dark right>
+    <v-navigation-drawer v-if="mobile && enableMenu" v-model="drawer" app dark right width="60%">
       <v-list nav class="text-uppercase">
         <v-list-item active-class="no-active" @click.native="goProfile()" :to="{ name: 'profileShow', params: { id: whoami.profile.id } }" >
           <Avatar
