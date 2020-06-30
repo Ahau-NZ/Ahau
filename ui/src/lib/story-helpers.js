@@ -1,5 +1,6 @@
 import gql from 'graphql-tag'
 import pick from 'lodash.pick'
+import { ARTEFACT_FRAGMENT } from './artefact-helpers'
 
 export const PERMITTED_STORY_ATTRS = [
   'id',
@@ -25,24 +26,12 @@ export const STORY_FRAGMENT = gql`
 `
 
 export const STORY_LINK_FRAGMENT = gql`
+  ${ARTEFACT_FRAGMENT}
   fragment StoryLinkFragment on Story {
     artefacts: artefactLinks {
       linkId
       artefact {
-        id
-        type
-        blob
-        uri
-        title
-        description
-        format
-        identifier
-        language
-        licence
-        recps
-        rights
-        source
-        translation
+        ...ArtefactFragment
       }
     }
   }
