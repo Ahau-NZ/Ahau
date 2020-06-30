@@ -80,6 +80,8 @@
 import StoryCard from '@/components/archive/StoryCard.vue'
 // import CollectionGroup from '@/components/archive/CollectionGroup.vue'
 import { SAVE_STORY, GET_STORY } from '@/lib/story-helpers.js'
+import { SAVE_ARTEFACT } from '@/lib/artefact-helpers.js'
+import { SAVE_LINK, TYPES } from '@/lib/link-helpers.js'
 import { firstMocks } from '@/mocks/collections'
 import { mapGetters, mapActions, mapMutations } from 'vuex'
 import NewRecordDialog from '@/components/dialog/archive/NewRecordDialog.vue'
@@ -127,7 +129,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['stories', 'showStory']),
+    ...mapGetters(['stories', 'showStory', 'whoami']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -151,23 +153,89 @@ export default {
   methods: {
     ...mapMutations(['addStoryToStories', 'removeStoryFromStories']),
     ...mapActions(['setComponent', 'setShowStory', 'setDialog']),
-    async addStory ($event) {
-      if ($event) {
-        const res = await this.$apollo.mutate(SAVE_STORY($event))
+    async saveStory (input) {
+      try {
+        const res = await this.$apollo.mutate(SAVE_STORY(input))
         if (res.errors) {
-          console.error('failed to create story', res.errors)
-          return
+          throw new Error('failed to save story. ' + res.errors)
         }
-
-        var newStoryRes = await this.$apollo.query(GET_STORY(res.data.saveStory))
-
-        if (newStoryRes.errors) {
-          console.error('error fetching story', newStoryRes.errors)
-          return
-        }
-
-        this.addStoryToStories(newStoryRes.data.story)
+        return res.data.saveStory
+      } catch (err) {
+        throw err
       }
+    },
+    async addStory (input) {
+      console.log(input)
+      if (input) {
+        // save the story
+        const storyId = await this.saveStory(input)
+        if (!storyId) return
+        debugger
+        // check if the input has artefacts
+        if (input.artefacts && input.artefacts.length > 0) {
+          // create an artefact for each new artefact given
+          await Promise.all(input.artefacts.map(async artefact => {
+            const artefactId = await this.saveArtefact(artefact)
+            console.log('artefactId', artefactId)
+            if (!artefactId) return
+
+            const input = {
+              type: TYPES.STORY_ARTEFACT,
+              parent: storyId,
+              child: artefactId
+            }
+
+            // create the link between the story and this artefact
+            const linkId = await this.saveLink(input)
+            console.log('linkId', linkId)
+            return artefactId
+          }))
+        }
+
+        var newStory = await this.getStory(storyId)
+        console.log('newStory', newStory)
+
+        this.addStoryToStories(newStory)
+      }
+    },
+    async saveArtefact (input) {
+      try {
+        const res = await this.$apollo.mutate(SAVE_ARTEFACT(input))
+
+        if (res.errors) {
+          throw new Error('failed to save artefact. ' + res.errors)
+        }
+
+        return res.data.saveArtefact
+      } catch (err) {
+        throw err
+      }
+    },
+    async getStory (id) {
+      const res = await this.$apollo.query(GET_STORY(id))
+
+      if (res.errors) {
+        console.error('failed to get the story. ' + res.errors)
+        return
+      }
+
+      return res.data.story
+    },
+    async saveLink ({ type, parent, child }) {
+      const res = await this.$apollo.mutate(SAVE_LINK({
+        type,
+        parent,
+        child,
+        recps: [this.whoami.feedId]
+      }))
+
+      if (res.errors) {
+        console.error('error creating the link. ' + res.errors)
+        return
+      }
+
+      // return the linkId
+      return res.data.saveLink
     },
     toggleStory (story) {
       this.currentStory = story

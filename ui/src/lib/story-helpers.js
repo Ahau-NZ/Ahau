@@ -62,6 +62,25 @@ export const GET_ALL_STORIES = ({
         language
         source
         transcription
+        artefacts: artefactLinks {
+          linkId
+          artefact {
+            id
+            type
+            blob
+            uri
+            title
+            description
+            format
+            identifier
+            language
+            licence
+            recps
+            rights
+            source
+            translation
+          }
+        }
       }
     }
   `,

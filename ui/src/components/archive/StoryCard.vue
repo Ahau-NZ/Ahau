@@ -29,7 +29,7 @@
           v-model="model"
           hide-delimiters
           :show-arrows="!mobile && fullStory && story.artefacts && story.artefacts.length > 1" :show-arrows-on-hover="!mobile" :height="showArtefact ? 'auto' : mobile ? '300px' : '500px'" style="background-color:#1E1E1E">
-          <v-carousel-item v-for="(artefact,i) in story.artefacts" :key="`story-card-artefact-${i}`">
+          <v-carousel-item v-for="({ artefact } , i) in story.artefacts" :key="`story-card-artefact-${i}`">
             <Artefact :model="model" :index="i" @showArtefact="toggleShowArtefact($event)" :artefact="artefact" />
           </v-carousel-item>
         </v-carousel>
@@ -42,7 +42,7 @@
           style="width:100vw;margin-top:-2px"
         >
           <v-slide-item
-            v-for="(artefact, i) in story.artefacts"
+            v-for="({ artefact }, i) in story.artefacts"
             :key="`a-s-g-${i}`"
             v-slot:default="{ active, toggle }"
             transition="fade-transition"
@@ -315,7 +315,9 @@ export default {
     model (newVal) {
       // show artefact details when viewing in carousel
       if (this.showArtefact) {
-        this.artefact = this.story.artefacts[newVal]
+        console.log('newVal', newVal)
+        this.artefact = this.story.artefacts[newVal].artefact
+        console.log('artefact', this.artefact)
       }
     }
   },

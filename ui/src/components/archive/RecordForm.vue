@@ -426,6 +426,8 @@ import DeleteArtefactDialog from '@/components/dialog/artefact/DeleteArtefactDia
 import { RULES } from '@/lib/constants'
 import { mapGetters } from 'vuex'
 
+import gql from 'graphql-tag'
+
 const imageRegex = /^image\//
 const audioRegex = /^audio\//
 const videoRegex = /^video\//
@@ -521,49 +523,91 @@ export default {
     warn (field) {
       alert(`Cannot add ${field} yet`)
     },
-    processMediaFiles ($event) {
+    async processMediaFiles ($event) {
       this.index = this.formData.artefacts ? this.formData.artefacts.length : 0
       const { files } = $event.target
+      console.log('processMediaFiles', files)
 
-      Array.from(files).forEach((file, i) => {
-        this.formData.artefacts.push(this.processFile(file))
-      })
+      // await Promise.all(Array.from(files).forEach(async (file, i) => {
+      //   var artefact = await this.uploadFile(file)
+      //   console.log(artefact)
+
+      //   this.formData.artefacts.push(await this.uploadFile(file))
+      // }))
+
+      this.formData.artefacts = await Promise.all(
+        Array.from(files).map(async file => {
+          var artefact = await this.uploadFile(file)
+          return artefact
+        })
+      )
+
+      console.log('artefacts', this.formData.artefacts)
 
       this.newDialog = true
     },
-    processFile (file) {
-      var attrs = {}
+    async uploadFile (file) {
+      // upload the file to ssb
+      try {
+        const res = await this.$apollo.mutate({
+          mutation: gql`
+            mutation uploadFile($file: Upload!) {
+              uploadFile(file:$file) {
+                blob
+                mimeType
+                uri
+              }
+            }
+          `,
+          variables: {
+            file
+          }
+        })
 
-      const type = this.getFileType(file.type)
-      const title = this.getFileName(file.name)
-      const format = this.getFormat(file.type)
-      const blob = URL.createObjectURL(file)
+        if (res.errors) throw new Error('Error uploading file. ' + res.errors)
 
-      if (type === 'video' || type === 'audio') {
-        attrs = {
-          duration: '',
-          size: file.size,
-          transcription: ''
+        // get the resulting blob
+        var blobObject = res.data.uploadFile
+        var artefact = {}
+
+        // get artefact attributes from the file and blob
+        const type = this.getFileType(file.type)
+        const title = this.getFileName(file.name)
+        const format = this.getFileFormat(file.type)
+        const blob = blobObject.blob
+        const uri = blobObject.uri
+        const mimeType = blobObject.mimeType
+
+        if (type === 'video' || type === 'audio') {
+          artefact = {
+            duration: '',
+            size: file.size,
+            transcription: ''
+          }
         }
-      }
 
-      attrs = {
-        ...attrs,
-        type,
-        blob,
-        title,
-        description: '',
-        format,
-        identifier: '',
-        language: '',
-        licence: '',
-        rights: '',
-        source: '',
-        translation: '',
-        mentions: []
-      }
+        artefact = {
+          ...artefact,
+          type,
+          blob,
+          uri,
+          mimeType,
+          title,
+          description: '',
+          format,
+          identifier: '',
+          language: '',
+          licence: '',
+          rights: '',
+          source: '',
+          translation: '',
+          mentions: []
+        }
 
-      return attrs
+        return artefact
+      } catch (err) {
+        throw err
+      }
     },
     getFileType (type) {
       switch (true) {
@@ -577,7 +621,7 @@ export default {
           return ''
       }
     },
-    getFormat (fileType) {
+    getFileFormat (fileType) {
       return fileType.replace(/.*\//, '')
     },
     getFileName (fileName) {

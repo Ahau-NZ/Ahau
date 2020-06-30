@@ -1,6 +1,8 @@
 import gql from 'graphql-tag'
+import pick from 'lodash.pick'
 
 export const PERMITTED_ARTEFACT_ATTRS = [
+  'id',
   'type',
   'blob',
   'title',
@@ -11,7 +13,11 @@ export const PERMITTED_ARTEFACT_ATTRS = [
   'licence',
   'rights',
   'source',
-  'translation'
+  'translation',
+  'transcription',
+  'tombstone',
+  'duration',
+  'size'
 ]
 
 export const getArtefact = id => ({
@@ -30,6 +36,9 @@ export const getArtefact = id => ({
         rights
         source
         translation
+        transcription
+        size
+        duration
       }
     }
   `,
@@ -53,17 +62,23 @@ export const getArtefacts = () => ({
         rights
         source
         translation
+        transcription
+        size
+        duration
       }
     }
   `,
   fetchPolicy: 'no-cache'
 })
 
-export const saveArtefact = input => ({
-  mutation: gql`
-    mutation($input: ArtefactInput) {
-      saveArtefact(input: $input)
-    }
-  `,
-  variables: { input }
-})
+export const SAVE_ARTEFACT = input => {
+  input = pick(input, PERMITTED_ARTEFACT_ATTRS)
+  return {
+    mutation: gql`
+      mutation($input: ArtefactInput) {
+        saveArtefact(input: $input)
+      }
+    `,
+    variables: { input }
+  }
+}
