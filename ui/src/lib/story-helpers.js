@@ -18,24 +18,44 @@ export const PERMITTED_STORY_ATTRS = [
   'transcription'
 ]
 
-export const GET_STORY = id => ({
-  query: gql`
-    query($id: ID!) {
-      story(id: $id) {
+export const STORY_FRAGMENT = gql`
+  fragment StoryFragment on Story {
+    ${PERMITTED_STORY_ATTRS}
+  }
+`
+
+export const STORY_LINK_FRAGMENT = gql`
+  fragment StoryLinkFragment on Story {
+    artefacts: artefactLinks {
+      linkId
+      artefact {
         id
         type
+        blob
+        uri
         title
         description
-        timeInterval
-        submissionDate
-        location
-        contributionNotes
-        locationDescription
         format
         identifier
         language
+        licence
+        recps
+        rights
         source
-        transcription
+        translation
+      }
+    }
+  }
+`
+
+export const GET_STORY = id => ({
+  query: gql`
+    ${STORY_FRAGMENT}
+    ${STORY_LINK_FRAGMENT}
+    query($id: ID!) {
+      story(id: $id) {
+        ...StoryFragment
+        ...StoryLinkFragment
       }
     }
   `,
@@ -46,41 +66,12 @@ export const GET_STORY = id => ({
 // TODO: sort out type
 export const GET_ALL_STORIES = ({
   query: gql`
+    ${STORY_FRAGMENT}
+    ${STORY_LINK_FRAGMENT}
     query {
       stories (type: "*") {
-        id
-        type
-        title
-        description
-        timeInterval
-        submissionDate
-        location
-        contributionNotes
-        locationDescription
-        format
-        identifier
-        language
-        source
-        transcription
-        artefacts: artefactLinks {
-          linkId
-          artefact {
-            id
-            type
-            blob
-            uri
-            title
-            description
-            format
-            identifier
-            language
-            licence
-            recps
-            rights
-            source
-            translation
-          }
-        }
+        ...StoryFragment
+        ...StoryLinkFragment
       }
     }
   `,
