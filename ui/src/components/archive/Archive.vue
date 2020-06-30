@@ -165,18 +165,16 @@ export default {
       }
     },
     async addStory (input) {
-      console.log(input)
       if (input) {
         // save the story
         const storyId = await this.saveStory(input)
         if (!storyId) return
-        debugger
+
         // check if the input has artefacts
         if (input.artefacts && input.artefacts.length > 0) {
           // create an artefact for each new artefact given
           await Promise.all(input.artefacts.map(async artefact => {
             const artefactId = await this.saveArtefact(artefact)
-            console.log('artefactId', artefactId)
             if (!artefactId) return
 
             const input = {
@@ -186,29 +184,25 @@ export default {
             }
 
             // create the link between the story and this artefact
-            const linkId = await this.saveLink(input)
-            console.log('linkId', linkId)
+            await this.saveLink(input)
             return artefactId
           }))
         }
 
         var newStory = await this.getStory(storyId)
-        console.log('newStory', newStory)
-
         this.addStoryToStories(newStory)
       }
     },
     async saveArtefact (input) {
       try {
         const res = await this.$apollo.mutate(SAVE_ARTEFACT(input))
-
         if (res.errors) {
-          throw new Error('failed to save artefact. ' + res.errors)
+          throw res.errors
         }
 
         return res.data.saveArtefact
       } catch (err) {
-        throw err
+        throw new Error('failed to save artefact. ' + err)
       }
     },
     async getStory (id) {

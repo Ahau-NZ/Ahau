@@ -174,28 +174,7 @@ import { personComplete } from '@/mocks/person-profile'
 import AddButton from '@/components/button/AddButton.vue'
 import ProfileSearchBar from '@/components/archive/ProfileSearchBar.vue'
 import AvatarGroup from '@/components/AvatarGroup.vue'
-
-const EMPTY_ARTEFACT = {
-  type: '',
-  id: '',
-  title: '',
-  blob: '',
-  description: '',
-  format: '',
-  identifier: '',
-  language: '',
-  licence: '',
-  // "recps" // [String] Is this needed?
-  rights: '',
-  source: '',
-  translation: '',
-  duration: 0,
-  size: 0,
-  transcription: '',
-  mentions: []
-}
-
-const PERMITTED_ARTEFACT_ATTRS = Object.keys(EMPTY_ARTEFACT)
+import { PERMITTED_ARTEFACT_ATTRS, EMPTY_ARTEFACT } from '@/lib/artefact-helpers.js'
 
 function artefactChanges (initial, updated) {
   let changes = []
@@ -230,7 +209,7 @@ function arrayChanges (array1, array2) {
 
 function artefactSubmission (newArtefact) {
   var output = {}
-  var artefact = pick(newArtefact, [...PERMITTED_ARTEFACT_ATTRS])
+  var artefact = pick(newArtefact, ...PERMITTED_ARTEFACT_ATTRS)
   Object.entries(artefact).forEach(([key, value]) => {
     if (!isEmpty(artefact[key])) {
       output[key] = value

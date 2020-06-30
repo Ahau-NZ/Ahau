@@ -580,9 +580,9 @@ export default {
 
         if (type === 'video' || type === 'audio') {
           artefact = {
-            duration: '',
+            duration: null, // TODO: how to get the duration from the file....
             size: file.size,
-            transcription: ''
+            transcription: null
           }
         }
 
@@ -593,14 +593,14 @@ export default {
           uri,
           mimeType,
           title,
-          description: '',
+          description: null,
           format,
-          identifier: '',
-          language: '',
-          licence: '',
-          rights: '',
-          source: '',
-          translation: '',
+          identifier: null,
+          language: null,
+          licence: null,
+          rights: null,
+          source: null,
+          translation: null,
           mentions: []
         }
 
