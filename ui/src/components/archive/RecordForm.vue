@@ -390,6 +390,7 @@
       :show="newDialog"
       :index="index"
       :artefacts="formData.artefacts"
+      :editing="true"
       @close="newDialog = false"
       @delete="toggleDialog($event, 'delete')"
       @submit="updateArtefacts($event)"
@@ -414,10 +415,10 @@ import ChipGroup from '@/components/archive/ChipGroup.vue'
 import ProfileSearchBar from '@/components/archive/ProfileSearchBar.vue'
 
 import { findByName } from '@/lib/search-helpers.js'
+import { artefactChanges, SAVE_ARTEFACT, DELETE_ARTEFACT } from '@/lib/artefact-helpers'
 
 import { personComplete } from '@/mocks/person-profile'
 import { firstMocks } from '@/mocks/collections'
-import { artefacts } from '@/mocks/artefacts'
 
 import NewArtefactDialog from '@/components/dialog/artefact/NewArtefactDialog.vue'
 import ArtefactCarousel from '@/components/artefact/ArtefactCarousel.vue'
@@ -456,7 +457,6 @@ export default {
       deleteDialog: false,
       deleteRecordDialog: false,
       index: 0,
-      ARTEFACTS: artefacts,
       search: false,
       model: 0,
       show: false,
@@ -504,16 +504,8 @@ export default {
       if (this.showStory) this.show = true
     },
     async getSuggestions (name) {
-      console.log('name: ', name)
       if (name) this.suggestions = await findByName(name)
       else this.suggestions = []
-    },
-
-    // clickedOff () {
-    //   this.search = !this.search
-    // },
-    updateArtefacts (changes) {
-      alert('WARNING, submission doesnt currently update artefacts')
     },
     toggleDialog ($event, dialog) {
       this.index = $event
@@ -526,14 +518,6 @@ export default {
     async processMediaFiles ($event) {
       this.index = this.formData.artefacts ? this.formData.artefacts.length : 0
       const { files } = $event.target
-      console.log('processMediaFiles', files)
-
-      // await Promise.all(Array.from(files).forEach(async (file, i) => {
-      //   var artefact = await this.uploadFile(file)
-      //   console.log(artefact)
-
-      //   this.formData.artefacts.push(await this.uploadFile(file))
-      // }))
 
       this.formData.artefacts = await Promise.all(
         Array.from(files).map(async file => {
@@ -541,8 +525,6 @@ export default {
           return artefact
         })
       )
-
-      console.log('artefacts', this.formData.artefacts)
 
       this.newDialog = true
     },
@@ -627,15 +609,66 @@ export default {
     getFileName (fileName) {
       return fileName.replace(/\.[^/.]+$/, '')
     },
-    removeItem (array, $event) {
-      array.splice($event, 1)
+    updateItem (array, update, index) {
+      // update the item in the array at the index
+      array.splice(index, 1, update)
     },
+    async saveArtefact (input) {
+      try {
+        const res = await this.$apollo.mutate(SAVE_ARTEFACT(input))
+        if (res.errors) {
+          throw res.errors
+        }
+      } catch (err) {
+        throw err
+      }
+    },
+    async updateArtefacts (artefacts) {
+      console.log(artefacts)
+      await Promise.all(artefacts.map(async (artefact, i) => {
+        var oldArtefact = this.formData.artefacts[i]
+        if (this.editing) {
+          if (artefact.id) {
+            var changes = artefactChanges(oldArtefact, artefact)
+            // save the changes to this artefact
+            await this.saveArtefact({ id: artefact.id, ...changes })
+          } else {
+            // create a new artefact?
+            console.error('NEED TO CREATE AN ARTEFACT')
+          }
+        }
 
-    removeArtefact ($event) {
-      console.error('deleting an artefact not fully implemented')
-      // either remove from the database or from formData
+        Object.assign(oldArtefact, artefact)
+        this.updateItem(this.formData.artefacts, artefact, i)
+        return artefact
+      }))
+    },
+    removeItem (array, index) {
+      array.splice(index, 1)
+    },
+    async deleteArtefact (id) {
+      try {
+        const res = await this.$apollo.mutate(DELETE_ARTEFACT(id, new Date()))
+
+        if (res.errors) {
+          throw res.errors
+        }
+      } catch (err) {
+        throw err
+      }
+    },
+    async removeArtefact (index) {
+      if (this.editing) {
+        // remove from the database
+        var artefact = this.formData.artefacts[this.index]
+
+        // check it has an id
+        if (artefact.id) {
+          await this.deleteArtefact(artefact.id)
+        }
+      }
+      // remove from formData
       this.removeItem(this.formData.artefacts, this.index)
-
       if (this.formData.artefacts && this.formData.artefacts.length === 0) this.newDialog = false
     }
   }

@@ -33,7 +33,7 @@
                 type="profile"
                 item="preferredName"
               />
-              <AvatarGroup v-if="artefact.mentions.length > 0"
+              <AvatarGroup v-if="artefact.mentions && artefact.mentions.length > 0"
                 :profiles="artefact.mentions"
                 show-labels
                 size="40px"
@@ -166,64 +166,19 @@ import DialogTitleBanner from '@/components/dialog/DialogTitleBanner.vue'
 import ArtefactCarousel from '@/components/artefact/ArtefactCarousel.vue'
 
 import clone from 'lodash.clonedeep'
-import isEmpty from 'lodash.isempty'
-import isEqual from 'lodash.isequal'
-import pick from 'lodash.pick'
 
 import { personComplete } from '@/mocks/person-profile'
 import AddButton from '@/components/button/AddButton.vue'
 import ProfileSearchBar from '@/components/archive/ProfileSearchBar.vue'
 import AvatarGroup from '@/components/AvatarGroup.vue'
-import { PERMITTED_ARTEFACT_ATTRS, EMPTY_ARTEFACT } from '@/lib/artefact-helpers.js'
-
-function artefactChanges (initial, updated) {
-  let changes = []
-  Object.entries(updated).forEach(([key, value]) => {
-    if (!isEqual(updated[key], initial[key])) {
-      if (typeof updated[key] === 'object') {
-        if (Array.isArray(updated[key])) {
-          changes[key] = { add: [], remove: [] }
-          changes[key].add = arrayChanges(updated[key], initial[key])
-          changes[key].remove = arrayChanges(initial[key], updated[key])
-
-          if (changes[key].add.length === 0) delete changes[key].add
-          if (changes[key].remove.length === 0) delete changes[key].remove
-
-          // means the same item was remove then added back in
-          if (isEmpty(changes[key])) delete changes[key]
-        } else {
-          changes[key] = artefactChanges(initial[key], updated[key])
-        }
-      } else {
-        changes[key] = updated[key]
-      }
-    }
-  })
-  return changes
-}
-
-function arrayChanges (array1, array2) {
-  return array1.filter(item => !array2.some(item2 => item.id === item2.id))
-    .map(item => item.id) // map it to id
-}
-
-function artefactSubmission (newArtefact) {
-  var output = {}
-  var artefact = pick(newArtefact, ...PERMITTED_ARTEFACT_ATTRS)
-  Object.entries(artefact).forEach(([key, value]) => {
-    if (!isEmpty(artefact[key])) {
-      output[key] = value
-    }
-  })
-  return Object.assign({}, output)
-}
 
 export default {
   name: 'NewArtefactDialog',
   props: {
     show: Boolean,
     artefacts: Array,
-    index: Number
+    index: Number,
+    editing: Boolean
   },
   components: {
     ArtefactCarousel,
@@ -237,7 +192,6 @@ export default {
       items: [...personComplete.children, ...personComplete.parents, ...personComplete.siblings],
       showMentions: false,
       searchString: '',
-      editing: true,
       selectedIndex: this.index,
       formData: clone(this.artefacts)
     }
@@ -298,7 +252,7 @@ export default {
   },
   methods: {
     processMediaFiles ($event) {
-      this.index = this.formData.artefacts.length
+      this.index = this.formData.artefacts ? this.formData.artefacts.length : 0
       const { files } = $event.target
 
       Array.from(files).forEach((file, i) => {
@@ -314,41 +268,17 @@ export default {
       this.$emit('close')
     },
     submit () {
-      var output = {}
-      if (this.editing) {
-        // get all changes
-        output = artefactChanges(this.artefacts, this.formData)
-      } else {
-        output = artefactSubmission(this.formData)
-      }
-      this.$emit('submit', output)
+      this.$emit('submit', this.formData)
       this.$emit('close')
     }
   }
 }
 </script>
 <style lang="scss">
-/* .custom.v-text-field > .v-input__control > .v-input__slot:before {
-  border-style: none;
-}
-.custom.v-text-field > .v-input__control > .v-input__slot:after {
-  border-style: none;
-} */
-
 .artefact-dialog {
     max-height: 91% !important;
 }
-
- .v-input--is-focused {
+.v-input--is-focused {
   color: yellow !important;
-
 }
-// .v-input--is-focused {
-//   border-color: yellow !important;
-// }
-
-.v-text-field .primary--text {
-    // color: yellow !important;
-}
-
 </style>
