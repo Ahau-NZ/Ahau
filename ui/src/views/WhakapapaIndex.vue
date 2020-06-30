@@ -90,7 +90,7 @@ import WhakapapaViewCard from '@/components/whakapapa/WhakapapaViewCard.vue'
 import NewViewDialog from '@/components/dialog/whakapapa/NewViewDialog.vue'
 import NewNodeDialog from '@/components/dialog/profile/NewNodeDialog.vue'
 import WhakapapaListHelper from '@/components/dialog/whakapapa/WhakapapaListHelper.vue'
-import { saveWhakapapaLink } from '@/lib/link-helpers.js'
+import { SAVE_LINK } from '@/lib/link-helpers.js'
 
 import tree from '@/lib/tree-helpers'
 import { mapGetters, mapActions } from 'vuex'
@@ -491,6 +491,7 @@ export default {
       view
     ) {
       const input = {
+        type: 'link/profile-profile/child',
         child,
         parent,
         relationshipType,
@@ -498,12 +499,12 @@ export default {
         recps: this.newView.recps
       }
       try {
-        const res = await this.$apollo.mutate(saveWhakapapaLink(input))
+        const res = await this.$apollo.mutate(SAVE_LINK(input))
         if (res.errors) {
           console.error('failed to createChildLink', res)
           return
         } else {
-          return res.data.saveWhakapapaLink // TODO return the linkId
+          return res.data.saveLink // TODO return the linkId
         }
       } catch (err) {
         throw err
