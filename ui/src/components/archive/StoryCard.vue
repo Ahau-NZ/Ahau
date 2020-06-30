@@ -315,9 +315,7 @@ export default {
     model (newVal) {
       // show artefact details when viewing in carousel
       if (this.showArtefact) {
-        console.log('newVal', newVal)
         this.artefact = this.story.artefacts[newVal].artefact
-        console.log('artefact', this.artefact)
       }
     }
   },
@@ -343,7 +341,7 @@ export default {
         var newStoryRes = await this.$apollo.query(GET_STORY(id))
 
         if (newStoryRes.errors) {
-          console.log('error updating story', newStoryRes.errors)
+          console.error('error updating story', newStoryRes.errors)
           return
         }
         this.updateStoryInStories(newStoryRes.data.story)

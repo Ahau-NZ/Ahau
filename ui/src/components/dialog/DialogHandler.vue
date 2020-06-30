@@ -208,7 +208,6 @@ export default {
       return true
     },
     async addPerson ($event) {
-      console.log('addPerson', $event)
       try {
         var { id } = $event
 
