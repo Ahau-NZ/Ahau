@@ -5,7 +5,7 @@
     <v-row class="py-2">
       <v-col cols="12">
         <p class="headliner pa-0 mb-4">CONNECT</p>
-        <p class="sub-headline pa-0">Enter a ĀHAU PĀTAKA code to connect to a digital pātaka</p>
+        <p class="sub-headline pa-0">Enter a Pātaka code to discover tribes</p>
         <v-text-field
           v-model="patakaCode"
           placeholder="xxxx-xxxx-xxxx-xxxx"
@@ -25,7 +25,7 @@
           <v-row justify="start">
               <v-col v-for="community in communities" :item="community" :key="community.id" justify-self="start">
                 <!-- <router-link :to="{ name: 'communityShow', params: { id: community.id } }"> -->
-                <router-link :to="{ name: 'profileShow', params: { id: community.id } }">
+                <router-link @click.native="setComponent('profile')" :to="{ name: 'profileShow', params: { id: community.id } }">
                   <v-card light width="200px">
                     <v-img height="150px" :src="getImage(community)" class="card-image" />
                     <v-card-title class="subtitle font-weight-bold pb-2">{{
@@ -45,6 +45,7 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
 import gql from 'graphql-tag'
 
 // import { communityBasic01, communityBasic02 } from '../mocks/community'
@@ -85,6 +86,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['setComponent']),
     getImage (community) {
       return get(community, 'avatarImage.uri') || ''
     },

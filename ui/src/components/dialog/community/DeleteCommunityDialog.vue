@@ -3,7 +3,7 @@
     <template v-slot:content>
       <v-card-subtitle>
         <div class="warning-blurb">
-          Are you sure you want to delete this community profile and remove all associated connections including members, records and artefacs from this archive?
+          Are you sure you want to delete this community profile and all its connections, including members, records and artefacts?
         </div>
       </v-card-subtitle>
     </template>
@@ -50,7 +50,7 @@ export default {
     },
     submit () {
       this.$emit('submit')
-      this.close()
+      // this.close()
     }
   },
   components: {

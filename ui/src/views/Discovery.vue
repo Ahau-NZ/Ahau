@@ -15,10 +15,10 @@
     </v-col>
     <!-- RightSideNav -->
     <v-col cols="12" xs="12" sm="12" md="2" :class="!mobile ? 'pa-5' : 'px-5 py-0'">
-        <v-btn fab color="white" @click="addCommunityDialog()">
-          <v-icon class="black--text">mdi-plus</v-icon>
+        <v-btn fab elevation="1" color="white" @click="addCommunityDialog()">
+          <v-icon :large="!mobile" class="black--text">mdi-plus</v-icon>
         </v-btn>
-        <span class="black--text pl-4 subtitle">Create community</span>
+        <!-- <span class="black--text pl-4 subtitle">Create community</span> -->
         <!-- <v-icon left>mdi-plus</v-icon> Create community -->
     </v-col>
 
@@ -43,7 +43,6 @@ export default {
   methods: {
     ...mapActions(['setDialog']),
     addCommunityDialog () {
-      console.log('setting dialog to new-communtiy')
       this.setDialog({ active: 'new-community' })
     }
   }
@@ -62,7 +61,7 @@ export default {
 
   .niho-bg {
     background: linear-gradient(rgba(255, 255, 255, 0.99),
-        rgba(255, 255, 255, 0.7)), url(../assets/niho.svg);
+        rgba(255, 255, 255, 0.8)), url(../assets/niho.svg);
     background-position-x: -450px;
     background-attachment: fixed;
     background-repeat: no-repeat;

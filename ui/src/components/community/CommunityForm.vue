@@ -27,9 +27,6 @@
                   outlined />
               <!-- </slot> -->
             </v-col>
-            <v-col cols="12" class="pa-1">
-              <v-text-field v-model="formData.legalName" label="Community legal name" v-bind="customProps" outlined />
-            </v-col>
           </v-row>
         </v-col>
       </v-row>

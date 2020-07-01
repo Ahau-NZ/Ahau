@@ -8,20 +8,23 @@
       @create="addCommunity($event)"
       @close="close"
     />
-    <EditCommunityDialog
+    <EditCommunityDialog 
       v-if="isActive('edit-community')"
       :show="isActive('edit-community')"
       :title="`Edit ${currentProfile.preferredName}`"
+      @delete="toggleDialog('delete-community', null, 'edit-community')"
       @submit="updateCommunity($event)"
       @close="close"
       :selectedProfile="currentProfile"
     />
-    <DeleteCommunityDialog v-if="isActive('delete-community')"
+    <DeleteCommunityDialog 
+      v-if="isActive('delete-community')"
       :show="isActive('delete-community')"
-      :view="view" @close="close"
-      @submit="$emit('deleteCommunity')"
+      @submit="deleteCommunity"
+      @close="close"
     />
-    <NewNodeDialog v-if="isActive('new-node')"
+    <NewNodeDialog 
+      v-if="isActive('new-node')"
       :show="isActive('new-node')"
       :title="`Add ${type} to ${selectedProfile.preferredName}`"
       @create="addPerson($event)"
@@ -97,6 +100,22 @@
       :show="isActive('coming-soon')"
       @close="close"
     />
+    <ConfirmationMessage :show="snackbar" :message="confirmationText" />
+
+    <!-- <v-snackbar v-model="snackbar" >
+      {{ confirmationText }}
+      <template v-slot:action="{ attrs }">
+        <v-btn
+          color="white"
+          text
+          v-bind="attrs"
+          @click="show = false"
+        >
+          Close
+        </v-btn>
+      </template>
+    </v-snackbar> -->
+
   </div>
 </template>
 
@@ -115,6 +134,7 @@ import WhakapapaShowHelper from '@/components/dialog/whakapapa/WhakapapaShowHelp
 import WhakapapaTableHelper from '@/components/dialog/whakapapa/WhakapapaTableHelper.vue'
 import NewCollectionDialog from '@/components/dialog/archive/NewCollectionDialog.vue'
 import ComingSoonDialog from '@/components/dialog/ComingSoonDialog.vue'
+import ConfirmationMessage from '@/components/dialog/ConfirmationMessage.vue'
 
 import gql from 'graphql-tag'
 
@@ -153,7 +173,8 @@ export default {
     NewCollectionDialog,
     EditCommunityDialog,
     ComingSoonDialog,
-    DeleteCommunityDialog
+    DeleteCommunityDialog,
+    ConfirmationMessage
   },
   props: {
     story: {
@@ -191,6 +212,8 @@ export default {
   },
   data () {
     return {
+      snackbar: false,
+      confirmationText: null,
       suggestions: [],
       source: null,
       sampleStory: story1
@@ -245,7 +268,7 @@ export default {
       // if person doesnt exisit create one
       if (!$event.id) {
         const id = await this.createProfile($event)
-        console.log("res: ", id)
+        console.log('res: ', id)
         if (id) {
           this.$router.push({ name: 'profileShow', params: { id: id } })
         }
@@ -269,7 +292,7 @@ export default {
       phone,
       deceased
     }) {
-      console.log("creating person: ", preferredName, type)
+      console.log('creating person: ', preferredName, type)
       const res = await this.$apollo.mutate({
         mutation: gql`
           mutation($input: ProfileInput!) {
@@ -730,6 +753,42 @@ export default {
       } else this.deleteNode(this.selectedProfile)
       this.setSelectedProfile(null)
     },
+
+    async deleteCommunity () {
+      const profileResult = await this.$apollo.mutate({
+        mutation: gql`
+          mutation($input: ProfileInput!) {
+            saveProfile(input: $input)
+          }
+        `,
+        variables: {
+          input: {
+            id: this.selectedProfile.id,
+            tombstone: {
+              date: new Date()
+            }
+          }
+        }
+      })
+      if (profileResult.errors) {
+        console.error('failed to delete profile', profileResult)
+        return
+      }
+      else {
+        this.$router.push({name:'profileShow', params: {id: this.whoami.profile.id}})
+        this.confirmationAlert("community successfully deleted")
+        setTimeout(() => { 
+          this.confirmationText = null
+          this.snackbar = !this.snackbar  
+          }, 3000);
+      }
+    },
+
+    confirmationAlert(message) {
+      this.confirmationText = message
+      this.snackbar = !this.snackbar  
+    },
+
     async getSuggestions ($event) {
       if (!$event) {
         this.suggestions = []

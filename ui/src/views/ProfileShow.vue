@@ -12,7 +12,7 @@
         <h1 class="primary--text" :style="mobile ? length: ''">{{ currentProfile.legalName ? currentProfile.legalName : currentProfile.preferredName }}</h1>
       </v-col>
       <v-col :order="mobile ? 'first' : 'last'" :align="mobile ? 'end' : 'center'" cols="12" md="2" sm="12"  class="px-5">
-        <EditProfileButton @click="currentProfile.type === 'person' ? setDialog('edit-node'):setDialog('edit-community')" />
+        <EditProfileButton @click="currentProfile.type === 'person' ? setDialog('edit-node') : setDialog('edit-community')" />
       </v-col>
     </v-row>
     <v-row>
@@ -135,7 +135,7 @@ export default {
 
 .niho-bg {
   background: linear-gradient(to bottom,rgba(255, 255, 255, 0.99),
-  rgba(255, 255, 255, 0.01)), url(../assets/niho.svg);
+  rgba(255, 255, 255, 0.8)), url(../assets/niho.svg);
   background-position-x: 100px;
   background-attachment: fixed;
   background-repeat: no-repeat;

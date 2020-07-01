@@ -6,17 +6,17 @@ import WhakapapaShow from '@/views/WhakapapaShow.vue'
 
 import Discovery from '@/views/Discovery.vue'
 
-import People from '@/views/People.vue'
+// import People from '@/views/People.vue'
 import ProfileShow from '@/views/ProfileShow.vue'
-import ProfileEdit from '@/views/ProfileEdit.vue'
+// import ProfileEdit from '@/views/ProfileEdit.vue'
 
-import CommunityNew from '@/views/CommunityNew.vue'
-import CommunityShow from '@/views/CommunityShow.vue'
-import CommunityEdit from '@/views/CommunityEdit.vue'
+// import CommunityNew from '@/views/CommunityNew.vue'
+// import CommunityShow from '@/views/CommunityShow.vue'
+// import CommunityEdit from '@/views/CommunityEdit.vue'
 
-import StoryShow from '@/views/StoryShow.vue'
+// import StoryShow from '@/views/StoryShow.vue'
 
-import Archive from '@/components/archive/Archive.vue'
+// import Archive from '@/components/archive/Archive.vue'
 
 import Login from '@/views/Login.vue'
 
@@ -51,7 +51,14 @@ export default new Router({
     // { path: '/archive/:id', name: 'archive', component: Archive },
 
     { path: '*', redirect: '/' }
-  ]
+  ],
+  scrollBehavior (to, from, savedPosition) {
+    if (savedPosition) {
+      return savedPosition
+    } else {
+      return { x: 0, y: 0 }
+    }
+  }
 })
 
 // NOTE the below fanciness breaks at the moment in production

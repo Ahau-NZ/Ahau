@@ -90,7 +90,7 @@ import { PERMITTED_PROFILE_ATTRS, PERMITTED_RELATIONSHIP_ATTRS, getProfile } fro
 
 function setDefaultData (withRelationships) {
   const formData = {
-    type:'person',
+    type: 'person',
     id: '',
     preferredName: '',
     legalName: '',

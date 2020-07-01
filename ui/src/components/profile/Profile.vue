@@ -92,9 +92,9 @@ export default {
       isEditing: false
     }
   },
-  computed : {
+  computed: {
     ...mapGetters(['whoami']),
-     mobile () {
+    mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     }
   },
