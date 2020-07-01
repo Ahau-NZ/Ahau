@@ -1,11 +1,33 @@
 <template>
   <div class="py-4">
-
     <!-- CONNECT -->
     <v-row class="py-2">
       <v-col cols="12">
         <p class="headliner pa-0 mb-4">CONNECT</p>
         <p class="sub-headline pa-0">Enter a Pātaka code to discover tribes</p>
+        <v-row>
+          <v-col cols='12' sm='12' md='6'>
+              <v-text-field 
+                v-model="patakaCode" 
+                outlined 
+                light
+                dense
+                :success-messages="successMsg"
+                :error-messages="errorMsg"
+                prepend-icon="mdi-lan-connect"
+                clearable
+              />
+          </v-col>
+          <v-col>
+              <v-btn color="383838" @click="acceptInvite">
+                <span>connect</span>
+              </v-btn>
+          </v-col>
+        </v-row>
+        <!-- <div style="height: 20px">
+          <p v-if="invalidCode" class="red--text">Invalid code</p>
+        </div> -->
+        <!-- <p class="sub-headline pa-0">Enter a Pātaka code to discover tribes</p>
         <v-text-field
           v-model="patakaCode"
           placeholder="xxxx-xxxx-xxxx-xxxx"
@@ -14,41 +36,38 @@
           dense
           style="width: 50%;"
           append-outer-icon="mdi-lan-connect"
-        ></v-text-field>
+        ></v-text-field> -->
       </v-col>
     </v-row>
 
     <!-- TRIBES -->
-    <v-row >
+    <v-row>
       <v-col cols="12">
-          <p class="headliner pa-0 mb-4">TRIBES</p>
-          <v-row justify="start">
-              <v-col v-for="community in communities" :item="community" :key="community.id" justify-self="start">
-                <!-- <router-link :to="{ name: 'communityShow', params: { id: community.id } }"> -->
-                <router-link @click.native="setComponent('profile')" :to="{ name: 'profileShow', params: { id: community.id } }">
-                  <v-card light width="200px">
-                    <v-img height="150px" :src="getImage(community)" class="card-image" />
-                    <v-card-title class="subtitle font-weight-bold pb-2">{{
-                      community.preferredName
-                    }}</v-card-title>
-                    <v-card-text class="body-2">{{
-                      shortDescrciption(community)
-                    }}</v-card-text>
-                  </v-card>
-                </router-link>
-              </v-col>
-            </v-row>
+        <p class="headliner pa-0 mb-4">TRIBES</p>
+        <v-row justify="start">
+            <v-col v-for="community in communities" :item="community" :key="community.id" justify-self="start">
+              <!-- <router-link :to="{ name: 'communityShow', params: { id: community.id } }"> -->
+              <router-link @click.native="setComponent('profile')" :to="{ name: 'profileShow', params: { id: community.id } }">
+                <v-card light width="200px">
+                  <v-img height="150px" :src="getImage(community)" class="card-image" />
+                  <v-card-title class="subtitle font-weight-bold pb-2">{{
+                    community.preferredName
+                  }}</v-card-title>
+                  <v-card-text class="body-2">{{
+                    shortDescrciption(community)
+                  }}</v-card-text>
+                </v-card>
+              </router-link>
+            </v-col>
+          </v-row>
       </v-col>
     </v-row>
-
   </div>
 </template>
 
 <script>
 import { mapActions } from 'vuex'
 import gql from 'graphql-tag'
-
-// import { communityBasic01, communityBasic02 } from '../mocks/community'
 
 const get = require('lodash.get')
 
@@ -57,7 +76,11 @@ export default {
   data () {
     return {
       communities: [],
-      patakaCode: null
+      patakaCode: null,
+      invalidCode: false,
+      validCode: false,
+      successMsg: [],
+      errorMsg: []
     }
   },
   watch: {
@@ -93,6 +116,27 @@ export default {
     shortDescrciption (community) {
       if (!community.description) return
       return community.description.substring(0, 180)
+    },
+    async acceptInvite (inviteCode) {
+      try {
+        await this.$apollo.mutate({
+          mutation: gql`
+          mutation($inviteCode: String) {
+            acceptInvite(inviteCode: $inviteCode)
+          }`,
+          varibles: {
+            inviteCode: this.patakaCode
+          }
+        })
+        // this.sucinvalidCode = false
+        // this.validCode = true
+        this.successMsg = ["Successfully located Pātaka"]
+      } catch (err) {
+        // this.invalidCode = true
+        // this.validCode = false
+        this.errorMsg = ["Invalid code, please check the code and try again"]
+        console.error('Invite error: ', err)
+      }
     }
   }
 }
