@@ -4,10 +4,6 @@
     <AddButton :dark="dark" :size="mobile ? '40px' : '60px'" icon="mdi-image-plus" />
     <p v-if="showLabel" class="add-label clickable" >Add artefacts</p>
   </div>
-  <!-- <div class="mt-10 ml-10">
-        <input v-show="false" ref="fileInput" type="file" accept="audio/*,video/*,image/*" multiple @change="processMediaFiles($event)" />
-        <AddButton  class="right: 0;" @click="$refs.fileInput.click()" label=""/>
-      </div> -->
 </template>
 <script>
 import AddButton from '@/components/button/AddButton.vue'
