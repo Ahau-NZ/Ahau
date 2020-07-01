@@ -35,17 +35,16 @@
           />
         </v-scale-transition>
       </v-slide-item>
-      <div class="mt-10 ml-10">
-        <input v-show="false" ref="fileInput" type="file" accept="audio/*,video/*,image/*" multiple @change="processMediaFiles($event)" />
-        <AddButton dark size="30px" icon="mdi-image-plus" iconClass="pr-12" class="right: 0;" @click="$refs.fileInput.click()" label=""/>
-      </div>
+      <v-slide-item>
+        <UploadArtefactButton dark class="pt-4 px-5"/>
+      </v-slide-item>
     </v-slide-group>
   </v-container>
 </template>
 
 <script>
 import ArtefactCarouselItem from '@/components/artefact/ArtefactCarouselItem.vue'
-import AddButton from '@/components/button/AddButton.vue'
+import UploadArtefactButton from '@/components/artefact/UploadArtefactButton.vue'
 
 export default {
   name: 'ArtefactCarousel',
@@ -61,7 +60,7 @@ export default {
   },
   components: {
     ArtefactCarouselItem,
-    AddButton
+    UploadArtefactButton
   },
   data () {
     return {
@@ -82,9 +81,6 @@ export default {
     }
   },
   methods: {
-    processMediaFiles (event) {
-      this.$emit('processMediaFiles', event)
-    },
     removeItem () {
       this.$emit('delete', this.index)
       this.showArtefact(this.artefacts[0], 0)

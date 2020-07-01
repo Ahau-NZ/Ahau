@@ -19,16 +19,11 @@
                 :artefacts="formData.artefacts"
                 @delete="toggleDialog($event, 'delete')"
                 @update="toggleDialog($event, 'new')"
-                @processMediaFiles="processMediaFiles($event)"
                 editing
               />
             </v-col>
             <v-col cols="6" >
-              <div @click="$refs.fileInput.click()">
-                <AddButton :size="mobile ? '40px' : '60px'" icon="mdi-image-plus"/>
-                <p class="add-label clickable" >Add artefact</p>
-              </div>
-              <input v-show="false" ref="fileInput" type="file" accept="audio/*,video/*,image/*" multiple @change="processMediaFiles($event)" />
+              <UploadArtefactButton showLabel />
             </v-col>
             <v-col :cols="showLocation ? '12':'6'" class="py-0">
               <div v-if="!showLocation" @click="showLocation = true" class="pt-3">
@@ -394,7 +389,6 @@
       @close="newDialog = false"
       @delete="toggleDialog($event, 'delete')"
       @submit="updateArtefacts($event)"
-      @processMediaFiles="processMediaFiles($event)"
     />
     <DeleteArtefactDialog
       v-if="deleteDialog"
@@ -410,6 +404,7 @@
 import AvatarGroup from '@/components/AvatarGroup.vue'
 import Avatar from '@/components/Avatar.vue'
 import AddButton from '@/components/button/AddButton.vue'
+import UploadArtefactButton from '@/components/artefact/UploadArtefactButton.vue'
 
 import ChipGroup from '@/components/archive/ChipGroup.vue'
 import ProfileSearchBar from '@/components/archive/ProfileSearchBar.vue'
@@ -427,17 +422,12 @@ import DeleteArtefactDialog from '@/components/dialog/artefact/DeleteArtefactDia
 import { RULES } from '@/lib/constants'
 import { mapGetters } from 'vuex'
 
-import gql from 'graphql-tag'
-
-const imageRegex = /^image\//
-const audioRegex = /^audio\//
-const videoRegex = /^video\//
-
 export default {
   name: 'RecordForm',
   components: {
     Avatar,
     AddButton,
+    UploadArtefactButton,
     ProfileSearchBar,
     AvatarGroup,
     ChipGroup,
@@ -514,100 +504,6 @@ export default {
     },
     warn (field) {
       alert(`Cannot add ${field} yet`)
-    },
-    async processMediaFiles ($event) {
-      this.index = this.formData.artefacts ? this.formData.artefacts.length : 0
-      const { files } = $event.target
-
-      this.formData.artefacts = await Promise.all(
-        Array.from(files).map(async file => {
-          var artefact = await this.uploadFile(file)
-          return artefact
-        })
-      )
-
-      this.newDialog = true
-    },
-    async uploadFile (file) {
-      // upload the file to ssb
-      try {
-        const res = await this.$apollo.mutate({
-          mutation: gql`
-            mutation uploadFile($file: Upload!) {
-              uploadFile(file:$file) {
-                blob
-                mimeType
-                uri
-              }
-            }
-          `,
-          variables: {
-            file
-          }
-        })
-
-        if (res.errors) throw new Error('Error uploading file. ' + res.errors)
-
-        // get the resulting blob
-        var blobObject = res.data.uploadFile
-        var artefact = {}
-
-        // get artefact attributes from the file and blob
-        const type = this.getFileType(file.type)
-        const title = this.getFileName(file.name)
-        const format = this.getFileFormat(file.type)
-        const blob = blobObject.blob
-        const uri = blobObject.uri
-        const mimeType = blobObject.mimeType
-
-        if (type === 'video' || type === 'audio') {
-          artefact = {
-            duration: null, // TODO: how to get the duration from the file....
-            size: file.size,
-            transcription: null
-          }
-        }
-
-        artefact = {
-          ...artefact,
-          type,
-          blob,
-          uri,
-          mimeType,
-          title,
-          description: null,
-          format,
-          identifier: null,
-          language: null,
-          licence: null,
-          rights: null,
-          source: null,
-          translation: null,
-          mentions: []
-        }
-
-        return artefact
-      } catch (err) {
-        throw err
-      }
-    },
-    getFileType (type) {
-      switch (true) {
-        case imageRegex.test(type):
-          return 'photo'
-        case audioRegex.test(type):
-          return 'audio'
-        case videoRegex.test(type):
-          return 'video'
-        default:
-          return ''
-      }
-    },
-    getFileFormat (fileType) {
-      return fileType.replace(/.*\//, '')
-    },
-    getFileName (fileName) {
-      return fileName.replace(/\.[^/.]+$/, '')
     },
     updateItem (array, update, index) {
       // update the item in the array at the index
