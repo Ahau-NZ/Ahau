@@ -42,7 +42,7 @@
           </div>
           <div v-else>
             <v-row :class="mobile ? 'pa-0': 'px-6 top-margin'">
-              <StoryCard @updateDialog="updateDialog($event)" :fullStory="true" :story.sync="currentStory" @close="toggleStory($event)" />
+              <StoryCard @updateDialog="updateDialog($event)" :fullStory="true" :story.sync="currentStory" @submit="saveStory($event)" @close="toggleStory($event)" />
             </v-row>
           </div>
         </v-col>
@@ -67,7 +67,7 @@
       :show="dialog === 'new-story'"
       :title="'Add new Record'"
       @close="dialog = null"
-      @submit="addStory($event)"
+      @submit="saveStory($event)"
     />
   </div>
 </template>
@@ -151,23 +151,15 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['addStoryToStories', 'removeStoryFromStories']),
+    ...mapMutations(['addStoryToStories', 'updateStoryInStories', 'removeStoryFromStories']),
     ...mapActions(['setComponent', 'setShowStory', 'setDialog']),
     async saveStory (input) {
-      try {
-        const res = await this.$apollo.mutate(SAVE_STORY(input))
-        if (res.errors) {
-          throw new Error('failed to save story. ' + res.errors)
-        }
-        return res.data.saveStory
-      } catch (err) {
-        throw err
-      }
-    },
-    async addStory (input) {
       if (input) {
-        // save the story
-        const storyId = await this.saveStory(input)
+        var res = await this.$apollo.mutate(SAVE_STORY(input))
+        if (res.errors) throw res.errors
+
+        const storyId = res.data.saveStory
+
         if (!storyId) return
 
         // check if the input has artefacts
@@ -177,20 +169,34 @@ export default {
             const artefactId = await this.saveArtefact(artefact)
             if (!artefactId) return
 
-            const input = {
-              type: TYPES.STORY_ARTEFACT,
-              parent: storyId,
-              child: artefactId
+            // if the artefact doesnt have an id, it means we need to create the link between
+            // this artefact and the story
+            if (!artefact.id) {
+              const input = {
+                type: TYPES.STORY_ARTEFACT,
+                parent: storyId,
+                child: artefactId
+              }
+
+              // create the link between the story and this artefact
+              await this.saveLink(input)
             }
 
-            // create the link between the story and this artefact
-            await this.saveLink(input)
             return artefactId
           }))
         }
 
-        var newStory = await this.getStory(storyId)
-        this.addStoryToStories(newStory)
+        // get the full newly created/updated story
+        var story = await this.getStory(storyId)
+
+        if (input.id) {
+          // if the story already existed, we only need to update it
+          this.updateStoryInStories(story)
+          this.currentStory = story
+        } else {
+          // if it was a new story we need to add it
+          this.addStoryToStories(story)
+        }
       }
     },
     async saveArtefact (input) {

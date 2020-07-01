@@ -412,7 +412,7 @@ import ChipGroup from '@/components/archive/ChipGroup.vue'
 import ProfileSearchBar from '@/components/archive/ProfileSearchBar.vue'
 
 import { findByName } from '@/lib/search-helpers.js'
-import { artefactChanges, SAVE_ARTEFACT, DELETE_ARTEFACT } from '@/lib/artefact-helpers'
+import { DELETE_ARTEFACT } from '@/lib/artefact-helpers'
 
 import { personComplete } from '@/mocks/person-profile'
 import { firstMocks } from '@/mocks/collections'
@@ -477,7 +477,7 @@ export default {
     this.showAdvanced()
   },
   computed: {
-    ...mapGetters(['showStory']),
+    ...mapGetters(['showStory', 'whoami']),
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
@@ -520,35 +520,19 @@ export default {
       // update the item in the array at the index
       array.splice(index, 1, update)
     },
-    async saveArtefact (input) {
-      try {
-        const res = await this.$apollo.mutate(SAVE_ARTEFACT(input))
-        if (res.errors) {
-          throw res.errors
-        }
-      } catch (err) {
-        throw err
-      }
-    },
     async updateArtefacts (artefacts) {
-      console.log(artefacts)
-      await Promise.all(artefacts.map(async (artefact, i) => {
-        var oldArtefact = this.formData.artefacts[i]
+      this.formData.artefacts = await Promise.all(artefacts.map(async (artefact, i) => {
         if (this.editing) {
           if (artefact.id) {
-            var changes = artefactChanges(oldArtefact, artefact)
-            // save the changes to this artefact
-            await this.saveArtefact({ id: artefact.id, ...changes })
-          } else {
-            // create a new artefact?
-            console.error('NEED TO CREATE AN ARTEFACT')
+            var oldArtefact = this.formData.artefacts[i]
+            Object.assign(oldArtefact, artefact)
+            return artefact
           }
         }
-
-        Object.assign(oldArtefact, artefact)
-        this.updateItem(this.formData.artefacts, artefact, i)
         return artefact
       }))
+
+      this.newDialog = !!this.newDialog
     },
     removeItem (array, index) {
       array.splice(index, 1)

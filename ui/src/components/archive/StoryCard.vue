@@ -225,7 +225,7 @@
       :story="story"
       @close="dialog = null"
       @delete="dialog = 'delete-story'"
-      @submit="updateStory($event)"
+      @submit="$emit('submit', $event)"
     />
     <DeleteRecordDialog
       v-if="dialog === 'delete-story'"
@@ -249,7 +249,7 @@ import { colours } from '@/lib/colours.js'
 import ArtefactCarouselItem from '@/components/artefact/ArtefactCarouselItem.vue'
 import NewRecordDialog from '@/components/dialog/archive/NewRecordDialog.vue'
 import DeleteRecordDialog from '@/components/dialog/archive/DeleteRecordDialog.vue'
-import { SAVE_STORY, GET_STORY, DELETE_STORY } from '@/lib/story-helpers.js'
+import { DELETE_STORY } from '@/lib/story-helpers.js'
 
 export default {
   name: 'StoryCard',
@@ -320,34 +320,8 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['setStory', 'updateStoryInStories', 'deleteStoryFromStories']),
+    ...mapMutations(['setStory', 'deleteStoryFromStories']),
     ...mapActions(['setShowArtefact', 'setDialog', 'setProfileById', 'setShowStory']),
-    async updateStory ($event) {
-      if ($event) {
-        var { id } = $event
-
-        if (!id) {
-          console.error('edit story missin id')
-          return
-        }
-
-        const res = await this.$apollo.mutate(SAVE_STORY($event))
-        if (res.errors) {
-          console.error('failed to update story', res.errors)
-          return
-        }
-
-        // get the updated story from the db
-        var newStoryRes = await this.$apollo.query(GET_STORY(id))
-
-        if (newStoryRes.errors) {
-          console.error('error updating story', newStoryRes.errors)
-          return
-        }
-        this.updateStoryInStories(newStoryRes.data.story)
-        this.$emit('update:story', newStoryRes.data.story)
-      }
-    },
     async deleteStory () {
       const res = await this.$apollo.mutate(DELETE_STORY(this.story.id, new Date()))
 
