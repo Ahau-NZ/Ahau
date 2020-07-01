@@ -25,6 +25,11 @@ export default {
   components: {
     AddButton
   },
+  data () {
+    return {
+      artefacts: []
+    }
+  },
   computed: {
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
@@ -32,17 +37,16 @@ export default {
   },
   methods: {
     async processMediaFiles ($event) {
-      this.index = this.formData.artefacts ? this.formData.artefacts.length : 0
       const { files } = $event.target
 
-      this.formData.artefacts = await Promise.all(
+      this.artefacts = await Promise.all(
         Array.from(files).map(async file => {
           var artefact = await this.uploadFile(file)
           return artefact
         })
       )
 
-      this.newDialog = true
+      this.$emit('artefacts', this.artefacts)
     },
     async uploadFile (file) {
       // upload the file to ssb

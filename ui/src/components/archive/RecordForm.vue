@@ -19,11 +19,12 @@
                 :artefacts="formData.artefacts"
                 @delete="toggleDialog($event, 'delete')"
                 @update="toggleDialog($event, 'new')"
+                @artefacts="processArtefacts($event)"
                 editing
               />
             </v-col>
             <v-col cols="6" >
-              <UploadArtefactButton showLabel />
+              <UploadArtefactButton showLabel @artefacts="processArtefacts($event)"/>
             </v-col>
             <v-col :cols="showLocation ? '12':'6'" class="py-0">
               <div v-if="!showLocation" @click="showLocation = true" class="pt-3">
@@ -389,6 +390,7 @@
       @close="newDialog = false"
       @delete="toggleDialog($event, 'delete')"
       @submit="updateArtefacts($event)"
+      @artefacts="processArtefacts($event)"
     />
     <DeleteArtefactDialog
       v-if="deleteDialog"
@@ -490,6 +492,15 @@ export default {
     }
   },
   methods: {
+    processArtefacts (artefacts) {
+      this.index = this.formData.artefacts ? this.formData.artefacts.length : 0
+
+      artefacts.forEach(artefact => {
+        this.formData.artefacts.push(artefact)
+      })
+
+      this.newDialog = true
+    },
     showAdvanced () {
       if (this.showStory) this.show = true
     },
