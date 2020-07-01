@@ -17,9 +17,9 @@
     </v-row>
     <v-row>
       <!-- SideNav -->
-        <v-col  v-if="!hideNav" cols="12" xs="12" sm="12" md="2" lg="20p" :class="!mobile ? 'pr-0' : 'px-5 py-0'">
-          <SideNavMenu :profile="currentProfile" />
-        </v-col>
+      <v-col  v-if="!hideNav" cols="12" xs="12" sm="12" md="2" lg="20p" :class="!mobile ? 'pr-0' : 'px-5 py-0'">
+        <SideNavMenu :profile="currentProfile" />
+      </v-col>
       <!-- Content -->
       <v-col cols="12" xs="12" sm="12" md="10" lg="80p" :class="mobile ? 'px-6 py-0' : 'pl-0 py-0'">
         <transition

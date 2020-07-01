@@ -1,6 +1,6 @@
 <template>
   <v-form ref="form" light>
-    <v-col>
+    <v-col class="px-0">
       <v-row>
 
         <!-- Upload profile photo -->
@@ -23,9 +23,17 @@
           <v-row>
             <v-col cols="12" class="pa-1">
               <!-- <slot name="search"> -->
-                <v-text-field v-model="formData.preferredName" label="Community preferred name" v-bind="customProps"
+                <v-text-field v-model="formData.preferredName" label="Community name" v-bind="customProps"
                   outlined />
               <!-- </slot> -->
+            </v-col>
+          </v-row>
+          <v-row>
+            <!-- Description textarea -->
+            <v-col cols="12" class="pa-1">
+              <v-textarea v-model="formData.description" label="Community description" v-bind="customProps" no-resize rows="4"
+                auto-grow outlined>
+              </v-textarea>
             </v-col>
           </v-row>
         </v-col>
@@ -34,15 +42,7 @@
       <v-row>
         <v-col cols="12">
           <v-row>
-            <!-- Description textarea -->
-            <v-col cols="12" class="pa-1">
-              <v-textarea v-model="formData.description" label="Description" v-bind="customProps" no-resize rows="4"
-                auto-grow outlined>
-              </v-textarea>
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col cols="12" sm="6">
+            <v-col cols="12" sm="6" class="py-0">
               <v-row>
                 <v-col cols="12" class="pa-1">
                   <!-- Address -->
@@ -50,7 +50,7 @@
                 </v-col>
               </v-row>
             </v-col>
-            <v-col cols="12" sm="6">
+            <v-col cols="12" sm="6" class="py-0">
               <v-row>
                 <v-col cols="12" class="pa-1">
                   <!-- City, Country -->
