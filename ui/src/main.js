@@ -1,7 +1,8 @@
 import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
-import store from './store'
+import store from './store/index'
+import VuexRouterSync from 'vuex-router-sync'
 
 import { createProvider } from './plugins/vue-apollo'
 import vuetify from './plugins/vuetify'
@@ -13,6 +14,8 @@ if (process.env.VUE_APP_PLATFORM === 'cordova') {
 } else {
   main()
 }
+
+VuexRouterSync.sync(store, router)
 
 function main () {
   // install

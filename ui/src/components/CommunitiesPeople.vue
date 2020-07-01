@@ -13,7 +13,7 @@
         class="pr-8"
       >
         <router-link
-          :to="{ name: 'personShow', params: { id: profile.id } }"
+          :to="{ name: 'profileShow', params: { id: profile.id } }"
           class="d-flex flex-column align-center"
         >
           <Avatar

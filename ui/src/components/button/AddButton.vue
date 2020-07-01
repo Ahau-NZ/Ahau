@@ -1,17 +1,22 @@
 <template>
-      <v-col class="add-row" @click="click" :style="{ justifyContent: align }" >
-          <v-icon class="add-button">mdi-plus</v-icon>
-          <span class="add-label" v-if="row">{{ label }}</span>
-      </v-col>
-  </template>
+  <v-col class="add-row" @click="click" :style="{ justifyContent: justify, height: height }">
+    <v-icon :size="size" :class="iconClass" class="add-button pr-1" :dark="dark">{{icon}}</v-icon>
+    <span :class="`add-label ${dark ? 'white--text' : ''}`">{{ label }}</span>
+  </v-col>
+</template>
 
 <script>
 export default {
   name: 'AddButton',
   props: {
     label: String,
-    align: { type: String, default: 'center' },
-    row: { type: Boolean, default: false }
+    justify: { type: String, default: 'center' },
+    row: { type: Boolean, default: false },
+    height: { type: String },
+    size: { type: String, default: '20px' },
+    icon: { type: String, default: 'mdi-plus' },
+    iconClass: String,
+    dark: { type: Boolean, default: false }
   },
   methods: {
     click () {
@@ -35,7 +40,7 @@ export default {
       height: 20px;
       padding: 0px;
       font-size: 0.6em;
-      color: rgba(0, 0, 0, 0.6);
+      color: rgba(0,0,0,0.6);
       margin-right: 10px;
     }
 

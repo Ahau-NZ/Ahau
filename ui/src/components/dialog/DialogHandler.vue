@@ -1,14 +1,44 @@
 <template>
   <div id="container">
-    <NewNodeDialog v-if="isActive('new-node')"
+    <NewCommunityDialog
+      v-if="isActive('new-community')"
+      :show="isActive('new-community')"
+      :title="`Ko Wai Mātou ---- Create New Community`"
+      :type="type"
+      @create="addCommunity($event)"
+      @close="close"
+    />
+    <EditCommunityDialog 
+      v-if="isActive('edit-community')"
+      :show="isActive('edit-community')"
+      :title="`Edit ${currentProfile.preferredName}`"
+      @delete="toggleDialog('delete-community', null, 'edit-community')"
+      @submit="updateCommunity($event)"
+      @close="close"
+      :selectedProfile="currentProfile"
+    />
+    <DeleteCommunityDialog 
+      v-if="isActive('delete-community')"
+      :show="isActive('delete-community')"
+      @submit="deleteCommunity"
+      @close="close"
+    />
+    <NewNodeDialog 
+      v-if="isActive('new-node')"
       :show="isActive('new-node')"
       :title="`Add ${type} to ${selectedProfile.preferredName}`"
-      :type="type"
       @create="addPerson($event)"
       @close="close"
       :selectedProfile="selectedProfile"
       :suggestions="suggestions"
       @getSuggestions="getSuggestions($event)"
+    />
+    <EditNodeDialog v-if="isActive('edit-node')"
+      :show="isActive('edit-node')"
+      :title="`Edit ${currentProfile.preferredName}`"
+      @submit="updateProfile($event)"
+      @close="close"
+      :selectedProfile="currentProfile"
     />
     <SideViewEditNodeDialog
       v-if="isActive('view-edit-node')"
@@ -23,6 +53,7 @@
       @delete="toggleDialog('delete-node', null, null)"
       @open-profile="setSelectedProfile($event)"
       :view="view"
+      :preview ="previewProfile"
     />
     <DeleteNodeDialog v-if="isActive('delete-node')"
       :show="isActive('delete-node')"
@@ -59,11 +90,41 @@
       :title="`Whakapapa registry`"
       @close="close"
     />
+    <NewCollectionDialog
+      :show="isActive('new-collection')"
+      :title="'Create a new Collection'"
+      @close="close"
+      @submit="console.log('TODO: add collection to profile')"
+    />
+    <ComingSoonDialog
+      :show="isActive('coming-soon')"
+      @close="close"
+    />
+    <ConfirmationMessage :show="snackbar" :message="confirmationText" />
+
+    <!-- <v-snackbar v-model="snackbar" >
+      {{ confirmationText }}
+      <template v-slot:action="{ attrs }">
+        <v-btn
+          color="white"
+          text
+          v-bind="attrs"
+          @click="show = false"
+        >
+          Close
+        </v-btn>
+      </template>
+    </v-snackbar> -->
+
   </div>
 </template>
 
 <script>
 import NewNodeDialog from '@/components/dialog/profile/NewNodeDialog.vue'
+import NewCommunityDialog from '@/components/dialog/community/NewCommunityDialog.vue'
+import EditCommunityDialog from '@/components/dialog/community/EditCommunityDialog.vue'
+import DeleteCommunityDialog from '@/components/dialog/community/DeleteCommunityDialog.vue'
+import EditNodeDialog from '@/components/dialog/profile/EditNodeDialog.vue'
 import SideViewEditNodeDialog from '@/components/dialog/profile/SideViewEditNodeDialog.vue'
 import DeleteNodeDialog from '@/components/dialog/profile/DeleteNodeDialog.vue'
 import WhakapapaViewDialog from '@/components/dialog/whakapapa/WhakapapaViewDialog.vue'
@@ -71,47 +132,61 @@ import WhakapapaEditDialog from '@/components/dialog/whakapapa/WhakapapaEditDial
 import WhakapapaDeleteDialog from '@/components/dialog/whakapapa/WhakapapaDeleteDialog.vue'
 import WhakapapaShowHelper from '@/components/dialog/whakapapa/WhakapapaShowHelper.vue'
 import WhakapapaTableHelper from '@/components/dialog/whakapapa/WhakapapaTableHelper.vue'
+import NewCollectionDialog from '@/components/dialog/archive/NewCollectionDialog.vue'
+import ComingSoonDialog from '@/components/dialog/ComingSoonDialog.vue'
+import ConfirmationMessage from '@/components/dialog/ConfirmationMessage.vue'
 
 import gql from 'graphql-tag'
-import { whoami } from '@/lib/profile-helpers.js'
+
+import { PERMITTED_PROFILE_ATTRS, PERMITTED_RELATIONSHIP_ATTRS, saveProfile } from '@/lib/profile-helpers.js'
+
 import { saveWhakapapaLink } from '@/lib/link-helpers.js'
 import pick from 'lodash.pick'
 import isEmpty from 'lodash.isempty'
 
 import findSuccessor from '@/lib/find-successor'
 
-import { PERMITTED_PROFILE_ATTRS, PERMITTED_RELATIONSHIP_ATTRS } from '@/lib/profile-helpers'
+import { PERMITTED_COMMUNITY_ATTRS, saveCommunity } from '@/lib/community-helpers'
+
 import tree from '@/lib/tree-helpers'
 
 import * as d3 from 'd3'
-import { mapGetters, mapActions, mapMutations } from 'vuex'
+import {
+  mapGetters,
+  mapActions
+} from 'vuex'
 
+import { story1 } from '@/mocks/stories'
 export default {
   name: 'DialogHandler',
   components: {
     NewNodeDialog,
+    NewCommunityDialog,
+    EditNodeDialog,
     SideViewEditNodeDialog,
     DeleteNodeDialog,
     WhakapapaViewDialog,
     WhakapapaEditDialog,
     WhakapapaDeleteDialog,
     WhakapapaShowHelper,
-    WhakapapaTableHelper
+    WhakapapaTableHelper,
+    NewCollectionDialog,
+    EditCommunityDialog,
+    ComingSoonDialog,
+    DeleteCommunityDialog,
+    ConfirmationMessage
   },
   props: {
+    story: {
+      type: Object
+    },
     focus: {
       type: String
     },
     relationshipLinks: {
       type: Map
     },
-    selectedProfile: {
-      type: Object
-    },
     view: {
-      type: Object
-    },
-    profiles: {
       type: Object
     },
     dialog: {
@@ -119,7 +194,7 @@ export default {
       required: false,
       default: null,
       validator: (val) => [
-        'new-node', 'view-edit-node', 'delete-node',
+        'edit-community', 'new-community', 'new-node', 'view-edit-node', 'delete-node', 'new-collection', 'new-story', 'edit-story', 'edit-node', 'delete-story',
         'whakapapa-view', 'whakapapa-edit', 'whakapapa-delete', 'whakapapa-helper', 'whakapapa-table-helper'
       ].includes(val)
     },
@@ -137,27 +212,25 @@ export default {
   },
   data () {
     return {
+      snackbar: false,
+      confirmationText: null,
       suggestions: [],
       source: null,
-      whoami: {
-        profile: { id: '' }
-      }
+      sampleStory: story1
     }
   },
-  apollo: {
-    whoami: whoami
-  },
   computed: {
-    ...mapGetters(['nestedWhakapapa']),
+    ...mapGetters(['nestedWhakapapa', 'selectedProfile', 'whoami', 'storeDialog', 'previewProfile', 'currentProfile']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     }
   },
   methods: {
-    ...mapMutations(['setNestedWhakapapa']),
-    ...mapActions(['updateNode', 'deleteNode', 'updatePartnerNode', 'addChild', 'addParent', 'loading']),
+    ...mapActions(['updateNode', 'deleteNode', 'updatePartnerNode', 'addChild', 'addParent', 'loading', 'setDialog',
+      'setProfileById'
+    ]),
     isActive (type) {
-      if (type === this.dialog) {
+      if (type === this.dialog || type === this.storeDialog) {
         return true
       }
       return false
@@ -172,11 +245,13 @@ export default {
     },
     toggleDialog (dialog, type, source) {
       this.source = source
+      this.setDialog(dialog)
       this.$emit('update:dialog', dialog)
       this.$emit('update:type', type)
     },
     canDelete (profile) {
       if (!profile) return false
+      if (this.previewProfile) return false
 
       // not allowed to delete own profile
       if (profile.id === this.whoami.profile.id) return false
@@ -188,9 +263,76 @@ export default {
       }
       return true
     },
+    async addCommunity ($event) {
+      console.log($event)
+      // if person doesnt exisit create one
+      if (!$event.id) {
+        const id = await this.createProfile($event)
+        console.log('res: ', id)
+        if (id) {
+          this.$router.push({ name: 'profileShow', params: { id: id } })
+        }
+      }
+    },
+    async createProfile ({
+      type,
+      preferredName,
+      legalName,
+      gender,
+      bornAt,
+      diedAt,
+      birthOrder,
+      avatarImage,
+      altNames,
+      description,
+      address,
+      location,
+      profession,
+      email,
+      phone,
+      deceased
+    }) {
+      console.log('creating person: ', preferredName, type)
+      const res = await this.$apollo.mutate({
+        mutation: gql`
+          mutation($input: ProfileInput!) {
+            saveProfile(input: $input)
+          }
+        `,
+        variables: {
+          input: {
+            type,
+            preferredName,
+            legalName,
+            gender,
+            bornAt,
+            diedAt,
+            birthOrder,
+            avatarImage,
+            altNames,
+            description,
+            location,
+            profession,
+            address,
+            email,
+            phone,
+            deceased,
+            recps: type === 'community' ? [this.whoami.feedId] : this.view.recps
+          }
+        }
+      })
+
+      if (res.errors) {
+        console.error('failed to createProfile', res)
+        return
+      }
+      return res.data.saveProfile // a profileId
+    },
     async addPerson ($event) {
       try {
-        var { id } = $event
+        var {
+          id
+        } = $event
 
         if (this.view.ignoredProfiles.includes(id)) {
           const input = {
@@ -206,7 +348,9 @@ export default {
                 saveWhakapapaView(input: $input)
               }
               `,
-              variables: { input }
+              variables: {
+                input
+              }
             })
             if (res.data) {
               this.$emit('refreshWhakapapa')
@@ -222,7 +366,10 @@ export default {
                   profile.parents[0] = this.selectedProfile
 
                   // add child to parent
-                  this.addChild({ child: profile, parent: this.selectedProfile })
+                  this.addChild({
+                    child: profile,
+                    parent: this.selectedProfile
+                  })
 
                   break
                 case 'parent':
@@ -232,7 +379,10 @@ export default {
                   if (child === this.view.focus) {
                     // in this case we're updating the top of the graph, we update view.focus to that new top parent
                     this.$emit('updateFocus', parent)
-                    this.addParent({ child: this.selectedProfile, parent: profile })
+                    this.addParent({
+                      child: this.selectedProfile,
+                      parent: profile
+                    })
                   } else {
                     // load the profile insteaad
                     const profile = await this.getRelatives(parent)
@@ -240,7 +390,10 @@ export default {
                       profile.children[0] = this.selectedProfile
                     }
 
-                    this.addParent({ child: this.selectedProfile, parent: profile })
+                    this.addParent({
+                      child: this.selectedProfile,
+                      parent: profile
+                    })
 
                     // if the parent is the new head of the tree and is being added on a partner family line that update the tree
                     if (this.selectedProfile.parents.length === 1) {
@@ -257,7 +410,10 @@ export default {
                   profileSibling.parents[0] = this.selectedProfile.parents[0]
 
                   // add child to parent
-                  this.addChild({ child: profileSibling, parent: this.selectedProfile.parents[0] })
+                  this.addChild({
+                    child: profileSibling,
+                    parent: this.selectedProfile.parents[0]
+                  })
                   break
                 default:
                   console.error('Add person was unsuccessful. Could not detect the relationship type')
@@ -287,14 +443,21 @@ export default {
             case 'child':
               child = id
               parent = this.selectedProfile.id
-              await this.createChildLink({ child, parent, ...relationshipAttrs })
+              await this.createChildLink({
+                child,
+                parent,
+                ...relationshipAttrs
+              })
 
               const profile = await this.loadDescendants(child, '', [])
 
               profile.parents[0] = this.selectedProfile
 
               // add child to parent
-              this.addChild({ child: profile, parent: this.selectedProfile })
+              this.addChild({
+                child: profile,
+                parent: this.selectedProfile
+              })
 
               break
             case 'parent':
@@ -312,7 +475,13 @@ export default {
                 }
               })
               // if the child doesnt exsist than create the whakapapa link
-              if (!childExsists) await this.createChildLink({ child, parent, ...relationshipAttrs })
+              if (!childExsists) {
+                await this.createChildLink({
+                  child,
+                  parent,
+                  ...relationshipAttrs
+                })
+              }
 
               if (child === this.view.focus) {
                 // in this case we're updating the top of the graph, we update view.focus to that new top parent
@@ -322,7 +491,10 @@ export default {
                 //   parentProfile.children[0] = this.selectedProfile
                 // }
 
-                this.addParent({ child: this.selectedProfile, parent: parentProfile })
+                this.addParent({
+                  child: this.selectedProfile,
+                  parent: parentProfile
+                })
 
                 // if the parent is the new head of the tree and is being added on a partner family line that update the tree
                 if (this.selectedProfile.parents.length === 1) {
@@ -334,14 +506,21 @@ export default {
               if (!this.selectedProfile.parents) break
               parent = this.selectedProfile.parents[0].id
               child = id
-              await this.createChildLink({ child, parent, ...relationshipAttrs })
+              await this.createChildLink({
+                child,
+                parent,
+                ...relationshipAttrs
+              })
 
               const profileSibling = await this.loadDescendants(child, '', [])
 
               profileSibling.parents[0] = this.selectedProfile.parents[0]
 
               // add child to parent
-              this.addChild({ child: profileSibling, parent: this.selectedProfile.parents[0] })
+              this.addChild({
+                child: profileSibling,
+                parent: this.selectedProfile.parents[0]
+              })
               break
             default:
               console.error('not built')
@@ -357,59 +536,14 @@ export default {
         throw err
       }
     },
-    async createProfile ({
-      preferredName,
-      legalName,
-      gender,
-      aliveInterval,
-      birthOrder,
-      avatarImage,
-      altNames,
-      description,
-      address,
-      location,
-      profession,
-      email,
-      phone,
-      deceased
-    }) {
-      const res = await this.$apollo.mutate({
-        mutation: gql`
-          mutation($input: ProfileInput!) {
-            saveProfile(input: $input)
-          }
-        `,
-        variables: {
-          input: {
-            type: 'person',
-            preferredName,
-            legalName,
-            gender,
-            aliveInterval,
-            birthOrder,
-            avatarImage,
-            altNames,
-            description,
-            location,
-            profession,
-            address,
-            email,
-            phone,
-            deceased,
-            recps: this.view.recps
-          }
-        }
-      })
 
-      if (res.errors) {
-        console.error('failed to createProfile', res)
-        return
-      }
-      return res.data.saveProfile // a profileId
+    async createChildLink ({
+      child,
+      parent,
+      relationshipType,
+      legallyAdopted
     },
-    async createChildLink (
-      { child, parent, relationshipType, legallyAdopted },
-      view
+    view
     ) {
       const input = {
         child,
@@ -429,6 +563,33 @@ export default {
         throw err
       }
     },
+    async updateCommunity ($event) {
+      console.log('updateCommunity', $event)
+      Object.entries($event).map(([key, value]) => {
+        if (value === '') {
+          delete $event[key]
+        }
+      })
+
+      const profileChanges = pick($event, [...PERMITTED_COMMUNITY_ATTRS])
+      const profileId = this.selectedProfile.id
+
+      let input = {
+        id: profileId,
+        ...profileChanges
+      }
+
+      const res = await this.$apollo.mutate(saveProfile(input))
+      if (res.errors) {
+        console.error('failed to update profile', res)
+        return
+      }
+      if (this.storeDialog === 'edit-community') {
+        this.setProfileById({
+          id: res.data.saveProfile
+        })
+      }
+    },
     async updateProfile ($event) {
       Object.entries($event).map(([key, value]) => {
         if (value === '') {
@@ -441,8 +602,9 @@ export default {
       const profileId = this.selectedProfile.id
 
       if (!isEmpty(relationshipAttrs) && this.selectedProfile.id !== this.view.focus) {
+        console.log('updating relationship: ', relationshipAttrs)
         const relationship = this.selectedProfile.relationship
-        const input = {
+        let input = {
           relationshipId: relationship.relationshipId,
           child: relationship.child,
           parent: relationship.parent,
@@ -455,36 +617,45 @@ export default {
             console.error('failed to update child link', linkRes)
             return
           } else {
-            this.relationshipLinks[relationship.parent + '-' + relationship.child] = input
+            this.relationshipLinks.set(relationship.parent + '-' + relationship.child, input)
+            this.selectedProfile.relationship = input
+            let node = this.selectedProfile
+            this.updateNode({
+              node
+            })
           }
         } catch (err) {
+          console.log('error:', err)
           throw err
         }
       }
-      const res = await this.$apollo.mutate({
-        mutation: gql`
-          mutation($input: ProfileInput!) {
-            saveProfile(input: $input)
-          }
-        `,
-        variables: {
-          input: {
-            id: profileId,
-            ...profileChanges
-          }
-        }
-      })
+
+      let input = {
+        id: profileId,
+        ...profileChanges
+      }
+      const res = await this.$apollo.mutate(saveProfile(input))
       if (res.errors) {
         console.error('failed to update profile', res)
         return
       }
+      if (this.storeDialog === 'edit-node') {
+        this.setProfileById({
+          id: res.data.saveProfile
+        })
+        return
+      }
+
       // reload the selectedProfiles personal details
       var node = await this.loadKnownFamily(true, this.selectedProfile)
       // apply the changes to the nestedWhakapapa
+      console.log('load des ', node)
       if (this.selectedProfile.isPartner && this.selectedProfile.id !== this.focus) {
         this.updatePartnerNode(node)
       } else {
-        this.updateNode({ node })
+        this.updateNode({
+          node
+        })
       }
 
       // reorder children if there is a change in birthorder
@@ -493,7 +664,9 @@ export default {
         nestedParent.children = nestedParent.children.sort((a, b) => {
           return a.birthOrder - b.birthOrder
         })
-        this.updateNode({ node: nestedParent })
+        this.updateNode({
+          node: nestedParent
+        })
       }
 
       // reset the selectedProfile to the newly changed one
@@ -520,7 +693,9 @@ export default {
             saveWhakapapaView(input: $input)
           }
           `,
-          variables: { input }
+          variables: {
+            input
+          }
         })
         this.$emit('refreshWhakapapa')
         if (res.data) {
@@ -529,7 +704,7 @@ export default {
             const successor = findSuccessor(this.selectedProfile)
             this.$emit('updateFocus', successor.id)
             return
-          // if removing top ancestor on a partner line show the new top ancestor
+            // if removing top ancestor on a partner line show the new top ancestor
           } else if (this.selectedProfile.id === this.focus) {
             const successor = findSuccessor(this.selectedProfile)
             this.$emit('setFocus', successor.id)
@@ -556,7 +731,9 @@ export default {
         variables: {
           input: {
             id: this.selectedProfile.id,
-            tombstone: { date: new Date() }
+            tombstone: {
+              date: new Date()
+            }
           }
         }
       })
@@ -569,13 +746,49 @@ export default {
         const successor = findSuccessor(this.selectedProfile)
         this.$emit('updateFocus', successor.id)
 
-      // if removing top ancestor on a partner line show the new top ancestor
+        // if removing top ancestor on a partner line show the new top ancestor
       } else if (this.selectedProfile.id === this.focus) {
         const successor = findSuccessor(this.selectedProfile)
         this.$emit('setFocus', successor.id)
       } else this.deleteNode(this.selectedProfile)
       this.setSelectedProfile(null)
     },
+
+    async deleteCommunity () {
+      const profileResult = await this.$apollo.mutate({
+        mutation: gql`
+          mutation($input: ProfileInput!) {
+            saveProfile(input: $input)
+          }
+        `,
+        variables: {
+          input: {
+            id: this.selectedProfile.id,
+            tombstone: {
+              date: new Date()
+            }
+          }
+        }
+      })
+      if (profileResult.errors) {
+        console.error('failed to delete profile', profileResult)
+        return
+      }
+      else {
+        this.$router.push({name:'profileShow', params: {id: this.whoami.profile.id}})
+        this.confirmationAlert("community successfully deleted")
+        setTimeout(() => { 
+          this.confirmationText = null
+          this.snackbar = !this.snackbar  
+          }, 3000);
+      }
+    },
+
+    confirmationAlert(message) {
+      this.confirmationText = message
+      this.snackbar = !this.snackbar  
+    },
+
     async getSuggestions ($event) {
       if (!$event) {
         this.suggestions = []
@@ -618,7 +831,9 @@ export default {
       records = records.map(record => {
         let obj = {}
         let profile = record
-        obj = { profile }
+        obj = {
+          profile
+        }
         return obj
       })
 
@@ -627,9 +842,9 @@ export default {
       this.suggestions = Object.assign([], records)
     },
     /*
-      needed this function because this.profiles keeps track of more than just the nodes in this tree,
-      i only needed the nodes in this tree to be able to check if i can add them or not
-    */
+        needed this function because this.profiles keeps track of more than just the nodes in this tree,
+        i only needed the nodes in this tree to be able to check if i can add them or not
+      */
     findInTree (profileId) {
       if (this.selectedProfile.id === profileId) return true // this is always in the tree
 
@@ -735,7 +950,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-
-</style>

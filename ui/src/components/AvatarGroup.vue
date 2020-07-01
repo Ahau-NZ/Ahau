@@ -2,18 +2,18 @@
   <v-col class="pt-0 pb-0">
     <v-row>
       <v-col class="pt-1 pb-0">
-        <small> {{ groupTitle }} </small>
+        <small class="label"> {{ groupTitle }} </small>
       </v-col>
     </v-row>
 
-    <v-row class="d-flex align-center">
-      <v-col
-        cols="4"
-        class="pt-0 pb-0"
-        v-for="profile in profiles"
-        :key="profile.id"
+    <v-row :class="customClass">
+      <div
+        width="100%"
+        :class="spacing"
+        v-for="(profile, i) in profiles"
+        :key="`${groupTitle}-${profile.id}-${i}`"
       >
-        <v-row justify="center">
+        <div justify="center" class="pt-2">
           <Avatar
             :size="size"
             :image="profile.avatarImage"
@@ -21,18 +21,17 @@
             :gender="profile.gender"
             :aliveInterval="profile.aliveInterval"
             :deceased="profile.deceased"
-            :show-label="showLabels"
-            :clickable="true"
+            :showLabel="showLabels"
+            :clickable="clickable"
             @click="profileClick(profile)"
+            :deletable="deletable"
+            @delete="$emit('delete', i)"
+            :isView="isView"
+            :dark="dark"
           />
-        </v-row>
-      </v-col>
-
-      <v-col cols="4" class="d-flex justify-center align-center">
-        <v-row justify="center">
-          <slot></slot>
-        </v-row>
-      </v-col>
+        </div>
+      </div>
+      <slot name="action"></slot>
     </v-row>
   </v-col>
 </template>
@@ -48,7 +47,18 @@ export default {
     profiles: { type: Array, default: null },
     groupTitle: { type: String, default: null },
     showLabels: { type: Boolean, default: false },
-    size: { type: String, default: '80px' }
+    size: { type: String, default: '80px' },
+    customClass: { type: String, default: 'd-flex justify-start align-center pa-2 pl-4' },
+    spacing: { type: String, default: 'pr-5' },
+    deletable: { type: Boolean, default: false },
+    isView: { type: Boolean, default: false },
+    clickable: { type: Boolean, default: true },
+    dark: { type: Boolean, default: false }
+  },
+  computed: {
+    columns () {
+      return this.profiles.length
+    }
   },
   methods: {
     profileClick (profile) {
@@ -56,5 +66,13 @@ export default {
     }
   }
 }
-// NOTE: this component stretchs to the parent. Can be changes later on as needed to adapt to different sizes
 </script>
+<style scoped lang="scss">
+.label {
+  color: #9b9b9b
+}
+* {
+  color: #383838
+}
+
+</style>

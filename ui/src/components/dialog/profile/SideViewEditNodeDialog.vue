@@ -1,18 +1,19 @@
 <template>
   <transition appear :name="mobile ? 'up' : 'left'">
     <v-navigation-drawer
-      :style="mobile ? 'top: -64px;' : 'top: 64px;'"
+      :style="mobile ? preview ? 'top: -7px ' : 'top: -64px;' : 'top: 64px;'"
       v-model="drawer"
-      absolute
+      :absolute="mobile"
+      :fixed="!mobile"
       :right="!mobile"
       light
-      :width="mobile ? '100%' : '25%'"
+      :width="mobile ? '100%' : '21%'"
       permanent
       :height="mobile ? 'auto' : 'calc(100vh - 64px)'"
       class="side-menu"
     >
       <v-card light min-height="100%">
-        <DialogTitleBanner v-if="mobile" :title="formData.preferredName" mobile @close="close"  :isEditing="isEditing" class="px-5 pt-5"/>
+        <DialogTitleBanner v-if="mobile" :title="formData.preferredName" mobile @close="close"  :isEditing="isEditing" class="px-1 pt-3"/>
         <v-row v-else class="justify-end">
           <v-btn icon class="mr-3">
             <v-icon @click="close" color="secondary">mdi-close</v-icon>
@@ -85,6 +86,19 @@
           </v-row>
           <v-row v-if="!isEditing"  class="justify-center">
             <v-btn
+              :to="{ name: 'profileShow', params: { id: profile.id } }"
+              color="white"
+              text
+              medium
+              class="blue--text"
+            >
+              <ArchiveIcon size="normal"/>
+              <span class="pl-2 "> Archive</span>
+
+              <!-- <v-icon small class="blue--text" left>mdi-account-circle</v-icon>Archive -->
+            </v-btn>
+            <v-btn
+              v-if="!preview"
               @click="toggleEdit"
               color="white"
               text
@@ -94,7 +108,7 @@
               <v-icon small class="blue--text" left>mdi-pencil</v-icon>Edit
             </v-btn>
           </v-row>
-          <v-row v-if="formData.description && !isEditing" class="ma-2">
+          <v-row v-if="formData.description && !isEditing" class="ma-2 py-2">
             <v-col cols="12" class="pt-0">
               <v-row>
                 <v-col class="py-1 px-0 profile-label"><small>Description</small></v-col>
@@ -104,8 +118,8 @@
               </v-row>
             </v-col>
           </v-row>
-          <v-row v-if="!isEditing"  style="border: 0.5px solid rgba(0,0,0,0.12); border-radius: 10px;" class="flex-column mx-2">
-            <v-col>
+          <v-row v-if="!isEditing"  style="border: 0.5px solid rgba(0,0,0,0.12); border-radius: 10px;" class="flex-column mx-0 ">
+            <v-col class="pa-0 my-2">
               <v-row style="border-bottom: 0.5px solid rgba(0,0,0,0.12);" class="ma-0">
                 <v-col cols="6">
                   <v-row>
@@ -155,13 +169,15 @@
                     :show-labels="true"
                     @profile-click="openProfile($event)"
                   >
-                    <AddButton @click="toggleNew('parent')" />
+                    <template v-slot:action >
+                      <AddButton v-if="!preview" @click="toggleNew('parent')" class="pb-4" justify="start"/>
+                    </template>
                   </AvatarGroup>
                 </v-col>
 
-                <hr v-if="profile.siblings" class="family-divider"/>
+                <hr v-if="profile.parents" class="family-divider"/>
 
-                <v-col :cols="12" v-if="profile.siblings" class="pa-0">
+                <v-col :cols="12" v-if="profile.siblings && profile.siblings.length" class="pa-0">
                   <AvatarGroup
                     :profiles="profile.siblings"
                     group-title="Siblings"
@@ -169,11 +185,13 @@
                     :show-labels="true"
                     @profile-click="openProfile($event)"
                   >
-                    <AddButton v-if="view.focus !== profile.id" @click="toggleNew('sibling')" />
+                  <template v-slot:action >
+                    <AddButton v-if="!preview && view && view.focus !== profile.id" @click="toggleNew('sibling')" class="pb-4" justify="start"/>
+                  </template>
                   </AvatarGroup>
                 </v-col>
 
-                <hr v-if="profile.siblings" class="family-divider"/>
+                <hr v-if="profile.siblings && profile.siblings.length" class="family-divider"/>
 
                 <v-col :cols="12" class="pa-0">
                   <AvatarGroup
@@ -184,7 +202,9 @@
                     :show-labels="true"
                     @profile-click="openProfile($event)"
                   >
-                    <AddButton @click="toggleNew('child')" />
+                    <template v-slot:action >
+                      <AddButton v-if="!preview" @click="toggleNew('child')" class="pb-4" justify="start"/>
+                    </template>
                   </AvatarGroup>
                   <AvatarGroup
                     v-else
@@ -194,7 +214,9 @@
                     :show-labels="true"
                     @profile-click="openProfile($event)"
                   >
-                    <AddButton @click="toggleNew('child')" />
+                    <template v-slot:action >
+                      <AddButton v-if="!preview" @click="toggleNew('child')" class="pb-6" />
+                    </template>
                   </AvatarGroup>
                 </v-col>
               </v-row>
@@ -215,10 +237,9 @@ import isEqual from 'lodash.isequal'
 import isEmpty from 'lodash.isempty'
 import pick from 'lodash.pick'
 import clone from 'lodash.clonedeep'
+import ArchiveIcon from '@/components/button/ArchiveIcon.vue'
 
-import edtf from 'edtf'
-
-import ProfileForm from '@/components/profile-form/ProfileForm.vue'
+import ProfileForm from '@/components/profile/ProfileForm.vue'
 
 import Avatar from '@/components/Avatar.vue'
 import AvatarGroup from '@/components/AvatarGroup.vue'
@@ -228,7 +249,11 @@ import DialogTitleBanner from '@/components/dialog/DialogTitleBanner.vue'
 function defaultData (input) {
   var profile = clone(input)
 
-  var aliveInterval = profile.aliveInterval.split('/')
+  var aliveInterval = ['', '']
+
+  if (profile.aliveInterval) {
+    aliveInterval = profile.aliveInterval.split('/')
+  }
 
   return {
     id: profile.id,
@@ -263,7 +288,8 @@ export default {
     AddButton,
     Avatar,
     AvatarGroup,
-    DialogTitleBanner
+    DialogTitleBanner,
+    ArchiveIcon
   },
   props: {
     goBack: { type: Function },
@@ -274,12 +300,12 @@ export default {
     sideMenu: { type: Boolean, default: false },
     relationshipLinks: { type: Array },
     show: { type: Boolean, required: true },
-    readonly: { type: Boolean, default: false }
+    readonly: { type: Boolean, default: false },
+    preview: { type: Boolean, default: false }
   },
 
   data () {
     return {
-      testmapimage: require('../../../assets/map-test.png'),
       isEditing: false,
       formData: {},
       showDescription: false,
@@ -333,6 +359,7 @@ export default {
       immediate: true,
       handler (newVal) {
         this.drawer = newVal
+        if (this.mobile) window.scrollTo(0, 0)
       }
     },
     profile: {
@@ -341,9 +368,12 @@ export default {
       handler (newVal) {
         if (!newVal) return
         this.formData = defaultData(newVal)
-        var dates = this.formData.aliveInterval.split('/')
-        this.formData.bornAt = dates[0]
-        this.formData.diedAt = dates[1]
+
+        if (this.formData.aliveInterval) {
+          var dates = this.formData.aliveInterval.split('/')
+          this.formData.bornAt = dates[0]
+          this.formData.diedAt = dates[1]
+        }
       }
     },
     'formData.bornAt' (newVal) {
@@ -398,6 +428,7 @@ export default {
 .side-menu {
   background-color: white;
   overflow: none;
+  z-index:6
 }
 
 ::-webkit-scrollbar {
@@ -432,7 +463,11 @@ export default {
 
 .family-divider {
   width: 80%;
-  border: 0.5px solid rgba(0, 0, 0, 0.12);
+  height:0.5px;
+  border-width:0;
+  color:gray;
+  background-color:gray;
+  opacity:0.3
 }
 
 .up-enter-active {

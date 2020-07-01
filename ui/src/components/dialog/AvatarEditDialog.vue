@@ -1,8 +1,8 @@
 <template>
-  <Dialog :title="`Crop Photo`" :show="show" @close="close" width="600px" :goBack="close" enableMenu background="black">
+  <Dialog :title="`Crop Photo`" :show="show" @close="close" :width="width" :goBack="close" enableMenu background="black">
     <template v-slot:content>
       <v-row justify="center">
-        <v-col style="max-width: 400px;">
+        <v-col :width="width">
           <clipper-fixed
             ref="avatar"
             :grid="false"
@@ -12,6 +12,7 @@
             :round="!isView"
             shadow="rgba(0,0,0,0.5)"
             :rotate="rotation"
+            :ratio="size"
           />
         </v-col>
       </v-row>
@@ -61,11 +62,37 @@ export default {
   props: {
     show: { type: Boolean, default: false },
     avatarImage: String,
-    isView: { type: Boolean, default: false }
+    isView: { type: Boolean, default: false },
+    type: { type: String, default: 'avatar' }
   },
   data () {
     return {
       rotation: 0
+    }
+  },
+  computed: {
+    mobile () {
+      return this.$vuetify.breakpoint.xs
+    },
+    size () {
+      if (this.mobile) return 1
+      switch (this.type) {
+        case 'avatar': return 1
+        case 'whakapapa': return 2
+        case 'header': return 6
+        default:
+          return 1
+      }
+    },
+    width () {
+      if (this.mobile) return '720px'
+      switch (this.type) {
+        case 'avatar': return '500px'
+        case 'whakapapa': return '600px'
+        case 'header': return '1000px'
+        default:
+          return 1
+      }
     }
   },
   methods: {
@@ -97,7 +124,7 @@ export default {
 
           let cleanImage = {}
           Object.entries(result.data.uploadFile).forEach(([key, value]) => {
-            if (key !== '__typename') cleanImage[key] = value
+            if (key !== 'type') cleanImage[key] = value
           })
           this.$emit('submit', cleanImage)
         })

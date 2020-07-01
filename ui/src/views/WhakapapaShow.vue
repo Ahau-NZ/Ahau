@@ -1,5 +1,7 @@
 <template>
-  <div id="whakapapa-show" >
+  <!-- <div id="whakapapa-show" >
+    <v-container fluid class="pa-0" :style="mobile ? '':'max-height:100vh'"> -->
+  <div id="whakapapa-show">
     <v-container fluid class="pa-0" :style="[ mobile ? 'width:100vw' : 'width:95vw; margin-top:64px;' ]">
 
       <!-- Desktop Header -->
@@ -79,7 +81,7 @@
               <v-icon v-else>mdi-hexagon-multiple</v-icon>
             </v-btn>
           </template>
-          <div v-if="search" class="icon-search" @click.stop>
+          <div v-if="search" class="icon-search ml-n12 pt-7" @click.stop>
             <SearchBar :nestedWhakapapa="nestedWhakapapa" :searchNodeId.sync="searchNodeId" @close="clickedOff()"/>
           </div>
           <div v-else  class="icon-button">
@@ -91,9 +93,9 @@
           <div v-if="whakapapa.table" class="icon-button">
             <FlattenButton @flatten="toggleFlatten()" />
           </div>
-          <div class="icon-button">
+          <!-- <div class="icon-button">
             <TableButton @table="toggleTable()" />
-          </div>
+          </div> -->
           <div class="icon-button">
             <HelpButton v-if="whakapapa.tree" @click="updateDialog('whakapapa-helper', null)" />
             <HelpButton v-else @click="updateDialog('whakapapa-table-helper', null)" />
@@ -104,7 +106,7 @@
         </v-speed-dial>
       </v-card>
 
-      <v-row v-if="whakapapa.table && overflow" class="navigate">
+      <v-row v-if="whakapapa.table && overflow" :class="mobile ? 'navigateMobile' : 'navigate'">
         <div class="icon-button">
           <v-btn fab x-small light @click="togglePan(200)">
             <v-icon>mdi-arrow-left</v-icon>
@@ -118,10 +120,9 @@
       </v-row>
 
       <Tree
-        class="tree"
+        :class="mobile? 'mobile-tree':'tree'"
         v-if="whakapapa.tree"
         :getRelatives="getRelatives"
-        :relationshipLinks="relationshipLinks"
         @load-descendants="loadDescendants($event)"
         @collapse-node="collapseNode($event)"
         @open-context-menu="openContextMenu($event)"
@@ -145,7 +146,7 @@
         @open-context-menu="openContextMenu($event)"
         :searchNodeId="searchNodeId"
       />
-    </v-container >
+    </v-container>
 
     <vue-context ref="menu" class="px-0"  >
       <li v-for="(option, index) in contextMenuOpts" :key="index">
@@ -170,7 +171,6 @@
     <DialogHandler
       :dialog.sync="dialog.active"
       :type.sync="dialog.type"
-      :selectedProfile="selectedProfile"
       :view="whakapapaView"
       :loadDescendants="loadDescendants"
       :loadKnownFamily="loadKnownFamily"
@@ -194,11 +194,11 @@ import gql from 'graphql-tag'
 import isEmpty from 'lodash.isempty'
 import { VueContext } from 'vue-context'
 
-import WhakapapaShowViewCard from '@/components/whakapapa-view/WhakapapaShowViewCard.vue'
-import WhakapapaBanner from '@/components/whakapapa-view/WhakapapaBanner.vue'
+import WhakapapaShowViewCard from '@/components/whakapapa/WhakapapaShowViewCard.vue'
+import WhakapapaBanner from '@/components/whakapapa/WhakapapaBanner.vue'
 
-import Tree from '@/components/Tree.vue'
-import Table from '@/components/Table.vue'
+import Tree from '@/components/tree/Tree.vue'
+import Table from '@/components/table/Table.vue'
 import FeedbackButton from '@/components/button/FeedbackButton.vue'
 import TableButton from '@/components/button/TableButton.vue'
 import HelpButton from '@/components/button/HelpButton.vue'
@@ -214,7 +214,7 @@ import avatarHelper from '@/lib/avatar-helpers.js'
 import DialogHandler from '@/components/dialog/DialogHandler.vue'
 import findSuccessor from '@/lib/find-successor'
 
-import { mapGetters, mapMutations, mapActions } from 'vuex'
+import { mapGetters, mapActions, mapMutations } from 'vuex'
 
 const saveWhakapapaViewMutation = input => (
   {
@@ -246,7 +246,6 @@ export default {
   data () {
     return {
       fab: false,
-      // loading: true,
       overflow: 'false',
       pan: 0,
       search: false,
@@ -263,22 +262,9 @@ export default {
       },
       focus: null,
       // the record which defines the starting point for a tree (the 'focus')
-      whoami: {
-        profile: { id: '' }
-      },
-      // my profile id, to ensure we don't delete our own profile
-
-      profiles: {},
-
-      // a dictionary which maps profileIds > profiles
-      // this is a store for lookups, and from which we build up nestedWhakapapa
 
       relationshipLinks: new Map(), // shows relationship information between two profiles -> reference using parentId-childId as the key
 
-      // recordQueue: [],
-      // processingQueue: false,
-
-      selectedProfile: null,
       dialog: {
         active: null,
         type: null
@@ -316,22 +302,10 @@ export default {
         variables: { id: this.$route.params.id },
         fetchPolicy: 'no-cache'
       }
-    },
-    whoami: {
-      query: gql`
-        {
-          whoami {
-            profile {
-              id
-            }
-          }
-        }
-      `,
-      fetchPolicy: 'no-cache'
     }
   },
   computed: {
-    ...mapGetters(['nestedWhakapapa']),
+    ...mapGetters(['currentFocus', 'nestedWhakapapa', 'selectedProfile', 'whoami', 'loadingState', 'route']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -349,22 +323,29 @@ export default {
   watch: {
     'currentFocus': async function (newFocus) {
       if (newFocus) {
-        this.loading(true)
+        this.setLoading(true)
         // var startTime = Date.now()
 
         const nestedWhakapapa = await this.loadDescendants(newFocus, '', [])
-        this.setNestedWhakapapa(nestedWhakapapa)
+        this.addNestedWhakapapa(nestedWhakapapa)
+        this.addRelationshipLinks(this.relationshipLinks)
         // var endTime = Date.now()
         // var eclipsedTime = (endTime - startTime) / 1000
         // console.log('build whakapapa time: ', eclipsedTime)
       }
+    },
+    whakapapaView (newVal) {
+      this.addWhakapapa(newVal)
+    },
+    relationshipLinks (newVal) {
+      this.addRelationshipLinks(newVal)
     }
   },
   methods: {
-    ...mapMutations(['setNestedWhakapapa']),
-    ...mapActions(['loading']),
+    ...mapMutations(['updateSelectedProfile']),
+    ...mapActions(['setLoading', 'addNestedWhakapapa', 'addWhakapapa', 'addRelationshipLinks']),
     load (status) {
-      this.loading(status)
+      this.setLoading(status)
     },
     tableOverflow (width) {
       var show = width > screen.width
@@ -381,7 +362,7 @@ export default {
       this.currentFocus = parent
     },
     isVisibleProfile (descendant) {
-      return this.whakapapaView.ignoredProfiles.indexOf(descendant.profile.id) === -1
+      if (this.whakapapaView.ignoredProfiles) { return this.whakapapaView.ignoredProfiles.indexOf(descendant.profile.id) === -1 }
     },
     canDelete (profile) {
       if (!profile) return false
@@ -404,7 +385,6 @@ export default {
       if (profile.id === this.currentFocus) {
         return false
       }
-
       return true
     },
     updateDialog (dialog, type) {
@@ -548,7 +528,6 @@ export default {
       }
       try {
         const result = await this.$apollo.query(request)
-
         if (result.errors) {
           console.error('WARNING, something went wrong')
           console.error(result.errors)
@@ -564,6 +543,7 @@ export default {
         console.error(e)
       }
     },
+
     async loadDescendants (profileId, path, temp) {
       // calls person.fetchPerson which gets info about this person from the db
       var person = await this.getRelatives(profileId)
@@ -628,6 +608,11 @@ export default {
           return child.profile
         })
 
+        partner.parents = partner.parents.map(d => {
+          // TODO: doesnt save this relationship
+          return d.profile
+        })
+
         partner.partners = [person]
         partner.siblings = []
 
@@ -637,10 +622,10 @@ export default {
       if (person.parents.length > 0) {
         person.relationship = this.relationshipLinks.get(person.parents[0].id + '-' + person.id)
       }
-
-      if (this.selectedProfile && this.selectedProfile.id === person.id) this.selectedProfile = person
+      if (this.selectedProfile && this.selectedProfile.id === person.id) this.updateSelectedProfile(person)
       return person
     },
+
     // contextMenu //////////////////////////
     // TODO - extract all this
     openContextMenu ({ event, profile }) {
@@ -680,7 +665,7 @@ export default {
     },
     async setSelectedProfile (profile) {
       if (profile === null) {
-        this.selectedProfile = {}
+        this.updateSelectedProfile({})
         return
       }
       // check the type of profile we received
@@ -690,20 +675,21 @@ export default {
           // find parent to get any changes to siblings
           var person = await tree.find(this.nestedWhakapapa, profile.parents[0].id)
           if (!person) {
-            this.selectedProfile = profile
+            this.updateSelectedProfile(profile)
             return
           }
           var updatedProfile = tree.getSiblings(person, profile)
-          this.selectedProfile = updatedProfile
-        } else this.selectedProfile = profile
+          this.updateSelectedProfile(updatedProfile)
+        } else this.updateSelectedProfile(profile)
       } else if (typeof profile === 'string') {
         // need to find the profile in this whakapapa
         var profileFound = await tree.find(this.nestedWhakapapa, profile)
         if (!profileFound) {
           // lets load descendants of them instead
-          this.selectedProfile = await this.loadDescendants(profile, '', [])
+          let partner = await this.loadDescendants(profile, '', [])
+          partner.isPartner = true
           console.warn('could potentially be loading a large amount of data')
-          this.selectedProfile.isPartner = true
+          this.updateSelectedProfile(partner)
           return
         }
         if (profileFound.parents.length) {
@@ -711,14 +697,14 @@ export default {
           var parent = await tree.find(this.nestedWhakapapa, profileFound.parents[0].id)
           // if parent not found is becuase that parent is not in this nestedWhakapapa
           if (!parent) {
-            this.selectedProfile = profileFound
+            this.updateSelectedProfile(profileFound)
             return
           }
           var newUpdatedProfile = tree.getSiblings(parent, profileFound)
-          this.selectedProfile = newUpdatedProfile
-        } else this.selectedProfile = profileFound
+          this.updateSelectedProfile(newUpdatedProfile)
+        } else this.updateSelectedProfile(profileFound)
       } else {
-        this.selectedProfile = {}
+        this.updateSelectedProfile({})
       }
     },
 
@@ -737,16 +723,16 @@ export default {
         if (res.data) {
           const updatedWhakapapa = await this.$apollo.query({
             query: gql`
-              query($id: String!) {
-                whakapapaView(id: $id) {
-                  name
-                  description
-                  image { uri }
-                  focus
-                  recps
+                query($id: String!) {
+                  whakapapaView(id: $id) {
+                    name
+                    description
+                    image { uri }
+                    focus
+                    recps
+                  }
                 }
-              }
-            `,
+              `,
             variables: { id: res.data.saveWhakapapaView },
             fetchPolicy: 'no-cache'
           })
@@ -787,96 +773,101 @@ export default {
     getImage () {
       return avatarHelper.defaultImage(this.aliveInterval, this.gender)
     }
+  },
+  destroyed () {
+    // reset whakapapa and relationships when leaving the tree
+    this.addNestedWhakapapa([])
+    this.addRelationshipLinks([])
   }
 }
+
 </script>
-
 <style>
-  .v-select.v-select--is-menu-active
-  .v-input__icon--append
-  .v-icon {
+.v-select.v-select--is-menu-active .v-input__icon--append .v-icon {
     transform: rotate(0);
-  }
-
+}
 </style>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 @import "~vue-context/dist/css/vue-context.css";
-
 #whakapapa-show {
-
-  & > .container {
+  &>.container {
     position: relative;
-    /* width: 95vw; */
-    /* border: 2px solid red; */
+    max-height:100vh;
 
-    & > .header {
+    &>.header {
       position: absolute;
-      top: 10px;
+      top: 70px;
       left: 22px;
       /* right: 160px; */
       width: 30%;
-
       .col {
-        padding-top: 0;
-        padding-bottom: 0;
+          padding-top: 0;
+          padding-bottom: 0;
       }
     }
-
-    & > .select {
+    &>.select {
       position: fixed;
       top: 80px;
       right: 110px;
-
       .col {
-        padding-top: 0;
-        padding-bottom: 0;
+          padding-top: 0;
+          padding-bottom: 0;
       }
     }
-
-    & > .navigate {
+    &>.navigate {
       position: fixed;
       top: 130px;
       right: 110px;
+    }
+    &>.navigateMobile {
+      position: fixed;
+      top: 130px;
+      right: 50px;
     }
   }
 }
 
 h1 {
-  color: black;
+    color: black;
 }
 
 .description {
-  color: #555;
+    color: #555;
 }
 
 .fixed {
-  position: fixed;
+    position: fixed;
 }
 
 .icon-button {
-  padding: 0px;
-  width: 50px;
-  display: flex;
-  justify-content: flex-end;
+    padding: 0px;
+    width: 50px;
+    display: flex;
+    justify-content: flex-end;
 }
 
 .icon-search {
-  width: 300px;
-  display: flex;
-  justify-items: flex-end;
+    width: 300px;
+    display: flex;
+    justify-items: flex-end;
 }
 
 .contextMenuIcon {
-  width: 20px;
-  height: 20px;
-  color: black;
+    width: 20px;
+    height: 20px;
+    color: black;
 }
 
 .tree {
-  max-height: calc(100vh - 64px);
+  max-height: calc(100vh)
+}
 
+.mobile-tree {
+  position:absolute;
+  height: calc(100vh - 43px);
+  margin-top: -68px;
 }
 
 #create .v-speed-dial {

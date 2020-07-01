@@ -3,9 +3,9 @@
 
     <!-- Content Slot -->
     <template v-if="!hideDetails" v-slot:content>
-      <v-col class="py-0">
+      <v-col class="py-0 px-0">
 
-        <ProfileForm :profile.sync="formData" :readonly="hasSelection" :editRelationship="hasSelection" :mobile="mobile">
+        <ProfileForm :profile.sync="formData" :readonly="hasSelection" :editRelationship="hasSelection" :withRelationships="withRelationships" :mobile="mobile">
 
           <!-- Slot = Search -->
           <template v-slot:search>
@@ -77,7 +77,7 @@
 <script>
 import Dialog from '@/components/dialog/Dialog.vue'
 
-import ProfileForm from '@/components/profile-form/ProfileForm.vue'
+import ProfileForm from '@/components/profile/ProfileForm.vue'
 
 import Avatar from '@/components/Avatar.vue'
 import isEmpty from 'lodash.isempty'
@@ -90,6 +90,7 @@ import { PERMITTED_PROFILE_ATTRS, PERMITTED_RELATIONSHIP_ATTRS, getProfile } fro
 
 function setDefaultData (withRelationships) {
   const formData = {
+    type: 'person',
     id: '',
     preferredName: '',
     legalName: '',

@@ -1,0 +1,46 @@
+<template>
+  <v-col :cols="mobile ? smCols : '12'" :sm="smCols" :md="mdCols">
+    <v-row>
+      <v-col v-if="title" class=" ma-0 profile-label"><small>{{ title }}</small></v-col>
+    </v-row>
+    <v-row v-if="value" class="justify-center">
+      <p class="ma-0 profile-info">{{ value }}</p>
+    </v-row>
+    <v-row v-if="subValue" class="justify-center">
+      <p class="ma-0 profile-info"><small>{{ subValue }}</small></p>
+    </v-row>
+  </v-col>
+</template>
+
+<script>
+
+export default {
+  name: 'ProfileInfoCard',
+  props: {
+    title: String,
+    value: String,
+    subValue: String,
+    smCols: {
+      type: String,
+      default: '6'
+    },
+    mdCols: {
+      type: String,
+      default: '3'
+    }
+  },
+  computed: {
+    mobile () {
+      return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
+    }
+  }
+}
+</script>
+
+<style>
+.profile-label {
+  color: rgba(0,0,0,0.6);
+  display: flex;
+  justify-content: center;
+}
+</style>
