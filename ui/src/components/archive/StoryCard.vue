@@ -77,7 +77,7 @@
         <v-list-item-subtitle style="color:grey" class="ml-5 pb-1"> Mentions </v-list-item-subtitle>
         <AvatarGroup
           style="position:relative; bottom:15px;"
-          :profiles="currentProfile.siblings"
+          :profiles="story.mentions.map(m => m.profile)"
           show-labels :size="fullStory ? '50px': '30px'"
           spacing="pr-2"
           @profile-click="openProfile($event)"

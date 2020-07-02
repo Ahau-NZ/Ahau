@@ -75,9 +75,14 @@ function setDefaultStory (newStory) {
   var story = clone(newStory)
 
   var artefacts = story.artefacts
+  var mentions = story.mentions
 
   if (artefacts && artefacts.length > 0) {
     artefacts = artefacts.map(a => a.artefact)
+  }
+
+  if (mentions && mentions.length > 0) {
+    mentions = mentions.map(m => m.profile)
   }
 
   return {
@@ -99,7 +104,7 @@ function setDefaultStory (newStory) {
     translation: story.translation,
     culturalNarrative: story.culturalNarrative,
 
-    mentions: story.mentions,
+    mentions,
     categories: story.categories,
     collections: story.collections,
     access: story.access,
