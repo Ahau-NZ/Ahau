@@ -20,6 +20,6 @@ export const UPLOAD_FILE = input => {
         }
       }
     `,
-    variables: { input }
+    variables: input
   }
 }
