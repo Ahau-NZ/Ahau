@@ -186,6 +186,39 @@ export default {
           }))
         }
 
+        if (input.mentions && input.mentions.length > 0) {
+          // creat a link for each new mention
+          await Promise.all(input.mentions.map(async mention => {
+            console.log('mention', mention)
+            if (mention.id) {
+              // save the link
+              const input = {
+                type: TYPES.STORY_PROFILE_MENTION,
+                parent: storyId,
+                child: mention.id
+              }
+
+              // create the link between the story and this profile as a mention
+              await this.saveLink(input)
+            }
+          }))
+        }
+
+        if (input.contributors && input.contributors.length > 0) {
+          await Promise.all(input.contributors.map(async contributor => {
+            console.log('contributor', contributor)
+            if (contributor.id) {
+              const input = {
+                type: TYPES.STORY_PROFILE_CONTRIBUTOR,
+                parent: storyId,
+                child: contributor.id
+              }
+
+              await this.saveLink(input)
+            }
+          }))
+        }
+
         // get the full newly created/updated story
         var story = await this.getStory(storyId)
 
