@@ -136,7 +136,7 @@
 </template>
 
 <script>
-import { FILE_UPLOAD } from '@/lib/file-helpers.js'
+import { UPLOAD_FILE } from '@/lib/file-helpers.js'
 import Avatar from '@/components/Avatar.vue'
 const pick = require('lodash.pick')
 
@@ -186,7 +186,7 @@ export default {
         canvas.toBlob(async blob => {
           const file = new File([blob], type, { type: blob.type })
 
-          const result = await this.$apollo.mutate(FILE_UPLOAD({ file, encrypt: true }))
+          const result = await this.$apollo.mutate(UPLOAD_FILE({ file, encrypt: true }))
           if (result.errors) throw result.errors
           this.addImages({
             [type + 'Image']: pick(result.data.uploadFile, [
