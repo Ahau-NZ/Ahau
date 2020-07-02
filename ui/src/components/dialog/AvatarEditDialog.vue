@@ -51,7 +51,7 @@
 
 <script>
 import Dialog from '@/components/dialog/Dialog.vue'
-import gql from 'graphql-tag'
+import { FILE_UPLOAD } from '@/lib/file-helpers.js'
 
 export default {
   name: 'AvatarEditDialog',
@@ -78,20 +78,7 @@ export default {
         canvas.toBlob(async blob => {
           const file = new File([blob], 'avatar', { type: blob.type })
 
-          const result = await this.$apollo.mutate({
-            mutation: gql`
-              mutation uploadFile($file: Upload!) {
-                uploadFile(file: $file) {
-                  blob
-                  mimeType
-                  uri
-                }
-              }
-            `,
-            variables: {
-              file
-            }
-          })
+          const result = await this.$apollo.mutate(FILE_UPLOAD({ file, encrypt: true }))
 
           if (result.errors) throw result.errors
 
