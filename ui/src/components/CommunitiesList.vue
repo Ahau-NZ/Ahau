@@ -6,37 +6,25 @@
         <p class="headliner pa-0 mb-4">CONNECT</p>
         <p class="sub-headline pa-0">Enter a Pātaka code to discover tribes</p>
         <v-row>
-          <v-col cols='12' sm='12' md='6'>
-              <v-text-field 
-                v-model="patakaCode" 
-                outlined 
-                light
-                dense
-                :success-messages="successMsg"
-                :error-messages="errorMsg"
-                prepend-icon="mdi-lan-connect"
-                clearable
-              />
+          <v-col cols="12" sm="12" md="6">
+            <v-text-field
+              v-model="patakaCode"
+              outlined
+              light
+              dense
+              :disables="validating"
+              :success-messages="successMsg"
+              :error-messages="errorMsg"
+              prepend-icon="mdi-lan-connect"
+              clearable
+            />
           </v-col>
           <v-col>
-              <v-btn color="383838" @click="acceptInvite">
-                <span>connect</span>
-              </v-btn>
+            <v-btn color="383838" @click="acceptInvite">
+              <span>{{validating ? 'checking invite' : 'connect'}}</span>
+            </v-btn>
           </v-col>
         </v-row>
-        <!-- <div style="height: 20px">
-          <p v-if="invalidCode" class="red--text">Invalid code</p>
-        </div> -->
-        <!-- <p class="sub-headline pa-0">Enter a Pātaka code to discover tribes</p>
-        <v-text-field
-          v-model="patakaCode"
-          placeholder="xxxx-xxxx-xxxx-xxxx"
-          outlined
-          light
-          dense
-          style="width: 50%;"
-          append-outer-icon="mdi-lan-connect"
-        ></v-text-field> -->
       </v-col>
     </v-row>
 
@@ -76,9 +64,8 @@ export default {
   data () {
     return {
       communities: [],
-      patakaCode: null,
-      invalidCode: false,
-      validCode: false,
+      patakaCode: '',
+      validating: false,
       successMsg: [],
       errorMsg: []
     }
@@ -117,26 +104,25 @@ export default {
       if (!community.description) return
       return community.description.substring(0, 180)
     },
-    async acceptInvite (inviteCode) {
+    async acceptInvite () {
+      this.validating = true
       try {
         await this.$apollo.mutate({
           mutation: gql`
-          mutation($inviteCode: String) {
+          mutation acceptInvite($inviteCode: String!) {
             acceptInvite(inviteCode: $inviteCode)
           }`,
-          varibles: {
+          variables: {
             inviteCode: this.patakaCode
-          }
+          },
+          fetchPolicy: 'no-cache'
         })
-        // this.sucinvalidCode = false
-        // this.validCode = true
-        this.successMsg = ["Successfully located Pātaka"]
+        this.successMsg = ['Successfully located Pātaka']
       } catch (err) {
-        // this.invalidCode = true
-        // this.validCode = false
-        this.errorMsg = ["Invalid code, please check the code and try again"]
+        this.errorMsg = ['Invalid code, please check the code and try again']
         console.error('Invite error: ', err)
       }
+      this.validating = false
     }
   }
 }

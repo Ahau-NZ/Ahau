@@ -5,18 +5,19 @@
   "homepage": "https://gitlab.com/ahau/whakapapa-ora",
   "main": "index.js",
   "dependencies": {
-    "@apollo/federation": "^0.11.3",
-    "@ssb-graphql/invite": "0.0.1",
+    "@apollo/federation": "^0.17.0",
+    "@ssb-graphql/invite": "0.0.2",
     "@ssb-graphql/main": "^3.0.1",
-    "@ssb-graphql/profile": "^1.0.0",
-    "@ssb-graphql/stats": "0.0.1",
-    "apollo-server": "^2.9.3",
-    "apollo-server-express": "^2.9.6",
+    "@ssb-graphql/pataka": "0.0.1",
+    "@ssb-graphql/profile": "^1.0.2",
+    "@ssb-graphql/stats": "0.0.3",
+    "apollo-server": "^2.15.1",
+    "apollo-server-express": "^2.15.1",
     "cors": "^2.8.5",
     "express": "^4.17.1",
-    "graphql": "^14.5.8",
+    "graphql": "^15.2.0",
     "graphql-date": "^1.0.3",
-    "graphql-upload": "^8.0.7"
+    "graphql-upload": "^11.0.0"
   },
   "devDependencies": {
     "casual": "^1.6.2"

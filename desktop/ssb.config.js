@@ -4,6 +4,7 @@ const path = require('path')
 
 const customConfig = {
   port: 8087,
+  allowPrivate: true,
   caps: {
     shs: 'LftKJZRB4nbBRnlJuFteWG9AP+gGboVEhibx016bR0s='
     // this is the "secret handshake" capability.

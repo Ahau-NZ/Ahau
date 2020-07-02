@@ -7,6 +7,11 @@ const Main = require('@ssb-graphql/main')
 const Profile = require('@ssb-graphql/profile')
 const Invite = require('@ssb-graphql/invite')
 const stats = require('@ssb-graphql/stats')
+const Pataka = require('@ssb-graphql/pataka')
+
+
+// const { PubSub } = require('apollo-server')
+// const pubsub = new PubSub()
 
 module.exports = {
   name: 'graphql-http-server',
@@ -18,6 +23,7 @@ module.exports = {
     const main = Main(sbot)
     const profile = Profile(sbot)
     const invite = Invite(sbot)
+    const pataka = Pataka(sbot, profile.gettersWithCache)
 
     profile.Context((err, context) => {
       if (err) throw err
@@ -35,6 +41,10 @@ module.exports = {
           {
             typeDefs: invite.typeDefs,
             resolvers: invite.resolvers
+          },
+          {
+            typeDefs: pataka.typeDefs,
+            resolvers: pataka.resolvers
           },
           {
             typeDefs: stats.typeDefs,

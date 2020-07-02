@@ -4,10 +4,19 @@
       <v-row>
         <v-col cols="4">
           <v-row justify="center">
-            <v-btn color="grey" outlined tile @click="generateInviteCode">Generate join code</v-btn>
+            <v-btn
+              color="grey"
+              outlined
+              :disabled="!network.ipv4"
+              tile
+              @click="toggleDialog"
+            >{{!network.ipv4 ? 'Loading network data' : 'Generate join code'}}</v-btn>
           </v-row>
         </v-col>
-        <v-col v-if="generatedInvite" class="generated-code">
+        <v-col v-if="generateError">
+          <p class="red--text caption mb-0">{{generateError}}</p>
+        </v-col>
+        <v-col v-else-if="generatedInvite" class="generated-code">
           <v-row>
             <h3 class="text-uppercase subtitle-1">Pātaka single use code</h3>
           </v-row>
@@ -31,14 +40,17 @@
           <p class="subtitle-2 grey--text text-center">Pataka SSB ID</p>
           <v-col cols="8" class="mx-auto">
             <v-row justify="center">
-              <div class="dot mr-4" :class="network.internetLatency ? 'green' : 'grey'" />
+              <div
+                class="dot mr-4"
+                :class="network.internetLatency ? network.internetLatency === -1 ? 'red' : 'green' : 'grey'"
+              />
               <p
                 class="body-1 text-uppercase text-center"
-              >{{ network.internetLatency ? 'Online' : 'Checking'}}</p>
+              >{{ network.internetLatency ? network.internetLatency === -1 ? 'Offline' : 'Online' : 'Checking'}}</p>
             </v-row>
             <v-row justify="center">
               <div class="dot mr-4" :class="network.ipv4 ? 'green' : 'grey'" />
-              <p class="body-1 text-uppercase">{{network.ipv4 ? 'Local' : 'Checking'}}</p>
+              <p class="body-1 text-uppercase">{{network.ipv4 ? ' Local' : 'Checking'}}</p>
             </v-row>
             <Meter title="CPU" :values="cpuLoad" />
             <Meter title="RAM" :values="memoryLoad" />
@@ -59,61 +71,83 @@
           </v-col>
         </v-col>
         <v-col cols="3" class="stat-column">
-          <h2 class="h2 text-uppercase pb-12">People</h2>
+          <!-- <h2 class="h2 text-uppercase pb-12">People</h2>
           <h3 class="py-2 text-uppercase subtitle-1 grey--text">64 people online</h3>
           <v-row class="pb-4">
             <Avatar size="40px" alt="name" />
           </v-row>
-          <v-btn color="grey" outlined tile>View people</v-btn>
+          <v-btn color="grey" outlined tile>View people</v-btn>-->
         </v-col>
         <v-col cols="2" class="stat-column">
           <h2 class="h2 text-uppercase pb-12">Summary</h2>
-          <h3 class="py-2 text-uppercase subtitle-1 grey--text">213 Records</h3>
-          <h3 class="py-2 text-uppercase subtitle-1 grey--text">28 Whakapapa Records</h3>
-          <h3 class="py-2 text-uppercase subtitle-1 grey--text">7 communities</h3>
+          <h3
+            class="py-2 text-uppercase subtitle-1 grey--text"
+          >{{dataSummary.profileRecords}} Profile Records</h3>
+          <h3
+            class="py-2 text-uppercase subtitle-1 grey--text"
+          >{{dataSummary.whakapapaRecords}} Whakapapa Records</h3>
+          <h3
+            class="py-2 text-uppercase subtitle-1 grey--text"
+          >{{dataSummary.communityRecords}} Community Records</h3>
         </v-col>
         <v-col cols="3" class="stat-column">
-          <h2 class="h2 text-uppercase pb-12">Activity log</h2>
+          <!-- <h2 class="h2 text-uppercase pb-12">Activity log</h2>
           <p class="log-box">
-            warning: Pulling without specifying how to reconcile divergent branches is
-            discouraged. You can squelch this message by running one of the following
-            commands sometime before your next pull:
-            git config pull.rebase false # merge (the default strategy)
-            git config pull.rebase true # rebase
-            git config pull.ff only # fast-forward only
-            You can replace "git config" with "git config --global" to set a default
-            preference for all repositories. You can also pass --rebase, --no-rebase,
-            or --ff-only on the command line to override the configured default per
-            invocation.
-            From gitlab.com:ahau/ssb-graphql-main
-            * branch master -> FETCH_HEAD
-            Already up to date.
-          </p>
+          </p>-->
         </v-col>
       </v-row>
     </v-container>
+    <GenerateInviteDialog
+      v-if="dialog"
+      :show="dialog"
+      :publicIpv4="publicIpv4"
+      :title="`Generate Invite Code`"
+      @close="toggleDialog"
+      @generate="generateInviteCode($event)"
+    />
   </div>
 </template>
 
 <script>
 import Avatar from '@/components/Avatar.vue'
+import GenerateInviteDialog from '@/components/GenerateInviteDialog'
 import Meter from '@/components/Meter.vue'
 import gql from 'graphql-tag'
 
 export default {
   name: 'Dashboard',
   data: () => ({
+    dialog: false,
+    ipSet: false,
     copyText: 'Copy',
     generatedInvite: null,
+    generateError: false,
+    publicIpv4: null,
     network: {
       internetLatency: null,
-      ipv4: null
+      ipv4: null,
+      ipv6: null
     },
     diskUsage: [],
     cpuLoad: [],
-    memoryLoad: []
+    memoryLoad: [],
+    dataSummary: {
+      profileRecords: 0,
+      whakapapaRecords: 0,
+      communityRecords: 0
+    }
   }),
   apollo: {
+    publicIpv4: {
+      query: gql`query {
+      network {
+        publicIpv4
+      }
+    }`,
+      update (data) {
+        return data.network.publicIpv4
+      }
+    },
     network: {
       query: gql`query {
       network {
@@ -149,8 +183,20 @@ export default {
       }
     }`,
       update (data) {
-        console.log('update -> DISAK', data)
         return data.diskUsage
+      }
+    },
+    dataSummary: {
+      query: gql`query {
+      dataSummary {
+        profileRecords
+        whakapapaRecords
+        communityRecords
+      }
+    }`,
+      pollInterval: 300,
+      update (data) {
+        return data.dataSummary
       }
     }
   },
@@ -164,20 +210,37 @@ export default {
     'diskUsage' (newValue) {
       this.$apollo.queries.diskUsage.startPolling(5000)
     }
+    // 'dataSummary' (newValue) {
+    //   this.$apollo.queries.dataSummary.startPolling(5000)
+    // }
   },
   methods: {
-    async generateInviteCode () {
+    async toggleDialog () {
+      this.dialog = !this.dialog
+    },
+    async generateInviteCode (externalIp) {
+      const input = externalIp ? {
+        external: externalIp
+      } : {}
       try {
         const res = await this.$apollo.mutate({
           mutation: gql`
-              mutation {
-                createInvite
+              mutation ($input: createInviteInput) {
+                createInvite(input: $input)
               }
-              `
+              `,
+          variables: {
+            input: {
+              ...input
+            }
+          }
+
         })
+        this.generateError = false
         this.generatedInvite = res.data.createInvite
         this.copyText = 'Copy'
       } catch (err) {
+        this.generateError = err
         throw err
       }
     },
@@ -209,7 +272,8 @@ export default {
   },
   components: {
     Avatar,
-    Meter
+    Meter,
+    GenerateInviteDialog
   }
 }
 </script>
