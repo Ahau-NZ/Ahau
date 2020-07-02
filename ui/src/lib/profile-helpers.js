@@ -5,13 +5,13 @@ const apolloProvider = createProvider()
 const apolloClient = apolloProvider.defaultClient
 
 export const PERMITTED_PROFILE_ATTRS = [
+  'headerImage',
+  'avatarImage',
   'gender',
   'legalName',
   'aliveInterval',
   'preferredName',
-  'avatarImage',
   'description',
-  'headerImage',
   'altNames',
   'birthOrder',
   'location',
@@ -27,12 +27,21 @@ export const PERMITTED_RELATIONSHIP_ATTRS = [
   'legallyAdopted'
 ]
 
+export const PROFILE_FRAGMENT = gql`
+  fragment ProfileFragment on Person {
+    ${PERMITTED_PROFILE_ATTRS.slice(2)}
+    avatarImage { uri }
+    headerImage { uri }
+  }
+`
+
 export const whoami = ({
   query: gql`
-    {
+    ${PROFILE_FRAGMENT}
+    query {
       whoami {
         profile {
-          id
+          ...ProfileFragment
         }
       }
     }
@@ -42,42 +51,26 @@ export const whoami = ({
 
 export const getProfile = id => ({
   query: gql`
+    ${PROFILE_FRAGMENT}
     query($id: String!) {
       person(id: $id){
-        id
-        preferredName legalName altNames
-        aliveInterval birthOrder
-        gender description 
-        location  address email
-        phone profession deceased
-        avatarImage { uri } headerImage { uri }
+        ...ProfileFragment
         children {
           profile {
-            id
-            preferredName legalName altNames
-            aliveInterval birthOrder
-            gender description
-            location  address deceased
-            email phone profession
-            avatarImage { uri }
+            ...ProfileFragment
           }
           linkId
           relationshipType
+          legallyAdopted
         }
         parents {
           profile {
-            id
-            preferredName legalName altNames
-            aliveInterval birthOrder
-            gender description
-            location address email
-            phone profession deceased
-            avatarImage { uri }
+            ...ProfileFragment
           }
           linkId
           relationshipType
+          legallyAdopted
         }
-        
       }
     }
   `,
@@ -105,87 +98,3 @@ export const saveProfile = input => ({
   `,
   variables: { input }
 })
-
-// export const PERMITTED_PROFILE_ATTRS = [
-//   'gender',
-//   'legalName',
-//   'bornAt',
-//   'diedAt',
-//   'preferredName',
-//   'avatarImage',
-//   'description',
-//   'headerImage',
-//   'altNames',
-//   'birthOrder',
-//   'location',
-//   'email',
-//   'phone',
-//   'address',
-//   'profession',
-//   'deceased'
-// ]
-
-// export const PERMITTED_RELATIONSHIP_ATTRS = [
-//   'relationshipType',
-//   'legallyAdopted'
-// ]
-
-// const getProfile = id => ({
-//   query: gql`
-//     query($id: String!) {
-//       person(id: $id){
-//         id
-//         preferredName legalName altNames
-//         bornAt diedAt birthOrder
-//         gender description
-//         location  address email
-//         phone profession deceased
-//         avatarImage { uri }
-//         children {
-//           profile {
-//             id
-//             preferredName legalName altNames
-//             bornAt diedAt birthOrder
-//             gender description
-//             location  address deceased
-//             email phone profession
-//             avatarImage { uri }
-//           }
-//           relationshipId
-//           relationshipType
-//         }
-//         parents {
-//           profile {
-//             id
-//             preferredName legalName altNames
-//             bornAt diedAt birthOrder
-//             gender description
-//             location address email
-//             phone profession deceased
-//             avatarImage { uri }
-//           }
-//           relationshipId
-//           relationshipType
-//         }
-
-//       }
-//     }
-//   `,
-//   variables: { id: id },
-//   fetchPolicy: 'no-cache'
-// })
-
-// const saveProfile = input => ({
-//   mutation: gql`
-//     mutation($input: ProfileInput!) {
-//       saveProfile(input: $input)
-//     }
-//   `,
-//   variables: { input }
-// })
-
-// export default {
-//   getProfile,
-//   saveProfile,
-//   getRelatives
-// }
