@@ -140,8 +140,11 @@ export default {
     }
   },
   watch: {
-    showStory (newVal) {
-      if (newVal === false) {
+    showStory (newVal, oldVal) {
+      if (oldVal === false && newVal === true) {
+        this.scrollPosition = window.pageYOffset
+        window.scrollTo(0, 0)
+      } else if (oldVal === true && newVal === false) {
         setTimeout(() => {
           window.scrollTo({
             top: this.scrollPosition
@@ -272,9 +275,7 @@ export default {
     },
     toggleStory (story) {
       this.currentStory = story
-      this.scrollPosition = window.pageYOffset
       this.setShowStory()
-      window.scrollTo(0, 0)
       this.setDialog(null)
     },
     openContextMenu (event) {
