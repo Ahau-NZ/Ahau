@@ -19,16 +19,12 @@
                 :artefacts="formData.artefacts"
                 @delete="toggleDialog($event, 'delete')"
                 @update="toggleDialog($event, 'new')"
-                @processMediaFiles="processMediaFiles($event)"
+                @artefacts="processArtefacts($event)"
                 editing
               />
             </v-col>
             <v-col cols="6" >
-              <div @click="$refs.fileInput.click()">
-                <AddButton :size="mobile ? '40px' : '60px'" icon="mdi-image-plus"/>
-                <p class="add-label clickable" >Add artefact</p>
-              </div>
-              <input v-show="false" ref="fileInput" type="file" accept="audio/*,video/*,image/*" multiple @change="processMediaFiles($event)" />
+              <UploadArtefactButton showLabel @artefacts="processArtefacts($event)"/>
             </v-col>
             <v-col :cols="showLocation ? '12':'6'" class="py-0">
               <div v-if="!showLocation" @click="showLocation = true" class="pt-3">
@@ -390,10 +386,11 @@
       :show="newDialog"
       :index="index"
       :artefacts="formData.artefacts"
+      :editing="true"
       @close="newDialog = false"
       @delete="toggleDialog($event, 'delete')"
       @submit="updateArtefacts($event)"
-      @processMediaFiles="processMediaFiles($event)"
+      @artefacts="processArtefacts($event)"
     />
     <DeleteArtefactDialog
       v-if="deleteDialog"
@@ -409,15 +406,16 @@
 import AvatarGroup from '@/components/AvatarGroup.vue'
 import Avatar from '@/components/Avatar.vue'
 import AddButton from '@/components/button/AddButton.vue'
+import UploadArtefactButton from '@/components/artefact/UploadArtefactButton.vue'
 
 import ChipGroup from '@/components/archive/ChipGroup.vue'
 import ProfileSearchBar from '@/components/archive/ProfileSearchBar.vue'
 
 import { findByName } from '@/lib/search-helpers.js'
+import { DELETE_ARTEFACT } from '@/lib/artefact-helpers'
 
 import { personComplete } from '@/mocks/person-profile'
 import { firstMocks } from '@/mocks/collections'
-import { artefacts } from '@/mocks/artefacts'
 
 import NewArtefactDialog from '@/components/dialog/artefact/NewArtefactDialog.vue'
 import ArtefactCarousel from '@/components/artefact/ArtefactCarousel.vue'
@@ -426,15 +424,12 @@ import DeleteArtefactDialog from '@/components/dialog/artefact/DeleteArtefactDia
 import { RULES } from '@/lib/constants'
 import { mapGetters } from 'vuex'
 
-const imageRegex = /^image\//
-const audioRegex = /^audio\//
-const videoRegex = /^video\//
-
 export default {
   name: 'RecordForm',
   components: {
     Avatar,
     AddButton,
+    UploadArtefactButton,
     ProfileSearchBar,
     AvatarGroup,
     ChipGroup,
@@ -454,7 +449,6 @@ export default {
       deleteDialog: false,
       deleteRecordDialog: false,
       index: 0,
-      ARTEFACTS: artefacts,
       search: false,
       model: 0,
       show: false,
@@ -483,7 +477,7 @@ export default {
     this.showAdvanced()
   },
   computed: {
-    ...mapGetters(['showStory']),
+    ...mapGetters(['showStory', 'whoami']),
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
@@ -498,20 +492,21 @@ export default {
     }
   },
   methods: {
+    processArtefacts (artefacts) {
+      this.index = this.formData.artefacts ? this.formData.artefacts.length : 0
+
+      artefacts.forEach(artefact => {
+        this.formData.artefacts.push(artefact)
+      })
+
+      this.newDialog = true
+    },
     showAdvanced () {
       if (this.showStory) this.show = true
     },
     async getSuggestions (name) {
-      console.log('name: ', name)
       if (name) this.suggestions = await findByName(name)
       else this.suggestions = []
-    },
-
-    // clickedOff () {
-    //   this.search = !this.search
-    // },
-    updateArtefacts (changes) {
-      alert('WARNING, submission doesnt currently update artefacts')
     },
     toggleDialog ($event, dialog) {
       this.index = $event
@@ -521,77 +516,50 @@ export default {
     warn (field) {
       alert(`Cannot add ${field} yet`)
     },
-    processMediaFiles ($event) {
-      this.index = this.formData.artefacts ? this.formData.artefacts.length : 0
-      const { files } = $event.target
-
-      Array.from(files).forEach((file, i) => {
-        this.formData.artefacts.push(this.processFile(file))
-      })
-
-      this.newDialog = true
+    updateItem (array, update, index) {
+      // update the item in the array at the index
+      array.splice(index, 1, update)
     },
-    processFile (file) {
-      var attrs = {}
+    async updateArtefacts (artefacts) {
+      this.formData.artefacts = await Promise.all(artefacts.map(async (artefact, i) => {
+        if (this.editing) {
+          if (artefact.id) {
+            var oldArtefact = this.formData.artefacts[i]
+            Object.assign(oldArtefact, artefact)
+            return artefact
+          }
+        }
+        return artefact
+      }))
 
-      const type = this.getFileType(file.type)
-      const title = this.getFileName(file.name)
-      const format = this.getFormat(file.type)
-      const blob = URL.createObjectURL(file)
+      this.newDialog = !!this.newDialog
+    },
+    removeItem (array, index) {
+      array.splice(index, 1)
+    },
+    async deleteArtefact (id) {
+      try {
+        const res = await this.$apollo.mutate(DELETE_ARTEFACT(id, new Date()))
 
-      if (type === 'video' || type === 'audio') {
-        attrs = {
-          duration: '',
-          size: file.size,
-          transcription: ''
+        if (res.errors) {
+          throw res.errors
+        }
+      } catch (err) {
+        throw err
+      }
+    },
+    async removeArtefact (index) {
+      if (this.editing) {
+        // remove from the database
+        var artefact = this.formData.artefacts[this.index]
+
+        // check it has an id
+        if (artefact.id) {
+          await this.deleteArtefact(artefact.id)
         }
       }
-
-      attrs = {
-        ...attrs,
-        type,
-        blob,
-        title,
-        description: '',
-        format,
-        identifier: '',
-        language: '',
-        licence: '',
-        rights: '',
-        source: '',
-        translation: '',
-        mentions: []
-      }
-
-      return attrs
-    },
-    getFileType (type) {
-      switch (true) {
-        case imageRegex.test(type):
-          return 'photo'
-        case audioRegex.test(type):
-          return 'audio'
-        case videoRegex.test(type):
-          return 'video'
-        default:
-          return ''
-      }
-    },
-    getFormat (fileType) {
-      return fileType.replace(/.*\//, '')
-    },
-    getFileName (fileName) {
-      return fileName.replace(/\.[^/.]+$/, '')
-    },
-    removeItem (array, $event) {
-      array.splice($event, 1)
-    },
-
-    removeArtefact ($event) {
-      console.error('deleting an artefact not fully implemented')
-      // either remove from the database or from formData
+      // remove from formData
       this.removeItem(this.formData.artefacts, this.index)
-
       if (this.formData.artefacts && this.formData.artefacts.length === 0) this.newDialog = false
     }
   }

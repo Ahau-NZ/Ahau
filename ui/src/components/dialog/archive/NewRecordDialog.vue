@@ -3,7 +3,7 @@
 
       <!-- FORM -->
       <template v-slot:content>
-        <RecordForm ref="recordForm" :formData.sync="formData"/>
+        <RecordForm ref="recordForm" :editing="editing" :formData.sync="formData"/>
       </template>
 
       <template v-if="editing" v-slot:before-actions>
@@ -73,6 +73,13 @@ const EMPTY_STORY = {
 
 function setDefaultStory (newStory) {
   var story = clone(newStory)
+
+  var artefacts = story.artefacts
+
+  if (artefacts && artefacts.length > 0) {
+    artefacts = artefacts.map(a => a.artefact)
+  }
+
   return {
     id: story.id,
     title: story.title,
@@ -99,7 +106,7 @@ function setDefaultStory (newStory) {
     contributors: story.contributors,
     protocols: story.protocols,
     relatedRecords: story.relatedRecords,
-    artefacts: story.artefacts
+    artefacts
   }
 }
 

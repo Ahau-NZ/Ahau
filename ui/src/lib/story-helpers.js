@@ -1,5 +1,6 @@
 import gql from 'graphql-tag'
 import pick from 'lodash.pick'
+import { ARTEFACT_FRAGMENT } from './artefact-helpers'
 
 export const PERMITTED_STORY_ATTRS = [
   'id',
@@ -18,24 +19,32 @@ export const PERMITTED_STORY_ATTRS = [
   'transcription'
 ]
 
+export const STORY_FRAGMENT = gql`
+  fragment StoryFragment on Story {
+    ${PERMITTED_STORY_ATTRS}
+  }
+`
+
+export const STORY_LINK_FRAGMENT = gql`
+  ${ARTEFACT_FRAGMENT}
+  fragment StoryLinkFragment on Story {
+    artefacts: artefactLinks {
+      linkId
+      artefact {
+        ...ArtefactFragment
+      }
+    }
+  }
+`
+
 export const GET_STORY = id => ({
   query: gql`
+    ${STORY_FRAGMENT}
+    ${STORY_LINK_FRAGMENT}
     query($id: ID!) {
       story(id: $id) {
-        id
-        type
-        title
-        description
-        timeInterval
-        submissionDate
-        location
-        contributionNotes
-        locationDescription
-        format
-        identifier
-        language
-        source
-        transcription
+        ...StoryFragment
+        ...StoryLinkFragment
       }
     }
   `,
@@ -46,22 +55,12 @@ export const GET_STORY = id => ({
 // TODO: sort out type
 export const GET_ALL_STORIES = ({
   query: gql`
+    ${STORY_FRAGMENT}
+    ${STORY_LINK_FRAGMENT}
     query {
       stories (type: "*") {
-        id
-        type
-        title
-        description
-        timeInterval
-        submissionDate
-        location
-        contributionNotes
-        locationDescription
-        format
-        identifier
-        language
-        source
-        transcription
+        ...StoryFragment
+        ...StoryLinkFragment
       }
     }
   `,

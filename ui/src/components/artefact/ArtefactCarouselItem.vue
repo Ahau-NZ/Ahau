@@ -9,7 +9,7 @@
     >
       <v-img
         v-if="artefact.type === 'photo'"
-        :src="artefact.blob"
+        :src="artefact.uri"
         :contain='controls'
         class="media"
         tile
@@ -26,10 +26,10 @@
         </template> -->
       </v-img>
       <div v-if="artefact.type === 'video'">
-        <video ref="video" :src="artefact.blob" :controls="hover && controls" class="video"/>
+        <video ref="video" :src="artefact.uri" :controls="hover && controls" class="video"/>
       </div>
       <div v-if="artefact.type === 'audio'" class="media" >
-        <audio :src="artefact.blob"
+        <audio :src="artefact.uri"
           :controls="controls" class="px-12" style="width:100%;height:80%;"
         />
         <v-icon size="50" class="center">mdi-music</v-icon>
