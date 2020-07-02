@@ -440,8 +440,6 @@ export default {
       const relationshipAttrs = pick($event, [...PERMITTED_RELATIONSHIP_ATTRS])
       const profileId = this.selectedProfile.id
 
-      console.log('avatarImage', profileChanges)
-
       if (!isEmpty(relationshipAttrs) && this.selectedProfile.id !== this.view.focus) {
         const relationship = this.selectedProfile.relationship
         const input = {
