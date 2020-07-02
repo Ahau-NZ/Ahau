@@ -5,8 +5,10 @@ const apolloProvider = createProvider()
 const apolloClient = apolloProvider.defaultClient
 
 export const PERMITTED_PROFILE_ATTRS = [
+  // WARNING: make sure header and avatar images are the first two
   'headerImage',
   'avatarImage',
+  'id',
   'gender',
   'legalName',
   'aliveInterval',

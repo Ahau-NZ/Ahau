@@ -149,7 +149,7 @@
               <!-- <AddButton label="Creator" @click="showCreator = true" /> -->
               <ProfileSearchBar
                 :selectedItems.sync="formData.creator"
-                :items="items"
+                :items="suggestions"
                 :searchString.sync="searchString"
                 :openMenu.sync="showCreator"
                 single
@@ -286,7 +286,7 @@
               </v-row>
               <ProfileSearchBar
                 :selectedItems.sync="formData.contributors"
-                :items="items"
+                :items="suggestions"
                 :searchString.sync="searchString"
                 :openMenu.sync="showContributors"
                 type="profile"

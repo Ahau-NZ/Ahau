@@ -4,7 +4,7 @@
     <v-list-item class="px-0" style="min-height:0; height:10px">
       <v-list-item-icon v-if="!fullStory" class="pt-0 mt-0" style="position:absolute; top:5px; right:1px; margin-right:0px">
         <v-list-item-subtitle v-if="!mobile" class="no-flex">contributors</v-list-item-subtitle>
-        <AvatarGroup :profiles="story.contributors" customClass="ma-0 pa-0" style="position:relative; bottom:10px;" size="28px" spacing="pr-1"/>
+        <AvatarGroup :profiles="story.contributors.map(c => c.profile)" customClass="ma-0 pa-0" style="position:relative; bottom:10px;" size="28px" spacing="pr-1"/>
       </v-list-item-icon>
     </v-list-item>
     <v-btn v-if="fullStory && !showArtefact && !mobile" @click="close"
@@ -108,7 +108,7 @@
             style="position:relative; bottom:15px;"
             show-labels size="50px"
             spacing="pr-2"
-            :profiles="story.contributors"
+            :profiles="story.contributors.map(c => c.profile)"
             @profile-click="openProfile($event)"
           />
         </div>

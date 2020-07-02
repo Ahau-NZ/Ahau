@@ -42,6 +42,12 @@ export const STORY_LINK_FRAGMENT = gql`
         ...ProfileFragment
       }
     }
+    contributors: contributorLinks {
+      linkId
+      profile {
+        ...ProfileFragment
+      }
+    }
   }
 `
 

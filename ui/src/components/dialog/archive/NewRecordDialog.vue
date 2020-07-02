@@ -76,6 +76,7 @@ function setDefaultStory (newStory) {
 
   var artefacts = story.artefacts
   var mentions = story.mentions
+  var contributors = story.contributors
 
   if (artefacts && artefacts.length > 0) {
     artefacts = artefacts.map(a => a.artefact)
@@ -83,6 +84,10 @@ function setDefaultStory (newStory) {
 
   if (mentions && mentions.length > 0) {
     mentions = mentions.map(m => m.profile)
+  }
+
+  if (contributors && contributors.length > 0) {
+    contributors = contributors.map(c => c.profile)
   }
 
   return {
@@ -108,7 +113,7 @@ function setDefaultStory (newStory) {
     categories: story.categories,
     collections: story.collections,
     access: story.access,
-    contributors: story.contributors,
+    contributors,
     protocols: story.protocols,
     relatedRecords: story.relatedRecords,
     artefacts
@@ -199,6 +204,7 @@ export default {
       if (this.editing) {
         // get all changes
         output = { id: this.story.id, ...storyChanges(this.story, this.formData) }
+        console.log('editing', output)
       } else {
         output = storySubmission(this.formData)
       }
