@@ -52,6 +52,7 @@ module.exports = {
           }
         ]),
         context,
+        // context: { ...context, pubsub },
         mockEntireSchema: false
       })
       server.applyMiddleware({ app })
