@@ -216,8 +216,6 @@ import isEmpty from 'lodash.isempty'
 import pick from 'lodash.pick'
 import clone from 'lodash.clonedeep'
 
-import edtf from 'edtf'
-
 import ProfileForm from '@/components/profile-form/ProfileForm.vue'
 
 import Avatar from '@/components/Avatar.vue'
