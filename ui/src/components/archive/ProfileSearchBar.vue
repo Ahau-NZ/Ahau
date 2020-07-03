@@ -67,10 +67,10 @@
         <!-- RELATED RECORDS + COLLECTIONS -->
         <template v-else-if="type === 'collection'">
           <v-list-item @click="addSelectedItem(data.item, $event)">
-            <Avatar class="mr-3" size="40px" isView :image="data.item.image"/>
+            <Avatar class="mr-3" size="40px" isView :image="getImage(data.item)"/>
             <v-list-item-content>
               <v-list-item-title>
-                {{ data.item.title }}
+                {{ data.item.title || 'Untitled Record' }}
               </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
@@ -145,6 +145,17 @@ export default {
     }
   },
   methods: {
+    getImage (item) {
+      const { artefacts } = item
+
+      if (artefacts && artefacts.length > 0) {
+        // still in link format
+        var artefact = artefacts[0].artefact
+        if (artefact.type === 'photo') return artefact
+      }
+
+      return null
+    },
     clearSuggestions () {
       this.$emit('getSuggestions', null)
     },

@@ -135,7 +135,7 @@
       <v-row class="px-4">
         <v-col class="pt-0 pr-1" v-if="story.relatedRecords && story.relatedRecords.length > 0" :cols="mobile ? '12':'12'">
           <v-list-item-subtitle class="pb-1" style="color:grey"> Related records </v-list-item-subtitle>
-          <ChipGroup :chips="story.relatedRecords" type="story"/>
+          <ChipGroup :chips="story.relatedRecords.map(r => r.story)" type="story"/>
         </v-col>
       </v-row>
       <v-row class="px-4 mb-12">

@@ -157,7 +157,7 @@ export default {
     ...mapMutations(['addStoryToStories', 'updateStoryInStories', 'removeStoryFromStories']),
     ...mapActions(['setComponent', 'setShowStory', 'setDialog']),
     async saveStory (input) {
-      var { id, artefacts, mentions, contributors } = input
+      var { id, artefacts, mentions, contributors, relatedRecords } = input
 
       try {
         if (!id) {
@@ -251,6 +251,34 @@ export default {
                 await this.removeLink({ date: new Date(), linkId: profile.linkId })
               }
               return profile
+            }))
+          }
+        }
+
+        if (relatedRecords) {
+          const { add, remove } = relatedRecords
+
+          if (add && add.length > 0) {
+            await Promise.all(add.map(async story => {
+              if (story.id) {
+                const linkInput = {
+                  type: TYPES.STORY_STORY,
+                  parent: id,
+                  child: story.id
+                }
+
+                await this.saveLink(linkInput)
+              }
+              return story
+            }))
+          }
+
+          if (remove && remove.length > 0) {
+            await Promise.all(remove.map(async story => {
+              if (story.linkId) {
+                await this.removeLink({ date: new Date(), linkId: story.linkId })
+              }
+              return story
             }))
           }
         }

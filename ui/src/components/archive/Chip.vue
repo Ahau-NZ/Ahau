@@ -4,12 +4,13 @@
       <v-row >
         <v-col cols="auto" class="pa-0 pl-3">
           <v-img
-            v-if="thumbnail"
+            v-if="hasImage"
             height=60
             width="80"
-            :src="src"
-          ></v-img>
-          <v-card height=60 width="80" v-else style="background-color:#383838">
+            :src="getImage"
+          >
+          </v-img>
+          <v-card v-else height=60 width="80" style="background-color:#383838">
             <v-icon x-large class="pl-5 pt-2">mdi-book-open</v-icon>
           </v-card>
         </v-col>
@@ -50,15 +51,25 @@ export default {
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
-    thumbnail () {
-      if (this.chip.image) return true
-      else if (this.type === 'story' && this.chip.artefacts.length && this.chip.artefacts[0].type === 'photo') return true
-      else return false
+    hasImage () {
+      if (this.chip.image && this.chip.uri) return true
+      else if (this.type === 'story' && this.chip.artefacts && this.chip.artefacts.length > 0) {
+        var artefact = this.chip.artefacts[0].artefact
+        if (artefact.type === 'photo') {
+          return true
+        }
+      }
+      return false
     },
-    src () {
-      if (this.chip.image && this.chip.image.uri) return this.chip.image.uri
-      else if (this.type === 'story') return this.chip.artefacts[0].blob
-      return this.chip.image
+    getImage () {
+      if (this.chip.image && this.chip.uri) return this.chip.uri
+      else if (this.type === 'story' && this.chip.artefacts && this.chip.artefacts.length > 0) {
+        var artefact = this.chip.artefacts[0].artefact
+        if (artefact.type === 'photo') {
+          return artefact.uri
+        }
+      }
+      return null
     }
   }
 }

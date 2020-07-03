@@ -272,7 +272,7 @@
                 item="title"
                 placeholder="add related records"
               />
-              <ChipGroup type="story" :chips="formData.relatedRecords" deletable @delete="removeItem(formData.relatedRecords, $event)" />
+              <ChipGroup v-if="formData.relatedRecords && formData.relatedRecords.length > 0" type="story" :chips="formData.relatedRecords" deletable @delete="removeItem(formData.relatedRecords, $event)" />
               <v-divider v-if="mobile" light class="mt-6 mr-4"></v-divider>
             </v-col>
             <!-- ADD CONTRIBUTORS -->

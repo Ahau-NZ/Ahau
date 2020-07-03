@@ -12,6 +12,7 @@ export function SET_DEFAULT_STORY (newStory) {
   var artefacts = story.artefacts
   var mentions = story.mentions
   var contributors = story.contributors
+  var relatedRecords = story.relatedRecords
 
   if (artefacts && artefacts.length > 0) {
     artefacts = artefacts.map(a => {
@@ -32,10 +33,19 @@ export function SET_DEFAULT_STORY (newStory) {
   }
 
   if (contributors && contributors.length > 0) {
-    contributors = contributors.map(m => {
+    contributors = contributors.map(c => {
       return {
-        ...m.profile,
-        linkId: m.linkId
+        ...c.profile,
+        linkId: c.linkId
+      }
+    })
+  }
+
+  if (relatedRecords && relatedRecords.length > 0) {
+    relatedRecords = relatedRecords.map(r => {
+      return {
+        ...r.story,
+        linkId: r.linkId
       }
     })
   }
@@ -65,7 +75,7 @@ export function SET_DEFAULT_STORY (newStory) {
     access: story.access,
     contributors,
     protocols: story.protocols,
-    relatedRecords: story.relatedRecords,
+    relatedRecords,
     artefacts
   }
 }
@@ -153,6 +163,18 @@ export const STORY_LINK_FRAGMENT = gql`
       linkId
       profile {
         ...ProfileFragment
+      }
+    }
+    relatedRecords: storyLinks {
+      linkId
+      story {
+        ...StoryFragment
+        artefacts: artefactLinks {
+          linkId
+          artefact {
+            ...ArtefactFragment
+          }
+        }
       }
     }
   }
