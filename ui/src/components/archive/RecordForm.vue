@@ -148,13 +148,13 @@
               <!-- <AddButton label="Creator" @click="showCreator = true" /> -->
               <ProfileSearchBar
                 :selectedItems.sync="formData.creator"
-                :items="suggestions"
-                :searchString.sync="searchString"
+                :items="creators"
                 :openMenu.sync="showCreator"
                 single
                 type="profile"
                 item="preferredName"
                 placeholder="add creator"
+                @getSuggestions="getSuggestions('creators', $event)"
               />
               <div v-if="formData.creator" class="pt-5 pl-5">
                 <Avatar
@@ -457,6 +457,7 @@ export default {
       mentions: [],
       contributors: [],
       access: [],
+      creators: [],
       showMentions: false,
       showCategories: false,
       showContributors: false,

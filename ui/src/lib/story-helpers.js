@@ -88,7 +88,7 @@ export const EMPTY_STORY = {
   endDate: null,
   location: null,
   locationDescription: null,
-  creator: {},
+  creator: null,
   contributionNotes: null,
 
   format: null,
