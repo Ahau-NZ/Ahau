@@ -67,7 +67,6 @@
         <!-- RELATED RECORDS + COLLECTIONS -->
         <template v-else-if="type === 'collection'">
           <v-list-item @click="addSelectedItem(data.item, $event)">
-            <!-- <Avatar class="mr-3" size="40px" isView :image="getImage(data.item)"/> -->
             <v-list-item-avatar tile left>
               <v-img
                 v-if="getImage(data.item)"
