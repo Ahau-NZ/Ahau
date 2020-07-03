@@ -200,87 +200,15 @@ export default {
         }
 
         if (mentions) {
-          const { add, remove } = mentions
-
-          if (add && add.length > 0) {
-            await Promise.all(add.map(async profile => {
-              if (profile.id) {
-                const linkInput = {
-                  type: TYPES.STORY_PROFILE_MENTION,
-                  parent: id,
-                  child: profile.id
-                }
-
-                await this.saveLink(linkInput)
-              }
-              return profile
-            }))
-          }
-
-          if (remove && remove.length > 0) {
-            await Promise.all(remove.map(async profile => {
-              if (profile.linkId) {
-                await this.removeLink({ date: new Date(), linkId: profile.linkId })
-              }
-              return profile
-            }))
-          }
+          await this.processLinks(id, mentions, TYPES.STORY_PROFILE_MENTION)
         }
 
         if (contributors) {
-          const { add, remove } = contributors
-
-          if (add && add.length > 0) {
-            await Promise.all(add.map(async profile => {
-              if (profile.id) {
-                const linkInput = {
-                  type: TYPES.STORY_PROFILE_CONTRIBUTOR,
-                  parent: id,
-                  child: profile.id
-                }
-
-                await this.saveLink(linkInput)
-              }
-              return profile
-            }))
-          }
-
-          if (remove && remove.length > 0) {
-            await Promise.all(remove.map(async profile => {
-              if (profile.linkId) {
-                await this.removeLink({ date: new Date(), linkId: profile.linkId })
-              }
-              return profile
-            }))
-          }
+          await this.processLinks(id, contributors, TYPES.STORY_PROFILE_CONTRIBUTOR)
         }
 
         if (relatedRecords) {
-          const { add, remove } = relatedRecords
-
-          if (add && add.length > 0) {
-            await Promise.all(add.map(async story => {
-              if (story.id) {
-                const linkInput = {
-                  type: TYPES.STORY_STORY,
-                  parent: id,
-                  child: story.id
-                }
-
-                await this.saveLink(linkInput)
-              }
-              return story
-            }))
-          }
-
-          if (remove && remove.length > 0) {
-            await Promise.all(remove.map(async story => {
-              if (story.linkId) {
-                await this.removeLink({ date: new Date(), linkId: story.linkId })
-              }
-              return story
-            }))
-          }
+          await this.processLinks(id, relatedRecords, TYPES.STORY_STORY)
         }
 
         var story = await this.getStory(id)
@@ -295,6 +223,33 @@ export default {
         }
       } catch (err) {
         throw err
+      }
+    },
+    async processLinks (parentId, object, type) {
+      const { add, remove } = object
+
+      if (add && add.length > 0) {
+        await Promise.all(add.map(async linkedItem => {
+          if (linkedItem.id) {
+            const linkInput = {
+              type,
+              parent: parentId,
+              child: linkedItem.id
+            }
+
+            await this.saveLink(linkInput)
+          }
+          return linkedItem
+        }))
+      }
+
+      if (remove && remove.length > 0) {
+        await Promise.all(remove.map(async linkedItem => {
+          if (linkedItem.linkId) {
+            await this.removeLink({ date: new Date(), linkId: linkedItem.linkId })
+          }
+          return linkedItem
+        }))
       }
     },
     async saveArtefact (input) {
