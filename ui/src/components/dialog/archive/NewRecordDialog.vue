@@ -34,134 +34,17 @@
 </template>
 
 <script>
-import pick from 'lodash.pick'
-import isEmpty from 'lodash.isempty'
-import isEqual from 'lodash.isequal'
 
 import Dialog from '@/components/dialog/Dialog.vue'
 import RecordForm from '@/components/archive/RecordForm.vue'
-import clone from 'lodash.clonedeep'
+
 import { mapActions } from 'vuex'
 
-const EMPTY_STORY = {
-  id: '',
-  title: '',
-  description: '',
-  startDate: '',
-  endDate: '',
-  location: '',
-  locationDescription: '',
-  creator: {},
-  contributionNotes: '',
-
-  format: '',
-  identifier: '',
-  source: '',
-  language: '',
-  translation: '',
-  culturalNarrative: '',
-
-  mentions: [],
-  categories: [],
-  collections: [],
-  access: [],
-  contributors: [],
-  protocols: [],
-  relatedRecords: [],
-  artefacts: []
-}
-
-function setDefaultStory (newStory) {
-  var story = clone(newStory)
-
-  var artefacts = story.artefacts
-  var mentions = story.mentions
-  var contributors = story.contributors
-
-  if (artefacts && artefacts.length > 0) {
-    artefacts = artefacts.map(a => a.artefact)
-  }
-
-  if (mentions && mentions.length > 0) {
-    mentions = mentions.map(m => m.profile)
-  }
-
-  if (contributors && contributors.length > 0) {
-    contributors = contributors.map(c => c.profile)
-  }
-
-  return {
-    id: story.id,
-    title: story.title,
-    description: story.description,
-    startDate: story.startDate,
-    endDate: story.endDate,
-    location: story.location,
-    locationDescription: story.locationDescription,
-    creator: story.creator,
-    submissionDate: story.submissionDate,
-    contributionNotes: story.contributionNotes,
-
-    format: story.format,
-    identifier: story.identifier,
-    source: story.source,
-    language: story.language,
-    translation: story.translation,
-    culturalNarrative: story.culturalNarrative,
-
-    mentions,
-    categories: story.categories,
-    collections: story.collections,
-    access: story.access,
-    contributors,
-    protocols: story.protocols,
-    relatedRecords: story.relatedRecords,
-    artefacts
-  }
-}
-
-function storyChanges (initial, updated) {
-  let changes = []
-  Object.entries(updated).forEach(([key, value]) => {
-    if (!isEqual(updated[key], initial[key])) {
-      switch (true) {
-        case Array.isArray(updated[key]) && key !== 'artefacts':
-          changes[key] = { add: [], remove: [] }
-          changes[key].add = arrayChanges(updated[key], initial[key])
-          changes[key].remove = arrayChanges(initial[key], updated[key])
-
-          if (changes[key].add.length === 0) delete changes[key].add
-          if (changes[key].remove.length === 0) delete changes[key].remove
-
-          // means the same item was remove then added back in
-          if (isEmpty(changes[key])) delete changes[key]
-          break
-        default:
-          changes[key] = updated[key]
-          break
-      }
-    }
-  })
-  return changes
-}
-
-function arrayChanges (array1, array2) {
-  return array1.filter(item => !array2.some(item2 => item.id === item2.id))
-    .map(item => item.id) // map it to id
-}
-
-const PERMITTED_STORY_ATTRS = Object.keys(setDefaultStory(EMPTY_STORY))
-
-function storySubmission (newStory) {
-  var output = {}
-  var story = pick(newStory, [...PERMITTED_STORY_ATTRS])
-  Object.entries(story).forEach(([key, value]) => {
-    if (!isEmpty(story[key])) {
-      output[key] = value
-    }
-  })
-  return Object.assign({}, output)
-}
+import {
+  GET_CHANGES,
+  EMPTY_STORY,
+  SET_DEFAULT_STORY
+} from '@/lib/story-helpers.js'
 
 export default {
   name: 'NewRecordDialog',
@@ -177,7 +60,7 @@ export default {
   },
   data () {
     return {
-      formData: setDefaultStory(this.story)
+      formData: SET_DEFAULT_STORY(this.story)
     }
   },
   computed: {
@@ -185,28 +68,19 @@ export default {
       return this.$vuetify.breakpoint.xs
     }
   },
-  watch: {
-    story: {
-      handler (newVal) {
-        console.log(newVal)
-      },
-      deep: true
-    }
-  },
   methods: {
     ...mapActions(['setDialog']),
     close () {
-      this.formData = setDefaultStory(this.story)
+      this.formData = SET_DEFAULT_STORY(this.story)
       this.$emit('close')
     },
     submit () {
       var output = {}
       if (this.editing) {
         // get all changes
-        output = { id: this.story.id, ...storyChanges(this.story, this.formData) }
-        console.log('editing', output)
+        output = { id: this.story.id, ...GET_CHANGES(SET_DEFAULT_STORY(this.story), this.formData) }
       } else {
-        output = storySubmission(this.formData)
+        output = { ...GET_CHANGES(SET_DEFAULT_STORY(EMPTY_STORY), this.formData) }
       }
       this.$emit('submit', output)
       this.close()
