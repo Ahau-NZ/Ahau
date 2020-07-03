@@ -97,13 +97,12 @@
               </v-row>
               <ProfileSearchBar
                 :selectedItems.sync="formData.mentions"
-                :items="suggestions"
-                :searchString.sync="searchString"
+                :items="mentions"
                 :openMenu.sync="showMentions"
                 placeholder="add mention"
                 type="profile"
                 item="preferredName"
-                @getSuggestions="getSuggestions"
+                @getSuggestions="getSuggestions('mentions', $event)"
               />
               <AvatarGroup v-if="formData.mentions && formData.mentions.length > 0"
                 :profiles="formData.mentions"
@@ -123,12 +122,12 @@
               </v-row>
               <ProfileSearchBar
                 :selectedItems.sync="formData.access"
-                :items="suggestions"
-                :searchString.sync="searchString"
+                :items="access"
                 :openMenu.sync="showAccess"
                 type="profile"
                 item="preferredName"
                 placeholder="add access"
+                @getSuggestions="getSuggestions('access', $event)"
               />
               <AvatarGroup v-if="formData.access && formData.access.length > 0"
                 :profiles="formData.access"
@@ -267,8 +266,7 @@
               </v-row>
               <ProfileSearchBar
                 :selectedItems.sync="formData.relatedRecords"
-                :items="collections"
-                :searchString.sync="searchString"
+                :items="stories || []"
                 :openMenu.sync="showRecords"
                 type="collection"
                 item="title"
@@ -286,12 +284,13 @@
               </v-row>
               <ProfileSearchBar
                 :selectedItems.sync="formData.contributors"
-                :items="suggestions"
+                :items="contributors"
                 :searchString.sync="searchString"
                 :openMenu.sync="showContributors"
                 type="profile"
                 item="preferredName"
                 placeholder="contributors"
+                @getSuggestions="getSuggestions('contributors', $event)"
               />
               <AvatarGroup v-if="formData.contributors && formData.contributors.length > 0"
                 :profiles="formData.contributors"
@@ -455,6 +454,9 @@ export default {
       categories: [{ title: 'one' }, { title: 'two' }, { title: 'three' }, { title: 'four' }, { title: 'five' }, { title: 'six' }, { title: 'seven' }],
       collections: firstMocks,
       showLocation: false,
+      mentions: [],
+      contributors: [],
+      access: [],
       showMentions: false,
       showCategories: false,
       showContributors: false,
@@ -477,7 +479,7 @@ export default {
     this.showAdvanced()
   },
   computed: {
-    ...mapGetters(['showStory', 'whoami']),
+    ...mapGetters(['showStory', 'whoami', 'stories']),
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
@@ -504,9 +506,10 @@ export default {
     showAdvanced () {
       if (this.showStory) this.show = true
     },
-    async getSuggestions (name) {
-      if (name) this.suggestions = await findByName(name)
-      else this.suggestions = []
+    async getSuggestions (array, $event) {
+      var suggestions = []
+      if ($event) suggestions = await findByName($event)
+      this[array] = suggestions
     },
     toggleDialog ($event, dialog) {
       this.index = $event

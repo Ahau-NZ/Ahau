@@ -117,14 +117,14 @@ export const PERMITTED_STORY_ATTRS = [
 
 export const PERMITTED_STORY_LINKS = [
   'mentions',
-  'categories',
-  'collections',
-  'access',
+  // 'categories',
+  // 'collections',
+  // 'access',
   'contributors',
-  'protocols',
+  // 'protocols',
   'relatedRecords',
-  'artefacts',
-  'creator'
+  'artefacts'
+  // 'creator'
 ]
 
 export const STORY_FRAGMENT = gql`
