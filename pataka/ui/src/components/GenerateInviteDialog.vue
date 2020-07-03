@@ -11,7 +11,12 @@
           >Port-Forwarding</a> on your router.
         </p>
         <p>Bellow is the public IP we detected. Please enable Port-Fowarding and confirm this is the right IP.</p>
-        <v-text-field v-model="ip" label="This machines public IP" outlined />
+        <v-text-field
+          v-model="ip"
+          :error-messages="errorMsg"
+          label="This machines public IP"
+          outlined
+        />
       </v-col>
     </template>
     <!-- End Content Slot -->
@@ -19,7 +24,12 @@
     <!-- Actions Slot -->
     <template v-slot:actions style="border: 2px solid orange;">
       <v-btn @click="submit('local')" text large class="secondary--text">Use local network</v-btn>
-      <v-btn @click="submit('external')" text large class="blue--text ml-5">Port-forwarding set</v-btn>
+      <v-btn
+        @click="checkPortForwarding"
+        text
+        large
+        class="blue--text ml-5"
+      >{{checkingPort ? 'Checking' : 'Check Port-Fowarding'}}</v-btn>
     </template>
     <!-- End Actions Slot -->
   </Dialog>
@@ -36,7 +46,11 @@ export default {
   props: {
     show: { type: Boolean, required: true },
     title: { type: String },
-    publicIpv4: { type: String, default: 'xxx.xxx.xx.xx' }
+    publicIpv4: { type: String, default: 'xxx.xxx.xx.xx' },
+    portFowarding: { type: Boolean, default: false },
+    checkPortForwarding: { type: Function },
+    checkingPort: { type: Boolean, default: false },
+    errorMsg: { type: String }
   },
   data () {
     return {

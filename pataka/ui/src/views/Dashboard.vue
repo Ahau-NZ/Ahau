@@ -7,9 +7,9 @@
             <v-btn
               color="grey"
               outlined
-              :disabled="!network.ipv4"
+              :disabled="network.portForwarding === null"
               tile
-              @click="toggleDialog"
+              @click="tryInvite"
             >{{!network.ipv4 ? 'Loading network data' : 'Generate join code'}}</v-btn>
           </v-row>
         </v-col>
@@ -39,18 +39,31 @@
           <h2 class="subtitle-1 text-uppercase text-center">Name of Pataka</h2>
           <p class="subtitle-2 grey--text text-center">Pataka SSB ID</p>
           <v-col cols="8" class="mx-auto">
-            <v-row justify="center">
+            <v-row justify="start" class="pl-4">
               <div
                 class="dot mr-4"
+                :class="network.portForwarding ? 'green' : network.internetLatency === null ? 'grey' : 'orange'"
+              />
+              <p
+                class="body-1 text-uppercase text-center"
+              >{{ network.portForwarding ? 'Port-Forwarding' : network.portForwarding === null ? 'Checking' : 'Port-Forwarding Off' }}</p>
+            </v-row>
+            <v-row justify="start" class="pl-4">
+              <div
+                class="dot mr-4 internet-dot"
                 :class="network.internetLatency ? network.internetLatency === -1 ? 'red' : 'green' : 'grey'"
               />
               <p
                 class="body-1 text-uppercase text-center"
-              >{{ network.internetLatency ? network.internetLatency === -1 ? 'Offline' : 'Online' : 'Checking'}}</p>
+              >{{ network.internetLatency ? network.internetLatency === -1 ? 'Offline' : 'Connected to the Internet' : 'Checking'}}</p>
+              <span
+                v-if="network.internetLatency && network.internetLatency !== -1"
+                class="network-latency"
+              >{{network.internetLatency}}ms</span>
             </v-row>
-            <v-row justify="center">
+            <v-row justify="start" class="pl-4">
               <div class="dot mr-4" :class="network.ipv4 ? 'green' : 'grey'" />
-              <p class="body-1 text-uppercase">{{network.ipv4 ? ' Local' : 'Checking'}}</p>
+              <p class="body-1 text-uppercase">{{network.ipv4 ? ' Local Network' : 'Checking'}}</p>
             </v-row>
             <Meter title="CPU" :values="cpuLoad" />
             <Meter title="RAM" :values="memoryLoad" />
@@ -100,8 +113,12 @@
     <GenerateInviteDialog
       v-if="dialog"
       :show="dialog"
-      :publicIpv4="publicIpv4"
+      :publicIpv4="network.publicIpv4"
+      :portForwarding="network.portForwarding"
+      :checkPortForwarding="checkPortForwarding"
+      :checkingPort="checkingPort"
       :title="`Generate Invite Code`"
+      :errorMsg="errorMsg"
       @close="toggleDialog"
       @generate="generateInviteCode($event)"
     />
@@ -122,11 +139,14 @@ export default {
     copyText: 'Copy',
     generatedInvite: null,
     generateError: false,
-    publicIpv4: null,
+    errorMsg: null,
+    checkingPort: null,
     network: {
       internetLatency: null,
       ipv4: null,
-      ipv6: null
+      ipv6: null,
+      publicIpv4: null,
+      portForwarding: null
     },
     diskUsage: [],
     cpuLoad: [],
@@ -138,23 +158,16 @@ export default {
     }
   }),
   apollo: {
-    publicIpv4: {
-      query: gql`query {
-      network {
-        publicIpv4
-      }
-    }`,
-      update (data) {
-        return data.network.publicIpv4
-      }
-    },
     network: {
       query: gql`query {
       network {
         ipv4
         internetLatency
+        publicIpv4
+        portForwarding
       }
     }`,
+      pollInterval: 10000,
       update (data) {
         return data.network
       }
@@ -163,6 +176,7 @@ export default {
       query: gql`query {
       cpuLoad
     }`,
+      pollInterval: 5000,
       update (data) {
         return [ ...this.cpuLoad, data.cpuLoad ]
       }
@@ -171,6 +185,7 @@ export default {
       query: gql`query {
       memoryLoad
     }`,
+      pollInterval: 5000,
       update (data) {
         return [ ...this.memoryLoad, data.memoryLoad ]
       }
@@ -182,6 +197,7 @@ export default {
         fs
       }
     }`,
+      pollInterval: 10000,
       update (data) {
         return data.diskUsage
       }
@@ -194,25 +210,11 @@ export default {
         communityRecords
       }
     }`,
-      pollInterval: 300,
+      pollInterval: 5000,
       update (data) {
         return data.dataSummary
       }
     }
-  },
-  watch: {
-    'cpuLoad' (newValue) {
-      if (newValue.length === 1) this.$apollo.queries.cpuLoad.startPolling(5000)
-    },
-    'memoryLoad' (newValue) {
-      if (newValue.length === 1) this.$apollo.queries.memoryLoad.startPolling(5000)
-    },
-    'diskUsage' (newValue) {
-      this.$apollo.queries.diskUsage.startPolling(5000)
-    }
-    // 'dataSummary' (newValue) {
-    //   this.$apollo.queries.dataSummary.startPolling(5000)
-    // }
   },
   methods: {
     async toggleDialog () {
@@ -237,12 +239,37 @@ export default {
 
         })
         this.generateError = false
+        this.dialog = false
         this.generatedInvite = res.data.createInvite
         this.copyText = 'Copy'
       } catch (err) {
         this.generateError = err
         throw err
       }
+    },
+    async tryInvite () {
+      if (this.network.portForwarding) await this.generateInviteCode(this.network.publicIpv4)
+      else this.toggleDialog()
+    },
+    async checkPortForwarding () {
+      this.checkingPort = true
+      this.errorMsg = null
+      const res = await this.$apollo.query({
+        query: gql`query {
+            network {
+              portForwarding
+            }
+          }`
+      })
+      const pf = res.data.network.portForwarding
+      this.network.portForwarding = pf
+      if (pf) {
+        await this.tryInvite()
+        this.errorMsg = null
+      } else {
+        this.errorMsg = 'Port not open'
+      }
+      this.checkingPort = false
     },
     async getDiskUsage () {
       try {
@@ -307,6 +334,22 @@ export default {
 .grey {
   background-color: grey;
 }
+.internet-dot:hover ~ .network-latency {
+  left: -290px;
+}
+.network-latency {
+  position: relative;
+  left: -100vw;
+  top: -20px;
+  background: grey;
+  height: 30px;
+  width: 100px;
+  line-height: 30px;
+  text-align: center;
+  border-radius: 4px;
+  margin: 0 auto;
+}
+
 .stat-column {
   padding-top: 240px;
 }
