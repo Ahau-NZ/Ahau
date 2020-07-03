@@ -67,7 +67,15 @@
         <!-- RELATED RECORDS + COLLECTIONS -->
         <template v-else-if="type === 'collection'">
           <v-list-item @click="addSelectedItem(data.item, $event)">
-            <Avatar class="mr-3" size="40px" isView :image="getImage(data.item)"/>
+            <!-- <Avatar class="mr-3" size="40px" isView :image="getImage(data.item)"/> -->
+            <v-list-item-avatar tile left>
+              <v-img
+                v-if="getImage(data.item)"
+                :src="getImage(data.item)"
+              >
+              </v-img>
+              <v-icon v-else x-large>mdi-book-open</v-icon>
+            </v-list-item-avatar>
             <v-list-item-content>
               <v-list-item-title>
                 {{ data.item.title || 'Untitled Record' }}
@@ -151,7 +159,7 @@ export default {
       if (artefacts && artefacts.length > 0) {
         // still in link format
         var artefact = artefacts[0].artefact
-        if (artefact.type === 'photo') return artefact
+        if (artefact.type === 'photo') return artefact.uri
       }
 
       return null
