@@ -160,9 +160,10 @@ export default {
       var { id, artefacts, mentions, contributors, relatedRecords } = input
 
       try {
+        const res = await this.$apollo.mutate(SAVE_STORY(input))
+        if (res.errors) throw res.errors
+
         if (!id) {
-          const res = await this.$apollo.mutate(SAVE_STORY(input))
-          if (res.errors) throw res.errors
           id = res.data.saveStory
         }
 
