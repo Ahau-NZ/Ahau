@@ -210,6 +210,7 @@ import SearchButton from '@/components/button/SearchButton.vue'
 
 import tree from '@/lib/tree-helpers'
 import avatarHelper from '@/lib/avatar-helpers.js'
+import { GET_PROFILE } from '@/lib/profile-helpers.js'
 
 import DialogHandler from '@/components/dialog/DialogHandler.vue'
 import findSuccessor from '@/lib/find-successor'
@@ -449,85 +450,9 @@ export default {
       return profile
     },
 
-    async getRelatives (profileId) {
-      const request = {
-        query: gql`
-          query($id: String!) {
-            person(id: $id) {
-              id
-              preferredName
-              legalName
-              gender
-              aliveInterval
-              birthOrder
-              description
-              address
-              email
-              phone
-              location
-              profession
-              deceased
-              altNames
-              avatarImage {
-                uri
-              }
-              children {
-                profile {
-                  id
-                  preferredName
-                  legalName
-                  gender
-                  aliveInterval
-                  birthOrder
-                  description
-                  address
-                  email
-                  phone
-                  location
-                  profession
-                  deceased
-                  altNames
-                  avatarImage {
-                    uri
-                  }
-                }
-                linkId
-                relationshipType
-              }
-
-              parents {
-                profile {
-                  id
-                  preferredName
-                  legalName
-                  gender
-                  aliveInterval     
-                  birthOrder
-                  description
-                  address
-                  phone
-                  email
-                  location
-                  profession
-                  deceased
-                  altNames
-                  avatarImage {
-                    uri
-                  }
-                }
-                linkId
-                relationshipType
-              }
-            }
-          }
-        `,
-        variables: {
-          id: profileId
-        },
-        fetchPolicy: 'no-cache'
-      }
+    async getRelatives (id) {
       try {
-        const result = await this.$apollo.query(request)
+        const result = await this.$apollo.query(GET_PROFILE(id))
         if (result.errors) {
           console.error('WARNING, something went wrong')
           console.error(result.errors)

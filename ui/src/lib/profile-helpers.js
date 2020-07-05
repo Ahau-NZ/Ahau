@@ -51,7 +51,7 @@ export const whoami = ({
   fetchPolicy: 'no-cache'
 })
 
-export const getProfile = id => ({
+export const GET_PROFILE = id => ({
   query: gql`
     ${PROFILE_FRAGMENT}
     query($id: String!) {
@@ -82,7 +82,7 @@ export const getProfile = id => ({
 
 // get person with parents and children from DB
 export default async function getRelatives (profileId) {
-  const request = getProfile(profileId)
+  const request = GET_PROFILE(profileId)
   const result = await apolloClient.query(request)
   if (result.errors) {
     console.error('WARNING, something went wrong')
