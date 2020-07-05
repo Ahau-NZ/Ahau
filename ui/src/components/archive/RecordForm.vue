@@ -167,7 +167,7 @@
                   :deceased="formData.creator.deceased"
                   showLabel
                   deletable
-                  @delete="formData.creator = {}"
+                  @delete="formData.creator = null"
                 />
               </div>
             </v-col>
@@ -366,7 +366,7 @@
             </v-col>
             <v-col cols="12" class="pa-1">
               <v-textarea
-                v-model="formData.translation"
+                v-model="formData.transcription"
                 label="Translation/Transcription"
                 v-bind="customProps"
                 no-resize
