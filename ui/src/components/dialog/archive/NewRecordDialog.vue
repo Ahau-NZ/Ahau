@@ -38,7 +38,7 @@
 import Dialog from '@/components/dialog/Dialog.vue'
 import RecordForm from '@/components/archive/RecordForm.vue'
 
-import { mapActions } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 
 import {
   GET_CHANGES,
@@ -64,8 +64,16 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['whoami', 'currentProfile']),
     mobile () {
       return this.$vuetify.breakpoint.xs
+    }
+  },
+  mounted () {
+    if (!this.editing) {
+      this.formData.mentions.push(this.currentProfile)
+      this.formData.contributors.push(this.whoami.profile)
+      this.formData.access.push(this.whoami.profile)
     }
   },
   methods: {
