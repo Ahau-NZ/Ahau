@@ -62,7 +62,7 @@
     </v-list-item>
     <v-list-item :disabled="disableClick" :ripple="false" @click.stop="showText()">
       <v-list-item-content>
-        <v-list-item-subtitle v-if="fullStory || showArtefact" class="pb-1" style="color:grey"> Description </v-list-item-subtitle>
+        <v-list-item-subtitle v-if="fullStory || showArtefact" class="pb-1" style="color:grey">Description</v-list-item-subtitle>
         <p v-if="!showArtefact" ref="text" :class="turncateText ? 'description' : ''">
           {{ story.description }}
         </p>
@@ -71,10 +71,9 @@
         </p>
       </v-list-item-content>
     </v-list-item>
-    <v-row v-if="!showArtefact">
-
-      <v-col v-if="story.mentions && story.mentions.length > 0" class="py-0" :cols="mobile ? '12' : 'auto'">
-        <v-list-item-subtitle style="color:grey" class="ml-5 pb-1"> Mentions </v-list-item-subtitle>
+    <v-row v-if="!showArtefact" class="px-4">
+      <v-col v-if="story.mentions && story.mentions.length > 0" cols="12" sm="12" md="auto">
+        <v-list-item-subtitle style="color:grey">Mentions</v-list-item-subtitle>
         <AvatarGroup
           style="position:relative; bottom:15px;"
           :profiles="story.mentions.map(m => m.profile)"
@@ -84,40 +83,41 @@
           :clickable="fullStory"
         />
       </v-col>
-      <v-col v-if="story.location" class="pt-0" :cols="mobile ? '12' : '4'">
-        <v-list-item-subtitle style="color:grey" class="ms-5 pa-0 pb-1"> Location </v-list-item-subtitle>
-        <p class="mt-3 mb-5 ms-5">{{story.location}}</p>
+      <v-col v-if="story.location" class="pt-0" cols="12" sm="12" md="auto">
+        <v-list-item-subtitle style="color:grey" class="ms-5 pa-0 pb-1">Location</v-list-item-subtitle>
+        <p class="mt-3 mb-5 ms-5">{{ story.location }}</p>
+      </v-col>
+      <v-col v-if="story.access && story.access.length > 0" cols="12" sm="12" md="auto">
+        <v-list-item-subtitle style="color:grey">Access</v-list-item-subtitle>
+        <AvatarGroup
+          style="position:relative; bottom:15px;"
+          :profiles="story.access.map(m => m.profile)"
+          show-labels :size="fullStory ? '50px': '30px'"
+          spacing="pr-2"
+          @profile-click="openProfile($event)"
+          :clickable="fullStory"
+        />
+      </v-col>
+      <v-col v-if="story.contributors && story.contributors.length > 0 && fullStory" cols="12" sm="12" md="auto">
+        <v-list-item-subtitle style="color:grey">Contributors</v-list-item-subtitle>
+        <AvatarGroup
+          style="position:relative; bottom:15px;"
+          :profiles="story.contributors.map(m => m.profile)"
+          show-labels :size="fullStory ? '50px': '30px'"
+          spacing="pr-2"
+          @profile-click="openProfile($event)"
+          :clickable="fullStory"
+        />
+      </v-col>
+      <v-col v-if="fullStory">
+        <v-list-item-subtitle class="pb-1" style="color:grey">Submission date</v-list-item-subtitle>
+        <p class="mt-3">{{ story.submissionDate }}</p>
       </v-col>
     </v-row>
     <div v-if="fullStory && !showArtefact">
       <v-row class="px-4">
-        <div class="py-0 px-0">
-          <v-list-item-subtitle style="color:grey" class="ml-5 pb-1"> Access </v-list-item-subtitle>
-          <AvatarGroup
-            v-if="story.access && story.access.length > 0"
-            :profiles="story.access"
-            show-labels
-            size="50px"
-            style="position:relative; bottom:15px;"
-            @profile-click="openProfile($event)"
-          />
-        </div>
-        <div class="py-0 px-0">
-          <v-list-item-subtitle style="color:grey" class="ml-5 pb-1"> Contributors </v-list-item-subtitle>
-          <AvatarGroup
-            style="position:relative; bottom:15px;"
-            show-labels size="50px"
-            spacing="pr-2"
-            :profiles="story.contributors.map(c => c.profile)"
-            @profile-click="openProfile($event)"
-          />
-        </div>
-        <v-col :class="mobile ? 'pt-0': 'pt-0 pl-12'" style="min-width:188px; max-width:188px">
-          <v-list-item-subtitle class="pb-1" style="color:grey">Submission date </v-list-item-subtitle>
-            <p class="mt-3">{{story.submissionDate}}</p>
-        </v-col>
         <div class="py-0 px-0" v-if="story.creator" cols="3">
-          <v-list-item-subtitle style="color:grey" class="ml-5 pb-1"> Creator </v-list-item-subtitle>
+          <v-list-item-subtitle style="color:grey" class="ml-5 pb-1">Creator</v-list-item-subtitle>
             <Avatar
               size="50px"
               :image="story.creator.avatarImage"
@@ -133,42 +133,42 @@
         </div>
       </v-row>
       <v-row class="px-4">
-        <v-col class="pt-0 pr-1" v-if="story.relatedRecords && story.relatedRecords.length > 0" :cols="mobile ? '12':'12'">
-          <v-list-item-subtitle class="pb-1" style="color:grey"> Related records </v-list-item-subtitle>
+        <v-col class="pt-0 pr-1" v-if="story.relatedRecords && story.relatedRecords.length > 0" cols="12" sm="12" md="auto">
+          <v-list-item-subtitle class="pb-1" style="color:grey">Related records</v-list-item-subtitle>
           <ChipGroup :chips="story.relatedRecords.map(r => r.story)" type="story"/>
         </v-col>
       </v-row>
       <v-row class="px-4 mb-12">
         <v-col v-if="story.contributionNotes" cols="12" class="pb-6">
-          <v-list-item-subtitle class="pb-1" style="color:grey"> Contribution notes </v-list-item-subtitle>
+          <v-list-item-subtitle class="pb-1" style="color:grey">Contribution notes</v-list-item-subtitle>
           <p>{{ story.contributionNotes }}</p>
         </v-col>
         <v-col v-if="story.locationDescription" cols="12" class="pb-6">
-          <v-list-item-subtitle class="pb-1" style="color:grey"> Location description </v-list-item-subtitle>
+          <v-list-item-subtitle class="pb-1" style="color:grey">Location description</v-list-item-subtitle>
           <p>{{ story.locationDescription }}</p>
         </v-col>
         <v-col v-if="story.culturalNarrative" cols="12" class="pb-6">
-          <v-list-item-subtitle class="pb-1" style="color:grey"> Cultural narrative </v-list-item-subtitle>
+          <v-list-item-subtitle class="pb-1" style="color:grey">Cultural narrative</v-list-item-subtitle>
           <p>{{ story.culturalNarrative }}</p>
         </v-col>
         <v-col v-if="story.format" :cols="mobile ? '6' : '3'">
-          <v-list-item-subtitle class="pb-1" style="color:grey"> Format </v-list-item-subtitle>
+          <v-list-item-subtitle class="pb-1" style="color:grey">Format</v-list-item-subtitle>
           <p>{{ story.format }}</p>
         </v-col>
         <v-col v-if="story.identifier" :cols="mobile ? '6' : '3'">
-          <v-list-item-subtitle class="pb-1" style="color:grey"> Identifier </v-list-item-subtitle>
+          <v-list-item-subtitle class="pb-1" style="color:grey">Identifier</v-list-item-subtitle>
           <p>{{ story.identifier }}</p>
         </v-col>
         <v-col v-if="story.source" :cols="mobile ? '6' : '3'">
-          <v-list-item-subtitle class="pb-1" style="color:grey"> Source </v-list-item-subtitle>
+          <v-list-item-subtitle class="pb-1" style="color:grey">Source</v-list-item-subtitle>
           <p>{{ story.source }}</p>
         </v-col>
         <v-col v-if="story.language" :cols="mobile ? '6' : '3'">
-          <v-list-item-subtitle class="pb-1" style="color:grey"> Language </v-list-item-subtitle>
+          <v-list-item-subtitle class="pb-1" style="color:grey">Language</v-list-item-subtitle>
           <p>{{ story.language }}</p>
         </v-col>
         <v-col v-if="story.transcription" cols="12" class="pb-6">
-          <v-list-item-subtitle class="pb-1" style="color:grey"> Translation / Transcription </v-list-item-subtitle>
+          <v-list-item-subtitle class="pb-1" style="color:grey">Translation / Transcription</v-list-item-subtitle>
           <p>{{ story.transcription }}</p>
         </v-col>
       </v-row>
