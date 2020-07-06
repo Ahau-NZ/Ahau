@@ -7,10 +7,10 @@
   "dependencies": {
     "@apollo/federation": "^0.11.3",
     "@ssb-graphql/artefact": "^0.1.1",
-    "@ssb-graphql/whakapapa": "^2.0.0",
     "@ssb-graphql/main": "^3.0.1",
     "@ssb-graphql/profile": "^1.0.2",
     "@ssb-graphql/story": "^1.0.0",
+    "@ssb-graphql/whakapapa": "^2.1.0",
     "apollo-server": "^2.9.3",
     "apollo-server-express": "^2.9.6",
     "cors": "^2.8.5",
