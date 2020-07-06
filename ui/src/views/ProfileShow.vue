@@ -11,7 +11,10 @@
       <v-col cols="12" offset-md="2" md="8" sm="12" :class="!mobile ? 'pl-12' : '' " :align="mobile ? 'center' : 'start'">
         <h1 class="primary--text" :style="mobile ? length: ''">{{ currentProfile.legalName ? currentProfile.legalName : currentProfile.preferredName }}</h1>
       </v-col>
-      <v-col :order="mobile ? 'first' : 'last'" :align="mobile ? 'end' : 'center'" cols="12" md="2" sm="12"  class="px-5">
+      <v-col :order="mobile ? 'first' : 'last'" :align="mobile ? 'end' : 'center'" cols="12" :md="groupTiaki ? 1:2" sm="12"  class="px-5">
+        <EditProfileButton @click="currentProfile.type === 'person' ? setDialog('edit-node') : setDialog('edit-community')" />
+      </v-col>
+      <v-col v-if="groupTiaki" :order="mobile ? 'first' : 'last'" :align="mobile ? 'end' : 'center'" cols="12" md="1" sm="12"  class="px-5">
         <EditProfileButton @click="currentProfile.type === 'person' ? setDialog('edit-node') : setDialog('edit-community')" />
       </v-col>
     </v-row>
@@ -77,6 +80,9 @@ export default {
     ...mapGetters(['currentProfile', 'activeComponent', 'showStory', 'showArtefact']),
     mobile () {
       return this.$vuetify.breakpoint.xs
+    },
+    groupTiaki () {
+      return this.currentProfile.type === 'community' 
     },
     length () {
       if (this.currentProfile.legalName) {

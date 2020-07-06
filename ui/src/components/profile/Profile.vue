@@ -1,7 +1,7 @@
 <template>
     <v-row class="mb-12" :class="mobile ? 'mobile-profile':''">
       <v-col cols="12" sx="12" sm="12" md="9" :class="mobile ? 'pt-7 pb-5 px-5' : 'px-5' ">
-        <RegisterButton v-if="profile.type === 'community'"/>
+        <!-- <RegisterButton v-if="profile.type === 'community'" :class="!mobile ? 'margin-top':''"/> -->
         <ProfileInfoCard v-if="profile.type === 'person'" :profile="profile" @setupProfile="setupProfile($event)" />
         <ProfileCard>
           <template v-slot:content>
@@ -69,7 +69,7 @@ import calculateAge from '@/lib/calculate-age'
 import formatDate from '@/lib/format-date'
 import Avatar from '@/components/Avatar.vue'
 import { mapGetters } from 'vuex'
-import RegisterButton from '@/components/button/RegisterButton.vue'
+// import RegisterButton from '@/components/button/RegisterButton.vue'
 
 export default {
   name: 'Profile',
@@ -78,7 +78,7 @@ export default {
     ProfileCard,
     ProfileInfoItem,
     Avatar,
-    RegisterButton
+    // RegisterButton
   },
   props: {
     profile: {
@@ -98,7 +98,7 @@ export default {
   computed: {
     ...mapGetters(['whoami']),
     mobile () {
-      return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
+      return this.$vuetify.breakpoint.xs
     }
   },
   methods: {
@@ -146,5 +146,9 @@ export default {
   .br {
   border-right: 0.5px solid rgba(0,0,0,0.3);
   }
+
+  // .margin-top {
+  //   margin-top: -75px
+  // }
 
 </style>

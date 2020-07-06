@@ -1,18 +1,19 @@
 <template>
-    <v-btn pill outlined relative large color="#b12526" :class="mobile ? 'mobileBtn' : 'btn'">
-        join community
+     <v-btn pill outlined large color="#b12526" height="50px" :class="mobile ? 'mobileBtn':'btn'">
+        <span>join community</span>
     </v-btn>
-    <!-- <v-btn v-on="on"  @click="toggle()" :small="!mobile" :x-small="mobile" :class="mobile ? 'my-2 mr-2': 'my-2'" fab color="white">
-        <v-icon :medium ="!mobile" :small="mobile" class="black--text">mdi-account-edit</v-icon>
-    </v-btn> -->
-    <!-- <h1 style="color:black">register button</h1> -->
+    <!-- <v-col align="end" class="px-0">
+        <v-btn pill outlined large color="#b12526" :width="mobile ? '100%':'25%'" height="50px">
+            join community
+        </v-btn>
+    </v-col> -->
 </template>
 <script>
 export default {
   computed: {
     mobile () {
-      return this.$vuetify.breakpoint.xs
-    }
+      return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
+    },
   },
   methods: {
     toggle () {
@@ -24,23 +25,22 @@ export default {
 <style lang="scss">
 
     .btn {
-        position: absolute;
-        top: 320px;
+        margin-top:43px;
+        margin-left:20px;
         background-color: white;
-        width: 20%;
-        right: 278px;
         border-radius: 10px;
-        height: 50px !important;
         font-size: 1rem !important;
+        max-width: 250px;
+        width:17vw;
+        border-width: 2px;
     }
 
     .mobileBtn {
-        width: 106%;
-        position: relative;
-        margin-bottom: 15px;
+        margin-left:-10px;
+        margin-top:10px;
         border-radius: 10px;
-        right: 11px;
-        height: 50px !important;
         font-size: 1rem !important;
+        width:106%;
+        border-width: 2px;
     }
 </style>

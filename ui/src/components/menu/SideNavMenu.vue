@@ -8,7 +8,8 @@
           </v-btn>
         </v-row>
       </v-col>
-      <v-row :class="mobile ? 'rounded-border' : 'ml-12'" >
+      <RegisterButton v-if="profile.type === 'community'"/>
+      <v-row v-else :class="mobile ? 'rounded-border' : 'ml-12'" >
         <v-col align="center" :class="mobile ? 'py-0 px-0' : tablet ? 'py-4 px-0' : 'py-1'">
           <v-btn @click="setActive('profile')" light :fab="mobile" text>
             <v-col class="pa-0" :cols="mobile ? '12' : '2'">
@@ -87,6 +88,8 @@ import ArchiveIcon from '@/components/button/ArchiveIcon.vue'
 import WhakapapaIcon from '@/components/button/WhakapapaIcon.vue'
 import UserIcon from '@/components/button/UserIcon.vue'
 import TimelineIcon from '@/components/button/TimelineIcon.vue'
+import RegisterButton from '@/components/button/RegisterButton.vue'
+
 
 import Avatar from '@/components/Avatar.vue'
 import { mapGetters, mapActions } from 'vuex'
@@ -220,7 +223,8 @@ export default {
     WhakapapaIcon,
     UserIcon,
     TimelineIcon,
-    Avatar
+    Avatar,
+    RegisterButton
   }
 }
 </script>
