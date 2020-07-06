@@ -1,10 +1,13 @@
 <template>
-  <div style="width: 180px;">
+  <div :style="mobile ? 'width: 180px;' : 'width: 300px;'">
     <v-combobox
       v-if="openMenu"
+      v-model="chips"
+      id="combobox"
+      ref="combobox"
       :items="items"
-      :item-text="item"
       item-value="id"
+      :item-text="item"
       :multiple="!single"
       :menu-props="{ light: true, value: openMenu, closeOnClick: true, openOnClick: true }"
       hide-selected
@@ -16,34 +19,28 @@
       dense
       rounded
       outlined
-      deletable-chips
       :searchInput.sync="searchInput"
       :autofocus="openMenu"
-      id="combobox"
-      ref="combobox"
-      bottom
       :blur="clearSuggestions"
       class="search-input"
     >
-      <template v-slot:selection="data">
-        <slot name="selection" :data="data"></slot>
+      <template v-slot:selection="{}">
       </template>
-      <template v-slot:item="data">
-
+      <template v-slot:item="{ item }">
         <!-- MENTIONS + CONTRIBUTORS + CREATOR -->
-        <template v-if="type === 'profile'">
-          <v-list-item @click="addSelectedItem(data.item)">
-            <Avatar class="mr-3" size="40px" :image="data.item.avatarImage" :alt="data.item.preferredName" :gender="data.item.gender" :aliveInterval="data.item.aliveInterval" />
+        <template v-if="type === 'profile'" >
+          <v-list-item @click="addSelectedItem(item)">
+            <Avatar class="mr-3" size="40px" :image="item.avatarImage" :alt="item.preferredName" :gender="item.gender" :aliveInterval="item.aliveInterval" />
             <v-list-item-content>
-              <v-list-item-title> {{ data.item.preferredName }} </v-list-item-title>
+              <v-list-item-title> {{ item.preferredName }} </v-list-item-title>
               <v-list-item-subtitle>Preferred name</v-list-item-subtitle>
             </v-list-item-content>
             <v-list-item-content>
-              <v-list-item-title> {{ data.item.legalName ? data.item.legalName :  '&nbsp;' }} </v-list-item-title>
+              <v-list-item-title> {{ item.legalName ? item.legalName :  '&nbsp;' }} </v-list-item-title>
               <v-list-item-subtitle>Legal name</v-list-item-subtitle>
             </v-list-item-content>
             <v-list-item-action>
-              <v-list-item-title> {{ age(data.item.aliveInterval) }} </v-list-item-title>
+              <v-list-item-title> {{ age(item.aliveInterval) }} </v-list-item-title>
               <v-list-item-subtitle>Age</v-list-item-subtitle>
             </v-list-item-action>
           </v-list-item>
@@ -51,14 +48,14 @@
 
         <!-- ACCESS -->
         <template v-else-if="type === 'commuinty'">
-          <v-list-item @click="addSelectedItem(data.item)">
-            <Avatar class="mr-3" size="40px" :image="data.item.avatarImage" :alt="data.item.preferredName" :gender="data.item.gender" :aliveInterval="data.item.aliveInterval" />
+          <v-list-item @click="addSelectedItem(item)">
+            <Avatar class="mr-3" size="40px" :image="item.avatarImage" :alt="item.preferredName" :gender="item.gender" :aliveInterval="item.aliveInterval" />
             <v-list-item-content>
-              <v-list-item-title> {{ data.item.preferredName }} </v-list-item-title>
+              <v-list-item-title> {{ item.preferredName }} </v-list-item-title>
               <v-list-item-subtitle>Community name</v-list-item-subtitle>
             </v-list-item-content>
             <v-list-item-action>
-              <v-list-item-title> {{ age(data.item.aliveInterval) }} </v-list-item-title>
+              <v-list-item-title> {{ age(item.aliveInterval) }} </v-list-item-title>
               <v-list-item-subtitle>Members</v-list-item-subtitle>
             </v-list-item-action>
           </v-list-item>
@@ -66,18 +63,18 @@
 
         <!-- RELATED RECORDS + COLLECTIONS -->
         <template v-else-if="type === 'collection'">
-          <v-list-item @click="addSelectedItem(data.item, $event)">
+          <v-list-item @click="addSelectedItem(item)">
             <v-list-item-avatar tile left>
               <v-img
-                v-if="getImage(data.item)"
-                :src="getImage(data.item)"
+                v-if="getImage(item)"
+                :src="getImage(item)"
               >
               </v-img>
               <v-icon v-else x-large>mdi-book-open</v-icon>
             </v-list-item-avatar>
             <v-list-item-content>
               <v-list-item-title>
-                {{ data.item.title || 'Untitled Record' }}
+                {{ item.title || 'Untitled Record' }}
               </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
@@ -85,12 +82,11 @@
 
         <!-- CATEGORIES -->
         <template v-else>
-          <v-list-item @click="addSelectedItem(data.item, $event)">
-            {{ data.item }}
+          <v-list-item @click="addSelectedItem(item)">
+            {{ item }}
           </v-list-item>
         </template>
       </template>
-      <template v-slot:no-data></template>
     </v-combobox>
     <slot></slot>
   </div>
@@ -99,6 +95,7 @@
 <script>
 import Avatar from '@/components/Avatar.vue'
 import calculateAge from '@/lib/calculate-age'
+import find from 'lodash.find'
 
 export default {
   name: 'ProfileSearchBar',
@@ -127,7 +124,7 @@ export default {
   },
   data () {
     return {
-      chips: this.selectedItems,
+      chips: [],
       searchInput: '',
       parentElement: null,
       childElement: null,
@@ -137,7 +134,19 @@ export default {
   components: {
     Avatar
   },
+  computed: {
+    mobile () {
+      return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
+    }
+  },
   watch: {
+    selectedItems: {
+      deep: true,
+      immediate: true,
+      handler (newValue) {
+        this.chips = newValue
+      }
+    },
     chips: {
       deep: true,
       handler (newValue) {
@@ -148,6 +157,8 @@ export default {
       if (!newValue) return
       if (newValue.length > 2) {
         this.$emit('getSuggestions', newValue)
+      } else {
+        this.clearSuggestions()
       }
     }
   },

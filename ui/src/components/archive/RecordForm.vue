@@ -90,10 +90,10 @@
             </v-col>
 
             <!-- ADD MENTIONS -->
-            <v-col :cols="mobile ? '12' : formData.mentions && formData.mentions.length > 2 ? 'auto' : '3'" class="pr-0">
-              <v-row v-if="!showMentions" class="pl-10 pt-2" @click="showMentions = true" >
+            <v-col cols="12" md="auto" class="pa-5">
+              <v-row v-if="!showMentions" @click="showMentions = true; mentions = []" class="pl-5">
                 <v-icon small>mdi-plus</v-icon>
-                <AddButton size="20px" icon="mdi-account" iconClass="pr-3" class="right: 0;" label="Mention" justify="start"/>
+                <AddButton size="20px" icon="mdi-account" iconClass="pr-3" label="Mention" justify="start"/>
               </v-row>
               <ProfileSearchBar
                 :selectedItems.sync="formData.mentions"
@@ -115,8 +115,8 @@
             </v-col>
 
             <!-- ADD ACCESS -->
-            <v-col :cols="mobile ? '12' : formData.access && formData.access.length > 1 ? 'auto' : '3'">
-              <v-row v-if="!showAccess" @click="showAccess = true" class="pl-10 pt-2">
+            <v-col cols="12" md="auto" class="pa-5">
+              <v-row v-if="!showAccess" @click="showAccess = true; access = []" class="pl-5">
                 <v-icon small>mdi-plus</v-icon>
                 <AddButton size="20px" icon="mdi-file-key" iconClass="pr-3" label="Access" justify="start"/>
               </v-row>
@@ -139,8 +139,8 @@
               <v-divider v-if="mobile" light class="mt-6 mr-4"></v-divider>
             </v-col>
             <!-- ADD CONTRIBUTORS -->
-            <v-col :cols="mobile ? '12' : formData.contributors && formData.contributors.length > 1 ? 'auto' : '3'">
-              <v-row v-if="!showContributors" @click="showContributors = true" class="pl-10 pt-2">
+            <v-col cols="12" md="auto" class="pa-5">
+              <v-row v-if="!showContributors" @click="showContributors = true; contributors = []" class="pl-5">
                 <v-icon small>mdi-plus</v-icon>
                   <AddButton size="20px" icon="mdi-library" iconClass="pr-3" label="Contributor"  justify="start"/>
               </v-row>
@@ -249,27 +249,27 @@
           <v-row class="px-3">
 
             <!-- RELATED RECORDS -->
-            <v-col :cols="mobile ? '12' : formData.relatedRecords && formData.relatedRecords.length > 0 ? 'auto' : '3'">
-              <v-row v-if="!showRecords" @click="showRecords = true" class="pl-10">
+            <v-col cols="12" md="auto" class="pa-5">
+              <v-row v-if="!showRecords" @click="showRecords = true">
                 <v-icon small>mdi-plus</v-icon>
-                <AddButton size="20px" icon="mdi-book-multiple" iconClass="pr-3" class="right: 0;" label="Related records"  justify="start"/>
+                <AddButton size="20px" icon="mdi-book-multiple" iconClass="pr-3" label="Related records"  justify="start"/>
               </v-row>
               <ProfileSearchBar
                 :selectedItems.sync="formData.relatedRecords"
-                :items="stories || []"
+                :items="stories"
                 :openMenu.sync="showRecords"
+                placeholder="add related record"
                 type="collection"
                 item="title"
-                placeholder="add related records"
               />
               <ChipGroup v-if="formData.relatedRecords && formData.relatedRecords.length > 0" type="story" :chips="formData.relatedRecords" deletable @delete="removeItem(formData.relatedRecords, $event)" />
               <v-divider v-if="mobile" light class="mt-6 mr-4"></v-divider>
             </v-col>
             <!-- ADD CREATOR -->
-            <v-col :cols="mobile ? '12' : formData.creator ? 'auto' : '3'">
-              <v-row v-if="!showCreator" @click="showCreator = true" class="pl-10">
+            <v-col cols="12" md="auto" class="pa-5">
+              <v-row v-if="!showCreator" @click="showCreator = true">
                 <v-icon small>mdi-plus</v-icon>
-                <AddButton size="20px" icon="mdi-account-circle" iconClass="pr-3" class="right: 0;" label="Creator" justify="start"/>
+                <AddButton size="20px" icon="mdi-account-circle" iconClass="pr-3" label="Creator" justify="start"/>
               </v-row>
               <!-- <AddButton label="Creator" @click="showCreator = true" /> -->
               <ProfileSearchBar
