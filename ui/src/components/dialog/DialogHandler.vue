@@ -8,7 +8,7 @@
       @create="addCommunity($event)"
       @close="close"
     />
-    <EditCommunityDialog 
+    <EditCommunityDialog
       v-if="isActive('edit-community')"
       :show="isActive('edit-community')"
       :title="`Edit ${currentProfile.preferredName}`"
@@ -17,13 +17,13 @@
       @close="close"
       :selectedProfile="currentProfile"
     />
-    <DeleteCommunityDialog 
+    <DeleteCommunityDialog
       v-if="isActive('delete-community')"
       :show="isActive('delete-community')"
       @submit="deleteCommunity"
       @close="close"
     />
-    <NewNodeDialog 
+    <NewNodeDialog
       v-if="isActive('new-node')"
       :show="isActive('new-node')"
       :title="`Add ${type} to ${selectedProfile.preferredName}`"
@@ -772,21 +772,19 @@ export default {
       })
       if (profileResult.errors) {
         console.error('failed to delete profile', profileResult)
-        return
-      }
-      else {
-        this.$router.push({name:'profileShow', params: {id: this.whoami.profile.id}})
-        this.confirmationAlert("community successfully deleted")
-        setTimeout(() => { 
+      } else {
+        this.$router.push({ name: 'profileShow', params: { id: this.whoami.profile.id } })
+        this.confirmationAlert('community successfully deleted')
+        setTimeout(() => {
           this.confirmationText = null
-          this.snackbar = !this.snackbar  
-          }, 3000);
+          this.snackbar = !this.snackbar
+        }, 3000)
       }
     },
 
-    confirmationAlert(message) {
+    confirmationAlert (message) {
       this.confirmationText = message
-      this.snackbar = !this.snackbar  
+      this.snackbar = !this.snackbar
     },
 
     async getSuggestions ($event) {

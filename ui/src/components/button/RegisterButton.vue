@@ -22,7 +22,7 @@ export default {
 }
 </script>
 <style lang="scss">
-    
+
     .btn {
         position: absolute;
         top: 320px;

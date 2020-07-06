@@ -15,10 +15,10 @@
         <p class="sub-headline pa-0">Enter a Pātaka code to discover tribes</p>
         <v-row>
           <v-col cols="10" md='9' class="py-0">
-              <v-text-field 
-                v-model="patakaCode" 
+              <v-text-field
+                v-model="patakaCode"
                 placeholder="xxxx-xxxxx-xxxx-xxxx"
-                outlined 
+                outlined
                 light
                 dense
                 :success-messages="successMsg"
@@ -108,9 +108,9 @@ export default {
       fetchPolicy: 'no-cache'
     }
   },
-  computed:{
+  computed: {
     mobile () {
-      return this.$vuetify.breakpoint.xs    
+      return this.$vuetify.breakpoint.xs
     }
   },
   methods: {
@@ -135,11 +135,11 @@ export default {
         })
         // this.sucinvalidCode = false
         // this.validCode = true
-        this.successMsg = ["Successfully located Pātaka"]
+        this.successMsg = ['Successfully located Pātaka']
       } catch (err) {
         // this.invalidCode = true
         // this.validCode = false
-        this.errorMsg = ["Invalid code, please check the code and try again"]
+        this.errorMsg = ['Invalid code, please check the code and try again']
         console.error('Invite error: ', err)
       }
     }
@@ -190,7 +190,6 @@ export default {
     color: rgba(0, 0, 0, 0.6);
   }
 
-  
   .addBtn {
     position: fixed;
     top: 80px;
