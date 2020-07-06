@@ -491,7 +491,7 @@ export default {
                     uri
                   }
                 }
-                relationshipId
+                linkId
                 relationshipType
               }
 
@@ -515,7 +515,7 @@ export default {
                     uri
                   }
                 }
-                relationshipId
+                linkId
                 relationshipType
               }
             }

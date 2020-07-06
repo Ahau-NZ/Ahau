@@ -21,8 +21,7 @@ module.exports = {
     const profile = Profile(sbot)
     const story = Story(sbot)
     const artefact = Artefact(sbot)
-    const invite = Invite(sbot)
-    const whakapapa = Whakapapa(sbot, profile.gettersWithCache)
+    const whakapapa = Whakapapa(sbot, { ...profile.gettersWithCache, ...story.gettersWithCache, ...artefact.gettersWithCache })
     profile.Context((err, context) => {
       if (err) throw err
 

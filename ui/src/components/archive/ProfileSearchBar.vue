@@ -134,12 +134,10 @@ export default {
     chips: {
       deep: true,
       handler (newValue) {
-        console.log('chips: ', newValue)
         this.$emit('update:selectedItems', newValue)
       }
     },
     searchInput (newValue) {
-      console.log('search: ', newValue)
       if (!newValue) return
       if (newValue.length > 2) {
         this.$emit('getSuggestions', newValue)
@@ -148,23 +146,19 @@ export default {
   },
   methods: {
     clearSuggestions () {
-      console.log('clearing')
       this.$emit('getSuggestions', null)
     },
     age (aliveInterval) {
       return calculateAge(aliveInterval)
     },
     close () {
-      console.log('i should close')
       this.$emit('update:openMenu', false)
       this.clearSuggestions()
     },
     open () {
-      console.log('open')
       return true
     },
     addSelectedItem (item) {
-      console.log('adding: ', item)
       if (Array.isArray(this.chips)) {
         this.chips.push(item)
       } else {

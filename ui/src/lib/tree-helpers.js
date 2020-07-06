@@ -156,7 +156,7 @@ function getRelationship (parent, child, relationship) {
   return {
     index: parent.id + '-' + child.id, // index in the relationshipLinks map
     attrs: {
-      relationshipId: relationship.relationshipId,
+      linkId: relationship.linkId,
       relationshipType: relationship.relationshipType,
       parent: parent.id,
       child: child.id
