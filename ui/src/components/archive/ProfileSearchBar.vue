@@ -95,7 +95,6 @@
 <script>
 import Avatar from '@/components/Avatar.vue'
 import calculateAge from '@/lib/calculate-age'
-import find from 'lodash.find'
 
 export default {
   name: 'ProfileSearchBar',
