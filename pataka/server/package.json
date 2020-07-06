@@ -10,7 +10,7 @@
     "@ssb-graphql/main": "^3.0.1",
     "@ssb-graphql/pataka": "0.0.1",
     "@ssb-graphql/profile": "^1.0.2",
-    "@ssb-graphql/stats": "0.0.3",
+    "@ssb-graphql/stats": "0.0.5",
     "apollo-server": "^2.15.1",
     "apollo-server-express": "^2.15.1",
     "cors": "^2.8.5",
