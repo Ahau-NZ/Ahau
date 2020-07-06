@@ -140,7 +140,7 @@ import gql from 'graphql-tag'
 
 import { PERMITTED_PROFILE_ATTRS, PERMITTED_RELATIONSHIP_ATTRS, saveProfile } from '@/lib/profile-helpers.js'
 
-import { saveWhakapapaLink } from '@/lib/link-helpers.js'
+import { SAVE_LINK } from '@/lib/link-helpers.js'
 import pick from 'lodash.pick'
 import isEmpty from 'lodash.isempty'
 
@@ -546,6 +546,7 @@ export default {
     view
     ) {
       const input = {
+        type: 'link/profile-profile/child',
         child,
         parent,
         relationshipType,
@@ -553,7 +554,7 @@ export default {
         recps: this.view.recps
       }
       try {
-        const res = await this.$apollo.mutate(saveWhakapapaLink(input))
+        const res = await this.$apollo.mutate(SAVE_LINK(input))
         if (res.errors) {
           console.error('failed to createChildLink', res)
           return
@@ -602,17 +603,17 @@ export default {
       const profileId = this.selectedProfile.id
 
       if (!isEmpty(relationshipAttrs) && this.selectedProfile.id !== this.view.focus) {
-        console.log('updating relationship: ', relationshipAttrs)
         const relationship = this.selectedProfile.relationship
         let input = {
-          relationshipId: relationship.relationshipId,
+          type: 'link/profile-profile/child',
+          linkId: relationship.linkId,
           child: relationship.child,
           parent: relationship.parent,
-          ...relationshipAttrs,
-          recps: this.view.recps
+          ...relationshipAttrs
+          // recps: this.view.recps
         }
         try {
-          const linkRes = await this.$apollo.mutate(saveWhakapapaLink(input))
+          const linkRes = await this.$apollo.mutate(SAVE_LINK(input))
           if (linkRes.errors) {
             console.error('failed to update child link', linkRes)
             return
@@ -649,7 +650,6 @@ export default {
       // reload the selectedProfiles personal details
       var node = await this.loadKnownFamily(true, this.selectedProfile)
       // apply the changes to the nestedWhakapapa
-      console.log('load des ', node)
       if (this.selectedProfile.isPartner && this.selectedProfile.id !== this.focus) {
         this.updatePartnerNode(node)
       } else {

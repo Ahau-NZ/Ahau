@@ -29,7 +29,7 @@
           v-model="model"
           hide-delimiters
           :show-arrows="!mobile && fullStory && story.artefacts && story.artefacts.length > 1" :show-arrows-on-hover="!mobile" :height="showArtefact ? 'auto' : mobile ? '300px' : '500px'" style="background-color:#1E1E1E">
-          <v-carousel-item v-for="(artefact,i) in story.artefacts" :key="`story-card-artefact-${i}`">
+          <v-carousel-item v-for="({ artefact } , i) in story.artefacts" :key="`story-card-artefact-${i}`">
             <Artefact :model="model" :index="i" @showArtefact="toggleShowArtefact($event)" :artefact="artefact" />
           </v-carousel-item>
         </v-carousel>
@@ -42,7 +42,7 @@
           style="width:100vw;margin-top:-2px"
         >
           <v-slide-item
-            v-for="(artefact, i) in story.artefacts"
+            v-for="({ artefact }, i) in story.artefacts"
             :key="`a-s-g-${i}`"
             v-slot:default="{ active, toggle }"
             transition="fade-transition"
@@ -225,7 +225,7 @@
       :story="story"
       @close="dialog = null"
       @delete="dialog = 'delete-story'"
-      @submit="updateStory($event)"
+      @submit="$emit('submit', $event)"
     />
     <DeleteRecordDialog
       v-if="dialog === 'delete-story'"
@@ -249,7 +249,7 @@ import { colours } from '@/lib/colours.js'
 import ArtefactCarouselItem from '@/components/artefact/ArtefactCarouselItem.vue'
 import NewRecordDialog from '@/components/dialog/archive/NewRecordDialog.vue'
 import DeleteRecordDialog from '@/components/dialog/archive/DeleteRecordDialog.vue'
-import { SAVE_STORY, GET_STORY, DELETE_STORY } from '@/lib/story-helpers.js'
+import { DELETE_STORY } from '@/lib/story-helpers.js'
 
 export default {
   name: 'StoryCard',
@@ -315,39 +315,13 @@ export default {
     model (newVal) {
       // show artefact details when viewing in carousel
       if (this.showArtefact) {
-        this.artefact = this.story.artefacts[newVal]
+        this.artefact = this.story.artefacts[newVal].artefact
       }
     }
   },
   methods: {
-    ...mapMutations(['setStory', 'updateStoryInStories', 'deleteStoryFromStories']),
+    ...mapMutations(['setStory', 'deleteStoryFromStories']),
     ...mapActions(['setShowArtefact', 'setDialog', 'setProfileById', 'setShowStory']),
-    async updateStory ($event) {
-      if ($event) {
-        var { id } = $event
-
-        if (!id) {
-          console.error('edit story missin id')
-          return
-        }
-
-        const res = await this.$apollo.mutate(SAVE_STORY($event))
-        if (res.errors) {
-          console.error('failed to update story', res.errors)
-          return
-        }
-
-        // get the updated story from the db
-        var newStoryRes = await this.$apollo.query(GET_STORY(id))
-
-        if (newStoryRes.errors) {
-          console.log('error updating story', newStoryRes.errors)
-          return
-        }
-        this.updateStoryInStories(newStoryRes.data.story)
-        this.$emit('update:story', newStoryRes.data.story)
-      }
-    },
     async deleteStory () {
       const res = await this.$apollo.mutate(DELETE_STORY(this.story.id, new Date()))
 

@@ -3,7 +3,7 @@
     <clipper-upload accept="image/*" @input="toggleAvatar">
 
       <v-row class="upload-pic-row">
-        <v-icon  v-if="!avatar.new" :class="color">mdi-camera</v-icon>
+        <v-icon :class="color" class="pr-2 pt-1">mdi-camera</v-icon>
         <p class="toggle" style="cursor: pointer;">
           {{ label }}
         </p>

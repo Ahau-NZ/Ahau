@@ -269,7 +269,7 @@ export default {
           }
         })
       }
-      children = uniqby(children, 'relationshipId')
+      children = uniqby(children, 'linkId')
 
       // eslint-disable-next-line no-return-assign
       return this.closeSuggestions = children

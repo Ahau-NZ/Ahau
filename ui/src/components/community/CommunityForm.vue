@@ -12,8 +12,7 @@
             </v-col>
             <!-- Upload Profile Photo Button -->
             <v-col v-if="!readonly" cols="12" justify="center" align="center" class="pa-0">
-              <ImagePicker @updateAvatar="formData.avatarImage = $event" :avatarLoaded="formData.avatarImage"
-                type="avatar" isView />
+              <ImagePicker @updateAvatar="formData.avatarImage = $event" :avatarLoaded="formData.avatarImage" type="avatar" isView />
             </v-col>
           </v-row>
         </v-col>

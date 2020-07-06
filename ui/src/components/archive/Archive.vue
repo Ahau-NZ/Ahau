@@ -42,7 +42,7 @@
           </div>
           <div v-else>
             <v-row :class="mobile ? 'pa-0': 'px-6 top-margin'">
-              <StoryCard @updateDialog="updateDialog($event)" :fullStory="true" :story.sync="currentStory" @close="toggleStory($event)" />
+              <StoryCard @updateDialog="updateDialog($event)" :fullStory="true" :story.sync="currentStory" @submit="saveStory($event)" @close="toggleStory($event)" />
             </v-row>
           </div>
         </v-col>
@@ -67,7 +67,7 @@
       :show="dialog === 'new-story'"
       :title="'Add new Record'"
       @close="dialog = null"
-      @submit="addStory($event)"
+      @submit="saveStory($event)"
     />
   </div>
 </template>
@@ -80,6 +80,8 @@
 import StoryCard from '@/components/archive/StoryCard.vue'
 // import CollectionGroup from '@/components/archive/CollectionGroup.vue'
 import { SAVE_STORY, GET_STORY } from '@/lib/story-helpers.js'
+import { SAVE_ARTEFACT } from '@/lib/artefact-helpers.js'
+import { SAVE_LINK, TYPES } from '@/lib/link-helpers.js'
 import { firstMocks } from '@/mocks/collections'
 import { mapGetters, mapActions, mapMutations } from 'vuex'
 import NewRecordDialog from '@/components/dialog/archive/NewRecordDialog.vue'
@@ -127,7 +129,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['stories', 'showStory']),
+    ...mapGetters(['stories', 'showStory', 'whoami']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -138,8 +140,11 @@ export default {
     }
   },
   watch: {
-    showStory (newVal) {
-      if (newVal === false) {
+    showStory (newVal, oldVal) {
+      if (oldVal === false && newVal === true) {
+        this.scrollPosition = window.pageYOffset
+        window.scrollTo(0, 0)
+      } else if (oldVal === true && newVal === false) {
         setTimeout(() => {
           window.scrollTo({
             top: this.scrollPosition
@@ -149,31 +154,95 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['addStoryToStories', 'removeStoryFromStories']),
+    ...mapMutations(['addStoryToStories', 'updateStoryInStories', 'removeStoryFromStories']),
     ...mapActions(['setComponent', 'setShowStory', 'setDialog']),
-    async addStory ($event) {
-      if ($event) {
-        const res = await this.$apollo.mutate(SAVE_STORY($event))
-        if (res.errors) {
-          console.error('failed to create story', res.errors)
-          return
+    async saveStory (input) {
+      if (input) {
+        var res = await this.$apollo.mutate(SAVE_STORY(input))
+        if (res.errors) throw res.errors
+
+        const storyId = res.data.saveStory
+
+        if (!storyId) return
+
+        // check if the input has artefacts
+        if (input.artefacts && input.artefacts.length > 0) {
+          // create an artefact for each new artefact given
+          await Promise.all(input.artefacts.map(async artefact => {
+            const artefactId = await this.saveArtefact(artefact)
+            if (!artefactId) return
+
+            // if the artefact doesnt have an id, it means we need to create the link between
+            // this artefact and the story
+            if (!artefact.id) {
+              const input = {
+                type: TYPES.STORY_ARTEFACT,
+                parent: storyId,
+                child: artefactId
+              }
+
+              // create the link between the story and this artefact
+              await this.saveLink(input)
+            }
+
+            return artefactId
+          }))
         }
 
-        var newStoryRes = await this.$apollo.query(GET_STORY(res.data.saveStory))
+        // get the full newly created/updated story
+        var story = await this.getStory(storyId)
 
-        if (newStoryRes.errors) {
-          console.error('error fetching story', newStoryRes.errors)
-          return
+        if (input.id) {
+          // if the story already existed, we only need to update it
+          this.updateStoryInStories(story)
+          this.currentStory = story
+        } else {
+          // if it was a new story we need to add it
+          this.addStoryToStories(story)
         }
-
-        this.addStoryToStories(newStoryRes.data.story)
       }
+    },
+    async saveArtefact (input) {
+      try {
+        const res = await this.$apollo.mutate(SAVE_ARTEFACT(input))
+        if (res.errors) {
+          throw res.errors
+        }
+
+        return res.data.saveArtefact
+      } catch (err) {
+        throw new Error('failed to save artefact. ' + err)
+      }
+    },
+    async getStory (id) {
+      const res = await this.$apollo.query(GET_STORY(id))
+
+      if (res.errors) {
+        console.error('failed to get the story. ' + res.errors)
+        return
+      }
+
+      return res.data.story
+    },
+    async saveLink ({ type, parent, child }) {
+      const res = await this.$apollo.mutate(SAVE_LINK({
+        type,
+        parent,
+        child,
+        recps: [this.whoami.feedId]
+      }))
+
+      if (res.errors) {
+        console.error('error creating the link. ' + res.errors)
+        return
+      }
+
+      // return the linkId
+      return res.data.saveLink
     },
     toggleStory (story) {
       this.currentStory = story
-      this.scrollPosition = window.pageYOffset
       this.setShowStory()
-      window.scrollTo(0, 0)
       this.setDialog(null)
     },
     openContextMenu (event) {

@@ -62,7 +62,7 @@ export const getProfile = id => ({
             email phone profession
             avatarImage { uri }
           }
-          relationshipId
+          linkId
           relationshipType
         }
         parents {
@@ -75,7 +75,7 @@ export const getProfile = id => ({
             phone profession deceased
             avatarImage { uri }
           }
-          relationshipId
+          linkId
           relationshipType
         }
         
