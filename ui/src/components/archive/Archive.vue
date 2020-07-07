@@ -155,7 +155,7 @@ export default {
   },
   methods: {
     ...mapMutations(['addStoryToStories', 'updateStoryInStories', 'removeStoryFromStories']),
-    ...mapActions(['setComponent', 'setShowStory', 'setDialog']),
+    ...mapActions(['setComponent', 'setShowStory', 'setDialog', 'getAllStories']),
     async saveStory (input) {
       var { id, artefacts, mentions, contributors, relatedRecords } = input
 
@@ -210,18 +210,27 @@ export default {
 
         if (relatedRecords) {
           await this.processLinks(id, relatedRecords, TYPES.STORY_STORY)
+
+          // TEST 1 exists
+          // TEST 2 is new with RR Test 1
+          // Add Test 2
+          // Update Test 1 to show Test 2
         }
 
         var story = await this.getStory(id)
 
         if (input.id) {
           // if the story already existed, we only need to update it
-          this.updateStoryInStories(story)
+          // TODO: use these if needed when reloading the full set becomes too much
+          // this.updateStoryInStories(story)
           this.currentStory = story
-        } else {
+        } // else {
           // if it was a new story we need to add it
-          this.addStoryToStories(story)
-        }
+          // TODO: use these if needed when reloading the full set becomes too much
+          // this.addStoryToStories(story)
+        // }
+
+        this.getAllStories()
       } catch (err) {
         throw err
       }
