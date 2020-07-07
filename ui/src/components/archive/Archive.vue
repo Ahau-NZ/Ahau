@@ -230,6 +230,7 @@ export default {
           // this.addStoryToStories(story)
         // }
 
+        console.warn('Potentially loading a large amount of data with each change to a story...')
         this.getAllStories()
       } catch (err) {
         throw err
