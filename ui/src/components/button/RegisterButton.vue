@@ -1,24 +1,25 @@
 <template>
-     <v-btn pill outlined large color="#b12526" height="50px" :class="mobile ? 'mobileBtn':'btn'">
+    <v-btn v-if="tablet" pill outlined large color="#b12526" height="50px" class="tabletBtn" @click="setDialog('new-registration')">
+      <span>join community </span>
+    </v-btn>
+     <v-btn v-else pill outlined large color="#b12526" height="50px" :class="mobile ? 'mobileBtn':'btn'" @click="setDialog('new-registration')">
         <span>join community</span>
     </v-btn>
-    <!-- <v-col align="end" class="px-0">
-        <v-btn pill outlined large color="#b12526" :width="mobile ? '100%':'25%'" height="50px">
-            join community
-        </v-btn>
-    </v-col> -->
 </template>
 <script>
+import {mapActions} from 'vuex'
+
 export default {
   computed: {
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
+    tablet () {
+      return this.$vuetify.breakpoint.md
+    },
   },
   methods: {
-    toggle () {
-      this.$emit('click')
-    }
+  ...mapActions(['setDialog']) 
   }
 }
 </script>
@@ -32,15 +33,26 @@ export default {
         font-size: 1rem !important;
         max-width: 250px;
         width:17vw;
-        border-width: 2px;
+        border-width: 1px;
+    }
+    
+    .tabletBtn {
+        margin-top:53px;
+        margin-left:10px;
+        background-color: white;
+        border-radius: 10px;
+        font-size: 0.8rem !important;
+        max-width: 250px;
+        width:14vw;
+        border-width: 1px;
     }
 
     .mobileBtn {
-        margin-left:-10px;
         margin-top:10px;
         border-radius: 10px;
         font-size: 1rem !important;
-        width:106%;
-        border-width: 2px;
+        width:100%;
+        border-width: 1px;
+        background-color: white;
     }
 </style>

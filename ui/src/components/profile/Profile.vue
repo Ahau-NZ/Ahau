@@ -98,7 +98,7 @@ export default {
   computed: {
     ...mapGetters(['whoami']),
     mobile () {
-      return this.$vuetify.breakpoint.xs
+      return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     }
   },
   methods: {

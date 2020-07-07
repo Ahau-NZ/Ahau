@@ -1,6 +1,6 @@
 <template>
   <v-row ref="sideNav" class="sideNav" :class="position"  v-scroll="onScroll">
-    <v-col cols="12" md="2" :class="mobile ? 'px-6': tablet ? 'pt-12':''">
+    <v-col cols="12" md="2" :class="nonMember ? 'px-3' : mobile ? 'px-6': tablet ? 'pt-12':''">
       <v-col align="center" v-if="!mobile" class="pa-2 ml-12" cols="12">
         <v-row cols="12" xs="12" sm="12">
           <v-btn :class="tablet ? 'pl-2':''" @click="setActive('profile')" light text style="height: auto;">
@@ -8,7 +8,7 @@
           </v-btn>
         </v-row>
       </v-col>
-      <RegisterButton v-if="profile.type === 'community'"/>
+      <RegisterButton v-if="nonMember"/>
       <v-row v-else :class="mobile ? 'rounded-border' : 'ml-12'" >
         <v-col align="center" :class="mobile ? 'py-0 px-0' : tablet ? 'py-4 px-0' : 'py-1'">
           <v-btn @click="setActive('profile')" light :fab="mobile" text>
@@ -121,6 +121,10 @@ export default {
   },
   computed: {
     ...mapGetters(['activeComponent', 'showStory', 'whoami', 'storeDialog']),
+    nonMember () {
+      // TODO - if community profile and user is not a member of a community
+      return this.profile.type === 'community'
+    },
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },

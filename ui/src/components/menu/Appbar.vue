@@ -129,7 +129,7 @@ export default {
       }
     },
     mobile () {
-      return this.$vuetify.breakpoint.xs
+      return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
     isgoWhakapapa () {
       if (this.route.from) {
