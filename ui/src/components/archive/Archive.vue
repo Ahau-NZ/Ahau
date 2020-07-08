@@ -210,25 +210,13 @@ export default {
 
         if (relatedRecords) {
           await this.processLinks(id, relatedRecords, TYPES.STORY_STORY)
-
-          // TEST 1 exists
-          // TEST 2 is new with RR Test 1
-          // Add Test 2
-          // Update Test 1 to show Test 2
         }
 
         var story = await this.getStory(id)
 
         if (input.id) {
-          // if the story already existed, we only need to update it
-          // TODO: use these if needed when reloading the full set becomes too much
-          // this.updateStoryInStories(story)
           this.currentStory = story
-        } // else {
-          // if it was a new story we need to add it
-          // TODO: use these if needed when reloading the full set becomes too much
-          // this.addStoryToStories(story)
-        // }
+        }
 
         console.warn('Potentially loading a large amount of data with each change to a story...')
         this.getAllStories()
