@@ -3,7 +3,9 @@
     <NewRegistrationDialog
       v-if="isActive('new-registration')"
       :show="isActive('new-registration')"
-      :title="`Join Community Request`"
+      :selectedProfile="whoami.profile"
+      :title="`Request to join : ${currentProfile.preferredName}`"
+      @editProfile="toggleEditProfile($event)"
       @close="close"
     />
     <NewCommunityDialog
@@ -41,10 +43,10 @@
     />
     <EditNodeDialog v-if="isActive('edit-node')"
       :show="isActive('edit-node')"
-      :title="`Edit ${currentProfile.preferredName}`"
+      :title="source === 'new-registration' ? `Edit ${registration.preferredName}`:`Edit ${currentProfile.preferredName}`"
       @submit="updateProfile($event)"
       @close="close"
-      :selectedProfile="currentProfile"
+      :selectedProfile="source === 'new-registration' ? registration : currentProfile"
     />
     <SideViewEditNodeDialog
       v-if="isActive('view-edit-node')"
@@ -210,7 +212,7 @@ export default {
       type: String,
       default: null,
       validator: (val) => [
-        'parent', 'child', 'sibling'
+        'parent', 'child', 'sibling','registration'
       ].includes(val)
     },
     loadDescendants: Function,
@@ -224,19 +226,23 @@ export default {
       confirmationText: null,
       suggestions: [],
       source: null,
-      sampleStory: story1
+      registration: ''
     }
   },
   computed: {
     ...mapGetters(['nestedWhakapapa', 'selectedProfile', 'whoami', 'storeDialog', 'previewProfile', 'currentProfile']),
     mobile () {
       return this.$vuetify.breakpoint.xs
-    }
+    },
   },
   methods: {
     ...mapActions(['updateNode', 'deleteNode', 'updatePartnerNode', 'addChild', 'addParent', 'loading', 'setDialog',
       'setProfileById'
     ]),
+    toggleEditProfile (profile) {
+      this.registration = profile
+      this.toggleDialog('edit-node',null,'new-registration')
+    },
     isActive (type) {
       if (type === this.dialog || type === this.storeDialog) {
         return true
@@ -600,11 +606,13 @@ export default {
       }
     },
     async updateProfile ($event) {
-      Object.entries($event).map(([key, value]) => {
-        if (value === '') {
-          delete $event[key]
-        }
-      })
+      console.log("update profile: ", $event)
+      // When do we need this?
+      // Object.entries($event).map(([key, value]) => {
+      //   if (value === '') {
+      //     delete $event[key]
+      //   }
+      // })
 
       const profileChanges = pick($event, [...PERMITTED_PROFILE_ATTRS])
       const relationshipAttrs = pick($event, [...PERMITTED_RELATIONSHIP_ATTRS])

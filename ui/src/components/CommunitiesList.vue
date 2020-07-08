@@ -45,7 +45,7 @@
             <v-col v-for="community in communities" :item="community" :key="community.id" justify-self="start">
               <!-- <router-link :to="{ name: 'communityShow', params: { id: community.id } }"> -->
               <router-link @click.native="setComponent('profile')" :to="{ name: 'profileShow', params: { id: community.id } }">
-                <v-card light :width="!mobile ? '30%':'100vw'">
+                <v-card light :width="!mobile ? '190px':'100vw'">
                   <v-img height="150px" :src="getImage(community)" class="card-image" />
                   <v-card-title class="subtitle font-weight-bold pb-2">{{
                     community.preferredName
@@ -57,9 +57,6 @@
               </router-link>
             </v-col>
           </v-row>
-      </v-col>
-      <v-col>
-          <!-- show connected pataka -->
       </v-col>
     </v-row>
   </div>

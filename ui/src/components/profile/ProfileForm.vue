@@ -146,7 +146,7 @@
           </v-row>
           <!-- DECEASED PICKER -->
           <v-row>
-           <v-col  v-if="!readonly || formData.deceased" cols="12" class="pa-1">
+           <v-col  v-if=" !isUser || formData.deceased" cols="12" class="pa-1">
               <v-checkbox v-model="formData.deceased"
                 label="No longer living" :hide-details="true"
                 v-bind="customProps"
@@ -179,8 +179,17 @@
                 outlined
               />
             </v-col>
+            <v-col v-if="isRegistration" cols="12" class="pa-1">
+              <!-- City, Country -->
+              <v-text-field
+                v-model="formData.location"
+                label="City, Country"
+                v-bind="customProps"
+                outlined
+              />
+            </v-col>
             <!-- GENDER EDIT -->
-            <v-col v-else class="pa-1">
+            <v-col v-if="!readonly" class="pa-1">
               <p class="text-field">Gender</p>
 
               <v-row class="gender-button-row" :class="mobile ? '':'pb-12'">
@@ -219,7 +228,7 @@
           </v-row>
         </v-col>
 
-        <v-col cols="12" :sm="mobile ? '12' : '6'">
+        <v-col cols="12" :sm="mobile ? '12' : '6'" class="py-0">
           <v-row>
             <!-- Description textarea -->
             <v-col cols="12" class="pa-1">
@@ -248,7 +257,6 @@
           </v-row>
         </v-col>
       </v-row>
-
       <v-row>
         <v-col cols="12" :sm="mobile ? '12' : '6'">
           <!-- Email -->
@@ -287,7 +295,7 @@
               />
             </v-col>
           </v-row>
-          <v-row>
+          <v-row v-if="!isRegistration">
             <v-col cols="12" class="pa-1">
               <!-- City, Country -->
               <v-text-field
@@ -326,7 +334,9 @@ export default {
     hideDetails: { type: Boolean, default: false },
     editRelationship: { type: Boolean, default: false },
     mobile: { type: Boolean, default: false },
-    isEditing: { type: Boolean, default: false }
+    isEditing: { type: Boolean, default: false },
+    isUser: { type: Boolean, default: false },
+    isRegistration: { type: Boolean, default: false}
   },
   data () {
     return {
@@ -347,7 +357,11 @@ export default {
       handler (newVal) {
         this.formData = newVal
       }
-    }
+    },
+    'formData.gender' (newValue) {
+      if (newValue === 'male') this.updateSelectedGender('male')
+      if (newValue === 'female') this.updateSelectedGender('female')
+    },
   },
   computed: {
     customProps () {

@@ -79,7 +79,8 @@ export default {
     show: { type: Boolean, required: true },
     title: { type: String, default: 'Create a new person' },
     hideDetails: { type: Boolean, default: false },
-    selectedProfile: { type: Object }
+    selectedProfile: { type: Object },
+    readOnly: { type: Boolean, default: false}
   },
   data () {
     return {
@@ -119,10 +120,14 @@ export default {
   },
   watch: {
     profile (newVal) {
+      console.log("watching profile: ", newVal)
       this.formData = defaultData(newVal)
     },
     'formData.deceased' (newValue) {
       if (!newValue) this.formData.diedAt = ''
+    },
+    formData (newVal) {
+      console.log("formData: ", newVal)
     }
   },
   methods: {

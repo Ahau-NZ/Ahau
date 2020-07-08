@@ -1,23 +1,32 @@
 <template>
     <v-row cols="12" class="rounded-border">
       <ProfileInfoItem class="br bb" :title="'Preferred Name'" :value="profile.preferredName"/>
-      <ProfileInfoItem :class="mobile ? 'bb':'br bb'" :title="'Age'" :value="age" :sub-value="dob" />
+      <ProfileInfoItem :class="mobile ? 'bb':'br bb'" :title="'Age'" :value="age" />
       <ProfileInfoItem class="br bb" :title="'Occupation'" :value="profile.profession" />
       <ProfileInfoItem class="bb" :title="'Location'" :value="profile.location" />
 
-      <div v-if="profile.parents && profile.parents.length" :class="mobile ? '' : 'br'">
+      <div v-if="profile.parents && profile.parents.length || isRegistration" :class="mobile ? '' : 'br'" style="min-width:150px">
         <AvatarGroup v-if="profile.parents" :profiles="profile.parents" group-title="Parents" size="50px" :show-labels="true"
           @profile-click="openProfile($event)">
+          <template v-slot:action >
+            <AddButton v-if="isRegistration" @click="toggleNew('parent')" class="pb-4" justify="start"/>
+          </template>
         </AvatarGroup>
       </div>
-      <div v-if="profile.siblings && profile.siblings.length" :class="mobile ? '' : 'br'">
+      <div v-if="profile.siblings && profile.siblings.length || isRegistration" :class="mobile ? '' : 'br'" style="min-width:150px">
         <AvatarGroup v-if="profile.siblings" :profiles="profile.siblings" group-title="Siblings" size="50px" :show-labels="true"
           @profile-click="openProfile($event)">
+          <template v-slot:action >
+            <AddButton v-if="isRegistration" @click="toggleNew('sibling')" class="pb-4" justify="start"/>
+          </template>
         </AvatarGroup>
       </div>
-      <div v-if="profile.children && profile.children.length">
+      <div v-if="profile.children && profile.children.length || isRegistration" style="min-width:150px">
         <AvatarGroup v-if="profile.children" :profiles="profile.children" group-title="Children" size="50px" :show-labels="true"
           @profile-click="openProfile($event)">
+          <template v-slot:action >
+            <AddButton v-if="isRegistration" @click="toggleNew('child')" class="pb-4" justify="start"/>
+          </template>
         </AvatarGroup>
       </div>
     </v-row>
@@ -29,15 +38,18 @@ import formatDate from '@/lib/format-date'
 import AvatarGroup from '@/components/AvatarGroup.vue'
 import ProfileInfoItem from './ProfileInfoItem'
 import { mapActions } from 'vuex'
+import AddButton from '@/components/button/AddButton.vue'
 
 export default {
   name: 'ProfileInfoCard',
   components: {
     ProfileInfoItem,
-    AvatarGroup
+    AvatarGroup,
+    AddButton
   },
   props: {
-    profile: Object
+    profile: Object,
+    isRegistration: { type:Boolean, default: false }
   },
   computed: {
     mobile () {
