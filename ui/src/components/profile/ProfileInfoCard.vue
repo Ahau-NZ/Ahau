@@ -25,10 +25,10 @@
 
 <script>
 import calculateAge from '@/lib/calculate-age'
-import formatDate from '@/lib/format-date'
 import AvatarGroup from '@/components/AvatarGroup.vue'
 import ProfileInfoItem from './ProfileInfoItem'
 import { mapActions } from 'vuex'
+import { dateIntervalToString } from '@/lib/date-helpers.js'
 
 export default {
   name: 'ProfileInfoCard',
@@ -52,7 +52,7 @@ export default {
     },
     dob () {
       if (this.profile.aliveInterval) {
-        var formattedDate = formatDate(this.profile.aliveInterval)
+        var formattedDate = dateIntervalToString(this.profile.aliveInterval)
         return formattedDate
       }
       return ' '

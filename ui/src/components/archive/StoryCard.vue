@@ -15,9 +15,8 @@
     </v-btn>
     <v-list-item>
       <v-list-item-content class="pb-0">
-        <v-list-item-subtitle v-if="story.recordDate">
-          {{ story.recordDate }}
-          <span v-if="story.recordEndDate"> - {{ story.recordEndDate }} </span>
+        <v-list-item-subtitle v-if="time" class="mt-n2 pb-1">
+          <span>{{ time }}</span>
         </v-list-item-subtitle>
         <v-list-item-title v-if="!showArtefact" class="headline mb-1 wrap-text">{{ story.title }}</v-list-item-title>
         <v-list-item-title v-else class="headline mb-1 wrap-text">{{ artefact.title }}</v-list-item-title>
@@ -62,7 +61,7 @@
     </v-list-item>
     <v-list-item :disabled="disableClick" :ripple="false" @click.stop="showText()">
       <v-list-item-content>
-        <v-list-item-subtitle v-if="fullStory || showArtefact" class="pb-1" style="color:grey">Description</v-list-item-subtitle>
+        <v-list-item-subtitle v-if="fullStory || showArtefact" class="pb-1" style="color:#a7a3a3"> Description </v-list-item-subtitle>
         <p v-if="!showArtefact" ref="text" :class="turncateText ? 'description' : ''">
           {{ story.description }}
         </p>
@@ -73,7 +72,7 @@
     </v-list-item>
     <v-row v-if="!showArtefact" class="px-4">
       <v-col v-if="story.mentions && story.mentions.length > 0" cols="12" sm="12" md="auto">
-        <v-list-item-subtitle style="color:grey">Mentions</v-list-item-subtitle>
+        <v-list-item-subtitle style="color:#a7a3a3">Mentions</v-list-item-subtitle>
         <AvatarGroup
           style="position:relative; bottom:15px;"
           :profiles="story.mentions.map(m => m.profile)"
@@ -84,11 +83,11 @@
         />
       </v-col>
       <v-col v-if="story.location" class="pt-0" cols="12" sm="12" md="auto">
-        <v-list-item-subtitle style="color:grey" class="ms-5 pa-0 pb-1">Location</v-list-item-subtitle>
+        <v-list-item-subtitle style="color:#a7a3a3" class="ms-5 pa-0 pb-1">Location</v-list-item-subtitle>
         <p class="mt-3 mb-5 ms-5">{{ story.location }}</p>
       </v-col>
       <v-col v-if="story.access && story.access.length > 0" cols="12" sm="12" md="auto">
-        <v-list-item-subtitle style="color:grey">Access</v-list-item-subtitle>
+        <v-list-item-subtitle style="color:#a7a3a3">Access</v-list-item-subtitle>
         <AvatarGroup
           style="position:relative; bottom:15px;"
           :profiles="story.access.map(m => m.profile)"
@@ -99,7 +98,7 @@
         />
       </v-col>
       <v-col v-if="story.contributors && story.contributors.length > 0 && fullStory" cols="12" sm="12" md="auto">
-        <v-list-item-subtitle style="color:grey">Contributors</v-list-item-subtitle>
+        <v-list-item-subtitle style="color:#a7a3a3">Contributors</v-list-item-subtitle>
         <AvatarGroup
           style="position:relative; bottom:15px;"
           :profiles="story.contributors.map(m => m.profile)"
@@ -110,7 +109,7 @@
         />
       </v-col>
       <v-col v-if="fullStory">
-        <v-list-item-subtitle class="pb-1" style="color:grey">Submission date</v-list-item-subtitle>
+        <v-list-item-subtitle class="pb-1" style="color:#a7a3a3">Submission date</v-list-item-subtitle>
         <p class="mt-3">{{ story.submissionDate }}</p>
       </v-col>
     </v-row>
@@ -134,66 +133,42 @@
       </v-row>
       <v-row class="px-4">
         <v-col class="pt-0 pr-1" v-if="story.relatedRecords && story.relatedRecords.length > 0" cols="12" sm="12" md="auto">
-          <v-list-item-subtitle class="pb-1" style="color:grey">Related records</v-list-item-subtitle>
+          <v-list-item-subtitle class="pb-1" style="color:#a7a3a3">Related records</v-list-item-subtitle>
           <ChipGroup :chips="story.relatedRecords.map(r => r.story)" type="story"/>
         </v-col>
       </v-row>
       <v-row class="px-4 mb-12">
         <v-col v-if="story.contributionNotes" cols="12" class="pb-6">
-          <v-list-item-subtitle class="pb-1" style="color:grey">Contribution notes</v-list-item-subtitle>
+          <v-list-item-subtitle class="pb-1" style="color:#a7a3a3">Contribution notes</v-list-item-subtitle>
           <p>{{ story.contributionNotes }}</p>
         </v-col>
         <v-col v-if="story.locationDescription" cols="12" class="pb-6">
-          <v-list-item-subtitle class="pb-1" style="color:grey">Location description</v-list-item-subtitle>
+          <v-list-item-subtitle class="pb-1" style="color:#a7a3a3">Location description</v-list-item-subtitle>
           <p>{{ story.locationDescription }}</p>
         </v-col>
         <v-col v-if="story.culturalNarrative" cols="12" class="pb-6">
-          <v-list-item-subtitle class="pb-1" style="color:grey">Cultural narrative</v-list-item-subtitle>
+          <v-list-item-subtitle class="pb-1" style="color:#a7a3a3">Cultural narrative</v-list-item-subtitle>
           <p>{{ story.culturalNarrative }}</p>
         </v-col>
         <v-col v-if="story.format" :cols="mobile ? '6' : '3'">
-          <v-list-item-subtitle class="pb-1" style="color:grey">Format</v-list-item-subtitle>
+          <v-list-item-subtitle class="pb-1" style="color:#a7a3a3">Format</v-list-item-subtitle>
           <p>{{ story.format }}</p>
         </v-col>
         <v-col v-if="story.identifier" :cols="mobile ? '6' : '3'">
-          <v-list-item-subtitle class="pb-1" style="color:grey">Identifier</v-list-item-subtitle>
+          <v-list-item-subtitle class="pb-1" style="color:#a7a3a3">Identifier</v-list-item-subtitle>
           <p>{{ story.identifier }}</p>
         </v-col>
         <v-col v-if="story.source" :cols="mobile ? '6' : '3'">
-          <v-list-item-subtitle class="pb-1" style="color:grey">Source</v-list-item-subtitle>
+          <v-list-item-subtitle class="pb-1" style="color:#a7a3a3">Source</v-list-item-subtitle>
           <p>{{ story.source }}</p>
         </v-col>
         <v-col v-if="story.language" :cols="mobile ? '6' : '3'">
-          <v-list-item-subtitle class="pb-1" style="color:grey">Language</v-list-item-subtitle>
+          <v-list-item-subtitle class="pb-1" style="color:#a7a3a3">Language</v-list-item-subtitle>
           <p>{{ story.language }}</p>
         </v-col>
         <v-col v-if="story.transcription" cols="12" class="pb-6">
-          <v-list-item-subtitle class="pb-1" style="color:grey">Translation / Transcription</v-list-item-subtitle>
+          <v-list-item-subtitle class="pb-1" style="color:#a7a3a3">Translation / Transcription</v-list-item-subtitle>
           <p>{{ story.transcription }}</p>
-        </v-col>
-      </v-row>
-    </div>
-    <div v-if="showArtefact">
-      <v-row class="px-4">
-        <v-col v-if="artefact.format" :cols="mobile ? '6' : '3'" class="pb-6">
-          <v-list-item-subtitle class="pb-1" style="color:grey"> Format </v-list-item-subtitle>
-          <p style="color:white">{{ artefact.format }}</p>
-        </v-col>
-        <v-col v-if="artefact.identifier" :cols="mobile ? '6' : '3'">
-          <v-list-item-subtitle class="pb-1" style="color:grey"> Identifier </v-list-item-subtitle>
-          <p style="color:white">{{ artefact.identifier }}</p>
-        </v-col>
-        <v-col v-if="artefact.source" :cols="mobile ? '6' : '3'">
-          <v-list-item-subtitle class="pb-1" style="color:grey"> Source </v-list-item-subtitle>
-          <p style="color:white">{{ artefact.source }}</p>
-        </v-col>
-        <v-col v-if="artefact.language" :cols="mobile ? '6' : '3'">
-          <v-list-item-subtitle class="pb-1" style="color:grey"> Language </v-list-item-subtitle>
-          <p style="color:white">{{ artefact.language }}</p>
-        </v-col>
-        <v-col v-if="artefact.translation" cols="12">
-          <v-list-item-subtitle class="pb-1" style="color:grey"> Translation / Transcription </v-list-item-subtitle>
-          <p style="color:white">{{ artefact.translation }}</p>
         </v-col>
       </v-row>
     </div>
@@ -250,6 +225,7 @@ import ArtefactCarouselItem from '@/components/artefact/ArtefactCarouselItem.vue
 import NewRecordDialog from '@/components/dialog/archive/NewRecordDialog.vue'
 import DeleteRecordDialog from '@/components/dialog/archive/DeleteRecordDialog.vue'
 import { DELETE_STORY } from '@/lib/story-helpers.js'
+import { dateIntervalToString, dateToString } from '@/lib/date-helpers.js'
 
 export default {
   name: 'StoryCard',
@@ -291,6 +267,18 @@ export default {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
 
+    time () {
+      if (this.story.timeInterval) {
+        return dateIntervalToString(this.story.timeInterval)
+      }
+      return ''
+    },
+    submissionDate () {
+      if (this.story.submissionDate) {
+        return dateToString(this.story.submissionDate)
+      }
+      return ''
+    },
     // disable textTurncate click event when not needed
     disableClick () {
       if (this.fullStory) {
@@ -322,6 +310,7 @@ export default {
   methods: {
     ...mapMutations(['setStory', 'deleteStoryFromStories']),
     ...mapActions(['setShowArtefact', 'setDialog', 'setProfileById', 'setShowStory']),
+
     async deleteStory () {
       const res = await this.$apollo.mutate(DELETE_STORY(this.story.id, new Date()))
 
@@ -379,7 +368,7 @@ export default {
     width: 50px;
     margin: 5px;
     border-radius: 50%;
-    background-color: lightgrey;
+    background-color: light#a7a3a3;
     background-position-y: 10px;
 }
 
@@ -429,7 +418,7 @@ p {
 }
 
 v-list-item-subtitle {
-  color: grey
+  color: #a7a3a3
 }
 
 .recordView {

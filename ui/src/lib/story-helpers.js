@@ -13,6 +13,11 @@ export function SET_DEFAULT_STORY (newStory) {
   var mentions = story.mentions
   var contributors = story.contributors
   var relatedRecords = story.relatedRecords
+  var timeInterval = ['', '']
+
+  if (story.timeInterval) {
+    timeInterval = story.timeInterval.split('/')
+  }
 
   if (artefacts && artefacts.length > 0) {
     artefacts = artefacts.map(a => {
@@ -54,8 +59,9 @@ export function SET_DEFAULT_STORY (newStory) {
     id: story.id,
     title: story.title,
     description: story.description,
-    startDate: story.startDate,
-    endDate: story.endDate,
+    timeInterval: story.timeInterval,
+    startDate: timeInterval[0],
+    endDate: timeInterval[1],
     location: story.location,
     locationDescription: story.locationDescription,
     creator: story.creator,
@@ -247,6 +253,7 @@ export function arrayChanges (array1, array2) {
 }
 
 export function GET_CHANGES (initial, updated) {
+  console.log(initial, updated)
   var changes = {}
 
   Object.entries(updated).forEach(([key, value]) => {
@@ -284,10 +291,16 @@ export function GET_CHANGES (initial, updated) {
           // if there were no changes, then remove the add/remove
           if (isEmpty(changes[key])) delete changes[key]
           break
+
         default:
           changes[key] = value
       }
     }
   })
+
+  // Update the submissionDate with the new record
+  var submissionDate = new Date().toISOString().slice(0, 10)
+  changes.submissionDate = submissionDate
+
   return changes
 }
