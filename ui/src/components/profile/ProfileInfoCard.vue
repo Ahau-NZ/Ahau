@@ -1,22 +1,22 @@
 <template>
     <v-row cols="12" class="rounded-border">
-      <ProfileInfoItem class="br bb" :title="'Preferred Name'" :value="profile.preferredName"/>
-      <ProfileInfoItem :class="mobile ? 'bb':'br bb'" :title="'Age'" :value="age" :sub-value="dob" />
-      <ProfileInfoItem class="br bb" :title="'Occupation'" :value="profile.profession" />
-      <ProfileInfoItem class="bb" :title="'Location'" :value="profile.location" />
+      <ProfileInfoItem :class="`br ${borderClass}`" :title="'Preferred Name'" :value="profile.preferredName"/>
+      <ProfileInfoItem :class="mobile ? `${borderClass}`:`br ${borderClass}`" :title="'Age'" :value="age" :sub-value="dob" />
+      <ProfileInfoItem :class="`br ${borderClass}`" :title="'Occupation'" :value="profile.profession" />
+      <ProfileInfoItem :class="`${borderClass}`" :title="'Location'" :value="profile.location" />
 
-      <div v-if="profile.parents && profile.parents.length" :class="mobile ? '' : 'br'">
-        <AvatarGroup v-if="profile.parents" :profiles="profile.parents" group-title="Parents" size="50px" :show-labels="true"
+      <div v-if="profile.parents && profile.parents.length > 0" :class="mobile ? '' : 'br'">
+        <AvatarGroup :profiles="profile.parents" group-title="Parents" size="50px" :show-labels="true"
           @profile-click="openProfile($event)">
         </AvatarGroup>
       </div>
-      <div v-if="profile.siblings && profile.siblings.length" :class="mobile ? '' : 'br'">
-        <AvatarGroup v-if="profile.siblings" :profiles="profile.siblings" group-title="Siblings" size="50px" :show-labels="true"
+      <div v-if="profile.siblings && profile.siblings.length > 0" :class="mobile ? '' : 'br'">
+        <AvatarGroup :profiles="profile.siblings" group-title="Siblings" size="50px" :show-labels="true"
           @profile-click="openProfile($event)">
         </AvatarGroup>
       </div>
-      <div v-if="profile.children && profile.children.length">
-        <AvatarGroup v-if="profile.children" :profiles="profile.children" group-title="Children" size="50px" :show-labels="true"
+      <div v-if="profile.children && profile.children.length > 0">
+        <AvatarGroup :profiles="profile.children" group-title="Children" size="50px" :show-labels="true"
           @profile-click="openProfile($event)">
         </AvatarGroup>
       </div>
@@ -40,6 +40,17 @@ export default {
     profile: Object
   },
   computed: {
+    borderClass () {
+      if (this.hasFamilyMembers) return 'bb'
+      return ''
+    },
+    hasFamilyMembers () {
+      if (this.profile.parents && this.profile.parents.length > 0) return true
+      if (this.profile.children && this.profile.children.length > 0) return true
+      if (this.profile.siblings && this.profile.siblings.length > 0) return true
+
+      return false
+    },
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
