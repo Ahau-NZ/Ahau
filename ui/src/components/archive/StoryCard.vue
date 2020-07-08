@@ -86,7 +86,7 @@
         <v-list-item-subtitle style="color:#a7a3a3" class="ms-5 pa-0 pb-1">Location</v-list-item-subtitle>
         <p class="mt-3 mb-5 ms-5">{{ story.location }}</p>
       </v-col>
-      <v-col v-if="story.access && story.access.length > 0" cols="12" sm="12" md="auto">
+      <!-- <v-col v-if="story.access && story.access.length > 0" cols="12" sm="12" md="auto">
         <v-list-item-subtitle style="color:#a7a3a3">Access</v-list-item-subtitle>
         <AvatarGroup
           style="position:relative; bottom:15px;"
@@ -96,7 +96,7 @@
           @profile-click="openProfile($event)"
           :clickable="fullStory"
         />
-      </v-col>
+      </v-col> -->
       <v-col v-if="story.contributors && story.contributors.length > 0 && fullStory" cols="12" sm="12" md="auto">
         <v-list-item-subtitle style="color:#a7a3a3">Contributors</v-list-item-subtitle>
         <AvatarGroup
@@ -114,7 +114,7 @@
       </v-col>
     </v-row>
     <div v-if="fullStory && !showArtefact">
-      <v-row class="px-4">
+      <!-- <v-row class="px-4">
         <div class="py-0 px-0" v-if="story.creator" cols="3">
           <v-list-item-subtitle style="color:grey" class="ml-5 pb-1">Creator</v-list-item-subtitle>
             <Avatar
@@ -130,7 +130,7 @@
               @profile-click="openProfile($event)"
             />
         </div>
-      </v-row>
+      </v-row> -->
       <v-row class="px-4">
         <v-col class="pt-0 pr-1" v-if="story.relatedRecords && story.relatedRecords.length > 0" cols="12" sm="12" md="auto">
           <v-list-item-subtitle class="pb-1" style="color:#a7a3a3">Related records</v-list-item-subtitle>
@@ -146,10 +146,10 @@
           <v-list-item-subtitle class="pb-1" style="color:#a7a3a3">Location description</v-list-item-subtitle>
           <p>{{ story.locationDescription }}</p>
         </v-col>
-        <v-col v-if="story.culturalNarrative" cols="12" class="pb-6">
+        <!-- <v-col v-if="story.culturalNarrative" cols="12" class="pb-6">
           <v-list-item-subtitle class="pb-1" style="color:#a7a3a3">Cultural narrative</v-list-item-subtitle>
           <p>{{ story.culturalNarrative }}</p>
-        </v-col>
+        </v-col> -->
         <v-col v-if="story.format" :cols="mobile ? '6' : '3'">
           <v-list-item-subtitle class="pb-1" style="color:#a7a3a3">Format</v-list-item-subtitle>
           <p>{{ story.format }}</p>

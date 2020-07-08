@@ -115,7 +115,7 @@
             </v-col>
 
             <!-- ADD ACCESS -->
-            <v-col cols="12" md="auto" class="pa-5">
+            <!-- <v-col cols="12" md="auto" class="pa-5">
               <v-row v-if="!showAccess" @click="showAccess = true; access = []" class="pl-5">
                 <v-icon small>mdi-plus</v-icon>
                 <AddButton size="20px" icon="mdi-file-key" iconClass="pr-3" label="Access" justify="start"/>
@@ -137,7 +137,7 @@
                 @delete="removeItem(formData.access, $event)"
               />
               <v-divider v-if="mobile" light class="mt-6 mr-4"></v-divider>
-            </v-col>
+            </v-col> -->
             <!-- ADD CONTRIBUTORS -->
             <v-col cols="12" md="auto" class="pa-5">
               <v-row v-if="!showContributors" @click="showContributors = true; contributors = []" class="pl-5">
@@ -266,12 +266,11 @@
               <v-divider v-if="mobile" light class="mt-6 mr-4"></v-divider>
             </v-col>
             <!-- ADD CREATOR -->
-            <v-col cols="12" md="auto" class="pa-5">
+            <!-- <v-col cols="12" md="auto" class="pa-5">
               <v-row v-if="!showCreator" @click="showCreator = true">
                 <v-icon small>mdi-plus</v-icon>
                 <AddButton size="20px" icon="mdi-account-circle" iconClass="pr-3" label="Creator" justify="start"/>
               </v-row>
-              <!-- <AddButton label="Creator" @click="showCreator = true" /> -->
               <ProfileSearchBar
                 :selectedItems.sync="formData.creator"
                 :items="creators"
@@ -296,7 +295,7 @@
                   @delete="formData.creator = null"
                 />
               </div>
-            </v-col>
+            </v-col> -->
             <v-col cols="12" class="pa-1">
               <v-textarea
                 v-if="show"
@@ -321,7 +320,7 @@
               >
               </v-textarea>
             </v-col>
-            <v-col cols="12" class="pa-1">
+            <!-- <v-col cols="12" class="pa-1">
               <v-textarea
                 v-if="show"
                 v-model="formData.culturalNarrative"
@@ -332,7 +331,7 @@
                 auto-grow
               >
               </v-textarea>
-            </v-col>
+            </v-col> -->
             <v-col :cols="mobile ? '6' : '3'" class="pa-1">
               <v-text-field
                 v-model="formData.format"
@@ -400,7 +399,7 @@
 
 <script>
 import AvatarGroup from '@/components/AvatarGroup.vue'
-import Avatar from '@/components/Avatar.vue'
+// import Avatar from '@/components/Avatar.vue'
 import AddButton from '@/components/button/AddButton.vue'
 import UploadArtefactButton from '@/components/artefact/UploadArtefactButton.vue'
 import NodeDatePicker from '@/components/NodeDatePicker.vue'
@@ -424,7 +423,7 @@ import { mapGetters } from 'vuex'
 export default {
   name: 'RecordForm',
   components: {
-    Avatar,
+    // Avatar,
     AddButton,
     UploadArtefactButton,
     ProfileSearchBar,
@@ -455,14 +454,14 @@ export default {
       showLocation: false,
       mentions: [],
       contributors: [],
-      access: [],
-      creators: [],
+      // access: [],
+      // creators: [],
       showMentions: false,
       showCategories: false,
       showContributors: false,
-      showCreator: false,
+      // showCreator: false,
       showCollections: false,
-      showAccess: false,
+      // showAccess: false,
       showProtocols: false,
       showRecords: false,
       searchString: '',

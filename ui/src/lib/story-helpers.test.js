@@ -10,16 +10,16 @@ const FULL_STORY = {
   endDate: '2020-07-01',
   location: '123 Pukemoremore Road',
   locationDescription: 'The Farm',
-  creator: {
-    id: '%ProfileA'
-  },
+  // creator: {
+  //   id: '%ProfileA'
+  // },
   contributionNotes: 'Any Whanau can add or contribute to this story',
   format: null,
   identifier: null,
   source: null,
   language: null,
   translation: null,
-  culturalNarrative: null,
+  // culturalNarrative: null,
   mentions: [
     { id: '%ProfileA' }, { id: '%ProfileB' }, { id: '%ProfileC' }
   ],
