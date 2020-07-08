@@ -63,11 +63,13 @@ export default {
         query: gql`
           {
             whoami {
-              profile {
-                id
-                preferredName
-                avatarImage {
-                  uri
+              public {
+                profile {
+                  id
+                  preferredName
+                  avatarImage {
+                    uri
+                  }
                 }
               }
             }
@@ -78,7 +80,7 @@ export default {
 
       if (result.errors) throw result.errors
 
-      if (result.data.whoami.profile) this.profile = result.data.whoami.profile
+      if (result.data.whoami.public.profile) this.profile = result.data.whoami.public.profile
       this.proceed()
     },
 

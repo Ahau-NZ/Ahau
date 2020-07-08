@@ -13,7 +13,7 @@ const plugins = [
   // 'ssb-promiscuous', // temporary?
 
   'ssb-blobs',
-
+  'ssb-tribes',
   'ssb-backlinks',
   'ssb-whakapapa',
   'ssb-profile',

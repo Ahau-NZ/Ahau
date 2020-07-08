@@ -9,7 +9,6 @@ const Invite = require('@ssb-graphql/invite')
 const stats = require('@ssb-graphql/stats')
 const Pataka = require('@ssb-graphql/pataka')
 
-
 // const { PubSub } = require('apollo-server')
 // const pubsub = new PubSub()
 
@@ -24,8 +23,7 @@ module.exports = {
     const profile = Profile(sbot)
     const invite = Invite(sbot)
     const pataka = Pataka(sbot, profile.gettersWithCache)
-
-    profile.Context((err, context) => {
+    main.loadContext((err, context) => {
       if (err) throw err
 
       const server = new ApolloServer({
