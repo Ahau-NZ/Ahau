@@ -69,10 +69,10 @@
               </v-textarea>
             </v-col>
             <v-col cols="12" sm="12" md="6" class="pa-1">
-              <v-text-field
-                v-model="formData.recordDate"
+              <NodeDatePicker
+                :value.sync="formData.startDate"
                 label="Date"
-                v-bind="customProps"
+                min="-3000-01-01"
               />
             </v-col>
             <v-col cols="12" sm="12" md="6" class="pa-1">
@@ -80,11 +80,11 @@
                 label="include an end date" :hide-details="true"
                 v-bind="customProps"
               />
-              <v-text-field
+              <NodeDatePicker
                 v-else
-                v-model="formData.recordEndDate"
+                :value.sync="formData.endDate"
                 label="End Date"
-                v-bind="customProps"
+                min="-3000-01-01"
                 @click:clear="hasEndDate = false"
               />
             </v-col>
@@ -407,6 +407,7 @@ import AvatarGroup from '@/components/AvatarGroup.vue'
 import Avatar from '@/components/Avatar.vue'
 import AddButton from '@/components/button/AddButton.vue'
 import UploadArtefactButton from '@/components/artefact/UploadArtefactButton.vue'
+import NodeDatePicker from '@/components/NodeDatePicker.vue'
 
 import ChipGroup from '@/components/archive/ChipGroup.vue'
 import ProfileSearchBar from '@/components/archive/ProfileSearchBar.vue'
@@ -435,7 +436,8 @@ export default {
     ChipGroup,
     NewArtefactDialog,
     ArtefactCarousel,
-    DeleteArtefactDialog
+    DeleteArtefactDialog,
+    NodeDatePicker
   },
   props: {
     formData: {
@@ -503,6 +505,7 @@ export default {
     },
     showAdvanced () {
       if (this.showStory) this.show = true
+      if (this.formData.endDate.length) this.hasEndDate = true
     },
     async getSuggestions (name) {
       if (name) this.suggestions = await findByName(name)

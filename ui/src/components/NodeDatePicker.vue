@@ -55,7 +55,7 @@ export default {
     label: String,
     value: { type: [Date, String], default: 'XXXX-XX-XX' },
     readonly: { type: Boolean, default: false },
-    min: { type: String }
+    min: { type: String },
   },
   data () {
     return {
@@ -99,6 +99,7 @@ export default {
 
       // array to return
       var years = [
+        { text: '', value: '' }
       ]
 
       // generates an array from 0 to max years
@@ -131,6 +132,7 @@ export default {
     // generates an array of months
     months () {
       return [
+        { text: '', value: '' },
         { text: 'XX', value: 'XX' },
         { text: '01', value: '01' },
         { text: '02', value: '02' },
@@ -150,6 +152,7 @@ export default {
     days () {
       // the array to return will always have the unspecified option
       var days = [
+        { value: '', text: '' },
         { value: 'XX', text: 'XX' }
       ]
 
