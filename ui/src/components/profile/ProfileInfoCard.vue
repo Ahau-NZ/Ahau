@@ -1,7 +1,7 @@
 <template>
     <v-row cols="12" class="rounded-border">
       <ProfileInfoItem class="br bb" :title="'Preferred Name'" :value="profile.preferredName"/>
-      <ProfileInfoItem :class="mobile ? 'bb':'br bb'" :title="'Age'" :value="age" />
+      <ProfileInfoItem :class="mobile ? 'bb':'br bb'" :title="'Age'" :value="age" :subValue="dob" />
       <ProfileInfoItem class="br bb" :title="'Occupation'" :value="profile.profession" />
       <ProfileInfoItem class="bb" :title="'Location'" :value="profile.location" />
 

@@ -146,7 +146,7 @@
           </v-row>
           <!-- DECEASED PICKER -->
           <v-row>
-           <v-col  v-if=" !isUser || formData.deceased" cols="12" class="pa-1">
+           <v-col  v-if="!isUser || formData.deceased" cols="12" class="pa-1">
               <v-checkbox v-model="formData.deceased"
                 label="No longer living" :hide-details="true"
                 v-bind="customProps"
@@ -175,15 +175,6 @@
               <v-text-field
                 v-model="formData.gender"
                 label="Gender"
-                v-bind="customProps"
-                outlined
-              />
-            </v-col>
-            <v-col v-if="isRegistration" cols="12" class="pa-1">
-              <!-- City, Country -->
-              <v-text-field
-                v-model="formData.location"
-                label="City, Country"
                 v-bind="customProps"
                 outlined
               />
@@ -295,17 +286,6 @@
               />
             </v-col>
           </v-row>
-          <v-row v-if="!isRegistration">
-            <v-col cols="12" class="pa-1">
-              <!-- City, Country -->
-              <v-text-field
-                v-model="formData.location"
-                label="City, Country"
-                v-bind="customProps"
-                outlined
-              />
-            </v-col>
-          </v-row>
         </v-col>
       </v-row>
   </v-form>
@@ -336,7 +316,6 @@ export default {
     mobile: { type: Boolean, default: false },
     isEditing: { type: Boolean, default: false },
     isUser: { type: Boolean, default: false },
-    isRegistration: { type: Boolean, default: false}
   },
   data () {
     return {
@@ -359,6 +338,7 @@ export default {
       }
     },
     'formData.gender' (newValue) {
+      console.log("gender: ", newValue)
       if (newValue === 'male') this.updateSelectedGender('male')
       if (newValue === 'female') this.updateSelectedGender('female')
     },
