@@ -28,7 +28,7 @@
         </v-btn>
       </div>
     </v-row>
-    <v-row>
+    <v-row v-if="stories && stories.length > 0">
       <transition name="change" mode="out-in">
         <v-col cols="12" xs="12" sm="12" md="9" :class="!showStory ? '':'pa-0'">
           <!-- <v-row>
@@ -48,6 +48,19 @@
         </v-col>
       </transition>
     </v-row>
+    <v-row v-else>
+      <v-col>
+        <div
+          v-if="!stories || (stories && stories.length < 1)"
+          class="px-8 subtitle-1 grey--text "
+          :class="{
+            'text-center': mobile
+          }"
+        >
+          No records found
+        </div>
+      </v-col>
+    </v-row>
   </v-container>
   <!-- <vue-context ref="menu" class="pa-4">
     <li v-for="(option, index) in contextMenuOpts" :key="index">
@@ -65,7 +78,7 @@
     <NewRecordDialog
       v-if="dialog === 'new-story'"
       :show="dialog === 'new-story'"
-      :title="'Add new Record'"
+      :title="`Add record to ${currentProfile.preferredName || 'Untitled'}'s archive`"
       @close="dialog = null"
       @submit="saveStory($event)"
     />
@@ -129,7 +142,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['stories', 'showStory', 'whoami']),
+    ...mapGetters(['stories', 'showStory', 'whoami', 'currentProfile']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -216,6 +229,8 @@ export default {
 
         if (input.id) {
           this.currentStory = story
+        } else {
+          this.toggleStory(story)
         }
 
         console.warn('Potentially loading a large amount of data with each change to a story...')

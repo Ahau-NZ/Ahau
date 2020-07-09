@@ -73,7 +73,7 @@ export default {
     if (!this.editing) {
       this.formData.mentions.push(this.currentProfile)
       this.formData.contributors.push(this.whoami.profile)
-      this.formData.access.push(this.whoami.profile)
+      // this.formData.access.push(this.whoami.profile)
     }
   },
   watch: {
