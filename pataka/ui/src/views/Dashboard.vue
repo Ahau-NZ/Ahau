@@ -56,12 +56,9 @@
               <p
                 class="body-1 text-uppercase text-center"
               >{{ network.internetLatency ? network.internetLatency === -1 ? 'Offline' : 'Connected to the Internet' : 'Checking'}}</p>
-              <span
-                v-if="network.internetLatency && network.internetLatency !== -1"
-                class="network-latency"
-              >{{network.internetLatency}}ms</span>
+              <span class="network-latency">{{latency}}</span>
             </v-row>
-            <v-row justify="start" class="pl-4">
+            <v-row justify="start" class="pl-4 network-local">
               <div class="dot mr-4" :class="network.ipv4 ? 'green' : 'grey'" />
               <p class="body-1 text-uppercase">{{network.ipv4 ? ' Local Network' : 'Checking'}}</p>
             </v-row>
@@ -162,6 +159,12 @@ export default {
       communityRecords: 0
     }
   }),
+  computed: {
+    latency () {
+      if (this.network.internetLatency && this.network.internetLatency !== -1) return `${this.network.internetLatency} ms`
+      else return 'Unknown'
+    }
+  },
   apollo: {
     profile: {
       query: gql`query {
@@ -361,12 +364,12 @@ export default {
   background-color: grey;
 }
 .internet-dot:hover ~ .network-latency {
-  left: -290px;
+  left: -200px;
 }
 .network-latency {
   position: relative;
   left: -100vw;
-  top: -20px;
+  top: -10px;
   background: grey;
   height: 30px;
   width: 100px;
@@ -375,7 +378,9 @@ export default {
   border-radius: 4px;
   margin: 0 auto;
 }
-
+.network-local {
+  margin-top: -30px !important;
+}
 .stat-column {
   padding-top: 240px;
 }
