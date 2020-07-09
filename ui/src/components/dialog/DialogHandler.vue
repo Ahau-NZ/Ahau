@@ -108,7 +108,6 @@ import tree from '@/lib/tree-helpers'
 import * as d3 from 'd3'
 import { mapGetters, mapActions } from 'vuex'
 
-import { story1 } from '@/mocks/stories'
 export default {
   name: 'DialogHandler',
   components: {
@@ -161,8 +160,7 @@ export default {
   data () {
     return {
       suggestions: [],
-      source: null,
-      sampleStory: story1
+      source: null
     }
   },
   computed: {

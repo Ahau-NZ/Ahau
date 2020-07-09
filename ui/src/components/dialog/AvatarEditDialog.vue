@@ -1,5 +1,5 @@
 <template>
-  <Dialog :title="`Crop Photo`" :show="show" @close="close" :width="width" :goBack="close" enableMenu background="black">
+  <Dialog title="Crop Photo" :show="show" @close="close" :width="width" :goBack="close" enableMenu background="black">
     <template v-slot:content>
       <v-row justify="center">
         <v-col :width="width">
