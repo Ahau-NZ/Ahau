@@ -509,7 +509,7 @@ export default {
     },
     showAdvanced () {
       if (this.showStory) this.show = true
-      if (this.formData.endDate.length) this.hasEndDate = true
+      if (this.formData.endDate && this.formData.endDate.length > 0) this.hasEndDate = true
     },
     async getSuggestions (array, $event) {
       var suggestions = []

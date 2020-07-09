@@ -5,6 +5,7 @@ import { PROFILE_FRAGMENT } from './profile-helpers'
 import isEqual from 'lodash.isequal'
 import isEmpty from 'lodash.isempty'
 import clone from 'lodash.clonedeep'
+import uniqby from 'lodash.uniqby'
 
 export function SET_DEFAULT_STORY (newStory) {
   var story = clone(newStory)
@@ -111,7 +112,9 @@ export const EMPTY_STORY = {
   contributors: [],
   protocols: [],
   relatedRecords: [],
-  artefacts: []
+  artefacts: [],
+  timeInterval: null,
+  submissionDate: null
 }
 
 export const PERMITTED_STORY_ATTRS = [
@@ -231,9 +234,12 @@ export const DELETE_STORY = (id, date) => ({
 })
 
 export const SAVE_STORY = input => {
+  var submissionDate = new Date().toISOString().slice(0, 10)
+
   input = {
     type: '*', // TODO: sort out types
-    ...pick(input, PERMITTED_STORY_ATTRS)
+    ...pick(input, PERMITTED_STORY_ATTRS),
+    submissionDate
   }
 
   return {
@@ -253,7 +259,6 @@ export function arrayChanges (array1, array2) {
 }
 
 export function GET_CHANGES (initial, updated) {
-  console.log(initial, updated)
   var changes = {}
 
   Object.entries(updated).forEach(([key, value]) => {
@@ -284,6 +289,10 @@ export function GET_CHANGES (initial, updated) {
           // get all the items that were deleted
           changes[key].remove = arrayChanges(initial[key], updated[key])
 
+          // remove dupes
+          changes[key].add = uniqby(changes[key].add, 'id')
+          changes[key].remove = uniqby(changes[key].remove, 'id')
+
           // remove add or remove if theyre empty
           if (isEmpty(changes[key].add)) delete changes[key].add
           if (isEmpty(changes[key].remove)) delete changes[key].remove
@@ -297,10 +306,6 @@ export function GET_CHANGES (initial, updated) {
       }
     }
   })
-
-  // Update the submissionDate with the new record
-  var submissionDate = new Date().toISOString().slice(0, 10)
-  changes.submissionDate = submissionDate
 
   return changes
 }

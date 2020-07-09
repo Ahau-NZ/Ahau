@@ -1,83 +1,111 @@
-import { GET_CHANGES } from './story-helpers.js'
-
+import { GET_CHANGES, EMPTY_STORY, SET_DEFAULT_STORY } from './story-helpers.js'
+import { personComplete } from '../mocks/person-profile.js'
 import clone from 'lodash.clonedeep'
 const test = require('tape')
 
-const FULL_STORY = {
-  title: 'Whanau Reunion',
-  description: 'Whanau Reunion 2020 where we had a whanau olympics',
-  startDate: '2020-07-01',
-  endDate: '2020-07-01',
-  location: '123 Pukemoremore Road',
-  locationDescription: 'The Farm',
-  // creator: {
-  //   id: '%ProfileA'
-  // },
-  contributionNotes: 'Any Whanau can add or contribute to this story',
-  format: null,
-  identifier: null,
-  source: null,
-  language: null,
-  translation: null,
-  // culturalNarrative: null,
-  mentions: [
-    { id: '%ProfileA' }, { id: '%ProfileB' }, { id: '%ProfileC' }
-  ],
-  categories: [],
-  collections: [],
-  access: [],
-  contributors: [
-    { id: '%ProfileA' }, { id: '%ProfileC' }
-  ],
-  protocols: [],
-  relatedRecords: [],
-  artefacts: [
-    { id: '%A', title: 'Artefact A' }, { id: '%B', title: 'Artefact B' }
-  ]
+const storyInitial = SET_DEFAULT_STORY(EMPTY_STORY)
+
+const storyMinimal = {
+  title: 'Title',
+  description: 'Description',
+  location: 'Aotearoa',
+  locationDescription: 'The land of the long white cloud',
+  contributionNotes: 'Kia ora',
+
+  format: 'FORMAT',
+  identifier: 'ID',
+  source: 'SRC',
+  language: 'Maaori',
+  translation: 'N/A',
+  culturalNarrative: 'N/A',
+
+  timeInterval: '1900/2020',
+  submissionDate: '2020-07-08'
 }
 
-test('edit story submission', t => {
-  t.plan(3)
+const { children, parents } = personComplete
 
-  var original = clone(FULL_STORY)
+const storyComplete = {
+  // ...storyMinimal,
+  mentions: [...children],
+  // categories: [],
+  // collections: [],
+  // access: [],
+  contributors: [...children]
+  // protocols: [],
+  // relatedRecords: [],
+  // artefacts: [],
+}
 
-  // TEST ON NO CHANGES
-  var noChangesSubmission = GET_CHANGES(original, original)
-  t.deepEqual(noChangesSubmission, {}, 'empty edit submission returns empty object')
+test('create new story (empty)', t => {
+  t.plan(1)
+  const emptyStoryChanges = GET_CHANGES(storyInitial, storyInitial)
+  t.deepEqual(emptyStoryChanges, {}, 'no changes returns an empty object')
+})
 
-  // TEST ON CHANGES IN STRINGS
-  var stringChanges = clone(FULL_STORY)
+test('create new story (properties)', t => {
+  t.plan(1)
 
-  var expectedStringChanges = {
-    title: 'Whanau Reunion of 2020',
-    description: 'We had a whanau reunion at the farm in 2020'
+  const propertyStoryChanges = GET_CHANGES(storyInitial, storyMinimal)
+
+  t.deepEqual(propertyStoryChanges, {
+    title: 'Title',
+    description: 'Description',
+    location: 'Aotearoa',
+    locationDescription: 'The land of the long white cloud',
+    contributionNotes: 'Kia ora',
+    format: 'FORMAT',
+    identifier: 'ID',
+    source: 'SRC',
+    language: 'Maaori',
+    translation: 'N/A',
+    culturalNarrative: 'N/A',
+    timeInterval: '1900/2020',
+    submissionDate: '2020-07-08'
+  }, 'returns all the changed properties')
+})
+
+test('create/update new story (arrays)', t => {
+  t.plan(5)
+
+  const arrayStoryChanges = GET_CHANGES(storyInitial, storyComplete)
+
+  var expectedArray = {
+    add: [...children]
   }
+  t.deepEqual(arrayStoryChanges, {
+    mentions: expectedArray,
+    contributors: expectedArray
+  }, 'returns all the changed arrays in format array: { add: [...], remove: [...] }')
 
-  stringChanges.title = expectedStringChanges.title
-  stringChanges.description = expectedStringChanges.description
+  var storyUpdated = clone(storyComplete)
 
-  var stringChangesSubmission = GET_CHANGES(original, stringChanges)
-  t.deepEqual(stringChangesSubmission, expectedStringChanges, 'string changes in an edit story submission return expected changes')
+  storyUpdated.mentions.splice(0, 1) // remove first mention
+  storyUpdated.mentions.push(parents[0]) // add a profile in
 
-  // TEST ON CHANGES IN AN ARRAY
-  var arrayChanges = clone(FULL_STORY)
+  storyUpdated.contributors.splice(1, 1)
 
-  arrayChanges.artefacts.push({ title: 'Artefact C', mentions: [{ id: '%1' }] })
-  arrayChanges.artefacts[0].title = 'ARTEFACT A'
-  arrayChanges.artefacts.splice(1, 1)
+  var updatedStoryChanges = GET_CHANGES(storyComplete, storyUpdated)
 
-  var expectedArraySubmission = {
-    artefacts: {
-      add: [
-        { id: '%A', title: 'ARTEFACT A', linkId: undefined },
-        { title: 'Artefact C', mentions: [{ id: '%1' }] }
-      ],
-      remove: [
-        { id: '%B', title: 'Artefact B' }
-      ]
-    }
-  }
+  t.deepEqual(updatedStoryChanges.mentions, {
+    add: [parents[0]],
+    remove: [children[0]]
+  }, 'contains mentioned profile to be added and removed')
 
-  var arrayChangesSubmission = GET_CHANGES(original, arrayChanges)
-  t.deepEqual(arrayChangesSubmission, expectedArraySubmission, 'submissions which have arrays returns correctly, inc nested arrays')
+  t.deepEqual(updatedStoryChanges.contributors, {
+    remove: [children[1]]
+  }, 'contains contributor profile to be removed')
+
+  // add another three to mentions that are duplicates
+  var storyUpdated2 = clone(storyUpdated)
+  var parent = parents[1]
+
+  storyUpdated2.mentions.push(parent)
+  storyUpdated2.mentions.push(parent)
+  storyUpdated2.mentions.push(parent)
+
+  var updatedStory2Changes = GET_CHANGES(storyUpdated, storyUpdated2)
+
+  t.true(updatedStory2Changes.mentions.add.length === 1, 'returns correct amount of mentions, removing duplicates')
+  t.deepEqual(updatedStory2Changes.mentions.add[0], parent, 'returns correct mentioned profile')
 })
