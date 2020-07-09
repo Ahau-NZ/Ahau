@@ -55,7 +55,9 @@ export default {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
     age () {
-      return calculateAge(this.profile.aliveInterval)
+      var age = calculateAge(this.profile.aliveInterval)
+      if (age === null) return ' '
+      return age.toString()
     },
     dob () {
       if (this.profile.aliveInterval) {

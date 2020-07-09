@@ -214,7 +214,7 @@
 
 <script>
 import AvatarGroup from '@/components/AvatarGroup.vue'
-import Avatar from '@/components/Avatar.vue'
+// import Avatar from '@/components/Avatar.vue'
 import Artefact from '@/components/artefact/Artefact.vue'
 import ChipGroup from '@/components/archive/ChipGroup.vue'
 import { mapActions, mapMutations, mapGetters } from 'vuex'
@@ -235,7 +235,7 @@ export default {
   },
   components: {
     AvatarGroup,
-    Avatar,
+    // Avatar,
     Artefact,
     ChipGroup,
     EditStoryButton,
