@@ -47,10 +47,12 @@ const EMPTY_STORY = {
   id: '',
   title: '',
   description: '',
+  timeInterval: '',
   startDate: '',
   endDate: '',
   location: '',
   locationDescription: '',
+  submissionDate: '',
   creator: {},
   contributionNotes: '',
 
@@ -73,7 +75,10 @@ const EMPTY_STORY = {
 
 function setDefaultStory (newStory) {
   var story = clone(newStory)
-
+  var timeInterval = ['', '']
+  if (story.timeInterval) {
+    timeInterval = story.timeInterval.split('/')
+  }
   var artefacts = story.artefacts
 
   if (artefacts && artefacts.length > 0) {
@@ -84,8 +89,9 @@ function setDefaultStory (newStory) {
     id: story.id,
     title: story.title,
     description: story.description,
-    startDate: story.startDate,
-    endDate: story.endDate,
+    timeInterval: story.timeInterval,
+    startDate: timeInterval[0],
+    endDate: timeInterval[1],
     location: story.location,
     locationDescription: story.locationDescription,
     creator: story.creator,
@@ -132,6 +138,11 @@ function storyChanges (initial, updated) {
       }
     }
   })
+
+  //Update the submissionDate with the new record 
+  var submissionDate = new Date().toISOString().slice(0,10)
+  changes['submissionDate'] = submissionDate
+
   return changes
 }
 
@@ -146,10 +157,16 @@ function storySubmission (newStory) {
   var output = {}
   var story = pick(newStory, [...PERMITTED_STORY_ATTRS])
   Object.entries(story).forEach(([key, value]) => {
-    if (!isEmpty(story[key])) {
+    if (!isEmpty(value)) {
       output[key] = value
     }
   })
+  var timeInterval = story.startDate + '/' + story.endDate
+  output['timeInterval'] = timeInterval
+  
+  var submissionDate = new Date().toISOString().slice(0,10)
+  output['submissionDate'] = submissionDate
+
   return Object.assign({}, output)
 }
 
@@ -178,9 +195,24 @@ export default {
   watch: {
     story: {
       handler (newVal) {
-        console.log(newVal)
       },
       deep: true
+    },
+    'formData.startDate' (newVal) {
+      if (this.formData.timeInterval) {
+        var dates = this.formData.timeInterval.split('/')
+        this.formData.timeInterval = (newVal || '') + '/' + (dates[1] || '')
+      } else {
+        this.formData.timeInterval = (newVal || '') + '/'
+      }
+    },
+    'formData.endDate' (newVal) {
+      if (this.formData.timeInterval) {
+        var dates = this.formData.timeInterval.split('/')
+        this.formData.timeInterval = (dates[0] || '') + '/' + (newVal || '')
+      } else {
+        this.formData.timeInterval = '/' + (newVal || '')
+      }
     }
   },
   methods: {
