@@ -1,5 +1,5 @@
 <template>
-  <div :style="mobile ? 'width: 180px;' : 'width: 300px;'">
+  <div style="width: 300px">
     <v-combobox
       v-if="openMenu"
       v-model="chips"
