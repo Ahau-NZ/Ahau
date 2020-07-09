@@ -86,20 +86,13 @@
 </template>
 
 <script>
-// import {
-//   VueContext
-// } from 'vue-context'
-
 import StoryCard from '@/components/archive/StoryCard.vue'
 // import CollectionGroup from '@/components/archive/CollectionGroup.vue'
 import { SAVE_STORY, GET_STORY } from '@/lib/story-helpers.js'
 import { SAVE_ARTEFACT } from '@/lib/artefact-helpers.js'
 import { SAVE_LINK, TYPES } from '@/lib/link-helpers.js'
-import { firstMocks } from '@/mocks/collections'
 import { mapGetters, mapActions, mapMutations } from 'vuex'
 import NewRecordDialog from '@/components/dialog/archive/NewRecordDialog.vue'
-
-// const get = require('lodash.get')
 
 export default {
   name: 'Archive',
@@ -113,22 +106,18 @@ export default {
   data () {
     return {
       currentStory: null,
-      collections: firstMocks,
-      dialog: {
-        active: null,
-        type: null
-      },
-      contextMenuOpts: [{
-        title: 'Create a new Collection',
-        dialog: 'new-collection',
-        icon: 'mdi-folder-multiple-outline'
-      },
-      {
-        title: 'Add new record',
-        dialog: 'new-story',
-        icon: 'mdi-file-outline'
-      }
-      ],
+      dialog: null,
+      // contextMenuOpts: [{
+      //   title: 'Create a new Collection',
+      //   dialog: 'new-collection',
+      //   icon: 'mdi-folder-multiple-outline'
+      // },
+      // {
+      //   title: 'Add new record',
+      //   dialog: 'new-story',
+      //   icon: 'mdi-file-outline'
+      // }
+      // ],
       scrollPosition: 0
     }
   },
