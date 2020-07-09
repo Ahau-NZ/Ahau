@@ -1,11 +1,11 @@
 <template>
     <v-row cols="12" class="rounded-border">
-      <ProfileInfoItem class="br bb" :title="'Preferred Name'" :value="profile.preferredName"/>
-      <ProfileInfoItem :class="mobile ? 'bb':'br bb'" :title="'Age'" :value="age" :subValue="dob" />
-      <ProfileInfoItem class="br bb" :title="'Occupation'" :value="profile.profession" />
-      <ProfileInfoItem class="bb" :title="'Location'" :value="profile.location" />
+      <ProfileInfoItem :class="mobile ? 'bb br':'br'" :title="'Preferred Name'" :value="profile.preferredName"/>
+      <ProfileInfoItem :class="mobile ? 'bb':'br'" :title="'Age'" :value="age"/>
+      <ProfileInfoItem class="br" :title="'Occupation'" :value="profile.profession" />
+      <ProfileInfoItem :title="'Location'" :value="profile.location" />
 
-      <div v-if="profile.parents && profile.parents.length || isRegistration" :class="mobile ? '' : 'br'" style="min-width:150px">
+      <div v-if="profile.parents && profile.parents.length || isRegistration" :class="mobile ? 'bt' : 'br bt'" style="min-width:150px; flex-grow: 1;">
         <AvatarGroup v-if="profile.parents" :profiles="profile.parents" group-title="Parents" size="50px" :show-labels="true"
           @profile-click="openProfile($event)">
           <template v-slot:action >
@@ -13,7 +13,7 @@
           </template>
         </AvatarGroup>
       </div>
-      <div v-if="profile.siblings && profile.siblings.length || isRegistration" :class="mobile ? '' : 'br'" style="min-width:150px">
+      <div v-if="profile.siblings && profile.siblings.length" :class="mobile ? 'bt' : profile.children && profile.children.length  ? 'br bt' : 'bt'" style="min-width:150px; flex-grow: 1;">
         <AvatarGroup v-if="profile.siblings" :profiles="profile.siblings" group-title="Siblings" size="50px" :show-labels="true"
           @profile-click="openProfile($event)">
           <template v-slot:action >
@@ -21,7 +21,7 @@
           </template>
         </AvatarGroup>
       </div>
-      <div v-if="profile.children && profile.children.length || isRegistration" style="min-width:150px">
+      <div v-if="profile.children && profile.children.length" style="min-width:150px; flex-grow: 1;" :class="mobile ? 'bt' : 'bt'">
         <AvatarGroup v-if="profile.children" :profiles="profile.children" group-title="Children" size="50px" :show-labels="true"
           @profile-click="openProfile($event)">
           <template v-slot:action >
