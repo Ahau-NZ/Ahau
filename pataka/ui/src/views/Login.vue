@@ -63,13 +63,11 @@ export default {
         query: gql`
           {
             whoami {
-              public {
-                profile {
-                  id
-                  preferredName
-                  avatarImage {
-                    uri
-                  }
+              profile {
+                id
+                preferredName
+                avatarImage {
+                  uri
                 }
               }
             }
@@ -80,7 +78,7 @@ export default {
 
       if (result.errors) throw result.errors
 
-      if (result.data.whoami.public.profile) this.profile = result.data.whoami.public.profile
+      if (result.data.whoami.profile) this.profile = result.data.whoami.profile
       this.proceed()
     },
 
@@ -99,7 +97,7 @@ export default {
       // Shortcut in dev, that saves us from doing one click when testing
       if (this.isSetup && process.env.NODE_ENV === 'development') {
         this.karakiaTūwhera()
-        this.$router.push({ name: 'Dashboard' })
+        this.$router.push({ name: 'dashboard' })
       }
 
       this.isLoading = false
@@ -124,7 +122,8 @@ export default {
         variables: {
           input: {
             id: this.profile.id,
-            ...newProfile
+            ...newProfile,
+            recps: this.profile.id
           }
         }
       })

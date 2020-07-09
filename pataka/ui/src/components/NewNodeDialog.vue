@@ -3,39 +3,7 @@
     <!-- Content Slot -->
     <template v-slot:content>
       <v-col class="py-0">
-        <ProfileForm :profile.sync="formData" :mobile="mobile">
-          <!-- Slot = Search -->
-          <template v-slot:search>
-            <v-combobox
-              v-model="formData.preferredName"
-              item-value="id"
-              item-text="id"
-              label="Pātaka name"
-              :menu-props="{ light: true }"
-              append-icon
-              @click:clear="resetFormData()"
-              outlined
-            >
-              <!-- Slot:item = Data -->
-              <template v-slot:item="data">
-                <template v-if="typeof data.item === 'object'">
-                  <v-list-item @click="setFormData(data.item)">
-                    <Avatar
-                      class="mr-3"
-                      size="40px"
-                      :image="data.item.profile.avatarImage"
-                      :alt="data.item.profile.preferredName"
-                    />
-                    <v-list-item-content>
-                      <v-list-item-title>{{ data.item.profile.preferredName }}</v-list-item-title>
-                      <v-list-item-subtitle>Preferred name</v-list-item-subtitle>
-                    </v-list-item-content>
-                  </v-list-item>
-                </template>
-              </template>
-            </v-combobox>
-          </template>
-        </ProfileForm>
+        <ProfileForm :profile.sync="formData" :mobile="mobile" />
       </v-col>
     </template>
     <!-- End Content Slot -->
@@ -56,7 +24,6 @@
 <script>
 import Dialog from '@/components/Dialog.vue'
 import ProfileForm from '@/components/ProfileForm.vue'
-import Avatar from '@/components/Avatar.vue'
 import isEmpty from 'lodash.isempty'
 
 function setDefaultData () {
@@ -73,7 +40,6 @@ function setDefaultData () {
 export default {
   name: 'NewNodeDialog',
   components: {
-    Avatar,
     Dialog,
     ProfileForm
   },
@@ -93,7 +59,7 @@ export default {
     submission () {
       let submission = {}
       Object.entries(this.formData).map(([key, value]) => {
-        submission[key] = value
+        if (!isEmpty(this.formData[key])) submission[key] = value
       })
 
       return submission
@@ -116,14 +82,6 @@ export default {
       this.formData = setDefaultData()
     }
 
-  },
-  watch: {
-    // watch for changes to avatarImage to decide when to show avatar
-    'formData.avatarImage' (newValue) {
-      if (!isEmpty(this.formData.avatarImage)) {
-        this.showAvatar = true
-      }
-    }
   }
 }
 </script>

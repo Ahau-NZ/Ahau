@@ -35,9 +35,9 @@
       </v-row>
       <v-row justify="center">
         <v-col cols="4">
-          <Avatar size="180px" alt="name" class="pb-4" />
-          <h2 class="subtitle-1 text-uppercase text-center">Name of Pataka</h2>
-          <p class="subtitle-2 grey--text text-center">Pataka SSB ID</p>
+          <Avatar size="180px" alt="name" class="pb-4" :image="profile.avatarImage" />
+          <h2 class="subtitle-1 text-uppercase text-center">{{profile.preferredName}}</h2>
+          <p class="subtitle-2 grey--text text-center">{{profile.feedId}}</p>
           <v-col cols="8" class="mx-auto">
             <v-row justify="start" class="pl-4">
               <div
@@ -141,6 +141,11 @@ export default {
     generateError: false,
     errorMsg: null,
     checkingPort: null,
+    profile: {
+      feedId: '',
+      preferredName: '',
+      avatarImage: null
+    },
     network: {
       internetLatency: null,
       ipv4: null,
@@ -158,6 +163,27 @@ export default {
     }
   }),
   apollo: {
+    profile: {
+      query: gql`query {
+        whoami {
+          feedId
+          profile {
+            id
+            preferredName
+            avatarImage {
+              uri
+            }
+          }
+        }
+    }`,
+      update (data) {
+        if (!data.whoami.profile || !data.whoami.profile.preferredName) this.$router.push({ name: 'login' })
+        return {
+          ...data.whoami.profile,
+          feedId: data.whoami.feedId
+        }
+      }
+    },
     network: {
       query: gql`query {
       network {

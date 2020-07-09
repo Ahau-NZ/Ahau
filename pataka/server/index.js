@@ -23,7 +23,7 @@ module.exports = {
     const profile = Profile(sbot)
     const invite = Invite(sbot)
     const pataka = Pataka(sbot, profile.gettersWithCache)
-    main.loadContext((err, context) => {
+    profile.Context((err, context) => {
       if (err) throw err
 
       const server = new ApolloServer({

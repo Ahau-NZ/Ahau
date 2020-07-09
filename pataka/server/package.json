@@ -1,15 +1,15 @@
 {
   "name": "ahau-pataka-server",
-  "version": "0.0.1",
+  "version": "0.6.1",
   "description": "A pub application for the Ahau ecosystem. Built using scuttlebutt",
   "homepage": "https://gitlab.com/ahau/whakapapa-ora",
   "main": "index.js",
   "dependencies": {
     "@apollo/federation": "^0.17.0",
     "@ssb-graphql/invite": "0.1.0",
-    "@ssb-graphql/main": "^4.0.1",
+    "@ssb-graphql/main": "3.0.1",
     "@ssb-graphql/pataka": "0.0.1",
-    "@ssb-graphql/profile": "^2.0.1",
+    "@ssb-graphql/profile": "1.0.2",
     "@ssb-graphql/stats": "0.0.5",
     "apollo-server": "^2.15.1",
     "apollo-server-express": "^2.15.1",
@@ -17,7 +17,7 @@
     "express": "^4.17.1",
     "graphql": "^15.3.0",
     "graphql-date": "^1.0.3",
-    "graphql-upload": "^11.0.0"
+    "graphql-upload": "9.0.0"
   },
   "devDependencies": {
     "casual": "^1.6.2"

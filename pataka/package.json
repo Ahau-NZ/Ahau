@@ -34,7 +34,7 @@
     "ssb-master": "^1.0.3",
     "ssb-no-auth": "^1.0.0",
     "ssb-private": "^1.1.0",
-    "ssb-profile": "^1.1.1",
+    "ssb-profile": "1.0.2",
     "ssb-promiscuous": "^1.1.0",
     "ssb-query": "^2.4.5",
     "ssb-replicate": "^1.3.2",
