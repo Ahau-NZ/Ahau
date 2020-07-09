@@ -155,51 +155,100 @@ export default {
   },
   methods: {
     ...mapMutations(['addStoryToStories', 'updateStoryInStories', 'removeStoryFromStories']),
-    ...mapActions(['setComponent', 'setShowStory', 'setDialog']),
+    ...mapActions(['setComponent', 'setShowStory', 'setDialog', 'getAllStories']),
     async saveStory (input) {
-      if (input) {
-        var res = await this.$apollo.mutate(SAVE_STORY(input))
+      var { id, artefacts, mentions, contributors, relatedRecords } = input
+
+      try {
+        const res = await this.$apollo.mutate(SAVE_STORY(input))
         if (res.errors) throw res.errors
 
-        const storyId = res.data.saveStory
-
-        if (!storyId) return
-
-        // check if the input has artefacts
-        if (input.artefacts && input.artefacts.length > 0) {
-          // create an artefact for each new artefact given
-          await Promise.all(input.artefacts.map(async artefact => {
-            const artefactId = await this.saveArtefact(artefact)
-            if (!artefactId) return
-
-            // if the artefact doesnt have an id, it means we need to create the link between
-            // this artefact and the story
-            if (!artefact.id) {
-              const input = {
-                type: TYPES.STORY_ARTEFACT,
-                parent: storyId,
-                child: artefactId
-              }
-
-              // create the link between the story and this artefact
-              await this.saveLink(input)
-            }
-
-            return artefactId
-          }))
+        if (!id) {
+          id = res.data.saveStory
         }
 
-        // get the full newly created/updated story
-        var story = await this.getStory(storyId)
+        // process the artefacts
+        if (artefacts) {
+          const { add, remove } = artefacts
+
+          if (add && add.length > 0) {
+            // all artefacts to create or update
+            await Promise.all(add.map(async artefact => {
+              const artefactId = await this.saveArtefact(artefact)
+              if (!artefactId) return
+
+              // if the artefact didnt have an id, then it means we create the link
+              if (!artefact.id) {
+                const artefactInput = {
+                  type: TYPES.STORY_ARTEFACT,
+                  parent: id,
+                  child: artefactId
+                }
+
+                await this.saveLink(artefactInput)
+              }
+            }))
+          }
+
+          if (remove && remove.length > 0) {
+            await Promise.all(remove.map(async artefact => {
+              if (artefact.linkId) {
+                await this.removeLink({ date: new Date(), linkId: artefact.linkId })
+              }
+              return artefact
+            }))
+          }
+        }
+
+        if (mentions) {
+          await this.processLinks(id, mentions, TYPES.STORY_PROFILE_MENTION)
+        }
+
+        if (contributors) {
+          await this.processLinks(id, contributors, TYPES.STORY_PROFILE_CONTRIBUTOR)
+        }
+
+        if (relatedRecords) {
+          await this.processLinks(id, relatedRecords, TYPES.STORY_STORY)
+        }
+
+        var story = await this.getStory(id)
 
         if (input.id) {
-          // if the story already existed, we only need to update it
-          this.updateStoryInStories(story)
           this.currentStory = story
-        } else {
-          // if it was a new story we need to add it
-          this.addStoryToStories(story)
         }
+
+        console.warn('Potentially loading a large amount of data with each change to a story...')
+        this.getAllStories()
+      } catch (err) {
+        throw err
+      }
+    },
+    async processLinks (parentId, object, type) {
+      const { add, remove } = object
+
+      if (add && add.length > 0) {
+        await Promise.all(add.map(async linkedItem => {
+          if (linkedItem.id) {
+            const linkInput = {
+              type,
+              parent: parentId,
+              child: linkedItem.id
+            }
+
+            await this.saveLink(linkInput)
+          }
+          return linkedItem
+        }))
+      }
+
+      if (remove && remove.length > 0) {
+        await Promise.all(remove.map(async linkedItem => {
+          if (linkedItem.linkId) {
+            await this.removeLink({ date: new Date(), linkId: linkedItem.linkId })
+          }
+          return linkedItem
+        }))
       }
     },
     async saveArtefact (input) {
@@ -238,6 +287,19 @@ export default {
       }
 
       // return the linkId
+      return res.data.saveLink
+    },
+    async removeLink ({ date, linkId }) {
+      const res = await this.$apollo.mutate(SAVE_LINK({
+        linkId,
+        tombstone: { date }
+      }))
+
+      if (res.errors) {
+        console.error('error removing link. ' + res.errors)
+        return
+      }
+
       return res.data.saveLink
     },
     toggleStory (story) {

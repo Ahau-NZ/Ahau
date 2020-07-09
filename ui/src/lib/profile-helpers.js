@@ -5,13 +5,15 @@ const apolloProvider = createProvider()
 const apolloClient = apolloProvider.defaultClient
 
 export const PERMITTED_PROFILE_ATTRS = [
+  // WARNING: make sure header and avatar images are the first two
+  'headerImage',
+  'avatarImage',
+  'id',
   'gender',
   'legalName',
   'aliveInterval',
   'preferredName',
-  'avatarImage',
   'description',
-  'headerImage',
   'altNames',
   'birthOrder',
   'location',
@@ -27,12 +29,21 @@ export const PERMITTED_RELATIONSHIP_ATTRS = [
   'legallyAdopted'
 ]
 
+export const PROFILE_FRAGMENT = gql`
+  fragment ProfileFragment on Person {
+    ${PERMITTED_PROFILE_ATTRS.slice(2)}
+    avatarImage { uri }
+    headerImage { uri }
+  }
+`
+
 export const whoami = ({
   query: gql`
-    {
+    ${PROFILE_FRAGMENT}
+    query {
       whoami {
         profile {
-          id
+          ...ProfileFragment
         }
       }
     }
@@ -40,44 +51,28 @@ export const whoami = ({
   fetchPolicy: 'no-cache'
 })
 
-export const getProfile = id => ({
+export const GET_PROFILE = id => ({
   query: gql`
+    ${PROFILE_FRAGMENT}
     query($id: String!) {
       person(id: $id){
-        id
-        preferredName legalName altNames
-        aliveInterval birthOrder
-        gender description 
-        location  address email
-        phone profession deceased
-        avatarImage { uri } headerImage { uri }
+        ...ProfileFragment
         children {
           profile {
-            id
-            preferredName legalName altNames
-            aliveInterval birthOrder
-            gender description
-            location  address deceased
-            email phone profession
-            avatarImage { uri }
+            ...ProfileFragment
           }
           linkId
           relationshipType
+          legallyAdopted
         }
         parents {
           profile {
-            id
-            preferredName legalName altNames
-            aliveInterval birthOrder
-            gender description
-            location address email
-            phone profession deceased
-            avatarImage { uri }
+            ...ProfileFragment
           }
           linkId
           relationshipType
+          legallyAdopted
         }
-        
       }
     }
   `,
@@ -87,7 +82,7 @@ export const getProfile = id => ({
 
 // get person with parents and children from DB
 export default async function getRelatives (profileId) {
-  const request = getProfile(profileId)
+  const request = GET_PROFILE(profileId)
   const result = await apolloClient.query(request)
   if (result.errors) {
     console.error('WARNING, something went wrong')
@@ -105,87 +100,3 @@ export const saveProfile = input => ({
   `,
   variables: { input }
 })
-
-// export const PERMITTED_PROFILE_ATTRS = [
-//   'gender',
-//   'legalName',
-//   'bornAt',
-//   'diedAt',
-//   'preferredName',
-//   'avatarImage',
-//   'description',
-//   'headerImage',
-//   'altNames',
-//   'birthOrder',
-//   'location',
-//   'email',
-//   'phone',
-//   'address',
-//   'profession',
-//   'deceased'
-// ]
-
-// export const PERMITTED_RELATIONSHIP_ATTRS = [
-//   'relationshipType',
-//   'legallyAdopted'
-// ]
-
-// const getProfile = id => ({
-//   query: gql`
-//     query($id: String!) {
-//       person(id: $id){
-//         id
-//         preferredName legalName altNames
-//         bornAt diedAt birthOrder
-//         gender description
-//         location  address email
-//         phone profession deceased
-//         avatarImage { uri }
-//         children {
-//           profile {
-//             id
-//             preferredName legalName altNames
-//             bornAt diedAt birthOrder
-//             gender description
-//             location  address deceased
-//             email phone profession
-//             avatarImage { uri }
-//           }
-//           relationshipId
-//           relationshipType
-//         }
-//         parents {
-//           profile {
-//             id
-//             preferredName legalName altNames
-//             bornAt diedAt birthOrder
-//             gender description
-//             location address email
-//             phone profession deceased
-//             avatarImage { uri }
-//           }
-//           relationshipId
-//           relationshipType
-//         }
-
-//       }
-//     }
-//   `,
-//   variables: { id: id },
-//   fetchPolicy: 'no-cache'
-// })
-
-// const saveProfile = input => ({
-//   mutation: gql`
-//     mutation($input: ProfileInput!) {
-//       saveProfile(input: $input)
-//     }
-//   `,
-//   variables: { input }
-// })
-
-// export default {
-//   getProfile,
-//   saveProfile,
-//   getRelatives
-// }

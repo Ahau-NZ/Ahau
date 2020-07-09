@@ -66,12 +66,12 @@
       :title="`Whakapapa registry`"
       @close="close"
     />
-    <NewCollectionDialog
+    <!-- <NewCollectionDialog
       :show="isActive('new-collection')"
       :title="'Create a new Collection'"
       @close="close"
       @submit="console.log('TODO: add collection to profile')"
-    />
+    /> -->
     <ComingSoonDialog
       :show="isActive('coming-soon')"
       @close="close"
@@ -90,7 +90,7 @@ import WhakapapaEditDialog from '@/components/dialog/whakapapa/WhakapapaEditDial
 import WhakapapaDeleteDialog from '@/components/dialog/whakapapa/WhakapapaDeleteDialog.vue'
 import WhakapapaShowHelper from '@/components/dialog/whakapapa/WhakapapaShowHelper.vue'
 import WhakapapaTableHelper from '@/components/dialog/whakapapa/WhakapapaTableHelper.vue'
-import NewCollectionDialog from '@/components/dialog/archive/NewCollectionDialog.vue'
+// import NewCollectionDialog from '@/components/dialog/archive/NewCollectionDialog.vue'
 import ComingSoonDialog from '@/components/dialog/ComingSoonDialog.vue'
 
 import gql from 'graphql-tag'
@@ -121,7 +121,7 @@ export default {
     WhakapapaDeleteDialog,
     WhakapapaShowHelper,
     WhakapapaTableHelper,
-    NewCollectionDialog,
+    // NewCollectionDialog,
     ComingSoonDialog
   },
   props: {

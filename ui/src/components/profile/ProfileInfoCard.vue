@@ -25,7 +25,6 @@
 
 <script>
 import calculateAge from '@/lib/calculate-age'
-import formatDate from '@/lib/format-date'
 import AvatarGroup from '@/components/AvatarGroup.vue'
 import ProfileInfoItem from './ProfileInfoItem'
 import { mapActions } from 'vuex'
