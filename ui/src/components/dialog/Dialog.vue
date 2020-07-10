@@ -10,6 +10,7 @@
         :light="!dark"
         :max-width="width"
         :fullscreen="mobile"
+        @input="closeDialog"
       >
         <div>
           <!-- Dialog Card -->
@@ -102,7 +103,7 @@ export default {
   },
   data () {
     return {
-      listener: null
+      listener: null,
     }
   },
   computed: {
@@ -111,6 +112,9 @@ export default {
     }
   },
   methods: {
+    closeDialog() {
+      this.$emit('close')
+    },
     close () {
       this.$emit('close')
     }

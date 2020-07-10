@@ -17,9 +17,8 @@
        hide-details dense rounded outlined 
        :searchInput.sync="searchInput" 
        :autofocus="openMenu" 
-       :blur="clearSuggestions" 
+       @blur="close" 
        class="search-input" 
-       @keydown.backspace="backspace"
       >
         <template v-slot:selection="{}">
         </template>
@@ -121,7 +120,7 @@ export default {
     data() {
         return {
             chips: [],
-            searchInput: '',
+            searchInput: "",
             parentElement: null,
             childElement: null,
             disableFocus: false
@@ -139,9 +138,12 @@ export default {
         selectedItems: {
             deep: true,
             immediate: true,
-            handler(newValue) {
-              console.log(newValue)
-                this.chips = newValue
+            handler(newValue, oldValue) {
+              if (oldValue && oldValue.length > newValue.length) {
+                return this.chips = oldValue
+              } else {
+                  this.chips = newValue
+              }
             }
         },
         chips: {
@@ -160,14 +162,6 @@ export default {
         }
     },
     methods: {
-        backspace (e) { 
-          console.log("backspace")
-          if (this.searchInput === '') {
-            console.log('do nothing')
-            e.preventDefault();
-            e.stopPropagation();
-          }
-        },
         getImage(item) {
             const {
                 artefacts
@@ -188,6 +182,7 @@ export default {
             return calculateAge(aliveInterval)
         },
         close() {
+          console.log
             this.$emit('update:openMenu', false)
             this.clearSuggestions()
         },
@@ -203,6 +198,7 @@ export default {
             this.$emit('update:openMenu', false)
         },
         removeSelectedItem(item) {
+          console.log("remove chip")
             this.chips.slice(item, 1)
         }
     }
