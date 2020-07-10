@@ -164,15 +164,15 @@ export default {
     },
     goProfile () {
       this.setComponent('profile')
-      this.setProfileById({ id: this.whoami.profile.id })
-      this.$router.push({ name: 'profileShow', params: { id: this.whoami.profile.id } }).catch(() => {})
+      this.setProfileById({ id: this.whoami.personal.profile.id })
+      this.$router.push({ name: 'profileShow', params: { id: this.whoami.personal.profile.id } }).catch(() => {})
       // this.setProfileById(this.profile.id)
       if (this.drawer) this.drawer = false
     },
     goArchive () {
       this.setComponent('archive')
-      this.setProfileById({ id: this.whoami.profile.id })
-      this.$router.push({ name: 'profileShow', params: { id: this.whoami.profile.id } }).catch(() => {})
+      this.setProfileById({ id: this.whoami.personal.profile.id })
+      this.$router.push({ name: 'profileShow', params: { id: this.whoami.personal.profile.id } }).catch(() => {})
       if (this.drawer) this.drawer = false
     },
     karakiaWhakamutunga () {

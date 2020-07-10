@@ -49,7 +49,6 @@ Permanently fixed, established and understood!
 Forward together!
 ---------------------------------
 `
-console.log(karakia)
 
 const appURL =
   process.env.NODE_ENV === 'development'
@@ -64,6 +63,6 @@ ahoy({
   // appDir: '../whakapapa-ora', // only use this when ssb-ahoy symlinked
   onReady: ({ config }) => {
     // this config has updated manifest added
-    console.log('BOOM')
+    console.log(karakia)
   }
 })

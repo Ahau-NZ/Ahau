@@ -43,8 +43,19 @@ export const whoami = ({
     ${PROFILE_FRAGMENT}
     query {
       whoami {
-        profile {
-          ...ProfileFragment
+        public {
+          profile {
+            id
+            preferredName
+            avatarImage {
+              uri
+            }
+          }
+        }
+        personal {
+          profile {
+            ...ProfileFragment
+          }
         }
       }
     }

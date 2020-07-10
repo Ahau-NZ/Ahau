@@ -31,12 +31,12 @@
       @click.native="karakiaTūwhera()"
     >
       <Avatar
-        :image="whoami.profile.avatarImage"
-        :gender="whoami.profile.gender"
-        :aliveInterval="whoami.profile.aliveInterval"
+        :image="whoami.personal.profile.avatarImage"
+        :gender="whoami.personal.profile.gender"
+        :aliveInterval="whoami.personal.profile.aliveInterval"
         size="13vh"
       />
-      <h3 class="name mt-2">{{ whoami.profile.preferredName }}</h3>
+      <h3 class="name mt-2">{{ whoami.personal.profile.preferredName }}</h3>
     </router-link>
 
      <NewNodeDialog
@@ -154,8 +154,9 @@ export default {
         `,
         variables: {
           input: {
-            id: this.whoami.personal.profile.id,
-            ...publicDetails
+            id: this.whoami.public.profile.id,
+            ...publicDetails,
+            allowPublic: true
           }
         }
       })

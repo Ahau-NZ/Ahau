@@ -24,37 +24,28 @@ module.exports = {
     const artefact = Artefact(sbot)
     const whakapapa = Whakapapa(sbot, { ...profile.gettersWithCache, ...story.gettersWithCache, ...artefact.gettersWithCache })
 
+    sbot.post(m => {
+      console.log(m.value.sequence, m.key)
+
+      sbot.get({ id: m.key, private: true, meta: true }, (err, m) => {
+        if (err) return console.error(err)
+
+        console.log(JSON.stringify(m.value.content, null, 2))
+        console.log('------------------\n\n')
+      })
+    })
+
     main.loadContext((err, context) => {
       if (err) throw err
 
-      console.log('context', context)
-
       const server = new ApolloServer({
         schema: buildFederatedSchema([
-          {
-            typeDefs: main.typeDefs,
-            resolvers: main.resolvers
-          },
-          {
-            typeDefs: tribes.typeDefs,
-            resolvers: tribes.resolvers
-          },
-          {
-            typeDefs: profile.typeDefs,
-            resolvers: profile.resolvers
-          },
-          {
-            typeDefs: artefact.typeDefs,
-            resolvers: artefact.resolvers
-          },
-          {
-            typeDefs: story.typeDefs,
-            resolvers: story.resolvers
-          },
-          {
-            typeDefs: whakapapa.typeDefs,
-            resolvers: whakapapa.resolvers
-          }
+          main,
+          tribes,
+          profile,
+          artefact,
+          story,
+          whakapapa
         ]),
         context,
         mockEntireSchema: false,

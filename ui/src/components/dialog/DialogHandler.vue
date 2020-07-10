@@ -3,7 +3,7 @@
     <!-- <NewRegistrationDialog
       v-if="isActive('new-registration')"
       :show="isActive('new-registration')"
-      :profile="whoami.profile"
+      :profile="whoami.public.profile"
       :title="`Request to join : ${currentProfile.preferredName}`"
       :parents.sync="parents"
       :parentIndex.sync="parentIndex"
@@ -361,7 +361,8 @@ export default {
             deceased,
             aliveInterval,
             // UPDATE : for private groups
-            recps: type === 'community' ? [this.whoami.feedId] : this.view.recps
+            // (mix) agree, I just changed this to something safe .. but it's incorrect
+            recps:  'needs to be fixed' // TODO determine correct recps
           }
         }
       })
@@ -595,8 +596,9 @@ export default {
         parent,
         relationshipType,
         legallyAdopted,
-        recps: this.view ? this.view.recps : [this.whoami.feedId]
+        recps: this.view.recps // if this breaks, that's good to know!
       }
+
       try {
         const res = await this.$apollo.mutate(SAVE_LINK(input))
         if (res.errors) {
@@ -817,8 +819,8 @@ export default {
         console.error('failed to delete profile', profileResult)
       } else {
         this.setComponent('profile')
-        this.setProfileById({ id: this.whoami.profile.id })
-        this.$router.push({ name: 'profileShow', params: { id: this.whoami.profile.id } }).catch(() => {})
+        this.setProfileById({ id: this.whoami.personal.profile.id })
+        this.$router.push({ name: 'profileShow', params: { id: this.whoami.personal.profile.id } }).catch(() => {})
         this.confirmationAlert('community successfully deleted')
         setTimeout(() => {
           this.confirmationText = null
