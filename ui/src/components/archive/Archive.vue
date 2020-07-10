@@ -28,7 +28,7 @@
         </v-btn>
       </div>
     </v-row>
-    <v-row>
+    <v-row v-if="stories && stories.length > 0">
       <transition name="change" mode="out-in">
         <v-col cols="12" xs="12" sm="12" md="9" :class="!showStory ? '':'pa-0'">
           <!-- <v-row>
@@ -48,6 +48,19 @@
         </v-col>
       </transition>
     </v-row>
+    <v-row v-else>
+      <v-col>
+        <div
+          v-if="!stories || (stories && stories.length < 1)"
+          class="px-8 subtitle-1 grey--text "
+          :class="{
+            'text-center': mobile
+          }"
+        >
+          No records found
+        </div>
+      </v-col>
+    </v-row>
   </v-container>
   <!-- <vue-context ref="menu" class="pa-4">
     <li v-for="(option, index) in contextMenuOpts" :key="index">
@@ -65,7 +78,7 @@
     <NewRecordDialog
       v-if="dialog === 'new-story'"
       :show="dialog === 'new-story'"
-      :title="'Add new Record'"
+      :title="`Add record to ${currentProfile.preferredName || 'Untitled'}'s archive`"
       @close="dialog = null"
       @submit="saveStory($event)"
     />
@@ -73,20 +86,13 @@
 </template>
 
 <script>
-// import {
-//   VueContext
-// } from 'vue-context'
-
 import StoryCard from '@/components/archive/StoryCard.vue'
 // import CollectionGroup from '@/components/archive/CollectionGroup.vue'
 import { SAVE_STORY, GET_STORY } from '@/lib/story-helpers.js'
 import { SAVE_ARTEFACT } from '@/lib/artefact-helpers.js'
 import { SAVE_LINK, TYPES } from '@/lib/link-helpers.js'
-import { firstMocks } from '@/mocks/collections'
 import { mapGetters, mapActions, mapMutations } from 'vuex'
 import NewRecordDialog from '@/components/dialog/archive/NewRecordDialog.vue'
-
-// const get = require('lodash.get')
 
 export default {
   name: 'Archive',
@@ -100,22 +106,18 @@ export default {
   data () {
     return {
       currentStory: null,
-      collections: firstMocks,
-      dialog: {
-        active: null,
-        type: null
-      },
-      contextMenuOpts: [{
-        title: 'Create a new Collection',
-        dialog: 'new-collection',
-        icon: 'mdi-folder-multiple-outline'
-      },
-      {
-        title: 'Add new record',
-        dialog: 'new-story',
-        icon: 'mdi-file-outline'
-      }
-      ],
+      dialog: null,
+      // contextMenuOpts: [{
+      //   title: 'Create a new Collection',
+      //   dialog: 'new-collection',
+      //   icon: 'mdi-folder-multiple-outline'
+      // },
+      // {
+      //   title: 'Add new record',
+      //   dialog: 'new-story',
+      //   icon: 'mdi-file-outline'
+      // }
+      // ],
       scrollPosition: 0
     }
   },
@@ -129,7 +131,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['stories', 'showStory', 'whoami']),
+    ...mapGetters(['stories', 'showStory', 'whoami', 'currentProfile']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -155,51 +157,102 @@ export default {
   },
   methods: {
     ...mapMutations(['addStoryToStories', 'updateStoryInStories', 'removeStoryFromStories']),
-    ...mapActions(['setComponent', 'setShowStory', 'setDialog']),
+    ...mapActions(['setComponent', 'setShowStory', 'setDialog', 'getAllStories']),
     async saveStory (input) {
-      if (input) {
-        var res = await this.$apollo.mutate(SAVE_STORY(input))
+      var { id, artefacts, mentions, contributors, relatedRecords } = input
+
+      try {
+        const res = await this.$apollo.mutate(SAVE_STORY(input))
         if (res.errors) throw res.errors
 
-        const storyId = res.data.saveStory
-
-        if (!storyId) return
-
-        // check if the input has artefacts
-        if (input.artefacts && input.artefacts.length > 0) {
-          // create an artefact for each new artefact given
-          await Promise.all(input.artefacts.map(async artefact => {
-            const artefactId = await this.saveArtefact(artefact)
-            if (!artefactId) return
-
-            // if the artefact doesnt have an id, it means we need to create the link between
-            // this artefact and the story
-            if (!artefact.id) {
-              const input = {
-                type: TYPES.STORY_ARTEFACT,
-                parent: storyId,
-                child: artefactId
-              }
-
-              // create the link between the story and this artefact
-              await this.saveLink(input)
-            }
-
-            return artefactId
-          }))
+        if (!id) {
+          id = res.data.saveStory
         }
 
-        // get the full newly created/updated story
-        var story = await this.getStory(storyId)
+        // process the artefacts
+        if (artefacts) {
+          const { add, remove } = artefacts
+
+          if (add && add.length > 0) {
+            // all artefacts to create or update
+            await Promise.all(add.map(async artefact => {
+              const artefactId = await this.saveArtefact(artefact)
+              if (!artefactId) return
+
+              // if the artefact didnt have an id, then it means we create the link
+              if (!artefact.id) {
+                const artefactInput = {
+                  type: TYPES.STORY_ARTEFACT,
+                  parent: id,
+                  child: artefactId
+                }
+
+                await this.saveLink(artefactInput)
+              }
+            }))
+          }
+
+          if (remove && remove.length > 0) {
+            await Promise.all(remove.map(async artefact => {
+              if (artefact.linkId) {
+                await this.removeLink({ date: new Date(), linkId: artefact.linkId })
+              }
+              return artefact
+            }))
+          }
+        }
+
+        if (mentions) {
+          await this.processLinks(id, mentions, TYPES.STORY_PROFILE_MENTION)
+        }
+
+        if (contributors) {
+          await this.processLinks(id, contributors, TYPES.STORY_PROFILE_CONTRIBUTOR)
+        }
+
+        if (relatedRecords) {
+          await this.processLinks(id, relatedRecords, TYPES.STORY_STORY)
+        }
+
+        var story = await this.getStory(id)
 
         if (input.id) {
-          // if the story already existed, we only need to update it
-          this.updateStoryInStories(story)
           this.currentStory = story
         } else {
-          // if it was a new story we need to add it
-          this.addStoryToStories(story)
+          this.toggleStory(story)
         }
+
+        console.warn('Potentially loading a large amount of data with each change to a story...')
+        this.getAllStories()
+      } catch (err) {
+        throw err
+      }
+    },
+    async processLinks (parentId, object, type) {
+      const { add, remove } = object
+
+      if (add && add.length > 0) {
+        await Promise.all(add.map(async linkedItem => {
+          if (linkedItem.id) {
+            const linkInput = {
+              type,
+              parent: parentId,
+              child: linkedItem.id
+            }
+
+            await this.saveLink(linkInput)
+          }
+          return linkedItem
+        }))
+      }
+
+      if (remove && remove.length > 0) {
+        await Promise.all(remove.map(async linkedItem => {
+          if (linkedItem.linkId) {
+            await this.removeLink({ date: new Date(), linkId: linkedItem.linkId })
+          }
+          return linkedItem
+        }))
       }
     },
     async saveArtefact (input) {
@@ -238,6 +291,19 @@ export default {
       }
 
       // return the linkId
+      return res.data.saveLink
+    },
+    async removeLink ({ date, linkId }) {
+      const res = await this.$apollo.mutate(SAVE_LINK({
+        linkId,
+        tombstone: { date }
+      }))
+
+      if (res.errors) {
+        console.error('error removing link. ' + res.errors)
+        return
+      }
+
       return res.data.saveLink
     },
     toggleStory (story) {

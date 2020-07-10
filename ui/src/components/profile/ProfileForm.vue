@@ -114,7 +114,7 @@
                 :value.sync="formData.bornAt"
                 label="Date of birth"
                 :readonly="readonly"
-                min="-3000-01-01"
+                min="0000-01-01"
               />
             </v-col>
           </v-row>
@@ -206,8 +206,8 @@
                   </div>
                 </v-col>
               </v-row>
-              <v-row>
-                <v-col  v-if="!readonly || formData.gender === 'other'" cols="6" class="pl-4 py-0">
+              <v-row class="pt-6">
+                <v-col  v-if="!readonly || formData.gender === 'other'" cols="6" class="pl-10 py-0">
                   <v-checkbox v-model="formData.gender"
                     value="other"
                     label="other" :hide-details="true"
@@ -215,7 +215,7 @@
                     outlined
                   />
                 </v-col>
-                <v-col  v-if="!readonly || formData.gender === 'unkown'" cols="6" class="pa-4 py-0">
+                <v-col  v-if="!readonly || formData.gender === 'unkown'" cols="6" class="pa-10 py-0">
                   <v-checkbox v-model="formData.gender"
                     value="unkown"
                     label="unknown" :hide-details="true"
@@ -491,7 +491,7 @@ export default {
       margin: 5px;
 
       .gender-image {
-        margin-top:80px;
+        margin-top:30px;
         width: 8em;
         height: 8em;
         border: 0.5px solid rgba(0,0,0,0.6);

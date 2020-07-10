@@ -15,15 +15,6 @@
         tile
         flat
       >
-        <!-- <template v-slot:placeholder>
-          <v-row
-            class="fill-height ma-0"
-            align="center"
-            justify="center"
-          >
-            <v-progress-circular indeterminate color="secondary"></v-progress-circular>
-          </v-row>
-        </template> -->
       </v-img>
       <div v-if="artefact.type === 'video'">
         <video ref="video" :src="artefact.uri" :controls="hover && controls" class="video"/>
@@ -132,8 +123,4 @@ export default {
   right: 2px;
 }
 
-// .highlight {
-//   overflow: hidden;
-//   border: 5px solid rgba(0, 0, 0, 0.5)
-// }
 </style>

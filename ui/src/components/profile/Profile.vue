@@ -101,26 +101,6 @@ export default {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     }
   },
-  methods: {
-    splitParagraphs (text) {
-      if (!text) return
-      return text.split('\n\n')
-    },
-    age (born) {
-      var age = calculateAge(born)
-      if (age == null) {
-        return 'age not entered'
-      }
-      return age
-    },
-    formatDob (born) {
-      var formattedDate = formatDate(born)
-      if (formattedDate == null) {
-        return 'no dob'
-      }
-      return formattedDate
-    }
-  }
 }
 </script>
 <style lang="scss">
