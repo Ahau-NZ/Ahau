@@ -32,23 +32,26 @@
             <v-divider></v-divider>
 
             <v-list>
-              <v-list-item v-for="(notification, index) in notifications" :key="index">
+              <div  v-for="(notification, index) in notifications" :key="index">
+              <v-list-item class="py-1">
                 <v-list-item-avatar>
-                  <img src="personComplete.avatarImage.uri" alt="personComplete.preferredName">
+                  <img :src="completePerson.avatarImage.uri" :alt="completePerson.preferredName">
                 </v-list-item-avatar>
                 <v-list-item-content>
-                  <v-list-item-title>{{personComplete.preferredName}}</v-list-item-title>
-                  <v-list-item-subtitle>{{notification.is}} {{notification.to}}</v-list-item-subtitle>
+                  <v-list-item-title>{{completePerson.legalName}}</v-list-item-title>
+                  <v-list-item-subtitle class="text-caption ahauRed">{{notification.is}} {{notification.to}}</v-list-item-subtitle>
                 </v-list-item-content>
                 <v-list-item-action>
-                  <v-btn>
-                    <v-icon>mdi-heart</v-icon>
+                  <v-btn icon x-small>
+                    <v-icon>mdi-close</v-icon>
                   </v-btn>
-                </v-list-item-action>
-                <v-divider></v-divider>
+                </v-list-item-action>  
               </v-list-item>
+              <v-divider></v-divider>
+            </div>
+            <v-spacer class="mb-6"></v-spacer>
             </v-list>
-            <v-spacer></v-spacer>
+            
 
             <!-- <v-card-actions>
               <v-spacer></v-spacer>
@@ -128,7 +131,7 @@
     mapActions
   } from 'vuex'
 
-  import personComplete from '@/mocks/person-profile'
+  import {personComplete} from '@/mocks/person-profile'
 
   const karakia = `
 ---------------------------------
@@ -165,6 +168,8 @@ To return to everyday activities
       return {
         drawer: false,
         dialog: false,
+        menu: false,
+        completePerson: personComplete,
         notifications: [{
             type: 'communityRequest',
             is: 'is requesting to connect to',
@@ -326,6 +331,6 @@ To return to everyday activities
   }
 
   .ahauRed {
-    color: #B12526;
+    color: #B12526 !important;
   }
 </style>
