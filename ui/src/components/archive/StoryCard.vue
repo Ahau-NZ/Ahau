@@ -1,6 +1,6 @@
 <template>
   <div style="width: 100%; height: 100%;">
-  <v-card @click.prevent="showStory()" :class="customClass" flat :ripple="false" class="mx-auto" :light="!showArtefact" width="100%" :elevation="!mobile && !showArtefact && fullStory ? '24':''">
+  <v-card @click.prevent="showStory()" :class="customClass" flat :ripple="false" class="mx-auto" :light="!showArtefact" width="100%" :elevation="!mobile && !showArtefact && fullStory ? '24':''" @blur="close">
     <v-list-item class="px-0" style="min-height:0; height:10px">
       <v-list-item-icon v-if="!fullStory" class="pt-0 mt-0" style="position:absolute; top:5px; right:1px; margin-right:0px">
         <v-list-item-subtitle v-if="!mobile" class="no-flex">contributors</v-list-item-subtitle>
@@ -65,7 +65,7 @@
         <p v-if="!showArtefact" ref="text" :class="turncateText ? 'description' : ''">
           {{ story.description }}
         </p>
-        <p v-if="artefact.description" ref="text" style="color:white; border: solid 2px yellow;" :class="turncateText ? 'description' : ''">
+        <p v-if="artefact.description" ref="text" style="color:white" >
           {{ artefact.description }}
         </p>
       </v-list-item-content>

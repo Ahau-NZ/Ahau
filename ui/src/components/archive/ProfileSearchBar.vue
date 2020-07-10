@@ -17,8 +17,8 @@
        hide-details dense rounded outlined 
        :searchInput.sync="searchInput" 
        :autofocus="openMenu" 
-       @blur="close" 
        class="search-input" 
+       allow-overflow
       >
         <template v-slot:selection="{}">
         </template>
@@ -59,18 +59,33 @@
 
             <!-- RELATED RECORDS + COLLECTIONS -->
             <template v-else-if="type === 'collection'">
-                <v-list-item @click="addSelectedItem(item)">
-                    <v-list-item-avatar tile left>
-                        <v-img v-if="getImage(item)" :src="getImage(item)">
-                        </v-img>
-                        <v-icon v-else x-large>mdi-book-open</v-icon>
-                    </v-list-item-avatar>
-                    <v-list-item-content>
-                        <v-list-item-title>
-                            {{ item.title || 'Untitled Record' }}
-                        </v-list-item-title>
-                    </v-list-item-content>
-                </v-list-item>
+                <v-card flat light class="d-inline-block" justify="center" height="90%" width="100%" @click="addSelectedItem(item)">
+                    <Chip
+                        :title="item.title"
+                        :description="item.description"
+                        :type="item.type"
+                        :chip="item"
+                        :image="getImage(item)"
+                    />
+                </v-card>  
+                <!-- <v-card outlined width="100%">
+                    <v-img v-if="getImage(item)" :src="getImage(item)"></v-img>
+                </v-card> -->
+                <!-- <v-card outlined rounded width="100%" class="my-1 pa-0">
+                    <v-list-item @click="addSelectedItem(item)" class="pa-0">
+                        <v-list-item-avatar tile left class="pa-0">
+                            <v-img class="pa-0" v-if="getImage(item)" :src="getImage(item)">
+                            </v-img>
+                            <v-icon v-else x-large>mdi-book-open</v-icon>
+                        </v-list-item-avatar>
+                        <v-list-item-content>
+                            <v-list-item-title>
+                                {{ item.title || 'Untitled Record' }}
+                            </v-list-item-title>
+
+                        </v-list-item-content>
+                    </v-list-item>
+                </v-card> -->
             </template>
 
             <!-- CATEGORIES -->
@@ -88,6 +103,8 @@
 <script>
 import Avatar from '@/components/Avatar.vue'
 import calculateAge from '@/lib/calculate-age'
+import Chip from '@/components/archive/Chip.vue'
+
 
 export default {
     name: 'ProfileSearchBar',
@@ -127,7 +144,8 @@ export default {
         }
     },
     components: {
-        Avatar
+        Avatar,
+        Chip
     },
     computed: {
         mobile() {
@@ -153,8 +171,10 @@ export default {
             }
         },
         searchInput(newValue) {
+            console.log('newValue')
             if (!newValue) return
-            if (newValue.length > 2) {
+            if (newValue.length > 1) {
+                console.log('getting suggestions')
                 this.$emit('getSuggestions', newValue)
             } else {
                 this.clearSuggestions()
