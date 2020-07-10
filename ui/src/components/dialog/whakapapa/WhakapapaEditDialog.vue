@@ -1,7 +1,7 @@
 <template>
   <Dialog :title="`Edit ${ formData.name } Whakapapa`" :show="show" @close="close" width="720px" :goBack="close" :enableBar="false">
     <template v-slot:content>
-      <v-row class="px-2">
+      <v-row class="px-2 pa-5">
         <v-col cols="12" sm="5" order-sm="2">
           <v-row class="pa-0">
             <v-col cols="12" class="pa-0">
@@ -24,7 +24,7 @@
           </v-row>
         </v-col>
         <!-- Information Col -->
-        <v-col cols="12" sm="7" class="border-right">
+        <v-col cols="12" sm="7" class="pl-5">
           <v-row>
             <!-- Preferred Name -->
             <v-col cols="12" class="pa-1">
@@ -53,7 +53,7 @@
       </v-row>
     </template>
     <template v-slot:before-actions>
-      <v-col cols="12" sm="auto" class="mb-8">
+      <v-col cols="12" sm="auto">
         <v-btn
           @click="$emit('delete')"
           align="center"
@@ -61,7 +61,7 @@
           text
           class="secondary--text pl-5"
         >
-          <v-icon small class="secondary--text" left>mdi-delete</v-icon>Delete this whakapapa record
+          <v-icon small class="secondary--text" left>mdi-delete</v-icon>Delete whakapapa record
         </v-btn>
       </v-col>
     </template>

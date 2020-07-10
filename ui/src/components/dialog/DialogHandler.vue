@@ -3,12 +3,18 @@
     <NewNodeDialog v-if="isActive('new-node')"
       :show="isActive('new-node')"
       :title="`Add ${type} to ${selectedProfile.preferredName}`"
-      :type="type"
       @create="addPerson($event)"
       @close="close"
       :selectedProfile="selectedProfile"
       :suggestions="suggestions"
       @getSuggestions="getSuggestions($event)"
+    />
+    <EditNodeDialog v-if="isActive('edit-node')"
+      :show="isActive('edit-node')"
+      :title="`Edit ${currentProfile.preferredName}`"
+      @submit="updateProfile($event)"
+      @close="close"
+      :selectedProfile="currentProfile"
     />
     <SideViewEditNodeDialog
       v-if="isActive('view-edit-node')"
@@ -23,6 +29,7 @@
       @delete="toggleDialog('delete-node', null, null)"
       @open-profile="setSelectedProfile($event)"
       :view="view"
+      :preview ="previewProfile"
     />
     <DeleteNodeDialog v-if="isActive('delete-node')"
       :show="isActive('delete-node')"
@@ -59,11 +66,23 @@
       :title="`Whakapapa registry`"
       @close="close"
     />
+    <!-- <NewCollectionDialog
+      :show="isActive('new-collection')"
+      :title="'Create a new Collection'"
+      @close="close"
+      @submit="console.log('TODO: add collection to profile')"
+    /> -->
+    <ComingSoonDialog
+      :show="isActive('coming-soon')"
+      @close="close"
+    />
+
   </div>
 </template>
 
 <script>
 import NewNodeDialog from '@/components/dialog/profile/NewNodeDialog.vue'
+import EditNodeDialog from '@/components/dialog/profile/EditNodeDialog.vue'
 import SideViewEditNodeDialog from '@/components/dialog/profile/SideViewEditNodeDialog.vue'
 import DeleteNodeDialog from '@/components/dialog/profile/DeleteNodeDialog.vue'
 import WhakapapaViewDialog from '@/components/dialog/whakapapa/WhakapapaViewDialog.vue'
@@ -71,47 +90,50 @@ import WhakapapaEditDialog from '@/components/dialog/whakapapa/WhakapapaEditDial
 import WhakapapaDeleteDialog from '@/components/dialog/whakapapa/WhakapapaDeleteDialog.vue'
 import WhakapapaShowHelper from '@/components/dialog/whakapapa/WhakapapaShowHelper.vue'
 import WhakapapaTableHelper from '@/components/dialog/whakapapa/WhakapapaTableHelper.vue'
+// import NewCollectionDialog from '@/components/dialog/archive/NewCollectionDialog.vue'
+import ComingSoonDialog from '@/components/dialog/ComingSoonDialog.vue'
 
 import gql from 'graphql-tag'
-import { whoami } from '@/lib/profile-helpers.js'
-import { saveWhakapapaLink } from '@/lib/link-helpers.js'
+
+import { PERMITTED_PROFILE_ATTRS, PERMITTED_RELATIONSHIP_ATTRS, saveProfile } from '@/lib/profile-helpers.js'
+
+import { SAVE_LINK } from '@/lib/link-helpers.js'
 import pick from 'lodash.pick'
 import isEmpty from 'lodash.isempty'
 
 import findSuccessor from '@/lib/find-successor'
 
-import { PERMITTED_PROFILE_ATTRS, PERMITTED_RELATIONSHIP_ATTRS } from '@/lib/profile-helpers'
 import tree from '@/lib/tree-helpers'
 
 import * as d3 from 'd3'
-import { mapGetters, mapActions, mapMutations } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   name: 'DialogHandler',
   components: {
     NewNodeDialog,
+    EditNodeDialog,
     SideViewEditNodeDialog,
     DeleteNodeDialog,
     WhakapapaViewDialog,
     WhakapapaEditDialog,
     WhakapapaDeleteDialog,
     WhakapapaShowHelper,
-    WhakapapaTableHelper
+    WhakapapaTableHelper,
+    // NewCollectionDialog,
+    ComingSoonDialog
   },
   props: {
+    story: {
+      type: Object
+    },
     focus: {
       type: String
     },
     relationshipLinks: {
       type: Map
     },
-    selectedProfile: {
-      type: Object
-    },
     view: {
-      type: Object
-    },
-    profiles: {
       type: Object
     },
     dialog: {
@@ -119,7 +141,7 @@ export default {
       required: false,
       default: null,
       validator: (val) => [
-        'new-node', 'view-edit-node', 'delete-node',
+        'new-node', 'view-edit-node', 'delete-node', 'new-collection', 'new-story', 'edit-story', 'edit-node', 'delete-story',
         'whakapapa-view', 'whakapapa-edit', 'whakapapa-delete', 'whakapapa-helper', 'whakapapa-table-helper'
       ].includes(val)
     },
@@ -138,26 +160,19 @@ export default {
   data () {
     return {
       suggestions: [],
-      source: null,
-      whoami: {
-        profile: { id: '' }
-      }
+      source: null
     }
   },
-  apollo: {
-    whoami: whoami
-  },
   computed: {
-    ...mapGetters(['nestedWhakapapa']),
+    ...mapGetters(['nestedWhakapapa', 'selectedProfile', 'whoami', 'storeDialog', 'previewProfile', 'currentProfile', 'currentStory']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     }
   },
   methods: {
-    ...mapMutations(['setNestedWhakapapa']),
-    ...mapActions(['updateNode', 'deleteNode', 'updatePartnerNode', 'addChild', 'addParent', 'loading']),
+    ...mapActions(['updateNode', 'deleteNode', 'updatePartnerNode', 'addChild', 'addParent', 'loading', 'setDialog', 'setProfileById']),
     isActive (type) {
-      if (type === this.dialog) {
+      if (type === this.dialog || type === this.storeDialog) {
         return true
       }
       return false
@@ -172,11 +187,13 @@ export default {
     },
     toggleDialog (dialog, type, source) {
       this.source = source
+      this.setDialog(dialog)
       this.$emit('update:dialog', dialog)
       this.$emit('update:type', type)
     },
     canDelete (profile) {
       if (!profile) return false
+      if (this.previewProfile) return false
 
       // not allowed to delete own profile
       if (profile.id === this.whoami.profile.id) return false
@@ -412,6 +429,7 @@ export default {
       view
     ) {
       const input = {
+        type: 'link/profile-profile/child',
         child,
         parent,
         relationshipType,
@@ -419,7 +437,7 @@ export default {
         recps: this.view.recps
       }
       try {
-        const res = await this.$apollo.mutate(saveWhakapapaLink(input))
+        const res = await this.$apollo.mutate(SAVE_LINK(input))
         if (res.errors) {
           console.error('failed to createChildLink', res)
           return
@@ -442,42 +460,45 @@ export default {
 
       if (!isEmpty(relationshipAttrs) && this.selectedProfile.id !== this.view.focus) {
         const relationship = this.selectedProfile.relationship
-        const input = {
-          relationshipId: relationship.relationshipId,
+        let input = {
+          type: 'link/profile-profile/child',
+          linkId: relationship.linkId,
           child: relationship.child,
           parent: relationship.parent,
-          ...relationshipAttrs,
-          recps: this.view.recps
+          ...relationshipAttrs
+          // recps: this.view.recps
         }
         try {
-          const linkRes = await this.$apollo.mutate(saveWhakapapaLink(input))
+          const linkRes = await this.$apollo.mutate(SAVE_LINK(input))
           if (linkRes.errors) {
             console.error('failed to update child link', linkRes)
             return
           } else {
-            this.relationshipLinks[relationship.parent + '-' + relationship.child] = input
+            this.relationshipLinks.set(relationship.parent + '-' + relationship.child, input)
+            this.selectedProfile.relationship = input
+            let node = this.selectedProfile
+            this.updateNode({ node })
           }
         } catch (err) {
+          console.log('error:', err)
           throw err
         }
       }
-      const res = await this.$apollo.mutate({
-        mutation: gql`
-          mutation($input: ProfileInput!) {
-            saveProfile(input: $input)
-          }
-        `,
-        variables: {
-          input: {
-            id: profileId,
-            ...profileChanges
-          }
-        }
-      })
+
+      let input = {
+        id: profileId,
+        ...profileChanges
+      }
+      const res = await this.$apollo.mutate(saveProfile(input))
       if (res.errors) {
         console.error('failed to update profile', res)
         return
       }
+      if (this.storeDialog === 'edit-node') {
+        this.setProfileById({ id: res.data.saveProfile })
+        return
+      }
+
       // reload the selectedProfiles personal details
       var node = await this.loadKnownFamily(true, this.selectedProfile)
       // apply the changes to the nestedWhakapapa
@@ -735,7 +756,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-
-</style>

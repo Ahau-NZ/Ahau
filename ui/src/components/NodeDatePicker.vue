@@ -1,22 +1,21 @@
 <template>
   <div>
-    <fieldset :class="`rounded-border ${customClass}`">
+    <fieldset :class="`rounded-input ${customClass}`">
       <legend class="ml-2 custom-label">
-        Date of birth
+        {{label}}
       </legend>
         <v-row>
           <v-col class="pa-0 pl-6">
             <v-autocomplete
-              v-model="date.year"
+              v-model="date.day"
               hide-no-data
-              :items="years"
-              label="Year"
-              placeholder="YYYY"
+              :items="days"
+              label="Day"
+              placeholder="DD"
               v-bind="customProps"
               @focus="focused = true"
               @blur="focused = false"
-            >
-            </v-autocomplete>
+            ></v-autocomplete>
           </v-col>
           <v-col class="pa-0">
             <v-autocomplete
@@ -32,15 +31,16 @@
           </v-col>
           <v-col class="pa-0 pr-3">
             <v-autocomplete
-              v-model="date.day"
+              v-model="date.year"
               hide-no-data
-              :items="days"
-              label="Day"
-              placeholder="DD"
+              :items="years"
+              label="Year"
+              placeholder="YYYY"
               v-bind="customProps"
               @focus="focused = true"
               @blur="focused = false"
-            ></v-autocomplete>
+            >
+            </v-autocomplete>
           </v-col>
         </v-row>
     </fieldset>
@@ -99,6 +99,7 @@ export default {
 
       // array to return
       var years = [
+        { text: '', value: '' }
       ]
 
       // generates an array from 0 to max years
@@ -131,6 +132,7 @@ export default {
     // generates an array of months
     months () {
       return [
+        { text: '', value: '' },
         { text: 'XX', value: 'XX' },
         { text: '01', value: '01' },
         { text: '02', value: '02' },
@@ -150,6 +152,7 @@ export default {
     days () {
       // the array to return will always have the unspecified option
       var days = [
+        { value: '', text: '' },
         { value: 'XX', text: 'XX' }
       ]
 
@@ -352,8 +355,8 @@ export default {
   pointer-events: none;
 }
 
-.rounded-border {
-  border: 1px solid #9e9e9e;
+.rounded-input {
+  border: 1px solid rgba(0,0,0,0.3);
   border-radius: 4px;
 }
 

@@ -1,25 +1,35 @@
 <template>
-  <v-card light outlined min-height="200px">
-    <v-card-title class="headline">Kaitiaki</v-card-title>
-    <v-btn
-      text
-      v-for="t in profile.tiaki"
-      :key="t.id"
-      :to="{ name: 'personShow', params: { id: t.id } }"
-    >
-      {{ t.preferredName }}
-    </v-btn>
-  </v-card>
+  <ProfileCard title="kaitiaki">
+    <v-tooltip left>
+      <template v-slot:activator="{ on }">
+        <h4 v-on="on" class="pa-3 mb-0"> {{ title }} </h4>
+      </template>
+      <span>{{ helperText }}</span>
+    </v-tooltip>
+    <div>
+      <slot name="content"></slot>
+    </div>
+  </ProfileCard>
 </template>
 
 <script>
+
 export default {
   name: 'Kaitiaki',
   props: {
-    profile: {
-      type: Object,
-      default: () => ({})
-    }
+    title: String,
+    subtitle: String,
+    helperText: String
   }
 }
 </script>
+
+<style scoped lang="scss">
+.rounded-card {
+    border-radius: 10px;
+    .p {
+      font-size: 0.8em;
+      line-height: 1.6;
+    }
+  }
+</style>

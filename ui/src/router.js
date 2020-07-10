@@ -7,12 +7,16 @@ import WhakapapaShow from '@/views/WhakapapaShow.vue'
 import Discovery from '@/views/Discovery.vue'
 
 import People from '@/views/People.vue'
-import PersonShow from '@/views/PersonShow.vue'
-import PersonEdit from '@/views/PersonEdit.vue'
+import ProfileShow from '@/views/ProfileShow.vue'
+import ProfileEdit from '@/views/ProfileEdit.vue'
 
 import CommunityNew from '@/views/CommunityNew.vue'
 import CommunityShow from '@/views/CommunityShow.vue'
 import CommunityEdit from '@/views/CommunityEdit.vue'
+
+import StoryShow from '@/views/StoryShow.vue'
+
+import Archive from '@/components/archive/Archive.vue'
 
 import Login from '@/views/Login.vue'
 
@@ -31,8 +35,10 @@ export default new Router({
     { path: '/discovery', name: 'discovery', component: Discovery },
 
     { path: '/person', name: 'personIndex', component: People },
-    { path: '/person/:id/edit', name: 'personEdit', component: PersonEdit },
-    { path: '/person/:id', name: 'personShow', component: PersonShow },
+    { path: '/profile/:id/edit', name: 'profileEdit', component: ProfileEdit },
+    { path: '/profile/:id', name: 'profileShow', component: ProfileShow },
+
+    { path: '/story/:id', name: 'story', component: StoryShow },
 
     { path: '/community/new', name: 'communityNew', component: CommunityNew },
     {
@@ -41,6 +47,8 @@ export default new Router({
       component: CommunityEdit
     },
     { path: '/community/:id', name: 'communityShow', component: CommunityShow },
+
+    { path: '/archive/:id', name: 'archive', component: Archive },
 
     { path: '*', redirect: '/' }
   ]

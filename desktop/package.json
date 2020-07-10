@@ -36,7 +36,7 @@
     "ssb-serve-blobs": "^2.3.0",
     "ssb-story": "^1.0.0",
     "ssb-unix-socket": "^1.0.0",
-    "ssb-whakapapa": "^0.6.0"
+    "ssb-whakapapa": "^2.0.0"
   },
   "devDependencies": {
     "@fiahfy/icns-convert": "0.0.6",

@@ -7,7 +7,11 @@ export const personMinimum = {
   description: null,
   gender: 'male',
   avatarImage: null,
-  headerImage: null
+  headerImage: null,
+  parents: [],
+  children: [],
+  siblings: [],
+  partners: []
 }
 
 export const personEmpty = {
@@ -85,6 +89,8 @@ export const personComplete = {
   legallyAdopted: false,
   birthOrder: '',
   altNames: ['Willard', 'William'],
+  occupation: 'Actor',
+  location: 'USA',
   avatarImage: {
     uri:
       'https://m.media-amazon.com/images/M/MV5BNTczMzk1MjU1MV5BMl5BanBnXkFtZTcwNDk2MzAyMg@@._V1_UY317_CR2,0,214,317_AL_.jpg'
@@ -120,9 +126,9 @@ export const personComplete = {
       },
       children: [
         {
-          id: '%S',
+          id: '%J',
           gender: 'female',
-          legalName: 'Willow Smith',
+          legalName: 'Willow Smith JNR',
           preferredName: 'Willow ',
           avatarImage: {
             uri: 'http://www.gstatic.com/tv/thumb/persons/512549/512549_v9_bb.jpg'
@@ -155,7 +161,7 @@ export const personComplete = {
   ],
   siblings: [
     {
-      id: '%F',
+      id: '%G',
       gender: 'female',
       legalName: 'Pam Smith',
       preferredName: 'Pam',
@@ -165,7 +171,7 @@ export const personComplete = {
       }
     },
     {
-      id: '%G',
+      id: '%H',
       gender: 'female',
       legalName: 'Ellen Smith',
       preferredName: 'Ellen',
@@ -175,7 +181,7 @@ export const personComplete = {
       }
     },
     {
-      id: '%H',
+      id: '%I',
       gender: 'male',
       legalName: 'Harry Smith',
       preferredName: 'Harry',

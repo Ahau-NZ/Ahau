@@ -1,17 +1,22 @@
 <template>
   <v-app>
     <Appbar v-if="displayAppbar" :enableMenu="enableMenu" app />
-    <v-content :class="{ 'mobileWhakapapaTitleStyle': mobile }">
+    <v-main v-if="!mobile || mobile && !storeDialog" :class="{ 'mobileWhakapapaTitleStyle': mobile }">
+      <transition name="fade" mode="out-in">
+        <router-view :mobileServerLoaded="mobileServerLoaded" />
+      </transition>
       <Spinner />
-      <router-view :mobileServerLoaded="mobileServerLoaded" />
-    </v-content>
+    </v-main>
+    <DialogHandler />
   </v-app>
 </template>
 
 <script>
-import Appbar from '@/components/Appbar.vue'
+import Appbar from '@/components/menu/Appbar.vue'
 import nodejsClient from '@/plugins/cordova-nodejs-client.js'
 import Spinner from '@/components/Spinner.vue'
+import { mapGetters, mapActions } from 'vuex'
+import DialogHandler from '@/components/dialog/DialogHandler.vue'
 
 export default {
   name: 'App',
@@ -22,7 +27,7 @@ export default {
   },
 
   computed: {
-
+    ...mapGetters(['selectedProfile', 'storeDialog']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -32,7 +37,7 @@ export default {
     },
     enableMenu () {
       if (
-        this.$route.name === 'personEdit' &&
+        this.$route.name === 'profileEdit' &&
         this.$route.query.setup === true
       ) {
         return false
@@ -40,6 +45,7 @@ export default {
     }
   },
   mounted () {
+    this.setWhoami()
     if (process.env.VUE_APP_PLATFORM === 'cordova') {
       navigator.splashscreen.hide()
       nodejsClient.start({
@@ -50,9 +56,13 @@ export default {
       })
     }
   },
+  methods: {
+    ...mapActions(['setWhoami'])
+  },
   components: {
     Appbar,
-    Spinner
+    Spinner,
+    DialogHandler
   },
   // this watch add class to body depending on the route clicked.
   // used for changing body backgrounds, unique to each route.
@@ -76,6 +86,18 @@ a {
   text-decoration: none;
 }
 
+.fade-enter-active,
+.fade-leave-active {
+  transition-duration: 0.15s;
+  transition-property: opacity;
+  transition-timing-function: ease;
+}
+
+.fade-enter,
+.fade-leave-active {
+  opacity: 0
+}
+
 /* //remove default vuetify dark theme background */
 .v-application {
   background: none !important;
@@ -97,23 +119,11 @@ body {
     background-color: var(--primary-background);
     background-repeat: no-repeat;
     background-position-x: 150%;
-    // background-size: cover;
-  }
-  &.page--whakapapashow {
-    background: url(./assets/niho.svg);
-    background-color: var(--primary-background);
-    background-position-x: -300px;
-    // background-repeat: no-repeat;
-    // background-size: cover;
-  }
-  &.page--personshow {
-    background-color: #303030;
   }
 }
 
 .mobileWhakapapaTitleStyle {
   padding-top: 56px !important;
-  /* border: 5px solid yellow; */
 }
 
 </style>

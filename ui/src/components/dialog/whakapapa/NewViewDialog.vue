@@ -26,7 +26,7 @@
 import Dialog from '@/components/dialog/Dialog.vue'
 import pick from 'lodash.pick'
 import isEmpty from 'lodash.isempty'
-import WhakapapaForm from '@/components/whakapapa-form/WhakapapaForm.vue'
+import WhakapapaForm from '@/components/whakapapa/WhakapapaForm.vue'
 import { mapActions } from 'vuex'
 
 const EMPTY_WHAKAPAPA = {
@@ -99,7 +99,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['loading']),
+    ...mapActions(['setLoading']),
     close () {
       this.formData = setDefaultWhakapapa(EMPTY_WHAKAPAPA)
       this.$refs.whakapapaForm.$refs.form.reset()
@@ -110,7 +110,7 @@ export default {
         console.error('not validated')
         return
       }
-      this.loading(true)
+      this.setLoading(true)
       const csv = this.csv
       const output = whakapapaSubmission(this.formData)
       const newOutput = {

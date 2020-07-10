@@ -14,14 +14,14 @@
       class="body-width white mx-auto"
       style="position:relative"
     >
-    <v-row class="pa-5" light>
-        <v-col class="headliner black--text pa-0">
-        Whakapapa records
-        </v-col>
-        <v-col align="right" class="pa-0">
-          <v-icon  color="blue-grey" light @click="toggleWhakapapaHelper">mdi-information</v-icon>
-        </v-col>
-    </v-row>
+      <v-row class="pa-5" light>
+          <v-col class="headliner black--text pa-0">
+          Whakapapa records
+          </v-col>
+          <v-col align="right" class="pa-0">
+            <v-icon  color="blue-grey" light @click="toggleWhakapapaHelper">mdi-information</v-icon>
+          </v-col>
+      </v-row>
 
       <div
         v-if="!views || (views && views.length < 1)"
@@ -86,14 +86,14 @@ import gql from 'graphql-tag'
 import pick from 'lodash.pick'
 import isEmpty from 'lodash.isempty'
 import * as d3 from 'd3'
-import WhakapapaViewCard from '@/components/whakapapa-view/WhakapapaViewCard.vue'
+import WhakapapaViewCard from '@/components/whakapapa/WhakapapaViewCard.vue'
 import NewViewDialog from '@/components/dialog/whakapapa/NewViewDialog.vue'
 import NewNodeDialog from '@/components/dialog/profile/NewNodeDialog.vue'
 import WhakapapaListHelper from '@/components/dialog/whakapapa/WhakapapaListHelper.vue'
-import { saveWhakapapaLink } from '@/lib/link-helpers.js'
+import { SAVE_LINK } from '@/lib/link-helpers.js'
 
 import tree from '@/lib/tree-helpers'
-import { mapMutations } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 
 // import clone from 'lodash.clonedeep'
 // import _ from 'lodash'
@@ -122,8 +122,6 @@ export default {
         { src: require('../assets/whakapapa-list.jpg') }
       ],
       views: [],
-
-      whoami: {},
       showWhakapapaHelper: false,
       showProfileForm: false,
       showViewForm: false,
@@ -131,29 +129,13 @@ export default {
       columns: []
     }
   },
-  mounted () {
-    // reset nestedWhakapapa
-    this.setNestedWhakapapa([])
-  },
   computed: {
+    ...mapGetters(['whoami']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     }
   },
   apollo: {
-    whoami: {
-      query: gql`
-        {
-          whoami {
-            profile {
-              id
-            }
-            feedId
-          }
-        }
-      `,
-      fetchPolicy: 'no-cache'
-    },
     views: {
       query: gql`
         {
@@ -173,7 +155,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['setNestedWhakapapa', 'setLoading']),
+    ...mapActions(['addNestedWhakapapa', 'setLoading']),
     async getSuggestions ($event) {
       if (!$event) {
         this.suggestions = []
@@ -509,6 +491,7 @@ export default {
       view
     ) {
       const input = {
+        type: 'link/profile-profile/child',
         child,
         parent,
         relationshipType,
@@ -516,12 +499,12 @@ export default {
         recps: this.newView.recps
       }
       try {
-        const res = await this.$apollo.mutate(saveWhakapapaLink(input))
+        const res = await this.$apollo.mutate(SAVE_LINK(input))
         if (res.errors) {
           console.error('failed to createChildLink', res)
           return
         } else {
-          return res.data.saveWhakapapaLink // TODO return the linkId
+          return res.data.saveLink // TODO return the linkId
         }
       } catch (err) {
         throw err
@@ -568,6 +551,10 @@ export default {
 
 .mobileContainer {
   padding: 0px;
+}
+
+.top-margin {
+  margin-top: 80px;
 }
 
 </style>

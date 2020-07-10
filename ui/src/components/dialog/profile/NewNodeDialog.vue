@@ -3,9 +3,9 @@
 
     <!-- Content Slot -->
     <template v-if="!hideDetails" v-slot:content>
-      <v-col class="py-0">
+      <v-col class="py-0 px-0">
 
-        <ProfileForm :profile.sync="formData" :readonly="hasSelection" :editRelationship="hasSelection" :mobile="mobile">
+        <ProfileForm :profile.sync="formData" :readonly="hasSelection" :editRelationship="hasSelection" :withRelationships="withRelationships" :mobile="mobile">
 
           <!-- Slot = Search -->
           <template v-slot:search>
@@ -77,7 +77,7 @@
 <script>
 import Dialog from '@/components/dialog/Dialog.vue'
 
-import ProfileForm from '@/components/profile-form/ProfileForm.vue'
+import ProfileForm from '@/components/profile/ProfileForm.vue'
 
 import Avatar from '@/components/Avatar.vue'
 import isEmpty from 'lodash.isempty'
@@ -86,7 +86,7 @@ import calculateAge from '@/lib/calculate-age'
 import uniqby from 'lodash.uniqby'
 import pick from 'lodash.pick'
 
-import { PERMITTED_PROFILE_ATTRS, PERMITTED_RELATIONSHIP_ATTRS, getProfile } from '@/lib/profile-helpers'
+import { PERMITTED_PROFILE_ATTRS, PERMITTED_RELATIONSHIP_ATTRS, GET_PROFILE } from '@/lib/profile-helpers'
 
 function setDefaultData (withRelationships) {
   const formData = {
@@ -248,7 +248,7 @@ export default {
       // children of your partners that arent currently your children
       if (this.selectedProfile.partners) {
         this.selectedProfile.partners.forEach(async partner => {
-          const result = await this.$apollo.query(getProfile(partner.id))
+          const result = await this.$apollo.query(GET_PROFILE(partner.id))
           if (result.data) {
             result.data.person.children.forEach(d => {
               if (!currentChildren[d.profile.id]) {
@@ -260,7 +260,7 @@ export default {
       }
 
       // get ignored children
-      const ignored = await this.$apollo.query(getProfile(this.selectedProfile.id))
+      const ignored = await this.$apollo.query(GET_PROFILE(this.selectedProfile.id))
       if (ignored.data) {
         ignored.data.person.children.forEach(d => {
           if (!currentChildren[d.profile.id]) {
@@ -268,7 +268,7 @@ export default {
           }
         })
       }
-      children = uniqby(children, 'relationshipId')
+      children = uniqby(children, 'linkId')
 
       // eslint-disable-next-line no-return-assign
       return this.closeSuggestions = children
@@ -286,7 +286,7 @@ export default {
 
       if (this.selectedProfile.siblings) {
         this.selectedProfile.siblings.forEach(async sibling => {
-          const result = await this.$apollo.query(getProfile(sibling.id))
+          const result = await this.$apollo.query(GET_PROFILE(sibling.id))
 
           if (result.data) {
             result.data.person.parents.forEach(d => {
@@ -299,7 +299,7 @@ export default {
       }
 
       // get ignored parents
-      const ignored = await this.$apollo.query(getProfile(this.selectedProfile.id))
+      const ignored = await this.$apollo.query(GET_PROFILE(this.selectedProfile.id))
       if (ignored.data) {
         ignored.data.person.parents.forEach(d => {
           if (!currentParents[d.profile.id]) {
