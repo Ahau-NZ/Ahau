@@ -43,7 +43,13 @@ import clone from 'lodash.clonedeep'
 
 function defaultData (input) {
   var profile = clone(input)
-  var aliveInterval = profile.aliveInterval.split('/')
+
+  var aliveInterval = ['', '']
+
+  if (profile.aliveInterval) {
+    aliveInterval = profile.aliveInterval.split('/')
+  }
+
   return {
     id: profile.id,
     gender: profile.gender,
@@ -118,8 +124,25 @@ export default {
     }
   },
   watch: {
-    profile (newVal) {
-      this.formData = defaultData(newVal)
+    profile: {
+      deep: true,
+      immediate: true,
+      handler (newVal) {
+        if (!newVal) return
+        this.formData = defaultData(newVal)
+
+        if (this.formData.aliveInterval) {
+          var dates = this.formData.aliveInterval.split('/')
+          this.formData.bornAt = dates[0]
+          this.formData.diedAt = dates[1]
+        }
+      }
+    },
+    'formData.bornAt' (newVal) {
+      this.formData.aliveInterval = this.formData.bornAt + '/' + this.formData.diedAt
+    },
+    'formData.diedAt' (newVal) {
+      this.formData.aliveInterval = this.formData.bornAt + '/' + this.formData.diedAt
     },
     'formData.deceased' (newValue) {
       if (!newValue) this.formData.diedAt = ''

@@ -60,12 +60,12 @@
       </v-list-item-content>
     </v-list-item>
     <v-list-item :disabled="disableClick" :ripple="false" @click.stop="showText()">
-      <v-list-item-content>
+      <v-list-item-content >
         <v-list-item-subtitle v-if="fullStory || showArtefact" class="pb-1" style="color:#a7a3a3"> Description </v-list-item-subtitle>
         <p v-if="!showArtefact" ref="text" :class="turncateText ? 'description' : ''">
           {{ story.description }}
         </p>
-        <p v-if="artefact.description" ref="text" style="color:white" :class="turncateText ? 'description' : ''">
+        <p v-if="artefact.description" ref="text" style="color:white; border: solid 2px yellow;" :class="turncateText ? 'description' : ''">
           {{ artefact.description }}
         </p>
       </v-list-item-content>
@@ -256,7 +256,7 @@ export default {
   },
   mounted () {
     // grab text height to figure out if we need to hide it or not
-    // this.textHeight = this.$refs.text.offsetHeight
+    this.textHeight = this.$refs.text.offsetHeight
     if (this.fullStory) {
       this.turncateText = false
     }
@@ -283,7 +283,9 @@ export default {
     disableClick () {
       if (this.fullStory) {
         return true
-      } else if (this.textHeight > 60) return false
+      } else if (this.textHeight > 60) {
+        return false
+      }
       return true
     },
 
