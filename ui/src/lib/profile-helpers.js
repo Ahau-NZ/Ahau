@@ -9,6 +9,7 @@ export const PERMITTED_PROFILE_ATTRS = [
   'headerImage',
   'avatarImage',
   'id',
+  'type',
   'gender',
   'legalName',
   'aliveInterval',

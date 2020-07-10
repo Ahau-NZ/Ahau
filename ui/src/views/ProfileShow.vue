@@ -8,24 +8,28 @@
       @setupProfile="setupProfile($event)"
     />
     <v-row v-if="activeComponent === 'profile'">
-      <v-col cols="12" offset-md="2" md="8" sm="12" :class="!mobile ? 'pl-12' : '' " :align="mobile ? 'center' : 'start'">
-        <h1 ref="title" class="primary--text" :style="mobile ? length: ''">{{ currentProfile.legalName ? currentProfile.legalName : currentProfile.preferredName }}</h1>
+      <v-col cols="12" offset-md="2" md="8" sm="12" :class="!mobile ? 'pl-12' : '' " :align="mobile ? 'center' : 'start'" :order="mobile ? '3' : '1'">
+        <h1 class="primary--text" :style="mobile ? length: ''">{{ currentProfile.legalName ? currentProfile.legalName : currentProfile.preferredName }}</h1>
       </v-col>
-      <v-col :order="mobile ? 'first' : 'last'" :align="mobile ? 'end' : 'center'" cols="12" md="2" sm="12"  class="px-5">
-        <EditProfileButton @click="setDialog('edit-node')" />
+      <!-- <v-col v-if="isKaitiaki" :order="mobile ? '1' : '2'" :align="mobile ? 'start' : isKaitiaki ? 'start':'center'" cols="6" md="1" sm="6"  class="px-5">
+        <EditRegistrationButton @click="setDialog('edit-registration')" />
+      </v-col> -->
+      <v-col :order="mobile ? '2' : '3'" :align="mobile ? 'end' : isKaitiaki ? 'start':'center'" :cols="isKaitiaki ? '12':'12'" :md="isKaitiaki ? 1:2" sm="6"  class="px-5">
+        <EditProfileButton @click="currentProfile.type === 'person' ? setDialog('edit-node') : setDialog('edit-community')" />
       </v-col>
     </v-row>
     <v-row>
       <!-- SideNav -->
-        <v-col  v-if="!hideNav" cols="12" xs="12" sm="12" md="2" lg="20p" :class="!mobile ? 'pr-0' : 'px-5 py-0'">
-          <SideNavMenu :profile="currentProfile" />
-        </v-col>
+      <v-col  v-if="!hideNav" cols="12" xs="12" sm="12" md="2" lg="20p" :class="!mobile ? 'pr-0' : 'px-5 py-0'">
+        <SideNavMenu :profile="currentProfile" />
+      </v-col>
       <!-- Content -->
       <v-col cols="12" xs="12" sm="12" md="10" lg="80p" :class="mobile ? 'px-6 py-0' : 'pl-0 py-0'">
         <transition
           name="fade"
           mode="out-in"
        >
+        <!-- <Community v-if="activeComponent === 'profile'" :profile="currentProfile" :setupProfile="setupProfile"/> -->
         <Profile v-if="activeComponent === 'profile'" :profile="currentProfile" :setupProfile="setupProfile"/>
         <Archive v-if="activeComponent === 'archive'" :profile="{...currentProfile, type: 'person'}"/>
         <Timeline v-if="activeComponent === 'timeline'" :profile="currentProfile"/>
@@ -44,6 +48,7 @@ import Archive from '@/components/archive/Archive'
 import Timeline from '@/components/story/Timeline.vue'
 import Header from '@/components/profile/Header.vue'
 import EditProfileButton from '@/components/button/EditProfileButton.vue'
+import EditRegistrationButton from '@/components/button/EditRegistrationButton.vue'
 import WhakapapaIndex from '@/views/WhakapapaIndex.vue'
 
 import {
@@ -60,6 +65,7 @@ export default {
     Timeline,
     Header,
     EditProfileButton,
+    EditRegistrationButton,
     WhakapapaIndex
   },
   data () {
@@ -75,15 +81,20 @@ export default {
   computed: {
     ...mapGetters(['currentProfile', 'activeComponent', 'showStory', 'showArtefact']),
     mobile () {
-      return this.$vuetify.breakpoint.xs
+      return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
+    },
+    isKaitiaki () {
+      // TODO - only viewable by kaitiaki
+      return this.currentProfile.type === 'community' 
     },
     length () {
-      if (this.currentProfile.legalName) {
-        if (this.currentProfile.legalName.length > 30) return 'font-size:6vw'
-        if (this.currentProfile.legalName.length > 25) return 'font-size:7vw'
-        if (this.currentProfile.legalName.length > 20) return 'font-size:8vw'
-        else return 'font-size: 10vw'
-      } else return 'font-size: 10vw'
+      var name = ''
+      if (this.currentProfile.legalName) name = this.currentProfile.legalName
+      else if (this.currentProfile.preferredName) name = this.currentProfile.preferredName
+      if (name.length > 30) return 'font-size:6vw'
+      if (name.length > 25) return 'font-size:7vw'
+      if (name.length > 20) return 'font-size:8vw'
+      else return 'font-size: 10vw'
     },
     hideNav () {
       if (this.mobile && this.showStory) return true
@@ -133,8 +144,8 @@ export default {
 }
 
 .niho-bg {
-  background: linear-gradient(rgba(255, 255, 255, 0.99),
-  rgba(255, 255, 255, 0.7)), url(../assets/niho.svg);
+  background: linear-gradient(to bottom,rgba(255, 255, 255, 0.99),
+  rgba(255, 255, 255, 0.8)), url(../assets/niho.svg);
   background-position-x: 100px;
   background-attachment: fixed;
   background-repeat: no-repeat;

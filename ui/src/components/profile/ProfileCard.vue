@@ -28,6 +28,6 @@ h4 {
   border: 0.5px solid rgba(0,0,0,0.3);
   border-radius: 10px;
   background-color: white;
-  margin-top: 20px;
+  margin-bottom:20px;
 }
 </style>

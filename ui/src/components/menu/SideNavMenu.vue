@@ -1,14 +1,15 @@
 <template>
   <v-row ref="sideNav" class="sideNav" :class="position"  v-scroll="onScroll">
-    <v-col cols="12" md="2" :class="mobile ? 'px-6': tablet ? 'pt-12':''">
+    <v-col cols="12" md="2" :class="nonMember ? 'px-3' : mobile ? 'px-6': tablet ? 'pt-12':''">
       <v-col align="center" v-if="!mobile" class="pa-2 ml-12" cols="12">
         <v-row cols="12" xs="12" sm="12">
           <v-btn :class="tablet ? 'pl-2':''" @click="setActive('profile')" light text style="height: auto;">
-            <Avatar :image="profile.avatarImage" :gender="profile.gender" :alt="profile.preferredName" :size="tablet ? '110px':'170px'" />
+            <Avatar :image="profile.avatarImage" :gender="profile.gender" :age="profile.bornAt" :aliveInterval="profile.aliveInterval" :size="tablet ? '110px':'170px'" />
           </v-btn>
         </v-row>
       </v-col>
-      <v-row :class="mobile ? 'rounded-border' : 'ml-12'" >
+      <RegisterButton v-if="nonMember"/>
+      <v-row v-else :class="mobile ? 'rounded-border' : 'ml-12'" >
         <v-col align="center" :class="mobile ? 'py-0 px-0' : tablet ? 'py-4 px-0' : 'py-1'">
           <v-btn @click="setActive('profile')" light :fab="mobile" text>
             <v-col class="pa-0" :cols="mobile ? '12' : '2'">
@@ -87,6 +88,8 @@ import ArchiveIcon from '@/components/button/ArchiveIcon.vue'
 import WhakapapaIcon from '@/components/button/WhakapapaIcon.vue'
 import UserIcon from '@/components/button/UserIcon.vue'
 import TimelineIcon from '@/components/button/TimelineIcon.vue'
+import RegisterButton from '@/components/button/RegisterButton.vue'
+
 
 import Avatar from '@/components/Avatar.vue'
 import { mapGetters, mapActions } from 'vuex'
@@ -96,6 +99,10 @@ export default {
   props: {
     profile: {
       type: Object
+    },
+    community: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -114,6 +121,10 @@ export default {
   },
   computed: {
     ...mapGetters(['activeComponent', 'showStory', 'whoami', 'storeDialog']),
+    nonMember () {
+      // TODO - if community profile and user is not a member of a community
+      return this.profile.type === 'community'
+    },
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
@@ -145,7 +156,11 @@ export default {
     ...mapActions(['setComponent', 'setShowStory', 'setDialog']),
     goProfile () {
       this.setActive('profile')
-      this.$router.push({ name: 'profileShow', params: { id: this.profile.id } })
+      if (this.community) {
+        this.$router.push({ name: 'communityShow', params: { id: this.profile.id } })
+      } else {
+        this.$router.push({ name: 'profileShow', params: { id: this.profile.id } })
+      }
     },
     goArchive () {
       if (this.showStory) {
@@ -212,7 +227,8 @@ export default {
     WhakapapaIcon,
     UserIcon,
     TimelineIcon,
-    Avatar
+    Avatar,
+    RegisterButton
   }
 }
 </script>

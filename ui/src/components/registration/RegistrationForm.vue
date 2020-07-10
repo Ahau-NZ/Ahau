@@ -114,7 +114,7 @@
                 :value.sync="formData.bornAt"
                 label="Date of birth"
                 :readonly="readonly"
-                min="0000-01-01"
+                min="-3000-01-01"
               />
             </v-col>
           </v-row>
@@ -146,7 +146,7 @@
           </v-row>
           <!-- DECEASED PICKER -->
           <v-row>
-           <v-col  v-if=" !isUser || formData.deceased" cols="12" class="pa-1">
+           <v-col  v-if="!readonly || formData.deceased" cols="12" class="pa-1">
               <v-checkbox v-model="formData.deceased"
                 label="No longer living" :hide-details="true"
                 v-bind="customProps"
@@ -179,17 +179,8 @@
                 outlined
               />
             </v-col>
-            <v-col v-if="isRegistration" cols="12" class="pa-1">
-              <!-- City, Country -->
-              <v-text-field
-                v-model="formData.location"
-                label="City, Country"
-                v-bind="customProps"
-                outlined
-              />
-            </v-col>
             <!-- GENDER EDIT -->
-            <v-col v-if="!readonly" class="pa-1">
+            <v-col v-else class="pa-1">
               <p class="text-field">Gender</p>
 
               <v-row class="gender-button-row" :class="mobile ? '':'pb-12'">
@@ -206,8 +197,8 @@
                   </div>
                 </v-col>
               </v-row>
-              <v-row class="pt-6">
-                <v-col  v-if="!readonly || formData.gender === 'other'" cols="6" class="pl-10 py-0">
+              <v-row>
+                <v-col  v-if="!readonly || formData.gender === 'other'" cols="6" class="pl-4 py-0">
                   <v-checkbox v-model="formData.gender"
                     value="other"
                     label="other" :hide-details="true"
@@ -215,7 +206,7 @@
                     outlined
                   />
                 </v-col>
-                <v-col  v-if="!readonly || formData.gender === 'unkown'" cols="6" class="pa-10 py-0">
+                <v-col  v-if="!readonly || formData.gender === 'unkown'" cols="6" class="pa-4 py-0">
                   <v-checkbox v-model="formData.gender"
                     value="unkown"
                     label="unknown" :hide-details="true"
@@ -228,7 +219,7 @@
           </v-row>
         </v-col>
 
-        <v-col cols="12" :sm="mobile ? '12' : '6'" class="py-0">
+        <v-col cols="12" :sm="mobile ? '12' : '6'">
           <v-row>
             <!-- Description textarea -->
             <v-col cols="12" class="pa-1">
@@ -257,6 +248,7 @@
           </v-row>
         </v-col>
       </v-row>
+
       <v-row>
         <v-col cols="12" :sm="mobile ? '12' : '6'">
           <!-- Email -->
@@ -295,7 +287,7 @@
               />
             </v-col>
           </v-row>
-          <v-row v-if="!isRegistration">
+          <v-row>
             <v-col cols="12" class="pa-1">
               <!-- City, Country -->
               <v-text-field
@@ -320,7 +312,7 @@ import NodeDatePicker from '@/components/NodeDatePicker.vue'
 import { GENDERS, RELATIONSHIPS } from '@/lib/constants'
 
 export default {
-  name: 'ProfileForm',
+  name: 'RegistrationForm',
   components: {
     Avatar,
     ImagePicker,
@@ -334,9 +326,7 @@ export default {
     hideDetails: { type: Boolean, default: false },
     editRelationship: { type: Boolean, default: false },
     mobile: { type: Boolean, default: false },
-    isEditing: { type: Boolean, default: false },
-    isUser: { type: Boolean, default: false },
-    isRegistration: { type: Boolean, default: false}
+    isEditing: { type: Boolean, default: false }
   },
   data () {
     return {
@@ -357,11 +347,7 @@ export default {
       handler (newVal) {
         this.formData = newVal
       }
-    },
-    'formData.gender' (newValue) {
-      if (newValue === 'male') this.updateSelectedGender('male')
-      if (newValue === 'female') this.updateSelectedGender('female')
-    },
+    }
   },
   computed: {
     customProps () {
@@ -491,7 +477,7 @@ export default {
       margin: 5px;
 
       .gender-image {
-        margin-top:30px;
+        margin-top:80px;
         width: 8em;
         height: 8em;
         border: 0.5px solid rgba(0,0,0,0.6);

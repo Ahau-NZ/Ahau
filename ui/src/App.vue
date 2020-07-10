@@ -29,7 +29,7 @@ export default {
   computed: {
     ...mapGetters(['selectedProfile', 'storeDialog']),
     mobile () {
-      return this.$vuetify.breakpoint.xs
+      return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
     displayAppbar () {
       if (this.$route.name === 'login') return false
