@@ -157,3 +157,66 @@ function arrayChanges (array1, array2) {
   return array1.filter(item => !array2.some(item2 => item.id === item2.id))
     .map(item => item.id) // map it to id
 }
+
+export const ALL_ATTRS = [
+  'id',
+
+  'type',
+  'blob',
+  'mimeType',
+  'format',
+  'size',
+  'lastModified',
+
+  'title',
+  'description',
+
+  'identifier',
+  'licence',
+  'rights',
+  'source',
+
+  'language',
+  'translation'
+]
+
+export const PHOTO_ATTRS = [
+  ...ALL_ATTRS
+]
+
+export const AUDIO_ATTRS = [
+  ...ALL_ATTRS,
+  'duration',
+  'transcription'
+]
+
+export const VIDEO_ATTRS = [
+  ...ALL_ATTRS,
+  ...AUDIO_ATTRS
+]
+
+export const TEXT_ATTRS = [
+  ...ALL_ATTRS
+]
+
+export const APPLICATION_ATTRS = [
+  ...ALL_ATTRS
+]
+
+export function typeAttrs (type) {
+  switch (type) {
+    case 'photo':
+    case 'image':
+      return PHOTO_ATTRS
+    case 'video':
+      return VIDEO_ATTRS
+    case 'audio':
+      return AUDIO_ATTRS
+    case 'text':
+      return TEXT_ATTRS
+    case 'application':
+      return APPLICATION_ATTRS
+    default:
+      return []
+  }
+}

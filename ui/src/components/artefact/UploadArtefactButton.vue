@@ -1,16 +1,13 @@
 <template>
   <div @click="$refs.fileInput.click()">
-    <input v-show="false" ref="fileInput" type="file" accept="audio/*,video/*,image/*" multiple @change="processMediaFiles($event)" />
+    <input v-show="false" ref="fileInput" type="file" accept="audio/*,video/*,image/*,application/pdf,text/plain" multiple @change="processMediaFiles($event)" />
     <AddButton :dark="dark" :size="mobile ? '40px' : '60px'" icon="mdi-image-plus" />
     <p v-if="showLabel" class="add-label clickable" >Add artefacts</p>
   </div>
 </template>
 <script>
+import { UPLOAD_FILE } from '@/lib/file-helpers.js'
 import AddButton from '@/components/button/AddButton.vue'
-import gql from 'graphql-tag'
-const imageRegex = /^image\//
-const audioRegex = /^audio\//
-const videoRegex = /^video\//
 
 export default {
   name: 'UploadArtefactButton',
@@ -37,93 +34,39 @@ export default {
 
       this.artefacts = await Promise.all(
         Array.from(files).map(async file => {
-          var artefact = await this.uploadFile(file)
+          var artefact = await this.processArtefact(file)
           return artefact
         })
       )
 
       this.$emit('artefacts', this.artefacts)
     },
-    async uploadFile (file) {
-      // upload the file to ssb
+    async processArtefact (file) {
       try {
-        const res = await this.$apollo.mutate({
-          mutation: gql`
-            mutation uploadFile($file: Upload!) {
-              uploadFile(file:$file) {
-                blob
-                mimeType
-                uri
-              }
-            }
-          `,
-          variables: {
-            file
-          }
-        })
+        // upload the file to ssb
+        const res = await this.$apollo.mutate(UPLOAD_FILE({ file, encrypt: true }))
 
         if (res.errors) throw new Error('Error uploading file. ' + res.errors)
 
         // get the resulting blob
-        var blobObject = res.data.uploadFile
-        var artefact = {}
+        var blob = res.data.uploadFile
+        var [ type ] = file.type.split('/')
+        const [ name, format ] = file.name.split('.')
 
-        // get artefact attributes from the file and blob
-        const type = this.getFileType(file.type)
-        const title = this.getFileName(file.name)
-        const format = this.getFileFormat(file.type)
-        const blob = blobObject.blob
-        const uri = blobObject.uri
-        const mimeType = blobObject.mimeType
+        if (type === 'image') type = 'photo'
 
-        if (type === 'video' || type === 'audio') {
-          artefact = {
-            duration: null, // TODO: how to get the duration from the file....
-            size: file.size,
-            transcription: null
-          }
-        }
-
-        artefact = {
-          ...artefact,
+        var artefact = {
           type,
           blob,
-          uri,
-          mimeType,
-          title,
-          description: null,
           format,
-          identifier: null,
-          language: null,
-          licence: null,
-          rights: null,
-          source: null,
-          translation: null,
-          mentions: []
+          title: name
         }
 
+        if (!artefact.blob.mimeType) artefact.blob.mimeType = file.type
         return artefact
       } catch (err) {
         throw err
       }
-    },
-    getFileType (type) {
-      switch (true) {
-        case imageRegex.test(type):
-          return 'photo'
-        case audioRegex.test(type):
-          return 'audio'
-        case videoRegex.test(type):
-          return 'video'
-        default:
-          return ''
-      }
-    },
-    getFileFormat (fileType) {
-      return fileType.replace(/.*\//, '')
-    },
-    getFileName (fileName) {
-      return fileName.replace(/\.[^/.]+$/, '')
     }
   }
 }
