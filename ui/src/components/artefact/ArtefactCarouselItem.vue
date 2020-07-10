@@ -17,13 +17,16 @@
       >
       </v-img>
       <div v-if="artefact.type === 'video'">
-        <video ref="video" :src="artefact.uri" :controls="hover && controls" class="video"/>
+        <video ref="video" :src="artefact.blob.uri" :controls="hover && controls" class="video"/>
       </div>
       <div v-if="artefact.type === 'audio'" class="media" >
-        <audio :src="artefact.uri"
+        <audio :src="artefact.blob.uri"
           :controls="controls" class="px-12" style="width:100%;height:80%;"
         />
         <v-icon size="50" class="center">mdi-music</v-icon>
+      </div>
+      <div v-if="artefact.type === 'application'">
+        <pdf :src="artefact.blob.uri"></pdf>
       </div>
       <v-btn v-if="controls && hover && editing" class="edit mr-2 mt-2"
         fab x-small
@@ -45,6 +48,8 @@
 </template>
 
 <script>
+import pdf from 'vue-pdf'
+
 export default {
   name: 'ArtefactCarouselItem',
   props: {
@@ -55,6 +60,12 @@ export default {
     selected: { type: Boolean, default: false },
     selectedIndex: { type: Number, default: 0 },
     editing: { type: Boolean }
+  },
+  components: {
+    pdf
+  },
+  mounted () {
+    console.log(this.artefact.blob.uri)
   },
   data () {
     return {
