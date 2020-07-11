@@ -1,25 +1,26 @@
 <template>
 <div style="width: 300px">
     <v-combobox
-      v-if="openMenu" 
-      v-model="chips" 
-      id="combobox"
-       ref="combobox" 
-       :items="items" 
-       item-value="id" 
-       :item-text="item" 
-       :multiple="!single" 
-       :menu-props="{ light: true, value: openMenu }" 
-       hide-selected append-icon="mdi-close" 
-       @click:append="close" 
-       :placeholder="placeholder" 
-       no-data-text="no suggestions found" 
-       hide-details dense rounded outlined 
-       :searchInput.sync="searchInput" 
-       :autofocus="openMenu" 
-       class="search-input" 
-       allow-overflow
-      >
+        v-if="openMenu" 
+        v-model="chips" 
+        id="combobox"
+        ref="combobox" 
+        :items="items" 
+        item-value="id" 
+        :item-text="item" 
+        :multiple="!single" 
+        :menu-props="{ light: true, value: openMenu }" 
+        hide-selected append-icon="mdi-close" 
+        @click:append="close" 
+        :placeholder="placeholder" 
+        no-data-text="no suggestions found" 
+        hide-details dense rounded outlined 
+        :searchInput.sync="searchInput" 
+        :autofocus="openMenu" 
+        class="search-input" 
+        allow-overflow
+        @blur="close"
+    >
         <template v-slot:selection="{}">
         </template>
         <template v-slot:item="{ item }">
@@ -59,7 +60,7 @@
 
             <!-- RELATED RECORDS + COLLECTIONS -->
             <template v-else-if="type === 'collection'">
-                <v-card flat light class="d-inline-block" justify="center" height="90%" width="100%" @click="addSelectedItem(item)">
+                <v-card flat light  justify="center" height="90%" width="100%" @click="addSelectedItem(item)">
                     <Chip
                         :title="item.title"
                         :description="item.description"
@@ -68,24 +69,6 @@
                         :image="getImage(item)"
                     />
                 </v-card>  
-                <!-- <v-card outlined width="100%">
-                    <v-img v-if="getImage(item)" :src="getImage(item)"></v-img>
-                </v-card> -->
-                <!-- <v-card outlined rounded width="100%" class="my-1 pa-0">
-                    <v-list-item @click="addSelectedItem(item)" class="pa-0">
-                        <v-list-item-avatar tile left class="pa-0">
-                            <v-img class="pa-0" v-if="getImage(item)" :src="getImage(item)">
-                            </v-img>
-                            <v-icon v-else x-large>mdi-book-open</v-icon>
-                        </v-list-item-avatar>
-                        <v-list-item-content>
-                            <v-list-item-title>
-                                {{ item.title || 'Untitled Record' }}
-                            </v-list-item-title>
-
-                        </v-list-item-content>
-                    </v-list-item>
-                </v-card> -->
             </template>
 
             <!-- CATEGORIES -->
@@ -233,5 +216,9 @@ export default {
 
 .search-input>>>input {
     text-align: start !important;
+}
+
+.search-input {
+    overflow: auto;
 }
 </style>

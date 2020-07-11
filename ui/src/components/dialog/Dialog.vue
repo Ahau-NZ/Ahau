@@ -6,7 +6,7 @@
           mobile
             ? 'dialog-bottom-transition'
             : 'scale-transition'"
-        v-model="show"
+        v-model="showDialog"
         :light="!dark"
         :max-width="width"
         :fullscreen="mobile"
@@ -62,7 +62,7 @@ export default {
   props: {
     show: {
       type: Boolean,
-      required: true
+      required: false
     },
     isEditing: {
       type: Boolean,
@@ -103,6 +103,7 @@ export default {
   },
   data () {
     return {
+      showDialog : this.show,
       listener: null,
     }
   },
@@ -113,6 +114,7 @@ export default {
   },
   methods: {
     closeDialog() {
+      this.showDialog = false
       this.$emit('close')
     },
     close () {
