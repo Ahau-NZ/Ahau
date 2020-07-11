@@ -15,7 +15,7 @@
               placeholder="DD"
               v-bind="customProps"
               @focus="focused = true"
-              @blur="onBlur($event, 'day')"
+              @blur="focused = false"
               auto-select-first
             ></v-autocomplete>
           </v-col>
@@ -29,7 +29,7 @@
               placeholder="MM"
               v-bind="customProps"
               @focus="focused = true"
-              @blur="onBlur($event, 'month')"
+              @blur="focused = false"
               auto-select-first
 
             ></v-autocomplete>
@@ -46,8 +46,8 @@
               v-bind="customProps"
               @focus="focused = true"
               auto-select-first
-              @blur="onBlur($event, 'year')"
-   
+              @blur="focesd = false"
+
             >
             </v-autocomplete>
           </v-col>
@@ -203,31 +203,32 @@ export default {
     }
   },
   methods: {
-    onBlur(event, refName) {
-      // empty
-      if (event.target.value == '') {
-        console.log('empty string')
-        this.date[refName] = ''
-      }
-      // invalid
-      else if (this.$refs[refName].filteredItems === undefined) {
-        console.log('invalid')
-        this.date[refName] = ''
-      }
-      // item
-      else if (this.$refs[refName].filteredItems[0].text) {
-        console.log('item',this.$refs[refName].filteredItems[0].text)
-        this.date[refName] = this.$refs[refName].filteredItems[0].text
-      } 
-      // value
-      else if (this.$refs[refName].value) {
-        console.log(event)
-        console.log('value',this.$refs[refName].value)
-        this.date[refName] = this.$refs[refName].value
-      } 
-      this.focused = false
-    },
-    
+  //  WIP - tryng to improve ux of date input
+   // onBlur (event, refName) {
+    //   // empty
+    //   if (event.target.value == '') {
+    //     console.log('empty string')
+    //     this.date[refName] = ''
+    //   }
+    //   // invalid
+    //   else if (this.$refs[refName].filteredItems === undefined) {
+    //     console.log('invalid')
+    //     this.date[refName] = ''
+    //   }
+    //   // item
+    //   else if (this.$refs[refName].filteredItems[0].text) {
+    //     console.log('item', this.$refs[refName].filteredItems[0].text)
+    //     this.date[refName] = this.$refs[refName].filteredItems[0].text
+    //   }
+    //   // value
+    //   else if (this.$refs[refName].value) {
+    //     console.log(event)
+    //     console.log('value', this.$refs[refName].value)
+    //     this.date[refName] = this.$refs[refName].value
+    //   }
+    //   this.focused = false
+    // },
+
     // turns an integer into a double digit string
     intToDDString (int) {
       if (int < 10) {

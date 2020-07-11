@@ -103,8 +103,8 @@ export default {
   },
   data () {
     return {
-      showDialog : this.show,
-      listener: null,
+      showDialog: this.show,
+      listener: null
     }
   },
   computed: {
@@ -113,7 +113,7 @@ export default {
     }
   },
   methods: {
-    closeDialog() {
+    closeDialog () {
       this.showDialog = false
       this.$emit('close')
     },

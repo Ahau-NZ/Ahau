@@ -42,7 +42,7 @@ export default {
     type: String,
     chip: Object,
     index: Number,
-    image: { type:Object, default: null}
+    image: { type: Object, default: null }
   },
   computed: {
     colour () {
