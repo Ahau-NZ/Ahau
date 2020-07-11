@@ -7,6 +7,7 @@
         <v-row>
           <v-col class="pa-0 pl-6">
             <v-autocomplete
+              ref="day"
               v-model="date.day"
               hide-no-data
               :items="days"
@@ -14,11 +15,13 @@
               placeholder="DD"
               v-bind="customProps"
               @focus="focused = true"
-              @blur="focused = false"
+              @blur="onBlur($event, 'day')"
+              auto-select-first
             ></v-autocomplete>
           </v-col>
           <v-col class="pa-0">
             <v-autocomplete
+              ref="month"
               v-model="date.month"
               hide-no-data
               :items="months"
@@ -26,11 +29,15 @@
               placeholder="MM"
               v-bind="customProps"
               @focus="focused = true"
-              @blur="focused = false"
+              @blur="onBlur($event, 'month')"
+              auto-select-first
+
             ></v-autocomplete>
+            <!-- @blur="focused = false" -->
           </v-col>
           <v-col class="pa-0 pr-3">
             <v-autocomplete
+              ref="year"
               v-model="date.year"
               hide-no-data
               :items="years"
@@ -38,7 +45,9 @@
               placeholder="YYYY"
               v-bind="customProps"
               @focus="focused = true"
-              @blur="focused = false"
+              auto-select-first
+              @blur="onBlur($event, 'year')"
+   
             >
             </v-autocomplete>
           </v-col>
@@ -194,6 +203,31 @@ export default {
     }
   },
   methods: {
+    onBlur(event, refName) {
+      // empty
+      if (event.target.value == '') {
+        console.log('empty string')
+        this.date[refName] = ''
+      }
+      // invalid
+      else if (this.$refs[refName].filteredItems === undefined) {
+        console.log('invalid')
+        this.date[refName] = ''
+      }
+      // item
+      else if (this.$refs[refName].filteredItems[0].text) {
+        console.log('item',this.$refs[refName].filteredItems[0].text)
+        this.date[refName] = this.$refs[refName].filteredItems[0].text
+      } 
+      // value
+      else if (this.$refs[refName].value) {
+        console.log(event)
+        console.log('value',this.$refs[refName].value)
+        this.date[refName] = this.$refs[refName].value
+      } 
+      this.focused = false
+    },
+    
     // turns an integer into a double digit string
     intToDDString (int) {
       if (int < 10) {
