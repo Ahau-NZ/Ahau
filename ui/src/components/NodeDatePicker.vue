@@ -55,7 +55,7 @@ export default {
     label: String,
     value: { type: [Date, String], default: 'XXXX-XX-XX' },
     readonly: { type: Boolean, default: false },
-    min: { type: String },
+    min: { type: String }
   },
   data () {
     return {

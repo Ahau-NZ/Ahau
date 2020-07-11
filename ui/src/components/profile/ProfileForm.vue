@@ -114,7 +114,7 @@
                 :value.sync="formData.bornAt"
                 label="Date of birth"
                 :readonly="readonly"
-                min="-3000-01-01"
+                min="0000-01-01"
               />
             </v-col>
           </v-row>

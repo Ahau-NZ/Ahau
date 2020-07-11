@@ -90,20 +90,19 @@
             </v-col>
 
             <!-- ADD MENTIONS -->
-            <v-col :cols="mobile ? '12' : formData.mentions && formData.mentions.length > 2 ? 'auto' : '3'" class="pr-0">
-              <v-row v-if="!showMentions" class="pl-10 pt-2" @click="showMentions = true" >
+            <v-col cols="12" md="auto" class="pa-5">
+              <v-row v-if="!showMentions" @click="showMentions = true; mentions = []" class="pl-5">
                 <v-icon small>mdi-plus</v-icon>
-                <AddButton size="20px" icon="mdi-account" iconClass="pr-3" class="right: 0;" label="Mention" justify="start"/>
+                <AddButton size="20px" icon="mdi-account" iconClass="pr-3" label="Mention" justify="start"/>
               </v-row>
               <ProfileSearchBar
                 :selectedItems.sync="formData.mentions"
-                :items="suggestions"
-                :searchString.sync="searchString"
+                :items="mentions"
                 :openMenu.sync="showMentions"
                 placeholder="add mention"
                 type="profile"
                 item="preferredName"
-                @getSuggestions="getSuggestions"
+                @getSuggestions="getSuggestions('mentions', $event)"
               />
               <AvatarGroup v-if="formData.mentions && formData.mentions.length > 0"
                 :profiles="formData.mentions"
@@ -116,19 +115,19 @@
             </v-col>
 
             <!-- ADD ACCESS -->
-            <v-col :cols="mobile ? '12' : formData.access && formData.access.length > 1 ? 'auto' : '3'">
-              <v-row v-if="!showAccess" @click="showAccess = true" class="pl-10 pt-2">
+            <!-- <v-col cols="12" md="auto" class="pa-5">
+              <v-row v-if="!showAccess" @click="showAccess = true; access = []" class="pl-5">
                 <v-icon small>mdi-plus</v-icon>
                 <AddButton size="20px" icon="mdi-file-key" iconClass="pr-3" label="Access" justify="start"/>
               </v-row>
               <ProfileSearchBar
                 :selectedItems.sync="formData.access"
-                :items="suggestions"
-                :searchString.sync="searchString"
+                :items="access"
                 :openMenu.sync="showAccess"
                 type="profile"
                 item="preferredName"
                 placeholder="add access"
+                @getSuggestions="getSuggestions('access', $event)"
               />
               <AvatarGroup v-if="formData.access && formData.access.length > 0"
                 :profiles="formData.access"
@@ -138,41 +137,31 @@
                 @delete="removeItem(formData.access, $event)"
               />
               <v-divider v-if="mobile" light class="mt-6 mr-4"></v-divider>
-            </v-col>
-
-            <!-- ADD CREATOR -->
-            <v-col :cols="mobile ? '12' : formData.creator ? 'auto' : '3'">
-              <v-row v-if="!showCreator" @click="showCreator = true" class="pl-10 pt-2">
+            </v-col> -->
+            <!-- ADD CONTRIBUTORS -->
+            <v-col cols="12" md="auto" class="pa-5">
+              <v-row v-if="!showContributors" @click="showContributors = true; contributors = []" class="pl-5">
                 <v-icon small>mdi-plus</v-icon>
-                <AddButton size="20px" icon="mdi-account-circle" iconClass="pr-3" class="right: 0;" label="Creator" justify="start"/>
+                  <AddButton size="20px" icon="mdi-library" iconClass="pr-3" label="Contributor"  justify="start"/>
               </v-row>
-              <!-- <AddButton label="Creator" @click="showCreator = true" /> -->
               <ProfileSearchBar
-                :selectedItems.sync="formData.creator"
-                :items="items"
+                :selectedItems.sync="formData.contributors"
+                :items="contributors"
                 :searchString.sync="searchString"
-                :openMenu.sync="showCreator"
-                single
+                :openMenu.sync="showContributors"
                 type="profile"
                 item="preferredName"
-                placeholder="add creator"
+                placeholder="contributors"
+                @getSuggestions="getSuggestions('contributors', $event)"
               />
-              <div v-if="formData.creator" class="pt-5 pl-5">
-                <Avatar
-                  style="width:50px"
-                  size="40px"
-                  :image="formData.creator.avatarImage"
-                  :alt="formData.creator.preferredName"
-                  :gender="formData.creator.gender"
-                  :diedAt="formData.creator.diedAt"
-                  :deceased="formData.creator.deceased"
-                  showLabel
-                  deletable
-                  @delete="formData.creator = {}"
-                />
-              </div>
+              <AvatarGroup v-if="formData.contributors && formData.contributors.length > 0"
+                :profiles="formData.contributors"
+                show-labels
+                size="40px"
+                deletable
+                @delete="removeItem(formData.contributors, $event)"
+              />
             </v-col>
-
            </v-row>
             <!-- TODO: ADD CATEGORIES -->
            <!-- <v-col :cols="mobile ? formData.categories.length > 2 ? 'auto' : '6' : formData.categories.length > 1 ? 'auto' : '3'">
@@ -260,47 +249,53 @@
           <v-row class="px-3">
 
             <!-- RELATED RECORDS -->
-            <v-col :cols="mobile ? '12' : formData.relatedRecords && formData.relatedRecords.length > 0 ? 'auto' : '3'">
-              <v-row v-if="!showRecords" @click="showRecords = true" class="pl-10">
+            <v-col cols="12" md="auto" class="pa-5">
+              <v-row v-if="!showRecords" @click="showRecords = true">
                 <v-icon small>mdi-plus</v-icon>
-                <AddButton size="20px" icon="mdi-book-multiple" iconClass="pr-3" class="right: 0;" label="Related records"  justify="start"/>
+                <AddButton size="20px" icon="mdi-book-multiple" iconClass="pr-3" label="Related records"  justify="start"/>
               </v-row>
               <ProfileSearchBar
                 :selectedItems.sync="formData.relatedRecords"
-                :items="collections"
-                :searchString.sync="searchString"
+                :items="filteredStories"
                 :openMenu.sync="showRecords"
+                placeholder="add related record"
                 type="collection"
                 item="title"
-                placeholder="add related records"
               />
-              <ChipGroup type="story" :chips="formData.relatedRecords" deletable @delete="removeItem(formData.relatedRecords, $event)" />
+              <ChipGroup v-if="formData.relatedRecords && formData.relatedRecords.length > 0" type="story" :chips="formData.relatedRecords" deletable @delete="removeItem(formData.relatedRecords, $event)" />
               <v-divider v-if="mobile" light class="mt-6 mr-4"></v-divider>
             </v-col>
-            <!-- ADD CONTRIBUTORS -->
-            <!-- <v-col :cols="mobile ? formData.contributors.length > 2 ? 'auto' : '6' : formData.contributors.length > 1 ? 'auto' : '3'"> -->
-            <v-col :cols="mobile ? '12' : formData.contributors && formData.contributors.length > 1 ? 'auto' : '3'">
-              <v-row v-if="!showContributors" @click="showContributors = true" class="pl-10">
+            <!-- ADD CREATOR -->
+            <!-- <v-col cols="12" md="auto" class="pa-5">
+              <v-row v-if="!showCreator" @click="showCreator = true">
                 <v-icon small>mdi-plus</v-icon>
-                  <AddButton size="20px" icon="mdi-library" iconClass="pr-3" class="right: 0;" label="Contributor"  justify="start"/>
+                <AddButton size="20px" icon="mdi-account-circle" iconClass="pr-3" label="Creator" justify="start"/>
               </v-row>
               <ProfileSearchBar
-                :selectedItems.sync="formData.contributors"
-                :items="items"
-                :searchString.sync="searchString"
-                :openMenu.sync="showContributors"
+                :selectedItems.sync="formData.creator"
+                :items="creators"
+                :openMenu.sync="showCreator"
+                single
                 type="profile"
                 item="preferredName"
-                placeholder="contributors"
+                placeholder="add creator"
+                @getSuggestions="getSuggestions('creators', $event)"
               />
-              <AvatarGroup v-if="formData.contributors && formData.contributors.length > 0"
-                :profiles="formData.contributors"
-                show-labels
-                size="40px"
-                deletable
-                @delete="removeItem(formData.contributors, $event)"
-              />
-            </v-col>
+              <div v-if="formData.creator" class="pt-5 pl-5">
+                <Avatar
+                  style="width:50px"
+                  size="40px"
+                  :image="formData.creator.avatarImage"
+                  :alt="formData.creator.preferredName"
+                  :gender="formData.creator.gender"
+                  :diedAt="formData.creator.diedAt"
+                  :deceased="formData.creator.deceased"
+                  showLabel
+                  deletable
+                  @delete="formData.creator = null"
+                />
+              </div>
+            </v-col> -->
             <v-col cols="12" class="pa-1">
               <v-textarea
                 v-if="show"
@@ -325,7 +320,7 @@
               >
               </v-textarea>
             </v-col>
-            <v-col cols="12" class="pa-1">
+            <!-- <v-col cols="12" class="pa-1">
               <v-textarea
                 v-if="show"
                 v-model="formData.culturalNarrative"
@@ -336,7 +331,7 @@
                 auto-grow
               >
               </v-textarea>
-            </v-col>
+            </v-col> -->
             <v-col :cols="mobile ? '6' : '3'" class="pa-1">
               <v-text-field
                 v-model="formData.format"
@@ -367,7 +362,7 @@
             </v-col>
             <v-col cols="12" class="pa-1">
               <v-textarea
-                v-model="formData.translation"
+                v-model="formData.transcription"
                 label="Translation/Transcription"
                 v-bind="customProps"
                 no-resize
@@ -404,7 +399,7 @@
 
 <script>
 import AvatarGroup from '@/components/AvatarGroup.vue'
-import Avatar from '@/components/Avatar.vue'
+// import Avatar from '@/components/Avatar.vue'
 import AddButton from '@/components/button/AddButton.vue'
 import UploadArtefactButton from '@/components/artefact/UploadArtefactButton.vue'
 import NodeDatePicker from '@/components/NodeDatePicker.vue'
@@ -428,7 +423,7 @@ import { mapGetters } from 'vuex'
 export default {
   name: 'RecordForm',
   components: {
-    Avatar,
+    // Avatar,
     AddButton,
     UploadArtefactButton,
     ProfileSearchBar,
@@ -457,12 +452,16 @@ export default {
       categories: [{ title: 'one' }, { title: 'two' }, { title: 'three' }, { title: 'four' }, { title: 'five' }, { title: 'six' }, { title: 'seven' }],
       collections: firstMocks,
       showLocation: false,
+      mentions: [],
+      contributors: [],
+      // access: [],
+      // creators: [],
       showMentions: false,
       showCategories: false,
       showContributors: false,
-      showCreator: false,
+      // showCreator: false,
       showCollections: false,
-      showAccess: false,
+      // showAccess: false,
       showProtocols: false,
       showRecords: false,
       searchString: '',
@@ -479,7 +478,7 @@ export default {
     this.showAdvanced()
   },
   computed: {
-    ...mapGetters(['showStory', 'whoami']),
+    ...mapGetters(['showStory', 'whoami', 'stories']),
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
@@ -491,6 +490,11 @@ export default {
         class: 'custom',
         clearable: true
       }
+    },
+    filteredStories () {
+      return this.stories.filter(d => {
+        return d.id !== this.formData.id // filter the current story out
+      })
     }
   },
   methods: {
@@ -505,11 +509,12 @@ export default {
     },
     showAdvanced () {
       if (this.showStory) this.show = true
-      if (this.formData.endDate.length) this.hasEndDate = true
+      if (this.formData.endDate && this.formData.endDate.length > 0) this.hasEndDate = true
     },
-    async getSuggestions (name) {
-      if (name) this.suggestions = await findByName(name)
-      else this.suggestions = []
+    async getSuggestions (array, $event) {
+      var suggestions = []
+      if ($event) suggestions = await findByName($event)
+      this[array] = suggestions
     },
     toggleDialog ($event, dialog) {
       this.index = $event

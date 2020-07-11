@@ -86,7 +86,7 @@ import calculateAge from '@/lib/calculate-age'
 import uniqby from 'lodash.uniqby'
 import pick from 'lodash.pick'
 
-import { PERMITTED_PROFILE_ATTRS, PERMITTED_RELATIONSHIP_ATTRS, getProfile } from '@/lib/profile-helpers'
+import { PERMITTED_PROFILE_ATTRS, PERMITTED_RELATIONSHIP_ATTRS, GET_PROFILE } from '@/lib/profile-helpers'
 
 function setDefaultData (withRelationships) {
   const formData = {
@@ -249,7 +249,7 @@ export default {
       // children of your partners that arent currently your children
       if (this.selectedProfile.partners) {
         this.selectedProfile.partners.forEach(async partner => {
-          const result = await this.$apollo.query(getProfile(partner.id))
+          const result = await this.$apollo.query(GET_PROFILE(partner.id))
           if (result.data) {
             result.data.person.children.forEach(d => {
               if (!currentChildren[d.profile.id]) {
@@ -261,7 +261,7 @@ export default {
       }
 
       // get ignored children
-      const ignored = await this.$apollo.query(getProfile(this.selectedProfile.id))
+      const ignored = await this.$apollo.query(GET_PROFILE(this.selectedProfile.id))
       if (ignored.data) {
         ignored.data.person.children.forEach(d => {
           if (!currentChildren[d.profile.id]) {
@@ -287,7 +287,7 @@ export default {
 
       if (this.selectedProfile.siblings) {
         this.selectedProfile.siblings.forEach(async sibling => {
-          const result = await this.$apollo.query(getProfile(sibling.id))
+          const result = await this.$apollo.query(GET_PROFILE(sibling.id))
 
           if (result.data) {
             result.data.person.parents.forEach(d => {
@@ -300,7 +300,7 @@ export default {
       }
 
       // get ignored parents
-      const ignored = await this.$apollo.query(getProfile(this.selectedProfile.id))
+      const ignored = await this.$apollo.query(GET_PROFILE(this.selectedProfile.id))
       if (ignored.data) {
         ignored.data.person.parents.forEach(d => {
           if (!currentParents[d.profile.id]) {
