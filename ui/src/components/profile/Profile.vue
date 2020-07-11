@@ -1,6 +1,6 @@
 <template>
     <v-row class="mb-12" :class="mobile ? 'mobile-profile':''">
-      <v-col cols="12" sx="12" sm="12" md="9" :class="mobile ? 'pt-7 pb-5 px-5' : 'px-5' ">
+      <v-col cols="12" md="9" :class="mobile ? 'pt-7 pb-5 px-5' : 'px-5' ">
         <!-- <RegisterButton v-if="profile.type === 'community'" :class="!mobile ? 'margin-top':''"/> -->
         <ProfileInfoCard v-if="profile.type === 'person'" :profile="profile" @setupProfile="setupProfile($event)" />
         <ProfileCard>

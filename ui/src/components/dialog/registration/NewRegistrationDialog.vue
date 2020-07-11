@@ -1,19 +1,19 @@
 <template>
   <Dialog :show="show" :title="title" @close="close" width="720px" :goBack="close" enableMenu>
     <template v-if="!hideDetails" v-slot:content>
-      <v-col cols="12" :class="mobile ? 'pb-5 px-5' : 'px-5' ">
+      <v-col cols="12" :class="mobile ? 'pb-5 px-2' : 'px-5' ">
         <v-row>
           <span class="py-6 px-4 subtitle-2 blue--text">To join this communtiy, please confirm that you are happy to share the following profile information with <strong><i>{{currentProfile.preferredName}}</i></strong> members</span>
         </v-row>
         <!-- WRAP -->
         <v-form ref="checkboxes">
-          <v-card outlined elevation='1' :style="checkbox1 ? 'border: 2px solid #4caf50' : '', mobile ? 'margin: 0px' : 'margin: 20px;' ">
+          <v-card outlined elevation='1' :style="mobile ? 'margin: 0px' : 'margin: 20px'" :class="{'checkbox':checkbox1}">
             <v-row>
               <v-col cols="12" md="3" class="py-0">
                 <v-row class="justify-center pt-12">
                   <Avatar
                     class="big-avatar"
-                    :size="mobile ? '100px':'100px'"
+                    :size="mobile ? '200px':'100px'"
                     :image="formData.avatarImage"
                     :alt="formData.preferredName"
                     :gender="formData.gender"
@@ -29,7 +29,7 @@
             </v-row>
             <!-- <RegisterButton v-if="profile.type === 'community'" :class="!mobile ? 'margin-top':''"/> -->
             <ProfileInfoCard :profile="formData" isRegistration :style="mobile ? 'margin: 0px 10px' : 'margin: 0px 30px;'"/>
-            <ProfileCard :style="mobile ? 'margin: 10px 10px' : 'margin: 0px 30px;'">
+            <ProfileCard :style="mobile ? 'margin: 10px 10px' : 'margin: 20px 30px;'">
               <template v-slot:content>
                 <ProfileInfoItem title="About" smCols="12" mdCols="12" :value="formData.description"/>
               </template>
@@ -37,7 +37,7 @@
             
             <v-divider></v-divider>
             <v-card-actions style="display: flex; justify-content: center; align-items: center;">
-              <v-checkbox class="checkbox" color="success" v-model="checkbox1" :label="`I agree to share this information`" :rules="requiredRules"></v-checkbox> . 
+              <v-checkbox class="checkbox-label" color="success" v-model="checkbox1" :label="`I agree to share this information`" :rules="requiredRules"></v-checkbox> . 
             </v-card-actions>
           </v-card>
       <!-- WRAP END -->
@@ -45,7 +45,7 @@
           <p class="py-6 px-4 subtitle-2 blue--text">The below private information will only be viewable by <strong><i>{{currentProfile.preferredName}}</i></strong> kaitiaki</p>
         </v-row>
         <!-- WRAP -->
-        <v-card outlined elevation='1' style="margin: 20px;  " :style="checkbox2 ? 'border: 2px solid #4caf50' : ''">
+        <v-card outlined elevation='1' style="margin: 20px;  " :style="mobile ? 'margin: 0px' : 'margin: 20px'" :class="{'checkbox':checkbox2}">
         <ProfileCard style="margin: 30px;">
           <template v-slot:content>
             <v-row cols="12" class="pt-0" >
@@ -59,7 +59,7 @@
                    
         <v-divider></v-divider>
         <v-card-actions style="display: flex; justify-content: center; align-items: center;">
-          <v-checkbox class="checkbox" color="success" v-model="checkbox2" :label="`I agree to share this information`" :rules="requiredRules"></v-checkbox> . 
+          <v-checkbox class="checkbox-label" color="success" v-model="checkbox2" :label="`I agree to share this information`" :rules="requiredRules"></v-checkbox> . 
         </v-card-actions>
       </v-card>
     </v-form>
@@ -129,7 +129,8 @@ import Dialog from '@/components/dialog/Dialog.vue'
 import ProfileInfoCard from '@/components/profile/ProfileInfoCard.vue'
 import ProfileInfoItem from '@/components/profile/ProfileInfoItem.vue'
 import ProfileCard from '@/components/profile/ProfileCard.vue'
-import formatDate from '@/lib/format-date'
+import {dateIntervalToString} from '@/lib/date-helpers'
+
 import EditProfileButton from '@/components/button/EditProfileButton.vue'
 
 
@@ -262,7 +263,7 @@ export default {
     dob () {
       if (this.formData.aliveInterval) {
         console.log(this.formData.aliveInterval)
-        var formattedDate = formatDate(this.formData.aliveInterval)
+        var formattedDate = dateIntervalToString(this.formData.aliveInterval)
         return formattedDate
       }
       return ' '
@@ -332,13 +333,6 @@ export default {
       }
       return age
     },
-    formatDob (born) {
-      var formattedDate = formatDate(born)
-      if (formattedDate == null) {
-        return 'no dob'
-      }
-      return formattedDate
-    },
     
     close () {
       this.$emit('close')
@@ -396,9 +390,11 @@ export default {
   font-size: 14px;
 }
 
-.checkbox /deep/ label {
-  /* color: #4caf50; */
-  /* font-weight: 600; */
+.checkbox-label /deep/ label {
   font-size: 1.1em
+}
+
+.checkbox {
+  border: 2px solid #4caf50 
 }
 </style>
