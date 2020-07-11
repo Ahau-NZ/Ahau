@@ -10,7 +10,7 @@
       <div
         width="100%"
         :class="spacing"
-        v-for="(profile, i) in groupProfiles"
+        v-for="(profile, i) in profiles"
         :key="`${groupTitle}-${profile.id}-${i}`"
       >
         <div justify="center" class="pt-2">
@@ -38,7 +38,7 @@
 
 <script>
 import Avatar from './Avatar.vue'
-import has from 'lodash.has'
+// import has from 'lodash.has'
 export default {
   name: 'AvatarGroup',
   components: {
@@ -56,11 +56,11 @@ export default {
     clickable: { type: Boolean, default: true },
     dark: { type: Boolean, default: false }
   },
-  data () {
-    return {
-      groupProfiles: this.formatProfiles(this.profiles)
-    }
-  },
+  // data () {
+  //   return {
+  //     groupProfiles: this.formatProfiles(this.profiles)
+  //   }
+  // },
   computed: {
     columns () {
       return this.profiles.length
@@ -70,15 +70,15 @@ export default {
     profileClick (profile) {
       this.$emit('profile-click', profile)
     },
-    formatProfiles (profiles) {
-      if (profiles.length > 0 && has(profiles[0], 'profile')) {
-        var formattedProfiles = []
-        profiles.map(profile => {
-          formattedProfiles.push(profile.profile)
-        })
-        return formattedProfiles      
-      } else return profiles
-    }
+    // formatProfiles (profiles) {
+    //   if (profiles.length > 0 && has(profiles[0], 'profile')) {
+    //     var formattedProfiles = []
+    //     profiles.map(profile => {
+    //       formattedProfiles.push(profile.profile)
+    //     })
+    //     return formattedProfiles      
+    //   } else return profiles
+    // }
   }
 }
 </script>
