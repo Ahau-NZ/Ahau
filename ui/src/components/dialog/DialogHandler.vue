@@ -46,7 +46,7 @@
       :title="source === 'new-registration' ? `Edit ${registration.preferredName}`:`Edit ${currentProfile.preferredName}`"
       @submit="updateProfile($event)"
       @close="close"
-      :selectedProfile="source === 'new-registration' ? registration : currentProfile"
+      :profile="source === 'new-registration' ? registration : currentProfile"
     />
     <SideViewEditNodeDialog
       v-if="isActive('view-edit-node')"

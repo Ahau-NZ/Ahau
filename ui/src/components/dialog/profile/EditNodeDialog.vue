@@ -85,12 +85,12 @@ export default {
     show: { type: Boolean, required: true },
     title: { type: String, default: 'Create a new person' },
     hideDetails: { type: Boolean, default: false },
-    selectedProfile: { type: Object },
+    profile: { type: Object,  default: () => {}},
     readOnly: { type: Boolean, default: false}
   },
   data () {
     return {
-      formData: defaultData(this.selectedProfile),
+      formData: {},
       hasSelection: false
     }
   },
@@ -100,12 +100,13 @@ export default {
       return this.$vuetify.breakpoint.xs
     },
     profileChanges () {
+      console.log('profilechanges')
       let changes = {}
       Object.entries(this.formData).forEach(([key, value]) => {
-        if (!isEqual(this.formData[key], this.selectedProfile[key])) {
+        if (!isEqual(this.formData[key], this.profile[key])) {
           switch (key) {
             case 'altNames':
-              if (!isEqual(this.formData.altNames.add, this.selectedProfile.altNames)) {
+              if (!isEqual(this.formData.altNames.add, this.profile.altNames)) {
                 changes[key] = pick(this.formData.altNames, ['add', 'remove'])
                 changes[key].add = changes[key].add.filter(Boolean)
               }
@@ -118,10 +119,11 @@ export default {
           }
         }
       })
+      console.log("changes: ", changes)
       return changes
     },
     hasChanges () {
-      return isEqual(this.data, this.selectedProfile)
+      return isEqual(this.data, this.profile)
     }
   },
   watch: {
@@ -145,11 +147,12 @@ export default {
     'formData.diedAt' (newVal) {
       this.formData.aliveInterval = this.formData.bornAt + '/' + this.formData.diedAt
     },
+    // profile (newVal) {
+    //   console.log("watching profile: ", newVal)
+    //   this.formData = defaultData(newVal)
+    // },
     'formData.deceased' (newValue) {
       if (!newValue) this.formData.diedAt = ''
-    },
-    formData (newVal) {
-      console.log("formData: ", newVal)
     }
   },
   methods: {
@@ -166,8 +169,10 @@ export default {
     },
 
     submit () {
+      console.log('submit')
       var output = Object.assign({}, pick(this.profileChanges, [...PERMITTED_PROFILE_ATTRS]))
       if (!isEmpty(output)) {
+        console.log('output: ', output)
         this.$emit('submit', output)
       }
     },
