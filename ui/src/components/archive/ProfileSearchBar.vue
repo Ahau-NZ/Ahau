@@ -1,24 +1,24 @@
 <template>
 <div style="width: 300px">
     <v-combobox
-      v-if="openMenu" 
-      v-model="chips" 
+      v-if="openMenu"
+      v-model="chips"
       id="combobox"
-       ref="combobox" 
-       :items="items" 
-       item-value="id" 
-       :item-text="item" 
-       :multiple="!single" 
-       :menu-props="{ light: true, value: openMenu }" 
-       hide-selected append-icon="mdi-close" 
-       @click:append="close" 
-       :placeholder="placeholder" 
-       no-data-text="no suggestions found" 
-       hide-details dense rounded outlined 
-       :searchInput.sync="searchInput" 
-       :autofocus="openMenu" 
-       :blur="clearSuggestions" 
-       class="search-input" 
+       ref="combobox"
+       :items="items"
+       item-value="id"
+       :item-text="item"
+       :multiple="!single"
+       :menu-props="{ light: true, value: openMenu }"
+       hide-selected append-icon="mdi-close"
+       @click:append="close"
+       :placeholder="placeholder"
+       no-data-text="no suggestions found"
+       hide-details dense rounded outlined
+       :searchInput.sync="searchInput"
+       :autofocus="openMenu"
+       :blur="clearSuggestions"
+       class="search-input"
        @keydown.backspace="backspace"
       >
         <template v-slot:selection="{}">
@@ -91,121 +91,121 @@ import Avatar from '@/components/Avatar.vue'
 import calculateAge from '@/lib/calculate-age'
 
 export default {
-    name: 'ProfileSearchBar',
-    props: {
-        label: String,
-        openMenu: {
-            type: Boolean,
-            default: false
-        },
-        item: String,
-        selectedItems: {
-            type: [Object, Array]
-        },
-        items: {
-            type: Array,
-            default () {
-                return []
-            }
-        },
-        single: {
-            type: Boolean,
-            default: false
-        },
-        type: String,
-        placeholder: {
-            type: String,
-            default: ' '
-        }
+  name: 'ProfileSearchBar',
+  props: {
+    label: String,
+    openMenu: {
+      type: Boolean,
+      default: false
     },
-    data() {
-        return {
-            chips: [],
-            searchInput: '',
-            parentElement: null,
-            childElement: null,
-            disableFocus: false
-        }
+    item: String,
+    selectedItems: {
+      type: [Object, Array]
     },
-    components: {
-        Avatar
+    items: {
+      type: Array,
+      default () {
+        return []
+      }
     },
-    computed: {
-        mobile() {
-            return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
-        }
+    single: {
+      type: Boolean,
+      default: false
     },
-    watch: {
-        selectedItems: {
-            deep: true,
-            immediate: true,
-            handler(newValue) {
-              console.log(newValue)
-                this.chips = newValue
-            }
-        },
-        chips: {
-            deep: true,
-            handler(newValue) {
-                this.$emit('update:selectedItems', newValue)
-            }
-        },
-        searchInput(newValue) {
-            if (!newValue) return
-            if (newValue.length > 2) {
-                this.$emit('getSuggestions', newValue)
-            } else {
-                this.clearSuggestions()
-            }
-        }
-    },
-    methods: {
-        backspace (e) { 
-          console.log("backspace")
-          if (this.searchInput === '') {
-            console.log('do nothing')
-            e.preventDefault();
-            e.stopPropagation();
-          }
-        },
-        getImage(item) {
-            const {
-                artefacts
-            } = item
-
-            if (artefacts && artefacts.length > 0) {
-                // still in link format
-                var artefact = artefacts[0].artefact
-                if (artefact.type === 'photo') return artefact.uri
-            }
-
-            return null
-        },
-        clearSuggestions() {
-            this.$emit('getSuggestions', null)
-        },
-        age(aliveInterval) {
-            return calculateAge(aliveInterval)
-        },
-        close() {
-            this.$emit('update:openMenu', false)
-            this.clearSuggestions()
-        },
-        open() {
-            return true
-        },
-        addSelectedItem(item) {
-            if (Array.isArray(this.chips)) {
-                this.chips.push(item)
-            } else {
-                this.chips = item
-            }
-            this.$emit('update:openMenu', false)
-        },
-        removeSelectedItem(item) {
-            this.chips.slice(item, 1)
-        }
+    type: String,
+    placeholder: {
+      type: String,
+      default: ' '
     }
+  },
+  data () {
+    return {
+      chips: [],
+      searchInput: '',
+      parentElement: null,
+      childElement: null,
+      disableFocus: false
+    }
+  },
+  components: {
+    Avatar
+  },
+  computed: {
+    mobile () {
+      return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
+    }
+  },
+  watch: {
+    selectedItems: {
+      deep: true,
+      immediate: true,
+      handler (newValue) {
+        console.log(newValue)
+        this.chips = newValue
+      }
+    },
+    chips: {
+      deep: true,
+      handler (newValue) {
+        this.$emit('update:selectedItems', newValue)
+      }
+    },
+    searchInput (newValue) {
+      if (!newValue) return
+      if (newValue.length > 2) {
+        this.$emit('getSuggestions', newValue)
+      } else {
+        this.clearSuggestions()
+      }
+    }
+  },
+  methods: {
+    backspace (e) {
+      console.log('backspace')
+      if (this.searchInput === '') {
+        console.log('do nothing')
+        e.preventDefault()
+        e.stopPropagation()
+      }
+    },
+    getImage (item) {
+      const {
+        artefacts
+      } = item
+
+      if (artefacts && artefacts.length > 0) {
+        // still in link format
+        var artefact = artefacts[0].artefact
+        if (artefact.type === 'photo') return artefact.uri
+      }
+
+      return null
+    },
+    clearSuggestions () {
+      this.$emit('getSuggestions', null)
+    },
+    age (aliveInterval) {
+      return calculateAge(aliveInterval)
+    },
+    close () {
+      this.$emit('update:openMenu', false)
+      this.clearSuggestions()
+    },
+    open () {
+      return true
+    },
+    addSelectedItem (item) {
+      if (Array.isArray(this.chips)) {
+        this.chips.push(item)
+      } else {
+        this.chips = item
+      }
+      this.$emit('update:openMenu', false)
+    },
+    removeSelectedItem (item) {
+      this.chips.slice(item, 1)
+    }
+  }
 }
 </script>
 

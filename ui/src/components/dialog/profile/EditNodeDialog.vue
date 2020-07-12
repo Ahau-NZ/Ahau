@@ -85,8 +85,8 @@ export default {
     show: { type: Boolean, required: true },
     title: { type: String, default: 'Create a new person' },
     hideDetails: { type: Boolean, default: false },
-    profile: { type: Object,  default: () => {}},
-    readOnly: { type: Boolean, default: false}
+    profile: { type: Object, default: () => {} },
+    readOnly: { type: Boolean, default: false }
   },
   data () {
     return {
@@ -119,7 +119,7 @@ export default {
           }
         }
       })
-      console.log("changes: ", changes)
+      console.log('changes: ', changes)
       return changes
     },
     hasChanges () {

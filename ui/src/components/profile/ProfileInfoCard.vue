@@ -1,6 +1,6 @@
 <template>
     <v-row cols="12" class="rounded-border">
-    
+
       <!-- <ProfileInfoItem :class="mobile ? 'bb br':'br'" :title="'Preferred Name'" :value="profile.preferredName"/>
       <ProfileInfoItem :class="mobile ? 'bb':'br'" :title="'Age'" :value="age"/>
       <ProfileInfoItem class="br" :title="'Occupation'" :value="profile.profession" />
@@ -8,7 +8,7 @@
 
       <div v-if="profile.parents && profile.parents.length || isRegistration" :class="mobile ? 'bt' : 'br bt'" style="min-width:150px; flex-grow: 1;">
         <AvatarGroup v-if="profile.parents" :profiles="profile.parents" group-title="Parents" size="50px" :show-labels="true" -->
-     
+
       <ProfileInfoItem :class="`br ${borderClass}`" :title="'Preferred Name'" :value="profile.preferredName"/>
       <ProfileInfoItem :class="mobile ? `${borderClass}`:`br ${borderClass}`" :title="'Age'" :value="age" :sub-value="dob" />
       <ProfileInfoItem :class="`br ${borderClass}`" :title="'Occupation'" :value="profile.profession" />
@@ -22,10 +22,10 @@
           </template>
         </AvatarGroup>
       </div>
-     
+
       <!-- <div v-if="profile.siblings && profile.siblings.length" :class="mobile ? 'bt' : profile.children && profile.children.length  ? 'br bt' : 'bt'" style="min-width:150px; flex-grow: 1;">
         <AvatarGroup v-if="profile.siblings" :profiles="profile.siblings" group-title="Siblings" size="50px" :show-labels="true" -->
-     
+
       <div v-if="profile.siblings && profile.siblings.length > 0" :class="mobile ? '' : 'br'">
         <AvatarGroup :profiles="profile.siblings" group-title="Siblings" size="50px" :show-labels="true"
           @profile-click="openProfile($event)">
@@ -66,7 +66,7 @@ export default {
   },
   props: {
     profile: Object,
-    isRegistration: { type:Boolean, default: false }
+    isRegistration: { type: Boolean, default: false }
   },
   computed: {
     borderClass () {

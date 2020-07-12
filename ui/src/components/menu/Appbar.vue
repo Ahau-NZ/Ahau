@@ -45,13 +45,12 @@
                     <v-btn icon x-small>
                       <v-icon>mdi-close</v-icon>
                     </v-btn>
-                  </v-list-item-action>  
+                  </v-list-item-action>
                 </v-list-item>
                 <v-divider></v-divider>
               </div>
               <v-spacer class="mb-6"></v-spacer>
             </v-list>
-            
 
             <!-- <v-card-actions>
               <v-spacer></v-spacer>
@@ -124,16 +123,16 @@
 </template>
 
 <script>
-  import Avatar from '@/components/Avatar'
-  import FeedbackButton from '@/components/button/FeedbackButton'
-  import {
-    mapGetters,
-    mapActions
-  } from 'vuex'
+import Avatar from '@/components/Avatar'
+import FeedbackButton from '@/components/button/FeedbackButton'
+import {
+  mapGetters,
+  mapActions
+} from 'vuex'
 
-  import {personComplete} from '@/mocks/person-profile'
+import { personComplete } from '@/mocks/person-profile'
 
-  const karakia = `
+const karakia = `
 ---------------------------------
 Kia whakairia te tapu
 Kia wātea ai te ara
@@ -147,121 +146,122 @@ To return to everyday activities
 ---------------------------------
 `
 
-  export default {
-    name: 'Appbar',
-    props: {
-      enableMenu: {
-        type: Boolean,
-        default: true
-      },
-      app: {
-        type: Boolean,
-        default: false
-      },
-      sideMenu: {
-        type: Boolean,
-        default: false
-      }
-      // goBack: { type: Function }
+export default {
+  name: 'Appbar',
+  props: {
+    enableMenu: {
+      type: Boolean,
+      default: true
     },
-    data() {
+    app: {
+      type: Boolean,
+      default: false
+    },
+    sideMenu: {
+      type: Boolean,
+      default: false
+    }
+    // goBack: { type: Function }
+  },
+  data () {
+    return {
+      drawer: false,
+      dialog: false,
+      menu: false,
+      completePerson: personComplete,
+      notifications: [{
+        type: 'communityRequest',
+        is: 'is requesting to connect to',
+        to: 'Tairea Whanau',
+        from: 'Ben Tairea'
+      },
+      {
+        type: 'communityRequest',
+        is: 'is requesting to connect to',
+        to: 'TU TOA Leavers 2020',
+        from: 'Margaret Doctor'
+      }
+      ]
+    }
+  },
+  computed: {
+    ...mapGetters(['whoami', 'whakapapa', 'route', 'showStory', 'storeDialog']),
+    classObject: function () {
       return {
-        drawer: false,
-        dialog: false,
-        menu: false,
-        completePerson: personComplete,
-        notifications: [{
-            type: 'communityRequest',
-            is: 'is requesting to connect to',
-            to: 'Tairea Whanau',
-            from: 'Ben Tairea'
-          },
-          {
-            type: 'communityRequest',
-            is: 'is requesting to connect to',
-            to: 'TU TOA Leavers 2020',
-            from: 'Margaret Doctor'
-          },
-        ],
+        'mobile': this.mobile,
+        'desktop': !this.mobile,
+        'sideMenuAppBarStyle': this.sideMenu
       }
     },
-    computed: {
-      ...mapGetters(['whoami', 'whakapapa', 'route', 'showStory', 'storeDialog']),
-      classObject: function () {
-        return {
-          'mobile': this.mobile,
-          'desktop': !this.mobile,
-          'sideMenuAppBarStyle': this.sideMenu
-        }
-      },
-      mobile() {
-        return this.$vuetify.breakpoint.xs
-      },
-      isgoWhakapapa() {
-        if (this.route.from) {
-          return this.route.from.name === 'whakapapaShow' && this.route.name === 'profileShow'
-        }
-        return false
-      },
-      isgoBack() {
-        if (this.mobile) {
-          if (this.route.name === 'whakapapaShow') return true
-          else if (this.showStory) return true
-        }
-        return false
-      }
+    mobile () {
+      return this.$vuetify.breakpoint.xs
     },
-    watch: {
-      route(newVal) {
-        if (this.storeDialog) this.setDialog(null)
+    isgoWhakapapa () {
+      if (this.route.from) {
+        return this.route.from.name === 'whakapapaShow' && this.route.name === 'profileShow'
       }
+      return false
     },
-    mounted() {
-      if (process.env.VUE_APP_PLATFORM !== 'cordova') {
-        this.getCurrentIdentity()
+    isgoBack () {
+      if (this.mobile) {
+        if (this.route.name === 'whakapapaShow') return true
+        else if (this.showStory) return true
       }
+      return false
+    }
+  },
+  watch: {
+    route (newVal) {
+      if (this.storeDialog) this.setDialog(null)
+    }
+  },
+  mounted () {
+    if (process.env.VUE_APP_PLATFORM !== 'cordova') {
+      this.getCurrentIdentity()
+    }
+  },
+  methods: {
+    ...mapActions(['setWhoami', 'setProfileById', 'setComponent', 'setShowStory', 'setDialog']),
+    resetWindow () {
+      window.scrollTo(0, 0)
     },
-    methods: {
-      ...mapActions(['setWhoami', 'setProfileById', 'setComponent', 'setShowStory', 'setDialog']),
-      resetWindow() {
-        window.scrollTo(0, 0)
-      },
-      async getCurrentIdentity() {
-        await this.setWhoami()
-      },
-      goProfile() {
-        this.setComponent('profile')
-        // this.setProfileById(this.profile.id)
-        if (this.drawer) this.drawer = false
-      },
-      goArchive() {
-        this.setComponent('archive')
-        if (this.drawer) this.drawer = false
-      },
-      karakiaWhakamutunga() {
-        console.log(karakia)
-      },
-      toggleDrawer() {
-        this.drawer = !this.drawer
-      },
-      goBack() {
-        if (this.route.name === 'whakapapaShow') return this.$router.push({
+    async getCurrentIdentity () {
+      await this.setWhoami()
+    },
+    goProfile () {
+      this.setComponent('profile')
+      // this.setProfileById(this.profile.id)
+      if (this.drawer) this.drawer = false
+    },
+    goArchive () {
+      this.setComponent('archive')
+      if (this.drawer) this.drawer = false
+    },
+    karakiaWhakamutunga () {
+      console.log(karakia)
+    },
+    toggleDrawer () {
+      this.drawer = !this.drawer
+    },
+    goBack () {
+      if (this.route.name === 'whakapapaShow') {
+        return this.$router.push({
           name: 'whakapapaIndex'
         })
-        else if (this.showStory) return this.setShowStory()
-      },
-      goWhakapapa() {
-        this.$router.push({
-          path: this.route.from.fullPath
-        })
-      }
-
+      } else if (this.showStory) return this.setShowStory()
     },
-    components: {
-      Avatar,
-      FeedbackButton
+    goWhakapapa () {
+      this.$router.push({
+        path: this.route.from.fullPath
+      })
     }
+
+  },
+  components: {
+    Avatar,
+    FeedbackButton
   }
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

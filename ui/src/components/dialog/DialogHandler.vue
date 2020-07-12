@@ -211,7 +211,7 @@ export default {
       type: String,
       default: null,
       validator: (val) => [
-        'parent', 'child', 'sibling','registration'
+        'parent', 'child', 'sibling', 'registration'
       ].includes(val)
     },
     loadDescendants: Function,
@@ -232,7 +232,7 @@ export default {
     ...mapGetters(['nestedWhakapapa', 'selectedProfile', 'whoami', 'storeDialog', 'previewProfile', 'currentProfile']),
     mobile () {
       return this.$vuetify.breakpoint.xs
-    },
+    }
   },
   methods: {
     ...mapActions(['updateNode', 'deleteNode', 'updatePartnerNode', 'addChild', 'addParent', 'loading', 'setDialog',
@@ -240,7 +240,7 @@ export default {
     ]),
     toggleEditProfile (profile) {
       this.registration = profile
-      this.toggleDialog('edit-node',null,'new-registration')
+      this.toggleDialog('edit-node', null, 'new-registration')
     },
     isActive (type) {
       if (type === this.dialog || type === this.storeDialog) {
@@ -605,7 +605,7 @@ export default {
       }
     },
     async updateProfile ($event) {
-      console.log("update profile: ", $event)
+      console.log('update profile: ', $event)
       // When do we need this?
       // Object.entries($event).map(([key, value]) => {
       //   if (value === '') {

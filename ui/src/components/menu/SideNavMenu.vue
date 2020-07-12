@@ -90,7 +90,6 @@ import UserIcon from '@/components/button/UserIcon.vue'
 import TimelineIcon from '@/components/button/TimelineIcon.vue'
 import RegisterButton from '@/components/button/RegisterButton.vue'
 
-
 import Avatar from '@/components/Avatar.vue'
 import { mapGetters, mapActions } from 'vuex'
 

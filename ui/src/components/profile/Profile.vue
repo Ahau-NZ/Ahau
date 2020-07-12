@@ -77,7 +77,7 @@ export default {
     ProfileInfoCard,
     ProfileCard,
     ProfileInfoItem,
-    Avatar,
+    Avatar
     // RegisterButton
   },
   props: {
@@ -100,7 +100,7 @@ export default {
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     }
-  },
+  }
 }
 </script>
 <style lang="scss">

@@ -76,7 +76,7 @@ import { mapActions } from 'vuex'
 //     id: person.id,
 //     preferredName: person.preferredName,
 //     legalName: person.legalName,
-//     altNames: person.altNames, 
+//     altNames: person.altNames,
 //     gender: person.gender,
 //     relationshipType: person.relationshipType,
 //     legallyAdopted: person.legallyAdopted,

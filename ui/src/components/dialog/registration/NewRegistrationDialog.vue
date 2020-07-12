@@ -33,11 +33,11 @@
               <template v-slot:content>
                 <ProfileInfoItem title="About" smCols="12" mdCols="12" :value="formData.description"/>
               </template>
-            </ProfileCard>  
-            
+            </ProfileCard>
+
             <v-divider></v-divider>
             <v-card-actions style="display: flex; justify-content: center; align-items: center;">
-              <v-checkbox class="checkbox-label" color="success" v-model="checkbox1" :label="`I agree to share this information`" :rules="requiredRules"></v-checkbox> . 
+              <v-checkbox class="checkbox-label" color="success" v-model="checkbox1" :label="`I agree to share this information`" :rules="requiredRules"></v-checkbox> .
             </v-card-actions>
           </v-card>
       <!-- WRAP END -->
@@ -56,10 +56,10 @@
             </v-row>
           </template>
         </ProfileCard>
-                   
+
         <v-divider></v-divider>
         <v-card-actions style="display: flex; justify-content: center; align-items: center;">
-          <v-checkbox class="checkbox-label" color="success" v-model="checkbox2" :label="`I agree to share this information`" :rules="requiredRules"></v-checkbox> . 
+          <v-checkbox class="checkbox-label" color="success" v-model="checkbox2" :label="`I agree to share this information`" :rules="requiredRules"></v-checkbox> .
         </v-card-actions>
       </v-card>
     </v-form>
@@ -84,11 +84,8 @@
           </v-col>
         </v-row>
       </v-hover>
-      
+
     </template>
-
-
-
 
     <!-- Actions Slot -->
     <template v-slot:actions>
@@ -99,12 +96,12 @@
         <!-- <v-icon color="secondary">mdi-close</v-icon> -->
         <span>cancel</span>
       </v-btn>
-      <!-- <v-btn 
+      <!-- <v-btn
         @click="submit"
         text large
         class="blue--text mx-5"
       > -->
-      <v-btn 
+      <v-btn
         @click="submit"
         :disabled="disabled"
         text large
@@ -121,19 +118,17 @@
 
 <script>
 
-import { PERMITTED_PROFILE_ATTRS } from '@/lib/profile-helpers.js'
-import getRelatives from '@/lib/profile-helpers.js'
+import getRelatives, { PERMITTED_PROFILE_ATTRS } from '@/lib/profile-helpers.js'
+
 import Avatar from '@/components/Avatar.vue'
 import Dialog from '@/components/dialog/Dialog.vue'
 
 import ProfileInfoCard from '@/components/profile/ProfileInfoCard.vue'
 import ProfileInfoItem from '@/components/profile/ProfileInfoItem.vue'
 import ProfileCard from '@/components/profile/ProfileCard.vue'
-import {dateIntervalToString} from '@/lib/date-helpers'
+import { dateIntervalToString } from '@/lib/date-helpers'
 
 import EditProfileButton from '@/components/button/EditProfileButton.vue'
-
-
 
 import ProfileForm from '@/components/profile/ProfileForm.vue'
 import isEmpty from 'lodash.isempty'
@@ -144,7 +139,7 @@ import clone from 'lodash.clonedeep'
 import { mapActions, mapGetters } from 'vuex'
 
 const REQUIRED_ATTRS = [
-  'id', 'legalName', 'aliveInterval', 'gender', 'relationshipType', 
+  'id', 'legalName', 'aliveInterval', 'gender', 'relationshipType',
   'parents', 'profession', 'address', 'email', 'phone', 'location'
 ]
 
@@ -180,8 +175,7 @@ function setProfileData () {
 }
 
 function updateProfileData (input) {
-  if (input) 
-  var profile = clone(input)
+  if (input) { var profile = clone(input) }
   var aliveInterval = profile.aliveInterval.split('/')
   return {
     id: profile.id,
@@ -226,8 +220,8 @@ export default {
     show: { type: Boolean, required: true },
     title: { type: String, default: 'Create a new person' },
     hideDetails: { type: Boolean, default: false },
-    readOnly: { type: Boolean, default: false},
-    selectedProfile: { type: Object}
+    readOnly: { type: Boolean, default: false },
+    selectedProfile: { type: Object }
   },
   data () {
     return {
@@ -237,7 +231,7 @@ export default {
       formData: setProfileData(),
       hasSelection: false,
       requiredRules: [
-       v => v == true || 'Please agree to share information'
+        v => v == true || 'Please agree to share information'
       ],
       errorMsgs: []
     }
@@ -251,7 +245,7 @@ export default {
       return this.$vuetify.breakpoint.xs
     },
     customClass () {
-      return 
+
     },
     disabled () {
       this.getErrorMsgs()
@@ -267,7 +261,7 @@ export default {
         return formattedDate
       }
       return ' '
-    },
+    }
     // profileChanges () {
     //   let changes = {}
     //   Object.entries(this.formData).forEach(([key, value]) => {
@@ -309,9 +303,9 @@ export default {
       var output = Object.keys(this.formData)
         .filter(key => REQUIRED_ATTRS.includes(key))
         .reduce((obj, key) => {
-          obj[key] = this.formData[key];
-          return obj;
-        }, {});
+          obj[key] = this.formData[key]
+          return obj
+        }, {})
       Object.entries(output).forEach(([key, value]) => {
         if (isEmpty(output[key])) {
           // errors[key] = value
@@ -323,8 +317,8 @@ export default {
     async getFullProfile () {
       const profile = await getRelatives(this.selectedProfile.id)
 
-      this.formData = updateProfileData(profile) 
-      // this.profile = updateProfileData(profile) 
+      this.formData = updateProfileData(profile)
+      // this.profile = updateProfileData(profile)
     },
     age (born) {
       var age = calculateAge(born)
@@ -333,7 +327,7 @@ export default {
       }
       return age
     },
-    
+
     close () {
       this.$emit('close')
     },
@@ -346,7 +340,7 @@ export default {
     //       obj[key] = this.formData[key];
     //       return obj;
     //     }, {});
-      
+
     //   Object.entries(output).forEach(([key, value]) => {
     //     if (isEmpty(output[key])) {
     //       empty[key] = value
@@ -358,8 +352,8 @@ export default {
     submit () {
       // this.checkSubmission()
       // console.log(this.errorMsgs)
-  
-      if(this.$refs.checkboxes.validate()) {
+
+      if (this.$refs.checkboxes.validate()) {
         console.log('approved.')
       }
     }
@@ -395,6 +389,6 @@ export default {
 }
 
 .checkbox {
-  border: 2px solid #4caf50 
+  border: 2px solid #4caf50
 }
 </style>

@@ -27,7 +27,7 @@ const mutations = {
   },
   updateType (state, dialog) {
     state.dialog = dialog
-  },
+  }
 }
 
 const actions = {

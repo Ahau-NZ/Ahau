@@ -47,7 +47,7 @@
               @focus="focused = true"
               auto-select-first
               @blur="onBlur($event, 'year')"
-   
+
             >
             </v-autocomplete>
           </v-col>
@@ -203,7 +203,7 @@ export default {
     }
   },
   methods: {
-    onBlur(event, refName) {
+    onBlur (event, refName) {
       // empty
       if (event.target.value == '') {
         console.log('empty string')
@@ -216,18 +216,18 @@ export default {
       }
       // item
       else if (this.$refs[refName].filteredItems[0].text) {
-        console.log('item',this.$refs[refName].filteredItems[0].text)
+        console.log('item', this.$refs[refName].filteredItems[0].text)
         this.date[refName] = this.$refs[refName].filteredItems[0].text
-      } 
+      }
       // value
       else if (this.$refs[refName].value) {
         console.log(event)
-        console.log('value',this.$refs[refName].value)
+        console.log('value', this.$refs[refName].value)
         this.date[refName] = this.$refs[refName].value
-      } 
+      }
       this.focused = false
     },
-    
+
     // turns an integer into a double digit string
     intToDDString (int) {
       if (int < 10) {
