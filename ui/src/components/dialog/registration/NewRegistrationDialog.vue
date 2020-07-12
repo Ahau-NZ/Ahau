@@ -29,11 +29,11 @@
             </v-row>
             <!-- <RegisterButton v-if="profile.type === 'community'" :class="!mobile ? 'margin-top':''"/> -->
             <ProfileInfoCard :profile="formData" isRegistration :style="mobile ? 'margin: 0px 10px' : 'margin: 0px 30px;'"/>
-            <ProfileCard :style="mobile ? 'margin: 10px 10px' : 'margin: 20px 30px;'">
+            <!-- <ProfileCard :style="mobile ? 'margin: 10px 10px' : 'margin: 20px 30px;'">
               <template v-slot:content>
                 <ProfileInfoItem title="About" smCols="12" mdCols="12" :value="formData.description"/>
               </template>
-            </ProfileCard>  
+            </ProfileCard>   -->
             
             <v-divider></v-divider>
             <v-card-actions style="display: flex; justify-content: center; align-items: center;">
@@ -132,84 +132,14 @@ import { PERMITTED_PROFILE_ATTRS } from '@/lib/profile-helpers.js'
 import getRelatives from '@/lib/profile-helpers.js'
 import tree from '@/lib/tree-helpers'
 
-import EditProfileButton from '@/components/button/EditProfileButton.vue'
-
-
-
 import isEmpty from 'lodash.isempty'
 import calculateAge from '@/lib/calculate-age'
-import pick from 'lodash.pick'
-import isEqual from 'lodash.isequal'
-import clone from 'lodash.clonedeep'
 import { mapActions, mapGetters } from 'vuex'
 
 const REQUIRED_ATTRS = [
   'id', 'legalName', 'aliveInterval', 'gender', 'relationshipType', 
   'parents', 'profession', 'address', 'email', 'phone', 'location'
 ]
-
-function setProfileData () {
-  const formData = {
-    type: 'person',
-    id: '',
-    preferredName: '',
-    legalName: '',
-    altNames: {
-      add: []
-    },
-    gender: '',
-    relationshipType: 'birth',
-    legallyAdopted: false,
-    children: [],
-    parents: [],
-    siblings: [],
-    avatarImage: {},
-    aliveInterval: '',
-    bornAt: '',
-    diedAt: '',
-    birthOrder: '',
-    description: '',
-    location: '',
-    profession: '',
-    address: '',
-    email: '',
-    phone: '',
-    deceased: false
-  }
-  return formData
-}
-
-function updateProfileData (input) {
-  if (input) 
-  var profile = clone(input)
-  var aliveInterval = profile.aliveInterval.split('/')
-  return {
-    id: profile.id,
-    gender: profile.gender,
-    legalName: profile.legalName,
-    aliveInterval: profile.aliveInterval,
-    bornAt: aliveInterval[0],
-    diedAt: aliveInterval[1],
-    preferredName: profile.preferredName,
-    avatarImage: profile.avatarImage,
-    description: profile.description,
-    birthOrder: profile.birthOrder,
-    location: profile.location,
-    email: profile.email,
-    phone: profile.phone,
-    deceased: profile.deceased,
-    address: profile.address,
-    profession: profile.profession,
-    altNames: {
-      currentState: clone(profile.altNames),
-      add: [], // new altNames to add
-      remove: [] // altNames to remove
-    },
-    children: profile.children,
-    parents: profile.parents,
-    siblings: []
-  }
-}
 
 export default {
   name: 'NewRegistrationDialog',
@@ -219,7 +149,6 @@ export default {
     ProfileInfoItem,
     ProfileInfoCard,
     ProfileCard,
-    EditProfileButton
   },
   props: {
     show: { type: Boolean, required: true },
@@ -233,7 +162,7 @@ export default {
       checkbox1: false,
       checkbox2: false,
       profile: {},
-      formData: setProfileData(),
+      formData: {},
       hasSelection: false,
       requiredRules: [
        v => v == true || 'Please agree to share information'
@@ -261,45 +190,12 @@ export default {
     },
     dob () {
       if (this.formData.aliveInterval) {
-        console.log(this.formData.aliveInterval)
         var formattedDate = dateIntervalToString(this.formData.aliveInterval)
         return formattedDate
       }
       return ' '
     },
-    // profileChanges () {
-    //   let changes = {}
-    //   Object.entries(this.formData).forEach(([key, value]) => {
-    //     if (!isEqual(this.formData[key], this.selectedProfile[key])) {
-    //       switch (key) {
-    //         case 'altNames':
-    //           if (!isEqual(this.formData.altNames.add, this.selectedProfile.altNames)) {
-    //             changes[key] = pick(this.formData.altNames, ['add', 'remove'])
-    //             changes[key].add = changes[key].add.filter(Boolean)
-    //           }
-    //           break
-    //         case 'birthOrder':
-    //           changes[key] = parseInt(value)
-    //           break
-    //         default:
-    //           changes[key] = value
-    //       }
-    //     }
-    //   })
-    //   return changes
-    // },
-    // hasChanges () {
-    //   return isEqual(this.data, this.selectedProfile)
-    // }
   },
-  // watch: {
-  //   profile (newVal) {
-  //     this.formData = defaultData(newVal)
-  //   },
-  //   'formData.deceased' (newValue) {
-  //     if (!newValue) this.formData.diedAt = ''
-  //   }
-  // },
   methods: {
     ...mapActions(['setDialog']),
     getErrorMsgs () {
@@ -321,6 +217,7 @@ export default {
     },
     async getFullProfile () {
       var person = await getRelatives(this.selectedProfile.id) 
+
       if (person.children) {
         person.children = await Promise.all(person.children.map(async (child) => {
           const childProfile = await getRelatives(child.profile.id)
@@ -332,11 +229,19 @@ export default {
         person.parents = await Promise.all(person.parents.map(async parent => {
           const parentProfile = await getRelatives(parent.profile.id)
           person = tree.getSiblings(parentProfile, person)
+          if (parentProfile.parents) {
+            person.grandparents = parentProfile.parents.map(grandparent => {
+            return grandparent.profile
+            // const grandParent = await getRelatives(grandparent.profile.id)
+            // return grandParent
+          })
+        }
           return parentProfile
         }))
       }
 
-      this.formData = updateProfileData(person) 
+      // this.formData = updateProfileData(person) 
+      this.formData = person 
     },
     age (born) {
       var age = calculateAge(born)

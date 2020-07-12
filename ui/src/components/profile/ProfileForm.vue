@@ -197,7 +197,7 @@
                   </div>
                 </v-col>
               </v-row>
-              <v-row class="pt-6">
+              <v-row>
                 <v-col  v-if="!readonly || formData.gender === 'other'" cols="6" class="pl-10 py-0">
                   <v-checkbox v-model="formData.gender"
                     value="other"
@@ -286,7 +286,19 @@
               />
             </v-col>
           </v-row>
+          <v-row>
+            <v-col cols="12" class="pa-1">
+              <!-- Location -->
+              <v-text-field
+                v-model="formData.location"
+                label="City, Country"
+                v-bind="customProps"
+                outlined
+              />
+            </v-col>
+          </v-row>
         </v-col>
+        
       </v-row>
   </v-form>
 </template>

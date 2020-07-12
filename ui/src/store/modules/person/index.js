@@ -48,10 +48,7 @@ const actions = {
         person = tree.getSiblings(parentProfile, person)
         if (parentProfile.parents) {
           person.grandparents = parentProfile.parents.map(grandparent => {
-            console.log(grandparent)
             return grandparent.profile
-            // const grandParent = await getRelatives(grandparent.profile.id)
-            // return grandParent
           })
         }
         return parentProfile
