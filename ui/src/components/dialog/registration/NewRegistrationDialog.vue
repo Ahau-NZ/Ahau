@@ -28,6 +28,7 @@
               </v-col>
             </v-row>
             <!-- <RegisterButton v-if="profile.type === 'community'" :class="!mobile ? 'margin-top':''"/> -->
+<<<<<<< HEAD
             <ProfileInfoCard :profile="formData" isRegistration :style="mobile ? 'margin: 0px 20px' : 'margin: 0px 30px;'"/>
             <!-- <ProfileCard :style="mobile ? 'margin: 10px 10px' : 'margin: 20px 30px;'">
               <template v-slot:content>
@@ -35,6 +36,14 @@
               </template>
             </ProfileCard>   -->
 
+=======
+            <ProfileInfoCard :profile="formData" isRegistration :style="mobile ? 'margin: 0px 20px' : 'margin: 0px 30px;'"/> 
+            <v-divider></v-divider>
+            <span> Please provide some of your whakapapa information </span>
+            <div v-for="parent in formData.parents" :key="parent.id">
+              <ParentInformation :profile="parent" />
+            </div>
+>>>>>>> 10480226fbae877281f17149b753956e51daac98
             <v-divider></v-divider>
             <v-card-actions style="display: flex; justify-content: center; align-items: center;">
               <v-checkbox class="checkbox-label" color="success" v-model="checkbox1" :label="`I agree to share this information`" :rules="requiredRules"></v-checkbox> .
@@ -123,6 +132,7 @@ import Dialog from '@/components/dialog/Dialog.vue'
 import ProfileInfoCard from '@/components/profile/ProfileInfoCard.vue'
 import ProfileInfoItem from '@/components/profile/ProfileInfoItem.vue'
 import ProfileCard from '@/components/profile/ProfileCard.vue'
+import ParentInformation from '@/components/registration/ParentInformation.vue'
 
 import { dateIntervalToString } from '@/lib/date-helpers'
 import getRelatives, { PERMITTED_PROFILE_ATTRS } from '@/lib/profile-helpers.js'
@@ -145,7 +155,12 @@ export default {
     Avatar,
     ProfileInfoItem,
     ProfileInfoCard,
+<<<<<<< HEAD
     ProfileCard
+=======
+    ProfileCard,
+    ParentInformation
+>>>>>>> 10480226fbae877281f17149b753956e51daac98
   },
   props: {
     show: { type: Boolean, required: true },
