@@ -12,7 +12,7 @@
           <AvatarGroup :profiles="profile.grandparents" group-title="Grandparents" size="50px" :show-labels="true"
             @profile-click="openProfile($event)">
             <template v-slot:action >
-              <AddButton v-if="isRegistration" @click="toggleNew('parent')" class="pb-4" justify="start"/>
+              <AddButton v-if="isRegistration" @click="toggleNew('grandparent')" class="pb-4" justify="start"/>
             </template>
           </AvatarGroup>
         </div>
@@ -69,16 +69,7 @@ export default {
     isRegistration: { type:Boolean, default: false }
   },
   computed: {
-    // borderClass () {
-    //   if (this.hasFamilyMembers) return 'bb'
-    //   return ''
-    // },
-    // hasFamilyMembers () {
-    //   if (this.profile.parents && this.profile.parents.length > 0) return true
-    //   if (this.profile.children && this.profile.children.length > 0) return true
-    //   if (this.profile.siblings && this.profile.siblings.length > 0) return true
-    //   return false
-    // },
+
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
@@ -100,8 +91,12 @@ export default {
 
     openProfile (profile) {
       this.setProfileById({ id: profile.id, type: 'preview' })
-      this.setDialog({ active: 'view-edit-node', preview: true })
-    }
+      this.setDialog({ active: 'view-edit-node', type: 'preview' })
+    },
+    toggleNew (type) {
+      // this.$emit('new', type)
+      this.setDialog({active:'new-node', type:type, source:'new-registration'})
+    },
   }
 }
 </script>

@@ -173,8 +173,9 @@ export default {
       console.log('submit')
       var output = Object.assign({}, pick(this.profileChanges, [...PERMITTED_PROFILE_ATTRS]))
       if (!isEmpty(output)) {
-        console.log('output: ', output)
         this.$emit('submit', output)
+      } else {
+        this.close()
       }
     },
 

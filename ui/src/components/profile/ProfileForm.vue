@@ -127,7 +127,7 @@
                 label="Related by"
                 :items="relationshipTypes"
                 outlined
-                v-bind="customProps"
+                :menu-props="{light: true}"
               />
             </v-col>
           </v-row>

@@ -347,7 +347,7 @@ export default {
     },
     openProfile (profile) {
       this.setProfileById({ id: profile.id, type: 'preview' })
-      this.setDialog({ active: 'view-edit-node', preview: true })
+      this.setDialog({ active: 'view-edit-node', type: 'preview' })
     },
     updateModel (event) {
       this.model = event

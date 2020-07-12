@@ -3,7 +3,7 @@
     <NewRegistrationDialog
       v-if="isActive('new-registration')"
       :show="isActive('new-registration')"
-      :selectedProfile="whoami.profile"
+      :profile="whoami.profile"
       :title="`Request to join : ${currentProfile.preferredName}`"
       @editProfile="toggleEditProfile($event)"
       @close="close"
@@ -12,7 +12,7 @@
       v-if="isActive('new-community')"
       :show="isActive('new-community')"
       :title="`Ko Wai Mātou ---- Create New Community`"
-      :type="type"
+      :type="dialogType"
       @create="addCommunity($event)"
       @close="close"
     />
@@ -34,12 +34,13 @@
     <NewNodeDialog
       v-if="isActive('new-node')"
       :show="isActive('new-node')"
-      :title="`Add ${type} to ${selectedProfile.preferredName}`"
-      @create="addPerson($event)"
-      @close="close"
+      :title="`Add ${dialogType} to ${selectedProfile.preferredName}`"
       :selectedProfile="selectedProfile"
       :suggestions="suggestions"
+      :withView="source !== 'new-registration'"
       @getSuggestions="getSuggestions($event)"
+      @create="addPerson($event)"
+      @close="close"
     />
     <EditNodeDialog v-if="isActive('edit-node')"
       :show="isActive('edit-node')"
@@ -196,7 +197,7 @@ export default {
       type: Map
     },
     view: {
-      type: Object
+      type: Object, default: null
     },
     dialog: {
       type: String,
@@ -211,7 +212,7 @@ export default {
       type: String,
       default: null,
       validator: (val) => [
-        'parent', 'child', 'sibling','registration'
+        'parent', 'child', 'sibling','registration', 'grandparent'
       ].includes(val)
     },
     loadDescendants: Function,
@@ -225,14 +226,36 @@ export default {
       confirmationText: null,
       suggestions: [],
       source: null,
-      registration: ''
+      registration: '',
+      dialogType: ''
     }
   },
   computed: {
-    ...mapGetters(['nestedWhakapapa', 'selectedProfile', 'whoami', 'storeDialog', 'previewProfile', 'currentProfile']),
+    ...mapGetters(['nestedWhakapapa', 'selectedProfile', 'whoami', 'storeDialog', 'storeType', 'storeSource', 'currentProfile']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
+    previewProfile () {
+      return this.storeType === 'preview'
+    }
+  },
+  watch: {
+    //view profile info while in registration dialog 
+    storeDialog (newValue, OldValue) {
+      if (newValue && OldValue === 'new-registration') {
+        this.source = 'new-registration'
+      }
+    },
+    type (newVal) {
+      console.log("handler: ", newVal)
+      this.dialogType = newVal
+      console.log("dialogType: ", newVal)
+    },
+    storeType (newVal) {
+      console.log("store: ", newVal)
+      this.dialogType = newVal
+      console.log("dialogType: ", newVal)
+    }
   },
   methods: {
     ...mapActions(['updateNode', 'deleteNode', 'updatePartnerNode', 'addChild', 'addParent', 'loading', 'setDialog',
@@ -250,15 +273,16 @@ export default {
     },
     close () {
       if (this.isActive('new-node')) {
-        this.toggleDialog(this.source, this.type, null)
+        this.toggleDialog(this.source, this.dialogType, null)
         return
       }
       this.toggleDialog(this.source, null, null)
       this.$emit('setloading', false)
     },
     toggleDialog (dialog, type, source) {
+      console.log("redirecting to: ", this.source)
       this.source = source
-      this.setDialog(dialog)
+      this.setDialog(dialog, type, source)
       this.$emit('update:dialog', dialog)
       this.$emit('update:type', type)
     },
@@ -303,9 +327,10 @@ export default {
       profession,
       email,
       phone,
-      deceased
+      deceased,
+      aliveInterval
     }) {
-      console.log('creating person: ', preferredName, type)
+      console.log('creating person: ', preferredName, gender)
       const res = await this.$apollo.mutate({
         mutation: gql`
           mutation($input: ProfileInput!) {
@@ -330,7 +355,9 @@ export default {
             email,
             phone,
             deceased,
-            recps: type === 'community' ? [this.whoami.feedId] : this.view.recps
+            aliveInterval,
+            // UPDATE : for private groups
+            recps: type === 'community' ? [this.whoami.feedId] : this.view ? this.view.recps : [this.whoami.feedId]
           }
         }
       })
@@ -347,7 +374,7 @@ export default {
           id
         } = $event
 
-        if (this.view.ignoredProfiles.includes(id)) {
+        if (this.view && this.view.ignoredProfiles.includes(id)) {
           const input = {
             id: this.$route.params.id,
             ignoredProfiles: {
@@ -370,7 +397,7 @@ export default {
 
               let child, parent
 
-              switch (this.type) {
+              switch (this.dialogType) {
                 case 'child':
                   child = id
                   parent = this.selectedProfile.id
@@ -389,7 +416,7 @@ export default {
                   child = this.selectedProfile.id
                   parent = id
 
-                  if (child === this.view.focus) {
+                  if (this.view && child === this.view.focus) {
                     // in this case we're updating the top of the graph, we update view.focus to that new top parent
                     this.$emit('updateFocus', parent)
                     this.addParent({
@@ -452,7 +479,7 @@ export default {
             'legallyAdopted'
           ])
 
-          switch (this.type) {
+          switch (this.dialogType) {
             case 'child':
               child = id
               parent = this.selectedProfile.id
@@ -496,7 +523,7 @@ export default {
                 })
               }
 
-              if (child === this.view.focus) {
+              if (this.view && child === this.view.focus) {
                 // in this case we're updating the top of the graph, we update view.focus to that new top parent
                 this.$emit('updateFocus', parent)
               } else {
@@ -564,7 +591,7 @@ export default {
         parent,
         relationshipType,
         legallyAdopted,
-        recps: this.view.recps
+        recps: this.view ? this.view.recps : [this.whoami.feedId]
       }
       try {
         const res = await this.$apollo.mutate(SAVE_LINK(input))
@@ -656,10 +683,15 @@ export default {
         return
       }
       if (this.storeDialog === 'edit-node') {
-        this.setProfileById({
-          id: res.data.saveProfile
-        })
-        return
+        if (this.source === 'new-registration'){
+          this.close()
+          return
+        } else {
+          this.setProfileById({
+            id: res.data.saveProfile,
+          })
+          return
+        }
       }
 
       // reload the selectedProfiles personal details

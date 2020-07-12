@@ -8,7 +8,7 @@
         <ProfileForm :profile.sync="formData" :readonly="hasSelection" :editRelationship="hasSelection" :withRelationships="withRelationships" :mobile="mobile">
 
           <!-- Slot = Search -->
-          <template v-slot:search>
+          <template v-if="withView" v-slot:search>
             <v-combobox
               v-model="formData.preferredName"
               :items="generateSuggestions"
@@ -137,6 +137,7 @@ export default {
     suggestions: { type: Array },
     hideDetails: { type: Boolean, default: false },
     selectedProfile: { type: Object },
+    withView: {type: Boolean, default: true}, 
     type: {
       type: String,
       validator: (val) => [
@@ -152,7 +153,10 @@ export default {
     }
   },
   mounted () {
-    this.getCloseSuggestions()
+    if (this.withView) {
+      console.log('withView')
+      this.getCloseSuggestions()
+    }
   },
   computed: {
     generateSuggestions () {
@@ -227,6 +231,7 @@ export default {
       this.$emit('getSuggestions', null)
     },
     getCloseSuggestions () {
+      console.log("getting close suggestions")
       switch (this.type) {
         case 'child':
           return this.findChildren()
@@ -363,6 +368,7 @@ export default {
       }
     },
     'formData.preferredName' (newValue) {
+      if (!this.withView) return
       if (!newValue) return
       if (newValue.length > 2) {
         if (!this.hasSelection) {

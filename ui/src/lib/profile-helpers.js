@@ -38,7 +38,7 @@ export const PROFILE_FRAGMENT = gql`
   }
 `
 
-export const whoami = ({
+export const getwhoami = ({
   query: gql`
     ${PROFILE_FRAGMENT}
     query {

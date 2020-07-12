@@ -7,7 +7,7 @@
         </v-row>
         <!-- WRAP -->
         <v-form ref="checkboxes">
-          <v-card outlined elevation='1' :style="mobile ? 'margin: 0px' : 'margin: 20px'" :class="{'checkbox':checkbox1}">
+          <v-card elevation='1' :style="mobile ? 'margin: 0px' : 'margin: 20px'" :class="{'checkbox':checkbox1}">
             <v-row>
               <v-col cols="12" md="3" class="py-0">
                 <v-row class="justify-center pt-12">
@@ -28,7 +28,7 @@
               </v-col>
             </v-row>
             <!-- <RegisterButton v-if="profile.type === 'community'" :class="!mobile ? 'margin-top':''"/> -->
-            <ProfileInfoCard :profile="formData" isRegistration :style="mobile ? 'margin: 0px 10px' : 'margin: 0px 30px;'"/>
+            <ProfileInfoCard :profile="formData" isRegistration :style="mobile ? 'margin: 0px 20px' : 'margin: 0px 30px;'"/>
             <!-- <ProfileCard :style="mobile ? 'margin: 10px 10px' : 'margin: 20px 30px;'">
               <template v-slot:content>
                 <ProfileInfoItem title="About" smCols="12" mdCols="12" :value="formData.description"/>
@@ -45,8 +45,8 @@
           <p class="py-6 px-4 subtitle-2 blue--text">The below private information will only be viewable by <strong><i>{{currentProfile.preferredName}}</i></strong> kaitiaki</p>
         </v-row>
         <!-- WRAP -->
-        <v-card outlined elevation='1' style="margin: 20px;  " :style="mobile ? 'margin: 0px' : 'margin: 20px'" :class="{'checkbox':checkbox2}">
-        <ProfileCard style="margin: 30px;">
+        <v-card elevation='1' :style="mobile ? 'margin: 0px' : 'margin: 20px'" :class="{'checkbox':checkbox2}" class="pt-2">
+        <ProfileCard :style="mobile ? 'margin: 10px;':'margin:20px'">
           <template v-slot:content>
             <v-row cols="12" class="pt-0" >
               <ProfileInfoItem :class="mobile ? 'bb':'br bb'" smCols="12" mdCols="6" title="Date of birth" :value="dob"/>
@@ -68,7 +68,7 @@
       </v-col>
 
       <v-hover v-if="errorMsgs && errorMsgs.length" v-slot:default="{ hover }">
-        <v-row @click="$emit('editProfile',formData)" align="center" style="border: 1px solid rgba(168,0,0); border-radius: 10px;" :style="hover ? 'cursor: pointer;background-color:rgba(168,0,0,0.1)':''">
+        <v-row @click="editProfile"  class="mx-12" align="center" style="border: 1px solid rgba(168,0,0); border-radius: 10px;" :style="hover ? 'cursor: pointer;background-color:rgba(168,0,0,0.1)':''">
           <v-col cols="12">
               <v-row justify="center">
                 <span class="px-4 subtitle-2 secondary--text">To join this communtiy, please update the required areas on your profile</span>
@@ -155,13 +155,12 @@ export default {
     title: { type: String, default: 'Create a new person' },
     hideDetails: { type: Boolean, default: false },
     readOnly: { type: Boolean, default: false},
-    selectedProfile: { type: Object}
+    profile: { type: Object}
   },
   data () {
     return {
       checkbox1: false,
       checkbox2: false,
-      profile: {},
       formData: {},
       hasSelection: false,
       requiredRules: [
@@ -170,11 +169,12 @@ export default {
       errorMsgs: []
     }
   },
-  created () {
-    this.getFullProfile()
+  mounted () {
+    console.log("mounted:", this.profile)
+    this.getFullProfile(this.profile.id)
   },
   computed: {
-    ...mapGetters(['currentProfile']),
+    ...mapGetters(['currentProfile', 'selectedProfile']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -197,7 +197,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions(['setDialog']),
+    ...mapActions(['setDialog', 'setProfileById']),
     getErrorMsgs () {
       // var errors = {}
       var errors = []
@@ -215,34 +215,12 @@ export default {
       })
       this.errorMsgs = errors
     },
-    async getFullProfile () {
-      var person = await getRelatives(this.selectedProfile.id) 
 
-      if (person.children) {
-        person.children = await Promise.all(person.children.map(async (child) => {
-          const childProfile = await getRelatives(child.profile.id)
-          person = tree.getPartners(person, childProfile)
-          return childProfile
-        }))
-      }
-      if (person.parents) {
-        person.parents = await Promise.all(person.parents.map(async parent => {
-          const parentProfile = await getRelatives(parent.profile.id)
-          person = tree.getSiblings(parentProfile, person)
-          if (parentProfile.parents) {
-            person.grandparents = parentProfile.parents.map(grandparent => {
-            return grandparent.profile
-            // const grandParent = await getRelatives(grandparent.profile.id)
-            // return grandParent
-          })
-        }
-          return parentProfile
-        }))
-      }
-
-      // this.formData = updateProfileData(person) 
-      this.formData = person 
+    async getFullProfile (id) {
+      await this.setProfileById({ id:id, type:'setWhanau' })
+      return this.formData = this.selectedProfile  
     },
+
     age (born) {
       var age = calculateAge(born)
       if (age == null) {
@@ -250,32 +228,16 @@ export default {
       }
       return age
     },
-    
+
+    editProfile () {
+      this.$emit('editProfile',this.formData)
+    },
+
     close () {
       this.$emit('close')
     },
 
-    // checkSubmission () {
-    //   var empty = {}
-    //   var output = Object.keys(this.formData)
-    //     .filter(key => REQUIRED_ATTRS.includes(key))
-    //     .reduce((obj, key) => {
-    //       obj[key] = this.formData[key];
-    //       return obj;
-    //     }, {});
-      
-    //   Object.entries(output).forEach(([key, value]) => {
-    //     if (isEmpty(output[key])) {
-    //       empty[key] = value
-    //     }
-    //   })
-    //   this.errorMsgs = Object.keys(empty)
-    // },
-
     submit () {
-      // this.checkSubmission()
-      // console.log(this.errorMsgs)
-  
       if(this.$refs.checkboxes.validate()) {
         console.log('approved.')
       }
@@ -307,9 +269,6 @@ export default {
   font-size: 14px;
 }
 
-.checkbox-label /deep/ label {
-  font-size: 1.1em
-}
 
 .checkbox {
   border: 2px solid #4caf50 

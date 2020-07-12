@@ -15,7 +15,7 @@
         <EditRegistrationButton @click="setDialog('edit-registration')" />
       </v-col> -->
       <v-col :order="mobile ? '2' : '3'" :align="mobile || tablet ? 'end' : isKaitiaki ? 'start':'center'" :cols="isKaitiaki ? '12':'12'" :md="isKaitiaki ? 1:2" class="px-5">
-        <EditProfileButton @click="currentProfile.type === 'person' ? setDialog('edit-node') : setDialog('edit-community')" />
+        <EditProfileButton @click="currentProfile.type === 'person' ? setDialog('edit-node', 'this', 'this') : setDialog('edit-community')" />
       </v-col>
     </v-row>
     <v-row>
