@@ -63,8 +63,8 @@
         </v-col>
         <v-col :class="mobile ? 'py-0 px-0' : tablet ? 'py-4 px-0' : 'py-1'">
           <!-- TODO: connect whakapapa -->
-          <!-- <v-btn @click="setActive('whakapapa')" light :fab="mobile" text> -->
-          <v-btn @click="setDialog('coming-soon')" light :fab="mobile" text>
+          <v-btn @click="setActive('whakapapa')" light :fab="mobile" text>
+          <!-- <v-btn @click="setDialog('coming-soon')" light :fab="mobile" text> -->
             <v-col class="pa-0" :cols="mobile ? '12' : '2'">
               <WhakapapaIcon :size="mobile ? 'large' : tablet ? 'x-large' : 'medium'" :color="activeComponent === 'whakapapa' ? 'red' : 'disabled'"/>
             </v-col>
