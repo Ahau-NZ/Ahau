@@ -9,7 +9,7 @@
       </v-btn> -->
       <template v-if="!isgoBack">
         <!-- bade notification -->
-        <v-menu v-model="menu" :close-on-content-click="false" :nudge-width="200" offset-x light>
+        <v-menu v-model="menu" :close-on-content-click="true" offset-x offset-y light>
           <template v-slot:activator="{ on, attrs }">
             <div style="display: flex; position: relative;">
               <!-- <router-link to="/" v-if="enableMenu" class="logo-link" @click.native="karakiaWhakamutunga()"> -->
@@ -23,33 +23,33 @@
           </template>
 
           <v-card>
-            <v-list>
-              <v-list-item>
-                <p class="py-0 my-0 ahauRed">Notifications</p>
-              </v-list-item>
+            <v-list height="40px">
+
+                <p class="pt-1 pl-5 my-0 headliner black--text" >Notifications</p>
+
             </v-list>
 
             <v-divider></v-divider>
 
-            <v-list>
-              <div  v-for="(notification, index) in notifications" :key="index">
-              <v-list-item class="py-1">
-                <v-list-item-avatar>
-                  <img :src="completePerson.avatarImage.uri" :alt="completePerson.preferredName">
-                </v-list-item-avatar>
-                <v-list-item-content>
-                  <v-list-item-title>{{completePerson.legalName}}</v-list-item-title>
-                  <v-list-item-subtitle class="text-caption ahauRed">{{notification.is}} {{notification.to}}</v-list-item-subtitle>
-                </v-list-item-content>
-                <v-list-item-action>
-                  <v-btn icon x-small>
-                    <v-icon>mdi-close</v-icon>
-                  </v-btn>
-                </v-list-item-action>  
-              </v-list-item>
-              <v-divider></v-divider>
-            </div>
-            <v-spacer class="mb-6"></v-spacer>
+            <v-list class="pt-0">
+                <div  v-for="(notification, index) in notifications" :key="index">
+                <v-list-item class="py-1" @click="setDialog('new-registration','review')">
+                  <Avatar size="50px" :image="whoami.profile.avatarImage"
+                    :alt="whoami.profile.preferredName" :gender="whoami.profile.gender" :bornAt="whoami.profile.bornAt" />
+                    <!-- <img :src="completePerson.avatarImage.uri" :alt="completePerson.preferredName"> -->
+                  <v-list-item-content class="pl-5">
+                    <v-list-item-title>{{completePerson.legalName}}</v-list-item-title>
+                    <v-list-item-subtitle class="text-caption ahauRed">{{notification.is}} {{notification.to}}</v-list-item-subtitle>
+                  </v-list-item-content>
+                  <v-list-item-action>
+                    <v-btn icon x-small>
+                      <v-icon>mdi-close</v-icon>
+                    </v-btn>
+                  </v-list-item-action>  
+                </v-list-item>
+                <v-divider></v-divider>
+              </div>
+              <v-spacer class="mb-6"></v-spacer>
             </v-list>
             
 
@@ -266,6 +266,12 @@ To return to everyday activities
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
+  .headliner {
+    font-size: 0.8em;
+    text-transform: uppercase;
+    font-weight: 400;
+    letter-spacing: 5px;
+  }
   .mobile {
 
     .logo,

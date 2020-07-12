@@ -10,6 +10,9 @@ const getters = {
   storeDialog: state => {
     return state.dialog
   },
+  dialogType: state => {
+    return state.dialog
+  },
   previewProfile: state => {
     return state.preview
   }
@@ -21,11 +24,14 @@ const mutations = {
   },
   updatePreview (state, preview) {
     state.preview = preview
-  }
+  },
+  updateType (state, dialog) {
+    state.dialog = dialog
+  },
 }
 
 const actions = {
-  setDialog ({ commit }, dialog) {
+  setDialog ({ commit }, dialog, type) {
     if (dialog === null) {
       commit('updateDialog', dialog)
       commit('updatePreview', false)
