@@ -7,7 +7,7 @@
     </v-btn>
 </template>
 <script>
-import {mapActions} from 'vuex'
+import { mapActions } from 'vuex'
 
 export default {
   computed: {
@@ -16,10 +16,10 @@ export default {
     },
     tablet () {
       return this.$vuetify.breakpoint.md
-    },
+    }
   },
   methods: {
-  ...mapActions(['setDialog']) 
+    ...mapActions(['setDialog'])
   }
 }
 </script>
@@ -35,7 +35,7 @@ export default {
         width:17vw;
         border-width: 1px;
     }
-    
+
     .tabletBtn {
         margin-top:53px;
         margin-left:10px;

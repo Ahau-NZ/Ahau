@@ -298,7 +298,7 @@
             </v-col>
           </v-row>
         </v-col>
-        
+
       </v-row>
   </v-form>
 </template>
@@ -327,7 +327,7 @@ export default {
     editRelationship: { type: Boolean, default: false },
     mobile: { type: Boolean, default: false },
     isEditing: { type: Boolean, default: false },
-    isUser: { type: Boolean, default: false },
+    isUser: { type: Boolean, default: false }
   },
   data () {
     return {
@@ -350,10 +350,10 @@ export default {
       }
     },
     'formData.gender' (newValue) {
-      console.log("gender: ", newValue)
+      console.log('gender: ', newValue)
       if (newValue === 'male') this.updateSelectedGender('male')
       if (newValue === 'female') this.updateSelectedGender('female')
-    },
+    }
   },
   computed: {
     customProps () {

@@ -85,8 +85,8 @@ export default {
     show: { type: Boolean, required: true },
     title: { type: String, default: 'Create a new person' },
     hideDetails: { type: Boolean, default: false },
-    profile: { type: Object,  default: () => {}},
-    readOnly: { type: Boolean, default: false}
+    profile: { type: Object, default: () => {} },
+    readOnly: { type: Boolean, default: false }
   },
   data () {
     return {
@@ -119,7 +119,7 @@ export default {
           }
         }
       })
-      console.log("changes: ", changes)
+      console.log('changes: ', changes)
       return changes
     },
     hasChanges () {
@@ -127,11 +127,11 @@ export default {
     }
   },
   watch: {
-     profile: {
+    profile: {
       deep: true,
       immediate: true,
       handler (newVal) {
-        console.log("profile watcher: ", newVal)
+        console.log('profile watcher: ', newVal)
         if (!newVal) return
         this.formData = defaultData(newVal)
 

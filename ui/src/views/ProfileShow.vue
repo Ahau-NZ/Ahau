@@ -88,7 +88,7 @@ export default {
     },
     isKaitiaki () {
       // TODO - only viewable by kaitiaki
-      return this.currentProfile.type === 'community' 
+      return this.currentProfile.type === 'community'
     },
     length () {
       var name = ''

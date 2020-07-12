@@ -381,7 +381,7 @@ export default {
     },
     'formData.diedAt' (newVal) {
       this.formData.aliveInterval = this.formData.bornAt + '/' + this.formData.diedAt
-    },
+    }
   },
   methods: {
     age (born) {

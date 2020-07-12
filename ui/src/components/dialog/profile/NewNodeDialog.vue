@@ -137,7 +137,7 @@ export default {
     suggestions: { type: Array },
     hideDetails: { type: Boolean, default: false },
     selectedProfile: { type: Object },
-    withView: {type: Boolean, default: true}, 
+    withView: { type: Boolean, default: true },
     type: {
       type: String,
       validator: (val) => [
@@ -231,7 +231,7 @@ export default {
       this.$emit('getSuggestions', null)
     },
     getCloseSuggestions () {
-      console.log("getting close suggestions")
+      console.log('getting close suggestions')
       switch (this.type) {
         case 'child':
           return this.findChildren()

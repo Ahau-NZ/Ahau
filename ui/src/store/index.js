@@ -2,8 +2,6 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import { createProvider } from '../plugins/vue-apollo'
 import gql from 'graphql-tag'
-import { whoami } from '@/lib/profile-helpers'
-
 
 import whakapapa from './modules/whakapapa'
 import person from './modules/person'

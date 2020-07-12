@@ -34,10 +34,10 @@
                 <ProfileInfoItem title="About" smCols="12" mdCols="12" :value="formData.description"/>
               </template>
             </ProfileCard>   -->
-            
+
             <v-divider></v-divider>
             <v-card-actions style="display: flex; justify-content: center; align-items: center;">
-              <v-checkbox class="checkbox-label" color="success" v-model="checkbox1" :label="`I agree to share this information`" :rules="requiredRules"></v-checkbox> . 
+              <v-checkbox class="checkbox-label" color="success" v-model="checkbox1" :label="`I agree to share this information`" :rules="requiredRules"></v-checkbox> .
             </v-card-actions>
           </v-card>
       <!-- WRAP END -->
@@ -56,10 +56,10 @@
             </v-row>
           </template>
         </ProfileCard>
-                   
+
         <v-divider></v-divider>
         <v-card-actions style="display: flex; justify-content: center; align-items: center;">
-          <v-checkbox class="checkbox-label" color="success" v-model="checkbox2" :label="`I agree to share this information`" :rules="requiredRules"></v-checkbox> . 
+          <v-checkbox class="checkbox-label" color="success" v-model="checkbox2" :label="`I agree to share this information`" :rules="requiredRules"></v-checkbox> .
         </v-card-actions>
       </v-card>
     </v-form>
@@ -84,11 +84,8 @@
           </v-col>
         </v-row>
       </v-hover>
-      
+
     </template>
-
-
-
 
     <!-- Actions Slot -->
     <template v-slot:actions>
@@ -99,12 +96,12 @@
         <!-- <v-icon color="secondary">mdi-close</v-icon> -->
         <span>cancel</span>
       </v-btn>
-      <!-- <v-btn 
+      <!-- <v-btn
         @click="submit"
         text large
         class="blue--text mx-5"
       > -->
-      <v-btn 
+      <v-btn
         @click="submit"
         :disabled="disabled"
         text large
@@ -127,9 +124,9 @@ import ProfileInfoCard from '@/components/profile/ProfileInfoCard.vue'
 import ProfileInfoItem from '@/components/profile/ProfileInfoItem.vue'
 import ProfileCard from '@/components/profile/ProfileCard.vue'
 
-import {dateIntervalToString} from '@/lib/date-helpers'
-import { PERMITTED_PROFILE_ATTRS } from '@/lib/profile-helpers.js'
-import getRelatives from '@/lib/profile-helpers.js'
+import { dateIntervalToString } from '@/lib/date-helpers'
+import getRelatives, { PERMITTED_PROFILE_ATTRS } from '@/lib/profile-helpers.js'
+
 import tree from '@/lib/tree-helpers'
 
 import isEmpty from 'lodash.isempty'
@@ -137,7 +134,7 @@ import calculateAge from '@/lib/calculate-age'
 import { mapActions, mapGetters } from 'vuex'
 
 const REQUIRED_ATTRS = [
-  'id', 'legalName', 'aliveInterval', 'gender', 'relationshipType', 
+  'id', 'legalName', 'aliveInterval', 'gender', 'relationshipType',
   'parents', 'profession', 'address', 'email', 'phone', 'location'
 ]
 
@@ -148,14 +145,14 @@ export default {
     Avatar,
     ProfileInfoItem,
     ProfileInfoCard,
-    ProfileCard,
+    ProfileCard
   },
   props: {
     show: { type: Boolean, required: true },
     title: { type: String, default: 'Create a new person' },
     hideDetails: { type: Boolean, default: false },
-    readOnly: { type: Boolean, default: false},
-    profile: { type: Object}
+    readOnly: { type: Boolean, default: false },
+    profile: { type: Object }
   },
   data () {
     return {
@@ -164,13 +161,13 @@ export default {
       formData: {},
       hasSelection: false,
       requiredRules: [
-       v => v == true || 'Please agree to share information'
+        v => v == true || 'Please agree to share information'
       ],
       errorMsgs: []
     }
   },
   mounted () {
-    console.log("mounted:", this.profile)
+    console.log('mounted:', this.profile)
     this.getFullProfile(this.profile.id)
   },
   computed: {
@@ -179,7 +176,7 @@ export default {
       return this.$vuetify.breakpoint.xs
     },
     customClass () {
-      return 
+
     },
     disabled () {
       this.getErrorMsgs()
@@ -194,7 +191,7 @@ export default {
         return formattedDate
       }
       return ' '
-    },
+    }
   },
   methods: {
     ...mapActions(['setDialog', 'setProfileById']),
@@ -204,9 +201,9 @@ export default {
       var output = Object.keys(this.formData)
         .filter(key => REQUIRED_ATTRS.includes(key))
         .reduce((obj, key) => {
-          obj[key] = this.formData[key];
-          return obj;
-        }, {});
+          obj[key] = this.formData[key]
+          return obj
+        }, {})
       Object.entries(output).forEach(([key, value]) => {
         if (isEmpty(output[key])) {
           // errors[key] = value
@@ -217,8 +214,8 @@ export default {
     },
 
     async getFullProfile (id) {
-      await this.setProfileById({ id:id, type:'setWhanau' })
-      return this.formData = this.selectedProfile  
+      await this.setProfileById({ id: id, type: 'setWhanau' })
+      return this.formData = this.selectedProfile
     },
 
     age (born) {
@@ -230,7 +227,7 @@ export default {
     },
 
     editProfile () {
-      this.$emit('editProfile',this.formData)
+      this.$emit('editProfile', this.formData)
     },
 
     close () {
@@ -238,7 +235,7 @@ export default {
     },
 
     submit () {
-      if(this.$refs.checkboxes.validate()) {
+      if (this.$refs.checkboxes.validate()) {
         console.log('approved.')
       }
     }
@@ -269,8 +266,7 @@ export default {
   font-size: 14px;
 }
 
-
 .checkbox {
-  border: 2px solid #4caf50 
+  border: 2px solid #4caf50
 }
 </style>

@@ -212,7 +212,7 @@ export default {
       type: String,
       default: null,
       validator: (val) => [
-        'parent', 'child', 'sibling','registration', 'grandparent'
+        'parent', 'child', 'sibling', 'registration', 'grandparent'
       ].includes(val)
     },
     loadDescendants: Function,
@@ -240,21 +240,21 @@ export default {
     }
   },
   watch: {
-    //view profile info while in registration dialog 
+    // view profile info while in registration dialog
     storeDialog (newValue, OldValue) {
       if (newValue && OldValue === 'new-registration') {
         this.source = 'new-registration'
       }
     },
     type (newVal) {
-      console.log("handler: ", newVal)
+      console.log('handler: ', newVal)
       this.dialogType = newVal
-      console.log("dialogType: ", newVal)
+      console.log('dialogType: ', newVal)
     },
     storeType (newVal) {
-      console.log("store: ", newVal)
+      console.log('store: ', newVal)
       this.dialogType = newVal
-      console.log("dialogType: ", newVal)
+      console.log('dialogType: ', newVal)
     }
   },
   methods: {
@@ -263,7 +263,7 @@ export default {
     ]),
     toggleEditProfile (profile) {
       this.registration = profile
-      this.toggleDialog('edit-node',null,'new-registration')
+      this.toggleDialog('edit-node', null, 'new-registration')
     },
     isActive (type) {
       if (type === this.dialog || type === this.storeDialog) {
@@ -280,7 +280,7 @@ export default {
       this.$emit('setloading', false)
     },
     toggleDialog (dialog, type, source) {
-      console.log("redirecting to: ", this.source)
+      console.log('redirecting to: ', this.source)
       this.source = source
       this.setDialog(dialog, type, source)
       this.$emit('update:dialog', dialog)
@@ -632,7 +632,7 @@ export default {
       }
     },
     async updateProfile ($event) {
-      console.log("update profile: ", $event)
+      console.log('update profile: ', $event)
       // When do we need this?
       // Object.entries($event).map(([key, value]) => {
       //   if (value === '') {
@@ -683,12 +683,12 @@ export default {
         return
       }
       if (this.storeDialog === 'edit-node') {
-        if (this.source === 'new-registration'){
+        if (this.source === 'new-registration') {
           this.close()
           return
         } else {
           this.setProfileById({
-            id: res.data.saveProfile,
+            id: res.data.saveProfile
           })
           return
         }

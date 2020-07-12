@@ -69,14 +69,14 @@ export default {
   methods: {
     profileClick (profile) {
       this.$emit('profile-click', profile)
-    },
+    }
     // formatProfiles (profiles) {
     //   if (profiles.length > 0 && has(profiles[0], 'profile')) {
     //     var formattedProfiles = []
     //     profiles.map(profile => {
     //       formattedProfiles.push(profile.profile)
     //     })
-    //     return formattedProfiles      
+    //     return formattedProfiles
     //   } else return profiles
     // }
   }

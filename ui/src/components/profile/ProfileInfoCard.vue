@@ -44,7 +44,6 @@
           </AvatarGroup>
         </div>
 
-        
       </v-row>
     </div>
 </template>
@@ -66,7 +65,7 @@ export default {
   },
   props: {
     profile: Object,
-    isRegistration: { type:Boolean, default: false }
+    isRegistration: { type: Boolean, default: false }
   },
   computed: {
 
@@ -95,8 +94,8 @@ export default {
     },
     toggleNew (type) {
       // this.$emit('new', type)
-      this.setDialog({active:'new-node', type:type, source:'new-registration'})
-    },
+      this.setDialog({ active: 'new-node', type: type, source: 'new-registration' })
+    }
   }
 }
 </script>
