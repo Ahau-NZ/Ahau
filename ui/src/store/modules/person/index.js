@@ -46,6 +46,14 @@ const actions = {
       person.parents = await Promise.all(person.parents.map(async parent => {
         const parentProfile = await getRelatives(parent.profile.id)
         person = tree.getSiblings(parentProfile, person)
+        if (parentProfile.parents) {
+          person.grandparents = parentProfile.parents.map(grandparent => {
+            console.log(grandparent)
+            return grandparent.profile
+            // const grandParent = await getRelatives(grandparent.profile.id)
+            // return grandParent
+          })
+        }
         return parentProfile
       }))
     }

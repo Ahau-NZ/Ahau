@@ -2,12 +2,12 @@
     <v-row class="mb-12" :class="mobile ? 'mobile-profile':''">
       <v-col cols="12" md="9" :class="mobile ? 'pt-7 pb-5 px-5' : 'px-5' ">
         <!-- <RegisterButton v-if="profile.type === 'community'" :class="!mobile ? 'margin-top':''"/> -->
-        <ProfileInfoCard v-if="profile.type === 'person'" :profile="profile" @setupProfile="setupProfile($event)" />
-        <ProfileCard>
+        <ProfileInfoCard :profile="profile" @setupProfile="setupProfile($event)" />
+        <!-- <ProfileCard>
           <template v-slot:content>
             <ProfileInfoItem title="About" smCols="12" mdCols="12" :value="profile.description"/>
           </template>
-        </ProfileCard>
+        </ProfileCard> -->
         <ProfileCard>
           <template v-slot:content>
             <v-row cols="12" class="pt-0" >

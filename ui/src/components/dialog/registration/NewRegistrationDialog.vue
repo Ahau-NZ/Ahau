@@ -121,21 +121,21 @@
 
 <script>
 
-import { PERMITTED_PROFILE_ATTRS } from '@/lib/profile-helpers.js'
-import getRelatives from '@/lib/profile-helpers.js'
 import Avatar from '@/components/Avatar.vue'
 import Dialog from '@/components/dialog/Dialog.vue'
-
 import ProfileInfoCard from '@/components/profile/ProfileInfoCard.vue'
 import ProfileInfoItem from '@/components/profile/ProfileInfoItem.vue'
 import ProfileCard from '@/components/profile/ProfileCard.vue'
+
 import {dateIntervalToString} from '@/lib/date-helpers'
+import { PERMITTED_PROFILE_ATTRS } from '@/lib/profile-helpers.js'
+import getRelatives from '@/lib/profile-helpers.js'
+import tree from '@/lib/tree-helpers'
 
 import EditProfileButton from '@/components/button/EditProfileButton.vue'
 
 
 
-import ProfileForm from '@/components/profile/ProfileForm.vue'
 import isEmpty from 'lodash.isempty'
 import calculateAge from '@/lib/calculate-age'
 import pick from 'lodash.pick'
@@ -215,7 +215,6 @@ export default {
   name: 'NewRegistrationDialog',
   components: {
     Dialog,
-    ProfileForm,
     Avatar,
     ProfileInfoItem,
     ProfileInfoCard,
@@ -321,10 +320,23 @@ export default {
       this.errorMsgs = errors
     },
     async getFullProfile () {
-      const profile = await getRelatives(this.selectedProfile.id)
+      var person = await getRelatives(this.selectedProfile.id) 
+      if (person.children) {
+        person.children = await Promise.all(person.children.map(async (child) => {
+          const childProfile = await getRelatives(child.profile.id)
+          person = tree.getPartners(person, childProfile)
+          return childProfile
+        }))
+      }
+      if (person.parents) {
+        person.parents = await Promise.all(person.parents.map(async parent => {
+          const parentProfile = await getRelatives(parent.profile.id)
+          person = tree.getSiblings(parentProfile, person)
+          return parentProfile
+        }))
+      }
 
-      this.formData = updateProfileData(profile) 
-      // this.profile = updateProfileData(profile) 
+      this.formData = updateProfileData(person) 
     },
     age (born) {
       var age = calculateAge(born)
