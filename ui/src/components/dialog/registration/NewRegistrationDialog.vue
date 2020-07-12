@@ -28,22 +28,12 @@
               </v-col>
             </v-row>
             <!-- <RegisterButton v-if="profile.type === 'community'" :class="!mobile ? 'margin-top':''"/> -->
-<<<<<<< HEAD
-            <ProfileInfoCard :profile="formData" isRegistration :style="mobile ? 'margin: 0px 20px' : 'margin: 0px 30px;'"/>
-            <!-- <ProfileCard :style="mobile ? 'margin: 10px 10px' : 'margin: 20px 30px;'">
-              <template v-slot:content>
-                <ProfileInfoItem title="About" smCols="12" mdCols="12" :value="formData.description"/>
-              </template>
-            </ProfileCard>   -->
-
-=======
             <ProfileInfoCard :profile="formData" isRegistration :style="mobile ? 'margin: 0px 20px' : 'margin: 0px 30px;'"/> 
             <v-divider></v-divider>
             <span> Please provide some of your whakapapa information </span>
             <div v-for="parent in formData.parents" :key="parent.id">
               <ParentInformation :profile="parent" />
             </div>
->>>>>>> 10480226fbae877281f17149b753956e51daac98
             <v-divider></v-divider>
             <v-card-actions style="display: flex; justify-content: center; align-items: center;">
               <v-checkbox class="checkbox-label" color="success" v-model="checkbox1" :label="`I agree to share this information`" :rules="requiredRules"></v-checkbox> .
@@ -155,12 +145,8 @@ export default {
     Avatar,
     ProfileInfoItem,
     ProfileInfoCard,
-<<<<<<< HEAD
-    ProfileCard
-=======
     ProfileCard,
     ParentInformation
->>>>>>> 10480226fbae877281f17149b753956e51daac98
   },
   props: {
     show: { type: Boolean, required: true },
