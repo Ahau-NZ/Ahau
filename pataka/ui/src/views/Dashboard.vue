@@ -378,9 +378,9 @@ export default {
   border-radius: 4px;
   margin: 0 auto;
 }
-.network-local {
-  margin-top: -30px !important;
-}
+// .network-local {
+//   margin-top: -30px !important;
+// }
 .stat-column {
   padding-top: 240px;
 }
