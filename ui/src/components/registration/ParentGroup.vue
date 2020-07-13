@@ -57,31 +57,28 @@
 <script>
 import Avatar from '@/components/Avatar.vue'
 import calculateAge from '@/lib/calculate-age'
-import AddButton from '@/components/button/AddButton.vue'
 
-// import has from 'lodash.has'
 export default {
   name: 'ParentGroup',
   components: {
-    Avatar,
-    AddButton
+    Avatar
   },
   props: {
     profile: { type: Object, default: null },
     title: { type: String, default: null },
     size: { type: String, default: '80px' },
     spacing: { type: String, default: 'pr-5' },
-    index: Number,
+    index: Number
   },
   data () {
     return {
-      hover : false
-        // groupProfiles: this.formatProfiles(this.profiles)
+      hover: false
+      // groupProfiles: this.formatProfiles(this.profiles)
     }
   },
-  watch :{
-    hover(newVal) {
-      if (newVal) console.log("hover:", this.hover)
+  watch: {
+    hover (newVal) {
+      if (newVal) console.log('hover:', this.hover)
     }
   },
   computed: {
@@ -98,21 +95,20 @@ export default {
       if (this.profile.parents) {
         this.profile.parents.map(grandparent => {
           console.log(grandparent)
-          
           var profile = {
             ...grandparent.profile,
             relationshipType: grandparent.relationshipType
           }
           grandparents.push(profile)
         })
-        return grandparents
       }
+      return grandparents
     }
   },
   methods: {
     profileClick (profile) {
       this.$emit('profile-click', profile)
-    },
+    }
   }
 }
 </script>

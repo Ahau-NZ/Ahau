@@ -356,19 +356,17 @@ export default {
       }
     },
     'formData.gender' (newValue) {
-      if (newValue === 'other' || newValue === 'unknown' ) this.updateSelectedGender('other')
+      if (newValue === 'other' || newValue === 'unknown') this.updateSelectedGender('other')
     }
   },
   computed: {
     showAvatar () {
       if (this.isEditing) return true
-      if (!this.formData) return false
       if (this.formData) {
-        if (this.formData.gender) return true 
-        else return false 
-        if (this.formData.avatar) return true
+        if (this.formData.gender) return true
+        if (this.formData.avatarImage) return true
         else return false
-      }
+      } else return false
     },
     customProps () {
       // readonly = hasSelected || !isEditing

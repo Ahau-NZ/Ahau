@@ -120,7 +120,7 @@ function defaultData (input) {
       currentState: clone(profile.altNames),
       add: [], // new altNames to add
       remove: [] // altNames to remove
-    },
+    }
   }
 }
 
@@ -358,7 +358,7 @@ export default {
     },
     submit () {
       var submission = pick(this.submission, [...PERMITTED_PROFILE_ATTRS, ...PERMITTED_RELATIONSHIP_ATTRS])
-      console.log("submit: ", submission)
+      console.log('submit: ', submission)
       this.$emit('create', submission)
       // this.hasSelection
       //   ? this.$emit('create', pick(this.formData, ['id', 'relationshipType', 'legallyAdopted']))
@@ -373,7 +373,7 @@ export default {
       this.$emit('close')
     },
     async setFormData (person) {
-      console.log("setting selected: ", person)
+      console.log('setting selected: ', person)
       this.hasSelection = true
       this.profile = person.profile
       this.formData.relationshipType = person.relationshipType

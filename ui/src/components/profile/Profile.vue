@@ -1,13 +1,7 @@
 <template>
     <v-row class="mb-12" :class="mobile ? 'mobile-profile':''">
       <v-col cols="12" md="9" :class="mobile ? 'pt-7 pb-5 px-5' : 'px-5' ">
-        <!-- <RegisterButton v-if="profile.type === 'community'" :class="!mobile ? 'margin-top':''"/> -->
         <ProfileInfoCard :profile="profile" @setupProfile="setupProfile($event)" />
-        <!-- <ProfileCard>
-          <template v-slot:content>
-            <ProfileInfoItem title="About" smCols="12" mdCols="12" :value="profile.description"/>
-          </template>
-        </ProfileCard> -->
         <ProfileCard>
           <template v-slot:content>
             <v-row cols="12" class="pt-0" >
@@ -65,11 +59,8 @@
 import ProfileInfoCard from '@/components/profile/ProfileInfoCard.vue'
 import ProfileInfoItem from '@/components/profile/ProfileInfoItem.vue'
 import ProfileCard from '@/components/profile/ProfileCard.vue'
-import calculateAge from '@/lib/calculate-age'
-import formatDate from '@/lib/format-date'
 import Avatar from '@/components/Avatar.vue'
 import { mapGetters } from 'vuex'
-// import RegisterButton from '@/components/button/RegisterButton.vue'
 
 export default {
   name: 'Profile',
@@ -78,7 +69,6 @@ export default {
     ProfileCard,
     ProfileInfoItem,
     Avatar
-    // RegisterButton
   },
   props: {
     profile: {

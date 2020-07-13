@@ -41,7 +41,7 @@
 </template>
 
 <script>
-  import Avatar from '@/components/Avatar.vue'
+import Avatar from '@/components/Avatar.vue'
 
 export default {
   name: 'ProfilePersonItem',
@@ -59,9 +59,9 @@ export default {
     mdCols: {
       type: String,
       default: '3'
-    },
+    }
   },
-  data() {
+  data () {
     return {
       placeholder: {
         uri: 'https://upload.wikimedia.org/wikipedia/commons/b/bd/Question-mark-grey.jpg'

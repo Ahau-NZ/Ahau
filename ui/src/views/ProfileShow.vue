@@ -48,7 +48,7 @@ import Archive from '@/components/archive/Archive'
 import Timeline from '@/components/story/Timeline.vue'
 import Header from '@/components/profile/Header.vue'
 import EditProfileButton from '@/components/button/EditProfileButton.vue'
-import EditRegistrationButton from '@/components/button/EditRegistrationButton.vue'
+// import EditRegistrationButton from '@/components/button/EditRegistrationButton.vue'
 import WhakapapaIndex from '@/views/WhakapapaIndex.vue'
 
 import {
@@ -65,7 +65,7 @@ export default {
     Timeline,
     Header,
     EditProfileButton,
-    EditRegistrationButton,
+    // EditRegistrationButton,
     WhakapapaIndex
   },
   data () {

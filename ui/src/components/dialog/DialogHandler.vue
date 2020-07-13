@@ -158,7 +158,7 @@ import isEmpty from 'lodash.isempty'
 
 import findSuccessor from '@/lib/find-successor'
 
-import { PERMITTED_COMMUNITY_ATTRS, saveCommunity } from '@/lib/community-helpers'
+import { PERMITTED_COMMUNITY_ATTRS } from '@/lib/community-helpers'
 
 import tree from '@/lib/tree-helpers'
 
@@ -230,8 +230,8 @@ export default {
       source: null,
       registration: '',
       dialogType: '',
-      parents:[],
-      parentIndex: null,
+      parents: [],
+      parentIndex: null
     }
   },
   computed: {
@@ -264,24 +264,24 @@ export default {
     addGrandparentToRegistartion (grandparent) {
       var parent = this.parents[this.parentIndex]
       if (parent.grandparents) {
-        console.log("grandparents detected")
+        console.log('grandparents detected')
         parent.grandparents.push(grandparent)
-        console.log("new grandparent added: ", parent)
+        console.log('new grandparent added: ', parent)
       } else {
-        console.log(parent.preferredName, "currently no granparents detected")
+        console.log(parent.preferredName, 'currently no granparents detected')
 
         parent = {
           ...parent,
           grandparents: [grandparent]
         }
-        console.log("grandparents added: ", parent)
+        console.log('grandparents added: ', parent)
       }
-      console.log("parent index: ", this.parentIndex)
+      console.log('parent index: ', this.parentIndex)
       this.parents.splice(this.parentIndex, 1, parent)
       console.log(this.parents)
     },
     addParentToRegistration (parent) {
-      console.log("add parent: ", parent)
+      console.log('add parent: ', parent)
       this.parents.push(parent)
     },
     toggleEditProfile (profile) {
@@ -313,7 +313,7 @@ export default {
       this.$emit('update:type', type)
     },
     canDelete (profile) {
-      console.log("can delete: ", profile)
+      console.log('can delete: ', profile)
       if (!profile) return false
       if (this.previewProfile) return false
 
@@ -384,7 +384,7 @@ export default {
             deceased,
             aliveInterval,
             // UPDATE : for private groups
-            recps: type === 'community' ? [this.whoami.feedId] : this.view.recps 
+            recps: type === 'community' ? [this.whoami.feedId] : this.view.recps
           }
         }
       })
@@ -866,51 +866,46 @@ export default {
         this.suggestions = []
         return
       }
-      console.log("search for this: ", $event)
+      console.log('search for this: ', $event)
       var records = await this.findByName($event)
 
-      console.log("record: ", records)
+      console.log('record: ', records)
 
       if (isEmpty(records)) {
         this.suggestions = []
         return
       }
 
-      if (this.source !== "new-registration") {
-        
-      
+      if (this.source !== 'new-registration') {
+        var profiles = {} // flatStore for these suggestions
 
-      var profiles = {} // flatStore for these suggestions
-
-      records.forEach(record => {
-        record.children = record.children.map(child => {
-          console.log('mapping children')
-          profiles[child.profile.id] = child.profile // add this records children to the flatStore
-          return child.profile.id // only want the childs ID
+        records.forEach(record => {
+          record.children = record.children.map(child => {
+            console.log('mapping children')
+            profiles[child.profile.id] = child.profile // add this records children to the flatStore
+            return child.profile.id // only want the childs ID
+          })
+          record.parents = record.parents.map(parent => {
+            console.log('mapping parents')
+            profiles[parent.profile.id] = parent.profile // add this records parents to the flatStore
+            return parent.profile.id // only want the parents ID
+          })
+          profiles[record.id] = record // add this record to the flatStore
         })
-        record.parents = record.parents.map(parent => {
-          console.log('mapping parents')
-          profiles[parent.profile.id] = parent.profile // add this records parents to the flatStore
-          return parent.profile.id // only want the parents ID
+
+        // now we have the flatStore for the suggestions we need to filter out the records
+        // so we cant add one that is already in the tree
+        records = records.filter(record => {
+          console.log('searching in tree')
+          if (this.findInTree(record.id)) return false // dont include it
+          return true
         })
-        profiles[record.id] = record // add this record to the flatStore
-      })
 
-      // now we have the flatStore for the suggestions we need to filter out the records
-      // so we cant add one that is already in the tree
-      records = records.filter(record => {
-        console.log('searching in tree')
-        if (this.findInTree(record.id)) return false // dont include it
-        return true
-      })
-    
-
-      // hydrate all the left over records
-      records = records.map(record => {
-        console.log('hydrating')
-        return tree.hydrate(record, profiles) // needed to hydrate to fix all dates
-      })
-
+        // hydrate all the left over records
+        records = records.map(record => {
+          console.log('hydrating')
+          return tree.hydrate(record, profiles) // needed to hydrate to fix all dates
+        })
       }
 
       records = records.map(record => {
@@ -922,7 +917,7 @@ export default {
         return obj
       })
       var end = Object.assign([], records)
-      console.log("end results: ", end)
+      console.log('end results: ', end)
       // sets suggestions which is passed into the dialogs
 
       this.suggestions = Object.assign([], records)

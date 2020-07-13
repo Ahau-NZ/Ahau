@@ -28,7 +28,7 @@
               </v-col>
             </v-row>
             <!-- <RegisterButton v-if="profile.type === 'community'" :class="!mobile ? 'margin-top':''"/> -->
-            <ProfileInfoCard :profile="formData" isRegistration :style="mobile ? 'margin: 0px 20px' : 'margin: 0px 30px;'"/> 
+            <ProfileInfoCard :profile="formData" isRegistration :style="mobile ? 'margin: 0px 20px' : 'margin: 0px 30px;'"/>
             <v-divider></v-divider>
 
             <v-card-actions style="display: flex; justify-content: center; align-items: center;">
@@ -146,9 +146,6 @@ import ParentGroup from '@/components/registration/ParentGroup.vue'
 import AddButton from '@/components/button/AddButton.vue'
 
 import { dateIntervalToString } from '@/lib/date-helpers'
-import getRelatives, { PERMITTED_PROFILE_ATTRS } from '@/lib/profile-helpers.js'
-
-import tree from '@/lib/tree-helpers'
 
 import isEmpty from 'lodash.isempty'
 import calculateAge from '@/lib/calculate-age'
@@ -176,8 +173,8 @@ export default {
     hideDetails: { type: Boolean, default: false },
     readOnly: { type: Boolean, default: false },
     profile: { type: Object },
-    parents: {type: Array, default: null},
-    parentIndex: Number 
+    parents: { type: Array, default: null },
+    parentIndex: Number
   },
   data () {
     return {
@@ -186,9 +183,9 @@ export default {
       formData: {},
       hasSelection: false,
       requiredRules: [
-        v => v == true || 'Please agree to share information'
+        v => v === true || 'Please agree to share information'
       ],
-      errorMsgs: [],
+      errorMsgs: []
     }
   },
   mounted () {
@@ -218,12 +215,9 @@ export default {
       if (name.length > 20) return 'font-size:8vw'
       else return 'font-size: 10vw'
     },
-  
+
     mobile () {
       return this.$vuetify.breakpoint.xs
-    },
-    customClass () {
-
     },
     disabled () {
       this.getErrorMsgs()
@@ -252,11 +246,11 @@ export default {
       this.parents[parentIndex].grandparents.splice(grandparentIndex, 1)
     },
     addParent () {
-      this.setDialog({active:'new-node',type:'parent'})
+      this.setDialog({ active: 'new-node', type: 'parent' })
     },
-    addGrandparent(index) {
+    addGrandparent (index) {
       this.$emit('update:parentIndex', index)
-      this.setDialog({active:'new-node', type:'grandparent'})
+      this.setDialog({ active: 'new-node', type: 'grandparent' })
     },
     getErrorMsgs () {
       // var errors = {}
@@ -279,7 +273,7 @@ export default {
 
     async getFullProfile (id) {
       await this.setProfileById({ id: id, type: 'setWhanau' })
-      return this.formData = this.selectedProfile
+      this.formData = this.selectedProfile
     },
 
     age (born) {
@@ -302,7 +296,7 @@ export default {
       if (this.$refs.checkboxes.validate()) {
         var output = {
           ...this.formData,
-          parents:this.parents
+          parents: this.parents
         }
         console.log('send this object: ', output)
         this.close()

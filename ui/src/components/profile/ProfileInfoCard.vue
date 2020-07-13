@@ -7,30 +7,6 @@
         <ProfileInfoItem v-if="profile.type === 'person'" class="br" :title="'Occupation'" :value="profile.profession" />
         <ProfileInfoItem v-if="profile.type === 'person'" :title="'City, Country'" :value="profile.location" />
       </v-row>
-      <!-- <v-row v-if="isRegistration" class="rounded-border">
-        <span> To verify your descendancy, please provide your parents and your grandparents information </span> 
-        <div v-for="parent in profile.parents" :key="parent.id" class="pl-6">
-          <v-col cols="3">
-            <p>{{parent.relationshipType}} parent</p>
-            <Avatar :image="parent.avatarImage" :gender="parent.gender" :age="parent.bornAt" :aliveInterval="parent.aliveInterval" :size="tablet ? '100px':'170px'" />
-            <Avatar :profiles="parent" :group-title="`${parent.relationshipType} parent`" size="50px" :show-labels="true">
-              <template v-slot:action >
-                <AddButton v-if="isRegistration" @click="toggleNew('parent')" class="pb-4" justify="start"/>
-              </template>
-            </Avatar>
-          </v-col> -->
-          <!-- <v-col cols="9">
-             <AvatarGroup :profiles="grandParents(parent)" :group-title="'parent'" size="50px" :show-labels="true"
-              @profile-click="openProfile($event)">
-              <template v-slot:action >
-                <AddButton v-if="isRegistration" @click="toggleNew('parent')" class="pb-4" justify="start"/>
-              </template>
-            </AvatarGroup>
-          </v-col> -->
-        <!-- </div>
-
-      </v-row> -->
-
       <v-row v-if="profile.type !== 'community' & !isRegistration" class="rounded-border">
         <div v-if="profile.parents && profile.parents.length > 0" class="pl-6">
           <AvatarGroup :profiles="profile.parents" group-title="Parents" size="50px" :show-labels="true"
@@ -70,15 +46,13 @@ import ProfileInfoItem from './ProfileInfoItem'
 import { mapActions } from 'vuex'
 import AddButton from '@/components/button/AddButton.vue'
 import { dateIntervalToString } from '@/lib/date-helpers.js'
-import Avatar from '@/components/Avatar.vue'
 
 export default {
   name: 'ProfileInfoCard',
   components: {
     ProfileInfoItem,
     AvatarGroup,
-    AddButton,
-    Avatar
+    AddButton
   },
   props: {
     profile: Object,

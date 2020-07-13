@@ -18,14 +18,14 @@
 </template>
 
 <script>
-import CommunitiesNav from '@/components/CommunitiesNav'
+// import CommunitiesNav from '@/components/CommunitiesNav'
 import CommunitiesList from '@/components/CommunitiesList'
 import { mapActions } from 'vuex'
 
 export default {
   name: 'Discovery',
   components: {
-    CommunitiesNav,
+    // CommunitiesNav,
     CommunitiesList
   },
   computed: {
