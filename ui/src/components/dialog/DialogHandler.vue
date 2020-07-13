@@ -6,6 +6,7 @@
       :profile="whoami.profile"
       :title="`Request to join : ${currentProfile.preferredName}`"
       :parents.sync="parents"
+      :parentIndex.sync="parentIndex"
       @editProfile="toggleEditProfile($event)"
       @close="close"
     />
@@ -35,12 +36,12 @@
     <NewNodeDialog
       v-if="isActive('new-node')"
       :show="isActive('new-node')"
-      :title="`Add ${dialogType} to ${selectedProfile.preferredName}`"
+      :title="source !== 'new-registration' ? `Add ${dialogType} to ${selectedProfile.preferredName}`:`Add ${dialogType} to Registration Form`"
       :selectedProfile="selectedProfile"
       :suggestions="suggestions"
       :withView="source !== 'new-registration'"
       @getSuggestions="getSuggestions($event)"
-      @create="source !== 'new-registration' ? addPerson($event) : dialogType === 'grandparent' ? addGrandparentToParent($event) : addParentToRegistration($event)"
+      @create="source !== 'new-registration' ? addPerson($event) : dialogType === 'grandparent' ? addGrandparentToRegistartion($event) : addParentToRegistration($event)"
       @close="close"
     />
     <EditNodeDialog v-if="isActive('edit-node')"
@@ -229,7 +230,8 @@ export default {
       source: null,
       registration: '',
       dialogType: '',
-      parents:[]
+      parents:[],
+      parentIndex: null,
     }
   },
   computed: {
@@ -259,7 +261,26 @@ export default {
     ...mapActions(['updateNode', 'deleteNode', 'updatePartnerNode', 'addChild', 'addParent', 'loading', 'setDialog',
       'setProfileById'
     ]),
-    addParentToRegistration(parent) {
+    addGrandparentToRegistartion (grandparent) {
+      var parent = this.parents[this.parentIndex]
+      if (parent.grandparents) {
+        console.log("grandparents detected")
+        parent.grandparents.push(grandparent)
+        console.log("new grandparent added: ", parent)
+      } else {
+        console.log(parent.preferredName, "currently no granparents detected")
+
+        parent = {
+          ...parent,
+          grandparents: [grandparent]
+        }
+        console.log("grandparents added: ", parent)
+      }
+      console.log("parent index: ", this.parentIndex)
+      this.parents.splice(this.parentIndex, 1, parent)
+      console.log(this.parents)
+    },
+    addParentToRegistration (parent) {
       console.log("add parent: ", parent)
       this.parents.push(parent)
     },

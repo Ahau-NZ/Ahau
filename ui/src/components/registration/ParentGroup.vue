@@ -1,13 +1,13 @@
 <template>
-  <v-col class="px-4 py-0">
+  <v-col :class="mobile ? 'py-0':'px-4 py-0'">
     <v-row>
-      <v-col class="pt-0 pb-1">
+      <v-col class="pt-0 pb-1" :justify="mobile ? center : start">
         <v-row>
           <v-col class="pt-1 pb-2">
             <small class="label"> {{ title }} </small>
           </v-col>
         </v-row>
-        <v-row >
+        <v-row :style="hover ? 'background-color:rgba(0,0,0,0.04);':''">
           <v-col cols="2" class="pa-0 pl-0">
               <Avatar
                 size="50px"
@@ -16,16 +16,10 @@
                 :gender="profile.gender"
                 :aliveInterval="profile.aliveInterval"
                 :deceased="profile.deceased"
-                :showLabel="showLabels"
-                :clickable="clickable"
-                @click="profileClick(profile)"
-                :deletable="deletable"
-                @delete="$emit('delete', i)"
-                :isView="isView"
-                :dark="dark"
+                :showLabel="mobile"
               />
           </v-col>
-          <v-col v-if="profile.legalName" cols="6" class="py-0">
+          <v-col v-if="profile.legalName" cols="6" :class="mobile ? 'pl-8 py-0':'py-0'">
             <v-row>
               <span class="text">{{profile.legalName}}</span>
             </v-row>
@@ -33,24 +27,26 @@
               <span>legal name</span>
             </v-row>
           </v-col>
-          <v-col cols="3" class="py-0 pl-0">
+          <v-col v-if="!mobile" cols="2" class="py-0 pl-0" >
             <v-row>
               <span class="text">{{profile.preferredName}}</span>
             </v-row>
             <v-row class="sub-title">
-              <p>name</p>
+              <p>preferred name</p>
             </v-row>
           </v-col>
-          <v-col cols="1" class="py-0 ">
+          <v-col v-if="age" cols="1" class="py-0 ml-5">
             <v-row>
               <span class="text">{{ age }}</span>
             </v-row>
             <v-row class="sub-title">
               <span>age</span>
             </v-row>
-          <v-btn color="white" elevation="2" fab light x-small style="position:relative;left:40px">
-            <v-icon>mdi-close</v-icon>
-          </v-btn>
+          </v-col>
+          <v-col class="px-0" :style="mobile ? 'position: relative;left: 10px':''">
+            <v-btn @click="$emit('removeParent',index)" @mouseenter="hover = !hover" @mouseleave="hover = !hover"  fab text light x-small >
+              <v-icon>mdi-close</v-icon>
+            </v-btn>
           </v-col>
         </v-row>
       </v-col>
@@ -73,24 +69,28 @@ export default {
   props: {
     profile: { type: Object, default: null },
     title: { type: String, default: null },
-    showLabels: { type: Boolean, default: false },
     size: { type: String, default: '80px' },
-    customClass: { type: String, default: 'd-flex justify-start align-center pa-2 pl-4' },
     spacing: { type: String, default: 'pr-5' },
-    deletable: { type: Boolean, default: false },
-    isView: { type: Boolean, default: false },
-    clickable: { type: Boolean, default: true },
-    dark: { type: Boolean, default: false }
+    index: Number,
   },
-  // data () {
-  //   return {
-  //     groupProfiles: this.formatProfiles(this.profiles)
-  //   }
-  // },
+  data () {
+    return {
+      hover : false
+        // groupProfiles: this.formatProfiles(this.profiles)
+    }
+  },
+  watch :{
+    hover(newVal) {
+      if (newVal) console.log("hover:", this.hover)
+    }
+  },
   computed: {
+    mobile () {
+      return this.$vuetify.breakpoint.xs
+    },
     age () {
       var age = calculateAge(this.profile.aliveInterval)
-      if (age === null) return ' '
+      if (age === null) return ''
       return age.toString()
     },
     grandParents () {
@@ -113,16 +113,6 @@ export default {
     profileClick (profile) {
       this.$emit('profile-click', profile)
     },
-  
-    // formatProfiles (profiles) {
-    //   if (profiles.length > 0 && has(profiles[0], 'profile')) {
-    //     var formattedProfiles = []
-    //     profiles.map(profile => {
-    //       formattedProfiles.push(profile.profile)
-    //     })
-    //     return formattedProfiles      
-    //   } else return profiles
-    // }
   }
 }
 </script>
@@ -135,11 +125,11 @@ export default {
 }
 
 .sub-title {
-  font-size: .6rem;
+  font-size: .7rem;
   color : #9b9b9b
 }
 
 .text {
-  font-size:85%
+  font-size:100%
 }
 </style>

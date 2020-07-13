@@ -120,7 +120,7 @@
           </v-row>
 
           <!-- Editing: relationship type-->
-          <v-row>
+          <v-row v-if="withRelationships || editRelationship">
             <v-col cols="12" class="pa-1">
               <v-select
                 v-model="formData.relationshipType"
@@ -240,7 +240,7 @@
             <v-col cols="12" class="pa-1">
               <v-text-field
                 v-model="formData.profession"
-                label="Occupation"
+                label="Profession"
                 v-bind="customProps"
                 outlined
               />
@@ -333,7 +333,7 @@ export default {
     return {
       genders: GENDERS,
       relationshipTypes: RELATIONSHIPS,
-      formData: this.profile,
+      formData: {},
       form: {
         valid: true,
         showDescription: false
@@ -341,18 +341,22 @@ export default {
       selectedGender: ''
     }
   },
+  mounted () {
+    if (this.formData.gender) {
+      if (this.formData.gender === 'male') this.updateSelectedGender('other')
+      if (this.formData.gender === 'female') this.updateSelectedGender('female')
+    }
+  },
   watch: {
     profile: {
       deep: true,
       immediate: true,
-      handler (newVal) {
+      handler (newVal, oldVal) {
         this.formData = newVal
       }
     },
     'formData.gender' (newValue) {
-      console.log('gender: ', newValue)
-      if (newValue === 'male') this.updateSelectedGender('male')
-      if (newValue === 'female') this.updateSelectedGender('female')
+      if (newValue === 'other' || newValue === 'unknown' ) this.updateSelectedGender('other')
     }
   },
   computed: {

@@ -31,23 +31,6 @@
             <ProfileInfoCard :profile="formData" isRegistration :style="mobile ? 'margin: 0px 20px' : 'margin: 0px 30px;'"/> 
             <v-divider></v-divider>
 
-            <!-- ADD PARENTS INFORMATION-->
-            <p class="pt-5 pl-5 subtitle-2">Please provide the names of at least one parent and one grand parent</p>
-            <div v-for="(parent, index) in parents" :key="index">
-              <v-row class="rounded-border mx-4">
-                <v-col cols="12">
-                  <ParentGroup :index="index" :profile="parent" :title="parent.relationshipType ? parent.relationshipType + ' parent' : 'parent'" @removeParent="removeParent($event)"/>
-                </v-col>
-                <v-divider></v-divider>
-                <v-row class="py-4 pl-10">
-                  <AddButton justify="start" :width="'50px'" label="Add grandparents" @click="addParent"/>
-                </v-row>
-              </v-row>
-            </div>
-            <v-row class="py-4 pl-10">
-              <AddButton justify="start" :width="'50px'" label="Add parent" @click="addParent"/>
-            </v-row>
-            <v-divider></v-divider>
             <v-card-actions style="display: flex; justify-content: center; align-items: center;">
               <v-checkbox class="checkbox-label" color="success" v-model="checkbox1" :label="`I agree to share this information`" :rules="requiredRules"></v-checkbox> .
             </v-card-actions>
@@ -57,6 +40,7 @@
         <v-row>
           <p class="py-6 px-4 subtitle-2 blue--text">The below private information will only be viewable by <strong><i>{{currentProfile.preferredName}}</i></strong> kaitiaki</p>
         </v-row>
+
         <!-- WRAP -->
         <v-card elevation='1' :style="mobile ? 'margin: 0px' : 'margin: 20px'" :class="{'checkbox':checkbox2}" class="pt-2">
         <ProfileCard :style="mobile ? 'margin: 10px;':'margin:20px'">
@@ -69,6 +53,28 @@
             </v-row>
           </template>
         </ProfileCard>
+                    <!-- ADD PARENTS INFORMATION-->
+            <p class="pt-5 pl-5 subtitle-2">Please provide the names of at least one parent and one grand parent</p>
+            <div v-for="(parent, index) in parents" :key="index">
+              <v-row class="rounded-border mx-4">
+                <v-col cols="12">
+                  <ParentGroup :index="index" :profile="parent" :title="parent.relationshipType ? parent.relationshipType + ' parent' : 'parent'" @removeParent="removeParent($event)"/>
+                </v-col>
+                <v-col  cols="12" class="pa-0">
+                  <v-divider></v-divider>
+                </v-col>
+                <v-col cols="12" v-for="(grandparent, grandparentIndex) in parent.grandparents" :key="`grandparent-${grandparentIndex}`" >
+                  <ParentGroup :index="grandparentIndex" :profile="grandparent" :title="grandparent.relationshipType ? grandparent.relationshipType + ' grandparent' : 'grandparent'" @removeParent="removeGrandparent($event, index)"/>
+                </v-col>
+                <v-row class="py-4 pl-10">
+                  <AddButton justify="start" :width="'50px'" :label="'Add parents of ' + parent.preferredName" @click="addGrandparent(index)"/>
+                </v-row>
+              </v-row>
+            </div>
+            <v-row class="py-4 pl-10">
+              <AddButton justify="start" :width="'50px'" label="Add parent" @click="addParent('parent')"/>
+            </v-row>
+            <v-divider></v-divider>
 
         <v-divider></v-divider>
         <v-card-actions style="display: flex; justify-content: center; align-items: center;">
@@ -81,12 +87,12 @@
       </v-col>
 
       <v-hover v-if="errorMsgs && errorMsgs.length" v-slot:default="{ hover }">
-        <v-row @click="editProfile"  class="mx-12" align="center" style="border: 1px solid rgba(168,0,0); border-radius: 10px;" :style="hover ? 'cursor: pointer;background-color:rgba(168,0,0,0.1)':''">
+        <v-row @click="editProfile"  :class="mobile ? 'mx-2':'mx-12'" align="center" style="border: 1px solid rgba(168,0,0); border-radius: 10px;" :style="hover ? 'cursor: pointer;background-color:rgba(168,0,0,0.1)':''">
           <v-col cols="12">
               <v-row justify="center">
                 <span class="px-4 subtitle-2 secondary--text">To join this communtiy, please update the required areas on your profile</span>
               </v-row>
-              <v-row v-for="error in errorMsgs" :key="error" justify="center" class="py-1">
+              <v-row v-for="error in errorMsgs" :key="error" justify="start" :class="mobile ? 'py-1 pl-2':'py-1 pl-12 ml-12'">
                 <span class="secondary--text "><i>- Please update your {{error}} information</i></span>
               <!-- <v-col v-for="error in errorMsgs" :key="error[key]"></v-col> -->
               </v-row>
@@ -170,7 +176,8 @@ export default {
     hideDetails: { type: Boolean, default: false },
     readOnly: { type: Boolean, default: false },
     profile: { type: Object },
-    parents: {type: Array, default: null}
+    parents: {type: Array, default: null},
+    parentIndex: Number 
   },
   data () {
     return {
@@ -189,6 +196,15 @@ export default {
   },
   computed: {
     ...mapGetters(['currentProfile', 'selectedProfile']),
+    length () {
+      var name = ''
+      if (this.currentProfile.legalName) name = this.currentProfile.legalName
+      else if (this.currentProfile.preferredName) name = this.currentProfile.preferredName
+      if (name.length > 30) return 'font-size:6vw'
+      if (name.length > 25) return 'font-size:7vw'
+      if (name.length > 20) return 'font-size:8vw'
+      else return 'font-size: 10vw'
+    },
   
     mobile () {
       return this.$vuetify.breakpoint.xs
@@ -214,11 +230,17 @@ export default {
   methods: {
     ...mapActions(['setDialog', 'setProfileById']),
     removeParent (index) {
-      
-      this.parents[index].splice
+      this.parents.splice(index, 1)
+    },
+    removeGrandparent (grandparentIndex, parentIndex) {
+      this.parents[parentIndex].grandparents.splice(grandparentIndex, 1)
     },
     addParent () {
       this.setDialog({active:'new-node',type:'parent'})
+    },
+    addGrandparent(index) {
+      this.$emit('update:parentIndex', index)
+      this.setDialog({active:'new-node', type:'grandparent'})
     },
     getErrorMsgs () {
       // var errors = {}
@@ -231,6 +253,7 @@ export default {
         }, {})
       Object.entries(output).forEach(([key, value]) => {
         if (isEmpty(output[key])) {
+          if (key === 'location') key = 'city,country'
           // errors[key] = value
           errors.push(key)
         }

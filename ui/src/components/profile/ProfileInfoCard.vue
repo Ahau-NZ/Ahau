@@ -5,7 +5,7 @@
         <ProfileInfoItem v-if="profile.type === 'person'" :class="mobile ? 'br bb':'br'" :title="'Preferred Name'" :value="profile.preferredName"/>
         <ProfileInfoItem v-if="profile.type === 'person'" :class="mobile ? 'bb':'br'" :title="'Age'" :value="age"/>
         <ProfileInfoItem v-if="profile.type === 'person'" class="br" :title="'Occupation'" :value="profile.profession" />
-        <ProfileInfoItem v-if="profile.type === 'person'" :title="'Location'" :value="profile.location" />
+        <ProfileInfoItem v-if="profile.type === 'person'" :title="'City, Country'" :value="profile.location" />
       </v-row>
       <!-- <v-row v-if="isRegistration" class="rounded-border">
         <span> To verify your descendancy, please provide your parents and your grandparents information </span> 
