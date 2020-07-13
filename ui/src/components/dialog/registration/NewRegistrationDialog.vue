@@ -54,7 +54,7 @@
           </template>
         </ProfileCard>
                     <!-- ADD PARENTS INFORMATION-->
-            <p class="pt-5 pl-5 subtitle-2">Please provide the names of at least one parent and one grand parent</p>
+            <p class="pt-5 pl-5 subtitle-2" :style="parentsRequired ? 'color:crimson':''">Please provide the names of at least one parent and one grandparent</p>
             <div v-for="(parent, index) in parents" :key="index">
               <v-row class="rounded-border mx-4">
                 <v-col cols="12">
@@ -90,7 +90,7 @@
         <v-row @click="editProfile"  :class="mobile ? 'mx-2':'mx-12'" align="center" style="border: 1px solid rgba(168,0,0); border-radius: 10px;" :style="hover ? 'cursor: pointer;background-color:rgba(168,0,0,0.1)':''">
           <v-col cols="12">
               <v-row justify="center">
-                <span class="px-4 subtitle-2 secondary--text">To join this communtiy, please update the required areas on your profile</span>
+                <span class="px-4 subtitle-2 secondary--text">To join this communtiy, please update the required information on your profile</span>
               </v-row>
               <v-row v-for="error in errorMsgs" :key="error" justify="start" :class="mobile ? 'py-1 pl-2':'py-1 pl-12 ml-12'">
                 <span class="secondary--text "><i>- Please update your {{error}} information</i></span>
@@ -196,6 +196,19 @@ export default {
   },
   computed: {
     ...mapGetters(['currentProfile', 'selectedProfile']),
+    parentsRequired () {
+      var needParents = true
+      if (this.parents && this.parents.length) {
+        this.parents.map((parent) => {
+          if (parent.grandparents && parent.grandparents.length) {
+            needParents = false
+          } else {
+            needParents = true
+          }
+        })
+      }
+      return needParents
+    },
     length () {
       var name = ''
       if (this.currentProfile.legalName) name = this.currentProfile.legalName
@@ -215,6 +228,9 @@ export default {
     disabled () {
       this.getErrorMsgs()
       if (this.errorMsgs && this.errorMsgs.length > 0) {
+        return true
+      }
+      if (this.parentsRequired) {
         return true
       }
       return false
@@ -284,7 +300,12 @@ export default {
 
     submit () {
       if (this.$refs.checkboxes.validate()) {
-        console.log('approved.')
+        var output = {
+          ...this.formData,
+          parents:this.parents
+        }
+        console.log('send this object: ', output)
+        this.close()
       }
     }
   }

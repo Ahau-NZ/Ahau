@@ -50,11 +50,6 @@ const actions = {
       person.parents = await Promise.all(person.parents.map(async parent => {
         var parentProfile = await getRelatives(parent.profile.id)
         person = tree.getSiblings(parentProfile, person)
-        if (parentProfile.parents) {
-          person.grandparents = parentProfile.parents.map(grandparent => {
-            return grandparent.profile
-          })
-        }
         parentProfile = {
           ...parentProfile,
           relationshipType: parent.relationshipType

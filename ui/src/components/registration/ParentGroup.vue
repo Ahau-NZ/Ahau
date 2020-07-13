@@ -1,7 +1,7 @@
 <template>
   <v-col :class="mobile ? 'py-0':'px-4 py-0'">
     <v-row>
-      <v-col class="pt-0 pb-1" :justify="mobile ? center : start">
+      <v-col class="pt-0 pb-1" :justify="mobile ? 'center' : 'start'">
         <v-row>
           <v-col class="pt-1 pb-2">
             <small class="label"> {{ title }} </small>

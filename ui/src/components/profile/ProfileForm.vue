@@ -3,7 +3,7 @@
       <v-row>
         <!-- Upload profile photo -->
         <v-col :order="mobile ? '' : '2'" class="py-0">
-          <v-row class="justify-center pt-12">
+          <v-row v-if="showAvatar" class="justify-center pt-12">
             <!-- <v-col cols="12" class="pa-0" > -->
               <!-- Avatar -->
             <Avatar
@@ -360,6 +360,16 @@ export default {
     }
   },
   computed: {
+    showAvatar () {
+      if (this.isEditing) return true
+      if (!this.formData) return false
+      if (this.formData) {
+        if (this.formData.gender) return true 
+        else return false 
+        if (this.formData.avatar) return true
+        else return false
+      }
+    },
     customProps () {
       // readonly = hasSelected || !isEditing
       return {
