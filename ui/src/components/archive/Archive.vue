@@ -23,7 +23,7 @@
           <v-icon small class="black--text">mdi-magnify</v-icon>
         </v-btn>            -->
         <!-- <v-btn :medium="!mobile" :x-small="mobile" :class="mobile ? 'addBtnMob' : 'addBtn'" class="my-2" fab color="white" @click.stop="openContextMenu($event)"> -->
-        <v-btn :medium="!mobile" text :x-small="mobile" :class="mobile ? 'addBtnMob' : 'addBtn'" class="my-2" fab color="white" @click.prevent="dialog = 'new-story'">
+        <v-btn :medium="!mobile" :x-small="mobile" :class="mobile ? 'addBtnMob' : 'addBtn'" class="my-2" fab color="white" @click.prevent="dialog = 'new-story'" elevation="2">
           <v-icon :large="!mobile" class="black--text">mdi-plus</v-icon>
         </v-btn>
       </div>
@@ -159,7 +159,7 @@ export default {
     ...mapMutations(['addStoryToStories', 'updateStoryInStories', 'removeStoryFromStories']),
     ...mapActions(['setComponent', 'setShowStory', 'setDialog', 'getAllStories']),
     async saveStory (input) {
-      var { id, artefacts, mentions, contributors, relatedRecords } = input
+      var { id, artefacts, mentions, contributors, creators, relatedRecords } = input
 
       try {
         const res = await this.$apollo.mutate(SAVE_STORY(input))
@@ -208,6 +208,10 @@ export default {
 
         if (contributors) {
           await this.processLinks(id, contributors, TYPES.STORY_PROFILE_CONTRIBUTOR)
+        }
+
+        if (creators) {
+          await this.processLinks(id, creators, TYPES.STORY_PROFILE_CREATOR)
         }
 
         if (relatedRecords) {

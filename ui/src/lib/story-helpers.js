@@ -13,6 +13,7 @@ export function SET_DEFAULT_STORY (newStory) {
   var artefacts = story.artefacts
   var mentions = story.mentions
   var contributors = story.contributors
+  var creators = story.creators
   var relatedRecords = story.relatedRecords
   var timeInterval = ['', '']
 
@@ -47,6 +48,15 @@ export function SET_DEFAULT_STORY (newStory) {
     })
   }
 
+  if (creators && creators.length > 0) {
+    creators = creators.map(c => {
+      return {
+        ...c.profile,
+        linkId: c.linkId
+      }
+    })
+  }
+
   if (relatedRecords && relatedRecords.length > 0) {
     relatedRecords = relatedRecords.map(r => {
       return {
@@ -65,7 +75,6 @@ export function SET_DEFAULT_STORY (newStory) {
     endDate: timeInterval[1],
     location: story.location,
     locationDescription: story.locationDescription,
-    // creator: story.creator,
     submissionDate: story.submissionDate,
     contributionNotes: story.contributionNotes,
 
@@ -81,6 +90,7 @@ export function SET_DEFAULT_STORY (newStory) {
     collections: story.collections,
     // access: story.access,
     contributors,
+    creators,
     protocols: story.protocols,
     relatedRecords,
     artefacts
@@ -95,7 +105,6 @@ export const EMPTY_STORY = {
   endDate: null,
   location: null,
   locationDescription: null,
-  // creator: null,
   contributionNotes: null,
 
   format: null,
@@ -110,6 +119,7 @@ export const EMPTY_STORY = {
   collections: [],
   // access: [],
   contributors: [],
+  creators: [],
   protocols: [],
   relatedRecords: [],
   artefacts: [],
@@ -142,8 +152,8 @@ export const PERMITTED_STORY_LINKS = [
   'contributors',
   // 'protocols',
   'relatedRecords',
-  'artefacts'
-  // 'creator'
+  'artefacts',
+  'creators'
 ]
 
 export const STORY_FRAGMENT = gql`
@@ -169,6 +179,12 @@ export const STORY_LINK_FRAGMENT = gql`
       }
     }
     contributors: contributorLinks {
+      linkId
+      profile {
+        ...ProfileFragment
+      }
+    }
+    creators: creatorLinks {
       linkId
       profile {
         ...ProfileFragment

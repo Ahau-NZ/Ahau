@@ -4,7 +4,7 @@
     <v-list-item class="px-0" style="min-height:0; height:10px">
       <v-list-item-icon v-if="!fullStory" class="pt-0 mt-0" style="position:absolute; top:5px; right:1px; margin-right:0px">
         <v-list-item-subtitle v-if="!mobile" class="no-flex">contributors</v-list-item-subtitle>
-        <AvatarGroup :profiles="story.contributors.map(c => c.profile)" customClass="ma-0 pa-0" style="position:relative; bottom:10px;" size="28px" spacing="pr-1"/>
+        <AvatarGroup :profiles="story.contributors.map(c => c.profile)" customClass="ma-0 pa-0" style="position:relative; bottom:15px; left:10px" :size="mobile ? '25px':'30px'" spacing="pr-1"/>
       </v-list-item-icon>
     </v-list-item>
     <v-btn v-if="fullStory && !showArtefact && !mobile" @click="close"
@@ -74,7 +74,7 @@
       <v-col v-if="story.mentions && story.mentions.length > 0" cols="12" sm="12" md="auto">
         <v-list-item-subtitle style="color:#a7a3a3">Mentions</v-list-item-subtitle>
         <AvatarGroup
-          style="position:relative; bottom:15px;"
+          style="position:relative; bottom:15px; right:15px"
           :profiles="story.mentions.map(m => m.profile)"
           show-labels :size="fullStory ? '50px': '30px'"
           spacing="pr-2"
@@ -100,7 +100,7 @@
       <v-col v-if="story.contributors && story.contributors.length > 0 && fullStory" cols="12" sm="12" md="auto">
         <v-list-item-subtitle style="color:#a7a3a3">Contributors</v-list-item-subtitle>
         <AvatarGroup
-          style="position:relative; bottom:15px;"
+          style="position:relative; bottom:15px; right:15px"
           :profiles="story.contributors.map(m => m.profile)"
           show-labels :size="fullStory ? '50px': '30px'"
           spacing="pr-2"
@@ -110,27 +110,23 @@
       </v-col>
       <v-col v-if="fullStory">
         <v-list-item-subtitle class="pb-1" style="color:#a7a3a3">Submission date</v-list-item-subtitle>
-        <p class="mt-3">{{ story.submissionDate }}</p>
+        <p class="mt-3">{{ submissionDate }}</p>
       </v-col>
     </v-row>
     <div v-if="fullStory && !showArtefact">
-      <!-- <v-row class="px-4">
-        <div class="py-0 px-0" v-if="story.creator" cols="3">
-          <v-list-item-subtitle style="color:grey" class="ml-5 pb-1">Creator</v-list-item-subtitle>
-            <Avatar
-              size="50px"
-              :image="story.creator.avatarImage"
-              :alt="story.creator.preferredName"
-              :gender="story.creator.gender"
-              :aliveInterval="story.creator.aliveInterval"
-              :deceased="story.creator.deceased"
-              showLabel
-              style="position:relative; bottom:8px;"
-              class="ml-5 pt-4"
-              @profile-click="openProfile($event)"
-            />
-        </div>
-      </v-row> -->
+      <v-row class="px-4">
+        <v-col v-if="story.creators && story.creators.length > 0 && fullStory" cols="12" sm="12" md="auto">
+          <v-list-item-subtitle style="color:#a7a3a3">Creators</v-list-item-subtitle>
+          <AvatarGroup
+            style="position:relative; bottom:15px; right:15px"
+            :profiles="story.creators.map(m => m.profile)"
+            show-labels :size="fullStory ? '50px': '30px'"
+            spacing="pr-2"
+            @profile-click="openProfile($event)"
+            :clickable="fullStory"
+          />
+        </v-col>
+      </v-row>
       <v-row class="px-4">
         <v-col class="pt-0 pr-1" v-if="story.relatedRecords && story.relatedRecords.length > 0" cols="12" sm="12" md="auto">
           <v-list-item-subtitle class="pb-1" style="color:#a7a3a3">Related records</v-list-item-subtitle>
@@ -172,7 +168,7 @@
         </v-col>
       </v-row>
     </div>
-    <v-card-actions class="justify-end">
+    <v-card-actions v-if="fullStory" class="justify-end">
       <v-list-item-icon v-if="fullStory && !showArtefact" class="pt-0 mt-0">
         <EditStoryButton @click="toggleDialog('edit-story')"/>
       </v-list-item-icon>
