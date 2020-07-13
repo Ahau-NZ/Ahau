@@ -27,7 +27,7 @@
       <template v-slot:selection="{}">
       </template>
       <template v-slot:item="{ item }">
-        <!-- MENTIONS + CONTRIBUTORS + CREATOR -->
+        <!-- MENTIONS + CONTRIBUTORS + CREATORS -->
         <template v-if="type === 'profile'" >
           <v-list-item @click="addSelectedItem(item)">
             <Avatar class="mr-3" size="40px" :image="item.avatarImage" :alt="item.preferredName" :gender="item.gender" :aliveInterval="item.aliveInterval" />
