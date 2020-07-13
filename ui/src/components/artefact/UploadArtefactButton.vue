@@ -54,6 +54,9 @@ export default {
         const [ name, format ] = file.name.split('.')
 
         if (type === 'image') type = 'photo'
+        else if (file.type === 'application/pdf' || file.type === 'text/plain') type = 'document'
+
+        if (!blob.mimeType) blob.mimeType = file.type
 
         var artefact = {
           type,
@@ -62,7 +65,6 @@ export default {
           title: name
         }
 
-        if (!artefact.blob.mimeType) artefact.blob.mimeType = file.type
         return artefact
       } catch (err) {
         throw err

@@ -25,22 +25,27 @@ export const EMPTY_ARTEFACT = {
 
 export const PERMITTED_ARTEFACT_SHARED_ATTRS = [
   'id',
+
   'type',
   'blob',
+  'createdAt',
+  'lastModified',
+
   'title',
   'description',
-  'format',
+
   'identifier',
-  'language',
   'licence',
   'rights',
   'source',
+  'format',
+
+  'language',
   'translation'
 ]
 
 export const PERMITTED_ARTEFACT_VIDEO_AUDIO_ATTRS = [
   'duration',
-  'size',
   'transcription'
 ]
 
@@ -163,9 +168,7 @@ export const ALL_ATTRS = [
 
   'type',
   'blob',
-  'mimeType',
-  'format',
-  'size',
+  'createdAt',
   'lastModified',
 
   'title',
@@ -175,6 +178,7 @@ export const ALL_ATTRS = [
   'licence',
   'rights',
   'source',
+  'format',
 
   'language',
   'translation'
@@ -214,7 +218,7 @@ export function typeAttrs (type) {
       return AUDIO_ATTRS
     case 'text':
       return TEXT_ATTRS
-    case 'application':
+    case 'document':
       return APPLICATION_ATTRS
     default:
       return []

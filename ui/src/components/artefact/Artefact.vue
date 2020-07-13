@@ -11,7 +11,8 @@
       <audio :src="artefact.blob.uri" class="px-12" style="width:100%;height:80%;"/>
     </div>
     <v-img ref="photo" v-if="artefact.type === 'photo'" class="media center" :src="artefact.blob.uri" contain></v-img>
-    <pdf v-if="artefact.type === 'application'" :src="artefact.blob.uri"/>
+    <pdf v-if="artefact.type === 'document'" :src="artefact.blob.uri"/>
+    <!-- <pdf v-if="artefact.type === 'text'" :src="artefact.blob.uri"/> -->
   </v-sheet>
 </template>
 
@@ -34,9 +35,6 @@ export default {
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     }
-  },
-  mounted () {
-    console.log(this.artefact.blob.uri)
   },
   watch: {
     model (newVal) {

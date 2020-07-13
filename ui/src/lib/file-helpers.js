@@ -17,6 +17,7 @@ export const UPLOAD_FILE = input => {
           unbox
           mimeType
           uri
+          size
         }
       }
     `,

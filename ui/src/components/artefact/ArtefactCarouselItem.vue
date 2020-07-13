@@ -25,7 +25,7 @@
         />
         <v-icon size="50" class="center">mdi-music</v-icon>
       </div>
-      <div v-if="artefact.type === 'application'">
+      <div v-if="artefact.type === 'document'">
         <pdf :src="artefact.blob.uri"></pdf>
       </div>
       <v-btn v-if="controls && hover && editing" class="edit mr-2 mt-2"
@@ -63,9 +63,6 @@ export default {
   },
   components: {
     pdf
-  },
-  mounted () {
-    console.log(this.artefact.blob.uri)
   },
   data () {
     return {
