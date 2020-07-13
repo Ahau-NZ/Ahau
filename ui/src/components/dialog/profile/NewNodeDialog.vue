@@ -8,7 +8,7 @@
         <ProfileForm :profile.sync="formData" :readonly="hasSelection" :editRelationship="hasSelection" :withRelationships="withRelationships" :mobile="mobile">
 
           <!-- Slot = Search -->
-          <template v-if="withView" v-slot:search>
+          <template v-slot:search>
             <v-combobox
               v-model="formData.preferredName"
               :items="generateSuggestions"
@@ -85,8 +85,44 @@ import calculateAge from '@/lib/calculate-age'
 
 import uniqby from 'lodash.uniqby'
 import pick from 'lodash.pick'
+import clone from 'lodash.clonedeep'
 
 import { PERMITTED_PROFILE_ATTRS, PERMITTED_RELATIONSHIP_ATTRS, GET_PROFILE } from '@/lib/profile-helpers'
+
+function defaultData (input) {
+  var profile = clone(input)
+
+  var aliveInterval = ['', '']
+
+  if (profile.aliveInterval) {
+    aliveInterval = profile.aliveInterval.split('/')
+  }
+
+  return {
+    type: 'person',
+    id: profile.id,
+    gender: profile.gender,
+    legalName: profile.legalName,
+    aliveInterval: profile.aliveInterval,
+    bornAt: aliveInterval[0],
+    diedAt: aliveInterval[1],
+    preferredName: profile.preferredName,
+    avatarImage: profile.avatarImage,
+    description: profile.description,
+    birthOrder: profile.birthOrder,
+    location: profile.location,
+    email: profile.email,
+    phone: profile.phone,
+    deceased: profile.deceased,
+    address: profile.address,
+    profession: profile.profession,
+    altNames: {
+      currentState: clone(profile.altNames),
+      add: [], // new altNames to add
+      remove: [] // altNames to remove
+    },
+  }
+}
 
 function setDefaultData (withRelationships) {
   const formData = {
@@ -149,14 +185,12 @@ export default {
     return {
       formData: setDefaultData(this.withRelationships),
       hasSelection: false,
-      closeSuggestions: []
+      closeSuggestions: [],
+      profile: {}
     }
   },
   mounted () {
-    if (this.withView) {
-      console.log('withView')
-      this.getCloseSuggestions()
-    }
+    this.getCloseSuggestions()
   },
   computed: {
     generateSuggestions () {
@@ -324,6 +358,7 @@ export default {
     },
     submit () {
       var submission = pick(this.submission, [...PERMITTED_PROFILE_ATTRS, ...PERMITTED_RELATIONSHIP_ATTRS])
+      console.log("submit: ", submission)
       this.$emit('create', submission)
       // this.hasSelection
       //   ? this.$emit('create', pick(this.formData, ['id', 'relationshipType', 'legallyAdopted']))
@@ -338,8 +373,9 @@ export default {
       this.$emit('close')
     },
     async setFormData (person) {
+      console.log("setting selected: ", person)
       this.hasSelection = true
-      this.formData = person.profile
+      this.profile = person.profile
       this.formData.relationshipType = person.relationshipType
       this.formData.legallyAdopted = false
     },
@@ -352,6 +388,21 @@ export default {
 
   },
   watch: {
+    profile: {
+      deep: true,
+      immediate: true,
+      handler (newVal) {
+        console.log('profile watcher: ', newVal)
+        if (!newVal) return
+        this.formData = defaultData(newVal)
+
+        if (this.formData.aliveInterval) {
+          var dates = this.formData.aliveInterval.split('/')
+          this.formData.bornAt = dates[0]
+          this.formData.diedAt = dates[1]
+        }
+      }
+    },
     'formData.relationshipType' (newValue, oldValue) {
       // make sure adoption status can't be set true when relationship type is birth
       if (newValue === 'birth') this.formData.legallyAdopted = false
@@ -368,7 +419,6 @@ export default {
       }
     },
     'formData.preferredName' (newValue) {
-      if (!this.withView) return
       if (!newValue) return
       if (newValue.length > 2) {
         if (!this.hasSelection) {

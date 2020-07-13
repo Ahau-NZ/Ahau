@@ -5,6 +5,7 @@
       :show="isActive('new-registration')"
       :profile="whoami.profile"
       :title="`Request to join : ${currentProfile.preferredName}`"
+      :parents.sync="parents"
       @editProfile="toggleEditProfile($event)"
       @close="close"
     />
@@ -39,7 +40,7 @@
       :suggestions="suggestions"
       :withView="source !== 'new-registration'"
       @getSuggestions="getSuggestions($event)"
-      @create="addPerson($event)"
+      @create="source !== 'new-registration' ? addPerson($event) : dialogType === 'grandparent' ? addGrandparentToParent($event) : addParentToRegistration($event)"
       @close="close"
     />
     <EditNodeDialog v-if="isActive('edit-node')"
@@ -227,7 +228,8 @@ export default {
       suggestions: [],
       source: null,
       registration: '',
-      dialogType: ''
+      dialogType: '',
+      parents:[]
     }
   },
   computed: {
@@ -247,20 +249,20 @@ export default {
       }
     },
     type (newVal) {
-      console.log('handler: ', newVal)
       this.dialogType = newVal
-      console.log('dialogType: ', newVal)
     },
     storeType (newVal) {
-      console.log('store: ', newVal)
       this.dialogType = newVal
-      console.log('dialogType: ', newVal)
     }
   },
   methods: {
     ...mapActions(['updateNode', 'deleteNode', 'updatePartnerNode', 'addChild', 'addParent', 'loading', 'setDialog',
       'setProfileById'
     ]),
+    addParentToRegistration(parent) {
+      console.log("add parent: ", parent)
+      this.parents.push(parent)
+    },
     toggleEditProfile (profile) {
       this.registration = profile
       this.toggleDialog('edit-node', null, 'new-registration')
@@ -276,17 +278,21 @@ export default {
         this.toggleDialog(this.source, this.dialogType, null)
         return
       }
+      if (this.parents.length) this.parents = []
       this.toggleDialog(this.source, null, null)
       this.$emit('setloading', false)
     },
     toggleDialog (dialog, type, source) {
-      console.log('redirecting to: ', this.source)
       this.source = source
-      this.setDialog(dialog, type, source)
+      if (this.storeDialog) {
+        this.setDialog(dialog, type, source)
+        return
+      }
       this.$emit('update:dialog', dialog)
       this.$emit('update:type', type)
     },
     canDelete (profile) {
+      console.log("can delete: ", profile)
       if (!profile) return false
       if (this.previewProfile) return false
 
@@ -294,7 +300,7 @@ export default {
       if (profile.id === this.whoami.profile.id) return false
 
       // if deleting the focus (top ancestor)
-      if (profile.id === this.view.focus) {
+      if (this.view && profile.id === this.view.focus) {
         // can only proceed if can find a clear "successor" to be new focus
         return Boolean(findSuccessor(profile))
       }
@@ -357,7 +363,7 @@ export default {
             deceased,
             aliveInterval,
             // UPDATE : for private groups
-            recps: type === 'community' ? [this.whoami.feedId] : this.view ? this.view.recps : [this.whoami.feedId]
+            recps: type === 'community' ? [this.whoami.feedId] : this.view.recps 
           }
         }
       })
@@ -374,7 +380,7 @@ export default {
           id
         } = $event
 
-        if (this.view && this.view.ignoredProfiles.includes(id)) {
+        if (this.view.ignoredProfiles.includes(id)) {
           const input = {
             id: this.$route.params.id,
             ignoredProfiles: {
@@ -416,7 +422,7 @@ export default {
                   child = this.selectedProfile.id
                   parent = id
 
-                  if (this.view && child === this.view.focus) {
+                  if (child === this.view.focus) {
                     // in this case we're updating the top of the graph, we update view.focus to that new top parent
                     this.$emit('updateFocus', parent)
                     this.addParent({
@@ -523,7 +529,7 @@ export default {
                 })
               }
 
-              if (this.view && child === this.view.focus) {
+              if (child === this.view.focus) {
                 // in this case we're updating the top of the graph, we update view.focus to that new top parent
                 this.$emit('updateFocus', parent)
               } else {
@@ -839,22 +845,30 @@ export default {
         this.suggestions = []
         return
       }
-
+      console.log("search for this: ", $event)
       var records = await this.findByName($event)
+
+      console.log("record: ", records)
 
       if (isEmpty(records)) {
         this.suggestions = []
         return
       }
 
+      if (this.source !== "new-registration") {
+        
+      
+
       var profiles = {} // flatStore for these suggestions
 
       records.forEach(record => {
         record.children = record.children.map(child => {
+          console.log('mapping children')
           profiles[child.profile.id] = child.profile // add this records children to the flatStore
           return child.profile.id // only want the childs ID
         })
         record.parents = record.parents.map(parent => {
+          console.log('mapping parents')
           profiles[parent.profile.id] = parent.profile // add this records parents to the flatStore
           return parent.profile.id // only want the parents ID
         })
@@ -864,14 +878,19 @@ export default {
       // now we have the flatStore for the suggestions we need to filter out the records
       // so we cant add one that is already in the tree
       records = records.filter(record => {
+        console.log('searching in tree')
         if (this.findInTree(record.id)) return false // dont include it
         return true
       })
+    
 
       // hydrate all the left over records
       records = records.map(record => {
+        console.log('hydrating')
         return tree.hydrate(record, profiles) // needed to hydrate to fix all dates
       })
+
+      }
 
       records = records.map(record => {
         let obj = {}
@@ -881,7 +900,8 @@ export default {
         }
         return obj
       })
-
+      var end = Object.assign([], records)
+      console.log("end results: ", end)
       // sets suggestions which is passed into the dialogs
 
       this.suggestions = Object.assign([], records)

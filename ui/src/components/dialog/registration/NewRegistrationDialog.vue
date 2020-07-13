@@ -30,24 +30,29 @@
             <!-- <RegisterButton v-if="profile.type === 'community'" :class="!mobile ? 'margin-top':''"/> -->
             <ProfileInfoCard :profile="formData" isRegistration :style="mobile ? 'margin: 0px 20px' : 'margin: 0px 30px;'"/> 
             <v-divider></v-divider>
-            <p class="pt-5 pl-5 subtitle-2"> Please provide some of your whakapapa information </p>
-            <v-divider></v-divider>
-            
-            <div v-for="parent in formData.parents" :key="parent.id">
-              <v-row>
-                <v-col cols="6">
-                  <ParentGroup :profile="parent" :title="parent.relationshipType + ' parent'"/>
+
+            <!-- ADD PARENTS INFORMATION-->
+            <p class="pt-5 pl-5 subtitle-2">Please provide the names of at least one parent and one grand parent</p>
+            <div v-for="(parent, index) in parents" :key="index">
+              <v-row class="rounded-border mx-4">
+                <v-col cols="12">
+                  <ParentGroup :index="index" :profile="parent" :title="parent.relationshipType ? parent.relationshipType + ' parent' : 'parent'" @removeParent="removeParent($event)"/>
                 </v-col>
-                <v-col cols="6">
-                  <ParentGroup :profile="grandParents" :title="parent.relationshipType + ' parent'"/>
-                </v-col>
+                <v-divider></v-divider>
+                <v-row class="py-4 pl-10">
+                  <AddButton justify="start" :width="'50px'" label="Add grandparents" @click="addParent"/>
+                </v-row>
               </v-row>
             </div>
+            <v-row class="py-4 pl-10">
+              <AddButton justify="start" :width="'50px'" label="Add parent" @click="addParent"/>
+            </v-row>
             <v-divider></v-divider>
             <v-card-actions style="display: flex; justify-content: center; align-items: center;">
               <v-checkbox class="checkbox-label" color="success" v-model="checkbox1" :label="`I agree to share this information`" :rules="requiredRules"></v-checkbox> .
             </v-card-actions>
           </v-card>
+
       <!-- WRAP END -->
         <v-row>
           <p class="py-6 px-4 subtitle-2 blue--text">The below private information will only be viewable by <strong><i>{{currentProfile.preferredName}}</i></strong> kaitiaki</p>
@@ -132,6 +137,7 @@ import ProfileInfoCard from '@/components/profile/ProfileInfoCard.vue'
 import ProfileInfoItem from '@/components/profile/ProfileInfoItem.vue'
 import ProfileCard from '@/components/profile/ProfileCard.vue'
 import ParentGroup from '@/components/registration/ParentGroup.vue'
+import AddButton from '@/components/button/AddButton.vue'
 
 import { dateIntervalToString } from '@/lib/date-helpers'
 import getRelatives, { PERMITTED_PROFILE_ATTRS } from '@/lib/profile-helpers.js'
@@ -155,14 +161,16 @@ export default {
     ProfileInfoItem,
     ProfileInfoCard,
     ProfileCard,
-    ParentGroup
+    ParentGroup,
+    AddButton
   },
   props: {
     show: { type: Boolean, required: true },
     title: { type: String, default: 'Create a new person' },
     hideDetails: { type: Boolean, default: false },
     readOnly: { type: Boolean, default: false },
-    profile: { type: Object }
+    profile: { type: Object },
+    parents: {type: Array, default: null}
   },
   data () {
     return {
@@ -173,7 +181,7 @@ export default {
       requiredRules: [
         v => v == true || 'Please agree to share information'
       ],
-      errorMsgs: []
+      errorMsgs: [],
     }
   },
   mounted () {
@@ -205,6 +213,13 @@ export default {
   },
   methods: {
     ...mapActions(['setDialog', 'setProfileById']),
+    removeParent (index) {
+      
+      this.parents[index].splice
+    },
+    addParent () {
+      this.setDialog({active:'new-node',type:'parent'})
+    },
     getErrorMsgs () {
       // var errors = {}
       var errors = []
