@@ -1,7 +1,6 @@
 import gql from 'graphql-tag'
 import pick from 'lodash.pick'
 import isEmpty from 'lodash.isempty'
-import isEqual from 'lodash.isequal'
 
 export const EMPTY_ARTEFACT = {
   id: null,
@@ -29,7 +28,6 @@ export const PERMITTED_ARTEFACT_SHARED_ATTRS = [
   'type',
   'blob',
   'createdAt',
-  'lastModified',
 
   'title',
   'description',
@@ -38,7 +36,6 @@ export const PERMITTED_ARTEFACT_SHARED_ATTRS = [
   'licence',
   'rights',
   'source',
-  'format',
 
   'language',
   'translation'
@@ -50,8 +47,7 @@ export const PERMITTED_ARTEFACT_VIDEO_AUDIO_ATTRS = [
 ]
 
 export const PERMITTED_ARTEFACT_OUTPUT_ATTRS = [
-  ...PERMITTED_ARTEFACT_SHARED_ATTRS,
-  'uri'
+  ...PERMITTED_ARTEFACT_SHARED_ATTRS
 ]
 
 export const PERMITTED_ARTEFACT_ATTRS = [
@@ -61,7 +57,17 @@ export const PERMITTED_ARTEFACT_ATTRS = [
 
 export const ARTEFACT_FRAGMENT = gql`
   fragment ArtefactFragment on Artefact {
-    ${PERMITTED_ARTEFACT_OUTPUT_ATTRS}
+    type
+    blob { blobId mimeType size unbox uri }
+    createdAt
+    title
+    description
+    identifier
+    licence
+    rights
+    source
+    language
+    translation
     ... on Audio {
       ${PERMITTED_ARTEFACT_VIDEO_AUDIO_ATTRS}
     }
@@ -106,6 +112,8 @@ function removeNullProperties (input) {
 export const SAVE_ARTEFACT = input => {
   input = pick(input, PERMITTED_ARTEFACT_ATTRS)
 
+  if (input.blob && input.blob.uri) delete input.blob.uri
+
   removeNullProperties(input)
 
   return {
@@ -132,44 +140,12 @@ export const DELETE_ARTEFACT = (id, date) => ({
   }
 })
 
-export function artefactChanges (initial, updated) {
-  var changes = {}
-  Object.entries(updated).forEach(([key, value]) => {
-    if (!isEqual(updated[key], initial[key])) {
-      if (typeof updated[key] === 'object') {
-        if (Array.isArray(updated[key])) {
-          changes[key] = { add: [], remove: [] }
-          changes[key].add = arrayChanges(updated[key], initial[key])
-          changes[key].remove = arrayChanges(initial[key], updated[key])
-
-          if (changes[key].add.length === 0) delete changes[key].add
-          if (changes[key].remove.length === 0) delete changes[key].remove
-
-          // means the same item was remove then added back in
-          if (isEmpty(changes[key])) delete changes[key]
-        } else {
-          changes[key] = artefactChanges(initial[key], updated[key])
-        }
-      } else {
-        changes[key] = updated[key]
-      }
-    }
-  })
-  return changes
-}
-
-function arrayChanges (array1, array2) {
-  return array1.filter(item => !array2.some(item2 => item.id === item2.id))
-    .map(item => item.id) // map it to id
-}
-
 export const ALL_ATTRS = [
   'id',
 
   'type',
   'blob',
   'createdAt',
-  'lastModified',
 
   'title',
   'description',

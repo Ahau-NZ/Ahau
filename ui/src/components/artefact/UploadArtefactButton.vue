@@ -51,19 +51,22 @@ export default {
         // get the resulting blob
         var blob = res.data.uploadFile
         var [ type ] = file.type.split('/')
-        const [ name, format ] = file.name.split('.')
+        const [ name ] = file.name.split('.')
 
         if (type === 'image') type = 'photo'
         else if (file.type === 'application/pdf' || file.type === 'text/plain') type = 'document'
 
         if (!blob.mimeType) blob.mimeType = file.type
 
+        delete blob.__typename
+
         var artefact = {
           type,
           blob,
-          format,
           title: name
         }
+
+        console.log(artefact)
 
         return artefact
       } catch (err) {
