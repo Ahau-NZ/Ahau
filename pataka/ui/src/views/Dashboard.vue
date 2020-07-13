@@ -81,12 +81,14 @@
           </v-col>
         </v-col>
         <v-col cols="3" class="stat-column">
-          <!-- <h2 class="h2 text-uppercase pb-12">People</h2>
-          <h3 class="py-2 text-uppercase subtitle-1 grey--text">64 people online</h3>
-          <v-row class="pb-4">
-            <Avatar size="40px" alt="name" />
+          <h2 class="h2 text-uppercase pb-12">People</h2>
+          <!-- <h3 class="py-2 text-uppercase subtitle-1 grey--text">64 people online</h3> -->
+          <p v-if="invitedPeople.length === 0">There's no one on your network</p>
+          <v-row v-for="(people, key) in invitedPeople" :key="key" class="pb-4">
+            <h6>{{people.id}}</h6>
+            <Avatar size="40px" alt="name" :image="people.avatarImage" />
           </v-row>
-          <v-btn color="grey" outlined tile>View people</v-btn>-->
+          <v-btn color="grey" outlined tile>View people</v-btn>
         </v-col>
         <v-col cols="2" class="stat-column">
           <h2 class="h2 text-uppercase pb-12">Summary</h2>
@@ -138,6 +140,7 @@ export default {
     generateError: false,
     errorMsg: null,
     checkingPort: null,
+    invitedPeople: [],
     profile: {
       feedId: '',
       preferredName: '',
@@ -229,6 +232,21 @@ export default {
       pollInterval: 10000,
       update (data) {
         return data.diskUsage
+      }
+    },
+    invitedPeople: {
+      query: gql`query {
+        invitedPeople {
+          id
+          preferredName
+          avatarImage {
+            uri
+          }
+        }
+      }
+      `,
+      update (data) {
+        return data.invitedPeople
       }
     },
     dataSummary: {
