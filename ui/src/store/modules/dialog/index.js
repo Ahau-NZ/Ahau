@@ -44,12 +44,6 @@ const actions = {
       commit('updateDialog', dialog)
     }
   }
-  // setDialog ({ commit }, dialog) {
-  //   console.log("setDialog: ", dialog, type, source)
-  //   commit('updateDialog', dialog)
-  //   if (type) commit('updateType', type)
-  //   if (source) commit('updateSource', source)
-  // }
 }
 
 export default {

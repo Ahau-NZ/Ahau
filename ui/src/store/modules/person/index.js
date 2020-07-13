@@ -28,7 +28,6 @@ const mutations = {
 
 const actions = {
   async setProfileById ({ commit, rootState, dispatch }, { id, type }) {
-    console.log('setting profile')
     if (id === rootState.whoami.profile.id) {
       dispatch('setWhoami', id)
     }

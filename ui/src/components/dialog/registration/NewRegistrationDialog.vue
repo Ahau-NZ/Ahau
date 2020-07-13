@@ -30,9 +30,18 @@
             <!-- <RegisterButton v-if="profile.type === 'community'" :class="!mobile ? 'margin-top':''"/> -->
             <ProfileInfoCard :profile="formData" isRegistration :style="mobile ? 'margin: 0px 20px' : 'margin: 0px 30px;'"/> 
             <v-divider></v-divider>
-            <span> Please provide some of your whakapapa information </span>
+            <p class="pt-5 pl-5 subtitle-2"> Please provide some of your whakapapa information </p>
+            <v-divider></v-divider>
+            
             <div v-for="parent in formData.parents" :key="parent.id">
-              <ParentInformation :profile="parent" />
+              <v-row>
+                <v-col cols="6">
+                  <ParentGroup :profile="parent" :title="parent.relationshipType + ' parent'"/>
+                </v-col>
+                <v-col cols="6">
+                  <ParentGroup :profile="grandParents" :title="parent.relationshipType + ' parent'"/>
+                </v-col>
+              </v-row>
             </div>
             <v-divider></v-divider>
             <v-card-actions style="display: flex; justify-content: center; align-items: center;">
@@ -122,7 +131,7 @@ import Dialog from '@/components/dialog/Dialog.vue'
 import ProfileInfoCard from '@/components/profile/ProfileInfoCard.vue'
 import ProfileInfoItem from '@/components/profile/ProfileInfoItem.vue'
 import ProfileCard from '@/components/profile/ProfileCard.vue'
-import ParentInformation from '@/components/registration/ParentInformation.vue'
+import ParentGroup from '@/components/registration/ParentGroup.vue'
 
 import { dateIntervalToString } from '@/lib/date-helpers'
 import getRelatives, { PERMITTED_PROFILE_ATTRS } from '@/lib/profile-helpers.js'
@@ -146,7 +155,7 @@ export default {
     ProfileInfoItem,
     ProfileInfoCard,
     ProfileCard,
-    ParentInformation
+    ParentGroup
   },
   props: {
     show: { type: Boolean, required: true },
@@ -168,11 +177,11 @@ export default {
     }
   },
   mounted () {
-    console.log('mounted:', this.profile)
     this.getFullProfile(this.profile.id)
   },
   computed: {
     ...mapGetters(['currentProfile', 'selectedProfile']),
+  
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
