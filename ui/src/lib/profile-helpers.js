@@ -25,6 +25,31 @@ export const PERMITTED_PROFILE_ATTRS = [
   'deceased'
 ]
 
+export const COMMON_PERMITTED_PROFILE_ATTRS = [
+  'headerImage',
+  'avatarImage',
+  'id',
+  'type',
+  'gender',
+  'legalName',
+  'preferredName',
+  'description',
+  'altNames',
+  'birthOrder',
+  'location',
+  'profession',
+  'deceased'
+]
+
+export const PRIVATE_PERMITTED_PROFILE_ATTRS = [
+  'aliveInterval',
+  'location',
+  'email',
+  'phone',
+  'parents',
+  'message'
+]
+
 export const PERMITTED_RELATIONSHIP_ATTRS = [
   'relationshipType',
   'legallyAdopted'

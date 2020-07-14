@@ -27,7 +27,7 @@
               <span>legal name</span>
             </v-row>
           </v-col>
-          <v-col v-if="!mobile" cols="2" class="py-0 pl-0" >
+          <v-col v-if="!mobile" cols="2" class="py-0 pl-0 ml-n5" >
             <v-row>
               <span class="text">{{profile.preferredName}}</span>
             </v-row>
@@ -35,7 +35,7 @@
               <p>preferred name</p>
             </v-row>
           </v-col>
-          <v-col v-if="age" cols="1" class="py-0 ml-5">
+          <v-col v-if="age" cols="1" class="py-0">
             <v-row>
               <span class="text">{{ age }}</span>
             </v-row>
@@ -43,7 +43,7 @@
               <span>age</span>
             </v-row>
           </v-col>
-          <v-col class="px-0" :style="mobile ? 'position: relative;left: 10px':''">
+          <v-col cols="1" class="px-0" :style="mobile ? 'position: relative;left: 10px':''">
             <v-btn @click="$emit('removeParent',index)" @mouseenter="hover = !hover" @mouseleave="hover = !hover"  fab text light x-small >
               <v-icon>mdi-close</v-icon>
             </v-btn>
