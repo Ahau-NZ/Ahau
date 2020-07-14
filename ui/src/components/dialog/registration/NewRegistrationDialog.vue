@@ -158,8 +158,7 @@ import isEmpty from 'lodash.isempty'
 import pick from 'lodash.pick'
 import calculateAge from '@/lib/calculate-age'
 import { mapActions, mapGetters } from 'vuex'
-import { PRIVATE_PERMITTED_PROFILE_ATTRS, COMMON_PERMITTED_PROFILE_ATTRS } from '@/lib/profile-helpers' 
-
+import { PRIVATE_PERMITTED_PROFILE_ATTRS, COMMON_PERMITTED_PROFILE_ATTRS } from '@/lib/profile-helpers'
 
 const REQUIRED_ATTRS = [
   'id', 'legalName', 'aliveInterval', 'gender', 'relationshipType',
@@ -310,9 +309,6 @@ export default {
           parents: this.parents,
           message: this.message
         }
-        console.log(input)
-        console.log(COMMON_PERMITTED_PROFILE_ATTRS)
-        console.log(PRIVATE_PERMITTED_PROFILE_ATTRS)
         var common = pick(input, COMMON_PERMITTED_PROFILE_ATTRS)
         var kaitiaki = pick(input, PRIVATE_PERMITTED_PROFILE_ATTRS)
 
