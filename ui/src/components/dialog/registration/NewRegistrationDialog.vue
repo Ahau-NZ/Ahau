@@ -158,6 +158,7 @@ import isEmpty from 'lodash.isempty'
 import pick from 'lodash.pick'
 import calculateAge from '@/lib/calculate-age'
 import { mapActions, mapGetters } from 'vuex'
+import { PRIVATE_PERMITTED_PROFILE_ATTRS, COMMON_PERMITTED_PROFILE_ATTRS } from '@/lib/profile-helpers' 
 
 
 const REQUIRED_ATTRS = [
@@ -304,11 +305,20 @@ export default {
 
     submit () {
       if (this.$refs.checkboxes.validate()) {
-        var common = pick(this.submission, [ ])
-        var output = {
+        var input = {
           ...this.formData,
           parents: this.parents,
           message: this.message
+        }
+        console.log(input)
+        console.log(COMMON_PERMITTED_PROFILE_ATTRS)
+        console.log(PRIVATE_PERMITTED_PROFILE_ATTRS)
+        var common = pick(input, COMMON_PERMITTED_PROFILE_ATTRS)
+        var kaitiaki = pick(input, PRIVATE_PERMITTED_PROFILE_ATTRS)
+
+        var output = {
+          common: common,
+          kaitiaki: kaitiaki
         }
         // TODO - send message to Kaitiaki
         console.warn('send this object: ', output)

@@ -357,6 +357,7 @@ export default {
       return calculateAge(aliveInterval)
     },
     submit () {
+      console.log(PERMITTED_PROFILE_ATTRS)
       var submission = pick(this.submission, [...PERMITTED_PROFILE_ATTRS, ...PERMITTED_RELATIONSHIP_ATTRS])
       console.log('submit: ', submission)
       this.$emit('create', submission)
