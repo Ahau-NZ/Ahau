@@ -12,10 +12,10 @@ const customConfig = {
   lan: {
     legacy: false
     // disables legacy UDP announce (which doesn't respect caps.shs!)
+  },
+  serveBlobs: {
+    cors: true
   }
-  // serveBlobs: {
-  //   cors: true
-  // }
 }
 
 module.exports = function () {
