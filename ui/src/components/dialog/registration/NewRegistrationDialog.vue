@@ -54,82 +54,89 @@
           </template>
         </ProfileCard>
                     <!-- ADD PARENTS INFORMATION-->
-            <p class="pt-5 pl-5 subtitle-2" :style="parentsRequired ? 'color:crimson':''">Please provide the names of at least one parent and one grandparent</p>
-            <div v-for="(parent, index) in parents" :key="index">
-              <v-row class="rounded-border mx-4">
-                <v-col cols="12">
-                  <ParentGroup :index="index" :profile="parent" :title="parent.relationshipType ? parent.relationshipType + ' parent' : 'parent'" @removeParent="removeParent($event)"/>
-                </v-col>
-                <v-col  cols="12" class="pa-0">
-                  <v-divider></v-divider>
-                </v-col>
-                <v-col cols="12" v-for="(grandparent, grandparentIndex) in parent.grandparents" :key="`grandparent-${grandparentIndex}`" >
-                  <ParentGroup :index="grandparentIndex" :profile="grandparent" :title="grandparent.relationshipType ? grandparent.relationshipType + ' grandparent' : 'grandparent'" @removeParent="removeGrandparent($event, index)"/>
-                </v-col>
-                <v-row class="py-4 pl-10">
-                  <AddButton justify="start" :width="'50px'" :label="'Add parents of ' + parent.preferredName" @click="addGrandparent(index)"/>
-                </v-row>
+          <p class="pt-5 pl-5 subtitle-2" :style="parentsRequired ? 'color:crimson':''">Please provide the names of at least one parent and one grandparent</p>
+          <div v-for="(parent, index) in parents" :key="index">
+            <v-row class="rounded-border mx-4">
+              <v-col cols="12">
+                <ParentGroup :index="index" :profile="parent" :title="parent.relationshipType ? parent.relationshipType + ' parent' : 'parent'" @removeParent="removeParent($event)"/>
+              </v-col>
+              <v-col  cols="12" class="pa-0">
+                <v-divider></v-divider>
+              </v-col>
+              <v-col cols="12" v-for="(grandparent, grandparentIndex) in parent.grandparents" :key="`grandparent-${grandparentIndex}`" >
+                <ParentGroup :index="grandparentIndex" :profile="grandparent" :title="grandparent.relationshipType ? grandparent.relationshipType + ' grandparent' : 'grandparent'" @removeParent="removeGrandparent($event, index)"/>
+              </v-col>
+              <v-row class="py-4 pl-10">
+                <AddButton justify="start" :width="'50px'" :label="'Add parents of ' + parent.preferredName" @click="addGrandparent(index)"/>
               </v-row>
-            </div>
-            <v-row class="py-4 pl-10">
-              <AddButton justify="start" :width="'50px'" label="Add parent" @click="addParent('parent')"/>
             </v-row>
-            <v-divider></v-divider>
-
-        <v-divider></v-divider>
+          </div>
+          <v-row class="py-4 pl-10">
+            <AddButton justify="start" :width="'50px'" label="Add parent" @click="addParent('parent')"/>
+          </v-row>
+          <v-divider></v-divider>
+          <v-col cols="12" :class="mobile ? 'pt-4 px-0':'pt-6 px-4'">
+            <v-textarea
+              v-model="message"
+              label="Send a message"
+              no-resize
+              rows="3"
+              auto-grow
+              outlined
+              placeholder=" "
+            >
+            </v-textarea>
+          </v-col>
         <v-card-actions style="display: flex; justify-content: center; align-items: center;">
           <v-checkbox class="checkbox-label" color="success" v-model="checkbox2" :label="`I agree to share this information`" :rules="requiredRules"></v-checkbox> .
         </v-card-actions>
       </v-card>
+      
     </v-form>
-  <!-- WRAP END -->
-
-      </v-col>
-
-      <v-hover v-if="errorMsgs && errorMsgs.length" v-slot:default="{ hover }">
-        <v-row @click="editProfile"  :class="mobile ? 'mx-2':'mx-12'" align="center" style="border: 1px solid rgba(168,0,0); border-radius: 10px;" :style="hover ? 'cursor: pointer;background-color:rgba(168,0,0,0.1)':''">
-          <v-col cols="12">
-              <v-row justify="center">
-                <span class="px-4 subtitle-2 secondary--text">To join this communtiy, please update the required information on your profile</span>
-              </v-row>
-              <v-row v-for="error in errorMsgs" :key="error" justify="start" :class="mobile ? 'py-1 pl-2':'py-1 pl-12 ml-12'">
-                <span class="secondary--text "><i>- Please update your {{error}} information</i></span>
-              <!-- <v-col v-for="error in errorMsgs" :key="error[key]"></v-col> -->
-              </v-row>
-              <v-row class="pt-2" justify="center">
-                <v-icon color="secondary">mdi-account-edit</v-icon>
-                <v-btn text large>update your details</v-btn>
-              </v-row>
-          </v-col>
-        </v-row>
-      </v-hover>
-
-    </template>
+  </v-col>
+    <v-hover v-if="errorMsgs && errorMsgs.length" v-slot:default="{ hover }">
+      <v-row @click="editProfile"  :class="mobile ? 'mx-2':'mx-12'" align="center" style="border: 1px solid rgba(168,0,0); border-radius: 10px;" :style="hover ? 'cursor: pointer;background-color:rgba(168,0,0,0.1)':''">
+        <v-col cols="12">
+            <v-row justify="center">
+              <span class="px-4 subtitle-2 secondary--text">To join this communtiy, please update the required information on your profile</span>
+            </v-row>
+            <v-row v-for="error in errorMsgs" :key="error" justify="start" :class="mobile ? 'py-1 pl-2':'py-1 pl-12 ml-12'">
+              <span class="secondary--text "><i>- Please update your {{error}} information</i></span>
+            <!-- <v-col v-for="error in errorMsgs" :key="error[key]"></v-col> -->
+            </v-row>
+            <v-row class="pt-2" justify="center">
+              <v-icon color="secondary">mdi-account-edit</v-icon>
+              <v-btn text large>update your details</v-btn>
+            </v-row>
+        </v-col>
+      </v-row>
+    </v-hover>
+  </template>
 
     <!-- Actions Slot -->
-    <template v-slot:actions>
-      <v-btn @click="close"
-        text large
-        class="secondary--text"
-      >
-        <!-- <v-icon color="secondary">mdi-close</v-icon> -->
-        <span>cancel</span>
-      </v-btn>
-      <!-- <v-btn
-        @click="submit"
-        text large
-        class="blue--text mx-5"
-      > -->
-      <v-btn
-        @click="submit"
-        :disabled="disabled"
-        text large
-        class="blue--text mx-5"
-      >
-        <!-- <v-icon>mdi-check</v-icon> -->
-        <span>approve</span>
-      </v-btn>
-    </template>
+  <template v-slot:actions>
+    <v-btn @click="close"
+      text large
+      class="secondary--text"
+    >
+      <!-- <v-icon color="secondary">mdi-close</v-icon> -->
+      <span>cancel</span>
+    </v-btn>
+    <!-- <v-btn
+      @click="submit"
+      text large
+      class="blue--text mx-5"
+    > -->
+    <v-btn
+      @click="submit"
+      :disabled="disabled"
+      text large
+      class="blue--text mx-5"
+    >
+      <!-- <v-icon>mdi-check</v-icon> -->
+      <span>approve</span>
+    </v-btn>
+  </template>
     <!-- End Actions Slot -->
 
   </Dialog>
@@ -148,8 +155,10 @@ import AddButton from '@/components/button/AddButton.vue'
 import { dateIntervalToString } from '@/lib/date-helpers'
 
 import isEmpty from 'lodash.isempty'
+import pick from 'lodash.pick'
 import calculateAge from '@/lib/calculate-age'
 import { mapActions, mapGetters } from 'vuex'
+
 
 const REQUIRED_ATTRS = [
   'id', 'legalName', 'aliveInterval', 'gender', 'relationshipType',
@@ -185,7 +194,8 @@ export default {
       requiredRules: [
         v => v === true || 'Please agree to share information'
       ],
-      errorMsgs: []
+      errorMsgs: [],
+      message:'',
     }
   },
   mounted () {
@@ -294,11 +304,14 @@ export default {
 
     submit () {
       if (this.$refs.checkboxes.validate()) {
+        var common = pick(this.submission, [ ])
         var output = {
           ...this.formData,
-          parents: this.parents
+          parents: this.parents,
+          message: this.message
         }
-        console.log('send this object: ', output)
+        // TODO - send message to Kaitiaki
+        console.warn('send this object: ', output)
         this.close()
       }
     }
