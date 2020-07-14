@@ -4,8 +4,7 @@
     <!-- Content Slot -->
     <template v-if="!hideDetails" v-slot:content>
       <v-col class="py-0">
-        <CommunityForm :profile.sync="formData">
-        </CommunityForm>
+        <CommunityForm :profile.sync="formData"></CommunityForm>
       </v-col>
     </template>
     <!-- End Content Slot -->
@@ -38,7 +37,6 @@ import CommunityForm from '@/components/community/CommunityForm.vue'
 import isEmpty from 'lodash.isempty'
 import calculateAge from '@/lib/calculate-age'
 
-import { getProfile } from '@/lib/profile-helpers'
 import uniqby from 'lodash.uniqby'
 
 function setDefaultData () {
@@ -46,7 +44,6 @@ function setDefaultData () {
     type: 'community',
     id: '',
     preferredName: '',
-    legalName: '',
     avatarImage: {},
     description: '',
     location: '',
@@ -73,53 +70,14 @@ export default {
   data () {
     return {
       formData: setDefaultData(this.withRelationships),
-      hasSelection: false,
-      closeSuggestions: []
     }
   },
-  mounted () {
-    this.getCloseSuggestions()
-  },
+
   computed: {
-    generateSuggestions () {
-      if (this.hasSelection) return []
-
-      let otherSuggestions = []
-      let closeSuggestions = []
-
-      if (this.suggestions && this.suggestions.length > 0) {
-        otherSuggestions = [
-          this.type ? { header: 'Are you looking for:' } : null,
-          ...this.suggestions
-        ]
-      }
-
-      if (this.closeSuggestions && this.closeSuggestions.length > 0 && this.suggestions.length < 1) {
-        closeSuggestions = [
-          this.type ? (this.type === 'child' ? { header: 'Suggested children' } : { header: 'Suggested parents' }) : null,
-          ...this.closeSuggestions,
-          this.type ? { divider: true } : null
-        ]
-      }
-
-      return [
-        ...closeSuggestions,
-        ...otherSuggestions
-      ].filter(Boolean)
-    },
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
-    customProps () {
-      // readonly = hasSelected || !isEditing
-      return {
-        readonly: this.readonly,
-        flat: this.readonly,
-        hideDetails: true,
-        placeholder: ' ',
-        class: this.readonly ? 'custom' : ''
-      }
-    },
+
     submission () {
       let submission = {}
       Object.entries(this.formData).map(([key, value]) => {
@@ -137,106 +95,9 @@ export default {
     }
   },
   methods: {
-    clearSuggestions () {
-      this.$emit('getSuggestions', null)
-    },
-    getCloseSuggestions () {
-      switch (this.type) {
-        case 'child':
-          return this.findChildren()
-        case 'parent':
-          return this.findParents()
-        default:
-          return []
-      }
-    },
-    async findChildren () {
-      var currentChildren = []
-      var children = []
-
-      if (this.selectedProfile.children) {
-        this.selectedProfile.children.forEach(d => {
-          currentChildren[d.id] = d
-        })
-      }
-
-      // children of your partners that arent currently your children
-      if (this.selectedProfile.partners) {
-        this.selectedProfile.partners.forEach(async partner => {
-          const result = await this.$apollo.query(getProfile(partner.id))
-          if (result.data) {
-            result.data.person.children.forEach(d => {
-              if (!currentChildren[d.profile.id]) {
-                children.push(d)
-              }
-            })
-          }
-        })
-      }
-
-      // get ignored children
-      const ignored = await this.$apollo.query(getProfile(this.selectedProfile.id))
-      if (ignored.data) {
-        ignored.data.person.children.forEach(d => {
-          if (!currentChildren[d.profile.id]) {
-            children.push(d)
-          }
-        })
-      }
-      children = uniqby(children, 'relationshipId')
-
-      // eslint-disable-next-line no-return-assign
-      return this.closeSuggestions = children
-    },
-
-    async findParents () {
-      var currentParents = []
-      var parents = []
-
-      if (this.selectedProfile.parents) {
-        this.selectedProfile.parents.forEach(d => {
-          currentParents[d.id] = d
-        })
-      }
-
-      if (this.selectedProfile.siblings) {
-        this.selectedProfile.siblings.forEach(async sibling => {
-          const result = await this.$apollo.query(getProfile(sibling.id))
-
-          if (result.data) {
-            result.data.person.parents.forEach(d => {
-              if (!currentParents[d.profile.id]) {
-                parents.push(d)
-              }
-            })
-          }
-        })
-      }
-
-      // get ignored parents
-      const ignored = await this.$apollo.query(getProfile(this.selectedProfile.id))
-      if (ignored.data) {
-        ignored.data.person.parents.forEach(d => {
-          if (!currentParents[d.profile.id]) {
-            parents.push(d)
-          }
-        })
-      }
-
-      parents = uniqby(parents, 'realtionshipId')
-
-      // eslint-disable-next-line no-return-assign
-      return this.closeSuggestions = parents
-    },
-    age (bornAt) {
-      return calculateAge(bornAt)
-    },
     submit () {
       var submission = Object.assign({}, this.submission)
       this.$emit('create', submission)
-      // this.hasSelection
-      //   ? this.$emit('create', pick(this.formData, ['id', 'relationshipType', 'legallyAdopted']))
-      //   : this.$emit('create', submission)
       this.close()
     },
     cordovaBackButton () {
@@ -246,17 +107,9 @@ export default {
       this.resetFormData()
       this.$emit('close')
     },
-    async setFormData (person) {
-      this.hasSelection = true
-      this.formData = person.profile
-      this.formData.relationshipType = person.relationshipType
-      this.formData.legallyAdopted = false
-    },
+
     resetFormData () {
-      if (this.hasSelection) {
-        this.hasSelection = false
-        this.formData = setDefaultData()
-      }
+      this.formData = setDefaultData()
     }
 
   },
@@ -267,21 +120,6 @@ export default {
         this.showAvatar = true
       }
     }
-    // 'formData.preferredName' (newValue) {
-    //   if (!newValue) return
-    //   if (newValue.length > 2) {
-    //     if (!this.hasSelection) {
-    //       this.$emit('getSuggestions', newValue)
-    //     }
-    //   } else {
-    //     this.$emit('getSuggestions', null)
-    //   }
-    // },
-    // hasSelection (newValue) {
-    //   if (newValue) {
-    //     this.$emit('getSuggestions', null)
-    //   }
-    // }
   }
 }
 </script>
