@@ -146,10 +146,7 @@
           <v-list-item-subtitle class="pb-1" style="color:#a7a3a3">Cultural narrative</v-list-item-subtitle>
           <p>{{ story.culturalNarrative }}</p>
         </v-col> -->
-        <v-col v-if="story.format" :cols="mobile ? '6' : '3'">
-          <v-list-item-subtitle class="pb-1" style="color:#a7a3a3">Format</v-list-item-subtitle>
-          <p>{{ story.format }}</p>
-        </v-col>
+
         <v-col v-if="story.identifier" :cols="mobile ? '6' : '3'">
           <v-list-item-subtitle class="pb-1" style="color:#a7a3a3">Identifier</v-list-item-subtitle>
           <p>{{ story.identifier }}</p>

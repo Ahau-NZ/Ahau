@@ -25,8 +25,18 @@
         />
         <v-icon size="50" class="center">mdi-music</v-icon>
       </div>
-      <div v-if="artefact.type === 'document'">
-        <pdf :src="artefact.blob.uri"></pdf>
+      <div v-if="artefact.type === 'document'" class="media">
+        <div>
+          <div v-if="controls" class="text-center" style="padding-top:15%;">
+            <v-icon size="100px">{{ artefactIcon }}</v-icon><br>
+            <v-btn text @click.prevent="downloadFile()">
+              Download File
+            </v-btn>
+          </div>
+          <div v-else class="pt-4 px-5">
+            <v-icon size="60px">{{ artefactIcon }}</v-icon>
+          </div>
+        </div>
       </div>
       <v-btn v-if="controls && hover && editing" class="edit mr-2 mt-2"
         fab x-small
@@ -48,6 +58,7 @@
 </template>
 
 <script>
+import { ARTEFACT_ICON } from '@/lib/artefact-helpers.js'
 import pdf from 'vue-pdf'
 
 export default {
@@ -69,11 +80,22 @@ export default {
       hover: false
     }
   },
+  computed: {
+    artefactIcon () {
+      return ARTEFACT_ICON(this.artefact.blob.mimeType)
+    }
+  },
   methods: {
     match (i) {
       if (this.selectedIndex === i) {
         return true
       }
+    },
+    downloadFile () {
+      var hiddenElement = document.createElement('a')
+      hiddenElement.href = this.artefact.blob.uri
+      hiddenElement.target = '_blank'
+      hiddenElement.click()
     }
   }
 }

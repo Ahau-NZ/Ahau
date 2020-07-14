@@ -1,6 +1,6 @@
 <template>
   <div @click="$refs.fileInput.click()">
-    <input v-show="false" ref="fileInput" type="file" accept="audio/*,video/*,image/*,application/pdf,text/plain" multiple @change="processMediaFiles($event)" />
+    <input v-show="false" ref="fileInput" type="file" accept="audio/*,video/*,image/*,application/*,text/*"  multiple @change="processMediaFiles($event)" />
     <AddButton :dark="dark" :size="mobile ? '40px' : '60px'" icon="mdi-image-plus" />
     <p v-if="showLabel" class="add-label clickable" >Add artefacts</p>
   </div>
@@ -54,7 +54,7 @@ export default {
         const [ name ] = file.name.split('.')
 
         if (type === 'image') type = 'photo'
-        else if (file.type === 'application/pdf' || file.type === 'text/plain') type = 'document'
+        else if (type === 'application' || type === 'text') type = 'document'
 
         if (!blob.mimeType) blob.mimeType = file.type
 
@@ -65,8 +65,6 @@ export default {
           blob,
           title: name
         }
-
-        console.log(artefact)
 
         return artefact
       } catch (err) {

@@ -41,6 +41,13 @@ export const PERMITTED_ARTEFACT_SHARED_ATTRS = [
   'translation'
 ]
 
+export const ARTEFACT_ICON = (mimeType) => {
+  switch (mimeType) {
+    case 'application/pdf': return 'mdi-file-pdf'
+    default: return 'mdi-file'
+  }
+}
+
 export const PERMITTED_ARTEFACT_VIDEO_AUDIO_ATTRS = [
   'duration',
   'transcription'
@@ -57,6 +64,7 @@ export const PERMITTED_ARTEFACT_ATTRS = [
 
 export const ARTEFACT_FRAGMENT = gql`
   fragment ArtefactFragment on Artefact {
+    id
     type
     blob { blobId mimeType size unbox uri }
     createdAt

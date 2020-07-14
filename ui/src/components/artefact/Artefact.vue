@@ -11,14 +11,20 @@
       <audio :src="artefact.blob.uri" class="px-12" style="width:100%;height:80%;"/>
     </div>
     <v-img ref="photo" v-if="artefact.type === 'photo'" class="media center" :src="artefact.blob.uri" contain></v-img>
-    <pdf v-if="artefact.type === 'document'" :src="artefact.blob.uri"/>
-    <!-- <pdf v-if="artefact.type === 'text'" :src="artefact.blob.uri"/> -->
+    <div v-else-if="artefact.type === 'document'" class="media" style="margin-top:15%;">
+      <div class="text-center">
+        <v-icon size="100px">{{ artefactIcon }}</v-icon><br>
+        <v-btn text @click.prevent="downloadFile()">
+          Download file
+        </v-btn>
+      </div>
+    </div>
   </v-sheet>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
-import pdf from 'vue-pdf'
+import { ARTEFACT_ICON } from '@/lib/artefact-helpers.js'
 
 export default {
   name: 'Artefact',
@@ -28,12 +34,14 @@ export default {
     index: Number
   },
   components: {
-    pdf
   },
   computed: {
     ...mapGetters(['showArtefact']),
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
+    },
+    artefactIcon () {
+      return ARTEFACT_ICON(this.artefact.blob.mimeType)
     }
   },
   watch: {
@@ -64,7 +72,20 @@ export default {
   methods: {
     toggleArtefact () {
       this.$emit('showArtefact', this.artefact)
+    },
+    downloadFile () {
+      var hiddenElement = document.createElement('a')
+      hiddenElement.href = this.artefact.blob.uri
+      hiddenElement.target = '_blank'
+      hiddenElement.download = this.artefact.title
+      hiddenElement.click()
     }
+
+      //     var hiddenElement = document.createElement('a')
+      // hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(csv)
+      // hiddenElement.target = '_blank'
+      // hiddenElement.download = 'whakapapa.csv'
+      // hiddenElement.click()
   }
 
 }
