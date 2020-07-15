@@ -1,6 +1,5 @@
 import gql from 'graphql-tag'
 import pick from 'lodash.pick'
-import isEmpty from 'lodash.isempty'
 
 export const EMPTY_ARTEFACT = {
   id: null,
@@ -77,10 +76,12 @@ export const ARTEFACT_FRAGMENT = gql`
     language
     translation
     ... on Audio {
-      ${PERMITTED_ARTEFACT_VIDEO_AUDIO_ATTRS}
+      duration
+      transcription
     }
     ... on Video {
-      ${PERMITTED_ARTEFACT_VIDEO_AUDIO_ATTRS}
+      duration
+      transcription
     }
   }
 `
@@ -109,20 +110,10 @@ export const getArtefacts = () => ({
   fetchPolicy: 'no-cache'
 })
 
-function removeNullProperties (input) {
-  Object.entries(input).forEach(([key, value]) => {
-    if (isEmpty(input[key])) {
-      delete input[key]
-    }
-  })
-}
-
 export const SAVE_ARTEFACT = input => {
   input = pick(input, PERMITTED_ARTEFACT_ATTRS)
 
   if (input.blob && input.blob.uri) delete input.blob.uri
-
-  removeNullProperties(input)
 
   return {
     mutation: gql`

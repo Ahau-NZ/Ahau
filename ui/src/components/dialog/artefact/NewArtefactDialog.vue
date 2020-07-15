@@ -54,7 +54,8 @@
             </v-col>
             <v-col cols="12" sm="12" md="3" class=py-1>
               <v-text-field
-                v-model="artefact.format"
+                readonly
+                :value="artefact.blob.mimeType"
                 label="Format"
                 v-bind="customProps"
               />
@@ -94,7 +95,7 @@
                 v-bind="customProps"
               />
             </v-col>
-            <v-col class=py-1 cols="12" sm="12" md="3">
+            <v-col class=py-1 cols="12" sm="12" md="3" v-if="artefact.type === 'audio' || artefact.type === 'video'">
               <v-text-field
                 v-model="artefact.duration"
                 label="Duration"
@@ -104,7 +105,8 @@
             </v-col>
             <v-col class=py-1 cols="12" sm="12" md="3">
               <v-text-field
-                v-model="artefact.size"
+                readonly
+                :value="artefact.blob.size"
                 label="Size"
                 type="number"
                 v-bind="customProps"
