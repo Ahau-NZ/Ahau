@@ -178,9 +178,9 @@ import ArtefactCarousel from '@/components/artefact/ArtefactCarousel.vue'
 import clone from 'lodash.clonedeep'
 
 import { personComplete } from '@/mocks/person-profile'
-import AddButton from '@/components/button/AddButton.vue'
-import ProfileSearchBar from '@/components/archive/ProfileSearchBar.vue'
-import AvatarGroup from '@/components/AvatarGroup.vue'
+// import AddButton from '@/components/button/AddButton.vue'
+// import ProfileSearchBar from '@/components/archive/ProfileSearchBar.vue'
+// import AvatarGroup from '@/components/AvatarGroup.vue'
 
 import NodeDatePicker from '@/components/NodeDatePicker.vue'
 
@@ -194,9 +194,9 @@ export default {
   },
   components: {
     ArtefactCarousel,
-    AddButton,
-    ProfileSearchBar,
-    AvatarGroup,
+    // AddButton,
+    // ProfileSearchBar,
+    // AvatarGroup,
     DialogTitleBanner,
     NodeDatePicker
   },
