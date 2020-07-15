@@ -20,6 +20,14 @@
                 />
               </h1>
             </v-col>
+            <v-col cols="12">
+              <NodeDatePicker
+                :value.sync="artefact.createdAt"
+                label="Date Created"
+                min="0000-01-01"
+                dark
+              />
+            </v-col>
             <v-col cols="12" class="px-0">
               <ArtefactCarousel :artefacts="formData" :index.sync="selectedIndex" :editing="!editing" @delete="$emit('delete', $event)" @artefacts="$emit('artefacts', $event)"/>
             </v-col>
@@ -174,6 +182,8 @@ import AddButton from '@/components/button/AddButton.vue'
 import ProfileSearchBar from '@/components/archive/ProfileSearchBar.vue'
 import AvatarGroup from '@/components/AvatarGroup.vue'
 
+import NodeDatePicker from '@/components/NodeDatePicker.vue'
+
 export default {
   name: 'NewArtefactDialog',
   props: {
@@ -187,7 +197,8 @@ export default {
     AddButton,
     ProfileSearchBar,
     AvatarGroup,
-    DialogTitleBanner
+    DialogTitleBanner,
+    NodeDatePicker
   },
   data () {
     return {
