@@ -16,8 +16,8 @@ export const EMPTY_ARTEFACT = {
   blob: null,
   uri: null,
   title: null,
+  createdAt: null,
   description: null,
-  format: null,
   identifier: null,
   language: null,
   licence: null,
@@ -25,9 +25,7 @@ export const EMPTY_ARTEFACT = {
   source: null,
   translation: null,
   duration: null,
-  size: null,
-  transcription: null,
-  mentions: []
+  transcription: null
 }
 
 export const PERMITTED_ARTEFACT_SHARED_ATTRS = [
@@ -150,64 +148,3 @@ export const DELETE_ARTEFACT = (id, date) => ({
     }
   }
 })
-
-export const ALL_ATTRS = [
-  'id',
-
-  'type',
-  'blob',
-  'createdAt',
-
-  'title',
-  'description',
-
-  'identifier',
-  'licence',
-  'rights',
-  'source',
-  'format',
-
-  'language',
-  'translation'
-]
-
-export const PHOTO_ATTRS = [
-  ...ALL_ATTRS
-]
-
-export const AUDIO_ATTRS = [
-  ...ALL_ATTRS,
-  'duration',
-  'transcription'
-]
-
-export const VIDEO_ATTRS = [
-  ...ALL_ATTRS,
-  ...AUDIO_ATTRS
-]
-
-export const TEXT_ATTRS = [
-  ...ALL_ATTRS
-]
-
-export const APPLICATION_ATTRS = [
-  ...ALL_ATTRS
-]
-
-export function typeAttrs (type) {
-  switch (type) {
-    case 'photo':
-    case 'image':
-      return PHOTO_ATTRS
-    case 'video':
-      return VIDEO_ATTRS
-    case 'audio':
-      return AUDIO_ATTRS
-    case 'text':
-      return TEXT_ATTRS
-    case 'document':
-      return APPLICATION_ATTRS
-    default:
-      return []
-  }
-}

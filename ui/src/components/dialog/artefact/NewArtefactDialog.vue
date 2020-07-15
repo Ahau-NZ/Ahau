@@ -31,7 +31,7 @@
             <v-col cols="12" class="px-0">
               <ArtefactCarousel :artefacts="formData" :index.sync="selectedIndex" :editing="!editing" @delete="$emit('delete', $event)" @artefacts="$emit('artefacts', $event)"/>
             </v-col>
-            <v-col cols="12" class="pl-10 py-6">
+            <!-- <v-col cols="12" class="pl-10 py-6">
               <AddButton size="20px" icon="mdi-account-multiple-plus" dark iconClass="pr-3" class="right: 0;" label="Mention" @click="showMentions = true"  justify="start"/>
               <ProfileSearchBar
                 :selectedItems.sync="artefact.mentions"
@@ -49,7 +49,7 @@
                 @delete="removeItem(artefact.mentions, $event)"
                 dark
               />
-            </v-col>
+            </v-col> -->
             <v-col cols="12" class=py-1>
               <v-textarea
                 v-model="artefact.description"
