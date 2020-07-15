@@ -1,6 +1,15 @@
 import gql from 'graphql-tag'
 import pick from 'lodash.pick'
 
+export const ARTEFACT_FILE_TYPES = `
+  audio/*,
+  video/*,
+  image/*,
+  application/msword, application/vnd.ms-excel, application/vnd.ms-powerpoint,
+  application/pdf,
+  text/*
+`
+
 export const EMPTY_ARTEFACT = {
   id: null,
   type: null,
@@ -41,8 +50,11 @@ export const PERMITTED_ARTEFACT_SHARED_ATTRS = [
 ]
 
 export const ARTEFACT_ICON = (mimeType) => {
-  switch (mimeType) {
-    case 'application/pdf': return 'mdi-file-pdf'
+  switch (true) {
+    case mimeType === 'application/pdf': return 'mdi-file-pdf'
+    case mimeType === 'application/msword': return 'mdi-file-word'
+    case mimeType === 'application/vnd.ms-excel': return 'mdi-file-excel'
+    case mimeType === 'application/vnd.ms-powerpoin': return 'mdi-file-powerpoint'
     default: return 'mdi-file'
   }
 }

@@ -1,12 +1,13 @@
 <template>
   <div @click="$refs.fileInput.click()">
-    <input v-show="false" ref="fileInput" type="file" accept="audio/*,video/*,image/*,application/*,text/*"  multiple @change="processMediaFiles($event)" />
+    <input v-show="false" ref="fileInput" type="file" :accept="acceptedFileTypes"  multiple @change="processMediaFiles($event)" />
     <AddButton :dark="dark" :size="mobile ? '40px' : '60px'" icon="mdi-image-plus" />
     <p v-if="showLabel" class="add-label clickable" >Add artefacts</p>
   </div>
 </template>
 <script>
 import { UPLOAD_FILE } from '@/lib/file-helpers.js'
+import { ARTEFACT_FILE_TYPES } from '@/lib/artefact-helpers.js'
 import AddButton from '@/components/button/AddButton.vue'
 
 export default {
@@ -26,6 +27,9 @@ export default {
   computed: {
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
+    },
+    acceptedFileTypes () {
+      return ARTEFACT_FILE_TYPES
     }
   },
   methods: {
