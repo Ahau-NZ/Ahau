@@ -14,7 +14,8 @@ const customConfig = {
     // disables legacy UDP announce (which doesn't respect caps.shs!)
   },
   serveBlobs: {
-    cors: true
+    cors: true,
+    csp: ''
   }
 }
 
