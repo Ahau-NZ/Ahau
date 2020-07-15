@@ -260,8 +260,6 @@ export default {
       }
     },
     async saveArtefact (input) {
-      console.log(input)
-      return
       try {
         const res = await this.$apollo.mutate(SAVE_ARTEFACT(input))
         if (res.errors) {

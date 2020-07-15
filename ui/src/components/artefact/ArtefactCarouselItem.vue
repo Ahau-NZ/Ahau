@@ -9,7 +9,7 @@
     >
       <v-img
         v-if="artefact.type === 'photo'"
-        :src="artefact.uri"
+        :src="artefact.blob.uri"
         :contain='controls'
         class="media"
         tile
@@ -59,7 +59,6 @@
 
 <script>
 import { ARTEFACT_ICON } from '@/lib/artefact-helpers.js'
-import pdf from 'vue-pdf'
 
 export default {
   name: 'ArtefactCarouselItem',
@@ -73,7 +72,6 @@ export default {
     editing: { type: Boolean }
   },
   components: {
-    pdf
   },
   data () {
     return {
