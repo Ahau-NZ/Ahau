@@ -31,6 +31,10 @@ const actions = {
     if (id === rootState.whoami.profile.id) {
       dispatch('setWhoami', id)
     }
+    // if viewing a story and sideview is open and you want to jump to another profile > close the story
+    if (rootState.archive.showStory && rootState.dialog.preview) {
+      dispatch('setShowStory')
+    }
     if (type !== 'setWhanau' && rootState.dialog.dialog) {
       dispatch('setDialog', null)
     }
