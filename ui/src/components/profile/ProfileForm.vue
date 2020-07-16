@@ -3,7 +3,7 @@
       <v-row>
         <!-- Upload profile photo -->
         <v-col :order="mobile ? '' : '2'" class="py-0">
-          <v-row class="justify-center pt-12">
+          <v-row v-if="showAvatar" class="justify-center pt-12">
             <!-- <v-col cols="12" class="pa-0" > -->
               <!-- Avatar -->
             <Avatar
@@ -120,14 +120,14 @@
           </v-row>
 
           <!-- Editing: relationship type-->
-          <v-row>
+          <v-row v-if="withRelationships || editRelationship">
             <v-col cols="12" class="pa-1">
               <v-select
                 v-model="formData.relationshipType"
                 label="Related by"
                 :items="relationshipTypes"
                 outlined
-                v-bind="customProps"
+                :menu-props="{light: true}"
               />
             </v-col>
           </v-row>
@@ -146,7 +146,7 @@
           </v-row>
           <!-- DECEASED PICKER -->
           <v-row>
-           <v-col  v-if="!readonly || formData.deceased" cols="12" class="pa-1">
+           <v-col  v-if="!isUser || formData.deceased" cols="12" class="pa-1">
               <v-checkbox v-model="formData.deceased"
                 label="No longer living" :hide-details="true"
                 v-bind="customProps"
@@ -180,10 +180,10 @@
               />
             </v-col>
             <!-- GENDER EDIT -->
-            <v-col v-else class="pa-1">
+            <v-col v-if="!readonly" class="pa-1">
               <p class="text-field">Gender</p>
 
-              <v-row class="gender-button-row">
+              <v-row class="gender-button-row" :class="mobile ? '':'pb-12'">
                 <!-- TANE -->
                 <v-col class="pa-0">
                   <div class="gender-button" @click="updateSelectedGender('male')">
@@ -197,7 +197,7 @@
                   </div>
                 </v-col>
               </v-row>
-              <v-row class="pt-6">
+              <v-row>
                 <v-col  v-if="!readonly || formData.gender === 'other'" cols="6" class="pl-10 py-0">
                   <v-checkbox v-model="formData.gender"
                     value="other"
@@ -219,7 +219,7 @@
           </v-row>
         </v-col>
 
-        <v-col cols="12" :sm="mobile ? '12' : '6'">
+        <v-col cols="12" :sm="mobile ? '12' : '6'" class="py-0">
           <v-row>
             <!-- Description textarea -->
             <v-col cols="12" class="pa-1">
@@ -240,7 +240,7 @@
             <v-col cols="12" class="pa-1">
               <v-text-field
                 v-model="formData.profession"
-                label="Occupation"
+                label="Profession"
                 v-bind="customProps"
                 outlined
               />
@@ -248,7 +248,6 @@
           </v-row>
         </v-col>
       </v-row>
-
       <v-row>
         <v-col cols="12" :sm="mobile ? '12' : '6'">
           <!-- Email -->
@@ -289,7 +288,7 @@
           </v-row>
           <v-row>
             <v-col cols="12" class="pa-1">
-              <!-- City, Country -->
+              <!-- Location -->
               <v-text-field
                 v-model="formData.location"
                 label="City, Country"
@@ -299,6 +298,7 @@
             </v-col>
           </v-row>
         </v-col>
+
       </v-row>
   </v-form>
 </template>
@@ -326,13 +326,14 @@ export default {
     hideDetails: { type: Boolean, default: false },
     editRelationship: { type: Boolean, default: false },
     mobile: { type: Boolean, default: false },
-    isEditing: { type: Boolean, default: false }
+    isEditing: { type: Boolean, default: false },
+    isUser: { type: Boolean, default: false }
   },
   data () {
     return {
       genders: GENDERS,
       relationshipTypes: RELATIONSHIPS,
-      formData: this.profile,
+      formData: {},
       form: {
         valid: true,
         showDescription: false
@@ -340,16 +341,33 @@ export default {
       selectedGender: ''
     }
   },
+  mounted () {
+    if (this.formData.gender) {
+      if (this.formData.gender === 'male') this.updateSelectedGender('other')
+      if (this.formData.gender === 'female') this.updateSelectedGender('female')
+    }
+  },
   watch: {
     profile: {
       deep: true,
       immediate: true,
-      handler (newVal) {
+      handler (newVal, oldVal) {
         this.formData = newVal
       }
+    },
+    'formData.gender' (newValue) {
+      if (newValue === 'other' || newValue === 'unknown') this.updateSelectedGender('other')
     }
   },
   computed: {
+    showAvatar () {
+      if (this.isEditing) return true
+      if (this.formData) {
+        if (this.formData.gender) return true
+        if (this.formData.avatarImage) return true
+        else return false
+      } else return false
+    },
     customProps () {
       // readonly = hasSelected || !isEditing
       return {
