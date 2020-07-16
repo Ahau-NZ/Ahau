@@ -393,7 +393,6 @@ export default {
       deep: true,
       immediate: true,
       handler (newVal) {
-        console.log('profile watcher: ', newVal)
         if (!newVal) return
         this.formData = defaultData(newVal)
 
