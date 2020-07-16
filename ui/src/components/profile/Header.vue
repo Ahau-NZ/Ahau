@@ -111,6 +111,7 @@ export default {
     hsl(0, 5.2%, 27.6%);
   /* background-size: 50px 50px; */
   background-size: cover;
+  // background-attachment: fixed;
 }
 
 .picker {
@@ -127,8 +128,8 @@ export default {
 }
 
 .avatar-mobile {
-  margin-left: 50vw;
-  margin-right: 50vw;
+  position: absolute;
+  width: 100%;
 }
 
 </style>
