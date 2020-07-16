@@ -31,10 +31,10 @@
       <template v-if="!mobile">
         <!--  WIP links -->
         <v-btn text active-class="no-active" :to="{ name: 'discovery' }" class="white--text text-uppercase ms-10">Tribes</v-btn>
-        <v-btn active-class="no-active" text @click.native="setComponent('archive')" :to="{ name: 'profileShow', params: { id: whoami.profile.id } }" class="white--text text-uppercase ms-10">Archive</v-btn>
+        <v-btn active-class="no-active" text @click.native="goArchive" class="white--text text-uppercase ms-10">Archive</v-btn>
 
         <v-btn active-class="no-active" text @click.native="resetWindow" to="/whakapapa" class="white--text text-uppercase ms-10">whakapapa</v-btn>
-        <router-link @click.native="goProfile()" :to="{ name: 'profileShow', params: { id: whoami.profile.id } }">
+        <v-btn active-class="no-active" text @click.native="goProfile()">
           <Avatar
             v-if="!mobile"
             size="50px"
@@ -44,7 +44,7 @@
             :gender="whoami.profile.gender"
             :bornAt="whoami.profile.bornAt"
           />
-        </router-link>
+        </v-btn>
 
       </template>
 
@@ -60,7 +60,7 @@
     <!-- The drawer shows only on mobile -->
     <v-navigation-drawer v-if="mobile && enableMenu" v-model="drawer" app dark right width="60%">
       <v-list nav class="text-uppercase">
-        <v-list-item active-class="no-active" @click.native="goProfile()" :to="{ name: 'profileShow', params: { id: whoami.profile.id } }" >
+        <v-list-item active-class="no-active" @click="goProfile()" >
           <Avatar
             size="80px"
             :image="whoami.profile.avatarImage"
@@ -72,7 +72,7 @@
         <v-list-item active-class="no-active" link to="/whakapapa" class="white--text">
           <v-list-item-title>whakapapa</v-list-item-title>
         </v-list-item>
-        <v-list-item active-class="no-active" link @click.native="goArchive()" :to="{ name: 'profileShow', params: { id: whoami.profile.id } }" >
+        <v-list-item active-class="no-active" link @click.native="goArchive()" >
           <v-list-item-title class="white--text" >Archive</v-list-item-title>
         </v-list-item>
         <v-list-item active-class="no-active" link :to="{ name: 'discovery' }">
@@ -164,11 +164,15 @@ export default {
     },
     goProfile () {
       this.setComponent('profile')
+      this.setProfileById({ id: this.whoami.profile.id })
+      this.$router.push({ name: 'profileShow', params: { id: this.whoami.profile.id } }).catch(() => {})
       // this.setProfileById(this.profile.id)
       if (this.drawer) this.drawer = false
     },
     goArchive () {
       this.setComponent('archive')
+      this.setProfileById({ id: this.whoami.profile.id })
+      this.$router.push({ name: 'profileShow', params: { id: this.whoami.profile.id } }).catch(() => {})
       if (this.drawer) this.drawer = false
     },
     karakiaWhakamutunga () {

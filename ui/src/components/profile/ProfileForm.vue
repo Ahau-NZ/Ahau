@@ -206,9 +206,9 @@
                     outlined
                   />
                 </v-col>
-                <v-col  v-if="!readonly || formData.gender === 'unkown'" cols="6" class="pa-10 py-0">
+                <v-col  v-if="!readonly || formData.gender === 'unknown'" cols="6" class="pa-10 py-0">
                   <v-checkbox v-model="formData.gender"
-                    value="unkown"
+                    value="unknown"
                     label="unknown" :hide-details="true"
                     v-bind="customProps"
                     outlined
@@ -343,7 +343,7 @@ export default {
   },
   mounted () {
     if (this.formData.gender) {
-      if (this.formData.gender === 'male') this.updateSelectedGender('other')
+      if (this.formData.gender === 'male') this.updateSelectedGender('male')
       if (this.formData.gender === 'female') this.updateSelectedGender('female')
     }
   },

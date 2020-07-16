@@ -172,7 +172,6 @@ export default {
   name: 'DialogHandler',
   components: {
     NewNodeDialog,
-    NewCommunityDialog,
     EditNodeDialog,
     SideViewEditNodeDialog,
     DeleteNodeDialog,
@@ -182,8 +181,9 @@ export default {
     WhakapapaShowHelper,
     WhakapapaTableHelper,
     // NewCollectionDialog,
-    EditCommunityDialog,
     ComingSoonDialog,
+    NewCommunityDialog,
+    EditCommunityDialog,
     DeleteCommunityDialog,
     ConfirmationMessage,
     NewRegistrationDialog

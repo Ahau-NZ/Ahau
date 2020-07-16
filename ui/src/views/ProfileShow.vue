@@ -74,8 +74,7 @@ export default {
       loaded: false
     }
   },
-  mounted () {
-    this.setupProfile(this.$route.params.id)
+  beforeMount () {
     this.getAllStories()
   },
   computed: {
@@ -102,12 +101,6 @@ export default {
     hideNav () {
       if (this.mobile && this.showStory) return true
       else return false
-    }
-  },
-  watch: {
-    // update profile information routing to profileShow with new Id
-    '$route.params.id': function (id) {
-      this.setProfileById({ id })
     }
   },
   methods: {
@@ -139,11 +132,7 @@ export default {
 }
 
 .body-width {
-  /* min-width: $formWidth; */
   max-width: 100vw;
-  // padding-bottom: 500px;
-  // background: white;
-  // margin-bottom: 200px;
 }
 
 .niho-bg {

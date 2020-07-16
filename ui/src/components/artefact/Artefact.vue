@@ -58,11 +58,9 @@ export default {
   },
   methods: {
     toggleArtefact (e) {
-      console.log(e)
       this.$emit('showArtefact', this.artefact)
     }
   }
-
 }
 
 </script>
@@ -75,13 +73,6 @@ export default {
   width:80%;
   display: block;
 }
-
-// .video {
-//   position:absolute;
-//   top:10%;
-//   left:0%;
-//   width:100%;
-// }
 
 .media {
   width: 100%;
