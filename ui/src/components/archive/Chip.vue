@@ -1,5 +1,5 @@
 <template>
-  <v-card :color="colour" dark tile class="d-inline-block related-tile" :min-width="mobile ? '100%' : '300'" :max-width="mobile ? '100%' : '300px'" max-height="60" min-height="60" style="overflow: hidden;">
+  <v-card :color="colour" dark tile class="d-inline-block related-tile" :min-width="mobile ? '100%' : '300'" :max-width="mobile ? '100%' : '300px'" max-height="60" min-height="60" style="overflow: hidden;" @click="showRelatedStory">
     <v-container class="pa-0">
       <v-row >
         <v-col cols="auto" class="pa-0 pl-3">
@@ -33,6 +33,7 @@
 
 <script>
 import { colours } from '@/lib/colours.js'
+import { mapMutations, mapGetters } from 'vuex'
 export default {
   name: 'Chip',
   props: {
@@ -44,6 +45,7 @@ export default {
     index: Number
   },
   computed: {
+    ...mapGetters(['stories']),
     colour () {
       var i = Math.round(Math.random() * 10)
       return colours[i]
@@ -70,6 +72,15 @@ export default {
         }
       }
       return null
+    }
+  },
+  methods: {
+    ...mapMutations(['setStory']),
+    showRelatedStory () {
+      if (this.deletable) return
+      var story = this.stories.find(story => story.id === this.chip.id)
+      this.setStory(story)
+      window.scrollTo(0, 0)
     }
   }
 }

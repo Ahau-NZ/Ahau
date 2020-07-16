@@ -301,7 +301,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['setStory', 'deleteStoryFromStories']),
+    ...mapMutations(['deleteStoryFromStories']),
     ...mapActions(['setShowArtefact', 'setDialog', 'setProfileById', 'setShowStory']),
 
     async deleteStory () {
