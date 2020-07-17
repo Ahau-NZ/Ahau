@@ -75,4 +75,8 @@ export default {
   color: #383838
 }
 
+.no-wrap {
+  flex-wrap: nowrap;
+}
+
 </style>
