@@ -24,7 +24,7 @@
     </v-list-item>
     <v-list-item v-if="story.artefacts && story.artefacts.length > 0" class="px-0" >
       <v-list-item-content>
-        <v-carousel    
+        <v-carousel
           v-model="model"
           hide-delimiters
           :show-arrows="!mobile && fullStory && story.artefacts && story.artefacts.length > 1" :show-arrows-on-hover="!mobile" :height="showArtefact ? 'auto' : mobile ? '300px' : '500px'" style="background-color:#1E1E1E">

@@ -31,9 +31,7 @@
               @focus="focused = true"
               @blur="focused = false"
               auto-select-first
-
             ></v-autocomplete>
-            <!-- @blur="focused = false" -->
           </v-col>
           <v-col class="pa-0 pr-3">
             <v-autocomplete
@@ -47,7 +45,6 @@
               @focus="focused = true"
               auto-select-first
               @blur="focesd = false"
-
             >
             </v-autocomplete>
           </v-col>
@@ -203,33 +200,7 @@ export default {
     }
   },
   methods: {
-  //  WIP - tryng to improve ux of date input
-   // onBlur (event, refName) {
-    //   // empty
-    //   if (event.target.value == '') {
-    //     console.log('empty string')
-    //     this.date[refName] = ''
-    //   }
-    //   // invalid
-    //   else if (this.$refs[refName].filteredItems === undefined) {
-    //     console.log('invalid')
-    //     this.date[refName] = ''
-    //   }
-    //   // item
-    //   else if (this.$refs[refName].filteredItems[0].text) {
-    //     console.log('item', this.$refs[refName].filteredItems[0].text)
-    //     this.date[refName] = this.$refs[refName].filteredItems[0].text
-    //   }
-    //   // value
-    //   else if (this.$refs[refName].value) {
-    //     console.log(event)
-    //     console.log('value', this.$refs[refName].value)
-    //     this.date[refName] = this.$refs[refName].value
-    //   }
-    //   this.focused = false
-    // },
-
-    // turns an integer into a double digit string
+     // turns an integer into a double digit string
     intToDDString (int) {
       if (int < 10) {
         return ('0' + int).toString()

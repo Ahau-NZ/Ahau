@@ -109,7 +109,7 @@ export default {
   },
   methods: {
     ...mapActions(['setComponent', 'setDialog', 'setProfileById']),
-    goProfile(id) {
+    goProfile (id) {
       this.setComponent('profile')
       this.setProfileById({ id })
       this.$router.push({ name: 'profileShow', params: { id } }).catch(() => {})
