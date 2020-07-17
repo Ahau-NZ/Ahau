@@ -20,14 +20,6 @@
                 />
               </h1>
             </v-col>
-            <v-col cols="12">
-              <NodeDatePicker
-                :value.sync="artefact.createdAt"
-                label="Date Created"
-                min="0000-01-01"
-                dark
-              />
-            </v-col>
             <v-col cols="12" class="px-0">
               <ArtefactCarousel :artefacts="formData" :index.sync="selectedIndex" :editing="!editing" @delete="$emit('delete', $event)" @artefacts="$emit('artefacts', $event)"/>
             </v-col>
@@ -60,7 +52,15 @@
                 auto-grow
               />
             </v-col>
-            <v-col cols="12" sm="12" md="3" class=py-1>
+            <v-col cols="12" md="6" class="pt-0 pb-1">
+              <NodeDatePicker
+                :value.sync="artefact.createdAt"
+                label="Date Created"
+                min="0000-01-01"
+                dark
+              />
+            </v-col>
+            <v-col cols="12" sm="12" md="3" class="py-1 pt-2">
               <v-text-field
                 readonly
                 :value="artefact.blob.mimeType"
@@ -68,7 +68,7 @@
                 v-bind="customProps"
               />
             </v-col>
-            <v-col class=py-1 cols="12" sm="12" md="3">
+            <v-col cols="12" sm="12" md="3" class="py-1 pt-2">
               <v-text-field
                 v-model="artefact.identifier"
                 label="Identifier"
