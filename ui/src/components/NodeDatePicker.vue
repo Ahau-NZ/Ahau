@@ -200,7 +200,7 @@ export default {
     }
   },
   methods: {
-     // turns an integer into a double digit string
+    // turns an integer into a double digit string
     intToDDString (int) {
       if (int < 10) {
         return ('0' + int).toString()
