@@ -1,7 +1,6 @@
 <template>
   <div id="container">
-    <!--
-    <NewRegistrationDialog
+    <!-- <NewRegistrationDialog
       v-if="isActive('new-registration')"
       :show="isActive('new-registration')"
       :profile="whoami.profile"
@@ -10,7 +9,7 @@
       :parentIndex.sync="parentIndex"
       @editProfile="toggleEditProfile($event)"
       @close="close"
-    />
+    /> -->
     <NewCommunityDialog
       v-if="isActive('new-community')"
       :show="isActive('new-community')"
@@ -34,7 +33,6 @@
       @submit="deleteCommunity"
       @close="close"
     />
-    -->
     <NewNodeDialog
       v-if="isActive('new-node')"
       :show="isActive('new-node')"
@@ -113,9 +111,7 @@
       :show="isActive('coming-soon')"
       @close="close"
     />
-    <!--
     <ConfirmationMessage :show="snackbar" :message="confirmationText" />
-    -->
 
     <!-- <v-snackbar v-model="snackbar" >
       {{ confirmationText }}
@@ -136,10 +132,10 @@
 
 <script>
 import NewNodeDialog from '@/components/dialog/profile/NewNodeDialog.vue'
-// import NewCommunityDialog from '@/components/dialog/community/NewCommunityDialog.vue'
+import NewCommunityDialog from '@/components/dialog/community/NewCommunityDialog.vue'
 // import NewRegistrationDialog from '@/components/dialog/registration/NewRegistrationDialog.vue'
-// import EditCommunityDialog from '@/components/dialog/community/EditCommunityDialog.vue'
-// import DeleteCommunityDialog from '@/components/dialog/community/DeleteCommunityDialog.vue'
+import EditCommunityDialog from '@/components/dialog/community/EditCommunityDialog.vue'
+import DeleteCommunityDialog from '@/components/dialog/community/DeleteCommunityDialog.vue'
 import EditNodeDialog from '@/components/dialog/profile/EditNodeDialog.vue'
 import SideViewEditNodeDialog from '@/components/dialog/profile/SideViewEditNodeDialog.vue'
 import DeleteNodeDialog from '@/components/dialog/profile/DeleteNodeDialog.vue'
@@ -150,7 +146,7 @@ import WhakapapaShowHelper from '@/components/dialog/whakapapa/WhakapapaShowHelp
 import WhakapapaTableHelper from '@/components/dialog/whakapapa/WhakapapaTableHelper.vue'
 // import NewCollectionDialog from '@/components/dialog/archive/NewCollectionDialog.vue'
 import ComingSoonDialog from '@/components/dialog/ComingSoonDialog.vue'
-// import ConfirmationMessage from '@/components/dialog/ConfirmationMessage.vue'
+import ConfirmationMessage from '@/components/dialog/ConfirmationMessage.vue'
 
 import gql from 'graphql-tag'
 
@@ -162,7 +158,7 @@ import isEmpty from 'lodash.isempty'
 
 import findSuccessor from '@/lib/find-successor'
 
-// import { PERMITTED_COMMUNITY_ATTRS } from '@/lib/community-helpers'
+import { PERMITTED_COMMUNITY_ATTRS } from '@/lib/community-helpers'
 
 import tree from '@/lib/tree-helpers'
 
@@ -184,12 +180,12 @@ export default {
     WhakapapaDeleteDialog,
     WhakapapaShowHelper,
     WhakapapaTableHelper,
-    ComingSoonDialog
     // NewCollectionDialog,
-    // NewCommunityDialog,
-    // EditCommunityDialog,
-    // DeleteCommunityDialog,
-    // ConfirmationMessage,
+    ComingSoonDialog,
+    NewCommunityDialog,
+    EditCommunityDialog,
+    DeleteCommunityDialog,
+    ConfirmationMessage,
     // NewRegistrationDialog
   },
   props: {
@@ -263,7 +259,7 @@ export default {
   },
   methods: {
     ...mapActions(['updateNode', 'deleteNode', 'updatePartnerNode', 'addChild', 'addParent', 'loading', 'setDialog',
-      'setProfileById'
+      'setProfileById', 'setComponent'
     ]),
     addGrandparentToRegistartion (grandparent) {
       var parent = this.parents[this.parentIndex]
@@ -284,10 +280,10 @@ export default {
       this.parents.splice(this.parentIndex, 1, parent)
       console.log(this.parents)
     },
-    // addParentToRegistration (parent) {
-    //   console.log('add parent: ', parent)
-    //   this.parents.push(parent)
-    // },
+    addParentToRegistration (parent) {
+      console.log('add parent: ', parent)
+      this.parents.push(parent)
+    },
     toggleEditProfile (profile) {
       this.registration = profile
       this.toggleDialog('edit-node', null, 'new-registration')
@@ -338,7 +334,9 @@ export default {
         const id = await this.createProfile($event)
         console.log('res: ', id)
         if (id) {
-          this.$router.push({ name: 'profileShow', params: { id: id } })
+          this.setComponent('profile')
+          this.setProfileById({ id })
+          this.$router.push({ name: 'profileShow', params: { id } }).catch(() => {})
         }
       }
     },
@@ -851,7 +849,10 @@ export default {
       if (profileResult.errors) {
         console.error('failed to delete profile', profileResult)
       } else {
-        this.$router.push({ name: 'profileShow', params: { id: this.whoami.profile.id } })
+        
+        this.setComponent('profile')
+        this.setProfileById({ id :this.whoami.profile.id })
+        this.$router.push({ name: 'profileShow', params: { id :this.whoami.profile.id } }).catch(() => {})
         this.confirmationAlert('community successfully deleted')
         setTimeout(() => {
           this.confirmationText = null

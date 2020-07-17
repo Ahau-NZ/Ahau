@@ -30,7 +30,7 @@
       <!-- Desktop doesn't use a drawer, it has the links directly in the app bar -->
       <template v-if="!mobile">
         <!--  WIP links -->
-        <v-btn text @click.stop="setDialog('coming-soon')" active-class="no-active" class="red--text text-uppercase ms-10">Tribes</v-btn>
+        <v-btn text active-class="no-active" :to="{ name: 'discovery' }" class="white--text text-uppercase ms-10">Tribes</v-btn>
         <v-btn active-class="no-active" text @click.native="goArchive" class="white--text text-uppercase ms-10">Archive</v-btn>
 
         <v-btn active-class="no-active" text @click.native="resetWindow" to="/whakapapa" class="white--text text-uppercase ms-10">whakapapa</v-btn>
@@ -58,7 +58,7 @@
     </v-app-bar>
 
     <!-- The drawer shows only on mobile -->
-    <v-navigation-drawer v-if="mobile && enableMenu" v-model="drawer" app dark right>
+    <v-navigation-drawer v-if="mobile && enableMenu" v-model="drawer" app dark right width="60%">
       <v-list nav class="text-uppercase">
         <v-list-item active-class="no-active" @click="goProfile()" >
           <Avatar
@@ -75,8 +75,8 @@
         <v-list-item active-class="no-active" link @click.native="goArchive()" >
           <v-list-item-title class="white--text" >Archive</v-list-item-title>
         </v-list-item>
-        <v-list-item active-class="no-active" link @click.stop="setDialog('coming-soon')">
-          <v-list-item-title class="red--text">Tribes</v-list-item-title>
+        <v-list-item active-class="no-active" link :to="{ name: 'discovery' }">
+          <v-list-item-title class="white--text">Tribes</v-list-item-title>
         </v-list-item>
         <v-list-item class="pt-12">
           <FeedbackButton />
@@ -129,7 +129,7 @@ export default {
       }
     },
     mobile () {
-      return this.$vuetify.breakpoint.xs
+      return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
     isgoWhakapapa () {
       if (this.route.from) {
