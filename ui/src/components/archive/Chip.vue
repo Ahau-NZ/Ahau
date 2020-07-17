@@ -43,7 +43,7 @@ export default {
     type: String,
     chip: Object,
     index: Number,
-    image: { type: Object, default: null }
+    image: { type: String, default: null }
   },
   computed: {
     ...mapGetters(['stories']),

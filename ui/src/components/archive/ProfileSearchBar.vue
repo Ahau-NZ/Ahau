@@ -153,10 +153,8 @@ export default {
       }
     },
     searchInput (newValue) {
-      console.log('newValue')
       if (!newValue) return
       if (newValue.length > 1) {
-        console.log('getting suggestions')
         this.$emit('getSuggestions', newValue)
       } else {
         this.clearSuggestions()

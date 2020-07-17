@@ -5,7 +5,6 @@ const apolloProvider = createProvider()
 const apolloClient = apolloProvider.defaultClient
 
 export async function findByName (name) {
-  console.log('finding person')
   const request = {
     query: gql`
       query($name: String!) {

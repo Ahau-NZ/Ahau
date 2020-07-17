@@ -55,6 +55,7 @@
       </div>
 
       <NewViewDialog
+        v-if="showViewForm"
         :show="showViewForm"
         title="Create a new whakapapa"
         @close="toggleViewForm"
@@ -265,6 +266,7 @@ export default {
       this.toggleProfileForm()
     },
     toggleViewForm () {
+      console.log("show view form")
       if (!this.showViewForm && this.mobile) {
         window.scrollTo({
           top: 0,
