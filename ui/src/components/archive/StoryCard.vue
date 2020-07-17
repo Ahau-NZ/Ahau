@@ -22,9 +22,9 @@
         <v-list-item-title v-else class="headline mb-1 wrap-text">{{ artefact.title }}</v-list-item-title>
       </v-list-item-content>
     </v-list-item>
-    <v-list-item v-if="story.artefacts && story.artefacts.length > 0" class="px-0">
+    <v-list-item v-if="story.artefacts && story.artefacts.length > 0" class="px-0" >
       <v-list-item-content>
-        <v-carousel
+        <v-carousel    
           v-model="model"
           hide-delimiters
           :show-arrows="!mobile && fullStory && story.artefacts && story.artefacts.length > 1" :show-arrows-on-hover="!mobile" :height="showArtefact ? 'auto' : mobile ? '300px' : '500px'" style="background-color:#1E1E1E">
@@ -340,7 +340,7 @@ export default {
     },
     openProfile (profile) {
       this.setProfileById({ id: profile.id, type: 'preview' })
-      this.setDialog({ active: 'view-edit-node', preview: true })
+      this.setDialog({ active: 'view-edit-node', type: 'preview' })
     },
     updateModel (event) {
       this.model = event

@@ -1,6 +1,6 @@
 <template>
-  <v-sheet @click="toggleArtefact" class="container pa-0">
-    <div v-if="artefact.type === 'video'" :style="showArtefact ? mobile ? 'height:300px' : 'height:500px' : 'height:auto'" >
+  <v-sheet @click="toggleArtefact($event)" class="container pa-0">
+    <div v-if="artefact.type === 'video'" :style="mobile ? 'height:300px' : 'height:auto'" >
     <!-- <div v-if="artefact.__typename === 'Video'" :style="showArtefact ? mobile ? 'height:300px' : 'height:500px;' : 'height:auto'" > -->
       <v-hover v-slot:default="{ hover }">
         <video ref="video" :src="artefact.blob.uri" :controls="hover" class="video"/>
@@ -70,7 +70,7 @@ export default {
     }
   },
   methods: {
-    toggleArtefact () {
+    toggleArtefact (e) {
       this.$emit('showArtefact', this.artefact)
     },
     downloadFile () {
@@ -81,7 +81,6 @@ export default {
       hiddenElement.click()
     }
   }
-
 }
 
 </script>
@@ -95,18 +94,17 @@ export default {
   display: block;
 }
 
-.video {
-  position:absolute;
-  top:10%;
-  left:0%;
-  width:100%;
-}
-
 .media {
   width: 100%;
   height: 100%;
   background-color: #1E1E1E;
 
+}
+.video {
+  width: 100%;
+  height: 100%;
+  background-color: #1E1E1E;
+  // display:content;
 }
 
 .center {
