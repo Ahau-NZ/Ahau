@@ -118,6 +118,7 @@
                 label="Size"
                 type="number"
                 v-bind="customProps"
+                suffix="bytes"
               />
             </v-col>
             <v-col class=py-1 cols="12">
