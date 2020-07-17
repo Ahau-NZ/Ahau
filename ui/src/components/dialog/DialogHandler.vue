@@ -362,7 +362,7 @@ export default {
             aliveInterval,
             // UPDATE : for private groups
             // (mix) agree, I just changed this to something safe .. but it's incorrect
-            recps:  'needs to be fixed' // TODO determine correct recps
+            recps: 'needs to be fixed' // TODO determine correct recps
           }
         }
       })
