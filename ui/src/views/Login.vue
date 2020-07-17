@@ -51,11 +51,10 @@
 </template>
 
 <script>
-import gql from 'graphql-tag'
 import Avatar from '@/components/Avatar'
 import NewNodeDialog from '@/components/dialog/profile/NewNodeDialog.vue'
-import pick from 'lodash.pick'
 import { mapGetters, mapActions } from 'vuex'
+import { savePublicProfile } from '@/lib/profile-helpers.js'
 
 const karakia = `
 ---------------------------------
@@ -142,66 +141,19 @@ export default {
     },
 
     async save (profileChanges) {
-      const publicDetails = pick(profileChanges,
-        'preferredName',
-        'avatarImage'
+      const res = await this.$apollo.mutate(
+        savePublicProfile(
+          this.whoami.personal.profile.id,
+          this.whoami.public.profile.id,
+          profileChanges
+        )
       )
-      const publicResult = await this.$apollo.mutate({
-        mutation: gql`
-          mutation($input: ProfileInput!) {
-            saveProfile(input: $input)
-          }
-        `,
-        variables: {
-          input: {
-            id: this.whoami.public.profile.id,
-            ...publicDetails,
-            allowPublic: true
-          }
-        }
-      })
 
-      if (publicResult.errors) {
-        console.error('failed to update profile', publicResult)
+      if (res.errors) {
+        console.error('failed to update profile', res)
         return
       }
-      // TODO 2020-07-06
-      // might be possible to do these two mutations in one?
 
-      const personalDetails = pick(profileChanges,
-        'preferredName',
-        'legalName',
-        'gender',
-        'aliveInterval',
-        'birthOrder',
-        'avatarImage',
-        'altNames',
-        'description',
-        'location',
-        'email',
-        'address',
-        'phone',
-        'profession',
-        'deceased'
-      )
-      const result = await this.$apollo.mutate({
-        mutation: gql`
-          mutation($input: ProfileInput!) {
-            saveProfile(input: $input)
-          }
-        `,
-        variables: {
-          input: {
-            id: this.whoami.personal.profile.id,
-            ...personalDetails
-          }
-        }
-      })
-
-      if (result.errors) {
-        console.error('failed to update profile', result)
-        return
-      }
       this.getCurrentIdentity()
     }
   },

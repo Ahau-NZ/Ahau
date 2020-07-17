@@ -1,5 +1,6 @@
 import gql from 'graphql-tag'
 import { createProvider } from '@/plugins/vue-apollo'
+import pick from 'lodash.pick'
 
 const apolloProvider = createProvider()
 const apolloClient = apolloProvider.defaultClient
@@ -23,6 +24,12 @@ export const PERMITTED_PROFILE_ATTRS = [
   'profession',
   'deceased',
   'type'
+]
+
+export const PERMITTED_PUBLIC_PROFILE_ATTRS = [
+  'id',
+  'preferredName',
+  'avatarImage'
 ]
 
 export const PERMITTED_RELATIONSHIP_ATTRS = [
@@ -104,11 +111,39 @@ export async function getRelatives (profileId) {
   }
 }
 
-export const saveProfile = input => ({
-  mutation: gql`
-    mutation($input: ProfileInput!) {
-      saveProfile(input: $input)
+export const saveProfile = input => {
+  input = pick(input, PERMITTED_PROFILE_ATTRS)
+  return {
+    mutation: gql`
+      mutation($input: ProfileInput!) {
+        saveProfile(input: $input)
+      }
+    `,
+    variables: { input }
+  }
+}
+
+export const savePublicProfile = (personalId, publicId, input) => {
+  const personalDetails = pick(input, PERMITTED_PROFILE_ATTRS)
+  const publicDetails = pick(input, PERMITTED_PUBLIC_PROFILE_ATTRS)
+
+  return {
+    mutation: gql`
+      mutation ($personalDetails:ProfileInput, $publicDetails:ProfileInput) {
+        savePersonProfile: saveProfile(input:$personalDetails)
+        savePublicProfile: saveProfile(input:$publicDetails)
+      }
+    `,
+    variables: {
+      personalDetails: {
+        id: personalId,
+        ...personalDetails
+      },
+      publicDetails: {
+        id: publicId,
+        ...publicDetails,
+        allowPublic: true
+      }
     }
-  `,
-  variables: { input }
-})
+  }
+}
