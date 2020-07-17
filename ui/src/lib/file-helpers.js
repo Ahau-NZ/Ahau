@@ -13,7 +13,7 @@ export const UPLOAD_FILE = input => {
     mutation: gql`
       mutation uploadFile($file: Upload!, $encrypt: Boolean) {
         uploadFile(file: $file, encrypt: $encrypt) {
-          blobId: blob
+          blob
           unbox
           mimeType
           uri

@@ -62,6 +62,10 @@ export default {
 
         if (!blob.mimeType) blob.mimeType = file.type
 
+        // TODO: change when @ssb-graphql/main is updated
+        blob.blobId = blob.blob
+        delete blob.blob
+
         delete blob.__typename
 
         var artefact = {
