@@ -23,12 +23,12 @@
           <v-icon small class="black--text">mdi-magnify</v-icon>
         </v-btn>            -->
         <!-- <v-btn :medium="!mobile" :x-small="mobile" :class="mobile ? 'addBtnMob' : 'addBtn'" class="my-2" fab color="white" @click.stop="openContextMenu($event)"> -->
-        <v-btn :medium="!mobile" :x-small="mobile" :class="mobile ? 'addBtnMob' : 'addBtn'" class="my-2" fab color="white" @click.prevent="dialog = 'new-story'" elevation="2">
+        <v-btn :medium="!mobile" text :x-small="mobile" :class="mobile ? 'addBtnMob' : 'addBtn'" class="my-2" fab color="white" @click.prevent="dialog = 'new-story'" elevation="1">
           <v-icon :large="!mobile" class="black--text">mdi-plus</v-icon>
         </v-btn>
       </div>
     </v-row>
-    <v-row v-if="stories && stories.length > 0">
+    <v-row v-if="profileStories && profileStories.length > 0">
       <transition name="change" mode="out-in">
         <v-col cols="12" xs="12" sm="12" md="9" :class="!showStory ? '':'pa-0'">
           <!-- <v-row>
@@ -36,7 +36,7 @@
           </v-row>
           <v-divider class="mt-6 mb-8" light></v-divider> -->
           <div v-if="!showStory">
-            <v-row v-for="(story, i) in stories" :key="`story-${i}-id-${story.id}`" class="mb-5">
+            <v-row v-for="(story, i) in profileStories" :key="`story-${i}-id-${story.id}`" class="mb-5">
               <StoryCard @updateDialog="updateDialog($event)" @toggleStory="toggleStory($event)" :story="story" />
             </v-row>
           </div>
@@ -51,7 +51,7 @@
     <v-row v-else>
       <v-col>
         <div
-          v-if="!stories || (stories && stories.length < 1)"
+          v-if="!profileStories || (profileStories && profileStories.length < 1)"
           class="px-8 subtitle-1 grey--text "
           :class="{
             'text-center': mobile
@@ -71,10 +71,6 @@
     </li>
   </vue-context> -->
 
-  <!-- <DialogHandler
-    :dialog.sync="dialog.active"
-    :type.sync="dialog.type"
-  /> -->
     <NewRecordDialog
       v-if="dialog === 'new-story'"
       :show="dialog === 'new-story'"
@@ -101,11 +97,9 @@ export default {
     NewRecordDialog
     // CollectionGroup,
     // VueContext,
-    // DialogHandler
   },
   data () {
     return {
-      currentStory: null,
       dialog: null,
       // contextMenuOpts: [{
       //   title: 'Create a new Collection',
@@ -131,7 +125,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['stories', 'showStory', 'whoami', 'currentProfile']),
+    ...mapGetters(['stories', 'showStory', 'whoami', 'currentProfile', 'currentStory']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -139,6 +133,18 @@ export default {
       if (this.mobile && !this.showStory) return 'top-margin'
       else if (!this.mobile) return 'mt-10'
       return ''
+    },
+    profileStories () {
+      if (this.currentProfile.type === 'person') {
+        let profileStories = this.stories.filter((story) =>
+          story.mentions.some((mention) =>
+            mention.profile.id === this.currentProfile.id
+          ))
+        return profileStories
+      } else {
+        // TODO - update to only return stories access === community
+        return this.stories
+      }
     }
   },
   watch: {
@@ -156,10 +162,10 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['addStoryToStories', 'updateStoryInStories', 'removeStoryFromStories']),
+    ...mapMutations(['setStory', 'addStoryToStories', 'updateStoryInStories', 'removeStoryFromStories']),
     ...mapActions(['setComponent', 'setShowStory', 'setDialog', 'getAllStories']),
     async saveStory (input) {
-      var { id, artefacts, mentions, contributors, relatedRecords } = input
+      var { id, artefacts, mentions, contributors, creators, relatedRecords } = input
 
       try {
         const res = await this.$apollo.mutate(SAVE_STORY(input))
@@ -208,6 +214,10 @@ export default {
 
         if (contributors) {
           await this.processLinks(id, contributors, TYPES.STORY_PROFILE_CONTRIBUTOR)
+        }
+
+        if (creators) {
+          await this.processLinks(id, creators, TYPES.STORY_PROFILE_CREATOR)
         }
 
         if (relatedRecords) {
@@ -307,7 +317,7 @@ export default {
       return res.data.saveLink
     },
     toggleStory (story) {
-      this.currentStory = story
+      this.setStory(story)
       this.setShowStory()
       this.setDialog(null)
     },

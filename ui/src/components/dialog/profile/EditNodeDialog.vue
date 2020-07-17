@@ -85,11 +85,12 @@ export default {
     show: { type: Boolean, required: true },
     title: { type: String, default: 'Create a new person' },
     hideDetails: { type: Boolean, default: false },
-    selectedProfile: { type: Object }
+    profile: { type: Object, default: () => {} },
+    readOnly: { type: Boolean, default: false }
   },
   data () {
     return {
-      formData: defaultData(this.selectedProfile),
+      formData: {},
       hasSelection: false
     }
   },
@@ -101,10 +102,10 @@ export default {
     profileChanges () {
       let changes = {}
       Object.entries(this.formData).forEach(([key, value]) => {
-        if (!isEqual(this.formData[key], this.selectedProfile[key])) {
+        if (!isEqual(this.formData[key], this.profile[key])) {
           switch (key) {
             case 'altNames':
-              if (!isEqual(this.formData.altNames.add, this.selectedProfile.altNames)) {
+              if (!isEqual(this.formData.altNames.add, this.profile.altNames)) {
                 changes[key] = pick(this.formData.altNames, ['add', 'remove'])
                 changes[key].add = changes[key].add.filter(Boolean)
               }
@@ -120,7 +121,7 @@ export default {
       return changes
     },
     hasChanges () {
-      return isEqual(this.data, this.selectedProfile)
+      return isEqual(this.data, this.profile)
     }
   },
   watch: {
@@ -151,7 +152,6 @@ export default {
   methods: {
     updateAvatar (avatarImage) {
       this.formData.avatarImage = avatarImage
-      // this.toggleAvatar(null)
     },
     age (born) {
       var age = calculateAge(born)
@@ -165,6 +165,8 @@ export default {
       var output = Object.assign({}, pick(this.profileChanges, [...PERMITTED_PROFILE_ATTRS]))
       if (!isEmpty(output)) {
         this.$emit('submit', output)
+      } else {
+        this.close()
       }
     },
 

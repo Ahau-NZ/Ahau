@@ -171,7 +171,6 @@ function getRelationship (parent, child, relationship) {
   NOTE: cannot be used for partners see below
 */
 function updateNode (nestedWhakapapa, node) {
-  console.log('updateNode', nestedWhakapapa, '--', node)
   // if the nestedWhakapapa has no value
   // then we can search it
   if (!nestedWhakapapa) return null

@@ -1,12 +1,7 @@
 <template>
     <v-row class="mb-12" :class="mobile ? 'mobile-profile':''">
-      <v-col cols="12" sx="12" sm="12" md="9" :class="mobile ? 'pt-7 pb-5 px-5' : 'px-5' ">
+      <v-col cols="12" md="9" :class="mobile ? 'pt-7 pb-5 px-5' : 'px-5' ">
         <ProfileInfoCard :profile="profile" @setupProfile="setupProfile($event)" />
-        <ProfileCard>
-          <template v-slot:content>
-            <ProfileInfoItem title="About" smCols="12" mdCols="12" :value="profile.description"/>
-          </template>
-        </ProfileCard>
         <ProfileCard>
           <template v-slot:content>
             <v-row cols="12" class="pt-0" >
@@ -32,6 +27,30 @@
             </v-row>
           </template>
         </ProfileCard>
+        <ProfileCard v-if="profile.type === 'person'" title="Communities" class="mt-3">
+          <template v-slot:content>
+            <v-row class="justify-center align-center ma-0">
+              <v-col cols="2" class="pt-0 pl-0">
+                <Avatar :size="mobile ? '50px' : '40px'" :image="whoami.profile.avatarImage" :alt="whoami.profile.preferredName" />
+              </v-col>
+              <v-col>
+                <p style="color:black;">{{whoami.profile.preferredName}}</p>
+              </v-col>
+            </v-row>
+          </template>
+        </ProfileCard>
+        <ProfileCard v-else title="Members" class="mt-3">
+          <template v-slot:content>
+            <v-row class="justify-center align-center ma-0">
+              <v-col cols="2" class="pt-0 pl-0">
+                <Avatar :size="mobile ? '50px' : '40px'" :image="whoami.profile.avatarImage" :alt="whoami.profile.preferredName" />
+              </v-col>
+              <v-col>
+                <p style="color:black;">{{whoami.profile.preferredName}}</p>
+              </v-col>
+            </v-row>
+          </template>
+        </ProfileCard>
       </v-col>
     </v-row>
 </template>
@@ -40,8 +59,8 @@
 import ProfileInfoCard from '@/components/profile/ProfileInfoCard.vue'
 import ProfileInfoItem from '@/components/profile/ProfileInfoItem.vue'
 import ProfileCard from '@/components/profile/ProfileCard.vue'
-import { mapGetters } from 'vuex'
 import Avatar from '@/components/Avatar.vue'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'Profile',
@@ -70,35 +89,6 @@ export default {
     ...mapGetters(['whoami']),
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
-    },
-    headerHeight () {
-      switch (this.$vuetify.breakpoint.name) {
-        case 'xs': return '150px'
-        case 'sm': return '150px'
-        case 'md': return '250px'
-        case 'lg': return '250px'
-        case 'xl': return '250px'
-        default:
-          return '250px'
-      }
-    }
-  },
-  methods: {
-    splitParagraphs (text) {
-      if (!text) return
-      return text.split('\n\n')
-    },
-    getComponent () {
-      // isMobile would be some check to determine the validity of that, how ever you check for that
-      switch (this.$vuetify.breakpoint.name) {
-        case 'xs':
-          return 'ProfileShowMobile'
-        case 'sm':
-        case 'md':
-        case 'lg':
-        case 'xl':
-          return 'ProfileShowDesktop'
-      }
     }
   }
 }
@@ -126,5 +116,9 @@ export default {
   .br {
   border-right: 0.5px solid rgba(0,0,0,0.3);
   }
+
+  // .margin-top {
+  //   margin-top: -75px
+  // }
 
 </style>

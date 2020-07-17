@@ -22,9 +22,9 @@
         <v-list-item-title v-else class="headline mb-1 wrap-text">{{ artefact.title }}</v-list-item-title>
       </v-list-item-content>
     </v-list-item>
-    <v-list-item v-if="story.artefacts && story.artefacts.length > 0" class="px-0">
+    <v-list-item v-if="story.artefacts && story.artefacts.length > 0" class="px-0" >
       <v-list-item-content>
-        <v-carousel
+        <v-carousel    
           v-model="model"
           hide-delimiters
           :show-arrows="!mobile && fullStory && story.artefacts && story.artefacts.length > 1" :show-arrows-on-hover="!mobile" :height="showArtefact ? 'auto' : mobile ? '300px' : '500px'" style="background-color:#1E1E1E">
@@ -114,23 +114,19 @@
       </v-col>
     </v-row>
     <div v-if="fullStory && !showArtefact">
-      <!-- <v-row class="px-4">
-        <div class="py-0 px-0" v-if="story.creator" cols="3">
-          <v-list-item-subtitle style="color:grey" class="ml-5 pb-1">Creator</v-list-item-subtitle>
-            <Avatar
-              size="50px"
-              :image="story.creator.avatarImage"
-              :alt="story.creator.preferredName"
-              :gender="story.creator.gender"
-              :aliveInterval="story.creator.aliveInterval"
-              :deceased="story.creator.deceased"
-              showLabel
-              style="position:relative; bottom:8px;"
-              class="ml-5 pt-4"
-              @profile-click="openProfile($event)"
-            />
-        </div>
-      </v-row> -->
+      <v-row class="px-4">
+        <v-col v-if="story.creators && story.creators.length > 0 && fullStory" cols="12" sm="12" md="auto">
+          <v-list-item-subtitle style="color:#a7a3a3">Creators</v-list-item-subtitle>
+          <AvatarGroup
+            style="position:relative; bottom:15px; right:15px"
+            :profiles="story.creators.map(m => m.profile)"
+            show-labels :size="fullStory ? '50px': '30px'"
+            spacing="pr-2"
+            @profile-click="openProfile($event)"
+            :clickable="fullStory"
+          />
+        </v-col>
+      </v-row>
       <v-row class="px-4">
         <v-col class="pt-0 pr-1" v-if="story.relatedRecords && story.relatedRecords.length > 0" cols="12" sm="12" md="auto">
           <v-list-item-subtitle class="pb-1" style="color:#a7a3a3">Related records</v-list-item-subtitle>
@@ -310,7 +306,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['setStory', 'deleteStoryFromStories']),
+    ...mapMutations(['deleteStoryFromStories']),
     ...mapActions(['setShowArtefact', 'setDialog', 'setProfileById', 'setShowStory']),
 
     async deleteStory () {
@@ -349,7 +345,7 @@ export default {
     },
     openProfile (profile) {
       this.setProfileById({ id: profile.id, type: 'preview' })
-      this.setDialog({ active: 'view-edit-node', preview: true })
+      this.setDialog({ active: 'view-edit-node', type: 'preview' })
     },
     updateModel (event) {
       this.model = event
