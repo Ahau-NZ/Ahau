@@ -29,7 +29,6 @@
           name="fade"
           mode="out-in"
        >
-        <!-- <Community v-if="activeComponent === 'profile'" :profile="currentProfile" :setupProfile="setupProfile"/> -->
         <Profile v-if="activeComponent === 'profile'" :profile="currentProfile" :setupProfile="setupProfile"/>
         <Archive v-if="activeComponent === 'archive'" :profile="{...currentProfile, type: 'person'}"/>
         <Timeline v-if="activeComponent === 'timeline'" :profile="currentProfile"/>

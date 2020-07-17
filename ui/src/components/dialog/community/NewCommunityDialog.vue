@@ -31,15 +31,13 @@
 
 <script>
 import Dialog from '@/components/dialog/Dialog.vue'
-
 import CommunityForm from '@/components/community/CommunityForm.vue'
+import { PERMITTED_COMMUNITY_ATTRS } from '@/lib/community-helpers.js'
 
+import pick from 'lodash.pick'
 import isEmpty from 'lodash.isempty'
-import calculateAge from '@/lib/calculate-age'
 
-import uniqby from 'lodash.uniqby'
-
-function setDefaultData () {
+function defaultData () {
   const formData = {
     type: 'community',
     id: '',
@@ -69,7 +67,7 @@ export default {
   },
   data () {
     return {
-      formData: setDefaultData(this.withRelationships),
+      formData: defaultData(this.withRelationships)
     }
   },
 
@@ -79,15 +77,10 @@ export default {
     },
 
     submission () {
+      const form = pick(this.formData, PERMITTED_COMMUNITY_ATTRS)
       let submission = {}
-      Object.entries(this.formData).map(([key, value]) => {
-        if (!isEmpty(this.formData[key])) {
-          if (key === 'birthOrder') {
-            submission[key] = parseInt(value)
-          } else {
-            submission[key] = value
-          }
-        } else if (key === 'deceased') {
+      Object.entries(form).map(([key, value]) => {
+        if (!isEmpty(value)) {
           submission[key] = value
         }
       })
@@ -104,21 +97,8 @@ export default {
       this.close()
     },
     close () {
-      this.resetFormData()
+      this.formData = defaultData()
       this.$emit('close')
-    },
-
-    resetFormData () {
-      this.formData = setDefaultData()
-    }
-
-  },
-  watch: {
-    // watch for changes to avatarImage to decide when to show avatar
-    'formData.avatarImage' (newValue) {
-      if (!isEmpty(this.formData.avatarImage)) {
-        this.showAvatar = true
-      }
     }
   }
 }
