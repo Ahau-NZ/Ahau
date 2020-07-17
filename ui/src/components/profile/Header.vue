@@ -2,7 +2,7 @@
   <v-container class="header-bg full-width my-0 py-0 px-0" :class="headerHeight" v-bind:style="{ backgroundImage: 'url(' + headerImage +')', height: headerHeight + 'px'}">
     <v-row>
       <v-col v-if="mobile" class="mt-12">
-        <Avatar class="avatar-mobile" :image="profile.avatarImage" :alt="profile.preferredName" size="180"/>
+        <Avatar class="avatar-mobile" :image="profile.avatarImage" :alt="profile.preferredName" size="180" :isView="profile.type === 'community'"/>
       </v-col>
       <v-col>
         <ImagePicker class="picker" label=" " type="header" :isView="true" @updateAvatar="updateHeader($event)" :avatarLoaded="headerImage"/>
