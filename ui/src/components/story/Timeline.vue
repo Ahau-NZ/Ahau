@@ -1,47 +1,46 @@
 <template>
   <div>
-    <v-container fluid class="body-width white pa-5 niho-bg">
+    <v-container fluid class="body-width px-2">
 
-      <div :class="{'showOverlay': showStory && !mobile}">
-        <v-row v-if="!showStory" class="top-margin mb-5">
-          <v-col class="headliner black--text pa-0 pl-4 pt-2">
-            Timeline
-          </v-col>
-          <div>
-            <v-btn :medium="!mobile" text :x-small="mobile" :class="mobile ? 'addBtnMob' : 'addBtn'" class="my-2" fab
-              color="white" @click.prevent="dialog = 'new-story'" elevation="1">
-              <v-icon :large="!mobile" class="black--text">mdi-plus</v-icon>
-            </v-btn>
-          </div>
-        </v-row>
+      <div :class="{'showOverlay': showStory && !mobile}"></div>
 
-        <v-row v-if="profileStories && profileStories.length > 0">
-          <transition name="change" mode="out-in">
-            <v-col cols="12" xs="12" sm="12" md="9" :class="!showStory ? '':'pa-0'">
-              <div v-if="!showStory">
-                <TimelineCard :data="profileStories" @toggleStory="toggleStory($event)" />
-              </div>
-              <div v-else>
-                <v-row :class="mobile ? 'pa-0': 'px-6 top-margin'">
-                  <StoryCard @updateDialog="updateDialog($event)" :fullStory="true" :story.sync="currentStory"
-                    @submit="saveStory($event)" @close="toggleStory($event)" />
-                </v-row>
-              </div>
-            </v-col>
-          </transition>
-        </v-row>
-        <v-row v-else>
-          <v-col>
-            <div v-if="!profileStories || (profileStories && profileStories.length < 1)"
-              class="px-8 subtitle-1 grey--text " :class="{
-                      'text-center': mobile
-                    }">
-              No timeline events found
+      <v-row v-if="!showStory" class="top-margin mb-5">
+        <v-col class="headliner black--text pa-0 pl-4 pt-2">
+          Timeline
+        </v-col>
+        <div>
+          <v-btn :medium="!mobile" text :x-small="mobile" :class="mobile ? 'addBtnMob' : 'addBtn'" class="my-2" fab
+            color="white" @click.prevent="dialog = 'new-story'" elevation="1">
+            <v-icon :large="!mobile" class="black--text">mdi-plus</v-icon>
+          </v-btn>
+        </div>
+      </v-row>
+
+      <v-row v-if="profileStories && profileStories.length > 0">
+        <transition name="change" mode="out-in">
+          <v-col cols="12" xs="12" sm="12" md="9" :class="!showStory ? '':'pa-0'">
+            <div v-if="!showStory">
+              <TimelineCard :data="profileStories" @toggleStory="toggleStory($event)" />
+            </div>
+            <div v-else>
+              <v-row :class="mobile ? 'pa-0': 'px-6 top-margin'">
+                <StoryCard @updateDialog="updateDialog($event)" :fullStory="true" :story.sync="currentStory"
+                  @submit="saveStory($event)" @close="toggleStory($event)" />
+              </v-row>
             </div>
           </v-col>
-        </v-row>
-
-      </div>
+        </transition>
+      </v-row>
+      <v-row v-else>
+        <v-col>
+          <div v-if="!profileStories || (profileStories && profileStories.length < 1)"
+            class="px-8 subtitle-1 grey--text " :class="{
+                      'text-center': mobile
+                    }">
+            No timeline events found
+          </div>
+        </v-col>
+      </v-row>
     </v-container>
   </div>
 </template>
@@ -89,18 +88,14 @@
         return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
       },
       profileStories() {
-        console.log("this.currentProfile.type",this.currentProfile.type)
-        
         if (this.currentProfile.type === 'person') {
           let profileStories = this.stories.filter((story) =>
             story.mentions.some((mention) =>
               mention.profile.id === this.currentProfile.id
             ))
-            console.log("profileStories",profileStories)
           return profileStories
         } else {
           // TODO - update to only return stories access === community
-          console.log("this.stories",this.stories)
           return this.stories
         }
       }
@@ -315,6 +310,31 @@
   }
 </script>
 <style lang="scss">
+  
+  .top-margin {
+    margin-top: 80px
+  }
+
+
+  .headliner {
+    font-size: 1em;
+    text-transform: uppercase;
+    font-weight: 400;
+    letter-spacing: 5px;
+  }
+
+  .addBtn {
+    position: fixed;
+    top: 80px;
+    right: 100px
+  }
+
+  .addBtnMob {
+    position: absolute;
+    top: 80px;
+    right: 20px
+  }
+
 
   .showOverlay {
     z-index: 1;

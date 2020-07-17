@@ -129,11 +129,22 @@ export default {
   background-repeat: no-repeat;
 }
 
-.fade-enter-active,
+/* .fade-enter-active,
 .fade-leave-active {
   transition-duration: 0.2;
   transition-property: top;
   transition-timing-function: ease-in-out;
- }
+ } */
+
+ .fade-enter-active {
+    transition: all 0.6s ease-in-out;
+  }
+
+  .fade-enter,
+  .fade-leave-to {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
 
 </style>

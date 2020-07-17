@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-timeline align-start justify-start dense light>
+    <v-timeline align-start justify-start dense light align-top>
       <v-timeline-item v-for="(item, index) in data.slice().reverse()" :key="index" fillDot large :icon="item.storyTypeIcon"
         :color="getDotColour(item.storyTypeIcon)" :icon-color="getIconColour(item.storyTypeIcon)">
 
@@ -106,7 +106,6 @@
                
             </v-row>
           </v-card-actions>
-          
         </v-card>
       </v-timeline-item>
     </v-timeline>
@@ -157,27 +156,28 @@ export default {
 </script>
 
 <style scoped>
-  .relativeCorner {
-    position: absolute;
-    top: 0;
-    right: 0;
-  }
+    .relativeCorner {
+      position: absolute;
+      top: 0;
+      right: 0;
+    }
 
-  .people-circle {
-    width: 50px;
-    margin: 5px;
-    border-radius: 50%;
-    background-color: lightgrey;
-    background-position-y: 10px;
-  }
+    .people-circle {
+      width: 50px;
+      margin: 5px;
+      border-radius: 50%;
+      background-color: lightgrey;
+      background-position-y: 10px;
+    }
 
-  .mobileTitle, .timelineDate {
-    font-size: 1rem !important;
-    line-height: 1.5rem;
-    font-weight: 400;
-    margin: 0;
-    padding: 0px 25px;
-    word-break: normal;
-    color: rgba(0,0,0,0.6)
-  }
+    .mobileTitle, .timelineDate {
+      font-size: 1rem !important;
+      line-height: 1.5rem;
+      font-weight: 400;
+      margin: 0;
+      padding: 0px 25px;
+      word-break: normal;
+      color: rgba(0,0,0,0.6)
+    }
+
 </style>
