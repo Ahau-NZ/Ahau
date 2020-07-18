@@ -26,7 +26,7 @@
               <span>legal name</span>
             </v-row>
           </v-col>
-          <v-col cols="2" :class="!profile.legalName ? 'py-0':'py-0 pl-0 ml-n5'" >
+          <v-col cols="2" :class="!profile.legalName ? 'py-0 px-6':'py-0 pl-0 ml-n5'" >
             <v-row>
               <span class="text">{{profile.preferredName}}</span>
             </v-row>
@@ -42,7 +42,7 @@
               <span>age</span>
             </v-row>
           </v-col>
-          <v-col cols="1" class="px-0" :style="mobile ? 'position: relative;left: 10px':''">
+          <v-col v-if="deleteable" cols="1" class="px-0" :style="mobile ? 'position: relative;left: 10px':''">
             <v-btn @click="$emit('removeParent',index)" @mouseenter="hover = !hover" @mouseleave="hover = !hover"  fab text light x-small >
               <v-icon>mdi-close</v-icon>
             </v-btn>
@@ -67,7 +67,8 @@ export default {
     title: { type: String, default: null },
     size: { type: String, default: '80px' },
     spacing: { type: String, default: 'pr-5' },
-    index: Number
+    index: Number,
+    deleteable: Boolean
   },
   data () {
     return {

@@ -4,9 +4,10 @@
       v-if="isActive('new-registration')"
       :show="isActive('new-registration')"
       :profile="whoami.profile"
-      :title="`Request to join : ${currentProfile.preferredName}`"
+      :title="dialogType === 'review' ? `Request to join Āhau from ---- Benjamin Nootai Tairea`:`Request to join : ${currentProfile.preferredName}`"
       :parents.sync="parents"
       :parentIndex.sync="parentIndex"
+      :type="dialogType"
       @editProfile="toggleEditProfile($event)"
       @close="close"
     />
@@ -14,7 +15,7 @@
       v-if="isActive('new-community')"
       :show="isActive('new-community')"
       :title="`Ko Wai Mātou ---- Create New Community`"
-      :type="type"
+      :type="dialogType"
       @create="addCommunity($event)"
       @close="close"
     />

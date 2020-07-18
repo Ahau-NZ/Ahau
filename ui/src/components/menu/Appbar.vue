@@ -33,7 +33,7 @@
 
             <v-list class="pt-0">
                 <div  v-for="(notification, index) in notifications" :key="index">
-                <v-list-item class="py-1" @click="setDialog('new-registration','review')">
+                <v-list-item class="py-1" @click="setDialog({ active: 'new-registration', type: 'review' })">
                   <Avatar size="50px" :image="whoami.profile.avatarImage"
                     :alt="whoami.profile.preferredName" :gender="whoami.profile.gender" :bornAt="whoami.profile.bornAt" />
                     <!-- <img :src="completePerson.avatarImage.uri" :alt="completePerson.preferredName"> -->
@@ -341,13 +341,13 @@ export default {
     }
   }
 
-  .notificationBadge {
-    -webkit-animation: bounce 3s infinite ease-in-out;
-    -o-animation: bounce 3s infinite ease-in-out;
-    -ms-animation: bounce 3s infinite ease-in-out;
-    -moz-animation: bounce 3s infinite ease-in-out;
-    animation: bounce 3s infinite ease-in-out;
-  }
+  // .notificationBadge {
+  //   -webkit-animation: bounce 3s infinite ease-in-out;
+  //   -o-animation: bounce 3s infinite ease-in-out;
+  //   -ms-animation: bounce 3s infinite ease-in-out;
+  //   -moz-animation: bounce 3s infinite ease-in-out;
+  //   animation: bounce 3s infinite ease-in-out;
+  // }
 
   .ahauRed {
     color: #B12526 !important;

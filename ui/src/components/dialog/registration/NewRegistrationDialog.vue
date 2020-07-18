@@ -3,7 +3,9 @@
     <template v-if="!hideDetails" v-slot:content>
       <v-col cols="12" :class="mobile ? 'pb-5 px-2' : 'px-5' ">
         <v-row>
-          <span class="py-6 px-4 subtitle-2 black--text">To join this communtiy, please confirm that you are happy to share the following profile information with <strong><i>{{currentProfile.preferredName}}</i></strong> members</span>
+          <span  v-if="type === 'review'" class="py-6 px-4 subtitle-2 black--text">A new request has been recieved from <strong><i>Benjamin Nootai Tairea</i></strong> to join <strong><i>Your Whanau.</i></strong><br> Please review their information and respond below</span>
+          <!-- TODO update text with notification data -->
+          <span v-else class="py-6 px-4 subtitle-2 black--text">To join this communtiy, please confirm that you are happy to share the following profile information with <strong><i>{{currentProfile.preferredName}}</i></strong> members</span>
         </v-row>
         <!-- WRAP -->
         <v-form ref="checkboxes">
@@ -31,16 +33,17 @@
             <ProfileInfoCard :profile="formData" isRegistration :style="mobile ? 'margin: 0px 20px' : 'margin: 0px 30px;'"/>
             <v-divider></v-divider>
 
-            <v-card-actions style="display: flex; justify-content: center; align-items: center;">
+            <v-card-actions v-if="type !== 'review'" style="display: flex; justify-content: center; align-items: center;">
               <v-checkbox class="checkbox-label" color="success" v-model="checkbox1" :label="`I agree to share this information`" :rules="requiredRules"></v-checkbox> .
             </v-card-actions>
           </v-card>
 
           <!-- PRIVATE INFORMATION -->
           <v-row>
-            <p class="py-6 px-4 subtitle-2 black--text">The below private information will only be viewable by <strong><i>{{currentProfile.preferredName}}</i></strong> kaitiaki</p>
+            <p v-if="type === 'review'" class="py-6 px-4 subtitle-2 black--text">The below private information will only be viewable by you and any other <strong><i>Your Whanau</i></strong> kaitiaki</p>
+            <p v-else class="py-6 px-4 subtitle-2 black--text">The below private information will only be viewable by <strong><i>{{currentProfile.preferredName}}</i></strong> kaitiaki</p>
           </v-row>
-          <v-card elevation='1' :style="mobile ? 'margin: 0px' : 'margin: 20px'" :class="{'checkbox':checkbox2}" class="pt-2">
+          <v-card elevation='1' :style="mobile ? 'margin: 0px' : 'margin: 20px'" :class="{'checkbox':checkbox2}" class="py-2">
             <ProfileCard :style="mobile ? 'margin: 10px;':'margin:20px'">
               <template v-slot:content>
                 <v-row cols="12" class="pt-0" >
@@ -51,18 +54,25 @@
                 </v-row>
               </template>
             </ProfileCard>
-            <v-card-actions style="display: flex; justify-content: center; align-items: center;">
+            <v-card-actions v-if="type !== 'review'" style="display: flex; justify-content: center; align-items: center;">
               <v-checkbox class="checkbox-label" color="success" v-model="checkbox2" :label="`I agree to share this information`" :rules="requiredRules"></v-checkbox> .
             </v-card-actions>
           </v-card>
 
           <!-- ADD PARENTS INFORMATION-->
-          <p class="pt-5 pl-5 subtitle-2 black--text">Please provide the names of at least one parent and one grandparent</p>
-          <v-card elevation='1' :style="mobile ? 'margin: 0px' : 'margin: 20px'" class="pt-2" :class="{'checkbox':checkbox3}">
-            <div v-for="(parent, index) in parents" :key="index">
+          <p v-if="type === 'review'" class="py-6 px-4 subtitle-2 black--text">Please review the provided whakapapa information provided by <strong><i>Ben</i></strong></p>
+          <p v-else class="pt-5 pl-5 subtitle-2 black--text">Please provide the names of at least one parent and one grandparent</p>
+          <v-card elevation='1' :style="mobile ? 'margin: 0px' : 'margin: 20px'" class="py-1" :class="{'checkbox':checkbox3}">
+            <div v-for="(parent, index) in parentsArray" :key="index">
               <v-row class="rounded-border mx-4">
                 <v-col cols="12">
-                  <ParentGroup :index="index" :profile="parent" :title="parent.relationshipType ? parent.relationshipType + ' parent' : 'parent'" @removeParent="removeParent($event)"/>
+                  <ParentGroup 
+                    :deletable ="type !== 'review'"
+                    :index="index" 
+                    :profile="parent" 
+                    :title="parent.relationshipType ? parent.relationshipType + ' parent' : 'parent'" 
+                    @removeParent="removeParent($event)"
+                  />
                 </v-col>
                 <v-col  cols="12" class="pa-0">
                   <v-divider></v-divider>
@@ -70,17 +80,17 @@
                 <v-col cols="12" v-for="(grandparent, grandparentIndex) in parent.grandparents" :key="`grandparent-${grandparentIndex}`" >
                   <ParentGroup :index="grandparentIndex" :profile="grandparent" :title="grandparent.relationshipType ? grandparent.relationshipType + ' grandparent' : 'grandparent'" @removeParent="removeGrandparent($event, index)"/>
                 </v-col>
-                <v-row class="py-4 pl-10">
+                <v-row v-if="type !== 'review'" class="py-4 pl-10">
                   <v-icon :color="!gpNames ? '#b12526':''">mdi-account-supervisor-circle</v-icon>
                   <AddButton :color="!gpNames ? '#b12526':''" justify="start" :width="'50px'" :label="'Add parents of ' + parent.preferredName" @click="addGrandparent(index)"/>
                 </v-row>
               </v-row>
             </div>
-            <v-row class="py-4 pl-12">
+            <v-row v-if="type !== 'review'" class="py-4 pl-12">
               <v-icon :color="!parentsNames ? '#b12526':''">mdi-account-supervisor-circle</v-icon>
               <AddButton :color="!parentsNames ? '#b12526':''" justify="start" :width="'50px'" label="Add parent" @click="addParent('parent')"/>
             </v-row>
-            <v-card-actions style="display: flex; justify-content: center; align-items: center;">
+            <v-card-actions v-if="type !== 'review'" style="display: flex; justify-content: center; align-items: center;">
               <v-checkbox :disabled="!gpNames" class="checkbox-label" color="success" v-model="checkbox3" :label="`I agree to share this information`" :rules="requiredRules"></v-checkbox> .
             </v-card-actions>
           </v-card>
@@ -89,19 +99,20 @@
           <v-col cols="12" :class="mobile ? 'pt-4 px-0':'pt-6 px-5'">
             <v-textarea
               v-model="message"
-              label="Send a message with your request"
+              :label="type === 'review' ? 'Message recieved with request':'Send a message with your request'"
               no-resize
               rows="3"
               auto-grow
               outlined
               placeholder=" "
+              :readonly="type === 'review'"
             >
             </v-textarea>
           </v-col>
         </v-form>
       </v-col>
       <!-- ERROR MESSAGES -->
-      <v-hover v-if="errorMsgs && errorMsgs.length" v-slot:default="{ hover }">
+      <v-hover v-if="errorMsgs && errorMsgs.length && type !== 'review'" v-slot:default="{ hover }">
         <v-row :class="mobile ? 'mx-2':'mx-10'" align="center" style="border: 1px solid rgba(168,0,0); border-radius: 10px;" >
           <v-col cols="12">
               <v-row justify="center">
@@ -120,7 +131,22 @@
     </template>
 
     <!-- Actions Slot -->
-    <template v-slot:actions>
+    <template v-if="type === 'review'" v-slot:actions>
+      <v-btn @click="respond('decline')"
+        text large
+        class="secondary--text"
+      >
+        <span>decline</span>
+      </v-btn>
+      <v-btn
+        @click="respond('approve')"
+        text large
+        class="blue--text mx-5"
+      >
+        <span>approve</span>
+      </v-btn>
+    </template>
+    <template v-else v-slot:actions>
       <v-btn @click="close"
         text large
         class="secondary--text"
@@ -181,7 +207,8 @@ export default {
     readOnly: { type: Boolean, default: false },
     profile: { type: Object },
     parents: { type: Array, default: null },
-    parentIndex: Number
+    parentIndex: Number,
+    type: { type: String, default: null }
   },
   data () {
     return {
@@ -195,11 +222,23 @@ export default {
       ],
       errorMsgs: [],
       message: '',
-      gpNames: false
+      parentsArray : [],
+      gpNames: false,
     }
   },
   mounted () {
+    // TODO - update Profile, Parents and Message with notifcations data
     this.getFullProfile(this.profile.id)
+    if (this.type === "review") {
+      console.log('i should set parentsArray:, ', this.currentProfile.parents)
+      this.parentsArray = this.currentProfile.parents
+    } else this.parentsArray = this.parents 
+  },
+  watch : {
+    parents (newVal) {
+      console.log(newVal)
+      if (newVal) this.parentsArray = newVal
+    }
   },
   computed: {
     ...mapGetters(['currentProfile', 'selectedProfile']),
@@ -316,20 +355,34 @@ export default {
         var input = {
           ...this.formData,
           parents: this.parents,
-          message: this.message
         }
         var common = pick(input, COMMON_PERMITTED_PROFILE_ATTRS)
         var kaitiaki = pick(input, PRIVATE_PERMITTED_PROFILE_ATTRS)
 
         var output = {
-          common: common,
-          kaitiaki: kaitiaki
+          // TODO - update to match notifications
+          type : 'registration',
+          from : this.formData.id,
+          message : {
+            request : {
+              common: common,
+              kaitiaki: kaitiaki,
+              message: this.message
+            },
+          },
+          to : this.currentProfile.id
         }
         // TODO - send message to Kaitiaki
         console.warn('send this object: ', output)
         this.close()
       }
-    }
+    },
+
+    respond (response) {
+      console.log("add message and then send ", response)
+    },
+
+
   }
 }
 </script>

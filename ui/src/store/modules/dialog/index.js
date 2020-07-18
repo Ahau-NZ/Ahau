@@ -3,7 +3,7 @@
 
 const state = {
   dialog: null,
-  type: false,
+  type: null,
   source: null
 }
 
@@ -35,7 +35,7 @@ const actions = {
   setDialog ({ commit }, dialog, type) {
     if (dialog === null) {
       commit('updateDialog', dialog)
-      commit('updateType', false)
+      commit('updateType', null)
     } else if (typeof dialog === 'object') {
       commit('updateDialog', dialog.active)
       commit('updateType', dialog.type)
