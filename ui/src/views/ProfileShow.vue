@@ -122,7 +122,7 @@ export default {
 }
 
 .niho-bg {
-  background: linear-gradient(rgba(255, 255, 255, 0.99),
+  background: linear-gradient(to right, rgba(255, 255, 255, 0.99),
   rgba(255, 255, 255, 0.7)), url(../assets/niho.svg);
   background-position-x: 100px;
   background-attachment: fixed;
@@ -145,6 +145,5 @@ export default {
     opacity: 0;
     transform: translateY(30px);
   }
-
 
 </style>

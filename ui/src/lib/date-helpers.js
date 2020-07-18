@@ -31,6 +31,35 @@ function humanDate (date) {
   return `${day} ${month} ${year}`
 }
 
+export function yearMonthDay (interval) {
+  if (interval === null) return ''
+
+  const [lower, upper] = interval.split('/')
+  if (lower.length && upper.length) {
+    if (lower === upper) return `${yearMonthDayFormatter(lower)}`
+    return `${yearMonthDayFormatter(lower)} - ${yearMonthDayFormatter(upper)}`
+  }
+  if (lower.length) return yearMonthDayFormatter(lower)
+  if (upper.length) return yearMonthDayFormatter(upper)
+  return ''
+}
+
+function yearMonthDayFormatter (date) {
+  var split = date.split('-')
+  if (!split[0].length) return
+  var year = split[0]
+  var month = split[1]
+  if (!month) return year
+  if (!month.length) return year
+  if (month.match(/X/)) return year
+  month = MONTHS[month]
+  var day = split[2]
+  if (!day) return `${year} - ${month}`
+  if (!day.length) return `${year} - ${month}`
+  if (day.match(/X/)) return `${year} - ${month}`
+  return `${year} - ${month} ${day}`
+}
+
 const MONTHS = {
   '01': 'Jan',
   '02': 'Feb',

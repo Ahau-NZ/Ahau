@@ -1,23 +1,40 @@
 <template>
-  <v-card :flat="timeline" :color="timeline ? 'none' : colour" :dark="!timeline" tile class="d-inline-block related-tile" :min-width="mobile ? '100%' : '300'" :max-width="mobile ? '100%' : '300px'" max-height="60" min-height="60" style="overflow: hidden;" @click="showRelatedStory">
-    <v-container class="pa-0">
-      <v-row >
+  <v-card
+    :flat="timeline"
+    :color="timeline ? 'none' : colour"
+    :dark="!timeline"
+    tile
+    class="d-inline-block related-tile ma-0 pa-0"
+    :min-width="getWidth"
+    :max-width="getWidth"
+    :max-height="timeline ? 'auto' : '60'"
+    :min-height="timeline ? '100' : '60'"
+
+    @click="showRelatedStory"
+
+  >
+    <v-container fluid class="pa-0" >
+      <v-row align="center" class="ma-0">
         <!-- Image -->
-        <v-col cols="auto" class="pa-0 pl-3">
+        <v-col v-if="hasImage" :cols="timeline ? '4': 'auto'" md="2" class="pa-0">
           <v-img
             v-if="hasImage"
-            height=60
-            width="80"
+            :height="timeline ? '100' : '60'"
+            :width="timeline ? '100%' : '80'"
             :src="getImage"
+            :class="timeline ? 'ma-1' : ''"
           >
           </v-img>
-          <v-card v-else-if="!hasImage && !timeline" height=60 width="80" style="background-color:#383838">
+          <v-card v-else height="60" width="80" style="background-color:#383838">
             <v-icon x-large class="pl-5 pt-2">mdi-book-open</v-icon>
           </v-card>
         </v-col>
-        <v-col class="py-0">
-          <span class="truncated-x">{{ title }}</span>
-          <p class="truncate-overflow">{{ description }}</p>
+        <!-- Text Container -->
+        <v-col class="py-2 pl-4" :cols="timeline && !hasImage ? '12' : timeline && mobile ? '8': '10' ">
+          <!-- <span class="truncated-x">{{ title }}</span>
+          <p class="truncate-overflow">{{ description }}</p> -->
+          <span class="timeline-title">{{ title }}</span>
+          <p class="timeline-description my-2">{{ description }}</p>
         </v-col>
         <v-col
           cols="auto"
@@ -44,7 +61,7 @@ export default {
     type: String,
     chip: Object,
     index: Number,
-    timeline: {type: Boolean, default: false}
+    timeline: { type: Boolean, default: false }
   },
   computed: {
     ...mapGetters(['stories']),
@@ -74,6 +91,15 @@ export default {
         }
       }
       return null
+    },
+    getWidth () {
+      if (this.timeline) {
+        return '100%'
+      } else if (this.mobile) {
+        return '100%'
+      } else {
+        return '300'
+      }
     }
   },
   methods: {
@@ -115,5 +141,17 @@ export default {
 .center {
   justify-content: center;
   align-content: center;
+}
+
+.timeline-title {
+  font-size: 1em;
+  font-weight: 400;
+  color: rgba(0,0,0,0.87);
+}
+
+.timeline-description {
+  font-size: 0.9em;
+  font-weight: 300;
+  color: #383838;
 }
 </style>
