@@ -1,6 +1,6 @@
 <template>
   <div style="width: 100%; height: 100%;">
-  <v-card @click.prevent="showStory()" :class="customClass" flat :ripple="false" class="mx-auto" :light="!showArtefact" width="100%" :elevation="!mobile && !showArtefact && fullStory ? '24':''">
+  <v-card @click.prevent="showStory()" :class="customClass" flat :ripple="false" class="mx-auto" :light="!showArtefact" width="100%" :elevation="!mobile && !showArtefact && fullStory ? '24':''" @blur="close">
     <v-list-item class="px-0" style="min-height:0; height:10px">
       <v-list-item-icon v-if="!fullStory" class="pt-0 mt-0" style="position:absolute; top:5px; right:1px; margin-right:0px">
         <v-list-item-subtitle v-if="!mobile" class="no-flex">contributors</v-list-item-subtitle>
@@ -22,7 +22,7 @@
         <v-list-item-title v-else class="headline mb-1 wrap-text">{{ artefact.title }}</v-list-item-title>
       </v-list-item-content>
     </v-list-item>
-    <v-list-item v-if="story.artefacts && story.artefacts.length > 0" class="px-0">
+    <v-list-item v-if="story.artefacts && story.artefacts.length > 0" class="px-0" >
       <v-list-item-content>
         <v-carousel
           v-model="model"
@@ -60,12 +60,12 @@
       </v-list-item-content>
     </v-list-item>
     <v-list-item :disabled="disableClick" :ripple="false" @click.stop="showText()">
-      <v-list-item-content>
+      <v-list-item-content >
         <v-list-item-subtitle v-if="fullStory || showArtefact" class="pb-1" style="color:#a7a3a3"> Description </v-list-item-subtitle>
         <p v-if="!showArtefact" ref="text" :class="turncateText ? 'description' : ''">
           {{ story.description }}
         </p>
-        <p v-if="artefact.description" ref="text" style="color:white" :class="turncateText ? 'description' : ''">
+        <p v-if="artefact.description" ref="text" style="color:white" >
           {{ artefact.description }}
         </p>
       </v-list-item-content>
@@ -114,23 +114,19 @@
       </v-col>
     </v-row>
     <div v-if="fullStory && !showArtefact">
-      <!-- <v-row class="px-4">
-        <div class="py-0 px-0" v-if="story.creator" cols="3">
-          <v-list-item-subtitle style="color:grey" class="ml-5 pb-1">Creator</v-list-item-subtitle>
-            <Avatar
-              size="50px"
-              :image="story.creator.avatarImage"
-              :alt="story.creator.preferredName"
-              :gender="story.creator.gender"
-              :aliveInterval="story.creator.aliveInterval"
-              :deceased="story.creator.deceased"
-              showLabel
-              style="position:relative; bottom:8px;"
-              class="ml-5 pt-4"
-              @profile-click="openProfile($event)"
-            />
-        </div>
-      </v-row> -->
+      <v-row class="px-4">
+        <v-col v-if="story.creators && story.creators.length > 0 && fullStory" cols="12" sm="12" md="auto">
+          <v-list-item-subtitle style="color:#a7a3a3">Creators</v-list-item-subtitle>
+          <AvatarGroup
+            style="position:relative; bottom:15px; right:15px"
+            :profiles="story.creators.map(m => m.profile)"
+            show-labels :size="fullStory ? '50px': '30px'"
+            spacing="pr-2"
+            @profile-click="openProfile($event)"
+            :clickable="fullStory"
+          />
+        </v-col>
+      </v-row>
       <v-row class="px-4">
         <v-col class="pt-0 pr-1" v-if="story.relatedRecords && story.relatedRecords.length > 0" cols="12" sm="12" md="auto">
           <v-list-item-subtitle class="pb-1" style="color:#a7a3a3">Related records</v-list-item-subtitle>
@@ -150,10 +146,7 @@
           <v-list-item-subtitle class="pb-1" style="color:#a7a3a3">Cultural narrative</v-list-item-subtitle>
           <p>{{ story.culturalNarrative }}</p>
         </v-col> -->
-        <v-col v-if="story.format" :cols="mobile ? '6' : '3'">
-          <v-list-item-subtitle class="pb-1" style="color:#a7a3a3">Format</v-list-item-subtitle>
-          <p>{{ story.format }}</p>
-        </v-col>
+
         <v-col v-if="story.identifier" :cols="mobile ? '6' : '3'">
           <v-list-item-subtitle class="pb-1" style="color:#a7a3a3">Identifier</v-list-item-subtitle>
           <p>{{ story.identifier }}</p>
@@ -256,7 +249,7 @@ export default {
   },
   mounted () {
     // grab text height to figure out if we need to hide it or not
-    // this.textHeight = this.$refs.text.offsetHeight
+    this.textHeight = this.$refs.text.offsetHeight
     if (this.fullStory) {
       this.turncateText = false
     }
@@ -283,7 +276,9 @@ export default {
     disableClick () {
       if (this.fullStory) {
         return true
-      } else if (this.textHeight > 60) return false
+      } else if (this.textHeight > 60) {
+        return false
+      }
       return true
     },
 
@@ -308,7 +303,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['setStory', 'deleteStoryFromStories']),
+    ...mapMutations(['deleteStoryFromStories']),
     ...mapActions(['setShowArtefact', 'setDialog', 'setProfileById', 'setShowStory']),
 
     async deleteStory () {
@@ -347,7 +342,7 @@ export default {
     },
     openProfile (profile) {
       this.setProfileById({ id: profile.id, type: 'preview' })
-      this.setDialog({ active: 'view-edit-node', preview: true })
+      this.setDialog({ active: 'view-edit-node', type: 'preview' })
     },
     updateModel (event) {
       this.model = event
