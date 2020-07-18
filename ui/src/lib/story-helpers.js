@@ -274,49 +274,64 @@ export function arrayChanges (array1, array2) {
   })
 }
 
-export function GET_CHANGES (initial, updated) {
+function findItemById (initialArray, itemToFind) {
+  if (!itemToFind.id) return null
+  return initialArray.find(existingItem => {
+    return existingItem.id === itemToFind.id
+  })
+}
+
+export function GET_CHANGES (initialValue, updatedValue) {
   var changes = {}
 
-  Object.entries(updated).forEach(([key, value]) => {
-    if (!isEqual(updated[key], initial[key])) {
-      switch (true) {
-        case Array.isArray(updated[key]):
-          // initiate add remove arrays to tell us what to add or remove
-          changes[key] = { add: [], remove: [] }
+  if (isEqual(initialValue, updatedValue)) return changes
 
-          // go through all the new values in the array
-          updated[key].forEach(newVal => {
-            // try find it in the initial array
-            var oldVal = initial[key].find(og => {
-              return og.id === newVal.id
-            })
-            if (oldVal) {
-              var valuesChanges = GET_CHANGES(oldVal, newVal)
-              if (!isEmpty(valuesChanges)) {
-                // ensure we include the linkId incase it needs to be deleted...
-                changes[key].add.push({ id: oldVal.id, ...valuesChanges, linkId: oldVal.linkId })
+  Object.entries(updatedValue).forEach(([key, value]) => {
+    // see if the value has changes
+    if (!isEqual(initialValue[key], updatedValue[key])) {
+      switch (true) {
+        // the value is an array
+        case Array.isArray(updatedValue[key]):
+          // intiate the array to add, remove fields
+          changes[key] = { add: [], remove: [] }
+          var newItems = []
+          updatedValue[key].forEach(newItem => {
+            // if the item already exists
+            var oldItem = findItemById(initialValue[key], newItem)
+
+            if (oldItem) {
+              // only get what changed...
+              var itemChanges = GET_CHANGES(oldItem, newItem)
+
+              // only add if there are changes
+              if (!isEmpty(itemChanges)) {
+                newItem = { id: newItem.id, linkId: newItem.linkId, ...itemChanges }
+                changes[key].add.push(newItem)
               }
             } else {
-              // its a new one
-              changes[key].add.push(newVal)
+              newItems.push(newItem)
             }
           })
 
-          // get all the items that were deleted
-          changes[key].remove = arrayChanges(initial[key], updated[key])
+          changes[key].remove = arrayChanges(initialValue[key], updatedValue[key])
 
-          // remove dupes
+          // remove dupes (if any) from the add array
           changes[key].add = uniqby(changes[key].add, 'id')
+
+          // add new items to add array
+          changes[key].add = [...changes[key].add, ...newItems]
+
+          // remove dupes from remove array
           changes[key].remove = uniqby(changes[key].remove, 'id')
 
           // remove add or remove if theyre empty
           if (isEmpty(changes[key].add)) delete changes[key].add
           if (isEmpty(changes[key].remove)) delete changes[key].remove
-
-          // if there were no changes, then remove the add/remove
-          if (isEmpty(changes[key])) delete changes[key]
           break
-
+        // use default for non arrays
+        case key === 'duration':
+          changes[key] = parseInt(value)
+          break
         default:
           changes[key] = value
       }
