@@ -51,7 +51,7 @@
           <v-btn @click="setActive('timeline')" light :fab="mobile" text>
           <!-- <v-btn @click="setDialog('coming-soon')" light :fab="mobile" text> -->
             <v-col class="pa-0" :cols="mobile ? '12' : '2'">
-              <TimelineIcon :size="tablet ? 'x-large' : 'medium'" :color="activeComponent === 'timeline' ? 'red' : 'disabled'"/>
+              <TimelineIcon :size="tablet ? 'x-large' : 'medium'" :color="activeComponent === 'timeline' ? 'red' : 'black'"/>
             </v-col>
             <v-col class="py-0" v-if="!mobile && !isOverflowing">
               <span ref="text" :style="activeComponent === 'timeline' ? 'color:#B02425;' : 'black'" class="ml-2 nav-label subtitle-1">

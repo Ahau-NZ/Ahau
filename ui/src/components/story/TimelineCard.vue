@@ -118,17 +118,11 @@
       </v-timeline-item>
 
     </v-timeline>
-    </v-container>
   </div>
 </template>
 
 <script>
-import Contributors from '@/components/Contributors.vue'
 import AvatarGroup from '@/components/AvatarGroup.vue'
-
-import Artefact from '@/components/artefact/Artefact.vue'
-import ArtefactCarouselItem from '@/components/artefact/ArtefactCarouselItem.vue'
-
 import Chip from '@/components/archive/Chip.vue'
 
 import {
@@ -142,10 +136,7 @@ import {
 export default {
   props: ['data'],
   components: {
-    Contributors,
     AvatarGroup,
-    ArtefactCarouselItem,
-    Artefact,
     Chip
   },
   data: () => ({
@@ -195,10 +186,12 @@ export default {
       this.animation = -1
     },
     shorten (description) {
-      if (description.length > 120) {
-        return description.slice(0, 120) + ' ...'
-      } else {
-        return description
+      if (description) {
+        if (description.length > 120) {
+          return description.slice(0, 120) + ' ...'
+        } else {
+          return description
+        }
       }
     }
   }
