@@ -40,13 +40,12 @@
 
       <!-- Don't think this should be here -->
       <div
-        @click="toggleViewForm"
         :class="{
           'text-center': mobile
         }"
         class="mt-8 mb-4"
       >
-        <v-btn fab small>
+        <v-btn @click="toggleViewForm" fab small>
           <v-icon>mdi-plus</v-icon>
         </v-btn>
         <span class="pointer black--text pl-4 subtitle"
@@ -55,6 +54,7 @@
       </div>
 
       <NewViewDialog
+        v-if="showViewForm"
         :show="showViewForm"
         title="Create a new whakapapa"
         @close="toggleViewForm"
@@ -73,6 +73,7 @@
       />
 
       <WhakapapaListHelper
+        v-if="showWhakapapaHelper"
         :show="showWhakapapaHelper"
         @close="toggleWhakapapaHelper"
       />

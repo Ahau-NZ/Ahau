@@ -147,7 +147,6 @@
               <ProfileSearchBar
                 :selectedItems.sync="formData.contributors"
                 :items="contributors"
-                :searchString.sync="searchString"
                 :openMenu.sync="showContributors"
                 type="profile"
                 item="preferredName"

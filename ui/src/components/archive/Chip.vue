@@ -1,5 +1,5 @@
 <template>
-  <v-card :color="colour" dark tile class="d-inline-block related-tile" :min-width="mobile ? '100%' : '300'" :max-width="mobile ? '100%' : '300px'" max-height="60" min-height="60" style="overflow: hidden;" @click="showRelatedStory">
+  <v-card rounded :color="colour" dark tile class="d-inline-block related-tile" :min-width="mobile ? '100%' : '300'" :max-width="mobile ? '100%' : '300px'" max-height="60" min-height="60" style="overflow: hidden;" @click="showRelatedStory">
     <v-container class="pa-0">
       <v-row >
         <v-col cols="auto" class="pa-0 pl-3">
@@ -42,7 +42,8 @@ export default {
     deletable: Boolean,
     type: String,
     chip: Object,
-    index: Number
+    index: Number,
+    image: { type: String, default: null }
   },
   computed: {
     ...mapGetters(['stories']),
@@ -54,6 +55,7 @@ export default {
       return this.$vuetify.breakpoint.xs
     },
     hasImage () {
+      if (this.image) return true
       if (this.chip.image && this.chip.uri) return true
       else if (this.type === 'story' && this.chip.artefacts && this.chip.artefacts.length > 0) {
         var artefact = this.chip.artefacts[0].artefact
@@ -64,6 +66,7 @@ export default {
       return false
     },
     getImage () {
+      if (this.image) return this.image
       if (this.chip.image && this.chip.uri) return this.chip.uri
       else if (this.type === 'story' && this.chip.artefacts && this.chip.artefacts.length > 0) {
         var artefact = this.chip.artefacts[0].artefact
