@@ -24,13 +24,13 @@
           <v-icon small class="black--text">mdi-magnify</v-icon>
         </v-btn>            -->
         <!-- <v-btn :medium="!mobile" :x-small="mobile" :class="mobile ? 'addBtnMob' : 'addBtn'" class="my-2" fab color="white" @click.stop="openContextMenu($event)"> -->
-        <v-btn 
+        <v-btn
           @click.prevent="dialog = 'new-story'"
-          :medium="!mobile" 
-          :class="!mobile ? 'addBtn my-2' : 'addBtnMobile'" 
-          :color="!mobile ? 'white' : 'rgba(177,37,38,1)'" 
-          elevation="2" 
-          fab 
+          :medium="!mobile"
+          :class="!mobile ? 'addBtn my-2' : 'addBtnMobile'"
+          :color="!mobile ? 'white' : 'rgba(177,37,38,1)'"
+          elevation="2"
+          fab
           light
 
           :fixed="mobile"
@@ -75,7 +75,7 @@
       </v-col>
     </v-row>
 
-    <WhakapapaListHelper :show="showWhakapapaHelper" @close="toggleWhakapapaHelper" />      
+    <WhakapapaListHelper :show="showWhakapapaHelper" @close="toggleWhakapapaHelper" />
 
   </v-container>
   <!-- <vue-context ref="menu" class="pa-4">
@@ -139,7 +139,7 @@ export default {
       // }
       // ],
       scrollPosition: 0,
-      showWhakapapaHelper: false,
+      showWhakapapaHelper: false
     }
   },
   props: {
@@ -179,7 +179,7 @@ export default {
   methods: {
     ...mapMutations(['addStoryToStories', 'updateStoryInStories', 'removeStoryFromStories']),
     ...mapActions(['setComponent', 'setShowStory', 'setDialog', 'getAllStories']),
-    toggleWhakapapaHelper() {
+    toggleWhakapapaHelper () {
       this.showWhakapapaHelper = !this.showWhakapapaHelper
     },
     async saveStory (input) {
