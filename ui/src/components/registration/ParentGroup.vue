@@ -16,7 +16,6 @@
                 :gender="profile.gender"
                 :aliveInterval="profile.aliveInterval"
                 :deceased="profile.deceased"
-                :showLabel="mobile"
               />
           </v-col>
           <v-col v-if="profile.legalName" cols="6" :class="mobile ? 'pl-8 py-0':'py-0'">
@@ -27,7 +26,7 @@
               <span>legal name</span>
             </v-row>
           </v-col>
-          <v-col v-if="!mobile" cols="2" class="py-0 pl-0 ml-n5" >
+          <v-col cols="2" :class="!profile.legalName ? 'py-0':'py-0 pl-0 ml-n5'" >
             <v-row>
               <span class="text">{{profile.preferredName}}</span>
             </v-row>

@@ -1,6 +1,6 @@
 <template>
   <div id="container">
-    <!-- <NewRegistrationDialog
+    <NewRegistrationDialog
       v-if="isActive('new-registration')"
       :show="isActive('new-registration')"
       :profile="whoami.profile"
@@ -9,7 +9,7 @@
       :parentIndex.sync="parentIndex"
       @editProfile="toggleEditProfile($event)"
       @close="close"
-    /> -->
+    />
     <NewCommunityDialog
       v-if="isActive('new-community')"
       :show="isActive('new-community')"
@@ -133,7 +133,7 @@
 <script>
 import NewNodeDialog from '@/components/dialog/profile/NewNodeDialog.vue'
 import NewCommunityDialog from '@/components/dialog/community/NewCommunityDialog.vue'
-// import NewRegistrationDialog from '@/components/dialog/registration/NewRegistrationDialog.vue'
+import NewRegistrationDialog from '@/components/dialog/registration/NewRegistrationDialog.vue'
 import EditCommunityDialog from '@/components/dialog/community/EditCommunityDialog.vue'
 import DeleteCommunityDialog from '@/components/dialog/community/DeleteCommunityDialog.vue'
 import EditNodeDialog from '@/components/dialog/profile/EditNodeDialog.vue'
@@ -186,7 +186,7 @@ export default {
     EditCommunityDialog,
     DeleteCommunityDialog,
     ConfirmationMessage,
-    // NewRegistrationDialog
+    NewRegistrationDialog
   },
   props: {
     story: {
@@ -349,7 +349,6 @@ export default {
       deceased,
       aliveInterval
     }) {
-      console.log('creating person: ', preferredName, gender)
       const res = await this.$apollo.mutate({
         mutation: gql`
           mutation($input: ProfileInput!) {
@@ -624,7 +623,6 @@ export default {
       }
     },
     async updateCommunity ($event) {
-      console.log('updateCommunity', $event)
       Object.entries($event).map(([key, value]) => {
         if (value === '') {
           delete $event[key]
@@ -651,7 +649,6 @@ export default {
       }
     },
     async updateProfile ($event) {
-      console.log('update profile: ', $event)
       // When do we need this?
       // Object.entries($event).map(([key, value]) => {
       //   if (value === '') {
@@ -861,10 +858,7 @@ export default {
         this.suggestions = []
         return
       }
-      console.log('search for this: ', $event)
       var records = await this.findByName($event)
-
-      console.log('record: ', records)
 
       if (isEmpty(records)) {
         this.suggestions = []
@@ -876,12 +870,10 @@ export default {
 
         records.forEach(record => {
           record.children = record.children.map(child => {
-            console.log('mapping children')
             profiles[child.profile.id] = child.profile // add this records children to the flatStore
             return child.profile.id // only want the childs ID
           })
           record.parents = record.parents.map(parent => {
-            console.log('mapping parents')
             profiles[parent.profile.id] = parent.profile // add this records parents to the flatStore
             return parent.profile.id // only want the parents ID
           })
@@ -891,14 +883,12 @@ export default {
         // now we have the flatStore for the suggestions we need to filter out the records
         // so we cant add one that is already in the tree
         records = records.filter(record => {
-          console.log('searching in tree')
           if (this.findInTree(record.id)) return false // dont include it
           return true
         })
 
         // hydrate all the left over records
         records = records.map(record => {
-          console.log('hydrating')
           return tree.hydrate(record, profiles) // needed to hydrate to fix all dates
         })
       }
@@ -912,7 +902,6 @@ export default {
         return obj
       })
       var end = Object.assign([], records)
-      console.log('end results: ', end)
       // sets suggestions which is passed into the dialogs
 
       this.suggestions = Object.assign([], records)

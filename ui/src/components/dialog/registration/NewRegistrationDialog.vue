@@ -3,7 +3,7 @@
     <template v-if="!hideDetails" v-slot:content>
       <v-col cols="12" :class="mobile ? 'pb-5 px-2' : 'px-5' ">
         <v-row>
-          <span class="py-6 px-4 subtitle-2 blue--text">To join this communtiy, please confirm that you are happy to share the following profile information with <strong><i>{{currentProfile.preferredName}}</i></strong> members</span>
+          <span class="py-6 px-4 subtitle-2 black--text">To join this communtiy, please confirm that you are happy to share the following profile information with <strong><i>{{currentProfile.preferredName}}</i></strong> members</span>
         </v-row>
         <!-- WRAP -->
         <v-form ref="checkboxes">
@@ -36,49 +36,60 @@
             </v-card-actions>
           </v-card>
 
-      <!-- WRAP END -->
-        <v-row>
-          <p class="py-6 px-4 subtitle-2 blue--text">The below private information will only be viewable by <strong><i>{{currentProfile.preferredName}}</i></strong> kaitiaki</p>
-        </v-row>
-
-        <!-- WRAP -->
-        <v-card elevation='1' :style="mobile ? 'margin: 0px' : 'margin: 20px'" :class="{'checkbox':checkbox2}" class="pt-2">
-        <ProfileCard :style="mobile ? 'margin: 10px;':'margin:20px'">
-          <template v-slot:content>
-            <v-row cols="12" class="pt-0" >
-              <ProfileInfoItem :class="mobile ? 'bb':'br bb'" smCols="12" mdCols="6" title="Date of birth" :value="dob"/>
-              <ProfileInfoItem :class="mobile ? 'bb':'bb'" smCols="12" mdCols="6" title="Phone" :value="formData.phone"/>
-              <ProfileInfoItem :class="mobile ? 'bb':'br'" smCols="12" mdCols="6" title="Email" :value="formData.email"/>
-              <ProfileInfoItem smCols="12" mdCols="6" title="Address" :value="formData.address"/>
-            </v-row>
-          </template>
-        </ProfileCard>
-                    <!-- ADD PARENTS INFORMATION-->
-          <p class="pt-5 pl-5 subtitle-2" :style="parentsRequired ? 'color:crimson':''">Please provide the names of at least one parent and one grandparent</p>
-          <div v-for="(parent, index) in parents" :key="index">
-            <v-row class="rounded-border mx-4">
-              <v-col cols="12">
-                <ParentGroup :index="index" :profile="parent" :title="parent.relationshipType ? parent.relationshipType + ' parent' : 'parent'" @removeParent="removeParent($event)"/>
-              </v-col>
-              <v-col  cols="12" class="pa-0">
-                <v-divider></v-divider>
-              </v-col>
-              <v-col cols="12" v-for="(grandparent, grandparentIndex) in parent.grandparents" :key="`grandparent-${grandparentIndex}`" >
-                <ParentGroup :index="grandparentIndex" :profile="grandparent" :title="grandparent.relationshipType ? grandparent.relationshipType + ' grandparent' : 'grandparent'" @removeParent="removeGrandparent($event, index)"/>
-              </v-col>
-              <v-row class="py-4 pl-10">
-                <AddButton justify="start" :width="'50px'" :label="'Add parents of ' + parent.preferredName" @click="addGrandparent(index)"/>
-              </v-row>
-            </v-row>
-          </div>
-          <v-row class="py-4 pl-10">
-            <AddButton justify="start" :width="'50px'" label="Add parent" @click="addParent('parent')"/>
+          <!-- PRIVATE INFORMATION -->
+          <v-row>
+            <p class="py-6 px-4 subtitle-2 black--text">The below private information will only be viewable by <strong><i>{{currentProfile.preferredName}}</i></strong> kaitiaki</p>
           </v-row>
-          <v-divider></v-divider>
-          <v-col cols="12" :class="mobile ? 'pt-4 px-0':'pt-6 px-4'">
+          <v-card elevation='1' :style="mobile ? 'margin: 0px' : 'margin: 20px'" :class="{'checkbox':checkbox2}" class="pt-2">
+            <ProfileCard :style="mobile ? 'margin: 10px;':'margin:20px'">
+              <template v-slot:content>
+                <v-row cols="12" class="pt-0" >
+                  <ProfileInfoItem :class="mobile ? 'bb':'br bb'" smCols="12" mdCols="6" title="Date of birth" :value="dob"/>
+                  <ProfileInfoItem :class="mobile ? 'bb':'bb'" smCols="12" mdCols="6" title="Phone" :value="formData.phone"/>
+                  <ProfileInfoItem :class="mobile ? 'bb':'br'" smCols="12" mdCols="6" title="Email" :value="formData.email"/>
+                  <ProfileInfoItem smCols="12" mdCols="6" title="Address" :value="formData.address"/>
+                </v-row>
+              </template>
+            </ProfileCard> 
+            <v-card-actions style="display: flex; justify-content: center; align-items: center;">
+              <v-checkbox class="checkbox-label" color="success" v-model="checkbox2" :label="`I agree to share this information`" :rules="requiredRules"></v-checkbox> .
+            </v-card-actions>
+          </v-card>
+     
+          <!-- ADD PARENTS INFORMATION-->
+          <p class="pt-5 pl-5 subtitle-2 black--text">Please provide the names of at least one parent and one grandparent</p>
+          <v-card elevation='1' :style="mobile ? 'margin: 0px' : 'margin: 20px'" class="pt-2" :class="{'checkbox':checkbox3}">
+            <div v-for="(parent, index) in parents" :key="index">
+              <v-row class="rounded-border mx-4">
+                <v-col cols="12">
+                  <ParentGroup :index="index" :profile="parent" :title="parent.relationshipType ? parent.relationshipType + ' parent' : 'parent'" @removeParent="removeParent($event)"/>
+                </v-col>
+                <v-col  cols="12" class="pa-0">
+                  <v-divider></v-divider>
+                </v-col>
+                <v-col cols="12" v-for="(grandparent, grandparentIndex) in parent.grandparents" :key="`grandparent-${grandparentIndex}`" >
+                  <ParentGroup :index="grandparentIndex" :profile="grandparent" :title="grandparent.relationshipType ? grandparent.relationshipType + ' grandparent' : 'grandparent'" @removeParent="removeGrandparent($event, index)"/>
+                </v-col>
+                <v-row class="py-4 pl-10">
+                  <v-icon :color="!gpNames ? '#b12526':''">mdi-account-supervisor-circle</v-icon>
+                  <AddButton :color="!gpNames ? '#b12526':''" justify="start" :width="'50px'" :label="'Add parents of ' + parent.preferredName" @click="addGrandparent(index)"/>
+                </v-row>
+              </v-row>
+            </div>
+            <v-row class="py-4 pl-12">
+              <v-icon :color="!parentsNames ? '#b12526':''">mdi-account-supervisor-circle</v-icon>
+              <AddButton :color="!parentsNames ? '#b12526':''" justify="start" :width="'50px'" label="Add parent" @click="addParent('parent')"/>
+            </v-row>
+            <v-card-actions style="display: flex; justify-content: center; align-items: center;">
+              <v-checkbox :disabled="!gpNames" class="checkbox-label" color="success" v-model="checkbox3" :label="`I agree to share this information`" :rules="requiredRules"></v-checkbox> .
+            </v-card-actions>
+          </v-card>
+
+          <!-- MESSAGE -->
+          <v-col cols="12" :class="mobile ? 'pt-4 px-0':'pt-6 px-5'">
             <v-textarea
               v-model="message"
-              label="Send a message"
+              label="Send a message with your request"
               no-resize
               rows="3"
               auto-grow
@@ -87,57 +98,44 @@
             >
             </v-textarea>
           </v-col>
-        <v-card-actions style="display: flex; justify-content: center; align-items: center;">
-          <v-checkbox class="checkbox-label" color="success" v-model="checkbox2" :label="`I agree to share this information`" :rules="requiredRules"></v-checkbox> .
-        </v-card-actions>
-      </v-card>
-      
-    </v-form>
-  </v-col>
-    <v-hover v-if="errorMsgs && errorMsgs.length" v-slot:default="{ hover }">
-      <v-row @click="editProfile"  :class="mobile ? 'mx-2':'mx-12'" align="center" style="border: 1px solid rgba(168,0,0); border-radius: 10px;" :style="hover ? 'cursor: pointer;background-color:rgba(168,0,0,0.1)':''">
-        <v-col cols="12">
-            <v-row justify="center">
-              <span class="px-4 subtitle-2 secondary--text">To join this communtiy, please update the required information on your profile</span>
-            </v-row>
-            <v-row v-for="error in errorMsgs" :key="error" justify="start" :class="mobile ? 'py-1 pl-2':'py-1 pl-12 ml-12'">
-              <span class="secondary--text "><i>- Please update your {{error}} information</i></span>
-            <!-- <v-col v-for="error in errorMsgs" :key="error[key]"></v-col> -->
-            </v-row>
-            <v-row class="pt-2" justify="center">
-              <v-icon color="secondary">mdi-account-edit</v-icon>
-              <v-btn text large>update your details</v-btn>
-            </v-row>
-        </v-col>
-      </v-row>
-    </v-hover>
-  </template>
+        </v-form>
+      </v-col>
+      <!-- ERROR MESSAGES -->
+      <v-hover v-if="errorMsgs && errorMsgs.length" v-slot:default="{ hover }">
+        <v-row :class="mobile ? 'mx-2':'mx-10'" align="center" style="border: 1px solid rgba(168,0,0); border-radius: 10px;" >
+          <v-col cols="12">
+              <v-row justify="center">
+                <span class="px-4 subtitle-2 secondary--text">To join this communtiy, please update the required information on your profile</span>
+              </v-row>
+              <v-row v-for="error in errorMsgs" :key="error" justify="start" :class="mobile ? 'py-1 pl-2':'py-1 pl-12 ml-12'">
+                <span class="secondary--text "><i>- Please update your {{error}} information</i></span>
+              </v-row>
+              <v-row v-if="remainingErrors" @click="editProfile" class="pt-2" justify="center" :style="hover ? 'cursor: pointer;background-color:rgba(168,0,0,0.1)':''">
+                <v-icon color="secondary">mdi-account-edit</v-icon>
+                <v-btn text large>update your details</v-btn>
+              </v-row>
+          </v-col>
+        </v-row>
+      </v-hover>
+    </template>
 
     <!-- Actions Slot -->
-  <template v-slot:actions>
-    <v-btn @click="close"
-      text large
-      class="secondary--text"
-    >
-      <!-- <v-icon color="secondary">mdi-close</v-icon> -->
-      <span>cancel</span>
-    </v-btn>
-    <!-- <v-btn
-      @click="submit"
-      text large
-      class="blue--text mx-5"
-    > -->
-    <v-btn
-      @click="submit"
-      :disabled="disabled"
-      text large
-      class="blue--text mx-5"
-    >
-      <!-- <v-icon>mdi-check</v-icon> -->
-      <span>approve</span>
-    </v-btn>
-  </template>
-    <!-- End Actions Slot -->
+    <template v-slot:actions>
+      <v-btn @click="close"
+        text large
+        class="secondary--text"
+      >
+        <span>cancel</span>
+      </v-btn>
+      <v-btn
+        @click="submit"
+        :disabled="disabled"
+        text large
+        class="blue--text mx-5"
+      >
+        <span>submit</span>
+      </v-btn>
+    </template>
 
   </Dialog>
 </template>
@@ -189,13 +187,15 @@ export default {
     return {
       checkbox1: false,
       checkbox2: false,
+      checkbox3: false,
       formData: {},
       hasSelection: false,
       requiredRules: [
-        v => v === true || 'Please agree to share information'
+        v => v === true
       ],
       errorMsgs: [],
       message:'',
+      gpNames: false,
     }
   },
   mounted () {
@@ -203,18 +203,23 @@ export default {
   },
   computed: {
     ...mapGetters(['currentProfile', 'selectedProfile']),
-    parentsRequired () {
-      var needParents = true
+    remainingErrors(){
+      if (this.errorMsgs && this.errorMsgs.length) {
+
+        var remaining  = this.errorMsgs.filter((f) => f !== 'grandparents' & f !== 'parents')
+        console.log(remaining)
+        return remaining.length
+      }
+    },
+    parentsNames () {
       if (this.parents && this.parents.length) {
         this.parents.map((parent) => {
           if (parent.grandparents && parent.grandparents.length) {
-            needParents = false
-          } else {
-            needParents = true
-          }
-        })
+            this.gpNames = true
+        }})
+        return true
       }
-      return needParents
+      return false
     },
     length () {
       var name = ''
@@ -234,7 +239,7 @@ export default {
       if (this.errorMsgs && this.errorMsgs.length > 0) {
         return true
       }
-      if (this.parentsRequired) {
+      if (!this.parentsNames && !this.gpNames) {
         return true
       }
       return false
@@ -265,10 +270,14 @@ export default {
     getErrorMsgs () {
       // var errors = {}
       var errors = []
-      var output = Object.keys(this.formData)
+      var profile = {
+        ...this.formData,
+        parents:this.parents
+      }
+      var output = Object.keys(profile)
         .filter(key => REQUIRED_ATTRS.includes(key))
         .reduce((obj, key) => {
-          obj[key] = this.formData[key]
+          obj[key] = profile[key]
           return obj
         }, {})
       Object.entries(output).forEach(([key, value]) => {
@@ -278,6 +287,7 @@ export default {
           errors.push(key)
         }
       })
+      if (!this.gpNames) errors.push('grandparents')
       this.errorMsgs = errors
     },
 

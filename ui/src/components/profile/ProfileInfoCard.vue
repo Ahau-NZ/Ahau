@@ -7,7 +7,7 @@
         <ProfileInfoItem v-if="profile.type === 'person'" class="br" :title="'Occupation'" :value="profile.profession" />
         <ProfileInfoItem v-if="profile.type === 'person'" :title="'City, Country'" :value="profile.location" />
       </v-row>
-      <v-row v-if="profile.type !== 'community' & !isRegistration" class="rounded-border">
+      <v-row v-if="profile.type !== 'community' & !isRegistration & isFamily" class="rounded-border">
         <div v-if="profile.parents && profile.parents.length > 0" class="pl-6">
           <AvatarGroup :profiles="profile.parents" group-title="Parents" size="50px" :show-labels="true"
             @profile-click="openProfile($event)">
@@ -59,7 +59,6 @@ export default {
     isRegistration: { type: Boolean, default: false }
   },
   computed: {
-
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
@@ -74,6 +73,11 @@ export default {
         return formattedDate
       }
       return ' '
+    },
+    isFamily () {
+      if (this.profile.parents && this.profile.parents.length) return true
+      if (this.profile.children && this.profile.children.length) return true
+      return false
     }
   },
   methods: {
