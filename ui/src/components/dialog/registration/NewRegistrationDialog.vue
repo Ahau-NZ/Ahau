@@ -3,11 +3,11 @@
     <template v-if="!hideDetails" v-slot:content>
       <v-col cols="12" :class="mobile ? 'pb-5 px-2' : 'px-5' ">
         <v-row>
-          <span class="py-6 px-4 subtitle-2 blue--text">To join this communtiy, please confirm that you are happy to share the following profile information with <strong><i>{{currentProfile.preferredName}}</i></strong> members</span>
+          <span class="py-6 px-4 subtitle-2 black--text">To join this communtiy, please confirm that you are happy to share the following profile information with <strong><i>{{currentProfile.preferredName}}</i></strong> members</span>
         </v-row>
         <!-- WRAP -->
         <v-form ref="checkboxes">
-          <v-card outlined elevation='1' :style="mobile ? 'margin: 0px' : 'margin: 20px'" :class="{'checkbox':checkbox1}">
+          <v-card elevation='1' :style="mobile ? 'margin: 0px' : 'margin: 20px'" :class="{'checkbox':checkbox1}">
             <v-row>
               <v-col cols="12" md="3" class="py-0">
                 <v-row class="justify-center pt-12">
@@ -28,63 +28,95 @@
               </v-col>
             </v-row>
             <!-- <RegisterButton v-if="profile.type === 'community'" :class="!mobile ? 'margin-top':''"/> -->
-            <ProfileInfoCard :profile="formData" isRegistration :style="mobile ? 'margin: 0px 10px' : 'margin: 0px 30px;'"/>
-            <ProfileCard :style="mobile ? 'margin: 10px 10px' : 'margin: 20px 30px;'">
-              <template v-slot:content>
-                <ProfileInfoItem title="About" smCols="12" mdCols="12" :value="formData.description"/>
-              </template>
-            </ProfileCard>
-
+            <ProfileInfoCard :profile="formData" isRegistration :style="mobile ? 'margin: 0px 20px' : 'margin: 0px 30px;'"/>
             <v-divider></v-divider>
+
             <v-card-actions style="display: flex; justify-content: center; align-items: center;">
               <v-checkbox class="checkbox-label" color="success" v-model="checkbox1" :label="`I agree to share this information`" :rules="requiredRules"></v-checkbox> .
             </v-card-actions>
           </v-card>
-      <!-- WRAP END -->
-        <v-row>
-          <p class="py-6 px-4 subtitle-2 blue--text">The below private information will only be viewable by <strong><i>{{currentProfile.preferredName}}</i></strong> kaitiaki</p>
-        </v-row>
-        <!-- WRAP -->
-        <v-card outlined elevation='1' style="margin: 20px;  " :style="mobile ? 'margin: 0px' : 'margin: 20px'" :class="{'checkbox':checkbox2}">
-        <ProfileCard style="margin: 30px;">
-          <template v-slot:content>
-            <v-row cols="12" class="pt-0" >
-              <ProfileInfoItem :class="mobile ? 'bb':'br bb'" smCols="12" mdCols="6" title="Date of birth" :value="dob"/>
-              <ProfileInfoItem :class="mobile ? 'bb':'bb'" smCols="12" mdCols="6" title="Phone" :value="formData.phone"/>
-              <ProfileInfoItem :class="mobile ? 'bb':'br'" smCols="12" mdCols="6" title="Email" :value="formData.email"/>
-              <ProfileInfoItem smCols="12" mdCols="6" title="Address" :value="formData.address"/>
+
+          <!-- PRIVATE INFORMATION -->
+          <v-row>
+            <p class="py-6 px-4 subtitle-2 black--text">The below private information will only be viewable by <strong><i>{{currentProfile.preferredName}}</i></strong> kaitiaki</p>
+          </v-row>
+          <v-card elevation='1' :style="mobile ? 'margin: 0px' : 'margin: 20px'" :class="{'checkbox':checkbox2}" class="pt-2">
+            <ProfileCard :style="mobile ? 'margin: 10px;':'margin:20px'">
+              <template v-slot:content>
+                <v-row cols="12" class="pt-0" >
+                  <ProfileInfoItem :class="mobile ? 'bb':'br bb'" smCols="12" mdCols="6" title="Date of birth" :value="dob"/>
+                  <ProfileInfoItem :class="mobile ? 'bb':'bb'" smCols="12" mdCols="6" title="Phone" :value="formData.phone"/>
+                  <ProfileInfoItem :class="mobile ? 'bb':'br'" smCols="12" mdCols="6" title="Email" :value="formData.email"/>
+                  <ProfileInfoItem smCols="12" mdCols="6" title="Address" :value="formData.address"/>
+                </v-row>
+              </template>
+            </ProfileCard>
+            <v-card-actions style="display: flex; justify-content: center; align-items: center;">
+              <v-checkbox class="checkbox-label" color="success" v-model="checkbox2" :label="`I agree to share this information`" :rules="requiredRules"></v-checkbox> .
+            </v-card-actions>
+          </v-card>
+
+          <!-- ADD PARENTS INFORMATION-->
+          <p class="pt-5 pl-5 subtitle-2 black--text">Please provide the names of at least one parent and one grandparent</p>
+          <v-card elevation='1' :style="mobile ? 'margin: 0px' : 'margin: 20px'" class="pt-2" :class="{'checkbox':checkbox3}">
+            <div v-for="(parent, index) in parents" :key="index">
+              <v-row class="rounded-border mx-4">
+                <v-col cols="12">
+                  <ParentGroup :index="index" :profile="parent" :title="parent.relationshipType ? parent.relationshipType + ' parent' : 'parent'" @removeParent="removeParent($event)"/>
+                </v-col>
+                <v-col  cols="12" class="pa-0">
+                  <v-divider></v-divider>
+                </v-col>
+                <v-col cols="12" v-for="(grandparent, grandparentIndex) in parent.grandparents" :key="`grandparent-${grandparentIndex}`" >
+                  <ParentGroup :index="grandparentIndex" :profile="grandparent" :title="grandparent.relationshipType ? grandparent.relationshipType + ' grandparent' : 'grandparent'" @removeParent="removeGrandparent($event, index)"/>
+                </v-col>
+                <v-row class="py-4 pl-10">
+                  <v-icon :color="!gpNames ? '#b12526':''">mdi-account-supervisor-circle</v-icon>
+                  <AddButton :color="!gpNames ? '#b12526':''" justify="start" :width="'50px'" :label="'Add parents of ' + parent.preferredName" @click="addGrandparent(index)"/>
+                </v-row>
+              </v-row>
+            </div>
+            <v-row class="py-4 pl-12">
+              <v-icon :color="!parentsNames ? '#b12526':''">mdi-account-supervisor-circle</v-icon>
+              <AddButton :color="!parentsNames ? '#b12526':''" justify="start" :width="'50px'" label="Add parent" @click="addParent('parent')"/>
             </v-row>
-          </template>
-        </ProfileCard>
+            <v-card-actions style="display: flex; justify-content: center; align-items: center;">
+              <v-checkbox :disabled="!gpNames" class="checkbox-label" color="success" v-model="checkbox3" :label="`I agree to share this information`" :rules="requiredRules"></v-checkbox> .
+            </v-card-actions>
+          </v-card>
 
-        <v-divider></v-divider>
-        <v-card-actions style="display: flex; justify-content: center; align-items: center;">
-          <v-checkbox class="checkbox-label" color="success" v-model="checkbox2" :label="`I agree to share this information`" :rules="requiredRules"></v-checkbox> .
-        </v-card-actions>
-      </v-card>
-    </v-form>
-  <!-- WRAP END -->
-
+          <!-- MESSAGE -->
+          <v-col cols="12" :class="mobile ? 'pt-4 px-0':'pt-6 px-5'">
+            <v-textarea
+              v-model="message"
+              label="Send a message with your request"
+              no-resize
+              rows="3"
+              auto-grow
+              outlined
+              placeholder=" "
+            >
+            </v-textarea>
+          </v-col>
+        </v-form>
       </v-col>
-
+      <!-- ERROR MESSAGES -->
       <v-hover v-if="errorMsgs && errorMsgs.length" v-slot:default="{ hover }">
-        <v-row @click="$emit('editProfile',formData)" align="center" style="border: 1px solid rgba(168,0,0); border-radius: 10px;" :style="hover ? 'cursor: pointer;background-color:rgba(168,0,0,0.1)':''">
+        <v-row :class="mobile ? 'mx-2':'mx-10'" align="center" style="border: 1px solid rgba(168,0,0); border-radius: 10px;" >
           <v-col cols="12">
               <v-row justify="center">
-                <span class="px-4 subtitle-2 secondary--text">To join this communtiy, please update the required areas on your profile</span>
+                <span class="px-4 subtitle-2 secondary--text">To join this communtiy, please update the required information on your profile</span>
               </v-row>
-              <v-row v-for="error in errorMsgs" :key="error" justify="center" class="py-1">
+              <v-row v-for="error in errorMsgs" :key="error" justify="start" :class="mobile ? 'py-1 pl-2':'py-1 pl-12 ml-12'">
                 <span class="secondary--text "><i>- Please update your {{error}} information</i></span>
-              <!-- <v-col v-for="error in errorMsgs" :key="error[key]"></v-col> -->
               </v-row>
-              <v-row class="pt-2" justify="center">
+              <v-row v-if="remainingErrors" @click="editProfile" class="pt-2" justify="center" :style="hover ? 'cursor: pointer;background-color:rgba(168,0,0,0.1)':''">
                 <v-icon color="secondary">mdi-account-edit</v-icon>
                 <v-btn text large>update your details</v-btn>
               </v-row>
           </v-col>
         </v-row>
       </v-hover>
-
     </template>
 
     <!-- Actions Slot -->
@@ -93,233 +125,176 @@
         text large
         class="secondary--text"
       >
-        <!-- <v-icon color="secondary">mdi-close</v-icon> -->
         <span>cancel</span>
       </v-btn>
-      <!-- <v-btn
-        @click="submit"
-        text large
-        class="blue--text mx-5"
-      > -->
       <v-btn
         @click="submit"
         :disabled="disabled"
         text large
         class="blue--text mx-5"
       >
-        <!-- <v-icon>mdi-check</v-icon> -->
-        <span>approve</span>
+        <span>submit</span>
       </v-btn>
     </template>
-    <!-- End Actions Slot -->
 
   </Dialog>
 </template>
 
 <script>
 
-import getRelatives, { PERMITTED_PROFILE_ATTRS } from '@/lib/profile-helpers.js'
-
 import Avatar from '@/components/Avatar.vue'
 import Dialog from '@/components/dialog/Dialog.vue'
-
 import ProfileInfoCard from '@/components/profile/ProfileInfoCard.vue'
 import ProfileInfoItem from '@/components/profile/ProfileInfoItem.vue'
 import ProfileCard from '@/components/profile/ProfileCard.vue'
+import ParentGroup from '@/components/registration/ParentGroup.vue'
+import AddButton from '@/components/button/AddButton.vue'
+
 import { dateIntervalToString } from '@/lib/date-helpers'
 
-import EditProfileButton from '@/components/button/EditProfileButton.vue'
-
-import ProfileForm from '@/components/profile/ProfileForm.vue'
 import isEmpty from 'lodash.isempty'
-import calculateAge from '@/lib/calculate-age'
 import pick from 'lodash.pick'
-import isEqual from 'lodash.isequal'
-import clone from 'lodash.clonedeep'
+import calculateAge from '@/lib/calculate-age'
 import { mapActions, mapGetters } from 'vuex'
+import { PRIVATE_PERMITTED_PROFILE_ATTRS, COMMON_PERMITTED_PROFILE_ATTRS } from '@/lib/profile-helpers'
 
 const REQUIRED_ATTRS = [
   'id', 'legalName', 'aliveInterval', 'gender', 'relationshipType',
   'parents', 'profession', 'address', 'email', 'phone', 'location'
 ]
 
-function setProfileData () {
-  const formData = {
-    type: 'person',
-    id: '',
-    preferredName: '',
-    legalName: '',
-    altNames: {
-      add: []
-    },
-    gender: '',
-    relationshipType: 'birth',
-    legallyAdopted: false,
-    children: [],
-    parents: [],
-    siblings: [],
-    avatarImage: {},
-    aliveInterval: '',
-    bornAt: '',
-    diedAt: '',
-    birthOrder: '',
-    description: '',
-    location: '',
-    profession: '',
-    address: '',
-    email: '',
-    phone: '',
-    deceased: false
-  }
-  return formData
-}
-
-function updateProfileData (input) {
-  if (input) { var profile = clone(input) }
-  var aliveInterval = profile.aliveInterval.split('/')
-  return {
-    id: profile.id,
-    gender: profile.gender,
-    legalName: profile.legalName,
-    aliveInterval: profile.aliveInterval,
-    bornAt: aliveInterval[0],
-    diedAt: aliveInterval[1],
-    preferredName: profile.preferredName,
-    avatarImage: profile.avatarImage,
-    description: profile.description,
-    birthOrder: profile.birthOrder,
-    location: profile.location,
-    email: profile.email,
-    phone: profile.phone,
-    deceased: profile.deceased,
-    address: profile.address,
-    profession: profile.profession,
-    altNames: {
-      currentState: clone(profile.altNames),
-      add: [], // new altNames to add
-      remove: [] // altNames to remove
-    },
-    children: profile.children,
-    parents: profile.parents,
-    siblings: []
-  }
-}
-
 export default {
   name: 'NewRegistrationDialog',
   components: {
     Dialog,
-    ProfileForm,
     Avatar,
     ProfileInfoItem,
     ProfileInfoCard,
     ProfileCard,
-    EditProfileButton
+    ParentGroup,
+    AddButton
   },
   props: {
     show: { type: Boolean, required: true },
     title: { type: String, default: 'Create a new person' },
     hideDetails: { type: Boolean, default: false },
     readOnly: { type: Boolean, default: false },
-    selectedProfile: { type: Object }
+    profile: { type: Object },
+    parents: { type: Array, default: null },
+    parentIndex: Number
   },
   data () {
     return {
       checkbox1: false,
       checkbox2: false,
-      profile: {},
-      formData: setProfileData(),
+      checkbox3: false,
+      formData: {},
       hasSelection: false,
       requiredRules: [
-        v => v == true || 'Please agree to share information'
+        v => v === true
       ],
-      errorMsgs: []
+      errorMsgs: [],
+      message: '',
+      gpNames: false
     }
   },
-  created () {
-    this.getFullProfile()
+  mounted () {
+    this.getFullProfile(this.profile.id)
   },
   computed: {
-    ...mapGetters(['currentProfile']),
+    ...mapGetters(['currentProfile', 'selectedProfile']),
+    remainingErrors () {
+      if (this.errorMsgs && this.errorMsgs.length) {
+        var remaining = this.errorMsgs.filter((f) => f !== 'grandparents' & f !== 'parents')
+        return remaining.length
+      } return false
+    },
+    parentsNames () {
+      if (this.parents && this.parents.length) {
+        this.parents.map((parent) => {
+          if (parent.grandparents && parent.grandparents.length) {
+            this.gpNames = true
+          }
+        })
+        return true
+      }
+      return false
+    },
+    length () {
+      var name = ''
+      if (this.currentProfile.legalName) name = this.currentProfile.legalName
+      else if (this.currentProfile.preferredName) name = this.currentProfile.preferredName
+      if (name.length > 30) return 'font-size:6vw'
+      if (name.length > 25) return 'font-size:7vw'
+      if (name.length > 20) return 'font-size:8vw'
+      else return 'font-size: 10vw'
+    },
+
     mobile () {
       return this.$vuetify.breakpoint.xs
-    },
-    customClass () {
-
     },
     disabled () {
       this.getErrorMsgs()
       if (this.errorMsgs && this.errorMsgs.length > 0) {
         return true
       }
+      if (!this.parentsNames && !this.gpNames) {
+        return true
+      }
       return false
     },
     dob () {
       if (this.formData.aliveInterval) {
-        console.log(this.formData.aliveInterval)
         var formattedDate = dateIntervalToString(this.formData.aliveInterval)
         return formattedDate
       }
       return ' '
     }
-    // profileChanges () {
-    //   let changes = {}
-    //   Object.entries(this.formData).forEach(([key, value]) => {
-    //     if (!isEqual(this.formData[key], this.selectedProfile[key])) {
-    //       switch (key) {
-    //         case 'altNames':
-    //           if (!isEqual(this.formData.altNames.add, this.selectedProfile.altNames)) {
-    //             changes[key] = pick(this.formData.altNames, ['add', 'remove'])
-    //             changes[key].add = changes[key].add.filter(Boolean)
-    //           }
-    //           break
-    //         case 'birthOrder':
-    //           changes[key] = parseInt(value)
-    //           break
-    //         default:
-    //           changes[key] = value
-    //       }
-    //     }
-    //   })
-    //   return changes
-    // },
-    // hasChanges () {
-    //   return isEqual(this.data, this.selectedProfile)
-    // }
   },
-  // watch: {
-  //   profile (newVal) {
-  //     this.formData = defaultData(newVal)
-  //   },
-  //   'formData.deceased' (newValue) {
-  //     if (!newValue) this.formData.diedAt = ''
-  //   }
-  // },
   methods: {
-    ...mapActions(['setDialog']),
+    ...mapActions(['setDialog', 'setProfileById']),
+    removeParent (index) {
+      this.parents.splice(index, 1)
+    },
+    removeGrandparent (grandparentIndex, parentIndex) {
+      this.parents[parentIndex].grandparents.splice(grandparentIndex, 1)
+    },
+    addParent () {
+      this.setDialog({ active: 'new-node', type: 'parent' })
+    },
+    addGrandparent (index) {
+      this.$emit('update:parentIndex', index)
+      this.setDialog({ active: 'new-node', type: 'grandparent' })
+    },
     getErrorMsgs () {
       // var errors = {}
       var errors = []
-      var output = Object.keys(this.formData)
+      var profile = {
+        ...this.formData,
+        parents: this.parents
+      }
+      var output = Object.keys(profile)
         .filter(key => REQUIRED_ATTRS.includes(key))
         .reduce((obj, key) => {
-          obj[key] = this.formData[key]
+          obj[key] = profile[key]
           return obj
         }, {})
       Object.entries(output).forEach(([key, value]) => {
         if (isEmpty(output[key])) {
+          if (key === 'location') key = 'city,country'
           // errors[key] = value
           errors.push(key)
         }
       })
+      if (!this.gpNames) errors.push('grandparents')
       this.errorMsgs = errors
     },
-    async getFullProfile () {
-      const profile = await getRelatives(this.selectedProfile.id)
 
-      this.formData = updateProfileData(profile)
-      // this.profile = updateProfileData(profile)
+    async getFullProfile (id) {
+      await this.setProfileById({ id: id, type: 'setWhanau' })
+      this.formData = this.selectedProfile
     },
+
     age (born) {
       var age = calculateAge(born)
       if (age == null) {
@@ -328,33 +303,31 @@ export default {
       return age
     },
 
+    editProfile () {
+      this.$emit('editProfile', this.formData)
+    },
+
     close () {
       this.$emit('close')
     },
 
-    // checkSubmission () {
-    //   var empty = {}
-    //   var output = Object.keys(this.formData)
-    //     .filter(key => REQUIRED_ATTRS.includes(key))
-    //     .reduce((obj, key) => {
-    //       obj[key] = this.formData[key];
-    //       return obj;
-    //     }, {});
-
-    //   Object.entries(output).forEach(([key, value]) => {
-    //     if (isEmpty(output[key])) {
-    //       empty[key] = value
-    //     }
-    //   })
-    //   this.errorMsgs = Object.keys(empty)
-    // },
-
     submit () {
-      // this.checkSubmission()
-      // console.log(this.errorMsgs)
-
       if (this.$refs.checkboxes.validate()) {
-        console.log('approved.')
+        var input = {
+          ...this.formData,
+          parents: this.parents,
+          message: this.message
+        }
+        var common = pick(input, COMMON_PERMITTED_PROFILE_ATTRS)
+        var kaitiaki = pick(input, PRIVATE_PERMITTED_PROFILE_ATTRS)
+
+        var output = {
+          common: common,
+          kaitiaki: kaitiaki
+        }
+        // TODO - send message to Kaitiaki
+        console.warn('send this object: ', output)
+        this.close()
       }
     }
   }
@@ -382,10 +355,6 @@ export default {
 
 .v-input--radio-group__input label {
   font-size: 14px;
-}
-
-.checkbox-label /deep/ label {
-  font-size: 1.1em
 }
 
 .checkbox {

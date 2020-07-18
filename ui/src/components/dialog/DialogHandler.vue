@@ -3,12 +3,13 @@
     <NewRegistrationDialog
       v-if="isActive('new-registration')"
       :show="isActive('new-registration')"
-      :selectedProfile="whoami.profile"
+      :profile="whoami.profile"
       :title="`Request to join : ${currentProfile.preferredName}`"
+      :parents.sync="parents"
+      :parentIndex.sync="parentIndex"
       @editProfile="toggleEditProfile($event)"
       @close="close"
     />
-    
     <NewCommunityDialog
       v-if="isActive('new-community')"
       :show="isActive('new-community')"
@@ -17,7 +18,6 @@
       @create="addCommunity($event)"
       @close="close"
     />
-
     <EditCommunityDialog
       v-if="isActive('edit-community')"
       :show="isActive('edit-community')"
@@ -158,7 +158,6 @@ export default {
   name: 'DialogHandler',
   components: {
     NewNodeDialog,
-    NewCommunityDialog,
     EditNodeDialog,
     SideViewEditNodeDialog,
     DeleteNodeDialog,
@@ -609,7 +608,6 @@ export default {
       }
     },
     async updateCommunity ($event) {
-      console.log('updateCommunity', $event)
       Object.entries($event).map(([key, value]) => {
         if (value === '') {
           delete $event[key]
@@ -880,7 +878,6 @@ export default {
         return obj
       })
       // sets suggestions which is passed into the dialogs
-
       this.suggestions = Object.assign([], records)
     },
     /*

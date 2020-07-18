@@ -326,6 +326,7 @@ export default {
 
     // toggle artefact view
     toggleShowArtefact (artefact) {
+      console.log('click artefact')
       if (this.fullStory) {
         this.artefact = artefact
         this.setShowArtefact()

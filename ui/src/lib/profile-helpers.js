@@ -26,6 +26,31 @@ export const PERMITTED_PROFILE_ATTRS = [
   'type'
 ]
 
+export const COMMON_PERMITTED_PROFILE_ATTRS = [
+  'headerImage',
+  'avatarImage',
+  'id',
+  'type',
+  'gender',
+  'legalName',
+  'preferredName',
+  'description',
+  'altNames',
+  'birthOrder',
+  'location',
+  'profession',
+  'deceased'
+]
+
+export const PRIVATE_PERMITTED_PROFILE_ATTRS = [
+  'aliveInterval',
+  'address',
+  'email',
+  'phone',
+  'parents',
+  'message'
+]
+
 export const PERMITTED_RELATIONSHIP_ATTRS = [
   'relationshipType',
   'legallyAdopted'
@@ -39,7 +64,7 @@ export const PROFILE_FRAGMENT = gql`
   }
 `
 
-export const whoami = ({
+export const getwhoami = ({
   query: gql`
     ${PROFILE_FRAGMENT}
     query {

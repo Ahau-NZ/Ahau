@@ -4,7 +4,14 @@
       <v-col align="center" v-if="!mobile" :class="tablet ? 'pa-2 pt-5 ml-6':'pa-2 ml-12'" cols="12">
         <v-row cols="12" xs="12" sm="12">
           <v-btn :class="tablet ? 'pl-2':''" @click="setActive('profile')" light text style="height: auto;">
-            <Avatar :image="profile.avatarImage" :gender="profile.gender" :alt="profile.preferredName" :age="profile.bornAt" :aliveInterval="profile.aliveInterval" :size="tablet ? '100px':'170px'" :isView="profile.type === 'community'"/>
+            <Avatar
+              :image="profile.avatarImage"
+              :gender="profile.gender"
+              :age="profile.bornAt"
+              :aliveInterval="profile.aliveInterval"
+              :alt="profile.preferredName"
+              :size="tablet ? '110px':'170px'"
+              :isView="profile.type === 'community' && !profile.avatarImage" />
           </v-btn>
         </v-row>
       </v-col>
@@ -64,10 +71,10 @@
         </v-col>
         <v-col :class="mobile ? 'py-0 px-0' : tablet ? 'py-4 px-0' : 'py-1'">
           <!-- TODO: connect whakapapa -->
-          <!-- <v-btn @click="setActive('whakapapa')" light :fab="mobile" text> -->
-          <v-btn @click="setDialog('coming-soon')" light :fab="mobile" text>
+          <v-btn @click="setActive('whakapapa')" light :fab="mobile" text>
+          <!-- <v-btn @click="setDialog('coming-soon')" light :fab="mobile" text> -->
             <v-col class="pa-0" :cols="mobile ? '12' : '2'">
-              <WhakapapaIcon :size="mobile ? 'large' : tablet ? 'x-large' : 'medium'" :color="activeComponent === 'whakapapa' ? 'red' : 'disabled'"/>
+              <WhakapapaIcon :size="mobile ? 'large' : tablet ? 'x-large' : 'medium'" :color="activeComponent === 'whakapapa' ? 'red' : 'black'"/>
             </v-col>
             <v-col class="py-0" v-if="!mobile && !isOverflowing">
               <span ref="text" :style="activeComponent === 'whakapapa' ? 'color:#B02425;' : 'black'" class="ml-2 subtitle-1">

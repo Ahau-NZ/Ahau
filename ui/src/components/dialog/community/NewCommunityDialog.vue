@@ -67,7 +67,7 @@ export default {
   },
   data () {
     return {
-      formData: defaultData(this.withRelationships)
+      formData: defaultData()
     }
   },
 

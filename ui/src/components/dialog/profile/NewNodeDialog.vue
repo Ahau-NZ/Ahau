@@ -358,9 +358,6 @@ export default {
     submit () {
       var submission = pick(this.submission, [...PERMITTED_PROFILE_ATTRS, ...PERMITTED_RELATIONSHIP_ATTRS])
       this.$emit('create', submission)
-      // this.hasSelection
-      //   ? this.$emit('create', pick(this.formData, ['id', 'relationshipType', 'legallyAdopted']))
-      //   : this.$emit('create', submission)
       this.close()
     },
     cordovaBackButton () {

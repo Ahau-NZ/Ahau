@@ -1,7 +1,7 @@
 <template>
   <v-col class="add-row" @click="click" :style="{ justifyContent: justify, height: height }">
-    <v-icon :size="size" :class="iconClass" class="add-button pr-1" :dark="dark">{{icon}}</v-icon>
-    <span :class="`add-label ${dark ? 'white--text' : ''}`">{{ label }}</span>
+    <v-icon :color="color" :size="size" :class="iconClass" class="add-button pr-1" :dark="dark">{{icon}}</v-icon>
+    <span :style="`color:${color}`" :class="`add-label ${dark ? 'white--text' : ''}`">{{ label }}</span>
   </v-col>
 </template>
 
@@ -16,7 +16,8 @@ export default {
     size: { type: String, default: '20px' },
     icon: { type: String, default: 'mdi-plus' },
     iconClass: String,
-    dark: { type: Boolean, default: false }
+    dark: { type: Boolean, default: false },
+    color: { type: String, default: '' }
   },
   methods: {
     click () {

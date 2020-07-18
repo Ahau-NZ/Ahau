@@ -100,7 +100,6 @@ export default {
       return this.$vuetify.breakpoint.xs
     },
     profileChanges () {
-      console.log('profilechanges')
       let changes = {}
       Object.entries(this.formData).forEach(([key, value]) => {
         if (!isEqual(this.formData[key], this.profile[key])) {
@@ -119,7 +118,6 @@ export default {
           }
         }
       })
-      console.log('changes: ', changes)
       return changes
     },
     hasChanges () {
@@ -147,10 +145,6 @@ export default {
     'formData.diedAt' (newVal) {
       this.formData.aliveInterval = this.formData.bornAt + '/' + this.formData.diedAt
     },
-    // profile (newVal) {
-    //   console.log("watching profile: ", newVal)
-    //   this.formData = defaultData(newVal)
-    // },
     'formData.deceased' (newValue) {
       if (!newValue) this.formData.diedAt = ''
     }
@@ -168,10 +162,8 @@ export default {
     },
 
     submit () {
-      console.log('submit')
       var output = Object.assign({}, pick(this.profileChanges, [...PERMITTED_PROFILE_ATTRS]))
       if (!isEmpty(output)) {
-        console.log('output: ', output)
         this.$emit('submit', output)
       } else {
         this.close()
