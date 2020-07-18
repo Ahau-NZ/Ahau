@@ -40,7 +40,7 @@
         </v-col>
       </v-row>
 
-      <NewViewDialog :show="showViewForm" title="Create a new whakapapa" @close="toggleViewForm"
+      <NewViewDialog v-if="showViewForm" :show="showViewForm" title="Create a new whakapapa" @close="toggleViewForm"
         @submit="handleStepOne($event)" />
       <!-- TODO: add suggestions in here as well? -->
       <NewNodeDialog v-if="showProfileForm" :show="showProfileForm" :suggestions="suggestions"
