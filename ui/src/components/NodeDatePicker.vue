@@ -1,7 +1,7 @@
 <template>
   <div>
-    <fieldset :class="`rounded-input ${customClass}`">
-      <legend class="ml-2 custom-label">
+    <fieldset :class="`${customClass}`">
+      <legend :class="`ml-2 ${labelClass}`">
         {{label}}
       </legend>
         <v-row>
@@ -15,7 +15,7 @@
               placeholder="DD"
               v-bind="customProps"
               @focus="focused = true"
-              @blur="onBlur($event, 'day')"
+              @blur="focused = false"
               auto-select-first
             ></v-autocomplete>
           </v-col>
@@ -29,11 +29,9 @@
               placeholder="MM"
               v-bind="customProps"
               @focus="focused = true"
-              @blur="onBlur($event, 'month')"
+              @blur="focused = false"
               auto-select-first
-
             ></v-autocomplete>
-            <!-- @blur="focused = false" -->
           </v-col>
           <v-col class="pa-0 pr-3">
             <v-autocomplete
@@ -46,8 +44,7 @@
               v-bind="customProps"
               @focus="focused = true"
               auto-select-first
-              @blur="onBlur($event, 'year')"
-
+              @blur="focesd = false"
             >
             </v-autocomplete>
           </v-col>
@@ -64,7 +61,8 @@ export default {
     label: String,
     value: { type: [Date, String], default: 'XXXX-XX-XX' },
     readonly: { type: Boolean, default: false },
-    min: { type: String }
+    min: { type: String },
+    dark: Boolean
   },
   data () {
     return {
@@ -91,11 +89,21 @@ export default {
         appendIcon: '',
         readonly: this.readonly,
         menuProps: { light: true },
-        light: true
+        light: !this.dark
       }
     },
     customClass () {
-      return this.focused ? 'custom-fieldset-focused' : 'custom-fieldset-default'
+      var focusedClass = 'light-custom-fieldset-focused light-rounded-input'
+      var defaultClass = 'light-custom-fieldset-default light-rounded-input'
+      if (this.dark) {
+        focusedClass = 'dark-custom-fieldset-focused dark-rounded-input'
+        defaultClass = 'dark-custom-fieldset-default dark-rounded-input'
+      }
+      return this.focused ? focusedClass : defaultClass
+    },
+    labelClass () {
+      if (this.dark) return 'dark-custom-label'
+      return 'light-custom-label'
     },
     // generates the years available to the user
     years () {
@@ -203,31 +211,6 @@ export default {
     }
   },
   methods: {
-    onBlur (event, refName) {
-      // empty
-      if (event.target.value == '') {
-        console.log('empty string')
-        this.date[refName] = ''
-      }
-      // invalid
-      else if (this.$refs[refName].filteredItems === undefined) {
-        console.log('invalid')
-        this.date[refName] = ''
-      }
-      // item
-      else if (this.$refs[refName].filteredItems[0].text) {
-        console.log('item', this.$refs[refName].filteredItems[0].text)
-        this.date[refName] = this.$refs[refName].filteredItems[0].text
-      }
-      // value
-      else if (this.$refs[refName].value) {
-        console.log(event)
-        console.log('value', this.$refs[refName].value)
-        this.date[refName] = this.$refs[refName].value
-      }
-      this.focused = false
-    },
-
     // turns an integer into a double digit string
     intToDDString (int) {
       if (int < 10) {
@@ -389,8 +372,13 @@ export default {
   pointer-events: none;
 }
 
-.rounded-input {
+.light-rounded-input {
   border: 1px solid rgba(0,0,0,0.3);
+  border-radius: 4px;
+}
+
+.dark-rounded-input {
+  border: 1px solid #545454;
   border-radius: 4px;
 }
 
@@ -401,7 +389,7 @@ export default {
   border-style: none;
 }
 
-.custom-label {
+.light-custom-label {
   font-size: 12px;
   margin-left: 8px;
   color: #858585;
@@ -409,15 +397,35 @@ export default {
   padding-right: 3px;
 }
 
-.custom-fieldset-default:hover {
+.light-custom-fieldset-default:hover {
   border-color: #242424;
 }
 
-.custom-fieldset-focused {
+.light-custom-fieldset-focused {
   border-width: 2px;
   border-color: black;
-  .custom-label {
+  .light-custom-label {
     color: black;
+  }
+}
+
+.dark-custom-label {
+  font-size: 12px;
+  margin-left: 8px;
+  color: white;
+  padding-left: 3px;
+  padding-right: 3px;
+}
+
+.dark-custom-fieldset-default:hover {
+  border-color: white;
+}
+
+.dark-custom-fieldset-focused {
+  border-width: 2px;
+  border-color: #545454;
+  .dark-custom-label {
+    color: #545454;
   }
 }
 </style>

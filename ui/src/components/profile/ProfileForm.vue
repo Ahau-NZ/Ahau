@@ -3,7 +3,7 @@
       <v-row>
         <!-- Upload profile photo -->
         <v-col :order="mobile ? '' : '2'" class="py-0">
-          <v-row class="justify-center pt-12">
+          <v-row v-if="showAvatar" class="justify-center pt-12">
             <!-- <v-col cols="12" class="pa-0" > -->
               <!-- Avatar -->
             <Avatar
@@ -120,14 +120,14 @@
           </v-row>
 
           <!-- Editing: relationship type-->
-          <v-row>
+          <v-row v-if="withRelationships || editRelationship">
             <v-col cols="12" class="pa-1">
               <v-select
                 v-model="formData.relationshipType"
                 label="Related by"
                 :items="relationshipTypes"
                 outlined
-                v-bind="customProps"
+                :menu-props="{light: true}"
               />
             </v-col>
           </v-row>
@@ -197,7 +197,7 @@
                   </div>
                 </v-col>
               </v-row>
-              <v-row class="pt-6">
+              <v-row>
                 <v-col  v-if="!readonly || formData.gender === 'other'" cols="6" class="pl-10 py-0">
                   <v-checkbox v-model="formData.gender"
                     value="other"
@@ -206,9 +206,9 @@
                     outlined
                   />
                 </v-col>
-                <v-col  v-if="!readonly || formData.gender === 'unkown'" cols="6" class="pa-10 py-0">
+                <v-col  v-if="!readonly || formData.gender === 'unknown'" cols="6" class="pa-10 py-0">
                   <v-checkbox v-model="formData.gender"
-                    value="unkown"
+                    value="unknown"
                     label="unknown" :hide-details="true"
                     v-bind="customProps"
                     outlined
@@ -240,7 +240,7 @@
             <v-col cols="12" class="pa-1">
               <v-text-field
                 v-model="formData.profession"
-                label="Occupation"
+                label="Profession"
                 v-bind="customProps"
                 outlined
               />
@@ -286,7 +286,19 @@
               />
             </v-col>
           </v-row>
+          <v-row>
+            <v-col cols="12" class="pa-1">
+              <!-- Location -->
+              <v-text-field
+                v-model="formData.location"
+                label="City, Country"
+                v-bind="customProps"
+                outlined
+              />
+            </v-col>
+          </v-row>
         </v-col>
+
       </v-row>
   </v-form>
 </template>
@@ -321,7 +333,7 @@ export default {
     return {
       genders: GENDERS,
       relationshipTypes: RELATIONSHIPS,
-      formData: this.profile,
+      formData: {},
       form: {
         valid: true,
         showDescription: false
@@ -329,21 +341,33 @@ export default {
       selectedGender: ''
     }
   },
+  mounted () {
+    if (this.formData.gender) {
+      if (this.formData.gender === 'male') this.updateSelectedGender('male')
+      if (this.formData.gender === 'female') this.updateSelectedGender('female')
+    }
+  },
   watch: {
     profile: {
       deep: true,
       immediate: true,
-      handler (newVal) {
+      handler (newVal, oldVal) {
         this.formData = newVal
       }
     },
     'formData.gender' (newValue) {
-      console.log('gender: ', newValue)
-      if (newValue === 'male') this.updateSelectedGender('male')
-      if (newValue === 'female') this.updateSelectedGender('female')
+      if (newValue === 'other' || newValue === 'unknown') this.updateSelectedGender('other')
     }
   },
   computed: {
+    showAvatar () {
+      if (this.isEditing) return true
+      if (this.formData) {
+        if (this.formData.gender) return true
+        if (this.formData.avatarImage) return true
+        else return false
+      } else return false
+    },
     customProps () {
       // readonly = hasSelected || !isEditing
       return {

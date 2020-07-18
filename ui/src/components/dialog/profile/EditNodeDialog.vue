@@ -158,7 +158,6 @@ export default {
   methods: {
     updateAvatar (avatarImage) {
       this.formData.avatarImage = avatarImage
-      // this.toggleAvatar(null)
     },
     age (born) {
       var age = calculateAge(born)
@@ -174,6 +173,8 @@ export default {
       if (!isEmpty(output)) {
         console.log('output: ', output)
         this.$emit('submit', output)
+      } else {
+        this.close()
       }
     },
 

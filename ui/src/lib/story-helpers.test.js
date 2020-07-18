@@ -28,6 +28,7 @@ const { children, parents } = personComplete
 const storyComplete = {
   // ...storyMinimal,
   mentions: [...children],
+  creators: [...children],
   // categories: [],
   // collections: [],
   // access: [],
@@ -75,7 +76,8 @@ test('create/update new story (arrays)', t => {
   }
   t.deepEqual(arrayStoryChanges, {
     mentions: expectedArray,
-    contributors: expectedArray
+    contributors: expectedArray,
+    creators: expectedArray
   }, 'returns all the changed arrays in format array: { add: [...], remove: [...] }')
 
   var storyUpdated = clone(storyComplete)

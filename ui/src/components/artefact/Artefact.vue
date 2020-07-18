@@ -1,22 +1,30 @@
 <template>
-  <v-sheet @click="toggleArtefact" class="container pa-0">
-    <div v-if="artefact.type === 'video'" :style="showArtefact ? mobile ? 'height:300px' : 'height:500px' : 'height:auto'" >
+  <v-sheet @click="toggleArtefact($event)" class="container pa-0">
+    <div v-if="artefact.type === 'video'" :style="mobile ? 'height:300px' : 'height:auto'" >
     <!-- <div v-if="artefact.__typename === 'Video'" :style="showArtefact ? mobile ? 'height:300px' : 'height:500px;' : 'height:auto'" > -->
       <v-hover v-slot:default="{ hover }">
-        <video ref="video" :src="artefact.uri" :controls="hover" class="video"/>
+        <video ref="video" :src="artefact.blob.uri" :controls="hover" class="video"/>
       </v-hover>
     </div>
     <div v-if="artefact.type === 'audio'" :style="showArtefact ? 'height:300px': mobile ? 'height:300px' : 'height:500px'">
     <!-- <div v-if="artefact.__typename === 'Audio'" :style="showArtefact ? 'height:300px': mobile ? 'background-color:dimgray;height:300px' : 'background-color:dimgray;height:500px'"> -->
-      <audio :src="artefact.uri" class="px-12" style="width:100%;height:80%;"/>
+      <audio :src="artefact.blob.uri" class="px-12" style="width:100%;height:80%;"/>
     </div>
-    <v-img ref="photo" v-if="artefact.type === 'photo'" class="media center" :src="artefact.uri" contain></v-img>
-    <!-- <v-img v-if="artefact.__typename === 'Photo'" :src="artefact.blob" style="height:100%"></v-img> -->
+    <v-img ref="photo" v-if="artefact.type === 'photo'" class="media center" :src="artefact.blob.uri" contain></v-img>
+    <div v-else-if="artefact.type === 'document'" class="media" style="margin-top:15%;">
+      <div class="text-center">
+        <v-icon size="100px">{{ artefactIcon }}</v-icon><br>
+        <v-btn text @click.prevent="downloadFile()">
+          Download file
+        </v-btn>
+      </div>
+    </div>
   </v-sheet>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
+import { ARTEFACT_ICON } from '@/lib/artefact-helpers.js'
 
 export default {
   name: 'Artefact',
@@ -25,10 +33,15 @@ export default {
     model: { type: Number, default: -1 },
     index: Number
   },
+  components: {
+  },
   computed: {
     ...mapGetters(['showArtefact']),
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
+    },
+    artefactIcon () {
+      return ARTEFACT_ICON(this.artefact.blob.mimeType)
     }
   },
   watch: {
@@ -57,11 +70,17 @@ export default {
     }
   },
   methods: {
-    toggleArtefact () {
+    toggleArtefact (e) {
       this.$emit('showArtefact', this.artefact)
+    },
+    downloadFile () {
+      var hiddenElement = document.createElement('a')
+      hiddenElement.href = this.artefact.blob.uri
+      hiddenElement.target = '_blank'
+      hiddenElement.download = this.artefact.title
+      hiddenElement.click()
     }
   }
-
 }
 
 </script>
@@ -75,18 +94,17 @@ export default {
   display: block;
 }
 
-.video {
-  position:absolute;
-  top:10%;
-  left:0%;
-  width:100%;
-}
-
 .media {
   width: 100%;
   height: 100%;
   background-color: #1E1E1E;
 
+}
+.video {
+  width: 100%;
+  height: 100%;
+  background-color: #1E1E1E;
+  // display:content;
 }
 
 .center {

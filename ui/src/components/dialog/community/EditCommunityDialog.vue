@@ -39,37 +39,36 @@
 </template>
 
 <script>
-
-import { PERMITTED_PROFILE_ATTRS } from '@/lib/profile-helpers.js'
+import { PERMITTED_COMMUNITY_ATTRS } from '@/lib/community-helpers.js'
 import Dialog from '@/components/dialog/Dialog.vue'
 import CommunityForm from '@/components/community/CommunityForm.vue'
 import isEmpty from 'lodash.isempty'
 import pick from 'lodash.pick'
 import isEqual from 'lodash.isequal'
-import clone from 'lodash.clonedeep'
+// import clone from 'lodash.clonedeep'
 
 function defaultData (profile) {
   return {
     id: profile.id,
-    gender: profile.gender,
-    legalName: profile.legalName,
-    bornAt: profile.bornAt,
-    diedAt: profile.diedAt,
+
     preferredName: profile.preferredName,
-    avatarImage: profile.avatarImage,
+    // legalName: profile.legalName,
+    // altNames: {
+    //   currentState: clone(profile.altNames),
+    //   add: [], // new altNames to add
+    //   remove: [] // altNames to remove
+    // },
+
     description: profile.description,
-    birthOrder: profile.birthOrder,
-    location: profile.location,
+    avatarImage: profile.avatarImage,
+    headerImage: profile.headerImage,
+
     email: profile.email,
     phone: profile.phone,
-    deceased: profile.deceased,
     address: profile.address,
-    profession: profile.profession,
-    altNames: {
-      currentState: clone(profile.altNames),
-      add: [], // new altNames to add
-      remove: [] // altNames to remove
-    }
+    location: profile.location,
+
+    tombstone: profile.tombstone
   }
 }
 
@@ -93,22 +92,11 @@ export default {
 
   computed: {
     profileChanges () {
+      var form = Object.assign({}, pick(this.formData, [...PERMITTED_COMMUNITY_ATTRS]))
       let changes = {}
-      Object.entries(this.formData).forEach(([key, value]) => {
-        if (!isEqual(this.formData[key], this.selectedProfile[key])) {
-          switch (key) {
-            case 'altNames':
-              if (!isEqual(this.formData.altNames.add, this.selectedProfile.altNames)) {
-                changes[key] = pick(this.formData.altNames, ['add', 'remove'])
-                changes[key].add = changes[key].add.filter(Boolean)
-              }
-              break
-            case 'birthOrder':
-              changes[key] = parseInt(value)
-              break
-            default:
-              changes[key] = value
-          }
+      Object.entries(form).forEach(([key, value]) => {
+        if (!isEqual(value, this.selectedProfile[key])) {
+          changes[key] = value
         }
       })
       return changes
@@ -132,9 +120,8 @@ export default {
     },
 
     submit () {
-      var output = Object.assign({}, pick(this.profileChanges, [...PERMITTED_PROFILE_ATTRS]))
-      if (!isEmpty(output)) {
-        this.$emit('submit', output)
+      if (!isEmpty(this.profileChanges)) {
+        this.$emit('submit', this.profileChanges)
       }
     },
     toggleDescription () {

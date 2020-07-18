@@ -85,8 +85,44 @@ import calculateAge from '@/lib/calculate-age'
 
 import uniqby from 'lodash.uniqby'
 import pick from 'lodash.pick'
+import clone from 'lodash.clonedeep'
 
 import { PERMITTED_PROFILE_ATTRS, PERMITTED_RELATIONSHIP_ATTRS, GET_PROFILE } from '@/lib/profile-helpers'
+
+function defaultData (input) {
+  var profile = clone(input)
+
+  var aliveInterval = ['', '']
+
+  if (profile.aliveInterval) {
+    aliveInterval = profile.aliveInterval.split('/')
+  }
+
+  return {
+    type: 'person',
+    id: profile.id,
+    gender: profile.gender,
+    legalName: profile.legalName,
+    aliveInterval: profile.aliveInterval,
+    bornAt: aliveInterval[0],
+    diedAt: aliveInterval[1],
+    preferredName: profile.preferredName,
+    avatarImage: profile.avatarImage,
+    description: profile.description,
+    birthOrder: profile.birthOrder,
+    location: profile.location,
+    email: profile.email,
+    phone: profile.phone,
+    deceased: profile.deceased,
+    address: profile.address,
+    profession: profile.profession,
+    altNames: {
+      currentState: clone(profile.altNames),
+      add: [], // new altNames to add
+      remove: [] // altNames to remove
+    }
+  }
+}
 
 function setDefaultData (withRelationships) {
   const formData = {
@@ -137,6 +173,7 @@ export default {
     suggestions: { type: Array },
     hideDetails: { type: Boolean, default: false },
     selectedProfile: { type: Object },
+    withView: { type: Boolean, default: true },
     type: {
       type: String,
       validator: (val) => [
@@ -148,7 +185,8 @@ export default {
     return {
       formData: setDefaultData(this.withRelationships),
       hasSelection: false,
-      closeSuggestions: []
+      closeSuggestions: [],
+      profile: {}
     }
   },
   mounted () {
@@ -334,7 +372,7 @@ export default {
     },
     async setFormData (person) {
       this.hasSelection = true
-      this.formData = person.profile
+      this.profile = person.profile
       this.formData.relationshipType = person.relationshipType
       this.formData.legallyAdopted = false
     },
@@ -347,6 +385,20 @@ export default {
 
   },
   watch: {
+    profile: {
+      deep: true,
+      immediate: true,
+      handler (newVal) {
+        if (!newVal) return
+        this.formData = defaultData(newVal)
+
+        if (this.formData.aliveInterval) {
+          var dates = this.formData.aliveInterval.split('/')
+          this.formData.bornAt = dates[0]
+          this.formData.diedAt = dates[1]
+        }
+      }
+    },
     'formData.relationshipType' (newValue, oldValue) {
       // make sure adoption status can't be set true when relationship type is birth
       if (newValue === 'birth') this.formData.legallyAdopted = false

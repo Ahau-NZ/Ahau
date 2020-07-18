@@ -147,7 +147,6 @@
               <ProfileSearchBar
                 :selectedItems.sync="formData.contributors"
                 :items="contributors"
-                :searchString.sync="searchString"
                 :openMenu.sync="showContributors"
                 type="profile"
                 item="preferredName"
@@ -266,36 +265,29 @@
               <v-divider v-if="mobile" light class="mt-6 mr-4"></v-divider>
             </v-col>
             <!-- ADD CREATOR -->
-            <!-- <v-col cols="12" md="auto" class="pa-5">
-              <v-row v-if="!showCreator" @click="showCreator = true">
+            <v-col cols="12" md="auto" class="pa-5">
+              <v-row v-if="!showCreators" @click="showCreators = true; creators = []" class="pl-5">
                 <v-icon small>mdi-plus</v-icon>
-                <AddButton size="20px" icon="mdi-account-circle" iconClass="pr-3" label="Creator" justify="start"/>
+                  <AddButton size="20px" icon="mdi-library" iconClass="pr-3" label="Creators"  justify="start"/>
               </v-row>
               <ProfileSearchBar
-                :selectedItems.sync="formData.creator"
+                :selectedItems.sync="formData.creators"
                 :items="creators"
-                :openMenu.sync="showCreator"
-                single
+                :searchString.sync="searchString"
+                :openMenu.sync="showCreators"
                 type="profile"
                 item="preferredName"
-                placeholder="add creator"
+                placeholder="creators"
                 @getSuggestions="getSuggestions('creators', $event)"
               />
-              <div v-if="formData.creator" class="pt-5 pl-5">
-                <Avatar
-                  style="width:50px"
-                  size="40px"
-                  :image="formData.creator.avatarImage"
-                  :alt="formData.creator.preferredName"
-                  :gender="formData.creator.gender"
-                  :diedAt="formData.creator.diedAt"
-                  :deceased="formData.creator.deceased"
-                  showLabel
-                  deletable
-                  @delete="formData.creator = null"
-                />
-              </div>
-            </v-col> -->
+              <AvatarGroup v-if="formData.creators && formData.creators.length > 0"
+                :profiles="formData.creators"
+                show-labels
+                size="40px"
+                deletable
+                @delete="removeItem(formData.creators, $event)"
+              />
+            </v-col>
             <v-col cols="12" class="pa-1">
               <v-textarea
                 v-if="show"
@@ -455,11 +447,11 @@ export default {
       mentions: [],
       contributors: [],
       // access: [],
-      // creators: [],
+      creators: [],
       showMentions: false,
       showCategories: false,
       showContributors: false,
-      // showCreator: false,
+      showCreators: false,
       showCollections: false,
       // showAccess: false,
       showProtocols: false,

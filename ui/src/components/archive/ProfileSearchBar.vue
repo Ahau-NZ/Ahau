@@ -1,94 +1,92 @@
 <template>
-<div style="width: 300px">
+  <div style="width: 300px">
     <v-combobox
       v-if="openMenu"
       v-model="chips"
       id="combobox"
-       ref="combobox"
-       :items="items"
-       item-value="id"
-       :item-text="item"
-       :multiple="!single"
-       :menu-props="{ light: true, value: openMenu }"
-       hide-selected append-icon="mdi-close"
-       @click:append="close"
-       :placeholder="placeholder"
-       no-data-text="no suggestions found"
-       hide-details dense rounded outlined
-       :searchInput.sync="searchInput"
-       :autofocus="openMenu"
-       :blur="clearSuggestions"
-       class="search-input"
-       @keydown.backspace="backspace"
-      >
-        <template v-slot:selection="{}">
+      ref="combobox"
+      :items="items"
+      item-value="id"
+      :item-text="item"
+      :multiple="!single"
+      :menu-props="{ light: true, value: openMenu }"
+      hide-selected append-icon="mdi-close"
+      @click:append="close"
+      :placeholder="placeholder"
+      no-data-text="no suggestions found"
+      hide-details dense rounded outlined
+      :searchInput.sync="searchInput"
+      :autofocus="openMenu"
+      class="search-input"
+      allow-overflow
+      @blur="close($event)"
+    >
+      <template v-slot:selection="{}">
+      </template>
+      <template v-slot:item="{ item }">
+        <!-- MENTIONS + CONTRIBUTORS + CREATOR -->
+        <template v-if="type === 'profile'">
+          <v-list-item class="click" @mousedown="addSelectedItem(item)">
+            <Avatar class="mr-3" size="40px" :image="item.avatarImage" :alt="item.preferredName" :gender="item.gender" :aliveInterval="item.aliveInterval" />
+            <v-list-item-content>
+              <v-list-item-title> {{ item.preferredName }} </v-list-item-title>
+              <v-list-item-subtitle>Preferred name</v-list-item-subtitle>
+            </v-list-item-content>
+            <v-list-item-content>
+              <v-list-item-title> {{ item.legalName ? item.legalName :  '&nbsp;' }} </v-list-item-title>
+              <v-list-item-subtitle>Legal name</v-list-item-subtitle>
+            </v-list-item-content>
+            <v-list-item-action>
+              <v-list-item-title> {{ age(item.aliveInterval) }} </v-list-item-title>
+              <v-list-item-subtitle>Age</v-list-item-subtitle>
+            </v-list-item-action>
+          </v-list-item>
         </template>
-        <template v-slot:item="{ item }">
-            <!-- MENTIONS + CONTRIBUTORS + CREATOR -->
-            <template v-if="type === 'profile'">
-                <v-list-item @click="addSelectedItem(item)">
-                    <Avatar class="mr-3" size="40px" :image="item.avatarImage" :alt="item.preferredName" :gender="item.gender" :aliveInterval="item.aliveInterval" />
-                    <v-list-item-content>
-                        <v-list-item-title> {{ item.preferredName }} </v-list-item-title>
-                        <v-list-item-subtitle>Preferred name</v-list-item-subtitle>
-                    </v-list-item-content>
-                    <v-list-item-content>
-                        <v-list-item-title> {{ item.legalName ? item.legalName :  '&nbsp;' }} </v-list-item-title>
-                        <v-list-item-subtitle>Legal name</v-list-item-subtitle>
-                    </v-list-item-content>
-                    <v-list-item-action>
-                        <v-list-item-title> {{ age(item.aliveInterval) }} </v-list-item-title>
-                        <v-list-item-subtitle>Age</v-list-item-subtitle>
-                    </v-list-item-action>
-                </v-list-item>
-            </template>
 
-            <!-- ACCESS -->
-            <template v-else-if="type === 'commuinty'">
-                <v-list-item @click="addSelectedItem(item)">
-                    <Avatar class="mr-3" size="40px" :image="item.avatarImage" :alt="item.preferredName" :gender="item.gender" :aliveInterval="item.aliveInterval" />
-                    <v-list-item-content>
-                        <v-list-item-title> {{ item.preferredName }} </v-list-item-title>
-                        <v-list-item-subtitle>Community name</v-list-item-subtitle>
-                    </v-list-item-content>
-                    <v-list-item-action>
-                        <v-list-item-title> {{ age(item.aliveInterval) }} </v-list-item-title>
-                        <v-list-item-subtitle>Members</v-list-item-subtitle>
-                    </v-list-item-action>
-                </v-list-item>
-            </template>
-
-            <!-- RELATED RECORDS + COLLECTIONS -->
-            <template v-else-if="type === 'collection'">
-                <v-list-item @click="addSelectedItem(item)">
-                    <v-list-item-avatar tile left>
-                        <v-img v-if="getImage(item)" :src="getImage(item)">
-                        </v-img>
-                        <v-icon v-else x-large>mdi-book-open</v-icon>
-                    </v-list-item-avatar>
-                    <v-list-item-content>
-                        <v-list-item-title>
-                            {{ item.title || 'Untitled Record' }}
-                        </v-list-item-title>
-                    </v-list-item-content>
-                </v-list-item>
-            </template>
-
-            <!-- CATEGORIES -->
-            <template v-else>
-                <v-list-item @click="addSelectedItem(item)">
-                    {{ item }}
-                </v-list-item>
-            </template>
+        <!-- ACCESS -->
+        <template v-else-if="type === 'commuinty'">
+          <v-list-item class="click" @mousedown="addSelectedItem(item)">
+            <Avatar class="mr-3" size="40px" :image="item.avatarImage" :alt="item.preferredName" :gender="item.gender" :aliveInterval="item.aliveInterval" />
+            <v-list-item-content>
+              <v-list-item-title> {{ item.preferredName }} </v-list-item-title>
+              <v-list-item-subtitle>Community name</v-list-item-subtitle>
+            </v-list-item-content>
+            <v-list-item-action>
+              <v-list-item-title> {{ age(item.aliveInterval) }} </v-list-item-title>
+              <v-list-item-subtitle>Members</v-list-item-subtitle>
+            </v-list-item-action>
+          </v-list-item>
         </template>
+
+        <!-- RELATED RECORDS + COLLECTIONS -->
+        <template v-else-if="type === 'collection'">
+          <v-card flat light  justify="center" height="90%" width="100%" class="click" @mousedown="addSelectedItem(item)">
+            <Chip
+              :title="item.title"
+              :description="item.description"
+              :type="item.type"
+              :chip="item"
+              :image="getImage(item)"
+            />
+          </v-card>
+        </template>
+
+        <!-- CATEGORIES -->
+        <template v-else>
+          <v-list-item class="click" @click="addSelectedItem(item)">
+            {{ item }}
+          </v-list-item>
+        </template>
+      </template>
     </v-combobox>
     <slot></slot>
-</div>
+  </div>
 </template>
 
 <script>
 import Avatar from '@/components/Avatar.vue'
 import calculateAge from '@/lib/calculate-age'
+import Chip from '@/components/archive/Chip.vue'
 
 export default {
   name: 'ProfileSearchBar',
@@ -128,7 +126,8 @@ export default {
     }
   },
   components: {
-    Avatar
+    Avatar,
+    Chip
   },
   computed: {
     mobile () {
@@ -139,9 +138,12 @@ export default {
     selectedItems: {
       deep: true,
       immediate: true,
-      handler (newValue) {
-        console.log(newValue)
-        this.chips = newValue
+      handler (newValue, oldValue) {
+        if (oldValue && oldValue.length > newValue.length) {
+          this.chips = oldValue
+        } else {
+          this.chips = newValue
+        }
       }
     },
     chips: {
@@ -152,7 +154,7 @@ export default {
     },
     searchInput (newValue) {
       if (!newValue) return
-      if (newValue.length > 2) {
+      if (newValue.length > 1) {
         this.$emit('getSuggestions', newValue)
       } else {
         this.clearSuggestions()
@@ -160,25 +162,13 @@ export default {
     }
   },
   methods: {
-    backspace (e) {
-      console.log('backspace')
-      if (this.searchInput === '') {
-        console.log('do nothing')
-        e.preventDefault()
-        e.stopPropagation()
-      }
-    },
     getImage (item) {
-      const {
-        artefacts
-      } = item
-
+      const { artefacts } = item
       if (artefacts && artefacts.length > 0) {
         // still in link format
         var artefact = artefacts[0].artefact
         if (artefact.type === 'photo') return artefact.uri
       }
-
       return null
     },
     clearSuggestions () {
@@ -217,5 +207,17 @@ export default {
 
 .search-input>>>input {
     text-align: start !important;
+}
+
+.search-input {
+    overflow: auto;
+}
+
+.click {
+  cursor:pointer
+}
+
+.click:hover {
+  background-color: rgba(0, 0, 0, 0.08);
 }
 </style>

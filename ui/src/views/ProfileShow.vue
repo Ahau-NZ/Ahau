@@ -15,7 +15,7 @@
         <EditRegistrationButton @click="setDialog('edit-registration')" />
       </v-col> -->
       <v-col :order="mobile ? '2' : '3'" :align="mobile || tablet ? 'end' : isKaitiaki ? 'start':'center'" :cols="isKaitiaki ? '12':'12'" :md="isKaitiaki ? 1:2" class="px-5">
-        <EditProfileButton @click="currentProfile.type === 'person' ? setDialog('edit-node') : setDialog('edit-community')" />
+        <EditProfileButton @click="currentProfile.type === 'person' ? setDialog('edit-node', 'this', 'this') : setDialog('edit-community')" />
       </v-col>
     </v-row>
     <v-row>
@@ -48,7 +48,7 @@ import Archive from '@/components/archive/Archive'
 import Timeline from '@/components/story/Timeline.vue'
 import Header from '@/components/profile/Header.vue'
 import EditProfileButton from '@/components/button/EditProfileButton.vue'
-import EditRegistrationButton from '@/components/button/EditRegistrationButton.vue'
+// import EditRegistrationButton from '@/components/button/EditRegistrationButton.vue'
 import WhakapapaIndex from '@/views/WhakapapaIndex.vue'
 
 import {
@@ -65,7 +65,7 @@ export default {
     Timeline,
     Header,
     EditProfileButton,
-    EditRegistrationButton,
+    // EditRegistrationButton,
     WhakapapaIndex
   },
   data () {
@@ -74,8 +74,7 @@ export default {
       loaded: false
     }
   },
-  mounted () {
-    this.setupProfile(this.$route.params.id)
+  beforeMount () {
     this.getAllStories()
   },
   computed: {
@@ -102,12 +101,6 @@ export default {
     hideNav () {
       if (this.mobile && this.showStory) return true
       else return false
-    }
-  },
-  watch: {
-    // update profile information routing to profileShow with new Id
-    '$route.params.id': function (id) {
-      this.setProfileById({ id })
     }
   },
   methods: {
@@ -139,11 +132,7 @@ export default {
 }
 
 .body-width {
-  /* min-width: $formWidth; */
   max-width: 100vw;
-  // padding-bottom: 500px;
-  // background: white;
-  // margin-bottom: 200px;
 }
 
 .niho-bg {

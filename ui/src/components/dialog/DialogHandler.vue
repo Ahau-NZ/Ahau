@@ -8,6 +8,7 @@
       @editProfile="toggleEditProfile($event)"
       @close="close"
     />
+    
     <NewCommunityDialog
       v-if="isActive('new-community')"
       :show="isActive('new-community')"
@@ -16,6 +17,7 @@
       @create="addCommunity($event)"
       @close="close"
     />
+
     <EditCommunityDialog
       v-if="isActive('edit-community')"
       :show="isActive('edit-community')"
@@ -34,12 +36,13 @@
     <NewNodeDialog
       v-if="isActive('new-node')"
       :show="isActive('new-node')"
-      :title="`Add ${type} to ${selectedProfile.preferredName}`"
-      @create="addPerson($event)"
-      @close="close"
+      :title="source !== 'new-registration' ? `Add ${dialogType} to ${selectedProfile.preferredName}`:`Add ${dialogType} to Registration Form`"
       :selectedProfile="selectedProfile"
       :suggestions="suggestions"
+      :withView="source !== 'new-registration'"
       @getSuggestions="getSuggestions($event)"
+      @create="source !== 'new-registration' ? addPerson($event) : dialogType === 'grandparent' ? addGrandparentToRegistartion($event) : addParentToRegistration($event)"
+      @close="close"
     />
     <EditNodeDialog v-if="isActive('edit-node')"
       :show="isActive('edit-node')"
@@ -110,20 +113,6 @@
     />
     <ConfirmationMessage :show="snackbar" :message="confirmationText" />
 
-    <!-- <v-snackbar v-model="snackbar" >
-      {{ confirmationText }}
-      <template v-slot:action="{ attrs }">
-        <v-btn
-          color="white"
-          text
-          v-bind="attrs"
-          @click="show = false"
-        >
-          Close
-        </v-btn>
-      </template>
-    </v-snackbar> -->
-
   </div>
 </template>
 
@@ -155,7 +144,7 @@ import isEmpty from 'lodash.isempty'
 
 import findSuccessor from '@/lib/find-successor'
 
-import { PERMITTED_COMMUNITY_ATTRS, saveCommunity } from '@/lib/community-helpers'
+import { PERMITTED_COMMUNITY_ATTRS } from '@/lib/community-helpers'
 
 import tree from '@/lib/tree-helpers'
 
@@ -179,8 +168,9 @@ export default {
     WhakapapaShowHelper,
     WhakapapaTableHelper,
     // NewCollectionDialog,
-    EditCommunityDialog,
     ComingSoonDialog,
+    NewCommunityDialog,
+    EditCommunityDialog,
     DeleteCommunityDialog,
     ConfirmationMessage,
     NewRegistrationDialog
@@ -196,7 +186,7 @@ export default {
       type: Map
     },
     view: {
-      type: Object
+      type: Object, default: null
     },
     dialog: {
       type: String,
@@ -211,7 +201,7 @@ export default {
       type: String,
       default: null,
       validator: (val) => [
-        'parent', 'child', 'sibling', 'registration'
+        'parent', 'child', 'sibling', 'registration', 'grandparent'
       ].includes(val)
     },
     loadDescendants: Function,
@@ -225,19 +215,54 @@ export default {
       confirmationText: null,
       suggestions: [],
       source: null,
-      registration: ''
+      registration: '',
+      dialogType: '',
+      parents: [],
+      parentIndex: null
     }
   },
   computed: {
-    ...mapGetters(['nestedWhakapapa', 'selectedProfile', 'whoami', 'storeDialog', 'previewProfile', 'currentProfile']),
+    ...mapGetters(['nestedWhakapapa', 'selectedProfile', 'whoami', 'storeDialog', 'storeType', 'storeSource', 'currentProfile']),
     mobile () {
       return this.$vuetify.breakpoint.xs
+    },
+    previewProfile () {
+      return this.storeType === 'preview'
+    }
+  },
+  watch: {
+    // view profile info while in registration dialog
+    storeDialog (newValue, OldValue) {
+      if (newValue && OldValue === 'new-registration') {
+        this.source = 'new-registration'
+      }
+    },
+    type (newVal) {
+      this.dialogType = newVal
+    },
+    storeType (newVal) {
+      this.dialogType = newVal
     }
   },
   methods: {
     ...mapActions(['updateNode', 'deleteNode', 'updatePartnerNode', 'addChild', 'addParent', 'loading', 'setDialog',
-      'setProfileById'
+      'setProfileById', 'setComponent'
     ]),
+    addGrandparentToRegistartion (grandparent) {
+      var parent = this.parents[this.parentIndex]
+      if (parent.grandparents) {
+        parent.grandparents.push(grandparent)
+      } else {
+        parent = {
+          ...parent,
+          grandparents: [grandparent]
+        }
+      }
+      this.parents.splice(this.parentIndex, 1, parent)
+    },
+    addParentToRegistration (parent) {
+      this.parents.push(parent)
+    },
     toggleEditProfile (profile) {
       this.registration = profile
       this.toggleDialog('edit-node', null, 'new-registration')
@@ -250,15 +275,19 @@ export default {
     },
     close () {
       if (this.isActive('new-node')) {
-        this.toggleDialog(this.source, this.type, null)
+        this.toggleDialog(this.source, this.dialogType, null)
         return
       }
+      if (this.parents.length) this.parents = []
       this.toggleDialog(this.source, null, null)
       this.$emit('setloading', false)
     },
     toggleDialog (dialog, type, source) {
       this.source = source
-      this.setDialog(dialog)
+      if (this.storeDialog) {
+        this.setDialog(dialog, type, source)
+        return
+      }
       this.$emit('update:dialog', dialog)
       this.$emit('update:type', type)
     },
@@ -270,20 +299,20 @@ export default {
       if (profile.id === this.whoami.profile.id) return false
 
       // if deleting the focus (top ancestor)
-      if (profile.id === this.view.focus) {
+      if (this.view && profile.id === this.view.focus) {
         // can only proceed if can find a clear "successor" to be new focus
         return Boolean(findSuccessor(profile))
       }
       return true
     },
     async addCommunity ($event) {
-      console.log($event)
       // if person doesnt exisit create one
       if (!$event.id) {
         const id = await this.createProfile($event)
-        console.log('res: ', id)
         if (id) {
-          this.$router.push({ name: 'profileShow', params: { id: id } })
+          this.setComponent('profile')
+          this.setProfileById({ id })
+          this.$router.push({ name: 'profileShow', params: { id } }).catch(() => {})
         }
       }
     },
@@ -303,9 +332,9 @@ export default {
       profession,
       email,
       phone,
-      deceased
+      deceased,
+      aliveInterval
     }) {
-      console.log('creating person: ', preferredName, type)
       const res = await this.$apollo.mutate({
         mutation: gql`
           mutation($input: ProfileInput!) {
@@ -330,6 +359,8 @@ export default {
             email,
             phone,
             deceased,
+            aliveInterval,
+            // UPDATE : for private groups
             recps: type === 'community' ? [this.whoami.feedId] : this.view.recps
           }
         }
@@ -370,7 +401,7 @@ export default {
 
               let child, parent
 
-              switch (this.type) {
+              switch (this.dialogType) {
                 case 'child':
                   child = id
                   parent = this.selectedProfile.id
@@ -452,7 +483,7 @@ export default {
             'legallyAdopted'
           ])
 
-          switch (this.type) {
+          switch (this.dialogType) {
             case 'child':
               child = id
               parent = this.selectedProfile.id
@@ -564,7 +595,7 @@ export default {
         parent,
         relationshipType,
         legallyAdopted,
-        recps: this.view.recps
+        recps: this.view ? this.view.recps : [this.whoami.feedId]
       }
       try {
         const res = await this.$apollo.mutate(SAVE_LINK(input))
@@ -605,14 +636,6 @@ export default {
       }
     },
     async updateProfile ($event) {
-      console.log('update profile: ', $event)
-      // When do we need this?
-      // Object.entries($event).map(([key, value]) => {
-      //   if (value === '') {
-      //     delete $event[key]
-      //   }
-      // })
-
       const profileChanges = pick($event, [...PERMITTED_PROFILE_ATTRS])
       const relationshipAttrs = pick($event, [...PERMITTED_RELATIONSHIP_ATTRS])
       const profileId = this.selectedProfile.id
@@ -656,10 +679,15 @@ export default {
         return
       }
       if (this.storeDialog === 'edit-node') {
-        this.setProfileById({
-          id: res.data.saveProfile
-        })
-        return
+        if (this.source === 'new-registration') {
+          this.close()
+          return
+        } else {
+          this.setProfileById({
+            id: res.data.saveProfile
+          })
+          return
+        }
       }
 
       // reload the selectedProfiles personal details
@@ -788,7 +816,9 @@ export default {
       if (profileResult.errors) {
         console.error('failed to delete profile', profileResult)
       } else {
-        this.$router.push({ name: 'profileShow', params: { id: this.whoami.profile.id } })
+        this.setComponent('profile')
+        this.setProfileById({ id: this.whoami.profile.id })
+        this.$router.push({ name: 'profileShow', params: { id: this.whoami.profile.id } }).catch(() => {})
         this.confirmationAlert('community successfully deleted')
         setTimeout(() => {
           this.confirmationText = null
@@ -807,39 +837,39 @@ export default {
         this.suggestions = []
         return
       }
-
       var records = await this.findByName($event)
-
       if (isEmpty(records)) {
         this.suggestions = []
         return
       }
 
-      var profiles = {} // flatStore for these suggestions
+      if (this.source !== 'new-registration') {
+        var profiles = {} // flatStore for these suggestions
 
-      records.forEach(record => {
-        record.children = record.children.map(child => {
-          profiles[child.profile.id] = child.profile // add this records children to the flatStore
-          return child.profile.id // only want the childs ID
+        records.forEach(record => {
+          record.children = record.children.map(child => {
+            profiles[child.profile.id] = child.profile // add this records children to the flatStore
+            return child.profile.id // only want the childs ID
+          })
+          record.parents = record.parents.map(parent => {
+            profiles[parent.profile.id] = parent.profile // add this records parents to the flatStore
+            return parent.profile.id // only want the parents ID
+          })
+          profiles[record.id] = record // add this record to the flatStore
         })
-        record.parents = record.parents.map(parent => {
-          profiles[parent.profile.id] = parent.profile // add this records parents to the flatStore
-          return parent.profile.id // only want the parents ID
+
+        // now we have the flatStore for the suggestions we need to filter out the records
+        // so we cant add one that is already in the tree
+        records = records.filter(record => {
+          if (this.findInTree(record.id)) return false // dont include it
+          return true
         })
-        profiles[record.id] = record // add this record to the flatStore
-      })
 
-      // now we have the flatStore for the suggestions we need to filter out the records
-      // so we cant add one that is already in the tree
-      records = records.filter(record => {
-        if (this.findInTree(record.id)) return false // dont include it
-        return true
-      })
-
-      // hydrate all the left over records
-      records = records.map(record => {
-        return tree.hydrate(record, profiles) // needed to hydrate to fix all dates
-      })
+        // hydrate all the left over records
+        records = records.map(record => {
+          return tree.hydrate(record, profiles) // needed to hydrate to fix all dates
+        })
+      }
 
       records = records.map(record => {
         let obj = {}
@@ -849,7 +879,6 @@ export default {
         }
         return obj
       })
-
       // sets suggestions which is passed into the dialogs
 
       this.suggestions = Object.assign([], records)

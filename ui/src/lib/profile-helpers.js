@@ -22,7 +22,8 @@ export const PERMITTED_PROFILE_ATTRS = [
   'phone',
   'address',
   'profession',
-  'deceased'
+  'deceased',
+  'type'
 ]
 
 export const PERMITTED_RELATIONSHIP_ATTRS = [

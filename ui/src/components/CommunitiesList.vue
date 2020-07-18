@@ -43,18 +43,15 @@
         <!-- <p class="headliner pa-0 mb-4">TRIBES</p> -->
         <v-row justify="start">
             <v-col v-for="community in communities" :item="community" :key="community.id" justify-self="start">
-              <!-- <router-link :to="{ name: 'communityShow', params: { id: community.id } }"> -->
-              <router-link @click.native="setComponent('profile')" :to="{ name: 'profileShow', params: { id: community.id } }">
-                <v-card light :width="!mobile ? '190px':'100vw'">
-                  <v-img height="150px" :src="getImage(community)" class="card-image" />
-                  <v-card-title class="subtitle font-weight-bold pb-2">{{
-                    community.preferredName
-                  }}</v-card-title>
-                  <v-card-text class="body-2">{{
-                    shortDescrciption(community)
-                  }}</v-card-text>
-                </v-card>
-              </router-link>
+              <v-card light :width="!mobile ? '190px':'100vw'" @click="goProfile(community.id)">
+                <v-img height="150px" :src="getImage(community)" class="card-image" />
+                <v-card-title class="subtitle font-weight-bold pb-2">{{
+                  community.preferredName
+                }}</v-card-title>
+                <v-card-text class="body-2">{{
+                  shortDescrciption(community)
+                }}</v-card-text>
+              </v-card>
             </v-col>
           </v-row>
       </v-col>
@@ -111,7 +108,12 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setComponent', 'setDialog']),
+    ...mapActions(['setComponent', 'setDialog', 'setProfileById']),
+    goProfile (id) {
+      this.setComponent('profile')
+      this.setProfileById({ id })
+      this.$router.push({ name: 'profileShow', params: { id } }).catch(() => {})
+    },
     getImage (community) {
       return get(community, 'avatarImage.uri') || ''
     },
