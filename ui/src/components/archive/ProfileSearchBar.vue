@@ -62,11 +62,11 @@
         <template v-else-if="type === 'collection'">
           <v-card flat light  justify="center" height="90%" width="100%" class="click" @mousedown="addSelectedItem(item)">
             <Chip
-                :title="item.title"
-                :description="item.description"
-                :type="item.type"
-                :chip="item"
-                :image="getImage(item)"
+              :title="item.title"
+              :description="item.description"
+              :type="item.type"
+              :chip="item"
+              :image="getImage(item)"
             />
           </v-card>
         </template>
@@ -74,7 +74,7 @@
         <!-- CATEGORIES -->
         <template v-else>
           <v-list-item class="click" @click="addSelectedItem(item)">
-              {{ item }}
+            {{ item }}
           </v-list-item>
         </template>
       </template>
@@ -163,16 +163,12 @@ export default {
   },
   methods: {
     getImage (item) {
-      const {
-        artefacts
-      } = item
-
+      const { artefacts } = item
       if (artefacts && artefacts.length > 0) {
         // still in link format
         var artefact = artefacts[0].artefact
         if (artefact.type === 'photo') return artefact.uri
       }
-
       return null
     },
     clearSuggestions () {
@@ -197,7 +193,6 @@ export default {
       this.$emit('update:openMenu', false)
     },
     removeSelectedItem (item) {
-      console.log('remove chip')
       this.chips.slice(item, 1)
     }
   }
