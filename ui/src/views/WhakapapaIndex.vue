@@ -1,17 +1,30 @@
 <template>
   <div :class="showProfileView ? 'flexStart': 'flexCenter'">
-    <v-container fluid class="white body-width mx-0" :style="!mobile ? 'margin-top: 64px;' : '' ">
+    <v-container fluid class="white body-width mx-0" :style="!mobile ? 'margin-top: 64px;' : 'margin-top: 64px;' ">
 
        <!-- Header  -->
       <v-row class="pa-5" light>
-        <v-col class="headliner black--text pa-0">
+        <v-col cols="12" class="headliner black--text pa-0">
           Whakapapa records
           <v-icon color="blue-grey" light @click="toggleWhakapapaHelper" class="infoButton">mdi-information</v-icon>
         </v-col>
 
-        <v-btn @click="toggleViewForm" :medium="!mobile" :x-small="mobile" :class="mobile ? 'addBtnMob' : 'addBtn'" class="my-2" fab color="white" @click.prevent="dialog = 'new-story'" elevation="2" >
-            <v-icon :large="!mobile" class="black--text">mdi-plus</v-icon>
-          </v-btn>
+        <v-btn 
+          @click="toggleViewForm" 
+          @click.prevent="dialog = 'new-story'" 
+          :medium="!mobile" 
+          :class="!mobile ? 'addBtn my-2' : 'addBtnMobile'" 
+          :color="!mobile ? 'white' : 'rgba(177,37,38,1)'" 
+          elevation="2" 
+          fab 
+          light
+
+          :fixed="mobile"
+          :bottom="mobile"
+          :right="mobile"
+        >
+          <v-icon :large="!mobile" :class="!mobile ? 'black--text' : 'white--text'">mdi-plus</v-icon>
+        </v-btn>
         
       </v-row>
 
@@ -22,7 +35,7 @@
       </div>
 
       <v-row v-for="view in views" :key="view.id" dense class="mb-2">
-        <v-col cols="12">
+        <v-col cols="12" md="10">
           <WhakapapaViewCard :view="view" cropDescription />
         </v-col>
       </v-row>
@@ -537,6 +550,7 @@
     text-transform: uppercase;
     font-weight: 400;
     letter-spacing: 5px;
+
   }
 
   .desktopContainer {
@@ -567,6 +581,11 @@
     top: 80px;
     right:100px
   }
+
+  .addBtnMobile {
+    bottom: 16px !important;
+  }
+
 
   .infoButton {
     margin-top: -20px;

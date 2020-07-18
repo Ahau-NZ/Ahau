@@ -127,8 +127,8 @@ export default {
 }
 
 .avatar-mobile {
-  margin-left: 50vw;
-  margin-right: 50vw;
+  margin-left: 40vw;
+  margin-right: 40vw;
 }
 
 </style>

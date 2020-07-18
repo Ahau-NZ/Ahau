@@ -82,6 +82,10 @@ export default {
 
 <style lang="scss">
 /* // global styles */
+.ahauRed {
+  color: #B12526;
+}
+
 a {
   text-decoration: none;
 }

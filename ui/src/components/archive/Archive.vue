@@ -4,8 +4,9 @@
     <!-- VIEW STORY OVERLAY -->
     <div :class="{ 'showOverlay': showStory && !mobile }"></div>
     <v-row v-if="!showStory" class="top-margin mb-5">
-      <v-col class="headliner black--text pa-0 pl-4 pt-2">
+      <v-col cols="12" class="headliner black--text pa-0 pl-4 pt-2">
         Archive records
+        <v-icon color="blue-grey" light @click="toggleWhakapapaHelper" class="infoButton">mdi-information</v-icon>
       </v-col>
       <!-- <v-col align="right" class="pa-0">
         <v-btn outlined flat :medium="!mobile" :x-small="mobile" :class="mobile ? 'addBtnMob' : 'addBtn'" class="my-2" fab color="white" @click.stop="openContextMenu($event)">
@@ -23,8 +24,20 @@
           <v-icon small class="black--text">mdi-magnify</v-icon>
         </v-btn>            -->
         <!-- <v-btn :medium="!mobile" :x-small="mobile" :class="mobile ? 'addBtnMob' : 'addBtn'" class="my-2" fab color="white" @click.stop="openContextMenu($event)"> -->
-        <v-btn :medium="!mobile" :x-small="mobile" :class="mobile ? 'addBtnMob' : 'addBtn'" class="my-2" fab color="white" @click.prevent="dialog = 'new-story'" elevation="2">
-          <v-icon :large="!mobile" class="black--text">mdi-plus</v-icon>
+        <v-btn 
+          @click.prevent="dialog = 'new-story'"
+          :medium="!mobile" 
+          :class="!mobile ? 'addBtn my-2' : 'addBtnMobile'" 
+          :color="!mobile ? 'white' : 'rgba(177,37,38,1)'" 
+          elevation="2" 
+          fab 
+          light
+
+          :fixed="mobile"
+          :bottom="mobile"
+          :right="mobile"
+        >
+          <v-icon :large="!mobile" :class="!mobile ? 'black--text' : 'white--text'">mdi-plus</v-icon>
         </v-btn>
       </div>
     </v-row>
@@ -61,6 +74,9 @@
         </div>
       </v-col>
     </v-row>
+
+    <WhakapapaListHelper :show="showWhakapapaHelper" @close="toggleWhakapapaHelper" />      
+
   </v-container>
   <!-- <vue-context ref="menu" class="pa-4">
     <li v-for="(option, index) in contextMenuOpts" :key="index">
@@ -94,11 +110,15 @@ import { SAVE_LINK, TYPES } from '@/lib/link-helpers.js'
 import { mapGetters, mapActions, mapMutations } from 'vuex'
 import NewRecordDialog from '@/components/dialog/archive/NewRecordDialog.vue'
 
+// TODO: Replace with Archive Helper (doesnt exist yet)
+import WhakapapaListHelper from '@/components/dialog/whakapapa/WhakapapaListHelper.vue'
+
 export default {
   name: 'Archive',
   components: {
     StoryCard,
-    NewRecordDialog
+    NewRecordDialog,
+    WhakapapaListHelper
     // CollectionGroup,
     // VueContext,
     // DialogHandler
@@ -118,7 +138,8 @@ export default {
       //   icon: 'mdi-file-outline'
       // }
       // ],
-      scrollPosition: 0
+      scrollPosition: 0,
+      showWhakapapaHelper: false,
     }
   },
   props: {
@@ -158,6 +179,9 @@ export default {
   methods: {
     ...mapMutations(['addStoryToStories', 'updateStoryInStories', 'removeStoryFromStories']),
     ...mapActions(['setComponent', 'setShowStory', 'setDialog', 'getAllStories']),
+    toggleWhakapapaHelper() {
+      this.showWhakapapaHelper = !this.showWhakapapaHelper
+    },
     async saveStory (input) {
       var { id, artefacts, mentions, contributors, relatedRecords } = input
 
@@ -359,11 +383,14 @@ export default {
   right:100px
 }
 
-.addBtnMob {
-  position: absolute;
-  top: 80px;
-  right:20px
-}
+.addBtnMobile {
+    /* bottom: 16px !important; */
+  }
+
+  .infoButton {
+    margin-top: -20px;
+    margin-left: 10px;
+  }
 
 .change-enter-active,
 .change-leave-active {
