@@ -4,13 +4,13 @@
       <v-col align="center" v-if="!mobile" :class="tablet ? 'pa-2 pt-5 ml-6':'pa-2 ml-12'" cols="12">
         <v-row cols="12" xs="12" sm="12">
           <v-btn :class="tablet ? 'pl-2':''" @click="setActive('profile')" light text style="height: auto;">
-            <Avatar 
-              :image="profile.avatarImage" 
-              :gender="profile.gender"  
-              :age="profile.bornAt" 
-              :aliveInterval="profile.aliveInterval" 
-              :alt="profile.preferredName" 
-              :size="tablet ? '110px':'170px'" 
+            <Avatar
+              :image="profile.avatarImage"
+              :gender="profile.gender"
+              :age="profile.bornAt"
+              :aliveInterval="profile.aliveInterval"
+              :alt="profile.preferredName"
+              :size="tablet ? '110px':'170px'"
               :isView="profile.type === 'community' && !profile.avatarImage" />
           </v-btn>
         </v-row>

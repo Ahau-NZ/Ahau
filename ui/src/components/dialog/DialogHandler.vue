@@ -266,7 +266,6 @@ export default {
       if (parent.grandparents) {
         parent.grandparents.push(grandparent)
       } else {
-
         parent = {
           ...parent,
           grandparents: [grandparent]
@@ -836,10 +835,9 @@ export default {
       if (profileResult.errors) {
         console.error('failed to delete profile', profileResult)
       } else {
-        
         this.setComponent('profile')
-        this.setProfileById({ id :this.whoami.profile.id })
-        this.$router.push({ name: 'profileShow', params: { id :this.whoami.profile.id } }).catch(() => {})
+        this.setProfileById({ id: this.whoami.profile.id })
+        this.$router.push({ name: 'profileShow', params: { id: this.whoami.profile.id } }).catch(() => {})
         this.confirmationAlert('community successfully deleted')
         setTimeout(() => {
           this.confirmationText = null
@@ -901,9 +899,7 @@ export default {
         }
         return obj
       })
-      var end = Object.assign([], records)
       // sets suggestions which is passed into the dialogs
-
       this.suggestions = Object.assign([], records)
     },
     /*

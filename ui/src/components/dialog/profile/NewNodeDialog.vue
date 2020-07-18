@@ -265,7 +265,6 @@ export default {
       this.$emit('getSuggestions', null)
     },
     getCloseSuggestions () {
-      console.log('getting close suggestions')
       switch (this.type) {
         case 'child':
           return this.findChildren()
@@ -357,13 +356,8 @@ export default {
       return calculateAge(aliveInterval)
     },
     submit () {
-      console.log(PERMITTED_PROFILE_ATTRS)
       var submission = pick(this.submission, [...PERMITTED_PROFILE_ATTRS, ...PERMITTED_RELATIONSHIP_ATTRS])
-      console.log('submit: ', submission)
       this.$emit('create', submission)
-      // this.hasSelection
-      //   ? this.$emit('create', pick(this.formData, ['id', 'relationshipType', 'legallyAdopted']))
-      //   : this.$emit('create', submission)
       this.close()
     },
     cordovaBackButton () {
@@ -374,7 +368,6 @@ export default {
       this.$emit('close')
     },
     async setFormData (person) {
-      console.log('setting selected: ', person)
       this.hasSelection = true
       this.profile = person.profile
       this.formData.relationshipType = person.relationshipType

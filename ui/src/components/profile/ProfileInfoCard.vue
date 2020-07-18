@@ -1,13 +1,13 @@
 <template>
     <div>
       <v-row cols="12" class="rounded-border">
-        <ProfileInfoItem class="bb" title="About" smCols="12" mdCols="12" :value="profile.description"/>
+        <ProfileInfoItem :class="profile.type === 'person' ? 'bb':''" title="About" smCols="12" mdCols="12" :value="profile.description"/>
         <ProfileInfoItem v-if="profile.type === 'person'" :class="mobile ? 'br bb':'br'" :title="'Preferred Name'" :value="profile.preferredName"/>
         <ProfileInfoItem v-if="profile.type === 'person'" :class="mobile ? 'bb':'br'" :title="'Age'" :value="age"/>
         <ProfileInfoItem v-if="profile.type === 'person'" class="br" :title="'Occupation'" :value="profile.profession" />
         <ProfileInfoItem v-if="profile.type === 'person'" :title="'City, Country'" :value="profile.location" />
       </v-row>
-      <v-row v-if="profile.type !== 'community' & !isRegistration & isFamily" class="rounded-border">
+      <v-row v-if="isFamily" class="rounded-border">
         <div v-if="profile.parents && profile.parents.length > 0" class="pl-6">
           <AvatarGroup :profiles="profile.parents" group-title="Parents" size="50px" :show-labels="true"
             @profile-click="openProfile($event)">
@@ -75,6 +75,8 @@ export default {
       return ' '
     },
     isFamily () {
+      if (this.profile.type === 'community') return false
+      if (this.isRegistration) return false
       if (this.profile.parents && this.profile.parents.length) return true
       if (this.profile.children && this.profile.children.length) return true
       return false

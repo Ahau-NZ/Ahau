@@ -50,12 +50,12 @@
                   <ProfileInfoItem smCols="12" mdCols="6" title="Address" :value="formData.address"/>
                 </v-row>
               </template>
-            </ProfileCard> 
+            </ProfileCard>
             <v-card-actions style="display: flex; justify-content: center; align-items: center;">
               <v-checkbox class="checkbox-label" color="success" v-model="checkbox2" :label="`I agree to share this information`" :rules="requiredRules"></v-checkbox> .
             </v-card-actions>
           </v-card>
-     
+
           <!-- ADD PARENTS INFORMATION-->
           <p class="pt-5 pl-5 subtitle-2 black--text">Please provide the names of at least one parent and one grandparent</p>
           <v-card elevation='1' :style="mobile ? 'margin: 0px' : 'margin: 20px'" class="pt-2" :class="{'checkbox':checkbox3}">
@@ -194,8 +194,8 @@ export default {
         v => v === true
       ],
       errorMsgs: [],
-      message:'',
-      gpNames: false,
+      message: '',
+      gpNames: false
     }
   },
   mounted () {
@@ -203,20 +203,19 @@ export default {
   },
   computed: {
     ...mapGetters(['currentProfile', 'selectedProfile']),
-    remainingErrors(){
+    remainingErrors () {
       if (this.errorMsgs && this.errorMsgs.length) {
-
-        var remaining  = this.errorMsgs.filter((f) => f !== 'grandparents' & f !== 'parents')
-        console.log(remaining)
+        var remaining = this.errorMsgs.filter((f) => f !== 'grandparents' & f !== 'parents')
         return remaining.length
-      }
+      } return false
     },
     parentsNames () {
       if (this.parents && this.parents.length) {
         this.parents.map((parent) => {
           if (parent.grandparents && parent.grandparents.length) {
             this.gpNames = true
-        }})
+          }
+        })
         return true
       }
       return false
@@ -272,7 +271,7 @@ export default {
       var errors = []
       var profile = {
         ...this.formData,
-        parents:this.parents
+        parents: this.parents
       }
       var output = Object.keys(profile)
         .filter(key => REQUIRED_ATTRS.includes(key))
