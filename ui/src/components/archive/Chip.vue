@@ -1,7 +1,8 @@
 <template>
-  <v-card :color="colour" dark tile class="d-inline-block related-tile" :min-width="mobile ? '100%' : '300'" :max-width="mobile ? '100%' : '300px'" max-height="60" min-height="60" style="overflow: hidden;" @click="showRelatedStory">
+  <v-card :flat="timeline" :color="timeline ? 'none' : colour" :dark="!timeline" tile class="d-inline-block related-tile" :min-width="mobile ? '100%' : '300'" :max-width="mobile ? '100%' : '300px'" max-height="60" min-height="60" style="overflow: hidden;" @click="showRelatedStory">
     <v-container class="pa-0">
       <v-row >
+        <!-- Image -->
         <v-col cols="auto" class="pa-0 pl-3">
           <v-img
             v-if="hasImage"
@@ -10,7 +11,7 @@
             :src="getImage"
           >
           </v-img>
-          <v-card v-else height=60 width="80" style="background-color:#383838">
+          <v-card v-else-if="!hasImage && !timeline" height=60 width="80" style="background-color:#383838">
             <v-icon x-large class="pl-5 pt-2">mdi-book-open</v-icon>
           </v-card>
         </v-col>
@@ -42,7 +43,8 @@ export default {
     deletable: Boolean,
     type: String,
     chip: Object,
-    index: Number
+    index: Number,
+    timeline: {type: Boolean, default: false}
   },
   computed: {
     ...mapGetters(['stories']),

@@ -16,9 +16,9 @@
         </div>
       </v-row>
 
-      <v-row v-if="profileStories && profileStories.length > 0">
+      <v-row v-if="profileStories && profileStories.length > 0"  style="border: 2px solid red;">
         <transition name="change" mode="out-in">
-          <v-col cols="12" xs="12" sm="12" md="9" :class="!showStory ? '':'pa-0'">
+          <v-col cols="12" xs="12" sm="12" md="12" :class="!showStory ? '':'pa-0'">
             <div v-if="!showStory">
               <TimelineCard :data="profileStories" @toggleStory="toggleStory($event)" />
             </div>
@@ -83,7 +83,7 @@
       return {}
     },
     computed: {
-      ...mapGetters(['stories', 'currentProfile', 'showStory', 'currentStory']),
+      ...mapGetters(['stories', 'currentProfile', 'showStory', 'currentStory', 'whoami']),
       mobile() {
         return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
       },
@@ -116,7 +116,7 @@
     },
     methods: {
       ...mapMutations(['setStory']),
-      ...mapActions(['setShowStory', 'setDialog']),
+      ...mapActions(['setShowStory', 'setDialog', 'getAllStories']),
       updateDialog(dialog) {
         this.$emit('setDialog', dialog)
       },
