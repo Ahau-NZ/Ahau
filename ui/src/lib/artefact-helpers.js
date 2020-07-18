@@ -1,7 +1,14 @@
 import gql from 'graphql-tag'
 import pick from 'lodash.pick'
-import isEmpty from 'lodash.isempty'
-import isEqual from 'lodash.isequal'
+
+export const ARTEFACT_FILE_TYPES = `
+  audio/*,
+  video/*,
+  image/*,
+  application/msword, application/vnd.ms-excel, application/vnd.ms-powerpoint,
+  application/pdf,
+  text/*
+`
 
 export const EMPTY_ARTEFACT = {
   id: null,
@@ -9,8 +16,8 @@ export const EMPTY_ARTEFACT = {
   blob: null,
   uri: null,
   title: null,
+  createdAt: null,
   description: null,
-  format: null,
   identifier: null,
   language: null,
   licence: null,
@@ -18,35 +25,45 @@ export const EMPTY_ARTEFACT = {
   source: null,
   translation: null,
   duration: null,
-  size: null,
-  transcription: null,
-  mentions: []
+  transcription: null
 }
 
 export const PERMITTED_ARTEFACT_SHARED_ATTRS = [
   'id',
+
   'type',
   'blob',
+  'createdAt',
+
   'title',
   'description',
-  'format',
+
   'identifier',
-  'language',
   'licence',
   'rights',
   'source',
+
+  'language',
   'translation'
 ]
 
+export const ARTEFACT_ICON = (mimeType) => {
+  switch (true) {
+    case mimeType === 'application/pdf': return 'mdi-file-pdf'
+    case mimeType === 'application/msword': return 'mdi-file-word'
+    case mimeType === 'application/vnd.ms-excel': return 'mdi-file-excel'
+    case mimeType === 'application/vnd.ms-powerpoin': return 'mdi-file-powerpoint'
+    default: return 'mdi-file'
+  }
+}
+
 export const PERMITTED_ARTEFACT_VIDEO_AUDIO_ATTRS = [
   'duration',
-  'size',
   'transcription'
 ]
 
 export const PERMITTED_ARTEFACT_OUTPUT_ATTRS = [
-  ...PERMITTED_ARTEFACT_SHARED_ATTRS,
-  'uri'
+  ...PERMITTED_ARTEFACT_SHARED_ATTRS
 ]
 
 export const PERMITTED_ARTEFACT_ATTRS = [
@@ -56,12 +73,25 @@ export const PERMITTED_ARTEFACT_ATTRS = [
 
 export const ARTEFACT_FRAGMENT = gql`
   fragment ArtefactFragment on Artefact {
-    ${PERMITTED_ARTEFACT_OUTPUT_ATTRS}
+    id
+    type
+    blob { blobId mimeType size unbox uri }
+    createdAt
+    title
+    description
+    identifier
+    licence
+    rights
+    source
+    language
+    translation
     ... on Audio {
-      ${PERMITTED_ARTEFACT_VIDEO_AUDIO_ATTRS}
+      duration
+      transcription
     }
     ... on Video {
-      ${PERMITTED_ARTEFACT_VIDEO_AUDIO_ATTRS}
+      duration
+      transcription
     }
   }
 `
@@ -90,18 +120,10 @@ export const getArtefacts = () => ({
   fetchPolicy: 'no-cache'
 })
 
-function removeNullProperties (input) {
-  Object.entries(input).forEach(([key, value]) => {
-    if (isEmpty(input[key])) {
-      delete input[key]
-    }
-  })
-}
-
 export const SAVE_ARTEFACT = input => {
   input = pick(input, PERMITTED_ARTEFACT_ATTRS)
 
-  removeNullProperties(input)
+  if (input.blob && input.blob.uri) delete input.blob.uri
 
   return {
     mutation: gql`
@@ -126,34 +148,3 @@ export const DELETE_ARTEFACT = (id, date) => ({
     }
   }
 })
-
-export function artefactChanges (initial, updated) {
-  var changes = {}
-  Object.entries(updated).forEach(([key, value]) => {
-    if (!isEqual(updated[key], initial[key])) {
-      if (typeof updated[key] === 'object') {
-        if (Array.isArray(updated[key])) {
-          changes[key] = { add: [], remove: [] }
-          changes[key].add = arrayChanges(updated[key], initial[key])
-          changes[key].remove = arrayChanges(initial[key], updated[key])
-
-          if (changes[key].add.length === 0) delete changes[key].add
-          if (changes[key].remove.length === 0) delete changes[key].remove
-
-          // means the same item was remove then added back in
-          if (isEmpty(changes[key])) delete changes[key]
-        } else {
-          changes[key] = artefactChanges(initial[key], updated[key])
-        }
-      } else {
-        changes[key] = updated[key]
-      }
-    }
-  })
-  return changes
-}
-
-function arrayChanges (array1, array2) {
-  return array1.filter(item => !array2.some(item2 => item.id === item2.id))
-    .map(item => item.id) // map it to id
-}

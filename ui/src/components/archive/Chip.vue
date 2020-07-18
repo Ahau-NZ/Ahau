@@ -68,7 +68,7 @@ export default {
       else if (this.type === 'story' && this.chip.artefacts && this.chip.artefacts.length > 0) {
         var artefact = this.chip.artefacts[0].artefact
         if (artefact.type === 'photo') {
-          return artefact.uri
+          return artefact.blob.uri
         }
       }
       return null
