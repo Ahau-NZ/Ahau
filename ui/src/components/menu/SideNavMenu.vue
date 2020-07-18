@@ -66,7 +66,7 @@
           <v-btn @click="setActive('whakapapa')" light :fab="mobile" text>
           <!-- <v-btn @click="setDialog('coming-soon')" light :fab="mobile" text> -->
             <v-col class="pa-0" :cols="mobile ? '12' : '2'">
-              <WhakapapaIcon :size="mobile ? 'large' : tablet ? 'x-large' : 'medium'" :color="activeComponent === 'whakapapa' ? 'red' : 'disabled'"/>
+              <WhakapapaIcon :size="mobile ? 'large' : tablet ? 'x-large' : 'medium'" :color="activeComponent === 'whakapapa' ? 'red' : 'black'"/>
             </v-col>
             <v-col class="py-0" v-if="!mobile && !isOverflowing">
               <span ref="text" :style="activeComponent === 'whakapapa' ? 'color:#B02425;' : 'black'" class="ml-2 subtitle-1">
