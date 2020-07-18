@@ -44,7 +44,7 @@ export const COMMON_PERMITTED_PROFILE_ATTRS = [
 
 export const PRIVATE_PERMITTED_PROFILE_ATTRS = [
   'aliveInterval',
-  'location',
+  'address',
   'email',
   'phone',
   'parents',
