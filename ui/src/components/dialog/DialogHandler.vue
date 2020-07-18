@@ -1,6 +1,6 @@
 <template>
   <div id="container">
-    <NewRegistrationDialog
+    <!-- <NewRegistrationDialog
       v-if="isActive('new-registration')"
       :show="isActive('new-registration')"
       :profile="whoami.profile"
@@ -9,7 +9,7 @@
       :parentIndex.sync="parentIndex"
       @editProfile="toggleEditProfile($event)"
       @close="close"
-    />
+    /> -->
     <NewCommunityDialog
       v-if="isActive('new-community')"
       :show="isActive('new-community')"
@@ -133,7 +133,7 @@
 <script>
 import NewNodeDialog from '@/components/dialog/profile/NewNodeDialog.vue'
 import NewCommunityDialog from '@/components/dialog/community/NewCommunityDialog.vue'
-import NewRegistrationDialog from '@/components/dialog/registration/NewRegistrationDialog.vue'
+// import NewRegistrationDialog from '@/components/dialog/registration/NewRegistrationDialog.vue'
 import EditCommunityDialog from '@/components/dialog/community/EditCommunityDialog.vue'
 import DeleteCommunityDialog from '@/components/dialog/community/DeleteCommunityDialog.vue'
 import EditNodeDialog from '@/components/dialog/profile/EditNodeDialog.vue'
@@ -186,7 +186,7 @@ export default {
     EditCommunityDialog,
     DeleteCommunityDialog,
     ConfirmationMessage,
-    NewRegistrationDialog
+    // NewRegistrationDialog
   },
   props: {
     story: {
@@ -259,29 +259,22 @@ export default {
   },
   methods: {
     ...mapActions(['updateNode', 'deleteNode', 'updatePartnerNode', 'addChild', 'addParent', 'loading', 'setDialog',
-      'setProfileById'
+      'setProfileById', 'setComponent'
     ]),
     addGrandparentToRegistartion (grandparent) {
       var parent = this.parents[this.parentIndex]
       if (parent.grandparents) {
-        console.log('grandparents detected')
         parent.grandparents.push(grandparent)
-        console.log('new grandparent added: ', parent)
       } else {
-        console.log(parent.preferredName, 'currently no granparents detected')
 
         parent = {
           ...parent,
           grandparents: [grandparent]
         }
-        console.log('grandparents added: ', parent)
       }
-      console.log('parent index: ', this.parentIndex)
       this.parents.splice(this.parentIndex, 1, parent)
-      console.log(this.parents)
     },
     addParentToRegistration (parent) {
-      console.log('add parent: ', parent)
       this.parents.push(parent)
     },
     toggleEditProfile (profile) {
@@ -313,7 +306,6 @@ export default {
       this.$emit('update:type', type)
     },
     canDelete (profile) {
-      console.log('can delete: ', profile)
       if (!profile) return false
       if (this.previewProfile) return false
 
@@ -328,13 +320,13 @@ export default {
       return true
     },
     async addCommunity ($event) {
-      console.log($event)
       // if person doesnt exisit create one
       if (!$event.id) {
         const id = await this.createProfile($event)
-        console.log('res: ', id)
         if (id) {
-          this.$router.push({ name: 'profileShow', params: { id: id } })
+          this.setComponent('profile')
+          this.setProfileById({ id })
+          this.$router.push({ name: 'profileShow', params: { id } }).catch(() => {})
         }
       }
     },
@@ -847,7 +839,10 @@ export default {
       if (profileResult.errors) {
         console.error('failed to delete profile', profileResult)
       } else {
-        this.$router.push({ name: 'profileShow', params: { id: this.whoami.profile.id } })
+        
+        this.setComponent('profile')
+        this.setProfileById({ id :this.whoami.profile.id })
+        this.$router.push({ name: 'profileShow', params: { id :this.whoami.profile.id } }).catch(() => {})
         this.confirmationAlert('community successfully deleted')
         setTimeout(() => {
           this.confirmationText = null

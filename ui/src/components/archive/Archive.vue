@@ -227,7 +227,7 @@ export default {
         var story = await this.getStory(id)
 
         if (input.id) {
-          this.currentStory = story
+          this.setStory(story)
         } else {
           this.toggleStory(story)
         }

@@ -121,9 +121,9 @@ export default {
     profile: {
       handler (newVal) {
         this.formData = newVal
-      }
-    },
-    deep: true
+      },
+      deep: true
+    }
   },
   computed: {
     mobile () {
