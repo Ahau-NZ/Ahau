@@ -1,6 +1,6 @@
 <template>
   <div style="width: 100%; height: 100%;">
-  <v-card @click.prevent="showStory()" :class="customClass" flat :ripple="false" class="mx-auto" :light="!showArtefact" width="100%" :elevation="!mobile && !showArtefact && fullStory ? '24':''">
+  <v-card @click.prevent="showStory()" :class="customClass" flat :ripple="false" class="mx-auto" :light="!showArtefact" width="100%" :elevation="!mobile && !showArtefact && fullStory ? '24':''" @blur="close">
     <v-list-item class="px-0" style="min-height:0; height:10px">
       <v-list-item-icon v-if="!fullStory" class="pt-0 mt-0" style="position:absolute; top:5px; right:1px; margin-right:0px">
         <v-list-item-subtitle v-if="!mobile" class="no-flex">contributors</v-list-item-subtitle>
@@ -60,7 +60,7 @@
       </v-list-item-content>
     </v-list-item>
     <v-list-item :disabled="disableClick" :ripple="false" @click.stop="showText()">
-      <v-list-item-content>
+      <v-list-item-content >
         <v-list-item-subtitle v-if="fullStory || showArtefact" class="pb-1" style="color:#a7a3a3"> Description </v-list-item-subtitle>
         <p v-if="!showArtefact" ref="text" :class="truncateText ? 'description' : ''">
           {{ story.description }}
@@ -146,10 +146,7 @@
           <v-list-item-subtitle class="pb-1" style="color:#a7a3a3">Cultural narrative</v-list-item-subtitle>
           <p>{{ story.culturalNarrative }}</p>
         </v-col> -->
-        <v-col v-if="story.format" :cols="mobile ? '6' : '3'">
-          <v-list-item-subtitle class="pb-1" style="color:#a7a3a3">Format</v-list-item-subtitle>
-          <p>{{ story.format }}</p>
-        </v-col>
+
         <v-col v-if="story.identifier" :cols="mobile ? '6' : '3'">
           <v-list-item-subtitle class="pb-1" style="color:#a7a3a3">Identifier</v-list-item-subtitle>
           <p>{{ story.identifier }}</p>
@@ -252,7 +249,7 @@ export default {
   },
   mounted () {
     // grab text height to figure out if we need to hide it or not
-    // this.textHeight = this.$refs.text.offsetHeight
+    this.textHeight = this.$refs.text.offsetHeight
     if (this.fullStory) {
       this.truncateText = false
     }
@@ -279,7 +276,9 @@ export default {
     disableClick () {
       if (this.fullStory) {
         return true
-      } else if (this.textHeight > 60) return false
+      } else if (this.textHeight > 60) {
+        return false
+      }
       return true
     },
 

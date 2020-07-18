@@ -61,7 +61,8 @@ export default {
     type: String,
     chip: Object,
     index: Number,
-    timeline: { type: Boolean, default: false }
+    timeline: { type: Boolean, default: false },
+    image: { type: String, default: null }
   },
   computed: {
     ...mapGetters(['stories']),
@@ -73,6 +74,7 @@ export default {
       return this.$vuetify.breakpoint.xs
     },
     hasImage () {
+      if (this.image) return true
       if (this.chip.image && this.chip.uri) return true
       else if (this.type === 'story' && this.chip.artefacts && this.chip.artefacts.length > 0) {
         var artefact = this.chip.artefacts[0].artefact
@@ -83,11 +85,12 @@ export default {
       return false
     },
     getImage () {
+      if (this.image) return this.image
       if (this.chip.image && this.chip.uri) return this.chip.uri
       else if (this.type === 'story' && this.chip.artefacts && this.chip.artefacts.length > 0) {
         var artefact = this.chip.artefacts[0].artefact
         if (artefact.type === 'photo') {
-          return artefact.uri
+          return artefact.blob.uri
         }
       }
       return null

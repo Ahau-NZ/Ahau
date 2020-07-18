@@ -1,7 +1,6 @@
 <template>
   <div id="container">
-    <!--
-    <NewRegistrationDialog
+    <!-- <NewRegistrationDialog
       v-if="isActive('new-registration')"
       :show="isActive('new-registration')"
       :profile="whoami.profile"
@@ -10,7 +9,7 @@
       :parentIndex.sync="parentIndex"
       @editProfile="toggleEditProfile($event)"
       @close="close"
-    />
+    /> -->
     <NewCommunityDialog
       v-if="isActive('new-community')"
       :show="isActive('new-community')"
@@ -34,7 +33,6 @@
       @submit="deleteCommunity"
       @close="close"
     />
-    -->
     <NewNodeDialog
       v-if="isActive('new-node')"
       :show="isActive('new-node')"
@@ -113,33 +111,17 @@
       :show="isActive('coming-soon')"
       @close="close"
     />
-    <!--
     <ConfirmationMessage :show="snackbar" :message="confirmationText" />
-    -->
-
-    <!-- <v-snackbar v-model="snackbar" >
-      {{ confirmationText }}
-      <template v-slot:action="{ attrs }">
-        <v-btn
-          color="white"
-          text
-          v-bind="attrs"
-          @click="show = false"
-        >
-          Close
-        </v-btn>
-      </template>
-    </v-snackbar> -->
 
   </div>
 </template>
 
 <script>
 import NewNodeDialog from '@/components/dialog/profile/NewNodeDialog.vue'
-// import NewCommunityDialog from '@/components/dialog/community/NewCommunityDialog.vue'
+import NewCommunityDialog from '@/components/dialog/community/NewCommunityDialog.vue'
 // import NewRegistrationDialog from '@/components/dialog/registration/NewRegistrationDialog.vue'
-// import EditCommunityDialog from '@/components/dialog/community/EditCommunityDialog.vue'
-// import DeleteCommunityDialog from '@/components/dialog/community/DeleteCommunityDialog.vue'
+import EditCommunityDialog from '@/components/dialog/community/EditCommunityDialog.vue'
+import DeleteCommunityDialog from '@/components/dialog/community/DeleteCommunityDialog.vue'
 import EditNodeDialog from '@/components/dialog/profile/EditNodeDialog.vue'
 import SideViewEditNodeDialog from '@/components/dialog/profile/SideViewEditNodeDialog.vue'
 import DeleteNodeDialog from '@/components/dialog/profile/DeleteNodeDialog.vue'
@@ -150,7 +132,7 @@ import WhakapapaShowHelper from '@/components/dialog/whakapapa/WhakapapaShowHelp
 import WhakapapaTableHelper from '@/components/dialog/whakapapa/WhakapapaTableHelper.vue'
 // import NewCollectionDialog from '@/components/dialog/archive/NewCollectionDialog.vue'
 import ComingSoonDialog from '@/components/dialog/ComingSoonDialog.vue'
-// import ConfirmationMessage from '@/components/dialog/ConfirmationMessage.vue'
+import ConfirmationMessage from '@/components/dialog/ConfirmationMessage.vue'
 
 import gql from 'graphql-tag'
 
@@ -162,7 +144,7 @@ import isEmpty from 'lodash.isempty'
 
 import findSuccessor from '@/lib/find-successor'
 
-// import { PERMITTED_COMMUNITY_ATTRS } from '@/lib/community-helpers'
+import { PERMITTED_COMMUNITY_ATTRS } from '@/lib/community-helpers'
 
 import tree from '@/lib/tree-helpers'
 
@@ -184,12 +166,12 @@ export default {
     WhakapapaDeleteDialog,
     WhakapapaShowHelper,
     WhakapapaTableHelper,
-    ComingSoonDialog
     // NewCollectionDialog,
-    // NewCommunityDialog,
-    // EditCommunityDialog,
-    // DeleteCommunityDialog,
-    // ConfirmationMessage,
+    ComingSoonDialog,
+    NewCommunityDialog,
+    EditCommunityDialog,
+    DeleteCommunityDialog,
+    ConfirmationMessage
     // NewRegistrationDialog
   },
   props: {
@@ -263,31 +245,23 @@ export default {
   },
   methods: {
     ...mapActions(['updateNode', 'deleteNode', 'updatePartnerNode', 'addChild', 'addParent', 'loading', 'setDialog',
-      'setProfileById'
+      'setProfileById', 'setComponent'
     ]),
     addGrandparentToRegistartion (grandparent) {
       var parent = this.parents[this.parentIndex]
       if (parent.grandparents) {
-        console.log('grandparents detected')
         parent.grandparents.push(grandparent)
-        console.log('new grandparent added: ', parent)
       } else {
-        console.log(parent.preferredName, 'currently no granparents detected')
-
         parent = {
           ...parent,
           grandparents: [grandparent]
         }
-        console.log('grandparents added: ', parent)
       }
-      console.log('parent index: ', this.parentIndex)
       this.parents.splice(this.parentIndex, 1, parent)
-      console.log(this.parents)
     },
-    // addParentToRegistration (parent) {
-    //   console.log('add parent: ', parent)
-    //   this.parents.push(parent)
-    // },
+    addParentToRegistration (parent) {
+      this.parents.push(parent)
+    },
     toggleEditProfile (profile) {
       this.registration = profile
       this.toggleDialog('edit-node', null, 'new-registration')
@@ -317,7 +291,6 @@ export default {
       this.$emit('update:type', type)
     },
     canDelete (profile) {
-      console.log('can delete: ', profile)
       if (!profile) return false
       if (this.previewProfile) return false
 
@@ -332,13 +305,13 @@ export default {
       return true
     },
     async addCommunity ($event) {
-      console.log($event)
       // if person doesnt exisit create one
       if (!$event.id) {
         const id = await this.createProfile($event)
-        console.log('res: ', id)
         if (id) {
-          this.$router.push({ name: 'profileShow', params: { id: id } })
+          this.setComponent('profile')
+          this.setProfileById({ id })
+          this.$router.push({ name: 'profileShow', params: { id } }).catch(() => {})
         }
       }
     },
@@ -361,7 +334,6 @@ export default {
       deceased,
       aliveInterval
     }) {
-      console.log('creating person: ', preferredName, gender)
       const res = await this.$apollo.mutate({
         mutation: gql`
           mutation($input: ProfileInput!) {
@@ -663,14 +635,6 @@ export default {
       }
     },
     async updateProfile ($event) {
-      console.log('update profile: ', $event)
-      // When do we need this?
-      // Object.entries($event).map(([key, value]) => {
-      //   if (value === '') {
-      //     delete $event[key]
-      //   }
-      // })
-
       const profileChanges = pick($event, [...PERMITTED_PROFILE_ATTRS])
       const relationshipAttrs = pick($event, [...PERMITTED_RELATIONSHIP_ATTRS])
       const profileId = this.selectedProfile.id
@@ -851,7 +815,9 @@ export default {
       if (profileResult.errors) {
         console.error('failed to delete profile', profileResult)
       } else {
-        this.$router.push({ name: 'profileShow', params: { id: this.whoami.profile.id } })
+        this.setComponent('profile')
+        this.setProfileById({ id: this.whoami.profile.id })
+        this.$router.push({ name: 'profileShow', params: { id: this.whoami.profile.id } }).catch(() => {})
         this.confirmationAlert('community successfully deleted')
         setTimeout(() => {
           this.confirmationText = null
@@ -870,11 +836,7 @@ export default {
         this.suggestions = []
         return
       }
-      console.log('search for this: ', $event)
       var records = await this.findByName($event)
-
-      console.log('record: ', records)
-
       if (isEmpty(records)) {
         this.suggestions = []
         return
@@ -885,12 +847,10 @@ export default {
 
         records.forEach(record => {
           record.children = record.children.map(child => {
-            console.log('mapping children')
             profiles[child.profile.id] = child.profile // add this records children to the flatStore
             return child.profile.id // only want the childs ID
           })
           record.parents = record.parents.map(parent => {
-            console.log('mapping parents')
             profiles[parent.profile.id] = parent.profile // add this records parents to the flatStore
             return parent.profile.id // only want the parents ID
           })
@@ -900,14 +860,12 @@ export default {
         // now we have the flatStore for the suggestions we need to filter out the records
         // so we cant add one that is already in the tree
         records = records.filter(record => {
-          console.log('searching in tree')
           if (this.findInTree(record.id)) return false // dont include it
           return true
         })
 
         // hydrate all the left over records
         records = records.map(record => {
-          console.log('hydrating')
           return tree.hydrate(record, profiles) // needed to hydrate to fix all dates
         })
       }
@@ -920,8 +878,6 @@ export default {
         }
         return obj
       })
-      var end = Object.assign([], records)
-      console.log('end results: ', end)
       // sets suggestions which is passed into the dialogs
 
       this.suggestions = Object.assign([], records)

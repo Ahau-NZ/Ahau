@@ -23,7 +23,7 @@
             <v-col cols="12" class="px-0">
               <ArtefactCarousel :artefacts="formData" :index.sync="selectedIndex" :editing="!editing" @delete="$emit('delete', $event)" @artefacts="$emit('artefacts', $event)"/>
             </v-col>
-            <v-col cols="12" class="pl-10 py-6">
+            <!-- <v-col cols="12" class="pl-10 py-6">
               <AddButton size="20px" icon="mdi-account-multiple-plus" dark iconClass="pr-3" class="right: 0;" label="Mention" @click="showMentions = true"  justify="start"/>
               <ProfileSearchBar
                 :selectedItems.sync="artefact.mentions"
@@ -41,7 +41,7 @@
                 @delete="removeItem(artefact.mentions, $event)"
                 dark
               />
-            </v-col>
+            </v-col> -->
             <v-col cols="12" class=py-1>
               <v-textarea
                 v-model="artefact.description"
@@ -52,14 +52,23 @@
                 auto-grow
               />
             </v-col>
-            <v-col cols="12" sm="12" md="3" class=py-1>
+            <v-col cols="12" md="6" class="pt-0 pb-1">
+              <NodeDatePicker
+                :value.sync="artefact.createdAt"
+                label="Date Created"
+                min="0000-01-01"
+                dark
+              />
+            </v-col>
+            <v-col cols="12" sm="12" md="3" class="py-1 pt-2">
               <v-text-field
-                v-model="artefact.format"
+                readonly
+                :value="artefact.blob.mimeType"
                 label="Format"
                 v-bind="customProps"
               />
             </v-col>
-            <v-col class=py-1 cols="12" sm="12" md="3">
+            <v-col cols="12" sm="12" md="3" class="py-1 pt-2">
               <v-text-field
                 v-model="artefact.identifier"
                 label="Identifier"
@@ -94,7 +103,7 @@
                 v-bind="customProps"
               />
             </v-col>
-            <v-col class=py-1 cols="12" sm="12" md="3">
+            <v-col class=py-1 cols="12" sm="12" md="3" v-if="artefact.type === 'audio' || artefact.type === 'video'">
               <v-text-field
                 v-model="artefact.duration"
                 label="Duration"
@@ -104,10 +113,12 @@
             </v-col>
             <v-col class=py-1 cols="12" sm="12" md="3">
               <v-text-field
-                v-model="artefact.size"
+                readonly
+                :value="artefact.blob.size"
                 label="Size"
                 type="number"
                 v-bind="customProps"
+                suffix="bytes"
               />
             </v-col>
             <v-col class=py-1 cols="12">
@@ -168,9 +179,11 @@ import ArtefactCarousel from '@/components/artefact/ArtefactCarousel.vue'
 import clone from 'lodash.clonedeep'
 
 import { personComplete } from '@/mocks/person-profile'
-import AddButton from '@/components/button/AddButton.vue'
-import ProfileSearchBar from '@/components/archive/ProfileSearchBar.vue'
-import AvatarGroup from '@/components/AvatarGroup.vue'
+// import AddButton from '@/components/button/AddButton.vue'
+// import ProfileSearchBar from '@/components/archive/ProfileSearchBar.vue'
+// import AvatarGroup from '@/components/AvatarGroup.vue'
+
+import NodeDatePicker from '@/components/NodeDatePicker.vue'
 
 export default {
   name: 'NewArtefactDialog',
@@ -182,10 +195,11 @@ export default {
   },
   components: {
     ArtefactCarousel,
-    AddButton,
-    ProfileSearchBar,
-    AvatarGroup,
-    DialogTitleBanner
+    // AddButton,
+    // ProfileSearchBar,
+    // AvatarGroup,
+    DialogTitleBanner,
+    NodeDatePicker
   },
   data () {
     return {
