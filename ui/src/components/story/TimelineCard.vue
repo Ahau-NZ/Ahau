@@ -4,7 +4,7 @@
 
       <v-timeline-item
         class="timeItem"
-        v-for="(item, index) in data.slice().reverse()"
+        v-for="(item, index) in sortedData"
         :key="index"
         :color="getDotColour(item.storyTypeIcon)"
         :icon="item.storyTypeIcon"
@@ -130,7 +130,8 @@ import {
 } from 'vuex'
 
 import {
-  yearMonthDay
+  yearMonthDay,
+  convertToTime
 } from '@/lib/date-helpers.js'
 
 export default {
@@ -154,9 +155,18 @@ export default {
       } else {
         return '70%'
       }
+    },
+    sortedData () {
+      var sortedData = this.sortDesc(this.data)
+      return sortedData
     }
+
   },
   methods: {
+    sortDesc (data) {
+      var sortDescending = data.sort((a, b) => convertToTime(a.timeInterval) - convertToTime(b.timeInterval))
+      return sortDescending
+    },
     getDotColour (iconType) {
       return '#b12526'
     },

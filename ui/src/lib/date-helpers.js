@@ -60,6 +60,12 @@ function yearMonthDayFormatter (date) {
   return `${year} - ${month} ${day}`
 }
 
+export function convertToTime (date) {
+  const lower = date.split('/')
+  var time = new Date(lower)
+  return time
+}
+
 const MONTHS = {
   '01': 'Jan',
   '02': 'Feb',
