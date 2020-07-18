@@ -113,20 +113,6 @@
     />
     <ConfirmationMessage :show="snackbar" :message="confirmationText" />
 
-    <!-- <v-snackbar v-model="snackbar" >
-      {{ confirmationText }}
-      <template v-slot:action="{ attrs }">
-        <v-btn
-          color="white"
-          text
-          v-bind="attrs"
-          @click="show = false"
-        >
-          Close
-        </v-btn>
-      </template>
-    </v-snackbar> -->
-
   </div>
 </template>
 
@@ -264,24 +250,16 @@ export default {
     addGrandparentToRegistartion (grandparent) {
       var parent = this.parents[this.parentIndex]
       if (parent.grandparents) {
-        console.log('grandparents detected')
         parent.grandparents.push(grandparent)
-        console.log('new grandparent added: ', parent)
       } else {
-        console.log(parent.preferredName, 'currently no granparents detected')
-
         parent = {
           ...parent,
           grandparents: [grandparent]
         }
-        console.log('grandparents added: ', parent)
       }
-      console.log('parent index: ', this.parentIndex)
       this.parents.splice(this.parentIndex, 1, parent)
-      console.log(this.parents)
     },
     addParentToRegistration (parent) {
-      console.log('add parent: ', parent)
       this.parents.push(parent)
     },
     toggleEditProfile (profile) {
@@ -313,7 +291,6 @@ export default {
       this.$emit('update:type', type)
     },
     canDelete (profile) {
-      console.log('can delete: ', profile)
       if (!profile) return false
       if (this.previewProfile) return false
 
@@ -328,11 +305,9 @@ export default {
       return true
     },
     async addCommunity ($event) {
-      console.log($event)
       // if person doesnt exisit create one
       if (!$event.id) {
         const id = await this.createProfile($event)
-        console.log('res: ', id)
         if (id) {
           this.setComponent('profile')
           this.setProfileById({ id })
@@ -359,7 +334,6 @@ export default {
       deceased,
       aliveInterval
     }) {
-      console.log('creating person: ', preferredName, gender)
       const res = await this.$apollo.mutate({
         mutation: gql`
           mutation($input: ProfileInput!) {
@@ -661,14 +635,6 @@ export default {
       }
     },
     async updateProfile ($event) {
-      console.log('update profile: ', $event)
-      // When do we need this?
-      // Object.entries($event).map(([key, value]) => {
-      //   if (value === '') {
-      //     delete $event[key]
-      //   }
-      // })
-
       const profileChanges = pick($event, [...PERMITTED_PROFILE_ATTRS])
       const relationshipAttrs = pick($event, [...PERMITTED_RELATIONSHIP_ATTRS])
       const profileId = this.selectedProfile.id
@@ -870,11 +836,7 @@ export default {
         this.suggestions = []
         return
       }
-      console.log('search for this: ', $event)
       var records = await this.findByName($event)
-
-      console.log('record: ', records)
-
       if (isEmpty(records)) {
         this.suggestions = []
         return
@@ -885,12 +847,10 @@ export default {
 
         records.forEach(record => {
           record.children = record.children.map(child => {
-            console.log('mapping children')
             profiles[child.profile.id] = child.profile // add this records children to the flatStore
             return child.profile.id // only want the childs ID
           })
           record.parents = record.parents.map(parent => {
-            console.log('mapping parents')
             profiles[parent.profile.id] = parent.profile // add this records parents to the flatStore
             return parent.profile.id // only want the parents ID
           })
@@ -900,14 +860,12 @@ export default {
         // now we have the flatStore for the suggestions we need to filter out the records
         // so we cant add one that is already in the tree
         records = records.filter(record => {
-          console.log('searching in tree')
           if (this.findInTree(record.id)) return false // dont include it
           return true
         })
 
         // hydrate all the left over records
         records = records.map(record => {
-          console.log('hydrating')
           return tree.hydrate(record, profiles) // needed to hydrate to fix all dates
         })
       }
@@ -920,8 +878,6 @@ export default {
         }
         return obj
       })
-      var end = Object.assign([], records)
-      console.log('end results: ', end)
       // sets suggestions which is passed into the dialogs
 
       this.suggestions = Object.assign([], records)
