@@ -62,6 +62,13 @@ export default {
 
         if (!blob.mimeType) blob.mimeType = file.type
 
+        var createdAt = ''
+        if (file.lastModified) {
+          createdAt = new Date(file.lastModified).toISOString().slice(0, 10)
+        } else {
+          createdAt = Date.now().toISOString().slice(0, 10)
+        }
+
         // TODO: change when @ssb-graphql/main is updated
         blob.blobId = blob.blob
         delete blob.blob
@@ -71,7 +78,8 @@ export default {
         var artefact = {
           type,
           blob,
-          title: name
+          title: name,
+          createdAt
         }
 
         return artefact
