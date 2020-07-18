@@ -123,14 +123,14 @@ export const saveProfile = input => {
   }
 }
 
-export const savePublicProfile = (personalId, publicId, input) => {
+export const saveCurrentIdentity = (personalId, publicId, input) => {
   const personalDetails = pick(input, PERMITTED_PROFILE_ATTRS)
   const publicDetails = pick(input, PERMITTED_PUBLIC_PROFILE_ATTRS)
 
   return {
     mutation: gql`
       mutation ($personalDetails:ProfileInput, $publicDetails:ProfileInput) {
-        savePersonProfile: saveProfile(input:$personalDetails)
+        savePersonalProfile: saveProfile(input:$personalDetails)
         savePublicProfile: saveProfile(input:$publicDetails)
       }
     `,

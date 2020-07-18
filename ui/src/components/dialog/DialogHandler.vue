@@ -136,7 +136,7 @@ import ConfirmationMessage from '@/components/dialog/ConfirmationMessage.vue'
 
 import gql from 'graphql-tag'
 
-import { PERMITTED_PROFILE_ATTRS, PERMITTED_RELATIONSHIP_ATTRS, saveProfile } from '@/lib/profile-helpers.js'
+import { PERMITTED_RELATIONSHIP_ATTRS, saveProfile, saveCurrentIdentity } from '@/lib/profile-helpers.js'
 
 import { SAVE_LINK } from '@/lib/link-helpers.js'
 import pick from 'lodash.pick'
@@ -227,6 +227,10 @@ export default {
     },
     previewProfile () {
       return this.storeType === 'preview'
+    },
+    isPersonalProfile (id) {
+      if (this.whoami.personal.profile.id !== id) return false
+      return true
     }
   },
   watch: {
@@ -244,7 +248,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['updateNode', 'deleteNode', 'updatePartnerNode', 'addChild', 'addParent', 'loading', 'setDialog',
+    ...mapActions(['setWhoami', 'updateNode', 'deleteNode', 'updatePartnerNode', 'addChild', 'addParent', 'loading', 'setDialog',
       'setProfileById', 'setComponent'
     ]),
     addGrandparentToRegistartion (grandparent) {
@@ -372,6 +376,34 @@ export default {
         return
       }
       return res.data.saveProfile // a profileId
+    },
+    async saveProfile (input) {
+      const res = await this.$apollo.mutate(
+        saveProfile(input)
+      )
+
+      if (res.errors) {
+        console.error('failed to save profile', res)
+        return
+      }
+
+      return res.data.saveProfile
+    },
+    async saveCurrentIdentity (input) {
+      const res = await this.$apollo.mutate(
+        saveCurrentIdentity(
+          this.whoami.personal.profile.id,
+          this.whoami.public.profile.id,
+          input
+        )
+      )
+
+      if (res.errors) {
+        console.error('failed to save identity profile', res)
+      }
+
+      // set whoami
+      await this.setWhoami()
     },
     async addPerson ($event) {
       try {
@@ -637,9 +669,16 @@ export default {
         })
       }
     },
-    async updateProfile ($event) {
-      const profileChanges = pick($event, [...PERMITTED_PROFILE_ATTRS])
-      const relationshipAttrs = pick($event, [...PERMITTED_RELATIONSHIP_ATTRS])
+    async updateProfile (input) {
+      console.log('update profile: ', input)
+      // When do we need this?
+      // Object.entries($event).map(([key, value]) => {
+      //   if (value === '') {
+      //     delete $event[key]
+      //   }
+      // })
+
+      const relationshipAttrs = pick(input, [...PERMITTED_RELATIONSHIP_ATTRS])
       const profileId = this.selectedProfile.id
 
       if (!isEmpty(relationshipAttrs) && this.selectedProfile.id !== this.view.focus) {
@@ -671,22 +710,22 @@ export default {
         }
       }
 
-      let input = {
-        id: profileId,
-        ...profileChanges
+      if (this.isPersonalProfile(profileId)) {
+        await this.saveCurrentIdentity(input)
+      } else {
+        await this.saveProfile({
+          id: profileId,
+          ...input
+        })
       }
-      const res = await this.$apollo.mutate(saveProfile(input))
-      if (res.errors) {
-        console.error('failed to update profile', res)
-        return
-      }
+
       if (this.storeDialog === 'edit-node') {
         if (this.source === 'new-registration') {
           this.close()
           return
         } else {
           this.setProfileById({
-            id: res.data.saveProfile
+            id: profileId
           })
           return
         }
@@ -704,7 +743,7 @@ export default {
       }
 
       // reorder children if there is a change in birthorder
-      if (profileChanges.birthOrder) {
+      if (input.birthOrder) {
         var nestedParent = tree.find(this.nestedWhakapapa, this.selectedProfile.parents[0].id)
         nestedParent.children = nestedParent.children.sort((a, b) => {
           return a.birthOrder - b.birthOrder

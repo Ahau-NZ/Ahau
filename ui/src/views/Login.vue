@@ -54,7 +54,7 @@
 import Avatar from '@/components/Avatar'
 import NewNodeDialog from '@/components/dialog/profile/NewNodeDialog.vue'
 import { mapGetters, mapActions } from 'vuex'
-import { savePublicProfile } from '@/lib/profile-helpers.js'
+import { saveCurrentIdentity } from '@/lib/profile-helpers.js'
 
 const karakia = `
 ---------------------------------
@@ -142,7 +142,7 @@ export default {
 
     async save (profileChanges) {
       const res = await this.$apollo.mutate(
-        savePublicProfile(
+        saveCurrentIdentity(
           this.whoami.personal.profile.id,
           this.whoami.public.profile.id,
           profileChanges
