@@ -7,6 +7,7 @@
         <v-row>
           <v-col class="pa-0 pl-6">
             <v-autocomplete
+              ref="day"
               v-model="date.day"
               hide-no-data
               :items="days"
@@ -15,10 +16,12 @@
               v-bind="customProps"
               @focus="focused = true"
               @blur="focused = false"
+              auto-select-first
             ></v-autocomplete>
           </v-col>
           <v-col class="pa-0">
             <v-autocomplete
+              ref="month"
               v-model="date.month"
               hide-no-data
               :items="months"
@@ -27,10 +30,12 @@
               v-bind="customProps"
               @focus="focused = true"
               @blur="focused = false"
+              auto-select-first
             ></v-autocomplete>
           </v-col>
           <v-col class="pa-0 pr-3">
             <v-autocomplete
+              ref="year"
               v-model="date.year"
               hide-no-data
               :items="years"
@@ -38,7 +43,8 @@
               placeholder="YYYY"
               v-bind="customProps"
               @focus="focused = true"
-              @blur="focused = false"
+              auto-select-first
+              @blur="focesd = false"
             >
             </v-autocomplete>
           </v-col>

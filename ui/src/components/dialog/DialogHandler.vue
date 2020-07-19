@@ -113,20 +113,6 @@
     />
     <ConfirmationMessage :show="snackbar" :message="confirmationText" />
 
-    <!-- <v-snackbar v-model="snackbar" >
-      {{ confirmationText }}
-      <template v-slot:action="{ attrs }">
-        <v-btn
-          color="white"
-          text
-          v-bind="attrs"
-          @click="show = false"
-        >
-          Close
-        </v-btn>
-      </template>
-    </v-snackbar> -->
-
   </div>
 </template>
 
@@ -648,13 +634,6 @@ export default {
       }
     },
     async updateProfile ($event) {
-      // When do we need this?
-      // Object.entries($event).map(([key, value]) => {
-      //   if (value === '') {
-      //     delete $event[key]
-      //   }
-      // })
-
       const profileChanges = pick($event, [...PERMITTED_PROFILE_ATTRS])
       const relationshipAttrs = pick($event, [...PERMITTED_RELATIONSHIP_ATTRS])
       const profileId = this.selectedProfile.id
@@ -857,7 +836,6 @@ export default {
         return
       }
       var records = await this.findByName($event)
-
       if (isEmpty(records)) {
         this.suggestions = []
         return
