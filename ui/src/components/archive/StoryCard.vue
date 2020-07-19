@@ -167,10 +167,10 @@
     </div>
     <v-card-actions v-if="fullStory" class="justify-end">
       <v-list-item-icon v-if="fullStory && !showArtefact" class="pt-0 mt-0">
-        <EditStoryButton v-if="false" @click="toggleDialog('edit-story')"/>
+        <EditStoryButton v-if="story.canEdit" @click="toggleDialog('edit-story')"/>
       </v-list-item-icon>
       <v-list-item-icon v-if="showArtefact" class="pt-0 mt-12">
-        <EditArtefactButton v-if="false" @click="toggleDialog('edit-story')"/>
+        <EditArtefactButton v-if="story.canEdit" @click="toggleDialog('edit-story')"/>
       </v-list-item-icon>
       <v-list-item-icon v-if="showArtefact && !mobile" class="pt-0 mt-0"
       style="position:absolute; top:0px; right:0px;">

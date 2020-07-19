@@ -170,7 +170,7 @@
                     @profile-click="openProfile($event)"
                   >
                     <template v-slot:action >
-                      <AddButton v-if="!preview" @click="toggleNew('parent')" class="pb-4" justify="start"/>
+                      <AddButton v-if="!preview && profile.canEdit" @click="toggleNew('parent')" class="pb-4" justify="start"/>
                     </template>
                   </AvatarGroup>
                 </v-col>
@@ -203,7 +203,7 @@
                     @profile-click="openProfile($event)"
                   >
                     <template v-slot:action >
-                      <AddButton v-if="!preview" @click="toggleNew('child')" class="pb-4" justify="start"/>
+                      <AddButton v-if="!preview && profile.canEdit" @click="toggleNew('child')" class="pb-4" justify="start"/>
                     </template>
                   </AvatarGroup>
                   <AvatarGroup
@@ -215,7 +215,7 @@
                     @profile-click="openProfile($event)"
                   >
                     <template v-slot:action >
-                      <AddButton v-if="!preview" @click="toggleNew('child')" class="pb-6" />
+                      <AddButton v-if="!preview && profile.canEdit" @click="toggleNew('child')" class="pb-6" />
                     </template>
                   </AvatarGroup>
                 </v-col>
