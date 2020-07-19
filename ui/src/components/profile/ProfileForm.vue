@@ -16,7 +16,7 @@
               :deceased="formData.deceased"
               :isEditing="isEditing"
               @updateAvatar="formData.avatarImage = $event"
-              
+
             />
           </v-row>
 
@@ -350,7 +350,7 @@ export default {
         valid: true,
         showDescription: false
       },
-      selectedGender: '',
+      selectedGender: ''
     }
   },
   mounted () {
@@ -541,14 +541,14 @@ export default {
 
   /* grey circle outline with plus */
   .avatarPlaceholder {
-    width: 200px; 
+    width: 200px;
     height: 200px;
-    border: 0.3px solid rgb(118, 118, 118,0.9); 
-    border-radius: 50%; 
-    display: flex; 
+    border: 0.3px solid rgb(118, 118, 118,0.9);
+    border-radius: 50%;
+    display: flex;
     justify-content: center;
     align-items: center;
-    font-size:2rem; 
+    font-size:2rem;
     color:rgba(0, 0, 0, 0.54)
   }
 </style>
