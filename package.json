@@ -47,6 +47,7 @@
   },
   "license": "AGPL-3.0",
   "dependencies": {
+    "ssb-profile": "^1.0.0",
     "vue-country-region-select": "^2.0.13"
   },
   "bugs": {

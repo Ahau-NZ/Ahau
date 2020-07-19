@@ -16,8 +16,17 @@
               :deceased="formData.deceased"
               :isEditing="isEditing"
               @updateAvatar="formData.avatarImage = $event"
+
             />
           </v-row>
+
+          <v-row v-else class="justify-center pt-12">
+            <!-- no avatar placeholder -->
+            <div class="big-avatar avatarPlaceholder">
+              <v-icon size="200" color="rgba(0,0,0,0.3)">mdi-account-circle</v-icon>
+            </div>
+          </v-row>
+
           <v-row v-if="isEditing" class="justify-center">
             <h1>Edit {{ formData.preferredName }}</h1>
           </v-row>
@@ -121,7 +130,7 @@
 
           <!-- Editing: relationship type-->
           <v-row v-if="withRelationships || editRelationship">
-            <v-col cols="12" class="pa-1">
+            <v-col cols="12" class="pa-1" v-if="this.$route.name !== 'login'">
               <v-select
                 v-model="formData.relationshipType"
                 label="Related by"
@@ -145,7 +154,7 @@
             </v-col>
           </v-row>
           <!-- DECEASED PICKER -->
-          <v-row>
+          <v-row v-if="this.$route.name !== 'login'">
            <v-col  v-if="!isUser || formData.deceased" cols="12" class="pa-1">
               <v-checkbox v-model="formData.deceased"
                 label="No longer living" :hide-details="true"
@@ -198,6 +207,7 @@
                 </v-col>
               </v-row>
               <v-row>
+
                 <v-col  v-if="!readonly || formData.gender === 'other'" cols="6" class="pl-10 py-0">
                   <v-checkbox v-model="formData.gender"
                     value="other"
@@ -311,6 +321,8 @@ import NodeDatePicker from '@/components/NodeDatePicker.vue'
 
 import { GENDERS, RELATIONSHIPS } from '@/lib/constants'
 
+import isEmpty from 'lodash.isempty'
+
 export default {
   name: 'ProfileForm',
   components: {
@@ -346,6 +358,9 @@ export default {
       if (this.formData.gender === 'male') this.updateSelectedGender('male')
       if (this.formData.gender === 'female') this.updateSelectedGender('female')
     }
+    if (isEmpty(this.formData.relationshipType)) {
+      this.formData.relationshipType = 'birth'
+    }
   },
   watch: {
     profile: {
@@ -356,7 +371,8 @@ export default {
       }
     },
     'formData.gender' (newValue) {
-      if (newValue === 'other' || newValue === 'unknown') this.updateSelectedGender('other')
+      if (newValue === 'other') this.updateSelectedGender('other')
+      if (newValue === 'unknown') this.updateSelectedGender('unknown')
     }
   },
   computed: {
@@ -521,5 +537,18 @@ export default {
         }
       }
     }
+  }
+
+  /* grey circle outline with plus */
+  .avatarPlaceholder {
+    width: 200px;
+    height: 200px;
+    border: 0.3px solid rgb(118, 118, 118,0.9);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size:2rem;
+    color:rgba(0, 0, 0, 0.54)
   }
 </style>
