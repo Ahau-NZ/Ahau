@@ -112,7 +112,7 @@
       :show="isActive('coming-soon')"
       @close="close"
     />
-    <ConfirmationMessage :show="snackbar" :message="confirmationText" />
+    <ConfirmationText :show="snackbar" :message="confirmationText" />
 
   </div>
 </template>
@@ -133,7 +133,7 @@ import WhakapapaShowHelper from '@/components/dialog/whakapapa/WhakapapaShowHelp
 import WhakapapaTableHelper from '@/components/dialog/whakapapa/WhakapapaTableHelper.vue'
 // import NewCollectionDialog from '@/components/dialog/archive/NewCollectionDialog.vue'
 import ComingSoonDialog from '@/components/dialog/ComingSoonDialog.vue'
-import ConfirmationMessage from '@/components/dialog/ConfirmationMessage.vue'
+import ConfirmationText from '@/components/dialog/ConfirmationText.vue'
 
 import gql from 'graphql-tag'
 
@@ -172,7 +172,7 @@ export default {
     NewCommunityDialog,
     EditCommunityDialog,
     DeleteCommunityDialog,
-    ConfirmationMessage,
+    ConfirmationText,
     NewRegistrationDialog
   },
   props: {

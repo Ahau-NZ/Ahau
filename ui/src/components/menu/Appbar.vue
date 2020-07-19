@@ -7,62 +7,12 @@
       <!-- <v-btn v-if="showStory && mobile" @click="setShowStory" icon dark>
         <v-icon>mdi-arrow-left</v-icon>
       </v-btn> -->
+
       <template v-if="!isgoBack">
-        <!-- bade notification -->
-        <v-menu v-model="menu" :close-on-content-click="true" offset-x offset-y light>
-          <template v-slot:activator="{ on, attrs }">
-            <div style="display: flex; position: relative;">
-              <!-- <router-link to="/" v-if="enableMenu" class="logo-link" @click.native="karakiaWhakamutunga()"> -->
-              <img src="@/assets/logo_red.svg" class="logo" />
-              <!-- </router-link> -->
-              <div v-bind="attrs" v-on="on" class="notificationBadge"
-                style="width: 50px; position:absolute; bottom:0;right:0; display: flex; justify-content: center;align-items: center;">
-                <v-badge color="#B12526" :content="notifications.length" style="cursor: pointer;"></v-badge>
-              </div>
-            </div>
-          </template>
-
-          <v-card>
-            <v-list height="40px">
-
-                <p class="pt-1 pl-5 my-0 headliner black--text" >Notifications</p>
-
-            </v-list>
-
-            <v-divider></v-divider>
-
-            <v-list class="pt-0">
-                <div  v-for="(notification, index) in notifications" :key="index">
-                <v-list-item class="py-1" @click="setDialog({ active: 'new-registration', type: 'review' })">
-                  <Avatar size="50px" :image="whoami.profile.avatarImage"
-                    :alt="whoami.profile.preferredName" :gender="whoami.profile.gender" :bornAt="whoami.profile.bornAt" />
-                    <!-- <img :src="completePerson.avatarImage.uri" :alt="completePerson.preferredName"> -->
-                  <v-list-item-content class="pl-5">
-                    <v-list-item-title>{{completePerson.legalName}}</v-list-item-title>
-                    <v-list-item-subtitle class="text-caption ahauRed">{{notification.is}} {{notification.to}}</v-list-item-subtitle>
-                  </v-list-item-content>
-                  <v-list-item-action>
-                    <v-btn icon x-small>
-                      <v-icon>mdi-close</v-icon>
-                    </v-btn>
-                  </v-list-item-action>
-                </v-list-item>
-                <v-divider></v-divider>
-              </div>
-              <v-spacer class="mb-6"></v-spacer>
-            </v-list>
-
-            <!-- <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn text @click="menu = false">Cancel</v-btn>
-              <v-btn color="primary" text @click="menu = false">Save</v-btn>
-            </v-card-actions> -->
-          </v-card>
-        </v-menu>
-
+        <NotificationPanel/>      
       </template>
 
-      <v-btn v-if="isgoWhakapapa && !showStory" text @click="goWhakapapa" :class="mobile ? 'ms-4':'ms-10'">
+      <v-btn v-if="isgoWhakapapa && !showStory" text @click="goWhakapapa" :class="mobile ? 'ms-8':'ms-10'">
         <v-row>
           <v-icon large>mdi-chevron-left</v-icon>
           <Avatar size="50px" class="ma-0" :image="whakapapa.image ? whakapapa.image : null" :alt="whakapapa.name"
@@ -74,7 +24,6 @@
 
       <!-- Desktop doesn't use a drawer, it has the links directly in the app bar -->
       <template v-if="!mobile">
-        <!--  WIP links -->
         <v-btn text active-class="no-active" :to="{ name: 'discovery' }" class="white--text text-uppercase ms-10">Tribes</v-btn>
         <v-btn active-class="no-active" text @click.native="goArchive" class="white--text text-uppercase ms-10">Archive</v-btn>
 
@@ -133,13 +82,12 @@
 
 <script>
 import Avatar from '@/components/Avatar'
+import NotificationPanel from '@/components/menu/NotificationPanel'
 import FeedbackButton from '@/components/button/FeedbackButton'
 import {
   mapGetters,
   mapActions
 } from 'vuex'
-
-import { personComplete } from '@/mocks/person-profile'
 
 const karakia = `
 ---------------------------------
@@ -175,22 +123,7 @@ export default {
   data () {
     return {
       drawer: false,
-      dialog: false,
-      menu: false,
-      completePerson: personComplete,
-      notifications: [{
-        type: 'communityRequest',
-        is: 'is requesting to connect to',
-        to: 'Tairea Whanau',
-        from: 'Ben Tairea'
-      },
-      {
-        type: 'communityRequest',
-        is: 'is requesting to connect to',
-        to: 'TU TOA Leavers 2020',
-        from: 'Margaret Doctor'
-      }
-      ]
+      dialog: false
     }
   },
   computed: {
@@ -272,33 +205,14 @@ export default {
   },
   components: {
     Avatar,
-    FeedbackButton
+    FeedbackButton,
+    NotificationPanel
   }
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
-  .headliner {
-    font-size: 0.8em;
-    text-transform: uppercase;
-    font-weight: 400;
-    letter-spacing: 5px;
-  }
-  .mobile {
-
-    .logo,
-    .logo-link {
-      height: 35px;
-    }
-  }
-
-  .desktop {
-    .logo {
-      height: 45px;
-      padding: 0 25px;
-    }
-  }
 
   .sideMenuAppBarStyle {
     margin-top: -56px !important;
@@ -317,11 +231,9 @@ export default {
     0% {
       transform: translateY(-5px)
     }
-
     50% {
       transform: translateY(5px)
     }
-
     100% {
       transform: translateY(-5px)
     }
@@ -331,25 +243,12 @@ export default {
     0% {
       transform: translateY(-5px)
     }
-
     50% {
       transform: translateY(5px)
     }
-
     100% {
       transform: translateY(-5px)
     }
   }
 
-  // .notificationBadge {
-  //   -webkit-animation: bounce 3s infinite ease-in-out;
-  //   -o-animation: bounce 3s infinite ease-in-out;
-  //   -ms-animation: bounce 3s infinite ease-in-out;
-  //   -moz-animation: bounce 3s infinite ease-in-out;
-  //   animation: bounce 3s infinite ease-in-out;
-  // }
-
-  .ahauRed {
-    color: #B12526 !important;
-  }
 </style>

@@ -1,4 +1,5 @@
 <template>
+<div>
   <Dialog :show="show" :title="title" @close="close" width="720px" :goBack="close" enableMenu>
     <template v-if="!hideDetails" v-slot:content>
       <v-col cols="12" :class="mobile ? 'pb-5 px-2' : 'px-5' ">
@@ -164,6 +165,7 @@
     </template>
 
   </Dialog>
+</div>
 </template>
 
 <script>
@@ -230,7 +232,6 @@ export default {
     // TODO - update Profile, Parents and Message with notifcations data
     this.getFullProfile(this.profile.id)
     if (this.type === "review") {
-      console.log('i should set parentsArray:, ', this.currentProfile.parents)
       this.parentsArray = this.currentProfile.parents
     } else this.parentsArray = this.parents 
   },
