@@ -22,7 +22,8 @@ export const PERMITTED_PROFILE_ATTRS = [
   'address',
   'profession',
   'deceased',
-  'type'
+  'type',
+  'canEdit'
 ]
 
 export const PERMITTED_RELATIONSHIP_ATTRS = [

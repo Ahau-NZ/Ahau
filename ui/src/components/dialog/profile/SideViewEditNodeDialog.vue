@@ -98,7 +98,7 @@
               <!-- <v-icon small class="blue--text" left>mdi-account-circle</v-icon>Archive -->
             </v-btn>
             <v-btn
-              v-if="!preview"
+              v-if="!preview && profile.canEdit"
               @click="toggleEdit"
               color="white"
               text

@@ -141,7 +141,9 @@ export const PERMITTED_STORY_ATTRS = [
   'identifier',
   'language',
   'source',
-  'transcription'
+  'transcription',
+  'canEdit',
+  'recps'
 ]
 
 export const PERMITTED_STORY_LINKS = [
