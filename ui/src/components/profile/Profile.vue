@@ -117,5 +117,4 @@ export default {
   border-right: 0.5px solid rgba(0,0,0,0.3);
   }
 
-
 </style>

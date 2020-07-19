@@ -8,10 +8,56 @@
           <!-- TODO update text with notification data -->
           <span v-else class="py-6 px-4 subtitle-2 black--text">To join this communtiy, please confirm that you are happy to share the following profile information with <strong><i>{{currentProfile.preferredName}}</i></strong> members</span>
         </v-row>
-        <!-- WRAP -->
+        <!-- PROFILE INFOMATION -->
         <v-form ref="checkboxes">
           <v-card elevation='1' :style="mobile ? 'margin: 0px' : 'margin: 20px'" :class="{'checkbox':checkbox1}">
-            <v-row>
+
+            <v-row v-if="type === 'review'">
+              <v-col>
+                <v-col cols="12" class="py-0">
+                  <v-row class="justify-center pt-12">
+                    <Avatar
+                      class="big-avatar"
+                      size="100px"
+                      :image="formData.avatarImage"
+                      :alt="formData.preferredName"
+                      :gender="formData.gender"
+                      :aliveInterval="formData.aliveInterval"
+                      :deceased="formData.deceased"
+                      @updateAvatar="formData.avatarImage = $event"
+                    />
+                  </v-row>
+                </v-col>
+                <v-col cols="12" align="center">
+                  <h4 class="primary--text">{{ formData.legalName ? formData.legalName : formData.preferredName }}</h4>
+                </v-col>
+              </v-col>
+              <v-col align-self='center' cols="1" >
+                <v-icon large >mdi-transfer-right</v-icon>
+                <v-icon large>mdi-transfer-left</v-icon>
+              </v-col>
+              <v-col>
+                <v-col cols="12" class="py-0">
+                  <v-row class="justify-center pt-12">
+                    <Avatar
+                      class="big-avatar"
+                      size="100px"
+                      :image="formData.avatarImage"
+                      :alt="formData.preferredName"
+                      :gender="formData.gender"
+                      :aliveInterval="formData.aliveInterval"
+                      :deceased="formData.deceased"
+                      @updateAvatar="formData.avatarImage = $event"
+                    />
+                  </v-row>
+                </v-col>
+                <v-col cols="12" align="center">
+                  <h4 class="primary--text">Your Whanau</h4>
+                </v-col>
+              </v-col>
+            </v-row>
+
+            <v-row v-else>
               <v-col cols="12" md="3" class="py-0">
                 <v-row class="justify-center pt-12">
                   <Avatar
@@ -30,10 +76,8 @@
                 <h1 class="primary--text" :style="mobile ? length: ''">{{ formData.legalName ? formData.legalName : formData.preferredName }}</h1>
               </v-col>
             </v-row>
-            <!-- <RegisterButton v-if="profile.type === 'community'" :class="!mobile ? 'margin-top':''"/> -->
             <ProfileInfoCard :profile="formData" isRegistration :style="mobile ? 'margin: 0px 20px' : 'margin: 0px 30px;'"/>
             <v-divider></v-divider>
-
             <v-card-actions v-if="type !== 'review'" style="display: flex; justify-content: center; align-items: center;">
               <v-checkbox class="checkbox-label" color="success" v-model="checkbox1" :label="`I agree to share this information`" :rules="requiredRules"></v-checkbox> .
             </v-card-actions>
@@ -67,11 +111,11 @@
             <div v-for="(parent, index) in parentsArray" :key="index">
               <v-row class="rounded-border mx-4">
                 <v-col cols="12">
-                  <ParentGroup 
-                    :deletable ="type !== 'review'"
-                    :index="index" 
-                    :profile="parent" 
-                    :title="parent.relationshipType ? parent.relationshipType + ' parent' : 'parent'" 
+                  <ParentGroup
+                    :deleteable ="type !== 'review'"
+                    :index="index"
+                    :profile="parent"
+                    :title="parent.relationshipType ? parent.relationshipType + ' parent' : 'parent'"
                     @removeParent="removeParent($event)"
                   />
                 </v-col>
@@ -79,7 +123,13 @@
                   <v-divider></v-divider>
                 </v-col>
                 <v-col cols="12" v-for="(grandparent, grandparentIndex) in parent.grandparents" :key="`grandparent-${grandparentIndex}`" >
-                  <ParentGroup :index="grandparentIndex" :profile="grandparent" :title="grandparent.relationshipType ? grandparent.relationshipType + ' grandparent' : 'grandparent'" @removeParent="removeGrandparent($event, index)"/>
+                  <ParentGroup
+                    :deleteable ="type !== 'review'"
+                    :index="grandparentIndex"
+                    :profile="grandparent"
+                    :title="grandparent.relationshipType ? grandparent.relationshipType + ' grandparent' : 'grandparent'"
+                    @removeParent="removeGrandparent($event, index)"
+                  />
                 </v-col>
                 <v-row v-if="type !== 'review'" class="py-4 pl-10">
                   <v-icon :color="!gpNames ? '#b12526':''">mdi-account-supervisor-circle</v-icon>
@@ -165,6 +215,42 @@
     </template>
 
   </Dialog>
+
+  <!-- MESSAGE RESPONSE -->
+  <Dialog v-if="showMessage" :show="showMessage" :title="`${response} request to join Your Whanau` " @close="close" width="720px" :goBack="close" enableMenu>
+    <template v-slot:content>
+      <p class="pt-4 px-4 subtitle-2 black--text">Would you like to send a message along with your response to <strong><i>Benjamin Nootai Tairea</i></strong></p>
+       <v-col cols="12" :class="mobile ? 'pt-4 px-0':'px-5'">
+            <v-textarea
+              v-model="resMessage"
+              label='Message'
+              no-resize
+              rows="3"
+              auto-grow
+              outlined
+              placeholder=" "
+            >
+            </v-textarea>
+          </v-col>
+    </template>
+
+    <template v-slot:actions>
+      <v-btn @click="showMessage = !showMessage"
+        text large
+        class="secondary--text"
+      >
+        <span>cancel</span>
+      </v-btn>
+      <v-btn
+        @click="send"
+        text large
+        class="blue--text mx-5"
+      >
+        <span>send</span>
+      </v-btn>
+    </template>
+
+  </Dialog>
 </div>
 </template>
 
@@ -224,25 +310,28 @@ export default {
       ],
       errorMsgs: [],
       message: '',
-      parentsArray : [],
+      parentsArray: [],
       gpNames: false,
+      showMessage: false,
+      resMessage: '',
+      response: ''
     }
   },
   mounted () {
     // TODO - update Profile, Parents and Message with notifcations data
     this.getFullProfile(this.profile.id)
-    if (this.type === "review") {
+    if (this.type === 'review') {
       this.parentsArray = this.currentProfile.parents
-    } else this.parentsArray = this.parents 
+    } else this.parentsArray = this.parents
   },
-  watch : {
+  watch: {
     parents (newVal) {
       console.log(newVal)
       if (newVal) this.parentsArray = newVal
     }
   },
   computed: {
-    ...mapGetters(['currentProfile', 'selectedProfile']),
+    ...mapGetters(['currentProfile', 'selectedProfile', 'whoami']),
     remainingErrors () {
       if (this.errorMsgs && this.errorMsgs.length) {
         var remaining = this.errorMsgs.filter((f) => f !== 'grandparents' & f !== 'parents')
@@ -251,11 +340,13 @@ export default {
     },
     parentsNames () {
       if (this.parents && this.parents.length) {
+        var gparents = 0
         this.parents.map((parent) => {
           if (parent.grandparents && parent.grandparents.length) {
-            this.gpNames = true
+            gparents++
           }
         })
+        if (gparents > 0) this.gpNames = true
         return true
       }
       return false
@@ -355,23 +446,26 @@ export default {
       if (this.$refs.checkboxes.validate()) {
         var input = {
           ...this.formData,
-          parents: this.parents,
+          parents: this.parents
         }
         var common = pick(input, COMMON_PERMITTED_PROFILE_ATTRS)
         var kaitiaki = pick(input, PRIVATE_PERMITTED_PROFILE_ATTRS)
 
         var output = {
           // TODO - update to match notifications
-          type : 'registration',
-          from : this.formData.id,
-          message : {
-            request : {
-              common: common,
-              kaitiaki: kaitiaki,
+          action: 'registration',
+          from: this.formData.id,
+          message: {
+            request: {
+              community: this.currentProfile.id,
+              profile: {
+                common: common,
+                kaitiaki: kaitiaki
+              },
               message: this.message
-            },
+            }
           },
-          to : this.currentProfile.id
+          to: this.currentProfile.id
         }
         // TODO - send message to Kaitiaki
         console.warn('send this object: ', output)
@@ -380,9 +474,31 @@ export default {
     },
 
     respond (response) {
-      console.log("add message and then send ", response)
+      this.showMessage = !this.showMessage
+      this.response = response
     },
 
+    send () {
+      var output = {
+        // TODO - update to match notifications
+        action: 'registration-response',
+        from: this.whoami.profile.id,
+        message: {
+          community: 'community profile.id',
+          response: {
+            outcome: this.response,
+            message: this.resMessage
+          }
+        },
+        to: this.formData.id
+      }
+      // TODO - below consoles
+      console.log('send response: ', output)
+      console.log('add person to group')
+
+      this.showMessage = !this.showMessage
+      this.close()
+    }
 
   }
 }

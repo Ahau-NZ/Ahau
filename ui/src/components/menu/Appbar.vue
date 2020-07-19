@@ -9,7 +9,7 @@
       </v-btn> -->
 
       <template v-if="!isgoBack">
-        <NotificationPanel/>      
+        <NotificationPanel/>
       </template>
 
       <v-btn v-if="isgoWhakapapa && !showStory" text @click="goWhakapapa" :class="mobile ? 'ms-8':'ms-10'">

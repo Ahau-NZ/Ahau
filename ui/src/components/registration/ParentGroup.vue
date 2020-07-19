@@ -68,17 +68,11 @@ export default {
     size: { type: String, default: '80px' },
     spacing: { type: String, default: 'pr-5' },
     index: Number,
-    deleteable: Boolean
+    deleteable: { type: Boolean, default: false }
   },
   data () {
     return {
       hover: false
-      // groupProfiles: this.formatProfiles(this.profiles)
-    }
-  },
-  watch: {
-    hover (newVal) {
-      if (newVal) console.log('hover:', this.hover)
     }
   },
   computed: {
