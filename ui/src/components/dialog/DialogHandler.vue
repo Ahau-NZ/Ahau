@@ -227,10 +227,6 @@ export default {
     },
     previewProfile () {
       return this.storeType === 'preview'
-    },
-    isPersonalProfile (id) {
-      if (this.whoami.personal.profile.id !== id) return false
-      return true
     }
   },
   watch: {
@@ -248,6 +244,9 @@ export default {
     }
   },
   methods: {
+    isPersonalProfile (id) {
+      return this.whoami.personal.profile.id === id
+    },
     ...mapActions(['setWhoami', 'updateNode', 'deleteNode', 'updatePartnerNode', 'addChild', 'addParent', 'loading', 'setDialog',
       'setProfileById', 'setComponent'
     ]),
