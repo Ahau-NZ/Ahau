@@ -33,6 +33,7 @@ function defaultImage (isView, aliveInterval, gender) {
           return tane
       }
     case 'other': return diverse
+    case 'unknown': return diverse
     default:
       switch (true) {
         case age === null:
