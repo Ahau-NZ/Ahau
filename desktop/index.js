@@ -2,7 +2,6 @@ const ahoy = require('ssb-ahoy')
 const Config = require('./ssb.config')
 
 const plugins = [
-  'ssb-recps-guard',
   'ssb-master',
   'ssb-unix-socket',
   'ssb-no-auth',
@@ -28,7 +27,8 @@ const plugins = [
 
   // 'ssb-private',
   'ssb-invite',
-  'ahau-server'
+  'ahau-server',
+  'ssb-recps-guard'
 ]
 
 // Karakia tūwhera - dont not remove
