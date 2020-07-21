@@ -1,6 +1,6 @@
 <template>
   <v-card
-    :to="'/whakapapa'"
+    @click="goProfile('whakapapa')"
     style="width: 100%"
     light
     outlined
@@ -60,6 +60,7 @@
 
 <script>
 import whakapapa from '@/assets/whakapapa.svg'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'WhakapapaShowViewCard',
@@ -74,6 +75,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['currentProfile']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -94,6 +96,13 @@ export default {
     }
   },
   methods: {
+    goProfile (component) {
+      // this.setComponent(component)
+      // this.setProfileById({ id: this.currentProfile.id })
+      this.$router.push({ name: 'profileShow', params: { id: this.currentProfile.id } }).catch(() => {})
+      // this.setProfileById(this.profile.id)
+      // if (this.drawer) this.drawer = false
+    },
     background (view) {
       if (view.image && view.image.uri) {
         return {

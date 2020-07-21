@@ -11,14 +11,12 @@
 
         <v-btn
           @click="toggleViewForm"
-          @click.prevent="dialog = 'new-story'"
           :medium="!mobile"
           :class="!mobile ? 'addBtn my-2' : 'addBtnMobile'"
           :color="!mobile ? 'white' : 'rgba(177,37,38,1)'"
           elevation="2"
           fab
           light
-
           :fixed="mobile"
           :bottom="mobile"
           :right="mobile"
@@ -87,8 +85,6 @@ const saveProfileQuery = gql`
     saveProfile(input: $input)
   }
 `
-
-// TEMPORARY should be Query for all views
 
 export default {
   name: 'WhakapapaIndex',
@@ -586,7 +582,6 @@ export default {
   }
 
   .infoButton {
-    margin-top: -20px;
     margin-left: 10px;
   }
 

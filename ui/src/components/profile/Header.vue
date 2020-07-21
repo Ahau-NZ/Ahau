@@ -111,6 +111,7 @@ export default {
     hsl(0, 5.2%, 27.6%);
   /* background-size: 50px 50px; */
   background-size: cover;
+  background-position: center;
   // background-attachment: fixed;
 }
 
