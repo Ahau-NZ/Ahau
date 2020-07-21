@@ -210,7 +210,7 @@ import SearchButton from '@/components/button/SearchButton.vue'
 
 import tree from '@/lib/tree-helpers'
 import avatarHelper from '@/lib/avatar-helpers.js'
-import { getProfile } from '@/lib/profile-helpers.js'
+import { getPerson } from '@/lib/person-helpers.js'
 
 import DialogHandler from '@/components/dialog/DialogHandler.vue'
 import findSuccessor from '@/lib/find-successor'
@@ -453,7 +453,7 @@ export default {
 
     async getRelatives (id) {
       try {
-        const result = await this.$apollo.query(getProfile(id))
+        const result = await this.$apollo.query(getPerson(id))
         if (result.errors) {
           console.error('WARNING, something went wrong')
           console.error(result.errors)

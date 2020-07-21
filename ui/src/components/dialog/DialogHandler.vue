@@ -47,7 +47,7 @@
     <EditNodeDialog v-if="isActive('edit-node')"
       :show="isActive('edit-node')"
       :title="source === 'new-registration' ? `Edit ${registration.preferredName}`:`Edit ${currentProfile.preferredName}`"
-      @submit="updateProfile($event)"
+      @submit="updatePerson($event)"
       @close="close"
       :profile="source === 'new-registration' ? registration : currentProfile"
     />
@@ -60,7 +60,7 @@
       :sideMenu="true"
       @close="close"
       @new="toggleDialog('new-node', $event, 'view-edit-node')"
-      @submit="updateProfile($event)"
+      @submit="updatePerson($event)"
       @delete="toggleDialog('delete-node', null, null)"
       @open-profile="setSelectedProfile($event)"
       :view="view"
@@ -136,15 +136,14 @@ import ConfirmationMessage from '@/components/dialog/ConfirmationMessage.vue'
 
 import gql from 'graphql-tag'
 
-import { PERMITTED_RELATIONSHIP_ATTRS, saveProfile, saveCurrentIdentity } from '@/lib/profile-helpers.js'
+import { PERMITTED_RELATIONSHIP_ATTRS, savePerson, saveCurrentIdentity } from '@/lib/person-helpers.js'
+import { saveCommunity } from '@/lib/community-helpers'
 
 import { SAVE_LINK } from '@/lib/link-helpers.js'
 import pick from 'lodash.pick'
 import isEmpty from 'lodash.isempty'
 
 import findSuccessor from '@/lib/find-successor'
-
-import { PERMITTED_COMMUNITY_ATTRS } from '@/lib/community-helpers'
 
 import tree from '@/lib/tree-helpers'
 
@@ -309,9 +308,13 @@ export default {
       return true
     },
     async addCommunity ($event) {
-      // if person doesnt exisit create one
+      // if community doesnt exisit create one
       if (!$event.id) {
-        const id = await this.createProfile($event)
+        const res = await this.$apollo.mutate(saveCommunity($event))
+        if (res.errors) {
+          console.error('failed to create community', res)
+        }
+        const id = res.date.saveProfile
         if (id) {
           this.setComponent('profile')
           this.setProfileById({ id })
@@ -319,70 +322,13 @@ export default {
         }
       }
     },
-    async createProfile ({
-      type,
-      preferredName,
-      legalName,
-      gender,
-      bornAt,
-      diedAt,
-      birthOrder,
-      avatarImage,
-      altNames,
-      description,
-      address,
-      location,
-      profession,
-      email,
-      phone,
-      deceased,
-      aliveInterval
-    }) {
-      const res = await this.$apollo.mutate({
-        mutation: gql`
-          mutation($input: ProfileInput!) {
-            saveProfile(input: $input)
-          }
-        `,
-        variables: {
-          input: {
-            type,
-            preferredName,
-            legalName,
-            gender,
-            bornAt,
-            diedAt,
-            birthOrder,
-            avatarImage,
-            altNames,
-            description,
-            location,
-            profession,
-            address,
-            email,
-            phone,
-            deceased,
-            aliveInterval,
-            // UPDATE : for private groups
-            // (mix) agree, I just changed this to something safe .. but it's incorrect
-            recps: 'needs to be fixed' // TODO determine correct recps
-          }
-        }
-      })
+    async savePerson (input) {
+      if (!input.recps) input.recps = [this.whoami.personal.groupId]
+      // TODO fix recps to be right group
+      const res = await this.$apollo.mutate(savePerson(input))
 
       if (res.errors) {
-        console.error('failed to createProfile', res)
-        return
-      }
-      return res.data.saveProfile // a profileId
-    },
-    async saveProfile (input) {
-      const res = await this.$apollo.mutate(
-        saveProfile(input)
-      )
-
-      if (res.errors) {
-        console.error('failed to save profile', res)
+        console.error(`failed to ${input.id ? 'update' : 'save'} profile`, res)
         return
       }
 
@@ -406,9 +352,7 @@ export default {
     },
     async addPerson ($event) {
       try {
-        var {
-          id
-        } = $event
+        var { id } = $event
 
         if (this.view.ignoredProfiles.includes(id)) {
           const input = {
@@ -503,9 +447,9 @@ export default {
             throw err
           }
         } else {
-          // if person doesnt exisit create one
+          // if person doesnt exist create one
           if (!id) {
-            id = await this.createProfile($event)
+            id = await this.savePerson($event)
             if (!id) return
           }
 
@@ -613,22 +557,10 @@ export default {
       }
     },
 
-    async createChildLink ({
-      child,
-      parent,
-      relationshipType,
-      legallyAdopted
-    },
-    view
-    ) {
-      const input = {
-        type: 'link/profile-profile/child',
-        child,
-        parent,
-        relationshipType,
-        legallyAdopted,
-        recps: this.view.recps // if this breaks, that's good to know!
-      }
+    async createChildLink (input) {
+      input.type = 'link/profile-profile/child'
+      input.recps = input.recps || this.view.recps
+      // TODO check recps
 
       try {
         const res = await this.$apollo.mutate(SAVE_LINK(input))
@@ -643,43 +575,33 @@ export default {
     },
     async updateCommunity ($event) {
       console.log('updateCommunity', $event)
-      Object.entries($event).map(([key, value]) => {
-        if (value === '') {
-          delete $event[key]
-        }
-      })
 
-      const profileChanges = pick($event, [...PERMITTED_COMMUNITY_ATTRS])
-      const profileId = this.selectedProfile.id
-
-      let input = {
-        id: profileId,
-        ...profileChanges
-      }
-
-      const res = await this.$apollo.mutate(saveProfile(input))
+      const res = await this.$apollo.mutate(saveCommunity({
+        id: this.selectedProfile.id,
+        ...$event
+      }))
       if (res.errors) {
-        console.error('failed to update profile', res)
+        console.error('failed to update community', res)
         return
       }
+
       if (this.storeDialog === 'edit-community') {
         this.setProfileById({
           id: res.data.saveProfile
         })
       }
     },
-    async updateProfile (input) {
+    async updatePerson (input) {
       console.log('update profile: ', input)
-      // When do we need this?
-      // Object.entries($event).map(([key, value]) => {
-      //   if (value === '') {
-      //     delete $event[key]
-      //   }
-      // })
+
+      const profileId = this.selectedProfile.id
+      if (this.isPersonalProfile(profileId)) {
+        await this.saveCurrentIdentity(input)
+      } else {
+        await this.savePerson({ id: profileId, ...input })
+      }
 
       const relationshipAttrs = pick(input, [...PERMITTED_RELATIONSHIP_ATTRS])
-      const profileId = this.selectedProfile.id
-
       if (!isEmpty(relationshipAttrs) && this.selectedProfile.id !== this.view.focus) {
         const relationship = this.selectedProfile.relationship
         let input = {
@@ -707,15 +629,6 @@ export default {
           console.log('error:', err)
           throw err
         }
-      }
-
-      if (this.isPersonalProfile(profileId)) {
-        await this.saveCurrentIdentity(input)
-      } else {
-        await this.saveProfile({
-          id: profileId,
-          ...input
-        })
       }
 
       if (this.storeDialog === 'edit-node') {
@@ -772,9 +685,9 @@ export default {
       try {
         const res = await this.$apollo.mutate({
           mutation: gql`
-          mutation($input: WhakapapaViewInput) {
-            saveWhakapapaView(input: $input)
-          }
+            mutation($input: WhakapapaViewInput) {
+              saveWhakapapaView(input: $input)
+            }
           `,
           variables: {
             input

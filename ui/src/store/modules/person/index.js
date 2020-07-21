@@ -1,6 +1,6 @@
 // import gql from 'graphql-tag'
 // import { createProvider } from '@/plugins/vue-apollo'
-import { getRelatives } from '@/lib/profile-helpers'
+import { getRelatives } from '@/lib/person-helpers'
 import tree from '@/lib/tree-helpers'
 
 const state = {

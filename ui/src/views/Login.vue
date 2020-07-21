@@ -54,7 +54,7 @@
 import Avatar from '@/components/Avatar'
 import NewNodeDialog from '@/components/dialog/profile/NewNodeDialog.vue'
 import { mapGetters, mapActions } from 'vuex'
-import { saveCurrentIdentity } from '@/lib/profile-helpers.js'
+import { saveCurrentIdentity } from '@/lib/person-helpers.js'
 
 const karakia = `
 ---------------------------------
