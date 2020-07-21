@@ -55,7 +55,7 @@
     <!-- End Content Slot -->
 
     <!-- Actions Slot -->
-    <template v-slot:actions  style="border: 2px solid orange;">
+    <template v-slot:actions>
       <v-btn @click="close"
         text large fab
         class="secondary--text"
