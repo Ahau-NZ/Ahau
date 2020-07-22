@@ -1,6 +1,6 @@
 <template>
   <div :class="showProfileView ? 'flexStart': 'flexCenter'">
-    <v-container fluid class="white body-width mx-0" :style="!mobile ? 'margin-top: 64px;' : 'margin-top: 64px;' ">
+    <v-container fluid class="white body-width mx-0 px-0" :style="!mobile ? 'margin-top: 64px;' : 'margin-top: 64px;' ">
 
        <!-- Header  -->
       <v-row class="pa-5" light>
@@ -45,7 +45,7 @@
         @getSuggestions="getSuggestions" title="Add a Person" @create="handleDoubleStep($event)"
         :withRelationships="false" @close="close" />
 
-      <WhakapapaListHelper :show="showWhakapapaHelper" @close="toggleWhakapapaHelper" />
+      <WhakapapaListHelper v-if="showWhakapapaHelper" :show="showWhakapapaHelper" @close="toggleWhakapapaHelper" />
 
     </v-container>
   </div>

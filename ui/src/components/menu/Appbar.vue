@@ -178,7 +178,7 @@ export default {
       this.drawer = !this.drawer
     },
     goBack () {
-      if (this.route.name === 'whakapapaShow') return this.$router.push({ name: 'profileShow' })
+      if (this.route.name === 'whakapapaShow') return this.$router.push({ path: this.route.from.fullPath })
       else if (this.showStory) return this.setShowStory()
     },
     goWhakapapa () {

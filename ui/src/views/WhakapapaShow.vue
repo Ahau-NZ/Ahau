@@ -14,7 +14,7 @@
               <template v-slot:activator="{ on }">
                 <v-btn
                   v-on="on"
-                  @click.prevent="dialog.active = 'whakapapa-edit'"
+                  @click.stop="dialog.active = 'whakapapa-edit'"
                   icon
                   class="pa-0 px-3"
                 >

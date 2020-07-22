@@ -1,6 +1,6 @@
 <template>
   <v-card
-    @click="goProfile('whakapapa')"
+    @click.stop="goProfile('whakapapa')"
     style="width: 100%"
     light
     outlined
