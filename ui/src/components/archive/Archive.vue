@@ -138,7 +138,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['stories', 'showStory', 'whoami', 'currentProfile', 'currentStory']),
+    ...mapGetters(['stories', 'showStory', 'whoami', 'currentProfile', 'currentStory', 'profileStories']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -147,18 +147,6 @@ export default {
       else if (!this.mobile) return 'mt-10'
       return ''
     },
-    profileStories () {
-      if (this.currentProfile.type === 'person') {
-        let profileStories = this.stories.filter((story) =>
-          story.mentions.some((mention) =>
-            mention.profile.id === this.currentProfile.id
-          ))
-        return profileStories
-      } else {
-        // TODO - update to only return stories access === community
-        return this.stories
-      }
-    }
   },
   watch: {
     showStory (newVal, oldVal) {

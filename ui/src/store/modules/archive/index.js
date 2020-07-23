@@ -10,7 +10,8 @@ const state = {
   currentStory: {},
   showStory: false,
   showArtefact: false,
-  stories: []
+  stories: [],
+  profileStories: []
 }
 
 const getters = {
@@ -28,6 +29,9 @@ const getters = {
   },
   stories: state => {
     return state.stories
+  },
+  profileStories: state => {
+    return state.profileStories
   }
 }
 
@@ -57,7 +61,11 @@ const mutations = {
   updateStoryInStories (state, updatedStory) {
     const index = state.stories.findIndex(story => story.id === updatedStory.id)
     if (index !== -1) state.stories.splice(index, 1, updatedStory)
+  },
+  updateProfileStories (state, profileStories) {
+    state.profileStories = profileStories
   }
+
 }
 
 const actions = {
@@ -75,7 +83,7 @@ const actions = {
   setShowArtefact ({ commit }) {
     commit('updateShowArtefact')
   },
-  async getAllStories ({ commit }) {
+  async getAllStories ({ commit, rootState }) {
     const res = await apollo.query(GET_ALL_STORIES)
 
     if (res.errors) {
@@ -85,6 +93,18 @@ const actions = {
     }
 
     commit('updateStories', res.data.stories)
+
+    const stories = res.data.stories
+    if (rootState.person.currentProfile.type === 'person') {
+      const profileStories = stories.filter((story) =>
+        story.mentions.some((mention) =>
+          mention.profile.id === rootState.person.currentProfile.id
+        ))
+      commit('updateProfileStories', profileStories)
+    } else {
+      // TODO - update to only return stories access === community
+      commit('updateProfileStories', stories)
+    }
   }
 }
 

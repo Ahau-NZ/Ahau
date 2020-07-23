@@ -17,8 +17,7 @@
       </v-row>
 
       <v-row v-if="profileStories && profileStories.length > 0" >
-
-          <v-col cols="12" xs="12" sm="12" md="9" :class="!showStory ? '':'pa-0'">
+          <v-col cols="12" xs="12" sm="12" :md="showStory ? '9':'12'" :class="!showStory ? '':'pa-0'">
             <div v-if="!showStory">
               <TimelineCard :data="profileStories" @toggleStory="toggleStory($event)" />
             </div>
@@ -43,7 +42,7 @@
             class="px-8 subtitle-1 grey--text " :class="{
                       'text-center': mobile
                     }">
-            No timeline events found
+            No records found in this profile. Please add record to this profile via Archive
           </div>
         </v-col>
       </v-row>
@@ -89,22 +88,10 @@ export default {
     return {}
   },
   computed: {
-    ...mapGetters(['stories', 'currentProfile', 'showStory', 'currentStory', 'whoami']),
+    ...mapGetters(['stories', 'currentProfile', 'showStory', 'currentStory', 'whoami', 'profileStories']),
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
-    profileStories () {
-      if (this.currentProfile.type === 'person') {
-        let profileStories = this.stories.filter((story) =>
-          story.mentions.some((mention) =>
-            mention.profile.id === this.currentProfile.id
-          ))
-        return profileStories
-      } else {
-        // TODO - update to only return stories access === community
-        return this.stories
-      }
-    }
   },
   watch: {
     // showStory(newVal, oldVal) {

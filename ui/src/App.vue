@@ -126,4 +126,8 @@ body {
   padding-top: 56px !important;
 }
 
+.v-timeline--dense .v-timeline-item__opposite {
+  display: inline-block !important;
+}
+
 </style>

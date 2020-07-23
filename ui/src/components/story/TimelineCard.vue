@@ -22,12 +22,12 @@
         </template>
 
         <!-- Date opposite timeline dot (not shown in dense view) -->
-        <!-- <span slot="opposite" class="timelineDate">{{formatTimeInterval(item.timeInterval)}}</span> -->
+        <span v-if="!mobile" slot="opposite" class="opposite-width-force">{{formatTimeInterval(item.timeInterval)}}</span>
 
         <p class="dateTitle">{{formatTimeInterval(item.timeInterval)}}</p>
 
         <v-card
-          class="timeCard elevation-2 ma-0 pa-0"
+          class="timeCard elevation-2 ma-0 pa-0 "
           @click.prevent="showStory(item)"
           :width="getWidth"
 
@@ -36,7 +36,7 @@
         >
 
         <!-- CONTRIBUTORS TOP CORNER **Hidden** -->
-        <transition
+        <!-- <transition
           name="fade"
           v-on:enter="enter(index)"
           v-on:after-leave="afterLeave(index, $event)"
@@ -51,7 +51,7 @@
               </v-list-item-icon>
             </v-list-item>
           </v-row>
-        </transition>
+        </transition> -->
 
           <v-row class="ma-0">
             <!-- show == index ? item.description : shorten(item.description) -->
@@ -66,7 +66,7 @@
             />
           </v-row>
 
-        <transition name="fade">
+        <!-- <transition name="fade"> -->
           <v-card-actions v-if="show == index" class="pt-0">
 
             <v-row class="px-4">
@@ -111,7 +111,7 @@
 
             </v-row>
           </v-card-actions>
-        </transition>
+        <!-- </transition> -->
 
         </v-card>
 
@@ -192,9 +192,9 @@ export default {
     enter (index) {
       this.animation = index
     },
-    afterLeave (index, el) {
-      this.animation = -1
-    },
+    // afterLeave (index, el) {
+    //   this.animation = -1
+    // },
     shorten (description) {
       if (description) {
         if (description.length > 120) {
@@ -209,7 +209,6 @@ export default {
 </script>
 
 <style scoped>
-
   .timeCard {
     overflow:hidden;
     min-height: 100px;
@@ -236,7 +235,7 @@ export default {
     background-position-y: 10px;
   }
 
-  .mobileTitle,
+  .mobileTitle
   .timelineDate {
     font-size: 1rem !important;
     line-height: 1.5rem;
@@ -264,4 +263,27 @@ export default {
     opacity: 0;
     transform: translateY(30px);
   }
+
+
+/* test */
+.v-timeline--dense .v-timeline-item__opposite {
+  display: inline-block !important;
+}
+
+.v-timeline-item__opposite {
+  flex: none;
+}
+
+/* line */
+.v-timeline {
+  left: 80px;
+}
+
+.opposite-width-force {
+  display: inline-block !important;
+  width: 95px;
+  text-align: right;
+  color: black
+}
+
 </style>

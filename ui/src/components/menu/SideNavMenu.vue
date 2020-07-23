@@ -141,7 +141,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setComponent', 'setShowStory', 'setDialog']),
+    ...mapActions(['setComponent', 'setShowStory', 'setDialog','profileStories']),
     goProfile () {
       this.setActive('profile')
       this.$router.push({ name: 'profileShow', params: { id: this.profile.id } })
