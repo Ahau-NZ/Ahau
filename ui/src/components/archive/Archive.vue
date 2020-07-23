@@ -315,7 +315,7 @@ export default {
         type,
         parent,
         child,
-        recps: [this.whoami.feedId]
+        recps: [this.whoami.personal.groupId]
       }))
 
       if (res.errors) {

@@ -16,6 +16,9 @@ const customConfig = {
   serveBlobs: {
     cors: true,
     csp: ''
+  },
+  recpsGuard: {
+    allowedTypes: [] // e.g. 'pub', 'announce'
   }
 }
 

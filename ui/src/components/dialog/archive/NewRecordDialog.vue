@@ -72,8 +72,9 @@ export default {
   mounted () {
     if (!this.editing) {
       this.formData.mentions.push(this.currentProfile)
-      this.formData.contributors.push(this.whoami.profile)
-      // this.formData.access.push(this.whoami.profile)
+      this.formData.contributors.push(this.whoami.public.profile)
+      // this.formData.access.push(this.whoami.public.profile)
+      // TODO 2020-07-10 this needs to be your profle within the current group
     }
   },
   watch: {

@@ -57,14 +57,14 @@ import gql from 'graphql-tag'
 import pick from 'lodash.pick'
 import isEmpty from 'lodash.isempty'
 import * as d3 from 'd3'
+import { mapGetters, mapActions } from 'vuex'
 import WhakapapaViewCard from '@/components/whakapapa/WhakapapaViewCard.vue'
 import NewViewDialog from '@/components/dialog/whakapapa/NewViewDialog.vue'
 import NewNodeDialog from '@/components/dialog/profile/NewNodeDialog.vue'
 import WhakapapaListHelper from '@/components/dialog/whakapapa/WhakapapaListHelper.vue'
-import {
-  SAVE_LINK
-} from '@/lib/link-helpers.js'
 
+import { SAVE_LINK } from '@/lib/link-helpers.js'
+import { savePerson } from '@/lib/person-helpers.js'
 import tree from '@/lib/tree-helpers'
 import {
   mapGetters,
@@ -266,9 +266,9 @@ export default {
     async handleStepOne ($event) {
       this.newView = {
         ...pick($event, ['name', 'description', 'image']),
-        focus: this.whoami.profile.id,
+        focus: this.whoami.personal.profile.id,
         mode: 'descendants', // HARD coded at the moment
-        recps: [this.whoami.feedId] // TODO change this for groups
+        recps: [this.whoami.personal.groupId]
       }
 
       switch ($event.focus) {
@@ -316,21 +316,13 @@ export default {
         } = $event
 
         if (!id) {
-          const res = await this.$apollo.mutate({
-            mutation: saveProfileQuery,
-            variables: {
-              input: {
-                ...$event,
-                type: 'person'
-              }
-            }
-          })
+          const res = await this.$apollo.mutate(savePerson($event))
           if (res.errors) {
             console.error('failed to create profile', res)
             return
           }
 
-          id = res.data.saveProfile
+          id = res.data.savePerson
         }
 
         this.createView({
@@ -435,52 +427,18 @@ export default {
       }))
     },
 
-    async createProfile ({
-      preferredName,
-      legalName,
-      gender,
-      aliveInterval,
-      birthOrder,
-      avatarImage,
-      altNames,
-      description,
-      location,
-      profession,
-      contact,
-      deceased
-    }) {
-      const res = await this.$apollo.mutate({
-        mutation: gql`
-          mutation($input: ProfileInput!) {
-            saveProfile(input: $input)
-          }
-        `,
-        variables: {
-          input: {
-            type: 'person',
-            preferredName,
-            legalName,
-            gender,
-            aliveInterval,
-            birthOrder,
-            avatarImage,
-            altNames: {
-              add: []
-            },
-            description,
-            location,
-            profession,
-            contact,
-            deceased,
-            recps: [this.whoami.feedId] // TODO change this for groups
-          }
-        }
+    async createProfile (opts) {
+      const mutation = savePerson({
+        type: 'person',
+        recps: [this.whoami.personal.groupId], // TEMP - safety till we figure out actual recps
+        ...opts
       })
+      const res = await this.$apollo.mutate(mutation)
 
       if (res.errors) {
         console.error('failed to createProfile', res)
       } else {
-        return res.data.saveProfile // a profileId
+        return res.data.savePerson // a profileId
       }
     },
 
