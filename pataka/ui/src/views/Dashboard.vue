@@ -16,12 +16,12 @@
         <v-col v-if="generateError">
           <p class="red--text caption mb-0">{{generateError}}</p>
         </v-col>
-        <v-col v-else-if="generatedInvite" class="generated-code">
+        <v-col cols="8" v-else-if="generatedInvite" class="generated-code">
           <v-row>
             <h3 class="text-uppercase subtitle-1">Pātaka single use code</h3>
           </v-row>
           <v-row align="center" class="mt-2">
-            <p class="grey--text caption mb-0" id="inviteCode">{{generatedInvite}}</p>
+            <p class="grey--text mb-0" id="inviteCode">{{generatedInvite}}</p>
             <v-btn
               color="grey"
               outlined
@@ -37,7 +37,7 @@
         <v-col cols="4">
           <Avatar size="180px" alt="name" class="pb-4" :image="profile.avatarImage" />
           <h2 class="subtitle-1 text-uppercase text-center">{{profile.preferredName}}</h2>
-          <p class="subtitle-2 grey--text text-center">{{profile.feedId}}</p>
+          <p class="grey--text text-center feed-id">{{profile.feedId}}</p>
           <v-col cols="8" class="mx-auto">
             <v-row justify="start" class="pl-4">
               <div
@@ -45,7 +45,7 @@
                 :class="network.portForwarding ? 'green' : network.internetLatency === null ? 'grey' : 'orange'"
               />
               <p
-                class="body-1 text-uppercase text-center"
+                class="body-2 text-uppercase text-center"
               >{{ network.portForwarding ? 'Port-Forwarding' : network.portForwarding === null ? 'Checking' : 'Port-Forwarding Off' }}</p>
             </v-row>
             <v-row justify="start" class="pl-4">
@@ -54,30 +54,33 @@
                 :class="network.internetLatency ? network.internetLatency === -1 ? 'red' : 'green' : 'grey'"
               />
               <p
-                class="body-1 text-uppercase text-center"
-              >{{ network.internetLatency ? network.internetLatency === -1 ? 'Offline' : 'Connected to the Internet' : 'Checking'}}</p>
+                class="body-2 text-uppercase text-center"
+              >{{ network.internetLatency ? network.internetLatency === -1 ? 'Offline' : 'Online' : 'Checking'}}</p>
               <span class="network-latency">{{latency}}</span>
             </v-row>
             <v-row justify="start" class="pl-4 network-local">
               <div class="dot mr-4" :class="network.ipv4 ? 'green' : 'grey'" />
-              <p class="body-1 text-uppercase">{{network.ipv4 ? ' Local Network' : 'Checking'}}</p>
+              <p class="body-2 text-uppercase">{{network.ipv4 ? ' Local Network' : 'Checking'}}</p>
             </v-row>
-            <Meter title="CPU" :values="cpuLoad" />
-            <Meter title="RAM" :values="memoryLoad" />
-            <v-col class="mt-8">
-              <h3>Disk Usage</h3>
-              <v-progress-linear
-                v-for="disk in diskUsage"
-                :key="disk.fs"
-                class="mt-4"
-                :value="disk.use"
-                height="25"
-                color="blue-grey"
-              >
-                <strong class="pr-2">{{ Math.ceil(disk.use) }}%</strong>
-                <span class="caption">{{disk.fs}}</span>
-              </v-progress-linear>
-            </v-col>
+          </v-col>
+        </v-col>
+        <v-col cols="3" class="stat-column">
+          <h2 class="h2 text-uppercase pb-12">Machine status</h2>
+          <Meter title="CPU" :values="cpuLoad" />
+          <Meter title="RAM" :values="memoryLoad" />
+          <v-col class="mt-8">
+            <h3>Disk Usage</h3>
+            <v-progress-linear
+              v-for="disk in diskUsage"
+              :key="disk.fs"
+              class="mt-4"
+              :value="disk.use"
+              height="25"
+              color="blue-grey"
+            >
+              <strong class="pr-2">{{ Math.ceil(disk.use) }}%</strong>
+              <span class="caption">{{disk.fs}}</span>
+            </v-progress-linear>
           </v-col>
         </v-col>
         <v-col cols="3" class="stat-column">
@@ -91,16 +94,10 @@
           <v-btn color="grey" outlined tile>View people</v-btn>
         </v-col>
         <v-col cols="2" class="stat-column">
-          <h2 class="h2 text-uppercase pb-12">Summary</h2>
-          <h3
+          <h2 class="h2 text-uppercase pb-12">Communities</h2>
+          <!-- <h3
             class="py-2 text-uppercase subtitle-1 grey--text"
-          >{{dataSummary.profileRecords}} Profile Records</h3>
-          <h3
-            class="py-2 text-uppercase subtitle-1 grey--text"
-          >{{dataSummary.whakapapaRecords}} Whakapapa Records</h3>
-          <h3
-            class="py-2 text-uppercase subtitle-1 grey--text"
-          >{{dataSummary.communityRecords}} Community Records</h3>
+          ></h3> -->
         </v-col>
         <v-col cols="3" class="stat-column">
           <!-- <h2 class="h2 text-uppercase pb-12">Activity log</h2>
@@ -362,6 +359,12 @@ export default {
 .generated-code {
   height: 70px;
 }
+#inviteCode {
+  font-size: 0.5em;
+}
+.feed-id {
+  font-size: 0.5em;
+}
 .dot {
   height: 25px;
   width: 25px;
@@ -400,7 +403,7 @@ export default {
 //   margin-top: -30px !important;
 // }
 .stat-column {
-  padding-top: 240px;
+  padding-top: 10px;
 }
 .log-box {
   background: var(--v-primary-base);
