@@ -66,10 +66,6 @@ import WhakapapaListHelper from '@/components/dialog/whakapapa/WhakapapaListHelp
 import { SAVE_LINK } from '@/lib/link-helpers.js'
 import { savePerson } from '@/lib/person-helpers.js'
 import tree from '@/lib/tree-helpers'
-import {
-  mapGetters,
-  mapActions
-} from 'vuex'
 
 // import clone from 'lodash.clonedeep'
 // import _ from 'lodash'
