@@ -31,12 +31,12 @@
       @click.native="karakiaTūwhera()"
     >
       <Avatar
-        :image="whoami.profile.avatarImage"
-        :gender="whoami.profile.gender"
-        :aliveInterval="whoami.profile.aliveInterval"
+        :image="whoami.personal.profile.avatarImage"
+        :gender="whoami.personal.profile.gender"
+        :aliveInterval="whoami.personal.profile.aliveInterval"
         size="13vh"
       />
-      <h3 class="name mt-2">{{ whoami.profile.preferredName }}</h3>
+      <h3 class="name mt-2">{{ whoami.personal.profile.preferredName }}</h3>
     </router-link>
 
      <NewNodeDialog
@@ -51,11 +51,10 @@
 </template>
 
 <script>
-import gql from 'graphql-tag'
 import Avatar from '@/components/Avatar'
 import NewNodeDialog from '@/components/dialog/profile/NewNodeDialog.vue'
-import pick from 'lodash.pick'
 import { mapGetters, mapActions } from 'vuex'
+import { saveCurrentIdentity } from '@/lib/person-helpers.js'
 
 const karakia = `
 ---------------------------------
@@ -119,19 +118,19 @@ export default {
     },
 
     proceed () {
-      if (this.$apollo.loading || !this.whoami.profile.id) {
+      if (this.$apollo.loading || !this.whoami.personal.profile.id) {
         console.log('waiting for apollo')
         setTimeout(this.proceed, 300)
         return
       }
 
-      this.isSetup = Boolean(this.whoami.profile.preferredName)
+      this.isSetup = Boolean(this.whoami.personal.profile.preferredName)
       // Shortcut in dev, that saves us from doing one click when testing
       if (this.isSetup && process.env.NODE_ENV === 'development') {
         this.karakiaTūwhera()
         this.setComponent('profile')
-        this.setProfileById({ id: this.whoami.profile.id })
-        this.$router.push({ name: 'profileShow', params: { id: this.whoami.profile.id } })
+        this.setProfileById({ id: this.whoami.personal.profile.id })
+        this.$router.push({ name: 'profileShow', params: { id: this.whoami.personal.profile.id } })
       }
 
       this.isLoading = false
@@ -142,40 +141,19 @@ export default {
     },
 
     async save (profileChanges) {
-      const newProfile = pick(profileChanges,
-        'preferredName',
-        'legalName',
-        'gender',
-        'aliveInterval',
-        'birthOrder',
-        'avatarImage',
-        'altNames',
-        'description',
-        'location',
-        'email',
-        'address',
-        'phone',
-        'profession',
-        'deceased'
+      const res = await this.$apollo.mutate(
+        saveCurrentIdentity(
+          this.whoami.personal.profile.id,
+          this.whoami.public.profile.id,
+          profileChanges
+        )
       )
-      const result = await this.$apollo.mutate({
-        mutation: gql`
-          mutation($input: ProfileInput!) {
-            saveProfile(input: $input)
-          }
-        `,
-        variables: {
-          input: {
-            id: this.whoami.profile.id,
-            ...newProfile
-          }
-        }
-      })
 
-      if (result.errors) {
-        console.error('failed to update profile', result)
+      if (res.errors) {
+        console.error('failed to update profile', res)
         return
       }
+
       this.getCurrentIdentity()
     }
   },

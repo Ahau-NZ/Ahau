@@ -11,6 +11,7 @@
 
     </clipper-upload>
     <AvatarEditDialog
+      v-if="avatar.showEditor"
       :show="avatar.showEditor"
       :avatarImage="avatar.new"
       @submit="updateAvatar($event)"

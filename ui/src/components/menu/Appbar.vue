@@ -39,10 +39,10 @@
             v-if="!mobile"
             size="50px"
             class="ms-10"
-            :image="whoami.profile.avatarImage"
-            :alt="whoami.profile.preferredName"
-            :gender="whoami.profile.gender"
-            :bornAt="whoami.profile.bornAt"
+            :image="whoami.personal.profile.avatarImage"
+            :alt="whoami.personal.profile.preferredName"
+            :gender="whoami.personal.profile.gender"
+            :bornAt="whoami.personal.profile.bornAt"
           />
         </v-btn>
 
@@ -63,10 +63,10 @@
         <v-list-item active-class="no-active" @click="goProfile()" >
           <Avatar
             size="80px"
-            :image="whoami.profile.avatarImage"
-            :alt="whoami.profile.preferredName"
-            :gender="whoami.profile.gender"
-            :bornAt="whoami.profile.bornAt"
+            :image="whoami.personal.profile.avatarImage"
+            :alt="whoami.personal.profile.preferredName"
+            :gender="whoami.personal.profile.gender"
+            :bornAt="whoami.personal.profile.bornAt"
           />
         </v-list-item>
         <v-list-item active-class="no-active" link to="/whakapapa" class="white--text">
@@ -164,15 +164,15 @@ export default {
     },
     goProfile () {
       this.setComponent('profile')
-      this.setProfileById({ id: this.whoami.profile.id })
-      this.$router.push({ name: 'profileShow', params: { id: this.whoami.profile.id } }).catch(() => {})
+      this.setProfileById({ id: this.whoami.personal.profile.id })
+      this.$router.push({ name: 'profileShow', params: { id: this.whoami.personal.profile.id } }).catch(() => {})
       // this.setProfileById(this.profile.id)
       if (this.drawer) this.drawer = false
     },
     goArchive () {
       this.setComponent('archive')
-      this.setProfileById({ id: this.whoami.profile.id })
-      this.$router.push({ name: 'profileShow', params: { id: this.whoami.profile.id } }).catch(() => {})
+      this.setProfileById({ id: this.whoami.personal.profile.id })
+      this.$router.push({ name: 'profileShow', params: { id: this.whoami.personal.profile.id } }).catch(() => {})
       if (this.drawer) this.drawer = false
     },
     karakiaWhakamutunga () {

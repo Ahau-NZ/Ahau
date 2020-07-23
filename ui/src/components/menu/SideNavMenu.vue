@@ -126,7 +126,7 @@ export default {
     this.offset = this.$refs.sideNav.offsetTop - 50
   },
   computed: {
-    ...mapGetters(['activeComponent', 'showStory', 'whoami', 'storeDialog']),
+    ...mapGetters(['activeComponent', 'showStory', 'storeDialog']),
     nonMember () {
       // TODO - if community profile and user is not a member of a community
       return this.profile.type === 'community'

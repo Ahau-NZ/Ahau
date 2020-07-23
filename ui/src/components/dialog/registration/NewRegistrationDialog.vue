@@ -153,10 +153,9 @@ import AddButton from '@/components/button/AddButton.vue'
 import { dateIntervalToString } from '@/lib/date-helpers'
 
 import isEmpty from 'lodash.isempty'
-import pick from 'lodash.pick'
 import calculateAge from '@/lib/calculate-age'
 import { mapActions, mapGetters } from 'vuex'
-import { PRIVATE_PERMITTED_PROFILE_ATTRS, COMMON_PERMITTED_PROFILE_ATTRS } from '@/lib/profile-helpers'
+// import { ... some mutation helper } from '@/lib/person-helpers'
 
 const REQUIRED_ATTRS = [
   'id', 'legalName', 'aliveInterval', 'gender', 'relationshipType',
@@ -318,16 +317,16 @@ export default {
           parents: this.parents,
           message: this.message
         }
-        var common = pick(input, COMMON_PERMITTED_PROFILE_ATTRS)
-        var kaitiaki = pick(input, PRIVATE_PERMITTED_PROFILE_ATTRS)
+        // var common = pick(input, COMMON_PERMITTED_PROFILE_ATTRS)
+        // var kaitiaki = pick(input, PRIVATE_PERMITTED_PROFILE_ATTRS)
 
-        var output = {
-          common: common,
-          kaitiaki: kaitiaki
-        }
-        // TODO - send message to Kaitiaki
-        console.warn('send this object: ', output)
-        this.close()
+        // var output = {
+        //   common: common,
+        //   kaitiaki: kaitiaki
+        // }
+        // // TODO - send message to Kaitiaki
+        // console.warn('send this object: ', output)
+        // this.close()
       }
     }
   }

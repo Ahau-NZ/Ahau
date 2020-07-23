@@ -1,7 +1,7 @@
 import gql from 'graphql-tag'
 import pick from 'lodash.pick'
 import { ARTEFACT_FRAGMENT } from './artefact-helpers'
-import { PROFILE_FRAGMENT } from './profile-helpers'
+import { PERSON_FRAGMENT } from './person-helpers'
 import isEqual from 'lodash.isequal'
 import isEmpty from 'lodash.isempty'
 import clone from 'lodash.clonedeep'
@@ -164,7 +164,7 @@ export const STORY_FRAGMENT = gql`
 
 export const STORY_LINK_FRAGMENT = gql`
   ${ARTEFACT_FRAGMENT}
-  ${PROFILE_FRAGMENT}
+  ${PERSON_FRAGMENT}
   fragment StoryLinkFragment on Story {
     artefacts: artefactLinks {
       linkId
