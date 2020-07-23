@@ -210,6 +210,7 @@ import SearchButton from '@/components/button/SearchButton.vue'
 
 import tree from '@/lib/tree-helpers'
 import avatarHelper from '@/lib/avatar-helpers.js'
+import { getPerson } from '@/lib/person-helpers.js'
 
 import DialogHandler from '@/components/dialog/DialogHandler.vue'
 import findSuccessor from '@/lib/find-successor'
@@ -368,7 +369,8 @@ export default {
       if (!profile) return false
 
       // not allowed to delete own profile
-      if (profile.id === this.whoami.profile.id) return false
+      if (profile.id === this.whoami.public.profile.id) return false
+      if (profile.id === this.whoami.personal.profile.id) return false
 
       // if deleting the focus (top ancestor)
       if (profile.id === this.whakapapaView.focus) {
@@ -449,85 +451,9 @@ export default {
       return profile
     },
 
-    async getRelatives (profileId) {
-      const request = {
-        query: gql`
-          query($id: String!) {
-            person(id: $id) {
-              id
-              preferredName
-              legalName
-              gender
-              aliveInterval
-              birthOrder
-              description
-              address
-              email
-              phone
-              location
-              profession
-              deceased
-              altNames
-              avatarImage {
-                uri
-              }
-              children {
-                profile {
-                  id
-                  preferredName
-                  legalName
-                  gender
-                  aliveInterval
-                  birthOrder
-                  description
-                  address
-                  email
-                  phone
-                  location
-                  profession
-                  deceased
-                  altNames
-                  avatarImage {
-                    uri
-                  }
-                }
-                relationshipId
-                relationshipType
-              }
-
-              parents {
-                profile {
-                  id
-                  preferredName
-                  legalName
-                  gender
-                  aliveInterval     
-                  birthOrder
-                  description
-                  address
-                  phone
-                  email
-                  location
-                  profession
-                  deceased
-                  altNames
-                  avatarImage {
-                    uri
-                  }
-                }
-                relationshipId
-                relationshipType
-              }
-            }
-          }
-        `,
-        variables: {
-          id: profileId
-        },
-        fetchPolicy: 'no-cache'
-      }
+    async getRelatives (id) {
       try {
-        const result = await this.$apollo.query(request)
+        const result = await this.$apollo.query(getPerson(id))
         if (result.errors) {
           console.error('WARNING, something went wrong')
           console.error(result.errors)

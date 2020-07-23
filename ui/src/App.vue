@@ -29,7 +29,7 @@ export default {
   computed: {
     ...mapGetters(['selectedProfile', 'storeDialog']),
     mobile () {
-      return this.$vuetify.breakpoint.xs
+      return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
     displayAppbar () {
       if (this.$route.name === 'login') return false
@@ -106,7 +106,6 @@ a {
 /* //custom backgrounds per route. see above 'watcher' */
 body {
   --primary-background: #303030;
-  // --primary-background: white;
 
   &.page--login {
     background: url(./assets/niho.svg);
@@ -120,32 +119,11 @@ body {
     background-color: var(--primary-background);
     background-repeat: no-repeat;
     background-position-x: 150%;
-    // background-size: cover;
   }
-  // &.page--whakapapashow {
-  //   background: url(./assets/niho.svg);
-  //   background-color: var(--primary-background);
-  //   background-position-x: -300px;
-  //   // background-repeat: no-repeat;
-  //   // background-size: cover;
-  // }
-  // &.page--profileshow {
-  //   background: url(./assets/niho.svg);
-  //   background-color: var(--primary-background);
-  //   background-position-x: 0px;
-  // }
-  // &.page--profile {
-  //   background: url(./assets/niho.svg);
-  //   background-color: var(--primary-background);
-  //   background-position-x: -300px;
-  //   /* background-repeat: no-repeat;
-  //   background-size: cover; */
-  // }
 }
 
 .mobileWhakapapaTitleStyle {
   padding-top: 56px !important;
-  /* border: 5px solid yellow; */
 }
 
 </style>

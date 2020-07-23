@@ -4,7 +4,7 @@
       <v-col align="center" v-if="!mobile" class="pa-2 ml-12" cols="12">
         <v-row cols="12" xs="12" sm="12">
           <v-btn :class="tablet ? 'pl-2':''" @click="setActive('profile')" light text style="height: auto;">
-            <Avatar :image="profile.avatarImage" :gender="profile.gender" :age="profile.bornAt" :aliveInterval="profile.aliveInterval" :size="tablet ? '110px':'170px'" />
+            <Avatar :image="profile.avatarImage" :gender="profile.gender" :alt="profile.preferredName" :size="tablet ? '110px':'170px'" :isView="profile.type === 'community'" />
           </v-btn>
         </v-row>
       </v-col>
@@ -117,7 +117,7 @@ export default {
     this.offset = this.$refs.sideNav.offsetTop - 50
   },
   computed: {
-    ...mapGetters(['activeComponent', 'showStory', 'whoami', 'storeDialog']),
+    ...mapGetters(['activeComponent', 'showStory', 'storeDialog']),
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },

@@ -9,30 +9,34 @@
     >
       <v-img
         v-if="artefact.type === 'photo'"
-        :src="artefact.blob"
+        :src="artefact.blob.uri"
         :contain='controls'
         class="media"
         tile
         flat
       >
-        <!-- <template v-slot:placeholder>
-          <v-row
-            class="fill-height ma-0"
-            align="center"
-            justify="center"
-          >
-            <v-progress-circular indeterminate color="secondary"></v-progress-circular>
-          </v-row>
-        </template> -->
       </v-img>
       <div v-if="artefact.type === 'video'">
-        <video ref="video" :src="artefact.blob" :controls="hover && controls" class="video"/>
+        <video ref="video" :src="artefact.blob.uri" :controls="hover && controls" class="video"/>
       </div>
       <div v-if="artefact.type === 'audio'" class="media" >
-        <audio :src="artefact.blob"
+        <audio :src="artefact.blob.uri"
           :controls="controls" class="px-12" style="width:100%;height:80%;"
         />
         <v-icon size="50" class="center">mdi-music</v-icon>
+      </div>
+      <div v-if="artefact.type === 'document'" class="media">
+        <div>
+          <div v-if="controls" class="text-center" style="padding-top:15%;">
+            <v-icon size="100px">{{ artefactIcon }}</v-icon><br>
+            <v-btn text @click.prevent="downloadFile()">
+              Download File
+            </v-btn>
+          </div>
+          <div v-else class="pt-4 px-5">
+            <v-icon size="60px">{{ artefactIcon }}</v-icon>
+          </div>
+        </div>
       </div>
       <v-btn v-if="controls && hover && editing" class="edit mr-2 mt-2"
         fab x-small
@@ -54,6 +58,8 @@
 </template>
 
 <script>
+import { ARTEFACT_ICON } from '@/lib/artefact-helpers.js'
+
 export default {
   name: 'ArtefactCarouselItem',
   props: {
@@ -65,9 +71,16 @@ export default {
     selectedIndex: { type: Number, default: 0 },
     editing: { type: Boolean }
   },
+  components: {
+  },
   data () {
     return {
       hover: false
+    }
+  },
+  computed: {
+    artefactIcon () {
+      return ARTEFACT_ICON(this.artefact.blob.mimeType)
     }
   },
   methods: {
@@ -75,6 +88,12 @@ export default {
       if (this.selectedIndex === i) {
         return true
       }
+    },
+    downloadFile () {
+      var hiddenElement = document.createElement('a')
+      hiddenElement.href = this.artefact.blob.uri
+      hiddenElement.target = '_blank'
+      hiddenElement.click()
     }
   }
 }
@@ -132,8 +151,4 @@ export default {
   right: 2px;
 }
 
-// .highlight {
-//   overflow: hidden;
-//   border: 5px solid rgba(0, 0, 0, 0.5)
-// }
 </style>

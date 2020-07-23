@@ -3,7 +3,7 @@
       <v-row>
         <!-- Upload profile photo -->
         <v-col :order="mobile ? '' : '2'" class="py-0">
-          <v-row class="justify-center pt-12">
+          <v-row v-if="showAvatar" class="justify-center pt-12">
             <!-- <v-col cols="12" class="pa-0" > -->
               <!-- Avatar -->
             <Avatar
@@ -16,8 +16,17 @@
               :deceased="formData.deceased"
               :isEditing="isEditing"
               @updateAvatar="formData.avatarImage = $event"
+
             />
           </v-row>
+
+          <v-row v-else class="justify-center pt-12">
+            <!-- no avatar placeholder -->
+            <div class="big-avatar avatarPlaceholder">
+              <v-icon size="200" color="rgba(0,0,0,0.3)">mdi-account-circle</v-icon>
+            </div>
+          </v-row>
+
           <v-row v-if="isEditing" class="justify-center">
             <h1>Edit {{ formData.preferredName }}</h1>
           </v-row>
@@ -114,20 +123,20 @@
                 :value.sync="formData.bornAt"
                 label="Date of birth"
                 :readonly="readonly"
-                min="-3000-01-01"
+                min="0000-01-01"
               />
             </v-col>
           </v-row>
 
           <!-- Editing: relationship type-->
-          <v-row>
-            <v-col cols="12" class="pa-1">
+          <v-row v-if="withRelationships || editRelationship">
+            <v-col cols="12" class="pa-1" v-if="this.$route.name !== 'login'">
               <v-select
                 v-model="formData.relationshipType"
                 label="Related by"
                 :items="relationshipTypes"
                 outlined
-                v-bind="customProps"
+                :menu-props="{light: true}"
               />
             </v-col>
           </v-row>
@@ -145,8 +154,8 @@
             </v-col>
           </v-row>
           <!-- DECEASED PICKER -->
-          <v-row>
-           <v-col  v-if="!readonly || formData.deceased" cols="12" class="pa-1">
+          <v-row v-if="this.$route.name !== 'login'">
+           <v-col  v-if="!isUser || formData.deceased" cols="12" class="pa-1">
               <v-checkbox v-model="formData.deceased"
                 label="No longer living" :hide-details="true"
                 v-bind="customProps"
@@ -180,7 +189,7 @@
               />
             </v-col>
             <!-- GENDER EDIT -->
-            <v-col v-else class="pa-1">
+            <v-col v-if="!readonly" class="pa-1">
               <p class="text-field">Gender</p>
 
               <v-row class="gender-button-row" :class="mobile ? '':'pb-12'">
@@ -198,7 +207,8 @@
                 </v-col>
               </v-row>
               <v-row>
-                <v-col  v-if="!readonly || formData.gender === 'other'" cols="6" class="pl-4 py-0">
+
+                <v-col  v-if="!readonly || formData.gender === 'other'" cols="6" class="pl-10 py-0">
                   <v-checkbox v-model="formData.gender"
                     value="other"
                     label="other" :hide-details="true"
@@ -206,9 +216,9 @@
                     outlined
                   />
                 </v-col>
-                <v-col  v-if="!readonly || formData.gender === 'unkown'" cols="6" class="pa-4 py-0">
+                <v-col  v-if="!readonly || formData.gender === 'unknown'" cols="6" class="pa-10 py-0">
                   <v-checkbox v-model="formData.gender"
-                    value="unkown"
+                    value="unknown"
                     label="unknown" :hide-details="true"
                     v-bind="customProps"
                     outlined
@@ -219,7 +229,7 @@
           </v-row>
         </v-col>
 
-        <v-col cols="12" :sm="mobile ? '12' : '6'">
+        <v-col cols="12" :sm="mobile ? '12' : '6'" class="py-0">
           <v-row>
             <!-- Description textarea -->
             <v-col cols="12" class="pa-1">
@@ -240,7 +250,7 @@
             <v-col cols="12" class="pa-1">
               <v-text-field
                 v-model="formData.profession"
-                label="Occupation"
+                label="Profession"
                 v-bind="customProps"
                 outlined
               />
@@ -248,7 +258,6 @@
           </v-row>
         </v-col>
       </v-row>
-
       <v-row>
         <v-col cols="12" :sm="mobile ? '12' : '6'">
           <!-- Email -->
@@ -289,7 +298,7 @@
           </v-row>
           <v-row>
             <v-col cols="12" class="pa-1">
-              <!-- City, Country -->
+              <!-- Location -->
               <v-text-field
                 v-model="formData.location"
                 label="City, Country"
@@ -299,6 +308,7 @@
             </v-col>
           </v-row>
         </v-col>
+
       </v-row>
   </v-form>
 </template>
@@ -310,6 +320,8 @@ import AddButton from '@/components/button/AddButton.vue'
 import NodeDatePicker from '@/components/NodeDatePicker.vue'
 
 import { GENDERS, RELATIONSHIPS } from '@/lib/constants'
+
+import isEmpty from 'lodash.isempty'
 
 export default {
   name: 'ProfileForm',
@@ -326,13 +338,14 @@ export default {
     hideDetails: { type: Boolean, default: false },
     editRelationship: { type: Boolean, default: false },
     mobile: { type: Boolean, default: false },
-    isEditing: { type: Boolean, default: false }
+    isEditing: { type: Boolean, default: false },
+    isUser: { type: Boolean, default: false }
   },
   data () {
     return {
       genders: GENDERS,
       relationshipTypes: RELATIONSHIPS,
-      formData: this.profile,
+      formData: {},
       form: {
         valid: true,
         showDescription: false
@@ -340,16 +353,37 @@ export default {
       selectedGender: ''
     }
   },
+  mounted () {
+    if (this.formData.gender) {
+      if (this.formData.gender === 'male') this.updateSelectedGender('male')
+      if (this.formData.gender === 'female') this.updateSelectedGender('female')
+    }
+    if (isEmpty(this.formData.relationshipType)) {
+      this.formData.relationshipType = 'birth'
+    }
+  },
   watch: {
     profile: {
       deep: true,
       immediate: true,
-      handler (newVal) {
+      handler (newVal, oldVal) {
         this.formData = newVal
       }
+    },
+    'formData.gender' (newValue) {
+      if (newValue === 'other') this.updateSelectedGender('other')
+      if (newValue === 'unknown') this.updateSelectedGender('unknown')
     }
   },
   computed: {
+    showAvatar () {
+      if (this.isEditing) return true
+      if (this.formData) {
+        if (this.formData.gender) return true
+        if (this.formData.avatarImage) return true
+        else return false
+      } else return false
+    },
     customProps () {
       // readonly = hasSelected || !isEditing
       return {
@@ -477,7 +511,7 @@ export default {
       margin: 5px;
 
       .gender-image {
-        margin-top:80px;
+        margin-top:30px;
         width: 8em;
         height: 8em;
         border: 0.5px solid rgba(0,0,0,0.6);
@@ -503,5 +537,18 @@ export default {
         }
       }
     }
+  }
+
+  /* grey circle outline with plus */
+  .avatarPlaceholder {
+    width: 200px;
+    height: 200px;
+    border: 0.3px solid rgb(118, 118, 118,0.9);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size:2rem;
+    color:rgba(0, 0, 0, 0.54)
   }
 </style>

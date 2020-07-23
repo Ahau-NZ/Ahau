@@ -1,27 +1,19 @@
 <template>
-  <div class="wrapper niho-bg">
-    <!-- <CommunitiesNav /> -->
-    <!-- <CommunitiesPeople /> -->
-
+  <div :class="mobile ? 'niho-bg':'wrapper niho-bg'">
     <!-- LeftSideNav -->
-    <v-col cols="12" xs="12" sm="12" md="2" :class="!mobile ? 'pr-0' : 'px-5 py-0'">
-
+    <v-col cols="12" xs="12" sm="12" md="2  " :class="!mobile ? 'pr-0' : 'px-0 py-0'">
     </v-col>
     <!-- Content -->
-    <v-col cols="12" xs="12" sm="12" md="8" :class="mobile ? 'px-6 py-0' : 'pl-0 py-0'">
-      <transition name="fade" mode="out-in">
-        <CommunitiesList />
-      </transition>
+    <v-col cols="12" xs="12" sm="12" md="10" :class="mobile ? 'py-0' : 'pl-0 py-0'">
+      <!-- <CommunitiesNav /> -->
+      <CommunitiesList @addCommunityDialog="addCommunityDialog" />
     </v-col>
     <!-- RightSideNav -->
     <v-col cols="12" xs="12" sm="12" md="2" :class="!mobile ? 'pa-5' : 'px-5 py-0'">
-        <v-btn fab elevation="1" color="white" @click="addCommunityDialog()">
+        <v-btn class="ml-10" fab elevation="1" color="white" @click="addCommunityDialog()">
           <v-icon :large="!mobile" class="black--text">mdi-plus</v-icon>
         </v-btn>
-        <!-- <span class="black--text pl-4 subtitle">Create community</span> -->
-        <!-- <v-icon left>mdi-plus</v-icon> Create community -->
     </v-col>
-
   </div>
 </template>
 
@@ -33,6 +25,7 @@ import { mapActions } from 'vuex'
 export default {
   name: 'Discovery',
   components: {
+    // CommunitiesNav,
     CommunitiesList
   },
   computed: {

@@ -3,7 +3,7 @@
     <clipper-upload accept="image/*" @input="toggleAvatar">
 
       <v-row class="upload-pic-row">
-        <v-icon  v-if="!avatar.new" :class="color">mdi-camera</v-icon>
+        <v-icon class="grey--text pr-2 pt-1">mdi-camera</v-icon>
         <p class="toggle" style="cursor: pointer;">
           {{ label }}
         </p>
@@ -11,6 +11,7 @@
 
     </clipper-upload>
     <AvatarEditDialog
+      v-if="avatar.showEditor"
       :show="avatar.showEditor"
       :avatarImage="avatar.new"
       @submit="updateAvatar($event)"
@@ -41,12 +42,6 @@ export default {
         new: null,
         showEditor: false
       }
-    }
-  },
-  computed: {
-    color () {
-      if (this.$route.name === 'profileShow') return 'white--text'
-      else return 'grey--text'
     }
   },
   methods: {

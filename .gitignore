@@ -38,6 +38,3 @@ yarn-error.log*
 *.njsproj
 *.sln
 *.sw?
-
-#assets
-/ui/src/assets/ignore

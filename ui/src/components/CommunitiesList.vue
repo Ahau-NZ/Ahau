@@ -1,51 +1,57 @@
 <template>
   <div class="py-4">
-    <!-- CONNECT -->
+    <v-row class="top-margin mb-5">
+      <v-col class="headliner black--text pa-0 pl-4 pt-2" :class="!mobile ? 'pt-2':''">
+        Tribes
+      </v-col>
+      <div>
+        <v-btn :medium="!mobile" text :x-small="mobile" :class="mobile ? 'addBtnMob' : 'addBtn'" class="my-2" fab color="white" @click="$emit('addCommunityDialog')" elevation="1">
+          <v-icon :large="!mobile" class="black--text">mdi-plus</v-icon>
+        </v-btn>
+      </div>
+    </v-row>
     <v-row class="py-2">
-      <v-col cols="12">
-        <p class="headliner pa-0 mb-4">CONNECT</p>
+      <v-col cols="12" md="9">
         <p class="sub-headline pa-0">Enter a Pātaka code to discover tribes</p>
         <v-row>
-          <v-col cols="12" sm="12" md="6">
-            <v-text-field
-              v-model="patakaCode"
-              outlined
-              light
-              dense
-              :disables="validating"
-              :success-messages="successMsg"
-              :error-messages="errorMsg"
-              prepend-icon="mdi-lan-connect"
-              clearable
-            />
+          <v-col cols="10" md='9' class="py-0">
+              <v-text-field
+                v-model="patakaCode"
+                placeholder="xxxx-xxxxx-xxxx-xxxx"
+                outlined
+                light
+                dense
+                :success-messages="successMsg"
+                :error-messages="errorMsg"
+                append-icon="mdi-lan-connect"
+                clearable
+              />
           </v-col>
-          <v-col>
-            <v-btn color="383838" @click="acceptInvite">
-              <span>{{validating ? 'checking invite' : 'connect'}}</span>
-            </v-btn>
+          <v-col class="py-0 pl-0">
+              <v-btn color="black" :class="mobile ? 'px-0':''" @click="acceptInvite" :text="mobile" :x-small="mobile">
+                <v-icon v-if="mobile">mdi-arrow-right</v-icon>
+                <span v-else>connect</span>
+              </v-btn>
           </v-col>
         </v-row>
+        <v-divider light color="grey"></v-divider>
       </v-col>
     </v-row>
-
     <!-- TRIBES -->
-    <v-row>
-      <v-col cols="12">
-        <p class="headliner pa-0 mb-4">TRIBES</p>
+    <v-row class="pt-4">
+      <v-col cols="12" md="9" class="py-0">
+        <!-- <p class="headliner pa-0 mb-4">TRIBES</p> -->
         <v-row justify="start">
             <v-col v-for="community in communities" :item="community" :key="community.id" justify-self="start">
-              <!-- <router-link :to="{ name: 'communityShow', params: { id: community.id } }"> -->
-              <router-link @click.native="setComponent('profile')" :to="{ name: 'profileShow', params: { id: community.id } }">
-                <v-card light width="200px">
-                  <v-img height="150px" :src="getImage(community)" class="card-image" />
-                  <v-card-title class="subtitle font-weight-bold pb-2">{{
-                    community.preferredName
-                  }}</v-card-title>
-                  <v-card-text class="body-2">{{
-                    shortDescrciption(community)
-                  }}</v-card-text>
-                </v-card>
-              </router-link>
+              <v-card light :width="!mobile ? '190px':'100vw'" @click="goProfile(community.id)">
+                <v-img height="150px" :src="getImage(community)" class="card-image" />
+                <v-card-title class="subtitle font-weight-bold pb-2">{{
+                  community.preferredName
+                }}</v-card-title>
+                <v-card-text class="body-2">{{
+                  shortDescrciption(community)
+                }}</v-card-text>
+              </v-card>
             </v-col>
           </v-row>
       </v-col>
@@ -64,8 +70,9 @@ export default {
   data () {
     return {
       communities: [],
-      patakaCode: '',
-      validating: false,
+      patakaCode: null,
+      invalidCode: false,
+      validCode: false,
       successMsg: [],
       errorMsg: []
     }
@@ -95,8 +102,18 @@ export default {
       fetchPolicy: 'no-cache'
     }
   },
+  computed: {
+    mobile () {
+      return this.$vuetify.breakpoint.xs
+    }
+  },
   methods: {
-    ...mapActions(['setComponent']),
+    ...mapActions(['setComponent', 'setDialog', 'setProfileById']),
+    goProfile (id) {
+      this.setComponent('profile')
+      this.setProfileById({ id })
+      this.$router.push({ name: 'profileShow', params: { id } }).catch(() => {})
+    },
     getImage (community) {
       return get(community, 'avatarImage.uri') || ''
     },
@@ -104,25 +121,26 @@ export default {
       if (!community.description) return
       return community.description.substring(0, 180)
     },
-    async acceptInvite () {
-      this.validating = true
+    async acceptInvite (inviteCode) {
       try {
         await this.$apollo.mutate({
           mutation: gql`
-          mutation acceptInvite($inviteCode: String!) {
+          mutation($inviteCode: String) {
             acceptInvite(inviteCode: $inviteCode)
           }`,
-          variables: {
+          varibles: {
             inviteCode: this.patakaCode
-          },
-          fetchPolicy: 'no-cache'
+          }
         })
+        // this.sucinvalidCode = false
+        // this.validCode = true
         this.successMsg = ['Successfully located Pātaka']
       } catch (err) {
+        // this.invalidCode = true
+        // this.validCode = false
         this.errorMsg = ['Invalid code, please check the code and try again']
         console.error('Invite error: ', err)
       }
-      this.validating = false
     }
   }
 }
@@ -171,8 +189,16 @@ export default {
     color: rgba(0, 0, 0, 0.6);
   }
 
-  .title {
+  .addBtn {
+    position: fixed;
+    top: 80px;
+    right:100px
+  }
 
+  .addBtnMob {
+    position: absolute;
+    top: 10px;
+    right:20px
   }
 
 </style>

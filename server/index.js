@@ -4,6 +4,7 @@ const http = require('http')
 const express = require('express')
 const cors = require('cors')
 const Main = require('@ssb-graphql/main')
+const Tribes = require('@ssb-graphql/tribes')
 const Profile = require('@ssb-graphql/profile')
 const Invite = require('@ssb-graphql/invite')
 const Whakapapa = require('@ssb-graphql/whakapapa')
@@ -18,40 +19,36 @@ module.exports = {
     const app = express()
     app.options('*', cors())
     const main = Main(sbot)
+    const tribes = Tribes(sbot)
     const profile = Profile(sbot)
     const story = Story(sbot)
     const artefact = Artefact(sbot)
     const invite = Invite(sbot)
-    const whakapapa = Whakapapa(sbot, profile.gettersWithCache)
-    profile.Context((err, context) => {
+    const whakapapa = Whakapapa(sbot, { ...profile.gettersWithCache, ...story.gettersWithCache, ...artefact.gettersWithCache })
+
+    sbot.post(m => {
+      console.log(m.value.sequence, m.key)
+
+      sbot.get({ id: m.key, private: true, meta: true }, (err, m) => {
+        if (err) return console.error(err)
+
+        console.log(JSON.stringify(m.value.content, null, 2))
+        console.log('------------------\n\n')
+      })
+    })
+
+    main.loadContext((err, context) => {
       if (err) throw err
 
       const server = new ApolloServer({
         schema: buildFederatedSchema([
-          {
-            typeDefs: main.typeDefs,
-            resolvers: main.resolvers
-          },
-          {
-            typeDefs: profile.typeDefs,
-            resolvers: profile.resolvers
-          },
-          {
-            typeDefs: artefact.typeDefs,
-            resolvers: artefact.resolvers
-          },
-          {
-            typeDefs: story.typeDefs,
-            resolvers: story.resolvers
-          },
-          {
-            typeDefs: invite.typeDefs,
-            resolvers: invite.resolvers
-          },
-          {
-            typeDefs: whakapapa.typeDefs,
-            resolvers: whakapapa.resolvers
-          }
+          main,
+          tribes,
+          profile,
+          artefact,
+          story,
+          invite,
+          whakapapa
         ]),
         context,
         mockEntireSchema: false,

@@ -60,24 +60,6 @@ import Avatar from '@/components/Avatar.vue'
 import ImagePicker from '@/components/ImagePicker.vue'
 import { RULES } from '@/lib/constants'
 
-// const EMPTY_WHAKAPAPA = {
-//   name: '',
-//   description: '',
-//   mode: 'descendants',
-//   focus: 'self',
-//   image: null
-// }
-
-// function setDefaultWhakapapa (whakapapa) {
-//   return {
-//     name: whakapapa.name,
-//     description: whakapapa.description,
-//     mode: whakapapa.mode,
-//     focus: whakapapa.focus,
-//     image: whakapapa.image
-//   }
-// }
-
 export default {
   name: 'CollectionForm',
   components: {

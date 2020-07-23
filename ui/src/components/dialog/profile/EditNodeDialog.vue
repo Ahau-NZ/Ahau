@@ -31,7 +31,7 @@
 
 <script>
 
-import { PERMITTED_PROFILE_ATTRS } from '@/lib/profile-helpers.js'
+import { PERMITTED_PERSON_ATTRS } from '@/lib/person-helpers.js'
 
 import Dialog from '@/components/dialog/Dialog.vue'
 import ProfileForm from '@/components/profile/ProfileForm.vue'
@@ -43,7 +43,13 @@ import clone from 'lodash.clonedeep'
 
 function defaultData (input) {
   var profile = clone(input)
-  var aliveInterval = profile.aliveInterval.split('/')
+
+  var aliveInterval = ['', '']
+
+  if (profile.aliveInterval) {
+    aliveInterval = profile.aliveInterval.split('/')
+  }
+
   return {
     id: profile.id,
     gender: profile.gender,
@@ -79,11 +85,12 @@ export default {
     show: { type: Boolean, required: true },
     title: { type: String, default: 'Create a new person' },
     hideDetails: { type: Boolean, default: false },
-    selectedProfile: { type: Object }
+    profile: { type: Object, default: () => {} },
+    readOnly: { type: Boolean, default: false }
   },
   data () {
     return {
-      formData: defaultData(this.selectedProfile),
+      formData: {},
       hasSelection: false
     }
   },
@@ -95,10 +102,10 @@ export default {
     profileChanges () {
       let changes = {}
       Object.entries(this.formData).forEach(([key, value]) => {
-        if (!isEqual(this.formData[key], this.selectedProfile[key])) {
+        if (!isEqual(this.formData[key], this.profile[key])) {
           switch (key) {
             case 'altNames':
-              if (!isEqual(this.formData.altNames.add, this.selectedProfile.altNames)) {
+              if (!isEqual(this.formData.altNames.add, this.profile.altNames)) {
                 changes[key] = pick(this.formData.altNames, ['add', 'remove'])
                 changes[key].add = changes[key].add.filter(Boolean)
               }
@@ -114,12 +121,29 @@ export default {
       return changes
     },
     hasChanges () {
-      return isEqual(this.data, this.selectedProfile)
+      return isEqual(this.data, this.profile)
     }
   },
   watch: {
-    profile (newVal) {
-      this.formData = defaultData(newVal)
+    profile: {
+      deep: true,
+      immediate: true,
+      handler (newVal) {
+        if (!newVal) return
+        this.formData = defaultData(newVal)
+
+        if (this.formData.aliveInterval) {
+          var dates = this.formData.aliveInterval.split('/')
+          this.formData.bornAt = dates[0]
+          this.formData.diedAt = dates[1]
+        }
+      }
+    },
+    'formData.bornAt' (newVal) {
+      this.formData.aliveInterval = this.formData.bornAt + '/' + this.formData.diedAt
+    },
+    'formData.diedAt' (newVal) {
+      this.formData.aliveInterval = this.formData.bornAt + '/' + this.formData.diedAt
     },
     'formData.deceased' (newValue) {
       if (!newValue) this.formData.diedAt = ''
@@ -128,7 +152,6 @@ export default {
   methods: {
     updateAvatar (avatarImage) {
       this.formData.avatarImage = avatarImage
-      // this.toggleAvatar(null)
     },
     age (born) {
       var age = calculateAge(born)
@@ -139,9 +162,11 @@ export default {
     },
 
     submit () {
-      var output = Object.assign({}, pick(this.profileChanges, [...PERMITTED_PROFILE_ATTRS]))
+      var output = Object.assign({}, pick(this.profileChanges, [...PERMITTED_PERSON_ATTRS]))
       if (!isEmpty(output)) {
         this.$emit('submit', output)
+      } else {
+        this.close()
       }
     },
 

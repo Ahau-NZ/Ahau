@@ -19,20 +19,20 @@
   </div>
 </template>
 <script>
-  export default {
-    props: {
-      show: {type: Boolean, default: false},
-      message: {stype: String, default: "Action successfully completed"}
-    },
-    data () {
-      return {
-        showMessage: false
-      }
-    },
-    watch: {
-      show (newVal) {
-        this.showMessage = newVal
-      }
+export default {
+  props: {
+    show: { type: Boolean, default: false },
+    message: { stype: String, default: 'Action successfully completed' }
+  },
+  data () {
+    return {
+      showMessage: false
+    }
+  },
+  watch: {
+    show (newVal) {
+      this.showMessage = newVal
     }
   }
+}
 </script>

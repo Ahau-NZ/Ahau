@@ -86,14 +86,14 @@
           </v-row>
           <v-row v-if="!isEditing"  class="justify-center">
             <v-btn
-              :to="{ name: 'profileShow', params: { id: profile.id } }"
+              @click="goProfileShow()"
               color="white"
               text
               medium
               class="blue--text"
             >
               <ArchiveIcon size="normal"/>
-              <span class="pl-2 "> Archive</span>
+              <span class="pl-2 "> Profile</span>
 
               <!-- <v-icon small class="blue--text" left>mdi-account-circle</v-icon>Archive -->
             </v-btn>
@@ -231,14 +231,15 @@
 <script>
 import calculateAge from '../../../lib/calculate-age'
 
-import { PERMITTED_PROFILE_ATTRS, PERMITTED_RELATIONSHIP_ATTRS } from '@/lib/profile-helpers'
+import { PERMITTED_PERSON_ATTRS, PERMITTED_RELATIONSHIP_ATTRS } from '@/lib/person-helpers'
 
 import isEqual from 'lodash.isequal'
 import isEmpty from 'lodash.isempty'
 import pick from 'lodash.pick'
 import clone from 'lodash.clonedeep'
-import ArchiveIcon from '@/components/button/ArchiveIcon.vue'
+import { mapActions } from 'vuex'
 
+import ArchiveIcon from '@/components/button/ArchiveIcon.vue'
 import ProfileForm from '@/components/profile/ProfileForm.vue'
 
 import Avatar from '@/components/Avatar.vue'
@@ -384,6 +385,12 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['setProfileById', 'setComponent']),
+    goProfileShow () {
+      this.setComponent('profile')
+      this.setProfileById({ id: this.profile.id })
+      this.$router.push({ name: 'profileShow', params: { id: this.profile.id } }).catch(() => {})
+    },
     age (born) {
       var age = calculateAge(born)
       return age
@@ -397,7 +404,7 @@ export default {
       this.toggleEdit()
     },
     submit () {
-      var output = Object.assign({}, pick(this.profileChanges, [...PERMITTED_PROFILE_ATTRS, ...PERMITTED_RELATIONSHIP_ATTRS]))
+      var output = Object.assign({}, pick(this.profileChanges, [...PERMITTED_PERSON_ATTRS, ...PERMITTED_RELATIONSHIP_ATTRS]))
 
       if (!isEmpty(output)) {
         this.$emit('submit', output)
@@ -407,7 +414,7 @@ export default {
       this.toggleEdit()
     },
     openProfile (profile) {
-      this.$emit('open-profile', profile.id)
+      this.setProfileById({ id: profile.id, type: 'setWhanau' })
     },
     toggleNew (type) {
       this.$emit('new', type)

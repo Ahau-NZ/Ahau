@@ -1,7 +1,7 @@
 <template>
   <v-tooltip left>
     <template v-slot:activator="{ on }">
-        <v-btn v-on="on"  @click="toggle()" :small="!mobile" :x-small="mobile" :class="mobile ? 'my-2 mr-2': 'my-2'" fab color="white">
+        <v-btn v-on="on"  @click="toggle()" :small="!mobile" :x-small="mobile" :class="mobile ? 'my-2 mr-2': 'my-2'" fab color="white" elevation="2">
           <v-icon :medium ="!mobile" :small="mobile" class="black--text">mdi-account-edit</v-icon>
         </v-btn>
     </template>

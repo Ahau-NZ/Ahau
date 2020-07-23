@@ -1,15 +1,16 @@
 <template>
-  <v-card :color="colour" dark tile class="d-inline-block related-tile" :min-width="mobile ? '100%' : '300'" :max-width="mobile ? '100%' : '300px'" max-height="60" min-height="60" style="overflow: hidden;">
+  <v-card rounded :color="colour" dark tile class="d-inline-block related-tile" :min-width="mobile ? '100%' : '300'" :max-width="mobile ? '100%' : '300px'" max-height="60" min-height="60" style="overflow: hidden;" @click="showRelatedStory">
     <v-container class="pa-0">
       <v-row >
         <v-col cols="auto" class="pa-0 pl-3">
           <v-img
-            v-if="thumbnail"
+            v-if="hasImage"
             height=60
             width="80"
-            :src="src"
-          ></v-img>
-          <v-card height=60 width="80" v-else style="background-color:#383838">
+            :src="getImage"
+          >
+          </v-img>
+          <v-card v-else height=60 width="80" style="background-color:#383838">
             <v-icon x-large class="pl-5 pt-2">mdi-book-open</v-icon>
           </v-card>
         </v-col>
@@ -32,6 +33,7 @@
 
 <script>
 import { colours } from '@/lib/colours.js'
+import { mapMutations, mapGetters } from 'vuex'
 export default {
   name: 'Chip',
   props: {
@@ -40,9 +42,11 @@ export default {
     deletable: Boolean,
     type: String,
     chip: Object,
-    index: Number
+    index: Number,
+    image: { type: String, default: null }
   },
   computed: {
+    ...mapGetters(['stories']),
     colour () {
       var i = Math.round(Math.random() * 10)
       return colours[i]
@@ -50,15 +54,36 @@ export default {
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
-    thumbnail () {
-      if (this.chip.image) return true
-      else if (this.type === 'story' && this.chip.artefacts.length && this.chip.artefacts[0].type === 'photo') return true
-      else return false
+    hasImage () {
+      if (this.image) return true
+      if (this.chip.image && this.chip.uri) return true
+      else if (this.type === 'story' && this.chip.artefacts && this.chip.artefacts.length > 0) {
+        var artefact = this.chip.artefacts[0].artefact
+        if (artefact.type === 'photo') {
+          return true
+        }
+      }
+      return false
     },
-    src () {
-      if (this.chip.image && this.chip.image.uri) return this.chip.image.uri
-      else if (this.type === 'story') return this.chip.artefacts[0].blob
-      return this.chip.image
+    getImage () {
+      if (this.image) return this.image
+      if (this.chip.image && this.chip.uri) return this.chip.uri
+      else if (this.type === 'story' && this.chip.artefacts && this.chip.artefacts.length > 0) {
+        var artefact = this.chip.artefacts[0].artefact
+        if (artefact.type === 'photo') {
+          return artefact.blob.uri
+        }
+      }
+      return null
+    }
+  },
+  methods: {
+    ...mapMutations(['setStory']),
+    showRelatedStory () {
+      if (this.deletable) return
+      var story = this.stories.find(story => story.id === this.chip.id)
+      this.setStory(story)
+      window.scrollTo(0, 0)
     }
   }
 }
