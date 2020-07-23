@@ -26,9 +26,8 @@
         <!-- <v-btn :medium="!mobile" :x-small="mobile" :class="mobile ? 'addBtnMob' : 'addBtn'" class="my-2" fab color="white" @click.stop="openContextMenu($event)"> -->
         <v-btn
           @click.prevent="dialog = 'new-story'"
-          :medium="!mobile"
           :class="!mobile ? 'addBtn my-2' : 'addBtnMobile'"
-          :color="!mobile ? 'white' : 'rgba(177,37,38,1)'"
+          :color="!mobile ? 'white' : 'rgba(160, 35, 36,1)'"
           elevation="2"
           fab
           light

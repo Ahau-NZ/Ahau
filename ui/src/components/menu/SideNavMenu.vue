@@ -270,7 +270,7 @@ export default {
     top: 50px;
     width: 101.5%;
     z-index: 1;
-    background: linear-gradient(rgba(255, 255, 255, 0.9),rgba(255, 255, 255, 0.2) );
+    background: linear-gradient(rgba(255, 255, 255, 0.9),rgba(255, 255, 255, 0.02) );
   }
 
   .hideStickyMobile {

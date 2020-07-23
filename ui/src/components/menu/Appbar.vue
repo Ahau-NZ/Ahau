@@ -4,26 +4,12 @@
       <v-btn v-if="isgoBack" @click="goBack" icon dark>
         <v-icon>mdi-arrow-left</v-icon>
       </v-btn>
-      <!-- <v-btn v-if="showStory && mobile" @click="setShowStory" icon dark>
-        <v-icon>mdi-arrow-left</v-icon>
-      </v-btn> -->
       <template v-if="!isgoBack">
         <router-link to="/" v-if="enableMenu" class="logo-link"  @click.native="karakiaWhakamutunga()">
           <img src="@/assets/logo_red.svg" class="logo" />
         </router-link>
       </template>
-      <v-btn v-if="isgoWhakapapa && !showStory" text @click="goWhakapapa" :class="mobile ? 'ms-4':'ms-10'">
-        <v-row>
-          <v-icon large>mdi-chevron-left</v-icon>
-          <Avatar
-            size="50px"
-            class="ma-0"
-            :image="whakapapa.image ? whakapapa.image : null"
-            :alt="whakapapa.name"
-            :isView="!whakapapa.image"
-          />
-        </v-row>
-      </v-btn>
+      <BackButton v-if="!mobile" @goBack="goBack"/>
       <v-spacer />
       <!-- TODO this takes you back to previous view -->
 
@@ -92,6 +78,7 @@
 import Avatar from '@/components/Avatar'
 import FeedbackButton from '@/components/button/FeedbackButton'
 import { mapGetters, mapActions } from 'vuex'
+import BackButton from '@/components/button/BackButton'
 
 const karakia = `
 ---------------------------------
@@ -113,7 +100,6 @@ export default {
     enableMenu: { type: Boolean, default: true },
     app: { type: Boolean, default: false },
     sideMenu: { type: Boolean, default: false }
-    // goBack: { type: Function }
   },
   data () {
     return {
@@ -122,7 +108,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['whoami', 'whakapapa', 'route', 'showStory', 'storeDialog']),
+    ...mapGetters(['whoami', 'whakapapa', 'route', 'showStory', 'storeDialog', 'currentProfile']),
     classObject: function () {
       return {
         'mobile': this.mobile,
@@ -132,12 +118,6 @@ export default {
     },
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
-    },
-    isgoWhakapapa () {
-      if (this.route.from) {
-        return this.route.from.name === 'whakapapaShow' && this.route.name === 'profileShow'
-      }
-      return false
     },
     isgoBack () {
       if (this.mobile) {
@@ -181,14 +161,12 @@ export default {
       if (this.route.name === 'whakapapaShow') return this.$router.push({ path: this.route.from.fullPath })
       else if (this.showStory) return this.setShowStory()
     },
-    goWhakapapa () {
-      this.$router.push({ path: this.route.from.fullPath })
-    }
 
   },
   components: {
     Avatar,
-    FeedbackButton
+    FeedbackButton,
+    BackButton
   }
 }
 </script>

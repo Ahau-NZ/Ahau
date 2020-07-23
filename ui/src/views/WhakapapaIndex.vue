@@ -13,7 +13,7 @@
           @click="toggleViewForm"
           :medium="!mobile"
           :class="!mobile ? 'addBtn my-2' : 'addBtnMobile'"
-          :color="!mobile ? 'white' : 'rgba(177,37,38,1)'"
+          :color="!mobile ? 'white' : 'rgba(160, 35, 36,1)'"
           elevation="2"
           fab
           light

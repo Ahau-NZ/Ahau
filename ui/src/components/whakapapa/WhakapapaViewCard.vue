@@ -3,11 +3,9 @@
     :to="view.id
         ? { name: 'whakapapaShow', params: { id: view.id } }
         : '/whakapapa'"
-    class="pa-2"
+    class="pa-0"
     color="#fff"
-    :style="`
-      shadow ? '' : 'box-shadow: none;'
-      `"
+    style="bor"
   >
     <!-- <div class="d-flex flex-no-wrap flex-start align-stretch"> -->
     <div class="d-flex flex-no-wrap flex-start align-stretch">
@@ -58,7 +56,9 @@ export default {
       if (view.image && view.image.uri) {
         return {
           backgroundImage: `url(${view.image.uri})`,
-          backgroundSize: 'cover'
+          backgroundSize: 'cover',
+          borderTopLeftRadius: '4px',
+          borderBottomLeftRadius: '4px',
         }
       }
       return {
