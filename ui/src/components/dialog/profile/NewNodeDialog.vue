@@ -87,7 +87,7 @@ import uniqby from 'lodash.uniqby'
 import pick from 'lodash.pick'
 import clone from 'lodash.clonedeep'
 
-import { PERMITTED_PROFILE_ATTRS, PERMITTED_RELATIONSHIP_ATTRS, GET_PROFILE } from '@/lib/profile-helpers'
+import { PERMITTED_PERSON_ATTRS, PERMITTED_RELATIONSHIP_ATTRS, getPerson } from '@/lib/person-helpers'
 
 function defaultData (input) {
   var profile = clone(input)
@@ -287,7 +287,7 @@ export default {
       // children of your partners that arent currently your children
       if (this.selectedProfile.partners) {
         this.selectedProfile.partners.forEach(async partner => {
-          const result = await this.$apollo.query(GET_PROFILE(partner.id))
+          const result = await this.$apollo.query(getPerson(partner.id))
           if (result.data) {
             result.data.person.children.forEach(d => {
               if (!currentChildren[d.profile.id]) {
@@ -299,7 +299,7 @@ export default {
       }
 
       // get ignored children
-      const ignored = await this.$apollo.query(GET_PROFILE(this.selectedProfile.id))
+      const ignored = await this.$apollo.query(getPerson(this.selectedProfile.id))
       if (ignored.data) {
         ignored.data.person.children.forEach(d => {
           if (!currentChildren[d.profile.id]) {
@@ -325,7 +325,7 @@ export default {
 
       if (this.selectedProfile.siblings) {
         this.selectedProfile.siblings.forEach(async sibling => {
-          const result = await this.$apollo.query(GET_PROFILE(sibling.id))
+          const result = await this.$apollo.query(getPerson(sibling.id))
 
           if (result.data) {
             result.data.person.parents.forEach(d => {
@@ -338,7 +338,7 @@ export default {
       }
 
       // get ignored parents
-      const ignored = await this.$apollo.query(GET_PROFILE(this.selectedProfile.id))
+      const ignored = await this.$apollo.query(getPerson(this.selectedProfile.id))
       if (ignored.data) {
         ignored.data.person.parents.forEach(d => {
           if (!currentParents[d.profile.id]) {
@@ -356,7 +356,7 @@ export default {
       return calculateAge(aliveInterval)
     },
     submit () {
-      var submission = pick(this.submission, [...PERMITTED_PROFILE_ATTRS, ...PERMITTED_RELATIONSHIP_ATTRS])
+      var submission = pick(this.submission, [...PERMITTED_PERSON_ATTRS, ...PERMITTED_RELATIONSHIP_ATTRS])
       this.$emit('create', submission)
       // this.hasSelection
       //   ? this.$emit('create', pick(this.formData, ['id', 'relationshipType', 'legallyAdopted']))

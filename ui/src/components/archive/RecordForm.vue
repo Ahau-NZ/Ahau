@@ -470,7 +470,7 @@ export default {
     this.showAdvanced()
   },
   computed: {
-    ...mapGetters(['showStory', 'whoami', 'stories']),
+    ...mapGetters(['showStory', 'stories']),
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
