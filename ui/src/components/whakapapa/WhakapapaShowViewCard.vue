@@ -37,7 +37,7 @@
             <template v-slot:activator="{ on }">
             <v-btn
               v-on="on"
-              @click.prevent="show = !show"
+              @click.stop="show = !show"
               icon
               class="pa-0 px-3"
             >

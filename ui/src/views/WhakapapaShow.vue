@@ -637,7 +637,8 @@ export default {
     // save whakapapa changes
     async updateWhakapapa (whakapapaChanges) {
       const input = {
-        id: this.$route.params.id
+        id: this.$route.params.id,
+        recps: this.whakapapaView.recps
       }
       Object.entries(whakapapaChanges).forEach(([key, value]) => {
         if (!isEmpty(value)) input[key] = value
