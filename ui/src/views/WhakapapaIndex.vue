@@ -64,7 +64,7 @@ import NewNodeDialog from '@/components/dialog/profile/NewNodeDialog.vue'
 import WhakapapaListHelper from '@/components/dialog/whakapapa/WhakapapaListHelper.vue'
 
 import { SAVE_LINK } from '@/lib/link-helpers.js'
-import { savePerson } from '@/lib/person-helpers.js'
+import { saveProfile } from '@/lib/person-helpers.js'
 import tree from '@/lib/tree-helpers'
 
 // import clone from 'lodash.clonedeep'
@@ -313,13 +313,13 @@ export default {
         } = $event
 
         if (!id) {
-          const res = await this.$apollo.mutate(savePerson($event))
+          const res = await this.$apollo.mutate(saveProfile($event))
           if (res.errors) {
             console.error('failed to create profile', res)
             return
           }
 
-          id = res.data.savePerson
+          id = res.data.saveProfile
         }
 
         this.createView({
@@ -405,6 +405,9 @@ export default {
           id
         } = $event
         id = await this.createProfile(person)
+        if (id == null) {
+          throw new Error('BAD')
+        }
         if (id.errors) {
           console.error('failed to create profile', id)
           return
@@ -434,7 +437,7 @@ export default {
     },
 
     async createProfile (opts) {
-      const mutation = savePerson({
+      const mutation = saveProfile({
         type: 'person',
         recps: [this.whoami.personal.groupId], // TEMP - safety till we figure out actual recps
         ...opts
@@ -444,7 +447,8 @@ export default {
       if (res.errors) {
         console.error('failed to createProfile', res)
       } else {
-        return res.data.savePerson // a profileId
+        
+        return res.data.saveProfile // a profileId
       }
     },
 

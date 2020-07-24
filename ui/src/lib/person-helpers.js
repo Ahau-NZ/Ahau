@@ -117,7 +117,7 @@ export async function getRelatives (profileId) {
   }
 }
 
-export const savePerson = input => {
+export const saveProfile = input => {
   const _input = pick(input, PERMITTED_PERSON_ATTRS)
   if (!_input.id) _input.type = 'person'
 

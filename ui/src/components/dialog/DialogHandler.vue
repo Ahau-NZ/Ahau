@@ -136,7 +136,7 @@ import ConfirmationMessage from '@/components/dialog/ConfirmationMessage.vue'
 
 import gql from 'graphql-tag'
 
-import { PERMITTED_RELATIONSHIP_ATTRS, savePerson, saveCurrentIdentity } from '@/lib/person-helpers.js'
+import { PERMITTED_RELATIONSHIP_ATTRS, saveProfile, saveCurrentIdentity } from '@/lib/person-helpers.js'
 import { saveCommunity } from '@/lib/community-helpers'
 
 import { SAVE_LINK } from '@/lib/link-helpers.js'
@@ -322,10 +322,10 @@ export default {
         }
       }
     },
-    async savePerson (input) {
+    async saveProfile (input) {
       if (!input.recps) input.recps = [this.whoami.personal.groupId]
       // TODO fix recps to be right group
-      const res = await this.$apollo.mutate(savePerson(input))
+      const res = await this.$apollo.mutate(saveProfile(input))
 
       if (res.errors) {
         console.error(`failed to ${input.id ? 'update' : 'save'} profile`, res)
@@ -449,7 +449,7 @@ export default {
         } else {
           // if person doesnt exist create one
           if (!id) {
-            id = await this.savePerson($event)
+            id = await this.saveProfile($event)
             if (!id) return
           }
 
@@ -598,7 +598,7 @@ export default {
       if (this.isPersonalProfile(profileId)) {
         await this.saveCurrentIdentity(input)
       } else {
-        await this.savePerson({ id: profileId, ...input })
+        await this.saveProfile({ id: profileId, ...input })
       }
 
       const relationshipAttrs = pick(input, [...PERMITTED_RELATIONSHIP_ATTRS])
