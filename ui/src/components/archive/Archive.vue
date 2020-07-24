@@ -165,6 +165,7 @@ export default {
     ...mapMutations(['setStory', 'addStoryToStories', 'updateStoryInStories', 'removeStoryFromStories']),
     ...mapActions(['setComponent', 'setShowStory', 'setDialog', 'getAllStories']),
     async saveStory (input) {
+      input.recps=[this.whoami.personal.groupId]
       var { id, artefacts, mentions, contributors, creators, relatedRecords } = input
 
       try {
