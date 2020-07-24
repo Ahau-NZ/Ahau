@@ -290,6 +290,7 @@ export default {
             input: pruned
           }
         })
+        console.log({ result })
         if (!result.data) {
           console.error('Creating Whakapapa was unsuccessful')
           return
@@ -347,11 +348,20 @@ export default {
           return d.parentNumber
         })(profilesArray)
 
+      // FINE SO FAR
+      console.log({ root })
+
       // create new array now with child and parents data
       var descendants = await root.descendants()
 
+      // STILL FILNE
+      console.log({ descendants })
+
       // create whakapapaLinks
       var finalArray = await this.createLinks(descendants)
+
+       // ???
+      console.log({ finalArray })
 
       // var endTime = Date.now()
       // var eclipsedTime = (endTime - startTime) / 1000

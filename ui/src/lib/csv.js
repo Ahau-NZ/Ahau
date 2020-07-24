@@ -1,7 +1,6 @@
 import * as d3 from 'd3'
 import { GENDERS, RELATIONSHIPS } from './constants'
 
-const dateRegex = /^([0-2][0-9]|(3)[0-1])(\/|-)(((0)[0-9])|((1)[0-2]))(\/|-)\d{4}$/
 const emailRegex = /^\w+([\\.-]?\w+)*@\w+([\\.-]?\w+)*(\.\w{2,3})+$/
 
 function importCsv (file) {
@@ -33,8 +32,9 @@ function parse (fileContent) {
 
       const errs = personErrors(d, i)
 
-      if (errs) errors = [...errors, ...errs]
-      else {
+      if (errs) {
+        errors = [...errors, ...errs]
+      } else {
         return {
           parentNumber: d.parentNumber,
           number: d.number,
@@ -60,7 +60,9 @@ function parse (fileContent) {
       // this code should never be reached
     }
 
-    if (csv.length > 200) {
+    const maxCsvLength = 800
+
+    if (csv.length > maxCsvLength) {
       errors.push('Aroha mai, we are currently experiencing issues processing large files. We are currently working on this and hope to have this working soon')
     }
 
@@ -134,7 +136,9 @@ function isString (d) {
 }
 
 function isValidDate (d) {
-  return dateRegex.test(d) || isEmpty(d)
+  const isValid = d === '' || isNaN(new Date(d)) === false
+
+  return isValid
 }
 
 function isValidNumber (d) {

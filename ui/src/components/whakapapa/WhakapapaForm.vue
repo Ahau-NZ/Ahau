@@ -172,6 +172,8 @@ export default {
           this.$emit('update:data', csv)
         })
         .catch(errs => {
+          // TODO: Fix error handling.
+          // alert(errs.join('\n'))
           this.errorMsgs = errs
           this.csvErrorShow = true
         })
