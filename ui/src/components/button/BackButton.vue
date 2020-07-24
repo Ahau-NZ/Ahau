@@ -1,25 +1,26 @@
 <template>
   <div>
-  <v-btn v-if="isgoWhakapapa && !showStory" text @click="goWhakapapa" :class="mobile ? 'ms-10':'ms-10'">
-    <v-row>
-      <v-icon large>mdi-chevron-left</v-icon>
-      <Avatar
-        size="50px"
-        class="ma-0"
-        :image="whakapapa.image ? whakapapa.image : null"
-        :alt="whakapapa.name"
-        :isView="!whakapapa.image"
-      />
-    </v-row>
-  </v-btn>
-    <v-btn v-else-if="!showStory && this.route.name === 'whakapapaShow'" text @click="$emit('goBack')" :class="mobile ? 'ms-4':'ms-10'">
-      <v-row>
+    <v-btn v-if="isgoWhakapapa && !showStory" fab @click="goWhakapapa" class="ms-10 pr-6 pb-1">
+      <v-row align="center">
         <v-icon large>mdi-chevron-left</v-icon>
         <Avatar
-          size="50px"
+          size="45px"
+          class="ma-0"
+          :image="whakapapa.image ? whakapapa.image : null"
+          :alt="whakapapa.name"
+          :isView="!whakapapa.image"
+        />
+      </v-row>
+    </v-btn>
+    <v-btn v-else-if="!showStory && this.route.name === 'whakapapaShow'" fab @click="$emit('goBack')" class="ms-10  pr-6 pb-1">
+      <v-row align="center">
+        <v-icon large>mdi-chevron-left</v-icon>
+        <Avatar
+          size="45px"
           class="ma-0"
           :image="currentProfile.avatarImage ? currentProfile.avatarImage : null"
-          :alt="currentProfile.prefferedName"
+          :alt="currentProfile.preferredName"
+          :gender="currentProfile.gender"
         />
       </v-row>
     </v-btn>

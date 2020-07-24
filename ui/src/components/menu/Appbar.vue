@@ -21,11 +21,11 @@
 
         <!-- <v-btn active-class="no-active" text @click.native="resetWindow" to="/whakapapa" class="white--text text-uppercase ms-10">whakapapa</v-btn> -->
         <v-btn active-class="no-active" text @click.native="goProfile('whakapapa')" class="white--text text-uppercase ms-10">whakapapa</v-btn>
-        <v-btn active-class="no-active" text @click.native="goProfile('profile')">
+        <v-btn active-class="no-active" fab @click.native="goProfile('profile')" class="pr-12 mr-4 ml-10">
           <Avatar
             v-if="!mobile"
-            size="50px"
-            class="ms-10"
+            size="45px"
+            class="ms-12"
             :image="whoami.personal.profile.avatarImage"
             :alt="whoami.personal.profile.preferredName"
             :gender="whoami.personal.profile.gender"
@@ -146,8 +146,8 @@ export default {
     },
     goProfile (component) {
       this.setComponent(component)
-      this.setProfileById({ id: this.whoami.profile.id })
-      this.$router.push({ name: 'profileShow', params: { id: this.whoami.profile.id } }).catch(() => {})
+      this.setProfileById({ id: this.whoami.personal.profile.id })
+      this.$router.push({ name: 'profileShow', params: { id: this.whoami.personal.profile.id } }).catch(() => {})
       // this.setProfileById(this.profile.id)
       if (this.drawer) this.drawer = false
     },

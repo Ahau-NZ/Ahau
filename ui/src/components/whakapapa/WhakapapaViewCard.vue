@@ -5,7 +5,6 @@
         : '/whakapapa'"
     class="pa-0"
     color="#fff"
-    style="bor"
   >
     <!-- <div class="d-flex flex-no-wrap flex-start align-stretch"> -->
     <div class="d-flex flex-no-wrap flex-start align-stretch">
