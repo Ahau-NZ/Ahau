@@ -6,7 +6,7 @@
     <v-row v-if="!showStory" class="top-margin mb-5">
       <v-col cols="12" class="headliner black--text pa-0 pl-4 pt-2">
         Archive records
-        <v-icon color="blue-grey" light @click="toggleWhakapapaHelper" class="infoButton">mdi-information</v-icon>
+        <v-icon color="blue-grey" light @click="toggleArchiveHelper" class="infoButton">mdi-information</v-icon>
       </v-col>
       <!-- <v-col align="right" class="pa-0">
         <v-btn outlined flat :medium="!mobile" :x-small="mobile" :class="mobile ? 'addBtnMob' : 'addBtn'" class="my-2" fab color="white" @click.stop="openContextMenu($event)">
@@ -74,7 +74,7 @@
       </v-col>
     </v-row>
 
-    <WhakapapaListHelper :show="showWhakapapaHelper" @close="toggleWhakapapaHelper" />
+    <ArchiveHelper v-if="showArchiveHelper" :show="showArchiveHelper" @close="toggleArchiveHelper" />
 
   </v-container>
   <!-- <vue-context ref="menu" class="pa-4">
@@ -106,14 +106,14 @@ import { mapGetters, mapActions, mapMutations } from 'vuex'
 import NewRecordDialog from '@/components/dialog/archive/NewRecordDialog.vue'
 
 // TODO: Replace with Archive Helper (doesnt exist yet)
-import WhakapapaListHelper from '@/components/dialog/whakapapa/WhakapapaListHelper.vue'
+import ArchiveHelper from '@/components/dialog/archive/ArchiveHelper.vue'
 
 export default {
   name: 'Archive',
   components: {
     StoryCard,
     NewRecordDialog,
-    WhakapapaListHelper
+    ArchiveHelper
     // CollectionGroup,
     // VueContext,
   },
@@ -132,7 +132,7 @@ export default {
       // }
       // ],
       scrollPosition: 0,
-      showWhakapapaHelper: false
+      showArchiveHelper: false
     }
   },
   props: {
@@ -184,8 +184,8 @@ export default {
   methods: {
     ...mapMutations(['setStory', 'addStoryToStories', 'updateStoryInStories', 'removeStoryFromStories']),
     ...mapActions(['setComponent', 'setShowStory', 'setDialog', 'getAllStories']),
-    toggleWhakapapaHelper () {
-      this.showWhakapapaHelper = !this.showWhakapapaHelper
+    toggleArchiveHelper () {
+      this.showArchiveHelper = !this.showArchiveHelper
     },
     async saveStory (input) {
       input.recps = [this.whoami.personal.groupId]
