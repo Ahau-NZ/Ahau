@@ -14,7 +14,7 @@
               <template v-slot:activator="{ on }">
                 <v-btn
                   v-on="on"
-                  @click.prevent="dialog.active = 'whakapapa-edit'"
+                  @click.stop="dialog.active = 'whakapapa-edit'"
                   icon
                   class="pa-0 px-3"
                 >
@@ -637,7 +637,8 @@ export default {
     // save whakapapa changes
     async updateWhakapapa (whakapapaChanges) {
       const input = {
-        id: this.$route.params.id
+        id: this.$route.params.id,
+        recps: this.whakapapaView.recps
       }
       Object.entries(whakapapaChanges).forEach(([key, value]) => {
         if (!isEmpty(value)) input[key] = value

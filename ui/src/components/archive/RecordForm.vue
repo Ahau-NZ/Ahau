@@ -249,7 +249,7 @@
 
             <!-- RELATED RECORDS -->
             <v-col cols="12" md="auto" class="pa-5">
-              <v-row v-if="!showRecords" @click="showRecords = true">
+              <v-row v-if="!showRecords" @click="showRecords = true" class="pl-5">
                 <v-icon small>mdi-plus</v-icon>
                 <AddButton size="20px" icon="mdi-book-multiple" iconClass="pr-3" label="Related records"  justify="start"/>
               </v-row>

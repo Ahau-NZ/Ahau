@@ -23,7 +23,7 @@
           <v-row v-else class="justify-center pt-12">
             <!-- no avatar placeholder -->
             <div class="big-avatar avatarPlaceholder">
-              <v-icon size="200" color="rgba(0,0,0,0.3)">mdi-account-circle</v-icon>
+              <img :src="require('@/assets/account.svg')"/>
             </div>
           </v-row>
 

@@ -4,26 +4,12 @@
       <v-btn v-if="isgoBack" @click="goBack" icon dark>
         <v-icon>mdi-arrow-left</v-icon>
       </v-btn>
-      <!-- <v-btn v-if="showStory && mobile" @click="setShowStory" icon dark>
-        <v-icon>mdi-arrow-left</v-icon>
-      </v-btn> -->
       <template v-if="!isgoBack">
         <router-link to="/" v-if="enableMenu" class="logo-link"  @click.native="karakiaWhakamutunga()">
           <img src="@/assets/logo_red.svg" class="logo" />
         </router-link>
       </template>
-      <v-btn v-if="isgoWhakapapa && !showStory" text @click="goWhakapapa" :class="mobile ? 'ms-4':'ms-10'">
-        <v-row>
-          <v-icon large>mdi-chevron-left</v-icon>
-          <Avatar
-            size="50px"
-            class="ma-0"
-            :image="whakapapa.image ? whakapapa.image : null"
-            :alt="whakapapa.name"
-            :isView="!whakapapa.image"
-          />
-        </v-row>
-      </v-btn>
+      <BackButton v-if="!mobile" @goBack="goBack"/>
       <v-spacer />
       <!-- TODO this takes you back to previous view -->
 
@@ -31,14 +17,15 @@
       <template v-if="!mobile">
         <!--  WIP links -->
         <v-btn text active-class="no-active" :to="{ name: 'discovery' }" class="white--text text-uppercase ms-10">Tribes</v-btn>
-        <v-btn active-class="no-active" text @click.native="goArchive" class="white--text text-uppercase ms-10">Archive</v-btn>
+        <v-btn active-class="no-active" text @click.native="goProfile('archive')" class="white--text text-uppercase ms-10">Archive</v-btn>
 
-        <v-btn active-class="no-active" text @click.native="resetWindow" to="/whakapapa" class="white--text text-uppercase ms-10">whakapapa</v-btn>
-        <v-btn active-class="no-active" text @click.native="goProfile()">
+        <!-- <v-btn active-class="no-active" text @click.native="resetWindow" to="/whakapapa" class="white--text text-uppercase ms-10">whakapapa</v-btn> -->
+        <v-btn active-class="no-active" text @click.native="goProfile('whakapapa')" class="white--text text-uppercase ms-10">whakapapa</v-btn>
+        <v-btn active-class="no-active" fab @click.native="goProfile('profile')" class="pr-12 mr-4 ml-10">
           <Avatar
             v-if="!mobile"
-            size="50px"
-            class="ms-10"
+            size="45px"
+            class="ms-12"
             :image="whoami.personal.profile.avatarImage"
             :alt="whoami.personal.profile.preferredName"
             :gender="whoami.personal.profile.gender"
@@ -60,7 +47,7 @@
     <!-- The drawer shows only on mobile -->
     <v-navigation-drawer v-if="mobile && enableMenu" v-model="drawer" app dark right width="60%">
       <v-list nav class="text-uppercase">
-        <v-list-item active-class="no-active" @click="goProfile()" >
+        <v-list-item active-class="no-active" @click="goProfile('profile')" >
           <Avatar
             size="80px"
             :image="whoami.personal.profile.avatarImage"
@@ -69,10 +56,11 @@
             :bornAt="whoami.personal.profile.bornAt"
           />
         </v-list-item>
-        <v-list-item active-class="no-active" link to="/whakapapa" class="white--text">
+        <!-- <v-list-item active-class="no-active" link to="/whakapapa" class="white--text"> -->
+        <v-list-item active-class="no-active" link @click.native="goProfile('whakapapa')" class="white--text">
           <v-list-item-title>whakapapa</v-list-item-title>
         </v-list-item>
-        <v-list-item active-class="no-active" link @click.native="goArchive()" >
+        <v-list-item active-class="no-active" link @click.native="goProfile('archive')" >
           <v-list-item-title class="white--text" >Archive</v-list-item-title>
         </v-list-item>
         <v-list-item active-class="no-active" link :to="{ name: 'discovery' }">
@@ -90,6 +78,7 @@
 import Avatar from '@/components/Avatar'
 import FeedbackButton from '@/components/button/FeedbackButton'
 import { mapGetters, mapActions } from 'vuex'
+import BackButton from '@/components/button/BackButton'
 
 const karakia = `
 ---------------------------------
@@ -111,7 +100,6 @@ export default {
     enableMenu: { type: Boolean, default: true },
     app: { type: Boolean, default: false },
     sideMenu: { type: Boolean, default: false }
-    // goBack: { type: Function }
   },
   data () {
     return {
@@ -120,7 +108,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['whoami', 'whakapapa', 'route', 'showStory', 'storeDialog']),
+    ...mapGetters(['whoami', 'whakapapa', 'route', 'showStory', 'storeDialog', 'currentProfile']),
     classObject: function () {
       return {
         'mobile': this.mobile,
@@ -130,12 +118,6 @@ export default {
     },
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
-    },
-    isgoWhakapapa () {
-      if (this.route.from) {
-        return this.route.from.name === 'whakapapaShow' && this.route.name === 'profileShow'
-      }
-      return false
     },
     isgoBack () {
       if (this.mobile) {
@@ -162,17 +144,11 @@ export default {
     async getCurrentIdentity () {
       await this.setWhoami()
     },
-    goProfile () {
-      this.setComponent('profile')
+    goProfile (component) {
+      this.setComponent(component)
       this.setProfileById({ id: this.whoami.personal.profile.id })
       this.$router.push({ name: 'profileShow', params: { id: this.whoami.personal.profile.id } }).catch(() => {})
       // this.setProfileById(this.profile.id)
-      if (this.drawer) this.drawer = false
-    },
-    goArchive () {
-      this.setComponent('archive')
-      this.setProfileById({ id: this.whoami.personal.profile.id })
-      this.$router.push({ name: 'profileShow', params: { id: this.whoami.personal.profile.id } }).catch(() => {})
       if (this.drawer) this.drawer = false
     },
     karakiaWhakamutunga () {
@@ -182,17 +158,15 @@ export default {
       this.drawer = !this.drawer
     },
     goBack () {
-      if (this.route.name === 'whakapapaShow') return this.$router.push({ name: 'whakapapaIndex' })
+      if (this.route.name === 'whakapapaShow') return this.$router.push({ path: this.route.from.fullPath })
       else if (this.showStory) return this.setShowStory()
     },
-    goWhakapapa () {
-      this.$router.push({ path: this.route.from.fullPath })
-    }
 
   },
   components: {
     Avatar,
-    FeedbackButton
+    FeedbackButton,
+    BackButton
   }
 }
 </script>
