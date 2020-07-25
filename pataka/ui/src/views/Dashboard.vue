@@ -209,8 +209,11 @@ export default {
       query: gql`query {
       cpuLoad
     }`,
-      pollInterval: 5000,
+      pollInterval: 10000,
       update (data) {
+        if (this.cpuLoad.length >= 360) {
+          this.cpuLoad.shift()
+        }
         return [ ...this.cpuLoad, data.cpuLoad ]
       }
     },
@@ -218,8 +221,11 @@ export default {
       query: gql`query {
       memoryLoad
     }`,
-      pollInterval: 5000,
+      pollInterval: 10000,
       update (data) {
+        if (this.memoryLoad.length >= 360) {
+          this.memoryLoad.shift()
+        }
         return [ ...this.memoryLoad, data.memoryLoad ]
       }
     },
