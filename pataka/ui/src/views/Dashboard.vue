@@ -62,47 +62,50 @@
               <div class="dot mr-4" :class="network.ipv4 ? 'green' : 'grey'" />
               <p class="body-2 text-uppercase">{{network.ipv4 ? ' Local Network' : 'Checking'}}</p>
             </v-row>
+            <v-col class="mt-8">
+              <h3>Disk Usage</h3>
+              <v-progress-linear
+                v-for="disk in diskUsage"
+                :key="disk.fs"
+                class="mt-4"
+                :value="disk.use"
+                height="25"
+                color="blue-grey"
+              >
+                <strong class="pr-2">{{ Math.ceil(disk.use) }}%</strong>
+                <span class="caption">{{disk.fs}}</span>
+              </v-progress-linear>
+            </v-col>
           </v-col>
         </v-col>
-        <v-col cols="3" class="stat-column">
-          <h2 class="h2 text-uppercase pb-12">Machine status</h2>
-          <Meter title="CPU" :values="cpuLoad" />
-          <Meter title="RAM" :values="memoryLoad" />
-          <v-col class="mt-8">
-            <h3>Disk Usage</h3>
-            <v-progress-linear
-              v-for="disk in diskUsage"
-              :key="disk.fs"
-              class="mt-4"
-              :value="disk.use"
-              height="25"
-              color="blue-grey"
-            >
-              <strong class="pr-2">{{ Math.ceil(disk.use) }}%</strong>
-              <span class="caption">{{disk.fs}}</span>
-            </v-progress-linear>
-          </v-col>
-        </v-col>
-        <v-col cols="3" class="stat-column">
-          <h2 class="h2 text-uppercase pb-12">People</h2>
-          <!-- <h3 class="py-2 text-uppercase subtitle-1 grey--text">64 people online</h3> -->
-          <p v-if="invitedPeople.length === 0">There's no one on your network</p>
-          <v-row v-for="(people, key) in invitedPeople" :key="key" class="pb-4">
-            <h6>{{people.id}}</h6>
-            <Avatar size="40px" alt="name" :image="people.avatarImage" />
+        <v-col cols="8">
+          <v-row class="stat-column">
+            <v-col cols="4">
+              <Meter title="CPU" :values="cpuLoad" />
+            </v-col>
+            <v-col cols="4">
+              <Meter title="RAM" :values="memoryLoad" />
+            </v-col>
           </v-row>
-          <v-btn color="grey" outlined tile>View people</v-btn>
-        </v-col>
-        <v-col cols="2" class="stat-column">
-          <h2 class="h2 text-uppercase pb-12">Communities</h2>
-          <!-- <h3
-            class="py-2 text-uppercase subtitle-1 grey--text"
-          ></h3> -->
-        </v-col>
-        <v-col cols="3" class="stat-column">
-          <!-- <h2 class="h2 text-uppercase pb-12">Activity log</h2>
-          <p class="log-box">
-          </p>-->
+          <v-row class="pt-12">
+            <v-col cols="4" class="stat-column">
+              <h2 class="h2 text-uppercase pb-12">People</h2>
+              <p v-if="invitedPeople.length === 0">There's no one on your network</p>
+              <v-row v-for="(people, key) in invitedPeople" :key="key" class="pb-4">
+                <h6>{{people.preferredName}}</h6>
+                <Avatar size="40px" alt="name" :image="people.avatarImage" />
+              </v-row>
+              <v-btn color="grey" outlined tile>View people</v-btn>
+            </v-col>
+            <v-col cols="4" class="stat-column">
+              <h2 class="h2 text-uppercase pb-12">Communities</h2>
+              <p v-if="communities.length === 0">There's are no communities on your network</p>
+              <v-row v-for="(community, key) in communities" :key="key" class="pb-4">
+                <h6>{{community.preferredName}}</h6>
+                <Avatar size="40px" alt="name" :image="community.avatarImage" />
+              </v-row>
+            </v-col>
+          </v-row>
         </v-col>
       </v-row>
     </v-container>
@@ -138,6 +141,7 @@ export default {
     errorMsg: null,
     checkingPort: null,
     invitedPeople: [],
+    communities: [],
     profile: {
       feedId: '',
       preferredName: '',
@@ -244,6 +248,19 @@ export default {
       `,
       update (data) {
         return data.invitedPeople
+      }
+    },
+    communities: {
+      query: gql`query {
+        communities {
+          preferredName
+          avatarImage {
+            uri
+          }
+        }
+      }`,
+      update (data) {
+        return data.communities
       }
     },
     dataSummary: {
@@ -410,5 +427,13 @@ export default {
   opacity: 0.8;
   padding: 45px 25px 15px;
   min-height: 90%;
+}
+@media screen and (min-width: 1280px) {
+  #inviteCode {
+    font-size: 0.8em;
+  }
+  .feed-id {
+    font-size: 0.8em;
+  }
 }
 </style>
