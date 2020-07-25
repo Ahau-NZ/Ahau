@@ -212,7 +212,7 @@ export default {
       pollInterval: 10000,
       update (data) {
         if (this.cpuLoad.length >= 360) {
-          this.cpuLoad.shift()
+          this.cpuLoad.pop()
         }
         return [ ...this.cpuLoad, data.cpuLoad ]
       }
@@ -224,7 +224,7 @@ export default {
       pollInterval: 10000,
       update (data) {
         if (this.memoryLoad.length >= 360) {
-          this.memoryLoad.shift()
+          this.memoryLoad.pop()
         }
         return [ ...this.memoryLoad, data.memoryLoad ]
       }
