@@ -76,12 +76,6 @@ const saveWhakapapaViewQuery = gql`
   }
 `
 
-const saveProfileQuery = gql`
-  mutation($input: ProfileInput!) {
-    saveProfile(input: $input)
-  }
-`
-
 export default {
   name: 'WhakapapaIndex',
   data () {

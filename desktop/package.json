@@ -39,7 +39,7 @@
     "ssb-story": "^1.0.1",
     "ssb-tribes": "^0.1.2",
     "ssb-unix-socket": "^1.0.0",
-    "ssb-whakapapa": "^2.0.1"
+    "ssb-whakapapa": "^2.0.2"
   },
   "devDependencies": {
     "@fiahfy/icns-convert": "0.0.6",
