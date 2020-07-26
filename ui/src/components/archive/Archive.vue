@@ -4,8 +4,9 @@
     <!-- VIEW STORY OVERLAY -->
     <div :class="{ 'showOverlay': showStory && !mobile }"></div>
     <v-row v-if="!showStory" class="top-margin mb-5">
-      <v-col class="headliner black--text pa-0 pl-4 pt-2">
+      <v-col cols="12" class="headliner black--text pa-0 pl-4 pt-2">
         Archive records
+        <v-icon color="blue-grey" light @click="toggleArchiveHelper" class="infoButton">mdi-information</v-icon>
       </v-col>
       <!-- <v-col align="right" class="pa-0">
         <v-btn outlined flat :medium="!mobile" :x-small="mobile" :class="mobile ? 'addBtnMob' : 'addBtn'" class="my-2" fab color="white" @click.stop="openContextMenu($event)">
@@ -23,8 +24,19 @@
           <v-icon small class="black--text">mdi-magnify</v-icon>
         </v-btn>            -->
         <!-- <v-btn :medium="!mobile" :x-small="mobile" :class="mobile ? 'addBtnMob' : 'addBtn'" class="my-2" fab color="white" @click.stop="openContextMenu($event)"> -->
-        <v-btn :medium="!mobile" text :x-small="mobile" :class="mobile ? 'addBtnMob' : 'addBtn'" class="my-2" fab color="white" @click.prevent="dialog = 'new-story'" elevation="1">
-          <v-icon :large="!mobile" class="black--text">mdi-plus</v-icon>
+        <v-btn
+          @click.prevent="dialog = 'new-story'"
+          :class="!mobile ? 'addBtn my-2' : 'addBtnMobile'"
+          :color="!mobile ? 'white' : 'rgba(160, 35, 36,1)'"
+          elevation="2"
+          fab
+          light
+
+          :fixed="mobile"
+          :bottom="mobile"
+          :right="mobile"
+        >
+          <v-icon :large="!mobile" :class="!mobile ? 'black--text' : 'white--text'">mdi-plus</v-icon>
         </v-btn>
       </div>
     </v-row>
@@ -36,7 +48,7 @@
           </v-row>
           <v-divider class="mt-6 mb-8" light></v-divider> -->
           <div v-if="!showStory">
-            <v-row v-for="(story, i) in profileStories" :key="`story-${i}-id-${story.id}`" class="mb-5">
+            <v-row v-for="(story, i) in profileStories" :key="`story-${i}-id-${story.id}`">
               <StoryCard @updateDialog="updateDialog($event)" @toggleStory="toggleStory($event)" :story="story" />
             </v-row>
           </div>
@@ -61,6 +73,9 @@
         </div>
       </v-col>
     </v-row>
+
+    <ArchiveHelper v-if="showArchiveHelper" :show="showArchiveHelper" @close="toggleArchiveHelper" />
+
   </v-container>
   <!-- <vue-context ref="menu" class="pa-4">
     <li v-for="(option, index) in contextMenuOpts" :key="index">
@@ -90,11 +105,15 @@ import { SAVE_LINK, TYPES } from '@/lib/link-helpers.js'
 import { mapGetters, mapActions, mapMutations } from 'vuex'
 import NewRecordDialog from '@/components/dialog/archive/NewRecordDialog.vue'
 
+// TODO: Replace with Archive Helper (doesnt exist yet)
+import ArchiveHelper from '@/components/dialog/archive/ArchiveHelper.vue'
+
 export default {
   name: 'Archive',
   components: {
     StoryCard,
-    NewRecordDialog
+    NewRecordDialog,
+    ArchiveHelper
     // CollectionGroup,
     // VueContext,
   },
@@ -112,7 +131,8 @@ export default {
       //   icon: 'mdi-file-outline'
       // }
       // ],
-      scrollPosition: 0
+      scrollPosition: 0,
+      showArchiveHelper: false
     }
   },
   props: {
@@ -164,7 +184,11 @@ export default {
   methods: {
     ...mapMutations(['setStory', 'addStoryToStories', 'updateStoryInStories', 'removeStoryFromStories']),
     ...mapActions(['setComponent', 'setShowStory', 'setDialog', 'getAllStories']),
+    toggleArchiveHelper () {
+      this.showArchiveHelper = !this.showArchiveHelper
+    },
     async saveStory (input) {
+      input.recps = [this.whoami.personal.groupId]
       var { id, artefacts, mentions, contributors, creators, relatedRecords } = input
 
       try {
@@ -292,7 +316,7 @@ export default {
         type,
         parent,
         child,
-        recps: [this.whoami.feedId]
+        recps: [this.whoami.personal.groupId]
       }))
 
       if (res.errors) {
@@ -369,11 +393,13 @@ export default {
   right:100px
 }
 
-.addBtnMob {
-  position: absolute;
-  top: 80px;
-  right:20px
-}
+.addBtnMobile {
+    bottom: 16px !important;
+  }
+
+  .infoButton {
+    margin-left: 10px;
+  }
 
 .change-enter-active,
 .change-leave-active {

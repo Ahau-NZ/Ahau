@@ -16,6 +16,9 @@ const customConfig = {
   serveBlobs: {
     cors: true,
     csp: ''
+  },
+  recpsGuard: {
+    allowedTypes: [] // e.g. 'pub', 'announce'
   }
 }
 
@@ -33,6 +36,7 @@ module.exports = function () {
     (err) => {
       if (err) throw err
       console.log('saved config')
+      console.log(config)
     }
   )
 

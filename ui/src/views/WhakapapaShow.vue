@@ -14,7 +14,7 @@
               <template v-slot:activator="{ on }">
                 <v-btn
                   v-on="on"
-                  @click.prevent="dialog.active = 'whakapapa-edit'"
+                  @click.stop="dialog.active = 'whakapapa-edit'"
                   icon
                   class="pa-0 px-3"
                 >
@@ -205,7 +205,7 @@ import SearchButton from '@/components/button/SearchButton.vue'
 
 import tree from '@/lib/tree-helpers'
 import avatarHelper from '@/lib/avatar-helpers.js'
-import { GET_PROFILE } from '@/lib/profile-helpers.js'
+import { getPerson } from '@/lib/person-helpers.js'
 
 import DialogHandler from '@/components/dialog/DialogHandler.vue'
 import findSuccessor from '@/lib/find-successor'
@@ -369,7 +369,8 @@ export default {
       if (!profile) return false
 
       // not allowed to delete own profile
-      if (profile.id === this.whoami.profile.id) return false
+      if (profile.id === this.whoami.public.profile.id) return false
+      if (profile.id === this.whoami.personal.profile.id) return false
 
       // if deleting the focus (top ancestor)
       if (profile.id === this.whakapapaView.focus) {
@@ -452,7 +453,7 @@ export default {
 
     async getRelatives (id) {
       try {
-        const result = await this.$apollo.query(GET_PROFILE(id))
+        const result = await this.$apollo.query(getPerson(id))
         if (result.errors) {
           console.error('WARNING, something went wrong')
           console.error(result.errors)
@@ -636,7 +637,8 @@ export default {
     // save whakapapa changes
     async updateWhakapapa (whakapapaChanges) {
       const input = {
-        id: this.$route.params.id
+        id: this.$route.params.id,
+        recps: this.whakapapaView.recps
       }
       Object.entries(whakapapaChanges).forEach(([key, value]) => {
         if (!isEmpty(value)) input[key] = value

@@ -1,14 +1,14 @@
 <template>
   <v-row ref="sideNav" class="sideNav" :class="position"  v-scroll="onScroll">
     <v-col cols="12" md="2" :class="mobile ? 'px-6': tablet ? 'pt-12':''">
-      <v-col align="center" v-if="!mobile" class="pa-2 ml-12" cols="12">
+      <v-col align="center" v-if="!mobile" class="pa-2 ml-8" cols="12">
         <v-row cols="12" xs="12" sm="12">
           <v-btn :class="tablet ? 'pl-2':''" @click="setActive('profile')" light text style="height: auto;">
             <Avatar :image="profile.avatarImage" :gender="profile.gender" :alt="profile.preferredName" :size="tablet ? '110px':'170px'" :isView="profile.type === 'community'" />
           </v-btn>
         </v-row>
       </v-col>
-      <v-row :class="mobile ? 'rounded-border' : 'ml-12'" >
+      <v-row :class="mobile ? 'rounded-border' : 'ml-8'" >
         <v-col align="center" :class="mobile ? 'py-0 px-0' : tablet ? 'py-4 px-0' : 'py-1'">
           <v-btn @click="setActive('profile')" light :fab="mobile" text>
             <v-col class="pa-0" :cols="mobile ? '12' : '2'">
@@ -63,10 +63,10 @@
         </v-col>
         <v-col :class="mobile ? 'py-0 px-0' : tablet ? 'py-4 px-0' : 'py-1'">
           <!-- TODO: connect whakapapa -->
-          <!-- <v-btn @click="setActive('whakapapa')" light :fab="mobile" text> -->
-          <v-btn @click="setDialog('coming-soon')" light :fab="mobile" text>
+          <v-btn @click="setActive('whakapapa')" light :fab="mobile" text>
+          <!-- <v-btn @click="setDialog('coming-soon')" light :fab="mobile" text> -->
             <v-col class="pa-0" :cols="mobile ? '12' : '2'">
-              <WhakapapaIcon :size="mobile ? 'large' : tablet ? 'x-large' : 'medium'" :color="activeComponent === 'whakapapa' ? 'red' : 'disabled'"/>
+              <WhakapapaIcon :size="mobile ? 'large' : tablet ? 'x-large' : 'medium'" :color="activeComponent === 'whakapapa' ? 'red' : 'black'"/>
             </v-col>
             <v-col class="py-0" v-if="!mobile && !isOverflowing">
               <span ref="text" :style="activeComponent === 'whakapapa' ? 'color:#B02425;' : 'black'" class="ml-2 subtitle-1">
@@ -113,7 +113,7 @@ export default {
     this.offset = this.$refs.sideNav.offsetTop - 50
   },
   computed: {
-    ...mapGetters(['activeComponent', 'showStory', 'whoami', 'storeDialog']),
+    ...mapGetters(['activeComponent', 'showStory', 'storeDialog']),
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
@@ -270,7 +270,7 @@ export default {
     top: 50px;
     width: 101.5%;
     z-index: 1;
-    background: linear-gradient(rgba(255, 255, 255, 0.9),rgba(255, 255, 255, 0.2) );
+    background: linear-gradient(rgba(255, 255, 255, 0.9),rgba(255, 255, 255, 0.02) );
   }
 
   .hideStickyMobile {
