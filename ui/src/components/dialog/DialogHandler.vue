@@ -701,21 +701,13 @@ export default {
     async deleteProfile () {
       if (!this.canDelete(this.selectedProfile)) return
 
-      const profileResult = await this.$apollo.mutate({
-        mutation: gql`
-          mutation($input: ProfileInput!) {
-            saveProfile(input: $input)
-          }
-        `,
-        variables: {
-          input: {
-            id: this.selectedProfile.id,
-            tombstone: {
-              date: new Date()
-            }
-          }
-        }
-      })
+      var input = {
+        id: this.selectedProfile.id,
+        tombstone: { date: new Date() }
+      }
+
+      const profileResult = await this.$apollo.mutate(savePerson(input))
+
       if (profileResult.errors) {
         console.error('failed to delete profile', profileResult)
         return
