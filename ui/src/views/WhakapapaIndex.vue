@@ -76,12 +76,6 @@ const saveWhakapapaViewQuery = gql`
   }
 `
 
-const saveProfileQuery = gql`
-  mutation($input: ProfileInput!) {
-    saveProfile(input: $input)
-  }
-`
-
 export default {
   name: 'WhakapapaIndex',
   data () {
@@ -360,7 +354,7 @@ export default {
       // create whakapapaLinks
       var finalArray = await this.createLinks(descendants)
 
-       // ???
+      // ???
       console.log({ finalArray })
 
       // var endTime = Date.now()
@@ -376,15 +370,19 @@ export default {
 
     async createProfiles (csv) {
       this.columns = csv.columns
+      const results = []
       // create a profile for each person and add the created id to the person and parse back to profilesArray
-      return Promise.all(csv.map(async d => {
+      for (const d of csv) {
         var id = await this.addPerson(d)
         const person = {
           id: id,
           ...d
         }
-        return person
-      }))
+
+        results.push(person)
+      }
+
+      return results
     },
 
     async addPerson ($event) {
@@ -420,20 +418,19 @@ export default {
 
     async createLinks (descendants) {
       descendants.shift()
-      return Promise.all(descendants.map(async d => {
-        let relationship = {
-          child: d.data.id,
-          parent: d.parent.data.id,
-          relationshipType: d.data.relationshipType
-        }
+      const results = []
+
+      for (const d of descendants) {
+        let relationship = { child: d.data.id, parent: d.parent.data.id, relationshipType: d.data.relationshipType }
         var link = await this.createChildLink(relationship)
 
         var person = {
           ...d,
           link: link
         }
-        return person
-      }))
+        results.push(person)
+      }
+      return results
     },
 
     async createProfile (opts) {
@@ -447,7 +444,6 @@ export default {
       if (res.errors) {
         console.error('failed to createProfile', res)
       } else {
-        
         return res.data.saveProfile // a profileId
       }
     },

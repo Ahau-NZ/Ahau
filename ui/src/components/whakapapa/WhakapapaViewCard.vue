@@ -57,7 +57,7 @@ export default {
           backgroundImage: `url(${view.image.uri})`,
           backgroundSize: 'cover',
           borderTopLeftRadius: '4px',
-          borderBottomLeftRadius: '4px',
+          borderBottomLeftRadius: '4px'
         }
       }
       return {
