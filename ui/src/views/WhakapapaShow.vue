@@ -598,6 +598,7 @@ export default {
         id: this.whakapapaView.id,
         ...input
       }
+
       try {
         const res = await this.$apollo.mutate(saveWhakapapaView(input))
         if (res.errors) {

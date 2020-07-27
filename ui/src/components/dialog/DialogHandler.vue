@@ -138,6 +138,7 @@ import gql from 'graphql-tag'
 
 import { PERMITTED_RELATIONSHIP_ATTRS, savePerson, saveCurrentIdentity } from '@/lib/person-helpers.js'
 import { saveCommunity } from '@/lib/community-helpers'
+import { saveWhakapapaView } from '@/lib/whakapapa-helpers.js'
 
 import { SAVE_LINK } from '@/lib/link-helpers.js'
 import pick from 'lodash.pick'
@@ -362,16 +363,7 @@ export default {
             }
           }
           try {
-            const res = await this.$apollo.mutate({
-              mutation: gql`
-              mutation($input: WhakapapaViewInput) {
-                saveWhakapapaView(input: $input)
-              }
-              `,
-              variables: {
-                input
-              }
-            })
+            const res = await this.$apollo.mutate(saveWhakapapaView(input))
             if (res.data) {
               this.$emit('refreshWhakapapa')
 
@@ -683,16 +675,7 @@ export default {
         }
       }
       try {
-        const res = await this.$apollo.mutate({
-          mutation: gql`
-            mutation($input: WhakapapaViewInput) {
-              saveWhakapapaView(input: $input)
-            }
-          `,
-          variables: {
-            input
-          }
-        })
+        const res = await this.$apollo.mutate(saveWhakapapaView(input))
         this.$emit('refreshWhakapapa')
         if (res.data) {
           // if removing top ancestor on main whanau line, update the whakapapa view focus with child/partner
