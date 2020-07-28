@@ -77,15 +77,9 @@ export default {
       errorMsg: []
     }
   },
-  watch: {
-    communities () {
-
-    }
-  },
   apollo: {
     communities: {
-      query: gql`
-      query {
+      query: gql`query {
         communities {
           id
           preferredName
