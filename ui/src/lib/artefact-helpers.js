@@ -85,6 +85,8 @@ export const ARTEFACT_FRAGMENT = gql`
     source
     language
     translation
+    canEdit
+    recps
     ... on Audio {
       duration
       transcription
