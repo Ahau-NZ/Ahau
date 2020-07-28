@@ -142,6 +142,7 @@ export const PERMITTED_STORY_ATTRS = [
   'language',
   'source',
   'transcription',
+  'canEdit',
   'recps'
 ]
 
