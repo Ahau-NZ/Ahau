@@ -150,7 +150,7 @@
 
     <vue-context ref="menu" class="px-0">
       <li>
-        <a href="#" @click.prevent="updateDialog('view-edit-node', 'sibling')"  class="d-flex align-center px-4">
+        <a href="#" @click.prevent="updateDialog('view-edit-node', null)"  class="d-flex align-center px-4">
           <img class="contextMenuIcon" :src="require('../assets/account-circle.svg')"/>
           <p class="ma-0 pl-3">View Person</p>
         </a>
