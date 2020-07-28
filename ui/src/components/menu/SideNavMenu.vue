@@ -1,7 +1,7 @@
 <template>
   <v-row ref="sideNav" class="sideNav" :class="position"  v-scroll="onScroll">
     <v-col cols="12" md="2" :class="nonMember ? 'px-3 pt-3' : mobile ? 'px-6': tablet ? 'pt-12':''">
-      <v-col align="center" v-if="!mobile" :class="tablet ? 'pa-2 pt-5 ml-6':'pa-2 ml-12'" cols="12">
+      <v-col align="center" v-if="!mobile" class="pa-2 ml-8" cols="12">
         <v-row cols="12" xs="12" sm="12">
           <v-btn :class="tablet ? 'pl-2':''" @click="setActive('profile')" light text style="height: auto;">
             <Avatar
@@ -16,7 +16,7 @@
         </v-row>
       </v-col>
       <RegisterButton v-if="nonMember"/>
-      <v-row v-else :class="mobile ? 'rounded-border' : tablet ? 'ml-6' : 'ml-12'" >
+      <v-row v-else :class="mobile ? 'rounded-border' : 'ml-8'" >
         <v-col align="center" :class="mobile ? 'py-0 px-0' : tablet ? 'py-4 px-0' : 'py-1'">
           <v-btn @click="setActive('profile')" light :fab="mobile" text>
             <v-col class="pa-0" :cols="mobile ? '12' : '2'">
@@ -292,7 +292,7 @@ export default {
     top: 50px;
     width: 101.5%;
     z-index: 1;
-    background: linear-gradient(rgba(255, 255, 255, 0.9),rgba(255, 255, 255, 0.2) );
+    background: linear-gradient(rgba(255, 255, 255, 0.9),rgba(255, 255, 255, 0.02) );
   }
 
   .hideStickyMobile {

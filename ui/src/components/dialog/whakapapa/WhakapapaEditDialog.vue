@@ -90,7 +90,8 @@ function setDefaultData (view) {
   return {
     name: view.name,
     description: view.description,
-    image: view.image
+    image: view.image,
+    recps: view.recps
   }
 }
 
