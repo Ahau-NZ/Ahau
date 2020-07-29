@@ -121,6 +121,8 @@ export default {
             name
             focus
             description
+            canEdit
+            recps
             image {
               uri
             }
