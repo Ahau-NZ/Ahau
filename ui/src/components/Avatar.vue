@@ -16,7 +16,7 @@
         </v-avatar>
       </v-row>
       <v-row v-if="showLabel" justify="center">
-        <p :style="`font-size:0.8em; ${theme}`"> {{ alt }} </p>
+        <p :style="`font-size:0.8em; ${theme}; margin-bottom:0`"> {{ alt }} </p>
       </v-row>
     </v-col>
   </div>
@@ -41,7 +41,7 @@
         </div>
       </v-row>
       <v-row v-if="showLabel" justify="center">
-        <p :style="`font-size:0.8em ${theme}`"> {{ alt }} </p>
+        <p :style="`font-size:0.8em ${theme};margin-bottom:0`"> {{ alt }} </p>
       </v-row>
     </v-col>
   </div>

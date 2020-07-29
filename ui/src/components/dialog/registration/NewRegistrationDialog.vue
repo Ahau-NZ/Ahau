@@ -270,7 +270,7 @@ import isEmpty from 'lodash.isempty'
 import pick from 'lodash.pick'
 import calculateAge from '@/lib/calculate-age'
 import { mapActions, mapGetters } from 'vuex'
-import { PRIVATE_PERMITTED_PROFILE_ATTRS, COMMON_PERMITTED_PROFILE_ATTRS } from '@/lib/profile-helpers'
+import { PRIVATE_PERMITTED_PROFILE_ATTRS, COMMON_PERMITTED_PROFILE_ATTRS } from '@/lib/community-helpers'
 
 const REQUIRED_ATTRS = [
   'id', 'legalName', 'aliveInterval', 'gender', 'relationshipType',

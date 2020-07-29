@@ -19,10 +19,10 @@
           <template v-slot:content>
             <v-row class="justify-center align-center ma-0">
               <v-col cols="2" class="pt-0 pl-0">
-                <Avatar :size="mobile ? '50px' : '40px'" :image="whoami.profile.avatarImage" :alt="whoami.profile.preferredName" />
+                <Avatar :size="mobile ? '50px' : '40px'" :image="whoami.personal.profile.avatarImage" :alt="whoami.personal.profile.preferredName" />
               </v-col>
               <v-col>
-                <p style="color:black;">{{whoami.profile.preferredName}}</p>
+                <p style="color:black;">{{whoami.personal.profile.preferredName}}</p>
               </v-col>
             </v-row>
           </template>
@@ -31,10 +31,10 @@
           <template v-slot:content>
             <v-row class="justify-center align-center ma-0">
               <v-col cols="2" class="pt-0 pl-0">
-                <Avatar :size="mobile ? '50px' : '40px'" :image="whoami.profile.avatarImage" :alt="whoami.profile.preferredName" />
+                <Avatar :size="mobile ? '50px' : '40px'" :image="whoami.personal.profile.avatarImage" :alt="whoami.personal.profile.preferredName" />
               </v-col>
               <v-col>
-                <p style="color:black;">{{whoami.profile.preferredName}}</p>
+                <p style="color:black;">{{whoami.personal.profile.preferredName}}</p>
               </v-col>
             </v-row>
           </template>
@@ -43,10 +43,10 @@
           <template v-slot:content>
             <v-row class="justify-center align-center ma-0">
               <v-col cols="2" class="pt-0 pl-0">
-                <Avatar :size="mobile ? '50px' : '40px'" :image="whoami.profile.avatarImage" :alt="whoami.profile.preferredName" />
+                <Avatar :size="mobile ? '50px' : '40px'" :image="whoami.personal.profile.avatarImage" :alt="whoami.personal.profile.preferredName" />
               </v-col>
               <v-col>
-                <p style="color:black;">{{whoami.profile.preferredName}}</p>
+                <p style="color:black;">{{whoami.personal.profile.preferredName}}</p>
               </v-col>
             </v-row>
           </template>

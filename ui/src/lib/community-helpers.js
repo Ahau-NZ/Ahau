@@ -1,4 +1,5 @@
-// import gql from 'graphql-tag'
+import gql from 'graphql-tag'
+import pick from 'lodash.pick'
 // import {
 //   createProvider
 // } from '@/plugins/vue-apollo'
@@ -29,14 +30,26 @@ export const PERMITTED_COMMUNITY_ATTRS = [
 // TODO: finish community-helper
 // eg: getCommunity() *single community
 
-// export const saveCommunityProfile = input => ({
-//   mutation: gql`
-//     mutation($input: ProfileInput!) {
-//       saveProfile(input: $input)
-//     }
-//   `,
-//   variables: { input }
-// })
+export const saveCommunity = input => {
+  const _input = pick(input, PERMITTED_COMMUNITY_ATTRS)
+  Object.entries(_input).forEach(([key, value]) => {
+    if (value === '') {
+      delete _input[key]
+    }
+  })
+  if (!_input.id) _input.type = 'community'
+
+  return {
+    mutation: gql`
+      mutation($input: ProfileInput!) {
+        saveProfile(input: $input)
+      }
+    `,
+    variables: {
+      input: _input
+    }
+  }
+}
 
 // export async function saveCommunity (input) {
 //   console.log('input:', input)

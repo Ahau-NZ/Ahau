@@ -1,85 +1,55 @@
 <template>
-  <div
-    :class="{
-      'body-width': mobile,
-      'fill-height': mobile,
-      white: mobile
-    }"
-  >
-    <v-container
-      :class="{
-        'desktopContainer': !mobile,
-        'mobileContainer': mobile
-      }"
-      class="body-width white mx-auto"
-      style="position:relative"
-    >
+  <div :class="showProfileView ? 'flexStart': 'flexCenter'">
+    <v-container fluid class="white body-width mx-0 px-0" :style="!mobile ? 'margin-top: 64px;' : 'margin-top: 64px;' ">
+
+       <!-- Header  -->
       <v-row class="pa-5" light>
-          <v-col class="headliner black--text pa-0">
+        <v-col cols="12" class="headliner black--text pa-0">
           Whakapapa records
-          </v-col>
-          <v-col align="right" class="pa-0">
-            <v-icon  color="blue-grey" light @click="toggleWhakapapaHelper">mdi-information</v-icon>
-          </v-col>
+          <v-icon color="blue-grey" light @click="toggleWhakapapaHelper" class="infoButton">mdi-information</v-icon>
+        </v-col>
+
+        <v-btn
+          @click="toggleViewForm"
+          :medium="!mobile"
+          :class="!mobile ? 'addBtn my-2' : 'addBtnMobile'"
+          :color="!mobile ? 'white' : 'rgba(160, 35, 36,1)'"
+          elevation="2"
+          fab
+          light
+          :fixed="mobile"
+          :bottom="mobile"
+          :right="mobile"
+        >
+          <v-icon :large="!mobile" :class="!mobile ? 'black--text' : 'white--text'">mdi-plus</v-icon>
+        </v-btn>
+
       </v-row>
 
-      <div
-        v-if="!views || (views && views.length < 1)"
-        class="px-8 py-12 subtitle grey--text "
-        :class="{
+      <div v-if="!views || (views && views.length < 1)" class="px-8 py-12 subtitle grey--text " :class="{
           'text-center': mobile
-        }"
-      >
+        }">
         No whakapapa record found
       </div>
+
       <v-row v-for="view in views" :key="view.id" dense class="mb-2">
-        <v-col cols="12">
+        <v-col cols="12" md="10">
           <WhakapapaViewCard :view="view" cropDescription />
         </v-col>
       </v-row>
 
-      <!-- Don't think this should be here -->
-      <div
-        :class="{
-          'text-center': mobile
-        }"
-        class="mt-8 mb-4"
-      >
-        <v-btn @click="toggleViewForm" fab small>
-          <v-icon>mdi-plus</v-icon>
-        </v-btn>
-        <span class="pointer black--text pl-4 subtitle"
-          >Create new whakapapa</span
-        >
-      </div>
-
-      <NewViewDialog
-        v-if="showViewForm"
-        :show="showViewForm"
-        title="Create a new whakapapa"
-        @close="toggleViewForm"
-        @submit="handleStepOne($event)"
-      />
+      <NewViewDialog v-if="showViewForm" :show="showViewForm" title="Create a new whakapapa" @close="toggleViewForm"
+        @submit="handleStepOne($event)" />
       <!-- TODO: add suggestions in here as well? -->
-      <NewNodeDialog
-        v-if="showProfileForm"
-        :show="showProfileForm"
-        :suggestions="suggestions"
-        @getSuggestions="getSuggestions"
-        title="Add a Person"
-        @create="handleDoubleStep($event)"
-        :withRelationships="false"
-        @close="close"
-      />
+      <NewNodeDialog v-if="showProfileForm" :show="showProfileForm" :suggestions="suggestions"
+        @getSuggestions="getSuggestions" title="Add a Person" @create="handleDoubleStep($event)"
+        :withRelationships="false" @close="close" />
 
-      <WhakapapaListHelper
-        v-if="showWhakapapaHelper"
-        :show="showWhakapapaHelper"
-        @close="toggleWhakapapaHelper"
-      />
+      <WhakapapaListHelper v-if="showWhakapapaHelper" :show="showWhakapapaHelper" @close="toggleWhakapapaHelper" />
 
     </v-container>
   </div>
+
 </template>
 
 <script>
@@ -87,14 +57,15 @@ import gql from 'graphql-tag'
 import pick from 'lodash.pick'
 import isEmpty from 'lodash.isempty'
 import * as d3 from 'd3'
+import { mapGetters, mapActions } from 'vuex'
 import WhakapapaViewCard from '@/components/whakapapa/WhakapapaViewCard.vue'
 import NewViewDialog from '@/components/dialog/whakapapa/NewViewDialog.vue'
 import NewNodeDialog from '@/components/dialog/profile/NewNodeDialog.vue'
 import WhakapapaListHelper from '@/components/dialog/whakapapa/WhakapapaListHelper.vue'
-import { SAVE_LINK } from '@/lib/link-helpers.js'
 
+import { SAVE_LINK } from '@/lib/link-helpers.js'
+import { savePerson } from '@/lib/person-helpers.js'
 import tree from '@/lib/tree-helpers'
-import { mapGetters, mapActions } from 'vuex'
 
 // import clone from 'lodash.clonedeep'
 // import _ from 'lodash'
@@ -111,23 +82,34 @@ const saveProfileQuery = gql`
   }
 `
 
-// TEMPORARY should be Query for all views
-
 export default {
   name: 'WhakapapaIndex',
   data () {
     return {
       suggestions: [],
-      items: [
-        { src: require('../assets/tree.jpg') },
-        { src: require('../assets/whakapapa-list.jpg') }
+      items: [{
+        src: require('../assets/tree.jpg')
+      },
+      {
+        src: require('../assets/whakapapa-list.jpg')
+      }
       ],
       views: [],
       showWhakapapaHelper: false,
       showProfileForm: false,
       showViewForm: false,
       newView: null,
-      columns: []
+      columns: [],
+      profileWhakapapaView: {
+        type: Boolean,
+        default: false
+      },
+      showProfileView: false
+    }
+  },
+  created () {
+    if (this.$route.name === 'profileShow') {
+      this.showProfileView = true
     }
   },
   computed: {
@@ -179,7 +161,9 @@ export default {
       records = records.map(record => {
         let obj = {}
         let profile = record
-        obj = { profile }
+        obj = {
+          profile
+        }
         return obj
       })
 
@@ -278,9 +262,9 @@ export default {
     async handleStepOne ($event) {
       this.newView = {
         ...pick($event, ['name', 'description', 'image']),
-        focus: this.whoami.profile.id,
+        focus: this.whoami.personal.profile.id,
         mode: 'descendants', // HARD coded at the moment
-        recps: [this.whoami.feedId] // TODO change this for groups
+        recps: [this.whoami.personal.groupId]
       }
 
       switch ($event.focus) {
@@ -313,7 +297,9 @@ export default {
 
         this.$router.push({
           name: 'whakapapaShow',
-          params: { id: result.data.saveWhakapapaView }
+          params: {
+            id: result.data.saveWhakapapaView
+          }
         })
       } catch (err) {
         throw err
@@ -321,24 +307,18 @@ export default {
     },
     async handleDoubleStep ($event) {
       try {
-        var { id } = $event
+        var {
+          id
+        } = $event
 
         if (!id) {
-          const res = await this.$apollo.mutate({
-            mutation: saveProfileQuery,
-            variables: {
-              input: {
-                ...$event,
-                type: 'person'
-              }
-            }
-          })
+          const res = await this.$apollo.mutate(savePerson($event))
           if (res.errors) {
             console.error('failed to create profile', res)
             return
           }
 
-          id = res.data.saveProfile
+          id = res.data.savePerson
         }
 
         this.createView({
@@ -360,8 +340,12 @@ export default {
 
       // create obj of children and parents
       var root = await d3.stratify()
-        .id(function (d) { return d.number })
-        .parentId(function (d) { return d.parentNumber })(profilesArray)
+        .id(function (d) {
+          return d.number
+        })
+        .parentId(function (d) {
+          return d.parentNumber
+        })(profilesArray)
 
       // create new array now with child and parents data
       var descendants = await root.descendants()
@@ -390,8 +374,7 @@ export default {
           ...d
         }
         return person
-      })
-      )
+      }))
     },
 
     async addPerson ($event) {
@@ -408,7 +391,9 @@ export default {
         }
       })
       try {
-        var { id } = $event
+        var {
+          id
+        } = $event
         id = await this.createProfile(person)
         if (id.errors) {
           console.error('failed to create profile', id)
@@ -438,58 +423,28 @@ export default {
       }))
     },
 
-    async createProfile ({
-      preferredName,
-      legalName,
-      gender,
-      aliveInterval,
-      birthOrder,
-      avatarImage,
-      altNames,
-      description,
-      location,
-      profession,
-      contact,
-      deceased
-    }) {
-      const res = await this.$apollo.mutate({
-        mutation: gql`
-          mutation($input: ProfileInput!) {
-            saveProfile(input: $input)
-          }
-        `,
-        variables: {
-          input: {
-            type: 'person',
-            preferredName,
-            legalName,
-            gender,
-            aliveInterval,
-            birthOrder,
-            avatarImage,
-            altNames: {
-              add: []
-            },
-            description,
-            location,
-            profession,
-            contact,
-            deceased,
-            recps: [this.whoami.feedId] // TODO change this for groups
-          }
-        }
+    async createProfile (opts) {
+      const mutation = savePerson({
+        type: 'person',
+        recps: [this.whoami.personal.groupId], // TEMP - safety till we figure out actual recps
+        ...opts
       })
+      const res = await this.$apollo.mutate(mutation)
 
       if (res.errors) {
         console.error('failed to createProfile', res)
       } else {
-        return res.data.saveProfile // a profileId
+        return res.data.savePerson // a profileId
       }
     },
 
-    async createChildLink (
-      { child, parent, relationshipType, legallyAdopted },
-      view
+    async createChildLink ({
+      child,
+      parent,
+      relationshipType,
+      legallyAdopted
+    },
+    view
     ) {
       const input = {
         type: 'link/profile-profile/child',
@@ -524,38 +479,73 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
-.body-width {
-  max-width: 900px;
-}
-.pointer {
-  cursor: pointer;
-}
+  .body-width {
+    max-width: 900px;
+  }
 
-.cover-image {
-  min-width: 150px;
-  width: 150px;
-  background-color: #fff;
-  background-position: center center;
-}
+  .pointer {
+    cursor: pointer;
+  }
 
-.headliner {
-  font-size: 1em;
-  text-transform: uppercase;
-  font-weight: 400;
-  letter-spacing: 5px;
-}
+  .cover-image {
+    min-width: 150px;
+    width: 150px;
+    background-color: #fff;
+    background-position: center center;
+  }
 
-.desktopContainer {
-  margin-top: 64px;
-  border: 3px solid red;
-}
+  .headliner {
+    font-size: 1em;
+    text-transform: uppercase;
+    font-weight: 400;
+    letter-spacing: 5px;
 
-.mobileContainer {
-  padding: 0px;
-}
+  }
 
-.top-margin {
-  margin-top: 80px;
-}
+  .desktopContainer {
+    margin-top: 64px;
+    width: 80%;
+  }
 
+  .mobileContainer {
+    padding: 0px;
+  }
+
+  .top-margin {
+    margin-top: 80px;
+  }
+
+  .profileWhakapapaView {
+    margin-left: 0 !important
+  }
+
+  .positionRight {
+    position: absolute;
+    top: 64px;
+    right: 50px;
+  }
+
+  .addBtn {
+    position: fixed;
+    top: 80px;
+    right:100px
+  }
+
+  .addBtnMobile {
+    bottom: 16px !important;
+  }
+
+  .infoButton {
+    margin-left: 10px;
+  }
+
+  .flexStart {
+    display: flex;
+    justify-content: flex-start;
+  }
+
+  .flexCenter {
+    display:flex;
+    justify-content: center;
+  }
 </style>

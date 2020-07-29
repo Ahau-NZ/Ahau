@@ -20,8 +20,8 @@
         <v-list class="pt-0">
           <div  v-for="(notification, index) in notifications" :key="index">
             <v-list-item class="py-1" @click="setDialog({ active: 'new-registration', type: 'review' })">
-              <Avatar size="50px" :image="whoami.profile.avatarImage"
-                :alt="whoami.profile.preferredName" :gender="whoami.profile.gender" :bornAt="whoami.profile.bornAt"
+              <Avatar size="50px" :image="whoami.personal.profile.avatarImage"
+                :alt="whoami.personal.profile.preferredName" :gender="whoami.personal.profile.gender" :bornAt="whoami.personal.profile.bornAt"
               />
               <v-list-item-content class="pl-5">
                 <v-list-item-title>{{completePerson.legalName}}</v-list-item-title>
@@ -57,8 +57,8 @@
         <v-list class="pt-0">
           <div  v-for="(notification, index) in notifications" :key="index">
             <v-list-item class="py-1" @click="setDialog({ active: 'new-registration', type: 'review' })">
-              <Avatar size="50px" :image="whoami.profile.avatarImage"
-                :alt="whoami.profile.preferredName" :gender="whoami.profile.gender" :bornAt="whoami.profile.bornAt" />
+              <Avatar size="50px" :image="whoami.personal.profile.avatarImage"
+                :alt="whoami.personal.profile.preferredName" :gender="whoami.personal.profile.gender" :bornAt="whoami.personal.profile.bornAt" />
               <v-list-item-content class="pl-5">
                 <v-list-item-title>{{completePerson.legalName}}</v-list-item-title>
                 <v-list-item-subtitle class="text-caption ahauRed">{{notification.is}} {{notification.to}}</v-list-item-subtitle>

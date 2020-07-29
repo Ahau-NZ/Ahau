@@ -31,7 +31,7 @@
 
 <script>
 
-import { PERMITTED_PROFILE_ATTRS } from '@/lib/profile-helpers.js'
+import { PERMITTED_PERSON_ATTRS } from '@/lib/person-helpers.js'
 
 import Dialog from '@/components/dialog/Dialog.vue'
 import ProfileForm from '@/components/profile/ProfileForm.vue'
@@ -162,7 +162,7 @@ export default {
     },
 
     submit () {
-      var output = Object.assign({}, pick(this.profileChanges, [...PERMITTED_PROFILE_ATTRS]))
+      var output = Object.assign({}, pick(this.profileChanges, [...PERMITTED_PERSON_ATTRS]))
       if (!isEmpty(output)) {
         this.$emit('submit', output)
       } else {
