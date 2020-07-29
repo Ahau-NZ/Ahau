@@ -91,17 +91,37 @@ export default {
       menu: false,
       expand: false,
       completePerson: personComplete,
+      // TODO: Update to real notifications
       notifications: [{
-        type: 'communityRequest',
-        is: 'is requesting to connect to',
-        to: 'Tairea Whanau',
-        from: 'Ben Tairea'
+        type: 'registration',
+        message: {
+          request: {
+            community: this.currentProfile.id,
+            profile: this.whoami.private.profile,
+            message: 'Hello my name is Ben, I was born in Australia and havent been home yet, so I am excited to learn more baout who I am and where I come from'
+          }
+        },
+        from: this.whoami.private.profile
       },
       {
-        type: 'communityRequest',
-        is: 'is requesting to connect to',
-        to: 'TU TOA Leavers 2020',
-        from: 'Margaret Doctor'
+        type: 'approved',
+        message: {
+          response: {
+            community: this.currentProfile.id,
+            message: 'Kia ora Ben, so awesome that you have joined. We dont current have any information about your family on the whakapapa record so it would be awesome if you can add any some information about your mum and siblings (if you have any)'
+          }
+        },
+        from: this.whoami.private.profile
+      },
+      {
+        type: 'declined',
+        message: {
+          request: {
+            community: this.currentProfile.id,
+            message: 'Kia ora Ben, Aroha mai. Im sorry I cant find any whakapapa connection to our whānau for your parents or grandparents names that you have provided. Please give me a call on 0226990253 so we can talk and see if we can make the connection.'
+          }
+        },
+        from: this.whoami.private.profile
       }]
     }
   },

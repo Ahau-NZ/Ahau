@@ -270,7 +270,7 @@ import isEmpty from 'lodash.isempty'
 import pick from 'lodash.pick'
 import calculateAge from '@/lib/calculate-age'
 import { mapActions, mapGetters } from 'vuex'
-import { PRIVATE_PERMITTED_PROFILE_ATTRS, COMMON_PERMITTED_PROFILE_ATTRS } from '@/lib/community-helpers'
+import { PERMITTED_PERSON_ATTRS } from '@/lib/person-helpers'
 
 const REQUIRED_ATTRS = [
   'id', 'legalName', 'aliveInterval', 'gender', 'relationshipType',
@@ -448,8 +448,8 @@ export default {
           ...this.formData,
           parents: this.parents
         }
-        var common = pick(input, COMMON_PERMITTED_PROFILE_ATTRS)
-        var kaitiaki = pick(input, PRIVATE_PERMITTED_PROFILE_ATTRS)
+        // var profile = pick(input, PERMITTED_PERSON_ATTRS)
+        // var kaitiaki = pick(input, PRIVATE_PERMITTED_PROFILE_ATTRS)
 
         var output = {
           // TODO - update to match notifications
@@ -458,10 +458,7 @@ export default {
           message: {
             request: {
               community: this.currentProfile.id,
-              profile: {
-                common: common,
-                kaitiaki: kaitiaki
-              },
+              profile: input,
               message: this.message
             }
           },
