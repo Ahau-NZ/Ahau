@@ -43,13 +43,13 @@
         <!-- <p class="headliner pa-0 mb-4">TRIBES</p> -->
         <v-row justify="start">
             <v-col v-for="tribe in tribes" :item="tribe" :key="tribe.id" justify-self="start">
-              <v-card light :width="!mobile ? '190px':'100vw'" @click="goProfile(tribe.private ? tribe.private.id : tribe.public.id)">
-                <v-img height="150px" :src="getImage(tribe)" class="card-image" />
+              <v-card light :width="!mobile ? '190px':'100vw'" @click="goProfile(tribe.private ? tribe.private[0].id : tribe.public[0].id)">
+                <v-img height="150px" :src="getImage(tribe.private[0])" class="card-image" />
                 <v-card-title class="subtitle font-weight-bold pb-2">{{
-                  tribe.preferredName
+                  tribe.private[0].preferredName
                 }}</v-card-title>
                 <v-card-text class="body-2">{{
-                  shortDescrciption(tribe)
+                  shortDescrciption(tribe.private[0])
                 }}</v-card-text>
               </v-card>
             </v-col>
@@ -88,13 +88,13 @@ export default {
           public {
             id
             preferredName
+            description
             avatarImage { uri } 
             description
             headerImage { uri }
           }
           private {
             id
-            type
             preferredName
             description
             avatarImage { uri }
@@ -114,8 +114,8 @@ export default {
     connectedTribes () {
       return this.tribes.filter(tribe => tribe.private !== null)
     },
-    unConnectedTribes () {
-      return this.tribes.filter(tribe => tribe.private == null)
+    otherTribes () {
+      return this.tribes.filter(tribe => tribe.private === null)
     }
   },
   methods: {

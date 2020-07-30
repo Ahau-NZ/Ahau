@@ -308,70 +308,72 @@ export default {
       // - [x] create a PRIVATE community profile for that group (recps: [groupId])
       // - [x] create a link between group + private profile
       //    - saveGroupProfileLink
-      // - [ ] create a PUBLIC community profile for that group (allowPublic: true)
-      // - [ ] create a link between group + public profile
+      // - [x] create a PUBLIC community profile for that group (allowPublic: true)
+      // - [x] create a link between group + public profile
 
       // (later?)
       // - [ ] create a copy of your personal profile (recps: [groupId])
       // - [ ] link your feedId + profile
       //    - saveFeedProfileLink (recps: [groupId])
+      try {
 
-      const createGroupRes = await this.$apollo.mutate(createGroup())
-      if (createGroupRes.errors) {
-        console.error('failed to create private group', createGroupRes)
-        this.confirmationAlert('Failed to create private group. Please contact us if this continues to happen')
+        const createGroupRes = await this.$apollo.mutate(createGroup())
+        if (createGroupRes.errors) {
+          console.error('failed to create private group', createGroupRes)
+        }
+        const groupId = createGroupRes.data.createGroup.id
+
+        const createCommunityRes = await this.$apollo.mutate(saveCommunity({
+          ...$event,
+          recps: [groupId]
+        }))
+        if (createCommunityRes.errors) {
+          console.error('failed to create community', createCommunityRes)
+        }
+
+        const groupProfile = createCommunityRes.data.saveProfile // id
+        
+        console.log("group made: ", groupId)
+        console.log("group profile made: ",  groupProfile)
+
+        const profileLinkRes = await this.$apollo.mutate(saveGroupProfileLink({
+          profile: groupProfile,
+          group: groupId
+        }))
+        if (profileLinkRes.errors) {
+          console.error('failed to create link community profile', profileLinkRes)
+        }
+
+        console.log("group link made: ", profileLinkRes)
+
+        const createPublicCommunityRes = await this.$apollo.mutate(savePublicCommunity({
+          ...$event,
+        }))
+        if (createPublicCommunityRes.errors) {
+          console.error('failed to create community', createPublicCommunityRes)
+        }
+
+        const groupPublicProfile = createPublicCommunityRes.data.saveProfile // id
+
+        console.log("public group profile made: ", groupPublicProfile)
+
+        const profilePublicLinkRes = await this.$apollo.mutate(saveGroupProfileLink({
+          profile: groupPublicProfile,
+          group: groupId,
+          allowPublic: true
+        }))
+        if (profilePublicLinkRes.errors) {
+          console.error('failed to create link community profile', groupPublicProfile)
+        }
+      } 
+      catch (err) {
+        this.confirmationAlert('Failed to create private group. Please contact us if this continues to happen: ', err)
         setTimeout(() => {
           this.confirmationText = null
           this.snackbar = !this.snackbar
         }, 5000)
         return
       }
-      const groupId = createGroupRes.data.createGroup.id
-
-      const createCommunityRes = await this.$apollo.mutate(saveCommunity({
-        ...$event,
-        recps: [groupId]
-      }))
-      if (createCommunityRes.errors) {
-        console.error('failed to create community', createCommunityRes)
-      }
-
-      const groupProfile = createCommunityRes.data.saveProfile // id
-      
-      console.log("group made: ", groupId)
-      console.log("group profile made: ",  groupProfile)
-
-      const profileLinkRes = await this.$apollo.mutate(saveGroupProfileLink({
-        profile: groupProfile,
-        group: groupId
-      }))
-      if (profileLinkRes.errors) {
-        console.error('failed to create link community profile', profileLinkRes)
-      }
-
-      console.log("group link made: ", profileLinkRes)
-
-      const createPublicCommunityRes = await this.$apollo.mutate(savePublicCommunity({
-        ...$event,
-      }))
-      if (createPublicCommunityRes.errors) {
-        console.error('failed to create community', createPublicCommunityRes)
-      }
-
-      const groupPublicProfile = createPublicCommunityRes.data.saveProfile // id
-
-      console.log("public group profile made: ", groupPublicProfile)
-
-      const profilePublicLinkRes = await this.$apollo.mutate(saveGroupProfileLink({
-        profile: groupPublicProfile,
-        group: groupId,
-        allowPublic: true
-      }))
-      if (profilePublicLinkRes.errors) {
-        console.error('failed to create link community profile', groupPublicProfile)
-      }
-
-      console.log("public group link made: ", profilePublicLinkRes)
 
       // if (id) {
       //   this.setComponent('profile')
