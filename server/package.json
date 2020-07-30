@@ -7,6 +7,7 @@
   "dependencies": {
     "@apollo/federation": "^0.11.3",
     "@ssb-graphql/artefact": "3.0.1",
+    "@ssb-graphql/invite": "^0.1.0",
     "@ssb-graphql/main": "^5.0.0",
     "@ssb-graphql/profile": "^2.2.3",
     "@ssb-graphql/story": "^1.1.1",

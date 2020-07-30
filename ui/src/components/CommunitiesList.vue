@@ -125,10 +125,10 @@ export default {
       try {
         await this.$apollo.mutate({
           mutation: gql`
-          mutation($inviteCode: String) {
+          mutation($inviteCode: String!) {
             acceptInvite(inviteCode: $inviteCode)
           }`,
-          varibles: {
+          variables: {
             inviteCode: this.patakaCode
           }
         })
