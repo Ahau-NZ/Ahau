@@ -45,7 +45,8 @@
       @create="source !== 'new-registration' ? addPerson($event) : dialogType === 'grandparent' ? addGrandparentToRegistartion($event) : addParentToRegistration($event)"
       @close="close"
     />
-    <EditNodeDialog v-if="isActive('edit-node')"
+    <EditNodeDialog
+      v-if="isActive('edit-node')"
       :show="isActive('edit-node')"
       :title="source === 'new-registration' ? `Edit ${registration.preferredName}`:`Edit ${currentProfile.preferredName}`"
       @submit="updatePerson($event)"
@@ -65,31 +66,36 @@
       @delete="toggleDialog('delete-node', null, null)"
       @open-profile="setSelectedProfile($event)"
       :view="view"
-      :preview ="previewProfile"
+      :preview="previewProfile"
     />
-    <DeleteNodeDialog v-if="isActive('delete-node')"
+    <DeleteNodeDialog
+      v-if="isActive('delete-node')"
       :show="isActive('delete-node')"
       :profile="selectedProfile"
       :warnAboutChildren="selectedProfile && selectedProfile.id !== nestedWhakapapa.id"
       @submit="removeProfile"
       @close="close"
     />
-    <WhakapapaViewDialog v-if="isActive('whakapapa-view')"
+    <WhakapapaViewDialog
+      v-if="isActive('whakapapa-view')"
       :show="isActive('whakapapa-view')"
       :view="view"
       @edit="toggleDialog('whakapapa-edit', null, 'whakapapa-view')"
       @close="close"
     />
-    <WhakapapaEditDialog v-if="isActive('whakapapa-edit')"
+    <WhakapapaEditDialog
+      v-if="isActive('whakapapa-edit')"
       :show="isActive('whakapapa-edit')"
       :view="view"
       @delete="toggleDialog('whakapapa-delete', null, 'whakapapa-edit')"
       @close="close"
       @submit="$emit('updateWhakapapa', $event)"
     />
-    <WhakapapaDeleteDialog v-if="isActive('whakapapa-delete')"
+    <WhakapapaDeleteDialog
+      v-if="isActive('whakapapa-delete')"
       :show="isActive('whakapapa-delete')"
-      :view="view" @close="close"
+      :view="view"
+      @close="close"
       @submit="$emit('deleteWhakapapa')"
     />
     <WhakapapaShowHelper
@@ -107,6 +113,7 @@
       :title="'Create a new Collection'"
       @close="close"
       @submit="console.log('TODO: add collection to profile')"
+<<<<<<< Updated upstream
     /> -->
     <ComingSoonDialog
       :show="isActive('coming-soon')"
@@ -114,6 +121,11 @@
     />
     <ConfirmationText :show="snackbar" :message="confirmationText" />
 
+=======
+    />-->
+    <ComingSoonDialog :show="isActive('coming-soon')" @close="close" />
+    <ConfirmationText :show="snackbar" :message="confirmationText" />
+>>>>>>> Stashed changes
   </div>
 </template>
 
@@ -138,7 +150,7 @@ import ConfirmationText from '@/components/dialog/ConfirmationText.vue'
 import gql from 'graphql-tag'
 
 import { PERMITTED_RELATIONSHIP_ATTRS, savePerson, saveCurrentIdentity } from '@/lib/person-helpers.js'
-import { createGroup, saveCommunity } from '@/lib/community-helpers'
+import { createGroup, saveCommunity, saveGroupProfileLink } from '@/lib/community-helpers'
 import { SAVE_LINK } from '@/lib/link-helpers.js'
 import tree from '@/lib/tree-helpers'
 import findSuccessor from '@/lib/find-successor'
@@ -307,8 +319,7 @@ export default {
       // WIP
       // - [x] set up private group (so you have groupId)
       // - [x] create a PRIVATE community profile for that group (recps: [groupId])
-      // - [ ] create a link between group + private profile
-      //    - saveGroupProfileLink
+      // - [x] create a link between group + private profile
       // - [ ] create a PUBLIC community profile for that group (allowPublic: true)
       // - [ ] create a link between group + public profile
 
@@ -334,6 +345,15 @@ export default {
       }
       const community = createCommunityRes.data.saveProfile // id
       console.log({ groupId, community })
+
+      const linkCommunityRes = await this.$apollo.mutate(saveGroupProfileLink({
+        profile: community,
+        group: groupId
+      }))
+
+      if (linkCommunityRes.errors) {
+        console.error('failed to saveGroupProfileLink', linkCommunityRes)
+      }
 
       // TODO
       // - link community + group

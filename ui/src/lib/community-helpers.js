@@ -67,6 +67,20 @@ export const saveCommunity = input => {
     }
   }
 }
+
+export const saveGroupProfileLink = input => {
+  return {
+    mutation: gql`
+      mutation($input: GroupProfileLinkInput!) {
+        saveGroupProfileLink(input: $input)
+      }
+    `,
+    variables: {
+      input: input
+    }
+  }
+}
+
 // make savePublicCommunity
 
 // export async function saveCommunity (input) {
