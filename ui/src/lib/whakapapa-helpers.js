@@ -17,6 +17,7 @@ export const getWhakapapaView = id => ({
         description
         image { uri }
         focus
+        canEdit
         recps
       }
     }

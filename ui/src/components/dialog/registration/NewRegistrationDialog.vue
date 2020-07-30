@@ -1,257 +1,394 @@
 <template>
-<div>
-  <Dialog :show="show" :title="title" @close="close" width="720px" :goBack="close" enableMenu>
-    <template v-if="!hideDetails" v-slot:content>
-      <v-col cols="12" :class="mobile ? 'pb-5 px-2' : 'px-5' ">
-        <v-row>
-          <span  v-if="type === 'review'" class="py-6 px-4 subtitle-2 black--text">A new request has been recieved from <strong><i>Benjamin Nootai Tairea</i></strong> to join <strong><i>Your Whanau.</i></strong><br> Please review their information and respond below</span>
-          <!-- TODO update text with notification data -->
-          <span v-else class="py-6 px-4 subtitle-2 black--text">To join this communtiy, please confirm that you are happy to share the following profile information with <strong><i>{{currentProfile.preferredName}}</i></strong> members</span>
-        </v-row>
-        <!-- PROFILE INFOMATION -->
-        <v-form ref="checkboxes">
-          <v-card elevation='1' :style="mobile ? 'margin: 0px' : 'margin: 20px'" :class="{'checkbox':checkbox1}">
-
-            <v-row v-if="type === 'review'">
-              <v-col>
-                <v-col cols="12" class="py-0">
-                  <v-row class="justify-center pt-12">
-                    <Avatar
-                      class="big-avatar"
-                      size="100px"
-                      :image="formData.avatarImage"
-                      :alt="formData.preferredName"
-                      :gender="formData.gender"
-                      :aliveInterval="formData.aliveInterval"
-                      :deceased="formData.deceased"
-                      @updateAvatar="formData.avatarImage = $event"
-                    />
-                  </v-row>
-                </v-col>
-                <v-col cols="12" align="center">
-                  <h4 class="primary--text">{{ formData.legalName ? formData.legalName : formData.preferredName }}</h4>
-                </v-col>
-              </v-col>
-              <v-col align-self='center' cols="1" >
-                <v-icon large >mdi-transfer-right</v-icon>
-                <v-icon large>mdi-transfer-left</v-icon>
-              </v-col>
-              <v-col>
-                <v-col cols="12" class="py-0">
-                  <v-row class="justify-center pt-12">
-                    <Avatar
-                      class="big-avatar"
-                      size="100px"
-                      :image="formData.avatarImage"
-                      :alt="formData.preferredName"
-                      :gender="formData.gender"
-                      :aliveInterval="formData.aliveInterval"
-                      :deceased="formData.deceased"
-                      @updateAvatar="formData.avatarImage = $event"
-                    />
-                  </v-row>
-                </v-col>
-                <v-col cols="12" align="center">
-                  <h4 class="primary--text">Your Whanau</h4>
-                </v-col>
-              </v-col>
-            </v-row>
-
-            <v-row v-else>
-              <v-col cols="12" md="3" class="py-0">
-                <v-row class="justify-center pt-12">
-                  <Avatar
-                    class="big-avatar"
-                    :size="mobile ? '200px':'100px'"
-                    :image="formData.avatarImage"
-                    :alt="formData.preferredName"
-                    :gender="formData.gender"
-                    :aliveInterval="formData.aliveInterval"
-                    :deceased="formData.deceased"
-                    @updateAvatar="formData.avatarImage = $event"
-                  />
-                </v-row>
-              </v-col>
-              <v-col cols="12" md="9" sm="12" :align="mobile ? 'center' : 'start'" :order="mobile ? '3' : '1'" :class="!mobile ? 'pt-12':''">
-                <h1 class="primary--text" :style="mobile ? length: ''">{{ formData.legalName ? formData.legalName : formData.preferredName }}</h1>
-              </v-col>
-            </v-row>
-            <ProfileInfoCard :profile="formData" isRegistration :style="mobile ? 'margin: 0px 20px' : 'margin: 0px 30px;'"/>
-            <v-divider></v-divider>
-            <v-card-actions v-if="type !== 'review'" style="display: flex; justify-content: center; align-items: center;">
-              <v-checkbox class="checkbox-label" color="success" v-model="checkbox1" :label="`I agree to share this information`" :rules="requiredRules"></v-checkbox> .
-            </v-card-actions>
-          </v-card>
-
-          <!-- PRIVATE INFORMATION -->
+  <div>
+    <Dialog :show="show" :title="title" @close="close" width="720px" :goBack="close" enableMenu>
+      <template v-if="!hideDetails" v-slot:content>
+        <v-col cols="12" :class="mobile ? 'pb-5 px-2' : 'px-5' ">
           <v-row>
-            <p v-if="type === 'review'" class="py-6 px-4 subtitle-2 black--text">The below private information will only be viewable by you and any other <strong><i>Your Whanau</i></strong> kaitiaki</p>
-            <p v-else class="py-6 px-4 subtitle-2 black--text">The below private information will only be viewable by <strong><i>{{currentProfile.preferredName}}</i></strong> kaitiaki</p>
+            <span v-if="type === 'review'" class="py-6 px-4 subtitle-2 black--text">
+              A new request has been recieved from
+              <strong>
+                <i>Benjamin Nootai Tairea</i>
+              </strong> to join
+              <strong>
+                <i>Your Whanau.</i>
+              </strong>
+              <br />Please review their information and respond below
+            </span>
+            <!-- TODO update text with notification data -->
+            <span v-else class="py-6 px-4 subtitle-2 black--text">
+              To join this communtiy, please confirm that you are happy to share the following profile information with
+              <strong>
+                <i>{{currentProfile.preferredName}}</i>
+              </strong> members
+            </span>
           </v-row>
-          <v-card elevation='1' :style="mobile ? 'margin: 0px' : 'margin: 20px'" :class="{'checkbox':checkbox2}" class="py-2">
-            <ProfileCard :style="mobile ? 'margin: 10px;':'margin:20px'">
-              <template v-slot:content>
-                <v-row cols="12" class="pt-0" >
-                  <ProfileInfoItem :class="mobile ? 'bb':'br bb'" smCols="12" mdCols="6" title="Date of birth" :value="dob"/>
-                  <ProfileInfoItem :class="mobile ? 'bb':'bb'" smCols="12" mdCols="6" title="Phone" :value="formData.phone"/>
-                  <ProfileInfoItem :class="mobile ? 'bb':'br'" smCols="12" mdCols="6" title="Email" :value="formData.email"/>
-                  <ProfileInfoItem smCols="12" mdCols="6" title="Address" :value="formData.address"/>
-                </v-row>
-              </template>
-            </ProfileCard>
-            <v-card-actions v-if="type !== 'review'" style="display: flex; justify-content: center; align-items: center;">
-              <v-checkbox class="checkbox-label" color="success" v-model="checkbox2" :label="`I agree to share this information`" :rules="requiredRules"></v-checkbox> .
-            </v-card-actions>
-          </v-card>
-
-          <!-- ADD PARENTS INFORMATION-->
-          <p v-if="type === 'review'" class="py-6 px-4 subtitle-2 black--text">Please review the provided whakapapa information provided by <strong><i>Ben</i></strong></p>
-          <p v-else class="pt-5 pl-5 subtitle-2 black--text">Please provide the names of at least one parent and one grandparent</p>
-          <v-card elevation='1' :style="mobile ? 'margin: 0px' : 'margin: 20px'" class="py-1" :class="{'checkbox':checkbox3}">
-            <div v-for="(parent, index) in parentsArray" :key="index">
-              <v-row class="rounded-border mx-4">
-                <v-col cols="12">
-                  <ParentGroup
-                    :deleteable ="type !== 'review'"
-                    :index="index"
-                    :profile="parent"
-                    :title="parent.relationshipType ? parent.relationshipType + ' parent' : 'parent'"
-                    @removeParent="removeParent($event)"
-                  />
-                </v-col>
-                <v-col  cols="12" class="pa-0">
-                  <v-divider></v-divider>
-                </v-col>
-                <v-col cols="12" v-for="(grandparent, grandparentIndex) in parent.grandparents" :key="`grandparent-${grandparentIndex}`" >
-                  <ParentGroup
-                    :deleteable ="type !== 'review'"
-                    :index="grandparentIndex"
-                    :profile="grandparent"
-                    :title="grandparent.relationshipType ? grandparent.relationshipType + ' grandparent' : 'grandparent'"
-                    @removeParent="removeGrandparent($event, index)"
-                  />
-                </v-col>
-                <v-row v-if="type !== 'review'" class="py-4 pl-10">
-                  <v-icon :color="!gpNames ? '#b12526':''">mdi-account-supervisor-circle</v-icon>
-                  <AddButton :color="!gpNames ? '#b12526':''" justify="start" :width="'50px'" :label="'Add parents of ' + parent.preferredName" @click="addGrandparent(index)"/>
-                </v-row>
-              </v-row>
-            </div>
-            <v-row v-if="type !== 'review'" class="py-4 pl-12">
-              <v-icon :color="!parentsNames ? '#b12526':''">mdi-account-supervisor-circle</v-icon>
-              <AddButton :color="!parentsNames ? '#b12526':''" justify="start" :width="'50px'" label="Add parent" @click="addParent('parent')"/>
-            </v-row>
-            <v-card-actions v-if="type !== 'review'" style="display: flex; justify-content: center; align-items: center;">
-              <v-checkbox :disabled="!gpNames" class="checkbox-label" color="success" v-model="checkbox3" :label="`I agree to share this information`" :rules="requiredRules"></v-checkbox> .
-            </v-card-actions>
-          </v-card>
-
-          <!-- MESSAGE -->
-          <v-col cols="12" :class="mobile ? 'pt-4 px-0':'pt-6 px-5'">
-            <v-textarea
-              v-model="message"
-              :label="type === 'review' ? 'Message recieved with request':'Send a message with your request'"
-              no-resize
-              rows="3"
-              auto-grow
-              outlined
-              placeholder=" "
-              :readonly="type === 'review'"
+          <!-- PROFILE INFOMATION -->
+          <v-form ref="checkboxes">
+            <v-card
+              elevation="1"
+              :style="mobile ? 'margin: 0px' : 'margin: 20px'"
+              :class="{'checkbox':checkbox1}"
             >
-            </v-textarea>
-          </v-col>
-        </v-form>
-      </v-col>
-      <!-- ERROR MESSAGES -->
-      <v-hover v-if="errorMsgs && errorMsgs.length && type !== 'review'" v-slot:default="{ hover }">
-        <v-row :class="mobile ? 'mx-2':'mx-10'" align="center" style="border: 1px solid rgba(168,0,0); border-radius: 10px;" >
-          <v-col cols="12">
+              <v-row v-if="type === 'review'">
+                <v-col>
+                  <v-col cols="12" class="py-0">
+                    <v-row class="justify-center pt-12">
+                      <Avatar
+                        class="big-avatar"
+                        size="100px"
+                        :image="formData.avatarImage"
+                        :alt="formData.preferredName"
+                        :gender="formData.gender"
+                        :aliveInterval="formData.aliveInterval"
+                        :deceased="formData.deceased"
+                        @updateAvatar="formData.avatarImage = $event"
+                      />
+                    </v-row>
+                  </v-col>
+                  <v-col cols="12" align="center">
+                    <h4
+                      class="primary--text"
+                    >{{ formData.legalName ? formData.legalName : formData.preferredName }}</h4>
+                  </v-col>
+                </v-col>
+                <v-col align-self="center" cols="1">
+                  <v-icon large>mdi-transfer-right</v-icon>
+                  <v-icon large>mdi-transfer-left</v-icon>
+                </v-col>
+                <v-col>
+                  <v-col cols="12" class="py-0">
+                    <v-row class="justify-center pt-12">
+                      <Avatar
+                        class="big-avatar"
+                        size="100px"
+                        :image="formData.avatarImage"
+                        :alt="formData.preferredName"
+                        :gender="formData.gender"
+                        :aliveInterval="formData.aliveInterval"
+                        :deceased="formData.deceased"
+                        @updateAvatar="formData.avatarImage = $event"
+                      />
+                    </v-row>
+                  </v-col>
+                  <v-col cols="12" align="center">
+                    <h4 class="primary--text">Your Whanau</h4>
+                  </v-col>
+                </v-col>
+              </v-row>
+
+              <v-row v-else>
+                <v-col cols="12" md="3" class="py-0">
+                  <v-row class="justify-center pt-12">
+                    <Avatar
+                      class="big-avatar"
+                      :size="mobile ? '200px':'100px'"
+                      :image="formData.avatarImage"
+                      :alt="formData.preferredName"
+                      :gender="formData.gender"
+                      :aliveInterval="formData.aliveInterval"
+                      :deceased="formData.deceased"
+                      @updateAvatar="formData.avatarImage = $event"
+                    />
+                  </v-row>
+                </v-col>
+                <v-col
+                  cols="12"
+                  md="9"
+                  sm="12"
+                  :align="mobile ? 'center' : 'start'"
+                  :order="mobile ? '3' : '1'"
+                  :class="!mobile ? 'pt-12':''"
+                >
+                  <h1
+                    class="primary--text"
+                    :style="mobile ? length: ''"
+                  >{{ formData.legalName ? formData.legalName : formData.preferredName }}</h1>
+                </v-col>
+              </v-row>
+              <ProfileInfoCard
+                :profile="formData"
+                isRegistration
+                :style="mobile ? 'margin: 0px 20px' : 'margin: 0px 30px;'"
+              />
+              <v-divider></v-divider>
+              <v-card-actions
+                v-if="type !== 'review'"
+                style="display: flex; justify-content: center; align-items: center;"
+              >
+                <v-checkbox
+                  class="checkbox-label"
+                  color="success"
+                  v-model="checkbox1"
+                  :label="`I agree to share this information`"
+                  :rules="requiredRules"
+                ></v-checkbox>.
+              </v-card-actions>
+            </v-card>
+
+            <!-- PRIVATE INFORMATION -->
+            <v-row>
+              <p v-if="type === 'review'" class="py-6 px-4 subtitle-2 black--text">
+                The below private information will only be viewable by you and any other
+                <strong>
+                  <i>Your Whanau</i>
+                </strong> kaitiaki
+              </p>
+              <p v-else class="py-6 px-4 subtitle-2 black--text">
+                The below private information will only be viewable by
+                <strong>
+                  <i>{{currentProfile.preferredName}}</i>
+                </strong> kaitiaki
+              </p>
+            </v-row>
+            <v-card
+              elevation="1"
+              :style="mobile ? 'margin: 0px' : 'margin: 20px'"
+              :class="{'checkbox':checkbox2}"
+              class="py-2"
+            >
+              <ProfileCard :style="mobile ? 'margin: 10px;':'margin:20px'">
+                <template v-slot:content>
+                  <v-row cols="12" class="pt-0">
+                    <ProfileInfoItem
+                      :class="mobile ? 'bb':'br bb'"
+                      smCols="12"
+                      mdCols="6"
+                      title="Date of birth"
+                      :value="dob"
+                    />
+                    <ProfileInfoItem
+                      :class="mobile ? 'bb':'bb'"
+                      smCols="12"
+                      mdCols="6"
+                      title="Phone"
+                      :value="formData.phone"
+                    />
+                    <ProfileInfoItem
+                      :class="mobile ? 'bb':'br'"
+                      smCols="12"
+                      mdCols="6"
+                      title="Email"
+                      :value="formData.email"
+                    />
+                    <ProfileInfoItem
+                      smCols="12"
+                      mdCols="6"
+                      title="Address"
+                      :value="formData.address"
+                    />
+                  </v-row>
+                </template>
+              </ProfileCard>
+              <v-card-actions
+                v-if="type !== 'review'"
+                style="display: flex; justify-content: center; align-items: center;"
+              >
+                <v-checkbox
+                  class="checkbox-label"
+                  color="success"
+                  v-model="checkbox2"
+                  :label="`I agree to share this information`"
+                  :rules="requiredRules"
+                ></v-checkbox>.
+              </v-card-actions>
+            </v-card>
+
+            <!-- ADD PARENTS INFORMATION-->
+            <p v-if="type === 'review'" class="py-6 px-4 subtitle-2 black--text">
+              Please review the provided whakapapa information provided by
+              <strong>
+                <i>Ben</i>
+              </strong>
+            </p>
+            <p
+              v-else
+              class="pt-5 pl-5 subtitle-2 black--text"
+            >Please provide the names of at least one parent and one grandparent</p>
+            <v-card
+              elevation="1"
+              :style="mobile ? 'margin: 0px' : 'margin: 20px'"
+              class="py-1"
+              :class="{'checkbox':checkbox3}"
+            >
+              <div v-for="(parent, index) in parentsArray" :key="index">
+                <v-row class="rounded-border mx-4">
+                  <v-col cols="12">
+                    <ParentGroup
+                      :deleteable="type !== 'review'"
+                      :index="index"
+                      :profile="parent"
+                      :title="parent.relationshipType ? parent.relationshipType + ' parent' : 'parent'"
+                      @removeParent="removeParent($event)"
+                    />
+                  </v-col>
+                  <v-col cols="12" class="pa-0">
+                    <v-divider></v-divider>
+                  </v-col>
+                  <v-col
+                    cols="12"
+                    v-for="(grandparent, grandparentIndex) in parent.grandparents"
+                    :key="`grandparent-${grandparentIndex}`"
+                  >
+                    <ParentGroup
+                      :deleteable="type !== 'review'"
+                      :index="grandparentIndex"
+                      :profile="grandparent"
+                      :title="grandparent.relationshipType ? grandparent.relationshipType + ' grandparent' : 'grandparent'"
+                      @removeParent="removeGrandparent($event, index)"
+                    />
+                  </v-col>
+                  <v-row v-if="type !== 'review'" class="py-4 pl-10">
+                    <v-icon :color="!gpNames ? '#b12526':''">mdi-account-supervisor-circle</v-icon>
+                    <AddButton
+                      :color="!gpNames ? '#b12526':''"
+                      justify="start"
+                      :width="'50px'"
+                      :label="'Add parents of ' + parent.preferredName"
+                      @click="addGrandparent(index)"
+                    />
+                  </v-row>
+                </v-row>
+              </div>
+              <v-row v-if="type !== 'review'" class="py-4 pl-12">
+                <v-icon :color="!parentsNames ? '#b12526':''">mdi-account-supervisor-circle</v-icon>
+                <AddButton
+                  :color="!parentsNames ? '#b12526':''"
+                  justify="start"
+                  :width="'50px'"
+                  label="Add parent"
+                  @click="addParent('parent')"
+                />
+              </v-row>
+              <v-card-actions
+                v-if="type !== 'review'"
+                style="display: flex; justify-content: center; align-items: center;"
+              >
+                <v-checkbox
+                  :disabled="!gpNames"
+                  class="checkbox-label"
+                  color="success"
+                  v-model="checkbox3"
+                  :label="`I agree to share this information`"
+                  :rules="requiredRules"
+                ></v-checkbox>.
+              </v-card-actions>
+            </v-card>
+
+            <!-- MESSAGE -->
+            <v-col cols="12" :class="mobile ? 'pt-4 px-0':'pt-6 px-5'">
+              <v-textarea
+                v-model="message"
+                :label="type === 'review' ? 'Message recieved with request':'Send a message with your request'"
+                no-resize
+                rows="3"
+                auto-grow
+                outlined
+                placeholder=" "
+                :readonly="type === 'review'"
+              ></v-textarea>
+            </v-col>
+          </v-form>
+        </v-col>
+        <!-- ERROR MESSAGES -->
+        <v-hover
+          v-if="errorMsgs && errorMsgs.length && type !== 'review'"
+          v-slot:default="{ hover }"
+        >
+          <v-row
+            :class="mobile ? 'mx-2':'mx-10'"
+            align="center"
+            style="border: 1px solid rgba(168,0,0); border-radius: 10px;"
+          >
+            <v-col cols="12">
               <v-row justify="center">
-                <span class="px-4 subtitle-2 secondary--text">To join this communtiy, please update the required information on your profile</span>
+                <span
+                  class="px-4 subtitle-2 secondary--text"
+                >To join this communtiy, please update the required information on your profile</span>
               </v-row>
-              <v-row v-for="error in errorMsgs" :key="error" justify="start" :class="mobile ? 'py-1 pl-2':'py-1 pl-12 ml-12'">
-                <span class="secondary--text "><i>- Please update your {{error}} information</i></span>
+              <v-row
+                v-for="error in errorMsgs"
+                :key="error"
+                justify="start"
+                :class="mobile ? 'py-1 pl-2':'py-1 pl-12 ml-12'"
+              >
+                <span class="secondary--text">
+                  <i>- Please update your {{error}} information</i>
+                </span>
               </v-row>
-              <v-row v-if="remainingErrors" @click="editProfile" class="pt-2" justify="center" :style="hover ? 'cursor: pointer;background-color:rgba(168,0,0,0.1)':''">
+              <v-row
+                v-if="remainingErrors"
+                @click="editProfile"
+                class="pt-2"
+                justify="center"
+                :style="hover ? 'cursor: pointer;background-color:rgba(168,0,0,0.1)':''"
+              >
                 <v-icon color="secondary">mdi-account-edit</v-icon>
                 <v-btn text large>update your details</v-btn>
               </v-row>
-          </v-col>
-        </v-row>
-      </v-hover>
-    </template>
+            </v-col>
+          </v-row>
+        </v-hover>
+      </template>
 
-    <!-- Actions Slot -->
-    <template v-if="type === 'review'" v-slot:actions>
-      <v-btn @click="respond('decline')"
-        text large
-        class="secondary--text"
-      >
-        <span>decline</span>
-      </v-btn>
-      <v-btn
-        @click="respond('approve')"
-        text large
-        class="blue--text mx-5"
-      >
-        <span>approve</span>
-      </v-btn>
-    </template>
-    <template v-else v-slot:actions>
-      <v-btn @click="close"
-        text large
-        class="secondary--text"
-      >
-        <span>cancel</span>
-      </v-btn>
-      <v-btn
-        @click="submit"
-        :disabled="disabled"
-        text large
-        class="blue--text mx-5"
-      >
-        <span>submit</span>
-      </v-btn>
-    </template>
+      <!-- Actions Slot -->
+      <template v-if="type === 'review'" v-slot:actions>
+        <v-btn @click="respond('decline')" text large class="secondary--text">
+          <span>decline</span>
+        </v-btn>
+        <v-btn @click="respond('approve')" text large class="blue--text mx-5">
+          <span>approve</span>
+        </v-btn>
+      </template>
+      <template v-else v-slot:actions>
+        <v-btn @click="close" text large class="secondary--text">
+          <span>cancel</span>
+        </v-btn>
+        <v-btn @click="submit" :disabled="disabled" text large class="blue--text mx-5">
+          <span>submit</span>
+        </v-btn>
+      </template>
+    </Dialog>
 
-  </Dialog>
+    <!-- MESSAGE RESPONSE -->
+    <Dialog
+      v-if="showMessage"
+      :show="showMessage"
+      :title="`${response} request to join Your Whanau` "
+      @close="close"
+      width="720px"
+      :goBack="close"
+      enableMenu
+    >
+      <template v-slot:content>
+        <p class="pt-4 px-4 subtitle-2 black--text">
+          Would you like to send a message along with your response to
+          <strong>
+            <i>Benjamin Nootai Tairea</i>
+          </strong>
+        </p>
+        <v-col cols="12" :class="mobile ? 'pt-4 px-0':'px-5'">
+          <v-textarea
+            v-model="resMessage"
+            label="Message"
+            no-resize
+            rows="3"
+            auto-grow
+            outlined
+            placeholder=" "
+          ></v-textarea>
+        </v-col>
+      </template>
 
-  <!-- MESSAGE RESPONSE -->
-  <Dialog v-if="showMessage" :show="showMessage" :title="`${response} request to join Your Whanau` " @close="close" width="720px" :goBack="close" enableMenu>
-    <template v-slot:content>
-      <p class="pt-4 px-4 subtitle-2 black--text">Would you like to send a message along with your response to <strong><i>Benjamin Nootai Tairea</i></strong></p>
-       <v-col cols="12" :class="mobile ? 'pt-4 px-0':'px-5'">
-            <v-textarea
-              v-model="resMessage"
-              label='Message'
-              no-resize
-              rows="3"
-              auto-grow
-              outlined
-              placeholder=" "
-            >
-            </v-textarea>
-          </v-col>
-    </template>
-
-    <template v-slot:actions>
-      <v-btn @click="showMessage = !showMessage"
-        text large
-        class="secondary--text"
-      >
-        <span>cancel</span>
-      </v-btn>
-      <v-btn
-        @click="send"
-        text large
-        class="blue--text mx-5"
-      >
-        <span>send</span>
-      </v-btn>
-    </template>
-
-  </Dialog>
-</div>
+      <template v-slot:actions>
+        <v-btn @click="showMessage = !showMessage" text large class="secondary--text">
+          <span>cancel</span>
+        </v-btn>
+        <v-btn @click="send" text large class="blue--text mx-5">
+          <span>send</span>
+        </v-btn>
+      </template>
+    </Dialog>
+  </div>
 </template>
 
 <script>
@@ -267,10 +404,9 @@ import AddButton from '@/components/button/AddButton.vue'
 import { dateIntervalToString } from '@/lib/date-helpers'
 
 import isEmpty from 'lodash.isempty'
-import pick from 'lodash.pick'
 import calculateAge from '@/lib/calculate-age'
 import { mapActions, mapGetters } from 'vuex'
-import { PRIVATE_PERMITTED_PROFILE_ATTRS, COMMON_PERMITTED_PROFILE_ATTRS } from '@/lib/community-helpers'
+// import { ... some mutation helper } from '@/lib/person-helpers'
 
 const REQUIRED_ATTRS = [
   'id', 'legalName', 'aliveInterval', 'gender', 'relationshipType',
@@ -448,28 +584,16 @@ export default {
           ...this.formData,
           parents: this.parents
         }
-        var common = pick(input, COMMON_PERMITTED_PROFILE_ATTRS)
-        var kaitiaki = pick(input, PRIVATE_PERMITTED_PROFILE_ATTRS)
+        // var common = pick(input, COMMON_PERMITTED_PROFILE_ATTRS)
+        // var kaitiaki = pick(input, PRIVATE_PERMITTED_PROFILE_ATTRS)
 
-        var output = {
-          // TODO - update to match notifications
-          action: 'registration',
-          from: this.formData.id,
-          message: {
-            request: {
-              community: this.currentProfile.id,
-              profile: {
-                common: common,
-                kaitiaki: kaitiaki
-              },
-              message: this.message
-            }
-          },
-          to: this.currentProfile.id
-        }
-        // TODO - send message to Kaitiaki
-        console.warn('send this object: ', output)
-        this.close()
+        // var output = {
+        //   common: common,
+        //   kaitiaki: kaitiaki
+        // }
+        // // TODO - send message to Kaitiaki
+        // console.warn('send this object: ', output)
+        // this.close()
       }
     },
 
@@ -528,6 +652,6 @@ export default {
 }
 
 .checkbox {
-  border: 2px solid #4caf50
+  border: 2px solid #4caf50;
 }
 </style>

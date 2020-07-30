@@ -24,11 +24,28 @@ export const PERMITTED_COMMUNITY_ATTRS = [
   'address',
   'location',
 
-  'tombstone'
+  'tombstone',
+  'recps'
 ]
+
+// WIP
+// PERMITTED_COMMUNITY_PUBLIC_ATTRS
 
 // TODO: finish community-helper
 // eg: getCommunity() *single community
+
+export const createGroup = () => {
+  return {
+    mutation: gql`
+      mutation($nothing: Boolean) {
+        createGroup(nothing: $nothing) {
+          id
+        }
+      }
+    `,
+    variables: { nothing: true }
+  }
+}
 
 export const saveCommunity = input => {
   const _input = pick(input, PERMITTED_COMMUNITY_ATTRS)
@@ -50,6 +67,7 @@ export const saveCommunity = input => {
     }
   }
 }
+// make savePublicCommunity
 
 // export async function saveCommunity (input) {
 //   console.log('input:', input)
