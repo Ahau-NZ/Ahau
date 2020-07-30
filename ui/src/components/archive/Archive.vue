@@ -99,9 +99,9 @@
 <script>
 import StoryCard from '@/components/archive/StoryCard.vue'
 // import CollectionGroup from '@/components/archive/CollectionGroup.vue'
-import { SAVE_STORY, GET_STORY } from '@/lib/story-helpers.js'
-import { SAVE_ARTEFACT } from '@/lib/artefact-helpers.js'
-import { SAVE_LINK, TYPES } from '@/lib/link-helpers.js'
+import { saveStory, getStory } from '@/lib/story-helpers.js'
+import { saveArtefact } from '@/lib/artefact-helpers.js'
+import { saveLink, TYPES } from '@/lib/link-helpers.js'
 import { mapGetters, mapActions, mapMutations } from 'vuex'
 import NewRecordDialog from '@/components/dialog/archive/NewRecordDialog.vue'
 
@@ -188,12 +188,17 @@ export default {
       this.showArchiveHelper = !this.showArchiveHelper
     },
     async saveStory (input) {
-      input.recps = [this.whoami.personal.groupId]
+      if (!input.id) input.recps = [this.whoami.personal.groupId]
+
       var { id, artefacts, mentions, contributors, creators, relatedRecords } = input
 
       try {
-        const res = await this.$apollo.mutate(SAVE_STORY(input))
-        if (res.errors) throw res.errors
+        const res = await this.$apollo.mutate(saveStory(input))
+
+        if (res.errors) {
+          console.error('saveStory returned errors')
+          throw res.errors
+        }
 
         if (!id) {
           id = res.data.saveStory
@@ -204,31 +209,28 @@ export default {
           const { add, remove } = artefacts
 
           if (add && add.length > 0) {
-            // all artefacts to create or update
-            await Promise.all(add.map(async artefact => {
+            await add.reduce(async (_, artefact) => {
+              await _
               const artefactId = await this.saveArtefact(artefact)
               if (!artefactId) return
 
-              // if the artefact didnt have an id, then it means we create the link
               if (!artefact.id) {
-                const artefactInput = {
+                await this.saveLink({
                   type: TYPES.STORY_ARTEFACT,
                   parent: id,
                   child: artefactId
-                }
-
-                await this.saveLink(artefactInput)
+                })
               }
-            }))
+            }, undefined)
           }
 
           if (remove && remove.length > 0) {
-            await Promise.all(remove.map(async artefact => {
+            await remove.reduce(async (_, artefact) => {
+              await _
               if (artefact.linkId) {
                 await this.removeLink({ date: new Date(), linkId: artefact.linkId })
               }
-              return artefact
-            }))
+            }, undefined)
           }
         }
 
@@ -259,6 +261,7 @@ export default {
         console.warn('Potentially loading a large amount of data with each change to a story...')
         this.getAllStories()
       } catch (err) {
+        console.error('Something went wrong while creating a story')
         throw err
       }
     },
@@ -266,79 +269,89 @@ export default {
       const { add, remove } = object
 
       if (add && add.length > 0) {
-        await Promise.all(add.map(async linkedItem => {
-          if (linkedItem.id) {
-            const linkInput = {
+        await add.reduce(async (_, linkedItem) => {
+          await _
+
+          if (linkedItem.id && !linkedItem.linkId) {
+            await this.saveLink({
               type,
               parent: parentId,
               child: linkedItem.id
-            }
-
-            await this.saveLink(linkInput)
+            })
           }
-          return linkedItem
-        }))
+        }, undefined)
       }
 
       if (remove && remove.length > 0) {
-        await Promise.all(remove.map(async linkedItem => {
+        await add.reduce(async (_, linkedItem) => {
+          await _
+
           if (linkedItem.linkId) {
             await this.removeLink({ date: new Date(), linkId: linkedItem.linkId })
           }
-          return linkedItem
-        }))
+        }, undefined)
       }
     },
     async saveArtefact (input) {
+      if (!input.id) input.recps = [this.whoami.personal.groupId] // TEMP - safety till we figure out actual recps
+
       try {
-        const res = await this.$apollo.mutate(SAVE_ARTEFACT(input))
+        const res = await this.$apollo.mutate(saveArtefact(input))
+
         if (res.errors) {
+          console.error('error saving artefact', input)
           throw res.errors
         }
 
         return res.data.saveArtefact
       } catch (err) {
-        throw new Error('failed to save artefact. ' + err)
+        console.error('something went wrong while saving an arteact')
+        throw err
       }
     },
     async getStory (id) {
-      const res = await this.$apollo.query(GET_STORY(id))
+      try {
+        if (!id) throw new Error('getStory(id) missing id')
 
-      if (res.errors) {
-        console.error('failed to get the story. ' + res.errors)
-        return
+        const res = await this.$apollo.query(getStory(id))
+
+        if (res.errors) {
+          console.error('error getting story', id)
+          throw res.errors
+        }
+
+        return res.data.story
+      } catch (err) {
+        console.error(err)
+        console.error('something went wrong while getting a story')
+        throw err
       }
-
-      return res.data.story
     },
-    async saveLink ({ type, parent, child }) {
-      const res = await this.$apollo.mutate(SAVE_LINK({
-        type,
-        parent,
-        child,
-        recps: [this.whoami.personal.groupId]
-      }))
+    async saveLink (input) {
+      if (!input.linkId) input.recps = [this.whoami.personal.groupId]
 
-      if (res.errors) {
-        console.error('error creating the link. ' + res.errors)
-        return
+      try {
+        const res = await this.$apollo.mutate(saveLink(input))
+
+        if (res.errors) {
+          console.error('error saving the link.', input)
+          throw res.errors
+        }
+
+        // return the linkId
+        return res.data.saveLink
+      } catch (err) {
+        console.error('something went wrong while saving a link')
+        throw err
       }
-
-      // return the linkId
-      return res.data.saveLink
     },
     async removeLink ({ date, linkId }) {
-      const res = await this.$apollo.mutate(SAVE_LINK({
-        linkId,
-        tombstone: { date }
-      }))
-
-      if (res.errors) {
-        console.error('error removing link. ' + res.errors)
-        return
+      try {
+        await this.saveLink({ linkId, tombstone: { date } })
+      } catch (err) {
+        console.error('something went wrong while removing a link', linkId)
+        throw err
       }
-
-      return res.data.saveLink
     },
     toggleStory (story) {
       this.setStory(story)
