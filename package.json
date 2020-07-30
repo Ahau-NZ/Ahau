@@ -33,7 +33,7 @@
     "lint:ui": "cd ui && npm run lint",
     "lint:pataka": "cd pataka && npm run lint",
     "test:ui": "cd ui && npm run test",
-    "cleanup": "rm -rf node_modules && rm -rf **/node_modules && rm -rf package-lock.json && rm -rf **/package-lock.json && git checkout mobile/"
+    "cleanup": "rm -rf node_modules && rm -rf **/node_modules && rm -rf package-lock.json && rm -rf **/package-lock.json"
   },
   "dependencies": {
     "vue-country-region-select": "^2.0.13"

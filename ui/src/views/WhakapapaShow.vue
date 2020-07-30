@@ -9,12 +9,12 @@
       <v-row v-if="!mobile" class="header">
         <!-- Whakapapa"SHOW"ViewCard -->
         <WhakapapaShowViewCard :view="whakapapaView" :shadow="false">
-          <template v-slot:edit>
+          <template v-slot:edit v-if="whakapapaView && whakapapaView.canEdit">
             <v-tooltip bottom>
               <template v-slot:activator="{ on }">
                 <v-btn
                   v-on="on"
-                  @click.prevent="dialog.active = 'whakapapa-edit'"
+                  @click.stop="dialog.active = 'whakapapa-edit'"
                   icon
                   class="pa-0 px-3"
                 >
@@ -148,23 +148,18 @@
       />
     </v-container>
 
-    <vue-context ref="menu" class="px-0"  >
-      <li v-for="(option, index) in contextMenuOpts" :key="index">
+    <vue-context ref="menu" class="px-0">
+      <li>
+        <a href="#" @click.prevent="updateDialog('view-edit-node', null)"  class="d-flex align-center px-4">
+          <img class="contextMenuIcon" :src="require('../assets/account-circle.svg')"/>
+          <p class="ma-0 pl-3">View Person</p>
+        </a>
+      </li>
+      <li v-for="(option, index) in contextMenuOpts.filter(d => !d.canEdit)" :key="index">
         <a href="#" @click.prevent="updateDialog(option.dialog, option.type)" class="d-flex align-center px-4">
-          <img class="contextMenuIcon" :src="option.icon"/>
+          <v-icon v-if="option.icon==='mdi-delete'" class="contextMenuIcon">mdi-delete</v-icon>
+          <img v-else class="contextMenuIcon" :src="option.icon"/>
           <p class="ma-0 pl-3">{{ option.title }}</p>
-        </a>
-      </li>
-      <li v-if="canAddSibling(selectedProfile)">
-        <a href="#" @click.prevent="updateDialog('new-node', 'sibling')"  class="d-flex align-center px-4">
-          <img class="contextMenuIcon" :src="require('../assets/node-sibling.svg')"/>
-          <p class="ma-0 pl-3">Add Sibling</p>
-        </a>
-      </li>
-      <li v-if="canDelete(selectedProfile)">
-        <a href="#" @click.prevent="updateDialog('delete-node', null)" class="d-flex align-center px-4">
-          <v-icon class="contextMenuIcon">mdi-delete</v-icon>
-          <p class="ma-0 pl-3">Delete Person</p>
         </a>
       </li>
     </vue-context>
@@ -277,9 +272,10 @@ export default {
         table: false
       },
       contextMenuOpts: [
-        { title: 'View Person', dialog: 'view-edit-node', icon: require('../assets/account-circle.svg') },
-        { title: 'Add Parent', dialog: 'new-node', type: 'parent', icon: require('../assets/node-parent.svg') },
-        { title: 'Add Child', dialog: 'new-node', type: 'child', icon: require('../assets/node-child.svg') }
+        { title: 'Add Parent', dialog: 'new-node', type: 'parent', icon: require('../assets/node-parent.svg'), canEdit: this.canEdit },
+        { title: 'Add Child', dialog: 'new-node', type: 'child', icon: require('../assets/node-child.svg'), canEdit: this.canEdit },
+        { title: 'Add Sibling', dialog: 'new-node', type: 'sibling', icon: require('../assets/node-sibling.svg'), canEdit: this.canEdit && this.canAddSibling(this.selectedProfile) },
+        { title: 'Delete Person', dialog: 'delete-node', type: null, icon: 'mdi-delete', canEdit: this.canEdit && this.canDelete(this.selectedProfile) }
       ]
     }
   },
@@ -296,6 +292,7 @@ export default {
               }
               focus
               recps
+              canEdit
               ignoredProfiles
             }
           }
@@ -319,6 +316,9 @@ export default {
       set: function (newValue) {
         this.focus = newValue
       }
+    },
+    canEdit () {
+      return this.selectedProfile && this.selectedProfile.canEdit
     }
   },
   watch: {
@@ -637,7 +637,8 @@ export default {
     // save whakapapa changes
     async updateWhakapapa (whakapapaChanges) {
       const input = {
-        id: this.$route.params.id
+        id: this.$route.params.id,
+        recps: this.whakapapaView.recps
       }
       Object.entries(whakapapaChanges).forEach(([key, value]) => {
         if (!isEmpty(value)) input[key] = value
@@ -656,6 +657,7 @@ export default {
                     image { uri }
                     focus
                     recps
+                    canEdit
                   }
                 }
               `,

@@ -26,6 +26,8 @@ export const PERMITTED_PERSON_ATTRS = [
   'aliveInterval',
   'birthOrder',
   'deceased',
+  'type',
+  'canEdit',
 
   // 'tombstone', // PROBLEMS, can't fetch this at the moment, breaks PERSON_FRAGMENT
   'recps'
