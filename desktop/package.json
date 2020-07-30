@@ -28,7 +28,7 @@
     "ssb-legacy-conn": "^1.0.25",
     "ssb-master": "^1.0.3",
     "ssb-no-auth": "^1.0.0",
-    "ssb-profile": "^1.4.0",
+    "ssb-profile": "^1.5.0",
     "ssb-promiscuous": "^1.1.0",
     "ssb-query": "^2.4.5",
     "ssb-recps-guard": "^2.1.0",
@@ -37,7 +37,7 @@
     "ssb-story": "^1.0.2",
     "ssb-tribes": "^0.1.2",
     "ssb-unix-socket": "^1.0.0",
-    "ssb-whakapapa": "^2.0.1"
+    "ssb-whakapapa": "^2.0.2"
   },
   "devDependencies": {
     "@fiahfy/icns-convert": "0.0.6",

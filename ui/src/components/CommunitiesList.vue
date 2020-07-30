@@ -78,17 +78,20 @@ export default {
     }
   },
   apollo: {
+    // WIP : put the tribes query in here
+    // then build UI to display the tribes
+    // tribes -> [ { id: GroupId, public: [Profile], private: [Profile] }]
     communities: {
       query: gql`query {
-        communities {
+        tribes {
           id
-          preferredName
-          description
-          headerImage {
-            uri
+          public {
+            id
+            preferredName
           }
-          avatarImage {
-            uri
+          private {
+            id
+            preferredName
           }
         }
       }

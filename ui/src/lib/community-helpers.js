@@ -28,6 +28,9 @@ export const PERMITTED_COMMUNITY_ATTRS = [
   'recps'
 ]
 
+// WIP
+// PERMITTED_COMMUNITY_PUBLIC_ATTRS
+
 // TODO: finish community-helper
 // eg: getCommunity() *single community
 
@@ -64,6 +67,7 @@ export const saveCommunity = input => {
     }
   }
 }
+// make savePublicCommunity
 
 // export async function saveCommunity (input) {
 //   console.log('input:', input)

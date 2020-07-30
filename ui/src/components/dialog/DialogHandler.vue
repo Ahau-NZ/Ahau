@@ -303,6 +303,18 @@ export default {
     },
     async setupNewCommunity ($event) {
       if ($event.id) throw new Error('this is for creating a new tribe + community, not updating')
+      // WIP
+      // - [x] set up private group (so you have groupId)
+      // - [x] create a PRIVATE community profile for that group (recps: [groupId])
+      // - [ ] create a link between group + private profile
+      //    - saveGroupProfileLink
+      // - [ ] create a PUBLIC community profile for that group (allowPublic: true)
+      // - [ ] create a link between group + public profile
+
+      // (later?)
+      // - [ ] create a copy of your personal profile (recps: [groupId])
+      // - [ ] link your feedId + profile
+      //    - saveFeedProfileLink (recps: [groupId])
 
       const createGroupRes = await this.$apollo.mutate(createGroup())
       if (createGroupRes.errors) {
