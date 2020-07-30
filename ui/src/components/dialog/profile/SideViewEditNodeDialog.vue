@@ -215,7 +215,7 @@
                     @profile-click="openProfile($event)"
                   >
                     <template v-slot:action >
-                      <AddButton v-if="!preview" @click="toggleNew('child')" class="pb-6" />
+                      <AddButton v-if="!preview" @click="toggleNew('child')" class="pb-6" justify="start"/>
                     </template>
                   </AvatarGroup>
                 </v-col>

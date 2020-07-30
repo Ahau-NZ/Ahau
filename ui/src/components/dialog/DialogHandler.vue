@@ -4,10 +4,11 @@
       v-if="isActive('new-registration')"
       :show="isActive('new-registration')"
       :title="dialogType === 'review' ? `Request to join Āhau from ---- Benjamin Nootai Tairea`:`Request to join : ${currentProfile.preferredName}`"
-      :profile="whoami.public.profile"
+      :profile="whoami.personal.profile"
       :parents.sync="parents"
       :parentIndex.sync="parentIndex"
       :type="dialogType"
+      :notification="currentNotification"
       @editProfile="toggleEditProfile($event)"
       @close="close"
     />
@@ -221,7 +222,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['nestedWhakapapa', 'selectedProfile', 'whoami', 'storeDialog', 'storeType', 'storeSource', 'currentProfile']),
+    ...mapGetters(['nestedWhakapapa', 'selectedProfile', 'whoami', 'storeDialog', 'storeType', 'storeSource', 'currentProfile', 'currentNotification']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -309,6 +310,13 @@ export default {
       return true
     },
     async addCommunity ($event) {
+
+      if (!$event.recps) {
+        console.log("no recps")
+        $event.recps = [this.whoami.personal.groupId]
+      }
+
+      console.log("addCommunity: ", $event)
       // if community doesnt exisit create one
       if (!$event.id) {
         const res = await this.$apollo.mutate(saveCommunity($event))
@@ -352,6 +360,7 @@ export default {
       await this.setWhoami()
     },
     async addPerson ($event) {
+      console.log("addPerson: ", $event)
       try {
         var { id } = $event
 
@@ -608,7 +617,6 @@ export default {
       }
     },
     async updatePerson (input) {
-      console.log('update profile: ', input)
 
       const profileId = this.selectedProfile.id
       if (this.isPersonalProfile(profileId)) {

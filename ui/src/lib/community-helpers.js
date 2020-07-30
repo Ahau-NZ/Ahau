@@ -12,8 +12,8 @@ export const PERMITTED_COMMUNITY_ATTRS = [
   'type',
 
   'preferredName',
-  'legalName',
-  'altNames',
+  // 'legalName',
+  // 'altNames',
 
   'description',
   'avatarImage',
@@ -24,7 +24,8 @@ export const PERMITTED_COMMUNITY_ATTRS = [
   'address',
   'location',
 
-  'tombstone'
+  'tombstone',
+  'recps'
 ]
 
 // TODO: finish community-helper

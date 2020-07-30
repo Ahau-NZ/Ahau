@@ -19,21 +19,44 @@
         <v-divider></v-divider>
         <v-list class="pt-0">
           <div  v-for="(notification, index) in notifications" :key="index">
-            <v-list-item class="py-1" @click="setDialog({ active: 'new-registration', type: 'review' })">
-              <Avatar size="50px" :image="whoami.personal.profile.avatarImage"
-                :alt="whoami.personal.profile.preferredName" :gender="whoami.personal.profile.gender" :bornAt="whoami.personal.profile.bornAt"
-              />
-              <v-list-item-content class="pl-5">
-                <v-list-item-title>{{completePerson.legalName}}</v-list-item-title>
-                <v-list-item-subtitle class="text-caption ahauRed">{{notification.is}} {{notification.to}}</v-list-item-subtitle>
-              </v-list-item-content>
-              <v-list-item-action>
-                <v-btn icon x-small>
-                  <v-icon>mdi-close</v-icon>
-                </v-btn>
-              </v-list-item-action>
-            </v-list-item>
-            <v-divider></v-divider>
+
+            <!-- Registration Notification -->
+            <div v-if="notification.type === 'registration'">
+              <v-list-item class="py-1" @click="openReview(notification)">
+                <Avatar size="50px" :image="notification.from.avatarImage"
+                  :alt="notification.from.preferredName" :gender="notification.from.gender" :bornAt="notification.from.bornAt"
+                />
+                <v-list-item-content class="pl-5">
+                  <v-list-item-title>{{notification.from.preferredName}}</v-list-item-title>
+                  <v-list-item-subtitle class="text-caption ahauRed">Has requested to join {{notification.message.community.preferredName}}</v-list-item-subtitle>
+                </v-list-item-content>
+                <!-- <v-list-item-action>
+                  <v-btn icon x-small>
+                    <v-icon>mdi-close</v-icon>
+                  </v-btn>
+                </v-list-item-action> -->
+              </v-list-item>
+              <v-divider></v-divider>
+            </div>
+
+            <!-- Response notification -->
+            <div v-else-if="notification.type === 'response'">
+              <v-list-item class="py-1" @click="openResponse(notification)">
+               <Avatar size="50px" :image="notification.from.avatarImage"
+                  :alt="notification.from.preferredName" :gender="notification.from.gender" :bornAt="notification.from.bornAt"
+                />
+                <v-list-item-content class="pl-5">
+                  <v-list-item-title>{{notification.from.preferredName}}</v-list-item-title>
+                  <v-list-item-subtitle class="text-caption ahauRed">Has {{notification.message.outcome}} your request to join {{notification.message.community.preferredName}}</v-list-item-subtitle>
+                </v-list-item-content>
+                <!-- <v-list-item-action>
+                  <v-btn icon x-small>
+                    <v-icon>mdi-close</v-icon>
+                  </v-btn>
+                </v-list-item-action> -->
+              </v-list-item>
+              <v-divider></v-divider>
+            </div>
           </div>
           <v-spacer class="mb-6"></v-spacer>
         </v-list>
@@ -57,10 +80,10 @@
         <v-list class="pt-0">
           <div  v-for="(notification, index) in notifications" :key="index">
             <v-list-item class="py-1" @click="setDialog({ active: 'new-registration', type: 'review' })">
-              <Avatar size="50px" :image="whoami.personal.profile.avatarImage"
-                :alt="whoami.personal.profile.preferredName" :gender="whoami.personal.profile.gender" :bornAt="whoami.personal.profile.bornAt" />
+              <Avatar size="50px" :image="notification.from.avatarImage"
+                :alt="notification.from.preferredName" :gender="notification.from.gender" :bornAt="notification.from.bornAt" />
               <v-list-item-content class="pl-5">
-                <v-list-item-title>{{completePerson.legalName}}</v-list-item-title>
+                <v-list-item-title>{{notification.from.preferredName}}</v-list-item-title>
                 <v-list-item-subtitle class="text-caption ahauRed">{{notification.is}} {{notification.to}}</v-list-item-subtitle>
               </v-list-item-content>
               <v-list-item-action>
@@ -92,47 +115,29 @@ export default {
       expand: false,
       completePerson: personComplete,
       // TODO: Update to real notifications
-      notifications: [{
-        type: 'registration',
-        message: {
-          request: {
-            community: this.currentProfile.id,
-            profile: this.whoami.private.profile,
-            message: 'Hello my name is Ben, I was born in Australia and havent been home yet, so I am excited to learn more baout who I am and where I come from'
-          }
-        },
-        from: this.whoami.private.profile
-      },
-      {
-        type: 'approved',
-        message: {
-          response: {
-            community: this.currentProfile.id,
-            message: 'Kia ora Ben, so awesome that you have joined. We dont current have any information about your family on the whakapapa record so it would be awesome if you can add any some information about your mum and siblings (if you have any)'
-          }
-        },
-        from: this.whoami.private.profile
-      },
-      {
-        type: 'declined',
-        message: {
-          request: {
-            community: this.currentProfile.id,
-            message: 'Kia ora Ben, Aroha mai. Im sorry I cant find any whakapapa connection to our whānau for your parents or grandparents names that you have provided. Please give me a call on 0226990253 so we can talk and see if we can make the connection.'
-          }
-        },
-        from: this.whoami.private.profile
-      }]
+     
     }
+  },
+  mounted () {
+    this.setNotifications()
   },
   computed: {
-    ...mapGetters(['whoami']),
+    ...mapGetters(['whoami', 'currentProfile', 'notifications']),
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
-    }
+    },
   },
   methods: {
-    ...mapActions(['setDialog'])
+    ...mapActions(['setDialog', 'setNotifications', 'setCurrentNotification']),
+
+    openReview (notification) {
+      this.setCurrentNotification(notification)
+      this.setDialog({ active: 'new-registration', type: 'review' })
+    },
+    openResponse (notification) {
+      this.setCurrentNotification(notification)
+      this.setDialog({ active: 'new-registration', type: 'response' })
+    }
   }
 }
 </script>

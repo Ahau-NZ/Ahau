@@ -7,6 +7,7 @@ import whakapapa from './modules/whakapapa'
 import person from './modules/person'
 import archive from './modules/archive'
 import dialog from './modules/dialog'
+import notifications from './modules/notifications'
 
 const apolloProvider = createProvider()
 const apollo = apolloProvider.defaultClient
@@ -45,7 +46,8 @@ const store = new Vuex.Store({
     whakapapa,
     person,
     archive,
-    dialog
+    dialog,
+    notifications
   },
   getters: {
     loadingState: state => {

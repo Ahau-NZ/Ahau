@@ -296,7 +296,8 @@ export default {
     profile: { type: Object },
     parents: { type: Array, default: null },
     parentIndex: Number,
-    type: { type: String, default: null }
+    type: { type: String, default: null },
+    notification: { type: Object, default: null }
   },
   data () {
     return {
@@ -314,20 +315,27 @@ export default {
       gpNames: false,
       showMessage: false,
       resMessage: '',
-      response: ''
+      response: '',
+      scrollPosition: '' 
     }
   },
   mounted () {
     // TODO - update Profile, Parents and Message with notifcations data
     this.getFullProfile(this.profile.id)
     if (this.type === 'review') {
-      this.parentsArray = this.currentProfile.parents
+      this.parentsArray = this.notification.profile.parents
     } else this.parentsArray = this.parents
   },
   watch: {
-    parents (newVal) {
-      console.log(newVal)
-      if (newVal) this.parentsArray = newVal
+    parents (newVal, oldVal) {
+      if (newVal) {
+        this.parentsArray = newVal
+         setTimeout(() => {
+          window.scrollTo({
+            top: this.scrollPosition
+          })
+        }, 100)
+      }
     }
   },
   computed: {
@@ -391,6 +399,8 @@ export default {
       this.parents[parentIndex].grandparents.splice(grandparentIndex, 1)
     },
     addParent () {
+      console.log(window.pageYOffset)
+      this.scrollPosition = window.pageYOffset
       this.setDialog({ active: 'new-node', type: 'parent' })
     },
     addGrandparent (index) {
@@ -456,11 +466,9 @@ export default {
           action: 'registration',
           from: this.formData.id,
           message: {
-            request: {
-              community: this.currentProfile.id,
-              profile: input,
-              message: this.message
-            }
+            community: this.currentProfile.id,
+            profile: input,
+            message: this.message
           },
           to: this.currentProfile.id
         }
@@ -478,14 +486,12 @@ export default {
     send () {
       var output = {
         // TODO - update to match notifications
-        action: 'registration-response',
+        action: 'response',
         from: this.whoami.profile.id,
         message: {
           community: 'community profile.id',
-          response: {
-            outcome: this.response,
-            message: this.resMessage
-          }
+          outcome: this.response,
+          message: this.resMessage
         },
         to: this.formData.id
       }
