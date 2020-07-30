@@ -42,14 +42,14 @@
       <v-col cols="12" md="9" class="py-0">
         <!-- <p class="headliner pa-0 mb-4">TRIBES</p> -->
         <v-row justify="start">
-            <v-col v-for="community in communities" :item="community" :key="community.id" justify-self="start">
-              <v-card light :width="!mobile ? '190px':'100vw'" @click="goProfile(community.id)">
-                <v-img height="150px" :src="getImage(community)" class="card-image" />
+            <v-col v-for="tribe in tribes" :item="tribe" :key="tribe.id" justify-self="start">
+              <v-card light :width="!mobile ? '190px':'100vw'" @click="goProfile(tribe.private ? tribe.private.id : tribe.public.id)">
+                <v-img height="150px" :src="getImage(tribe)" class="card-image" />
                 <v-card-title class="subtitle font-weight-bold pb-2">{{
-                  community.preferredName
+                  tribe.preferredName
                 }}</v-card-title>
                 <v-card-text class="body-2">{{
-                  shortDescrciption(community)
+                  shortDescrciption(tribe)
                 }}</v-card-text>
               </v-card>
             </v-col>
@@ -81,17 +81,25 @@ export default {
     // WIP : put the tribes query in here
     // then build UI to display the tribes
     // tribes -> [ { id: GroupId, public: [Profile], private: [Profile] }]
-    communities: {
+    tribes: {
       query: gql`query {
         tribes {
           id
           public {
             id
             preferredName
+            avatarImage { uri } 
+            description
+            headerImage { uri }
           }
           private {
             id
+            type
             preferredName
+            description
+            avatarImage { uri }
+            headerImage { uri }
+            recps
           }
         }
       }
@@ -102,6 +110,12 @@ export default {
   computed: {
     mobile () {
       return this.$vuetify.breakpoint.xs
+    },
+    connectedTribes () {
+      return this.tribes.filter(tribe => tribe.private !== null)
+    },
+    unConnectedTribes () {
+      return this.tribes.filter(tribe => tribe.private == null)
     }
   },
   methods: {
