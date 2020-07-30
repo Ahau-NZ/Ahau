@@ -23,35 +23,14 @@ module.exports = {
     const profile = Profile(sbot)
     const invite = Invite(sbot)
     const pataka = Pataka(sbot, profile.gettersWithCache)
-    profile.Context((err, context) => {
+    main.loadContext((err, context) => {
       if (err) throw err
 
       const server = new ApolloServer({
-        schema: buildFederatedSchema([
-          {
-            typeDefs: main.typeDefs,
-            resolvers: main.resolvers
-          },
-          {
-            typeDefs: profile.typeDefs,
-            resolvers: profile.resolvers
-          },
-          {
-            typeDefs: invite.typeDefs,
-            resolvers: invite.resolvers
-          },
-          {
-            typeDefs: pataka.typeDefs,
-            resolvers: pataka.resolvers
-          },
-          {
-            typeDefs: stats.typeDefs,
-            resolvers: stats.resolvers
-          }
-        ]),
+        schema: buildFederatedSchema([main, profile, invite, pataka, stats]),
         context,
-        // context: { ...context, pubsub },
-        mockEntireSchema: false
+        mockEntireSchema: false,
+        mocks: process.env.MOCK === true ? require('./mocks') : false
       })
       server.applyMiddleware({ app })
 

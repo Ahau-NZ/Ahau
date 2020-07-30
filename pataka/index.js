@@ -13,20 +13,22 @@ const plugins = [
   // 'ssb-promiscuous', // temporary?
 
   'ssb-blobs',
-  'ssb-tribes',
-  'ssb-backlinks',
-  'ssb-whakapapa',
-  'ssb-profile',
-  'ssb-artefact',
-  'ssb-story',
+  'ssb-serve-blobs',
 
   'ssb-query',
-  'ssb-serve-blobs',
+  'ssb-backlinks',
+
+  'ssb-tribes',
+
+  'ssb-profile',
+  'ssb-story',
+  'ssb-artefact',
+  'ssb-whakapapa',
+
   // 'ssb-private',
   'ssb-invite',
-  // 'ssb-about',
-  // 'ssb-suggest'
-  'ahau-pataka-server'
+  'ahau-pataka-server',
+  'ssb-recps-guard'
 ]
 
 // Karakia tūwhera - dont not remove

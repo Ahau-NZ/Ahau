@@ -83,7 +83,7 @@ export default {
           let cleanImage = {}
           Object.entries(image).forEach(([key, value]) => {
             if (key !== '__typename') cleanImage[key] = value
-            if (key === 'mimeType') cleanImage.mimeType = 'image/png' // !! HACK until mimeType: Hello World gets solved
+            // if (key === 'mimeType') cleanImage.mimeType = 'image/png' // !! HACK until mimeType: Hello World gets solved
           })
           this.$emit('submit', cleanImage)
         })

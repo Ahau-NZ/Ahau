@@ -173,6 +173,7 @@ export default {
     profile: {
       query: gql`query {
         whoami {
+          public {
           feedId
           profile {
             id
@@ -181,13 +182,14 @@ export default {
               uri
             }
           }
+          }
         }
     }`,
       update (data) {
-        if (!data.whoami.profile || !data.whoami.profile.preferredName) this.$router.push({ name: 'login' })
+        if (!data.whoami.public.profile || !data.whoami.public.profile.preferredName) this.$router.push({ name: 'login' })
         return {
-          ...data.whoami.profile,
-          feedId: data.whoami.feedId
+          ...data.whoami.public.profile,
+          feedId: data.whoami.public.feedId
         }
       }
     },
@@ -258,15 +260,17 @@ export default {
     },
     communities: {
       query: gql`query {
-        communities {
-          preferredName
-          avatarImage {
-            uri
+        tribes {
+          public {
+            preferredName
+            avatarImage {
+              uri
+            }
           }
         }
       }`,
       update (data) {
-        return data.communities
+        return data.tribes
       }
     },
     dataSummary: {
