@@ -286,7 +286,6 @@ export default {
             input: pruned
           }
         })
-        console.log({ result })
         if (!result.data) {
           console.error('Creating Whakapapa was unsuccessful')
           return
@@ -344,24 +343,11 @@ export default {
           return d.parentNumber
         })(profilesArray)
 
-      // FINE SO FAR
-      console.log({ root })
-
       // create new array now with child and parents data
       var descendants = await root.descendants()
 
-      // STILL FILNE
-      console.log({ descendants })
-
       // create whakapapaLinks
       var finalArray = await this.createLinks(descendants)
-
-      // ???
-      console.log({ finalArray })
-
-      // var endTime = Date.now()
-      // var eclipsedTime = (endTime - startTime) / 1000
-      // console.log('csv build time: ', eclipsedTime)
 
       // create whakapapa with top ancestor as focus
       this.createView({
@@ -401,13 +387,7 @@ export default {
         }
       })
       try {
-        var {
-          id
-        } = $event
-        id = await this.createProfile(person)
-        if (id == null) {
-          throw new Error('BAD')
-        }
+        var id = await this.createProfile(person)
         if (id.errors) {
           console.error('failed to create profile', id)
           return
@@ -419,7 +399,9 @@ export default {
     },
 
     async createLinks (descendants) {
+      // Remove first item
       descendants.shift()
+
       const results = []
 
       for (const d of descendants) {

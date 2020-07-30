@@ -1,5 +1,8 @@
 import * as csv from './csv'
 const test = require('tape')
+const fs = require('fs').promises
+const path = require('path')
+const d3 = require('d3')
 
 // NOTE: column names need to be on same line as opening of string literal
 
@@ -19,6 +22,7 @@ test('csv.parse', t => {
 
   csv.parse(A)
     .then(csv => {
+      console.log(csv)
       t.equal(csv.length, 2, 'loads 2 rows')
       t.deepEqual(
         csv[1],
@@ -167,4 +171,59 @@ test('csv.schema', t => {
   t.false(isValid('preferredName')(123), 'preferredName cant be a number')
 
   t.end()
+})
+
+test('real data', (t) => {
+  const filepath = path.join(__dirname, 'fixtures', 'MOCK_DATA_150.csv')
+  fs.readFile(filepath, 'utf8').then((file) => {
+    t.ok(file, 'file read returns result')
+    csv.parse(file).then((rows) => {
+      t.ok(rows, 'csv parse returns result')
+
+      const tree = d3.stratify()
+        .id(function (d) {
+          return d.number
+        })
+        .parentId(function (d) {
+          return d.parentNumber
+        })(rows)
+
+      t.equal(rows.length, 149, 'csv parser returns correct number of rows')
+
+      let count = 1
+      const walk = (row) => {
+        const seen = new Set()
+
+        row.children.forEach((child) => {
+          count += 1
+          if (seen.has(child.id)) {
+            t.fail('have not already seen this child')
+          }
+          seen.add(child.id)
+          if (child.children != null) {
+            walk(child)
+          }
+        })
+      }
+
+      t.ok(tree, 'tree exists')
+      walk(tree)
+      t.equal(count, rows.length, 'tree has correct number of nodes')
+
+      const descendants = tree.descendants()
+
+      t.equal(count, descendants.length, 'descendants has correct number of nodes')
+
+      descendants.forEach((descendant, index) => {
+        t.equal(descendant.number, descendant.data.id, 'number and id are same')
+        if (index === 0) {
+          t.equal(descendant.parent, null, 'root does not have parent')
+        } else {
+          t.ok(descendant.parent, 'non root does have parent')
+        }
+      })
+
+      t.end()
+    })
+  })
 })

@@ -27,7 +27,15 @@ function parse (fileContent) {
   var errors = []
 
   return new Promise((resolve, reject) => {
+    const seen = new Set()
+
     const csv = d3.csvParse(fileContent, (d, i) => {
+      if (seen.has(d.number)) {
+        // TODO: better error message
+        throw new Error('I have already seen this number')
+      }
+      seen.add(d.number)
+
       count++
 
       const errs = personErrors(d, i)
