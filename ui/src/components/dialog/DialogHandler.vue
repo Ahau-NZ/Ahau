@@ -140,7 +140,7 @@ import { PERMITTED_RELATIONSHIP_ATTRS, savePerson, saveCurrentIdentity } from '@
 import { saveCommunity } from '@/lib/community-helpers'
 import { saveWhakapapaView } from '@/lib/whakapapa-helpers.js'
 
-import { SAVE_LINK } from '@/lib/link-helpers.js'
+import { saveLink } from '@/lib/link-helpers.js'
 import pick from 'lodash.pick'
 import isEmpty from 'lodash.isempty'
 
@@ -555,7 +555,7 @@ export default {
       // TODO check recps
 
       try {
-        const res = await this.$apollo.mutate(SAVE_LINK(input))
+        const res = await this.$apollo.mutate(saveLink(input))
         if (res.errors) {
           console.error('failed to createChildLink', res)
           return
@@ -605,7 +605,7 @@ export default {
           // recps: this.view.recps
         }
         try {
-          const linkRes = await this.$apollo.mutate(SAVE_LINK(input))
+          const linkRes = await this.$apollo.mutate(saveLink(input))
           if (linkRes.errors) {
             console.error('failed to update child link', linkRes)
             return
