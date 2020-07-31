@@ -63,24 +63,10 @@ import NewViewDialog from '@/components/dialog/whakapapa/NewViewDialog.vue'
 import NewNodeDialog from '@/components/dialog/profile/NewNodeDialog.vue'
 import WhakapapaListHelper from '@/components/dialog/whakapapa/WhakapapaListHelper.vue'
 
-import { SAVE_LINK } from '@/lib/link-helpers.js'
+import { saveLink } from '@/lib/link-helpers.js'
 import { savePerson } from '@/lib/person-helpers.js'
 import tree from '@/lib/tree-helpers'
-
-// import clone from 'lodash.clonedeep'
-// import _ from 'lodash'
-
-const saveWhakapapaViewQuery = gql`
-  mutation($input: WhakapapaViewInput) {
-    saveWhakapapaView(input: $input)
-  }
-`
-
-const saveProfileQuery = gql`
-  mutation($input: ProfileInput!) {
-    saveProfile(input: $input)
-  }
-`
+import { saveWhakapapaView } from '@/lib/whakapapa-helpers.js'
 
 export default {
   name: 'WhakapapaIndex',
@@ -286,12 +272,8 @@ export default {
       })
 
       try {
-        const result = await this.$apollo.mutate({
-          mutation: saveWhakapapaViewQuery,
-          variables: {
-            input: pruned
-          }
-        })
+        const result = await this.$apollo.mutate(saveWhakapapaView(input))
+
         if (!result.data) {
           console.error('Creating Whakapapa was unsuccessful')
           return
@@ -309,25 +291,24 @@ export default {
     },
     async handleDoubleStep ($event) {
       try {
-        var {
-          id
-        } = $event
+        var { id } = $event
 
         if (!id) {
-          $event.recps = [this.whoami.personal.groupId]
-          const res = await this.$apollo.mutate(savePerson($event))
+          var input = {
+            ...$event,
+            recps: [this.whoami.personal.groupId]
+          }
+
+          const res = await this.$apollo.mutate(savePerson(input))
           if (res.errors) {
-            console.error('failed to create profile', res)
+            console.error('failed to create profile', res.errors)
             return
           }
 
           id = res.data.saveProfile
         }
 
-        this.createView({
-          ...this.newView,
-          focus: id
-        })
+        this.createView({ ...this.newView, focus: id })
       } catch (err) {
         throw err
       }
@@ -458,7 +439,7 @@ export default {
         recps: this.newView.recps
       }
       try {
-        const res = await this.$apollo.mutate(SAVE_LINK(input))
+        const res = await this.$apollo.mutate(saveLink(input))
         if (res.errors) {
           console.error('failed to createChildLink', res)
           return
