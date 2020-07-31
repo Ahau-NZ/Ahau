@@ -69,10 +69,6 @@ export default {
           createdAt = Date.now().toISOString().slice(0, 10)
         }
 
-        // TODO: change when @ssb-graphql/main is updated
-        blob.blobId = blob.blob
-        delete blob.blob
-
         delete blob.__typename
 
         var artefact = {
