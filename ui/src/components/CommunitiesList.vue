@@ -113,6 +113,8 @@ export default {
             avatarImage { uri } 
             description
             headerImage { uri }
+            tombstone { date }
+
           }
           private {
             id
@@ -121,6 +123,7 @@ export default {
             avatarImage { uri }
             headerImage { uri }
             recps
+            tombstone {date}
           }
         }
       }
