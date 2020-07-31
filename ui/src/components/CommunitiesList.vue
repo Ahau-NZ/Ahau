@@ -30,7 +30,7 @@
             </v-row>
         </v-col>
       </v-row>
-      <v-divider v-if="connectedTribes && connectedTribes.length" light color="grey" class="my-10"></v-divider>
+      <v-divider v-if="otherTribes && otherTribes.length" light color="grey" class="my-10"></v-divider>
       <v-row v-if="otherTribes && otherTribes.length" class="pt-4">
         <v-col cols="12" md="9" class="py-0">
           <p class="sub-headline pa-0 mb-4">Other whanau tribes</p>

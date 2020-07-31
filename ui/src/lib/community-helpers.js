@@ -125,37 +125,3 @@ export const saveGroupProfileLink = input => {
     }
   }
 }
-
-// export async function saveCommunity (input) {
-//   console.log('input:', input)
-//   const request = saveCommunityProfile(input)
-//   console.log('request:', request)
-//   const result = await apolloClient.mutate(request)
-//   console.log('result:', result)
-//   if (result.errors) {
-//     console.error('WARNING, something went wrong')
-//     console.error(result.errors)
-//   } else {
-//     return result.data
-//   }
-// }
-
-// export const getCommunities = () => ({
-//   query: gql`
-//     query {
-//       communities {
-//         id
-//         preferredName
-//         legalName
-//         description
-//         avatarImage { uri }
-//         headerImage { uri }
-//         tombstone // <<< currently a problem
-//       }
-//     }
-//   `,
-//   // variables: {
-//   //   id: id
-//   // },
-//   fetchPolicy: 'no-cache'
-// })
