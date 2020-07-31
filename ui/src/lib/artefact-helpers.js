@@ -45,7 +45,6 @@ export const PERMITTED_ARTEFACT_SHARED_ATTRS = [
 
   'language',
   'translation',
-
   'recps'
 ]
 

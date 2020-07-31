@@ -293,7 +293,7 @@ export default {
       }
     },
     async saveArtefact (input) {
-      if (!input.id) input.recps = [this.whoami.personal.groupId] // TEMP - safety till we figure out actual recps
+      if (!input.id) input.recps = [this.whoami.personal.groupId]
 
       try {
         const res = await this.$apollo.mutate(saveArtefact(input))
