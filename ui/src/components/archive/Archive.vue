@@ -209,28 +209,30 @@ export default {
           const { add, remove } = artefacts
 
           if (add && add.length > 0) {
-            await add.reduce(async (_, artefact) => {
-              await _
+            await Promise.all(add.map(async artefact => {
               const artefactId = await this.saveArtefact(artefact)
               if (!artefactId) return
 
+              // if the artefact didnt have an id, then it means we create the link
               if (!artefact.id) {
-                await this.saveLink({
+                const artefactInput = {
                   type: TYPES.STORY_ARTEFACT,
                   parent: id,
                   child: artefactId
-                })
+                }
+
+                await this.saveLink(artefactInput)
               }
-            }, undefined)
+            }))
           }
 
           if (remove && remove.length > 0) {
-            await remove.reduce(async (_, artefact) => {
-              await _
+            await Promise.all(remove.map(async artefact => {
               if (artefact.linkId) {
                 await this.removeLink({ date: new Date(), linkId: artefact.linkId })
               }
-            }, undefined)
+              return artefact
+            }))
           }
         }
 
@@ -269,27 +271,27 @@ export default {
       const { add, remove } = object
 
       if (add && add.length > 0) {
-        await add.reduce(async (_, linkedItem) => {
-          await _
-
-          if (linkedItem.id && !linkedItem.linkId) {
-            await this.saveLink({
+        await Promise.all(add.map(async linkedItem => {
+          if (linkedItem.id) {
+            const linkInput = {
               type,
               parent: parentId,
               child: linkedItem.id
-            })
+            }
+
+            await this.saveLink(linkInput)
           }
-        }, undefined)
+          return linkedItem
+        }))
       }
 
       if (remove && remove.length > 0) {
-        await add.reduce(async (_, linkedItem) => {
-          await _
-
+        await Promise.all(remove.map(async linkedItem => {
           if (linkedItem.linkId) {
             await this.removeLink({ date: new Date(), linkId: linkedItem.linkId })
           }
-        }, undefined)
+          return linkedItem
+        }))
       }
     },
     async saveArtefact (input) {

@@ -36,7 +36,6 @@ module.exports = function () {
     (err) => {
       if (err) throw err
       console.log('saved config')
-      console.log(config)
     }
   )
 
