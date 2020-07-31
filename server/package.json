@@ -10,7 +10,7 @@
     "@ssb-graphql/main": "^5.0.0",
     "@ssb-graphql/profile": "^2.3.0",
     "@ssb-graphql/story": "^1.1.1",
-    "@ssb-graphql/tribes": "^1.0.0",
+    "@ssb-graphql/tribes": "file:../../@ssb-graphql/tribes",
     "@ssb-graphql/whakapapa": "^2.4.1",
     "apollo-server": "^2.9.3",
     "apollo-server-express": "^2.9.6",

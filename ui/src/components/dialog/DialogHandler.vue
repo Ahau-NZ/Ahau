@@ -312,7 +312,6 @@ export default {
       // - [ ] link your feedId + profile
       //    - saveFeedProfileLink (recps: [groupId])
       try {
-
         const createGroupRes = await this.$apollo.mutate(createGroup())
         if (createGroupRes.errors) {
           console.error('failed to create private group', createGroupRes)
@@ -340,7 +339,7 @@ export default {
         }
 
         const createPublicCommunityRes = await this.$apollo.mutate(savePublicCommunity({
-          ...$event,
+          ...$event
         }))
         if (createPublicCommunityRes.errors) {
           console.error('failed to create community', createPublicCommunityRes)
@@ -361,19 +360,16 @@ export default {
 
         if (profilePublicLinkRes.data.saveGroupProfileLink) {
           this.setComponent('profile')
-          this.setProfileById({ id:groupProfile })
-          this.$router.push({ name: 'profileShow', params: { id:groupProfile } }).catch(() => {})
+          this.setProfileById({ id: groupProfile })
+          this.$router.push({ name: 'profileShow', params: { id: groupProfile } }).catch(() => {})
         }
-
-      }
-      catch (err) {
+      } catch (err) {
         // is this the right place for this?
         this.confirmationAlert('Failed to create private group. Please contact us if this continues to happen', err)
         setTimeout(() => {
           this.confirmationText = null
           this.snackbar = !this.snackbar
         }, 5000)
-        return
       }
     },
     async savePerson (input) {

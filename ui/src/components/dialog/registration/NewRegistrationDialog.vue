@@ -402,6 +402,7 @@ import ParentGroup from '@/components/registration/ParentGroup.vue'
 import AddButton from '@/components/button/AddButton.vue'
 
 import { dateIntervalToString } from '@/lib/date-helpers'
+import { CREATE_GROUP_APPLICATION } from '@/lib/tribes-application-helpers'
 
 import isEmpty from 'lodash.isempty'
 import calculateAge from '@/lib/calculate-age'
@@ -430,6 +431,7 @@ export default {
     hideDetails: { type: Boolean, default: false },
     readOnly: { type: Boolean, default: false },
     profile: { type: Object },
+    tribe: { type: Object },
     parents: { type: Array, default: null },
     parentIndex: Number,
     type: { type: String, default: null }
@@ -502,12 +504,12 @@ export default {
     },
     disabled () {
       this.getErrorMsgs()
-      if (this.errorMsgs && this.errorMsgs.length > 0) {
-        return true
-      }
-      if (!this.parentsNames && !this.gpNames) {
-        return true
-      }
+      // if (this.errorMsgs && this.errorMsgs.length > 0) {
+      //   return true
+      // }
+      // if (!this.parentsNames && !this.gpNames) {
+      //   return true
+      // }
       return false
     },
     dob () {
@@ -578,23 +580,34 @@ export default {
       this.$emit('close')
     },
 
-    submit () {
-      if (this.$refs.checkboxes.validate()) {
-        var input = {
-          ...this.formData,
-          parents: this.parents
-        }
-        // var common = pick(input, COMMON_PERMITTED_PROFILE_ATTRS)
-        // var kaitiaki = pick(input, PRIVATE_PERMITTED_PROFILE_ATTRS)
-
-        // var output = {
-        //   common: common,
-        //   kaitiaki: kaitiaki
-        // }
-        // // TODO - send message to Kaitiaki
-        // console.warn('send this object: ', output)
-        // this.close()
+    async submit () {
+      // if (this.$refs.checkboxes.validate()) {
+      var input = {
+        ...this.formData,
+        parents: this.parents
       }
+      // var common = pick(input, COMMON_PERMITTED_PROFILE_ATTRS)
+      // var kaitiaki = pick(input, PRIVATE_PERMITTED_PROFILE_ATTRS)
+
+      // var output = {
+      //   common: common,
+      //   kaitiaki: kaitiaki
+      // }
+      // // TODO - send message to Kaitiaki
+      // console.warn('send this object: ', output)
+      console.log('submit -> this.formData', this.formData)
+      console.log(this.profile)
+      const applyToJoin = await this.$apollo.mutate({
+        mutation: CREATE_GROUP_APPLICATION,
+        variables: {
+          groupId: '%amIy7O4zhhjSNgGMEdjwL2H4X1Q8ap+Ckw+rL2FX7Kc=.cloaked',
+          recps: ['%amIy7O4zhhjSNgGMEdjwL2H4X1Q8ap+Ckw+rL2FX7Kc=.cloaked' ],
+          test: 'Hello'
+        }
+      })
+      console.log('submit -> applyToJoin', applyToJoin)
+      // this.close()
+      // }
     },
 
     respond (response) {

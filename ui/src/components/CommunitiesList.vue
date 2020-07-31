@@ -24,18 +24,31 @@
         <v-col cols="12" md="9" class="py-0">
           <p class="sub-headline pa-0 mb-4">Tribes that you are connected to</p>
           <v-row justify="start">
-              <v-col v-for="tribe in connectedTribes" :item="tribe" :key="tribe.id" justify-self="start">
-                <v-card light :width="!mobile ? '190px':'100vw'" @click="goProfile(tribe.private[0].id)">
-                  <v-img height="150px" :src="getImage(tribe.private[0])" class="card-image" />
-                  <v-card-title class="subtitle font-weight-bold pb-2">{{
-                    tribe.private[0].preferredName
-                  }}</v-card-title>
-                  <v-card-text class="body-2">{{
-                    shortDescrciption(tribe.private[0])
-                  }}</v-card-text>
-                </v-card>
-              </v-col>
-            </v-row>
+            <v-col
+              v-for="tribe in connectedTribes"
+              :item="tribe"
+              :key="tribe.id"
+              justify-self="start"
+            >
+              <v-card
+                light
+                :width="!mobile ? '190px':'100vw'"
+                @click="goProfile(tribe.private[0].id)"
+              >
+                <v-img height="150px" :src="getImage(tribe.private[0])" class="card-image" />
+                <v-card-title class="subtitle font-weight-bold pb-2">
+                  {{
+                  tribe.private[0].preferredName
+                  }}
+                </v-card-title>
+                <v-card-text class="body-2">
+                  {{
+                  shortDescription(tribe.private[0])
+                  }}
+                </v-card-text>
+              </v-card>
+            </v-col>
+          </v-row>
         </v-col>
       </v-row>
       <v-divider v-if="connectedTribes && connectedTribes.length" light color="grey" class="my-10"></v-divider>
@@ -43,18 +56,26 @@
         <v-col cols="12" md="9" class="py-0">
           <p class="sub-headline pa-0 mb-4">Other whanau tribes</p>
           <v-row justify="start">
-              <v-col v-for="tribe in otherTribes" :item="tribe" :key="tribe.id" justify-self="start">
-                <v-card light :width="!mobile ? '190px':'100vw'" @click="goProfile(tribe.public[0].id)">
-                  <v-img height="150px" :src="getImage(tribe.public[0])" class="card-image" />
-                  <v-card-title class="subtitle font-weight-bold pb-2">{{
-                    tribe.public[0].preferredName
-                  }}</v-card-title>
-                  <v-card-text class="body-2">{{
-                    shortDescrciption(tribe.public[0])
-                  }}</v-card-text>
-                </v-card>
-              </v-col>
-            </v-row>
+            <v-col v-for="tribe in otherTribes" :item="tribe" :key="tribe.id" justify-self="start">
+              <v-card
+                light
+                :width="!mobile ? '190px':'100vw'"
+                @click="goProfile(tribe.public[0].id)"
+              >
+                <v-img height="150px" :src="getImage(tribe.public[0])" class="card-image" />
+                <v-card-title class="subtitle font-weight-bold pb-2">
+                  {{
+                  tribe.public[0].preferredName
+                  }}
+                </v-card-title>
+                <v-card-text class="body-2">
+                  {{
+                  shortDescription(tribe.public[0])
+                  }}
+                </v-card-text>
+              </v-card>
+            </v-col>
+          </v-row>
         </v-col>
       </v-row>
     </div>
@@ -104,7 +125,7 @@ export default {
   name: 'CommunitiesList',
   data () {
     return {
-      communities: [],
+      tribes: [],
       patakaCode: null,
       invalidCode: false,
       validCode: false,
@@ -166,7 +187,7 @@ export default {
     getImage (community) {
       return get(community, 'avatarImage.uri') || ''
     },
-    shortDescrciption (community) {
+    shortDescription (community) {
       if (!community.description) return
       return community.description.substring(0, 180)
     },
