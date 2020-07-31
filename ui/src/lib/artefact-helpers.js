@@ -44,7 +44,8 @@ export const PERMITTED_ARTEFACT_SHARED_ATTRS = [
   'source',
 
   'language',
-  'translation'
+  'translation',
+  'recps'
 ]
 
 export const ARTEFACT_ICON = (mimeType) => {

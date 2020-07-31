@@ -62,14 +62,14 @@ export default {
 
         if (!blob.mimeType) blob.mimeType = file.type
 
+        if (blob.__typename) delete blob.__typename
+
         var createdAt = ''
         if (file.lastModified) {
           createdAt = new Date(file.lastModified).toISOString().slice(0, 10)
         } else {
           createdAt = Date.now().toISOString().slice(0, 10)
         }
-
-        delete blob.__typename
 
         var artefact = {
           type,

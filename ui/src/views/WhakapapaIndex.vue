@@ -314,13 +314,14 @@ export default {
         } = $event
 
         if (!id) {
+          $event.recps = [this.whoami.personal.groupId]
           const res = await this.$apollo.mutate(savePerson($event))
           if (res.errors) {
             console.error('failed to create profile', res)
             return
           }
 
-          id = res.data.savePerson
+          id = res.data.saveProfile
         }
 
         this.createView({
@@ -436,7 +437,7 @@ export default {
       if (res.errors) {
         console.error('failed to createProfile', res)
       } else {
-        return res.data.savePerson // a profileId
+        return res.data.saveProfile // a profileId
       }
     },
 

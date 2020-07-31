@@ -188,7 +188,7 @@ export default {
       this.showArchiveHelper = !this.showArchiveHelper
     },
     async saveStory (input) {
-      input.recps = [this.whoami.personal.groupId]
+      if (!input.id) input.recps = [this.whoami.personal.groupId]
       var { id, artefacts, mentions, contributors, creators, relatedRecords } = input
 
       try {
@@ -291,6 +291,7 @@ export default {
     },
     async saveArtefact (input) {
       try {
+        if (!input.id) input.recps = [this.whoami.personal.groupId]
         const res = await this.$apollo.mutate(SAVE_ARTEFACT(input))
         if (res.errors) {
           throw res.errors
