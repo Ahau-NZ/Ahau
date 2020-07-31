@@ -358,17 +358,16 @@ export default {
 
     async createProfiles (csv) {
       this.columns = csv.columns
-      const results = []
       // create a profile for each person and add the created id to the person and parse back to profilesArray
-      for (const d of csv) {
+      const results = Promise.all(csv.map(async (d) => {
         var id = await this.addPerson(d)
         const person = {
           id: id,
           ...d
         }
 
-        results.push(person)
-      }
+        return person
+      }))
 
       return results
     },
@@ -402,9 +401,7 @@ export default {
       // Remove first item
       descendants.shift()
 
-      const results = []
-
-      for (const d of descendants) {
+      const results = Promise.all(descendants.map(async (d) => {
         let relationship = { child: d.data.id, parent: d.parent.data.id, relationshipType: d.data.relationshipType }
         var link = await this.createChildLink(relationship)
 
@@ -412,8 +409,10 @@ export default {
           ...d,
           link: link
         }
-        results.push(person)
-      }
+
+        return person
+      }))
+
       return results
     },
 
