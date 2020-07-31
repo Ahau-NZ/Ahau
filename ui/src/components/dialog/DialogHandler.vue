@@ -306,13 +306,6 @@ export default {
     },
     async setupNewCommunity ($event) {
       if ($event.id) throw new Error('this is for creating a new tribe + community, not updating')
-      // WIP
-      // - [x] set up private group (so you have groupId)
-      // - [x] create a PRIVATE community profile for that group (recps: [groupId])
-      // - [x] create a link between group + private profile
-      //    - saveGroupProfileLink
-      // - [x] create a PUBLIC community profile for that group (allowPublic: true)
-      // - [x] create a link between group + public profile
 
       // (later?)
       // - [ ] create a copy of your personal profile (recps: [groupId])
@@ -332,12 +325,10 @@ export default {
         }))
         if (createCommunityRes.errors) {
           console.error('failed to create community', createCommunityRes)
+          return
         }
 
         const groupProfile = createCommunityRes.data.saveProfile // id
-        
-        console.log("group made: ", groupId)
-        console.log("group profile made: ",  groupProfile)
 
         const profileLinkRes = await this.$apollo.mutate(saveGroupProfileLink({
           profile: groupProfile,
@@ -345,20 +336,18 @@ export default {
         }))
         if (profileLinkRes.errors) {
           console.error('failed to create link community profile', profileLinkRes)
+          return
         }
-
-        console.log("group link made: ", profileLinkRes)
 
         const createPublicCommunityRes = await this.$apollo.mutate(savePublicCommunity({
           ...$event,
         }))
         if (createPublicCommunityRes.errors) {
           console.error('failed to create community', createPublicCommunityRes)
+          return
         }
 
         const groupPublicProfile = createPublicCommunityRes.data.saveProfile // id
-
-        console.log("public group profile made: ", groupPublicProfile)
 
         const profilePublicLinkRes = await this.$apollo.mutate(saveGroupProfileLink({
           profile: groupPublicProfile,
@@ -367,22 +356,25 @@ export default {
         }))
         if (profilePublicLinkRes.errors) {
           console.error('failed to create link community profile', groupPublicProfile)
+          return
         }
+
+        if (profilePublicLinkRes.data.saveGroupProfileLink) {
+          this.setComponent('profile')
+          this.setProfileById({ id:groupProfile })
+          this.$router.push({ name: 'profileShow', params: { id:groupProfile } }).catch(() => {})
+        }
+
       } 
       catch (err) {
-        this.confirmationAlert('Failed to create private group. Please contact us if this continues to happen: ', err)
+        // is this the right place for this? 
+        this.confirmationAlert('Failed to create private group. Please contact us if this continues to happen', err)
         setTimeout(() => {
           this.confirmationText = null
           this.snackbar = !this.snackbar
         }, 5000)
         return
       }
-
-      // if (id) {
-      //   this.setComponent('profile')
-      //   this.setProfileById({ id })
-      //   this.$router.push({ name: 'profileShow', params: { id } }).catch(() => {})
-      // }
     },
     async savePerson (input) {
       if (!input.id) input.recps = [this.whoami.personal.groupId]
