@@ -10,6 +10,47 @@
         </v-btn>
       </div>
     </v-row>
+    <!-- TRIBES -->
+    <div v-if="tribes && tribes.length">
+      <v-row v-if="connectedTribes && connectedTribes.length" class="pt-4">
+        <v-col cols="12" md="9" class="py-0">
+          <p class="sub-headline pa-0 mb-4">Tribes that you are connected to</p>
+          <v-row justify="start">
+              <v-col v-for="tribe in connectedTribes" :item="tribe" :key="tribe.id" justify-self="start">
+                <v-card light :width="!mobile ? '190px':'100vw'" @click="goProfile(tribe.private[0].id)">
+                  <v-img height="150px" :src="getImage(tribe.private[0])" class="card-image" />
+                  <v-card-title class="subtitle font-weight-bold pb-2">{{
+                    tribe.private[0].preferredName
+                  }}</v-card-title>
+                  <v-card-text class="body-2">{{
+                    shortDescrciption(tribe.private[0])
+                  }}</v-card-text>
+                </v-card>
+              </v-col>
+            </v-row>
+        </v-col>
+      </v-row>
+      <v-divider v-if="connectedTribes && connectedTribes.length" light color="grey" class="my-10"></v-divider>
+      <v-row v-if="otherTribes && otherTribes.length" class="pt-4">
+        <v-col cols="12" md="9" class="py-0">
+          <p class="sub-headline pa-0 mb-4">Other whanau tribes</p>
+          <v-row justify="start">
+              <v-col v-for="tribe in otherTribes" :item="tribe" :key="tribe.id" justify-self="start">
+                <v-card light :width="!mobile ? '190px':'100vw'" @click="goProfile(tribe.public[0].id)">
+                  <v-img height="150px" :src="getImage(tribe.public[0])" class="card-image" />
+                  <v-card-title class="subtitle font-weight-bold pb-2">{{
+                    tribe.public[0].preferredName
+                  }}</v-card-title>
+                  <v-card-text class="body-2">{{
+                    shortDescrciption(tribe.public[0])
+                  }}</v-card-text>
+                </v-card>
+              </v-col>
+            </v-row>
+        </v-col>
+      </v-row>
+    </div>
+    <v-divider light color="grey" class="my-10"></v-divider>
     <v-row class="py-2">
       <v-col cols="12" md="9">
         <p class="sub-headline pa-0">Enter a Pātaka code to discover tribes</p>
@@ -34,26 +75,6 @@
               </v-btn>
           </v-col>
         </v-row>
-        <v-divider light color="grey"></v-divider>
-      </v-col>
-    </v-row>
-    <!-- TRIBES -->
-    <v-row class="pt-4">
-      <v-col cols="12" md="9" class="py-0">
-        <!-- <p class="headliner pa-0 mb-4">TRIBES</p> -->
-        <v-row justify="start">
-            <v-col v-for="tribe in tribes" :item="tribe" :key="tribe.id" justify-self="start">
-              <v-card light :width="!mobile ? '190px':'100vw'" @click="goProfile(tribe.private ? tribe.private[0].id : tribe.public[0].id)">
-                <v-img height="150px" :src="getImage(tribe.private[0])" class="card-image" />
-                <v-card-title class="subtitle font-weight-bold pb-2">{{
-                  tribe.private[0].preferredName
-                }}</v-card-title>
-                <v-card-text class="body-2">{{
-                  shortDescrciption(tribe.private[0])
-                }}</v-card-text>
-              </v-card>
-            </v-col>
-          </v-row>
       </v-col>
     </v-row>
   </div>
@@ -112,10 +133,10 @@ export default {
       return this.$vuetify.breakpoint.xs
     },
     connectedTribes () {
-      return this.tribes.filter(tribe => tribe.private !== null)
+      return this.tribes.filter(tribe => tribe.private.length > 0)
     },
     otherTribes () {
-      return this.tribes.filter(tribe => tribe.private === null)
+      return this.tribes.filter(tribe => tribe.private.length < 1)
     }
   },
   methods: {
