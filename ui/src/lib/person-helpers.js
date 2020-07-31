@@ -101,6 +101,13 @@ export const getPerson = id => ({
           relationshipType
           legallyAdopted
         }
+        kaitiaki {
+          id
+          preferredName
+          avatarImage { uri }
+          gender
+          aliveInterval
+        }
       }
     }
   `,
