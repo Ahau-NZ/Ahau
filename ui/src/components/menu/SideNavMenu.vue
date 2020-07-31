@@ -129,7 +129,8 @@ export default {
     ...mapGetters(['activeComponent', 'showStory', 'storeDialog']),
     nonMember () {
       // TODO - if community profile and user is not a member of a community
-      return this.profile.type === 'community'
+      if (this.profile.type === 'community' && this.profile.recps.length < 1) return true
+      else return false
     },
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm

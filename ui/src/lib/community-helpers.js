@@ -12,8 +12,8 @@ export const PERMITTED_COMMUNITY_ATTRS = [
   'type',
 
   'preferredName',
-  'legalName',
-  'altNames',
+  // 'legalName',
+  // 'altNames',
 
   'description',
   'avatarImage',
@@ -28,8 +28,24 @@ export const PERMITTED_COMMUNITY_ATTRS = [
   'recps'
 ]
 
-// WIP
-// PERMITTED_COMMUNITY_PUBLIC_ATTRS
+export const PERMITTED_PUBLIC_COMMUNITY_ATTRS = [
+  'id',
+  'preferredName',
+  'avatarImage',
+  'description',
+  'headerImage',
+  'email',
+  'phone',
+  'location',
+  'tombstone'
+]
+
+export const PERMITTED_COMMUNITY_LINK_ATTRS = [
+  'id',
+  'profile',
+  'group',
+  'allowPublic'
+]
 
 // TODO: finish community-helper
 // eg: getCommunity() *single community
@@ -68,7 +84,37 @@ export const saveCommunity = input => {
   }
 }
 
+// make savePublicCommunity
+export const savePublicCommunity = input => {
+  const _input = pick(input, PERMITTED_PUBLIC_COMMUNITY_ATTRS)
+  Object.entries(_input).forEach(([key, value]) => {
+    if (value === '') {
+      delete _input[key]
+    }
+  })
+  if (!_input.id) _input.type = 'community'
+  _input.allowPublic = true
+
+  return {
+    mutation: gql`
+      mutation($input: ProfileInput!) {
+        saveProfile(input: $input)
+      }
+    `,
+    variables: {
+      input: _input
+    }
+  }
+}
+
 export const saveGroupProfileLink = input => {
+  const _input = pick(input, PERMITTED_COMMUNITY_LINK_ATTRS)
+  Object.entries(_input).forEach(([key, value]) => {
+    if (value === '') {
+      delete _input[key]
+    }
+  })
+
   return {
     mutation: gql`
       mutation($input: GroupProfileLinkInput!) {
@@ -76,12 +122,10 @@ export const saveGroupProfileLink = input => {
       }
     `,
     variables: {
-      input: input
+      input: _input
     }
   }
 }
-
-// make savePublicCommunity
 
 // export async function saveCommunity (input) {
 //   console.log('input:', input)

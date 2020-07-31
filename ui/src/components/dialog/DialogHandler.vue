@@ -113,19 +113,9 @@
       :title="'Create a new Collection'"
       @close="close"
       @submit="console.log('TODO: add collection to profile')"
-<<<<<<< Updated upstream
-    /> -->
-    <ComingSoonDialog
-      :show="isActive('coming-soon')"
-      @close="close"
-    />
-    <ConfirmationText :show="snackbar" :message="confirmationText" />
-
-=======
     />-->
     <ComingSoonDialog :show="isActive('coming-soon')" @close="close" />
     <ConfirmationText :show="snackbar" :message="confirmationText" />
->>>>>>> Stashed changes
   </div>
 </template>
 
@@ -150,7 +140,7 @@ import ConfirmationText from '@/components/dialog/ConfirmationText.vue'
 import gql from 'graphql-tag'
 
 import { PERMITTED_RELATIONSHIP_ATTRS, savePerson, saveCurrentIdentity } from '@/lib/person-helpers.js'
-import { createGroup, saveCommunity, saveGroupProfileLink } from '@/lib/community-helpers'
+import { createGroup, saveCommunity, savePublicCommunity, saveGroupProfileLink } from '@/lib/community-helpers'
 import { SAVE_LINK } from '@/lib/link-helpers.js'
 import tree from '@/lib/tree-helpers'
 import findSuccessor from '@/lib/find-successor'
@@ -316,55 +306,75 @@ export default {
     },
     async setupNewCommunity ($event) {
       if ($event.id) throw new Error('this is for creating a new tribe + community, not updating')
-      // WIP
-      // - [x] set up private group (so you have groupId)
-      // - [x] create a PRIVATE community profile for that group (recps: [groupId])
-      // - [x] create a link between group + private profile
-      // - [ ] create a PUBLIC community profile for that group (allowPublic: true)
-      // - [ ] create a link between group + public profile
 
       // (later?)
       // - [ ] create a copy of your personal profile (recps: [groupId])
       // - [ ] link your feedId + profile
       //    - saveFeedProfileLink (recps: [groupId])
+      try {
 
-      const createGroupRes = await this.$apollo.mutate(createGroup())
-      if (createGroupRes.errors) {
-        console.error('failed to create private group', createGroupRes)
+        const createGroupRes = await this.$apollo.mutate(createGroup())
+        if (createGroupRes.errors) {
+          console.error('failed to create private group', createGroupRes)
+        }
+        const groupId = createGroupRes.data.createGroup.id
+
+        const createCommunityRes = await this.$apollo.mutate(saveCommunity({
+          ...$event,
+          recps: [groupId]
+        }))
+        if (createCommunityRes.errors) {
+          console.error('failed to create community', createCommunityRes)
+          return
+        }
+
+        const groupProfile = createCommunityRes.data.saveProfile // id
+
+        const profileLinkRes = await this.$apollo.mutate(saveGroupProfileLink({
+          profile: groupProfile,
+          group: groupId
+        }))
+        if (profileLinkRes.errors) {
+          console.error('failed to create link community profile', profileLinkRes)
+          return
+        }
+
+        const createPublicCommunityRes = await this.$apollo.mutate(savePublicCommunity({
+          ...$event,
+        }))
+        if (createPublicCommunityRes.errors) {
+          console.error('failed to create community', createPublicCommunityRes)
+          return
+        }
+
+        const groupPublicProfile = createPublicCommunityRes.data.saveProfile // id
+
+        const profilePublicLinkRes = await this.$apollo.mutate(saveGroupProfileLink({
+          profile: groupPublicProfile,
+          group: groupId,
+          allowPublic: true
+        }))
+        if (profilePublicLinkRes.errors) {
+          console.error('failed to create link community profile', groupPublicProfile)
+          return
+        }
+
+        if (profilePublicLinkRes.data.saveGroupProfileLink) {
+          this.setComponent('profile')
+          this.setProfileById({ id:groupProfile })
+          this.$router.push({ name: 'profileShow', params: { id:groupProfile } }).catch(() => {})
+        }
+
+      }
+      catch (err) {
+        // is this the right place for this?
+        this.confirmationAlert('Failed to create private group. Please contact us if this continues to happen', err)
+        setTimeout(() => {
+          this.confirmationText = null
+          this.snackbar = !this.snackbar
+        }, 5000)
         return
-        // TODO show user an error
       }
-      const groupId = createGroupRes.data.createGroup.id
-
-      const createCommunityRes = await this.$apollo.mutate(saveCommunity({
-        ...$event,
-        recps: [groupId]
-      }))
-      if (createCommunityRes.errors) {
-        console.error('failed to create community', createCommunityRes)
-      }
-      const community = createCommunityRes.data.saveProfile // id
-      console.log({ groupId, community })
-
-      const linkCommunityRes = await this.$apollo.mutate(saveGroupProfileLink({
-        profile: community,
-        group: groupId
-      }))
-
-      if (linkCommunityRes.errors) {
-        console.error('failed to saveGroupProfileLink', linkCommunityRes)
-      }
-
-      // TODO
-      // - link community + group
-      //   - modify @ssb-graphql/profile to be able to make group-profile links
-      // - create public profile + link to group
-
-      // if (id) {
-      //   this.setComponent('profile')
-      //   this.setProfileById({ id })
-      //   this.$router.push({ name: 'profileShow', params: { id } }).catch(() => {})
-      // }
     },
     async savePerson (input) {
       if (!input.recps) input.recps = [this.whoami.personal.groupId]

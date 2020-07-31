@@ -8,6 +8,12 @@
       <!-- <CommunitiesNav /> -->
       <CommunitiesList @addCommunityDialog="addCommunityDialog" />
     </v-col>
+    <!-- RightSideNav -->
+    <!-- <v-col cols="12" xs="12" sm="12" md="2" :class="!mobile ? 'pa-5' : 'px-5 py-0'">
+        <v-btn class="ml-10" fab elevation="1" color="white" @click="addCommunityDialog()">
+          <v-icon :large="!mobile" class="black--text">mdi-plus</v-icon>
+        </v-btn>
+    </v-col> -->
   </div>
 </template>
 
