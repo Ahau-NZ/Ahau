@@ -99,9 +99,6 @@ export default {
     }
   },
   apollo: {
-    // WIP : put the tribes query in here
-    // then build UI to display the tribes
-    // tribes -> [ { id: GroupId, public: [Profile], private: [Profile] }]
     tribes: {
       query: gql`query {
         tribes {

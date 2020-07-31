@@ -303,13 +303,6 @@ export default {
     },
     async setupNewCommunity ($event) {
       if ($event.id) throw new Error('this is for creating a new tribe + community, not updating')
-      // WIP
-      // - [x] set up private group (so you have groupId)
-      // - [x] create a PRIVATE community profile for that group (recps: [groupId])
-      // - [x] create a link between group + private profile
-      //    - saveGroupProfileLink
-      // - [x] create a PUBLIC community profile for that group (allowPublic: true)
-      // - [x] create a link between group + public profile
 
       // (later?)
       // - [ ] create a copy of your personal profile (recps: [groupId])
@@ -371,6 +364,7 @@ export default {
 
       } 
       catch (err) {
+        // is this the right place for this? 
         this.confirmationAlert('Failed to create private group. Please contact us if this continues to happen', err)
         setTimeout(() => {
           this.confirmationText = null
