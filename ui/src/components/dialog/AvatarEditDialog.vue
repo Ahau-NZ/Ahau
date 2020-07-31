@@ -105,11 +105,15 @@ export default {
         canvas.toBlob(async blob => {
           const file = new File([blob], 'avatar', { type: blob.type })
 
-          const result = await this.$apollo.mutate(UPLOAD_FILE({ file, encrypt: true }))
+          var result = await this.$apollo.mutate(UPLOAD_FILE({ file, encrypt: true }))
           if (result.errors) throw result.errors
 
           var image = result.data.uploadFile
           if (image.mimeType === null) image.mimeType = file.type
+          // TODO: change when ssb-profile blobs are updated, need this because ssb-profile schema uses blob.blob not blob.blobId
+          if (image.blobId) image.blob = image.blobId
+
+          delete image.blobId
 
           let cleanImage = {}
           Object.entries(image).forEach(([key, value]) => {
