@@ -123,8 +123,8 @@ export const getArtefacts = () => ({
   fetchPolicy: 'no-cache'
 })
 
-export const SAVE_ARTEFACT = input => {
-  input = pick(input, PERMITTED_ARTEFACT_ATTRS)
+export const saveArtefact = input => {
+  input = pick(input, [...PERMITTED_ARTEFACT_ATTRS])
 
   if (input.blob && input.blob.uri) delete input.blob.uri
 
@@ -134,7 +134,7 @@ export const SAVE_ARTEFACT = input => {
         saveArtefact(input: $input)
       }
     `,
-    variables: { input: { ...input } }
+    variables: { input }
   }
 }
 
