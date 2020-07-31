@@ -323,7 +323,7 @@ export default {
       }
     },
     async savePerson (input) {
-      if (!input.recps) input.recps = [this.whoami.personal.groupId]
+      if (!input.id) input.recps = [this.whoami.personal.groupId]
       // TODO fix recps to be right group
       const res = await this.$apollo.mutate(savePerson(input))
 
