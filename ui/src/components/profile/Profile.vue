@@ -39,7 +39,7 @@
             </v-row>
           </template>
         </ProfileCard>
-        <ProfileCard v-else title="Members" class="mt-3">
+        <ProfileCard v-else-if="member" title="Members" class="mt-3">
           <template v-slot:content>
             <v-row class="justify-center align-center ma-0">
               <v-col cols="2" class="pt-0 pl-0">
@@ -89,6 +89,10 @@ export default {
     ...mapGetters(['whoami']),
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
+    },
+    member () {
+      if (this.profile.type === 'community' && this.profile.recps.length > 0) return true
+      else return false
     }
   }
 }
