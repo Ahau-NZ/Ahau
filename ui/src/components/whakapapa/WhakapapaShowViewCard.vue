@@ -33,7 +33,7 @@
           <!-- Pencil icon -->
           <slot name="edit"></slot>
           <!-- Dropdown icon -->
-          <v-tooltip v-if="description" bottom>
+          <v-tooltip v-if="description || view.kaitiaki" bottom>
             <template v-slot:activator="{ on }">
             <v-btn
               v-on="on"
@@ -44,7 +44,7 @@
               <v-icon>{{ show ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
             </v-btn>
             </template>
-            <span>Show whakapapa description</span>
+            <span>Show Whakapapa details</span>
           </v-tooltip>
         </v-card-text>
       </div>
@@ -52,7 +52,8 @@
     <v-expand-transition>
       <div v-show="show">
         <v-divider></v-divider>
-        <v-card-subtitle v-text="description" class="pa-3"/>
+        <v-card-subtitle v-if="description" v-text="description" class="pa-3"/>
+        <AvatarGroup :profiles="view.kaitiaki" groupTitle="Kaitiaki" size="50px"/>
       </div>
     </v-expand-transition>
   </v-card>
@@ -62,12 +63,17 @@
 import whakapapa from '@/assets/whakapapa.svg'
 import { mapGetters } from 'vuex'
 
+import AvatarGroup from '@/components/AvatarGroup.vue'
+
 export default {
   name: 'WhakapapaShowViewCard',
   props: {
     view: { type: Object, required: true },
     shadow: { type: Boolean, default: true },
     cropDescription: { type: Boolean, default: false }
+  },
+  components: {
+    AvatarGroup
   },
   data () {
     return {

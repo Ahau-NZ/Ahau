@@ -26,7 +26,7 @@
         <!-- Information Col -->
         <v-col cols="12" sm="7" class="pl-5">
           <v-row>
-            <!-- Preferred Name -->
+            <!-- Name -->
             <v-col cols="12" class="pa-1">
               <v-text-field
                 v-model="formData.name"
@@ -47,6 +47,11 @@
                 rows="1"
                 auto-grow
               ></v-textarea>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col>
+              <AvatarGroup :profiles="view.kaitiaki" groupTitle="Kaitiaki" size="50px"/>
             </v-col>
           </v-row>
         </v-col>
@@ -79,6 +84,7 @@
 <script>
 import Dialog from '@/components/dialog/Dialog.vue'
 import Avatar from '@/components/Avatar.vue'
+import AvatarGroup from '@/components/AvatarGroup.vue'
 import ImagePicker from '@/components/ImagePicker.vue'
 
 import isEqual from 'lodash.isequal'
@@ -96,10 +102,11 @@ function setDefaultData (view) {
 }
 
 export default {
-  name: 'ViewEditNodeDialog',
+  name: 'WhakapapaEditDialog',
   components: {
     Dialog,
     Avatar,
+    AvatarGroup,
     ImagePicker
   },
   props: {

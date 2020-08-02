@@ -3,6 +3,11 @@
     <Dialog :show="show" :title="title" @close="close" width="720px" :goBack="close" enableMenu>
       <template v-slot:content>
         <WhakapapaForm ref="whakapapaForm" :view.sync="formData" :data.sync="csv"/>
+        <v-row class="ml-4">
+          <v-col>
+            <AvatarGroup size="50px" groupTitle="Kaitiaki" :profiles="[whoami.personal.profile]"/>
+          </v-col>
+        </v-row>
       </template>
       <template v-slot:actions>
         <v-btn @click="close"
@@ -27,7 +32,8 @@ import Dialog from '@/components/dialog/Dialog.vue'
 import pick from 'lodash.pick'
 import isEmpty from 'lodash.isempty'
 import WhakapapaForm from '@/components/whakapapa/WhakapapaForm.vue'
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
+import AvatarGroup from '@/components/AvatarGroup.vue'
 
 const EMPTY_WHAKAPAPA = {
   name: '',
@@ -70,7 +76,8 @@ export default {
   name: 'NewViewDialog',
   components: {
     Dialog,
-    WhakapapaForm
+    WhakapapaForm,
+    AvatarGroup
   },
   props: {
     title: String,
@@ -87,6 +94,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['whoami']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     }
