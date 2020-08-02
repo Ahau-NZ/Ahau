@@ -36,10 +36,21 @@ export const getWhakapapaView = id => ({
     ${KAITIAKI_FRAGMENT}
     query($id: String!) {
       whakapapaView(id: $id) {
+<<<<<<< HEAD
         ...WhakapapaFragment
         kaitiaki {
           ...KaitiakiFragment
         }
+=======
+        id
+        name
+        description
+        image { uri }
+        focus
+        canEdit
+        recps
+        ignoredProfiles
+>>>>>>> master
       }
     }
   `,
