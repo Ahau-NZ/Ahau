@@ -1,13 +1,13 @@
 import gql from 'graphql-tag'
 import pick from 'lodash.pick'
 import { ARTEFACT_FRAGMENT } from './artefact-helpers'
-import { PERSON_FRAGMENT } from './person-helpers'
+import { PERSON_FRAGMENT, KAITIAKI_FRAGMENT } from './person-helpers'
 import isEqual from 'lodash.isequal'
 import isEmpty from 'lodash.isempty'
 import clone from 'lodash.clonedeep'
 import uniqby from 'lodash.uniqby'
 
-export function SET_DEFAULT_STORY (newStory) {
+export function setDefaultStory (newStory) {
   var story = clone(newStory)
 
   var artefacts = story.artefacts
@@ -93,7 +93,8 @@ export function SET_DEFAULT_STORY (newStory) {
     creators,
     protocols: story.protocols,
     relatedRecords,
-    artefacts
+    artefacts,
+    kaitiaki: story.kaitiaki
   }
 }
 
@@ -167,6 +168,7 @@ export const STORY_FRAGMENT = gql`
 export const STORY_LINK_FRAGMENT = gql`
   ${ARTEFACT_FRAGMENT}
   ${PERSON_FRAGMENT}
+  ${KAITIAKI_FRAGMENT}
   fragment StoryLinkFragment on Story {
     artefacts: artefactLinks {
       linkId
@@ -203,6 +205,9 @@ export const STORY_LINK_FRAGMENT = gql`
           }
         }
       }
+    }
+    kaitiaki {
+      ...KaitiakiFragment
     }
   }
 `
