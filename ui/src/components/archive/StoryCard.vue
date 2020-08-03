@@ -71,7 +71,7 @@
       </v-list-item-content>
     </v-list-item>
     <v-row v-if="!showArtefact" class="px-4 pb-0">
-      <v-col v-if="story.mentions && story.mentions.length > 0" cols="12" sm="12" md="auto" class="pb-0">
+      <v-col v-if="story.mentions && story.mentions.length > 0" cols="auto"  class="pb-0">
         <v-list-item-subtitle style="color:#a7a3a3">Mentions</v-list-item-subtitle>
         <AvatarGroup
           style="position:relative; bottom:15px; right:15px"
@@ -82,7 +82,7 @@
           :clickable="fullStory"
         />
       </v-col>
-      <v-col v-if="story.kaitiaki && story.kaitiaki.length > 0" cols="12" sm="12" md="auto" class="pb-0">
+      <v-col v-if="story.kaitiaki && story.kaitiaki.length > 0" cols="auto" class="pb-0">
         <v-list-item-subtitle style="color:#a7a3a3">Kaitiaki</v-list-item-subtitle>
         <AvatarGroup
           style="position:relative; bottom:15px; right:15px"
@@ -108,7 +108,7 @@
           :clickable="fullStory"
         />
       </v-col> -->
-      <v-col v-if="story.contributors && story.contributors.length > 0 && fullStory" cols="12" sm="12" md="auto">
+      <v-col v-if="story.contributors && story.contributors.length > 0 && fullStory" cols="auto">
         <v-list-item-subtitle style="color:#a7a3a3">Contributors</v-list-item-subtitle>
         <AvatarGroup
           style="position:relative; bottom:15px; right:15px"
@@ -126,7 +126,7 @@
     </v-row>
     <div v-if="fullStory && !showArtefact">
       <v-row class="px-4">
-        <v-col v-if="story.creators && story.creators.length > 0 && fullStory" cols="12" sm="12" md="auto">
+        <v-col v-if="story.creators && story.creators.length > 0 && fullStory" cols="auto">
           <v-list-item-subtitle style="color:#a7a3a3">Creators</v-list-item-subtitle>
           <AvatarGroup
             style="position:relative; bottom:15px; right:15px"
