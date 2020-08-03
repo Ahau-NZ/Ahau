@@ -601,7 +601,7 @@ export default {
           action: 'registration',
           from: this.formData.id,
           message: {
-            katiaki: this.currentTribe.public.taiki[0].id,
+            katiaki: this.currentTribe.public[0].tiaki[0].id,
             community: this.currentProfile.id,
             profile: input,
             message: this.message
@@ -621,14 +621,13 @@ export default {
       // }
       // // TODO - send message to Kaitiaki
       // console.warn('send this object: ', output)
-      console.log('submit -> this.formData', this.formData)
-      console.log(this.profile)
+      console.log('submit -> this.formData', this.currentTribe.public[0].tiaki)
       const applyToJoin = await this.$apollo.mutate({
         mutation: CREATE_GROUP_APPLICATION,
         variables: {
-          groupId: '%amIy7O4zhhjSNgGMEdjwL2H4X1Q8ap+Ckw+rL2FX7Kc=.cloaked',
-          recps: ['%amIy7O4zhhjSNgGMEdjwL2H4X1Q8ap+Ckw+rL2FX7Kc=.cloaked' ],
-          test: 'Hello'
+          groupId: this.currentTribe.id,
+          recps: this.currentTribe.public[0].tiaki.map(i => i.id),
+          text: 'Hello'
         }
       })
       console.log('submit -> applyToJoin', applyToJoin)
