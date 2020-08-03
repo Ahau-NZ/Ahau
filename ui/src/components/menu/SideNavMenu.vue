@@ -167,7 +167,6 @@ export default {
   computed: {
     ...mapGetters(['activeComponent', 'showStory', 'storeDialog']),
     nonMember () {
-      // TODO - if community profile and user is not a member of a community
       if (this.profile.type === 'community' && this.profile.recps.length < 1) return true
       else return false
     },

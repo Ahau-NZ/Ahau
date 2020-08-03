@@ -3,12 +3,12 @@
     <template v-slot:content>
       <v-card-text class="pt-4">
         <p>
-          An Archive is where you create and access private and community records. 
-        </p> 
+          An Archive is where you create and access private and community records.
+        </p>
         <p>
-          All records that are created are fully encrypted to either your personal archive (which can only be accessed by you) or community archive (which can only be accessed by approved community members) basded on the access that you set when creating a record. <br> 
-          Your Personal Archive gets created when you start Ahau, and a Community Archive gets created when a community profile is created.  
-        </p>  
+          All records that are created are fully encrypted to either your personal archive (which can only be accessed by you) or community archive (which can only be accessed by approved community members) basded on the access that you set when creating a record. <br>
+          Your Personal Archive gets created when you start Ahau, and a Community Archive gets created when a community profile is created.
+        </p>
       </v-card-text>
       <v-divider />
       <p>

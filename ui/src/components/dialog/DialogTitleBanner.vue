@@ -87,7 +87,7 @@ export default {
     margin: 0px;
 
     background: #292929 url(../../assets/bg-tohu.png);
-    background-size: 80%;
+    background-size: 100%;
     background-position-x: 80%;
     background-position-y: 5px;
     background-repeat: no-repeat;
@@ -108,7 +108,7 @@ export default {
     margin: 0px;
 
     background: #292929 url(../../assets/bg-tohu.png);
-    background-size: 50%;
+    background-size: 60%;
     background-position-x: 80%;
     background-position-y: -40px;
     background-repeat: no-repeat;

@@ -207,7 +207,7 @@ export const STORY_LINK_FRAGMENT = gql`
   }
 `
 
-export const GET_STORY = id => ({
+export const getStory = id => ({
   query: gql`
     ${STORY_FRAGMENT}
     ${STORY_LINK_FRAGMENT}
@@ -251,7 +251,7 @@ export const DELETE_STORY = (id, date) => ({
   }
 })
 
-export const SAVE_STORY = input => {
+export const saveStory = input => {
   var submissionDate = new Date().toISOString().slice(0, 10)
 
   input = {

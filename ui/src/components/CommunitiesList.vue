@@ -30,11 +30,7 @@
               :key="tribe.id"
               justify-self="start"
             >
-              <v-card
-                light
-                :width="!mobile ? '190px':'100vw'"
-                @click="goProfile(tribe.private[0].id)"
-              >
+              <v-card light :width="!mobile ? '190px':'100vw'" @click="goTribe(tribe)">
                 <v-img height="150px" :src="getImage(tribe.private[0])" class="card-image" />
                 <v-card-title class="subtitle font-weight-bold pb-2">
                   {{
@@ -43,25 +39,21 @@
                 </v-card-title>
                 <v-card-text class="body-2">
                   {{
-                  shortDescription(tribe.private[0])
+                  shortDescrciption(tribe.private[0])
                   }}
                 </v-card-text>
               </v-card>
             </v-col>
           </v-row>
+          <v-divider v-if="otherTribes && otherTribes.length" light color="grey" class="my-10"></v-divider>
         </v-col>
       </v-row>
-      <v-divider v-if="connectedTribes && connectedTribes.length" light color="grey" class="my-10"></v-divider>
       <v-row v-if="otherTribes && otherTribes.length" class="pt-4">
         <v-col cols="12" md="9" class="py-0">
           <p class="sub-headline pa-0 mb-4">Other whanau tribes</p>
           <v-row justify="start">
             <v-col v-for="tribe in otherTribes" :item="tribe" :key="tribe.id" justify-self="start">
-              <v-card
-                light
-                :width="!mobile ? '190px':'100vw'"
-                @click="goProfile(tribe.public[0].id)"
-              >
+              <v-card light :width="!mobile ? '190px':'100vw'" @click="goTribe(tribe)">
                 <v-img height="150px" :src="getImage(tribe.public[0])" class="card-image" />
                 <v-card-title class="subtitle font-weight-bold pb-2">
                   {{
@@ -70,7 +62,7 @@
                 </v-card-title>
                 <v-card-text class="body-2">
                   {{
-                  shortDescription(tribe.public[0])
+                  shortDescrciption(tribe.public[0])
                   }}
                 </v-card-text>
               </v-card>
@@ -79,9 +71,9 @@
         </v-col>
       </v-row>
     </div>
-    <v-divider light color="grey" class="my-10"></v-divider>
     <v-row class="py-2">
       <v-col cols="12" md="9">
+        <v-divider light color="grey" class="my-10"></v-divider>
         <p class="sub-headline pa-0">Enter a Pātaka code to discover tribes</p>
         <v-row>
           <v-col cols="10" md="9" class="py-0">
@@ -146,7 +138,11 @@ export default {
             description
             headerImage { uri }
             tombstone { date }
-
+            tiaki {
+              id
+              avatarImage { uri }
+              preferredName
+            }
           }
           private {
             id
@@ -156,6 +152,11 @@ export default {
             headerImage { uri }
             recps
             tombstone {date}
+            tiaki {
+              id
+              avatarImage { uri }
+              preferredName
+            }
           }
         }
       }
@@ -174,11 +175,16 @@ export default {
       return this.tribes.filter(tribe => tribe.private.length > 0)
     },
     otherTribes () {
-      return this.tribes.filter(tribe => tribe.private.length < 1)
+      return this.tribes.filter(tribe => tribe.private.length < 1 && tribe.public.length > 0)
     }
   },
   methods: {
-    ...mapActions(['setComponent', 'setDialog', 'setProfileById']),
+    ...mapActions(['setComponent', 'setDialog', 'setProfileById', 'setCurrentTribe']),
+    goTribe (tribe) {
+      this.setCurrentTribe(tribe)
+      if (tribe.private.length > 0) this.goProfile(tribe.private[0].id)
+      else this.goProfile(tribe.public[0].id)
+    },
     goProfile (id) {
       this.setComponent('profile')
       this.setProfileById({ id })

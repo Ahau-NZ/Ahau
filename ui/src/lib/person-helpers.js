@@ -59,6 +59,7 @@ export const whoami = ({
     query {
       whoami {
         public {
+          feedId
           profile {
             id
             preferredName
@@ -68,6 +69,7 @@ export const whoami = ({
           }
         }
         personal {
+          groupId
           profile {
             ...ProfileFragment
           }
