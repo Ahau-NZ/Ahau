@@ -5,7 +5,7 @@
         <WhakapapaForm ref="whakapapaForm" :view.sync="formData" :data.sync="csv"/>
         <v-row class="ml-4">
           <v-col>
-            <AvatarGroup size="50px" groupTitle="Kaitiaki" :profiles="[whoami.personal.profile]"/>
+            <AvatarGroup size="50px" groupTitle="Kaitiaki" :profiles="[whoami.personal.profile]" showLabels/>
           </v-col>
         </v-row>
       </template>

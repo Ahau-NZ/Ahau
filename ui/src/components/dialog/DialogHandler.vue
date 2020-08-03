@@ -91,12 +91,12 @@
       :view="view" @close="close"
       @submit="$emit('deleteWhakapapa')"
     />
-    <WhakapapaShowHelper
+    <WhakapapaShowHelper v-if="isActive('whakapapa-helper')"
       :show="isActive('whakapapa-helper')"
       :title="`Whakapapa ---- Family tree`"
       @close="close"
     />
-    <WhakapapaTableHelper
+    <WhakapapaTableHelper v-if="isActive('whakapapa-table-helper')"
       :show="isActive('whakapapa-table-helper')"
       :title="`Whakapapa registry`"
       @close="close"

@@ -51,7 +51,7 @@
           </v-row>
           <v-row>
             <v-col>
-              <AvatarGroup :profiles="view.kaitiaki" groupTitle="Kaitiaki" size="50px"/>
+              <AvatarGroup :profiles="view.kaitiaki" groupTitle="Kaitiaki" size="50px" showLabels/>
             </v-col>
           </v-row>
         </v-col>
