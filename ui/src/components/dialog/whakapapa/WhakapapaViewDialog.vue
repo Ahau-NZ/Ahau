@@ -32,7 +32,7 @@
           {{ view.description }}
         </v-col>
       </v-row>
-
+      <AvatarGroup size="50px" show-labels groupTitle="Kaitiaki" :profiles="view.kaitiaki"/>
       <v-row justify="center" align="center" class="mt-5">
         <v-icon>
            mdi-lock
@@ -46,12 +46,14 @@
 <script>
 import Dialog from '@/components/dialog/Dialog.vue'
 import Avatar from '@/components/Avatar.vue'
+import AvatarGroup from '@/components/AvatarGroup.vue'
 
 export default {
   name: 'WhakapapaViewDialog',
   components: {
     Dialog,
-    Avatar
+    Avatar,
+    AvatarGroup
   },
   props: {
     view: {

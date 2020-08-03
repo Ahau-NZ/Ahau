@@ -3,11 +3,7 @@
     <Dialog :show="show" :title="title" @close="close" width="720px" :goBack="close" enableMenu>
       <template v-slot:content>
         <WhakapapaForm ref="whakapapaForm" :view.sync="formData" :data.sync="csv"/>
-        <v-row class="ml-4">
-          <v-col>
-            <AvatarGroup size="50px" groupTitle="Kaitiaki" :profiles="[whoami.personal.profile]"/>
-          </v-col>
-        </v-row>
+        <AvatarGroup size="50px" show-labels groupTitle="Kaitiaki" :profiles="[whoami.public.profile]"/>
       </template>
       <template v-slot:actions>
         <v-btn @click="close"

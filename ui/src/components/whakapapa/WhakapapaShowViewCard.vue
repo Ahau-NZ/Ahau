@@ -53,7 +53,7 @@
       <div v-show="show">
         <v-divider></v-divider>
         <v-card-subtitle v-if="description" v-text="description" class="pa-3"/>
-        <AvatarGroup :profiles="view.kaitiaki" groupTitle="Kaitiaki" size="50px"/>
+        <AvatarGroup :profiles="view.kaitiaki" groupTitle="Kaitiaki" size="50px" show-labels/>
       </div>
     </v-expand-transition>
   </v-card>
