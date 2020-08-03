@@ -17,7 +17,7 @@
       :show="isActive('new-community')"
       :title="`Ko Wai Mātou ---- Create New Community`"
       :type="dialogType"
-      @create="addCommunity($event)"
+      @create="setupNewCommunity($event)"
       @close="close"
     />
     <EditCommunityDialog
@@ -139,22 +139,18 @@ import ConfirmationText from '@/components/dialog/ConfirmationText.vue'
 import gql from 'graphql-tag'
 
 import { PERMITTED_RELATIONSHIP_ATTRS, savePerson, saveCurrentIdentity } from '@/lib/person-helpers.js'
-import { saveCommunity } from '@/lib/community-helpers'
+import { createGroup, saveCommunity, savePublicCommunity, saveGroupProfileLink } from '@/lib/community-helpers'
 import { saveWhakapapaView } from '@/lib/whakapapa-helpers.js'
 
 import { saveLink } from '@/lib/link-helpers.js'
-import pick from 'lodash.pick'
-import isEmpty from 'lodash.isempty'
-
-import findSuccessor from '@/lib/find-successor'
 
 import tree from '@/lib/tree-helpers'
+import findSuccessor from '@/lib/find-successor'
 
+import pick from 'lodash.pick'
+import isEmpty from 'lodash.isempty'
 import * as d3 from 'd3'
-import {
-  mapGetters,
-  mapActions
-} from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   name: 'DialogHandler',
@@ -310,26 +306,72 @@ export default {
       }
       return true
     },
-    async addCommunity ($event) {
+    async setupNewCommunity ($event) {
+      if ($event.id) throw new Error('this is for creating a new tribe + community, not updating')
 
-      if (!$event.recps) {
-        console.log("no recps")
-        $event.recps = [this.whoami.personal.groupId]
-      }
-
-      console.log("addCommunity: ", $event)
-      // if community doesnt exisit create one
-      if (!$event.id) {
-        const res = await this.$apollo.mutate(saveCommunity($event))
-        if (res.errors) {
-          console.error('failed to create community', res)
+      // (later?)
+      // - [ ] create a copy of your personal profile (recps: [groupId])
+      // - [ ] link your feedId + profile
+      //    - saveFeedProfileLink (recps: [groupId])
+      try {
+        const createGroupRes = await this.$apollo.mutate(createGroup())
+        if (createGroupRes.errors) {
+          console.error('failed to create private group', createGroupRes)
         }
-        const id = res.date.saveProfile
-        if (id) {
+        const groupId = createGroupRes.data.createGroup.id
+
+        const createCommunityRes = await this.$apollo.mutate(saveCommunity({
+          ...$event,
+          recps: [groupId]
+        }))
+        if (createCommunityRes.errors) {
+          console.error('failed to create community', createCommunityRes)
+          return
+        }
+
+        const groupProfile = createCommunityRes.data.saveProfile // id
+
+        const profileLinkRes = await this.$apollo.mutate(saveGroupProfileLink({
+          profile: groupProfile,
+          group: groupId
+        }))
+        if (profileLinkRes.errors) {
+          console.error('failed to create link community profile', profileLinkRes)
+          return
+        }
+
+        const createPublicCommunityRes = await this.$apollo.mutate(savePublicCommunity({
+          ...$event
+        }))
+        if (createPublicCommunityRes.errors) {
+          console.error('failed to create community', createPublicCommunityRes)
+          return
+        }
+
+        const groupPublicProfile = createPublicCommunityRes.data.saveProfile // id
+
+        const profilePublicLinkRes = await this.$apollo.mutate(saveGroupProfileLink({
+          profile: groupPublicProfile,
+          group: groupId,
+          allowPublic: true
+        }))
+        if (profilePublicLinkRes.errors) {
+          console.error('failed to create link community profile', groupPublicProfile)
+          return
+        }
+
+        if (profilePublicLinkRes.data.saveGroupProfileLink) {
           this.setComponent('profile')
-          this.setProfileById({ id })
-          this.$router.push({ name: 'profileShow', params: { id } }).catch(() => {})
+          this.setProfileById({ id: groupProfile })
+          this.$router.push({ name: 'profileShow', params: { id: groupProfile } }).catch(() => {})
         }
+      } catch (err) {
+        // is this the right place for this?
+        this.confirmationAlert('Failed to create private group. Please contact us if this continues to happen', err)
+        setTimeout(() => {
+          this.confirmationText = null
+          this.snackbar = !this.snackbar
+        }, 5000)
       }
     },
     async savePerson (input) {
@@ -576,21 +618,6 @@ export default {
       }
     },
     async updateCommunity ($event) {
-      // Kept from current branch 
-      // Object.entries($event).map(([key, value]) => {
-      //   if (value === '') {
-      //     delete $event[key]
-      //   }
-      // })
-
-      // const profileChanges = pick($event, [...PERMITTED_COMMUNITY_ATTRS])
-      // const profileId = this.selectedProfile.id
-
-      // let input = {
-      //   id: profileId,
-      //   ...profileChanges
-      // }
-
       console.log('updateCommunity', $event)
 
       const res = await this.$apollo.mutate(saveCommunity({
@@ -750,7 +777,7 @@ export default {
     },
 
     async deleteCommunity () {
-      const profileResult = await this.$apollo.mutate({
+      const deletePrivateRes = await this.$apollo.mutate({
         mutation: gql`
           mutation($input: ProfileInput!) {
             saveProfile(input: $input)
@@ -758,16 +785,38 @@ export default {
         `,
         variables: {
           input: {
-            id: this.selectedProfile.id,
+            id: this.currentProfiles.private[0].id,
             tombstone: {
               date: new Date()
             }
           }
         }
       })
-      if (profileResult.errors) {
-        console.error('failed to delete profile', profileResult)
+      if (deletePrivateRes.errors) {
+        console.error('failed to delete private profile', deletePrivateRes)
       } else {
+        console.log('private profile deleted')
+        const deletePublicRes = await this.$apollo.mutate({
+          mutation: gql`
+            mutation($input: ProfileInput!) {
+              saveProfile(input: $input)
+            }
+          `,
+          variables: {
+            input: {
+              id: this.currentProfiles.public[0].id,
+              tombstone: {
+                date: new Date()
+              },
+              allowPublic: true
+            }
+          }
+        })
+      }
+      if (deletePublicRes.errors) {
+        console.error('failed to delete public profile', deletePublicRes)
+      } else {
+        console.log('public profile deleted')
         this.setComponent('profile')
         this.setProfileById({ id: this.whoami.personal.profile.id })
         this.$router.push({ name: 'profileShow', params: { id: this.whoami.personal.profile.id } }).catch(() => {})

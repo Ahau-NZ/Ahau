@@ -267,10 +267,8 @@ import AddButton from '@/components/button/AddButton.vue'
 import { dateIntervalToString } from '@/lib/date-helpers'
 
 import isEmpty from 'lodash.isempty'
-import pick from 'lodash.pick'
 import calculateAge from '@/lib/calculate-age'
 import { mapActions, mapGetters } from 'vuex'
-import { PERMITTED_PERSON_ATTRS } from '@/lib/person-helpers'
 
 const REQUIRED_ATTRS = [
   'id', 'legalName', 'aliveInterval', 'gender', 'relationshipType',
@@ -458,14 +456,15 @@ export default {
           ...this.formData,
           parents: this.parents
         }
-        // var profile = pick(input, PERMITTED_PERSON_ATTRS)
-        // var kaitiaki = pick(input, PRIVATE_PERMITTED_PROFILE_ATTRS)
+
 
         var output = {
           // TODO - update to match notifications
           action: 'registration',
           from: this.formData.id,
           message: {
+            // add kaitiaki 
+            // add groupId
             community: this.currentProfile.id,
             profile: input,
             message: this.message

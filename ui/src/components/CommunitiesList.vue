@@ -10,8 +10,49 @@
         </v-btn>
       </div>
     </v-row>
+    <!-- TRIBES -->
+    <div v-if="tribes && tribes.length">
+      <v-row v-if="connectedTribes && connectedTribes.length" class="pt-4">
+        <v-col cols="12" md="9" class="py-0">
+          <p class="sub-headline pa-0 mb-4">Tribes that you are connected to</p>
+          <v-row justify="start">
+              <v-col v-for="tribe in connectedTribes" :item="tribe" :key="tribe.id" justify-self="start">
+                <v-card light :width="!mobile ? '190px':'100vw'" @click="goConnectedTribe(tribe)">
+                  <v-img height="150px" :src="getImage(tribe.private[0])" class="card-image" />
+                  <v-card-title class="subtitle font-weight-bold pb-2">{{
+                    tribe.private[0].preferredName
+                  }}</v-card-title>
+                  <v-card-text class="body-2">{{
+                    shortDescrciption(tribe.private[0])
+                  }}</v-card-text>
+                </v-card>
+              </v-col>
+            </v-row>
+        </v-col>
+      </v-row>
+      <v-row v-if="otherTribes && otherTribes.length" class="pt-4">
+        <v-col cols="12" md="9" class="py-0">
+          <v-divider v-if="otherTribes && otherTribes.length" light color="grey" class="my-10"></v-divider>
+          <p class="sub-headline pa-0 mb-4">Other whanau tribes</p>
+          <v-row justify="start">
+              <v-col v-for="tribe in otherTribes" :item="tribe" :key="tribe.id" justify-self="start">
+                <v-card light :width="!mobile ? '190px':'100vw'" @click="goProfile(tribe.public[0].id)">
+                  <v-img height="150px" :src="getImage(tribe.public[0])" class="card-image" />
+                  <v-card-title class="subtitle font-weight-bold pb-2">{{
+                    tribe.public[0].preferredName
+                  }}</v-card-title>
+                  <v-card-text class="body-2">{{
+                    shortDescrciption(tribe.public[0])
+                  }}</v-card-text>
+                </v-card>
+              </v-col>
+            </v-row>
+        </v-col>
+      </v-row>
+    </div>
     <v-row class="py-2">
       <v-col cols="12" md="9">
+        <v-divider light color="grey" class="my-10"></v-divider>
         <p class="sub-headline pa-0">Enter a Pātaka code to discover tribes</p>
         <v-row>
           <v-col cols="10" md='9' class="py-0">
@@ -34,26 +75,6 @@
               </v-btn>
           </v-col>
         </v-row>
-        <v-divider light color="grey"></v-divider>
-      </v-col>
-    </v-row>
-    <!-- TRIBES -->
-    <v-row class="pt-4">
-      <v-col cols="12" md="9" class="py-0">
-        <!-- <p class="headliner pa-0 mb-4">TRIBES</p> -->
-        <v-row justify="start">
-            <v-col v-for="community in communities" :item="community" :key="community.id" justify-self="start">
-              <v-card light :width="!mobile ? '190px':'100vw'" @click="goProfile(community.id)">
-                <v-img height="150px" :src="getImage(community)" class="card-image" />
-                <v-card-title class="subtitle font-weight-bold pb-2">{{
-                  community.preferredName
-                }}</v-card-title>
-                <v-card-text class="body-2">{{
-                  shortDescrciption(community)
-                }}</v-card-text>
-              </v-card>
-            </v-col>
-          </v-row>
       </v-col>
     </v-row>
   </div>
@@ -77,24 +98,29 @@ export default {
       errorMsg: []
     }
   },
-  watch: {
-    communities () {
-
-    }
-  },
   apollo: {
-    communities: {
-      query: gql`
-      query {
-        communities {
+    tribes: {
+      query: gql`query {
+        tribes {
           id
-          preferredName
-          description
-          headerImage {
-            uri
+          public {
+            id
+            preferredName
+            description
+            avatarImage { uri } 
+            description
+            headerImage { uri }
+            tombstone { date }
+
           }
-          avatarImage {
-            uri
+          private {
+            id
+            preferredName
+            description
+            avatarImage { uri }
+            headerImage { uri }
+            recps
+            tombstone {date}
           }
         }
       }
@@ -105,10 +131,20 @@ export default {
   computed: {
     mobile () {
       return this.$vuetify.breakpoint.xs
+    },
+    connectedTribes () {
+      return this.tribes.filter(tribe => tribe.private.length > 0)
+    },
+    otherTribes () {
+      return this.tribes.filter(tribe => tribe.private.length < 1 && tribe.public.length > 0)
     }
   },
   methods: {
-    ...mapActions(['setComponent', 'setDialog', 'setProfileById']),
+    ...mapActions(['setComponent', 'setDialog', 'setProfileById', 'setProfiles']),
+    goConnectedTribe (tribe) {
+      this.setProfiles(tribe)
+      this.goProfile(tribe.private[0].id)
+    },
     goProfile (id) {
       this.setComponent('profile')
       this.setProfileById({ id })
