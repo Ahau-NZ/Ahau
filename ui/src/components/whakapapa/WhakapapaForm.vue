@@ -91,7 +91,7 @@
         </v-row>
       </v-col>
     </v-row>
-    <CsvHelperDialog :show="csvHelper" @click="csvInfo()" @close="csvInfo()"/>
+    <CsvHelperDialog v-if="csvHelper" :show="csvHelper" @click="csvInfo()" @close="csvInfo()"/>
     <CsvErrorDialog :show="csvErrorShow" :errorMsgs="errorMsgs" @click="csvErrorClose()" @close="csvErrorClose()"/>
   </v-form>
 </template>
@@ -172,8 +172,7 @@ export default {
           this.$emit('update:data', csv)
         })
         .catch(errs => {
-          // TODO: Fix error handling.
-          // alert(errs.join('\n'))
+          console.log(errs)
           this.errorMsgs = errs
           this.csvErrorShow = true
         })

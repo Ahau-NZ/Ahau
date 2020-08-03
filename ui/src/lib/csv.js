@@ -1,8 +1,6 @@
 import * as d3 from 'd3'
 import { GENDERS, RELATIONSHIPS } from './constants'
 
-const emailRegex = /^\w+([\\.-]?\w+)*@\w+([\\.-]?\w+)*(\.\w{2,3})+$/
-
 function importCsv (file) {
   return new Promise((resolve, reject) => {
     if (!file.name.endsWith('.csv')) { // check if file extension is csv
@@ -49,16 +47,16 @@ function parse (fileContent) {
           preferredName: d.preferredName,
           legalName: d.legalName,
           gender: d.gender,
-          bornAt: d.bornAt.split(/\//).reverse().join('/'),
-          diedAt: d.diedAt.split(/\//).reverse().join('/'),
+          relationshipType: d.relationshipType ? d.relationshipType : 'birth',
           birthOrder: d.birthOrder,
+          bornAt: d.bornAt.split(/\//).reverse().join('/'),
+          deceased: d.deceased,
+          diedAt: d.diedAt.split(/\//).reverse().join('/'),
           phone: d.phone,
           email: d.email,
           address: d.address,
           location: d.location,
-          profession: d.profession,
-          relationshipType: d.relationshipType ? d.relationshipType : 'birth',
-          deceased: d.deceased
+          profession: d.profession
         }
       }
     })
@@ -68,7 +66,7 @@ function parse (fileContent) {
       // this code should never be reached
     }
 
-    const maxCsvLength = 800
+    const maxCsvLength = 1000
 
     if (csv.length > maxCsvLength) {
       errors.push('Aroha mai, we are currently experiencing issues processing large files. We are currently working on this and hope to have this working soon')
@@ -130,8 +128,8 @@ const schema = {
     msg: '[relationshipType] only accepts the following: ' + RELATIONSHIPS
   },
   email: {
-    action: d => emailRegex.test(d) || isEmpty(d),
-    msg: '[email] only accepts valid email address with @ and domain name extension. '
+    action: d => isString(d) || isEmpty(d),
+    msg: '[email] must be a string or empty'
   }
 }
 
