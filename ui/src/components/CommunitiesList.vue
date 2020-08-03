@@ -28,11 +28,11 @@
                 </v-card>
               </v-col>
             </v-row>
+          <v-divider v-if="otherTribes && otherTribes.length" light color="grey" class="my-10"></v-divider>
         </v-col>
       </v-row>
       <v-row v-if="otherTribes && otherTribes.length" class="pt-4">
         <v-col cols="12" md="9" class="py-0">
-          <v-divider v-if="otherTribes && otherTribes.length" light color="grey" class="my-10"></v-divider>
           <p class="sub-headline pa-0 mb-4">Other whanau tribes</p>
           <v-row justify="start">
               <v-col v-for="tribe in otherTribes" :item="tribe" :key="tribe.id" justify-self="start">
@@ -83,6 +83,7 @@
 <script>
 import { mapActions } from 'vuex'
 import gql from 'graphql-tag'
+import { getTribes } from '@/lib/community-helpers'
 
 const get = require('lodash.get')
 
@@ -108,10 +109,14 @@ export default {
             preferredName
             description
             avatarImage { uri } 
-            description
             headerImage { uri }
             tombstone { date }
-
+            tiaki { 
+              id
+              avatarImage { uri }
+              preferredName
+              legalName
+            }
           }
           private {
             id
@@ -121,6 +126,12 @@ export default {
             headerImage { uri }
             recps
             tombstone {date}
+            tiaki { 
+              id
+              avatarImage { uri }
+              preferredName
+              legalName
+            }
           }
         }
       }
@@ -142,7 +153,6 @@ export default {
   methods: {
     ...mapActions(['setComponent', 'setDialog', 'setProfileById', 'setCurrentTribe']),
     goTribe (tribe) {
-      console.log("goTribe hit")
       this.setCurrentTribe(tribe)
       if (tribe.private.length > 0) this.goProfile(tribe.private[0].id)
       else this.goProfile(tribe.public[0].id)

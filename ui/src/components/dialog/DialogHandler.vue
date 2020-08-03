@@ -779,7 +779,6 @@ export default {
       if (deleteTribeRes.errors) {
         console.error('failed to delete public profile', deleteTribeRes)
       } else {
-        console.log('public profile deleted')
         this.setComponent('profile')
         this.setProfileById({ id: this.whoami.personal.profile.id })
         this.$router.push({ name: 'profileShow', params: { id: this.whoami.personal.profile.id } }).catch(() => {})

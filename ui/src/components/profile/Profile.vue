@@ -91,8 +91,7 @@ export default {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
     member () {
-      if (this.profile.type === 'community' && this.profile.recps.length > 0) return true
-      else return false
+      return this.profile.type === 'community' && this.profile.recps.length > 0
     }
   }
 }
