@@ -9,8 +9,9 @@ export const PERMITTED_PERSON_ATTRS = [
   'headerImage',
   'avatarImage',
   'tombstone',
+  // WARNING: make sure header and avatar images are the first two and tombstone is the third (for PERSON_FRAGMENT)
+
   'canEdit',
-  // WARNING: make sure header and avatar images are the first two and tombstone is the third (for PERSON_FRAGMENT) and canEdit is the fourth (for KAITIAKI_FRAGMENT)
   'id',
   // NOTE: we don't allow setting of `type`, this is always "profile"
   'preferredName',
@@ -51,8 +52,8 @@ export const PERSON_FRAGMENT = gql`
     headerImage { uri }
   }
 `
-export const KAITIAKI_FRAGMENT = gql`
-  fragment KaitiakiFragment on Person {
+export const PUBLIC_PROFILE_FRAGMENT = gql`
+  fragment PublicProfileFragment on Person {
     id
     preferredName
     avatarImage { uri }
@@ -62,17 +63,13 @@ export const KAITIAKI_FRAGMENT = gql`
 export const whoami = ({
   query: gql`
     ${PERSON_FRAGMENT}
-    ${KAITIAKI_FRAGMENT}
+    ${PUBLIC_PROFILE_FRAGMENT}
     query {
       whoami {
         public {
           feedId
           profile {
-            id
-            preferredName
-            avatarImage {
-              uri
-            }
+            ...PublicProfileFragment
           }
         }
         personal {
@@ -80,7 +77,7 @@ export const whoami = ({
           profile {
             ...ProfileFragment
             kaitiaki {
-              ...KaitiakiFragment
+              ...PublicProfileFragment
             }
           }
         }
@@ -93,7 +90,7 @@ export const whoami = ({
 export const getPerson = id => ({
   query: gql`
     ${PERSON_FRAGMENT}
-    ${KAITIAKI_FRAGMENT}
+    ${PUBLIC_PROFILE_FRAGMENT}
     query($id: String!) {
       person(id: $id){
         ...ProfileFragment
@@ -114,7 +111,7 @@ export const getPerson = id => ({
           legallyAdopted
         }
         kaitiaki {
-          ...KaitiakiFragment
+          ...PublicProfileFragment
         }
       }
     }

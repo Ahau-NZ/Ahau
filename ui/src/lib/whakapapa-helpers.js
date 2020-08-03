@@ -1,5 +1,5 @@
 import gql from 'graphql-tag'
-import { KAITIAKI_FRAGMENT } from './person-helpers'
+import { PUBLIC_PROFILE_FRAGMENT } from './person-helpers'
 
 export const PERMITTED_WHAKAPAPA_ATTRS = [
   'image', // WARNING: this needs to be the first
@@ -33,12 +33,12 @@ export const saveWhakapapaView = input => {
 export const getWhakapapaView = id => ({
   query: gql`
     ${WHAKAPAPA_FRAGMENT}
-    ${KAITIAKI_FRAGMENT}
+    ${PUBLIC_PROFILE_FRAGMENT}
     query($id: String!) {
       whakapapaView(id: $id) {
         ...WhakapapaFragment
         kaitiaki {
-          ...KaitiakiFragment
+          ...PublicProfileFragment
         }
       }
     }
@@ -50,12 +50,12 @@ export const getWhakapapaView = id => ({
 export const getWhakapapaViews = () => ({
   query: gql`
     ${WHAKAPAPA_FRAGMENT}
-    ${KAITIAKI_FRAGMENT}
+    ${PUBLIC_PROFILE_FRAGMENT}
     query {
       whakapapaViews {
         ...WhakapapaFragment
         kaitiaki {
-          ...KaitiakiFragment
+          ...PublicProfileFragment
         }
       }
     }
