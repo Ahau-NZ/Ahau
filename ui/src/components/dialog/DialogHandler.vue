@@ -4,10 +4,11 @@
       v-if="isActive('new-registration')"
       :show="isActive('new-registration')"
       :title="dialogType === 'review' ? `Request to join Āhau from ---- Benjamin Nootai Tairea`:`Request to join : ${currentProfile.preferredName}`"
-      :profile="whoami.public.profile"
+      :profile="whoami.personal.profile"
       :parents.sync="parents"
       :parentIndex.sync="parentIndex"
       :type="dialogType"
+      :notification="currentNotification"
       @editProfile="toggleEditProfile($event)"
       @close="close"
     />
@@ -140,8 +141,11 @@ import ConfirmationText from '@/components/dialog/ConfirmationText.vue'
 import gql from 'graphql-tag'
 
 import { PERMITTED_RELATIONSHIP_ATTRS, savePerson, saveCurrentIdentity } from '@/lib/person-helpers.js'
-import { createGroup, saveCommunity, savePublicCommunity, saveGroupProfileLink } from '@/lib/community-helpers'
-import { SAVE_LINK } from '@/lib/link-helpers.js'
+import { createGroup, saveCommunity, savePublicCommunity, saveGroupProfileLink, deleteTribe } from '@/lib/community-helpers'
+import { saveWhakapapaView } from '@/lib/whakapapa-helpers.js'
+
+import { saveLink } from '@/lib/link-helpers.js'
+
 import tree from '@/lib/tree-helpers'
 import findSuccessor from '@/lib/find-successor'
 
@@ -217,7 +221,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['nestedWhakapapa', 'selectedProfile', 'whoami', 'storeDialog', 'storeType', 'storeSource', 'currentProfile']),
+    ...mapGetters(['nestedWhakapapa', 'selectedProfile', 'whoami', 'storeDialog', 'storeType', 'storeSource', 'currentProfile', 'currentNotification', 'currentTribe']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -312,7 +316,6 @@ export default {
       // - [ ] link your feedId + profile
       //    - saveFeedProfileLink (recps: [groupId])
       try {
-
         const createGroupRes = await this.$apollo.mutate(createGroup())
         if (createGroupRes.errors) {
           console.error('failed to create private group', createGroupRes)
@@ -340,7 +343,7 @@ export default {
         }
 
         const createPublicCommunityRes = await this.$apollo.mutate(savePublicCommunity({
-          ...$event,
+          ...$event
         }))
         if (createPublicCommunityRes.errors) {
           console.error('failed to create community', createPublicCommunityRes)
@@ -360,24 +363,23 @@ export default {
         }
 
         if (profilePublicLinkRes.data.saveGroupProfileLink) {
+          // need a getTribe(groupId) graphql call
+          // setCurrentTibe(tribe)
           this.setComponent('profile')
-          this.setProfileById({ id:groupProfile })
-          this.$router.push({ name: 'profileShow', params: { id:groupProfile } }).catch(() => {})
+          this.setProfileById({ id: groupProfile })
+          this.$router.push({ name: 'profileShow', params: { id: groupProfile } }).catch(() => {})
         }
-
-      }
-      catch (err) {
+      } catch (err) {
         // is this the right place for this?
         this.confirmationAlert('Failed to create private group. Please contact us if this continues to happen', err)
         setTimeout(() => {
           this.confirmationText = null
           this.snackbar = !this.snackbar
         }, 5000)
-        return
       }
     },
     async savePerson (input) {
-      if (!input.recps) input.recps = [this.whoami.personal.groupId]
+      if (!input.id && !input.recps) input.recps = [this.whoami.personal.groupId]
       // TODO fix recps to be right group
       const res = await this.$apollo.mutate(savePerson(input))
 
@@ -405,6 +407,7 @@ export default {
       await this.setWhoami()
     },
     async addPerson ($event) {
+      console.log("addPerson: ", $event)
       try {
         var { id } = $event
 
@@ -416,16 +419,7 @@ export default {
             }
           }
           try {
-            const res = await this.$apollo.mutate({
-              mutation: gql`
-              mutation($input: WhakapapaViewInput) {
-                saveWhakapapaView(input: $input)
-              }
-              `,
-              variables: {
-                input
-              }
-            })
+            const res = await this.$apollo.mutate(saveWhakapapaView(input))
             if (res.data) {
               this.$emit('refreshWhakapapa')
 
@@ -617,7 +611,7 @@ export default {
       // TODO check recps
 
       try {
-        const res = await this.$apollo.mutate(SAVE_LINK(input))
+        const res = await this.$apollo.mutate(saveLink(input))
         if (res.errors) {
           console.error('failed to createChildLink', res)
           return
@@ -646,7 +640,6 @@ export default {
       }
     },
     async updatePerson (input) {
-      console.log('update profile: ', input)
 
       const profileId = this.selectedProfile.id
       if (this.isPersonalProfile(profileId)) {
@@ -667,7 +660,7 @@ export default {
           // recps: this.view.recps
         }
         try {
-          const linkRes = await this.$apollo.mutate(SAVE_LINK(input))
+          const linkRes = await this.$apollo.mutate(saveLink(input))
           if (linkRes.errors) {
             console.error('failed to update child link', linkRes)
             return
@@ -724,7 +717,7 @@ export default {
     },
     async removeProfile (deleteOrIgnore) {
       if (deleteOrIgnore === 'delete') {
-        await this.deleteProfile()
+        await this.deletePerson()
       } else {
         await this.ignoreProfile()
       }
@@ -737,16 +730,7 @@ export default {
         }
       }
       try {
-        const res = await this.$apollo.mutate({
-          mutation: gql`
-            mutation($input: WhakapapaViewInput) {
-              saveWhakapapaView(input: $input)
-            }
-          `,
-          variables: {
-            input
-          }
-        })
+        const res = await this.$apollo.mutate(saveWhakapapaView(input))
         this.$emit('refreshWhakapapa')
         if (res.data) {
           // if removing top ancestor on main whanau line, update the whakapapa view focus with child/partner
@@ -769,24 +753,16 @@ export default {
         throw err
       }
     },
-    async deleteProfile () {
+    async deletePerson () {
       if (!this.canDelete(this.selectedProfile)) return
 
-      const profileResult = await this.$apollo.mutate({
-        mutation: gql`
-          mutation($input: ProfileInput!) {
-            saveProfile(input: $input)
-          }
-        `,
-        variables: {
-          input: {
-            id: this.selectedProfile.id,
-            tombstone: {
-              date: new Date()
-            }
-          }
-        }
-      })
+      var input = {
+        id: this.selectedProfile.id,
+        tombstone: { date: new Date() }
+      }
+
+      const profileResult = await this.$apollo.mutate(savePerson(input))
+
       if (profileResult.errors) {
         console.error('failed to delete profile', profileResult)
         return
@@ -805,23 +781,9 @@ export default {
     },
 
     async deleteCommunity () {
-      const profileResult = await this.$apollo.mutate({
-        mutation: gql`
-          mutation($input: ProfileInput!) {
-            saveProfile(input: $input)
-          }
-        `,
-        variables: {
-          input: {
-            id: this.selectedProfile.id,
-            tombstone: {
-              date: new Date()
-            }
-          }
-        }
-      })
-      if (profileResult.errors) {
-        console.error('failed to delete profile', profileResult)
+      const deleteTribeRes = await this.$apollo.mutate(deleteTribe(this.currentTribe))
+      if (deleteTribeRes.errors) {
+        console.error('failed to delete public profile', deleteTribeRes)
       } else {
         this.setComponent('profile')
         this.setProfileById({ id: this.whoami.personal.profile.id })

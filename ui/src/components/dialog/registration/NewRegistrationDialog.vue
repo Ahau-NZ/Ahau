@@ -406,7 +406,6 @@ import { dateIntervalToString } from '@/lib/date-helpers'
 import isEmpty from 'lodash.isempty'
 import calculateAge from '@/lib/calculate-age'
 import { mapActions, mapGetters } from 'vuex'
-// import { ... some mutation helper } from '@/lib/person-helpers'
 
 const REQUIRED_ATTRS = [
   'id', 'legalName', 'aliveInterval', 'gender', 'relationshipType',
@@ -432,7 +431,8 @@ export default {
     profile: { type: Object },
     parents: { type: Array, default: null },
     parentIndex: Number,
-    type: { type: String, default: null }
+    type: { type: String, default: null },
+    notification: { type: Object, default: null }
   },
   data () {
     return {
@@ -450,24 +450,31 @@ export default {
       gpNames: false,
       showMessage: false,
       resMessage: '',
-      response: ''
+      response: '',
+      scrollPosition: ''
     }
   },
   mounted () {
     // TODO - update Profile, Parents and Message with notifcations data
     this.getFullProfile(this.profile.id)
     if (this.type === 'review') {
-      this.parentsArray = this.currentProfile.parents
+      this.parentsArray = this.notification.profile.parents
     } else this.parentsArray = this.parents
   },
   watch: {
-    parents (newVal) {
-      console.log(newVal)
-      if (newVal) this.parentsArray = newVal
+    parents (newVal, oldVal) {
+      if (newVal) {
+        this.parentsArray = newVal
+        setTimeout(() => {
+          window.scrollTo({
+            top: this.scrollPosition
+          })
+        }, 100)
+      }
     }
   },
   computed: {
-    ...mapGetters(['currentProfile', 'selectedProfile', 'whoami']),
+    ...mapGetters(['currentProfile', 'selectedProfile', 'whoami', 'currentTribe']),
     remainingErrors () {
       if (this.errorMsgs && this.errorMsgs.length) {
         var remaining = this.errorMsgs.filter((f) => f !== 'grandparents' & f !== 'parents')
@@ -527,6 +534,8 @@ export default {
       this.parents[parentIndex].grandparents.splice(grandparentIndex, 1)
     },
     addParent () {
+      console.log(window.pageYOffset)
+      this.scrollPosition = window.pageYOffset
       this.setDialog({ active: 'new-node', type: 'parent' })
     },
     addGrandparent (index) {
@@ -584,16 +593,22 @@ export default {
           ...this.formData,
           parents: this.parents
         }
-        // var common = pick(input, COMMON_PERMITTED_PROFILE_ATTRS)
-        // var kaitiaki = pick(input, PRIVATE_PERMITTED_PROFILE_ATTRS)
 
-        // var output = {
-        //   common: common,
-        //   kaitiaki: kaitiaki
-        // }
-        // // TODO - send message to Kaitiaki
-        // console.warn('send this object: ', output)
-        // this.close()
+        var output = {
+          // TODO - update to match notifications
+          action: 'registration',
+          from: this.formData.id,
+          message: {
+            katiaki: this.currentTribe.public.taiki[0].id,
+            community: this.currentProfile.id,
+            profile: input,
+            message: this.message
+          },
+          to: this.currentProfile.id
+        }
+        // TODO - send message to Kaitiaki
+        console.warn('send this object: ', output)
+        this.close()
       }
     },
 
@@ -605,14 +620,12 @@ export default {
     send () {
       var output = {
         // TODO - update to match notifications
-        action: 'registration-response',
+        action: 'response',
         from: this.whoami.profile.id,
         message: {
           community: 'community profile.id',
-          response: {
-            outcome: this.response,
-            message: this.resMessage
-          }
+          outcome: this.response,
+          message: this.resMessage
         },
         to: this.formData.id
       }

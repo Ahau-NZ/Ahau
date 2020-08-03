@@ -159,7 +159,7 @@ export default {
     goBack () {
       if (this.route.name === 'whakapapaShow') return this.$router.push({ path: this.route.from.fullPath })
       else if (this.showStory) return this.setShowStory()
-    },
+    }
 
   },
   components: {

@@ -1,12 +1,14 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import { createProvider } from '../plugins/vue-apollo'
-import gql from 'graphql-tag'
 
 import whakapapa from './modules/whakapapa'
 import person from './modules/person'
 import archive from './modules/archive'
 import dialog from './modules/dialog'
+import notifications from './modules/notifications'
+import tribe from './modules/tribe'
+import { whoami } from '../lib/person-helpers.js'
 
 const apolloProvider = createProvider()
 const apollo = apolloProvider.defaultClient
@@ -45,7 +47,9 @@ const store = new Vuex.Store({
     whakapapa,
     person,
     archive,
-    dialog
+    dialog,
+    notifications,
+    tribe
   },
   getters: {
     loadingState: state => {
@@ -78,35 +82,7 @@ const store = new Vuex.Store({
       commit('updateLoading', loading)
     },
     async setWhoami ({ commit }) {
-      const result = await apollo.query({
-        query: gql`
-          {
-            whoami {
-              public {
-                feedId
-                profile {
-                  id
-                  preferredName
-                  aliveInterval
-                  gender 
-                  avatarImage { uri }
-                }
-              }
-              personal {
-                groupId
-                profile {
-                  id
-                  preferredName
-                  aliveInterval
-                  gender 
-                  avatarImage { uri }
-                }
-              }
-            }
-          }
-        `,
-        fetchPolicy: 'no-cache'
-      })
+      const result = await apollo.query(whoami)
 
       if (result.errors) throw result.errors
 

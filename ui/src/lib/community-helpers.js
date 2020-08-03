@@ -64,12 +64,8 @@ export const createGroup = () => {
 }
 
 export const saveCommunity = input => {
-  const _input = pick(input, PERMITTED_COMMUNITY_ATTRS)
-  Object.entries(_input).forEach(([key, value]) => {
-    if (value === '') {
-      delete _input[key]
-    }
-  })
+  const _input = prune(input, PERMITTED_COMMUNITY_ATTRS)
+
   if (!_input.id) _input.type = 'community'
 
   return {
@@ -84,14 +80,9 @@ export const saveCommunity = input => {
   }
 }
 
-// make savePublicCommunity
 export const savePublicCommunity = input => {
-  const _input = pick(input, PERMITTED_PUBLIC_COMMUNITY_ATTRS)
-  Object.entries(_input).forEach(([key, value]) => {
-    if (value === '') {
-      delete _input[key]
-    }
-  })
+  const _input = prune(input, PERMITTED_PUBLIC_COMMUNITY_ATTRS)
+
   if (!_input.id) _input.type = 'community'
   _input.allowPublic = true
 
@@ -108,12 +99,7 @@ export const savePublicCommunity = input => {
 }
 
 export const saveGroupProfileLink = input => {
-  const _input = pick(input, PERMITTED_COMMUNITY_LINK_ATTRS)
-  Object.entries(_input).forEach(([key, value]) => {
-    if (value === '') {
-      delete _input[key]
-    }
-  })
+  const _input = prune(input, PERMITTED_COMMUNITY_LINK_ATTRS)
 
   return {
     mutation: gql`
@@ -127,36 +113,75 @@ export const saveGroupProfileLink = input => {
   }
 }
 
-// export async function saveCommunity (input) {
-//   console.log('input:', input)
-//   const request = saveCommunityProfile(input)
-//   console.log('request:', request)
-//   const result = await apolloClient.mutate(request)
-//   console.log('result:', result)
-//   if (result.errors) {
-//     console.error('WARNING, something went wrong')
-//     console.error(result.errors)
-//   } else {
-//     return result.data
-//   }
-// }
+export const deleteTribe = tribe => {
+  return {
+    mutation: gql`
+      mutation($privateInput: ProfileInput, $publicInput: ProfileInput) {
+        deletePrivate: saveProfile(input: $privateInput)
+        deletePublic: saveProfile(input: $publicInput)
+      }
+    `,
+    variables: {
+      privateInput: {
+        id: tribe.private[0].id,
+        tombstone: { date: new Date() }
+      },
+      publicInput: {
+        id: tribe.public[0].id,
+        tombstone: { date: new Date() },
+        allowPublic: true
+      }
+    }
+  }
+}
 
-// export const getCommunities = () => ({
-//   query: gql`
-//     query {
-//       communities {
-//         id
-//         preferredName
-//         legalName
-//         description
-//         avatarImage { uri }
-//         headerImage { uri }
-//         tombstone // <<< currently a problem
-//       }
-//     }
-//   `,
-//   // variables: {
-//   //   id: id
-//   // },
-//   fetchPolicy: 'no-cache'
-// })
+export const getTribes = {
+  query: gql`
+    query {
+      tribes {
+        id
+        public {
+          id
+          preferredName
+          description
+          avatarImage {
+            uri
+          }
+          description
+          headerImage {
+            uri
+          }
+          tombstone {
+            date
+          }
+        }
+        private {
+          id
+          preferredName
+          description
+          avatarImage {
+            uri
+          }
+          headerImage {
+            uri
+          }
+          recps
+          tombstone {
+            date
+          }
+        }
+      }
+    }
+  `,
+  fetchPolicy: 'no-cache'
+}
+
+function prune (input, attrs) {
+  const _input = pick(input, attrs)
+  Object.entries(_input).forEach(([key, value]) => {
+    if (value === '') {
+      delete _input[key]
+    }
+  })
+  return _input
+}
