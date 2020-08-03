@@ -7,6 +7,7 @@ import person from './modules/person'
 import archive from './modules/archive'
 import dialog from './modules/dialog'
 import notifications from './modules/notifications'
+import tribe from './modules/tribe'
 import { whoami } from '../lib/person-helpers.js'
 
 const apolloProvider = createProvider()
@@ -47,7 +48,8 @@ const store = new Vuex.Store({
     person,
     archive,
     dialog,
-    notifications
+    notifications,
+    tribe
   },
   getters: {
     loadingState: state => {

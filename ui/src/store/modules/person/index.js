@@ -5,8 +5,7 @@ import tree from '@/lib/tree-helpers'
 
 const state = {
   selectedProfile: {},
-  currentProfile: {},
-  currentProfiles: {}
+  currentProfile: {}
 }
 
 const getters = {
@@ -15,9 +14,6 @@ const getters = {
   },
   currentProfile: state => {
     return state.currentProfile
-  },
-  currentProfiles: state => {
-    return state.currentProfiles
   }
 }
 
@@ -27,15 +23,12 @@ const mutations = {
   },
   updateCurrentProfile (state, profile) {
     state.currentProfile = profile
-  },
-  updateCurrentProfiles (state, profileGroup) {
-    state.currentProfiles = profileGroup
   }
 }
 
 const actions = {
-  setProfiles ({ commit }, profileGroup) {
-    commit('updateCurrentProfiles', profileGroup)
+  async setProfile ({ commit }, profile) {
+    commit('updatedCurrentProfile', profile)
   },
   async setProfileById ({ commit, rootState, dispatch }, { id, type }) {
     if (id === rootState.whoami.public.profile.id) {
