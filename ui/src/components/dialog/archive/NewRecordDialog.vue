@@ -43,7 +43,7 @@ import { mapGetters, mapActions } from 'vuex'
 import {
   GET_CHANGES,
   EMPTY_STORY,
-  SET_DEFAULT_STORY
+  setDefaultStory
 } from '@/lib/story-helpers.js'
 
 export default {
@@ -60,7 +60,7 @@ export default {
   },
   data () {
     return {
-      formData: SET_DEFAULT_STORY(this.story)
+      formData: setDefaultStory(this.story)
     }
   },
   computed: {
@@ -73,6 +73,7 @@ export default {
     if (!this.editing) {
       this.formData.mentions.push(this.currentProfile)
       this.formData.contributors.push(this.whoami.public.profile)
+      this.formData.kaitiaki = [this.whoami.public.profile]
       // this.formData.access.push(this.whoami.public.profile)
       // TODO 2020-07-10 this needs to be your profle within the current group
     }
@@ -98,16 +99,16 @@ export default {
   methods: {
     ...mapActions(['setDialog']),
     close () {
-      this.formData = SET_DEFAULT_STORY(this.story)
+      this.formData = setDefaultStory(this.story)
       this.$emit('close')
     },
     submit () {
       var output = {}
       if (this.editing) {
         // get all changes
-        output = { id: this.story.id, ...GET_CHANGES(SET_DEFAULT_STORY(this.story), this.formData) }
+        output = { id: this.story.id, ...GET_CHANGES(setDefaultStory(this.story), this.formData) }
       } else {
-        output = { ...GET_CHANGES(SET_DEFAULT_STORY(EMPTY_STORY), this.formData) }
+        output = { ...GET_CHANGES(setDefaultStory(EMPTY_STORY), this.formData) }
       }
       this.$emit('submit', output)
       this.close()
