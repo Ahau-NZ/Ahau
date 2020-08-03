@@ -294,6 +294,7 @@ export function GET_CHANGES (initialValue, updatedValue) {
   if (isEqual(initialValue, updatedValue)) return changes
 
   Object.entries(updatedValue).forEach(([key, value]) => {
+    if (key === 'kaitiaki') return
     // see if the value has changes
     if (!isEqual(initialValue[key], updatedValue[key])) {
       switch (true) {
