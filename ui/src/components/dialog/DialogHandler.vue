@@ -137,7 +137,7 @@ import ConfirmationMessage from '@/components/dialog/ConfirmationMessage.vue'
 import gql from 'graphql-tag'
 
 import { PERMITTED_RELATIONSHIP_ATTRS, savePerson, saveCurrentIdentity } from '@/lib/person-helpers.js'
-import { createGroup, saveCommunity, savePublicCommunity, saveGroupProfileLink } from '@/lib/community-helpers'
+import { createGroup, saveCommunity, savePublicCommunity, saveGroupProfileLink, deleteTribe } from '@/lib/community-helpers'
 import { saveWhakapapaView } from '@/lib/whakapapa-helpers.js'
 
 import { saveLink } from '@/lib/link-helpers.js'
@@ -217,7 +217,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['nestedWhakapapa', 'selectedProfile', 'whoami', 'storeDialog', 'storeType', 'storeSource', 'currentProfile', 'currentProfiles']),
+    ...mapGetters(['nestedWhakapapa', 'selectedProfile', 'whoami', 'storeDialog', 'storeType', 'storeSource', 'currentProfile', 'currentProfiles','currentTribe']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -373,7 +373,7 @@ export default {
       }
     },
     async savePerson (input) {
-      if (!input.id) input.recps = [this.whoami.personal.groupId]
+      if (!input.id && !input.recps) input.recps = [this.whoami.personal.groupId]
       // TODO fix recps to be right group
       const res = await this.$apollo.mutate(savePerson(input))
 
@@ -711,7 +711,7 @@ export default {
     },
     async removeProfile (deleteOrIgnore) {
       if (deleteOrIgnore === 'delete') {
-        await this.deleteProfile()
+        await this.deletePerson()
       } else {
         await this.ignoreProfile()
       }
@@ -747,7 +747,7 @@ export default {
         throw err
       }
     },
-    async deleteProfile () {
+    async deletePerson () {
       if (!this.canDelete(this.selectedProfile)) return
 
       var input = {
@@ -775,44 +775,9 @@ export default {
     },
 
     async deleteCommunity () {
-      const deletePrivateRes = await this.$apollo.mutate({
-        mutation: gql`
-          mutation($input: ProfileInput!) {
-            saveProfile(input: $input)
-          }
-        `,
-        variables: {
-          input: {
-            id: this.currentProfiles.private[0].id,
-            tombstone: {
-              date: new Date()
-            }
-          }
-        }
-      })
-      if (deletePrivateRes.errors) {
-        console.error('failed to delete private profile', deletePrivateRes)
-      } else {
-        console.log('private profile deleted')
-        const deletePublicRes = await this.$apollo.mutate({
-          mutation: gql`
-            mutation($input: ProfileInput!) {
-              saveProfile(input: $input)
-            }
-          `,
-          variables: {
-            input: {
-              id: this.currentProfiles.public[0].id,
-              tombstone: {
-                date: new Date()
-              },
-              allowPublic: true
-            }
-          }
-        })
-      }
-      if (deletePublicRes.errors) {
-        console.error('failed to delete public profile', deletePublicRes)
+      const deleteTribeRes = await this.$apollo.mutate(deleteTribe(this.currentTribe))
+      if (deleteTribeRes.errors) {
+        console.error('failed to delete public profile', deleteTribeRes)
       } else {
         console.log('public profile deleted')
         this.setComponent('profile')

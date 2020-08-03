@@ -125,3 +125,24 @@ export const saveGroupProfileLink = input => {
     }
   }
 }
+
+export const deleteTribe = tribe => {
+  return {
+    mutation: gql`{
+      mutation($privateInput: ProfileInput, $publicInput: ProfileInput) {
+        deletePrivate: saveProfile(input: $privateInput)
+        deletePublic: saveProfile(input: $publicInput)
+      }
+    }`,
+    variables: {
+      privateInput: {
+        id: tribe.private[0].id,
+        tombstone: { date: new Date() }
+      },
+      publicInput: {
+        id: tribe.public[0].id,
+        tombstone: { date: new Date() }
+      }
+    }
+  }
+}
