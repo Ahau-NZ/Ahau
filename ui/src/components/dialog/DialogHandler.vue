@@ -359,6 +359,8 @@ export default {
         }
 
         if (profilePublicLinkRes.data.saveGroupProfileLink) {
+          // need a getTribe(groupId) graphql call
+          // setCurrentTibe(tribe)
           this.setComponent('profile')
           this.setProfileById({ id: groupProfile })
           this.$router.push({ name: 'profileShow', params: { id: groupProfile } }).catch(() => {})

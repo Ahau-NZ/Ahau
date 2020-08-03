@@ -115,7 +115,6 @@ export default {
               id
               avatarImage { uri }
               preferredName
-              legalName
             }
           }
           private {
@@ -130,7 +129,6 @@ export default {
               id
               avatarImage { uri }
               preferredName
-              legalName
             }
           }
         }

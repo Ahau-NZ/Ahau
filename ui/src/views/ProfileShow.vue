@@ -76,9 +76,10 @@ export default {
   },
   beforeMount () {
     this.getAllStories()
+    this.getTribes()
   },
   computed: {
-    ...mapGetters(['currentProfile', 'activeComponent', 'showStory', 'showArtefact']),
+    ...mapGetters(['currentProfile', 'activeComponent', 'showStory', 'showArtefact', 'currentTribe']),
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
@@ -104,7 +105,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['getAllStories', 'setProfileById', 'setWhoami', 'setShowArtefact', 'setDialog']),
+    ...mapActions(['getAllStories', 'setProfileById', 'setWhoami', 'setShowArtefact', 'setDialog', 'getTribes']),
     async setupProfile (id) {
       this.setProfileById({ id })
     }
