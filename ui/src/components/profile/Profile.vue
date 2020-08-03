@@ -37,12 +37,13 @@
             </v-row>
           </template>
         </ProfileCard>
-        <ProfileCard v-if="profile.type === 'person'" title="Communities" class="mt-3">
+        <!-- TODO: these can be extended to show communities in common with currentProfile  -->
+        <ProfileCard v-if="profile.id === whoami.personal.profile.id" title="Communities" class="mt-3">
           <template v-slot:content>
             <v-row v-for="tribe in connectedTribes" :key="tribe.id" class="justify-center align-center ma-0">
               <v-col cols="2" class="pt-0 pl-0">
                 <Avatar :size="mobile ? '50px' : '40px'" :image="tribe.private[0].avatarImage" :alt="tribe.private[0].preferredName" :isView="!tribe.private[0].avatarImage"/>
-              </v-col> 
+              </v-col>
               <v-col>
                 <p style="color:black;">{{tribe.private[0].preferredName}}</p>
               </v-col>
@@ -55,7 +56,7 @@
             <v-row v-for="tribe in connectedTribes" :key="tribe.id" class="justify-center align-center ma-0">
               <v-col cols="2" class="pt-0 pl-0">
                 <Avatar :size="mobile ? '50px' : '40px'" :image="tribe.private[0].avatarImage" :alt="tribe.private[0].preferredName" :isView="!tribe.private[0].avatarImage"/>
-              </v-col> 
+              </v-col>
               <v-col>
                 <p style="color:black;">{{tribe.private[0].preferredName}}</p>
               </v-col>
@@ -97,7 +98,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['whoami', 'currentTribe','tribes']),
+    ...mapGetters(['whoami', 'currentTribe', 'tribes']),
     connectedTribes () {
       return this.tribes.filter(tribe => tribe.private.length > 0)
     },

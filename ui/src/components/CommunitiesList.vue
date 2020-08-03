@@ -83,7 +83,6 @@
 <script>
 import { mapActions } from 'vuex'
 import gql from 'graphql-tag'
-import { getTribes } from '@/lib/community-helpers'
 
 const get = require('lodash.get')
 
