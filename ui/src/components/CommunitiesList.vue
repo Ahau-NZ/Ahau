@@ -39,7 +39,7 @@
                 </v-card-title>
                 <v-card-text class="body-2">
                   {{
-                  shortDescrciption(tribe.private[0])
+                  shortDescription(tribe.private[0])
                   }}
                 </v-card-text>
               </v-card>
@@ -62,7 +62,7 @@
                 </v-card-title>
                 <v-card-text class="body-2">
                   {{
-                  shortDescrciption(tribe.public[0])
+                  shortDescription(tribe.public[0])
                   }}
                 </v-card-text>
               </v-card>
