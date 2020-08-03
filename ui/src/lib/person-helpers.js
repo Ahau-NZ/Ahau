@@ -49,15 +49,13 @@ export const PERSON_FRAGMENT = gql`
     ${PERMITTED_PERSON_ATTRS.slice(3)}
     avatarImage { uri }
     headerImage { uri }
-    tombstone { date }
   }
 `
 export const KAITIAKI_FRAGMENT = gql`
   fragment KaitiakiFragment on Person {
-    ${PERMITTED_PERSON_ATTRS.slice(4)}
+    id
+    preferredName
     avatarImage { uri }
-    headerImage { uri }
-    tombstone { date }
   }
 `
 
