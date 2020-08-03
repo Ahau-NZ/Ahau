@@ -337,7 +337,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['currentProfile', 'selectedProfile', 'whoami']),
+    ...mapGetters(['currentProfile', 'selectedProfile', 'whoami', 'currentTribe']),
     remainingErrors () {
       if (this.errorMsgs && this.errorMsgs.length) {
         var remaining = this.errorMsgs.filter((f) => f !== 'grandparents' & f !== 'parents')
@@ -463,8 +463,7 @@ export default {
           action: 'registration',
           from: this.formData.id,
           message: {
-            // add kaitiaki 
-            // add groupId
+            katiaki: this.currentTribe.public.taiki[0].id, 
             community: this.currentProfile.id,
             profile: input,
             message: this.message
