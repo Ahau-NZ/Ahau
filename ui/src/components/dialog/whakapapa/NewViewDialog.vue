@@ -115,7 +115,7 @@ export default {
       const output = whakapapaSubmission(this.formData)
       const newOutput = {
         ...output,
-        csv: csv
+        csv
       }
       this.$emit('submit', newOutput)
       this.close()
