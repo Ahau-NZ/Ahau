@@ -1,7 +1,7 @@
 import gql from 'graphql-tag'
 import pick from 'lodash.pick'
 import { ARTEFACT_FRAGMENT } from './artefact-helpers'
-import { PERSON_FRAGMENT, KAITIAKI_FRAGMENT } from './person-helpers'
+import { PERSON_FRAGMENT, PUBLIC_PROFILE_FRAGMENT } from './person-helpers'
 import isEqual from 'lodash.isequal'
 import isEmpty from 'lodash.isempty'
 import clone from 'lodash.clonedeep'
@@ -168,7 +168,7 @@ export const STORY_FRAGMENT = gql`
 export const STORY_LINK_FRAGMENT = gql`
   ${ARTEFACT_FRAGMENT}
   ${PERSON_FRAGMENT}
-  ${KAITIAKI_FRAGMENT}
+  ${PUBLIC_PROFILE_FRAGMENT}
   fragment StoryLinkFragment on Story {
     artefacts: artefactLinks {
       linkId
@@ -207,7 +207,7 @@ export const STORY_LINK_FRAGMENT = gql`
       }
     }
     kaitiaki {
-      ...KaitiakiFragment
+      ...PublicProfileFragment
     }
   }
 `
@@ -294,6 +294,7 @@ export function GET_CHANGES (initialValue, updatedValue) {
   if (isEqual(initialValue, updatedValue)) return changes
 
   Object.entries(updatedValue).forEach(([key, value]) => {
+    if (key === 'kaitiaki') return
     // see if the value has changes
     if (!isEqual(initialValue[key], updatedValue[key])) {
       switch (true) {
