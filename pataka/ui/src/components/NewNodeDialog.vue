@@ -59,14 +59,17 @@ export default {
     submission () {
       let submission = {}
       Object.entries(this.formData).map(([key, value]) => {
+        /* Hack for blobId */
         if (key === 'avatarImage') {
           const { blobId, mimeType, size, unbox, uri } = this.formData[key]
-          submission.avatarImage = {
-            blob: blobId,
-            mimeType,
-            size,
-            unbox,
-            uri
+          if (uri) {
+            submission.avatarImage = {
+              blob: blobId,
+              mimeType,
+              size,
+              unbox,
+              uri
+            }
           }
         } else if (!isEmpty(this.formData[key])) submission[key] = value
       })

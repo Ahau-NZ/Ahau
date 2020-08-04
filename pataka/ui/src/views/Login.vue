@@ -115,7 +115,6 @@ export default {
         'avatarImage',
         'description'
       )
-      console.log('save -> newProfile', newProfile)
       const result = await this.$apollo.mutate({
         mutation: gql`
           mutation($input: ProfileInput!) {

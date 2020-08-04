@@ -13,16 +13,6 @@
         :fullscreen="mobile"
       >
         <div>
-          <!-- Mobile App Bar -->
-          <!-- Removed Appbar. Using DialogTitleBanner as header with back button -->
-          <!-- <Appbar
-            v-if="enableBar && mobile"
-            :enableMenu="enableMenu"
-            app
-            :goBack="goBack"
-            class="pb-12"
-          />-->
-
           <!-- Dialog Card -->
           <v-card :min-height="mobile ? height : 'auto'">
             <v-container width="100%" class="pa-5 pb-2" :style="`background: ${background};`">
@@ -38,12 +28,10 @@
               <slot name="title"></slot>
 
               <!--=== CONTENT OF DIALOG CARD ===-->
-              <!-- Slot = Content see: NewNodeDialogV2.vue for content -->
               <slot name="content"></slot>
 
               <!--=== BOTTOM OF DIALOG CARD ===-->
               <v-row>
-                <!-- Slot = before-actions -->
                 <slot name="before-actions"></slot>
 
                 <v-col
