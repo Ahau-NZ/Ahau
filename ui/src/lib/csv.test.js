@@ -22,7 +22,6 @@ test('csv.parse', t => {
 
   csv.parse(A)
     .then(csv => {
-      console.log(csv)
       t.equal(csv.length, 2, 'loads 2 rows')
       t.deepEqual(
         csv[1],
