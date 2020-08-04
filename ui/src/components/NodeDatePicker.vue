@@ -1,6 +1,6 @@
 <template>
   <div>
-    <fieldset :class="`${customClass}`">
+    <fieldset :class="`${customClass}`" @mouseover="$emit('hover')" @mouseleave="$emit('hover')">
       <legend :class="`ml-2 ${labelClass}`">
         {{label}}
       </legend>
