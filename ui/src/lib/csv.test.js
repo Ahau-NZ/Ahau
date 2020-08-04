@@ -9,7 +9,8 @@ const d3 = require('d3')
 // for columns
 const ALL_COLUMNS = 'parentNumber,number,preferredName,legalName,gender,relationshipType,birthOrder,bornAt,deceased,diedAt,phone,email,address,location,profession'
 const MISSING_COLUMNS = 'parentNumber,number,legalName,gender,relationshipType,bornAt,deceased,diedAt,phone,address,location'
-const EXTRA_COLUMNS = `${ALL_COLUMNS},extra1,extra2`
+const EXTRA_COLUMNS = `${ALL_COLUMNS},extra1,extra2
+`
 const MISPELLED_COLUMNS = 'parentNumbe,number,preferredName,legalName,gender,relationshipType,birthOrder,bornAt,deceased,diedAt,phone,email,address,location,profession'
 
 // for numbers
@@ -22,6 +23,16 @@ const VALID_NUMBERS = `${ALL_COLUMNS}
 ,1,,,,,,,,,,,,,
 1,2,,,,,,,,,,,,,
 1,3,,,,,,,,,,,,,
+`
+
+// for parentNumber
+const INVALID_FIRST_PARENT_NUMBER = `${ALL_COLUMNS}
+1,2,,,,,,,,,,,,,
+`
+const INVALID_PARENT_NUMBER = `${ALL_COLUMNS}
+,1,,,,,,,,,,,,,
+1,2,,,,,,,,,,,,,
+4,3,,,,,,,,,,,,,
 `
 
 const CORRECT_PERSONS = `${ALL_COLUMNS}
@@ -60,7 +71,7 @@ test('header columns', t => {
 
   csv.parse(MISPELLED_COLUMNS)
     .catch(err => {
-      t.deepEqual(err, ['[columns] Missing column(s): parentNumber', '[columns] Additional header column(s) not allowed: parentNumbe'], 'returns error for additional columns')
+      t.deepEqual(err, ['[columns] Missing column(s): parentNumber', '[columns] Additional header column(s) not allowed: parentNumbe'], 'returns error for wrong columns')
     })
 })
 
@@ -68,12 +79,39 @@ test('number', t => {
   t.plan(2)
   csv.parse(DUPLICATE_NUMBERS)
     .catch(err => {
-      t.deepEqual(err, ['[number] \'1\' has already been used and is not unique'], 'returns error for additional columns')
+      t.deepEqual(err, ['[number] \'1\' has already been used and is not unique'], 'returns error for duplicate numbers')
     })
 
   csv.parse(VALID_NUMBERS)
     .then(res => {
       t.true(res.length === 3, 'returns no errors')
+    })
+    .catch(err => {
+      console.log(err)
+    })
+})
+
+test('parentNumber', t => {
+  t.plan(2)
+  csv.parse(INVALID_FIRST_PARENT_NUMBER)
+    .then(res => {
+      console.log(res)
+    })
+    .catch(err => {
+      t.deepEqual(err, [
+        '[parentNumber] the first parent number must be empty\n [VALUE] 1',
+        '[parentNumber] a parentNumber was used before its number was assigned\n [VALUE] 1'
+      ], 'returns error for non-empty first parentNumber')
+    })
+
+  csv.parse(INVALID_PARENT_NUMBER)
+    .then(res => {
+      console.log(res)
+    })
+    .catch(err => {
+      t.deepEqual(err, [
+        '[parentNumber] a parentNumber was used before its number was assigned\n [VALUE] 4'
+      ], 'returns error for parentNumber that has number which hasnt been seen yet')
     })
 })
 
@@ -270,17 +308,3 @@ test('real data', (t) => {
   })
   t.end()
 })
-
-/*
-  Tests
-
-  -X check columns
-    -X columns must remain untouched
-      -X validate the columns
-  - check number
-    - all numbers must be unique
-  - check parentNumber
-    - parentNumber must exist as a number
-    - first parentNumber must be empty (the root node cannot have a parent?)
-  -
-*/

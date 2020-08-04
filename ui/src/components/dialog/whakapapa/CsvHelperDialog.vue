@@ -31,10 +31,10 @@
                 The <b>parentNumber</b> column is used to point to that persons parents <b>number.</b>
               </li>
               <li>
-                If the <b>parentNumber</b> field is missing, that person will not appear in the created whakapapa tree.
+                If the <b>parentNumber</b> field is missing (apart from the first row), that person will not appear in the created whakapapa tree.
               </li>
               <li class="font-weight-bold">
-                You must leave the first parentNumber empty.
+                You must leave the first rows parentNumber empty.
               </li>
               <li>All fields listed in the table below are optional and can be left empty. If used, they do need to be entered in the correct <b>format</b>.</li>
             </ul>

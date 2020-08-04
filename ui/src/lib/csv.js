@@ -46,11 +46,20 @@ function parse (fileContent) {
     const seen = new Set()
 
     const csv = d3.csvParse(fileContent, (d, i) => {
+      if (i === 0 && !isEmpty(d.parentNumber)) {
+        errors.push('[parentNumber] the first parent number must be empty\n [VALUE] ' + d.parentNumber)
+      }
+
       if (seen.has(d.number)) {
-        errors = [`[number] '${d.number}' has already been used and is not unique`]
+        errors.push(`[number] '${d.number}' has already been used and is not unique`)
       }
 
       seen.add(d.number)
+
+      // the parentNumber should already exist as a number
+      if (!isEmpty(d.parentNumber) && !seen.has(d.parentNumber)) {
+        errors.push('[parentNumber] a parentNumber was used before its number was assigned\n [VALUE] ' + d.parentNumber)
+      }
 
       count++
 
@@ -125,9 +134,7 @@ function personErrors (d, i) {
   Object.keys(schema)
     .filter(key => !schema[key].action(d[key])) // the action is the validation function for this key
     .forEach(key => {
-      if (key === 'parentNumber' && i === 0) {
-        errors.push('[parentNumber] the first parentNumber needs to be left empty')
-      }
+      if (key === 'parentNumber' && i === 0) return
       if (d[key] !== undefined) {
         // dont include undefined values in the errors
         errors.push(`[ROW-${i + 1}] ${schema[key].msg} [VALUE]: ${d[key]}`)
