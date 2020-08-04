@@ -6,13 +6,19 @@
         <v-col cols="12" sm="12" md="12">
           <v-row>
             <v-col cols="12" class="pa-1">
-              <v-text-field
-                v-model="formData.title"
-                label="Title"
-                v-bind="customProps"
-                class="title-input"
-                style="text-align: start; font-size: 1.2em; font-weight: 500;"
-              />
+              <v-tooltip top open-delay="700">
+                <template v-slot:activator="{ on }">
+                  <v-text-field
+                    v-on="on"
+                    v-model="formData.title"
+                    label="Title"
+                    v-bind="customProps"
+                    class="title-input"
+                    style="text-align: start; font-size: 1.2em; font-weight: 700;"
+                  />
+                </template>
+                <span>A short, descriptive name for the record</span>
+              </v-tooltip>
             </v-col>
             <v-col v-if="formData.artefacts && formData.artefacts.length > 0" cols="12" class="pl-0 pr-0">
               <ArtefactCarousel
@@ -23,27 +29,43 @@
                 editing
               />
             </v-col>
-            <v-col cols="6" >
-              <UploadArtefactButton showLabel @artefacts="processArtefacts($event)"/>
-            </v-col>
-            <v-col :cols="showLocation ? '12':'6'" class="py-0">
-              <div v-if="!showLocation" @click="showLocation = true" class="pt-3">
-                <AddButton :size="mobile ? '40px' : '60px'" icon="mdi-map-plus"/>
-                <p class="add-label clickable" >Add location</p>
-              </div>
-              <v-row v-if="showLocation">
-                <v-col :cols="formData.artefacts && formData.artefacts.length > 0 ? '6':'12'" class="pa-1">
-                  <v-textarea
-                    v-model="formData.location"
-                    label="Location"
-                    v-bind="customProps"
-                    no-resize
-                    rows="3"
-                    auto-grow
-                  >
-                  </v-textarea>
+            <v-tooltip top center open-delay="700">
+              <template v-slot:activator="{ on }">
+                <v-col v-on="on" cols="6" >
+                  <UploadArtefactButton showLabel @artefacts="processArtefacts($event)"/>
                 </v-col>
-                <v-col :cols="formData.artefacts && formData.artefacts.length > 0 ? '6':'12'" class="pa-1">
+              </template>
+              <span>Media assets associated with the record<br>Can be images, documents, video, or audio files. </span>
+            </v-tooltip>
+            <!-- <v-col cols="6" >
+              <UploadArtefactButton showLabel @artefacts="processArtefacts($event)"/>
+            </v-col> -->
+            <v-tooltip top open-delay="700">
+              <template v-slot:activator="{ on }">
+                <v-col v-on="on" :cols="showLocation ? '12':'6'" class="py-0">
+                  <div v-if="!showLocation" @click="showLocation = true" class="pt-3">
+                    <AddButton :size="mobile ? '40px' : '60px'" icon="mdi-map-plus"/>
+                    <p class="add-label clickable" >Add location</p>
+                  </div>
+                  <v-row v-if="showLocation">
+                    <v-col :cols="formData.artefacts && formData.artefacts.length > 0 ? '6':'12'" class="pa-1">
+                      <v-textarea
+                        v-on="on"
+                        v-model="formData.location"
+                        label="Location"
+                        v-bind="customProps"
+                        no-resize
+                        rows="3"
+                        auto-grow
+                      >
+                      </v-textarea>
+                    </v-col>
+                  </v-row>
+                </v-col>
+              </template>
+              <span>A short description about a location <br>or place associated with the record</span>
+            </v-tooltip>
+                <!-- <v-col :cols="formData.artefacts && formData.artefacts.length > 0 ? '6':'12'" class="pa-1">
                   <v-textarea
                     v-model="formData.locationDescription"
                     label="Location description"
@@ -53,28 +75,38 @@
                     auto-grow
                   >
                   </v-textarea>
-                </v-col>
-              </v-row>
-            </v-col>
+                </v-col> -->
 
             <v-col cols="12" class="pa-1">
-              <v-textarea
-                v-model="formData.description"
-                label="Description"
-                v-bind="customProps"
-                no-resize
-                rows="3"
-                auto-grow
-              >
-              </v-textarea>
+              <v-tooltip top open-delay="700">
+                <template v-slot:activator="{ on }">
+                  <v-textarea
+                    v-on="on"
+                    v-model="formData.description"
+                    label="Description"
+                    v-bind="customProps"
+                    no-resize
+                    rows="3"
+                    auto-grow
+                  >
+                  </v-textarea>
+                </template>
+                <span>An in depth description of the record</span>
+              </v-tooltip>
             </v-col>
-            <v-col cols="12" sm="12" md="6" class="pa-1">
-              <NodeDatePicker
-                :value.sync="formData.startDate"
-                label="Date"
-                min="-3000-01-01"
-              />
-            </v-col>
+            <v-tooltip top open-delay="700">
+              <template v-slot:activator="{ on }">
+                <v-col v-on="on" cols="12" sm="12" md="6" class="pa-1">
+                  <NodeDatePicker
+                    :value.sync="formData.startDate"
+                    label="Date"
+                    min="-3000-01-01"
+                  />
+                </v-col>
+              </template>
+              <span>Date in relation to the information provided in the record</span>
+            </v-tooltip>
+
             <v-col cols="12" sm="12" md="6" class="pa-1">
               <v-checkbox v-model="hasEndDate" v-if="!hasEndDate"
                 label="include an end date" :hide-details="true"
@@ -91,10 +123,17 @@
 
             <!-- ADD MENTIONS -->
             <v-col cols="12" md="auto" class="pa-5">
-              <v-row v-if="!showMentions" @click="showMentions = true; mentions = []" class="pl-5">
-                <v-icon small>mdi-plus</v-icon>
-                <AddButton size="20px" icon="mdi-account" iconClass="pr-3" label="Mention" justify="start"/>
-              </v-row>
+              <v-tooltip top open-delay="700" :disabled="showMentions">
+                <template v-slot:activator="{ on }">
+                  <div v-on="on">
+                    <v-row v-if="!showMentions" @click="showMentions = true; mentions = []" class="pl-5">
+                      <v-icon small>mdi-plus</v-icon>
+                      <AddButton size="20px" icon="mdi-account" iconClass="pr-3" label="Mention" justify="start"/>
+                    </v-row>
+                  </div>
+                </template>
+                <span>People and communities that are mentioned<br>or connected to the record</span>
+              </v-tooltip>
               <ProfileSearchBar
                 :selectedItems.sync="formData.mentions"
                 :items="mentions"
@@ -140,10 +179,18 @@
             </v-col> -->
             <!-- ADD CONTRIBUTORS -->
             <v-col cols="12" md="auto" class="pa-5">
-              <v-row v-if="!showContributors" @click="showContributors = true; contributors = []" class="pl-5">
-                <v-icon small>mdi-plus</v-icon>
-                  <AddButton size="20px" icon="mdi-library" iconClass="pr-3" label="Contributor"  justify="start"/>
-              </v-row>
+              <v-tooltip top open-delay="700" :disabled="showContributors">
+                <template v-slot:activator="{ on }">
+                  <div v-on="on">
+                    <v-row v-if="!showContributors" @click="showContributors = true; contributors = []" class="pl-5">
+                      <v-icon small>mdi-plus</v-icon>
+                        <AddButton size="20px" icon="mdi-library" iconClass="pr-3" label="Contributor"  justify="start"/>
+                    </v-row>
+                  </div>
+                </template>
+                <span>A Contributor is the person or people who contributed<br>to the submission of the record into the archive</span>
+              </v-tooltip>
+
               <ProfileSearchBar
                 :selectedItems.sync="formData.contributors"
                 :items="contributors"
@@ -246,13 +293,20 @@
       <v-expand-transition>
         <div v-show="show">
           <v-row class="px-3">
-
             <!-- RELATED RECORDS -->
             <v-col cols="12" md="auto" class="pa-5">
-              <v-row v-if="!showRecords" @click="showRecords = true" class="pl-5">
-                <v-icon small>mdi-plus</v-icon>
-                <AddButton size="20px" icon="mdi-book-multiple" iconClass="pr-3" label="Related records"  justify="start"/>
-              </v-row>
+              <v-tooltip top open-delay="700" :disabled="showRecords">
+                <template v-slot:activator="{ on }">
+                  <div v-on="on">
+                    <v-row v-if="!showRecords" @click="showRecords = true" class="pl-5">
+                      <v-icon small>mdi-plus</v-icon>
+                      <AddButton size="20px" icon="mdi-book-multiple" iconClass="pr-3" label="Related records"  justify="start"/>
+                    </v-row>
+                  </div>
+                </template>
+                <span>Related records are records that have a close connection <br> and are used to guide viewers from one record to another</span>
+              </v-tooltip>
+
               <ProfileSearchBar
                 :selectedItems.sync="formData.relatedRecords"
                 :items="filteredStories"
@@ -266,10 +320,18 @@
             </v-col>
             <!-- ADD CREATOR -->
             <v-col cols="12" md="auto" class="pa-5">
-              <v-row v-if="!showCreators" @click="showCreators = true; creators = []" class="pl-5">
-                <v-icon small>mdi-plus</v-icon>
-                  <AddButton size="20px" icon="mdi-library" iconClass="pr-3" label="Creators"  justify="start"/>
-              </v-row>
+              <v-tooltip top open-delay="700" :disabled="showCreators">
+                <template v-slot:activator="{ on }">
+                  <div v-on="on">
+                    <v-row v-if="!showCreators" @click="showCreators = true; creators = []" class="pl-5">
+                      <v-icon small>mdi-plus</v-icon>
+                        <AddButton size="20px" icon="mdi-library" iconClass="pr-3" label="Creators"  justify="start"/>
+                    </v-row>
+                  </div>
+                </template>
+                <span>A Creator is the person that is primarily responsible for providing the essential knowledge that goes into the record</span>
+              </v-tooltip>
+
               <ProfileSearchBar
                 :selectedItems.sync="formData.creators"
                 :items="creators"
@@ -301,29 +363,25 @@
               />
             </v-col>
             <v-col cols="12" class="pa-1">
-              <v-textarea
-                v-if="show"
-                v-model="formData.contributionNotes"
-                label="Contribution notes"
-                v-bind="customProps"
-                no-resize
-                rows="3"
-                auto-grow
-              >
-              </v-textarea>
+              <v-tooltip top open-delay="700">
+                <template v-slot:activator="{ on }">
+                  <v-textarea
+                    v-on="on"
+                    v-if="show"
+                    v-model="formData.contributionNotes"
+                    label="Contribution notes"
+                    v-bind="customProps"
+                    no-resize
+                    rows="3"
+                    auto-grow
+                  >
+                  </v-textarea>
+                </template>
+                <span>Extra context about the record creation process</span>
+              </v-tooltip>
+
             </v-col>
-            <v-col cols="12" class="pa-1">
-              <v-textarea
-                v-if="show"
-                v-model="formData.locationDescription"
-                label="Location description"
-                v-bind="customProps"
-                no-resize
-                rows="3"
-                auto-grow
-              >
-              </v-textarea>
-            </v-col>
+
             <!-- <v-col cols="12" class="pa-1">
               <v-textarea
                 v-if="show"
@@ -337,43 +395,73 @@
               </v-textarea>
             </v-col> -->
             <v-col :cols="mobile ? '6' : '3'" class="pa-1">
-              <v-text-field
-                v-model="formData.format"
-                label="Format"
-                v-bind="customProps"
-              />
+              <v-tooltip top open-delay="700">
+                <template v-slot:activator="{ on }">
+                  <v-text-field
+                    v-on="on"
+                    v-model="formData.format"
+                    label="Format"
+                    v-bind="customProps"
+                  />
+                </template>
+                <span>The specific physical or digital form of the record</span>
+              </v-tooltip>
             </v-col>
             <v-col :cols="mobile ? '6' : '3'" class="pa-1">
-              <v-text-field
-                v-model="formData.identifier"
-                label="Identifier"
-                v-bind="customProps"
-              />
+              <v-tooltip top open-delay="700">
+                <template v-slot:activator="{ on }">
+                  <v-text-field
+                    v-on="on"
+                    v-model="formData.identifier"
+                    label="Identifier"
+                    v-bind="customProps"
+                  />
+                </template>
+                <span>A unique, unambiguous reference to the record</span>
+              </v-tooltip>
             </v-col>
             <v-col :cols="mobile ? '6' : '3'" class="pa-1">
-              <v-text-field
-                v-model="formData.source"
-                label="Source"
-                v-bind="customProps"
-              />
+              <v-tooltip top open-delay="700">
+                <template v-slot:activator="{ on }">
+                  <v-text-field
+                    v-on="on"
+                    v-model="formData.source"
+                    label="Source"
+                    v-bind="customProps"
+                  />
+                </template>
+                <span>Source provides a reference to the resource or institution<br>from where the record is contributed or originated</span>
+              </v-tooltip>
             </v-col>
             <v-col :cols="mobile ? '6' : '3'" class="pa-1">
-              <v-text-field
-                v-model="formData.language"
-                label="Language"
-                v-bind="customProps"
-              />
+              <v-tooltip top open-delay="700">
+                <template v-slot:activator="{ on }">
+                  <v-text-field
+                    v-on="on"
+                    v-model="formData.language"
+                    label="Language"
+                    v-bind="customProps"
+                  />
+                </template>
+                <span>The language that the information or media asset has been provided</span>
+              </v-tooltip>
             </v-col>
             <v-col cols="12" class="pa-1">
-              <v-textarea
-                v-model="formData.transcription"
-                label="Translation/Transcription"
-                v-bind="customProps"
-                no-resize
-                rows="3"
-                auto-grow
-              >
-              </v-textarea>
+              <v-tooltip top open-delay="700">
+                <template v-slot:activator="{ on }">
+                  <v-textarea
+                    v-on="on"
+                    v-model="formData.transcription"
+                    label="Translation/Transcription"
+                    v-bind="customProps"
+                    no-resize
+                    rows="3"
+                    auto-grow
+                  >
+                  </v-textarea>
+                </template>
+                <span>Transcription is a plain text field used to provide a text transcription or translation <br>of an audio or video recording, or of text in an image or document</span>
+              </v-tooltip>
             </v-col>
           </v-row>
         </div>
