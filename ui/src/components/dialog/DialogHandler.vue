@@ -91,12 +91,12 @@
       :view="view" @close="close"
       @submit="$emit('deleteWhakapapa')"
     />
-    <WhakapapaShowHelper
+    <WhakapapaShowHelper v-if="isActive('whakapapa-helper')"
       :show="isActive('whakapapa-helper')"
       :title="`Whakapapa ---- Family tree`"
       @close="close"
     />
-    <WhakapapaTableHelper
+    <WhakapapaTableHelper v-if="isActive('whakapapa-table-helper')"
       :show="isActive('whakapapa-table-helper')"
       :title="`Whakapapa registry`"
       @close="close"
@@ -136,10 +136,11 @@ import ConfirmationMessage from '@/components/dialog/ConfirmationMessage.vue'
 
 import gql from 'graphql-tag'
 
-import { PERMITTED_RELATIONSHIP_ATTRS, saveProfile, saveCurrentIdentity } from '@/lib/person-helpers.js'
+import { PERMITTED_RELATIONSHIP_ATTRS, savePerson, saveCurrentIdentity } from '@/lib/person-helpers.js'
 import { saveCommunity } from '@/lib/community-helpers'
+import { saveWhakapapaView } from '@/lib/whakapapa-helpers.js'
 
-import { SAVE_LINK } from '@/lib/link-helpers.js'
+import { saveLink } from '@/lib/link-helpers.js'
 import pick from 'lodash.pick'
 import isEmpty from 'lodash.isempty'
 
@@ -314,7 +315,7 @@ export default {
         if (res.errors) {
           console.error('failed to create community', res)
         }
-        const id = res.date.saveProfile
+        const id = res.data.saveProfile
         if (id) {
           this.setComponent('profile')
           this.setProfileById({ id })
@@ -322,10 +323,10 @@ export default {
         }
       }
     },
-    async saveProfile (input) {
-      if (!input.recps) input.recps = [this.whoami.personal.groupId]
+    async savePerson (input) {
+      if (!input.id) input.recps = [this.whoami.personal.groupId]
       // TODO fix recps to be right group
-      const res = await this.$apollo.mutate(saveProfile(input))
+      const res = await this.$apollo.mutate(savePerson(input))
 
       if (res.errors) {
         console.error(`failed to ${input.id ? 'update' : 'save'} profile`, res)
@@ -362,16 +363,7 @@ export default {
             }
           }
           try {
-            const res = await this.$apollo.mutate({
-              mutation: gql`
-              mutation($input: WhakapapaViewInput) {
-                saveWhakapapaView(input: $input)
-              }
-              `,
-              variables: {
-                input
-              }
-            })
+            const res = await this.$apollo.mutate(saveWhakapapaView(input))
             if (res.data) {
               this.$emit('refreshWhakapapa')
 
@@ -449,7 +441,7 @@ export default {
         } else {
           // if person doesnt exist create one
           if (!id) {
-            id = await this.saveProfile($event)
+            id = await this.savePerson($event)
             if (!id) return
           }
 
@@ -563,7 +555,7 @@ export default {
       // TODO check recps
 
       try {
-        const res = await this.$apollo.mutate(SAVE_LINK(input))
+        const res = await this.$apollo.mutate(saveLink(input))
         if (res.errors) {
           console.error('failed to createChildLink', res)
           return
@@ -598,7 +590,7 @@ export default {
       if (this.isPersonalProfile(profileId)) {
         await this.saveCurrentIdentity(input)
       } else {
-        await this.saveProfile({ id: profileId, ...input })
+        await this.savePerson({ id: profileId, ...input })
       }
 
       const relationshipAttrs = pick(input, [...PERMITTED_RELATIONSHIP_ATTRS])
@@ -613,7 +605,7 @@ export default {
           // recps: this.view.recps
         }
         try {
-          const linkRes = await this.$apollo.mutate(SAVE_LINK(input))
+          const linkRes = await this.$apollo.mutate(saveLink(input))
           if (linkRes.errors) {
             console.error('failed to update child link', linkRes)
             return
@@ -683,16 +675,7 @@ export default {
         }
       }
       try {
-        const res = await this.$apollo.mutate({
-          mutation: gql`
-            mutation($input: WhakapapaViewInput) {
-              saveWhakapapaView(input: $input)
-            }
-          `,
-          variables: {
-            input
-          }
-        })
+        const res = await this.$apollo.mutate(saveWhakapapaView(input))
         this.$emit('refreshWhakapapa')
         if (res.data) {
           // if removing top ancestor on main whanau line, update the whakapapa view focus with child/partner
@@ -718,21 +701,13 @@ export default {
     async deleteProfile () {
       if (!this.canDelete(this.selectedProfile)) return
 
-      const profileResult = await this.$apollo.mutate({
-        mutation: gql`
-          mutation($input: ProfileInput!) {
-            saveProfile(input: $input)
-          }
-        `,
-        variables: {
-          input: {
-            id: this.selectedProfile.id,
-            tombstone: {
-              date: new Date()
-            }
-          }
-        }
-      })
+      var input = {
+        id: this.selectedProfile.id,
+        tombstone: { date: new Date() }
+      }
+
+      const profileResult = await this.$apollo.mutate(savePerson(input))
+
       if (profileResult.errors) {
         console.error('failed to delete profile', profileResult)
         return

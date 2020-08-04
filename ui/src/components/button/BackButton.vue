@@ -9,6 +9,10 @@
           :image="whakapapa.image ? whakapapa.image : null"
           :alt="whakapapa.name"
           :isView="!whakapapa.image"
+          showLabel
+          row
+     
+          
         />
       </v-row>
     </v-btn>
@@ -21,6 +25,10 @@
           :image="currentProfile.avatarImage ? currentProfile.avatarImage : null"
           :alt="currentProfile.preferredName"
           :gender="currentProfile.gender"
+          showLabel
+          row
+      
+          
         />
       </v-row>
     </v-btn>

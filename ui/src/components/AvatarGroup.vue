@@ -1,6 +1,6 @@
 <template>
   <v-col class="pt-0 pb-0">
-    <v-row>
+    <v-row v-if="groupTitle">
       <v-col class="pt-1 pb-0">
         <small class="label"> {{ groupTitle }} </small>
       </v-col>
@@ -28,6 +28,7 @@
             @delete="$emit('delete', i)"
             :isView="isView"
             :dark="dark"
+            :row="row"
           />
         </div>
       </div>
@@ -46,14 +47,15 @@ export default {
   props: {
     profiles: { type: Array, default: null },
     groupTitle: { type: String, default: null },
-    showLabels: { type: Boolean, default: false },
+    showLabels: Boolean,
     size: { type: String, default: '80px' },
     customClass: { type: String, default: 'd-flex justify-start align-center pa-2 pl-4' },
     spacing: { type: String, default: 'pr-5' },
-    deletable: { type: Boolean, default: false },
-    isView: { type: Boolean, default: false },
+    deletable: Boolean,
+    isView: Boolean,
     clickable: { type: Boolean, default: true },
-    dark: { type: Boolean, default: false }
+    dark: Boolean,
+    row: Boolean
   },
   computed: {
     columns () {

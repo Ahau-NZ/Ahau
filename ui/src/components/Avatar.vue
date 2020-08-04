@@ -14,8 +14,13 @@
             :style="customStyle"
           />
         </v-avatar>
+        <v-row v-if="showLabel && row">
+          <v-col class="pl-5">
+            <p :style="`font-size:1em; ${theme};`"> {{ alt }} </p>
+          </v-col>
+        </v-row>
       </v-row>
-      <v-row v-if="showLabel" justify="center">
+      <v-row v-if="showLabel && !row" justify="center">
         <p :style="`font-size:0.8em; ${theme}; margin-bottom:0`"> {{ alt }} </p>
       </v-row>
     </v-col>
@@ -40,7 +45,7 @@
           <ImagePicker @updateAvatar="updateAvatar($event)" />
         </div>
       </v-row>
-      <v-row v-if="showLabel" justify="center">
+      <v-row v-if="showLabel && !row" justify="center">
         <p :style="`font-size:0.8em ${theme};margin-bottom:0`"> {{ alt }} </p>
       </v-row>
     </v-col>
@@ -58,14 +63,15 @@ export default {
     alt: String,
     gender: String,
     aliveInterval: String,
-    deceased: { type: Boolean, default: false },
+    deceased: Boolean,
     size: { type: String, default: '25vh' },
-    showLabel: { type: Boolean, default: false },
-    clickable: { type: Boolean, default: false },
-    isView: { type: Boolean, default: false },
-    isEditing: { type: Boolean, default: false },
-    deletable: { type: Boolean, default: false },
-    dark: { type: Boolean, default: false }
+    showLabel: Boolean,
+    clickable: Boolean,
+    isView: Boolean,
+    isEditing: Boolean,
+    deletable: Boolean,
+    dark: Boolean,
+    row: Boolean
   },
   components: {
     ImagePicker
