@@ -6,57 +6,107 @@ const d3 = require('d3')
 
 // NOTE: column names need to be on same line as opening of string literal
 
-// missing "deceased" column
-const A = `parentNumber,number,preferredName,legalName,gender,bornAt,diedAt,birthOrder,relationshipType,profession,phone,email,address,location
-,1,Basia,Basia Adanez,female,,,,birth,Marketing Manager,1851844701,badanez0@yale.edu,2 Gateway Center,Philippines
-1,2,Phelia,Phelia Curness,male,,,,adopted,Pharmacist,9481822794,pcurness1@irs.gov,52 Prentice Terrace,Chile
+// for columns
+const ALL_COLUMNS = 'parentNumber,number,preferredName,legalName,gender,relationshipType,birthOrder,bornAt,deceased,diedAt,phone,email,address,location,profession'
+const MISSING_COLUMNS = 'parentNumber,number,legalName,gender,relationshipType,bornAt,deceased,diedAt,phone,address,location'
+const EXTRA_COLUMNS = `${ALL_COLUMNS},extra1,extra2`
+const MISPELLED_COLUMNS = 'parentNumbe,number,preferredName,legalName,gender,relationshipType,birthOrder,bornAt,deceased,diedAt,phone,email,address,location,profession'
+
+// for numbers
+const DUPLICATE_NUMBERS = `${ALL_COLUMNS}
+,1,,,,,,,,,,,,,
+,1,,,,,,,,,,,,,
 `
-// person missing relationshipType
-const B = `parentNumber,number,preferredName,legalName,gender,bornAt,diedAt,birthOrder,relationshipType,profession,phone,email,address,location
-,1,Basia,Basia Adanez,female,,,,birth,Marketing Manager,1851844701,badanez0@yale.edu,2 Gateway Center,Philippines
-1,2,Phelia,Phelia Curness,male,,,,,Pharmacist,9481822794,pcurness1@irs.gov,52 Prentice Terrace,Chile
+
+const VALID_NUMBERS = `${ALL_COLUMNS}
+,1,,,,,,,,,,,,,
+1,2,,,,,,,,,,,,,
+1,3,,,,,,,,,,,,,
 `
+
+const CORRECT_PERSONS = `${ALL_COLUMNS}
+,1,Claudine,Claudine Eriepa,female,birth,16,01/02/0304,no,,021123456789,claudine@me.com,123 Happy Lane,HappyVille,Teacher
+1,2,Cherese,Cherese Eriepa,female,birth,2,24/02/0304,yes,24/02/0305,021167892345,cherese@me.com,123 Happy Lane,HappyVille,Software Engineer
+2,3,Daynah,Daynah Eriepa,female,birth,3,24/02/0304,no,,021167823459,daynah@me.com,123 Happy Lane,HappyVille,Community Advisor
+`
+
+/*
+  row 1 - incorrect relationshipType
+  row 2 - incorrect DOB
+  row 3 - incorrect gender
+*/
+const INCORRECT_PERSONS = `${ALL_COLUMNS}
+,1,Claudine,Claudine Eriepa,female,bith,16,01/02/0304,no,,021123456789,claudine@me.com,123 Happy Lane,HappyVille,Teacher
+1,2,Cherese,Cherese Eriepa,female,birth,2,24/02,no,,021167892345,cherese@me.com,123 Happy Lane,HappyVille,Software Engineer
+2,3,Daynah,Daynah Eriepa,fema,birth,3,24/02/0304,no,,021167823459,daynah@me.com,123 Happy Lane,HappyVille,Community Advisor
+`
+
+test('header columns', t => {
+  t.plan(4)
+  csv.parse(ALL_COLUMNS)
+    .then(res => {
+      t.deepEqual(res.columns, csv.PERMITTED_CSV_COLUMNS, 'validates correct columns given')
+    })
+
+  csv.parse(MISSING_COLUMNS)
+    .catch(err => {
+      t.deepEqual(err, ['[columns] Missing column(s): preferredName,birthOrder,email,profession'], 'returns errors for missing columns')
+    })
+
+  csv.parse(EXTRA_COLUMNS)
+    .catch(err => {
+      t.deepEqual(err, ['[columns] Additional header column(s) not allowed: extra1,extra2'], 'returns error for additional columns')
+    })
+
+  csv.parse(MISPELLED_COLUMNS)
+    .catch(err => {
+      t.deepEqual(err, ['[columns] Missing column(s): parentNumber', '[columns] Additional header column(s) not allowed: parentNumbe'], 'returns error for additional columns')
+    })
+})
+
+test('number', t => {
+  t.plan(2)
+  csv.parse(DUPLICATE_NUMBERS)
+    .catch(err => {
+      t.deepEqual(err, ['[number] \'1\' has already been used and is not unique'], 'returns error for additional columns')
+    })
+
+  csv.parse(VALID_NUMBERS)
+    .then(res => {
+      t.true(res.length === 3, 'returns no errors')
+    })
+})
 
 test('csv.parse', t => {
-  t.plan(3)
+  t.plan(2)
 
-  csv.parse(A)
+  csv.parse(CORRECT_PERSONS)
     .then(csv => {
-      console.log(csv)
-      t.equal(csv.length, 2, 'loads 2 rows')
-      t.deepEqual(
-        csv[1],
-        {
-          parentNumber: '1', // TODO should be number?
-          number: '2',
-          preferredName: 'Phelia',
-          legalName: 'Phelia Curness',
-          gender: 'male',
-          bornAt: '', // TODO should be undefined ?
-          diedAt: '',
-          birthOrder: '',
-          phone: '9481822794',
-          email: 'pcurness1@irs.gov',
-          address: '52 Prentice Terrace',
-          location: 'Chile',
-          profession: 'Pharmacist',
-          relationshipType: 'adopted',
-          deceased: undefined // << adds one missing from cols
-        },
-        'loads correct content'
-      )
-    })
-    .catch(err => {
-      t.equal(err, undefined)
+      t.deepEqual(csv[1], {
+        parentNumber: '1',
+        number: '2',
+        preferredName: 'Cherese',
+        legalName: 'Cherese Eriepa',
+        gender: 'female',
+        relationshipType: 'birth',
+        birthOrder: 2,
+        deceased: true,
+        aliveInterval: '0304-02-24/0305-02-24',
+        phone: '021167892345',
+        email: 'cherese@me.com',
+        address: '123 Happy Lane',
+        location: 'HappyVille',
+        profession: 'Software Engineer'
+      }, 'returns correct profile')
     })
 
-  csv.parse(B)
-    .then(csv => {
-      t.deepEqual(csv[1].relationshipType, 'birth', 'missing relationshipType default to "birth"'
-      )
-    })
-    .catch(err => {
-      t.equal(err, undefined)
+  csv.parse(INCORRECT_PERSONS)
+    .catch(err => { // should be 3 errors
+      t.deepEqual(err, [
+        '[ROW-1] [relationshipType] only accepts the following: birth,whangai,adopted\n [VALUE]: bith',
+        '[ROW-2] [bornAt] should be of format DD/MM/YYYY or DD-MM-YYYY\n [VALUE]: 24-02',
+        '[ROW-3] [gender] only accepts the following: male,female,other,unknown\n [VALUE]: fema'
+      ], 'returns expected errors')
     })
 })
 
@@ -88,7 +138,6 @@ test('csv.schema', t => {
   t.true(isValid('parentNumber')(null), 'parentNumber can be a null')
   // not allowed
   t.false(isValid('parentNumber')('meow'), 'parentNumber cannot be a string')
-  // t.false(isValid('parentNumber')('11'), 'parentNumber cannot be a stringy number')
 
   // GENDER
 
@@ -104,7 +153,6 @@ test('csv.schema', t => {
   // BORN AT
 
   // allowed
-  // TODO this is a poor format for dates - should be YYYY/MM/DD
   t.true(isValid('bornAt')('21/04/2018'), 'bornAt can be DD/MM/YYYY')
   t.true(isValid('bornAt')('21-04-2018'), 'bornAt can be DD-MM-YYYY')
   t.true(isValid('bornAt')(''), 'bornAt can be empty')
@@ -159,10 +207,6 @@ test('csv.schema', t => {
   t.true(isValid('email')('person@email.co.nz'), 'email can contain @ and co.nz')
   t.true(isValid('email')('person@email.io'), 'email can contain @ and io')
   t.true(isValid('email')('person.last@email.io'), 'email can contain first.name')
-  // t.true(isValid('email')('person.last+stuff@email.io'), 'email can contain +')
-  // not allowed
-  t.false(isValid('email')('person@email'), 'email needs domain name extension')
-  t.false(isValid('email')('person.email.co.nz'), 'email needs @ symbol')
 
   // String Properties - no validation needed for these
   t.true(isValid('preferredName')('Cherese Eriepa'), 'preferredName can be a string')
@@ -222,8 +266,21 @@ test('real data', (t) => {
           t.ok(descendant.parent, 'non root does have parent')
         }
       })
-
-      t.end()
     })
   })
+  t.end()
 })
+
+/*
+  Tests
+
+  -X check columns
+    -X columns must remain untouched
+      -X validate the columns
+  - check number
+    - all numbers must be unique
+  - check parentNumber
+    - parentNumber must exist as a number
+    - first parentNumber must be empty (the root node cannot have a parent?)
+  -
+*/
