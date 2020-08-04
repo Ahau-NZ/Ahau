@@ -80,29 +80,31 @@
         </v-col>
         <v-col cols="8">
           <v-row class="stat-column">
-            <v-col cols="4">
+            <v-col cols="6">
               <Meter title="CPU" :values="cpuLoad" />
             </v-col>
-            <v-col cols="4">
+            <v-col cols="6">
               <Meter title="RAM" :values="memoryLoad" />
             </v-col>
           </v-row>
           <v-row class="pt-12">
-            <v-col cols="4" class="stat-column">
+            <v-col cols="6" class="stat-column">
               <h2 class="h2 text-uppercase pb-12">People</h2>
               <p v-if="invitedPeople.length === 0">There's no one on your network</p>
-              <v-row v-for="(people, key) in invitedPeople" :key="key" class="pb-4">
-                <h6>{{people.preferredName}}</h6>
-                <Avatar size="40px" alt="name" :image="people.avatarImage" />
+              <v-row class="pb-2">
+                <v-col v-for="(people, key) in invitedPeople" :key="key" cols="1">
+                  <Avatar size="40px" alt="name" :image="people.avatarImage" />
+                </v-col>
               </v-row>
-              <v-btn color="grey" outlined tile>View people</v-btn>
+              <!-- <v-btn color="grey" outlined tile>View people</v-btn> -->
             </v-col>
-            <v-col cols="4" class="stat-column">
+            <v-col cols="6" class="stat-column">
               <h2 class="h2 text-uppercase pb-12">Communities</h2>
               <p v-if="communities.length === 0">There's are no communities on your network</p>
-              <v-row v-for="(community, key) in communities" :key="key" class="pb-4">
-                <h6>{{community.preferredName}}</h6>
-                <Avatar size="40px" alt="name" :image="community.avatarImage" />
+              <v-row class="pb-2">
+                <v-col v-for="(community, key) in communities" :key="key" cols="1">
+                  <Avatar size="40px" alt="name" :image="community.avatarImage" />
+                </v-col>
               </v-row>
             </v-col>
           </v-row>
@@ -156,12 +158,7 @@ export default {
     },
     diskUsage: [],
     cpuLoad: [],
-    memoryLoad: [],
-    dataSummary: {
-      profileRecords: 0,
-      whakapapaRecords: 0,
-      communityRecords: 0
-    }
+    memoryLoad: []
   }),
   computed: {
     latency () {
@@ -281,19 +278,6 @@ export default {
       }`,
       update (data) {
         return data.tribes
-      }
-    },
-    dataSummary: {
-      query: gql`query {
-      dataSummary {
-        profileRecords
-        whakapapaRecords
-        communityRecords
-      }
-    }`,
-      pollInterval: 5000,
-      update (data) {
-        return data.dataSummary
       }
     }
   },
