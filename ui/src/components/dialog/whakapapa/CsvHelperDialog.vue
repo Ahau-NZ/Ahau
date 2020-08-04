@@ -4,7 +4,7 @@
     <template v-slot:content>
       <v-card-text class="pt-2">
         To make the data entry and upload of whakapapa information easier we have added the ability to upload a CSV file to build the whakapapa graph. <br><br>
-        These instructions will walk you through those steps to successfully transfer and upload this information. If you are having any issues with this please contact us at info@ahau.io and we will do our best to help you.
+        These instructions will walk you through those steps to successfully transfer and upload this information. If you are having any issues with this please contact us at <b>info@ahau.io</b> and we will do our best to help you.
       </v-card-text>
       <div class="video-player">
         <video class="video" ref="video" controls>
@@ -26,19 +26,13 @@
             <ul>
               <li>Each <b> table column </b> <v-icon>mdi-arrow-up-down</v-icon> in the table represents a different field of information (i.e. preferredName, legalName, etc).</li>
               <li>Each <b> table row </b> <v-icon>mdi-arrow-left-right</v-icon> in the table represents a different person.</li>
-              <li> The <b>number</b> column is used to point to the person on that row. Use 1 for the first person, 2 for the next and so on. Each person must have a different <b>number.</b> </li>
-              <li>
-                The <b>parentNumber</b> column is used to point to that persons parents <b>number.</b>
-              </li>
-              <li>
-                If the <b>parentNumber</b> field is missing (apart from the first row), that person will not appear in the created whakapapa tree.
-              </li>
-              <li class="font-weight-bold">
-                You must leave the first rows parentNumber empty.
-              </li>
-              <li>All fields listed in the table below are optional and can be left empty. If used, they do need to be entered in the correct <b>format</b>.</li>
+              <li>The <b>number</b> column and the <b>parentNumber</b> column are used to tell the software who is the <b>parent</b> and who is the <b>child</b>.</li>
+              <li>In the <b>number</b> column put 1 for the first person, 2 for the second person, 3 for the third person and so on until each person has a number. <b>Each person must have a different number</b>.</li>
+              <li>In the <b>parentNumber</b> column for the first person, leave this field empty. This person is your top ancestor for this whakapapa record. All children and grandchildren will come from them.</li>
+              <li>For everyone else, in the <b>parentNumber</b> column, put in the number that is in the <b>number column</b> of that persons parent (please see the video for examples)</li>
+              <li><b>IMPORTANT NOTE:</b> All fields in the table below can be left empty, however if the are entered they must be entered in the correct format shown below.</li>
             </ul>
-            <v-simple-table fixed-header dense class="px-12" height="300px">
+            <v-simple-table fixed-header dense height="300px">
               <template v-slot:default>
                 <thead>
                   <tr>
@@ -64,7 +58,7 @@
             </v-simple-table>
           </li>
           <li>
-            Save your changes: <kbd>File > Save as</kbd> and select where you would like to save the file.
+            Once you have completed the spreadsheet, save your changes: <kbd>File > Save as</kbd> and select where you would like to save the file.
             <ul>
               <li>
                 <b>Windows</b>: Make sure that below the file name you select <b>CSV (comma delimited)(*.csv)</b> from <kbd>save as type</kbd>
@@ -75,7 +69,7 @@
             </ul>
           </li>
           <li>
-            When creating a new whakapapapa and choose <b>Build from CSV</b> where you can then upload your newly created <b>.csv</b> file.
+            In Āhau, when creating a new whakapapapa record, choose <b>Import from CSV file</b> where you can then upload your newly created <b>.csv</b> file.
           </li>
           <li>
             The software will run a quick check on the file and let you know if anything needs changing
