@@ -8,7 +8,10 @@ const apolloClient = apolloProvider.defaultClient
 export const PERMITTED_PERSON_ATTRS = [
   'headerImage',
   'avatarImage',
-  // WARNING: make sure header and avatar images are the first two (for PERSON_FRAGMENT)
+  'tombstone',
+  // WARNING: make sure header and avatar images are the first two and tombstone is the third (for PERSON_FRAGMENT)
+
+  'canEdit',
   'id',
   // NOTE: we don't allow setting of `type`, this is always "profile"
   'preferredName',
@@ -27,9 +30,7 @@ export const PERMITTED_PERSON_ATTRS = [
   'birthOrder',
   'deceased',
   'type',
-  'canEdit',
 
-  // 'tombstone', // PROBLEMS, can't fetch this at the moment, breaks PERSON_FRAGMENT
   'recps'
 ]
 
@@ -46,29 +47,38 @@ export const PERMITTED_RELATIONSHIP_ATTRS = [
 
 export const PERSON_FRAGMENT = gql`
   fragment ProfileFragment on Person {
-    ${PERMITTED_PERSON_ATTRS.slice(2)}
+    ${PERMITTED_PERSON_ATTRS.slice(3)}
     avatarImage { uri }
     headerImage { uri }
+  }
+`
+export const PUBLIC_PROFILE_FRAGMENT = gql`
+  fragment PublicProfileFragment on Person {
+    id
+    preferredName
+    avatarImage { uri }
   }
 `
 
 export const whoami = ({
   query: gql`
     ${PERSON_FRAGMENT}
+    ${PUBLIC_PROFILE_FRAGMENT}
     query {
       whoami {
         public {
+          feedId
           profile {
-            id
-            preferredName
-            avatarImage {
-              uri
-            }
+            ...PublicProfileFragment
           }
         }
         personal {
+          groupId
           profile {
             ...ProfileFragment
+            kaitiaki {
+              ...PublicProfileFragment
+            }
           }
         }
       }
@@ -80,6 +90,7 @@ export const whoami = ({
 export const getPerson = id => ({
   query: gql`
     ${PERSON_FRAGMENT}
+    ${PUBLIC_PROFILE_FRAGMENT}
     query($id: String!) {
       person(id: $id){
         ...ProfileFragment
@@ -98,6 +109,9 @@ export const getPerson = id => ({
           linkId
           relationshipType
           legallyAdopted
+        }
+        kaitiaki {
+          ...PublicProfileFragment
         }
       }
     }

@@ -9,6 +9,10 @@
           :image="whakapapa.image ? whakapapa.image : null"
           :alt="whakapapa.name"
           :isView="!whakapapa.image"
+          showLabel
+          row
+     
+          
         />
       </v-row>
     </v-btn>
@@ -21,6 +25,10 @@
           :image="currentProfile.avatarImage ? currentProfile.avatarImage : null"
           :alt="currentProfile.preferredName"
           :gender="currentProfile.gender"
+          showLabel
+          row
+      
+          
         />
       </v-row>
     </v-btn>
@@ -28,32 +36,32 @@
 </template>
 
 <script>
-  import { mapGetters } from 'vuex'
-  import Avatar from '@/components/Avatar'
+import { mapGetters } from 'vuex'
+import Avatar from '@/components/Avatar'
 
-  export default {
-    components: {
-      Avatar
+export default {
+  components: {
+    Avatar
+  },
+  computed: {
+    ...mapGetters(['whakapapa', 'route', 'showStory', 'currentProfile']),
+    mobile () {
+      return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
-    computed: {
-      ...mapGetters(['whakapapa', 'route', 'showStory', 'currentProfile']),
-      mobile () {
-        return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
-      },
-      isgoWhakapapa () {
-        if (this.route.from) {
-          return this.route.from.name === 'whakapapaShow' && this.route.name === 'profileShow'
-        }
-        return false
-      },
-    },
-    methods: {
-      goWhakapapa () {
-        this.$router.push({ path: this.route.from.fullPath })
+    isgoWhakapapa () {
+      if (this.route.from) {
+        return this.route.from.name === 'whakapapaShow' && this.route.name === 'profileShow'
       }
+      return false
     }
-      
+  },
+  methods: {
+    goWhakapapa () {
+      this.$router.push({ path: this.route.from.fullPath })
+    }
   }
+
+}
 </script>
 
 <style lang="scss" scoped>

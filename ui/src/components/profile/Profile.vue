@@ -14,29 +14,14 @@
       </v-col>
       <!-- RIGHT SIDE COLUMN -->
       <v-col cols="12" sx="12" md="3" :class="mobile ? 'pt-0 px-5' : 'pr-8'">
-        <!-- TODO: update profiles to profiles.tiaki -->
-        <ProfileCard title="Kaitiaki" class="mt-0">
+        <ProfileCard title="Kaitiaki" class="mt-0 px-0">
           <template v-slot:content>
-            <v-row class="justify-center align-center ma-0">
-              <v-col cols="2" class="pt-0 pl-0">
-                <Avatar :size="mobile ? '50px' : '40px'" :image="whoami.personal.profile.avatarImage" :alt="whoami.personal.profile.preferredName" />
-              </v-col>
-              <v-col>
-                <p style="color:black;">{{whoami.personal.profile.preferredName}}</p>
-              </v-col>
-            </v-row>
+            <AvatarGroup :profiles="profile.kaitiaki" size="40px" show-labels row customClass="pl-2" @profile-click="openProfile($event)"/>
           </template>
         </ProfileCard>
         <ProfileCard v-if="profile.type === 'person'" title="Communities" class="mt-3">
           <template v-slot:content>
-            <v-row class="justify-center align-center ma-0">
-              <v-col cols="2" class="pt-0 pl-0">
-                <Avatar :size="mobile ? '50px' : '40px'" :image="whoami.personal.profile.avatarImage" :alt="whoami.personal.profile.preferredName" />
-              </v-col>
-              <v-col>
-                <p style="color:black;">{{whoami.personal.profile.preferredName}}</p>
-              </v-col>
-            </v-row>
+            <AvatarGroup :profiles="[whoami.personal.profile]" size="40px" show-labels row customClass="pl-2" @profile-click="openProfile($event)"/>
           </template>
         </ProfileCard>
         <ProfileCard v-else title="Members" class="mt-3">
@@ -84,7 +69,8 @@ import ProfileInfoCard from '@/components/profile/ProfileInfoCard.vue'
 import ProfileInfoItem from '@/components/profile/ProfileInfoItem.vue'
 import ProfileCard from '@/components/profile/ProfileCard.vue'
 import Avatar from '@/components/Avatar.vue'
-import { mapGetters } from 'vuex'
+import AvatarGroup from '@/components/AvatarGroup.vue'
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   name: 'Profile',
@@ -92,7 +78,8 @@ export default {
     ProfileInfoCard,
     ProfileCard,
     ProfileInfoItem,
-    Avatar
+    Avatar,
+    AvatarGroup
   },
   props: {
     profile: {
@@ -113,6 +100,13 @@ export default {
     ...mapGetters(['whoami']),
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
+    }
+  },
+  methods: {
+    ...mapActions(['setProfileById', 'setDialog']),
+    openProfile (profile) {
+      this.setProfileById({ id: profile.id, type: 'preview' })
+      this.setDialog({ active: 'view-edit-node', type: 'preview' })
     }
   }
 }

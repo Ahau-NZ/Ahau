@@ -9,7 +9,7 @@
       :parentIndex.sync="parentIndex"
       @editProfile="toggleEditProfile($event)"
       @close="close"
-    /> -->
+    />-->
     <NewCommunityDialog
       v-if="isActive('new-community')"
       :show="isActive('new-community')"
@@ -44,7 +44,8 @@
       @create="source !== 'new-registration' ? addPerson($event) : dialogType === 'grandparent' ? addGrandparentToRegistartion($event) : addParentToRegistration($event)"
       @close="close"
     />
-    <EditNodeDialog v-if="isActive('edit-node')"
+    <EditNodeDialog
+      v-if="isActive('edit-node')"
       :show="isActive('edit-node')"
       :title="source === 'new-registration' ? `Edit ${registration.preferredName}`:`Edit ${currentProfile.preferredName}`"
       @submit="updatePerson($event)"
@@ -64,39 +65,46 @@
       @delete="toggleDialog('delete-node', null, null)"
       @open-profile="setSelectedProfile($event)"
       :view="view"
-      :preview ="previewProfile"
+      :preview="previewProfile"
     />
-    <DeleteNodeDialog v-if="isActive('delete-node')"
+    <DeleteNodeDialog
+      v-if="isActive('delete-node')"
       :show="isActive('delete-node')"
       :profile="selectedProfile"
       :warnAboutChildren="selectedProfile && selectedProfile.id !== nestedWhakapapa.id"
       @submit="removeProfile"
       @close="close"
     />
-    <WhakapapaViewDialog v-if="isActive('whakapapa-view')"
+    <WhakapapaViewDialog
+      v-if="isActive('whakapapa-view')"
       :show="isActive('whakapapa-view')"
       :view="view"
       @edit="toggleDialog('whakapapa-edit', null, 'whakapapa-view')"
       @close="close"
     />
-    <WhakapapaEditDialog v-if="isActive('whakapapa-edit')"
+    <WhakapapaEditDialog
+      v-if="isActive('whakapapa-edit')"
       :show="isActive('whakapapa-edit')"
       :view="view"
       @delete="toggleDialog('whakapapa-delete', null, 'whakapapa-edit')"
       @close="close"
       @submit="$emit('updateWhakapapa', $event)"
     />
-    <WhakapapaDeleteDialog v-if="isActive('whakapapa-delete')"
+    <WhakapapaDeleteDialog
+      v-if="isActive('whakapapa-delete')"
       :show="isActive('whakapapa-delete')"
-      :view="view" @close="close"
+      :view="view"
+      @close="close"
       @submit="$emit('deleteWhakapapa')"
     />
     <WhakapapaShowHelper
+      v-if="isActive('whakapapa-helper')"
       :show="isActive('whakapapa-helper')"
       :title="`Whakapapa ---- Family tree`"
       @close="close"
     />
     <WhakapapaTableHelper
+      v-if="isActive('whakapapa-table-helper')"
       :show="isActive('whakapapa-table-helper')"
       :title="`Whakapapa registry`"
       @close="close"
@@ -106,13 +114,9 @@
       :title="'Create a new Collection'"
       @close="close"
       @submit="console.log('TODO: add collection to profile')"
-    /> -->
-    <ComingSoonDialog
-      :show="isActive('coming-soon')"
-      @close="close"
-    />
+    />-->
+    <ComingSoonDialog :show="isActive('coming-soon')" @close="close" />
     <ConfirmationMessage :show="snackbar" :message="confirmationText" />
-
   </div>
 </template>
 
@@ -137,15 +141,14 @@ import ConfirmationMessage from '@/components/dialog/ConfirmationMessage.vue'
 import gql from 'graphql-tag'
 
 import { PERMITTED_RELATIONSHIP_ATTRS, savePerson, saveCurrentIdentity } from '@/lib/person-helpers.js'
+import { saveCommunity } from '@/lib/community-helpers'
+import { saveWhakapapaView } from '@/lib/whakapapa-helpers.js'
 
-import { SAVE_LINK } from '@/lib/link-helpers.js'
+import { saveLink } from '@/lib/link-helpers.js'
 import pick from 'lodash.pick'
 import isEmpty from 'lodash.isempty'
 
 import findSuccessor from '@/lib/find-successor'
-
-import { PERMITTED_COMMUNITY_ATTRS, saveCommunity } from '@/lib/community-helpers'
-
 import tree from '@/lib/tree-helpers'
 
 import * as d3 from 'd3'
@@ -158,7 +161,6 @@ export default {
   name: 'DialogHandler',
   components: {
     NewNodeDialog,
-    NewCommunityDialog,
     EditNodeDialog,
     SideViewEditNodeDialog,
     DeleteNodeDialog,
@@ -325,7 +327,7 @@ export default {
       }
     },
     async savePerson (input) {
-      if (!input.recps) input.recps = [this.whoami.personal.groupId]
+      if (!input.id) input.recps = [this.whoami.personal.groupId]
       // TODO fix recps to be right group
       const res = await this.$apollo.mutate(savePerson(input))
 
@@ -366,16 +368,7 @@ export default {
             }
           }
           try {
-            const res = await this.$apollo.mutate({
-              mutation: gql`
-              mutation($input: WhakapapaViewInput) {
-                saveWhakapapaView(input: $input)
-              }
-              `,
-              variables: {
-                input
-              }
-            })
+            const res = await this.$apollo.mutate(saveWhakapapaView(input))
             if (res.data) {
               this.$emit('refreshWhakapapa')
 
@@ -567,7 +560,7 @@ export default {
       // TODO check recps
 
       try {
-        const res = await this.$apollo.mutate(SAVE_LINK(input))
+        const res = await this.$apollo.mutate(saveLink(input))
         if (res.errors) {
           console.error('failed to createChildLink', res)
           return
@@ -617,7 +610,7 @@ export default {
           // recps: this.view.recps
         }
         try {
-          const linkRes = await this.$apollo.mutate(SAVE_LINK(input))
+          const linkRes = await this.$apollo.mutate(saveLink(input))
           if (linkRes.errors) {
             console.error('failed to update child link', linkRes)
             return
@@ -687,16 +680,7 @@ export default {
         }
       }
       try {
-        const res = await this.$apollo.mutate({
-          mutation: gql`
-            mutation($input: WhakapapaViewInput) {
-              saveWhakapapaView(input: $input)
-            }
-          `,
-          variables: {
-            input
-          }
-        })
+        const res = await this.$apollo.mutate(saveWhakapapaView(input))
         this.$emit('refreshWhakapapa')
         if (res.data) {
           // if removing top ancestor on main whanau line, update the whakapapa view focus with child/partner
@@ -722,21 +706,13 @@ export default {
     async deleteProfile () {
       if (!this.canDelete(this.selectedProfile)) return
 
-      const profileResult = await this.$apollo.mutate({
-        mutation: gql`
-          mutation($input: ProfileInput!) {
-            saveProfile(input: $input)
-          }
-        `,
-        variables: {
-          input: {
-            id: this.selectedProfile.id,
-            tombstone: {
-              date: new Date()
-            }
-          }
-        }
-      })
+      var input = {
+        id: this.selectedProfile.id,
+        tombstone: { date: new Date() }
+      }
+
+      const profileResult = await this.$apollo.mutate(savePerson(input))
+
       if (profileResult.errors) {
         console.error('failed to delete profile', profileResult)
         return

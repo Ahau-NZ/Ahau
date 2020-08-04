@@ -1,6 +1,5 @@
 <template>
   <v-card
-    @click.stop="goProfile('whakapapa')"
     style="width: 100%"
     light
     outlined
@@ -33,7 +32,7 @@
           <!-- Pencil icon -->
           <slot name="edit"></slot>
           <!-- Dropdown icon -->
-          <v-tooltip v-if="description" bottom>
+          <v-tooltip v-if="description || view.kaitiaki" bottom>
             <template v-slot:activator="{ on }">
             <v-btn
               v-on="on"
@@ -44,7 +43,7 @@
               <v-icon>{{ show ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
             </v-btn>
             </template>
-            <span>Show whakapapa description</span>
+            <span>Show Whakapapa details</span>
           </v-tooltip>
         </v-card-text>
       </div>
@@ -52,7 +51,8 @@
     <v-expand-transition>
       <div v-show="show">
         <v-divider></v-divider>
-        <v-card-subtitle v-text="description" class="pa-3"/>
+        <v-card-subtitle v-if="description" v-text="description" class="pa-3"/>
+        <AvatarGroup :profiles="view.kaitiaki" groupTitle="Kaitiaki" size="50px" showLabels @profile-click="openProfile($event)"/>
       </div>
     </v-expand-transition>
   </v-card>
@@ -60,7 +60,9 @@
 
 <script>
 import whakapapa from '@/assets/whakapapa.svg'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
+
+import AvatarGroup from '@/components/AvatarGroup.vue'
 
 export default {
   name: 'WhakapapaShowViewCard',
@@ -68,6 +70,9 @@ export default {
     view: { type: Object, required: true },
     shadow: { type: Boolean, default: true },
     cropDescription: { type: Boolean, default: false }
+  },
+  components: {
+    AvatarGroup
   },
   data () {
     return {
@@ -96,12 +101,13 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['setDialog', 'setProfileById']),
     goProfile (component) {
-      // this.setComponent(component)
-      // this.setProfileById({ id: this.currentProfile.id })
       this.$router.push({ name: 'profileShow', params: { id: this.currentProfile.id } }).catch(() => {})
-      // this.setProfileById(this.profile.id)
-      // if (this.drawer) this.drawer = false
+    },
+    openProfile (profile) {
+      this.setProfileById({ id: profile.id, type: 'preview' })
+      this.setDialog({ active: 'view-edit-node', type: 'preview' })
     },
     background (view) {
       if (view.image && view.image.uri) {
