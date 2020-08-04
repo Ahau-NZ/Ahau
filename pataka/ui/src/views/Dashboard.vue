@@ -147,12 +147,12 @@ export default {
       preferredName: '',
       avatarImage: null
     },
+    portForwarding: null,
     network: {
       internetLatency: null,
       ipv4: null,
       ipv6: null,
-      publicIpv4: null,
-      portForwarding: null
+      publicIpv4: null
     },
     diskUsage: [],
     cpuLoad: [],
@@ -205,6 +205,16 @@ export default {
       pollInterval: 10000,
       update (data) {
         return data.network
+      }
+    },
+    portForwarding: {
+      query: gql`query {
+      network {
+        portForwarding
+      }
+    }`,
+      update (data) {
+        return data.network.portForwarding
       }
     },
     cpuLoad: {
@@ -319,7 +329,7 @@ export default {
       }
     },
     async tryInvite () {
-      if (this.network.portForwarding) await this.generateInviteCode(this.network.publicIpv4)
+      if (this.portForwarding) await this.generateInviteCode(this.network.publicIpv4)
       else this.toggleDialog()
     },
     async checkPortForwarding () {
@@ -333,7 +343,7 @@ export default {
           }`
       })
       const pf = res.data.network.portForwarding
-      this.network.portForwarding = pf
+      this.portForwarding = pf
       if (pf) {
         await this.tryInvite()
         this.errorMsg = null
