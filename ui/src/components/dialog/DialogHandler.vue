@@ -44,7 +44,8 @@
       @create="source !== 'new-registration' ? addPerson($event) : dialogType === 'grandparent' ? addGrandparentToRegistartion($event) : addParentToRegistration($event)"
       @close="close"
     />
-    <EditNodeDialog v-if="isActive('edit-node')"
+    <EditNodeDialog
+      v-if="isActive('edit-node')"
       :show="isActive('edit-node')"
       :title="source === 'new-registration' ? `Edit ${registration.preferredName}`:`Edit ${currentProfile.preferredName}`"
       @submit="updatePerson($event)"
@@ -64,31 +65,36 @@
       @delete="toggleDialog('delete-node', null, null)"
       @open-profile="setSelectedProfile($event)"
       :view="view"
-      :preview ="previewProfile"
+      :preview="previewProfile"
     />
-    <DeleteNodeDialog v-if="isActive('delete-node')"
+    <DeleteNodeDialog
+      v-if="isActive('delete-node')"
       :show="isActive('delete-node')"
       :profile="selectedProfile"
       :warnAboutChildren="selectedProfile && selectedProfile.id !== nestedWhakapapa.id"
       @submit="removeProfile"
       @close="close"
     />
-    <WhakapapaViewDialog v-if="isActive('whakapapa-view')"
+    <WhakapapaViewDialog
+      v-if="isActive('whakapapa-view')"
       :show="isActive('whakapapa-view')"
       :view="view"
       @edit="toggleDialog('whakapapa-edit', null, 'whakapapa-view')"
       @close="close"
     />
-    <WhakapapaEditDialog v-if="isActive('whakapapa-edit')"
+    <WhakapapaEditDialog
+      v-if="isActive('whakapapa-edit')"
       :show="isActive('whakapapa-edit')"
       :view="view"
       @delete="toggleDialog('whakapapa-delete', null, 'whakapapa-edit')"
       @close="close"
       @submit="$emit('updateWhakapapa', $event)"
     />
-    <WhakapapaDeleteDialog v-if="isActive('whakapapa-delete')"
+    <WhakapapaDeleteDialog
+      v-if="isActive('whakapapa-delete')"
       :show="isActive('whakapapa-delete')"
-      :view="view" @close="close"
+      :view="view"
+      @close="close"
       @submit="$emit('deleteWhakapapa')"
     />
     <WhakapapaShowHelper v-if="isActive('whakapapa-helper')"
@@ -106,13 +112,9 @@
       :title="'Create a new Collection'"
       @close="close"
       @submit="console.log('TODO: add collection to profile')"
-    /> -->
-    <ComingSoonDialog
-      :show="isActive('coming-soon')"
-      @close="close"
-    />
-    <ConfirmationMessage :show="snackbar" :message="confirmationText" />
-
+    />-->
+    <ComingSoonDialog :show="isActive('coming-soon')" @close="close" />
+    <ConfirmationText :show="snackbar" :message="confirmationText" />
   </div>
 </template>
 
@@ -141,7 +143,6 @@ import { createGroup, saveCommunity, savePublicCommunity, saveGroupProfileLink, 
 import { saveWhakapapaView } from '@/lib/whakapapa-helpers.js'
 
 import { saveLink } from '@/lib/link-helpers.js'
-
 import tree from '@/lib/tree-helpers'
 import findSuccessor from '@/lib/find-successor'
 
