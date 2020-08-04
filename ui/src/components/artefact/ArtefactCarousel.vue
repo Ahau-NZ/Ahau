@@ -15,7 +15,7 @@
     </v-carousel>
     <v-slide-group
       v-model="selectedIndex"
-      class="pa-0 background"
+      class="py-0 px-2 background"
       dark
       center-active
       style="width:100vw;"
