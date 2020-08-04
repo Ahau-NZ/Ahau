@@ -45,11 +45,6 @@
             </slot>
           </v-col>
         </v-row>
-      </v-col>
-    </v-row>
-
-    <v-row>
-      <v-col cols="12" :sm="mobile ? '12' : '6'">
         <v-row>
           <!-- Description textarea -->
           <v-col cols="12" class="pa-1">
