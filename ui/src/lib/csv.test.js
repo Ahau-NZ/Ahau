@@ -61,17 +61,24 @@ test('header columns', t => {
 
   csv.parse(MISSING_COLUMNS)
     .catch(err => {
-      t.deepEqual(err, ['[columns] Missing column(s): preferredName,birthOrder,email,profession'], 'returns errors for missing columns')
+      t.deepEqual(err, [
+        { row: 'header', field: 'columns', error: 'missing column(s)', value: ['preferredName', 'birthOrder', 'email', 'profession'] }
+      ], 'returns errors for missing columns')
     })
 
   csv.parse(EXTRA_COLUMNS)
     .catch(err => {
-      t.deepEqual(err, ['[columns] Additional header column(s) not allowed: extra1,extra2'], 'returns error for additional columns')
+      t.deepEqual(err, [
+        { row: 'header', field: 'columns', error: 'additional header column(s) are not allowed', value: ['extra1', 'extra2'] }
+      ], 'returns error for additional columns')
     })
 
   csv.parse(MISPELLED_COLUMNS)
     .catch(err => {
-      t.deepEqual(err, ['[columns] Missing column(s): parentNumber', '[columns] Additional header column(s) not allowed: parentNumbe'], 'returns error for wrong columns')
+      t.deepEqual(err, [
+        { row: 'header', field: 'columns', error: 'missing column(s)', value: ['parentNumber'] },
+        { row: 'header', field: 'columns', error: 'additional header column(s) are not allowed', value: ['parentNumbe'] }
+      ], 'returns error for wrong columns')
     })
 })
 
@@ -79,7 +86,9 @@ test('number', t => {
   t.plan(2)
   csv.parse(DUPLICATE_NUMBERS)
     .catch(err => {
-      t.deepEqual(err, ['[number] \'1\' has already been used and is not unique'], 'returns error for duplicate numbers')
+      t.deepEqual(err, [
+        { row: 1, field: 'number', error: 'the number is not unique', value: '1' }
+      ], 'returns error for duplicate numbers')
     })
 
   csv.parse(VALID_NUMBERS)
@@ -99,8 +108,8 @@ test('parentNumber', t => {
     })
     .catch(err => {
       t.deepEqual(err, [
-        '[parentNumber] the first parent number must be empty\n [VALUE] 1',
-        '[parentNumber] a parentNumber was used before its number was assigned\n [VALUE] 1'
+        { row: 1, field: 'parentNumber', error: 'the first parent number must be empty', value: '1' },
+        { row: 1, field: 'parentNumber', error: 'this parentNumber was used before it was assigned', value: '1' }
       ], 'returns error for non-empty first parentNumber')
     })
 
@@ -110,7 +119,7 @@ test('parentNumber', t => {
     })
     .catch(err => {
       t.deepEqual(err, [
-        '[parentNumber] a parentNumber was used before its number was assigned\n [VALUE] 4'
+        { row: 3, field: 'parentNumber', error: 'this parentNumber was used before it was assigned', value: '4' }
       ], 'returns error for parentNumber that has number which hasnt been seen yet')
     })
 })
@@ -141,9 +150,9 @@ test('csv.parse', t => {
   csv.parse(INCORRECT_PERSONS)
     .catch(err => { // should be 3 errors
       t.deepEqual(err, [
-        '[ROW-1] [relationshipType] only accepts the following: birth,whangai,adopted\n [VALUE]: bith',
-        '[ROW-2] [bornAt] should be of format DD/MM/YYYY or DD-MM-YYYY\n [VALUE]: 24-02',
-        '[ROW-3] [gender] only accepts the following: male,female,other,unknown\n [VALUE]: fema'
+        { row: 1, field: 'relationshipType', error: 'only accepts the following: birth,whangai,adopted', value: 'bith' },
+        { row: 2, field: 'bornAt', error: 'should be of format DD/MM/YYYY or DD-MM-YYYY', value: '24-02' },
+        { row: 3, field: 'gender', error: 'only accepts the following: male,female,other,unknown', value: 'fema' }
       ], 'returns expected errors')
     })
 })

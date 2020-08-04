@@ -7,9 +7,28 @@
       </v-card-text>
 
       <v-card-text class="pt-0">
-        <p v-for="(error, i) in errorMsgs" class="errorMsg ma-0" :key="i">
-          <i>{{error}}</i>
-        </p>
+        <v-simple-table fixed-header dense>
+          <template v-slot:default>
+            <thead>
+              <tr>
+                <th class="text-left">Row</th>
+                <th class="text-left">Field</th>
+                <th class="text-left">Error</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="{ row, field, error, value } in errorMsgs" :key="`${row}-${field}`">
+                <td> {{ row }} </td>
+                <td> {{ field }} </td>
+                <td> {{ error }} </td>
+                <td> {{ value }} </td>
+              </tr>
+            </tbody>
+          </template>
+        </v-simple-table>
+      </v-card-text>
+      <v-card-text class="pt-8">
+        Fix these and try uploading again
       </v-card-text>
 
       <!-- <v-divider /> -->

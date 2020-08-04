@@ -46,19 +46,21 @@ function parse (fileContent) {
     const seen = new Set()
 
     const csv = d3.csvParse(fileContent, (d, i) => {
+      var row = i + 1
+
       if (i === 0 && !isEmpty(d.parentNumber)) {
-        errors.push('[parentNumber] the first parent number must be empty\n [VALUE] ' + d.parentNumber)
+        errors.push({ row, field: 'parentNumber', error: 'the first parent number must be empty', value: d.parentNumber })
       }
 
       if (seen.has(d.number)) {
-        errors.push(`[number] '${d.number}' has already been used and is not unique`)
+        errors.push({ row: i, field: 'number', error: 'the number is not unique', value: d.number })
       }
 
       seen.add(d.number)
 
       // the parentNumber should already exist as a number
       if (!isEmpty(d.parentNumber) && !seen.has(d.parentNumber)) {
-        errors.push('[parentNumber] a parentNumber was used before its number was assigned\n [VALUE] ' + d.parentNumber)
+        errors.push({ row, field: 'parentNumber', error: 'this parentNumber was used before it was assigned', value: d.parentNumber })
       }
 
       count++
@@ -66,7 +68,7 @@ function parse (fileContent) {
       d.bornAt = d.bornAt.replace(/\//g, '-')
       d.diedAt = d.diedAt.replace(/\//g, '-')
 
-      const errs = personErrors(d, i)
+      const errs = personErrors(d, row)
 
       if (errs) {
         errors = [...errors, ...errs]
@@ -107,7 +109,7 @@ function parse (fileContent) {
     })
 
     if (count !== csv.length && errors.length === 0) {
-      throw new Error('missed some entries, but do not have errors for them')
+      errors.push({ row: 'N/A', field: 'N/A', error: 'missing some entries, but no not have errors for them', value: csv })
       // this code should never be reached
     }
 
@@ -117,7 +119,8 @@ function parse (fileContent) {
     const maxCsvLength = 1000
 
     if (csv.length > maxCsvLength) {
-      errors.push('Aroha mai, we are currently experiencing issues processing large files. We are currently working on this and hope to have this working soon')
+      const lengthError = 'Aroha mai, we are currently experiencing issues processing large files. We are currently working on this and hope to have this working soon'
+      errors = [{ row: 'N/A', field: 'row count', error: lengthError, value: '' }, ...errors] // make sure its the first error
     }
 
     if (errors.length) reject(errors)
@@ -125,7 +128,7 @@ function parse (fileContent) {
   })
 }
 
-function personErrors (d, i) {
+function personErrors (d, row) {
   // d = a particular rows data
   // i = row number
 
@@ -134,10 +137,10 @@ function personErrors (d, i) {
   Object.keys(schema)
     .filter(key => !schema[key].action(d[key])) // the action is the validation function for this key
     .forEach(key => {
-      if (key === 'parentNumber' && i === 0) return
+      if (key === 'parentNumber' && row === 0) return
       if (d[key] !== undefined) {
         // dont include undefined values in the errors
-        errors.push(`[ROW-${i + 1}] ${schema[key].msg} [VALUE]: ${d[key]}`)
+        errors.push({ row, field: key, error: schema[key].msg, value: d[key] })
       }
     })
 
@@ -147,43 +150,43 @@ function personErrors (d, i) {
 const schema = {
   parentNumber: {
     action: d => isValidNumber(d) || isEmpty(d),
-    msg: '[parentNumber] must be either a number or empty\n'
+    msg: 'must be either a number or empty'
   },
   number: {
     action: d => isValidNumber(d) && d != null,
-    msg: '[number] is required and must be a number\n'
+    msg: 'is required and must be a number'
   },
   preferredName: {
     action: d => isString(d) || isEmpty(d),
-    msg: '[preferredName] must be a string or empty\n'
+    msg: 'must be a string or empty'
   },
   gender: {
     action: d => GENDERS.includes(d) || isEmpty(d),
-    msg: '[gender] only accepts the following: ' + GENDERS + '\n'
+    msg: 'only accepts the following: ' + GENDERS
   },
   bornAt: {
     action: d => isValidDate(d),
-    msg: '[bornAt] should be of format DD/MM/YYYY or DD-MM-YYYY\n'
+    msg: 'should be of format DD/MM/YYYY or DD-MM-YYYY'
   },
   deceased: {
     action: d => ['yes', 'no', '', null].includes(d),
-    msg: '[deceased must be either yes, no or empty]'
+    msg: 'must be either yes, no or empty'
   },
   diedAt: {
     action: d => isValidDate(d),
-    msg: '[diedAt] should be of format DD/MM/YYYY or DD-MM-YYYY\n'
+    msg: 'should be of format DD/MM/YYYY or DD-MM-YYYY'
   },
   birthOrder: {
     action: d => isValidNumber(d) || isEmpty(d),
-    msg: '[birthOrder] must be either a number or empty\n'
+    msg: 'must be either a number or empty'
   },
   relationshipType: {
     action: d => RELATIONSHIPS.includes(d) || isEmpty(d),
-    msg: '[relationshipType] only accepts the following: ' + RELATIONSHIPS + '\n'
+    msg: 'only accepts the following: ' + RELATIONSHIPS
   },
   email: {
     action: d => isString(d) || isEmpty(d),
-    msg: '[email] must be a string or empty\n'
+    msg: 'must be a string or empty'
   }
 }
 
@@ -227,7 +230,7 @@ function headerColumnErrors (headers) {
   })
 
   if (missingColumns.length > 0) {
-    errors = ['[columns] Missing column(s): ' + missingColumns]
+    errors.push({ row: 'header', field: 'columns', error: 'missing column(s)', value: missingColumns })
   }
 
   const additionalColumns = headers.filter(d => {
@@ -235,7 +238,7 @@ function headerColumnErrors (headers) {
   })
 
   if (additionalColumns.length > 0) {
-    errors = [...errors, '[columns] Additional header column(s) not allowed: ' + additionalColumns]
+    errors.push({ row: 'header', field: 'columns', error: 'additional header column(s) are not allowed', value: additionalColumns })
   }
 
   return errors
