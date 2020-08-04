@@ -176,7 +176,7 @@
       @change-focus="changeFocus($event)"
       @newAncestor="showNewAncestors($event)"
       :focus="focus"
-      @updateWhakapapa="updateWhakapapa($event)"
+      @updateWhakapapa="saveWhakapapa($event)"
       @deleteWhakapapa="deleteWhakapapa"
       @refreshWhakapapa="refreshWhakapapa"
       @setFocus="setFocus($event)"
@@ -185,8 +185,6 @@
 </template>
 
 <script>
-import gql from 'graphql-tag'
-import isEmpty from 'lodash.isempty'
 import { VueContext } from 'vue-context'
 
 import WhakapapaShowViewCard from '@/components/whakapapa/WhakapapaShowViewCard.vue'
@@ -206,21 +204,12 @@ import SearchButton from '@/components/button/SearchButton.vue'
 import tree from '@/lib/tree-helpers'
 import avatarHelper from '@/lib/avatar-helpers.js'
 import { getPerson } from '@/lib/person-helpers.js'
+import { getWhakapapaView, saveWhakapapaView } from '@/lib/whakapapa-helpers.js'
 
 import DialogHandler from '@/components/dialog/DialogHandler.vue'
 import findSuccessor from '@/lib/find-successor'
 
 import { mapGetters, mapActions, mapMutations } from 'vuex'
-
-const saveWhakapapaViewMutation = input => (
-  {
-    mutation: gql`
-    mutation($input: WhakapapaViewInput) {
-      saveWhakapapaView(input: $input)
-    }
-  `,
-    variables: { input }
-  })
 
 export default {
   name: 'WhakapapaShow',
@@ -281,29 +270,11 @@ export default {
   },
   apollo: {
     whakapapaView () {
-      return {
-        query: gql`
-          query($id: String!) {
-            whakapapaView(id: $id) {
-              name
-              description
-              image {
-                uri
-              }
-              focus
-              recps
-              canEdit
-              ignoredProfiles
-            }
-          }
-        `,
-        variables: { id: this.$route.params.id },
-        fetchPolicy: 'no-cache'
-      }
+      return getWhakapapaView(this.$route.params.id)
     }
   },
   computed: {
-    ...mapGetters(['currentFocus', 'nestedWhakapapa', 'selectedProfile', 'whoami', 'loadingState', 'route']),
+    ...mapGetters(['currentFocus', 'nestedWhakapapa', 'selectedProfile', 'whoami', 'loadingState', 'route', 'currentProfile']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -576,18 +547,7 @@ export default {
       this.showWhakapapaHelper = !this.showWhakapapaHelper
     },
     async updateFocus (focus) {
-      const input = {
-        id: this.$route.params.id,
-        focus: focus
-      }
-      try {
-        const res = await this.$apollo.mutate(saveWhakapapaViewMutation(input))
-        if (res.data) {
-          this.refreshWhakapapa()
-        } else console.error(res)
-      } catch (err) {
-        throw err
-      }
+      await this.saveWhakapapa({ focus })
     },
     async setSelectedProfile (profile) {
       if (profile === null) {
@@ -633,70 +593,37 @@ export default {
         this.updateSelectedProfile({})
       }
     },
-
-    // save whakapapa changes
-    async updateWhakapapa (whakapapaChanges) {
-      const input = {
-        id: this.$route.params.id,
-        recps: this.whakapapaView.recps
+    async saveWhakapapa (input) {
+      input = {
+        id: this.whakapapaView.id,
+        ...input
       }
-      Object.entries(whakapapaChanges).forEach(([key, value]) => {
-        if (!isEmpty(value)) input[key] = value
-      })
+
       try {
-        const res = await this.$apollo.mutate(saveWhakapapaViewMutation(input))
-        // If saving changes works than set the new whakapapa information
-        // TODO: res has new whakapapa record information so we dont need to query it here
-        if (res.data) {
-          const updatedWhakapapa = await this.$apollo.query({
-            query: gql`
-                query($id: String!) {
-                  whakapapaView(id: $id) {
-                    name
-                    description
-                    image { uri }
-                    focus
-                    recps
-                    canEdit
-                  }
-                }
-              `,
-            variables: { id: res.data.saveWhakapapaView },
-            fetchPolicy: 'no-cache'
-          })
-          // update the whakapapaView with new record
-          if (updatedWhakapapa.data) {
-            this.whakapapaView = updatedWhakapapa.data.whakapapaView
-          }
-        } else console.error(res)
-      } catch (err) {
-        throw err
+        const res = await this.$apollo.mutate(saveWhakapapaView(input))
+        if (res.errors) {
+          console.error('failed to save whakapapa', res.errors)
+          return
+        }
+        // refresh the current whakapapa
+        await this.refreshWhakapapa()
+        return res.data.saveWhakapapaView
+      } catch (e) {
+        console.error('something went wrong while trying to save the whakapapa', e)
       }
     },
-
     async refreshWhakapapa () {
       await this.$apollo.queries.whakapapaView.refresh()
     },
     async deleteWhakapapa () {
-      const treeResult = await this.$apollo.mutate({
-        mutation: gql`
-          mutation($input: WhakapapaViewInput) {
-            saveWhakapapaView(input: $input)
-          }
-        `,
-        variables: {
-          input: {
-            id: this.$route.params.id,
-            tombstone: { date: new Date() }
-          }
-        }
-      })
-
-      if (treeResult.errors) {
-        console.error('failed to delete tree', treeResult)
-        return
+      var input = {
+        tombstone: { date: new Date() }
       }
-      this.$router.push({ name: 'whakapapaIndex', params: { id: this.whakapapaView.recps } })
+
+      await this.saveWhakapapa(input)
+
+      // this.$router.push({ name: 'whakapapaIndex', params: { id: this.whakapapaView.recps } })
+      this.$router.push({ name: 'profileShow', params: { id:this.currentProfile.id } }).catch(() => {})
     },
     getImage () {
       return avatarHelper.defaultImage(this.aliveInterval, this.gender)
@@ -722,7 +649,7 @@ export default {
 #whakapapa-show {
   &>.container {
     position: relative;
-    max-height:100vh;
+    max-height:98vh;
 
     &>.header {
       position: absolute;

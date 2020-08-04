@@ -12,7 +12,7 @@
       />
     </template>
     <template v-slot:title>
-      <div class="px-4">
+      <div justify="center" align="center" class="px-4">
         <h1>{{ view.name }}</h1>
         <v-btn
           @click="$emit('edit')"
@@ -27,12 +27,10 @@
       </div>
     </template>
     <template v-slot:content>
-      <v-row justify="center">
-        <v-col>
-          {{ view.description }}
-        </v-col>
+      <v-row justify="center" align="center" class="mt-5">
+        <p>{{ view.description }}</p>
       </v-row>
-
+      <AvatarGroup size="50px" show-labels groupTitle="Kaitiaki" :profiles="view.kaitiaki"/>
       <v-row justify="center" align="center" class="mt-5">
         <v-icon>
            mdi-lock
@@ -46,12 +44,14 @@
 <script>
 import Dialog from '@/components/dialog/Dialog.vue'
 import Avatar from '@/components/Avatar.vue'
+import AvatarGroup from '@/components/AvatarGroup.vue'
 
 export default {
   name: 'WhakapapaViewDialog',
   components: {
     Dialog,
-    Avatar
+    Avatar,
+    AvatarGroup
   },
   props: {
     view: {

@@ -91,8 +91,8 @@
         </v-row>
       </v-col>
     </v-row>
-    <CsvHelperDialog :show="csvHelper" @click="csvInfo()" @close="csvInfo()"/>
-    <CsvErrorDialog :show="csvErrorShow" :errorMsgs="errorMsgs" @click="csvErrorClose()" @close="csvErrorClose()"/>
+    <CsvHelperDialog v-if="csvHelper" :show="csvHelper" @click="csvInfo()" @close="csvInfo()"/>
+    <CsvErrorDialog v-if="csvErrorShow" :show="csvErrorShow" :errorMsgs="errorMsgs" @click="csvErrorClose()" @close="csvErrorClose()"/>
   </v-form>
 </template>
 <script>

@@ -24,7 +24,7 @@ export const LINK_PERMITTED_ATTRS = [
   'tombstone'
 ]
 
-export const SAVE_LINK = input => {
+export const saveLink = input => {
   input = pick(input, LINK_PERMITTED_ATTRS)
   return {
     mutation: gql`
