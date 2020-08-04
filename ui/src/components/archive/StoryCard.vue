@@ -1,6 +1,17 @@
 <template>
   <div style="width: 100%; height: 100%;">
-  <v-card @click.prevent="showStory()" :class="customClass" flat :ripple="false" class="mx-auto" :light="!showArtefact" width="100%" :elevation="!mobile && !showArtefact && fullStory ? '24':''" @blur="close">
+  <v-card
+    v-click-outside="onClickOutside"
+    class="mx-auto"
+    width="100%"
+    flat
+    :class="customClass"
+    :ripple="false"
+    :light="!showArtefact"
+    :elevation="!mobile && !showArtefact && fullStory ? '24':''"
+    @click="showStory()"
+    @blur="close"
+  >
     <v-list-item class="px-0" style="min-height:0; height:10px">
       <v-list-item-icon v-if="!fullStory" class="pt-1 mt-0" style="position:absolute; top:5px; right:1px; margin-right:0px">
         <v-list-item-subtitle v-if="!mobile" class="no-flex">contributors</v-list-item-subtitle>
@@ -316,7 +327,13 @@ export default {
   methods: {
     ...mapMutations(['deleteStoryFromStories']),
     ...mapActions(['setShowArtefact', 'setDialog', 'setProfileById', 'setShowStory']),
-
+    onClickOutside () {
+      if (!this.fullStory || this.dialog) return
+      if (!this.storeDialog) {
+        if (this.showArtefact) this.setShowArtefact()
+        else this.setShowStory()
+      }
+    },
     async deleteStory () {
       const res = await this.$apollo.mutate(DELETE_STORY(this.story.id, new Date()))
 
