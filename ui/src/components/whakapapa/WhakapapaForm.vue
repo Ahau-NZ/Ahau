@@ -172,7 +172,6 @@ export default {
           this.$emit('update:data', csv)
         })
         .catch(errs => {
-          console.log(errs)
           this.errorMsgs = errs
           this.csvErrorShow = true
         })
