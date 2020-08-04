@@ -11,7 +11,7 @@
     "@ssb-graphql/profile": "^2.2.3",
     "@ssb-graphql/story": "^1.1.1",
     "@ssb-graphql/tribes": "^1.0.0",
-    "@ssb-graphql/whakapapa": "gitlab:ahau/ssb-graphql-whakapapa#fix-prune",
+    "@ssb-graphql/whakapapa": "^2.4.3",
     "apollo-server": "^2.9.3",
     "apollo-server-express": "^2.9.6",
     "cors": "^2.8.5",
