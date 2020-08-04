@@ -54,7 +54,12 @@
           </div>
           <div v-else>
             <v-row :class="mobile ? 'pa-0': 'px-6 top-margin'">
-              <StoryCard @updateDialog="updateDialog($event)" :fullStory="true" :story.sync="currentStory" @submit="saveStory($event)" @close="toggleStory($event)" />
+              <StoryCard
+                :fullStory="true"
+                :story.sync="currentStory"
+                @updateDialog="updateDialog($event)"
+                @submit="saveStory($event)"
+                @close="toggleStory($event)" />
             </v-row>
           </div>
         </v-col>
@@ -145,7 +150,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['stories', 'showStory', 'whoami', 'currentProfile', 'currentStory']),
+    ...mapGetters(['stories', 'showStory', 'whoami', 'currentProfile', 'currentStory', 'showArtefact', 'storeDialog']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
