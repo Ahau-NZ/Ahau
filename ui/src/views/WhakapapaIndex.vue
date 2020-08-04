@@ -66,7 +66,7 @@ import WhakapapaListHelper from '@/components/dialog/whakapapa/WhakapapaListHelp
 import { saveLink } from '@/lib/link-helpers.js'
 import { savePerson } from '@/lib/person-helpers.js'
 import tree from '@/lib/tree-helpers'
-import { saveWhakapapaView } from '@/lib/whakapapa-helpers.js'
+import { saveWhakapapaView, getWhakapapaViews } from '@/lib/whakapapa-helpers.js'
 
 export default {
   name: 'WhakapapaIndex',
@@ -105,25 +105,7 @@ export default {
     }
   },
   apollo: {
-    views: {
-      query: gql`
-        {
-          whakapapaViews {
-            id
-            name
-            focus
-            description
-            canEdit
-            recps
-            image {
-              uri
-            }
-          }
-        }
-      `,
-      update: data => data.whakapapaViews,
-      fetchPolicy: 'no-cache'
-    }
+    views: getWhakapapaViews()
   },
   methods: {
     ...mapActions(['addNestedWhakapapa', 'setLoading']),

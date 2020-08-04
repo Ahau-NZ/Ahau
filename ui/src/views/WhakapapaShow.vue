@@ -274,7 +274,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['currentFocus', 'nestedWhakapapa', 'selectedProfile', 'whoami', 'loadingState', 'route']),
+    ...mapGetters(['currentFocus', 'nestedWhakapapa', 'selectedProfile', 'whoami', 'loadingState', 'route', 'currentProfile']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -622,7 +622,8 @@ export default {
 
       await this.saveWhakapapa(input)
 
-      this.$router.push({ name: 'whakapapaIndex', params: { id: this.whakapapaView.recps } })
+      // this.$router.push({ name: 'whakapapaIndex', params: { id: this.whakapapaView.recps } })
+      this.$router.push({ name: 'profileShow', params: { id: this.currentProfile.id } }).catch(() => {})
     },
     getImage () {
       return avatarHelper.defaultImage(this.aliveInterval, this.gender)
@@ -648,7 +649,7 @@ export default {
 #whakapapa-show {
   &>.container {
     position: relative;
-    max-height:100vh;
+    max-height:98vh;
 
     &>.header {
       position: absolute;

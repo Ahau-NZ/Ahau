@@ -14,40 +14,39 @@
       </v-col>
       <!-- RIGHT SIDE COLUMN -->
       <v-col cols="12" sx="12" md="3" :class="mobile ? 'pt-0 px-5' : 'pr-8'">
-        <!-- TODO: update profiles to profiles.tiaki -->
-        <ProfileCard title="Kaitiaki" class="mt-0">
+        <ProfileCard title="Kaitiaki" class="mt-0 px-0">
           <template v-slot:content>
             <div v-if="profile.type === 'community'">
-              <v-row  v-for="kaitiaki in currentTribe.public[0].tiaki" :key="kaitiaki.id" class="justify-center align-center ma-0">
+              <v-row  v-for="kaitiaki in currentTribe.public[0].tiaki" :key="kaitiaki.id" class="justify-center align-center ma-0 ml-4">
                 <v-col cols="2" class="pt-0 pl-0">
-                  <Avatar :size="mobile ? '50px' : '40px'" :image="kaitiaki.avatarImage" :alt="kaitiaki.preferredName" />
+                  <Avatar :size="mobile ? '50px' : '40px'" :image="kaitiaki.avatarImage" :alt="kaitiaki.preferredName" clickable @click="openProfile(kaitiaki)"/>
                 </v-col>
                 <v-col>
                   <p style="color:black;">{{kaitiaki.preferredName}}</p>
                 </v-col>
               </v-row>
             </div>
-            <v-row v-else class="justify-center align-center ma-0">
-              <v-col cols="2" class="pt-0 pl-0">
-                <Avatar :size="mobile ? '50px' : '40px'" :image="whoami.personal.profile.avatarImage" :alt="whoami.personal.profile.preferredName" />
-              </v-col>
-              <v-col>
-                <p style="color:black;">{{whoami.personal.profile.preferredName}}</p>
-              </v-col>
-            </v-row>
+            <div v-else>
+              <AvatarGroup :profiles="profile.kaitiaki" size="40px" show-labels row customClass="pl-3" @profile-click="openProfile($event)"/>
+            </div>
           </template>
         </ProfileCard>
         <!-- TODO: these can be extended to show communities in common with currentProfile  -->
         <ProfileCard v-if="profile.id === whoami.personal.profile.id" title="Communities" class="mt-3">
           <template v-slot:content>
-            <v-row v-for="tribe in connectedTribes" :key="tribe.id" class="justify-center align-center ma-0">
-              <v-col cols="2" class="pt-0 pl-0">
-                <Avatar :size="mobile ? '50px' : '40px'" :image="tribe.private[0].avatarImage" :alt="tribe.private[0].preferredName" :isView="!tribe.private[0].avatarImage"/>
-              </v-col>
-              <v-col>
-                <p style="color:black;">{{tribe.private[0].preferredName}}</p>
-              </v-col>
-            </v-row>
+            <div v-if="connectedTribes.length > 0">
+              <v-row v-for="tribe in connectedTribes" :key="tribe.id" class="justify-center align-center ma-0 ml-4">
+                <v-col cols="2" class="pt-0 pl-0">
+                  <Avatar :size="mobile ? '50px' : '40px'" :image="tribe.private[0].avatarImage" :alt="tribe.private[0].preferredName" :isView="!tribe.private[0].avatarImage" clickable @click="goTribe(tribe)"/>
+                </v-col>
+                <v-col class="py-0">
+                  <p style="color:black;">{{tribe.private[0].preferredName}}</p>
+                </v-col>
+              </v-row>
+            </div>
+            <router-link v-else to="/discovery">
+              <p>Click here to discover your tribes</p>
+            </router-link>
           </template>
         </ProfileCard>
         <!-- TODO show other commuinty Members -->
@@ -72,7 +71,8 @@ import ProfileInfoCard from '@/components/profile/ProfileInfoCard.vue'
 import ProfileInfoItem from '@/components/profile/ProfileInfoItem.vue'
 import ProfileCard from '@/components/profile/ProfileCard.vue'
 import Avatar from '@/components/Avatar.vue'
-import { mapGetters } from 'vuex'
+import AvatarGroup from '@/components/AvatarGroup.vue'
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   name: 'Profile',
@@ -80,7 +80,8 @@ export default {
     ProfileInfoCard,
     ProfileCard,
     ProfileInfoItem,
-    Avatar
+    Avatar,
+    AvatarGroup
   },
   props: {
     profile: {
@@ -107,6 +108,18 @@ export default {
     },
     member () {
       return this.profile.type === 'community' && this.profile.recps.length > 0
+    }
+  },
+  methods: {
+    ...mapActions(['setProfileById', 'setDialog', 'setCurrentTribe']),
+    openProfile (profile) {
+      this.setProfileById({ id: profile.id, type: 'preview' })
+      this.setDialog({ active: 'view-edit-node', type: 'preview' })
+    },
+    goTribe (tribe) {
+      this.setCurrentTribe(tribe)
+      this.setProfileById({ id: tribe.private[0].id })
+      this.$router.push({ name: 'profileShow', params: { id: tribe.private[0].id } }).catch(() => {})
     }
   }
 }

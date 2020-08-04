@@ -288,6 +288,18 @@
                 @delete="removeItem(formData.creators, $event)"
               />
             </v-col>
+            <v-divider v-if="mobile" light class="mt-6 mr-4"></v-divider>
+            <!-- ADD KAITIAKI -->
+            <v-col cols="12" md="auto" class="pa-5">
+              <v-row class="pl-5">
+                  <AddButton size="20px" icon="mdi-library" iconClass="pr-3" label="Kaitiaki"  justify="start"/>
+              </v-row>
+              <AvatarGroup v-if="formData.kaitiaki && formData.kaitiaki.length > 0"
+                :profiles="formData.kaitiaki"
+                show-labels
+                size="40px"
+              />
+            </v-col>
             <v-col cols="12" class="pa-1">
               <v-textarea
                 v-if="show"

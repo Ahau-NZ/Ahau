@@ -1,11 +1,10 @@
 import gql from 'graphql-tag'
 import pick from 'lodash.pick'
-// import {
-//   createProvider
-// } from '@/plugins/vue-apollo'
+import { PUBLIC_PROFILE_FRAGMENT } from '@/lib/person-helpers'
+import { createProvider } from '@/plugins/vue-apollo'
 
-// const apolloProvider = createProvider()
-// const apolloClient = apolloProvider.defaultClient
+const apolloProvider = createProvider()
+const apolloClient = apolloProvider.defaultClient
 
 export const PERMITTED_COMMUNITY_ATTRS = [
   'id',
@@ -37,7 +36,8 @@ export const PERMITTED_PUBLIC_COMMUNITY_ATTRS = [
   'email',
   'phone',
   'location',
-  'tombstone'
+  'tombstone',
+  'tiaki'
 ]
 
 export const PERMITTED_COMMUNITY_LINK_ATTRS = [
@@ -136,7 +136,9 @@ export const deleteTribe = tribe => {
 }
 
 export const getTribes = ({
-  query: gql`query {
+  query: gql`
+  ${PUBLIC_PROFILE_FRAGMENT}
+  query {
     tribes {
       id
       public {
@@ -147,6 +149,9 @@ export const getTribes = ({
         description
         headerImage { uri }
         tombstone { date }
+        tiaki {
+          ...PublicProfileFragment
+        }
       }
       private {
         id
@@ -156,6 +161,9 @@ export const getTribes = ({
         headerImage { uri }
         recps
         tombstone {date}
+        tiaki {
+          ...PublicProfileFragment
+        }
       }
     }
   }
@@ -171,4 +179,37 @@ function prune (input, attrs) {
     }
   })
   return _input
+}
+
+export const getCommunityProfile = id => ({
+  query: gql`
+    ${PUBLIC_PROFILE_FRAGMENT}
+    query($id: String!) {
+      community {
+        id
+        preferredName
+        description
+        avatarImage { uri } 
+        description
+        headerImage { uri }
+        tombstone { date }
+        tiaki {
+          ...PublicProfileFragment
+        }
+      }
+    }
+  `,
+  variables: { id: id },
+  fetchPolicy: 'no-cache'
+})
+
+export async function getTribe (profileId) {
+  const result = await apolloClient.query(getTribes)
+  if (result.errors) {
+    console.error('Failed to to get Tribes')
+    console.error(result.errors)
+  } else {
+    const tribe = result.data.tribes.find(tribe => tribe.private[0].id === profileId)
+    return tribe
+  }
 }

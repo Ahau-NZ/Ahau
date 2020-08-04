@@ -91,12 +91,12 @@
       :view="view" @close="close"
       @submit="$emit('deleteWhakapapa')"
     />
-    <WhakapapaShowHelper
+    <WhakapapaShowHelper v-if="isActive('whakapapa-helper')"
       :show="isActive('whakapapa-helper')"
       :title="`Whakapapa ---- Family tree`"
       @close="close"
     />
-    <WhakapapaTableHelper
+    <WhakapapaTableHelper v-if="isActive('whakapapa-table-helper')"
       :show="isActive('whakapapa-table-helper')"
       :title="`Whakapapa registry`"
       @close="close"
@@ -137,7 +137,7 @@ import ConfirmationMessage from '@/components/dialog/ConfirmationMessage.vue'
 import gql from 'graphql-tag'
 
 import { PERMITTED_RELATIONSHIP_ATTRS, savePerson, saveCurrentIdentity } from '@/lib/person-helpers.js'
-import { createGroup, saveCommunity, savePublicCommunity, saveGroupProfileLink, deleteTribe } from '@/lib/community-helpers'
+import { createGroup, saveCommunity, savePublicCommunity, saveGroupProfileLink, deleteTribe, getTribe } from '@/lib/community-helpers'
 import { saveWhakapapaView } from '@/lib/whakapapa-helpers.js'
 
 import { saveLink } from '@/lib/link-helpers.js'
@@ -217,7 +217,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['nestedWhakapapa', 'selectedProfile', 'whoami', 'storeDialog', 'storeType', 'storeSource', 'currentProfile', 'currentProfiles', 'currentTribe']),
+    ...mapGetters(['nestedWhakapapa', 'selectedProfile', 'whoami', 'storeDialog', 'storeType', 'storeSource', 'currentProfile', 'currentProfiles', 'currentTribe', 'tribes']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -244,7 +244,7 @@ export default {
       return this.whoami.personal.profile.id === id
     },
     ...mapActions(['setWhoami', 'updateNode', 'deleteNode', 'updatePartnerNode', 'addChild', 'addParent', 'loading', 'setDialog',
-      'setProfileById', 'setComponent'
+      'setProfileById', 'setComponent', 'setCurrentTribe'
     ]),
     addGrandparentToRegistartion (grandparent) {
       var parent = this.parents[this.parentIndex]
@@ -359,8 +359,8 @@ export default {
         }
 
         if (profilePublicLinkRes.data.saveGroupProfileLink) {
-          // need a getTribe(groupId) graphql call
-          // setCurrentTibe(tribe)
+          const tribe = await getTribe(groupProfile)
+          this.setCurrentTribe(tribe)
           this.setComponent('profile')
           this.setProfileById({ id: groupProfile })
           this.$router.push({ name: 'profileShow', params: { id: groupProfile } }).catch(() => {})
@@ -617,8 +617,6 @@ export default {
       }
     },
     async updateCommunity ($event) {
-      console.log('updateCommunity', $event)
-
       const res = await this.$apollo.mutate(saveCommunity({
         id: this.selectedProfile.id,
         ...$event
