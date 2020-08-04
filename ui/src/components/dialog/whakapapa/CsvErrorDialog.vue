@@ -14,6 +14,7 @@
                 <th class="text-left">Row</th>
                 <th class="text-left">Field</th>
                 <th class="text-left">Error</th>
+                <th class="text-left">Value Given</th>
               </tr>
             </thead>
             <tbody>
