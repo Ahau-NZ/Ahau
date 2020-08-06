@@ -329,7 +329,7 @@ export default {
     ...mapActions(['setShowArtefact', 'setDialog', 'setProfileById', 'setShowStory']),
     onClickOutside () {
       if (!this.fullStory || this.dialog) return
-      if (!this.storeDialog) {
+      if (!this.storeDialog && !this.mobile) {
         if (this.showArtefact) this.setShowArtefact()
         else this.setShowStory()
       }
@@ -354,7 +354,6 @@ export default {
 
     // toggle artefact view
     toggleShowArtefact (artefact) {
-      console.log('click artefact')
       if (this.fullStory) {
         this.artefact = artefact
         this.setShowArtefact()
