@@ -4,23 +4,17 @@
     <!-- Content Slot -->
     <template v-if="!hideDetails" v-slot:content>
       <v-col class="py-0">
-        <CommunityForm :profile.sync="formData"></CommunityForm>
+        <CommunityForm :profile.sync="formData" />
       </v-col>
     </template>
     <!-- End Content Slot -->
 
     <!-- Actions Slot -->
     <template v-slot:actions  style="border: 2px solid orange;">
-      <v-btn @click="close"
-        text large fab
-        class="secondary--text"
-      >
+      <v-btn @click="close" text large fab class="secondary--text">
         <v-icon color="secondary">mdi-close</v-icon>
       </v-btn>
-      <v-btn @click="submit"
-        text large fab
-        class="blue--text ml-5"
-      >
+      <v-btn @click="submit" text large fab class="blue--text ml-5">
         <v-icon>mdi-check</v-icon>
       </v-btn>
     </template>
@@ -67,7 +61,7 @@ export default {
   },
   data () {
     return {
-      formData: defaultData(this.withRelationships)
+      formData: defaultData()
     }
   },
 
