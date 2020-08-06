@@ -151,7 +151,7 @@ test('csv.parse', t => {
     .catch(err => { // should be 3 errors
       t.deepEqual(err, [
         { row: 1, field: 'relationshipType', error: 'only accepts the following: birth,whangai,adopted', value: 'bith' },
-        { row: 2, field: 'bornAt', error: 'should be of format DD/MM/YYYY or DD-MM-YYYY', value: '24-02' },
+        { row: 2, field: 'bornAt', error: 'should be of format DD/MM/YYYY or DD-MM-YYYY', value: '24/02' },
         { row: 3, field: 'gender', error: 'only accepts the following: male,female,other,unknown', value: 'fema' }
       ], 'returns expected errors')
     })
@@ -202,25 +202,40 @@ test('csv.schema', t => {
   // allowed
   t.true(isValid('bornAt')('21/04/2018'), 'bornAt can be DD/MM/YYYY')
   t.true(isValid('bornAt')('21-04-2018'), 'bornAt can be DD-MM-YYYY')
+  t.true(isValid('bornAt')('1-1-2018'), 'bornAt can be D-M-YYYY')
+  t.true(isValid('bornAt')('01-01-2018'), 'bornAt can be DD-MM-YYYY')
+  t.true(isValid('bornAt')('1-01-2018'), 'bornAt can be D-MM-YYYY')
+  t.true(isValid('bornAt')('11-1-2018'), 'bornAt can be DD-M-YYYY')
   t.true(isValid('bornAt')(''), 'bornAt can be empty')
   t.true(isValid('bornAt')(null), 'bornAt can be null')
   // not allowed
   t.false(isValid('bornAt')('04-21-2018'), 'bornAt cannot be MM-DD-YYYY') // american style
   t.false(isValid('bornAt')('04/21/2018'), 'bornAt cannot be MM/DD/YYYY') // american style
+  t.false(isValid('bornAt')('32-01-2018'), 'bornAt invalid day - 32')
+  t.false(isValid('bornAt')('00-01-2018'), 'bornAt invalid day - 0')
+  t.false(isValid('bornAt')('01-13-2018'), 'bornAt invalid month - 13')
+  t.false(isValid('bornAt')('01-00-2018'), 'bornAt invalid month - 0')
   t.false(isValid('bornAt')('meow'), 'bornAt cannot be any string')
   t.false(isValid('bornAt')(12), 'bornAt cannot be number')
 
   // DIED AT
 
   // allowed
-  // TODO this is a poor format for dates - should be YYYY/MM/DD
   t.true(isValid('diedAt')('21/04/2018'), 'diedAt can be DD/MM/YYYY')
   t.true(isValid('diedAt')('21-04-2018'), 'diedAt can be DD-MM-YYYY')
+  t.true(isValid('diedAt')('1-1-2018'), 'diedAt can be D-M-YYYY')
+  t.true(isValid('diedAt')('01-01-2018'), 'diedAt can be DD-MM-YYYY')
+  t.true(isValid('diedAt')('1-01-2018'), 'diedAt can be D-MM-YYYY')
+  t.true(isValid('diedAt')('11-1-2018'), 'diedAt can be DD-M-YYYY')
   t.true(isValid('diedAt')(''), 'diedAt can be empty')
   t.true(isValid('diedAt')(null), 'diedAt can be null')
   // not allowed
   t.false(isValid('diedAt')('04-21-2018'), 'diedAt cannot be MM-DD-YYYY') // american style
   t.false(isValid('diedAt')('04/21/2018'), 'diedAt cannot be MM/DD/YYYY') // american style
+  t.false(isValid('diedAt')('32-01-2018'), 'diedAt invalid day - 32')
+  t.false(isValid('diedAt')('00-01-2018'), 'diedAt invalid day - 0')
+  t.false(isValid('diedAt')('01-13-2018'), 'diedAt invalid month - 13')
+  t.false(isValid('diedAt')('01-00-2018'), 'diedAt invalid month - 0')
   t.false(isValid('diedAt')('meow'), 'diedAt cannot be any string')
   t.false(isValid('diedAt')(12), 'diedAt cannot be number')
 
@@ -265,6 +280,7 @@ test('csv.schema', t => {
 })
 
 test('real data', (t) => {
+  t.plan(304)
   const filepath = path.join(__dirname, 'fixtures', 'MOCK_DATA_150.csv')
   fs.readFile(filepath, 'utf8').then((file) => {
     t.ok(file, 'file read returns result')
@@ -315,5 +331,18 @@ test('real data', (t) => {
       })
     })
   })
-  t.end()
+})
+
+test('csv.convertDate', (t) => {
+  t.plan(8)
+  function convert (date, expectedRes) {
+    var res = csv.convertDate(date)
+    t.true(res, date + ' returns result')
+    t.deepEqual(res, expectedRes, date + ' returns expected result ' + expectedRes)
+  }
+
+  convert('24/07/1995', '1995-07-24')
+  convert('1/07/1997', '1997-07-01')
+  convert('01/7/1997', '1997-07-01')
+  convert('1/7/1997', '1997-07-01')
 })

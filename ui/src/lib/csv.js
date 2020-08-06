@@ -65,23 +65,13 @@ function parse (fileContent) {
 
       count++
 
-      d.bornAt = d.bornAt.replace(/\//g, '-')
-      d.diedAt = d.diedAt.replace(/\//g, '-')
-
       const errs = personErrors(d, row)
 
       if (errs) {
         errors = [...errors, ...errs]
       } else {
-        if (d.bornAt) {
-          const [day, month, year] = d.bornAt.split('-')
-          d.bornAt = `${year}-${month}-${day}`
-        }
-
-        if (d.diedAt) {
-          const [day, month, year] = d.diedAt.split('-')
-          d.diedAt = `${year}-${month}-${day}`
-        }
+        d.bornAt = convertDate(d.bornAt)
+        d.diedAt = convertDate(d.diedAt)
 
         if (d.birthOrder) {
           d.birthOrder = parseInt(d.birthOrder)
@@ -198,7 +188,7 @@ function isString (d) {
   return typeof d === 'string'
 }
 
-var dateRegex = /^(0[1-9]|[12][0-9]|3[01])[/-](0?[1-9]|1[012])[/-]\d{4}$/
+var dateRegex = /^(0[1-9]|[0-9]|[12][0-9]|3[01])[/-](0?[1-9]|1[012])[/-]\d{4}$/
 
 function isValidDate (d) {
   return isEmpty(d) || dateRegex.test(d)
@@ -244,8 +234,28 @@ function headerColumnErrors (headers) {
   return errors
 }
 
+/*
+  Convert date to YYYY-MM-DD
+*/
+function convertDate (date) {
+  if (!date) return ''
+  // the date is valid so we can convert it
+  var [day, month, year] = date.replace(/\//g, '-').split('-')
+  day = convertDigit(day)
+  month = convertDigit(month)
+  var _date = `${year}-${month}-${day}`
+
+  return _date
+}
+
+function convertDigit (digit) {
+  if (digit.length === 1) return '0' + digit
+  return digit
+}
+
 export {
   importCsv,
+  convertDate,
   parse,
   schema,
   PERMITTED_CSV_COLUMNS
