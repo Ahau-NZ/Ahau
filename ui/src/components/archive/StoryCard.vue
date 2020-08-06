@@ -329,7 +329,7 @@ export default {
     ...mapActions(['setShowArtefact', 'setDialog', 'setProfileById', 'setShowStory']),
     onClickOutside () {
       if (!this.fullStory || this.dialog) return
-      if (!this.storeDialog) {
+      if (!this.storeDialog && !this.mobile) {
         if (this.showArtefact) this.setShowArtefact()
         else this.setShowStory()
       }
