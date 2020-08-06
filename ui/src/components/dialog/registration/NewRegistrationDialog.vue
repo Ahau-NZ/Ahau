@@ -206,16 +206,18 @@ export default {
       deep: true,
       immediate:true,
       handler (newVal) {
-        if (newVal.length < 1) return this.parentNamesValid = false
-        this.gpNamesValid = newVal.every((parent) => {
-          if (!parent.grandparents) return false
-          return parent.grandparents.every((gp) => {
-            return gp.preferredName && gp.preferredName.length
+        if (newVal.length < 1) this.parentNamesValid = false
+        else {
+          this.gpNamesValid = newVal.every((parent) => {
+            if (!parent.grandparents) return false
+            return parent.grandparents.every((gp) => {
+              return gp.preferredName && gp.preferredName.length
+            })
           })
-        })
-        this.parentNamesValid = newVal.every((parent) => {
-          return parent.preferredName && parent.preferredName.length
-        })
+          this.parentNamesValid = newVal.every((parent) => {
+            return parent.preferredName && parent.preferredName.length
+          })
+        }
       }
     }
   },
@@ -333,8 +335,8 @@ export default {
         //   kaitiaki: kaitiaki
         // }
         // // TODO - send message to Kaitiaki
-        // console.warn('send this object: ', output)
-        // this.close()
+        console.warn('send this object: ', input)
+        this.close()
       }
     }
   }
