@@ -17,9 +17,9 @@
         <ProfileCard title="Kaitiaki" class="mt-0 px-0">
           <template v-slot:content>
             <div v-if="profile.type === 'community'">
-              <v-row  v-for="kaitiaki in currentTribe.public[0].tiaki" :key="kaitiaki.id" class="justify-center align-center ma-0 ml-4">
+              <v-row  v-for="kaitiaki in tiakis" :key="kaitiaki.id" class="justify-center align-center ma-0 ml-4">
                 <v-col cols="2" class="pt-0 pl-0">
-                  <Avatar :size="mobile ? '50px' : '40px'" :image="kaitiaki.avatarImage" :alt="kaitiaki.preferredName" clickable @click="openProfile(kaitiaki)"/>
+                  <Avatar :size="mobile ? '50px' : '40px'" :image="kaitiaki.avatarImage" :alt="kaitiaki.preferredName"/>
                 </v-col>
                 <v-col>
                   <p style="color:black;">{{kaitiaki.preferredName}}</p>
@@ -27,7 +27,7 @@
               </v-row>
             </div>
             <div v-else>
-              <AvatarGroup :profiles="profile.kaitiaki" size="40px" show-labels row customClass="pl-3" @profile-click="openProfile($event)"/>
+              <AvatarGroup :profiles="profile.kaitiaki" size="40px" show-labels row customClass="pl-3"/>
             </div>
           </template>
         </ProfileCard>
@@ -100,6 +100,9 @@ export default {
   },
   computed: {
     ...mapGetters(['whoami', 'currentTribe', 'tribes']),
+    tiakis () {
+      return this.currentTribe.private.length > 0 ? this.currentTribe.private[0].tiaki : this.currentTribe.public[0].tiaki
+    },
     connectedTribes () {
       return this.tribes.filter(tribe => tribe.private.length > 0)
     },

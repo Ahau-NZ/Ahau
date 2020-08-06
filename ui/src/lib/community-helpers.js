@@ -7,32 +7,29 @@ const apolloProvider = createProvider()
 const apolloClient = apolloProvider.defaultClient
 
 export const PERMITTED_COMMUNITY_ATTRS = [
-  'id',
-  'type',
-
-  'preferredName',
-  // 'legalName',
-  // 'altNames',
-
-  'description',
   'avatarImage',
   'headerImage',
-
+  'id',
+  'type',
+  'preferredName',
+  'description',
   'email',
   'phone',
-  'address',
   'location',
-
   'tombstone',
+  'tiaki',
+  // private only attrs
+  'address',
   'recps'
 ]
 
 export const PERMITTED_PUBLIC_COMMUNITY_ATTRS = [
-  'id',
-  'preferredName',
   'avatarImage',
-  'description',
   'headerImage',
+  'id',
+  'type',
+  'preferredName',
+  'description',
   'email',
   'phone',
   'location',
@@ -135,6 +132,31 @@ export const deleteTribe = tribe => {
   }
 }
 
+export const updateTribe = (tribe, input) => {
+  const privateDetails = pick(input, PERMITTED_COMMUNITY_ATTRS)
+  const publicDetails = pick(input, PERMITTED_PUBLIC_COMMUNITY_ATTRS)
+
+  return {
+    mutation: gql`
+      mutation($privateInput:ProfileInput, $publicInput:ProfileInput) {
+        savePrivate: saveProfile(input:$privateInput)
+        savePublic: saveProfile(input:$publicInput)
+      }
+    `,
+    variables: {
+      privateInput: {
+        id: tribe.private[0].id,
+        ...privateDetails
+      },
+      publicInput: {
+        id: tribe.public[0].id,
+        ...publicDetails,
+        allowPublic: true
+      }
+    }
+  }
+}
+
 export const getTribes = ({
   query: gql`
   ${PUBLIC_PROFILE_FRAGMENT}
@@ -203,13 +225,16 @@ export const getCommunityProfile = id => ({
   fetchPolicy: 'no-cache'
 })
 
-export async function getTribe (profileId) {
+// TODO: figure out how to manage query in vue vs in js
+// should this file export mutations or results
+export async function callGetTribe (profileId) {
   const result = await apolloClient.query(getTribes)
   if (result.errors) {
     console.error('Failed to to get Tribes')
     console.error(result.errors)
   } else {
-    const tribe = result.data.tribes.find(tribe => tribe.private[0].id === profileId)
+    const tribes = result.data.tribes.filter(tribe => tribe.private.length > 0)
+    const tribe = tribes.find(tribe => tribe.private[0].id === profileId)
     return tribe
   }
 }
