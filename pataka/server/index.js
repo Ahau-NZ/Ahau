@@ -8,6 +8,7 @@ const Profile = require('@ssb-graphql/profile')
 const Invite = require('@ssb-graphql/invite')
 const stats = require('@ssb-graphql/stats')
 const Pataka = require('@ssb-graphql/pataka')
+const pull = require('pull-stream')
 
 // const { PubSub } = require('apollo-server')
 // const pubsub = new PubSub()
@@ -19,6 +20,23 @@ module.exports = {
     const PORT = 4001
     const app = express()
     app.options('*', cors())
+
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Live streaming new messages ...')
+      pull(
+        sbot.createLogStream({ live: true, old: false, private: true }),
+        pull.drain(m => {
+          delete m.value.meta
+          delete m.value.cyphertext
+          console.log(JSON.stringify(m, null, 2))
+        })
+      )
+
+      console.log('Logging log:info ...')
+      sbot.on('log:info', m => console.log(m))
+      // sbot.emit('log:info', ['listener working'])
+    }
+
     const main = Main(sbot)
     const profile = Profile(sbot)
     const invite = Invite(sbot)
