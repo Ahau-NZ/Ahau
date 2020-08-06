@@ -11,10 +11,10 @@
       <v-col cols="12" offset-md="2" md="8" sm="12" :class="!mobile ? 'pl-12' : '' " :align="mobile ? 'center' : 'start'" :order="mobile ? '3' : '1'">
         <h1 class="primary--text" :style="mobile ? length : ''">{{ currentProfile.legalName ? currentProfile.legalName : currentProfile.preferredName }}</h1>
       </v-col>
-      <!-- <v-col v-if="isKaitiaki" :order="mobile ? '1' : '2'" :align="mobile ? 'start' : isKaitiaki ? 'start':'center'" cols="6" md="1" sm="6"  class="px-5">
+      <!-- <v-col v-if="currentProfile.canEdit" :order="mobile ? '1' : '2'" :align="mobile ? 'start' : isCommunity ? 'start':'center'" cols="6" md="1" sm="6"  class="px-5">
         <EditRegistrationButton @click="setDialog('edit-registration')" />
       </v-col> -->
-      <v-col :order="mobile ? '2' : '3'" :align="mobile || tablet ? 'end' : isKaitiaki ? 'start':'center'" :cols="isKaitiaki ? '12':'12'" :md="isKaitiaki ? 1:2" class="px-5">
+      <v-col v-if="currentProfile.canEdit" :order="mobile ? '2' : '3'" :align="mobile || tablet ? 'end' : isCommunity ? 'start':'center'" cols="12" :md="isCommunity ? 1:2" class="px-5">
         <EditProfileButton v-if="currentProfile.canEdit" @click="currentProfile.type === 'person' ? setDialog('edit-node', 'this', 'this') : setDialog('edit-community')" />
       </v-col>
     </v-row>
@@ -76,16 +76,17 @@ export default {
   },
   beforeMount () {
     this.getAllStories()
+    this.setTribes()
   },
   computed: {
-    ...mapGetters(['currentProfile', 'activeComponent', 'showStory', 'showArtefact']),
+    ...mapGetters(['currentProfile', 'activeComponent', 'showStory', 'showArtefact', 'currentTribe']),
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
     tablet () {
       return this.$vuetify.breakpoint.md
     },
-    isKaitiaki () {
+    isCommunity () {
       // TODO - only viewable by kaitiaki
       return this.currentProfile.type === 'community'
     },
@@ -104,7 +105,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['getAllStories', 'setProfileById', 'setWhoami', 'setShowArtefact', 'setDialog']),
+    ...mapActions(['getAllStories', 'setProfileById', 'setWhoami', 'setShowArtefact', 'setDialog', 'setTribes']),
     async setupProfile (id) {
       this.setProfileById({ id })
     }

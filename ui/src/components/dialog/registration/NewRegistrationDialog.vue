@@ -71,17 +71,17 @@
                   <ParentGroup :index="grandparentIndex" :profile="grandparent" :title="grandparent.relationshipType ? grandparent.relationshipType + ' grandparent' : 'grandparent'" @removeParent="removeGrandparent($event, index)"/>
                 </v-col>
                 <v-row class="py-4 pl-10">
-                  <v-icon :color="!gpNames ? '#b12526':''">mdi-account-supervisor-circle</v-icon>
-                  <AddButton :color="!gpNames ? '#b12526':''" justify="start" :width="'50px'" :label="'Add parents of ' + parent.preferredName" @click="addGrandparent(index)"/>
+                  <v-icon :color="!gpNamesValid ? '#b12526':''">mdi-account-supervisor-circle</v-icon>
+                  <AddButton :color="!gpNamesValid ? '#b12526':''" justify="start" :width="'50px'" :label="'Add parents of ' + parent.preferredName" @click="addGrandparent(index)"/>
                 </v-row>
               </v-row>
             </div>
             <v-row class="py-4 pl-12">
-              <v-icon :color="!parentsNames ? '#b12526':''">mdi-account-supervisor-circle</v-icon>
-              <AddButton :color="!parentsNames ? '#b12526':''" justify="start" :width="'50px'" label="Add parent" @click="addParent('parent')"/>
+              <v-icon :color="!parentNamesValid ? '#b12526':''">mdi-account-supervisor-circle</v-icon>
+              <AddButton :color="!parentNamesValid ? '#b12526':''" justify="start" :width="'50px'" label="Add parent" @click="addParent('parent')"/>
             </v-row>
             <v-card-actions style="display: flex; justify-content: center; align-items: center;">
-              <v-checkbox :disabled="!gpNames" class="checkbox-label" color="success" v-model="checkbox3" :label="`I agree to share this information`" :rules="requiredRules"></v-checkbox> .
+              <v-checkbox :disabled="!gpNamesValid" class="checkbox-label" color="success" v-model="checkbox3" :label="`I agree to share this information`" :rules="requiredRules"></v-checkbox> .
             </v-card-actions>
           </v-card>
 
@@ -194,11 +194,30 @@ export default {
       ],
       errorMsgs: [],
       message: '',
-      gpNames: false
+      gpNamesValid: false,
+      parentNamesValid: false
     }
   },
   mounted () {
     this.getFullProfile(this.profile.id)
+  },
+  watch: {
+    parents: {
+      deep: true,
+      immediate:true,
+      handler (newVal) {
+        if (newVal.length < 1) return this.parentNamesValid = false
+        this.gpNamesValid = newVal.every((parent) => {
+          if (!parent.grandparents) return false
+          return parent.grandparents.every((gp) => {
+            return gp.preferredName && gp.preferredName.length
+          })
+        })
+        this.parentNamesValid = newVal.every((parent) => {
+          return parent.preferredName && parent.preferredName.length
+        })
+      }
+    }
   },
   computed: {
     ...mapGetters(['currentProfile', 'selectedProfile']),
@@ -207,17 +226,6 @@ export default {
         var remaining = this.errorMsgs.filter((f) => f !== 'grandparents' & f !== 'parents')
         return remaining.length
       } return false
-    },
-    parentsNames () {
-      if (this.parents && this.parents.length) {
-        this.parents.map((parent) => {
-          if (parent.grandparents && parent.grandparents.length) {
-            this.gpNames = true
-          }
-        })
-        return true
-      }
-      return false
     },
     length () {
       var name = ''
@@ -237,7 +245,7 @@ export default {
       if (this.errorMsgs && this.errorMsgs.length > 0) {
         return true
       }
-      if (!this.parentsNames && !this.gpNames) {
+      if (!this.parentNamesValid && !this.gpNamesValid) {
         return true
       }
       return false
@@ -285,7 +293,7 @@ export default {
           errors.push(key)
         }
       })
-      if (!this.gpNames) errors.push('grandparents')
+      if (!this.gpNamesValid) errors.push('grandparents')
       this.errorMsgs = errors
     },
 

@@ -3,7 +3,7 @@
     <NewRegistrationDialog
       v-if="isActive('new-registration')"
       :show="isActive('new-registration')"
-      :profile="whoami.public.profile"
+      :profile="whoami.personal.profile"
       :title="`Request to join : ${currentProfile.preferredName}`"
       :parents.sync="parents"
       :parentIndex.sync="parentIndex"
@@ -114,7 +114,7 @@
       @submit="console.log('TODO: add collection to profile')"
     />-->
     <ComingSoonDialog :show="isActive('coming-soon')" @close="close" />
-    <ConfirmationText :show="snackbar" :message="confirmationText" />
+    <ConfirmationMessage :show="snackbar" :message="confirmationText" />
   </div>
 </template>
 
@@ -139,9 +139,9 @@ import ConfirmationMessage from '@/components/dialog/ConfirmationMessage.vue'
 import gql from 'graphql-tag'
 
 import { PERMITTED_RELATIONSHIP_ATTRS, savePerson, saveCurrentIdentity } from '@/lib/person-helpers.js'
-import { createGroup, saveCommunity, saveGroupProfileLink } from '@/lib/community-helpers'
-
+import { createGroup, saveCommunity, savePublicCommunity, saveGroupProfileLink, deleteTribe, updateTribe } from '@/lib/community-helpers'
 import { saveWhakapapaView } from '@/lib/whakapapa-helpers.js'
+
 import { saveLink } from '@/lib/link-helpers.js'
 import tree from '@/lib/tree-helpers'
 import findSuccessor from '@/lib/find-successor'
@@ -218,7 +218,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['nestedWhakapapa', 'selectedProfile', 'whoami', 'storeDialog', 'storeType', 'storeSource', 'currentProfile']),
+    ...mapGetters(['nestedWhakapapa', 'selectedProfile', 'whoami', 'storeDialog', 'storeType', 'storeSource', 'currentProfile', 'currentProfiles', 'currentTribe', 'tribes']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -245,7 +245,7 @@ export default {
       return this.whoami.personal.profile.id === id
     },
     ...mapActions(['setWhoami', 'updateNode', 'deleteNode', 'updatePartnerNode', 'addChild', 'addParent', 'loading', 'setDialog',
-      'setProfileById', 'setComponent'
+      'setProfileById', 'setComponent', 'setCurrentTribe', 'setCurrentTribeById', 'setTribes'
     ]),
     addGrandparentToRegistartion (grandparent) {
       var parent = this.parents[this.parentIndex]
@@ -307,58 +307,84 @@ export default {
     },
     async setupNewCommunity ($event) {
       if ($event.id) throw new Error('this is for creating a new tribe + community, not updating')
-      // WIP
-      // - [x] set up private group (so you have groupId)
-      // - [x] create a PRIVATE community profile for that group (recps: [groupId])
-      // - [x] create a link between group + private profile
-      // - [ ] create a PUBLIC community profile for that group (allowPublic: true)
-      // - [ ] create a link between group + public profile
 
       // (later?)
       // - [ ] create a copy of your personal profile (recps: [groupId])
       // - [ ] link your feedId + profile
       //    - saveFeedProfileLink (recps: [groupId])
+      try {
+        const createGroupRes = await this.$apollo.mutate(createGroup())
+        if (createGroupRes.errors) {
+          console.error('failed to create private group', createGroupRes)
+        }
+        const groupId = createGroupRes.data.createGroup.id
 
-      const createGroupRes = await this.$apollo.mutate(createGroup())
-      if (createGroupRes.errors) {
-        console.error('failed to create private group', createGroupRes)
-        return
-        // TODO show user an error
+        const createCommunityRes = await this.$apollo.mutate(saveCommunity({
+          ...$event,
+          recps: [groupId]
+        }))
+        if (createCommunityRes.errors) {
+          console.error('failed to create community', createCommunityRes)
+          return
+        }
+
+        const groupProfile = createCommunityRes.data.saveProfile // id
+
+        const profileLinkRes = await this.$apollo.mutate(saveGroupProfileLink({
+          profile: groupProfile,
+          group: groupId
+        }))
+        if (profileLinkRes.errors) {
+          console.error('failed to create link community profile', profileLinkRes)
+          return
+        }
+
+        const createPublicCommunityRes = await this.$apollo.mutate(savePublicCommunity({
+          ...$event
+        }))
+        if (createPublicCommunityRes.errors) {
+          console.error('failed to create community', createPublicCommunityRes)
+          return
+        }
+
+        const groupPublicProfile = createPublicCommunityRes.data.saveProfile // id
+
+        const profilePublicLinkRes = await this.$apollo.mutate(saveGroupProfileLink({
+          profile: groupPublicProfile,
+          group: groupId,
+          allowPublic: true
+        }))
+        if (profilePublicLinkRes.errors) {
+          console.error('failed to create link community profile', groupPublicProfile)
+          return
+        }
+
+        if (profilePublicLinkRes.data.saveGroupProfileLink) {
+          this.setCurrentTribeById(groupProfile)
+          this.setComponent('profile')
+          this.setProfileById({ id: groupProfile })
+          this.$router.push({ name: 'profileShow', params: { id: groupProfile } }).catch(() => {})
+        }
+      } catch (err) {
+        // is this the right place for this?
+        this.confirmationAlert('Failed to create private group. Please contact us if this continues to happen', err)
+        setTimeout(() => {
+          this.confirmationText = null
+          this.snackbar = !this.snackbar
+        }, 5000)
       }
-      const groupId = createGroupRes.data.createGroup.id
-
-      const createCommunityRes = await this.$apollo.mutate(saveCommunity({
-        ...$event,
-        recps: [groupId]
-      }))
-      if (createCommunityRes.errors) {
-        console.error('failed to create community', createCommunityRes)
+    },
+    async updateCommunity ($event) {
+      const res = await this.$apollo.mutate(updateTribe(this.currentTribe, $event))
+      if (res.errors) {
+        console.error('failed to update community', res)
+      } else {
+        this.setProfileById({ id: res.data.savePrivate })
+        this.setCurrentTribeById(res.data.savePrivate)
       }
-      const community = createCommunityRes.data.saveProfile // id
-      console.log({ groupId, community })
-
-      const linkCommunityRes = await this.$apollo.mutate(saveGroupProfileLink({
-        profile: community,
-        group: groupId
-      }))
-
-      if (linkCommunityRes.errors) {
-        console.error('failed to saveGroupProfileLink', linkCommunityRes)
-      }
-
-      // TODO
-      // - link community + group
-      //   - modify @ssb-graphql/profile to be able to make group-profile links
-      // - create public profile + link to group
-
-      // if (id) {
-      //   this.setComponent('profile')
-      //   this.setProfileById({ id })
-      //   this.$router.push({ name: 'profileShow', params: { id } }).catch(() => {})
-      // }
     },
     async savePerson (input) {
-      if (!input.id) input.recps = [this.whoami.personal.groupId]
+      if (!input.id && !input.recps) input.recps = [this.whoami.personal.groupId]
       // TODO fix recps to be right group
       const res = await this.$apollo.mutate(savePerson(input))
 
@@ -599,29 +625,13 @@ export default {
         throw err
       }
     },
-    async updateCommunity ($event) {
-      console.log('updateCommunity', $event)
 
-      const res = await this.$apollo.mutate(saveCommunity({
-        id: this.selectedProfile.id,
-        ...$event
-      }))
-      if (res.errors) {
-        console.error('failed to update community', res)
-        return
-      }
-
-      if (this.storeDialog === 'edit-community') {
-        this.setProfileById({
-          id: res.data.saveProfile
-        })
-      }
-    },
     async updatePerson (input) {
       console.log('update profile: ', input)
 
       const profileId = this.selectedProfile.id
       if (this.isPersonalProfile(profileId)) {
+        console.log()
         await this.saveCurrentIdentity(input)
       } else {
         await this.savePerson({ id: profileId, ...input })
@@ -696,7 +706,7 @@ export default {
     },
     async removeProfile (deleteOrIgnore) {
       if (deleteOrIgnore === 'delete') {
-        await this.deleteProfile()
+        await this.deletePerson()
       } else {
         await this.ignoreProfile()
       }
@@ -732,7 +742,7 @@ export default {
         throw err
       }
     },
-    async deleteProfile () {
+    async deletePerson () {
       if (!this.canDelete(this.selectedProfile)) return
 
       var input = {
@@ -760,24 +770,12 @@ export default {
     },
 
     async deleteCommunity () {
-      const profileResult = await this.$apollo.mutate({
-        mutation: gql`
-          mutation($input: ProfileInput!) {
-            saveProfile(input: $input)
-          }
-        `,
-        variables: {
-          input: {
-            id: this.selectedProfile.id,
-            tombstone: {
-              date: new Date()
-            }
-          }
-        }
-      })
-      if (profileResult.errors) {
-        console.error('failed to delete profile', profileResult)
+      const deleteTribeRes = await this.$apollo.mutate(deleteTribe(this.currentTribe))
+      if (deleteTribeRes.errors) {
+        console.error('failed to delete public profile', deleteTribeRes)
       } else {
+        this.source = null
+        this.setTribes()
         this.setComponent('profile')
         this.setProfileById({ id: this.whoami.personal.profile.id })
         this.$router.push({ name: 'profileShow', params: { id: this.whoami.personal.profile.id } }).catch(() => {})
