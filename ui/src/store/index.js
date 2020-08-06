@@ -6,6 +6,7 @@ import whakapapa from './modules/whakapapa'
 import person from './modules/person'
 import archive from './modules/archive'
 import dialog from './modules/dialog'
+import tribe from './modules/tribe'
 import { whoami } from '../lib/person-helpers.js'
 
 const apolloProvider = createProvider()
@@ -45,7 +46,8 @@ const store = new Vuex.Store({
     whakapapa,
     person,
     archive,
-    dialog
+    dialog,
+    tribe
   },
   getters: {
     loadingState: state => {

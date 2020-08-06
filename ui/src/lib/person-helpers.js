@@ -37,7 +37,8 @@ export const PERMITTED_PERSON_ATTRS = [
 export const PERMITTED_PUBLIC_PERSON_ATTRS = [
   'id',
   'preferredName',
-  'avatarImage'
+  'avatarImage',
+  'gender'
 ]
 
 export const PERMITTED_RELATIONSHIP_ATTRS = [
