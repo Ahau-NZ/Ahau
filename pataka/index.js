@@ -25,10 +25,9 @@ const plugins = [
   'ssb-artefact',
   'ssb-whakapapa',
 
-  // 'ssb-private',
   'ssb-invite',
-  'ahau-pataka-server'
-  // 'ssb-recps-guard' // << NOTE - do not need this on pataka
+  'ahau-pataka-server',
+  'ssb-recps-guard'
 ]
 
 // Karakia tūwhera - dont not remove

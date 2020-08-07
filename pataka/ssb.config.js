@@ -18,7 +18,9 @@ const customConfig = {
     csp: ''
   },
   recpsGuard: {
-    allowedTypes: [] // e.g. 'pub', 'announce'
+    allowedTypes: [
+      'contact'
+    ]
   }
 }
 
