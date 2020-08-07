@@ -1,4 +1,4 @@
-const Config = require('ssb-config/inject')
+const Config = require('ssb-config/defaults')
 const fs = require('fs')
 const path = require('path')
 
@@ -29,7 +29,7 @@ module.exports = function () {
     ? 'ahau-dev'
     : 'ssb-ahau'
 
-  const config = Config(appName, Object.assign({}, customConfig))
+  const config = Config(appName, customConfig)
 
   // write a copy of this config to ~/.{appName}/config
   fs.writeFile(

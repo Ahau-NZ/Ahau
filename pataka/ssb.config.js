@@ -1,4 +1,4 @@
-const Config = require('ssb-config/inject')
+const Config = require('ssb-config/defaults')
 const fs = require('fs')
 const path = require('path')
 
@@ -28,8 +28,7 @@ module.exports = function () {
   const appName =
     process.env.NODE_ENV === 'development' ? 'ahau-pataka-dev' : 'ahau-pataka'
 
-  const config = Config(appName, Object.assign({}, customConfig))
-  // console.log(JSON.stringify(config, null, 2))
+  const config = Config(appName, customConfig)
 
   // write a copy of this config to ~/.{appName}/config
   fs.writeFile(

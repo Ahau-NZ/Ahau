@@ -626,24 +626,6 @@ export default {
         throw err
       }
     },
-    async updateCommunity ($event) {
-      console.log('updateCommunity', $event)
-
-      const res = await this.$apollo.mutate(saveCommunity({
-        id: this.selectedProfile.id,
-        ...$event
-      }))
-      if (res.errors) {
-        console.error('failed to update community', res)
-        return
-      }
-
-      if (this.storeDialog === 'edit-community') {
-        this.setProfileById({
-          id: res.data.saveProfile
-        })
-      }
-    },
     async updatePerson (input) {
       console.log('update profile: ', input)
 
