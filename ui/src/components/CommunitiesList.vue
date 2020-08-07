@@ -140,6 +140,7 @@ export default {
             tombstone { date }
             tiaki {
               id
+              feedId
               avatarImage { uri }
               preferredName
             }
@@ -154,6 +155,7 @@ export default {
             tombstone {date}
             tiaki {
               id
+              feedId
               avatarImage { uri }
               preferredName
             }

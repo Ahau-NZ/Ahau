@@ -1,5 +1,8 @@
 // import gql from 'graphql-tag'
-// import { createProvider } from '@/plugins/vue-apollo'
+import { createProvider } from '@/plugins/vue-apollo'
+import { LIST_GROUP_APPLICATIONS } from '@/lib/tribes-application-helpers'
+const apolloProvider = createProvider()
+const apollo = apolloProvider.defaultClient
 
 const state = {
   notifications: [],
@@ -25,40 +28,29 @@ const mutations = {
 }
 
 const actions = {
+  async getAllNotifications ({ commit }) {
+    const res = await apollo.query({ query: LIST_GROUP_APPLICATIONS })
+    const formatedNotification = res.data.listGroupApplications.map(a => ({
+      type: 'registration',
+      message: {
+        community: a.group,
+        profile: a.applicant,
+        message: a.text ? a.text[a.text.length - 1] : ''
+      },
+      from: a.applicant
+    }))
+    if (res.errors) {
+      console.error('error fetching all notifications', res)
+      commit('updateNotifications', [])
+      return
+    }
+    commit('updateNotifications', formatedNotification)
+  },
   setCurrentNotification ({ commit }, notification) {
     commit('updateCurrentNotification', notification)
   },
-  setNotifications ({ commit, rootState }, notifications) {
-    var dummyNotifications = [
-      {
-        type: 'registration',
-        message: {
-          community: rootState.whoami.personal.profile,
-          profile: rootState.person.currentProfile,
-          message: 'Hello my name is Ben, I was born in Australia and havent been home yet, so I am excited to learn more baout who I am and where I come from'
-        },
-        from: rootState.whoami.personal.profile
-      },
-      {
-        type: 'response',
-        message: {
-          outcome: 'approved',
-          community: rootState.whoami.personal.profile,
-          message: 'Kia ora Ben, so awesome that you have joined. We dont current have any information about your family on the whakapapa record so it would be awesome if you can add any some information about your mum and siblings (if you have any)'
-        },
-        from: rootState.whoami.personal.profile
-      },
-      {
-        type: 'response',
-        message: {
-          outcome: 'declined',
-          community: rootState.whoami.personal.profile,
-          message: 'Kia ora Ben, Aroha mai. Im sorry I cant find any whakapapa connection to our whānau for your parents or grandparents names that you have provided. Please give me a call on 0226990253 so we can talk and see if we can make the connection.'
-        },
-        from: rootState.whoami.personal.profile
-      }
-    ]
-    commit('updateNotifications', dummyNotifications)
+  async setNotifications ({ commit, rootState }, notifications) {
+    commit('updateNotifications', notifications)
   }
 }
 

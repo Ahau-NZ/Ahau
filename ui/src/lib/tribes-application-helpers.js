@@ -5,8 +5,12 @@ export const CREATE_GROUP_APPLICATION = gql`
     createGroupApplication(groupId: $groupId, recps: $recps, text: $text) {
       id
       version
-      groupId
-      applicantId
+      group {
+        id
+      }
+      applicant {
+        id
+      }
       text
       recps
       accepted
@@ -19,8 +23,12 @@ export const ACCEPT_GROUP_APPLICATION = gql`
   mutation($id: String!, $text: String) {
     acceptGroupApplication(id: $id, text: $text) {
       id
-      groupId
-      applicantId
+      group {
+        id
+      }
+      applicant {
+        id
+      }
       text
       recps
       accepted
@@ -30,13 +38,25 @@ export const ACCEPT_GROUP_APPLICATION = gql`
 
 export const LIST_GROUP_APPLICATIONS = gql`
   query($groupId: String, $accepted: Boolean) {
-    listGroupApplications(groupdId: $groupdId, accepted: $accepted) {
+    listGroupApplications(groupId: $groupId, accepted: $accepted) {
       id
-      groupId
-      applicantId
       text
-      recps
       accepted
+      applicant {
+        id
+        gender
+        preferredName
+        avatarImage {
+          uri
+        }
+      }
+      group {
+        id
+        preferredName
+        avatarImage {
+          uri
+        }
+      }
     }
   }
 `
@@ -45,8 +65,12 @@ export const GET_GROUP_APPLICATION = gql`
   query($id: String!) {
     getGroupApplication(id: $id) {
       id
-      groupId
-      applicantId
+      group {
+        id
+      }
+      applicant {
+        id
+      }
       text
       recps
       accepted

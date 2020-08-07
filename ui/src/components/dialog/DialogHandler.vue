@@ -3,7 +3,7 @@
     <NewRegistrationDialog
       v-if="isActive('new-registration')"
       :show="isActive('new-registration')"
-      :title="dialogType === 'review' ? `Request to join Āhau from ---- Benjamin Nootai Tairea`:`Request to join : ${currentProfile.preferredName}`"
+      :title="dialogType === 'review' ? `Request to join Āhau from ---- ${currentNotification.from.preferredName}`:`Request to join : ${currentProfile.preferredName}`"
       :profile="whoami.personal.profile"
       :parents.sync="parents"
       :parentIndex.sync="parentIndex"

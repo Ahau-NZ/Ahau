@@ -7,10 +7,10 @@
             <span v-if="type === 'review'" class="py-6 px-4 subtitle-2 black--text">
               A new request has been recieved from
               <strong>
-                <i>Benjamin Nootai Tairea</i>
+                <i>{{currentNotification.from.preferredName}}</i>
               </strong> to join
               <strong>
-                <i>Your Whanau.</i>
+                <i>{{currentNotification.message.community.preferredName}}</i>
               </strong>
               <br />Please review their information and respond below
             </span>
@@ -71,7 +71,9 @@
                     </v-row>
                   </v-col>
                   <v-col cols="12" align="center">
-                    <h4 class="primary--text">Your Whanau</h4>
+                    <h4
+                      class="primary--text"
+                    >{{currentNotification.message.community.preferredName}}</h4>
                   </v-col>
                 </v-col>
               </v-row>
@@ -130,7 +132,7 @@
               <p v-if="type === 'review'" class="py-6 px-4 subtitle-2 black--text">
                 The below private information will only be viewable by you and any other
                 <strong>
-                  <i>Your Whanau</i>
+                  <i>{{currentNotification.message.community.preferredName}}</i>
                 </strong> kaitiaki
               </p>
               <p v-else class="py-6 px-4 subtitle-2 black--text">
@@ -197,7 +199,7 @@
             <p v-if="type === 'review'" class="py-6 px-4 subtitle-2 black--text">
               Please review the provided whakapapa information provided by
               <strong>
-                <i>Ben</i>
+                <i>{{currentNotification.from.preferredName}}</i>
               </strong>
             </p>
             <p
@@ -353,7 +355,7 @@
     <Dialog
       v-if="showMessage"
       :show="showMessage"
-      :title="`${response} request to join Your Whanau` "
+      :title="`${response} request to join ${currentNotification.message.community.preferredName}` "
       @close="close"
       width="720px"
       :goBack="close"
@@ -363,7 +365,7 @@
         <p class="pt-4 px-4 subtitle-2 black--text">
           Would you like to send a message along with your response to
           <strong>
-            <i>Benjamin Nootai Tairea</i>
+            <i>{{currentNotification.from.preferredName}}</i>
           </strong>
         </p>
         <v-col cols="12" :class="mobile ? 'pt-4 px-0':'px-5'">
@@ -476,7 +478,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['currentProfile', 'selectedProfile', 'whoami', 'currentTribe']),
+    ...mapGetters(['currentProfile', 'selectedProfile', 'whoami', 'currentTribe', 'currentNotification']),
     remainingErrors () {
       if (this.errorMsgs && this.errorMsgs.length) {
         var remaining = this.errorMsgs.filter((f) => f !== 'grandparents' & f !== 'parents')
@@ -596,42 +598,33 @@ export default {
           parents: this.parents
         }
 
-        var output = {
-          // TODO - update to match notifications
-          action: 'registration',
-          from: this.formData.id,
-          message: {
-            katiaki: this.currentTribe.public[0].tiaki[0].id,
-            community: this.currentProfile.id,
-            profile: input,
-            message: this.message
-          },
-          to: this.currentProfile.id
-        }
+        // var output = {
+        //   // TODO - update to match notifications
+        //   action: 'registration',
+        //   from: this.formData.id,
+        //   message: {
+        //     katiaki: this.currentTribe.public[0].tiaki[0].id,
+        //     community: this.currentProfile.id,
+        //     profile: input,
+        //     message: this.message
+        //   },
+        //   to: this.currentProfile.id
+        // }
         // TODO - send message to Kaitiaki
         console.warn('send this object: ', output)
         this.close()
       }
-      // var common = pick(input, COMMON_PERMITTED_PROFILE_ATTRS)
-      // var kaitiaki = pick(input, PRIVATE_PERMITTED_PROFILE_ATTRS)
-
-      // var output = {
-      //   common: common,
-      //   kaitiaki: kaitiaki
-      // }
-      // // TODO - send message to Kaitiaki
-      // console.warn('send this object: ', output)
       console.log('submit -> this.formData', this.currentTribe.public[0].tiaki)
       const applyToJoin = await this.$apollo.mutate({
         mutation: CREATE_GROUP_APPLICATION,
         variables: {
           groupId: this.currentTribe.id,
-          recps: this.currentTribe.public[0].tiaki.map(i => i.id),
+          recps: [...this.currentTribe.public[0].tiaki.map(i => i.feedId), this.whoami.public.feedId],
           text: 'Hello'
         }
       })
       console.log('submit -> applyToJoin', applyToJoin)
-      // this.close()
+      this.close()
       // }
     },
 
