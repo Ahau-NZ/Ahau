@@ -1,5 +1,6 @@
 import * as d3 from 'd3'
 import { GENDERS, RELATIONSHIPS } from './constants'
+import edtf from 'edtf'
 
 const PERMITTED_CSV_COLUMNS = [
   'parentNumber',
@@ -53,14 +54,14 @@ function parse (fileContent) {
       }
 
       if (seen.has(d.number)) {
-        errors.push({ row: i, field: 'number', error: 'the number is not unique', value: d.number })
+        errors.push({ row, field: 'number', error: 'the number is not unique', value: d.number })
       }
 
       seen.add(d.number)
 
       // the parentNumber should already exist as a number
       if (!isEmpty(d.parentNumber) && !seen.has(d.parentNumber)) {
-        errors.push({ row, field: 'parentNumber', error: 'this parentNumber was used before it was assigned', value: d.parentNumber })
+        errors.push({ row, field: 'parentNumber', error: 'this parentNumber was used before it was assigned or doesnt exist', value: d.parentNumber })
       }
 
       count++
@@ -72,6 +73,18 @@ function parse (fileContent) {
       } else {
         d.bornAt = convertDate(d.bornAt)
         d.diedAt = convertDate(d.diedAt)
+
+        var aliveInterval = `${d.bornAt}/${d.diedAt}`
+
+        // validate the dates make up a valid interval
+        if (!isValidInterval(aliveInterval)) {
+          if (d.bornAt === d.diedAt) {
+            aliveInterval = '/' + d.diedAt
+          } else {
+            errors.push({ row, field: 'bornAt, diedAt', error: 'bornAt and diedAt do not make up a valid interval', value: aliveInterval })
+            aliveInterval = null
+          }
+        }
 
         if (d.birthOrder) {
           d.birthOrder = parseInt(d.birthOrder)
@@ -88,7 +101,7 @@ function parse (fileContent) {
           relationshipType: d.relationshipType ? d.relationshipType : 'birth',
           birthOrder: d.birthOrder,
           deceased: d.deceased === 'yes',
-          aliveInterval: d.bornAt + '/' + d.diedAt,
+          aliveInterval,
           phone: d.phone,
           email: d.email,
           address: d.address,
@@ -246,6 +259,17 @@ function convertDate (date) {
   var _date = `${year}-${month}-${day}`
 
   return _date
+}
+
+function isValidInterval (interval) {
+  if (interval === '/' || interval === '' || interval === null) return true
+
+  try {
+    edtf(interval)
+    return true
+  } catch (err) {
+    return false
+  }
 }
 
 function convertDigit (digit) {

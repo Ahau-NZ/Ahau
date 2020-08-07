@@ -7,26 +7,14 @@
       </v-card-text>
 
       <v-card-text class="pt-0">
-        <v-simple-table fixed-header dense>
-          <template v-slot:default>
-            <thead>
-              <tr>
-                <th class="text-left">Row</th>
-                <th class="text-left">Field</th>
-                <th class="text-left">Error</th>
-                <th class="text-left">Value Given</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="{ row, field, error, value } in errorMsgs" :key="`${row}-${field}`">
-                <td> {{ row }} </td>
-                <td> {{ field }} </td>
-                <td> {{ error }} </td>
-                <td> {{ value }} </td>
-              </tr>
-            </tbody>
-          </template>
-        </v-simple-table>
+        <v-data-table
+          :items="errorMsgs"
+          fixed-header
+          dense
+          sort-by="row"
+          :headers="headers"
+        >
+        </v-data-table>
       </v-card-text>
       <v-card-text class="pt-8">
         Fix these and try uploading again
@@ -57,6 +45,12 @@ export default {
   name: 'CsvErrorDialog',
   data () {
     return {
+      headers: [
+        { text: 'Row', value: 'row' },
+        { text: 'Field', value: 'field' },
+        { text: 'Error', value: 'error' },
+        { text: 'Value given', value: 'value' }
+      ],
       items: [
         { src: require('../../../assets/tree.jpg') },
         { src: require('../../../assets/whakapapa-list.jpg') }

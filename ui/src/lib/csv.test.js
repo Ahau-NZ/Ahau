@@ -87,7 +87,7 @@ test('number', t => {
   csv.parse(DUPLICATE_NUMBERS)
     .catch(err => {
       t.deepEqual(err, [
-        { row: 1, field: 'number', error: 'the number is not unique', value: '1' }
+        { row: 2, field: 'number', error: 'the number is not unique', value: '1' }
       ], 'returns error for duplicate numbers')
     })
 
@@ -109,7 +109,7 @@ test('parentNumber', t => {
     .catch(err => {
       t.deepEqual(err, [
         { row: 1, field: 'parentNumber', error: 'the first parent number must be empty', value: '1' },
-        { row: 1, field: 'parentNumber', error: 'this parentNumber was used before it was assigned', value: '1' }
+        { row: 1, field: 'parentNumber', error: 'this parentNumber was used before it was assigned or doesnt exist', value: '1' }
       ], 'returns error for non-empty first parentNumber')
     })
 
@@ -119,7 +119,7 @@ test('parentNumber', t => {
     })
     .catch(err => {
       t.deepEqual(err, [
-        { row: 3, field: 'parentNumber', error: 'this parentNumber was used before it was assigned', value: '4' }
+        { row: 3, field: 'parentNumber', error: 'this parentNumber was used before it was assigned or doesnt exist', value: '4' }
       ], 'returns error for parentNumber that has number which hasnt been seen yet')
     })
 })
@@ -146,6 +146,7 @@ test('csv.parse', t => {
         profession: 'Software Engineer'
       }, 'returns correct profile')
     })
+    .catch(err => console.log(err))
 
   csv.parse(INCORRECT_PERSONS)
     .catch(err => { // should be 3 errors

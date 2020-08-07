@@ -1,21 +1,21 @@
 number,parentNumber,preferredName,legalName,gender,relationshipType,birthOrder,bornAt,deceased,diedAt,phone,email,address,location,profession
 1,1,Jehanna,Jehanna Drohun,female,birth,9,,,,7841619792,jdrohun0@dropbox.com,2 Hagan Hill,Serbia,Senior Financial Analyst
 2,1,Mirna,Mirna Couche,female,whangai,6,06/06/1294,idk,,3407509458,mcouche1@adobe.com,561 Oakridge Pass,Brazil,Automation Specialist I
-3,1,Emma,Emma Dymick,female,birth,3,17/11/1508,,1,8679296679,edymick2@usnews.com,132 Ludington Point,China,Software Test Engineer II
-4,1,Dalton,Dalton Witter,male,birth,n,03/05/1673,no,,4273584301,dwitter3@typepad.com,212 Darwin Drive,France,Chemical Engineer
-5,1,Ursala,Ursala Fancy,male,idk,5,29/08/1102,yes,,4194096774,ufancy4@spiegel.de,08622 Doe Crossing Way,Poland,Account Coordinator
-6,1,Emili,Emili Tod,Idk,whangai,7,04/07/1487,yes,,7204184747,etod5@t-online.de,83 Green Hill,Norway,Biostatistician II
-7,20,Devlin,Devlin McIlheran,female,birth,2,16/12/1011,,,5958165308,dmcilheran6@tumblr.com,52460 Del Sol Point,Madagascar,Actuary
-8,1,Wanda,Wanda Jaulme,male,adopted,5,1,no,,5687540054,wjaulme7@bigcartel.com,1778 Bultman Center,Slovenia,Social Worker
-9,1,Rhona,Rhona Proffitt,female,,,,yes,,,,,,
-10,1,Dolf,Dolf Batchellor,female,whangai,4,08/09/1806,no,,9672307714,dbatchellor9@devhub.com,70707 Waubesa Lane,Portugal,Paralegal
-11,2,Lilas,Lilas McAnulty,female,adopted,6,13/08/1097,,,2476813209,lmcanultya@wix.com,387 Kinsman Park,Canada,Programmer Analyst II
-12,3,Leeanne,Leeanne Carrick,male,birth,2,29/10/1344,,,1496630593,lcarrickb@stumbleupon.com,719 Roxbury Junction,Morocco,Legal Assistant
+3,2,Emma,Emma Dymick,female,birth,3,17/11/1508,,1,8679296679,edymick2@usnews.com,132 Ludington Point,China,Software Test Engineer II
+4,2,Dalton,Dalton Witter,male,birth,n,03/05/1673,no,,4273584301,dwitter3@typepad.com,212 Darwin Drive,France,Chemical Engineer
+5,2,Ursala,Ursala Fancy,male,idk,5,29/08/1102,yes,,4194096774,ufancy4@spiegel.de,08622 Doe Crossing Way,Poland,Account Coordinator
+6,5,Emili,Emili Tod,Idk,whangai,7,04/07/1487,yes,,7204184747,etod5@t-online.de,83 Green Hill,Norway,Biostatistician II
+7,5,Devlin,Devlin McIlheran,female,birth,2,16/12/1011,,,5958165308,dmcilheran6@tumblr.com,52460 Del Sol Point,Madagascar,Actuary
+8,7,Wanda,Wanda Jaulme,male,adopted,5,1,no,,5687540054,wjaulme7@bigcartel.com,1778 Bultman Center,Slovenia,Social Worker
+9,7,Rhona,Rhona Proffitt,female,,,,yes,,,,,,
+10,7,Dolf,Dolf Batchellor,female,whangai,4,08/09/1806,no,,9672307714,dbatchellor9@devhub.com,70707 Waubesa Lane,Portugal,Paralegal
+11,7,Lilas,Lilas McAnulty,female,adopted,6,13/08/1097,,12/08/1097,2476813209,lmcanultya@wix.com,387 Kinsman Park,Canada,Programmer Analyst II
+12,7,Leeanne,Leeanne Carrick,male,birth,2,29/10/1344,,,1496630593,lcarrickb@stumbleupon.com,719 Roxbury Junction,Morocco,Legal Assistant
 13,4,Clemente,Clemente Erington,male,,,,,,,,,,
-14,5,Carmella,Carmella Brash,male,adopted,9,16/10/1187,,,5542677013,cbrashd@myspace.com,8 Glacier Hill Place,Indonesia,Administrative Officer
+14,4,Carmella,Carmella Brash,male,adopted,9,16/10/1187,,,5542677013,cbrashd@myspace.com,8 Glacier Hill Place,Indonesia,Administrative Officer
 15,6,Veronica,Veronica Taleworth,female,,,,,,,,,,
-16,7,Jerad,Jerad Quilter,male,birth,9,13/03/1778,,,3303394728,jquilterf@hp.com,202 Calypso Court,United States,Research Associate
-17,8,Saunder,Saunder Llorens,female,,,,no,,,,,,
-18,9,Erl,Erl Penman,female,birth,4,03/01/1202,no,,7649440635,epenmanh@cyberchimps.com,3 Forster Trail,Philippines,Clinical Specialist
-19,10,Rafael,Rafael Tully,female,adopted,1,07/01/1636,no,,9444259135,rtullyi@huffingtonpost.com,057 Haas Hill,Philippines,Computer Systems Analyst III
-20,11,Montague,Montague Mersh,female,,,,,,,,,,
+16,6,Jerad,Jerad Quilter,male,birth,9,13/03/1778,,13/03/1778,3303394728,jquilterf@hp.com,202 Calypso Court,United States,Research Associate
+17,50,Saunder,Saunder Llorens,female,,,,no,,,,,,
+18,16,Erl,Erl Penman,female,birth,4,03/01/1202,no,,7649440635,epenmanh@cyberchimps.com,3 Forster Trail,Philippines,Clinical Specialist
+19,16,Rafael,Rafael Tully,female,adopted,1,07/01/1636,no,,9444259135,rtullyi@huffingtonpost.com,057 Haas Hill,Philippines,Computer Systems Analyst III
+20,17,Montague,Montague Mersh,female,,,,,,,,,,
