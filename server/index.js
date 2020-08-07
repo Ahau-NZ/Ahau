@@ -18,8 +18,8 @@ module.exports = {
     const app = express()
     app.options('*', cors())
     const main = Main(sbot)
-    const tribes = Tribes(sbot)
     const profile = Profile(sbot)
+    const tribes = Tribes(sbot, { ...profile.gettersWithCache })
     const story = Story(sbot)
     const artefact = Artefact(sbot)
     const whakapapa = Whakapapa(sbot, { ...profile.gettersWithCache, ...story.gettersWithCache, ...artefact.gettersWithCache })
@@ -41,8 +41,8 @@ module.exports = {
       const server = new ApolloServer({
         schema: buildFederatedSchema([
           main,
-          tribes,
           profile,
+          tribes,
           artefact,
           story,
           whakapapa
