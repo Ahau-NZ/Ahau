@@ -123,11 +123,7 @@
 <script>
 import NewNodeDialog from '@/components/dialog/profile/NewNodeDialog.vue'
 import NewCommunityDialog from '@/components/dialog/community/NewCommunityDialog.vue'
-<<<<<<< HEAD
-// import NewRegistrationDialog from '@/components/dialog/registration/NewRegistrationDialog.vue'
-=======
 import NewRegistrationDialog from '@/components/dialog/registration/NewRegistrationDialog.vue'
->>>>>>> origin/master
 import EditCommunityDialog from '@/components/dialog/community/EditCommunityDialog.vue'
 import DeleteCommunityDialog from '@/components/dialog/community/DeleteCommunityDialog.vue'
 import EditNodeDialog from '@/components/dialog/profile/EditNodeDialog.vue'
@@ -149,13 +145,10 @@ import { createGroup, saveCommunity, savePublicCommunity, saveGroupProfileLink, 
 import { saveWhakapapaView } from '@/lib/whakapapa-helpers.js'
 
 import { saveLink } from '@/lib/link-helpers.js'
-<<<<<<< HEAD
 import pick from 'lodash.pick'
 import isEmpty from 'lodash.isempty'
 
 import findSuccessor from '@/lib/find-successor'
-=======
->>>>>>> origin/master
 import tree from '@/lib/tree-helpers'
 import findSuccessor from '@/lib/find-successor'
 
@@ -181,13 +174,8 @@ export default {
     NewCommunityDialog,
     EditCommunityDialog,
     DeleteCommunityDialog,
-<<<<<<< HEAD
-    ConfirmationMessage
-    // NewRegistrationDialog
-=======
     ConfirmationMessage,
     NewRegistrationDialog
->>>>>>> origin/master
   },
   props: {
     story: {
@@ -236,11 +224,7 @@ export default {
     }
   },
   computed: {
-<<<<<<< HEAD
-    ...mapGetters(['nestedWhakapapa', 'selectedProfile', 'whoami', 'storeDialog', 'storeType', 'storeSource', 'currentProfile']),
-=======
     ...mapGetters(['nestedWhakapapa', 'selectedProfile', 'whoami', 'storeDialog', 'storeType', 'storeSource', 'currentProfile', 'currentProfiles', 'currentTribe', 'tribes']),
->>>>>>> origin/master
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -327,14 +311,6 @@ export default {
       }
       return true
     },
-<<<<<<< HEAD
-    async addCommunity ($event) {
-      // if community doesnt exisit create one
-      if (!$event.id) {
-        const res = await this.$apollo.mutate(saveCommunity($event))
-        if (res.errors) {
-          console.error('failed to create community', res)
-=======
     async setupNewCommunity ($event) {
       if ($event.id) throw new Error('this is for creating a new tribe + community, not updating')
 
@@ -375,7 +351,6 @@ export default {
         if (createPublicCommunityRes.errors) {
           console.error('failed to create community', createPublicCommunityRes)
           return
->>>>>>> origin/master
         }
 
         const groupPublicProfile = createPublicCommunityRes.data.saveProfile // id
@@ -656,7 +631,6 @@ export default {
         throw err
       }
     },
-<<<<<<< HEAD
     async updateCommunity ($event) {
       console.log('updateCommunity', $event)
 
@@ -675,9 +649,6 @@ export default {
         })
       }
     },
-=======
-
->>>>>>> origin/master
     async updatePerson (input) {
       console.log('update profile: ', input)
 
