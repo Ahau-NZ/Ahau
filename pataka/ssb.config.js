@@ -4,7 +4,6 @@ const path = require('path')
 
 const customConfig = {
   port: 8088,
-  allowPrivate: true,
   caps: {
     shs: 'LftKJZRB4nbBRnlJuFteWG9AP+gGboVEhibx016bR0s='
     // this is the "secret handshake" capability.
@@ -28,6 +27,7 @@ module.exports = function () {
     process.env.NODE_ENV === 'development' ? 'ahau-pataka-dev' : 'ahau-pataka'
 
   const config = Config(appName, Object.assign({}, customConfig))
+  // console.log(JSON.stringify(config, null, 2))
 
   // write a copy of this config to ~/.{appName}/config
   fs.writeFile(

@@ -27,8 +27,8 @@ const plugins = [
 
   // 'ssb-private',
   'ssb-invite',
-  'ahau-pataka-server',
-  'ssb-recps-guard'
+  'ahau-pataka-server'
+  // 'ssb-recps-guard' // << NOTE - do not need this on pataka
 ]
 
 // Karakia tūwhera - dont not remove
@@ -64,6 +64,7 @@ ahoy({
   // appDir: '../whakapapa-ora', // only use this when ssb-ahoy symlinked
   onReady: ({ config }) => {
     // this config has updated manifest added
+
     console.log('BOOM')
   }
 })
