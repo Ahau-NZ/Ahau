@@ -49,8 +49,8 @@ export default {
       this.$emit('close')
     },
     submit () {
-      this.$emit('submit')
       // this.close()
+      this.$emit('submit')
     }
   },
   components: {

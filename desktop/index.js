@@ -25,7 +25,6 @@ const plugins = [
   'ssb-artefact',
   'ssb-whakapapa',
 
-  // 'ssb-private',
   'ssb-invite',
   'ahau-server',
   'ssb-recps-guard'

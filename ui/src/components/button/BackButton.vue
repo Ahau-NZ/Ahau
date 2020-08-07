@@ -11,8 +11,7 @@
           :isView="!whakapapa.image"
           showLabel
           row
-     
-          
+
         />
       </v-row>
     </v-btn>
@@ -27,8 +26,7 @@
           :gender="currentProfile.gender"
           showLabel
           row
-      
-          
+
         />
       </v-row>
     </v-btn>
