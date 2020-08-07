@@ -27,7 +27,7 @@
     "ssb-blobs": "^1.2.2",
     "ssb-config": "^3.4.3",
     "ssb-conn": "^0.11.2",
-    "ssb-db": "^20.2.2",
+    "ssb-db": "^20.3.0",
     "ssb-friends": "^4.1.4",
     "ssb-invite": "^2.1.4",
     "ssb-lan": "^0.2.0",

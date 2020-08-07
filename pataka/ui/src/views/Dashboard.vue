@@ -35,7 +35,7 @@
       </v-row>
       <v-row justify="center">
         <v-col cols="4">
-          <Avatar size="180px" alt="name" class="pb-4" :image="profile.avatarImage" />
+          <Avatar size="180px" :alt="profile.preferredName" class="pb-4" :image="profile.avatarImage" />
           <h2 class="subtitle-1 text-uppercase text-center">{{profile.preferredName}}</h2>
           <p class="grey--text text-center feed-id">{{profile.feedId}}</p>
           <v-col cols="8" class="mx-auto">
@@ -93,7 +93,7 @@
               <p v-if="invitedPeople.length === 0">There's no one on your network</p>
               <v-row class="pb-2">
                 <v-col v-for="(people, key) in invitedPeople" :key="key" cols="1">
-                  <Avatar size="40px" alt="name" :image="people.avatarImage" />
+                  <Avatar size="40px" :alt="people.preferredName" :image="people.avatarImage" />
                 </v-col>
               </v-row>
               <!-- <v-btn color="grey" outlined tile>View people</v-btn> -->
@@ -103,7 +103,7 @@
               <p v-if="communities.length === 0">There's are no communities on your network</p>
               <v-row class="pb-2">
                 <v-col v-for="(community, key) in communities" :key="key" cols="1">
-                  <Avatar size="40px" alt="name" :image="community.avatarImage" />
+                  <Avatar size="40px" :alt="community.preferredName" :image="community.avatarImage" />
                 </v-col>
               </v-row>
             </v-col>
@@ -131,6 +131,8 @@ import Avatar from '@/components/Avatar.vue'
 import GenerateInviteDialog from '@/components/GenerateInviteDialog'
 import Meter from '@/components/Meter.vue'
 import gql from 'graphql-tag'
+
+const SECONDS = 1000
 
 export default {
   name: 'Dashboard',
@@ -199,7 +201,7 @@ export default {
           portForwarding
         }
       }`,
-      pollInterval: 10000,
+      pollInterval: 10 * SECONDS,
       update (data) {
         return data.network
       }
@@ -216,9 +218,9 @@ export default {
     },
     cpuLoad: {
       query: gql`query {
-      cpuLoad
-    }`,
-      pollInterval: 10000,
+        cpuLoad
+      }`,
+      pollInterval: 10 * SECONDS,
       update (data) {
         if (this.cpuLoad.length >= 360) {
           this.cpuLoad.pop()
@@ -230,7 +232,7 @@ export default {
       query: gql`query {
         memoryLoad
       }`,
-      pollInterval: 10000,
+      pollInterval: 10 * SECONDS,
       update (data) {
         if (this.memoryLoad.length >= 360) {
           this.memoryLoad.pop()
@@ -245,7 +247,7 @@ export default {
           fs
         }
       }`,
-      pollInterval: 10000,
+      pollInterval: 10 * SECONDS,
       update (data) {
         return data.diskUsage
       }
@@ -261,9 +263,9 @@ export default {
         }
       }
       `,
-      pollInterval: 2e3,
+      pollInterval: 5 * SECONDS,
       update (data) {
-        return data.invitedPeople
+        return data.invitedPeople || []
       }
     },
     communities: {
@@ -277,6 +279,7 @@ export default {
           }
         }
       }`,
+      pollInterval: 10 * SECONDS,
       update (data) {
         return data.tribes
       }
