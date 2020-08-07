@@ -192,13 +192,13 @@ export default {
     },
     network: {
       query: gql`query {
-      network {
-        ipv4
-        internetLatency
-        publicIpv4
-        portForwarding
-      }
-    }`,
+        network {
+          ipv4
+          internetLatency
+          publicIpv4
+          portForwarding
+        }
+      }`,
       pollInterval: 10000,
       update (data) {
         return data.network
@@ -206,10 +206,10 @@ export default {
     },
     portForwarding: {
       query: gql`query {
-      network {
-        portForwarding
-      }
-    }`,
+        network {
+          portForwarding
+        }
+      }`,
       update (data) {
         return data.network.portForwarding
       }
@@ -228,8 +228,8 @@ export default {
     },
     memoryLoad: {
       query: gql`query {
-      memoryLoad
-    }`,
+        memoryLoad
+      }`,
       pollInterval: 10000,
       update (data) {
         if (this.memoryLoad.length >= 360) {
@@ -240,11 +240,11 @@ export default {
     },
     diskUsage: {
       query: gql`query {
-      diskUsage {
-        use
-        fs
-      }
-    }`,
+        diskUsage {
+          use
+          fs
+        }
+      }`,
       pollInterval: 10000,
       update (data) {
         return data.diskUsage
@@ -261,6 +261,7 @@ export default {
         }
       }
       `,
+      pollInterval: 2e3,
       update (data) {
         return data.invitedPeople
       }
