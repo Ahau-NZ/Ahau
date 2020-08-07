@@ -4,11 +4,7 @@
     <!-- Content Slot -->
     <template v-if="!hideDetails" v-slot:content>
       <v-col class="py-0">
-<<<<<<< HEAD
-        <CommunityForm :profile.sync="formData"></CommunityForm>
-=======
         <CommunityForm :profile.sync="formData" />
->>>>>>> origin/master
       </v-col>
     </template>
     <!-- End Content Slot -->
@@ -61,15 +57,10 @@ export default {
     title: { type: String, default: 'Create a new community' },
     hideDetails: { type: Boolean, default: false },
     selectedProfile: { type: Object }
-
   },
   data () {
     return {
-<<<<<<< HEAD
-      formData: defaultData(this.withRelationships)
-=======
       formData: defaultData()
->>>>>>> origin/master
     }
   },
 
