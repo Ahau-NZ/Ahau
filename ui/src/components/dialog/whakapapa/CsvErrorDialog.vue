@@ -7,9 +7,17 @@
       </v-card-text>
 
       <v-card-text class="pt-0">
-        <p v-for="(error, i) in errorMsgs" class="errorMsg ma-0" :key="i">
-          <i>{{error}}</i>
-        </p>
+        <v-data-table
+          :items="errorMsgs"
+          fixed-header
+          dense
+          sort-by="row"
+          :headers="headers"
+        >
+        </v-data-table>
+      </v-card-text>
+      <v-card-text class="pt-8">
+        Fix these and try uploading again
       </v-card-text>
 
       <!-- <v-divider /> -->
@@ -37,6 +45,12 @@ export default {
   name: 'CsvErrorDialog',
   data () {
     return {
+      headers: [
+        { text: 'Row', value: 'row' },
+        { text: 'Field', value: 'field' },
+        { text: 'Error', value: 'error' },
+        { text: 'Value given', value: 'value' }
+      ],
       items: [
         { src: require('../../../assets/tree.jpg') },
         { src: require('../../../assets/whakapapa-list.jpg') }

@@ -88,14 +88,14 @@
       :view="view"
       @delete="toggleDialog('whakapapa-delete', null, 'whakapapa-edit')"
       @close="close"
-      @submit="$emit('updateWhakapapa', $event)"
+      @submit="$emit('update-whakapapa', $event)"
     />
     <WhakapapaDeleteDialog
       v-if="isActive('whakapapa-delete')"
       :show="isActive('whakapapa-delete')"
       :view="view"
       @close="close"
-      @submit="$emit('deleteWhakapapa')"
+      @submit="$emit('delete-whakapapa')"
     />
     <WhakapapaShowHelper v-if="isActive('whakapapa-helper')"
       :show="isActive('whakapapa-helper')"

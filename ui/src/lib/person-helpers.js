@@ -134,7 +134,9 @@ export async function getRelatives (profileId) {
 }
 
 export const savePerson = input => {
-  const _input = pick(input, PERMITTED_PERSON_ATTRS)
+  var _input = pick(input, PERMITTED_PERSON_ATTRS)
+  _input = pruneEmptyValues(_input)
+
   if (!_input.id) _input.type = 'person'
 
   return {
@@ -145,6 +147,14 @@ export const savePerson = input => {
     `,
     variables: { input: _input }
   }
+}
+
+function pruneEmptyValues (input) {
+  const pruned = {}
+  Object.entries(input).forEach(([key, value]) => {
+    if (value !== '' && value !== null) pruned[key] = value
+  })
+  return pruned
 }
 
 export const saveCurrentIdentity = (personalId, publicId, input) => {
