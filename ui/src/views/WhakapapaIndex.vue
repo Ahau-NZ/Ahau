@@ -297,9 +297,8 @@ export default {
     },
     async buildFromFile (csv) {
       this.setLoading(true)
-      // var startTime = Date.now()
-      // create profile for each person
 
+      // create profile for each person
       var profilesArray = await this.createProfiles(csv)
 
       profilesArray['columns'] = this.columns
@@ -328,45 +327,19 @@ export default {
 
     async createProfiles (csv) {
       this.columns = csv.columns
-      // create a profile for each person and add the created id to the person and parse back to profilesArray
-      const results = Promise.all(csv.map(async (d) => {
-        var id = await this.addPerson(d)
-        const person = {
-          id: id,
-          ...d
-        }
 
-        return person
+      var results = Promise.all(csv.map(async (d) => {
+        var id = await this.createProfile(d)
+        return { id, ...d }
       }))
+        .then((res) => res)
+        .catch((err) => {
+          console.error('failed to create profile with csv bulk create', err)
+          this.setLoading(false)
+        })
 
       return results
     },
-
-    async addPerson ($event) {
-      let person = {}
-      Object.entries($event).map(([key, value]) => {
-        if (!isEmpty($event[key])) {
-          if (key === 'birthOrder') {
-            person[key] = parseInt(value)
-          } else if (key === 'deceased' && value === 'yes') {
-            person[key] = true
-          } else {
-            person[key] = value
-          }
-        }
-      })
-      try {
-        var id = await this.createProfile(person)
-        if (id.errors) {
-          console.error('failed to create profile', id)
-          return
-        }
-        return id
-      } catch (err) {
-        throw err
-      }
-    },
-
     async createLinks (descendants) {
       // Remove first item
       descendants.shift()
@@ -386,16 +359,15 @@ export default {
       return results
     },
 
-    async createProfile (opts) {
-      const mutation = savePerson({
+    async createProfile (input) {
+      const res = await this.$apollo.mutate(savePerson({
         type: 'person',
         recps: [this.whoami.personal.groupId], // TEMP - safety till we figure out actual recps
-        ...opts
-      })
-      const res = await this.$apollo.mutate(mutation)
+        ...input
+      }))
 
       if (res.errors) {
-        console.error('failed to createProfile', res)
+        console.error('failed to createProfile', res.errors)
       } else {
         return res.data.saveProfile // a profileId
       }

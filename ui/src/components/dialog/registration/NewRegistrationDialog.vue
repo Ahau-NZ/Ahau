@@ -204,7 +204,7 @@ export default {
   watch: {
     parents: {
       deep: true,
-      immediate:true,
+      immediate: true,
       handler (newVal) {
         if (newVal.length < 1) this.parentNamesValid = false
         else {
