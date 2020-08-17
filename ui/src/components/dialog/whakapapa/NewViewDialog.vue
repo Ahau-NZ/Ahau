@@ -3,6 +3,7 @@
     <Dialog :show="show" :title="title" @close="close" width="720px" :goBack="close" enableMenu>
       <template v-slot:content>
         <WhakapapaForm ref="whakapapaForm" :view.sync="formData" :data.sync="csv"/>
+        <AvatarGroup size="50px" show-labels groupTitle="Kaitiaki" :profiles="[whoami.public.profile]" showLabels/>
       </template>
       <template v-slot:actions>
         <v-btn @click="close"
@@ -27,7 +28,8 @@ import Dialog from '@/components/dialog/Dialog.vue'
 import pick from 'lodash.pick'
 import isEmpty from 'lodash.isempty'
 import WhakapapaForm from '@/components/whakapapa/WhakapapaForm.vue'
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
+import AvatarGroup from '@/components/AvatarGroup.vue'
 
 const EMPTY_WHAKAPAPA = {
   name: '',
@@ -70,7 +72,8 @@ export default {
   name: 'NewViewDialog',
   components: {
     Dialog,
-    WhakapapaForm
+    WhakapapaForm,
+    AvatarGroup
   },
   props: {
     title: String,
@@ -87,6 +90,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['whoami']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     }
@@ -115,7 +119,7 @@ export default {
       const output = whakapapaSubmission(this.formData)
       const newOutput = {
         ...output,
-        csv: csv
+        csv
       }
       this.$emit('submit', newOutput)
       this.close()

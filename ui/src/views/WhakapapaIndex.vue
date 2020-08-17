@@ -66,7 +66,7 @@ import WhakapapaListHelper from '@/components/dialog/whakapapa/WhakapapaListHelp
 import { saveLink } from '@/lib/link-helpers.js'
 import { savePerson } from '@/lib/person-helpers.js'
 import tree from '@/lib/tree-helpers'
-import { saveWhakapapaView } from '@/lib/whakapapa-helpers.js'
+import { saveWhakapapaView, getWhakapapaViews } from '@/lib/whakapapa-helpers.js'
 
 export default {
   name: 'WhakapapaIndex',
@@ -105,25 +105,7 @@ export default {
     }
   },
   apollo: {
-    views: {
-      query: gql`
-        {
-          whakapapaViews {
-            id
-            name
-            focus
-            description
-            canEdit
-            recps
-            image {
-              uri
-            }
-          }
-        }
-      `,
-      update: data => data.whakapapaViews,
-      fetchPolicy: 'no-cache'
-    }
+    views: getWhakapapaViews()
   },
   methods: {
     ...mapActions(['addNestedWhakapapa', 'setLoading']),
@@ -315,9 +297,8 @@ export default {
     },
     async buildFromFile (csv) {
       this.setLoading(true)
-      // var startTime = Date.now()
-      // create profile for each person
 
+      // create profile for each person
       var profilesArray = await this.createProfiles(csv)
 
       profilesArray['columns'] = this.columns
@@ -337,10 +318,6 @@ export default {
       // create whakapapaLinks
       var finalArray = await this.createLinks(descendants)
 
-      // var endTime = Date.now()
-      // var eclipsedTime = (endTime - startTime) / 1000
-      // console.log('csv build time: ', eclipsedTime)
-
       // create whakapapa with top ancestor as focus
       this.createView({
         ...this.newView,
@@ -350,73 +327,47 @@ export default {
 
     async createProfiles (csv) {
       this.columns = csv.columns
-      // create a profile for each person and add the created id to the person and parse back to profilesArray
-      return Promise.all(csv.map(async d => {
-        var id = await this.addPerson(d)
-        const person = {
-          id: id,
-          ...d
-        }
-        return person
+
+      var results = Promise.all(csv.map(async (d) => {
+        var id = await this.createProfile(d)
+        return { id, ...d }
       }))
-    },
+        .then((res) => res)
+        .catch((err) => {
+          console.error('failed to create profile with csv bulk create', err)
+          this.setLoading(false)
+        })
 
-    async addPerson ($event) {
-      let person = {}
-      Object.entries($event).map(([key, value]) => {
-        if (!isEmpty($event[key])) {
-          if (key === 'birthOrder') {
-            person[key] = parseInt(value)
-          } else if (key === 'deceased' && value === 'yes') {
-            person[key] = true
-          } else {
-            person[key] = value
-          }
-        }
-      })
-      try {
-        var {
-          id
-        } = $event
-        id = await this.createProfile(person)
-        if (id.errors) {
-          console.error('failed to create profile', id)
-          return
-        }
-        return id
-      } catch (err) {
-        throw err
-      }
+      return results
     },
-
     async createLinks (descendants) {
+      // Remove first item
       descendants.shift()
-      return Promise.all(descendants.map(async d => {
-        let relationship = {
-          child: d.data.id,
-          parent: d.parent.data.id,
-          relationshipType: d.data.relationshipType
-        }
+
+      const results = Promise.all(descendants.map(async (d) => {
+        let relationship = { child: d.data.id, parent: d.parent.data.id, relationshipType: d.data.relationshipType }
         var link = await this.createChildLink(relationship)
 
         var person = {
           ...d,
           link: link
         }
+
         return person
       }))
+
+      return results
     },
 
-    async createProfile (opts) {
-      const mutation = savePerson({
+    async createProfile (input) {
+      const res = await this.$apollo.mutate(savePerson({
         type: 'person',
         recps: [this.whoami.personal.groupId], // TEMP - safety till we figure out actual recps
-        ...opts
-      })
-      const res = await this.$apollo.mutate(mutation)
+        ...input
+      }))
 
       if (res.errors) {
-        console.error('failed to createProfile', res)
+        console.error('failed to createProfile', res.errors)
       } else {
         return res.data.saveProfile // a profileId
       }

@@ -11,7 +11,16 @@ export const CREATE_GROUP_APPLICATION = gql`
       applicant {
         id
       }
-      text
+      comments {
+        author {
+          id
+          preferredName
+          avatarImage {
+            uri
+          }
+        }
+        text
+      }
       recps
       accepted
       addMember
@@ -29,7 +38,25 @@ export const ACCEPT_GROUP_APPLICATION = gql`
       applicant {
         id
       }
-      text
+      comments {
+        author {
+          id
+          preferredName
+          avatarImage {
+            uri
+          }
+        }
+        comments {
+          author {
+            id
+            preferredName
+            avatarImage {
+              uri
+            }
+          }
+          text
+        }
+      }
       recps
       accepted
     }
@@ -40,7 +67,16 @@ export const LIST_GROUP_APPLICATIONS = gql`
   query($groupId: String, $accepted: Boolean) {
     listGroupApplications(groupId: $groupId, accepted: $accepted) {
       id
-      text
+      comments {
+        author {
+          id
+          preferredName
+          avatarImage {
+            uri
+          }
+        }
+        text
+      }
       accepted
       applicant {
         id
@@ -52,9 +88,11 @@ export const LIST_GROUP_APPLICATIONS = gql`
       }
       group {
         id
-        preferredName
-        avatarImage {
-          uri
+        public {
+          preferredName
+          avatarImage {
+            uri
+          }
         }
       }
     }
@@ -71,7 +109,16 @@ export const GET_GROUP_APPLICATION = gql`
       applicant {
         id
       }
-      text
+      comments {
+        author {
+          id
+          preferredName
+          avatarImage {
+            uri
+          }
+        }
+        text
+      }
       recps
       accepted
     }

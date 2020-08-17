@@ -1,9 +1,9 @@
-import { GET_CHANGES, EMPTY_STORY, SET_DEFAULT_STORY } from './story-helpers.js'
+import { GET_CHANGES, EMPTY_STORY, setDefaultStory } from './story-helpers.js'
 import { personComplete } from '../mocks/person-profile.js'
 import clone from 'lodash.clonedeep'
 const test = require('tape')
 
-const storyInitial = SET_DEFAULT_STORY(EMPTY_STORY)
+const storyInitial = setDefaultStory(EMPTY_STORY)
 
 const storyMinimal = {
   title: 'Title',

@@ -19,8 +19,8 @@
       </div>
     </v-row>
     <!-- TRIBES -->
-    <div v-if="tribes && tribes.length">
-      <v-row v-if="connectedTribes && connectedTribes.length" class="pt-4">
+    <div>
+      <v-row v-if="connectedTribes.length" class="pt-4">
         <v-col cols="12" md="9" class="py-0">
           <p class="sub-headline pa-0 mb-4">Tribes that you are connected to</p>
           <v-row justify="start">
@@ -48,7 +48,7 @@
           <v-divider v-if="otherTribes && otherTribes.length" light color="grey" class="my-10"></v-divider>
         </v-col>
       </v-row>
-      <v-row v-if="otherTribes && otherTribes.length" class="pt-4">
+      <v-row v-if="otherTribes.length" class="pt-4">
         <v-col cols="12" md="9" class="py-0">
           <p class="sub-headline pa-0 mb-4">Other whanau tribes</p>
           <v-row justify="start">

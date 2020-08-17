@@ -32,13 +32,18 @@ const actions = {
   setCurrentTribe ({ commit }, tribe) {
     commit('updateCurrentTribe', tribe)
   },
-  async getTribes ({ commit }) {
+  async setTribes ({ commit }) {
     const tribes = await apollo.query(getTribes)
     if (tribes.errors) {
       console.error('failed to get tribes', tribes)
       return
     }
     commit('updateTribes', tribes.data.tribes)
+  },
+  async setCurrentTribeById ({ commit, dispatch, rootState }, id) {
+    await dispatch('setTribes')
+    var tribe = rootState.tribe.tribes.filter(tribe => tribe.private.length > 0).find(tribe => tribe.private[0].id === id)
+    commit('updateCurrentTribe', tribe)
   }
 }
 

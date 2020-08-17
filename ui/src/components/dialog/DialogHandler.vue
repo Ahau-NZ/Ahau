@@ -90,7 +90,7 @@
       :view="view"
       @delete="toggleDialog('whakapapa-delete', null, 'whakapapa-edit')"
       @close="close"
-      @submit="$emit('updateWhakapapa', $event)"
+      @submit="$emit('update-whakapapa', $event)"
     />
     <WhakapapaDeleteDialog
       v-if="isActive('whakapapa-delete')"
@@ -100,11 +100,13 @@
       @submit="$emit('deleteWhakapapa')"
     />
     <WhakapapaShowHelper
+      v-if="isActive('whakapapa-helper')"
       :show="isActive('whakapapa-helper')"
       :title="`Whakapapa ---- Family tree`"
       @close="close"
     />
     <WhakapapaTableHelper
+      v-if="isActive('whakapapa-table-helper')"
       :show="isActive('whakapapa-table-helper')"
       :title="`Whakapapa registry`"
       @close="close"
@@ -141,11 +143,10 @@ import ConfirmationText from '@/components/dialog/ConfirmationText.vue'
 import gql from 'graphql-tag'
 
 import { PERMITTED_RELATIONSHIP_ATTRS, savePerson, saveCurrentIdentity } from '@/lib/person-helpers.js'
-import { createGroup, saveCommunity, savePublicCommunity, saveGroupProfileLink, deleteTribe } from '@/lib/community-helpers'
+import { createGroup, saveCommunity, savePublicCommunity, saveGroupProfileLink, deleteTribe, updateTribe } from '@/lib/community-helpers'
 import { saveWhakapapaView } from '@/lib/whakapapa-helpers.js'
 
 import { saveLink } from '@/lib/link-helpers.js'
-
 import tree from '@/lib/tree-helpers'
 import findSuccessor from '@/lib/find-successor'
 
@@ -248,7 +249,7 @@ export default {
       return this.whoami.personal.profile.id === id
     },
     ...mapActions(['setWhoami', 'updateNode', 'deleteNode', 'updatePartnerNode', 'addChild', 'addParent', 'loading', 'setDialog',
-      'setProfileById', 'setComponent'
+      'setProfileById', 'setComponent', 'setCurrentTribe', 'setCurrentTribeById', 'setTribes'
     ]),
     addGrandparentToRegistartion (grandparent) {
       var parent = this.parents[this.parentIndex]
@@ -363,8 +364,7 @@ export default {
         }
 
         if (profilePublicLinkRes.data.saveGroupProfileLink) {
-          // need a getTribe(groupId) graphql call
-          // setCurrentTibe(tribe)
+          this.setCurrentTribeById(groupProfile)
           this.setComponent('profile')
           this.setProfileById({ id: groupProfile })
           this.$router.push({ name: 'profileShow', params: { id: groupProfile } }).catch(() => {})
@@ -376,6 +376,15 @@ export default {
           this.confirmationText = null
           this.snackbar = !this.snackbar
         }, 5000)
+      }
+    },
+    async updateCommunity ($event) {
+      const res = await this.$apollo.mutate(updateTribe(this.currentTribe, $event))
+      if (res.errors) {
+        console.error('failed to update community', res)
+      } else {
+        this.setProfileById({ id: res.data.savePrivate })
+        this.setCurrentTribeById(res.data.savePrivate)
       }
     },
     async savePerson (input) {
@@ -407,7 +416,7 @@ export default {
       await this.setWhoami()
     },
     async addPerson ($event) {
-      console.log("addPerson: ", $event)
+      console.log('addPerson: ', $event)
       try {
         var { id } = $event
 
@@ -621,28 +630,11 @@ export default {
         throw err
       }
     },
-    async updateCommunity ($event) {
-      console.log('updateCommunity', $event)
 
-      const res = await this.$apollo.mutate(saveCommunity({
-        id: this.selectedProfile.id,
-        ...$event
-      }))
-      if (res.errors) {
-        console.error('failed to update community', res)
-        return
-      }
-
-      if (this.storeDialog === 'edit-community') {
-        this.setProfileById({
-          id: res.data.saveProfile
-        })
-      }
-    },
     async updatePerson (input) {
-
       const profileId = this.selectedProfile.id
       if (this.isPersonalProfile(profileId)) {
+        console.log()
         await this.saveCurrentIdentity(input)
       } else {
         await this.savePerson({ id: profileId, ...input })
@@ -785,6 +777,8 @@ export default {
       if (deleteTribeRes.errors) {
         console.error('failed to delete public profile', deleteTribeRes)
       } else {
+        this.source = null
+        this.setTribes()
         this.setComponent('profile')
         this.setProfileById({ id: this.whoami.personal.profile.id })
         this.$router.push({ name: 'profileShow', params: { id: this.whoami.personal.profile.id } }).catch(() => {})

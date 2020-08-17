@@ -194,6 +194,20 @@
                 ></v-checkbox>.
               </v-card-actions>
             </v-card>
+            <!-- <v-row class="py-4 pl-10">
+                  <v-icon :color="!gpNamesValid ? '#b12526':''">mdi-account-supervisor-circle</v-icon>
+                  <AddButton :color="!gpNamesValid ? '#b12526':''" justify="start" :width="'50px'" :label="'Add parents of ' + parent.preferredName" @click="addGrandparent(index)"/>
+                </v-row>
+              </v-row>
+            </div>
+            <v-row class="py-4 pl-12">
+              <v-icon :color="!parentNamesValid ? '#b12526':''">mdi-account-supervisor-circle</v-icon>
+              <AddButton :color="!parentNamesValid ? '#b12526':''" justify="start" :width="'50px'" label="Add parent" @click="addParent('parent')"/>
+            </v-row>
+            <v-card-actions style="display: flex; justify-content: center; align-items: center;">
+              <v-checkbox :disabled="!gpNamesValid" class="checkbox-label" color="success" v-model="checkbox3" :label="`I agree to share this information`" :rules="requiredRules"></v-checkbox> .
+            </v-card-actions>
+            </v-card>-->
 
             <!-- ADD PARENTS INFORMATION-->
             <p v-if="type === 'review'" class="py-6 px-4 subtitle-2 black--text">
@@ -455,7 +469,9 @@ export default {
       showMessage: false,
       resMessage: '',
       response: '',
-      scrollPosition: ''
+      scrollPosition: '',
+      gpNamesValid: false,
+      parentNamesValid: false
     }
   },
   mounted () {
@@ -474,6 +490,26 @@ export default {
             top: this.scrollPosition
           })
         }, 100)
+      }
+    }
+  },
+  watch: {
+    parents: {
+      deep: true,
+      immediate: true,
+      handler (newVal) {
+        if (newVal.length < 1) this.parentNamesValid = false
+        else {
+          this.gpNamesValid = newVal.every((parent) => {
+            if (!parent.grandparents) return false
+            return parent.grandparents.every((gp) => {
+              return gp.preferredName && gp.preferredName.length
+            })
+          })
+          this.parentNamesValid = newVal.every((parent) => {
+            return parent.preferredName && parent.preferredName.length
+          })
+        }
       }
     }
   },
@@ -513,12 +549,12 @@ export default {
     },
     disabled () {
       this.getErrorMsgs()
-      // if (this.errorMsgs && this.errorMsgs.length > 0) {
-      //   return true
-      // }
-      // if (!this.parentsNames && !this.gpNames) {
-      //   return true
-      // }
+      if (this.errorMsgs && this.errorMsgs.length > 0) {
+        return true
+      }
+      if (!this.parentNamesValid && !this.gpNamesValid) {
+        return true
+      }
       return false
     },
     dob () {
@@ -566,7 +602,7 @@ export default {
           errors.push(key)
         }
       })
-      if (!this.gpNames) errors.push('grandparents')
+      if (!this.gpNamesValid) errors.push('grandparents')
       this.errorMsgs = errors
     },
 
@@ -611,7 +647,7 @@ export default {
         //   to: this.currentProfile.id
         // }
         // TODO - send message to Kaitiaki
-        console.warn('send this object: ', output)
+        console.warn('send this object: ', input)
         this.close()
       }
       console.log('submit -> this.formData', this.currentTribe.public[0].tiaki)

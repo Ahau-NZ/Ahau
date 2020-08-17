@@ -7,12 +7,19 @@
           <!-- <router-link to="/" v-if="enableMenu" class="logo-link" @click.native="karakiaWhakamutunga()"> -->
           <img src="@/assets/logo_red.svg" class="logo" />
           <!-- </router-link> -->
-          <div :style="mobile ? 'position:absolute; bottom:-10px;right:8px':'position:absolute; bottom:-10px;right:30px'">
-            <v-badge color="#B12526" :content="notifications.length" style="cursor: pointer;"></v-badge>
+          <div
+            :style="mobile ? 'position:absolute; bottom:-10px;right:8px':'position:absolute; bottom:-10px;right:30px'"
+          >
+            <v-badge
+              v-if="hasNotification"
+              color="#B12526"
+              :content="notifications.length"
+              style="cursor: pointer;"
+            ></v-badge>
           </div>
         </div>
       </template>
-      <v-card v-if="notifications">
+      <v-card v-if="hasNotification">
         <v-list height="40px">
           <p class="pt-1 pl-5 my-0 headliner black--text">Notifications</p>
         </v-list>
@@ -146,6 +153,9 @@ export default {
     ...mapGetters(['whoami', 'currentProfile', 'notifications']),
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
+    },
+    hasNotification () {
+      return this.notifications.length > 0
     }
   },
   methods: {
@@ -173,7 +183,8 @@ export default {
   letter-spacing: 5px;
 }
 .mobile {
-  .logo, .logo-link {
+  .logo,
+  .logo-link {
     height: 35px;
   }
 }
@@ -184,5 +195,4 @@ export default {
     padding: 0 25px;
   }
 }
-
 </style>

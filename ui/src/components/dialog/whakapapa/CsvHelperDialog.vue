@@ -2,63 +2,86 @@
   <Dialog :title="'Upload CSV Instructions'" :show="show" @close="close" :width="`720px`" :goBack="close">
 
     <template v-slot:content>
-      <v-card-text class="pt-0">
+      <v-card-text class="pt-2">
         To make the data entry and upload of whakapapa information easier we have added the ability to upload a CSV file to build the whakapapa graph. <br><br>
-        These instructions will walk you through those steps to successfully transfer and upload this information. If you are having any issues with this please contact us at info@ahau.io and we will do our best to help you.
+        These instructions will walk you through those steps to successfully transfer and upload this information. If you are having any issues with this please contact us at <b>info@ahau.io</b> and we will do our best to help you.
       </v-card-text>
       <div class="video-player">
         <video class="video" ref="video" controls>
           <source src="@/assets/buildCSV.mp4" type="video/mp4">
         </video>
       </div>
-      <v-card-text class="pt-0">
-        <p>1. Download and open CSV template </p>
-        <p>2. It is important to note that you must not edit the first row. If you do, the file upload will not work. We understand that this may mean that there are columns missing that you would like to have. If this is the case, please let us know via the feedback button or send us an email at info@ahau.io </p>
-        <p>3. Type in or copy the information from your existing spreadsheet into the template making sure that the information provided in each cell aligns correctly under each column heading, and that each person is on a single row. Leave the columns 'parentNumber' and 'number' blank for this step. If you dont have the information to put in for each header it is ok to just leave it blank.</p>
-        <p>
-          4. For each field the software expects certain types of answers. Please note that no field is required to be filled out, (with the exception of number and parentNumber, but we will get to that). If any information is not yet known or you do not wish to put it into the software you can just leave it empty.
-          <ul>
-            <li>preferredName : the name the person is known by, can be one name or more, but it looks better in the graph if just the first name is provided </li>
-            <li>legalName : the persons legal name, this can be as long or as short as you like</li>
-            <li>gender : the persons gender, put m for male or f for female </li>
-            <li>bornAt : the persons date of birth, use the dd/mm/yyyy format for instance 01/12/1987
-          This can be easily set in excel. Unders ‘home’ tab in the number section, select ‘short date’ from the drop down menu. </li>
-            <li>deceased: whether the person is still living or not. Enter yes if the person is no longer living, else leave it blank.</li>
-            <li>diedAt : if the person has passed away put the date the person passed using the dd/mm/yyyy format for instance 01-12-2019 </li>
-            <li>birthOrder : the persons order of birth, put 1 for the first born, 2 for the 2nd born, and so on. </li>
-            <li>contact : you can put any text into this field this could be phone number e.g 022 0022 0022 or email </li>
-            <li>location : you put any text into this field. This could be street address, or just city, country </li>
-            <li>profession : you put any text into this field. This could the persons current profession, or a description </li>
-            <li>relationshipType : use this field, if the person if by related birth, whangai or adoption. If left blank it will add the person by birth otherwise put whangai or adopted </li>
-          </ul>
-        </p>
-        <p>5. Once you have each cell correctly aligned under each heading we will now need to populate the 'parentNumber' and 'number' columns to tell the software who is the parent of each person. Please note for the file to successfully upload to work these fields must be completed. </p>
-        <p>5.1 In the number column give each person a different number. The easiest way to do this is to give them a number, starting from '1', the next person '2', the next person '3' and so on, continuning until the list is complete. There is currently no limit to the number of people you can have. Please note that there are a number of ways to do this easily in excel, and be careful to give each person a different number. </p>
-        <p>5.2 Now in the parentNumber column, you will put the number given in the 'number' column that persons parent.</p>
-
-          <ul>
-            <li> Will Smith has 3 children, Jaden, Trey, and Willow. </li>
-            <li> Will's number is '1', so Jaden, Trey and Willow's parentNumber will be 1. </li>
-            <li> Continue this process untill every person has a their corressponding 'parentNumber' </li>
-          </ul>
-        <p>Please note the if the parentNumber field is missing, that person will not appear in the created whakapapa graph</p>
-        <p>6. Once all feilds have been completed click 'file' -> 'save as' and select where you would like to save the file. Make sure that below the file name you select 'CSV (comma delimited)(*.csv)' from the 'save as type'.</p>
-        <p>7. Back in Āhau select build from CSV file and select the field to upload the file that you have just created.</p>
-        <p>8. The software will run a quick check and if everything looks right the field will turn green you should expect to see a message below the file showing the top ancestors first name and the name of their first child.
-          **upload example**
-        </p>
-        <p>9. Select the blue tick to confirm and and the software will automatically take you to your newly created whakapapa graph</p>
+      <v-card-text>
+        <ol id="instruction-list">
+          <li> Download and open our csv template:
+              <v-btn color="blue-grey" class="pa-0" @click='downloadCsv()' text>
+                <v-icon class="pr-2" color="blue-grey">
+                  mdi-file-download
+                </v-icon>
+                CSV Template
+              </v-btn>
+          </li>
+          <li> <b>IMPORTANT NOTE: </b> You must not edit the first header row, otherwise the csv import will not work. </li>
+          <li> Fill in your whānau information. How it works:
+            <ul>
+              <li>Each <b> table column </b> <v-icon>mdi-arrow-up-down</v-icon> in the table represents a different field of information (i.e. preferredName, legalName, etc).</li>
+              <li>Each <b> table row </b> <v-icon>mdi-arrow-left-right</v-icon> in the table represents a different person.</li>
+              <li>The <b>number</b> column and the <b>parentNumber</b> column are used to tell the software who is the <b>parent</b> and who is the <b>child</b>.</li>
+              <li>In the <b>number</b> column put 1 for the first person, 2 for the second person, 3 for the third person and so on until each person has a number. <b>Each person must have a different number</b>.</li>
+              <li>In the <b>parentNumber</b> column for the first person, leave this field empty. This person is your top ancestor for this whakapapa record. All children and grandchildren will come from them.</li>
+              <li>For everyone else, in the <b>parentNumber</b> column, put in the number that is in the <b>number column</b> of that persons parent (please see the video for examples)</li>
+              <li><b>IMPORTANT NOTE:</b> All fields in the table below can be left empty, however if the are entered they must be entered in the correct format shown below.</li>
+            </ul>
+            <v-simple-table fixed-header dense height="300px">
+              <template v-slot:default>
+                <thead>
+                  <tr>
+                    <th class="text-left">Field</th>
+                    <th class="text-left">Description</th>
+                    <th class="text-left">Format</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="field in fields" :key="field.name">
+                    <td> {{ field.name }} </td>
+                    <td> {{ field.description }} </td>
+                    <td>
+                      <ul>
+                        <li v-for="format in field.formats" :key="format" style="list-style: none">
+                          {{ format }}
+                        </li>
+                      </ul>
+                    </td>
+                  </tr>
+                </tbody>
+              </template>
+            </v-simple-table>
+          </li>
+          <li>
+            Once you have completed the spreadsheet, save your changes: <kbd>File > Save as</kbd> and select where you would like to save the file.
+            <ul>
+              <li>
+                <b>Windows</b>: Make sure that below the file name you select <b>CSV (comma delimited)(*.csv)</b> from <kbd>save as type</kbd>
+              </li>
+              <li>
+                <b>Mac/Numbers</b>: Export the saved file to csv <kbd>File > Export To > CSV...</kbd>
+              </li>
+            </ul>
+          </li>
+          <li>
+            In Āhau, when creating a new whakapapapa record, choose <b>Import from CSV file</b> where you can then upload your newly created <b>.csv</b> file.
+          </li>
+          <li>
+            The software will run a quick check on the file and let you know if anything needs changing
+          </li>
+          <li>
+            If the checks passed, you should see a green message giving you the OK
+          </li>
+          <li>
+            Press <v-icon class="blue--text">mdi-check</v-icon> to create your whakapapa from the <b>.csv</b> file and you'll automatically be taken to your newly created whakapapa tree.
+          </li>
+        </ol>
       </v-card-text>
-      <!-- <v-divider />
-
-      <v-carousel hide-delimiters>
-        <v-carousel-item
-          v-for="(item,i) in items"
-          :key="i"
-          :src="item.src"
-          class="centerImage"
-        ></v-carousel-item>
-      </v-carousel> -->
     </template>
   </Dialog>
 </template>
@@ -75,6 +98,21 @@ export default {
       items: [
         { src: require('../../../assets/tree.jpg') },
         { src: require('../../../assets/whakapapa-list.jpg') }
+      ],
+      fields: [
+        { name: 'preferredName', description: 'Name the person is known by. Generally, the first name or even a nick name.', formats: ['Text'] },
+        { name: 'legalName', description: 'Legal name of a person', formats: ['Text'] },
+        { name: 'gender', description: 'Gender of a person', formats: ['male', 'female', 'other', 'unknown'] },
+        { name: 'relationshipType', description: 'How a person is related', formats: ['birth (default)', 'whangai', 'adopted'] },
+        { name: 'birthOrder', description: 'Order a person was born in their whānau. First born is 1, second is 2 and so on.', formats: ['Number'] },
+        { name: 'bornAt', description: 'Date of birth, the date a person was born', formats: ['DD-MM-YYYY', 'DD/MM/YYYY'] },
+        { name: 'deceased', description: 'This is to specify if a person is no longer living', formats: ['no (default)', 'yes'] },
+        { name: 'diedAt', description: 'Date of death, the date a person passed away', formats: ['DD-MM-YYYY', 'DD/MM/YYYY'] },
+        { name: 'phone', description: 'Phone number, this can be any phone number (i.e. mobile, home or work)', formats: ['Text'] },
+        { name: 'email', description: 'Email address', formats: ['Text'] },
+        { name: 'address', description: 'Street address', formats: ['Text'] },
+        { name: 'location', description: 'Town, City or Country', formats: ['Text'] },
+        { name: 'profession', description: 'Current Profession', formats: ['Text'] }
       ]
     }
   },
@@ -85,13 +123,21 @@ export default {
     cordovaBackButton () {
       this.close()
     },
+    downloadCsv () {
+      var csv = 'parentNumber,number,preferredName,legalName,gender,bornAt,deceased,diedAt,birthOrder,relationshipType,profession,phone,email,address,location\n'
+      var hiddenElement = document.createElement('a')
+      hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(csv)
+      hiddenElement.target = '_blank'
+      hiddenElement.download = 'whakapapa.csv'
+      hiddenElement.click()
+    },
     close () {
       this.$emit('close')
     }
   }
 }
 </script>
-<style>
+<style scoped>
 .centerImage {
   display: block;
   margin-left: auto;
@@ -107,5 +153,8 @@ export default {
 
 .video {
   width: 100%;
+}
+.instruction-list .li {
+  padding-bottom: 10px;
 }
 </style>
