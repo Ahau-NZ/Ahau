@@ -546,13 +546,13 @@ export default {
       return this.$vuetify.breakpoint.xs
     },
     disabled () {
-      this.getErrorMsgs()
-      if (this.errorMsgs && this.errorMsgs.length > 0) {
-        return true
-      }
-      if (!this.parentNamesValid && !this.gpNamesValid) {
-        return true
-      }
+      // this.getErrorMsgs()
+      // if (this.errorMsgs && this.errorMsgs.length > 0) {
+      //   return true
+      // }
+      // if (!this.parentNamesValid && !this.gpNamesValid) {
+      //   return true
+      // }
       return false
     },
     dob () {
