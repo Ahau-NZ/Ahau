@@ -653,7 +653,7 @@ export default {
         mutation: CREATE_GROUP_APPLICATION,
         variables: {
           groupId: this.currentTribe.id,
-          recps: [...this.currentTribe.public[0].tiaki.map(i => i.feedId), this.whoami.public.feedId],
+          groupAdmins: [...this.currentTribe.public[0].tiaki.map(i => i.feedId)],
           text: 'Hello'
         }
       })
