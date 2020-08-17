@@ -4,6 +4,8 @@ import { LIST_GROUP_APPLICATIONS } from '@/lib/tribes-application-helpers'
 const apolloProvider = createProvider()
 const apollo = apolloProvider.defaultClient
 
+const POLL_INTERVAL = 5000
+
 const state = {
   notifications: [],
   currentNotification: {}
@@ -27,24 +29,31 @@ const mutations = {
   }
 }
 
+async function fetchAllNotifications (commit) {
+  const res = await apollo.query({ query: LIST_GROUP_APPLICATIONS })
+  const formatedNotification = res.data.listGroupApplications.map(a => ({
+    type: 'registration',
+    message: {
+      community: a.group,
+      profile: a.applicant,
+      message: a.text ? a.text[a.text.length - 1] : ''
+    },
+    from: a.applicant
+  }))
+  if (res.errors) {
+    console.error('error fetching all notifications', res)
+    commit('updateNotifications', [])
+    return
+  }
+  commit('updateNotifications', formatedNotification)
+}
+
 const actions = {
   async getAllNotifications ({ commit }) {
-    const res = await apollo.query({ query: LIST_GROUP_APPLICATIONS })
-    const formatedNotification = res.data.listGroupApplications.map(a => ({
-      type: 'registration',
-      message: {
-        community: a.group,
-        profile: a.applicant,
-        message: a.text ? a.text[a.text.length - 1] : ''
-      },
-      from: a.applicant
-    }))
-    if (res.errors) {
-      console.error('error fetching all notifications', res)
-      commit('updateNotifications', [])
-      return
-    }
-    commit('updateNotifications', formatedNotification)
+    await fetchAllNotifications(commit)
+    setInterval(() => {
+      fetchAllNotifications(commit)
+    }, POLL_INTERVAL)
   },
   setCurrentNotification ({ commit }, notification) {
     commit('updateCurrentNotification', notification)
