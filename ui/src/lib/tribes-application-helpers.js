@@ -1,10 +1,13 @@
 import gql from 'graphql-tag'
 
 export const CREATE_GROUP_APPLICATION = gql`
-  mutation($groupId: String!, $recps: [String], $text: String) {
-    createGroupApplication(groupId: $groupId, recps: $recps, text: $text) {
+  mutation($groupId: String!, $groupAdmins: [String!]!, $text: String) {
+    createGroupApplication(
+      groupId: $groupId
+      groupAdmins: $groupAdmins
+      text: $text
+    ) {
       id
-      version
       group {
         id
       }
@@ -21,7 +24,7 @@ export const CREATE_GROUP_APPLICATION = gql`
         }
         text
       }
-      recps
+      groupAdmins
       accepted
       addMember
     }
@@ -57,7 +60,7 @@ export const ACCEPT_GROUP_APPLICATION = gql`
           text
         }
       }
-      recps
+      groupAdmins
       accepted
     }
   }
@@ -119,7 +122,7 @@ export const GET_GROUP_APPLICATION = gql`
         }
         text
       }
-      recps
+      groupAdmins
       accepted
     }
   }

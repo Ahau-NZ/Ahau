@@ -34,7 +34,7 @@ async function fetchAllNotifications (commit) {
   const formatedNotification = res.data.listGroupApplications.map(a => ({
     type: 'registration',
     message: {
-      community: a.group,
+      group: a.group.public[0],
       profile: a.applicant,
       message: a.text ? a.text[a.text.length - 1] : ''
     },

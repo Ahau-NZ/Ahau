@@ -40,7 +40,7 @@
                   <v-list-item-title>{{notification.from.preferredName}}</v-list-item-title>
                   <v-list-item-subtitle
                     class="text-caption ahauRed"
-                  >Has requested to join {{notification.message.community.preferredName}}</v-list-item-subtitle>
+                  >Has requested to join {{notification.message.group.preferredName}}</v-list-item-subtitle>
                 </v-list-item-content>
                 <!-- <v-list-item-action>
                   <v-btn icon x-small>
@@ -65,7 +65,7 @@
                   <v-list-item-title>{{notification.from.preferredName}}</v-list-item-title>
                   <v-list-item-subtitle
                     class="text-caption ahauRed"
-                  >Has {{notification.message.outcome}} your request to join {{notification.message.community.preferredName}}</v-list-item-subtitle>
+                  >Has {{notification.message.outcome}} your request to join {{notification.message.group.preferredName}}</v-list-item-subtitle>
                 </v-list-item-content>
                 <!-- <v-list-item-action>
                   <v-btn icon x-small>

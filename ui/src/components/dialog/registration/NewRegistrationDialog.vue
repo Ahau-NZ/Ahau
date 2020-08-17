@@ -10,7 +10,7 @@
                 <i>{{currentNotification.from.preferredName}}</i>
               </strong> to join
               <strong>
-                <i>{{currentNotification.message.community.preferredName}}</i>
+                <i>{{currentNotification.message.group.preferredName}}</i>
               </strong>
               <br />Please review their information and respond below
             </span>
@@ -71,9 +71,7 @@
                     </v-row>
                   </v-col>
                   <v-col cols="12" align="center">
-                    <h4
-                      class="primary--text"
-                    >{{currentNotification.message.community.preferredName}}</h4>
+                    <h4 class="primary--text">{{currentNotification.message.group.preferredName}}</h4>
                   </v-col>
                 </v-col>
               </v-row>
@@ -132,7 +130,7 @@
               <p v-if="type === 'review'" class="py-6 px-4 subtitle-2 black--text">
                 The below private information will only be viewable by you and any other
                 <strong>
-                  <i>{{currentNotification.message.community.preferredName}}</i>
+                  <i>{{currentNotification.message.group.preferredName}}</i>
                 </strong> kaitiaki
               </p>
               <p v-else class="py-6 px-4 subtitle-2 black--text">
@@ -369,7 +367,7 @@
     <Dialog
       v-if="showMessage"
       :show="showMessage"
-      :title="`${response} request to join ${currentNotification.message.community.preferredName}` "
+      :title="`${response} request to join ${currentNotification.message.group.preferredName}` "
       @close="close"
       width="720px"
       :goBack="close"
@@ -475,10 +473,10 @@ export default {
     }
   },
   mounted () {
-    // TODO - update Profile, Parents and Message with notifcations data
+    // TODO - update Profile, Parents and Message with notifications data
     this.getFullProfile(this.profile.id)
     if (this.type === 'review') {
-      this.parentsArray = this.notification.profile.parents
+      this.parentsArray = this.notification.message.profile.parents
     } else this.parentsArray = this.parents
   },
   watch: {
