@@ -61,12 +61,12 @@
                       <Avatar
                         class="big-avatar"
                         size="100px"
-                        :image="formData.avatarImage"
-                        :alt="formData.preferredName"
-                        :gender="formData.gender"
-                        :aliveInterval="formData.aliveInterval"
-                        :deceased="formData.deceased"
-                        @updateAvatar="formData.avatarImage = $event"
+                        :image="currentNotification.message.group.avatarImage"
+                        :alt="currentNotification.message.group.preferredName"
+                        :gender="currentNotification.message.group.gender"
+                        :aliveInterval="currentNotification.message.group.aliveInterval"
+                        :deceased="currentNotification.message.group.deceased"
+                        @updateAvatar="currentNotification.message.group.avatarImage = $event"
                       />
                     </v-row>
                   </v-col>
