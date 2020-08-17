@@ -38,6 +38,7 @@ async function fetchAllNotifications (commit) {
       profile: a.applicant,
       message: a.text ? a.text[a.text.length - 1] : ''
     },
+    applicationId: a.id,
     from: a.applicant
   }))
   if (res.errors) {

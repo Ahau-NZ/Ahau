@@ -416,7 +416,7 @@ import ParentGroup from '@/components/registration/ParentGroup.vue'
 import AddButton from '@/components/button/AddButton.vue'
 
 import { dateIntervalToString } from '@/lib/date-helpers'
-import { CREATE_GROUP_APPLICATION } from '@/lib/tribes-application-helpers'
+import { CREATE_GROUP_APPLICATION, ACCEPT_GROUP_APPLICATION } from '@/lib/tribes-application-helpers'
 
 import isEmpty from 'lodash.isempty'
 import calculateAge from '@/lib/calculate-age'
@@ -667,22 +667,32 @@ export default {
       this.response = response
     },
 
-    send () {
-      var output = {
-        // TODO - update to match notifications
-        action: 'response',
-        from: this.whoami.profile.id,
-        message: {
-          community: 'community profile.id',
-          outcome: this.response,
-          message: this.resMessage
-        },
-        to: this.formData.id
-      }
-      // TODO - below consoles
-      console.log('send response: ', output)
-      console.log('add person to group')
+    async send () {
+      console.log('send -> this.whoami', this.whoami)
+      /* TODO: format */
+      // var output = {
+      //   // TODO - update to match notifications
+      //   action: 'response',
+      //   from: this.whoami.profile.id,
+      //   message: {
+      //     community: 'community profile.id',
+      //     outcome: this.response,
+      //     message: this.resMessage
+      //   },
+      //   to: this.formData.id
+      // }
+      // // TODO - below consoles
+      // console.log('send response: ', output)
+      // console.log('add person to group')
 
+      const accept = await this.$apollo.mutate({
+        mutation: ACCEPT_GROUP_APPLICATION,
+        variables: {
+          id: this.currentNotification.applicationId,
+          text: this.resMessage
+        }
+      })
+      /* TODO: check for errors */
       this.showMessage = !this.showMessage
       this.close()
     }

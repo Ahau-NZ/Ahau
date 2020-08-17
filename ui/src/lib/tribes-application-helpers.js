@@ -49,16 +49,6 @@ export const ACCEPT_GROUP_APPLICATION = gql`
             uri
           }
         }
-        comments {
-          author {
-            id
-            preferredName
-            avatarImage {
-              uri
-            }
-          }
-          text
-        }
       }
       groupAdmins
       accepted
