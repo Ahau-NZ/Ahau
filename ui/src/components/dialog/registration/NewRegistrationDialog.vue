@@ -491,26 +491,27 @@ export default {
       }
     }
   },
-  watch: {
-    parents: {
-      deep: true,
-      immediate: true,
-      handler (newVal) {
-        if (newVal.length < 1) this.parentNamesValid = false
-        else {
-          this.gpNamesValid = newVal.every((parent) => {
-            if (!parent.grandparents) return false
-            return parent.grandparents.every((gp) => {
-              return gp.preferredName && gp.preferredName.length
-            })
-          })
-          this.parentNamesValid = newVal.every((parent) => {
-            return parent.preferredName && parent.preferredName.length
-          })
-        }
-      }
-    }
-  },
+  /* WHICH ONE IS RIGHT? */
+  // watch: {
+  //   parents: {
+  //     deep: true,
+  //     immediate: true,
+  //     handler (newVal) {
+  //       if (newVal.length < 1) this.parentNamesValid = false
+  //       else {
+  //         this.gpNamesValid = newVal.every((parent) => {
+  //           if (!parent.grandparents) return false
+  //           return parent.grandparents.every((gp) => {
+  //             return gp.preferredName && gp.preferredName.length
+  //           })
+  //         })
+  //         this.parentNamesValid = newVal.every((parent) => {
+  //           return parent.preferredName && parent.preferredName.length
+  //         })
+  //       }
+  //     }
+  //   }
+  // },
   computed: {
     ...mapGetters(['currentProfile', 'selectedProfile', 'whoami', 'currentTribe', 'currentNotification']),
     remainingErrors () {
@@ -648,7 +649,6 @@ export default {
         console.warn('send this object: ', input)
         this.close()
       }
-      console.log('submit -> this.formData', this.currentTribe.public[0].tiaki)
       const applyToJoin = await this.$apollo.mutate({
         mutation: CREATE_GROUP_APPLICATION,
         variables: {
@@ -657,9 +657,8 @@ export default {
           text: 'Hello'
         }
       })
-      console.log('submit -> applyToJoin', applyToJoin)
+      /* TODO: check for errors */
       this.close()
-      // }
     },
 
     respond (response) {
