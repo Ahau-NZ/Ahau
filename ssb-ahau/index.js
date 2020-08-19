@@ -30,10 +30,18 @@ function logPublish (sbot) {
 function lanConn (sbot) {
   pull(
     sbot.lan.discoveredPeers(),
-    pull.through(console.log),
+    pull.filter(p => p.verified),
     pull.drain(({ address, verified }) => {
-      pull.conn.connect(address, (err, data) => {
-        console.log(err, data)
+      sbot.conn.connect(address, (err, peer) => {
+        if (err) return console.error(err)
+        if (!peer) return
+
+        console.log('connected to local peer:', peer.id)
+        // ensure we replicate their first 100 messages so we can see their name / avatar
+        pull(
+          peer.createHistoryStream({ id: peer.id, keys: false, limit: 100 }),
+          sbot.createWriteStream()
+        )
       })
     })
   )
