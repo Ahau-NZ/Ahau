@@ -7,6 +7,7 @@ module.exports = {
   init: function (sbot, config) {
     if (process.env.NODE_ENV === 'development') {
       logPublish(sbot)
+      logReplication(sbot)
     }
 
     graphqlServer(sbot)
@@ -15,16 +16,25 @@ module.exports = {
 }
 
 function logPublish (sbot) {
-  sbot.post(m => {
-    console.log(m.value.sequence, m.key)
-
-    sbot.get({ id: m.key, private: true, meta: true }, (err, m) => {
-      if (err) return console.error(err)
-
+  pull(
+    sbot.createUserStream({ id: sbot.id, live: true, old: false, private: true, meta: true }),
+    pull.drain(m => {
+      console.log('')
+      console.log(m.value.sequence, m.key)
       console.log(JSON.stringify(m.value.content, null, 2))
-      console.log('------------------\n\n')
+      console.log('')
     })
-  })
+  )
+}
+
+function logReplication (sbot) {
+  pull(
+    sbot.createLogStream({ live: true, old: false }),
+    pull.filter(m => m.value.author !== sbot.id),
+    pull.drain(m => {
+      console.log(`replicated ${m.value.author}, seq: ${m.value.sequence}`)
+    })
+  )
 }
 
 function lanConn (sbot) {
