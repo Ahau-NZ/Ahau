@@ -10,7 +10,6 @@ const plugins = [
   'ssb-lan',
   'ssb-replicate',
   'ssb-friends',
-  'ssb-promiscuous', // temporary?
 
   'ssb-blobs',
   'ssb-serve-blobs',
