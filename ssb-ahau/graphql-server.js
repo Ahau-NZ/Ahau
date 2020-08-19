@@ -10,6 +10,7 @@ const Profile = require('@ssb-graphql/profile')
 const Whakapapa = require('@ssb-graphql/whakapapa')
 const Artefact = require('@ssb-graphql/artefact')
 const Story = require('@ssb-graphql/story')
+const Invite = require('@ssb-graphql/invite')
 
 module.exports = function graphqlServer (sbot) {
   const PORT = 4000
@@ -21,6 +22,7 @@ module.exports = function graphqlServer (sbot) {
   const tribes = Tribes(sbot, { ...profile.gettersWithCache })
   const story = Story(sbot)
   const artefact = Artefact(sbot)
+  const invite = Invite(sbot)
   const whakapapa = Whakapapa(sbot, {
     ...profile.gettersWithCache,
     ...story.gettersWithCache,
@@ -37,6 +39,7 @@ module.exports = function graphqlServer (sbot) {
         profile,
         artefact,
         story,
+        invite,
         whakapapa
       ]),
       context,
