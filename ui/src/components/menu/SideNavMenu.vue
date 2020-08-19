@@ -27,8 +27,7 @@
           </v-btn>
         </v-row>
       </v-col>
-      <!-- /* FOR DEV */ -->
-      <RegisterButton v-if="true" />
+      <RegisterButton v-if="nonMember" />
       <v-row v-else :class="mobile ? 'rounded-border' : tablet ? 'ml-6' : 'ml-12'">
         <v-col align="center" :class="mobile ? 'py-0 px-0' : tablet ? 'py-4 px-0' : 'py-1'">
           <v-btn @click="setActive('profile')" light :fab="mobile" text>
