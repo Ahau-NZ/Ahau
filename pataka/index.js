@@ -26,7 +26,7 @@ const plugins = [
   'ssb-whakapapa',
 
   'ssb-invite',
-  'ahau-server',
+  'ahau-pataka-server',
   'ssb-recps-guard'
 ]
 
@@ -48,20 +48,22 @@ Permanently fixed, established and understood!
 Forward together!
 ---------------------------------
 `
+console.log(karakia)
 
 const appURL =
   process.env.NODE_ENV === 'development'
-    ? 'http://localhost:8080' // dev-server
+    ? 'http://localhost:8081' // dev-server
     : `file://${__dirname}/dist/index.html` // production build
 
 ahoy({
-  title: 'Whakapapa Ora',
+  title: 'Pātaka',
   config: Config(),
   plugins,
   appURL,
   // appDir: '../whakapapa-ora', // only use this when ssb-ahoy symlinked
   onReady: ({ config }) => {
     // this config has updated manifest added
-    console.log(karakia)
+
+    console.log('BOOM')
   }
 })

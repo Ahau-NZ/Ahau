@@ -18,6 +18,38 @@
         </v-btn>
       </div>
     </v-row>
+    <v-row class="py-2">
+      <v-col cols="12" md="9">
+        <p class="sub-headline pa-0">Enter a Pātaka code to discover tribes</p>
+        <v-row>
+          <v-col cols="10" md='9' class="py-0">
+            <v-text-field
+              v-model="patakaCode"
+              placeholder="xxxx-xxxxx-xxxx-xxxx"
+              outlined
+              light
+              dense
+              :success-messages="successMsg"
+              :error-messages="errorMsg"
+              append-icon="mdi-lan-connect"
+              clearable
+            />
+          </v-col>
+          <v-col class="py-0 pl-0">
+            <v-btn
+              color="black"
+              :class="mobile ? 'px-0':''"
+              @click="acceptInvite"
+              :text="mobile"
+              :x-small="mobile"
+            >
+              <v-icon v-if="mobile">mdi-arrow-right</v-icon>
+              <span v-else>connect</span>
+            </v-btn>
+          </v-col>
+        </v-row>
+      </v-col>
+    </v-row>
     <!-- TRIBES -->
     <div>
       <v-row v-if="connectedTribes.length" class="pt-4">
@@ -71,39 +103,6 @@
         </v-col>
       </v-row>
     </div>
-    <v-row class="py-2">
-      <v-col cols="12" md="9">
-        <v-divider light color="grey" class="my-10"></v-divider>
-        <p class="sub-headline pa-0">Enter a Pātaka code to discover tribes</p>
-        <v-row>
-          <v-col cols="10" md="9" class="py-0">
-            <v-text-field
-              v-model="patakaCode"
-              placeholder="xxxx-xxxxx-xxxx-xxxx"
-              outlined
-              light
-              dense
-              :success-messages="successMsg"
-              :error-messages="errorMsg"
-              append-icon="mdi-lan-connect"
-              clearable
-            />
-          </v-col>
-          <v-col class="py-0 pl-0">
-            <v-btn
-              color="black"
-              :class="mobile ? 'px-0':''"
-              @click="acceptInvite"
-              :text="mobile"
-              :x-small="mobile"
-            >
-              <v-icon v-if="mobile">mdi-arrow-right</v-icon>
-              <span v-else>connect</span>
-            </v-btn>
-          </v-col>
-        </v-row>
-      </v-col>
-    </v-row>
   </div>
 </template>
 
@@ -203,10 +202,10 @@ export default {
       try {
         await this.$apollo.mutate({
           mutation: gql`
-          mutation($inviteCode: String) {
+          mutation($inviteCode: String!) {
             acceptInvite(inviteCode: $inviteCode)
           }`,
-          varibles: {
+          variables: {
             inviteCode: this.patakaCode
           }
         })

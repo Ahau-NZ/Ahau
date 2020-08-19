@@ -3,7 +3,7 @@ const fs = require('fs')
 const path = require('path')
 
 const customConfig = {
-  port: 8087,
+  port: 8088,
   caps: {
     shs: 'LftKJZRB4nbBRnlJuFteWG9AP+gGboVEhibx016bR0s='
     // this is the "secret handshake" capability.
@@ -19,15 +19,14 @@ const customConfig = {
   },
   recpsGuard: {
     allowedTypes: [
-      'contact', 'pub' // needed for ssb-invite
+      'contact'
     ]
   }
 }
 
 module.exports = function () {
-  const appName = process.env.NODE_ENV === 'development'
-    ? 'ahau-dev'
-    : 'ssb-ahau'
+  const appName =
+    process.env.NODE_ENV === 'development' ? 'ahau-pataka-dev' : 'ahau-pataka'
 
   const config = Config(appName, customConfig)
 
@@ -35,7 +34,7 @@ module.exports = function () {
   fs.writeFile(
     path.join(config.path, 'config'),
     JSON.stringify(customConfig, null, 2),
-    (err) => {
+    err => {
       if (err) throw err
       console.log('saved config')
     }

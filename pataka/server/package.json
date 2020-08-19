@@ -1,25 +1,23 @@
 {
-  "name": "ahau-server",
+  "name": "ahau-pataka-server",
   "version": "0.6.1",
-  "description": "An application for gathering and sharing whakapapa (family trees, traditional knowledge). Built using scuttlebutt",
+  "description": "A pub application for the Ahau ecosystem. Built using scuttlebutt",
   "homepage": "https://gitlab.com/ahau/whakapapa-ora",
   "main": "index.js",
   "dependencies": {
     "@apollo/federation": "^0.19.1",
-    "@ssb-graphql/artefact": "3.0.1",
     "@ssb-graphql/invite": "^0.1.1",
     "@ssb-graphql/main": "^5.0.0",
+    "@ssb-graphql/pataka": "0.0.5",
     "@ssb-graphql/profile": "^2.3.3",
-    "@ssb-graphql/story": "^1.1.1",
-    "@ssb-graphql/tribes": "^1.1.2",
-    "@ssb-graphql/whakapapa": "^2.4.3",
+    "@ssb-graphql/stats": "0.0.6",
     "apollo-server": "^2.16.1",
     "apollo-server-express": "^2.16.1",
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "graphql": "^15.3.0",
     "graphql-date": "^1.0.3",
-    "graphql-upload": "^8.0.7"
+    "graphql-upload": "9.0.0"
   },
   "devDependencies": {
     "casual": "^1.6.2"

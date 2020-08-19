@@ -123,6 +123,12 @@
 </template>
 
 <script>
+import pick from 'lodash.pick'
+import isEmpty from 'lodash.isempty'
+import * as d3 from 'd3'
+import { mapGetters, mapActions } from 'vuex'
+import gql from 'graphql-tag'
+
 import NewNodeDialog from '@/components/dialog/profile/NewNodeDialog.vue'
 import NewCommunityDialog from '@/components/dialog/community/NewCommunityDialog.vue'
 import NewRegistrationDialog from '@/components/dialog/registration/NewRegistrationDialog.vue'
@@ -140,20 +146,13 @@ import WhakapapaTableHelper from '@/components/dialog/whakapapa/WhakapapaTableHe
 import ComingSoonDialog from '@/components/dialog/ComingSoonDialog.vue'
 import ConfirmationText from '@/components/dialog/ConfirmationText.vue'
 
-import gql from 'graphql-tag'
-
 import { PERMITTED_RELATIONSHIP_ATTRS, savePerson, saveCurrentIdentity } from '@/lib/person-helpers.js'
 import { createGroup, saveCommunity, savePublicCommunity, saveGroupProfileLink, deleteTribe, updateTribe } from '@/lib/community-helpers'
 import { saveWhakapapaView } from '@/lib/whakapapa-helpers.js'
-
 import { saveLink } from '@/lib/link-helpers.js'
 import tree from '@/lib/tree-helpers'
-import findSuccessor from '@/lib/find-successor'
 
-import pick from 'lodash.pick'
-import isEmpty from 'lodash.isempty'
-import * as d3 from 'd3'
-import { mapGetters, mapActions } from 'vuex'
+import findSuccessor from '@/lib/find-successor'
 
 export default {
   name: 'DialogHandler',
@@ -630,7 +629,6 @@ export default {
         throw err
       }
     },
-
     async updatePerson (input) {
       const profileId = this.selectedProfile.id
       if (this.isPersonalProfile(profileId)) {

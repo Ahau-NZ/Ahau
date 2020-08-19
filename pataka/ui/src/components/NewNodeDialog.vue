@@ -1,16 +1,15 @@
 <template>
   <Dialog :show="show" :title="title" @close="close" width="720px" :goBack="close" enableMenu>
-
     <!-- Content Slot -->
-    <template v-if="!hideDetails" v-slot:content>
+    <template v-slot:content>
       <v-col class="py-0">
-        <CommunityForm :profile.sync="formData" />
+        <ProfileForm :profile.sync="formData" :mobile="mobile" />
       </v-col>
     </template>
     <!-- End Content Slot -->
 
     <!-- Actions Slot -->
-    <template v-slot:actions  style="border: 2px solid orange;">
+    <template v-slot:actions style="border: 2px solid orange;">
       <v-btn @click="close" text large fab class="secondary--text">
         <v-icon color="secondary">mdi-close</v-icon>
       </v-btn>
@@ -19,80 +18,82 @@
       </v-btn>
     </template>
     <!-- End Actions Slot -->
-
   </Dialog>
 </template>
 
 <script>
-import Dialog from '@/components/dialog/Dialog.vue'
-import CommunityForm from '@/components/community/CommunityForm.vue'
-import { PERMITTED_COMMUNITY_ATTRS } from '@/lib/community-helpers.js'
-
-import pick from 'lodash.pick'
+import Dialog from '@/components/Dialog.vue'
+import ProfileForm from '@/components/ProfileForm.vue'
 import isEmpty from 'lodash.isempty'
 
-function defaultData () {
+function setDefaultData () {
   const formData = {
-    type: 'community',
     id: '',
     preferredName: '',
     avatarImage: {},
-    description: '',
-    location: '',
-    address: '',
-    email: '',
-    phone: ''
+    description: ''
   }
+
   return formData
 }
 
 export default {
-  name: 'NewCommunityDialog',
+  name: 'NewNodeDialog',
   components: {
     Dialog,
-    CommunityForm
+    ProfileForm
   },
   props: {
     show: { type: Boolean, required: true },
-    title: { type: String, default: 'Create a new community' },
-    hideDetails: { type: Boolean, default: false },
-    selectedProfile: { type: Object }
+    title: { type: String, default: 'Create a new Pātaka' }
   },
   data () {
     return {
-      formData: defaultData()
+      formData: setDefaultData()
     }
   },
-
   computed: {
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
-
     submission () {
-      const form = pick(this.formData, PERMITTED_COMMUNITY_ATTRS)
       let submission = {}
-      Object.entries(form).map(([key, value]) => {
-        if (!isEmpty(value)) {
-          submission[key] = value
-        }
+      Object.entries(this.formData).map(([key, value]) => {
+        /* Hack for blobId */
+        if (key === 'avatarImage') {
+          const { blobId, mimeType, size, unbox, uri } = this.formData[key]
+          if (uri) {
+            submission.avatarImage = {
+              blob: blobId,
+              mimeType,
+              size,
+              unbox,
+              uri
+            }
+          }
+        } else if (!isEmpty(this.formData[key])) submission[key] = value
       })
+
       return submission
     }
   },
   methods: {
     submit () {
-      var submission = Object.assign({}, this.submission)
-      this.$emit('create', submission)
-      this.close()
-    },
-    cordovaBackButton () {
+      this.$emit('create', this.submission)
       this.close()
     },
     close () {
-      this.formData = defaultData()
+      this.resetFormData()
       this.$emit('close')
+    },
+    async setFormData (person) {
+      this.hasSelection = true
+      this.formData = person.profile
+    },
+    resetFormData () {
+      this.formData = setDefaultData()
     }
+
   }
 }
 </script>
