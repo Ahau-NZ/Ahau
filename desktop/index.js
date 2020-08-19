@@ -26,7 +26,7 @@ const plugins = [
   'ssb-whakapapa',
 
   'ssb-invite',
-  'ahau-server',
+  'ssb-ahau',
   'ssb-recps-guard'
 ]
 

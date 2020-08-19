@@ -70,5 +70,5 @@ SecretStack({ appKey: 'LftKJZRB4nbBRnlJuFteWG9AP+gGboVEhibx016bR0s=' })
   // Private groups
   .use(require('ssb-tribes'))
   // Custom
-  .use(require('ahau-server'))
+  .use(require('ssb-ahau'))
   .call(null, config)
