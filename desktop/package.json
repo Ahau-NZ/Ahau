@@ -12,7 +12,7 @@
     "dist": "electron-builder --config build/electron-builder.config.js"
   },
   "dependencies": {
-    "ahau-server": "file:../server",
+    "ssb-ahau": "file:../ssb-ahau",
     "secret-stack": "^6.3.1",
     "sodium-native": "^2.4.9",
     "ssb-ahoy": "^3.0.0",
@@ -29,7 +29,6 @@
     "ssb-master": "^1.0.3",
     "ssb-no-auth": "^1.0.0",
     "ssb-profile": "^1.5.1",
-    "ssb-promiscuous": "^1.1.0",
     "ssb-query": "^2.4.5",
     "ssb-recps-guard": "^2.1.0",
     "ssb-replicate": "^1.3.2",

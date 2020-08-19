@@ -10,7 +10,6 @@ const plugins = [
   'ssb-lan',
   'ssb-replicate',
   'ssb-friends',
-  // 'ssb-promiscuous', // temporary?
 
   'ssb-blobs',
   'ssb-serve-blobs',
@@ -26,7 +25,7 @@ const plugins = [
   'ssb-whakapapa',
 
   'ssb-invite',
-  'ahau-server',
+  'ssb-ahau',
   'ssb-recps-guard'
 ]
 
