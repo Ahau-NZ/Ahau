@@ -162,6 +162,7 @@ export default {
         }
       }
     `,
+      pollInterval: 10e3,
       update (data) {
         return data.tribes
       },
