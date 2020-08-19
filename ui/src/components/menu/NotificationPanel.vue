@@ -10,12 +10,12 @@
           <div
             :style="mobile ? 'position:absolute; bottom:-10px;right:8px':'position:absolute; bottom:-10px;right:30px'"
           >
-            <v-badge
+            <!-- <v-badge
               v-if="hasNotification"
               color="#B12526"
-              :content="notifications.length"
+              :content="notificationsCount"
               style="cursor: pointer;"
-            ></v-badge>
+            ></v-badge>-->
           </div>
         </div>
       </template>
@@ -25,7 +25,7 @@
         </v-list>
         <v-divider></v-divider>
         <v-list class="pt-0">
-          <div v-for="(notification, index) in notifications" :key="index">
+          <div v-for="(notification, index) in notificationsToShow" :key="index">
             <!-- Registration Notification -->
             <div v-if="notification.type === 'registration'">
               <v-list-item class="py-1" @click="openReview(notification)">
@@ -54,18 +54,20 @@
             <!-- Response notification -->
             <div v-else-if="notification.type === 'response'">
               <v-list-item class="py-1" @click="openResponse(notification)">
+                <!-- TODO: which tiaki accepted -->
+                <!-- Showing the first tiaki -->
                 <Avatar
                   size="50px"
-                  :image="notification.from.avatarImage"
-                  :alt="notification.from.preferredName"
-                  :gender="notification.from.gender"
-                  :bornAt="notification.from.bornAt"
+                  :image="notification.message.groupAdmins[0].avatarImage"
+                  :alt="notification.message.groupAdmins[0].preferredName"
+                  :gender="notification.message.groupAdmins[0].gender"
+                  :bornAt="notification.message.groupAdmins[0].bornAt"
                 />
                 <v-list-item-content class="pl-5">
-                  <v-list-item-title>{{notification.from.preferredName}}</v-list-item-title>
+                  <v-list-item-title>{{notification.message.groupAdmins[0].preferredName}}</v-list-item-title>
                   <v-list-item-subtitle
                     class="text-caption ahauRed"
-                  >Has {{notification.message.outcome}} your request to join {{notification.message.group.preferredName}}</v-list-item-subtitle>
+                  >Has {{notification.message.outcome}} {{notification.from.preferredName}}'s the request to join {{notification.message.group.preferredName}}</v-list-item-subtitle>
                 </v-list-item-content>
                 <!-- <v-list-item-action>
                   <v-btn icon x-small>
@@ -87,7 +89,7 @@
       <div
         :style="mobile ? 'position:absolute; bottom:-10px;right:8px':'position:absolute; bottom:-10px;right:30px'"
       >
-        <v-badge color="#B12526" :content="notifications.length" style="cursor: pointer;"></v-badge>
+        <!-- <v-badge color="#B12526" :content="notificationsCount" style="cursor: pointer;"></v-badge> -->
       </div>
     </div>
 
@@ -151,11 +153,30 @@ export default {
   },
   computed: {
     ...mapGetters(['whoami', 'currentProfile', 'notifications']),
+    notificationsToShow () {
+      const reversedNotifications = this.notifications.slice(0).reverse()
+      return reversedNotifications.map(i => ({ ...i, mine: i.from.id === this.whoami.public.profile.id }))
+    },
+    notificationsToJoin () {
+      return this.notifications
+        .filter(i => {
+          return !i.accepted && !i.mine
+        })
+    },
+    notificationsAccepted () {
+      return this.notifications
+        .filter(i => {
+          return i.accepted && i.mine
+        })
+    },
+    notificationsCount () {
+      return this.notifications.length
+    },
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
     hasNotification () {
-      return this.notifications.length > 0
+      return this.notificationsCount > 0
     }
   },
   methods: {

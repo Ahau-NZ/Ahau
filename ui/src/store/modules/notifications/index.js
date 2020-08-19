@@ -32,14 +32,17 @@ const mutations = {
 async function fetchAllNotifications (commit) {
   const res = await apollo.query({ query: LIST_GROUP_APPLICATIONS })
   const formatedNotification = res.data.listGroupApplications.map(a => ({
-    type: 'registration',
+    type: a.comments.length < 2 ? 'registration' : 'response',
     message: {
+      outcome: a.accepted ? 'accepted' : 'not responded',
       group: a.group.public[0],
+      groupAdmins: a.group.public[0].tiaki,
       profile: a.applicant,
       message: a.text ? a.text[a.text.length - 1] : ''
     },
     applicationId: a.id,
-    from: a.applicant
+    from: a.applicant,
+    accepted: a.accepted
   }))
   if (res.errors) {
     console.error('error fetching all notifications', res)

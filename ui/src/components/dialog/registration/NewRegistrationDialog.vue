@@ -15,12 +15,12 @@
               <br />Please review their information and respond below
             </span>
             <!-- TODO update text with notification data -->
-            <span v-else class="py-6 px-4 subtitle-2 black--text">
+            <!-- <span v-else class="py-6 px-4 subtitle-2 black--text">
               To join this communtiy, please confirm that you are happy to share the following profile information with
               <strong>
                 <i>{{currentProfile.preferredName}}</i>
               </strong> members
-            </span>
+            </span>-->
           </v-row>
           <!-- PROFILE INFOMATION -->
           <v-form ref="checkboxes">
@@ -36,19 +36,19 @@
                       <Avatar
                         class="big-avatar"
                         size="100px"
-                        :image="formData.avatarImage"
-                        :alt="formData.preferredName"
-                        :gender="formData.gender"
-                        :aliveInterval="formData.aliveInterval"
-                        :deceased="formData.deceased"
-                        @updateAvatar="formData.avatarImage = $event"
+                        :image="currentNotification.from.avatarImage"
+                        :alt="currentNotification.from.preferredName"
+                        :gender="currentNotification.from.gender"
+                        :aliveInterval="currentNotification.from.aliveInterval"
+                        :deceased="currentNotification.from.deceased"
+                        @updateAvatar="currentNotification.from.avatarImage = $event"
                       />
                     </v-row>
                   </v-col>
                   <v-col cols="12" align="center">
                     <h4
                       class="primary--text"
-                    >{{ formData.legalName ? formData.legalName : formData.preferredName }}</h4>
+                    >{{ currentNotification.from.legalName ? currentNotification.from.legalName : currentNotification.from.preferredName }}</h4>
                   </v-col>
                 </v-col>
                 <v-col align-self="center" cols="1">
@@ -105,13 +105,14 @@
                   >{{ formData.legalName ? formData.legalName : formData.preferredName }}</h1>
                 </v-col>
               </v-row>
-              <ProfileInfoCard
+              <!-- TODO: INFO -->
+              <!-- <ProfileInfoCard
                 :profile="formData"
                 isRegistration
                 :style="mobile ? 'margin: 0px 20px' : 'margin: 0px 30px;'"
-              />
+              />-->
               <v-divider></v-divider>
-              <v-card-actions
+              <!-- <v-card-actions
                 v-if="type !== 'review'"
                 style="display: flex; justify-content: center; align-items: center;"
               >
@@ -122,11 +123,11 @@
                   :label="`I agree to share this information`"
                   :rules="requiredRules"
                 ></v-checkbox>.
-              </v-card-actions>
+              </v-card-actions>-->
             </v-card>
 
             <!-- PRIVATE INFORMATION -->
-            <v-row>
+            <!-- <v-row>
               <p v-if="type === 'review'" class="py-6 px-4 subtitle-2 black--text">
                 The below private information will only be viewable by you and any other
                 <strong>
@@ -139,8 +140,8 @@
                   <i>{{currentProfile.preferredName}}</i>
                 </strong> kaitiaki
               </p>
-            </v-row>
-            <v-card
+            </v-row>-->
+            <!-- <v-card
               elevation="1"
               :style="mobile ? 'margin: 0px' : 'margin: 20px'"
               :class="{'checkbox':checkbox2}"
@@ -191,7 +192,7 @@
                   :rules="requiredRules"
                 ></v-checkbox>.
               </v-card-actions>
-            </v-card>
+            </v-card>-->
             <!-- <v-row class="py-4 pl-10">
                   <v-icon :color="!gpNamesValid ? '#b12526':''">mdi-account-supervisor-circle</v-icon>
                   <AddButton :color="!gpNamesValid ? '#b12526':''" justify="start" :width="'50px'" :label="'Add parents of ' + parent.preferredName" @click="addGrandparent(index)"/>
@@ -208,13 +209,13 @@
             </v-card>-->
 
             <!-- ADD PARENTS INFORMATION-->
-            <p v-if="type === 'review'" class="py-6 px-4 subtitle-2 black--text">
+            <!-- <p v-if="type === 'review'" class="py-6 px-4 subtitle-2 black--text">
               Please review the provided whakapapa information provided by
               <strong>
                 <i>{{currentNotification.from.preferredName}}</i>
               </strong>
-            </p>
-            <p
+            </p>-->
+            <!-- <p
               v-else
               class="pt-5 pl-5 subtitle-2 black--text"
             >Please provide the names of at least one parent and one grandparent</p>
@@ -286,7 +287,7 @@
                   :rules="requiredRules"
                 ></v-checkbox>.
               </v-card-actions>
-            </v-card>
+            </v-card>-->
 
             <!-- MESSAGE -->
             <v-col cols="12" :class="mobile ? 'pt-4 px-0':'pt-6 px-5'">
@@ -345,7 +346,7 @@
       </template>
 
       <!-- Actions Slot -->
-      <template v-if="type === 'review'" v-slot:actions>
+      <template v-if="type === 'review' && showActions" v-slot:actions>
         <v-btn @click="respond('decline')" text large class="secondary--text">
           <span>decline</span>
         </v-btn>
@@ -353,7 +354,7 @@
           <span>approve</span>
         </v-btn>
       </template>
-      <template v-else v-slot:actions>
+      <template v-else-if="showActions" v-slot:actions>
         <v-btn @click="close" text large class="secondary--text">
           <span>cancel</span>
         </v-btn>
@@ -542,7 +543,14 @@ export default {
       if (name.length > 20) return 'font-size:8vw'
       else return 'font-size: 10vw'
     },
-
+    showActions () {
+      console.log('this.currentNotification', this.currentNotification)
+      if (!this.currentNotification.mine && this.type === 'review') {
+        return true
+      } else if (this.currentNotification.mine && this.type === 'response' && !this.currentNotification.accepted) {
+        return true
+      } else return false
+    },
     mobile () {
       return this.$vuetify.breakpoint.xs
     },

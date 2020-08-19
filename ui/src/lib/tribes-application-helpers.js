@@ -83,6 +83,12 @@ export const LIST_GROUP_APPLICATIONS = gql`
         id
         public {
           preferredName
+          tiaki {
+            preferredName
+            avatarImage {
+              uri
+            }
+          }
           avatarImage {
             uri
           }
