@@ -410,11 +410,11 @@
 
 import Avatar from '@/components/Avatar.vue'
 import Dialog from '@/components/dialog/Dialog.vue'
-import ProfileInfoCard from '@/components/profile/ProfileInfoCard.vue'
-import ProfileInfoItem from '@/components/profile/ProfileInfoItem.vue'
-import ProfileCard from '@/components/profile/ProfileCard.vue'
-import ParentGroup from '@/components/registration/ParentGroup.vue'
-import AddButton from '@/components/button/AddButton.vue'
+// import ProfileInfoCard from '@/components/profile/ProfileInfoCard.vue'
+// import ProfileInfoItem from '@/components/profile/ProfileInfoItem.vue'
+// import ProfileCard from '@/components/profile/ProfileCard.vue'
+// import ParentGroup from '@/components/registration/ParentGroup.vue'
+// import AddButton from '@/components/button/AddButton.vue'
 
 import { dateIntervalToString } from '@/lib/date-helpers'
 import { CREATE_GROUP_APPLICATION, ACCEPT_GROUP_APPLICATION } from '@/lib/tribes-application-helpers'
@@ -432,12 +432,12 @@ export default {
   name: 'NewRegistrationDialog',
   components: {
     Dialog,
-    Avatar,
-    ProfileInfoItem,
-    ProfileInfoCard,
-    ProfileCard,
-    ParentGroup,
-    AddButton
+    Avatar
+    // ProfileInfoItem,
+    // ProfileInfoCard,
+    // ProfileCard,
+    // ParentGroup,
+    // AddButton
   },
   props: {
     show: { type: Boolean, required: true },
@@ -544,12 +544,16 @@ export default {
       else return 'font-size: 10vw'
     },
     showActions () {
-      console.log('this.currentNotification', this.currentNotification)
+      if (isEmpty(this.currentNotification)) {
+        return true
+      }
       if (!this.currentNotification.mine && this.type === 'review') {
         return true
-      } else if (this.currentNotification.mine && this.type === 'response' && !this.currentNotification.accepted) {
+      }
+      if (this.currentNotification.mine && this.type === 'response' && !this.currentNotification.accepted) {
         return true
-      } else return false
+      }
+      return false
     },
     mobile () {
       return this.$vuetify.breakpoint.xs

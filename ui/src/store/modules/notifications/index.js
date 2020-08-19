@@ -61,9 +61,6 @@ const actions = {
   },
   setCurrentNotification ({ commit }, notification) {
     commit('updateCurrentNotification', notification)
-  },
-  async setNotifications ({ commit, rootState }, notifications) {
-    commit('updateNotifications', notifications)
   }
 }
 
