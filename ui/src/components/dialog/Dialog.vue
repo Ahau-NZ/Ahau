@@ -48,8 +48,8 @@
         <slot name="content"></slot>
       </v-card-text>
       <v-divider/>
-      <v-card-actions class="pa-0 py-2">
-        <v-container class="py-0 pt-1">
+      <v-card-actions class="pa-0">
+        <v-container class="py-0">
           <v-row>
             <v-col cols="12" md="auto" v-if="$slots['before-actions']" align="center" class="py-0">
               <slot name="before-actions"></slot>

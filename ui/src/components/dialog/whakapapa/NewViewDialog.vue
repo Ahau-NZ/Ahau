@@ -8,6 +8,9 @@
         <WhakapapaForm ref="whakapapaForm" :view.sync="formData" :data.sync="csv"/>
         <AvatarGroup v-if="kaitiaki && kaitiaki.length > 0" size="50px" show-labels groupTitle="Kaitiaki" :profiles="kaitiaki" showLabels/>
       </template>
+      <template v-slot:before-actions>
+        <AccessButton :access.sync="access" />
+      </template>
     </Dialog>
   </div>
 </template>
@@ -19,6 +22,7 @@ import isEmpty from 'lodash.isempty'
 import WhakapapaForm from '@/components/whakapapa/WhakapapaForm.vue'
 import { mapActions, mapGetters } from 'vuex'
 import AvatarGroup from '@/components/AvatarGroup.vue'
+import AccessButton from '@/components/button/AccessButton.vue'
 
 const EMPTY_WHAKAPAPA = {
   name: '',
@@ -62,7 +66,8 @@ export default {
   components: {
     Dialog,
     WhakapapaForm,
-    AvatarGroup
+    AvatarGroup,
+    AccessButton
   },
   props: {
     title: String,
@@ -75,11 +80,15 @@ export default {
     return {
       helpertext: false,
       formData: setDefaultWhakapapa(EMPTY_WHAKAPAPA),
-      csv: ''
+      csv: '',
+      access: null
     }
   },
+  mounted () {
+    this.access = this.generateAccessOptions
+  },
   computed: {
-    ...mapGetters(['whoami']),
+    ...mapGetters(['whoami', 'generateAccessOptions']),
     kaitiaki () {
       if (!this.whoami) return null
       return [this.whoami.public.profile]

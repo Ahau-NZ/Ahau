@@ -62,6 +62,30 @@ const store = new Vuex.Store({
     // TODO-implement goBack to previous profile &| component
     goBack: state => {
       return state.goBack
+    },
+    accessOptions: ({ whoami, tribe }) => {
+      return [
+        { ...whoami.personal.profile, groupId: whoami.personal.groupId, isPersonalGroup: true },
+        ...tribe.tribes
+          .filter(tribe => tribe.private.length > 0) // only include tribes you have the private profile for...
+          .map(tribe => {
+            return {
+              groupId: tribe.id,
+              ...tribe.private[0]
+            }
+          })
+      ]
+    },
+    generateAccessOptions: ({ whoami, person, tribe }) => {
+      const { currentProfile } = person
+      const { currentTribe } = tribe
+
+      if (currentProfile.type === 'person') return { groupId: whoami.personal.groupId, ...whoami.personal.profile, isPersonalGroup: true }
+      else if (currentProfile.type === 'community') {
+        return currentTribe.private.length > 0
+          ? { groupId: currentTribe.id, ...currentTribe.private[0], type: 'community', isPersonalGroup: false }
+          : null
+      }
     }
   },
   mutations: {
