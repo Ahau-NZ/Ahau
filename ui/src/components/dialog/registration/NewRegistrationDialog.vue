@@ -661,14 +661,19 @@ export default {
         console.warn('send this object: ', input)
         this.close()
       }
-      const applyToJoin = await this.$apollo.mutate({
-        mutation: CREATE_GROUP_APPLICATION,
-        variables: {
-          groupId: this.currentTribe.id,
-          groupAdmins: [...this.currentTribe.public[0].tiaki.map(i => i.feedId)],
-          text: 'Hello'
-        }
-      })
+      try {
+        await this.$apollo.mutate({
+          mutation: CREATE_GROUP_APPLICATION,
+          variables: {
+            groupId: this.currentTribe.id,
+            groupAdmins: [...this.currentTribe.public[0].tiaki.map(i => i.feedId)],
+            text: this.message
+          }
+        })
+      } catch (err) {
+        console.log('Got error on creating group application', err)
+      }
+
       /* TODO: check for errors */
       this.close()
     },
@@ -696,13 +701,17 @@ export default {
       // console.log('send response: ', output)
       // console.log('add person to group')
 
-      const accept = await this.$apollo.mutate({
-        mutation: ACCEPT_GROUP_APPLICATION,
-        variables: {
-          id: this.currentNotification.applicationId,
-          text: this.resMessage
-        }
-      })
+      try {
+        await this.$apollo.mutate({
+          mutation: ACCEPT_GROUP_APPLICATION,
+          variables: {
+            id: this.currentNotification.applicationId,
+            text: this.resMessage
+          }
+        })
+      } catch (err) {
+        console.log('Error on accepting group invite', err)
+      }
       /* TODO: check for errors */
       this.showMessage = !this.showMessage
       this.close()
