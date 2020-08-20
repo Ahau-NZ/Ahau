@@ -1,5 +1,8 @@
 <template>
-  <Dialog :show="show" :title="title" @close="close" width="720px" :goBack="close" enableMenu>
+  <Dialog :show="show" :title="title" width="720px" :goBack="close" enableMenu
+    @submit="submit"
+    @close="close"
+  >
 
     <!-- Content Slot -->
     <template v-if="!hideDetails" v-slot:content>
@@ -10,31 +13,11 @@
     <!-- End Content Slot -->
 
     <template v-slot:before-actions>
-      <v-col cols="12" sm="auto" class="mt-4">
-        <v-btn text @click="$emit('delete')">
-          Delete community
-          <v-icon class="pl-2">mdi-delete</v-icon>
-        </v-btn>
-      </v-col>
-    </template>
-
-    <!-- Actions Slot -->
-    <template v-slot:actions >
-      <v-btn @click="close"
-        text large fab
-        class="secondary--text"
-      >
-        <v-icon color="secondary">mdi-close</v-icon>
-      </v-btn>
-      <v-btn @click="submit"
-        text large fab
-        class="blue--text ml-5"
-      >
-        <v-icon>mdi-check</v-icon>
+      <v-btn text @click="$emit('delete')">
+        Delete community
+        <v-icon class="pl-2">mdi-delete</v-icon>
       </v-btn>
     </template>
-    <!-- End Actions Slot -->
-
   </Dialog>
 </template>
 

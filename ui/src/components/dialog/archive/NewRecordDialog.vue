@@ -1,36 +1,20 @@
 <template>
-  <Dialog :show="show" :title="title" @close="close" width="70%" :goBack="close" enableMenu>
+  <Dialog :show="show" :title="title" width="55vw" :goBack="close" enableMenu
+    @submit="submit"
+    @close="close"
+  >
+    <!-- FORM -->
+    <template v-slot:content>
+      <RecordForm ref="recordForm" :editing="editing" :formData.sync="formData"/>
+    </template>
 
-      <!-- FORM -->
-      <template v-slot:content>
-        <RecordForm ref="recordForm" :editing="editing" :formData.sync="formData"/>
-      </template>
-
-      <template v-if="editing" v-slot:before-actions>
-        <v-col cols="12" sm="auto" class="mt-4">
-          <v-btn text @click="$emit('delete')">
-            Delete this record
-            <v-icon class="pl-2">mdi-delete</v-icon>
-          </v-btn>
-        </v-col>
-      </template>
-
-      <template v-slot:actions>
-        <v-btn @click="close"
-          text large fab
-          class="secondary--text"
-          :class="mobile ? 'mr-4':''"
-        >
-          <v-icon>mdi-close</v-icon>
-        </v-btn>
-        <v-btn @click="submit"
-            text large fab
-            class="blue--text"
-          >
-            <v-icon>mdi-check</v-icon>
-          </v-btn>
-      </template>
-    </Dialog>
+    <template v-if="editing" v-slot:before-actions>
+      <v-btn text @click="$emit('delete')">
+        Delete this record
+        <v-icon class="pl-2">mdi-delete</v-icon>
+      </v-btn>
+    </template>
+  </Dialog>
 </template>
 
 <script>
@@ -74,7 +58,6 @@ export default {
       this.formData.mentions.push(this.currentProfile)
       this.formData.contributors.push(this.whoami.public.profile)
       this.formData.kaitiaki = [this.whoami.public.profile]
-      // this.formData.access.push(this.whoami.public.profile)
       // TODO 2020-07-10 this needs to be your profle within the current group
     }
   },
