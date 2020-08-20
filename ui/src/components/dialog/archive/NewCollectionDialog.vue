@@ -1,22 +1,11 @@
 <template>
   <div>
-    <Dialog :show="show" :title="title" @close="close" width="70%" :goBack="close" enableMenu>
+    <Dialog :show="show" :title="title" width="70%" :goBack="close" enableMenu
+      @submit="submit"
+      @close="close"
+    >
       <template v-slot:content>
         <CollectionForm ref="collectionForm" :view.sync="formData"/>
-      </template>
-      <template v-slot:actions>
-        <v-btn @click="close"
-          text large fab
-          class="secondary--text"
-        >
-          <v-icon color="secondary">mdi-close</v-icon>
-        </v-btn>
-        <v-btn @click="submit"
-          text large fab
-          class="blue--text"
-        >
-          <v-icon>mdi-check</v-icon>
-        </v-btn>
       </template>
     </Dialog>
   </div>

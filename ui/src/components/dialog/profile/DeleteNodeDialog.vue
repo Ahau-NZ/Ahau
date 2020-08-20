@@ -1,5 +1,8 @@
 <template>
-  <Dialog :title="`Delete ${ profile.preferredName }`" :show="show" @close="close" width="720px" :goBack="close" enableMenu>
+  <Dialog :title="`Delete ${ profile.preferredName }`" :show="show" width="720px" :goBack="close" enableMenu
+    @submit="submit"
+    @close="close"
+  >
     <template v-slot:content>
       <v-card-subtitle>
         <v-col cols="12" sm="5" md="8">
@@ -24,20 +27,6 @@
         </div>
 
       </v-card-subtitle>
-    </template>
-    <template v-slot:actions>
-      <v-btn @click="close"
-        text large fab
-        class="secondary--text"
-      >
-        <v-icon color="secondary">mdi-close</v-icon>
-      </v-btn>
-      <v-btn @click="submit"
-        text large fab
-        class="blue--text"
-      >
-        <v-icon>mdi-check</v-icon>
-      </v-btn>
     </template>
   </Dialog>
 </template>
