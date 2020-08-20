@@ -1,5 +1,8 @@
 <template>
-  <Dialog :show="show" :title="title" @close="close" width="720px" :goBack="close" enableMenu>
+  <Dialog :show="show" :title="title" width="720px" :goBack="close" enableMenu
+    @submit="submit"
+    @close="close"
+  >
 
     <!-- Content Slot -->
     <template v-if="!hideDetails" v-slot:content>
@@ -8,23 +11,6 @@
       </v-col>
     </template>
     <!-- End Content Slot -->
-
-    <!-- Actions Slot -->
-    <template v-slot:actions>
-      <v-btn @click="close"
-        text large fab
-        class="secondary--text"
-      >
-        <v-icon color="secondary">mdi-close</v-icon>
-      </v-btn>
-      <v-btn @click="submit"
-        text large fab
-        class="blue--text ml-5"
-      >
-        <v-icon>mdi-check</v-icon>
-      </v-btn>
-    </template>
-    <!-- End Actions Slot -->
 
   </Dialog>
 </template>

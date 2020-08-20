@@ -38,6 +38,16 @@
         <small> Private record - Only visible by you</small>
       </v-row>
     </template>
+    <template v-slot:actions>
+      <v-col :align="mobile ? 'center' : 'end'" class="py-0">
+        <v-btn
+          text
+          @click="close"
+        >
+          close
+        </v-btn>
+      </v-col>
+    </template>
   </Dialog>
 </template>
 
@@ -69,7 +79,7 @@ export default {
   },
   computed: {
     mobile () {
-      return this.$vuetify.breakpoint.xs
+      return this.$vuetify.breakpoint.xs || this.vuetify.breakpoint.sm
     }
   },
   methods: {

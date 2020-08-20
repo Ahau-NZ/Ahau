@@ -41,6 +41,16 @@
         </v-tooltip>
       </v-carousel>
     </template>
+    <template v-slot:actions>
+      <v-col :align="mobile ? 'center' : 'end'" class="py-0">
+        <v-btn
+          text
+          @click="close"
+        >
+          close
+        </v-btn>
+      </v-col>
+    </template>
   </Dialog>
 </template>
 <script>

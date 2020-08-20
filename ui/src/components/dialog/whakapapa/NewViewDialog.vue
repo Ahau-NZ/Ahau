@@ -1,23 +1,12 @@
 <template>
   <div>
-    <Dialog :show="show" :title="title" @close="close" width="720px" :goBack="close" enableMenu>
+    <Dialog :show="show" :title="title" width="720px" :goBack="close" enableMenu
+      @submit="submit"
+      @close="close"
+    >
       <template v-slot:content>
         <WhakapapaForm ref="whakapapaForm" :view.sync="formData" :data.sync="csv"/>
-        <AvatarGroup size="50px" show-labels groupTitle="Kaitiaki" :profiles="[whoami.public.profile]" showLabels/>
-      </template>
-      <template v-slot:actions>
-        <v-btn @click="close"
-          text large fab
-          class="secondary--text"
-        >
-          <v-icon color="secondary">mdi-close</v-icon>
-        </v-btn>
-        <v-btn @click="submit"
-          text large fab
-          class="blue--text"
-        >
-          <v-icon>mdi-check</v-icon>
-        </v-btn>
+        <AvatarGroup v-if="kaitiaki && kaitiaki.length > 0" size="50px" show-labels groupTitle="Kaitiaki" :profiles="kaitiaki" showLabels/>
       </template>
     </Dialog>
   </div>
@@ -91,15 +80,15 @@ export default {
   },
   computed: {
     ...mapGetters(['whoami']),
+    kaitiaki () {
+      if (!this.whoami) return null
+      return [this.whoami.public.profile]
+    },
+    position () {
+      return this.mobile ? 'center' : 'start'
+    },
     mobile () {
       return this.$vuetify.breakpoint.xs
-    }
-  },
-  watch: {
-    formData: {
-      handler (newVal) {
-      },
-      deep: true
     }
   },
   methods: {

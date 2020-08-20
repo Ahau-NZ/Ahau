@@ -1,25 +1,14 @@
 <template>
-  <Dialog :title="`Delete ${ view.name }`" :show="show" @close="close" width="600px" :goBack="close" enableMenu>
+  <Dialog :title="`Delete ${ view.name }`" :show="show" width="600px" :goBack="close" enableMenu
+    @submit="submit"
+    @close="close"
+  >
     <template v-slot:content>
       <v-card-subtitle>
         <div>
           Are you sure you want to delete this whakapapa record?
         </div>
       </v-card-subtitle>
-    </template>
-    <template v-slot:actions>
-      <v-btn @click="close"
-        text large fab
-        class="secondary--text"
-      >
-        <v-icon color="secondary">mdi-close</v-icon>
-      </v-btn>
-      <v-btn @click="submit"
-        text large fab
-        class="blue--text"
-      >
-        <v-icon>mdi-check</v-icon>
-      </v-btn>
     </template>
   </Dialog>
 </template>
