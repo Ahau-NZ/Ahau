@@ -4,8 +4,6 @@ import { LIST_GROUP_APPLICATIONS } from '@/lib/tribes-application-helpers'
 const apolloProvider = createProvider()
 const apollo = apolloProvider.defaultClient
 
-const POLL_INTERVAL = 5000
-
 const state = {
   notifications: [],
   currentNotification: {}
@@ -29,35 +27,28 @@ const mutations = {
   }
 }
 
-async function fetchAllNotifications (commit) {
-  const res = await apollo.query({ query: LIST_GROUP_APPLICATIONS })
-  const formatedNotification = res.data.listGroupApplications.map(a => ({
-    type: a.comments.length < 2 ? 'registration' : 'response',
-    message: {
-      outcome: a.accepted ? 'accepted' : 'not responded',
-      group: a.group.public[0],
-      groupAdmins: a.group.public[0].tiaki,
-      profile: a.applicant,
-      message: a.text ? a.text[a.text.length - 1] : ''
-    },
-    applicationId: a.id,
-    from: a.applicant,
-    accepted: a.accepted
-  }))
-  if (res.errors) {
-    console.error('error fetching all notifications', res)
-    commit('updateNotifications', [])
-    return
-  }
-  commit('updateNotifications', formatedNotification)
-}
-
 const actions = {
   async getAllNotifications ({ commit }) {
-    await fetchAllNotifications(commit)
-    setInterval(() => {
-      fetchAllNotifications(commit)
-    }, POLL_INTERVAL)
+    const res = await apollo.query({ query: LIST_GROUP_APPLICATIONS })
+    const formatedNotification = res.data.listGroupApplications.map(a => ({
+      type: a.comments.length < 2 ? 'registration' : 'response',
+      message: {
+        outcome: a.accepted ? 'accepted' : 'not responded',
+        group: a.group.public[0],
+        groupAdmins: a.group.public[0].tiaki,
+        profile: a.applicant,
+        message: a.text ? a.text[a.text.length - 1] : ''
+      },
+      applicationId: a.id,
+      from: a.applicant,
+      accepted: a.accepted
+    }))
+    if (res.errors) {
+      console.error('error fetching all notifications', res)
+      commit('updateNotifications', [])
+      return
+    }
+    commit('updateNotifications', formatedNotification)
   },
   setCurrentNotification ({ commit }, notification) {
     commit('updateCurrentNotification', notification)
