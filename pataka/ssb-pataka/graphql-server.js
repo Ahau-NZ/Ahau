@@ -5,43 +5,25 @@ const cors = require('cors')
 const { ApolloServer } = require('apollo-server-express')
 const { buildFederatedSchema } = require('@apollo/federation')
 const Main = require('@ssb-graphql/main')
-const Tribes = require('@ssb-graphql/tribes')
 const Profile = require('@ssb-graphql/profile')
-const Artefact = require('@ssb-graphql/artefact')
-const Story = require('@ssb-graphql/story')
-const Whakapapa = require('@ssb-graphql/whakapapa')
 const Invite = require('@ssb-graphql/invite')
+const stats = require('@ssb-graphql/stats')
+const Pataka = require('@ssb-graphql/pataka')
 
 module.exports = function graphqlServer (sbot) {
-  const PORT = 4000
+  const PORT = 4001
   const app = express()
   app.options('*', cors())
 
   const main = Main(sbot)
   const profile = Profile(sbot)
-  const tribes = Tribes(sbot, { ...profile.gettersWithCache })
-  const story = Story(sbot)
-  const artefact = Artefact(sbot)
-  const whakapapa = Whakapapa(sbot, {
-    ...profile.gettersWithCache,
-    ...story.gettersWithCache,
-    ...artefact.gettersWithCache
-  })
   const invite = Invite(sbot)
-
+  const pataka = Pataka(sbot, profile.gettersWithCache)
   main.loadContext((err, context) => {
     if (err) throw err
 
     const server = new ApolloServer({
-      schema: buildFederatedSchema([
-        main,
-        tribes,
-        profile,
-        artefact,
-        story,
-        whakapapa,
-        invite
-      ]),
+      schema: buildFederatedSchema([main, profile, invite, pataka, stats]),
       context,
       mockEntireSchema: false,
       mocks: process.env.MOCK === true ? require('./mocks') : false
@@ -58,12 +40,6 @@ module.exports = function graphqlServer (sbot) {
       console.log(
         `🚀 Subscriptions ready at ws://localhost:${PORT}${server.subscriptionsPath}`
       )
-      if (process.env.PLATFORM === 'cordova') {
-        require('cordova-bridge').channel.post(
-          'initialized',
-          JSON.stringify({ started: true })
-        )
-      }
     })
   })
 }

@@ -1,5 +1,5 @@
 {
-  "name": "ahau-pataka-server",
+  "name": "ssb-pataka",
   "version": "0.6.1",
   "description": "A pub application for the Ahau ecosystem. Built using scuttlebutt",
   "homepage": "https://gitlab.com/ahau/whakapapa-ora",
