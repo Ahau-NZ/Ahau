@@ -19,18 +19,16 @@
       <v-card-text class="pt-8">
         Fix these and try uploading again
       </v-card-text>
-
-      <!-- <v-divider /> -->
-
-      <v-row class="justify-end ma-0">
-        <v-btn @click="close"
-        text large fab
-        class="blue--text"
-      >
-        <v-icon>mdi-check</v-icon>
-      </v-btn>
-      </v-row>
-
+    </template>
+    <template v-slot:actions>
+      <v-col :align="mobile ? 'center' : 'end'" class="py-0">
+        <v-btn
+          text
+          @click="close"
+        >
+          close
+        </v-btn>
+      </v-col>
     </template>
   </Dialog>
 </template>
