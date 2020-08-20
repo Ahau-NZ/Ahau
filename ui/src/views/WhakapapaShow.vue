@@ -176,8 +176,8 @@
       @change-focus="changeFocus($event)"
       @newAncestor="showNewAncestors($event)"
       :focus="focus"
-      @updateWhakapapa="saveWhakapapa($event)"
-      @deleteWhakapapa="deleteWhakapapa"
+      @update-whakapapa="saveWhakapapa($event)"
+      @delete-whakapapa="deleteWhakapapa"
       @refreshWhakapapa="refreshWhakapapa"
       @setFocus="setFocus($event)"
     />
