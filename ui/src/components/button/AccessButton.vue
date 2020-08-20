@@ -15,10 +15,10 @@
                 <v-icon>mdi-chevron-down</v-icon>
               </v-btn>
             </v-col>
-            <v-col class="pa-2">
+            <v-col class="pa-0 py-md-2">
 
               <v-card-text v-if="access" class="font-italic font-weight-light text-caption py-0 text-md-right">
-                {{ access.isPersonalGroup ? 'Only you will have access to this record' : `Only the ${ access.preferredName } tribe will have access to this record` }}
+                {{ access.isPersonalGroup ? 'Only you will have access to this record' : `Only ${access.preferredName} will have access to this record` }}
               </v-card-text>
             </v-col>
           </v-row>

@@ -56,11 +56,11 @@
             </v-col>
             <v-spacer v-if="!mobile"/>
             <slot name="actions">
-              <v-col cols="6" md="auto" :align="mobile ? 'center' : 'end'" class="py-0">
+              <v-col cols="6" md="auto" :align="mobile ? 'center' : 'end'" class="py-0 pb-2 pb-md-0">
                 <v-btn @click="close"
-                  fab
+                  :fab="!mobile"
                   icon
-                  large
+                  :large="!mobile"
                   class="secondary--text"
                 >
                   <v-icon color="secondary">mdi-close</v-icon>
@@ -69,9 +69,9 @@
 
                 <v-col cols="6" md="auto" :align="mobile ? 'center' : 'end'" class="py-0">
                 <v-btn @click="$emit('submit')"
-                  fab
+                  :fab="!mobile"
                   icon
-                  large
+                  :large="!mobile"
                   class="blue--text"
                 >
                   <v-icon>mdi-check</v-icon>
