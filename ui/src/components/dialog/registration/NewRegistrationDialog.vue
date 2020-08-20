@@ -1,5 +1,8 @@
 <template>
-  <Dialog :show="show" :title="title" @close="close" width="720px" :goBack="close" enableMenu>
+  <Dialog :show="show" :title="title" width="720px" :goBack="close" enableMenu
+    @submit="submit"
+    @close="close"
+  >
     <template v-if="!hideDetails" v-slot:content>
       <v-col cols="12" :class="mobile ? 'pb-5 px-2' : 'px-5' ">
         <v-row>

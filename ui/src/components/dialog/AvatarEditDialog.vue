@@ -1,5 +1,8 @@
 <template>
-  <Dialog title="Crop Photo" :show="show" @close="close" :width="width" :goBack="close" enableMenu background="black">
+  <Dialog title="Crop Photo" :show="show" :width="width" :goBack="close" enableMenu dark
+    @submit="submit"
+    @close="close"
+  >
     <template v-slot:content>
       <v-row justify="center">
         <v-col :width="width">
@@ -32,20 +35,6 @@
           :max="360"
         ></clipper-range>
       </div>
-    </template>
-    <template v-slot:actions>
-      <v-btn @click="close"
-        text large fab
-        class="secondary--text"
-      >
-        <v-icon color="secondary">mdi-close</v-icon>
-      </v-btn>
-      <v-btn @click="submit"
-        text large fab
-        class="blue--text"
-      >
-        <v-icon>mdi-check</v-icon>
-      </v-btn>
     </template>
   </Dialog>
 </template>

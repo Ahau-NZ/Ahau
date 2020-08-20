@@ -1,5 +1,9 @@
 <template>
-  <Dialog :title="`Edit ${ formData.name } Whakapapa`" :show="show" @close="close" width="720px" :goBack="close" :enableBar="false">
+  <Dialog :title="`Edit ${ formData.name } Whakapapa`" :show="show"  :goBack="close" :enableBar="false"
+    width="720px" height="370px"
+    @submit="submit"
+    @close="close"
+  >
     <template v-slot:content>
       <v-row class="px-2 pa-5">
         <v-col cols="12" sm="5" order-sm="2">
@@ -24,7 +28,7 @@
           </v-row>
         </v-col>
         <!-- Information Col -->
-        <v-col cols="12" sm="7" class="pl-5">
+        <v-col cols="12" sm="7">
           <v-row>
             <!-- Name -->
             <v-col cols="12" class="pa-1">
@@ -58,24 +62,9 @@
       </v-row>
     </template>
     <template v-slot:before-actions>
-      <v-col cols="12" sm="auto">
-        <v-btn
-          @click="$emit('delete')"
-          align="center"
-          color="white"
-          text
-          class="secondary--text pl-5"
-        >
-          <v-icon small class="secondary--text" left>mdi-delete</v-icon>Delete whakapapa record
-        </v-btn>
-      </v-col>
-    </template>
-    <template v-slot:actions>
-      <v-btn @click="close" text large fab class="secondary--text">
-        <v-icon color="secondary">mdi-close</v-icon>
-      </v-btn>
-      <v-btn :disabled="!form.valid" @click="submit" text large fab class="blue--text" color="blue">
-        <v-icon>mdi-check</v-icon>
+      <v-btn text @click="$emit('delete')" class="py-0">
+        <v-icon class="pl-2">mdi-delete</v-icon>
+        Delete whakapapa record
       </v-btn>
     </template>
   </Dialog>
