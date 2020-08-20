@@ -86,7 +86,7 @@
 </template>
 
 <script>
-import banner from '../../assets/bg-tohu.png'
+import banner from '@/assets/bg-tohu.png'
 
 export default {
   name: 'Dialog',
