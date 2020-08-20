@@ -148,13 +148,6 @@ export default {
       completePerson: personComplete
     }
   },
-  created () {
-    this.getNotifications()
-  },
-  beforeDestroy () {
-    clearInterval(this.polling)
-  },
-
   computed: {
     ...mapGetters(['whoami', 'currentProfile', 'notifications']),
     notificationsToShow () {
@@ -184,12 +177,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setDialog', 'getAllNotifications', 'setCurrentNotification']),
-    getNotifications () {
-      this.polling = setInterval(() => {
-        this.getAllNotifications()
-      }, 5e3)
-    },
+    ...mapActions(['setDialog', 'setCurrentNotification']),
     openReview (notification) {
       console.log('open review')
       this.setCurrentNotification(notification)

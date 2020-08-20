@@ -105,6 +105,12 @@ export default {
       dialog: false
     }
   },
+  created () {
+    this.getNotifications()
+  },
+  beforeDestroy () {
+    clearInterval(this.polling)
+  },
   computed: {
     ...mapGetters(['whoami', 'whakapapa', 'route', 'showStory', 'storeDialog', 'currentProfile']),
     classObject: function () {
@@ -136,9 +142,14 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setWhoami', 'setProfileById', 'setComponent', 'setShowStory', 'setDialog']),
+    ...mapActions(['setWhoami', 'setProfileById', 'setComponent', 'setShowStory', 'setDialog', 'getAllNotifications']),
     resetWindow () {
       window.scrollTo(0, 0)
+    },
+    getNotifications () {
+      this.polling = setInterval(() => {
+        this.getAllNotifications()
+      }, 5e3)
     },
     async getCurrentIdentity () {
       await this.setWhoami()
