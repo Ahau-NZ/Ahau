@@ -137,6 +137,7 @@ export default {
     }
   },
   mounted () {
+    this.getAllNotifications()
     if (process.env.VUE_APP_PLATFORM !== 'cordova') {
       this.getCurrentIdentity()
     }

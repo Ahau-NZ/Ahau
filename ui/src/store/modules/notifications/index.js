@@ -29,7 +29,10 @@ const mutations = {
 
 const actions = {
   async getAllNotifications ({ commit }) {
-    const res = await apollo.query({ query: LIST_GROUP_APPLICATIONS })
+    const res = await apollo.query({
+      query: LIST_GROUP_APPLICATIONS,
+      fetchPolicy: 'no-cache'
+    })
     const formatedNotification = res.data.listGroupApplications.map(a => ({
       type: a.comments.length < 2 ? 'registration' : 'response',
       message: {
