@@ -27,7 +27,7 @@
           </v-btn>
         </v-row>
       </v-col>
-      <RegisterButton v-if="nonMember" />
+      <RegisterButton v-if="nonMember" :notificationSent="notificationSent" />
       <v-row v-else :class="mobile ? 'rounded-border' : tablet ? 'ml-6' : 'ml-12'">
         <v-col align="center" :class="mobile ? 'py-0 px-0' : tablet ? 'py-4 px-0' : 'py-1'">
           <v-btn @click="setActive('profile')" light :fab="mobile" text>
@@ -164,10 +164,13 @@ export default {
     this.offset = this.$refs.sideNav.offsetTop - 50
   },
   computed: {
-    ...mapGetters(['activeComponent', 'showStory', 'storeDialog']),
+    ...mapGetters(['activeComponent', 'showStory', 'storeDialog', 'notifications']),
     nonMember () {
       if (this.profile.type === 'community' && this.profile.recps.length < 1) return true
       else return false
+    },
+    notificationSent () {
+      return this.notifications.filter(i => i.message.group.id === this.profile.id).length > 0
     },
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
