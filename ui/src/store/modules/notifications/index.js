@@ -40,7 +40,7 @@ const actions = {
         group: a.group.public[0],
         groupAdmins: a.group.public[0].tiaki,
         profile: a.applicant,
-        message: a.text ? a.text[a.text.length - 1] : ''
+        comments: a.comments.map(i => i.text)
       },
       applicationId: a.id,
       from: a.applicant,
