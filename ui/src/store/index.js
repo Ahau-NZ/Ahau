@@ -16,6 +16,7 @@ Vue.use(Vuex)
 
 const store = new Vuex.Store({
   state: {
+    currentAccess: null,
     whoami: {
       public: {
         feedId: '',
@@ -63,6 +64,9 @@ const store = new Vuex.Store({
     goBack: state => {
       return state.goBack
     },
+    currentAccess: state => {
+      return state.currentAccess
+    },
     accessOptions: ({ whoami, tribe }) => {
       return [
         { ...whoami.personal.profile, groupId: whoami.personal.groupId, isPersonalGroup: true },
@@ -76,7 +80,7 @@ const store = new Vuex.Store({
           })
       ]
     },
-    generateAccessOptions: ({ whoami, person, tribe }) => {
+    getDefaultAccess: ({ whoami, person, tribe }) => {
       const { currentProfile } = person
       const { currentTribe } = tribe
 
@@ -86,9 +90,32 @@ const store = new Vuex.Store({
           ? { groupId: currentTribe.id, ...currentTribe.private[0], type: 'community', isPersonalGroup: false }
           : null
       }
+    },
+    getAccessFromRecps: ({ whoami, tribe }) => {
+      return recps => {
+        if (!recps || recps.length === 0) return null
+
+        // turn the recps given to the matching group (personal or tribe)
+        if (recps.includes(whoami.personal.groupId)) return { groupId: whoami.personal.groupId, ...whoami.personal.profile, isPersonalGroup: true }
+
+        const recp = tribe.tribes
+          .filter(d => {
+            return d.private.length > 0
+          })
+          .find(d => {
+            return recps.includes(d.id)
+          })
+
+        if (!recp || !recp.id || !recp.private) return null
+
+        return { groupId: recp.id, isPersonalGroup: false, ...recp.private[0] }
+      }
     }
   },
   mutations: {
+    setCurrentAccess (state, access) {
+      state.currentAccess = access
+    },
     updateLoading (state, loading) {
       state.loading = loading
     },
