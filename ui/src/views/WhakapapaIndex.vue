@@ -26,13 +26,13 @@
 
       </v-row>
 
-      <div v-if="!views || (views && views.length < 1)" class="px-8 py-12 subtitle grey--text " :class="{
+      <div v-if="!filteredWhakapapaViews || (filteredWhakapapaViews && filteredWhakapapaViews.length < 1)" class="px-8 py-12 subtitle grey--text " :class="{
           'text-center': mobile
         }">
         No whakapapa record found
       </div>
 
-      <v-row v-for="view in views" :key="view.id" dense class="mb-2">
+      <v-row v-for="view in filteredWhakapapaViews" :key="view.id" dense class="mb-2">
         <v-col cols="12" md="10">
           <WhakapapaViewCard :view="view" cropDescription />
         </v-col>
@@ -43,7 +43,9 @@
       <!-- TODO: add suggestions in here as well? -->
       <NewNodeDialog v-if="showProfileForm" :show="showProfileForm" :suggestions="suggestions"
         @getSuggestions="getSuggestions" title="Add a Person" @create="handleDoubleStep($event)"
-        :withRelationships="false" @close="close" />
+        :withRelationships="false" @close="close"
+        :access="getDefaultAccess"
+      />
 
       <WhakapapaListHelper v-if="showWhakapapaHelper" :show="showWhakapapaHelper" @close="toggleWhakapapaHelper" />
 
@@ -99,9 +101,20 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['whoami']),
+    ...mapGetters(['whoami', 'getDefaultAccess', 'currentProfile', 'currentTribe']),
     mobile () {
       return this.$vuetify.breakpoint.xs
+    },
+    filteredWhakapapaViews () {
+      if (this.currentProfile.type === 'person') {
+        return this.views
+      }
+
+      return this.views.filter(view => {
+        return view.recps.some(recp => {
+          return recp === this.currentTribe.id
+        })
+      })
     }
   },
   apollo: {
@@ -229,22 +242,28 @@ export default {
       }
       this.showViewForm = !this.showViewForm
     },
-    async handleStepOne ($event) {
+    async handleStepOne (input) {
+      var { access } = input
+
+      if (access && access.groupId) input.recps = [access.groupId]
+      else input.recps = [this.whoami.personal.groupId]
+
       this.newView = {
-        ...pick($event, ['name', 'description', 'image']),
+        ...pick(input, ['name', 'description', 'image', 'recps']),
         focus: this.whoami.personal.profile.id,
-        mode: 'descendants', // HARD coded at the moment
-        recps: [this.whoami.personal.groupId]
+        mode: 'descendants' // HARD coded at the moment
       }
 
-      switch ($event.focus) {
+      switch (input.focus) {
         case 'self':
           return this.createView(this.newView)
         case 'new':
           return this.toggleProfileForm()
         case 'file':
-          return this.buildFromFile($event.csv)
+          return this.buildFromFile(input.csv)
         default:
+          this.setLoading(false)
+          console.error('Something went wrong while creating a new whakapapa', input)
       }
     },
     async createView (input) {
@@ -256,10 +275,7 @@ export default {
       try {
         const result = await this.$apollo.mutate(saveWhakapapaView(input))
 
-        if (!result.data) {
-          console.error('Creating Whakapapa was unsuccessful')
-          return
-        }
+        if (result.errors) throw result.errors
 
         this.$router.push({
           name: 'whakapapaShow',
@@ -268,31 +284,33 @@ export default {
           }
         })
       } catch (err) {
-        throw err
+        this.setLoading(false)
+        console.error('Something went wrong while creating a whakapapa', err)
       }
     },
-    async handleDoubleStep ($event) {
+    async handleDoubleStep (input) {
       try {
-        var { id } = $event
+        var { id, access } = input
 
         if (!id) {
-          var input = {
-            ...$event,
-            recps: [this.whoami.personal.groupId]
+          // see which recps to use
+          if (access && access.groupId) {
+            input.recps = [access.groupId]
+          } else {
+            // access wasnt set, so set it to yourself
+            input.recps = [this.whoami.personal.groupId]
           }
 
           const res = await this.$apollo.mutate(savePerson(input))
-          if (res.errors) {
-            console.error('failed to create profile', res.errors)
-            return
-          }
+          if (res.errors) throw res.errors
 
           id = res.data.saveProfile
         }
 
         this.createView({ ...this.newView, focus: id })
       } catch (err) {
-        throw err
+        this.setLoading(false)
+        console.error('Something went wrong while creating a person', err)
       }
     },
     async buildFromFile (csv) {
