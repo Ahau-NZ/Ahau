@@ -9,16 +9,21 @@
                 v-on="on"
                 text
                 rounded
+                :disabled="disabled"
               >
                 <v-icon>mdi-eye</v-icon>
                 <span class="ml-2">{{ access ? access.isPersonalGroup ? 'Private' : access.preferredName : 'set access'}}</span>
-                <v-icon>mdi-chevron-down</v-icon>
+                <v-icon v-if="!disabled">mdi-chevron-down</v-icon>
               </v-btn>
             </v-col>
             <v-col class="pa-0 py-md-2">
 
-              <v-card-text v-if="access" class="font-italic font-weight-light text-caption py-0 text-md-right">
+              <v-card-text v-if="access && !disabled" class="font-italic font-weight-light text-caption py-0 text-md-right">
                 {{ access.isPersonalGroup ? 'Only you will have access to this record' : `Only ${access.preferredName} will have access to this record` }}
+              </v-card-text>
+
+              <v-card-text v-if="access && disabled" class="font-italic font-weight-light text-caption py-0 text-md-right">
+                {{ access.isPersonalGroup ? 'Only you have access to this record' : `Only ${access.preferredName} has access to this record` }}
               </v-card-text>
             </v-col>
           </v-row>
@@ -45,7 +50,13 @@ import { mapGetters } from 'vuex'
 export default {
   name: 'AccessButton',
   props: {
-    access: Object
+    access: Object,
+    disabled: Boolean
+  },
+  data () {
+    return {
+      toggle: false
+    }
   },
   components: {
     Avatar
