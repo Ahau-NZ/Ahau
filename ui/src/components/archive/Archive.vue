@@ -150,7 +150,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['stories', 'showStory', 'whoami', 'currentProfile', 'currentStory', 'showArtefact', 'storeDialog']),
+    ...mapGetters(['stories', 'showStory', 'whoami', 'currentProfile', 'currentTribe', 'currentStory', 'showArtefact', 'storeDialog']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -161,16 +161,23 @@ export default {
     },
     profileStories () {
       if (this.currentProfile.type === 'person') {
-        let profileStories = this.stories.filter((story) =>
-          story.mentions.some((mention) =>
-            mention.profile.id === this.currentProfile.id
-          ))
-        return profileStories
+        return this.stories.filter(story => {
+          return story.mentions.some(mention => {
+            return mention.profile.id === this.currentProfile.id
+          })
+        })
+      } else if (this.currentProfile.type === 'community') {
+        return this.stories.filter(story => {
+          return story.recps.some(recp => {
+            return recp === this.currentTribe.id
+          })
+        })
       } else {
-        // TODO - update to only return stories access === community
-        return this.stories
+        console.error('currentProfile.type not supported, should be person or community')
+        return []
       }
     }
+
   },
   watch: {
     showStory (newVal, oldVal) {
@@ -193,9 +200,15 @@ export default {
       this.showArchiveHelper = !this.showArchiveHelper
     },
     async saveStory (input) {
-      if (!input.id) input.recps = [this.whoami.personal.groupId]
+      var { id, artefacts, mentions, contributors, creators, relatedRecords, access } = input
 
-      var { id, artefacts, mentions, contributors, creators, relatedRecords } = input
+      // we only want to set recps if we are creating a new story
+      if (!input.id && access && access.groupId) {
+        input.recps = [access.groupId]
+      }
+
+      // if the access didnt set the recps, it needs to be set (if creating a story)
+      if (!input.id && !input.recps) input.recps = [this.whoami.personal.groupId]
 
       try {
         const res = await this.$apollo.mutate(saveStory(input))
