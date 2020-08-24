@@ -14,7 +14,7 @@
       <!-- <v-col v-if="currentProfile.canEdit" :order="mobile ? '1' : '2'" :align="mobile ? 'start' : isCommunity ? 'start':'center'" cols="6" md="1" sm="6"  class="px-5">
         <EditRegistrationButton @click="setDialog('edit-registration')" />
       </v-col> -->
-      <v-col v-if="currentProfile.canEdit" :order="mobile ? '2' : '3'" :align="mobile || tablet ? 'end' : isCommunity ? 'start':'center'" cols="12" :md="isCommunity ? 1:2" class="px-5">
+      <v-col :order="mobile ? '2' : '3'" :align="mobile || tablet ? 'end' : isCommunity ? 'start':'center'" cols="12" :md="isCommunity ? 1:2" class="px-5">
         <EditProfileButton v-if="currentProfile.canEdit" @click="currentProfile.type === 'person' ? setDialog('edit-node', 'this', 'this') : setDialog('edit-community')" />
       </v-col>
     </v-row>
@@ -22,7 +22,7 @@
       <!-- SideNav -->
       <v-col  v-if="!hideNav" cols="12" xs="12" sm="12" md="2" lg="20p" :class="!mobile ? 'pr-0' : 'px-5 py-0'">
         <!-- REMOVE v-if TO NAV COMMUNITY -->
-        <SideNavMenu v-if="currentProfile.type === 'community'" :profile="currentProfile" />
+        <SideNavMenu :profile="currentProfile" />
       </v-col>
       <!-- Content -->
       <v-col cols="12" xs="12" sm="12" md="10" lg="80p" :class="mobile ? 'px-6 py-0' : 'pl-0 py-0'">

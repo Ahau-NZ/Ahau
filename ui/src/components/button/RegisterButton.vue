@@ -26,7 +26,7 @@ export default {
 <style lang="scss">
 
     .btn {
-        margin-top:43px;
+        margin-top:37px;
         margin-left:20px;
         background-color: white;
         border-radius: 10px;
@@ -37,7 +37,7 @@ export default {
     }
 
     .tabletBtn {
-        margin-top:53px;
+        margin-top:34px;
         margin-left:10px;
         background-color: white;
         border-radius: 10px;
