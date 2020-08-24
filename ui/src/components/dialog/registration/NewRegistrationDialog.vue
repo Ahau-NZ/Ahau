@@ -491,6 +491,9 @@ export default {
       this.parentsArray = this.notification.message.profile.parents
     } else this.parentsArray = this.parents
   },
+  beforeDestroy () {
+    this.setCurrentNotification({})
+  },
   watch: {
     parents (newVal, oldVal) {
       if (newVal) {
@@ -591,7 +594,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setDialog', 'setProfileById']),
+    ...mapActions(['setDialog', 'setProfileById', 'setCurrentNotification']),
     removeParent (index) {
       this.parents.splice(index, 1)
     },
