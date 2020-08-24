@@ -165,6 +165,7 @@ export const getTribes = ({
       id
       public {
         id
+        type
         preferredName
         description
         avatarImage { uri } 
@@ -177,6 +178,7 @@ export const getTribes = ({
       }
       private {
         id
+        type
         preferredName
         description
         avatarImage { uri }

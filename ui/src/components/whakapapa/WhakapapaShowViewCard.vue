@@ -53,6 +53,7 @@
         <v-divider></v-divider>
         <v-card-subtitle v-if="description" v-text="description" class="pa-3"/>
         <AvatarGroup :profiles="view.kaitiaki" groupTitle="Kaitiaki" size="50px" showLabels @profile-click="openProfile($event)"/>
+        <AvatarGroup v-if="currentAccess" :profiles="[currentAccess]" :isView="currentAccess.type === 'community'" groupTitle="Access" size="50px" showLabels @profile-click="openProfile($event)"/>
       </div>
     </v-expand-transition>
   </v-card>
@@ -76,11 +77,12 @@ export default {
   },
   data () {
     return {
-      show: false
+      show: false,
+      access: null
     }
   },
   computed: {
-    ...mapGetters(['currentProfile']),
+    ...mapGetters(['currentProfile', 'getAccessFromRecps', 'currentAccess']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },

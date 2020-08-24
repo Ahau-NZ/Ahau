@@ -82,6 +82,17 @@
       </v-list-item-content>
     </v-list-item>
     <v-row v-if="!showArtefact" class="px-4 pb-0">
+      <v-col v-if="access && access.length > 0" cols="auto" class="pb-0">
+        <v-list-item-subtitle style="color:#a7a3a3">Access</v-list-item-subtitle>
+        <AvatarGroup
+          style="position:relative; bottom:15px; right:15px"
+          :profiles="access"
+          show-labels :size="fullStory ? '50px': '30px'"
+          spacing="pr-2"
+          @profile-click="openProfile($event)"
+          :clickable="fullStory"
+        />
+      </v-col>
       <v-col v-if="story.mentions && story.mentions.length > 0" cols="auto"  class="pb-0">
         <v-list-item-subtitle style="color:#a7a3a3">Mentions</v-list-item-subtitle>
         <AvatarGroup
@@ -108,17 +119,7 @@
         <v-list-item-subtitle style="color:#a7a3a3" class="ms-5 pa-0 pb-1">Location</v-list-item-subtitle>
         <p class="mt-3 mb-5 ms-5">{{ story.location }}</p>
       </v-col>
-      <!-- <v-col v-if="story.access && story.access.length > 0" cols="12" sm="12" md="auto">
-        <v-list-item-subtitle style="color:#a7a3a3">Access</v-list-item-subtitle>
-        <AvatarGroup
-          style="position:relative; bottom:15px;"
-          :profiles="story.access.map(m => m.profile)"
-          show-labels :size="fullStory ? '50px': '30px'"
-          spacing="pr-2"
-          @profile-click="openProfile($event)"
-          :clickable="fullStory"
-        />
-      </v-col> -->
+      
       <v-col v-if="story.contributors && story.contributors.length > 0 && fullStory" cols="auto">
         <v-list-item-subtitle style="color:#a7a3a3">Contributors</v-list-item-subtitle>
         <AvatarGroup
@@ -277,11 +278,14 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['showArtefact', 'currentProfile', 'storeDialog']),
+    ...mapGetters(['showArtefact', 'currentProfile', 'storeDialog', 'getAccessFromRecps']),
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
-
+    access () {
+      if (!this.story || !this.story.recps) return []
+      return [this.getAccessFromRecps(this.story.recps)]
+    },
     time () {
       if (this.story.timeInterval) {
         return dateIntervalToString(this.story.timeInterval)

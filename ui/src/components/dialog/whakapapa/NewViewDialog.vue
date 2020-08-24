@@ -20,7 +20,7 @@ import Dialog from '@/components/dialog/Dialog.vue'
 import pick from 'lodash.pick'
 import isEmpty from 'lodash.isempty'
 import WhakapapaForm from '@/components/whakapapa/WhakapapaForm.vue'
-import { mapActions, mapGetters } from 'vuex'
+import { mapActions, mapGetters, mapMutations } from 'vuex'
 import AvatarGroup from '@/components/AvatarGroup.vue'
 import AccessButton from '@/components/button/AccessButton.vue'
 
@@ -85,10 +85,15 @@ export default {
     }
   },
   mounted () {
-    this.access = this.generateAccessOptions
+    this.access = this.getDefaultAccess
+  },
+  watch: {
+    access (value) {
+      this.setCurrentAccess(value)
+    }
   },
   computed: {
-    ...mapGetters(['whoami', 'generateAccessOptions']),
+    ...mapGetters(['whoami', 'getDefaultAccess']),
     kaitiaki () {
       if (!this.whoami) return null
       return [this.whoami.public.profile]
@@ -101,6 +106,7 @@ export default {
     }
   },
   methods: {
+    ...mapMutations(['setCurrentAccess']),
     ...mapActions(['setLoading']),
     close () {
       this.formData = setDefaultWhakapapa(EMPTY_WHAKAPAPA)
@@ -117,7 +123,8 @@ export default {
       const output = whakapapaSubmission(this.formData)
       const newOutput = {
         ...output,
-        csv
+        csv,
+        access: this.access
       }
       this.$emit('submit', newOutput)
       this.close()

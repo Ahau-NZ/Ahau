@@ -274,7 +274,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['currentFocus', 'nestedWhakapapa', 'selectedProfile', 'whoami', 'loadingState', 'route', 'currentProfile']),
+    ...mapGetters(['currentFocus', 'nestedWhakapapa', 'selectedProfile', 'whoami', 'loadingState', 'route', 'currentProfile', 'getAccessFromRecps']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -308,13 +308,14 @@ export default {
     },
     whakapapaView (newVal) {
       this.addWhakapapa(newVal)
+      if (newVal.recps) this.setCurrentAccess(this.getAccessFromRecps(newVal.recps))
     },
     relationshipLinks (newVal) {
       this.addRelationshipLinks(newVal)
     }
   },
   methods: {
-    ...mapMutations(['updateSelectedProfile']),
+    ...mapMutations(['updateSelectedProfile', 'setCurrentAccess']),
     ...mapActions(['setLoading', 'addNestedWhakapapa', 'addWhakapapa', 'addRelationshipLinks']),
     load (status) {
       this.setLoading(status)

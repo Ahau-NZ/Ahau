@@ -44,7 +44,6 @@
       <NewNodeDialog v-if="showProfileForm" :show="showProfileForm" :suggestions="suggestions"
         @getSuggestions="getSuggestions" title="Add a Person" @create="handleDoubleStep($event)"
         :withRelationships="false" @close="close"
-        :access="getDefaultAccess"
       />
 
       <WhakapapaListHelper v-if="showWhakapapaHelper" :show="showWhakapapaHelper" @close="toggleWhakapapaHelper" />
@@ -59,7 +58,7 @@ import gql from 'graphql-tag'
 import pick from 'lodash.pick'
 import isEmpty from 'lodash.isempty'
 import * as d3 from 'd3'
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters, mapActions, mapMutations } from 'vuex'
 import WhakapapaViewCard from '@/components/whakapapa/WhakapapaViewCard.vue'
 import NewViewDialog from '@/components/dialog/whakapapa/NewViewDialog.vue'
 import NewNodeDialog from '@/components/dialog/profile/NewNodeDialog.vue'
@@ -101,7 +100,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['whoami', 'getDefaultAccess', 'currentProfile', 'currentTribe']),
+    ...mapGetters(['whoami', 'currentAccess', 'getDefaultAccess', 'currentProfile', 'currentTribe']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -117,10 +116,15 @@ export default {
       })
     }
   },
+  mounted () {
+    this.setCurrentAccess(this.getDefaultAccess)
+    console.log(this.currentAccess)
+  },
   apollo: {
     views: getWhakapapaViews()
   },
   methods: {
+    ...mapMutations(['setCurrentAccess']),
     ...mapActions(['addNestedWhakapapa', 'setLoading']),
     async getSuggestions ($event) {
       if (!$event) {

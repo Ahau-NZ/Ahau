@@ -55,6 +55,9 @@
 
       </v-col>
     </template>
+    <template v-slot:before-actions>
+      <AccessButton v-if="currentAccess" :access="currentAccess" disabled/>
+    </template>
   </Dialog>
 </template>
 
@@ -72,6 +75,8 @@ import pick from 'lodash.pick'
 import clone from 'lodash.clonedeep'
 
 import { PERMITTED_PERSON_ATTRS, PERMITTED_RELATIONSHIP_ATTRS, getPerson } from '@/lib/person-helpers'
+import AccessButton from '@/components/button/AccessButton.vue'
+import { mapGetters, mapMutations } from 'vuex'
 
 function defaultData (input) {
   var profile = clone(input)
@@ -148,15 +153,16 @@ export default {
   components: {
     Avatar,
     Dialog,
-    ProfileForm
+    ProfileForm,
+    AccessButton
   },
   props: {
     show: { type: Boolean, required: true },
     withRelationships: { type: Boolean, default: true },
     title: { type: String, default: 'Create a new person' },
-    suggestions: { type: Array },
-    hideDetails: { type: Boolean, default: false },
-    selectedProfile: { type: Object },
+    suggestions: Array,
+    hideDetails: Boolean,
+    selectedProfile: Object,
     withView: { type: Boolean, default: true },
     type: {
       type: String,
@@ -177,6 +183,7 @@ export default {
     this.getCloseSuggestions()
   },
   computed: {
+    ...mapGetters(['currentAccess']),
     generateSuggestions () {
       if (this.hasSelection) return []
 
@@ -245,6 +252,7 @@ export default {
     }
   },
   methods: {
+    ...mapMutations(['setCurrentAccess']),
     clearSuggestions () {
       this.$emit('getSuggestions', null)
     },
