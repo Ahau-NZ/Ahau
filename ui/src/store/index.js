@@ -80,7 +80,7 @@ const store = new Vuex.Store({
           })
       ]
     },
-    getDefaultAccess: ({ whoami, person, tribe }) => {
+    defaultAccess: ({ whoami, person, tribe }) => {
       const { currentProfile } = person
       const { currentTribe } = tribe
 

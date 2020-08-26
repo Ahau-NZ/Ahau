@@ -85,7 +85,7 @@ export default {
     }
   },
   mounted () {
-    this.access = this.getDefaultAccess
+    this.access = this.defaultAccess
   },
   watch: {
     access (value) {
@@ -93,7 +93,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['whoami', 'getDefaultAccess']),
+    ...mapGetters(['whoami', 'defaultAccess']),
     kaitiaki () {
       if (!this.whoami) return null
       return [this.whoami.public.profile]

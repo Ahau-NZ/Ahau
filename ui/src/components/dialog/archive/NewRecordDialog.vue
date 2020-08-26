@@ -54,7 +54,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['whoami', 'currentProfile', 'getDefaultAccess', 'getAccessFromRecps']),
+    ...mapGetters(['whoami', 'currentProfile', 'defaultAccess', 'getAccessFromRecps']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     }
@@ -64,7 +64,7 @@ export default {
       this.formData.mentions.push(this.currentProfile)
       this.formData.contributors.push(this.whoami.public.profile)
       this.formData.kaitiaki = [this.whoami.public.profile]
-      this.access = this.getDefaultAccess
+      this.access = this.defaultAccess
     } else {
       this.access = this.getAccessFromRecps(this.story.recps)
     }

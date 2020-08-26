@@ -102,7 +102,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['whoami', 'currentAccess', 'getDefaultAccess', 'currentProfile', 'currentTribe']),
+    ...mapGetters(['whoami', 'currentAccess', 'defaultAccess', 'currentProfile', 'currentTribe']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -120,7 +120,7 @@ export default {
   },
   mounted () {
     // set the current default access as the current group
-    this.setCurrentAccess(this.getDefaultAccess)
+    this.setCurrentAccess(this.defaultAccess)
   },
   apollo: {
     views: getWhakapapaViews()
