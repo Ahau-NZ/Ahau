@@ -1,6 +1,14 @@
 <template>
   <div>
-    <Dialog :show="show" :title="title" @close="close" width="720px" :goBack="close" enableMenu>
+    <Dialog
+      :show="show"
+      :title="title"
+      @close="close"
+      width="720px"
+      :goBack="close"
+      enableMenu
+      @submit="close"
+    >
       <template v-if="!hideDetails" v-slot:content>
         <v-col cols="12" :class="mobile ? 'pb-5 px-2' : 'px-5' ">
           <v-row>
@@ -291,15 +299,17 @@
 
             <!-- MESSAGE -->
             <v-col cols="12" :class="mobile ? 'pt-4 px-0':'pt-6 px-5'">
+              <div v-if="type === 'review'|| currentNotification.accepted">{{receivedMessage}}</div>
               <v-textarea
+                v-else
                 v-model="message"
-                :label="type === 'review' ? 'Message recieved with request':'Send a message with your request'"
+                :label="type === 'review' ? 'Message received with request':'Send a message with your request'"
                 no-resize
                 rows="3"
                 auto-grow
                 outlined
                 placeholder=" "
-                :readonly="type === 'review'"
+                :readonly="currentNotification.accepted || type === 'review'"
               ></v-textarea>
             </v-col>
           </v-form>
@@ -373,6 +383,7 @@
       width="720px"
       :goBack="close"
       enableMenu
+      @submit="submit"
     >
       <template v-slot:content>
         <p class="pt-4 px-4 subtitle-2 black--text">
@@ -480,6 +491,9 @@ export default {
       this.parentsArray = this.notification.message.profile.parents
     } else this.parentsArray = this.parents
   },
+  beforeDestroy () {
+    this.setCurrentNotification({})
+  },
   watch: {
     parents (newVal, oldVal) {
       if (newVal) {
@@ -529,7 +543,11 @@ export default {
             gparents++
           }
         })
-        if (gparents > 0) this.gpNames = true
+        if (gparents > 0) {
+          /* TODO: It is considered a very bad practice to introduce side effects inside computed properties. It makes the code not predictable and hard to understand. */
+          // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+          this.gpNames = true
+        }
         return true
       }
       return false
@@ -542,6 +560,9 @@ export default {
       if (name.length > 25) return 'font-size:7vw'
       if (name.length > 20) return 'font-size:8vw'
       else return 'font-size: 10vw'
+    },
+    receivedMessage () {
+      return this.currentNotification.message.comments[this.currentNotification.accepted ? 1 : 0]
     },
     showActions () {
       if (isEmpty(this.currentNotification)) {
@@ -577,7 +598,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setDialog', 'setProfileById']),
+    ...mapActions(['setDialog', 'setProfileById', 'setCurrentNotification']),
     removeParent (index) {
       this.parents.splice(index, 1)
     },
@@ -639,28 +660,28 @@ export default {
     },
 
     async submit () {
-      if (this.$refs.checkboxes.validate()) {
-        var input = {
-          ...this.formData,
-          parents: this.parents
-        }
+      // if (this.$refs.checkboxes.validate()) {
+      // var input = {
+      //   ...this.formData,
+      //   parents: this.parents
+      // }
 
-        // var output = {
-        //   // TODO - update to match notifications
-        //   action: 'registration',
-        //   from: this.formData.id,
-        //   message: {
-        //     katiaki: this.currentTribe.public[0].tiaki[0].id,
-        //     community: this.currentProfile.id,
-        //     profile: input,
-        //     message: this.message
-        //   },
-        //   to: this.currentProfile.id
-        // }
-        // TODO - send message to Kaitiaki
-        console.warn('send this object: ', input)
-        this.close()
-      }
+      // var output = {
+      //   // TODO - update to match notifications
+      //   action: 'registration',
+      //   from: this.formData.id,
+      //   message: {
+      //     katiaki: this.currentTribe.public[0].tiaki[0].id,
+      //     community: this.currentProfile.id,
+      //     profile: input,
+      //     message: this.message
+      //   },
+      //   to: this.currentProfile.id
+      // }
+      // TODO - send message to Kaitiaki
+      // console.warn('send this object: ', input)
+      // this.close()
+      // }
       try {
         await this.$apollo.mutate({
           mutation: CREATE_GROUP_APPLICATION,
@@ -679,12 +700,13 @@ export default {
     },
 
     respond (response) {
-      this.showMessage = !this.showMessage
-      this.response = response
+      if (response === 'approve') {
+        this.showMessage = !this.showMessage
+        this.response = response
+      } else this.close()
     },
 
     async send () {
-      console.log('send -> this.whoami', this.whoami)
       /* TODO: format */
       // var output = {
       //   // TODO - update to match notifications
@@ -710,7 +732,7 @@ export default {
           }
         })
       } catch (err) {
-        console.log('Error on accepting group invite', err)
+        console.log('Error on accepting group application', err)
       }
       /* TODO: check for errors */
       this.showMessage = !this.showMessage

@@ -82,6 +82,7 @@ export const LIST_GROUP_APPLICATIONS = gql`
       group {
         id
         public {
+          id
           preferredName
           tiaki {
             preferredName

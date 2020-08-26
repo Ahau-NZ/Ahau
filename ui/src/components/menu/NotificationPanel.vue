@@ -67,7 +67,7 @@
                   <v-list-item-title>{{notification.message.groupAdmins[0].preferredName}}</v-list-item-title>
                   <v-list-item-subtitle
                     class="text-caption ahauRed"
-                  >Has {{notification.message.outcome}} {{notification.from.preferredName}}'s the request to join {{notification.message.group.preferredName}}</v-list-item-subtitle>
+                  >Has {{notification.message.outcome}} {{notification.from.preferredName}}'s request to join {{notification.message.group.preferredName}}</v-list-item-subtitle>
                 </v-list-item-content>
                 <!-- <v-list-item-action>
                   <v-btn icon x-small>
