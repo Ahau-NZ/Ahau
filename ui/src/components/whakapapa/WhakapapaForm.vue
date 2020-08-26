@@ -52,7 +52,7 @@
           </v-col>
           <v-col cols="12" class="pa-1" v-if="!hideDetails">
             <v-radio-group v-model="formData.focus">
-              <v-radio :label="`Yourself`" value="self"></v-radio>
+              <!-- <v-radio :label="`Yourself`" value="self"></v-radio> -->
               <v-radio :label="`Another person`" value="new"></v-radio>
               <v-radio :label="`Import from CSV file`" value="file"></v-radio>
             </v-radio-group>

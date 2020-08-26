@@ -139,7 +139,6 @@
                 :items="mentions"
                 :openMenu.sync="showMentions"
                 placeholder="add mention"
-                type="profile"
                 item="preferredName"
                 @getSuggestions="getSuggestions('mentions', $event)"
               />
@@ -153,30 +152,6 @@
               <v-divider v-if="mobile" light class="mt-6 mr-4"></v-divider>
             </v-col>
 
-            <!-- ADD ACCESS -->
-            <!-- <v-col cols="12" md="auto" class="pa-5">
-              <v-row v-if="!showAccess" @click="showAccess = true; access = []" class="pl-5">
-                <v-icon small>mdi-plus</v-icon>
-                <AddButton size="20px" icon="mdi-file-key" iconClass="pr-3" label="Access" justify="start"/>
-              </v-row>
-              <ProfileSearchBar
-                :selectedItems.sync="formData.access"
-                :items="access"
-                :openMenu.sync="showAccess"
-                type="profile"
-                item="preferredName"
-                placeholder="add access"
-                @getSuggestions="getSuggestions('access', $event)"
-              />
-              <AvatarGroup v-if="formData.access && formData.access.length > 0"
-                :profiles="formData.access"
-                show-labels
-                size="40px"
-                deletable
-                @delete="removeItem(formData.access, $event)"
-              />
-              <v-divider v-if="mobile" light class="mt-6 mr-4"></v-divider>
-            </v-col> -->
             <!-- ADD CONTRIBUTORS -->
             <v-col cols="12" md="auto" class="pa-5">
               <v-tooltip top open-delay="700" :disabled="showContributors">
@@ -195,7 +170,6 @@
                 :selectedItems.sync="formData.contributors"
                 :items="contributors"
                 :openMenu.sync="showContributors"
-                type="profile"
                 item="preferredName"
                 placeholder="contributors"
                 @getSuggestions="getSuggestions('contributors', $event)"
@@ -249,7 +223,6 @@
                 :items="collections"
                 :searchString.sync="searchString"
                 :openMenu.sync="showCollections"
-                type="collection"
                 item="title"
                 placeholder="add collection"
               />
@@ -263,7 +236,6 @@
                 :items="items"
                 :searchString.sync="searchString"
                 :openMenu.sync="showProtocols"
-                type="profile"
                 item="preferredName"
               />
               <AvatarGroup v-if="formData.protocols.length > 0"
@@ -312,7 +284,6 @@
                 :items="filteredStories"
                 :openMenu.sync="showRecords"
                 placeholder="add related record"
-                type="collection"
                 item="title"
               />
               <ChipGroup v-if="formData.relatedRecords && formData.relatedRecords.length > 0" type="story" :chips="formData.relatedRecords" deletable @delete="removeItem(formData.relatedRecords, $event)" />
@@ -337,7 +308,6 @@
                 :items="creators"
                 :searchString.sync="searchString"
                 :openMenu.sync="showCreators"
-                type="profile"
                 item="preferredName"
                 placeholder="creators"
                 @getSuggestions="getSuggestions('creators', $event)"
@@ -354,7 +324,7 @@
             <!-- ADD KAITIAKI -->
             <v-col cols="12" md="auto" class="pa-5">
               <v-row class="pl-5">
-                  <AddButton size="20px" icon="mdi-library" iconClass="pr-3" label="Kaitiaki"  justify="start"/>
+                <AddButton size="20px" icon="mdi-library" iconClass="pr-3" label="Kaitiaki"  justify="start"/>
               </v-row>
               <AvatarGroup v-if="formData.kaitiaki && formData.kaitiaki.length > 0"
                 :profiles="formData.kaitiaki"
@@ -530,7 +500,8 @@ export default {
     formData: {
       type: Object
     },
-    editing: Boolean
+    editing: Boolean,
+    access: Object
   },
   data () {
     return {
@@ -546,14 +517,12 @@ export default {
       showLocation: false,
       mentions: [],
       contributors: [],
-      // access: [],
       creators: [],
       showMentions: false,
       showCategories: false,
       showContributors: false,
       showCreators: false,
       showCollections: false,
-      // showAccess: false,
       showProtocols: false,
       showRecords: false,
       searchString: '',
@@ -584,8 +553,13 @@ export default {
       }
     },
     filteredStories () {
+      if (!this.access) return
       return this.stories.filter(d => {
-        return d.id !== this.formData.id // filter the current story out
+        // filter out the current story
+        if (d.id === this.formData.id) return false
+
+        // filter out stories by recps
+        return d.recps.includes(this.access.groupId)
       })
     }
   },
@@ -606,6 +580,14 @@ export default {
     async getSuggestions (array, $event) {
       var suggestions = []
       if ($event) suggestions = await findByName($event)
+
+      // filter out suggestions not in this tribe
+      if (!suggestions) return
+
+      suggestions = suggestions.filter(record => {
+        return record.recps.includes(this.access.groupId)
+      })
+
       this[array] = suggestions
     },
     toggleDialog ($event, dialog) {

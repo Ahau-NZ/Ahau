@@ -54,7 +54,6 @@
 </template>
 
 <script>
-import gql from 'graphql-tag'
 import pick from 'lodash.pick'
 import isEmpty from 'lodash.isempty'
 import * as d3 from 'd3'
@@ -68,6 +67,7 @@ import { saveLink } from '@/lib/link-helpers.js'
 import { savePerson } from '@/lib/person-helpers.js'
 import tree from '@/lib/tree-helpers'
 import { saveWhakapapaView, getWhakapapaViews } from '@/lib/whakapapa-helpers.js'
+import { findByName } from '@/lib/search-helpers.js'
 
 export default {
   name: 'WhakapapaIndex',
@@ -117,8 +117,8 @@ export default {
     }
   },
   mounted () {
+    // set the current default access as the current group
     this.setCurrentAccess(this.getDefaultAccess)
-    console.log(this.currentAccess)
   },
   apollo: {
     views: getWhakapapaViews()
@@ -132,7 +132,7 @@ export default {
         return
       }
 
-      var records = await this.findByName($event)
+      var records = await findByName($event)
 
       if (isEmpty(records)) {
         this.suggestions = []
@@ -162,70 +162,6 @@ export default {
       // sets suggestions which is passed into the dialogs
       this.suggestions = Object.assign([], records)
     },
-    async findByName (name) {
-      const request = {
-        query: gql`
-          query($name: String!) {
-            findPersons(name: $name) {
-              id
-              preferredName
-              legalName
-              gender
-              aliveInterval
-              birthOrder
-              description
-              altNames
-              avatarImage { uri }
-              children {
-                profile {
-                  id
-                  preferredName
-                  legalName
-                  gender
-                  aliveInterval
-                  birthOrder
-                  description
-                  altNames
-                  avatarImage { uri }
-                }
-                relationshipType
-              }
-              parents {
-                profile {
-                  id
-                  preferredName
-                  legalName
-                  gender
-                  aliveInterval
-                  birthOrder
-                  description
-                  altNames
-                  avatarImage { uri }
-                }
-                relationshipType
-              }
-            }
-          }
-        `,
-        variables: {
-          name: name
-        },
-        fetchPolicy: 'no-cache'
-      }
-
-      try {
-        const result = await this.$apollo.query(request)
-        if (result.errors) {
-          console.error('WARNING, something went wrong')
-          console.error(result.errors)
-          return
-        }
-        return result.data.findPersons
-      } catch (e) {
-        console.error('WARNING, something went wrong, caught it')
-        console.error(e)
-      }
-    },
     toggleWhakapapaHelper () {
       this.showWhakapapaHelper = !this.showWhakapapaHelper
     },
@@ -250,7 +186,7 @@ export default {
       var { access } = input
 
       if (access && access.groupId) input.recps = [access.groupId]
-      else input.recps = [this.whoami.personal.groupId]
+      else throw new Error('Recps field missing from whakapapa input')
 
       this.newView = {
         ...pick(input, ['name', 'description', 'image', 'recps']),
@@ -294,17 +230,9 @@ export default {
     },
     async handleDoubleStep (input) {
       try {
-        var { id, access } = input
+        var { id } = input
 
         if (!id) {
-          // see which recps to use
-          if (access && access.groupId) {
-            input.recps = [access.groupId]
-          } else {
-            // access wasnt set, so set it to yourself
-            input.recps = [this.whoami.personal.groupId]
-          }
-
           const res = await this.$apollo.mutate(savePerson(input))
           if (res.errors) throw res.errors
 
