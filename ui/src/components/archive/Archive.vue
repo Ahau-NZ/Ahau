@@ -207,10 +207,13 @@ export default {
         input.recps = [access.groupId]
       }
 
-      // if the access didnt set the recps, it needs to be set (if creating a story)
-      if (!input.id && !input.recps) input.recps = [this.whoami.personal.groupId]
-
       try {
+
+        if (!input.id && !input.recps) {
+          // should be recps on this record, otherwise throw an error
+          throw 'Recps field missing on saveStory'
+        }
+
         const res = await this.$apollo.mutate(saveStory(input))
 
         if (res.errors) {
@@ -228,16 +231,19 @@ export default {
 
           if (add && add.length > 0) {
             await Promise.all(add.map(async artefact => {
+              artefact.recps = input.recps // use same recps as the story
               const artefactId = await this.saveArtefact(artefact)
               if (!artefactId) return
 
               // if the artefact didnt have an id, then it means we create the link
               if (!artefact.id) {
-                const artefactInput = {
+                var artefactInput = {
                   type: TYPES.STORY_ARTEFACT,
                   parent: id,
                   child: artefactId
                 }
+
+                if (!artefact.linkId) artefactInput.recps = input.recps
 
                 await this.saveLink(artefactInput)
               }
@@ -255,19 +261,19 @@ export default {
         }
 
         if (mentions) {
-          await this.processLinks(id, mentions, TYPES.STORY_PROFILE_MENTION)
+          await this.processLinks(id, mentions, TYPES.STORY_PROFILE_MENTION, input.recps)
         }
 
         if (contributors) {
-          await this.processLinks(id, contributors, TYPES.STORY_PROFILE_CONTRIBUTOR)
+          await this.processLinks(id, contributors, TYPES.STORY_PROFILE_CONTRIBUTOR, input.recps)
         }
 
         if (creators) {
-          await this.processLinks(id, creators, TYPES.STORY_PROFILE_CREATOR)
+          await this.processLinks(id, creators, TYPES.STORY_PROFILE_CREATOR, input.recps)
         }
 
         if (relatedRecords) {
-          await this.processLinks(id, relatedRecords, TYPES.STORY_STORY)
+          await this.processLinks(id, relatedRecords, TYPES.STORY_STORY, input.recps)
         }
 
         var story = await this.getStory(id)
@@ -285,7 +291,7 @@ export default {
         throw err
       }
     },
-    async processLinks (parentId, object, type) {
+    async processLinks (parentId, object, type, recps) {
       const { add, remove } = object
 
       if (add && add.length > 0) {
@@ -294,7 +300,8 @@ export default {
             const linkInput = {
               type,
               parent: parentId,
-              child: linkedItem.id
+              child: linkedItem.id,
+              recps
             }
 
             await this.saveLink(linkInput)
@@ -313,7 +320,7 @@ export default {
       }
     },
     async saveArtefact (input) {
-      if (!input.id) input.recps = [this.whoami.personal.groupId]
+      if (!input.id && !input.recps) throw 'Recps field missing on saveArtefact'
 
       try {
         const res = await this.$apollo.mutate(saveArtefact(input))
@@ -325,7 +332,7 @@ export default {
 
         return res.data.saveArtefact
       } catch (err) {
-        console.error('something went wrong while saving an arteact')
+        console.error('something went wrong while saving an artefact')
         throw err
       }
     },
@@ -348,7 +355,7 @@ export default {
       }
     },
     async saveLink (input) {
-      if (!input.linkId) input.recps = [this.whoami.personal.groupId]
+      if (!input.linkId && !input.recps) throw 'Recps field missing on saveLink'
 
       try {
         const res = await this.$apollo.mutate(saveLink(input))

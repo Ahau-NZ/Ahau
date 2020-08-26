@@ -28,7 +28,7 @@ const EMPTY_WHAKAPAPA = {
   name: '',
   description: '',
   mode: 'descendants',
-  focus: 'self',
+  focus: 'new',
   image: null
 }
 

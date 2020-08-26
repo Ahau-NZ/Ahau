@@ -76,7 +76,7 @@ import clone from 'lodash.clonedeep'
 
 import { PERMITTED_PERSON_ATTRS, PERMITTED_RELATIONSHIP_ATTRS, getPerson } from '@/lib/person-helpers'
 import AccessButton from '@/components/button/AccessButton.vue'
-import { mapGetters, mapMutations } from 'vuex'
+import { mapGetters } from 'vuex'
 
 function defaultData (input) {
   var profile = clone(input)
@@ -252,7 +252,6 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['setCurrentAccess']),
     clearSuggestions () {
       this.$emit('getSuggestions', null)
     },
@@ -348,7 +347,15 @@ export default {
       return calculateAge(aliveInterval)
     },
     submit () {
-      var submission = pick(this.submission, [...PERMITTED_PERSON_ATTRS, ...PERMITTED_RELATIONSHIP_ATTRS])
+      var recps = this.currentAccess
+        ? [this.currentAccess.groupId]
+        : null
+
+      var submission = {
+        ...pick(this.submission, [...PERMITTED_PERSON_ATTRS, ...PERMITTED_RELATIONSHIP_ATTRS]),
+        recps
+      }
+
       this.$emit('create', submission)
       this.close()
     },

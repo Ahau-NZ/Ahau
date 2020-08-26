@@ -5,7 +5,7 @@
   >
     <!-- FORM -->
     <template v-slot:content>
-      <RecordForm ref="recordForm" :editing="editing" :formData.sync="formData"/>
+      <RecordForm ref="recordForm" :editing="editing" :formData.sync="formData" :access="access"/>
       <v-col align="center">
         <v-btn v-if="editing" text @click="$emit('delete')">
           Delete this record
