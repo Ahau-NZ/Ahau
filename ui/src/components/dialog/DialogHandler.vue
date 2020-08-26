@@ -384,13 +384,18 @@ export default {
       }
     },
     async savePerson (input) {
-      if (input.id) delete input.recps
+      if (input.id) {
+        // if its an update, remove any recps that may have crept through
+        delete input.recps
+      } else if (!input.id && !input.recps) {
+        // if this is saving a new person and it doesnt have recps
+        // automatically set it to the view
+        input.recps = this.view.recps
+      }
+
       const res = await this.$apollo.mutate(savePerson(input))
 
-      if (res.errors) {
-        console.error(`failed to ${input.id ? 'update' : 'save'} profile`, res)
-        return
-      }
+      if (res.errors) throw new Error(`Failed to ${input.id ? 'update' : 'save'} profile`, res)
 
       return res.data.saveProfile
     },
@@ -626,10 +631,11 @@ export default {
 
     async updatePerson (input) {
       if (!input) return
+
       if (input.recps) { // cant have recps on an update
-        // throw new Error('Unexpected recps field on updatePerson')
         delete input.recps
       }
+
       const profileId = this.selectedProfile.id
       if (this.isPersonalProfile(profileId)) {
         await this.saveCurrentIdentity(input)
