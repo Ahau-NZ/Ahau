@@ -696,8 +696,10 @@ export default {
     },
 
     respond (response) {
-      this.showMessage = !this.showMessage
-      this.response = response
+      if (response === 'approve') {
+        this.showMessage = !this.showMessage
+        this.response = response
+      } else this.close()
     },
 
     async send () {
