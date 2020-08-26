@@ -52,7 +52,7 @@
               <v-list-item-subtitle>Tribe name</v-list-item-subtitle>
             </v-list-item-content>
             <v-list-item-action>
-              <v-list-item-title> {{ ' '}} </v-list-item-title> <!-- TODO -->
+              <v-list-item-title> {{ 'N/A' }} </v-list-item-title> <!-- TODO: add a count for the amount of members in the tribe -->
               <v-list-item-subtitle>Members</v-list-item-subtitle>
             </v-list-item-action>
           </v-list-item>
