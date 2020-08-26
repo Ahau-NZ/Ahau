@@ -340,9 +340,9 @@ export default {
       return calculateAge(aliveInterval)
     },
     submit () {
-      console.log("submission: ", this.submission)
+      console.log('submission: ', this.submission)
       var submission = pick(this.submission, [...PERMITTED_PERSON_ATTRS, ...PERMITTED_RELATIONSHIP_ATTRS])
-      console.log("submit: ", submission)
+      console.log('submit: ', submission)
       this.$emit('create', submission)
       this.close()
     },

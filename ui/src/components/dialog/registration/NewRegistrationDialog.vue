@@ -543,7 +543,11 @@ export default {
             gparents++
           }
         })
-        if (gparents > 0) this.gpNames = true
+        if (gparents > 0) {
+          /* TODO: It is considered a very bad practice to introduce side effects inside computed properties. It makes the code not predictable and hard to understand. */
+          // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+          this.gpNames = true
+        }
         return true
       }
       return false
