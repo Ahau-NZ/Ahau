@@ -97,11 +97,14 @@ export default {
       var output = {}
       if (this.editing) {
         // get all changes
-        output = { id: this.story.id, ...GET_CHANGES(setDefaultStory(this.story), this.formData) }
+        output = {
+          id: this.story.id,
+          ...GET_CHANGES(setDefaultStory(this.story), this.formData)
+        }
       } else {
         output = {
           ...GET_CHANGES(setDefaultStory(EMPTY_STORY), this.formData),
-          access: this.access
+          recps: [this.access.groupId]
         }
       }
 

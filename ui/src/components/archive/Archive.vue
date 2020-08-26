@@ -200,30 +200,16 @@ export default {
       this.showArchiveHelper = !this.showArchiveHelper
     },
     async saveStory (input) {
-      var { id, artefacts, mentions, contributors, creators, relatedRecords, access } = input
-
-      // we only want to set recps if we are creating a new story
-      if (!input.id && access && access.groupId) {
-        input.recps = [access.groupId]
-      }
+      var { id, artefacts, mentions, contributors, creators, relatedRecords } = input
 
       try {
-
-        if (!input.id && !input.recps) {
-          // should be recps on this record, otherwise throw an error
-          throw 'Recps field missing on saveStory'
-        }
-
         const res = await this.$apollo.mutate(saveStory(input))
 
-        if (res.errors) {
-          console.error('saveStory returned errors')
-          throw res.errors
-        }
+        if (res.errors) throw res.errors
+        if (!id) id = res.data.saveStory
 
-        if (!id) {
-          id = res.data.saveStory
-        }
+        // get the full story
+        var story = await this.getStory(id)
 
         // process the artefacts
         if (artefacts) {
@@ -231,7 +217,7 @@ export default {
 
           if (add && add.length > 0) {
             await Promise.all(add.map(async artefact => {
-              artefact.recps = input.recps // use same recps as the story
+              if (!artefact.id) artefact.recps = story.recps
               const artefactId = await this.saveArtefact(artefact)
               if (!artefactId) return
 
@@ -240,10 +226,9 @@ export default {
                 var artefactInput = {
                   type: TYPES.STORY_ARTEFACT,
                   parent: id,
-                  child: artefactId
+                  child: artefactId,
+                  recps: story.recps
                 }
-
-                if (!artefact.linkId) artefactInput.recps = input.recps
 
                 await this.saveLink(artefactInput)
               }
@@ -261,22 +246,23 @@ export default {
         }
 
         if (mentions) {
-          await this.processLinks(id, mentions, TYPES.STORY_PROFILE_MENTION, input.recps)
+          await this.processLinks(mentions, { type: TYPES.STORY_PROFILE_MENTION, parent: id, recps: story.recps })
         }
 
         if (contributors) {
-          await this.processLinks(id, contributors, TYPES.STORY_PROFILE_CONTRIBUTOR, input.recps)
+          await this.processLinks(contributors, { type: TYPES.STORY_PROFILE_CONTRIBUTOR, parent: id, recps: story.recps })
         }
 
         if (creators) {
-          await this.processLinks(id, creators, TYPES.STORY_PROFILE_CREATOR, input.recps)
+          await this.processLinks(creators, { type: TYPES.STORY_PROFILE_CREATOR, parent: id, recps: story.recps })
         }
 
         if (relatedRecords) {
-          await this.processLinks(id, relatedRecords, TYPES.STORY_STORY, input.recps)
+          await this.processLinks(relatedRecords, { type: TYPES.STORY_STORY, recps: story.recps })
         }
 
-        var story = await this.getStory(id)
+        // reload again
+        story = await this.getStory(id)
 
         if (input.id) {
           this.setStory(story)
@@ -291,7 +277,7 @@ export default {
         throw err
       }
     },
-    async processLinks (parentId, object, type, recps) {
+    async processLinks (object, { type, parent, recps }) {
       const { add, remove } = object
 
       if (add && add.length > 0) {
@@ -299,7 +285,7 @@ export default {
           if (linkedItem.id) {
             const linkInput = {
               type,
-              parent: parentId,
+              parent,
               child: linkedItem.id,
               recps
             }
@@ -320,20 +306,17 @@ export default {
       }
     },
     async saveArtefact (input) {
-      if (!input.id && !input.recps) throw 'Recps field missing on saveArtefact'
-
       try {
         const res = await this.$apollo.mutate(saveArtefact(input))
 
         if (res.errors) {
-          console.error('error saving artefact', input)
+          console.error('Error saving artefact:', input)
           throw res.errors
         }
 
         return res.data.saveArtefact
       } catch (err) {
-        console.error('something went wrong while saving an artefact')
-        throw err
+        console.error('something went wrong while saving an artefact.', err)
       }
     },
     async getStory (id) {
@@ -355,8 +338,6 @@ export default {
       }
     },
     async saveLink (input) {
-      if (!input.linkId && !input.recps) throw 'Recps field missing on saveLink'
-
       try {
         const res = await this.$apollo.mutate(saveLink(input))
 
