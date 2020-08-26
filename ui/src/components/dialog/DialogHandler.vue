@@ -625,9 +625,11 @@ export default {
     },
 
     async updatePerson (input) {
-      console.log(input)
       if (!input) return
-      if (input.recps) delete input.recps // cant have recps on an update
+      if (input.recps) { // cant have recps on an update
+        // throw new Error('Unexpected recps field on updatePerson')
+        delete input.recps
+      }
       const profileId = this.selectedProfile.id
       if (this.isPersonalProfile(profileId)) {
         await this.saveCurrentIdentity(input)

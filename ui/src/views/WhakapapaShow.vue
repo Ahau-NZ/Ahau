@@ -312,6 +312,7 @@ export default {
       }
     },
     whakapapaView (newVal) {
+      if (newVal.recps) this.setCurrentAccess(this.getAccessFromRecps(newVal.recps))
       this.addWhakapapa(newVal)
     },
     relationshipLinks (newVal) {

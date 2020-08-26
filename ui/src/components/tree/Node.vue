@@ -78,7 +78,7 @@
 
     <g id="node-label" :style="textStyle">
       <rect :width="textWidth" y="-16" height="20"></rect>
-      <text>{{ profile.preferredName }}</text>
+      <text>{{ profile.recps[0] }}</text>
     </g>
     <!-- Changes focus -->
     <g
@@ -155,7 +155,7 @@ export default {
     },
     textWidth () {
       // const { x, y } = textElm.getBBox();
-      const width = (this.profile.preferredName || '').length * 8
+      const width = (this.profile.recps[0] || '').length * 8
       return width
     },
     groupStyle () {

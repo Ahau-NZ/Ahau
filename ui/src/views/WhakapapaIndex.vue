@@ -56,6 +56,8 @@
 <script>
 import pick from 'lodash.pick'
 import isEmpty from 'lodash.isempty'
+import isEqual from 'lodash.isequal'
+
 import * as d3 from 'd3'
 import { mapGetters, mapActions, mapMutations } from 'vuex'
 import WhakapapaViewCard from '@/components/whakapapa/WhakapapaViewCard.vue'
@@ -140,6 +142,11 @@ export default {
       }
 
       var profiles = {} // flatStore for these suggestions
+
+      // filter out all records that arent in the current tribe
+      records = records.filter(record => {
+        return isEqual(record.recps, [this.currentAccess.groupId])
+      })
 
       records.forEach(record => {
         profiles[record.id] = record // add this record to the flatStore
