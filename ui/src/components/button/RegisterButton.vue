@@ -43,7 +43,6 @@ export default {
   background-color: rgb(12, 8, 8);
 }
 
-
 .btn {
     margin-top:37px;
     margin-left:20px;

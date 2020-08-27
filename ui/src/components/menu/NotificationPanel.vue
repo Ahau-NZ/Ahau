@@ -171,7 +171,7 @@
                   <v-list-item-subtitle class="text-caption ahauRed">
                     Has joined {{notification.message.group.preferredName}}
                   </v-list-item-subtitle>
-                </v-list-item-content>          
+                </v-list-item-content>
               </v-list-item>
               <v-divider></v-divider>
             </div>
