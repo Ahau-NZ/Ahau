@@ -5,14 +5,17 @@
   >
     <!-- FORM -->
     <template v-slot:content>
-      <RecordForm ref="recordForm" :editing="editing" :formData.sync="formData"/>
+      <RecordForm ref="recordForm" :editing="editing" :formData.sync="formData" :access="access"/>
+      <v-col align="center">
+        <v-btn v-if="editing" text @click="$emit('delete')">
+          Delete this record
+          <v-icon class="pl-2">mdi-delete</v-icon>
+        </v-btn>
+      </v-col>
     </template>
 
-    <template v-if="editing" v-slot:before-actions>
-      <v-btn text @click="$emit('delete')">
-        Delete this record
-        <v-icon class="pl-2">mdi-delete</v-icon>
-      </v-btn>
+    <template v-if="access" v-slot:before-actions>
+      <AccessButton :access.sync="access" :disabled="editing" />
     </template>
   </Dialog>
 </template>
@@ -21,6 +24,7 @@
 
 import Dialog from '@/components/dialog/Dialog.vue'
 import RecordForm from '@/components/archive/RecordForm.vue'
+import AccessButton from '@/components/button/AccessButton.vue'
 
 import { mapGetters, mapActions } from 'vuex'
 
@@ -34,7 +38,8 @@ export default {
   name: 'NewRecordDialog',
   components: {
     Dialog,
-    RecordForm
+    RecordForm,
+    AccessButton
   },
   props: {
     show: { type: Boolean, required: true },
@@ -44,11 +49,12 @@ export default {
   },
   data () {
     return {
-      formData: setDefaultStory(this.story)
+      formData: setDefaultStory(this.story),
+      access: null
     }
   },
   computed: {
-    ...mapGetters(['whoami', 'currentProfile']),
+    ...mapGetters(['whoami', 'currentProfile', 'defaultAccess', 'getAccessFromRecps']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     }
@@ -58,7 +64,9 @@ export default {
       this.formData.mentions.push(this.currentProfile)
       this.formData.contributors.push(this.whoami.public.profile)
       this.formData.kaitiaki = [this.whoami.public.profile]
-      // TODO 2020-07-10 this needs to be your profle within the current group
+      this.access = this.defaultAccess
+    } else {
+      this.access = this.getAccessFromRecps(this.story.recps)
     }
   },
   watch: {
@@ -89,10 +97,17 @@ export default {
       var output = {}
       if (this.editing) {
         // get all changes
-        output = { id: this.story.id, ...GET_CHANGES(setDefaultStory(this.story), this.formData) }
+        output = {
+          id: this.story.id,
+          ...GET_CHANGES(setDefaultStory(this.story), this.formData)
+        }
       } else {
-        output = { ...GET_CHANGES(setDefaultStory(EMPTY_STORY), this.formData) }
+        output = {
+          ...GET_CHANGES(setDefaultStory(EMPTY_STORY), this.formData),
+          recps: [this.access.groupId]
+        }
       }
+
       this.$emit('submit', output)
       this.close()
     }

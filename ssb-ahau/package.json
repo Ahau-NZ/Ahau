@@ -6,9 +6,9 @@
   "main": "index.js",
   "dependencies": {
     "@apollo/federation": "^0.11.3",
-    "@ssb-graphql/artefact": "^3.0.1",
+    "@ssb-graphql/artefact": "^3.0.2",
     "@ssb-graphql/main": "^5.0.0",
-    "@ssb-graphql/profile": "^2.3.1",
+    "@ssb-graphql/profile": "^2.3.4",
     "@ssb-graphql/story": "^1.1.1",
     "@ssb-graphql/tribes": "^1.1.2",
     "@ssb-graphql/whakapapa": "^2.4.3",

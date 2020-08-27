@@ -136,17 +136,17 @@ import WhakapapaTableHelper from '@/components/dialog/whakapapa/WhakapapaTableHe
 import ComingSoonDialog from '@/components/dialog/ComingSoonDialog.vue'
 import ConfirmationMessage from '@/components/dialog/ConfirmationMessage.vue'
 
-import gql from 'graphql-tag'
-
 import { PERMITTED_RELATIONSHIP_ATTRS, savePerson, saveCurrentIdentity } from '@/lib/person-helpers.js'
 import { createGroup, saveCommunity, savePublicCommunity, saveGroupProfileLink, deleteTribe, updateTribe } from '@/lib/community-helpers'
 import { saveWhakapapaView } from '@/lib/whakapapa-helpers.js'
+import { findByName } from '@/lib/search-helpers.js'
 
 import { saveLink } from '@/lib/link-helpers.js'
 import tree from '@/lib/tree-helpers'
 import findSuccessor from '@/lib/find-successor'
 
 import pick from 'lodash.pick'
+import isEqual from 'lodash.isequal'
 import isEmpty from 'lodash.isempty'
 import * as d3 from 'd3'
 import { mapGetters, mapActions } from 'vuex'
@@ -384,14 +384,18 @@ export default {
       }
     },
     async savePerson (input) {
-      if (!input.id && !input.recps) input.recps = [this.whoami.personal.groupId]
-      // TODO fix recps to be right group
+      if (input.id) {
+        // if its an update, remove any recps that may have crept through
+        delete input.recps
+      } else if (!input.id && !input.recps) {
+        // if this is saving a new person and it doesnt have recps
+        // automatically set it to the view
+        input.recps = this.view.recps
+      }
+
       const res = await this.$apollo.mutate(savePerson(input))
 
-      if (res.errors) {
-        console.error(`failed to ${input.id ? 'update' : 'save'} profile`, res)
-        return
-      }
+      if (res.errors) throw new Error(`Failed to ${input.id ? 'update' : 'save'} profile`, res)
 
       return res.data.saveProfile
     },
@@ -611,8 +615,7 @@ export default {
 
     async createChildLink (input) {
       input.type = 'link/profile-profile/child'
-      input.recps = input.recps || this.view.recps
-      // TODO check recps
+      input.recps = this.view.recps
 
       try {
         const res = await this.$apollo.mutate(saveLink(input))
@@ -627,11 +630,14 @@ export default {
     },
 
     async updatePerson (input) {
-      console.log('update profile: ', input)
+      if (!input) return
+
+      if (input.recps) { // cant have recps on an update
+        delete input.recps
+      }
 
       const profileId = this.selectedProfile.id
       if (this.isPersonalProfile(profileId)) {
-        console.log()
         await this.saveCurrentIdentity(input)
       } else {
         await this.savePerson({ id: profileId, ...input })
@@ -646,13 +652,11 @@ export default {
           child: relationship.child,
           parent: relationship.parent,
           ...relationshipAttrs
-          // recps: this.view.recps
         }
         try {
           const linkRes = await this.$apollo.mutate(saveLink(input))
           if (linkRes.errors) {
-            console.error('failed to update child link', linkRes)
-            return
+            throw linkRes.errors
           } else {
             this.relationshipLinks.set(relationship.parent + '-' + relationship.child, input)
             this.selectedProfile.relationship = input
@@ -662,7 +666,7 @@ export default {
             })
           }
         } catch (err) {
-          console.log('error:', err)
+          console.error('something went wrong while trying to save link on update person', err)
           throw err
         }
       }
@@ -797,11 +801,17 @@ export default {
         this.suggestions = []
         return
       }
-      var records = await this.findByName($event)
+      var records = await findByName($event)
+
       if (isEmpty(records)) {
         this.suggestions = []
         return
       }
+
+      // filter out all records that arent in the current tribe
+      records = records.filter(record => {
+        return isEqual(record.recps, this.view.recps)
+      })
 
       if (this.source !== 'new-registration') {
         var profiles = {} // flatStore for these suggestions
@@ -883,70 +893,6 @@ export default {
         return true // was found
       }
       return false // wasnt found
-    },
-    async findByName (name) {
-      const request = {
-        query: gql`
-          query($name: String!) {
-            findPersons(name: $name) {
-              id
-              preferredName
-              legalName
-              gender
-              aliveInterval
-              birthOrder
-              description
-              altNames
-              avatarImage { uri }
-              children {
-                profile {
-                  id
-                  preferredName
-                  legalName
-                  gender
-                  aliveInterval
-                  birthOrder
-                  description
-                  altNames
-                  avatarImage { uri }
-                }
-                relationshipType
-              }
-              parents {
-                profile {
-                  id
-                  preferredName
-                  legalName
-                  gender
-                  aliveInterval
-                  birthOrder
-                  description
-                  altNames
-                  avatarImage { uri }
-                }
-                relationshipType
-              }
-            }
-          }
-        `,
-        variables: {
-          name: name
-        },
-        fetchPolicy: 'no-cache'
-      }
-
-      try {
-        const result = await this.$apollo.query(request)
-        if (result.errors) {
-          console.error('WARNING, something went wrong')
-          console.error(result.errors)
-          return
-        }
-        return result.data.findPersons
-      } catch (e) {
-        console.error('WARNING, something went wrong, caught it')
-        console.error(e)
-      }
     }
   }
 }

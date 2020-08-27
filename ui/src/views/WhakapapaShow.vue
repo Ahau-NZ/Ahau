@@ -8,7 +8,7 @@
       <!-- Whakapapa Title Card -->
       <v-row v-if="!mobile" class="header">
         <!-- Whakapapa"SHOW"ViewCard -->
-        <WhakapapaShowViewCard :view="whakapapaView" :shadow="false">
+        <WhakapapaShowViewCard :view="whakapapaView" :access="access" :shadow="false">
           <template v-slot:edit v-if="whakapapaView && whakapapaView.canEdit">
             <v-tooltip bottom>
               <template v-slot:activator="{ on }">
@@ -274,7 +274,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['currentFocus', 'nestedWhakapapa', 'selectedProfile', 'whoami', 'loadingState', 'route', 'currentProfile']),
+    ...mapGetters(['currentFocus', 'nestedWhakapapa', 'selectedProfile', 'whoami', 'loadingState', 'route', 'currentProfile', 'getAccessFromRecps']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -290,6 +290,11 @@ export default {
     },
     canEdit () {
       return this.selectedProfile && this.selectedProfile.canEdit
+    },
+    access () {
+      // return the access based on the whakapapaView we are in...
+      if (!this.whakapapaView || !this.whakapapaView.recps) return null
+      return this.getAccessFromRecps(this.whakapapaView.recps)
     }
   },
   watch: {
@@ -307,6 +312,7 @@ export default {
       }
     },
     whakapapaView (newVal) {
+      if (newVal.recps) this.setCurrentAccess(this.getAccessFromRecps(newVal.recps))
       this.addWhakapapa(newVal)
     },
     relationshipLinks (newVal) {
@@ -314,7 +320,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['updateSelectedProfile']),
+    ...mapMutations(['updateSelectedProfile', 'setCurrentAccess']),
     ...mapActions(['setLoading', 'addNestedWhakapapa', 'addWhakapapa', 'addRelationshipLinks']),
     load (status) {
       this.setLoading(status)
