@@ -3,7 +3,7 @@
     <NewRegistrationDialog
       v-if="isActive('new-registration')"
       :show="isActive('new-registration')"
-      :title="dialogType === 'review' ? `Request to join : ${currentNotification.message.group.preferredName}` : `Request to join : ${currentNotification.message.group.preferredName} ---- ${currentNotification.message.outcome}`"
+      :title="dialogType === 'review' ? `Request to join : ${currentNotification.message.group.preferredName}` : `Request to join : ${currentTribe.public[0].preferredName}`"
       :profile="whoami.personal.profile"
       :parents.sync="parents"
       :parentIndex.sync="parentIndex"
