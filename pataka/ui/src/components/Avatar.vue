@@ -52,6 +52,7 @@
 <script>
 import avatarHelper from '@/lib/avatar-helpers.js'
 import ImagePicker from '@/components/ImagePicker.vue'
+import logo from '../assets/logo_black.svg'
 
 export default {
   name: 'Avatar',
@@ -59,6 +60,9 @@ export default {
     showOnHover: Boolean,
     image: Object,
     alt: String,
+    gender: String,
+    aliveInterval: String,
+    type: { type: String, default: 'person' },
     size: { type: String, default: '25vh' },
     showLabel: { type: Boolean, default: false },
     clickable: { type: Boolean, default: false },
@@ -74,7 +78,8 @@ export default {
   },
   computed: {
     getImage () {
-      return avatarHelper.defaultImage(this.isView, this.aliveInterval, this.gender)
+      if (this.type === 'person') return avatarHelper.defaultImage(this.isView, this.aliveInterval, this.gender)
+      else return logo
     },
     customStyle () {
       return {
@@ -122,7 +127,7 @@ export default {
 }
 
 .no-pic {
-  background: grey;
+  background: white;
   padding: 15px;
 }
 

@@ -96,13 +96,16 @@
             <v-col cols="6" class="stat-column">
               <h2 class="h2 text-uppercase pb-8">People</h2>
               <p v-if="invitedPeople.length === 0">There's no one on your network</p>
-              <v-row class="pb-2 pl-4">
+              <v-row class="pb-2">
                 <v-col v-for="(people, key) in invitedPeople" :key="key" cols="2">
                   <Avatar
+                    type="person"
                     size="60px"
                     :alt="people.preferredName"
                     :image="people.avatarImage"
                     showOnHover
+                    :gender="people.gender"
+                    :aliveInterval="people.aliveInterval"
                   />
                 </v-col>
               </v-row>
@@ -111,13 +114,16 @@
             <v-col cols="6" class="stat-column">
               <h2 class="h2 text-uppercase pb-8">Tribes</h2>
               <p v-if="tribes.length === 0">There's are no tribes on your network</p>
-              <v-row class="pb-2 pl-4">
-                <v-col v-for="(tribes, key) in tribes" :key="key" cols="2">
+              <v-row class="pb-2">
+                <v-col v-for="(tribe, key) in tribes" :key="key" cols="2">
                   <Avatar
+                    type="tribe"
                     size="60px"
-                    :alt="tribes.public[0].preferredName"
-                    :image="tribes.public[0].avatarImage"
+                    :alt="tribe.public[0].preferredName"
+                    :image="tribe.public[0].avatarImage"
                     showOnHover
+                    :gender="tribe.public[0].gender"
+                    :aliveInterval="tribe.public[0].aliveInterval"
                   />
                 </v-col>
               </v-row>
@@ -266,6 +272,8 @@ export default {
         invitedPeople {
           id
           preferredName
+          gender
+          aliveInterval
           avatarImage {
             uri
           }

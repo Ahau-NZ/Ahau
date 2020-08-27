@@ -6,7 +6,7 @@ import tama from '../assets/tama.svg'
 import kotiro from '../assets/kotiro.svg'
 import diverse from '../assets/diverse.svg'
 
-import whakapapa from '@/assets/whakapapa.svg'
+import whakapapa from '../assets/whakapapa.svg'
 
 import calculateAge from './calculate-age'
 
