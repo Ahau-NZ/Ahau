@@ -421,7 +421,6 @@ export default {
       await this.setWhoami()
     },
     async addPerson ($event) {
-      console.log('addPerson: ', $event)
       try {
         var { id } = $event
 

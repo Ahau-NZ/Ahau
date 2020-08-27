@@ -150,31 +150,32 @@ export default {
   },
   computed: {
     ...mapGetters(['whoami', 'currentProfile', 'notifications']),
-    notificationsToShow () {
-      const reversedNotifications = this.notifications.slice(0).reverse()
-      return reversedNotifications.map(i => ({ ...i, mine: i.from.id === this.whoami.public.profile.id }))
-    },
-    notificationsToJoin () {
-      return this.notifications
-        .filter(i => {
-          return !i.accepted && !i.mine
-        })
-    },
-    notificationsAccepted () {
-      return this.notifications
-        .filter(i => {
-          return i.accepted && i.mine
-        })
-    },
-    notificationsCount () {
-      return this.notifications.length
-    },
-    mobile () {
+        mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
-    hasNotification () {
-      return this.notificationsCount > 0
-    }
+    // TODO: add notification badge
+    // notificationsToShow () {
+    //   const reversedNotifications = this.notifications.slice(0).reverse()
+    //   return reversedNotifications.map(i => ({ ...i, mine: i.from.id === this.whoami.public.profile.id }))
+    // },
+    // notificationsToJoin () {
+    //   return this.notifications
+    //     .filter(i => {
+    //       return !i.accepted && !i.mine
+    //     })
+    // },
+    // notificationsAccepted () {
+    //   return this.notifications
+    //     .filter(i => {
+    //       return i.accepted && i.mine
+    //     })
+    // },
+    // notificationsCount () {
+    //   return this.notifications.length
+    // },
+    // hasNotification () {
+    //   return this.notificationsCount > 0
+    // }
   },
   methods: {
     ...mapActions(['setDialog', 'setCurrentNotification']),
