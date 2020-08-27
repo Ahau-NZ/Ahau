@@ -17,7 +17,7 @@
           </div>
         </div>
       </template>
-      <v-card v-if="hasNotification">
+      <v-card v-if="hasNotification" elevation="24">
         <v-list class="py-0">
           <v-list-item>
             <p class="pt-1 pl-5 my-0 headliner black--text">Notifications</p>
@@ -110,7 +110,7 @@
     </div>
 
     <v-expand-transition v-if="hasNotification">
-      <v-card tile light v-show="expand" style="position: absolute;left: 0px;top: 54px; width:100%">
+      <v-card tile light v-show="expand" style="position: absolute;left: 0px;top: 54px; width:100%" elevation="12" v-scroll="onScroll">
         <v-list class="py-0">
           <v-list-item>
             <p class="pt-1 pl-5 my-0 headliner black--text">Notifications</p>
@@ -194,7 +194,8 @@ export default {
     return {
       menu: false,
       expand: false,
-      completePerson: personComplete
+      completePerson: personComplete,
+      offset: 0
     }
   },
   computed: {
@@ -229,6 +230,11 @@ export default {
       return this.notifications.length > 0
     }
   },
+  watch: {
+    offset (newVal, oldVal) {
+      if (this.expand && newVal < oldVal) this.expand = !this.expand
+    }
+  },
   methods: {
     ...mapActions(['setDialog', 'setCurrentNotification']),
     openReview (notification) {
@@ -240,6 +246,9 @@ export default {
       console.log('open response')
       this.setCurrentNotification(notification)
       this.setDialog({ active: 'new-registration', type: 'response' })
+    },
+    onScroll () {
+      if (this.mobile) this.offset = window.pageYOffset
     }
   }
 }

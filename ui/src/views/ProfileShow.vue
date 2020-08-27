@@ -8,7 +8,7 @@
       @setupProfile="setupProfile($event)"
     />
     <v-row v-if="activeComponent === 'profile'">
-      <v-col cols="12" offset-md="2" md="8" sm="12" :class="!mobile ? 'pl-12' : '' " :align="mobile ? 'center' : 'start'" :order="mobile ? '3' : '1'">
+      <v-col cols="12" offset-md="2" md="8" sm="12" :class="!mobile ? 'pl-12' : 'pt-0 mt-n3' " :align="mobile ? 'center' : 'start'" :order="mobile ? '3' : '1'">
         <h1 class="primary--text" :style="mobile ? length : ''">{{ currentProfile.legalName ? currentProfile.legalName : currentProfile.preferredName }}</h1>
       </v-col>
       <!-- <v-col v-if="currentProfile.canEdit" :order="mobile ? '1' : '2'" :align="mobile ? 'start' : isCommunity ? 'start':'center'" cols="6" md="1" sm="6"  class="px-5">
