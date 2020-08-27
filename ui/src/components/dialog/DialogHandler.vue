@@ -3,7 +3,7 @@
     <NewRegistrationDialog
       v-if="isActive('new-registration')"
       :show="isActive('new-registration')"
-      :title="dialogType === 'review' ? `Request to join Āhau from ---- ${currentNotification.from.preferredName}`:`Request to join : ${(currentTribe && currentTribe.public) ? currentTribe.public[0].preferredName : currentNotification.message.group.preferredName}`"
+      :title="dialogType === 'review' ? `Request to join : ${currentNotification.message.group.preferredName}` : `Request to join : ${currentTribe.public[0].preferredName}`"
       :profile="whoami.personal.profile"
       :parents.sync="parents"
       :parentIndex.sync="parentIndex"
@@ -128,7 +128,6 @@ import isEqual from 'lodash.isequal'
 import isEmpty from 'lodash.isempty'
 import * as d3 from 'd3'
 import { mapGetters, mapActions } from 'vuex'
-import gql from 'graphql-tag'
 
 import NewNodeDialog from '@/components/dialog/profile/NewNodeDialog.vue'
 import NewCommunityDialog from '@/components/dialog/community/NewCommunityDialog.vue'

@@ -28,7 +28,7 @@
         </v-row>
       </v-col>
       <RegisterButton v-if="nonMember" :notificationSent="notificationSent" />
-      <v-row v-else :class="mobile ? 'rounded-border' : tablet ? 'ml-6' : 'ml-12'">
+      <v-row v-else :class="mobile ? 'rounded-border box-shadow' : tablet ? 'ml-6' : 'ml-12'">
         <v-col align="center" :class="mobile ? 'py-0 px-0' : tablet ? 'py-4 px-0' : 'py-1'">
           <v-btn @click="setActive('profile')" light :fab="mobile" text>
             <v-col class="pa-0" :cols="mobile ? '12' : '2'">
@@ -337,7 +337,9 @@ export default {
     rgba(255, 255, 255, 0.9),
     rgba(255, 255, 255, 0.02)
   );
-}
+.box-shadow {
+   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)
+}}
 
 .hideStickyMobile {
   position: fixed; /* Allocates space for the element, but moves it with you when you scroll */
@@ -349,4 +351,5 @@ export default {
 .v-btn::before {
   opacity: 0 !important;
 }
+
 </style>
