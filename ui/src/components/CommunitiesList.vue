@@ -199,7 +199,7 @@ export default {
       if (!community.description) return
       return community.description.substring(0, 180)
     },
-    async acceptInvite (inviteCode) {
+    async acceptInvite () {
       try {
         await this.$apollo.mutate({
           mutation: gql`
@@ -207,10 +207,10 @@ export default {
             acceptInvite(inviteCode: $inviteCode)
           }`,
           variables: {
-            inviteCode: this.patakaCode
+            inviteCode: this.patakaCode.trim()
           }
         })
-        // this.sucinvalidCode = false
+        // this.invalidCode = false
         // this.validCode = true
         this.successMsg = ['Successfully located Pātaka']
       } catch (err) {
@@ -218,7 +218,9 @@ export default {
         // this.validCode = false
         this.errorMsg = ['Invalid code, please check the code and try again']
         console.error('Invite error: ', err)
+        return
       }
+      this.errorMsg = []
     }
   }
 }

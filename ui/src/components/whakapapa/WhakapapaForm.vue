@@ -52,7 +52,19 @@
           </v-col>
           <v-col cols="12" class="pa-1" v-if="!hideDetails">
             <v-radio-group v-model="formData.focus">
-              <v-radio :label="`Yourself`" value="self"></v-radio>
+              <!-- <v-radio :label="`Yourself`" value="self"></v-radio> -->
+              <!--
+                TODO: enable this again once we have a clear way to ensure we know you have a profile in a group.
+                Ideas:
+                - find your profile in this group
+                - otherwise create a profile for you in group, and link it to you
+                PROBLEM:
+                  if a group already exists and someone made a profile for you ... when they add you,
+                  how do they give you that profile? (if it's already woven into a whakapapa?!)
+                  Requires Multiple editors, or being able to transfer ownership OR merge/link existing profiles.
+                  Needs research.
+              -->
+
               <v-radio :label="`Another person`" value="new"></v-radio>
               <v-radio :label="`Import from CSV file`" value="file"></v-radio>
             </v-radio-group>
@@ -108,7 +120,7 @@ const EMPTY_WHAKAPAPA = {
   name: '',
   description: '',
   mode: 'descendants',
-  focus: 'self',
+  focus: 'new',
   image: null
 }
 

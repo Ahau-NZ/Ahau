@@ -10,6 +10,7 @@ export async function findByName (name) {
       query($name: String!) {
         findPersons(name: $name) {
           id
+          type
           preferredName
           legalName
           gender
@@ -18,9 +19,11 @@ export async function findByName (name) {
           description
           altNames
           avatarImage { uri }
+          recps
           children {
             profile {
               id
+              type
               preferredName
               legalName
               gender
@@ -29,12 +32,14 @@ export async function findByName (name) {
               description
               altNames
               avatarImage { uri }
+              recps
             }
             relationshipType
           }
           parents {
             profile {
               id
+              type
               preferredName
               legalName
               gender
@@ -43,6 +48,7 @@ export async function findByName (name) {
               description
               altNames
               avatarImage { uri }
+              recps
             }
             relationshipType
           }
@@ -50,21 +56,16 @@ export async function findByName (name) {
       }
     `,
     variables: {
-      name: name
+      name
     },
     fetchPolicy: 'no-cache'
   }
 
   try {
-    const result = await apolloClient.query(request)
-    if (result.errors) {
-      console.error('WARNING, something went wrong')
-      console.error(result.errors)
-      return
-    }
-    return result.data.findPersons
-  } catch (e) {
-    console.error('WARNING, something went wrong, caught it')
-    console.error(e)
+    const res = await apolloClient.query(request)
+    if (res.errors) throw res.errors
+    return res.data.findPersons
+  } catch (err) {
+    console.error('something went wrong while trying to find persons by name', err)
   }
 }

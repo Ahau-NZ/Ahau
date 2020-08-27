@@ -54,19 +54,19 @@
         <slot name="content"></slot>
       </v-card-text>
       <v-divider/>
-      <v-card-actions class="pa-0 py-2">
-        <v-container class="py-0 pt-1">
+      <v-card-actions class="pa-0">
+        <v-container class="py-0">
           <v-row>
             <v-col cols="12" md="auto" v-if="$slots['before-actions']" align="center" class="py-0">
               <slot name="before-actions"></slot>
             </v-col>
             <v-spacer v-if="!mobile"/>
             <slot name="actions">
-              <v-col cols="6" md="auto" :align="mobile ? 'center' : 'end'" class="py-0">
+              <v-col cols="6" md="auto" :align="mobile ? 'center' : 'end'" class="py-0 pb-2 pb-md-0">
                 <v-btn @click="close"
-                  fab
+                  :fab="!mobile"
                   icon
-                  large
+                  :large="!mobile"
                   class="secondary--text"
                 >
                   <v-icon color="secondary">mdi-close</v-icon>
@@ -75,9 +75,9 @@
 
                 <v-col cols="6" md="auto" :align="mobile ? 'center' : 'end'" class="py-0">
                 <v-btn @click="$emit('submit')"
-                  fab
+                  :fab="!mobile"
                   icon
-                  large
+                  :large="!mobile"
                   class="blue--text"
                 >
                   <v-icon>mdi-check</v-icon>

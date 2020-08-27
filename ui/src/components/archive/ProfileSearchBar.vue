@@ -8,11 +8,11 @@
       :items="items"
       item-value="id"
       :item-text="item"
-      :multiple="!single"
       :menu-props="{ light: true, value: openMenu }"
       hide-selected append-icon="mdi-close"
       @click:append="close"
       :placeholder="placeholder"
+      multiple
       no-data-text="no suggestions found"
       hide-details dense rounded outlined
       :searchInput.sync="searchInput"
@@ -25,7 +25,7 @@
       </template>
       <template v-slot:item="{ item }">
         <!-- MENTIONS + CONTRIBUTORS + CREATOR -->
-        <template v-if="type === 'profile'">
+        <template v-if="item.type === 'person'">
           <v-list-item class="click" @mousedown="addSelectedItem(item)">
             <Avatar class="mr-3" size="40px" :image="item.avatarImage" :alt="item.preferredName" :gender="item.gender" :aliveInterval="item.aliveInterval" />
             <v-list-item-content>
@@ -44,22 +44,22 @@
         </template>
 
         <!-- ACCESS -->
-        <template v-else-if="type === 'commuinty'">
+        <template v-else-if="item.type === 'community'">
           <v-list-item class="click" @mousedown="addSelectedItem(item)">
-            <Avatar class="mr-3" size="40px" :image="item.avatarImage" :alt="item.preferredName" :gender="item.gender" :aliveInterval="item.aliveInterval" />
+            <Avatar class="mr-3" size="40px" :image="item.avatarImage" isView :alt="item.preferredName" :gender="item.gender" :aliveInterval="item.aliveInterval" />
             <v-list-item-content>
-              <v-list-item-title> {{ item.preferredName }} </v-list-item-title>
-              <v-list-item-subtitle>Community name</v-list-item-subtitle>
+              <v-list-item-title> {{ item.preferredName ? item.preferredName :  '&nbsp;' }} </v-list-item-title>
+              <v-list-item-subtitle>Tribe name</v-list-item-subtitle>
             </v-list-item-content>
             <v-list-item-action>
-              <v-list-item-title> {{ age(item.aliveInterval) }} </v-list-item-title>
+              <v-list-item-title> {{ 'N/A' }} </v-list-item-title> <!-- TODO: add a count for the amount of members in the tribe -->
               <v-list-item-subtitle>Members</v-list-item-subtitle>
             </v-list-item-action>
           </v-list-item>
         </template>
 
-        <!-- RELATED RECORDS + COLLECTIONS -->
-        <template v-else-if="type === 'collection'">
+        <!-- RELATED RECORDS -->
+        <template v-else-if="item.type === '*'">
           <v-card flat light  justify="center" height="90%" width="100%" class="click" @mousedown="addSelectedItem(item)">
             <Chip
               :title="item.title"
@@ -74,7 +74,7 @@
         <!-- CATEGORIES -->
         <template v-else>
           <v-list-item class="click" @click="addSelectedItem(item)">
-            {{ item }}
+            {{ item.type }}
           </v-list-item>
         </template>
       </template>
@@ -110,7 +110,6 @@ export default {
       type: Boolean,
       default: false
     },
-    type: String,
     placeholder: {
       type: String,
       default: ' '
@@ -119,10 +118,7 @@ export default {
   data () {
     return {
       chips: [],
-      searchInput: '',
-      parentElement: null,
-      childElement: null,
-      disableFocus: false
+      searchInput: ''
     }
   },
   components: {
@@ -181,19 +177,13 @@ export default {
       this.$emit('update:openMenu', false)
       this.clearSuggestions()
     },
-    open () {
-      return true
-    },
     addSelectedItem (item) {
-      if (Array.isArray(this.chips)) {
+      if (Array.isArray(this.chips) && !this.single) {
         this.chips.push(item)
       } else {
-        this.chips = item
+        this.chips = [item]
       }
       this.$emit('update:openMenu', false)
-    },
-    removeSelectedItem (item) {
-      this.chips.slice(item, 1)
     }
   }
 }

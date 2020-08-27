@@ -150,7 +150,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['stories', 'showStory', 'whoami', 'currentProfile', 'currentStory', 'showArtefact', 'storeDialog']),
+    ...mapGetters(['stories', 'showStory', 'whoami', 'currentProfile', 'currentTribe', 'currentStory', 'showArtefact', 'storeDialog']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -161,16 +161,23 @@ export default {
     },
     profileStories () {
       if (this.currentProfile.type === 'person') {
-        let profileStories = this.stories.filter((story) =>
-          story.mentions.some((mention) =>
-            mention.profile.id === this.currentProfile.id
-          ))
-        return profileStories
+        return this.stories.filter(story => {
+          return story.mentions.some(mention => {
+            return mention.profile.id === this.currentProfile.id
+          })
+        })
+      } else if (this.currentProfile.type === 'community') {
+        return this.stories.filter(story => {
+          return story.recps.some(recp => {
+            return recp === this.currentTribe.id
+          })
+        })
       } else {
-        // TODO - update to only return stories access === community
-        return this.stories
+        console.error('currentProfile.type not supported, should be person or community')
+        return []
       }
     }
+
   },
   watch: {
     showStory (newVal, oldVal) {
@@ -193,21 +200,16 @@ export default {
       this.showArchiveHelper = !this.showArchiveHelper
     },
     async saveStory (input) {
-      if (!input.id) input.recps = [this.whoami.personal.groupId]
-
       var { id, artefacts, mentions, contributors, creators, relatedRecords } = input
 
       try {
         const res = await this.$apollo.mutate(saveStory(input))
 
-        if (res.errors) {
-          console.error('saveStory returned errors')
-          throw res.errors
-        }
+        if (res.errors) throw res.errors
+        if (!id) id = res.data.saveStory
 
-        if (!id) {
-          id = res.data.saveStory
-        }
+        // get the full story
+        var story = await this.getStory(id)
 
         // process the artefacts
         if (artefacts) {
@@ -215,15 +217,17 @@ export default {
 
           if (add && add.length > 0) {
             await Promise.all(add.map(async artefact => {
+              if (!artefact.id) artefact.recps = story.recps
               const artefactId = await this.saveArtefact(artefact)
               if (!artefactId) return
 
               // if the artefact didnt have an id, then it means we create the link
               if (!artefact.id) {
-                const artefactInput = {
+                var artefactInput = {
                   type: TYPES.STORY_ARTEFACT,
                   parent: id,
-                  child: artefactId
+                  child: artefactId,
+                  recps: story.recps
                 }
 
                 await this.saveLink(artefactInput)
@@ -242,22 +246,23 @@ export default {
         }
 
         if (mentions) {
-          await this.processLinks(id, mentions, TYPES.STORY_PROFILE_MENTION)
+          await this.processLinks(mentions, { type: TYPES.STORY_PROFILE_MENTION, parent: id, recps: story.recps })
         }
 
         if (contributors) {
-          await this.processLinks(id, contributors, TYPES.STORY_PROFILE_CONTRIBUTOR)
+          await this.processLinks(contributors, { type: TYPES.STORY_PROFILE_CONTRIBUTOR, parent: id, recps: story.recps })
         }
 
         if (creators) {
-          await this.processLinks(id, creators, TYPES.STORY_PROFILE_CREATOR)
+          await this.processLinks(creators, { type: TYPES.STORY_PROFILE_CREATOR, parent: id, recps: story.recps })
         }
 
         if (relatedRecords) {
-          await this.processLinks(id, relatedRecords, TYPES.STORY_STORY)
+          await this.processLinks(relatedRecords, { type: TYPES.STORY_STORY, recps: story.recps })
         }
 
-        var story = await this.getStory(id)
+        // reload again
+        story = await this.getStory(id)
 
         if (input.id) {
           this.setStory(story)
@@ -272,7 +277,7 @@ export default {
         throw err
       }
     },
-    async processLinks (parentId, object, type) {
+    async processLinks (object, { type, parent, recps }) {
       const { add, remove } = object
 
       if (add && add.length > 0) {
@@ -280,8 +285,9 @@ export default {
           if (linkedItem.id) {
             const linkInput = {
               type,
-              parent: parentId,
-              child: linkedItem.id
+              parent,
+              child: linkedItem.id,
+              recps
             }
 
             await this.saveLink(linkInput)
@@ -300,20 +306,17 @@ export default {
       }
     },
     async saveArtefact (input) {
-      if (!input.id) input.recps = [this.whoami.personal.groupId]
-
       try {
         const res = await this.$apollo.mutate(saveArtefact(input))
 
         if (res.errors) {
-          console.error('error saving artefact', input)
+          console.error('Error saving artefact:', input)
           throw res.errors
         }
 
         return res.data.saveArtefact
       } catch (err) {
-        console.error('something went wrong while saving an arteact')
-        throw err
+        console.error('something went wrong while saving an artefact.', err)
       }
     },
     async getStory (id) {
@@ -335,8 +338,6 @@ export default {
       }
     },
     async saveLink (input) {
-      if (!input.linkId) input.recps = [this.whoami.personal.groupId]
-
       try {
         const res = await this.$apollo.mutate(saveLink(input))
 
