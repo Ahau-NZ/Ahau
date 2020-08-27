@@ -136,35 +136,18 @@ export default {
 
       var records = await findByName($event)
 
-      if (isEmpty(records)) {
-        this.suggestions = []
-        return
-      }
-
       var profiles = {} // flatStore for these suggestions
 
       // filter out all records that arent in the current tribe
-      records = records.filter(record => {
-        return isEqual(record.recps, [this.currentAccess.groupId])
-      })
-
-      records.forEach(record => {
-        profiles[record.id] = record // add this record to the flatStore
-      })
-
-      records = records.map(record => {
-        let obj = {}
-        let profile = record
-        obj = {
-          profile
-        }
-        return obj
-      })
-
-      // hydrate all the left over records
-      records = records.map(record => {
-        return tree.hydrate(record, profiles) // needed to hydrate to fix all dates
-      })
+      records = records
+        .filter(profile => {
+          var equals = isEqual(profile.recps, [this.currentAccess.groupId])
+          if (equals) profiles[profile.id] = profile
+          return equals
+        })
+        .map(profile => {
+          return tree.hydrate({ profile }, profiles)
+        })
 
       // sets suggestions which is passed into the dialogs
       this.suggestions = Object.assign([], records)
