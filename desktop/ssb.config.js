@@ -9,10 +9,8 @@ const customConfig = {
     // this is the "secret handshake" capability.
     // only devices using this exact same code can talk to each other
   },
-  lan: {
-    legacy: false
-    // disables legacy UDP announce (which doesn't respect caps.shs!)
-  },
+  friends: { hops: 2 },
+  lan: { legacy: false }, // disables legacy UDP announce (which doesn't respect caps.shs!)
   serveBlobs: {
     cors: true,
     csp: ''

@@ -8,6 +8,9 @@
         <WhakapapaForm ref="whakapapaForm" :view.sync="formData" :data.sync="csv"/>
         <AvatarGroup v-if="kaitiaki && kaitiaki.length > 0" size="50px" show-labels groupTitle="Kaitiaki" :profiles="kaitiaki" showLabels/>
       </template>
+      <template v-slot:before-actions>
+        <AccessButton :access.sync="access" />
+      </template>
     </Dialog>
   </div>
 </template>
@@ -17,14 +20,15 @@ import Dialog from '@/components/dialog/Dialog.vue'
 import pick from 'lodash.pick'
 import isEmpty from 'lodash.isempty'
 import WhakapapaForm from '@/components/whakapapa/WhakapapaForm.vue'
-import { mapActions, mapGetters } from 'vuex'
+import { mapActions, mapGetters, mapMutations } from 'vuex'
 import AvatarGroup from '@/components/AvatarGroup.vue'
+import AccessButton from '@/components/button/AccessButton.vue'
 
 const EMPTY_WHAKAPAPA = {
   name: '',
   description: '',
   mode: 'descendants',
-  focus: 'self',
+  focus: 'new',
   image: null
 }
 
@@ -62,7 +66,8 @@ export default {
   components: {
     Dialog,
     WhakapapaForm,
-    AvatarGroup
+    AvatarGroup,
+    AccessButton
   },
   props: {
     title: String,
@@ -75,11 +80,20 @@ export default {
     return {
       helpertext: false,
       formData: setDefaultWhakapapa(EMPTY_WHAKAPAPA),
-      csv: ''
+      csv: '',
+      access: null
+    }
+  },
+  mounted () {
+    this.access = this.defaultAccess
+  },
+  watch: {
+    access (value) {
+      this.setCurrentAccess(value)
     }
   },
   computed: {
-    ...mapGetters(['whoami']),
+    ...mapGetters(['whoami', 'defaultAccess']),
     kaitiaki () {
       if (!this.whoami) return null
       return [this.whoami.public.profile]
@@ -92,6 +106,7 @@ export default {
     }
   },
   methods: {
+    ...mapMutations(['setCurrentAccess']),
     ...mapActions(['setLoading']),
     close () {
       this.formData = setDefaultWhakapapa(EMPTY_WHAKAPAPA)
@@ -108,7 +123,8 @@ export default {
       const output = whakapapaSubmission(this.formData)
       const newOutput = {
         ...output,
-        csv
+        csv,
+        access: this.access
       }
       this.$emit('submit', newOutput)
       this.close()

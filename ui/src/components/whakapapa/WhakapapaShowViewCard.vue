@@ -18,16 +18,17 @@
         <!-- Whakapapa Title Icons -->
         <v-card-text class="pa-0 d-flex justify-start align-center" style="width: 100%;">
           <!-- Lock icon -->
-          <v-tooltip bottom>
+          <v-tooltip bottom v-if="access">
             <template v-slot:activator="{ on }">
               <v-btn
                 icon
                 class="py-0 px-3"
               >
-                <v-icon v-on="on" small color="#555">mdi-lock</v-icon>
+                <v-icon v-on="on" small color="#555">mdi-eye</v-icon>
               </v-btn>
             </template>
-            <span>Private record - Only visible by you</span>
+            <span v-if="access.isPersonalGroup">Only you have access to this whakapapa</span>
+            <span v-else>Only {{ access.preferredName }} has access to this whakapapa</span>
           </v-tooltip>
           <!-- Pencil icon -->
           <slot name="edit"></slot>
@@ -53,6 +54,7 @@
         <v-divider></v-divider>
         <v-card-subtitle v-if="description" v-text="description" class="pa-3"/>
         <AvatarGroup :profiles="view.kaitiaki" groupTitle="Kaitiaki" size="50px" showLabels @profile-click="openProfile($event)"/>
+        <AvatarGroup v-if="access" :profiles="[access]" :isView="access.type === 'community'" groupTitle="Access" size="50px" showLabels @profile-click="openProfile($event)"/>
       </div>
     </v-expand-transition>
   </v-card>
@@ -69,7 +71,8 @@ export default {
   props: {
     view: { type: Object, required: true },
     shadow: { type: Boolean, default: true },
-    cropDescription: { type: Boolean, default: false }
+    cropDescription: { type: Boolean, default: false },
+    access: Object
   },
   components: {
     AvatarGroup
@@ -80,7 +83,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['currentProfile']),
+    ...mapGetters(['currentProfile', 'getAccessFromRecps', 'currentAccess']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },

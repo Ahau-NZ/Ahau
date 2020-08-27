@@ -47,11 +47,11 @@ function lanConn (sbot) {
         if (!peer) return
 
         console.log('connected to local peer:', peer.id)
-        // ensure we replicate their first 100 messages so we can see their name / avatar
-        pull(
-          peer.createHistoryStream({ id: peer.id, keys: false, limit: 100 }),
-          sbot.createWriteStream()
-        )
+        // replicate their first 100 messages so we can see their name / avatar
+        // pull(
+        //   peer.createHistoryStream({ id: peer.id, keys: false, limit: 100 }),
+        //   sbot.createWriteStream()
+        // )
       })
     })
   )
