@@ -6,6 +6,7 @@
         <div v-bind="attrs" v-on="on" style="display: flex; position: relative;">
           <img src="@/assets/logo_red.svg" class="logo" />
           <div
+            v-if="notificationsCount > 0"
             :style="mobile ? 'position:absolute; bottom:-10px;right:8px':'position:absolute; bottom:-10px;right:30px'"
           >
             <v-badge

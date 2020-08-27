@@ -6,7 +6,12 @@
       </v-list-item>
     </v-list>
     <v-divider></v-divider>
-    <v-list height="30px" class="py-0" style="background-color:#a9a9a950">
+    <v-list
+      height="30px"
+      class="py-0"
+      style="background-color:#a9a9a950"
+      v-if="notificationsToJoin.length > 0"
+    >
       <p class="pt-1 pl-8 my-0 subtitle-2 black--text">New</p>
     </v-list>
     <v-divider></v-divider>
@@ -33,7 +38,12 @@
         </div>
       </div>
     </v-list>
-    <v-list height="30px" class="py-0" style="background-color:#a9a9a950">
+    <v-list
+      height="30px"
+      class="py-0"
+      style="background-color:#a9a9a950"
+      v-if="notificationsAccepted.length > 0"
+    >
       <p class="pt-1 pl-8 my-0 subtitle-2 black--text">Complete</p>
     </v-list>
     <v-divider></v-divider>
