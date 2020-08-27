@@ -352,5 +352,4 @@ export default {
   opacity: 0 !important;
 }
 
-
 </style>

@@ -104,14 +104,14 @@
               <!-- <v-btn color="grey" outlined tile>View people</v-btn> -->
             </v-col>
             <v-col cols="6" class="stat-column">
-              <h2 class="h2 text-uppercase pb-12">Communities</h2>
-              <p v-if="communities.length === 0">There's are no communities on your network</p>
+              <h2 class="h2 text-uppercase pb-12">Tribes</h2>
+              <p v-if="tribes.length === 0">There's are no tribes on your network</p>
               <v-row class="pb-2">
-                <v-col v-for="(community, key) in communities" :key="key" cols="1">
+                <v-col v-for="(tribes, key) in tribes" :key="key" cols="1">
                   <Avatar
                     size="60px"
-                    :alt="community.public[0].preferredName"
-                    :image="community.public[0].avatarImage"
+                    :alt="tribes.public[0].preferredName"
+                    :image="tribes.public[0].avatarImage"
                   />
                 </v-col>
               </v-row>
@@ -154,7 +154,7 @@ export default {
     errorMsg: null,
     checkingPort: null,
     invitedPeople: [],
-    communities: [],
+    tribes: [],
     profile: {
       feedId: '',
       preferredName: '',
@@ -210,10 +210,7 @@ export default {
           portForwarding
         }
       }`,
-      pollInterval: 10 * SECONDS,
-      update (data) {
-        return data.network
-      }
+      pollInterval: 10 * SECONDS
     },
     portForwarding: {
       query: gql`query {
@@ -256,10 +253,7 @@ export default {
           fs
         }
       }`,
-      pollInterval: 10 * SECONDS,
-      update (data) {
-        return data.diskUsage
-      }
+      pollInterval: 10 * SECONDS
     },
     invitedPeople: {
       query: gql`query {
@@ -272,12 +266,9 @@ export default {
         }
       }
       `,
-      pollInterval: 5 * SECONDS,
-      update (data) {
-        return data.invitedPeople || []
-      }
+      pollInterval: 5 * SECONDS
     },
-    communities: {
+    tribes: {
       query: gql`query {
         tribes {
           public {
@@ -288,10 +279,7 @@ export default {
           }
         }
       }`,
-      pollInterval: 10 * SECONDS,
-      update (data) {
-        return data.tribes
-      }
+      pollInterval: 10 * SECONDS
     }
   },
   methods: {
@@ -321,7 +309,8 @@ export default {
         this.generatedInvite = res.data.createInvite
         this.copyText = 'Copy'
       } catch (err) {
-        this.generateError = err
+        console.error(err)
+        this.generateError = 'something went wrong while trying to generate an invite code'
         throw err
       }
     },
@@ -348,21 +337,6 @@ export default {
         this.errorMsg = 'Port not open'
       }
       this.checkingPort = false
-    },
-    async getDiskUsage () {
-      try {
-        const res = await this.$apollo.query({
-          mutation: gql`
-              mutation {
-                createInvite
-              }
-              `
-        })
-        this.generatedInvite = res.data.createInvite
-        this.copyText = 'Copy'
-      } catch (err) {
-        throw err
-      }
     },
     async copyCode () {
       navigator.clipboard.writeText(this.generatedInvite)

@@ -18,7 +18,7 @@
         </div>
       </template>
       <v-card v-if="hasNotification">
-        <NotificationList 
+        <NotificationList
           @expand="expand = !expand"
           :notificationsToJoin="notificationsToJoin"
           :notificationsAccepted="notificationsAccepted"
@@ -32,26 +32,36 @@
       <div
         :style="mobile ? 'position:absolute; bottom:-10px;right:8px':'position:absolute; bottom:-10px;right:30px'"
       >
-        <v-badge v-if="hasNotification" color="#B12526" :content="notificationsCount" style="cursor: pointer;"></v-badge>
+        <v-badge
+          v-if="hasNotification"
+          color="#B12526"
+          :content="notificationsCount"
+          style="cursor: pointer;"
+        ></v-badge>
       </div>
     </div>
 
     <v-expand-transition v-if="hasNotification">
-      <v-card tile light v-show="expand" style="position: absolute;left: 0px;top: 54px; width:100%" elevation="12" v-scroll="onScroll">
-        <NotificationList 
+      <v-card
+        tile
+        light
+        v-show="expand"
+        style="position: absolute;left: 0px;top: 54px; width:100%"
+        elevation="12"
+        v-scroll="onScroll"
+      >
+        <NotificationList
           @expand="expand = !expand"
           :notificationsToJoin="notificationsToJoin"
           :notificationsAccepted="notificationsAccepted"
         />
       </v-card>
     </v-expand-transition>
-  </div> 
+  </div>
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
-import { personComplete } from '@/mocks/person-profile'
-import Avatar from '@/components/Avatar'
+import { mapGetters } from 'vuex'
 import NotificationList from '@/components/menu/NotificationList.vue'
 
 export default {
@@ -65,8 +75,8 @@ export default {
       offset: 0
     }
   },
-    computed: {
-    ...mapGetters(['whoami','notifications']),
+  computed: {
+    ...mapGetters(['whoami', 'notifications']),
     myNotifications () {
       const reversedNotifications = this.notifications.slice(0).reverse()
       return reversedNotifications.map(i => ({ ...i, mine: i.from.id === this.whoami.public.profile.id }))
@@ -84,14 +94,14 @@ export default {
         })
     },
     notificationsCount () {
-      return this.notificationsToJoin.length 
+      return this.notificationsToJoin.length
     },
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
     hasNotification () {
       return this.notifications.length > 0
-    },
+    }
   },
   watch: {
     offset (newVal, oldVal) {

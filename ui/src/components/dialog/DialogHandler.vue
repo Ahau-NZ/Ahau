@@ -128,7 +128,6 @@ import isEqual from 'lodash.isequal'
 import isEmpty from 'lodash.isempty'
 import * as d3 from 'd3'
 import { mapGetters, mapActions } from 'vuex'
-import gql from 'graphql-tag'
 
 import NewNodeDialog from '@/components/dialog/profile/NewNodeDialog.vue'
 import NewCommunityDialog from '@/components/dialog/community/NewCommunityDialog.vue'
@@ -421,7 +420,6 @@ export default {
       await this.setWhoami()
     },
     async addPerson ($event) {
-      console.log('addPerson: ', $event)
       try {
         var { id } = $event
 

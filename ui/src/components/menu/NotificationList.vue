@@ -2,8 +2,8 @@
   <div>
     <v-list class="py-0">
       <v-list-item>
-          <p class="pt-1 pl-5 my-0 headliner black--text">Notifications</p>
-        </v-list-item>
+        <p class="pt-1 pl-5 my-0 headliner black--text">Notifications</p>
+      </v-list-item>
     </v-list>
     <v-divider></v-divider>
     <v-list height="30px" class="py-0" style="background-color:#a9a9a950">
@@ -25,7 +25,7 @@
             <v-list-item-content class="pl-5">
               <v-list-item-title class="bold">{{notification.from.preferredName}}</v-list-item-title>
               <v-list-item-subtitle
-                class="text-caption bold "
+                class="text-caption bold"
               >Has requested to join {{notification.message.group.preferredName}}</v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
@@ -51,9 +51,9 @@
             />
             <v-list-item-content class="pl-5">
               <v-list-item-title>{{notification.message.groupAdmins[0].preferredName}}</v-list-item-title>
-              <v-list-item-subtitle class="text-caption ahauRed">
-                Has approved your request to join {{notification.message.group.preferredName}}
-              </v-list-item-subtitle>
+              <v-list-item-subtitle
+                class="text-caption ahauRed"
+              >Has approved your request to join {{notification.message.group.preferredName}}</v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
           <v-divider></v-divider>
@@ -69,9 +69,9 @@
             />
             <v-list-item-content class="pl-5">
               <v-list-item-title>{{notification.from.preferredName}}</v-list-item-title>
-              <v-list-item-subtitle class="text-caption ahauRed">
-                Has joined {{notification.message.group.preferredName}}
-              </v-list-item-subtitle>
+              <v-list-item-subtitle
+                class="text-caption ahauRed"
+              >Has joined {{notification.message.group.preferredName}}</v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
           <v-divider></v-divider>
@@ -82,7 +82,7 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapActions } from 'vuex'
 import Avatar from '@/components/Avatar'
 export default {
   components: {
@@ -103,7 +103,7 @@ export default {
       console.log('open response')
       this.setCurrentNotification(notification)
       this.setDialog({ active: 'new-registration', type: 'response' })
-    },
+    }
   }
 }
 </script>
