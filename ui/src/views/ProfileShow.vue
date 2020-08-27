@@ -21,7 +21,6 @@
     <v-row>
       <!-- SideNav -->
       <v-col  v-if="!hideNav" cols="12" xs="12" sm="12" md="2" lg="20p" :class="!mobile ? 'pr-0' : 'px-5 py-0'">
-        <!-- REMOVE v-if TO NAV COMMUNITY -->
         <SideNavMenu :profile="currentProfile" />
       </v-col>
       <!-- Content -->
