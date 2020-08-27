@@ -17,85 +17,12 @@
           </div>
         </div>
       </template>
-      <v-card v-if="hasNotification" elevation="24">
-        <v-list class="py-0">
-          <v-list-item>
-            <p class="pt-1 pl-5 my-0 headliner black--text">Notifications</p>
-          </v-list-item>
-        </v-list>
-        <v-divider></v-divider>
-        <v-list height="30px" class="py-0" style="background-color:#a9a9a950">
-          <p class="pt-1 pl-8 my-0 subtitle-2 black--text">New</p>
-        </v-list>
-        <v-divider></v-divider>
-        <v-list class="py-0">
-          <div v-for="(notification, index) in notificationsToJoin" :key="index">
-            <!-- Registration Notification -->
-            <div>
-              <v-list-item class="py-1" @click="openReview(notification)">
-                <Avatar
-                  size="50px"
-                  :image="notification.from.avatarImage"
-                  :alt="notification.from.preferredName"
-                  :gender="notification.from.gender"
-                  :bornAt="notification.from.bornAt"
-                />
-                <v-list-item-content class="pl-5">
-                  <v-list-item-title class="bold">{{notification.from.preferredName}}</v-list-item-title>
-                  <v-list-item-subtitle
-                    class="text-caption bold "
-                  >Has requested to join {{notification.message.group.preferredName}}</v-list-item-subtitle>
-                </v-list-item-content>
-              </v-list-item>
-              <v-divider></v-divider>
-            </div>
-          </div>
-        </v-list>
-        <v-list height="30px" class="py-0" style="background-color:#a9a9a950">
-          <p class="pt-1 pl-8 my-0 subtitle-2 black--text">Complete</p>
-        </v-list>
-        <v-divider></v-divider>
-        <v-list class="py-0">
-          <div v-for="(notification, index) in notificationsAccepted" :key="index">
-            <!-- Response notification -->
-            <div v-if="notification.mine">
-              <v-list-item class="py-1" @click="openResponse(notification)">
-                <Avatar
-                  size="50px"
-                  :image="notification.message.groupAdmins[0].avatarImage"
-                  :alt="notification.message.groupAdmins[0].preferredName"
-                  :gender="notification.message.groupAdmins[0].gender"
-                  :bornAt="notification.message.groupAdmins[0].bornAt"
-                />
-                <v-list-item-content class="pl-5">
-                  <v-list-item-title>{{notification.message.groupAdmins[0].preferredName}}</v-list-item-title>
-                  <v-list-item-subtitle class="text-caption ahauRed">
-                    Has approved your request to join {{notification.message.group.preferredName}}
-                  </v-list-item-subtitle>
-                </v-list-item-content>
-              </v-list-item>
-              <v-divider></v-divider>
-            </div>
-            <div v-else>
-              <v-list-item class="py-1" @click="openResponse(notification)">
-                <Avatar
-                  size="50px"
-                  :image="notification.from.avatarImage"
-                  :alt="notification.from.preferredName"
-                  :gender="notification.from.gender"
-                  :bornAt="notification.from.bornAt"
-                />
-                <v-list-item-content class="pl-5">
-                  <v-list-item-title>{{notification.from.preferredName}}</v-list-item-title>
-                  <v-list-item-subtitle class="text-caption ahauRed">
-                    Has joined {{notification.message.group.preferredName}}
-                  </v-list-item-subtitle>
-                </v-list-item-content>
-              </v-list-item>
-              <v-divider></v-divider>
-            </div>
-          </div>
-        </v-list>
+      <v-card v-if="hasNotification">
+        <NotificationList 
+          @expand="expand = !expand"
+          :notificationsToJoin="notificationsToJoin"
+          :notificationsAccepted="notificationsAccepted"
+        />
       </v-card>
     </v-menu>
 
@@ -111,95 +38,35 @@
 
     <v-expand-transition v-if="hasNotification">
       <v-card tile light v-show="expand" style="position: absolute;left: 0px;top: 54px; width:100%" elevation="12" v-scroll="onScroll">
-        <v-list class="py-0">
-          <v-list-item>
-            <p class="pt-1 pl-5 my-0 headliner black--text">Notifications</p>
-            <v-list-item-action style>
-              <v-btn @click="expand = !expand" icon x-small style="position:relative; left:215px; top:2px;">
-                <v-icon>mdi-close</v-icon>
-              </v-btn>
-            </v-list-item-action>
-          </v-list-item>
-        </v-list>
-        <v-divider></v-divider>
-        <v-list height="30px" class="py-0" style="background-color:#a9a9a950">
-          <p class="pt-1 pl-8 my-0 subtitle-2 black--text">New</p>
-        </v-list>
-        <v-divider></v-divider>
-        <v-list class="py-0">
-          <div v-for="(notification, index) in notificationsToJoin" :key="index">
-            <!-- Registration Notification -->
-            <div v-if="notification.type === 'registration'">
-              <v-list-item class="py-1" @click="openReview(notification)">
-                <Avatar
-                  size="50px"
-                  :image="notification.from.avatarImage"
-                  :alt="notification.from.preferredName"
-                  :gender="notification.from.gender"
-                  :bornAt="notification.from.bornAt"
-                />
-                <v-list-item-content class="pl-5">
-                  <v-list-item-title class="bold">{{notification.from.preferredName}}</v-list-item-title>
-                  <v-list-item-subtitle
-                    class="text-caption bold "
-                  >Has requested to join {{notification.message.group.preferredName}}</v-list-item-subtitle>
-                </v-list-item-content>
-              </v-list-item>
-              <v-divider></v-divider>
-            </div>
-          </div>
-        </v-list>
-        <v-list height="30px" class="py-0" style="background-color:#a9a9a950">
-          <p class="pt-1 pl-8 my-0 subtitle-2 black--text">Earlier</p>
-        </v-list>
-        <v-divider></v-divider>
-        <v-list class="py-0 mb-6">
-          <div v-for="(notification, index) in notificationsAccepted" :key="index">
-
-            <!-- Response notification -->
-            <div v-if="notification.type === 'response' && notification.accepted === true">
-              <v-list-item class="py-1" @click="openResponse(notification)">
-                <Avatar
-                  size="50px"
-                  :image="notification.from.avatarImage"
-                  :alt="notification.from.preferredName"
-                  :gender="notification.from.gender"
-                  :bornAt="notification.from.bornAt"
-                />
-                <v-list-item-content class="pl-5">
-                  <v-list-item-title>{{notification.from.preferredName}}</v-list-item-title>
-                  <v-list-item-subtitle class="text-caption ahauRed">
-                    Has joined {{notification.message.group.preferredName}}
-                  </v-list-item-subtitle>
-                </v-list-item-content>
-              </v-list-item>
-              <v-divider></v-divider>
-            </div>
-          </div>
-        </v-list>
+        <NotificationList 
+          @expand="expand = !expand"
+          :notificationsToJoin="notificationsToJoin"
+          :notificationsAccepted="notificationsAccepted"
+        />
       </v-card>
     </v-expand-transition>
-  </div>
+  </div> 
 </template>
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import { personComplete } from '@/mocks/person-profile'
 import Avatar from '@/components/Avatar'
+import NotificationList from '@/components/menu/NotificationList.vue'
+
 export default {
   components: {
-    Avatar
+    NotificationList
   },
   data () {
     return {
       menu: false,
       expand: false,
-      completePerson: personComplete,
       offset: 0
     }
   },
-  computed: {
-    ...mapGetters(['whoami', 'currentProfile', 'notifications']),
+    computed: {
+    ...mapGetters(['whoami','notifications']),
     myNotifications () {
       const reversedNotifications = this.notifications.slice(0).reverse()
       return reversedNotifications.map(i => ({ ...i, mine: i.from.id === this.whoami.public.profile.id }))
@@ -217,18 +84,14 @@ export default {
         })
     },
     notificationsCount () {
-      return this.notificationsToJoin.length
+      return this.notificationsToJoin.length 
     },
-    // notificationsCount () {
-    //   var newNotifications = this.notifications.filter(notification => notification.message.outcome === "not responded")
-    //   return this.newNotifications.length
-    // },
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
     hasNotification () {
       return this.notifications.length > 0
-    }
+    },
   },
   watch: {
     offset (newVal, oldVal) {
@@ -236,21 +99,11 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setDialog', 'setCurrentNotification']),
-    openReview (notification) {
-      console.log('open review')
-      this.setCurrentNotification(notification)
-      this.setDialog({ active: 'new-registration', type: 'review' })
-    },
-    openResponse (notification) {
-      console.log('open response')
-      this.setCurrentNotification(notification)
-      this.setDialog({ active: 'new-registration', type: 'response' })
-    },
     onScroll () {
       if (this.mobile) this.offset = window.pageYOffset
     }
   }
+
 }
 </script>
 
