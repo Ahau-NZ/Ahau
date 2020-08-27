@@ -94,7 +94,7 @@
           </v-row>
           <v-row class="pt-12">
             <v-col cols="6" class="stat-column">
-              <h2 class="h2 text-uppercase pb-12">People</h2>
+              <h2 class="h2 text-uppercase pb-8">People</h2>
               <p v-if="invitedPeople.length === 0">There's no one on your network</p>
               <v-row class="pb-2 pl-4">
                 <v-col v-for="(people, key) in invitedPeople" :key="key" cols="2">
@@ -109,7 +109,7 @@
               <!-- <v-btn color="grey" outlined tile>View people</v-btn> -->
             </v-col>
             <v-col cols="6" class="stat-column">
-              <h2 class="h2 text-uppercase pb-12">Tribes</h2>
+              <h2 class="h2 text-uppercase pb-8">Tribes</h2>
               <p v-if="tribes.length === 0">There's are no tribes on your network</p>
               <v-row class="pb-2 pl-4">
                 <v-col v-for="(tribes, key) in tribes" :key="key" cols="2">
@@ -174,8 +174,8 @@ export default {
       publicIpv4: null
     },
     diskUsage: [],
-    cpuLoad: [],
-    memoryLoad: []
+    cpuLoad: [ 0, 0 ],
+    memoryLoad: [ 0, 0 ]
   }),
   computed: {
     latency () {
@@ -234,7 +234,7 @@ export default {
       }`,
       pollInterval: 10 * SECONDS,
       update (data) {
-        if (this.cpuLoad.length >= 360) {
+        if (this.cpuLoad.length >= 360 || this.cpuLoad[this.cpuLoad.length - 1] === 0) {
           this.cpuLoad.pop()
         }
         return [ ...this.cpuLoad, data.cpuLoad ]
@@ -246,7 +246,7 @@ export default {
       }`,
       pollInterval: 10 * SECONDS,
       update (data) {
-        if (this.memoryLoad.length >= 360) {
+        if (this.memoryLoad.length >= 360 || this.memoryLoad[this.memoryLoad.length - 1] === 0) {
           this.memoryLoad.pop()
         }
         return [ ...this.memoryLoad, data.memoryLoad ]
