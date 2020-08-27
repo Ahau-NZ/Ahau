@@ -1,9 +1,9 @@
 <template>
   <v-col :cols="mobile ? smCols : '12'" :sm="smCols" :md="mdCols">
     <v-row>
-      <v-col v-if="title" class=" ma-0 profile-label"><small>{{ title }}</small></v-col>
+      <v-col v-if="title" class=" ma-0 profile-label overline pt-0"><small>{{ title }}</small></v-col>
     </v-row>
-    <v-row v-if="value" class="justify-center">
+    <v-row v-if="value" class="justify-center px-2">
       <p class="ma-0 profile-info">{{ value }}</p>
     </v-row>
     <v-row v-if="subValue" class="justify-center">

@@ -5,7 +5,7 @@
     large
     :color="notificationSent ? 'grey' : '#b12526'"
     height="50px"
-    :class="[{ btn: true }, { mobileBtn: mobile }, { tabletBtn: tablet }, { disabled: notificationSent }]"
+    :class="[{ btn: !mobile && !tablet }, { mobileBtn: mobile }, { tabletBtn: tablet }, { disabled: notificationSent }]"
     @click="setDialog('new-registration')"
   >
     <span>{{text}}</span>
@@ -23,7 +23,7 @@ export default {
   },
   computed: {
     text () {
-      return this.notificationSent ? 'Application sent' : 'Join community'
+      return this.notificationSent ? 'Request sent' : 'Join community'
     },
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
@@ -42,48 +42,28 @@ export default {
   pointer-events: none;
   background-color: rgb(12, 8, 8);
 }
+
+
 .btn {
-  margin-top: 43px;
-  margin-left: 20px;
-  background-color: white;
-  border-radius: 10px;
-  font-size: 1rem !important;
-  max-width: 250px;
-  width: 17vw;
-  border-width: 1px;
+    margin-top:37px;
+    margin-left:20px;
+    background-color: white;
+    border-radius: 10px;
+    font-size: 1rem !important;
+    max-width: 250px;
+    width:17vw;
+    border-width: 1px;
 }
 
-    // .btn {
-    //     margin-top:37px;
-    //     margin-left:20px;
-    //     background-color: white;
-    //     border-radius: 10px;
-    //     font-size: 1rem !important;
-    //     max-width: 250px;
-    //     width:17vw;
-    //     border-width: 1px;
-    // }
-
-    // .tabletBtn {
-    //     margin-top:34px;
-    //     margin-left:10px;
-    //     background-color: white;
-    //     border-radius: 10px;
-    //     font-size: 0.8rem !important;
-    //     max-width: 250px;
-    //     width:14vw;
-    //     border-width: 1px;
-    // }
-    
 .tabletBtn {
-  margin-top: 53px;
-  margin-left: 10px;
-  background-color: white;
-  border-radius: 10px;
-  font-size: 0.8rem !important;
-  max-width: 250px;
-  width: 14vw;
-  border-width: 1px;
+    margin-top:34px;
+    margin-left:10px;
+    background-color: white;
+    border-radius: 10px;
+    font-size: 0.8rem !important;
+    max-width: 250px;
+    width:14vw;
+    border-width: 1px;
 }
 
 .mobileBtn {
