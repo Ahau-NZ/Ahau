@@ -20,6 +20,12 @@
         height="60px"
         max-height="60px"
       >
+        <template v-slot:img="{ props }">
+          <v-img
+            v-bind="props"
+            style="opacity:40%; left:100px"
+          ></v-img>
+      </template>
         <v-btn
           v-if="mobile"
           icon
@@ -30,7 +36,7 @@
         <v-spacer v-if="mobile"/>
 
         <div class="dialog-title text-uppercase">
-          <span style="color: #BA041B;">{{ splitTitle.maori }}</span>
+          <span style="color: #BA041B; font-weight:500">{{ splitTitle.maori }}</span>
           <span>{{ splitTitle.english }}</span>
         </div>
 

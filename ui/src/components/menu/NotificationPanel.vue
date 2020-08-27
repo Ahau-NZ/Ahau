@@ -29,9 +29,9 @@
         </v-list>
         <v-divider></v-divider>
         <v-list class="py-0">
-          <div v-for="(notification, index) in notificationsToShow" :key="index">
+          <div v-for="(notification, index) in notificationsToJoin" :key="index">
             <!-- Registration Notification -->
-            <div v-if="notification.type === 'registration'">
+            <div>
               <v-list-item class="py-1" @click="openReview(notification)">
                 <Avatar
                   size="50px"
@@ -52,14 +52,31 @@
           </div>
         </v-list>
         <v-list height="30px" class="py-0" style="background-color:#a9a9a950">
-          <p class="pt-1 pl-8 my-0 subtitle-2 black--text">Earlier</p>
+          <p class="pt-1 pl-8 my-0 subtitle-2 black--text">Complete</p>
         </v-list>
         <v-divider></v-divider>
         <v-list class="py-0">
-          <div v-for="(notification, index) in notificationsToShow" :key="index">
-
+          <div v-for="(notification, index) in notificationsAccepted" :key="index">
             <!-- Response notification -->
-            <div v-if="notification.type === 'response' && notification.accepted === true">
+            <div v-if="notification.mine">
+              <v-list-item class="py-1" @click="openResponse(notification)">
+                <Avatar
+                  size="50px"
+                  :image="notification.message.groupAdmins[0].avatarImage"
+                  :alt="notification.message.groupAdmins[0].preferredName"
+                  :gender="notification.message.groupAdmins[0].gender"
+                  :bornAt="notification.message.groupAdmins[0].bornAt"
+                />
+                <v-list-item-content class="pl-5">
+                  <v-list-item-title>{{notification.message.groupAdmins[0].preferredName}}</v-list-item-title>
+                  <v-list-item-subtitle class="text-caption ahauRed">
+                    Has approved your request to join {{notification.message.group.preferredName}}
+                  </v-list-item-subtitle>
+                </v-list-item-content>
+              </v-list-item>
+              <v-divider></v-divider>
+            </div>
+            <div v-else>
               <v-list-item class="py-1" @click="openResponse(notification)">
                 <Avatar
                   size="50px"
@@ -76,7 +93,6 @@
                 </v-list-item-content>
               </v-list-item>
               <v-divider></v-divider>
-              <v-spacer class="mb-6"></v-spacer>
             </div>
           </div>
         </v-list>
@@ -111,7 +127,7 @@
         </v-list>
         <v-divider></v-divider>
         <v-list class="py-0">
-          <div v-for="(notification, index) in notificationsToShow" :key="index">
+          <div v-for="(notification, index) in notificationsToJoin" :key="index">
             <!-- Registration Notification -->
             <div v-if="notification.type === 'registration'">
               <v-list-item class="py-1" @click="openReview(notification)">
@@ -138,7 +154,7 @@
         </v-list>
         <v-divider></v-divider>
         <v-list class="py-0 mb-6">
-          <div v-for="(notification, index) in notificationsToShow" :key="index">
+          <div v-for="(notification, index) in notificationsAccepted" :key="index">
 
             <!-- Response notification -->
             <div v-if="notification.type === 'response' && notification.accepted === true">
@@ -183,37 +199,38 @@ export default {
   },
   computed: {
     ...mapGetters(['whoami', 'currentProfile', 'notifications']),
-    notificationsToShow () {
+    myNotifications () {
       const reversedNotifications = this.notifications.slice(0).reverse()
       return reversedNotifications.map(i => ({ ...i, mine: i.from.id === this.whoami.public.profile.id }))
     },
     notificationsToJoin () {
-      return this.notifications
+      return this.myNotifications
         .filter(i => {
           return !i.accepted && !i.mine
         })
     },
     notificationsAccepted () {
-      return this.notifications
+      return this.myNotifications
         .filter(i => {
-          return i.accepted && i.mine
+          return i.accepted
         })
     },
     notificationsCount () {
-      return this.notifications.length
+      return this.notificationsToJoin.length
     },
+    // notificationsCount () {
+    //   var newNotifications = this.notifications.filter(notification => notification.message.outcome === "not responded")
+    //   return this.newNotifications.length
+    // },
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
     hasNotification () {
-      return this.notificationsCount > 0
+      return this.notifications.length > 0
     }
   },
   methods: {
     ...mapActions(['setDialog', 'setCurrentNotification']),
-    onClickOutside () {
-      return this.expand = !this.expand
-    },
     openReview (notification) {
       console.log('open review')
       this.setCurrentNotification(notification)
