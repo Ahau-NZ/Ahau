@@ -97,8 +97,13 @@
               <h2 class="h2 text-uppercase pb-12">People</h2>
               <p v-if="invitedPeople.length === 0">There's no one on your network</p>
               <v-row class="pb-2 pl-4">
-                <v-col v-for="(people, key) in invitedPeople" :key="key" cols="1">
-                  <Avatar size="60px" :alt="people.preferredName" :image="people.avatarImage" />
+                <v-col v-for="(people, key) in invitedPeople" :key="key" cols="2">
+                  <Avatar
+                    size="60px"
+                    :alt="people.preferredName"
+                    :image="people.avatarImage"
+                    showOnHover
+                  />
                 </v-col>
               </v-row>
               <!-- <v-btn color="grey" outlined tile>View people</v-btn> -->
@@ -107,11 +112,12 @@
               <h2 class="h2 text-uppercase pb-12">Tribes</h2>
               <p v-if="tribes.length === 0">There's are no tribes on your network</p>
               <v-row class="pb-2 pl-4">
-                <v-col v-for="(tribes, key) in tribes" :key="key" cols="1">
+                <v-col v-for="(tribes, key) in tribes" :key="key" cols="2">
                   <Avatar
                     size="60px"
                     :alt="tribes.public[0].preferredName"
                     :image="tribes.public[0].avatarImage"
+                    showOnHover
                   />
                 </v-col>
               </v-row>

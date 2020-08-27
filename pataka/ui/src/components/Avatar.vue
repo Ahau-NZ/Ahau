@@ -2,19 +2,31 @@
   <div v-if="clickable" @click="$emit('click')" style="cursor: pointer;">
     <v-col>
       <v-row justify="center">
-        <v-avatar :size="size" :tile="isView">
+        <v-avatar
+          :size="size"
+          :tile="isView"
+          @mouseover="hovered = true"
+          @mouseleave="hovered = false"
+        >
           <v-img v-if="image && image.uri" :src="image.uri" :alt="alt" />
           <v-img v-else :src="getImage" :style="customStyle" />
         </v-avatar>
       </v-row>
       <v-row v-if="showLabel" justify="center">{{ alt }}</v-row>
     </v-col>
+    <div
+      v-if="showOnHover"
+      :style="{ left: `${size / 4}px` }"
+      :class="['hoverName', { show: hovered }]"
+    >{{this.alt}}</div>
   </div>
 
   <div v-else>
     <v-col>
       <v-row justify="center">
         <v-avatar
+          @mouseover="hovered = true"
+          @mouseleave="hovered = false"
           :size="size"
           :tile="isView"
           class="avatar-container"
@@ -29,6 +41,11 @@
       </v-row>
       <v-row v-if="showLabel" justify="center">{{ alt }}</v-row>
     </v-col>
+    <div
+      v-if="showOnHover"
+      :style="{ left: `${size / 4}px` }"
+      :class="['hoverName', { show: hovered }]"
+    >{{this.alt}}</div>
   </div>
 </template>
 
@@ -39,6 +56,7 @@ import ImagePicker from '@/components/ImagePicker.vue'
 export default {
   name: 'Avatar',
   props: {
+    showOnHover: Boolean,
     image: Object,
     alt: String,
     size: { type: String, default: '25vh' },
@@ -48,6 +66,11 @@ export default {
     isEditing: { type: Boolean, default: false },
     offline: { type: Boolean, default: false }
 
+  },
+  data: function () {
+    return {
+      hovered: false
+    }
   },
   computed: {
     getImage () {
@@ -79,6 +102,21 @@ export default {
   background: white;
 }
 
+.hoverName {
+  position: relative;
+  padding: 2px 5px;
+  width: 200px;
+  text-align: left;
+  top: -10px;
+  opacity: 0;
+  z-index: 99;
+  pointer-events: none;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.show {
+  opacity: 1;
+}
 .isEditing {
   opacity: 0.2;
 }
