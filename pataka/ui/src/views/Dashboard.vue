@@ -242,6 +242,8 @@ export default {
       update (data) {
         if (this.cpuLoad.length >= 360 || this.cpuLoad[this.cpuLoad.length - 1] === 0) {
           this.cpuLoad.pop()
+        } else if (this.cpuLoad[0] === 0) {
+          this.cpuLoad.shift()
         }
         return [ ...this.cpuLoad, data.cpuLoad ]
       }
@@ -252,8 +254,10 @@ export default {
       }`,
       pollInterval: 10 * SECONDS,
       update (data) {
-        if (this.memoryLoad.length >= 360 || this.memoryLoad[this.memoryLoad.length - 1] === 0) {
+        if (this.memoryLoad.length >= 360) {
           this.memoryLoad.pop()
+        } else if (this.memoryLoad[0] === 0) {
+          this.memoryLoad.shift()
         }
         return [ ...this.memoryLoad, data.memoryLoad ]
       }
