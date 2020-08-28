@@ -52,9 +52,7 @@ module.exports = {
 
     // sodium-native: only include needed prebuilds
     '!node_modules/sodium-native/prebuilds/*',
-    // 'node_modules/sodium-native/prebuilds/${platform}-${arch}/electron.*.node', // eslint-disable-line
-    'node_modules/sodium-native/prebuilds/${platform}-${arch}/electron.abi69.node', // eslint-disable-line
-    'node_modules/sodium-native/prebuilds/${platform}-${arch}/libsodium.*', // eslint-disable-line
+    'node_modules/sodium-native/prebuilds/${platform}-${arch}/*', // eslint-disable-line
 
     // README / tests: more aggressive exclusion than default
     '!**/node_modules/**/{CHANGELOG.md,README*,README,readme.md,readme}',
