@@ -34,7 +34,7 @@ const actions = {
       fetchPolicy: 'no-cache'
     })
     const formatedNotification = []
-    res.data.listGroupApplications.map(a => {
+    res.data.listGroupApplications.forEach(a => {
       if (a.group.public.length > 0) {
         var noti = {
           type: a.comments.length < 2 ? 'registration' : 'response',
@@ -51,21 +51,7 @@ const actions = {
         }
         formatedNotification.push(noti)
       }
-    }
-    )
-    // const formatedNotification = res.data.listGroupApplications.map(a => ({
-    //   type: a.comments.length < 2 ? 'registration' : 'response',
-    //   message: {
-    //     outcome: a.accepted ? 'accepted' : 'not responded',
-    //     group: a.group.public[0],
-    //     groupAdmins: a.group.public[0].tiaki,
-    //     profile: a.applicant,
-    //     comments: a.comments.map(i => i.text)
-    //   },
-    //   applicationId: a.id,
-    //   from: a.applicant,
-    //   accepted: a.accepted
-    // }))
+    })
     if (res.errors) {
       console.error('error fetching all notifications', res)
       commit('updateNotifications', [])

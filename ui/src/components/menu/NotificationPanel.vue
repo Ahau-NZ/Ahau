@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- DESKTOP NOTIFICATIONS -->
-    <v-menu v-if="!mobile" absolute v-model="menu" :close-on-content-click="true" light>
+    <v-menu v-if="!mobile" absolute v-model="menu" :close-on-content-click="true" light allow-overflow>
       <template v-slot:activator="{ on, attrs }">
         <div v-bind="attrs" v-on="on" style="display: flex; position: relative;">
           <img src="@/assets/logo_red.svg" class="logo" />
@@ -18,7 +18,7 @@
           </div>
         </div>
       </template>
-      <v-card v-if="hasNotification">
+      <v-card v-if="hasNotification" style="max-height:500px;">
         <NotificationList
           @expand="expand = !expand"
           :notificationsToJoin="notificationsToJoin"
@@ -47,7 +47,7 @@
         tile
         light
         v-show="expand"
-        style="position: absolute;left: 0px;top: 54px; width:100%"
+        style="position: absolute;left: 0px;top: 54px; width:100%; max-height:calc(100vh + 24px);overflow-y:scroll;"
         elevation="12"
         v-scroll="onScroll"
       >
