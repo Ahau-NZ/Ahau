@@ -10,7 +10,7 @@
             :style="mobile ? 'position:absolute; bottom:-10px;right:8px':'position:absolute; bottom:-10px;right:30px'"
           >
             <v-badge
-              v-if="hasNotification"
+              v-if="showBadge"
               color="#B12526"
               :content="notificationsCount"
               style="cursor: pointer;"
@@ -34,7 +34,7 @@
         :style="mobile ? 'position:absolute; bottom:-10px;right:8px':'position:absolute; bottom:-10px;right:30px'"
       >
         <v-badge
-          v-if="hasNotification"
+          v-if="showBadge"
           color="#B12526"
           :content="notificationsCount"
           style="cursor: pointer;"
@@ -101,7 +101,10 @@ export default {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
     hasNotification () {
-      return this.notifications.length > 0
+      return this.notificationsToJoin.length > 0 || this.notificationsAccepted.length > 0
+    },
+    showBadge () {
+      return this.notificationsToJoin.length > 0
     }
   },
   watch: {

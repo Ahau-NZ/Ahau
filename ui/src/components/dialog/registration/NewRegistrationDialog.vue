@@ -7,7 +7,6 @@
       width="720px"
       :goBack="close"
       enableMenu
-      @submit="close"
     >
       <template v-if="!hideDetails" v-slot:content>
         <v-col cols="12" :class="mobile ? 'pb-5 px-2' : 'px-5' ">
@@ -368,7 +367,7 @@
         <v-btn @click="close" text large class="secondary--text">
           <span>cancel</span>
         </v-btn>
-        <v-btn @click="submit" :disabled="disabled" text large class="blue--text mx-5">
+        <v-btn @click="submitRequest" :disabled="disabled" text large class="blue--text mx-5">
           <span>submit</span>
         </v-btn>
       </template>
@@ -383,7 +382,6 @@
       width="720px"
       :goBack="close"
       enableMenu
-      @submit="submit"
     >
       <template v-slot:content>
         <p class="pt-4 px-4 subtitle-2 black--text">
@@ -409,7 +407,7 @@
         <v-btn @click="showMessage = !showMessage" text large class="secondary--text">
           <span>cancel</span>
         </v-btn>
-        <v-btn @click="send" text large class="blue--text mx-5">
+        <v-btn @click="sendResponse" text large class="blue--text mx-5">
           <span>send</span>
         </v-btn>
       </template>
@@ -481,7 +479,9 @@ export default {
       response: '',
       scrollPosition: '',
       gpNamesValid: false,
-      parentNamesValid: false
+      parentNamesValid: false,
+      isSubmitting: false,
+      isResponding: false
     }
   },
   mounted () {
@@ -659,7 +659,9 @@ export default {
       this.$emit('close')
     },
 
-    async submit () {
+    async submitRequest () {
+      if (this.isSubmitting) return
+      this.isSubmitting = true
       // if (this.$refs.checkboxes.validate()) {
       // var input = {
       //   ...this.formData,
@@ -683,7 +685,7 @@ export default {
       // this.close()
       // }
       try {
-        await this.$apollo.mutate({
+        this.$apollo.mutate({
           mutation: CREATE_GROUP_APPLICATION,
           variables: {
             groupId: this.currentTribe.id,
@@ -706,7 +708,9 @@ export default {
       } else this.close()
     },
 
-    async send () {
+    async sendResponse () {
+      if (this.isResponding) return
+      this.isResponding = true
       /* TODO: format */
       // var output = {
       //   // TODO - update to match notifications
@@ -724,7 +728,7 @@ export default {
       // console.log('add person to group')
 
       try {
-        await this.$apollo.mutate({
+        this.$apollo.mutate({
           mutation: ACCEPT_GROUP_APPLICATION,
           variables: {
             id: this.currentNotification.applicationId,
@@ -738,7 +742,6 @@ export default {
       this.showMessage = !this.showMessage
       this.close()
     }
-
   }
 }
 </script>
