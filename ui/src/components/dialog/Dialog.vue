@@ -74,7 +74,7 @@
                 </v-col>
 
                 <v-col cols="6" md="auto" :align="mobile ? 'center' : 'end'" class="py-0">
-                <v-btn @click="$emit('submit')"
+                <v-btn @click="submit"
                   :fab="!mobile"
                   icon
                   :large="!mobile"
@@ -131,7 +131,8 @@ export default {
     return {
       showDialog: this.show,
       listener: null,
-      banner
+      banner,
+      isSubmitting: false
     }
   },
   computed: {
@@ -171,11 +172,18 @@ export default {
     }
   },
   methods: {
+    submit () {
+      if (this.isSubmitting) return
+      this.isSubmitting = true
+      this.$emit('submit')
+    },
     closeDialog () {
+      this.isSubmitting = false
       this.showDialog = false
       this.close()
     },
     close () {
+      this.isSubmitting = false
       this.$emit('close')
     }
   },
