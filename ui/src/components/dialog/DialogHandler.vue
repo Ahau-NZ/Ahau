@@ -228,6 +228,9 @@ export default {
     },
     previewProfile () {
       return this.storeType === 'preview'
+    },
+    dialogOpen () {
+      return (this.dialog || this.storeDialog)
     }
   },
   watch: {
@@ -242,6 +245,14 @@ export default {
     },
     storeType (newVal) {
       this.dialogType = newVal
+    },
+    dialogOpen (newVal) {
+      // TODO consider using vuex action for this
+      if (newVal === true) {
+        document.body.classList.add('stop-scroll')
+      } else {
+        document.body.classList.remove('stop-scroll')
+      }
     }
   },
   methods: {

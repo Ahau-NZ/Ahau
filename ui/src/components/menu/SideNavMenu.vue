@@ -224,6 +224,8 @@ export default {
     onScroll () {
       this.scroll = window.pageYOffset
       var sideNav = this.$refs.sideNav
+
+      // TODO tidy this up by making methods?
       if (!this.mobile && this.activeComponent === 'profile') {
         if (this.scroll > this.offset) {
           sideNav.classList.add('sticky')

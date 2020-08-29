@@ -110,6 +110,14 @@ export default {
   watch: {
     offset (newVal, oldVal) {
       if (this.expand && newVal < oldVal) this.expand = !this.expand
+    },
+    menu (newVal) {
+      // TODO consider using vuex for this
+      if (newVal === true) {
+        document.body.classList.add('stop-scroll')
+      } else {
+        document.body.classList.remove('stop-scroll')
+      }
     }
   },
   methods: {
@@ -145,4 +153,5 @@ export default {
 .bold {
   font-weight: 550;
 }
+
 </style>

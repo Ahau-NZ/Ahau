@@ -212,7 +212,7 @@ export default {
         })
         // this.invalidCode = false
         // this.validCode = true
-        this.successMsg = ['Successfully located Pātaka']
+        this.successMsg = ['Successfully connected to Pātaka']
       } catch (err) {
         // this.invalidCode = true
         // this.validCode = false
