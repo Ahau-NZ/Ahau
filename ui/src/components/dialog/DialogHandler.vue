@@ -3,10 +3,12 @@
     <NewRegistrationDialog
       v-if="isActive('new-registration')"
       :show="isActive('new-registration')"
+      :title="dialogType === 'review' ? `Request to join : ${currentNotification.message.group.preferredName}` : `Request to join : ${currentTribe.public[0].preferredName}`"
       :profile="whoami.personal.profile"
-      :title="`Request to join : ${currentProfile.preferredName}`"
       :parents.sync="parents"
       :parentIndex.sync="parentIndex"
+      :type="dialogType"
+      :notification="currentNotification"
       @editProfile="toggleEditProfile($event)"
       @close="close"
     />
@@ -95,14 +97,16 @@
       :show="isActive('whakapapa-delete')"
       :view="view"
       @close="close"
-      @submit="$emit('delete-whakapapa')"
+      @submit="$emit('deleteWhakapapa')"
     />
-    <WhakapapaShowHelper v-if="isActive('whakapapa-helper')"
+    <WhakapapaShowHelper
+      v-if="isActive('whakapapa-helper')"
       :show="isActive('whakapapa-helper')"
       :title="`Whakapapa ---- Family tree`"
       @close="close"
     />
-    <WhakapapaTableHelper v-if="isActive('whakapapa-table-helper')"
+    <WhakapapaTableHelper
+      v-if="isActive('whakapapa-table-helper')"
       :show="isActive('whakapapa-table-helper')"
       :title="`Whakapapa registry`"
       @close="close"
@@ -114,11 +118,17 @@
       @submit="console.log('TODO: add collection to profile')"
     />-->
     <ComingSoonDialog :show="isActive('coming-soon')" @close="close" />
-    <ConfirmationMessage :show="snackbar" :message="confirmationText" />
+    <ConfirmationText :show="snackbar" :message="confirmationText" />
   </div>
 </template>
 
 <script>
+import pick from 'lodash.pick'
+import isEqual from 'lodash.isequal'
+import isEmpty from 'lodash.isempty'
+import * as d3 from 'd3'
+import { mapGetters, mapActions } from 'vuex'
+
 import NewNodeDialog from '@/components/dialog/profile/NewNodeDialog.vue'
 import NewCommunityDialog from '@/components/dialog/community/NewCommunityDialog.vue'
 import NewRegistrationDialog from '@/components/dialog/registration/NewRegistrationDialog.vue'
@@ -134,22 +144,16 @@ import WhakapapaShowHelper from '@/components/dialog/whakapapa/WhakapapaShowHelp
 import WhakapapaTableHelper from '@/components/dialog/whakapapa/WhakapapaTableHelper.vue'
 // import NewCollectionDialog from '@/components/dialog/archive/NewCollectionDialog.vue'
 import ComingSoonDialog from '@/components/dialog/ComingSoonDialog.vue'
-import ConfirmationMessage from '@/components/dialog/ConfirmationMessage.vue'
+import ConfirmationText from '@/components/dialog/ConfirmationText.vue'
 
 import { PERMITTED_RELATIONSHIP_ATTRS, savePerson, saveCurrentIdentity } from '@/lib/person-helpers.js'
 import { createGroup, saveCommunity, savePublicCommunity, saveGroupProfileLink, deleteTribe, updateTribe } from '@/lib/community-helpers'
 import { saveWhakapapaView } from '@/lib/whakapapa-helpers.js'
 import { findByName } from '@/lib/search-helpers.js'
-
 import { saveLink } from '@/lib/link-helpers.js'
 import tree from '@/lib/tree-helpers'
-import findSuccessor from '@/lib/find-successor'
 
-import pick from 'lodash.pick'
-import isEqual from 'lodash.isequal'
-import isEmpty from 'lodash.isempty'
-import * as d3 from 'd3'
-import { mapGetters, mapActions } from 'vuex'
+import findSuccessor from '@/lib/find-successor'
 
 export default {
   name: 'DialogHandler',
@@ -168,7 +172,7 @@ export default {
     NewCommunityDialog,
     EditCommunityDialog,
     DeleteCommunityDialog,
-    ConfirmationMessage,
+    ConfirmationText,
     NewRegistrationDialog
   },
   props: {
@@ -218,12 +222,15 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['nestedWhakapapa', 'selectedProfile', 'whoami', 'storeDialog', 'storeType', 'storeSource', 'currentProfile', 'currentProfiles', 'currentTribe', 'tribes']),
+    ...mapGetters(['nestedWhakapapa', 'selectedProfile', 'whoami', 'storeDialog', 'storeType', 'storeSource', 'currentProfile', 'currentNotification', 'currentTribe']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
     previewProfile () {
       return this.storeType === 'preview'
+    },
+    dialogOpen () {
+      return (this.dialog || this.storeDialog)
     }
   },
   watch: {
@@ -238,6 +245,14 @@ export default {
     },
     storeType (newVal) {
       this.dialogType = newVal
+    },
+    dialogOpen (newVal) {
+      // TODO consider using vuex action for this
+      if (newVal === true) {
+        document.body.classList.add('stop-scroll')
+      } else {
+        document.body.classList.remove('stop-scroll')
+      }
     }
   },
   methods: {
@@ -628,7 +643,6 @@ export default {
         throw err
       }
     },
-
     async updatePerson (input) {
       if (!input) return
 

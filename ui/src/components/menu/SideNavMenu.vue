@@ -1,9 +1,20 @@
 <template>
-  <v-row ref="sideNav" class="sideNav" :class="position"  v-scroll="onScroll">
+  <v-row ref="sideNav" class="sideNav" :class="position" v-scroll="onScroll">
     <v-col cols="12" md="2" :class="nonMember ? 'px-3 pt-3' : mobile ? 'px-6': tablet ? 'pt-12':''">
-      <v-col align="center" v-if="!mobile" class="pa-2 ml-8" cols="12">
+      <v-col
+        align="center"
+        v-if="!mobile"
+        :class="tablet ? 'pa-2 pt-5 ml-6':'pa-2 ml-12'"
+        cols="12"
+      >
         <v-row cols="12" xs="12" sm="12">
-          <v-btn :class="tablet ? 'pl-2':''" @click="setActive('profile')" light text style="height: auto;">
+          <v-btn
+            :class="tablet ? 'pl-2':''"
+            @click="setActive('profile')"
+            light
+            text
+            style="height: auto;"
+          >
             <Avatar
               :image="profile.avatarImage"
               :gender="profile.gender"
@@ -11,22 +22,33 @@
               :aliveInterval="profile.aliveInterval"
               :alt="profile.preferredName"
               :size="tablet ? '110px':'170px'"
-              :isView="profile.type === 'community' && !profile.avatarImage" />
+              :isView="profile.type === 'community' && !profile.avatarImage"
+            />
           </v-btn>
         </v-row>
       </v-col>
-      <RegisterButton v-if="nonMember"/>
-      <v-row v-else :class="mobile ? 'rounded-border' : 'ml-8'" >
+      <RegisterButton v-if="nonMember" :notificationSent="notificationSent" />
+      <v-row v-else :class="mobile ? 'rounded-border box-shadow' : tablet ? 'ml-6' : 'ml-12'">
         <v-col align="center" :class="mobile ? 'py-0 px-0' : tablet ? 'py-4 px-0' : 'py-1'">
           <v-btn @click="setActive('profile')" light :fab="mobile" text>
             <v-col class="pa-0" :cols="mobile ? '12' : '2'">
-              <Avatar v-if="mobile && activeComponent !=='profile'" :image="profile.avatarImage" size="40px"/>
-              <UserIcon v-else :size="tablet ? 'x-large':'medium'" :color="activeComponent === 'profile' ? 'red' : 'black'"/>
+              <Avatar
+                v-if="mobile && activeComponent !=='profile'"
+                :image="profile.avatarImage"
+                size="40px"
+              />
+              <UserIcon
+                v-else
+                :size="tablet ? 'x-large':'medium'"
+                :color="activeComponent === 'profile' ? 'red' : 'black'"
+              />
             </v-col>
             <v-col class="py-0" v-if="!mobile && !isOverflowing">
-              <span ref="text" :style="activeComponent === 'profile' ? 'color:#B02425;' : ''" class="ml-2 nav-label subtitle-1">
-                Profile
-              </span>
+              <span
+                ref="text"
+                :style="activeComponent === 'profile' ? 'color:#B02425;' : ''"
+                class="ml-2 nav-label subtitle-1"
+              >Profile</span>
             </v-col>
           </v-btn>
         </v-col>
@@ -41,17 +63,23 @@
               </span>
             </v-col>
           </v-btn>
-        </v-col> -->
+        </v-col>-->
         <v-col :class="mobile ? 'py-0 px-0' : tablet ? 'py-4 px-0' : 'py-1'">
           <v-btn @click="goArchive()" light :fab="mobile" text>
             <v-col class="pa-0" :cols="mobile ? '12' : '2'">
-              <ArchiveIcon v-if="!showStory" :size="mobile ? 'large' : tablet ? 'x-large' : 'medium'" :color="activeComponent === 'archive' ? 'red' : 'black'" />
+              <ArchiveIcon
+                v-if="!showStory"
+                :size="mobile ? 'large' : tablet ? 'x-large' : 'medium'"
+                :color="activeComponent === 'archive' ? 'red' : 'black'"
+              />
               <v-icon v-else color="#B02425">mdi-arrow-left</v-icon>
             </v-col>
             <v-col class="py-0" v-if="!mobile && !isOverflowing">
-              <span ref="text" :style="activeComponent === 'archive' ? 'color:#B02425;' : ''" class="ml-2 nav-label subtitle-1">
-                Archive
-              </span>
+              <span
+                ref="text"
+                :style="activeComponent === 'archive' ? 'color:#B02425;' : ''"
+                class="ml-2 nav-label subtitle-1"
+              >Archive</span>
             </v-col>
           </v-btn>
         </v-col>
@@ -60,26 +88,36 @@
           <!-- <v-btn @click="setActive('timeline')" light :fab="mobile" text> -->
           <v-btn @click="setDialog('coming-soon')" light :fab="mobile" text>
             <v-col class="pa-0" :cols="mobile ? '12' : '2'">
-              <TimelineIcon :size="tablet ? 'x-large' : 'medium'" :color="activeComponent === 'timeline' ? 'red' : 'disabled'"/>
+              <TimelineIcon
+                :size="tablet ? 'x-large' : 'medium'"
+                :color="activeComponent === 'timeline' ? 'red' : 'disabled'"
+              />
             </v-col>
             <v-col class="py-0" v-if="!mobile && !isOverflowing">
-              <span ref="text" :style="activeComponent === 'timeline' ? 'color:#B02425;' : 'black'" class="ml-2 nav-label subtitle-1">
-                Timeline
-              </span>
+              <span
+                ref="text"
+                :style="activeComponent === 'timeline' ? 'color:#B02425;' : 'black'"
+                class="ml-2 nav-label subtitle-1"
+              >Timeline</span>
             </v-col>
           </v-btn>
         </v-col>
         <v-col :class="mobile ? 'py-0 px-0' : tablet ? 'py-4 px-0' : 'py-1'">
           <!-- TODO: connect whakapapa -->
           <v-btn @click="setActive('whakapapa')" light :fab="mobile" text>
-          <!-- <v-btn @click="setDialog('coming-soon')" light :fab="mobile" text> -->
+            <!-- <v-btn @click="setDialog('coming-soon')" light :fab="mobile" text> -->
             <v-col class="pa-0" :cols="mobile ? '12' : '2'">
-              <WhakapapaIcon :size="mobile ? 'large' : tablet ? 'x-large' : 'medium'" :color="activeComponent === 'whakapapa' ? 'red' : 'black'"/>
+              <WhakapapaIcon
+                :size="mobile ? 'large' : tablet ? 'x-large' : 'medium'"
+                :color="activeComponent === 'whakapapa' ? 'red' : 'black'"
+              />
             </v-col>
             <v-col class="py-0" v-if="!mobile && !isOverflowing">
-              <span ref="text" :style="activeComponent === 'whakapapa' ? 'color:#B02425;' : 'black'" class="ml-2 subtitle-1">
-                Whakapapa
-              </span>
+              <span
+                ref="text"
+                :style="activeComponent === 'whakapapa' ? 'color:#B02425;' : 'black'"
+                class="ml-2 subtitle-1"
+              >Whakapapa</span>
             </v-col>
           </v-btn>
         </v-col>
@@ -126,10 +164,13 @@ export default {
     this.offset = this.$refs.sideNav.offsetTop - 50
   },
   computed: {
-    ...mapGetters(['activeComponent', 'showStory', 'storeDialog']),
+    ...mapGetters(['activeComponent', 'showStory', 'storeDialog', 'notifications']),
     nonMember () {
       if (this.profile.type === 'community' && this.profile.recps.length < 1) return true
       else return false
+    },
+    notificationSent () {
+      return this.notifications.filter(i => i.message.group.id === this.profile.id).length > 0
     },
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
@@ -183,6 +224,8 @@ export default {
     onScroll () {
       this.scroll = window.pageYOffset
       var sideNav = this.$refs.sideNav
+
+      // TODO tidy this up by making methods?
       if (!this.mobile && this.activeComponent === 'profile') {
         if (this.scroll > this.offset) {
           sideNav.classList.add('sticky')
@@ -240,70 +283,75 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .icon-bar {
-    border: 0.5px solid rgba(0, 0, 0, 0.3);
-    border-radius: 10px;
-  }
+.icon-bar {
+  border: 0.5px solid rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+}
 
-  .border {
-    border-style: 0.5px solid rgba(0,0,0,0.3);
-  }
+.border {
+  border-style: 0.5px solid rgba(0, 0, 0, 0.3);
+}
 
-  .side-padding {
-    padding-left: 10px;
-    padding-right: 10px;
-    background-color: white;
-  }
-  .w {
-    height: 80px;
-  }
-  .rounded-border {
-    border: 0.5px solid rgba(0,0,0,0.3);
-    border-radius: 10px;
-    background-color: white ;
-  }
+.side-padding {
+  padding-left: 10px;
+  padding-right: 10px;
+  background-color: white;
+}
+.w {
+  height: 80px;
+}
+.rounded-border {
+  border: 0.5px solid rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+  background-color: white;
+}
 
-  .sideNav {
-    transition: top 0.2s ease;
-  }
+.sideNav {
+  transition: top 0.2s ease;
+}
 
-  .sticky {
-    position: fixed; /* Allocates space for the element, but moves it with you when you scroll */
-    top: 50px
-  }
+.sticky {
+  position: fixed; /* Allocates space for the element, but moves it with you when you scroll */
+  top: 50px;
+}
 
-  .user {
-    position: absolute;
-    top: 150px
-  }
+.user {
+  position: absolute;
+  top: 150px;
+}
 
-  .userMobile {
-    position: absolute;
-    top: 330px;
-    width: 101.5%;
-  }
-  .archiveMobile {
-    position: absolute;
-    top: 0px;
-    width: 101.5%
-  }
-  .stickyMobile {
-    position: fixed; /* Allocates space for the element, but moves it with you when you scroll */
-    top: 50px;
-    width: 101.5%;
-    z-index: 1;
-    background: linear-gradient(rgba(255, 255, 255, 0.9),rgba(255, 255, 255, 0.02) );
-  }
+.userMobile {
+  position: absolute;
+  top: 330px;
+  width: 101.5%;
+}
+.archiveMobile {
+  position: absolute;
+  top: 0px;
+  width: 101.5%;
+}
+.stickyMobile {
+  position: fixed; /* Allocates space for the element, but moves it with you when you scroll */
+  top: 50px;
+  width: 101.5%;
+  z-index: 1;
+  background: linear-gradient(
+    rgba(255, 255, 255, 0.9),
+    rgba(255, 255, 255, 0.02)
+  );
+.box-shadow {
+   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)
+}}
 
-  .hideStickyMobile {
-    position: fixed; /* Allocates space for the element, but moves it with you when you scroll */
-    width: 102%;
-    z-index: 1;
-    top : -50px
-  }
+.hideStickyMobile {
+  position: fixed; /* Allocates space for the element, but moves it with you when you scroll */
+  width: 102%;
+  z-index: 1;
+  top: -50px;
+}
 
-  .v-btn::before {
+.v-btn::before {
   opacity: 0 !important;
-  }
+}
 
 </style>

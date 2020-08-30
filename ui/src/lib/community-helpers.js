@@ -113,9 +113,9 @@ export const saveGroupProfileLink = input => {
 export const deleteTribe = tribe => {
   return {
     mutation: gql`
-      mutation($privateInput:ProfileInput, $publicInput:ProfileInput) {
-        deletePrivate: saveProfile(input:$privateInput)
-        deletePublic: saveProfile(input:$publicInput)
+      mutation($privateInput: ProfileInput, $publicInput: ProfileInput) {
+        deletePrivate: saveProfile(input: $privateInput)
+        deletePublic: saveProfile(input: $publicInput)
       }
     `,
     variables: {
@@ -138,9 +138,9 @@ export const updateTribe = (tribe, input) => {
 
   return {
     mutation: gql`
-      mutation($privateInput:ProfileInput, $publicInput:ProfileInput) {
-        savePrivate: saveProfile(input:$privateInput)
-        savePublic: saveProfile(input:$publicInput)
+      mutation($privateInput: ProfileInput, $publicInput: ProfileInput) {
+        savePrivate: saveProfile(input: $privateInput)
+        savePublic: saveProfile(input: $publicInput)
       }
     `,
     variables: {
@@ -157,43 +157,53 @@ export const updateTribe = (tribe, input) => {
   }
 }
 
-export const getTribes = ({
+export const getTribes = {
   query: gql`
-  ${PUBLIC_PROFILE_FRAGMENT}
-  query {
-    tribes {
-      id
-      public {
+    ${PUBLIC_PROFILE_FRAGMENT}
+    query {
+      tribes {
         id
-        type
-        preferredName
-        description
-        avatarImage { uri } 
-        description
-        headerImage { uri }
-        tombstone { date }
-        tiaki {
-          ...PublicProfileFragment
+        public {
+          id
+          preferredName
+          description
+          avatarImage {
+            uri
+          }
+          description
+          headerImage {
+            uri
+          }
+          tombstone {
+            date
+          }
+          tiaki {
+            ...PublicProfileFragment
+          }
         }
-      }
-      private {
-        id
-        type
-        preferredName
-        description
-        avatarImage { uri }
-        headerImage { uri }
-        recps
-        tombstone {date}
-        tiaki {
-          ...PublicProfileFragment
+        private {
+          id
+          preferredName
+          description
+          avatarImage {
+            uri
+          }
+          headerImage {
+            uri
+          }
+          recps
+          tombstone {
+            date
+          }
+          tiaki {
+            ...PublicProfileFragment
+          }
         }
       }
     }
-  }
-`,
+  `,
   fetchPolicy: 'no-cache'
-})
+}
 
 function prune (input, attrs) {
   const _input = pick(input, attrs)
@@ -213,10 +223,16 @@ export const getCommunityProfile = id => ({
         id
         preferredName
         description
-        avatarImage { uri } 
+        avatarImage {
+          uri
+        }
         description
-        headerImage { uri }
-        tombstone { date }
+        headerImage {
+          uri
+        }
+        tombstone {
+          date
+        }
         tiaki {
           ...PublicProfileFragment
         }

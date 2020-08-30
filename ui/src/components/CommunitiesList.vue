@@ -18,52 +18,11 @@
         </v-btn>
       </div>
     </v-row>
-    <!-- TRIBES -->
-    <div>
-      <v-row v-if="connectedTribes.length" class="pt-4">
-        <v-col cols="12" md="9" class="py-0">
-          <p class="sub-headline pa-0 mb-4">Tribes that you are connected to</p>
-          <v-row justify="start">
-              <v-col v-for="tribe in connectedTribes" :item="tribe" :key="tribe.id" justify-self="start">
-                <v-card light :width="!mobile ? '190px':'100vw'" @click="goTribe(tribe)">
-                  <v-img height="150px" :src="getImage(tribe.private[0])" class="card-image" />
-                  <v-card-title class="subtitle font-weight-bold pb-2">{{
-                    tribe.private[0].preferredName
-                  }}</v-card-title>
-                  <v-card-text class="body-2">{{
-                    shortDescrciption(tribe.private[0])
-                  }}</v-card-text>
-                </v-card>
-              </v-col>
-            </v-row>
-          <v-divider v-if="otherTribes.length" light color="grey" class="my-10"></v-divider>
-        </v-col>
-      </v-row>
-      <v-row v-if="otherTribes.length" class="pt-4">
-        <v-col cols="12" md="9" class="py-0">
-          <p class="sub-headline pa-0 mb-4">Other whanau tribes</p>
-          <v-row justify="start">
-              <v-col v-for="tribe in otherTribes" :item="tribe" :key="tribe.id" justify-self="start">
-                <v-card light :width="!mobile ? '190px':'100vw'" @click="goTribe(tribe)">
-                  <v-img height="150px" :src="getImage(tribe.public[0])" class="card-image" />
-                  <v-card-title class="subtitle font-weight-bold pb-2">{{
-                    tribe.public[0].preferredName
-                  }}</v-card-title>
-                  <v-card-text class="body-2">{{
-                    shortDescrciption(tribe.public[0])
-                  }}</v-card-text>
-                </v-card>
-              </v-col>
-            </v-row>
-        </v-col>
-      </v-row>
-    </div>
     <v-row class="py-2">
       <v-col cols="12" md="9">
-        <v-divider light color="grey" class="my-10"></v-divider>
         <p class="sub-headline pa-0">Enter a Pātaka code to discover tribes</p>
         <v-row>
-          <v-col cols="10" md="9" class="py-0">
+          <v-col cols="10" md='9' class="py-0">
             <v-text-field
               v-model="patakaCode"
               placeholder="xxxx-xxxxx-xxxx-xxxx"
@@ -91,6 +50,59 @@
         </v-row>
       </v-col>
     </v-row>
+    <!-- TRIBES -->
+    <div>
+      <v-row v-if="connectedTribes.length" class="pt-4">
+        <v-col cols="12" md="9" class="py-0">
+          <p class="sub-headline pa-0 mb-4">Tribes that you are connected to</p>
+          <v-row justify="start">
+            <v-col
+              v-for="tribe in connectedTribes"
+              :item="tribe"
+              :key="tribe.id"
+              justify-self="start"
+            >
+              <v-card light :width="!mobile ? '190px':'100vw'" @click="goTribe(tribe)">
+                <v-img height="150px" :src="getImage(tribe.private[0])" class="card-image" />
+                <v-card-title class="subtitle font-weight-bold pb-2">
+                  {{
+                  tribe.private[0].preferredName
+                  }}
+                </v-card-title>
+                <v-card-text class="body-2">
+                  {{
+                  shortDescription(tribe.private[0])
+                  }}
+                </v-card-text>
+              </v-card>
+            </v-col>
+          </v-row>
+          <v-divider v-if="otherTribes && otherTribes.length" light color="grey" class="my-10"></v-divider>
+        </v-col>
+      </v-row>
+      <v-row v-if="otherTribes.length" class="pt-4">
+        <v-col cols="12" md="9" class="py-0">
+          <p class="sub-headline pa-0 mb-4">Other whanau tribes</p>
+          <v-row justify="start">
+            <v-col v-for="tribe in otherTribes" :item="tribe" :key="tribe.id" justify-self="start">
+              <v-card light :width="!mobile ? '190px':'100vw'" @click="goTribe(tribe)">
+                <v-img height="150px" :src="getImage(tribe.public[0])" class="card-image" />
+                <v-card-title class="subtitle font-weight-bold pb-2">
+                  {{
+                  tribe.public[0].preferredName
+                  }}
+                </v-card-title>
+                <v-card-text class="body-2">
+                  {{
+                  shortDescription(tribe.public[0])
+                  }}
+                </v-card-text>
+              </v-card>
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
+    </div>
   </div>
 </template>
 
@@ -121,11 +133,13 @@ export default {
             id
             preferredName
             description
-            avatarImage { uri } 
+            avatarImage { uri }
+            description
             headerImage { uri }
             tombstone { date }
-            tiaki { 
+            tiaki {
               id
+              feedId
               avatarImage { uri }
               preferredName
             }
@@ -138,8 +152,9 @@ export default {
             headerImage { uri }
             recps
             tombstone {date}
-            tiaki { 
+            tiaki {
               id
+              feedId
               avatarImage { uri }
               preferredName
             }
@@ -147,6 +162,7 @@ export default {
         }
       }
     `,
+      pollInterval: 10e3,
       update (data) {
         return data.tribes
       },
@@ -179,30 +195,32 @@ export default {
     getImage (community) {
       return get(community, 'avatarImage.uri') || ''
     },
-    shortDescrciption (community) {
+    shortDescription (community) {
       if (!community.description) return
       return community.description.substring(0, 180)
     },
-    async acceptInvite (inviteCode) {
+    async acceptInvite () {
       try {
         await this.$apollo.mutate({
           mutation: gql`
-          mutation($inviteCode: String) {
+          mutation($inviteCode: String!) {
             acceptInvite(inviteCode: $inviteCode)
           }`,
-          varibles: {
-            inviteCode: this.patakaCode
+          variables: {
+            inviteCode: this.patakaCode.trim()
           }
         })
-        // this.sucinvalidCode = false
+        // this.invalidCode = false
         // this.validCode = true
-        this.successMsg = ['Successfully located Pātaka']
+        this.successMsg = ['Successfully connected to Pātaka']
       } catch (err) {
         // this.invalidCode = true
         // this.validCode = false
         this.errorMsg = ['Invalid code, please check the code and try again']
         console.error('Invite error: ', err)
+        return
       }
+      this.errorMsg = []
     }
   }
 }

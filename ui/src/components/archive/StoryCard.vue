@@ -119,7 +119,7 @@
         <v-list-item-subtitle style="color:#a7a3a3" class="ms-5 pa-0 pb-1">Location</v-list-item-subtitle>
         <p class="mt-3 mb-5 ms-5">{{ story.location }}</p>
       </v-col>
-      
+
       <v-col v-if="story.contributors && story.contributors.length > 0 && fullStory" cols="auto">
         <v-list-item-subtitle style="color:#a7a3a3">Contributors</v-list-item-subtitle>
         <AvatarGroup

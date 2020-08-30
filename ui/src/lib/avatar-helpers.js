@@ -1,5 +1,5 @@
 import koro from '../assets/koro.svg'
-import kuia from '..//assets/kuia.svg'
+import kuia from '../assets/kuia.svg'
 import tane from '../assets/tane.svg'
 import wahine from '../assets/wahine.svg'
 import tama from '../assets/tama.svg'
@@ -32,8 +32,10 @@ function defaultImage (isView, aliveInterval, gender) {
         default:
           return tane
       }
-    case 'other': return diverse
-    case 'unknown': return diverse
+    case 'other':
+      return diverse
+    case 'unknown':
+      return diverse
     default:
       switch (true) {
         case age === null:

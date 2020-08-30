@@ -6,6 +6,7 @@ import whakapapa from './modules/whakapapa'
 import person from './modules/person'
 import archive from './modules/archive'
 import dialog from './modules/dialog'
+import notifications from './modules/notifications'
 import tribe from './modules/tribe'
 import { whoami } from '../lib/person-helpers.js'
 
@@ -48,6 +49,7 @@ const store = new Vuex.Store({
     person,
     archive,
     dialog,
+    notifications,
     tribe
   },
   getters: {

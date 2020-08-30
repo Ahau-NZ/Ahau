@@ -151,8 +151,4 @@ export default {
   border-right: 0.5px solid rgba(0,0,0,0.3);
   }
 
-  // .margin-top {
-  //   margin-top: -75px
-  // }
-
 </style>

@@ -9,6 +9,7 @@
         mobile
           ? 'dialog-bottom-transition'
           : 'scale-transition'"
+    @input="close"
   >
     <v-card>
       <v-app-bar
@@ -20,6 +21,12 @@
         height="60px"
         max-height="60px"
       >
+        <template v-slot:img="{ props }">
+          <v-img
+            v-bind="props"
+            style="opacity:40%; left:100px"
+          ></v-img>
+      </template>
         <v-btn
           v-if="mobile"
           icon
@@ -30,7 +37,7 @@
         <v-spacer v-if="mobile"/>
 
         <div class="dialog-title text-uppercase">
-          <span style="color: #BA041B;">{{ splitTitle.maori }}</span>
+          <span style="color: #BA041B; font-weight:500">{{ splitTitle.maori }}</span>
           <span>{{ splitTitle.english }}</span>
         </div>
 
@@ -68,7 +75,7 @@
                 </v-col>
 
                 <v-col cols="6" md="auto" :align="mobile ? 'center' : 'end'" class="py-0">
-                <v-btn @click="$emit('submit')"
+                <v-btn @click="submit"
                   :fab="!mobile"
                   icon
                   :large="!mobile"
@@ -125,7 +132,13 @@ export default {
     return {
       showDialog: this.show,
       listener: null,
-      banner
+      banner,
+      isSubmitting: false
+    }
+  },
+  watch: {
+    showDialog (newVal) {
+      console.log(newVal)
     }
   },
   computed: {
@@ -165,11 +178,18 @@ export default {
     }
   },
   methods: {
+    submit () {
+      if (this.isSubmitting) return
+      this.isSubmitting = true
+      this.$emit('submit')
+    },
     closeDialog () {
+      this.isSubmitting = false
       this.showDialog = false
       this.close()
     },
     close () {
+      this.isSubmitting = false
       this.$emit('close')
     }
   },

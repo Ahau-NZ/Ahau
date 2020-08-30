@@ -49,7 +49,6 @@ export default {
     title: { type: String, default: 'Create a new community' },
     hideDetails: { type: Boolean, default: false },
     selectedProfile: { type: Object }
-
   },
   data () {
     return {

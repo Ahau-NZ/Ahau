@@ -1,13 +1,11 @@
 <template>
   <div>
-    <v-app-bar  v-if="mobile || enableMenu" :app="mobile && app" :class="classObject" flat color="#303030" fixed>
+    <v-app-bar v-if="mobile || enableMenu" :app="mobile && app" :class="classObject" flat color="#303030" fixed>
       <v-btn v-if="isgoBack" @click="goBack" icon dark>
         <v-icon>mdi-arrow-left</v-icon>
       </v-btn>
       <template v-if="!isgoBack">
-        <router-link to="/" v-if="enableMenu" class="logo-link"  @click.native="karakiaWhakamutunga()">
-          <img src="@/assets/logo_red.svg" class="logo" />
-        </router-link>
+        <NotificationPanel/>
       </template>
       <BackButton v-if="!mobile" @goBack="goBack"/>
       <v-spacer />
@@ -15,7 +13,6 @@
 
       <!-- Desktop doesn't use a drawer, it has the links directly in the app bar -->
       <template v-if="!mobile">
-        <!--  WIP links -->
         <v-btn text active-class="no-active" :to="{ name: 'discovery' }" class="white--text text-uppercase ms-10">Tribes</v-btn>
         <v-btn active-class="no-active" text @click.native="goProfile('archive')" class="white--text text-uppercase ms-10">Archive</v-btn>
 
@@ -76,6 +73,7 @@
 
 <script>
 import Avatar from '@/components/Avatar'
+import NotificationPanel from '@/components/menu/NotificationPanel'
 import FeedbackButton from '@/components/button/FeedbackButton'
 import { mapGetters, mapActions } from 'vuex'
 import BackButton from '@/components/button/BackButton'
@@ -107,6 +105,12 @@ export default {
       dialog: false
     }
   },
+  created () {
+    this.getNotifications()
+  },
+  beforeDestroy () {
+    clearInterval(this.polling)
+  },
   computed: {
     ...mapGetters(['whoami', 'whakapapa', 'route', 'showStory', 'storeDialog', 'currentProfile']),
     classObject: function () {
@@ -123,7 +127,8 @@ export default {
       if (this.mobile) {
         if (this.route.name === 'whakapapaShow') return true
         else if (this.showStory) return true
-      } return false
+      }
+      return false
     }
   },
   watch: {
@@ -132,14 +137,20 @@ export default {
     }
   },
   mounted () {
+    this.getAllNotifications()
     if (process.env.VUE_APP_PLATFORM !== 'cordova') {
       this.getCurrentIdentity()
     }
   },
   methods: {
-    ...mapActions(['setWhoami', 'setProfileById', 'setComponent', 'setShowStory', 'setDialog']),
+    ...mapActions(['setWhoami', 'setProfileById', 'setComponent', 'setShowStory', 'setDialog', 'getAllNotifications']),
     resetWindow () {
       window.scrollTo(0, 0)
+    },
+    getNotifications () {
+      this.polling = setInterval(() => {
+        this.getAllNotifications()
+      }, 5e3)
     },
     async getCurrentIdentity () {
       await this.setWhoami()
@@ -166,6 +177,7 @@ export default {
   components: {
     Avatar,
     FeedbackButton,
+    NotificationPanel,
     BackButton
   }
 }
@@ -173,31 +185,42 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
-  .mobile {
-
-    .logo,
-    .logo-link {
-      height: 35px;
-    }
-  }
-
-  .desktop {
-    .logo {
-      height: 45px;
-      padding: 0 25px;
-    }
-  }
 
   .sideMenuAppBarStyle {
     margin-top: -56px !important;
   }
 
   .v-btn--active.no-active::before {
-  opacity: 0 !important;
+    opacity: 0 !important;
   }
 
   .v-list-item--active.no-active::before {
-  opacity: 0 !important;
+    opacity: 0 !important;
+  }
+
+  /* ---- badge notification bounce animation ---- */
+  @-webkit-keyframes bounce {
+    0% {
+      transform: translateY(-5px)
+    }
+    50% {
+      transform: translateY(5px)
+    }
+    100% {
+      transform: translateY(-5px)
+    }
+  }
+
+  @keyframes bounce {
+    0% {
+      transform: translateY(-5px)
+    }
+    50% {
+      transform: translateY(5px)
+    }
+    100% {
+      transform: translateY(-5px)
+    }
   }
 
 </style>
