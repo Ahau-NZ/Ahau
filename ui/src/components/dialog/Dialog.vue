@@ -9,6 +9,7 @@
         mobile
           ? 'dialog-bottom-transition'
           : 'scale-transition'"
+    @input="close"
   >
     <v-card>
       <v-app-bar
@@ -133,6 +134,11 @@ export default {
       listener: null,
       banner,
       isSubmitting: false
+    }
+  },
+  watch: {
+    showDialog (newVal) {
+      console.log(newVal)
     }
   },
   computed: {

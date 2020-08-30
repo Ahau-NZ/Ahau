@@ -130,4 +130,9 @@ body {
   padding-top: 56px !important;
 }
 
+.stop-scroll {
+  max-height: 100vh !important;
+  overflow: hidden !important;
+}
+
 </style>
