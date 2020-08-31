@@ -1,55 +1,55 @@
 <template>
-    <svg id="baseSvg" width="100%" :height="height" ref="baseSvg">
-      <!-- niho background picture -->
-      <defs>
-        <pattern id="img1" patternUnits="userSpaceOnUse" x="400" y="0" width="100%" height="100%">
-          <image xlink:href="../../assets/niho.svg" width="100%" height="100%" />
-        </pattern>
-      </defs>
-      <path id="background" d="M5,5 l0,680 2980,0 l0,-680 l-980,0" fill="url(#img1)" />
-      <!-- whakapapa tree -->
-      <g id="baseGroup" >
-        <g :transform="`translate(${treeX} ${treeY})`">
-          <g v-for="link in links" :key="link.id" class="link">
-            <Link :link="link" :class="link.class"/>
-          </g>
+  <svg id="baseSvg" width="100%" :height="height" ref="baseSvg">
+    <!-- niho background picture -->
+    <defs>
+      <pattern id="img1" patternUnits="userSpaceOnUse" x="400" y="0" width="100%" height="100%">
+        <image xlink:href="../../assets/niho.svg" width="100%" height="100%" />
+      </pattern>
+    </defs>
+    <path id="background" d="M5,5 l0,680 2980,0 l0,-680 l-980,0" fill="url(#img1)" />
+    <!-- whakapapa tree -->
+    <g id="baseGroup" >
+      <g :transform="`translate(${treeX} ${treeY})`">
+        <g v-for="link in links" :key="link.id" class="link">
+          <Link :link="link" :class="link.class"/>
         </g>
+      </g>
 
-        <g
-          :transform="`translate(${treeX - nodeRadius} ${treeY - nodeRadius})`"
-          ref="tree"
-        >
-          <g v-for="node in nodes" :key="node.id" class="node">
-            <Node
-              :node.sync="node"
-              :radius="nodeRadius"
-              :nonFocusedPartners="nonFocusedPartners"
-              :nodeCentered="nodeCentered"
-              @click="centerNode(node)"
-              @open-context-menu="$emit('open-context-menu', $event)"
-              @change-focus="changeFocus($event, node)"
-              :showLabel="true"
-            />
-          </g>
+      <g
+        :transform="`translate(${treeX - nodeRadius} ${treeY - nodeRadius})`"
+        ref="tree"
+      >
+        <g v-for="node in nodes" :key="node.id" class="node">
+          <Node
+            :node.sync="node"
+            :radius="nodeRadius"
+            :nonFocusedPartners="nonFocusedPartners"
+            :nodeCentered="nodeCentered"
+            @click="centerNode(node)"
+            @open-context-menu="$emit('open-context-menu', $event)"
+            @change-focus="changeFocus($event, node)"
+            :showLabel="true"
+          />
         </g>
       </g>
-      <!-- zoom in, zoom out buttons -->
-      <g class="zoomControl">
-        <g @click="zoomReset()" :transform="mobile ? `translate(${15} ${treeY*3})` : `translate(${30} ${treeY*3.1})`">
-          <circle stroke="white" fill="white" filter="url(#shadow)" cx="20" cy="1" r="15"/>
-          <circle stroke="black" fill="white" filter="url(#shadow)" cx="20" cy="1" r="5"/>
-          <path d="M 20,-7 20,10 M 12,1 28,1" stroke="grey" stroke-width="1.5" />
-        </g>
-        <g @click="zoomInOut(1.6)" :transform="mobile ? `translate(${15} ${treeY*3.35})` : `translate(${30} ${treeY*3.4})`">
-          <circle stroke="white" fill="white" filter="url(#shadow)" cx="20" cy="1" r="15"/>
-          <path d="M 20,-5 20,7 M 14,1 26,1" stroke="grey" stroke-width="1.5" />
-        </g>
-        <g @click="zoomInOut(1 / 1.6)" :transform="mobile ? `translate(${15} ${treeY*3.7})` : `translate(${30} ${treeY*3.7})`">
-          <circle stroke="white" fill="white" filter="url(#shadow)" cx="20" cy="1" r="15"/>
-          <path d="M 14,1 26,1" stroke="grey" stroke-width="1.5" />
-        </g>
+    </g>
+    <!-- zoom in, zoom out buttons -->
+    <g class="zoomControl">
+      <g @click="zoomReset()" :transform="mobile ? `translate(${15} ${treeY*3})` : `translate(${30} ${treeY*3.1})`">
+        <circle stroke="white" fill="white" filter="url(#shadow)" cx="20" cy="1" r="15"/>
+        <circle stroke="black" fill="white" filter="url(#shadow)" cx="20" cy="1" r="5"/>
+        <path d="M 20,-7 20,10 M 12,1 28,1" stroke="grey" stroke-width="1.5" />
       </g>
-    </svg>
+      <g @click="zoomInOut(1.6)" :transform="mobile ? `translate(${15} ${treeY*3.35})` : `translate(${30} ${treeY*3.4})`">
+        <circle stroke="white" fill="white" filter="url(#shadow)" cx="20" cy="1" r="15"/>
+        <path d="M 20,-5 20,7 M 14,1 26,1" stroke="grey" stroke-width="1.5" />
+      </g>
+      <g @click="zoomInOut(1 / 1.6)" :transform="mobile ? `translate(${15} ${treeY*3.7})` : `translate(${30} ${treeY*3.7})`">
+        <circle stroke="white" fill="white" filter="url(#shadow)" cx="20" cy="1" r="15"/>
+        <path d="M 14,1 26,1" stroke="grey" stroke-width="1.5" />
+      </g>
+    </g>
+  </svg>
 </template>
 
 <script>
@@ -66,9 +66,6 @@ export default {
   props: {
     find: {
       type: Function
-    },
-    currentFocus: {
-      type: String
     },
     view: {
       type: Object,

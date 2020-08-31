@@ -306,6 +306,7 @@ export default {
       this.$emit('update:type', type)
     },
     canDelete (profile) {
+      // TODO refactor this logic + WhakapapaShow logic
       if (!profile) return false
       if (this.previewProfile) return false
 
