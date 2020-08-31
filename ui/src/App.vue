@@ -7,6 +7,9 @@
       </transition>
       <Spinner />
     </v-main>
+    <div class='version'>
+      <span>version</span> {{version}}
+    </div>
     <DialogHandler />
   </v-app>
 </template>
@@ -18,11 +21,16 @@ import Spinner from '@/components/Spinner.vue'
 import { mapGetters, mapActions } from 'vuex'
 import DialogHandler from '@/components/dialog/DialogHandler.vue'
 
+const { version } = require('../../desktop/package.json')
+// TODO - this is only useful for the desktop installer,
+// this will need to change when we build mobile again
+
 export default {
   name: 'App',
-  data: function () {
+  data () {
     return {
-      mobileServerLoaded: false
+      mobileServerLoaded: false,
+      version
     }
   },
 
@@ -133,6 +141,36 @@ body {
 .stop-scroll {
   max-height: 100vh !important;
   overflow: hidden !important;
+}
+
+.version {
+  color: #999;
+  position: fixed;
+  bottom: 5px;
+  right: 10px;
+  font-size: .8rem;
+
+  transition: all .3s ease-in;
+
+  span {
+    font-size: .8rem;
+    color: rgba(0,0,0,0);
+    transition: all .3s ease-in;
+  }
+
+  &:hover {
+    color: #555;
+    font-size: 1.2rem;
+
+    background-color: #fff;
+    padding: 0 4px;
+    border: 1px solid #444;
+    border-radius: 4px;
+
+    span {
+      color: #555;
+    }
+  }
 }
 
 </style>
