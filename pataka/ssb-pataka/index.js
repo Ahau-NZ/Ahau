@@ -1,4 +1,5 @@
 const pull = require('pull-stream')
+const env = require('ahau-env')
 const graphqlServer = require('./graphql-server')
 
 // const { PubSub } = require('apollo-server')
@@ -8,7 +9,7 @@ module.exports = {
   name: 'ssb-pataka',
   version: '1.0.0',
   init: function (sbot, cfg) {
-    if (process.env.NODE_ENV === 'development') {
+    if (!env.isProduction || process.env.AHAU_LOGGING) {
       logPublish(sbot)
       logReplication(sbot)
 

@@ -48,10 +48,9 @@ Forward together!
 ---------------------------------
 `
 
-const appURL =
-  process.env.NODE_ENV === 'development'
-    ? 'http://localhost:8080' // dev-server
-    : `file://${__dirname}/dist/index.html` // production build
+const appURL = process.env.NODE_ENV === 'development'
+  ? 'http://localhost:8080' // dev-server
+  : `file://${__dirname}/dist/index.html` // production build
 
 ahoy({
   title: 'Whakapapa Ora',

@@ -48,7 +48,6 @@ module.exports = {
     /* custom */
     '!dist/installers/*',
     '!electron-builder.env',
-    '../ssb-ahau/**/*',
 
     // sodium-native: only include needed prebuilds
     '!node_modules/sodium-native/prebuilds/*',
@@ -59,7 +58,6 @@ module.exports = {
     '!**/node_modules/**/{test,__tests__,tests,powered-test,example,examples}',
 
     /* custom */
-
     '!**/node_modules/*.d.ts',
     '!**/node_modules/.bin',
     '!**/*.{iml,o,hprof,orig,pyc,pyo,rbc,swp,csproj,sln,xproj}',
