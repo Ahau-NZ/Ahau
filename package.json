@@ -35,9 +35,6 @@
     "test:ui": "cd ui && npm run test",
     "cleanup": "rm -rf node_modules && rm -rf **/node_modules && rm -rf package-lock.json && rm -rf **/package-lock.json"
   },
-  "dependencies": {
-    "vue-country-region-select": "^2.0.13"
-  },
   "devDependencies": {
     "husky": "^4.2.1",
     "kill-port": "^1.6.0",
