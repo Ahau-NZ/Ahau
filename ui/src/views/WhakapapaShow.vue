@@ -155,7 +155,7 @@
         </a>
       </li>
       <li v-for="(option, index) in contextMenuOpts" :key="index">
-        <a v-if="option.canEdit" href="#" @click.prevent="updateDialog(option.dialog, option.type)" class="d-flex align-center px-4">
+        <a v-if="option.isPermitted" href="#" @click.prevent="updateDialog(option.dialog, option.type)" class="d-flex align-center px-4">
           <v-icon v-if="option.icon==='mdi-delete'" class="contextMenuIcon">mdi-delete</v-icon>
           <img v-else class="contextMenuIcon" :src="option.icon"/>
           <p class="ma-0 pl-3">{{ option.title }}</p>
@@ -318,28 +318,28 @@ export default {
           title: 'Add Parent',
           dialog: 'new-node',
           type: 'parent',
-          canEdit: this.canEdit,
+          isPermitted: Boolean(this.selectedProfile),
           icon: require('../assets/node-parent.svg')
         },
         {
           title: 'Add Child',
           dialog: 'new-node',
           type: 'child',
-          canEdit: this.canEdit,
+          isPermitted: Boolean(this.selectedProfile),
           icon: require('../assets/node-child.svg')
         },
         {
           title: 'Add Sibling',
           dialog: 'new-node',
           type: 'sibling',
-          canEdit: this.canAddSibling,
+          isPermitted: this.canAddSibling,
           icon: require('../assets/node-sibling.svg')
         },
         {
           title: 'Delete Person',
           dialog: 'delete-node',
           type: null,
-          canEdit: this.canDelete,
+          isPermitted: this.canDelete,
           icon: 'mdi-delete'
         }
       ]
