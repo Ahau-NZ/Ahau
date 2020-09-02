@@ -50,7 +50,8 @@ export default {
   data () {
     return {
       formData: setDefaultStory(this.story),
-      access: null
+      access: null,
+      initial: false
     }
   },
   computed: {
@@ -59,28 +60,31 @@ export default {
       return this.$vuetify.breakpoint.xs
     }
   },
-  mounted () {
+  async mounted () {
+    this.initial = true
     if (!this.editing) {
-      this.access = this.defaultAccess
+      this.access = await this.defaultAccess
     } else {
       this.access = this.getAccessFromRecps(this.story.recps)
     }
   },
   watch: {
-    access: {
-      immediate: true,
-      deep: true,
-      handler (newAccess) {
-        if (newAccess) {
-          // when the access changes, we need to reset all prefilled values to ensure we
-          // dont allow publishing of records that arent in the current group
-          this.formData.mentions = [newAccess]
-          this.formData.contributors = [this.whoami.public.profile]
-          this.formData.kaitiaki = [this.whoami.public.profile]
-          this.formData.creators = []
-          this.formData.relatedRecords = []
-        }
+    access (newAccess) {
+      if (!newAccess) return
+
+      // make sure it doesnt clear the current profile on initial loading
+      if (!this.initial) this.formData.mentions = []
+      else {
+        this.formData.mentions = [this.currentProfile]
+        this.initial = false
       }
+
+      // when the access changes, we need to reset all prefilled values to ensure we
+      // dont allow publishing of records that arent in the current group
+      this.formData.contributors = [this.whoami.public.profile]
+      this.formData.kaitiaki = [this.whoami.public.profile]
+      this.formData.creators = []
+      this.formData.relatedRecords = []
     },
     'formData.startDate' (newVal) {
       if (this.formData.timeInterval) {
