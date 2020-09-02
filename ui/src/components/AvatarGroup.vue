@@ -26,7 +26,7 @@
             @click="profileClick(profile)"
             :deletable="deletable"
             @delete="$emit('delete', i)"
-            :isView="isView || profile.type !== 'person'"
+            :isView="isView || profile.type === 'community'"
             :dark="dark"
             :row="row"
           />
