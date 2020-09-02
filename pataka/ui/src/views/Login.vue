@@ -97,8 +97,10 @@ export default {
 
       this.isSetup = Boolean(this.profile.preferredName)
 
-      this.karakiatūwhera()
-      this.$router.push({ name: 'dashboard' })
+      if (this.isSetup) {
+        this.karakiaTūwhera()
+        this.$router.push({ name: 'dashboard' })
+      }
 
       // Shortcut in dev, that saves us from doing one click when testing
       // if (this.isSetup && process.env.NODE_ENV === 'development') {
