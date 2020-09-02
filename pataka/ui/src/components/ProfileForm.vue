@@ -12,6 +12,7 @@
             :image="formData.avatarImage"
             :alt="formData.preferredName"
             :gender="formData.gender"
+            :isView="true"
             :isEditing="isEditing"
             @updateAvatar="formData.avatarImage = $event"
           />

@@ -40,6 +40,7 @@
             :alt="profile.preferredName"
             class="pb-4"
             :image="profile.avatarImage"
+            :isView="true"
           />
           <h2 class="subtitle-1 text-uppercase text-center">{{profile.preferredName}}</h2>
           <p class="grey--text text-center feed-id">{{profile.feedId}}</p>
@@ -121,6 +122,7 @@
                     size="60px"
                     :alt="tribe.public[0].preferredName"
                     :image="tribe.public[0].avatarImage"
+                    :isView="true"
                     showOnHover
                     :gender="tribe.public[0].gender"
                     :aliveInterval="tribe.public[0].aliveInterval"
