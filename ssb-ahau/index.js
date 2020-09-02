@@ -1,11 +1,12 @@
 const pull = require('pull-stream')
+const env = require('ahau-env')
 const graphqlServer = require('./graphql-server')
 
 module.exports = {
   name: 'ssb-ahau',
   version: '1.0.0',
   init: function (sbot, config) {
-    if (process.env.NODE_ENV === 'development') {
+    if (!env.isProduction || process.env.AHAU_LOGGING) {
       logPublish(sbot)
       logReplication(sbot)
     }

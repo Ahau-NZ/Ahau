@@ -49,10 +49,9 @@ Forward together!
 `
 console.log(karakia)
 
-const appURL =
-  process.env.NODE_ENV === 'development'
-    ? 'http://localhost:8081' // dev-server
-    : `file://${__dirname}/dist/index.html` // production build
+const appURL = process.env.NODE_ENV === 'development'
+  ? 'http://localhost:8081' // dev-server
+  : `file://${__dirname}/dist/index.html` // production build
 
 ahoy({
   title: 'Pātaka',

@@ -49,7 +49,6 @@ module.exports = {
     '!ui/*',
     '!dist/installers/*',
     '!electron-builder.env',
-    '../server/**/*',
 
     // sodium-native: only include needed prebuilds
     '!node_modules/sodium-native/prebuilds/*',

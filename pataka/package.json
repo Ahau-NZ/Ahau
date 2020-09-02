@@ -18,6 +18,7 @@
     "lint": "cd ui && npm run lint"
   },
   "dependencies": {
+    "ahau-env": "file:../ahau-env",
     "secret-stack": "^6.3.1",
     "ssb-ahoy": "^3.0.0",
     "ssb-artefact": "^2.0.0",
