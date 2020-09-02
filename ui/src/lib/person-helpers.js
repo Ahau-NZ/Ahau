@@ -70,6 +70,7 @@ export const whoami = ({
         public {
           feedId
           profile {
+            type
             ...PublicProfileFragment
           }
         }
