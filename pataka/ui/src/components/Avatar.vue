@@ -9,7 +9,7 @@
           @mouseleave="hovered = false"
         >
           <v-img v-if="image && image.uri" :src="image.uri" :alt="alt" />
-          <v-img v-else :src="getImage" :style="customStyle" />
+          <v-img v-else :src="getImage" :style="customStyle" class="alive"/>
         </v-avatar>
       </v-row>
       <v-row v-if="showLabel" justify="center">{{ alt }}</v-row>
@@ -33,7 +33,7 @@
           :class="{'isEditing': isEditing}"
         >
           <v-img v-if="image && image.uri" :src="image.uri" :alt="alt" />
-          <v-img v-else :src="getImage" class="no-pic" :style="customStyle" />
+          <v-img v-else :src="getImage" class="no-pic" :style="customStyle"/>
         </v-avatar>
         <div v-if="isEditing" class="avatar-overlay">
           <ImagePicker @updateAvatar="updateAvatar($event)" />
@@ -83,10 +83,9 @@ export default {
     },
     customStyle () {
       return {
-        opacity: this.offline ? 0.5 : 1
+        opacity: this.offline ? 0.5 : 1,
       }
-    }
-
+    },
   },
   components: {
     ImagePicker
@@ -103,8 +102,6 @@ export default {
 .avatar-container {
   position: relative;
   text-align: center;
-  color: white;
-  background: white;
 }
 
 .hoverName {
@@ -127,7 +124,6 @@ export default {
 }
 
 .no-pic {
-  background: white;
   padding: 15px;
 }
 
