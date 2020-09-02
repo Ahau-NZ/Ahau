@@ -61,15 +61,27 @@ export default {
   },
   mounted () {
     if (!this.editing) {
-      this.formData.mentions.push(this.currentProfile)
-      this.formData.contributors.push(this.whoami.public.profile)
-      this.formData.kaitiaki = [this.whoami.public.profile]
       this.access = this.defaultAccess
     } else {
       this.access = this.getAccessFromRecps(this.story.recps)
     }
   },
   watch: {
+    access: {
+      immediate: true,
+      deep: true,
+      handler (newAccess) {
+        if (newAccess) {
+          // when the access changes, we need to reset all prefilled values to ensure we
+          // dont allow publishing of records that arent in the current group
+          this.formData.mentions = [newAccess]
+          this.formData.contributors = [this.whoami.public.profile]
+          this.formData.kaitiaki = [this.whoami.public.profile]
+          this.formData.creators = []
+          this.formData.relatedRecords = []
+        }
+      }
+    },
     'formData.startDate' (newVal) {
       if (this.formData.timeInterval) {
         var dates = this.formData.timeInterval.split('/')
