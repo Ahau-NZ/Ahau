@@ -1,0 +1,15 @@
+{
+  "name": "ahau-env",
+  "version": "1.0.0",
+  "description": "common place to hold ahau env",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "ahau",
+    "env"
+  ],
+  "author": "mixmix",
+  "license": "AGPL-3.0"
+}

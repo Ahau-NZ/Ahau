@@ -5,6 +5,7 @@
   "homepage": "https://gitlab.com/ahau/whakapapa-ora",
   "main": "index.js",
   "dependencies": {
+    "ahau-env": "file:../ahau-env",
     "@apollo/federation": "^0.19.1",
     "@ssb-graphql/main": "^5.0.0",
     "@ssb-graphql/invite": "^0.1.1",
