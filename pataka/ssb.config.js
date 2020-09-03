@@ -1,7 +1,7 @@
 const Config = require('ssb-config/defaults')
 const env = require('ahau-env')
-const fs = require('fs')
-const path = require('path')
+// const fs = require('fs')
+// const path = require('path')
 
 const customConfig = {
   port: 8088,
@@ -34,14 +34,14 @@ module.exports = function () {
   const config = Config(appName, customConfig)
 
   // write a copy of this config to ~/.{appName}/config
-  fs.writeFile(
-    path.join(config.path, 'config'),
-    JSON.stringify(customConfig, null, 2),
-    err => {
-      if (err) throw err
-      // console.log('saved config')
-    }
-  )
+  // fs.writeFile(
+  //   path.join(config.path, 'config'),
+  //   JSON.stringify(customConfig, null, 2),
+  //   err => {
+  //     if (err) throw err
+  //     // console.log('saved config')
+  //   }
+  // )
 
   return config
 }

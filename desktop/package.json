@@ -19,7 +19,7 @@
     "ssb-artefact": "^2.0.0",
     "ssb-backlinks": "^2.1.1",
     "ssb-blobs": "^1.2.3",
-    "ssb-config": "^3.4.4",
+    "ssb-config": "^3.4.5",
     "ssb-conn": "^0.17.0",
     "ssb-db": "^20.3.0",
     "ssb-friends": "^4.2.1",
