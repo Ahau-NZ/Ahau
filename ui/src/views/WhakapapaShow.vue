@@ -267,7 +267,7 @@ export default {
       whakapapa: {
         tree: true,
         table: false
-      },
+      }
     }
   },
   apollo: {

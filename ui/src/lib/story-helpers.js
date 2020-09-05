@@ -289,6 +289,8 @@ function findItemById (initialArray, itemToFind) {
 }
 
 export function GET_CHANGES (initialValue, updatedValue) {
+  console.log('intialValue: ', initialValue)
+  console.log('updatedValue: ', updatedValue)
   var changes = {}
 
   if (isEqual(initialValue, updatedValue)) return changes

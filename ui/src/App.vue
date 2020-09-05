@@ -7,7 +7,7 @@
       </transition>
       <Spinner />
     </v-main>
-    <div class='version'>
+    <div v-if="!mobile" class='version'>
       <span>version</span> {{version}}
     </div>
     <DialogHandler />

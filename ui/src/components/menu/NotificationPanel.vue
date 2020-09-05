@@ -29,16 +29,21 @@
 
     <!-- MOBILE NOTIFICATIONS -->
     <div v-else @click="expand = !expand" style="display: flex; position: relative;">
-      <img src="@/assets/logo_red.svg" class="logo" />
-      <div
-        :style="mobile ? 'position:absolute; bottom:-10px;right:8px':'position:absolute; bottom:-10px;right:30px'"
-      >
-        <v-badge
-          v-if="showBadge"
-          color="#B12526"
-          :content="notificationsCount"
-          style="cursor: pointer;"
-        ></v-badge>
+      <v-btn v-if="expand" icon dark>
+        <v-icon>mdi-arrow-left</v-icon>
+      </v-btn>
+      <div v-else>
+        <img src="@/assets/logo_red.svg" class="logo" />
+        <div
+          :style="mobile ? 'position:absolute; bottom:-10px;right:8px':'position:absolute; bottom:-10px;right:30px'"
+        >
+          <v-badge
+            v-if="showBadge"
+            color="#B12526"
+            :content="notificationsCount"
+            style="cursor: pointer;"
+          ></v-badge>
+        </div>
       </div>
     </div>
 
@@ -47,7 +52,7 @@
         tile
         light
         v-show="expand"
-        style="position: absolute;left: 0px;top: 54px; width:100%; max-height:calc(100vh + 24px);overflow-y:scroll;"
+        style="position: absolute;left: 0px;top: 54px; width:100%; max-height:calc(100vh + 24px); overflow:auto"
         elevation="12"
         v-scroll="onScroll"
       >
@@ -108,21 +113,20 @@ export default {
     }
   },
   watch: {
-    offset (newVal, oldVal) {
-      if (this.expand && newVal < oldVal) this.expand = !this.expand
-    },
-    menu (newVal) {
+    expand (newVal) {
       // TODO consider using vuex for this
-      if (newVal === true) {
-        document.body.classList.add('stop-scroll')
-      } else {
-        document.body.classList.remove('stop-scroll')
+      if (newVal === false) {
+        setTimeout(() => {
+          window.scrollTo({
+            top: this.offset
+          })
+        }, 100)
       }
     }
   },
   methods: {
     onScroll () {
-      if (this.mobile) this.offset = window.pageYOffset
+      if (!this.expand) this.offset = window.pageYOffset
     }
   }
 
