@@ -7,7 +7,7 @@
       <template v-if="!isgoBack">
         <NotificationPanel/>
       </template>
-      <BackButton v-if="!mobile" @goBack="goBack"/>
+      <BackButton v-if="!mobile" @go-back="goBack"/>
       <v-spacer />
       <!-- TODO this takes you back to previous view -->
 

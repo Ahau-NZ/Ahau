@@ -1,35 +1,42 @@
 <template>
   <div>
-    <v-btn v-if="isgoWhakapapa && !showStory" fab @click="goWhakapapa" class="ms-10 pr-6 pb-1">
-      <v-row align="center">
-        <v-icon large>mdi-chevron-left</v-icon>
-        <Avatar
-          size="45px"
-          class="ma-0"
-          :image="whakapapa.image ? whakapapa.image : null"
-          :alt="whakapapa.name"
-          :isView="!whakapapa.image"
-          showLabel
-          row
+    <div v-if="isgoWhakapapa && !showStory" fab class="ms-10 pr-6 pb-1">
+      <v-btn @click="goWhakapapa">
+        <v-row align="center">
+          <v-icon large>mdi-chevron-left</v-icon>
+          <Avatar
+            size="45px"
+            class="ma-0"
+            :image="whakapapa.image ? whakapapa.image : null"
+            :alt="whakapapa.name"
+            :isView="!whakapapa.image"
+            showLabel
+            row
 
-        />
-      </v-row>
-    </v-btn>
-    <v-btn v-else-if="!showStory && this.route.name === 'whakapapaShow'" fab @click="$emit('goBack')" class="ms-10  pr-6 pb-1">
-      <v-row align="center">
-        <v-icon large>mdi-chevron-left</v-icon>
-        <Avatar
-          size="45px"
-          class="ma-0"
-          :image="currentProfile.avatarImage ? currentProfile.avatarImage : null"
-          :alt="currentProfile.preferredName"
-          :gender="currentProfile.gender"
-          showLabel
-          row
+          />
+          <span class="pl-2 caption">Back to {{whakapapa.name}}</span>
+        </v-row>
+      </v-btn>
+    </div>
+    <div v-else-if="!showStory && this.route.name === 'whakapapaShow'" fab class="ms-10  pr-6 pb-1">
+      <v-btn @click="$emit('go-back')">
+        <v-row align="center">
+          <v-icon large>mdi-chevron-left</v-icon>
+          <Avatar
+            size="45px"
+            class="ma-0"
+            :image="currentProfile.avatarImage ? currentProfile.avatarImage : null"
+            :alt="currentProfile.preferredName"
+            :gender="currentProfile.gender"
+            showLabel
+            row
+            :isView="currentProfile.type === 'community' && !currentProfile.avatarImage"
 
-        />
-      </v-row>
-    </v-btn>
+          />
+          <span class="pl-2 caption">Back to {{currentProfile.preferredName}}</span>
+        </v-row>
+      </v-btn>
+    </div>
   </div>
 </template>
 
