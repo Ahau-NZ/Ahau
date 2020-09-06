@@ -86,9 +86,7 @@ export default {
 }
 </script>
 <style scoped lang="scss">
-.label {
-  color: #9b9b9b
-}
+
 * {
   color: #383838
 }
