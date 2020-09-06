@@ -264,7 +264,6 @@ export const saveStory = input => {
     ...pick(input, PERMITTED_STORY_ATTRS),
     submissionDate
   }
-
   return {
     mutation: gql`
       mutation($input: StoryInput!) {
@@ -289,8 +288,6 @@ function findItemById (initialArray, itemToFind) {
 }
 
 export function GET_CHANGES (initialValue, updatedValue) {
-  console.log('intialValue: ', initialValue)
-  console.log('updatedValue: ', updatedValue)
   var changes = {}
 
   if (isEqual(initialValue, updatedValue)) return changes

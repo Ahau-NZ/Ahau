@@ -70,15 +70,13 @@ export default {
   },
   watch: {
     access (newAccess) {
-      if (!newAccess) return
-
+      if (!newAccess || this.editing) return
       // make sure it doesnt clear the current profile on initial loading
       if (!this.initial) this.formData.mentions = []
       else {
         this.formData.mentions = [this.currentProfile]
         this.initial = false
       }
-
       // when the access changes, we need to reset all prefilled values to ensure we
       // dont allow publishing of records that arent in the current group
       this.formData.contributors = [this.whoami.public.profile]
