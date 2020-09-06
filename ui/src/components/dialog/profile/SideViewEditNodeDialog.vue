@@ -92,7 +92,8 @@
               medium
               class="blue--text"
             >
-              <ArchiveIcon size="normal"/>
+              <!-- <ArchiveIcon size="normal"/> -->
+              <v-icon class="blue--text" style="font-size:20px">mdi-account-circle</v-icon>
               <span class="pl-2 "> Profile</span>
 
               <!-- <v-icon small class="blue--text" left>mdi-account-circle</v-icon>Archive -->
