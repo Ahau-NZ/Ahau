@@ -92,11 +92,8 @@
               medium
               class="blue--text"
             >
-              <!-- <ArchiveIcon size="normal"/> -->
               <v-icon class="blue--text" style="font-size:20px">mdi-account-circle</v-icon>
               <span class="pl-2 "> Profile</span>
-
-              <!-- <v-icon small class="blue--text" left>mdi-account-circle</v-icon>Archive -->
             </v-btn>
             <v-btn
               v-if="!preview && profile.canEdit"
@@ -240,7 +237,6 @@ import pick from 'lodash.pick'
 import clone from 'lodash.clonedeep'
 import { mapActions } from 'vuex'
 
-import ArchiveIcon from '@/components/button/ArchiveIcon.vue'
 import ProfileForm from '@/components/profile/ProfileForm.vue'
 
 import Avatar from '@/components/Avatar.vue'
@@ -290,8 +286,7 @@ export default {
     AddButton,
     Avatar,
     AvatarGroup,
-    DialogTitleBanner,
-    ArchiveIcon
+    DialogTitleBanner
   },
   props: {
     goBack: { type: Function },
