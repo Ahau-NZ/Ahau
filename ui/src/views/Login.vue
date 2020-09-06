@@ -21,14 +21,12 @@
       <!-- TODO change this for an EditProfile dialog -->
       <v-icon left>mdi-plus</v-icon>
       <p class="mb-0">Ko wai koe --</p><p style="color:lightgrey" class="mb-0"> -- who are you?</p>
-      <!-- <p style="color:white;" class="mb-0"  >  Who are you?</p> -->
 
     </v-btn>
-    <router-link
+    <div
       v-if="!isLoading && isSetup"
-      :to="{ name: 'whakapapaIndex' }"
-      class="d-flex flex-column align-center"
-      @click.native="karakiaTūwhera()"
+      class="d-flex flex-column align-center button"
+      @click="login()"
     >
       <Avatar
         :image="whoami.personal.profile.avatarImage"
@@ -36,8 +34,8 @@
         :aliveInterval="whoami.personal.profile.aliveInterval"
         size="13vh"
       />
-      <h3 class="name mt-2">{{ whoami.personal.profile.preferredName }}</h3>
-    </router-link>
+      <p class="name mt-2">{{ whoami.personal.profile.preferredName }}</p>
+    </div>
 
      <NewNodeDialog
       v-if="dialog"
@@ -126,14 +124,19 @@ export default {
 
       this.isSetup = Boolean(this.whoami.personal.profile.preferredName)
       // Shortcut in dev, that saves us from doing one click when testing
+
       if (this.isSetup && process.env.NODE_ENV === 'development') {
-        this.karakiaTūwhera()
-        this.setComponent('profile')
-        this.setProfileById({ id: this.whoami.personal.profile.id })
-        this.$router.push({ name: 'profileShow', params: { id: this.whoami.personal.profile.id } })
+        this.login()
       }
 
       this.isLoading = false
+    },
+
+    login () {
+      this.karakiaTūwhera()
+      this.setComponent('profile')
+      this.setProfileById({ id: this.whoami.personal.profile.id })
+      this.$router.push({ name: 'profileShow', params: { id: this.whoami.personal.profile.id } })
     },
 
     toggleNew () {
@@ -175,7 +178,6 @@ h1 {
 .container {
   width: 100%;
   height: 90%;
-
   display: flex;
   justify-content: center;
   align-items: center;
@@ -190,9 +192,16 @@ h1 {
   align-items: center;
 }
 .name {
+  font-size: 1em;
+  text-transform: uppercase;
+  font-weight: 400;
+  letter-spacing: 3px;
   color: white;
 }
 .body-width {
   max-width: 900px;
+}
+.button:hover {
+  cursor: pointer;
 }
 </style>

@@ -16,6 +16,7 @@
         <div justify="center" class="pt-2">
           <Avatar
             :size="size"
+            ::isEditing="false"
             :image="profile.avatarImage"
             :alt="profile.preferredName"
             :gender="profile.gender"
