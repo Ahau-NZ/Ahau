@@ -52,7 +52,7 @@
     "ssb-ref": "2.13.9",
     "ssb-replicate": "1.3.2",
     "ssb-story": "^1.0.0",
-    "ssb-tribes": "github:ssbc/ssb-tribes#master",
+    "ssb-tribes": "^0.4.0",
     "utf-8-validate": "5.0.2"
   }
 }
