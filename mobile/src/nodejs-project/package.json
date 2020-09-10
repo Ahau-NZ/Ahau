@@ -12,7 +12,7 @@
     "@ssb-graphql/whakapapa": "^2.4.2",
     "@ssb-graphql/artefact": "^3.0.1",
     "@ssb-graphql/story": "^1.1.1",
-    "ssb-ahau": "file:../../../ssb-ahau",
+    "ssb-ahau": "^1.0.3",
     "apollo-server": "2.9.16",
     "apollo-server-express": "2.9.16",
     "bindings-noderify-nodejs-mobile": "10.3.0",
