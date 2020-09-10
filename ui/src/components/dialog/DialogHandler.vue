@@ -146,7 +146,7 @@ import WhakapapaTableHelper from '@/components/dialog/whakapapa/WhakapapaTableHe
 import ComingSoonDialog from '@/components/dialog/ComingSoonDialog.vue'
 import ConfirmationText from '@/components/dialog/ConfirmationText.vue'
 
-import { PERMITTED_RELATIONSHIP_ATTRS, savePerson, saveCurrentIdentity } from '@/lib/person-helpers.js'
+import { PERMITTED_RELATIONSHIP_ATTRS, savePerson } from '@/lib/person-helpers.js'
 import { createGroup, saveCommunity, savePublicCommunity, saveGroupProfileLink, deleteTribe, updateTribe } from '@/lib/community-helpers'
 import { saveWhakapapaView } from '@/lib/whakapapa-helpers.js'
 import { findByName } from '@/lib/search-helpers.js'
@@ -415,22 +415,6 @@ export default {
 
       return res.data.saveProfile
     },
-    async saveCurrentIdentity (input) {
-      const res = await this.$apollo.mutate(
-        saveCurrentIdentity(
-          this.whoami.personal.profile.id,
-          this.whoami.public.profile.id,
-          input
-        )
-      )
-
-      if (res.errors) {
-        console.error('failed to save identity profile', res)
-      }
-
-      // set whoami
-      await this.setWhoami()
-    },
     async addPerson ($event) {
       try {
         var { id } = $event
@@ -652,11 +636,7 @@ export default {
       }
 
       const profileId = this.selectedProfile.id
-      if (this.isPersonalProfile(profileId)) {
-        await this.saveCurrentIdentity(input)
-      } else {
-        await this.savePerson({ id: profileId, ...input })
-      }
+      await this.savePerson({ id: profileId, ...input })
 
       const relationshipAttrs = pick(input, [...PERMITTED_RELATIONSHIP_ATTRS])
       if (!isEmpty(relationshipAttrs) && this.selectedProfile.id !== this.view.focus) {
