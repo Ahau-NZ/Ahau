@@ -256,9 +256,6 @@ export default {
     }
   },
   methods: {
-    isPersonalProfile (id) {
-      return this.whoami.personal.profile.id === id
-    },
     ...mapActions(['setWhoami', 'updateNode', 'deleteNode', 'updatePartnerNode', 'addChild', 'addParent', 'loading', 'setDialog',
       'setProfileById', 'setComponent', 'setCurrentTribe', 'setCurrentTribeById', 'setTribes'
     ]),
