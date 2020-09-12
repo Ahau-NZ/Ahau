@@ -52,7 +52,7 @@
 import Avatar from '@/components/Avatar'
 import NewNodeDialog from '@/components/dialog/profile/NewNodeDialog.vue'
 import { mapGetters, mapActions } from 'vuex'
-import { saveCurrentIdentity } from '@/lib/person-helpers.js'
+import { savePerson } from '@/lib/person-helpers.js'
 
 const karakia = `
 ---------------------------------
@@ -143,14 +143,13 @@ export default {
       this.dialog = !this.dialog
     },
 
-    async save (profileChanges) {
-      const res = await this.$apollo.mutate(
-        saveCurrentIdentity(
-          this.whoami.personal.profile.id,
-          this.whoami.public.profile.id,
-          profileChanges
-        )
-      )
+    async save (input) {
+      input = {
+        id: this.whoami.personal.profile.id,
+        ...input
+      }
+
+      const res = await this.$apollo.mutate(savePerson(input))
 
       if (res.errors) {
         console.error('failed to update profile', res)

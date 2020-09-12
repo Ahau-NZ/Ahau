@@ -157,31 +157,3 @@ function pruneEmptyValues (input) {
   })
   return pruned
 }
-
-export const saveCurrentIdentity = (personalId, publicId, input) => {
-  const personalDetails = pick(input, PERMITTED_PERSON_ATTRS)
-  const publicDetails = pick(input, PERMITTED_PUBLIC_PERSON_ATTRS)
-
-  // TODO - this currently submits mutations to public profile event when they are empty!
-  // could fix this is ssb-profile or here?
-
-  return {
-    mutation: gql`
-      mutation ($personalDetails:ProfileInput, $publicDetails:ProfileInput) {
-        savePersonalProfile: saveProfile(input:$personalDetails)
-        savePublicProfile: saveProfile(input:$publicDetails)
-      }
-    `,
-    variables: {
-      personalDetails: {
-        id: personalId,
-        ...personalDetails
-      },
-      publicDetails: {
-        id: publicId,
-        ...publicDetails,
-        allowPublic: true
-      }
-    }
-  }
-}
