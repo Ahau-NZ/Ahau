@@ -98,7 +98,9 @@ export default {
           if (result.errors) throw result.errors
 
           var image = result.data.uploadFile
-          if (image.mimeType === null) image.mimeType = file.type
+          // TODO: HACK until mimeType: Hello World gets solved
+          if (image.mimeType === null || image.mimeType === 'Hello World') image.mimeType = file.type
+
           // TODO: change when ssb-profile blobs are updated, need this because ssb-profile schema uses blob.blob not blob.blobId
           if (image.blobId) image.blob = image.blobId
 
