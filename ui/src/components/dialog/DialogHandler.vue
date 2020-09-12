@@ -97,7 +97,7 @@
       :show="isActive('whakapapa-delete')"
       :view="view"
       @close="close"
-      @submit="$emit('deleteWhakapapa')"
+      @submit="$emit('delete-whakapapa')"
     />
     <WhakapapaShowHelper
       v-if="isActive('whakapapa-helper')"
