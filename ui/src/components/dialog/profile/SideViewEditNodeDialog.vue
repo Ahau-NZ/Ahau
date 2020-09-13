@@ -109,7 +109,7 @@
           <v-row v-if="formData.description && !isEditing" class="ma-2 py-2">
             <v-col cols="12" class="pt-0">
               <v-row>
-                <v-col class="py-1 px-0 profile-label"><small>Description</small></v-col>
+                <v-col class="py-1 px-0 profile-label overline"><small>Description</small></v-col>
               </v-row>
               <v-row class="py-0 justify-center">
                 <p class="ma-0 profile-info" style="font-size: 0.8em">{{formData.description}}</p>
@@ -117,11 +117,11 @@
             </v-col>
           </v-row>
           <v-row v-if="!isEditing"  style="border: 0.5px solid rgba(0,0,0,0.12); border-radius: 10px;" class="flex-column mx-0 ">
-            <v-col class="pa-0 my-2">
+            <v-col class="pa-0">
               <v-row style="border-bottom: 0.5px solid rgba(0,0,0,0.12);" class="ma-0">
                 <v-col cols="6">
                   <v-row>
-                    <v-col class="py-1 px-0 profile-label"><small>Legal Name</small></v-col>
+                    <v-col class="py-1 px-0 profile-label overline"><small>Legal Name</small></v-col>
                   </v-row>
                   <v-row class="py-0 justify-center">
                     <p class="ma-0 profile-info">{{formData.legalName}}</p>
@@ -129,7 +129,7 @@
                 </v-col>
                 <v-col cols="6">
                   <v-row>
-                    <v-col class="py-1 px-0 profile-label"><small>Age</small></v-col>
+                    <v-col class="py-1 px-0 profile-label overline"><small>Age</small></v-col>
                   </v-row>
                   <v-row class="py-0 justify-center">
                     <p class="ma-0 profile-info">{{age(formData.aliveInterval)}}</p>
@@ -139,7 +139,7 @@
               <v-row class="ma-0">
                 <v-col cols="6">
                   <v-row>
-                    <v-col class="py-1 px-0 profile-label"><small>Occupation</small></v-col>
+                    <v-col class="py-1 px-0 profile-label overline"><small>Occupation</small></v-col>
                   </v-row>
                   <v-row class="py-0 justify-center">
                     <p class="ma-0 profile-info" style="font-size: 0.8em">{{formData.profession}}</p>
@@ -147,7 +147,7 @@
                 </v-col>
                 <v-col cols="6">
                   <v-row>
-                    <v-col class="py-1 px-0 profile-label"><small>Location</small></v-col>
+                    <v-col class="py-1 px-0 profile-label overline"><small>Location</small></v-col>
                   </v-row>
                   <v-row class="py-0 justify-center">
                     <p class="ma-0 profile-info" style="font-size: 0.8em">{{formData.location}}</p>

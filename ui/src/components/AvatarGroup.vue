@@ -2,7 +2,7 @@
   <v-col class="pt-0 pb-0">
     <v-row v-if="groupTitle">
       <v-col class="pt-1 pb-0">
-        <small class="label"> {{ groupTitle }} </small>
+        <small class="label overline"> {{ groupTitle }} </small>
       </v-col>
     </v-row>
 
@@ -89,6 +89,11 @@ export default {
 
 * {
   color: #383838
+}
+
+.label {
+  color: rgba(0,0,0,0.6);
+  font-size: 65% !important;
 }
 
 </style>

@@ -1,7 +1,7 @@
 <template>
     <v-row class="mb-12" :class="mobile ? 'mobile-profile':''">
       <v-col cols="12" md="9" :class="mobile ? 'pt-7 pb-5 px-5' : 'px-5' ">
-        <ProfileInfoCard :profile="profile" @setupProfile="setupProfile($event)" />
+        <ProfileInfoCard :profile="profile" @setupProfile="setupProfile($event)"/>
         <ProfileCard>
           <template v-slot:content>
             <v-row cols="12" class="pt-0" >
@@ -21,13 +21,20 @@
                 <v-col cols="2" class="pt-0 pl-0">
                   <Avatar :size="mobile ? '50px' : '40px'" :image="kaitiaki.avatarImage" :alt="kaitiaki.preferredName"/>
                 </v-col>
-                <v-col>
+                <v-col class="py-0">
                   <p style="color:black;">{{kaitiaki.preferredName}}</p>
                 </v-col>
               </v-row>
             </div>
             <div v-else>
-              <AvatarGroup :profiles="profile.kaitiaki" size="40px" show-labels row customClass="pl-3"/>
+              <v-row  v-for="kaitiaki in profile.kaitiaki" :key="kaitiaki.id" class="justify-center align-center ma-0 ml-4">
+                <v-col cols="2" class="pt-0 pl-0">
+                  <Avatar :size="mobile ? '50px' : '40px'" :image="kaitiaki.avatarImage" :alt="kaitiaki.preferredName"/>
+                </v-col>
+                <v-col class="py-0">
+                  <p style="color:black;">{{kaitiaki.preferredName}}</p>
+                </v-col>
+              </v-row>
             </div>
           </template>
         </ProfileCard>
@@ -45,7 +52,7 @@
               </v-row>
             </div>
             <router-link v-else to="/discovery">
-              <p>Click here to discover your tribes</p>
+              <p class="pl-3 caption">Click here to discover your tribes</p>
             </router-link>
           </template>
         </ProfileCard>
@@ -71,7 +78,6 @@ import ProfileInfoCard from '@/components/profile/ProfileInfoCard.vue'
 import ProfileInfoItem from '@/components/profile/ProfileInfoItem.vue'
 import ProfileCard from '@/components/profile/ProfileCard.vue'
 import Avatar from '@/components/Avatar.vue'
-import AvatarGroup from '@/components/AvatarGroup.vue'
 import { mapGetters, mapActions } from 'vuex'
 
 export default {
@@ -80,8 +86,7 @@ export default {
     ProfileInfoCard,
     ProfileCard,
     ProfileInfoItem,
-    Avatar,
-    AvatarGroup
+    Avatar
   },
   props: {
     profile: {
@@ -101,7 +106,11 @@ export default {
   computed: {
     ...mapGetters(['whoami', 'currentTribe', 'tribes']),
     tiakis () {
+      // if (this.profile.type === 'person') {
+      //   return this.profile.kaitiaki
+      // } else if (this.profile.type === 'community') {
       return this.currentTribe.private.length > 0 ? this.currentTribe.private[0].tiaki : this.currentTribe.public[0].tiaki
+      // }
     },
     connectedTribes () {
       return this.tribes.filter(tribe => tribe.private.length > 0)

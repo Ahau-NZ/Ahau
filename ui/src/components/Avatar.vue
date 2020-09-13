@@ -15,13 +15,13 @@
           />
         </v-avatar>
         <v-row v-if="showLabel && row">
-          <v-col class="pl-5">
-            <p :style="`font-size:1em; ${theme};`" class="overline"> {{ alt }} </p>
+          <v-col class="pl-7 pb-0" >
+            <p class="mt-n1" :style="`font-size:1em; ${theme};`"> {{ alt }} </p>
           </v-col>
         </v-row>
       </v-row>
       <v-row v-if="showLabel && !row" justify="center">
-        <p :style="`font-size:0.8em; ${theme}; margin-bottom:0`" class="overline"> {{ alt }} </p>
+        <p :style="`font-size:0.8em; ${theme}; margin-bottom:0`"> {{ alt }} </p>
       </v-row>
     </v-col>
   </div>
@@ -46,7 +46,7 @@
         </div>
       </v-row>
       <v-row v-if="showLabel && !row" justify="center">
-        <p :style="`font-size:0.8em ${theme};margin-bottom:0`"> {{ alt }} </p>
+        <p :style="`font-size:0.8em ${theme};margin-bottom:0`">{{ alt }} </p>
       </v-row>
     </v-col>
   </div>
