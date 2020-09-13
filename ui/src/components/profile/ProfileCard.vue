@@ -1,7 +1,7 @@
 <template>
   <v-row cols="12" class="rounded-border">
     <v-col v-if="title" cols="12">
-      <h4 class="mb-0"> {{ title }}</h4>
+      <h4 class="mb-0 overline"> {{ title }}</h4>
     </v-col>
     <v-col :class="!title ? 'pb-0':''" class="pt-0 px-0">
       <slot name="content"></slot>
