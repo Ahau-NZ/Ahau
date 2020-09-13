@@ -47,6 +47,19 @@ export const PERMITTED_COMMUNITY_LINK_ATTRS = [
 // TODO: finish community-helper
 // eg: getCommunity() *single community
 
+export const getMembers = id => ({
+  query: gql`
+    ${PUBLIC_PROFILE_FRAGMENT}
+    query($id: ID!) {
+      listGroupAuthors(id: $id) {
+        ...PublicProfileFragment
+      }
+    }
+  `,
+  variables: { id: id },
+  fetchPolicy: 'no-cache'
+})
+
 export const createGroup = () => {
   return {
     mutation: gql`

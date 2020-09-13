@@ -1,6 +1,6 @@
 // import gql from 'graphql-tag'
 import { createProvider } from '@/plugins/vue-apollo'
-import { getTribes } from '@/lib/community-helpers'
+import { getTribes, getMembers } from '@/lib/community-helpers'
 
 const apolloProvider = createProvider()
 const apollo = apolloProvider.defaultClient
@@ -29,8 +29,17 @@ const mutations = {
 }
 
 const actions = {
-  setCurrentTribe ({ commit }, tribe) {
-    commit('updateCurrentTribe', tribe)
+  async setCurrentTribe ({ commit }, tribe) {
+    const authors = await apollo.query(getMembers(tribe.id))
+    if (authors.errors) {
+      console.log('failed to get group authors: ', authors)
+    }
+    const members = authors.data.listGroupAuthors
+    const whanau = {
+      ...tribe,
+      members
+    }
+    commit('updateCurrentTribe', whanau)
   },
   async setTribes ({ commit }) {
     const tribes = await apollo.query(getTribes)
