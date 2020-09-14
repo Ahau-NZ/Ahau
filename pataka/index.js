@@ -17,14 +17,13 @@ const plugins = [
   'ssb-query',
   'ssb-backlinks',
 
-  'ssb-tribes',
-
   'ssb-profile',
-  'ssb-story',
-  'ssb-artefact',
-  'ssb-whakapapa',
+  // 'ssb-story',
+  // 'ssb-artefact',
+  // 'ssb-whakapapa',
 
   'ssb-invite',
+  'ssb-tribes', // TODO disable attempting decryption
   'ssb-pataka',
   'ssb-recps-guard'
 ]
