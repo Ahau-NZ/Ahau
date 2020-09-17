@@ -200,6 +200,11 @@ export default {
       return community.description.substring(0, 180)
     },
     async acceptInvite () {
+      if (!this.patakaCode || this.patakaCode.length === 0) {
+        this.errorMsg = ['Invalid code, please enter a code and try again']
+        return
+      }
+
       try {
         await this.$apollo.mutate({
           mutation: gql`
