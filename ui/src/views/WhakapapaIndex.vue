@@ -14,7 +14,7 @@
           :medium="!mobile"
           :class="!mobile ? 'addBtn my-2' : 'addBtnMobile'"
           :color="!mobile ? 'white' : 'rgba(160, 35, 36,1)'"
-          elevation="2"
+          elevation="4"
           fab
           light
           :fixed="mobile"
@@ -26,17 +26,21 @@
 
       </v-row>
 
-      <div v-if="!filteredWhakapapaViews || (filteredWhakapapaViews && filteredWhakapapaViews.length < 1)" class="px-8 py-12 subtitle grey--text " :class="{
+      <div v-if="!groupedWhakapapaViews || (groupedWhakapapaViews && groupedWhakapapaViews.length < 1)" class="px-8 py-12 subtitle grey--text " :class="{
           'text-center': mobile
         }">
         No whakapapa record found
       </div>
-
-      <v-row v-for="view in filteredWhakapapaViews" :key="view.id" dense class="mb-2">
-        <v-col cols="12" md="10">
-          <WhakapapaViewCard :view="view" cropDescription />
-        </v-col>
-      </v-row>
+      <div v-for="(group, index ) in groupedWhakapapaViews" :key="index" class="py-4">
+        <v-row>
+          <p class="black--text headliner pl-5 pt-5" style="font-size:20px">{{group.group}}</p>
+        </v-row>
+        <v-row v-for="view in group.views" :key="view.id" dense class="mb-2">
+          <v-col cols="12" md="10">
+            <WhakapapaViewCard :view="view" cropDescription />
+          </v-col>
+        </v-row>
+      </div>
 
       <NewViewDialog v-if="showViewForm" :show="showViewForm" title="Create a new whakapapa" @close="toggleViewForm"
         @submit="handleStepOne($event)" />
@@ -57,6 +61,7 @@
 import pick from 'lodash.pick'
 import isEmpty from 'lodash.isempty'
 import isEqual from 'lodash.isequal'
+import groupBy from 'lodash.groupby'
 
 import * as d3 from 'd3'
 import { mapGetters, mapActions, mapMutations } from 'vuex'
@@ -106,17 +111,22 @@ export default {
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
-    filteredWhakapapaViews () {
-      if (this.currentProfile.type === 'person') {
-        return this.views
+    groupedWhakapapaViews () {
+      if (this.currentProfile.id === this.whoami.personal.profile.id) {
+        var groups = []
+        var groupedObj = groupBy( this.views, 'recps[0]')
+        Object.keys(groupedObj).map((key, value) => {
+          groups.push({group:key, views: groupedObj[key]})
+        })
+        return groups
       }
 
-      return this.views.filter(view => {
+      return [{group:this.currentProfile.preferredName, views:this.views.filter(view => {
         return view.recps.some(recp => {
           return recp === this.currentTribe.id
         })
-      })
-    }
+      })}]
+    } 
   },
   mounted () {
     // set the current default access as the current group
@@ -374,7 +384,6 @@ export default {
     text-transform: uppercase;
     font-weight: 400;
     letter-spacing: 5px;
-
   }
 
   .desktopContainer {
