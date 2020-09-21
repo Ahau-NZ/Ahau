@@ -140,8 +140,8 @@ export default {
           var views = groupedObj[key]
           if (key === this.whoami.personal.groupId) return { group: 'private', views: views }
           var tribe = await getTribeByGroupId(key)
-          if (tribe.private > 0) return
-          else return { group: tribe.private[0].preferredName, views: views }
+          if (tribe.private.length > 0) return { group: tribe.private[0].preferredName, views: views }
+          return null
         }))
         return groups
       }
