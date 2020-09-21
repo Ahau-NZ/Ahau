@@ -26,20 +26,21 @@
 
       </v-row>
 
-      <div v-if="!groupedWhakapapaViews || (groupedWhakapapaViews && groupedWhakapapaViews.length < 1)" class="px-8 py-12 subtitle grey--text " :class="{
+      <div v-if="!whakapapas || (whakapapas && whakapapas.length < 1)" class="px-8 py-12 subtitle grey--text " :class="{
           'text-center': mobile
         }">
         No whakapapa record found
       </div>
-      <div v-for="(group, index ) in groupedWhakapapaViews" :key="index" class="py-4">
+      <div v-for="(group, index ) in whakapapas" :key="index" class="py-4">
         <v-row>
-          <p class="black--text headliner pl-5 pt-5" style="font-size:20px">{{group.group}}</p>
+          <p class="black--text headliner pl-10 pt-5" style="font-size:20px">{{group.group}} records</p>
         </v-row>
         <v-row v-for="view in group.views" :key="view.id" dense class="mb-2">
           <v-col cols="12" md="10">
             <WhakapapaViewCard :view="view" cropDescription />
           </v-col>
         </v-row>
+        <v-divider light class="mt-10"></v-divider>
       </div>
 
       <NewViewDialog v-if="showViewForm" :show="showViewForm" title="Create a new whakapapa" @close="toggleViewForm"
@@ -99,10 +100,11 @@ export default {
         type: Boolean,
         default: false
       },
-      showProfileView: false
+      showProfileView: false,
+      whakapapas:[]
     }
   },
-  created () {
+  async created () {
     if (this.$route.name === 'profileShow') {
       this.showProfileView = true
     }
@@ -112,15 +114,34 @@ export default {
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
+  },
+  async mounted () {
+    // set the current default access as the current group
+    this.setCurrentAccess(this.defaultAccess)
+    this.whakapapas = await this.groupedWhakapapaViews()
+  },
+
+  methods: {
+    ...mapMutations(['setCurrentAccess']),
+    ...mapActions(['addNestedWhakapapa', 'setLoading']),
+
     async groupedWhakapapaViews () {
+      var views = []
+      const res = await this.$apollo.query(getWhakapapaViews())
+      if (res.errors) {
+        console.log("error getting whakapapa views")
+      } else {
+        console.log(res.data)
+        views = res.data.whakapapaViews
+      }
       if (this.currentProfile.id === this.whoami.personal.profile.id) {
-        var groupedObj = groupBy( this.views, 'recps[0]')
+        var groupedObj = groupBy(views, 'recps[0]')
         const groups = await Promise.all(Object.keys(groupedObj).map(async (key, value) => {
           var views = groupedObj[key]
-          if (key === this.whoami.personal.groupId) return {key:'private', views: views}
+          if (key === this.whoami.personal.groupId) return {group:'private', views: views}
           var tribe = await getTribeByGroupId(key)
           if (tribe.private < 1) return
-          else  return {key:tribe.private[0].preferredName, veiws: views}
+          else  return {group:tribe.private[0].preferredName, views: views}
         }))
         console.log("array:", groups)
         return groups
@@ -131,18 +152,8 @@ export default {
           return recp === this.currentTribe.id
         })
       })}]
-    } 
-  },
-  mounted () {
-    // set the current default access as the current group
-    this.setCurrentAccess(this.defaultAccess)
-  },
-  apollo: {
-    views: getWhakapapaViews()
-  },
-  methods: {
-    ...mapMutations(['setCurrentAccess']),
-    ...mapActions(['addNestedWhakapapa', 'setLoading']),
+    },
+
     async getSuggestions ($event) {
       if (!$event) {
         this.suggestions = []
