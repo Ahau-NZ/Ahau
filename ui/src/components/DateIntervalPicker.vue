@@ -65,6 +65,7 @@ export default {
       deep: true,
       immediate: true,
       handler (interval) {
+        if (!interval) interval = '/'
         console.log('interval', interval)
         if (interval === null || interval === '') interval = '/'
         var [start, end] = interval.split('/')
