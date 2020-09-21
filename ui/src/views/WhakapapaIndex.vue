@@ -75,6 +75,7 @@ import { savePerson } from '@/lib/person-helpers.js'
 import tree from '@/lib/tree-helpers'
 import { saveWhakapapaView, getWhakapapaViews } from '@/lib/whakapapa-helpers.js'
 import { findByName } from '@/lib/search-helpers.js'
+import { getTribeByGroupId } from '@/lib/community-helpers.js'
 
 export default {
   name: 'WhakapapaIndex',
@@ -111,13 +112,17 @@ export default {
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
-    groupedWhakapapaViews () {
+    async groupedWhakapapaViews () {
       if (this.currentProfile.id === this.whoami.personal.profile.id) {
-        var groups = []
         var groupedObj = groupBy( this.views, 'recps[0]')
-        Object.keys(groupedObj).map((key, value) => {
-          groups.push({group:key, views: groupedObj[key]})
-        })
+        const groups = await Promise.all(Object.keys(groupedObj).map(async (key, value) => {
+          var views = groupedObj[key]
+          if (key === this.whoami.personal.groupId) return {key:'private', views: views}
+          var tribe = await getTribeByGroupId(key)
+          if (tribe.private < 1) return
+          else  return {key:tribe.private[0].preferredName, veiws: views}
+        }))
+        console.log("array:", groups)
         return groups
       }
 
