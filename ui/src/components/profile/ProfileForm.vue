@@ -116,17 +116,7 @@
             </template>
           </v-row>
 
-            <!-- DATE OF BIRTH -->
-          <!-- <v-row>
-            <v-col cols="12" class="pa-1">
-              <NodeDatePicker
-                :value.sync="formData.bornAt"
-                label="Date of birth"
-                :readonly="readonly"
-                min="0000-01-01"
-              />
-            </v-col>
-          </v-row> -->
+            <!-- DATE OF BIRTH + DATE OF DEATH-->
           <DateIntervalPicker
             label="Date of Birth"
             endLabel="Date of Death"
@@ -160,26 +150,6 @@
               />
             </v-col>
           </v-row>
-          <!-- DECEASED PICKER -->
-          <!-- <v-row v-if="this.$route.name !== 'login'">
-           <v-col  v-if="!isUser || formData.deceased" cols="12" class="pa-1">
-              <v-checkbox v-model="formData.deceased"
-                label="No longer living" :hide-details="true"
-                v-bind="customProps"
-                outlined
-              />
-            </v-col> -->
-            <!-- DIED AT PICKER -->
-            <!-- <v-col cols="12" class="pa-1">
-              <NodeDatePicker
-                v-if="formData.deceased"
-                label="Date of death"
-                :value.sync="formData.diedAt"
-                :readonly="readonly"
-                :min="formData.bornAt || '-3000-01-01'"
-              />
-            </v-col> -->
-          <!-- </v-row> -->
         </v-col>
       </v-row>
 
