@@ -11,7 +11,7 @@ export default function calculateAge (aliveInterval, now = new Date()) {
   } else if (interval.lower && !interval.upper) {
     diffMs = now.getTime() - interval.lower.getTime()
   } else if (!interval.lower && interval.upper) {
-    return null
+    return '0'
   }
 
   var ageDt = new Date(diffMs)

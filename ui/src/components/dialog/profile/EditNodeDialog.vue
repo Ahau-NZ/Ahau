@@ -99,6 +99,10 @@ export default {
             case 'birthOrder':
               changes[key] = parseInt(value)
               break
+            case 'aliveInterval':
+              if (this.formData.bornAt !== this.formData.diedAt) changes[key] = value
+              else changes[key] = '/' + this.formData.diedAt
+              break
             default:
               changes[key] = value
           }

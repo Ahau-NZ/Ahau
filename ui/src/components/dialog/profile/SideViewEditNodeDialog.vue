@@ -333,6 +333,10 @@ export default {
                 changes[key] = value
               }
               break
+            case 'aliveInterval':
+              if (this.formData.bornAt !== this.formData.diedAt) changes[key] = value
+              else changes[key] = '/' + this.formData.diedAt
+              break
             default:
               changes[key] = value
           }
@@ -378,6 +382,9 @@ export default {
     },
     'formData.diedAt' (newVal) {
       this.formData.aliveInterval = this.formData.bornAt + '/' + this.formData.diedAt
+    },
+    'formData.deceased' (newValue) {
+      if (!newValue) this.formData.diedAt = ''
     }
   },
   methods: {

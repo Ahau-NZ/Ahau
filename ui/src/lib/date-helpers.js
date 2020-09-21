@@ -45,3 +45,32 @@ const MONTHS = {
   '11': 'Nov',
   '12': 'Dec'
 }
+
+export function convertDateObjToString (obj) {
+  var { year, month, day } = obj
+
+  var error
+
+  if (year && month && day) return `${year}-${month}-${day}`
+  if (year && month && !day) return `${year}-${month}`
+  if (year && !month && !day) return `${year}`
+  if (!year && !month && !day) return ''
+  if (year && !month && day) {
+    error = new Error('Please specify a month')
+    error.metadata = { month: true }
+  }
+  if (!year && month && day) {
+    error = new Error('Please specify a year')
+    error.metadata = { year: true }
+  }
+  if (!year && !month && day) {
+    error = new Error('Please specify a year and month')
+    error.metadata = { year: true, month: true }
+  }
+  if (!year && month && !day) {
+    error = new Error('Please specify a year')
+    error.metadata = { year: true, day: true }
+  }
+
+  throw error
+}

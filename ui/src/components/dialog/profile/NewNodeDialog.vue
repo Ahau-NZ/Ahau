@@ -236,6 +236,10 @@ export default {
                 submission[key] = value
               }
               break
+            case 'aliveInterval':
+              if (this.formData.bornAt !== this.formData.diedAt) submission[key] = value
+              else submission[key] = '/' + this.formData.diedAt
+              break
             default:
               submission[key] = value
           }
@@ -243,10 +247,6 @@ export default {
           submission[key] = value
         }
       })
-
-      var aliveInterval = this.formData.bornAt + '/' + this.formData.diedAt
-
-      submission['aliveInterval'] = aliveInterval
 
       return submission
     }
@@ -351,6 +351,8 @@ export default {
         ? [this.currentAccess.groupId]
         : null
 
+      console.log(this.submission)
+
       var submission = {
         ...pick(this.submission, [...PERMITTED_PERSON_ATTRS, ...PERMITTED_RELATIONSHIP_ATTRS]),
         recps
@@ -405,11 +407,6 @@ export default {
         this.showAvatar = true
       }
     },
-    'formData.deceased' (newValue) {
-      if (newValue === false) {
-        this.formData.diedAt = ''
-      }
-    },
     'formData.preferredName' (newValue) {
       if (!newValue) return
       if (newValue.length > 2) {
@@ -421,20 +418,13 @@ export default {
       }
     },
     'formData.bornAt' (newVal) {
-      if (this.formData.aliveInterval) {
-        var dates = this.formData.aliveInterval.split('/')
-        this.formData.aliveInterval = (newVal || '') + '/' + (dates[1] || '')
-      } else {
-        this.formData.aliveInterval = (newVal || '') + '/'
-      }
+      this.formData.aliveInterval = this.formData.bornAt + '/' + this.formData.diedAt
     },
     'formData.diedAt' (newVal) {
-      if (this.formData.aliveInterval) {
-        var dates = this.formData.aliveInterval.split('/')
-        this.formData.aliveInterval = (dates[0] || '') + '/' + (newVal || '')
-      } else {
-        this.formData.aliveInterval = '/' + (newVal || '')
-      }
+      this.formData.aliveInterval = this.formData.bornAt + '/' + this.formData.diedAt
+    },
+    'formData.deceased' (newValue) {
+      if (!newValue) this.formData.diedAt = ''
     },
     hasSelection (newValue) {
       if (newValue) {
