@@ -6,11 +6,12 @@
         :label="label"
         :readonly="readonly"
         min="0000-01-01"
+        :max="end || currentDate"
       />
     </v-col>
-    <v-col  v-if="$route.name !== 'login' && allowInterval" cols="12" class="pa-1">
+    <v-col  v-if="$route.name !== 'login' && allowInterval" cols="12">
       <v-checkbox v-model="showEndDate"
-        label="No longer living" :hide-details="true"
+        label="No longer living" hide-details
         v-bind="customProps"
         outlined
       />
@@ -22,6 +23,7 @@
         :value.sync="end"
         :readonly="readonly"
         :min="start || '-3000-01-01'"
+        :max="currentDate"
       />
     </v-col>
     <v-col v-if="errorMsg" style="color: red;">
@@ -51,10 +53,11 @@ export default {
   },
   data () {
     return {
-      start: null,
-      end: null,
+      start: '',
+      end: '',
       showEndDate: this.hasEndDate,
-      errorMsg: null
+      errorMsg: null,
+      currentDate: new Date().toISOString().slice(0, 10)
     }
   },
   watch: {
@@ -62,6 +65,8 @@ export default {
       deep: true,
       immediate: true,
       handler (interval) {
+        console.log('interval', interval)
+        if (interval === null || interval === '') interval = '/'
         var [start, end] = interval.split('/')
 
         this.start = start
@@ -69,6 +74,7 @@ export default {
       }
     },
     showEndDate (show) {
+      if (!show) this.$emit('update:interval', this.start + '/')
       this.$emit('update:hasEndDate', show)
     },
     start () {
@@ -86,7 +92,7 @@ export default {
         flat: this.readonly,
         hideDetails: true,
         placeholder: ' ',
-        class: this.readonly ? 'custom' : '',
+        class: this.readonly ? 'custom mt-0' : 'mt-0',
         light: true
       }
     }
@@ -100,7 +106,6 @@ export default {
         this.$emit('update:interval', interval)
         this.errorMsg = null
       } catch (err) {
-        console.log('err', err)
         this.errorMsg = 'Please try another date range'
       }
     }

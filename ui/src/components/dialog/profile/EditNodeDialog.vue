@@ -30,19 +30,11 @@ import clone from 'lodash.clonedeep'
 function defaultData (input) {
   var profile = clone(input)
 
-  var aliveInterval = ['', '']
-
-  if (profile.aliveInterval) {
-    aliveInterval = profile.aliveInterval.split('/')
-  }
-
   return {
     id: profile.id,
     gender: profile.gender,
     legalName: profile.legalName,
     aliveInterval: profile.aliveInterval,
-    bornAt: aliveInterval[0],
-    diedAt: aliveInterval[1],
     preferredName: profile.preferredName,
     avatarImage: profile.avatarImage,
     description: profile.description,
@@ -99,10 +91,6 @@ export default {
             case 'birthOrder':
               changes[key] = parseInt(value)
               break
-            case 'aliveInterval':
-              if (this.formData.bornAt !== this.formData.diedAt) changes[key] = value
-              else changes[key] = '/' + this.formData.diedAt
-              break
             default:
               changes[key] = value
           }
@@ -121,22 +109,7 @@ export default {
       handler (newVal) {
         if (!newVal) return
         this.formData = defaultData(newVal)
-
-        if (this.formData.aliveInterval) {
-          var dates = this.formData.aliveInterval.split('/')
-          this.formData.bornAt = dates[0]
-          this.formData.diedAt = dates[1]
-        }
       }
-    },
-    'formData.bornAt' (newVal) {
-      this.formData.aliveInterval = this.formData.bornAt + '/' + this.formData.diedAt
-    },
-    'formData.diedAt' (newVal) {
-      this.formData.aliveInterval = this.formData.bornAt + '/' + this.formData.diedAt
-    },
-    'formData.deceased' (newValue) {
-      if (!newValue) this.formData.diedAt = ''
     }
   },
   methods: {
