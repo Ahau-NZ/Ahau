@@ -11,8 +11,8 @@
           class="my-2"
           fab
           color="white"
-          @click="$emit('addCommunityDialog')"
-          elevation="1"
+          @click="$emit('add-community-dialog')"
+          elevation="4"
         >
           <v-icon :large="!mobile" class="black--text">mdi-plus</v-icon>
         </v-btn>
@@ -109,6 +109,7 @@
 <script>
 import { mapActions } from 'vuex'
 import gql from 'graphql-tag'
+import whakapapa from '@/assets/whakapapa.png'
 
 const get = require('lodash.get')
 
@@ -193,7 +194,7 @@ export default {
       this.$router.push({ name: 'profileShow', params: { id } }).catch(() => {})
     },
     getImage (community) {
-      return get(community, 'avatarImage.uri') || ''
+      return get(community, 'avatarImage.uri') || whakapapa
     },
     shortDescription (community) {
       if (!community.description) return
