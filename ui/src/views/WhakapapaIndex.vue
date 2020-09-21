@@ -33,7 +33,7 @@
       </div>
       <div v-for="(group, index ) in whakapapas" :key="index" class="py-4">
         <v-row>
-          <p class="black--text headliner pl-10 pt-5" style="font-size:20px">{{group.group}} records</p>
+          <p class="black--text overline pl-10" style="font-size:20px">{{group.group}} records</p>
         </v-row>
         <v-row v-for="view in group.views" :key="view.id" dense class="mb-2">
           <v-col cols="12" md="10">
@@ -101,7 +101,7 @@ export default {
         default: false
       },
       showProfileView: false,
-      whakapapas:[]
+      whakapapas: []
     }
   },
   async created () {
@@ -113,7 +113,7 @@ export default {
     ...mapGetters(['whoami', 'currentAccess', 'defaultAccess', 'currentProfile', 'currentTribe']),
     mobile () {
       return this.$vuetify.breakpoint.xs
-    },
+    }
   },
   async mounted () {
     // set the current default access as the current group
@@ -129,7 +129,7 @@ export default {
       var views = []
       const res = await this.$apollo.query(getWhakapapaViews())
       if (res.errors) {
-        console.log("error getting whakapapa views")
+        console.log('error getting whakapapa views')
       } else {
         console.log(res.data)
         views = res.data.whakapapaViews
@@ -138,20 +138,20 @@ export default {
         var groupedObj = groupBy(views, 'recps[0]')
         const groups = await Promise.all(Object.keys(groupedObj).map(async (key, value) => {
           var views = groupedObj[key]
-          if (key === this.whoami.personal.groupId) return {group:'private', views: views}
+          if (key === this.whoami.personal.groupId) return { group: 'private', views: views }
           var tribe = await getTribeByGroupId(key)
-          if (tribe.private < 1) return
-          else  return {group:tribe.private[0].preferredName, views: views}
+          if (tribe.private > 0) return
+          else return { group: tribe.private[0].preferredName, views: views }
         }))
-        console.log("array:", groups)
         return groups
       }
 
-      return [{group:this.currentProfile.preferredName, views:this.views.filter(view => {
-        return view.recps.some(recp => {
-          return recp === this.currentTribe.id
-        })
-      })}]
+      return [{ group: this.currentProfile.preferredName,
+        views: views.filter(view => {
+          return view.recps.some(recp => {
+            return recp === this.currentTribe.id
+          })
+        }) }]
     },
 
     async getSuggestions ($event) {
