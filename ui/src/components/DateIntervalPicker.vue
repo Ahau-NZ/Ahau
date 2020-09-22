@@ -26,7 +26,7 @@
         :hasError="!!errorMsg"
       />
     </v-col>
-    <v-col v-if="errorMsg" style="color: red;" class="custom-label">
+    <v-col v-if="errorMsg && showEndDate" style="color: red;" class="custom-label">
       {{ errorMsg }}
     </v-col>
   </v-row>
