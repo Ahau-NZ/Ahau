@@ -230,6 +230,7 @@
 import calculateAge from '../../../lib/calculate-age'
 
 import { PERMITTED_PERSON_ATTRS, PERMITTED_RELATIONSHIP_ATTRS } from '@/lib/person-helpers'
+import { parseInterval } from '@/lib/date-helpers.js'
 
 import isEqual from 'lodash.isequal'
 import isEmpty from 'lodash.isempty'
@@ -324,6 +325,9 @@ export default {
               if (value && value !== this.profile.relationshipType) {
                 changes[key] = value
               }
+              break
+            case 'aliveInterval':
+              changes[key] = parseInterval(this.formData.aliveInterval)
               break
             default:
               changes[key] = value

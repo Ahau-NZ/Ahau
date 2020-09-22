@@ -74,3 +74,15 @@ export function convertDateObjToString (obj) {
 
   throw error
 }
+
+export function parseInterval (interval) {
+  if (!interval || interval === '') return interval
+
+  if (interval.indexOf('/') < 0) return '/'
+
+  const [start, end] = interval.split('/')
+
+  if (start === end) return '/' + end
+
+  return interval
+}

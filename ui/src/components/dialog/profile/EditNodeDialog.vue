@@ -18,6 +18,7 @@
 <script>
 
 import { PERMITTED_PERSON_ATTRS } from '@/lib/person-helpers.js'
+import { parseInterval } from '@/lib/date-helpers.js'
 
 import Dialog from '@/components/dialog/Dialog.vue'
 import ProfileForm from '@/components/profile/ProfileForm.vue'
@@ -90,6 +91,9 @@ export default {
               break
             case 'birthOrder':
               changes[key] = parseInt(value)
+              break
+            case 'aliveInterval':
+              changes[key] = parseInterval(this.formData.aliveInterval)
               break
             default:
               changes[key] = value

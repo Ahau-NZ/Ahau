@@ -77,6 +77,7 @@ import clone from 'lodash.clonedeep'
 import { PERMITTED_PERSON_ATTRS, PERMITTED_RELATIONSHIP_ATTRS, getPerson } from '@/lib/person-helpers'
 import AccessButton from '@/components/button/AccessButton.vue'
 import { mapGetters } from 'vuex'
+import { parseInterval } from '@/lib/date-helpers.js'
 
 function defaultData (input) {
   var profile = clone(input)
@@ -225,6 +226,9 @@ export default {
               if (!isEmpty(this.formData[key].add)) {
                 submission[key] = value
               }
+              break
+            case 'aliveInterval':
+              submission[key] = parseInterval(this.formData.aliveInterval)
               break
             default:
               submission[key] = value
