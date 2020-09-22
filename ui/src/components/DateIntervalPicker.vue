@@ -6,7 +6,7 @@
         :label="label"
         :readonly="readonly"
         min="0000-01-01"
-        :max="end || currentDate"
+        :hasError="!!errorMsg"
       />
     </v-col>
     <v-col  v-if="$route.name !== 'login' && allowInterval" cols="12">
@@ -22,11 +22,11 @@
         :label="endLabel"
         :value.sync="end"
         :readonly="readonly"
-        :min="start || '-3000-01-01'"
-        :max="currentDate"
+        min="0000-01-01"
+        :hasError="!!errorMsg"
       />
     </v-col>
-    <v-col v-if="errorMsg" style="color: red;">
+    <v-col v-if="errorMsg" style="color: red;" class="custom-label">
       {{ errorMsg }}
     </v-col>
   </v-row>
@@ -120,5 +120,12 @@ export default {
 }
 .custom.v-text-field > .v-input__control > .v-input__slot:after {
   border-style: none;
+}
+.custom-label {
+  font-size: 12px;
+  margin-left: 8px;
+  color: var(--custom-label);
+  padding-left: 3px;
+  padding-right: 3px;
 }
 </style>

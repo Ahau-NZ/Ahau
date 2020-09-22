@@ -70,7 +70,8 @@ export default {
     value: { type: [Date, String], default: 'XXXX-XX-XX' },
     readonly: { type: Boolean, default: false },
     min: { type: String },
-    dark: Boolean
+    dark: Boolean,
+    hasError: Boolean
   },
   data () {
     return {
@@ -108,10 +109,10 @@ export default {
     },
     cssVars () {
       return {
-        '--custom-label': this.errorMsg ? 'red' : this.dark ? 'white' : '#858585',
-        '--custom-fieldset-hover': this.errorMsg ? 'red' : this.dark ? 'white' : '#242424',
-        '--custom-fieldset-focused': this.errorMsg ? 'red' : this.dark ? '#545454' : 'black',
-        '--rounded-input-color': this.errorMsg ? 'red' : this.dark ? '#545454' : 'rgba(0,0,0,0.3)'
+        '--custom-label': this.errorMsg || this.hasError ? 'red' : this.dark ? 'white' : '#858585',
+        '--custom-fieldset-hover': this.errorMsg || this.hasError ? 'red' : this.dark ? 'white' : '#242424',
+        '--custom-fieldset-focused': this.errorMsg || this.hasError ? 'red' : this.dark ? '#545454' : 'black',
+        '--rounded-input-color': this.errorMsg || this.hasError ? 'red' : this.dark ? '#545454' : 'rgba(0,0,0,0.3)'
       }
     },
     // generates the years available to the user
