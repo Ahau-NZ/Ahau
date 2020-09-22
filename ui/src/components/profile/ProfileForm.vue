@@ -123,6 +123,7 @@
             allowInterval
             :interval.sync="formData.aliveInterval"
             :hasEndDate.sync="formData.deceased"
+            checkbox-label="No longer living"
           />
 
           <!-- Editing: relationship type-->

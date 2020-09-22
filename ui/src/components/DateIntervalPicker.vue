@@ -11,7 +11,7 @@
     </v-col>
     <v-col  v-if="$route.name !== 'login' && allowInterval" cols="12">
       <v-checkbox v-model="showEndDate"
-        label="No longer living" hide-details
+        :label="checkboxLabel" hide-details
         v-bind="customProps"
         outlined
       />
@@ -46,7 +46,8 @@ export default {
       type: String,
       required: true
     },
-    endLabel: String
+    endLabel: String,
+    checkboxLabel: String
   },
   components: {
     NodeDatePicker
