@@ -66,7 +66,7 @@ export default {
       immediate: true,
       handler (interval) {
         if (!interval) interval = '/'
-        console.log('interval', interval)
+
         if (interval === null || interval === '') interval = '/'
         var [start, end] = interval.split('/')
 
@@ -103,7 +103,10 @@ export default {
       var interval = this.start + '/' + this.end
 
       try {
-        if (this.start !== this.end) edtf(interval)
+        if (this.start === '' && this.end !== '') {
+          var [year] = this.end.split('-')
+          interval = year + '/' + this.end
+        } else if (this.start !== this.end) edtf(interval)
         this.$emit('update:interval', interval)
         this.errorMsg = null
       } catch (err) {
