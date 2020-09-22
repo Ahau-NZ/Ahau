@@ -341,8 +341,6 @@ export default {
         ? [this.currentAccess.groupId]
         : null
 
-      console.log(this.submission)
-
       var submission = {
         ...pick(this.submission, [...PERMITTED_PERSON_ATTRS, ...PERMITTED_RELATIONSHIP_ATTRS]),
         recps
