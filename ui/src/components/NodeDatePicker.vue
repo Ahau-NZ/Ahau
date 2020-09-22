@@ -296,7 +296,12 @@ export default {
       handler (value) {
         if (value) {
           if (typeof value !== 'object') {
-            value = edtf(value)
+            try {
+              value = edtf(value)
+            } catch (err) {
+              this.errorMsg = 'Please specify a valid date'
+              return
+            }
           }
 
           var str = value.edtf

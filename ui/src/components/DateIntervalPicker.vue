@@ -34,6 +34,7 @@
 <script>
 import NodeDatePicker from '@/components/NodeDatePicker.vue'
 import edtf from 'edtf'
+import { mapMutations } from 'vuex'
 
 export default {
   name: 'DateIntervalPicker',
@@ -84,6 +85,9 @@ export default {
     },
     end () {
       this.updateInterval()
+    },
+    errorMsg (val) {
+      this.setAllowSubmissions(!val)
     }
   },
   computed: {
@@ -100,6 +104,7 @@ export default {
     }
   },
   methods: {
+    ...mapMutations(['setAllowSubmissions']),
     updateInterval () {
       var interval = this.start + '/' + this.end
 
