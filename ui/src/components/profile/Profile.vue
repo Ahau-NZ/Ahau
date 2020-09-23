@@ -56,7 +56,6 @@
             </router-link>
           </template>
         </ProfileCard>
-        <!-- TODO show other commuinty Members -->
         <ProfileCard v-if="profile.type === 'community'" title="Members" class="mt-3">
           <template v-slot:content>
             <v-row v-for="member in currentTribe.members" :key="member.id" class="justify-center align-center ma-0 ml-4">

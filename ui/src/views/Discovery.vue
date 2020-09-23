@@ -5,7 +5,7 @@
     <!-- Content -->
     <v-col cols="12" xs="12" sm="12" md="10" :class="mobile ? 'py-0' : 'pl-0 py-0'">
       <!-- <CommunitiesNav /> -->
-      <CommunitiesList @addCommunityDialog="addCommunityDialog" />
+      <CommunitiesList @add-community-dialog="addCommunityDialog" />
     </v-col>
   </div>
 </template>
