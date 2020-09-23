@@ -77,15 +77,10 @@ import clone from 'lodash.clonedeep'
 import { PERMITTED_PERSON_ATTRS, PERMITTED_RELATIONSHIP_ATTRS, getPerson } from '@/lib/person-helpers'
 import AccessButton from '@/components/button/AccessButton.vue'
 import { mapGetters } from 'vuex'
+import { parseInterval } from '@/lib/date-helpers.js'
 
 function defaultData (input) {
   var profile = clone(input)
-
-  var aliveInterval = ['', '']
-
-  if (profile.aliveInterval) {
-    aliveInterval = profile.aliveInterval.split('/')
-  }
 
   return {
     type: 'person',
@@ -93,8 +88,6 @@ function defaultData (input) {
     gender: profile.gender,
     legalName: profile.legalName,
     aliveInterval: profile.aliveInterval,
-    bornAt: aliveInterval[0],
-    diedAt: aliveInterval[1],
     preferredName: profile.preferredName,
     avatarImage: profile.avatarImage,
     description: profile.description,
@@ -128,8 +121,6 @@ function setDefaultData (withRelationships) {
     children: [],
     avatarImage: {},
     aliveInterval: '',
-    bornAt: '',
-    diedAt: '',
     birthOrder: '',
     description: '',
     location: '',
@@ -236,6 +227,9 @@ export default {
                 submission[key] = value
               }
               break
+            case 'aliveInterval':
+              submission[key] = parseInterval(this.formData.aliveInterval)
+              break
             default:
               submission[key] = value
           }
@@ -243,10 +237,6 @@ export default {
           submission[key] = value
         }
       })
-
-      var aliveInterval = this.formData.bornAt + '/' + this.formData.diedAt
-
-      submission['aliveInterval'] = aliveInterval
 
       return submission
     }
@@ -387,12 +377,6 @@ export default {
       handler (newVal) {
         if (!newVal) return
         this.formData = defaultData(newVal)
-
-        if (this.formData.aliveInterval) {
-          var dates = this.formData.aliveInterval.split('/')
-          this.formData.bornAt = dates[0]
-          this.formData.diedAt = dates[1]
-        }
       }
     },
     'formData.relationshipType' (newValue, oldValue) {
@@ -405,11 +389,6 @@ export default {
         this.showAvatar = true
       }
     },
-    'formData.deceased' (newValue) {
-      if (newValue === false) {
-        this.formData.diedAt = ''
-      }
-    },
     'formData.preferredName' (newValue) {
       if (!newValue) return
       if (newValue.length > 2) {
@@ -418,22 +397,6 @@ export default {
         }
       } else {
         this.$emit('getSuggestions', null)
-      }
-    },
-    'formData.bornAt' (newVal) {
-      if (this.formData.aliveInterval) {
-        var dates = this.formData.aliveInterval.split('/')
-        this.formData.aliveInterval = (newVal || '') + '/' + (dates[1] || '')
-      } else {
-        this.formData.aliveInterval = (newVal || '') + '/'
-      }
-    },
-    'formData.diedAt' (newVal) {
-      if (this.formData.aliveInterval) {
-        var dates = this.formData.aliveInterval.split('/')
-        this.formData.aliveInterval = (dates[0] || '') + '/' + (newVal || '')
-      } else {
-        this.formData.aliveInterval = '/' + (newVal || '')
       }
     },
     hasSelection (newValue) {

@@ -26,7 +26,7 @@
             :image="whoami.personal.profile.avatarImage"
             :alt="whoami.personal.profile.preferredName"
             :gender="whoami.personal.profile.gender"
-            :bornAt="whoami.personal.profile.bornAt"
+            :aliveInterval="whoami.personal.profile.aliveInterval"
           />
         </v-btn>
 
@@ -50,7 +50,7 @@
             :image="whoami.personal.profile.avatarImage"
             :alt="whoami.personal.profile.preferredName"
             :gender="whoami.personal.profile.gender"
-            :bornAt="whoami.personal.profile.bornAt"
+            :aliveInterval="whoami.personal.profile.aliveInterval"
           />
         </v-list-item>
         <!-- <v-list-item active-class="no-active" link to="/whakapapa" class="white--text"> -->

@@ -11,8 +11,8 @@
           class="my-2"
           fab
           color="white"
-          @click="$emit('addCommunityDialog')"
-          elevation="1"
+          @click="$emit('add-community-dialog')"
+          elevation="4"
         >
           <v-icon :large="!mobile" class="black--text">mdi-plus</v-icon>
         </v-btn>
@@ -109,6 +109,7 @@
 <script>
 import { mapActions } from 'vuex'
 import gql from 'graphql-tag'
+import whakapapa from '@/assets/whakapapa.png'
 
 const get = require('lodash.get')
 
@@ -131,32 +132,44 @@ export default {
           id
           public {
             id
+            type
             preferredName
             description
             avatarImage { uri }
             description
             headerImage { uri }
             tombstone { date }
+            email
+            phone
+            location
+            canEdit
             tiaki {
               id
               feedId
               avatarImage { uri }
               preferredName
+              aliveInterval
             }
           }
           private {
             id
+            type
             preferredName
             description
             avatarImage { uri }
             headerImage { uri }
             recps
             tombstone {date}
+            email
+            phone
+            location
+            canEdit
             tiaki {
               id
               feedId
               avatarImage { uri }
               preferredName
+              aliveInterval
             }
           }
         }
@@ -181,25 +194,30 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setComponent', 'setDialog', 'setProfileById', 'setCurrentTribe']),
+    ...mapActions(['setComponent', 'setDialog', 'setProfileById', 'setProfile','setCurrentTribe']),
     goTribe (tribe) {
       this.setCurrentTribe(tribe)
-      if (tribe.private.length > 0) this.goProfile(tribe.private[0].id)
-      else this.goProfile(tribe.public[0].id)
+      if (tribe.private.length > 0) this.goProfile(tribe.private[0])
+      else this.goProfile(tribe.public[0])
     },
-    goProfile (id) {
+    goProfile (tribe) {
       this.setComponent('profile')
-      this.setProfileById({ id })
-      this.$router.push({ name: 'profileShow', params: { id } }).catch(() => {})
+      this.setProfile(tribe)
+      this.$router.push({ name: 'profileShow', params: { id: tribe.id } }).catch(() => {})
     },
     getImage (community) {
-      return get(community, 'avatarImage.uri') || ''
+      return get(community, 'avatarImage.uri') || whakapapa
     },
     shortDescription (community) {
       if (!community.description) return
       return community.description.substring(0, 180)
     },
     async acceptInvite () {
+      if (!this.patakaCode || this.patakaCode.length === 0) {
+        this.errorMsg = ['Invalid code, please enter a code and try again']
+        return
+      }
+
       try {
         await this.$apollo.mutate({
           mutation: gql`

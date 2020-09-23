@@ -14,7 +14,7 @@
           :medium="!mobile"
           :class="!mobile ? 'addBtn my-2' : 'addBtnMobile'"
           :color="!mobile ? 'white' : 'rgba(160, 35, 36,1)'"
-          elevation="2"
+          elevation="4"
           fab
           light
           :fixed="mobile"
