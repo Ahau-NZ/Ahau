@@ -103,6 +103,8 @@
               :interval.sync="formData.timeInterval"
               :hasEndDate.sync="hasEndDate"
               checkbox-label="include an end date"
+              :cols="mobile ? '12' : '6'"
+              :hide-checkbox="hasEndDate"
             />
 
             <!-- ADD MENTIONS -->

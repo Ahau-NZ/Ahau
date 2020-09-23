@@ -1,6 +1,6 @@
 <template>
   <v-row>
-    <v-col cols="12" class="pa-1">
+    <v-col :cols="cols" class="pa-1">
       <NodeDatePicker
         :value.sync="start"
         :label="label"
@@ -9,7 +9,7 @@
         :hasError="!!errorMsg"
       />
     </v-col>
-    <v-col  v-if="$route.name !== 'login' && allowInterval" cols="12">
+    <v-col  v-if="$route.name !== 'login' && allowInterval && !hideCheckbox" :cols="cols">
       <v-checkbox v-model="showEndDate"
         :label="checkboxLabel" hide-details
         v-bind="customProps"
@@ -17,7 +17,7 @@
       />
     </v-col>
     <!-- DIED AT PICKER -->
-    <v-col cols="12" class="pa-1" v-if="showEndDate">
+    <v-col :cols="cols" class="pa-1" v-if="showEndDate">
       <NodeDatePicker
         :label="endLabel"
         :value.sync="end"
@@ -26,7 +26,7 @@
         :hasError="!!errorMsg"
       />
     </v-col>
-    <v-col v-if="errorMsg && showEndDate" style="color: red;" class="custom-label">
+    <v-col v-if="errorMsg && showEndDate" style="color: red;" cols="12 pa-0" align="center" class="custom-label">
       {{ errorMsg }}
     </v-col>
   </v-row>
@@ -48,7 +48,12 @@ export default {
       required: true
     },
     endLabel: String,
-    checkboxLabel: String
+    checkboxLabel: String,
+    cols: {
+      type: String,
+      default: '12'
+    },
+    hideCheckbox: Boolean
   },
   components: {
     NodeDatePicker
