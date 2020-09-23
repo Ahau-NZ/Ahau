@@ -80,6 +80,7 @@
                   icon
                   :large="!mobile"
                   class="blue--text"
+                  :disabled="!allowSubmissions"
                 >
                   <v-icon>mdi-check</v-icon>
                 </v-btn>
@@ -94,6 +95,7 @@
 
 <script>
 import banner from '@/assets/bg-tohu.png'
+import { mapGetters, mapMutations } from 'vuex'
 
 export default {
   name: 'Dialog',
@@ -142,6 +144,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['allowSubmissions']),
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
@@ -178,6 +181,7 @@ export default {
     }
   },
   methods: {
+    ...mapMutations(['setAllowSubmissions']),
     submit () {
       if (this.isSubmitting) return
       this.isSubmitting = true
@@ -190,6 +194,7 @@ export default {
     },
     close () {
       this.isSubmitting = false
+      this.setAllowSubmissions(true)
       this.$emit('close')
     }
   },

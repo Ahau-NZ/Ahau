@@ -1,7 +1,7 @@
 <template>
   <div>
-    <fieldset :class="`${customClass}`" @mouseover="$emit('hover')" @mouseleave="$emit('hover')">
-      <legend :class="`ml-2 ${labelClass}`">
+    <fieldset :style="cssVars" :class="`custom-fieldset-${focused} rounded-input`" @mouseover="$emit('hover')" @mouseleave="$emit('hover')">
+      <legend class="ml-2 custom-label">
         {{label}}
       </legend>
         <v-row>
@@ -14,8 +14,8 @@
               label="Day"
               placeholder="DD"
               v-bind="customProps"
-              @focus="focused = true"
-              @blur="focused = false"
+              @focus="focused = 'focused'"
+              @blur="focused = 'default'"
               auto-select-first
             ></v-autocomplete>
           </v-col>
@@ -28,8 +28,8 @@
               label="Month"
               placeholder="MM"
               v-bind="customProps"
-              @focus="focused = true"
-              @blur="focused = false"
+              @focus="focused = 'focused'"
+              @blur="focused = 'default'"
               auto-select-first
             ></v-autocomplete>
           </v-col>
@@ -42,11 +42,18 @@
               label="Year"
               placeholder="YYYY"
               v-bind="customProps"
-              @focus="focused = true"
+              @focus="focused = 'focused'"
+              @blur="focused = 'default'"
               auto-select-first
-              @blur="focesd = false"
             >
             </v-autocomplete>
+          </v-col>
+        </v-row>
+        <v-row v-if="errorMsg">
+          <v-col class="pa-0 pl-3">
+            <legend class="custom-label">
+              {{ errorMsg }}
+            </legend>
           </v-col>
         </v-row>
     </fieldset>
@@ -54,6 +61,7 @@
 </template>
 <script>
 import edtf from 'edtf'
+import { convertDateObjToString } from '@/lib/date-helpers.js'
 
 export default {
   name: 'NodeDatePicker',
@@ -62,11 +70,12 @@ export default {
     value: { type: [Date, String], default: 'XXXX-XX-XX' },
     readonly: { type: Boolean, default: false },
     min: { type: String },
-    dark: Boolean
+    dark: Boolean,
+    hasError: Boolean
   },
   data () {
     return {
-      focused: false,
+      focused: 'default',
       date: {
         year: '',
         month: '',
@@ -76,8 +85,15 @@ export default {
         year: '',
         month: '',
         day: ''
-      }
+      },
+      theme: 'light',
+      errorMsg: null
     }
+  },
+  mounted () {
+    this.dark
+      ? this.theme = 'dark'
+      : this.theme = 'light'
   },
   computed: {
     customProps () {
@@ -88,22 +104,16 @@ export default {
         hideNoData: true,
         appendIcon: '',
         readonly: this.readonly,
-        menuProps: { light: true },
-        light: !this.dark
+        menuProps: { light: true }
       }
     },
-    customClass () {
-      var focusedClass = 'light-custom-fieldset-focused light-rounded-input'
-      var defaultClass = 'light-custom-fieldset-default light-rounded-input'
-      if (this.dark) {
-        focusedClass = 'dark-custom-fieldset-focused dark-rounded-input'
-        defaultClass = 'dark-custom-fieldset-default dark-rounded-input'
+    cssVars () {
+      return {
+        '--custom-label': this.errorMsg || this.hasError ? 'red' : this.dark ? 'white' : '#858585',
+        '--custom-fieldset-hover': this.errorMsg || this.hasError ? 'red' : this.dark ? 'white' : '#242424',
+        '--custom-fieldset-focused': this.errorMsg || this.hasError ? 'red' : this.dark ? '#545454' : 'black',
+        '--rounded-input-color': this.errorMsg || this.hasError ? 'red' : this.dark ? '#545454' : 'rgba(0,0,0,0.3)'
       }
-      return this.focused ? focusedClass : defaultClass
-    },
-    labelClass () {
-      if (this.dark) return 'dark-custom-label'
-      return 'light-custom-label'
     },
     // generates the years available to the user
     years () {
@@ -271,18 +281,12 @@ export default {
     date: {
       deep: true,
       handler (newValue) {
-        var year = this.date.year || ''
-        var month = this.date.month || ''
-        var day = this.date.day || ''
-
-        if (year && month && day) {
-          this.$emit('update:value', `${year}-${month}-${day}`)
-        } else if (year && month && !day) {
-          this.$emit('update:value', `${year}-${month}`)
-        } else if (year && !month && !day) {
-          this.$emit('update:value', year)
-        } else {
-          this.$emit('update:value', '')
+        try {
+          var date = convertDateObjToString(newValue)
+          this.errorMsg = null
+          this.$emit('update:value', date)
+        } catch (err) {
+          this.errorMsg = err.message
         }
       }
     },
@@ -292,7 +296,12 @@ export default {
       handler (value) {
         if (value) {
           if (typeof value !== 'object') {
-            value = edtf(value)
+            try {
+              value = edtf(value)
+            } catch (err) {
+              this.errorMsg = 'Please specify a valid date'
+              return
+            }
           }
 
           var str = value.edtf
@@ -346,6 +355,7 @@ export default {
 }
 </script>
 <style lang="scss">
+
 ::-webkit-scrollbar {
   width:12px;
 }
@@ -372,13 +382,8 @@ export default {
   pointer-events: none;
 }
 
-.light-rounded-input {
-  border: 1px solid rgba(0,0,0,0.3);
-  border-radius: 4px;
-}
-
-.dark-rounded-input {
-  border: 1px solid #545454;
+.rounded-input {
+  border: 1px solid var(--rounded-input-color);
   border-radius: 4px;
 }
 
@@ -389,43 +394,24 @@ export default {
   border-style: none;
 }
 
-.light-custom-label {
+.custom-label {
   font-size: 12px;
   margin-left: 8px;
-  color: #858585;
+  color: var(--custom-label);
   padding-left: 3px;
   padding-right: 3px;
 }
 
-.light-custom-fieldset-default:hover {
-  border-color: #242424;
+.custom-fieldset-default:hover {
+  border-color: var(--custom-fieldset-hover);
 }
 
-.light-custom-fieldset-focused {
+.custom-fieldset-focused {
   border-width: 2px;
-  border-color: black;
-  .light-custom-label {
-    color: black;
+  border-color: var(--custom-fieldset-focused);
+  .custom-label {
+    color: var(--custom-fieldset-focused);
   }
 }
 
-.dark-custom-label {
-  font-size: 12px;
-  margin-left: 8px;
-  color: white;
-  padding-left: 3px;
-  padding-right: 3px;
-}
-
-.dark-custom-fieldset-default:hover {
-  border-color: white;
-}
-
-.dark-custom-fieldset-focused {
-  border-width: 2px;
-  border-color: #545454;
-  .dark-custom-label {
-    color: #545454;
-  }
-}
 </style>

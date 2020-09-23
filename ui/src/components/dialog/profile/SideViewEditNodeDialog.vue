@@ -13,7 +13,7 @@
       class="side-menu"
     >
       <v-card light min-height="100%">
-        <DialogTitleBanner v-if="mobile" :title="formData.preferredName" mobile @close="close"  :isEditing="isEditing" class="px-1 pt-3"/>
+        <DialogTitleBanner v-if="mobile" :title="formData.preferredName || 'Profile'" mobile @close="close"  :isEditing="isEditing" class="px-1 pt-3"/>
         <v-row v-else class="justify-end">
           <v-btn icon class="mr-3">
             <v-icon @click="close" color="secondary">mdi-close</v-icon>
@@ -230,6 +230,7 @@
 import calculateAge from '../../../lib/calculate-age'
 
 import { PERMITTED_PERSON_ATTRS, PERMITTED_RELATIONSHIP_ATTRS } from '@/lib/person-helpers'
+import { parseInterval } from '@/lib/date-helpers.js'
 
 import isEqual from 'lodash.isequal'
 import isEmpty from 'lodash.isempty'
@@ -247,19 +248,11 @@ import DialogTitleBanner from '@/components/dialog/DialogTitleBanner.vue'
 function defaultData (input) {
   var profile = clone(input)
 
-  var aliveInterval = ['', '']
-
-  if (profile.aliveInterval) {
-    aliveInterval = profile.aliveInterval.split('/')
-  }
-
   return {
     id: profile.id,
     gender: profile.gender,
     legalName: profile.legalName,
     aliveInterval: profile.aliveInterval,
-    bornAt: aliveInterval[0],
-    diedAt: aliveInterval[1],
     preferredName: profile.preferredName,
     avatarImage: profile.avatarImage,
     description: profile.description,
@@ -333,6 +326,9 @@ export default {
                 changes[key] = value
               }
               break
+            case 'aliveInterval':
+              changes[key] = parseInterval(this.formData.aliveInterval)
+              break
             default:
               changes[key] = value
           }
@@ -365,19 +361,7 @@ export default {
       handler (newVal) {
         if (!newVal) return
         this.formData = defaultData(newVal)
-
-        if (this.formData.aliveInterval) {
-          var dates = this.formData.aliveInterval.split('/')
-          this.formData.bornAt = dates[0]
-          this.formData.diedAt = dates[1]
-        }
       }
-    },
-    'formData.bornAt' (newVal) {
-      this.formData.aliveInterval = this.formData.bornAt + '/' + this.formData.diedAt
-    },
-    'formData.diedAt' (newVal) {
-      this.formData.aliveInterval = this.formData.bornAt + '/' + this.formData.diedAt
     }
   },
   methods: {

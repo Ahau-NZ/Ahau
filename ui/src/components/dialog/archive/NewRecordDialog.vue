@@ -83,22 +83,6 @@ export default {
       this.formData.kaitiaki = [this.whoami.public.profile]
       this.formData.creators = []
       this.formData.relatedRecords = []
-    },
-    'formData.startDate' (newVal) {
-      if (this.formData.timeInterval) {
-        var dates = this.formData.timeInterval.split('/')
-        this.formData.timeInterval = (newVal || '') + '/' + (dates[1] || '')
-      } else {
-        this.formData.timeInterval = (newVal || '') + '/'
-      }
-    },
-    'formData.endDate' (newVal) {
-      if (this.formData.timeInterval) {
-        var dates = this.formData.timeInterval.split('/')
-        this.formData.timeInterval = (dates[0] || '') + '/' + (newVal || '')
-      } else {
-        this.formData.timeInterval = '/' + (newVal || '')
-      }
     }
   },
   methods: {

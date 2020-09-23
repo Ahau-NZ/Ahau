@@ -2,6 +2,7 @@ import gql from 'graphql-tag'
 import pick from 'lodash.pick'
 import { ARTEFACT_FRAGMENT } from './artefact-helpers'
 import { PERSON_FRAGMENT, PUBLIC_PROFILE_FRAGMENT } from './person-helpers'
+import { parseInterval } from './date-helpers'
 import isEqual from 'lodash.isequal'
 import isEmpty from 'lodash.isempty'
 import clone from 'lodash.clonedeep'
@@ -15,11 +16,6 @@ export function setDefaultStory (newStory) {
   var contributors = story.contributors
   var creators = story.creators
   var relatedRecords = story.relatedRecords
-  var timeInterval = ['', '']
-
-  if (story.timeInterval) {
-    timeInterval = story.timeInterval.split('/')
-  }
 
   if (artefacts && artefacts.length > 0) {
     artefacts = artefacts.map(a => {
@@ -71,8 +67,6 @@ export function setDefaultStory (newStory) {
     title: story.title,
     description: story.description,
     timeInterval: story.timeInterval,
-    startDate: timeInterval[0],
-    endDate: timeInterval[1],
     location: story.location,
     locationDescription: story.locationDescription,
     submissionDate: story.submissionDate,
@@ -338,6 +332,9 @@ export function GET_CHANGES (initialValue, updatedValue) {
         // use default for non arrays
         case key === 'duration':
           changes[key] = parseInt(value)
+          break
+        case key === 'timeInterval':
+          changes[key] = parseInterval(value)
           break
         default:
           changes[key] = value
