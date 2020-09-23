@@ -180,37 +180,29 @@ export const getTribes = {
           id
           preferredName
           description
-          avatarImage {
-            uri
-          }
+          avatarImage { uri }
           description
-          headerImage {
-            uri
-          }
-          tombstone {
-            date
-          }
-          tiaki {
-            ...PublicProfileFragment
-          }
+          headerImage { uri }
+          tombstone { date }
+          email
+          phone
+          canEdit
+          location
+          tiaki { ...PublicProfileFragment }
         }
         private {
           id
           preferredName
           description
-          avatarImage {
-            uri
-          }
-          headerImage {
-            uri
-          }
-          recps
-          tombstone {
-            date
-          }
-          tiaki {
-            ...PublicProfileFragment
-          }
+          avatarImage { uri }
+          description
+          headerImage { uri }
+          tombstone { date }
+          email
+          phone
+          location
+          canEdit
+          tiaki { ...PublicProfileFragment }
         }
       }
     }
