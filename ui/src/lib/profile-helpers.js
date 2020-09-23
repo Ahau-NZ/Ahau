@@ -107,6 +107,34 @@ export const saveProfile = input => ({
   variables: { input }
 })
 
+export const getPataka = ({
+  query: gql`
+    {
+      patakas {
+        id
+        preferredName
+        avatarImage {uri}
+      }
+    }
+  `,
+  fetchPolicy: 'no-cache'
+})
+
+export const getConnectedPeers = ({
+  query: gql`
+    {
+      connectedPeers {
+        pataka {
+          id
+          preferredName
+          avatarImage {uri}
+        }
+      }
+    }
+  `,
+  fetchPolicy: 'no-cache'
+})
+
 // export const PERMITTED_PROFILE_ATTRS = [
 //   'gender',
 //   'legalName',
