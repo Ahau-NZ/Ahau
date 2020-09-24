@@ -38,6 +38,14 @@
           <v-icon>mdi-menu</v-icon>
         </v-btn>
       </template>
+      <v-progress-linear
+        v-if="syncing"
+        :active="syncing"
+        :indeterminate="syncing"
+        absolute
+        bottom
+        color="#B71C1C"
+      ></v-progress-linear>
 
     </v-app-bar>
 
@@ -68,6 +76,14 @@
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
+    <v-progress-linear
+        v-if="syncing"
+        :active="syncing"
+        :indeterminate="syncing"
+        absolute
+        bottom
+        color="#B71C1C"
+    ></v-progress-linear>
   </div>
 </template>
 
@@ -102,7 +118,8 @@ export default {
   data () {
     return {
       drawer: false,
-      dialog: false
+      dialog: false,
+      loading: true
     }
   },
   created () {
@@ -112,7 +129,7 @@ export default {
     clearInterval(this.polling)
   },
   computed: {
-    ...mapGetters(['whoami', 'whakapapa', 'route', 'showStory', 'storeDialog', 'currentProfile']),
+    ...mapGetters(['whoami', 'whakapapa', 'route', 'showStory', 'storeDialog', 'currentProfile', 'syncing']),
     classObject: function () {
       return {
         'mobile': this.mobile,

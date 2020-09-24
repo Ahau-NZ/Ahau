@@ -80,14 +80,10 @@ export default {
             inviteCode: this.patakaCode.trim()
           }
         })
-        // this.invalidCode = false
-        // this.validCode = true
         this.successMsg = ['Successfully connected to Pātaka']
-        this.$emit('submit', 'Pātaka successfully connected')
+        this.$emit('submit', 'Successfully connected to Pātaka')
         this.close()
       } catch (err) {
-        // this.invalidCode = true
-        // this.validCode = false
         this.errorMsg = ['Invalid code, please check the code and try again']
         console.error('Invite error: ', err)
         return
@@ -97,9 +93,6 @@ export default {
     close () {
       this.$emit('close')
     }
-    // submit () {
-    //   this.$emit('submit', output)
-    // }
   }
 }
 </script>

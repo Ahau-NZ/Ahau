@@ -100,7 +100,7 @@
       v-if="dialog"
       :show="dialog"
       :title="`Connect to new Pātaka`"
-      @close="connected($event)"
+      @close="dialog = !dialog"
       @submit="connected($event)"
     />
     <ConfirmationText
@@ -108,7 +108,7 @@
       :message="confirmationText"
       :timeout="5000"
       loading=true
-      color="success"
+      color="#b12526"
     />
   </div>
 </template>
@@ -216,11 +216,12 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setComponent', 'setDialog', 'setProfile', 'setCurrentTribe']),
+    ...mapActions(['setComponent', 'setDialog', 'setProfile', 'setCurrentTribe', 'setSyncing']),
     connected (text) {
-      this.dialog = false
       this.sortPataka()
+      this.dialog = false
       this.snackbar = !this.snackbar
+      this.setSyncing(true)
       setTimeout(() => {
         this.snackbar = !this.snackbar
       }, 5000)
@@ -229,30 +230,7 @@ export default {
       this.syncing = true
     },
     async sortPataka () {
-      // var result = await this.$apollo.query({
-      //   query: gql`
-      //   query{
-      //     patakas {
-      //       id preferredName avatarImage {uri} description
-      //     }
-      //   }`,
-      //   fetchPolicy: 'no-cache'
-      // })
-      // if (result.errors) {
-      //   console.error('WARNING, something went wrong')
-      //   console.error(result.errors)
-      // } else {
-
-      //   result.data.patakas.map(pataka => {
-      //     return story.mentions.some(mention => {
-      //       return mention.profile.id === this.currentProfile.id
-      //     })
-      //   })
-
       this.patakas = await getSortedPatakas()
-
-      // this.patakas = result.data.patakas
-
       console.log('data patakas: ', this.patakas)
     },
     goTribe (tribe) {
