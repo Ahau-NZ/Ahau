@@ -45,6 +45,7 @@
         absolute
         bottom
         color="#B71C1C"
+        height="5"
       ></v-progress-linear>
 
     </v-app-bar>
@@ -83,6 +84,7 @@
         absolute
         bottom
         color="#B71C1C"
+        height="5"
     ></v-progress-linear>
   </div>
 </template>
@@ -189,7 +191,6 @@ export default {
       if (this.route.name === 'whakapapaShow') return this.$router.push({ path: this.route.from.fullPath })
       else if (this.showStory) return this.setShowStory()
     }
-
   },
   components: {
     Avatar,
