@@ -14,7 +14,7 @@
             row
 
           />
-          <span class="pl-2 caption">Back to {{whakapapa.name}}</span>
+          <span class="pl-2 caption">Back to {{whakapapa.name}} whakapapa</span>
         </v-row>
       </v-btn>
     </div>
@@ -33,7 +33,7 @@
             :isView="currentProfile.type === 'community' && !currentProfile.avatarImage"
 
           />
-          <span class="pl-2 caption">Back to {{currentProfile.preferredName}}</span>
+          <span class="pl-2 caption">Back to {{currentProfile.preferredName}} archive</span>
         </v-row>
       </v-btn>
     </div>

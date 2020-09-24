@@ -12,7 +12,7 @@
 
 <script>
 // import CommunitiesNav from '@/components/CommunitiesNav'
-import CommunitiesList from '@/components/CommunitiesList'
+import CommunitiesList from '@/components/community/CommunitiesList'
 import { mapActions } from 'vuex'
 
 export default {

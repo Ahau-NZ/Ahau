@@ -32,7 +32,7 @@
         <v-btn v-if="deletable" class="delete" @click="$emit('delete')" icon x-small light max-width="20px" max-height="20px">
           <v-icon>mdi-close</v-icon>
         </v-btn>
-        <v-avatar :size="size" :tile="isView" class="avatar-container" :class="{'isEditing': isEditing}">
+        <v-avatar :size="size" :tile="isView" class="avatar-container" :class="{'isEditing': isEditing, 'isOnline': online}">
           <v-img v-if="image && image.uri" :src="image.uri" :alt="alt" />
           <v-img
             v-else
@@ -71,7 +71,8 @@ export default {
     isEditing: Boolean,
     deletable: Boolean,
     dark: Boolean,
-    row: Boolean
+    row: Boolean,
+    online: Boolean
   },
   components: {
     ImagePicker
@@ -124,8 +125,13 @@ export default {
 }
 
 .isEditing {
-    opacity: 0.2;
-  }
+  opacity: 0.2;
+}
+
+.isOnline {
+  border: #27f17d solid 2px;
+  border-radius: 50%
+}
 
 .avatar-overlay {
   position: absolute;

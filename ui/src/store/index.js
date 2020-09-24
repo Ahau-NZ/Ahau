@@ -43,7 +43,8 @@ const store = new Vuex.Store({
       show: false,
       location: ''
     },
-    allowSubmissions: true
+    allowSubmissions: true,
+    syncing: false
   },
   modules: {
     whakapapa,
@@ -56,6 +57,9 @@ const store = new Vuex.Store({
   getters: {
     loadingState: state => {
       return state.loading
+    },
+    syncing: state => {
+      return state.syncing
     },
     whoami: state => {
       return state.whoami
@@ -128,6 +132,12 @@ const store = new Vuex.Store({
     updateLoading (state, loading) {
       state.loading = loading
     },
+    updateSyncing (state, syncing) {
+      state.syncing = syncing
+      setTimeout(() => {
+        state.syncing = !state.syncing
+      }, 30000)
+    },
     updateWhoami (state, whoami) {
       state.whoami = whoami
     },
@@ -138,6 +148,9 @@ const store = new Vuex.Store({
   actions: {
     setLoading ({ commit }, loading) {
       commit('updateLoading', loading)
+    },
+    setSyncing ({ commit }, syncing) {
+      commit('updateSyncing', syncing)
     },
     async setWhoami ({ commit }) {
       const result = await apollo.query(whoami)

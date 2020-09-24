@@ -39,7 +39,7 @@
           </template>
         </ProfileCard>
         <!-- TODO: these can be extended to show communities in common with currentProfile  -->
-        <ProfileCard v-if="profile.id === whoami.personal.profile.id" title="Communities" class="mt-3">
+        <ProfileCard v-if="profile.id === whoami.personal.profile.id" title="Communities" class="mt-2">
           <template v-slot:content>
             <div v-if="connectedTribes.length > 0">
               <v-row v-for="tribe in connectedTribes" :key="tribe.id" class="justify-center align-center ma-0 ml-4">
@@ -56,8 +56,7 @@
             </router-link>
           </template>
         </ProfileCard>
-        <!-- TODO show other commuinty Members -->
-        <ProfileCard v-if="profile.type === 'community'" title="Members" class="mt-3">
+        <ProfileCard v-if="profile.type === 'community' && !nonMember" title="Members">
           <template v-slot:content>
             <v-row v-for="member in currentTribe.members" :key="member.id" class="justify-center align-center ma-0 ml-4">
               <v-col cols="2" class="pt-0 pl-0">
@@ -117,6 +116,12 @@ export default {
     },
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
+    },
+    nonMember () {
+      return (
+        this.profile.type === 'community' && 
+        !this.profile.recps
+      )
     }
   },
   methods: {
