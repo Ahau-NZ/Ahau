@@ -2,12 +2,13 @@
   <div class="text-center ma-2">
     <v-snackbar
       v-model="showMessage"
+      :color="color"
     >
       {{ message }}
 
       <template v-slot:action="{ attrs }">
         <v-btn
-          color="pink"
+          color="red"
           text
           v-bind="attrs"
           @click="show = false"
@@ -22,7 +23,8 @@
 export default {
   props: {
     show: { type: Boolean, default: false },
-    message: { stype: String, default: 'Action successfully completed' }
+    message: { type: String, default: 'Action successfully completed' },
+    color: { type: String, default: '' }
   },
   data () {
     return {

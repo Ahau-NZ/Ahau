@@ -48,11 +48,11 @@ import gql from 'graphql-tag'
 export default {
   name: 'NewPatakaDialog',
   components: {
-    Dialog,
+    Dialog
   },
   props: {
     show: { type: Boolean, required: true },
-    title: String,
+    title: String
   },
   data () {
     return {
@@ -60,7 +60,7 @@ export default {
       invalidCode: false,
       validCode: false,
       successMsg: [],
-      errorMsg: [],
+      errorMsg: []
     }
   },
   computed: {
@@ -96,7 +96,7 @@ export default {
     },
     close () {
       this.$emit('close')
-    },
+    }
     // submit () {
     //   this.$emit('submit', output)
     // }

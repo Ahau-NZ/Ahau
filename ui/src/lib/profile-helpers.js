@@ -107,21 +107,28 @@ export const saveProfile = input => ({
   variables: { input }
 })
 
-export const getPataka = ({
-  query: gql`
-    {
-      patakas {
-        id
-        preferredName
-        avatarImage {uri}
-      }
-    }
-  `,
-  fetchPolicy: 'no-cache'
-})
+async function getPataka () {
+  const result = await apolloClient.query({
+    query: gql`
+      query{
+        patakas {
+          id preferredName avatarImage {uri} description
+        }
+      }`,
+    fetchPolicy: 'no-cache'
+  })
+  if (result.errors) {
+    console.error('WARNING, something went wrong getting patakas')
+    console.error(result.errors)
+  } else {
+    return result.data.patakas
+  }
+  return result
+}
 
-export const getConnectedPeers = ({
-  query: gql`
+async function getConnectedPeers () {
+  const result = await apolloClient.query({
+    query: gql`
     {
       connectedPeers {
         pataka {
@@ -132,89 +139,28 @@ export const getConnectedPeers = ({
       }
     }
   `,
-  fetchPolicy: 'no-cache'
-})
+    fetchPolicy: 'no-cache'
+  })
+  if (result.errors) {
+    console.error('WARNING, something went wrong getting connected peers')
+    console.error(result.errors)
+  } else {
+    return result.data.connectedPeers
+  }
+  return result
+}
 
-// export const PERMITTED_PROFILE_ATTRS = [
-//   'gender',
-//   'legalName',
-//   'bornAt',
-//   'diedAt',
-//   'preferredName',
-//   'avatarImage',
-//   'description',
-//   'headerImage',
-//   'altNames',
-//   'birthOrder',
-//   'location',
-//   'email',
-//   'phone',
-//   'address',
-//   'profession',
-//   'deceased'
-// ]
+export async function getSortedPatakas () {
+  const patakas = await getPataka()
+  const connectedPeers = await getConnectedPeers()
 
-// export const PERMITTED_RELATIONSHIP_ATTRS = [
-//   'relationshipType',
-//   'legallyAdopted'
-// ]
-
-// const getProfile = id => ({
-//   query: gql`
-//     query($id: String!) {
-//       person(id: $id){
-//         id
-//         preferredName legalName altNames
-//         bornAt diedAt birthOrder
-//         gender description
-//         location  address email
-//         phone profession deceased
-//         avatarImage { uri }
-//         children {
-//           profile {
-//             id
-//             preferredName legalName altNames
-//             bornAt diedAt birthOrder
-//             gender description
-//             location  address deceased
-//             email phone profession
-//             avatarImage { uri }
-//           }
-//           relationshipId
-//           relationshipType
-//         }
-//         parents {
-//           profile {
-//             id
-//             preferredName legalName altNames
-//             bornAt diedAt birthOrder
-//             gender description
-//             location address email
-//             phone profession deceased
-//             avatarImage { uri }
-//           }
-//           relationshipId
-//           relationshipType
-//         }
-
-//       }
-//     }
-//   `,
-//   variables: { id: id },
-//   fetchPolicy: 'no-cache'
-// })
-
-// const saveProfile = input => ({
-//   mutation: gql`
-//     mutation($input: ProfileInput!) {
-//       saveProfile(input: $input)
-//     }
-//   `,
-//   variables: { input }
-// })
-
-// export default {
-//   getProfile,
-//   saveProfile,
-//   getRelatives
-// }
+  const sortedPatakas = patakas.map(pataka => {
+    if (connectedPeers.pataka.some(peer => peer.id === pataka.id)) {
+      return {
+        ...pataka,
+        online: true
+      }
+    } else return pataka
+  })
+  return sortedPatakas
+}
