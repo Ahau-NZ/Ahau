@@ -86,6 +86,9 @@
                 </v-col>
               </v-row>
             </div>
+            <div v-else>
+              <p class="pl-3 caption">You are not currently connected to any Pātaka</p>
+            </div>
             <v-row justify='center'>
               <v-btn text small justify-center class="blue--text mt-3" @click="dialog = !dialog">
                 <v-icon small class="blue--text pr-2 ml-3">mdi-plus</v-icon>
