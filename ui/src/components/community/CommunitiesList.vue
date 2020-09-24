@@ -13,6 +13,7 @@
           color="white"
           @click="$emit('add-community-dialog')"
           elevation="4"
+          z-index="1"
         >
           <v-icon :large="!mobile" class="black--text">mdi-plus</v-icon>
         </v-btn>
@@ -31,7 +32,7 @@
                   :key="tribe.id"
                   justify-self="start"
                 >
-                  <v-card light :width="!mobile ? '190px':'100vw'" @click="goTribe(tribe)">
+                  <v-card flat class="rounded-border" light :width="!mobile ? '190px':'100vw'" @click="goTribe(tribe)">
                     <v-img height="150px" :src="getImage(tribe.private[0])" class="card-image" />
                     <v-card-title class="subtitle font-weight-bold pb-2">
                       {{
@@ -54,7 +55,7 @@
               <p class="sub-headline pa-0 mb-4">Other whanau tribes</p>
               <v-row justify="start">
                 <v-col v-for="tribe in otherTribes" :item="tribe" :key="tribe.id" justify-self="start">
-                  <v-card light :width="!mobile ? '190px':'100vw'" @click="goTribe(tribe)">
+                  <v-card flat light class="rounded-border" :width="!mobile ? '190px':'100vw'" @click="goTribe(tribe)">
                     <v-img height="150px" :src="getImage(tribe.public[0])" class="card-image" />
                     <v-card-title class="subtitle font-weight-bold pb-2">
                       {{
@@ -73,8 +74,8 @@
           </v-row>
         </div>
       </v-col>
-      <v-col cols="12" md='3' class="py-0 pr-8 mt-12">
-        <ProfileCard title="Pātaka" class="mt-3">
+      <v-col cols="12" md='3' class="py-0 pr-8 pl-4 mt-12">
+        <ProfileCard title="Pātaka" class="mt-7">
           <template v-slot:content>
             <div v-if="patakas.length > 0">
               <v-row v-for="pataka in patakas" :key="pataka.id" class="justify-center align-center ma-0 ml-4">
@@ -138,7 +139,6 @@ export default {
       tribes: [],
       patakas: [],
       dialog: false,
-      syncing: false
     }
   },
   components: {
@@ -230,11 +230,9 @@ export default {
       }, 5000)
       this.confirmationText = text
       // update to check ssb.status
-      this.syncing = true
     },
     async sortPataka () {
       this.patakas = await getSortedPatakas()
-      console.log('data patakas: ', this.patakas)
     },
     goTribe (tribe) {
       this.setCurrentTribe(tribe)
@@ -253,35 +251,6 @@ export default {
       if (!community.description) return
       return community.description.substring(0, 180)
     }
-    //   async acceptInvite () {
-    //     if (!this.patakaCode || this.patakaCode.length === 0) {
-    //       this.errorMsg = ['Invalid code, please enter a code and try again']
-    //       return
-    //     }
-
-    //     try {
-    //       await this.$apollo.mutate({
-    //         mutation: gql`
-    //         mutation($inviteCode: String!) {
-    //           acceptInvite(inviteCode: $inviteCode)
-    //         }`,
-    //         variables: {
-    //           inviteCode: this.patakaCode.trim()
-    //         }
-    //       })
-    //       // this.invalidCode = false
-    //       // this.validCode = true
-    //       this.successMsg = ['Successfully connected to Pātaka']
-    //     } catch (err) {
-    //       // this.invalidCode = true
-    //       // this.validCode = false
-    //       this.errorMsg = ['Invalid code, please check the code and try again']
-    //       console.error('Invite error: ', err)
-    //       return
-    //     }
-    //     this.errorMsg = []
-    //   }
-
   }
 }
 </script>
@@ -345,5 +314,13 @@ export default {
   position: absolute;
   top: 10px;
   right: 20px;
+}
+
+.rounded-border {
+  color: black;
+  border: 0.5px solid rgba(0,0,0,0.3);
+  border-radius: 10px;
+  background-color: white;
+  margin-bottom:20px;
 }
 </style>

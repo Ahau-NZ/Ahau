@@ -165,7 +165,7 @@ export default {
   computed: {
     ...mapGetters(['activeComponent', 'showStory', 'storeDialog', 'notifications']),
     nonMember () {
-      if (this.profile.type === 'community' && this.profile.recps.length < 1) return true
+      if (this.profile.type === 'community' && !this.profile.recps) return true
       else return false
     },
     notificationSent () {
