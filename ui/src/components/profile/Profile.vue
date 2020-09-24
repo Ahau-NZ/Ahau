@@ -120,7 +120,7 @@ export default {
     nonMember () {
       if (this.profile.type === 'community' && !this.profile.recps) return true
       else return false
-    },
+    }
   },
   methods: {
     ...mapActions(['setProfileById', 'setDialog', 'setCurrentTribe']),

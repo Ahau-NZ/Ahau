@@ -126,8 +126,6 @@ import Avatar from '@/components/Avatar.vue'
 import NewPatakaDialog from '@/components/dialog/community/NewPatakaDialog.vue'
 import ConfirmationText from '@/components/dialog/ConfirmationText.vue'
 
-import { getSortedPatakas } from '@/lib/profile-helpers'
-
 const get = require('lodash.get')
 
 export default {
@@ -137,8 +135,9 @@ export default {
       snackbar: false,
       confirmationText: null,
       tribes: [],
-      patakas: [],
-      dialog: false,
+      patakasRaw: [],
+      connectedPeers: [],
+      dialog: false
     }
   },
   components: {
@@ -198,14 +197,37 @@ export default {
       }
     `,
       pollInterval: 10e3,
+      fetchPolicy: 'no-cache'
+    },
+
+    patakasRaw: {
+      query: gql`query{
+        patakas {
+          id
+          preferredName
+          avatarImage { uri }
+          description
+        }
+      }`,
+      pollInterval: 10e3,
+      fetchPolicy: 'no-cache',
       update (data) {
-        return data.tribes
-      },
+        return data.patakas
+      }
+    },
+    connectedPeers: {
+      query: gql`query{
+        connectedPeers {
+          pataka {
+            id
+            preferredName
+            avatarImage {uri}
+          }
+        }
+      }`,
+      pollInterval: 10e3,
       fetchPolicy: 'no-cache'
     }
-  },
-  mounted () {
-    this.sortPataka()
   },
   computed: {
     mobile () {
@@ -216,6 +238,16 @@ export default {
     },
     otherTribes () {
       return this.tribes.filter(tribe => tribe.private.length < 1 && tribe.public.length > 0)
+    },
+    patakas () {
+      return this.patakasRaw.map(pataka => {
+        if (this.connectedPeers.pataka.some(peer => peer.id === pataka.id)) {
+          return {
+            ...pataka,
+            online: true
+          }
+        } else return pataka
+      })
     }
   },
   methods: {
@@ -230,9 +262,6 @@ export default {
       }, 5000)
       this.confirmationText = text
       // update to check ssb.status
-    },
-    async sortPataka () {
-      this.patakas = await getSortedPatakas()
     },
     goTribe (tribe) {
       this.setCurrentTribe(tribe)
