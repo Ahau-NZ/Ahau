@@ -261,3 +261,37 @@ export async function callGetTribe (profileId) {
     return tribe
   }
 }
+
+export const getTribe = id => ({
+  query: gql`
+    query($id: String!) {
+      tribe (id:$id){
+        id 
+        private {
+          id
+          preferredName
+          avatarImage {uri}
+        }
+        public {
+          id 
+          preferredName
+          avatarImage {uri}
+        }
+      }
+    }
+  `,
+  variables: { id: id },
+  fetchPolicy: 'no-cache'
+})
+
+// get tribe profiles by groupId
+export async function getTribeByGroupId (id) {
+  const request = getTribe(id)
+  const result = await apolloClient.query(request)
+  if (result.errors) {
+    console.error('WARNING, error getting tribe')
+    console.error(result.errors)
+  } else {
+    return result.data.tribe
+  }
+}

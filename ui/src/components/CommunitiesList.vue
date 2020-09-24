@@ -194,7 +194,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setComponent', 'setDialog', 'setProfileById', 'setProfile','setCurrentTribe']),
+    ...mapActions(['setComponent', 'setDialog', 'setProfileById', 'setProfile', 'setCurrentTribe']),
     goTribe (tribe) {
       this.setCurrentTribe(tribe)
       if (tribe.private.length > 0) this.goProfile(tribe.private[0])
