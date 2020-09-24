@@ -45,7 +45,7 @@
         absolute
         bottom
         color="#B71C1C"
-      ></v-progress-linear>
+      />
 
     </v-app-bar>
 
@@ -77,13 +77,13 @@
       </v-list>
     </v-navigation-drawer>
     <v-progress-linear
-        v-if="syncing"
-        :active="syncing"
-        :indeterminate="syncing"
-        absolute
-        bottom
-        color="#B71C1C"
-    ></v-progress-linear>
+      v-if="syncing"
+      :active="syncing"
+      :indeterminate="syncing"
+      absolute
+      bottom
+      color="#B71C1C"
+    />
   </div>
 </template>
 

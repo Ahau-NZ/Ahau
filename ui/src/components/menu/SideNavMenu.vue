@@ -168,8 +168,10 @@ export default {
       else return false
     },
     nonMember () {
-      if (this.profile.type === 'community' && !this.profile.recps) return true
-      else return false
+      return (
+        this.profile.type === 'community' && 
+        !this.profile.recps
+      )
     },
     notificationSent () {
       return this.notifications.filter(i => i.message.group.id === this.profile.id).length > 0

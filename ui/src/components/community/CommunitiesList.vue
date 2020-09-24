@@ -104,7 +104,7 @@
       v-if="dialog"
       :show="dialog"
       :title="`Connect to new Pātaka`"
-      @close="dialog = !dialog"
+      @close="dialog = false"
       @submit="connected($event)"
     />
     <ConfirmationText
@@ -253,7 +253,6 @@ export default {
   methods: {
     ...mapActions(['setComponent', 'setDialog', 'setProfile', 'setCurrentTribe', 'setSyncing']),
     connected (text) {
-      this.sortPataka()
       this.dialog = false
       this.snackbar = !this.snackbar
       this.setSyncing(true)
