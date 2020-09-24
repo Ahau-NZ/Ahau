@@ -83,9 +83,9 @@ export default {
     },
     customStyle () {
       return {
-        opacity: this.offline ? 0.5 : 1,
+        opacity: this.offline ? 0.5 : 1
       }
-    },
+    }
   },
   components: {
     ImagePicker

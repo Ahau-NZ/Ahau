@@ -116,17 +116,15 @@
             </template>
           </v-row>
 
-            <!-- DATE OF BIRTH -->
-          <v-row>
-            <v-col cols="12" class="pa-1">
-              <NodeDatePicker
-                :value.sync="formData.bornAt"
-                label="Date of birth"
-                :readonly="readonly"
-                min="0000-01-01"
-              />
-            </v-col>
-          </v-row>
+            <!-- DATE OF BIRTH + DATE OF DEATH-->
+          <DateIntervalPicker
+            label="Date of Birth"
+            endLabel="Date of Death"
+            allowInterval
+            :interval.sync="formData.aliveInterval"
+            :hasEndDate.sync="formData.deceased"
+            checkbox-label="No longer living"
+          />
 
           <!-- Editing: relationship type-->
           <v-row v-if="withRelationships || editRelationship">
@@ -150,26 +148,6 @@
                 min="1"
                 v-bind="customProps"
                 outlined
-              />
-            </v-col>
-          </v-row>
-          <!-- DECEASED PICKER -->
-          <v-row v-if="this.$route.name !== 'login'">
-           <v-col  v-if="!isUser || formData.deceased" cols="12" class="pa-1">
-              <v-checkbox v-model="formData.deceased"
-                label="No longer living" :hide-details="true"
-                v-bind="customProps"
-                outlined
-              />
-            </v-col>
-            <!-- DIED AT PICKER -->
-            <v-col cols="12" class="pa-1">
-              <NodeDatePicker
-                v-if="formData.deceased"
-                label="Date of death"
-                :value.sync="formData.diedAt"
-                :readonly="readonly"
-                :min="formData.bornAt || '-3000-01-01'"
               />
             </v-col>
           </v-row>
@@ -317,7 +295,7 @@
 import Avatar from '@/components/Avatar.vue'
 import ImagePicker from '@/components/ImagePicker.vue'
 import AddButton from '@/components/button/AddButton.vue'
-import NodeDatePicker from '@/components/NodeDatePicker.vue'
+import DateIntervalPicker from '@/components/DateIntervalPicker.vue'
 
 import { GENDERS, RELATIONSHIPS } from '@/lib/constants'
 
@@ -329,7 +307,7 @@ export default {
     Avatar,
     ImagePicker,
     AddButton,
-    NodeDatePicker
+    DateIntervalPicker
   },
   props: {
     profile: { type: Object, required: true },

@@ -18,7 +18,6 @@
             <Avatar
               :image="profile.avatarImage"
               :gender="profile.gender"
-              :age="profile.bornAt"
               :aliveInterval="profile.aliveInterval"
               :alt="profile.preferredName"
               :size="tablet ? '110px':'170px'"

@@ -94,32 +94,18 @@
                 <span>An in depth description of the record</span>
               </v-tooltip>
             </v-col>
-            <v-tooltip top open-delay="700">
-              <template v-slot:activator="{ on }">
-                <v-col v-on="on" cols="12" sm="12" md="6" class="pa-1">
-                  <NodeDatePicker
-                    :value.sync="formData.startDate"
-                    label="Date"
-                    min="-3000-01-01"
-                  />
-                </v-col>
-              </template>
-              <span>Date in relation to the information provided in the record</span>
-            </v-tooltip>
 
-            <v-col cols="12" sm="12" md="6" class="pa-1">
-              <v-checkbox v-model="hasEndDate" v-if="!hasEndDate"
-                label="include an end date" :hide-details="true"
-                v-bind="customProps"
-              />
-              <NodeDatePicker
-                v-else
-                :value.sync="formData.endDate"
-                label="End Date"
-                min="-3000-01-01"
-                @click:clear="hasEndDate = false"
-              />
-            </v-col>
+            <DateIntervalPicker
+              class="px-3"
+              label="Date"
+              endLabel="End Date"
+              allowInterval
+              :interval.sync="formData.timeInterval"
+              :hasEndDate.sync="hasEndDate"
+              checkbox-label="include an end date"
+              :cols="mobile ? '12' : '6'"
+              :hide-checkbox="hasEndDate"
+            />
 
             <!-- ADD MENTIONS -->
             <v-col cols="12" md="auto" class="pa-5">
@@ -464,7 +450,7 @@ import AvatarGroup from '@/components/AvatarGroup.vue'
 // import Avatar from '@/components/Avatar.vue'
 import AddButton from '@/components/button/AddButton.vue'
 import UploadArtefactButton from '@/components/artefact/UploadArtefactButton.vue'
-import NodeDatePicker from '@/components/NodeDatePicker.vue'
+import DateIntervalPicker from '@/components/DateIntervalPicker.vue'
 
 import ChipGroup from '@/components/archive/ChipGroup.vue'
 import ProfileSearchBar from '@/components/archive/ProfileSearchBar.vue'
@@ -494,7 +480,7 @@ export default {
     NewArtefactDialog,
     ArtefactCarousel,
     DeleteArtefactDialog,
-    NodeDatePicker
+    DateIntervalPicker
   },
   props: {
     formData: {

@@ -42,7 +42,8 @@ const store = new Vuex.Store({
     goBack: {
       show: false,
       location: ''
-    }
+    },
+    allowSubmissions: true
   },
   modules: {
     whakapapa,
@@ -68,6 +69,9 @@ const store = new Vuex.Store({
     },
     currentAccess: state => {
       return state.currentAccess
+    },
+    allowSubmissions: state => {
+      return state.allowSubmissions
     },
     accessOptions: ({ whoami, tribe }) => {
       return [
@@ -115,6 +119,9 @@ const store = new Vuex.Store({
     }
   },
   mutations: {
+    setAllowSubmissions (state, allow) {
+      state.allowSubmissions = allow
+    },
     setCurrentAccess (state, access) {
       state.currentAccess = access
     },
