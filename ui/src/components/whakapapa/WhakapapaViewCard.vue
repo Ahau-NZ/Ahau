@@ -3,28 +3,30 @@
     :to="view.id
         ? { name: 'whakapapaShow', params: { id: view.id } }
         : '/whakapapa'"
-    class="pa-2"
-    color="#fff"
-    :style="`
-      shadow ? '' : 'box-shadow: none;'
-      `"
+    light
   >
-    <!-- <div class="d-flex flex-no-wrap flex-start align-stretch"> -->
-    <div class="d-flex flex-no-wrap flex-start align-stretch">
-      <div class="cover-image" :style="background(view)"></div>
-      <div class="information">
-        <v-card-title v-text="view.name" class="pt-3"/>
-        <v-card-subtitle v-text="description" class="pb-3"/>
-        <v-card-text v-if="hasSlotContent">
-          <slot></slot>
-        </v-card-text>
-      </div>
-    </div>
+      <v-container class="pa-0">
+        <v-list-item-icon class="pt-1 mt-0" style="position:absolute; top:5px; right:1px; margin-right:0px">
+          <v-list-item-subtitle class="no-flex mt-n1 mr-n3" :style="mobile ? 'font-size:0.7rem':'font-size:0.8rem'">Kaitiaki</v-list-item-subtitle>
+          <AvatarGroup :profiles="view.kaitiaki" customClass="ma-0 pa-0 pt-1" style="position:relative; bottom:15px; left:10px" :size="mobile ? '25px':'30px'" spacing="pr-1"/>
+        </v-list-item-icon>
+        <div class="d-flex flex-no-wrap flex-start align-stretch">
+          <div class="cover-image" :style="background(view)"></div>
+          <div class="information">
+            <v-card-title v-text="view.name" class="pt-3"/>
+            <v-card-subtitle v-text="description" class="pb-3"/>
+            <v-card-text v-if="hasSlotContent">
+              <slot></slot>
+            </v-card-text>
+          </div>
+        </div>
+      </v-container>
   </v-card>
 </template>
 
 <script>
 import whakapapa from '@/assets/whakapapa.png'
+import AvatarGroup from '@/components/AvatarGroup.vue'
 
 export default {
   name: 'WhakapapaViewCard',
@@ -32,6 +34,9 @@ export default {
     view: { type: Object, required: true },
     shadow: { type: Boolean, default: true },
     cropDescription: { type: Boolean, default: false }
+  },
+  components: {
+    AvatarGroup
   },
   computed: {
     mobile () {
@@ -58,7 +63,9 @@ export default {
       if (view.image && view.image.uri) {
         return {
           backgroundImage: `url(${view.image.uri})`,
-          backgroundSize: 'cover'
+          backgroundSize: 'cover',
+          borderTopLeftRadius: '4px',
+          borderBottomLeftRadius: '4px'
         }
       }
       return {

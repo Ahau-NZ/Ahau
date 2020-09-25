@@ -1,5 +1,8 @@
 <template>
-  <Dialog title="Crop Photo" :show="show" @close="close" :width="width" :goBack="close" enableMenu background="black">
+  <Dialog title="Crop Photo" :show="show" :width="width" :goBack="close" enableMenu dark
+    @submit="submit"
+    @close="close"
+  >
     <template v-slot:content>
       <v-row justify="center">
         <v-col :width="width">
@@ -33,20 +36,6 @@
         ></clipper-range>
       </div>
     </template>
-    <template v-slot:actions>
-      <v-btn @click="close"
-        text large fab
-        class="secondary--text"
-      >
-        <v-icon color="secondary">mdi-close</v-icon>
-      </v-btn>
-      <v-btn @click="submit"
-        text large fab
-        class="blue--text"
-      >
-        <v-icon>mdi-check</v-icon>
-      </v-btn>
-    </template>
   </Dialog>
 </template>
 
@@ -79,7 +68,7 @@ export default {
       switch (this.type) {
         case 'avatar': return 1
         case 'whakapapa': return 2
-        case 'header': return 6
+        case 'header': return 5
         default:
           return 1
       }
@@ -89,7 +78,7 @@ export default {
       switch (this.type) {
         case 'avatar': return '500px'
         case 'whakapapa': return '600px'
-        case 'header': return '1000px'
+        case 'header': return '800px'
         default:
           return 1
       }
@@ -105,11 +94,17 @@ export default {
         canvas.toBlob(async blob => {
           const file = new File([blob], 'avatar', { type: blob.type })
 
-          const result = await this.$apollo.mutate(UPLOAD_FILE({ file, encrypt: true }))
+          var result = await this.$apollo.mutate(UPLOAD_FILE({ file, encrypt: true }))
           if (result.errors) throw result.errors
 
           var image = result.data.uploadFile
-          if (image.mimeType === null) image.mimeType = file.type
+          // TODO: HACK until mimeType: Hello World gets solved
+          if (image.mimeType === null || image.mimeType === 'Hello World') image.mimeType = file.type
+
+          // TODO: change when ssb-profile blobs are updated, need this because ssb-profile schema uses blob.blob not blob.blobId
+          if (image.blobId) image.blob = image.blobId
+
+          delete image.blobId
 
           let cleanImage = {}
           Object.entries(image).forEach(([key, value]) => {

@@ -60,7 +60,10 @@ export default {
         if (type === 'image') type = 'photo'
         else if (type === 'application' || type === 'text') type = 'document'
 
-        if (!blob.mimeType) blob.mimeType = file.type
+        // TODO: HACK until mimeType: Hello World gets solved
+        if (!blob.mimeType || blob.mimeType === 'Hello World') blob.mimeType = file.type
+
+        if (blob.__typename) delete blob.__typename
 
         var createdAt = ''
         if (file.lastModified) {
@@ -68,12 +71,6 @@ export default {
         } else {
           createdAt = Date.now().toISOString().slice(0, 10)
         }
-
-        // TODO: change when @ssb-graphql/main is updated
-        blob.blobId = blob.blob
-        delete blob.blob
-
-        delete blob.__typename
 
         var artefact = {
           type,

@@ -5,15 +5,14 @@ const apolloProvider = createProvider()
 const apolloClient = apolloProvider.defaultClient
 
 export const PERMITTED_PROFILE_ATTRS = [
-  // WARNING: make sure header and avatar images are the first two
-  'headerImage',
-  'avatarImage',
-  'id',
+  'type',
   'gender',
   'legalName',
   'aliveInterval',
   'preferredName',
+  'avatarImage',
   'description',
+  'headerImage',
   'altNames',
   'birthOrder',
   'location',
@@ -21,8 +20,7 @@ export const PERMITTED_PROFILE_ATTRS = [
   'phone',
   'address',
   'profession',
-  'deceased',
-  'type'
+  'deceased'
 ]
 
 export const PERMITTED_RELATIONSHIP_ATTRS = [
@@ -30,21 +28,12 @@ export const PERMITTED_RELATIONSHIP_ATTRS = [
   'legallyAdopted'
 ]
 
-export const PROFILE_FRAGMENT = gql`
-  fragment ProfileFragment on Person {
-    ${PERMITTED_PROFILE_ATTRS.slice(2)}
-    avatarImage { uri }
-    headerImage { uri }
-  }
-`
-
 export const whoami = ({
   query: gql`
-    ${PROFILE_FRAGMENT}
-    query {
+    {
       whoami {
         profile {
-          ...ProfileFragment
+          id
         }
       }
     }
@@ -52,28 +41,44 @@ export const whoami = ({
   fetchPolicy: 'no-cache'
 })
 
-export const GET_PROFILE = id => ({
+export const getProfile = id => ({
   query: gql`
-    ${PROFILE_FRAGMENT}
     query($id: String!) {
       person(id: $id){
-        ...ProfileFragment
+        id type
+        preferredName legalName altNames
+        aliveInterval birthOrder
+        gender description 
+        location  address email
+        phone profession deceased
+        avatarImage { uri } headerImage { uri }
         children {
           profile {
-            ...ProfileFragment
+            id
+            preferredName legalName altNames
+            aliveInterval birthOrder
+            gender description
+            location  address deceased
+            email phone profession
+            avatarImage { uri }
           }
-          linkId
+          relationshipId
           relationshipType
-          legallyAdopted
         }
         parents {
           profile {
-            ...ProfileFragment
+            id
+            preferredName legalName altNames
+            aliveInterval birthOrder
+            gender description
+            location address email
+            phone profession deceased
+            avatarImage { uri }
           }
-          linkId
+          relationshipId
           relationshipType
-          legallyAdopted
         }
+        
       }
     }
   `,
@@ -83,7 +88,7 @@ export const GET_PROFILE = id => ({
 
 // get person with parents and children from DB
 export default async function getRelatives (profileId) {
-  const request = GET_PROFILE(profileId)
+  const request = getProfile(profileId)
   const result = await apolloClient.query(request)
   if (result.errors) {
     console.error('WARNING, something went wrong')

@@ -1,30 +1,16 @@
 <template>
-  <Dialog :show="show" :title="title" @close="close" width="720px" :goBack="close" enableMenu>
+  <Dialog :show="show" :title="title" width="720px" :goBack="close" enableMenu
+    @submit="submit"
+    @close="close"
+  >
 
     <!-- Content Slot -->
     <template v-if="!hideDetails" v-slot:content>
       <v-col class="py-0">
-        <CommunityForm :profile.sync="formData"></CommunityForm>
+        <CommunityForm :profile.sync="formData" />
       </v-col>
     </template>
     <!-- End Content Slot -->
-
-    <!-- Actions Slot -->
-    <template v-slot:actions  style="border: 2px solid orange;">
-      <v-btn @click="close"
-        text large fab
-        class="secondary--text"
-      >
-        <v-icon color="secondary">mdi-close</v-icon>
-      </v-btn>
-      <v-btn @click="submit"
-        text large fab
-        class="blue--text ml-5"
-      >
-        <v-icon>mdi-check</v-icon>
-      </v-btn>
-    </template>
-    <!-- End Actions Slot -->
 
   </Dialog>
 </template>
@@ -63,11 +49,10 @@ export default {
     title: { type: String, default: 'Create a new community' },
     hideDetails: { type: Boolean, default: false },
     selectedProfile: { type: Object }
-
   },
   data () {
     return {
-      formData: defaultData(this.withRelationships)
+      formData: defaultData()
     }
   },
 

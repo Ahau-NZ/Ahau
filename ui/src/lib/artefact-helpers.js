@@ -44,7 +44,8 @@ export const PERMITTED_ARTEFACT_SHARED_ATTRS = [
   'source',
 
   'language',
-  'translation'
+  'translation',
+  'recps'
 ]
 
 export const ARTEFACT_ICON = (mimeType) => {
@@ -85,6 +86,8 @@ export const ARTEFACT_FRAGMENT = gql`
     source
     language
     translation
+    canEdit
+    recps
     ... on Audio {
       duration
       transcription
@@ -120,7 +123,7 @@ export const getArtefacts = () => ({
   fetchPolicy: 'no-cache'
 })
 
-export const SAVE_ARTEFACT = input => {
+export const saveArtefact = input => {
   input = pick(input, PERMITTED_ARTEFACT_ATTRS)
 
   if (input.blob && input.blob.uri) delete input.blob.uri
@@ -131,7 +134,7 @@ export const SAVE_ARTEFACT = input => {
         saveArtefact(input: $input)
       }
     `,
-    variables: { input: { ...input } }
+    variables: { input }
   }
 }
 

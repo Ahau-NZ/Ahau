@@ -21,23 +21,21 @@
       <!-- TODO change this for an EditProfile dialog -->
       <v-icon left>mdi-plus</v-icon>
       <p class="mb-0">Ko wai koe --</p><p style="color:lightgrey" class="mb-0"> -- who are you?</p>
-      <!-- <p style="color:white;" class="mb-0"  >  Who are you?</p> -->
 
     </v-btn>
-    <router-link
+    <div
       v-if="!isLoading && isSetup"
-      :to="{ name: 'whakapapaIndex' }"
-      class="d-flex flex-column align-center"
-      @click.native="karakiaTūwhera()"
+      class="d-flex flex-column align-center button"
+      @click="login()"
     >
       <Avatar
-        :image="whoami.profile.avatarImage"
-        :gender="whoami.profile.gender"
-        :aliveInterval="whoami.profile.aliveInterval"
+        :image="whoami.personal.profile.avatarImage"
+        :gender="whoami.personal.profile.gender"
+        :aliveInterval="whoami.personal.profile.aliveInterval"
         size="13vh"
       />
-      <h3 class="name mt-2">{{ whoami.profile.preferredName }}</h3>
-    </router-link>
+      <p class="name mt-2">{{ whoami.personal.profile.preferredName }}</p>
+    </div>
 
      <NewNodeDialog
       v-if="dialog"
@@ -51,11 +49,10 @@
 </template>
 
 <script>
-import gql from 'graphql-tag'
 import Avatar from '@/components/Avatar'
 import NewNodeDialog from '@/components/dialog/profile/NewNodeDialog.vue'
-import pick from 'lodash.pick'
 import { mapGetters, mapActions } from 'vuex'
+import { savePerson } from '@/lib/person-helpers.js'
 
 const karakia = `
 ---------------------------------
@@ -119,63 +116,46 @@ export default {
     },
 
     proceed () {
-      if (this.$apollo.loading || !this.whoami.profile.id) {
+      if (this.$apollo.loading || !this.whoami.personal.profile.id) {
         console.log('waiting for apollo')
         setTimeout(this.proceed, 300)
         return
       }
 
-      this.isSetup = Boolean(this.whoami.profile.preferredName)
+      this.isSetup = Boolean(this.whoami.personal.profile.preferredName)
       // Shortcut in dev, that saves us from doing one click when testing
+
       if (this.isSetup && process.env.NODE_ENV === 'development') {
-        this.karakiaTūwhera()
-        this.setComponent('profile')
-        this.setProfileById({ id: this.whoami.profile.id })
-        this.$router.push({ name: 'profileShow', params: { id: this.whoami.profile.id } })
+        this.login()
       }
 
       this.isLoading = false
+    },
+
+    login () {
+      this.karakiaTūwhera()
+      this.setComponent('profile')
+      this.setProfileById({ id: this.whoami.personal.profile.id })
+      this.$router.push({ name: 'profileShow', params: { id: this.whoami.personal.profile.id } })
     },
 
     toggleNew () {
       this.dialog = !this.dialog
     },
 
-    async save (profileChanges) {
-      const newProfile = pick(profileChanges,
-        'preferredName',
-        'legalName',
-        'gender',
-        'aliveInterval',
-        'birthOrder',
-        'avatarImage',
-        'altNames',
-        'description',
-        'location',
-        'email',
-        'address',
-        'phone',
-        'profession',
-        'deceased'
-      )
-      const result = await this.$apollo.mutate({
-        mutation: gql`
-          mutation($input: ProfileInput!) {
-            saveProfile(input: $input)
-          }
-        `,
-        variables: {
-          input: {
-            id: this.whoami.profile.id,
-            ...newProfile
-          }
-        }
-      })
+    async save (input) {
+      input = {
+        id: this.whoami.personal.profile.id,
+        ...input
+      }
 
-      if (result.errors) {
-        console.error('failed to update profile', result)
+      const res = await this.$apollo.mutate(savePerson(input))
+
+      if (res.errors) {
+        console.error('failed to update profile', res)
         return
       }
+
       this.getCurrentIdentity()
     }
   },
@@ -197,7 +177,6 @@ h1 {
 .container {
   width: 100%;
   height: 90%;
-
   display: flex;
   justify-content: center;
   align-items: center;
@@ -212,9 +191,16 @@ h1 {
   align-items: center;
 }
 .name {
+  font-size: 1em;
+  text-transform: uppercase;
+  font-weight: 400;
+  letter-spacing: 3px;
   color: white;
 }
 .body-width {
   max-width: 900px;
+}
+.button:hover {
+  cursor: pointer;
 }
 </style>

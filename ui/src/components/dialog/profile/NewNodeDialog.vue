@@ -1,5 +1,8 @@
 <template>
-  <Dialog :show="show" :title="title" @close="close" width="720px" :goBack="close" enableMenu>
+  <Dialog :show="show" :title="title" width="720px" :goBack="close" enableMenu
+    @submit="submit"
+    @close="close"
+  >
 
     <!-- Content Slot -->
     <template v-if="!hideDetails" v-slot:content>
@@ -52,25 +55,9 @@
 
       </v-col>
     </template>
-    <!-- End Content Slot -->
-
-    <!-- Actions Slot -->
-    <template v-slot:actions  style="border: 2px solid orange;">
-      <v-btn @click="close"
-        text large fab
-        class="secondary--text"
-      >
-        <v-icon color="secondary">mdi-close</v-icon>
-      </v-btn>
-      <v-btn @click="submit"
-        text large fab
-        class="blue--text ml-5"
-      >
-        <v-icon>mdi-check</v-icon>
-      </v-btn>
+    <template v-slot:before-actions>
+      <AccessButton v-if="currentAccess" :access="currentAccess" disabled/>
     </template>
-    <!-- End Actions Slot -->
-
   </Dialog>
 </template>
 
@@ -87,16 +74,13 @@ import uniqby from 'lodash.uniqby'
 import pick from 'lodash.pick'
 import clone from 'lodash.clonedeep'
 
-import { PERMITTED_PROFILE_ATTRS, PERMITTED_RELATIONSHIP_ATTRS, GET_PROFILE } from '@/lib/profile-helpers'
+import { PERMITTED_PERSON_ATTRS, PERMITTED_RELATIONSHIP_ATTRS, getPerson } from '@/lib/person-helpers'
+import AccessButton from '@/components/button/AccessButton.vue'
+import { mapGetters } from 'vuex'
+import { parseInterval } from '@/lib/date-helpers.js'
 
 function defaultData (input) {
   var profile = clone(input)
-
-  var aliveInterval = ['', '']
-
-  if (profile.aliveInterval) {
-    aliveInterval = profile.aliveInterval.split('/')
-  }
 
   return {
     type: 'person',
@@ -104,8 +88,6 @@ function defaultData (input) {
     gender: profile.gender,
     legalName: profile.legalName,
     aliveInterval: profile.aliveInterval,
-    bornAt: aliveInterval[0],
-    diedAt: aliveInterval[1],
     preferredName: profile.preferredName,
     avatarImage: profile.avatarImage,
     description: profile.description,
@@ -139,8 +121,6 @@ function setDefaultData (withRelationships) {
     children: [],
     avatarImage: {},
     aliveInterval: '',
-    bornAt: '',
-    diedAt: '',
     birthOrder: '',
     description: '',
     location: '',
@@ -164,15 +144,16 @@ export default {
   components: {
     Avatar,
     Dialog,
-    ProfileForm
+    ProfileForm,
+    AccessButton
   },
   props: {
     show: { type: Boolean, required: true },
     withRelationships: { type: Boolean, default: true },
     title: { type: String, default: 'Create a new person' },
-    suggestions: { type: Array },
-    hideDetails: { type: Boolean, default: false },
-    selectedProfile: { type: Object },
+    suggestions: Array,
+    hideDetails: Boolean,
+    selectedProfile: Object,
     withView: { type: Boolean, default: true },
     type: {
       type: String,
@@ -193,6 +174,7 @@ export default {
     this.getCloseSuggestions()
   },
   computed: {
+    ...mapGetters(['currentAccess']),
     generateSuggestions () {
       if (this.hasSelection) return []
 
@@ -245,6 +227,9 @@ export default {
                 submission[key] = value
               }
               break
+            case 'aliveInterval':
+              submission[key] = parseInterval(this.formData.aliveInterval)
+              break
             default:
               submission[key] = value
           }
@@ -252,10 +237,6 @@ export default {
           submission[key] = value
         }
       })
-
-      var aliveInterval = this.formData.bornAt + '/' + this.formData.diedAt
-
-      submission['aliveInterval'] = aliveInterval
 
       return submission
     }
@@ -287,7 +268,7 @@ export default {
       // children of your partners that arent currently your children
       if (this.selectedProfile.partners) {
         this.selectedProfile.partners.forEach(async partner => {
-          const result = await this.$apollo.query(GET_PROFILE(partner.id))
+          const result = await this.$apollo.query(getPerson(partner.id))
           if (result.data) {
             result.data.person.children.forEach(d => {
               if (!currentChildren[d.profile.id]) {
@@ -299,7 +280,7 @@ export default {
       }
 
       // get ignored children
-      const ignored = await this.$apollo.query(GET_PROFILE(this.selectedProfile.id))
+      const ignored = await this.$apollo.query(getPerson(this.selectedProfile.id))
       if (ignored.data) {
         ignored.data.person.children.forEach(d => {
           if (!currentChildren[d.profile.id]) {
@@ -325,7 +306,7 @@ export default {
 
       if (this.selectedProfile.siblings) {
         this.selectedProfile.siblings.forEach(async sibling => {
-          const result = await this.$apollo.query(GET_PROFILE(sibling.id))
+          const result = await this.$apollo.query(getPerson(sibling.id))
 
           if (result.data) {
             result.data.person.parents.forEach(d => {
@@ -338,7 +319,7 @@ export default {
       }
 
       // get ignored parents
-      const ignored = await this.$apollo.query(GET_PROFILE(this.selectedProfile.id))
+      const ignored = await this.$apollo.query(getPerson(this.selectedProfile.id))
       if (ignored.data) {
         ignored.data.person.parents.forEach(d => {
           if (!currentParents[d.profile.id]) {
@@ -356,11 +337,16 @@ export default {
       return calculateAge(aliveInterval)
     },
     submit () {
-      var submission = pick(this.submission, [...PERMITTED_PROFILE_ATTRS, ...PERMITTED_RELATIONSHIP_ATTRS])
+      var recps = this.currentAccess
+        ? [this.currentAccess.groupId]
+        : null
+
+      var submission = {
+        ...pick(this.submission, [...PERMITTED_PERSON_ATTRS, ...PERMITTED_RELATIONSHIP_ATTRS]),
+        recps
+      }
+
       this.$emit('create', submission)
-      // this.hasSelection
-      //   ? this.$emit('create', pick(this.formData, ['id', 'relationshipType', 'legallyAdopted']))
-      //   : this.$emit('create', submission)
       this.close()
     },
     cordovaBackButton () {
@@ -391,12 +377,6 @@ export default {
       handler (newVal) {
         if (!newVal) return
         this.formData = defaultData(newVal)
-
-        if (this.formData.aliveInterval) {
-          var dates = this.formData.aliveInterval.split('/')
-          this.formData.bornAt = dates[0]
-          this.formData.diedAt = dates[1]
-        }
       }
     },
     'formData.relationshipType' (newValue, oldValue) {
@@ -409,11 +389,6 @@ export default {
         this.showAvatar = true
       }
     },
-    'formData.deceased' (newValue) {
-      if (newValue === false) {
-        this.formData.diedAt = ''
-      }
-    },
     'formData.preferredName' (newValue) {
       if (!newValue) return
       if (newValue.length > 2) {
@@ -422,22 +397,6 @@ export default {
         }
       } else {
         this.$emit('getSuggestions', null)
-      }
-    },
-    'formData.bornAt' (newVal) {
-      if (this.formData.aliveInterval) {
-        var dates = this.formData.aliveInterval.split('/')
-        this.formData.aliveInterval = (newVal || '') + '/' + (dates[1] || '')
-      } else {
-        this.formData.aliveInterval = (newVal || '') + '/'
-      }
-    },
-    'formData.diedAt' (newVal) {
-      if (this.formData.aliveInterval) {
-        var dates = this.formData.aliveInterval.split('/')
-        this.formData.aliveInterval = (dates[0] || '') + '/' + (newVal || '')
-      } else {
-        this.formData.aliveInterval = '/' + (newVal || '')
       }
     },
     hasSelection (newValue) {

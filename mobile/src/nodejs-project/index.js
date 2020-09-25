@@ -59,7 +59,6 @@ SecretStack({ appKey: 'LftKJZRB4nbBRnlJuFteWG9AP+gGboVEhibx016bR0s=' })
   .use(require('ssb-promiscuous')) // needs: conn, friends
   // Queries
   .use(require('ssb-query')) // needs: db
-  .use(require('ssb-private')) // needs: db
   .use(require('ssb-backlinks')) // needs: db
   .use(require('ssb-whakapapa'))
   .use(require('ssb-profile'))
@@ -68,6 +67,8 @@ SecretStack({ appKey: 'LftKJZRB4nbBRnlJuFteWG9AP+gGboVEhibx016bR0s=' })
   // Blobs
   .use(require('ssb-blobs'))
   .use(require('ssb-serve-blobs')) // needs: blobs
+  // Private groups
+  .use(require('ssb-tribes'))
   // Custom
-  .use(require('ahau-server'))
+  .use(require('ssb-ahau'))
   .call(null, config)

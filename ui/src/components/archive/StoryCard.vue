@@ -1,8 +1,19 @@
 <template>
   <div style="width: 100%; height: 100%;">
-  <v-card @click.prevent="showStory()" :class="customClass" flat :ripple="false" class="mx-auto" :light="!showArtefact" width="100%" :elevation="!mobile && !showArtefact && fullStory ? '24':''" @blur="close">
+  <v-card
+    v-click-outside="onClickOutside"
+    class="mx-auto"
+    width="100%"
+    flat
+    :class="customClass"
+    :ripple="false"
+    :light="!showArtefact"
+    :elevation="!mobile && !showArtefact && fullStory ? '24':''"
+    @click="showStory()"
+    @blur="close"
+  >
     <v-list-item class="px-0" style="min-height:0; height:10px">
-      <v-list-item-icon v-if="!fullStory" class="pt-0 mt-0" style="position:absolute; top:5px; right:1px; margin-right:0px">
+      <v-list-item-icon v-if="!fullStory" class="pt-1 mt-0" style="position:absolute; top:5px; right:1px; margin-right:0px">
         <v-list-item-subtitle v-if="!mobile" class="no-flex">contributors</v-list-item-subtitle>
         <AvatarGroup :profiles="story.contributors.map(c => c.profile)" customClass="ma-0 pa-0" style="position:relative; bottom:15px; left:10px" :size="mobile ? '25px':'30px'" spacing="pr-1"/>
       </v-list-item-icon>
@@ -70,8 +81,19 @@
         </p>
       </v-list-item-content>
     </v-list-item>
-    <v-row v-if="!showArtefact" class="px-4">
-      <v-col v-if="story.mentions && story.mentions.length > 0" cols="12" sm="12" md="auto">
+    <v-row v-if="!showArtefact" class="px-4 pb-0">
+      <v-col v-if="access && access.length > 0" cols="auto" class="pb-0">
+        <v-list-item-subtitle style="color:#a7a3a3">Access</v-list-item-subtitle>
+        <AvatarGroup
+          style="position:relative; bottom:15px; right:15px"
+          :profiles="access"
+          show-labels :size="fullStory ? '50px': '30px'"
+          spacing="pr-2"
+          @profile-click="openProfile($event)"
+          :clickable="fullStory"
+        />
+      </v-col>
+      <v-col v-if="story.mentions && story.mentions.length > 0" cols="auto"  class="pb-0">
         <v-list-item-subtitle style="color:#a7a3a3">Mentions</v-list-item-subtitle>
         <AvatarGroup
           style="position:relative; bottom:15px; right:15px"
@@ -82,22 +104,23 @@
           :clickable="fullStory"
         />
       </v-col>
-      <v-col v-if="story.location" class="pt-0" cols="12" sm="12" md="auto">
-        <v-list-item-subtitle style="color:#a7a3a3" class="ms-5 pa-0 pb-1">Location</v-list-item-subtitle>
-        <p class="mt-3 mb-5 ms-5">{{ story.location }}</p>
-      </v-col>
-      <!-- <v-col v-if="story.access && story.access.length > 0" cols="12" sm="12" md="auto">
-        <v-list-item-subtitle style="color:#a7a3a3">Access</v-list-item-subtitle>
+      <v-col v-if="story.kaitiaki && story.kaitiaki.length > 0" cols="auto" class="pb-0">
+        <v-list-item-subtitle style="color:#a7a3a3">Kaitiaki</v-list-item-subtitle>
         <AvatarGroup
-          style="position:relative; bottom:15px;"
-          :profiles="story.access.map(m => m.profile)"
+          style="position:relative; bottom:15px; right:15px"
+          :profiles="story.kaitiaki"
           show-labels :size="fullStory ? '50px': '30px'"
           spacing="pr-2"
           @profile-click="openProfile($event)"
           :clickable="fullStory"
         />
-      </v-col> -->
-      <v-col v-if="story.contributors && story.contributors.length > 0 && fullStory" cols="12" sm="12" md="auto">
+      </v-col>
+      <v-col v-if="story.location" class="pt-0" cols="12" sm="12" md="auto">
+        <v-list-item-subtitle style="color:#a7a3a3" class="ms-5 pa-0 pb-1">Location</v-list-item-subtitle>
+        <p class="mt-3 mb-5 ms-5">{{ story.location }}</p>
+      </v-col>
+
+      <v-col v-if="story.contributors && story.contributors.length > 0 && fullStory" cols="auto">
         <v-list-item-subtitle style="color:#a7a3a3">Contributors</v-list-item-subtitle>
         <AvatarGroup
           style="position:relative; bottom:15px; right:15px"
@@ -115,7 +138,7 @@
     </v-row>
     <div v-if="fullStory && !showArtefact">
       <v-row class="px-4">
-        <v-col v-if="story.creators && story.creators.length > 0 && fullStory" cols="12" sm="12" md="auto">
+        <v-col v-if="story.creators && story.creators.length > 0 && fullStory" cols="auto">
           <v-list-item-subtitle style="color:#a7a3a3">Creators</v-list-item-subtitle>
           <AvatarGroup
             style="position:relative; bottom:15px; right:15px"
@@ -167,10 +190,10 @@
     </div>
     <v-card-actions v-if="fullStory" class="justify-end">
       <v-list-item-icon v-if="fullStory && !showArtefact" class="pt-0 mt-0">
-        <EditStoryButton @click="toggleDialog('edit-story')"/>
+        <EditStoryButton v-if="story.canEdit" @click="toggleDialog('edit-story')"/>
       </v-list-item-icon>
       <v-list-item-icon v-if="showArtefact" class="pt-0 mt-12">
-        <EditArtefactButton @click="toggleDialog('edit-story')"/>
+        <EditArtefactButton v-if="story.canEdit" @click="toggleDialog('edit-story')"/>
       </v-list-item-icon>
       <v-list-item-icon v-if="showArtefact && !mobile" class="pt-0 mt-0"
       style="position:absolute; top:0px; right:0px;">
@@ -255,11 +278,14 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['showArtefact', 'currentProfile', 'storeDialog']),
+    ...mapGetters(['showArtefact', 'currentProfile', 'storeDialog', 'getAccessFromRecps']),
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
-
+    access () {
+      if (!this.story || !this.story.recps) return []
+      return [this.getAccessFromRecps(this.story.recps)]
+    },
     time () {
       if (this.story.timeInterval) {
         return dateIntervalToString(this.story.timeInterval)
@@ -305,7 +331,13 @@ export default {
   methods: {
     ...mapMutations(['deleteStoryFromStories']),
     ...mapActions(['setShowArtefact', 'setDialog', 'setProfileById', 'setShowStory']),
-
+    onClickOutside () {
+      if (!this.fullStory || this.dialog) return
+      if (!this.storeDialog && !this.mobile) {
+        if (this.showArtefact) this.setShowArtefact()
+        else this.setShowStory()
+      }
+    },
     async deleteStory () {
       const res = await this.$apollo.mutate(DELETE_STORY(this.story.id, new Date()))
 

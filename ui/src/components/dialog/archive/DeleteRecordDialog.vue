@@ -1,25 +1,14 @@
 <template>
-  <Dialog :title="`Remove record from archive`" :show="show" @close="close" width="720px" :goBack="close" enableMenu>
+  <Dialog :title="`Remove record from archive`" :show="show" width="720px" :goBack="close" enableMenu
+    @submit="submit"
+    @close="close"
+  >
     <template v-slot:content>
       <v-card-subtitle>
         <div class="warning-blurb">
           Are you sure you want to remove this record from this archive?
         </div>
       </v-card-subtitle>
-    </template>
-    <template v-slot:actions>
-      <v-btn @click="close"
-        text large fab
-        class="secondary--text"
-      >
-        <v-icon color="secondary">mdi-close</v-icon>
-      </v-btn>
-      <v-btn @click="submit"
-        text large fab
-        class="blue--text"
-      >
-        <v-icon>mdi-check</v-icon>
-      </v-btn>
     </template>
   </Dialog>
 </template>

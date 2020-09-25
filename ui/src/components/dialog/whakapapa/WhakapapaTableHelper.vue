@@ -13,18 +13,18 @@
           <br />
           <b>Add child: </b> Click on the arrow icon above a person and select add child to enter a childs information and update the record.
           <br />
-          <b>Add parent: </b>  Click on the arrow icon above a person and select add child to enter a childs information and update the record.
-          their information <br />
+          <b>Add partner or another Parent: </b>  Click on the arrow icon above a person and select add parent to enter a parents information and update the record.
+          <br />
           <b>Delete: </b> If someone has been added to the record incorrectly they can be deleted if the have been created in error. Click on the arrow icon above a person and select Delete to remove a person and their children from the tree. Please be careful
           when deleting someone as that information cannot be brought back and
           will have to be added again. <br />
-          <b>Sort: </b> When adding a person, use order of birth to sort the
+          <b>Sort by birth: </b> When adding a person, add their order of birth to sort the
           whanau members by order of birth. <br />
         </p>
         <p>
           Start by clicking on someone or adding a person in your family.<br />
-          Karawhiua!
         </p>
+        <b>Karawhiua!</b>
       </v-card-text>
       <v-divider />
       <v-carousel hide-delimiters>
@@ -40,6 +40,16 @@
           <span>{{item.text}}</span>
         </v-tooltip>
       </v-carousel>
+    </template>
+    <template v-slot:actions>
+      <v-col :align="mobile ? 'center' : 'end'" class="py-0">
+        <v-btn
+          text
+          @click="close"
+        >
+          close
+        </v-btn>
+      </v-col>
     </template>
   </Dialog>
 </template>

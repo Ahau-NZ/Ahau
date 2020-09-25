@@ -1,56 +1,45 @@
 <template>
-  <Dialog :show="show" :title="title" @close="close" width="70%" :goBack="close" enableMenu>
-
-      <!-- FORM -->
-      <template v-slot:content>
-        <RecordForm ref="recordForm" :editing="editing" :formData.sync="formData"/>
-      </template>
-
-      <template v-if="editing" v-slot:before-actions>
-        <v-col cols="12" sm="auto" class="mt-4">
-          <v-btn text @click="$emit('delete')">
-            Delete this record
-            <v-icon class="pl-2">mdi-delete</v-icon>
-          </v-btn>
-        </v-col>
-      </template>
-
-      <template v-slot:actions>
-        <v-btn @click="close"
-          text large fab
-          class="secondary--text"
-          :class="mobile ? 'mr-4':''"
-        >
-          <v-icon>mdi-close</v-icon>
+  <Dialog :show="show" :title="title" width="55vw" :goBack="close" enableMenu
+    @submit="submit"
+    @close="close"
+  >
+    <!-- FORM -->
+    <template v-slot:content>
+      <RecordForm ref="recordForm" :editing="editing" :formData.sync="formData" :access="access"/>
+      <v-col align="center">
+        <v-btn v-if="editing" text @click="$emit('delete')">
+          Delete this record
+          <v-icon class="pl-2">mdi-delete</v-icon>
         </v-btn>
-        <v-btn @click="submit"
-            text large fab
-            class="blue--text"
-          >
-            <v-icon>mdi-check</v-icon>
-          </v-btn>
-      </template>
-    </Dialog>
+      </v-col>
+    </template>
+
+    <template v-if="access" v-slot:before-actions>
+      <AccessButton :access.sync="access" :disabled="editing" />
+    </template>
+  </Dialog>
 </template>
 
 <script>
 
 import Dialog from '@/components/dialog/Dialog.vue'
 import RecordForm from '@/components/archive/RecordForm.vue'
+import AccessButton from '@/components/button/AccessButton.vue'
 
 import { mapGetters, mapActions } from 'vuex'
 
 import {
   GET_CHANGES,
   EMPTY_STORY,
-  SET_DEFAULT_STORY
+  setDefaultStory
 } from '@/lib/story-helpers.js'
 
 export default {
   name: 'NewRecordDialog',
   components: {
     Dialog,
-    RecordForm
+    RecordForm,
+    AccessButton
   },
   props: {
     show: { type: Boolean, required: true },
@@ -60,54 +49,63 @@ export default {
   },
   data () {
     return {
-      formData: SET_DEFAULT_STORY(this.story)
+      formData: setDefaultStory(this.story),
+      access: null,
+      initial: false
     }
   },
   computed: {
-    ...mapGetters(['whoami', 'currentProfile']),
+    ...mapGetters(['whoami', 'currentProfile', 'defaultAccess', 'getAccessFromRecps']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     }
   },
-  mounted () {
+  async mounted () {
+    this.initial = true
     if (!this.editing) {
-      this.formData.mentions.push(this.currentProfile)
-      this.formData.contributors.push(this.whoami.profile)
-      // this.formData.access.push(this.whoami.profile)
+      this.access = await this.defaultAccess
+    } else {
+      this.access = this.getAccessFromRecps(this.story.recps)
     }
   },
   watch: {
-    'formData.startDate' (newVal) {
-      if (this.formData.timeInterval) {
-        var dates = this.formData.timeInterval.split('/')
-        this.formData.timeInterval = (newVal || '') + '/' + (dates[1] || '')
-      } else {
-        this.formData.timeInterval = (newVal || '') + '/'
+    access (newAccess) {
+      if (!newAccess || this.editing) return
+      // make sure it doesnt clear the current profile on initial loading
+      if (!this.initial) this.formData.mentions = []
+      else {
+        this.formData.mentions = [this.currentProfile]
+        this.initial = false
       }
-    },
-    'formData.endDate' (newVal) {
-      if (this.formData.timeInterval) {
-        var dates = this.formData.timeInterval.split('/')
-        this.formData.timeInterval = (dates[0] || '') + '/' + (newVal || '')
-      } else {
-        this.formData.timeInterval = '/' + (newVal || '')
-      }
+      // when the access changes, we need to reset all prefilled values to ensure we
+      // dont allow publishing of records that arent in the current group
+      this.formData.contributors = [this.whoami.public.profile]
+      this.formData.kaitiaki = [this.whoami.public.profile]
+      this.formData.creators = []
+      this.formData.relatedRecords = []
     }
   },
   methods: {
     ...mapActions(['setDialog']),
     close () {
-      this.formData = SET_DEFAULT_STORY(this.story)
+      this.formData = setDefaultStory(this.story)
       this.$emit('close')
     },
     submit () {
       var output = {}
       if (this.editing) {
         // get all changes
-        output = { id: this.story.id, ...GET_CHANGES(SET_DEFAULT_STORY(this.story), this.formData) }
+        output = {
+          id: this.story.id,
+          ...GET_CHANGES(setDefaultStory(this.story), this.formData)
+        }
       } else {
-        output = { ...GET_CHANGES(SET_DEFAULT_STORY(EMPTY_STORY), this.formData) }
+        output = {
+          ...GET_CHANGES(setDefaultStory(EMPTY_STORY), this.formData),
+          recps: [this.access.groupId]
+        }
       }
+
       this.$emit('submit', output)
       this.close()
     }

@@ -1,12 +1,14 @@
 import Vue from 'vue'
+import VuexRouterSync from 'vuex-router-sync'
+import VuejsClipper from 'vuejs-clipper'
+import gql from 'graphql-tag'
+
 import App from './App.vue'
 import router from './router'
 import store from './store/index'
-import VuexRouterSync from 'vuex-router-sync'
 
 import { createProvider } from './plugins/vue-apollo'
 import vuetify from './plugins/vuetify'
-import VuejsClipper from 'vuejs-clipper'
 import CordovaBackButton from './plugins/cordova-back-button'
 
 if (process.env.VUE_APP_PLATFORM === 'cordova') {
@@ -17,19 +19,42 @@ if (process.env.VUE_APP_PLATFORM === 'cordova') {
 
 VuexRouterSync.sync(store, router)
 
-function main () {
+async function main () {
   // install
   Vue.use(VuejsClipper)
   Vue.use(CordovaBackButton, { router })
   Vue.config.productionTip = false
 
-  new Vue({
-    router,
-    store,
+  const apolloProvider = createProvider()
 
-    apolloProvider: createProvider(),
-    vuetify,
+  checkReady(() => {
+    new Vue({
+      router,
+      store,
 
-    render: h => h(App)
-  }).$mount('#app')
+      apolloProvider,
+      vuetify,
+
+      render: h => h(App)
+    }).$mount('#app')
+  })
+
+  async function checkReady (next) {
+    try {
+      await apolloProvider.defaultClient.query({
+        query: gql`{
+          whoami {
+            public {
+              feedId
+            }
+          }
+        }`
+      })
+    } catch (e) {
+      console.log('Waiting for Graphql')
+      return setTimeout(() => checkReady(next), 500)
+    }
+
+    next()
+  }
 }

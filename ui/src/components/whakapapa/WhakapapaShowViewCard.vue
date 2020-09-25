@@ -1,6 +1,5 @@
 <template>
   <v-card
-    :to="'/whakapapa'"
     style="width: 100%"
     light
     outlined
@@ -19,32 +18,33 @@
         <!-- Whakapapa Title Icons -->
         <v-card-text class="pa-0 d-flex justify-start align-center" style="width: 100%;">
           <!-- Lock icon -->
-          <v-tooltip bottom>
+          <v-tooltip bottom v-if="access">
             <template v-slot:activator="{ on }">
               <v-btn
                 icon
                 class="py-0 px-3"
               >
-                <v-icon v-on="on" small color="#555">mdi-lock</v-icon>
+                <v-icon v-on="on" small color="#555">mdi-eye</v-icon>
               </v-btn>
             </template>
-            <span>Private record - Only visible by you</span>
+            <span v-if="access.isPersonalGroup">Only you have access to this whakapapa</span>
+            <span v-else>Only {{ access.preferredName }} has access to this whakapapa</span>
           </v-tooltip>
           <!-- Pencil icon -->
           <slot name="edit"></slot>
           <!-- Dropdown icon -->
-          <v-tooltip v-if="description" bottom>
+          <v-tooltip v-if="description || view.kaitiaki" bottom>
             <template v-slot:activator="{ on }">
             <v-btn
               v-on="on"
-              @click.prevent="show = !show"
+              @click.stop="show = !show"
               icon
               class="pa-0 px-3"
             >
               <v-icon>{{ show ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
             </v-btn>
             </template>
-            <span>Show whakapapa description</span>
+            <span>Show Whakapapa details</span>
           </v-tooltip>
         </v-card-text>
       </div>
@@ -52,7 +52,9 @@
     <v-expand-transition>
       <div v-show="show">
         <v-divider></v-divider>
-        <v-card-subtitle v-text="description" class="pa-3"/>
+        <v-card-subtitle v-if="description" v-text="description" class="pa-3"/>
+        <AvatarGroup :profiles="view.kaitiaki" groupTitle="Kaitiaki" size="50px" showLabels @profile-click="openProfile($event)"/>
+        <AvatarGroup v-if="access" :profiles="[access]" :isView="access.type === 'community'" groupTitle="Access" size="50px" showLabels @profile-click="openProfile($event)"/>
       </div>
     </v-expand-transition>
   </v-card>
@@ -60,13 +62,20 @@
 
 <script>
 import whakapapa from '@/assets/whakapapa.svg'
+import { mapGetters, mapActions } from 'vuex'
+
+import AvatarGroup from '@/components/AvatarGroup.vue'
 
 export default {
   name: 'WhakapapaShowViewCard',
   props: {
     view: { type: Object, required: true },
     shadow: { type: Boolean, default: true },
-    cropDescription: { type: Boolean, default: false }
+    cropDescription: { type: Boolean, default: false },
+    access: Object
+  },
+  components: {
+    AvatarGroup
   },
   data () {
     return {
@@ -74,6 +83,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['currentProfile', 'getAccessFromRecps', 'currentAccess']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -94,6 +104,14 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['setDialog', 'setProfileById']),
+    goProfile (component) {
+      this.$router.push({ name: 'profileShow', params: { id: this.currentProfile.id } }).catch(() => {})
+    },
+    openProfile (profile) {
+      this.setProfileById({ id: profile.id, type: 'preview' })
+      this.setDialog({ active: 'view-edit-node', type: 'preview' })
+    },
     background (view) {
       if (view.image && view.image.uri) {
         return {

@@ -1,8 +1,8 @@
 <template>
   <v-col class="pt-0 pb-0">
-    <v-row>
+    <v-row v-if="groupTitle">
       <v-col class="pt-1 pb-0">
-        <small class="label"> {{ groupTitle }} </small>
+        <small class="label overline"> {{ groupTitle }} </small>
       </v-col>
     </v-row>
 
@@ -16,6 +16,7 @@
         <div justify="center" class="pt-2">
           <Avatar
             :size="size"
+            ::isEditing="false"
             :image="profile.avatarImage"
             :alt="profile.preferredName"
             :gender="profile.gender"
@@ -26,8 +27,9 @@
             @click="profileClick(profile)"
             :deletable="deletable"
             @delete="$emit('delete', i)"
-            :isView="isView"
+            :isView="isView || profile.type === 'community'"
             :dark="dark"
+            :row="row"
           />
         </div>
       </div>
@@ -38,6 +40,7 @@
 
 <script>
 import Avatar from './Avatar.vue'
+// import has from 'lodash.has'
 export default {
   name: 'AvatarGroup',
   components: {
@@ -46,15 +49,21 @@ export default {
   props: {
     profiles: { type: Array, default: null },
     groupTitle: { type: String, default: null },
-    showLabels: { type: Boolean, default: false },
+    showLabels: Boolean,
     size: { type: String, default: '80px' },
     customClass: { type: String, default: 'd-flex justify-start align-center pa-2 pl-4' },
     spacing: { type: String, default: 'pr-5' },
-    deletable: { type: Boolean, default: false },
-    isView: { type: Boolean, default: false },
+    deletable: Boolean,
+    isView: Boolean,
     clickable: { type: Boolean, default: true },
-    dark: { type: Boolean, default: false }
+    dark: Boolean,
+    row: Boolean
   },
+  // data () {
+  //   return {
+  //     groupProfiles: this.formatProfiles(this.profiles)
+  //   }
+  // },
   computed: {
     columns () {
       return this.profiles.length
@@ -64,19 +73,27 @@ export default {
     profileClick (profile) {
       this.$emit('profile-click', profile)
     }
+    // formatProfiles (profiles) {
+    //   if (profiles.length > 0 && has(profiles[0], 'profile')) {
+    //     var formattedProfiles = []
+    //     profiles.map(profile => {
+    //       formattedProfiles.push(profile.profile)
+    //     })
+    //     return formattedProfiles
+    //   } else return profiles
+    // }
   }
 }
 </script>
 <style scoped lang="scss">
-.label {
-  color: #9b9b9b
-}
+
 * {
   color: #383838
 }
 
-.no-wrap {
-  flex-wrap: nowrap;
+.label {
+  color: rgba(0,0,0,0.6);
+  font-size: 65% !important;
 }
 
 </style>

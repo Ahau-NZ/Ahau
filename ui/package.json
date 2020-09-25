@@ -1,6 +1,6 @@
 {
   "name": "ahau-ui",
-  "version": "0.5.0",
+  "version": "0.7.1",
   "description": "An application for gathering and sharing whakapapa (family trees, traditional knowledge). Built using scuttlebutt",
   "homepage": "https://gitlab.com/ahau/whakapapa-ora",
   "scripts": {
@@ -22,6 +22,7 @@
     "lodash.chunk": "^4.2.0",
     "lodash.clonedeep": "^4.5.0",
     "lodash.get": "^4.4.2",
+    "lodash.groupby": "^4.6.0",
     "lodash.isempty": "^4.4.0",
     "lodash.isequal": "^4.5.0",
     "lodash.pick": "^4.4.0",

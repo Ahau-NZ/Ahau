@@ -14,9 +14,14 @@
             :style="customStyle"
           />
         </v-avatar>
+        <v-row v-if="showLabel && row">
+          <v-col class="pl-7 pb-0" >
+            <p class="mt-n1" :style="`font-size:1em; ${theme};`"> {{ alt }} </p>
+          </v-col>
+        </v-row>
       </v-row>
-      <v-row v-if="showLabel" justify="center">
-        <p :style="`font-size:0.8em; ${theme}`"> {{ alt }} </p>
+      <v-row v-if="showLabel && !row" justify="center">
+        <p :style="`font-size:0.8em; ${theme}; margin-bottom:0`"> {{ alt }} </p>
       </v-row>
     </v-col>
   </div>
@@ -27,7 +32,7 @@
         <v-btn v-if="deletable" class="delete" @click="$emit('delete')" icon x-small light max-width="20px" max-height="20px">
           <v-icon>mdi-close</v-icon>
         </v-btn>
-        <v-avatar :size="size" :tile="isView" class="avatar-container" :class="{'isEditing': isEditing}">
+        <v-avatar :size="size" :tile="isView" class="avatar-container" :class="{'isEditing': isEditing, 'isOnline': online}">
           <v-img v-if="image && image.uri" :src="image.uri" :alt="alt" />
           <v-img
             v-else
@@ -40,8 +45,8 @@
           <ImagePicker @updateAvatar="updateAvatar($event)" />
         </div>
       </v-row>
-      <v-row v-if="showLabel" justify="center">
-        <p :style="`font-size:0.8em ${theme}`"> {{ alt }} </p>
+      <v-row v-if="showLabel && !row" justify="center">
+        <p :style="`font-size:0.8em ${theme};margin-bottom:0`">{{ alt }} </p>
       </v-row>
     </v-col>
   </div>
@@ -58,14 +63,16 @@ export default {
     alt: String,
     gender: String,
     aliveInterval: String,
-    deceased: { type: Boolean, default: false },
+    deceased: Boolean,
     size: { type: String, default: '25vh' },
-    showLabel: { type: Boolean, default: false },
-    clickable: { type: Boolean, default: false },
-    isView: { type: Boolean, default: false },
-    isEditing: { type: Boolean, default: false },
-    deletable: { type: Boolean, default: false },
-    dark: { type: Boolean, default: false }
+    showLabel: Boolean,
+    clickable: Boolean,
+    isView: Boolean,
+    isEditing: Boolean,
+    deletable: Boolean,
+    dark: Boolean,
+    row: Boolean,
+    online: Boolean
   },
   components: {
     ImagePicker
@@ -118,8 +125,13 @@ export default {
 }
 
 .isEditing {
-    opacity: 0.2;
-  }
+  opacity: 0.2;
+}
+
+.isOnline {
+  border: #27f17d solid 2px;
+  border-radius: 50%
+}
 
 .avatar-overlay {
   position: absolute;

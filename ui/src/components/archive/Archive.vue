@@ -1,15 +1,14 @@
 <template>
-  <div>
-    <v-container fluid class="body-width px-2">
-
-      <!-- VIEW STORY OVERLAY -->
-      <div :class="{ 'showOverlay': showStory && !mobile }"></div>
-
-      <v-row v-if="!showStory" class="top-margin mb-5">
-        <v-col class="headliner black--text pa-0 pl-4 pt-2">
-          Archive records
-        </v-col>
-        <!-- <v-col align="right" class="pa-0">
+<div>
+  <v-container fluid class="body-width px-2">
+    <!-- VIEW STORY OVERLAY -->
+    <div :class="{ 'showOverlay': showStory && !mobile }"></div>
+    <v-row v-if="!showStory" class="top-margin mb-5">
+      <v-col cols="12" class="headliner black--text pa-0 pl-4 pt-2">
+        Archive records
+        <v-icon color="blue-grey" light @click="toggleArchiveHelper" class="infoButton">mdi-information</v-icon>
+      </v-col>
+      <!-- <v-col align="right" class="pa-0">
         <v-btn outlined flat :medium="!mobile" :x-small="mobile" :class="mobile ? 'addBtnMob' : 'addBtn'" class="my-2" fab color="white" @click.stop="openContextMenu($event)">
           <v-icon :large="!mobile" class="black--text">mdi-plus</v-icon>
         </v-btn>
@@ -24,33 +23,43 @@
           <!-- <v-btn :class="mobile ? 'searchBtnMob' : 'searchBtn'" :small="!mobile" :x-small="mobile" class="my-2" fab flat color="white" @click="editProfile()">
           <v-icon small class="black--text">mdi-magnify</v-icon>
         </v-btn>            -->
-          <!-- <v-btn :medium="!mobile" :x-small="mobile" :class="mobile ? 'addBtnMob' : 'addBtn'" class="my-2" fab color="white" @click.stop="openContextMenu($event)"> -->
-          <v-btn :medium="!mobile" text :x-small="mobile" :class="mobile ? 'addBtnMob' : 'addBtn'" class="my-2" fab
-            color="white" @click.prevent="dialog = 'new-story'" elevation="1">
-            <v-icon :large="!mobile" class="black--text">mdi-plus</v-icon>
-          </v-btn>
-        </div>
-      </v-row>
+        <!-- <v-btn :medium="!mobile" :x-small="mobile" :class="mobile ? 'addBtnMob' : 'addBtn'" class="my-2" fab color="white" @click.stop="openContextMenu($event)"> -->
+        <v-btn
+          @click.prevent="dialog = 'new-story'"
+          :class="!mobile ? 'addBtn my-2' : 'addBtnMobile'"
+          :color="!mobile ? 'white' : 'rgba(160, 35, 36,1)'"
+          elevation="4"
+          fab
+          light
 
-      <v-row v-if="profileStories && profileStories.length > 0">
-
+          :fixed="mobile"
+          :bottom="mobile"
+          :right="mobile"
+        >
+          <v-icon :large="!mobile" :class="!mobile ? 'black--text' : 'white--text'">mdi-plus</v-icon>
+        </v-btn>
+      </div>
+    </v-row>
+    <v-row v-if="profileStories && profileStories.length > 0">
+      <transition name="change" mode="out-in">
         <v-col cols="12" xs="12" sm="12" md="9" :class="!showStory ? '':'pa-0'">
           <!-- <v-row>
             <CollectionGroup :collections="collections" />
           </v-row>
           <v-divider class="mt-6 mb-8" light></v-divider> -->
           <div v-if="!showStory">
-           <transition-group name="fade">
-              <v-row  v-for="(story, i) in profileStories" :key="`story-${i}-id-${story.id}`" class="mb-5">
-                <StoryCard @updateDialog="updateDialog($event)" :key="i" @toggleStory="toggleStory($event)" :story="story" />
-              </v-row>
-            </transition-group>
-
+            <v-row v-for="(story, i) in profileStories" :key="`story-${i}-id-${story.id}`">
+              <StoryCard @updateDialog="updateDialog($event)" @toggleStory="toggleStory($event)" :story="story" />
+            </v-row>
           </div>
           <div v-else>
             <v-row :class="mobile ? 'pa-0': 'px-6 top-margin'">
-              <StoryCard @updateDialog="updateDialog($event)" :fullStory="true" :story.sync="currentStory"
-                @submit="saveStory($event)" @close="toggleStory($event)" />
+              <StoryCard
+                :fullStory="true"
+                :story.sync="currentStory"
+                @updateDialog="updateDialog($event)"
+                @submit="saveStory($event)"
+                @close="toggleStory($event)" />
             </v-row>
           </div>
         </v-col>
@@ -61,13 +70,17 @@
           <div v-if="!profileStories || (profileStories && profileStories.length < 1)"
             class="px-8 subtitle-1 grey--text " :class="{
             'text-center': mobile
-          }">
-            No records found
-          </div>
-        </v-col>
-      </v-row>
-    </v-container>
-    <!-- <vue-context ref="menu" class="pa-4">
+          }"
+        >
+          No records found
+        </div>
+      </v-col>
+    </v-row>
+
+    <ArchiveHelper v-if="showArchiveHelper" :show="showArchiveHelper" @close="toggleArchiveHelper" />
+
+  </v-container>
+  <!-- <vue-context ref="menu" class="pa-4">
     <li v-for="(option, index) in contextMenuOpts" :key="index">
       <a href="#" @click.prevent="setDialog(option.dialog)" class="d-flex align-center px-4">
         <v-icon light>{{ option.icon }}</v-icon>
@@ -85,29 +98,21 @@
 <script>
 import StoryCard from '@/components/archive/StoryCard.vue'
 // import CollectionGroup from '@/components/archive/CollectionGroup.vue'
-import {
-  SAVE_STORY,
-  GET_STORY
-} from '@/lib/story-helpers.js'
-import {
-  SAVE_ARTEFACT
-} from '@/lib/artefact-helpers.js'
-import {
-  SAVE_LINK,
-  TYPES
-} from '@/lib/link-helpers.js'
-import {
-  mapGetters,
-  mapActions,
-  mapMutations
-} from 'vuex'
+import { saveStory, getStory } from '@/lib/story-helpers.js'
+import { saveArtefact } from '@/lib/artefact-helpers.js'
+import { saveLink, TYPES } from '@/lib/link-helpers.js'
+import { mapGetters, mapActions, mapMutations } from 'vuex'
 import NewRecordDialog from '@/components/dialog/archive/NewRecordDialog.vue'
+
+// TODO: Replace with Archive Helper (doesnt exist yet)
+import ArchiveHelper from '@/components/dialog/archive/ArchiveHelper.vue'
 
 export default {
   name: 'Archive',
   components: {
     StoryCard,
-    NewRecordDialog
+    NewRecordDialog,
+    ArchiveHelper
     // CollectionGroup,
     // VueContext,
   },
@@ -125,7 +130,8 @@ export default {
       //   icon: 'mdi-file-outline'
       // }
       // ],
-      scrollPosition: 0
+      scrollPosition: 0,
+      showArchiveHelper: false
     }
   },
   props: {
@@ -138,7 +144,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['stories', 'showStory', 'whoami', 'currentProfile', 'currentStory', 'profileStories']),
+    ...mapGetters(['stories', 'showStory', 'whoami', 'currentProfile', 'currentTribe', 'currentStory', 'showArtefact', 'storeDialog']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -147,6 +153,25 @@ export default {
       else if (!this.mobile) return 'mt-10'
       return ''
     },
+    profileStories () {
+      if (this.currentProfile.type === 'person') {
+        return this.stories.filter(story => {
+          return story.mentions.some(mention => {
+            return mention.profile.id === this.currentProfile.id
+          })
+        })
+      } else if (this.currentProfile.type === 'community') {
+        return this.stories.filter(story => {
+          return story.recps.some(recp => {
+            return recp === this.currentTribe.id
+          })
+        })
+      } else {
+        console.error('currentProfile.type not supported, should be person or community')
+        return []
+      }
+    }
+
   },
   watch: {
     showStory (newVal, oldVal) {
@@ -165,6 +190,9 @@ export default {
   methods: {
     ...mapMutations(['setStory', 'addStoryToStories', 'updateStoryInStories', 'removeStoryFromStories']),
     ...mapActions(['setComponent', 'setShowStory', 'setDialog', 'getAllStories']),
+    toggleArchiveHelper () {
+      this.showArchiveHelper = !this.showArchiveHelper
+    },
     async saveStory (input) {
       var {
         id,
@@ -176,12 +204,13 @@ export default {
       } = input
 
       try {
-        const res = await this.$apollo.mutate(SAVE_STORY(input))
-        if (res.errors) throw res.errors
+        const res = await this.$apollo.mutate(saveStory(input))
 
-        if (!id) {
-          id = res.data.saveStory
-        }
+        if (res.errors) throw res.errors
+        if (!id) id = res.data.saveStory
+
+        // get the full story
+        var story = await this.getStory(id)
 
         // process the artefacts
         if (artefacts) {
@@ -191,17 +220,18 @@ export default {
           } = artefacts
 
           if (add && add.length > 0) {
-            // all artefacts to create or update
             await Promise.all(add.map(async artefact => {
+              if (!artefact.id) artefact.recps = story.recps
               const artefactId = await this.saveArtefact(artefact)
               if (!artefactId) return
 
               // if the artefact didnt have an id, then it means we create the link
               if (!artefact.id) {
-                const artefactInput = {
+                var artefactInput = {
                   type: TYPES.STORY_ARTEFACT,
                   parent: id,
-                  child: artefactId
+                  child: artefactId,
+                  recps: story.recps
                 }
 
                 await this.saveLink(artefactInput)
@@ -223,22 +253,23 @@ export default {
         }
 
         if (mentions) {
-          await this.processLinks(id, mentions, TYPES.STORY_PROFILE_MENTION)
+          await this.processLinks(mentions, { type: TYPES.STORY_PROFILE_MENTION, parent: id, recps: story.recps })
         }
 
         if (contributors) {
-          await this.processLinks(id, contributors, TYPES.STORY_PROFILE_CONTRIBUTOR)
+          await this.processLinks(contributors, { type: TYPES.STORY_PROFILE_CONTRIBUTOR, parent: id, recps: story.recps })
         }
 
         if (creators) {
-          await this.processLinks(id, creators, TYPES.STORY_PROFILE_CREATOR)
+          await this.processLinks(creators, { type: TYPES.STORY_PROFILE_CREATOR, parent: id, recps: story.recps })
         }
 
         if (relatedRecords) {
-          await this.processLinks(id, relatedRecords, TYPES.STORY_STORY)
+          await this.processLinks(relatedRecords, { type: TYPES.STORY_STORY, recps: story.recps })
         }
 
-        var story = await this.getStory(id)
+        // reload again
+        story = await this.getStory(id)
 
         if (input.id) {
           this.setStory(story)
@@ -249,22 +280,21 @@ export default {
         console.warn('Potentially loading a large amount of data with each change to a story...')
         this.getAllStories()
       } catch (err) {
+        console.error('Something went wrong while creating a story')
         throw err
       }
     },
-    async processLinks (parentId, object, type) {
-      const {
-        add,
-        remove
-      } = object
+    async processLinks (object, { type, parent, recps }) {
+      const { add, remove } = object
 
       if (add && add.length > 0) {
         await Promise.all(add.map(async linkedItem => {
           if (linkedItem.id) {
             const linkInput = {
               type,
-              parent: parentId,
-              child: linkedItem.id
+              parent,
+              child: linkedItem.id,
+              recps
             }
 
             await this.saveLink(linkInput)
@@ -287,63 +317,59 @@ export default {
     },
     async saveArtefact (input) {
       try {
-        const res = await this.$apollo.mutate(SAVE_ARTEFACT(input))
+        const res = await this.$apollo.mutate(saveArtefact(input))
+
         if (res.errors) {
+          console.error('Error saving artefact:', input)
           throw res.errors
         }
 
         return res.data.saveArtefact
       } catch (err) {
-        throw new Error('failed to save artefact. ' + err)
+        console.error('something went wrong while saving an artefact.', err)
       }
     },
     async getStory (id) {
-      const res = await this.$apollo.query(GET_STORY(id))
+      try {
+        if (!id) throw new Error('getStory(id) missing id')
 
-      if (res.errors) {
-        console.error('failed to get the story. ' + res.errors)
-        return
-      }
+        const res = await this.$apollo.query(getStory(id))
 
-      return res.data.story
-    },
-    async saveLink ({
-      type,
-      parent,
-      child
-    }) {
-      const res = await this.$apollo.mutate(SAVE_LINK({
-        type,
-        parent,
-        child,
-        recps: [this.whoami.feedId]
-      }))
-
-      if (res.errors) {
-        console.error('error creating the link. ' + res.errors)
-        return
-      }
-
-      // return the linkId
-      return res.data.saveLink
-    },
-    async removeLink ({
-      date,
-      linkId
-    }) {
-      const res = await this.$apollo.mutate(SAVE_LINK({
-        linkId,
-        tombstone: {
-          date
+        if (res.errors) {
+          console.error('error getting story', id)
+          throw res.errors
         }
-      }))
 
-      if (res.errors) {
-        console.error('error removing link. ' + res.errors)
-        return
+        return res.data.story
+      } catch (err) {
+        console.error(err)
+        console.error('something went wrong while getting a story')
+        throw err
       }
+    },
+    async saveLink (input) {
+      try {
+        const res = await this.$apollo.mutate(saveLink(input))
 
-      return res.data.saveLink
+        if (res.errors) {
+          console.error('error saving the link.', input)
+          throw res.errors
+        }
+
+        // return the linkId
+        return res.data.saveLink
+      } catch (err) {
+        console.error('something went wrong while saving a link')
+        throw err
+      }
+    },
+    async removeLink ({ date, linkId }) {
+      try {
+        await this.saveLink({ linkId, tombstone: { date } })
+      } catch (err) {
+        console.error('something went wrong while removing a link', linkId)
+        throw err
+      }
     },
     toggleStory (story) {
       this.setStory(story)
@@ -393,10 +419,12 @@ export default {
     right: 80px;
   }
 
-  .addBtn {
-    position: fixed;
-    top: 80px;
-    right: 100px
+.addBtnMobile {
+    bottom: 16px !important;
+  }
+
+  .infoButton {
+    margin-left: 10px;
   }
 
   .addBtnMob {

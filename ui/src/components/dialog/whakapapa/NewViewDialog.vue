@@ -1,22 +1,15 @@
 <template>
   <div>
-    <Dialog :show="show" :title="title" @close="close" width="720px" :goBack="close" enableMenu>
+    <Dialog :show="show" :title="title" width="720px" :goBack="close" enableMenu
+      @submit="submit"
+      @close="close"
+    >
       <template v-slot:content>
         <WhakapapaForm ref="whakapapaForm" :view.sync="formData" :data.sync="csv"/>
+        <AvatarGroup v-if="kaitiaki && kaitiaki.length > 0" size="50px" show-labels groupTitle="Kaitiaki" :profiles="kaitiaki" showLabels/>
       </template>
-      <template v-slot:actions>
-        <v-btn @click="close"
-          text large fab
-          class="secondary--text"
-        >
-          <v-icon color="secondary">mdi-close</v-icon>
-        </v-btn>
-        <v-btn @click="submit"
-          text large fab
-          class="blue--text"
-        >
-          <v-icon>mdi-check</v-icon>
-        </v-btn>
+      <template v-slot:before-actions>
+        <AccessButton :access.sync="access" />
       </template>
     </Dialog>
   </div>
@@ -27,13 +20,15 @@ import Dialog from '@/components/dialog/Dialog.vue'
 import pick from 'lodash.pick'
 import isEmpty from 'lodash.isempty'
 import WhakapapaForm from '@/components/whakapapa/WhakapapaForm.vue'
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters, mapMutations } from 'vuex'
+import AvatarGroup from '@/components/AvatarGroup.vue'
+import AccessButton from '@/components/button/AccessButton.vue'
 
 const EMPTY_WHAKAPAPA = {
   name: '',
   description: '',
   mode: 'descendants',
-  focus: 'self',
+  focus: 'new',
   image: null
 }
 
@@ -70,7 +65,9 @@ export default {
   name: 'NewViewDialog',
   components: {
     Dialog,
-    WhakapapaForm
+    WhakapapaForm,
+    AvatarGroup,
+    AccessButton
   },
   props: {
     title: String,
@@ -83,22 +80,33 @@ export default {
     return {
       helpertext: false,
       formData: setDefaultWhakapapa(EMPTY_WHAKAPAPA),
-      csv: ''
+      csv: '',
+      access: null
+    }
+  },
+  mounted () {
+    this.access = this.defaultAccess
+  },
+  watch: {
+    access (value) {
+      this.setCurrentAccess(value)
     }
   },
   computed: {
+    ...mapGetters(['whoami', 'defaultAccess']),
+    kaitiaki () {
+      if (!this.whoami) return null
+      return [this.whoami.public.profile]
+    },
+    position () {
+      return this.mobile ? 'center' : 'start'
+    },
     mobile () {
       return this.$vuetify.breakpoint.xs
     }
   },
-  watch: {
-    formData: {
-      handler (newVal) {
-      },
-      deep: true
-    }
-  },
   methods: {
+    ...mapMutations(['setCurrentAccess']),
     ...mapActions(['setLoading']),
     close () {
       this.formData = setDefaultWhakapapa(EMPTY_WHAKAPAPA)
@@ -115,7 +123,8 @@ export default {
       const output = whakapapaSubmission(this.formData)
       const newOutput = {
         ...output,
-        csv: csv
+        csv,
+        access: this.access
       }
       this.$emit('submit', newOutput)
       this.close()

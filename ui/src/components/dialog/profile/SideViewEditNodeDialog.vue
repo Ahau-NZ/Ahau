@@ -13,7 +13,7 @@
       class="side-menu"
     >
       <v-card light min-height="100%">
-        <DialogTitleBanner v-if="mobile" :title="formData.preferredName" mobile @close="close"  :isEditing="isEditing" class="px-1 pt-3"/>
+        <DialogTitleBanner v-if="mobile" :title="formData.preferredName || 'Profile'" mobile @close="close"  :isEditing="isEditing" class="px-1 pt-3"/>
         <v-row v-else class="justify-end">
           <v-btn icon class="mr-3">
             <v-icon @click="close" color="secondary">mdi-close</v-icon>
@@ -92,13 +92,11 @@
               medium
               class="blue--text"
             >
-              <ArchiveIcon size="normal"/>
+              <v-icon class="blue--text" style="font-size:20px">mdi-account-circle</v-icon>
               <span class="pl-2 "> Profile</span>
-
-              <!-- <v-icon small class="blue--text" left>mdi-account-circle</v-icon>Archive -->
             </v-btn>
             <v-btn
-              v-if="!preview"
+              v-if="!preview && profile.canEdit"
               @click="toggleEdit"
               color="white"
               text
@@ -111,7 +109,7 @@
           <v-row v-if="formData.description && !isEditing" class="ma-2 py-2">
             <v-col cols="12" class="pt-0">
               <v-row>
-                <v-col class="py-1 px-0 profile-label"><small>Description</small></v-col>
+                <v-col class="py-1 px-0 profile-label overline"><small>Description</small></v-col>
               </v-row>
               <v-row class="py-0 justify-center">
                 <p class="ma-0 profile-info" style="font-size: 0.8em">{{formData.description}}</p>
@@ -119,11 +117,11 @@
             </v-col>
           </v-row>
           <v-row v-if="!isEditing"  style="border: 0.5px solid rgba(0,0,0,0.12); border-radius: 10px;" class="flex-column mx-0 ">
-            <v-col class="pa-0 my-2">
+            <v-col class="pa-0">
               <v-row style="border-bottom: 0.5px solid rgba(0,0,0,0.12);" class="ma-0">
                 <v-col cols="6">
                   <v-row>
-                    <v-col class="py-1 px-0 profile-label"><small>Legal Name</small></v-col>
+                    <v-col class="py-1 px-0 profile-label overline"><small>Legal Name</small></v-col>
                   </v-row>
                   <v-row class="py-0 justify-center">
                     <p class="ma-0 profile-info">{{formData.legalName}}</p>
@@ -131,7 +129,7 @@
                 </v-col>
                 <v-col cols="6">
                   <v-row>
-                    <v-col class="py-1 px-0 profile-label"><small>Age</small></v-col>
+                    <v-col class="py-1 px-0 profile-label overline"><small>Age</small></v-col>
                   </v-row>
                   <v-row class="py-0 justify-center">
                     <p class="ma-0 profile-info">{{age(formData.aliveInterval)}}</p>
@@ -141,7 +139,7 @@
               <v-row class="ma-0">
                 <v-col cols="6">
                   <v-row>
-                    <v-col class="py-1 px-0 profile-label"><small>Occupation</small></v-col>
+                    <v-col class="py-1 px-0 profile-label overline"><small>Occupation</small></v-col>
                   </v-row>
                   <v-row class="py-0 justify-center">
                     <p class="ma-0 profile-info" style="font-size: 0.8em">{{formData.profession}}</p>
@@ -149,7 +147,7 @@
                 </v-col>
                 <v-col cols="6">
                   <v-row>
-                    <v-col class="py-1 px-0 profile-label"><small>Location</small></v-col>
+                    <v-col class="py-1 px-0 profile-label overline"><small>Location</small></v-col>
                   </v-row>
                   <v-row class="py-0 justify-center">
                     <p class="ma-0 profile-info" style="font-size: 0.8em">{{formData.location}}</p>
@@ -170,7 +168,7 @@
                     @profile-click="openProfile($event)"
                   >
                     <template v-slot:action >
-                      <AddButton v-if="!preview" @click="toggleNew('parent')" class="pb-4" justify="start"/>
+                      <AddButton v-if="!preview && profile.canEdit" @click="toggleNew('parent')" class="pb-4" justify="start"/>
                     </template>
                   </AvatarGroup>
                 </v-col>
@@ -203,7 +201,7 @@
                     @profile-click="openProfile($event)"
                   >
                     <template v-slot:action >
-                      <AddButton v-if="!preview" @click="toggleNew('child')" class="pb-4" justify="start"/>
+                      <AddButton v-if="!preview && profile.canEdit" @click="toggleNew('child')" class="pb-4" justify="start"/>
                     </template>
                   </AvatarGroup>
                   <AvatarGroup
@@ -215,7 +213,7 @@
                     @profile-click="openProfile($event)"
                   >
                     <template v-slot:action >
-                      <AddButton v-if="!preview" @click="toggleNew('child')" class="pb-6" />
+                      <AddButton v-if="!preview && profile.canEdit" @click="toggleNew('child')" class="pb-6" />
                     </template>
                   </AvatarGroup>
                 </v-col>
@@ -231,7 +229,8 @@
 <script>
 import calculateAge from '../../../lib/calculate-age'
 
-import { PERMITTED_PROFILE_ATTRS, PERMITTED_RELATIONSHIP_ATTRS } from '@/lib/profile-helpers'
+import { PERMITTED_PERSON_ATTRS, PERMITTED_RELATIONSHIP_ATTRS } from '@/lib/person-helpers'
+import { parseInterval } from '@/lib/date-helpers.js'
 
 import isEqual from 'lodash.isequal'
 import isEmpty from 'lodash.isempty'
@@ -239,7 +238,6 @@ import pick from 'lodash.pick'
 import clone from 'lodash.clonedeep'
 import { mapActions } from 'vuex'
 
-import ArchiveIcon from '@/components/button/ArchiveIcon.vue'
 import ProfileForm from '@/components/profile/ProfileForm.vue'
 
 import Avatar from '@/components/Avatar.vue'
@@ -250,19 +248,11 @@ import DialogTitleBanner from '@/components/dialog/DialogTitleBanner.vue'
 function defaultData (input) {
   var profile = clone(input)
 
-  var aliveInterval = ['', '']
-
-  if (profile.aliveInterval) {
-    aliveInterval = profile.aliveInterval.split('/')
-  }
-
   return {
     id: profile.id,
     gender: profile.gender,
     legalName: profile.legalName,
     aliveInterval: profile.aliveInterval,
-    bornAt: aliveInterval[0],
-    diedAt: aliveInterval[1],
     preferredName: profile.preferredName,
     avatarImage: profile.avatarImage,
     description: profile.description,
@@ -289,8 +279,7 @@ export default {
     AddButton,
     Avatar,
     AvatarGroup,
-    DialogTitleBanner,
-    ArchiveIcon
+    DialogTitleBanner
   },
   props: {
     goBack: { type: Function },
@@ -337,6 +326,9 @@ export default {
                 changes[key] = value
               }
               break
+            case 'aliveInterval':
+              changes[key] = parseInterval(this.formData.aliveInterval)
+              break
             default:
               changes[key] = value
           }
@@ -369,19 +361,7 @@ export default {
       handler (newVal) {
         if (!newVal) return
         this.formData = defaultData(newVal)
-
-        if (this.formData.aliveInterval) {
-          var dates = this.formData.aliveInterval.split('/')
-          this.formData.bornAt = dates[0]
-          this.formData.diedAt = dates[1]
-        }
       }
-    },
-    'formData.bornAt' (newVal) {
-      this.formData.aliveInterval = this.formData.bornAt + '/' + this.formData.diedAt
-    },
-    'formData.diedAt' (newVal) {
-      this.formData.aliveInterval = this.formData.bornAt + '/' + this.formData.diedAt
     }
   },
   methods: {
@@ -404,7 +384,7 @@ export default {
       this.toggleEdit()
     },
     submit () {
-      var output = Object.assign({}, pick(this.profileChanges, [...PERMITTED_PROFILE_ATTRS, ...PERMITTED_RELATIONSHIP_ATTRS]))
+      var output = Object.assign({}, pick(this.profileChanges, [...PERMITTED_PERSON_ATTRS, ...PERMITTED_RELATIONSHIP_ATTRS]))
 
       if (!isEmpty(output)) {
         this.$emit('submit', output)

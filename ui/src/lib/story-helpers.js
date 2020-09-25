@@ -1,13 +1,14 @@
 import gql from 'graphql-tag'
 import pick from 'lodash.pick'
 import { ARTEFACT_FRAGMENT } from './artefact-helpers'
-import { PROFILE_FRAGMENT } from './profile-helpers'
+import { PERSON_FRAGMENT, PUBLIC_PROFILE_FRAGMENT } from './person-helpers'
+import { parseInterval } from './date-helpers'
 import isEqual from 'lodash.isequal'
 import isEmpty from 'lodash.isempty'
 import clone from 'lodash.clonedeep'
 import uniqby from 'lodash.uniqby'
 
-export function SET_DEFAULT_STORY (newStory) {
+export function setDefaultStory (newStory) {
   var story = clone(newStory)
 
   var artefacts = story.artefacts
@@ -15,11 +16,6 @@ export function SET_DEFAULT_STORY (newStory) {
   var contributors = story.contributors
   var creators = story.creators
   var relatedRecords = story.relatedRecords
-  var timeInterval = ['', '']
-
-  if (story.timeInterval) {
-    timeInterval = story.timeInterval.split('/')
-  }
 
   if (artefacts && artefacts.length > 0) {
     artefacts = artefacts.map(a => {
@@ -71,8 +67,6 @@ export function SET_DEFAULT_STORY (newStory) {
     title: story.title,
     description: story.description,
     timeInterval: story.timeInterval,
-    startDate: timeInterval[0],
-    endDate: timeInterval[1],
     location: story.location,
     locationDescription: story.locationDescription,
     submissionDate: story.submissionDate,
@@ -93,7 +87,8 @@ export function SET_DEFAULT_STORY (newStory) {
     creators,
     protocols: story.protocols,
     relatedRecords,
-    artefacts
+    artefacts,
+    kaitiaki: story.kaitiaki
   }
 }
 
@@ -141,7 +136,9 @@ export const PERMITTED_STORY_ATTRS = [
   'identifier',
   'language',
   'source',
-  'transcription'
+  'transcription',
+  'canEdit',
+  'recps'
 ]
 
 export const PERMITTED_STORY_LINKS = [
@@ -164,7 +161,8 @@ export const STORY_FRAGMENT = gql`
 
 export const STORY_LINK_FRAGMENT = gql`
   ${ARTEFACT_FRAGMENT}
-  ${PROFILE_FRAGMENT}
+  ${PERSON_FRAGMENT}
+  ${PUBLIC_PROFILE_FRAGMENT}
   fragment StoryLinkFragment on Story {
     artefacts: artefactLinks {
       linkId
@@ -202,10 +200,13 @@ export const STORY_LINK_FRAGMENT = gql`
         }
       }
     }
+    kaitiaki {
+      ...PublicProfileFragment
+    }
   }
 `
 
-export const GET_STORY = id => ({
+export const getStory = id => ({
   query: gql`
     ${STORY_FRAGMENT}
     ${STORY_LINK_FRAGMENT}
@@ -249,7 +250,7 @@ export const DELETE_STORY = (id, date) => ({
   }
 })
 
-export const SAVE_STORY = input => {
+export const saveStory = input => {
   var submissionDate = new Date().toISOString().slice(0, 10)
 
   input = {
@@ -257,7 +258,6 @@ export const SAVE_STORY = input => {
     ...pick(input, PERMITTED_STORY_ATTRS),
     submissionDate
   }
-
   return {
     mutation: gql`
       mutation($input: StoryInput!) {
@@ -287,6 +287,7 @@ export function GET_CHANGES (initialValue, updatedValue) {
   if (isEqual(initialValue, updatedValue)) return changes
 
   Object.entries(updatedValue).forEach(([key, value]) => {
+    if (key === 'kaitiaki') return
     // see if the value has changes
     if (!isEqual(initialValue[key], updatedValue[key])) {
       switch (true) {
@@ -331,6 +332,9 @@ export function GET_CHANGES (initialValue, updatedValue) {
         // use default for non arrays
         case key === 'duration':
           changes[key] = parseInt(value)
+          break
+        case key === 'timeInterval':
+          changes[key] = parseInterval(value)
           break
         default:
           changes[key] = value

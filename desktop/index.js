@@ -10,23 +10,23 @@ const plugins = [
   'ssb-lan',
   'ssb-replicate',
   'ssb-friends',
-  'ssb-promiscuous', // temporary?
 
   'ssb-blobs',
-
-  'ssb-backlinks',
-  'ssb-whakapapa',
-  'ssb-profile',
-  'ssb-artefact',
-  'ssb-story',
+  'ssb-serve-blobs',
 
   'ssb-query',
-  'ssb-serve-blobs',
-  // 'ssb-private',
-  // 'ssb-invite',
-  // 'ssb-about',
-  // 'ssb-suggest'
-  'ahau-server'
+  'ssb-backlinks',
+
+  'ssb-tribes',
+
+  'ssb-profile',
+  'ssb-story',
+  'ssb-artefact',
+  'ssb-whakapapa',
+
+  'ssb-invite',
+  'ssb-ahau',
+  'ssb-recps-guard'
 ]
 
 // Karakia tūwhera - dont not remove
@@ -47,12 +47,10 @@ Permanently fixed, established and understood!
 Forward together!
 ---------------------------------
 `
-console.log(karakia)
 
-const appURL =
-  process.env.NODE_ENV === 'development'
-    ? 'http://localhost:8080' // dev-server
-    : `file://${__dirname}/dist/index.html` // production build
+const appURL = process.env.NODE_ENV === 'development'
+  ? 'http://localhost:8080' // dev-server
+  : `file://${__dirname}/dist/index.html` // production build
 
 ahoy({
   title: 'Whakapapa Ora',
@@ -62,6 +60,6 @@ ahoy({
   // appDir: '../whakapapa-ora', // only use this when ssb-ahoy symlinked
   onReady: ({ config }) => {
     // this config has updated manifest added
-    console.log('BOOM')
+    console.log(karakia)
   }
 })

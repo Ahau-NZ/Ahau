@@ -3,8 +3,7 @@ import tree from '@/lib/tree-helpers'
 const state = {
   nestedWhakapapa: {},
   whakapapa: {},
-  relationshipLinks: new Map(),
-  currentFocus: ''
+  relationshipLinks: new Map()
 }
 
 const getters = {
@@ -16,9 +15,6 @@ const getters = {
   },
   relationshipLinks: state => {
     return state.relationshipLinks
-  },
-  currentFoucs: state => {
-    return state.currentFocus
   }
 }
 

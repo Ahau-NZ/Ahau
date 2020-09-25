@@ -16,8 +16,17 @@
               :deceased="formData.deceased"
               :isEditing="isEditing"
               @updateAvatar="formData.avatarImage = $event"
+
             />
           </v-row>
+
+          <v-row v-else class="justify-center pt-12">
+            <!-- no avatar placeholder -->
+            <div class="big-avatar avatarPlaceholder">
+              <img :src="require('@/assets/account.svg')"/>
+            </div>
+          </v-row>
+
           <v-row v-if="isEditing" class="justify-center">
             <h1>Edit {{ formData.preferredName }}</h1>
           </v-row>
@@ -107,21 +116,19 @@
             </template>
           </v-row>
 
-            <!-- DATE OF BIRTH -->
-          <v-row>
-            <v-col cols="12" class="pa-1">
-              <NodeDatePicker
-                :value.sync="formData.bornAt"
-                label="Date of birth"
-                :readonly="readonly"
-                min="0000-01-01"
-              />
-            </v-col>
-          </v-row>
+            <!-- DATE OF BIRTH + DATE OF DEATH-->
+          <DateIntervalPicker
+            label="Date of Birth"
+            endLabel="Date of Death"
+            allowInterval
+            :interval.sync="formData.aliveInterval"
+            :hasEndDate.sync="formData.deceased"
+            checkbox-label="No longer living"
+          />
 
           <!-- Editing: relationship type-->
           <v-row v-if="withRelationships || editRelationship">
-            <v-col cols="12" class="pa-1">
+            <v-col cols="12" class="pa-1" v-if="this.$route.name !== 'login'">
               <v-select
                 v-model="formData.relationshipType"
                 label="Related by"
@@ -141,26 +148,6 @@
                 min="1"
                 v-bind="customProps"
                 outlined
-              />
-            </v-col>
-          </v-row>
-          <!-- DECEASED PICKER -->
-          <v-row>
-           <v-col  v-if="!isUser || formData.deceased" cols="12" class="pa-1">
-              <v-checkbox v-model="formData.deceased"
-                label="No longer living" :hide-details="true"
-                v-bind="customProps"
-                outlined
-              />
-            </v-col>
-            <!-- DIED AT PICKER -->
-            <v-col cols="12" class="pa-1">
-              <NodeDatePicker
-                v-if="formData.deceased"
-                label="Date of death"
-                :value.sync="formData.diedAt"
-                :readonly="readonly"
-                :min="formData.bornAt || '-3000-01-01'"
               />
             </v-col>
           </v-row>
@@ -198,6 +185,7 @@
                 </v-col>
               </v-row>
               <v-row>
+
                 <v-col  v-if="!readonly || formData.gender === 'other'" cols="6" class="pl-10 py-0">
                   <v-checkbox v-model="formData.gender"
                     value="other"
@@ -307,9 +295,11 @@
 import Avatar from '@/components/Avatar.vue'
 import ImagePicker from '@/components/ImagePicker.vue'
 import AddButton from '@/components/button/AddButton.vue'
-import NodeDatePicker from '@/components/NodeDatePicker.vue'
+import DateIntervalPicker from '@/components/DateIntervalPicker.vue'
 
 import { GENDERS, RELATIONSHIPS } from '@/lib/constants'
+
+import isEmpty from 'lodash.isempty'
 
 export default {
   name: 'ProfileForm',
@@ -317,7 +307,7 @@ export default {
     Avatar,
     ImagePicker,
     AddButton,
-    NodeDatePicker
+    DateIntervalPicker
   },
   props: {
     profile: { type: Object, required: true },
@@ -346,6 +336,9 @@ export default {
       if (this.formData.gender === 'male') this.updateSelectedGender('male')
       if (this.formData.gender === 'female') this.updateSelectedGender('female')
     }
+    if (isEmpty(this.formData.relationshipType)) {
+      this.formData.relationshipType = 'birth'
+    }
   },
   watch: {
     profile: {
@@ -356,7 +349,8 @@ export default {
       }
     },
     'formData.gender' (newValue) {
-      if (newValue === 'other' || newValue === 'unknown') this.updateSelectedGender('other')
+      if (newValue === 'other') this.updateSelectedGender('other')
+      if (newValue === 'unknown') this.updateSelectedGender('unknown')
     }
   },
   computed: {
@@ -521,5 +515,18 @@ export default {
         }
       }
     }
+  }
+
+  /* grey circle outline with plus */
+  .avatarPlaceholder {
+    width: 200px;
+    height: 200px;
+    border: 0.3px solid rgb(118, 118, 118,0.9);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size:2rem;
+    color:rgba(0, 0, 0, 0.54)
   }
 </style>

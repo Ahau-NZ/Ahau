@@ -1,8 +1,12 @@
 <template>
-  <Dialog :title="`Edit ${ formData.name } Whakapapa`" :show="show" @close="close" width="720px" :goBack="close" :enableBar="false">
+  <Dialog :title="`Edit ${ formData.name } Whakapapa`" :show="show"  :goBack="close" :enableBar="false"
+    width="720px" height="370px"
+    @submit="submit"
+    @close="close"
+  >
     <template v-slot:content>
-      <v-row class="px-2 pa-5">
-        <v-col cols="12" sm="5" order-sm="2">
+      <v-row class="px-2 pa-5 pb-0">
+        <v-col cols="12" sm="5" order-sm="2" class="pb-0">
           <v-row class="pa-0">
             <v-col cols="12" class="pa-0">
               <!-- Avatar -->
@@ -24,9 +28,9 @@
           </v-row>
         </v-col>
         <!-- Information Col -->
-        <v-col cols="12" sm="7" class="pl-5">
+        <v-col cols="12" sm="7" class="pb-md-0">
           <v-row>
-            <!-- Preferred Name -->
+            <!-- Name -->
             <v-col cols="12" class="pa-1">
               <v-text-field
                 v-model="formData.name"
@@ -49,29 +53,24 @@
               ></v-textarea>
             </v-col>
           </v-row>
+          <v-row>
+            <v-col>
+              <AvatarGroup :profiles="view.kaitiaki" groupTitle="Kaitiaki" size="50px" showLabels/>
+            </v-col>
+          <!-- </v-row>
+          <v-row> -->
+            <v-col cols="12" class="pb-md-0 pl-md-0">
+              <v-btn text @click="$emit('delete')" class="pl-md-0">
+                <v-icon class="pl-2">mdi-delete</v-icon>
+                Delete whakapapa record
+              </v-btn>
+            </v-col>
+          </v-row>
         </v-col>
       </v-row>
     </template>
-    <template v-slot:before-actions>
-      <v-col cols="12" sm="auto">
-        <v-btn
-          @click="$emit('delete')"
-          align="center"
-          color="white"
-          text
-          class="secondary--text pl-5"
-        >
-          <v-icon small class="secondary--text" left>mdi-delete</v-icon>Delete whakapapa record
-        </v-btn>
-      </v-col>
-    </template>
-    <template v-slot:actions>
-      <v-btn @click="close" text large fab class="secondary--text">
-        <v-icon color="secondary">mdi-close</v-icon>
-      </v-btn>
-      <v-btn :disabled="!form.valid" @click="submit" text large fab class="blue--text" color="blue">
-        <v-icon>mdi-check</v-icon>
-      </v-btn>
+    <template v-if="access" v-slot:before-actions>
+      <AccessButton :access.sync="access" disabled />
     </template>
   </Dialog>
 </template>
@@ -79,27 +78,34 @@
 <script>
 import Dialog from '@/components/dialog/Dialog.vue'
 import Avatar from '@/components/Avatar.vue'
+import AvatarGroup from '@/components/AvatarGroup.vue'
 import ImagePicker from '@/components/ImagePicker.vue'
+import AccessButton from '@/components/button/AccessButton.vue'
 
 import isEqual from 'lodash.isequal'
 import isEmpty from 'lodash.isempty'
 
 import { RULES } from '@/lib/constants.js'
 
+import { mapGetters } from 'vuex'
+
 function setDefaultData (view) {
   return {
     name: view.name,
     description: view.description,
-    image: view.image
+    image: view.image,
+    recps: view.recps
   }
 }
 
 export default {
-  name: 'ViewEditNodeDialog',
+  name: 'WhakapapaEditDialog',
   components: {
     Dialog,
     Avatar,
-    ImagePicker
+    AvatarGroup,
+    ImagePicker,
+    AccessButton
   },
   props: {
     show: { type: Boolean, required: true },
@@ -112,10 +118,15 @@ export default {
       form: {
         valid: true,
         rules: RULES
-      }
+      },
+      access: null
     }
   },
+  mounted () {
+    this.access = this.getAccessFromRecps(this.view.recps)
+  },
   computed: {
+    ...mapGetters(['getAccessFromRecps']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },

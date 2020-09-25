@@ -1,5 +1,8 @@
 <template>
-  <Dialog :show="show" :title="title" @close="close" width="720px" :goBack="close" enableMenu>
+  <Dialog :show="show" :title="title" width="720px" :goBack="close" enableMenu
+    @submit="submit"
+    @close="close"
+  >
 
     <!-- Content Slot -->
     <template v-if="!hideDetails" v-slot:content>
@@ -9,29 +12,13 @@
     </template>
     <!-- End Content Slot -->
 
-    <!-- Actions Slot -->
-    <template v-slot:actions>
-      <v-btn @click="close"
-        text large fab
-        class="secondary--text"
-      >
-        <v-icon color="secondary">mdi-close</v-icon>
-      </v-btn>
-      <v-btn @click="submit"
-        text large fab
-        class="blue--text ml-5"
-      >
-        <v-icon>mdi-check</v-icon>
-      </v-btn>
-    </template>
-    <!-- End Actions Slot -->
-
   </Dialog>
 </template>
 
 <script>
 
-import { PERMITTED_PROFILE_ATTRS } from '@/lib/profile-helpers.js'
+import { PERMITTED_PERSON_ATTRS } from '@/lib/person-helpers.js'
+import { parseInterval } from '@/lib/date-helpers.js'
 
 import Dialog from '@/components/dialog/Dialog.vue'
 import ProfileForm from '@/components/profile/ProfileForm.vue'
@@ -44,19 +31,11 @@ import clone from 'lodash.clonedeep'
 function defaultData (input) {
   var profile = clone(input)
 
-  var aliveInterval = ['', '']
-
-  if (profile.aliveInterval) {
-    aliveInterval = profile.aliveInterval.split('/')
-  }
-
   return {
     id: profile.id,
     gender: profile.gender,
     legalName: profile.legalName,
     aliveInterval: profile.aliveInterval,
-    bornAt: aliveInterval[0],
-    diedAt: aliveInterval[1],
     preferredName: profile.preferredName,
     avatarImage: profile.avatarImage,
     description: profile.description,
@@ -113,6 +92,9 @@ export default {
             case 'birthOrder':
               changes[key] = parseInt(value)
               break
+            case 'aliveInterval':
+              changes[key] = parseInterval(this.formData.aliveInterval)
+              break
             default:
               changes[key] = value
           }
@@ -131,22 +113,7 @@ export default {
       handler (newVal) {
         if (!newVal) return
         this.formData = defaultData(newVal)
-
-        if (this.formData.aliveInterval) {
-          var dates = this.formData.aliveInterval.split('/')
-          this.formData.bornAt = dates[0]
-          this.formData.diedAt = dates[1]
-        }
       }
-    },
-    'formData.bornAt' (newVal) {
-      this.formData.aliveInterval = this.formData.bornAt + '/' + this.formData.diedAt
-    },
-    'formData.diedAt' (newVal) {
-      this.formData.aliveInterval = this.formData.bornAt + '/' + this.formData.diedAt
-    },
-    'formData.deceased' (newValue) {
-      if (!newValue) this.formData.diedAt = ''
     }
   },
   methods: {
@@ -162,7 +129,7 @@ export default {
     },
 
     submit () {
-      var output = Object.assign({}, pick(this.profileChanges, [...PERMITTED_PROFILE_ATTRS]))
+      var output = Object.assign({}, pick(this.profileChanges, [...PERMITTED_PERSON_ATTRS]))
       if (!isEmpty(output)) {
         this.$emit('submit', output)
       } else {

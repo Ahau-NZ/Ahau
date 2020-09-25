@@ -48,20 +48,16 @@ module.exports = {
     /* custom */
     '!dist/installers/*',
     '!electron-builder.env',
-    '../server/**/*',
 
     // sodium-native: only include needed prebuilds
     '!node_modules/sodium-native/prebuilds/*',
-    // 'node_modules/sodium-native/prebuilds/${os}-${arch}/electron.*.node', // eslint-disable-line
-    'node_modules/sodium-native/prebuilds/${os}-${arch}/electron.abi69.node', // eslint-disable-line
-    'node_modules/sodium-native/prebuilds/${os}-${arch}/libsodium.so.23', // eslint-disable-line
+    'node_modules/sodium-native/prebuilds/${platform}-${arch}/*', // eslint-disable-line
 
     // README / tests: more aggressive exclusion than default
     '!**/node_modules/**/{CHANGELOG.md,README*,README,readme.md,readme}',
     '!**/node_modules/**/{test,__tests__,tests,powered-test,example,examples}',
 
     /* custom */
-
     '!**/node_modules/*.d.ts',
     '!**/node_modules/.bin',
     '!**/*.{iml,o,hprof,orig,pyc,pyo,rbc,swp,csproj,sln,xproj}',
