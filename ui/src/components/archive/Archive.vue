@@ -63,6 +63,7 @@
             </v-row>
           </div>
         </v-col>
+      </transition>
 
       </v-row>
       <v-row v-else>

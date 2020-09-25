@@ -34,7 +34,6 @@
               </v-row>
             </div>
           </v-col>
-
       </v-row>
       <v-row v-else>
         <v-col>
@@ -54,23 +53,10 @@
 import TimelineCard from '@/components/story/TimelineCard'
 import StoryCard from '@/components/archive/StoryCard.vue'
 
-import {
-  mapGetters,
-  mapActions,
-  mapMutations
-} from 'vuex'
-
-import {
-  SAVE_STORY,
-  GET_STORY
-} from '@/lib/story-helpers.js'
-import {
-  SAVE_ARTEFACT
-} from '@/lib/artefact-helpers.js'
-import {
-  SAVE_LINK,
-  TYPES
-} from '@/lib/link-helpers.js'
+import { mapGetters, mapActions, mapMutations } from 'vuex'
+import { saveStory, getStory } from '@/lib/story-helpers.js'
+import { saveArtefact } from '@/lib/artefact-helpers.js'
+import { saveLink, TYPES } from '@/lib/link-helpers.js'
 
 export default {
   name: 'Timeline',
@@ -91,7 +77,7 @@ export default {
     ...mapGetters(['stories', 'currentProfile', 'showStory', 'currentStory', 'whoami', 'profileStories']),
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
-    },
+    }
   },
   watch: {
     // showStory(newVal, oldVal) {
@@ -113,6 +99,7 @@ export default {
     updateDialog (dialog) {
       this.$emit('setDialog', dialog)
     },
+
     toggleStory (story) {
       this.setStory(story)
       this.setShowStory()
@@ -130,12 +117,13 @@ export default {
       } = input
 
       try {
-        const res = await this.$apollo.mutate(SAVE_STORY(input))
-        if (res.errors) throw res.errors
+        const res = await this.$apollo.mutate(saveStory(input))
 
-        if (!id) {
-          id = res.data.saveStory
-        }
+        if (res.errors) throw res.errors
+        if (!id) id = res.data.saveStory
+
+        // get the full story
+        var story = await this.getStory(id)
 
         // process the artefacts
         if (artefacts) {
@@ -145,17 +133,18 @@ export default {
           } = artefacts
 
           if (add && add.length > 0) {
-            // all artefacts to create or update
             await Promise.all(add.map(async artefact => {
+              if (!artefact.id) artefact.recps = story.recps
               const artefactId = await this.saveArtefact(artefact)
               if (!artefactId) return
 
               // if the artefact didnt have an id, then it means we create the link
               if (!artefact.id) {
-                const artefactInput = {
+                var artefactInput = {
                   type: TYPES.STORY_ARTEFACT,
                   parent: id,
-                  child: artefactId
+                  child: artefactId,
+                  recps: story.recps
                 }
 
                 await this.saveLink(artefactInput)
@@ -177,25 +166,26 @@ export default {
         }
 
         if (mentions) {
-          await this.processLinks(id, mentions, TYPES.STORY_PROFILE_MENTION)
+          await this.processLinks(mentions, { type: TYPES.STORY_PROFILE_MENTION, parent: id, recps: story.recps })
         }
 
         if (contributors) {
-          await this.processLinks(id, contributors, TYPES.STORY_PROFILE_CONTRIBUTOR)
+          await this.processLinks(contributors, { type: TYPES.STORY_PROFILE_CONTRIBUTOR, parent: id, recps: story.recps })
         }
 
         if (creators) {
-          await this.processLinks(id, creators, TYPES.STORY_PROFILE_CREATOR)
+          await this.processLinks(creators, { type: TYPES.STORY_PROFILE_CREATOR, parent: id, recps: story.recps })
         }
 
         if (relatedRecords) {
-          await this.processLinks(id, relatedRecords, TYPES.STORY_STORY)
+          await this.processLinks(relatedRecords, { type: TYPES.STORY_STORY, recps: story.recps })
         }
 
-        var story = await this.getStory(id)
+        // reload again
+        story = await this.getStory(id)
 
         if (input.id) {
-          this.currentStory = story
+          this.setStory(story)
         } else {
           this.toggleStory(story)
         }
@@ -203,22 +193,21 @@ export default {
         console.warn('Potentially loading a large amount of data with each change to a story...')
         this.getAllStories()
       } catch (err) {
+        console.error('Something went wrong while creating a story')
         throw err
       }
     },
-    async processLinks (parentId, object, type) {
-      const {
-        add,
-        remove
-      } = object
+    async processLinks (object, { type, parent, recps }) {
+      const { add, remove } = object
 
       if (add && add.length > 0) {
         await Promise.all(add.map(async linkedItem => {
           if (linkedItem.id) {
             const linkInput = {
               type,
-              parent: parentId,
-              child: linkedItem.id
+              parent,
+              child: linkedItem.id,
+              recps
             }
 
             await this.saveLink(linkInput)
@@ -239,65 +228,65 @@ export default {
         }))
       }
     },
+
     async saveArtefact (input) {
       try {
-        const res = await this.$apollo.mutate(SAVE_ARTEFACT(input))
+        const res = await this.$apollo.mutate(saveArtefact(input))
+
         if (res.errors) {
+          console.error('Error saving artefact:', input)
           throw res.errors
         }
 
         return res.data.saveArtefact
       } catch (err) {
-        throw new Error('failed to save artefact. ' + err)
+        console.error('something went wrong while saving an artefact.', err)
       }
     },
+
     async getStory (id) {
-      const res = await this.$apollo.query(GET_STORY(id))
+      try {
+        if (!id) throw new Error('getStory(id) missing id')
 
-      if (res.errors) {
-        console.error('failed to get the story. ' + res.errors)
-        return
-      }
+        const res = await this.$apollo.query(getStory(id))
 
-      return res.data.story
-    },
-    async saveLink ({
-      type,
-      parent,
-      child
-    }) {
-      const res = await this.$apollo.mutate(SAVE_LINK({
-        type,
-        parent,
-        child,
-        recps: [this.whoami.feedId]
-      }))
-
-      if (res.errors) {
-        console.error('error creating the link. ' + res.errors)
-        return
-      }
-
-      // return the linkId
-      return res.data.saveLink
-    },
-    async removeLink ({
-      date,
-      linkId
-    }) {
-      const res = await this.$apollo.mutate(SAVE_LINK({
-        linkId,
-        tombstone: {
-          date
+        if (res.errors) {
+          console.error('error getting story', id)
+          throw res.errors
         }
-      }))
 
-      if (res.errors) {
-        console.error('error removing link. ' + res.errors)
-        return
+        return res.data.story
+      } catch (err) {
+        console.error(err)
+        console.error('something went wrong while getting a story')
+        throw err
       }
+    },
 
-      return res.data.saveLink
+    async saveLink (input) {
+      try {
+        const res = await this.$apollo.mutate(saveLink(input))
+
+        if (res.errors) {
+          console.error('error saving the link.', input)
+          throw res.errors
+        }
+
+        // return the linkId
+        return res.data.saveLink
+      } catch (err) {
+        console.error('something went wrong while saving a link')
+        throw err
+      }
+    },
+
+    async removeLink ({ date, linkId }) {
+      try {
+        await this.saveLink({ linkId, tombstone: { date } })
+      } catch (err) {
+        console.error('something went wrong while removing a link', linkId)
+        throw err
+      }
     }
   }
 }

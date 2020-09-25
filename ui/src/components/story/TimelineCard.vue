@@ -125,14 +125,8 @@
 import AvatarGroup from '@/components/AvatarGroup.vue'
 import Chip from '@/components/archive/Chip.vue'
 
-import {
-  mapGetters
-} from 'vuex'
-
-import {
-  yearMonthDay,
-  convertToTime
-} from '@/lib/date-helpers.js'
+import { mapGetters } from 'vuex'
+import { yearMonthDay, convertToTime } from '@/lib/date-helpers.js'
 
 export default {
   props: ['data'],
@@ -263,7 +257,6 @@ export default {
     opacity: 0;
     transform: translateY(30px);
   }
-
 
 /* test */
 .v-timeline--dense .v-timeline-item__opposite {

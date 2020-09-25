@@ -158,7 +158,6 @@ export default {
         }),
         image: this.currentProfile.avatarImage
       }]
-
     },
 
     async getSuggestions ($event) {

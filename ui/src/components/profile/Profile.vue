@@ -119,7 +119,7 @@ export default {
     },
     nonMember () {
       return (
-        this.profile.type === 'community' && 
+        this.profile.type === 'community' &&
         !this.profile.recps
       )
     }

@@ -169,7 +169,7 @@ export default {
     },
     nonMember () {
       return (
-        this.profile.type === 'community' && 
+        this.profile.type === 'community' &&
         !this.profile.recps
       )
     },
@@ -204,7 +204,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setComponent', 'setShowStory', 'setDialog','profileStories']),
+    ...mapActions(['setComponent', 'setShowStory', 'setDialog', 'profileStories']),
     goProfile () {
       this.setActive('profile')
       if (this.community) {

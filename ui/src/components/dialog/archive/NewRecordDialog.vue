@@ -28,11 +28,7 @@ import AccessButton from '@/components/button/AccessButton.vue'
 
 import { mapGetters, mapActions } from 'vuex'
 
-import {
-  GET_CHANGES,
-  EMPTY_STORY,
-  setDefaultStory
-} from '@/lib/story-helpers.js'
+import { GET_CHANGES, EMPTY_STORY, setDefaultStory } from '@/lib/story-helpers.js'
 
 export default {
   name: 'NewRecordDialog',
