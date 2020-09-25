@@ -129,7 +129,7 @@ export default {
 }
 
 .isOnline {
-  border: #27f17d solid 2px;
+  border: #f51f1f solid 2px;
   border-radius: 50%
 }
 

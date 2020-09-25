@@ -58,14 +58,10 @@
                   <v-card flat light class="rounded-border" :width="!mobile ? '190px':'100vw'" @click="goTribe(tribe)">
                     <v-img height="150px" :src="getImage(tribe.public[0])" class="card-image" />
                     <v-card-title class="subtitle font-weight-bold pb-2">
-                      {{
-                      tribe.public[0].preferredName
-                      }}
+                      {{ tribe.public[0].preferredName }}
                     </v-card-title>
                     <v-card-text class="body-2">
-                      {{
-                      shortDescription(tribe.public[0])
-                      }}
+                      {{ shortDescription(tribe.public[0]) }}
                     </v-card-text>
                   </v-card>
                 </v-col>
@@ -78,12 +74,13 @@
         <ProfileCard title="Pātaka" class="mt-7">
           <template v-slot:content>
             <div v-if="patakas.length > 0">
-              <v-row v-for="pataka in patakas" :key="pataka.id" class="justify-center align-center ma-0 ml-4">
+              <v-row v-for="pataka in patakas" :key="pataka.id" class="align-center ml-6">
                 <v-col cols="2" class="pt-0 pl-0">
                   <Avatar :size="mobile ? '60px' : '45px'" :image="pataka.avatarImage" :alt="pataka.preferredName" :isView="!pataka.avatarImage" :online="pataka.online"/>
                 </v-col>
-                <v-col cols="10" class="py-0">
-                  <p style="color:black;">{{pataka.preferredName}}</p>
+                <v-col cols="10" class="pb-6" justify-center>
+                  <p style="color:black;" class="mb-0">{{pataka.preferredName}} </p>
+                  <span v-if="pataka.online" style="color:#f51f1f; position:absolute; font-size:11px">online</span> 
                 </v-col>
               </v-row>
             </div>
@@ -226,7 +223,10 @@ export default {
         }
       }`,
       pollInterval: 10e3,
-      fetchPolicy: 'no-cache'
+      fetchPolicy: 'no-cache',
+      update (data) {
+        return data.connectedPeers
+      }
     }
   },
   computed: {
