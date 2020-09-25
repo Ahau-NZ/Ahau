@@ -78,6 +78,9 @@ export default {
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     }
+    // sortedStories () {
+    //   this.profileStories.
+    // }
   },
   watch: {
     // showStory(newVal, oldVal) {

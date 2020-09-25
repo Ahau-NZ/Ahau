@@ -1,9 +1,9 @@
 <template>
   <div>
-    <v-timeline light dense class="timeLine">
+    <v-timeline light dense>
 
       <v-timeline-item
-        class="timeItem"
+        class="timeItem py-6"
         v-for="(item, index) in sortedData"
         :key="index"
         :color="getDotColour(item.storyTypeIcon)"
@@ -22,9 +22,10 @@
         </template>
 
         <!-- Date opposite timeline dot (not shown in dense view) -->
-        <span v-if="!mobile" slot="opposite" class="opposite-width-force">{{formatTimeInterval(item.timeInterval)}}</span>
-
-        <p class="dateTitle">{{formatTimeInterval(item.timeInterval)}}</p>
+        <template v-slot:opposite>
+          <span v-if="!mobile" class="opposite-width-force overline">{{formatTimeInterval(item.timeInterval)}}</span>
+        </template>
+        <!-- <p class="dateTitle">{{formatTimeInterval(item.timeInterval)}}</p> -->
 
         <v-card
           class="timeCard elevation-2 ma-0 pa-0 "
@@ -203,6 +204,10 @@ export default {
 </script>
 
 <style scoped>
+  /* .timeItem {
+    position:relative;
+    left:-95px;
+  } */
   .timeCard {
     overflow:hidden;
     min-height: 100px;
@@ -259,13 +264,13 @@ export default {
   }
 
 /* test */
-.v-timeline--dense .v-timeline-item__opposite {
+/* .v-timeline--dense .v-timeline-item__opposite {
   display: inline-block !important;
-}
+} */
 
-.v-timeline-item__opposite {
+/* .v-timeline-item__opposite {
   flex: none;
-}
+} */
 
 /* line */
 .v-timeline {

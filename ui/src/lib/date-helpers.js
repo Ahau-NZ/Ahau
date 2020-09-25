@@ -17,7 +17,11 @@ export function dateToString (date) {
 
 function humanDate (date) {
   var split = date.split('-')
-  if (!split[0].length) return
+  if (!split[0].length && !split[1].length) return
+  if (!split[0].length && split[1].length) {
+    var bcYear = `-${split[1]}`
+    return bcYear
+  }
   var year = split[0]
   var month = split[1]
   if (!month) return year
@@ -33,7 +37,6 @@ function humanDate (date) {
 
 export function yearMonthDay (interval) {
   if (interval === null) return ''
-
   const [lower, upper] = interval.split('/')
   if (lower.length && upper.length) {
     if (lower === upper) return `${yearMonthDayFormatter(lower)}`
@@ -46,7 +49,12 @@ export function yearMonthDay (interval) {
 
 function yearMonthDayFormatter (date) {
   var split = date.split('-')
-  if (!split[0].length) return
+  if (!split[0].length && !split[1].length) return
+  if (!split[0].length && split[1].length) {
+    var bcYear = `-${split[1]}`
+    console.log('bcYear:', bcYear)
+    return bcYear
+  }
   var year = split[0]
   var month = split[1]
   if (!month) return year
@@ -57,7 +65,8 @@ function yearMonthDayFormatter (date) {
   if (!day) return `${year} - ${month}`
   if (!day.length) return `${year} - ${month}`
   if (day.match(/X/)) return `${year} - ${month}`
-  return `${year} - ${month} ${day}`
+  // return `${year} - ${month} ${day}`
+  return `${year} - ${month}`
 }
 
 export function convertToTime (date) {
