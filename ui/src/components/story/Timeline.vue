@@ -16,31 +16,28 @@
         </div> -->
       </v-row>
 
-      <v-row v-if="profileStories && profileStories.length > 0" >
-          <v-col cols="12" xs="12" sm="12" :md="showStory ? '9':'12'" :class="!showStory ? '':'pa-0'">
-            <div v-if="!showStory">
-              <TimelineCard :data="profileStories" @toggleStory="toggleStory($event)" />
-            </div>
-            <!-- Full story view -->
-            <div v-else>
-              <v-row :class="mobile ? 'pa-0': 'px-6 top-margin'">
-                <StoryCard
-                  @updateDialog="updateDialog($event)"
-                  :fullStory="true"
-                  :story.sync="currentStory"
-                  @submit="saveStory($event)"
-                  @close="toggleStory($event)"
-                />
-              </v-row>
-            </div>
-          </v-col>
+      <v-row v-if="stories && stories.length > 0" >
+        <v-col cols="12" sm="12" md="9" :class="!showStory ? '':'pa-0'">
+          <div v-if="!showStory">
+            <TimelineCard :data="stories" @toggleStory="toggleStory($event)" />
+          </div>
+          <!-- Full story view -->
+          <div v-else>
+            <v-row :class="mobile ? 'pa-0': 'px-6 top-margin'">
+              <StoryCard
+                @updateDialog="updateDialog($event)"
+                :fullStory="true"
+                :story.sync="currentStory"
+                @submit="saveStory($event)"
+                @close="toggleStory($event)"
+              />
+            </v-row>
+          </div>
+        </v-col>
       </v-row>
       <v-row v-else>
         <v-col>
-          <div v-if="!profileStories || (profileStories && profileStories.length < 1)"
-            class="px-8 subtitle-1 grey--text " :class="{
-                      'text-center': mobile
-                    }">
+          <div class="px-8 subtitle-1 grey--text " :class="{ 'text-center': mobile }">
             No records found in this profile. Please add record to this profile via Archive
           </div>
         </v-col>
@@ -52,6 +49,7 @@
 <script>
 import TimelineCard from '@/components/story/TimelineCard'
 import StoryCard from '@/components/archive/StoryCard.vue'
+import isEmpty from 'lodash.isempty'
 
 import { mapGetters, mapActions, mapMutations } from 'vuex'
 import { saveStory, getStory } from '@/lib/story-helpers.js'
@@ -71,16 +69,21 @@ export default {
     }
   },
   data () {
-    return {}
+    return {
+      unDatedStories: []
+    }
   },
   computed: {
     ...mapGetters(['stories', 'currentProfile', 'showStory', 'currentStory', 'whoami', 'profileStories']),
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
+    },
+    stories () {
+      return this.profileStories.filter(story => !isEmpty(story.timeInterval))
+    },
+    unDatedstories () {
+      return this.profileStories.filter(story => isEmpty(story.timeInterval))
     }
-    // sortedStories () {
-    //   this.profileStories.
-    // }
   },
   watch: {
     // showStory(newVal, oldVal) {

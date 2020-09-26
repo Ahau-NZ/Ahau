@@ -1,9 +1,10 @@
 <template>
   <div>
-    <v-timeline light dense>
+    <v-timeline light dense :class="mobile ? 'mobile-time-line':'time-line'">
 
       <v-timeline-item
-        class="timeItem py-6"
+        class="py-6"
+        :class="{ 'desktop-timeItem': !mobile }"
         v-for="(item, index) in sortedData"
         :key="index"
         :color="getDotColour(item.storyTypeIcon)"
@@ -23,37 +24,19 @@
 
         <!-- Date opposite timeline dot (not shown in dense view) -->
         <template v-slot:opposite>
-          <span v-if="!mobile" class="opposite-width-force overline">{{formatTimeInterval(item.timeInterval)}}</span>
+          <span v-if="!mobile" class="opposite-width-force overline" :class="{'opposite-desktop': !mobile}">
+            {{formatTimeInterval(item.timeInterval)}}
+          </span>
         </template>
-        <!-- <p class="dateTitle">{{formatTimeInterval(item.timeInterval)}}</p> -->
-
+        <p v-if="mobile" class="dateTitle">{{formatTimeInterval(item.timeInterval)}}</p>
         <v-card
-          class="timeCard elevation-2 ma-0 pa-0 "
+          class="timeCard ma-0 pa-0 rounded-border"
+          flat
           @click.prevent="showStory(item)"
           :width="getWidth"
-
           @mouseenter="unhide(index)"
           @mouseleave="hide()"
         >
-
-        <!-- CONTRIBUTORS TOP CORNER **Hidden** -->
-        <!-- <transition
-          name="fade"
-          v-on:enter="enter(index)"
-          v-on:after-leave="afterLeave(index, $event)"
-        >
-          <v-row v-if="show == index" class="ma-0"  style="height: 50px;">
-            <v-list-item class="px-0" style="min-height:0; height:10px">
-              <v-list-item-icon v-if="!mobile" class="pt-2 mt-0"
-                style="position:absolute; top:5px; right:1px; margin-right:0px;">
-                <v-list-item-subtitle class="no-flex">contributors</v-list-item-subtitle>
-                <AvatarGroup :profiles="item.contributors.map(c => c.profile)" customClass="ma-0 pa-0 no-wrap"
-                  style="position:relative; bottom:15px; left:10px;" :size="mobile ? '25px':'30px'" spacing="pr-1" />
-              </v-list-item-icon>
-            </v-list-item>
-          </v-row>
-        </transition> -->
-
           <v-row class="ma-0">
             <!-- show == index ? item.description : shorten(item.description) -->
             <Chip
@@ -66,8 +49,6 @@
               timeline
             />
           </v-row>
-
-        <!-- <transition name="fade"> -->
           <v-card-actions v-if="show == index" class="pt-0">
 
             <v-row class="px-4">
@@ -144,13 +125,6 @@ export default {
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
-    getWidth () {
-      if (this.mobile) {
-        return '100%'
-      } else {
-        return '70%'
-      }
-    },
     sortedData () {
       var sortedData = this.sortDesc(this.data)
       return sortedData
@@ -204,10 +178,17 @@ export default {
 </script>
 
 <style scoped>
-  /* .timeItem {
+  .rounded-border {
+    border: 0.5px solid rgba(0,0,0,0.3);
+    border-radius: 10px;
+    background-color: white;
+  }
+
+  .desktop-timeItem {
     position:relative;
     left:-95px;
-  } */
+  }
+
   .timeCard {
     overflow:hidden;
     min-height: 100px;
@@ -263,25 +244,25 @@ export default {
     transform: translateY(30px);
   }
 
-/* test */
-/* .v-timeline--dense .v-timeline-item__opposite {
-  display: inline-block !important;
-} */
+  .time-line {
+    left: 80px;
+  }
 
-/* .v-timeline-item__opposite {
-  flex: none;
-} */
+  .mobile-time-line {
+    right: 20px;
+  }
 
-/* line */
-.v-timeline {
-  left: 80px;
-}
+  .opposite-width-force {
+    display: inline-block !important;
+    width: 95px;
+    text-align: right;
+    color: black;
+    flex: none
+  }
 
-.opposite-width-force {
-  display: inline-block !important;
-  width: 95px;
-  text-align: right;
-  color: black
-}
+  .desktop-opposite {
+    position: relative;
+    left:90px;
+  }
 
 </style>

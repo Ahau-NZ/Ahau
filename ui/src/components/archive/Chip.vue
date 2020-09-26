@@ -4,43 +4,43 @@
     :color="timeline ? 'none' : colour"
     :dark="!timeline"
     tile
-    class="d-inline-block related-tile ma-0 pa-0"
+    class="d-inline-block related-tile pa-0"
     :min-width="getWidth"
     :max-width="getWidth"
     :max-height="timeline ? 'auto' : '60'"
     :min-height="timeline ? '100' : '60'"
+    :class="timeline ? 'ma-0': 'ma-1'"
 
     @click="showRelatedStory"
 
   >
     <v-container fluid class="pa-0" >
-      <v-row align="center" class="ma-0">
+      <v-row class="ma-0">
         <!-- Image -->
-        <v-col v-if="hasImage" :cols="timeline ? '4': 'auto'" md="2" class="pa-0">
+        <v-col :cols="timeline ? '4': 'auto'" md="2" class="pa-0">
           <v-img
             v-if="hasImage"
             :height="timeline ? '100' : '60'"
-            :width="timeline ? '100%' : '80'"
+            :width="timeline ? '100' : '80'"
             :src="getImage"
-            :class="timeline ? 'ma-1' : ''"
+            :class="timeline ? 'ma-0' : ''"
           >
           </v-img>
           <v-card v-else height="60" width="80" style="background-color:#383838">
-            <v-icon x-large class="pl-5 pt-2">mdi-book-open</v-icon>
+            <v-icon x-large class="pl-1 pt-2">mdi-book-open</v-icon>
           </v-card>
         </v-col>
         <!-- Text Container -->
-        <v-col class="py-2 pl-4" :cols="timeline && !hasImage ? '12' : timeline && mobile ? '8': '10' ">
-          <!-- <span class="truncated-x">{{ title }}</span>
-          <p class="truncate-overflow">{{ description }}</p> -->
-          <span class="timeline-title">{{ title }}</span>
-          <p class="timeline-description my-2">{{ description }}</p>
-        </v-col>
-        <v-col
-          cols="auto"
-          class="pa-0"
-        >
-          <v-btn v-if="deletable" @click="$emit('delete')" class="mr-2" small top right icon>
+        <v-col class="py-2" :cols="timeline && !hasImage ? '12' : timeline && mobile ? '8': '10' ">
+          <div v-if="!timeline">
+            <span class="truncated-x">{{ title }}</span>
+            <p class="truncate-overflow">{{ description }}</p>
+          </div>
+          <div v-else>
+            <span class="timeline-title">{{ title }}</span>
+            <p class="timeline-description my-2">{{ description }}</p>
+          </div>
+          <v-btn v-if="deletable" @click="$emit('delete')" class="mr-2 white--text" style="position:absolute; top:-2px; right:-10px" small top right icon>
             <v-icon small>mdi-close</v-icon>
           </v-btn>
         </v-col>
@@ -121,7 +121,7 @@ export default {
 .truncated-x {
   overflow: hidden;
   display: block;
-  width: 140px;
+  width: 200px;
   white-space: nowrap;
   text-overflow: ellipsis;
   font-size: 12px;
@@ -132,7 +132,7 @@ export default {
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   font-size: 10px;
-  width: 170px;
+  width: 200px;
   overflow: hidden;
 }
 
