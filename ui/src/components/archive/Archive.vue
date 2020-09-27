@@ -64,22 +64,17 @@
           </div>
         </v-col>
       </transition>
-
       </v-row>
       <v-row v-else>
         <v-col>
           <div v-if="!profileStories || (profileStories && profileStories.length < 1)"
-            class="px-8 subtitle-1 grey--text " :class="{
-            'text-center': mobile
-          }"
-        >
+            class="px-8 subtitle-1 grey--text " :class="{ 'text-center': mobile }"
+          >
           No records found
         </div>
       </v-col>
     </v-row>
-
     <ArchiveHelper v-if="showArchiveHelper" :show="showArchiveHelper" @close="toggleArchiveHelper" />
-
   </v-container>
   <!-- <vue-context ref="menu" class="pa-4">
     <li v-for="(option, index) in contextMenuOpts" :key="index">
@@ -145,7 +140,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['stories', 'showStory', 'whoami', 'currentProfile', 'currentTribe', 'currentStory', 'showArtefact', 'storeDialog']),
+    ...mapGetters(['profileStories', 'showStory', 'whoami', 'currentProfile', 'currentTribe', 'currentStory', 'showArtefact', 'storeDialog']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -153,26 +148,7 @@ export default {
       if (this.mobile && !this.showStory) return 'top-margin'
       else if (!this.mobile) return 'mt-10'
       return ''
-    },
-    profileStories () {
-      if (this.currentProfile.type === 'person') {
-        return this.stories.filter(story => {
-          return story.mentions.some(mention => {
-            return mention.profile.id === this.currentProfile.id
-          })
-        })
-      } else if (this.currentProfile.type === 'community') {
-        return this.stories.filter(story => {
-          return story.recps.some(recp => {
-            return recp === this.currentTribe.id
-          })
-        })
-      } else {
-        console.error('currentProfile.type not supported, should be person or community')
-        return []
-      }
     }
-
   },
   watch: {
     showStory (newVal, oldVal) {

@@ -33,7 +33,6 @@
           class="timeCard ma-0 pa-0 rounded-border"
           flat
           @click.prevent="showStory(item)"
-          :width="getWidth"
           @mouseenter="unhide(index)"
           @mouseleave="hide()"
         >

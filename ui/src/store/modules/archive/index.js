@@ -101,8 +101,15 @@ const actions = {
           mention.profile.id === rootState.person.currentProfile.id
         ))
       commit('updateProfileStories', profileStories)
+    } else if (rootState.person.currentProfile.type === 'community') {
+      const communityStories = stories.filter((story) =>
+        story.recps.some((recp) =>
+          recp === rootState.tribe.currentTribe.id
+        ))
+      console.log('communityStories: ', communityStories)
+      commit('updateProfileStories', communityStories)
     } else {
-      // TODO - update to only return stories access === community
+      console.error('currentProfile.type not supported, should be person or community')
       commit('updateProfileStories', stories)
     }
   }
