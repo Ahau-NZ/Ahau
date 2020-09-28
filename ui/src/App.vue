@@ -140,6 +140,7 @@ body {
 
 .v-timeline--dense .v-timeline-item__opposite {
   display: inline-block !important;
+  flex:none
 }
 
 .stop-scroll {

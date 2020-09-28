@@ -8,12 +8,6 @@
         <v-col class="headliner black--text pa-0 pl-4 pt-2">
           Timeline
         </v-col>
-        <!-- <div>
-          <v-btn :medium="!mobile" text :x-small="mobile" :class="mobile ? 'addBtnMob' : 'addBtn'" class="my-2" fab
-            color="white" @click.prevent="dialog = 'new-story'" elevation="1">
-            <v-icon :large="!mobile" class="black--text">mdi-plus</v-icon>
-          </v-btn>
-        </div> -->
       </v-row>
 
       <v-row v-if="stories && stories.length > 0" >
@@ -84,20 +78,6 @@ export default {
     unDatedstories () {
       return this.profileStories.filter(story => isEmpty(story.timeInterval))
     }
-  },
-  watch: {
-    // showStory(newVal, oldVal) {
-    //   if (oldVal === false && newVal === true) {
-    //     this.scrollPosition = window.pageYOffset
-    //     window.scrollTo(0, 0)
-    //   } else if (oldVal === true && newVal === false) {
-    //     setTimeout(() => {
-    //       window.scrollTo({
-    //         top: this.scrollPosition
-    //       })
-    //     }, 100)
-    //   }
-    // }
   },
   methods: {
     ...mapMutations(['setStory']),

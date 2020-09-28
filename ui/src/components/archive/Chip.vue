@@ -26,9 +26,6 @@
             :class="timeline ? 'ma-0' : ''"
           >
           </v-img>
-          <v-card v-else height="60" width="80" style="background-color:#383838">
-            <v-icon x-large class="pl-1 pt-2">mdi-book-open</v-icon>
-          </v-card>
         </v-col>
         <!-- Text Container -->
         <v-col class="py-2" :cols="timeline && !hasImage ? '12' : timeline && mobile ? '8': '10' ">

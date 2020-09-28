@@ -42,6 +42,8 @@ const mutations = {
   deleteStoryFromStories (state, deletedStory) {
     const index = state.stories.findIndex(story => story.id === deletedStory.id)
     if (index !== -1) state.stories.splice(index, 1)
+    const profileIndex = state.profileStories.findIndex(story => story.id === deletedStory.id)
+    if (profileIndex !== -1) state.profileStories.splice(index, 1)
   },
   updateComponent (state, component) {
     state.activeComponent = component
@@ -100,14 +102,13 @@ const actions = {
         story.mentions.some((mention) =>
           mention.profile.id === rootState.person.currentProfile.id
         ))
-      commit('updateProfileStories', profileStories)
+      return commit('updateProfileStories', profileStories)
     } else if (rootState.person.currentProfile.type === 'community') {
       const communityStories = stories.filter((story) =>
         story.recps.some((recp) =>
           recp === rootState.tribe.currentTribe.id
         ))
-      console.log('communityStories: ', communityStories)
-      commit('updateProfileStories', communityStories)
+      return commit('updateProfileStories', communityStories)
     } else {
       console.error('currentProfile.type not supported, should be person or community')
       commit('updateProfileStories', stories)
