@@ -154,7 +154,6 @@ body {
   bottom: 5px;
   right: 10px;
   font-size: .8rem;
-
   transition: all .3s ease-in;
 
   span {

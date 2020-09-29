@@ -318,6 +318,7 @@ export default {
     // style card based on current stories, story or artefact view
     customClass () {
       if (this.fullStory) {
+        window.scrollTo(0, 0)
         if (this.showArtefact) {
           return 'ontop disableCard'
         }
