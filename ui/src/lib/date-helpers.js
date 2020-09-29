@@ -52,7 +52,6 @@ function yearMonthDayFormatter (date) {
   if (!split[0].length && !split[1].length) return
   if (!split[0].length && split[1].length) {
     var bcYear = `-${split[1]}`
-    console.log('bcYear:', bcYear)
     return bcYear
   }
   var year = split[0]

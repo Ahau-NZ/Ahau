@@ -1,15 +1,15 @@
 <template>
   <v-card
-    :flat="timeline"
-    :color="timeline ? 'none' : colour"
-    :dark="!timeline"
+    :flat="expanded"
+    :color="expanded ? 'none' : colour"
+    :dark="!expanded"
     tile
     class="d-inline-block related-tile pa-0"
     :min-width="width"
     :max-width="width"
-    :max-height="timeline ? 'auto' : '60'"
-    :min-height="timeline ? '100' : '60'"
-    :class="timeline ? 'ma-0': 'ma-1'"
+    :max-height="expanded ? 'auto' : '60'"
+    :min-height="expanded ? '100' : '60'"
+    :class="expanded ? 'ma-0': 'ma-1'"
 
     @click="showRelatedStory"
 
@@ -17,26 +17,20 @@
     <v-container fluid class="pa-0" >
       <v-row class="ma-0">
         <!-- Image -->
-        <v-col :cols="timeline ? '4': 'auto'" md="2" class="pa-0">
+        <v-col :cols="expanded ? '4': 'auto'" md="2" class="pa-0">
           <v-img
             v-if="hasImage"
-            :height="timeline ? '100' : '60'"
-            :width="timeline ? '100' : '80'"
+            :height="expanded ? '100' : '60'"
+            :width="expanded ? '100' : '80'"
             :src="getImage"
-            :class="timeline ? 'ma-0' : ''"
+            :class="expanded ? 'ma-0' : ''"
           >
           </v-img>
         </v-col>
         <!-- Text Container -->
-        <v-col class="py-2" :cols="timeline && !hasImage ? '12' : timeline && mobile ? '8': '10' ">
-          <div v-if="!timeline">
-            <span class="truncated-x">{{ title }}</span>
-            <p class="truncate-overflow">{{ description }}</p>
-          </div>
-          <div v-else>
-            <span class="timeline-title">{{ title }}</span>
-            <p class="timeline-description my-2">{{ description }}</p>
-          </div>
+        <v-col class="py-2" :cols="expanded && !hasImage ? '12' : expanded && mobile ? '8': '10' ">
+          <span :class="expanded ? 'expanded-title' : 'truncated-x'">{{ title }}</span>
+          <p :class="expanded ? 'expanded-description my-2' : 'truncate-overflow'"> {{ description }}</p>
           <v-btn v-if="deletable" @click="$emit('delete')" class="mr-2 white--text" style="position:absolute; top:-2px; right:-10px" small top right icon>
             <v-icon small>mdi-close</v-icon>
           </v-btn>
@@ -58,7 +52,7 @@ export default {
     type: String,
     chip: Object,
     index: Number,
-    timeline: { type: Boolean, default: false },
+    expanded: { type: Boolean, default: false },
     image: { type: String, default: null }
   },
   computed: {
@@ -93,7 +87,7 @@ export default {
       return null
     },
     width () {
-      if (this.timeline) {
+      if (this.expanded) {
         return '100%'
       } else if (this.mobile) {
         return '100%'
@@ -108,7 +102,6 @@ export default {
       if (this.deletable) return
       var story = this.stories.find(story => story.id === this.chip.id)
       this.setStory(story)
-      window.scrollTo(0, 0)
     }
   }
 }
@@ -143,15 +136,19 @@ export default {
   align-content: center;
 }
 
-.timeline-title {
+.expanded-title {
   font-size: 1em;
   font-weight: 400;
   color: rgba(0,0,0,0.87);
 }
 
-.timeline-description {
+.expanded-description {
   font-size: 0.9em;
   font-weight: 300;
   color: #383838;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 </style>

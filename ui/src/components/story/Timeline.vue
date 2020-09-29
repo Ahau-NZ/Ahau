@@ -67,7 +67,21 @@ export default {
   },
   data () {
     return {
-      unDatedStories: []
+      unDatedStories: [],
+      scrollPosition: 0
+    }
+  },
+  watch: {
+    showStory (newVal, oldVal) {
+      if (oldVal === false && newVal === true) {
+        this.scrollPosition = window.pageYOffset
+      } else if (oldVal === true && newVal === false) {
+        setTimeout(() => {
+          window.scrollTo({
+            top: this.scrollPosition
+          })
+        }, 100)
+      }
     }
   },
   computed: {

@@ -67,8 +67,10 @@
       </v-row>
       <v-row v-else>
         <v-col>
-          <div v-if="!profileStories || (profileStories && profileStories.length < 1)"
-            class="px-8 subtitle-1 grey--text " :class="{ 'text-center': mobile }"
+          <div 
+            v-if="!profileStories || (profileStories && profileStories.length < 1)"
+            class="px-8 subtitle-1 grey--text " 
+            :class="{ 'text-center': mobile }"
           >
           No records found
         </div>
@@ -157,7 +159,6 @@ export default {
     showStory (newVal, oldVal) {
       if (oldVal === false && newVal === true) {
         this.scrollPosition = window.pageYOffset
-        window.scrollTo(0, 0)
       } else if (oldVal === true && newVal === false) {
         setTimeout(() => {
           window.scrollTo({

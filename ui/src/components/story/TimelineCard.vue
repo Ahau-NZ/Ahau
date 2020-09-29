@@ -14,15 +14,7 @@
         small
         light
       >
-
-        <!-- TIMELINE DOT -->
-        <template v-slot:icon>
-          <!-- <v-avatar v-if="item.img">
-            <img :src="item.img">
-          </v-avatar> -->
-        </template>
-
-        <!-- Date opposite timeline dot (not shown in dense view) -->
+        <!-- Date opposite timeline dot (not shown in mobile view) -->
         <template v-slot:opposite>
           <span v-if="!mobile" class="opposite-width-force overline" :class="{'opposite-desktop': !mobile}">
             {{formatTimeInterval(item.timeInterval)}}
@@ -36,68 +28,61 @@
           @mouseenter="unhide(index)"
           @mouseleave="hide()"
         >
-          <v-row class="ma-0">
-            <!-- show == index ? item.description : shorten(item.description) -->
-            <Chip
-              :title="item.title"
-              :description="item.description"
-              :index="index"
-              :type="'story'"
-              :chip="item"
-              light
-              timeline
-            />
-          </v-row>
-          <v-card-actions v-if="show == index" class="pt-0">
+        <v-row class="ma-0">
+          <Chip
+            :title="item.title"
+            :description="item.description"
+            :index="index"
+            :type="'story'"
+            :chip="item"
+            light
+            expanded
+          />
+        </v-row>
+        <v-card-actions v-if="show == index" class="pt-0">
+          <v-row class="px-4">
+            <v-col v-if="item.mentions && item.mentions.length > 0" style="height: 100px; ">
+              <v-list-item-subtitle style="color:#a7a3a3">Mentions</v-list-item-subtitle>
+              <AvatarGroup
+                style="position:relative; bottom:15px; right:15px"
+                :profiles="item.mentions.map(m => m.profile)"
+                show-labels :size="'30px'"
+                spacing="pr-2"
+              />
+            </v-col>
 
-            <v-row class="px-4">
+            <v-col v-if="mobile && item.contributors && item.contributors.length > 0" style="height: 100px;">
+              <v-list-item-subtitle style="color:#a7a3a3">Contributors</v-list-item-subtitle>
+              <AvatarGroup
+                style="position:relative; bottom:15px; right:15px"
+                :profiles="item.contributors.map(m => m.profile)"
+                show-labels :size="'30px'"
+                spacing="pr-2"
+                customClass="no-wrap pa-2 pl-4"
+              />
+              </v-col>
 
-                <v-col v-if="item.mentions && item.mentions.length > 0" style="height: 100px; ">
-                  <v-list-item-subtitle style="color:#a7a3a3">Mentions</v-list-item-subtitle>
-                  <AvatarGroup
-                    style="position:relative; bottom:15px; right:15px"
-                    :profiles="item.mentions.map(m => m.profile)"
-                    show-labels :size="'30px'"
-                    spacing="pr-2"
-                  />
-                </v-col>
+              <v-col v-if="item.location" class="pt-0" cols="12" sm="12" >
+                <v-list-item-subtitle style="color:#a7a3a3" class="ms-5 pa-0 pb-1">Location</v-list-item-subtitle>
+                <p class="mt-3 mb-5 ms-5">{{ item.location }}</p>
+              </v-col>
 
-                <v-col v-if="mobile && item.contributors && item.contributors.length > 0" style="height: 100px;">
-                    <v-list-item-subtitle style="color:#a7a3a3">Contributors</v-list-item-subtitle>
-                    <AvatarGroup
-                      style="position:relative; bottom:15px; right:15px"
-                      :profiles="item.contributors.map(m => m.profile)"
-                      show-labels :size="'30px'"
-                      spacing="pr-2"
-                      customClass="no-wrap pa-2 pl-4"
-                    />
-                  </v-col>
-
-                <v-col v-if="item.location" class="pt-0" cols="12" sm="12" >
-                  <v-list-item-subtitle style="color:#a7a3a3" class="ms-5 pa-0 pb-1">Location</v-list-item-subtitle>
-                  <p class="mt-3 mb-5 ms-5">{{ item.location }}</p>
-                </v-col>
-
-                <v-col v-if="item.access && item.access.length > 0" cols="12" sm="12" >
-                  <v-list-item-subtitle style="color:#a7a3a3">Access</v-list-item-subtitle>
-                  <AvatarGroup
-                    style="position:relative; bottom:15px;"
-                    :profiles="item.access.map(m => m.profile)"
-                    show-labels :size="fullStory ? '50px': '30px'"
-                    spacing="pr-2"
-                    @profile-click="openProfile($event)"
-                    :clickable="fullStory"
-                  />
-                </v-col>
+              <v-col v-if="item.access && item.access.length > 0" cols="12" sm="12" >
+                <v-list-item-subtitle style="color:#a7a3a3">Access</v-list-item-subtitle>
+                <AvatarGroup
+                  style="position:relative; bottom:15px;"
+                  :profiles="item.access.map(m => m.profile)"
+                  show-labels :size="fullStory ? '50px': '30px'"
+                  spacing="pr-2"
+                  @profile-click="openProfile($event)"
+                  :clickable="fullStory"
+                />
+              </v-col>
 
             </v-row>
           </v-card-actions>
-        <!-- </transition> -->
-
         </v-card>
-
       </v-timeline-item>
-
     </v-timeline>
   </div>
 </template>
@@ -158,18 +143,9 @@ export default {
     enter (index) {
       this.animation = index
     },
-    // afterLeave (index, el) {
-    //   this.animation = -1
-    // },
-    // shorten (description) {
-    //   if (description) {
-    //     if (description.length > 120) {
-    //       return description.slice(0, 120) + ' ...'
-    //     } else {
-    //       return description
-    //     }
-    //   }
-    // }
+    afterLeave (index, el) {
+      this.animation = -1
+    },
   }
 }
 </script>
