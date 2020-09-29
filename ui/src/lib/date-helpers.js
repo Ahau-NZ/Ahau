@@ -17,7 +17,11 @@ export function dateToString (date) {
 
 function humanDate (date) {
   var split = date.split('-')
-  if (!split[0].length) return
+  if (!split[0].length && !split[1].length) return
+  if (!split[0].length && split[1].length) {
+    var bcYear = `-${split[1]}`
+    return bcYear
+  }
   var year = split[0]
   var month = split[1]
   if (!month) return year
@@ -29,6 +33,45 @@ function humanDate (date) {
   if (!day.length) return `${month} ${year}`
   if (day.match(/X/)) return `${month} ${year}`
   return `${day} ${month} ${year}`
+}
+
+export function yearMonthDay (interval) {
+  if (interval === null) return ''
+  const [lower, upper] = interval.split('/')
+  if (lower.length && upper.length) {
+    if (lower === upper) return `${yearMonthDayFormatter(lower)}`
+    return `${yearMonthDayFormatter(lower)} - ${yearMonthDayFormatter(upper)}`
+  }
+  if (lower.length) return yearMonthDayFormatter(lower)
+  if (upper.length) return yearMonthDayFormatter(upper)
+  return ''
+}
+
+function yearMonthDayFormatter (date) {
+  var split = date.split('-')
+  if (!split[0].length && !split[1].length) return
+  if (!split[0].length && split[1].length) {
+    var bcYear = `-${split[1]}`
+    return bcYear
+  }
+  var year = split[0]
+  var month = split[1]
+  if (!month) return year
+  if (!month.length) return year
+  if (month.match(/X/)) return year
+  month = MONTHS[month]
+  var day = split[2]
+  if (!day) return `${year} - ${month}`
+  if (!day.length) return `${year} - ${month}`
+  if (day.match(/X/)) return `${year} - ${month}`
+  // return `${year} - ${month} ${day}`
+  return `${year} - ${month}`
+}
+
+export function convertToTime (date) {
+  const lower = date.split('/')
+  var time = new Date(lower)
+  return time
 }
 
 const MONTHS = {

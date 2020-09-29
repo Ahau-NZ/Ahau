@@ -74,10 +74,6 @@ export default {
       loaded: false
     }
   },
-  beforeMount () {
-    this.getAllStories()
-    this.setTribes()
-  },
   computed: {
     ...mapGetters(['currentProfile', 'activeComponent', 'showStory', 'showArtefact', 'currentTribe']),
     mobile () {
@@ -108,6 +104,8 @@ export default {
     ...mapActions(['getAllStories', 'setProfileById', 'setWhoami', 'setShowArtefact', 'setDialog', 'setTribes']),
     async setupProfile (id) {
       this.setProfileById({ id })
+      this.getAllStories()
+      this.setTribes()
     }
   }
 }
@@ -137,18 +135,28 @@ export default {
 }
 
 .niho-bg {
-  background: linear-gradient(to bottom,rgba(255, 255, 255, 0.99),
-  rgba(255, 255, 255, 0.8)), url(../assets/niho.svg);
+  background: linear-gradient(to right, rgba(255, 255, 255, 0.99),
+  rgba(255, 255, 255, 0.7)), url(../assets/niho.svg);
   background-position-x: 100px;
   background-attachment: fixed;
   background-repeat: no-repeat;
 }
 
-.fade-enter-active,
+/* .fade-enter-active,
 .fade-leave-active {
   transition-duration: 0.2;
   transition-property: top;
   transition-timing-function: ease-in-out;
- }
+ } */
+
+ .fade-enter-active {
+    transition: all 0.6s ease-in-out;
+  }
+
+  .fade-enter,
+  .fade-leave-to {
+    opacity: 0;
+    transform: translateY(30px);
+  }
 
 </style>

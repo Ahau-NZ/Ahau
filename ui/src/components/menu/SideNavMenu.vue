@@ -84,12 +84,12 @@
         </v-col>
         <v-col :class="mobile ? 'py-0 px-0' : tablet ? 'py-4 px-0' : 'py-1'">
           <!-- TODO: connect timeline -->
-          <!-- <v-btn @click="setActive('timeline')" light :fab="mobile" text> -->
-          <v-btn @click="setDialog('coming-soon')" light :fab="mobile" text>
+          <v-btn @click="setActive('timeline')" light :fab="mobile" text>
+          <!-- <v-btn @click="setDialog('coming-soon')" light :fab="mobile" text> -->
             <v-col class="pa-0" :cols="mobile ? '12' : '2'">
               <TimelineIcon
                 :size="tablet ? 'x-large' : 'medium'"
-                :color="activeComponent === 'timeline' ? 'red' : 'disabled'"
+                :color="activeComponent === 'timeline' ? 'red' : 'black'"
               />
             </v-col>
             <v-col class="py-0" v-if="!mobile && !isOverflowing">
@@ -169,7 +169,7 @@ export default {
     },
     nonMember () {
       return (
-        this.profile.type === 'community' && 
+        this.profile.type === 'community' &&
         !this.profile.recps
       )
     },
@@ -204,7 +204,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setComponent', 'setShowStory', 'setDialog']),
+    ...mapActions(['setComponent', 'setShowStory', 'setDialog', 'profileStories']),
     goProfile () {
       this.setActive('profile')
       if (this.community) {
