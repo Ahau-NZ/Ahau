@@ -28,45 +28,42 @@
           @mouseenter="unhide(index)"
           @mouseleave="hide()"
         >
-        <v-row class="ma-0">
-          <Chip
-            :title="item.title"
-            :description="item.description"
-            :index="index"
-            :type="'story'"
-            :chip="item"
-            light
-            expanded
-          />
-        </v-row>
-        <v-card-actions v-if="show == index" class="pt-0">
-          <v-row class="px-4">
-            <v-col v-if="item.mentions && item.mentions.length > 0" style="height: 100px; ">
-              <v-list-item-subtitle style="color:#a7a3a3">Mentions</v-list-item-subtitle>
-              <AvatarGroup
-                style="position:relative; bottom:15px; right:15px"
-                :profiles="item.mentions.map(m => m.profile)"
-                show-labels :size="'30px'"
-                spacing="pr-2"
-              />
-            </v-col>
-
-            <v-col v-if="mobile && item.contributors && item.contributors.length > 0" style="height: 100px;">
-              <v-list-item-subtitle style="color:#a7a3a3">Contributors</v-list-item-subtitle>
-              <AvatarGroup
-                style="position:relative; bottom:15px; right:15px"
-                :profiles="item.contributors.map(m => m.profile)"
-                show-labels :size="'30px'"
-                spacing="pr-2"
-                customClass="no-wrap pa-2 pl-4"
-              />
+          <v-row class="ma-0">
+            <Chip
+              :title="item.title"
+              :description="item.description"
+              :index="index"
+              :type="'story'"
+              :chip="item"
+              light
+              expanded
+            />
+          </v-row>
+          <v-card-actions v-if="show == index" class="pt-0">
+            <v-row class="px-4">
+              <v-col v-if="item.mentions && item.mentions.length > 0" style="height: 100px; ">
+                <v-list-item-subtitle style="color:#a7a3a3">Mentions</v-list-item-subtitle>
+                <AvatarGroup
+                  style="position:relative; bottom:15px; right:15px"
+                  :profiles="item.mentions.map(m => m.profile)"
+                  show-labels :size="'30px'"
+                  spacing="pr-2"
+                />
               </v-col>
-
+              <v-col v-if="mobile && item.contributors && item.contributors.length > 0" style="height: 100px;">
+                <v-list-item-subtitle style="color:#a7a3a3">Contributors</v-list-item-subtitle>
+                <AvatarGroup
+                  style="position:relative; bottom:15px; right:15px"
+                  :profiles="item.contributors.map(m => m.profile)"
+                  show-labels :size="'30px'"
+                  spacing="pr-2"
+                  customClass="no-wrap pa-2 pl-4"
+                />
+              </v-col>
               <v-col v-if="item.location" class="pt-0" cols="12" sm="12" >
                 <v-list-item-subtitle style="color:#a7a3a3" class="ms-5 pa-0 pb-1">Location</v-list-item-subtitle>
                 <p class="mt-3 mb-5 ms-5">{{ item.location }}</p>
               </v-col>
-
               <v-col v-if="item.access && item.access.length > 0" cols="12" sm="12" >
                 <v-list-item-subtitle style="color:#a7a3a3">Access</v-list-item-subtitle>
                 <AvatarGroup
@@ -78,7 +75,6 @@
                   :clickable="fullStory"
                 />
               </v-col>
-
             </v-row>
           </v-card-actions>
         </v-card>

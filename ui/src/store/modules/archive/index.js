@@ -97,14 +97,11 @@ const actions = {
     commit('updateStories', res.data.stories)
 
     const stories = res.data.stories
-    console.log('stories: ', stories)
     if (rootState.person.currentProfile.type === 'person') {
-      console.log('new person')
       const profileStories = stories.filter((story) =>
         story.mentions.some((mention) =>
           mention.profile.id === rootState.person.currentProfile.id
         ))
-      console.log('profileStories: ', profileStories)
       return commit('updateProfileStories', profileStories)
     } else if (rootState.person.currentProfile.type === 'community') {
       const communityStories = stories.filter((story) =>
