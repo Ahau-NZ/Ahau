@@ -74,10 +74,6 @@ export default {
       loaded: false
     }
   },
-  beforeMount () {
-    this.getAllStories()
-    this.setTribes()
-  },
   computed: {
     ...mapGetters(['currentProfile', 'activeComponent', 'showStory', 'showArtefact', 'currentTribe']),
     mobile () {
@@ -108,6 +104,8 @@ export default {
     ...mapActions(['getAllStories', 'setProfileById', 'setWhoami', 'setShowArtefact', 'setDialog', 'setTribes']),
     async setupProfile (id) {
       this.setProfileById({ id })
+      this.getAllStories()
+      this.setTribes()
     }
   }
 }

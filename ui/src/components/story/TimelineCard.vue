@@ -40,7 +40,7 @@
             <!-- show == index ? item.description : shorten(item.description) -->
             <Chip
               :title="item.title"
-              :description="animation == index ? item.description : shorten(item.description)"
+              :description="item.description"
               :index="index"
               :type="'story'"
               :chip="item"
@@ -145,9 +145,7 @@ export default {
       return yearMonthDay(date)
     },
     showStory (story) {
-      // if (!this.fullStory) {
       this.$emit('toggleStory', story)
-      // }
     },
     // hide methods animate the card, contributor, mentions
     unhide (cardIndex) {
@@ -163,15 +161,15 @@ export default {
     // afterLeave (index, el) {
     //   this.animation = -1
     // },
-    shorten (description) {
-      if (description) {
-        if (description.length > 120) {
-          return description.slice(0, 120) + ' ...'
-        } else {
-          return description
-        }
-      }
-    }
+    // shorten (description) {
+    //   if (description) {
+    //     if (description.length > 120) {
+    //       return description.slice(0, 120) + ' ...'
+    //     } else {
+    //       return description
+    //     }
+    //   }
+    // }
   }
 }
 </script>

@@ -5,8 +5,8 @@
     :dark="!timeline"
     tile
     class="d-inline-block related-tile pa-0"
-    :min-width="getWidth"
-    :max-width="getWidth"
+    :min-width="width"
+    :max-width="width"
     :max-height="timeline ? 'auto' : '60'"
     :min-height="timeline ? '100' : '60'"
     :class="timeline ? 'ma-0': 'ma-1'"
@@ -92,7 +92,7 @@ export default {
       }
       return null
     },
-    getWidth () {
+    width () {
       if (this.timeline) {
         return '100%'
       } else if (this.mobile) {

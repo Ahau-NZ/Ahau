@@ -62,6 +62,9 @@ export default {
       default: () => ({})
     }
   },
+  beforeMount() {
+    this.getAllStories()
+  },
   data () {
     return {
       unDatedStories: []
