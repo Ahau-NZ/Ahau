@@ -102,14 +102,13 @@ export default {
       isEditing: false
     }
   },
+  beforeMount () {
+    this.setTribes()
+  },
   computed: {
     ...mapGetters(['whoami', 'currentTribe', 'tribes']),
     tiakis () {
-      // if (this.profile.type === 'person') {
-      //   return this.profile.kaitiaki
-      // } else if (this.profile.type === 'community') {
       return this.currentTribe.private.length > 0 ? this.currentTribe.private[0].tiaki : this.currentTribe.public[0].tiaki
-      // }
     },
     connectedTribes () {
       return this.tribes.filter(tribe => tribe.private.length > 0)
@@ -119,13 +118,13 @@ export default {
     },
     nonMember () {
       return (
-        this.profile.type === 'community' && 
+        this.profile.type === 'community' &&
         !this.profile.recps
       )
     }
   },
   methods: {
-    ...mapActions(['setProfileById', 'setDialog', 'setCurrentTribe']),
+    ...mapActions(['setProfileById', 'setDialog', 'setCurrentTribe', 'setTribes']),
     openProfile (profile) {
       this.setProfileById({ id: profile.id, type: 'preview' })
       this.setDialog({ active: 'view-edit-node', type: 'preview' })

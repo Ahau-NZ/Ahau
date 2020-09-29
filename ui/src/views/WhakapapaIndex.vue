@@ -31,7 +31,7 @@
         }">
         No whakapapa record found
       </div>
-      <div v-for="(group, index ) in whakapapas" :key="index" class="py-6">
+      <div v-for="(group, index ) in whakapapas" :key="index" class="py-4">
         <v-row class="pl-6 pb-3">
           <Avatar :size="mobile ? '50px' : '40px'" :image="group.image" :alt="group.name" :isView="!group.image" />
           <p class="black--text overline pl-6 pt-1" style="font-size:20px">{{group.name}} records</p>
@@ -41,7 +41,7 @@
             <WhakapapaViewCard :view="view" cropDescription />
           </v-col>
         </v-row>
-        <v-divider class="mt-5"></v-divider>
+        <v-divider light class="mt-12" style="max-width:80%"></v-divider>
       </div>
 
       <NewViewDialog v-if="showViewForm" :show="showViewForm" title="Create a new whakapapa" @close="toggleViewForm"
@@ -158,7 +158,6 @@ export default {
         }),
         image: this.currentProfile.avatarImage
       }]
-
     },
 
     async getSuggestions ($event) {
