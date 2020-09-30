@@ -24,19 +24,7 @@
           <v-icon small class="black--text">mdi-magnify</v-icon>
         </v-btn>            -->
         <!-- <v-btn :medium="!mobile" :x-small="mobile" :class="mobile ? 'addBtnMob' : 'addBtn'" class="my-2" fab color="white" @click.stop="openContextMenu($event)"> -->
-        <v-btn
-          @click.prevent="dialog = 'new-story'"
-          :class="!mobile ? '' : 'addBtnMobile'"
-          :color="!mobile ? 'white' : 'rgba(160, 35, 36,1)'"
-          elevation="4"
-          fab
-          light
-          fixed
-          :bottom="mobile"
-          :right="mobile"
-        >
-          <v-icon :large="!mobile" :class="!mobile ? 'black--text' : 'white--text'">mdi-plus</v-icon>
-        </v-btn>
+        <BigAddButton @click.prevent="dialog = 'new-story'" />
       </v-col>
     </v-row>
     <v-row v-if="profileStories && profileStories.length > 0">
@@ -100,6 +88,7 @@ import { saveArtefact } from '@/lib/artefact-helpers.js'
 import { saveLink, TYPES } from '@/lib/link-helpers.js'
 import { mapGetters, mapActions, mapMutations } from 'vuex'
 import NewRecordDialog from '@/components/dialog/archive/NewRecordDialog.vue'
+import BigAddButton from '@/components/button/BigAddButton.vue'
 
 // TODO: Replace with Archive Helper (doesnt exist yet)
 import ArchiveHelper from '@/components/dialog/archive/ArchiveHelper.vue'
@@ -109,7 +98,8 @@ export default {
   components: {
     StoryCard,
     NewRecordDialog,
-    ArchiveHelper
+    ArchiveHelper,
+    BigAddButton
     // CollectionGroup,
     // VueContext,
   },
@@ -397,10 +387,6 @@ export default {
     position: absolute;
     top: 80px;
     right: 80px;
-  }
-
-.addBtnMobile {
-    bottom: 16px !important;
   }
 
   .infoButton {

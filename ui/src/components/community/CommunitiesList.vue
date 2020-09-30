@@ -3,19 +3,7 @@
     <v-row>
       <v-col cols="10" class="headliner black--text pa-0 pl-4 pt-5" :class="!mobile ? 'pt-2':''">Tribes</v-col>
       <v-col >
-        <v-btn
-          @click="$emit('add-community-dialog')"
-          :class="!mobile ? '' : 'addBtnMobile'"
-          :color="!mobile ? 'white' : 'rgba(160, 35, 36,1)'"
-          elevation="4"
-          fab
-          light
-          :fixed="mobile"
-          :bottom="mobile"
-          :right="mobile"
-        >
-          <v-icon :large="!mobile" :class="!mobile ? 'black--text' : 'white--text'">mdi-plus</v-icon>
-        </v-btn>
+        <BigAddButton @click="$emit('add-community-dialog')" />
       </v-col>
     </v-row>
     <v-row>
@@ -122,6 +110,7 @@ import ProfileCard from '@/components/profile/ProfileCard.vue'
 import Avatar from '@/components/Avatar.vue'
 import NewPatakaDialog from '@/components/dialog/community/NewPatakaDialog.vue'
 import ConfirmationText from '@/components/dialog/ConfirmationText.vue'
+import BigAddButton from '@/components/button/BigAddButton.vue'
 
 const get = require('lodash.get')
 
@@ -336,7 +325,4 @@ export default {
   margin-bottom:20px;
 }
 
-.addBtnMobile {
-    bottom: 16px !important;
-  }
 </style>

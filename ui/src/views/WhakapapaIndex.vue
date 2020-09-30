@@ -1,26 +1,13 @@
 <template>
     <v-container fluid class="px-2" style="margin-top: 64px;">
-      <v-row class="pa-5" light>
+      <v-row class="pa-5" :class="mobile ? 'pb-0':''" light>
         <v-col cols="12" md="10" class="headliner black--text pa-0">
           Whakapapa records
           <v-icon color="blue-grey" light @click="toggleWhakapapaHelper" class="infoButton">mdi-information</v-icon>
         </v-col>
         <v-col>
-          <v-btn
-            @click="toggleViewForm"
-            :class="!mobile ? '' : 'addBtnMobile'"
-            :color="!mobile ? 'white' : 'rgba(160, 35, 36,1)'"
-            elevation="4"
-            fab
-            light
-            fixed
-            :bottom="mobile"
-            :right="mobile"
-          >
-            <v-icon :large="!mobile" :class="!mobile ? 'black--text' : 'white--text'">mdi-plus</v-icon>
-          </v-btn>
+          <BigAddButton @click="toggleViewForm" />
         </v-col>
-
       </v-row>
       <v-row>
         <v-col :class="mobile ? 'pt-0':''" cols="12" md="10">
@@ -67,6 +54,7 @@ import NewViewDialog from '@/components/dialog/whakapapa/NewViewDialog.vue'
 import NewNodeDialog from '@/components/dialog/profile/NewNodeDialog.vue'
 import WhakapapaListHelper from '@/components/dialog/whakapapa/WhakapapaListHelper.vue'
 import Avatar from '@/components/Avatar.vue'
+import BigAddButton from '@/components/button/BigAddButton.vue'
 
 import { saveLink } from '@/lib/link-helpers.js'
 import { savePerson } from '@/lib/person-helpers.js'
@@ -371,7 +359,8 @@ export default {
     NewViewDialog,
     NewNodeDialog,
     WhakapapaListHelper,
-    Avatar
+    Avatar,
+    BigAddButton
   }
 }
 </script>
@@ -385,33 +374,8 @@ export default {
     letter-spacing: 5px;
   }
 
-  .positionRight {
-    position: absolute;
-    top: 64px;
-    right: 50px;
-  }
-
-  .addBtn {
-    position: fixed;
-    top: 80px;
-    right:100px
-  }
-
-  .addBtnMobile {
-    bottom: 16px !important;
-  }
-
   .infoButton {
     margin-left: 10px;
   }
 
-  .flexStart {
-    display: flex;
-    justify-content: flex-start;
-  }
-
-  .flexCenter {
-    display:flex;
-    justify-content: center;
-  }
 </style>
