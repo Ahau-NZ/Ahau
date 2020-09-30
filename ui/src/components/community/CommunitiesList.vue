@@ -4,7 +4,7 @@
       <v-col cols="10" class="headliner black--text pa-0 pl-4 pt-5" :class="!mobile ? 'pt-2':''">Tribes</v-col>
       <v-col >
         <v-btn
-          @click.prevent="dialog = 'new-story'"
+          @click="$emit('add-community-dialog')"
           :class="!mobile ? '' : 'addBtnMobile'"
           :color="!mobile ? 'white' : 'rgba(160, 35, 36,1)'"
           elevation="4"
@@ -315,10 +315,6 @@ export default {
   background-size: 50px 50px;
 }
 
-.connect-title {
-  flex: 1;
-}
-
 .headliner {
   font-size: 1em;
   text-transform: uppercase;
@@ -332,16 +328,6 @@ export default {
   color: rgba(0, 0, 0, 0.6);
 }
 
-.addBtn {
-  position: fixed;
-  top: 80px;
-  right: 100px;
-}
-
-.addBtnMob {
-  bottom: 16px !important;
-}
-
 .rounded-border {
   color: black;
   border: 0.5px solid rgba(0,0,0,0.3);
@@ -349,4 +335,8 @@ export default {
   background-color: white;
   margin-bottom:20px;
 }
+
+.addBtnMobile {
+    bottom: 16px !important;
+  }
 </style>
