@@ -1,6 +1,6 @@
 <template>
   <div class="py-4">
-    <v-row class="mb-5">
+    <v-row>
       <v-col cols="10" class="headliner black--text pa-0 pl-4 pt-5" :class="!mobile ? 'pt-2':''">Tribes</v-col>
       <v-col >
         <v-btn

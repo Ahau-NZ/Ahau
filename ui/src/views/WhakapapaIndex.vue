@@ -3,8 +3,8 @@
     <v-container fluid class="px-2" style="margin-top: 64px;">
 
        <!-- Header  -->
-      <v-row class="pa-5 pb-0" light>
-        <v-col :cols="mobile ? '12':'10'" class="headliner black--text pa-0">
+      <v-row class="pa-5" light>
+        <v-col cols="12" md="10" class="headliner black--text pa-0">
           Whakapapa records
           <v-icon color="blue-grey" light @click="toggleWhakapapaHelper" class="infoButton">mdi-information</v-icon>
         </v-col>
@@ -26,7 +26,7 @@
 
       </v-row>
       <v-row>
-        <v-col class='pt-0' cols="12">
+        <v-col :class="mobile ? 'pt-0':''" cols="12" md="10">
           <div v-if="!whakapapas || (whakapapas && whakapapas.length < 1)" class="px-8 py-12 subtitle grey--text " :class="{
               'text-center': mobile
             }">

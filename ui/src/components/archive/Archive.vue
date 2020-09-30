@@ -3,7 +3,7 @@
   <v-container fluid class="px-2">
     <!-- VIEW STORY OVERLAY -->
     <div :class="{ 'showOverlay': showStory && !mobile }"></div>
-    <v-row v-if="!showStory" class="top-margin mb-5">
+    <v-row v-if="!showStory" class="top-margin mb-10">
       <v-col cols="10" class="headliner black--text pa-0 pl-4 pt-2">
         Archive records
         <v-icon color="blue-grey" light @click="toggleArchiveHelper" class="infoButton">mdi-information</v-icon>
