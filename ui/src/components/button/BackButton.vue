@@ -68,7 +68,7 @@ export default {
       this.setComponent('whakapapa')
       this.setProfileById({ id: this.goBack })
       this.$router.push({ name: 'profileShow', params: { id: this.goBack } }).catch(() => {})
-    },
+    }
   }
 }
 </script>

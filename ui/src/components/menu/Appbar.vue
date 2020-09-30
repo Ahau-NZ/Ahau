@@ -125,9 +125,9 @@ export default {
     clearInterval(this.polling)
   },
   computed: {
-    ...mapGetters(['whoami', 'whakapapa', 'route', 'showStory', 'storeDialog', 'currentProfile', 'syncing','activeComponent']),
+    ...mapGetters(['whoami', 'whakapapa', 'route', 'showStory', 'storeDialog', 'currentProfile', 'syncing', 'activeComponent']),
     isWhakapapaIndex () {
-      return this.route.name === 'profileShow' && this.activeComponent === 'whakapapa' 
+      return this.route.name === 'profileShow' && this.activeComponent === 'whakapapa'
     },
     classObject: function () {
       return {
