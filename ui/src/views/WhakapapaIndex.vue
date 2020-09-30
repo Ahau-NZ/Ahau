@@ -1,48 +1,51 @@
 <template>
-  <div :class="showProfileView ? 'flexStart': 'flexCenter'">
-    <v-container fluid class="white body-width mx-0 px-0" :style="!mobile ? 'margin-top: 64px;' : 'margin-top: 64px;' ">
+  <!-- <div :class="showProfileView ? 'flexStart': 'flexCenter'"> -->
+    <v-container fluid class="px-2" style="margin-top: 64px;">
 
        <!-- Header  -->
-      <v-row class="pa-5" light>
-        <v-col cols="12" class="headliner black--text pa-0">
+      <v-row class="pa-5 pb-0" light>
+        <v-col :cols="mobile ? '12':'10'" class="headliner black--text pa-0">
           Whakapapa records
           <v-icon color="blue-grey" light @click="toggleWhakapapaHelper" class="infoButton">mdi-information</v-icon>
         </v-col>
-
-        <v-btn
-          @click="toggleViewForm"
-          :medium="!mobile"
-          :class="!mobile ? 'addBtn my-2' : 'addBtnMobile'"
-          :color="!mobile ? 'white' : 'rgba(160, 35, 36,1)'"
-          elevation="4"
-          fab
-          light
-          :fixed="mobile"
-          :bottom="mobile"
-          :right="mobile"
-        >
-          <v-icon :large="!mobile" :class="!mobile ? 'black--text' : 'white--text'">mdi-plus</v-icon>
-        </v-btn>
+        <v-col>
+          <v-btn
+            @click.prevent="dialog = 'new-story'"
+            :class="!mobile ? '' : 'addBtnMobile'"
+            :color="!mobile ? 'white' : 'rgba(160, 35, 36,1)'"
+            elevation="4"
+            fab
+            light
+            fixed
+            :bottom="mobile"
+            :right="mobile"
+          >
+            <v-icon :large="!mobile" :class="!mobile ? 'black--text' : 'white--text'">mdi-plus</v-icon>
+          </v-btn>
+        </v-col>
 
       </v-row>
-
-      <div v-if="!whakapapas || (whakapapas && whakapapas.length < 1)" class="px-8 py-12 subtitle grey--text " :class="{
-          'text-center': mobile
-        }">
-        No whakapapa record found
-      </div>
-      <div v-for="(group, index ) in whakapapas" :key="index" class="py-4">
-        <v-row class="pl-6 pb-3">
-          <Avatar :size="mobile ? '50px' : '40px'" :image="group.image" :alt="group.name" :isView="!group.image" />
-          <p class="black--text overline pl-6 pt-1" style="font-size:20px">{{group.name}} records</p>
-        </v-row>
-        <v-row v-for="view in group.views" :key="view.id" dense class="mb-2">
-          <v-col cols="12" md="10">
-            <WhakapapaViewCard :view="view" cropDescription />
-          </v-col>
-        </v-row>
-        <v-divider light class="mt-12" style="max-width:80%"></v-divider>
-      </div>
+      <v-row>
+        <v-col class='pt-0' cols="12">
+          <div v-if="!whakapapas || (whakapapas && whakapapas.length < 1)" class="px-8 py-12 subtitle grey--text " :class="{
+              'text-center': mobile
+            }">
+            No whakapapa record found
+          </div>
+          <div v-for="(group, index ) in whakapapas" :key="index" class="py-4">
+            <v-row class="pl-6 pb-3">
+              <Avatar :size="mobile ? '50px' : '40px'" :image="group.image" :alt="group.name" :isView="!group.image" />
+              <p class="black--text overline pl-6 pt-1" style="font-size:20px">{{group.name}} records</p>
+            </v-row>
+            <v-row v-for="view in group.views" :key="view.id" dense class="mb-2">
+              <v-col cols="12" md="10">
+                <WhakapapaViewCard :view="view" cropDescription />
+              </v-col>
+            </v-row>
+            <v-divider light class="mt-12" style="max-width:80%"></v-divider>
+          </div>
+        </v-col>
+      </v-row>
 
       <NewViewDialog v-if="showViewForm" :show="showViewForm" title="Create a new whakapapa" @close="toggleViewForm"
         @submit="handleStepOne($event)" />
@@ -55,7 +58,7 @@
       <WhakapapaListHelper v-if="showWhakapapaHelper" :show="showWhakapapaHelper" @close="toggleWhakapapaHelper" />
 
     </v-container>
-  </div>
+  <!-- </div> -->
 
 </template>
 

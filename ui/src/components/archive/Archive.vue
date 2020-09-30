@@ -1,6 +1,6 @@
 <template>
 <div>
-  <v-container fluid class="body-width px-2">
+  <v-container fluid class="px-2">
     <!-- VIEW STORY OVERLAY -->
     <div :class="{ 'showOverlay': showStory && !mobile }"></div>
     <v-row v-if="!showStory" class="top-margin mb-5">
@@ -31,7 +31,7 @@
           elevation="4"
           fab
           light
-          :fixed="mobile"
+          fixed
           :bottom="mobile"
           :right="mobile"
         >
