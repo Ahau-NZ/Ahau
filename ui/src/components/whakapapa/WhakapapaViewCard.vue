@@ -1,9 +1,7 @@
 <template>
   <v-card
-    :to="view.id
-        ? { name: 'whakapapaShow', params: { id: view.id } }
-        : '/whakapapa'"
     light
+    @click="goWhakapapaShow()"
   >
       <v-container class="pa-0">
         <v-list-item-icon class="pt-1 mt-0" style="position:absolute; top:5px; right:1px; margin-right:0px">
@@ -27,6 +25,7 @@
 <script>
 import whakapapa from '@/assets/whakapapa.png'
 import AvatarGroup from '@/components/AvatarGroup.vue'
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
   name: 'WhakapapaViewCard',
@@ -39,6 +38,7 @@ export default {
     AvatarGroup
   },
   computed: {
+    ...mapGetters(['currentProfile']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -59,6 +59,11 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['setGoBack']),
+    goWhakapapaShow () {
+      this.setGoBack(this.currentProfile.id)
+      this.$router.push({ name: 'whakapapaShow', params: { id: this.view.id } })
+    },
     background (view) {
       if (view.image && view.image.uri) {
         return {

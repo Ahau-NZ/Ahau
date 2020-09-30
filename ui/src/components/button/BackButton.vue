@@ -1,8 +1,11 @@
 <template>
   <div>
-    <div v-if="isgoWhakapapa && !showStory" fab class="ms-10 pr-6 pb-1">
-      <v-btn @click="goWhakapapa">
-        <v-row align="center">
+    <div v-if="isProfileShow && !showStory" fab :class="mobile ? 'ml-n4':'ms-10 pr-6 pb-1'">
+      <v-btn @click="goWhakapapaShow" text>
+        <div v-if="mobile">
+          <v-icon dark>mdi-arrow-left</v-icon>
+        </div>
+        <v-row v-else align="center">
           <v-icon large>mdi-chevron-left</v-icon>
           <Avatar
             size="45px"
@@ -18,22 +21,15 @@
         </v-row>
       </v-btn>
     </div>
-    <div v-else-if="!showStory && this.route.name === 'whakapapaShow'" fab class="ms-10  pr-6 pb-1">
-      <v-btn @click="$emit('go-back')">
-        <v-row align="center">
+    <div v-else-if="this.route.name === 'whakapapaShow'" fab :class="mobile ? 'ml-n4':'ms-10 pr-6 pb-1'">
+      <v-btn @click="goWhakapapaIndex" text>
+        <div v-if="mobile">
+          <v-icon dark>mdi-arrow-left</v-icon>
+        </div>
+        <v-row v-else align="center">
           <v-icon large>mdi-chevron-left</v-icon>
-          <Avatar
-            size="45px"
-            class="ma-0"
-            :image="currentProfile.avatarImage ? currentProfile.avatarImage : null"
-            :alt="currentProfile.preferredName"
-            :gender="currentProfile.gender"
-            showLabel
-            row
-            :isView="currentProfile.type === 'community' && !currentProfile.avatarImage"
-
-          />
-          <span class="pl-2 caption">Back to {{currentProfile.preferredName}} archive</span>
+          <WhakapapaIcon size="small" color="white"/>
+          <span class="pl-2 caption">Back to whakapapa records</span>
         </v-row>
       </v-btn>
     </div>
@@ -41,19 +37,21 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import Avatar from '@/components/Avatar'
+import WhakapapaIcon from '@/components/button/WhakapapaIcon.vue'
 
 export default {
   components: {
-    Avatar
+    Avatar,
+    WhakapapaIcon
   },
   computed: {
-    ...mapGetters(['whakapapa', 'route', 'showStory', 'currentProfile']),
+    ...mapGetters(['whakapapa', 'route', 'showStory', 'currentProfile', 'goBack']),
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
-    isgoWhakapapa () {
+    isProfileShow () {
       if (this.route.from) {
         return this.route.from.name === 'whakapapaShow' && this.route.name === 'profileShow'
       }
@@ -61,14 +59,22 @@ export default {
     }
   },
   methods: {
-    goWhakapapa () {
+    ...mapActions(['setProfileById', 'setComponent']),
+    goWhakapapaShow () {
+      this.setComponent('')
       this.$router.push({ path: this.route.from.fullPath })
-    }
+    },
+    goWhakapapaIndex () {
+      this.setComponent('whakapapa')
+      this.setProfileById({ id: this.goBack })
+      this.$router.push({ name: 'profileShow', params: { id: this.goBack } }).catch(() => {})
+    },
   }
-
 }
 </script>
 
 <style lang="scss" scoped>
-
+  .v-btn--active.no-active::before {
+    opacity: 0 !important;
+  }
 </style>
