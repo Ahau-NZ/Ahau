@@ -62,7 +62,7 @@ export default {
       default: () => ({})
     }
   },
-  beforeMount() {
+  beforeMount () {
     this.getAllStories()
   },
   data () {

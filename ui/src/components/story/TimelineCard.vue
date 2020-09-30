@@ -141,7 +141,7 @@ export default {
     },
     afterLeave (index, el) {
       this.animation = -1
-    },
+    }
   }
 }
 </script>

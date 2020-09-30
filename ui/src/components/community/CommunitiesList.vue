@@ -80,7 +80,7 @@
                 </v-col>
                 <v-col cols="10" class="pb-6" justify-center>
                   <p style="color:black;" class="mb-0">{{pataka.preferredName}} </p>
-                  <span v-if="pataka.online" style="color:#37e259; position:absolute; font-size:11px">online</span> 
+                  <span v-if="pataka.online" style="color:#37e259; position:absolute; font-size:11px">online</span>
                 </v-col>
               </v-row>
             </div>

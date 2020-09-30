@@ -66,9 +66,9 @@
       </v-row>
       <v-row v-else>
         <v-col>
-          <div 
+          <div
             v-if="!profileStories || (profileStories && profileStories.length < 1)"
-            class="px-8 subtitle-1 grey--text " 
+            class="px-8 subtitle-1 grey--text "
             :class="{ 'text-center': mobile }"
           >
           No records found
@@ -140,7 +140,7 @@ export default {
       type: Function
     }
   },
-  beforeMount() {
+  beforeMount () {
     this.getAllStories()
   },
   computed: {
