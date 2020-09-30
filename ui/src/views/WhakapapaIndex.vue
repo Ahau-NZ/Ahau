@@ -26,17 +26,23 @@
 
       </v-row>
 
-      <div v-if="!filteredWhakapapaViews || (filteredWhakapapaViews && filteredWhakapapaViews.length < 1)" class="px-8 py-12 subtitle grey--text " :class="{
+      <div v-if="!whakapapas || (whakapapas && whakapapas.length < 1)" class="px-8 py-12 subtitle grey--text " :class="{
           'text-center': mobile
         }">
         No whakapapa record found
       </div>
-
-      <v-row v-for="view in filteredWhakapapaViews" :key="view.id" dense class="mb-2">
-        <v-col cols="12" md="10">
-          <WhakapapaViewCard :view="view" cropDescription />
-        </v-col>
-      </v-row>
+      <div v-for="(group, index ) in whakapapas" :key="index" class="py-4">
+        <v-row class="pl-6 pb-3">
+          <Avatar :size="mobile ? '50px' : '40px'" :image="group.image" :alt="group.name" :isView="!group.image" />
+          <p class="black--text overline pl-6 pt-1" style="font-size:20px">{{group.name}} records</p>
+        </v-row>
+        <v-row v-for="view in group.views" :key="view.id" dense class="mb-2">
+          <v-col cols="12" md="10">
+            <WhakapapaViewCard :view="view" cropDescription />
+          </v-col>
+        </v-row>
+        <v-divider light class="mt-12" style="max-width:80%"></v-divider>
+      </div>
 
       <NewViewDialog v-if="showViewForm" :show="showViewForm" title="Create a new whakapapa" @close="toggleViewForm"
         @submit="handleStepOne($event)" />
@@ -57,6 +63,7 @@
 import pick from 'lodash.pick'
 import isEmpty from 'lodash.isempty'
 import isEqual from 'lodash.isequal'
+import groupBy from 'lodash.groupby'
 
 import * as d3 from 'd3'
 import { mapGetters, mapActions, mapMutations } from 'vuex'
@@ -64,12 +71,14 @@ import WhakapapaViewCard from '@/components/whakapapa/WhakapapaViewCard.vue'
 import NewViewDialog from '@/components/dialog/whakapapa/NewViewDialog.vue'
 import NewNodeDialog from '@/components/dialog/profile/NewNodeDialog.vue'
 import WhakapapaListHelper from '@/components/dialog/whakapapa/WhakapapaListHelper.vue'
+import Avatar from '@/components/Avatar.vue'
 
 import { saveLink } from '@/lib/link-helpers.js'
 import { savePerson } from '@/lib/person-helpers.js'
 import tree from '@/lib/tree-helpers'
 import { saveWhakapapaView, getWhakapapaViews } from '@/lib/whakapapa-helpers.js'
 import { findByName } from '@/lib/search-helpers.js'
+import { getTribeByGroupId } from '@/lib/community-helpers.js'
 
 export default {
   name: 'WhakapapaIndex',
@@ -93,10 +102,11 @@ export default {
         type: Boolean,
         default: false
       },
-      showProfileView: false
+      showProfileView: false,
+      whakapapas: []
     }
   },
-  created () {
+  async created () {
     if (this.$route.name === 'profileShow') {
       this.showProfileView = true
     }
@@ -105,29 +115,51 @@ export default {
     ...mapGetters(['whoami', 'currentAccess', 'defaultAccess', 'currentProfile', 'currentTribe']),
     mobile () {
       return this.$vuetify.breakpoint.xs
-    },
-    filteredWhakapapaViews () {
-      if (this.currentProfile.type === 'person') {
-        return this.views
-      }
-
-      return this.views.filter(view => {
-        return view.recps.some(recp => {
-          return recp === this.currentTribe.id
-        })
-      })
     }
   },
-  mounted () {
+  async mounted () {
     // set the current default access as the current group
     this.setCurrentAccess(this.defaultAccess)
+    this.whakapapas = await this.groupedWhakapapaViews()
   },
-  apollo: {
-    views: getWhakapapaViews()
-  },
+
   methods: {
     ...mapMutations(['setCurrentAccess']),
     ...mapActions(['addNestedWhakapapa', 'setLoading']),
+
+    async groupedWhakapapaViews () {
+      var views = []
+      const res = await this.$apollo.query(getWhakapapaViews())
+      if (res.errors) {
+        console.log('error getting whakapapa views')
+      } else {
+        views = res.data.whakapapaViews
+      }
+      if (this.currentProfile.id === this.whoami.personal.profile.id) {
+        var groupedObj = groupBy(views, 'recps[0]')
+        const groups = await Promise.all(
+          Object.keys(groupedObj).map(async (key, value) => {
+            var views = groupedObj[key]
+            if (key === this.whoami.personal.groupId) return { name: 'my private', image: this.whoami.personal.profile.avatarImage, views: views }
+            var tribe = await getTribeByGroupId(key)
+            if (tribe.private.length > 0) return { name: tribe.private[0].preferredName, image: tribe.private[0].avatarImage, views: views }
+            return null
+          })
+        )
+        const filteredGroups = groups.filter(i => !isEmpty(i))
+        return filteredGroups
+      }
+      return [{
+        name: this.currentProfile.preferredName,
+        views: views.filter(view => {
+          return view.recps.some(recp => {
+            return recp === this.currentTribe.id
+          })
+        }),
+        image: this.currentProfile.avatarImage
+      }]
+    },
+
     async getSuggestions ($event) {
       if (!$event) {
         this.suggestions = []
@@ -347,7 +379,8 @@ export default {
     WhakapapaViewCard,
     NewViewDialog,
     NewNodeDialog,
-    WhakapapaListHelper
+    WhakapapaListHelper,
+    Avatar
   }
 }
 </script>
@@ -374,7 +407,6 @@ export default {
     text-transform: uppercase;
     font-weight: 400;
     letter-spacing: 5px;
-
   }
 
   .desktopContainer {

@@ -138,6 +138,11 @@ body {
   padding-top: 56px !important;
 }
 
+.v-timeline--dense .v-timeline-item__opposite {
+  display: inline-block !important;
+  flex:none
+}
+
 .stop-scroll {
   max-height: 100vh !important;
   overflow: hidden !important;
@@ -149,7 +154,6 @@ body {
   bottom: 5px;
   right: 10px;
   font-size: .8rem;
-
   transition: all .3s ease-in;
 
   span {

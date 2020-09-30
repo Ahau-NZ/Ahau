@@ -84,12 +84,12 @@
         </v-col>
         <v-col :class="mobile ? 'py-0 px-0' : tablet ? 'py-4 px-0' : 'py-1'">
           <!-- TODO: connect timeline -->
-          <!-- <v-btn @click="setActive('timeline')" light :fab="mobile" text> -->
-          <v-btn @click="setDialog('coming-soon')" light :fab="mobile" text>
+          <v-btn @click="setActive('timeline')" light :fab="mobile" text>
+          <!-- <v-btn @click="setDialog('coming-soon')" light :fab="mobile" text> -->
             <v-col class="pa-0" :cols="mobile ? '12' : '2'">
               <TimelineIcon
                 :size="tablet ? 'x-large' : 'medium'"
-                :color="activeComponent === 'timeline' ? 'red' : 'disabled'"
+                :color="activeComponent === 'timeline' ? 'red' : 'black'"
               />
             </v-col>
             <v-col class="py-0" v-if="!mobile && !isOverflowing">
@@ -101,10 +101,8 @@
             </v-col>
           </v-btn>
         </v-col>
-        <v-col :class="mobile ? 'py-0 px-0' : tablet ? 'py-4 px-0' : 'py-1'">
-          <!-- TODO: connect whakapapa -->
+        <v-col v-if="showWhakapapa" :class="mobile ? 'py-0 px-0' : tablet ? 'py-4 px-0' : 'py-1'">
           <v-btn @click="setActive('whakapapa')" light :fab="mobile" text>
-            <!-- <v-btn @click="setDialog('coming-soon')" light :fab="mobile" text> -->
             <v-col class="pa-0" :cols="mobile ? '12' : '2'">
               <WhakapapaIcon
                 :size="mobile ? 'large' : tablet ? 'x-large' : 'medium'"
@@ -163,10 +161,17 @@ export default {
     this.offset = this.$refs.sideNav.offsetTop - 50
   },
   computed: {
-    ...mapGetters(['activeComponent', 'showStory', 'storeDialog', 'notifications']),
-    nonMember () {
-      if (this.profile.type === 'community' && !this.profile.recps) return true
+    ...mapGetters(['activeComponent', 'showStory', 'storeDialog', 'notifications', 'whoami']),
+    showWhakapapa () {
+      if (this.profile.type === 'community') return true
+      else if (this.profile.id === this.whoami.personal.profile.id) return true
       else return false
+    },
+    nonMember () {
+      return (
+        this.profile.type === 'community' &&
+        !this.profile.recps
+      )
     },
     notificationSent () {
       return this.notifications.filter(i => i.message.group.id === this.profile.id).length > 0
@@ -199,7 +204,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setComponent', 'setShowStory', 'setDialog']),
+    ...mapActions(['setComponent', 'setShowStory', 'setDialog', 'profileStories']),
     goProfile () {
       this.setActive('profile')
       if (this.community) {

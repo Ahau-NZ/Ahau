@@ -73,10 +73,17 @@
     <v-list-item :disabled="disableClick" :ripple="false" @click.stop="showText()">
       <v-list-item-content >
         <v-list-item-subtitle v-if="fullStory || showArtefact" class="pb-1" style="color:#a7a3a3"> Description </v-list-item-subtitle>
-        <p v-if="!showArtefact" ref="text" :class="turncateText ? 'description' : ''">
+        <!-- <div v-if="!showArtefact" >
+          <p ref="text" :class="truncateText ? 'description' : ''" v-for="(paragraph, i) in story.description.split('\n\n')" :key="i">
+            <div v-for="(line, i) in paragraph.split('\n')" :key="i">
+              {{ line }}
+            </div>
+          </p>
+        </div> -->
+        <p v-if="!showArtefact" ref="text" :class="truncateText ? 'description' : ''">
           {{ story.description }}
         </p>
-        <p v-if="artefact.description" ref="text" style="color:white" >
+        <p v-if="artefact.description" ref="text" style="color:white" :class="truncateText ? 'description' : ''" class="text-justify">
           {{ artefact.description }}
         </p>
       </v-list-item-content>
@@ -263,7 +270,7 @@ export default {
   data () {
     return {
       show: false,
-      turncateText: true,
+      truncateText: true,
       textHeight: 0,
       artefact: {},
       model: 0,
@@ -274,7 +281,7 @@ export default {
     // grab text height to figure out if we need to hide it or not
     this.textHeight = this.$refs.text.offsetHeight
     if (this.fullStory) {
-      this.turncateText = false
+      this.truncateText = false
     }
   },
   computed: {
@@ -298,7 +305,7 @@ export default {
       }
       return ''
     },
-    // disable textTurncate click event when not needed
+    // disable truncateText click event when not needed
     disableClick () {
       if (this.fullStory) {
         return true
@@ -311,6 +318,7 @@ export default {
     // style card based on current stories, story or artefact view
     customClass () {
       if (this.fullStory) {
+        window.scrollTo(0, 0)
         if (this.showArtefact) {
           return 'ontop disableCard'
         }
@@ -370,7 +378,7 @@ export default {
       }
     },
     showText () {
-      this.turncateText = !this.turncateText
+      this.truncateText = !this.truncateText
     },
     openProfile (profile) {
       this.setProfileById({ id: profile.id, type: 'preview' })
@@ -414,7 +422,7 @@ p {
   line-height: 1.6;
   color: #383838;
   margin-bottom: 0 !important;
-// cut of a long description
+ /* cut of a long description */
   &.description {
     overflow: hidden;
     text-overflow: ellipsis;
@@ -424,7 +432,7 @@ p {
   }
 }
 
-// disable click events on v-card when viewing single story
+/* disable click events on v-card when viewing single story */
 .disableCard {
   // user-select: none;
   cursor: default;
