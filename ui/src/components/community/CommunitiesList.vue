@@ -1,23 +1,22 @@
 <template>
   <div class="py-4">
-    <v-row class="top-margin mb-5">
-      <v-col class="headliner black--text pa-0 pl-4 pt-2" :class="!mobile ? 'pt-2':''">Tribes</v-col>
-      <div>
+    <v-row class="mb-5">
+      <v-col cols="10" class="headliner black--text pa-0 pl-4 pt-5" :class="!mobile ? 'pt-2':''">Tribes</v-col>
+      <v-col >
         <v-btn
-          :medium="!mobile"
-          text
-          :x-small="mobile"
-          :class="mobile ? 'addBtnMob' : 'addBtn'"
-          class="my-2"
-          fab
-          color="white"
-          @click="$emit('add-community-dialog')"
+          @click.prevent="dialog = 'new-story'"
+          :class="!mobile ? '' : 'addBtnMobile'"
+          :color="!mobile ? 'white' : 'rgba(160, 35, 36,1)'"
           elevation="4"
-          z-index="1"
+          fab
+          light
+          :fixed="mobile"
+          :bottom="mobile"
+          :right="mobile"
         >
-          <v-icon :large="!mobile" class="black--text">mdi-plus</v-icon>
+          <v-icon :large="!mobile" :class="!mobile ? 'black--text' : 'white--text'">mdi-plus</v-icon>
         </v-btn>
-      </div>
+      </v-col>
     </v-row>
     <v-row>
       <v-col cols="12" md="9">
@@ -70,7 +69,8 @@
           </v-row>
         </div>
       </v-col>
-      <v-col cols="12" md='3' class="py-0 pr-8 pl-4 mt-12">
+      <v-col cols="12" md='3' :class="mobile ? 'px-6':'py-0 pr-8 pl-4 mt-12'">
+        <v-divider v-if="mobile" light></v-divider>
         <ProfileCard title="Pātaka" class="mt-7">
           <template v-slot:content>
             <div v-if="patakas.length > 0">
@@ -80,7 +80,7 @@
                 </v-col>
                 <v-col cols="10" class="pb-6" justify-center>
                   <p style="color:black;" class="mb-0">{{pataka.preferredName}} </p>
-                  <span v-if="pataka.online" style="color:#f51f1f; position:absolute; font-size:11px">online</span> 
+                  <span v-if="pataka.online" style="color:#37e259; position:absolute; font-size:11px">online</span> 
                 </v-col>
               </v-row>
             </div>
@@ -339,9 +339,7 @@ export default {
 }
 
 .addBtnMob {
-  position: absolute;
-  top: 10px;
-  right: 20px;
+  bottom: 16px !important;
 }
 
 .rounded-border {

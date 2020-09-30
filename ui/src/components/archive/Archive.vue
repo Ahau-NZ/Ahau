@@ -4,7 +4,7 @@
     <!-- VIEW STORY OVERLAY -->
     <div :class="{ 'showOverlay': showStory && !mobile }"></div>
     <v-row v-if="!showStory" class="top-margin mb-5">
-      <v-col cols="12" class="headliner black--text pa-0 pl-4 pt-2">
+      <v-col cols="10" class="headliner black--text pa-0 pl-4 pt-2">
         Archive records
         <v-icon color="blue-grey" light @click="toggleArchiveHelper" class="infoButton">mdi-information</v-icon>
       </v-col>
@@ -18,7 +18,7 @@
         <!-- <v-col cols="12" md="10" sm="10" :class="!mobile ? 'pl-12 my-6' : 'py-0 ma-0'" align="start">
         <h1 class="title black--text ">Collections</h1>
       </v-col> -->
-        <div>
+        <v-col>
           <!-- TODO: Search records -->
           <!-- <v-btn :class="mobile ? 'searchBtnMob' : 'searchBtn'" :small="!mobile" :x-small="mobile" class="my-2" fab flat color="white" @click="editProfile()">
           <v-icon small class="black--text">mdi-magnify</v-icon>
@@ -26,19 +26,18 @@
         <!-- <v-btn :medium="!mobile" :x-small="mobile" :class="mobile ? 'addBtnMob' : 'addBtn'" class="my-2" fab color="white" @click.stop="openContextMenu($event)"> -->
         <v-btn
           @click.prevent="dialog = 'new-story'"
-          :class="!mobile ? 'addBtn my-2' : 'addBtnMobile'"
+          :class="!mobile ? '' : 'addBtnMobile'"
           :color="!mobile ? 'white' : 'rgba(160, 35, 36,1)'"
           elevation="4"
           fab
           light
-
           :fixed="mobile"
           :bottom="mobile"
           :right="mobile"
         >
           <v-icon :large="!mobile" :class="!mobile ? 'black--text' : 'white--text'">mdi-plus</v-icon>
         </v-btn>
-      </div>
+      </v-col>
     </v-row>
     <v-row v-if="profileStories && profileStories.length > 0">
       <transition name="change" mode="out-in">
@@ -406,12 +405,6 @@ export default {
 
   .infoButton {
     margin-left: 10px;
-  }
-
-  .addBtnMob {
-    position: absolute;
-    top: 80px;
-    right: 20px
   }
 
   .niho-bg {
