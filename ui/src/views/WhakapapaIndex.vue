@@ -1,8 +1,5 @@
 <template>
-  <!-- <div :class="showProfileView ? 'flexStart': 'flexCenter'"> -->
     <v-container fluid class="px-2" style="margin-top: 64px;">
-
-       <!-- Header  -->
       <v-row class="pa-5" light>
         <v-col cols="12" md="10" class="headliner black--text pa-0">
           Whakapapa records
@@ -10,7 +7,7 @@
         </v-col>
         <v-col>
           <v-btn
-            @click.prevent="dialog = 'new-story'"
+            @click="toggleViewForm"
             :class="!mobile ? '' : 'addBtnMobile'"
             :color="!mobile ? 'white' : 'rgba(160, 35, 36,1)'"
             elevation="4"
@@ -46,7 +43,6 @@
           </div>
         </v-col>
       </v-row>
-
       <NewViewDialog v-if="showViewForm" :show="showViewForm" title="Create a new whakapapa" @close="toggleViewForm"
         @submit="handleStepOne($event)" />
       <!-- TODO: add suggestions in here as well? -->
@@ -54,12 +50,8 @@
         @getSuggestions="getSuggestions" title="Add a Person" @create="handleDoubleStep($event)"
         :withRelationships="false" @close="close"
       />
-
       <WhakapapaListHelper v-if="showWhakapapaHelper" :show="showWhakapapaHelper" @close="toggleWhakapapaHelper" />
-
     </v-container>
-  <!-- </div> -->
-
 </template>
 
 <script>
@@ -101,10 +93,6 @@ export default {
       showViewForm: false,
       newView: null,
       columns: [],
-      profileWhakapapaView: {
-        type: Boolean,
-        default: false
-      },
       showProfileView: false,
       whakapapas: []
     }
@@ -390,43 +378,11 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
-  .body-width {
-    max-width: 900px;
-  }
-
-  .pointer {
-    cursor: pointer;
-  }
-
-  .cover-image {
-    min-width: 150px;
-    width: 150px;
-    background-color: #fff;
-    background-position: center center;
-  }
-
   .headliner {
     font-size: 1em;
     text-transform: uppercase;
     font-weight: 400;
     letter-spacing: 5px;
-  }
-
-  .desktopContainer {
-    margin-top: 64px;
-    width: 80%;
-  }
-
-  .mobileContainer {
-    padding: 0px;
-  }
-
-  .top-margin {
-    margin-top: 80px;
-  }
-
-  .profileWhakapapaView {
-    margin-left: 0 !important
   }
 
   .positionRight {
