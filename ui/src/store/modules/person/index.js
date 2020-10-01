@@ -67,7 +67,10 @@ const actions = {
         return parentProfile
       }))
     }
-    if (!type) commit('updateCurrentProfile', person)
+    if (!type) {
+      commit('updateCurrentProfile', person)
+      dispatch('setProfileStories', rootState.stories)
+    }
     commit('updateSelectedProfile', person)
   }
 }

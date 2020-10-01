@@ -39,10 +39,7 @@ const store = new Vuex.Store({
       }
     },
     loading: false,
-    goBack: {
-      show: false,
-      location: ''
-    },
+    goBack: '',
     allowSubmissions: true,
     syncing: false
   },
@@ -141,8 +138,8 @@ const store = new Vuex.Store({
     updateWhoami (state, whoami) {
       state.whoami = whoami
     },
-    updateGoBack (state, go) {
-      state.goBack = go
+    updateGoBack (state, id) {
+      state.goBack = id
     }
   },
   actions: {
@@ -159,8 +156,8 @@ const store = new Vuex.Store({
 
       commit('updateWhoami', result.data.whoami)
     },
-    goBack ({ commit }, go) {
-      commit('updateGoBack', go)
+    setGoBack ({ commit }, id) {
+      commit('updateGoBack', id)
     }
   }
 })

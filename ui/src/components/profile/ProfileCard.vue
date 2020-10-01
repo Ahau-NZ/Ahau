@@ -3,7 +3,7 @@
     <v-col v-if="title" cols="12" align="center">
       <h4 class="mb-0 overline"> {{ title }}</h4>
     </v-col>
-    <v-col :class="!title ? 'pb-0':''" class="pt-0 px-0">
+    <v-col :class="!title ? 'pb-0':''" class="pt-0">
       <slot name="content"></slot>
     </v-col>
   </v-row>

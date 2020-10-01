@@ -86,14 +86,14 @@
           </v-row>
           <v-row v-if="!isEditing"  class="justify-center">
             <v-btn
-              @click="goProfileShow()"
+              @click="goArchive()"
               color="white"
               text
               medium
               class="blue--text"
             >
-              <v-icon class="blue--text" style="font-size:20px">mdi-account-circle</v-icon>
-              <span class="pl-2 "> Profile</span>
+              <ArchiveIcon size="normal" color="blue"/>
+              <span class="pl-2 "> Archive </span>
             </v-btn>
             <v-btn
               v-if="!preview && profile.canEdit"
@@ -244,6 +244,7 @@ import Avatar from '@/components/Avatar.vue'
 import AvatarGroup from '@/components/AvatarGroup.vue'
 import AddButton from '@/components/button/AddButton.vue'
 import DialogTitleBanner from '@/components/dialog/DialogTitleBanner.vue'
+import ArchiveIcon from '@/components/button/ArchiveIcon.vue'
 
 function defaultData (input) {
   var profile = clone(input)
@@ -279,7 +280,8 @@ export default {
     AddButton,
     Avatar,
     AvatarGroup,
-    DialogTitleBanner
+    DialogTitleBanner,
+    ArchiveIcon
   },
   props: {
     goBack: { type: Function },
@@ -366,8 +368,8 @@ export default {
   },
   methods: {
     ...mapActions(['setProfileById', 'setComponent']),
-    goProfileShow () {
-      this.setComponent('profile')
+    goArchive () {
+      this.setComponent('archive')
       this.setProfileById({ id: this.profile.id })
       this.$router.push({ name: 'profileShow', params: { id: this.profile.id } }).catch(() => {})
     },

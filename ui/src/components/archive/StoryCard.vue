@@ -73,13 +73,6 @@
     <v-list-item :disabled="disableClick" :ripple="false" @click.stop="showText()">
       <v-list-item-content >
         <v-list-item-subtitle v-if="fullStory || showArtefact" class="pb-1" style="color:#a7a3a3"> Description </v-list-item-subtitle>
-        <!-- <div v-if="!showArtefact" >
-          <p ref="text" :class="truncateText ? 'description' : ''" v-for="(paragraph, i) in story.description.split('\n\n')" :key="i">
-            <div v-for="(line, i) in paragraph.split('\n')" :key="i">
-              {{ line }}
-            </div>
-          </p>
-        </div> -->
         <p v-if="!showArtefact" ref="text" :class="truncateText ? 'description' : ''">
           {{ story.description }}
         </p>
