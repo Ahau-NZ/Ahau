@@ -93,7 +93,6 @@
               class="blue--text"
             >
               <ArchiveIcon size="normal" color="blue"/>
-              <!-- <v-icon class="blue--text" style="font-size:20px">mdi-account-circle</v-icon> -->
               <span class="pl-2 "> Archive </span>
             </v-btn>
             <v-btn
