@@ -1,32 +1,16 @@
 <template>
-  <!-- <div :class="showProfileView ? 'flexStart': 'flexCenter'"> -->
     <v-container fluid class="px-2" style="margin-top: 64px;">
-
-       <!-- Header  -->
-      <v-row class="pa-5 pb-0" light>
-        <v-col :cols="mobile ? '12':'10'" class="headliner black--text pa-0">
+      <v-row class="pa-5" :class="mobile ? 'pb-0':''" light>
+        <v-col cols="12" md="10" class="headliner black--text pa-0">
           Whakapapa records
           <v-icon color="blue-grey" light @click="toggleWhakapapaHelper" class="infoButton">mdi-information</v-icon>
         </v-col>
         <v-col>
-          <v-btn
-            @click.prevent="dialog = 'new-story'"
-            :class="!mobile ? '' : 'addBtnMobile'"
-            :color="!mobile ? 'white' : 'rgba(160, 35, 36,1)'"
-            elevation="4"
-            fab
-            light
-            fixed
-            :bottom="mobile"
-            :right="mobile"
-          >
-            <v-icon :large="!mobile" :class="!mobile ? 'black--text' : 'white--text'">mdi-plus</v-icon>
-          </v-btn>
+          <BigAddButton @click="toggleViewForm" />
         </v-col>
-
       </v-row>
       <v-row>
-        <v-col class='pt-0' cols="12">
+        <v-col :class="mobile ? 'pt-0':''" cols="12" md="10">
           <div v-if="!whakapapas || (whakapapas && whakapapas.length < 1)" class="px-8 py-12 subtitle grey--text " :class="{
               'text-center': mobile
             }">
@@ -46,7 +30,6 @@
           </div>
         </v-col>
       </v-row>
-
       <NewViewDialog v-if="showViewForm" :show="showViewForm" title="Create a new whakapapa" @close="toggleViewForm"
         @submit="handleStepOne($event)" />
       <!-- TODO: add suggestions in here as well? -->
@@ -54,12 +37,8 @@
         @getSuggestions="getSuggestions" title="Add a Person" @create="handleDoubleStep($event)"
         :withRelationships="false" @close="close"
       />
-
       <WhakapapaListHelper v-if="showWhakapapaHelper" :show="showWhakapapaHelper" @close="toggleWhakapapaHelper" />
-
     </v-container>
-  <!-- </div> -->
-
 </template>
 
 <script>
@@ -75,6 +54,7 @@ import NewViewDialog from '@/components/dialog/whakapapa/NewViewDialog.vue'
 import NewNodeDialog from '@/components/dialog/profile/NewNodeDialog.vue'
 import WhakapapaListHelper from '@/components/dialog/whakapapa/WhakapapaListHelper.vue'
 import Avatar from '@/components/Avatar.vue'
+import BigAddButton from '@/components/button/BigAddButton.vue'
 
 import { saveLink } from '@/lib/link-helpers.js'
 import { savePerson } from '@/lib/person-helpers.js'
@@ -101,10 +81,6 @@ export default {
       showViewForm: false,
       newView: null,
       columns: [],
-      profileWhakapapaView: {
-        type: Boolean,
-        default: false
-      },
       showProfileView: false,
       whakapapas: []
     }
@@ -383,28 +359,14 @@ export default {
     NewViewDialog,
     NewNodeDialog,
     WhakapapaListHelper,
-    Avatar
+    Avatar,
+    BigAddButton
   }
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
-  .body-width {
-    max-width: 900px;
-  }
-
-  .pointer {
-    cursor: pointer;
-  }
-
-  .cover-image {
-    min-width: 150px;
-    width: 150px;
-    background-color: #fff;
-    background-position: center center;
-  }
-
   .headliner {
     font-size: 1em;
     text-transform: uppercase;
@@ -412,50 +374,8 @@ export default {
     letter-spacing: 5px;
   }
 
-  .desktopContainer {
-    margin-top: 64px;
-    width: 80%;
-  }
-
-  .mobileContainer {
-    padding: 0px;
-  }
-
-  .top-margin {
-    margin-top: 80px;
-  }
-
-  .profileWhakapapaView {
-    margin-left: 0 !important
-  }
-
-  .positionRight {
-    position: absolute;
-    top: 64px;
-    right: 50px;
-  }
-
-  .addBtn {
-    position: fixed;
-    top: 80px;
-    right:100px
-  }
-
-  .addBtnMobile {
-    bottom: 16px !important;
-  }
-
   .infoButton {
     margin-left: 10px;
   }
 
-  .flexStart {
-    display: flex;
-    justify-content: flex-start;
-  }
-
-  .flexCenter {
-    display:flex;
-    justify-content: center;
-  }
 </style>

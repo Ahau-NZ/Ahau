@@ -1,21 +1,9 @@
 <template>
   <div class="py-4">
-    <v-row class="mb-5">
+    <v-row>
       <v-col cols="10" class="headliner black--text pa-0 pl-4 pt-5" :class="!mobile ? 'pt-2':''">Tribes</v-col>
       <v-col >
-        <v-btn
-          @click.prevent="dialog = 'new-story'"
-          :class="!mobile ? '' : 'addBtnMobile'"
-          :color="!mobile ? 'white' : 'rgba(160, 35, 36,1)'"
-          elevation="4"
-          fab
-          light
-          :fixed="mobile"
-          :bottom="mobile"
-          :right="mobile"
-        >
-          <v-icon :large="!mobile" :class="!mobile ? 'black--text' : 'white--text'">mdi-plus</v-icon>
-        </v-btn>
+        <BigAddButton @click="$emit('add-community-dialog')" />
       </v-col>
     </v-row>
     <v-row>
@@ -80,7 +68,7 @@
                 </v-col>
                 <v-col cols="10" class="pb-6" justify-center>
                   <p style="color:black;" class="mb-0">{{pataka.preferredName}} </p>
-                  <span v-if="pataka.online" style="color:#37e259; position:absolute; font-size:11px">online</span> 
+                  <span v-if="pataka.online" style="color:#37e259; position:absolute; font-size:11px">online</span>
                 </v-col>
               </v-row>
             </div>
@@ -122,6 +110,7 @@ import ProfileCard from '@/components/profile/ProfileCard.vue'
 import Avatar from '@/components/Avatar.vue'
 import NewPatakaDialog from '@/components/dialog/community/NewPatakaDialog.vue'
 import ConfirmationText from '@/components/dialog/ConfirmationText.vue'
+import BigAddButton from '@/components/button/BigAddButton.vue'
 
 const get = require('lodash.get')
 
@@ -319,10 +308,6 @@ export default {
   background-size: 50px 50px;
 }
 
-.connect-title {
-  flex: 1;
-}
-
 .headliner {
   font-size: 1em;
   text-transform: uppercase;
@@ -336,16 +321,6 @@ export default {
   color: rgba(0, 0, 0, 0.6);
 }
 
-.addBtn {
-  position: fixed;
-  top: 80px;
-  right: 100px;
-}
-
-.addBtnMob {
-  bottom: 16px !important;
-}
-
 .rounded-border {
   color: black;
   border: 0.5px solid rgba(0,0,0,0.3);
@@ -353,4 +328,5 @@ export default {
   background-color: white;
   margin-bottom:20px;
 }
+
 </style>
