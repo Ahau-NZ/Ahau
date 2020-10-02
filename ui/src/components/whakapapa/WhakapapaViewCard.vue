@@ -1,18 +1,22 @@
 <template>
-  <v-card :to="view.id ? { name: 'whakapapaShow', params: { id: view.id }} : '/whakapapa'" light>
-    <v-container class="pa-0">
-      <v-list-item-icon class="pt-1 mt-0" style="position:absolute; top:5px; right:1px; margin-right:0px">
-        <v-list-item-subtitle class="no-flex mt-n1 mr-n3" :style="mobile ? 'font-size:0.7rem':'font-size:0.8rem'">Kaitiaki</v-list-item-subtitle>
-        <AvatarGroup :profiles="view.kaitiaki" customClass="ma-0 pa-0 pt-1" style="position:relative; bottom:15px; left:10px" :size="mobile ? '25px':'30px'" spacing="pr-1"/>
-      </v-list-item-icon>
-      <div class="d-flex flex-no-wrap flex-start align-stretch">
-        <div class="cover-image" :style="background(view)"></div>
-        <div class="information">
-          <v-card-title v-text="view.name" class="pt-3"/>
-          <v-card-subtitle v-text="description" class="pb-3"/>
-          <v-card-text v-if="hasSlotContent">
-            <slot></slot>
-          </v-card-text>
+  <v-card
+    light
+    @click="goWhakapapaShow()"
+  >
+      <v-container class="pa-0">
+        <v-list-item-icon class="pt-1 mt-0" style="position:absolute; top:5px; right:1px; margin-right:0px">
+          <v-list-item-subtitle class="no-flex mt-n1 mr-n3" :style="mobile ? 'font-size:0.7rem':'font-size:0.8rem'">Kaitiaki</v-list-item-subtitle>
+          <AvatarGroup :profiles="view.kaitiaki" customClass="ma-0 pa-0 pt-1" style="position:relative; bottom:15px; left:10px" :size="mobile ? '25px':'30px'" spacing="pr-1"/>
+        </v-list-item-icon>
+        <div class="d-flex flex-no-wrap flex-start align-stretch">
+          <div class="cover-image" :style="background(view)"></div>
+          <div class="information">
+            <v-card-title v-text="view.name" class="pt-3" style="word-break: break-word;"/>
+            <v-card-subtitle v-text="description" class="pb-3"/>
+            <v-card-text v-if="hasSlotContent">
+              <slot></slot>
+            </v-card-text>
+          </div>
         </div>
       </div>
     </v-container>
@@ -22,6 +26,7 @@
 <script>
 import whakapapa from '@/assets/whakapapa.png'
 import AvatarGroup from '@/components/AvatarGroup.vue'
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
   name: 'WhakapapaViewCard',
@@ -34,6 +39,7 @@ export default {
     AvatarGroup
   },
   computed: {
+    ...mapGetters(['currentProfile']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -54,6 +60,11 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['setGoBack']),
+    goWhakapapaShow () {
+      this.setGoBack(this.currentProfile.id)
+      this.$router.push({ name: 'whakapapaShow', params: { id: this.view.id } })
+    },
     background (view) {
       if (view.image && view.image.uri) {
         return {
