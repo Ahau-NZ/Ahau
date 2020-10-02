@@ -1,23 +1,10 @@
 <template>
   <div class="py-4">
-    <v-row class="top-margin mb-5">
-      <v-col class="headliner black--text pa-0 pl-4 pt-2" :class="!mobile ? 'pt-2':''">Tribes</v-col>
-      <div>
-        <v-btn
-          :medium="!mobile"
-          text
-          :x-small="mobile"
-          :class="mobile ? 'addBtnMob' : 'addBtn'"
-          class="my-2"
-          fab
-          color="white"
-          @click="$emit('add-community-dialog')"
-          elevation="4"
-          z-index="1"
-        >
-          <v-icon :large="!mobile" class="black--text">mdi-plus</v-icon>
-        </v-btn>
-      </div>
+    <v-row>
+      <v-col cols="10" class="headliner black--text pa-0 pl-4 pt-5" :class="!mobile ? 'pt-2':''">Tribes</v-col>
+      <v-col >
+        <BigAddButton @click="$emit('add-community-dialog')" />
+      </v-col>
     </v-row>
     <v-row>
       <v-col cols="12" md="9">
@@ -58,14 +45,10 @@
                   <v-card flat light class="rounded-border" :width="!mobile ? '190px':'100vw'" @click="goTribe(tribe)">
                     <v-img height="150px" :src="getImage(tribe.public[0])" class="card-image" />
                     <v-card-title class="subtitle font-weight-bold pb-2">
-                      {{
-                      tribe.public[0].preferredName
-                      }}
+                      {{ tribe.public[0].preferredName }}
                     </v-card-title>
                     <v-card-text class="body-2">
-                      {{
-                      shortDescription(tribe.public[0])
-                      }}
+                      {{ shortDescription(tribe.public[0]) }}
                     </v-card-text>
                   </v-card>
                 </v-col>
@@ -74,16 +57,18 @@
           </v-row>
         </div>
       </v-col>
-      <v-col cols="12" md='3' class="py-0 pr-8 pl-4 mt-12">
+      <v-col cols="12" md='3' :class="mobile ? 'px-6':'py-0 pr-8 pl-4 mt-12'">
+        <v-divider v-if="mobile" light></v-divider>
         <ProfileCard title="Pātaka" class="mt-7">
           <template v-slot:content>
             <div v-if="patakas.length > 0">
-              <v-row v-for="pataka in patakas" :key="pataka.id" class="justify-center align-center ma-0 ml-4">
+              <v-row v-for="pataka in patakas" :key="pataka.id" class="align-center ml-6">
                 <v-col cols="2" class="pt-0 pl-0">
                   <Avatar :size="mobile ? '60px' : '45px'" :image="pataka.avatarImage" :alt="pataka.preferredName" :isView="!pataka.avatarImage" :online="pataka.online"/>
                 </v-col>
-                <v-col cols="10" class="py-0">
-                  <p style="color:black;">{{pataka.preferredName}}</p>
+                <v-col cols="10" class="pb-6" justify-center>
+                  <p style="color:black;" class="mb-0">{{pataka.preferredName}} </p>
+                  <span v-if="pataka.online" style="color:#37e259; position:absolute; font-size:11px">online</span>
                 </v-col>
               </v-row>
             </div>
@@ -125,6 +110,7 @@ import ProfileCard from '@/components/profile/ProfileCard.vue'
 import Avatar from '@/components/Avatar.vue'
 import NewPatakaDialog from '@/components/dialog/community/NewPatakaDialog.vue'
 import ConfirmationText from '@/components/dialog/ConfirmationText.vue'
+import BigAddButton from '@/components/button/BigAddButton.vue'
 
 const get = require('lodash.get')
 
@@ -226,7 +212,10 @@ export default {
         }
       }`,
       pollInterval: 10e3,
-      fetchPolicy: 'no-cache'
+      fetchPolicy: 'no-cache',
+      update (data) {
+        return data.connectedPeers
+      }
     }
   },
   computed: {
@@ -319,10 +308,6 @@ export default {
   background-size: 50px 50px;
 }
 
-.connect-title {
-  flex: 1;
-}
-
 .headliner {
   font-size: 1em;
   text-transform: uppercase;
@@ -336,18 +321,6 @@ export default {
   color: rgba(0, 0, 0, 0.6);
 }
 
-.addBtn {
-  position: fixed;
-  top: 80px;
-  right: 100px;
-}
-
-.addBtnMob {
-  position: absolute;
-  top: 10px;
-  right: 20px;
-}
-
 .rounded-border {
   color: black;
   border: 0.5px solid rgba(0,0,0,0.3);
@@ -355,4 +328,5 @@ export default {
   background-color: white;
   margin-bottom:20px;
 }
+
 </style>

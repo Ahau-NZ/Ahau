@@ -1,10 +1,10 @@
 <template>
 <div>
-  <v-container fluid class="body-width px-2">
+  <v-container fluid class="px-2">
     <!-- VIEW STORY OVERLAY -->
     <div :class="{ 'showOverlay': showStory && !mobile }"></div>
-    <v-row v-if="!showStory" class="top-margin mb-5">
-      <v-col cols="12" class="headliner black--text pa-0 pl-4 pt-2">
+    <v-row v-if="!showStory" class="top-margin mb-10">
+      <v-col cols="10" class="headliner black--text pa-0 pl-4 pt-2">
         Archive records
         <v-icon color="blue-grey" light @click="toggleArchiveHelper" class="infoButton">mdi-information</v-icon>
       </v-col>
@@ -18,27 +18,14 @@
         <!-- <v-col cols="12" md="10" sm="10" :class="!mobile ? 'pl-12 my-6' : 'py-0 ma-0'" align="start">
         <h1 class="title black--text ">Collections</h1>
       </v-col> -->
-        <div>
+        <v-col>
           <!-- TODO: Search records -->
           <!-- <v-btn :class="mobile ? 'searchBtnMob' : 'searchBtn'" :small="!mobile" :x-small="mobile" class="my-2" fab flat color="white" @click="editProfile()">
           <v-icon small class="black--text">mdi-magnify</v-icon>
         </v-btn>            -->
         <!-- <v-btn :medium="!mobile" :x-small="mobile" :class="mobile ? 'addBtnMob' : 'addBtn'" class="my-2" fab color="white" @click.stop="openContextMenu($event)"> -->
-        <v-btn
-          @click.prevent="dialog = 'new-story'"
-          :class="!mobile ? 'addBtn my-2' : 'addBtnMobile'"
-          :color="!mobile ? 'white' : 'rgba(160, 35, 36,1)'"
-          elevation="4"
-          fab
-          light
-
-          :fixed="mobile"
-          :bottom="mobile"
-          :right="mobile"
-        >
-          <v-icon :large="!mobile" :class="!mobile ? 'black--text' : 'white--text'">mdi-plus</v-icon>
-        </v-btn>
-      </div>
+        <BigAddButton @click.prevent="dialog = 'new-story'" />
+      </v-col>
     </v-row>
     <v-row v-if="profileStories && profileStories.length > 0">
       <transition name="change" mode="out-in">
@@ -101,6 +88,7 @@ import { saveArtefact } from '@/lib/artefact-helpers.js'
 import { saveLink, TYPES } from '@/lib/link-helpers.js'
 import { mapGetters, mapActions, mapMutations } from 'vuex'
 import NewRecordDialog from '@/components/dialog/archive/NewRecordDialog.vue'
+import BigAddButton from '@/components/button/BigAddButton.vue'
 
 // TODO: Replace with Archive Helper (doesnt exist yet)
 import ArchiveHelper from '@/components/dialog/archive/ArchiveHelper.vue'
@@ -110,7 +98,8 @@ export default {
   components: {
     StoryCard,
     NewRecordDialog,
-    ArchiveHelper
+    ArchiveHelper,
+    BigAddButton
     // CollectionGroup,
     // VueContext,
   },
@@ -397,18 +386,8 @@ export default {
     right: 80px;
   }
 
-.addBtnMobile {
-    bottom: 16px !important;
-  }
-
   .infoButton {
     margin-left: 10px;
-  }
-
-  .addBtnMob {
-    position: absolute;
-    top: 80px;
-    right: 20px
   }
 
   .niho-bg {

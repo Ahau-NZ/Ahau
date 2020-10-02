@@ -2,7 +2,6 @@
   <v-card
     light
     @click="goWhakapapaShow()"
-    style="word-break: break-word;"
   >
       <v-container class="pa-0">
         <v-list-item-icon class="pt-1 mt-0" style="position:absolute; top:5px; right:1px; margin-right:0px">
@@ -19,7 +18,8 @@
             </v-card-text>
           </div>
         </div>
-      </v-container>
+      </div>
+    </v-container>
   </v-card>
 </template>
 
