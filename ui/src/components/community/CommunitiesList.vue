@@ -130,7 +130,8 @@ export default {
     ProfileCard,
     Avatar,
     NewPatakaDialog,
-    ConfirmationText
+    ConfirmationText,
+    BigAddButton
   },
   apollo: {
     tribes: {
@@ -230,7 +231,7 @@ export default {
     },
     patakas () {
       return this.patakasRaw.map(pataka => {
-        if (this.connectedPeers.pataka.some(peer => peer.id === pataka.id)) {
+        if (this.connectPeers && this.connectedPeers.pataka.some(peer => peer.id === pataka.id)) {
           return {
             ...pataka,
             online: true
