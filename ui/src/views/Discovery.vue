@@ -22,7 +22,7 @@ export default {
     CommunitiesList
   },
   beforeMount () {
-    window.scrollTo(0,0)
+    window.scrollTo(0, 0)
   },
   computed: {
     mobile () {

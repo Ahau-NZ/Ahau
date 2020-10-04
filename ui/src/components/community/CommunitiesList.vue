@@ -231,7 +231,7 @@ export default {
     },
     patakas () {
       return this.patakasRaw.map(pataka => {
-        if (this.connectPeers && this.connectedPeers.pataka.some(peer => peer.id === pataka.id)) {
+        if (this.connectedPeers && this.connectedPeers.pataka.some(peer => peer.id === pataka.id)) {
           return {
             ...pataka,
             online: true

@@ -11,22 +11,24 @@
       </v-row>
       <v-row>
         <v-col :class="mobile ? 'pt-0':''" cols="12" md="10">
-          <div v-if="!whakapapas || (whakapapas && whakapapas.length < 1)" class="px-8 py-12 subtitle grey--text " :class="{
+          <div v-if="!whakapapas || (whakapapas && whakapapas.length < 1) || (whakapapas && whakapapas[0].views.length < 1) " class="px-8 py-12 subtitle grey--text " :class="{
               'text-center': mobile
             }">
             No whakapapa record found
           </div>
-          <div v-for="(group, index ) in whakapapas" :key="index" class="py-4">
-            <v-row class="pl-6 pb-3">
-              <Avatar :size="mobile ? '50px' : '40px'" :image="group.image" :alt="group.name" :isView="!group.image" />
-              <p class="black--text overline pl-6 pt-1" style="font-size:20px">{{group.name}} records</p>
-            </v-row>
-            <v-row v-for="view in group.views" :key="view.id" dense class="mb-2">
-              <v-col cols="12" md="10">
-                <WhakapapaViewCard :view="view" cropDescription />
-              </v-col>
-            </v-row>
-            <v-divider light class="mt-12" style="max-width:80%"></v-divider>
+          <div v-else>
+            <div v-for="(group, index ) in whakapapas" :key="index" class="py-4">
+              <v-row class="pl-6 pb-3">
+                <Avatar :size="mobile ? '50px' : '40px'" :image="group.image" :alt="group.name" :isView="!group.image" />
+                <p class="black--text overline pl-6 pt-1" style="font-size:20px">{{group.name}} records</p>
+              </v-row>
+              <v-row v-for="view in group.views" :key="view.id" dense class="mb-2">
+                <v-col cols="12" md="10">
+                  <WhakapapaViewCard :view="view" cropDescription />
+                </v-col>
+              </v-row>
+              <v-divider light class="mt-12" style="max-width:80%"></v-divider>
+            </div>
           </div>
         </v-col>
       </v-row>
