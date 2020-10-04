@@ -230,6 +230,7 @@ export default {
       return this.tribes.filter(tribe => tribe.private.length < 1 && tribe.public.length > 0)
     },
     patakas () {
+      if (!this.patakasRaw) return 
       return this.patakasRaw.map(pataka => {
         if (this.connectedPeers && this.connectedPeers.pataka.some(peer => peer.id === pataka.id)) {
           return {
