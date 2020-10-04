@@ -24,7 +24,7 @@
           <v-icon small class="black--text">mdi-magnify</v-icon>
         </v-btn>            -->
         <!-- <v-btn :medium="!mobile" :x-small="mobile" :class="mobile ? 'addBtnMob' : 'addBtn'" class="my-2" fab color="white" @click.stop="openContextMenu($event)"> -->
-        <BigAddButton @click.prevent="dialog = 'new-story'" />
+        <BigAddButton @click="dialog = 'new-story'" />
       </v-col>
     </v-row>
     <v-row v-if="profileStories && profileStories.length > 0">

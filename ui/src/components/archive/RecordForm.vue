@@ -108,7 +108,7 @@
             />
 
             <!-- ADD MENTIONS -->
-            <v-col cols="12" md="auto" class="pa-5">
+            <v-col cols="12" md="6" class="pa-5">
               <v-tooltip top open-delay="700" :disabled="showMentions">
                 <template v-slot:activator="{ on }">
                   <div v-on="on">
@@ -139,7 +139,7 @@
             </v-col>
 
             <!-- ADD CONTRIBUTORS -->
-            <v-col cols="12" md="auto" class="pa-5">
+            <v-col cols="12" md="6" class="pa-5">
               <v-tooltip top open-delay="700" :disabled="showContributors">
                 <template v-slot:activator="{ on }">
                   <div v-on="on">
