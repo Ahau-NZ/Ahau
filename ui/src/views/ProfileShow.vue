@@ -74,6 +74,9 @@ export default {
       loaded: false
     }
   },
+  mounted () {
+    this.setProfileStories()
+  },
   computed: {
     ...mapGetters(['currentProfile', 'activeComponent', 'showStory', 'showArtefact', 'currentTribe']),
     mobile () {
@@ -101,12 +104,14 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['getAllStories', 'setProfileById', 'setWhoami', 'setShowArtefact', 'setDialog', 'setTribes']),
+    ...mapActions(['getAllStories', 'setProfileById', 'setWhoami', 'setShowArtefact', 'setDialog', 'setTribes', 'setProfileStories']),
     async setupProfile (id) {
+      console.log('setup profile in profile show')
+      // this.getAllStories()
       this.setProfileById({ id })
-      this.getAllStories()
-      this.setTribes()
-    }
+      // this.setTribes()
+    },
+
   }
 }
 </script>

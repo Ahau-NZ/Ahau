@@ -68,8 +68,8 @@ const actions = {
       }))
     }
     if (!type) {
+      console.log('updating current profile')
       commit('updateCurrentProfile', person)
-      dispatch('setProfileStories', rootState.stories)
     }
     commit('updateSelectedProfile', person)
   }

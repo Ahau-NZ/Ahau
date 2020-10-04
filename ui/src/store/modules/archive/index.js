@@ -87,25 +87,22 @@ const actions = {
   },
   setProfileStories ({ commit, rootState }) {
     const stories = rootState.archive.stories
-    if (rootState.person.currentProfile.type === 'person') {
+    if (rootState.person.currentProfile && rootState.person.currentProfile.type === 'person') {
       const profileStories = stories.filter((story) =>
         story.mentions.some((mention) =>
           mention.profile.id === rootState.person.currentProfile.id
         )).reverse()
       return commit('updateProfileStories', profileStories)
-    } else if (rootState.person.currentProfile.type === 'community') {
+    } else if (rootState.person.currentProfile && rootState.person.currentProfile.type === 'community') {
       const communityStories = stories.filter((story) =>
         story.recps.some((recp) =>
           recp === rootState.tribe.currentTribe.id
         )).reverse()
       return commit('updateProfileStories', communityStories)
-    } else {
-      console.error('currentProfile.type not supported, should be person or community')
-      commit('updateProfileStories', stories)
     }
   },
 
-  async getAllStories ({ commit }) {
+  async getAllStories ({ commit, dispatch }) {
     const res = await apollo.query(GET_ALL_STORIES)
 
     if (res.errors) {
@@ -114,6 +111,7 @@ const actions = {
       return
     }
     commit('updateStories', res.data.stories)
+    dispatch('setProfileStories')
   }
 }
 

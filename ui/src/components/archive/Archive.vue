@@ -243,7 +243,6 @@ export default {
         } else {
           this.toggleStory(story)
         }
-
         console.warn('Potentially loading a large amount of data with each change to a story...')
         this.getAllStories()
       } catch (err) {

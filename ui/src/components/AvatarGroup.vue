@@ -27,7 +27,7 @@
             @click="profileClick(profile)"
             :deletable="deletable"
             @delete="$emit('delete', i)"
-            :isView="isView || profile.type === 'community'"
+            :isView="isView || (profile.type === 'community' && !profile.avatarImage)"
             :dark="dark"
             :row="row"
           />

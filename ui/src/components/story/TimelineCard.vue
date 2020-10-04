@@ -113,7 +113,7 @@ export default {
   },
   methods: {
     sortDesc (data) {
-      var sortDescending = data.sort((a, b) => convertToTime(a.timeInterval) - convertToTime(b.timeInterval))
+      var sortDescending = data.sort((a, b) => convertToTime(a.timeInterval) - convertToTime(b.timeInterval)).reverse()
       return sortDescending
     },
     getDotColour (iconType) {
