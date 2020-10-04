@@ -130,9 +130,6 @@ export default {
       type: Function
     }
   },
-  beforeMount () {
-    this.getAllStories()
-  },
   computed: {
     ...mapGetters(['profileStories', 'showStory', 'whoami', 'currentProfile', 'currentTribe', 'currentStory', 'showArtefact', 'storeDialog']),
     mobile () {
