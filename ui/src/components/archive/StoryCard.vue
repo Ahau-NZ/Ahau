@@ -71,13 +71,13 @@
       </v-list-item-content>
     </v-list-item>
     <v-list-item :disabled="disableClick" :ripple="false" @click.stop="showText()">
-      <v-list-item-content >
+      <v-list-item-content>
         <v-list-item-subtitle v-if="fullStory || showArtefact" class="pb-1" style="color:#a7a3a3"> Description </v-list-item-subtitle>
         <p v-if="!showArtefact" ref="text" :class="truncateText ? 'description' : ''">
-          {{ story.description }}
+          <span v-for="(line, index) in story.description.split('\n')" :key="index">{{line}}<br></span>
         </p>
-        <p v-if="artefact.description" ref="text" style="color:white" :class="truncateText ? 'description' : ''" class="text-justify">
-          {{ artefact.description }}
+        <p v-if="artefact.description" ref="text" style="color:white" class="text-justify">
+          <span v-for="(line, index) in artefact.description.split('\n')" :key="index">{{line}}<br></span>
         </p>
       </v-list-item-content>
     </v-list-item>

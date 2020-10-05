@@ -394,7 +394,6 @@ export default {
       } else {
         this.setCurrentTribeById(res.data.savePrivate)
         this.setProfileById({ id: res.data.savePrivate })
-        
       }
     },
     async savePerson (input) {
