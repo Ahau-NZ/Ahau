@@ -75,7 +75,7 @@ export default {
     }
   },
   mounted () {
-    this.setProfileStories()
+    // this.setProfileStories()
   },
   computed: {
     ...mapGetters(['currentProfile', 'activeComponent', 'showStory', 'showArtefact', 'currentTribe']),
