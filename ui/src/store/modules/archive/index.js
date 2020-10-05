@@ -86,17 +86,14 @@ const actions = {
     commit('updateShowArtefact')
   },
   setProfileStories ({ commit, rootState }) {
-    console.log('setting profile stories')
     const stories = rootState.archive.stories
     if (rootState.person.currentProfile && rootState.person.currentProfile.type === 'person') {
-      console.log('its a person profile')
       const profileStories = stories.filter((story) =>
         story.mentions.some((mention) =>
           mention.profile.id === rootState.person.currentProfile.id
         )).reverse()
       return commit('updateProfileStories', profileStories)
     } else if (rootState.person.currentProfile && rootState.person.currentProfile.type === 'community') {
-      console.log('its a community profile')
       const communityStories = stories.filter((story) =>
         story.recps.some((recp) =>
           recp === rootState.tribe.currentTribe.id

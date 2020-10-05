@@ -110,7 +110,7 @@ export default {
       // this.getAllStories()
       this.setProfileById({ id })
       // this.setTribes()
-    },
+    }
 
   }
 }
