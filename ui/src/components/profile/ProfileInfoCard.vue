@@ -7,7 +7,7 @@
         <ProfileInfoItem v-if="profile.type === 'person'" class="br" :title="'Occupation'" :value="profile.profession" />
         <ProfileInfoItem v-if="profile.type === 'person'" :title="'City, Country'" :value="profile.location" />
       </v-row>
-      <v-row v-if="isFamily" class="rounded-border py-6">
+      <v-row v-if="isFamily" class="rounded-border py-2">
         <div v-if="profile.parents && profile.parents.length > 0" class="pl-6">
           <AvatarGroup :profiles="profile.parents" group-title="Parents" size="50px" :show-labels="true"
             @profile-click="openProfile($event)">

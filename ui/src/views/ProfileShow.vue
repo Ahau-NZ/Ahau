@@ -101,12 +101,12 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['getAllStories', 'setProfileById', 'setWhoami', 'setShowArtefact', 'setDialog', 'setTribes']),
+    ...mapActions(['getAllStories', 'setProfileById', 'setWhoami', 'setShowArtefact', 'setDialog', 'setTribes', 'setProfileStories']),
     async setupProfile (id) {
       this.setProfileById({ id })
-      this.getAllStories()
       this.setTribes()
     }
+
   }
 }
 </script>

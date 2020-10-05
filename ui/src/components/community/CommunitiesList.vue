@@ -230,7 +230,7 @@ export default {
       return this.tribes.filter(tribe => tribe.private.length < 1 && tribe.public.length > 0)
     },
     patakas () {
-      if (!this.patakasRaw) return 
+      if (!this.patakasRaw) return
       return this.patakasRaw.map(pataka => {
         if (this.connectedPeers && this.connectedPeers.pataka.some(peer => peer.id === pataka.id)) {
           return {
@@ -253,8 +253,8 @@ export default {
       this.confirmationText = text
       // update to check ssb.status
     },
-    goTribe (tribe) {
-      this.setCurrentTribe(tribe)
+    async goTribe (tribe) {
+      await this.setCurrentTribe(tribe)
       if (tribe.private.length > 0) this.goProfile(tribe.private[0])
       else this.goProfile(tribe.public[0])
     },

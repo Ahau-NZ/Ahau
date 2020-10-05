@@ -70,7 +70,7 @@ function yearMonthDayFormatter (date) {
 
 export function convertToTime (date) {
   const lower = date.split('/')
-  var time = new Date(lower)
+  var time = new Date(lower[0])
   return time
 }
 

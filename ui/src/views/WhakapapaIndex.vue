@@ -92,6 +92,11 @@ export default {
       this.showProfileView = true
     }
   },
+  watch: {
+    async currentProfile (newVal) {
+      this.whakapapas = await this.groupedWhakapapaViews()
+    }
+  },
   computed: {
     ...mapGetters(['whoami', 'currentAccess', 'defaultAccess', 'currentProfile', 'currentTribe']),
     mobile () {
