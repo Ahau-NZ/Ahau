@@ -49,10 +49,10 @@ const actions = {
     }
     commit('updateTribes', tribes.data.tribes)
   },
-  async setCurrentTribeById ({ commit, dispatch, rootState }, id) {
+  async setCurrentTribeById ({ dispatch, rootState }, id) {
     await dispatch('setTribes')
     var tribe = rootState.tribe.tribes.filter(tribe => tribe.private.length > 0).find(tribe => tribe.private[0].id === id)
-    commit('updateCurrentTribe', tribe)
+    dispatch('setCurrentTribe', tribe)
   }
 }
 
