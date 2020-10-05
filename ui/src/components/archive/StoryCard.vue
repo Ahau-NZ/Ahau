@@ -73,7 +73,7 @@
     <v-list-item :disabled="disableClick" :ripple="false" @click.stop="showText()">
       <v-list-item-content>
         <v-list-item-subtitle v-if="fullStory || showArtefact" class="pb-1" style="color:#a7a3a3"> Description </v-list-item-subtitle>
-        <p v-if="!showArtefact" ref="text" :class="truncateText ? 'description' : ''">
+        <p v-if="!showArtefact && story.description" ref="text" :class="truncateText ? 'description' : ''">
           <span v-for="(line, index) in story.description.split('\n')" :key="index">{{line}}<br></span>
         </p>
         <p v-if="artefact.description" ref="text" style="color:white" class="text-justify">
@@ -272,7 +272,7 @@ export default {
   },
   mounted () {
     // grab text height to figure out if we need to hide it or not
-    this.textHeight = this.$refs.text.offsetHeight
+    this.textHeight = this.$refs.text ? this.$refs.text.offsetHeight : 0
     if (this.fullStory) {
       this.truncateText = false
     }
