@@ -206,7 +206,7 @@ export default {
           }
           }
         }
-    }`,
+      }`,
       update (data) {
         if (!data.whoami.public.profile || !data.whoami.public.profile.preferredName) this.$router.push({ name: 'login' })
         return {
@@ -299,6 +299,10 @@ export default {
           }
         }
       }`,
+      update (data) {
+        return data.tribes.filter(tribe => tribe.public && tribe.public[0])
+        // TODO check why this api is returning tribes with no public profiles?
+      },
       pollInterval: 10 * SECONDS
     }
   },

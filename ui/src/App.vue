@@ -54,6 +54,7 @@ export default {
   },
   mounted () {
     this.setWhoami()
+    this.getAllStories()
     if (process.env.VUE_APP_PLATFORM === 'cordova') {
       navigator.splashscreen.hide()
       nodejsClient.start({
@@ -65,7 +66,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setWhoami'])
+    ...mapActions(['setWhoami', 'getAllStories'])
   },
   components: {
     Appbar,
@@ -73,7 +74,7 @@ export default {
     DialogHandler
   },
   // this watch add class to body depending on the route clicked.
-  // used for changing body backgrounds, unique to each route.
+  // used for changing body backgrounds, unique to each .route.
   watch: {
     '$route.name': {
       handler (to, from) {
@@ -138,6 +139,11 @@ body {
   padding-top: 56px !important;
 }
 
+.v-timeline--dense .v-timeline-item__opposite {
+  display: inline-block !important;
+  flex:none
+}
+
 .stop-scroll {
   max-height: 100vh !important;
   overflow: hidden !important;
@@ -149,7 +155,6 @@ body {
   bottom: 5px;
   right: 10px;
   font-size: .8rem;
-
   transition: all .3s ease-in;
 
   span {

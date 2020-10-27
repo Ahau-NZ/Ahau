@@ -1,13 +1,12 @@
 <template>
   <v-row ref="sideNav" class="sideNav" :class="position" v-scroll="onScroll">
-    <v-col cols="12" md="2" :class="nonMember ? 'px-3 pt-3' : mobile ? 'px-6': tablet ? 'pt-12':''">
-      <v-col
-        align="center"
+    <v-col :class="nonMember ? 'px-3 pt-3' : mobile ? 'px-6': tablet ? 'pt-12':''">
+      <v-row
+        justify-center
         v-if="!mobile"
         :class="tablet ? 'pa-2 pt-5 ml-6':'pa-2 ml-12'"
         cols="12"
       >
-        <v-row cols="12" xs="12" sm="12">
           <v-btn
             :class="tablet ? 'pl-2':''"
             @click="setActive('profile')"
@@ -24,11 +23,10 @@
               :isView="profile.type === 'community' && !profile.avatarImage"
             />
           </v-btn>
-        </v-row>
-      </v-col>
+      </v-row>
       <RegisterButton v-if="nonMember" :notificationSent="notificationSent" />
-      <v-row v-else :class="mobile ? 'rounded-border box-shadow' : tablet ? 'ml-6' : 'ml-12'">
-        <v-col align="center" :class="mobile ? 'py-0 px-0' : tablet ? 'py-4 px-0' : 'py-1'">
+      <v-row v-else :class="mobile ? 'rounded-border box-shadow' : tablet ? 'ml-10' : 'ml-12 px-4'">
+        <v-col cols="3" md="12" v-if="showWhakapapa" :class="mobile ? 'py-0 px-0' : tablet ? 'py-4 px-0' : 'py-1'">
           <v-btn @click="setActive('profile')" light :fab="mobile" text>
             <v-col class="pa-0" :cols="mobile ? '12' : '2'">
               <Avatar
@@ -63,7 +61,7 @@
             </v-col>
           </v-btn>
         </v-col>-->
-        <v-col :class="mobile ? 'py-0 px-0' : tablet ? 'py-4 px-0' : 'py-1'">
+        <v-col cols="3" md="12" :class="mobile ? 'py-0 px-0' : tablet ? 'py-4 px-0' : 'py-1'">
           <v-btn @click="goArchive()" light :fab="mobile" text>
             <v-col class="pa-0" :cols="mobile ? '12' : '2'">
               <ArchiveIcon
@@ -82,14 +80,14 @@
             </v-col>
           </v-btn>
         </v-col>
-        <v-col :class="mobile ? 'py-0 px-0' : tablet ? 'py-4 px-0' : 'py-1'">
+        <v-col cols="3" md="12" :class="mobile ? 'py-0 px-0' : tablet ? 'py-4 px-0' : 'py-1'">
           <!-- TODO: connect timeline -->
-          <!-- <v-btn @click="setActive('timeline')" light :fab="mobile" text> -->
-          <v-btn @click="setDialog('coming-soon')" light :fab="mobile" text>
+          <v-btn @click="setActive('timeline')" light :fab="mobile" text>
+          <!-- <v-btn @click="setDialog('coming-soon')" light :fab="mobile" text> -->
             <v-col class="pa-0" :cols="mobile ? '12' : '2'">
               <TimelineIcon
                 :size="tablet ? 'x-large' : 'medium'"
-                :color="activeComponent === 'timeline' ? 'red' : 'disabled'"
+                :color="activeComponent === 'timeline' ? 'red' : 'black'"
               />
             </v-col>
             <v-col class="py-0" v-if="!mobile && !isOverflowing">
@@ -101,7 +99,7 @@
             </v-col>
           </v-btn>
         </v-col>
-        <v-col v-if="showWhakapapa" :class="mobile ? 'py-0 px-0' : tablet ? 'py-4 px-0' : 'py-1'">
+        <v-col cols="3" md="12" v-if="showWhakapapa" :class="mobile ? 'py-0 px-0' : tablet ? 'py-4 px-0' : 'py-1'">
           <v-btn @click="setActive('whakapapa')" light :fab="mobile" text>
             <v-col class="pa-0" :cols="mobile ? '12' : '2'">
               <WhakapapaIcon
@@ -169,7 +167,7 @@ export default {
     },
     nonMember () {
       return (
-        this.profile.type === 'community' && 
+        this.profile.type === 'community' &&
         !this.profile.recps
       )
     },
@@ -204,7 +202,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setComponent', 'setShowStory', 'setDialog']),
+    ...mapActions(['setComponent', 'setShowStory', 'setDialog', 'profileStories']),
     goProfile () {
       this.setActive('profile')
       if (this.community) {

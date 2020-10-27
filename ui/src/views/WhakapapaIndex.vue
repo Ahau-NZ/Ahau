@@ -1,49 +1,37 @@
 <template>
-  <div :class="showProfileView ? 'flexStart': 'flexCenter'">
-    <v-container fluid class="white body-width mx-0 px-0" :style="!mobile ? 'margin-top: 64px;' : 'margin-top: 64px;' ">
-
-       <!-- Header  -->
-      <v-row class="pa-5" light>
-        <v-col cols="12" class="headliner black--text pa-0">
+    <v-container fluid class="px-2" style="margin-top: 64px;">
+      <v-row class="pa-5" :class="mobile ? 'pb-0':''" light>
+        <v-col cols="12" md="10" class="headliner black--text pa-0">
           Whakapapa records
           <v-icon color="blue-grey" light @click="toggleWhakapapaHelper" class="infoButton">mdi-information</v-icon>
         </v-col>
-
-        <v-btn
-          @click="toggleViewForm"
-          :medium="!mobile"
-          :class="!mobile ? 'addBtn my-2' : 'addBtnMobile'"
-          :color="!mobile ? 'white' : 'rgba(160, 35, 36,1)'"
-          elevation="4"
-          fab
-          light
-          :fixed="mobile"
-          :bottom="mobile"
-          :right="mobile"
-        >
-          <v-icon :large="!mobile" :class="!mobile ? 'black--text' : 'white--text'">mdi-plus</v-icon>
-        </v-btn>
-
+        <v-col>
+          <BigAddButton @click="toggleViewForm" />
+        </v-col>
       </v-row>
-
-      <div v-if="!whakapapas || (whakapapas && whakapapas.length < 1)" class="px-8 py-12 subtitle grey--text " :class="{
-          'text-center': mobile
-        }">
-        No whakapapa record found
-      </div>
-      <div v-for="(group, index ) in whakapapas" :key="index" class="py-6">
-        <v-row class="pl-6 pb-3">
-          <Avatar :size="mobile ? '50px' : '40px'" :image="group.image" :alt="group.name" :isView="!group.image" />
-          <p class="black--text overline pl-6 pt-1" style="font-size:20px">{{group.name}} records</p>
-        </v-row>
-        <v-row v-for="view in group.views" :key="view.id" dense class="mb-2">
-          <v-col cols="12" md="10">
-            <WhakapapaViewCard :view="view" cropDescription />
-          </v-col>
-        </v-row>
-        <v-divider class="mt-5"></v-divider>
-      </div>
-
+      <v-row>
+        <v-col :class="mobile ? 'pt-0':''" cols="12" md="10">
+          <div v-if="!whakapapas || (whakapapas && whakapapas.length < 1) || (whakapapas && whakapapas[0].views.length < 1) " class="px-8 py-12 subtitle grey--text " :class="{
+              'text-center': mobile
+            }">
+            No whakapapa record found
+          </div>
+          <div v-else>
+            <div v-for="(group, index ) in whakapapas" :key="index" class="py-4">
+              <v-row class="pl-6 pb-3">
+                <Avatar :size="mobile ? '50px' : '40px'" :image="group.image" :alt="group.name" :isView="!group.image" />
+                <p class="black--text overline pl-6 pt-1" style="font-size:20px">{{group.name}} records</p>
+              </v-row>
+              <v-row v-for="view in group.views" :key="view.id" dense class="mb-2">
+                <v-col cols="12" md="10">
+                  <WhakapapaViewCard :view="view" cropDescription />
+                </v-col>
+              </v-row>
+              <v-divider light class="mt-12" style="max-width:80%"></v-divider>
+            </div>
+          </div>
+        </v-col>
+      </v-row>
       <NewViewDialog v-if="showViewForm" :show="showViewForm" title="Create a new whakapapa" @close="toggleViewForm"
         @submit="handleStepOne($event)" />
       <!-- TODO: add suggestions in here as well? -->
@@ -51,12 +39,8 @@
         @getSuggestions="getSuggestions" title="Add a Person" @create="handleDoubleStep($event)"
         :withRelationships="false" @close="close"
       />
-
       <WhakapapaListHelper v-if="showWhakapapaHelper" :show="showWhakapapaHelper" @close="toggleWhakapapaHelper" />
-
     </v-container>
-  </div>
-
 </template>
 
 <script>
@@ -72,6 +56,7 @@ import NewViewDialog from '@/components/dialog/whakapapa/NewViewDialog.vue'
 import NewNodeDialog from '@/components/dialog/profile/NewNodeDialog.vue'
 import WhakapapaListHelper from '@/components/dialog/whakapapa/WhakapapaListHelper.vue'
 import Avatar from '@/components/Avatar.vue'
+import BigAddButton from '@/components/button/BigAddButton.vue'
 
 import { saveLink } from '@/lib/link-helpers.js'
 import { savePerson } from '@/lib/person-helpers.js'
@@ -98,10 +83,6 @@ export default {
       showViewForm: false,
       newView: null,
       columns: [],
-      profileWhakapapaView: {
-        type: Boolean,
-        default: false
-      },
       showProfileView: false,
       whakapapas: []
     }
@@ -109,6 +90,11 @@ export default {
   async created () {
     if (this.$route.name === 'profileShow') {
       this.showProfileView = true
+    }
+  },
+  watch: {
+    async currentProfile (newVal) {
+      this.whakapapas = await this.groupedWhakapapaViews()
     }
   },
   computed: {
@@ -158,7 +144,6 @@ export default {
         }),
         image: this.currentProfile.avatarImage
       }]
-
     },
 
     async getSuggestions ($event) {
@@ -381,28 +366,14 @@ export default {
     NewViewDialog,
     NewNodeDialog,
     WhakapapaListHelper,
-    Avatar
+    Avatar,
+    BigAddButton
   }
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
-  .body-width {
-    max-width: 900px;
-  }
-
-  .pointer {
-    cursor: pointer;
-  }
-
-  .cover-image {
-    min-width: 150px;
-    width: 150px;
-    background-color: #fff;
-    background-position: center center;
-  }
-
   .headliner {
     font-size: 1em;
     text-transform: uppercase;
@@ -410,50 +381,8 @@ export default {
     letter-spacing: 5px;
   }
 
-  .desktopContainer {
-    margin-top: 64px;
-    width: 80%;
-  }
-
-  .mobileContainer {
-    padding: 0px;
-  }
-
-  .top-margin {
-    margin-top: 80px;
-  }
-
-  .profileWhakapapaView {
-    margin-left: 0 !important
-  }
-
-  .positionRight {
-    position: absolute;
-    top: 64px;
-    right: 50px;
-  }
-
-  .addBtn {
-    position: fixed;
-    top: 80px;
-    right:100px
-  }
-
-  .addBtnMobile {
-    bottom: 16px !important;
-  }
-
   .infoButton {
     margin-left: 10px;
   }
 
-  .flexStart {
-    display: flex;
-    justify-content: flex-start;
-  }
-
-  .flexCenter {
-    display:flex;
-    justify-content: center;
-  }
 </style>

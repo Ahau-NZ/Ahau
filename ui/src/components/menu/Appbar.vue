@@ -1,15 +1,11 @@
 <template>
   <div>
     <v-app-bar v-if="mobile || enableMenu" :app="mobile && app" :class="classObject" flat color="#303030" fixed>
-      <v-btn v-if="isgoBack" @click="goBack" icon dark>
-        <v-icon>mdi-arrow-left</v-icon>
-      </v-btn>
       <template v-if="!isgoBack">
         <NotificationPanel/>
       </template>
-      <BackButton v-if="!mobile" @go-back="goBack"/>
+      <BackButton v-if="!isWhakapapaIndex" @go-back="goBack"/>
       <v-spacer />
-      <!-- TODO this takes you back to previous view -->
 
       <!-- Desktop doesn't use a drawer, it has the links directly in the app bar -->
       <template v-if="!mobile">
@@ -45,6 +41,7 @@
         absolute
         bottom
         color="#B71C1C"
+        height='5'
       />
 
     </v-app-bar>
@@ -83,6 +80,7 @@
       absolute
       bottom
       color="#B71C1C"
+      height='5'
     />
   </div>
 </template>
@@ -129,7 +127,10 @@ export default {
     clearInterval(this.polling)
   },
   computed: {
-    ...mapGetters(['whoami', 'whakapapa', 'route', 'showStory', 'storeDialog', 'currentProfile', 'syncing']),
+    ...mapGetters(['whoami', 'whakapapa', 'route', 'showStory', 'storeDialog', 'currentProfile', 'syncing', 'activeComponent']),
+    isWhakapapaIndex () {
+      return this.route.name === 'profileShow' && this.activeComponent === 'whakapapa'
+    },
     classObject: function () {
       return {
         'mobile': this.mobile,
@@ -144,6 +145,7 @@ export default {
       if (this.mobile) {
         if (this.route.name === 'whakapapaShow') return true
         else if (this.showStory) return true
+        else if (this.route.from.name === 'whakapapaShow' && this.route.name === 'profileShow' && this.activeComponent !== 'whakapapa') return true
       }
       return false
     }
@@ -189,7 +191,6 @@ export default {
       if (this.route.name === 'whakapapaShow') return this.$router.push({ path: this.route.from.fullPath })
       else if (this.showStory) return this.setShowStory()
     }
-
   },
   components: {
     Avatar,

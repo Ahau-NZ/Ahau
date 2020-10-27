@@ -392,8 +392,8 @@ export default {
       if (res.errors) {
         console.error('failed to update community', res)
       } else {
-        this.setProfileById({ id: res.data.savePrivate })
         this.setCurrentTribeById(res.data.savePrivate)
+        this.setProfileById({ id: res.data.savePrivate })
       }
     },
     async savePerson (input) {
