@@ -11,8 +11,8 @@
    data-name="Layer 1 Image"
    viewBox="0 0 80.02 80.45"
    version="1.1"
-   sodipodi:docname="Logo_Red.svg"
-   inkscape:version="0.92.3 (2405546, 2018-03-11)">
+   sodipodi:docname="icon.svg"
+   inkscape:version="0.92.5 (2060ec1f9f, 2020-04-08)">
   <metadata
      id="metadata76">
     <rdf:RDF>
@@ -34,15 +34,15 @@
      guidetolerance="10"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:window-width="1920"
-     inkscape:window-height="1043"
+     inkscape:window-width="2560"
+     inkscape:window-height="1440"
      id="namedview74"
      showgrid="false"
      inkscape:zoom="10.391548"
-     inkscape:cx="40.539275"
-     inkscape:cy="40.224998"
+     inkscape:cx="23.794898"
+     inkscape:cy="36.265956"
      inkscape:window-x="0"
-     inkscape:window-y="18"
+     inkscape:window-y="0"
      inkscape:window-maximized="0"
      inkscape:current-layer="Layer_1_Image" />
   <defs
@@ -58,11 +58,12 @@
      transform="translate(-1.21,-4.32)"
      id="path69"
      inkscape:connector-curvature="0"
-     style="fill:#b12526"
+     style="fill:#280000;stroke:none;fill-opacity:1"
      sodipodi:nodetypes="cccccccccccc" />
   <path
      class="cls-1"
      d="M41.29,24.64,71.37,54.71,41,84.77,11.25,54.67ZM50.71,61a3.74,3.74,0,0,1,0-.58,4.22,4.22,0,0,0-2-4.47,4.38,4.38,0,0,0-4.91.65c-2.17,2-2.12,5.3.11,7.73a8.71,8.71,0,0,0,14.4-2.63c1.79-3.95.78-8.51-2.6-12Q51,44.89,46.28,40c-1.64-1.73-3.22-3.52-4.83-5.28-.46.4-.57.46-.66.54-5,5-10.11,9.9-15.08,14.94a10.07,10.07,0,0,0-2.92,8.56,9.23,9.23,0,0,0,5.76,7.68,7.94,7.94,0,0,0,8.26-1.14,6.14,6.14,0,0,0,2.81-5.86,4.58,4.58,0,0,0-4.29-4,4.1,4.1,0,0,0-4.25,3.46,10.9,10.9,0,0,0,0,2,2.76,2.76,0,0,1-1.84-3.64,12.38,12.38,0,0,1,2.37-3.95c2.9-3.09,6-6,9-9a5.72,5.72,0,0,1,.57-.47,7,7,0,0,1,.56.48c2.93,3.06,5.91,6.07,8.74,9.22a11.72,11.72,0,0,1,2.17,3.67A2.89,2.89,0,0,1,50.71,61Z"
      transform="translate(-1.21 -4.32)"
-     id="path71" />
+     id="path71"
+     style="stroke:none;fill:#280000;fill-opacity:1" />
 </svg>
