@@ -153,7 +153,7 @@ export default {
             canEdit
             tiaki {
               id
-              feedId
+              originalAuthor
               avatarImage { uri }
               preferredName
               aliveInterval
@@ -174,7 +174,7 @@ export default {
             canEdit
             tiaki {
               id
-              feedId
+              originalAuthor
               avatarImage { uri }
               preferredName
               aliveInterval

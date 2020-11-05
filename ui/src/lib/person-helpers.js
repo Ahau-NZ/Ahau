@@ -61,10 +61,20 @@ export const PUBLIC_PROFILE_FRAGMENT = gql`
   }
 `
 
+export const AUTHOR_FRAGMENT = gql`
+  fragment AuthorFragment on Author {
+    feedId
+    interval {
+      start
+      end
+    }
+  }
+`
 export const whoami = ({
   query: gql`
     ${PERSON_FRAGMENT}
     ${PUBLIC_PROFILE_FRAGMENT}
+    ${AUTHOR_FRAGMENT}
     query {
       whoami {
         public {
@@ -78,8 +88,11 @@ export const whoami = ({
           groupId
           profile {
             ...ProfileFragment
-            kaitiaki {
-              ...PublicProfileFragment
+            authors {
+              ...AuthorFragment
+              profile {
+                ...PublicProfileFragment
+              }
             }
           }
         }
@@ -92,6 +105,7 @@ export const whoami = ({
 export const getPerson = id => ({
   query: gql`
     ${PERSON_FRAGMENT}
+    ${AUTHOR_FRAGMENT}
     ${PUBLIC_PROFILE_FRAGMENT}
     query($id: String!) {
       person(id: $id){
@@ -112,8 +126,11 @@ export const getPerson = id => ({
           relationshipType
           legallyAdopted
         }
-        kaitiaki {
-          ...PublicProfileFragment
+        authors {
+          ...AuthorFragment
+          profile {
+            ...PublicProfileFragment
+          }
         }
       }
     }

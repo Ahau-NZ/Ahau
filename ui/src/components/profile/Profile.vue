@@ -27,12 +27,12 @@
             </v-row>
           </div>
           <div v-else>
-            <v-row  v-for="kaitiaki in profile.kaitiaki" :key="kaitiaki.id" class="justify-center align-center ma-0 ml-4">
+            <v-row  v-for="({ profile: kaitiaki }) in profile.authors" :key="kaitiaki.id" class="justify-center align-center ma-0 ml-4">
               <v-col cols="2" class="pt-0 pl-0">
-                <Avatar :size="mobile ? '50px' : '40px'" :image="kaitiaki.avatarImage" :alt="kaitiaki.preferredName"/>
+                <Avatar :size="mobile ? '50px' : '40px'" :image="profile.avatarImage" :alt="kaitiaki.preferredName"/>
               </v-col>
               <v-col class="py-0">
-                <p style="color:black;">{{kaitiaki.preferredName}}</p>
+                <p style="color:black;">{{ profile.preferredName }}</p>
               </v-col>
             </v-row>
           </div>

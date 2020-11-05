@@ -413,6 +413,7 @@ export default {
       return res.data.saveProfile
     },
     async addPerson ($event) {
+      console.log($event)
       try {
         var { id } = $event
 
