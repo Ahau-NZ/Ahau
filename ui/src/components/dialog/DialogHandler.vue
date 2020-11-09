@@ -326,51 +326,63 @@ export default {
       // - [ ] link your feedId + profile
       //    - saveFeedProfileLink (recps: [groupId])
       try {
-        const createGroupRes = await this.$apollo.mutate(createGroup())
-        if (createGroupRes.errors) {
-          console.error('failed to create private group', createGroupRes)
-        }
+        const createGroupRes = await this.$apollo.mutate(
+          createGroup()
+        )
+
+        if (createGroupRes.errors) throw new Error('Failed to create private group', createGroupRes.errors)
+
+        console.log('successfully created private group')
+
         const groupId = createGroupRes.data.createGroup.id
 
-        const createCommunityRes = await this.$apollo.mutate(saveCommunity({
+        // Note: this auto-sets the authors to allow all authors
+        const input = {
           ...$event,
-          recps: [groupId]
-        }))
-        if (createCommunityRes.errors) {
-          console.error('failed to create community', createCommunityRes)
-          return
+          authors: {
+            add: ['*']
+          }
         }
 
+        const createCommunityRes = await this.$apollo.mutate(
+          saveCommunity({
+            ...input,
+            recps: [groupId]
+          })
+        )
+
+        if (createCommunityRes.errors) throw new Error('Failed to create community profile', createCommunityRes.errors)
+        console.log('successfully created community profile')
         const groupProfile = createCommunityRes.data.saveProfile // id
 
-        const profileLinkRes = await this.$apollo.mutate(saveGroupProfileLink({
-          profile: groupProfile,
-          group: groupId
-        }))
-        if (profileLinkRes.errors) {
-          console.error('failed to create link community profile', profileLinkRes)
-          return
-        }
+        const profileLinkRes = await this.$apollo.mutate(
+          saveGroupProfileLink({
+            profile: groupProfile,
+            group: groupId
+          })
+        )
 
-        const createPublicCommunityRes = await this.$apollo.mutate(savePublicCommunity({
-          ...$event
-        }))
-        if (createPublicCommunityRes.errors) {
-          console.error('failed to create community', createPublicCommunityRes)
-          return
-        }
+        if (profileLinkRes.errors) throw new Error('Failed to create community profile link', profileLinkRes.errors)
+        console.log('successfully created community profile link')
+        const createPublicCommunityRes = await this.$apollo.mutate(
+          savePublicCommunity(
+            input
+          )
+        )
+
+        if (createPublicCommunityRes.errors) throw new Error('Failed to create public community profile', createPublicCommunityRes.errors)
 
         const groupPublicProfile = createPublicCommunityRes.data.saveProfile // id
 
-        const profilePublicLinkRes = await this.$apollo.mutate(saveGroupProfileLink({
-          profile: groupPublicProfile,
-          group: groupId,
-          allowPublic: true
-        }))
-        if (profilePublicLinkRes.errors) {
-          console.error('failed to create link community profile', groupPublicProfile)
-          return
-        }
+        const profilePublicLinkRes = await this.$apollo.mutate(
+          saveGroupProfileLink({
+            profile: groupPublicProfile,
+            group: groupId,
+            allowPublic: true
+          })
+        )
+
+        if (profilePublicLinkRes.errors) throw new Error('Failed to create public community profile link', profilePublicLinkRes.errors)
 
         if (profilePublicLinkRes.data.saveGroupProfileLink) {
           this.setCurrentTribeById(groupProfile)
@@ -379,16 +391,17 @@ export default {
           this.$router.push({ name: 'profileShow', params: { id: groupProfile } }).catch(() => {})
         }
       } catch (err) {
+        console.error('Something went wrong while trying to create private group', $event)
+        console.error(err)
         // is this the right place for this?
         this.confirmationAlert('Failed to create private group. Please contact us if this continues to happen', err)
-        setTimeout(() => {
-          this.confirmationText = null
-          this.snackbar = !this.snackbar
-        }, 5000)
       }
     },
     async updateCommunity ($event) {
-      const res = await this.$apollo.mutate(updateTribe(this.currentTribe, $event))
+      const res = await this.$apollo.mutate(
+        updateTribe(this.currentTribe, $event)
+      )
+
       if (res.errors) {
         console.error('failed to update community', res)
       } else {
@@ -400,20 +413,42 @@ export default {
       if (input.id) {
         // if its an update, remove any recps that may have crept through
         delete input.recps
-      } else if (!input.id && !input.recps) {
-        // if this is saving a new person and it doesnt have recps
-        // automatically set it to the view
-        input.recps = this.view.recps
+        delete input.authors
+      } else {
+        if (!input.recps) {
+          // if this is saving a new person and it doesnt have recps
+          // automatically set it to the view
+          input.recps = this.view.recps
+        }
+
+        if (!input.authors) {
+          // auto set the authors
+          // set authors as public or private
+          // check the scope of the recps, it will tell us if its private or a group
+          input.authors = {
+            add: [
+              input.recps.includes(this.whoami.personal.groupId)
+                ? this.whoami.public.feedId // set it to my own feedId, making only i can edit
+                : '*' // set it to allow all authors
+            ]
+          }
+        }
       }
 
-      const res = await this.$apollo.mutate(savePerson(input))
+      try {
+        const res = await this.$apollo.mutate(
+          savePerson(input)
+        )
 
-      if (res.errors) throw new Error(`Failed to ${input.id ? 'update' : 'save'} profile`, res)
+        if (res.errors) throw res
 
-      return res.data.saveProfile
+        return res.data.saveProfile
+      } catch (err) {
+        console.error(`Failed to ${input.id ? 'update' : 'save'} profile`, input)
+        console.error(err)
+      }
     },
     async addPerson ($event) {
-      console.log($event)
       try {
         var { id } = $event
 
@@ -777,16 +812,17 @@ export default {
         this.setProfileById({ id: this.whoami.personal.profile.id })
         this.$router.push({ name: 'profileShow', params: { id: this.whoami.personal.profile.id } }).catch(() => {})
         this.confirmationAlert('community successfully deleted')
-        setTimeout(() => {
-          this.confirmationText = null
-          this.snackbar = !this.snackbar
-        }, 3000)
       }
     },
 
     confirmationAlert (message) {
       this.confirmationText = message
       this.snackbar = !this.snackbar
+
+      setTimeout(() => {
+        this.confirmationText = null
+        this.snackbar = !this.snackbar
+      }, 3000)
     },
 
     async getSuggestions ($event) {

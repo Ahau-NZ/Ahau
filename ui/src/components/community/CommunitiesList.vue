@@ -111,6 +111,7 @@ import Avatar from '@/components/Avatar.vue'
 import NewPatakaDialog from '@/components/dialog/community/NewPatakaDialog.vue'
 import ConfirmationText from '@/components/dialog/ConfirmationText.vue'
 import BigAddButton from '@/components/button/BigAddButton.vue'
+import { getTribes } from '@/lib/community-helpers.js'
 
 const get = require('lodash.get')
 
@@ -135,58 +136,9 @@ export default {
   },
   apollo: {
     tribes: {
-      query: gql`query {
-        tribes {
-          id
-          public {
-            id
-            type
-            preferredName
-            description
-            avatarImage { uri }
-            description
-            headerImage { uri }
-            tombstone { date }
-            email
-            phone
-            location
-            canEdit
-            tiaki {
-              id
-              originalAuthor
-              avatarImage { uri }
-              preferredName
-              aliveInterval
-            }
-          }
-          private {
-            id
-            type
-            preferredName
-            description
-            avatarImage { uri }
-            headerImage { uri }
-            recps
-            tombstone {date}
-            email
-            phone
-            location
-            canEdit
-            tiaki {
-              id
-              originalAuthor
-              avatarImage { uri }
-              preferredName
-              aliveInterval
-            }
-          }
-        }
-      }
-    `,
-      pollInterval: 10e3,
-      fetchPolicy: 'no-cache'
+      ...getTribes,
+      pollInterval: 10e3
     },
-
     patakasRaw: {
       query: gql`query{
         patakas {

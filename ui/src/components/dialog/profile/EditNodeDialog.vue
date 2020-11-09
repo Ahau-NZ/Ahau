@@ -129,7 +129,7 @@ export default {
     },
 
     submit () {
-      var output = Object.assign({}, pick(this.profileChanges, [...PERMITTED_PERSON_ATTRS]))
+      var output = Object.assign({}, pick(this.profileChanges, PERMITTED_PERSON_ATTRS))
       if (!isEmpty(output)) {
         this.$emit('submit', output)
       } else {
