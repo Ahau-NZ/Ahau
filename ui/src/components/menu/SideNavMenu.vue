@@ -166,6 +166,7 @@ export default {
       else return false
     },
     nonMember () {
+      console.log('profile', this.profile)
       return (
         this.profile.type === 'community' &&
         !this.profile.recps

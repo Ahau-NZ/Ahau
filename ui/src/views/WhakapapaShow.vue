@@ -630,6 +630,7 @@ export default {
       }
     },
     async saveWhakapapa (input) {
+      console.log('SAVING WHAKAPAPA', input)
       input = {
         id: this.whakapapaView.id,
         ...input

@@ -189,6 +189,7 @@ export const getTribes = {
           email
           phone
           canEdit
+          recps
           location
           authors {
             ...AuthorFragment
@@ -208,6 +209,7 @@ export const getTribes = {
           phone
           location
           canEdit
+          recps
           authors {
             ...AuthorFragment
             profile {

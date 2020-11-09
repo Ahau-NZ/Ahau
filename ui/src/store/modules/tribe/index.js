@@ -30,7 +30,10 @@ const mutations = {
 
 const actions = {
   async setCurrentTribe ({ commit }, tribe) {
-    const authors = await apollo.query(getMembers(tribe.id))
+    const authors = await apollo.query(
+      getMembers(tribe.id)
+    )
+
     if (authors.errors) {
       console.log('failed to get group authors: ', authors)
     }
@@ -39,6 +42,7 @@ const actions = {
       ...tribe,
       members
     }
+
     commit('updateCurrentTribe', whanau)
   },
   async setTribes ({ commit }) {

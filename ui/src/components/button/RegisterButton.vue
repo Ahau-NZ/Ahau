@@ -8,7 +8,7 @@
     :class="[{ btn: !mobile && !tablet }, { mobileBtn: mobile }, { tabletBtn: tablet }, { disabled: notificationSent }]"
     @click="setDialog('new-registration')"
   >
-    <span>{{text}}</span>
+    <span>{{ text }}</span>
   </v-btn>
 </template>
 <script>
