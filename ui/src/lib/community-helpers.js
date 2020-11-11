@@ -191,6 +191,9 @@ export const getTribes = {
           canEdit
           recps
           location
+          tiaki {
+            ...PublicProfileFragment
+          }
           authors {
             ...AuthorFragment
             profile {
@@ -210,6 +213,9 @@ export const getTribes = {
           location
           canEdit
           recps
+          tiaki {
+            ...PublicProfileFragment
+          }
           authors {
             ...AuthorFragment
             profile {
