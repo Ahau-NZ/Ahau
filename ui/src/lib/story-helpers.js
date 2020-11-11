@@ -1,7 +1,7 @@
 import gql from 'graphql-tag'
 import pick from 'lodash.pick'
 import { ARTEFACT_FRAGMENT } from './artefact-helpers'
-import { AUTHOR_FRAGMENT, PERSON_FRAGMENT, PUBLIC_PROFILE_FRAGMENT } from './person-helpers'
+import { PERSON_FRAGMENT } from './person-helpers'
 import { parseInterval } from './date-helpers'
 import isEqual from 'lodash.isequal'
 import isEmpty from 'lodash.isempty'
