@@ -27,7 +27,7 @@
         <BigAddButton @click="dialog = 'new-story'" />
       </v-col>
     </v-row>
-    <v-row v-if="profileStories && profileStories.length > 0">
+    <v-row v-if="stories && stories.length > 0">
       <transition name="change" mode="out-in">
         <v-col cols="12" xs="12" sm="12" md="9" :class="!showStory ? '':'pa-0'">
           <!-- <v-row>
@@ -35,7 +35,7 @@
           </v-row>
           <v-divider class="mt-6 mb-8" light></v-divider> -->
           <div v-if="!showStory">
-            <v-row v-for="(story, i) in profileStories" :key="`story-${i}-id-${story.id}`">
+            <v-row v-for="(story, i) in stories" :key="`story-${i}-id-${story.id}`">
               <StoryCard @updateDialog="updateDialog($event)" @toggleStory="toggleStory($event)" :story="story" />
             </v-row>
           </div>
@@ -55,7 +55,7 @@
       <v-row v-else>
         <v-col>
           <div
-            v-if="!profileStories || (profileStories && profileStories.length < 1)"
+            v-if="!stories || (stories && stories.length < 1)"
             class="px-8 subtitle-1 grey--text "
             :class="{ 'text-center': mobile }"
           >
@@ -83,7 +83,7 @@
 <script>
 import StoryCard from '@/components/archive/StoryCard.vue'
 // import CollectionGroup from '@/components/archive/CollectionGroup.vue'
-import { saveStory, getStory } from '@/lib/story-helpers.js'
+import { saveStory, getStory, getAllStories, getAllStoriesByMentions } from '@/lib/story-helpers.js'
 import { saveArtefact } from '@/lib/artefact-helpers.js'
 import { saveLink, TYPES } from '@/lib/link-helpers.js'
 import { mapGetters, mapActions, mapMutations } from 'vuex'
@@ -95,6 +95,15 @@ import ArchiveHelper from '@/components/dialog/archive/ArchiveHelper.vue'
 
 export default {
   name: 'Archive',
+  props: {
+    profile: {
+      type: Object,
+      default: () => ({})
+    },
+    editProfile: {
+      type: Function
+    }
+  },
   components: {
     StoryCard,
     NewRecordDialog,
@@ -103,8 +112,52 @@ export default {
     // CollectionGroup,
     // VueContext,
   },
+  apollo: {
+    stories () {
+      /*
+        difference between kaitiaki and author
+
+        -> authors will submit edits to the kaitiaki
+        -> original author will always be kaitiaki by default
+        -> build it so you can change kaitiaki (later?)
+      */
+      // TODO: what happens to stories that do not have any recps on it?
+      // personal profile: currentProfile
+      const isPersonal = this.currentProfile.id === this.whoami.personal.profile.id
+
+      if (this.currentProfile.type === 'community' || isPersonal) {
+        return {
+          ...getAllStories,
+          update (data) {
+            return data.stories.filter(story => {
+              return story.recps.some(recp => {
+                const id = isPersonal
+                  ? this.whoami.personal.groupId
+                  : this.currentTribe.id
+
+                return recp === id
+              })
+            })
+          }
+        }
+      } else if (this.currentProfile.type === 'person') {
+        return {
+          ...getAllStoriesByMentions(this.currentProfile.id),
+          update (data) {
+            return data.person.mentions.map(mention => {
+              return {
+                linkId: mention.linkId,
+                ...mention.story
+              }
+            })
+          }
+        }
+      }
+    }
+  },
   data () {
     return {
+      stories: [],
       dialog: null,
       // contextMenuOpts: [{
       //   title: 'Create a new Collection',
@@ -119,15 +172,6 @@ export default {
       // ],
       scrollPosition: 0,
       showArchiveHelper: false
-    }
-  },
-  props: {
-    profile: {
-      type: Object,
-      default: () => ({})
-    },
-    editProfile: {
-      type: Function
     }
   },
   computed: {
@@ -152,11 +196,17 @@ export default {
           })
         }, 100)
       }
+    },
+    currentTribe (newVal) {
+      console.log('currentTribe', newVal.id)
+    },
+    currentProfile (newVal) {
+      console.log('currentProfile', newVal.id)
     }
   },
   methods: {
     ...mapMutations(['setStory', 'addStoryToStories', 'updateStoryInStories', 'removeStoryFromStories']),
-    ...mapActions(['setComponent', 'setShowStory', 'setDialog', 'getAllStories']),
+    ...mapActions(['setComponent', 'setShowStory', 'setDialog']),
     toggleArchiveHelper () {
       this.showArchiveHelper = !this.showArchiveHelper
     },
@@ -169,6 +219,8 @@ export default {
         creators,
         relatedRecords
       } = input
+
+      console.log(input)
 
       try {
         const res = await this.$apollo.mutate(saveStory(input))
@@ -244,7 +296,7 @@ export default {
           this.toggleStory(story)
         }
         console.warn('Potentially loading a large amount of data with each change to a story...')
-        this.getAllStories()
+        this.$apollo.queries.stories.refresh()
       } catch (err) {
         console.error('Something went wrong while creating a story')
         throw err

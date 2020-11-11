@@ -101,7 +101,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['getAllStories', 'setProfileById', 'setWhoami', 'setShowArtefact', 'setDialog', 'setTribes', 'setProfileStories']),
+    ...mapActions(['setProfileById', 'setWhoami', 'setShowArtefact', 'setDialog', 'setTribes', 'setProfileStories']),
     async setupProfile (id) {
       this.setProfileById({ id })
       this.setTribes()

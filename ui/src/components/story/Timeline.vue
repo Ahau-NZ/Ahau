@@ -95,7 +95,7 @@ export default {
   },
   methods: {
     ...mapMutations(['setStory']),
-    ...mapActions(['setShowStory', 'setDialog', 'getAllStories']),
+    ...mapActions(['setShowStory', 'setDialog']),
     updateDialog (dialog) {
       this.$emit('setDialog', dialog)
     },
@@ -191,7 +191,7 @@ export default {
         }
 
         console.warn('Potentially loading a large amount of data with each change to a story...')
-        this.getAllStories()
+        console.error('RELOAD STORIES HERE - TIMELINE')
       } catch (err) {
         console.error('Something went wrong while creating a story')
         throw err

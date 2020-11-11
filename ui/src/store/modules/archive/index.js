@@ -1,9 +1,4 @@
 // import gql from 'graphql-tag'
-import { createProvider } from '@/plugins/vue-apollo'
-import { GET_ALL_STORIES } from '../../../lib/story-helpers'
-
-const apolloProvider = createProvider()
-const apollo = apolloProvider.defaultClient
 
 const state = {
   activeComponent: 'profile',
@@ -100,18 +95,6 @@ const actions = {
         )).reverse()
       return commit('updateProfileStories', communityStories)
     }
-  },
-
-  async getAllStories ({ commit, dispatch }) {
-    const res = await apollo.query(GET_ALL_STORIES)
-
-    if (res.errors) {
-      console.error('error fetching all stories', res)
-      commit('updateStories', [])
-      return
-    }
-    commit('updateStories', res.data.stories)
-    dispatch('setProfileStories')
   }
 }
 
