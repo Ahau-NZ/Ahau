@@ -257,6 +257,9 @@ export const getCommunityProfile = id => ({
         tombstone {
           date
         }
+        tiaki {
+          ...PublicProfileFragment
+        }
       }
     }
   `,
