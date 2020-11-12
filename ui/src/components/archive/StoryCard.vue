@@ -330,7 +330,6 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['deleteStoryFromStories']),
     ...mapActions(['setShowArtefact', 'setDialog', 'setProfileById', 'setShowStory']),
     onClickOutside () {
       if (!this.fullStory || this.dialog) return
@@ -347,7 +346,7 @@ export default {
         return
       }
 
-      this.deleteStoryFromStories(this.story)
+      this.$parent.$apollo.queries.stories.refetch({ id: this.story.id })
       this.$emit('close', null)
     },
     colour (index) {

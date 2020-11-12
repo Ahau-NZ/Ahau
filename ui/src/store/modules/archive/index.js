@@ -31,15 +31,6 @@ const getters = {
 }
 
 const mutations = {
-  addStoryToStories (state, story) {
-    state.stories.push(story)
-  },
-  deleteStoryFromStories (state, deletedStory) {
-    const index = state.stories.findIndex(story => story.id === deletedStory.id)
-    if (index !== -1) state.stories.splice(index, 1)
-    const profileIndex = state.profileStories.findIndex(story => story.id === deletedStory.id)
-    if (profileIndex !== -1) state.profileStories.splice(index, 1)
-  },
   updateComponent (state, component) {
     state.activeComponent = component
   },
@@ -54,10 +45,6 @@ const mutations = {
   },
   updateStories (state, stories) {
     state.stories = stories
-  },
-  updateStoryInStories (state, updatedStory) {
-    const index = state.stories.findIndex(story => story.id === updatedStory.id)
-    if (index !== -1) state.stories.splice(index, 1, updatedStory)
   },
   updateProfileStories (state, profileStories) {
     state.profileStories = profileStories
