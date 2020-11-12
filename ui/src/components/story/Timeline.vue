@@ -10,10 +10,10 @@
         </v-col>
       </v-row>
 
-      <v-row v-if="stories && stories.length > 0" >
+      <v-row v-if="filteredStories && filteredStories.length > 0" >
         <v-col cols="12" sm="12" md="9" :class="!showStory ? '':'pa-0'">
           <div v-if="!showStory">
-            <TimelineCard :data="stories" @toggleStory="toggleStory($event)" />
+            <TimelineCard :data="filteredStories" @toggleStory="toggleStory($event)" />
           </div>
           <!-- Full story view -->
           <div v-else>
@@ -63,12 +63,13 @@ export default {
   },
   mixins: [
     mapStoryMixins({
-      mapMethods: ['saveStory', 'processLinks', 'saveArtefact', 'getStory', 'saveLink', 'removeLink']
+      mapMethods: ['saveStory', 'processLinks', 'saveArtefact', 'getStory', 'saveLink', 'removeLink'],
+      mapApollo: ['stories']
     })
   ],
   data () {
     return {
-      unDatedStories: [],
+      stories: [],
       scrollPosition: 0
     }
   },
@@ -86,15 +87,12 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['stories', 'currentProfile', 'showStory', 'currentStory', 'whoami', 'profileStories']),
+    ...mapGetters(['currentProfile', 'showStory', 'currentStory', 'whoami']),
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
-    stories () {
-      return this.profileStories.filter(story => !isEmpty(story.timeInterval))
-    },
-    unDatedstories () {
-      return this.profileStories.filter(story => isEmpty(story.timeInterval))
+    filteredStories () {
+      return this.stories.filter(story => !isEmpty(story.timeInterval))
     }
   },
   methods: {

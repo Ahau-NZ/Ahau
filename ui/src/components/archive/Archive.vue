@@ -157,12 +157,6 @@ export default {
           })
         }, 100)
       }
-    },
-    currentTribe (newVal) {
-      console.log('currentTribe', newVal.id)
-    },
-    currentProfile (newVal) {
-      console.log('currentProfile', newVal.id)
     }
   },
   methods: {
