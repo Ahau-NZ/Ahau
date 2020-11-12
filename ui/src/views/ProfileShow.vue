@@ -31,8 +31,8 @@
        >
         <!-- <Community v-if="activeComponent === 'profile'" :profile="currentProfile" :setupProfile="setupProfile"/> -->
         <Profile v-if="activeComponent === 'profile'" :profile="currentProfile" :setupProfile="setupProfile"/>
-        <Archive v-if="activeComponent === 'archive'" :profile="{...currentProfile, type: 'person'}"/>
-        <Timeline v-if="activeComponent === 'timeline'" :profile="currentProfile"/>
+        <Archive v-if="activeComponent === 'archive'" :key="currentProfile.id"/>
+        <Timeline v-if="activeComponent === 'timeline'" :key="currentProfile.id" :profile="currentProfile"/>
         <WhakapapaIndex v-if="activeComponent === 'whakapapa'"/>
       </transition>
       </v-col>
