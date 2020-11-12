@@ -329,13 +329,8 @@ export default {
         const createGroupRes = await this.$apollo.mutate(
           createGroup()
         )
-
         if (createGroupRes.errors) throw new Error('Failed to create private group', createGroupRes.errors)
-
-        console.log('successfully created private group')
-
         const groupId = createGroupRes.data.createGroup.id
-
         // Note: this auto-sets the authors to allow all authors
         const input = {
           ...$event,
@@ -350,9 +345,7 @@ export default {
             recps: [groupId]
           })
         )
-
         if (createCommunityRes.errors) throw new Error('Failed to create community profile', createCommunityRes.errors)
-        console.log('successfully created community profile')
         const groupProfile = createCommunityRes.data.saveProfile // id
 
         const profileLinkRes = await this.$apollo.mutate(
@@ -361,17 +354,14 @@ export default {
             group: groupId
           })
         )
-
         if (profileLinkRes.errors) throw new Error('Failed to create community profile link', profileLinkRes.errors)
-        console.log('successfully created community profile link')
+
         const createPublicCommunityRes = await this.$apollo.mutate(
           savePublicCommunity(
             input
           )
         )
-
         if (createPublicCommunityRes.errors) throw new Error('Failed to create public community profile', createPublicCommunityRes.errors)
-
         const groupPublicProfile = createPublicCommunityRes.data.saveProfile // id
 
         const profilePublicLinkRes = await this.$apollo.mutate(
@@ -381,9 +371,7 @@ export default {
             allowPublic: true
           })
         )
-
         if (profilePublicLinkRes.errors) throw new Error('Failed to create public community profile link', profilePublicLinkRes.errors)
-
         if (profilePublicLinkRes.data.saveGroupProfileLink) {
           this.setCurrentTribeById(groupProfile)
           this.setComponent('profile')
