@@ -5,7 +5,12 @@ const path = require('path')
 
 const customConfig = {
   port: 8088,
-  // allowPrivate: true, // used for making local invite codes
+  allowPrivate: true, // used for making local invite codes
+  // HACK: There is a problem with ssb-invite where it look for a public incoming connection in the config which does not exist
+  // and then throws an error.
+  // When allowPrivate:true it settles on a private/local address,
+  // then invite.create({external}) overwrites the ip address of that address :(
+  // Possible solution would be to pass host and port to ssb-invite and have it skip getAddress
   caps: env.caps,
   // caps = capabilities, only apps with:
   // - the same shs ("secret handshake") key can connect to each other
