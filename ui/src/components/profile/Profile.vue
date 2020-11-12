@@ -17,13 +17,13 @@
       <ProfileCard title="Kaitiaki" class="mt-0 px-0">
         <template v-slot:content>
           <div>
-            <v-row  v-for="({ feedId, profile: kaitiaki }, i) in profile.authors" :key="i" class="justify-center align-center ma-0 ml-4">
+            <v-row  v-for="(kaitiaki, i) in profile.tiaki" :key="i" class="justify-center align-center ma-0 ml-4">
               <v-col cols="2" class="pt-0 pl-0">
-                <Avatar v-if="feedId !== '*'" :size="mobile ? '50px' : '40px'" :image="kaitiaki.avatarImage" :alt="kaitiaki.preferredName" :aliveInterval="kaitiaki.aliveInterval"/>
-                <Avatar v-else :size="mobile ? '50px' : '40px'" isView />
+                <Avatar :size="mobile ? '50px' : '40px'" :image="kaitiaki.avatarImage" :alt="kaitiaki.preferredName" :aliveInterval="kaitiaki.aliveInterval"/>
+                <!-- <Avatar v-else :size="mobile ? '50px' : '40px'" isView /> -->
               </v-col>
               <v-col  class="py-0">
-                <p style="color:black;">{{ feedId !== '*' ? kaitiaki.preferredName : 'Public' }}</p>
+                <p style="color:black;">{{ kaitiaki.preferredName }}</p>
               </v-col>
             </v-row>
           </div>

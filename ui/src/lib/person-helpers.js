@@ -56,7 +56,7 @@ export const PERMITTED_RELATIONSHIP_ATTRS = [
 export const AUTHOR_FRAGMENT = gql`
   fragment AuthorFragment on Author {
     feedId
-    interval {
+    intervals {
       start
       end
     }
@@ -96,6 +96,9 @@ export const whoami = ({
           groupId
           profile {
             ...ProfileFragment
+            tiaki {
+              ...PublicProfileFragment
+            }
             authors {
               ...AuthorFragment
               profile {
@@ -138,6 +141,9 @@ export const getPerson = id => ({
             ...ProfileFragment
           }
           ...ProfileLinkFragment
+        }
+        tiaki {
+          ...PublicProfileFragment
         }
         authors {
           ...AuthorFragment
