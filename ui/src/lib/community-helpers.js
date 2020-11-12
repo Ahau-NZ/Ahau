@@ -286,12 +286,12 @@ export const getTribe = id => ({
         private {
           id
           preferredName
-          avatarImage {uri}
+          avatarImage { uri }
         }
         public {
           id 
           preferredName
-          avatarImage {uri}
+          avatarImage { uri }
         }
       }
     }
