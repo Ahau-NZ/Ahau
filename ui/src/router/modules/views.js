@@ -6,6 +6,7 @@ import ProfileShow from '@/views/ProfileShow.vue'
 import Profile from '@/components/profile/Profile.vue'
 
 import Archive from '@/components/archive/Archive.vue'
+import Timeline from '@/components/story/Timeline.vue'
 
 export default [
   { path: '/login', name: 'login', component: Login },
@@ -23,7 +24,8 @@ export default [
       { path: 'archive', name: 'archive', component: Archive },
       // WhakapapaIndex will be rendered inside ProfileShow's <router-view>
       // when /profile/:id/whakapapa is matched
-      { path: 'whakapapa', name: 'whakapapaIndex', component: WhakapapaIndex }
+      { path: 'whakapapa', name: 'whakapapaIndex', component: WhakapapaIndex },
+      { path: 'timeline', name: 'timeline', component: Timeline }
     ]
   }
 ]

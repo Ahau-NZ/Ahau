@@ -3,11 +3,11 @@
     <v-overlay dark :value="showArtefact" z-index="6" opacity="1" color="rgba(30,30,30)">
     </v-overlay>
     <!-- Header and Title -->
-    <Header v-if="activeComponent === 'profile'"
+    <Header v-if="$route.name === 'profile'"
       :profile="currentProfile"
       @setupProfile="setupProfile($event)"
     />
-    <v-row v-if="activeComponent === 'profile'">
+    <v-row v-if="$route.name === 'profile'">
       <v-col cols="12" offset-md="2" md="8" sm="12" :class="!mobile ? 'pl-12' : 'pt-0 mt-n3' " :align="mobile ? 'center' : 'start'" :order="mobile ? '3' : '1'">
         <h1 class="primary--text" :style="mobile ? length : ''">{{ currentProfile.legalName ? currentProfile.legalName : currentProfile.preferredName }}</h1>
       </v-col>
@@ -29,12 +29,9 @@
           name="fade"
           mode="out-in"
        >
-        <!-- <Community v-if="activeComponent === 'profile'" :profile="currentProfile" :setupProfile="setupProfile"/> -->
-        <!-- <Profile v-if="activeComponent === 'profile'" :profile="currentProfile" :setupProfile="setupProfile"/>
-        <Archive v-if="activeComponent === 'archive'" :key="currentProfile.id"/>
-        <Timeline v-if="activeComponent === 'timeline'" :key="currentProfile.id" :profile="currentProfile"/>
-        <WhakapapaIndex v-if="activeComponent === 'whakapapa'"/> -->
-        <router-view></router-view>
+        <!-- <keep-alive> -->
+          <router-view></router-view>
+        <!-- </keep-alive> -->
       </transition>
       </v-col>
     </v-row>
