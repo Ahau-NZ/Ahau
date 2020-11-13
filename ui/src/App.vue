@@ -3,7 +3,9 @@
     <Appbar v-if="displayAppbar" :enableMenu="enableMenu" app />
     <v-main v-if="!mobile || mobile && !storeDialog" :class="{ 'mobileWhakapapaTitleStyle': mobile }">
       <transition name="fade" mode="out-in">
-        <router-view :mobileServerLoaded="mobileServerLoaded" />
+        <router-view :mobileServerLoaded="mobileServerLoaded" >
+          <router-view name="dialog" />
+        </router-view>
       </transition>
       <Spinner />
     </v-main>

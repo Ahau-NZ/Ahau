@@ -30,10 +30,11 @@
           mode="out-in"
        >
         <!-- <Community v-if="activeComponent === 'profile'" :profile="currentProfile" :setupProfile="setupProfile"/> -->
-        <Profile v-if="activeComponent === 'profile'" :profile="currentProfile" :setupProfile="setupProfile"/>
+        <!-- <Profile v-if="activeComponent === 'profile'" :profile="currentProfile" :setupProfile="setupProfile"/>
         <Archive v-if="activeComponent === 'archive'" :key="currentProfile.id"/>
         <Timeline v-if="activeComponent === 'timeline'" :key="currentProfile.id" :profile="currentProfile"/>
-        <WhakapapaIndex v-if="activeComponent === 'whakapapa'"/>
+        <WhakapapaIndex v-if="activeComponent === 'whakapapa'"/> -->
+        <router-view></router-view>
       </transition>
       </v-col>
     </v-row>

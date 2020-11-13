@@ -93,6 +93,9 @@ export default {
       isEditing: false
     }
   },
+  mounted () {
+    console.log('profile.vue mounted')
+  },
   beforeMount () {
     window.scrollTo(0, 0)
     this.setTribes()

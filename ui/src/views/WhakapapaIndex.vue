@@ -104,6 +104,7 @@ export default {
     }
   },
   async mounted () {
+    console.log('mounted...')
     // set the current default access as the current group
     this.setCurrentAccess(this.defaultAccess)
     this.whakapapas = await this.groupedWhakapapaViews()

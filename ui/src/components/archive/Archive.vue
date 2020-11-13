@@ -135,6 +135,9 @@ export default {
       showArchiveHelper: false
     }
   },
+  mounted () {
+    console.log('mounted...')
+  },
   computed: {
     ...mapGetters(['profileStories', 'showStory', 'whoami', 'currentProfile', 'currentTribe', 'currentStory', 'showArtefact', 'storeDialog']),
     mobile () {

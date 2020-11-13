@@ -62,7 +62,24 @@
           </v-btn>
         </v-col>-->
         <v-col cols="3" md="12" :class="mobile ? 'py-0 px-0' : tablet ? 'py-4 px-0' : 'py-1'">
-          <v-btn @click="goArchive()" light :fab="mobile" text>
+          <!-- <v-btn @click="goArchive()" light :fab="mobile" text>
+            <v-col class="pa-0" :cols="mobile ? '12' : '2'">
+              <ArchiveIcon
+                v-if="!showStory"
+                :size="mobile ? 'large' : tablet ? 'x-large' : 'medium'"
+                :color="activeComponent === 'archive' ? 'red' : 'black'"
+              />
+              <v-icon v-else color="#B02425">mdi-arrow-left</v-icon>
+            </v-col>
+            <v-col class="py-0" v-if="!mobile && !isOverflowing">
+              <span
+                ref="text"
+                :style="activeComponent === 'archive' ? 'color:#B02425;' : ''"
+                class="ml-2 nav-label subtitle-1"
+              >Archive</span>
+            </v-col>
+          </v-btn> -->
+          <v-btn to="/archive" light :fab="mobile" text>
             <v-col class="pa-0" :cols="mobile ? '12' : '2'">
               <ArchiveIcon
                 v-if="!showStory"
@@ -100,7 +117,7 @@
           </v-btn>
         </v-col>
         <v-col cols="3" md="12" v-if="showWhakapapa" :class="mobile ? 'py-0 px-0' : tablet ? 'py-4 px-0' : 'py-1'">
-          <v-btn @click="setActive('whakapapa')" light :fab="mobile" text>
+          <v-btn to="/whakapapa" light :fab="mobile" text>
             <v-col class="pa-0" :cols="mobile ? '12' : '2'">
               <WhakapapaIcon
                 :size="mobile ? 'large' : tablet ? 'x-large' : 'medium'"

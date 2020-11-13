@@ -10,11 +10,11 @@
       <!-- Desktop doesn't use a drawer, it has the links directly in the app bar -->
       <template v-if="!mobile">
         <v-btn text active-class="no-active" :to="{ name: 'discovery' }" class="white--text text-uppercase ms-10">Tribes</v-btn>
-        <v-btn active-class="no-active" text @click.native="goProfile('archive')" class="white--text text-uppercase ms-10">Archive</v-btn>
+        <v-btn active-class="no-active" text :to="go('archive')" class="white--text text-uppercase ms-10">Archive</v-btn>
 
         <!-- <v-btn active-class="no-active" text @click.native="resetWindow" to="/whakapapa" class="white--text text-uppercase ms-10">whakapapa</v-btn> -->
-        <v-btn active-class="no-active" text @click.native="goProfile('whakapapa')" class="white--text text-uppercase ms-10">whakapapa</v-btn>
-        <v-btn active-class="no-active" fab @click.native="goProfile('profile')" class="pr-12 mr-4 ml-10">
+        <v-btn active-class="no-active" text :to="go('whakapapa')" class="white--text text-uppercase ms-10">whakapapa</v-btn>
+        <v-btn active-class="no-active" fab :to="go('profile')" class="pr-12 mr-4 ml-10">
           <Avatar
             v-if="!mobile"
             size="45px"
@@ -49,7 +49,7 @@
     <!-- The drawer shows only on mobile -->
     <v-navigation-drawer v-if="mobile && enableMenu" v-model="drawer" app dark right width="60%">
       <v-list nav class="text-uppercase">
-        <v-list-item active-class="no-active" @click="goProfile('profile')" >
+        <v-list-item active-class="no-active" :to="go('profile')">
           <Avatar
             size="80px"
             :image="whoami.personal.profile.avatarImage"
@@ -58,11 +58,10 @@
             :aliveInterval="whoami.personal.profile.aliveInterval"
           />
         </v-list-item>
-        <!-- <v-list-item active-class="no-active" link to="/whakapapa" class="white--text"> -->
-        <v-list-item active-class="no-active" link @click.native="goProfile('whakapapa')" class="white--text">
+        <v-list-item active-class="no-active" link :to="go('whakapapa')" class="white--text">
           <v-list-item-title>whakapapa</v-list-item-title>
         </v-list-item>
-        <v-list-item active-class="no-active" link @click.native="goProfile('archive')" >
+        <v-list-item active-class="no-active" link :to="go('archive')">
           <v-list-item-title class="white--text" >Archive</v-list-item-title>
         </v-list-item>
         <v-list-item active-class="no-active" link :to="{ name: 'discovery' }">
@@ -163,6 +162,9 @@ export default {
   },
   methods: {
     ...mapActions(['setWhoami', 'setProfileById', 'setComponent', 'setShowStory', 'setDialog', 'getAllNotifications']),
+    go (path) {
+      return { path, params: { id: this.whoami.personal.profile.id } }
+    },
     resetWindow () {
       window.scrollTo(0, 0)
     },
@@ -173,13 +175,6 @@ export default {
     },
     async getCurrentIdentity () {
       await this.setWhoami()
-    },
-    goProfile (component) {
-      this.setComponent(component)
-      this.setProfileById({ id: this.whoami.personal.profile.id })
-      this.$router.push({ name: 'profileShow', params: { id: this.whoami.personal.profile.id } }).catch(() => {})
-      // this.setProfileById(this.profile.id)
-      if (this.drawer) this.drawer = false
     },
     karakiaWhakamutunga () {
       console.log(karakia)
