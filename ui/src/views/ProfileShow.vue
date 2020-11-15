@@ -4,24 +4,20 @@
     </v-overlay>
     <!-- Header and Title -->
     <Header v-if="$route.name === 'profile'"
-      :profile="currentProfile"
-      @setupProfile="setupProfile($event)"
+      :profile="profile"
     />
     <v-row v-if="$route.name === 'profile'">
       <v-col cols="12" offset-md="2" md="8" sm="12" :class="!mobile ? 'pl-12' : 'pt-0 mt-n3' " :align="mobile ? 'center' : 'start'" :order="mobile ? '3' : '1'">
-        <h1 class="primary--text" :style="mobile ? length : ''">{{ currentProfile.legalName ? currentProfile.legalName : currentProfile.preferredName }}</h1>
+        <h1 class="primary--text" :style="mobile ? length : ''">{{ profile.legalName ? profile.legalName : profile.preferredName }}</h1>
       </v-col>
-      <!-- <v-col v-if="currentProfile.canEdit" :order="mobile ? '1' : '2'" :align="mobile ? 'start' : isCommunity ? 'start':'center'" cols="6" md="1" sm="6"  class="px-5">
-        <EditRegistrationButton @click="setDialog('edit-registration')" />
-      </v-col> -->
       <v-col :order="mobile ? '2' : '3'" :align="mobile || tablet ? 'end' : isCommunity ? 'start':'center'" cols="12" :md="isCommunity ? 1:2" class="px-5">
-        <EditProfileButton v-if="currentProfile.canEdit" @click="currentProfile.type === 'person' ? setDialog('edit-node', 'this', 'this') : setDialog('edit-community')" />
+        <EditProfileButton v-if="profile.canEdit" @click="profile.type === 'person' ? setDialog('edit-node', 'this', 'this') : setDialog('edit-community')" />
       </v-col>
     </v-row>
     <v-row>
       <!-- SideNav -->
       <v-col  v-if="!hideNav" cols="12" xs="12" sm="12" md="2" lg="20p" :class="!mobile ? 'pr-0' : 'px-5 py-0'">
-        <SideNavMenu :profile="currentProfile" />
+        <SideNavMenu />
       </v-col>
       <!-- Content -->
       <v-col cols="12" xs="12" sm="12" md="10" lg="80p" :class="mobile ? 'px-6 py-0' : 'pl-0 py-0'">
@@ -29,9 +25,7 @@
           name="fade"
           mode="out-in"
        >
-        <!-- <keep-alive> -->
-          <router-view></router-view>
-        <!-- </keep-alive> -->
+        <router-view></router-view>
       </transition>
       </v-col>
     </v-row>
@@ -41,39 +35,43 @@
 
 <script>
 import SideNavMenu from '@/components/menu/SideNavMenu.vue'
-import Profile from '@/components/profile/Profile.vue'
-import Archive from '@/components/archive/Archive'
-import Timeline from '@/components/story/Timeline.vue'
 import Header from '@/components/profile/Header.vue'
 import EditProfileButton from '@/components/button/EditProfileButton.vue'
-// import EditRegistrationButton from '@/components/button/EditRegistrationButton.vue'
-import WhakapapaIndex from '@/views/WhakapapaIndex.vue'
 
 import {
-  mapActions,
-  mapGetters
+  mapGetters,
+  mapActions
 } from 'vuex'
+
+import mapProfileMixins from '@/mixins/profile-mixins.js'
 
 export default {
   name: 'ProfileShow',
   components: {
     SideNavMenu,
-    Profile,
-    Archive,
-    Timeline,
     Header,
-    EditProfileButton,
-    // EditRegistrationButton,
-    WhakapapaIndex
+    EditProfileButton
   },
+  mixins: [
+    mapProfileMixins({
+      mapApollo: ['profile']
+    })
+  ],
   data () {
     return {
+      profile: {},
       prevHeight: 0,
       loaded: false
     }
   },
+  watch: {
+    '$route.params.id' (to) {
+      console.log('to', to)
+      console.log('profile', this.profile.id)
+    }
+  },
   computed: {
-    ...mapGetters(['currentProfile', 'activeComponent', 'showStory', 'showArtefact', 'currentTribe']),
+    ...mapGetters(['activeComponent', 'showStory', 'showArtefact', 'currentTribe']),
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
@@ -82,12 +80,12 @@ export default {
     },
     isCommunity () {
       // TODO - only viewable by kaitiaki
-      return this.currentProfile.type === 'community'
+      return this.profile.type === 'community'
     },
     length () {
       var name = ''
-      if (this.currentProfile.legalName) name = this.currentProfile.legalName
-      else if (this.currentProfile.preferredName) name = this.currentProfile.preferredName
+      if (this.profile.legalName) name = this.profile.legalName
+      else if (this.profile.preferredName) name = this.profile.preferredName
       if (name.length > 30) return 'font-size:6vw'
       if (name.length > 25) return 'font-size:7vw'
       if (name.length > 20) return 'font-size:8vw'
@@ -99,12 +97,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setProfileById', 'setWhoami', 'setShowArtefact', 'setDialog', 'setTribes', 'setProfileStories']),
-    async setupProfile (id) {
-      this.setProfileById({ id })
-      this.setTribes()
-    }
-
+    ...mapActions(['setDialog', 'setTribes'])
   }
 }
 </script>

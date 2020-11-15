@@ -122,6 +122,44 @@ export const PROFILE_LINK_FRAGMENT = gql`
   }
 `
 
+export const getProfile = ({
+  query: gql`
+    ${PERSON_FRAGMENT}
+    ${AUTHOR_FRAGMENT}
+    ${PUBLIC_PROFILE_FRAGMENT}
+    ${PROFILE_LINK_FRAGMENT}
+    query($id: String!) {
+      person(id: $id){
+        ...ProfileFragment
+        children {
+          profile {
+            ...ProfileFragment
+          }
+          ...ProfileLinkFragment
+        }
+        parents {
+          profile {
+            ...ProfileFragment
+          }
+          ...ProfileLinkFragment
+        }
+        tiaki {
+          ...PublicProfileFragment
+        }
+        authors {
+          ...AuthorFragment
+          profile {
+            ...PublicProfileFragment
+          }
+        }
+      }
+    }
+  `,
+  update: data => data.person,
+  fetchPolicy: 'no-cache'
+})
+
+
 export const getPerson = id => ({
   query: gql`
     ${PERSON_FRAGMENT}
@@ -155,7 +193,10 @@ export const getPerson = id => ({
       }
     }
   `,
-  variables: { id: id },
+  variables: {
+    id
+  },
+  update: data => data.person,
   fetchPolicy: 'no-cache'
 })
 

@@ -17,7 +17,7 @@ export default [
     path: '/profileShow/:id',
     component: ProfileShow,
     children: [
-      { path: '', name: 'profileShow', redirect: { name: 'profile' } },
+      { path: '', name: 'profileShow', redirect: 'profile' },
       { path: 'profile', name: 'profile', component: Profile },
       // Archive will be rendered inside ProfileShow's <router-view>
       // when /profile/:id/archive is matched

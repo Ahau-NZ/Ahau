@@ -48,6 +48,7 @@ import isEmpty from 'lodash.isempty'
 import { mapGetters, mapActions, mapMutations } from 'vuex'
 
 import mapStoryMixins from '@/mixins/story-mixins.js'
+import mapProfileMixins from '@/mixins/profile-mixins.js'
 
 export default {
   name: 'Timeline',
@@ -55,13 +56,10 @@ export default {
     TimelineCard,
     StoryCard
   },
-  props: {
-    profile: {
-      type: Object,
-      default: () => ({})
-    }
-  },
   mixins: [
+    mapProfileMixins({
+      mapApollo: ['profile']
+    }),
     mapStoryMixins({
       mapMethods: ['saveStory', 'processLinks', 'saveArtefact', 'getStory', 'saveLink', 'removeLink'],
       mapApollo: ['stories']
@@ -69,6 +67,7 @@ export default {
   ],
   data () {
     return {
+      profile: {},
       stories: [],
       scrollPosition: 0
     }

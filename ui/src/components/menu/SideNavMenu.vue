@@ -2,14 +2,14 @@
   <v-row ref="sideNav" class="sideNav" :class="position" v-scroll="onScroll">
     <v-col :class="nonMember ? 'px-3 pt-3' : mobile ? 'px-6': tablet ? 'pt-12':''">
       <v-row
-        justify-center
         v-if="!mobile"
+        justify-center
         :class="tablet ? 'pa-2 pt-5 ml-6':'pa-2 ml-12'"
         cols="12"
       >
           <v-btn
             :class="tablet ? 'pl-2':''"
-            @click="setActive('profile')"
+            :to="go('profile')"
             light
             text
             style="height: auto;"
@@ -131,19 +131,24 @@ import RegisterButton from '@/components/button/RegisterButton.vue'
 import Avatar from '@/components/Avatar.vue'
 import { mapGetters, mapActions } from 'vuex'
 
+import mapProfileMixins from '@/mixins/profile-mixins.js'
+
 export default {
   name: 'SideNavMenu',
   props: {
-    profile: {
-      type: Object
-    },
     community: {
       type: Boolean,
       default: false
     }
   },
+  mixins: [
+    mapProfileMixins({
+      mapApollo: ['profile']
+    })
+  ],
   data () {
     return {
+      profile: {},
       offset: 0,
       componentLoaded: false,
       stickyMobile: false,

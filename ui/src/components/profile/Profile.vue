@@ -54,7 +54,7 @@
               <Avatar :size="mobile ? '50px' : '40px'" :image="member.avatarImage" :alt="member.preferredName" />
             </v-col>
             <v-col class="py-0">
-              <p style="color:black;">{{member.preferredName}}</p>
+              <p style="color:black;">{{ member.preferredName }}</p>
             </v-col>
           </v-row>
         </template>
@@ -69,6 +69,7 @@ import ProfileInfoItem from '@/components/profile/ProfileInfoItem.vue'
 import ProfileCard from '@/components/profile/ProfileCard.vue'
 import Avatar from '@/components/Avatar.vue'
 import { mapGetters, mapActions } from 'vuex'
+import mapProfileMixins from '@/mixins/profile-mixins.js'
 
 export default {
   name: 'Profile',
@@ -78,23 +79,15 @@ export default {
     ProfileInfoItem,
     Avatar
   },
-  props: {
-    profile: {
-      type: Object,
-      default: () => ({})
-    },
-    editProfile: {
-      type: Function
-    },
-    setupProfile: Function
-  },
+  mixins: [
+    mapProfileMixins({
+      mapApollo: ['profile']
+    })
+  ],
   data () {
     return {
-      isEditing: false
+      profile: {}
     }
-  },
-  mounted () {
-    console.log('profile.vue mounted')
   },
   beforeMount () {
     window.scrollTo(0, 0)
@@ -117,14 +110,8 @@ export default {
   },
   methods: {
     ...mapActions(['setProfileById', 'setDialog', 'setCurrentTribe', 'setTribes']),
-    openProfile (profile) {
-      this.setProfileById({ id: profile.id, type: 'preview' })
-      this.setDialog({ active: 'view-edit-node', type: 'preview' })
-    },
     goTribe (tribe) {
-      this.setCurrentTribe(tribe)
-      this.setProfileById({ id: tribe.private[0].id })
-      this.$router.push({ name: 'profileShow', params: { id: tribe.private[0].id } }).catch(() => {})
+      this.$router.push({ name: 'profile', params: { id: tribe.private[0].id } })
     }
   }
 }

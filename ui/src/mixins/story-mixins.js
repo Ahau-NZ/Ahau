@@ -25,9 +25,9 @@ export default function mapStoryMixins ({ mapMethods, mapApollo }) {
 
 const apollo = {
   stories () {
-    const isPersonal = this.currentProfile.id === this.whoami.personal.profile.id
+    const isPersonal = this.$route.params.id === this.whoami.personal.profile.id
 
-    if (this.currentProfile.type === 'community' || isPersonal) {
+    if (this.profile.type === 'community' || isPersonal) {
       return {
         ...getAllStories,
         update (data) {
@@ -42,9 +42,9 @@ const apollo = {
           })
         }
       }
-    } else if (this.currentProfile.type === 'person') {
+    } else if (this.profile.type === 'person') {
       return {
-        ...getAllStoriesByMentions(this.currentProfile.id),
+        ...getAllStoriesByMentions(this.profile.id),
         update (data) {
           return data.person.mentions.map(mention => {
             return {

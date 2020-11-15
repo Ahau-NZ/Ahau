@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-app-bar v-if="mobile || enableMenu" :app="mobile && app" :class="classObject" flat color="#303030" fixed>
-      <template v-if="!isgoBack">
+      <template v-if="!isGoBack">
         <NotificationPanel/>
       </template>
       <BackButton v-if="!isWhakapapaIndex" @go-back="goBack"/>
@@ -128,7 +128,7 @@ export default {
   computed: {
     ...mapGetters(['whoami', 'whakapapa', 'route', 'showStory', 'storeDialog', 'currentProfile', 'syncing', 'activeComponent']),
     isWhakapapaIndex () {
-      return this.route.name === 'profileShow' && this.activeComponent === 'whakapapa'
+      return this.$route.name === 'whakapapaIndex'
     },
     classObject: function () {
       return {
@@ -140,11 +140,11 @@ export default {
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
-    isgoBack () {
+    isGoBack () {
       if (this.mobile) {
-        if (this.route.name === 'whakapapaShow') return true
+        if (this.$route.name === 'whakapapa') return true
         else if (this.showStory) return true
-        else if (this.route.from.name === 'whakapapaShow' && this.route.name === 'profileShow' && this.activeComponent !== 'whakapapa') return true
+        else if (this.route.from.name === 'whakapapa' && this.route.name === 'profileShow' && this.activeComponent !== 'whakapapa') return true
       }
       return false
     }

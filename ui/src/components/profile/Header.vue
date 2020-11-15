@@ -16,15 +16,23 @@ import ImagePicker from '@/components/ImagePicker.vue'
 import Avatar from '@/components/Avatar.vue'
 
 import gql from 'graphql-tag'
+import mapProfileMixins from '@/mixins/profile-mixins.js'
 
 export default {
   name: 'ProfileHeader',
-  props: {
-    profile: Object
-  },
   components: {
     ImagePicker,
     Avatar
+  },
+  mixins: [
+    mapProfileMixins({
+      mapApollo: ['profile']
+    })
+  ],
+  data () {
+    return {
+      profile: {}
+    }
   },
   methods: {
     async updateHeader (image) {
