@@ -1,42 +1,39 @@
 <template>
-  <div>
-    <v-container fluid class="body-width px-2">
+  <div class="px-2">
+    <div :class="{'showOverlay': showStory && !mobile}"></div>
 
-      <div :class="{'showOverlay': showStory && !mobile}"></div>
+    <v-row v-if="!showStory" class="top-margin mb-5">
+      <v-col class="headliner black--text pa-0 pl-4 pt-2">
+        Timeline
+      </v-col>
+    </v-row>
 
-      <v-row v-if="!showStory" class="top-margin mb-5">
-        <v-col class="headliner black--text pa-0 pl-4 pt-2">
-          Timeline
-        </v-col>
-      </v-row>
-
-      <v-row v-if="filteredStories && filteredStories.length > 0" >
-        <v-col cols="12" sm="12" md="9" :class="!showStory ? '':'pa-0'">
-          <div v-if="!showStory">
-            <TimelineCard :data="filteredStories" @toggleStory="toggleStory($event)" />
-          </div>
-          <!-- Full story view -->
-          <div v-else>
-            <v-row :class="mobile ? 'pa-0': 'px-6 top-margin'">
-              <StoryCard
-                @updateDialog="updateDialog($event)"
-                :fullStory="true"
-                :story.sync="currentStory"
-                @submit="saveStory($event)"
-                @close="toggleStory($event)"
-              />
-            </v-row>
-          </div>
-        </v-col>
-      </v-row>
-      <v-row v-else>
-        <v-col>
-          <div class="px-8 subtitle-1 grey--text " :class="{ 'text-center': mobile }">
-            No records found in this profile. Please add record to this profile via Archive
-          </div>
-        </v-col>
-      </v-row>
-    </v-container>
+    <v-row v-if="filteredStories && filteredStories.length > 0" >
+      <v-col cols="12" sm="12" md="9" :class="!showStory ? '':'pa-0'">
+        <div v-if="!showStory">
+          <TimelineCard :data="filteredStories" @toggleStory="toggleStory($event)" />
+        </div>
+        <!-- Full story view -->
+        <div v-else>
+          <v-row :class="mobile ? 'pa-0': 'px-6 top-margin'">
+            <StoryCard
+              @updateDialog="updateDialog($event)"
+              :fullStory="true"
+              :story.sync="currentStory"
+              @submit="saveStory($event)"
+              @close="toggleStory($event)"
+            />
+          </v-row>
+        </div>
+      </v-col>
+    </v-row>
+    <v-row v-else>
+      <v-col>
+        <div class="px-8 subtitle-1 grey--text " :class="{ 'text-center': mobile }">
+          No records found in this profile. Please add record to this profile via Archive
+        </div>
+      </v-col>
+    </v-row>
   </div>
 </template>
 

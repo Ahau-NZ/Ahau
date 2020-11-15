@@ -1,6 +1,5 @@
 <template>
-  <div>
-    <v-container fluid class="px-2">
+  <div class="px-2">
       <!-- VIEW STORY OVERLAY -->
       <div :class="{ 'showOverlay': showStory && !mobile }"></div>
       <v-row v-if="!showStory" class="top-margin mb-10">
@@ -45,7 +44,6 @@
         </v-col>
       </v-row>
       <ArchiveHelper v-if="showArchiveHelper" :show="showArchiveHelper" @close="toggleArchiveHelper" />
-    </v-container>
 
     <NewRecordDialog v-if="dialog === 'new-story'" :show="dialog === 'new-story'"
       :title="`Add record to ${profile.preferredName || 'Untitled'}'s archive`" @close="dialog = null"

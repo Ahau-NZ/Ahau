@@ -25,7 +25,9 @@
           name="fade"
           mode="out-in"
        >
-        <router-view></router-view>
+        <router-view
+          :style="$route.name !== 'profile' ? 'margin-top:100px' : ''"
+        />
       </transition>
       </v-col>
     </v-row>
