@@ -442,7 +442,7 @@ export default {
 
         if (this.view.ignoredProfiles.includes(id)) {
           const input = {
-            id: this.$route.params.id,
+            id: this.$route.params.whakapapaId,
             ignoredProfiles: {
               remove: [id]
             }
@@ -733,7 +733,7 @@ export default {
     },
     async ignoreProfile () {
       const input = {
-        id: this.$route.params.id,
+        id: this.$route.params.whakapapaId,
         ignoredProfiles: {
           add: [this.selectedProfile.id]
         }

@@ -98,7 +98,7 @@
           </v-btn>
         </v-col>
         <v-col cols="3" md="12" v-if="showWhakapapa" :class="mobile ? 'py-0 px-0' : tablet ? 'py-4 px-0' : 'py-1'">
-          <v-btn :to="go('whakapapa')" light :fab="mobile" text>
+          <v-btn :to="go('whakapapaIndex')" light :fab="mobile" text>
             <v-col class="pa-0" :cols="mobile ? '12' : '2'">
               <WhakapapaIcon
                 :size="mobile ? 'large' : tablet ? 'x-large' : 'medium'"

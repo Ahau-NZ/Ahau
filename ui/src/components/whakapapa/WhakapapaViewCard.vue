@@ -59,10 +59,8 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setGoBack']),
     goWhakapapaShow () {
-      this.setGoBack(this.currentProfile.id)
-      this.$router.push({ name: 'whakapapaShow', params: { id: this.view.id } })
+      this.$router.push({ name: 'whakapapaShow', params: { whakapapaId: this.view.id } })
     },
     background (view) {
       if (view.image && view.image.uri) {

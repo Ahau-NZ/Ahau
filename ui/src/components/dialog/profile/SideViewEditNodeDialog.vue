@@ -369,9 +369,7 @@ export default {
   methods: {
     ...mapActions(['setProfileById', 'setComponent']),
     goArchive () {
-      this.setComponent('archive')
-      this.setProfileById({ id: this.profile.id })
-      this.$router.push({ name: 'profileShow', params: { id: this.profile.id } }).catch(() => {})
+      this.$router.push({ name: 'archive', params: { id: this.profile.id } })
     },
     age (born) {
       var age = calculateAge(born)

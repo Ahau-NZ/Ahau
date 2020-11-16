@@ -66,12 +66,6 @@ export default {
       loaded: false
     }
   },
-  watch: {
-    '$route.params.id' (to) {
-      console.log('to', to)
-      console.log('profile', this.profile.id)
-    }
-  },
   computed: {
     ...mapGetters(['activeComponent', 'showStory', 'showArtefact', 'currentTribe']),
     mobile () {

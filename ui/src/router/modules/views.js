@@ -14,7 +14,6 @@ export default [
   { path: '/discovery', name: 'discovery', component: Discovery },
   {
     path: '/profileShow/:id',
-    name: 'profileShow',
     component: ProfileShow,
     children: [
       { path: '', name: 'profileShow', redirect: 'profile' },
@@ -24,8 +23,15 @@ export default [
       { path: 'archive', name: 'archive', component: Archive },
       // WhakapapaIndex will be rendered inside ProfileShow's <router-view>
       // when /profile/:id/whakapapa is matched
-      { path: 'whakapapa', name: 'whakapapaIndex', component: WhakapapaIndex },
-      { path: 'whakapapa/:id', name: 'whakapapaShow', component: WhakapapaShow },
+      {
+        path: 'whakapapa',
+        name: 'whakapapaIndex',
+        component: WhakapapaIndex,
+        children: [
+          { path: 'whakapapa/:whakapapaId', name: 'whakapapaShow', component: WhakapapaShow }
+        ]
+      },
+
       { path: 'timeline', name: 'timeline', component: Timeline }
     ]
   }
