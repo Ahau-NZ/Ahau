@@ -10,55 +10,39 @@ import Timeline from '@/components/story/Timeline.vue'
 
 export default [
   { path: '/login', name: 'login', component: Login },
-  // { path: '/whakapapa', name: 'whakapapaIndex', component: WhakapapaIndex },
-  // { path: '/discovery', name: 'discovery', component: Discovery },
-  // {
-  //   path: '/profileShow/:id',
-  //   component: ProfileShow,
-  //   children: [
-  //     { path: '', name: 'profileShow', redirect: 'profile' },
-  //     { path: 'profile', name: 'profile', component: Profile },
-  //     // Archive will be rendered inside ProfileShow's <router-view>
-  //     // when /profile/:id/archive is matched
-  //     { path: 'archive', name: 'archive', component: Archive },
-  //     // WhakapapaIndex will be rendered inside ProfileShow's <router-view>
-  //     // when /profile/:id/whakapapa is matched
-  //     {
-  //       path: 'whakapapa',
-  //       name: 'whakapapaIndex',
-  //       component: WhakapapaIndex,
-  //       children: [
-  //         { path: 'whakapapa/:whakapapaId', name: 'whakapapaShow', component: WhakapapaShow }
-  //       ]
-  //     },
-
-  //     { path: 'timeline', name: 'timeline', component: Timeline }
-  //   ]
-  // }
   {
-    path: '/tribes',
-    name: 'tribes',
-    component: Discovery,
-    children: [
-      {
-        path: 'tribe/:tribeId',
-        name: 'tribe',
-        component: ProfileShow
-      }
-    ]
+    path: '/tribe',
+    name: 'tribe',
+    component: Discovery
   },
+  // {
+  //   path: '/person/:profileId',
+  //   name: 'person',
+  //   // component: ProfileShow,
+  //   children: [
+  //     { path: 'profile', name: 'profile/person', component: Profile }
+  //   ]
+  // },
+  // {
+  //   path: '/community/:profileId',
+  //   name: 'community',
+  //   // component: ProfileShow,
+  //   children: [
+  //     { path: 'profile', name: 'profile/community', component: Profile }
+  //   ]
+  // },
   {
     path: '/tribe/:tribeId',
     component: ProfileShow,
     children: [
       {
-        path: '',
-        name: 'profileShow',
-        redirect: 'profile'
+        path: 'person/:profileId',
+        name: 'person',
+        component: Profile
       },
       {
-        path: 'profile',
-        name: 'profile',
+        path: 'community/:profileId',
+        name: 'community',
         component: Profile
       },
       {
@@ -72,31 +56,53 @@ export default [
         component: Timeline
       },
       {
-        path: 'whakapapaIndex',
-        name: 'whakapapaIndex',
-        component: WhakapapaIndex
-      },
-      {
-        path: 'whakapapa/:whakapapaId',
+        path: 'whakapapa',
         name: 'whakapapa',
-        component: WhakapapaShow
+        component: WhakapapaIndex
       }
     ]
   }
 ]
-
 /*
-/tribes                                        - the index page for all tribes (current discovery I think?)
-/tribe/:tribeId                               - community home page
-/tribe/:tribeId/edit                          - editing the community page
-/tribe/:tribeId/archive                       - archive of a community
+TODO:
+- separate profile/person + profile/community
+- archive:
+  - personal archive: profile/:profileId/archive
+  - tribe archive / community archive
+  - person archive:
 
-/tribe/:tribeId/profile/:profileId     - shows a profile in a particular tribe context
-/tribe/:tribeId/profile/:profileId/home     - some overview with links out to archive / whakapapa / timeline?
-/tribe/:tribeId/profile/:profileId/archive
-/tribe/:tribeId/profile/:profileId/archive/new
+/tribe                                        - the index page for all tribes (current discovery I think?)
 
-/tribe/:tribeId/whakapapa  - index of all the whakapapa views for a particular tribe
-/tribe/:tribeId/whakapapa/:whakapapaId
+/tribe/new                                              - new community
+X /tribe/:tribeId/community/:profileId
+      /tribe/:tribeId/community/:profileId/edit
+/tribe/:tribeId/whakapapa                               - index of all the whakapapa views for a particular tribe
+/tribe/:tribeId/whakapapa/:whakapapaId                  -
 /tribe/:tribeId/whakapapa/:whakapapaId/edit
+/tribe/:tribeId/whakapapa/new
+                           - archive of a tribe
+
+/tribe/:tribeId/person/new                              - new person within a particular tribe
+X /tribe/:tribeId/person/:profileId                       - shows a person within a particular tribe
+/tribe/:tribeId/person/:profileId/edit
+
+/tribe/:tribeId/person/:profileId/story
+
+/tribe/:tribeId/person/:profileId/whakapapa
+/tribe/:tribeId/person/:profileId/timeline
+
+/tribe/:tribeId/story/:storyId
+/tribe/:tribeId/story/:storyId/edit
+/tribe/:tribeId/story/new
+// NOTE: these are actually stories
+X /tribe/:tribeId/timeline
+X /tribe/:tribeId/archive
+
+/person/:profileId - a public person profile
+/community/:profileId - a public community profile
+
+Login goes to your profile
+
+tribe/myTribe/profile/myProfile
+
 */

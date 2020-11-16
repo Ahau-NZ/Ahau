@@ -135,7 +135,7 @@ export default {
     login () {
       this.karakiaTūwhera()
       this.$router.push({
-        name: 'profile',
+        name: 'person',
         params: {
           tribeId: this.whoami.personal.groupId,
           profileId: this.whoami.personal.profile.id

@@ -24,7 +24,6 @@ export default function mapProfileMixins ({ mapMethods, mapApollo }) {
 const apollo = {
   profile () {
     // determine whether its a community or a profile
-    console.log(this.$route.params)
     return {
       ...getProfile,
       variables () {
@@ -32,7 +31,10 @@ const apollo = {
           id: this.$route.params.profileId
         }
       },
-      update: data => data.person
+      error: err => console.log('ERROR GETTING PROFILE...', err),
+      update: data => {
+        return data.person
+      }
     }
   }
 }

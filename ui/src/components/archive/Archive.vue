@@ -61,14 +61,11 @@ import BigAddButton from '@/components/button/BigAddButton.vue'
 // TODO: Replace with Archive Helper (doesnt exist yet)
 import ArchiveHelper from '@/components/dialog/archive/ArchiveHelper.vue'
 import mapStoryMixins from '@/mixins/story-mixins.js'
-import mapProfileMixins from '@/mixins/profile-mixins.js'
 
 export default {
   name: 'Archive',
+  props: ['profile'],
   mixins: [
-    mapProfileMixins({
-      mapApollo: ['profile']
-    }),
     mapStoryMixins({
       mapMethods: ['saveStory', 'processLinks', 'saveArtefact', 'getStory', 'saveLink', 'removeLink'],
       mapApollo: ['stories']
@@ -82,7 +79,6 @@ export default {
   },
   data () {
     return {
-      profile: {},
       stories: [],
       dialog: null,
       scrollPosition: 0,

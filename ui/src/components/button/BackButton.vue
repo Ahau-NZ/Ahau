@@ -57,7 +57,6 @@ export default {
         return this.$route.from.name === 'whakapapa' && this.$route.name === 'profile'
       }
 
-      console.log(this.$router)
       return false
     }
   },

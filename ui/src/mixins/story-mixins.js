@@ -27,34 +27,41 @@ const apollo = {
   stories () {
     const isPersonal = this.$route.params.profileId === this.whoami.personal.profile.id
 
-    console.log(this.profile)
-    if (this.profile.type === 'community' || isPersonal) {
-      return {
-        ...getAllStories,
-        update (data) {
-          return data.stories.filter(story => {
-            return story.recps.some(recp => {
-              const id = isPersonal
-                ? this.whoami.personal.groupId
-                : this.$route.params.tribeId
+    switch (this.profile.type) {
+      case 'community':
+      case isPersonal:
+        return {
+          ...getAllStories,
+          update (data) {
+            return data.stories.filter(story => {
+              return story.recps.some(recp => {
+                const id = isPersonal
+                  ? this.whoami.personal.groupId
+                  : this.$route.params.tribeId
 
-              return recp === id
+                return recp === id
+              })
             })
-          })
+          },
+          skip () {
+            return this.profile == null
+          }
         }
-      }
-    } else if (this.profile.type === 'person') {
-      return {
-        ...getAllStoriesByMentions(this.profile.id),
-        update (data) {
-          return data.person.mentions.map(mention => {
-            return {
-              linkId: mention.linkId,
-              ...mention.story
-            }
-          })
+      case 'person':
+        return {
+          ...getAllStoriesByMentions(this.profile.id),
+          update (data) {
+            return data.person.mentions.map(mention => {
+              return {
+                linkId: mention.linkId,
+                ...mention.story
+              }
+            })
+          }
         }
-      }
+      default:
+        console.error('profile was empty')
+        return null
     }
   }
 }

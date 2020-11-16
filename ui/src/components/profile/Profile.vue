@@ -35,10 +35,12 @@
           <div v-if="connectedTribes.length > 0">
             <v-row v-for="tribe in connectedTribes" :key="tribe.id" class="justify-center align-center ma-0 ml-4">
               <v-col cols="2" class="pt-0 pl-0">
-                <Avatar :size="mobile ? '50px' : '40px'" :image="tribe.private[0].avatarImage" :alt="tribe.private[0].preferredName" :isView="!tribe.private[0].avatarImage" clickable @click="goTribe(tribe)"/>
+                <router-link :to="goTribe(tribe)">
+                  <Avatar :size="mobile ? '50px' : '40px'" :image="tribe.private[0].avatarImage" :alt="tribe.private[0].preferredName" :isView="!tribe.private[0].avatarImage" clickable/>
+                </router-link>
               </v-col>
               <v-col class="py-0">
-                <p style="color:black;">{{tribe.private[0].preferredName}}</p>
+                <p style="color:black;">{{ tribe.private[0].preferredName }}</p>
               </v-col>
             </v-row>
           </div>
@@ -113,9 +115,11 @@ export default {
   methods: {
     ...mapActions(['setProfileById', 'setDialog', 'setCurrentTribe', 'setTribes']),
     goTribe (tribe) {
-      this.$router.push({
-        name: 'profile', params: { tribeId: tribe.id, profileId: tribe.private[0].id }
-      })
+      console.log(tribe)
+      return {
+        name: 'person',
+        params: { tribeId: tribe.id, profileId: tribe.private[0].id }
+      }
     }
   }
 }

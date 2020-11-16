@@ -9,11 +9,11 @@
 
       <!-- Desktop doesn't use a drawer, it has the links directly in the app bar -->
       <template v-if="!mobile">
-        <v-btn text active-class="no-active" :to="{ name: 'tribes' }" class="white--text text-uppercase ms-10">Tribes</v-btn>
+        <v-btn text active-class="no-active" :to="{ name: 'tribe' }" class="white--text text-uppercase ms-10">Tribes</v-btn>
         <v-btn active-class="no-active" text :to="go('archive')" class="white--text text-uppercase ms-10">Archive</v-btn>
 
         <!-- <v-btn active-class="no-active" text @click.native="resetWindow" to="/whakapapa" class="white--text text-uppercase ms-10">whakapapa</v-btn> -->
-        <v-btn active-class="no-active" text :to="go('whakapapaIndex')" class="white--text text-uppercase ms-10">whakapapa</v-btn>
+        <v-btn active-class="no-active" text :to="go('whakapapa')" class="white--text text-uppercase ms-10">whakapapa</v-btn>
         <v-btn active-class="no-active" fab :to="go('profile')" class="pr-12 mr-4 ml-10">
           <Avatar
             v-if="!mobile"
@@ -64,7 +64,7 @@
         <v-list-item active-class="no-active" link :to="go('archive')">
           <v-list-item-title class="white--text" >Archive</v-list-item-title>
         </v-list-item>
-        <v-list-item active-class="no-active" link :to="{ name: 'tribes' }">
+        <v-list-item active-class="no-active" link :to="{ name: 'tribe' }">
           <v-list-item-title class="white--text">Tribes</v-list-item-title>
         </v-list-item>
         <v-list-item class="pt-12">
@@ -128,7 +128,7 @@ export default {
   computed: {
     ...mapGetters(['whoami', 'whakapapa', 'showStory', 'storeDialog', 'currentProfile', 'syncing', 'activeComponent']),
     isWhakapapaIndex () {
-      return this.$route.name === 'whakapapaIndex'
+      return this.$route.name === 'whakapapa'
     },
     classObject: function () {
       return {
@@ -184,7 +184,6 @@ export default {
       this.drawer = !this.drawer
     },
     goBack () {
-      console.log(this.$route)
       if (this.$route.name === 'whakapapaShow') return this.$router.push({ path: this.$route.from.fullPath })
       else if (this.showStory) return this.setShowStory()
     }

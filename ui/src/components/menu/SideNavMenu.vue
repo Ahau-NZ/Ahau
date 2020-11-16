@@ -37,13 +37,13 @@
               <UserIcon
                 v-else
                 :size="tablet ? 'x-large':'medium'"
-                :color="$route.name === 'profile' ? 'red' : 'black'"
+                :color="activeStyle('profile')"
               />
             </v-col>
             <v-col class="py-0" v-if="!mobile && !isOverflowing">
               <span
                 ref="text"
-                :style="$route.name === 'profile' ? 'color:#B02425;' : ''"
+                :style="activeStyle('profile')"
                 class="ml-2 nav-label subtitle-1"
               >Profile</span>
             </v-col>
@@ -67,14 +67,14 @@
               <ArchiveIcon
                 v-if="!showStory"
                 :size="mobile ? 'large' : tablet ? 'x-large' : 'medium'"
-                :color="$route.name === 'archive' ? 'red' : 'black'"
+                :color="activeStyle('archive')"
               />
               <v-icon v-else color="#B02425">mdi-arrow-left</v-icon>
             </v-col>
             <v-col class="py-0" v-if="!mobile && !isOverflowing">
               <span
                 ref="text"
-                :style="$route.name === 'archive' ? 'color:#B02425;' : ''"
+                :style="activeStyle('archive')"
                 class="ml-2 nav-label subtitle-1"
               >Archive</span>
             </v-col>
@@ -85,30 +85,30 @@
             <v-col class="pa-0" :cols="mobile ? '12' : '2'">
               <TimelineIcon
                 :size="tablet ? 'x-large' : 'medium'"
-                :color="$route.name === 'timeline' ? 'red' : 'black'"
+                :color="activeStyle('timeline')"
               />
             </v-col>
             <v-col class="py-0" v-if="!mobile && !isOverflowing">
               <span
                 ref="text"
-                :style="$route.name === 'timeline' ? 'color:#B02425;' : 'black'"
+                :style="activeStyle('timeline')"
                 class="ml-2 nav-label subtitle-1"
               >Timeline</span>
             </v-col>
           </v-btn>
         </v-col>
         <v-col cols="3" md="12" v-if="showWhakapapa" :class="mobile ? 'py-0 px-0' : tablet ? 'py-4 px-0' : 'py-1'">
-          <v-btn :to="go('whakapapaIndex')" light :fab="mobile" text>
+          <v-btn :to="go('whakapapa')" light :fab="mobile" text>
             <v-col class="pa-0" :cols="mobile ? '12' : '2'">
               <WhakapapaIcon
                 :size="mobile ? 'large' : tablet ? 'x-large' : 'medium'"
-                :color="$route.name === 'whakapapaIndex' ? 'red' : 'black'"
+                :color="activeStyle('whakapapa')"
               />
             </v-col>
             <v-col class="py-0" v-if="!mobile && !isOverflowing">
               <span
                 ref="text"
-                :style="$route.name === 'whakapapaIndex' ? 'color:#B02425;' : 'black'"
+                :style="activeStyle('whakapapa')"
                 class="ml-2 subtitle-1"
               >Whakapapa</span>
             </v-col>
@@ -156,6 +156,7 @@ export default {
   },
   computed: {
     ...mapGetters(['showStory', 'storeDialog', 'notifications', 'whoami']),
+    
     showWhakapapa () {
       if (this.profile.type === 'community') return true
       else if (this.profile.id === this.whoami.personal.profile.id) return true
@@ -199,6 +200,10 @@ export default {
   },
   methods: {
     ...mapActions(['setComponent', 'setShowStory', 'setDialog', 'profileStories']),
+    activeStyle (routeName) {
+      if (this && this.$route && this.$route.name === routeName) return 'color:#B02425'
+      return 'black'
+    },
     go (name) {
       return {
         name,

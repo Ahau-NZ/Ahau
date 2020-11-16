@@ -658,7 +658,7 @@ export default {
 
       await this.saveWhakapapa(input)
 
-      // this.$router.push({ name: 'whakapapaIndex', params: { id: this.whakapapaView.recps } })
+      // this.$router.push({ name: 'whakapapa', params: { id: this.whakapapaView.recps } })
       this.$router.push({ name: 'profileShow', params: { id: this.currentProfile.id } })
     },
     getImage () {

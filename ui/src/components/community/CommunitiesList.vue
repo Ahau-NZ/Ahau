@@ -211,7 +211,7 @@ export default {
     },
     goProfile (tribeId, profileId) {
       return {
-        name: 'profile', params: { tribeId, profileId }
+        name: 'community', params: { tribeId, profileId }
       }
     },
     getImage (community) {

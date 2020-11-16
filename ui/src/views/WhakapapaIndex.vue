@@ -63,11 +63,18 @@ import tree from '@/lib/tree-helpers'
 import { saveWhakapapaView, getWhakapapaViews } from '@/lib/whakapapa-helpers.js'
 import { findByName } from '@/lib/search-helpers.js'
 import { getTribeByGroupId } from '@/lib/community-helpers.js'
+import mapProfileMixins from '@/mixins/profile-mixins.js'
 
 export default {
   name: 'WhakapapaIndex',
+  mixins: [
+    mapProfileMixins({
+      mapApollo: ['profile']
+    })
+  ],
   data () {
     return {
+      profile: {},
       suggestions: [],
       views: [],
       showWhakapapaHelper: false,
@@ -78,13 +85,8 @@ export default {
       whakapapas: []
     }
   },
-  watch: {
-    async currentProfile (newVal) {
-      this.whakapapas = await this.groupedWhakapapaViews()
-    }
-  },
   computed: {
-    ...mapGetters(['whoami', 'currentAccess', 'defaultAccess', 'currentProfile', 'currentTribe']),
+    ...mapGetters(['whoami', 'currentAccess', 'defaultAccess', 'currentTribe']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     }
@@ -94,7 +96,6 @@ export default {
     this.setCurrentAccess(this.defaultAccess)
     this.whakapapas = await this.groupedWhakapapaViews()
   },
-
   methods: {
     ...mapMutations(['setCurrentAccess']),
     ...mapActions(['addNestedWhakapapa', 'setLoading']),
@@ -121,14 +122,15 @@ export default {
         const filteredGroups = groups.filter(i => !isEmpty(i))
         return filteredGroups
       }
+
       return [{
-        name: this.currentProfile.preferredName,
+        name: this.profile.preferredName,
         views: views.filter(view => {
           return view.recps.some(recp => {
-            return recp === this.currentTribe.id
+            return recp === this.$route.params.tribeId
           })
         }),
-        image: this.currentProfile.avatarImage
+        image: this.profile.avatarImage
       }]
     },
 
