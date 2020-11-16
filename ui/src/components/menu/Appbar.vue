@@ -158,7 +158,13 @@ export default {
   methods: {
     ...mapActions(['setWhoami', 'setProfileById', 'setComponent', 'setShowStory', 'setDialog', 'getAllNotifications']),
     go (path) {
-      return { name: path, params: { id: this.whoami.personal.profile.id } }
+      return {
+        name: path,
+        params: {
+          tribeId: this.whoami.personal.groupId,
+          profileId: this.whoami.personal.profile.id
+        }
+      }
     },
     resetWindow () {
       window.scrollTo(0, 0)

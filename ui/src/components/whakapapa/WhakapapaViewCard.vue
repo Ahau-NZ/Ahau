@@ -1,7 +1,7 @@
 <template>
   <v-card
     light
-    @click="goWhakapapaShow()"
+    :to="goWhakapapaShow()"
   >
     <v-container class="pa-0">
       <v-list-item-icon class="pt-1 mt-0" style="position:absolute; top:5px; right:1px; margin-right:0px">
@@ -25,7 +25,7 @@
 <script>
 import whakapapa from '@/assets/whakapapa.png'
 import AvatarGroup from '@/components/AvatarGroup.vue'
-import { mapActions, mapGetters } from 'vuex'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'WhakapapaViewCard',
@@ -60,7 +60,14 @@ export default {
   },
   methods: {
     goWhakapapaShow () {
-      this.$router.push({ name: 'whakapapaShow', params: { whakapapaId: this.view.id } })
+      return {
+        name: 'whakapapa',
+        params: {
+          tribeId: this.$route.params.tribeId,
+          profileId: this.$route.params.profileId,
+          whakapapaId: this.view.id
+        }
+      }
     },
     background (view) {
       if (view.image && view.image.uri) {

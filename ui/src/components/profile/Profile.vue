@@ -86,7 +86,9 @@ export default {
   ],
   data () {
     return {
-      profile: {}
+      profile: {
+        type: 'community'
+      }
     }
   },
   beforeMount () {
@@ -111,7 +113,9 @@ export default {
   methods: {
     ...mapActions(['setProfileById', 'setDialog', 'setCurrentTribe', 'setTribes']),
     goTribe (tribe) {
-      this.$router.push({ name: 'profile', params: { id: tribe.private[0].id } })
+      this.$router.push({
+        name: 'profile', params: { tribeId: tribe.id, profileId: tribe.private[0].id }
+      })
     }
   }
 }

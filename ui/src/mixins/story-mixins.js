@@ -25,8 +25,9 @@ export default function mapStoryMixins ({ mapMethods, mapApollo }) {
 
 const apollo = {
   stories () {
-    const isPersonal = this.$route.params.id === this.whoami.personal.profile.id
+    const isPersonal = this.$route.params.profileId === this.whoami.personal.profile.id
 
+    console.log(this.profile)
     if (this.profile.type === 'community' || isPersonal) {
       return {
         ...getAllStories,
@@ -35,7 +36,7 @@ const apollo = {
             return story.recps.some(recp => {
               const id = isPersonal
                 ? this.whoami.personal.groupId
-                : this.currentTribe.id
+                : this.$route.params.tribeId
 
               return recp === id
             })

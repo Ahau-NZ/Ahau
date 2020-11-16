@@ -69,26 +69,13 @@ export default {
   data () {
     return {
       suggestions: [],
-      items: [{
-        src: require('../assets/tree.jpg')
-      },
-      {
-        src: require('../assets/whakapapa-list.jpg')
-      }
-      ],
       views: [],
       showWhakapapaHelper: false,
       showProfileForm: false,
       showViewForm: false,
       newView: null,
       columns: [],
-      showProfileView: false,
       whakapapas: []
-    }
-  },
-  async created () {
-    if (this.$route.name === 'profileShow') {
-      this.showProfileView = true
     }
   },
   watch: {
@@ -120,7 +107,7 @@ export default {
       } else {
         views = res.data.whakapapaViews
       }
-      if (this.currentProfile.id === this.whoami.personal.profile.id) {
+      if (this.$route.params.profileId === this.whoami.personal.profile.id) {
         var groupedObj = groupBy(views, 'recps[0]')
         const groups = await Promise.all(
           Object.keys(groupedObj).map(async (key, value) => {
