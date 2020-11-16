@@ -100,13 +100,12 @@ export default {
     }
   },
   mounted () {
-    console.log(this.$route)
     if (process.env.VUE_APP_PLATFORM !== 'cordova') {
       this.getCurrentIdentity()
     }
   },
   methods: {
-    ...mapActions(['setWhoami', 'setComponent', 'setProfileById']),
+    ...mapActions(['setWhoami']),
     async getCurrentIdentity () {
       await this.setWhoami()
       this.proceed()
@@ -135,9 +134,13 @@ export default {
 
     login () {
       this.karakiaTūwhera()
-      this.setComponent('profile')
-      this.setProfileById({ id: this.whoami.personal.profile.id })
-      this.$router.push({ name: 'profileShow', params: { id: this.whoami.personal.profile.id } })
+      this.$router.push({
+        name: 'profile',
+        params: {
+          tribeId: this.whoami.personal.groupId,
+          profileId: this.whoami.personal.profile.id
+        }
+      })
     },
 
     toggleNew () {

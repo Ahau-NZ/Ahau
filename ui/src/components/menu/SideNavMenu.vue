@@ -199,8 +199,14 @@ export default {
   },
   methods: {
     ...mapActions(['setComponent', 'setShowStory', 'setDialog', 'profileStories']),
-    go (path) {
-      return { path, params: { id: this.profile.id } }
+    go (name) {
+      return {
+        name,
+        params: {
+          tribeId: this.$route.params.tribeId,
+          profileId: this.profile.id
+        }
+      }
     },
     // TODO: refactor!!
     onScroll () {

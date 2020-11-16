@@ -27,7 +27,7 @@ const apollo = {
       ...getProfile,
       variables () {
         return {
-          id: this.$route.params.id
+          id: this.$route.params.profileId
         }
       },
       deep: true,
