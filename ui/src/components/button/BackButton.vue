@@ -21,7 +21,7 @@
         </v-row>
       </v-btn>
     </div>
-    <div v-else-if="this.route.name === 'whakapapaShow'" fab :class="mobile ? 'ml-n4':'ms-10 pr-6 pb-1'">
+    <div v-else-if="$route.name === 'whakapapaShow'" fab :class="mobile ? 'ml-n4':'ms-10 pr-6 pb-1'">
       <v-btn @click="goWhakapapaIndex" text>
         <div v-if="mobile">
           <v-icon dark>mdi-arrow-left</v-icon>
@@ -47,14 +47,17 @@ export default {
     WhakapapaIcon
   },
   computed: {
-    ...mapGetters(['whakapapa', 'route', 'showStory', 'currentProfile', 'goBack']),
+    ...mapGetters(['whakapapa', 'showStory', 'currentProfile']),
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
     isProfileShow () {
-      if (this.route.from) {
-        return this.route.from.name === 'whakapapaShow' && this.route.name === 'profileShow'
+      // TODO: fix!
+      if (this.$route.from) {
+        return this.$route.from.name === 'whakapapa' && this.$route.name === 'profile'
       }
+
+      console.log(this.$router)
       return false
     }
   },
@@ -62,7 +65,7 @@ export default {
     ...mapActions(['setProfileById', 'setComponent']),
     goWhakapapaShow () {
       this.setComponent('')
-      this.$router.push({ path: this.route.from.fullPath })
+      this.$router.push({ path: this.$route.from.fullPath })
     },
     goWhakapapaIndex () {
       this.setComponent('whakapapa')

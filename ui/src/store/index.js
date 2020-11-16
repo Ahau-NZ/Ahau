@@ -61,9 +61,6 @@ const store = new Vuex.Store({
     whoami: state => {
       return state.whoami
     },
-    route: state => {
-      return state.route
-    },
     // TODO-implement goBack to previous profile &| component
     goBack: state => {
       return state.goBack

@@ -131,24 +131,17 @@ import RegisterButton from '@/components/button/RegisterButton.vue'
 import Avatar from '@/components/Avatar.vue'
 import { mapGetters, mapActions } from 'vuex'
 
-import mapProfileMixins from '@/mixins/profile-mixins.js'
-
 export default {
   name: 'SideNavMenu',
   props: {
+    profile: Object,
     community: {
       type: Boolean,
       default: false
     }
   },
-  mixins: [
-    mapProfileMixins({
-      mapApollo: ['profile']
-    })
-  ],
   data () {
     return {
-      profile: {},
       offset: 0,
       componentLoaded: false,
       stickyMobile: false,

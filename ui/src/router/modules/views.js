@@ -14,6 +14,7 @@ export default [
   { path: '/discovery', name: 'discovery', component: Discovery },
   {
     path: '/profileShow/:id',
+    name: 'profileShow',
     component: ProfileShow,
     children: [
       { path: '', name: 'profileShow', redirect: 'profile' },

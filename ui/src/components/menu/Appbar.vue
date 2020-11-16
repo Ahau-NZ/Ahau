@@ -4,7 +4,7 @@
       <template v-if="!isGoBack">
         <NotificationPanel/>
       </template>
-      <BackButton v-if="!isWhakapapaIndex" @go-back="goBack"/>
+      <BackButton v-if="!isWhakapapaIndex" />
       <v-spacer />
 
       <!-- Desktop doesn't use a drawer, it has the links directly in the app bar -->
@@ -13,7 +13,7 @@
         <v-btn active-class="no-active" text :to="go('archive')" class="white--text text-uppercase ms-10">Archive</v-btn>
 
         <!-- <v-btn active-class="no-active" text @click.native="resetWindow" to="/whakapapa" class="white--text text-uppercase ms-10">whakapapa</v-btn> -->
-        <v-btn active-class="no-active" text :to="go('whakapapa')" class="white--text text-uppercase ms-10">whakapapa</v-btn>
+        <v-btn active-class="no-active" text :to="go('whakapapaIndex')" class="white--text text-uppercase ms-10">whakapapa</v-btn>
         <v-btn active-class="no-active" fab :to="go('profile')" class="pr-12 mr-4 ml-10">
           <Avatar
             v-if="!mobile"
@@ -126,7 +126,7 @@ export default {
     clearInterval(this.polling)
   },
   computed: {
-    ...mapGetters(['whoami', 'whakapapa', 'route', 'showStory', 'storeDialog', 'currentProfile', 'syncing', 'activeComponent']),
+    ...mapGetters(['whoami', 'whakapapa', 'showStory', 'storeDialog', 'currentProfile', 'syncing', 'activeComponent']),
     isWhakapapaIndex () {
       return this.$route.name === 'whakapapaIndex'
     },
@@ -144,14 +144,9 @@ export default {
       if (this.mobile) {
         if (this.$route.name === 'whakapapa') return true
         else if (this.showStory) return true
-        else if (this.route.from.name === 'whakapapa' && this.route.name === 'profileShow' && this.activeComponent !== 'whakapapa') return true
+        else if (this.r$oute.from.name === 'whakapapa' && this.$route.name === 'profileShow' && this.activeComponent !== 'whakapapa') return true
       }
       return false
-    }
-  },
-  watch: {
-    route (newVal) {
-      if (this.storeDialog) this.setDialog(null)
     }
   },
   mounted () {
@@ -163,7 +158,7 @@ export default {
   methods: {
     ...mapActions(['setWhoami', 'setProfileById', 'setComponent', 'setShowStory', 'setDialog', 'getAllNotifications']),
     go (path) {
-      return { path, params: { id: this.whoami.personal.profile.id } }
+      return { name: path, params: { id: this.whoami.personal.profile.id } }
     },
     resetWindow () {
       window.scrollTo(0, 0)
@@ -183,7 +178,8 @@ export default {
       this.drawer = !this.drawer
     },
     goBack () {
-      if (this.route.name === 'whakapapaShow') return this.$router.push({ path: this.route.from.fullPath })
+      console.log(this.$route)
+      if (this.$route.name === 'whakapapaShow') return this.$router.push({ path: this.$route.from.fullPath })
       else if (this.showStory) return this.setShowStory()
     }
   },

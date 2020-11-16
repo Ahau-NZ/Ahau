@@ -100,6 +100,7 @@ export default {
     }
   },
   mounted () {
+    console.log(this.$route)
     if (process.env.VUE_APP_PLATFORM !== 'cordova') {
       this.getCurrentIdentity()
     }
