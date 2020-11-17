@@ -9,7 +9,7 @@
       >
           <v-btn
             :class="tablet ? 'pl-2':''"
-            :to="go('profile')"
+            :to="go(profile.type)"
             light
             text
             style="height: auto;"
@@ -27,10 +27,10 @@
       <RegisterButton v-if="nonMember" :notificationSent="notificationSent" />
       <v-row v-else :class="mobile ? 'rounded-border box-shadow' : tablet ? 'ml-10' : 'ml-12 px-4'">
         <v-col cols="3" md="12" v-if="showWhakapapa" :class="mobile ? 'py-0 px-0' : tablet ? 'py-4 px-0' : 'py-1'">
-          <v-btn :to="go('profile')" light :fab="mobile" text>
+          <v-btn :to="go(profile.type)" light :fab="mobile" text>
             <v-col class="pa-0" :cols="mobile ? '12' : '2'">
               <Avatar
-                v-if="mobile && $route.name !=='profile'"
+                v-if="mobile && !isProfile"
                 :image="profile.avatarImage"
                 size="40px"
               />
@@ -156,7 +156,10 @@ export default {
   },
   computed: {
     ...mapGetters(['showStory', 'storeDialog', 'notifications', 'whoami']),
-    
+    isProfile () {
+      console.log(this.$route)
+      return this.$route.name === 'person' || this.$route.name === 'community'
+    },
     showWhakapapa () {
       if (this.profile.type === 'community') return true
       else if (this.profile.id === this.whoami.personal.profile.id) return true
@@ -184,9 +187,9 @@ export default {
     },
     position () {
       return {
-        user: !this.mobile && this.$route.name === 'profile',
+        user: !this.mobile && this.isProfile,
         sticky: !this.mobile && this.$route.name !== 'profile',
-        userMobile: this.mobile && this.$route.name === 'profile',
+        userMobile: this.mobile && this.isProfile,
         archiveMobile: this.mobile && this.$route.name !== 'profile',
         sideNav: this.$route.name !== 'profile'
       }

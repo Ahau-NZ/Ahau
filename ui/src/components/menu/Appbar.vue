@@ -14,7 +14,7 @@
 
         <!-- <v-btn active-class="no-active" text @click.native="resetWindow" to="/whakapapa" class="white--text text-uppercase ms-10">whakapapa</v-btn> -->
         <v-btn active-class="no-active" text :to="go('whakapapa')" class="white--text text-uppercase ms-10">whakapapa</v-btn>
-        <v-btn active-class="no-active" fab :to="go('profile')" class="pr-12 mr-4 ml-10">
+        <v-btn active-class="no-active" fab :to="go('person')" class="pr-12 mr-4 ml-10">
           <Avatar
             v-if="!mobile"
             size="45px"
@@ -49,7 +49,7 @@
     <!-- The drawer shows only on mobile -->
     <v-navigation-drawer v-if="mobile && enableMenu" v-model="drawer" app dark right width="60%">
       <v-list nav class="text-uppercase">
-        <v-list-item active-class="no-active" :to="go('profile')">
+        <v-list-item active-class="no-active" :to="go('person')">
           <Avatar
             size="80px"
             :image="whoami.personal.profile.avatarImage"
@@ -157,9 +157,9 @@ export default {
   },
   methods: {
     ...mapActions(['setWhoami', 'setProfileById', 'setComponent', 'setShowStory', 'setDialog', 'getAllNotifications']),
-    go (path) {
+    go (name) {
       return {
-        name: path,
+        name,
         params: {
           tribeId: this.whoami.personal.groupId,
           profileId: this.whoami.personal.profile.id,
