@@ -206,12 +206,12 @@ export default {
       // update to check ssb.status
     },
     goTribe (tribe) {
-      if (tribe.private.length > 0) return this.goProfile(tribe.id, tribe.private[0].id)
-      return this.goProfile(tribe.id, tribe.public[0].id)
+      if (tribe.private.length > 0) return this.goProfile(tribe.id, tribe.private[0])
+      return this.goProfile(tribe.id, tribe.public[0])
     },
-    goProfile (tribeId, profileId) {
+    goProfile (tribeId, profile) {
       return {
-        name: 'community', params: { tribeId, profileId }
+        name: 'community', params: { tribeId, profileId: profile.id, profile }
       }
     },
     getImage (community) {

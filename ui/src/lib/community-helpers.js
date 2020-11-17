@@ -239,7 +239,7 @@ function prune (input, attrs) {
   return _input
 }
 
-export const getCommunityProfile = id => ({
+export const getCommunity = id => ({
   query: gql`
     ${PUBLIC_PROFILE_FRAGMENT}
     query($id: String!) {

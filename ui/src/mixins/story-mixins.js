@@ -25,10 +25,11 @@ export default function mapStoryMixins ({ mapMethods, mapApollo }) {
 
 const apollo = {
   stories () {
+    console.log('HERE', this.$route.params)
     const isPersonal = this.$route.params.profileId === this.whoami.personal.profile.id
 
-    switch (this.profile.type) {
-      case 'community':
+    switch (true) {
+      case this.profile.type === 'community':
       case isPersonal:
         return {
           ...getAllStories,
@@ -47,7 +48,7 @@ const apollo = {
             return this.profile == null
           }
         }
-      case 'person':
+      case this.profile.type === 'person':
         return {
           ...getAllStoriesByMentions(this.profile.id),
           update (data) {

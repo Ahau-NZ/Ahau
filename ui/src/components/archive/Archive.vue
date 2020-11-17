@@ -80,6 +80,7 @@ export default {
   data () {
     return {
       stories: [],
+      mentions: [],
       dialog: null,
       scrollPosition: 0,
       showArchiveHelper: false

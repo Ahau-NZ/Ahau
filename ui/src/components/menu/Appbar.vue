@@ -162,7 +162,8 @@ export default {
         name: path,
         params: {
           tribeId: this.whoami.personal.groupId,
-          profileId: this.whoami.personal.profile.id
+          profileId: this.whoami.personal.profile.id,
+          profile: this.whoami.personal.profile
         }
       }
     },

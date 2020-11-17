@@ -209,7 +209,8 @@ export default {
         name,
         params: {
           tribeId: this.$route.params.tribeId,
-          profileId: this.profile.id
+          profileId: this.profile.id,
+          profile: this.profile
         }
       }
     },

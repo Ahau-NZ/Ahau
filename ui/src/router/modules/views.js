@@ -48,12 +48,14 @@ export default [
       {
         path: 'archive',
         name: 'archive',
-        component: Archive
+        component: Archive,
+        props: true
       },
       {
         path: 'timeline',
         name: 'timeline',
-        component: Timeline
+        component: Timeline,
+        props: true
       },
       {
         path: 'whakapapa',
