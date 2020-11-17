@@ -369,11 +369,16 @@ export default {
   methods: {
     ...mapActions(['setProfileById', 'setComponent']),
     goArchive () {
-      this.$router.push({ name: 'archive', params: { id: this.profile.id } })
+      this.$router.push({
+        path: `/tribe/${this.$route.params.tribeId}/person/${this.profile.id}`
+      })
     },
     age (born) {
       var age = calculateAge(born)
       return age
+    },
+    openProfile (e) {
+
     },
     close () {
       this.$emit('close')
@@ -393,9 +398,10 @@ export default {
       this.formData = defaultData(this.profile)
       this.toggleEdit()
     },
-    openProfile (profile) {
-      this.setProfileById({ id: profile.id, type: 'setWhanau' })
-    },
+    // openProfile (profile) {
+    //   this.
+    //   // this.setProfileById({ id: profile.id, type: 'setWhanau' })
+    // },
     toggleNew (type) {
       this.$emit('new', type)
     },

@@ -25,7 +25,6 @@ export default function mapStoryMixins ({ mapMethods, mapApollo }) {
 
 const apollo = {
   stories () {
-    console.log('HERE', this.$route.params)
     const isPersonal = this.$route.params.profileId === this.whoami.personal.profile.id
 
     switch (true) {

@@ -60,7 +60,13 @@ export default [
       {
         path: 'whakapapa',
         name: 'whakapapa',
-        component: WhakapapaIndex
+        component: WhakapapaIndex,
+        props: true
+      },
+      {
+        path: 'whakapapa/:whakapapaId',
+        name: 'whakapapaShow',
+        component: WhakapapaShow
       }
     ]
   }

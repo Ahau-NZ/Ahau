@@ -157,7 +157,6 @@ export default {
   computed: {
     ...mapGetters(['showStory', 'storeDialog', 'notifications', 'whoami']),
     isProfile () {
-      console.log(this.$route)
       return this.$route.name === 'person' || this.$route.name === 'community'
     },
     showWhakapapa () {

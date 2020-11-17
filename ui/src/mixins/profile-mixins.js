@@ -33,7 +33,6 @@ const apollo = {
       },
       error: err => console.log('ERROR GETTING PROFILE...', err),
       update: data => {
-        console.log(data.person)
         return data.person
       }
     }

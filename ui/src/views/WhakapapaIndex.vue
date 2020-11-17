@@ -67,14 +67,9 @@ import mapProfileMixins from '@/mixins/profile-mixins.js'
 
 export default {
   name: 'WhakapapaIndex',
-  mixins: [
-    mapProfileMixins({
-      mapApollo: ['profile']
-    })
-  ],
+  props: ['profile'],
   data () {
     return {
-      profile: {},
       suggestions: [],
       views: [],
       showWhakapapaHelper: false,

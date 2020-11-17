@@ -26,6 +26,7 @@
           mode="out-in"
        >
         <router-view
+          :key="profile.id"
           :style="!isProfile ? 'margin-top:100px' : ''"
         />
       </transition>
@@ -65,9 +66,6 @@ export default {
       prevHeight: 0,
       loaded: false
     }
-  },
-  mounted () {
-    console.log(this.$route)
   },
   computed: {
     ...mapGetters(['activeComponent', 'showStory', 'showArtefact', 'currentTribe']),
