@@ -284,7 +284,7 @@ export async function callGetTribe (profileId) {
 export const getTribe = id => ({
   query: gql`
     query($id: String!) {
-      tribe (id:$id){
+      tribe (id: $id){
         id 
         private {
           id
@@ -299,13 +299,16 @@ export const getTribe = id => ({
       }
     }
   `,
-  variables: { id: id },
+  variables () {
+    return { id }
+  },
   fetchPolicy: 'no-cache'
 })
 
 // get tribe profiles by groupId
 export async function getTribeByGroupId (id) {
   const request = getTribe(id)
+
   const result = await apolloClient.query(request)
   if (result.errors) {
     console.error('WARNING, error getting tribe')

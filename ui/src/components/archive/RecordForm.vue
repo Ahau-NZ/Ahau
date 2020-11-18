@@ -267,7 +267,7 @@
 
               <ProfileSearchBar
                 :selectedItems.sync="formData.relatedRecords"
-                :items="filteredStories"
+                :items="stories"
                 :openMenu.sync="showRecords"
                 placeholder="add related record"
                 item="title"
@@ -468,6 +468,8 @@ import DeleteArtefactDialog from '@/components/dialog/artefact/DeleteArtefactDia
 import { RULES } from '@/lib/constants'
 import { mapGetters } from 'vuex'
 
+import mapStoryMixins from '@/mixins/story-mixins.js'
+
 export default {
   name: 'RecordForm',
   components: {
@@ -489,8 +491,14 @@ export default {
     editing: Boolean,
     access: Object
   },
+  mixins: [
+    mapStoryMixins({
+      mapApollo: ['stories']
+    })
+  ],
   data () {
     return {
+      stories: [],
       newDialog: false,
       deleteDialog: false,
       deleteRecordDialog: false,
@@ -525,7 +533,7 @@ export default {
     this.showAdvanced()
   },
   computed: {
-    ...mapGetters(['showStory', 'stories']),
+    ...mapGetters(['showStory', 'whoami']),
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
@@ -537,16 +545,6 @@ export default {
         class: 'custom',
         clearable: true
       }
-    },
-    filteredStories () {
-      if (!this.access) return
-      return this.stories.filter(d => {
-        // filter out the current story
-        if (d.id === this.formData.id) return false
-
-        // filter out stories by recps
-        return d.recps.includes(this.access.groupId)
-      })
     }
   },
   methods: {
@@ -571,7 +569,8 @@ export default {
       if (!suggestions) return
 
       suggestions = suggestions.filter(record => {
-        return record.recps.includes(this.access.groupId)
+        if (!record.recps) return false // dont suggest public profiles?
+        return record.recps.includes(this.$route.params.tribeId)
       })
 
       this[array] = suggestions

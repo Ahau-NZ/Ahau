@@ -46,7 +46,7 @@
       <ArchiveHelper v-if="showArchiveHelper" :show="showArchiveHelper" @close="toggleArchiveHelper" />
 
     <NewRecordDialog v-if="dialog === 'new-story'" :show="dialog === 'new-story'"
-      :title="`Add record to ${profile.preferredName || 'Untitled'}'s archive`" @close="dialog = null"
+      :title="`Add record to ${ profile.preferredName || 'Untitled' }'s archive`" @close="dialog = null"
       @submit="saveStory($event)"
     />
   </div>
@@ -66,8 +66,7 @@ export default {
   name: 'Archive',
   props: {
     profile: {
-      type: Object,
-      required: true
+      type: Object
     }
   },
   mixins: [
@@ -81,6 +80,9 @@ export default {
     NewRecordDialog,
     ArchiveHelper,
     BigAddButton
+  },
+  mounted () {
+    console.log(this.profile)
   },
   data () {
     return {
@@ -116,7 +118,7 @@ export default {
   },
   methods: {
     ...mapMutations(['setStory']),
-    ...mapActions(['setComponent', 'setShowStory', 'setDialog']),
+    ...mapActions(['setShowStory', 'setDialog']),
     toggleArchiveHelper () {
       this.showArchiveHelper = !this.showArchiveHelper
     },

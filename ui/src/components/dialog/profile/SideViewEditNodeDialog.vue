@@ -86,7 +86,7 @@
           </v-row>
           <v-row v-if="!isEditing"  class="justify-center">
             <v-btn
-              @click.native="goArchive"
+              @click.native="goArchive()"
               color="white"
               text
               medium
@@ -162,7 +162,7 @@
                 <v-col :cols="12" class="pa-0">
                   <AvatarGroup
                     :profiles="profile.parents"
-                    group-title="Parents"
+                    group-title="Parentals"
                     size="50px"
                     :show-labels="true"
                     @profile-click="openProfile($event)"
@@ -367,18 +367,23 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setProfileById', 'setComponent']),
+    ...mapActions(['setProfileById']),
     goArchive () {
       this.$router.push({
-        path: `/tribe/${this.$route.params.tribeId}/person/${this.profile.id}/profile`
+        name: 'person/archive',
+        params: {
+          tribeId: this.$route.params.tribeId,
+          profileId: this.profile.id,
+          profile: this.profile
+        }
       })
     },
     age (born) {
       var age = calculateAge(born)
       return age
     },
-    openProfile (e) {
-
+    openProfile (profile) {
+      this.setProfileById({ id: profile.id, type: 'preview' })
     },
     close () {
       this.$emit('close')
@@ -398,10 +403,6 @@ export default {
       this.formData = defaultData(this.profile)
       this.toggleEdit()
     },
-    // openProfile (profile) {
-    //   this.
-    //   // this.setProfileById({ id: profile.id, type: 'setWhanau' })
-    // },
     toggleNew (type) {
       this.$emit('new', type)
     },

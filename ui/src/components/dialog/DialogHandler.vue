@@ -257,7 +257,7 @@ export default {
   },
   methods: {
     ...mapActions(['setWhoami', 'updateNode', 'deleteNode', 'updatePartnerNode', 'addChild', 'addParent', 'loading', 'setDialog',
-      'setProfileById', 'setComponent', 'setCurrentTribe', 'setCurrentTribeById', 'setTribes'
+      'setProfileById', 'setCurrentTribe', 'setCurrentTribeById', 'setTribes'
     ]),
     addGrandparentToRegistartion (grandparent) {
       var parent = this.parents[this.parentIndex]
@@ -375,9 +375,10 @@ export default {
         if (profilePublicLinkRes.errors) throw new Error('Failed to create public community profile link', profilePublicLinkRes.errors)
         if (profilePublicLinkRes.data.saveGroupProfileLink) {
           this.setCurrentTribeById(groupProfile)
-          this.setComponent('profile')
-          this.setProfileById({ id: groupProfile })
-          this.$router.push({ name: 'profileShow', params: { id: groupProfile } }).catch(() => {})
+          console.error('DIALOG HELPER: needs to go to truve after creating it?')
+          // this.setComponent('profile')
+          // this.setProfileById({ id: groupProfile })
+          // this.$router.push({ name: 'profileShow', params: { id: groupProfile } }).catch(() => {})
         }
       } catch (err) {
         console.error('Something went wrong while trying to create private group', $event)
@@ -796,9 +797,10 @@ export default {
       } else {
         this.source = null
         this.setTribes()
-        this.setComponent('profile')
-        this.setProfileById({ id: this.whoami.personal.profile.id })
-        this.$router.push({ name: 'profileShow', params: { id: this.whoami.personal.profile.id } }).catch(() => {})
+        console.error('DIALOG HANDLER: deleting a community needs to route somewhere')
+        // this.setComponent('profile')
+        // this.setProfileById({ id: this.whoami.personal.profile.id })
+        // this.$router.push({ name: 'profileShow', params: { id: this.whoami.personal.profile.id } }).catch(() => {})
         this.confirmationAlert('community successfully deleted')
       }
     },

@@ -1,4 +1,5 @@
 import { getProfile } from '@/lib/person-helpers.js'
+import { getTribe } from '@/lib/community-helpers.js'
 
 export default function mapProfileMixins ({ mapMethods, mapApollo }) {
   var customMixin = {}
@@ -34,6 +35,19 @@ const apollo = {
       error: err => console.log('ERROR GETTING PROFILE...', err),
       update: data => {
         return data.person
+      }
+    }
+  },
+  tribe () {
+    return {
+      skip () {
+        return this.$route.params.tribeId === this.whoami.personal.groupId
+      },
+      ...getTribe(this.$route.params.tribeId),
+      error: err => console.error('Error getting tribe', err),
+      update ({ tribe }) {
+        if (tribe.private.length > 0) return { groupId: tribe.id, ...tribe.private[0] }
+        return { groupId: tribe.id, ...tribe.public[0] }
       }
     }
   }

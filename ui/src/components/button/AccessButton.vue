@@ -32,12 +32,12 @@
       <v-list>
         <v-subheader>Choose who has access to this record:</v-subheader>
         <v-list-item
-          v-for="(item, index) in accessOptions"
+          v-for="(tribe, index) in accessOptions"
           :key="index"
-          @click="$emit('update:access', item)"
+          @click="go(tribe)"
         >
-          <Avatar class="mr-3" size="40px" :image="item.avatarImage" :isView="!item.isPersonalGroup" :alt="item.preferredName" :gender="item.gender" :aliveInterval="item.aliveInterval" />
-          <v-list-item-title>{{ item.isPersonalGroup ? 'Private' : item.preferredName + ' (tribe)' }}</v-list-item-title>
+          <Avatar class="mr-3" size="40px" :image="tribe.avatarImage" :isView="!tribe.isPersonalGroup" :alt="tribe.preferredName" :gender="tribe.gender" :aliveInterval="tribe.aliveInterval" />
+          <v-list-item-title>{{ tribe.isPersonalGroup ? 'Private' : tribe.preferredName + ' (tribe)' }}</v-list-item-title>
         </v-list-item>
       </v-list>
     </v-menu>
@@ -58,6 +58,9 @@ export default {
       toggle: false
     }
   },
+  mounted () {
+    console.log(this.access)
+  },
   components: {
     Avatar
   },
@@ -69,6 +72,19 @@ export default {
     margin () {
       if (this.mobile) return ''
       return 'pt-3 ml-2'
+    }
+  },
+  methods: {
+    go (profile) {
+      this.$emit('access', profile)
+      // const name = this.$route.name.split('/')[1]
+      // we want the access button to take us to the active component
+      // this.$router.push({
+      //   name: profile.type + '/' + name,
+      //   tribeId: profile.groupId,
+      //   profileId: profile.id,
+      //   profile
+      // })
     }
   }
 }

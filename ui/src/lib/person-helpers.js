@@ -159,7 +159,6 @@ export const getProfile = ({
   fetchPolicy: 'no-cache'
 })
 
-
 export const getPerson = id => ({
   query: gql`
     ${PERSON_FRAGMENT}

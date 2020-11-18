@@ -50,8 +50,7 @@ export default {
   name: 'Timeline',
   props: {
     profile: {
-      type: Object,
-      required: true
+      type: Object
     }
   },
   components: {

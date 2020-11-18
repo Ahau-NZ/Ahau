@@ -56,11 +56,6 @@ const actions = {
   setCurrentStory ({ commit }, story) {
     commit('setStory', story)
   },
-  setComponent ({ commit, dispatch, rootState }, component) {
-    if (rootState.dialog.dialog) dispatch('setDialog', null)
-    if (state.showStory) commit('updateShowStory')
-    commit('updateComponent', component)
-  },
   setShowStory ({ commit }) {
     commit('updateShowStory')
   },

@@ -276,7 +276,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['nestedWhakapapa', 'selectedProfile', 'whoami', 'loadingState', 'currentProfile', 'getAccessFromRecps']),
+    ...mapGetters(['nestedWhakapapa', 'selectedProfile', 'whoami', 'loadingState', 'getAccessFromRecps']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -658,8 +658,7 @@ export default {
 
       await this.saveWhakapapa(input)
 
-      // this.$router.push({ name: 'whakapapa', params: { id: this.whakapapaView.recps } })
-      this.$router.push({ name: 'profileShow', params: { id: this.currentProfile.id } })
+      this.$router.push({ name: 'profileShow', params: { id: this.profile.id } })
     },
     getImage () {
       return avatarHelper.defaultImage(this.aliveInterval, this.gender)
