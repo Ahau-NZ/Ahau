@@ -3,9 +3,7 @@
     <v-overlay dark :value="showArtefact" z-index="6" opacity="1" color="rgba(30,30,30)">
     </v-overlay>
     <!-- Header and Title -->
-    <Header v-if="isProfile"
-      :profile="profile"
-    />
+    <Header v-if="isProfile" :profile="profile"/>
     <v-row v-if="isProfile">
       <v-col cols="12" offset-md="2" md="8" sm="12" :class="!mobile ? 'pl-12' : 'pt-0 mt-n3' " :align="mobile ? 'center' : 'start'" :order="mobile ? '3' : '1'">
         <h1 class="primary--text" :style="mobile ? length : ''">{{ profile.legalName ? profile.legalName : profile.preferredName }}</h1>
@@ -70,7 +68,7 @@ export default {
   computed: {
     ...mapGetters(['activeComponent', 'showStory', 'showArtefact', 'currentTribe']),
     isProfile () {
-      return this.$route.name === 'person' || this.$route.name === 'community'
+      return this.$route.name === 'profile'
     },
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
