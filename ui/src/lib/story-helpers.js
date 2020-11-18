@@ -199,17 +199,20 @@ export const getStory = id => ({
   fetchPolicy: 'no-cache'
 })
 
-export const getAllStories = ({
+export const getAllStories = filter => ({
   query: gql`
     ${STORY_FRAGMENT}
     ${STORY_LINK_FRAGMENT}
-    query {
-      stories(type: "*") {
+    query ($filter: StoryFilter) {
+      stories(filter: $filter) {
         ...StoryFragment
         ...StoryLinkFragment
       }
     }
   `,
+  variables: {
+    filter
+  },
   fetchPolicy: 'no-cache'
 })
 

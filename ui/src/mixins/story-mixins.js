@@ -27,22 +27,9 @@ const apollo = {
   stories () {
     const isPersonal = this.currentProfile.id === this.whoami.personal.profile.id
 
-    if (this.currentProfile.type === 'community' || isPersonal) {
-      return {
-        ...getAllStories,
-        update (data) {
-          return data.stories.filter(story => {
-            return story.recps.some(recp => {
-              const id = isPersonal
-                ? this.whoami.personal.groupId
-                : this.currentTribe.id
-
-              return recp === id
-            })
-          })
-        }
-      }
-    } else if (this.currentProfile.type === 'person') {
+    if (isPersonal) return getAllStories({ groupId: this.whoami.personal.groupId })
+    else if (this.currentProfile.type === 'community') return getAllStories({ groupId: this.currentTribe.id })
+    else if (this.currentProfile.type === 'person') {
       return {
         ...getAllStoriesByMentions(this.currentProfile.id),
         update (data) {

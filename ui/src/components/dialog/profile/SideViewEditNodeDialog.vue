@@ -86,7 +86,7 @@
           </v-row>
           <v-row v-if="!isEditing"  class="justify-center">
             <v-btn
-              @click="goArchive()"
+              @click.native="goArchive"
               color="white"
               text
               medium
@@ -369,8 +369,8 @@ export default {
   methods: {
     ...mapActions(['setProfileById', 'setComponent']),
     goArchive () {
-      this.setComponent('archive')
       this.setProfileById({ id: this.profile.id })
+      this.setComponent('archive')
       this.$router.push({ name: 'profileShow', params: { id: this.profile.id } }).catch(() => {})
     },
     age (born) {
