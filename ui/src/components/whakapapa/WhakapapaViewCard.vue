@@ -25,7 +25,6 @@
 <script>
 import whakapapa from '@/assets/whakapapa.png'
 import AvatarGroup from '@/components/AvatarGroup.vue'
-import { mapGetters } from 'vuex'
 
 export default {
   name: 'WhakapapaViewCard',
@@ -38,7 +37,6 @@ export default {
     AvatarGroup
   },
   computed: {
-    ...mapGetters(['currentProfile']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -61,7 +59,7 @@ export default {
   methods: {
     goWhakapapaShow () {
       return {
-        name: 'whakapapa/:whakapapaId',
+        name: this.$route.name + '/:whakapapaId',
         params: {
           whakapapaId: this.view.id
         }

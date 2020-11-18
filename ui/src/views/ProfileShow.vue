@@ -3,11 +3,11 @@
     <v-overlay dark :value="showArtefact" z-index="6" opacity="1" color="rgba(30,30,30)">
     </v-overlay>
     <!-- Header and Title -->
-    <Header v-if="activeComponent === 'profile'"
+    <Header v-if="isProfile"
       :profile="profile"
       @setupProfile="setupProfile($event)"
     />
-    <v-row v-if="activeComponent === 'profile'">
+    <v-row v-if="isProfile">
       <v-col cols="12" offset-md="2" md="8" sm="12" :class="!mobile ? 'pl-12' : 'pt-0 mt-n3' " :align="mobile ? 'center' : 'start'" :order="mobile ? '3' : '1'">
         <h1 class="primary--text" :style="mobile ? length : ''">{{ profile.legalName ? profile.legalName : profile.preferredName }}</h1>
       </v-col>
@@ -17,8 +17,8 @@
     </v-row>
     <v-row>
       <!-- SideNav -->
-      <v-col  v-if="!hideNav" cols="12" xs="12" sm="12" md="2" lg="20p" :class="!mobile ? 'pr-0' : 'px-5 py-0'">
-        <SideNavMenu :profile="profile" />
+      <v-col  v-if="!hideNav && !isWhakapapaShow" cols="12" xs="12" sm="12" md="2" lg="20p" :class="!mobile ? 'pr-0' : 'px-5 py-0'">
+        <SideNavMenu  :profile="profile" />
       </v-col>
       <!-- Content -->
       <v-col cols="12" xs="12" sm="12" md="10" lg="80p" :class="mobile ? 'px-6 py-0' : 'pl-0 py-0'">
@@ -65,9 +65,11 @@ export default {
     }
   },
   computed: {
-    activeComponent () {
-      console.log('ACTIVE', this.$route.name)
-      return this.$route.name
+    isProfile () {
+      return this.$route.name === 'person/profile' || this.$route.name === 'community/profile'
+    },
+    isWhakapapaShow () {
+      return this.$route.name === 'person/whakapapa/:whakapapaId' || this.$route.name === 'community/whakapapa/:whakapapaId'
     },
     ...mapGetters(['showStory', 'showArtefact', 'currentTribe']),
     mobile () {

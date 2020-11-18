@@ -115,10 +115,13 @@ export default {
   methods: {
     ...mapActions(['setProfileById', 'setDialog', 'setCurrentTribe', 'setTribes']),
     goTribe (tribe) {
-      console.log(tribe)
+      var profile = tribe.private.length > 0
+        ? tribe.private[0]
+        : tribe.public[0]
+
       return {
-        name: 'person',
-        params: { tribeId: tribe.id, profileId: tribe.private[0].id }
+        name: profile.type,
+        params: { tribeId: tribe.id, profileId: profile.id, profile }
       }
     }
   }

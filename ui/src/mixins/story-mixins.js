@@ -25,13 +25,15 @@ export default function mapStoryMixins ({ mapMethods, mapApollo }) {
 
 const apollo = {
   stories () {
-    console.log('stories', this.$route)
-    console.log('stories', 'router', this.$router)
+    // extract type from the route name
+    // TODO: could be better
+    const type = this.$route.name.split('/')[0]
+
     const isPersonal = this.$route.params.profileId === this.whoami.personal.profile.id
 
     if (isPersonal) return getAllStories({ groupId: this.whoami.personal.groupId })
-    else if (this.profile.type === 'community') return getAllStories({ groupId: this.$route.params.tribeId })
-    else if (this.profile.type === 'person') {
+    else if (type === 'community') return getAllStories({ groupId: this.$route.params.tribeId })
+    else if (type === 'person') {
       return {
         ...getAllStoriesByMentions(this.$route.params.profileId),
         update (data) {

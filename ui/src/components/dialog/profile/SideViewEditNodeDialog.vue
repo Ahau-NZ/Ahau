@@ -370,7 +370,7 @@ export default {
     ...mapActions(['setProfileById', 'setComponent']),
     goArchive () {
       this.$router.push({
-        path: `/tribe/${this.$route.params.tribeId}/person/${this.profile.id}`
+        path: `/tribe/${this.$route.params.tribeId}/person/${this.profile.id}/profile`
       })
     },
     age (born) {

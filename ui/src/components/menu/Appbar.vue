@@ -135,7 +135,10 @@ export default {
   computed: {
     ...mapGetters(['whoami', 'whakapapa', 'showStory', 'storeDialog', 'currentProfile', 'syncing']),
     isWhakapapaIndex () {
-      return this.$route.name === 'whakapapa'
+      return (
+        this.$route.name === 'person/whakapapa/:whakapapaId' ||
+        this.$route.name === 'community/whakapapa/:whakapapaId'
+      )
     },
     classObject: function () {
       return {
@@ -179,7 +182,13 @@ export default {
     },
     goProfile (component) {
       this.$router.push({
-        path: `/tribe/${this.whoami.personal.groupId}/person/${this.whoami.personal.profile.id}/${component}`
+        // path: `/tribe/${this.whoami.personal.groupId}/person/${this.whoami.personal.profile.id}/${component}`
+        name: 'person/' + component,
+        params: {
+          tribeId: this.whoami.personal.groupId,
+          profileId: this.whoami.personal.profile.id,
+          profile: this.whoami.personal.profile
+        }
       }).catch(() => {})
     },
     karakiaWhakamutunga () {

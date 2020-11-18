@@ -162,7 +162,7 @@ export default {
     ...mapGetters(['showStory', 'storeDialog', 'notifications', 'whoami']),
     activeComponent () {
       if (this.$route.name === 'whakapapa/:whakapapaId') return 'whakapapa'
-      return this.$route.name
+      return this.$route.name.split('/')[1]
     },
     showWhakapapa () {
       if (this.profile.type === 'community') return true
@@ -206,7 +206,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setComponent', 'setShowStory', 'setDialog', 'profileStories']),
+    ...mapActions(['setShowStory', 'setDialog', 'profileStories']),
     goArchive () {
       if (this.showStory) {
         this.setShowStory()
@@ -215,10 +215,11 @@ export default {
     },
     setActive (component) {
       this.$router.push({
-        name: component,
+        name: this.profile.type + '/' + component,
         params: {
           tribeId: this.$route.params.tribeId,
-          profileId: this.$route.params.profileId
+          profileId: this.$route.params.profileId,
+          profile: this.profile
         }
       })
     },

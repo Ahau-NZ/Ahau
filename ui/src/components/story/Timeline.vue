@@ -48,7 +48,12 @@ import mapStoryMixins from '@/mixins/story-mixins.js'
 
 export default {
   name: 'Timeline',
-  props: ['profile'],
+  props: {
+    profile: {
+      type: Object,
+      required: true
+    }
+  },
   components: {
     TimelineCard,
     StoryCard

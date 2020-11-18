@@ -1,6 +1,7 @@
+
 <template>
-  <div class="px-2">
-    <v-row>
+  <v-container fluid class="px-2" style="margin-top: 64px;">
+    <v-row class="pa-5" :class="mobile ? 'pb-0':''" light>
       <v-col cols="12" md="10" class="headliner black--text pa-0">
         Whakapapa records
         <v-icon color="blue-grey" light @click="toggleWhakapapaHelper" class="infoButton">mdi-information</v-icon>
@@ -8,7 +9,8 @@
       <v-col>
         <BigAddButton @click="toggleViewForm" />
       </v-col>
-
+    </v-row>
+    <v-row>
       <v-col :class="mobile ? 'pt-0':''" cols="12" md="10">
         <div v-if="!whakapapas || (whakapapas && whakapapas.length < 1) || (whakapapas && whakapapas[0].views.length < 1) " class="px-8 py-12 subtitle grey--text " :class="{
             'text-center': mobile
@@ -30,16 +32,16 @@
           </div>
         </div>
       </v-col>
-      <NewViewDialog v-if="showViewForm" :show="showViewForm" title="Create a new whakapapa" @close="toggleViewForm"
-        @submit="handleStepOne($event)" />
-      <!-- TODO: add suggestions in here as well? -->
-      <NewNodeDialog v-if="showProfileForm" :show="showProfileForm" :suggestions="suggestions"
-        @getSuggestions="getSuggestions" title="Add a Person" @create="handleDoubleStep($event)"
-        :withRelationships="false" @close="close"
-      />
-      <WhakapapaListHelper v-if="showWhakapapaHelper" :show="showWhakapapaHelper" @close="toggleWhakapapaHelper" />
     </v-row>
-  </div>
+    <NewViewDialog v-if="showViewForm" :show="showViewForm" title="Create a new whakapapa" @close="toggleViewForm"
+      @submit="handleStepOne($event)" />
+    <!-- TODO: add suggestions in here as well? -->
+    <NewNodeDialog v-if="showProfileForm" :show="showProfileForm" :suggestions="suggestions"
+      @getSuggestions="getSuggestions" title="Add a Person" @create="handleDoubleStep($event)"
+      :withRelationships="false" @close="close"
+    />
+    <WhakapapaListHelper v-if="showWhakapapaHelper" :show="showWhakapapaHelper" @close="toggleWhakapapaHelper" />
+  </v-container>
 </template>
 
 <script>
@@ -66,7 +68,12 @@ import { getTribeByGroupId } from '@/lib/community-helpers.js'
 
 export default {
   name: 'WhakapapaIndex',
-  props: ['profile'],
+  props: {
+    profile: {
+      type: Object,
+      required: true
+    }
+  },
   data () {
     return {
       suggestions: [],

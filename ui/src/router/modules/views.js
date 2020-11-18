@@ -18,11 +18,7 @@ const EmptyRouterComponent = {
 
 export default [
   { path: '/login', name: 'login', component: Login },
-  {
-    path: '/tribe',
-    name: 'tribe',
-    component: Discovery
-  },
+  { path: '/tribe', name: 'tribe', component: Discovery },
   {
     path: '/tribe/:tribeId',
     component: EmptyRouterComponent,
@@ -31,70 +27,27 @@ export default [
         path: 'person/:profileId',
         component: ProfileShow,
         children: [
-          {
-            path: '', name: 'person', redirect: 'profile'
-          },
-          {
-            path: 'profile',
-            name: 'profile',
-            component: Profile
-          },
-          {
-            path: 'archive',
-            name: 'archive',
-            component: Archive
-          },
-          {
-            path: 'timeline',
-            name: 'timeline',
-            component: Timeline
-          },
-          {
-            path: 'whakapapa',
-            name: 'whakapapa',
-            component: WhakapapaIndex
-          },
-          {
-            path: 'whakapapa/:whakapapaId',
-            name: 'whakapapa/:whakapapaId',
-            component: WhakapapaShow
-          }
+          ...sharedRoutes('person')
         ]
       },
-      // {
-      //   path: 'community/:profileId',
-      //   component: ProfileShow,
-      //   children: [
-      //     {
-      //       path: '', name: 'community', redirect: 'profile'
-      //     },
-      //     {
-      //       path: 'profile',
-      //       name: 'profile',
-      //       component: Profile
-      //     },
-      //     {
-      //       path: 'archive',
-      //       name: 'archive',
-      //       component: Archive
-      //     },
-      //     {
-      //       path: 'timeline',
-      //       name: 'timeline',
-      //       component: Timeline
-      //     },
-      //     {
-      //       path: 'whakapapa',
-      //       name: 'whakapapa',
-      //       component: WhakapapaIndex
-      //     },
-      //     {
-      //       path: 'whakapapa/:whakapapaId',
-      //       name: 'whakapapa/:whakapapaId',
-      //       component: WhakapapaShow
-      //     }
-      //   ]
-      // }
+      {
+        path: 'community/:profileId',
+        component: ProfileShow,
+        children: [
+          ...sharedRoutes('community')
+        ]
+      }
     ]
   }
 ]
+
+function sharedRoutes (type) {
+  return [
+    { path: '', name: type, redirect: 'profile' },
+    { path: 'profile', name: `${type}/profile`, component: Profile },
+    { path: 'archive', name: `${type}/archive`, component: Archive, props: true },
+    { path: 'timeline', name: `${type}/timeline`, component: Timeline, props: true },
+    { path: 'whakapapa', name: `${type}/whakapapa`, component: WhakapapaIndex, props: true },
+    { path: 'whakapapa/:whakapapaId', name: `${type}/whakapapa/:whakapapaId`, component: WhakapapaShow }
+  ]
+}
