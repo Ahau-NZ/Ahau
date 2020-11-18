@@ -1,7 +1,7 @@
 <template>
   <div>
     <div v-if="isProfileShow && !showStory" fab :class="mobile ? 'ml-n4':'ms-10 pr-6 pb-1'">
-      <v-btn @click="goWhakapapaShow" text>
+      <v-btn @click="goWhakapapaShow()" text>
         <div v-if="mobile">
           <v-icon dark>mdi-arrow-left</v-icon>
         </div>
@@ -17,12 +17,12 @@
             row
 
           />
-          <span class="pl-2 caption">Back to {{whakapapa.name}} whakapapa</span>
+          <span class="pl-2 caption">Back to {{ whakapapa.name }} whakapapa</span>
         </v-row>
       </v-btn>
     </div>
-    <div v-else-if="$route.name === 'whakapapaShow'" fab :class="mobile ? 'ml-n4':'ms-10 pr-6 pb-1'">
-      <v-btn @click="goWhakapapaIndex" text>
+    <div v-else-if="$route.name === 'whakapapa/:whakapapaId'" fab :class="mobile ? 'ml-n4':'ms-10 pr-6 pb-1'">
+      <v-btn @click="goWhakapapaIndex()" text>
         <div v-if="mobile">
           <v-icon dark>mdi-arrow-left</v-icon>
         </div>
@@ -37,7 +37,7 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters } from 'vuex'
 import Avatar from '@/components/Avatar'
 import WhakapapaIcon from '@/components/button/WhakapapaIcon.vue'
 
@@ -46,30 +46,42 @@ export default {
     Avatar,
     WhakapapaIcon
   },
+  data () {
+    return {
+      route: {}
+    }
+  },
+  watch: {
+    $route (to, from) {
+      this.route = {
+        to,
+        from
+      }
+    }
+  },
   computed: {
-    ...mapGetters(['whakapapa', 'showStory', 'currentProfile']),
+    ...mapGetters(['whakapapa', 'showStory']),
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
     isProfileShow () {
-      // TODO: fix!
-      if (this.$route.from) {
-        return this.$route.from.name === 'whakapapa' && this.$route.name === 'profile'
+      // if the current route is profile and the previous one was whakapapa
+      if (this.route.from) {
+        return (
+          this.route.from.name === 'whakapapa/:whakapapaId' &&
+          this.route.to.name === 'profile'
+        )
       }
 
       return false
     }
   },
   methods: {
-    ...mapActions(['setProfileById', 'setComponent']),
     goWhakapapaShow () {
-      this.setComponent('')
-      this.$router.push({ path: this.$route.from.fullPath })
+      this.$router.push({ path: this.route.from.fullPath })
     },
     goWhakapapaIndex () {
-      this.setComponent('whakapapa')
-      this.setProfileById({ id: this.goBack })
-      this.$router.push({ name: 'profileShow', params: { id: this.goBack } }).catch(() => {})
+      this.$router.push({ name: 'whakapapa' }).catch(() => {})
     }
   }
 }

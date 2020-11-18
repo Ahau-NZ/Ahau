@@ -4,7 +4,7 @@
       <v-col v-if="mobile" class="mt-12">
         <Avatar class="avatar-mobile" :image="profile.avatarImage" :alt="profile.preferredName" size="180" :isView="profile.type === 'community' && !profile.avatarImage"/>
       </v-col>
-      <v-col>
+      <v-col v-if="profile.canEdit">
         <ImagePicker class="picker" label=" " type="header" :isView="true" @updateAvatar="updateHeader($event)" :avatarLoaded="headerImage"/>
       </v-col>
     </v-row>
@@ -16,23 +16,15 @@ import ImagePicker from '@/components/ImagePicker.vue'
 import Avatar from '@/components/Avatar.vue'
 
 import gql from 'graphql-tag'
-import mapProfileMixins from '@/mixins/profile-mixins.js'
 
 export default {
   name: 'ProfileHeader',
+  props: {
+    profile: Object
+  },
   components: {
     ImagePicker,
     Avatar
-  },
-  mixins: [
-    mapProfileMixins({
-      mapApollo: ['profile']
-    })
-  ],
-  data () {
-    return {
-      profile: {}
-    }
   },
   methods: {
     async updateHeader (image) {

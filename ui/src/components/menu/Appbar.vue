@@ -1,20 +1,20 @@
 <template>
   <div>
     <v-app-bar v-if="mobile || enableMenu" :app="mobile && app" :class="classObject" flat color="#303030" fixed>
-      <template v-if="!isGoBack">
+      <template v-if="!isgoBack">
         <NotificationPanel/>
       </template>
-      <BackButton v-if="!isWhakapapaIndex" />
+      <BackButton v-if="!isWhakapapaIndex" @go-back="goBack()"/>
       <v-spacer />
 
       <!-- Desktop doesn't use a drawer, it has the links directly in the app bar -->
       <template v-if="!mobile">
-        <v-btn text active-class="no-active" :to="{ name: 'tribe' }" class="white--text text-uppercase ms-10">Tribes</v-btn>
-        <v-btn active-class="no-active" text :to="go('archive')" class="white--text text-uppercase ms-10">Archive</v-btn>
+        <v-btn text active-class="no-active" to="/tribe" class="white--text text-uppercase ms-10">Tribes</v-btn>
+        <v-btn active-class="no-active" text @click.native="goProfile('archive')" class="white--text text-uppercase ms-10">Archive</v-btn>
 
         <!-- <v-btn active-class="no-active" text @click.native="resetWindow" to="/whakapapa" class="white--text text-uppercase ms-10">whakapapa</v-btn> -->
-        <v-btn active-class="no-active" text :to="go('whakapapa')" class="white--text text-uppercase ms-10">whakapapa</v-btn>
-        <v-btn active-class="no-active" fab :to="go('person')" class="pr-12 mr-4 ml-10">
+        <v-btn active-class="no-active" text @click.native="goProfile('whakapapa')" class="white--text text-uppercase ms-10">whakapapa</v-btn>
+        <v-btn active-class="no-active" fab @click.native="goProfile('profile')" class="pr-12 mr-4 ml-10">
           <Avatar
             v-if="!mobile"
             size="45px"
@@ -49,7 +49,7 @@
     <!-- The drawer shows only on mobile -->
     <v-navigation-drawer v-if="mobile && enableMenu" v-model="drawer" app dark right width="60%">
       <v-list nav class="text-uppercase">
-        <v-list-item active-class="no-active" :to="go('person')">
+        <v-list-item active-class="no-active" @click="goProfile('profile')" >
           <Avatar
             size="80px"
             :image="whoami.personal.profile.avatarImage"
@@ -58,13 +58,14 @@
             :aliveInterval="whoami.personal.profile.aliveInterval"
           />
         </v-list-item>
-        <v-list-item active-class="no-active" link :to="go('whakapapa')" class="white--text">
+        <!-- <v-list-item active-class="no-active" link to="/whakapapa" class="white--text"> -->
+        <v-list-item active-class="no-active" link @click.native="goProfile('whakapapa')" class="white--text">
           <v-list-item-title>whakapapa</v-list-item-title>
         </v-list-item>
-        <v-list-item active-class="no-active" link :to="go('archive')">
+        <v-list-item active-class="no-active" link @click.native="goProfile('archive')" >
           <v-list-item-title class="white--text" >Archive</v-list-item-title>
         </v-list-item>
-        <v-list-item active-class="no-active" link :to="{ name: 'tribe' }">
+        <v-list-item active-class="no-active" link to="/tribe">
           <v-list-item-title class="white--text">Tribes</v-list-item-title>
         </v-list-item>
         <v-list-item class="pt-12">
@@ -104,6 +105,12 @@ So the pathway is clear
 To return to everyday activities
 ---------------------------------
 `
+/*
+Back button is visible when:
+
+- [ ] The previous screen is whakapapaShow and the current one is a profile
+- [ ] The previous screen is whakapapaIndex and the current one is whakapapaShow
+*/
 
 export default {
   name: 'Appbar',
@@ -126,7 +133,7 @@ export default {
     clearInterval(this.polling)
   },
   computed: {
-    ...mapGetters(['whoami', 'whakapapa', 'showStory', 'storeDialog', 'currentProfile', 'syncing', 'activeComponent']),
+    ...mapGetters(['whoami', 'whakapapa', 'showStory', 'storeDialog', 'currentProfile', 'syncing']),
     isWhakapapaIndex () {
       return this.$route.name === 'whakapapa'
     },
@@ -140,11 +147,13 @@ export default {
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
-    isGoBack () {
+    isgoBack () {
       if (this.mobile) {
         if (this.$route.name === 'whakapapa') return true
         else if (this.showStory) return true
-        else if (this.r$oute.from.name === 'whakapapa' && this.$route.name === 'profileShow' && this.activeComponent !== 'whakapapa') return true
+        // console.log('isGoBack', this.$route)
+        else if (this.$route.name === 'profile' || this.$route.name === 'archive' || this.$route.name === 'timeline') return true
+        // else if (this.$route.from.name === 'whakapapa' && this.$route.name === 'profile') return true
       }
       return false
     }
@@ -157,16 +166,6 @@ export default {
   },
   methods: {
     ...mapActions(['setWhoami', 'setProfileById', 'setComponent', 'setShowStory', 'setDialog', 'getAllNotifications']),
-    go (name) {
-      return {
-        name,
-        params: {
-          tribeId: this.whoami.personal.groupId,
-          profileId: this.whoami.personal.profile.id,
-          profile: this.whoami.personal.profile
-        }
-      }
-    },
     resetWindow () {
       window.scrollTo(0, 0)
     },
@@ -178,6 +177,11 @@ export default {
     async getCurrentIdentity () {
       await this.setWhoami()
     },
+    goProfile (component) {
+      this.$router.push({
+        path: `/tribe/${this.whoami.personal.groupId}/person/${this.whoami.personal.profile.id}/${component}`
+      }).catch(() => {})
+    },
     karakiaWhakamutunga () {
       console.log(karakia)
     },
@@ -185,7 +189,7 @@ export default {
       this.drawer = !this.drawer
     },
     goBack () {
-      if (this.$route.name === 'whakapapaShow') return this.$router.push({ path: this.$route.from.fullPath })
+      if (this.$route.name === 'whakapapa') return this.$router.push({ path: this.$route.from.fullPath })
       else if (this.showStory) return this.setShowStory()
     }
   },

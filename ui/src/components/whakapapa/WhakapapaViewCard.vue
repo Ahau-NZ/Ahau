@@ -61,10 +61,8 @@ export default {
   methods: {
     goWhakapapaShow () {
       return {
-        name: 'whakapapaShow',
+        name: 'whakapapa/:whakapapaId',
         params: {
-          // tribeId: this.$route.params.tribeId,
-          // profileId: this.$route.params.profileId,
           whakapapaId: this.view.id
         }
       }

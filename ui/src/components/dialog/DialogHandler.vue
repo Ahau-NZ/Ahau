@@ -331,11 +331,12 @@ export default {
         )
         if (createGroupRes.errors) throw new Error('Failed to create private group', createGroupRes.errors)
         const groupId = createGroupRes.data.createGroup.id
+
         // Note: this auto-sets the authors to allow all authors
         const input = {
           ...$event,
           authors: {
-            add: ['*']
+            add: [this.whoami.public.feedId]
           }
         }
 
@@ -401,7 +402,6 @@ export default {
       if (input.id) {
         // if its an update, remove any recps that may have crept through
         delete input.recps
-        delete input.authors
       } else {
         if (!input.recps) {
           // if this is saving a new person and it doesnt have recps
@@ -805,11 +805,11 @@ export default {
 
     confirmationAlert (message) {
       this.confirmationText = message
-      this.snackbar = !this.snackbar
+      this.snackbar = true
 
       setTimeout(() => {
         this.confirmationText = null
-        this.snackbar = !this.snackbar
+        this.snackbar = false
       }, 3000)
     },
 

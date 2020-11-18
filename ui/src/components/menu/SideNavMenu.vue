@@ -2,14 +2,14 @@
   <v-row ref="sideNav" class="sideNav" :class="position" v-scroll="onScroll">
     <v-col :class="nonMember ? 'px-3 pt-3' : mobile ? 'px-6': tablet ? 'pt-12':''">
       <v-row
-        v-if="!mobile"
         justify-center
+        v-if="!mobile"
         :class="tablet ? 'pa-2 pt-5 ml-6':'pa-2 ml-12'"
         cols="12"
       >
           <v-btn
             :class="tablet ? 'pl-2':''"
-            :to="go(profile.type)"
+            @click="setActive('profile')"
             light
             text
             style="height: auto;"
@@ -27,23 +27,23 @@
       <RegisterButton v-if="nonMember" :notificationSent="notificationSent" />
       <v-row v-else :class="mobile ? 'rounded-border box-shadow' : tablet ? 'ml-10' : 'ml-12 px-4'">
         <v-col cols="3" md="12" v-if="showWhakapapa" :class="mobile ? 'py-0 px-0' : tablet ? 'py-4 px-0' : 'py-1'">
-          <v-btn :to="go(profile.type)" light :fab="mobile" text>
+          <v-btn @click="setActive('profile')" light :fab="mobile" text>
             <v-col class="pa-0" :cols="mobile ? '12' : '2'">
               <Avatar
-                v-if="mobile && !isProfile"
+                v-if="mobile && activeComponent !=='profile'"
                 :image="profile.avatarImage"
                 size="40px"
               />
               <UserIcon
                 v-else
                 :size="tablet ? 'x-large':'medium'"
-                :color="activeStyle('profile')"
+                :color="activeComponent === 'profile' ? 'red' : 'black'"
               />
             </v-col>
             <v-col class="py-0" v-if="!mobile && !isOverflowing">
               <span
                 ref="text"
-                :style="activeStyle('profile')"
+                :style="activeComponent === 'profile' ? 'color:#B02425;' : ''"
                 class="ml-2 nav-label subtitle-1"
               >Profile</span>
             </v-col>
@@ -52,63 +52,65 @@
         <!-- <v-col :class="mobile ? 'py-0 px-0' : 'py-1'">
           <v-btn @click="setActive('Activity')" light :fab="mobile" text>
             <v-col class="pa-0" :cols="mobile ? '12' : '2'">
-              <ActivityIcon size="medium" :color="$route.name === 'activity' ? 'red' : 'black'"/>
+              <ActivityIcon size="medium" :color="activeComponent === 'activity' ? 'red' : 'black'"/>
             </v-col>
             <v-col class="py-0" v-if="!mobile && !isOverflowing">
-              <span ref="text" :style="$route.name === 'activity' ? 'color:#B02425;' : ''" class="ml-2 nav-label subtitle-1">
+              <span ref="text" :style="activeComponent === 'activity' ? 'color:#B02425;' : ''" class="ml-2 nav-label subtitle-1">
                 Activity
               </span>
             </v-col>
           </v-btn>
         </v-col>-->
         <v-col cols="3" md="12" :class="mobile ? 'py-0 px-0' : tablet ? 'py-4 px-0' : 'py-1'">
-          <v-btn :to="go('archive')" light :fab="mobile" text>
+          <v-btn @click="goArchive()" light :fab="mobile" text>
             <v-col class="pa-0" :cols="mobile ? '12' : '2'">
               <ArchiveIcon
                 v-if="!showStory"
                 :size="mobile ? 'large' : tablet ? 'x-large' : 'medium'"
-                :color="activeStyle('archive')"
+                :color="activeComponent === 'archive' ? 'red' : 'black'"
               />
               <v-icon v-else color="#B02425">mdi-arrow-left</v-icon>
             </v-col>
             <v-col class="py-0" v-if="!mobile && !isOverflowing">
               <span
                 ref="text"
-                :style="activeStyle('archive')"
+                :style="activeComponent === 'archive' ? 'color:#B02425;' : ''"
                 class="ml-2 nav-label subtitle-1"
               >Archive</span>
             </v-col>
           </v-btn>
         </v-col>
         <v-col cols="3" md="12" :class="mobile ? 'py-0 px-0' : tablet ? 'py-4 px-0' : 'py-1'">
-          <v-btn :to="go('timeline')" light :fab="mobile" text>
+          <!-- TODO: connect timeline -->
+          <v-btn @click="setActive('timeline')" light :fab="mobile" text>
+          <!-- <v-btn @click="setDialog('coming-soon')" light :fab="mobile" text> -->
             <v-col class="pa-0" :cols="mobile ? '12' : '2'">
               <TimelineIcon
                 :size="tablet ? 'x-large' : 'medium'"
-                :color="activeStyle('timeline')"
+                :color="activeComponent === 'timeline' ? 'red' : 'black'"
               />
             </v-col>
             <v-col class="py-0" v-if="!mobile && !isOverflowing">
               <span
                 ref="text"
-                :style="activeStyle('timeline')"
+                :style="activeComponent === 'timeline' ? 'color:#B02425;' : 'black'"
                 class="ml-2 nav-label subtitle-1"
               >Timeline</span>
             </v-col>
           </v-btn>
         </v-col>
         <v-col cols="3" md="12" v-if="showWhakapapa" :class="mobile ? 'py-0 px-0' : tablet ? 'py-4 px-0' : 'py-1'">
-          <v-btn :to="go('whakapapa')" light :fab="mobile" text>
+          <v-btn @click="setActive('whakapapa')" light :fab="mobile" text>
             <v-col class="pa-0" :cols="mobile ? '12' : '2'">
               <WhakapapaIcon
                 :size="mobile ? 'large' : tablet ? 'x-large' : 'medium'"
-                :color="activeStyle('whakapapa')"
+                :color="activeComponent === 'whakapapa' ? 'red' : 'black'"
               />
             </v-col>
             <v-col class="py-0" v-if="!mobile && !isOverflowing">
               <span
                 ref="text"
-                :style="activeStyle('whakapapa')"
+                :style="activeComponent === 'whakapapa' ? 'color:#B02425;' : 'black'"
                 class="ml-2 subtitle-1"
               >Whakapapa</span>
             </v-col>
@@ -134,7 +136,9 @@ import { mapGetters, mapActions } from 'vuex'
 export default {
   name: 'SideNavMenu',
   props: {
-    profile: Object,
+    profile: {
+      type: Object
+    },
     community: {
       type: Boolean,
       default: false
@@ -156,8 +160,9 @@ export default {
   },
   computed: {
     ...mapGetters(['showStory', 'storeDialog', 'notifications', 'whoami']),
-    isProfile () {
-      return this.$route.name === 'person' || this.$route.name === 'community'
+    activeComponent () {
+      if (this.$route.name === 'whakapapa/:whakapapaId') return 'whakapapa'
+      return this.$route.name
     },
     showWhakapapa () {
       if (this.profile.type === 'community') return true
@@ -186,43 +191,43 @@ export default {
     },
     position () {
       return {
-        user: !this.mobile && this.isProfile,
-        sticky: !this.mobile && this.$route.name !== 'profile',
-        userMobile: this.mobile && this.isProfile,
-        archiveMobile: this.mobile && this.$route.name !== 'profile',
-        sideNav: this.$route.name !== 'profile'
+        user: !this.mobile && this.activeComponent === 'profile',
+        sticky: !this.mobile && this.activeComponent !== 'profile',
+        userMobile: this.mobile && this.activeComponent === 'profile',
+        archiveMobile: this.mobile && this.activeComponent !== 'profile',
+        sideNav: this.activeComponent !== 'profile'
       }
     }
   },
   watch: {
-    '$route.name' (newVal) {
-      if (newVal === 'profile' && this.mobile) this.offset = 290
-      else if (newVal === 'profile') this.offset = 100
+    '$route.name' (name) {
+      if (name === 'profile' && this.mobile) this.offset = 290
+      else if (name === 'profile') this.offset = 100
     }
   },
   methods: {
     ...mapActions(['setComponent', 'setShowStory', 'setDialog', 'profileStories']),
-    activeStyle (routeName) {
-      if (this && this.$route && this.$route.name === routeName) return 'color:#B02425'
-      return 'black'
+    goArchive () {
+      if (this.showStory) {
+        this.setShowStory()
+        this.setDialog(null)
+      } else this.setActive('archive')
     },
-    go (name) {
-      return {
-        name,
+    setActive (component) {
+      this.$router.push({
+        name: component,
         params: {
           tribeId: this.$route.params.tribeId,
-          profileId: this.profile.id,
-          profile: this.profile
+          profileId: this.$route.params.profileId
         }
-      }
+      })
     },
-    // TODO: refactor!!
     onScroll () {
       this.scroll = window.pageYOffset
       var sideNav = this.$refs.sideNav
 
       // TODO tidy this up by making methods?
-      if (!this.mobile && this.$route.name === 'profile') {
+      if (!this.mobile && this.activeComponent === 'profile') {
         if (this.scroll > this.offset) {
           sideNav.classList.add('sticky')
           sideNav.classList.remove('user')
@@ -231,7 +236,7 @@ export default {
           sideNav.classList.remove('sticky')
           sideNav.classList.add('user')
         }
-      } else if (this.mobile && this.$route.name === 'profile') {
+      } else if (this.mobile && this.activeComponent === 'profile') {
         if (this.scroll > this.offset + 100) {
           sideNav.classList.remove('userMobile')
           sideNav.classList.remove('sideNav')
@@ -247,7 +252,7 @@ export default {
           sideNav.classList.remove('sideNav')
           sideNav.classList.add('userMobile')
         }
-      } else if (this.mobile && this.$route.name !== 'profile') {
+      } else if (this.mobile && this.activeComponent !== 'profile') {
         if (this.scroll > 60) {
           sideNav.classList.remove('archiveMobile')
           sideNav.classList.add('hideStickyMobile')

@@ -1,6 +1,6 @@
 <template>
   <v-banner light single-line color="white" style="z-index:1">
-    <router-link :to="view.id ? { name: 'whakapapaShow', params: { id: view.id } } : '/whakapapa'">
+    <router-link :to="back()">
       <v-avatar size="35" tile >
         <v-img v-if="view.image && view.image.uri" :src="view.image.uri" :alt="view.name" :to="view.id ? { name: 'whakapapaShow', params: { id: view.id } } : '/whakapapa'"/>
         <v-img v-else :src="getImage" />
@@ -45,6 +45,17 @@ export default {
     },
     getImage () {
       return avatarHelper.defaultImage(this.view, null, null)
+    }
+  },
+  methods: {
+    back () {
+      return {
+        name: 'whakapapa',
+        params: {
+          tribeId: this.$route.params.tribeId,
+          profileId: this.$route.params.profileId
+        }
+      }
     }
   }
 }

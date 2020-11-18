@@ -86,7 +86,7 @@
           </v-row>
           <v-row v-if="!isEditing"  class="justify-center">
             <v-btn
-              @click="goArchive()"
+              @click.native="goArchive"
               color="white"
               text
               medium

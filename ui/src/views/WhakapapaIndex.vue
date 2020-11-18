@@ -63,7 +63,6 @@ import tree from '@/lib/tree-helpers'
 import { saveWhakapapaView, getWhakapapaViews } from '@/lib/whakapapa-helpers.js'
 import { findByName } from '@/lib/search-helpers.js'
 import { getTribeByGroupId } from '@/lib/community-helpers.js'
-import mapProfileMixins from '@/mixins/profile-mixins.js'
 
 export default {
   name: 'WhakapapaIndex',

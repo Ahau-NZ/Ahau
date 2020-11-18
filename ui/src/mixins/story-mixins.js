@@ -25,43 +25,24 @@ export default function mapStoryMixins ({ mapMethods, mapApollo }) {
 
 const apollo = {
   stories () {
+    console.log('stories', this.$route)
+    console.log('stories', 'router', this.$router)
     const isPersonal = this.$route.params.profileId === this.whoami.personal.profile.id
 
-    switch (true) {
-      case this.profile.type === 'community':
-      case isPersonal:
-        return {
-          ...getAllStories,
-          update (data) {
-            return data.stories.filter(story => {
-              return story.recps.some(recp => {
-                const id = isPersonal
-                  ? this.whoami.personal.groupId
-                  : this.$route.params.tribeId
-
-                return recp === id
-              })
-            })
-          },
-          skip () {
-            return this.profile == null
-          }
+    if (isPersonal) return getAllStories({ groupId: this.whoami.personal.groupId })
+    else if (this.profile.type === 'community') return getAllStories({ groupId: this.$route.params.tribeId })
+    else if (this.profile.type === 'person') {
+      return {
+        ...getAllStoriesByMentions(this.$route.params.profileId),
+        update (data) {
+          return data.person.mentions.map(mention => {
+            return {
+              linkId: mention.linkId,
+              ...mention.story
+            }
+          })
         }
-      case this.profile.type === 'person':
-        return {
-          ...getAllStoriesByMentions(this.profile.id),
-          update (data) {
-            return data.person.mentions.map(mention => {
-              return {
-                linkId: mention.linkId,
-                ...mention.story
-              }
-            })
-          }
-        }
-      default:
-        console.error('profile was empty')
-        return null
+      }
     }
   }
 }
