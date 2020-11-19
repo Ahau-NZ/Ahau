@@ -17,49 +17,31 @@ export function setDefaultStory (newStory) {
   var creators = story.creators
   var relatedRecords = story.relatedRecords
 
+  function mapLinks (link, entity) {
+    return {
+      ...link[entity],
+      linkId: link.linkId
+    }
+  }
+
   if (artefacts && artefacts.length > 0) {
-    artefacts = artefacts.map(a => {
-      return {
-        ...a.artefact,
-        linkId: a.linkId
-      }
-    })
+    artefacts = artefacts.map(d => mapLinks(d, 'artefact'))
   }
 
   if (mentions && mentions.length > 0) {
-    mentions = mentions.map(m => {
-      return {
-        ...m.profile,
-        linkId: m.linkId
-      }
-    })
+    mentions = mentions.map(d => mapLinks(d, 'profile'))
   }
 
   if (contributors && contributors.length > 0) {
-    contributors = contributors.map(c => {
-      return {
-        ...c.profile,
-        linkId: c.linkId
-      }
-    })
+    contributors = contributors.map(d => mapLinks(d, 'profile'))
   }
 
   if (creators && creators.length > 0) {
-    creators = creators.map(c => {
-      return {
-        ...c.profile,
-        linkId: c.linkId
-      }
-    })
+    creators = creators.map(d => mapLinks(d, 'profile'))
   }
 
   if (relatedRecords && relatedRecords.length > 0) {
-    relatedRecords = relatedRecords.map(r => {
-      return {
-        ...r.story,
-        linkId: r.linkId
-      }
-    })
+    relatedRecords = relatedRecords.map(d => mapLinks(d, 'story'))
   }
 
   return {
@@ -217,18 +199,45 @@ export const getStory = id => ({
   fetchPolicy: 'no-cache'
 })
 
-// TODO: sort out type
-export const GET_ALL_STORIES = ({
+export const getAllStories = filter => ({
   query: gql`
     ${STORY_FRAGMENT}
     ${STORY_LINK_FRAGMENT}
-    query {
-      stories (type: "*") {
+    query ($filter: StoryFilter) {
+      stories(filter: $filter) {
         ...StoryFragment
         ...StoryLinkFragment
       }
     }
   `,
+  variables: {
+    filter
+  },
+  update (data) {
+    return data.stories.reverse()
+  },
+  fetchPolicy: 'no-cache'
+})
+
+export const getAllStoriesByMentions = id => ({
+  query: gql`
+    ${STORY_FRAGMENT}
+    ${STORY_LINK_FRAGMENT}
+    query($id: String!) {
+      person(id: $id) {
+        mentions: mentionLinks {
+          linkId
+          story {
+            ...StoryFragment
+            ...StoryLinkFragment
+          }
+        }
+      }
+    }
+  `,
+  variables: {
+    id
+  },
   fetchPolicy: 'no-cache'
 })
 

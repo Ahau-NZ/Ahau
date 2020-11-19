@@ -54,7 +54,7 @@ export default {
   },
   mounted () {
     this.setWhoami()
-    this.getAllStories()
+
     if (process.env.VUE_APP_PLATFORM === 'cordova') {
       navigator.splashscreen.hide()
       nodejsClient.start({
@@ -66,7 +66,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setWhoami', 'getAllStories'])
+    ...mapActions(['setWhoami'])
   },
   components: {
     Appbar,
