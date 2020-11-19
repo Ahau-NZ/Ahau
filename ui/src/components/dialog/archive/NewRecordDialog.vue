@@ -26,7 +26,7 @@ import Dialog from '@/components/dialog/Dialog.vue'
 import RecordForm from '@/components/archive/RecordForm.vue'
 import AccessButton from '@/components/button/AccessButton.vue'
 
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters, mapActions, mapMutations } from 'vuex'
 
 import { GET_CHANGES, EMPTY_STORY, setDefaultStory } from '@/lib/story-helpers.js'
 import mapProfileMixins from '@/mixins/profile-mixins.js'
@@ -69,6 +69,9 @@ export default {
 
         this.access = tribe
       }
+    },
+    access (tribe) {
+      this.setCurrentAccess(tribe)
     }
   },
   computed: {
@@ -78,6 +81,7 @@ export default {
     }
   },
   methods: {
+    ...mapMutations(['setCurrentAccess']),
     ...mapActions(['setDialog']),
     updateAccess ($event) {
       this.access = $event
