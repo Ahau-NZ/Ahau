@@ -5,15 +5,11 @@ import pick from 'lodash.pick'
 const apolloProvider = createProvider()
 const apolloClient = apolloProvider.defaultClient
 
-export const PERMITTED_PERSON_ATTRS = [
-  'headerImage',
-  'avatarImage',
-  'tombstone',
-  // WARNING: make sure header and avatar images are the first two and tombstone is the third (for PERSON_FRAGMENT)
-
-  'canEdit',
+export const PERMITTED_PERSON_PROPS = [
   'id',
-  // NOTE: we don't allow setting of `type`, this is always "profile"
+  'canEdit',
+  'type',
+
   'preferredName',
   'legalName',
   'altNames',
@@ -29,9 +25,20 @@ export const PERMITTED_PERSON_ATTRS = [
   'aliveInterval',
   'birthOrder',
   'deceased',
-  'type',
 
   'recps'
+]
+
+export const PERMITTED_PERSON_NESTED_PROPS = [
+  'headerImage',
+  'avatarImage',
+  'tombstone',
+  'authors'
+]
+
+export const PERMITTED_PERSON_ATTRS = [
+  ...PERMITTED_PERSON_NESTED_PROPS,
+  ...PERMITTED_PERSON_PROPS
 ]
 
 export const PERMITTED_PUBLIC_PERSON_ATTRS = [
@@ -46,9 +53,19 @@ export const PERMITTED_RELATIONSHIP_ATTRS = [
   'legallyAdopted'
 ]
 
+export const AUTHOR_FRAGMENT = gql`
+  fragment AuthorFragment on Author {
+    feedId
+    intervals {
+      start
+      end
+    }
+  }
+`
+
 export const PERSON_FRAGMENT = gql`
   fragment ProfileFragment on Person {
-    ${PERMITTED_PERSON_ATTRS.slice(3)}
+    ${PERMITTED_PERSON_PROPS}
     avatarImage { uri }
     headerImage { uri }
   }
@@ -58,6 +75,7 @@ export const PUBLIC_PROFILE_FRAGMENT = gql`
     id
     preferredName
     avatarImage { uri }
+    feedId:originalAuthor
   }
 `
 
@@ -65,6 +83,7 @@ export const whoami = ({
   query: gql`
     ${PERSON_FRAGMENT}
     ${PUBLIC_PROFILE_FRAGMENT}
+    ${AUTHOR_FRAGMENT}
     query {
       whoami {
         public {
@@ -78,8 +97,14 @@ export const whoami = ({
           groupId
           profile {
             ...ProfileFragment
-            kaitiaki {
+            tiaki {
               ...PublicProfileFragment
+            }
+            authors {
+              ...AuthorFragment
+              profile {
+                ...PublicProfileFragment
+              }
             }
           }
         }
@@ -89,10 +114,20 @@ export const whoami = ({
   fetchPolicy: 'no-cache'
 })
 
+export const PROFILE_LINK_FRAGMENT = gql`
+  fragment ProfileLinkFragment on WhakapapaLink {
+    linkId
+    relationshipType
+    legallyAdopted
+  }
+`
+
 export const getPerson = id => ({
   query: gql`
     ${PERSON_FRAGMENT}
+    ${AUTHOR_FRAGMENT}
     ${PUBLIC_PROFILE_FRAGMENT}
+    ${PROFILE_LINK_FRAGMENT}
     query($id: String!) {
       person(id: $id){
         ...ProfileFragment
@@ -100,20 +135,22 @@ export const getPerson = id => ({
           profile {
             ...ProfileFragment
           }
-          linkId
-          relationshipType
-          legallyAdopted
+          ...ProfileLinkFragment
         }
         parents {
           profile {
             ...ProfileFragment
           }
-          linkId
-          relationshipType
-          legallyAdopted
+          ...ProfileLinkFragment
         }
-        kaitiaki {
+        tiaki {
           ...PublicProfileFragment
+        }
+        authors {
+          ...AuthorFragment
+          profile {
+            ...PublicProfileFragment
+          }
         }
       }
     }

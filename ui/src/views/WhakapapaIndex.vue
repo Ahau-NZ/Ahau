@@ -221,7 +221,9 @@ export default {
       })
 
       try {
-        const result = await this.$apollo.mutate(saveWhakapapaView(input))
+        const result = await this.$apollo.mutate(
+          saveWhakapapaView(input)
+        )
 
         if (result.errors) throw result.errors
 
@@ -241,7 +243,17 @@ export default {
         var { id } = input
 
         if (!id) {
-          const res = await this.$apollo.mutate(savePerson(input))
+          input.authors = {
+            add: [
+              input.recps.includes(this.whoami.personal.groupId)
+                ? this.whoami.public.feedId
+                : '*'
+            ]
+          }
+          const res = await this.$apollo.mutate(
+            savePerson(input)
+          )
+
           if (res.errors) throw res.errors
 
           id = res.data.saveProfile

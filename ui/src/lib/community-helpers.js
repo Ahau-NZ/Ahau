@@ -1,12 +1,13 @@
 import gql from 'graphql-tag'
 import pick from 'lodash.pick'
-import { PUBLIC_PROFILE_FRAGMENT } from '@/lib/person-helpers'
+import { PUBLIC_PROFILE_FRAGMENT, AUTHOR_FRAGMENT } from '@/lib/person-helpers'
 import { createProvider } from '@/plugins/vue-apollo'
 
 const apolloProvider = createProvider()
 const apolloClient = apolloProvider.defaultClient
 
 export const PERMITTED_COMMUNITY_ATTRS = [
+  'authors',
   'avatarImage',
   'headerImage',
   'id',
@@ -24,6 +25,7 @@ export const PERMITTED_COMMUNITY_ATTRS = [
 ]
 
 export const PERMITTED_PUBLIC_COMMUNITY_ATTRS = [
+  'authors',
   'avatarImage',
   'headerImage',
   'id',
@@ -172,37 +174,54 @@ export const updateTribe = (tribe, input) => {
 
 export const getTribes = {
   query: gql`
+    ${AUTHOR_FRAGMENT}
     ${PUBLIC_PROFILE_FRAGMENT}
     query {
       tribes {
         id
         public {
           id
+          type
           preferredName
           description
           avatarImage { uri }
-          description
           headerImage { uri }
-          tombstone { date }
           email
           phone
           canEdit
+          recps
           location
-          tiaki { ...PublicProfileFragment }
+          tiaki {
+            ...PublicProfileFragment
+          }
+          authors {
+            ...AuthorFragment
+            profile {
+              ...PublicProfileFragment
+            }
+          }
         }
         private {
           id
+          type
           preferredName
           description
           avatarImage { uri }
-          description
           headerImage { uri }
-          tombstone { date }
           email
           phone
           location
           canEdit
-          tiaki { ...PublicProfileFragment }
+          recps
+          tiaki {
+            ...PublicProfileFragment
+          }
+          authors {
+            ...AuthorFragment
+            profile {
+              ...PublicProfileFragment
+            }
+          }
         }
       }
     }
@@ -270,12 +289,12 @@ export const getTribe = id => ({
         private {
           id
           preferredName
-          avatarImage {uri}
+          avatarImage { uri }
         }
         public {
           id 
           preferredName
-          avatarImage {uri}
+          avatarImage { uri }
         }
       }
     }

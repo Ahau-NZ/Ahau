@@ -5,6 +5,7 @@
     <!-- Header and Title -->
     <Header v-if="activeComponent === 'profile'"
       :profile="currentProfile"
+      :canEdit="currentProfile.canEdit"
       @setupProfile="setupProfile($event)"
     />
     <v-row v-if="activeComponent === 'profile'">

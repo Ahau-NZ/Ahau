@@ -16,23 +16,14 @@
     <v-col cols="12" sx="12" md="3" :class="mobile ? 'pt-0 px-5' : 'pr-8'">
       <ProfileCard title="Kaitiaki" class="mt-0 px-0">
         <template v-slot:content>
-          <div v-if="profile.type === 'community'">
-            <v-row  v-for="kaitiaki in tiakis" :key="kaitiaki.id" class="justify-center align-center ma-0 ml-4">
+          <div>
+            <v-row  v-for="(kaitiaki, i) in profile.tiaki" :key="i" class="justify-center align-center ma-0 ml-4">
               <v-col cols="2" class="pt-0 pl-0">
-                <Avatar :size="mobile ? '50px' : '40px'" :image="kaitiaki.avatarImage" :alt="kaitiaki.preferredName"/>
+                <Avatar :size="mobile ? '50px' : '40px'" :image="kaitiaki.avatarImage" :alt="kaitiaki.preferredName" :aliveInterval="kaitiaki.aliveInterval"/>
+                <!-- <Avatar v-else :size="mobile ? '50px' : '40px'" isView /> -->
               </v-col>
-              <v-col class="py-0">
-                <p style="color:black;">{{kaitiaki.preferredName}}</p>
-              </v-col>
-            </v-row>
-          </div>
-          <div v-else>
-            <v-row  v-for="kaitiaki in profile.kaitiaki" :key="kaitiaki.id" class="justify-center align-center ma-0 ml-4">
-              <v-col cols="2" class="pt-0 pl-0">
-                <Avatar :size="mobile ? '50px' : '40px'" :image="kaitiaki.avatarImage" :alt="kaitiaki.preferredName"/>
-              </v-col>
-              <v-col class="py-0">
-                <p style="color:black;">{{kaitiaki.preferredName}}</p>
+              <v-col  class="py-0">
+                <p style="color:black;">{{ kaitiaki.preferredName }}</p>
               </v-col>
             </v-row>
           </div>
@@ -108,9 +99,6 @@ export default {
   },
   computed: {
     ...mapGetters(['whoami', 'currentTribe', 'tribes']),
-    tiakis () {
-      return this.currentTribe.private.length > 0 ? this.currentTribe.private[0].tiaki : this.currentTribe.public[0].tiaki
-    },
     connectedTribes () {
       return this.tribes.filter(tribe => tribe.private.length > 0)
     },
