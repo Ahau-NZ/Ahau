@@ -91,7 +91,7 @@ import { mapGetters } from 'vuex'
 import { yearMonthDay, convertToTime } from '@/lib/date-helpers.js'
 
 export default {
-  props: ['data'],
+  props: ['data', 'loading'],
   components: {
     AvatarGroup,
     Chip

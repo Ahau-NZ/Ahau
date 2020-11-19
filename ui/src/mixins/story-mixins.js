@@ -43,6 +43,7 @@ const apollo = {
               ...mention.story
             }
           })
+            .reverse()
         }
       }
     }

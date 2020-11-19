@@ -20,7 +20,8 @@ import gql from 'graphql-tag'
 export default {
   name: 'ProfileHeader',
   props: {
-    profile: Object
+    profile: Object,
+    canEdit: Boolean
   },
   components: {
     ImagePicker,

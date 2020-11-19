@@ -1,6 +1,6 @@
 <template>
   <div class="px-2">
-    <div :class="{'showOverlay': showStory && !mobile}"></div>
+    <div v-if="showStory" :class="{'showOverlay': showStory && !mobile}"></div>
 
     <v-row v-if="!showStory" class="top-margin mb-5">
       <v-col class="headliner black--text pa-0 pl-4 pt-2">
@@ -27,10 +27,38 @@
         </div>
       </v-col>
     </v-row>
-    <v-row v-else>
+    <!-- <v-row v-else>
       <v-col>
         <div class="px-8 subtitle-1 grey--text " :class="{ 'text-center': mobile }">
           No records found in this profile. Please add record to this profile via Archive
+        </div>
+      </v-col>
+    </v-row> -->
+    <v-row v-else>
+      <v-col>
+        <div v-if="!filteredStories || (filteredStories && filteredStories.length < 1)">
+          <div v-if="!filteredStories">
+              <v-card
+                :width="mobile ? '100%' : '87%'"
+                flat
+                :ripple="false"
+                light
+                v-for="n in 4"
+                :key="`skeleton-${n}`"
+                :class="mobile ? 'py-12' : 'pl-12 py-12'"
+              >
+                <v-skeleton-loader
+                  :width="mobile ? '100%' : '87%'"
+                  type="list-item-avatar-three-line"
+                ></v-skeleton-loader>
+              </v-card>
+          </div>
+          <div v-else
+            class="px-8 subtitle-1 grey--text "
+            :class="{ 'text-center': mobile }"
+          >
+            No records found in this profile. Please add record to this profile via Archive
+          </div>
         </div>
       </v-col>
     </v-row>
@@ -65,7 +93,7 @@ export default {
   ],
   data () {
     return {
-      stories: [],
+      stories: null,
       scrollPosition: 0
     }
   },
@@ -88,6 +116,7 @@ export default {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
     filteredStories () {
+      if (!this.stories) return null
       return this.stories.filter(story => !isEmpty(story.timeInterval))
     }
   },
