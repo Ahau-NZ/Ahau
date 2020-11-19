@@ -64,14 +64,13 @@ export default {
         this.access = tribe
         if (!tribe || this.whoami.personal.groupId === this.$route.params.tribeId) {
           this.access = { isPersonalGroup: true, groupId: this.whoami.personal.groupId, ...this.whoami.personal.profile }
+          this.setCurrentAccess(this.access)
           return
         }
 
         this.access = tribe
+        this.setCurrentAccess(this.access)
       }
-    },
-    access (tribe) {
-      this.setCurrentAccess(tribe)
     }
   },
   computed: {

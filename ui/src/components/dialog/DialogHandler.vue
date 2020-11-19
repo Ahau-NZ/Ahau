@@ -347,11 +347,11 @@ export default {
           })
         )
         if (createCommunityRes.errors) throw new Error('Failed to create community profile', createCommunityRes.errors)
-        const groupProfile = createCommunityRes.data.saveProfile // id
+        const groupProfileId = createCommunityRes.data.saveProfile // id
 
         const profileLinkRes = await this.$apollo.mutate(
           saveGroupProfileLink({
-            profile: groupProfile,
+            profile: groupProfileId,
             group: groupId
           })
         )
@@ -374,11 +374,11 @@ export default {
         )
         if (profilePublicLinkRes.errors) throw new Error('Failed to create public community profile link', profilePublicLinkRes.errors)
         if (profilePublicLinkRes.data.saveGroupProfileLink) {
-          this.setCurrentTribeById(groupProfile)
-          console.error('DIALOG HELPER: needs to go to truve after creating it?')
-          // this.setComponent('profile')
-          // this.setProfileById({ id: groupProfile })
-          // this.$router.push({ name: 'profileShow', params: { id: groupProfile } }).catch(() => {})
+          this.setCurrentTribeById(groupProfileId)
+          console.error('DIALOG HELPER: needs to go to tribe after creating it?')
+
+          this.setProfileById({ id: groupProfileId })
+          this.$router.push({ name: 'community/profile', params: { tribeId: groupId, profileId: groupProfileId } }).catch(() => {})
         }
       } catch (err) {
         console.error('Something went wrong while trying to create private group', $event)
@@ -797,10 +797,9 @@ export default {
       } else {
         this.source = null
         this.setTribes()
-        console.error('DIALOG HANDLER: deleting a community needs to route somewhere')
-        // this.setComponent('profile')
-        // this.setProfileById({ id: this.whoami.personal.profile.id })
-        // this.$router.push({ name: 'profileShow', params: { id: this.whoami.personal.profile.id } }).catch(() => {})
+
+        this.setProfileById({ id: this.whoami.personal.profile.id })
+        this.$router.push('/tribe').catch(() => {})
         this.confirmationAlert('community successfully deleted')
       }
     },
