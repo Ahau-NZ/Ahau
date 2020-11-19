@@ -78,7 +78,7 @@ export default {
   },
   methods: {
     goWhakapapaShow () {
-      this.$router.push({ path: this.route.from.fullPath })
+      this.$router.push({ path: this.route.from.fullPath }).catch(() => {})
     },
     goWhakapapaIndex () {
       this.$router.push({ name: 'whakapapa' }).catch(() => {})

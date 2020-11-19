@@ -83,7 +83,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['currentProfile', 'showStory', 'currentStory', 'whoami']),
+    ...mapGetters(['showStory', 'currentStory', 'whoami']),
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },

@@ -80,7 +80,6 @@ export default {
   methods: {
     ...mapActions(['setDialog']),
     updateAccess ($event) {
-      console.log('access', $event)
       this.access = $event
     },
     close () {

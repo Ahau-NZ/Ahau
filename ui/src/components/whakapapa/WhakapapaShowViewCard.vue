@@ -83,7 +83,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['currentProfile', 'getAccessFromRecps', 'currentAccess']),
+    ...mapGetters(['getAccessFromRecps', 'currentAccess']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },

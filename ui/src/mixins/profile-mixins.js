@@ -43,7 +43,12 @@ const apollo = {
       skip () {
         return this.$route.params.tribeId === this.whoami.personal.groupId
       },
-      ...getTribe(this.$route.params.tribeId),
+      ...getTribe,
+      variables () {
+        return {
+          id: this.$route.params.tribeId
+        }
+      },
       error: err => console.error('Error getting tribe', err),
       update ({ tribe }) {
         if (tribe.private.length > 0) return { groupId: tribe.id, ...tribe.private[0] }
@@ -54,4 +59,34 @@ const apollo = {
 }
 
 const methods = {
+  async getTribe (id) {
+
+    try {
+      if (id === this.whoami.personal.groupId) {
+        return {
+          groupId: this.whoami.personal.groupId,
+          ...this.whoami.personal.profile
+        }
+      }
+
+      const res = await this.$apollo.query({
+        ...getTribe,
+        variables: {
+          id
+        }
+      })
+
+      if (res.errors) throw res.errors
+
+      const tribe = res.data.tribe
+
+      return {
+        id: tribe.id,
+        ...(tribe.private.length > 0 ? tribe.private[0] : tribe.public[0])
+      }
+    } catch (err) {
+      console.error('Something went wrong while fetching tribe: ', id)
+      console.error('Error', err)
+    }
+  }
 }

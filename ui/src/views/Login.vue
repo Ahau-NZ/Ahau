@@ -140,7 +140,7 @@ export default {
           tribeId: this.whoami.personal.groupId,
           profileId: this.whoami.personal.profile.id
         }
-      })
+      }).catch(() => {})
     },
 
     toggleNew () {

@@ -278,7 +278,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['showArtefact', 'currentProfile', 'storeDialog', 'getAccessFromRecps']),
+    ...mapGetters(['showArtefact', 'storeDialog', 'getAccessFromRecps']),
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },

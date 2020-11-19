@@ -184,7 +184,7 @@ export default {
     patakas () {
       if (!this.patakasRaw) return
       return this.patakasRaw.map(pataka => {
-        if (this.connectedPeers && this.connectedPeers.pataka.some(peer => peer.id === pataka.id)) {
+        if (this.connectedPeers && this.connectedPeers.pataka && this.connectedPeers.pataka.some(peer => peer.id === pataka.id)) {
           return {
             ...pataka,
             online: true
@@ -194,7 +194,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setDialog', 'setProfile', 'setCurrentTribe', 'setSyncing']),
+    ...mapActions(['setDialog', 'setCurrentTribe', 'setSyncing']),
     connected (text) {
       this.dialog = false
       this.snackbar = !this.snackbar

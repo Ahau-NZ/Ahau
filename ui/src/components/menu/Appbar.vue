@@ -133,7 +133,7 @@ export default {
     clearInterval(this.polling)
   },
   computed: {
-    ...mapGetters(['whoami', 'whakapapa', 'showStory', 'storeDialog', 'currentProfile', 'syncing']),
+    ...mapGetters(['whoami', 'whakapapa', 'showStory', 'storeDialog', 'syncing']),
     isWhakapapaIndex () {
       return (
         this.$route.name === 'person/whakapapa/:whakapapaId' ||
@@ -198,7 +198,7 @@ export default {
       this.drawer = !this.drawer
     },
     goBack () {
-      if (this.$route.name === 'whakapapa') return this.$router.push({ path: this.$route.from.fullPath })
+      if (this.$route.name === 'whakapapa') return this.$router.push({ path: this.$route.from.fullPath }).catch(() => {})
       else if (this.showStory) return this.setShowStory()
     }
   },

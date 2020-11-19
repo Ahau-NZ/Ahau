@@ -1,49 +1,24 @@
 <template>
-  <!-- <v-app>
-    
+  <v-app>
+    <Appbar v-if="displayAppbar" :enableMenu="enableMenu" app />
+
+    <!-- Sizes your content based upon application components -->
     <v-main v-if="!mobile || mobile && !storeDialog" :class="{ 'mobileWhakapapaTitleStyle': mobile }">
-      <transition name="fade" mode="out-in">
-        <router-view :mobileServerLoaded="mobileServerLoaded" />
-      </transition>
-      <Spinner />
+
+      <!-- Provides the application the proper gutter -->
+      <v-container fluid class="pa-0">
+
+        <transition name="fade" mode="out-in">
+          <router-view :mobileServerLoaded="mobileServerLoaded" />
+        </transition>
+        <Spinner />
+      </v-container>
     </v-main>
     <div v-if="!mobile" class='version'>
       <span>version</span> {{version}}
     </div>
     <DialogHandler />
-  </v-app> -->
-
-<v-app>
-  <!-- <v-navigation-drawer app> -->
-    <!-- -->
-  <!-- </v-navigation-drawer> -->
-
-  <!-- <v-app-bar app> -->
-    <!-- -->
-  <Appbar :enableMenu="enableMenu" app />
-  <!-- </v-app-bar> -->
-
-  <!-- Sizes your content based upon application components -->
-  <v-main v-if="!mobile || mobile && !storeDialog" :class="{ 'mobileWhakapapaTitleStyle': mobile }">
-
-    <!-- Provides the application the proper gutter -->
-    <v-container fluid class="pa-0">
-
-      <transition name="fade" mode="out-in">
-        <router-view :mobileServerLoaded="mobileServerLoaded" />
-      </transition>
-      <Spinner />
-    </v-container>
-  </v-main>
-  <div v-if="!mobile" class='version'>
-    <span>version</span> {{version}}
-  </div>
-  <DialogHandler />
-
-  <!-- <v-footer app> -->
-    <!-- -->
-  <!-- </v-footer> -->
-</v-app>
+  </v-app>
 </template>
 
 <script>
@@ -67,7 +42,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters(['selectedProfile', 'storeDialog']),
+    ...mapGetters(['storeDialog']),
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
@@ -78,6 +53,10 @@ export default {
       ) {
         return false
       } else return true
+    },
+    displayAppbar () {
+      if (this.$route.name === 'login') return false
+      else return true
     }
   },
   mounted () {

@@ -658,7 +658,7 @@ export default {
 
       await this.saveWhakapapa(input)
 
-      this.$router.push({ name: 'profileShow', params: { id: this.profile.id } })
+      this.$router.push({ name: 'profileShow', params: { id: this.profile.id } }).catch(() => {})
     },
     getImage () {
       return avatarHelper.defaultImage(this.aliveInterval, this.gender)

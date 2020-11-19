@@ -64,7 +64,7 @@ import { savePerson } from '@/lib/person-helpers.js'
 import tree from '@/lib/tree-helpers'
 import { saveWhakapapaView, getWhakapapaViews } from '@/lib/whakapapa-helpers.js'
 import { findByName } from '@/lib/search-helpers.js'
-import { getTribeByGroupId } from '@/lib/community-helpers.js'
+import mapProfileMixins from '@/mixins/profile-mixins.js'
 
 export default {
   name: 'WhakapapaIndex',
@@ -74,6 +74,11 @@ export default {
       required: true
     }
   },
+  mixins: [
+    mapProfileMixins({
+      mapMethods: ['getTribe']
+    })
+  ],
   data () {
     return {
       suggestions: [],
@@ -112,12 +117,11 @@ export default {
       if (this.$route.params.profileId === this.whoami.personal.profile.id) {
         var groupedObj = groupBy(views, 'recps[0]')
         const groups = await Promise.all(
-          Object.keys(groupedObj).map(async (key, value) => {
-            var views = groupedObj[key]
-            if (key === this.whoami.personal.groupId) return { name: 'my private', image: this.whoami.personal.profile.avatarImage, views: views }
-            var tribe = await getTribeByGroupId(key)
-            if (tribe.private.length > 0) return { name: tribe.private[0].preferredName, image: tribe.private[0].avatarImage, views: views }
-            return null
+          Object.keys(groupedObj).map(async id => {
+            var views = groupedObj[id]
+            if (id === this.whoami.personal.groupId) return { name: 'my private', image: this.whoami.personal.profile.avatarImage, views: views }
+            var tribe = await this.getTribe(id)
+            return { name: tribe.preferredName, image: tribe.avatarImage, views: views }
           })
         )
         const filteredGroups = groups.filter(i => !isEmpty(i))
@@ -221,7 +225,7 @@ export default {
           params: {
             id: result.data.saveWhakapapaView
           }
-        })
+        }).catch(() => {})
       } catch (err) {
         this.setLoading(false)
         console.error('Something went wrong while creating a whakapapa', err)

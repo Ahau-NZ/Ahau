@@ -376,7 +376,7 @@ export default {
           profileId: this.profile.id,
           profile: this.profile
         }
-      })
+      }).catch(() => {})
     },
     age (born) {
       var age = calculateAge(born)

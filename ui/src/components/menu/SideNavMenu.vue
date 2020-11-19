@@ -221,7 +221,7 @@ export default {
           profileId: this.$route.params.profileId,
           profile: this.profile
         }
-      })
+      }).catch(() => {})
     },
     onScroll () {
       this.scroll = window.pageYOffset

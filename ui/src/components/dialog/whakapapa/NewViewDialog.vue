@@ -9,7 +9,7 @@
         <AvatarGroup v-if="kaitiaki && kaitiaki.length > 0" size="50px" show-labels groupTitle="Kaitiaki" :profiles="kaitiaki" showLabels/>
       </template>
       <template v-slot:before-actions>
-        <AccessButton :access.sync="access" />
+        <AccessButton :access="access" @access="updateAccess"/>
       </template>
     </Dialog>
   </div>
@@ -23,6 +23,7 @@ import WhakapapaForm from '@/components/whakapapa/WhakapapaForm.vue'
 import { mapActions, mapGetters, mapMutations } from 'vuex'
 import AvatarGroup from '@/components/AvatarGroup.vue'
 import AccessButton from '@/components/button/AccessButton.vue'
+import mapProfileMixins from '@/mixins/profile-mixins.js'
 
 const EMPTY_WHAKAPAPA = {
   name: '',
@@ -76,6 +77,11 @@ export default {
       required: true
     }
   },
+  mixins: [
+    mapProfileMixins({
+      mapApollo: ['tribe']
+    })
+  ],
   data () {
     return {
       helpertext: false,
@@ -84,12 +90,19 @@ export default {
       access: null
     }
   },
-  mounted () {
-    this.access = this.defaultAccess
-  },
   watch: {
-    access (value) {
-      this.setCurrentAccess(value)
+    tribe: {
+      deep: true,
+      immediate: true,
+      handler (tribe) {
+        this.access = tribe
+        if (!tribe || this.whoami.personal.groupId === this.$route.params.tribeId) {
+          this.access = { isPersonalGroup: true, groupId: this.whoami.personal.groupId, ...this.whoami.personal.profile }
+          return
+        }
+
+        this.access = tribe
+      }
     }
   },
   computed: {
@@ -108,6 +121,9 @@ export default {
   methods: {
     ...mapMutations(['setCurrentAccess']),
     ...mapActions(['setLoading']),
+    updateAccess ($event) {
+      this.access = $event
+    },
     close () {
       this.formData = setDefaultWhakapapa(EMPTY_WHAKAPAPA)
       this.$refs.whakapapaForm.$refs.form.reset()
