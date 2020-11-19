@@ -27,42 +27,59 @@
         <BigAddButton @click="dialog = 'new-story'" />
       </v-col>
     </v-row>
-    <v-row v-if="stories && stories.length > 0">
-      <transition name="change" mode="out-in">
-        <v-col cols="12" xs="12" sm="12" md="9" :class="!showStory ? '':'pa-0'">
-          <!-- <v-row>
-            <CollectionGroup :collections="collections" />
-          </v-row>
-          <v-divider class="mt-6 mb-8" light></v-divider> -->
-          <div v-if="!showStory">
-            <v-row v-for="(story, i) in stories" :key="`story-${i}-id-${story.id}`">
-              <StoryCard @updateDialog="updateDialog($event)" @toggleStory="toggleStory($event)" :story="story" />
+    <div>
+      <v-row v-if="stories && stories.length > 0">
+          <v-col cols="12" xs="12" sm="12" md="9" :class="!showStory ? '':'pa-0'">
+            <!-- <v-row>
+              <CollectionGroup :collections="collections" />
             </v-row>
-          </div>
-          <div v-else>
-            <v-row :class="mobile ? 'pa-0': 'px-6 top-margin'">
-              <StoryCard
-                :fullStory="true"
-                :story.sync="currentStory"
-                @updateDialog="updateDialog($event)"
-                @submit="saveStory($event)"
-                @close="toggleStory($event)" />
-            </v-row>
-          </div>
+            <v-divider class="mt-6 mb-8" light></v-divider> -->
+            <div v-if="!showStory">
+              <v-row v-for="(story, i) in stories" :key="`story-${i}-id-${story.id}`">
+                <StoryCard @updateDialog="updateDialog($event)" @toggleStory="toggleStory($event)" :story="story" />
+              </v-row>
+            </div>
+            <div v-else>
+              <v-row :class="mobile ? 'pa-0': 'px-6 top-margin'">
+                <StoryCard
+                  :fullStory="true"
+                  :story.sync="currentStory"
+                  @updateDialog="updateDialog($event)"
+                  @submit="saveStory($event)"
+                  @close="toggleStory($event)"
+                />
+              </v-row>
+            </div>
+          </v-col>
+        </v-row>
+        <v-row v-else>
+          <v-col>
+            <div v-if="!stories || (stories && stories.length < 1)">
+              <div v-if="!stories">
+                <v-card
+                  :width="mobile ? '100%' : '87%'"
+                  flat
+                  :ripple="false"
+                  light
+                  v-for="n in 4"
+                  :key="`skeleton-${n}`"
+                >
+                  <v-skeleton-loader
+                    :width="mobile ? '100%' : '87%'"
+                    type="card, card-avatar"
+                  ></v-skeleton-loader>
+                </v-card>
+              </div>
+              <div v-else
+                class="px-8 subtitle-1 grey--text "
+                :class="{ 'text-center': mobile }"
+              >
+                No records found
+              </div>
+            </div>
         </v-col>
-      </transition>
       </v-row>
-      <v-row v-else>
-        <v-col>
-          <div
-            v-if="!stories || (stories && stories.length < 1)"
-            class="px-8 subtitle-1 grey--text "
-            :class="{ 'text-center': mobile }"
-          >
-          No records found
-        </div>
-      </v-col>
-    </v-row>
+    </div>
     <ArchiveHelper v-if="showArchiveHelper" :show="showArchiveHelper" @close="toggleArchiveHelper" />
   </v-container>
   <!-- <vue-context ref="menu" class="pa-4">
@@ -118,8 +135,9 @@ export default {
   },
   data () {
     return {
-      stories: [],
+      stories: null,
       dialog: null,
+      loading: true,
       // contextMenuOpts: [{
       //   title: 'Create a new Collection',
       //   dialog: 'new-collection',
@@ -241,5 +259,17 @@ export default {
     top: 0px;
     left: 0px;
     background: rgba(0, 0, 0, 0.81);
+  }
+
+  .fade-in-enter-active {
+    transition: all .5s ease;
+  }
+
+  .fade-in-leave-active {
+    transition: all .5s ease;
+  }
+
+  .fade-in-enter, .fade-in-leave-to {
+    opacity: 0;
   }
 </style>

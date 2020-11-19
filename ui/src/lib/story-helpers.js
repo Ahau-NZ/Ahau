@@ -213,6 +213,9 @@ export const getAllStories = filter => ({
   variables: {
     filter
   },
+  update (data) {
+    return data.stories.reverse()
+  },
   fetchPolicy: 'no-cache'
 })
 
