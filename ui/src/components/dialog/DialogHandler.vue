@@ -154,7 +154,6 @@ import { saveLink } from '@/lib/link-helpers.js'
 import tree from '@/lib/tree-helpers'
 
 import findSuccessor from '@/lib/find-successor'
-import mapProfileMixins from '@/mixins/profile-mixins.js'
 
 export default {
   name: 'DialogHandler',
@@ -207,13 +206,9 @@ export default {
     },
     loadDescendants: Function,
     loadKnownFamily: Function,
+    setSelectedProfile: Function,
     getRelatives: Function
   },
-  mixins: [
-    mapProfileMixins({
-      mapMethods: ['setSelectedProfile']
-    })
-  ],
   data () {
     return {
       snackbar: false,
