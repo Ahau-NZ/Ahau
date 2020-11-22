@@ -18,7 +18,7 @@ import Avatar from '@/components/Avatar.vue'
 import gql from 'graphql-tag'
 
 export default {
-  name: 'ProfileHeader',
+  name: 'Header',
   props: {
     profile: Object,
     canEdit: Boolean
@@ -47,7 +47,8 @@ export default {
         return
       }
       if (res.data) {
-        this.$emit('setupProfile', this.profile.id)
+        // this.$emit('setupProfile', this.profile.id)
+        this.$parent.$apollo.queries.profile.refetch({ id: this.profile.id })
       }
     }
   },

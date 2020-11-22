@@ -5,7 +5,6 @@
     <!-- Header and Title -->
     <Header v-if="isProfile"
       :profile="profile"
-      @setupProfile="setupProfile($event)"
     />
     <v-row v-if="isProfile">
       <v-col cols="12" offset-md="2" md="8" sm="12" :class="!mobile ? 'pl-12' : 'pt-0 mt-n3' " :align="mobile ? 'center' : 'start'" :order="mobile ? '3' : '1'">
@@ -97,12 +96,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['getAllStories', 'setProfileById', 'setWhoami', 'setShowArtefact', 'setDialog', 'setTribes', 'setProfileStories']),
-    async setupProfile (id) {
-      this.setProfileById({ id })
-      this.setTribes()
-    }
-
+    ...mapActions(['setProfileById', 'setWhoami', 'setShowArtefact', 'setDialog', 'setTribes', 'setProfileStories'])
   }
 }
 </script>
