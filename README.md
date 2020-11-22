@@ -216,3 +216,18 @@ npm run lint:pataka // lint only pataka UI
 
 npm run cleanup // delete node_modules and package-lock.json files from all packages
 ```
+
+## Troubleshooting
+
+If `vue-cli-service` is not detected or recognised as a command, in the root folder run
+
+```bash
+$ npm cache clean -f
+```
+
+Following this, reinstall the required dependencies with
+
+```bash
+$ npm install
+```
+
