@@ -15,7 +15,7 @@
 <script>
 
 export default {
-  name: 'ProfileInfoCard',
+  name: 'ProfileInfoItem',
   props: {
     title: String,
     value: String,

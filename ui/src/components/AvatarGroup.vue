@@ -10,7 +10,7 @@
       <div
         width="100%"
         :class="spacing"
-        v-for="(profile, i) in profiles"
+        v-for="(profile, i) in formattedProfiles"
         :key="`${groupTitle}-${profile.id}-${i}`"
       >
         <div justify="center" class="pt-2">
@@ -59,29 +59,22 @@ export default {
     dark: Boolean,
     row: Boolean
   },
-  // data () {
-  //   return {
-  //     groupProfiles: this.formatProfiles(this.profiles)
-  //   }
-  // },
   computed: {
     columns () {
       return this.profiles.length
+    },
+    formattedProfiles () {
+      if (!this.profiles) return null
+      return this.profiles.map(d => {
+        if (d.profile) return d.profile
+        return d
+      })
     }
   },
   methods: {
     profileClick (profile) {
       this.$emit('profile-click', profile)
     }
-    // formatProfiles (profiles) {
-    //   if (profiles.length > 0 && has(profiles[0], 'profile')) {
-    //     var formattedProfiles = []
-    //     profiles.map(profile => {
-    //       formattedProfiles.push(profile.profile)
-    //     })
-    //     return formattedProfiles
-    //   } else return profiles
-    // }
   }
 }
 </script>

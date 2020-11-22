@@ -70,7 +70,7 @@ export default {
     isWhakapapaShow () {
       return this.$route.name === 'person/whakapapa/:whakapapaId' || this.$route.name === 'community/whakapapa/:whakapapaId'
     },
-    ...mapGetters(['showStory', 'showArtefact', 'currentTribe']),
+    ...mapGetters(['showStory', 'showArtefact']),
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
@@ -96,7 +96,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setProfileById', 'setWhoami', 'setShowArtefact', 'setDialog', 'setTribes', 'setProfileStories'])
+    ...mapActions(['setDialog'])
   }
 }
 </script>
