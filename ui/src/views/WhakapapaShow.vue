@@ -180,7 +180,6 @@
       :getRelatives="getRelatives"
       :relationshipLinks="relationshipLinks"
       @updateFocus="updateFocus($event)"
-      :setSelectedProfile="setSelectedProfile"
       @change-focus="changeFocus($event)"
       @newAncestor="setFocus($event)"
       :focus="focus"
@@ -218,6 +217,7 @@ import DialogHandler from '@/components/dialog/DialogHandler.vue'
 import findSuccessor from '@/lib/find-successor'
 
 import { mapGetters, mapActions, mapMutations } from 'vuex'
+import mapProfileMixins from '@/mixins/profile-mixins.js'
 
 export default {
   name: 'WhakapapaShow',
@@ -236,6 +236,11 @@ export default {
     DialogHandler,
     WhakapapaBanner
   },
+  mixins: [
+    mapProfileMixins({
+      mapMethods: ['setSelectedProfile']
+    })
+  ],
   data () {
     return {
       fab: false,
@@ -584,50 +589,6 @@ export default {
     },
     async updateFocus (focus) {
       await this.saveWhakapapa({ focus })
-    },
-    async setSelectedProfile (profile) {
-      if (profile === null) {
-        this.updateSelectedProfile({})
-        return
-      }
-      // check the type of profile we received
-      if (typeof profile === 'object') {
-        profile = await this.loadKnownFamily(true, profile)
-        if (profile.parents.length) {
-          // find parent to get any changes to siblings
-          var person = await tree.find(this.nestedWhakapapa, profile.parents[0].id)
-          if (!person) {
-            this.updateSelectedProfile(profile)
-            return
-          }
-          var updatedProfile = tree.getSiblings(person, profile)
-          this.updateSelectedProfile(updatedProfile)
-        } else this.updateSelectedProfile(profile)
-      } else if (typeof profile === 'string') {
-        // need to find the profile in this whakapapa
-        var profileFound = await tree.find(this.nestedWhakapapa, profile)
-        if (!profileFound) {
-          // lets load descendants of them instead
-          let partner = await this.loadDescendants(profile, '', [])
-          partner.isPartner = true
-          console.warn('could potentially be loading a large amount of data')
-          this.updateSelectedProfile(partner)
-          return
-        }
-        if (profileFound.parents.length) {
-          // find parent to get any changes to siblings
-          var parent = await tree.find(this.nestedWhakapapa, profileFound.parents[0].id)
-          // if parent not found is becuase that parent is not in this nestedWhakapapa
-          if (!parent) {
-            this.updateSelectedProfile(profileFound)
-            return
-          }
-          var newUpdatedProfile = tree.getSiblings(parent, profileFound)
-          this.updateSelectedProfile(newUpdatedProfile)
-        } else this.updateSelectedProfile(profileFound)
-      } else {
-        this.updateSelectedProfile({})
-      }
     },
     async saveWhakapapa (input) {
       input = {

@@ -17,7 +17,7 @@
     <div v-if="!mobile" class='version'>
       <span>version</span> {{version}}
     </div>
-    <DialogHandler />
+    <DialogHandler /> <!-- TODO: find out what uses this? -->
   </v-app>
 </template>
 

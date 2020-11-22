@@ -40,7 +40,7 @@
 
 <script>
 import Avatar from './Avatar.vue'
-// import has from 'lodash.has'
+
 export default {
   name: 'AvatarGroup',
   components: {
