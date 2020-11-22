@@ -214,7 +214,7 @@
         :title="`Edit ${story.title}`"
         editing
         :story="story"
-        @close="dialog = null"
+        @close="finishEditing()"
         @delete="dialog = 'delete-story'"
         @submit="$emit('submit', $event)"
       />
@@ -382,6 +382,10 @@ export default {
     },
     close () {
       this.$emit('close')
+    },
+    finishEditing () {
+      this.setShowStory()
+      this.dialog = null
     }
   }
 }

@@ -36,7 +36,7 @@
             <v-divider class="mt-6 mb-8" light></v-divider> -->
             <div v-if="!showStory">
               <v-row v-for="(story, i) in stories" :key="`story-${i}-id-${story.id}`">
-                <StoryCard @updateDialog="updateDialog($event)" @toggleStory="toggleStory($event)" :story="story" />
+                <StoryCard @toggleStory="toggleStory($event)" :story="story" />
               </v-row>
             </div>
             <div v-else>
@@ -44,7 +44,6 @@
                 <StoryCard
                   :fullStory="true"
                   :story.sync="currentStory"
-                  @updateDialog="updateDialog($event)"
                   @submit="saveStory($event)"
                   @close="toggleStory($event)"
                 />
