@@ -33,6 +33,11 @@
         </v-row>
       </v-btn>
     </div>
+    <div v-else-if="mobile && showStory" class="ml-n4">
+      <v-btn @click="toggleShowStory()" text>
+        <v-icon dark>mdi-arrow-left</v-icon>
+      </v-btn>
+    </div>
   </div>
 </template>
 
@@ -59,7 +64,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setProfileById', 'setComponent']),
+    ...mapActions(['setProfileById', 'setComponent', 'toggleShowStory']),
     goWhakapapaShow () {
       this.setComponent('')
       this.$router.push({ path: this.route.from.fullPath })

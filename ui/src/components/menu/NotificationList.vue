@@ -105,12 +105,10 @@ export default {
   methods: {
     ...mapActions(['setDialog', 'setCurrentNotification']),
     openReview (notification) {
-      console.log('open review')
       this.setCurrentNotification(notification)
       this.setDialog({ active: 'new-registration', type: 'review' })
     },
     openResponse (notification) {
-      console.log('open response')
       this.setCurrentNotification(notification)
       this.setDialog({ active: 'new-registration', type: 'response' })
     }

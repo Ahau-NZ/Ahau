@@ -88,7 +88,7 @@ import AvatarGroup from '@/components/AvatarGroup.vue'
 import Chip from '@/components/archive/Chip.vue'
 
 import { mapGetters } from 'vuex'
-import { yearMonthDay, convertToTime } from '@/lib/date-helpers.js'
+import { yearMonthDay, edtfToDateString } from '@/lib/date-helpers.js'
 
 export default {
   props: ['data', 'loading'],
@@ -113,7 +113,7 @@ export default {
   },
   methods: {
     sortDesc (data) {
-      var sortDescending = data.sort((a, b) => convertToTime(a.timeInterval) - convertToTime(b.timeInterval))
+      var sortDescending = data.sort((a, b) => edtfToDateString(a.timeInterval) - edtfToDateString(b.timeInterval))
       return sortDescending
     },
     getDotColour (iconType) {

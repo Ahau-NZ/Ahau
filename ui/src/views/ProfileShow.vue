@@ -17,6 +17,7 @@
       </v-col> -->
       <v-col :order="mobile ? '2' : '3'" :align="mobile || tablet ? 'end' : isCommunity ? 'start':'center'" cols="12" :md="isCommunity ? 1:2" class="px-5">
         <EditProfileButton v-if="currentProfile.canEdit" @click="currentProfile.type === 'person' ? setDialog('edit-node', 'this', 'this') : setDialog('edit-community')" />
+        <v-divider v-else class="py-5"></v-divider>
       </v-col>
     </v-row>
     <v-row>
@@ -68,6 +69,14 @@ export default {
     EditProfileButton,
     // EditRegistrationButton,
     WhakapapaIndex
+  },
+  watch: {
+    // TODO: remove this later
+    currentProfile (newVal) {
+      if (newVal) {
+        window.scrollTo(0, 0)
+      }
+    }
   },
   data () {
     return {

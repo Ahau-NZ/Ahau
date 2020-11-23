@@ -1,6 +1,6 @@
 <template>
   <Dialog :title="`${view.name} Whakapapa`" :show="show" @close="close" width="720px" :goBack="close" :enableBar="false">
-    <template v-slot:top>
+    <template v-slot:content>
       <Avatar
         class="big-avatar"
         size="250px"
@@ -10,8 +10,6 @@
         isView
         style="margin-top: 20px;"
       />
-    </template>
-    <template v-slot:title>
       <div justify="center" align="center" class="px-4">
         <h1>{{ view.name }}</h1>
         <v-btn
@@ -20,15 +18,13 @@
           color="white"
           text
           x-small
-          class="blue--text"
+          class="blue--text pt-4"
         >
           <v-icon small class="blue--text" left>mdi-pencil</v-icon>Edit
         </v-btn>
       </div>
-    </template>
-    <template v-slot:content>
       <v-row justify="center" align="center" class="mt-5">
-        <p>{{ view.description }}</p>
+        <v-col>{{ view.description }}</v-col>
       </v-row>
       <AvatarGroup size="50px" show-labels groupTitle="Kaitiaki" :profiles="view.kaitiaki"/>
       <v-row justify="center" align="center" class="mt-5">

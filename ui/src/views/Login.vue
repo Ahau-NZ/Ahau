@@ -125,9 +125,9 @@ export default {
       this.isSetup = Boolean(this.whoami.personal.profile.preferredName)
       // Shortcut in dev, that saves us from doing one click when testing
 
-      if (this.isSetup && process.env.NODE_ENV === 'development') {
-        this.login()
-      }
+      // if (this.isSetup && process.env.NODE_ENV === 'development') {
+      //   this.login()
+      // }
 
       this.isLoading = false
     },

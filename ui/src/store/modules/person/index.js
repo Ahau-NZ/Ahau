@@ -1,7 +1,8 @@
-// import gql from 'graphql-tag'
-// import { createProvider } from '@/plugins/vue-apollo'
+import { apolloProvider } from '@/plugins/vue-apollo'
 import { getRelatives } from '@/lib/person-helpers'
 import tree from '@/lib/tree-helpers'
+
+const apollo = apolloProvider.defaultClient
 
 const state = {
   selectedProfile: {},
@@ -40,15 +41,15 @@ const actions = {
     }
     // if viewing a story and sideview is open and you want to jump to another profile > close the story
     if (rootState.archive.showStory && rootState.dialog.preview) {
-      dispatch('setShowStory')
+      dispatch('toggleShowStory')
     }
     if (type !== 'setWhanau' && rootState.dialog.dialog) {
       dispatch('setDialog', null)
     }
-    var person = await getRelatives(id)
+    var person = await getRelatives(id, apollo)
     if (person.children) {
       person.children = await Promise.all(person.children.map(async (child) => {
-        var childProfile = await getRelatives(child.profile.id)
+        var childProfile = await getRelatives(child.profile.id, apollo)
         childProfile = {
           ...childProfile,
           relationshipType: child.relationshipType
@@ -59,7 +60,7 @@ const actions = {
     }
     if (person.parents) {
       person.parents = await Promise.all(person.parents.map(async parent => {
-        var parentProfile = await getRelatives(parent.profile.id)
+        var parentProfile = await getRelatives(parent.profile.id, apollo)
         person = tree.getSiblings(parentProfile, person)
         parentProfile = {
           ...parentProfile,

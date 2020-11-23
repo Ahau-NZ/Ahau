@@ -178,13 +178,13 @@ export default {
   },
   methods: {
     ...mapMutations(['setStory']),
-    ...mapActions(['setComponent', 'setShowStory', 'setDialog']),
+    ...mapActions(['setComponent', 'toggleShowStory', 'setDialog']),
     toggleArchiveHelper () {
       this.showArchiveHelper = !this.showArchiveHelper
     },
     toggleStory (story) {
       this.setStory(story)
-      this.setShowStory()
+      this.toggleShowStory()
       this.setDialog(null)
     },
     openContextMenu (event) {

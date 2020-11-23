@@ -1,3 +1,5 @@
+import edtf from 'edtf'
+
 export function dateIntervalToString (interval) {
   if (interval === null) return ''
 
@@ -60,18 +62,34 @@ function yearMonthDayFormatter (date) {
   if (!month.length) return year
   if (month.match(/X/)) return year
   month = MONTHS[month]
-  var day = split[2]
-  if (!day) return `${year} - ${month}`
-  if (!day.length) return `${year} - ${month}`
-  if (day.match(/X/)) return `${year} - ${month}`
+  // var day = split[2]
+  // if (!day) return `${year}-${month}`
+  // if (!day.length) return `${year}-${month}`
+  // if (day.match(/X/)) return `${year}-${month}`
   // return `${year} - ${month} ${day}`
-  return `${year} - ${month}`
+  return `${year}-${month}`
 }
 
-export function convertToTime (date) {
-  const lower = date.split('/')
-  var time = new Date(lower[0])
-  return time
+/*
+  takes an edtf date and returns a date string,
+  this is so the Timeline component can sort the items by date
+*/
+export function edtfToDateString (dateStr) {
+  if (dateStr === null || dateStr === '') return ''
+
+  try {
+    // get the date object
+    const { upper, lower } = edtf(dateStr)
+    var time = ''
+
+    if (!lower && upper) time = upper
+    else time = lower
+
+    return time
+  } catch (err) {
+    // NOTE: if edtf fails, then it will be caught here
+    console.error('There was an error with converting an edtfDateString', err)
+  }
 }
 
 const MONTHS = {
