@@ -61,7 +61,7 @@ const actions = {
     if (state.showStory) commit('updateShowStory')
     commit('updateComponent', component)
   },
-  setShowStory ({ commit }) {
+  toggleShowStory ({ commit }) {
     commit('updateShowStory')
   },
   setShowArtefact ({ commit }) {

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-container fluid class="body-width px-2">
+    <v-container fluid class="body-width px-0">
 
       <div v-if="showStory" :class="{'showOverlay': showStory && !mobile}"></div>
 
@@ -11,7 +11,7 @@
       </v-row>
 
       <v-row v-if="filteredStories && filteredStories.length > 0" >
-        <v-col cols="12" sm="12" md="9" :class="!showStory ? '':'pa-0'">
+        <v-col cols="12" sm="12" md="9" :class="showStory ? 'pa-0' : (mobile ? 'pa-0': '')">
           <div v-if="!showStory">
             <TimelineCard :data="filteredStories" @toggleStory="toggleStory($event)" />
           </div>
@@ -126,20 +126,37 @@ export default {
   },
   methods: {
     ...mapMutations(['setStory']),
-    ...mapActions(['setShowStory', 'setDialog', 'getAllStories']),
+    ...mapActions(['toggleShowStory', 'setDialog', 'getAllStories']),
     updateDialog (dialog) {
       this.$emit('setDialog', dialog)
     },
 
     toggleStory (story) {
       this.setStory(story)
-      this.setShowStory()
+      this.toggleShowStory()
       this.setDialog(null)
     }
   }
 }
 </script>
 <style lang="scss">
+
+  .v-timeline {
+    padding-top:0px
+  }
+
+  .v-timeline-item__divider {
+    @media screen and (max-width: 420px) {
+      right: 6px;
+      min-width: 0;
+    }
+  }
+
+  .v-timeline--dense .v-timeline-item__body {
+    @media screen and (max-width: 420px) {
+      max-width: calc(100% - 66px);
+    }
+  }
 
   .top-margin {
     margin-top: 80px

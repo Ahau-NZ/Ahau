@@ -202,7 +202,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setComponent', 'setShowStory', 'setDialog', 'profileStories']),
+    ...mapActions(['setComponent', 'toggleShowStory', 'setDialog', 'profileStories']),
     goProfile () {
       this.setActive('profile')
       if (this.community) {
@@ -213,12 +213,12 @@ export default {
     },
     goArchive () {
       if (this.showStory) {
-        this.setShowStory()
+        this.toggleShowStory()
         this.setDialog(null)
       } else this.setActive('archive')
     },
     setActive (component) {
-      if (this.showStory) this.setShowStory()
+      if (this.showStory) this.toggleShowStory()
       // if (this.storeDialog) this.setDialog(null)
       this.setComponent(component)
       window.scrollTo(0, 0)
@@ -336,7 +336,7 @@ export default {
   position: fixed; /* Allocates space for the element, but moves it with you when you scroll */
   top: 50px;
   width: 101.5%;
-  z-index: 1;
+  z-index: 3;
   background: linear-gradient(
     rgba(255, 255, 255, 0.9),
     rgba(255, 255, 255, 0.02)
