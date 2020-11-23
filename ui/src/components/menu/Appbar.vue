@@ -186,8 +186,7 @@ export default {
         name: 'person/' + component,
         params: {
           tribeId: this.whoami.personal.groupId,
-          profileId: this.whoami.personal.profile.id,
-          profile: this.whoami.personal.profile
+          profileId: this.whoami.personal.profile.id
         }
       }).catch(() => {})
     },

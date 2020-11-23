@@ -373,8 +373,7 @@ export default {
         name: 'person/archive',
         params: {
           tribeId: this.$route.params.tribeId,
-          profileId: this.profile.id,
-          profile: this.profile
+          profileId: this.profile.id
         }
       }).catch(() => {})
     },
