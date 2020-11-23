@@ -70,7 +70,7 @@ export default {
   name: 'WhakapapaIndex',
   mixins: [
     mapProfileMixins({
-      mapMethods: ['getTribe'],
+      mapMethods: ['getTribe', 'getProfile'],
       mapApollo: ['profile']
     })
   ],

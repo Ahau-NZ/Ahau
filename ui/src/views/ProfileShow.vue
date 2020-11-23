@@ -48,6 +48,7 @@ export default {
   name: 'ProfileShow',
   mixins: [
     mapProfileMixins({
+      mapMethods: ['getProfile'],
       mapApollo: ['profile']
     })
   ],

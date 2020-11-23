@@ -1,5 +1,6 @@
 import { getProfile } from '@/lib/person-helpers.js'
 import { getTribe } from '@/lib/community-helpers.js'
+import tree from '@/lib/tree-helpers.js'
 
 export default function mapProfileMixins ({ mapMethods, mapApollo }) {
   var customMixin = {}
@@ -24,20 +25,52 @@ export default function mapProfileMixins ({ mapMethods, mapApollo }) {
 
 const apollo = {
   profile () {
-    // determine whether its a community or a profile
+    if (!this.getProfile) throw new Error('apollo profile query requires getProfile method')
+
     return {
       ...getProfile,
       skip () {
         return this.$route.name === 'tribe' // skip calling this immediately if on the tribe page
       },
+      /*
+        NOTE: when variables is a function, it is reactive, so when the route profileId changes,
+        profile is updated automatically for you
+      */
       variables () {
         return {
           id: this.$route.params.profileId
         }
       },
-      error: err => console.log('ERROR GETTING PROFILE...', err),
-      update: data => {
-        return data.person
+      error (err) {
+        console.error('There was an error fetching the profile with id: ', this.$route.params.profileId)
+        console.error(err)
+      },
+      update: async data => {
+        var profile = data.person
+        if (profile.children) {
+          profile.children = await Promise.all(profile.children.map(async (child) => {
+            var childProfile = await this.getProfile(child.profile.id)
+            childProfile = {
+              ...childProfile,
+              relationshipType: child.relationshipType
+            }
+            profile = tree.getPartners(profile, childProfile)
+            return childProfile
+          }))
+        }
+        if (profile.parents) {
+          profile.parents = await Promise.all(profile.parents.map(async parent => {
+            var parentProfile = await this.getProfile(parent.profile.id)
+            profile = tree.getSiblings(parentProfile, profile)
+            parentProfile = {
+              ...parentProfile,
+              relationshipType: parent.relationshipType
+            }
+            return parentProfile
+          }))
+        }
+
+        return profile
       }
     }
   },
@@ -88,7 +121,22 @@ const methods = {
       }
     } catch (err) {
       console.error('Something went wrong while fetching tribe: ', id)
-      console.error('Error', err)
+      console.error(err)
+    }
+  },
+  async getProfile (id) {
+    try {
+      const res = await this.$apollo.query({
+        ...getProfile,
+        variables: { id }
+      })
+
+      if (res.errors) throw res.errors
+
+      return res.data.person
+    } catch (err) {
+      console.error('Something went wrong while fetching profile: ', id)
+      console.error(err)
     }
   }
 }
