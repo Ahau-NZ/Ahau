@@ -3,7 +3,7 @@
     <v-sheet class="v-sheet--offset mx-auto" color="primary" tile>
       <v-card-text class="pt-0">
         <v-row class="mt-2 ml-4" align="center">
-          <div class="title font-weight-light mb-2">{{title}}</div>
+          <h2>{{title}}</h2>
           <span class="pl-4 caption">usage on last hour</span>
         </v-row>
       </v-card-text>
@@ -23,4 +23,10 @@ export default {
 }
 </script>
 <style scoped lang="scss">
+h2 {
+    font-size: 1.3em;
+    text-transform: uppercase;
+    font-weight: 400;
+    letter-spacing: 4px;
+}
 </style>
