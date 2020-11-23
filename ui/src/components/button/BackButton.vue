@@ -21,7 +21,7 @@
         </v-row>
       </v-btn>
     </div>
-    <div v-else-if="$route.name === 'whakapapa/:whakapapaId'" fab :class="mobile ? 'ml-n4':'ms-10 pr-6 pb-1'">
+    <div v-else-if="isWhakapapaShow" fab :class="mobile ? 'ml-n4':'ms-10 pr-6 pb-1'">
       <v-btn @click="goWhakapapaIndex()" text>
         <div v-if="mobile">
           <v-icon dark>mdi-arrow-left</v-icon>
@@ -74,6 +74,12 @@ export default {
       }
 
       return false
+    },
+    isWhakapapaShow () {
+      return (
+        this.$route.name === 'person/whakapapa/:whakapapaId' ||
+        this.$route.name === 'community/whakapapa/:whakapapaId'
+      )
     }
   },
   methods: {
@@ -81,7 +87,8 @@ export default {
       this.$router.push({ path: this.route.from.fullPath }).catch(() => {})
     },
     goWhakapapaIndex () {
-      this.$router.push({ name: 'whakapapa' }).catch(() => {})
+      var type = this.$route.name.split('/whakapapa')[0]
+      this.$router.push({ name: type + '/whakapapa' }).catch(() => {})
     }
   }
 }

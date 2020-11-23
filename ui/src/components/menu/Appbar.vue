@@ -4,7 +4,7 @@
       <template v-if="!isgoBack">
         <NotificationPanel/>
       </template>
-      <BackButton v-if="!isWhakapapaIndex" @go-back="goBack()"/>
+      <BackButton v-if="showBackButton" @go-back="goBack()"/>
       <v-spacer />
 
       <!-- Desktop doesn't use a drawer, it has the links directly in the app bar -->
@@ -134,10 +134,11 @@ export default {
   },
   computed: {
     ...mapGetters(['whoami', 'whakapapa', 'showStory', 'storeDialog', 'syncing']),
-    isWhakapapaIndex () {
+    showBackButton () {
+      // only visible on whakapapaShow or profile
       return (
-        this.$route.name === 'person/whakapapa/:whakapapaId' ||
-        this.$route.name === 'community/whakapapa/:whakapapaId'
+        ['person/whakapapa/:whakapapaId', 'community/whakapapa/:whakapapaId', 'person/profile', 'community/profile']
+          .includes(this.$route.name)
       )
     },
     classObject: function () {
@@ -154,7 +155,6 @@ export default {
       if (this.mobile) {
         if (this.$route.name === 'whakapapa') return true
         else if (this.showStory) return true
-        // console.log('isGoBack', this.$route)
         else if (this.$route.name === 'profile' || this.$route.name === 'archive' || this.$route.name === 'timeline') return true
         // else if (this.$route.from.name === 'whakapapa' && this.$route.name === 'profile') return true
       }

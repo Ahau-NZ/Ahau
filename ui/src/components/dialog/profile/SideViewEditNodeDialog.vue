@@ -162,7 +162,7 @@
                 <v-col :cols="12" class="pa-0">
                   <AvatarGroup
                     :profiles="profile.parents"
-                    group-title="Parentals"
+                    group-title="Parents"
                     size="50px"
                     :show-labels="true"
                     @profile-click="openProfile($event)"
@@ -367,7 +367,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setProfileById']),
+    ...mapActions(['setProfileById', 'setDialog']),
     goArchive () {
       this.$router.push({
         name: 'person/archive',
@@ -384,6 +384,7 @@ export default {
     },
     openProfile (profile) {
       this.setProfileById({ id: profile.id, type: 'preview' })
+      this.setDialog({ active: 'view-edit-node', type: 'preview' })
     },
     close () {
       this.$emit('close')

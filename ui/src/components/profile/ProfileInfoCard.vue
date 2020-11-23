@@ -84,7 +84,6 @@ export default {
   },
   methods: {
     ...mapActions(['setProfileById', 'setDialog']),
-
     openProfile (profile) {
       this.setProfileById({ id: profile.id, type: 'preview' })
       this.setDialog({ active: 'view-edit-node', type: 'preview' })

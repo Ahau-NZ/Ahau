@@ -1,5 +1,5 @@
 <template>
-  <div v-if="clickable" @click="$emit('click')" style="cursor: pointer;">
+  <div v-if="clickable" @click="click" style="cursor: pointer;">
     <v-col class="py-0">
       <v-row justify="center" class="wrap">
         <v-btn :dark="dark" v-if="deletable" class="delete" @click="$emit('delete')" icon x-small light max-width="20px" max-height="20px">
@@ -100,6 +100,9 @@ export default {
   methods: {
     updateAvatar (avatarImage) {
       this.$emit('updateAvatar', avatarImage)
+    },
+    click () {
+      this.$emit('click')
     }
   }
 }

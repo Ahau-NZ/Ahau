@@ -243,8 +243,6 @@ import DeleteRecordDialog from '@/components/dialog/archive/DeleteRecordDialog.v
 import { DELETE_STORY } from '@/lib/story-helpers.js'
 import { dateIntervalToString, dateToString } from '@/lib/date-helpers.js'
 
-import mapProfileMixins from '@/mixins/profile-mixins.js'
-
 export default {
   name: 'StoryCard',
   props: {
@@ -263,11 +261,6 @@ export default {
     NewRecordDialog,
     DeleteRecordDialog
   },
-  mixins: [
-    mapProfileMixins({
-      mapMethods: ['setSelectedProfile']
-    })
-  ],
   data () {
     return {
       show: false,
@@ -339,6 +332,11 @@ export default {
   },
   methods: {
     ...mapActions(['setShowArtefact', 'setDialog', 'setProfileById', 'setShowStory']),
+    openProfile (profile) {
+      this.setProfileById({ id: profile.id, type: 'preview' })
+      this.setDialog({ active: 'view-edit-node', type: 'preview' })
+      this.setShowStory()
+    },
     onClickOutside () {
       if (!this.fullStory || this.dialog) return
       if (!this.storeDialog && !this.mobile) {
@@ -379,11 +377,6 @@ export default {
     },
     showText () {
       this.truncateText = !this.truncateText
-    },
-    openProfile (profile) {
-      this.setSelectedProfile(profile.id)
-      // this.setProfileById({ id: profile.id, type: 'preview' })
-      // this.setDialog({ active: 'view-edit-node', type: 'preview' })
     },
     updateModel (event) {
       this.model = event

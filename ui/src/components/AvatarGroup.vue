@@ -24,7 +24,7 @@
             :deceased="profile.deceased"
             :showLabel="showLabels"
             :clickable="clickable"
-            @click="profileClick(profile)"
+            @click="click(profile)"
             :deletable="deletable"
             @delete="$emit('delete', i)"
             :isView="isView || (profile.type === 'community' && !profile.avatarImage)"
@@ -72,7 +72,7 @@ export default {
     }
   },
   methods: {
-    profileClick (profile) {
+    click (profile) {
       this.$emit('profile-click', profile)
     }
   }
