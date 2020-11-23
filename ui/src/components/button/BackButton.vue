@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="isProfileShow && !showStory" fab :class="mobile ? 'ml-n4':'ms-10 pr-6 pb-1'">
+    <div v-if="isFromWhakapapaShow && !showStory" fab :class="mobile ? 'ml-n4':'ms-10 pr-6 pb-1'">
       <v-btn @click="goWhakapapaShow()" text>
         <div v-if="mobile">
           <v-icon dark>mdi-arrow-left</v-icon>
@@ -40,15 +40,23 @@
 import { mapGetters } from 'vuex'
 import Avatar from '@/components/Avatar'
 import WhakapapaIcon from '@/components/button/WhakapapaIcon.vue'
+import mapProfileMixins from '@/mixins/profile-mixins.js'
 
 export default {
   components: {
     Avatar,
     WhakapapaIcon
   },
+  mixins: [
+    mapProfileMixins({
+      mapApollo: ['profile']
+    })
+  ],
   data () {
     return {
-      route: {}
+      route: {},
+      profile: {},
+      history: null
     }
   },
   watch: {
@@ -57,24 +65,67 @@ export default {
         to,
         from
       }
+    },
+    profile: {
+      deep: true,
+      immediate: true,
+      handler (newProfile, oldProfile) {
+        console.log(newProfile, oldProfile)
+
+        this.history = {
+          prev: oldProfile && oldProfile.id ? oldProfile : null, // stop it from setting the prev to an empty object
+          next: newProfile
+        }
+      }
     }
   },
   computed: {
     ...mapGetters(['whakapapa', 'showStory']),
+    hasPreviousRoute () {
+      return !!this.route.from
+    },
+    previous () {
+      // extract the type of route from the name
+      if (this.route.from.name === 'tribe') return
+
+      const [type, routeName] = this.route.from.name.split('/')
+      // also get the profile...?
+
+      if (this.history.prev) {
+        return { routeName, title: this.history.prev.preferredName, image: this.history.prev.avatarImage }
+      }
+
+      return { routeName, title: this.history.next.preferredName, image: this.history.next.avatarImage }
+    },
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
-    isProfileShow () {
+    /*
+      if the route we came from was whakapapaShow
+    */
+    isFromWhakapapaShow () {
       // if the current route is profile and the previous one was whakapapa
       if (this.route.from) {
         return (
-          this.route.from.name === 'whakapapa/:whakapapaId' &&
-          this.route.to.name === 'profile'
+          // if the prev routes is one of the whakapapaShow options
+          (
+            this.route.from.name === 'person/whakapapa/:whakapapaId' ||
+            this.route.from.name === 'community/whakapapa/:whakapapaId'
+          ) &&
+          (
+          // AND the route we are going to isnt the tribes one
+            this.route.to.name !== 'tribe' &&
+            this.route.to.name !== 'person/whakapapa' &&
+            this.route.to.name !== 'community/whakapapa'
+          )
         )
       }
 
       return false
     },
+    /*
+      if the we are on WhakapapaShow from Whakapapaindex?
+    */
     isWhakapapaShow () {
       return (
         this.$route.name === 'person/whakapapa/:whakapapaId' ||
@@ -89,6 +140,9 @@ export default {
     goWhakapapaIndex () {
       var type = this.$route.name.split('/whakapapa')[0]
       this.$router.push({ name: type + '/whakapapa' }).catch(() => {})
+    },
+    goBack () {
+      this.$router.push({ path: this.route.from.fullPath })
     }
   }
 }

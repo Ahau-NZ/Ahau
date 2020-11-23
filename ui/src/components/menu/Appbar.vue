@@ -4,7 +4,7 @@
       <template v-if="!isgoBack">
         <NotificationPanel/>
       </template>
-      <BackButton v-if="showBackButton" @go-back="goBack()"/>
+      <BackButton @go-back="goBack()"/>
       <v-spacer />
 
       <!-- Desktop doesn't use a drawer, it has the links directly in the app bar -->

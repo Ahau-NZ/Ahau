@@ -27,6 +27,9 @@ const apollo = {
     // determine whether its a community or a profile
     return {
       ...getProfile,
+      skip () {
+        return this.$route.name === 'tribe' // skip calling this immediately if on the tribe page
+      },
       variables () {
         return {
           id: this.$route.params.profileId
