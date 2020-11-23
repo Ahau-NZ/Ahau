@@ -49,7 +49,6 @@ export default {
   },
   mixins: [
     mapProfileMixins({
-      mapMethods: ['getProfile'],
       mapApollo: ['profile']
     })
   ],

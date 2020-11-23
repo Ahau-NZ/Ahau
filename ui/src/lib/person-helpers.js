@@ -134,12 +134,24 @@ export const getProfile = ({
         children {
           profile {
             ...ProfileFragment
+            parents {
+              profile {
+                ...ProfileFragment
+              }
+              ...ProfileLinkFragment
+            }
           }
           ...ProfileLinkFragment
         }
         parents {
           profile {
             ...ProfileFragment
+            children {
+              profile {
+                ...ProfileFragment
+              }
+              ...ProfileLinkFragment
+            }
           }
           ...ProfileLinkFragment
         }

@@ -87,7 +87,6 @@ export default {
       mapApollo: ['stories']
     }),
     mapProfileMixins({
-      mapMethods: ['getProfile'],
       mapApollo: ['profile']
     })
   ],

@@ -25,8 +25,6 @@ export default function mapProfileMixins ({ mapMethods, mapApollo }) {
 
 const apollo = {
   profile () {
-    if (!this.getProfile) throw new Error('apollo profile query requires getProfile method')
-
     return {
       ...getProfile,
       skip () {
@@ -45,29 +43,30 @@ const apollo = {
         console.error('There was an error fetching the profile with id: ', this.$route.params.profileId)
         console.error(err)
       },
-      update: async data => {
+      update (data) {
         var profile = data.person
+        console.log('profile', profile)
         if (profile.children) {
-          profile.children = await Promise.all(profile.children.map(async (child) => {
-            var childProfile = await this.getProfile(child.profile.id)
+          profile.children = profile.children.map(child => {
+            var childProfile = child.profile
             childProfile = {
               ...childProfile,
               relationshipType: child.relationshipType
             }
             profile = tree.getPartners(profile, childProfile)
             return childProfile
-          }))
+          })
         }
         if (profile.parents) {
-          profile.parents = await Promise.all(profile.parents.map(async parent => {
-            var parentProfile = await this.getProfile(parent.profile.id)
+          profile.parents = profile.parents.map(parent => {
+            var parentProfile = parent.profile
             profile = tree.getSiblings(parentProfile, profile)
             parentProfile = {
               ...parentProfile,
               relationshipType: parent.relationshipType
             }
             return parentProfile
-          }))
+          })
         }
 
         return profile
