@@ -97,11 +97,11 @@ export default {
 }
 
 .cover-image {
-  min-width: 15%;
+  min-width: 20%;
   background-color: #fff;
   background-position: center center;
-  @media screen and (min-width: 420px) {
-    width: 84px;
+  @media screen and (max-width: 420px) {
+    min-width: 30%
   }
 }
 

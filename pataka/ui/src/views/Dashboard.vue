@@ -1,7 +1,7 @@
 <template>
   <div class="wrapper">
     <v-container class="px-12" fluid>
-      <v-row>
+      <v-row >
         <v-col cols="4">
           <v-row justify="center">
             <v-btn
@@ -18,7 +18,7 @@
         </v-col>
         <v-col cols="8" v-else-if="generatedInvite" class="generated-code">
           <v-row>
-            <h3 class="text-uppercase subtitle-1">Pātaka single use code</h3>
+            <h2>Pātaka single use code</h2>
           </v-row>
           <v-row align="center" class="mt-2">
             <p class="grey--text mb-0" id="inviteCode">{{generatedInvite}}</p>
@@ -42,34 +42,34 @@
             :image="profile.avatarImage"
             :isView="true"
           />
-          <h2 class="subtitle-1 text-uppercase text-center">{{profile.preferredName}}</h2>
-          <p class="grey--text text-center feed-id">{{profile.feedId}}</p>
-          <v-col cols="8" class="mx-auto">
-            <v-row justify="start" class="pl-4">
-              <div
-                class="dot mr-4"
-                :class="network.portForwarding ? 'green' : network.internetLatency === null ? 'grey' : 'orange'"
-              />
-              <p
-                class="body-2 text-uppercase text-center"
-              >{{ network.portForwarding ? 'Port-Forwarding' : network.portForwarding === null ? 'Checking' : 'Port-Forwarding Off' }}</p>
-            </v-row>
-            <v-row justify="start" class="pl-4">
+          <h1 class="text-uppercase text-center">{{profile.preferredName}}</h1>
+          <p class="grey--text text-center caption overflow-wrap">{{profile.feedId}}</p>
+          <v-col cols="8" class="mx-auto mt-8">
+            <v-row justify="start" align="center" class="py-2">
               <div
                 class="dot mr-4 internet-dot"
                 :class="network.internetLatency ? network.internetLatency === -1 ? 'red' : 'green' : 'grey'"
               />
               <p
-                class="body-2 text-uppercase text-center"
+                class="caption text-uppercase text-center ma-0"
               >{{ network.internetLatency ? network.internetLatency === -1 ? 'Offline' : 'Online' : 'Checking'}}</p>
               <span class="network-latency">{{latency}}</span>
             </v-row>
-            <v-row justify="start" class="pl-4 network-local">
+            <v-row justify="start" align="center" class="py-2 network-local">
               <div class="dot mr-4" :class="network.ipv4 ? 'green' : 'grey'" />
-              <p class="body-2 text-uppercase">{{network.ipv4 ? ' Local Network' : 'Checking'}}</p>
+              <p class="caption text-uppercase ma-0">{{network.ipv4 ? ' Local Network' : 'Checking'}}</p>
+            </v-row>
+             <v-row justify="start" align="center" class="py-2">
+              <div 
+                class="dot mr-4"
+                :class="network.portForwarding ? 'green' : network.internetLatency === null ? 'grey' : 'orange'"
+              />
+              <p
+                class="caption text-uppercase text-center ma-0"
+              >{{ network.portForwarding ? 'Port-Forwarding' : network.portForwarding === null ? 'Checking' : 'Port-Forwarding Off' }}</p>
             </v-row>
             <v-col class="mt-8">
-              <h3>Disk Usage</h3>
+              <h2 style="text-align:center;">Disk Usage</h2>
               <v-progress-linear
                 v-for="disk in diskUsage"
                 :key="disk.fs"
@@ -96,38 +96,20 @@
           <v-row class="pt-12">
             <v-col cols="6" class="stat-column">
               <h2 class="h2 text-uppercase pb-8">People</h2>
-              <p v-if="invitedPeople.length === 0">There's no one on your network</p>
+              <p v-if="invitedPeople.length === 0" class="caption">There is no one connected to your network</p>
               <v-row class="pb-2">
-                <v-col v-for="(people, key) in invitedPeople" :key="key" cols="2">
-                  <Avatar
-                    type="person"
-                    size="60px"
-                    :alt="people.preferredName"
-                    :image="people.avatarImage"
-                    showOnHover
-                    :gender="people.gender"
-                    :aliveInterval="people.aliveInterval"
-                  />
-                </v-col>
+                <div v-if="invitedPeople && invitedPeople.length > 0">
+                  <AvatarGroup :profiles="invitedPeople" size="60px" showLabel/>
+                </div>
               </v-row>
-              <!-- <v-btn color="grey" outlined tile>View people</v-btn> -->
             </v-col>
-            <v-col cols="6" class="stat-column">
+            <v-col cols="6" class="stat-column pl-6">
               <h2 class="h2 text-uppercase pb-8">Tribes</h2>
-              <p v-if="tribes.length === 0">There's are no tribes on your network</p>
+              <p v-if="tribes.length === 0" class="caption">There are no tribes on your network</p>
               <v-row class="pb-2">
-                <v-col v-for="(tribe, key) in tribes" :key="key" cols="2">
-                  <Avatar
-                    type="tribe"
-                    size="60px"
-                    :alt="tribe.public[0].preferredName"
-                    :image="tribe.public[0].avatarImage"
-                    :isView="true"
-                    showOnHover
-                    :gender="tribe.public[0].gender"
-                    :aliveInterval="tribe.public[0].aliveInterval"
-                  />
-                </v-col>
+                <div v-if="tribes && tribes.length > 0">
+                  <AvatarGroup :profiles="tribes" size="60px" showLabel/>
+                </div>
               </v-row>
             </v-col>
           </v-row>
@@ -151,6 +133,7 @@
 
 <script>
 import Avatar from '@/components/Avatar.vue'
+import AvatarGroup from '@/components/AvatarGroup.vue'
 import GenerateInviteDialog from '@/components/GenerateInviteDialog'
 import Meter from '@/components/Meter.vue'
 import gql from 'graphql-tag'
@@ -300,7 +283,8 @@ export default {
         }
       }`,
       update (data) {
-        return data.tribes.filter(tribe => tribe.public && tribe.public[0])
+        return data.tribes.filter(tribe => tribe.public && tribe.public[0]).map(tribe => {return tribe.public[0]})
+
         // TODO check why this api is returning tribes with no public profiles?
       },
       pollInterval: 10 * SECONDS
@@ -376,7 +360,8 @@ export default {
   components: {
     Avatar,
     Meter,
-    GenerateInviteDialog
+    GenerateInviteDialog,
+    AvatarGroup
   }
 }
 </script>
@@ -395,7 +380,12 @@ export default {
   font-size: 0.5em;
 }
 .feed-id {
-  font-size: 0.5em;
+  font-size: 0.9em;
+}
+.overflow-wrap {
+  overflow-wrap: break-word;
+  width: 50%;
+  margin: 0 auto;
 }
 .dot {
   height: 25px;
@@ -442,6 +432,18 @@ export default {
   opacity: 0.8;
   padding: 45px 25px 15px;
   min-height: 90%;
+}
+h1 {
+    font-size: 1.5em;
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 5px;
+}
+h2 {
+    font-size: 1em;
+    text-transform: uppercase;
+    font-weight: 400;
+    letter-spacing: 4px;
 }
 @media screen and (min-width: 1280px) {
   #inviteCode {

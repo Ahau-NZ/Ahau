@@ -89,10 +89,13 @@ export function createProvider (options = {}) {
   return apolloProvider
 }
 
+// currently we just use this so we don't instantiate heaps of providers
+export const apolloProvider = createProvider()
+
 // Manually call this when user log in
 export async function onLogin (apolloClient, token) {
   if (typeof localStorage !== 'undefined' && token) {
-    localStorage.setItem(AUTH_TOKEN, token)
+    localStorage.setItem(AUTH_TOKEN, token) // eslint-disable-line
   }
   if (apolloClient.wsClient) restartWebsockets(apolloClient.wsClient)
   try {
@@ -106,7 +109,7 @@ export async function onLogin (apolloClient, token) {
 // Manually call this when user log out
 export async function onLogout (apolloClient) {
   if (typeof localStorage !== 'undefined') {
-    localStorage.removeItem(AUTH_TOKEN)
+    localStorage.removeItem(AUTH_TOKEN) // eslint-disable-line
   }
   if (apolloClient.wsClient) restartWebsockets(apolloClient.wsClient)
   try {

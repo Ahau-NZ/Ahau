@@ -7,7 +7,7 @@ import App from './App.vue'
 import router from './router'
 import store from './store/index'
 
-import { createProvider } from './plugins/vue-apollo'
+import { apolloProvider } from './plugins/vue-apollo'
 import vuetify from './plugins/vuetify'
 import CordovaBackButton from './plugins/cordova-back-button'
 
@@ -24,8 +24,6 @@ async function main () {
   Vue.use(VuejsClipper)
   Vue.use(CordovaBackButton, { router })
   Vue.config.productionTip = false
-
-  const apolloProvider = createProvider()
 
   checkReady(() => {
     new Vue({

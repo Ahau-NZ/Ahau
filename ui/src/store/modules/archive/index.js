@@ -56,7 +56,7 @@ const actions = {
   setCurrentStory ({ commit }, story) {
     commit('setStory', story)
   },
-  setShowStory ({ commit }) {
+  toggleShowStory ({ commit }) {
     commit('updateShowStory')
   },
   setShowArtefact ({ commit }) {

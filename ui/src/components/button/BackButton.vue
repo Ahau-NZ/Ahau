@@ -33,11 +33,16 @@
         </v-row>
       </v-btn>
     </div>
+    <div v-else-if="mobile && showStory" class="ml-n4">
+      <v-btn @click="toggleShowStory()" text>
+        <v-icon dark>mdi-arrow-left</v-icon>
+      </v-btn>
+    </div>
   </div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import Avatar from '@/components/Avatar'
 import WhakapapaIcon from '@/components/button/WhakapapaIcon.vue'
 import mapProfileMixins from '@/mixins/profile-mixins.js'
@@ -132,6 +137,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['toggleShowStory']),
     goWhakapapaShow () {
       this.$router.push({ path: this.route.from.fullPath }).catch(() => {})
     },

@@ -324,6 +324,9 @@ export function GET_CHANGES (initialValue, updatedValue) {
           // remove dupes (if any) from the add array
           changes[key].add = uniqby(changes[key].add, 'id')
 
+          // make sure newItems are unique as well
+          newItems = uniqby(newItems, 'id')
+
           // add new items to add array
           changes[key].add = [...changes[key].add, ...newItems]
 

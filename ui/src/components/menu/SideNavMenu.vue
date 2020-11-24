@@ -206,14 +206,15 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setShowStory', 'setDialog', 'profileStories']),
+    ...mapActions(['toggleShowStory', 'setDialog', 'profileStories']),
     goArchive () {
       if (this.showStory) {
-        this.setShowStory()
+        this.toggleShowStory()
         this.setDialog(null)
       } else this.setActive('archive')
     },
     setActive (component) {
+      if (this.showStory) this.toggleShowStory()
       this.$router.push({
         name: this.profile.type + '/' + component,
         params: {
@@ -335,7 +336,7 @@ export default {
   position: fixed; /* Allocates space for the element, but moves it with you when you scroll */
   top: 50px;
   width: 101.5%;
-  z-index: 1;
+  z-index: 3;
   background: linear-gradient(
     rgba(255, 255, 255, 0.9),
     rgba(255, 255, 255, 0.02)

@@ -24,7 +24,7 @@
       >
         <v-icon color="secondary">mdi-close</v-icon>
       </v-btn>
-      <v-list-item>
+      <v-list-item :class="mobile && fullStory ? 'px-6':''">
         <v-list-item-content class="pb-0">
           <v-list-item-subtitle v-if="time" class="mt-n2 pb-1">
             <span>{{ time }}</span>
@@ -70,7 +70,7 @@
 
         </v-list-item-content>
       </v-list-item>
-      <v-list-item :disabled="disableClick" :ripple="false" @click.stop="showText()">
+      <v-list-item :class="mobile && fullStory ? 'px-6':''" :disabled="disableClick" :ripple="false" @click.stop="showText()">
         <v-list-item-content>
           <v-list-item-subtitle v-if="fullStory || showArtefact" class="pb-1" style="color:#a7a3a3"> Description </v-list-item-subtitle>
           <p v-if="!showArtefact && story.description" ref="text" :class="truncateText ? 'description' : ''">
@@ -331,7 +331,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setShowArtefact', 'setDialog', 'setProfileById', 'setShowStory']),
+    ...mapActions(['setShowArtefact', 'setDialog', 'setProfileById', 'toggleShowStory']),
     openProfile (profile) {
       this.setProfileById({ id: profile.id, type: 'preview' })
       this.setDialog({ active: 'view-edit-node', type: 'preview' })
@@ -341,7 +341,7 @@ export default {
       if (!this.fullStory || this.dialog) return
       if (!this.storeDialog && !this.mobile) {
         if (this.showArtefact) this.setShowArtefact()
-        else this.setShowStory()
+        else this.toggleShowStory()
       }
     },
     async deleteStory () {
@@ -385,7 +385,7 @@ export default {
       this.$emit('close')
     },
     finishEditing () {
-      this.setShowStory()
+      this.toggleShowStory()
       this.dialog = null
     }
   }

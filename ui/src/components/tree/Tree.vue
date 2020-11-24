@@ -314,6 +314,28 @@ export default {
         _children: children,
         children: _children
       })
+
+      // find the node position now
+      var _node = this.root.descendants().find(d => {
+        return d.data.id === node.data.id
+      })
+
+      // setTimeout needed to get new node position after it has finished collapsing/expanding
+      setTimeout(() => {
+        var svg = d3.select('#baseSvg')
+        var g = d3.select('#baseGroup')
+
+        var width = this.$refs.tree.clientWidth
+        var height = this.$refs.tree.clientHeight
+
+        var x = width / 2 - _node.x
+        var y = height / 2 - _node.y + 150
+
+        g.transition()
+          .duration(700)
+          .attr('transform', `translate(${x}, ${y})`)
+          .on('end', function () { svg.call(d3.zoom().transform, d3.zoomIdentity.translate((x), (y))) })
+      }, 100)
     },
 
     changeFocus (profileId) {
@@ -366,13 +388,12 @@ export default {
       var height = this.$refs.tree.clientHeight
 
       var x = width / 2 - source.x
-      var y = height / 2 - source.y
+      var y = height / 2 - source.y + 150
 
       // g.transition()
       //   .duration(700)
       //   .attr('transform', 'translate(' + (x) + ',' + (y) + ')scale(' + 1 + ')')
       //   .on('end', function () { svg.call(d3.zoom().transform, d3.zoomIdentity.translate((x), (y)).scale(1)) })
-
       g.transition()
         .duration(700)
         .attr('transform', 'translate(' + (x) + ',' + (y) + ')')

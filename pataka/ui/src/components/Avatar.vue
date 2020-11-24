@@ -1,52 +1,30 @@
 <template>
-  <div v-if="clickable" @click="$emit('click')" style="cursor: pointer;">
+  <div>
     <v-col>
       <v-row justify="center">
-        <v-avatar
-          :size="size"
-          :tile="isView"
-          @mouseover="hovered = true"
-          @mouseleave="hovered = false"
-        >
-          <v-img v-if="image && image.uri" :src="image.uri" :alt="alt" />
-          <v-img v-else :src="getImage" :style="customStyle" class="alive"/>
-        </v-avatar>
+        <v-hover v-slot="{ hover }">
+          <v-avatar
+            :size="size"
+            :tile="isView"
+            class="avatar-container"
+            :class="{'isEditing': isEditing}"
+            :dark="dark"
+          >
+            <v-img v-if="image && image.uri" :src="image.uri" :alt="alt" />
+            <v-img v-else :src="getImage" class="no-pic" :style="customStyle"/>
+            <v-overlay
+              absolute
+              opacity="0.5"
+              :value="hover && showLabel"
+            >
+              <p class="text-center pt-2" style="font-size:12px">{{alt}}</p>
+            </v-overlay>
+          </v-avatar>
+        </v-hover>
       </v-row>
-      <v-row v-if="showLabel" justify="center">{{ alt }}</v-row>
     </v-col>
-    <div
-      v-if="showOnHover"
-      :style="{ left: `${size / 4}px` }"
-      :class="['hoverName', { show: hovered }]"
-    >{{this.alt}}</div>
   </div>
 
-  <div v-else>
-    <v-col>
-      <v-row justify="center">
-        <v-avatar
-          @mouseover="hovered = true"
-          @mouseleave="hovered = false"
-          :size="size"
-          :tile="isView"
-          class="avatar-container"
-          :class="{'isEditing': isEditing}"
-        >
-          <v-img v-if="image && image.uri" :src="image.uri" :alt="alt" />
-          <v-img v-else :src="getImage" class="no-pic" :style="customStyle"/>
-        </v-avatar>
-        <div v-if="isEditing" class="avatar-overlay">
-          <ImagePicker @updateAvatar="updateAvatar($event)" />
-        </div>
-      </v-row>
-      <v-row v-if="showLabel" justify="center">{{ alt }}</v-row>
-    </v-col>
-    <div
-      v-if="showOnHover"
-      :style="{ left: `${size / 4}px` }"
-      :class="['hoverName', { show: hovered }]"
-    >{{this.alt}}</div>
-  </div>
 </template>
 
 <script>
@@ -68,7 +46,8 @@ export default {
     clickable: { type: Boolean, default: false },
     isView: { type: Boolean, default: false },
     isEditing: { type: Boolean, default: false },
-    offline: { type: Boolean, default: false }
+    offline: { type: Boolean, default: false },
+    dark: Boolean,
 
   },
   data: function () {

@@ -1,6 +1,4 @@
 <template>
-  <!-- <div id="whakapapa-show" >
-    <v-container fluid class="pa-0" :style="mobile ? '':'max-height:100vh'"> -->
   <div id="whakapapa-show">
     <v-container fluid class="pa-0" :style="[ mobile ? 'width:100vw' : 'width:95vw; margin-top:64px;' ]">
 
@@ -211,7 +209,7 @@ import SearchButton from '@/components/button/SearchButton.vue'
 
 import tree from '@/lib/tree-helpers'
 import avatarHelper from '@/lib/avatar-helpers.js'
-import { getPerson } from '@/lib/person-helpers.js'
+import { getRelatives } from '@/lib/person-helpers.js'
 import { getWhakapapaView, saveWhakapapaView } from '@/lib/whakapapa-helpers.js'
 
 import DialogHandler from '@/components/dialog/DialogHandler.vue'
@@ -459,22 +457,15 @@ export default {
     },
 
     async getRelatives (id) {
-      try {
-        const result = await this.$apollo.query(getPerson(id))
-        if (result.errors) {
-          console.error('WARNING, something went wrong')
-          console.error(result.errors)
-          return
-        } else {
-          if (result.data.person.id === this.currentFocus && result.data.person.parents.length) {
-            result.data.person.parents = []
-          }
-          return result.data.person
-        }
-      } catch (e) {
-        console.error('WARNING, something went wrong, caught it')
-        console.error(e)
+      const result = await getRelatives(id, this.$apollo)
+      if (!result) return
+
+      if (result.id === this.currentFocus && result.parents.length) {
+        // this looks like we are sometimes wiping parents? why?
+        // if it wasn't for this piece of code we would not need to pass this function into Tree, ...
+        result.parents = []
       }
+      return result
     },
 
     async loadDescendants (profileId, path, temp) {

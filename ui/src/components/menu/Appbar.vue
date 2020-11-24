@@ -181,7 +181,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setWhoami', 'setProfileById', 'setShowStory', 'setDialog', 'getAllNotifications']),
+    ...mapActions(['setWhoami', 'setProfileById', 'toggleShowStory', 'setDialog', 'getAllNotifications']),
     resetWindow () {
       window.scrollTo(0, 0)
     },
@@ -210,7 +210,7 @@ export default {
     },
     goBack () {
       if (this.$route.name === 'whakapapa') return this.$router.push({ path: this.$route.from.fullPath }).catch(() => {})
-      else if (this.showStory) return this.setShowStory()
+      else if (this.showStory) return this.toggleShowStory()
     }
   },
   components: {

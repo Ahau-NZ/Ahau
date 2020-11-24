@@ -9,16 +9,6 @@
     </router-link>
     <template v-slot:actions>
       <v-btn
-        @click.prevent="$emit('edit')"
-        align="right"
-        color="white"
-        text
-        class="px-0"
-        small
-      >
-        <v-icon class="blue--text" left>mdi-pencil</v-icon>
-      </v-btn>
-      <v-btn
         color="primary"
         text
         @click="$emit('more-info')"

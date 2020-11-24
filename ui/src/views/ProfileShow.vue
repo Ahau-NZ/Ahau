@@ -12,6 +12,7 @@
       </v-col>
       <v-col :order="mobile ? '2' : '3'" :align="mobile || tablet ? 'end' : isCommunity ? 'start':'center'" cols="12" :md="isCommunity ? 1:2" class="px-5">
         <EditProfileButton v-if="profile.canEdit" @click="profile.type === 'person' ? setDialog('edit-node', 'this', 'this') : setDialog('edit-community')" />
+        <v-divider v-else class="py-5"></v-divider>
       </v-col>
     </v-row>
     <v-row>
@@ -55,6 +56,14 @@ export default {
     SideNavMenu,
     Header,
     EditProfileButton
+  },
+  watch: {
+    // TODO: remove this later
+    currentProfile (newVal) {
+      if (newVal) {
+        window.scrollTo(0, 0)
+      }
+    }
   },
   data () {
     return {

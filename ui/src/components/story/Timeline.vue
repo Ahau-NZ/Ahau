@@ -27,13 +27,6 @@
         </div>
       </v-col>
     </v-row>
-    <!-- <v-row v-else>
-      <v-col>
-        <div class="px-8 subtitle-1 grey--text " :class="{ 'text-center': mobile }">
-          No records found in this profile. Please add record to this profile via Archive
-        </div>
-      </v-col>
-    </v-row> -->
     <v-row v-else>
       <v-col>
         <div v-if="!filteredStories || (filteredStories && filteredStories.length < 1)">
@@ -122,20 +115,37 @@ export default {
   },
   methods: {
     ...mapMutations(['setStory']),
-    ...mapActions(['setShowStory', 'setDialog', 'getAllStories']),
+    ...mapActions(['toggleShowStory', 'setDialog', 'getAllStories']),
     updateDialog (dialog) {
       this.$emit('setDialog', dialog)
     },
 
     toggleStory (story) {
       this.setStory(story)
-      this.setShowStory()
+      this.toggleShowStory()
       this.setDialog(null)
     }
   }
 }
 </script>
 <style lang="scss">
+
+  .v-timeline {
+    padding-top:0px
+  }
+
+  .v-timeline-item__divider {
+    @media screen and (max-width: 420px) {
+      right: 6px;
+      min-width: 0;
+    }
+  }
+
+  .v-timeline--dense .v-timeline-item__body {
+    @media screen and (max-width: 420px) {
+      max-width: calc(100% - 66px);
+    }
+  }
 
   .top-margin {
     margin-top: 80px

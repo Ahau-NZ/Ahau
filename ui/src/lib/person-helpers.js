@@ -1,9 +1,5 @@
 import gql from 'graphql-tag'
-import { createProvider } from '@/plugins/vue-apollo'
 import pick from 'lodash.pick'
-
-const apolloProvider = createProvider()
-const apolloClient = apolloProvider.defaultClient
 
 export const PERMITTED_PERSON_PROPS = [
   'id',
@@ -212,14 +208,20 @@ export const getPerson = id => ({
 })
 
 // get person with parents and children from DB
-export async function getRelatives (profileId) {
-  const request = getPerson(profileId)
-  const result = await apolloClient.query(request)
-  if (result.errors) {
-    console.error('WARNING, something went wrong')
-    console.error(result.errors)
-  } else {
-    return result.data.person
+export async function getRelatives (profileId, apollo) {
+  apollo = apollo || this.$apollo
+  try {
+    const request = getPerson(profileId)
+    const result = await apollo.query(request)
+    if (result.errors) {
+      console.error('WARNING, something went wrong')
+      console.error(result.errors)
+    } else {
+      return result.data.person
+    }
+  } catch (e) {
+    console.error('WARNING, something went wrong, caught it')
+    console.error(e)
   }
 }
 
