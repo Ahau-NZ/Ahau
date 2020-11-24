@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-app-bar v-if="mobile || enableMenu" :app="mobile && app" :class="classObject" flat color="#303030" fixed>
-      <template v-if="!isgoBack">
+      <template v-if="!isMobileGoBack">
         <NotificationPanel/>
       </template>
       <BackButton @go-back="goBack()"/>
@@ -12,7 +12,6 @@
         <v-btn text active-class="no-active" to="/tribe" class="white--text text-uppercase ms-10">Tribes</v-btn>
         <v-btn active-class="no-active" text @click.native="goProfile('archive')" class="white--text text-uppercase ms-10">Archive</v-btn>
 
-        <!-- <v-btn active-class="no-active" text @click.native="resetWindow" to="/whakapapa" class="white--text text-uppercase ms-10">whakapapa</v-btn> -->
         <v-btn active-class="no-active" text @click.native="goProfile('whakapapa')" class="white--text text-uppercase ms-10">whakapapa</v-btn>
         <v-btn active-class="no-active" fab @click.native="goProfile('profile')" class="pr-12 mr-4 ml-10">
           <Avatar
@@ -58,7 +57,6 @@
             :aliveInterval="whoami.personal.profile.aliveInterval"
           />
         </v-list-item>
-        <!-- <v-list-item active-class="no-active" link to="/whakapapa" class="white--text"> -->
         <v-list-item active-class="no-active" link @click.native="goProfile('whakapapa')" class="white--text">
           <v-list-item-title>whakapapa</v-list-item-title>
         </v-list-item>
@@ -123,7 +121,8 @@ export default {
     return {
       drawer: false,
       dialog: false,
-      loading: true
+      loading: true,
+      route: {}
     }
   },
   created () {
@@ -132,15 +131,13 @@ export default {
   beforeDestroy () {
     clearInterval(this.polling)
   },
+  watch: {
+    $route (to, from) {
+      this.route = { to, from }
+    }
+  },
   computed: {
     ...mapGetters(['whoami', 'whakapapa', 'showStory', 'storeDialog', 'syncing']),
-    showBackButton () {
-      // only visible on whakapapaShow or profile
-      return (
-        ['person/whakapapa/:whakapapaId', 'community/whakapapa/:whakapapaId', 'person/profile', 'community/profile']
-          .includes(this.$route.name)
-      )
-    },
     classObject: function () {
       return {
         'mobile': this.mobile,
@@ -151,12 +148,28 @@ export default {
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
-    isgoBack () {
-      if (this.mobile) {
-        if (this.$route.name === 'whakapapa') return true
-        else if (this.showStory) return true
-        else if (this.$route.name === 'profile' || this.$route.name === 'archive' || this.$route.name === 'timeline') return true
-        // else if (this.$route.from.name === 'whakapapa' && this.$route.name === 'profile') return true
+    isMobileGoBack () {
+      if (!this.mobile) return false
+
+      // if the current route is profile and the previous one was whakapapa
+      if (this.route.from) {
+        return (
+          (
+            this.$route.name === 'person/whakapapa/:whakapapaId' ||
+            this.$route.name === 'community/whakapapa/:whakapapaId'
+          ) ||
+          // if the prev routes is one of the whakapapaShow options
+          ((
+            this.route.from.name === 'person/whakapapa/:whakapapaId' ||
+            this.route.from.name === 'community/whakapapa/:whakapapaId'
+          ) &&
+          (
+          // AND the route we are going to isnt the tribes one
+            this.route.to.name !== 'tribe' &&
+            this.route.to.name !== 'person/whakapapa' &&
+            this.route.to.name !== 'community/whakapapa'
+          ))
+        )
       }
       return false
     }
