@@ -182,7 +182,6 @@ export default {
     },
     goProfile (component) {
       this.$router.push({
-        // path: `/tribe/${this.whoami.personal.groupId}/person/${this.whoami.personal.profile.id}/${component}`
         name: 'person/' + component,
         params: {
           tribeId: this.whoami.personal.groupId,

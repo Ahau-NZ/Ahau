@@ -105,9 +105,6 @@ export default {
   },
   methods: {
     ...mapActions(['setDialog', 'setProfileById']),
-    goProfile (component) {
-      this.$router.push({ name: 'profileShow', params: { id: this.currentProfile.id } }).catch(() => {})
-    },
     openProfile (profile) {
       this.setProfileById({ id: profile.id, type: 'preview' })
       this.setDialog({ active: 'view-edit-node', type: 'preview' })
