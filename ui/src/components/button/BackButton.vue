@@ -68,7 +68,7 @@ export default {
     $route (to, from) {
       this.route = {
         to,
-        from
+        from: to.params.keepAlive ? this.route.from : from
       }
     },
     profile: {
