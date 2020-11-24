@@ -117,9 +117,6 @@ export default {
     ArchiveHelper,
     BigAddButton
   },
-  mounted () {
-    console.log(this.profile)
-  },
   data () {
     return {
       profile: {},

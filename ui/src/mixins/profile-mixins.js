@@ -45,7 +45,7 @@ const apollo = {
       },
       update (data) {
         var profile = data.person
-        console.log('profile', profile)
+
         if (profile.children) {
           profile.children = profile.children.map(child => {
             var childProfile = child.profile

@@ -58,9 +58,6 @@ export default {
       toggle: false
     }
   },
-  mounted () {
-    console.log(this.access)
-  },
   components: {
     Avatar
   },
@@ -77,14 +74,6 @@ export default {
   methods: {
     go (profile) {
       this.$emit('access', profile)
-      // const name = this.$route.name.split('/')[1]
-      // we want the access button to take us to the active component
-      // this.$router.push({
-      //   name: profile.type + '/' + name,
-      //   tribeId: profile.groupId,
-      //   profileId: profile.id,
-      //   profile
-      // })
     }
   }
 }

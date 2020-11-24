@@ -216,10 +216,11 @@ export default {
 
         if (result.errors) throw result.errors
 
+        var type = this.$route.name.split('/whakapapa')[0]
         this.$router.push({
-          name: 'whakapapaShow',
+          name: type + '/whakapapa/:whakapapaId',
           params: {
-            id: result.data.saveWhakapapaView
+            whakapapaId: result.data.saveWhakapapaView
           }
         }).catch(() => {})
       } catch (err) {

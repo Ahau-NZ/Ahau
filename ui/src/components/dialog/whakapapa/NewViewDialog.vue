@@ -124,6 +124,7 @@ export default {
     ...mapActions(['setLoading']),
     updateAccess ($event) {
       this.access = $event
+      this.setCurrentAccess(this.access)
     },
     close () {
       this.formData = setDefaultWhakapapa(EMPTY_WHAKAPAPA)

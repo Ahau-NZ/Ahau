@@ -658,7 +658,8 @@ export default {
 
       await this.saveWhakapapa(input)
 
-      this.$router.push({ name: 'profileShow', params: { id: this.profile.id } }).catch(() => {})
+      const [newPath] = this.$route.fullPath.split('whakapapa/')
+      this.$router.push({ path: newPath + 'whakapapa' }).catch(() => {})
     },
     getImage () {
       return avatarHelper.defaultImage(this.aliveInterval, this.gender)

@@ -70,8 +70,6 @@ export default {
       deep: true,
       immediate: true,
       handler (newProfile, oldProfile) {
-        console.log(newProfile, oldProfile)
-
         this.history = {
           prev: oldProfile && oldProfile.id ? oldProfile : null, // stop it from setting the prev to an empty object
           next: newProfile
@@ -88,7 +86,7 @@ export default {
       // extract the type of route from the name
       if (this.route.from.name === 'tribe') return
 
-      const [type, routeName] = this.route.from.name.split('/')
+      const [, routeName] = this.route.from.name.split('/')
       // also get the profile...?
 
       if (this.history.prev) {
