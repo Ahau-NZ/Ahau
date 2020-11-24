@@ -270,11 +270,11 @@ export default {
   },
   apollo: {
     whakapapaView () {
-      return getWhakapapaView(this.$route.params.id)
+      return getWhakapapaView(this.$route.params.whakapapaId)
     }
   },
   computed: {
-    ...mapGetters(['nestedWhakapapa', 'selectedProfile', 'whoami', 'loadingState', 'route', 'currentProfile', 'getAccessFromRecps']),
+    ...mapGetters(['nestedWhakapapa', 'selectedProfile', 'whoami', 'loadingState', 'getAccessFromRecps']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -649,8 +649,8 @@ export default {
 
       await this.saveWhakapapa(input)
 
-      // this.$router.push({ name: 'whakapapaIndex', params: { id: this.whakapapaView.recps } })
-      this.$router.push({ name: 'profileShow', params: { id: this.currentProfile.id } }).catch(() => {})
+      const [newPath] = this.$route.fullPath.split('whakapapa/')
+      this.$router.push({ path: newPath + 'whakapapa' }).catch(() => {})
     },
     getImage () {
       return avatarHelper.defaultImage(this.aliveInterval, this.gender)

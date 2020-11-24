@@ -1,18 +1,17 @@
 <template>
   <div>
     <v-app-bar v-if="mobile || enableMenu" :app="mobile && app" :class="classObject" flat color="#303030" fixed>
-      <template v-if="!isgoBack">
+      <template v-if="!isMobileGoBack">
         <NotificationPanel/>
       </template>
-      <BackButton v-if="!isWhakapapaIndex" @go-back="goBack"/>
+      <BackButton @go-back="goBack()"/>
       <v-spacer />
 
       <!-- Desktop doesn't use a drawer, it has the links directly in the app bar -->
       <template v-if="!mobile">
-        <v-btn text active-class="no-active" :to="{ name: 'discovery' }" class="white--text text-uppercase ms-10">Tribes</v-btn>
+        <v-btn text active-class="no-active" to="/tribe" class="white--text text-uppercase ms-10">Tribes</v-btn>
         <v-btn active-class="no-active" text @click.native="goProfile('archive')" class="white--text text-uppercase ms-10">Archive</v-btn>
 
-        <!-- <v-btn active-class="no-active" text @click.native="resetWindow" to="/whakapapa" class="white--text text-uppercase ms-10">whakapapa</v-btn> -->
         <v-btn active-class="no-active" text @click.native="goProfile('whakapapa')" class="white--text text-uppercase ms-10">whakapapa</v-btn>
         <v-btn active-class="no-active" fab @click.native="goProfile('profile')" class="pr-12 mr-4 ml-10">
           <Avatar
@@ -58,14 +57,13 @@
             :aliveInterval="whoami.personal.profile.aliveInterval"
           />
         </v-list-item>
-        <!-- <v-list-item active-class="no-active" link to="/whakapapa" class="white--text"> -->
         <v-list-item active-class="no-active" link @click.native="goProfile('whakapapa')" class="white--text">
           <v-list-item-title>whakapapa</v-list-item-title>
         </v-list-item>
         <v-list-item active-class="no-active" link @click.native="goProfile('archive')" >
           <v-list-item-title class="white--text" >Archive</v-list-item-title>
         </v-list-item>
-        <v-list-item active-class="no-active" link :to="{ name: 'discovery' }">
+        <v-list-item active-class="no-active" link to="/tribe">
           <v-list-item-title class="white--text">Tribes</v-list-item-title>
         </v-list-item>
         <v-list-item class="pt-12">
@@ -105,6 +103,12 @@ So the pathway is clear
 To return to everyday activities
 ---------------------------------
 `
+/*
+Back button is visible when:
+
+- [ ] The previous screen is whakapapaShow and the current one is a profile
+- [ ] The previous screen is whakapapaIndex and the current one is whakapapaShow
+*/
 
 export default {
   name: 'Appbar',
@@ -117,7 +121,8 @@ export default {
     return {
       drawer: false,
       dialog: false,
-      loading: true
+      loading: true,
+      route: {}
     }
   },
   created () {
@@ -126,11 +131,13 @@ export default {
   beforeDestroy () {
     clearInterval(this.polling)
   },
+  watch: {
+    $route (to, from) {
+      this.route = { to, from }
+    }
+  },
   computed: {
-    ...mapGetters(['whoami', 'whakapapa', 'route', 'showStory', 'storeDialog', 'currentProfile', 'syncing', 'activeComponent']),
-    isWhakapapaIndex () {
-      return this.route.name === 'profileShow' && this.activeComponent === 'whakapapa'
-    },
+    ...mapGetters(['whoami', 'whakapapa', 'showStory', 'storeDialog', 'syncing']),
     classObject: function () {
       return {
         'mobile': this.mobile,
@@ -141,18 +148,30 @@ export default {
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
-    isgoBack () {
-      if (this.mobile) {
-        if (this.route.name === 'whakapapaShow') return true
-        else if (this.showStory) return true
-        else if (this.route.from.name === 'whakapapaShow' && this.route.name === 'profileShow' && this.activeComponent !== 'whakapapa') return true
+    isMobileGoBack () {
+      if (!this.mobile) return false
+
+      // if the current route is profile and the previous one was whakapapa
+      if (this.route.from) {
+        return (
+          (
+            this.$route.name === 'person/whakapapa/:whakapapaId' ||
+            this.$route.name === 'community/whakapapa/:whakapapaId'
+          ) ||
+          // if the prev routes is one of the whakapapaShow options
+          ((
+            this.route.from.name === 'person/whakapapa/:whakapapaId' ||
+            this.route.from.name === 'community/whakapapa/:whakapapaId'
+          ) &&
+          (
+          // AND the route we are going to isnt the tribes one
+            this.route.to.name !== 'tribe' &&
+            this.route.to.name !== 'person/whakapapa' &&
+            this.route.to.name !== 'community/whakapapa'
+          ))
+        )
       }
       return false
-    }
-  },
-  watch: {
-    route (newVal) {
-      if (this.storeDialog) this.setDialog(null)
     }
   },
   mounted () {
@@ -162,7 +181,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setWhoami', 'setProfileById', 'setComponent', 'toggleShowStory', 'setDialog', 'getAllNotifications']),
+    ...mapActions(['setWhoami', 'setProfileById', 'toggleShowStory', 'setDialog', 'getAllNotifications']),
     resetWindow () {
       window.scrollTo(0, 0)
     },
@@ -175,11 +194,13 @@ export default {
       await this.setWhoami()
     },
     goProfile (component) {
-      this.setComponent(component)
-      this.setProfileById({ id: this.whoami.personal.profile.id })
-      this.$router.push({ name: 'profileShow', params: { id: this.whoami.personal.profile.id } }).catch(() => {})
-      // this.setProfileById(this.profile.id)
-      if (this.drawer) this.drawer = false
+      this.$router.push({
+        name: 'person/' + component,
+        params: {
+          tribeId: this.whoami.personal.groupId,
+          profileId: this.whoami.personal.profile.id
+        }
+      }).catch(() => {})
     },
     karakiaWhakamutunga () {
       console.log(karakia)
@@ -188,7 +209,7 @@ export default {
       this.drawer = !this.drawer
     },
     goBack () {
-      if (this.route.name === 'whakapapaShow') return this.$router.push({ path: this.route.from.fullPath })
+      if (this.$route.name === 'whakapapa') return this.$router.push({ path: this.$route.from.fullPath }).catch(() => {})
       else if (this.showStory) return this.toggleShowStory()
     }
   },

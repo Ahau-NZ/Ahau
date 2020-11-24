@@ -4,7 +4,7 @@
       <v-col v-if="mobile" class="mt-12">
         <Avatar class="avatar-mobile" :image="profile.avatarImage" :alt="profile.preferredName" size="180" :isView="profile.type === 'community' && !profile.avatarImage"/>
       </v-col>
-      <v-col v-if="canEdit">
+      <v-col v-if="profile.canEdit">
         <ImagePicker class="picker" label=" " type="header" :isView="true" @updateAvatar="updateHeader($event)" :avatarLoaded="headerImage"/>
       </v-col>
     </v-row>
@@ -18,7 +18,7 @@ import Avatar from '@/components/Avatar.vue'
 import gql from 'graphql-tag'
 
 export default {
-  name: 'ProfileHeader',
+  name: 'Header',
   props: {
     profile: Object,
     canEdit: Boolean
@@ -47,7 +47,8 @@ export default {
         return
       }
       if (res.data) {
-        this.$emit('setupProfile', this.profile.id)
+        // this.$emit('setupProfile', this.profile.id)
+        this.$parent.$apollo.queries.profile.refetch({ id: this.profile.id })
       }
     }
   },

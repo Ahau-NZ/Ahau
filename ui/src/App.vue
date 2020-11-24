@@ -1,16 +1,23 @@
 <template>
   <v-app>
     <Appbar v-if="displayAppbar" :enableMenu="enableMenu" app />
+
+    <!-- Sizes your content based upon application components -->
     <v-main v-if="!mobile || mobile && !storeDialog" :class="{ 'mobileWhakapapaTitleStyle': mobile }">
-      <transition name="fade" mode="out-in">
-        <router-view :mobileServerLoaded="mobileServerLoaded" />
-      </transition>
-      <Spinner />
+
+      <!-- Provides the application the proper gutter -->
+      <v-container fluid class="pa-0">
+
+        <transition name="fade" mode="out-in">
+          <router-view :mobileServerLoaded="mobileServerLoaded" />
+        </transition>
+        <Spinner />
+      </v-container>
     </v-main>
     <div v-if="!mobile" class='version'>
       <span>version</span> {{version}}
     </div>
-    <DialogHandler />
+    <DialogHandler /> <!-- TODO: find out what uses this? -->
   </v-app>
 </template>
 
@@ -35,13 +42,9 @@ export default {
   },
 
   computed: {
-    ...mapGetters(['selectedProfile', 'storeDialog']),
+    ...mapGetters(['storeDialog']),
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
-    },
-    displayAppbar () {
-      if (this.$route.name === 'login') return false
-      else return true
     },
     enableMenu () {
       if (
@@ -50,6 +53,10 @@ export default {
       ) {
         return false
       } else return true
+    },
+    displayAppbar () {
+      if (this.$route.name === 'login') return false
+      else return true
     }
   },
   mounted () {

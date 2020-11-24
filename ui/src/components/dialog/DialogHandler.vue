@@ -257,7 +257,7 @@ export default {
   },
   methods: {
     ...mapActions(['setWhoami', 'updateNode', 'deleteNode', 'updatePartnerNode', 'addChild', 'addParent', 'loading', 'setDialog',
-      'setProfileById', 'setComponent', 'setCurrentTribe', 'setCurrentTribeById', 'setTribes'
+      'setProfileById', 'setCurrentTribe', 'setCurrentTribeById', 'setTribes'
     ]),
     addGrandparentToRegistartion (grandparent) {
       var parent = this.parents[this.parentIndex]
@@ -347,11 +347,11 @@ export default {
           })
         )
         if (createCommunityRes.errors) throw new Error('Failed to create community profile', createCommunityRes.errors)
-        const groupProfile = createCommunityRes.data.saveProfile // id
+        const groupProfileId = createCommunityRes.data.saveProfile // id
 
         const profileLinkRes = await this.$apollo.mutate(
           saveGroupProfileLink({
-            profile: groupProfile,
+            profile: groupProfileId,
             group: groupId
           })
         )
@@ -374,10 +374,11 @@ export default {
         )
         if (profilePublicLinkRes.errors) throw new Error('Failed to create public community profile link', profilePublicLinkRes.errors)
         if (profilePublicLinkRes.data.saveGroupProfileLink) {
-          this.setCurrentTribeById(groupProfile)
-          this.setComponent('profile')
-          this.setProfileById({ id: groupProfile })
-          this.$router.push({ name: 'profileShow', params: { id: groupProfile } }).catch(() => {})
+          this.setCurrentTribeById(groupProfileId)
+          console.error('DIALOG HELPER: needs to go to tribe after creating it?')
+
+          this.setProfileById({ id: groupProfileId })
+          this.$router.push({ name: 'community/profile', params: { tribeId: groupId, profileId: groupProfileId } }).catch(() => {})
         }
       } catch (err) {
         console.error('Something went wrong while trying to create private group', $event)
@@ -442,7 +443,7 @@ export default {
 
         if (this.view.ignoredProfiles.includes(id)) {
           const input = {
-            id: this.$route.params.id,
+            id: this.$route.params.whakapapaId,
             ignoredProfiles: {
               remove: [id]
             }
@@ -733,7 +734,7 @@ export default {
     },
     async ignoreProfile () {
       const input = {
-        id: this.$route.params.id,
+        id: this.$route.params.whakapapaId,
         ignoredProfiles: {
           add: [this.selectedProfile.id]
         }
@@ -796,9 +797,9 @@ export default {
       } else {
         this.source = null
         this.setTribes()
-        this.setComponent('profile')
+
         this.setProfileById({ id: this.whoami.personal.profile.id })
-        this.$router.push({ name: 'profileShow', params: { id: this.whoami.personal.profile.id } }).catch(() => {})
+        this.$router.push('/tribe').catch(() => {})
         this.confirmationAlert('community successfully deleted')
       }
     },

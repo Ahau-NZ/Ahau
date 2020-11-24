@@ -98,7 +98,8 @@ function hydrate (node, flatStore) {
 */
 function getSiblings (parent, child) {
   if (!child.siblings) child.siblings = []
-  if (parent.children) {
+
+  if (parent && parent.children) {
     parent.children.forEach(sibling => {
       if (sibling.profile) {
         if (sibling.profile.id !== child.id) {

@@ -528,7 +528,7 @@ export default {
   //   }
   // },
   computed: {
-    ...mapGetters(['currentProfile', 'selectedProfile', 'whoami', 'currentTribe', 'currentNotification']),
+    ...mapGetters(['selectedProfile', 'whoami', 'currentTribe', 'currentNotification']),
     remainingErrors () {
       if (this.errorMsgs && this.errorMsgs.length) {
         var remaining = this.errorMsgs.filter((f) => f !== 'grandparents' & f !== 'parents')

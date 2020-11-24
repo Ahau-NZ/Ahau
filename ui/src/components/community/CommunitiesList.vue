@@ -19,7 +19,7 @@
                   :key="tribe.id"
                   justify-self="start"
                 >
-                  <v-card flat class="rounded-border" light :width="!mobile ? '190px':'100vw'" @click="goTribe(tribe)">
+                  <v-card flat class="rounded-border" light :width="!mobile ? '190px':'100vw'" :to="goTribe(tribe)">
                     <v-img height="150px" :src="getImage(tribe.private[0])" class="card-image" />
                     <v-card-title class="subtitle font-weight-bold pb-2">
                       {{
@@ -42,7 +42,7 @@
               <p class="sub-headline pa-0 mb-4">Other whanau tribes</p>
               <v-row justify="start">
                 <v-col v-for="tribe in otherTribes" :item="tribe" :key="tribe.id" justify-self="start">
-                  <v-card flat light class="rounded-border" :width="!mobile ? '190px':'100vw'" @click="goTribe(tribe)">
+                  <v-card flat light class="rounded-border" :width="!mobile ? '190px':'100vw'" :to="goTribe(tribe)">
                     <v-img height="150px" :src="getImage(tribe.public[0])" class="card-image" />
                     <v-card-title class="subtitle font-weight-bold pb-2">
                       {{ tribe.public[0].preferredName }}
@@ -67,7 +67,7 @@
                   <Avatar :size="mobile ? '60px' : '45px'" :image="pataka.avatarImage" :alt="pataka.preferredName" :isView="!pataka.avatarImage" :online="pataka.online"/>
                 </v-col>
                 <v-col cols="10" class="pb-6" justify-center>
-                  <p style="color:black;" class="mb-0">{{pataka.preferredName}} </p>
+                  <p style="color:black;" class="mb-0">{{ pataka.preferredName }} </p>
                   <span v-if="pataka.online" style="color:#37e259; position:absolute; font-size:11px">online</span>
                 </v-col>
               </v-row>
@@ -184,7 +184,7 @@ export default {
     patakas () {
       if (!this.patakasRaw) return
       return this.patakasRaw.map(pataka => {
-        if (this.connectedPeers && this.connectedPeers.pataka.some(peer => peer.id === pataka.id)) {
+        if (this.connectedPeers && this.connectedPeers.pataka && this.connectedPeers.pataka.some(peer => peer.id === pataka.id)) {
           return {
             ...pataka,
             online: true
@@ -194,7 +194,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setComponent', 'setDialog', 'setProfile', 'setCurrentTribe', 'setSyncing']),
+    ...mapActions(['setDialog', 'setCurrentTribe', 'setSyncing']),
     connected (text) {
       this.dialog = false
       this.snackbar = !this.snackbar
@@ -205,15 +205,14 @@ export default {
       this.confirmationText = text
       // update to check ssb.status
     },
-    async goTribe (tribe) {
-      await this.setCurrentTribe(tribe)
-      if (tribe.private.length > 0) this.goProfile(tribe.private[0])
-      else this.goProfile(tribe.public[0])
+    goTribe (tribe) {
+      if (tribe.private.length > 0) return this.goProfile(tribe.id, tribe.private[0])
+      return this.goProfile(tribe.id, tribe.public[0])
     },
-    goProfile (tribe) {
-      this.setComponent('profile')
-      this.setProfile(tribe)
-      this.$router.push({ name: 'profileShow', params: { id: tribe.id } }).catch(() => {})
+    goProfile (tribeId, profile) {
+      return {
+        name: 'community', params: { tribeId, profileId: profile.id, profile }
+      }
     },
     getImage (community) {
       return get(community, 'avatarImage.uri') || whakapapa

@@ -279,7 +279,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['showArtefact', 'currentProfile', 'storeDialog', 'getAccessFromRecps']),
+    ...mapGetters(['showArtefact', 'storeDialog', 'getAccessFromRecps']),
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
@@ -332,6 +332,11 @@ export default {
   },
   methods: {
     ...mapActions(['setShowArtefact', 'setDialog', 'setProfileById', 'toggleShowStory']),
+    openProfile (profile) {
+      this.setProfileById({ id: profile.id, type: 'preview' })
+      this.setDialog({ active: 'view-edit-node', type: 'preview' })
+      this.setShowStory()
+    },
     onClickOutside () {
       if (!this.fullStory || this.dialog) return
       if (!this.storeDialog && !this.mobile) {
@@ -372,10 +377,6 @@ export default {
     },
     showText () {
       this.truncateText = !this.truncateText
-    },
-    openProfile (profile) {
-      this.setProfileById({ id: profile.id, type: 'preview' })
-      this.setDialog({ active: 'view-edit-node', type: 'preview' })
     },
     updateModel (event) {
       this.model = event

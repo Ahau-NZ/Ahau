@@ -105,7 +105,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setWhoami', 'setComponent', 'setProfileById']),
+    ...mapActions(['setWhoami']),
     async getCurrentIdentity () {
       await this.setWhoami()
       this.proceed()
@@ -134,9 +134,13 @@ export default {
 
     login () {
       this.karakiaTūwhera()
-      this.setComponent('profile')
-      this.setProfileById({ id: this.whoami.personal.profile.id })
-      this.$router.push({ name: 'profileShow', params: { id: this.whoami.personal.profile.id } })
+      this.$router.push({
+        name: 'person',
+        params: {
+          tribeId: this.whoami.personal.groupId,
+          profileId: this.whoami.personal.profile.id
+        }
+      }).catch(() => {})
     },
 
     toggleNew () {

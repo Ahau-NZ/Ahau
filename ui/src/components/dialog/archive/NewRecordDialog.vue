@@ -15,7 +15,7 @@
     </template>
 
     <template v-if="access" v-slot:before-actions>
-      <AccessButton :access.sync="access" :disabled="editing" />
+      <AccessButton :access="access" @access="updateAccess" :disabled="editing" />
     </template>
   </Dialog>
 </template>
@@ -26,9 +26,10 @@ import Dialog from '@/components/dialog/Dialog.vue'
 import RecordForm from '@/components/archive/RecordForm.vue'
 import AccessButton from '@/components/button/AccessButton.vue'
 
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters, mapActions, mapMutations } from 'vuex'
 
 import { GET_CHANGES, EMPTY_STORY, setDefaultStory } from '@/lib/story-helpers.js'
+import mapProfileMixins from '@/mixins/profile-mixins.js'
 
 export default {
   name: 'NewRecordDialog',
@@ -46,43 +47,44 @@ export default {
   data () {
     return {
       formData: setDefaultStory(this.story),
-      access: null,
-      initial: false
+      initial: false,
+      access: null
+    }
+  },
+  mixins: [
+    mapProfileMixins({
+      mapApollo: ['tribe']
+    })
+  ],
+  watch: {
+    tribe: {
+      deep: true,
+      immediate: true,
+      handler (tribe) {
+        this.access = tribe
+        if (!tribe || this.whoami.personal.groupId === this.$route.params.tribeId) {
+          this.access = { isPersonalGroup: true, groupId: this.whoami.personal.groupId, ...this.whoami.personal.profile }
+          this.setCurrentAccess(this.access)
+          return
+        }
+
+        this.access = tribe
+        this.setCurrentAccess(this.access)
+      }
     }
   },
   computed: {
-    ...mapGetters(['whoami', 'currentProfile', 'defaultAccess', 'getAccessFromRecps']),
+    ...mapGetters(['whoami']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     }
   },
-  async mounted () {
-    this.initial = true
-    if (!this.editing) {
-      this.access = await this.defaultAccess
-    } else {
-      this.access = this.getAccessFromRecps(this.story.recps)
-    }
-  },
-  watch: {
-    access (newAccess) {
-      if (!newAccess || this.editing) return
-      // make sure it doesnt clear the current profile on initial loading
-      if (!this.initial) this.formData.mentions = []
-      else {
-        this.formData.mentions = [this.currentProfile]
-        this.initial = false
-      }
-      // when the access changes, we need to reset all prefilled values to ensure we
-      // dont allow publishing of records that arent in the current group
-      this.formData.contributors = [this.whoami.public.profile]
-      this.formData.kaitiaki = [this.whoami.public.profile]
-      this.formData.creators = []
-      this.formData.relatedRecords = []
-    }
-  },
   methods: {
+    ...mapMutations(['setCurrentAccess']),
     ...mapActions(['setDialog']),
+    updateAccess ($event) {
+      this.access = $event
+    },
     close () {
       this.formData = setDefaultStory(this.story)
       this.$emit('close')

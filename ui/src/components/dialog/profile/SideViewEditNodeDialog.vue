@@ -86,7 +86,7 @@
           </v-row>
           <v-row v-if="!isEditing"  class="justify-center">
             <v-btn
-              @click.native="goArchive"
+              @click.native="goArchive()"
               color="white"
               text
               medium
@@ -367,15 +367,23 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setProfileById', 'setComponent']),
+    ...mapActions(['setProfileById', 'setDialog']),
     goArchive () {
-      this.setProfileById({ id: this.profile.id })
-      this.setComponent('archive')
-      this.$router.push({ name: 'profileShow', params: { id: this.profile.id } }).catch(() => {})
+      this.$router.push({
+        name: 'person/archive',
+        params: {
+          tribeId: this.$route.params.tribeId,
+          profileId: this.profile.id
+        }
+      }).catch(() => {})
     },
     age (born) {
       var age = calculateAge(born)
       return age
+    },
+    openProfile (profile) {
+      this.setProfileById({ id: profile.id, type: 'preview' })
+      this.setDialog({ active: 'view-edit-node', type: 'preview' })
     },
     close () {
       this.$emit('close')
@@ -394,9 +402,6 @@ export default {
 
       this.formData = defaultData(this.profile)
       this.toggleEdit()
-    },
-    openProfile (profile) {
-      this.setProfileById({ id: profile.id, type: 'setWhanau' })
     },
     toggleNew (type) {
       this.$emit('new', type)

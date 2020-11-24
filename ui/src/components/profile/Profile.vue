@@ -35,10 +35,12 @@
           <div v-if="connectedTribes.length > 0">
             <v-row v-for="tribe in connectedTribes" :key="tribe.id" class="justify-center align-center ma-0 ml-4">
               <v-col cols="2" class="pt-0 pl-0">
-                <Avatar :size="mobile ? '50px' : '40px'" :image="tribe.private[0].avatarImage" :alt="tribe.private[0].preferredName" :isView="!tribe.private[0].avatarImage" clickable @click="goTribe(tribe)"/>
+                <router-link :to="goTribe(tribe)">
+                  <Avatar :size="mobile ? '50px' : '40px'" :image="tribe.private[0].avatarImage" :alt="tribe.private[0].preferredName" :isView="!tribe.private[0].avatarImage" clickable/>
+                </router-link>
               </v-col>
               <v-col class="py-0">
-                <p style="color:black;">{{tribe.private[0].preferredName}}</p>
+                <p style="color:black;">{{ tribe.private[0].preferredName }}</p>
               </v-col>
             </v-row>
           </div>
@@ -54,7 +56,7 @@
               <Avatar :size="mobile ? '50px' : '40px'" :image="member.avatarImage" :alt="member.preferredName" />
             </v-col>
             <v-col class="py-0">
-              <p style="color:black;">{{member.preferredName}}</p>
+              <p style="color:black;">{{ member.preferredName }}</p>
             </v-col>
           </v-row>
         </template>
@@ -69,6 +71,7 @@ import ProfileInfoItem from '@/components/profile/ProfileInfoItem.vue'
 import ProfileCard from '@/components/profile/ProfileCard.vue'
 import Avatar from '@/components/Avatar.vue'
 import { mapGetters, mapActions } from 'vuex'
+import mapProfileMixins from '@/mixins/profile-mixins.js'
 
 export default {
   name: 'Profile',
@@ -78,19 +81,16 @@ export default {
     ProfileInfoItem,
     Avatar
   },
-  props: {
-    profile: {
-      type: Object,
-      default: () => ({})
-    },
-    editProfile: {
-      type: Function
-    },
-    setupProfile: Function
-  },
+  mixins: [
+    mapProfileMixins({
+      mapApollo: ['profile']
+    })
+  ],
   data () {
     return {
-      isEditing: false
+      profile: {
+        type: 'community'
+      }
     }
   },
   beforeMount () {
@@ -114,14 +114,15 @@ export default {
   },
   methods: {
     ...mapActions(['setProfileById', 'setDialog', 'setCurrentTribe', 'setTribes']),
-    openProfile (profile) {
-      this.setProfileById({ id: profile.id, type: 'preview' })
-      this.setDialog({ active: 'view-edit-node', type: 'preview' })
-    },
     goTribe (tribe) {
-      this.setCurrentTribe(tribe)
-      this.setProfileById({ id: tribe.private[0].id })
-      this.$router.push({ name: 'profileShow', params: { id: tribe.private[0].id } }).catch(() => {})
+      var profile = tribe.private.length > 0
+        ? tribe.private[0]
+        : tribe.public[0]
+
+      return {
+        name: profile.type,
+        params: { tribeId: tribe.id, profileId: profile.id, profile }
+      }
     }
   }
 }

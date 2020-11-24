@@ -25,13 +25,17 @@ export default function mapStoryMixins ({ mapMethods, mapApollo }) {
 
 const apollo = {
   stories () {
-    const isPersonal = this.currentProfile.id === this.whoami.personal.profile.id
+    // extract type from the route name
+    // TODO: could be better
+    const type = this.$route.name.split('/')[0]
+
+    const isPersonal = this.$route.params.profileId === this.whoami.personal.profile.id
 
     if (isPersonal) return getAllStories({ groupId: this.whoami.personal.groupId })
-    else if (this.currentProfile.type === 'community') return getAllStories({ groupId: this.currentTribe.id })
-    else if (this.currentProfile.type === 'person') {
+    else if (type === 'community') return getAllStories({ groupId: this.$route.params.tribeId })
+    else if (type === 'person') {
       return {
-        ...getAllStoriesByMentions(this.currentProfile.id),
+        ...getAllStoriesByMentions(this.$route.params.profileId),
         update (data) {
           return data.person.mentions.map(mention => {
             return {

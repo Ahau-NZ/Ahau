@@ -137,11 +137,6 @@ export default {
       isSubmitting: false
     }
   },
-  watch: {
-    showDialog (newVal) {
-      console.log(newVal)
-    }
-  },
   computed: {
     ...mapGetters(['allowSubmissions']),
     mobile () {

@@ -159,7 +159,11 @@ export default {
     this.offset = this.$refs.sideNav.offsetTop - 50
   },
   computed: {
-    ...mapGetters(['activeComponent', 'showStory', 'storeDialog', 'notifications', 'whoami']),
+    ...mapGetters(['showStory', 'storeDialog', 'notifications', 'whoami']),
+    activeComponent () {
+      if (this.$route.name === 'whakapapa/:whakapapaId') return 'whakapapa'
+      return this.$route.name.split('/')[1]
+    },
     showWhakapapa () {
       if (this.profile.type === 'community') return true
       else if (this.profile.id === this.whoami.personal.profile.id) return true
@@ -196,21 +200,13 @@ export default {
     }
   },
   watch: {
-    activeComponent (newVal) {
-      if (newVal === 'profile' && this.mobile) this.offset = 290
-      else if (newVal === 'profile') this.offset = 100
+    '$route.name' (name) {
+      if (name === 'profile' && this.mobile) this.offset = 290
+      else if (name === 'profile') this.offset = 100
     }
   },
   methods: {
-    ...mapActions(['setComponent', 'toggleShowStory', 'setDialog', 'profileStories']),
-    goProfile () {
-      this.setActive('profile')
-      if (this.community) {
-        this.$router.push({ name: 'communityShow', params: { id: this.profile.id } })
-      } else {
-        this.$router.push({ name: 'profileShow', params: { id: this.profile.id } })
-      }
-    },
+    ...mapActions(['toggleShowStory', 'setDialog', 'profileStories']),
     goArchive () {
       if (this.showStory) {
         this.toggleShowStory()
@@ -219,9 +215,14 @@ export default {
     },
     setActive (component) {
       if (this.showStory) this.toggleShowStory()
-      // if (this.storeDialog) this.setDialog(null)
-      this.setComponent(component)
-      window.scrollTo(0, 0)
+      this.$router.push({
+        name: this.profile.type + '/' + component,
+        params: {
+          tribeId: this.$route.params.tribeId,
+          profileId: this.$route.params.profileId,
+          keepAlive: true
+        }
+      }).catch(() => {})
     },
     onScroll () {
       this.scroll = window.pageYOffset

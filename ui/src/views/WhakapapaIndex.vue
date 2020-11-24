@@ -1,46 +1,47 @@
+
 <template>
-    <v-container fluid class="px-2" style="margin-top: 64px;">
-      <v-row class="pa-5" :class="mobile ? 'pb-0':''" light>
-        <v-col cols="12" md="10" class="headliner black--text pa-0">
-          Whakapapa records
-          <v-icon color="blue-grey" light @click="toggleWhakapapaHelper" class="infoButton">mdi-information</v-icon>
-        </v-col>
-        <v-col>
-          <BigAddButton @click="toggleViewForm" />
-        </v-col>
-      </v-row>
-      <v-row>
-        <v-col :class="mobile ? 'pt-0':''" cols="12" md="10">
-          <div v-if="!whakapapas || (whakapapas && whakapapas.length < 1) || (whakapapas && whakapapas[0].views.length < 1) " class="px-8 py-12 subtitle grey--text " :class="{
-              'text-center': mobile
-            }">
-            No whakapapa record found
+  <v-container fluid class="px-2" style="margin-top: 64px;">
+    <v-row class="pa-5" :class="mobile ? 'pb-0':''" light>
+      <v-col cols="12" md="10" class="headliner black--text pa-0">
+        Whakapapa records
+        <v-icon color="blue-grey" light @click="toggleWhakapapaHelper" class="infoButton">mdi-information</v-icon>
+      </v-col>
+      <v-col>
+        <BigAddButton @click="toggleViewForm" />
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col :class="mobile ? 'pt-0':''" cols="12" md="10">
+        <div v-if="!whakapapas || (whakapapas && whakapapas.length < 1) || (whakapapas && whakapapas[0].views.length < 1) " class="px-8 py-12 subtitle grey--text " :class="{
+            'text-center': mobile
+          }">
+          No whakapapa record found
+        </div>
+        <div v-else>
+          <div v-for="(group, index ) in whakapapas" :key="index" class="py-4">
+            <v-row class="pl-6 pb-3">
+              <Avatar :size="mobile ? '50px' : '40px'" :image="group.image" :alt="group.name" :isView="!group.image" />
+              <p class="black--text overline pl-6 pt-1" style="font-size:20px">{{group.name}} records</p>
+            </v-row>
+            <v-row v-for="view in group.views" :key="view.id" dense class="mb-2">
+              <v-col cols="12" md="10">
+                <WhakapapaViewCard :view="view" cropDescription />
+              </v-col>
+            </v-row>
+            <v-divider light class="mt-12" style="max-width:80%"></v-divider>
           </div>
-          <div v-else>
-            <div v-for="(group, index ) in whakapapas" :key="index" class="py-4">
-              <v-row class="pl-6 pb-3">
-                <Avatar :size="mobile ? '50px' : '40px'" :image="group.image" :alt="group.name" :isView="!group.image" />
-                <p class="black--text overline pl-6 pt-1" style="font-size:20px">{{group.name}} records</p>
-              </v-row>
-              <v-row v-for="view in group.views" :key="view.id" dense class="mb-2">
-                <v-col cols="12" md="10">
-                  <WhakapapaViewCard :view="view" cropDescription />
-                </v-col>
-              </v-row>
-              <v-divider light class="mt-12" style="max-width:80%"></v-divider>
-            </div>
-          </div>
-        </v-col>
-      </v-row>
-      <NewViewDialog v-if="showViewForm" :show="showViewForm" title="Create a new whakapapa" @close="toggleViewForm"
-        @submit="handleStepOne($event)" />
-      <!-- TODO: add suggestions in here as well? -->
-      <NewNodeDialog v-if="showProfileForm" :show="showProfileForm" :suggestions="suggestions"
-        @getSuggestions="getSuggestions" title="Add a Person" @create="handleDoubleStep($event)"
-        :withRelationships="false" @close="close"
-      />
-      <WhakapapaListHelper v-if="showWhakapapaHelper" :show="showWhakapapaHelper" @close="toggleWhakapapaHelper" />
-    </v-container>
+        </div>
+      </v-col>
+    </v-row>
+    <NewViewDialog v-if="showViewForm" :show="showViewForm" title="Create a new whakapapa" @close="toggleViewForm"
+      @submit="handleStepOne($event)" />
+    <!-- TODO: add suggestions in here as well? -->
+    <NewNodeDialog v-if="showProfileForm" :show="showProfileForm" :suggestions="suggestions"
+      @getSuggestions="getSuggestions" title="Add a Person" @create="handleDoubleStep($event)"
+      :withRelationships="false" @close="close"
+    />
+    <WhakapapaListHelper v-if="showWhakapapaHelper" :show="showWhakapapaHelper" @close="toggleWhakapapaHelper" />
+  </v-container>
 </template>
 
 <script>
@@ -63,42 +64,31 @@ import { savePerson } from '@/lib/person-helpers.js'
 import tree from '@/lib/tree-helpers'
 import { saveWhakapapaView, getWhakapapaViews } from '@/lib/whakapapa-helpers.js'
 import { findByName } from '@/lib/search-helpers.js'
-import { getTribeByGroupId } from '@/lib/community-helpers.js'
+import mapProfileMixins from '@/mixins/profile-mixins.js'
 
 export default {
   name: 'WhakapapaIndex',
+  mixins: [
+    mapProfileMixins({
+      mapMethods: ['getTribe'],
+      mapApollo: ['profile']
+    })
+  ],
   data () {
     return {
+      profile: {},
       suggestions: [],
-      items: [{
-        src: require('../assets/tree.jpg')
-      },
-      {
-        src: require('../assets/whakapapa-list.jpg')
-      }
-      ],
       views: [],
       showWhakapapaHelper: false,
       showProfileForm: false,
       showViewForm: false,
       newView: null,
       columns: [],
-      showProfileView: false,
       whakapapas: []
     }
   },
-  async created () {
-    if (this.$route.name === 'profileShow') {
-      this.showProfileView = true
-    }
-  },
-  watch: {
-    async currentProfile (newVal) {
-      this.whakapapas = await this.groupedWhakapapaViews()
-    }
-  },
   computed: {
-    ...mapGetters(['whoami', 'currentAccess', 'defaultAccess', 'currentProfile', 'currentTribe']),
+    ...mapGetters(['whoami', 'currentAccess', 'defaultAccess', 'currentTribe']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     }
@@ -108,7 +98,6 @@ export default {
     this.setCurrentAccess(this.defaultAccess)
     this.whakapapas = await this.groupedWhakapapaViews()
   },
-
   methods: {
     ...mapMutations(['setCurrentAccess']),
     ...mapActions(['addNestedWhakapapa', 'setLoading']),
@@ -121,28 +110,28 @@ export default {
       } else {
         views = res.data.whakapapaViews
       }
-      if (this.currentProfile.id === this.whoami.personal.profile.id) {
+      if (this.$route.params.profileId === this.whoami.personal.profile.id) {
         var groupedObj = groupBy(views, 'recps[0]')
         const groups = await Promise.all(
-          Object.keys(groupedObj).map(async (key, value) => {
-            var views = groupedObj[key]
-            if (key === this.whoami.personal.groupId) return { name: 'my private', image: this.whoami.personal.profile.avatarImage, views: views }
-            var tribe = await getTribeByGroupId(key)
-            if (tribe.private.length > 0) return { name: tribe.private[0].preferredName, image: tribe.private[0].avatarImage, views: views }
-            return null
+          Object.keys(groupedObj).map(async id => {
+            var views = groupedObj[id]
+            if (id === this.whoami.personal.groupId) return { name: 'my private', image: this.whoami.personal.profile.avatarImage, views: views }
+            var tribe = await this.getTribe(id)
+            return { name: tribe.preferredName, image: tribe.avatarImage, views: views }
           })
         )
         const filteredGroups = groups.filter(i => !isEmpty(i))
         return filteredGroups
       }
+
       return [{
-        name: this.currentProfile.preferredName,
+        name: this.profile.preferredName,
         views: views.filter(view => {
           return view.recps.some(recp => {
-            return recp === this.currentTribe.id
+            return recp === this.$route.params.tribeId
           })
         }),
-        image: this.currentProfile.avatarImage
+        image: this.profile.avatarImage
       }]
     },
 
@@ -227,12 +216,13 @@ export default {
 
         if (result.errors) throw result.errors
 
+        var type = this.$route.name.split('/whakapapa')[0]
         this.$router.push({
-          name: 'whakapapaShow',
+          name: type + '/whakapapa/:whakapapaId',
           params: {
-            id: result.data.saveWhakapapaView
+            whakapapaId: result.data.saveWhakapapaView
           }
-        })
+        }).catch(() => {})
       } catch (err) {
         this.setLoading(false)
         console.error('Something went wrong while creating a whakapapa', err)

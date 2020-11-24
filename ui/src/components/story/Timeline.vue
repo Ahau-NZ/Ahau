@@ -1,70 +1,60 @@
 <template>
-  <div>
-    <v-container fluid class="body-width px-0">
+  <div class="px-2">
+    <div v-if="showStory" :class="{'showOverlay': showStory && !mobile}"></div>
 
-      <div v-if="showStory" :class="{'showOverlay': showStory && !mobile}"></div>
+    <v-row v-if="!showStory" class="top-margin mb-5">
+      <v-col class="headliner black--text pa-0 pl-4 pt-2">
+        Timeline
+      </v-col>
+    </v-row>
 
-      <v-row v-if="!showStory" class="top-margin mb-5">
-        <v-col class="headliner black--text pa-0 pl-4 pt-2">
-          Timeline
-        </v-col>
-      </v-row>
-
-      <v-row v-if="filteredStories && filteredStories.length > 0" >
-        <v-col cols="12" sm="12" md="9" :class="showStory ? 'pa-0' : (mobile ? 'pa-0': '')">
-          <div v-if="!showStory">
-            <TimelineCard :data="filteredStories" @toggleStory="toggleStory($event)" />
+    <v-row v-if="filteredStories && filteredStories.length > 0" >
+      <v-col cols="12" sm="12" md="9" :class="!showStory ? '':'pa-0'">
+        <div v-if="!showStory">
+          <TimelineCard :data="filteredStories" @toggleStory="toggleStory($event)" />
+        </div>
+        <!-- Full story view -->
+        <div v-else>
+          <v-row :class="mobile ? 'pa-0': 'px-6 top-margin'">
+            <StoryCard
+              @updateDialog="updateDialog($event)"
+              :fullStory="true"
+              :story.sync="currentStory"
+              @submit="saveStory($event)"
+              @close="toggleStory($event)"
+            />
+          </v-row>
+        </div>
+      </v-col>
+    </v-row>
+    <v-row v-else>
+      <v-col>
+        <div v-if="!filteredStories || (filteredStories && filteredStories.length < 1)">
+          <div v-if="!filteredStories">
+              <v-card
+                :width="mobile ? '100%' : '87%'"
+                flat
+                :ripple="false"
+                light
+                v-for="n in 4"
+                :key="`skeleton-${n}`"
+                :class="mobile ? 'py-12' : 'pl-12 py-12'"
+              >
+                <v-skeleton-loader
+                  :width="mobile ? '100%' : '87%'"
+                  type="list-item-avatar-three-line"
+                ></v-skeleton-loader>
+              </v-card>
           </div>
-          <!-- Full story view -->
-          <div v-else>
-            <v-row :class="mobile ? 'pa-0': 'px-6 top-margin'">
-              <StoryCard
-                @updateDialog="updateDialog($event)"
-                :fullStory="true"
-                :story.sync="currentStory"
-                @submit="saveStory($event)"
-                @close="toggleStory($event)"
-              />
-            </v-row>
-          </div>
-        </v-col>
-      </v-row>
-      <!-- <v-row v-else>
-        <v-col>
-          <div class="px-8 subtitle-1 grey--text " :class="{ 'text-center': mobile }">
+          <div v-else
+            class="px-8 subtitle-1 grey--text "
+            :class="{ 'text-center': mobile }"
+          >
             No records found in this profile. Please add record to this profile via Archive
           </div>
-        </v-col>
-      </v-row> -->
-      <v-row v-else>
-        <v-col>
-          <div v-if="!filteredStories || (filteredStories && filteredStories.length < 1)">
-            <div v-if="!filteredStories">
-                <v-card
-                  :width="mobile ? '100%' : '87%'"
-                  flat
-                  :ripple="false"
-                  light
-                  v-for="n in 4"
-                  :key="`skeleton-${n}`"
-                  :class="mobile ? 'py-12' : 'pl-12 py-12'"
-                >
-                  <v-skeleton-loader
-                    :width="mobile ? '100%' : '87%'"
-                    type="list-item-avatar-three-line"
-                  ></v-skeleton-loader>
-                </v-card>
-            </div>
-            <div v-else
-              class="px-8 subtitle-1 grey--text "
-              :class="{ 'text-center': mobile }"
-            >
-              No records found in this profile. Please add record to this profile via Archive
-            </div>
-          </div>
-        </v-col>
-      </v-row>
-    </v-container>
+        </div>
+      </v-col>
+    </v-row>
   </div>
 </template>
 
@@ -76,6 +66,7 @@ import isEmpty from 'lodash.isempty'
 import { mapGetters, mapActions, mapMutations } from 'vuex'
 
 import mapStoryMixins from '@/mixins/story-mixins.js'
+import mapProfileMixins from '@/mixins/profile-mixins.js'
 
 export default {
   name: 'Timeline',
@@ -83,20 +74,18 @@ export default {
     TimelineCard,
     StoryCard
   },
-  props: {
-    profile: {
-      type: Object,
-      default: () => ({})
-    }
-  },
   mixins: [
     mapStoryMixins({
       mapMethods: ['saveStory', 'processLinks', 'saveArtefact', 'getStory', 'saveLink', 'removeLink'],
       mapApollo: ['stories']
+    }),
+    mapProfileMixins({
+      mapApollo: ['profile']
     })
   ],
   data () {
     return {
+      profile: {},
       stories: null,
       scrollPosition: 0
     }
@@ -115,7 +104,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['currentProfile', 'currentTribe', 'showStory', 'currentStory', 'whoami']),
+    ...mapGetters(['showStory', 'currentStory', 'whoami']),
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },

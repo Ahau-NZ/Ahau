@@ -239,7 +239,7 @@ function prune (input, attrs) {
   return _input
 }
 
-export const getCommunityProfile = id => ({
+export const getCommunity = id => ({
   query: gql`
     ${PUBLIC_PROFILE_FRAGMENT}
     query($id: String!) {
@@ -281,10 +281,10 @@ export async function callGetTribe (profileId) {
   }
 }
 
-export const getTribe = id => ({
+export const getTribe = ({
   query: gql`
     query($id: String!) {
-      tribe (id:$id){
+      tribe (id: $id){
         id 
         private {
           id
@@ -299,18 +299,5 @@ export const getTribe = id => ({
       }
     }
   `,
-  variables: { id: id },
   fetchPolicy: 'no-cache'
 })
-
-// get tribe profiles by groupId
-export async function getTribeByGroupId (id) {
-  const request = getTribe(id)
-  const result = await apolloClient.query(request)
-  if (result.errors) {
-    console.error('WARNING, error getting tribe')
-    console.error(result.errors)
-  } else {
-    return result.data.tribe
-  }
-}
