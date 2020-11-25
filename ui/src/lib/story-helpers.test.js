@@ -1,4 +1,4 @@
-import { GET_CHANGES, EMPTY_STORY, setDefaultStory } from './story-helpers.js'
+import { GET_CHANGES as getChanges, EMPTY_STORY, setDefaultStory } from './story-helpers.js'
 import { personComplete } from '../mocks/person-profile.js'
 import clone from 'lodash.clonedeep'
 const test = require('tape')
@@ -11,7 +11,6 @@ const storyMinimal = {
   location: 'Aotearoa',
   locationDescription: 'The land of the long white cloud',
   contributionNotes: 'Kia ora',
-
   format: 'FORMAT',
   identifier: 'ID',
   source: 'SRC',
@@ -40,16 +39,15 @@ const storyComplete = {
 
 test('create new story (empty)', t => {
   t.plan(1)
-  const emptyStoryChanges = GET_CHANGES(storyInitial, storyInitial)
+  const emptyStoryChanges = getChanges(storyInitial, storyInitial)
   t.deepEqual(emptyStoryChanges, {}, 'no changes returns an empty object')
 })
 
 test('create new story (properties)', t => {
   t.plan(1)
 
-  const propertyStoryChanges = GET_CHANGES(storyInitial, storyMinimal)
-
-  t.deepEqual(propertyStoryChanges, {
+  const propertyStoryChanges = getChanges(storyInitial, storyMinimal)
+  const expectedStory = {
     title: 'Title',
     description: 'Description',
     location: 'Aotearoa',
@@ -63,13 +61,15 @@ test('create new story (properties)', t => {
     culturalNarrative: 'N/A',
     timeInterval: '1900/2020',
     submissionDate: '2020-07-08'
-  }, 'returns all the changed properties')
+  }
+
+  t.deepEqual(propertyStoryChanges, expectedStory, 'returns all the changed properties')
 })
 
 test('create/update new story (arrays)', t => {
   t.plan(5)
 
-  const arrayStoryChanges = GET_CHANGES(storyInitial, storyComplete)
+  const arrayStoryChanges = getChanges(storyInitial, storyComplete)
 
   var expectedArray = {
     add: [...children]
@@ -87,7 +87,7 @@ test('create/update new story (arrays)', t => {
 
   storyUpdated.contributors.splice(1, 1)
 
-  var updatedStoryChanges = GET_CHANGES(storyComplete, storyUpdated)
+  var updatedStoryChanges = getChanges(storyComplete, storyUpdated)
 
   t.deepEqual(updatedStoryChanges.mentions, {
     add: [parents[0]],
@@ -106,8 +106,93 @@ test('create/update new story (arrays)', t => {
   storyUpdated2.mentions.push(parent)
   storyUpdated2.mentions.push(parent)
 
-  var updatedStory2Changes = GET_CHANGES(storyUpdated, storyUpdated2)
+  var updatedStory2Changes = getChanges(storyUpdated, storyUpdated2)
 
   t.true(updatedStory2Changes.mentions.add.length === 1, 'returns correct amount of mentions, removing duplicates')
   t.deepEqual(updatedStory2Changes.mentions.add[0], parent, 'returns correct mentioned profile')
+})
+
+test('test item changes are correctly computed', t => {
+  t.plan(1)
+
+  const addChildren = [
+    {
+      id: '1',
+      preferredName: 'Wahine',
+      gender: 'female',
+      aliveInterval: '1980-01-01/',
+      children: [
+        {
+          id: '2',
+          preferredName: 'Kotiro',
+          legalName: 'Kotiro',
+          gender: 'female',
+          aliveInterval: '2008-01-01/'
+        },
+        {
+          id: '3',
+          preferredName: 'Tama',
+          legalName: 'Tama',
+          gender: 'male',
+          aliveInterval: '2008-01-01/'
+        }
+      ]
+    },
+    {
+      id: '4',
+      preferredName: 'Tane',
+      legalName: 'Tane',
+      gender: 'male',
+      aliveInterval: '1980-01-01/'
+    }
+  ]
+
+  const removePartners = [
+    {
+      id: '5',
+      preferredName: 'Koro',
+      legalName: 'Koro',
+      gender: 'male',
+      aliveInterval: '1950-01-01/'
+    }
+  ]
+
+  const initialSiblings = [{
+    id: '1',
+    preferredName: 'Koro',
+    legalName: 'Koro',
+    gender: 'male',
+    aliveInterval: '1950-01-01/'
+  }]
+
+  const updatedSiblings = [{
+    id: '2',
+    preferredName: 'Test',
+    legalName: 'Test',
+    gender: 'female',
+    aliveInterval: '160-02-28/'
+  }]
+
+  const initialTestValue = {
+    title: 'value1',
+    children: [],
+    partners: removePartners,
+    siblings: initialSiblings
+  }
+
+  const updatedTestValue = {
+    title: 'value2',
+    children: addChildren,
+    partners: [],
+    siblings: updatedSiblings
+  }
+
+  const expectedChanges = {
+    title: 'value2',
+    children: { add: addChildren },
+    partners: { remove: removePartners },
+    siblings: { add: updatedSiblings, remove: initialSiblings }
+  }
+
+  t.deepEqual(getChanges(initialTestValue, updatedTestValue), expectedChanges, 'item changes correctly computed')
 })
