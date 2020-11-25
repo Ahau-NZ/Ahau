@@ -44,7 +44,7 @@
 </template>
 
 <script>
-import formatDate from '@/lib/format-date.js'
+import dateToString from '@/lib/format-date.js'
 import AvatarGroup from '@/components/AvatarGroup.vue'
 
 export default {
@@ -53,7 +53,7 @@ export default {
   components: { AvatarGroup },
   methods: {
     formatSubmissionDate (date) {
-      return formatDate(date)
+      return dateToString(date)
     }
   }
 }

@@ -1,4 +1,4 @@
-import { dateIntervalToString, edtfToDateString } from './date-helpers.js'
+import { dateIntervalToString, edtfToDateString, formatSubmissionDate } from './date-helpers.js'
 const test = require('tape')
 
 test('dateTest', t => {
@@ -25,4 +25,25 @@ test('edtfToDate', t => {
   t.deepEqual(edtfToDateString('1987-XX-04/'), new Date('1987-01-04'))
   t.deepEqual(edtfToDateString('/1999-02-14'), new Date('1999-02-14'))
   t.deepEqual(edtfToDateString('1998/1999'), new Date('1998-01-01'))
+})
+
+test('format-date', t => {
+  t.plan(6)
+
+  t.deepEqual(formatSubmissionDate('1990-02-28'), '28 Feb 1990', 'Correct date (28 Feb 1990)')
+  t.deepEqual(formatSubmissionDate('1990-02'), 'Feb 1990', 'Correct date (Feb 1990)')
+  t.deepEqual(formatSubmissionDate('1990'), '1990', 'Correct date (1990)')
+
+  t.throws(
+    () => { formatSubmissionDate('') },
+    /Cannot format an empty string/,
+    'Empty string passed to dateToString()'
+  )
+  t.throws(
+    () => { formatSubmissionDate() },
+    /Cannot format an undefined value/,
+    'No arguments passed to dateToString()'
+  )
+
+  t.deepEqual(formatSubmissionDate('string'), 'NaN undefined NaN', 'Invalid formatting of date')
 })
