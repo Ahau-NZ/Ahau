@@ -30,7 +30,7 @@
         <h5 class="pt-8 white--text">rotate</h5>
         <clipper-range
           v-model="rotation"
-          style="max-width:300px"
+          style="max-width: 300px"
           :min="0"
           :max="360"
         ></clipper-range>
@@ -90,7 +90,9 @@ export default {
     },
     async submit () {
       try {
-        const canvas = this.$refs.avatar.clip({ maxWPixel: 1920 })
+        const canvas = this.$refs.avatar.clip({
+          maxWPixel: this.type === 'header' ? 1920 : 800
+        })
         canvas.toBlob(async blob => {
           const file = new File([blob], 'avatar', { type: blob.type })
 
