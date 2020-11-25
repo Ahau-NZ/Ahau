@@ -13,29 +13,16 @@ test('dateTest', t => {
 })
 
 test('edtfToDate', t => {
-  t.plan(9)
+  t.plan(10)
 
-  const initial = [null, '', '20XX-02-28/', '201X/202X', '1987-03-XX/2100', '1800-XX/198X-05', '1987-XX-04/', '/1999-02-14', '1998/1999']
-  const expected = [
-    '',
-    '',
-    new Date('2000-02-28'),
-    new Date('2010-01-01'),
-    new Date('1987-03-01'),
-    new Date('1800-01-01'),
-    new Date('1987-01-04'),
-    new Date('1999-02-14'),
-    new Date('1998-01-01')
-  ]
-
-  initial.forEach((interval, i) => {
-    const date = edtfToDateString(interval)
-    t.deepEqual(
-      edtfToDateString(interval),
-      expected[i],
-      `${interval} => ${date}`
-    )
-  })
-
-  t.end()
+  t.deepEqual(edtfToDateString(null), '')
+  t.deepEqual(edtfToDateString(''), '')
+  t.deepEqual(edtfToDateString('dog'), undefined)
+  t.deepEqual(edtfToDateString('20XX-02-28/'), new Date('2000-02-28'))
+  t.deepEqual(edtfToDateString('201X/202X'), new Date('2010-01-01'))
+  t.deepEqual(edtfToDateString('1987-03-XX/2100'), new Date('1987-03-01'))
+  t.deepEqual(edtfToDateString('1800-XX/198X-05'), new Date('1800-01-01'))
+  t.deepEqual(edtfToDateString('1987-XX-04/'), new Date('1987-01-04'))
+  t.deepEqual(edtfToDateString('/1999-02-14'), new Date('1999-02-14'))
+  t.deepEqual(edtfToDateString('1998/1999'), new Date('1998-01-01'))
 })
