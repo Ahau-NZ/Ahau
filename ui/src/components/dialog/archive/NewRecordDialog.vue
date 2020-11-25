@@ -28,7 +28,7 @@ import AccessButton from '@/components/button/AccessButton.vue'
 
 import { mapGetters, mapActions, mapMutations } from 'vuex'
 
-import { GET_CHANGES, EMPTY_STORY, setDefaultStory } from '@/lib/story-helpers.js'
+import { getObjectChanges, EMPTY_STORY, setDefaultStory } from '@/lib/story-helpers.js'
 import mapProfileMixins from '@/mixins/profile-mixins.js'
 
 export default {
@@ -95,11 +95,11 @@ export default {
         // get all changes
         output = {
           id: this.story.id,
-          ...GET_CHANGES(setDefaultStory(this.story), this.formData)
+          ...getObjectChanges(setDefaultStory(this.story), this.formData)
         }
       } else {
         output = {
-          ...GET_CHANGES(setDefaultStory(EMPTY_STORY), this.formData),
+          ...getObjectChanges(setDefaultStory(EMPTY_STORY), this.formData),
           recps: [this.access.groupId]
         }
       }

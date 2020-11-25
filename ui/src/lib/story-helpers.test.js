@@ -1,4 +1,5 @@
-import { GET_CHANGES as getChanges, EMPTY_STORY, setDefaultStory } from './story-helpers.js'
+import { EMPTY_STORY, setDefaultStory } from './story-helpers.js'
+import { getObjectChanges } from './get-object-changes.js'
 import { personComplete } from '../mocks/person-profile.js'
 import clone from 'lodash.clonedeep'
 const test = require('tape')
@@ -39,14 +40,14 @@ const storyComplete = {
 
 test('create new story (empty)', t => {
   t.plan(1)
-  const emptyStoryChanges = getChanges(storyInitial, storyInitial)
+  const emptyStoryChanges = getObjectChanges(storyInitial, storyInitial)
   t.deepEqual(emptyStoryChanges, {}, 'no changes returns an empty object')
 })
 
 test('create new story (properties)', t => {
   t.plan(1)
 
-  const propertyStoryChanges = getChanges(storyInitial, storyMinimal)
+  const propertyStoryChanges = getObjectChanges(storyInitial, storyMinimal)
   const expectedStory = {
     title: 'Title',
     description: 'Description',
@@ -69,7 +70,7 @@ test('create new story (properties)', t => {
 test('create/update new story (arrays)', t => {
   t.plan(5)
 
-  const arrayStoryChanges = getChanges(storyInitial, storyComplete)
+  const arrayStoryChanges = getObjectChanges(storyInitial, storyComplete)
 
   var expectedArray = {
     add: [...children]
@@ -87,7 +88,7 @@ test('create/update new story (arrays)', t => {
 
   storyUpdated.contributors.splice(1, 1)
 
-  var updatedStoryChanges = getChanges(storyComplete, storyUpdated)
+  var updatedStoryChanges = getObjectChanges(storyComplete, storyUpdated)
 
   t.deepEqual(updatedStoryChanges.mentions, {
     add: [parents[0]],
@@ -106,7 +107,7 @@ test('create/update new story (arrays)', t => {
   storyUpdated2.mentions.push(parent)
   storyUpdated2.mentions.push(parent)
 
-  var updatedStory2Changes = getChanges(storyUpdated, storyUpdated2)
+  var updatedStory2Changes = getObjectChanges(storyUpdated, storyUpdated2)
 
   t.true(updatedStory2Changes.mentions.add.length === 1, 'returns correct amount of mentions, removing duplicates')
   t.deepEqual(updatedStory2Changes.mentions.add[0], parent, 'returns correct mentioned profile')
@@ -194,5 +195,5 @@ test('test item changes are correctly computed', t => {
     siblings: { add: updatedSiblings, remove: initialSiblings }
   }
 
-  t.deepEqual(getChanges(initialTestValue, updatedTestValue), expectedChanges, 'item changes correctly computed')
+  t.deepEqual(getObjectChanges(initialTestValue, updatedTestValue), expectedChanges, 'item changes correctly computed')
 })
