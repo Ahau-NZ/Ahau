@@ -21,7 +21,7 @@
     "secret-stack": "^6.3.1",
     "ssb-ahoy": "^3.0.0",
     "ssb-backlinks": "^2.1.1",
-    "ssb-blobs": "^1.2.3",
+    "ssb-blobs": "^2.0.0",
     "ssb-config": "^3.4.5",
     "ssb-conn": "^0.18.2",
     "ssb-db": "^20.3.0",
