@@ -28,7 +28,8 @@ import AccessButton from '@/components/button/AccessButton.vue'
 
 import { mapGetters, mapActions, mapMutations } from 'vuex'
 
-import { getObjectChanges, EMPTY_STORY, setDefaultStory } from '@/lib/story-helpers.js'
+import { EMPTY_STORY, setDefaultStory } from '@/lib/story-helpers.js'
+import { getObjectChanges } from '@/lib/get-object-changes.js'
 import mapProfileMixins from '@/mixins/profile-mixins.js'
 
 export default {
