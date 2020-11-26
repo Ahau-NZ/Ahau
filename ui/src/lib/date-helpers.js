@@ -101,7 +101,7 @@ const MONTHS = {
   '06': 'Jun',
   '07': 'Jul',
   '08': 'Aug',
-  '09': 'Sept',
+  '09': 'Sep',
   '10': 'Oct',
   '11': 'Nov',
   '12': 'Dec'
@@ -146,4 +146,29 @@ export function parseInterval (interval) {
   if (start === end) return '/' + end
 
   return interval
+}
+
+export function formatSubmissionDate (submittedDate) {
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+
+  // Date format incorrect
+  if (submittedDate === undefined ||
+    submittedDate === '' ||
+    submittedDate === null) {
+    return ''
+  }
+
+  try {
+    const bornDate = new Date(submittedDate)
+
+    if (submittedDate.toString().length === 4) { // If only year passed, i.e. bornAt = '1990'
+      return bornDate.getFullYear().toString()
+    } else if (submittedDate.toString().length === 7) { // If only year and month passed, i.e. bornAt = '1990-01'
+      return months[bornDate.getMonth()] + ' ' + bornDate.getFullYear()
+    } else { // Full date passed, i.e. bornAt = '1990-01-28'
+      return bornDate.getDate() + ' ' + months[bornDate.getMonth()] + ' ' + bornDate.getFullYear()
+    }
+  } catch (e) {
+    console.error(e.message) // Invalid format of date string
+  }
 }

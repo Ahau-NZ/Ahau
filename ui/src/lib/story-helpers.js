@@ -2,11 +2,7 @@ import gql from 'graphql-tag'
 import pick from 'lodash.pick'
 import { ARTEFACT_FRAGMENT } from './artefact-helpers'
 import { PERSON_FRAGMENT } from './person-helpers'
-import { parseInterval } from './date-helpers'
-import isEqual from 'lodash.isequal'
-import isEmpty from 'lodash.isempty'
 import clone from 'lodash.clonedeep'
-import uniqby from 'lodash.uniqby'
 
 export function setDefaultStory (newStory) {
   var story = clone(newStory)
@@ -277,78 +273,4 @@ export function arrayChanges (array1, array2) {
   return array1.filter(item => {
     return !array2.some(item2 => item.id === item2.id)
   })
-}
-
-function findItemById (initialArray, itemToFind) {
-  if (!itemToFind.id) return null
-  return initialArray.find(existingItem => {
-    return existingItem.id === itemToFind.id
-  })
-}
-
-export function GET_CHANGES (initialValue, updatedValue) {
-  var changes = {}
-
-  if (isEqual(initialValue, updatedValue)) return changes
-
-  Object.entries(updatedValue).forEach(([key, value]) => {
-    if (key === 'kaitiaki') return
-    // see if the value has changes
-    if (!isEqual(initialValue[key], updatedValue[key])) {
-      switch (true) {
-        // the value is an array
-        case Array.isArray(updatedValue[key]):
-          // intiate the array to add, remove fields
-          changes[key] = { add: [], remove: [] }
-          var newItems = []
-          updatedValue[key].forEach(newItem => {
-            // if the item already exists
-            var oldItem = findItemById(initialValue[key], newItem)
-
-            if (oldItem) {
-              // only get what changed...
-              var itemChanges = GET_CHANGES(oldItem, newItem)
-
-              // only add if there are changes
-              if (!isEmpty(itemChanges)) {
-                newItem = { id: newItem.id, linkId: newItem.linkId, ...itemChanges }
-                changes[key].add.push(newItem)
-              }
-            } else {
-              newItems.push(newItem)
-            }
-          })
-
-          changes[key].remove = arrayChanges(initialValue[key], updatedValue[key])
-
-          // remove dupes (if any) from the add array
-          changes[key].add = uniqby(changes[key].add, 'id')
-
-          // make sure newItems are unique as well
-          newItems = uniqby(newItems, 'id')
-
-          // add new items to add array
-          changes[key].add = [...changes[key].add, ...newItems]
-
-          // remove dupes from remove array
-          changes[key].remove = uniqby(changes[key].remove, 'id')
-
-          // remove add or remove if theyre empty
-          if (isEmpty(changes[key].add)) delete changes[key].add
-          if (isEmpty(changes[key].remove)) delete changes[key].remove
-          break
-        // use default for non arrays
-        case key === 'duration':
-          changes[key] = parseInt(value)
-          break
-        case key === 'timeInterval':
-          changes[key] = parseInterval(value)
-          break
-        default:
-          changes[key] = value
-      }
-    }
-  })
-
-  return changes
 }
