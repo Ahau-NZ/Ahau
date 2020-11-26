@@ -27,23 +27,16 @@ test('edtfToDate', t => {
   t.deepEqual(edtfToDateString('1998/1999'), new Date('1998-01-01'))
 })
 
-test('format-date', t => {
-  t.plan(6)
+test('format-submission-date', t => {
+  t.plan(7)
 
   t.deepEqual(formatSubmissionDate('1990-02-28'), '28 Feb 1990', 'Correct date (28 Feb 1990)')
   t.deepEqual(formatSubmissionDate('1990-02'), 'Feb 1990', 'Correct date (Feb 1990)')
   t.deepEqual(formatSubmissionDate('1990'), '1990', 'Correct date (1990)')
 
-  t.throws(
-    () => { formatSubmissionDate('') },
-    /Cannot format an empty string/,
-    'Empty string passed to dateToString()'
-  )
-  t.throws(
-    () => { formatSubmissionDate() },
-    /Cannot format an undefined value/,
-    'No arguments passed to dateToString()'
-  )
+  t.deepEqual(formatSubmissionDate(''), '', 'Empty string correctly returning an empty string')
+  t.deepEqual(formatSubmissionDate(), '', 'No arguments correctly returning an empty string')
+  t.deepEqual(formatSubmissionDate(null), '', 'null correctly returning an empty string')
 
   t.deepEqual(formatSubmissionDate('string'), 'NaN undefined NaN', 'Invalid formatting of date')
 })

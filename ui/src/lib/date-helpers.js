@@ -92,20 +92,20 @@ export function edtfToDateString (dateStr) {
   }
 }
 
-const MONTHS = [
-  'Jan',
-  'Feb',
-  'Mar',
-  'Apr',
-  'May',
-  'Jun',
-  'Jul',
-  'Aug',
-  'Sep',
-  'Oct',
-  'Nov',
-  'Dec'
-]
+const MONTHS = {
+  '01': 'Jan',
+  '02': 'Feb',
+  '03': 'Mar',
+  '04': 'Apr',
+  '05': 'May',
+  '06': 'Jun',
+  '07': 'Jul',
+  '08': 'Aug',
+  '09': 'Sep',
+  '10': 'Oct',
+  '11': 'Nov',
+  '12': 'Dec'
+}
 
 export function convertDateObjToString (obj) {
   var { year, month, day } = obj
@@ -149,13 +149,13 @@ export function parseInterval (interval) {
 }
 
 export function formatSubmissionDate (submittedDate) {
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
-  // Date passed as an empty string or no date passed
-  if (submittedDate === '') {
-    throw new Error('Cannot format an empty string')
-  }
-  if (submittedDate === undefined) {
-    throw new Error('Cannot format an undefined value')
+  // Date format incorrect
+  if (submittedDate === undefined ||
+    submittedDate === '' ||
+    submittedDate === null) {
+    return ''
   }
 
   try {
@@ -164,9 +164,9 @@ export function formatSubmissionDate (submittedDate) {
     if (submittedDate.toString().length === 4) { // If only year passed, i.e. bornAt = '1990'
       return bornDate.getFullYear().toString()
     } else if (submittedDate.toString().length === 7) { // If only year and month passed, i.e. bornAt = '1990-01'
-      return MONTHS[bornDate.getMonth()] + ' ' + bornDate.getFullYear()
+      return months[bornDate.getMonth()] + ' ' + bornDate.getFullYear()
     } else { // Full date passed, i.e. bornAt = '1990-01-28'
-      return bornDate.getDate() + ' ' + MONTHS[bornDate.getMonth()] + ' ' + bornDate.getFullYear()
+      return bornDate.getDate() + ' ' + months[bornDate.getMonth()] + ' ' + bornDate.getFullYear()
     }
   } catch (e) {
     console.error(e.message) // Invalid format of date string
