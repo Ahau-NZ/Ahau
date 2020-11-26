@@ -18,8 +18,12 @@ export function dateToString (date) {
 }
 
 function humanDate (date) {
+  if (date === null || date === undefined || date === '') {
+    return ''
+  }
+
   var split = date.split('-')
-  if (!split[0].length && !split[1].length) return
+  if (!split[0].length && !split[1].length) return ''
   if (!split[0].length && split[1].length) {
     var bcYear = `-${split[1]}`
     return bcYear
