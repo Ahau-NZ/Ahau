@@ -1,4 +1,4 @@
-import { dateIntervalToString, edtfToDateString, formatSubmissionDate } from './date-helpers.js'
+import { dateIntervalToString, dateToString, edtfToDateString, formatSubmissionDate } from './date-helpers.js'
 const test = require('tape')
 
 test('dateTest', t => {
@@ -10,6 +10,25 @@ test('dateTest', t => {
   initial.forEach((interval, i) => {
     t.equal(dateIntervalToString(interval), expected[i])
   })
+})
+
+test('dateToString', t => {
+  t.plan(10)
+
+  t.deepEqual(dateToString('2020-11-25'), '25 Nov 2020', 'Date correctly converted to string')
+
+  t.deepEqual(dateToString('2020'), '2020', 'Only year sent')
+  t.deepEqual(dateToString('2020-XX'), '2020', 'Only year sent')
+
+  t.deepEqual(dateToString('2020-02'), 'Feb 2020', 'Only year and month sent')
+  t.deepEqual(dateToString('2020-02-XX'), 'Feb 2020', 'Only year and month sent')
+
+  t.deepEqual(dateToString('-'), '', 'incorrect format sent')
+  t.deepEqual(dateToString('-1990'), '-1990', 'incorrect format sent')
+
+  t.deepEqual(dateToString(null), '', 'null value correctly handled')
+  t.deepEqual(dateToString(), '', 'undefined date correctly handled')
+  t.deepEqual(dateToString(''), '', 'empty string correctly handled')
 })
 
 test('edtfToDate', t => {

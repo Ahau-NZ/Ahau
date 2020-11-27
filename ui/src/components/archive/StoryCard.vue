@@ -241,7 +241,7 @@ import ArtefactCarouselItem from '@/components/artefact/ArtefactCarouselItem.vue
 import NewRecordDialog from '@/components/dialog/archive/NewRecordDialog.vue'
 import DeleteRecordDialog from '@/components/dialog/archive/DeleteRecordDialog.vue'
 import { DELETE_STORY } from '@/lib/story-helpers.js'
-import { dateIntervalToString, dateToString } from '@/lib/date-helpers.js'
+import { dateIntervalToString, formatSubmissionDate } from '@/lib/date-helpers.js'
 
 export default {
   name: 'StoryCard',
@@ -295,7 +295,7 @@ export default {
     },
     submissionDate () {
       if (this.story.submissionDate) {
-        return dateToString(this.story.submissionDate)
+        return formatSubmissionDate(this.story.submissionDate)
       }
       return ''
     },
