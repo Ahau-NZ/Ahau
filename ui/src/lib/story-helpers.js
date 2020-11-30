@@ -256,7 +256,7 @@ export const saveStory = input => {
 
   input = {
     type: '*', // TODO: sort out types
-    ...pick(input, PERMITTED_STORY_ATTRS),
+    ...pick(input, [...PERMITTED_STORY_ATTRS, 'authors']),
     submissionDate
   }
   return {
