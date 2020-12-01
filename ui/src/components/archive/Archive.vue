@@ -11,12 +11,22 @@
           <BigAddButton @click="dialog = 'new-story'" />
         </v-col>
       </v-row>
+      <v-btn
+        @click="dialog = 'new-collection'"
+      >
+        add collection
+      </v-btn>
+      <CollectionGroup v-if="collections.length > 0" :collections="collections" />
       <Stories :stories="stories" @save="saveStory($event)"/>
       <ArchiveHelper v-if="showArchiveHelper" :show="showArchiveHelper" @close="toggleArchiveHelper" />
     </div>
     <NewRecordDialog v-if="dialog === 'new-story'" :show="dialog === 'new-story'"
       :title="`Add record to ${ profile.preferredName || 'Untitled' }'s archive`" @close="dialog = null"
       @submit="saveStory($event)"
+    />
+    <NewCollectionDialog v-if="dialog === 'new-collection'" :show="dialog === 'new-collection'"
+      :title="`Add collection to ${ profile.preferredName || 'Untitled' }'s archive`" @close="dialog = null"
+      @submit="saveCollection($event)"
     />
   </div>
 </template>
@@ -25,14 +35,17 @@
 import Stories from '@/components/archive/Stories.vue'
 import { mapGetters, mapMutations } from 'vuex'
 import NewRecordDialog from '@/components/dialog/archive/NewRecordDialog.vue'
+import NewCollectionDialog from '@/components/dialog/archive/NewCollectionDialog.vue'
 import BigAddButton from '@/components/button/BigAddButton.vue'
 
 // TODO: Replace with Archive Helper (doesnt exist yet)
 import ArchiveHelper from '@/components/dialog/archive/ArchiveHelper.vue'
+
 import mapStoryMixins from '@/mixins/story-mixins.js'
 import mapProfileMixins from '@/mixins/profile-mixins.js'
+import mapCollectionMixins from '@/mixins/collection-mixins.js'
 
-// import CollectionGroup from '@/components/archive/CollectionGroup.vue'
+import CollectionGroup from '@/components/archive/CollectionGroup.vue'
 
 export default {
   name: 'Archive',
@@ -41,6 +54,10 @@ export default {
       mapMethods: ['saveStory', 'processLinks', 'saveArtefact', 'getStory', 'saveLink', 'removeLink'],
       mapApollo: ['stories']
     }),
+    mapCollectionMixins({
+      mapMethods: ['saveCollection'],
+      mapApollo: ['collections']
+    }),
     mapProfileMixins({
       mapApollo: ['profile']
     })
@@ -48,9 +65,10 @@ export default {
   components: {
     Stories,
     NewRecordDialog,
+    NewCollectionDialog,
     ArchiveHelper,
-    BigAddButton
-    // CollectionGroup
+    BigAddButton,
+    CollectionGroup
   },
   data () {
     return {
@@ -59,6 +77,7 @@ export default {
       dialog: null,
       scrollPosition: 0,
       showArchiveHelper: false,
+      showNewCollection: false,
       collections: []
     }
   },

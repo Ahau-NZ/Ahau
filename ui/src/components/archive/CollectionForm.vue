@@ -25,14 +25,13 @@
       <!-- Information Col -->
       <v-col cols="12" sm="7" class="border-right">
         <v-row>
-          <!-- Preferred Name -->
+          <!-- Name -->
           <v-col cols="12" class="pa-1">
             <v-text-field
               v-model="formData.name"
-              label="Collection Name *"
+              label="Collection Name"
               placeholder=" "
               hide-details
-              :rules="form.rules.name.whakapapaView"
             />
           </v-col>
           <!-- Description textarea -->
@@ -55,7 +54,6 @@
 </template>
 
 <script>
-
 import Avatar from '@/components/Avatar.vue'
 import ImagePicker from '@/components/ImagePicker.vue'
 import { RULES } from '@/lib/constants'
@@ -67,24 +65,19 @@ export default {
     ImagePicker
   },
   props: {
-    // view: { type: Object, default () { return setDefaultWhakapapa(EMPTY_WHAKAPAPA) } },
+    formData: {
+      type: Object
+    },
     readonly: { type: Boolean, default: false },
     hideDetails: { type: Boolean, default: false }
   },
   data () {
     return {
-      // formData: setDefaultWhakapapa(this.view),
-      formData: {},
       form: {
         valid: true,
         rules: RULES
       }
     }
-  },
-  watch: {
-
-  },
-  methods: {
   }
 }
 
