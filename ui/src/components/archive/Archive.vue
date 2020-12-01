@@ -10,14 +10,32 @@
         <v-col>
           <BigAddButton @click="dialog = 'new-story'" />
         </v-col>
+        <v-col cols="10" class="sub-headliner black--text pa-0 pl-4 pt-2">
+          Collections
+        </v-col>
+        <v-col cols="12">
+          <CollectionGroup v-if="collections.length > 0" :collections="collections" @selectedIndex="index = $event" />
+        </v-col>
+        <v-col>
+          <v-expand-transition>
+            <v-sheet
+              light
+            >
+              <div
+                v-if="index != null"
+                class="fill-height fill-width"
+              >
+                <Stories :stories="[]" @save="saveStory($event)" :title="selectedCollection.name" />
+              </div>
+              <div v-else
+                class="fill-height fill-width"
+              >
+                <Stories :stories="stories" @save="saveStory($event)" title="Stories"/>
+              </div>
+            </v-sheet>
+          </v-expand-transition>
+        </v-col>
       </v-row>
-      <v-btn
-        @click="dialog = 'new-collection'"
-      >
-        add collection
-      </v-btn>
-      <CollectionGroup v-if="collections.length > 0" :collections="collections" />
-      <Stories :stories="stories" @save="saveStory($event)"/>
       <ArchiveHelper v-if="showArchiveHelper" :show="showArchiveHelper" @close="toggleArchiveHelper" />
     </div>
     <NewRecordDialog v-if="dialog === 'new-story'" :show="dialog === 'new-story'"
@@ -78,7 +96,9 @@ export default {
       scrollPosition: 0,
       showArchiveHelper: false,
       showNewCollection: false,
-      collections: []
+      collections: [],
+      selectedCollection: null,
+      index: null
     }
   },
   computed: {
@@ -94,6 +114,11 @@ export default {
     },
     openContextMenu (event) {
       this.$refs.menu.open(event)
+    }
+  },
+  watch: {
+    index (i) {
+      this.selectedCollection = this.collections[i]
     }
   }
 }
@@ -149,6 +174,13 @@ export default {
 
   .headliner {
     font-size: 1em;
+    text-transform: uppercase;
+    font-weight: 400;
+    letter-spacing: 5px;
+  }
+
+  .sub-headliner {
+    font-size: 0.8em;
     text-transform: uppercase;
     font-weight: 400;
     letter-spacing: 5px;

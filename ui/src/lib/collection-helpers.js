@@ -22,13 +22,20 @@ export const EMPTY_COLLECTION = {
   image: null
 }
 
+// contains standalone attrs with no sub atrrs
 export const PERMITTED_COLLECTION_ATTRS = [
   'id',
   'type',
   'name',
   'description',
-  'image',
   'recps'
+]
+
+// contains attrs with sub attrs
+export const ALL_PERMITTED_COLLECTION_ATTRS = [
+  ...PERMITTED_COLLECTION_ATTRS,
+  'image',
+  'authors'
 ]
 
 // export const PERMITTED_COLLECTION_LINKS = [
@@ -37,6 +44,9 @@ export const PERMITTED_COLLECTION_ATTRS = [
 export const COLLECTION_FRAGMENT = gql`
   fragment CollectionFragment on Collection {
     ${PERMITTED_COLLECTION_ATTRS}
+    image {
+      uri
+    }
   }
 `
 
@@ -65,9 +75,9 @@ export const getAllCollections = filter => ({
   variables: {
     filter
   },
-  update (data) {
-    return data.stories.reverse()
-  },
+  // update (data) {
+  //   return data.collections.reverse()
+  // },
   fetchPolicy: 'no-cache'
 })
 
@@ -107,12 +117,12 @@ export const deleteCollection = (id, date) => ({
 })
 
 export const saveCollection = input => {
-  // var submissionDate = new Date().toISOString().slice(0, 10)
+  var submissionDate = Date.now()
 
   input = {
     type: '*', // TODO: sort out types
-    ...pick(input, [...PERMITTED_COLLECTION_ATTRS, 'authors'])
-    // submissionDate
+    ...pick(input, ALL_PERMITTED_COLLECTION_ATTRS),
+    submissionDate
   }
   return {
     mutation: gql`
