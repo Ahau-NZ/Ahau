@@ -3,7 +3,7 @@
     <g id="zoomable">
       <line x1="60" y1="55" :x2="tableWidth" y2="55" style="stroke-width: 1; stroke: lightgrey;"/>
       <g class="headers" v-for="column in columns" :key="column.label">
-        <text :transform="`translate(${column.x + 10} ${50})`">
+        <text :transform="`translate(${column.x + 10} ${50})`" @click="toggleSort(column.label)">
           {{ column.label }}
         </text>
         <line :x1="column.x" y1="55" :x2="column.x" :y2="tableHeight" style="stroke-width: 1; stroke: lightgrey;"/>
@@ -126,7 +126,9 @@ export default {
       componentLoaded: false, // need to ensure component is loaded before using $refs
       nodeRadius: 20, // use variable for zoom later on
       nodeSize: 40,
-      duration: 400
+      duration: 400,
+      sortNames: 0,
+      sortAge: 0
     }
   },
   mounted () {
@@ -170,6 +172,40 @@ export default {
       return this.tableLayout
         // returns the array of descendants starting with the root node, then followed by each child in topological order
         .descendants()
+        // sort by preferred name
+        .sort((a, b) => {
+          if (this.sortNames !== 0) {
+            const aName = a.data.preferredName.toLowerCase()
+            const bName = b.data.preferredName.toLowerCase()
+            if (this.sortNames === 1) {
+              if (aName < bName) { return -1 }
+              if (aName > bName) { return 1 }
+              return 0
+            }
+            if (this.sortNames === 2) {
+              if (aName > bName) { return -1 }
+              if (aName < bName) { return 1 }
+              return 0
+            }
+          }
+        })
+        // sort by age
+        .sort((a, b) => {
+          if (this.sortAge !== 0) {
+            const aAge = calculateAge(a.data.aliveInterval)
+            const bAge = calculateAge(b.data.aliveInterval)
+            if (this.sortAge === 1) {
+              if (aAge < bAge) { return -1 }
+              if (aAge > bAge) { return 1 }
+              return 0
+            }
+            if (this.sortAge === 2) {
+              if (aAge > bAge) { return -1 }
+              if (aAge < bAge) { return 1 }
+              return 0
+            }
+          }
+        })
         // filter deceased
         .filter(peeps => {
           if (this.filter && peeps.data.deceased) {
@@ -189,7 +225,7 @@ export default {
             height: d.height,
             parent: d.parent,
             x: d.x,
-            y: this.filter ? i * 45 : d.y * 1.5,
+            y: this.flatten ? i * 45 : d.y * 1.5,
             age: calculateAge(d.data.aliveInterval),
             color: this.nodeColor(d.data)
           }
@@ -269,8 +305,8 @@ export default {
   },
 
   watch: {
-    flatten (newVal) {
-      if (newVal === true) this.colWidth = 250
+    flatten (newValue) {
+      if (newValue === true) this.colWidth = 250
       else this.colWidth = 350
     },
 
@@ -351,6 +387,43 @@ export default {
       })
 
       // this.updateNode({ is, path: endNode.path })
+    },
+
+    toggleSort (value) {
+      if (value === 'Legal Name') {
+        switch (this.sortNames) {
+          case 0:
+            this.sortNames = 1
+            this.sortAge = 0
+            break
+          case 1:
+            this.sortNames = 2
+            this.sortAge = 0
+            break
+          case 2:
+            this.sortNames = 0
+            break
+          default:
+            this.sortNames = 0
+        }
+      }
+      if (value === 'Age') {
+        switch (this.sortAge) {
+          case 0:
+            this.sortAge = 1
+            this.sortNames = 0
+            break
+          case 1:
+            this.sortAge = 2
+            this.sortNames = 0
+            break
+          case 2:
+            this.sortAge = 0
+            break
+          default:
+            this.sortAge = 0
+        }
+      }
     }
   },
   components: {

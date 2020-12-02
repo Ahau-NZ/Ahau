@@ -261,7 +261,7 @@ export default {
         type: null
       },
       filter: false,
-      flatten: false,
+      flatten: true,
       whakapapa: {
         tree: true,
         table: false
