@@ -1,6 +1,7 @@
 import gql from 'graphql-tag'
 import pick from 'lodash.pick'
 import clone from 'lodash.clonedeep'
+import { PUBLIC_PROFILE_FRAGMENT } from '@/lib/person-helpers'
 
 export function setDefaultCollection (newCollection) {
   var collection = clone(newCollection)
@@ -65,9 +66,13 @@ export const getCollection = id => ({
 export const getAllCollections = filter => ({
   query: gql`
     ${COLLECTION_FRAGMENT}
+    ${PUBLIC_PROFILE_FRAGMENT}
     query ($filter: StoryFilter) {
       collections(filter: $filter) {
         ...CollectionFragment
+        tiaki {
+          ...PublicProfileFragment
+        }
       }
     }
   `,

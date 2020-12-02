@@ -10,8 +10,6 @@
         <v-slide-group
           v-model="model"
           light
-          max-width="600"
-          
           center-active
           style="width: 100%; height: 100%;"
         >
@@ -20,8 +18,8 @@
             :key="`c-s-g-${i}`"
             v-slot:default="{ active, toggle }"
             transition="fade-transition"
-            style="width:200px;height:250px;"
-            class="pa-1"
+            style="width:210px;height:310px;"
+            class="pa-0 mx-3"
           >
             <v-scale-transition>
               <Collection :collection="collection"
@@ -72,16 +70,11 @@ export default {
 </script>
 
 <style>
-.collection-group {
-  overflow-x: scroll;
-  white-space: nowrap;
-}
-
 .v-slide-group__prev {
-display: none !important;
+  display: none !important;
 }
 .v-slide-group__next {
-display: none !important;
+  display: none !important;
 }
 .v-slide-group__wrapper {
   overflow-x: auto; /* Enables the horizontal scrollbar */
@@ -89,9 +82,13 @@ display: none !important;
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
 }
-.v-slide-group__wrapper::-webkit-scrollbar {
-   /* Chrome opera and Safari */
 
+.v-slide-group__wrapper::-webkit-scrollbar {
+  display: none;
+}
+/*
+FOR SCROLLBAR
+.v-slide-group__wrapper::-webkit-scrollbar {
   height: 4px;
 }
 
@@ -106,5 +103,6 @@ display: none !important;
 .v-slide-group__wrapper::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
+*/
 
 </style>
