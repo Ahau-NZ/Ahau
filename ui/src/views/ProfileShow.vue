@@ -42,7 +42,8 @@ import mapProfileMixins from '@/mixins/profile-mixins.js'
 
 import {
   mapActions,
-  mapGetters
+  mapGetters,
+  mapMutations
 } from 'vuex'
 
 export default {
@@ -62,6 +63,12 @@ export default {
     currentProfile (newVal) {
       if (newVal) {
         window.scrollTo(0, 0)
+      }
+    },
+    profile: {
+      deep: true,
+      handler (profile) {
+        this.updateCurrentProfile(profile)
       }
     }
   },
@@ -105,7 +112,8 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setDialog'])
+    ...mapActions(['setDialog']),
+    ...mapMutations(['updateCurrentProfile'])
   }
 }
 </script>
