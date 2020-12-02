@@ -26,7 +26,8 @@ export const PERMITTED_COLLECTION_ATTRS = [
   'type',
   'name',
   'description',
-  'recps'
+  'recps',
+  'submissionDate'
 ]
 
 // contains attrs with sub attrs

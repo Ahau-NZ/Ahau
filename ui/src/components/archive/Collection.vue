@@ -14,39 +14,33 @@
     >
       <v-card-title v-text="collection.name"></v-card-title>
     </v-img>
-    <v-card-subtitle class="py-2" v-text="collection.description"></v-card-subtitle>
-    <!-- <v-card-text class="pb-0"> -->
-      <!-- <v-row> -->
-        <!-- <v-col>
-          Records:
-        </v-col> -->
-          <!-- <v-row>
-            <div>
-              Records:
-            </div>
-          </v-row>
+    <v-card-text class="pb-0">
+      
+      <v-row class="pa-0">
+        <v-col cols="6" class="pa-0">
           <v-row>
-            <div>
+            <v-col cols="12" class="pa-0 pl-2">
+              Records
+            </v-col>
+            <v-col cols="12" class="pa-0 pt-2 pl-2">
               {{ stories }}
-            </div>
+            </v-col>
           </v-row>
-        </v-col> -->
-        <!-- <v-col class="small-text pr-6 pl-6 pb-0" cols="7">
-          <v-row justify="end">
-            <div>
-              Last submission:
-            </div>
-          </v-row>
-          <v-row justify="end">
-            <div>
+        </v-col>
+        <v-col cols="6" class="pa-0">
+          <v-row>
+            <v-col cols="12" class="pa-0 pr-2">
+              Last Submission
+            </v-col>
+            <v-col cols="12" class="pa-0 pt-2 pr-2">
               {{ submissionDate }}
-            </div>
+            </v-col>
           </v-row>
-        </v-col> -->
-      <!-- </v-row> -->
+        </v-col>
+      </v-row>
 
       <!-- <v-divider class="mt-2"/> -->
-    <!-- </v-card-text> -->
+    </v-card-text>
   </v-card>
 </template>
 
