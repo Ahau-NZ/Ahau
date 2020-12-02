@@ -10,30 +10,11 @@
         <v-col v-show="!showStory">
           <BigAddButton @click.native.stop="openContextMenu($event)" />
         </v-col>
-        <v-col v-show="!showStory" cols="10" class="sub-headliner black--text pa-0 pl-4 pt-2">
-          Collections
-        </v-col>
-        <v-col  v-show="!showStory" cols="12" class="pa-0 pl-3 pt-2">
+        <v-col v-show="!showStory">
           <CollectionGroup :collections="collections" @selectedIndex="index = $event" />
         </v-col>
         <v-col>
-          <v-expand-transition>
-            <v-sheet
-              light
-            >
-              <div
-                v-if="index != null"
-                class="fill-height fill-width"
-              >
-                <Stories :stories="[]" @save="saveStory($event)" :title="selectedCollection.name" />
-              </div>
-              <div v-else
-                class="fill-height fill-width"
-              >
-                <Stories :stories="stories" @save="saveStory($event)" title="Stories"/>
-              </div>
-            </v-sheet>
-          </v-expand-transition>
+          <Stories :stories="stories" @save="saveStory($event)" title="Stories"/>
         </v-col>
       </v-row>
       <ArchiveHelper v-if="showArchiveHelper" :show="showArchiveHelper" @close="toggleArchiveHelper" />
@@ -60,7 +41,7 @@
 
 <script>
 import Stories from '@/components/archive/Stories.vue'
-import { mapGetters, mapMutations } from 'vuex'
+import { mapGetters, mapMutations, mapActions } from 'vuex'
 import NewRecordDialog from '@/components/dialog/archive/NewRecordDialog.vue'
 import NewCollectionDialog from '@/components/dialog/archive/NewCollectionDialog.vue'
 import BigAddButton from '@/components/button/BigAddButton.vue'
@@ -131,11 +112,17 @@ export default {
   },
   methods: {
     ...mapMutations(['setStory']),
+    ...mapActions(['toggleShowStory', 'setDialog']),
     toggleArchiveHelper () {
       this.showArchiveHelper = !this.showArchiveHelper
     },
     openContextMenu ($event) {
       this.$refs.menu.open($event)
+    },
+    toggleStory (story) {
+      this.setStory(story)
+      this.toggleShowStory()
+      this.setDialog(null)
     }
   },
   watch: {
