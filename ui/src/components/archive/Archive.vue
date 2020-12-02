@@ -1,19 +1,19 @@
 <template>
   <div>
     <div class="px-2">
-      <div :class="{ 'showOverlay': showStory && !mobile }"></div>
-      <v-row v-if="!showStory" class="top-margin mb-10">
+      <div v-if="showStory" :class="{ 'showOverlay': showStory && !mobile }"></div>
+      <v-row class="top-margin mb-10">
         <v-col cols="10" class="headliner black--text pa-0 pl-4 pt-2 pb-5">
           Archive
           <v-icon color="blue-grey" light @click="toggleArchiveHelper" class="infoButton">mdi-information</v-icon>
         </v-col>
-        <v-col>
+        <v-col v-show="!showStory">
           <BigAddButton @click.native.stop="openContextMenu($event)" />
         </v-col>
-        <v-col cols="10" class="sub-headliner black--text pa-0 pl-4 pt-2">
+        <v-col v-show="!showStory" cols="10" class="sub-headliner black--text pa-0 pl-4 pt-2">
           Collections
         </v-col>
-        <v-col cols="12" class="pa-0 pl-3 pt-2">
+        <v-col  v-show="!showStory" cols="12" class="pa-0 pl-3 pt-2">
           <CollectionGroup :collections="collections" @selectedIndex="index = $event" />
         </v-col>
         <v-col>
@@ -126,7 +126,7 @@ export default {
   computed: {
     ...mapGetters(['showStory', 'whoami', 'currentTribe']),
     mobile () {
-      return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoing.sm
+      return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     }
   },
   methods: {
