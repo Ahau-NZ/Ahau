@@ -3,18 +3,18 @@
     <div class="px-2">
       <div :class="{ 'showOverlay': showStory && !mobile }"></div>
       <v-row v-if="!showStory" class="top-margin mb-10">
-        <v-col cols="10" class="headliner black--text pa-0 pl-4 pt-2">
-          Archive records
+        <v-col cols="10" class="headliner black--text pa-0 pl-4 pt-2 pb-5">
+          Archive
           <v-icon color="blue-grey" light @click="toggleArchiveHelper" class="infoButton">mdi-information</v-icon>
         </v-col>
         <v-col>
-          <BigAddButton @click="dialog = 'new-story'" />
+          <BigAddButton @click.native.stop="openContextMenu($event)" />
         </v-col>
         <v-col cols="10" class="sub-headliner black--text pa-0 pl-4 pt-2">
           Collections
         </v-col>
-        <v-col cols="12">
-          <CollectionGroup v-if="collections.length > 0" :collections="collections" @selectedIndex="index = $event" />
+        <v-col cols="12" class="pa-0 pl-3 pt-2">
+          <CollectionGroup :collections="collections" @selectedIndex="index = $event" />
         </v-col>
         <v-col>
           <v-expand-transition>
@@ -38,6 +38,15 @@
       </v-row>
       <ArchiveHelper v-if="showArchiveHelper" :show="showArchiveHelper" @close="toggleArchiveHelper" />
     </div>
+    <VueContext ref="menu" class="pa-4">
+    <li v-for="(option, index) in contextMenuOpts" :key="index">
+      <a href="#" @click.prevent="dialog = option.dialog" class="d-flex align-center px-4">
+        <v-icon light>{{ option.icon }}</v-icon>
+        <p class="ma-0 pl-3">{{ option.title }}</p>
+      </a>
+    </li>
+  </VueContext>
+
     <NewRecordDialog v-if="dialog === 'new-story'" :show="dialog === 'new-story'"
       :title="`Add record to ${ profile.preferredName || 'Untitled' }'s archive`" @close="dialog = null"
       @submit="saveStory($event)"
@@ -65,6 +74,8 @@ import mapCollectionMixins from '@/mixins/collection-mixins.js'
 
 import CollectionGroup from '@/components/archive/CollectionGroup.vue'
 
+import { VueContext } from 'vue-context'
+
 export default {
   name: 'Archive',
   mixins: [
@@ -86,7 +97,8 @@ export default {
     NewCollectionDialog,
     ArchiveHelper,
     BigAddButton,
-    CollectionGroup
+    CollectionGroup,
+    VueContext
   },
   data () {
     return {
@@ -98,13 +110,23 @@ export default {
       showNewCollection: false,
       collections: [],
       selectedCollection: null,
-      index: null
+      index: null,
+      contextMenuOpts: [{
+        title: 'Create a new Collection',
+        dialog: 'new-collection',
+        icon: 'mdi-folder-multiple-outline'
+      },
+      {
+        title: 'Add new record',
+        dialog: 'new-story',
+        icon: 'mdi-file-outline'
+      }]
     }
   },
   computed: {
     ...mapGetters(['showStory', 'whoami', 'currentTribe']),
     mobile () {
-      return this.$vuetify.breakpoint.xs
+      return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoing.sm
     }
   },
   methods: {
@@ -112,8 +134,8 @@ export default {
     toggleArchiveHelper () {
       this.showArchiveHelper = !this.showArchiveHelper
     },
-    openContextMenu (event) {
-      this.$refs.menu.open(event)
+    openContextMenu ($event) {
+      this.$refs.menu.open($event)
     }
   },
   watch: {

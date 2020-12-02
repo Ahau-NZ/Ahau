@@ -1,5 +1,11 @@
 <template>
-  <v-card max-width="250px" max-height="370px" class="collection ma-2" light @click="$emit('click')">
+  <v-card
+    max-width="250px"
+    max-height="370px"
+    class="collection ma-2"
+    light
+    @click="$emit('click')"
+  >
     <v-img
       :src="image"
       class="white--text align-end"
@@ -51,7 +57,7 @@ import niho from '@/assets/niho.svg'
 
 export default {
   name: 'Collection',
-  props: ['collection'],
+  props: ['collection', 'selected'],
   // components: { AvatarGroup },
   computed: {
     image () {

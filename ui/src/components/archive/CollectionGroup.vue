@@ -1,10 +1,10 @@
 <template>
-  <div>
+  <div class="pa-0">
     <v-slide-group
+      v-if="collections && collections.length > 0"
       v-model="model"
       dark
       center-active
-      show-arrows
       style="width:100vw;"
     >
       <v-slide-item
@@ -23,6 +23,12 @@
         </v-scale-transition>
       </v-slide-item>
     </v-slide-group>
+    <div v-else
+      class="px-8 subtitle-1 grey--text "
+      :class="{ 'text-center': mobile }"
+    >
+      No collections found
+    </div>
   </div>
 </template>
 
@@ -43,6 +49,11 @@ export default {
     model (index) {
       this.selectedCollection = this.collections[index]
       this.$emit('selectedIndex', index)
+    }
+  },
+  computed: {
+    mobile () {
+      return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     }
   }
 }

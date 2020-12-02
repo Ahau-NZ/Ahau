@@ -1,7 +1,5 @@
 import gql from 'graphql-tag'
 import pick from 'lodash.pick'
-import { ARTEFACT_FRAGMENT } from './artefact-helpers'
-import { PERSON_FRAGMENT } from './person-helpers'
 import clone from 'lodash.clonedeep'
 
 export function setDefaultCollection (newCollection) {
