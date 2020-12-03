@@ -89,8 +89,7 @@ export default {
       this.setDialog({ active: 'view-edit-node', type: 'preview' })
     },
     toggleNew (type) {
-      // this.$emit('new', type)
-      this.setDialog({ active: 'new-node', type: type, source: 'new-registration' })
+      this.setDialog({ active: 'new-node', type, source: 'new-registration' })
     }
   }
 }

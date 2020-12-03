@@ -113,7 +113,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setProfileById', 'setDialog', 'setCurrentTribe', 'setTribes']),
+    ...mapActions(['setTribes']),
     goTribe (tribe) {
       var profile = tribe.private.length > 0
         ? tribe.private[0]

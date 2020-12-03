@@ -127,7 +127,7 @@ import pick from 'lodash.pick'
 import isEqual from 'lodash.isequal'
 import isEmpty from 'lodash.isempty'
 import * as d3 from 'd3'
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters, mapActions, mapMutations } from 'vuex'
 
 import NewNodeDialog from '@/components/dialog/profile/NewNodeDialog.vue'
 import NewCommunityDialog from '@/components/dialog/community/NewCommunityDialog.vue'
@@ -154,6 +154,8 @@ import { saveLink } from '@/lib/link-helpers.js'
 import tree from '@/lib/tree-helpers'
 
 import findSuccessor from '@/lib/find-successor'
+
+import mapProfileMixins from '@/mixins/profile-mixins.js'
 
 export default {
   name: 'DialogHandler',
@@ -209,6 +211,12 @@ export default {
     setSelectedProfile: Function,
     getRelatives: Function
   },
+  mixins: [
+    mapProfileMixins({
+      mapApollo: ['tribe'],
+      mapMethods: ['getTribe']
+    })
+  ],
   data () {
     return {
       snackbar: false,
@@ -218,7 +226,8 @@ export default {
       registration: '',
       dialogType: '',
       parents: [],
-      parentIndex: null
+      parentIndex: null,
+      tribe: {}
     }
   },
   computed: {
@@ -256,6 +265,7 @@ export default {
     }
   },
   methods: {
+    ...mapMutations(['updateCurrentProfile', 'updateSelectedProfile']),
     ...mapActions(['setWhoami', 'updateNode', 'deleteNode', 'updatePartnerNode', 'addChild', 'addParent', 'loading', 'setDialog',
       'setProfileById', 'setCurrentTribe', 'setCurrentTribeById', 'setTribes'
     ]),
@@ -395,8 +405,14 @@ export default {
       if (res.errors) {
         console.error('failed to update community', res)
       } else {
-        this.setCurrentTribeById(res.data.savePrivate)
-        this.setProfileById({ id: res.data.savePrivate })
+        // get the updated tribe
+        const tribe = await this.getTribe(this.currentTribe.id)
+        this.setDialog(null)
+        this.setCurrentTribe(tribe)
+        // console.log(tribe)
+        this.updateCurrentProfile(tribe)
+        this.updateSelectedProfile(tribe)
+        this.$router.go()
       }
     },
     async savePerson (input) {

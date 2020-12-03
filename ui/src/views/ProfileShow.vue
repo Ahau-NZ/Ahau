@@ -11,7 +11,7 @@
         <h1 class="primary--text" :style="mobile ? length : ''">{{ profile.legalName ? profile.legalName : profile.preferredName }}</h1>
       </v-col>
       <v-col :order="mobile ? '2' : '3'" :align="mobile || tablet ? 'end' : isCommunity ? 'start':'center'" cols="12" :md="isCommunity ? 1:2" class="px-5">
-        <EditProfileButton v-if="profile.canEdit" @click="profile.type === 'person' ? setDialog('edit-node', 'this', 'this') : setDialog('edit-community')" />
+        <EditProfileButton v-if="profile.canEdit" @click="goEdit()" />
         <v-divider v-else class="py-5"></v-divider>
       </v-col>
     </v-row>
@@ -50,7 +50,7 @@ export default {
   name: 'ProfileShow',
   mixins: [
     mapProfileMixins({
-      mapApollo: ['profile']
+      mapApollo: ['profile', 'tribe']
     })
   ],
   components: {
@@ -59,36 +59,40 @@ export default {
     EditProfileButton
   },
   watch: {
-    // TODO: remove this later
-    currentProfile (newVal) {
-      if (newVal) {
-        if (!this.initial) this.$apollo.queries.profile.refresh()
-        window.scrollTo(0, 0)
+    tribe: {
+      deep: true,
+      handler (tribe) {
+        this.setCurrentTribe(tribe)
+        if (tribe && tribe.private && tribe.private.length > 0) {
+          this.updateCurrentProfile(tribe.private[0])
+          this.updateSelectedProfile(tribe.private[0])
+        } else {
+          tribe.updateCurrentProfile(tribe.public[0])
+          tribe.updateSelectedProfile(tribe.public[0])
+        }
+
+        if (this.profile.type === 'person') this.$apollo.queries.profile.refresh()
       }
     },
-    profile: {
+    // TODO: remove this later
+    currentProfile: {
       deep: true,
-      handler (profile) {
-        if (this.initial) {
-          this.updateCurrentProfile(profile)
-          this.updateSelectedProfile(profile)
-          if (profile.type === 'community') this.setCurrentTribeById(profile.id)
-          this.initial = false
+      handler (newVal) {
+        if (newVal) {
+          window.scrollTo(0, 0)
         }
       }
     }
   },
-  mounted () {
-    this.initial = true
-  },
   data () {
     return {
       profile: {},
-      initial: false
+      tribe: {},
+      editing: false
     }
   },
   computed: {
-    ...mapGetters(['currentProfile']),
+    ...mapGetters(['currentProfile', 'whoami']),
     isProfile () {
       return this.$route.name === 'person/profile' || this.$route.name === 'community/profile'
     },
@@ -121,8 +125,12 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setDialog', 'setCurrentTribeById']),
-    ...mapMutations(['updateCurrentProfile', 'updateSelectedProfile'])
+    ...mapActions(['setDialog', 'setCurrentTribe', 'setCurrentTribeById']),
+    ...mapMutations(['updateCurrentProfile', 'updateSelectedProfile', 'updateCurrentTribe']),
+    goEdit () {
+      if (this.profile.type === 'person') this.setDialog('edit-node', 'this', 'this')
+      else this.setDialog('edit-community')
+    }
   }
 }
 </script>

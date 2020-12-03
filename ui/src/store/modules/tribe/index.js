@@ -30,6 +30,8 @@ const mutations = {
 
 const actions = {
   async setCurrentTribe ({ commit }, tribe) {
+    if (!tribe || !tribe.id) return
+
     const authors = await apollo.query(
       getMembers(tribe.id)
     )
@@ -46,16 +48,22 @@ const actions = {
     commit('updateCurrentTribe', whanau)
   },
   async setTribes ({ commit }) {
-    const tribes = await apollo.query(getTribes)
-    if (tribes.errors) {
-      console.error('failed to get tribes', tribes)
-      return
+    let tribes
+    try {
+      tribes = await apollo.query(getTribes)
+
+      if (tribes.errors) throw tribes.errors
+
+      commit('updateTribes', tribes.data.tribes)
+    } catch (err) {
+      console.error('Failed to get tribes', tribes)
     }
-    commit('updateTribes', tribes.data.tribes)
   },
   async setCurrentTribeById ({ dispatch, rootState }, id) {
     await dispatch('setTribes')
-    var tribe = rootState.tribe.tribes.filter(tribe => tribe.private.length > 0).find(tribe => tribe.private[0].id === id)
+    var tribe = rootState.tribe.tribes
+      .filter(tribe => tribe.private.length > 0)
+      .find(tribe => tribe.private[0].id === id)
     dispatch('setCurrentTribe', tribe)
   }
 }

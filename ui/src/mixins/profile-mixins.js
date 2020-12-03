@@ -74,9 +74,19 @@ const apollo = {
     }
   },
   tribe () {
+    if (!this.whoami) throw new Error('tribe mixin requires whoami')
     return {
       skip () {
-        return this.$route.params.tribeId === this.whoami.personal.groupId
+        if (this.$route.name === 'login' || this.$route.name === 'tribe') return true
+        if (this.$route.params.tribeId === this.whoami.personal.groupId) {
+          this.tribe = {
+            id: this.whoami.personal.groupId,
+            public: [this.whoami.public.profile],
+            private: [this.whoami.personal.profile]
+          }
+          return true
+        }
+        return false
       },
       ...getTribe,
       variables () {
@@ -84,11 +94,7 @@ const apollo = {
           id: this.$route.params.tribeId
         }
       },
-      error: err => console.error('Error getting tribe', err),
-      update ({ tribe }) {
-        if (tribe.private.length > 0) return { groupId: tribe.id, ...tribe.private[0] }
-        return { groupId: tribe.id, ...tribe.public[0] }
-      }
+      error: err => console.error('Error getting tribe', err)
     }
   }
 }
@@ -112,12 +118,8 @@ const methods = {
 
       if (res.errors) throw res.errors
 
-      const tribe = res.data.tribe
-
-      return {
-        id: tribe.id,
-        ...(tribe.private.length > 0 ? tribe.private[0] : tribe.public[0])
-      }
+      // const tribe = res.data.tribe
+      return res.data.tribe
     } catch (err) {
       console.error('Something went wrong while fetching tribe: ', id)
       console.error(err)
