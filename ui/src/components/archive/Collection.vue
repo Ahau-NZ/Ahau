@@ -4,7 +4,7 @@
     max-height="310px"
     light
     class="pa-0 ma-1 "
-    @click="$emit('click')"
+    :to="goCollectionShow()"
   >
     <v-img
       :src="image"
@@ -54,6 +54,16 @@ export default {
     },
     submissionDate () {
       return formatSubmissionDate(this.collection.submissionDate)
+    }
+  },
+  methods: {
+    goCollectionShow () {
+      return {
+        name: this.$route.name + '/:collectionId',
+        params: {
+          collectionId: this.collection.id
+        }
+      }
     }
   }
 }

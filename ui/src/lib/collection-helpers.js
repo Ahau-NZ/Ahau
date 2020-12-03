@@ -59,7 +59,9 @@ export const getCollection = id => ({
       }
     }
   `,
-  variables: { id },
+  variables () {
+    return { id }
+  },
   fetchPolicy: 'no-cache'
 })
 
