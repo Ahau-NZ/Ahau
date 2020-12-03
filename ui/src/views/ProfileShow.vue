@@ -21,7 +21,7 @@
         <SideNavMenu  :profile="profile" />
       </v-col>
       <!-- Content -->
-      <v-col cols="12" xs="12" sm="12" md="10" lg="80p" :class="mobile ? 'px-6 py-0' : 'pl-0 py-0'">
+      <v-col cols="12" xs="12" sm="12" :md="isWhakapapaShow ? '12' : '10'" :lg="isWhakapapaShow ? '100p' : '80p'" :class="mobile ? 'px-6 py-0' : 'pl-0 py-0'">
         <transition
           name="fade"
           mode="out-in"

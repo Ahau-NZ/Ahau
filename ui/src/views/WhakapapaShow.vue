@@ -112,7 +112,7 @@
         </div>
         <div class="icon-button">
           <v-btn fab x-small light @click.stop="togglePan(-200)">
-            <v-icon>mdi-arrow-right</v-icon>
+            <v-icon>mdi-sort</v-icon>
           </v-btn>
         </div>
       </v-row>
