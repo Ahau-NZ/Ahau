@@ -130,19 +130,21 @@
         :focus="focus"
         :searchNodeId="searchNodeId"
       />
-      <Table
-        v-if="whakapapa.table"
-        ref="table"
-        :filter="filter"
-        :flatten="flatten"
-        :view="whakapapaView"
-        :nestedWhakapapa="nestedWhakapapa"
-        :relationshipLinks="relationshipLinks"
-        @load-descendants="loadDescendants($event)"
-        @collapse-node="collapseNode($event)"
-        @open-context-menu="openContextMenu($event)"
-        :searchNodeId="searchNodeId"
-      />
+      <div class="whakapapa-table">
+        <Table
+          v-if="whakapapa.table"
+          ref="table"
+          :filter="filter"
+          :flatten="flatten"
+          :view="whakapapaView"
+          :nestedWhakapapa="nestedWhakapapa"
+          :relationshipLinks="relationshipLinks"
+          @load-descendants="loadDescendants($event)"
+          @collapse-node="collapseNode($event)"
+          @open-context-menu="openContextMenu($event)"
+          :searchNodeId="searchNodeId"
+        />
+      </div>
     </v-container>
 
     <vue-context ref="menu" class="px-0">
@@ -758,6 +760,11 @@ h1 {
 
 #create .v-btn--floating {
   position: relative;
+}
+
+.whakapapa-table {
+  overflow: auto;
+  width: 100%;
 }
 
 </style>
