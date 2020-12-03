@@ -127,8 +127,13 @@ export default {
       nodeRadius: 20, // use variable for zoom later on
       nodeSize: 40,
       duration: 400,
+
+      // The following variables are for sorting fields
+      // 0 = no sort, 1 = sort ascending, 2 = sort descending
       sortNames: 0,
-      sortAge: 0
+      sortAge: 0,
+      sortProfession: 0,
+      sortLocation: 0
     }
   },
   mounted () {
@@ -202,6 +207,40 @@ export default {
             if (this.sortAge === 2) {
               if (aAge > bAge) { return -1 }
               if (aAge < bAge) { return 1 }
+              return 0
+            }
+          }
+        })
+        // sort by profession
+        .sort((a, b) => {
+          if (this.sortProfession !== 0) {
+            const aProfession = a.data.profession.toLowerCase()
+            const bProfession = b.data.profession.toLowerCase()
+            if (this.sortProfession === 1) {
+              if (aProfession < bProfession) { return -1 }
+              if (aProfession > bProfession) { return 1 }
+              return 0
+            }
+            if (this.sortProfession === 2) {
+              if (aProfession > bProfession) { return -1 }
+              if (aProfession < bProfession) { return 1 }
+              return 0
+            }
+          }
+        })
+        // sort by location
+        .sort((a, b) => {
+          if (this.sortLocation !== 0) {
+            const aLocation = a.data.location.toLowerCase()
+            const bLocation = b.data.location.toLowerCase()
+            if (this.sortLocation === 1) {
+              if (aLocation < bLocation) { return -1 }
+              if (aLocation > bLocation) { return 1 }
+              return 0
+            }
+            if (this.sortLocation === 2) {
+              if (aLocation > bLocation) { return -1 }
+              if (aLocation < bLocation) { return 1 }
               return 0
             }
           }
@@ -390,15 +429,17 @@ export default {
     },
 
     toggleSort (value) {
+      // sort by name
       if (value === 'Legal Name') {
+        this.sortAge = 0
+        this.sortLocation = 0
+        this.sortProfession = 0
         switch (this.sortNames) {
           case 0:
             this.sortNames = 1
-            this.sortAge = 0
             break
           case 1:
             this.sortNames = 2
-            this.sortAge = 0
             break
           case 2:
             this.sortNames = 0
@@ -407,21 +448,61 @@ export default {
             this.sortNames = 0
         }
       }
+      // sort by age
       if (value === 'Age') {
+        this.sortNames = 0
+        this.sortLocation = 0
+        this.sortProfession = 0
         switch (this.sortAge) {
           case 0:
             this.sortAge = 1
-            this.sortNames = 0
             break
           case 1:
             this.sortAge = 2
-            this.sortNames = 0
             break
           case 2:
             this.sortAge = 0
             break
           default:
             this.sortAge = 0
+        }
+      }
+      // sort by profession
+      if (value === 'Profession') {
+        this.sortNames = 0
+        this.sortAge = 0
+        this.sortLocation = 0
+        switch (this.sortProfession) {
+          case 0:
+            this.sortProfession = 1
+            break
+          case 1:
+            this.sortProfession = 2
+            break
+          case 2:
+            this.sortProfession = 0
+            break
+          default:
+            this.sortProfession = 0
+        }
+      }
+      // sort by location
+      if (value === 'City, Country') {
+        this.sortNames = 0
+        this.sortAge = 0
+        this.sortProfession = 0
+        switch (this.sortLocation) {
+          case 0:
+            this.sortLocation = 1
+            break
+          case 1:
+            this.sortLocation = 2
+            break
+          case 2:
+            this.sortLocation = 0
+            break
+          default:
+            this.sortLocation = 0
         }
       }
     }
