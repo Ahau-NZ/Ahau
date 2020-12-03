@@ -104,19 +104,6 @@
         </v-speed-dial>
       </v-card>
 
-      <v-row v-if="whakapapa.table && overflow" :class="mobile ? 'navigateMobile' : 'navigate'">
-        <div class="icon-button">
-          <v-btn fab x-small light @click="togglePan(200)">
-            <v-icon>mdi-arrow-left</v-icon>
-          </v-btn>
-        </div>
-        <div class="icon-button">
-          <v-btn fab x-small light @click.stop="togglePan(-200)">
-            <v-icon>mdi-sort</v-icon>
-          </v-btn>
-        </div>
-      </v-row>
-
       <Tree
         :class="mobile? 'mobile-tree':'tree'"
         v-if="whakapapa.tree"
@@ -379,9 +366,6 @@ export default {
     tableOverflow (width) {
       var show = width > screen.width
       this.overflow = show
-    },
-    togglePan (x) {
-      this.$refs.table.panAction(x)
     },
     clickedOff () {
       this.search = !this.search
