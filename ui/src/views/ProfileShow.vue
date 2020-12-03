@@ -26,7 +26,7 @@
           name="fade"
           mode="out-in"
        >
-        <router-view :key="profile.id"></router-view>
+        <router-view :key="JSON.stringify(profile)"></router-view>
       </transition>
       </v-col>
     </v-row>
@@ -62,24 +62,33 @@ export default {
     // TODO: remove this later
     currentProfile (newVal) {
       if (newVal) {
+        if (!this.initial) this.$apollo.queries.profile.refresh()
         window.scrollTo(0, 0)
       }
     },
     profile: {
       deep: true,
       handler (profile) {
-        this.updateCurrentProfile(profile)
+        if (this.initial) {
+          this.updateCurrentProfile(profile)
+          this.updateSelectedProfile(profile)
+          if (profile.type === 'community') this.setCurrentTribeById(profile.id)
+          this.initial = false
+        }
       }
     }
+  },
+  mounted () {
+    this.initial = true
   },
   data () {
     return {
       profile: {},
-      prevHeight: 0,
-      loaded: false
+      initial: false
     }
   },
   computed: {
+    ...mapGetters(['currentProfile']),
     isProfile () {
       return this.$route.name === 'person/profile' || this.$route.name === 'community/profile'
     },
@@ -112,8 +121,8 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setDialog']),
-    ...mapMutations(['updateCurrentProfile'])
+    ...mapActions(['setDialog', 'setCurrentTribeById']),
+    ...mapMutations(['updateCurrentProfile', 'updateSelectedProfile'])
   }
 }
 </script>
