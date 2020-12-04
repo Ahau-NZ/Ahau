@@ -130,7 +130,7 @@ export default {
 
       // The following variables are for sorting fields
       // 0 = no sort, 1 = sort ascending, 2 = sort descending
-      sortNames: 0,
+      sortLegalName: 0,
       sortAge: 0,
       sortProfession: 0,
       sortLocation: 0
@@ -179,15 +179,15 @@ export default {
         .descendants()
         // sort by preferred name
         .sort((a, b) => {
-          if (this.sortNames !== 0) {
-            const aName = a.data.preferredName.toLowerCase()
-            const bName = b.data.preferredName.toLowerCase()
-            if (this.sortNames === 1) {
+          if (this.sortLegalName !== 0) {
+            const aName = a.data.preferredName.toLowerCase() + a.data.legalName.toLowerCase()
+            const bName = b.data.preferredName.toLowerCase() + b.data.legalName.toLowerCase()
+            if (this.sortLegalName === 1) {
               if (aName < bName) { return -1 }
               if (aName > bName) { return 1 }
               return 0
             }
-            if (this.sortNames === 2) {
+            if (this.sortLegalName === 2) {
               if (aName > bName) { return -1 }
               if (aName < bName) { return 1 }
               return 0
@@ -434,23 +434,23 @@ export default {
         this.sortAge = 0
         this.sortLocation = 0
         this.sortProfession = 0
-        switch (this.sortNames) {
+        switch (this.sortLegalName) {
           case 0:
-            this.sortNames = 1
+            this.sortLegalName = 1
             break
           case 1:
-            this.sortNames = 2
+            this.sortLegalName = 2
             break
           case 2:
-            this.sortNames = 0
+            this.sortLegalName = 0
             break
           default:
-            this.sortNames = 0
+            this.sortLegalName = 0
         }
       }
       // sort by age
       if (value === 'Age') {
-        this.sortNames = 0
+        this.sortLegalName = 0
         this.sortLocation = 0
         this.sortProfession = 0
         switch (this.sortAge) {
@@ -469,7 +469,7 @@ export default {
       }
       // sort by profession
       if (value === 'Profession') {
-        this.sortNames = 0
+        this.sortLegalName = 0
         this.sortAge = 0
         this.sortLocation = 0
         switch (this.sortProfession) {
@@ -488,7 +488,7 @@ export default {
       }
       // sort by location
       if (value === 'City, Country') {
-        this.sortNames = 0
+        this.sortLegalName = 0
         this.sortAge = 0
         this.sortProfession = 0
         switch (this.sortLocation) {

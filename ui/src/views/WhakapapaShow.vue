@@ -41,6 +41,9 @@
           <SearchButton :search.sync="search"/>
         </div>
         <div v-if="whakapapa.table && flatten" class="icon-button">
+          <SortButton @click="sortTable()" />
+        </div>
+        <div v-if="whakapapa.table && flatten" class="icon-button">
           <FilterButton :filter="filter" @filter="toggleFilter()" />
         </div>
         <div v-if="whakapapa.table" class="icon-button">
@@ -84,6 +87,9 @@
           </div>
           <div v-else  class="icon-button">
             <SearchButton  @click.stop :search.sync="search"/>
+          </div>
+          <div v-if="whakapapa.table && flatten" class="icon-button">
+            <SortButton @sort="sortTable()" />
           </div>
           <div v-if="whakapapa.table && flatten" class="icon-button">
             <FilterButton :filter="filter" @filter="toggleFilter()" />
@@ -203,6 +209,7 @@ import TableButton from '@/components/button/TableButton.vue'
 import HelpButton from '@/components/button/HelpButton.vue'
 import FlattenButton from '@/components/button/FlattenButton.vue'
 import FilterButton from '@/components/button/FilterButton.vue'
+import SortButton from '@/components/button/SortButton.vue'
 
 import SearchBar from '@/components/button/SearchBar.vue'
 import SearchButton from '@/components/button/SearchButton.vue'
@@ -225,6 +232,7 @@ export default {
     HelpButton,
     FlattenButton,
     FilterButton,
+    SortButton,
     SearchBar,
     SearchButton,
     FeedbackButton,
@@ -654,6 +662,9 @@ export default {
     },
     getImage () {
       return avatarHelper.defaultImage(this.aliveInterval, this.gender)
+    },
+    sortTable () {
+      console.log('sorting in whakapapa view')
     }
   },
   destroyed () {
