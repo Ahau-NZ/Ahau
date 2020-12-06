@@ -1,6 +1,7 @@
 import { getProfile } from '@/lib/person-helpers.js'
 import { getTribe } from '@/lib/community-helpers.js'
 import tree from '@/lib/tree-helpers.js'
+import gql from 'graphql-tag'
 
 export default function mapProfileMixins ({ mapMethods, mapApollo }) {
   var customMixin = {}
@@ -136,7 +137,28 @@ const methods = {
 
       return res.data.person
     } catch (err) {
-      console.error('Something went wrong while fetching profile: ', id)
+      console.error('Something went wrong while fetching the profile: ', id)
+      console.error(err)
+    }
+  },
+  // method to save a profile (community or person) using apollo
+  async saveProfile ($event) {
+    try {
+      const res = await this.$apollo.mutate({
+        mutation: gql`
+          mutation($input: ProfileInput!) {
+            saveProfile(input: $input)
+          }
+        `,
+        variables: {
+          input: $event
+        }
+      })
+
+      if (res.errors) throw res.errors
+      // dont need to return anything for now...
+    } catch (err) {
+      console.error('Something went wrong while saving the profile: ', $event)
       console.error(err)
     }
   }

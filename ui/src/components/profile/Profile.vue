@@ -71,7 +71,6 @@ import ProfileInfoItem from '@/components/profile/ProfileInfoItem.vue'
 import ProfileCard from '@/components/profile/ProfileCard.vue'
 import Avatar from '@/components/Avatar.vue'
 import { mapGetters, mapActions } from 'vuex'
-import mapProfileMixins from '@/mixins/profile-mixins.js'
 
 export default {
   name: 'Profile',
@@ -81,17 +80,8 @@ export default {
     ProfileInfoItem,
     Avatar
   },
-  mixins: [
-    mapProfileMixins({
-      mapApollo: ['profile']
-    })
-  ],
-  data () {
-    return {
-      profile: {
-        type: 'community'
-      }
-    }
+  props: {
+    profile: Object
   },
   beforeMount () {
     window.scrollTo(0, 0)

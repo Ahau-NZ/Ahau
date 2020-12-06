@@ -8,7 +8,7 @@
     />
     <v-row v-if="isProfile">
       <v-col cols="12" offset-md="2" md="8" sm="12" :class="!mobile ? 'pl-12' : 'pt-0 mt-n3' " :align="mobile ? 'center' : 'start'" :order="mobile ? '3' : '1'">
-        <h1 class="primary--text" :style="mobile ? length : ''">{{ profile.legalName ? profile.legalName : profile.preferredName }}</h1>
+        <h1 class="primary--text" :style="mobile ? length : ''">{{ title }}</h1>
       </v-col>
       <v-col :order="mobile ? '2' : '3'" :align="mobile || tablet ? 'end' : isCommunity ? 'start':'center'" cols="12" :md="isCommunity ? 1:2" class="px-5">
         <EditProfileButton v-if="profile.canEdit" @click="goEdit()" />
@@ -18,7 +18,7 @@
     <v-row>
       <!-- SideNav -->
       <v-col  v-if="!hideNav && !isWhakapapaShow" cols="12" xs="12" sm="12" md="2" lg="20p" :class="!mobile ? 'pr-0' : 'px-5 py-0'">
-        <SideNavMenu  :profile="profile" />
+        <SideNavMenu :profile="profile" />
       </v-col>
       <!-- Content -->
       <v-col cols="12" xs="12" sm="12" md="10" lg="80p" :class="mobile ? 'px-6 py-0' : 'pl-0 py-0'">
@@ -26,11 +26,27 @@
           name="fade"
           mode="out-in"
        >
-        <router-view :key="JSON.stringify(profile)"></router-view>
+        <router-view :key="JSON.stringify(profile)" :profile="profile"></router-view>
       </transition>
       </v-col>
     </v-row>
     <v-spacer v-if="!mobile" style="height:200px"></v-spacer>
+    <EditCommunityDialog
+      v-if="dialog === 'edit-community'"
+      :show="dialog === 'edit-community'"
+      :title="`Edit ${profile.preferredName}`"
+      @submit="updateCommunity"
+      @close="dialog = null"
+      :profile="profile"
+    />
+    <EditNodeDialog
+      v-if="dialog === 'edit-node'"
+      :show="dialog === 'edit-node'"
+      :title="`Edit ${profile.preferredName}`"
+      @submit="updatePerson"
+      @close="dialog = null"
+      :profile="profile"
+    />
   </v-container>
 </template>
 
@@ -39,6 +55,11 @@ import SideNavMenu from '@/components/menu/SideNavMenu.vue'
 import Header from '@/components/profile/Header.vue'
 import EditProfileButton from '@/components/button/EditProfileButton.vue'
 import mapProfileMixins from '@/mixins/profile-mixins.js'
+
+import EditCommunityDialog from '@/components/dialog/community/EditCommunityDialog.vue'
+import EditNodeDialog from '@/components/dialog/profile/EditNodeDialog.vue'
+
+import { updateTribe } from '@/lib/community-helpers.js'
 
 import {
   mapActions,
@@ -50,49 +71,31 @@ export default {
   name: 'ProfileShow',
   mixins: [
     mapProfileMixins({
-      mapApollo: ['profile', 'tribe']
+      mapApollo: ['profile', 'tribe'],
+      mapMethods: ['saveProfile']
     })
   ],
   components: {
     SideNavMenu,
     Header,
-    EditProfileButton
-  },
-  watch: {
-    tribe: {
-      deep: true,
-      handler (tribe) {
-        this.setCurrentTribe(tribe)
-        if (tribe && tribe.private && tribe.private.length > 0) {
-          this.updateCurrentProfile(tribe.private[0])
-          this.updateSelectedProfile(tribe.private[0])
-        } else {
-          tribe.updateCurrentProfile(tribe.public[0])
-          tribe.updateSelectedProfile(tribe.public[0])
-        }
-
-        if (this.profile.type === 'person') this.$apollo.queries.profile.refresh()
-      }
-    },
-    // TODO: remove this later
-    currentProfile: {
-      deep: true,
-      handler (newVal) {
-        if (newVal) {
-          window.scrollTo(0, 0)
-        }
-      }
-    }
+    EditProfileButton,
+    EditCommunityDialog,
+    EditNodeDialog
   },
   data () {
     return {
       profile: {},
       tribe: {},
-      editing: false
+      editing: false,
+      dialog: null
     }
   },
   computed: {
-    ...mapGetters(['currentProfile', 'whoami']),
+    ...mapGetters(['whoami']),
+    title () {
+      if (this.profile.legalName) return this.profile.legalName
+      else return this.profile.preferredName
+    },
     isProfile () {
       return this.$route.name === 'person/profile' || this.$route.name === 'community/profile'
     },
@@ -128,8 +131,35 @@ export default {
     ...mapActions(['setDialog', 'setCurrentTribe', 'setCurrentTribeById']),
     ...mapMutations(['updateCurrentProfile', 'updateSelectedProfile', 'updateCurrentTribe']),
     goEdit () {
-      if (this.profile.type === 'person') this.setDialog('edit-node', 'this', 'this')
-      else this.setDialog('edit-community')
+      if (this.profile.type === 'person') this.dialog = 'edit-node'
+      else this.dialog = 'edit-community'
+    },
+    async updateCommunity ($event) {
+      try {
+        const res = await this.$apollo.mutate(
+          updateTribe(this.tribe, $event)
+        )
+
+        if (res.errors) throw res.errors
+
+        this.dialog = null
+        this.refresh()
+      } catch (err) {
+        console.error('Something went wrong while saving a tribe')
+        console.error(err)
+      }
+    },
+    async updatePerson ($event) {
+      // attach the id to the input
+      const input = { id: this.profile.id, ...$event }
+      await this.saveProfile(input)
+      this.dialog = null
+      this.refresh()
+    },
+    refresh () {
+      // tell apollo to refresh the current tribe and profile queries
+      this.$apollo.queries.tribe.refetch()
+      this.$apollo.queries.profile.refetch()
     }
   }
 }

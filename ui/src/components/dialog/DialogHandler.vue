@@ -20,15 +20,6 @@
       @create="setupNewCommunity($event)"
       @close="close"
     />
-    <EditCommunityDialog
-      v-if="isActive('edit-community')"
-      :show="isActive('edit-community')"
-      :title="`Edit ${currentProfile.preferredName}`"
-      @delete="toggleDialog('delete-community', null, 'edit-community')"
-      @submit="updateCommunity($event)"
-      @close="close"
-      :selectedProfile="currentProfile"
-    />
     <DeleteCommunityDialog
       v-if="isActive('delete-community')"
       :show="isActive('delete-community')"
@@ -195,7 +186,7 @@ export default {
       required: false,
       default: null,
       validator: (val) => [
-        'edit-community', 'new-community', 'new-node', 'view-edit-node', 'delete-node', 'new-collection', 'new-story', 'edit-story', 'edit-node', 'delete-story',
+        'new-community', 'new-node', 'view-edit-node', 'delete-node', 'new-collection', 'new-story', 'edit-story', 'edit-node', 'delete-story',
         'whakapapa-view', 'whakapapa-edit', 'whakapapa-delete', 'whakapapa-helper', 'whakapapa-table-helper', 'new-registration'
       ].includes(val)
     },
@@ -395,24 +386,6 @@ export default {
         console.error(err)
         // is this the right place for this?
         this.confirmationAlert('Failed to create private group. Please contact us if this continues to happen', err)
-      }
-    },
-    async updateCommunity ($event) {
-      const res = await this.$apollo.mutate(
-        updateTribe(this.currentTribe, $event)
-      )
-
-      if (res.errors) {
-        console.error('failed to update community', res)
-      } else {
-        // get the updated tribe
-        const tribe = await this.getTribe(this.currentTribe.id)
-        this.setDialog(null)
-        this.setCurrentTribe(tribe)
-        // console.log(tribe)
-        this.updateCurrentProfile(tribe)
-        this.updateSelectedProfile(tribe)
-        this.$router.go()
       }
     },
     async savePerson (input) {
