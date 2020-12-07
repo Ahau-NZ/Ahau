@@ -283,18 +283,45 @@ export async function callGetTribe (profileId) {
 
 export const getTribe = ({
   query: gql`
+    ${PUBLIC_PROFILE_FRAGMENT}
     query($id: String!) {
       tribe (id: $id){
         id 
         private {
           id
           preferredName
-          avatarImage { uri }
+          description
+          avatarImage {
+            uri
+          }
+          description
+          headerImage {
+            uri
+          }
+          tombstone {
+            date
+          }
+          tiaki {
+            ...PublicProfileFragment
+          }
         }
         public {
-          id 
+          id
           preferredName
-          avatarImage { uri }
+          description
+          avatarImage {
+            uri
+          }
+          description
+          headerImage {
+            uri
+          }
+          tombstone {
+            date
+          }
+          tiaki {
+            ...PublicProfileFragment
+          }
         }
       }
     }

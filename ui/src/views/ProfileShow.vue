@@ -31,10 +31,15 @@
       </v-col>
     </v-row>
     <v-spacer v-if="!mobile" style="height:200px"></v-spacer>
+    <ConfirmationText
+      :show="snackbar"
+      :message="confirmationText"
+    />
     <EditCommunityDialog
       v-if="dialog === 'edit-community'"
       :show="dialog === 'edit-community'"
       :title="`Edit ${profile.preferredName}`"
+      @delete="dialog = 'delete-community'"
       @submit="updateCommunity"
       @close="dialog = null"
       :profile="profile"
@@ -47,22 +52,30 @@
       @close="dialog = null"
       :profile="profile"
     />
+    <DeleteCommunityDialog
+      v-if="dialog === 'delete-community'"
+      :show="dialog === 'delete-community'"
+      @submit="deleteCommunity"
+      @close="dialog = 'edit-community'"
+    />
   </v-container>
 </template>
 
 <script>
+import isEmpty from 'lodash.isempty'
+
 import SideNavMenu from '@/components/menu/SideNavMenu.vue'
 import Header from '@/components/profile/Header.vue'
 import EditProfileButton from '@/components/button/EditProfileButton.vue'
 import mapProfileMixins from '@/mixins/profile-mixins.js'
 
 import EditCommunityDialog from '@/components/dialog/community/EditCommunityDialog.vue'
+import DeleteCommunityDialog from '@/components/dialog/community/DeleteCommunityDialog.vue'
 import EditNodeDialog from '@/components/dialog/profile/EditNodeDialog.vue'
-
-import { updateTribe } from '@/lib/community-helpers.js'
+import ConfirmationText from '@/components/dialog/ConfirmationText.vue'
+import { updateTribe, deleteTribe } from '@/lib/community-helpers.js'
 
 import {
-  mapActions,
   mapGetters,
   mapMutations
 } from 'vuex'
@@ -80,18 +93,25 @@ export default {
     Header,
     EditProfileButton,
     EditCommunityDialog,
-    EditNodeDialog
+    DeleteCommunityDialog,
+    EditNodeDialog,
+    ConfirmationText
   },
   data () {
     return {
       profile: {},
       tribe: {},
       editing: false,
-      dialog: null
+      dialog: null,
+      snackbar: false,
+      confirmationText: null,
+      parents: [],
+      parentIndex: null,
+      dialogType: null
     }
   },
   computed: {
-    ...mapGetters(['whoami']),
+    ...mapGetters(['whoami', 'showStory', 'showArtefact', 'currentNotification']),
     title () {
       if (this.profile.legalName) return this.profile.legalName
       else return this.profile.preferredName
@@ -102,7 +122,6 @@ export default {
     isWhakapapaShow () {
       return this.$route.name === 'person/whakapapa/:whakapapaId' || this.$route.name === 'community/whakapapa/:whakapapaId'
     },
-    ...mapGetters(['showStory', 'showArtefact']),
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
@@ -110,7 +129,6 @@ export default {
       return this.$vuetify.breakpoint.md
     },
     isCommunity () {
-      // TODO - only viewable by kaitiaki
       return this.profile.type === 'community'
     },
     length () {
@@ -128,13 +146,28 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setDialog', 'setCurrentTribe', 'setCurrentTribeById']),
-    ...mapMutations(['updateCurrentProfile', 'updateSelectedProfile', 'updateCurrentTribe']),
+    ...mapMutations(['showAlert', 'updateCurrentProfile', 'updateSelectedProfile', 'updateCurrentTribe']),
     goEdit () {
       if (this.profile.type === 'person') this.dialog = 'edit-node'
       else this.dialog = 'edit-community'
     },
+
+    confirmationAlert (message) {
+      this.confirmationText = message
+      this.snackbar = true
+
+      setTimeout(() => {
+        this.confirmationText = null
+        this.snackbar = false
+      }, 3000)
+    },
+    // TOTO if these need to be used elsewhere, move to a mixin
     async updateCommunity ($event) {
+      if (isEmpty($event)) {
+        this.confirmationAlert('No changes submitted')
+        this.closeDialog()
+      }
+
       try {
         const res = await this.$apollo.mutate(
           updateTribe(this.tribe, $event)
@@ -142,19 +175,44 @@ export default {
 
         if (res.errors) throw res.errors
 
-        this.dialog = null
+        this.closeDialog()
         this.refresh()
+        this.confirmationAlert('Successfully updated the community')
       } catch (err) {
-        console.error('Something went wrong while saving a tribe')
+        const message = 'Something went wrong when saving the tribe'
+        console.error(message, this.tribe)
         console.error(err)
+        this.confirmationAlert(message)
+        this.closeDialog()
       }
     },
     async updatePerson ($event) {
       // attach the id to the input
       const input = { id: this.profile.id, ...$event }
       await this.saveProfile(input)
-      this.dialog = null
+      this.closeDialog()
       this.refresh()
+      this.confirmationAlert('Successfully updated the profile')
+    },
+    async deleteCommunity () {
+      try {
+        const res = await this.$apollo.mutate(
+          deleteTribe(this.tribe)
+        )
+
+        if (res.errors) throw res.errors
+        this.confirmationAlert('community successfully deleted')
+        this.$router.push('/tribe').catch(() => {})
+      } catch (err) {
+        const message = 'Something went wrong while trying to delete the community'
+        console.error(message, this.tribe.id)
+        console.error(err)
+        this.confirmationAlert(message)
+        this.dialog = 'edit-community'
+      }
+    },
+    closeDialog () {
+      this.dialog = null
     },
     refresh () {
       // tell apollo to refresh the current tribe and profile queries
