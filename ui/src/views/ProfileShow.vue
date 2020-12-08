@@ -26,7 +26,7 @@
           name="fade"
           mode="out-in"
        >
-        <router-view :key="JSON.stringify(profile)" :profile="profile"></router-view>
+        <router-view :key="JSON.stringify(profile)" :profile="profile" :tribe="tribe"></router-view>
       </transition>
       </v-col>
     </v-row>
@@ -73,7 +73,7 @@ import EditCommunityDialog from '@/components/dialog/community/EditCommunityDial
 import DeleteCommunityDialog from '@/components/dialog/community/DeleteCommunityDialog.vue'
 import EditNodeDialog from '@/components/dialog/profile/EditNodeDialog.vue'
 import ConfirmationText from '@/components/dialog/ConfirmationText.vue'
-import { updateTribe, deleteTribe } from '@/lib/community-helpers.js'
+import { updateTribe, deleteTribe, getMembers } from '@/lib/community-helpers.js'
 
 import {
   mapGetters,
@@ -108,6 +108,25 @@ export default {
       parents: [],
       parentIndex: null,
       dialogType: null
+    }
+  },
+  watch: {
+    tribe: {
+      deep: true,
+      async handler (tribe) {
+        if (!tribe.id) return
+        try {
+          const res = await this.$apollo.query(getMembers(tribe.id))
+          if (res.errors) throw res.errors
+
+          this.tribe.members = res.data.listGroupAuthors
+        } catch (err) {
+          const message = 'Something went wrong while trying to fetch members'
+          console.error(message)
+          console.error(err)
+          this.confirmationAlert(message)
+        }
+      }
     }
   },
   computed: {
@@ -146,7 +165,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['showAlert', 'updateCurrentProfile', 'updateSelectedProfile']),
+    ...mapMutations(['showAlert', 'updateSelectedProfile']),
     goEdit () {
       if (this.profile.type === 'person') this.dialog = 'edit-node'
       else this.dialog = 'edit-community'

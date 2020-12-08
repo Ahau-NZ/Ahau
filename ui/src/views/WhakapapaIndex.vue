@@ -51,7 +51,7 @@ import isEqual from 'lodash.isequal'
 import groupBy from 'lodash.groupby'
 
 import * as d3 from 'd3'
-import { mapGetters, mapActions, mapMutations } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import WhakapapaViewCard from '@/components/whakapapa/WhakapapaViewCard.vue'
 import NewViewDialog from '@/components/dialog/whakapapa/NewViewDialog.vue'
 import NewNodeDialog from '@/components/dialog/profile/NewNodeDialog.vue'
@@ -97,11 +97,9 @@ export default {
   },
   async mounted () {
     // set the current default access as the current group
-    this.setCurrentAccess(this.defaultAccess(this.tribe, this.profile))
     this.whakapapas = await this.groupedWhakapapaViews()
   },
   methods: {
-    ...mapMutations(['setCurrentAccess']),
     ...mapActions(['addNestedWhakapapa', 'setLoading']),
 
     async groupedWhakapapaViews () {

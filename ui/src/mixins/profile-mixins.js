@@ -49,7 +49,7 @@ const apollo = {
 
         if (profile.children) {
           profile.children = profile.children.map(child => {
-            var childProfile = child.profile
+            var childProfile = child.profile ? child.profile : child
             childProfile = {
               ...childProfile,
               relationshipType: child.relationshipType
@@ -58,9 +58,10 @@ const apollo = {
             return childProfile
           })
         }
+
         if (profile.parents) {
           profile.parents = profile.parents.map(parent => {
-            var parentProfile = parent.profile
+            var parentProfile = parent.profile ? parent.profile : parent
             profile = tree.getSiblings(parentProfile, profile)
             parentProfile = {
               ...parentProfile,
