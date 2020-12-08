@@ -29,7 +29,7 @@ const apollo = {
     return {
       ...getProfile,
       skip () {
-        return this.$route.name === 'tribe' // skip calling this immediately if on the tribe page
+        return this.$route.name === 'tribe' || this.$route.name === 'login' // skip calling this immediately if on the tribe page
       },
       /*
         NOTE: when variables is a function, it is reactive, so when the route profileId changes,

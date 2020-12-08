@@ -117,7 +117,7 @@ export default {
             var views = groupedObj[id]
             if (id === this.whoami.personal.groupId) return { name: 'my private', image: this.whoami.personal.profile.avatarImage, views: views }
             var tribe = await this.getTribe(id)
-            return { name: tribe.preferredName, image: tribe.avatarImage, views: views }
+            return { name: tribe.private[0].preferredName, image: tribe.private[0].avatarImage, views: views }
           })
         )
         const filteredGroups = groups.filter(i => !isEmpty(i))

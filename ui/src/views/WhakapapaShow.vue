@@ -371,6 +371,7 @@ export default {
       if (whakapapa.recps) {
         const tribe = await this.getTribe(whakapapa.recps[0])
         this.access = getTribalProfile(tribe, this.whoami)
+        this.setCurrentAccess(this.access)
       }
       this.addWhakapapa(whakapapa)
     },
