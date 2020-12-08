@@ -4,9 +4,7 @@ const state = {
   activeComponent: 'profile',
   currentStory: {},
   showStory: false,
-  showArtefact: false,
-  stories: [],
-  profileStories: []
+  showArtefact: false
 }
 
 const getters = {
@@ -21,12 +19,6 @@ const getters = {
   },
   showArtefact: state => {
     return state.showArtefact
-  },
-  stories: state => {
-    return state.stories
-  },
-  profileStories: state => {
-    return state.profileStories
   }
 }
 
@@ -42,14 +34,7 @@ const mutations = {
   },
   updateShowArtefact (state) {
     state.showArtefact = !state.showArtefact
-  },
-  updateStories (state, stories) {
-    state.stories = stories
-  },
-  updateProfileStories (state, profileStories) {
-    state.profileStories = profileStories
   }
-
 }
 
 const actions = {

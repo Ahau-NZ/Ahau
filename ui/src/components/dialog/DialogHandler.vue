@@ -113,7 +113,7 @@ import pick from 'lodash.pick'
 import isEqual from 'lodash.isequal'
 import isEmpty from 'lodash.isempty'
 import * as d3 from 'd3'
-import { mapGetters, mapActions, mapMutations } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 
 import NewNodeDialog from '@/components/dialog/profile/NewNodeDialog.vue'
 import NewCommunityDialog from '@/components/dialog/community/NewCommunityDialog.vue'
@@ -160,7 +160,6 @@ export default {
     NewRegistrationDialog
   },
   props: {
-    profile: Object,
     story: {
       type: Object
     },
@@ -196,7 +195,7 @@ export default {
   },
   mixins: [
     mapProfileMixins({
-      mapApollo: ['tribe'],
+      mapApollo: ['profile', 'tribe'],
       mapMethods: ['getTribe']
     })
   ],
@@ -210,6 +209,7 @@ export default {
       dialogType: '',
       parents: [],
       parentIndex: null,
+      profile: {},
       tribe: {}
     }
   },

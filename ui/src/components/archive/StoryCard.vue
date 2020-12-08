@@ -285,7 +285,7 @@ export default {
     },
     access () {
       if (!this.story || !this.story.recps) return []
-      return [this.getAccessFromRecps(this.story.recps)]
+      return [this.getAccessFromRecps(this.story.recps, this.tribe)]
     },
     time () {
       if (this.story.timeInterval) {

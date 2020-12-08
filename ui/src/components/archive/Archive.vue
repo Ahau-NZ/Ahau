@@ -118,7 +118,6 @@ export default {
   },
   data () {
     return {
-      // profile: {},
       stories: null,
       dialog: null,
       scrollPosition: 0,
@@ -126,7 +125,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['profileStories', 'showStory', 'whoami', 'currentStory', 'showArtefact', 'storeDialog']),
+    ...mapGetters(['showStory', 'whoami', 'currentStory', 'showArtefact', 'storeDialog']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },

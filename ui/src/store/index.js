@@ -94,14 +94,14 @@ const store = new Vuex.Store({
         }
       }
     },
-    getAccessFromRecps: ({ whoami, tribe }) => {
-      return recps => {
+    getAccessFromRecps: ({ whoami }) => {
+      return (recps, tribe) => {
         if (!recps || recps.length === 0) return null
 
         // turn the recps given to the matching group (personal or tribe)
         if (recps.includes(whoami.personal.groupId)) return { groupId: whoami.personal.groupId, ...whoami.personal.profile, isPersonalGroup: true }
 
-        const recp = tribe.tribes
+        const recp = tribe
           .filter(d => {
             return d.private.length > 0
           })
