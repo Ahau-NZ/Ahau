@@ -113,7 +113,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['whoami', 'defaultAccess']),
+    ...mapGetters(['whoami']),
     kaitiaki () {
       if (!this.whoami) return null
       return [this.whoami.public.profile]

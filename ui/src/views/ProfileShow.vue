@@ -146,7 +146,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['showAlert', 'updateCurrentProfile', 'updateSelectedProfile', 'updateCurrentTribe']),
+    ...mapMutations(['showAlert', 'updateCurrentProfile', 'updateSelectedProfile']),
     goEdit () {
       if (this.profile.type === 'person') this.dialog = 'edit-node'
       else this.dialog = 'edit-community'

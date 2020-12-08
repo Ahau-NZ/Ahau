@@ -30,7 +30,6 @@ const mutations = {
 const actions = {
   async setProfile ({ commit, dispatch }, profile) {
     await commit('updateCurrentProfile', profile)
-    dispatch('setProfileStories')
   },
   async setProfileById ({ commit, rootState, dispatch }, { id, type }) {
     if (id === rootState.whoami.public.profile.id) {
@@ -71,7 +70,6 @@ const actions = {
     }
     if (!type) {
       await commit('updateCurrentProfile', person)
-      dispatch('setProfileStories')
     }
     commit('updateSelectedProfile', person)
   }

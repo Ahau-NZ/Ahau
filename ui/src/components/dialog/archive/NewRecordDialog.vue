@@ -91,6 +91,7 @@ export default {
     ...mapActions(['setDialog']),
     updateAccess ($event) {
       this.access = $event
+      this.setCurrentAccess(this.access)
     },
     close () {
       this.formData = setDefaultStory(this.story)

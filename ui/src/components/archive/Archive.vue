@@ -126,7 +126,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['profileStories', 'showStory', 'whoami', 'currentTribe', 'currentStory', 'showArtefact', 'storeDialog']),
+    ...mapGetters(['profileStories', 'showStory', 'whoami', 'currentStory', 'showArtefact', 'storeDialog']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },

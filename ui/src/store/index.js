@@ -84,15 +84,14 @@ const store = new Vuex.Store({
           })
       ]
     },
-    defaultAccess: ({ whoami, person, tribe }) => {
-      const { currentProfile } = person
-      const { currentTribe } = tribe
-
-      if (currentProfile.type === 'person') return { groupId: whoami.personal.groupId, ...whoami.personal.profile, isPersonalGroup: true }
-      else if (currentProfile.type === 'community') {
-        return currentTribe.private.length > 0
-          ? { groupId: currentTribe.id, ...currentTribe.private[0], type: 'community', isPersonalGroup: false }
-          : null
+    defaultAccess: ({ whoami }) => {
+      return (tribe, profile) => {
+        if (profile.type === 'person') return { groupId: whoami.personal.groupId, ...whoami.personal.profile, isPersonalGroup: true }
+        else if (profile.type === 'community') {
+          return tribe.private.length > 0
+            ? { groupId: tribe.id, ...tribe.private[0], type: 'community', isPersonalGroup: false }
+            : null
+        }
       }
     },
     getAccessFromRecps: ({ whoami, tribe }) => {

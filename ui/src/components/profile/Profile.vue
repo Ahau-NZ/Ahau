@@ -51,7 +51,7 @@
       </ProfileCard>
       <ProfileCard v-if="profile.type === 'community' && !nonMember" title="Members">
         <template v-slot:content>
-          <v-row v-for="member in currentTribe.members" :key="member.id" class="justify-center align-center ma-0 ml-4">
+          <v-row v-for="member in tribe.members" :key="member.id" class="justify-center align-center ma-0 ml-4">
             <v-col cols="2" class="pt-0 pl-0">
               <Avatar :size="mobile ? '50px' : '40px'" :image="member.avatarImage" :alt="member.preferredName" />
             </v-col>
@@ -81,14 +81,15 @@ export default {
     Avatar
   },
   props: {
-    profile: Object
+    profile: Object,
+    tribe: Object
   },
   beforeMount () {
     window.scrollTo(0, 0)
     this.setTribes()
   },
   computed: {
-    ...mapGetters(['whoami', 'currentTribe', 'tribes']),
+    ...mapGetters(['whoami', 'tribes']),
     connectedTribes () {
       return this.tribes.filter(tribe => tribe.private.length > 0)
     },

@@ -68,15 +68,17 @@ import mapProfileMixins from '@/mixins/profile-mixins.js'
 
 export default {
   name: 'WhakapapaIndex',
+  props: {
+    profile: Object,
+    tribe: Object
+  },
   mixins: [
     mapProfileMixins({
-      mapMethods: ['getTribe'],
-      mapApollo: ['profile']
+      mapMethods: ['getTribe']
     })
   ],
   data () {
     return {
-      profile: {},
       suggestions: [],
       views: [],
       showWhakapapaHelper: false,
@@ -95,7 +97,7 @@ export default {
   },
   async mounted () {
     // set the current default access as the current group
-    this.setCurrentAccess(this.defaultAccess)
+    this.setCurrentAccess(this.defaultAccess(this.tribe, this.profile))
     this.whakapapas = await this.groupedWhakapapaViews()
   },
   methods: {
