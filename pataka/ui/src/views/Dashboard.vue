@@ -60,7 +60,7 @@
               <p class="caption text-uppercase ma-0">{{network.ipv4 ? ' Local Network' : 'Checking'}}</p>
             </v-row>
              <v-row justify="start" align="center" class="py-2">
-              <div 
+              <div
                 class="dot mr-4"
                 :class="network.portForwarding ? 'green' : network.internetLatency === null ? 'grey' : 'orange'"
               />
@@ -283,7 +283,7 @@ export default {
         }
       }`,
       update (data) {
-        return data.tribes.filter(tribe => tribe.public && tribe.public[0]).map(tribe => {return tribe.public[0]})
+        return data.tribes.filter(tribe => tribe.public && tribe.public[0]).map(tribe => { return tribe.public[0] })
 
         // TODO check why this api is returning tribes with no public profiles?
       },
