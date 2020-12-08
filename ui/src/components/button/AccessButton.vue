@@ -32,7 +32,7 @@
       <v-list>
         <v-subheader>Choose who has access to this record:</v-subheader>
         <v-list-item
-          v-for="(tribe, index) in accessOptions"
+          v-for="(tribe, index) in tribes"
           :key="index"
           @click="go(tribe)"
         >
@@ -45,6 +45,7 @@
 </template>
 <script>
 import Avatar from '@/components/Avatar.vue'
+import { getTribes } from '@/lib/community-helpers.js'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -55,14 +56,40 @@ export default {
   },
   data () {
     return {
-      toggle: false
+      toggle: false,
+      tribes: []
+    }
+  },
+  apollo: {
+    tribes () {
+      return {
+        ...getTribes,
+        update ({ tribes }) {
+          tribes = tribes
+            .filter(tribe => tribe.private.length !== 0)
+            .map(tribe => {
+              return {
+                groupId: tribe.id,
+                ...tribe.private.length > 0
+                  ? tribe.private[0]
+                  : tribe.public[0]
+              }
+            })
+          tribes.push({
+            groupId: this.whoami.personal.groupId,
+            ...this.whoami.personal.profile,
+            isPersonalGroup: true
+          })
+          return tribes
+        }
+      }
     }
   },
   components: {
     Avatar
   },
   computed: {
-    ...mapGetters(['accessOptions']),
+    ...mapGetters(['whoami']),
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },

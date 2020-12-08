@@ -90,7 +90,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['whoami', 'currentAccess', 'defaultAccess']),
+    ...mapGetters(['whoami', 'currentAccess']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     }

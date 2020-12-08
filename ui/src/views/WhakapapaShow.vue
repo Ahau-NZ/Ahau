@@ -283,7 +283,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['nestedWhakapapa', 'selectedProfile', 'whoami', 'loadingState', 'getAccessFromRecps']),
+    ...mapGetters(['nestedWhakapapa', 'selectedProfile', 'whoami', 'loadingState']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },

@@ -155,8 +155,6 @@ const methods = {
             recps
           }
 
-          console.log('linkInput', linkInput)
-
           await this.saveLink(linkInput)
         }
         return linkedItem

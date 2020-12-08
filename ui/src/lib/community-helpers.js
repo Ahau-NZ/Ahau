@@ -331,7 +331,7 @@ export const getTribe = ({
 
 export function getTribalProfile (tribe, whoami) {
   // see if this is our own personal tribe
-  if (whoami.personal.groupId === tribe.id) {
+  if (whoami.personal.groupId === tribe.groupId || whoami.personal.groupId === tribe.id) {
     return {
       groupId: whoami.personal.groupId,
       ...whoami.personal.profile,

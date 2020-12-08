@@ -70,49 +70,6 @@ const store = new Vuex.Store({
     },
     allowSubmissions: state => {
       return state.allowSubmissions
-    },
-    accessOptions: ({ whoami, tribe }) => {
-      return [
-        { ...whoami.personal.profile, groupId: whoami.personal.groupId, isPersonalGroup: true },
-        ...tribe.tribes
-          .filter(tribe => tribe.private.length > 0) // only include tribes you have the private profile for...
-          .map(tribe => {
-            return {
-              groupId: tribe.id,
-              ...tribe.private[0]
-            }
-          })
-      ]
-    },
-    defaultAccess: ({ whoami }) => {
-      return (tribe, profile) => {
-        if (profile.type === 'person') return { groupId: whoami.personal.groupId, ...whoami.personal.profile, isPersonalGroup: true }
-        else if (profile.type === 'community') {
-          return tribe.private.length > 0
-            ? { groupId: tribe.id, ...tribe.private[0], type: 'community', isPersonalGroup: false }
-            : null
-        }
-      }
-    },
-    getAccessFromRecps: ({ whoami }) => {
-      return (recps, tribe) => {
-        if (!recps || recps.length === 0) return null
-
-        // turn the recps given to the matching group (personal or tribe)
-        if (recps.includes(whoami.personal.groupId)) return { groupId: whoami.personal.groupId, ...whoami.personal.profile, isPersonalGroup: true }
-
-        const recp = tribe
-          .filter(d => {
-            return d.private.length > 0
-          })
-          .find(d => {
-            return recps.includes(d.id)
-          })
-
-        if (!recp || !recp.id || !recp.private) return null
-
-        return { groupId: recp.id, isPersonalGroup: false, ...recp.private[0] }
-      }
     }
   },
   mutations: {
