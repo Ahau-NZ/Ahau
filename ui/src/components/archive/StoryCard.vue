@@ -241,7 +241,9 @@ import ArtefactCarouselItem from '@/components/artefact/ArtefactCarouselItem.vue
 import NewRecordDialog from '@/components/dialog/archive/NewRecordDialog.vue'
 import DeleteRecordDialog from '@/components/dialog/archive/DeleteRecordDialog.vue'
 import { DELETE_STORY } from '@/lib/story-helpers.js'
+import { getTribalProfile } from '@/lib/community-helpers.js'
 import { dateIntervalToString, formatSubmissionDate } from '@/lib/date-helpers.js'
+import mapProfileMixins from '@/mixins/profile-mixins.js'
 
 export default {
   name: 'StoryCard',
@@ -250,6 +252,11 @@ export default {
     fullStory: Boolean,
     loading: Boolean
   },
+  mixins: [
+    mapProfileMixins({
+      mapMethods: ['getTribe']
+    })
+  ],
   components: {
     AvatarGroup,
     // Avatar,
@@ -268,24 +275,26 @@ export default {
       textHeight: 0,
       artefact: {},
       model: 0,
-      dialog: null
+      dialog: null,
+      access: null
     }
   },
-  mounted () {
+  async mounted () {
     // grab text height to figure out if we need to hide it or not
     this.textHeight = this.$refs.text ? this.$refs.text.offsetHeight : 0
     if (this.fullStory) {
       this.truncateText = false
     }
+
+    // populate access
+    const tribe = await this.getTribe(this.story.recps[0])
+    // get the profile of the tribe
+    this.access = [getTribalProfile(tribe, this.whoami)]
   },
   computed: {
-    ...mapGetters(['showArtefact', 'storeDialog', 'getAccessFromRecps']),
+    ...mapGetters(['showArtefact', 'storeDialog', 'whoami']),
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
-    },
-    access () {
-      if (!this.story || !this.story.recps) return []
-      return [this.getAccessFromRecps(this.story.recps, this.tribe)]
     },
     time () {
       if (this.story.timeInterval) {

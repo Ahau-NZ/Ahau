@@ -328,3 +328,23 @@ export const getTribe = ({
   `,
   fetchPolicy: 'no-cache'
 })
+
+export function getTribalProfile (tribe, whoami) {
+  // see if this is our own personal tribe
+  if (whoami.personal.groupId === tribe.id) {
+    return {
+      groupId: whoami.personal.groupId,
+      ...whoami.personal.profile,
+      isPersonalGroup: true
+    }
+  }
+
+  // not our personal tribe
+  return {
+    groupId: tribe.id,
+    ...tribe.private.length > 0
+      ? tribe.private[0]
+      : tribe.public[0],
+    isPersonalGroup: false
+  }
+}
