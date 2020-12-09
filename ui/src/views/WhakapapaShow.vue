@@ -356,14 +356,11 @@ export default {
     currentFocus: async function (newFocus) {
       if (newFocus) {
         this.setLoading(true)
-        // var startTime = Date.now()
 
         const nestedWhakapapa = await this.loadDescendants(newFocus, '', [])
         this.addNestedWhakapapa(nestedWhakapapa)
         this.addRelationshipLinks(this.relationshipLinks)
-        // var endTime = Date.now()
-        // var eclipsedTime = (endTime - startTime) / 1000
-        // console.log('build whakapapa time: ', eclipsedTime)
+
         this.setLoading(false)
       }
     },
@@ -479,9 +476,6 @@ export default {
     async loadDescendants (profileId, path, temp) {
       // calls person.fetchPerson which gets info about this person from the db
       var person = await this.getRelatives(profileId)
-
-      // if (temp[profileId]) console.log('profile exists: ', profileId)
-      // else temp[profileId] = profileId
 
       // make sure every person has a partners and siblings array
       person.partners = []
