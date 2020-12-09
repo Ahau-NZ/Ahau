@@ -267,7 +267,7 @@
 
               <ProfileSearchBar
                 :selectedItems.sync="formData.relatedRecords"
-                :items="stories"
+                :items="filteredStories"
                 :openMenu.sync="showRecords"
                 placeholder="add related record"
                 item="title"
@@ -544,6 +544,12 @@ export default {
         class: 'custom',
         clearable: true
       }
+    },
+    filteredStories () {
+      if (this.editing) {
+        return this.stories.filter(story => story.id !== this.formData.id)
+      }
+      return this.stories
     }
   },
   methods: {

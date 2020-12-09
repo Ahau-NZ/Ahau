@@ -31,7 +31,6 @@ const mutations = {
   },
   updateShowStory (state) {
     state.showStory = !state.showStory
-    console.log('toggleShowStory', state.showStory)
   },
   updateShowArtefact (state) {
     state.showArtefact = !state.showArtefact
