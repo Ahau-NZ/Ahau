@@ -10,7 +10,7 @@
       height="30px"
       class="py-0"
       style="background-color:#a9a9a950"
-      v-if="notificationsToJoin.length > 0"
+      v-if="notificationsToJoin && notificationsToJoin.length > 0"
     >
       <p class="pt-1 pl-8 my-0 subtitle-2 black--text">New</p>
     </v-list>
@@ -42,7 +42,7 @@
       height="30px"
       class="py-0"
       style="background-color:#a9a9a950"
-      v-if="notificationsAccepted.length > 0"
+      v-if="notificationsAccepted && notificationsAccepted.length > 0"
     >
       <p class="pt-1 pl-8 my-0 subtitle-2 black--text">Complete</p>
     </v-list>
@@ -106,11 +106,11 @@ export default {
     ...mapActions(['setDialog', 'setCurrentNotification']),
     openReview (notification) {
       this.setCurrentNotification(notification)
-      this.setDialog({ active: 'new-registration', type: 'review' })
+      this.setDialog({ active: 'review-registration', type: 'review' })
     },
     openResponse (notification) {
       this.setCurrentNotification(notification)
-      this.setDialog({ active: 'new-registration', type: 'response' })
+      this.setDialog({ active: 'review-registration', type: 'response' })
     }
   }
 }

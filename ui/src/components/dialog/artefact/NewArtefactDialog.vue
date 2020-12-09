@@ -12,12 +12,19 @@
         <v-row>
           <v-col cols="12">
             <h1>
-              <v-text-field
-                v-model="artefact.title"
-                label="Title"
-                v-bind="customProps"
-                dark
-              />
+              <v-tooltip top open-delay="700">
+                <template v-slot:activator="{ on }">
+                  <v-text-field
+                    v-on="on"
+                    v-if="show"
+                    v-model="artefact.title"
+                    label="Title"
+                    v-bind="customProps"
+                    dark
+                  />
+                </template>
+                <span>Provide a name for this artefact</span>
+              </v-tooltip>
             </h1>
           </v-col>
           <v-col cols="12" class="px-0">
@@ -42,15 +49,24 @@
               dark
             />
           </v-col> -->
+
           <v-col cols="12" class=py-1>
-            <v-textarea
-              v-model="artefact.description"
-              label="Description"
-              v-bind="customProps"
-              no-resize
-              rows="3"
-              auto-grow
-            />
+            <v-tooltip top open-delay="700">
+              <template v-slot:activator="{ on }">
+                <v-textarea
+                  v-on="on"
+                  v-if="show"
+                  v-model="artefact.description"
+                  label="Description"
+                  v-bind="customProps"
+                  no-resize
+                  rows="3"
+                  auto-grow
+                >
+                </v-textarea>
+              </template>
+              <span>Provide some context about the artefact</span>
+            </v-tooltip>
           </v-col>
           <v-col cols="12" md="6" class="pt-0 pb-1">
             <NodeDatePicker
@@ -61,77 +77,149 @@
             />
           </v-col>
           <v-col cols="12" sm="12" md="3" class="py-1 pt-2">
-            <v-text-field
-              readonly
-              :value="artefact.blob.mimeType"
-              label="Format"
-              v-bind="customProps"
-            />
+            <v-tooltip top open-delay="700">
+              <template v-slot:activator="{ on }">
+                <v-text-field
+                  v-on="on"
+                  v-if="show"
+                  readonly
+                  :value="artefact.blob.mimeType"
+                  label="Format"
+                  v-bind="customProps"
+                >
+                </v-text-field>
+              </template>
+              <span>The current digital form of this artefact being recorded</span>
+            </v-tooltip>
           </v-col>
           <v-col cols="12" sm="12" md="3" class="py-1 pt-2">
-            <v-text-field
-              v-model="artefact.identifier"
-              label="Identifier"
-              v-bind="customProps"
-            />
+            <v-tooltip top open-delay="700">
+              <template v-slot:activator="{ on }">
+                <v-text-field
+                  v-on="on"
+                  v-if="show"
+                  v-model="artefact.identifier"
+                  label="Identifier"
+                  v-bind="customProps"
+                >
+                </v-text-field>
+              </template>
+              <span>A unique, unambigous reference to the artefact</span>
+            </v-tooltip>
           </v-col>
           <v-col class=py-1 cols="12" sm="12" md="3">
-            <v-text-field
-              v-model="artefact.language"
-              label="Language"
-              v-bind="customProps"
-            />
+            <v-tooltip top open-delay="700">
+              <template v-slot:activator="{ on }">
+                <v-text-field
+                  v-on="on"
+                  v-if="show"
+                  v-model="artefact.language"
+                  label="Language"
+                  v-bind="customProps"
+                >
+                </v-text-field>
+              </template>
+              <span>The Language that is recorded in the artefact</span>
+            </v-tooltip>
           </v-col>
           <v-col class=py-1 cols="12" sm="12" md="3">
-            <v-text-field
-              v-model="artefact.licence"
-              label="Licence"
-              v-bind="customProps"
-            />
+            <v-tooltip top open-delay="700">
+              <template v-slot:activator="{ on }">
+                <v-text-field
+                  v-on="on"
+                  v-if="show"
+                  v-model="artefact.licence"
+                  label="Licence"
+                  v-bind="customProps"
+                >
+                </v-text-field>
+              </template>
+              <span>Is there a license associated to use of the artefact</span>
+            </v-tooltip>
           </v-col>
           <v-col class=py-1 cols="12" sm="12" md="3">
-            <v-text-field
-              v-model="artefact.rights"
-              label="Rights"
-              v-bind="customProps"
-            />
+            <v-tooltip top open-delay="700">
+              <template v-slot:activator="{ on }">
+                <v-text-field
+                  v-on="on"
+                  v-if="show"
+                  v-model="artefact.rights"
+                  label="Rights"
+                  v-bind="customProps"
+                >
+                </v-text-field>
+                </template>
+              <span>Are there any rights associated to the use of the artefact</span>
+            </v-tooltip>
           </v-col>
           <v-col class=py-1 cols="12" sm="12" md="3">
-            <v-text-field
-              v-model="artefact.source"
-              label="Source"
-              v-bind="customProps"
-            />
+            <v-tooltip top open-delay="700">
+              <template v-slot:activator="{ on }">
+                <v-text-field
+                  v-on="on"
+                  v-if="show"
+                  v-model="artefact.source"
+                  label="Source"
+                  v-bind="customProps"
+                >
+                </v-text-field>
+                </template>
+              <span>The original source of the artefact</span>
+            </v-tooltip>
           </v-col>
           <v-col class=py-1 cols="12" sm="12" md="3" v-if="artefact.type === 'audio' || artefact.type === 'video'">
-            <v-text-field
-              v-model="artefact.duration"
-              label="Duration"
-              type="number"
-              v-bind="customProps"
-            />
-          </v-col>
-          <v-col class=py-1 cols="12" sm="12" md="3">
-            <v-text-field
-              readonly
-              :value="artefact.blob.size"
-              label="Size"
-              type="number"
-              v-bind="customProps"
-              suffix="bytes"
-            />
+            <v-tooltip top open-delay="700">
+              <template v-slot:activator="{ on }">
+                <v-text-field
+                  v-on="on"
+                  v-if="show"
+                  v-model="artefact.duration"
+                  label="Duration"
+                  type="number"
+                  v-bind="customProps"
+                >
+                </v-text-field>
+                </template>
+              <span>The time duration of the recorded artefact </span>
+            </v-tooltip>
           </v-col>
           <v-col class=py-1 cols="12">
-            <v-textarea
-              v-model="artefact.translation"
-              label="Translation / Transcription"
-              v-bind="customProps"
-              no-resize
-              rows="3"
-              auto-grow
-            />
+            <v-tooltip top open-delay="700">
+              <template v-slot:activator="{ on }">
+                <v-textarea
+                  v-on="on"
+                  v-if="show"
+                  v-model="artefact.translation"
+                  label="Translation / Transcription"
+                  v-bind="customProps"
+                  no-resize
+                  rows="3"
+                  auto-grow
+                >
+                </v-textarea>
+              </template>
+              <span>An abstraction, transcription or translation to the artefact</span>
+            </v-tooltip>
           </v-col>
-          <v-col>
+          <v-col class=py-1 cols="12" sm="12" md="3">
+            <v-tooltip top open-delay="700">
+              <template v-slot:activator="{ on }">
+                <v-text-field
+                  v-on="on"
+                  v-if="show"
+                  readonly
+                  :value="artefact.blob.size"
+                  label="Size"
+                  type="number"
+                  v-bind="customProps"
+                  suffix="bytes"
+                >
+                </v-text-field>
+              </template>
+              <span>This file size of this uploaded digital artefact</span>
+            </v-tooltip>
+          </v-col>
+          <v-col cols="12">
             <v-card-actions>
               <v-row>
                 <v-btn :class="mobile ? 'mt-4':'mt-7'" text @click="$emit('delete', selectedIndex)">
