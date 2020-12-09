@@ -104,19 +104,6 @@
         </v-speed-dial>
       </v-card>
 
-      <v-row v-if="whakapapa.table && overflow" :class="mobile ? 'navigateMobile' : 'navigate'">
-        <div class="icon-button">
-          <v-btn fab x-small light @click="togglePan(200)">
-            <v-icon>mdi-arrow-left</v-icon>
-          </v-btn>
-        </div>
-        <div class="icon-button">
-          <v-btn fab x-small light @click.stop="togglePan(-200)">
-            <v-icon>mdi-arrow-right</v-icon>
-          </v-btn>
-        </div>
-      </v-row>
-
       <Tree
         :class="mobile? 'mobile-tree':'tree'"
         v-if="whakapapa.tree"
@@ -130,19 +117,21 @@
         :focus="focus"
         :searchNodeId="searchNodeId"
       />
-      <Table
-        v-if="whakapapa.table"
-        ref="table"
-        :filter="filter"
-        :flatten="flatten"
-        :view="whakapapaView"
-        :nestedWhakapapa="nestedWhakapapa"
-        :relationshipLinks="relationshipLinks"
-        @load-descendants="loadDescendants($event)"
-        @collapse-node="collapseNode($event)"
-        @open-context-menu="openContextMenu($event)"
-        :searchNodeId="searchNodeId"
-      />
+      <div class="whakapapa-table">
+        <Table
+          v-if="whakapapa.table"
+          ref="table"
+          :filter="filter"
+          :flatten="flatten"
+          :view="whakapapaView"
+          :nestedWhakapapa="nestedWhakapapa"
+          :relationshipLinks="relationshipLinks"
+          @load-descendants="loadDescendants($event)"
+          @collapse-node="collapseNode($event)"
+          @open-context-menu="openContextMenu($event)"
+          :searchNodeId="searchNodeId"
+        />
+      </div>
     </v-container>
 
     <vue-context ref="menu" class="px-0">
@@ -382,9 +371,6 @@ export default {
     tableOverflow (width) {
       var show = width > screen.width
       this.overflow = show
-    },
-    togglePan (x) {
-      this.$refs.table.panAction(x)
     },
     clickedOff () {
       this.search = !this.search
@@ -760,6 +746,11 @@ h1 {
 
 #create .v-btn--floating {
   position: relative;
+}
+
+.whakapapa-table {
+  overflow: auto;
+  width: 100%;
 }
 
 </style>
