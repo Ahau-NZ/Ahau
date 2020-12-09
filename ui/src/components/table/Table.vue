@@ -24,6 +24,7 @@
               :width="colWidth"
               :node="node"
               :radius="nodeRadius"
+              :nodeCentered="nodeCentered"
               @click="collapse(node)"
               @open-context-menu="$emit('open-context-menu', $event)"
               :showLabel="true"
@@ -126,7 +127,8 @@ export default {
       componentLoaded: false, // need to ensure component is loaded before using $refs
       nodeRadius: 20, // use variable for zoom later on
       nodeSize: 40,
-      duration: 400
+      duration: 400,
+      nodeCentered: ''
     }
   },
   mounted () {
@@ -189,7 +191,7 @@ export default {
             height: d.height,
             parent: d.parent,
             x: d.x,
-            y: this.filter ? i * 45 : d.y * 1.5,
+            y: this.flatten ? i * 45 : d.y * 1.5,
             age: calculateAge(d.data.aliveInterval),
             color: this.nodeColor(d.data)
           }
@@ -276,6 +278,16 @@ export default {
 
     nodes (newValue) {
       this.setLoading(false)
+    },
+
+    searchNodeId (newValue) {
+      if (this.searchNodeId !== null) {
+        this.root.descendants().find(d => {
+          if (d.data.id === newValue) {
+            this.centerNode(d)
+          }
+        })
+      }
     }
   },
   methods: {
@@ -338,6 +350,26 @@ export default {
       })
 
       // this.updateNode({ is, path: endNode.path })
+    },
+
+    centerNode (node) {
+      var svg = d3.select('#baseSvg')
+      var g = d3.select('#baseGroup')
+
+
+      var height = this.$refs.tree.clientHeight
+
+      var x = 0
+      var y = height / 2 - node.y + 150
+
+      // g.transition()
+      //   .duration(700)
+      //   .attr('transform', 'translate(' + (x) + ',' + (y) + ')scale(' + 1 + ')')
+      //   .on('end', function () { svg.call(d3.zoom().transform, d3.zoomIdentity.translate((x), (y)).scale(1)) })
+      g.transition()
+        .duration(700)
+        .attr('transform', 'translate(' + (x) + ',' + (y) + ')')
+        .on('end', function () { svg.call(d3.zoom().transform, d3.zoomIdentity.translate((x), (y))) })
     }
   },
   components: {
