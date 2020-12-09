@@ -42,7 +42,9 @@
 
 <script>
 import { colours } from '@/lib/colours.js'
-import { mapMutations, mapGetters } from 'vuex'
+import { mapMutations } from 'vuex'
+import mapStoryMixins from '@/mixins/story-mixins.js'
+
 export default {
   name: 'Chip',
   props: {
@@ -55,8 +57,12 @@ export default {
     expanded: { type: Boolean, default: false },
     image: { type: String, default: null }
   },
+  mixins: [
+    mapStoryMixins({
+      mapMethods: ['getStory']
+    })
+  ],
   computed: {
-    ...mapGetters(['stories']),
     colour () {
       var i = Math.round(Math.random() * 10)
       return colours[i]
@@ -98,9 +104,9 @@ export default {
   },
   methods: {
     ...mapMutations(['setStory']),
-    showRelatedStory () {
+    async showRelatedStory () {
       if (this.deletable) return
-      var story = this.stories.find(story => story.id === this.chip.id)
+      var story = await this.getStory(this.chip.id)
       this.setStory(story)
     }
   }

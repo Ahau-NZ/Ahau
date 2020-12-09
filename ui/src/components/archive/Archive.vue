@@ -98,17 +98,16 @@ import BigAddButton from '@/components/button/BigAddButton.vue'
 // TODO: Replace with Archive Helper (doesnt exist yet)
 import ArchiveHelper from '@/components/dialog/archive/ArchiveHelper.vue'
 import mapStoryMixins from '@/mixins/story-mixins.js'
-import mapProfileMixins from '@/mixins/profile-mixins.js'
 
 export default {
   name: 'Archive',
+  props: {
+    profile: Object
+  },
   mixins: [
     mapStoryMixins({
       mapMethods: ['saveStory', 'processLinks', 'saveArtefact', 'getStory', 'saveLink', 'removeLink'],
       mapApollo: ['stories']
-    }),
-    mapProfileMixins({
-      mapApollo: ['profile']
     })
   ],
   components: {
@@ -119,7 +118,6 @@ export default {
   },
   data () {
     return {
-      profile: {},
       stories: null,
       dialog: null,
       scrollPosition: 0,
@@ -127,7 +125,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['profileStories', 'showStory', 'whoami', 'currentTribe', 'currentStory', 'showArtefact', 'storeDialog']),
+    ...mapGetters(['showStory', 'whoami', 'currentStory', 'showArtefact', 'storeDialog']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },

@@ -69,7 +69,13 @@ export default {
           return
         }
 
-        this.access = tribe
+        this.access = {
+          ...tribe.private.length > 0
+            ? tribe.private[0]
+            : tribe.public[0],
+          groupId: tribe.id
+        }
+
         this.setCurrentAccess(this.access)
       }
     }
@@ -85,6 +91,7 @@ export default {
     ...mapActions(['setDialog']),
     updateAccess ($event) {
       this.access = $event
+      this.setCurrentAccess(this.access)
     },
     close () {
       this.formData = setDefaultStory(this.story)

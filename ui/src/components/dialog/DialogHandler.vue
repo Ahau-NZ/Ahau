@@ -3,8 +3,9 @@
     <NewRegistrationDialog
       v-if="isActive('new-registration')"
       :show="isActive('new-registration')"
-      :title="dialogType === 'review' ? `Request to join : ${currentNotification.message.group.preferredName}` : `Request to join : ${currentTribe.public[0].preferredName}`"
-      :profile="whoami.personal.profile"
+      :title="dialogType === 'review' ? `Request to join : ${currentNotification.message.group.preferredName}` : `Request to join : ${tribe.public[0].preferredName}`"
+      :profile="profile"
+      :tribe="tribe"
       :parents.sync="parents"
       :parentIndex.sync="parentIndex"
       :type="dialogType"
@@ -18,21 +19,6 @@
       :title="`Ko Wai Mātou ---- Create New Community`"
       :type="dialogType"
       @create="setupNewCommunity($event)"
-      @close="close"
-    />
-    <EditCommunityDialog
-      v-if="isActive('edit-community')"
-      :show="isActive('edit-community')"
-      :title="`Edit ${currentProfile.preferredName}`"
-      @delete="toggleDialog('delete-community', null, 'edit-community')"
-      @submit="updateCommunity($event)"
-      @close="close"
-      :selectedProfile="currentProfile"
-    />
-    <DeleteCommunityDialog
-      v-if="isActive('delete-community')"
-      :show="isActive('delete-community')"
-      @submit="deleteCommunity"
       @close="close"
     />
     <NewNodeDialog
@@ -49,10 +35,10 @@
     <EditNodeDialog
       v-if="isActive('edit-node')"
       :show="isActive('edit-node')"
-      :title="source === 'new-registration' ? `Edit ${registration.preferredName}`:`Edit ${currentProfile.preferredName}`"
+      :title="source === 'new-registration' ? `Edit ${registration.preferredName}`:`Edit ${profile.preferredName}`"
       @submit="updatePerson($event)"
       @close="close"
-      :profile="source === 'new-registration' ? registration : currentProfile"
+      :profile="source === 'new-registration' ? registration : profile"
     />
     <SideViewEditNodeDialog
       v-if="isActive('view-edit-node')"
@@ -132,8 +118,6 @@ import { mapGetters, mapActions } from 'vuex'
 import NewNodeDialog from '@/components/dialog/profile/NewNodeDialog.vue'
 import NewCommunityDialog from '@/components/dialog/community/NewCommunityDialog.vue'
 import NewRegistrationDialog from '@/components/dialog/registration/NewRegistrationDialog.vue'
-import EditCommunityDialog from '@/components/dialog/community/EditCommunityDialog.vue'
-import DeleteCommunityDialog from '@/components/dialog/community/DeleteCommunityDialog.vue'
 import EditNodeDialog from '@/components/dialog/profile/EditNodeDialog.vue'
 import SideViewEditNodeDialog from '@/components/dialog/profile/SideViewEditNodeDialog.vue'
 import DeleteNodeDialog from '@/components/dialog/profile/DeleteNodeDialog.vue'
@@ -147,13 +131,15 @@ import ComingSoonDialog from '@/components/dialog/ComingSoonDialog.vue'
 import ConfirmationText from '@/components/dialog/ConfirmationText.vue'
 
 import { PERMITTED_RELATIONSHIP_ATTRS, savePerson } from '@/lib/person-helpers.js'
-import { createGroup, saveCommunity, savePublicCommunity, saveGroupProfileLink, deleteTribe, updateTribe } from '@/lib/community-helpers'
+import { createGroup, saveCommunity, savePublicCommunity, saveGroupProfileLink } from '@/lib/community-helpers'
 import { saveWhakapapaView } from '@/lib/whakapapa-helpers.js'
 import { findByName } from '@/lib/search-helpers.js'
 import { saveLink } from '@/lib/link-helpers.js'
 import tree from '@/lib/tree-helpers'
 
 import findSuccessor from '@/lib/find-successor'
+
+import mapProfileMixins from '@/mixins/profile-mixins.js'
 
 export default {
   name: 'DialogHandler',
@@ -170,8 +156,6 @@ export default {
     // NewCollectionDialog,
     ComingSoonDialog,
     NewCommunityDialog,
-    EditCommunityDialog,
-    DeleteCommunityDialog,
     ConfirmationText,
     NewRegistrationDialog
   },
@@ -193,7 +177,7 @@ export default {
       required: false,
       default: null,
       validator: (val) => [
-        'edit-community', 'new-community', 'new-node', 'view-edit-node', 'delete-node', 'new-collection', 'new-story', 'edit-story', 'edit-node', 'delete-story',
+        'new-community', 'new-node', 'view-edit-node', 'delete-node', 'new-collection', 'new-story', 'edit-story', 'edit-node', 'delete-story',
         'whakapapa-view', 'whakapapa-edit', 'whakapapa-delete', 'whakapapa-helper', 'whakapapa-table-helper', 'new-registration'
       ].includes(val)
     },
@@ -209,6 +193,12 @@ export default {
     setSelectedProfile: Function,
     getRelatives: Function
   },
+  mixins: [
+    mapProfileMixins({
+      mapApollo: ['profile', 'tribe'],
+      mapMethods: ['getTribe']
+    })
+  ],
   data () {
     return {
       snackbar: false,
@@ -218,11 +208,13 @@ export default {
       registration: '',
       dialogType: '',
       parents: [],
-      parentIndex: null
+      parentIndex: null,
+      profile: {},
+      tribe: {}
     }
   },
   computed: {
-    ...mapGetters(['nestedWhakapapa', 'selectedProfile', 'whoami', 'storeDialog', 'storeType', 'storeSource', 'currentProfile', 'currentNotification', 'currentTribe']),
+    ...mapGetters(['nestedWhakapapa', 'selectedProfile', 'whoami', 'storeDialog', 'storeType', 'storeSource', 'currentNotification']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -256,8 +248,8 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setWhoami', 'updateNode', 'deleteNode', 'updatePartnerNode', 'addChild', 'addParent', 'loading', 'setDialog',
-      'setProfileById', 'setCurrentTribe', 'setCurrentTribeById', 'setTribes'
+    ...mapActions(['updateNode', 'deleteNode', 'updatePartnerNode', 'addChild', 'addParent', 'loading', 'setDialog',
+      'setProfileById', 'setTribes'
     ]),
     addGrandparentToRegistartion (grandparent) {
       var parent = this.parents[this.parentIndex]
@@ -374,10 +366,6 @@ export default {
         )
         if (profilePublicLinkRes.errors) throw new Error('Failed to create public community profile link', profilePublicLinkRes.errors)
         if (profilePublicLinkRes.data.saveGroupProfileLink) {
-          this.setCurrentTribeById(groupProfileId)
-          console.error('DIALOG HELPER: needs to go to tribe after creating it?')
-
-          this.setProfileById({ id: groupProfileId })
           this.$router.push({ name: 'community/profile', params: { tribeId: groupId, profileId: groupProfileId } }).catch(() => {})
         }
       } catch (err) {
@@ -385,18 +373,6 @@ export default {
         console.error(err)
         // is this the right place for this?
         this.confirmationAlert('Failed to create private group. Please contact us if this continues to happen', err)
-      }
-    },
-    async updateCommunity ($event) {
-      const res = await this.$apollo.mutate(
-        updateTribe(this.currentTribe, $event)
-      )
-
-      if (res.errors) {
-        console.error('failed to update community', res)
-      } else {
-        this.setCurrentTribeById(res.data.savePrivate)
-        this.setProfileById({ id: res.data.savePrivate })
       }
     },
     async savePerson (input) {
@@ -788,20 +764,6 @@ export default {
         this.$emit('setFocus', successor.id)
       } else this.deleteNode(this.selectedProfile)
       this.setSelectedProfile(null)
-    },
-
-    async deleteCommunity () {
-      const deleteTribeRes = await this.$apollo.mutate(deleteTribe(this.currentTribe))
-      if (deleteTribeRes.errors) {
-        console.error('failed to delete public profile', deleteTribeRes)
-      } else {
-        this.source = null
-        this.setTribes()
-
-        this.setProfileById({ id: this.whoami.personal.profile.id })
-        this.$router.push('/tribe').catch(() => {})
-        this.confirmationAlert('community successfully deleted')
-      }
     },
 
     confirmationAlert (message) {

@@ -88,6 +88,8 @@ import isEmpty from 'lodash.isempty'
 import { RULES } from '@/lib/constants.js'
 
 import { mapGetters } from 'vuex'
+import mapProfileMixins from '@/mixins/profile-mixins.js'
+import { getTribalProfile } from '@/lib/community-helpers.js'
 
 function setDefaultData (view) {
   return {
@@ -111,7 +113,11 @@ export default {
     show: { type: Boolean, required: true },
     view: { type: Object }
   },
-
+  mixins: [
+    mapProfileMixins({
+      mapMethods: ['getTribe']
+    })
+  ],
   data () {
     return {
       formData: setDefaultData(this.view),
@@ -122,11 +128,12 @@ export default {
       access: null
     }
   },
-  mounted () {
-    this.access = this.getAccessFromRecps(this.view.recps)
+  async mounted () {
+    const tribe = await this.getTribe(this.view.recps[0])
+    this.access = getTribalProfile(tribe, this.whoami)
   },
   computed: {
-    ...mapGetters(['getAccessFromRecps']),
+    ...mapGetters(['whoami']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
