@@ -73,7 +73,7 @@ import EditCommunityDialog from '@/components/dialog/community/EditCommunityDial
 import DeleteCommunityDialog from '@/components/dialog/community/DeleteCommunityDialog.vue'
 import EditNodeDialog from '@/components/dialog/profile/EditNodeDialog.vue'
 import ConfirmationText from '@/components/dialog/ConfirmationText.vue'
-import { updateTribe, deleteTribe, getMembers } from '@/lib/community-helpers.js'
+import { updateTribe, deleteTribe, getMembers, getTribalProfile } from '@/lib/community-helpers.js'
 
 import {
   mapGetters,
@@ -120,6 +120,7 @@ export default {
           if (res.errors) throw res.errors
 
           this.tribe.members = res.data.listGroupAuthors
+          this.setCurrentAccess(getTribalProfile(tribe, this.whoami))
         } catch (err) {
           const message = 'Something went wrong while trying to fetch members'
           console.error(message)
@@ -165,7 +166,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['showAlert', 'updateSelectedProfile']),
+    ...mapMutations(['showAlert', 'updateSelectedProfile', 'setCurrentAccess']),
     goEdit () {
       if (this.profile.type === 'person') this.dialog = 'edit-node'
       else this.dialog = 'edit-community'
