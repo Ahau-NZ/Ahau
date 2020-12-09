@@ -322,7 +322,10 @@ export default {
     async createProfile (input) {
       const res = await this.$apollo.mutate(savePerson({
         type: 'person',
-        recps: [this.whoami.personal.groupId], // TEMP - safety till we figure out actual recps
+        recps: [this.currentAccess.groupId],
+        authors: {
+          add: ['*']
+        },
         ...input
       }))
 
