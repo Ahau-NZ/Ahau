@@ -2,8 +2,8 @@
   <!-- <v-row cols="12" class="pl-2 pt-2"> -->
     <v-menu top offset-y light hide-details dense rounded outlined>
       <template v-slot:activator="{ on, attrs }">
-          <v-row :class="margin">
-            <v-col cols="12" md="auto" class="pa-0">
+          <v-row :class="margin" justify="start">
+            <v-col cols="12" md="auto" class="pa-0 pb-5">
               <v-btn
                 v-bind="attrs"
                 v-on="on"
@@ -15,9 +15,6 @@
                 <span class="ml-2">{{ access ? access.isPersonalGroup ? 'Private' : access.preferredName : 'set access'}}</span>
                 <v-icon v-if="!disabled">mdi-chevron-down</v-icon>
               </v-btn>
-            </v-col>
-            <v-col class="pa-0 py-md-2">
-
               <v-card-text v-if="access && !disabled" class="font-italic font-weight-light text-caption py-0 text-md-right">
                 {{ access.isPersonalGroup ? 'Only you will have access to this record' : `Only ${access.preferredName} will have access to this record` }}
               </v-card-text>
