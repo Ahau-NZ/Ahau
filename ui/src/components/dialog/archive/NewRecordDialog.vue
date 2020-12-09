@@ -71,9 +71,9 @@ export default {
           return
         }
 
-        if (!oldTribe) return
-
-        if (tribe.id === oldTribe.id) return
+        // Have commented this out as not sure why we needs this??
+        // if (!oldTribe) return
+        // if (tribe.id === oldTribe.id) return
 
         this.access = {
           ...tribe.private.length > 0

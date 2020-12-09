@@ -13,6 +13,16 @@
       @editProfile="toggleEditProfile($event)"
       @close="close"
     />
+    <ReviewRegistrationDialog
+      v-if="isActive('review-registration')"
+      :show="isActive('review-registration')"
+      :title="`Request to join : ${currentNotification.message.group.preferredName}`"
+      :profile="profile"
+      :tribe="tribe"
+      :type="dialogType"
+      :notification="currentNotification"
+      @close="close"
+    />
     <NewCommunityDialog
       v-if="isActive('new-community')"
       :show="isActive('new-community')"
@@ -118,6 +128,7 @@ import { mapGetters, mapActions } from 'vuex'
 import NewNodeDialog from '@/components/dialog/profile/NewNodeDialog.vue'
 import NewCommunityDialog from '@/components/dialog/community/NewCommunityDialog.vue'
 import NewRegistrationDialog from '@/components/dialog/registration/NewRegistrationDialog.vue'
+import ReviewRegistrationDialog from '@/components/dialog/registration/ReviewRegistrationDialog.vue'
 import EditNodeDialog from '@/components/dialog/profile/EditNodeDialog.vue'
 import SideViewEditNodeDialog from '@/components/dialog/profile/SideViewEditNodeDialog.vue'
 import DeleteNodeDialog from '@/components/dialog/profile/DeleteNodeDialog.vue'
@@ -157,7 +168,8 @@ export default {
     ComingSoonDialog,
     NewCommunityDialog,
     ConfirmationText,
-    NewRegistrationDialog
+    NewRegistrationDialog,
+    ReviewRegistrationDialog
   },
   props: {
     story: {
@@ -178,7 +190,7 @@ export default {
       default: null,
       validator: (val) => [
         'new-community', 'new-node', 'view-edit-node', 'delete-node', 'new-collection', 'new-story', 'edit-story', 'edit-node', 'delete-story',
-        'whakapapa-view', 'whakapapa-edit', 'whakapapa-delete', 'whakapapa-helper', 'whakapapa-table-helper', 'new-registration'
+        'whakapapa-view', 'whakapapa-edit', 'whakapapa-delete', 'whakapapa-helper', 'whakapapa-table-helper', 'new-registration', 'review-registration'
       ].includes(val)
     },
     type: {
