@@ -88,8 +88,6 @@
             :profiles="access"
             show-labels :size="fullStory ? '50px': '30px'"
             spacing="pr-2"
-            @profile-click="openProfile($event)"
-            :clickable="fullStory"
           />
         </v-col>
         <v-col v-if="story.mentions && story.mentions.length > 0" cols="auto"  class="pb-0">

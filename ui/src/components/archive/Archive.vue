@@ -155,7 +155,6 @@ export default {
     openProfile ($event) {
       this.setProfileById({ id: $event.id, type: 'preview' })
       this.setDialog({ active: 'view-edit-node', type: 'preview' })
-      this.toggleShowStory()
     },
     toggleArchiveHelper () {
       this.showArchiveHelper = !this.showArchiveHelper
