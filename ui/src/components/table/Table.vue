@@ -117,6 +117,10 @@ export default {
     pan: {
       type: Number,
       default: 0
+    },
+    sortTable: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -127,6 +131,8 @@ export default {
       nodeRadius: 20, // use variable for zoom later on
       nodeSize: 40,
       duration: 400,
+
+      sortTableBool: false,
 
       // The following variables are for sorting fields
       // 0 = no sort, 1 = sort ascending, 2 = sort descending
@@ -351,6 +357,11 @@ export default {
 
     nodes (newValue) {
       this.setLoading(false)
+    },
+
+    sortTable (newValue) {
+      this.sortTableBool = newValue
+      console.log('bool: ', this.sortTableBool)
     }
   },
   methods: {

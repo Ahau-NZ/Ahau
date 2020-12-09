@@ -41,7 +41,7 @@
           <SearchButton :search.sync="search"/>
         </div>
         <div v-if="whakapapa.table && flatten" class="icon-button">
-          <SortButton @click="sortTable()" />
+          <SortButton @sort="sortTable($event)" />
         </div>
         <div v-if="whakapapa.table && flatten" class="icon-button">
           <FilterButton :filter="filter" @filter="toggleFilter()" />
@@ -89,7 +89,7 @@
             <SearchButton  @click.stop :search.sync="search"/>
           </div>
           <div v-if="whakapapa.table && flatten" class="icon-button">
-            <SortButton @sort="sortTable()" />
+            <SortButton @sort="sortTable($event)" />
           </div>
           <div v-if="whakapapa.table && flatten" class="icon-button">
             <FilterButton :filter="filter" @filter="toggleFilter()" />
@@ -148,6 +148,7 @@
         @collapse-node="collapseNode($event)"
         @open-context-menu="openContextMenu($event)"
         :searchNodeId="searchNodeId"
+        :sortTable="sortTableBool"
       />
     </v-container>
 
@@ -172,6 +173,14 @@
           <p class="ma-0 pl-3">{{ option.title }}</p>
         </a>
         -->
+      </li>
+    </vue-context>
+
+    <vue-context ref="sort" class="px-0">
+      <li v-for="field in sortFields" :key="field.id">
+        <a href="#" @click.prevent="setSortField(field.name)" class="d-flex align-center px-4">
+          <p class="ma-0 pl-3">{{ field.value }}</p>
+        </a>
       </li>
     </vue-context>
 
@@ -273,7 +282,9 @@ export default {
       whakapapa: {
         tree: true,
         table: false
-      }
+      },
+      sortTableBool: false,
+      sortValue: ''
     }
   },
   apollo: {
@@ -347,6 +358,35 @@ export default {
           type: null,
           isPermitted: this.canDelete,
           icon: 'mdi-delete'
+        }
+      ]
+    },
+    sortFields () {
+      return [
+        {
+          id: 0,
+          name: 'preferred-name',
+          value: 'Preferred Name'
+        },
+        {
+          id: 1,
+          name: 'legal-name',
+          value: 'Legal Name'
+        },
+        {
+          id: 2,
+          name: 'age',
+          value: 'Age'
+        },
+        {
+          id: 3,
+          name: 'profession',
+          value: 'Profession'
+        },
+        {
+          id: 4,
+          name: 'location',
+          value: 'City, Country'
         }
       ]
     },
@@ -565,6 +605,7 @@ export default {
       if (this.dialog.view) {
         this.toggleView()
       }
+      console.log('menu event: ', event)
       this.$refs.menu.open(event)
     },
     toggleFilter () {
@@ -663,8 +704,14 @@ export default {
     getImage () {
       return avatarHelper.defaultImage(this.aliveInterval, this.gender)
     },
-    sortTable () {
-      console.log('sorting in whakapapa view')
+    sortTable (event) {
+      // console.log('sorting in whakapapa view')
+      // console.log('event: ', event)
+      this.$refs.sort.open(event)
+      this.sortTableBool = !this.sortTableBool
+    },
+    setSortField (value) {
+
     }
   },
   destroyed () {
