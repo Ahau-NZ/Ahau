@@ -36,7 +36,7 @@
               <v-divider class="mt-6 mb-8" light></v-divider> -->
               <div v-if="!showStory">
                 <v-row v-for="(story, i) in stories" :key="`story-${i}-id-${story.id}`">
-                  <StoryCard @updateDialog="updateDialog($event)" @toggleStory="toggleStory($event)" :story="story" />
+                  <StoryCard @updateDialog="updateDialog($event)" @toggleStory="toggleStory($event)" :story="story" @openProfile="openProfile" />
                 </v-row>
               </div>
               <div v-else>
@@ -47,6 +47,7 @@
                     @updateDialog="updateDialog($event)"
                     @submit="saveStory($event)"
                     @close="toggleStory($event)"
+                    @openProfile="openProfile"
                   />
                 </v-row>
               </div>
@@ -150,7 +151,12 @@ export default {
   },
   methods: {
     ...mapMutations(['setStory']),
-    ...mapActions(['setComponent', 'toggleShowStory', 'setDialog']),
+    ...mapActions(['setComponent', 'toggleShowStory', 'setDialog', 'setProfileById']),
+    openProfile ($event) {
+      this.setProfileById({ id: $event.id, type: 'preview' })
+      this.setDialog({ active: 'view-edit-node', type: 'preview' })
+      this.toggleShowStory()
+    },
     toggleArchiveHelper () {
       this.showArchiveHelper = !this.showArchiveHelper
     },

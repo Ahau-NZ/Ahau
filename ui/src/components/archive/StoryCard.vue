@@ -10,7 +10,6 @@
       :light="!showArtefact"
       :elevation="!mobile && !showArtefact && fullStory ? '24':''"
       @click="showStory()"
-      @blur="close"
     >
       <v-list-item class="px-0" style="min-height:0; height:10px">
         <v-list-item-icon v-if="!fullStory" class="pt-1 mt-0" style="position:absolute; top:5px; right:1px; margin-right:0px">
@@ -340,17 +339,17 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setShowArtefact', 'setDialog', 'setProfileById', 'toggleShowStory']),
-    openProfile (profile) {
-      this.setProfileById({ id: profile.id, type: 'preview' })
-      this.setDialog({ active: 'view-edit-node', type: 'preview' })
-      this.setShowStory()
+    ...mapActions(['setShowArtefact', 'toggleShowStory']),
+    openProfile ($event) {
+      this.$emit('openProfile', $event)
     },
     onClickOutside () {
       if (!this.fullStory || this.dialog) return
       if (!this.storeDialog && !this.mobile) {
         if (this.showArtefact) this.setShowArtefact()
-        else this.toggleShowStory()
+        else {
+          this.toggleShowStory()
+        }
       }
     },
     async deleteStory () {
