@@ -25,7 +25,7 @@
             <!-- <span v-else class="py-6 px-4 subtitle-2 black--text">
               To join this communtiy, please confirm that you are happy to share the following profile information with
               <strong>
-                <i>{{currentProfile.preferredName}}</i>
+                <i>{{profile.preferredName}}</i>
               </strong> members
             </span>-->
           </v-row>
@@ -144,7 +144,7 @@
               <p v-else class="py-6 px-4 subtitle-2 black--text">
                 The below private information will only be viewable by
                 <strong>
-                  <i>{{currentProfile.preferredName}}</i>
+                  <i>{{profile.preferredName}}</i>
                 </strong> kaitiaki
               </p>
             </v-row>-->
@@ -528,7 +528,7 @@ export default {
   //   }
   // },
   computed: {
-    ...mapGetters(['selectedProfile', 'whoami', 'currentTribe', 'currentNotification']),
+    ...mapGetters(['selectedProfile', 'whoami', 'currentNotification']),
     remainingErrors () {
       if (this.errorMsgs && this.errorMsgs.length) {
         var remaining = this.errorMsgs.filter((f) => f !== 'grandparents' & f !== 'parents')
@@ -554,8 +554,8 @@ export default {
     },
     length () {
       var name = ''
-      if (this.currentProfile.legalName) name = this.currentProfile.legalName
-      else if (this.currentProfile.preferredName) name = this.currentProfile.preferredName
+      if (this.profile.legalName) name = this.profile.legalName
+      else if (this.profile.preferredName) name = this.profile.preferredName
       if (name.length > 30) return 'font-size:6vw'
       if (name.length > 25) return 'font-size:7vw'
       if (name.length > 20) return 'font-size:8vw'
@@ -673,12 +673,12 @@ export default {
       //   action: 'registration',
       //   from: this.formData.id,
       //   message: {
-      //     katiaki: this.currentTribe.public[0].tiaki[0].id,
-      //     community: this.currentProfile.id,
+      //     katiaki: this.tribe.public[0].tiaki[0].id,
+      //     community: this.profile.id,
       //     profile: input,
       //     message: this.message
       //   },
-      //   to: this.currentProfile.id
+      //   to: this.profile.id
       // }
       // TODO - send message to Kaitiaki
       // console.warn('send this object: ', input)
@@ -688,8 +688,8 @@ export default {
         this.$apollo.mutate({
           mutation: CREATE_GROUP_APPLICATION,
           variables: {
-            groupId: this.currentTribe.id,
-            groupAdmins: [...this.currentTribe.public[0].tiaki.map(i => i.feedId)],
+            groupId: this.tribe.id,
+            groupAdmins: [...this.tribe.public[0].tiaki.map(i => i.feedId)],
             text: this.message
           }
         })

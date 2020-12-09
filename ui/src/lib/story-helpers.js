@@ -116,7 +116,8 @@ export const PERMITTED_STORY_ATTRS = [
   'source',
   'transcription',
   'canEdit',
-  'recps'
+  'recps',
+  'kaitiaki{id, preferredName, avatarImage{uri}}'
 ]
 
 export const PERMITTED_STORY_LINKS = [

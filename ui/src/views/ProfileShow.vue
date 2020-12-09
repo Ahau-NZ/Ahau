@@ -8,17 +8,17 @@
     />
     <v-row v-if="isProfile">
       <v-col cols="12" offset-md="2" md="8" sm="12" :class="!mobile ? 'pl-12' : 'pt-0 mt-n3' " :align="mobile ? 'center' : 'start'" :order="mobile ? '3' : '1'">
-        <h1 class="primary--text" :style="mobile ? length : ''">{{ profile.legalName ? profile.legalName : profile.preferredName }}</h1>
+        <h1 class="primary--text" :style="mobile ? length : ''">{{ title }}</h1>
       </v-col>
       <v-col :order="mobile ? '2' : '3'" :align="mobile || tablet ? 'end' : isCommunity ? 'start':'center'" cols="12" :md="isCommunity ? 1:2" class="px-5">
-        <EditProfileButton v-if="profile.canEdit" @click="profile.type === 'person' ? setDialog('edit-node', 'this', 'this') : setDialog('edit-community')" />
+        <EditProfileButton v-if="profile.canEdit" @click="goEdit()" />
         <v-divider v-else class="py-5"></v-divider>
       </v-col>
     </v-row>
     <v-row>
       <!-- SideNav -->
       <v-col  v-if="!hideNav && !isWhakapapaShow" cols="12" xs="12" sm="12" md="2" lg="20p" :class="!mobile ? 'pr-0' : 'px-5 py-0'">
-        <SideNavMenu  :profile="profile" />
+        <SideNavMenu :profile="profile" />
       </v-col>
       <!-- Content -->
       <v-col cols="12" xs="12" sm="12" :md="isWhakapapaShow ? '12' : '10'" :lg="isWhakapapaShow ? '100p' : '80p'" :class="mobile ? 'px-6 py-0' : 'pl-0 py-0'">
@@ -26,60 +26,121 @@
           name="fade"
           mode="out-in"
        >
-        <router-view :key="profile.id"></router-view>
+        <router-view :key="JSON.stringify(profile)" :profile="profile" :tribe="tribe"></router-view>
       </transition>
       </v-col>
     </v-row>
     <v-spacer v-if="!mobile" style="height:200px"></v-spacer>
+    <ConfirmationText
+      :show="snackbar"
+      :message="confirmationText"
+    />
+    <EditCommunityDialog
+      v-if="dialog === 'edit-community'"
+      :show="dialog === 'edit-community'"
+      :title="`Edit ${profile.preferredName}`"
+      @delete="dialog = 'delete-community'"
+      @submit="updateCommunity"
+      @close="dialog = null"
+      :profile="profile"
+    />
+    <EditNodeDialog
+      v-if="dialog === 'edit-node'"
+      :show="dialog === 'edit-node'"
+      :title="`Edit ${profile.preferredName}`"
+      @submit="updatePerson"
+      @close="dialog = null"
+      :profile="profile"
+    />
+    <DeleteCommunityDialog
+      v-if="dialog === 'delete-community'"
+      :show="dialog === 'delete-community'"
+      @submit="deleteCommunity"
+      @close="dialog = 'edit-community'"
+    />
   </v-container>
 </template>
 
 <script>
+import isEmpty from 'lodash.isempty'
+
 import SideNavMenu from '@/components/menu/SideNavMenu.vue'
 import Header from '@/components/profile/Header.vue'
 import EditProfileButton from '@/components/button/EditProfileButton.vue'
 import mapProfileMixins from '@/mixins/profile-mixins.js'
 
+import EditCommunityDialog from '@/components/dialog/community/EditCommunityDialog.vue'
+import DeleteCommunityDialog from '@/components/dialog/community/DeleteCommunityDialog.vue'
+import EditNodeDialog from '@/components/dialog/profile/EditNodeDialog.vue'
+import ConfirmationText from '@/components/dialog/ConfirmationText.vue'
+import { updateTribe, deleteTribe, getMembers } from '@/lib/community-helpers.js'
+
 import {
-  mapActions,
-  mapGetters
+  mapGetters,
+  mapMutations
 } from 'vuex'
 
 export default {
   name: 'ProfileShow',
   mixins: [
     mapProfileMixins({
-      mapApollo: ['profile']
+      mapApollo: ['profile', 'tribe'],
+      mapMethods: ['saveProfile']
     })
   ],
   components: {
     SideNavMenu,
     Header,
-    EditProfileButton
-  },
-  watch: {
-    // TODO: remove this later
-    currentProfile (newVal) {
-      if (newVal) {
-        window.scrollTo(0, 0)
-      }
-    }
+    EditProfileButton,
+    EditCommunityDialog,
+    DeleteCommunityDialog,
+    EditNodeDialog,
+    ConfirmationText
   },
   data () {
     return {
       profile: {},
-      prevHeight: 0,
-      loaded: false
+      tribe: {},
+      editing: false,
+      dialog: null,
+      snackbar: false,
+      confirmationText: null,
+      parents: [],
+      parentIndex: null,
+      dialogType: null
+    }
+  },
+  watch: {
+    tribe: {
+      deep: true,
+      async handler (tribe) {
+        if (!tribe.id) return
+        try {
+          const res = await this.$apollo.query(getMembers(tribe.id))
+          if (res.errors) throw res.errors
+
+          this.tribe.members = res.data.listGroupAuthors
+        } catch (err) {
+          const message = 'Something went wrong while trying to fetch members'
+          console.error(message)
+          console.error(err)
+          this.confirmationAlert(message)
+        }
+      }
     }
   },
   computed: {
+    ...mapGetters(['whoami', 'showStory', 'showArtefact', 'currentNotification']),
+    title () {
+      if (this.profile.legalName) return this.profile.legalName
+      else return this.profile.preferredName
+    },
     isProfile () {
       return this.$route.name === 'person/profile' || this.$route.name === 'community/profile'
     },
     isWhakapapaShow () {
       return this.$route.name === 'person/whakapapa/:whakapapaId' || this.$route.name === 'community/whakapapa/:whakapapaId'
     },
-    ...mapGetters(['showStory', 'showArtefact']),
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
@@ -87,7 +148,6 @@ export default {
       return this.$vuetify.breakpoint.md
     },
     isCommunity () {
-      // TODO - only viewable by kaitiaki
       return this.profile.type === 'community'
     },
     length () {
@@ -105,7 +165,79 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setDialog'])
+    ...mapMutations(['showAlert', 'updateSelectedProfile']),
+    goEdit () {
+      if (this.profile.type === 'person') this.dialog = 'edit-node'
+      else this.dialog = 'edit-community'
+    },
+
+    confirmationAlert (message) {
+      this.confirmationText = message
+      this.snackbar = true
+
+      setTimeout(() => {
+        this.confirmationText = null
+        this.snackbar = false
+      }, 3000)
+    },
+    // TOTO if these need to be used elsewhere, move to a mixin
+    async updateCommunity ($event) {
+      if (isEmpty($event)) {
+        this.confirmationAlert('No changes submitted')
+        this.closeDialog()
+      }
+
+      try {
+        const res = await this.$apollo.mutate(
+          updateTribe(this.tribe, $event)
+        )
+
+        if (res.errors) throw res.errors
+
+        this.closeDialog()
+        this.refresh()
+        this.confirmationAlert('Successfully updated the community')
+      } catch (err) {
+        const message = 'Something went wrong when saving the tribe'
+        console.error(message, this.tribe)
+        console.error(err)
+        this.confirmationAlert(message)
+        this.closeDialog()
+      }
+    },
+    async updatePerson ($event) {
+      // attach the id to the input
+      const input = { id: this.profile.id, ...$event }
+      await this.saveProfile(input)
+      this.closeDialog()
+      this.refresh()
+      this.confirmationAlert('Successfully updated the profile')
+    },
+    async deleteCommunity () {
+      try {
+        const res = await this.$apollo.mutate(
+          deleteTribe(this.tribe)
+        )
+
+        if (res.errors) throw res.errors
+        this.confirmationAlert('community successfully deleted')
+        this.$router.push('/tribe').catch(() => {})
+      } catch (err) {
+        const message = 'Something went wrong while trying to delete the community'
+        console.error(message, this.tribe.id)
+        console.error(err)
+        this.confirmationAlert(message)
+        this.dialog = 'edit-community'
+      }
+    },
+    closeDialog () {
+      this.dialog = null
+    },
+    refresh () {
+      // tell apollo to refresh the current tribe and profile queries
+      this.$apollo.queries.tribe.refetch()
+      this.$apollo.queries.profile.refetch()
+    }
   }
 }
 </script>

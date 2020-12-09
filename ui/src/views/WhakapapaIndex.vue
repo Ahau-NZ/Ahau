@@ -51,7 +51,7 @@ import isEqual from 'lodash.isequal'
 import groupBy from 'lodash.groupby'
 
 import * as d3 from 'd3'
-import { mapGetters, mapActions, mapMutations } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import WhakapapaViewCard from '@/components/whakapapa/WhakapapaViewCard.vue'
 import NewViewDialog from '@/components/dialog/whakapapa/NewViewDialog.vue'
 import NewNodeDialog from '@/components/dialog/profile/NewNodeDialog.vue'
@@ -68,15 +68,17 @@ import mapProfileMixins from '@/mixins/profile-mixins.js'
 
 export default {
   name: 'WhakapapaIndex',
+  props: {
+    profile: Object,
+    tribe: Object
+  },
   mixins: [
     mapProfileMixins({
-      mapMethods: ['getTribe'],
-      mapApollo: ['profile']
+      mapMethods: ['getTribe']
     })
   ],
   data () {
     return {
-      profile: {},
       suggestions: [],
       views: [],
       showWhakapapaHelper: false,
@@ -88,18 +90,16 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['whoami', 'currentAccess', 'defaultAccess', 'currentTribe']),
+    ...mapGetters(['whoami', 'currentAccess']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     }
   },
   async mounted () {
     // set the current default access as the current group
-    this.setCurrentAccess(this.defaultAccess)
     this.whakapapas = await this.groupedWhakapapaViews()
   },
   methods: {
-    ...mapMutations(['setCurrentAccess']),
     ...mapActions(['addNestedWhakapapa', 'setLoading']),
 
     async groupedWhakapapaViews () {
@@ -117,7 +117,7 @@ export default {
             var views = groupedObj[id]
             if (id === this.whoami.personal.groupId) return { name: 'my private', image: this.whoami.personal.profile.avatarImage, views: views }
             var tribe = await this.getTribe(id)
-            return { name: tribe.preferredName, image: tribe.avatarImage, views: views }
+            return { name: tribe.private[0].preferredName, image: tribe.private[0].avatarImage, views: views }
           })
         )
         const filteredGroups = groups.filter(i => !isEmpty(i))
@@ -322,7 +322,10 @@ export default {
     async createProfile (input) {
       const res = await this.$apollo.mutate(savePerson({
         type: 'person',
-        recps: [this.whoami.personal.groupId], // TEMP - safety till we figure out actual recps
+        recps: [this.currentAccess.groupId],
+        authors: {
+          add: ['*']
+        },
         ...input
       }))
 

@@ -206,7 +206,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['toggleShowStory', 'setDialog', 'profileStories']),
+    ...mapActions(['toggleShowStory', 'setDialog']),
     goArchive () {
       if (this.showStory) {
         this.toggleShowStory()

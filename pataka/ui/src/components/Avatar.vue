@@ -29,7 +29,7 @@
 
 <script>
 import avatarHelper from '@/lib/avatar-helpers.js'
-import ImagePicker from '@/components/ImagePicker.vue'
+// import ImagePicker from '@/components/ImagePicker.vue'
 import logo from '../assets/logo_black.svg'
 
 export default {
@@ -47,8 +47,7 @@ export default {
     isView: { type: Boolean, default: false },
     isEditing: { type: Boolean, default: false },
     offline: { type: Boolean, default: false },
-    dark: Boolean,
-
+    dark: Boolean
   },
   data: function () {
     return {
@@ -67,7 +66,7 @@ export default {
     }
   },
   components: {
-    ImagePicker
+    // ImagePicker
   },
   methods: {
     updateAvatar (avatarImage) {

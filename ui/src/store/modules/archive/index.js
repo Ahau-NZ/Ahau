@@ -4,9 +4,7 @@ const state = {
   activeComponent: 'profile',
   currentStory: {},
   showStory: false,
-  showArtefact: false,
-  stories: [],
-  profileStories: []
+  showArtefact: false
 }
 
 const getters = {
@@ -21,12 +19,6 @@ const getters = {
   },
   showArtefact: state => {
     return state.showArtefact
-  },
-  stories: state => {
-    return state.stories
-  },
-  profileStories: state => {
-    return state.profileStories
   }
 }
 
@@ -39,17 +31,11 @@ const mutations = {
   },
   updateShowStory (state) {
     state.showStory = !state.showStory
+    console.log('toggleShowStory', state.showStory)
   },
   updateShowArtefact (state) {
     state.showArtefact = !state.showArtefact
-  },
-  updateStories (state, stories) {
-    state.stories = stories
-  },
-  updateProfileStories (state, profileStories) {
-    state.profileStories = profileStories
   }
-
 }
 
 const actions = {
@@ -61,22 +47,6 @@ const actions = {
   },
   setShowArtefact ({ commit }) {
     commit('updateShowArtefact')
-  },
-  setProfileStories ({ commit, rootState }) {
-    const stories = rootState.archive.stories
-    if (rootState.person.currentProfile && rootState.person.currentProfile.type === 'person') {
-      const profileStories = stories.filter((story) =>
-        story.mentions.some((mention) =>
-          mention.profile.id === rootState.person.currentProfile.id
-        )).reverse()
-      return commit('updateProfileStories', profileStories)
-    } else if (rootState.person.currentProfile && rootState.person.currentProfile.type === 'community') {
-      const communityStories = stories.filter((story) =>
-        story.recps.some((recp) =>
-          recp === rootState.tribe.currentTribe.id
-        )).reverse()
-      return commit('updateProfileStories', communityStories)
-    }
   }
 }
 

@@ -65,11 +65,11 @@ export default {
     show: { type: Boolean, required: true },
     title: { type: String, default: 'Create a new person' },
     hideDetails: { type: Boolean, default: false },
-    selectedProfile: { type: Object }
+    profile: { type: Object }
   },
   data () {
     return {
-      formData: defaultData(this.selectedProfile)
+      formData: defaultData(this.profile)
     }
   },
 
@@ -78,14 +78,14 @@ export default {
       var form = Object.assign({}, pick(this.formData, [...PERMITTED_COMMUNITY_ATTRS]))
       let changes = {}
       Object.entries(form).forEach(([key, value]) => {
-        if (!isEqual(value, this.selectedProfile[key])) {
+        if (!isEqual(value, this.profile[key])) {
           changes[key] = value
         }
       })
       return changes
     },
     hasChanges () {
-      return isEqual(this.data, this.selectedProfile)
+      return isEqual(this.data, this.profile)
     }
   },
   watch: {

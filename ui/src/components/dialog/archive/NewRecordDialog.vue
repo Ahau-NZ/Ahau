@@ -48,30 +48,60 @@ export default {
   data () {
     return {
       formData: setDefaultStory(this.story),
-      initial: false,
-      access: null
+      access: null,
+      profile: {},
+      initial: false
     }
   },
   mixins: [
     mapProfileMixins({
-      mapApollo: ['tribe']
+      mapApollo: ['profile', 'tribe']
     })
   ],
+  mounted () {
+    this.initial = true
+  },
   watch: {
     tribe: {
       deep: true,
       immediate: true,
-      handler (tribe) {
-        this.access = tribe
+      handler (tribe, oldTribe) {
         if (!tribe || this.whoami.personal.groupId === this.$route.params.tribeId) {
           this.access = { isPersonalGroup: true, groupId: this.whoami.personal.groupId, ...this.whoami.personal.profile }
-          this.setCurrentAccess(this.access)
           return
         }
 
-        this.access = tribe
+        if (!oldTribe) return
+
+        if (tribe.id === oldTribe.id) return
+
+        this.access = {
+          ...tribe.private.length > 0
+            ? tribe.private[0]
+            : tribe.public[0],
+          groupId: tribe.id
+        }
+
         this.setCurrentAccess(this.access)
       }
+    },
+    profile (profile) {
+      if (!profile.id || this.editing) return
+
+      this.formData.mentions = [profile]
+      this.formData.contributors = [this.whoami.public.profile]
+      this.formData.kaitiaki = [this.whoami.public.profile]
+      this.formData.creators = []
+      this.formData.relatedRecords = []
+    },
+    access (access) {
+      if (!access || this.editing) return
+
+      this.formData.mentions = [access]
+      this.formData.contributors = [this.whoami.public.profile]
+      this.formData.kaitiaki = [this.whoami.public.profile]
+      this.formData.creators = []
+      this.formData.relatedRecords = []
     }
   },
   computed: {
@@ -85,6 +115,7 @@ export default {
     ...mapActions(['setDialog']),
     updateAccess ($event) {
       this.access = $event
+      this.setCurrentAccess(this.access)
     },
     close () {
       this.formData = setDefaultStory(this.story)

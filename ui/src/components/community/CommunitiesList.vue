@@ -194,7 +194,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setDialog', 'setCurrentTribe', 'setSyncing']),
+    ...mapActions(['setSyncing']),
     connected (text) {
       this.dialog = false
       this.snackbar = !this.snackbar
