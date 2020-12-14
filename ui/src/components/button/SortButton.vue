@@ -1,7 +1,7 @@
 <template>
   <v-tooltip bottom>
     <template v-slot:activator="{ on }">
-        <v-btn v-on="on" @click="$emit('sort', $event)" fab x-small color="#12355b">
+        <v-btn v-on="on" @click.stop="$emit('sort', $event)" fab x-small color="#12355b">
           <v-icon> mdi-sort </v-icon>
         </v-btn>
     </template>
