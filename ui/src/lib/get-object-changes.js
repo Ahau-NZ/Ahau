@@ -46,17 +46,14 @@ export function getObjectChanges (initialValue, updatedValue) {
 
           changes[key].remove = arrayChanges(initialValue[key], updatedValue[key])
 
-          // remove dupes (if any) from the add array
-          changes[key].add = uniqby(changes[key].add, 'id')
-
-          // make sure newItems are unique as well
-          newItems = uniqby(newItems, 'id')
+          changes[key].add = removeDuplicates(changes[key].add)
+          newItems = removeDuplicates(newItems)
 
           // add new items to add array
           changes[key].add = [...changes[key].add, ...newItems]
 
           // remove dupes from remove array
-          changes[key].remove = uniqby(changes[key].remove, 'id')
+          changes[key].remove = removeDuplicates(changes[key].remove)
 
           // remove add or remove if theyre empty
           if (isEmpty(changes[key].add)) delete changes[key].add
@@ -76,4 +73,14 @@ export function getObjectChanges (initialValue, updatedValue) {
   })
 
   return changes
+}
+
+function removeDuplicates (array) {
+  var i = 0
+
+  // make sure newItems are unique as well
+  return uniqby(array, (item) => {
+    if (item.id) return item.id
+    return ++i
+  })
 }

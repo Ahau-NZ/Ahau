@@ -1,14 +1,12 @@
 <template>
   <v-sheet @click="toggleArtefact($event)" class="container pa-0">
     <div v-if="artefact.type === 'video'" :style="mobile ? 'height:300px' : 'height:auto'" >
-    <!-- <div v-if="artefact.__typename === 'Video'" :style="showArtefact ? mobile ? 'height:300px' : 'height:500px;' : 'height:auto'" > -->
       <v-hover v-slot:default="{ hover }">
         <video ref="video" :src="artefact.blob.uri" :controls="hover" class="video"/>
       </v-hover>
     </div>
     <div v-if="artefact.type === 'audio'" :style="showArtefact ? 'height:300px': mobile ? 'height:300px' : 'height:500px'">
-    <!-- <div v-if="artefact.__typename === 'Audio'" :style="showArtefact ? 'height:300px': mobile ? 'background-color:dimgray;height:300px' : 'background-color:dimgray;height:500px'"> -->
-      <audio :src="artefact.blob.uri" class="px-12" style="width:100%;height:80%;"/>
+      <audio ref="audio" :src="artefact.blob.uri" class="px-12" style="width:100%;height:80%;"/>
     </div>
     <v-img ref="photo" v-if="artefact.type === 'photo'" class="media center" :src="artefact.blob.uri" contain></v-img>
     <div v-else-if="artefact.type === 'document'" class="media" style="margin-top:15%;">
