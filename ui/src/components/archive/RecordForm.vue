@@ -267,7 +267,7 @@
 
               <ProfileSearchBar
                 :selectedItems.sync="formData.relatedRecords"
-                :items="stories"
+                :items="filteredStories"
                 :openMenu.sync="showRecords"
                 placeholder="add related record"
                 item="title"
@@ -333,9 +333,8 @@
                   >
                   </v-textarea>
                 </template>
-                <span>Extra context about the record creation process</span>
+                <span>Extra context about the record or the record creation process</span>
               </v-tooltip>
-
             </v-col>
 
             <!-- <v-col cols="12" class="pa-1">
@@ -360,7 +359,7 @@
                     v-bind="customProps"
                   />
                 </template>
-                <span>The specific physical or digital form of the record</span>
+                <span>The specific physical or digital form of the record or artefact</span>
               </v-tooltip>
             </v-col>
             <v-col :cols="mobile ? '6' : '3'" class="pa-1">
@@ -545,6 +544,12 @@ export default {
         class: 'custom',
         clearable: true
       }
+    },
+    filteredStories () {
+      if (this.editing) {
+        return this.stories.filter(story => story.id !== this.formData.id)
+      }
+      return this.stories
     }
   },
   methods: {

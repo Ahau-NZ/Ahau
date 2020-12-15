@@ -1,6 +1,7 @@
 import { getProfile } from '@/lib/person-helpers.js'
 import { getTribe } from '@/lib/community-helpers.js'
 import tree from '@/lib/tree-helpers.js'
+import gql from 'graphql-tag'
 
 export default function mapProfileMixins ({ mapMethods, mapApollo }) {
   var customMixin = {}
@@ -28,7 +29,7 @@ const apollo = {
     return {
       ...getProfile,
       skip () {
-        return this.$route.name === 'tribe' // skip calling this immediately if on the tribe page
+        return this.$route.name === 'tribe' || this.$route.name === 'login' // skip calling this immediately if on the tribe page
       },
       /*
         NOTE: when variables is a function, it is reactive, so when the route profileId changes,
@@ -48,7 +49,7 @@ const apollo = {
 
         if (profile.children) {
           profile.children = profile.children.map(child => {
-            var childProfile = child.profile
+            var childProfile = child.profile ? child.profile : child
             childProfile = {
               ...childProfile,
               relationshipType: child.relationshipType
@@ -57,9 +58,10 @@ const apollo = {
             return childProfile
           })
         }
+
         if (profile.parents) {
           profile.parents = profile.parents.map(parent => {
-            var parentProfile = parent.profile
+            var parentProfile = parent.profile ? parent.profile : parent
             profile = tree.getSiblings(parentProfile, profile)
             parentProfile = {
               ...parentProfile,
@@ -74,9 +76,19 @@ const apollo = {
     }
   },
   tribe () {
+    if (!this.whoami) throw new Error('tribe mixin requires whoami')
     return {
       skip () {
-        return this.$route.params.tribeId === this.whoami.personal.groupId
+        if (this.$route.name === 'login' || this.$route.name === 'tribe') return true
+        if (this.$route.params.tribeId === this.whoami.personal.groupId) {
+          this.tribe = {
+            id: this.whoami.personal.groupId,
+            public: [this.whoami.public.profile],
+            private: [this.whoami.personal.profile]
+          }
+          return true
+        }
+        return false
       },
       ...getTribe,
       variables () {
@@ -84,11 +96,7 @@ const apollo = {
           id: this.$route.params.tribeId
         }
       },
-      error: err => console.error('Error getting tribe', err),
-      update ({ tribe }) {
-        if (tribe.private.length > 0) return { groupId: tribe.id, ...tribe.private[0] }
-        return { groupId: tribe.id, ...tribe.public[0] }
-      }
+      error: err => console.error('Error getting tribe', err)
     }
   }
 }
@@ -112,12 +120,8 @@ const methods = {
 
       if (res.errors) throw res.errors
 
-      const tribe = res.data.tribe
-
-      return {
-        id: tribe.id,
-        ...(tribe.private.length > 0 ? tribe.private[0] : tribe.public[0])
-      }
+      // const tribe = res.data.tribe
+      return res.data.tribe
     } catch (err) {
       console.error('Something went wrong while fetching tribe: ', id)
       console.error(err)
@@ -134,7 +138,28 @@ const methods = {
 
       return res.data.person
     } catch (err) {
-      console.error('Something went wrong while fetching profile: ', id)
+      console.error('Something went wrong while fetching the profile: ', id)
+      console.error(err)
+    }
+  },
+  // method to save a profile (community or person) using apollo
+  async saveProfile ($event) {
+    try {
+      const res = await this.$apollo.mutate({
+        mutation: gql`
+          mutation($input: ProfileInput!) {
+            saveProfile(input: $input)
+          }
+        `,
+        variables: {
+          input: $event
+        }
+      })
+
+      if (res.errors) throw res.errors
+      // dont need to return anything for now...
+    } catch (err) {
+      console.error('Something went wrong while saving the profile: ', $event)
       console.error(err)
     }
   }

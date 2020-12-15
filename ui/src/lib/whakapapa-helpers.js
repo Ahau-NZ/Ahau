@@ -34,9 +34,13 @@ export const saveWhakapapaView = input => {
 export const getWhakapapaView = id => ({
   query: gql`
     ${WHAKAPAPA_FRAGMENT}
+    ${PUBLIC_PROFILE_FRAGMENT}
     query($id: String!) {
       whakapapaView(id: $id) {
         ...WhakapapaFragment
+        kaitiaki {
+          ...PublicProfileFragment
+        }
       }
     }
   `,

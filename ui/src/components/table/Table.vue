@@ -419,19 +419,6 @@ export default {
       this.tableWidth = width
       this.$emit('update', this.tableWidth)
     },
-    // function to control left and right scroll buttons in table
-    panAction (x) {
-      var svg = d3.select('#baseSvg')
-      var g = d3.select('#zoomable')
-
-      var zoom = d3.zoom()
-        .translateExtent([[0, 0], [2400, Infinity]])
-        .on('zoom', function () {
-          g.attr('transform', d3.event.transform)
-        })
-
-      zoom.translateBy(svg.transition().duration(100), (x), 0)
-    },
 
     // set the width for the first column which needs to be dynamic when showing whakapapa links
     setWidth (depth) {

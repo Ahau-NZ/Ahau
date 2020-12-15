@@ -193,7 +193,7 @@
 
                 <v-col :cols="12" class="pa-0">
                   <AvatarGroup
-                    v-if="profile.children.length"
+                    v-if="profile.children && profile.children.length"
                     :profiles="profile.children"
                     group-title="Children"
                     size="60px"

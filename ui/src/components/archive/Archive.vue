@@ -36,7 +36,7 @@
               <v-divider class="mt-6 mb-8" light></v-divider> -->
               <div v-if="!showStory">
                 <v-row v-for="(story, i) in stories" :key="`story-${i}-id-${story.id}`">
-                  <StoryCard @updateDialog="updateDialog($event)" @toggleStory="toggleStory($event)" :story="story" />
+                  <StoryCard @updateDialog="updateDialog($event)" @toggleStory="toggleStory($event)" :story="story" @openProfile="openProfile" />
                 </v-row>
               </div>
               <div v-else>
@@ -47,6 +47,7 @@
                     @updateDialog="updateDialog($event)"
                     @submit="saveStory($event)"
                     @close="toggleStory($event)"
+                    @openProfile="openProfile"
                   />
                 </v-row>
               </div>
@@ -98,17 +99,16 @@ import BigAddButton from '@/components/button/BigAddButton.vue'
 // TODO: Replace with Archive Helper (doesnt exist yet)
 import ArchiveHelper from '@/components/dialog/archive/ArchiveHelper.vue'
 import mapStoryMixins from '@/mixins/story-mixins.js'
-import mapProfileMixins from '@/mixins/profile-mixins.js'
 
 export default {
   name: 'Archive',
+  props: {
+    profile: Object
+  },
   mixins: [
     mapStoryMixins({
       mapMethods: ['saveStory', 'processLinks', 'saveArtefact', 'getStory', 'saveLink', 'removeLink'],
       mapApollo: ['stories']
-    }),
-    mapProfileMixins({
-      mapApollo: ['profile']
     })
   ],
   components: {
@@ -119,7 +119,6 @@ export default {
   },
   data () {
     return {
-      profile: {},
       stories: null,
       dialog: null,
       scrollPosition: 0,
@@ -127,7 +126,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['profileStories', 'showStory', 'whoami', 'currentTribe', 'currentStory', 'showArtefact', 'storeDialog']),
+    ...mapGetters(['showStory', 'whoami', 'currentStory', 'showArtefact', 'storeDialog']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -152,7 +151,11 @@ export default {
   },
   methods: {
     ...mapMutations(['setStory']),
-    ...mapActions(['setComponent', 'toggleShowStory', 'setDialog']),
+    ...mapActions(['setComponent', 'toggleShowStory', 'setDialog', 'setProfileById']),
+    openProfile ($event) {
+      this.setProfileById({ id: $event.id, type: 'preview' })
+      this.setDialog({ active: 'view-edit-node', type: 'preview' })
+    },
     toggleArchiveHelper () {
       this.showArchiveHelper = !this.showArchiveHelper
     },

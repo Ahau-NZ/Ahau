@@ -83,7 +83,7 @@ export default {
     isView: { type: Boolean, default: false },
     isEditing: { type: Boolean, default: false },
     offline: { type: Boolean, default: false },
-    dark: Boolean,
+    dark: Boolean
 
   },
   data: function () {

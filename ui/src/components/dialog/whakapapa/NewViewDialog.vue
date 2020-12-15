@@ -101,13 +101,19 @@ export default {
           return
         }
 
-        this.access = tribe
+        this.access = {
+          ...tribe.private.length > 0
+            ? tribe.private[0]
+            : tribe.public[0],
+          groupId: tribe.id
+        }
+
         this.setCurrentAccess(this.access)
       }
     }
   },
   computed: {
-    ...mapGetters(['whoami', 'defaultAccess']),
+    ...mapGetters(['whoami']),
     kaitiaki () {
       if (!this.whoami) return null
       return [this.whoami.public.profile]
