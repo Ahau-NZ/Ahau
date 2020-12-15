@@ -3,8 +3,8 @@
     <g id="zoomable">
       <line x1="60" y1="55" :x2="tableWidth" y2="55" style="stroke-width: 1; stroke: lightgrey;"/>
       <g class="headers" v-for="column in columns" :key="column.label">
-        <text :transform="`translate(${column.x + 10} ${50})`" @click="toggleSort(column.label)">
-          {{ column.label }}
+        <text :transform="`translate(${column.x + 10} ${50})`">
+          {{ computeLabel(column.label) }}
         </text>
         <line :x1="column.x" y1="55" :x2="column.x" :y2="tableHeight" style="stroke-width: 1; stroke: lightgrey;"/>
       </g>
@@ -118,9 +118,14 @@ export default {
       type: Number,
       default: 0
     },
-    sortTable: {
-      type: Boolean,
-      default: false
+    sortValue: {
+      type: String,
+      default: ''
+    },
+    sortEvent: {
+      type: MouseEvent,
+      required: false,
+      default: null
     }
   },
   data () {
@@ -132,7 +137,7 @@ export default {
       nodeSize: 40,
       duration: 400,
 
-      sortTableBool: false,
+      sortField: '',
 
       // The following variables are for sorting fields
       // 0 = no sort, 1 = sort ascending, 2 = sort descending
@@ -187,6 +192,10 @@ export default {
         // sort by preferred name
         .sort((a, b) => {
           if (this.sortPreferredName !== 0) {
+            if (a.data.preferredName === null || b.data.preferredName === null) {
+              return 0
+            }
+
             const aName = a.data.preferredName.toLowerCase()
             const bName = b.data.preferredName.toLowerCase()
             if (this.sortPreferredName === 1) {
@@ -204,6 +213,11 @@ export default {
         // sort by legal name
         .sort((a, b) => {
           if (this.sortLegalName !== 0) {
+            if (a.data.preferredName === null || a.data.legalName === null ||
+                b.data.preferredName === null || b.data.legalName === null) {
+              return 0
+            }
+
             const aName = a.data.preferredName.toLowerCase() + a.data.legalName.toLowerCase()
             const bName = b.data.preferredName.toLowerCase() + b.data.legalName.toLowerCase()
             if (this.sortLegalName === 1) {
@@ -221,6 +235,10 @@ export default {
         // sort by age
         .sort((a, b) => {
           if (this.sortAge !== 0) {
+            if (a.data.aliveInterval === null || b.data.aliveInterval === null) {
+              return 0
+            }
+
             const aAge = calculateAge(a.data.aliveInterval)
             const bAge = calculateAge(b.data.aliveInterval)
             if (this.sortAge === 1) {
@@ -238,6 +256,10 @@ export default {
         // sort by profession
         .sort((a, b) => {
           if (this.sortProfession !== 0) {
+            if (a.data.profession === null || b.data.profession === null) {
+              return 0
+            }
+
             const aProfession = a.data.profession.toLowerCase()
             const bProfession = b.data.profession.toLowerCase()
             if (this.sortProfession === 1) {
@@ -255,6 +277,10 @@ export default {
         // sort by location
         .sort((a, b) => {
           if (this.sortLocation !== 0) {
+            if (a.data.location === null || b.data.location === null) {
+              return 0
+            }
+
             const aLocation = a.data.location.toLowerCase()
             const bLocation = b.data.location.toLowerCase()
             if (this.sortLocation === 1) {
@@ -377,9 +403,12 @@ export default {
       this.setLoading(false)
     },
 
-    sortTable (newValue) {
-      this.sortTableBool = newValue
-      console.log('bool: ', this.sortTableBool)
+    sortValue (newValue) {
+      this.sortField = newValue
+    },
+
+    sortEvent () {
+      this.toggleSort(this.sortField)
     }
   },
   methods: {
@@ -557,6 +586,37 @@ export default {
             this.sortLocation = 0
         }
       }
+    },
+    computeLabel (label) {
+      if (label === 'Address') {
+        return 'Address'
+      }
+      if (label === 'Email') {
+        return 'Email'
+      }
+      if (label === 'Phone') {
+        return 'Phone'
+      }
+
+      const legalName = ['Legal Name', 'Legal Name Asc', 'Legal Name Desc']
+      const age = ['Age', 'Age Asc', 'Age Desc']
+      const profession = ['Profession', 'Profession Asc', 'Profession Desc']
+      const location = ['City, Country', 'City, Country Asc', 'City, Country Desc']
+
+      if (label === 'Legal Name') {
+        return legalName[this.sortLegalName]
+      }
+      if (label === 'Age') {
+        return age[this.sortAge]
+      }
+      if (label === 'Profession') {
+        return profession[this.sortProfession]
+      }
+      if (label === 'City, Country') {
+        return location[this.sortLocation]
+      }
+
+      return ''
     }
   },
   components: {

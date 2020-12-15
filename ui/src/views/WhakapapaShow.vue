@@ -148,7 +148,8 @@
         @collapse-node="collapseNode($event)"
         @open-context-menu="openContextMenu($event)"
         :searchNodeId="searchNodeId"
-        :sortTable="sortTableBool"
+        :sortValue="sortValue"
+        :sortEvent="sortEvent"
       />
     </v-container>
 
@@ -178,7 +179,7 @@
 
     <vue-context ref="sort" class="px-0">
       <li v-for="field in sortFields" :key="field.id">
-        <a href="#" @click.prevent="setSortField(field.name)" class="d-flex align-center px-4">
+        <a href="#" @click.prevent="setSortField(field.value, $event)" class="d-flex align-center px-4">
           <p class="ma-0 pl-3">{{ field.value }}</p>
         </a>
       </li>
@@ -284,7 +285,8 @@ export default {
         table: false
       },
       sortTableBool: false,
-      sortValue: ''
+      sortValue: '',
+      sortEvent: null
     }
   },
   apollo: {
@@ -710,8 +712,9 @@ export default {
       this.$refs.sort.open(event)
       this.sortTableBool = !this.sortTableBool
     },
-    setSortField (value) {
-
+    setSortField (value, event) {
+      this.sortValue = value
+      this.sortEvent = event
     }
   },
   destroyed () {
