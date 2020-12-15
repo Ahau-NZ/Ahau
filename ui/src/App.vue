@@ -17,6 +17,10 @@
     <div v-if="!mobile" class='version'>
       <span>version</span> {{version}}
     </div>
+    <ConfirmationText
+      :show="snackbar"
+      :message="alertMessage"
+    />
     <DialogHandler /> <!-- TODO: find out what uses this? -->
   </v-app>
 </template>
@@ -27,6 +31,7 @@ import nodejsClient from '@/plugins/cordova-nodejs-client.js'
 import Spinner from '@/components/Spinner.vue'
 import { mapGetters, mapActions } from 'vuex'
 import DialogHandler from '@/components/dialog/DialogHandler.vue'
+import ConfirmationText from './components/dialog/ConfirmationText.vue'
 
 const { version } = require('../../desktop/package.json')
 // TODO - this is only useful for the desktop installer,
@@ -42,7 +47,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters(['storeDialog']),
+    ...mapGetters(['storeDialog', 'snackbar', 'alertMessage']),
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
@@ -78,7 +83,8 @@ export default {
   components: {
     Appbar,
     Spinner,
-    DialogHandler
+    DialogHandler,
+    ConfirmationText
   },
   // this watch add class to body depending on the route clicked.
   // used for changing body backgrounds, unique to each .route.

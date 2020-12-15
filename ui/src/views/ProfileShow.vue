@@ -31,10 +31,6 @@
       </v-col>
     </v-row>
     <v-spacer v-if="!mobile" style="height:200px"></v-spacer>
-    <ConfirmationText
-      :show="snackbar"
-      :message="confirmationText"
-    />
     <EditCommunityDialog
       v-if="dialog === 'edit-community'"
       :show="dialog === 'edit-community'"
@@ -72,7 +68,6 @@ import mapProfileMixins from '@/mixins/profile-mixins.js'
 import EditCommunityDialog from '@/components/dialog/community/EditCommunityDialog.vue'
 import DeleteCommunityDialog from '@/components/dialog/community/DeleteCommunityDialog.vue'
 import EditNodeDialog from '@/components/dialog/profile/EditNodeDialog.vue'
-import ConfirmationText from '@/components/dialog/ConfirmationText.vue'
 import { updateTribe, deleteTribe, getMembers, getTribalProfile } from '@/lib/community-helpers.js'
 
 import {
@@ -94,8 +89,7 @@ export default {
     EditProfileButton,
     EditCommunityDialog,
     DeleteCommunityDialog,
-    EditNodeDialog,
-    ConfirmationText
+    EditNodeDialog
   },
   data () {
     return {
@@ -103,8 +97,6 @@ export default {
       tribe: {},
       editing: false,
       dialog: null,
-      snackbar: false,
-      confirmationText: null,
       parents: [],
       parentIndex: null,
       dialogType: null
@@ -125,7 +117,7 @@ export default {
           const message = 'Something went wrong while trying to fetch members'
           console.error(message)
           console.error(err)
-          this.confirmationAlert(message)
+          this.confirmationAlert({ message })
         }
       }
     }
@@ -166,25 +158,15 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['showAlert', 'updateSelectedProfile', 'setCurrentAccess']),
+    ...mapMutations(['showAlert', 'updateSelectedProfile', 'setCurrentAccess', 'confirmationAlert']),
     goEdit () {
       if (this.profile.type === 'person') this.dialog = 'edit-node'
       else this.dialog = 'edit-community'
     },
-
-    confirmationAlert (message) {
-      this.confirmationText = message
-      this.snackbar = true
-
-      setTimeout(() => {
-        this.confirmationText = null
-        this.snackbar = false
-      }, 3000)
-    },
     // TOTO if these need to be used elsewhere, move to a mixin
     async updateCommunity ($event) {
       if (isEmpty($event)) {
-        this.confirmationAlert('No changes submitted')
+        this.confirmationAlert({ message: 'No changes submitted' })
         this.closeDialog()
       }
 
@@ -197,12 +179,12 @@ export default {
 
         this.closeDialog()
         this.refresh()
-        this.confirmationAlert('Successfully updated the community')
+        this.confirmationAlert({ message: 'Successfully updated the community' })
       } catch (err) {
         const message = 'Something went wrong when saving the tribe'
         console.error(message, this.tribe)
         console.error(err)
-        this.confirmationAlert(message)
+        this.confirmationAlert({ message })
         this.closeDialog()
       }
     },
@@ -212,7 +194,7 @@ export default {
       await this.saveProfile(input)
       this.closeDialog()
       this.refresh()
-      this.confirmationAlert('Successfully updated the profile')
+      this.confirmationAlert({ message: 'The profile was updated!' })
     },
     async deleteCommunity () {
       try {
@@ -221,13 +203,13 @@ export default {
         )
 
         if (res.errors) throw res.errors
-        this.confirmationAlert('community successfully deleted')
+        this.confirmationAlert({ message: 'community successfully deleted' })
         this.$router.push('/tribe').catch(() => {})
       } catch (err) {
         const message = 'Something went wrong while trying to delete the community'
         console.error(message, this.tribe.id)
         console.error(err)
-        this.confirmationAlert(message)
+        this.confirmationAlert({ message })
         this.dialog = 'edit-community'
       }
     },

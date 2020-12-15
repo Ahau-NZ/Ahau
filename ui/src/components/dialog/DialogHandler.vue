@@ -115,7 +115,6 @@
       @submit="console.log('TODO: add collection to profile')"
     />-->
     <ComingSoonDialog :show="isActive('coming-soon')" @close="close" />
-    <ConfirmationText :show="snackbar" :message="confirmationText" />
   </div>
 </template>
 
@@ -124,7 +123,7 @@ import pick from 'lodash.pick'
 import isEqual from 'lodash.isequal'
 import isEmpty from 'lodash.isempty'
 import * as d3 from 'd3'
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters, mapActions, mapMutations } from 'vuex'
 
 import NewNodeDialog from '@/components/dialog/profile/NewNodeDialog.vue'
 import NewCommunityDialog from '@/components/dialog/community/NewCommunityDialog.vue'
@@ -140,7 +139,6 @@ import WhakapapaShowHelper from '@/components/dialog/whakapapa/WhakapapaShowHelp
 import WhakapapaTableHelper from '@/components/dialog/whakapapa/WhakapapaTableHelper.vue'
 // import NewCollectionDialog from '@/components/dialog/archive/NewCollectionDialog.vue'
 import ComingSoonDialog from '@/components/dialog/ComingSoonDialog.vue'
-import ConfirmationText from '@/components/dialog/ConfirmationText.vue'
 
 import { PERMITTED_RELATIONSHIP_ATTRS, savePerson } from '@/lib/person-helpers.js'
 import { createGroup, saveCommunity, savePublicCommunity, saveGroupProfileLink } from '@/lib/community-helpers'
@@ -168,7 +166,6 @@ export default {
     // NewCollectionDialog,
     ComingSoonDialog,
     NewCommunityDialog,
-    ConfirmationText,
     NewRegistrationDialog,
     ReviewRegistrationDialog
   },
@@ -214,8 +211,6 @@ export default {
   ],
   data () {
     return {
-      snackbar: false,
-      confirmationText: null,
       suggestions: [],
       source: null,
       registration: '',
@@ -261,6 +256,7 @@ export default {
     }
   },
   methods: {
+    ...mapMutations(['confirmationAlert']),
     ...mapActions(['updateNode', 'deleteNode', 'updatePartnerNode', 'addChild', 'addParent', 'loading', 'setDialog',
       'setProfileById', 'setTribes'
     ]),
@@ -324,13 +320,13 @@ export default {
       return true
     },
     async setupNewCommunity ($event) {
-      if ($event.id) throw new Error('this is for creating a new tribe + community, not updating')
-
       // (later?)
       // - [ ] create a copy of your personal profile (recps: [groupId])
       // - [ ] link your feedId + profile
       //    - saveFeedProfileLink (recps: [groupId])
       try {
+        if ($event.id) throw new Error('this is for creating a new tribe + community, not updating')
+
         const createGroupRes = await this.$apollo.mutate(
           createGroup()
         )
@@ -384,8 +380,7 @@ export default {
       } catch (err) {
         console.error('Something went wrong while trying to create private group', $event)
         console.error(err)
-        // is this the right place for this?
-        this.confirmationAlert('Failed to create private group. Please contact us if this continues to happen', err)
+        this.confirmationAlert({ message: 'Failed to create the private group. Please contact us if this continues to happen' })
       }
     },
     async savePerson (input) {
@@ -777,16 +772,6 @@ export default {
         this.$emit('setFocus', successor.id)
       } else this.deleteNode(this.selectedProfile)
       this.setSelectedProfile(null)
-    },
-
-    confirmationAlert (message) {
-      this.confirmationText = message
-      this.snackbar = true
-
-      setTimeout(() => {
-        this.confirmationText = null
-        this.snackbar = false
-      }, 3000)
     },
 
     async getSuggestions ($event) {

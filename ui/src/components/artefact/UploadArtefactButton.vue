@@ -44,11 +44,16 @@ export default {
         })
       )
 
+      this.artefacts = this.artefacts.filter(Boolean)
+
       this.$emit('artefacts', this.artefacts)
     },
     async processArtefact (file) {
       // upload the file to ssb
       const blob = await this.uploadFile({ file, encrypt: true })
+
+      if (blob === null) return null // means there was an error
+
       var [ type ] = file.type.split('/')
       const [ name ] = file.name.split('.')
 
@@ -67,14 +72,12 @@ export default {
         createdAt = Date.now().toISOString().slice(0, 10)
       }
 
-      var artefact = {
+      return {
         type,
         blob,
         title: name,
         createdAt
       }
-
-      return artefact
     }
   }
 }
