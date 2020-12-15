@@ -6,7 +6,7 @@
   </div>
 </template>
 <script>
-import { UPLOAD_FILE } from '@/lib/file-helpers.js'
+import uploadFile from '@/mixins/upload-file.js'
 import { ARTEFACT_FILE_TYPES } from '@/lib/artefact-helpers.js'
 import AddButton from '@/components/button/AddButton.vue'
 
@@ -19,6 +19,7 @@ export default {
   components: {
     AddButton
   },
+  mixins: [uploadFile],
   data () {
     return {
       artefacts: []
@@ -46,43 +47,34 @@ export default {
       this.$emit('artefacts', this.artefacts)
     },
     async processArtefact (file) {
-      try {
-        // upload the file to ssb
-        const res = await this.$apollo.mutate(UPLOAD_FILE({ file, encrypt: true }))
+      // upload the file to ssb
+      const blob = await this.uploadFile({ file, encrypt: true })
+      var [ type ] = file.type.split('/')
+      const [ name ] = file.name.split('.')
 
-        if (res.errors) throw new Error('Error uploading file. ' + res.errors)
+      if (type === 'image') type = 'photo'
+      else if (type === 'application' || type === 'text') type = 'document'
 
-        // get the resulting blob
-        var blob = res.data.uploadFile
-        var [ type ] = file.type.split('/')
-        const [ name ] = file.name.split('.')
+      // TODO: HACK until mimeType: Hello World gets solved
+      if (!blob.mimeType || blob.mimeType === 'Hello World') blob.mimeType = file.type
 
-        if (type === 'image') type = 'photo'
-        else if (type === 'application' || type === 'text') type = 'document'
+      if (blob.__typename) delete blob.__typename
 
-        // TODO: HACK until mimeType: Hello World gets solved
-        if (!blob.mimeType || blob.mimeType === 'Hello World') blob.mimeType = file.type
-
-        if (blob.__typename) delete blob.__typename
-
-        var createdAt = ''
-        if (file.lastModified) {
-          createdAt = new Date(file.lastModified).toISOString().slice(0, 10)
-        } else {
-          createdAt = Date.now().toISOString().slice(0, 10)
-        }
-
-        var artefact = {
-          type,
-          blob,
-          title: name,
-          createdAt
-        }
-
-        return artefact
-      } catch (err) {
-        throw err
+      var createdAt = ''
+      if (file.lastModified) {
+        createdAt = new Date(file.lastModified).toISOString().slice(0, 10)
+      } else {
+        createdAt = Date.now().toISOString().slice(0, 10)
       }
+
+      var artefact = {
+        type,
+        blob,
+        title: name,
+        createdAt
+      }
+
+      return artefact
     }
   }
 }
