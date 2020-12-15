@@ -208,7 +208,7 @@
       <NewRecordDialog
         v-if="dialog === 'edit-story'"
         :show="dialog === 'edit-story'"
-        :title="`Edit ${story.title || 'Record'}`"
+        :title="`Edit ${story.title || 'Story'}`"
         editing
         :story="story"
         @close="finishEditing()"
