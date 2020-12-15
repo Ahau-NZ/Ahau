@@ -37,6 +37,7 @@
       :title="source !== 'new-registration' ? `Add ${dialogType} to ${selectedProfile.preferredName}`:`Add ${dialogType} to Registration Form`"
       :selectedProfile="selectedProfile"
       :suggestions="suggestions"
+      :type="dialogType"
       :withView="source !== 'new-registration'"
       @getSuggestions="getSuggestions($event)"
       @create="source !== 'new-registration' ? addPerson($event) : dialogType === 'grandparent' ? addGrandparentToRegistartion($event) : addParentToRegistration($event)"
