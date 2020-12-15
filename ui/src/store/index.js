@@ -8,6 +8,7 @@ import archive from './modules/archive'
 import dialog from './modules/dialog'
 import notifications from './modules/notifications'
 import tribe from './modules/tribe'
+import alerts from './modules/alerts'
 
 import { whoami } from '../lib/person-helpers.js'
 
@@ -42,9 +43,7 @@ const store = new Vuex.Store({
     loading: false,
     goBack: '',
     allowSubmissions: true,
-    syncing: false,
-    snackbar: false,
-    alertMessage: null
+    syncing: false
   },
   modules: {
     whakapapa,
@@ -52,7 +51,8 @@ const store = new Vuex.Store({
     archive,
     dialog,
     notifications,
-    tribe
+    tribe,
+    alerts
   },
   getters: {
     loadingState: state => {
@@ -73,9 +73,7 @@ const store = new Vuex.Store({
     },
     allowSubmissions: state => {
       return state.allowSubmissions
-    },
-    snackbar: state => state.snackbar,
-    alertMessage: state => state.alertMessage
+    }
   },
   mutations: {
     setAllowSubmissions (state, allow) {
@@ -98,15 +96,6 @@ const store = new Vuex.Store({
     },
     updateGoBack (state, id) {
       state.goBack = id
-    },
-    confirmationAlert (state, { message, delay = 3000 }) {
-      state.alertMessage = message
-      state.snackbar = true
-
-      setTimeout(() => {
-        state.alertMessage = null
-        state.snackbar = false
-      }, delay)
     }
   },
   actions: {

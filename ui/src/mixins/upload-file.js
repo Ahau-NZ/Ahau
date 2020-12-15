@@ -1,8 +1,9 @@
 import { uploadFile } from '@/lib/file-helpers.js'
-import { mapMutations } from 'vuex'
+import { createNamespacedHelpers } from 'vuex'
+const { mapMutations: mapAlertMutations } = createNamespacedHelpers('alerts')
 
 const methods = {
-  ...mapMutations(['confirmationAlert']),
+  ...mapAlertMutations(['showAlert']),
   async uploadFile (input) {
     try {
       const res = await this.$apollo.mutate(
@@ -15,7 +16,7 @@ const methods = {
       const message = 'Something went wrong while upload a file. Please check the file size is less the 5MB'
       console.error(message)
       console.error(err)
-      this.confirmationAlert({ message, delay: 5000 })
+      this.showAlert({ message, delay: 5000 })
       return null
     }
   }

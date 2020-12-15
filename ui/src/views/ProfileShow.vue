@@ -72,8 +72,11 @@ import { updateTribe, deleteTribe, getMembers, getTribalProfile } from '@/lib/co
 
 import {
   mapGetters,
-  mapMutations
+  mapMutations,
+  createNamespacedHelpers
 } from 'vuex'
+
+const { mapMutations: mapAlertMutations } = createNamespacedHelpers('alerts')
 
 export default {
   name: 'ProfileShow',
@@ -117,7 +120,7 @@ export default {
           const message = 'Something went wrong while trying to fetch members'
           console.error(message)
           console.error(err)
-          this.confirmationAlert({ message })
+          this.showAlert({ message })
         }
       }
     }
@@ -158,7 +161,8 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['showAlert', 'updateSelectedProfile', 'setCurrentAccess', 'confirmationAlert']),
+    ...mapAlertMutations(['showAlert']),
+    ...mapMutations(['updateSelectedProfile', 'setCurrentAccess']),
     goEdit () {
       if (this.profile.type === 'person') this.dialog = 'edit-node'
       else this.dialog = 'edit-community'
@@ -166,7 +170,7 @@ export default {
     // TOTO if these need to be used elsewhere, move to a mixin
     async updateCommunity ($event) {
       if (isEmpty($event)) {
-        this.confirmationAlert({ message: 'No changes submitted' })
+        this.showAlert({ message: 'No changes submitted' })
         this.closeDialog()
       }
 
@@ -179,12 +183,12 @@ export default {
 
         this.closeDialog()
         this.refresh()
-        this.confirmationAlert({ message: 'Successfully updated the community' })
+        this.showAlert({ message: 'Successfully updated the community' })
       } catch (err) {
         const message = 'Something went wrong when saving the tribe'
         console.error(message, this.tribe)
         console.error(err)
-        this.confirmationAlert({ message })
+        this.showAlert({ message })
         this.closeDialog()
       }
     },
@@ -194,7 +198,7 @@ export default {
       await this.saveProfile(input)
       this.closeDialog()
       this.refresh()
-      this.confirmationAlert({ message: 'The profile was updated!' })
+      this.showAlert({ message: 'The profile was updated!' })
     },
     async deleteCommunity () {
       try {
@@ -203,13 +207,13 @@ export default {
         )
 
         if (res.errors) throw res.errors
-        this.confirmationAlert({ message: 'community successfully deleted' })
+        this.showAlert({ message: 'community successfully deleted' })
         this.$router.push('/tribe').catch(() => {})
       } catch (err) {
         const message = 'Something went wrong while trying to delete the community'
         console.error(message, this.tribe.id)
         console.error(err)
-        this.confirmationAlert({ message })
+        this.showAlert({ message })
         this.dialog = 'edit-community'
       }
     },

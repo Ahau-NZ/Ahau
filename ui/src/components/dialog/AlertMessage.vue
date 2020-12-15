@@ -21,6 +21,7 @@
 </template>
 <script>
 export default {
+  name: 'AlertMessage',
   props: {
     show: { type: Boolean, default: false },
     message: { type: String, default: 'Action successfully completed' },

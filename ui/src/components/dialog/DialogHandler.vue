@@ -123,7 +123,6 @@ import pick from 'lodash.pick'
 import isEqual from 'lodash.isequal'
 import isEmpty from 'lodash.isempty'
 import * as d3 from 'd3'
-import { mapGetters, mapActions, mapMutations } from 'vuex'
 
 import NewNodeDialog from '@/components/dialog/profile/NewNodeDialog.vue'
 import NewCommunityDialog from '@/components/dialog/community/NewCommunityDialog.vue'
@@ -150,6 +149,8 @@ import tree from '@/lib/tree-helpers'
 import findSuccessor from '@/lib/find-successor'
 
 import mapProfileMixins from '@/mixins/profile-mixins.js'
+import { createNamespacedHelpers, mapGetters, mapActions } from 'vuex'
+const { mapMutations: mapAlertMutations } = createNamespacedHelpers('alerts')
 
 export default {
   name: 'DialogHandler',
@@ -256,7 +257,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['confirmationAlert']),
+    ...mapAlertMutations(['showAlert']),
     ...mapActions(['updateNode', 'deleteNode', 'updatePartnerNode', 'addChild', 'addParent', 'loading', 'setDialog',
       'setProfileById', 'setTribes'
     ]),
@@ -380,7 +381,7 @@ export default {
       } catch (err) {
         console.error('Something went wrong while trying to create private group', $event)
         console.error(err)
-        this.confirmationAlert({ message: 'Failed to create the private group. Please contact us if this continues to happen' })
+        this.showAlert({ message: 'Failed to create the private group. Please contact us if this continues to happen' })
       }
     },
     async savePerson (input) {

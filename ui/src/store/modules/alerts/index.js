@@ -1,0 +1,43 @@
+const state = {
+  alert: {
+    settings: {
+      show: false,
+      message: null,
+      color: ''
+    }
+  }
+}
+
+const getters = {
+  alert: state => state.alert,
+  alertSettings: state => state.alert.settings
+}
+
+const mutations = {
+  showAlert (state, { message, delay = 3000, color = '' }) {
+    state.alert.settings = {
+      show: true,
+      message,
+      color
+    }
+
+    setTimeout(() => {
+      state.alert.settings = {
+        show: false,
+        message: null,
+        color: ''
+      }
+    }, delay)
+  }
+}
+
+const actions = {
+}
+
+export default {
+  state,
+  mutations,
+  actions,
+  getters,
+  namespaced: true
+}
