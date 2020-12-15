@@ -598,10 +598,10 @@ export default {
         return 'Phone'
       }
 
-      const legalName = ['Legal Name', 'Legal Name Asc', 'Legal Name Desc']
-      const age = ['Age', 'Age Asc', 'Age Desc']
-      const profession = ['Profession', 'Profession Asc', 'Profession Desc']
-      const location = ['City, Country', 'City, Country Asc', 'City, Country Desc']
+      const legalName = ['Legal Name', 'Legal Name ↑', 'Legal Name ↓']
+      const age = ['Age', 'Age ↑', 'Age ↓']
+      const profession = ['Profession', 'Profession ↑', 'Profession ↓']
+      const location = ['City, Country', 'City, Country ↑', 'City, Country ↓']
 
       if (label === 'Legal Name') {
         return legalName[this.sortLegalName]
