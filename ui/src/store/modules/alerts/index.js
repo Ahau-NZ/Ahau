@@ -1,3 +1,12 @@
+/*
+  TODO (later):
+  - [ ] separate alerts into two sections
+    - [ ] confirmation message
+    - [ ] error message
+  - [ ] different message types will use different styling
+  - [ ] update the error message styling, temporarily red for now
+*/
+
 const state = {
   alert: {
     settings: {
