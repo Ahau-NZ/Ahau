@@ -18,8 +18,8 @@
           :transform="`translate(${60 - nodeRadius} ${80 - nodeRadius})`"
           ref="tree"
         >
-          <g v-for="node in nodes" :key="node.data.id" :id="node.data.id" class="node">
-            <rect :x="node.x + nodeRadius" :y="node.y" :width="tableWidth" :height="nodeRadius*2" class="row" :style="node.color" />
+          <g v-for="node in nodes" :key="node.data.id" class="node">
+            <rect :x="node.x + nodeRadius" :y="node.y" :width="tableWidth" :height="nodeRadius*2" class="row" :style="node.color" :id="node.data.id" />
             <Node
               :width="colWidth"
               :node="node"
@@ -353,27 +353,13 @@ export default {
     },
 
     centerNode (node) {
-      // var svg = d3.select('#baseSvg')
-      // var g = d3.select('#baseGroup')
-
-      // var height = this.$refs.tree.clientHeight
-
-      // var x = 0
-      // var y = height / 2 - node.y + 150
-
-      // g.transition()
-      //   .duration(700)
-      //   .attr('transform', 'translate(' + (x) + ',' + (y) + ')')
-      //   .on('end', function () { svg.call(d3.zoom().transform, d3.zoomIdentity.translate((x), (y))) })
       console.log('scrolling')
 
       const element = document.getElementById(`${node.data.id}`)
-      console.log('element: ', element)
       const coord = element.getBoundingClientRect()
+      console.log('person coords: ', coord)
 
-      console.log('coords: ', coord)
-
-      const elementPos = coord.top + window.pageYOffset
+      const elementPos = coord.bottom - 400
 
       console.log('element pos is ' + elementPos + 'px')
       window.scrollTo({
