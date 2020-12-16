@@ -84,6 +84,7 @@ import Link from '../tree/Link.vue'
 import calculateAge from '../../lib/calculate-age.js'
 import isEqual from 'lodash.isequal'
 import { mapGetters, mapActions } from 'vuex'
+import { SORT } from '@/lib/constants.js'
 
 export default {
   props: {
@@ -141,11 +142,11 @@ export default {
 
       // The following variables are for sorting fields
       // 0 = no sort, 1 = sort ascending, 2 = sort descending
-      sortPreferredName: 0,
-      sortLegalName: 0,
-      sortAge: 0,
-      sortProfession: 0,
-      sortLocation: 0
+      sortPreferredName: SORT.default,
+      sortLegalName: SORT.default,
+      sortAge: SORT.default,
+      sortProfession: SORT.default,
+      sortLocation: SORT.default
     }
   },
   mounted () {
@@ -191,19 +192,19 @@ export default {
         .descendants()
         // sort by preferred name
         .sort((a, b) => {
-          if (this.sortPreferredName !== 0) {
+          if (this.sortPreferredName !== SORT.default) {
             if (a.data.preferredName === null || b.data.preferredName === null) {
               return 0
             }
 
             const aName = a.data.preferredName.toLowerCase()
             const bName = b.data.preferredName.toLowerCase()
-            if (this.sortPreferredName === 1) {
+            if (this.sortPreferredName === SORT.ascending) {
               if (aName < bName) { return -1 }
               if (aName > bName) { return 1 }
               return 0
             }
-            if (this.sortPreferredName === 2) {
+            if (this.sortPreferredName === SORT.descending) {
               if (aName > bName) { return -1 }
               if (aName < bName) { return 1 }
               return 0
@@ -212,7 +213,7 @@ export default {
         })
         // sort by legal name
         .sort((a, b) => {
-          if (this.sortLegalName !== 0) {
+          if (this.sortLegalName !== SORT.default) {
             if (a.data.preferredName === null || a.data.legalName === null ||
                 b.data.preferredName === null || b.data.legalName === null) {
               return 0
@@ -220,12 +221,12 @@ export default {
 
             const aName = a.data.preferredName.toLowerCase() + a.data.legalName.toLowerCase()
             const bName = b.data.preferredName.toLowerCase() + b.data.legalName.toLowerCase()
-            if (this.sortLegalName === 1) {
+            if (this.sortLegalName === SORT.ascending) {
               if (aName < bName) { return -1 }
               if (aName > bName) { return 1 }
               return 0
             }
-            if (this.sortLegalName === 2) {
+            if (this.sortLegalName === SORT.descending) {
               if (aName > bName) { return -1 }
               if (aName < bName) { return 1 }
               return 0
@@ -234,19 +235,19 @@ export default {
         })
         // sort by age
         .sort((a, b) => {
-          if (this.sortAge !== 0) {
+          if (this.sortAge !== SORT.default) {
             if (a.data.aliveInterval === null || b.data.aliveInterval === null) {
               return 0
             }
 
             const aAge = calculateAge(a.data.aliveInterval)
             const bAge = calculateAge(b.data.aliveInterval)
-            if (this.sortAge === 1) {
+            if (this.sortAge === SORT.ascending) {
               if (aAge < bAge) { return -1 }
               if (aAge > bAge) { return 1 }
               return 0
             }
-            if (this.sortAge === 2) {
+            if (this.sortAge === SORT.descending) {
               if (aAge > bAge) { return -1 }
               if (aAge < bAge) { return 1 }
               return 0
@@ -255,19 +256,19 @@ export default {
         })
         // sort by profession
         .sort((a, b) => {
-          if (this.sortProfession !== 0) {
+          if (this.sortProfession !== SORT.default) {
             if (a.data.profession === null || b.data.profession === null) {
               return 0
             }
 
             const aProfession = a.data.profession.toLowerCase()
             const bProfession = b.data.profession.toLowerCase()
-            if (this.sortProfession === 1) {
+            if (this.sortProfession === SORT.ascending) {
               if (aProfession < bProfession) { return -1 }
               if (aProfession > bProfession) { return 1 }
               return 0
             }
-            if (this.sortProfession === 2) {
+            if (this.sortProfession === SORT.descending) {
               if (aProfession > bProfession) { return -1 }
               if (aProfession < bProfession) { return 1 }
               return 0
@@ -276,19 +277,19 @@ export default {
         })
         // sort by location
         .sort((a, b) => {
-          if (this.sortLocation !== 0) {
+          if (this.sortLocation !== SORT.default) {
             if (a.data.location === null || b.data.location === null) {
               return 0
             }
 
             const aLocation = a.data.location.toLowerCase()
             const bLocation = b.data.location.toLowerCase()
-            if (this.sortLocation === 1) {
+            if (this.sortLocation === SORT.ascending) {
               if (aLocation < bLocation) { return -1 }
               if (aLocation > bLocation) { return 1 }
               return 0
             }
-            if (this.sortLocation === 2) {
+            if (this.sortLocation === SORT.descending) {
               if (aLocation > bLocation) { return -1 }
               if (aLocation < bLocation) { return 1 }
               return 0
@@ -475,102 +476,102 @@ export default {
 
     toggleSort (value) {
       if (value === 'Preferred Name') {
-        this.sortAge = 0
-        this.sortLocation = 0
-        this.sortProfession = 0
-        this.sortLegalName = 0
+        this.sortAge = SORT.default
+        this.sortLocation = SORT.default
+        this.sortProfession = SORT.default
+        this.sortLegalName = SORT.default
         switch (this.sortPreferredName) {
-          case 0:
-            this.sortPreferredName = 1
+          case SORT.default:
+            this.sortPreferredName = SORT.ascending
             break
-          case 1:
-            this.sortPreferredName = 2
+          case SORT.ascending:
+            this.sortPreferredName = SORT.descending
             break
-          case 2:
-            this.sortPreferredName = 0
+          case SORT.descending:
+            this.sortPreferredName = SORT.default
             break
           default:
-            this.sortPreferredName = 0
+            this.sortPreferredName = SORT.default
         }
       }
       // sort by legal name
       if (value === 'Legal Name') {
-        this.sortPreferredName = 0
-        this.sortAge = 0
-        this.sortLocation = 0
-        this.sortProfession = 0
+        this.sortPreferredName = SORT.default
+        this.sortAge = SORT.default
+        this.sortLocation = SORT.default
+        this.sortProfession = SORT.default
         switch (this.sortLegalName) {
-          case 0:
-            this.sortLegalName = 1
+          case SORT.default:
+            this.sortLegalName = SORT.ascending
             break
-          case 1:
-            this.sortLegalName = 2
+          case SORT.ascending:
+            this.sortLegalName = SORT.descending
             break
-          case 2:
-            this.sortLegalName = 0
+          case SORT.descending:
+            this.sortLegalName = SORT.default
             break
           default:
-            this.sortLegalName = 0
+            this.sortLegalName = SORT.default
         }
       }
       // sort by age
       if (value === 'Age') {
-        this.sortPreferredName = 0
-        this.sortLegalName = 0
-        this.sortLocation = 0
-        this.sortProfession = 0
+        this.sortPreferredName = SORT.default
+        this.sortLegalName = SORT.default
+        this.sortLocation = SORT.default
+        this.sortProfession = SORT.default
         switch (this.sortAge) {
-          case 0:
-            this.sortAge = 1
+          case SORT.default:
+            this.sortAge = SORT.ascending
             break
-          case 1:
-            this.sortAge = 2
+          case SORT.ascending:
+            this.sortAge = SORT.descending
             break
-          case 2:
-            this.sortAge = 0
+          case SORT.descending:
+            this.sortAge = SORT.default
             break
           default:
-            this.sortAge = 0
+            this.sortAge = SORT.default
         }
       }
       // sort by profession
       if (value === 'Profession') {
-        this.sortPreferredName = 0
-        this.sortLegalName = 0
-        this.sortAge = 0
-        this.sortLocation = 0
+        this.sortPreferredName = SORT.default
+        this.sortLegalName = SORT.default
+        this.sortAge = SORT.default
+        this.sortLocation = SORT.default
         switch (this.sortProfession) {
-          case 0:
-            this.sortProfession = 1
+          case SORT.default:
+            this.sortProfession = SORT.ascending
             break
-          case 1:
-            this.sortProfession = 2
+          case SORT.ascending:
+            this.sortProfession = SORT.descending
             break
-          case 2:
-            this.sortProfession = 0
+          case SORT.descending:
+            this.sortProfession = SORT.default
             break
           default:
-            this.sortProfession = 0
+            this.sortProfession = SORT.default
         }
       }
       // sort by location
       if (value === 'City, Country') {
-        this.sortPreferredName = 0
-        this.sortLegalName = 0
-        this.sortAge = 0
-        this.sortProfession = 0
+        this.sortPreferredName = SORT.default
+        this.sortLegalName = SORT.default
+        this.sortAge = SORT.default
+        this.sortProfession = SORT.default
         switch (this.sortLocation) {
-          case 0:
-            this.sortLocation = 1
+          case SORT.default:
+            this.sortLocation = SORT.ascending
             break
-          case 1:
-            this.sortLocation = 2
+          case SORT.ascending:
+            this.sortLocation = SORT.descending
             break
-          case 2:
-            this.sortLocation = 0
+          case SORT.descending:
+            this.sortLocation = SORT.default
             break
           default:
-            this.sortLocation = 0
+            this.sortLocation = SORT.default
         }
       }
     },
