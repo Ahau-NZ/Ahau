@@ -145,7 +145,7 @@ export default {
         legalName: SORT.default,
         age: SORT.default,
         profesion: SORT.default,
-        location: SORT.default,
+        location: SORT.default
       }
     }
   },
@@ -199,7 +199,6 @@ export default {
 
             const aName = a.data.preferredName.toLowerCase()
             const bName = b.data.preferredName.toLowerCase()
-            
             return this.sortByField(aName, bName, 'preferredName')
           }
         })
@@ -213,7 +212,6 @@ export default {
 
             const aName = a.data.preferredName.toLowerCase() + a.data.legalName.toLowerCase()
             const bName = b.data.preferredName.toLowerCase() + b.data.legalName.toLowerCase()
-            
             return this.sortByField(aName, bName, 'legalName')
           }
         })
@@ -226,7 +224,6 @@ export default {
 
             const aAge = calculateAge(a.data.aliveInterval)
             const bAge = calculateAge(b.data.aliveInterval)
-            
             return this.sortByField(aAge, bAge, 'age')
           }
         })
@@ -239,7 +236,6 @@ export default {
 
             const aProfession = a.data.profession.toLowerCase()
             const bProfession = b.data.profession.toLowerCase()
-            
             return this.sortByField(aProfession, bProfession, 'profession')
           }
         })
@@ -252,7 +248,6 @@ export default {
 
             const aLocation = a.data.location.toLowerCase()
             const bLocation = b.data.location.toLowerCase()
-            
             return this.sortByField(aLocation, bLocation, 'location')
           }
         })
@@ -456,24 +451,22 @@ export default {
           this.resetSorts('location')
           this.setSortOnField('location')
           break
-        default:
-          return
       }
     },
     setSortOnField (field) {
       const currentSort = this.sort[field]
       switch (currentSort) {
         case SORT.default:
-            this.sort[field] = SORT.ascending
-            break
-          case SORT.ascending:
-            this.sort[field] = SORT.descending
-            break
-          case SORT.descending:
-            this.sort[field] = SORT.default
-            break
-          default:
-            this.sort[field] = SORT.default
+          this.sort[field] = SORT.ascending
+          break
+        case SORT.ascending:
+          this.sort[field] = SORT.descending
+          break
+        case SORT.descending:
+          this.sort[field] = SORT.default
+          break
+        default:
+          this.sort[field] = SORT.default
       }
     },
     resetSorts (ignoredKey) {
