@@ -39,7 +39,7 @@
             hide-delimiters
             :show-arrows="!mobile && fullStory && story.artefacts && story.artefacts.length > 1" :show-arrows-on-hover="!mobile" :height="showArtefact ? 'auto' : mobile ? '300px' : '500px'" style="background-color:#1E1E1E">
             <v-carousel-item v-for="({ artefact } , i) in story.artefacts" :key="`story-card-artefact-${i}`">
-              <Artefact :model="model" :index="i" @showArtefact="toggleShowArtefact($event)" :artefact="artefact" />
+              <Artefact :model="model" :index="i" @showArtefact="toggleShowArtefact($event)" :artefact="artefact" :controls="fullStory" />
             </v-carousel-item>
           </v-carousel>
           <v-slide-group
@@ -208,7 +208,7 @@
       <NewRecordDialog
         v-if="dialog === 'edit-story'"
         :show="dialog === 'edit-story'"
-        :title="`Edit ${story.title}`"
+        :title="`Edit ${story.title || 'Story'}`"
         editing
         :story="story"
         @close="finishEditing()"
