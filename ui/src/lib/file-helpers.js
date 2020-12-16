@@ -6,7 +6,7 @@ export const PERMITTED_FILE_INPUT = [
   'encrypt'
 ]
 
-export const UPLOAD_FILE = input => {
+export const uploadFile = input => {
   input = pick(input, PERMITTED_FILE_INPUT)
 
   return {
