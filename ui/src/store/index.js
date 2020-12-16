@@ -17,6 +17,14 @@ const apollo = apolloProvider.defaultClient
 
 Vue.use(Vuex)
 
+/*
+  TODO (later):
+    - [ ] move loading and syncing to alerts modules
+    - [ ] change modules to be namespaced
+          - https://vuex.vuejs.org/guide/modules.html#namespacing
+          - see alerts module for another example
+*/
+
 const store = new Vuex.Store({
   state: {
     currentAccess: null,

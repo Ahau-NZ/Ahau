@@ -381,7 +381,11 @@ export default {
       } catch (err) {
         console.error('Something went wrong while trying to create private group', $event)
         console.error(err)
-        this.showAlert({ message: 'Failed to create the private group. Please contact us if this continues to happen' })
+        this.showAlert({
+          message: 'Failed to create the private group. Please contact us if this continues to happen',
+          delay: 5000,
+          color: 'red'
+        })
       }
     },
     async savePerson (input) {

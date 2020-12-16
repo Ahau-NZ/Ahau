@@ -120,7 +120,7 @@ export default {
           const message = 'Something went wrong while trying to fetch members'
           console.error(message)
           console.error(err)
-          this.showAlert({ message })
+          this.showAlert({ message, delay: 5000, color: 'red' })
         }
       }
     }
@@ -213,7 +213,7 @@ export default {
         const message = 'Something went wrong while trying to delete the community'
         console.error(message, this.tribe.id)
         console.error(err)
-        this.showAlert({ message })
+        this.showAlert({ message, delay: 5000, color: 'red' })
         this.dialog = 'edit-community'
       }
     },

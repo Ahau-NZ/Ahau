@@ -16,7 +16,7 @@ const methods = {
       const message = 'Something went wrong while upload a file. Please check the file size is less the 5MB'
       console.error(message)
       console.error(err)
-      this.showAlert({ message, delay: 5000 })
+      this.showAlert({ message, delay: 5000, color: 'red' })
       return null
     }
   }
