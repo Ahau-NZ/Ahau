@@ -435,105 +435,52 @@ export default {
     },
 
     toggleSort (value) {
-      if (value === 'Preferred Name') {
-        this.sort['age'] = SORT.default
-        this.sort['location'] = SORT.default
-        this.sort['profesion'] = SORT.default
-        this.sort['legalName'] = SORT.default
-        switch (this.sort['preferredName']) {
-          case SORT.default:
-            this.sort['preferredName'] = SORT.ascending
+      switch (value) {
+        case 'Preferred Name':
+          this.resetSorts('preferredName')
+          this.setSortOnField('preferredName')
+          break
+        case 'Legal Name':
+          this.resetSorts('legalName')
+          this.setSortOnField('legalName')
+          break
+        case 'Age':
+          this.resetSorts('age')
+          this.setSortOnField('age')
+          break
+        case 'Profession':
+          this.resetSorts('profession')
+          this.setSortOnField('profession')
+          break
+        case 'City, Country':
+          this.resetSorts('location')
+          this.setSortOnField('location')
+          break
+        default:
+          return
+      }
+    },
+    setSortOnField (field) {
+      const currentSort = this.sort[field]
+      switch (currentSort) {
+        case SORT.default:
+            this.sort[field] = SORT.ascending
             break
           case SORT.ascending:
-            this.sort['preferredName'] = SORT.descending
+            this.sort[field] = SORT.descending
             break
           case SORT.descending:
-            this.sort['preferredName'] = SORT.default
+            this.sort[field] = SORT.default
             break
           default:
-            this.sort['preferredName'] = SORT.default
-        }
+            this.sort[field] = SORT.default
       }
-      // sort by legal name
-      if (value === 'Legal Name') {
-        this.sort['preferredName'] = SORT.default
-        this.sort['age'] = SORT.default
-        this.sort['location'] = SORT.default
-        this.sort['profesion'] = SORT.default
-        switch (this.sort['legalName']) {
-          case SORT.default:
-            this.sort['legalName'] = SORT.ascending
-            break
-          case SORT.ascending:
-            this.sort['legalName'] = SORT.descending
-            break
-          case SORT.descending:
-            this.sort['legalName'] = SORT.default
-            break
-          default:
-            this.sort['legalName'] = SORT.default
-        }
-      }
-      // sort by age
-      if (value === 'Age') {
-        this.sort['preferredName'] = SORT.default
-        this.sort['legalName'] = SORT.default
-        this.sort['location'] = SORT.default
-        this.sort['profesion'] = SORT.default
-        switch (this.sort['age']) {
-          case SORT.default:
-            this.sort['age'] = SORT.ascending
-            break
-          case SORT.ascending:
-            this.sort['age'] = SORT.descending
-            break
-          case SORT.descending:
-            this.sort['age'] = SORT.default
-            break
-          default:
-            this.sort['age'] = SORT.default
-        }
-      }
-      // sort by profession
-      if (value === 'Profession') {
-        this.sort['preferredName'] = SORT.default
-        this.sort['legalName'] = SORT.default
-        this.sort['age'] = SORT.default
-        this.sort['location'] = SORT.default
-        switch (this.sort['profesion']) {
-          case SORT.default:
-            this.sort['profesion'] = SORT.ascending
-            break
-          case SORT.ascending:
-            this.sort['profesion'] = SORT.descending
-            break
-          case SORT.descending:
-            this.sort['profesion'] = SORT.default
-            break
-          default:
-            this.sort['profesion'] = SORT.default
-        }
-      }
-      // sort by location
-      if (value === 'City, Country') {
-        this.sort['preferredName'] = SORT.default
-        this.sort['legalName'] = SORT.default
-        this.sort['age'] = SORT.default
-        this.sort['profesion'] = SORT.default
-        switch (this.sort['location']) {
-          case SORT.default:
-            this.sort['location'] = SORT.ascending
-            break
-          case SORT.ascending:
-            this.sort['location'] = SORT.descending
-            break
-          case SORT.descending:
-            this.sort['location'] = SORT.default
-            break
-          default:
-            this.sort['location'] = SORT.default
-        }
-      }
+    },
+    resetSorts (ignoredKey) {
+      Object.keys(this.sort).forEach(key => {
+        if (key === ignoredKey) return
+        this.sort[key] = SORT.default
+      })
     },
     computeLabel (label) {
       if (label === 'Address') {
