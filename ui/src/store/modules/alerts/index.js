@@ -5,6 +5,8 @@
     - [ ] error message
   - [ ] different message types will use different styling
   - [ ] update the error message styling, temporarily red for now
+  - [ ] use alerts in all graphql query catches, display something when it fails
+  - [ ] add confirmation messages when successfully performing operations (save/submit/update/create)
 */
 
 const state = {
