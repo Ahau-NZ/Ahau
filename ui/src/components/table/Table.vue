@@ -482,7 +482,6 @@ export default {
       }
     },
     checkSortObjectsNull (array) {
-      console.log('array: ', array)
       for (var i = 0; i < array.length; i++) {
         if (!array[i]) return true
       }
