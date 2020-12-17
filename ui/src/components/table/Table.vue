@@ -121,7 +121,7 @@ export default {
     },
     sortValue: {
       type: String,
-      default: ''
+      default: null
     },
     sortEvent: {
       type: MouseEvent,
@@ -187,18 +187,12 @@ export default {
 
     // returns an array of nodes associated with the root node created from the treeData object, as well as extra attributes
     nodes () {
-      var currentSort = null
-      Object.keys(this.sort).forEach(key => {
-        if (this.sort[key] !== 0) {
-          currentSort = key
-        }
-      })
       return this.tableLayout
         // returns the array of descendants starting with the root node, then followed by each child in topological order
         .descendants()
         // sort by preferred name
         .sort((a, b) => {
-          return this.determineSort(a, b, `${currentSort}`)
+          return this.determineSort(a, b)
         })
         // filter deceased
         .filter(peeps => {
@@ -425,8 +419,8 @@ export default {
 
       return ''
     },
-    sortByField (a, b, field) {
-      const sort = this.sort[field]
+    sortByField (a, b) {
+      const sort = this.sort[this.sortValue]
       if (sort !== SORT.default) {
         if (sort === SORT.ascending) {
           if (a < b) { return -1 }
@@ -440,44 +434,42 @@ export default {
         }
       }
     },
-    determineSort (a, b, field) {
-      switch (field) {
-        case 'preferredName':
-          const aName = this.convertNullToChar(a.data.preferredName, field)
-          const bName = this.convertNullToChar(b.data.preferredName, field)
-          if (this.checkSortObjectsNull([aName, bName])) return 0
-          return this.sortByField(aName.toLowerCase(), bName.toLowerCase(), field)
-        case 'legalName':
-          const aPrefName = this.convertNullToChar(a.data.preferredName, field)
-          const bPrefName = this.convertNullToChar(b.data.preferredName, field)
-          const aLegalName = this.convertNullToChar(a.data.legalName, field)
-          const bLegalName = this.convertNullToChar(b.data.legalName, field)
-          if (this.checkSortObjectsNull([aPrefName, bPrefName, aLegalName, bLegalName])) return 0
-          return this.sortByField(aPrefName.toLowerCase() + aLegalName.toLowerCase(), bPrefName.toLowerCase() + bLegalName, field)
-        case 'age':
-          const aAge = this.convertNullToChar(calculateAge(a.data.aliveInterval), field)
-          const bAge = this.convertNullToChar(calculateAge(b.data.aliveInterval), field)
-          return this.sortByField(aAge, bAge, field)
-        case 'profession':
-          const aProf = this.convertNullToChar(a.data.profession, field)
-          const bProf = this.convertNullToChar(b.data.profession, field)
-          return this.sortByField(aProf.toLowerCase(), bProf.toLowerCase(), field)
-        case 'location':
-          const aLoc = this.convertNullToChar(a.data.location, field)
-          const bLoc = this.convertNullToChar(b.data.location, field)
-          return this.sortByField(aLoc.toLowerCase(), bLoc.toLowerCase(), field)
+    determineSort (a, b) {
+      const field = this.sortValue
+      if (field === null || field === '') {
+        return
       }
+      let aVal, bVal
+
+      switch (field) {
+        case 'age':
+          aVal = this.convertNullToChar(calculateAge(a.data.aliveInterval))
+          bVal = this.convertNullToChar(calculateAge(b.data.aliveInterval))
+          return this.sortByField(aVal, bVal)
+        case 'legalName':
+          aVal = (a.data.preferredName || '') + (a.data.legalName || '')
+          bVal = (b.data.preferredName || '') + (b.data.legalName || '')
+          break
+        default:
+          aVal = a.data[field]
+          bVal = b.data[field]
+      }
+      aVal = this.convertNullToChar(aVal)
+      bVal = this.convertNullToChar(bVal)
+
+      return this.sortByField(aVal.toLowerCase(), bVal.toLowerCase())
     },
     // Hacky way to get empty/null fields to display below non-empty sorted fields
-    convertNullToChar (val, field) {
+    convertNullToChar (val) {
       if (val !== null && val !== '') return val
-      const sort = this.sort[field]
+      const sort = this.sort[this.sortValue]
       if (sort === SORT.ascending) {
         return 'ZZZZZ'
       }
       if (sort === SORT.descending) {
         return 'AAAAA'
       }
+      return ''
     }
   },
   components: {
