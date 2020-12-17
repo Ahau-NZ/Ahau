@@ -138,7 +138,6 @@ export default {
       nodeSize: 40,
       duration: 400,
 
-      sortField: '',
       // 0 = no sort, 1 = sort ascending, 2 = sort descending
       sort: {
         preferredName: SORT.default,
@@ -302,6 +301,7 @@ export default {
       this.setLoading(false)
     },
 
+    // Triggered whenever the user selects a sort
     sortEvent () {
       this.resetSorts(this.sortValue)
       this.setSortOnField(this.sortValue)
@@ -368,6 +368,7 @@ export default {
 
       // this.updateNode({ is, path: endNode.path })
     },
+    // Toggles the sort on the current field between ascending, descending and no sort
     setSortOnField (field) {
       const currentSort = this.sort[field]
       switch (currentSort) {
@@ -382,12 +383,14 @@ export default {
           this.sort[field] = SORT.default
       }
     },
+    // When a sort is triggered, ensures all other sorts are disabled
     resetSorts (ignoredKey) {
       Object.keys(this.sort).forEach(key => {
         if (key === ignoredKey) return
         this.sort[key] = SORT.default
       })
     },
+    // Computes the label of table headers depending on whether a sort is active
     computeLabel (label) {
       if (label === 'Address') {
         return 'Address'
@@ -419,6 +422,7 @@ export default {
 
       return ''
     },
+    // Executes a sort on two values
     sortByField (a, b) {
       const sort = this.sort[this.sortValue]
       if (sort !== SORT.default) {
@@ -434,6 +438,7 @@ export default {
         }
       }
     },
+    // Determines the sort to be performed depending on the field to be sorted
     determineSort (a, b) {
       const field = this.sortValue
       if (field === null || field === '') {
@@ -450,7 +455,7 @@ export default {
           aVal = (a.data.preferredName || '') + (a.data.legalName || '')
           bVal = (b.data.preferredName || '') + (b.data.legalName || '')
           break
-        default:
+        default: // Preferred name or location
           aVal = a.data[field]
           bVal = b.data[field]
       }
