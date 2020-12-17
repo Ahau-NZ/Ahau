@@ -308,12 +308,9 @@ export default {
       this.setLoading(false)
     },
 
-    sortValue (newValue) {
-      this.sortField = newValue
-    },
-
     sortEvent () {
-      this.toggleSort(this.sortField)
+      this.resetSorts(this.sortValue)
+      this.setSortOnField(this.sortValue)
     }
   },
   methods: {
@@ -377,11 +374,6 @@ export default {
 
       // this.updateNode({ is, path: endNode.path })
     },
-
-    toggleSort (value) {
-      this.resetSorts(`${value}`)
-      this.setSortOnField(`${value}`)
-    },
     setSortOnField (field) {
       const currentSort = this.sort[field]
       switch (currentSort) {
@@ -392,8 +384,6 @@ export default {
           this.sort[field] = SORT.descending
           break
         case SORT.descending:
-          this.sort[field] = SORT.default
-          break
         default:
           this.sort[field] = SORT.default
       }
@@ -453,37 +443,40 @@ export default {
     determineSort (a, b, field) {
       switch (field) {
         case 'preferredName':
-          const aName = a.data.preferredName
-          const bName = b.data.preferredName
+          const aName = this.convertNullToChar(a.data.preferredName, field)
+          const bName = this.convertNullToChar(b.data.preferredName, field)
           if (this.checkSortObjectsNull([aName, bName])) return 0
           return this.sortByField(aName.toLowerCase(), bName.toLowerCase(), field)
         case 'legalName':
-          const aPrefName = a.data.preferredName
-          const bPrefName = b.data.preferredName
-          const aLegalName = a.data.preferredName
-          const bLegalName = b.data.preferredName
+          const aPrefName = this.convertNullToChar(a.data.preferredName, field)
+          const bPrefName = this.convertNullToChar(b.data.preferredName, field)
+          const aLegalName = this.convertNullToChar(a.data.legalName, field)
+          const bLegalName = this.convertNullToChar(b.data.legalName, field)
           if (this.checkSortObjectsNull([aPrefName, bPrefName, aLegalName, bLegalName])) return 0
           return this.sortByField(aPrefName.toLowerCase() + aLegalName.toLowerCase(), bPrefName.toLowerCase() + bLegalName, field)
         case 'age':
-          const aAge = a.data.aliveInterval
-          const bAge = b.data.aliveInterval
-          if (this.checkSortObjectsNull([aAge, bAge])) return 0
+          const aAge = this.convertNullToChar(a.data.aliveInterval, field)
+          const bAge = this.convertNullToChar(b.data.aliveInterval, field)
           return this.sortByField(calculateAge(aAge), calculateAge(bAge), field)
         case 'profession':
-          const aProf = a.data.profession
-          const bProf = b.data.profession
-          if (this.checkSortObjectsNull([aProf, bProf])) return 0
+          const aProf = this.convertNullToChar(a.data.profession, field)
+          const bProf = this.convertNullToChar(b.data.profession, field)
           return this.sortByField(aProf.toLowerCase(), bProf.toLowerCase(), field)
         case 'location':
-          const aLoc = a.data.location
-          const bLoc = b.data.location
-          if (this.checkSortObjectsNull([aLoc, bLoc])) return 0
+          const aLoc = this.convertNullToChar(a.data.location, field)
+          const bLoc = this.convertNullToChar(b.data.location, field)
           return this.sortByField(aLoc.toLowerCase(), bLoc.toLowerCase(), field)
       }
     },
-    checkSortObjectsNull (array) {
-      for (var i = 0; i < array.length; i++) {
-        if (!array[i]) return true
+    // Hacky way to get empty/null fields to display below non-empty sorted fields
+    convertNullToChar (val, field) {
+      if (val !== null && val !== '') return val
+      const sort = this.sort[field]
+      if (sort === SORT.ascending) {
+        return 'ZZZZZ'
+      }
+      if (sort === SORT.descending) {
+        return 'AAAAA'
       }
     }
   },

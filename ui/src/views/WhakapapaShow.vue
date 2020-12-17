@@ -386,11 +386,6 @@ export default {
           value: 'location'
         }
       ]
-    },
-    access () {
-      // return the access based on the whakapapaView we are in...
-      if (!this.whakapapaView || !this.whakapapaView.recps) return null
-      return this.getAccessFromRecps(this.whakapapaView.recps)
     }
   },
   watch: {
