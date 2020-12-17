@@ -455,9 +455,9 @@ export default {
           if (this.checkSortObjectsNull([aPrefName, bPrefName, aLegalName, bLegalName])) return 0
           return this.sortByField(aPrefName.toLowerCase() + aLegalName.toLowerCase(), bPrefName.toLowerCase() + bLegalName, field)
         case 'age':
-          const aAge = this.convertNullToChar(a.data.aliveInterval, field)
-          const bAge = this.convertNullToChar(b.data.aliveInterval, field)
-          return this.sortByField(calculateAge(aAge), calculateAge(bAge), field)
+          const aAge = this.convertNullToChar(calculateAge(a.data.aliveInterval), field)
+          const bAge = this.convertNullToChar(calculateAge(b.data.aliveInterval), field)
+          return this.sortByField(aAge, bAge, field)
         case 'profession':
           const aProf = this.convertNullToChar(a.data.profession, field)
           const bProf = this.convertNullToChar(b.data.profession, field)
