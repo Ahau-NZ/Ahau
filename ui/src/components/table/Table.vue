@@ -144,7 +144,7 @@ export default {
         preferredName: SORT.default,
         legalName: SORT.default,
         age: SORT.default,
-        profesion: SORT.default,
+        profession: SORT.default,
         location: SORT.default
       }
     }
@@ -187,69 +187,18 @@ export default {
 
     // returns an array of nodes associated with the root node created from the treeData object, as well as extra attributes
     nodes () {
+      var currentSort = null
+      Object.keys(this.sort).forEach(key => {
+        if (this.sort[key] !== 0) {
+          currentSort = key
+        }
+      })
       return this.tableLayout
         // returns the array of descendants starting with the root node, then followed by each child in topological order
         .descendants()
         // sort by preferred name
         .sort((a, b) => {
-          if (this.sort['preferredName'] !== SORT.default) {
-            if (a.data.preferredName === null || b.data.preferredName === null) {
-              return 0
-            }
-
-            const aName = a.data.preferredName.toLowerCase()
-            const bName = b.data.preferredName.toLowerCase()
-            return this.sortByField(aName, bName, 'preferredName')
-          }
-        })
-        // sort by legal name
-        .sort((a, b) => {
-          if (this.sort['legalName'] !== SORT.default) {
-            if (a.data.preferredName === null || a.data.legalName === null ||
-                b.data.preferredName === null || b.data.legalName === null) {
-              return 0
-            }
-
-            const aName = a.data.preferredName.toLowerCase() + a.data.legalName.toLowerCase()
-            const bName = b.data.preferredName.toLowerCase() + b.data.legalName.toLowerCase()
-            return this.sortByField(aName, bName, 'legalName')
-          }
-        })
-        // sort by age
-        .sort((a, b) => {
-          if (this.sort['age'] !== SORT.default) {
-            if (a.data.aliveInterval === null || b.data.aliveInterval === null) {
-              return 0
-            }
-
-            const aAge = calculateAge(a.data.aliveInterval)
-            const bAge = calculateAge(b.data.aliveInterval)
-            return this.sortByField(aAge, bAge, 'age')
-          }
-        })
-        // sort by profession
-        .sort((a, b) => {
-          if (this.sort['profesion'] !== SORT.default) {
-            if (a.data.profession === null || b.data.profession === null) {
-              return 0
-            }
-
-            const aProfession = a.data.profession.toLowerCase()
-            const bProfession = b.data.profession.toLowerCase()
-            return this.sortByField(aProfession, bProfession, 'profession')
-          }
-        })
-        // sort by location
-        .sort((a, b) => {
-          if (this.sort['location'] !== SORT.default) {
-            if (a.data.location === null || b.data.location === null) {
-              return 0
-            }
-
-            const aLocation = a.data.location.toLowerCase()
-            const bLocation = b.data.location.toLowerCase()
-            return this.sortByField(aLocation, bLocation, 'location')
-          }
+          return this.determineSort(a, b, `${currentSort}`)
         })
         // filter deceased
         .filter(peeps => {
@@ -430,28 +379,8 @@ export default {
     },
 
     toggleSort (value) {
-      switch (value) {
-        case 'Preferred Name':
-          this.resetSorts('preferredName')
-          this.setSortOnField('preferredName')
-          break
-        case 'Legal Name':
-          this.resetSorts('legalName')
-          this.setSortOnField('legalName')
-          break
-        case 'Age':
-          this.resetSorts('age')
-          this.setSortOnField('age')
-          break
-        case 'Profession':
-          this.resetSorts('profession')
-          this.setSortOnField('profession')
-          break
-        case 'City, Country':
-          this.resetSorts('location')
-          this.setSortOnField('location')
-          break
-      }
+      this.resetSorts(`${value}`)
+      this.setSortOnField(`${value}`)
     },
     setSortOnField (field) {
       const currentSort = this.sort[field]
@@ -498,7 +427,7 @@ export default {
         return age[this.sort['age']]
       }
       if (label === 'Profession') {
-        return profession[this.sort['profesion']]
+        return profession[this.sort['profession']]
       }
       if (label === 'City, Country') {
         return location[this.sort['location']]
@@ -519,6 +448,43 @@ export default {
           if (a < b) { return 1 }
           return 0
         }
+      }
+    },
+    determineSort (a, b, field) {
+      switch (field) {
+        case 'preferredName':
+          const aName = a.data.preferredName
+          const bName = b.data.preferredName
+          if (this.checkSortObjectsNull([aName, bName])) return 0
+          return this.sortByField(aName.toLowerCase(), bName.toLowerCase(), field)
+        case 'legalName':
+          const aPrefName = a.data.preferredName
+          const bPrefName = b.data.preferredName
+          const aLegalName = a.data.preferredName
+          const bLegalName = b.data.preferredName
+          if (this.checkSortObjectsNull([aPrefName, bPrefName, aLegalName, bLegalName])) return 0
+          return this.sortByField(aPrefName.toLowerCase() + aLegalName.toLowerCase(), bPrefName.toLowerCase() + bLegalName, field)
+        case 'age':
+          const aAge = a.data.aliveInterval
+          const bAge = b.data.aliveInterval
+          if (this.checkSortObjectsNull([aAge, bAge])) return 0
+          return this.sortByField(calculateAge(aAge), calculateAge(bAge), field)
+        case 'profession':
+          const aProf = a.data.profession
+          const bProf = b.data.profession
+          if (this.checkSortObjectsNull([aProf, bProf])) return 0
+          return this.sortByField(aProf.toLowerCase(), bProf.toLowerCase(), field)
+        case 'location':
+          const aLoc = a.data.location
+          const bLoc = b.data.location
+          if (this.checkSortObjectsNull([aLoc, bLoc])) return 0
+          return this.sortByField(aLoc.toLowerCase(), bLoc.toLowerCase(), field)
+      }
+    },
+    checkSortObjectsNull (array) {
+      console.log('array: ', array)
+      for (var i = 0; i < array.length; i++) {
+        if (!array[i]) return true
       }
     }
   },

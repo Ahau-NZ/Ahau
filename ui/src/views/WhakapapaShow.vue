@@ -165,9 +165,9 @@
     </vue-context>
 
     <vue-context ref="sort" class="px-0">
-      <li v-for="field in sortFields" :key="field.id">
+      <li v-for="(field, i) in sortFields" :key="`sort-field-${i}`">
         <a href="#" @click.prevent="setSortField(field.value, $event)" class="d-flex align-center px-4">
-          <p class="ma-0 pl-3">{{ field.value }}</p>
+          <p class="ma-0 pl-3">{{ field.name }}</p>
         </a>
       </li>
     </vue-context>
@@ -366,29 +366,24 @@ export default {
     sortFields () {
       return [
         {
-          id: 0,
-          name: 'preferred-name',
-          value: 'Preferred Name'
+          name: 'Preferred Name',
+          value: 'preferredName'
         },
         {
-          id: 1,
-          name: 'legal-name',
-          value: 'Legal Name'
+          name: 'Legal Name',
+          value: 'legalName'
         },
         {
-          id: 2,
-          name: 'age',
-          value: 'Age'
+          name: 'Age',
+          value: 'age'
         },
         {
-          id: 3,
-          name: 'profession',
-          value: 'Profession'
+          name: 'Profession',
+          value: 'profession'
         },
         {
-          id: 4,
-          name: 'location',
-          value: 'City, Country'
+          name: 'City, Country',
+          value: 'location'
         }
       ]
     },
@@ -602,7 +597,6 @@ export default {
       if (this.dialog.view) {
         this.toggleView()
       }
-      console.log('menu event: ', event)
       this.$refs.menu.open(event)
     },
     toggleFilter () {
@@ -702,8 +696,6 @@ export default {
       return avatarHelper.defaultImage(this.aliveInterval, this.gender)
     },
     sortTable (event) {
-      // console.log('sorting in whakapapa view')
-      // console.log('event: ', event)
       this.$refs.sort.open(event)
       this.sortTableBool = !this.sortTableBool
     },
