@@ -115,6 +115,9 @@ export default {
     searchNodeId: {
       type: String
     },
+    searchNodeEvent: {
+      required: false
+    },
     pan: {
       type: Number,
       default: 0
@@ -280,10 +283,10 @@ export default {
       this.setLoading(false)
     },
 
-    searchNodeId (newValue) {
+    searchNodeEvent (newValue) {
       if (this.searchNodeId !== null) {
         this.root.descendants().find(d => {
-          if (d.data.id === newValue) {
+          if (d.data.id === this.searchNodeId) {
             this.centerNode(d)
           }
         })
@@ -353,15 +356,11 @@ export default {
     },
 
     centerNode (node) {
-      console.log('scrolling')
-
       const element = document.getElementById(`${node.data.id}`)
       const coord = element.getBoundingClientRect()
-      console.log('person coords: ', coord)
 
-      const elementPos = coord.bottom - 400
+      const elementPos = window.pageYOffset + coord.y - 400
 
-      console.log('element pos is ' + elementPos + 'px')
       window.scrollTo({
         top: elementPos,
         behavior: 'smooth'
