@@ -46,26 +46,31 @@
             </svg>
             <svg :width="columns[3].x - 45">
               <text  :transform="`translate(${columns[2].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ node.data.profession }}
+                {{ node.data.aliveInterval.substring(0,10) }}
               </text>
             </svg>
             <svg :width="columns[4].x - 45">
               <text  :transform="`translate(${columns[3].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ node.data.address }}
+                {{ node.data.profession }}
               </text>
             </svg>
             <svg :width="columns[5].x - 45">
               <text  :transform="`translate(${columns[4].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ node.data.location }}
+                {{ node.data.address }}
               </text>
             </svg>
             <svg :width="columns[6].x - 45">
-              <text :transform="`translate(${columns[5].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
+              <text  :transform="`translate(${columns[5].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
+                {{ node.data.location }}
+              </text>
+            </svg>
+            <svg :width="columns[7].x - 45">
+              <text :transform="`translate(${columns[6].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
                 {{ node.data.email }}
               </text>
             </svg>
             <svg>
-              <text :transform="`translate(${columns[6].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
+              <text :transform="`translate(${columns[7].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
                 {{ node.data.phone }}
               </text>
             </svg>
@@ -252,24 +257,28 @@ export default {
           x: this.colWidth + 200
         },
         {
+          label: 'D.O.B',
+          x: this.colWidth + 245
+        },
+        {
           label: 'Profession',
-          x: this.colWidth + 265
+          x: this.colWidth + 385
         },
         {
           label: 'Address',
-          x: this.colWidth + 465
+          x: this.colWidth + 615
         },
         {
           label: 'City, Country',
-          x: this.colWidth + 665
-        },
-        {
-          label: 'Email',
           x: this.colWidth + 865
         },
         {
+          label: 'Email',
+          x: this.colWidth + 1105
+        },
+        {
           label: 'Phone',
-          x: this.colWidth + 1165
+          x: this.colWidth + 1465
         }
       ]
     }
