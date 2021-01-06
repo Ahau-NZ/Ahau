@@ -35,13 +35,16 @@
 
       <v-row v-if="!mobile" class="select">
         <div v-if="search" class="icon-search">
-          <SearchBar :nestedWhakapapa="nestedWhakapapa" :searchNodeId.sync="searchNodeId" @close="clickedOff()"/>
+          <SearchBar :nestedWhakapapa="nestedWhakapapa" :searchNodeId.sync="searchNodeId" @close="clickedOffSearch()"/>
         </div>
-        <div v-else  class="icon-button">
+        <div v-else class="icon-button">
           <SearchButton :search.sync="search"/>
         </div>
-        <div v-if="whakapapa.table" class="icon-button">
-          <SearchFilterButton @searchFilter="initiateSearchFilter($event)"/>
+        <div v-if="searchFilter" class="icon-search">
+          <SearchBar :nestedWhakapapa="nestedWhakapapa" :searchNodeId.sync="searchNodeId" @close="clickedOffSearchFilter()"/>
+        </div>
+        <div v-if="whakapapa.table && !searchFilter" class="icon-button">
+          <SearchFilterButton :searchFilter.sync="searchFilter"/>
         </div>
         <div v-if="whakapapa.table && flatten" class="icon-button">
           <FilterButton :filter="filter" @filter="toggleFilter()" />
@@ -83,10 +86,16 @@
             </v-btn>
           </template>
           <div v-if="search" class="icon-search ml-n12 pt-7" @click.stop>
-            <SearchBar :nestedWhakapapa="nestedWhakapapa" :searchNodeId.sync="searchNodeId" @close="clickedOff()"/>
+            <SearchBar :nestedWhakapapa="nestedWhakapapa" :searchNodeId.sync="searchNodeId" @close="clickedOffSearch()"/>
           </div>
           <div v-else  class="icon-button">
             <SearchButton  @click.stop :search.sync="search"/>
+          </div>
+          <div v-if="searchFilter" class="icon-search">
+            <SearchBar :nestedWhakapapa="nestedWhakapapa" :searchNodeId.sync="searchNodeId" @close="clickedOffSearchFilter()"/>
+          </div>
+          <div v-if="whakapapa.table && !searchFilter" class="icon-button">
+            <SearchFilterButton @searchFilter="initiateSearchFilter($event)"/>
           </div>
           <div v-if="whakapapa.table && flatten" class="icon-button">
             <FilterButton :filter="filter" @filter="toggleFilter()" />
@@ -374,6 +383,9 @@ export default {
     },
     relationshipLinks (newVal) {
       this.addRelationshipLinks(newVal)
+    },
+    searchFilter (newValue) {
+      console.log('search filter: ', newValue)
     }
   },
   methods: {
@@ -383,8 +395,11 @@ export default {
       var show = width > screen.width
       this.overflow = show
     },
-    clickedOff () {
+    clickedOffSearch () {
       this.search = !this.search
+    },
+    clickedOffSearchFilter () {
+      this.searchFilter = !this.searchFilter
     },
     isVisibleProfile (descendant) {
       if (this.whakapapaView.ignoredProfiles) { return this.whakapapaView.ignoredProfiles.indexOf(descendant.profile.id) === -1 }
@@ -653,9 +668,6 @@ export default {
     },
     getImage () {
       return avatarHelper.defaultImage(this.aliveInterval, this.gender)
-    },
-    initiateSearchFilter (event) {
-      console.log('search filter initiated: ', event)
     }
   },
   destroyed () {
