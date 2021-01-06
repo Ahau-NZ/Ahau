@@ -40,6 +40,9 @@
         <div v-else  class="icon-button">
           <SearchButton :search.sync="search"/>
         </div>
+        <div v-if="whakapapa.table" class="icon-button">
+          <SearchFilterButton @searchFilter="initiateSearchFilter($event)"/>
+        </div>
         <div v-if="whakapapa.table && flatten" class="icon-button">
           <FilterButton :filter="filter" @filter="toggleFilter()" />
         </div>
@@ -196,6 +199,8 @@ import FilterButton from '@/components/button/FilterButton.vue'
 import SearchBar from '@/components/button/SearchBar.vue'
 import SearchButton from '@/components/button/SearchButton.vue'
 
+import SearchFilterButton from '@/components/button/SearchFilterButton.vue'
+
 import tree from '@/lib/tree-helpers'
 import avatarHelper from '@/lib/avatar-helpers.js'
 import { getRelatives } from '@/lib/person-helpers.js'
@@ -219,6 +224,7 @@ export default {
     FilterButton,
     SearchBar,
     SearchButton,
+    SearchFilterButton,
     FeedbackButton,
     Table,
     Tree,
@@ -238,6 +244,7 @@ export default {
       overflow: 'false',
       pan: 0,
       search: false,
+      searchFilter: false,
       searchNodeId: '',
       showWhakapapaHelper: false,
       whakapapaView: {
@@ -646,6 +653,9 @@ export default {
     },
     getImage () {
       return avatarHelper.defaultImage(this.aliveInterval, this.gender)
+    },
+    initiateSearchFilter (event) {
+      console.log('search filter initiated: ', event)
     }
   },
   destroyed () {
