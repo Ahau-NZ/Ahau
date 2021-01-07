@@ -87,6 +87,11 @@ export default {
         })
     }
   },
+  watch: {
+    searchString (newValue) {
+      this.$emit('update:searchFilterString', newValue)
+    }
+  },
   methods: {
     setString (name) {
       if (isEmpty(name)) return ''

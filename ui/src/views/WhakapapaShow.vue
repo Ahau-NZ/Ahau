@@ -41,7 +41,7 @@
           <SearchButton :search.sync="search"/>
         </div>
         <div v-if="searchFilter" class="icon-search">
-          <SearchBar :nestedWhakapapa="nestedWhakapapa" :searchNodeId.sync="searchNodeId" @close="clickedOffSearchFilter()"/>
+          <SearchBar :nestedWhakapapa="nestedWhakapapa" :searchNodeId.sync="searchNodeId" :searchFilterString.sync="searchFilterString" @close="clickedOffSearchFilter()"/>
         </div>
         <div v-if="whakapapa.table && !searchFilter" class="icon-button">
           <SearchFilterButton :searchFilter.sync="searchFilter"/>
@@ -92,7 +92,7 @@
             <SearchButton  @click.stop :search.sync="search"/>
           </div>
           <div v-if="searchFilter" class="icon-search">
-            <SearchBar :nestedWhakapapa="nestedWhakapapa" :searchNodeId.sync="searchNodeId" @close="clickedOffSearchFilter()"/>
+            <SearchBar :nestedWhakapapa="nestedWhakapapa" :searchNodeId.sync="searchNodeId" :searchFilterString.sync="searchFilterString" @close="clickedOffSearchFilter()"/>
           </div>
           <div v-if="whakapapa.table && !searchFilter" class="icon-button">
             <SearchFilterButton @searchFilter="initiateSearchFilter($event)"/>
@@ -142,6 +142,7 @@
           @collapse-node="collapseNode($event)"
           @open-context-menu="openContextMenu($event)"
           :searchNodeId="searchNodeId"
+          :searchFilterString="searchFilterString"
         />
       </div>
     </v-container>
@@ -254,6 +255,7 @@ export default {
       pan: 0,
       search: false,
       searchFilter: false,
+      searchFilterString: '',
       searchNodeId: '',
       showWhakapapaHelper: false,
       whakapapaView: {
@@ -383,9 +385,6 @@ export default {
     },
     relationshipLinks (newVal) {
       this.addRelationshipLinks(newVal)
-    },
-    searchFilter (newValue) {
-      console.log('search filter: ', newValue)
     }
   },
   methods: {

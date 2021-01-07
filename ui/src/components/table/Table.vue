@@ -82,6 +82,7 @@ import * as d3 from 'd3'
 import Node from './Node.vue'
 import Link from '../tree/Link.vue'
 import calculateAge from '../../lib/calculate-age.js'
+import isEmpty from 'lodash.isempty'
 import isEqual from 'lodash.isequal'
 import { mapGetters, mapActions } from 'vuex'
 
@@ -117,6 +118,10 @@ export default {
     pan: {
       type: Number,
       default: 0
+    },
+    searchFilterString: {
+      type: String,
+      default: ''
     }
   },
   data () {
@@ -181,6 +186,26 @@ export default {
         .filter(peeps => {
           if (this.filter && peeps.data.deceased) {
             return false
+          }
+          return true
+        })
+        .filter(d => {
+          const filterOnSearch = (this.searchFilterString && this.searchFilterString !== null)
+          if (filterOnSearch) {
+            const search = this.setString(this.searchFilterString)
+            const preferredName = this.setString(d.data.preferredName)
+            const legalName = this.setString(d.data.legalName)
+
+            if (
+              isEqual(preferredName, search) ||
+              preferredName.includes(search) ||
+              isEqual(legalName, search) ||
+              legalName.includes(search)
+            ) {
+              return true
+            } else {
+              return false
+            }
           }
           return true
         })
@@ -345,6 +370,10 @@ export default {
       })
 
       // this.updateNode({ is, path: endNode.path })
+    },
+    setString (name) {
+      if (isEmpty(name)) return ''
+      return name.toLowerCase().trim()
     }
   },
   components: {
