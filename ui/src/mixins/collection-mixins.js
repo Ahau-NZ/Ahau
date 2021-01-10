@@ -1,4 +1,4 @@
-import { saveCollection, getAllCollections } from '@/lib/collection-helpers'
+import { saveCollection, getAllCollections, saveStoryLink } from '@/lib/collection-helpers'
 
 // TODO make this function reusable for story, profile and collection mixins
 export default function mapStoryMixins ({ mapMethods, mapApollo }) {
@@ -38,7 +38,9 @@ const methods = {
         add: ['*']
       }
 
-      const res = await this.$apollo.mutate(saveCollection(input))
+      const res = await this.$apollo.mutate(
+        saveCollection(input)
+      )
 
       if (res.errors) throw res.errors
 
@@ -47,6 +49,26 @@ const methods = {
       this.$apollo.queries.collections.refetch({ id })
     } catch (err) {
       console.error('Something went wrong while trying to save collection', input)
+      console.error(err)
+    }
+  },
+  async saveStoryLink (input) {
+    try {
+      // enable all authors
+      input.authors = {
+        add: ['*']
+      }
+
+      const res = await this.$apollo.mutate(
+        saveStoryLink(input)
+      )
+
+      if (res.errors) throw res.errors
+
+      // refresh something here....
+      console.warn('needs to reload after saving story link')
+    } catch (err) {
+      console.error('Something went wrong while trying to save the link between a collection and story', input)
       console.error(err)
     }
   }

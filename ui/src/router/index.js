@@ -11,7 +11,7 @@ export default new Router({
   routes: [
     ...views,
     // ...dialogs,
-    { path: '/', redirect: '/tribe/%25mqqY3VPfL6KWN1R2dE7mssSri2ergXFYJ5isHDGOCGw=.cloaked/person/%25CBPFpRpn+EUJlcvkiLngyvzTTPG569xeVquV+Pop8p4=.sha256/archive/%25aMqc7HLraEYfWXeD3Ux9jaUP%2F+sJ15kNwVh0G0F43Rk=.sha256' },
+    { path: '/', redirect: '/login' },
     { path: '/logout', redirect: '' },
     { path: '*', redirect: '/' }
   ]

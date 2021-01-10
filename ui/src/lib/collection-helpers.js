@@ -38,8 +38,12 @@ export const ALL_PERMITTED_COLLECTION_ATTRS = [
   'authors'
 ]
 
-// export const PERMITTED_COLLECTION_LINKS = [
-// ]
+export const PERMITTED_STORY_LINK_ATTRS = [
+  'type',
+  'authors',
+  'collection',
+  'story'
+]
 
 export const COLLECTION_FRAGMENT = gql`
   fragment CollectionFragment on Collection {
@@ -134,6 +138,22 @@ export const saveCollection = input => {
     mutation: gql`
       mutation($input: CollectionInput!) {
         saveCollection(input: $input)
+      }
+    `,
+    variables: { input }
+  }
+}
+
+export const saveStoryLink = input => {
+  input = {
+    type: 'collection-story', // link
+    ...pick(input, PERMITTED_STORY_LINK_ATTRS)
+  }
+
+  return {
+    mutation: gql`
+      mutation($input: CollectionStoryLinkInput) {
+        saveStoryLink(input: $input)
       }
     `,
     variables: { input }
