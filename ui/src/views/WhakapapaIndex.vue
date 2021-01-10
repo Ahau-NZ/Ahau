@@ -21,11 +21,11 @@
           <div v-for="(group, index ) in whakapapas" :key="index" class="py-4">
             <v-row class="pl-6 pb-3">
               <Avatar :size="mobile ? '50px' : '40px'" :image="group.image" :alt="group.name" :isView="!group.image" />
-              <p class="black--text overline pl-6 pt-1" style="font-size:20px">{{group.name}} records</p>
+              <p class="black--text overline pl-6 pt-1" style="font-size:20px">{{ group.name }} records</p>
             </v-row>
             <v-row v-for="view in group.views" :key="view.id" dense class="mb-2">
               <v-col cols="12" md="10">
-                <WhakapapaViewCard :view="view" cropDescription />
+                <WhakapapaViewCard :view="view" cropDescription :tribeId="group.tribeId" />
               </v-col>
             </v-row>
             <v-divider light class="mt-12" style="max-width:80%"></v-divider>
@@ -51,7 +51,7 @@ import isEqual from 'lodash.isequal'
 import groupBy from 'lodash.groupby'
 
 import * as d3 from 'd3'
-import { mapGetters, mapActions, mapMutations } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import WhakapapaViewCard from '@/components/whakapapa/WhakapapaViewCard.vue'
 import NewViewDialog from '@/components/dialog/whakapapa/NewViewDialog.vue'
 import NewNodeDialog from '@/components/dialog/profile/NewNodeDialog.vue'
@@ -68,15 +68,17 @@ import mapProfileMixins from '@/mixins/profile-mixins.js'
 
 export default {
   name: 'WhakapapaIndex',
+  props: {
+    profile: Object,
+    tribe: Object
+  },
   mixins: [
     mapProfileMixins({
-      mapMethods: ['getTribe'],
-      mapApollo: ['profile']
+      mapMethods: ['getTribe']
     })
   ],
   data () {
     return {
-      profile: {},
       suggestions: [],
       views: [],
       showWhakapapaHelper: false,
@@ -88,18 +90,16 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['whoami', 'currentAccess', 'defaultAccess', 'currentTribe']),
+    ...mapGetters(['whoami', 'currentAccess']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     }
   },
   async mounted () {
     // set the current default access as the current group
-    this.setCurrentAccess(this.defaultAccess)
     this.whakapapas = await this.groupedWhakapapaViews()
   },
   methods: {
-    ...mapMutations(['setCurrentAccess']),
     ...mapActions(['addNestedWhakapapa', 'setLoading']),
 
     async groupedWhakapapaViews () {
@@ -115,9 +115,9 @@ export default {
         const groups = await Promise.all(
           Object.keys(groupedObj).map(async id => {
             var views = groupedObj[id]
-            if (id === this.whoami.personal.groupId) return { name: 'my private', image: this.whoami.personal.profile.avatarImage, views: views }
+            if (id === this.whoami.personal.groupId) return { name: 'my private', image: this.whoami.personal.profile.avatarImage, views: views, tribeId: this.whoami.personal.groupId }
             var tribe = await this.getTribe(id)
-            return { name: tribe.preferredName, image: tribe.avatarImage, views: views }
+            return { name: tribe.private[0].preferredName, image: tribe.private[0].avatarImage, views: views, tribeId: tribe.id }
           })
         )
         const filteredGroups = groups.filter(i => !isEmpty(i))
@@ -131,7 +131,8 @@ export default {
             return recp === this.$route.params.tribeId
           })
         }),
-        image: this.profile.avatarImage
+        image: this.profile.avatarImage,
+        tribeId: this.$route.params.tribeId
       }]
     },
 
@@ -322,7 +323,10 @@ export default {
     async createProfile (input) {
       const res = await this.$apollo.mutate(savePerson({
         type: 'person',
-        recps: [this.whoami.personal.groupId], // TEMP - safety till we figure out actual recps
+        recps: [this.currentAccess.groupId],
+        authors: {
+          add: ['*']
+        },
         ...input
       }))
 

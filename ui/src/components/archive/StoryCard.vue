@@ -10,7 +10,6 @@
       :light="!showArtefact"
       :elevation="!mobile && !showArtefact && fullStory ? '24':''"
       @click="showStory()"
-      @blur="close"
     >
       <v-list-item class="px-0" style="min-height:0; height:10px">
         <v-list-item-icon v-if="!fullStory" class="pt-1 mt-0" style="position:absolute; top:5px; right:1px; margin-right:0px">
@@ -40,7 +39,7 @@
             hide-delimiters
             :show-arrows="!mobile && fullStory && story.artefacts && story.artefacts.length > 1" :show-arrows-on-hover="!mobile" :height="showArtefact ? 'auto' : mobile ? '300px' : '500px'" style="background-color:#1E1E1E">
             <v-carousel-item v-for="({ artefact } , i) in story.artefacts" :key="`story-card-artefact-${i}`">
-              <Artefact :model="model" :index="i" @showArtefact="toggleShowArtefact($event)" :artefact="artefact" />
+              <Artefact :model="model" :index="i" @showArtefact="toggleShowArtefact($event)" :artefact="artefact" :controls="fullStory" />
             </v-carousel-item>
           </v-carousel>
           <v-slide-group
@@ -89,8 +88,6 @@
             :profiles="access"
             show-labels :size="fullStory ? '50px': '30px'"
             spacing="pr-2"
-            @profile-click="openProfile($event)"
-            :clickable="fullStory"
           />
         </v-col>
         <v-col v-if="story.mentions && story.mentions.length > 0" cols="auto"  class="pb-0">
@@ -211,7 +208,7 @@
       <NewRecordDialog
         v-if="dialog === 'edit-story'"
         :show="dialog === 'edit-story'"
-        :title="`Edit ${story.title}`"
+        :title="`Edit ${story.title || 'Story'}`"
         editing
         :story="story"
         @close="finishEditing()"
@@ -241,7 +238,9 @@ import ArtefactCarouselItem from '@/components/artefact/ArtefactCarouselItem.vue
 import NewRecordDialog from '@/components/dialog/archive/NewRecordDialog.vue'
 import DeleteRecordDialog from '@/components/dialog/archive/DeleteRecordDialog.vue'
 import { DELETE_STORY } from '@/lib/story-helpers.js'
+import { getTribalProfile } from '@/lib/community-helpers.js'
 import { dateIntervalToString, formatSubmissionDate } from '@/lib/date-helpers.js'
+import mapProfileMixins from '@/mixins/profile-mixins.js'
 
 export default {
   name: 'StoryCard',
@@ -250,6 +249,11 @@ export default {
     fullStory: Boolean,
     loading: Boolean
   },
+  mixins: [
+    mapProfileMixins({
+      mapMethods: ['getTribe']
+    })
+  ],
   components: {
     AvatarGroup,
     // Avatar,
@@ -268,24 +272,26 @@ export default {
       textHeight: 0,
       artefact: {},
       model: 0,
-      dialog: null
+      dialog: null,
+      access: null
     }
   },
-  mounted () {
+  async mounted () {
     // grab text height to figure out if we need to hide it or not
     this.textHeight = this.$refs.text ? this.$refs.text.offsetHeight : 0
     if (this.fullStory) {
       this.truncateText = false
     }
+
+    // populate access
+    const tribe = await this.getTribe(this.story.recps[0])
+    // get the profile of the tribe
+    this.access = [getTribalProfile(tribe, this.whoami)]
   },
   computed: {
-    ...mapGetters(['showArtefact', 'storeDialog', 'getAccessFromRecps']),
+    ...mapGetters(['showArtefact', 'storeDialog', 'whoami']),
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
-    },
-    access () {
-      if (!this.story || !this.story.recps) return []
-      return [this.getAccessFromRecps(this.story.recps)]
     },
     time () {
       if (this.story.timeInterval) {
@@ -331,17 +337,17 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setShowArtefact', 'setDialog', 'setProfileById', 'toggleShowStory']),
-    openProfile (profile) {
-      this.setProfileById({ id: profile.id, type: 'preview' })
-      this.setDialog({ active: 'view-edit-node', type: 'preview' })
-      this.setShowStory()
+    ...mapActions(['setShowArtefact', 'toggleShowStory']),
+    openProfile ($event) {
+      this.$emit('openProfile', $event)
     },
     onClickOutside () {
       if (!this.fullStory || this.dialog) return
       if (!this.storeDialog && !this.mobile) {
         if (this.showArtefact) this.setShowArtefact()
-        else this.toggleShowStory()
+        else {
+          this.toggleShowStory()
+        }
       }
     },
     async deleteStory () {

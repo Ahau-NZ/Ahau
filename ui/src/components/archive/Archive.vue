@@ -59,6 +59,9 @@ import { VueContext } from 'vue-context'
 
 export default {
   name: 'Archive',
+  props: {
+    profile: Object
+  },
   mixins: [
     mapStoryMixins({
       mapMethods: ['saveStory', 'processLinks', 'saveArtefact', 'getStory', 'saveLink', 'removeLink'],
@@ -83,7 +86,6 @@ export default {
   },
   data () {
     return {
-      profile: {},
       stories: null,
       dialog: null,
       scrollPosition: 0,
@@ -105,7 +107,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['showStory', 'whoami', 'currentTribe']),
+    ...mapGetters(['showStory', 'whoami', 'currentStory', 'showArtefact', 'storeDialog']),
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     }

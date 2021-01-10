@@ -8,12 +8,22 @@ import archive from './modules/archive'
 import dialog from './modules/dialog'
 import notifications from './modules/notifications'
 import tribe from './modules/tribe'
+import alerts from './modules/alerts'
+
 import { whoami } from '../lib/person-helpers.js'
 
 const apolloProvider = createProvider()
 const apollo = apolloProvider.defaultClient
 
 Vue.use(Vuex)
+
+/*
+  TODO (later):
+    - [ ] move loading and syncing to alerts modules
+    - [ ] change modules to be namespaced
+          - https://vuex.vuejs.org/guide/modules.html#namespacing
+          - see alerts module for another example
+*/
 
 const store = new Vuex.Store({
   state: {
@@ -49,7 +59,8 @@ const store = new Vuex.Store({
     archive,
     dialog,
     notifications,
-    tribe
+    tribe,
+    alerts
   },
   getters: {
     loadingState: state => {
@@ -70,50 +81,6 @@ const store = new Vuex.Store({
     },
     allowSubmissions: state => {
       return state.allowSubmissions
-    },
-    accessOptions: ({ whoami, tribe }) => {
-      return [
-        { ...whoami.personal.profile, groupId: whoami.personal.groupId, isPersonalGroup: true },
-        ...tribe.tribes
-          .filter(tribe => tribe.private.length > 0) // only include tribes you have the private profile for...
-          .map(tribe => {
-            return {
-              groupId: tribe.id,
-              ...tribe.private[0]
-            }
-          })
-      ]
-    },
-    defaultAccess: ({ whoami, person, tribe }) => {
-      const { currentProfile } = person
-      const { currentTribe } = tribe
-
-      if (currentProfile.type === 'person') return { groupId: whoami.personal.groupId, ...whoami.personal.profile, isPersonalGroup: true }
-      else if (currentProfile.type === 'community') {
-        return currentTribe.private.length > 0
-          ? { groupId: currentTribe.id, ...currentTribe.private[0], type: 'community', isPersonalGroup: false }
-          : null
-      }
-    },
-    getAccessFromRecps: ({ whoami, tribe }) => {
-      return recps => {
-        if (!recps || recps.length === 0) return null
-
-        // turn the recps given to the matching group (personal or tribe)
-        if (recps.includes(whoami.personal.groupId)) return { groupId: whoami.personal.groupId, ...whoami.personal.profile, isPersonalGroup: true }
-
-        const recp = tribe.tribes
-          .filter(d => {
-            return d.private.length > 0
-          })
-          .find(d => {
-            return recps.includes(d.id)
-          })
-
-        if (!recp || !recp.id || !recp.private) return null
-
-        return { groupId: recp.id, isPersonalGroup: false, ...recp.private[0] }
-      }
     }
   },
   mutations: {

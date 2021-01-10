@@ -197,3 +197,20 @@ test('test item changes are correctly computed', t => {
 
   t.deepEqual(getObjectChanges(initialTestValue, updatedTestValue), expectedChanges, 'item changes correctly computed')
 })
+
+test('bug with multiple artefacts', t => {
+  t.plan(1)
+  const story = {
+    artefacts: [
+      { title: 'A-0' },
+      { title: 'A-1' }
+    ]
+  }
+
+  const changes = getObjectChanges(storyInitial, story)
+  t.deepEqual(changes, {
+    artefacts: {
+      add: [{ title: 'A-0' }, { title: 'A-1' }]
+    }
+  }, 'adds multiple artefacts')
+})
