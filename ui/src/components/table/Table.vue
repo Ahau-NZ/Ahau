@@ -190,8 +190,8 @@ export default {
           return true
         })
         .filter(d => {
-          const filterOnSearch = (this.searchFilterString && this.searchFilterString !== null)
-          if (filterOnSearch) {
+          // const filterOnSearch = (this.searchFilterString && this.searchFilterString !== null)
+          if (this.searchFilterString) {
             const search = this.setString(this.searchFilterString)
             const preferredName = this.setString(d.data.preferredName)
             const legalName = this.setString(d.data.legalName)
@@ -221,7 +221,7 @@ export default {
             height: d.height,
             parent: d.parent,
             x: d.x,
-            y: this.filter ? i * 45 : d.y * 1.5,
+            y: (this.filter || this.searchFilterString) ? i * 45 : d.y * 1.5,
             age: calculateAge(d.data.aliveInterval),
             color: this.nodeColor(d.data)
           }

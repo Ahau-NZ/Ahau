@@ -5,7 +5,7 @@
           <v-icon> mdi-filter </v-icon>
         </v-btn>
     </template>
-    <span>SearchFilter</span>
+    <span>Filter on Name</span>
   </v-tooltip>
 </template>
 

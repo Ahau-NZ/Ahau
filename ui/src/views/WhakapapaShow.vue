@@ -385,6 +385,11 @@ export default {
     },
     relationshipLinks (newVal) {
       this.addRelationshipLinks(newVal)
+    },
+    searchFilter (newValue) {
+      if (newValue === true) {
+        this.flatten = true
+      }
     }
   },
   methods: {
