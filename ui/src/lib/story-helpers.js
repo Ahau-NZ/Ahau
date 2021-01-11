@@ -66,7 +66,7 @@ export function setDefaultStory (newStory) {
     protocols: story.protocols,
     relatedRecords,
     artefacts,
-    kaitiaki: story.kaitiaki
+    tiaki: story.tiaki
   }
 }
 
@@ -116,8 +116,7 @@ export const PERMITTED_STORY_ATTRS = [
   'source',
   'transcription',
   'canEdit',
-  'recps',
-  'kaitiaki{id, preferredName, avatarImage{uri}}'
+  'recps'
 ]
 
 export const PERMITTED_STORY_LINKS = [
@@ -135,6 +134,13 @@ export const PERMITTED_STORY_LINKS = [
 export const STORY_FRAGMENT = gql`
   fragment StoryFragment on Story {
     ${PERMITTED_STORY_ATTRS}
+    tiaki {
+      id
+      preferredName
+      avatarImage {
+        uri
+      }
+    }
   }
 `
 

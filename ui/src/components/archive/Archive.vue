@@ -41,7 +41,7 @@
 
 <script>
 import Stories from '@/components/archive/Stories.vue'
-import { mapGetters, mapMutations, mapActions } from 'vuex'
+import { mapGetters, mapMutations, mapActions, createNamespacedHelpers } from 'vuex'
 import NewRecordDialog from '@/components/dialog/archive/NewRecordDialog.vue'
 import NewCollectionDialog from '@/components/dialog/archive/NewCollectionDialog.vue'
 import BigAddButton from '@/components/button/BigAddButton.vue'
@@ -52,10 +52,11 @@ import ArchiveHelper from '@/components/dialog/archive/ArchiveHelper.vue'
 import mapStoryMixins from '@/mixins/story-mixins.js'
 import mapProfileMixins from '@/mixins/profile-mixins.js'
 import mapCollectionMixins from '@/mixins/collection-mixins.js'
-
 import CollectionGroup from '@/components/archive/CollectionGroup.vue'
 
 import { VueContext } from 'vue-context'
+
+const { mapMutations: mapAlertMutations } = createNamespacedHelpers('alerts')
 
 export default {
   name: 'Archive',
@@ -113,6 +114,7 @@ export default {
     }
   },
   methods: {
+    ...mapAlertMutations(['showAlert']),
     ...mapMutations(['setStory']),
     ...mapActions(['toggleShowStory', 'setDialog']),
     toggleArchiveHelper () {

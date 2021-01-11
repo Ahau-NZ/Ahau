@@ -31,9 +31,17 @@ const apollo = {
 
     const isPersonal = this.$route.params.profileId === this.whoami.personal.profile.id
 
-    if (isPersonal) return getAllStories({ groupId: this.whoami.personal.groupId })
-    else if (type === 'community') return getAllStories({ groupId: this.$route.params.tribeId })
-    else if (type === 'person') {
+    if (isPersonal) {
+      return {
+        ...getAllStories({ groupId: this.whoami.personal.groupId }),
+        error
+      }
+    } else if (type === 'community') {
+      return {
+        ...getAllStories({ groupId: this.$route.params.tribeId }),
+        error
+      }
+    } else if (type === 'person') {
       return {
         ...getAllStoriesByMentions(this.$route.params.profileId),
         update (data) {
@@ -45,14 +53,31 @@ const apollo = {
           })
             .reverse()
         },
-        error (err) {
-          console.warn('Something went wrong while trying to get mentions by profile', this.$route.params.profileId)
-          console.warn(err)
-          console.warn('If this is "not a valid profile" then it is caused by GraphQL using dummy data for a profile')
-        }
+        error
       }
     }
   }
+}
+
+function error (err) {
+  if (!this.showAlert) {
+    console.error('error function needs the mutation showAlert')
+  }
+  const message = 'Something went wrong while trying to get stories'
+
+  console.error(message)
+  console.error(err)
+
+  // TODO: figure out how to stop queries when there is an error
+  // this.$apollo.queries.stories.stop()
+  this.stories = []
+
+  // show message on screen
+  this.showAlert({
+    message,
+    delay: 5000,
+    color: 'red'
+  })
 }
 
 const methods = {
