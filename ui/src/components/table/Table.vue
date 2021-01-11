@@ -462,7 +462,7 @@ export default {
       aVal = this.convertNullToChar(aVal)
       bVal = this.convertNullToChar(bVal)
 
-      return this.sortByField(aVal.toLowerCase(), bVal.toLowerCase())
+      return this.sortByField(this.removeMacron(aVal.toLowerCase()), this.removeMacron(bVal.toLowerCase()))
     },
     // Hacky way to get empty/null fields to display below non-empty sorted fields
     convertNullToChar (val) {
@@ -475,6 +475,28 @@ export default {
         return 'AAAAA'
       }
       return ''
+    },
+    // Replaces characters with macrons with their non-macron equivalent so that strings are sorted properly
+    removeMacron (str) {
+      const macronArray = ['ā', 'ē', 'ī', 'ō', 'ū', 'Ā', 'Ē', 'Ī', 'Ō', 'Ū']
+      const nonMacronArray = ['a', 'e', 'i', 'o', 'u', 'A', 'E', 'I', 'O', 'U']
+
+      var newString = ''
+      for (var i = 0; i < str.length; i++) {
+        var macronFound = false
+        const currChar = str[i]
+        for (var j = 0; j < macronArray.length; j++) {
+          if (currChar === macronArray[j]) {
+            macronFound = true
+            newString += nonMacronArray[j]
+          }
+        }
+        if (!macronFound) {
+          newString += currChar
+        }
+      }
+
+      return newString
     }
   },
   components: {
