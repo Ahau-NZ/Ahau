@@ -46,31 +46,36 @@
             </svg>
             <svg :width="columns[3].x - 45">
               <text  :transform="`translate(${columns[2].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ node.data.aliveInterval.substring(0,10) }}
+                {{ node.data.aliveInterval.substring(0,10)  }}
               </text>
             </svg>
             <svg :width="columns[4].x - 45">
               <text  :transform="`translate(${columns[3].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ node.data.profession }}
+                {{ node.data.aliveInterval.substring(11,21) }}
               </text>
             </svg>
             <svg :width="columns[5].x - 45">
               <text  :transform="`translate(${columns[4].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ node.data.address }}
+                {{ node.data.profession }}
               </text>
             </svg>
             <svg :width="columns[6].x - 45">
               <text  :transform="`translate(${columns[5].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ node.data.location }}
+                {{ node.data.address }}
               </text>
             </svg>
             <svg :width="columns[7].x - 45">
-              <text :transform="`translate(${columns[6].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
+              <text  :transform="`translate(${columns[6].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
+                {{ node.data.location }}
+              </text>
+            </svg>
+            <svg :width="columns[8].x - 45">
+              <text :transform="`translate(${columns[7].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
                 {{ node.data.email }}
               </text>
             </svg>
             <svg>
-              <text :transform="`translate(${columns[7].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
+              <text :transform="`translate(${columns[8].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
                 {{ node.data.phone }}
               </text>
             </svg>
@@ -261,24 +266,28 @@ export default {
           x: this.colWidth + 245
         },
         {
-          label: 'Profession',
+          label: 'D.O.D',
           x: this.colWidth + 385
         },
         {
+          label: 'Profession',
+          x: this.colWidth + 525
+        },
+        {
           label: 'Address',
-          x: this.colWidth + 615
+          x: this.colWidth + 755
         },
         {
           label: 'City, Country',
-          x: this.colWidth + 865
+          x: this.colWidth + 1005
         },
         {
           label: 'Email',
-          x: this.colWidth + 1105
+          x: this.colWidth + 1245
         },
         {
           label: 'Phone',
-          x: this.colWidth + 1465
+          x: this.colWidth + 1605
         }
       ]
     }
