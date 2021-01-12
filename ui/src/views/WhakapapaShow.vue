@@ -35,13 +35,13 @@
 
       <v-row v-if="!mobile" class="select">
         <div v-if="search" class="icon-search">
-          <SearchBar :nestedWhakapapa="nestedWhakapapa" :searchNodeId.sync="searchNodeId" @close="clickedOffSearch()"/>
+          <SearchBar :nestedWhakapapa="nestedWhakapapa" :searchNodeId.sync="searchNodeId" :searchFilter="false" @close="clickedOffSearch()"/>
         </div>
         <div v-else class="icon-button">
           <SearchButton :search.sync="search"/>
         </div>
         <div v-if="searchFilter" class="icon-search">
-          <SearchBar :nestedWhakapapa="nestedWhakapapa" :searchNodeId.sync="searchNodeId" :searchFilterString.sync="searchFilterString" @close="clickedOffSearchFilter()"/>
+          <SearchBar :nestedWhakapapa="nestedWhakapapa" :searchNodeId.sync="searchNodeId" :searchFilterString.sync="searchFilterString" :searchFilter="true" @close="clickedOffSearchFilter()"/>
         </div>
         <div v-if="whakapapa.table && !searchFilter" class="icon-button">
           <SearchFilterButton :searchFilter.sync="searchFilter"/>

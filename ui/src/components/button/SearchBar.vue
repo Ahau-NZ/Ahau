@@ -2,7 +2,7 @@
   <v-combobox
     v-model="searchString"
     :items="nodes"
-    :menu-props="{ light: true }"
+    :menu-props=" { light: true } "
     hide-no-data
     append-icon="mdi-close"
     @click:append="close()"
@@ -19,7 +19,7 @@
   >
     <template v-slot:item="data">
       <template>
-        <v-list-item @click="setSearchNode(data.item)">
+        <v-list-item @click="setSearchNode(data.item)" v-if="!searchFilter">
           <Avatar class="mr-3" size="40px" :image="data.item.avatarImage" :alt="data.item.preferredName" :gender="data.item.gender" :aliveInterval="data.item.aliveInterval" />
           <v-list-item-content>
             <v-list-item-title> {{ data.item.preferredName }}</v-list-item-title>
@@ -60,6 +60,10 @@ export default {
     // },
     searchNodeId: {
       type: String
+    },
+    searchFilter: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
