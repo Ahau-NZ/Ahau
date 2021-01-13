@@ -84,6 +84,7 @@
                   :label="`Nick name ${index + 1} / Alternative name ${index + 1}`"
                   :append-icon="readonly ? '' : 'mdi-delete'"
                   @click:append="removeAltName(formData.altNames.currentState[index], index)"
+                  readonly
                   v-bind="customProps"
                   outlined
                 />
