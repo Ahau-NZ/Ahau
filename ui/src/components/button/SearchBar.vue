@@ -78,11 +78,25 @@ export default {
           const preferredName = this.setString(d.preferredName)
           const legalName = this.setString(d.legalName)
 
+          var altNameMatch = false
+          const altNames = d.altNames
+          if (altNames.length > 0) {
+            for (var i = 0; i < altNames.length; i++) {
+              const currAltName = this.setString(altNames[i])
+              if (isEqual(currAltName, search)) {
+                altNameMatch = true
+              }
+              if (currAltName.includes(search)) {
+                altNameMatch = true
+              }
+            }
+          }
           return (
             isEqual(preferredName, search) ||
             preferredName.includes(search) ||
             isEqual(legalName, search) ||
-            legalName.includes(search)
+            legalName.includes(search) ||
+            altNameMatch
           )
         })
     }
