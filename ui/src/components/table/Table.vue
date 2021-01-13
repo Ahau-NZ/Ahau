@@ -190,17 +190,30 @@ export default {
           return true
         })
         .filter(d => {
-          // const filterOnSearch = (this.searchFilterString && this.searchFilterString !== null)
           if (this.searchFilterString) {
             const search = this.setString(this.searchFilterString)
             const preferredName = this.setString(d.data.preferredName)
             const legalName = this.setString(d.data.legalName)
 
+            var altNameMatch = false
+            const altNames = d.data.altNames
+            if (altNames.length > 0) {
+              for (var i = 0; i < altNames.length; i++) {
+                const currAltName = this.setString(altNames[i])
+                console.log('curr alt name: ', currAltName)
+                console.log('search: ', search)
+                if (isEqual(currAltName, search) || currAltName.includes(search)) {
+                  altNameMatch = true
+                }
+              }
+            }
+
             if (
               isEqual(preferredName, search) ||
               preferredName.includes(search) ||
               isEqual(legalName, search) ||
-              legalName.includes(search)
+              legalName.includes(search) ||
+              altNameMatch
             ) {
               return true
             } else {
