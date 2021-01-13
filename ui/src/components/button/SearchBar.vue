@@ -83,10 +83,7 @@ export default {
           if (altNames.length > 0) {
             for (var i = 0; i < altNames.length; i++) {
               const currAltName = this.setString(altNames[i])
-              if (isEqual(currAltName, search)) {
-                altNameMatch = true
-              }
-              if (currAltName.includes(search)) {
+              if (isEqual(currAltName, search) || currAltName.includes(search)) {
                 altNameMatch = true
               }
             }
