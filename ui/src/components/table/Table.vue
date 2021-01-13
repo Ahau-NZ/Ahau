@@ -39,43 +39,48 @@
                 {{ node.data.legalName }}
               </text>
             </svg>
-            <svg :width="columns[2].x - 45">
+            <svg :width="columns[2].x - 45" >
               <text  :transform="`translate(${columns[1].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ node.age }}
+                {{ altNames(node.data.altNames) }}
               </text>
             </svg>
             <svg :width="columns[3].x - 45">
               <text  :transform="`translate(${columns[2].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ node.data.aliveInterval.substring(0,10)  }}
+                {{ node.age }}
               </text>
             </svg>
             <svg :width="columns[4].x - 45">
               <text  :transform="`translate(${columns[3].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ node.data.aliveInterval.substring(11,21) }}
+                {{ node.data.aliveInterval.substring(0,10)  }}
               </text>
             </svg>
             <svg :width="columns[5].x - 45">
               <text  :transform="`translate(${columns[4].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ node.data.profession }}
+                {{ node.data.aliveInterval.substring(11,21) }}
               </text>
             </svg>
             <svg :width="columns[6].x - 45">
               <text  :transform="`translate(${columns[5].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ node.data.address }}
+                {{ node.data.profession }}
               </text>
             </svg>
             <svg :width="columns[7].x - 45">
               <text  :transform="`translate(${columns[6].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ node.data.location }}
+                {{ node.data.address }}
               </text>
             </svg>
             <svg :width="columns[8].x - 45">
-              <text :transform="`translate(${columns[7].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
+              <text  :transform="`translate(${columns[7].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
+                {{ node.data.location }}
+              </text>
+            </svg>
+            <svg :width="columns[9].x - 45">
+              <text :transform="`translate(${columns[8].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
                 {{ node.data.email }}
               </text>
             </svg>
             <svg>
-              <text :transform="`translate(${columns[8].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
+              <text :transform="`translate(${columns[9].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
                 {{ node.data.phone }}
               </text>
             </svg>
@@ -258,36 +263,40 @@ export default {
           x: this.colWidth
         },
         {
-          label: 'Age',
+          label: 'Alt Name',
           x: this.colWidth + 200
         },
         {
+          label: 'Age',
+          x: this.colWidth + 400
+        },
+        {
           label: 'D.O.B',
-          x: this.colWidth + 245
+          x: this.colWidth + 470
         },
         {
           label: 'D.O.D',
-          x: this.colWidth + 385
+          x: this.colWidth + 600
         },
         {
           label: 'Profession',
-          x: this.colWidth + 525
+          x: this.colWidth + 730
         },
         {
           label: 'Address',
-          x: this.colWidth + 755
+          x: this.colWidth + 1000
         },
         {
           label: 'City, Country',
-          x: this.colWidth + 1005
+          x: this.colWidth + 1405
         },
         {
           label: 'Email',
-          x: this.colWidth + 1245
+          x: this.colWidth + 1645
         },
         {
           label: 'Phone',
-          x: this.colWidth + 1605
+          x: this.colWidth + 2005
         }
       ]
     }
@@ -363,6 +372,19 @@ export default {
       })
 
       // this.updateNode({ is, path: endNode.path })
+    },
+    altNames (altArray) {
+      var altNames = ''
+
+      for (var i = 0; i < altArray.length; i++) {
+        if (altNames.length === 0) {
+          altNames += altArray[i]
+        } else {
+          altNames += ', ' + altArray[i]
+        }
+      }
+
+      return altNames
     }
   },
   components: {
