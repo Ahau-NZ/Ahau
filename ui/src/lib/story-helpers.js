@@ -66,7 +66,8 @@ export function setDefaultStory (newStory) {
     protocols: story.protocols,
     relatedRecords,
     artefacts,
-    kaitiaki: story.kaitiaki
+    tiaki: story.tiaki
+    
   }
 }
 
@@ -117,7 +118,6 @@ export const PERMITTED_STORY_ATTRS = [
   'transcription',
   'canEdit',
   'recps',
-  'kaitiaki{id, preferredName, avatarImage{uri}}'
 ]
 
 export const PERMITTED_STORY_LINKS = [
@@ -147,6 +147,9 @@ export const STORY_LINK_FRAGMENT = gql`
       artefact {
         ...ArtefactFragment
       }
+    }
+    tiaki {
+      ...ProfileFragment
     }
     mentions: mentionLinks {
       linkId
@@ -257,7 +260,7 @@ export const saveStory = input => {
 
   input = {
     type: '*', // TODO: sort out types
-    ...pick(input, PERMITTED_STORY_ATTRS),
+    ...pick(input, [...PERMITTED_STORY_ATTRS, 'authors']),
     submissionDate
   }
   return {

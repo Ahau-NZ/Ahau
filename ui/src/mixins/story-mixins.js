@@ -66,6 +66,14 @@ const methods = {
       relatedRecords
     } = input
 
+    if (!id) {
+      // if there is not ID, its a create
+      // TODO: remove this later if we want to choose authors
+      input.authors = {
+        add: ['*']
+      }
+    }
+
     try {
       const res = await this.$apollo.mutate(saveStory(input))
 
@@ -180,6 +188,15 @@ const methods = {
   },
 
   async saveArtefact (input) {
+
+    if (!id) {
+      // if there is not ID, its a create
+      // TODO: remove this later if we want to choose authors
+      input.authors = {
+        add: ['*']
+      }
+    }
+
     try {
       const res = await this.$apollo.mutate(saveArtefact(input))
 

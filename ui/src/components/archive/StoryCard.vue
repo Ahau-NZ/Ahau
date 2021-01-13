@@ -101,11 +101,11 @@
             :clickable="fullStory"
           />
         </v-col>
-        <v-col v-if="story.kaitiaki && story.kaitiaki.length > 0" cols="auto" class="pb-0">
+        <v-col v-if="story.tiaki && story.tiaki.length > 0" cols="auto" class="pb-0">
           <v-list-item-subtitle style="color:#a7a3a3">Kaitiaki</v-list-item-subtitle>
           <AvatarGroup
             style="position:relative; bottom:15px; right:15px"
-            :profiles="story.kaitiaki"
+            :profiles="story.tiaki"
             show-labels :size="fullStory ? '50px': '30px'"
             spacing="pr-2"
             @profile-click="openProfile($event)"

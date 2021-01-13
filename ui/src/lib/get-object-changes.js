@@ -18,6 +18,7 @@ export function getObjectChanges (initialValue, updatedValue) {
 
   Object.entries(updatedValue).forEach(([key, value]) => {
     if (key === 'kaitiaki') return
+    if (key === 'tiaki') return
     // see if the value has changes
     if (!isEqual(initialValue[key], updatedValue[key])) {
       switch (true) {
