@@ -25,7 +25,8 @@ export const EMPTY_ARTEFACT = {
   source: null,
   translation: null,
   duration: null,
-  transcription: null
+  transcription: null,
+  location: null
 }
 
 export const PERMITTED_ARTEFACT_SHARED_ATTRS = [
@@ -35,6 +36,8 @@ export const PERMITTED_ARTEFACT_SHARED_ATTRS = [
   'blob',
   'createdAt',
 
+  'location',
+  
   'title',
   'description',
 
@@ -80,6 +83,7 @@ export const ARTEFACT_FRAGMENT = gql`
     createdAt
     title
     description
+    location
     identifier
     licence
     rights
@@ -124,7 +128,8 @@ export const getArtefacts = () => ({
 })
 
 export const saveArtefact = input => {
-  input = pick(input, PERMITTED_ARTEFACT_ATTRS)
+
+  input = pick(input, [...PERMITTED_ARTEFACT_ATTRS, 'authors'])
 
   if (input.blob && input.blob.uri) delete input.blob.uri
 

@@ -16,7 +16,7 @@
     "secret-stack": "^6.3.1",
     "ssb-ahau": "gitlab:ahau/ssb-plugins/ssb-ahau#collections",
     "ssb-ahoy": "^3.0.0",
-    "ssb-artefact": "^2.0.0",
+    "ssb-artefact": "^3.1.0",
     "ssb-backlinks": "^2.1.1",
     "ssb-blobs": "^2.0.0",
     "ssb-config": "^3.4.5",
