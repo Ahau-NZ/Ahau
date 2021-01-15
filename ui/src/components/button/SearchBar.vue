@@ -7,7 +7,7 @@
     append-icon="mdi-close"
     @click:append="close()"
     placeholder="Search"
-    no-data-text="no suggestions"
+    :no-data-text="searchFilter ? '' : 'no suggestions'"
     :search-input.sync="searchString"
     solo
     rounded
@@ -18,7 +18,8 @@
     autofocus
   >
     <template v-slot:item="data">
-      <template>
+      <!-- not sure why v-if="!searchFilter" is needed both here and the line below, but seems it is needed in both places to prevent a blank v-list-item when showing when filtering--->
+      <template v-if="!searchFilter">
         <v-list-item @click="setSearchNode(data.item)" v-if="!searchFilter">
           <Avatar class="mr-3" size="40px" :image="data.item.avatarImage" :alt="data.item.preferredName" :gender="data.item.gender" :aliveInterval="data.item.aliveInterval" />
           <v-list-item-content>
