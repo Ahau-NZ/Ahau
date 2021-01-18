@@ -108,6 +108,21 @@
       :title="`Whakapapa registry`"
       @close="close"
     />
+    <FilterForm
+      v-if="isActive('view-filter-menu')"
+      :show="isActive('view-filter-menu')"
+      :profile="selectedProfile"
+      :deleteable="canDelete(selectedProfile)"
+      :warnAboutChildren="selectedProfile && selectedProfile.id !== nestedWhakapapa.id"
+      :sideMenu="true"
+      @close="close"
+      @new="toggleDialog('new-node', $event, 'view-filter-menu')"
+      @submit="updatePerson($event)"
+      @delete="toggleDialog('delete-node', null, null)"
+      @open-profile="setSelectedProfile($event)"
+      :view="view"
+      :preview="previewProfile"
+    />
     <!-- <NewCollectionDialog
       :show="isActive('new-collection')"
       :title="'Create a new Collection'"
@@ -136,6 +151,7 @@ import WhakapapaEditDialog from '@/components/dialog/whakapapa/WhakapapaEditDial
 import WhakapapaDeleteDialog from '@/components/dialog/whakapapa/WhakapapaDeleteDialog.vue'
 import WhakapapaShowHelper from '@/components/dialog/whakapapa/WhakapapaShowHelper.vue'
 import WhakapapaTableHelper from '@/components/dialog/whakapapa/WhakapapaTableHelper.vue'
+import FilterForm from '@/components/dialog/FilterForm.vue'
 // import NewCollectionDialog from '@/components/dialog/archive/NewCollectionDialog.vue'
 import ComingSoonDialog from '@/components/dialog/ComingSoonDialog.vue'
 
@@ -164,6 +180,7 @@ export default {
     WhakapapaDeleteDialog,
     WhakapapaShowHelper,
     WhakapapaTableHelper,
+    FilterForm,
     // NewCollectionDialog,
     ComingSoonDialog,
     NewCommunityDialog,
