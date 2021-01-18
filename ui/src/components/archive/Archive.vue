@@ -14,7 +14,7 @@
           <CollectionGroup :collections="collections" @selectedIndex="index = $event" />
         </v-col>
         <v-col>
-          <Stories :stories="stories" @save="saveStory($event)" title="Stories"/>
+          <Stories :stories="stories" @save="processStory($event)" title="Stories"/>
         </v-col>
       </v-row>
       <ArchiveHelper v-if="showArchiveHelper" :show="showArchiveHelper" @close="toggleArchiveHelper" />
@@ -30,7 +30,7 @@
 
     <NewRecordDialog v-if="dialog === 'new-story'" :show="dialog === 'new-story'"
       :title="`Add record to ${ profile.preferredName || 'Untitled' }'s archive`" @close="dialog = null"
-      @submit="saveStory($event)"
+      @submit="processStory($event)"
     />
     <NewCollectionDialog v-if="dialog === 'new-collection'" :show="dialog === 'new-collection'"
       :title="`Add collection to ${ profile.preferredName || 'Untitled' }'s archive`" @close="dialog = null"
@@ -41,7 +41,7 @@
 
 <script>
 import Stories from '@/components/archive/Stories.vue'
-import { mapGetters, mapMutations, mapActions, createNamespacedHelpers } from 'vuex'
+import { mapGetters, createNamespacedHelpers } from 'vuex'
 import NewRecordDialog from '@/components/dialog/archive/NewRecordDialog.vue'
 import NewCollectionDialog from '@/components/dialog/archive/NewCollectionDialog.vue'
 import BigAddButton from '@/components/button/BigAddButton.vue'
@@ -49,7 +49,7 @@ import BigAddButton from '@/components/button/BigAddButton.vue'
 // TODO: Replace with Archive Helper (doesnt exist yet)
 import ArchiveHelper from '@/components/dialog/archive/ArchiveHelper.vue'
 
-import mapStoryMixins from '@/mixins/story-mixins.js'
+import { saveStoryMixin, storiesApolloMixin } from '@/mixins/story-mixins.js'
 import mapProfileMixins from '@/mixins/profile-mixins.js'
 import mapCollectionMixins from '@/mixins/collection-mixins.js'
 import CollectionGroup from '@/components/archive/CollectionGroup.vue'
@@ -64,10 +64,8 @@ export default {
     profile: Object
   },
   mixins: [
-    mapStoryMixins({
-      mapMethods: ['saveStory', 'processLinks', 'saveArtefact', 'getStory', 'saveLink', 'removeLink'],
-      mapApollo: ['stories']
-    }),
+    saveStoryMixin,
+    storiesApolloMixin,
     mapCollectionMixins({
       mapMethods: ['saveCollection'],
       mapApollo: ['collections']
@@ -115,18 +113,11 @@ export default {
   },
   methods: {
     ...mapAlertMutations(['showAlert']),
-    ...mapMutations(['setStory']),
-    ...mapActions(['toggleShowStory', 'setDialog']),
     toggleArchiveHelper () {
       this.showArchiveHelper = !this.showArchiveHelper
     },
     openContextMenu ($event) {
       this.$refs.menu.open($event)
-    },
-    toggleStory (story) {
-      this.setStory(story)
-      this.toggleShowStory()
-      this.setDialog(null)
     }
   },
   watch: {

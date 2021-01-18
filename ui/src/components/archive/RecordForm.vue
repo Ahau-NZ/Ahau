@@ -473,7 +473,7 @@ import DeleteArtefactDialog from '@/components/dialog/artefact/DeleteArtefactDia
 import { RULES } from '@/lib/constants'
 import { mapGetters } from 'vuex'
 
-import mapStoryMixins from '@/mixins/story-mixins.js'
+import { storiesApolloMixin } from '@/mixins/story-mixins.js'
 import mapCollectionMixins from '@/mixins/collection-mixins.js'
 
 export default {
@@ -498,9 +498,7 @@ export default {
     access: Object
   },
   mixins: [
-    mapStoryMixins({
-      mapApollo: ['stories']
-    }),
+    storiesApolloMixin,
     mapCollectionMixins({
       mapMethods: ['saveCollection'],
       mapApollo: ['collections']

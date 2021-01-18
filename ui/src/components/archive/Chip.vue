@@ -42,7 +42,7 @@
 <script>
 import { colours } from '@/lib/colours.js'
 import { mapMutations } from 'vuex'
-import mapStoryMixins from '@/mixins/story-mixins.js'
+import { methods } from '@/mixins/story-mixins.js'
 
 // default image for list items
 import niho from '@/assets/niho.svg'
@@ -60,9 +60,9 @@ export default {
     image: { type: String, default: null }
   },
   mixins: [
-    mapStoryMixins({
-      mapMethods: ['getStory']
-    })
+    {
+      methods: methods['getStory']
+    }
   ],
   computed: {
     colour () {
