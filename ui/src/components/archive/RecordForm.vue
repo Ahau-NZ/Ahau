@@ -168,6 +168,31 @@
                 @delete="removeItem(formData.contributors, $event)"
               />
             </v-col>
+
+            <!-- COLLECTIONS -->
+            <v-col cols="12" md="auto" class="pa-5">
+              <v-tooltip top open-delay="700" :disabled="showCollections">
+                <template v-slot:activator="{ on }">
+                  <div v-on="on">
+                    <v-row v-if="!showCollections" @click="showCollections = true" class="pl-5">
+                      <v-icon small>mdi-plus</v-icon>
+                      <AddButton size="20px" icon="mdi-folder" iconClass="pr-3" label="Collections"  justify="start"/>
+                    </v-row>
+                  </div>
+                </template>
+                <span>A Collection is a grouping of records</span>
+              </v-tooltip>
+
+              <ProfileSearchBar
+                :selectedItems.sync="formData.collections"
+                :items="filteredCollections"
+                :openMenu.sync="showCollections"
+                placeholder="add collections"
+                item="name"
+              />
+              <ChipGroup v-if="formData.collections && formData.collections.length > 0" type="collection" :chips="formData.collections" deletable @delete="removeItem(formData.collections, $event)" />
+              <v-divider v-if="mobile" light class="mt-6 mr-4"></v-divider>
+            </v-col>
            </v-row>
             <!-- TODO: ADD CATEGORIES -->
            <!-- <v-col :cols="mobile ? formData.categories.length > 2 ? 'auto' : '6' : formData.categories.length > 1 ? 'auto' : '3'">
@@ -198,22 +223,6 @@
                 </v-chip>
               </v-chip-group>
             </v-col> -->
-            <!-- TODO: ADD COLLECTIONS -->
-            <!-- <v-col :cols="mobile ? formData.categories.length > 0 ? '12' : '6' : formData.categories.length > 0 ? 'auto' : '3'">
-              <v-row v-if="!showCollections" class="pl-10 pt-2" @click="showCollections = true">
-                <v-icon small>mdi-plus</v-icon>
-                <AddButton size="20px" icon="mdi-folder-multiple-image" iconClass="pr-3" label="Collection" justify="start"/>
-              </v-row>
-              <ProfileSearchBar
-                :selectedItems.sync="formData.collections"
-                :items="collections"
-                :searchString.sync="searchString"
-                :openMenu.sync="showCollections"
-                item="title"
-                placeholder="add collection"
-              />
-              <ChipGroup :chips="formData.collections" deletable @delete="removeItem(formData.collections, $event)" />
-            </v-col>-->
           <!-- TODO: ADD PROTOCOLS -->
           <!-- <v-col :cols="mobile ? '12' : formData.protocols.length > 0 ? 'auto' : '4'">
               <AddButton label="Protocol" @click="showProtocols = true" />
@@ -457,9 +466,6 @@ import ProfileSearchBar from '@/components/archive/ProfileSearchBar.vue'
 import { findByName } from '@/lib/search-helpers.js'
 import { DELETE_ARTEFACT } from '@/lib/artefact-helpers'
 
-import { personComplete } from '@/mocks/person-profile'
-import { firstMocks } from '@/mocks/collections'
-
 import NewArtefactDialog from '@/components/dialog/artefact/NewArtefactDialog.vue'
 import ArtefactCarousel from '@/components/artefact/ArtefactCarousel.vue'
 import DeleteArtefactDialog from '@/components/dialog/artefact/DeleteArtefactDialog.vue'
@@ -468,6 +474,7 @@ import { RULES } from '@/lib/constants'
 import { mapGetters } from 'vuex'
 
 import mapStoryMixins from '@/mixins/story-mixins.js'
+import mapCollectionMixins from '@/mixins/collection-mixins.js'
 
 export default {
   name: 'RecordForm',
@@ -493,6 +500,10 @@ export default {
   mixins: [
     mapStoryMixins({
       mapApollo: ['stories']
+    }),
+    mapCollectionMixins({
+      mapMethods: ['saveCollection'],
+      mapApollo: ['collections']
     })
   ],
   data () {
@@ -505,21 +516,20 @@ export default {
       search: false,
       model: 0,
       show: false,
-      categories: [{ title: 'one' }, { title: 'two' }, { title: 'three' }, { title: 'four' }, { title: 'five' }, { title: 'six' }, { title: 'seven' }],
-      collections: firstMocks,
+      collections: [],
+      // categories: [{ title: 'one' }, { title: 'two' }, { title: 'three' }, { title: 'four' }, { title: 'five' }, { title: 'six' }, { title: 'seven' }],
       showLocation: false,
       mentions: [],
       contributors: [],
       creators: [],
       showMentions: false,
-      showCategories: false,
+      // showCategories: false,
       showContributors: false,
       showCreators: false,
       showCollections: false,
       showProtocols: false,
       showRecords: false,
       searchString: '',
-      items: [...personComplete.children, ...personComplete.parents, ...personComplete.siblings],
       suggestions: [],
       hasEndDate: false,
       form: {
@@ -550,6 +560,9 @@ export default {
         return this.stories.filter(story => story.id !== this.formData.id)
       }
       return this.stories
+    },
+    filteredCollections () {
+      return this.collections
     }
   },
   methods: {

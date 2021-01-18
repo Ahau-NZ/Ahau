@@ -29,15 +29,15 @@
           <v-list-item class="click" @mousedown="addSelectedItem(item)">
             <Avatar class="mr-3" size="40px" :image="item.avatarImage" :alt="item.preferredName" :gender="item.gender" :aliveInterval="item.aliveInterval" />
             <v-list-item-content>
-              <v-list-item-title> {{ item.preferredName }} </v-list-item-title>
+              <v-list-item-title> {{ item.preferredName || 'No preferred name' }} </v-list-item-title>
               <v-list-item-subtitle>Preferred name</v-list-item-subtitle>
             </v-list-item-content>
             <v-list-item-content>
-              <v-list-item-title> {{ item.legalName ? item.legalName :  '&nbsp;' }} </v-list-item-title>
+              <v-list-item-title> {{ item.legalName || 'No legal name' }} </v-list-item-title>
               <v-list-item-subtitle>Legal name</v-list-item-subtitle>
             </v-list-item-content>
             <v-list-item-action>
-              <v-list-item-title> {{ age(item.aliveInterval) }} </v-list-item-title>
+              <v-list-item-title> {{ age(item.aliveInterval) || 'No age' }} </v-list-item-title>
               <v-list-item-subtitle>Age</v-list-item-subtitle>
             </v-list-item-action>
           </v-list-item>
@@ -48,7 +48,7 @@
           <v-list-item class="click" @mousedown="addSelectedItem(item)">
             <Avatar class="mr-3" size="40px" :image="item.avatarImage" isView :alt="item.preferredName" :gender="item.gender" :aliveInterval="item.aliveInterval" />
             <v-list-item-content>
-              <v-list-item-title> {{ item.preferredName ? item.preferredName :  '&nbsp;' }} </v-list-item-title>
+              <v-list-item-title> {{ item.preferredName || 'Untitled Tribe' }} </v-list-item-title>
               <v-list-item-subtitle>Tribe name</v-list-item-subtitle>
             </v-list-item-content>
             <v-list-item-action>
@@ -62,8 +62,8 @@
         <template v-else-if="item.type === '*'">
           <v-card flat light  justify="center" height="90%" width="100%" class="click" @mousedown="addSelectedItem(item)">
             <Chip
-              :title="item.title"
-              :description="item.description"
+              :title="item.title || item.name || 'Untitled'"
+              :description="item.description || 'No description'"
               :type="item.type"
               :chip="item"
               :image="getImage(item)"
@@ -74,7 +74,7 @@
         <!-- CATEGORIES -->
         <template v-else>
           <v-list-item class="click" @click="addSelectedItem(item)">
-            {{ item.type }}
+            {{ item }}
           </v-list-item>
         </template>
       </template>
@@ -87,6 +87,9 @@
 import Avatar from '@/components/Avatar.vue'
 import calculateAge from '@/lib/calculate-age'
 import Chip from '@/components/archive/Chip.vue'
+
+// default image for list items
+import niho from '@/assets/niho.svg'
 
 export default {
   name: 'ProfileSearchBar',
@@ -130,6 +133,9 @@ export default {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     }
   },
+  mounted () {
+    console.log('ProfileSearchBar', this.items)
+  },
   watch: {
     selectedItems: {
       deep: true,
@@ -159,13 +165,18 @@ export default {
   },
   methods: {
     getImage (item) {
+      // for stories
       const { artefacts } = item
       if (artefacts && artefacts.length > 0) {
         // still in link format
         var artefact = artefacts[0].artefact
         if (artefact.type === 'photo') return artefact.blob.uri
       }
-      return null
+
+      // related records
+      // collections
+      // default
+      return niho
     },
     clearSuggestions () {
       this.$emit('getSuggestions', null)

@@ -19,7 +19,6 @@
         <!-- Image -->
         <v-col :cols="expanded ? '4': 'auto'" md="2" class="pa-0">
           <v-img
-            v-if="hasImage"
             :height="expanded ? '100' : '60'"
             :width="expanded ? '100' : '80'"
             :src="getImage"
@@ -28,9 +27,9 @@
           </v-img>
         </v-col>
         <!-- Text Container -->
-        <v-col class="py-2" :cols="expanded && !hasImage ? '12' : expanded && mobile ? '8': '10' ">
+        <v-col class="py-2" :cols="expanded && mobile ? '8': '10' ">
           <span :class="expanded ? 'expanded-title' : 'truncated-x'">{{ title }}</span>
-          <p :class="expanded ? 'expanded-description my-2' : 'truncate-overflow'"> {{ description }}</p>
+          <p :class="expanded ? 'expanded-description my-2' : 'truncate-overflow'"> {{ description || 'No Description'}}</p>
           <v-btn v-if="deletable" @click="$emit('delete')" class="mr-2 white--text" style="position:absolute; top:-2px; right:-10px" small top right icon>
             <v-icon small>mdi-close</v-icon>
           </v-btn>
@@ -44,6 +43,9 @@
 import { colours } from '@/lib/colours.js'
 import { mapMutations } from 'vuex'
 import mapStoryMixins from '@/mixins/story-mixins.js'
+
+// default image for list items
+import niho from '@/assets/niho.svg'
 
 export default {
   name: 'Chip',
@@ -79,18 +81,19 @@ export default {
           return true
         }
       }
+
       return false
     },
     getImage () {
       if (this.image) return this.image
       if (this.chip.image && this.chip.uri) return this.chip.uri
-      else if (this.type === 'story' && this.chip.artefacts && this.chip.artefacts.length > 0) {
+      if (this.type === 'story' && this.chip.artefacts && this.chip.artefacts.length > 0) {
         var artefact = this.chip.artefacts[0].artefact
         if (artefact.type === 'photo') {
           return artefact.blob.uri
         }
       }
-      return null
+      return niho
     },
     width () {
       if (this.expanded) {

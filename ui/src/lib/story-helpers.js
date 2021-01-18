@@ -40,6 +40,8 @@ export function setDefaultStory (newStory) {
     relatedRecords = relatedRecords.map(d => mapLinks(d, 'story'))
   }
 
+  // TODO: get format of collections
+
   return {
     id: story.id,
     title: story.title,

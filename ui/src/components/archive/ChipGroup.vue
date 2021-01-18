@@ -4,7 +4,7 @@
       <v-list class="pa-0">
         <v-list-item class="pa-1" v-for="(chip, i) in chips" :key="`chip-group-item-${i}-${chip.id}`">
           <Chip
-            :title="chip.title"
+            :title="chip.title || chip.name || 'Untitled'"
             :description="chip.description"
             :deletable="deletable"
             :index="i"
