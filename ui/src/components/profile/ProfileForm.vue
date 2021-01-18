@@ -57,7 +57,17 @@
                 <slot name="search">
                   <v-text-field
                     v-model="formData.preferredName"
-                    label="First name / Preferred name"
+                    label="First name"
+                    v-bind="customProps"
+                    outlined
+                  />
+                </slot>
+              </v-col>
+              <v-col cols="12" class="pa-1">
+                <slot name="search">
+                  <v-text-field
+                    v-model="formData.preferredName"
+                    label="Middle Name"
                     v-bind="customProps"
                     outlined
                   />
@@ -66,7 +76,7 @@
             <v-col cols="12" class="pa-1">
               <v-text-field
                 v-model="formData.legalName"
-                label="Legal name."
+                label="Last Name"
                 v-bind="customProps"
                 outlined
               />
