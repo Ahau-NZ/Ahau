@@ -1,7 +1,6 @@
 import { saveStory, getStory, getAllStories, getAllStoriesByMentions } from '@/lib/story-helpers.js'
 import { saveArtefact } from '@/lib/artefact-helpers.js'
 import { saveLink, TYPES } from '@/lib/link-helpers.js'
-
 import { mapActions, mapMutations } from 'vuex'
 
 export const storiesApolloMixin = {
@@ -99,20 +98,20 @@ export const methods = {
 
     try {
       // save the changes to the story
-      const id = this.saveStory(input)
+      const id = await this.saveStory(input)
 
       // get the full story
       var story = await this.getStory(id)
 
-      this.saveArtefacts(story, artefacts)
-      this.saveMentions(story, mentions)
-      this.saveContributors(story, contributors)
-      this.saveCreators(story, creators)
-      this.saveRelatedRecords(story, relatedRecords)
-      this.saveCollections(story, collections)
+      await this.saveArtefacts(story, artefacts)
+      await this.saveMentions(story, mentions)
+      await this.saveContributors(story, contributors)
+      await this.saveCreators(story, creators)
+      await this.saveRelatedRecords(story, relatedRecords)
+      await this.saveCollections(story, collections)
 
       // reload again
-      // story = await this.getStory(id)
+      story = await this.getStory(id)
 
       if (input.id) {
         this.setStory(story)
@@ -126,9 +125,6 @@ export const methods = {
       console.error('Something went wrong while creating a story')
       throw err
     }
-  },
-  async saveCollections (story, collections) {
-    console.error('saveCollections', collections)
   },
   async saveRelatedRecords (story, relatedRecords) {
     await this.processLinks(relatedRecords, {
@@ -242,7 +238,9 @@ export const methods = {
     }
 
     try {
-      const res = await this.$apollo.mutate(saveArtefact(input))
+      const res = await this.$apollo.mutate(
+        saveArtefact(input)
+      )
 
       if (res.errors) {
         console.error('Error saving artefact:', input)

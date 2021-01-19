@@ -190,7 +190,13 @@
                 placeholder="add collections"
                 item="name"
               />
-              <ChipGroup v-if="formData.collections && formData.collections.length > 0" type="collection" :chips="formData.collections" deletable @delete="removeItem(formData.collections, $event)" />
+              <ChipGroup
+                v-if="formData.collections && formData.collections.length > 0"
+                type="collection"
+                :chips="formData.collections"
+                deletable
+                @delete="removeItem(formData.collections, $event)"
+              />
               <v-divider v-if="mobile" light class="mt-6 mr-4"></v-divider>
             </v-col>
            </v-row>
@@ -281,7 +287,13 @@
                 placeholder="add related record"
                 item="title"
               />
-              <ChipGroup v-if="formData.relatedRecords && formData.relatedRecords.length > 0" type="story" :chips="formData.relatedRecords" deletable @delete="removeItem(formData.relatedRecords, $event)" />
+              <ChipGroup
+                v-if="formData.relatedRecords && formData.relatedRecords.length > 0"
+                type="story"
+                :chips="formData.relatedRecords"
+                deletable
+                @delete="removeItem(formData.relatedRecords, $event)"
+              />
               <v-divider v-if="mobile" light class="mt-6 mr-4"></v-divider>
             </v-col>
             <!-- ADD CREATOR -->
@@ -474,7 +486,7 @@ import { RULES } from '@/lib/constants'
 import { mapGetters } from 'vuex'
 
 import { storiesApolloMixin } from '@/mixins/story-mixins.js'
-import mapCollectionMixins from '@/mixins/collection-mixins.js'
+import { collectionsApolloMixin, saveCollectionsMixin } from '@/mixins/collection-mixins.js'
 
 export default {
   name: 'RecordForm',
@@ -499,10 +511,8 @@ export default {
   },
   mixins: [
     storiesApolloMixin,
-    mapCollectionMixins({
-      mapMethods: ['saveCollection'],
-      mapApollo: ['collections']
-    })
+    collectionsApolloMixin,
+    saveCollectionsMixin
   ],
   data () {
     return {

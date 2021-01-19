@@ -133,9 +133,6 @@ export default {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     }
   },
-  mounted () {
-    console.log('ProfileSearchBar', this.items)
-  },
   watch: {
     selectedItems: {
       deep: true,

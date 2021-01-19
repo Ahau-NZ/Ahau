@@ -39,10 +39,14 @@ export const ALL_PERMITTED_COLLECTION_ATTRS = [
 ]
 
 export const PERMITTED_STORY_LINK_ATTRS = [
+  'linkId',
   'type',
   'authors',
   'collection',
-  'story'
+  'story',
+
+  'tombstone',
+  'recps'
 ]
 
 export const COLLECTION_FRAGMENT = gql`
@@ -146,7 +150,7 @@ export const saveCollection = input => {
 
 export const saveStoryLink = input => {
   input = {
-    type: 'collection-story', // link
+    type: 'collection-story', // link type
     ...pick(input, PERMITTED_STORY_LINK_ATTRS)
   }
 

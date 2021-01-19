@@ -51,7 +51,7 @@ import ArchiveHelper from '@/components/dialog/archive/ArchiveHelper.vue'
 
 import { saveStoryMixin, storiesApolloMixin } from '@/mixins/story-mixins.js'
 import mapProfileMixins from '@/mixins/profile-mixins.js'
-import mapCollectionMixins from '@/mixins/collection-mixins.js'
+import { collectionsApolloMixin, saveCollectionsMixin } from '@/mixins/collection-mixins.js'
 import CollectionGroup from '@/components/archive/CollectionGroup.vue'
 
 import { VueContext } from 'vue-context'
@@ -66,10 +66,8 @@ export default {
   mixins: [
     saveStoryMixin,
     storiesApolloMixin,
-    mapCollectionMixins({
-      mapMethods: ['saveCollection'],
-      mapApollo: ['collections']
-    }),
+    collectionsApolloMixin,
+    saveCollectionsMixin,
     mapProfileMixins({
       mapApollo: ['profile']
     })

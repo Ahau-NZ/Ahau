@@ -3,6 +3,7 @@ import pick from 'lodash.pick'
 import { ARTEFACT_FRAGMENT } from './artefact-helpers'
 import { PERSON_FRAGMENT } from './person-helpers'
 import clone from 'lodash.clonedeep'
+import { COLLECTION_FRAGMENT } from './collection-helpers'
 
 export function setDefaultStory (newStory) {
   var story = clone(newStory)
@@ -12,6 +13,7 @@ export function setDefaultStory (newStory) {
   var contributors = story.contributors
   var creators = story.creators
   var relatedRecords = story.relatedRecords
+  var collections = story.collections
 
   function mapLinks (link, entity) {
     return {
@@ -40,7 +42,9 @@ export function setDefaultStory (newStory) {
     relatedRecords = relatedRecords.map(d => mapLinks(d, 'story'))
   }
 
-  // TODO: get format of collections
+  if (collections && collections.length > 0) {
+    collections = collections.map(d => mapLinks(d, 'collection'))
+  }
 
   return {
     id: story.id,
@@ -61,7 +65,7 @@ export function setDefaultStory (newStory) {
 
     mentions,
     categories: story.categories,
-    collections: story.collections,
+    collections,
     // access: story.access,
     contributors,
     creators,
@@ -124,7 +128,7 @@ export const PERMITTED_STORY_ATTRS = [
 export const PERMITTED_STORY_LINKS = [
   'mentions',
   // 'categories',
-  // 'collections',
+  'collections',
   // 'access',
   'contributors',
   // 'protocols',
@@ -149,6 +153,7 @@ export const STORY_FRAGMENT = gql`
 export const STORY_LINK_FRAGMENT = gql`
   ${ARTEFACT_FRAGMENT}
   ${PERSON_FRAGMENT}
+  ${COLLECTION_FRAGMENT}
   fragment StoryLinkFragment on Story {
     artefacts: artefactLinks {
       linkId
@@ -187,6 +192,12 @@ export const STORY_LINK_FRAGMENT = gql`
             ...ArtefactFragment
           }
         }
+      }
+    }
+    collections: collectionLinks {
+      linkId
+      collection {
+        ...CollectionFragment
       }
     }
   }
@@ -249,7 +260,7 @@ export const getAllStoriesByMentions = id => ({
   fetchPolicy: 'no-cache'
 })
 
-export const DELETE_STORY = (id, date) => ({
+export const deleteStory = (id, date) => ({
   mutation: gql`
     mutation ($input: StoryInput!) {
       saveStory (input: $input)
