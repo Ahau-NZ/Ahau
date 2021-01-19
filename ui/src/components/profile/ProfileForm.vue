@@ -177,7 +177,7 @@
             </v-col>
             <!-- GENDER EDIT -->
             <v-col v-if="!readonly" class="pa-1">
-              <p class="text-field">Gender</p>
+              <p class="text-field">Identifies As</p>
 
               <v-row class="gender-button-row" :class="mobile ? '':'pb-12'">
                 <!-- TANE -->
@@ -189,6 +189,12 @@
                 <!-- WAHINE -->
                 <v-col class="pa-0">
                   <div class="gender-button" @click="updateSelectedGender('female')">
+                    <img ref="wahineImg" :src="require('@/assets/wahine-outlined.svg')" :class="mobile ? 'gender-image-mobile':'gender-image'">
+                  </div>
+                </v-col>
+                <!-- OTHER -->
+                <v-col class="pa-0">
+                  <div class="gender-button" @click="updateSelectedGender('other')">
                     <img ref="wahineImg" :src="require('@/assets/wahine-outlined.svg')" :class="mobile ? 'gender-image-mobile':'gender-image'">
                   </div>
                 </v-col>
@@ -270,6 +276,16 @@
               />
             </v-col>
           </v-row>
+          <v-row>
+            <v-col cols="12" class="pa-1"> <!-- Blake TODO: change to date of birth in back end -->
+              <v-text-field
+                v-model="formData.profession"
+                label="Place of Birth"
+                v-bind="customProps"
+                outlined
+              />
+            </v-col>
+          </v-row>
         </v-col>
       </v-row>
       <v-row v-if="!formData.deceased">
@@ -316,6 +332,35 @@
               <v-text-field
                 v-model="formData.location"
                 label="City, Country"
+                v-bind="customProps"
+                outlined
+              />
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
+      <v-row v-if="formData.deceased"> <!-- Blake TODO: Hook up fields to back end -->
+        <v-col cols="12" :sm="mobile ? '12' : '6'">
+          <!-- Place of Death -->
+          <v-row>
+            <v-col cols="12" class="pa-1">
+                <v-text-field
+                  v-model="formData.email"
+                  label="Place of Death"
+                  v-bind="customProps"
+                  outlined
+                />
+              </v-col>
+          </v-row>
+        </v-col>
+
+        <v-col cols="12" :sm="mobile ? '12' : '6'">
+          <v-row>
+            <v-col cols="12" class="pa-1">
+              <!-- Burial Location -->
+              <v-text-field
+                v-model="formData.address"
+                label="Burial Location"
                 v-bind="customProps"
                 outlined
               />
@@ -375,6 +420,7 @@ export default {
     if (this.formData.gender) {
       if (this.formData.gender === 'male') this.updateSelectedGender('male')
       if (this.formData.gender === 'female') this.updateSelectedGender('female')
+      if (this.formData.gender === 'other') this.updateSelectedGender('other')
     }
     if (isEmpty(this.formData.relationshipType)) {
       this.formData.relationshipType = 'birth'
@@ -436,6 +482,9 @@ export default {
       }
       if (this.genderSelected === 'female') {
         this.$refs.wahineImg.src = require('@/assets/wahine.svg')
+      }
+      if (this.genderSelected === 'other') {
+        // this.$refs.otherImg.src = require('@/assets/other.svg') Blake TODO: get other image
       }
       // update the gender
       this.formData.gender = this.genderSelected
