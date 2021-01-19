@@ -272,7 +272,7 @@
           </v-row>
         </v-col>
       </v-row>
-      <v-row>
+      <v-row v-if="!formData.deceased">
         <v-col cols="12" :sm="mobile ? '12' : '6'">
           <!-- Email -->
           <v-row>
