@@ -11,7 +11,7 @@
     :min-height="expanded ? '100' : '60'"
     :class="expanded ? 'ma-0': 'ma-1'"
 
-    @click="showRelatedStory"
+    @click="$emit('click')"
 
   >
     <v-container fluid class="pa-0" >
@@ -42,7 +42,6 @@
 <script>
 import { colours } from '@/lib/colours.js'
 import { mapMutations } from 'vuex'
-import { methods } from '@/mixins/story-mixins.js'
 
 // default image for list items
 import niho from '@/assets/niho.svg'
@@ -59,11 +58,6 @@ export default {
     expanded: { type: Boolean, default: false },
     image: { type: String, default: null }
   },
-  mixins: [
-    {
-      methods: methods['getStory']
-    }
-  ],
   computed: {
     colour () {
       var i = Math.round(Math.random() * 10)
@@ -106,12 +100,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['setStory']),
-    async showRelatedStory () {
-      if (this.deletable) return
-      var story = await this.getStory(this.chip.id)
-      this.setStory(story)
-    }
+    ...mapMutations(['setStory'])
   }
 }
 </script>

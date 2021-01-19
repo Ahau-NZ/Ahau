@@ -10,6 +10,7 @@
             :index="i"
             :type="type"
             :chip="chip"
+            @click="$emit('click', chip)"
             @delete="$emit('delete', i)"
           />
         </v-list-item>
