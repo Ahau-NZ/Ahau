@@ -451,10 +451,6 @@ export default {
           aVal = this.convertNullToChar(calculateAge(a.data.aliveInterval))
           bVal = this.convertNullToChar(calculateAge(b.data.aliveInterval))
           return this.sortByField(aVal, bVal)
-        case 'legalName':
-          aVal = (a.data.preferredName || '') + (a.data.legalName || '')
-          bVal = (b.data.preferredName || '') + (b.data.legalName || '')
-          break
         default: // Preferred name or location
           aVal = a.data[field]
           bVal = b.data[field]

@@ -123,21 +123,23 @@
         :focus="focus"
         :searchNodeId="searchNodeId"
       />
-      <Table
-        v-if="whakapapa.table"
-        ref="table"
-        :filter="filter"
-        :flatten="flatten"
-        :view="whakapapaView"
-        :nestedWhakapapa="nestedWhakapapa"
-        :relationshipLinks="relationshipLinks"
-        @load-descendants="loadDescendants($event)"
-        @collapse-node="collapseNode($event)"
-        @open-context-menu="openContextMenu($event)"
-        :searchNodeId="searchNodeId"
-        :sortValue="sortValue"
-        :sortEvent="sortEvent"
-      />
+      <div class="whakapapa-table">
+        <Table
+          v-if="whakapapa.table"
+          ref="table"
+          :filter="filter"
+          :flatten="flatten"
+          :view="whakapapaView"
+          :nestedWhakapapa="nestedWhakapapa"
+          :relationshipLinks="relationshipLinks"
+          @load-descendants="loadDescendants($event)"
+          @collapse-node="collapseNode($event)"
+          @open-context-menu="openContextMenu($event)"
+          :searchNodeId="searchNodeId"
+          :sortValue="sortValue"
+          :sortEvent="sortEvent"
+        />
+      </div>
     </v-container>
 
     <vue-context ref="menu" class="px-0">
@@ -411,6 +413,12 @@ export default {
     relationshipLinks (newVal) {
       this.addRelationshipLinks(newVal)
     }
+  },
+  beforeCreate: function () {
+    document.body.classList.add('no-scroll')
+  },
+  beforeDestroy: function () {
+    document.body.classList.remove('no-scroll')
   },
   methods: {
     ...mapMutations(['updateSelectedProfile', 'setCurrentAccess']),
@@ -718,13 +726,13 @@ export default {
 @import "~vue-context/dist/css/vue-context.css";
 #whakapapa-show {
   &>.container {
-    position: relative;
+    position: absolute;
     max-height:98vh;
 
     &>.header {
       position: absolute;
-      top: 70px;
-      left: 22px;
+      top: 80px;
+      left: 30px;
       /* right: 160px; */
       width: 30%;
       .col {
@@ -806,6 +814,7 @@ h1 {
 .whakapapa-table {
   overflow: auto;
   width: 100%;
+  max-height: 95vh
 }
 
 </style>

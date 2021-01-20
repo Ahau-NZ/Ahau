@@ -41,7 +41,7 @@
 
 <script>
 import Dialog from '@/components/dialog/Dialog.vue'
-import { UPLOAD_FILE } from '@/lib/file-helpers.js'
+import uploadFile from '@/mixins/upload-file.js'
 
 export default {
   name: 'AvatarEditDialog',
@@ -59,6 +59,7 @@ export default {
       rotation: 0
     }
   },
+  mixins: [uploadFile],
   computed: {
     mobile () {
       return this.$vuetify.breakpoint.xs
@@ -95,11 +96,8 @@ export default {
         })
         canvas.toBlob(async blob => {
           const file = new File([blob], 'avatar', { type: blob.type })
+          const image = await this.uploadFile({ file, encrypt: true })
 
-          var result = await this.$apollo.mutate(UPLOAD_FILE({ file, encrypt: true }))
-          if (result.errors) throw result.errors
-
-          var image = result.data.uploadFile
           // TODO: HACK until mimeType: Hello World gets solved
           if (image.mimeType === null || image.mimeType === 'Hello World') image.mimeType = file.type
 
