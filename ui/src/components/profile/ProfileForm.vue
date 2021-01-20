@@ -53,34 +53,16 @@
           <!-- Names -->
           <v-col cols="12" :sm="mobile ? '12' : '6'" class="pt-4">
             <v-row>
-              <v-col cols="12" class="pa-1">
+              <v-col cols="12" class="pa-1"> <!-- Blake TODO: Connect with back end -->
                 <slot name="search">
                   <v-text-field
                     v-model="formData.preferredName"
-                    label="First Name"
+                    label="Full Name"
                     v-bind="customProps"
                     outlined
                   />
                 </slot>
               </v-col>
-              <v-col cols="12" class="pa-1">
-                <slot name="search"> <!-- Blake TODO: Add middle name in back-end-->
-                  <v-text-field
-                    v-model="formData.preferredName"
-                    label="Middle Name"
-                    v-bind="customProps"
-                    outlined
-                  />
-                </slot>
-              </v-col>
-            <v-col cols="12" class="pa-1">
-              <v-text-field
-                v-model="formData.legalName"
-                label="Last Name"
-                v-bind="customProps"
-                outlined
-              />
-            </v-col>
 
             <template>
               <v-col v-for="(altName, index) in formData.altNames.value"
@@ -164,8 +146,7 @@
         </v-col>
       </v-row>
 
-        <v-col cols="12" :sm="mobile ? '12' : '6'" class="py-0">
-          <v-row>
+      <v-row>
             <!-- GENDER VIEW -->
             <v-col  v-if="readonly" class="pa-1">
               <v-text-field
@@ -179,7 +160,7 @@
             <v-col v-if="!readonly" class="pa-1">
               <p class="text-field">Identifies As</p>
 
-              <v-row class="gender-button-row" :class="mobile ? '':'pb-12'">
+              <v-row class="gender-button-row">
                 <!-- TANE -->
                 <v-col class="pa-0">
                   <div class="gender-button" @click="updateSelectedGender('male')">
@@ -198,18 +179,16 @@
                     <img ref="wahineImg" :src="require('@/assets/wahine-outlined.svg')" :class="mobile ? 'gender-image-mobile':'gender-image'">
                   </div>
                 </v-col>
-              </v-row>
-              <v-row>
 
-                <v-col  v-if="!readonly || formData.gender === 'other'" cols="6" class="pl-10 py-0">
+                <!-- <v-col  v-if="!readonly || formData.gender === 'other'" cols="6" class="pl-10 py-0">
                   <v-checkbox v-model="formData.gender"
                     value="other"
                     label="other" :hide-details="true"
                     v-bind="customProps"
                     outlined
                   />
-                </v-col>
-                <v-col  v-if="!readonly || formData.gender === 'unknown'" cols="6" class="pa-10 py-0">
+                </v-col> -->
+                <v-col  v-if="!readonly || formData.gender === 'unknown'" cols="12" class="pa-10 py-0">
                   <v-checkbox v-model="formData.gender"
                     value="unknown"
                     label="unknown" :hide-details="true"
@@ -219,8 +198,7 @@
                 </v-col>
               </v-row>
             </v-col>
-          </v-row>
-        </v-col>
+      </v-row>
 
         <!-- Blake TODO: add padding between gender and advanced -->
         <!-- Start of advanced section -->
