@@ -425,8 +425,13 @@ export default {
   z-index:6
 }
 
+.no-scroll::-webkit-scrollbar{
+  display:none;
+}
+
 ::-webkit-scrollbar {
-  width: 5px;
+  width: 8px;
+  height: 8px;
 }
 
 /* Track */
@@ -477,5 +482,6 @@ export default {
 .left-leave-active {
   animation: slideOutRight .3s;
 }
+
 
 </style>
