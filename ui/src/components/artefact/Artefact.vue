@@ -1,16 +1,15 @@
 <template>
   <v-sheet @click="toggleArtefact($event)" class="container pa-0">
     <div v-if="artefact.type === 'video'" :style="mobile ? 'height:300px' : 'height:auto'" >
-    <!-- <div v-if="artefact.__typename === 'Video'" :style="showArtefact ? mobile ? 'height:300px' : 'height:500px;' : 'height:auto'" > -->
       <v-hover v-slot:default="{ hover }">
         <video ref="video" :src="artefact.blob.uri" :controls="hover" class="video"/>
       </v-hover>
     </div>
     <div v-if="artefact.type === 'audio'" :style="showArtefact ? 'height:300px': mobile ? 'height:300px' : 'height:500px'">
-    <!-- <div v-if="artefact.__typename === 'Audio'" :style="showArtefact ? 'height:300px': mobile ? 'background-color:dimgray;height:300px' : 'background-color:dimgray;height:500px'"> -->
-      <audio :src="artefact.blob.uri" class="px-12" style="width:100%;height:80%;"/>
+      <audio ref="audio" :src="artefact.blob.uri" class="px-12" :controls="controls" style="width:100%;height:80%;"/>
+      <v-icon size="50" class="center">mdi-music</v-icon>
     </div>
-    <v-img ref="photo" v-if="artefact.type === 'photo'" class="media center" :src="artefact.blob.uri" contain></v-img>
+    <v-img ref="photo" v-if="artefact.type === 'photo'" class="media" :src="artefact.blob.uri" contain></v-img>
     <div v-else-if="artefact.type === 'document'" class="media" style="margin-top:15%;">
       <div class="text-center">
         <v-icon size="100px">{{ artefactIcon }}</v-icon><br>
@@ -31,7 +30,8 @@ export default {
   props: {
     artefact: Object,
     model: { type: Number, default: -1 },
-    index: Number
+    index: Number,
+    controls: Boolean
   },
   components: {
   },
@@ -98,8 +98,9 @@ export default {
   width: 100%;
   height: 100%;
   background-color: #1E1E1E;
-
+  object-fit: cover;
 }
+
 .video {
   width: 100%;
   height: 100%;
@@ -108,8 +109,13 @@ export default {
 }
 
 .center {
-  justify-items: center;
-  align-items: center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  -webkit-transform: translate(-50%, -50%);
+  color: white;
+  opacity: 0.6;
 }
 
 .container {

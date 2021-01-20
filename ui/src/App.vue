@@ -17,6 +17,11 @@
     <div v-if="!mobile" class='version'>
       <span>version</span> {{version}}
     </div>
+    <AlertMessage
+      :show="alertSettings.show"
+      :message="alertSettings.message"
+      :color="alertSettings.color"
+    />
     <DialogHandler /> <!-- TODO: find out what uses this? -->
   </v-app>
 </template>
@@ -25,8 +30,12 @@
 import Appbar from '@/components/menu/Appbar.vue'
 import nodejsClient from '@/plugins/cordova-nodejs-client.js'
 import Spinner from '@/components/Spinner.vue'
-import { mapGetters, mapActions } from 'vuex'
+
 import DialogHandler from '@/components/dialog/DialogHandler.vue'
+import AlertMessage from './components/dialog/AlertMessage.vue'
+
+import { createNamespacedHelpers, mapGetters, mapActions } from 'vuex'
+const { mapGetters: mapAlertGetters } = createNamespacedHelpers('alerts')
 
 const { version } = require('../../desktop/package.json')
 // TODO - this is only useful for the desktop installer,
@@ -43,6 +52,7 @@ export default {
 
   computed: {
     ...mapGetters(['storeDialog']),
+    ...mapAlertGetters(['alertSettings']),
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
@@ -78,7 +88,8 @@ export default {
   components: {
     Appbar,
     Spinner,
-    DialogHandler
+    DialogHandler,
+    AlertMessage
   },
   // this watch add class to body depending on the route clicked.
   // used for changing body backgrounds, unique to each .route.
