@@ -5,7 +5,7 @@
            <v-icon light > mdi-format-list-bulleted </v-icon>
         </v-btn>
     </template>
-    <span>Hide relationships</span>
+    <span>Show relationships</span>
   </v-tooltip>
 
   <v-tooltip v-else bottom>
@@ -14,7 +14,7 @@
            <v-icon light > mdi-file-tree </v-icon>
         </v-btn>
     </template>
-    <span>Show relationships</span>
+    <span>Hide relationships</span>
   </v-tooltip>
 </template>
 
