@@ -448,8 +448,8 @@ export default {
 
       switch (field) {
         case 'age':
-          aVal = this.convertNullToChar(calculateAge(a.data.aliveInterval))
-          bVal = this.convertNullToChar(calculateAge(b.data.aliveInterval))
+          aVal = this.convertNullAgeToValue(calculateAge(a.data.aliveInterval))
+          bVal = this.convertNullAgeToValue(calculateAge(b.data.aliveInterval))
           return this.sortByField(aVal, bVal)
         default: // Preferred name or location
           aVal = a.data[field]
@@ -469,6 +469,18 @@ export default {
       }
       if (sort === SORT.descending) {
         return 'AAAAA'
+      }
+      return ''
+    },
+    // Hacky way to get empty/null ages to display below non-empty sorted ages
+    convertNullAgeToValue (val) {
+      if (val !== null && val !== '') return val
+      const sort = this.sort[this.sortValue]
+      if (sort === SORT.ascending) {
+        return 9999
+      }
+      if (sort === SORT.descending) {
+        return 0
       }
       return ''
     },
