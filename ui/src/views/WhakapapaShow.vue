@@ -414,10 +414,10 @@ export default {
       this.addRelationshipLinks(newVal)
     }
   },
-  beforeCreate: function() {
+  beforeCreate: function () {
     document.body.classList.add('no-scroll')
   },
-  beforeDestroy: function() {
+  beforeDestroy: function () {
     document.body.classList.remove('no-scroll')
   },
   methods: {

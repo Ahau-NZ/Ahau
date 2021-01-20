@@ -483,5 +483,4 @@ export default {
   animation: slideOutRight .3s;
 }
 
-
 </style>
