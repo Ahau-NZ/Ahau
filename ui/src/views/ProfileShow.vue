@@ -30,7 +30,7 @@
       </transition>
       </v-col>
     </v-row>
-    <v-spacer v-if="!mobile" style="height:200px"></v-spacer>
+    <v-spacer v-if="!mobile && !isWhakapapaShow" style="height:200px"></v-spacer>
     <EditCommunityDialog
       v-if="dialog === 'edit-community'"
       :show="dialog === 'edit-community'"

@@ -726,12 +726,13 @@ export default {
 @import "~vue-context/dist/css/vue-context.css";
 #whakapapa-show {
   &>.container {
-    max-height:60vh;
+    position: absolute;
+    max-height:98vh;
 
     &>.header {
       position: absolute;
-      top: 70px;
-      left: 22px;
+      top: 80px;
+      left: 30px;
       /* right: 160px; */
       width: 30%;
       .col {
