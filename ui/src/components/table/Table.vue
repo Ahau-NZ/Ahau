@@ -51,12 +51,12 @@
             </svg>
             <svg :width="columns[4].x - 45">
               <text  :transform="`translate(${columns[3].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ node.data.aliveInterval.substring(0,10)  }}
+                {{ computeDate('dob', node.data.aliveInterval) }} <!-- {{ node.data.aliveInterval.substring(0,10)  }} -->
               </text>
             </svg>
             <svg :width="columns[5].x - 45">
               <text  :transform="`translate(${columns[4].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ node.data.aliveInterval.substring(11,21) }}
+                {{ computeDate('dod', node.data.aliveInterval) }}<!-- {{ node.data.aliveInterval.substring(11,21) }} -->
               </text>
             </svg>
             <svg :width="columns[6].x - 45">
@@ -99,6 +99,7 @@ import Link from '../tree/Link.vue'
 import calculateAge from '../../lib/calculate-age.js'
 import isEqual from 'lodash.isequal'
 import { mapGetters, mapActions } from 'vuex'
+import { dateIntervalToString } from '@/lib/date-helpers.js'
 
 export default {
   props: {
@@ -185,13 +186,6 @@ export default {
       return this.tableLayout
         // returns the array of descendants starting with the root node, then followed by each child in topological order
         .descendants()
-        .sort((a, b) => {
-          if (this.names) { // check for you click event
-            if (a.data.preferredName.toLowerCase() < b.data.preferredName.toLowerCase()) { return -1 }
-            if (a.data.preferredName.toLowerCase() > b.data.preferredName.toLowerCase()) { return 1 }
-            return 0
-          }
-        })
         // filter deceased
         .filter(peeps => {
           if (this.filter && peeps.data.deceased) {
@@ -385,6 +379,27 @@ export default {
       }
 
       return altNames
+    },
+    computeDate (requiredDate, age) {
+      if (!age) {
+        return ''
+      }
+
+      var ageString = ''
+      const dateSplit = dateIntervalToString(age).split('-')
+
+      if (requiredDate === 'dob') {
+        if (dateSplit[0]) {
+          ageString = dateSplit[0]
+        }
+      }
+      if (requiredDate === 'dod') {
+        if (dateSplit[1]) {
+          ageString = dateSplit[1]
+        }
+      }
+
+      return ageString
     }
   },
   components: {
