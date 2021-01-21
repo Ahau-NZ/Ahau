@@ -12,34 +12,17 @@ export const storiesApolloMixin = {
 
       const isPersonal = this.$route.params.profileId === this.whoami.personal.profile.id
 
-      // how can we get stories by collections here....
-      // if we are viewing a collection subroute?
-
-      // route
-      console.log('ROUTE', this.$route)
-
-      // we want to check the route and display stories based on it
-
-      if (isPersonal) { // IF route is tribe/tribeId/person/personalProfileId/archive // personal one
-        // we want to show our own collections
-        // getAllCollections (filter by groupId: personal groupId)
-
+      if (isPersonal) {
         return {
           ...getAllStories({ groupId: this.whoami.personal.groupId }),
           error
         }
-      } else if (type === 'community') { // IF route is tribe/tribeId/community/profileId/archive // community one
-        // we want to show collections from a tribe
-        // getAllCollections (filter by groupId: tribeId)
-
+      } else if (type === 'community') {
         return {
           ...getAllStories({ groupId: this.$route.params.tribeId }),
           error
         }
-      } else if (type === 'person') { // IF route is tribe/tribeId/person/profileId/archive // person but not ours
-        // dont want to show any collections
-        // dont want to get any collections
-
+      } else if (type === 'person') {
         return {
           ...getAllStoriesByMentions(this.$route.params.profileId),
           update (data) {

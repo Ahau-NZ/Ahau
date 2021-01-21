@@ -1,6 +1,5 @@
 <template>
   <v-card
-    style="width: 100%;"
     light
     outlined
     :ripple="false"
@@ -171,22 +170,4 @@ export default {
   }
 }
 
-.cover-image {
-  min-width: 20%;
-  background-color: #fff;
-  background-position: center center;
-  @media screen and (min-width: 420px) {
-    width: 150px;
-  }
-}
-
-.information {
-  @media screen and (max-width: 420px) {
-    width: 70%;
-  }
-}
-
-.body-width {
-  width: 100%;
-}
 </style>

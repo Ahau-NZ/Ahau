@@ -673,7 +673,7 @@ export default {
     &>.header {
       position: absolute;
       top: 70px;
-      left: 22px;
+      left: 50px;
       /* right: 160px; */
       width: 30%;
       .col {
