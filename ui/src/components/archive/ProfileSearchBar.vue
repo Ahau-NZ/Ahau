@@ -172,6 +172,8 @@ export default {
 
       // related records
       // collections
+      if (item && item.image && item.image.uri) return item.image.uri
+
       // default
       return niho
     },

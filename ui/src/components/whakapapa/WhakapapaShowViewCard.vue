@@ -133,25 +133,6 @@ export default {
     openProfile (profile) {
       this.setProfileById({ id: profile.id, type: 'preview' })
       this.setDialog({ active: 'view-edit-node', type: 'preview' })
-    },
-    background (view) {
-      if (view.image && view.image.uri) {
-        return {
-          backgroundImage: `url(${view.image.uri})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center center'
-        }
-      }
-
-      if (this.type === 'view') {
-        return {
-          backgroundImage: `url(${whakapapa})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center'
-        }
-      }
-
-      return niho
     }
   }
 }

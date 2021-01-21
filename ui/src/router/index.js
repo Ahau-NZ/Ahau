@@ -12,7 +12,7 @@ export default new Router({
     ...views,
     // ...dialogs,
     { path: '/', redirect: '/login' },
-    { path: '/logout', redirect: '' },
+    { path: '/logout', redirect: '/login' },
     { path: '*', redirect: '/' }
   ]
 })

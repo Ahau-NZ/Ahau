@@ -88,8 +88,6 @@ export default {
       this.$emit('close')
     },
     submit () {
-      console.log(this.formData)
-      console.log('access', this.access)
       const output = {
         ...getObjectChanges(setDefaultCollection(EMPTY_COLLECTION), this.formData),
         recps: [this.access.groupId]

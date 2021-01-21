@@ -59,44 +59,6 @@ export const COLLECTION_FRAGMENT = gql`
   }
 `
 
-export const getCollection = id => ({
-  query: gql`
-    ${COLLECTION_FRAGMENT}
-    ${PUBLIC_PROFILE_FRAGMENT}
-    query ($id: ID!) {
-      collection(id: $id) {
-        ...CollectionFragment
-        tiaki {
-          ...PublicProfileFragment
-        }
-        stories: storyLinks {
-          linkId
-          story {
-            id
-            type
-            title
-            description
-            timeInterval
-            submissionDate
-            location
-            contributionNotes
-            locationDescription
-            format
-            identifier
-            language
-            source
-            transcription
-            canEdit
-            recps
-          }
-        }
-      }
-    }
-  `,
-  variables: { id },
-  fetchPolicy: 'no-cache'
-})
-
 export const getAllCollections = filter => ({
   query: gql`
     ${COLLECTION_FRAGMENT}

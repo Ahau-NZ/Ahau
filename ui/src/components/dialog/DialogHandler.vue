@@ -108,12 +108,6 @@
       :title="`Whakapapa registry`"
       @close="close"
     />
-    <!-- <NewCollectionDialog
-      :show="isActive('new-collection')"
-      :title="'Create a new Collection'"
-      @close="close"
-      @submit="console.log('TODO: add collection to profile')"
-    />-->
     <ComingSoonDialog :show="isActive('coming-soon')" @close="close" />
   </div>
 </template>
@@ -136,7 +130,6 @@ import WhakapapaEditDialog from '@/components/dialog/whakapapa/WhakapapaEditDial
 import WhakapapaDeleteDialog from '@/components/dialog/whakapapa/WhakapapaDeleteDialog.vue'
 import WhakapapaShowHelper from '@/components/dialog/whakapapa/WhakapapaShowHelper.vue'
 import WhakapapaTableHelper from '@/components/dialog/whakapapa/WhakapapaTableHelper.vue'
-// import NewCollectionDialog from '@/components/dialog/archive/NewCollectionDialog.vue'
 import ComingSoonDialog from '@/components/dialog/ComingSoonDialog.vue'
 
 import { PERMITTED_RELATIONSHIP_ATTRS, savePerson } from '@/lib/person-helpers.js'
@@ -164,7 +157,6 @@ export default {
     WhakapapaDeleteDialog,
     WhakapapaShowHelper,
     WhakapapaTableHelper,
-    // NewCollectionDialog,
     ComingSoonDialog,
     NewCommunityDialog,
     NewRegistrationDialog,
@@ -188,7 +180,7 @@ export default {
       required: false,
       default: null,
       validator: (val) => [
-        'new-community', 'new-node', 'view-edit-node', 'delete-node', 'new-collection', 'new-story', 'edit-story', 'edit-node', 'delete-story',
+        'new-community', 'new-node', 'view-edit-node', 'delete-node', 'new-story', 'edit-story', 'edit-node', 'delete-story',
         'whakapapa-view', 'whakapapa-edit', 'whakapapa-delete', 'whakapapa-helper', 'whakapapa-table-helper', 'new-registration', 'review-registration'
       ].includes(val)
     },

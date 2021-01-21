@@ -203,6 +203,11 @@ export const STORY_LINK_FRAGMENT = gql`
   }
 `
 
+/*
+  WARNING: i put this in here because it uses the story fragments, for some reason when
+  i imported story-helpers.js in collection-helpers.js to use the fragments, it would throw a
+  graphql error (even just importing it!!)
+*/
 export const getCollection = id => ({
   query: gql`
     ${COLLECTION_FRAGMENT}
