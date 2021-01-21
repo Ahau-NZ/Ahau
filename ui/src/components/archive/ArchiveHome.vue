@@ -1,16 +1,8 @@
 <template>
-  <!--
-  <v-col v-show="!showStory && !currentCollection" cols="12">
-    <CollectionGroup :collections="collections" @selectedIndex="index = $event" @click="showCurrentCollection"/>
-  </v-col>
-  <v-col>
-    <Stories :stories="filteredStories" @save="processStory($event)" :title="title"/>
-  </v-col> -->
   <v-row>
-    <v-col cols="12">
+    <v-col v-show="!showStory" cols="12">
       <CollectionGroup
         :collections="collections"
-        @selectedIndex="index = $event"
         @click="showCurrentCollection"
       />
     </v-col>
@@ -23,6 +15,7 @@
 
 import Stories from '@/components/archive/Stories.vue'
 import CollectionGroup from '@/components/archive/CollectionGroup.vue'
+import { mapGetters } from 'vuex'
 
 // import { saveStoryMixin, storiesApolloMixin } from '@/mixins/story-mixins.js'
 // import mapProfileMixins from '@/mixins/profile-mixins.js'
@@ -39,6 +32,9 @@ export default {
   components: {
     Stories,
     CollectionGroup
+  },
+  computed: {
+    ...mapGetters(['showStory'])
   },
   methods: {
     showCurrentCollection ({ id }) {

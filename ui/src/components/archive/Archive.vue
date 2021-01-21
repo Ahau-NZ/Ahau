@@ -41,7 +41,6 @@
 </template>
 
 <script>
-import Stories from '@/components/archive/Stories.vue'
 import { mapGetters, createNamespacedHelpers } from 'vuex'
 import NewRecordDialog from '@/components/dialog/archive/NewRecordDialog.vue'
 import NewCollectionDialog from '@/components/dialog/archive/NewCollectionDialog.vue'
@@ -53,7 +52,6 @@ import ArchiveHelper from '@/components/dialog/archive/ArchiveHelper.vue'
 import { saveStoryMixin, storiesApolloMixin } from '@/mixins/story-mixins.js'
 import mapProfileMixins from '@/mixins/profile-mixins.js'
 import { collectionsApolloMixin, saveCollectionsMixin } from '@/mixins/collection-mixins.js'
-import CollectionGroup from '@/components/archive/CollectionGroup.vue'
 
 import { VueContext } from 'vue-context'
 
@@ -74,25 +72,19 @@ export default {
     })
   ],
   components: {
-    Stories,
     NewRecordDialog,
     NewCollectionDialog,
     ArchiveHelper,
     BigAddButton,
-    CollectionGroup,
     VueContext
   },
   data () {
     return {
       stories: null,
-      currentCollection: false,
+      collections: [],
       dialog: null,
       scrollPosition: 0,
       showArchiveHelper: false,
-      showNewCollection: false,
-      collections: [],
-      selectedCollection: null,
-      index: null,
       contextMenuOpts: [{
         title: 'Create a new Collection',
         dialog: 'new-collection',
@@ -109,24 +101,10 @@ export default {
     ...mapGetters(['showStory', 'whoami', 'currentStory', 'showArtefact', 'storeDialog']),
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
-    },
-    title () {
-      if (this.currentCollection) return this.currentCollection.name || 'Untitled Collection'
-      return 'Stories'
-    },
-    filteredStories () {
-      if (!this.currentCollection) return this.stories
-
-      if (this.currentCollection.stories) return this.currentCollection.stories
-
-      return []
     }
   },
   methods: {
     ...mapAlertMutations(['showAlert']),
-    showCurrentCollection ($event) {
-      console.log($event)
-    },
     toggleArchiveHelper () {
       this.showArchiveHelper = !this.showArchiveHelper
     },
@@ -135,8 +113,16 @@ export default {
     }
   },
   watch: {
-    index (i) {
-      this.selectedCollection = this.collections[i]
+    showStory (newVal, oldVal) {
+      if (oldVal === false && newVal === true) {
+        this.scrollPosition = window.pageYOffset
+      } else if (oldVal === true && newVal === false) {
+        setTimeout(() => {
+          window.scrollTo({
+            top: this.scrollPosition
+          })
+        }, 100)
+      }
     }
   }
 }

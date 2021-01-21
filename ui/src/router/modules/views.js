@@ -68,7 +68,6 @@ function sharedRoutes (type) {
     },
     { path: 'timeline', name: `${type}/timeline`, component: Timeline, props: true },
     { path: 'whakapapa', name: `${type}/whakapapa`, component: WhakapapaIndex, props: true },
-    { path: 'whakapapa/:whakapapaId', name: `${type}/whakapapa/:whakapapaId`, component: WhakapapaShow },
-    // { path: 'archive/:collectionId', name: `${type}/archive/:collectionId`, component: CollectionShow }
+    { path: 'whakapapa/:whakapapaId', name: `${type}/whakapapa/:whakapapaId`, component: WhakapapaShow }
   ]
 }
