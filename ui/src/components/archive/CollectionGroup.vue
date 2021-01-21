@@ -19,12 +19,12 @@
             v-slot:default="{ active, toggle }"
             transition="fade-transition"
             style="width:210px;height:310px;"
-            class="pa-0 mx-3"
+            class="pa-0 mx-3 mb-5"
           >
             <v-scale-transition>
               <Collection :collection="collection"
                 :selected="active"
-                @click="toggle"
+                @click="toggle && $emit('click', collection)"
               />
             </v-scale-transition>
           </v-slide-item>
@@ -83,26 +83,27 @@ export default {
   scrollbar-width: none; /* Firefox */
 }
 
+/*
 .v-slide-group__wrapper::-webkit-scrollbar {
   display: none;
 }
-/*
-FOR SCROLLBAR
+*/
+
 .v-slide-group__wrapper::-webkit-scrollbar {
   height: 4px;
 }
 
 .v-slide-group__wrapper::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: lightgrey;
 }
 
 .v-slide-group__wrapper::-webkit-scrollbar-thumb {
+  /* background: #888; */
   background: #888;
 }
 
 .v-slide-group__wrapper::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
-*/
 
 </style>

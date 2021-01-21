@@ -3,8 +3,9 @@
     max-width="210px"
     max-height="310px"
     light
-    class="pa-0 ma-1 "
-    :to="goCollectionShow()"
+    class="pa-0 ma-1"
+    @click="$emit('click')"
+    outlined
   >
     <v-img
       :src="image"
@@ -13,7 +14,6 @@
       height="150px"
     >
     </v-img>
-    <!-- <v-card-text class="pb-0"> -->
       <v-row class="px-3">
         <v-col cols="12" class="truncate title grey--text body-2 font-weight-medium">
           {{ collection.name || 'Untitled Collection' }}
@@ -32,9 +32,6 @@
           <AvatarGroup :profiles="collection.tiaki" size="30" customClass="pa-0" showLabels/>
         </v-col>
       </v-row>
-
-      <!-- <v-divider class="mt-2"/> -->
-    <!-- </v-card-text> -->
   </v-card>
 </template>
 

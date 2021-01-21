@@ -27,6 +27,7 @@ export const PERMITTED_COLLECTION_ATTRS = [
   'type',
   'name',
   'description',
+  'canEdit',
   'recps',
   'submissionDate'
 ]
@@ -61,15 +62,38 @@ export const COLLECTION_FRAGMENT = gql`
 export const getCollection = id => ({
   query: gql`
     ${COLLECTION_FRAGMENT}
-    query($id: ID!) {
+    ${PUBLIC_PROFILE_FRAGMENT}
+    query ($id: ID!) {
       collection(id: $id) {
         ...CollectionFragment
+        tiaki {
+          ...PublicProfileFragment
+        }
+        stories: storyLinks {
+          linkId
+          story {
+            id
+            type
+            title
+            description
+            timeInterval
+            submissionDate
+            location
+            contributionNotes
+            locationDescription
+            format
+            identifier
+            language
+            source
+            transcription
+            canEdit
+            recps
+          }
+        }
       }
     }
   `,
-  variables () {
-    return { id }
-  },
+  variables: { id },
   fetchPolicy: 'no-cache'
 })
 
@@ -92,27 +116,6 @@ export const getAllCollections = filter => ({
   // update (data) {
   //   return data.collections.reverse()
   // },
-  fetchPolicy: 'no-cache'
-})
-
-export const getAllStoriesByMentions = id => ({
-  query: gql`
-    ${COLLECTION_FRAGMENT}
-    query($id: String!) {
-      person(id: $id) {
-        mentions: mentionLinks {
-          linkId
-          story {
-            ...StoryFragment
-            ...StoryLinkFragment
-          }
-        }
-      }
-    }
-  `,
-  variables: {
-    id
-  },
   fetchPolicy: 'no-cache'
 })
 

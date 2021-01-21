@@ -2,7 +2,7 @@
   <div>
     <div class="px-2">
       <div v-if="showStory" :class="{ 'showOverlay': showStory && !mobile }"></div>
-      <v-row class="top-margin mb-10">
+      <v-row class="top-margin">
         <v-col cols="10" class="headliner black--text pa-0 pl-4 pt-2 pb-5">
           Archive
           <v-icon color="blue-grey" light @click="toggleArchiveHelper" class="infoButton">mdi-information</v-icon>
@@ -10,11 +10,12 @@
         <v-col v-show="!showStory">
           <BigAddButton @click.native.stop="openContextMenu($event)" />
         </v-col>
-        <v-col v-show="!showStory">
-          <CollectionGroup :collections="collections" @selectedIndex="index = $event" />
-        </v-col>
-        <v-col>
-          <Stories :stories="stories" @save="processStory($event)" title="Stories"/>
+      </v-row>
+      <v-row>
+        <v-col cols="12">
+          <router-view :profile="profile" :stories="stories" :collections="collections"
+            @processStory="processStory"
+          ></router-view>
         </v-col>
       </v-row>
       <ArchiveHelper v-if="showArchiveHelper" :show="showArchiveHelper" @close="toggleArchiveHelper" />
@@ -84,6 +85,7 @@ export default {
   data () {
     return {
       stories: null,
+      currentCollection: false,
       dialog: null,
       scrollPosition: 0,
       showArchiveHelper: false,
@@ -107,10 +109,24 @@ export default {
     ...mapGetters(['showStory', 'whoami', 'currentStory', 'showArtefact', 'storeDialog']),
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
+    },
+    title () {
+      if (this.currentCollection) return this.currentCollection.name || 'Untitled Collection'
+      return 'Stories'
+    },
+    filteredStories () {
+      if (!this.currentCollection) return this.stories
+
+      if (this.currentCollection.stories) return this.currentCollection.stories
+
+      return []
     }
   },
   methods: {
     ...mapAlertMutations(['showAlert']),
+    showCurrentCollection ($event) {
+      console.log($event)
+    },
     toggleArchiveHelper () {
       this.showArchiveHelper = !this.showArchiveHelper
     },

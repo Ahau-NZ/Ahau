@@ -1,16 +1,56 @@
 <template>
-  <v-container fluid class="body-width pa-0 niho-bg">
-
-    
+  <v-container fluid>
+      <v-row v-if="!mobile" style="width:30%;" class="">
+        <WhakapapaShowViewCard
+          type="collection"
+          :view="collection"
+          :access="access"
+          :shadow="false"
+        >
+          <template v-slot:edit v-if="collection && collection.canEdit">
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on }">
+                <v-btn
+                  v-on="on"
+                  @click.stop="dialog.active = 'collection-edit'"
+                  icon
+                  class="pa-0 px-3"
+                >
+                  <v-icon small class="blue--text">mdi-pencil</v-icon>
+                </v-btn>
+              </template>
+              <span>Edit Collection</span>
+            </v-tooltip>
+          </template>
+        </WhakapapaShowViewCard>
+      </v-row>
+      <v-row>
+        <v-col cols="12">
+          <Stories title="Stories" :stories="stories" @save="$emit('processStory', $event)" />
+        </v-col>
+      </v-row>
   </v-container>
 </template>
 
 <script>
 // import mapCollectionMixins from '@/mixins/collection-mixins'
-import { getCollection } from '@/lib/collection-helpers'
+import { getCollection } from '@/lib/story-helpers'
+import { getTribalProfile } from '@/lib/community-helpers'
+
+import mapProfileMixins from '@/mixins/profile-mixins.js'
+
+import WhakapapaShowViewCard from '../components/whakapapa/WhakapapaShowViewCard'
+import { mapGetters, mapMutations } from 'vuex'
+import Stories from '../components/archive/Stories.vue'
 
 export default {
   name: 'CollectionShow',
+  // TODO: move to mixin
+  mixins: [
+    mapProfileMixins({
+      mapMethods: ['getTribe']
+    })
+  ],
   apollo: {
     collection () {
       return {
@@ -18,15 +58,46 @@ export default {
       }
     }
   },
+  components: {
+    WhakapapaShowViewCard,
+    Stories
+  },
   data () {
     return {
-      collection: {}
+      collection: {},
+      access: null,
+      dialog: {
+        active: null
+      }
     }
   },
   computed: {
+    ...mapGetters(['whoami']),
+    stories () {
+      if (!this.collection || !this.collection.stories) return []
+
+      return this.collection.stories.map(link => {
+        return {
+          linkId: link.linkId,
+          ...link.story
+        }
+      })
+    },
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     }
+  },
+  watch: {
+    async collection (collection) {
+      if (collection.recps && collection.recps.length > 0) {
+        const tribe = await this.getTribe(collection.recps[0])
+        this.access = getTribalProfile(tribe, this.whoami)
+        this.setCurrentAccess(this.access)
+      }
+    }
+  },
+  methods: {
+    ...mapMutations(['setCurrentAccess'])
   }
 }
 </script>
