@@ -31,11 +31,11 @@
 
     <NewRecordDialog v-if="dialog === 'new-story'" :show="dialog === 'new-story'"
       :title="`Add record to ${ profile.preferredName || 'Untitled' }'s archive`" @close="dialog = null"
-      @submit="processStory($event)"
+      @submit="processStory"
     />
     <NewCollectionDialog v-if="dialog === 'new-collection'" :show="dialog === 'new-collection'"
       :title="`Add collection to ${ profile.preferredName || 'Untitled' }'s archive`" @close="dialog = null"
-      @submit="saveCollection($event)"
+      @submit="processCollection"
     />
   </div>
 </template>
@@ -110,6 +110,10 @@ export default {
     },
     openContextMenu ($event) {
       this.$refs.menu.open($event)
+    },
+    async processCollection ($event) {
+      const id = await this.saveCollection($event)
+      this.$apollo.queries.collections.refetch({ id })
     }
   },
   watch: {

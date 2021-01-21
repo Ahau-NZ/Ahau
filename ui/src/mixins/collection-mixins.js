@@ -14,8 +14,10 @@ export const collectionsApolloMixin = {
 const methods = {
   async saveCollection (input) {
     try {
-      input.authors = {
-        add: ['*']
+      if (!input.id) {
+        input.authors = {
+          add: ['*']
+        }
       }
 
       const res = await this.$apollo.mutate(
@@ -24,9 +26,7 @@ const methods = {
 
       if (res.errors) throw res.errors
 
-      const id = res.data.saveCollection
-
-      this.$apollo.queries.collections.refetch({ id })
+      return res.data.saveCollection
     } catch (err) {
       console.error('Something went wrong while trying to save a collection', input)
       console.error(err)
