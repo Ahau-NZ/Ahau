@@ -7,13 +7,7 @@ import { COLLECTION_FRAGMENT } from './collection-helpers'
 
 export function setDefaultStory (newStory) {
   var story = clone(newStory)
-
-  var artefacts = story.artefacts
-  var mentions = story.mentions
-  var contributors = story.contributors
-  var creators = story.creators
-  var relatedRecords = story.relatedRecords
-  var collections = story.collections
+  var { artefacts, mentions, contributors, creators, relatedRecords, collections } = story
 
   function mapLinks (link, entity) {
     return {

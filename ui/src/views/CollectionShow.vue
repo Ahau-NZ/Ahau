@@ -113,8 +113,12 @@ export default {
   methods: {
     ...mapMutations(['setCurrentAccess']),
     async processCollection ($event) {
+      const { stories } = $event
+
       await this.saveCollection($event)
-      this.$apollo.queries.collection.refetch()
+      await this.saveStories(this.collection, stories)
+
+      this.$apollo.queries.collection.refresh()
     }
   }
 }

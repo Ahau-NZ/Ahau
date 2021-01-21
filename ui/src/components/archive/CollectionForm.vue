@@ -46,7 +46,35 @@
               auto-grow
             ></v-textarea>
           </v-col>
+          <v-col cols="12" md="auto" class="pa-5">
+            <v-tooltip top open-delay="700" :disabled="showStories">
+              <template v-slot:activator="{ on }">
+                <div v-on="on">
+                  <v-row v-if="!showStories" @click="showStories = true" class="pl-5">
+                    <v-icon small>mdi-plus</v-icon>
+                    <AddButton size="20px" icon="mdi-book-multiple" iconClass="pr-3" label="Stories"  justify="start"/>
+                  </v-row>
+                </div>
+              </template>
+              <span>The stories in this collection</span>
+            </v-tooltip>
 
+            <ProfileSearchBar
+              :selectedItems.sync="formData.stories"
+              :items="stories"
+              :openMenu.sync="showStories"
+              placeholder="add related record"
+              item="title"
+            />
+            <ChipGroup
+              v-if="formData.stories && formData.stories.length > 0"
+              type="story"
+              :chips="formData.stories"
+              deletable
+              @delete="removeStory"
+            />
+            <v-divider v-if="mobile" light class="mt-6 mr-4"></v-divider>
+          </v-col>
         </v-row>
       </v-col>
     </v-row>
@@ -58,11 +86,22 @@ import Avatar from '@/components/Avatar.vue'
 import ImagePicker from '@/components/ImagePicker.vue'
 import { RULES } from '@/lib/constants'
 
+import { storiesApolloMixin } from '@/mixins/story-mixins.js'
+
+import AddButton from '@/components/button/AddButton.vue'
+import ChipGroup from '@/components/archive/ChipGroup.vue'
+import ProfileSearchBar from '@/components/archive/ProfileSearchBar.vue'
+
+import { mapGetters } from 'vuex'
+
 export default {
   name: 'CollectionForm',
   components: {
     Avatar,
-    ImagePicker
+    ImagePicker,
+    AddButton,
+    ChipGroup,
+    ProfileSearchBar
   },
   props: {
     formData: {
@@ -71,12 +110,28 @@ export default {
     readonly: { type: Boolean, default: false },
     hideDetails: { type: Boolean, default: false }
   },
+  mixins: [
+    storiesApolloMixin
+  ],
   data () {
     return {
       form: {
         valid: true,
         rules: RULES
-      }
+      },
+      stories: [],
+      showStories: false
+    }
+  },
+  computed: {
+    ...mapGetters(['whoami']),
+    mobile () {
+      return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
+    }
+  },
+  methods: {
+    removeStory (i) {
+      this.formData.stories.splice(i, 1)
     }
   }
 }

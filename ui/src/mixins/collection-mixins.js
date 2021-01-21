@@ -100,6 +100,40 @@ const methods = {
         }
       }))
     }
+  },
+  async saveStories (collection, stories) {
+    if (!stories) return
+
+    const { add, remove } = stories
+
+    // existing linked collections are already removed prior
+    // we just need to worry about creating or removing links here
+
+    if (add && add.length > 0) {
+      await Promise.all(add.map(async story => {
+        // create the link between the collection and story
+        const input = {
+          collection: collection.id,
+          story: story.id,
+          recps: collection.recps // TODO: what recps to use here....
+        }
+
+        // save the link
+        await this.saveStoryLink(input)
+      }))
+    }
+
+    if (remove && remove.length > 0) {
+      await Promise.all(remove.map(async story => {
+        if (story.linkId) {
+          await this.removeStoryLink({
+            date: new Date(),
+            linkId: story.linkId
+          })
+          return story
+        }
+      }))
+    }
   }
 }
 

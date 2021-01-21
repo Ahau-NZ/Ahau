@@ -91,6 +91,8 @@ export default {
     submit () {
       var output = {}
 
+      console.log(this.formData)
+
       if (this.editing) {
         output = {
           id: this.collection.id,

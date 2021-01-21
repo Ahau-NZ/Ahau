@@ -6,6 +6,8 @@ import { mapActions, mapMutations } from 'vuex'
 export const storiesApolloMixin = {
   apollo: {
     stories () {
+      if (!this.whoami) throw new Error("the stories apollo query needs whoami. Use vuex.mapGetters(['whoami'])")
+
       // extract type from the route name
       // TODO: could be better
       const type = this.$route.name.split('/')[0]
