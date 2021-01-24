@@ -6,6 +6,12 @@
     <!-- FORM -->
     <template v-slot:content>
       <CollectionForm ref="collectionForm" :formData.sync="formData"/>
+      <v-col align="center">
+        <v-btn v-if="editing" text @click="$emit('delete')">
+          Delete this Collection
+          <v-icon class="pl-2">mdi-delete</v-icon>
+        </v-btn>
+      </v-col>
     </template>
 
     <template v-if="access" v-slot:before-actions>

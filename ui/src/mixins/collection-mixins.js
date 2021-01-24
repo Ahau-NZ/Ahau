@@ -6,7 +6,14 @@ export const collectionsApolloMixin = {
       const isPersonal = this.$route.params.profileId === this.whoami.personal.profile.id
 
       if (isPersonal) return getAllCollections({ groupId: this.whoami.personal.groupId })
-      else return getAllCollections({ groupId: this.$route.params.tribeId })
+
+      return {
+        ...getAllCollections({ groupId: this.$route.params.tribeId }),
+        skip () {
+          // skip getting any collections if we arent on a community archive
+          return this.$route.name !== 'community/archive'
+        }
+      }
     }
   }
 }
