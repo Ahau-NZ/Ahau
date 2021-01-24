@@ -170,6 +170,13 @@ export default {
       return this.tableLayout
         // returns the array of descendants starting with the root node, then followed by each child in topological order
         .descendants()
+        .sort((a, b) => {
+          if (this.names) { // check for you click event
+            if (a.data.preferredName.toLowerCase() < b.data.preferredName.toLowerCase()) { return -1 }
+            if (a.data.preferredName.toLowerCase() > b.data.preferredName.toLowerCase()) { return 1 }
+            return 0
+          }
+        })
         // filter deceased
         .filter(peeps => {
           if (this.filter && peeps.data.deceased) {
@@ -285,19 +292,6 @@ export default {
       var width = await this.colWidth + this.columns[this.columns.length - 1].x
       this.tableWidth = width
       this.$emit('update', this.tableWidth)
-    },
-    // function to control left and right scroll buttons in table
-    panAction (x) {
-      var svg = d3.select('#baseSvg')
-      var g = d3.select('#zoomable')
-
-      var zoom = d3.zoom()
-        .translateExtent([[0, 0], [2400, Infinity]])
-        .on('zoom', function () {
-          g.attr('transform', d3.event.transform)
-        })
-
-      zoom.translateBy(svg.transition().duration(100), (x), 0)
     },
 
     // set the width for the first column which needs to be dynamic when showing whakapapa links

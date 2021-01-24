@@ -48,7 +48,7 @@ export default {
   props: {
     profiles: { type: Array, default: null },
     groupTitle: { type: String, default: null },
-    showLabels: { type: Boolean, default: true}, 
+    showLabels: { type: Boolean, default: true },
     size: { type: String, default: '80px' },
     customClass: { type: String, default: 'd-flex justify-start align-center pa-2 pl-4' },
     spacing: { type: String, default: 'pr-5' },

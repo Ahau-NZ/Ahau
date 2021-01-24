@@ -92,11 +92,9 @@
       @close="dialog = false"
       @submit="connected($event)"
     />
-    <ConfirmationText
+    <AlertMessage
       :show="snackbar"
       :message="confirmationText"
-      :timeout="5000"
-      loading=true
       color="#b12526"
     />
   </div>
@@ -109,7 +107,7 @@ import whakapapa from '@/assets/whakapapa.png'
 import ProfileCard from '@/components/profile/ProfileCard.vue'
 import Avatar from '@/components/Avatar.vue'
 import NewPatakaDialog from '@/components/dialog/community/NewPatakaDialog.vue'
-import ConfirmationText from '@/components/dialog/ConfirmationText.vue'
+import AlertMessage from '@/components/dialog/AlertMessage.vue'
 import BigAddButton from '@/components/button/BigAddButton.vue'
 import { getTribes } from '@/lib/community-helpers.js'
 
@@ -131,7 +129,7 @@ export default {
     ProfileCard,
     Avatar,
     NewPatakaDialog,
-    ConfirmationText,
+    AlertMessage,
     BigAddButton
   },
   apollo: {
@@ -194,7 +192,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setDialog', 'setCurrentTribe', 'setSyncing']),
+    ...mapActions(['setSyncing']),
     connected (text) {
       this.dialog = false
       this.snackbar = !this.snackbar

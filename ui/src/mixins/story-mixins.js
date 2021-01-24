@@ -44,6 +44,11 @@ const apollo = {
             }
           })
             .reverse()
+        },
+        error (err) {
+          console.warn('Something went wrong while trying to get mentions by profile', this.$route.params.profileId)
+          console.warn(err)
+          console.warn('If this is "not a valid profile" then it is caused by GraphQL using dummy data for a profile')
         }
       }
     }
@@ -131,7 +136,7 @@ const methods = {
       }
 
       if (relatedRecords) {
-        await this.processLinks(relatedRecords, { type: TYPES.STORY_STORY, recps: story.recps })
+        await this.processLinks(relatedRecords, { type: TYPES.STORY_STORY, parent: id, recps: story.recps })
       }
 
       // reload again

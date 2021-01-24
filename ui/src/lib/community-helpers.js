@@ -283,21 +283,68 @@ export async function callGetTribe (profileId) {
 
 export const getTribe = ({
   query: gql`
+    ${PUBLIC_PROFILE_FRAGMENT}
     query($id: String!) {
       tribe (id: $id){
         id 
         private {
           id
           preferredName
-          avatarImage { uri }
+          description
+          avatarImage {
+            uri
+          }
+          description
+          headerImage {
+            uri
+          }
+          tombstone {
+            date
+          }
+          tiaki {
+            ...PublicProfileFragment
+          }
         }
         public {
-          id 
+          id
           preferredName
-          avatarImage { uri }
+          description
+          avatarImage {
+            uri
+          }
+          description
+          headerImage {
+            uri
+          }
+          tombstone {
+            date
+          }
+          tiaki {
+            ...PublicProfileFragment
+          }
         }
       }
     }
   `,
   fetchPolicy: 'no-cache'
 })
+
+export function getTribalProfile (tribe, whoami) {
+  // see if this is our own personal tribe
+  if (whoami.personal.groupId === tribe.groupId || whoami.personal.groupId === tribe.id) {
+    return {
+      groupId: whoami.personal.groupId,
+      ...whoami.personal.profile,
+      isPersonalGroup: true
+    }
+  }
+
+  // not our personal tribe
+  return {
+    groupId: tribe.id,
+    ...tribe.private.length > 0
+      ? tribe.private[0]
+      : tribe.public[0],
+    isPersonalGroup: false
+  }
+}

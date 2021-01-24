@@ -58,6 +58,11 @@ export default {
   components: {
     Dialog
   },
+  computed: {
+    mobile () {
+      return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
+    }
+  },
   methods: {
     cordovaBackButton () {
       this.close()

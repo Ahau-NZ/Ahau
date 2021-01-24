@@ -46,7 +46,7 @@
         <div v-if="whakapapa.table" class="icon-button">
           <FlattenButton @flatten="toggleFlatten()" />
         </div>
-        <div class="icon-button">
+        <div class="icon-button" v-if="isKaitiaki">
           <TableButton @table="toggleTable()" />
         </div>
         <div class="icon-button">
@@ -104,19 +104,6 @@
         </v-speed-dial>
       </v-card>
 
-      <v-row v-if="whakapapa.table && overflow" :class="mobile ? 'navigateMobile' : 'navigate'">
-        <div class="icon-button">
-          <v-btn fab x-small light @click="togglePan(200)">
-            <v-icon>mdi-arrow-left</v-icon>
-          </v-btn>
-        </div>
-        <div class="icon-button">
-          <v-btn fab x-small light @click.stop="togglePan(-200)">
-            <v-icon>mdi-arrow-right</v-icon>
-          </v-btn>
-        </div>
-      </v-row>
-
       <Tree
         :class="mobile? 'mobile-tree':'tree'"
         v-if="whakapapa.tree"
@@ -130,19 +117,21 @@
         :focus="focus"
         :searchNodeId="searchNodeId"
       />
-      <Table
-        v-if="whakapapa.table"
-        ref="table"
-        :filter="filter"
-        :flatten="flatten"
-        :view="whakapapaView"
-        :nestedWhakapapa="nestedWhakapapa"
-        :relationshipLinks="relationshipLinks"
-        @load-descendants="loadDescendants($event)"
-        @collapse-node="collapseNode($event)"
-        @open-context-menu="openContextMenu($event)"
-        :searchNodeId="searchNodeId"
-      />
+      <div class="whakapapa-table">
+        <Table
+          v-if="whakapapa.table"
+          ref="table"
+          :filter="filter"
+          :flatten="flatten"
+          :view="whakapapaView"
+          :nestedWhakapapa="nestedWhakapapa"
+          :relationshipLinks="relationshipLinks"
+          @load-descendants="loadDescendants($event)"
+          @collapse-node="collapseNode($event)"
+          @open-context-menu="openContextMenu($event)"
+          :searchNodeId="searchNodeId"
+        />
+      </div>
     </v-container>
 
     <vue-context ref="menu" class="px-0">
@@ -211,6 +200,9 @@ import tree from '@/lib/tree-helpers'
 import avatarHelper from '@/lib/avatar-helpers.js'
 import { getRelatives } from '@/lib/person-helpers.js'
 import { getWhakapapaView, saveWhakapapaView } from '@/lib/whakapapa-helpers.js'
+import { getTribalProfile } from '@/lib/community-helpers'
+
+import mapProfileMixins from '@/mixins/profile-mixins.js'
 
 import DialogHandler from '@/components/dialog/DialogHandler.vue'
 import findSuccessor from '@/lib/find-successor'
@@ -234,8 +226,14 @@ export default {
     DialogHandler,
     WhakapapaBanner
   },
+  mixins: [
+    mapProfileMixins({
+      mapMethods: ['getTribe']
+    })
+  ],
   data () {
     return {
+      access: null,
       fab: false,
       overflow: 'false',
       pan: 0,
@@ -274,7 +272,11 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['nestedWhakapapa', 'selectedProfile', 'whoami', 'loadingState', 'getAccessFromRecps']),
+    ...mapGetters(['nestedWhakapapa', 'selectedProfile', 'whoami', 'loadingState']),
+    isKaitiaki () {
+      if (!this.whakapapaView.kaitiaki) return false
+      return this.whoami.public.profile.id === this.whakapapaView.kaitiaki[0].id
+    },
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -341,31 +343,27 @@ export default {
           icon: 'mdi-delete'
         }
       ]
-    },
-    access () {
-      // return the access based on the whakapapaView we are in...
-      if (!this.whakapapaView || !this.whakapapaView.recps) return null
-      return this.getAccessFromRecps(this.whakapapaView.recps)
     }
   },
   watch: {
     currentFocus: async function (newFocus) {
       if (newFocus) {
         this.setLoading(true)
-        // var startTime = Date.now()
 
         const nestedWhakapapa = await this.loadDescendants(newFocus, '', [])
         this.addNestedWhakapapa(nestedWhakapapa)
         this.addRelationshipLinks(this.relationshipLinks)
-        // var endTime = Date.now()
-        // var eclipsedTime = (endTime - startTime) / 1000
-        // console.log('build whakapapa time: ', eclipsedTime)
+
         this.setLoading(false)
       }
     },
-    whakapapaView (newVal) {
-      if (newVal.recps) this.setCurrentAccess(this.getAccessFromRecps(newVal.recps))
-      this.addWhakapapa(newVal)
+    async whakapapaView (whakapapa) {
+      if (whakapapa.recps) {
+        const tribe = await this.getTribe(whakapapa.recps[0])
+        this.access = getTribalProfile(tribe, this.whoami)
+        this.setCurrentAccess(this.access)
+      }
+      this.addWhakapapa(whakapapa)
     },
     relationshipLinks (newVal) {
       this.addRelationshipLinks(newVal)
@@ -377,9 +375,6 @@ export default {
     tableOverflow (width) {
       var show = width > screen.width
       this.overflow = show
-    },
-    togglePan (x) {
-      this.$refs.table.panAction(x)
     },
     clickedOff () {
       this.search = !this.search
@@ -471,9 +466,6 @@ export default {
     async loadDescendants (profileId, path, temp) {
       // calls person.fetchPerson which gets info about this person from the db
       var person = await this.getRelatives(profileId)
-
-      // if (temp[profileId]) console.log('profile exists: ', profileId)
-      // else temp[profileId] = profileId
 
       // make sure every person has a partners and siblings array
       person.partners = []
@@ -758,6 +750,11 @@ h1 {
 
 #create .v-btn--floating {
   position: relative;
+}
+
+.whakapapa-table {
+  overflow: auto;
+  width: 100%;
 }
 
 </style>

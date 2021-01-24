@@ -11,18 +11,27 @@
         width="2"
       />
     </div>
-    <v-btn
-      v-if="!isLoading && !isSetup"
-      text
-      x-large
-      color="#b12526"
-      @click.prevent="toggleNew"
-    >
-      <!-- TODO change this for an EditProfile dialog -->
-      <v-icon left>mdi-plus</v-icon>
-      <p class="mb-0">Ko wai koe --</p><p style="color:lightgrey" class="mb-0"> -- who are you?</p>
+    <div v-if="!isLoading && !isSetup" style="justify-items: center;display: grid;">
+      <v-row>
+        <p class="mb-0 headliner">Nau mai whakatau mai</p>
+      </v-row>
+      <v-row class="pb-12">
+        <p style="color:darkgrey" class="mb-0 headliner2">welcome</p>
+      </v-row>
+      <v-row class="mt-10">
+        <v-btn
+          text
+          x-large
+          color="#b12526"
+          @click.prevent="toggleNew"
+        >
+            <p class="mb-0">Ko wai koe --</p><p style="color:lightgrey" class="mb-0"> -- who are you?</p>
+            <v-icon right small>mdi-cursor-default</v-icon>
 
-    </v-btn>
+        </v-btn>
+      </v-row>
+    </div>
+
     <div
       v-if="!isLoading && isSetup"
       class="d-flex flex-column align-center button"
@@ -207,4 +216,18 @@ h1 {
 .button:hover {
   cursor: pointer;
 }
+
+ .headliner {
+    font-size: 1.5em;
+    text-transform: uppercase;
+    font-weight: 400;
+    letter-spacing: 5px;
+  }
+
+ .headliner2 {
+    font-size: 1.5em;
+    text-transform: uppercase;
+    font-weight: 400;
+    letter-spacing: 3px;
+  }
 </style>
