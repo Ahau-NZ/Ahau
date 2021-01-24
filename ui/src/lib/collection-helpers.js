@@ -6,11 +6,23 @@ import { PUBLIC_PROFILE_FRAGMENT } from '@/lib/person-helpers'
 export function setDefaultCollection (newCollection) {
   var collection = clone(newCollection)
 
+  var { stories } = collection
+
+  if (stories && stories.length > 0) {
+    stories = stories.map(d => {
+      return {
+        ...d.story,
+        linkId: d.linkId
+      }
+    })
+  }
+
   return {
     id: collection.id,
     name: collection.name,
     description: collection.description,
-    image: collection.image
+    image: collection.image,
+    stories
   }
 }
 
@@ -18,7 +30,8 @@ export const EMPTY_COLLECTION = {
   id: null,
   name: null,
   description: null,
-  image: null
+  image: null,
+  stories: []
 }
 
 // contains standalone attrs with no sub atrrs

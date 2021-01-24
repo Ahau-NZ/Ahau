@@ -1,35 +1,46 @@
 <template>
-  <v-container fluid>
-      <v-row v-if="!mobile" style="width:30%;" class="">
-        <WhakapapaShowViewCard
-          type="collection"
-          :view="collection"
-          :access="access"
-          :shadow="false"
-        >
-          <template v-slot:edit v-if="collection && collection.canEdit">
-            <v-tooltip bottom>
-              <template v-slot:activator="{ on }">
-                <v-btn
-                  v-on="on"
-                  @click.stop="dialog.active = 'collection-edit'"
-                  icon
-                  class="pa-0 px-3"
-                >
-                  <v-icon small class="blue--text">mdi-pencil</v-icon>
-                </v-btn>
-              </template>
-              <span>Edit Collection</span>
-            </v-tooltip>
-          </template>
-        </WhakapapaShowViewCard>
-      </v-row>
-      <v-row>
-        <v-col cols="12">
-          <Stories title="Stories" :stories="stories" @save="$emit('processStory', $event)" />
-        </v-col>
-      </v-row>
-  </v-container>
+  <div>
+    <v-container fluid v-if="collection">
+        <v-row v-if="!mobile" style="width:30%;" class="">
+          <WhakapapaShowViewCard
+            type="collection"
+            :view="collection"
+            :access="access"
+            :shadow="false"
+          >
+            <template v-slot:edit v-if="collection && collection.canEdit">
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on }">
+                  <v-btn
+                    v-on="on"
+                    @click.stop="dialog = 'edit-collection'"
+                    icon
+                    class="pa-0 px-3"
+                  >
+                    <v-icon small class="blue--text">mdi-pencil</v-icon>
+                  </v-btn>
+                </template>
+                <span>Edit Collection</span>
+              </v-tooltip>
+            </template>
+          </WhakapapaShowViewCard>
+        </v-row>
+        <v-row>
+          <v-col cols="12">
+            <Stories title="Stories" :stories="stories" @save="$emit('processStory', $event)" />
+          </v-col>
+        </v-row>
+    </v-container>
+    <!-- Dialog -->
+    <NewCollectionDialog
+      v-if="collection && dialog === 'edit-collection'" :show="dialog === 'edit-collection'"
+      :collection="collection"
+      :title="`Edit ${collection.name || 'Untitled' } Collection`"
+      editing
+      @submit="processCollection"
+      @close="dialog = null"
+    />
+  </div>
 </template>
 
 <script>
@@ -38,15 +49,19 @@ import { getCollection } from '@/lib/story-helpers'
 import { getTribalProfile } from '@/lib/community-helpers'
 
 import mapProfileMixins from '@/mixins/profile-mixins.js'
+import { saveCollectionsMixin } from '@/mixins/collection-mixins.js'
 
 import WhakapapaShowViewCard from '../components/whakapapa/WhakapapaShowViewCard'
 import { mapGetters, mapMutations } from 'vuex'
 import Stories from '../components/archive/Stories.vue'
 
+import NewCollectionDialog from '@/components/dialog/archive/NewCollectionDialog.vue'
+
 export default {
   name: 'CollectionShow',
   // TODO: move to mixin
   mixins: [
+    saveCollectionsMixin,
     mapProfileMixins({
       mapMethods: ['getTribe']
     })
@@ -60,15 +75,14 @@ export default {
   },
   components: {
     WhakapapaShowViewCard,
-    Stories
+    Stories,
+    NewCollectionDialog
   },
   data () {
     return {
-      collection: {},
+      collection: null,
       access: null,
-      dialog: {
-        active: null
-      }
+      dialog: null
     }
   },
   computed: {
@@ -97,7 +111,15 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['setCurrentAccess'])
+    ...mapMutations(['setCurrentAccess']),
+    async processCollection ($event) {
+      const { stories } = $event
+
+      await this.saveCollection($event)
+      await this.saveStories(this.collection, stories)
+
+      this.$apollo.queries.collection.refresh()
+    }
   }
 }
 </script>

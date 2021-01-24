@@ -9,7 +9,7 @@
     </template>
 
     <template v-if="access" v-slot:before-actions>
-      <AccessButton :access="access" @access="updateAccess" />
+      <AccessButton :access="access" @access="updateAccess" :disabled="editing" />
     </template>
   </Dialog>
 </template>
@@ -36,7 +36,8 @@ export default {
   props: {
     show: { type: Boolean, required: true },
     collection: { type: Object, default () { return EMPTY_COLLECTION } },
-    title: String
+    title: String,
+    editing: Boolean
   },
   data () {
     return {
@@ -88,9 +89,20 @@ export default {
       this.$emit('close')
     },
     submit () {
-      const output = {
-        ...getObjectChanges(setDefaultCollection(EMPTY_COLLECTION), this.formData),
-        recps: [this.access.groupId]
+      var output = {}
+
+      console.log(this.formData)
+
+      if (this.editing) {
+        output = {
+          id: this.collection.id,
+          ...getObjectChanges(setDefaultCollection(this.collection), this.formData)
+        }
+      } else {
+        output = {
+          ...getObjectChanges(setDefaultCollection(EMPTY_COLLECTION), this.formData),
+          recps: [this.access.groupId]
+        }
       }
 
       this.$emit('submit', output)
