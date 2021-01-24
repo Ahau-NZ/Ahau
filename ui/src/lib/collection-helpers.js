@@ -112,10 +112,12 @@ export const saveCollection = input => {
   var submissionDate = Date.now()
 
   input = {
-    type: '*', // TODO: sort out types
     ...pick(input, ALL_PERMITTED_COLLECTION_ATTRS),
     submissionDate
   }
+
+  if (!input.id) input.type = '*' // TODO: sort out types
+
   return {
     mutation: gql`
       mutation($input: CollectionInput!) {

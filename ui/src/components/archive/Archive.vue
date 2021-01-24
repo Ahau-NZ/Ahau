@@ -95,7 +95,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['showStory', 'whoami', 'currentStory', 'showArtefact', 'storeDialog']),
+    ...mapGetters(['showStory', 'whoami', 'currentStory', 'showArtefact', 'storeDialog', 'currentAccess']),
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
@@ -105,8 +105,6 @@ export default {
       // if on personal archive
       const isPersonal = this.$route.params.profileId === this.whoami.personal.profile.id
       if (isPersonal) return true
-
-      console.log('ROUTE NAME', this.$route.name)
 
       // if on a community archive we're on
       if (this.$route.name === 'community/archive') return true

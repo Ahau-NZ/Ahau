@@ -76,6 +76,9 @@ const methods = {
   },
   async saveCollections (story, collections) {
     if (!collections) return
+    if (!this.currentAccess) {
+      throw new Error('saveCollections requires vuex.currentAccess')
+    }
 
     const { add, remove } = collections
 
@@ -88,7 +91,7 @@ const methods = {
         const input = {
           collection: collection.id,
           story: story.id,
-          recps: story.recps // TODO: what recps to use here....
+          recps: [this.currentAccess.groupId] // TODO: are we encrypting links to the groupId
         }
 
         // save the link
@@ -108,8 +111,12 @@ const methods = {
       }))
     }
   },
+  // TODO: refactor this and saveCollections
   async saveStories (collection, stories) {
     if (!stories) return
+    if (!this.currentAccess) {
+      throw new Error('saveStories requires vuex.currentAccess')
+    }
 
     const { add, remove } = stories
 
@@ -122,7 +129,7 @@ const methods = {
         const input = {
           collection: collection.id,
           story: story.id,
-          recps: collection.recps // TODO: what recps to use here....
+          recps: [this.currentAccess.groupId] // TODO: are we encrypting links to the groupId
         }
 
         // save the link
