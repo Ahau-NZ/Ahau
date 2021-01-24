@@ -1,6 +1,6 @@
 <template>
   <v-row>
-    <v-col v-if="allowCollections" v-show="!showStory" cols="12">
+    <v-col v-if="!hideCollections" v-show="!showStory" cols="12">
       <CollectionGroup
         :collections="collections"
         @click="showCurrentCollection"
@@ -21,27 +21,15 @@ export default {
   name: 'ArchiveHome',
   props: {
     stories: Array,
-    collections: Array
+    collections: Array,
+    hideCollections: Boolean
   },
   components: {
     Stories,
     CollectionGroup
   },
   computed: {
-    ...mapGetters(['showStory', 'whoami']),
-    allowCollections () {
-      // only personal or community archives will see collections
-
-      // if on personal archive
-      const isPersonal = this.$route.params.profileId === this.whoami.personal.profile.id
-      if (isPersonal) return true
-
-      // if on a community archive we're on
-      if (this.$route.name === 'community/archive') return true
-
-      // route name is person/archive
-      return false
-    }
+    ...mapGetters(['showStory', 'whoami'])
   },
   methods: {
     showCurrentCollection ({ id }) {

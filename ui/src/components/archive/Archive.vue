@@ -15,16 +15,23 @@
         <v-col cols="12">
           <router-view :profile="profile" :stories="stories" :collections="collections"
             @processStory="processStory"
+            :hide-collections="!allowCollections"
           ></router-view>
         </v-col>
       </v-row>
       <ArchiveHelper v-if="showArchiveHelper" :show="showArchiveHelper" @close="toggleArchiveHelper" />
     </div>
     <VueContext ref="menu" class="pa-4">
-    <li v-for="(option, index) in contextMenuOpts" :key="index">
-      <a href="#" @click.prevent="dialog = option.dialog" class="d-flex align-center px-4">
-        <v-icon light>{{ option.icon }}</v-icon>
-        <p class="ma-0 pl-3">{{ option.title }}</p>
+    <li v-if="allowCollections">
+      <a href="#" @click.prevent="dialog = 'new-collection'" class="d-flex align-center px-4">
+        <v-icon light>mdi-folder-multiple-outline</v-icon>
+        <p class="ma-0 pl-3">Create a new collection</p>
+      </a>
+    </li>
+    <li>
+      <a href="#" @click.prevent="dialog = 'new-story'" class="d-flex align-center px-4">
+        <v-icon light>mdi-file-outline</v-icon>
+        <p class="ma-0 pl-3">Add a new story</p>
       </a>
     </li>
   </VueContext>
@@ -84,23 +91,28 @@ export default {
       collections: [],
       dialog: null,
       scrollPosition: 0,
-      showArchiveHelper: false,
-      contextMenuOpts: [{
-        title: 'Create a new Collection',
-        dialog: 'new-collection',
-        icon: 'mdi-folder-multiple-outline'
-      },
-      {
-        title: 'Add new record',
-        dialog: 'new-story',
-        icon: 'mdi-file-outline'
-      }]
+      showArchiveHelper: false
     }
   },
   computed: {
     ...mapGetters(['showStory', 'whoami', 'currentStory', 'showArtefact', 'storeDialog']),
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
+    },
+    allowCollections () {
+      // only personal or community archives will see collections
+
+      // if on personal archive
+      const isPersonal = this.$route.params.profileId === this.whoami.personal.profile.id
+      if (isPersonal) return true
+
+      console.log('ROUTE NAME', this.$route.name)
+
+      // if on a community archive we're on
+      if (this.$route.name === 'community/archive') return true
+
+      // route name is person/archive
+      return false
     }
   },
   methods: {
