@@ -1,6 +1,6 @@
 <template>
   <v-row>
-    <v-col v-show="!showStory" cols="12">
+    <v-col v-if="allowCollections" v-show="!showStory" cols="12">
       <CollectionGroup
         :collections="collections"
         @click="showCurrentCollection"
@@ -17,12 +17,6 @@ import Stories from '@/components/archive/Stories.vue'
 import CollectionGroup from '@/components/archive/CollectionGroup.vue'
 import { mapGetters } from 'vuex'
 
-// import { saveStoryMixin, storiesApolloMixin } from '@/mixins/story-mixins.js'
-// import mapProfileMixins from '@/mixins/profile-mixins.js'
-// import { collectionsApolloMixin, saveCollectionsMixin } from '@/mixins/collection-mixins.js'
-
-// import { mapGetters } from 'vuex'
-
 export default {
   name: 'ArchiveHome',
   props: {
@@ -34,7 +28,20 @@ export default {
     CollectionGroup
   },
   computed: {
-    ...mapGetters(['showStory'])
+    ...mapGetters(['showStory', 'whoami']),
+    allowCollections () {
+      // only personal or community archives will see collections
+
+      // if on personal archive
+      const isPersonal = this.$route.params.profileId === this.whoami.personal.profile.id
+      if (isPersonal) return true
+
+      // if on a community archive we're on
+      if (this.$route.name === 'community/archive') return true
+
+      // route name is person/archive
+      return false
+    }
   },
   methods: {
     showCurrentCollection ({ id }) {

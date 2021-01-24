@@ -271,6 +271,9 @@ export default {
       return getWhakapapaView(this.$route.params.whakapapaId)
     }
   },
+  mounted () {
+    window.scrollTo(0, 0)
+  },
   computed: {
     ...mapGetters(['nestedWhakapapa', 'selectedProfile', 'whoami', 'loadingState']),
     isKaitiaki () {
