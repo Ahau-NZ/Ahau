@@ -38,13 +38,20 @@
       :title="`Edit ${collection.name || 'Untitled' } Collection`"
       editing
       @submit="processCollection"
+      @delete="dialog = 'delete-collection'"
+      @close="dialog = null"
+    />
+    <DeleteCollectionDialog
+      v-if="dialog === 'delete-collection'"
+      :show="dialog === 'delete-collection'"
+      @submit="deleteCollection"
       @close="dialog = null"
     />
   </div>
 </template>
 
 <script>
-// import mapCollectionMixins from '@/mixins/collection-mixins'
+import { deleteCollection } from '@/lib/collection-helpers'
 import { getCollection } from '@/lib/story-helpers'
 import { getTribalProfile } from '@/lib/community-helpers'
 
@@ -56,6 +63,7 @@ import { mapGetters, mapMutations } from 'vuex'
 import Stories from '../components/archive/Stories.vue'
 
 import NewCollectionDialog from '@/components/dialog/archive/NewCollectionDialog.vue'
+import DeleteCollectionDialog from '@/components/dialog/archive/DeleteCollectionDialog.vue'
 
 export default {
   name: 'CollectionShow',
@@ -76,7 +84,8 @@ export default {
   components: {
     WhakapapaShowViewCard,
     Stories,
-    NewCollectionDialog
+    NewCollectionDialog,
+    DeleteCollectionDialog
   },
   data () {
     return {
@@ -119,6 +128,20 @@ export default {
       await this.saveStories(this.collection, stories)
 
       this.$apollo.queries.collection.refresh()
+    },
+    async deleteCollection () {
+      const res = await this.$apollo.mutate(
+        deleteCollection(this.collection.id, new Date())
+      )
+
+      if (res.errors) {
+        console.error('failed to delete collection', res.errors)
+        return
+      }
+
+      // go back to the main archive page for this group/profile
+      const [newPath] = this.$route.fullPath.split('archive/')
+      this.$router.push({ path: newPath + 'archive' }).catch(() => {})
     }
   }
 }
