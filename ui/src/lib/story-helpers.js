@@ -66,7 +66,7 @@ export function setDefaultStory (newStory) {
     protocols: story.protocols,
     relatedRecords,
     artefacts,
-    kaitiaki: story.kaitiaki
+    tiaki: story.tiaki
   }
 }
 
@@ -116,8 +116,7 @@ export const PERMITTED_STORY_ATTRS = [
   'source',
   'transcription',
   'canEdit',
-  'recps',
-  'kaitiaki{id, preferredName, avatarImage{uri}}'
+  'recps'
 ]
 
 export const PERMITTED_STORY_LINKS = [
@@ -177,6 +176,9 @@ export const STORY_LINK_FRAGMENT = gql`
           }
         }
       }
+    }
+    tiaki {
+      ...ProfileFragment
     }
   }
 `
