@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-container fluid v-if="collection">
-        <v-row v-if="!mobile" style="width:30%;" class="">
+        <v-row v-if="!mobile && !showStory" style="width:30%;" class="">
           <WhakapapaShowViewCard
             type="collection"
             :view="collection"
@@ -95,7 +95,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['whoami']),
+    ...mapGetters(['whoami', 'currentAccess', 'showStory']),
     stories () {
       if (!this.collection || !this.collection.stories) return []
 

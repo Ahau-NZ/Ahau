@@ -32,7 +32,7 @@
     "ssb-recps-guard": "^2.1.0",
     "ssb-replicate": "^1.3.2",
     "ssb-serve-blobs": "2.4.0",
-    "ssb-story": "gitlab:ahau/ssb-plugins/ssb-story#links",
+    "ssb-story": "^2.2.0",
     "ssb-tribes": "^0.4.0",
     "ssb-unix-socket": "^1.0.0",
     "ssb-whakapapa": "^2.0.2"
