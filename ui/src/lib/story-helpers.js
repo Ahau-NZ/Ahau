@@ -67,7 +67,6 @@ export function setDefaultStory (newStory) {
     relatedRecords,
     artefacts,
     tiaki: story.tiaki
-    
   }
 }
 
@@ -117,7 +116,7 @@ export const PERMITTED_STORY_ATTRS = [
   'source',
   'transcription',
   'canEdit',
-  'recps',
+  'recps'
 ]
 
 export const PERMITTED_STORY_LINKS = [
@@ -180,6 +179,9 @@ export const STORY_LINK_FRAGMENT = gql`
           }
         }
       }
+    }
+    tiaki {
+      ...ProfileFragment
     }
   }
 `
