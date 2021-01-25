@@ -37,7 +37,7 @@ export const PERMITTED_ARTEFACT_SHARED_ATTRS = [
   'createdAt',
 
   'location',
-  
+
   'title',
   'description',
 
@@ -128,7 +128,6 @@ export const getArtefacts = () => ({
 })
 
 export const saveArtefact = input => {
-
   input = pick(input, [...PERMITTED_ARTEFACT_ATTRS, 'authors'])
 
   if (input.blob && input.blob.uri) delete input.blob.uri
