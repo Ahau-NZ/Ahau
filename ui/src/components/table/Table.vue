@@ -19,11 +19,12 @@
           ref="tree"
         >
           <g v-for="node in nodes" :key="node.data.id" class="node">
-            <rect :x="node.x + nodeRadius" :y="node.y" :width="tableWidth" :height="nodeRadius*2" class="row" :style="node.color" />
+            <rect :x="node.x + nodeRadius" :y="node.y" :width="tableWidth" :height="nodeRadius*2" class="row" :style="node.color" :id="node.data.id" />
             <Node
               :width="colWidth"
               :node="node"
               :radius="nodeRadius"
+              :nodeCentered="nodeCentered"
               @click="collapse(node)"
               @open-context-menu="$emit('open-context-menu', $event)"
               :showLabel="true"
@@ -114,6 +115,9 @@ export default {
     searchNodeId: {
       type: String
     },
+    searchNodeEvent: {
+      required: false
+    },
     pan: {
       type: Number,
       default: 0
@@ -126,7 +130,8 @@ export default {
       componentLoaded: false, // need to ensure component is loaded before using $refs
       nodeRadius: 20, // use variable for zoom later on
       nodeSize: 40,
-      duration: 400
+      duration: 400,
+      nodeCentered: ''
     }
   },
   mounted () {
@@ -196,7 +201,7 @@ export default {
             height: d.height,
             parent: d.parent,
             x: d.x,
-            y: this.filter ? i * 45 : d.y * 1.5,
+            y: this.flatten ? i * 45 : d.y * 1.5,
             age: calculateAge(d.data.aliveInterval),
             color: this.nodeColor(d.data)
           }
@@ -283,6 +288,16 @@ export default {
 
     nodes (newValue) {
       this.setLoading(false)
+    },
+
+    searchNodeEvent (newValue) {
+      if (this.searchNodeId !== null) {
+        this.root.descendants().find(d => {
+          if (d.data.id === this.searchNodeId) {
+            this.centerNode(d)
+          }
+        })
+      }
     }
   },
   methods: {
@@ -345,6 +360,18 @@ export default {
       })
 
       // this.updateNode({ is, path: endNode.path })
+    },
+
+    centerNode (node) {
+      const element = document.getElementById(`${node.data.id}`)
+      const coord = element.getBoundingClientRect()
+
+      const elementPos = window.pageYOffset + coord.y - 400
+
+      window.scrollTo({
+        top: elementPos,
+        behavior: 'smooth'
+      })
     }
   },
   components: {
