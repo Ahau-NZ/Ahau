@@ -155,9 +155,6 @@ export const STORY_LINK_FRAGMENT = gql`
         ...ArtefactFragment
       }
     }
-    tiaki {
-      ...ProfileFragment
-    }
     mentions: mentionLinks {
       linkId
       profile {
@@ -193,6 +190,9 @@ export const STORY_LINK_FRAGMENT = gql`
       collection {
         ...CollectionFragment
       }
+    }
+    tiaki {
+      ...ProfileFragment
     }
   }
 `
