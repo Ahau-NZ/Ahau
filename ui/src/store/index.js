@@ -8,12 +8,22 @@ import archive from './modules/archive'
 import dialog from './modules/dialog'
 import notifications from './modules/notifications'
 import tribe from './modules/tribe'
+import alerts from './modules/alerts'
+
 import { whoami } from '../lib/person-helpers.js'
 
 const apolloProvider = createProvider()
 const apollo = apolloProvider.defaultClient
 
 Vue.use(Vuex)
+
+/*
+  TODO (later):
+    - [ ] move loading and syncing to alerts modules
+    - [ ] change modules to be namespaced
+          - https://vuex.vuejs.org/guide/modules.html#namespacing
+          - see alerts module for another example
+*/
 
 const store = new Vuex.Store({
   state: {
@@ -49,7 +59,8 @@ const store = new Vuex.Store({
     archive,
     dialog,
     notifications,
-    tribe
+    tribe,
+    alerts
   },
   getters: {
     loadingState: state => {

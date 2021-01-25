@@ -31,7 +31,8 @@ export default {
   props: {
     view: { type: Object, required: true },
     shadow: { type: Boolean, default: true },
-    cropDescription: { type: Boolean, default: false }
+    cropDescription: { type: Boolean, default: false },
+    tribeId: String
   },
   components: {
     AvatarGroup
@@ -61,6 +62,7 @@ export default {
       return {
         name: this.$route.name + '/:whakapapaId',
         params: {
+          tribeId: this.tribeId,
           whakapapaId: this.view.id
         }
       }

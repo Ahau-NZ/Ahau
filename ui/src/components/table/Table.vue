@@ -175,6 +175,13 @@ export default {
       return this.tableLayout
         // returns the array of descendants starting with the root node, then followed by each child in topological order
         .descendants()
+        .sort((a, b) => {
+          if (this.names) { // check for you click event
+            if (a.data.preferredName.toLowerCase() < b.data.preferredName.toLowerCase()) { return -1 }
+            if (a.data.preferredName.toLowerCase() > b.data.preferredName.toLowerCase()) { return 1 }
+            return 0
+          }
+        })
         // filter deceased
         .filter(peeps => {
           if (this.filter && peeps.data.deceased) {

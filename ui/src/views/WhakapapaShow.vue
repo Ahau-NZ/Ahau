@@ -46,7 +46,7 @@
         <div v-if="whakapapa.table" class="icon-button">
           <FlattenButton @flatten="toggleFlatten()" />
         </div>
-        <div class="icon-button">
+        <div class="icon-button" v-if="isKaitiaki">
           <TableButton @table="toggleTable()" />
         </div>
         <div class="icon-button">
@@ -275,6 +275,10 @@ export default {
   },
   computed: {
     ...mapGetters(['nestedWhakapapa', 'selectedProfile', 'whoami', 'loadingState']),
+    isKaitiaki () {
+      if (!this.whakapapaView.kaitiaki) return false
+      return this.whoami.public.profile.id === this.whakapapaView.kaitiaki[0].id
+    },
     mobile () {
       return this.$vuetify.breakpoint.xs
     },

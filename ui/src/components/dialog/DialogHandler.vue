@@ -13,6 +13,16 @@
       @editProfile="toggleEditProfile($event)"
       @close="close"
     />
+    <ReviewRegistrationDialog
+      v-if="isActive('review-registration')"
+      :show="isActive('review-registration')"
+      :title="`Request to join : ${currentNotification.message.group.preferredName}`"
+      :profile="profile"
+      :tribe="tribe"
+      :type="dialogType"
+      :notification="currentNotification"
+      @close="close"
+    />
     <NewCommunityDialog
       v-if="isActive('new-community')"
       :show="isActive('new-community')"
@@ -27,6 +37,7 @@
       :title="source !== 'new-registration' ? `Add ${dialogType} to ${selectedProfile.preferredName}`:`Add ${dialogType} to Registration Form`"
       :selectedProfile="selectedProfile"
       :suggestions="suggestions"
+      :type="dialogType"
       :withView="source !== 'new-registration'"
       @getSuggestions="getSuggestions($event)"
       @create="source !== 'new-registration' ? addPerson($event) : dialogType === 'grandparent' ? addGrandparentToRegistartion($event) : addParentToRegistration($event)"
@@ -104,7 +115,6 @@
       @submit="console.log('TODO: add collection to profile')"
     />-->
     <ComingSoonDialog :show="isActive('coming-soon')" @close="close" />
-    <ConfirmationText :show="snackbar" :message="confirmationText" />
   </div>
 </template>
 
@@ -113,11 +123,11 @@ import pick from 'lodash.pick'
 import isEqual from 'lodash.isequal'
 import isEmpty from 'lodash.isempty'
 import * as d3 from 'd3'
-import { mapGetters, mapActions } from 'vuex'
 
 import NewNodeDialog from '@/components/dialog/profile/NewNodeDialog.vue'
 import NewCommunityDialog from '@/components/dialog/community/NewCommunityDialog.vue'
 import NewRegistrationDialog from '@/components/dialog/registration/NewRegistrationDialog.vue'
+import ReviewRegistrationDialog from '@/components/dialog/registration/ReviewRegistrationDialog.vue'
 import EditNodeDialog from '@/components/dialog/profile/EditNodeDialog.vue'
 import SideViewEditNodeDialog from '@/components/dialog/profile/SideViewEditNodeDialog.vue'
 import DeleteNodeDialog from '@/components/dialog/profile/DeleteNodeDialog.vue'
@@ -128,7 +138,6 @@ import WhakapapaShowHelper from '@/components/dialog/whakapapa/WhakapapaShowHelp
 import WhakapapaTableHelper from '@/components/dialog/whakapapa/WhakapapaTableHelper.vue'
 // import NewCollectionDialog from '@/components/dialog/archive/NewCollectionDialog.vue'
 import ComingSoonDialog from '@/components/dialog/ComingSoonDialog.vue'
-import ConfirmationText from '@/components/dialog/ConfirmationText.vue'
 
 import { PERMITTED_RELATIONSHIP_ATTRS, savePerson } from '@/lib/person-helpers.js'
 import { createGroup, saveCommunity, savePublicCommunity, saveGroupProfileLink } from '@/lib/community-helpers'
@@ -140,6 +149,8 @@ import tree from '@/lib/tree-helpers'
 import findSuccessor from '@/lib/find-successor'
 
 import mapProfileMixins from '@/mixins/profile-mixins.js'
+import { createNamespacedHelpers, mapGetters, mapActions } from 'vuex'
+const { mapMutations: mapAlertMutations } = createNamespacedHelpers('alerts')
 
 export default {
   name: 'DialogHandler',
@@ -156,8 +167,8 @@ export default {
     // NewCollectionDialog,
     ComingSoonDialog,
     NewCommunityDialog,
-    ConfirmationText,
-    NewRegistrationDialog
+    NewRegistrationDialog,
+    ReviewRegistrationDialog
   },
   props: {
     story: {
@@ -178,7 +189,7 @@ export default {
       default: null,
       validator: (val) => [
         'new-community', 'new-node', 'view-edit-node', 'delete-node', 'new-collection', 'new-story', 'edit-story', 'edit-node', 'delete-story',
-        'whakapapa-view', 'whakapapa-edit', 'whakapapa-delete', 'whakapapa-helper', 'whakapapa-table-helper', 'new-registration'
+        'whakapapa-view', 'whakapapa-edit', 'whakapapa-delete', 'whakapapa-helper', 'whakapapa-table-helper', 'new-registration', 'review-registration'
       ].includes(val)
     },
     type: {
@@ -201,8 +212,6 @@ export default {
   ],
   data () {
     return {
-      snackbar: false,
-      confirmationText: null,
       suggestions: [],
       source: null,
       registration: '',
@@ -248,6 +257,7 @@ export default {
     }
   },
   methods: {
+    ...mapAlertMutations(['showAlert']),
     ...mapActions(['updateNode', 'deleteNode', 'updatePartnerNode', 'addChild', 'addParent', 'loading', 'setDialog',
       'setProfileById', 'setTribes'
     ]),
@@ -311,13 +321,13 @@ export default {
       return true
     },
     async setupNewCommunity ($event) {
-      if ($event.id) throw new Error('this is for creating a new tribe + community, not updating')
-
       // (later?)
       // - [ ] create a copy of your personal profile (recps: [groupId])
       // - [ ] link your feedId + profile
       //    - saveFeedProfileLink (recps: [groupId])
       try {
+        if ($event.id) throw new Error('this is for creating a new tribe + community, not updating')
+
         const createGroupRes = await this.$apollo.mutate(
           createGroup()
         )
@@ -371,8 +381,11 @@ export default {
       } catch (err) {
         console.error('Something went wrong while trying to create private group', $event)
         console.error(err)
-        // is this the right place for this?
-        this.confirmationAlert('Failed to create private group. Please contact us if this continues to happen', err)
+        this.showAlert({
+          message: 'Failed to create the private group. Please contact us if this continues to happen',
+          delay: 5000,
+          color: 'red'
+        })
       }
     },
     async savePerson (input) {
@@ -764,16 +777,6 @@ export default {
         this.$emit('setFocus', successor.id)
       } else this.deleteNode(this.selectedProfile)
       this.setSelectedProfile(null)
-    },
-
-    confirmationAlert (message) {
-      this.confirmationText = message
-      this.snackbar = true
-
-      setTimeout(() => {
-        this.confirmationText = null
-        this.snackbar = false
-      }, 3000)
     },
 
     async getSuggestions ($event) {

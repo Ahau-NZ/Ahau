@@ -31,7 +31,7 @@
         <v-scale-transition>
           <ArtefactCarouselItem :artefact="artefact"
             :selected="active"
-            @click="toggle"
+            @click="selectItem(active, toggle)"
           />
         </v-scale-transition>
       </v-slide-item>
@@ -72,7 +72,7 @@ export default {
       this.selectedIndex = newValue
     },
     selectedIndex (n, o) {
-      if (n !== o) this.$emit('update:index', n)
+      this.$emit('update:index', n)
     }
   },
   computed: {
@@ -84,6 +84,10 @@ export default {
     removeItem () {
       this.$emit('delete', this.index)
       this.showArtefact(this.artefacts[0], 0)
+    },
+    selectItem (isActive, toggleArtefact) {
+      if (typeof toggleArtefact !== 'function') return
+      if (!isActive) toggleArtefact()
     }
   }
 }

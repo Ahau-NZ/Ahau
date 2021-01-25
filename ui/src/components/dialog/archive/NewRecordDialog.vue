@@ -71,10 +71,6 @@ export default {
           return
         }
 
-        if (!oldTribe) return
-
-        if (tribe.id === oldTribe.id) return
-
         this.access = {
           ...tribe.private.length > 0
             ? tribe.private[0]
@@ -94,10 +90,15 @@ export default {
       this.formData.creators = []
       this.formData.relatedRecords = []
     },
-    access (access) {
+    access (access, prevAccess) {
       if (!access || this.editing) return
 
-      this.formData.mentions = [access]
+      if (access.groupId === prevAccess.groupId || access.groupId === this.$route.params.tribeId) {
+        this.formData.mentions = [this.profile]
+      } else {
+        this.formData.mentions = [access]
+      }
+
       this.formData.contributors = [this.whoami.public.profile]
       this.formData.kaitiaki = [this.whoami.public.profile]
       this.formData.creators = []
