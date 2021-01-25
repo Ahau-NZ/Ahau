@@ -35,7 +35,7 @@
 
       <v-row v-if="!mobile" class="select">
         <div v-if="search" class="icon-search">
-          <SearchBar :nestedWhakapapa="nestedWhakapapa" :searchNodeId.sync="searchNodeId" @close="clickedOff()"/>
+          <SearchBar :nestedWhakapapa="nestedWhakapapa" :searchNodeId.sync="searchNodeId" @searchNode="setSearchNode($event)" @close="clickedOff()"/>
         </div>
         <div v-else  class="icon-button">
           <SearchButton :search.sync="search"/>
@@ -83,7 +83,7 @@
             </v-btn>
           </template>
           <div v-if="search" class="icon-search ml-n12 pt-7" @click.stop>
-            <SearchBar :nestedWhakapapa="nestedWhakapapa" :searchNodeId.sync="searchNodeId" @close="clickedOff()"/>
+            <SearchBar :nestedWhakapapa="nestedWhakapapa" :searchNodeId.sync="searchNodeId" @searchNode="setSearchNode($event)" @close="clickedOff()"/>
           </div>
           <div v-else  class="icon-button">
             <SearchButton  @click.stop :search.sync="search"/>
@@ -138,6 +138,7 @@
           :searchNodeId="searchNodeId"
           :sortValue="sortValue"
           :sortEvent="sortEvent"
+          :searchNodeEvent="searchNodeEvent"
         />
       </div>
     </v-container>
@@ -257,6 +258,7 @@ export default {
       pan: 0,
       search: false,
       searchNodeId: '',
+      searchNodeEvent: null,
       showWhakapapaHelper: false,
       whakapapaView: {
         name: 'Loading',
@@ -705,6 +707,9 @@ export default {
     setSortField (value, event) {
       this.sortValue = value
       this.sortEvent = event
+    },
+    setSearchNode (event) {
+      this.searchNodeEvent = event
     }
   },
   destroyed () {

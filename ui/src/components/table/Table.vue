@@ -19,11 +19,12 @@
           ref="tree"
         >
           <g v-for="node in nodes" :key="node.data.id" class="node">
-            <rect :x="node.x + nodeRadius" :y="node.y" :width="tableWidth" :height="nodeRadius*2" class="row" :style="node.color" />
+            <rect :x="node.x + nodeRadius" :y="node.y" :width="tableWidth" :height="nodeRadius*2" class="row" :style="node.color" :id="node.data.id" />
             <Node
               :width="colWidth"
               :node="node"
               :radius="nodeRadius"
+              :nodeCentered="nodeCentered"
               @click="collapse(node)"
               @open-context-menu="$emit('open-context-menu', $event)"
               :showLabel="true"
@@ -115,6 +116,9 @@ export default {
     searchNodeId: {
       type: String
     },
+    searchNodeEvent: {
+      required: false
+    },
     pan: {
       type: Number,
       default: 0
@@ -145,7 +149,8 @@ export default {
         age: SORT.default,
         profession: SORT.default,
         location: SORT.default
-      }
+      },
+      nodeCentered: ''
     }
   },
   mounted () {
@@ -305,6 +310,15 @@ export default {
     sortEvent () {
       this.resetSorts(this.sortValue)
       this.setSortOnField(this.sortValue)
+    },
+    searchNodeEvent (newValue) {
+      if (this.searchNodeId !== null) {
+        this.root.descendants().find(d => {
+          if (d.data.id === this.searchNodeId) {
+            this.centerNode(d)
+          }
+        })
+      }
     }
   },
   methods: {
@@ -505,6 +519,17 @@ export default {
       }
 
       return newString
+    },
+    centerNode (node) {
+      const element = document.getElementById(`${node.data.id}`)
+      const coord = element.getBoundingClientRect()
+
+      const elementPos = window.pageYOffset + coord.y - 400
+
+      window.scrollTo({
+        top: elementPos,
+        behavior: 'smooth'
+      })
     }
   },
   components: {
