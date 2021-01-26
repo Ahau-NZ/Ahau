@@ -1,4 +1,4 @@
-import { saveCollection, getAllCollections, saveStoryLink } from '@/lib/collection-helpers'
+import { saveCollection, getAllCollections, saveCollectionStoryLink } from '@/lib/collection-helpers'
 
 export const collectionsApolloMixin = {
   apollo: {
@@ -42,7 +42,7 @@ const methods = {
 
   // saves a single link between a collection and a story
   // different from the other link API
-  async saveStoryLink (input) {
+  async saveCollectionStoryLink (input) {
     try {
       // enable all authors
       if (!input.linkId) {
@@ -52,7 +52,7 @@ const methods = {
       }
 
       const res = await this.$apollo.mutate(
-        saveStoryLink(input)
+        saveCollectionStoryLink(input)
       )
 
       if (res.errors) throw res.errors
@@ -60,7 +60,7 @@ const methods = {
       // refresh something here....
       console.warn('needs to reload after saving story link')
       console.warn('return something here... linkId?')
-      return res.data.saveStoryLink
+      return res.data.saveCollectionStoryLink
     } catch (err) {
       console.error('Something went wrong while trying to save the link between a collection and story', input)
       console.error(err)
@@ -68,7 +68,7 @@ const methods = {
   },
   async removeStoryLink ({ date, linkId }) {
     try {
-      await this.saveStoryLink({ linkId, tombstone: { date } })
+      await this.saveCollectionStoryLink({ linkId, tombstone: { date } })
     } catch (err) {
       console.error('something went wrong while removing a link', linkId)
       throw err
@@ -95,7 +95,7 @@ const methods = {
         }
 
         // save the link
-        await this.saveStoryLink(input)
+        await this.saveCollectionStoryLink(input)
       }))
     }
 
@@ -133,7 +133,7 @@ const methods = {
         }
 
         // save the link
-        await this.saveStoryLink(input)
+        await this.saveCollectionStoryLink(input)
       }))
     }
 

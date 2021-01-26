@@ -128,7 +128,7 @@ export const saveCollection = input => {
   }
 }
 
-export const saveStoryLink = input => {
+export const saveCollectionStoryLink = input => {
   input = {
     type: 'collection-story', // link type
     ...pick(input, PERMITTED_STORY_LINK_ATTRS)
@@ -137,7 +137,7 @@ export const saveStoryLink = input => {
   return {
     mutation: gql`
       mutation($input: CollectionStoryLinkInput) {
-        saveStoryLink(input: $input)
+        saveCollectionStoryLink(input: $input)
       }
     `,
     variables: { input }
