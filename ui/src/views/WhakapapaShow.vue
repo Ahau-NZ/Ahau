@@ -416,12 +416,12 @@ export default {
       this.addRelationshipLinks(newVal)
     }
   },
-  beforeCreate: function () {
-    document.body.classList.add('no-scroll')
-  },
-  beforeDestroy: function () {
-    document.body.classList.remove('no-scroll')
-  },
+  // beforeCreate: function () {
+  //   document.body.classList.add('no-scroll')
+  // },
+  // beforeDestroy: function () {
+  //   document.body.classList.remove('no-scroll')
+  // },
   methods: {
     ...mapMutations(['updateSelectedProfile', 'setCurrentAccess']),
     ...mapActions(['setLoading', 'addNestedWhakapapa', 'addWhakapapa', 'addRelationshipLinks']),
@@ -731,7 +731,7 @@ export default {
 @import "~vue-context/dist/css/vue-context.css";
 #whakapapa-show {
   &>.container {
-    position: absolute;
+    position: relative;
     max-height:98vh;
 
     &>.header {
@@ -819,7 +819,6 @@ h1 {
 .whakapapa-table {
   overflow: auto;
   width: 100%;
-  max-height: 95vh
 }
 
 </style>
