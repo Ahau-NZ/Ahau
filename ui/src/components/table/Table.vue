@@ -4,7 +4,7 @@
       <line x1="60" y1="55" :x2="tableWidth" y2="55" style="stroke-width: 1; stroke: lightgrey;"/>
       <g class="headers" v-for="column in columns" :key="column.label">
         <text :transform="`translate(${column.x + 10} ${50})`">
-          {{ column.label }}
+          {{ computeLabel(column.label) }}
         </text>
         <line :x1="column.x" y1="55" :x2="column.x" :y2="tableHeight" style="stroke-width: 1; stroke: lightgrey;"/>
       </g>
@@ -85,6 +85,7 @@ import Link from '../tree/Link.vue'
 import calculateAge from '../../lib/calculate-age.js'
 import isEqual from 'lodash.isequal'
 import { mapGetters, mapActions } from 'vuex'
+import { SORT } from '@/lib/constants.js'
 
 export default {
   props: {
@@ -121,6 +122,15 @@ export default {
     pan: {
       type: Number,
       default: 0
+    },
+    sortValue: {
+      type: String,
+      default: null
+    },
+    sortEvent: {
+      type: MouseEvent,
+      required: false,
+      default: null
     }
   },
   data () {
@@ -131,6 +141,15 @@ export default {
       nodeRadius: 20, // use variable for zoom later on
       nodeSize: 40,
       duration: 400,
+
+      // 0 = no sort, 1 = sort ascending, 2 = sort descending
+      sort: {
+        preferredName: SORT.default,
+        legalName: SORT.default,
+        age: SORT.default,
+        profession: SORT.default,
+        location: SORT.default
+      },
       nodeCentered: ''
     }
   },
@@ -175,12 +194,9 @@ export default {
       return this.tableLayout
         // returns the array of descendants starting with the root node, then followed by each child in topological order
         .descendants()
+        // sort by preferred name
         .sort((a, b) => {
-          if (this.names) { // check for you click event
-            if (a.data.preferredName.toLowerCase() < b.data.preferredName.toLowerCase()) { return -1 }
-            if (a.data.preferredName.toLowerCase() > b.data.preferredName.toLowerCase()) { return 1 }
-            return 0
-          }
+          return this.determineSort(a, b)
         })
         // filter deceased
         .filter(peeps => {
@@ -281,8 +297,8 @@ export default {
   },
 
   watch: {
-    flatten (newVal) {
-      if (newVal === true) this.colWidth = 250
+    flatten (newValue) {
+      if (newValue === true) this.colWidth = 250
       else this.colWidth = 350
     },
 
@@ -290,6 +306,11 @@ export default {
       this.setLoading(false)
     },
 
+    // Triggered whenever the user selects a sort
+    sortEvent () {
+      this.resetSorts(this.sortValue)
+      this.setSortOnField(this.sortValue)
+    },
     searchNodeEvent (newValue) {
       if (this.searchNodeId !== null) {
         this.root.descendants().find(d => {
@@ -361,7 +382,144 @@ export default {
 
       // this.updateNode({ is, path: endNode.path })
     },
+    // Toggles the sort on the current field between ascending, descending and no sort
+    setSortOnField (field) {
+      const currentSort = this.sort[field]
+      switch (currentSort) {
+        case SORT.default:
+          this.sort[field] = SORT.ascending
+          break
+        case SORT.ascending:
+          this.sort[field] = SORT.descending
+          break
+        case SORT.descending:
+        default:
+          this.sort[field] = SORT.default
+      }
+    },
+    // When a sort is triggered, ensures all other sorts are disabled
+    resetSorts (ignoredKey) {
+      Object.keys(this.sort).forEach(key => {
+        if (key === ignoredKey) return
+        this.sort[key] = SORT.default
+      })
+    },
+    // Computes the label of table headers depending on whether a sort is active
+    computeLabel (label) {
+      if (label === 'Address') {
+        return 'Address'
+      }
+      if (label === 'Email') {
+        return 'Email'
+      }
+      if (label === 'Phone') {
+        return 'Phone'
+      }
 
+      const legalName = ['Legal Name', 'Legal Name ↑', 'Legal Name ↓']
+      const age = ['Age', 'Age ↑', 'Age ↓']
+      const profession = ['Profession', 'Profession ↑', 'Profession ↓']
+      const location = ['City, Country', 'City, Country ↑', 'City, Country ↓']
+
+      if (label === 'Legal Name') {
+        return legalName[this.sort['legalName']]
+      }
+      if (label === 'Age') {
+        return age[this.sort['age']]
+      }
+      if (label === 'Profession') {
+        return profession[this.sort['profession']]
+      }
+      if (label === 'City, Country') {
+        return location[this.sort['location']]
+      }
+
+      return ''
+    },
+    // Executes a sort on two values
+    sortByField (a, b) {
+      const sort = this.sort[this.sortValue]
+      if (sort !== SORT.default) {
+        if (sort === SORT.ascending) {
+          if (a < b) { return -1 }
+          if (a > b) { return 1 }
+          return 0
+        }
+        if (sort === SORT.descending) {
+          if (a > b) { return -1 }
+          if (a < b) { return 1 }
+          return 0
+        }
+      }
+    },
+    // Determines the sort to be performed depending on the field to be sorted
+    determineSort (a, b) {
+      const field = this.sortValue
+      if (field === null || field === '') {
+        return
+      }
+      let aVal, bVal
+
+      switch (field) {
+        case 'age':
+          aVal = this.convertNullAgeToValue(calculateAge(a.data.aliveInterval))
+          bVal = this.convertNullAgeToValue(calculateAge(b.data.aliveInterval))
+          return this.sortByField(aVal, bVal)
+        default: // Preferred name or location
+          aVal = a.data[field]
+          bVal = b.data[field]
+      }
+      aVal = this.convertNullToChar(aVal)
+      bVal = this.convertNullToChar(bVal)
+
+      return this.sortByField(this.removeMacron(aVal.toLowerCase()), this.removeMacron(bVal.toLowerCase()))
+    },
+    // Hacky way to get empty/null fields to display below non-empty sorted fields
+    convertNullToChar (val) {
+      if (val !== null && val !== '') return val
+      const sort = this.sort[this.sortValue]
+      if (sort === SORT.ascending) {
+        return 'ZZZZZ'
+      }
+      if (sort === SORT.descending) {
+        return 'AAAAA'
+      }
+      return ''
+    },
+    // Hacky way to get empty/null ages to display below non-empty sorted ages
+    convertNullAgeToValue (val) {
+      if (val !== null && val !== '') return val
+      const sort = this.sort[this.sortValue]
+      if (sort === SORT.ascending) {
+        return 9999
+      }
+      if (sort === SORT.descending) {
+        return 0
+      }
+      return ''
+    },
+    // Replaces characters with macrons with their non-macron equivalent so that strings are sorted properly
+    removeMacron (str) {
+      const macronArray = ['ā', 'ē', 'ī', 'ō', 'ū', 'Ā', 'Ē', 'Ī', 'Ō', 'Ū']
+      const nonMacronArray = ['a', 'e', 'i', 'o', 'u', 'A', 'E', 'I', 'O', 'U']
+
+      var newString = ''
+      for (var i = 0; i < str.length; i++) {
+        var macronFound = false
+        const currChar = str[i]
+        for (var j = 0; j < macronArray.length; j++) {
+          if (currChar === macronArray[j]) {
+            macronFound = true
+            newString += nonMacronArray[j]
+          }
+        }
+        if (!macronFound) {
+          newString += currChar
+        }
+      }
+
+      return newString
+    },
     centerNode (node) {
       const element = document.getElementById(`${node.data.id}`)
       const coord = element.getBoundingClientRect()

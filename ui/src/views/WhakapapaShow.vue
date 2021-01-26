@@ -41,6 +41,9 @@
           <SearchButton :search.sync="search"/>
         </div>
         <div v-if="whakapapa.table && flatten" class="icon-button">
+          <SortButton @sort="sortTable($event)" />
+        </div>
+        <div v-if="whakapapa.table && flatten" class="icon-button">
           <FilterButton :filter="filter" @filter="toggleFilter()" />
         </div>
         <div v-if="whakapapa.table" class="icon-button">
@@ -84,6 +87,9 @@
           </div>
           <div v-else  class="icon-button">
             <SearchButton  @click.stop :search.sync="search"/>
+          </div>
+          <div v-if="whakapapa.table && flatten" class="icon-button">
+            <SortButton @sort="sortTable($event)" />
           </div>
           <div v-if="whakapapa.table && flatten" class="icon-button">
             <FilterButton :filter="filter" @filter="toggleFilter()" />
@@ -130,6 +136,8 @@
           @collapse-node="collapseNode($event)"
           @open-context-menu="openContextMenu($event)"
           :searchNodeId="searchNodeId"
+          :sortValue="sortValue"
+          :sortEvent="sortEvent"
           :searchNodeEvent="searchNodeEvent"
         />
       </div>
@@ -156,6 +164,14 @@
           <p class="ma-0 pl-3">{{ option.title }}</p>
         </a>
         -->
+      </li>
+    </vue-context>
+
+    <vue-context ref="sort" class="px-0">
+      <li v-for="(field, i) in sortFields" :key="`sort-field-${i}`">
+        <a href="#" @click.prevent="setSortField(field.value, $event)" class="d-flex align-center px-4">
+          <p class="ma-0 pl-3">{{ field.name }}</p>
+        </a>
       </li>
     </vue-context>
 
@@ -193,6 +209,7 @@ import TableButton from '@/components/button/TableButton.vue'
 import HelpButton from '@/components/button/HelpButton.vue'
 import FlattenButton from '@/components/button/FlattenButton.vue'
 import FilterButton from '@/components/button/FilterButton.vue'
+import SortButton from '@/components/button/SortButton.vue'
 
 import SearchBar from '@/components/button/SearchBar.vue'
 import SearchButton from '@/components/button/SearchButton.vue'
@@ -218,6 +235,7 @@ export default {
     HelpButton,
     FlattenButton,
     FilterButton,
+    SortButton,
     SearchBar,
     SearchButton,
     FeedbackButton,
@@ -261,11 +279,14 @@ export default {
         type: null
       },
       filter: false,
-      flatten: false,
+      flatten: true,
       whakapapa: {
         tree: true,
         table: false
-      }
+      },
+      sortTableBool: false,
+      sortValue: '',
+      sortEvent: null
     }
   },
   apollo: {
@@ -345,6 +366,30 @@ export default {
           icon: 'mdi-delete'
         }
       ]
+    },
+    sortFields () {
+      return [
+        {
+          name: 'Preferred Name',
+          value: 'preferredName'
+        },
+        {
+          name: 'Legal Name',
+          value: 'legalName'
+        },
+        {
+          name: 'Age',
+          value: 'age'
+        },
+        {
+          name: 'Profession',
+          value: 'profession'
+        },
+        {
+          name: 'City, Country',
+          value: 'location'
+        }
+      ]
     }
   },
   watch: {
@@ -371,6 +416,12 @@ export default {
       this.addRelationshipLinks(newVal)
     }
   },
+  // beforeCreate: function () {
+  //   document.body.classList.add('no-scroll')
+  // },
+  // beforeDestroy: function () {
+  //   document.body.classList.remove('no-scroll')
+  // },
   methods: {
     ...mapMutations(['updateSelectedProfile', 'setCurrentAccess']),
     ...mapActions(['setLoading', 'addNestedWhakapapa', 'addWhakapapa', 'addRelationshipLinks']),
@@ -649,6 +700,14 @@ export default {
     getImage () {
       return avatarHelper.defaultImage(this.aliveInterval, this.gender)
     },
+    sortTable (event) {
+      this.$refs.sort.open(event)
+      this.sortTableBool = !this.sortTableBool
+    },
+    setSortField (value, event) {
+      this.sortValue = value
+      this.sortEvent = event
+    },
     setSearchNode (event) {
       this.searchNodeEvent = event
     }
@@ -677,8 +736,8 @@ export default {
 
     &>.header {
       position: absolute;
-      top: 70px;
-      left: 22px;
+      top: 80px;
+      left: 30px;
       /* right: 160px; */
       width: 30%;
       .col {
