@@ -68,7 +68,6 @@
         </div>
       </v-expand-transition>
     </v-container>
-
   </v-card>
 </template>
 
