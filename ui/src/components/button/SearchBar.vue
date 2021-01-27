@@ -109,9 +109,10 @@ export default {
       this.$emit('update:searchFilterString', '')
       this.$emit('close')
     },
-    setSearchNode (data) {
+    setSearchNode (data, event) {
       this.searchString = data.preferredName
       this.$emit('update:searchNodeId', data.id)
+      this.$emit('searchNode', event)
       this.$emit('close')
     },
     reset () {
