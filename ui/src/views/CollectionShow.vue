@@ -127,7 +127,8 @@ export default {
       await this.saveCollection($event)
       await this.saveStories(this.collection, stories)
 
-      this.$apollo.queries.collection.refresh()
+      this.$parent.$apollo.queries.collections.refetch({ filter: { groupId: this.$route.params.tribeId } })
+      this.$apollo.queries.collection.refetch()
     },
     async deleteCollection () {
       const res = await this.$apollo.mutate(
@@ -139,7 +140,10 @@ export default {
         return
       }
 
-      // go back to the main archive page for this group/profile
+      // reload parent component collections
+      await this.$parent.$apollo.queries.collections.refetch({ filter: { groupId: this.$route.params.tribeId } })
+
+      // go to the default archive page
       const [newPath] = this.$route.fullPath.split('archive/')
       this.$router.push({ path: newPath + 'archive' }).catch(() => {})
     }

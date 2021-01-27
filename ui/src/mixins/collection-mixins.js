@@ -57,9 +57,6 @@ const methods = {
 
       if (res.errors) throw res.errors
 
-      // refresh something here....
-      console.warn('needs to reload after saving story link')
-      console.warn('return something here... linkId?')
       return res.data.saveCollectionStoryLink
     } catch (err) {
       console.error('Something went wrong while trying to save the link between a collection and story', input)
