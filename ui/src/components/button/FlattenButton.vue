@@ -2,19 +2,19 @@
   <v-tooltip  v-if="flattenIcon" bottom>
     <template v-slot:activator="{ on }">
         <v-btn v-on="on" @click="toggle()" fab x-small color="blue-grey">
-           <v-icon light > mdi-format-list-bulleted </v-icon>
+           <v-icon light > mdi-account-group </v-icon>
         </v-btn>
     </template>
-    <span>Hide relationships</span>
+    <span>Show relationships</span>
   </v-tooltip>
 
   <v-tooltip v-else bottom>
     <template v-slot:activator="{ on }">
         <v-btn v-on="on" @click="toggle()" fab x-small color="blue-grey">
-           <v-icon light > mdi-file-tree </v-icon>
+           <v-icon light > mdi-account </v-icon>
         </v-btn>
     </template>
-    <span>Show relationships</span>
+    <span>Hide relationships</span>
   </v-tooltip>
 </template>
 

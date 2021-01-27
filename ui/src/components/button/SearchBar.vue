@@ -19,7 +19,7 @@
   >
     <template v-slot:item="data">
       <template>
-        <v-list-item @click="setSearchNode(data.item)">
+        <v-list-item @click.stop="setSearchNode(data.item, $event)">
           <Avatar class="mr-3" size="40px" :image="data.item.avatarImage" :alt="data.item.preferredName" :gender="data.item.gender" :aliveInterval="data.item.aliveInterval" />
           <v-list-item-content>
             <v-list-item-title> {{ data.item.preferredName }}</v-list-item-title>
@@ -109,9 +109,10 @@ export default {
     close () {
       this.$emit('close')
     },
-    setSearchNode (data) {
+    setSearchNode (data, event) {
       this.searchString = data.preferredName
       this.$emit('update:searchNodeId', data.id)
+      this.$emit('searchNode', event)
       this.$emit('close')
     },
     reset () {
