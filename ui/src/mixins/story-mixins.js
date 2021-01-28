@@ -105,12 +105,17 @@ export const methods = {
       // get the full story
       var story = await this.getStory(id)
 
-      await this.saveArtefacts(story, artefacts)
-      await this.saveMentions(story, mentions)
-      await this.saveContributors(story, contributors)
-      await this.saveCreators(story, creators)
-      await this.saveRelatedRecords(story, relatedRecords)
-      await this.saveCollections(story, collections)
+      await Promise.all(
+        // save all link updates
+        [
+          this.saveArtefacts(story, artefacts),
+          this.saveMentions(story, mentions),
+          this.saveContributors(story, contributors),
+          this.saveCreators(story, creators),
+          this.saveRelatedRecords(story, relatedRecords),
+          this.saveCollections(story, collections)
+        ]
+      )
 
       // reload again
       story = await this.getStory(id)
@@ -121,8 +126,7 @@ export const methods = {
         this.toggleStory(story)
       }
 
-      // load the story with this ones id
-      this.$apollo.queries.stories.refetch({ id })
+      this.$apollo.queries.stories.refetch()
     } catch (err) {
       console.error('Something went wrong while creating a story')
       throw err

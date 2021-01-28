@@ -88,9 +88,6 @@ export const getAllCollections = filter => ({
   variables: {
     filter
   },
-  // update (data) {
-  //   return data.collections.reverse()
-  // },
   fetchPolicy: 'no-cache'
 })
 

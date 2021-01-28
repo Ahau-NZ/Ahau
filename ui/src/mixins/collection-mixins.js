@@ -88,7 +88,7 @@ const methods = {
         const input = {
           collection: collection.id,
           story: story.id,
-          recps: [this.currentAccess.groupId] // TODO: are we encrypting links to the groupId
+          recps: [this.currentAccess.groupId]
         }
 
         // save the link
@@ -108,7 +108,7 @@ const methods = {
       }))
     }
   },
-  // TODO: refactor this and saveCollections
+  // TODO (later): refactor this and saveCollections as they are similar
   async saveStories (collection, stories) {
     if (!stories) return
     if (!this.currentAccess) {
@@ -126,7 +126,7 @@ const methods = {
         const input = {
           collection: collection.id,
           story: story.id,
-          recps: [this.currentAccess.groupId] // TODO: are we encrypting links to the groupId
+          recps: [this.currentAccess.groupId]
         }
 
         // save the link
