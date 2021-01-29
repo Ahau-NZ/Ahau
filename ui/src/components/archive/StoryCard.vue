@@ -362,6 +362,8 @@ export default {
     },
     async showRelatedStory (relatedRecord) {
       if (this.deletable) return
+
+      window.scrollTo(0, 0)
       var story = await this.getStory(relatedRecord.id)
       this.setStory(story)
     },

@@ -21,11 +21,11 @@
         <v-col cols="12" class="py-0 truncate description">
           <div class="small-text">{{ collection.description || 'No Description' }}</div>
         </v-col>
-        <v-col cols="5" class="small-text grey--text py-2">
+        <!-- <v-col cols="5" class="small-text grey--text py-2">
           Records: N/A
-        </v-col>
+        </v-col> -->
         <v-col cols="7" class="small-text grey--text py-2">
-          Last Submission: {{ submissionDate }}
+          Updated: {{ submissionDate }}
         </v-col>
         <v-col cols="12" class="small-text grey--text py-0" >
           Kaitiaki

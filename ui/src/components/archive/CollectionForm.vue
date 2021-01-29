@@ -56,7 +56,7 @@
                   </v-row>
                 </div>
               </template>
-              <span>The stories in this collection</span>
+              <span>Add stories from this archive to this collection</span>
             </v-tooltip>
 
             <ProfileSearchBar
