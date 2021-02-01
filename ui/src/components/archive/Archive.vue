@@ -21,7 +21,8 @@
       </v-row>
       <ArchiveHelper v-if="showArchiveHelper" :show="showArchiveHelper" @close="toggleArchiveHelper" />
     </div>
-    <VueContext v-show="!showStory" ref="menu" class="pa-4">
+
+    <VueContext ref="menu" class="pa-4">
     <li v-if="allowCollections">
       <a href="#" @click.prevent="dialog = 'new-collection'" class="d-flex align-center px-4">
         <v-icon light>mdi-folder-multiple-outline</v-icon>
