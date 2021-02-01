@@ -146,8 +146,9 @@ export default {
         // save the collection-story links
         await this.saveStoriesToCollection(collection, stories)
 
-        // reload the collections
+        // reload the collections and stories to reflect new links
         this.$apollo.queries.collections.refetch({ filter: { groupId: this.$route.params.tribeId } })
+        this.$apollo.queries.stories.refetch({ filter: { groupId: this.$route.params.tribeId } })
       } catch (err) {
         console.error('Something went wrong while saving a new collections and/or linking stories to it', $event)
         console.error(err)

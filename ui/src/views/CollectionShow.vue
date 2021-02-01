@@ -128,6 +128,8 @@ export default {
       await this.saveStoriesToCollection(this.collection, stories)
 
       this.$parent.$apollo.queries.collections.refetch({ filter: { groupId: this.$route.params.tribeId } })
+      this.$parent.$apollo.queries.stories.refetch({ filter: { groupId: this.$route.params.tribeId } })
+
       this.$apollo.queries.collection.refetch()
     },
     async deleteCollection () {
