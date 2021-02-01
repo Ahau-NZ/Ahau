@@ -60,6 +60,8 @@ import { saveStoryMixin, storiesApolloMixin } from '@/mixins/story-mixins.js'
 import mapProfileMixins from '@/mixins/profile-mixins.js'
 import { collectionsApolloMixin, saveCollectionsMixin } from '@/mixins/collection-mixins.js'
 
+import { getCollection } from '@/lib/story-helpers'
+
 import { VueContext } from 'vue-context'
 
 const { mapMutations: mapAlertMutations } = createNamespacedHelpers('alerts')
@@ -126,8 +128,30 @@ export default {
       this.$refs.menu.open($event)
     },
     async processCollection ($event) {
-      const id = await this.saveCollection($event)
-      this.$apollo.queries.collections.refetch({ id })
+      const { stories } = $event
+
+      try {
+        // save the new collection
+        const id = await this.saveCollection($event)
+
+        // get it from the db
+        const res = await this.$apollo.query(
+          getCollection(id)
+        )
+
+        if (res.errors) throw res.errors
+
+        const collection = res.data.collection
+
+        // save the collection-story links
+        await this.saveStoriesToCollection(collection, stories)
+
+        // reload the collections
+        this.$apollo.queries.collections.refetch({ filter: { groupId: this.$route.params.tribeId } })
+      } catch (err) {
+        console.error('Something went wrong while saving a new collections and/or linking stories to it', $event)
+        console.error(err)
+      }
     }
   },
   watch: {

@@ -113,7 +113,7 @@ export const methods = {
           this.saveContributors(story, contributors),
           this.saveCreators(story, creators),
           this.saveRelatedRecords(story, relatedRecords),
-          this.saveCollections(story, collections)
+          this.saveCollectionsToStory(story, collections)
         ]
       )
 

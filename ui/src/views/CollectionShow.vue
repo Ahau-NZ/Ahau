@@ -125,7 +125,7 @@ export default {
       const { stories } = $event
 
       await this.saveCollection($event)
-      await this.saveStories(this.collection, stories)
+      await this.saveStoriesToCollection(this.collection, stories)
 
       this.$parent.$apollo.queries.collections.refetch({ filter: { groupId: this.$route.params.tribeId } })
       this.$apollo.queries.collection.refetch()

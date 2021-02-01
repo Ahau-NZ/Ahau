@@ -71,7 +71,7 @@ const methods = {
       throw err
     }
   },
-  async saveCollections (story, collections) {
+  async saveCollectionsToStory (story, collections) {
     if (!collections) return
     if (!this.currentAccess) {
       throw new Error('saveCollections requires vuex.currentAccess')
@@ -109,10 +109,10 @@ const methods = {
     }
   },
   // TODO (later): refactor this and saveCollections as they are similar
-  async saveStories (collection, stories) {
+  async saveStoriesToCollection (collection, stories) {
     if (!stories) return
     if (!this.currentAccess) {
-      throw new Error('saveStories requires vuex.currentAccess')
+      throw new Error('saveStoriesToCollection requires vuex.currentAccess')
     }
 
     const { add, remove } = stories
