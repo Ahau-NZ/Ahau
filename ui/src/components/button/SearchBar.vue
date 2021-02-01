@@ -19,7 +19,7 @@
   >
     <template v-slot:item="data">
       <template>
-        <v-list-item @click="setSearchNode(data.item)">
+        <v-list-item @click.stop="setSearchNode(data.item, $event)">
           <Avatar class="mr-3" size="40px" :image="data.item.avatarImage" :alt="data.item.preferredName" :gender="data.item.gender" :aliveInterval="data.item.aliveInterval" />
           <v-list-item-content>
             <v-list-item-title> {{ data.item.preferredName }}</v-list-item-title>
@@ -78,11 +78,22 @@ export default {
           const preferredName = this.setString(d.preferredName)
           const legalName = this.setString(d.legalName)
 
+          var altNameMatch = false
+          const altNames = d.altNames
+          if (altNames.length > 0) {
+            for (var i = 0; i < altNames.length; i++) {
+              const currAltName = this.setString(altNames[i])
+              if (isEqual(currAltName, search) || currAltName.includes(search)) {
+                altNameMatch = true
+              }
+            }
+          }
           return (
             isEqual(preferredName, search) ||
             preferredName.includes(search) ||
             isEqual(legalName, search) ||
-            legalName.includes(search)
+            legalName.includes(search) ||
+            altNameMatch
           )
         })
     }
@@ -98,9 +109,10 @@ export default {
     close () {
       this.$emit('close')
     },
-    setSearchNode (data) {
+    setSearchNode (data, event) {
       this.searchString = data.preferredName
       this.$emit('update:searchNodeId', data.id)
+      this.$emit('searchNode', event)
       this.$emit('close')
     },
     reset () {

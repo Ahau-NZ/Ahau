@@ -21,7 +21,7 @@
         <SideNavMenu :profile="profile" />
       </v-col>
       <!-- Content -->
-      <v-col cols="12" xs="12" sm="12" :md="isWhakapapaShow ? '12' : '10'" :lg="isWhakapapaShow ? '100p' : '80p'" :class="mobile ? 'px-6 py-0' : 'pl-0 py-0'">
+      <v-col cols="12" xs="12" sm="12" :md="isWhakapapaShow ? '12' : '10'" :lg="isWhakapapaShow ? '100p' : '80p'" :class="mobile ? isWhakapapaShow ? 'py-0' : 'px-6 py-0' : 'pl-0 py-0'">
         <transition
           name="fade"
           mode="out-in"
@@ -30,7 +30,7 @@
       </transition>
       </v-col>
     </v-row>
-    <v-spacer v-if="!mobile" style="height:200px"></v-spacer>
+    <v-spacer v-if="!mobile && !isWhakapapaShow" style="height:200px"></v-spacer>
     <EditCommunityDialog
       v-if="dialog === 'edit-community'"
       :show="dialog === 'edit-community'"
