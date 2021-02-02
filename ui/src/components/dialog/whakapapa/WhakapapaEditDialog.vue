@@ -32,25 +32,37 @@
           <v-row>
             <!-- Name -->
             <v-col cols="12" class="pa-1">
-              <v-text-field
-                v-model="formData.name"
-                label="Name*"
-                placeholder=" "
-                hide-details
-                :rules="form.rules.name.whakapapaView"
-              />
+              <v-tooltip top open-delay="700">
+                <template v-slot:activator="{ on }">
+                  <v-text-field
+                    v-on="on"
+                    v-model="formData.name"
+                    label="Name*"
+                    placeholder=" "
+                    hide-details
+                    :rules="form.rules.name.whakapapaView"
+                 />
+               </template>
+                <span>Name of Whakapapa</span>
+              </v-tooltip>
             </v-col>
             <!-- Description textarea -->
             <v-col cols="12" class="pa-1">
-              <v-textarea
-                v-model="formData.description"
-                label="Description"
-                placeholder=" "
-                hide-details
-                no-resize
-                rows="1"
-                auto-grow
-              ></v-textarea>
+               <v-tooltip top open-delay="700">
+                <template v-slot:activator="{ on }">
+                  <v-textarea
+                    v-on="on"
+                    v-model="formData.description"
+                    label="Description"
+                    placeholder=" "
+                    hide-details
+                    no-resize
+                    rows="1"
+                    auto-grow
+                  ></v-textarea>
+                </template>
+                <span>A short description of the whakapapa record</span>
+               </v-tooltip>
             </v-col>
           </v-row>
           <v-row>
