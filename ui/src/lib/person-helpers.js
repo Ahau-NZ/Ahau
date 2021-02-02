@@ -71,7 +71,7 @@ export const PUBLIC_PROFILE_FRAGMENT = gql`
     id
     preferredName
     avatarImage { uri }
-    feedId:originalAuthor
+    feedId: originalAuthor
   }
 `
 

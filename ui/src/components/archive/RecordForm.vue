@@ -312,8 +312,8 @@
               <v-row class="pl-5">
                 <AddButton size="20px" icon="mdi-library" iconClass="pr-3" label="Kaitiaki"  justify="start"/>
               </v-row>
-              <AvatarGroup v-if="formData.kaitiaki && formData.kaitiaki.length > 0"
-                :profiles="formData.kaitiaki"
+              <AvatarGroup v-if="formData.tiaki && formData.tiaki.length > 0"
+                :profiles="formData.tiaki"
                 show-labels
                 size="40px"
               />
