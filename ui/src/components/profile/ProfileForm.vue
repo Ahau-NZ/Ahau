@@ -64,7 +64,7 @@
                 </slot>
               </v-col>
 
-            <template>
+            <!-- <template>
               <v-col v-for="(altName, index) in formData.altNames.currentState"
                 :key="`value-alt-name-${index}`"
                 cols="12"
@@ -83,7 +83,7 @@
               </v-col>
             </template>
 
-            <!-- Add Names -->
+            -- Add Names --
             <template v-if="!readonly">
               <v-col v-for="(altName, index) in formData.altNames.add"
                 :key="`add-alt-name-${index}`"
@@ -105,7 +105,7 @@
                 <v-col cols="8"></v-col>
                 <AddButton :align="'flex-end'" :width="'50px'" label="Add name" @click="addAltNameField" row/>
               </v-row>
-            </template>
+            </template> -->
           </v-row>
 
             <!-- DATE OF BIRTH + DATE OF DEATH-->
@@ -216,34 +216,84 @@
       <v-divider v-if="!showAdvanced" />
       <v-expand-transition>
         <div v-show="showAdvanced">
-          <v-row>
-        <v-col cols="12" :sm="mobile ? '12' : '6'" class="py-0">
+          <!-- Preferred name -->
           <v-row>
             <v-col cols="12" class="pa-1">
-                <slot name="search">
+              <slot name="search">
                   <v-text-field
-                    v-model="formData.preferredName"
-                    label="Preferred Name"
-                    v-bind="customProps"
-                    outlined
+                  v-model="formData.preferredName"
+                  label="Preferred Name"
+                  v-bind="customProps"
+                  outlined
                   />
-                </slot>
-              </v-col>
-            <!-- Description textarea -->
-            <v-col cols="12" class="pa-1">
-              <v-textarea
-                v-model="formData.description"
-                label="Description"
-                v-bind="customProps"
-                no-resize
-                rows="4"
-                auto-grow
-                outlined
-              >
-              </v-textarea>
+              </slot>
             </v-col>
           </v-row>
-          <!-- Occupation -->
+          <!-- Alt names -->
+          <v-row>
+            <template>
+              <v-col v-for="(altName, index) in formData.altNames.currentState"
+                :key="`value-alt-name-${index}`"
+                cols="12"
+                :sm="mobile ? '12' : '6'"
+                class="pa-1"
+              >
+                <v-text-field
+                  v-model="formData.altNames.currentState[index]"
+                  :label="`Nick name ${index + 1} / Alternative name ${index + 1}`"
+                  :append-icon="readonly ? '' : 'mdi-delete'"
+                  @click:append="removeAltName(formData.altNames.currentState[index], index)"
+                  readonly
+                  v-bind="customProps"
+                  outlined
+                />
+              </v-col>
+            </template>
+
+            <template v-if="!readonly">
+              <v-col v-for="(altName, index) in formData.altNames.add"
+                :key="`add-alt-name-${index}`"
+                cols="12"
+                :sm="mobile ? '12' : '6'"
+                class="pa-1"
+              >
+                <v-text-field
+                  v-model="formData.altNames.add[index]"
+                  :label="`Nick name / Alternative name ${index + 1}`"
+                  append-icon="mdi-delete"
+                  @click:append="removeAltNameField(index)"
+                  v-bind="customProps"
+                  cols="12"
+                  outlined
+                />
+              </v-col>
+                <AddButton :align="'flex-end'" :width="'50px'" label="Add nickname" @click="addAltNameField" row/>
+            </template>
+          </v-row>
+          <!-- Description, Profession, Place of Birth -->
+          <v-row>
+            <v-col cols="12" sm="12" class="py-0">
+              <v-row>
+              <!-- Description textarea -->
+              <v-col cols="12" class="pa-1">
+                <v-textarea
+                  v-model="formData.description"
+                  label="Description"
+                  v-bind="customProps"
+                  no-resize
+                  rows="4"
+                  auto-grow
+                  outlined
+                >
+                </v-textarea>
+              </v-col>
+            </v-row>
+        </v-col>
+      </v-row>
+      <!-- Email, Address, Phone, Location -->
+      <v-row v-if="!formData.deceased">
+        <v-col cols="12" :sm="mobile ? '12' : '6'">
+          <!-- Email -->
           <v-row>
             <v-col cols="12" class="pa-1">
               <v-text-field
@@ -253,23 +303,6 @@
                 outlined
               />
             </v-col>
-          </v-row>
-          <v-row>
-            <v-col cols="12" class="pa-1"> <!-- Blake TODO: change to date of birth in back end -->
-              <v-text-field
-                v-model="formData.profession"
-                label="Place of Birth"
-                v-bind="customProps"
-                outlined
-              />
-            </v-col>
-          </v-row>
-        </v-col>
-      </v-row>
-      <v-row v-if="!formData.deceased">
-        <v-col cols="12" :sm="mobile ? '12' : '6'">
-          <!-- Email -->
-          <v-row>
             <v-col cols="12" class="pa-1">
                 <v-text-field
                   v-model="formData.email"
@@ -294,6 +327,14 @@
 
         <v-col cols="12" :sm="mobile ? '12' : '6'">
           <v-row>
+            <v-col cols="12" class="pa-1"> <!-- Blake TODO: change to date of birth in back end -->
+              <v-text-field
+                v-model="formData.profession"
+                label="Place of Birth"
+                v-bind="customProps"
+                outlined
+              />
+            </v-col>
             <v-col cols="12" class="pa-1">
               <!-- Address -->
               <v-text-field
