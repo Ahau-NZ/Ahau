@@ -4,7 +4,7 @@
       <line x1="60" y1="55" :x2="tableWidth" y2="55" style="stroke-width: 1; stroke: lightgrey;"/>
       <g class="headers" v-for="column in columns" :key="column.label">
         <text :transform="`translate(${column.x + 10} ${50})`">
-          {{ column.label }}
+          {{ computeLabel(column.label) }}
         </text>
         <line :x1="column.x" y1="55" :x2="column.x" :y2="tableHeight" style="stroke-width: 1; stroke: lightgrey;"/>
       </g>
@@ -19,11 +19,12 @@
           ref="tree"
         >
           <g v-for="node in nodes" :key="node.data.id" class="node">
-            <rect :x="node.x + nodeRadius" :y="node.y" :width="tableWidth" :height="nodeRadius*2" class="row" :style="node.color" />
+            <rect :x="node.x + nodeRadius" :y="node.y" :width="tableWidth" :height="nodeRadius*2" class="row" :style="node.color" :id="node.data.id" />
             <Node
               :width="colWidth"
               :node="node"
               :radius="nodeRadius"
+              :nodeCentered="nodeCentered"
               @click="collapse(node)"
               @open-context-menu="$emit('open-context-menu', $event)"
               :showLabel="true"
@@ -39,33 +40,48 @@
                 {{ node.data.legalName }}
               </text>
             </svg>
-            <svg :width="columns[2].x - 45">
+            <svg :width="columns[2].x - 45" >
               <text  :transform="`translate(${columns[1].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ node.age }}
+                {{ altNames(node.data.altNames) }}
               </text>
             </svg>
             <svg :width="columns[3].x - 45">
               <text  :transform="`translate(${columns[2].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ node.data.profession }}
+                {{ node.age }}
               </text>
             </svg>
             <svg :width="columns[4].x - 45">
               <text  :transform="`translate(${columns[3].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ node.data.address }}
+                {{ computeDate('dob', node.data.aliveInterval) }} <!-- {{ node.data.aliveInterval.substring(0,10)  }} -->
               </text>
             </svg>
             <svg :width="columns[5].x - 45">
               <text  :transform="`translate(${columns[4].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ node.data.location }}
+                {{ computeDate('dod', node.data.aliveInterval) }}<!-- {{ node.data.aliveInterval.substring(11,21) }} -->
               </text>
             </svg>
             <svg :width="columns[6].x - 45">
-              <text :transform="`translate(${columns[5].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
+              <text  :transform="`translate(${columns[5].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
+                {{ node.data.profession }}
+              </text>
+            </svg>
+            <svg :width="columns[7].x - 45">
+              <text  :transform="`translate(${columns[6].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
+                {{ node.data.address }}
+              </text>
+            </svg>
+            <svg :width="columns[8].x - 45">
+              <text  :transform="`translate(${columns[7].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
+                {{ node.data.location }}
+              </text>
+            </svg>
+            <svg :width="columns[9].x - 45">
+              <text :transform="`translate(${columns[8].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
                 {{ node.data.email }}
               </text>
             </svg>
             <svg>
-              <text :transform="`translate(${columns[6].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
+              <text :transform="`translate(${columns[9].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
                 {{ node.data.phone }}
               </text>
             </svg>
@@ -84,6 +100,8 @@ import Link from '../tree/Link.vue'
 import calculateAge from '../../lib/calculate-age.js'
 import isEqual from 'lodash.isequal'
 import { mapGetters, mapActions } from 'vuex'
+import { dateIntervalToString } from '@/lib/date-helpers.js'
+import { SORT } from '@/lib/constants.js'
 
 export default {
   props: {
@@ -114,9 +132,21 @@ export default {
     searchNodeId: {
       type: String
     },
+    searchNodeEvent: {
+      required: false
+    },
     pan: {
       type: Number,
       default: 0
+    },
+    sortValue: {
+      type: String,
+      default: null
+    },
+    sortEvent: {
+      type: MouseEvent,
+      required: false,
+      default: null
     }
   },
   data () {
@@ -126,7 +156,17 @@ export default {
       componentLoaded: false, // need to ensure component is loaded before using $refs
       nodeRadius: 20, // use variable for zoom later on
       nodeSize: 40,
-      duration: 400
+      duration: 400,
+
+      // 0 = no sort, 1 = sort ascending, 2 = sort descending
+      sort: {
+        preferredName: SORT.default,
+        legalName: SORT.default,
+        age: SORT.default,
+        profession: SORT.default,
+        location: SORT.default
+      },
+      nodeCentered: ''
     }
   },
   mounted () {
@@ -170,12 +210,9 @@ export default {
       return this.tableLayout
         // returns the array of descendants starting with the root node, then followed by each child in topological order
         .descendants()
+        // sort by preferred name
         .sort((a, b) => {
-          if (this.names) { // check for you click event
-            if (a.data.preferredName.toLowerCase() < b.data.preferredName.toLowerCase()) { return -1 }
-            if (a.data.preferredName.toLowerCase() > b.data.preferredName.toLowerCase()) { return 1 }
-            return 0
-          }
+          return this.determineSort(a, b)
         })
         // filter deceased
         .filter(peeps => {
@@ -196,7 +233,7 @@ export default {
             height: d.height,
             parent: d.parent,
             x: d.x,
-            y: this.filter ? i * 45 : d.y * 1.5,
+            y: this.flatten ? i * 45 : d.y * 1.5,
             age: calculateAge(d.data.aliveInterval),
             color: this.nodeColor(d.data)
           }
@@ -248,41 +285,68 @@ export default {
           x: this.colWidth
         },
         {
-          label: 'Age',
+          label: 'Alt Name',
           x: this.colWidth + 200
         },
         {
+          label: 'Age',
+          x: this.colWidth + 400
+        },
+        {
+          label: 'D.O.B',
+          x: this.colWidth + 470
+        },
+        {
+          label: 'D.O.D',
+          x: this.colWidth + 600
+        },
+        {
           label: 'Profession',
-          x: this.colWidth + 265
+          x: this.colWidth + 730
         },
         {
           label: 'Address',
-          x: this.colWidth + 465
+          x: this.colWidth + 1000
         },
         {
           label: 'City, Country',
-          x: this.colWidth + 665
+          x: this.colWidth + 1405
         },
         {
           label: 'Email',
-          x: this.colWidth + 865
+          x: this.colWidth + 1645
         },
         {
           label: 'Phone',
-          x: this.colWidth + 1165
+          x: this.colWidth + 2005
         }
       ]
     }
   },
 
   watch: {
-    flatten (newVal) {
-      if (newVal === true) this.colWidth = 250
+    flatten (newValue) {
+      if (newValue === true) this.colWidth = 250
       else this.colWidth = 350
     },
 
     nodes (newValue) {
       this.setLoading(false)
+    },
+
+    // Triggered whenever the user selects a sort
+    sortEvent () {
+      this.resetSorts(this.sortValue)
+      this.setSortOnField(this.sortValue)
+    },
+    searchNodeEvent (newValue) {
+      if (this.searchNodeId !== null) {
+        this.root.descendants().find(d => {
+          if (d.data.id === this.searchNodeId) {
+            this.centerNode(d)
+          }
+        })
+      }
     }
   },
   methods: {
@@ -345,6 +409,189 @@ export default {
       })
 
       // this.updateNode({ is, path: endNode.path })
+    },
+    altNames (altArray) {
+      var altNames = ''
+
+      for (var i = 0; i < altArray.length; i++) {
+        if (altNames.length === 0) {
+          altNames += altArray[i]
+        } else {
+          altNames += ', ' + altArray[i]
+        }
+      }
+
+      return altNames
+    },
+    computeDate (requiredDate, age) {
+      if (!age) {
+        return ''
+      }
+
+      var ageString = ''
+      const dateSplit = dateIntervalToString(age).split('-')
+
+      if (requiredDate === 'dob') {
+        if (dateSplit[0]) {
+          ageString = dateSplit[0]
+        }
+      }
+      if (requiredDate === 'dod') {
+        if (dateSplit[1]) {
+          ageString = dateSplit[1]
+        }
+      }
+
+      return ageString
+    },
+    // Toggles the sort on the current field between ascending, descending and no sort
+    setSortOnField (field) {
+      const currentSort = this.sort[field]
+      switch (currentSort) {
+        case SORT.default:
+          this.sort[field] = SORT.ascending
+          break
+        case SORT.ascending:
+          this.sort[field] = SORT.descending
+          break
+        case SORT.descending:
+        default:
+          this.sort[field] = SORT.default
+      }
+    },
+    // When a sort is triggered, ensures all other sorts are disabled
+    resetSorts (ignoredKey) {
+      Object.keys(this.sort).forEach(key => {
+        if (key === ignoredKey) return
+        this.sort[key] = SORT.default
+      })
+    },
+    // Computes the label of table headers depending on whether a sort is active
+    computeLabel (label) {
+      if (label === 'Address') {
+        return 'Address'
+      }
+      if (label === 'Email') {
+        return 'Email'
+      }
+      if (label === 'Phone') {
+        return 'Phone'
+      }
+
+      const legalName = ['Legal Name', 'Legal Name ↑', 'Legal Name ↓']
+      const age = ['Age', 'Age ↑', 'Age ↓']
+      const profession = ['Profession', 'Profession ↑', 'Profession ↓']
+      const location = ['City, Country', 'City, Country ↑', 'City, Country ↓']
+
+      if (label === 'Legal Name') {
+        return legalName[this.sort['legalName']]
+      }
+      if (label === 'Age') {
+        return age[this.sort['age']]
+      }
+      if (label === 'Profession') {
+        return profession[this.sort['profession']]
+      }
+      if (label === 'City, Country') {
+        return location[this.sort['location']]
+      }
+
+      return ''
+    },
+    // Executes a sort on two values
+    sortByField (a, b) {
+      const sort = this.sort[this.sortValue]
+      if (sort !== SORT.default) {
+        if (sort === SORT.ascending) {
+          if (a < b) { return -1 }
+          if (a > b) { return 1 }
+          return 0
+        }
+        if (sort === SORT.descending) {
+          if (a > b) { return -1 }
+          if (a < b) { return 1 }
+          return 0
+        }
+      }
+    },
+    // Determines the sort to be performed depending on the field to be sorted
+    determineSort (a, b) {
+      const field = this.sortValue
+      if (field === null || field === '') {
+        return
+      }
+      let aVal, bVal
+
+      switch (field) {
+        case 'age':
+          aVal = this.convertNullAgeToValue(calculateAge(a.data.aliveInterval))
+          bVal = this.convertNullAgeToValue(calculateAge(b.data.aliveInterval))
+          return this.sortByField(aVal, bVal)
+        default: // Preferred name or location
+          aVal = a.data[field]
+          bVal = b.data[field]
+      }
+      aVal = this.convertNullToChar(aVal)
+      bVal = this.convertNullToChar(bVal)
+
+      return this.sortByField(this.removeMacron(aVal.toLowerCase()), this.removeMacron(bVal.toLowerCase()))
+    },
+    // Hacky way to get empty/null fields to display below non-empty sorted fields
+    convertNullToChar (val) {
+      if (val !== null && val !== '') return val
+      const sort = this.sort[this.sortValue]
+      if (sort === SORT.ascending) {
+        return 'ZZZZZ'
+      }
+      if (sort === SORT.descending) {
+        return 'AAAAA'
+      }
+      return ''
+    },
+    // Hacky way to get empty/null ages to display below non-empty sorted ages
+    convertNullAgeToValue (val) {
+      if (val !== null && val !== '') return val
+      const sort = this.sort[this.sortValue]
+      if (sort === SORT.ascending) {
+        return 9999
+      }
+      if (sort === SORT.descending) {
+        return 0
+      }
+      return ''
+    },
+    // Replaces characters with macrons with their non-macron equivalent so that strings are sorted properly
+    removeMacron (str) {
+      const macronArray = ['ā', 'ē', 'ī', 'ō', 'ū', 'Ā', 'Ē', 'Ī', 'Ō', 'Ū']
+      const nonMacronArray = ['a', 'e', 'i', 'o', 'u', 'A', 'E', 'I', 'O', 'U']
+
+      var newString = ''
+      for (var i = 0; i < str.length; i++) {
+        var macronFound = false
+        const currChar = str[i]
+        for (var j = 0; j < macronArray.length; j++) {
+          if (currChar === macronArray[j]) {
+            macronFound = true
+            newString += nonMacronArray[j]
+          }
+        }
+        if (!macronFound) {
+          newString += currChar
+        }
+      }
+
+      return newString
+    },
+    centerNode (node) {
+      const element = document.getElementById(`${node.data.id}`)
+      const coord = element.getBoundingClientRect()
+
+      const elementPos = window.pageYOffset + coord.y - 400
+
+      window.scrollTo({
+        top: elementPos,
+        behavior: 'smooth'
+      })
     }
   },
   components: {

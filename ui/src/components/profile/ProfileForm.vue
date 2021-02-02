@@ -66,24 +66,24 @@
             <v-col cols="12" class="pa-1">
               <v-text-field
                 v-model="formData.legalName"
-                label="Legal name."
+                label="Legal name"
                 v-bind="customProps"
                 outlined
               />
             </v-col>
 
             <template>
-              <v-col v-for="(altName, index) in formData.altNames.value"
+              <v-col v-for="(altName, index) in formData.altNames.currentState"
                 :key="`value-alt-name-${index}`"
                 cols="12"
                 :sm="mobile ? '12' : '6'"
                 class="pa-1"
               >
                 <v-text-field
-                  v-model="formData.altNames.value[index]"
-                  :label="`Nick name / Alternative name`"
+                  v-model="formData.altNames.currentState[index]"
+                  :label="`Nick name ${index + 1} / Alternative name ${index + 1}`"
                   :append-icon="readonly ? '' : 'mdi-delete'"
-                  @click:append="removeAltName(formData.altNames.value[index], index)"
+                  @click:append="removeAltName(formData.altNames.currentState[index], index)"
                   readonly
                   v-bind="customProps"
                   outlined
@@ -404,7 +404,7 @@ export default {
       this.formData.altNames.add.push(null)
     },
     removeAltName (altName, index) {
-      this.formData.altNames.value.splice(index, 1)
+      this.formData.altNames.currentState.splice(index, 1)
       this.formData.altNames.remove.push(altName)
     },
     removeAltNameField (index) {
