@@ -86,7 +86,7 @@ export default {
 
       this.formData.mentions = [profile]
       this.formData.contributors = [this.whoami.public.profile]
-      this.formData.kaitiaki = [this.whoami.public.profile]
+      this.formData.tiaki = [this.whoami.public.profile]
       this.formData.creators = []
       this.formData.relatedRecords = []
     },
@@ -100,7 +100,7 @@ export default {
       }
 
       this.formData.contributors = [this.whoami.public.profile]
-      this.formData.kaitiaki = [this.whoami.public.profile]
+      this.formData.tiaki = [this.whoami.public.profile]
       this.formData.creators = []
       this.formData.relatedRecords = []
     }
