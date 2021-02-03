@@ -52,15 +52,9 @@ export default {
       var output = {}
       if (this.editing) {
         // get all changes
-        output = {
-          id: this.profile.id,
-          ...getObjectChanges(setDefaultCommunity(this.profile), this.formData)
-        }
+        output = getObjectChanges(setDefaultCommunity(this.profile), this.formData)
       } else {
-        output = {
-          ...getObjectChanges(setDefaultCommunity(EMPTY_COMMUNITY), this.formData)
-          // TODO: does this need recps
-        }
+        output = getObjectChanges(setDefaultCommunity(EMPTY_COMMUNITY), this.formData)
       }
 
       this.$emit('submit', output)
@@ -70,7 +64,7 @@ export default {
       this.close()
     },
     close () {
-      this.formData = setDefaultCommunity(this.community)
+      this.formData = setDefaultCommunity(this.profile)
       this.$emit('close')
     }
   }

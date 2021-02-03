@@ -13,6 +13,7 @@ export const EMPTY_COMMUNITY = {
   id: null,
   preferredName: null,
   avatarImage: null,
+  headerImage: null,
   description: null,
   location: null,
   address: null,
@@ -24,10 +25,10 @@ export function setDefaultCommunity (newCommunity) {
   var community = clone(newCommunity)
 
   return {
-    type: 'community',
     id: community.id,
     preferredName: community.preferredName,
     avatarImage: community.avatarImage,
+    headerImage: community.headerImage,
     description: community.description,
     location: community.location,
     address: community.address,
