@@ -148,9 +148,19 @@
           </v-col>
         </v-row>
         <v-row class="px-4">
+          <v-col class="pt-0 pr-1" v-if="story.collections && story.collections.length > 0" cols="12" sm="12" md="auto">
+            <v-list-item-subtitle class="pb-1" style="color:#a7a3a3">Collections</v-list-item-subtitle>
+            <ChipGroup :chips="story.collections.map(c => c.collection)" type="collection" @click="showRelatedCollection"/>
+          </v-col>
+        </v-row>
+        <v-row class="px-4">
           <v-col class="pt-0 pr-1" v-if="story.relatedRecords && story.relatedRecords.length > 0" cols="12" sm="12" md="auto">
             <v-list-item-subtitle class="pb-1" style="color:#a7a3a3">Related records</v-list-item-subtitle>
-            <ChipGroup :chips="story.relatedRecords.map(r => r.story)" type="story"/>
+            <ChipGroup
+              :chips="story.relatedRecords.map(r => r.story)"
+              type="story"
+              @click="showRelatedStory"
+            />
           </v-col>
         </v-row>
         <v-row class="px-4 mb-12">
@@ -230,17 +240,20 @@ import AvatarGroup from '@/components/AvatarGroup.vue'
 // import Avatar from '@/components/Avatar.vue'
 import Artefact from '@/components/artefact/Artefact.vue'
 import ChipGroup from '@/components/archive/ChipGroup.vue'
-import { mapActions, mapGetters } from 'vuex'
+
 import EditStoryButton from '@/components/button/EditStoryButton.vue'
 import EditArtefactButton from '@/components/button/EditArtefactButton.vue'
 import { colours } from '@/lib/colours.js'
 import ArtefactCarouselItem from '@/components/artefact/ArtefactCarouselItem.vue'
 import NewRecordDialog from '@/components/dialog/archive/NewRecordDialog.vue'
 import DeleteRecordDialog from '@/components/dialog/archive/DeleteRecordDialog.vue'
-import { DELETE_STORY } from '@/lib/story-helpers.js'
+import { deleteStory } from '@/lib/story-helpers.js'
 import { getTribalProfile } from '@/lib/community-helpers.js'
 import { dateIntervalToString, formatSubmissionDate } from '@/lib/date-helpers.js'
+
+import { mapActions, mapGetters, mapMutations } from 'vuex'
 import mapProfileMixins from '@/mixins/profile-mixins.js'
+import { methods as mapStoryMethods } from '@/mixins/story-mixins.js'
 
 export default {
   name: 'StoryCard',
@@ -252,7 +265,12 @@ export default {
   mixins: [
     mapProfileMixins({
       mapMethods: ['getTribe']
-    })
+    }),
+    {
+      methods: {
+        getStory: mapStoryMethods.getStory
+      }
+    }
   ],
   components: {
     AvatarGroup,
@@ -337,9 +355,20 @@ export default {
     }
   },
   methods: {
+    ...mapMutations(['setStory']),
     ...mapActions(['setShowArtefact', 'toggleShowStory']),
     openProfile ($event) {
       this.$emit('openProfile', $event)
+    },
+    async showRelatedStory (relatedRecord) {
+      if (this.deletable) return
+
+      window.scrollTo(0, 0)
+      var story = await this.getStory(relatedRecord.id)
+      this.setStory(story)
+    },
+    showRelatedCollection (collection) {
+      console.warn('Not yet showing collection on click', collection)
     },
     onClickOutside () {
       if (!this.fullStory || this.dialog) return
@@ -351,7 +380,7 @@ export default {
       }
     },
     async deleteStory () {
-      const res = await this.$apollo.mutate(DELETE_STORY(this.story.id, new Date()))
+      const res = await this.$apollo.mutate(deleteStory(this.story.id, new Date()))
 
       if (res.errors) {
         console.error('failed to delete story', res.errors)

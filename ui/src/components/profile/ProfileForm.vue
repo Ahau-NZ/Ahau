@@ -63,49 +63,6 @@
                   />
                 </slot>
               </v-col>
-
-            <!-- <template>
-              <v-col v-for="(altName, index) in formData.altNames.currentState"
-                :key="`value-alt-name-${index}`"
-                cols="12"
-                :sm="mobile ? '12' : '6'"
-                class="pa-1"
-              >
-                <v-text-field
-                  v-model="formData.altNames.currentState[index]"
-                  :label="`Nick name ${index + 1} / Alternative name ${index + 1}`"
-                  :append-icon="readonly ? '' : 'mdi-delete'"
-                  @click:append="removeAltName(formData.altNames.currentState[index], index)"
-                  readonly
-                  v-bind="customProps"
-                  outlined
-                />
-              </v-col>
-            </template>
-
-            -- Add Names --
-            <template v-if="!readonly">
-              <v-col v-for="(altName, index) in formData.altNames.add"
-                :key="`add-alt-name-${index}`"
-                cols="12"
-                :sm="mobile ? '12' : '6'"
-                class="pa-1"
-              >
-                <v-text-field
-                  v-model="formData.altNames.add[index]"
-                  :label="`Nick name / Alternative name ${index + 1}`"
-                  append-icon="mdi-delete"
-                  @click:append="removeAltNameField(index)"
-                  v-bind="customProps"
-                  cols="12"
-                  outlined
-                />
-              </v-col>
-              <v-row class="mx-1">
-                <v-col cols="8"></v-col>
-                <AddButton :align="'flex-end'" :width="'50px'" label="Add name" @click="addAltNameField" row/>
-              </v-row>
-            </template> -->
           </v-row>
 
             <!-- DATE OF BIRTH + DATE OF DEATH-->
@@ -176,7 +133,7 @@
                 <!-- OTHER -->
                 <v-col class="pa-0">
                   <div class="gender-button" @click="updateSelectedGender('other')">
-                    <img ref="wahineImg" :src="require('@/assets/wahine-outlined.svg')" :class="mobile ? 'gender-image-mobile':'gender-image'">
+                    <img ref="diverseImg" :src="require('@/assets/diverse-outlined.svg')" :class="mobile ? 'gender-image-mobile':'gender-image'">
                   </div>
                 </v-col>
 
@@ -218,7 +175,7 @@
         <div v-show="showAdvanced">
           <!-- Preferred name -->
           <v-row>
-            <v-col cols="12" class="pa-1">
+            <v-col cols="6" class="pa-1">
               <slot name="search">
                   <v-text-field
                   v-model="formData.preferredName"
@@ -240,7 +197,7 @@
               >
                 <v-text-field
                   v-model="formData.altNames.currentState[index]"
-                  :label="`Nick name ${index + 1} / Alternative name ${index + 1}`"
+                  label="Also known as"
                   :append-icon="readonly ? '' : 'mdi-delete'"
                   @click:append="removeAltName(formData.altNames.currentState[index], index)"
                   readonly
@@ -259,7 +216,7 @@
               >
                 <v-text-field
                   v-model="formData.altNames.add[index]"
-                  :label="`Nick name / Alternative name ${index + 1}`"
+                  label="Also known as"
                   append-icon="mdi-delete"
                   @click:append="removeAltNameField(index)"
                   v-bind="customProps"
@@ -267,7 +224,7 @@
                   outlined
                 />
               </v-col>
-                <AddButton :align="'flex-end'" :width="'50px'" label="Add nickname" @click="addAltNameField" row/>
+                <AddButton :align="'flex-end'" :width="'50px'" label="Add another name" @click="addAltNameField" row/>
             </template>
           </v-row>
           <!-- Description, Profession, Place of Birth -->
@@ -290,19 +247,29 @@
             </v-row>
         </v-col>
       </v-row>
-      <!-- Email, Address, Phone, Location -->
-      <v-row v-if="!formData.deceased">
-        <v-col cols="12" :sm="mobile ? '12' : '6'">
-          <!-- Email -->
-          <v-row>
-            <v-col cols="12" class="pa-1">
+      <v-row>
+        <v-col cols="6" class="pa-1">
               <v-text-field
                 v-model="formData.profession"
                 label="Profession"
                 v-bind="customProps"
                 outlined
               />
-            </v-col>
+        </v-col>
+        <v-col cols="6" class="pa-1"> <!-- Blake TODO: change to date of birth in back end -->
+              <v-text-field
+                v-model="formData.profession"
+                label="Place of Birth"
+                v-bind="customProps"
+                outlined
+              />
+        </v-col>
+      </v-row>
+      <!-- Email, Address, Phone, Location -->
+      <v-row v-if="!formData.deceased">
+        <v-col cols="12" :sm="mobile ? '12' : '6'">
+          <!-- Email -->
+          <v-row>
             <v-col cols="12" class="pa-1">
                 <v-text-field
                   v-model="formData.email"
@@ -327,14 +294,6 @@
 
         <v-col cols="12" :sm="mobile ? '12' : '6'">
           <v-row>
-            <v-col cols="12" class="pa-1"> <!-- Blake TODO: change to date of birth in back end -->
-              <v-text-field
-                v-model="formData.profession"
-                label="Place of Birth"
-                v-bind="customProps"
-                outlined
-              />
-            </v-col>
             <v-col cols="12" class="pa-1">
               <!-- Address -->
               <v-text-field
