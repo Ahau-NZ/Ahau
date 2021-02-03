@@ -1,6 +1,6 @@
 <template>
   <v-form ref="form" light>
-    <v-col class="px-0">
+    <v-col>
       <v-row>
 
         <!-- Upload profile photo -->
@@ -38,41 +38,39 @@
       </v-row>
 
       <v-row>
-        <v-col cols="12">
+        <v-col cols="12" sm="6" class="pa-1">
+          <!-- Address -->
+          <v-text-field v-model="formData.address" label="Address" v-bind="customProps" />
+        </v-col>
+        <v-col cols="12" sm="6" class="pa-1">
+          <!-- City, Country -->
+          <v-text-field v-model="formData.location" label="City, Country" v-bind="customProps" />
+        </v-col>
+        <v-col cols="12" sm="6" class="pa-1">
+          <!-- Email -->
+          <v-text-field v-model="formData.email" label="Email" v-bind="customProps" />
+        </v-col>
+        <v-col cols="12" sm="6" class="pa-1">
+          <!-- Phone -->
+          <v-text-field v-model="formData.phone" label="Phone" v-bind="customProps" />
+        </v-col>
+        <v-col cols="12" v-if="!allowJoiningQuestions" >
+          <v-checkbox v-model="allowJoiningQuestions" label="Add questions to ask joining members?"/>
+        </v-col>
+        <v-col v-else>
           <v-row>
-            <v-col cols="12" sm="6" class="py-0">
-              <v-row>
-                <v-col cols="12" class="pa-1">
-                  <!-- Address -->
-                  <v-text-field v-model="formData.address" label="Address" v-bind="customProps" />
-                </v-col>
-              </v-row>
+            <v-col cols="12">
+              Member Joining Questions
             </v-col>
-            <v-col cols="12" sm="6" class="py-0">
-              <v-row>
-                <v-col cols="12" class="pa-1">
-                  <!-- City, Country -->
-                  <v-text-field v-model="formData.location" label="City, Country" v-bind="customProps" />
-                </v-col>
-              </v-row>
+            <v-col cols="12" sm="12" v-for="(question, i) in joiningQuestions" :key="`j-q-${i}`" class="pa-1">
+              <v-text-field
+                v-model="joiningQuestions[i].label"
+                v-bind="customProps"
+                :label="`Question ${i + 1}`"
+              />
             </v-col>
-          </v-row>
-          <v-row>
-            <v-col cols="12" sm="6" class="py-0">
-              <v-row>
-                <v-col cols="12" class="pa-1">
-                  <!-- Email -->
-                  <v-text-field v-model="formData.email" label="Email" v-bind="customProps" />
-                </v-col>
-              </v-row>
-            </v-col>
-            <v-col cols="12" sm="6" class="py-0">
-              <v-row>
-                <v-col cols="12" class="pa-1">
-                  <!-- Phone -->
-                  <v-text-field v-model="formData.phone" label="Phone" v-bind="customProps" />
-                </v-col>
-              </v-row>
+            <v-col cols="12">
+              <AddButton label="Add a question" @click="addQuestionField"/>
             </v-col>
           </v-row>
         </v-col>
@@ -84,15 +82,28 @@
 <script>
 import Avatar from '@/components/Avatar.vue'
 import ImagePicker from '@/components/ImagePicker.vue'
+import AddButton from '@/components/button/AddButton.vue'
 
 export default {
   name: 'CommunityForm',
   components: {
     Avatar,
-    ImagePicker
+    ImagePicker,
+    AddButton
   },
   props: {
     formData: Object
+  },
+  data () {
+    return {
+      allowJoiningQuestions: false,
+      joiningQuestions: []
+    }
+  },
+  watch: {
+    allowJoiningQuestions (allowed) {
+      if (!allowed) this.joiningQuestions = [] // clear the questions
+    }
   },
   computed: {
     mobile () {
@@ -104,6 +115,11 @@ export default {
         placeholder: ' ',
         outlined: true
       }
+    }
+  },
+  methods: {
+    addQuestionField () {
+      this.joiningQuestions.push({ label: '', type: 'input' })
     }
   }
 }
@@ -131,4 +147,5 @@ export default {
 .v-text-field input {
   text-align: center !important;
 }
+
 </style>
