@@ -132,7 +132,7 @@ export default {
       const { stories } = $event
 
       try {
-        // save the new collection
+        // save the collection
         const id = await this.saveCollection($event)
 
         // get it from the db
@@ -142,10 +142,8 @@ export default {
 
         if (res.errors) throw res.errors
 
-        const collection = res.data.collection
-
         // save the collection-story links
-        await this.saveStoriesToCollection(collection, stories)
+        await this.saveStoriesToCollection(id, stories)
 
         // reload the collections and stories to reflect new links
         this.$apollo.queries.collections.refetch({ filter: { groupId: this.$route.params.tribeId } })

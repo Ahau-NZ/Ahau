@@ -109,7 +109,7 @@ const methods = {
     }
   },
   // TODO (later): refactor this and saveCollections as they are similar
-  async saveStoriesToCollection (collection, stories) {
+  async saveStoriesToCollection (collectionId, stories) {
     if (!stories) return
     if (!this.currentAccess) {
       throw new Error('saveStoriesToCollection requires vuex.currentAccess')
@@ -124,7 +124,7 @@ const methods = {
       await Promise.all(add.map(async story => {
         // create the link between the collection and story
         const input = {
-          collection: collection.id,
+          collection: collectionId,
           story: story.id,
           recps: [this.currentAccess.groupId]
         }
