@@ -219,6 +219,24 @@
               <span>This file size of this uploaded digital artefact</span>
             </v-tooltip>
           </v-col>
+          <!-- Location test field -->
+         <v-col cols="12">
+            <h1>
+              <v-tooltip top open-delay="700">
+                <template v-slot:activator="{ on }">
+                  <v-text-field
+                    v-on="on"
+                    v-if="show"
+                    v-model="artefact.location"
+                    label="Location"
+                    v-bind="customProps"
+                    dark
+                  />
+                </template>
+                <span>Where was this artefact captured</span>
+              </v-tooltip>
+            </h1>
+          </v-col>
           <v-col cols="12">
             <v-card-actions>
               <v-row>
