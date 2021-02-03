@@ -77,37 +77,6 @@
           </v-row>
         </v-col>
       </v-row>
-
-      <v-row v-for="(q, i) in joiningQuestions" :key="`joining-question-${i}`">
-        <v-col cols="8">
-          <v-text-field
-            v-model="joiningQuestions[i].label"
-            v-bind="customProps"
-          />
-        </v-col>
-        <v-col cols="3">
-          <v-select
-            v-model="joiningQuestions[i].type"
-            label="Form Field Type"
-            :items="['Small Text Box', 'Large Text Box']"
-            outlined
-            :menu-props="{light: true}"
-          />
-        </v-col>
-        <v-col cols="1">
-          <v-btn @click="removeQuestion(i)" icon>
-            <v-icon light > mdi-delete </v-icon>
-          </v-btn>
-        </v-col>
-      </v-row>
-      <v-row>
-        <v-col cols="4">
-          <v-row @click="addQuestion" class="pl-5">
-            <!-- <v-icon small>mdi-plus</v-icon> -->
-              <AddButton size="20px" iconClass="pr-3" label="Add a joining question"  justify="start"/>
-          </v-row>
-        </v-col>
-      </v-row>
     </v-col>
   </v-form>
 </template>
@@ -116,14 +85,11 @@
 import Avatar from '@/components/Avatar.vue'
 import ImagePicker from '@/components/ImagePicker.vue'
 
-import AddButton from '@/components/button/AddButton.vue'
-
 export default {
   name: 'CommunityForm',
   components: {
     Avatar,
-    ImagePicker,
-    AddButton
+    ImagePicker
   },
   props: {
     formData: Object,
@@ -142,9 +108,7 @@ export default {
         valid: true,
         showDescription: false
       },
-      selectedGender: '',
-      showJoiningQuestions: false,
-      joiningQuestions: []
+      selectedGender: ''
     }
   },
   watch: {
@@ -169,18 +133,6 @@ export default {
         class: this.readonly ? 'custom' : '',
         outlined: true
       }
-    }
-  },
-  methods: {
-    addQuestion () {
-      this.joiningQuestions.push({ label: null, type: null })
-    },
-    // removeAltName (altName, index) {
-    //   this.formData.altNames.currentState.splice(index, 1)
-    //   this.formData.altNames.remove.push(altName)
-    // },
-    removeQuestion (index) {
-      this.joiningQuestions.splice(index, 1)
     }
   }
 }
