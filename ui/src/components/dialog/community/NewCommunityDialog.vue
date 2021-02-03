@@ -3,40 +3,25 @@
     @submit="submit"
     @close="close"
   >
-
-    <!-- Content Slot -->
     <template v-if="!hideDetails" v-slot:content>
       <v-col class="py-0">
-        <CommunityForm :profile.sync="formData" />
+        <CommunityForm :editing="editing" :formData.sync="formData" />
+        <v-col align="center">
+          <v-btn v-if="editing" text @click="$emit('delete')">
+            Delete this community
+            <v-icon class="pl-2">mdi-delete</v-icon>
+          </v-btn>
+        </v-col>
       </v-col>
     </template>
-    <!-- End Content Slot -->
-
   </Dialog>
 </template>
 
 <script>
 import Dialog from '@/components/dialog/Dialog.vue'
 import CommunityForm from '@/components/community/CommunityForm.vue'
-import { PERMITTED_COMMUNITY_ATTRS } from '@/lib/community-helpers.js'
-
-import pick from 'lodash.pick'
-import isEmpty from 'lodash.isempty'
-
-function defaultData () {
-  const formData = {
-    type: 'community',
-    id: '',
-    preferredName: '',
-    avatarImage: {},
-    description: '',
-    location: '',
-    address: '',
-    email: '',
-    phone: ''
-  }
-  return formData
-}
+import { EMPTY_COMMUNITY, setDefaultCommunity } from '@/lib/community-helpers.js'
+import { getObjectChanges } from '@/lib/get-object-changes.js'
 
 export default {
   name: 'NewCommunityDialog',
@@ -46,43 +31,46 @@ export default {
   },
   props: {
     show: { type: Boolean, required: true },
+    profile: { type: Object, default () { return EMPTY_COMMUNITY } },
     title: { type: String, default: 'Create a new community' },
     hideDetails: { type: Boolean, default: false },
-    selectedProfile: { type: Object }
+    editing: Boolean
   },
   data () {
     return {
-      formData: defaultData()
+      formData: setDefaultCommunity(this.profile)
     }
   },
 
   computed: {
     mobile () {
       return this.$vuetify.breakpoint.xs
-    },
-
-    submission () {
-      const form = pick(this.formData, PERMITTED_COMMUNITY_ATTRS)
-      let submission = {}
-      Object.entries(form).map(([key, value]) => {
-        if (!isEmpty(value)) {
-          submission[key] = value
-        }
-      })
-      return submission
     }
   },
   methods: {
     submit () {
-      var submission = Object.assign({}, this.submission)
-      this.$emit('create', submission)
+      var output = {}
+      if (this.editing) {
+        // get all changes
+        output = {
+          id: this.profile.id,
+          ...getObjectChanges(setDefaultCommunity(this.profile), this.formData)
+        }
+      } else {
+        output = {
+          ...getObjectChanges(setDefaultCommunity(EMPTY_COMMUNITY), this.formData)
+          // TODO: does this need recps
+        }
+      }
+
+      this.$emit('submit', output)
       this.close()
     },
     cordovaBackButton () {
       this.close()
     },
     close () {
-      this.formData = defaultData()
+      this.formData = setDefaultCommunity(this.community)
       this.$emit('close')
     }
   }

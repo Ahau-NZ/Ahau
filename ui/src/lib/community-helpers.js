@@ -1,10 +1,40 @@
 import gql from 'graphql-tag'
 import pick from 'lodash.pick'
+import clone from 'lodash.clonedeep'
+
 import { PUBLIC_PROFILE_FRAGMENT, AUTHOR_FRAGMENT } from '@/lib/person-helpers'
 import { createProvider } from '@/plugins/vue-apollo'
 
 const apolloProvider = createProvider()
 const apolloClient = apolloProvider.defaultClient
+
+export const EMPTY_COMMUNITY = {
+  type: 'community',
+  id: null,
+  preferredName: null,
+  avatarImage: null,
+  description: null,
+  location: null,
+  address: null,
+  email: null,
+  phone: null
+}
+
+export function setDefaultCommunity (newCommunity) {
+  var community = clone(newCommunity)
+
+  return {
+    type: 'community',
+    id: community.id,
+    preferredName: community.preferredName,
+    avatarImage: community.avatarImage,
+    description: community.description,
+    location: community.location,
+    address: community.address,
+    email: community.email,
+    phone: community.phone
+  }
+}
 
 export const PERMITTED_COMMUNITY_ATTRS = [
   'authors',
@@ -48,7 +78,6 @@ export const PERMITTED_COMMUNITY_LINK_ATTRS = [
 
 // TODO: finish community-helper
 // eg: getCommunity() *single community
-
 export const getMembers = id => ({
   query: gql`
     ${PUBLIC_PROFILE_FRAGMENT}

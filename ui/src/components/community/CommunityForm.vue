@@ -22,8 +22,7 @@
           <v-row>
             <v-col cols="12" class="pa-1">
               <!-- <slot name="search"> -->
-                <v-text-field v-model="formData.preferredName" label="Community name" v-bind="customProps"
-                  outlined />
+                <v-text-field v-model="formData.preferredName" label="Community name" v-bind="customProps"/>
               <!-- </slot> -->
             </v-col>
           </v-row>
@@ -31,7 +30,7 @@
             <!-- Description textarea -->
             <v-col cols="12" class="pa-1">
               <v-textarea v-model="formData.description" label="Community description" v-bind="customProps" no-resize rows="4"
-                auto-grow outlined>
+                auto-grow>
               </v-textarea>
             </v-col>
           </v-row>
@@ -45,7 +44,7 @@
               <v-row>
                 <v-col cols="12" class="pa-1">
                   <!-- Address -->
-                  <v-text-field v-model="formData.address" label="Address" v-bind="customProps" outlined />
+                  <v-text-field v-model="formData.address" label="Address" v-bind="customProps" />
                 </v-col>
               </v-row>
             </v-col>
@@ -53,7 +52,7 @@
               <v-row>
                 <v-col cols="12" class="pa-1">
                   <!-- City, Country -->
-                  <v-text-field v-model="formData.location" label="City, Country" v-bind="customProps" outlined />
+                  <v-text-field v-model="formData.location" label="City, Country" v-bind="customProps" />
                 </v-col>
               </v-row>
             </v-col>
@@ -63,7 +62,7 @@
               <v-row>
                 <v-col cols="12" class="pa-1">
                   <!-- Email -->
-                  <v-text-field v-model="formData.email" label="Email" v-bind="customProps" outlined />
+                  <v-text-field v-model="formData.email" label="Email" v-bind="customProps" />
                 </v-col>
               </v-row>
             </v-col>
@@ -71,7 +70,7 @@
               <v-row>
                 <v-col cols="12" class="pa-1">
                   <!-- Phone -->
-                  <v-text-field v-model="formData.phone" label="Phone" v-bind="customProps" outlined />
+                  <v-text-field v-model="formData.phone" label="Phone" v-bind="customProps" />
                 </v-col>
               </v-row>
             </v-col>
@@ -79,6 +78,36 @@
         </v-col>
       </v-row>
 
+      <v-row v-for="(q, i) in joiningQuestions" :key="`joining-question-${i}`">
+        <v-col cols="8">
+          <v-text-field
+            v-model="joiningQuestions[i].label"
+            v-bind="customProps"
+          />
+        </v-col>
+        <v-col cols="3">
+          <v-select
+            v-model="joiningQuestions[i].type"
+            label="Form Field Type"
+            :items="['Small Text Box', 'Large Text Box']"
+            outlined
+            :menu-props="{light: true}"
+          />
+        </v-col>
+        <v-col cols="1">
+          <v-btn @click="removeQuestion(i)" icon>
+            <v-icon light > mdi-delete </v-icon>
+          </v-btn>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col cols="4">
+          <v-row @click="addQuestion" class="pl-5">
+            <!-- <v-icon small>mdi-plus</v-icon> -->
+              <AddButton size="20px" iconClass="pr-3" label="Add a joining question"  justify="start"/>
+          </v-row>
+        </v-col>
+      </v-row>
     </v-col>
   </v-form>
 </template>
@@ -87,17 +116,17 @@
 import Avatar from '@/components/Avatar.vue'
 import ImagePicker from '@/components/ImagePicker.vue'
 
+import AddButton from '@/components/button/AddButton.vue'
+
 export default {
   name: 'CommunityForm',
   components: {
     Avatar,
-    ImagePicker
+    ImagePicker,
+    AddButton
   },
   props: {
-    profile: {
-      type: Object,
-      required: true
-    },
+    formData: Object,
     readonly: {
       type: Boolean,
       default: false
@@ -109,12 +138,13 @@ export default {
   },
   data () {
     return {
-      formData: this.profile,
       form: {
         valid: true,
         showDescription: false
       },
-      selectedGender: ''
+      selectedGender: '',
+      showJoiningQuestions: false,
+      joiningQuestions: []
     }
   },
   watch: {
@@ -136,12 +166,22 @@ export default {
         flat: this.readonly,
         hideDetails: true,
         placeholder: ' ',
-        class: this.readonly ? 'custom' : ''
+        class: this.readonly ? 'custom' : '',
+        outlined: true
       }
     }
   },
   methods: {
-
+    addQuestion () {
+      this.joiningQuestions.push({ label: null, type: null })
+    },
+    // removeAltName (altName, index) {
+    //   this.formData.altNames.currentState.splice(index, 1)
+    //   this.formData.altNames.remove.push(altName)
+    // },
+    removeQuestion (index) {
+      this.joiningQuestions.splice(index, 1)
+    }
   }
 }
 </script>
