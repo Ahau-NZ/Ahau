@@ -36,7 +36,7 @@ const mutations = {
       state.alert.settings = {
         show: false,
         message: null,
-        color: ''
+        color: null
       }
     }, delay)
   }

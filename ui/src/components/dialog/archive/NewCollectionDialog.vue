@@ -1,111 +1,116 @@
 <template>
-  <div>
-    <Dialog :show="show" :title="title" width="70%" :goBack="close" enableMenu
-      @submit="submit"
-      @close="close"
-    >
-      <template v-slot:content>
-        <CollectionForm ref="collectionForm" :view.sync="formData"/>
-      </template>
-    </Dialog>
-  </div>
+  <Dialog :show="show" :title="title" width="55vw" :goBack="close" enableMenu
+    @submit="submit"
+    @close="close"
+  >
+    <!-- FORM -->
+    <template v-slot:content>
+      <CollectionForm ref="collectionForm" :formData.sync="formData"/>
+      <v-col align="center">
+        <v-btn v-if="editing" text @click="$emit('delete')">
+          Delete this Collection
+          <v-icon class="pl-2">mdi-delete</v-icon>
+        </v-btn>
+      </v-col>
+    </template>
+
+    <template v-if="access" v-slot:before-actions>
+      <AccessButton :access="access" @access="updateAccess" :disabled="editing" />
+    </template>
+  </Dialog>
 </template>
 
 <script>
-import pick from 'lodash.pick'
-import isEmpty from 'lodash.isempty'
 
 import Dialog from '@/components/dialog/Dialog.vue'
-import CollectionForm from '@/components/collection-form/CollectionForm.vue'
+import CollectionForm from '@/components/archive/CollectionForm.vue'
+import AccessButton from '@/components/button/AccessButton.vue'
 
-const EMPTY_COLLECTION = {
-  name: '',
-  description: '',
-  mode: 'descendants',
-  focus: 'self',
-  image: null
-}
+import { mapGetters, mapActions, mapMutations } from 'vuex'
 
-const PERMITTED_COLLECTION_ATTRS = [
-  'name',
-  'description',
-  'mode',
-  'focus',
-  'image'
-]
-
-function setDefaultCollection (whakapapa) {
-  return {
-    name: whakapapa.name,
-    description: whakapapa.description,
-    mode: whakapapa.mode,
-    focus: whakapapa.focus,
-    image: whakapapa.image
-  }
-}
-
-function collectionSubmission (newCollection) {
-  var output = {}
-  var collection = pick(newCollection, [...PERMITTED_COLLECTION_ATTRS])
-  Object.entries(collection).forEach(([key, value]) => {
-    if (!isEmpty(collection[key])) {
-      output[key] = value
-    }
-  })
-  return Object.assign({}, output)
-}
+import { EMPTY_COLLECTION, setDefaultCollection } from '@/lib/collection-helpers.js'
+import { getObjectChanges } from '@/lib/get-object-changes.js'
+import mapProfileMixins from '@/mixins/profile-mixins.js'
 
 export default {
   name: 'NewCollectionDialog',
   components: {
     Dialog,
-    CollectionForm
+    CollectionForm,
+    AccessButton
   },
   props: {
+    show: { type: Boolean, required: true },
+    collection: { type: Object, default () { return EMPTY_COLLECTION } },
     title: String,
-    show: {
-      type: Boolean,
-      required: true
-    }
+    editing: Boolean
   },
   data () {
     return {
-      helpertext: false,
-      formData: setDefaultCollection(EMPTY_COLLECTION)
+      formData: setDefaultCollection(this.collection),
+      access: null
+    }
+  },
+  mixins: [
+    mapProfileMixins({
+      mapApollo: ['tribe']
+    })
+  ],
+  watch: {
+    tribe: {
+      deep: true,
+      immediate: true,
+      handler (tribe, oldTribe) {
+        if (!tribe || this.whoami.personal.groupId === this.$route.params.tribeId) {
+          this.access = { isPersonalGroup: true, groupId: this.whoami.personal.groupId, ...this.whoami.personal.profile }
+          return
+        }
+
+        this.access = {
+          ...tribe.private.length > 0
+            ? tribe.private[0]
+            : tribe.public[0],
+          groupId: tribe.id
+        }
+
+        this.setCurrentAccess(this.access)
+      }
     }
   },
   computed: {
+    ...mapGetters(['whoami']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     }
   },
-  watch: {
-    formData: {
-      handler (newVal) {
-      },
-      deep: true
-    }
-  },
   methods: {
+    ...mapMutations(['setCurrentAccess']),
+    ...mapActions(['setDialog']),
+    updateAccess ($event) {
+      this.access = $event
+      this.setCurrentAccess(this.access)
+    },
     close () {
-      this.formData = setDefaultCollection(EMPTY_COLLECTION)
-      this.$refs.collectionForm.$refs.form.reset()
+      this.formData = setDefaultCollection(this.collection)
       this.$emit('close')
     },
     submit () {
-      if (!this.$refs.collectionForm.$refs.form.validate()) {
-        console.error('not validated')
-        return
+      var output = {}
+
+      if (this.editing) {
+        output = {
+          id: this.collection.id,
+          ...getObjectChanges(setDefaultCollection(this.collection), this.formData)
+        }
+      } else {
+        output = {
+          ...getObjectChanges(setDefaultCollection(EMPTY_COLLECTION), this.formData),
+          recps: [this.access.groupId]
+        }
       }
-      const output = collectionSubmission(this.formData)
-      const newOutput = {
-        ...output
-      }
-      this.$emit('submit', newOutput)
+
+      this.$emit('submit', output)
       this.close()
-    },
-    setFormData (collection) {
-      this.formData = collection
     }
   }
 }
