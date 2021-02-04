@@ -2,11 +2,7 @@ import gql from 'graphql-tag'
 import pick from 'lodash.pick'
 import clone from 'lodash.clonedeep'
 
-import { PUBLIC_PROFILE_FRAGMENT, AUTHOR_FRAGMENT } from '@/lib/person-helpers'
-import { createProvider } from '@/plugins/vue-apollo'
-
-const apolloProvider = createProvider()
-const apolloClient = apolloProvider.defaultClient
+import { PUBLIC_PROFILE_FRAGMENT, AUTHOR_FRAGMENT } from './person-helpers'
 
 export const EMPTY_COMMUNITY = {
   type: 'community',
@@ -296,20 +292,6 @@ export const getCommunity = id => ({
   variables: { id: id },
   fetchPolicy: 'no-cache'
 })
-
-// TODO: figure out how to manage query in vue vs in js
-// should this file export mutations or results
-export async function callGetTribe (profileId) {
-  const result = await apolloClient.query(getTribes)
-  if (result.errors) {
-    console.error('Failed to to get Tribes')
-    console.error(result.errors)
-  } else {
-    const tribes = result.data.tribes.filter(tribe => tribe.private.length > 0)
-    const tribe = tribes.find(tribe => tribe.private[0].id === profileId)
-    return tribe
-  }
-}
 
 export const getTribe = ({
   query: gql`

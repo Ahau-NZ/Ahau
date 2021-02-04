@@ -54,7 +54,7 @@
           <!-- Phone -->
           <v-text-field v-model="formData.phone" label="Phone" v-bind="customProps" />
         </v-col>
-        <v-col cols="12" v-if="!allowJoiningQuestions" >
+        <v-col cols="12" v-if="!allowJoiningQuestions">
           <v-checkbox v-model="allowJoiningQuestions" label="Add questions to ask joining members?"/>
         </v-col>
         <v-col v-else>
@@ -67,10 +67,16 @@
                 v-model="joiningQuestions[i].label"
                 v-bind="customProps"
                 :label="`Question ${i + 1}`"
+                auto-focus
+                @blur="checkRemovalNeeded(i)"
               />
             </v-col>
-            <v-col cols="12">
-              <AddButton label="Add a question" @click="addQuestionField"/>
+            <v-col cols="12" v-if="!disableAddQuestion">
+              <v-row>
+                <v-spacer/>
+                <AddButton label="Add a question" @click="addQuestionField" :disabled="disableAddQuestion"/>
+                <v-spacer/>
+              </v-row>
             </v-col>
           </v-row>
         </v-col>
@@ -109,6 +115,18 @@ export default {
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
+    currentQuestion () {
+      if (this.joiningQuestions.length === 0) return null
+
+      return this.joiningQuestions[this.joiningQuestions.length - 1]
+    },
+    disableAddQuestion () {
+      if (!this.currentQuestion) return false
+
+      if (this.currentQuestion.label === '') return true
+
+      return false
+    },
     customProps () {
       return {
         hideDetails: true,
@@ -119,7 +137,12 @@ export default {
   },
   methods: {
     addQuestionField () {
+      if (this.disableAddQuestion) return
+
       this.joiningQuestions.push({ label: '', type: 'input' })
+    },
+    checkRemovalNeeded (i) {
+      if (this.joiningQuestions[i].label === '') this.joiningQuestions.splice(i, 1)
     }
   }
 }
