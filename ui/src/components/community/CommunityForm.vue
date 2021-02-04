@@ -62,9 +62,9 @@
             <v-col cols="12">
               Member Joining Questions
             </v-col>
-            <v-col cols="12" sm="12" v-for="(question, i) in joiningQuestions" :key="`j-q-${i}`" class="pa-1">
+            <v-col cols="12" sm="12" v-for="(question, i) in formData.joiningQuestions" :key="`j-q-${i}`" class="pa-1, mt-4">
               <v-text-field
-                v-model="joiningQuestions[i].label"
+                v-model="formData.joiningQuestions[i].label"
                 v-bind="customProps"
                 :label="`Question ${i + 1}`"
                 auto-focus
@@ -102,13 +102,19 @@ export default {
   },
   data () {
     return {
-      allowJoiningQuestions: false,
-      joiningQuestions: []
+      allowJoiningQuestions: false
     }
   },
   watch: {
+    'formData.joiningQuestions': {
+      deep: true,
+      immediate: true,
+      handler (joiningQuestions) {
+        if (joiningQuestions.length > 0) this.allowJoiningQuestions = true
+      }
+    },
     allowJoiningQuestions (allowed) {
-      if (!allowed) this.joiningQuestions = [] // clear the questions
+      if (!allowed) this.formData.joiningQuestions = [] // clear the questions
     }
   },
   computed: {
@@ -116,9 +122,9 @@ export default {
       return this.$vuetify.breakpoint.xs
     },
     currentQuestion () {
-      if (this.joiningQuestions.length === 0) return null
+      if (this.formData.joiningQuestions.length === 0) return null
 
-      return this.joiningQuestions[this.joiningQuestions.length - 1]
+      return this.formData.joiningQuestions[this.formData.joiningQuestions.length - 1]
     },
     disableAddQuestion () {
       if (!this.currentQuestion) return false
@@ -139,10 +145,10 @@ export default {
     addQuestionField () {
       if (this.disableAddQuestion) return
 
-      this.joiningQuestions.push({ label: '', type: 'input' })
+      this.formData.joiningQuestions.push({ label: '', type: 'input' })
     },
     checkRemovalNeeded (i) {
-      if (this.joiningQuestions[i].label === '') this.joiningQuestions.splice(i, 1)
+      if (this.formData.joiningQuestions[i].label === '') this.formData.joiningQuestions.splice(i, 1)
     }
   }
 }

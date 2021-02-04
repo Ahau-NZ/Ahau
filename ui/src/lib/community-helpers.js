@@ -14,7 +14,8 @@ export const EMPTY_COMMUNITY = {
   location: null,
   address: null,
   email: null,
-  phone: null
+  phone: null,
+  joiningQuestions: []
 }
 
 export function setDefaultCommunity (newCommunity) {
@@ -29,7 +30,8 @@ export function setDefaultCommunity (newCommunity) {
     location: community.location,
     address: community.address,
     email: community.email,
-    phone: community.phone
+    phone: community.phone,
+    joiningQuestions: community.joiningQuestions
   }
 }
 
@@ -46,6 +48,7 @@ export const PERMITTED_COMMUNITY_ATTRS = [
   'location',
   'tombstone',
   'tiaki',
+  'joiningQuestions',
   // private only attrs
   'address',
   'recps'
