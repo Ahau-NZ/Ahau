@@ -31,9 +31,10 @@
       </v-col>
     </v-row>
     <v-spacer v-if="!mobile && !isWhakapapaShow" style="height:200px"></v-spacer>
-    <EditCommunityDialog
+    <NewCommunityDialog
       v-if="dialog === 'edit-community'"
       :show="dialog === 'edit-community'"
+      editing
       :title="`Edit ${profile.preferredName}`"
       @delete="dialog = 'delete-community'"
       @submit="updateCommunity"
@@ -65,7 +66,7 @@ import Header from '@/components/profile/Header.vue'
 import EditProfileButton from '@/components/button/EditProfileButton.vue'
 import mapProfileMixins from '@/mixins/profile-mixins.js'
 
-import EditCommunityDialog from '@/components/dialog/community/EditCommunityDialog.vue'
+import NewCommunityDialog from '@/components/dialog/community/NewCommunityDialog.vue'
 import DeleteCommunityDialog from '@/components/dialog/community/DeleteCommunityDialog.vue'
 import EditNodeDialog from '@/components/dialog/profile/EditNodeDialog.vue'
 import { updateTribe, deleteTribe, getMembers, getTribalProfile } from '@/lib/community-helpers.js'
@@ -90,7 +91,7 @@ export default {
     SideNavMenu,
     Header,
     EditProfileButton,
-    EditCommunityDialog,
+    NewCommunityDialog,
     DeleteCommunityDialog,
     EditNodeDialog
   },

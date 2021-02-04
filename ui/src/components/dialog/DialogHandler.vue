@@ -27,8 +27,7 @@
       v-if="isActive('new-community')"
       :show="isActive('new-community')"
       :title="`Ko Wai Mātou ---- Create New Community`"
-      :type="dialogType"
-      @create="setupNewCommunity($event)"
+      @submit="setupNewCommunity($event)"
       @close="close"
     />
     <NewNodeDialog
