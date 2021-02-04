@@ -136,23 +136,16 @@
                     <img ref="otherImg" :src="require('@/assets/diverse-outlined.svg')" :class="mobile ? 'gender-image-mobile':'gender-image'">
                   </div>
                 </v-col>
-
-                <!-- <v-col  v-if="!readonly || formData.gender === 'other'" cols="6" class="pl-10 py-0">
-                  <v-checkbox v-model="formData.gender"
-                    value="other"
-                    label="other" :hide-details="true"
-                    v-bind="customProps"
-                    outlined
-                  />
-                </v-col> -->
-                <v-col  v-if="!readonly || formData.gender === 'unknown'" cols="12" class="pa-10 py-0">
-                  <v-checkbox v-model="formData.gender"
+                <div class="gender-checkbox-unknown">
+                  <v-col  v-if="!readonly || formData.gender === 'unknown'" cols="3" class="pa-10 py-0">
+                    <v-checkbox v-model="formData.gender"
                     value="unknown"
-                    label="unknown" :hide-details="true"
+                    label="Unknown" :hide-details="true"
                     v-bind="customProps"
                     outlined
-                  />
-                </v-col>
+                    />
+                  </v-col>
+                </div>
               </v-row>
             </v-col>
       </v-row>
@@ -547,6 +540,7 @@ export default {
   .gender-button-row {
     width: 100%;
     margin: 0px;
+    padding-bottom: 40px;
 
     .gender-button {
       width: auto;
@@ -583,6 +577,10 @@ export default {
         }
       }
     }
+
+    .gender-checkbox-unknown {
+        padding: 40px 0px;
+      }
   }
 
   /* grey circle outline with plus */
