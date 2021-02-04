@@ -130,10 +130,10 @@
                     <img ref="wahineImg" :src="require('@/assets/wahine-outlined.svg')" :class="mobile ? 'gender-image-mobile':'gender-image'">
                   </div>
                 </v-col>
-                <!-- OTHER -->
+                <!-- DIVERSE -->
                 <v-col class="pa-0">
                   <div class="gender-button" @click="updateSelectedGender('other')">
-                    <img ref="diverseImg" :src="require('@/assets/diverse-outlined.svg')" :class="mobile ? 'gender-image-mobile':'gender-image'">
+                    <img ref="otherImg" :src="require('@/assets/diverse-outlined.svg')" :class="mobile ? 'gender-image-mobile':'gender-image'">
                   </div>
                 </v-col>
 
@@ -453,6 +453,7 @@ export default {
       // reset images to outlined
       this.$refs.taneImg.src = require('@/assets/tane-outlined.svg')
       this.$refs.wahineImg.src = require('@/assets/wahine-outlined.svg')
+      this.$refs.otherImg.src = require('@/assets/diverse-outlined.svg')
       // hightlight selected image
       this.genderSelected = genderClicked
       if (this.genderSelected === 'male') {
@@ -462,7 +463,7 @@ export default {
         this.$refs.wahineImg.src = require('@/assets/wahine.svg')
       }
       if (this.genderSelected === 'other') {
-        // this.$refs.otherImg.src = require('@/assets/other.svg') Blake TODO: get other image
+        this.$refs.otherImg.src = require('@/assets/diverse.svg')
       }
       // update the gender
       this.formData.gender = this.genderSelected
