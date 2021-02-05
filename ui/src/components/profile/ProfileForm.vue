@@ -147,6 +147,17 @@
                   </v-col>
                 </div>
               </v-row>
+              <v-row class="gender-label-row">
+                <v-col class="pa-0">
+                  <p class="gender-label-text text-field">Tāne</p>
+                </v-col>
+                <v-col class="pa-0">
+                  <p class="gender-label-text text-field">Wāhine</p>
+                </v-col>
+                <v-col class="pa-0">
+                  <p class="gender-label-text text-field">Other</p>
+                </v-col>
+              </v-row>
             </v-col>
       </v-row>
 
@@ -540,7 +551,6 @@ export default {
   .gender-button-row {
     width: 100%;
     margin: 0px;
-    padding-bottom: 40px;
 
     .gender-button {
       width: auto;
@@ -582,6 +592,16 @@ export default {
         padding: 40px 0px;
       }
   }
+
+    .gender-label-row {
+      width: 75%;
+      margin: 0px;
+      padding-top: 5px;
+
+      .gender-label-text {
+        text-align: center;
+      }
+    }
 
   /* grey circle outline with plus */
   .avatarPlaceholder {
