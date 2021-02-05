@@ -189,9 +189,7 @@
                   />
               </slot>
             </v-col>
-          </v-row>
           <!-- Alt names -->
-          <v-row>
             <template>
               <v-col v-for="(altName, index) in formData.altNames.currentState"
                 :key="`value-alt-name-${index}`"
