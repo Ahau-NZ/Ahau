@@ -89,6 +89,7 @@ export default {
       this.formData.tiaki = [this.whoami.public.profile]
       this.formData.creators = []
       this.formData.relatedRecords = []
+      this.formData.collections = []
     },
     access (access, prevAccess) {
       if (!access || this.editing) return
@@ -103,6 +104,7 @@ export default {
       this.formData.tiaki = [this.whoami.public.profile]
       this.formData.creators = []
       this.formData.relatedRecords = []
+      this.formData.collections = []
     }
   },
   computed: {

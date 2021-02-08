@@ -104,6 +104,7 @@ const apollo = {
 const methods = {
   async getTribe (id) {
     try {
+      if (!this.whoami) throw new Error("the getTribe methods needs whoami. Use vuex.mapGetters(['whoami')")
       if (id === this.whoami.personal.groupId) {
         return {
           groupId: this.whoami.personal.groupId,

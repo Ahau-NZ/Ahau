@@ -63,9 +63,9 @@ import TimelineCard from '@/components/story/TimelineCard'
 import StoryCard from '@/components/archive/StoryCard.vue'
 import isEmpty from 'lodash.isempty'
 
-import { mapGetters, mapActions, mapMutations } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 
-import mapStoryMixins from '@/mixins/story-mixins.js'
+import { saveStoryMixin, storiesApolloMixin } from '@/mixins/story-mixins.js'
 import mapProfileMixins from '@/mixins/profile-mixins.js'
 
 export default {
@@ -75,10 +75,8 @@ export default {
     StoryCard
   },
   mixins: [
-    mapStoryMixins({
-      mapMethods: ['saveStory', 'processLinks', 'saveArtefact', 'getStory', 'saveLink', 'removeLink'],
-      mapApollo: ['stories']
-    }),
+    saveStoryMixin,
+    storiesApolloMixin,
     mapProfileMixins({
       mapApollo: ['profile']
     })
@@ -114,16 +112,9 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['setStory']),
-    ...mapActions(['toggleShowStory', 'setDialog', 'getAllStories']),
+    ...mapActions(['setDialog']),
     updateDialog (dialog) {
       this.$emit('setDialog', dialog)
-    },
-
-    toggleStory (story) {
-      this.setStory(story)
-      this.toggleShowStory()
-      this.setDialog(null)
     }
   }
 }
