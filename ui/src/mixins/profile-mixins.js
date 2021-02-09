@@ -2,6 +2,7 @@ import { getProfile } from '@/lib/person-helpers.js'
 import { getTribe } from '@/lib/community-helpers.js'
 import tree from '@/lib/tree-helpers.js'
 import gql from 'graphql-tag'
+import { getCommunity } from '../lib/community-helpers'
 
 export default function mapProfileMixins ({ mapMethods, mapApollo }) {
   var customMixin = {}
@@ -26,10 +27,17 @@ export default function mapProfileMixins ({ mapMethods, mapApollo }) {
 
 const apollo = {
   profile () {
+    // get the type of profile
+    const type = this.$route.name.split('/')[0]
+
+    const query = (type === 'community')
+      ? getCommunity
+      : getProfile
+
     return {
-      ...getProfile,
+      ...query,
       skip () {
-        return this.$route.name === 'tribe' || this.$route.name === 'login' // skip calling this immediately if on the tribe page
+        return query === {} || this.$route.name === 'tribe' || this.$route.name === 'login' // skip calling this immediately if on the tribe page
       },
       /*
         NOTE: when variables is a function, it is reactive, so when the route profileId changes,
@@ -45,6 +53,8 @@ const apollo = {
         console.error(err)
       },
       update (data) {
+        if (type === 'community') return data.community
+
         var profile = data.person
 
         if (profile.children) {

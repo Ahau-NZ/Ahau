@@ -66,15 +66,16 @@
               <v-text-field
                 v-model="formData.joiningQuestions[i].label"
                 v-bind="customProps"
+                append-icon="mdi-delete"
+                @click:append="removeJoiningQuestion(i)"
                 :label="`Question ${i + 1}`"
                 auto-focus
-                @blur="checkRemovalNeeded(i)"
               />
             </v-col>
-            <v-col cols="12" v-if="!disableAddQuestion">
+            <v-col cols="12">
               <v-row>
                 <v-spacer/>
-                <AddButton label="Add a question" @click="addQuestionField" :disabled="disableAddQuestion"/>
+                <AddButton label="Add a question" @click="addQuestionField"/>
                 <v-spacer/>
               </v-row>
             </v-col>
@@ -110,28 +111,14 @@ export default {
       deep: true,
       immediate: true,
       handler (joiningQuestions) {
-        if (joiningQuestions.length > 0) this.allowJoiningQuestions = true
+        if (joiningQuestions && joiningQuestions.length > 0) this.allowJoiningQuestions = true
+        else this.allowJoiningQuestions = false
       }
-    },
-    allowJoiningQuestions (allowed) {
-      if (!allowed) this.formData.joiningQuestions = [] // clear the questions
     }
   },
   computed: {
     mobile () {
       return this.$vuetify.breakpoint.xs
-    },
-    currentQuestion () {
-      if (this.formData.joiningQuestions.length === 0) return null
-
-      return this.formData.joiningQuestions[this.formData.joiningQuestions.length - 1]
-    },
-    disableAddQuestion () {
-      if (!this.currentQuestion) return false
-
-      if (this.currentQuestion.label === '') return true
-
-      return false
     },
     customProps () {
       return {
@@ -143,12 +130,10 @@ export default {
   },
   methods: {
     addQuestionField () {
-      if (this.disableAddQuestion) return
-
       this.formData.joiningQuestions.push({ label: '', type: 'input' })
     },
-    checkRemovalNeeded (i) {
-      if (this.formData.joiningQuestions[i].label === '') this.formData.joiningQuestions.splice(i, 1)
+    removeJoiningQuestion (index) {
+      this.formData.joiningQuestions.splice(index, 1)
     }
   }
 }

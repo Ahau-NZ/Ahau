@@ -66,7 +66,8 @@ export const PERMITTED_PUBLIC_COMMUNITY_ATTRS = [
   'phone',
   'location',
   'tombstone',
-  'tiaki'
+  'tiaki',
+  'joiningQuestions'
 ]
 
 export const PERMITTED_COMMUNITY_LINK_ATTRS = [
@@ -76,8 +77,6 @@ export const PERMITTED_COMMUNITY_LINK_ATTRS = [
   'allowPublic'
 ]
 
-// TODO: finish community-helper
-// eg: getCommunity() *single community
 export const getMembers = id => ({
   query: gql`
     ${PUBLIC_PROFILE_FRAGMENT}
@@ -220,6 +219,10 @@ export const getTribes = {
           canEdit
           recps
           location
+          joiningQuestions {
+            type
+            label
+          }
           tiaki {
             ...PublicProfileFragment
           }
@@ -229,6 +232,7 @@ export const getTribes = {
               ...PublicProfileFragment
             }
           }
+          
         }
         private {
           id
@@ -241,6 +245,10 @@ export const getTribes = {
           phone
           location
           canEdit
+          joiningQuestions {
+            type
+            label
+          }
           recps
           tiaki {
             ...PublicProfileFragment
@@ -268,11 +276,12 @@ function prune (input, attrs) {
   return _input
 }
 
-export const getCommunity = id => ({
+export const getCommunity = ({
   query: gql`
     ${PUBLIC_PROFILE_FRAGMENT}
+    ${AUTHOR_FRAGMENT}
     query($id: String!) {
-      community {
+      community(id: $id) {
         id
         preferredName
         description
@@ -286,13 +295,23 @@ export const getCommunity = id => ({
         tombstone {
           date
         }
+        joiningQuestions {
+          type
+          label
+        }
+        canEdit
         tiaki {
           ...PublicProfileFragment
+        }
+        authors {
+          ...AuthorFragment
+          profile {
+            ...PublicProfileFragment
+          }
         }
       }
     }
   `,
-  variables: { id: id },
   fetchPolicy: 'no-cache'
 })
 

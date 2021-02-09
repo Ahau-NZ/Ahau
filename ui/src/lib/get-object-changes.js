@@ -26,7 +26,7 @@ export function getObjectChanges (initialValue, updatedValue) {
         case Array.isArray(updatedValue[key]):
           // different use case for joiningQuestions
           if (key === 'joiningQuestions') {
-            changes[key] = updatedValue[key]
+            changes[key] = updatedValue[key].map(q => ({ label: q.label, type: q.type }))
             break
           }
           // intiate the array to add, remove fields
