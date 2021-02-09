@@ -736,7 +736,6 @@ export default {
   &>.container {
     position: relative;
     max-height:98vh;
-
     &>.header {
       position: absolute;
       top: 70px;
@@ -822,6 +821,7 @@ h1 {
 .whakapapa-table {
   overflow: auto;
   width: 100%;
+  padding-top: 50px;
 }
 
 </style>
