@@ -4,7 +4,7 @@
       <line x1="60" y1="55" :x2="tableWidth" y2="55" style="stroke-width: 1; stroke: lightgrey;"/>
       <g class="headers" v-for="column in columns" :key="column.label">
         <text :transform="`translate(${column.x + 10} ${50})`">
-          {{ computeLabel(column.label) }}
+          {{ column.label }}
         </text>
         <line :x1="column.x" y1="55" :x2="column.x" :y2="tableHeight" style="stroke-width: 1; stroke: lightgrey;"/>
       </g>
