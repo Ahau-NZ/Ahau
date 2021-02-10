@@ -411,6 +411,7 @@ export default {
       deep: true,
       immediate: true,
       handler (newVal, oldVal) {
+        console.log('profile value: ', newVal.buriedLocation)
         this.formData = newVal
       }
     },
