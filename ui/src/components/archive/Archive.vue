@@ -1,104 +1,71 @@
 <template>
   <div>
     <div class="px-2">
-      <!-- VIEW STORY OVERLAY -->
-      <div :class="{ 'showOverlay': showStory && !mobile }"></div>
-      <v-row v-if="!showStory" class="top-margin mb-10">
-        <v-col cols="10" class="headliner black--text pa-0 pl-4 pt-2">
-          Archive records
+      <div v-if="showStory" :class="{ 'showOverlay': showStory && !mobile }"></div>
+      <v-row v-show="!showStory" class="top-margin">
+        <v-col cols="10" class="headliner black--text pa-0 pl-4 pt-2 pb-5">
+          Archive
           <v-icon color="blue-grey" light @click="toggleArchiveHelper" class="infoButton">mdi-information</v-icon>
         </v-col>
-        <!-- <v-col align="right" class="pa-0">
-          <v-btn outlined flat :medium="!mobile" :x-small="mobile" :class="mobile ? 'addBtnMob' : 'addBtn'" class="my-2" fab color="white" @click.stop="openContextMenu($event)">
-            <v-icon :large="!mobile" class="black--text">mdi-plus</v-icon>
-          </v-btn>
-        </v-col> -->
-          <!-- </v-row> -->
-          <!-- TODO: Add Collections -->
-          <!-- <v-col cols="12" md="10" sm="10" :class="!mobile ? 'pl-12 my-6' : 'py-0 ma-0'" align="start">
-          <h1 class="title black--text ">Collections</h1>
-        </v-col> -->
-          <v-col>
-            <!-- TODO: Search records -->
-            <!-- <v-btn :class="mobile ? 'searchBtnMob' : 'searchBtn'" :small="!mobile" :x-small="mobile" class="my-2" fab flat color="white" @click="editProfile()">
-            <v-icon small class="black--text">mdi-magnify</v-icon>
-          </v-btn>            -->
-          <!-- <v-btn :medium="!mobile" :x-small="mobile" :class="mobile ? 'addBtnMob' : 'addBtn'" class="my-2" fab color="white" @click.stop="openContextMenu($event)"> -->
-          <BigAddButton @click="dialog = 'new-story'" />
+        <v-col v-show="!showStory">
+          <BigAddButton @click.native.stop="openContextMenu($event)" />
         </v-col>
       </v-row>
-      <div>
-        <v-row v-if="stories && stories.length > 0">
-            <v-col cols="12" xs="12" sm="12" md="9" :class="!showStory ? '':'pa-0'">
-              <!-- <v-row>
-                <CollectionGroup :collections="collections" />
-              </v-row>
-              <v-divider class="mt-6 mb-8" light></v-divider> -->
-              <div v-if="!showStory">
-                <v-row v-for="(story, i) in stories" :key="`story-${i}-id-${story.id}`">
-                  <StoryCard @updateDialog="updateDialog($event)" @toggleStory="toggleStory($event)" :story="story" @openProfile="openProfile" />
-                </v-row>
-              </div>
-              <div v-else>
-                <v-row :class="mobile ? 'pa-0': 'px-6 top-margin'">
-                  <StoryCard
-                    :fullStory="true"
-                    :story.sync="currentStory"
-                    @updateDialog="updateDialog($event)"
-                    @submit="saveStory($event)"
-                    @close="toggleStory($event)"
-                    @openProfile="openProfile"
-                  />
-                </v-row>
-              </div>
-            </v-col>
-          </v-row>
-          <v-row v-else>
-            <v-col>
-              <div v-if="!stories || (stories && stories.length < 1)">
-                <div v-if="!stories">
-                  <v-card
-                    :width="mobile ? '100%' : '87%'"
-                    flat
-                    :ripple="false"
-                    light
-                    v-for="n in 4"
-                    :key="`skeleton-${n}`"
-                  >
-                    <v-skeleton-loader
-                      :width="mobile ? '100%' : '87%'"
-                      type="card, card-avatar"
-                    ></v-skeleton-loader>
-                  </v-card>
-                </div>
-                <div v-else
-                  class="px-8 subtitle-1 grey--text "
-                  :class="{ 'text-center': mobile }"
-                >
-                  No records found
-                </div>
-              </div>
-          </v-col>
-        </v-row>
-      </div>
+      <v-row>
+        <v-col cols="12">
+          <router-view :profile="profile" :stories="stories" :collections="collections"
+            @processStory="processStory"
+            :hide-collections="!allowCollections"
+          ></router-view>
+        </v-col>
+      </v-row>
       <ArchiveHelper v-if="showArchiveHelper" :show="showArchiveHelper" @close="toggleArchiveHelper" />
     </div>
+
+    <VueContext ref="menu" class="pa-4">
+    <li v-if="allowCollections">
+      <a href="#" @click.prevent="dialog = 'new-collection'" class="d-flex align-center px-4">
+        <v-icon light>mdi-folder-multiple-outline</v-icon>
+        <p class="ma-0 pl-3">Create a new collection</p>
+      </a>
+    </li>
+    <li>
+      <a href="#" @click.prevent="dialog = 'new-story'" class="d-flex align-center px-4">
+        <v-icon light>mdi-file-outline</v-icon>
+        <p class="ma-0 pl-3">Add a new story</p>
+      </a>
+    </li>
+  </VueContext>
+
     <NewRecordDialog v-if="dialog === 'new-story'" :show="dialog === 'new-story'"
       :title="`Add record to ${ profile.preferredName || 'Untitled' }'s archive`" @close="dialog = null"
-      @submit="saveStory($event)"
+      @submit="processStory"
+    />
+    <NewCollectionDialog v-if="dialog === 'new-collection'" :show="dialog === 'new-collection'"
+      :title="`Add a collection to ${ archiveTitle } archive`" @close="dialog = null"
+      @submit="processCollection"
     />
   </div>
 </template>
 
 <script>
-import StoryCard from '@/components/archive/StoryCard.vue'
-import { mapGetters, mapActions, mapMutations } from 'vuex'
+import { mapGetters, createNamespacedHelpers } from 'vuex'
 import NewRecordDialog from '@/components/dialog/archive/NewRecordDialog.vue'
+import NewCollectionDialog from '@/components/dialog/archive/NewCollectionDialog.vue'
 import BigAddButton from '@/components/button/BigAddButton.vue'
 
 // TODO: Replace with Archive Helper (doesnt exist yet)
 import ArchiveHelper from '@/components/dialog/archive/ArchiveHelper.vue'
-import mapStoryMixins from '@/mixins/story-mixins.js'
+
+import { saveStoryMixin, storiesApolloMixin } from '@/mixins/story-mixins.js'
+import mapProfileMixins from '@/mixins/profile-mixins.js'
+import { collectionsApolloMixin, saveCollectionsMixin } from '@/mixins/collection-mixins.js'
+
+import { getCollection } from '@/lib/story-helpers'
+
+import { VueContext } from 'vue-context'
+
+const { mapMutations: mapAlertMutations } = createNamespacedHelpers('alerts')
 
 export default {
   name: 'Archive',
@@ -106,34 +73,85 @@ export default {
     profile: Object
   },
   mixins: [
-    mapStoryMixins({
-      mapMethods: ['saveStory', 'processLinks', 'saveArtefact', 'getStory', 'saveLink', 'removeLink'],
-      mapApollo: ['stories']
+    saveStoryMixin,
+    storiesApolloMixin,
+    collectionsApolloMixin,
+    saveCollectionsMixin,
+    mapProfileMixins({
+      mapApollo: ['profile']
     })
   ],
   components: {
-    StoryCard,
     NewRecordDialog,
+    NewCollectionDialog,
     ArchiveHelper,
-    BigAddButton
+    BigAddButton,
+    VueContext
   },
   data () {
     return {
       stories: null,
+      collections: [],
       dialog: null,
       scrollPosition: 0,
       showArchiveHelper: false
     }
   },
   computed: {
-    ...mapGetters(['showStory', 'whoami', 'currentStory', 'showArtefact', 'storeDialog']),
+    ...mapGetters(['showStory', 'whoami', 'currentStory', 'showArtefact', 'storeDialog', 'currentAccess']),
     mobile () {
-      return this.$vuetify.breakpoint.xs
+      return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
-    topMargin () {
-      if (this.mobile && !this.showStory) return 'top-margin'
-      else if (!this.mobile) return 'mt-10'
-      return ''
+    archiveTitle () {
+      if (!this.profile || !this.profile.preferredName) return 'this'
+      return this.profile.preferredName + "'s"
+    },
+    allowCollections () {
+      // only personal or community archives will see collections
+
+      // if on personal archive
+      const isPersonal = this.$route.params.profileId === this.whoami.personal.profile.id
+      if (isPersonal) return true
+
+      // if on a community archive we're on
+      if (this.$route.name === 'community/archive') return true
+
+      // route name is person/archive
+      return false
+    }
+  },
+  methods: {
+    ...mapAlertMutations(['showAlert']),
+    toggleArchiveHelper () {
+      this.showArchiveHelper = !this.showArchiveHelper
+    },
+    openContextMenu ($event) {
+      this.$refs.menu.open($event)
+    },
+    async processCollection ($event) {
+      const { stories } = $event
+
+      try {
+        // save the collection
+        const id = await this.saveCollection($event)
+
+        // get it from the db
+        const res = await this.$apollo.query(
+          getCollection(id)
+        )
+
+        if (res.errors) throw res.errors
+
+        // save the collection-story links
+        await this.saveStoriesToCollection(id, stories)
+
+        // reload the collections and stories to reflect new links
+        this.$apollo.queries.collections.refetch({ filter: { groupId: this.$route.params.tribeId } })
+        this.$apollo.queries.stories.refetch({ filter: { groupId: this.$route.params.tribeId } })
+      } catch (err) {
+        console.error('Something went wrong while saving a new collections and/or linking stories to it', $event)
+        console.error(err)
+      }
     }
   },
   watch: {
@@ -147,25 +165,6 @@ export default {
           })
         }, 100)
       }
-    }
-  },
-  methods: {
-    ...mapMutations(['setStory']),
-    ...mapActions(['setComponent', 'toggleShowStory', 'setDialog', 'setProfileById']),
-    openProfile ($event) {
-      this.setProfileById({ id: $event.id, type: 'preview' })
-      this.setDialog({ active: 'view-edit-node', type: 'preview' })
-    },
-    toggleArchiveHelper () {
-      this.showArchiveHelper = !this.showArchiveHelper
-    },
-    toggleStory (story) {
-      this.setStory(story)
-      this.toggleShowStory()
-      this.setDialog(null)
-    },
-    openContextMenu (event) {
-      this.$refs.menu.open(event)
     }
   }
 }
@@ -221,6 +220,13 @@ export default {
 
   .headliner {
     font-size: 1em;
+    text-transform: uppercase;
+    font-weight: 400;
+    letter-spacing: 5px;
+  }
+
+  .sub-headliner {
+    font-size: 0.8em;
     text-transform: uppercase;
     font-weight: 400;
     letter-spacing: 5px;

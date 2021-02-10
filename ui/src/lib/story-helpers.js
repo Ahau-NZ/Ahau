@@ -1,17 +1,13 @@
 import gql from 'graphql-tag'
 import pick from 'lodash.pick'
 import { ARTEFACT_FRAGMENT } from './artefact-helpers'
-import { PERSON_FRAGMENT } from './person-helpers'
+import { PERSON_FRAGMENT, PUBLIC_PROFILE_FRAGMENT } from './person-helpers'
 import clone from 'lodash.clonedeep'
+import { COLLECTION_FRAGMENT } from './collection-helpers'
 
 export function setDefaultStory (newStory) {
   var story = clone(newStory)
-
-  var artefacts = story.artefacts
-  var mentions = story.mentions
-  var contributors = story.contributors
-  var creators = story.creators
-  var relatedRecords = story.relatedRecords
+  var { artefacts, mentions, contributors, creators, relatedRecords, collections } = story
 
   function mapLinks (link, entity) {
     return {
@@ -40,6 +36,10 @@ export function setDefaultStory (newStory) {
     relatedRecords = relatedRecords.map(d => mapLinks(d, 'story'))
   }
 
+  if (collections && collections.length > 0) {
+    collections = collections.map(d => mapLinks(d, 'collection'))
+  }
+
   return {
     id: story.id,
     title: story.title,
@@ -59,14 +59,14 @@ export function setDefaultStory (newStory) {
 
     mentions,
     categories: story.categories,
-    collections: story.collections,
+    collections,
     // access: story.access,
     contributors,
     creators,
     protocols: story.protocols,
     relatedRecords,
     artefacts,
-    kaitiaki: story.kaitiaki
+    tiaki: story.tiaki
   }
 }
 
@@ -116,14 +116,13 @@ export const PERMITTED_STORY_ATTRS = [
   'source',
   'transcription',
   'canEdit',
-  'recps',
-  'kaitiaki{id, preferredName, avatarImage{uri}}'
+  'recps'
 ]
 
 export const PERMITTED_STORY_LINKS = [
   'mentions',
   // 'categories',
-  // 'collections',
+  'collections',
   // 'access',
   'contributors',
   // 'protocols',
@@ -135,12 +134,20 @@ export const PERMITTED_STORY_LINKS = [
 export const STORY_FRAGMENT = gql`
   fragment StoryFragment on Story {
     ${PERMITTED_STORY_ATTRS}
+    tiaki {
+      id
+      preferredName
+      avatarImage {
+        uri
+      }
+    }
   }
 `
 
 export const STORY_LINK_FRAGMENT = gql`
   ${ARTEFACT_FRAGMENT}
   ${PERSON_FRAGMENT}
+  ${COLLECTION_FRAGMENT}
   fragment StoryLinkFragment on Story {
     artefacts: artefactLinks {
       linkId
@@ -178,8 +185,48 @@ export const STORY_LINK_FRAGMENT = gql`
         }
       }
     }
+    collections: collectionLinks {
+      linkId
+      collection {
+        ...CollectionFragment
+      }
+    }
+    tiaki {
+      ...ProfileFragment
+    }
   }
 `
+
+/*
+  WARNING: i put this in here because it uses the story fragments, for some reason when
+  i imported story-helpers.js in collection-helpers.js to use the fragments, it would throw a
+  graphql error (even just importing it!!)
+*/
+export const getCollection = id => ({
+  query: gql`
+    ${COLLECTION_FRAGMENT}
+    ${PUBLIC_PROFILE_FRAGMENT}
+    ${STORY_FRAGMENT}
+    ${STORY_LINK_FRAGMENT}
+    query ($id: ID!) {
+      collection(id: $id) {
+        ...CollectionFragment
+        tiaki {
+          ...PublicProfileFragment
+        }
+        stories: storyLinks {
+          linkId
+          story {
+            ...StoryFragment
+            ...StoryLinkFragment
+          }
+        }
+      }
+    }
+  `,
+  variables: { id },
+  fetchPolicy: 'no-cache'
+})
 
 export const getStory = id => ({
   query: gql`
@@ -238,7 +285,7 @@ export const getAllStoriesByMentions = id => ({
   fetchPolicy: 'no-cache'
 })
 
-export const DELETE_STORY = (id, date) => ({
+export const deleteStory = (id, date) => ({
   mutation: gql`
     mutation ($input: StoryInput!) {
       saveStory (input: $input)
@@ -257,7 +304,7 @@ export const saveStory = input => {
 
   input = {
     type: '*', // TODO: sort out types
-    ...pick(input, PERMITTED_STORY_ATTRS),
+    ...pick(input, [...PERMITTED_STORY_ATTRS, 'authors']),
     submissionDate
   }
   return {

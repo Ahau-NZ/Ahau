@@ -312,6 +312,9 @@ export default {
       return getWhakapapaView(this.$route.params.whakapapaId)
     }
   },
+  mounted () {
+    window.scrollTo(0, 0)
+  },
   computed: {
     ...mapGetters(['nestedWhakapapa', 'selectedProfile', 'whoami', 'loadingState']),
     isKaitiaki () {
@@ -759,11 +762,10 @@ export default {
   &>.container {
     position: relative;
     max-height:98vh;
-
     &>.header {
       position: absolute;
-      top: 80px;
-      left: 30px;
+      top: 70px;
+      left: 50px;
       /* right: 160px; */
       width: 30%;
       .col {
@@ -845,6 +847,7 @@ h1 {
 .whakapapa-table {
   overflow: auto;
   width: 100%;
+  padding-top: 50px;
 }
 
 </style>

@@ -27,8 +27,7 @@
       v-if="isActive('new-community')"
       :show="isActive('new-community')"
       :title="`Ko Wai Mātou ---- Create New Community`"
-      :type="dialogType"
-      @create="setupNewCommunity($event)"
+      @submit="setupNewCommunity($event)"
       @close="close"
     />
     <NewNodeDialog
@@ -205,7 +204,7 @@ export default {
       required: false,
       default: null,
       validator: (val) => [
-        'new-community', 'new-node', 'view-edit-node', 'delete-node', 'new-collection', 'new-story', 'edit-story', 'edit-node', 'delete-story',
+        'new-community', 'new-node', 'view-edit-node', 'delete-node', 'new-story', 'edit-story', 'edit-node', 'delete-story',
         'whakapapa-view', 'whakapapa-edit', 'whakapapa-delete', 'whakapapa-helper', 'whakapapa-table-helper', 'new-registration', 'review-registration'
       ].includes(val)
     },

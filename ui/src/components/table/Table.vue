@@ -323,7 +323,7 @@ export default {
           x: this.colWidth
         },
         {
-          label: 'Alt Name',
+          label: 'Also Known As',
           x: this.colWidth + 200
         },
         {
@@ -510,6 +510,15 @@ export default {
     },
     // Computes the label of table headers depending on whether a sort is active
     computeLabel (label) {
+      if (label === 'Also Known As') {
+        return 'Also Known As'
+      }
+      if (label === 'D.O.B') {
+        return 'D.O.B'
+      }
+      if (label === 'D.O.D') {
+        return 'D.O.D'
+      }
       if (label === 'Address') {
         return 'Address'
       }
