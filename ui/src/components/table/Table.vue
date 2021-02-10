@@ -4,7 +4,7 @@
       <line x1="60" y1="55" :x2="tableWidth" y2="55" style="stroke-width: 1; stroke: lightgrey;"/>
       <g class="headers" v-for="column in columns" :key="column.label">
         <text :transform="`translate(${column.x + 10} ${50})`">
-          {{ column.label }}
+          {{ computeLabel(column.label) }}
         </text>
         <line :x1="column.x" y1="55" :x2="column.x" :y2="tableHeight" style="stroke-width: 1; stroke: lightgrey;"/>
       </g>
@@ -285,7 +285,7 @@ export default {
           x: this.colWidth
         },
         {
-          label: 'Alt Name',
+          label: 'Also Known As',
           x: this.colWidth + 200
         },
         {
@@ -468,6 +468,15 @@ export default {
     },
     // Computes the label of table headers depending on whether a sort is active
     computeLabel (label) {
+      if (label === 'Also Known As') {
+        return 'Also Known As'
+      }
+      if (label === 'D.O.B') {
+        return 'D.O.B'
+      }
+      if (label === 'D.O.D') {
+        return 'D.O.D'
+      }
       if (label === 'Address') {
         return 'Address'
       }
