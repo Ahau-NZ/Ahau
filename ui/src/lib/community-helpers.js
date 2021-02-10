@@ -90,6 +90,37 @@ export const getMembers = id => ({
   fetchPolicy: 'no-cache'
 })
 
+export const COMMUNITY_FRAGMENT = gql`
+${PUBLIC_PROFILE_FRAGMENT}
+${AUTHOR_FRAGMENT}
+  fragment CommunityFragment on Community {
+    id
+    type
+    preferredName
+    description
+    avatarImage { uri }
+    headerImage { uri }
+    email
+    phone
+    canEdit
+    recps
+    location
+    joiningQuestions {
+      type
+      label
+    }
+    tiaki {
+      ...PublicProfileFragment
+    }
+    authors {
+      ...AuthorFragment
+      profile {
+        ...PublicProfileFragment
+      }
+    }
+  }
+`
+
 export const createGroup = () => {
   return {
     mutation: gql`
@@ -202,63 +233,15 @@ export const updateTribe = (tribe, input) => {
 
 export const getTribes = {
   query: gql`
-    ${AUTHOR_FRAGMENT}
-    ${PUBLIC_PROFILE_FRAGMENT}
+    ${COMMUNITY_FRAGMENT}
     query {
       tribes {
         id
         public {
-          id
-          type
-          preferredName
-          description
-          avatarImage { uri }
-          headerImage { uri }
-          email
-          phone
-          canEdit
-          recps
-          location
-          joiningQuestions {
-            type
-            label
-          }
-          tiaki {
-            ...PublicProfileFragment
-          }
-          authors {
-            ...AuthorFragment
-            profile {
-              ...PublicProfileFragment
-            }
-          }
-          
+          ...CommunityFragment
         }
         private {
-          id
-          type
-          preferredName
-          description
-          avatarImage { uri }
-          headerImage { uri }
-          email
-          phone
-          location
-          canEdit
-          joiningQuestions {
-            type
-            label
-          }
-          recps
-          tiaki {
-            ...PublicProfileFragment
-          }
-          authors {
-            ...AuthorFragment
-            profile {
-              ...PublicProfileFragment
-            }
-          }
+          ...CommunityFragment
         }
       }
     }
@@ -278,37 +261,10 @@ function prune (input, attrs) {
 
 export const getCommunity = ({
   query: gql`
-    ${PUBLIC_PROFILE_FRAGMENT}
-    ${AUTHOR_FRAGMENT}
+    ${COMMUNITY_FRAGMENT}
     query($id: String!) {
       community(id: $id) {
-        id
-        preferredName
-        description
-        avatarImage {
-          uri
-        }
-        description
-        headerImage {
-          uri
-        }
-        tombstone {
-          date
-        }
-        joiningQuestions {
-          type
-          label
-        }
-        canEdit
-        tiaki {
-          ...PublicProfileFragment
-        }
-        authors {
-          ...AuthorFragment
-          profile {
-            ...PublicProfileFragment
-          }
-        }
+        ...CommunityFragment
       }
     }
   `,
@@ -317,45 +273,15 @@ export const getCommunity = ({
 
 export const getTribe = ({
   query: gql`
-    ${PUBLIC_PROFILE_FRAGMENT}
+    ${COMMUNITY_FRAGMENT}
     query($id: String!) {
       tribe (id: $id){
         id 
         private {
-          id
-          preferredName
-          description
-          avatarImage {
-            uri
-          }
-          description
-          headerImage {
-            uri
-          }
-          tombstone {
-            date
-          }
-          tiaki {
-            ...PublicProfileFragment
-          }
+          ...CommunityFragment
         }
         public {
-          id
-          preferredName
-          description
-          avatarImage {
-            uri
-          }
-          description
-          headerImage {
-            uri
-          }
-          tombstone {
-            date
-          }
-          tiaki {
-            ...PublicProfileFragment
-          }
+          ...CommunityFragment
         }
       }
     }
