@@ -53,10 +53,10 @@
           <!-- Names -->
           <v-col cols="12" :sm="mobile ? '12' : '6'" class="pt-4">
             <v-row>
-              <v-col cols="12" class="pa-1"> <!-- Blake TODO: Connect with back end -->
+              <v-col cols="12" class="pa-1">
                 <slot name="search">
                   <v-text-field
-                    v-model="formData.preferredName"
+                    v-model="formData.legalName"
                     label="Full Name"
                     v-bind="customProps"
                     outlined
@@ -160,8 +160,6 @@
               </v-row>
             </v-col>
       </v-row>
-
-        <!-- Blake TODO: add padding between gender and advanced -->
         <!-- Start of advanced section -->
         <v-divider />
         <v-card-actions class="pt-2 pb-2 px-5">
@@ -258,9 +256,9 @@
                 outlined
               />
         </v-col>
-        <v-col cols="6" class="pa-1"> <!-- Blake TODO: change to date of birth in back end -->
+        <v-col cols="6" class="pa-1">
               <v-text-field
-                v-model="formData.profession"
+                v-model="formData.placeOfBirth"
                 label="Place of Birth"
                 v-bind="customProps"
                 outlined
@@ -319,13 +317,13 @@
           </v-row>
         </v-col>
       </v-row>
-      <v-row v-if="formData.deceased"> <!-- Blake TODO: Hook up fields to back end -->
+      <v-row v-if="formData.deceased">
         <v-col cols="12" :sm="mobile ? '12' : '6'">
           <!-- Place of Death -->
           <v-row>
             <v-col cols="12" class="pa-1">
                 <v-text-field
-                  v-model="formData.email"
+                  v-model="formData.placeOfDeath"
                   label="Place of Death"
                   v-bind="customProps"
                   outlined
@@ -339,7 +337,7 @@
             <v-col cols="12" class="pa-1">
               <!-- Burial Location -->
               <v-text-field
-                v-model="formData.address"
+                v-model="formData.buriedLocation"
                 label="Burial Location"
                 v-bind="customProps"
                 outlined
