@@ -57,8 +57,6 @@ export default {
         output = getObjectChanges(setDefaultCommunity(EMPTY_COMMUNITY), this.formData)
       }
 
-      console.log('output', output)
-
       this.$emit('submit', output)
       this.close()
     },
