@@ -14,66 +14,76 @@
             <!-- Collection title-->
             <!-- order (title first if not mobile) -->
             <v-col :order="!mobile ? 2 : 1" cols="12" xs="12" sm="12" md="9">
-                <v-row class="align-center pl-3">
-                  <h3 class="blue-grey--text text--darken-4">
-                    {{ collection.name }}
-                  </h3>
-                  <div v-if="!mobile && collection && collection.canEdit">
-                    <v-tooltip top>
-                      <template v-slot:activator="{ on }">
-                        <v-btn
-                          v-on="on"
-                          @click.stop="dialog = 'edit-collection'"
-                          icon
-                          class="pl-5"
-                        >
-                          <v-icon class="blue--text">mdi-pencil</v-icon>
-                        </v-btn>
-                      </template>
-                      <span>Edit Collection</span>
-                    </v-tooltip>
-                  </div>
-                </v-row>
-                <v-row v-if="mobile" class="justify-center">
-                  <div v-if="collection && collection.canEdit">
-                    <v-tooltip top>
-                      <template v-slot:activator="{ on }">
-                        <v-btn
-                          v-on="on"
-                          @click.stop="dialog = 'edit-collection'"
-                          icon
-                          
-                        >
-                          <v-icon class="blue--text">mdi-pencil</v-icon>
-                        </v-btn>
-                      </template>
-                      <span>Edit Collection</span>
-                    </v-tooltip>
-                  </div>
-                </v-row>
-                <div v-if="!mobile">
-                  <!-- DESKTOP: Description -->
-                  <p v-if="collection.description" class="black--text mb-0 py-2 caption">
-                    {{ collection.description }}
-                  </p>
-                  <!-- DESKTOP: # of stories -->
-                  <v-subheader v-if="collection.stories.length > 0" light class="pa-0">
-                    {{ collection.stories.length }}
-                    {{
-                      collection.stories.length == 1 ? " Story " : " Stories "
-                    }}
-                    in this Collection
-                  </v-subheader>
+              <v-row class="align-center pl-3">
+                <h3 class="blue-grey--text text--darken-4">
+                  {{ collection.name }}
+                </h3>
+                <div v-if="!mobile && collection && collection.canEdit">
+                  <v-tooltip top>
+                    <template v-slot:activator="{ on }">
+                      <v-btn
+                        v-on="on"
+                        @click.stop="dialog = 'edit-collection'"
+                        icon
+                        class="pl-5"
+                      >
+                        <v-icon class="blue--text">mdi-pencil</v-icon>
+                      </v-btn>
+                    </template>
+                    <span>Edit Collection</span>
+                  </v-tooltip>
                 </div>
- 
+              </v-row>
+              <v-row v-if="mobile" class="justify-center">
+                <div v-if="collection && collection.canEdit">
+                  <v-tooltip top>
+                    <template v-slot:activator="{ on }">
+                      <v-btn
+                        v-on="on"
+                        @click.stop="dialog = 'edit-collection'"
+                        icon
+                      >
+                        <v-icon class="blue--text">mdi-pencil</v-icon>
+                      </v-btn>
+                    </template>
+                    <span>Edit Collection</span>
+                  </v-tooltip>
+                </div>
+              </v-row>
+              <div v-if="!mobile">
+                <!-- DESKTOP: Description -->
+                <p
+                  v-if="collection.description"
+                  class="black--text mb-0 py-2 caption"
+                >
+                  {{ collection.description }}
+                </p>
+                <!-- DESKTOP: # of stories -->
+                <v-subheader
+                  v-if="collection.stories.length > 0"
+                  light
+                  class="pa-0"
+                >
+                  {{ collection.stories.length }}
+                  {{ collection.stories.length == 1 ? " Story " : " Stories " }}
+                  in this Collection
+                </v-subheader>
+              </div>
             </v-col>
             <v-col v-if="mobile" order="3">
               <!-- MOBILE: Description -->
-              <p v-if="collection.description" class="black--text mb-0 py-2 caption">
+              <p
+                v-if="collection.description"
+                class="black--text mb-0 py-2 caption"
+              >
                 {{ collection.description }}
               </p>
               <!-- MOBILE: # of stories -->
-              <v-subheader v-if="collection.stories.length > 0" light class="pa-0">
+              <v-subheader
+                v-if="collection.stories.length > 0"
+                light
+                class="pa-0"
+              >
                 {{ collection.stories.length }}
                 {{ collection.stories.length == 1 ? " Story " : " Stories " }}
                 in this Collection
