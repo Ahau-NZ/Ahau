@@ -4,7 +4,7 @@
       <div v-if="showStory" :class="{ 'showOverlay': showStory && !mobile }"></div>
       <v-row v-show="!showStory" class="top-margin">
         <v-col cols="10" class="headliner black--text pa-0 pl-4 pt-2 pb-5">
-          Archive
+          {{ onCollectionPage ? 'Collection' : 'Archive'}}
           <v-icon color="blue-grey" light @click="toggleArchiveHelper" class="infoButton">mdi-information</v-icon>
         </v-col>
         <v-col v-show="!showStory">
@@ -118,6 +118,12 @@ export default {
 
       // route name is person/archive
       return false
+    },
+    onCollectionPage() {
+      console.log("this.$route.name",this.$route.name)
+      if (this.$route.name === 'person/archive/:collectionId' || this.$route.name === 'community/archive/:collectionId') {
+        return true
+      }
     }
   },
   methods: {

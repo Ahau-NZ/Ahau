@@ -7,7 +7,7 @@
           <v-row>
             <!-- Collection image -->
             <!-- order (image first if not mobile) -->
-            <v-col :order="!mobile ? 1 : 2" cols="12" xs="12" sm="12" md="2">
+            <v-col :order="!mobile ? 1 : 2" cols="12" xs="12" sm="12" md="1">
               <v-img :src="image" class="pa-0" cover height="100%" width="100%">
               </v-img>
             </v-col>
@@ -90,7 +90,7 @@
               </v-subheader>
             </v-col>
           </v-row>
-          <v-divider class="black my-8"></v-divider>
+          <v-divider class="grey mb-8"></v-divider>
         </v-col>
       </v-row>
 
@@ -127,126 +127,127 @@
 </template>
 
 <script>
-import { deleteCollection } from "@/lib/collection-helpers";
-import { getCollection } from "@/lib/story-helpers";
-import { getTribalProfile } from "@/lib/community-helpers";
+import { deleteCollection } from '@/lib/collection-helpers'
+import { getCollection } from '@/lib/story-helpers'
+import { getTribalProfile } from '@/lib/community-helpers'
 
-import mapProfileMixins from "@/mixins/profile-mixins.js";
-import { saveCollectionsMixin } from "@/mixins/collection-mixins.js";
+import mapProfileMixins from '@/mixins/profile-mixins.js'
+import { saveCollectionsMixin } from '@/mixins/collection-mixins.js'
 
-import WhakapapaShowViewCard from "../components/whakapapa/WhakapapaShowViewCard";
-import { mapGetters, mapMutations } from "vuex";
-import Stories from "../components/archive/Stories.vue";
+import { mapGetters, mapMutations } from 'vuex'
+import Stories from '../components/archive/Stories.vue'
 
-import NewCollectionDialog from "@/components/dialog/archive/NewCollectionDialog.vue";
-import DeleteCollectionDialog from "@/components/dialog/archive/DeleteCollectionDialog.vue";
+import NewCollectionDialog from '@/components/dialog/archive/NewCollectionDialog.vue'
+import DeleteCollectionDialog from '@/components/dialog/archive/DeleteCollectionDialog.vue'
+
+import whakapapa from '@/assets/whakapapa.png'
+import niho from '@/assets/niho.svg'
 
 export default {
-  name: "CollectionShow",
+  name: 'CollectionShow',
   // TODO: move to mixin
   mixins: [
     saveCollectionsMixin,
     mapProfileMixins({
-      mapMethods: ["getTribe"]
+      mapMethods: ['getTribe']
     })
   ],
   apollo: {
-    collection() {
+    collection () {
       return {
         ...getCollection(this.$route.params.collectionId)
-      };
+      }
     }
   },
   components: {
-    WhakapapaShowViewCard,
     Stories,
     NewCollectionDialog,
     DeleteCollectionDialog
   },
-  data() {
+  data () {
     return {
       collection: null,
       access: null,
       dialog: null
-    };
+    }
   },
   computed: {
-    ...mapGetters(["whoami", "currentAccess", "showStory"]),
-    stories() {
-      if (!this.collection || !this.collection.stories) return [];
+    ...mapGetters(['whoami', 'currentAccess', 'showStory']),
+    stories () {
+      if (!this.collection || !this.collection.stories) return []
 
       return this.collection.stories.map(link => {
         return {
           linkId: link.linkId,
           ...link.story
-        };
-      });
+        }
+      })
     },
-    mobile() {
-      return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm;
+    mobile () {
+      return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
-    image() {
+    image () {
       // if there is an image return it
       if (
         this.collection &&
         this.collection.image &&
         this.collection.image.uri
       ) {
-        return this.collection.image.uri;
+        return this.collection.image.uri
       }
 
       // otherwise return a default one
-      return this.type === "view" ? whakapapa : niho;
+      return this.type === 'view' ? whakapapa : niho
     }
   },
   watch: {
-    async collection(collection) {
+    async collection (collection) {
       if (collection.recps && collection.recps.length > 0) {
-        const tribe = await this.getTribe(collection.recps[0]);
-        this.access = getTribalProfile(tribe, this.whoami);
-        this.setCurrentAccess(this.access);
+        const tribe = await this.getTribe(collection.recps[0])
+        this.access = getTribalProfile(tribe, this.whoami)
+        this.setCurrentAccess(this.access)
       }
     }
   },
   methods: {
-    ...mapMutations(["setCurrentAccess"]),
+    ...mapMutations(['setCurrentAccess']),
 
-    async processCollection($event) {
-      const { stories } = $event;
+    async processCollection ($event) {
+      const { stories } = $event
 
-      await this.saveCollection($event);
-      await this.saveStoriesToCollection(this.collection, stories);
+      await this.saveCollection($event)
+      await this.saveStoriesToCollection(this.collection, stories)
 
       this.$parent.$apollo.queries.collections.refetch({
         filter: { groupId: this.$route.params.tribeId }
-      });
+      })
       this.$parent.$apollo.queries.stories.refetch({
         filter: { groupId: this.$route.params.tribeId }
-      });
+      })
 
-      this.$apollo.queries.collection.refetch();
+      this.$apollo.queries.collection.refetch()
     },
-    async deleteCollection() {
+    async deleteCollection () {
       const res = await this.$apollo.mutate(
         deleteCollection(this.collection.id, new Date())
-      );
+      )
 
       if (res.errors) {
-        console.error("failed to delete collection", res.errors);
-        return;
+        console.error('failed to delete collection', res.errors)
+        return
       }
 
       // reload parent component collections
       await this.$parent.$apollo.queries.collections.refetch({
         filter: { groupId: this.$route.params.tribeId }
-      });
+      })
 
       // go to the default archive page
-      const [newPath] = this.$route.fullPath.split("archive/");
-      this.$router.push({ path: newPath + "archive" }).catch(() => {});
+      const [newPath] = this.$route.fullPath.split('archive/')
+      this.$router.push({ path: newPath + 'archive' }).catch(() => {})
     }
   }
-};
+}
 </script>
 <style lang="scss">
 @media (min-width: 1264px) and (max-width: 1903px) {
