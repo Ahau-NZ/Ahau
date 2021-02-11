@@ -119,10 +119,12 @@ export default {
       // route name is person/archive
       return false
     },
-    onCollectionPage() {
-      console.log("this.$route.name",this.$route.name)
+    onCollectionPage () {
+      console.log('this.$route.name', this.$route.name)
       if (this.$route.name === 'person/archive/:collectionId' || this.$route.name === 'community/archive/:collectionId') {
         return true
+      } else {
+        return false
       }
     }
   },
