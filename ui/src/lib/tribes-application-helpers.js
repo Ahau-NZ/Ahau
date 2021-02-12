@@ -1,35 +1,44 @@
 import gql from 'graphql-tag'
 
-export const CREATE_GROUP_APPLICATION = gql`
-  mutation($groupId: String!, $groupAdmins: [String!]!, $text: String) {
-    createGroupApplication(
-      groupId: $groupId
-      groupAdmins: $groupAdmins
-      text: $text
-    ) {
-      id
-      group {
-        id
-      }
-      applicant {
-        id
-      }
-      comments {
-        author {
+export const createGroupApplication = ({ groupId, groupAdmins, text }) => {
+  return {
+    mutation: gql`
+      mutation($groupId: String!, $groupAdmins: [String!]!, $text: String) {
+        createGroupApplication(
+          groupId: $groupId
+          groupAdmins: $groupAdmins
+          text: $text
+        ) {
           id
-          preferredName
-          avatarImage {
-            uri
+          group {
+            id
           }
+          applicant {
+            id
+          }
+          comments {
+            author {
+              id
+              preferredName
+              avatarImage {
+                uri
+              }
+            }
+            text
+          }
+          groupAdmins
+          accepted
+          addMember
         }
-        text
       }
-      groupAdmins
-      accepted
-      addMember
+    `,
+    variables: {
+      groupId,
+      groupAdmins,
+      text
     }
   }
-`
+}
 
 export const ACCEPT_GROUP_APPLICATION = gql`
   mutation($id: String!, $text: String) {
