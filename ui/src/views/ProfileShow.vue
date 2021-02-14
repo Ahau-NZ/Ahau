@@ -129,7 +129,7 @@ export default {
   computed: {
     ...mapGetters(['whoami', 'showStory', 'showArtefact', 'currentNotification']),
     title () {
-      if (this.profile.legalName) return this.profile.preferredName + ' ' + this.profile.legalName // Blake TODO: Add middle name
+      if (this.profile.legalName) return this.profile.legalName
       else return this.profile.preferredName
     },
     isProfile () {

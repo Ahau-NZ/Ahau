@@ -161,7 +161,7 @@ export default {
       // 0 = no sort, 1 = sort ascending, 2 = sort descending
       sort: {
         preferredName: SORT.default,
-        legalName: SORT.default,
+        fullName: SORT.default,
         age: SORT.default,
         profession: SORT.default,
         location: SORT.default
@@ -281,7 +281,7 @@ export default {
     columns () {
       return [
         {
-          label: 'Legal Name',
+          label: 'Full Name',
           x: this.colWidth
         },
         {
@@ -487,13 +487,13 @@ export default {
         return 'Phone'
       }
 
-      const legalName = ['Legal Name', 'Legal Name ↑', 'Legal Name ↓']
+      const fullName = ['Full Name', 'Full Name ↑', 'Full Name ↓']
       const age = ['Age', 'Age ↑', 'Age ↓']
       const profession = ['Profession', 'Profession ↑', 'Profession ↓']
       const location = ['City, Country', 'City, Country ↑', 'City, Country ↓']
 
-      if (label === 'Legal Name') {
-        return legalName[this.sort['legalName']]
+      if (label === 'Full Name') {
+        return fullName[this.sort['fullName']]
       }
       if (label === 'Age') {
         return age[this.sort['age']]
