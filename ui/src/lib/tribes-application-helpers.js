@@ -138,10 +138,10 @@ export function findInvalidProfileProps (profile) {
 
   const { preferredName, legalName, aliveInterval, address, location } = profile
 
-  if (!preferredName && !legalName) invalidProps.push({ prop: 'name' })
-  if (!aliveInterval) invalidProps.push({ prop: 'dob' })
-  if (!address) invalidProps.push({ prop: 'address' })
-  if (!location) invalidProps.push({ prop: 'location' })
+  if (!preferredName && !legalName) invalidProps.push({ prop: 'Preferred Name or Full Name' })
+  if (!aliveInterval) invalidProps.push({ prop: 'Date of Birth' })
+  if (!address) invalidProps.push({ prop: 'Address' })
+  if (!location) invalidProps.push({ prop: 'City, Country' })
 
   return invalidProps
 }

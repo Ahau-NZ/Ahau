@@ -15,10 +15,10 @@ test('invalid profile props (empty profile)', t => {
   t.deepEqual(
     findInvalidProfileProps(emptyProfile),
     [
-      { prop: 'name' },
-      { prop: 'dob' },
-      { prop: 'address' },
-      { prop: 'location' }
+      { prop: 'Preferred Name or Full Name' },
+      { prop: 'Date of Birth' },
+      { prop: 'Address' },
+      { prop: 'City, Country' }
     ]
   )
 
@@ -42,29 +42,7 @@ test('invalid profile props (empty profile)', t => {
   t.deepEqual(
     findInvalidProfileProps(profileEx1),
     [
-      { prop: 'name' }
-    ]
-  )
-})
-
-test('invalid profile props (no names)', t => {
-  t.plan(1)
-
-  const emptyProfile = {
-    preferredName: null,
-    legalName: null,
-    aliveInterval: null,
-    address: null,
-    location: null
-  }
-
-  t.deepEqual(
-    findInvalidProfileProps(emptyProfile),
-    [
-      { prop: 'name' },
-      { prop: 'dob' },
-      { prop: 'address' },
-      { prop: 'location' }
+      { prop: 'Preferred Name or Full Name' }
     ]
   )
 })

@@ -65,7 +65,11 @@
                 >
                   <v-card-text>
                     Please update the following information on your profile: <br>
-                    {{ invalidPersonalProfileProps }}
+                    <ul>
+                      <li v-for="({ prop }) in invalidPersonalProfileProps" :key="JSON.stringify(prop)">
+                        {{ prop }}
+                      </li>
+                    </ul>
                   </v-card-text>
                 </v-card>
               </v-stepper-content>
@@ -127,15 +131,6 @@
                     </template>
                   </ProfileCard>
                 </v-card>
-                <!-- <v-btn
-                  color="primary"
-                  @click="step = 2"
-                >
-                  Agree
-                </v-btn>
-                <v-btn text @click="close">
-                  Dont Agree
-                </v-btn> -->
                 <v-checkbox v-model="checkbox1" label="Agree"/>
               </v-stepper-content>
 
@@ -202,102 +197,8 @@
                     </template>
                   </ProfileCard>
                 </v-card>
-                <!-- <v-btn
-                  color="primary"
-                  @click="step = 2"
-                >
-                  Agree
-                </v-btn>
-                <v-btn text @click="close">
-                  Dont Agree
-                </v-btn> -->
                 <v-checkbox v-model="checkbox2" label="Agree"/>
               </v-stepper-content>
-
-              <!-- TODO: a section for adding whanau members to the community as well...
-                - Currently the profile links are not attached to the profile you create in a community,
-                would need a way to copy over links as well as profile information
-              <v-stepper-step
-                :complete="step > 3"
-                step="3"
-              >
-                TODO: whanau section
-              </v-stepper-step>
-
-              <v-stepper-content step="3">
-
-                <v-card
-                  color="grey lighten-5"
-                  class="mb-6"
-                  height="auto"
-                  outlined
-                >
-                  <v-card-text>
-                    <strong>
-                      Please provide the names of at least one parent and one grandparent
-                    </strong>
-                  </v-card-text>
-                  <div v-for="(parent, index) in personalProfile.parents" :key="index">
-                    <v-row class="rounded-border mx-4">
-                      <v-col cols="12">
-                        <ParentGroup
-                          :deleteable="type !== 'review'"
-                          :index="index"
-                          :profile="parent"
-                          :title="parent.relationshipType ? parent.relationshipType + ' parent' : 'parent'"
-                          @removeParent="removeParent($event)"
-                        />
-                      </v-col>
-                      <v-col cols="12" class="pa-0">
-                        <v-divider></v-divider>
-                      </v-col>
-                      <v-col
-                        cols="12"
-                        v-for="(grandparent, grandparentIndex) in parent.parents"
-                        :key="`grandparent-${grandparentIndex}`"
-                      >
-                        <ParentGroup
-                          :index="grandparentIndex"
-                          :profile="grandparent"
-                          :title="grandparent.relationshipType ? grandparent.relationshipType + ' grandparent' : 'grandparent'"
-                          @removeParent="removeGrandparent($event, index)"
-                        />
-                      </v-col>
-                      <v-row v-if="type !== 'review'" class="py-4 pl-10">
-                        <v-icon :color="!gpNames ? '#b12526':''">mdi-account-supervisor-circle</v-icon>
-                        <AddButton
-                          :color="!gpNames ? '#b12526':''"
-                          justify="start"
-                          :width="'50px'"
-                          :label="'Add parents of ' + parent.preferredName"
-                          @click="addGrandparent(index)"
-                        />
-                      </v-row>
-                    </v-row>
-                  </div>
-                    <v-row class="py-4 pl-12">
-                      <v-icon :color="!parentsNames ? '#b12526':''">mdi-account-supervisor-circle</v-icon>
-                      <AddButton
-                        :color="!parentsNames ? '#b12526':''"
-                        justify="start"
-                        :width="'50px'"
-                        label="Add parent"
-                        @click="addParent('parent')"
-                      />
-                    </v-row>
-                </v-card>
-
-                <v-btn
-                  color="primary"
-                  @click="step = 3"
-                >
-                  Continue
-                </v-btn>
-                <v-btn text>
-                  Cancel
-                </v-btn>
-              </v-stepper-content> -->
-
               <!-- Joining Questions -->
               <v-stepper-step
                 v-if="hasJoiningQuestions"
@@ -447,8 +348,7 @@ export default {
     },
     personalProfile: {
       deep: true,
-      handler (profile) {
-        console.log(this.step)
+      handler () {
         if (this.isValidPersonalProfile && this.step === 1) this.step = 2
       }
     }
