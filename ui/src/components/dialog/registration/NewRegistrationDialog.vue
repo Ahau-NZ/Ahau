@@ -46,18 +46,40 @@
             <v-stepper
               v-model="step"
               vertical
-              
             >
               <v-stepper-step
                 :complete="step > 1"
                 step="1"
+                :color="isValidPersonalProfile ? 'green' : 'red'"
+                :rules="[() => isValidPersonalProfile]"
+                error-icon="mdi-close"
+              >
+                Update your information
+              </v-stepper-step>
+              <v-stepper-content step="1">
+                <v-card
+                  color="grey lighten-5"
+                  class="mb-6"
+                  height="auto"
+                  outlined
+                >
+                  <v-card-text>
+                    Please update the following information on your profile: <br>
+                    {{ invalidPersonalProfileProps }}
+                  </v-card-text>
+                </v-card>
+              </v-stepper-content>
+
+              <v-stepper-step
+                :complete="step > 2"
+                step="2"
                 :color="checkbox1 ? 'green' : 'black'"
               >
                 Share your information with the Community Kaitiaki
                 <small></small>
               </v-stepper-step>
 
-              <v-stepper-content step="1" >
+              <v-stepper-content step="2">
                 <v-card
                   color="grey lighten-5"
                   class="mb-6"
@@ -118,14 +140,14 @@
               </v-stepper-content>
 
               <v-stepper-step
-                :complete="step > 2"
-                step="2"
+                :complete="step > 3"
+                step="3"
                 :color="checkbox2 ? 'green' : 'black'"
               >
                 Share your information with the Community Members
               </v-stepper-step>
 
-              <v-stepper-content step="2">
+              <v-stepper-content step="3">
                 <v-card
                   color="grey lighten-5"
                   class="mb-6"
@@ -278,14 +300,15 @@
 
               <!-- Joining Questions -->
               <v-stepper-step
-                :complete="step > 3"
+                v-if="hasJoiningQuestions"
+                :complete="step > 4"
                 step="3"
-                :color="step > 3 ? 'green' : 'black'"
+                :color="step > 4 ? 'green' : 'black'"
               >
                 Answer Joining Questions
               </v-stepper-step>
 
-              <v-stepper-content step="3">
+              <v-stepper-content step="4" v-if="hasJoiningQuestions">
                 <v-card
                   color="grey lighten-5"
                   class="mb-6"
@@ -304,17 +327,17 @@
                 </v-card>
                 <v-btn
                   color="primary"
-                  @click="step = 4"
+                  @click="step = 5"
                 >
                   Next
                 </v-btn>
               </v-stepper-content>
 
               <!-- MESSAGE -->
-              <v-stepper-step step="4">
+              <v-stepper-step :step="hasJoiningQuestions ? 5 : 4">
                 Send a message with your request
               </v-stepper-step>
-              <v-stepper-content step="4">
+              <v-stepper-content :step="hasJoiningQuestions ? 5 : 4">
                 <v-card
                   color="grey lighten-5"
                   class="mb-6"
@@ -364,6 +387,7 @@ import { getProfile } from '@/lib/profile-helpers.js'
 import { mapGetters } from 'vuex'
 
 import { dateIntervalToString } from '@/lib/date-helpers.js'
+import { findInvalidProfileProps } from '@/lib/tribes-application-helpers.js'
 
 export default {
   name: 'NewRegistrationDialog',
@@ -393,7 +417,7 @@ export default {
   },
   data () {
     return {
-      step: null,
+      step: 1,
       checkbox1: null,
       checkbox2: null,
       formData: this.profile,
@@ -413,10 +437,6 @@ export default {
             answer: ''
           }
         })
-        this.joiningQuestions = [
-          { question: 'Who are your parents?', answer: '' },
-          { question: 'Who are your grandparents?', answer: '' }
-        ]
       }
     },
     checkbox1 (checkbox) {
@@ -424,6 +444,13 @@ export default {
     },
     checkbox2 (checkbox) {
       if (checkbox) this.step = 3 // step to the next section
+    },
+    personalProfile: {
+      deep: true,
+      handler (profile) {
+        console.log(this.step)
+        if (this.isValidPersonalProfile && this.step === 1) this.step = 2
+      }
     }
   },
   computed: {
@@ -452,7 +479,16 @@ export default {
         var formattedDate = dateIntervalToString(this.personalProfile.aliveInterval)
         return formattedDate
       }
-      return ' '
+      return null
+    },
+    invalidPersonalProfileProps () {
+      return findInvalidProfileProps(this.personalProfile)
+    },
+    isValidPersonalProfile () {
+      return this.invalidPersonalProfileProps.length === 0
+    },
+    hasJoiningQuestions () {
+      return this.joiningQuestions && this.joiningQuestions.length > 0
     }
   },
   methods: {

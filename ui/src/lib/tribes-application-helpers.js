@@ -127,3 +127,21 @@ export const GET_GROUP_APPLICATION = gql`
     }
   }
 `
+
+export function findInvalidProfileProps (profile) {
+  // validate required props on a profile when applying to join a community
+  // preferredName or legalName
+  // dob
+  // address
+  // city/country
+  const invalidProps = []
+
+  const { preferredName, legalName, aliveInterval, address, location } = profile
+
+  if (!preferredName && !legalName) invalidProps.push({ prop: 'name' })
+  if (!aliveInterval) invalidProps.push({ prop: 'dob' })
+  if (!address) invalidProps.push({ prop: 'address' })
+  if (!location) invalidProps.push({ prop: 'location' })
+
+  return invalidProps
+}
