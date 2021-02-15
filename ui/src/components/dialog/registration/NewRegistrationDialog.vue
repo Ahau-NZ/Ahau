@@ -346,11 +346,6 @@ export default {
         })
 
         this.formData = profile
-
-        this.joiningQuestions = [
-          { question: 'What are you?', answer: '' },
-          { question: 'Where you living?', answer: '' }
-        ]
       }
     },
     checkbox1 (checkbox) {
