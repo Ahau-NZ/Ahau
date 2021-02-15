@@ -78,7 +78,7 @@
 
     <g id="node-label" :style="textStyle">
       <rect :width="textWidth" y="-16" height="20"></rect>
-      <text>{{ profile.preferredName }}</text>
+      <text>{{ nodeDisplayName }}</text>
     </g>
     <!-- Changes focus -->
     <g
@@ -155,7 +155,7 @@ export default {
     },
     textWidth () {
       // const { x, y } = textElm.getBBox();
-      const width = (this.profile.preferredName || '').length * 8
+      const width = (this.nodeDisplayName || '').length * 8
       return width
     },
     groupStyle () {
@@ -186,6 +186,10 @@ export default {
     partnerMenuTranslate () {
       const x = this.node.right ? -0.3 : 1.4
       return `translate(${x * this.radius} ${1.3 * this.radius})`
+    },
+    nodeDisplayName () {
+      const displayName = this.profile.preferredName ? this.profile.preferredName : this.profile.legalName.split(' ')[0]
+      return displayName
     }
   },
   methods: {
