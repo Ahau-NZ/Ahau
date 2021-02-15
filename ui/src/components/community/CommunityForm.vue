@@ -54,9 +54,10 @@
           <!-- Phone -->
           <v-text-field v-model="formData.phone" label="Phone" v-bind="customProps" />
         </v-col>
-        <v-col cols="12" align="center" v-if="!allowJoiningQuestions">
-          <v-btn @click="allowJoiningQuestions = true" text light>
+        <v-col cols="12" align="center" v-if="!allowJoiningQuestions" class="pt-12">
+          <v-btn @click="allowJoiningQuestions = true" text light color="blue">
             Setup Comunity registration form
+            <v-icon>mdi-cogs</v-icon>
           </v-btn>
         </v-col>
         <v-col v-else>
