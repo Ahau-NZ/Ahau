@@ -581,7 +581,7 @@ export default {
     }
 
     .gender-checkbox-unknown-default {
-        padding: 90px 0px 0px 0px;
+        padding: 50px 0px 0px 0px;
     }
     .gender-checkbox-unknown-side {
         padding: 0px 0px 15px 0px;
@@ -591,7 +591,7 @@ export default {
     .gender-label-row {
       width: 75%;
       margin: 0px;
-      padding-top: 5px;
+      padding-top: 20px;
 
       .gender-label-text {
         text-align: center;
