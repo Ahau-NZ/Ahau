@@ -1,6 +1,6 @@
 <template>
   <v-form ref="form" light>
-    <v-col class="px-0">
+    <v-col>
       <v-row>
 
         <!-- Upload profile photo -->
@@ -38,40 +38,48 @@
       </v-row>
 
       <v-row>
-        <v-col cols="12">
+        <v-col cols="12" sm="6" class="pa-1">
+          <!-- Address -->
+          <v-text-field v-model="formData.address" label="Address" v-bind="customProps" />
+        </v-col>
+        <v-col cols="12" sm="6" class="pa-1">
+          <!-- City, Country -->
+          <v-text-field v-model="formData.location" label="City, Country" v-bind="customProps" />
+        </v-col>
+        <v-col cols="12" sm="6" class="pa-1">
+          <!-- Email -->
+          <v-text-field v-model="formData.email" label="Email" v-bind="customProps" />
+        </v-col>
+        <v-col cols="12" sm="6" class="pa-1">
+          <!-- Phone -->
+          <v-text-field v-model="formData.phone" label="Phone" v-bind="customProps" />
+        </v-col>
+        <v-col cols="12" align="center" v-if="!allowJoiningQuestions" class="pt-12">
+          <v-btn @click="allowJoiningQuestions = true" text light color="blue">
+            Setup Comunity registration form
+            <v-icon>mdi-cogs</v-icon>
+          </v-btn>
+        </v-col>
+        <v-col v-else>
           <v-row>
-            <v-col cols="12" sm="6" class="py-0">
-              <v-row>
-                <v-col cols="12" class="pa-1">
-                  <!-- Address -->
-                  <v-text-field v-model="formData.address" label="Address" v-bind="customProps" />
-                </v-col>
-              </v-row>
+            <v-col cols="12">
+              Community registration form
             </v-col>
-            <v-col cols="12" sm="6" class="py-0">
-              <v-row>
-                <v-col cols="12" class="pa-1">
-                  <!-- City, Country -->
-                  <v-text-field v-model="formData.location" label="City, Country" v-bind="customProps" />
-                </v-col>
-              </v-row>
+            <v-col cols="12" sm="12" v-for="(question, i) in formData.joiningQuestions" :key="`j-q-${i}`" class="pa-1, mt-4">
+              <v-text-field
+                v-model="formData.joiningQuestions[i].label"
+                v-bind="customProps"
+                append-icon="mdi-delete"
+                @click:append="removeJoiningQuestion(i)"
+                :label="`Question ${i + 1}`"
+                auto-focus
+              />
             </v-col>
-          </v-row>
-          <v-row>
-            <v-col cols="12" sm="6" class="py-0">
+            <v-col cols="12">
               <v-row>
-                <v-col cols="12" class="pa-1">
-                  <!-- Email -->
-                  <v-text-field v-model="formData.email" label="Email" v-bind="customProps" />
-                </v-col>
-              </v-row>
-            </v-col>
-            <v-col cols="12" sm="6" class="py-0">
-              <v-row>
-                <v-col cols="12" class="pa-1">
-                  <!-- Phone -->
-                  <v-text-field v-model="formData.phone" label="Phone" v-bind="customProps" />
-                </v-col>
+                <v-spacer/>
+                <AddButton label="Add a question" @click="addQuestionField"/>
+                <v-spacer/>
               </v-row>
             </v-col>
           </v-row>
@@ -84,15 +92,32 @@
 <script>
 import Avatar from '@/components/Avatar.vue'
 import ImagePicker from '@/components/ImagePicker.vue'
+import AddButton from '@/components/button/AddButton.vue'
 
 export default {
   name: 'CommunityForm',
   components: {
     Avatar,
-    ImagePicker
+    ImagePicker,
+    AddButton
   },
   props: {
     formData: Object
+  },
+  data () {
+    return {
+      allowJoiningQuestions: false
+    }
+  },
+  watch: {
+    'formData.joiningQuestions': {
+      deep: true,
+      immediate: true,
+      handler (joiningQuestions) {
+        if (joiningQuestions && joiningQuestions.length > 0) this.allowJoiningQuestions = true
+        else this.allowJoiningQuestions = false
+      }
+    }
   },
   computed: {
     mobile () {
@@ -104,6 +129,14 @@ export default {
         placeholder: ' ',
         outlined: true
       }
+    }
+  },
+  methods: {
+    addQuestionField () {
+      this.formData.joiningQuestions.push({ label: '', type: 'input' })
+    },
+    removeJoiningQuestion (index) {
+      this.formData.joiningQuestions.splice(index, 1)
     }
   }
 }
@@ -131,4 +164,5 @@ export default {
 .v-text-field input {
   text-align: center !important;
 }
+
 </style>

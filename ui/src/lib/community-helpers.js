@@ -2,11 +2,7 @@ import gql from 'graphql-tag'
 import pick from 'lodash.pick'
 import clone from 'lodash.clonedeep'
 
-import { PUBLIC_PROFILE_FRAGMENT, AUTHOR_FRAGMENT } from '@/lib/person-helpers'
-import { createProvider } from '@/plugins/vue-apollo'
-
-const apolloProvider = createProvider()
-const apolloClient = apolloProvider.defaultClient
+import { PUBLIC_PROFILE_FRAGMENT, AUTHOR_FRAGMENT } from './person-helpers'
 
 export const EMPTY_COMMUNITY = {
   type: 'community',
@@ -18,7 +14,8 @@ export const EMPTY_COMMUNITY = {
   location: null,
   address: null,
   email: null,
-  phone: null
+  phone: null,
+  joiningQuestions: []
 }
 
 export function setDefaultCommunity (newCommunity) {
@@ -33,7 +30,8 @@ export function setDefaultCommunity (newCommunity) {
     location: community.location,
     address: community.address,
     email: community.email,
-    phone: community.phone
+    phone: community.phone,
+    joiningQuestions: community.joiningQuestions
   }
 }
 
@@ -50,6 +48,7 @@ export const PERMITTED_COMMUNITY_ATTRS = [
   'location',
   'tombstone',
   'tiaki',
+  'joiningQuestions',
   // private only attrs
   'address',
   'recps'
@@ -67,7 +66,8 @@ export const PERMITTED_PUBLIC_COMMUNITY_ATTRS = [
   'phone',
   'location',
   'tombstone',
-  'tiaki'
+  'tiaki',
+  'joiningQuestions'
 ]
 
 export const PERMITTED_COMMUNITY_LINK_ATTRS = [
@@ -77,8 +77,6 @@ export const PERMITTED_COMMUNITY_LINK_ATTRS = [
   'allowPublic'
 ]
 
-// TODO: finish community-helper
-// eg: getCommunity() *single community
 export const getMembers = id => ({
   query: gql`
     ${PUBLIC_PROFILE_FRAGMENT}
@@ -91,6 +89,37 @@ export const getMembers = id => ({
   variables: { id: id },
   fetchPolicy: 'no-cache'
 })
+
+export const COMMUNITY_FRAGMENT = gql`
+${PUBLIC_PROFILE_FRAGMENT}
+${AUTHOR_FRAGMENT}
+  fragment CommunityFragment on Community {
+    id
+    type
+    preferredName
+    description
+    avatarImage { uri }
+    headerImage { uri }
+    email
+    phone
+    canEdit
+    recps
+    location
+    joiningQuestions {
+      type
+      label
+    }
+    tiaki {
+      ...PublicProfileFragment
+    }
+    authors {
+      ...AuthorFragment
+      profile {
+        ...PublicProfileFragment
+      }
+    }
+  }
+`
 
 export const createGroup = () => {
   return {
@@ -204,54 +233,15 @@ export const updateTribe = (tribe, input) => {
 
 export const getTribes = {
   query: gql`
-    ${AUTHOR_FRAGMENT}
-    ${PUBLIC_PROFILE_FRAGMENT}
+    ${COMMUNITY_FRAGMENT}
     query {
       tribes {
         id
         public {
-          id
-          type
-          preferredName
-          description
-          avatarImage { uri }
-          headerImage { uri }
-          email
-          phone
-          canEdit
-          recps
-          location
-          tiaki {
-            ...PublicProfileFragment
-          }
-          authors {
-            ...AuthorFragment
-            profile {
-              ...PublicProfileFragment
-            }
-          }
+          ...CommunityFragment
         }
         private {
-          id
-          type
-          preferredName
-          description
-          avatarImage { uri }
-          headerImage { uri }
-          email
-          phone
-          location
-          canEdit
-          recps
-          tiaki {
-            ...PublicProfileFragment
-          }
-          authors {
-            ...AuthorFragment
-            profile {
-              ...PublicProfileFragment
-            }
-          }
+          ...CommunityFragment
         }
       }
     }
@@ -269,89 +259,29 @@ function prune (input, attrs) {
   return _input
 }
 
-export const getCommunity = id => ({
+export const getCommunity = ({
   query: gql`
-    ${PUBLIC_PROFILE_FRAGMENT}
+    ${COMMUNITY_FRAGMENT}
     query($id: String!) {
-      community {
-        id
-        preferredName
-        description
-        avatarImage {
-          uri
-        }
-        description
-        headerImage {
-          uri
-        }
-        tombstone {
-          date
-        }
-        tiaki {
-          ...PublicProfileFragment
-        }
+      community(id: $id) {
+        ...CommunityFragment
       }
     }
   `,
-  variables: { id: id },
   fetchPolicy: 'no-cache'
 })
 
-// TODO: figure out how to manage query in vue vs in js
-// should this file export mutations or results
-export async function callGetTribe (profileId) {
-  const result = await apolloClient.query(getTribes)
-  if (result.errors) {
-    console.error('Failed to to get Tribes')
-    console.error(result.errors)
-  } else {
-    const tribes = result.data.tribes.filter(tribe => tribe.private.length > 0)
-    const tribe = tribes.find(tribe => tribe.private[0].id === profileId)
-    return tribe
-  }
-}
-
 export const getTribe = ({
   query: gql`
-    ${PUBLIC_PROFILE_FRAGMENT}
+    ${COMMUNITY_FRAGMENT}
     query($id: String!) {
       tribe (id: $id){
         id 
         private {
-          id
-          preferredName
-          description
-          avatarImage {
-            uri
-          }
-          description
-          headerImage {
-            uri
-          }
-          tombstone {
-            date
-          }
-          tiaki {
-            ...PublicProfileFragment
-          }
+          ...CommunityFragment
         }
         public {
-          id
-          preferredName
-          description
-          avatarImage {
-            uri
-          }
-          description
-          headerImage {
-            uri
-          }
-          tombstone {
-            date
-          }
-          tiaki {
-            ...PublicProfileFragment
-          }
+          ...CommunityFragment
         }
       }
     }
