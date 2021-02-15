@@ -15,6 +15,7 @@
             <v-card
               elevation="1"
               :style="mobile ? 'margin: 0px' : 'margin: 20px'"
+              class="mb-5"
             >
               <v-row>
                 <v-col cols="12" md="3" class="py-0">
@@ -45,15 +46,24 @@
               <v-divider></v-divider>
             </v-card>
 
-            <!-- MESSAGE -->
+            <!-- Joining Questions -->
+            <v-col cols="12" sm="12" v-for="(question, i) in joiningQuestions" :key="`j-q-${i}`" :class="mobile ? 'pt-4 px-0':'pt-6 px-5'">
+              <v-text-field
+                v-model="joiningQuestions[i].answer"
+                v-bind="customProps"
+                :label="joiningQuestions[i].question"
+              />
+            </v-col>
+
+             <!-- MESSAGE -->
             <v-col cols="12" :class="mobile ? 'pt-4 px-0':'pt-6 px-5'">
               <v-textarea
                 v-model="message"
                 label="Send a message with your request"
                 no-resize
+                v-bind="customProps"
                 rows="3"
                 auto-grow
-                outlined
                 placeholder=" "
               ></v-textarea>
             </v-col>
@@ -89,12 +99,27 @@ export default {
     show: { type: Boolean, required: true },
     title: { type: String, default: 'Join Community' },
     hideDetails: { type: Boolean, default: false },
-    profile: { type: Object }
+    profile: { type: Object, default () { return {} } }
   },
   data () {
     return {
       formData: this.profile,
-      message: ''
+      message: '',
+      joiningQuestions: []
+    }
+  },
+  watch: {
+    'profile': {
+      deep: true,
+      immediate: true,
+      handler (profile) {
+        this.joiningQuestions = profile.joiningQuestions.map(q => {
+          return {
+            question: q.label,
+            answer: ''
+          }
+        })
+      }
     }
   },
   computed: {
@@ -109,16 +134,21 @@ export default {
     },
     mobile () {
       return this.$vuetify.breakpoint.xs
+    },
+    customProps () {
+      return {
+        hideDetails: true,
+        placeholder: ' ',
+        outlined: true
+      }
     }
   },
   methods: {
     close () {
       this.$emit('close')
     },
-
     submit () {
-      this.$emit('submit', this.message)
-
+      this.$emit('submit', { text: this.message, joiningQuestionAnswers: this.joiningQuestions })
       this.close()
     }
   }

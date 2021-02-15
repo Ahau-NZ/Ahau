@@ -1,21 +1,21 @@
-import NewRegistrationDialog from './NewRegistrationDialog'
+import ReviewRegistrationDialog from './ReviewRegistrationDialog'
 
 import store from '@/store'
 
 export default {
-  title: 'NewRegistrationDialog'
+  title: 'ReviewRegistrationDialog'
 }
 
 export const EmptyDialog = () => ({
   template:
-    '<NewRegistrationDialog :show="true"/>',
-  components: { NewRegistrationDialog },
+    '<ReviewRegistrationDialog :show="true"/>',
+  components: { ReviewRegistrationDialog },
   store
 })
 
 export const WithProfile = () => ({
   template:
-    '<NewRegistrationDialog :show="show" :profile="profile" @submit="submit" @close="close"/>',
+    '<ReviewRegistrationDialog :show="show" :profile="profile" @submit="submit" @close="close"/>',
   methods: {
     submit ($event) {
       console.log('Text', $event)
@@ -37,6 +37,6 @@ export const WithProfile = () => ({
       }
     }
   },
-  components: { NewRegistrationDialog },
+  components: { ReviewRegistrationDialog },
   store
 })
