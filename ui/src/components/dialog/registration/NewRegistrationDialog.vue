@@ -72,6 +72,11 @@
                     </ul>
                   </v-card-text>
                 </v-card>
+                <v-btn
+                  color="primary"
+                >
+                  Go to edit profile
+                </v-btn>
               </v-stepper-content>
 
               <v-stepper-step
@@ -268,7 +273,7 @@
         <v-btn @click="close" text large class="secondary--text">
           <span>cancel</span>
         </v-btn>
-        <v-btn @click="submit" text large class="blue--text mx-5">
+        <v-btn @click="submit" text large class="blue--text mx-5" :disabled="disableSubmission">
           <span>submit</span>
         </v-btn>
       </template>
@@ -389,6 +394,12 @@ export default {
     },
     hasJoiningQuestions () {
       return this.joiningQuestions && this.joiningQuestions.length > 0
+    },
+    disableSubmission () {
+      // if we're not on the last step
+      if (this.step === (this.hasJoiningQuestions ? 5 : 4)) return false
+
+      return true
     }
   },
   methods: {
