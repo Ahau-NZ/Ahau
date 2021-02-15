@@ -1,4 +1,5 @@
 import gql from 'graphql-tag'
+import tree from './tree-helpers.js'
 
 export const SharedProfileFieldsFragment = gql`
   fragment SharedProfileFields on Profile {
@@ -78,6 +79,12 @@ export const AllProfileFieldsFragment = gql`
       children {
         profile {
           ...PersonProfileFields
+          children {
+            profile {
+              ...PersonProfileFields
+            }
+            ...PersonProfileLink
+          }
           parents {
             profile {
               ...PersonProfileFields
@@ -91,6 +98,12 @@ export const AllProfileFieldsFragment = gql`
         profile {
           ...PersonProfileFields
           children {
+            profile {
+              ...PersonProfileFields
+            }
+            ...PersonProfileLink
+          }
+          parents {
             profile {
               ...PersonProfileFields
             }
@@ -134,6 +147,44 @@ export const getProfile = ({
       }
     }
   `,
-  update: data => data.person,
+  update ({ profile }) {
+    if (profile.type === 'community') return profile
+
+    if (profile.children) {
+      profile.children = profile.children.map(child => {
+        var childProfile = child.profile ? child.profile : child
+        childProfile = {
+          ...childProfile,
+          relationshipType: child.relationshipType
+        }
+        profile = tree.getPartners(profile, childProfile)
+        return childProfile
+      })
+    }
+
+    if (profile.parents) {
+      profile.parents = profile.parents.map(parent => {
+        var parentProfile = parent.profile ? parent.profile : parent
+        parentProfile = {
+          ...parentProfile,
+          relationshipType: parent.relationshipType
+        }
+        profile = tree.getSiblings(parentProfile, profile)
+
+        parentProfile.parents = parentProfile.parents.map(grandParent => {
+          var grandParentProfile = grandParent.profile ? grandParent.profile : grandParent
+          grandParentProfile = {
+            ...grandParentProfile,
+            relationshipType: grandParent.relationshipType
+          }
+
+          return grandParentProfile
+        })
+        return parentProfile
+      })
+    }
+
+    return profile
+  },
   fetchPolicy: 'no-cache'
 })

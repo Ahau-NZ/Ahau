@@ -13,8 +13,7 @@
           <!-- PROFILE INFOMATION -->
           <v-form>
             <v-card
-              elevation="1"
-              :style="mobile ? 'margin: 0px' : 'margin: 20px'"
+              outlined
               class="mb-5"
             >
               <v-row>
@@ -33,40 +32,309 @@
                   cols="12"
                   md="9"
                   sm="12"
-                  :align="mobile ? 'center' : 'start'"
-                  :order="mobile ? '3' : '1'"
-                  :class="!mobile ? 'pt-12':''"
                 >
                   <h1
-                    class="primary--text"
+                    class="primary--text pt-12"
                     :style="mobile ? length : ''"
-                  >{{ formData.legalName ? formData.legalName : formData.preferredName }}</h1>
+                    align="start"
+
+                  >{{ formData.legalName || formData.preferredName }}</h1>
                 </v-col>
               </v-row>
-              <v-divider></v-divider>
             </v-card>
 
-            <!-- Joining Questions -->
-            <v-col cols="12" sm="12" v-for="(question, i) in joiningQuestions" :key="`j-q-${i}`" :class="mobile ? 'pt-4 px-0':'pt-6 px-5'">
-              <v-text-field
-                v-model="joiningQuestions[i].answer"
-                v-bind="customProps"
-                :label="joiningQuestions[i].question"
-              />
-            </v-col>
+            <v-stepper
+              v-model="step"
+              vertical
+              
+            >
+              <v-stepper-step
+                :complete="step > 1"
+                step="1"
+                :color="checkbox1 ? 'green' : 'black'"
+              >
+                Share your information with the Community Kaitiaki
+                <small></small>
+              </v-stepper-step>
 
-             <!-- MESSAGE -->
-            <v-col cols="12" :class="mobile ? 'pt-4 px-0':'pt-6 px-5'">
-              <v-textarea
-                v-model="message"
-                label="Send a message with your request"
-                no-resize
-                v-bind="customProps"
-                rows="3"
-                auto-grow
-                placeholder=" "
-              ></v-textarea>
-            </v-col>
+              <v-stepper-content step="1" >
+                <v-card
+                  color="grey lighten-5"
+                  class="mb-6"
+                  height="auto"
+                  outlined
+                >
+                  <v-card-text>
+                    Share the following information with the
+                    <strong>
+                      <i>{{ formData.preferredName }}</i>
+                    </strong>
+                    Community Kaitiaki
+                  </v-card-text>
+                  <ProfileCard :style="mobile ? 'margin: 10px;':'margin:20px'">
+                    <template v-slot:content>
+                      <v-row cols="12" class="pt-0">
+                        <ProfileInfoItem
+                          :class="mobile ? 'bb':'br bb'"
+                          smCols="12"
+                          mdCols="6"
+                          title="Date of birth"
+                          :value="dob"
+                        />
+                        <ProfileInfoItem
+                          :class="mobile ? 'bb':'bb'"
+                          smCols="12"
+                          mdCols="6"
+                          title="Phone"
+                          :value="personalProfile.phone"
+                        />
+                        <ProfileInfoItem
+                          :class="mobile ? 'bb':'br'"
+                          smCols="12"
+                          mdCols="6"
+                          title="Email"
+                          :value="personalProfile.email"
+                        />
+                        <ProfileInfoItem
+                          smCols="12"
+                          mdCols="6"
+                          title="Address"
+                          :value="personalProfile.address"
+                        />
+                      </v-row>
+                    </template>
+                  </ProfileCard>
+                </v-card>
+                <!-- <v-btn
+                  color="primary"
+                  @click="step = 2"
+                >
+                  Agree
+                </v-btn>
+                <v-btn text @click="close">
+                  Dont Agree
+                </v-btn> -->
+                <v-checkbox v-model="checkbox1" label="Agree"/>
+              </v-stepper-content>
+
+              <v-stepper-step
+                :complete="step > 2"
+                step="2"
+                :color="checkbox2 ? 'green' : 'black'"
+              >
+                Share your information with the Community Members
+              </v-stepper-step>
+
+              <v-stepper-content step="2">
+                <v-card
+                  color="grey lighten-5"
+                  class="mb-6"
+                  height="auto"
+                  outlined
+                >
+                  <v-card-text>
+                    Share the following information with the
+                    <strong>
+                      <i>{{ formData.preferredName }}</i>
+                    </strong>
+                    Community Members
+                  </v-card-text>
+                  <ProfileCard :style="mobile ? 'margin: 10px;':'margin:20px'">
+                    <template v-slot:content>
+                      <v-row cols="12" class="pt-0">
+                        <ProfileInfoItem
+                          :class="mobile ? 'bb':' bb'"
+                          smCols="12"
+                          mdCols="12"
+                          title="Description"
+                          :value="personalProfile.description"
+                        />
+                        <ProfileInfoItem
+                          :class="mobile ? 'bb':'bb br'"
+                          smCols="12"
+                          mdCols="6"
+                          title="Preferred Name"
+                          :value="personalProfile.preferredName"
+                        />
+                        <ProfileInfoItem
+                          :class="mobile ? 'bb':'bb'"
+                          smCols="12"
+                          mdCols="6"
+                          title="Full Name"
+                          :value="personalProfile.legalName"
+                        />
+                        <ProfileInfoItem
+                        :class="mobile ? 'bb':'br'"
+                          smCols="12"
+                          mdCols="6"
+                          title="City/Country"
+                          :value="personalProfile.location"
+                        />
+                        <ProfileInfoItem
+                          smCols="12"
+                          mdCols="6"
+                          title="Profession"
+                          :value="personalProfile.profession"
+                        />
+                      </v-row>
+                    </template>
+                  </ProfileCard>
+                </v-card>
+                <!-- <v-btn
+                  color="primary"
+                  @click="step = 2"
+                >
+                  Agree
+                </v-btn>
+                <v-btn text @click="close">
+                  Dont Agree
+                </v-btn> -->
+                <v-checkbox v-model="checkbox2" label="Agree"/>
+              </v-stepper-content>
+
+              <!-- TODO: a section for adding whanau members to the community as well...
+                - Currently the profile links are not attached to the profile you create in a community,
+                would need a way to copy over links as well as profile information
+              <v-stepper-step
+                :complete="step > 3"
+                step="3"
+              >
+                TODO: whanau section
+              </v-stepper-step>
+
+              <v-stepper-content step="3">
+
+                <v-card
+                  color="grey lighten-5"
+                  class="mb-6"
+                  height="auto"
+                  outlined
+                >
+                  <v-card-text>
+                    <strong>
+                      Please provide the names of at least one parent and one grandparent
+                    </strong>
+                  </v-card-text>
+                  <div v-for="(parent, index) in personalProfile.parents" :key="index">
+                    <v-row class="rounded-border mx-4">
+                      <v-col cols="12">
+                        <ParentGroup
+                          :deleteable="type !== 'review'"
+                          :index="index"
+                          :profile="parent"
+                          :title="parent.relationshipType ? parent.relationshipType + ' parent' : 'parent'"
+                          @removeParent="removeParent($event)"
+                        />
+                      </v-col>
+                      <v-col cols="12" class="pa-0">
+                        <v-divider></v-divider>
+                      </v-col>
+                      <v-col
+                        cols="12"
+                        v-for="(grandparent, grandparentIndex) in parent.parents"
+                        :key="`grandparent-${grandparentIndex}`"
+                      >
+                        <ParentGroup
+                          :index="grandparentIndex"
+                          :profile="grandparent"
+                          :title="grandparent.relationshipType ? grandparent.relationshipType + ' grandparent' : 'grandparent'"
+                          @removeParent="removeGrandparent($event, index)"
+                        />
+                      </v-col>
+                      <v-row v-if="type !== 'review'" class="py-4 pl-10">
+                        <v-icon :color="!gpNames ? '#b12526':''">mdi-account-supervisor-circle</v-icon>
+                        <AddButton
+                          :color="!gpNames ? '#b12526':''"
+                          justify="start"
+                          :width="'50px'"
+                          :label="'Add parents of ' + parent.preferredName"
+                          @click="addGrandparent(index)"
+                        />
+                      </v-row>
+                    </v-row>
+                  </div>
+                    <v-row class="py-4 pl-12">
+                      <v-icon :color="!parentsNames ? '#b12526':''">mdi-account-supervisor-circle</v-icon>
+                      <AddButton
+                        :color="!parentsNames ? '#b12526':''"
+                        justify="start"
+                        :width="'50px'"
+                        label="Add parent"
+                        @click="addParent('parent')"
+                      />
+                    </v-row>
+                </v-card>
+
+                <v-btn
+                  color="primary"
+                  @click="step = 3"
+                >
+                  Continue
+                </v-btn>
+                <v-btn text>
+                  Cancel
+                </v-btn>
+              </v-stepper-content> -->
+
+              <!-- Joining Questions -->
+              <v-stepper-step
+                :complete="step > 3"
+                step="3"
+                :color="step > 3 ? 'green' : 'black'"
+              >
+                Answer Joining Questions
+              </v-stepper-step>
+
+              <v-stepper-content step="3">
+                <v-card
+                  color="grey lighten-5"
+                  class="mb-6"
+                  height="auto"
+                  outlined
+                >
+                  <v-row>
+                    <v-col cols="12" sm="12" v-for="(question, i) in joiningQuestions" :key="`j-q-${i}`" :class="mobile ? 'pt-4 px-0':'pt-6 px-5'">
+                      <v-text-field
+                        v-model="joiningQuestions[i].answer"
+                        v-bind="customProps"
+                        :label="joiningQuestions[i].question"
+                      />
+                    </v-col>
+                  </v-row>
+                </v-card>
+                <v-btn
+                  color="primary"
+                  @click="step = 4"
+                >
+                  Next
+                </v-btn>
+              </v-stepper-content>
+
+              <!-- MESSAGE -->
+              <v-stepper-step step="4">
+                Send a message with your request
+              </v-stepper-step>
+              <v-stepper-content step="4">
+                <v-card
+                  color="grey lighten-5"
+                  class="mb-6"
+                  height="auto"
+                  outlined
+                >
+                  <v-col cols="12" :class="mobile ? 'pt-4 px-0':'pt-6 px-5'">
+                    <v-textarea
+                      v-model="message"
+                      label="Send a message with your request"
+                      no-resize
+                      v-bind="customProps"
+                      rows="3"
+                      auto-grow
+                      placeholder=" "
+                    ></v-textarea>
+                  </v-col>
+                </v-card>
+              </v-stepper-content>
+            </v-stepper>
           </v-form>
         </v-col>
       </template>
@@ -88,12 +356,34 @@
 
 import Avatar from '@/components/Avatar.vue'
 import Dialog from '@/components/dialog/Dialog.vue'
+import ProfileCard from '@/components/profile/ProfileCard.vue'
+import ProfileInfoItem from '@/components/profile/ProfileInfoItem.vue'
+
+import { getProfile } from '@/lib/profile-helpers.js'
+
+import { mapGetters } from 'vuex'
+
+import { dateIntervalToString } from '@/lib/date-helpers.js'
 
 export default {
   name: 'NewRegistrationDialog',
   components: {
     Dialog,
-    Avatar
+    Avatar,
+    ProfileCard,
+    ProfileInfoItem
+  },
+  apollo: {
+    personalProfile () {
+      return {
+        ...getProfile,
+        variables () {
+          return {
+            id: this.whoami.personal.profile.id
+          }
+        }
+      }
+    }
   },
   props: {
     show: { type: Boolean, required: true },
@@ -103,9 +393,13 @@ export default {
   },
   data () {
     return {
+      step: null,
+      checkbox1: null,
+      checkbox2: null,
       formData: this.profile,
       message: '',
-      joiningQuestions: []
+      joiningQuestions: [],
+      personalProfile: {}
     }
   },
   watch: {
@@ -119,10 +413,21 @@ export default {
             answer: ''
           }
         })
+        this.joiningQuestions = [
+          { question: 'Who are your parents?', answer: '' },
+          { question: 'Who are your grandparents?', answer: '' }
+        ]
       }
+    },
+    checkbox1 (checkbox) {
+      if (checkbox) this.step = 2 // step to the next section
+    },
+    checkbox2 (checkbox) {
+      if (checkbox) this.step = 3 // step to the next section
     }
   },
   computed: {
+    ...mapGetters(['whoami']),
     length () {
       var name = ''
       if (this.profile.legalName) name = this.profile.legalName
@@ -141,6 +446,13 @@ export default {
         placeholder: ' ',
         outlined: true
       }
+    },
+    dob () {
+      if (this.personalProfile.aliveInterval) {
+        var formattedDate = dateIntervalToString(this.personalProfile.aliveInterval)
+        return formattedDate
+      }
+      return ' '
     }
   },
   methods: {

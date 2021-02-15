@@ -29,6 +29,7 @@ export const WithProfile = () => ({
       show: true,
       profile: {
         preferredName: 'Cats',
+        description: 'This is a community for cats!',
         joiningQuestions: [
           { type: 'input', label: 'What is your name?' },
           { type: 'input', label: 'Where were you born?' },
