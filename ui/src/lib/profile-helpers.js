@@ -7,8 +7,6 @@ export const SharedProfileFieldsFragment = gql`
     type
     
     preferredName
-    legalName
-    altNames
     description
 
     avatarImage { uri }
@@ -36,6 +34,8 @@ export const PersonProfileFieldsFragment = gql`
   ${SharedProfileFieldsFragment}
   fragment PersonProfileFields on Person {
     ...SharedProfileFields
+    legalName
+    altNames
     profession
     gender
     aliveInterval
