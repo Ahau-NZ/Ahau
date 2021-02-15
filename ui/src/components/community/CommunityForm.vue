@@ -54,13 +54,16 @@
           <!-- Phone -->
           <v-text-field v-model="formData.phone" label="Phone" v-bind="customProps" />
         </v-col>
-        <v-col cols="12" v-if="!allowJoiningQuestions">
-          <v-checkbox v-model="allowJoiningQuestions" label="Add questions to ask joining members?"/>
+        <v-col cols="12" align="center" v-if="!allowJoiningQuestions" class="pt-12">
+          <v-btn @click="allowJoiningQuestions = true" text light color="blue">
+            Setup Comunity registration form
+            <v-icon>mdi-cogs</v-icon>
+          </v-btn>
         </v-col>
         <v-col v-else>
           <v-row>
             <v-col cols="12">
-              Member Joining Questions
+              Community registration form
             </v-col>
             <v-col cols="12" sm="12" v-for="(question, i) in formData.joiningQuestions" :key="`j-q-${i}`" class="pa-1, mt-4">
               <v-text-field
