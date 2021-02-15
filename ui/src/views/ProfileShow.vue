@@ -115,7 +115,9 @@ export default {
       dialog: null,
       parents: [],
       parentIndex: null,
-      dialogType: null
+      dialogType: null,
+      source: null,
+      isApplication: false
     }
   },
   watch: {
@@ -136,6 +138,15 @@ export default {
           this.showAlert({ message, delay: 5000, color: 'red' })
         }
       }
+    },
+    '$route.params' (params) {
+      if (!params.application) return
+      const { dialog, source } = params.application
+
+      this.dialog = dialog
+      this.source = source
+
+      this.isApplication = true
     }
   },
   computed: {
@@ -212,6 +223,10 @@ export default {
       this.closeDialog()
       this.refresh()
       this.showAlert({ message: 'The profile was updated!' })
+
+      if (this.isApplication) {
+        this.goProfile()
+      }
     },
     async deleteCommunity () {
       try {
@@ -245,6 +260,22 @@ export default {
       } catch (err) {
         console.error('Something went wrong while create a group application', err)
       }
+    },
+    goProfile () {
+      this.$router.push({
+        name: 'community/profile',
+        params: {
+          tribeId: this.source.tribeId,
+          profileId: this.source.profileId,
+          application: {
+            dialog: 'new-registration',
+            source: {
+              tribeId: this.$route.params.tribeId,
+              profileId: this.$route.params.profileId
+            }
+          }
+        }
+      }).catch(() => {})
     },
     closeDialog () {
       this.dialog = null

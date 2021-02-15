@@ -74,6 +74,7 @@
                 </v-card>
                 <v-btn
                   color="primary"
+                  @click="goProfile"
                 >
                   Go to edit profile
                 </v-btn>
@@ -333,7 +334,7 @@ export default {
     }
   },
   watch: {
-    'profile': {
+    profile: {
       deep: true,
       immediate: true,
       handler (profile) {
@@ -343,13 +344,20 @@ export default {
             answer: ''
           }
         })
+
+        this.formData = profile
+
+        this.joiningQuestions = [
+          { question: 'What are you?', answer: '' },
+          { question: 'Where you living?', answer: '' }
+        ]
       }
     },
     checkbox1 (checkbox) {
-      if (checkbox) this.step = 2 // step to the next section
+      if (checkbox) this.step = 3 // step to the next section
     },
     checkbox2 (checkbox) {
-      if (checkbox) this.step = 3 // step to the next section
+      if (checkbox) this.step = this.hasJoiningQuestions ? 4 : 5 // step to the next section
     },
     personalProfile: {
       deep: true,
@@ -387,6 +395,7 @@ export default {
       return null
     },
     invalidPersonalProfileProps () {
+      if (!this.personalProfile) return []
       return findInvalidProfileProps(this.personalProfile)
     },
     isValidPersonalProfile () {
@@ -409,6 +418,22 @@ export default {
     submit () {
       this.$emit('submit', { text: this.message, joiningQuestionAnswers: this.joiningQuestions })
       this.close()
+    },
+    goProfile () {
+      this.$router.push({
+        name: 'person/profile',
+        params: {
+          tribeId: this.whoami.personal.groupId,
+          profileId: this.whoami.personal.profile.id,
+          application: {
+            dialog: 'edit-node',
+            source: {
+              tribeId: this.$route.params.tribeId,
+              profileId: this.$route.params.profileId
+            }
+          }
+        }
+      }).catch(() => {})
     }
   }
 }
