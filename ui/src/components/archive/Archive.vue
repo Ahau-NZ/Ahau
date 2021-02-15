@@ -4,7 +4,7 @@
       <div v-if="showStory" :class="{ 'showOverlay': showStory && !mobile }"></div>
       <v-row v-show="!showStory" class="top-margin">
         <v-col cols="10" class="headliner black--text pa-0 pl-4 pt-2 pb-5">
-          {{ onCollectionPage ? 'Collection' : 'Archive'}}
+          {{ onCollectionPage ? 'Collection' : currentAccess.preferredName ? `${currentAccess.preferredName}'s Archive` : `${currentAccess.legalName}'s Archive`}}
           <v-icon color="blue-grey" light @click="toggleArchiveHelper" class="infoButton">mdi-information</v-icon>
         </v-col>
         <v-col v-show="!showStory">
@@ -42,7 +42,7 @@
       @submit="processStory"
     />
     <NewCollectionDialog v-if="dialog === 'new-collection'" :show="dialog === 'new-collection'"
-      :title="`Add a collection to ${ archiveTitle } archive`" @close="dialog = null"
+      :title="`Add a collection to ${ collectionTitle } archive`" @close="dialog = null"
       @submit="processCollection"
     />
   </div>
@@ -102,10 +102,18 @@ export default {
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
-    archiveTitle () {
+    collectionTitle () {
       if (!this.profile || !this.profile.preferredName) return 'this'
       return this.profile.preferredName + "'s"
     },
+    archiveTitle () {
+      // if my community profile return profile name
+      // if my profile return profile.name
+      // if person profile but not my profile return tribe name 
+      if (!this.profile || !this.profile.preferredName) return 'this'
+      return this.profile.preferredName + "'s"
+    },
+    
     allowCollections () {
       // only personal or community archives will see collections
 

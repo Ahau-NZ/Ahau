@@ -7,7 +7,7 @@
       />
     </v-col>
     <v-col cols="12">
-      <Stories :stories="stories" @save="$emit('processStory', $event)" title="Stories"/>
+      <Stories :stories="stories" @save="$emit('processStory', $event)" :title="title"/>
     </v-col>
   </v-row>
 </template>
@@ -22,14 +22,19 @@ export default {
   props: {
     stories: Array,
     collections: Array,
-    hideCollections: Boolean
+    hideCollections: Boolean,
+    profile: Object
   },
   components: {
     Stories,
     CollectionGroup
   },
   computed: {
-    ...mapGetters(['showStory', 'whoami'])
+    ...mapGetters(['showStory', 'whoami', 'currentAccess']),
+    title() {
+      if (this.profile.id !== this.currentAccess.id) return `Stories about ${this.profile.preferredName ? this.profile.preferredName : this.profile.legalName}`
+      return 'Stories'
+    }
   },
   methods: {
     showCurrentCollection ({ id }) {
