@@ -188,8 +188,8 @@ export default {
       return `translate(${x * this.radius} ${1.3 * this.radius})`
     },
     nodeDisplayName () {
-      const displayName = this.profile.preferredName ? this.profile.preferredName : this.profile.legalName.split(' ')[0]
-      return displayName
+      // display name on the tree node is preferred name if available, otherwise take the first string in the full name
+      return this.profile.preferredName ? this.profile.preferredName : this.profile.legalName.split(' ')[0]
     }
   },
   methods: {

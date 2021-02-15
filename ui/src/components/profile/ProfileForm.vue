@@ -136,7 +136,7 @@
                 <img ref="otherImg" :src="require('@/assets/diverse-outlined.svg')" :class="mobile ? 'gender-image-mobile':'gender-image'">
               </div>
             </v-col>
-            <div class="gender-checkbox-unknown">
+            <div :class="isSideViewDialog ? 'gender-checkbox-unknown-side' : 'gender-checkbox-unknown-default'">
               <v-col  v-if="!readonly || formData.gender === 'unknown'" cols="3" class="pa-10 py-0">
                 <v-checkbox v-model="formData.gender"
                 value="unknown"
@@ -147,7 +147,7 @@
               </v-col>
             </div>
           </v-row>
-          <v-row class="gender-label-row">
+          <v-row v-if="!isSideViewDialog" class="gender-label-row">
             <v-col class="pa-0">
               <p class="gender-label-text text-field">Tāne</p>
             </v-col>
@@ -377,7 +377,8 @@ export default {
     editRelationship: { type: Boolean, default: false },
     mobile: { type: Boolean, default: false },
     isEditing: { type: Boolean, default: false },
-    isUser: { type: Boolean, default: false }
+    isUser: { type: Boolean, default: false },
+    isSideViewDialog: { type: Boolean, default: false }
   },
   data () {
     return {
@@ -580,9 +581,12 @@ export default {
       }
     }
 
-    .gender-checkbox-unknown {
-        padding: 40px 0px;
-      }
+    .gender-checkbox-unknown-default {
+        padding: 90px 0px 0px 0px;
+    }
+    .gender-checkbox-unknown-side {
+        padding: 0px 0px 15px 0px;
+    }
   }
 
     .gender-label-row {
