@@ -104,61 +104,61 @@
       </v-row>
 
       <v-row>
-            <!-- GENDER VIEW -->
-            <v-col  v-if="readonly" class="pa-1">
-              <v-text-field
-                v-model="formData.gender"
-                label="Gender"
+      <!-- GENDER VIEW -->
+        <v-col  v-if="readonly" class="pa-1">
+          <v-text-field
+            v-model="formData.gender"
+            label="Gender"
+            v-bind="customProps"
+            outlined
+          />
+        </v-col>
+        <!-- GENDER EDIT -->
+        <v-col v-if="!readonly" class="pa-1">
+          <p class="text-field">Identifies As</p>
+
+          <v-row class="gender-button-row">
+            <!-- TANE -->
+            <v-col class="pa-0">
+              <div class="gender-button" @click="updateSelectedGender('male')">
+                <img ref="taneImg" :src="require('@/assets/tane-outlined.svg')" :class="mobile ? 'gender-image-mobile':'gender-image'">
+              </div>
+            </v-col>
+            <!-- WAHINE -->
+            <v-col class="pa-0">
+              <div class="gender-button" @click="updateSelectedGender('female')">
+                <img ref="wahineImg" :src="require('@/assets/wahine-outlined.svg')" :class="mobile ? 'gender-image-mobile':'gender-image'">
+              </div>
+            </v-col>
+            <!-- DIVERSE -->
+            <v-col class="pa-0">
+              <div class="gender-button" @click="updateSelectedGender('other')">
+                <img ref="otherImg" :src="require('@/assets/diverse-outlined.svg')" :class="mobile ? 'gender-image-mobile':'gender-image'">
+              </div>
+            </v-col>
+            <div class="gender-checkbox-unknown">
+              <v-col  v-if="!readonly || formData.gender === 'unknown'" cols="3" class="pa-10 py-0">
+                <v-checkbox v-model="formData.gender"
+                value="unknown"
+                label="Unknown" :hide-details="true"
                 v-bind="customProps"
                 outlined
-              />
+                />
+              </v-col>
+            </div>
+          </v-row>
+          <v-row class="gender-label-row">
+            <v-col class="pa-0">
+              <p class="gender-label-text text-field">Tāne</p>
             </v-col>
-            <!-- GENDER EDIT -->
-            <v-col v-if="!readonly" class="pa-1">
-              <p class="text-field">Identifies As</p>
-
-              <v-row class="gender-button-row">
-                <!-- TANE -->
-                <v-col class="pa-0">
-                  <div class="gender-button" @click="updateSelectedGender('male')">
-                    <img ref="taneImg" :src="require('@/assets/tane-outlined.svg')" :class="mobile ? 'gender-image-mobile':'gender-image'">
-                  </div>
-                </v-col>
-                <!-- WAHINE -->
-                <v-col class="pa-0">
-                  <div class="gender-button" @click="updateSelectedGender('female')">
-                    <img ref="wahineImg" :src="require('@/assets/wahine-outlined.svg')" :class="mobile ? 'gender-image-mobile':'gender-image'">
-                  </div>
-                </v-col>
-                <!-- DIVERSE -->
-                <v-col class="pa-0">
-                  <div class="gender-button" @click="updateSelectedGender('other')">
-                    <img ref="otherImg" :src="require('@/assets/diverse-outlined.svg')" :class="mobile ? 'gender-image-mobile':'gender-image'">
-                  </div>
-                </v-col>
-                <div class="gender-checkbox-unknown">
-                  <v-col  v-if="!readonly || formData.gender === 'unknown'" cols="3" class="pa-10 py-0">
-                    <v-checkbox v-model="formData.gender"
-                    value="unknown"
-                    label="Unknown" :hide-details="true"
-                    v-bind="customProps"
-                    outlined
-                    />
-                  </v-col>
-                </div>
-              </v-row>
-              <v-row class="gender-label-row">
-                <v-col class="pa-0">
-                  <p class="gender-label-text text-field">Tāne</p>
-                </v-col>
-                <v-col class="pa-0">
-                  <p class="gender-label-text text-field">Wāhine</p>
-                </v-col>
-                <v-col class="pa-0">
-                  <p class="gender-label-text text-field">Other</p>
-                </v-col>
-              </v-row>
+            <v-col class="pa-0">
+              <p class="gender-label-text text-field">Wāhine</p>
             </v-col>
+            <v-col class="pa-0">
+              <p class="gender-label-text text-field">Other</p>
+            </v-col>
+          </v-row>
+        </v-col>
       </v-row>
         <!-- Start of advanced section -->
         <v-divider />
@@ -178,16 +178,14 @@
           <!-- Preferred name -->
           <v-row>
             <v-col cols="6" class="pa-1">
-              <slot name="search">
-                  <v-text-field
-                  v-model="formData.preferredName"
-                  label="Preferred Name"
-                  v-bind="customProps"
-                  outlined
-                  />
-              </slot>
+              <v-text-field
+              v-model="formData.preferredName"
+              label="Preferred Name"
+              v-bind="customProps"
+              outlined
+              />
             </v-col>
-          <!-- Alt names -->
+            <!-- Alt names -->
             <template>
               <v-col v-for="(altName, index) in formData.altNames.currentState"
                 :key="`value-alt-name-${index}`"
@@ -224,128 +222,128 @@
                   outlined
                 />
               </v-col>
-                <AddButton :align="'flex-end'" :width="'50px'" label="Add another name" @click="addAltNameField" row/>
+              <AddButton :align="'flex-end'" :width="'50px'" label="Add another name" @click="addAltNameField" row/>
             </template>
           </v-row>
           <!-- Description, Profession, Place of Birth -->
           <v-row>
             <v-col cols="12" sm="12" class="py-0">
               <v-row>
-              <!-- Description textarea -->
-              <v-col cols="12" class="pa-1">
-                <v-textarea
-                  v-model="formData.description"
-                  label="Description"
-                  v-bind="customProps"
-                  no-resize
-                  rows="4"
-                  auto-grow
-                  outlined
-                >
-                </v-textarea>
-              </v-col>
-            </v-row>
-        </v-col>
-      </v-row>
-      <v-row>
-        <v-col cols="6" class="pa-1">
+                <!-- Description textarea -->
+                <v-col cols="12" class="pa-1">
+                  <v-textarea
+                    v-model="formData.description"
+                    label="Description"
+                    v-bind="customProps"
+                    no-resize
+                    rows="4"
+                    auto-grow
+                    outlined
+                  />
+                </v-col>
+              </v-row>
+            </v-col>
+          </v-row>
+          <!-- Profession, Place of Birth -->
+          <v-row>
+            <v-col cols="6" class="pa-1">
               <v-text-field
                 v-model="formData.profession"
                 label="Profession"
                 v-bind="customProps"
                 outlined
               />
-        </v-col>
-        <v-col cols="6" class="pa-1">
+            </v-col>
+            <v-col cols="6" class="pa-1">
               <v-text-field
                 v-model="formData.placeOfBirth"
                 label="Place of Birth"
                 v-bind="customProps"
                 outlined
               />
-        </v-col>
-      </v-row>
-      <!-- Email, Address, Phone, Location -->
-      <v-row v-if="!formData.deceased">
-        <v-col cols="12" :sm="mobile ? '12' : '6'">
-          <!-- Email -->
-          <v-row>
-            <v-col cols="12" class="pa-1">
-                <v-text-field
-                  v-model="formData.email"
-                  label="Email"
-                  v-bind="customProps"
-                  outlined
-                />
-              </v-col>
-          </v-row>
-          <!-- Phone -->
-          <v-row>
-            <v-col cols="12" class="pa-1">
-              <v-text-field
-                v-model="formData.phone"
-                label="Phone"
-                v-bind="customProps"
-                outlined
-              />
             </v-col>
           </v-row>
-        </v-col>
+          <!-- Email, Address, Phone, Location -->
+          <v-row v-if="!formData.deceased">
+            <v-col cols="12" :sm="mobile ? '12' : '6'">
+              <!-- Email -->
+              <v-row>
+                <v-col cols="12" class="pa-1">
+                  <v-text-field
+                    v-model="formData.email"
+                    label="Email"
+                    v-bind="customProps"
+                    outlined
+                  />
+                </v-col>
+              </v-row>
+              <!-- Phone -->
+              <v-row>
+                <v-col cols="12" class="pa-1">
+                  <v-text-field
+                    v-model="formData.phone"
+                    label="Phone"
+                    v-bind="customProps"
+                    outlined
+                  />
+                </v-col>
+              </v-row>
+            </v-col>
 
-        <v-col cols="12" :sm="mobile ? '12' : '6'">
-          <v-row>
-            <v-col cols="12" class="pa-1">
-              <!-- Address -->
-              <v-text-field
-                v-model="formData.address"
-                label="Address"
-                v-bind="customProps"
-                outlined
-              />
+            <v-col cols="12" :sm="mobile ? '12' : '6'">
+              <v-row>
+                <v-col cols="12" class="pa-1">
+                  <!-- Address -->
+                  <v-text-field
+                    v-model="formData.address"
+                    label="Address"
+                    v-bind="customProps"
+                    outlined
+                  />
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col cols="12" class="pa-1">
+                  <!-- Location -->
+                  <v-text-field
+                    v-model="formData.location"
+                    label="City, Country"
+                    v-bind="customProps"
+                    outlined
+                  />
+                </v-col>
+              </v-row>
             </v-col>
           </v-row>
-          <v-row>
-            <v-col cols="12" class="pa-1">
-              <!-- Location -->
-              <v-text-field
-                v-model="formData.location"
-                label="City, Country"
-                v-bind="customProps"
-                outlined
-              />
+          <v-row v-if="formData.deceased">
+            <v-col cols="12" :sm="mobile ? '12' : '6'">
+              <!-- Place of Death -->
+              <v-row>
+                <v-col cols="12" class="pa-1">
+                  <v-text-field
+                    v-model="formData.placeOfDeath"
+                    label="Place of Death"
+                    v-bind="customProps"
+                    outlined
+                  />
+                </v-col>
+              </v-row>
             </v-col>
-          </v-row>
-        </v-col>
-      </v-row>
-      <v-row v-if="formData.deceased">
-        <v-col cols="12" :sm="mobile ? '12' : '6'">
-          <!-- Place of Death -->
-          <v-row>
-            <v-col cols="12" class="pa-1">
-                <v-text-field
-                  v-model="formData.placeOfDeath"
-                  label="Place of Death"
-                  v-bind="customProps"
-                  outlined
-                />
-              </v-col>
-          </v-row>
-        </v-col>
 
-        <v-col cols="12" :sm="mobile ? '12' : '6'">
-          <v-row>
-            <v-col cols="12" class="pa-1">
-              <!-- Burial Location -->
-              <v-text-field
-                v-model="formData.buriedLocation"
-                label="Burial Location"
-                v-bind="customProps"
-                outlined
-              />
+            <v-col cols="12" :sm="mobile ? '12' : '6'">
+              <v-row>
+                <v-col cols="12" class="pa-1">
+                  <!-- Burial Location -->
+                  <v-text-field
+                    v-model="formData.buriedLocation"
+                    label="Burial Location"
+                    v-bind="customProps"
+                    outlined
+                  />
+                </v-col>
+              </v-row>
             </v-col>
           </v-row>
-        </v-col>
-      </v-row>
         </div>
       </v-expand-transition>
       <!-- End of advanced section -->
@@ -396,9 +394,7 @@ export default {
   },
   mounted () {
     if (this.formData.gender) {
-      if (this.formData.gender === 'male') this.updateSelectedGender('male')
-      if (this.formData.gender === 'female') this.updateSelectedGender('female')
-      if (this.formData.gender === 'other') this.updateSelectedGender('other')
+      this.updateSelectedGender(this.formData.gender)
     }
     if (isEmpty(this.formData.relationshipType)) {
       this.formData.relationshipType = 'birth'
