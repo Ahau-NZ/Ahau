@@ -31,7 +31,7 @@ export default {
   },
   computed: {
     ...mapGetters(['showStory', 'whoami', 'currentAccess']),
-    title() {
+    title () {
       if (this.profile.id !== this.currentAccess.id) return `Stories about ${this.profile.preferredName ? this.profile.preferredName : this.profile.legalName}`
       return 'Stories'
     }

@@ -5,15 +5,19 @@
       <v-row v-if="!showStory">
         <v-col cols="12" xs="12" sm="12" md="9" class="pa-0">
           <v-row>
+            <WhakapapaBanner v-if="mobile" :whakapapa="collection"/>
+            <v-row v-else>
+              <CollectionTitleCard :collection="collection" :access="[access]"/>
+            </v-row>
             <!-- Collection image -->
             <!-- order (image first if not mobile) -->
-            <v-col :order="!mobile ? 1 : 2" cols="12" xs="12" sm="12" md="1">
+            <!-- <v-col :order="!mobile ? 1 : 2" cols="12" xs="12" sm="12" md="1">
               <v-img :src="image" class="pa-0" cover height="100%" width="100%">
               </v-img>
-            </v-col>
+            </v-col> -->
             <!-- Collection title-->
             <!-- order (title first if not mobile) -->
-            <v-col :order="!mobile ? 2 : 1" cols="12" xs="12" sm="12" md="9">
+            <!-- <v-col :order="!mobile ? 2 : 1" cols="12" xs="12" sm="12" md="9">
               <v-row class="align-center pl-3">
                 <h3 class="blue-grey--text text--darken-4">
                   {{ collection.name }}
@@ -51,14 +55,12 @@
                 </div>
               </v-row>
               <div v-if="!mobile">
-                <!-- DESKTOP: Description -->
                 <p
                   v-if="collection.description"
                   class="black--text mb-0 py-2 caption"
                 >
                   {{ collection.description }}
                 </p>
-                <!-- DESKTOP: # of stories -->
                 <v-subheader
                   v-if="collection.stories.length > 0"
                   light
@@ -69,16 +71,15 @@
                   in this Collection
                 </v-subheader>
               </div>
-            </v-col>
-            <v-col v-if="mobile" order="3">
-              <!-- MOBILE: Description -->
+            </v-col> -->
+
+            <!-- <v-col v-if="mobile" order="3">
               <p
                 v-if="collection.description"
                 class="black--text mb-0 py-2 caption"
               >
                 {{ collection.description }}
               </p>
-              <!-- MOBILE: # of stories -->
               <v-subheader
                 v-if="collection.stories.length > 0"
                 light
@@ -88,15 +89,14 @@
                 {{ collection.stories.length == 1 ? " Story " : " Stories " }}
                 in this Collection
               </v-subheader>
-            </v-col>
+            </v-col> -->
           </v-row>
-          <v-divider class="grey mb-8"></v-divider>
         </v-col>
       </v-row>
 
       <!-- STORIES -->
       <v-row>
-        <v-col cols="12">
+        <v-col cols="12" class="px-0">
           <Stories
             title="Stories"
             :stories="stories"
@@ -139,6 +139,9 @@ import Stories from '../components/archive/Stories.vue'
 
 import NewCollectionDialog from '@/components/dialog/archive/NewCollectionDialog.vue'
 import DeleteCollectionDialog from '@/components/dialog/archive/DeleteCollectionDialog.vue'
+import WhakapapaBanner from '@/components/whakapapa/WhakapapaBanner.vue'
+import CollectionTitleCard from '@/components/archive/CollectionTitleCard.vue'
+
 
 import whakapapa from '@/assets/whakapapa.png'
 import niho from '@/assets/niho.svg'
@@ -162,7 +165,9 @@ export default {
   components: {
     Stories,
     NewCollectionDialog,
-    DeleteCollectionDialog
+    DeleteCollectionDialog,
+    WhakapapaBanner,
+    CollectionTitleCard
   },
   data () {
     return {
@@ -186,19 +191,20 @@ export default {
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
-    image () {
-      // if there is an image return it
-      if (
-        this.collection &&
-        this.collection.image &&
-        this.collection.image.uri
-      ) {
-        return this.collection.image.uri
-      }
+    // image () {
+    //   console.log("i am image")
+    //   // if there is an image return it
+    //   if (
+    //     this.collection &&
+    //     this.collection.image &&
+    //     this.collection.image.uri
+    //   ) {
+    //     return this.collection.image.uri
+    //   }
 
-      // otherwise return a default one
-      return this.type === 'view' ? whakapapa : niho
-    }
+    //   // otherwise return a default one
+    //   return this.type === 'view' ? whakapapa : niho
+    // }
   },
   watch: {
     async collection (collection) {
