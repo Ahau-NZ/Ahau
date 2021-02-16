@@ -48,7 +48,7 @@ import Collection from './Collection.vue'
 export default {
   name: 'CollectionGroup',
   props: {
-    collections: Array,
+    collections: Array
   },
   components: { Collection },
   data () {

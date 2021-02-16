@@ -3,7 +3,7 @@
     <div class="px-4">
       <div v-if="showStory" :class="{ 'showOverlay': showStory && !mobile }"></div>
       <v-row v-show="!showStory" class="top-margin">
-        <v-col cols="10" class="headliner black--text pa-0 pl-4 pt-2 pb-2">
+        <v-col v-if="!onCollectionPage && mobile" cols="10" class="headliner black--text pa-0 pl-4 pt-2 pb-2">
           {{archiveTitle}}
           <v-icon color="blue-grey" light @click="toggleArchiveHelper" class="infoButton">mdi-information</v-icon>
         </v-col>
@@ -105,7 +105,7 @@ export default {
     collectionTitle () {
       if (!this.profile || !this.profile.preferredName) return 'this'
       return this.profile.preferredName
-    },  
+    },
     archiveTitle () {
       if (this.currentAccess.id === this.whoami.personal.profile.id) return 'Your personal archive'
       return this.currentAccess.preferredName ? `${this.currentAccess.preferredName} Archive` : `${this.currentAccess.legalName}'s Archive`
@@ -124,7 +124,6 @@ export default {
       return false
     },
     onCollectionPage () {
-      console.log('this.$route.name', this.$route.name)
       if (this.$route.name === 'person/archive/:collectionId' || this.$route.name === 'community/archive/:collectionId') {
         return true
       } else {

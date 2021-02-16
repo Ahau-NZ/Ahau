@@ -1,95 +1,12 @@
 <template>
   <div>
-    <v-container fluid v-if="collection">
+    <v-container fluid v-if="collection" @click="dialog = 'edit-collection'">
       <!-- Collection Header -->
       <v-row v-if="!showStory">
-        <v-col cols="12" xs="12" sm="12" md="9" class="pa-0">
-          <v-row>
-            <WhakapapaBanner v-if="mobile" :whakapapa="collection"/>
-            <v-row v-else class="pb-5">
-              <CollectionTitleCard :collection="collection" :access="[access]" @click="dialog = 'edit-collection'"/>
-            </v-row>
-            <!-- Collection image -->
-            <!-- order (image first if not mobile) -->
-            <!-- <v-col :order="!mobile ? 1 : 2" cols="12" xs="12" sm="12" md="1">
-              <v-img :src="image" class="pa-0" cover height="100%" width="100%">
-              </v-img>
-            </v-col> -->
-            <!-- Collection title-->
-            <!-- order (title first if not mobile) -->
-            <!-- <v-col :order="!mobile ? 2 : 1" cols="12" xs="12" sm="12" md="9">
-              <v-row class="align-center pl-3">
-                <h3 class="blue-grey--text text--darken-4">
-                  {{ collection.name }}
-                </h3>
-                <div v-if="!mobile && collection && collection.canEdit">
-                  <v-tooltip top>
-                    <template v-slot:activator="{ on }">
-                      <v-btn
-                        v-on="on"
-                        @click.stop="dialog = 'edit-collection'"
-                        icon
-                        class="pl-5"
-                      >
-                        <v-icon class="blue--text">mdi-pencil</v-icon>
-                      </v-btn>
-                    </template>
-                    <span>Edit Collection</span>
-                  </v-tooltip>
-                </div>
-              </v-row>
-              <v-row v-if="mobile" class="justify-center">
-                <div v-if="collection && collection.canEdit">
-                  <v-tooltip top>
-                    <template v-slot:activator="{ on }">
-                      <v-btn
-                        v-on="on"
-                        @click.stop="dialog = 'edit-collection'"
-                        icon
-                      >
-                        <v-icon class="blue--text">mdi-pencil</v-icon>
-                      </v-btn>
-                    </template>
-                    <span>Edit Collection</span>
-                  </v-tooltip>
-                </div>
-              </v-row>
-              <div v-if="!mobile">
-                <p
-                  v-if="collection.description"
-                  class="black--text mb-0 py-2 caption"
-                >
-                  {{ collection.description }}
-                </p>
-                <v-subheader
-                  v-if="collection.stories.length > 0"
-                  light
-                  class="pa-0"
-                >
-                  {{ collection.stories.length }}
-                  {{ collection.stories.length == 1 ? " Story " : " Stories " }}
-                  in this Collection
-                </v-subheader>
-              </div>
-            </v-col> -->
-
-            <!-- <v-col v-if="mobile" order="3">
-              <p
-                v-if="collection.description"
-                class="black--text mb-0 py-2 caption"
-              >
-                {{ collection.description }}
-              </p>
-              <v-subheader
-                v-if="collection.stories.length > 0"
-                light
-                class="pa-0"
-              >
-                {{ collection.stories.length }}
-                {{ collection.stories.length == 1 ? " Story " : " Stories " }}
-                in this Collection
-              </v-subheader>
-            </v-col> -->
+        <CollectionTitle v-if="mobile" :collection="collection"/>
+        <v-col v-else cols="12" xs="12" sm="12" md="9" class="pa-0">
+          <v-row class="pb-5">
+            <CollectionTitleCard :collection="collection" :access="[access]" @click="dialog = 'edit-collection'"/>
           </v-row>
         </v-col>
       </v-row>
@@ -139,7 +56,7 @@ import Stories from '../components/archive/Stories.vue'
 
 import NewCollectionDialog from '@/components/dialog/archive/NewCollectionDialog.vue'
 import DeleteCollectionDialog from '@/components/dialog/archive/DeleteCollectionDialog.vue'
-import WhakapapaBanner from '@/components/whakapapa/WhakapapaBanner.vue'
+import CollectionTitle from '@/components/archive/CollectionTitle.vue'
 import CollectionTitleCard from '@/components/archive/CollectionTitleCard.vue'
 
 export default {
@@ -161,7 +78,7 @@ export default {
     Stories,
     NewCollectionDialog,
     DeleteCollectionDialog,
-    WhakapapaBanner,
+    CollectionTitle,
     CollectionTitleCard
   },
   data () {
@@ -185,7 +102,7 @@ export default {
     },
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
-    },
+    }
   },
   watch: {
     async collection (collection) {

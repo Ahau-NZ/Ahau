@@ -57,7 +57,7 @@
   <v-divider light></v-divider>
 </v-card>
 </template>
-    
+
 <script>
 import niho from '@/assets/niho.svg'
 import AvatarGroup from '@/components/AvatarGroup.vue'
@@ -65,22 +65,21 @@ import { getTribalProfile } from '@/lib/community-helpers.js'
 import { mapGetters } from 'vuex'
 import mapProfileMixins from '@/mixins/profile-mixins.js'
 
-
 export default {
-  name:'CollectionTitleCard',
+  name: 'CollectionTitleCard',
   components: {
     AvatarGroup
   },
   props: {
-    collection: Object,
+    collection: Object
   },
   mixins: [
     mapProfileMixins({
       mapMethods: ['getTribe']
-    }),
+    })
   ],
   async mounted () {
-       // populate access
+    // populate access
     const tribe = await this.getTribe(this.collection.recps[0])
     // get the profile of the tribe
     this.access = [getTribalProfile(tribe, this.whoami)]
@@ -103,7 +102,7 @@ export default {
       }
       // otherwise return a default one
       return niho
-    },
+    }
   }
 }
 </script>
