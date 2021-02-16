@@ -61,7 +61,7 @@
         </v-row>
         <v-row>
           <v-col cols="12" md="auto" class="pa-5">
-            <v-tooltip top open-delay="700" :disabled="showStories">
+            <v-tooltip v-if="!readonly" top open-delay="700" :disabled="showStories">
               <template v-slot:activator="{ on }">
                 <div v-on="on">
                   <p class="caption">Add stories from archive to this collection</p>
@@ -85,7 +85,7 @@
               v-if="formData.stories && formData.stories.length > 0"
               type="story"
               :chips="formData.stories"
-              deletable
+              :deletable="!readonly"
               @delete="removeStory"
             />
             <v-divider v-if="mobile" light class="mt-6 mr-4"></v-divider>

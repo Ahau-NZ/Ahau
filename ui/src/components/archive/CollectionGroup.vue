@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-row>
-      <v-col cols="10" class="sub-headliner black--text pa-0 pl-4 pt-2">
+      <v-col cols="10" class="sub-headliner black--text pa-0 pl-6 pb-2">
         Collections
       </v-col>
     </v-row>

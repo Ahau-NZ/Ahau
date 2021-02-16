@@ -1,6 +1,6 @@
 <template>
   <v-row>
-    <v-col v-if="!hideCollections" v-show="!showStory" cols="12">
+    <v-col v-if="!hideCollections" v-show="!showStory" cols="12" class="pa-0">
       <CollectionGroup
         :collections="collections"
         @click="showCurrentCollection"

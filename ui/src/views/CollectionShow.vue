@@ -105,6 +105,7 @@ export default {
           ...link.story
         }
       })
+      .reverse()
     },
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
@@ -150,6 +151,7 @@ export default {
       })
 
       this.$apollo.queries.collection.refetch()
+      this.close()
     },
     async deleteCollection () {
       const res = await this.$apollo.mutate(
