@@ -27,7 +27,7 @@
           </v-img>
         </v-col>
         <!-- Text Container -->
-        <v-col class="py-2" :cols="expanded && mobile ? '8': '10' ">
+        <v-col class="py-2" :cols="expanded && mobile ? '8': '8' ">
           <span :class="expanded ? 'expanded-title' : 'truncated-x'">{{ title }}</span>
           <p :class="expanded ? 'expanded-description my-2' : 'truncate-overflow'"> {{ description || 'No Description'}}</p>
           <v-btn v-if="deletable" @click="$emit('delete')" class="mr-2 white--text" style="position:absolute; top:-2px; right:-10px" small top right icon>

@@ -1,12 +1,16 @@
 <template>
   <div>
-    <v-container fluid v-if="collection" @click="dialog = 'edit-collection'">
+    <v-container fluid v-if="collection" >
       <!-- Collection Header -->
       <v-row v-if="!showStory">
-        <CollectionTitle v-if="mobile" :collection="collection"/>
+        <!-- <CollectionTitle v-if="mobile" :collection="collection" @click="dialog = 'edit-collection'"/> -->
+        <v-col v-if="mobile" cols="12" class="headliner black--text pa-0 pb-2 mt-n10">
+          {{ collection.name + ' collection'}}
+            <v-icon color="blue-grey" light @click="viewCollection" class="text-right justify-end">mdi-information</v-icon>
+        </v-col>
         <v-col v-else cols="12" xs="12" sm="12" md="9" class="pa-0">
           <v-row class="pb-5">
-            <CollectionTitleCard :collection="collection" :access="[access]" @click="dialog = 'edit-collection'"/>
+            <CollectionTitleCard :collection="collection" :access="[access]" @click="editCollection"/>
           </v-row>
         </v-col>
       </v-row>
@@ -25,20 +29,22 @@
 
     <!-- Dialog -->
     <NewCollectionDialog
-      v-if="collection && dialog === 'edit-collection'"
-      :show="dialog === 'edit-collection'"
+      v-if="collection && dialog"
+      :show="dialog"
       :collection="collection"
-      :title="`Edit ${collection.name || 'Untitled'} Collection`"
-      editing
+      :title="editing ? `Edit ${collection.name || 'Untitled'} Collection` : `${collection.name} Collection`"
+      :editing="editing"
+      :view="view"
       @submit="processCollection"
       @delete="dialog = 'delete-collection'"
-      @close="dialog = null"
+      @close="close"
+      @edit="editCollection"
     />
     <DeleteCollectionDialog
       v-if="dialog === 'delete-collection'"
       :show="dialog === 'delete-collection'"
       @submit="deleteCollection"
-      @close="dialog = null"
+      @close="close"
     />
   </div>
 </template>
@@ -56,7 +62,6 @@ import Stories from '../components/archive/Stories.vue'
 
 import NewCollectionDialog from '@/components/dialog/archive/NewCollectionDialog.vue'
 import DeleteCollectionDialog from '@/components/dialog/archive/DeleteCollectionDialog.vue'
-import CollectionTitle from '@/components/archive/CollectionTitle.vue'
 import CollectionTitleCard from '@/components/archive/CollectionTitleCard.vue'
 
 export default {
@@ -78,14 +83,15 @@ export default {
     Stories,
     NewCollectionDialog,
     DeleteCollectionDialog,
-    CollectionTitle,
     CollectionTitleCard
   },
   data () {
     return {
       collection: null,
       access: null,
-      dialog: null
+      dialog: false,
+      editing: false,
+      view: false
     }
   },
   computed: {
@@ -115,12 +121,26 @@ export default {
   },
   methods: {
     ...mapMutations(['setCurrentAccess']),
-
+    editCollection () {
+      this.view = false
+      this.editing = true
+      this.dialog = true
+    },
+    viewCollection () {
+      this.view = true
+      this.editing = false
+      this.dialog = true
+    },
+    close () {
+      this.view = false
+      this.editing = false
+      this.dialog = false
+    },
     async processCollection ($event) {
       const { stories } = $event
 
       await this.saveCollection($event)
-      await this.saveStoriesToCollection(this.collection, stories)
+      await this.saveStoriesToCollection(this.collection.id, stories)
 
       this.$parent.$apollo.queries.collections.refetch({
         filter: { groupId: this.$route.params.tribeId }

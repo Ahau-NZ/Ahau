@@ -55,7 +55,7 @@
         <slot name="content"></slot>
       </v-card-text>
       <v-divider/>
-      <v-card-actions class="pa-0">
+      <v-card-actions v-if="!readonly" class="pa-0">
         <v-container class="py-0">
           <v-row>
             <v-col cols="12" md="auto" v-if="$slots['before-actions']" align="center" class="py-0">
@@ -127,7 +127,8 @@ export default {
       default: true
     },
     title: String,
-    dark: Boolean
+    dark: Boolean,
+    readonly: Boolean
   },
   data () {
     return {
