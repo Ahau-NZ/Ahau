@@ -1,7 +1,7 @@
 import gql from 'graphql-tag'
 import pick from 'lodash.pick'
 import clone from 'lodash.clonedeep'
-import { PUBLIC_PROFILE_FRAGMENT } from '@/lib/person-helpers'
+import { PUBLIC_PROFILE_FRAGMENT } from './person-helpers'
 
 export function setDefaultCollection (newCollection) {
   var collection = clone(newCollection)
