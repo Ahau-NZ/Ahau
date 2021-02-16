@@ -1,4 +1,4 @@
-import { getProfile } from '@/lib/person-helpers.js'
+import { getProfile } from '@/lib/profile-helpers.js'
 import { getTribe } from '@/lib/community-helpers.js'
 import tree from '@/lib/tree-helpers.js'
 import gql from 'graphql-tag'
@@ -44,8 +44,8 @@ const apollo = {
         console.error('There was an error fetching the profile with id: ', this.$route.params.profileId)
         console.error(err)
       },
-      update (data) {
-        var profile = data.person
+      update ({ profile }) {
+        if (profile.type === 'community') return profile
 
         if (profile.children) {
           profile.children = profile.children.map(child => {
@@ -72,7 +72,8 @@ const apollo = {
         }
 
         return profile
-      }
+      },
+      fetchPolicy: 'no-cache'
     }
   },
   tribe () {
