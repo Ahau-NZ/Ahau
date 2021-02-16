@@ -98,7 +98,7 @@
             <SearchBar :nestedWhakapapa="nestedWhakapapa" :searchNodeId.sync="searchNodeId" :searchFilterString.sync="searchFilterString" @close="clickedOffSearchFilter()"/>
           </div>
           <div v-if="whakapapa.table && !searchFilter" class="icon-button">
-            <SearchFilterButton @searchFilter="initiateSearchFilter($event)"/>
+            <SearchFilterButton :searchFilter.sync="searchFilter"/>
           </div>
           <div v-if="whakapapa.table && flatten" class="icon-button">
             <SortButton @sort="sortTable($event)" />
