@@ -271,7 +271,7 @@ export default {
             height: d.height,
             parent: d.parent,
             x: d.x,
-            y: (this.filter || this.searchFilterString) ? i * 45 : d.y * 1.5,
+            y: this.flatten ? i * 45 : d.y * 1.5,
             age: calculateAge(d.data.aliveInterval),
             color: this.nodeColor(d.data)
           }
