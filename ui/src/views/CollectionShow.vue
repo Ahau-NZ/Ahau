@@ -6,8 +6,8 @@
         <v-col cols="12" xs="12" sm="12" md="9" class="pa-0">
           <v-row>
             <WhakapapaBanner v-if="mobile" :whakapapa="collection"/>
-            <v-row v-else>
-              <CollectionTitleCard :collection="collection" :access="[access]"/>
+            <v-row v-else class="pb-5">
+              <CollectionTitleCard :collection="collection" :access="[access]" @click="dialog = 'edit-collection'"/>
             </v-row>
             <!-- Collection image -->
             <!-- order (image first if not mobile) -->
@@ -142,13 +142,8 @@ import DeleteCollectionDialog from '@/components/dialog/archive/DeleteCollection
 import WhakapapaBanner from '@/components/whakapapa/WhakapapaBanner.vue'
 import CollectionTitleCard from '@/components/archive/CollectionTitleCard.vue'
 
-
-import whakapapa from '@/assets/whakapapa.png'
-import niho from '@/assets/niho.svg'
-
 export default {
   name: 'CollectionShow',
-  // TODO: move to mixin
   mixins: [
     saveCollectionsMixin,
     mapProfileMixins({
@@ -191,20 +186,6 @@ export default {
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
-    // image () {
-    //   console.log("i am image")
-    //   // if there is an image return it
-    //   if (
-    //     this.collection &&
-    //     this.collection.image &&
-    //     this.collection.image.uri
-    //   ) {
-    //     return this.collection.image.uri
-    //   }
-
-    //   // otherwise return a default one
-    //   return this.type === 'view' ? whakapapa : niho
-    // }
   },
   watch: {
     async collection (collection) {

@@ -1,11 +1,11 @@
 <template>
-<v-card light flat class="mx-6 pa-0">
+<v-card light flat rounded class="mx-2 pa-0" width="100%">
   <v-row>
     <v-col cols="12" xs="12" sm="12" md="2" class="py-0">
-      <v-img :src="image" contain class="grey darken-4">
+      <v-img :src="image" cover class="grey darken-4" height="105px">
       </v-img>
     </v-col>
-    <v-col cols="12" xs="12" sm="12" md="5" class="pa-0">
+    <v-col cols="12" xs="12" sm="12" md="6" class="pa-0">
       <v-row class="align-center pl-3">
         <h4 class="blue-grey--text text--darken-4 text-uppercase">
           {{ collection.name + ' collection'}}
@@ -15,7 +15,7 @@
             <template v-slot:activator="{ on }">
               <v-btn
                 v-on="on"
-                @click.stop="dialog = 'edit-collection'"
+                @click="$emit('click')"
                 icon
                 class="ml-5"
               >
@@ -44,7 +44,7 @@
         spacing="pr-2"
       />
     </v-col>
-    <v-col v-if="access && access.length > 0" cols="auto" class="pb-0">
+    <v-col v-if="collection.tiaki && collection.tiaki.length > 0" cols="auto" class="pb-0">
       <v-list-item-subtitle style="color:#a7a3a3">Kaitiaki</v-list-item-subtitle>
       <AvatarGroup
         style="position:relative; bottom:15px; right:15px"
@@ -61,6 +61,9 @@
 <script>
 import niho from '@/assets/niho.svg'
 import AvatarGroup from '@/components/AvatarGroup.vue'
+import { getTribalProfile } from '@/lib/community-helpers.js'
+import { mapGetters } from 'vuex'
+import mapProfileMixins from '@/mixins/profile-mixins.js'
 
 
 export default {
@@ -70,9 +73,25 @@ export default {
   },
   props: {
     collection: Object,
-    access: Object
+  },
+  mixins: [
+    mapProfileMixins({
+      mapMethods: ['getTribe']
+    }),
+  ],
+  async mounted () {
+       // populate access
+    const tribe = await this.getTribe(this.collection.recps[0])
+    // get the profile of the tribe
+    this.access = [getTribalProfile(tribe, this.whoami)]
+  },
+  data () {
+    return {
+      access: null
+    }
   },
   computed: {
+    ...mapGetters(['whoami']),
     image () {
       // if there is an image return it
       if (
@@ -85,9 +104,6 @@ export default {
       // otherwise return a default one
       return niho
     },
-    tiaki () {
-
-    }
   }
 }
 </script>

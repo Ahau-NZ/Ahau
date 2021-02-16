@@ -21,7 +21,7 @@
         </v-row>
       </v-row>
       <v-row v-if="showLabel && !row" justify="center">
-        <p :style="`font-size:0.8em; ${theme}; margin-bottom:0`"> {{ alt }} </p>
+        <p :style="`font-size:0.8em; ${theme}; margin-bottom:0`" class="limit-text"> {{ alt }} </p>
       </v-row>
     </v-col>
   </div>
@@ -46,7 +46,7 @@
         </div>
       </v-row>
       <v-row v-if="showLabel && !row" justify="center">
-        <p :style="`font-size:0.8em ${theme};margin-bottom:0`">{{ alt }} </p>
+        <p :style="`font-size:0.8em ${theme};margin-bottom:0`" class="limit-text">{{ alt }} </p>
       </v-row>
     </v-col>
   </div>
@@ -150,5 +150,12 @@ export default {
   backdrop-filter: opacity(0.1) blur(3px) saturate(5%) ;
   width: 100%;
   height: 100%;
+}
+
+.limit-text {
+  max-width: 80px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 </style>
