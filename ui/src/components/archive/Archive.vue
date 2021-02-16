@@ -13,7 +13,9 @@
       </v-row>
       <v-row>
         <v-col cols="12">
-          <router-view :profile="profile" :stories="stories" :collections="collections"
+          <router-view :profile="profile" :stories="stories"
+            ref="child"
+            :collections="collections"
             @processStory="processStory"
             :hide-collections="!allowCollections"
           ></router-view>
@@ -96,6 +98,9 @@ export default {
       scrollPosition: 0,
       showArchiveHelper: false
     }
+  },
+  mounted () {
+    console.log(this.$refs.child.$apollo)
   },
   computed: {
     ...mapGetters(['showStory', 'whoami', 'currentStory', 'showArtefact', 'storeDialog', 'currentAccess']),

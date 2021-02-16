@@ -126,6 +126,11 @@ export const methods = {
         this.toggleStory(story)
       }
 
+      console.log('collections:', collections)
+      if (this.$refs.child.$apollo.queries.collection) {
+        this.$refs.child.$apollo.queries.collection.refetch()
+      }
+
       this.$apollo.queries.stories.refetch()
     } catch (err) {
       console.error('Something went wrong while creating a story')

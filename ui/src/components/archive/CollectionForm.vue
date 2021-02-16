@@ -47,7 +47,7 @@
             />
           </v-col>
           <!-- Description textarea -->
-          <v-col cols="12" class="pa-1 pt-5s">
+          <v-col cols="12" class="pa-1 pt-6">
             <v-textarea
               v-model="formData.description"
               label="Collection Description"
@@ -60,10 +60,10 @@
           </v-col>
         </v-row>
         <v-row>
-          <v-col cols="12" md="auto" class="pa-5">
+          <v-col cols="12" md="auto" class="pa-2">
             <v-tooltip v-if="!readonly" top open-delay="700" :disabled="showStories">
               <template v-slot:activator="{ on }">
-                <div v-on="on">
+                <div class="pt-5" v-on="on">
                   <p class="caption">Add stories from archive to this collection</p>
                   <v-row v-if="!showStories" @click="showStories = true" class="pl-5">
                     <v-icon small>mdi-plus</v-icon>
@@ -88,7 +88,7 @@
               :deletable="!readonly"
               @delete="removeStory"
             />
-            <v-divider v-if="mobile" light class="mt-6 mr-4"></v-divider>
+            <!-- <v-divider v-if="mobile" light class="mt-6 mr-4"></v-divider> -->
           </v-col>
         </v-row>
       </v-col>

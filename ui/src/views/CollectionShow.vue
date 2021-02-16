@@ -105,7 +105,7 @@ export default {
           ...link.story
         }
       })
-      .reverse()
+        .reverse()
     },
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm

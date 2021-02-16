@@ -6,8 +6,8 @@
     <!-- FORM -->
     <template v-slot:content>
       <CollectionForm ref="collectionForm" :formData.sync="formData" :readonly="view" @edit="$emit('edit')"/>
-      <v-col class="pt-8" align="center">
-        <v-btn v-if="editing" text @click="$emit('delete')">
+      <v-col v-if="editing" class="pt-8" align="center">
+        <v-btn text @click="$emit('delete')">
           Delete this Collection
           <v-icon class="pl-2">mdi-delete</v-icon>
         </v-btn>
