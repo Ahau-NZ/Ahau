@@ -5,21 +5,25 @@ import { PERSON_FRAGMENT } from './person-helpers'
 export const createGroupApplication = ({ groupId, groupAdmins, answers, comment }) => {
   return {
     mutation: gql`
-      mutation($groupId: String!, $groupAdmins: [String!]!, $opts: ApplicationOptsInput) {
+      mutation(
+        $groupId: String!,
+        $groupAdmins: [String!]!,
+        $answers: [GroupApplicationAnswerInput],
+        $comment: String
+      ) {
         createGroupApplication(
-          groupId: $groupId
-          groupAdmins: $groupAdmins
-          opts: $opts
+          groupId: $groupId,
+          groupAdmins: $groupAdmins,
+          answers: $answers,
+          comment: $comment
         )
       }
     `,
     variables: {
       groupId,
       groupAdmins,
-      opts: {
-        answers,
-        comment
-      }
+      answers,
+      comment
     }
   }
 }
@@ -68,18 +72,21 @@ export const APPLICATION_FRAGMENT = gql`
     }
     history {
       type
-      author
+      authorId
+      author {
+        ...ProfileFragment
+      }
       timestamp
-      ...on CommentHistory {
+      ...on GroupApplicationCommentHistory {
         comment
       }
-      ...on AnswerHistory {
+      ...on GroupApplicationAnswerHistory {
         answers {
           question
           answer
         }
       }
-      ...on DecisionHistory {
+      ...on GroupApplicationDecisionHistory {
         decision {
           accepted
         }

@@ -205,11 +205,12 @@
                 </v-card>
                 <v-checkbox v-model="checkbox2" label="Agree"/>
               </v-stepper-content>
+
               <!-- Joining Questions -->
               <v-stepper-step
                 v-if="hasJoiningQuestions"
                 :complete="step > 4"
-                step="3"
+                step="4"
                 :color="step > 4 ? 'green' : 'black'"
               >
                 Answer Joining Questions
@@ -241,10 +242,12 @@
               </v-stepper-content>
 
               <!-- comment -->
-              <v-stepper-step :step="hasJoiningQuestions ? 5 : 4">
+              <v-stepper-step
+                :step="lastStep"
+              >
                 Send a comment with your request
               </v-stepper-step>
-              <v-stepper-content :step="hasJoiningQuestions ? 5 : 4">
+              <v-stepper-content :step="lastStep">
                 <v-card
                   color="grey lighten-5"
                   class="mb-6"
@@ -352,7 +355,7 @@ export default {
       if (checkbox) this.step = 3 // step to the next section
     },
     checkbox2 (checkbox) {
-      if (checkbox) this.step = this.hasJoiningQuestions ? 4 : 5 // step to the next section
+      if (checkbox) this.step = this.hasJoiningQuestions ? 5 : 4 // step to the next section
     },
     personalProfile: {
       deep: true,
@@ -397,13 +400,15 @@ export default {
       return this.invalidPersonalProfileProps.length === 0
     },
     hasJoiningQuestions () {
-      return this.answers && this.anwers.length > 0
+      return this.answers && this.answers.length > 0
+    },
+    lastStep () {
+      return this.hasJoiningQuestions
+        ? 5
+        : 4
     },
     disableSubmission () {
-      // if we're not on the last step
-      if (this.step === (this.hasJoiningQuestions ? 5 : 4)) return false
-
-      return true
+      return this.step !== this.lastStep
     }
   },
   methods: {
