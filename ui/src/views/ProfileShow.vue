@@ -245,18 +245,20 @@ export default {
         this.dialog = 'edit-community'
       }
     },
-    async createGroupApplication ({ text, joiningQuestionAnswers }) {
+    async createGroupApplication ({ comment, answers }) {
       try {
         const res = this.$apollo.mutate(
           createGroupApplication({
             groupId: this.tribe.id,
             groupAdmins: [...this.tribe.public[0].tiaki.map(d => d.feedId)],
-            text,
-            joiningQuestionAnswers
+            comment,
+            answers
           })
         )
 
         if (res.errors) throw res.errors
+
+        // return res.data.createGroupApplication // return the applicationId
       } catch (err) {
         console.error('Something went wrong while create a group application', err)
       }

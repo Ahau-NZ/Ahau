@@ -1,6 +1,6 @@
 // import gql from 'graphql-tag'
 import { createProvider } from '@/plugins/vue-apollo'
-import { LIST_GROUP_APPLICATIONS } from '@/lib/tribes-application-helpers'
+import { listGroupApplications } from '@/lib/tribes-application-helpers'
 const apolloProvider = createProvider()
 const apollo = apolloProvider.defaultClient
 
@@ -29,35 +29,43 @@ const mutations = {
 
 const actions = {
   async getAllNotifications ({ commit }) {
-    const res = await apollo.query({
-      query: LIST_GROUP_APPLICATIONS,
-      fetchPolicy: 'no-cache'
-    })
-    const formatedNotification = []
-    res.data.listGroupApplications.forEach(a => {
-      if (a.group.public.length > 0) {
-        var noti = {
-          type: a.comments.length < 2 ? 'registration' : 'response',
-          message: {
-            outcome: a.accepted ? 'accepted' : 'not responded',
-            group: a.group.public[0],
-            groupAdmins: a.group.public[0].tiaki,
-            profile: a.applicant,
-            comments: a.comments.map(i => i.text)
-          },
-          applicationId: a.id,
-          from: a.applicant,
-          accepted: a.accepted
+    try {
+      const res = await apollo.query(
+        listGroupApplications()
+      )
+
+      if (res.errors) throw res.errors
+
+      const formatedNotification = []
+
+      // TODO: currently a bug here
+      res.data.listGroupApplications.forEach(application => {
+        if (application.group.public.length > 0) {
+          var notification = {
+            type: application.history.length < 2 ? 'registration' : 'response',
+            message: {
+              outcome: (application.decision === null)
+                ? 'not responded'
+                : application.decision.accepted
+                  ? 'accepted'
+                  : 'declined',
+              group: application.group.public[0],
+              groupAdmins: application.groupAdmins,
+              profile: application.applicant,
+              comments: application.history.filter(history => history.type === 'comment').map(history => history.comment)
+            },
+            applicationId: application.id,
+            from: application.applicant,
+            accepted: application.decision ? application.decision.accepted : false
+          }
+          formatedNotification.push(notification)
         }
-        formatedNotification.push(noti)
-      }
-    })
-    if (res.errors) {
-      console.error('error fetching all notifications', res)
-      commit('updateNotifications', [])
-      return
+      })
+
+      commit('updateNotifications', formatedNotification)
+    } catch (err) {
+      console.error('Something went wrong while try to get all group applications', err)
     }
-    commit('updateNotifications', formatedNotification)
   },
   setCurrentNotification ({ commit }, notification) {
     commit('updateCurrentNotification', notification)

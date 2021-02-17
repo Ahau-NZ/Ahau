@@ -1,129 +1,114 @@
 import gql from 'graphql-tag'
+import { COMMUNITY_FRAGMENT } from './community-helpers'
+import { PERSON_FRAGMENT } from './person-helpers'
 
-export const createGroupApplication = ({ groupId, groupAdmins, text }) => {
+export const createGroupApplication = ({ groupId, groupAdmins, answers, comment }) => {
   return {
     mutation: gql`
-      mutation($groupId: String!, $groupAdmins: [String!]!, $text: String) {
+      mutation($groupId: String!, $groupAdmins: [String!]!, $opts: ApplicationOptsInput) {
         createGroupApplication(
           groupId: $groupId
           groupAdmins: $groupAdmins
-          text: $text
-        ) {
-          id
-          group {
-            id
-          }
-          applicant {
-            id
-          }
-          comments {
-            author {
-              id
-              preferredName
-              avatarImage {
-                uri
-              }
-            }
-            text
-          }
-          groupAdmins
-          accepted
-          addMember
-        }
+          opts: $opts
+        )
       }
     `,
     variables: {
       groupId,
       groupAdmins,
-      text
+      opts: {
+        answers,
+        comment
+      }
     }
   }
 }
 
-export const ACCEPT_GROUP_APPLICATION = gql`
-  mutation($id: String!, $text: String) {
-    acceptGroupApplication(id: $id, text: $text) {
+export const acceptGroupApplication = ({ id, comment, groupIntro }) => {
+  return {
+    mutation: gql`
+      mutation($id: String!, $comment: String, $groupIntro: String) {
+        acceptGroupApplication(id: $id, applicationComment: $comment, groupIntro: $groupIntro)
+      }
+    `,
+    variables: {
+      id,
+      comment,
+      groupIntro
+    }
+  }
+}
+
+export const APPLICATION_FRAGMENT = gql`
+  ${COMMUNITY_FRAGMENT}
+  ${PERSON_FRAGMENT}
+  fragment ApplicationFragment on GroupApplication {
+    id
+    group {
       id
-      group {
-        id
+      public {
+        ...CommunityFragment
       }
-      applicant {
-        id
+      private {
+        ...CommunityFragment
       }
-      comments {
-        author {
-          id
-          preferredName
-          avatarImage {
-            uri
-          }
+    }
+    applicant {
+      ...ProfileFragment
+    }
+    groupAdmins {
+      ...ProfileFragment
+    }
+    decision {
+      accepted
+    }
+    answers {
+      question
+      answer
+    }
+    history {
+      type
+      author
+      timestamp
+      ...on CommentHistory {
+        comment
+      }
+      ...on AnswerHistory {
+        answers {
+          question
+          answer
         }
       }
-      groupAdmins
-      accepted
+      ...on DecisionHistory {
+        decision {
+          accepted
+        }
+      }
     }
   }
 `
 
-export const LIST_GROUP_APPLICATIONS = gql`
-  query($groupId: String, $accepted: Boolean) {
-    listGroupApplications(groupId: $groupId, accepted: $accepted) {
-      id
-      comments {
-        author {
-          id
-          preferredName
-          avatarImage {
-            uri
-          }
+export const listGroupApplications = (accepted = null) => {
+  return {
+    query: gql`
+      ${APPLICATION_FRAGMENT}
+      query($accepted: Boolean) {
+        listGroupApplications(accepted: $accepted) {
+          ...ApplicationFragment
         }
-        text
-      }
+      }`,
+    variables: {
       accepted
-      applicant {
-        id
-        gender
-        preferredName
-        avatarImage {
-          uri
-        }
-      }
-      group {
-        id
-        public {
-          id
-          preferredName
-          avatarImage {
-            uri
-          }
-        }
-      }
-    }
+    },
+    fetchPolicy: 'no-cache'
   }
-`
+}
 
-export const GET_GROUP_APPLICATION = gql`
+export const getGroupApplication = gql`
+  ${APPLICATION_FRAGMENT}
   query($id: String!) {
     getGroupApplication(id: $id) {
-      id
-      group {
-        id
-      }
-      applicant {
-        id
-      }
-      comments {
-        author {
-          id
-          preferredName
-          avatarImage {
-            uri
-          }
-        }
-        text
-      }
-      groupAdmins
-      accepted
+      ...ApplicationFragment
     }
   }
 `

@@ -84,8 +84,16 @@ export default {
   computed: {
     ...mapGetters(['whoami', 'notifications']),
     myNotifications () {
-      const reversedNotifications = this.notifications.slice(0).reverse()
-      return reversedNotifications.map(i => ({ ...i, mine: i.from.id === this.whoami.public.profile.id }))
+      return this.notifications
+        .slice(0) // stops side effect
+        .reverse() // reverse the order
+        .map(notification => {
+          return {
+            ...notification,
+            mine: notification.from.id === this.whoami.public.profile.id ||
+              notification.from.id === this.whoami.personal.profile.id
+          }
+        })
     },
     notificationsToJoin () {
       return this.myNotifications

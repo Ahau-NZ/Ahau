@@ -223,11 +223,11 @@
                   outlined
                 >
                   <v-row>
-                    <v-col cols="12" sm="12" v-for="(question, i) in joiningQuestions" :key="`j-q-${i}`" :class="mobile ? 'pt-4 px-0':'pt-6 px-5'">
+                    <v-col cols="12" sm="12" v-for="(question, i) in answers" :key="`j-q-${i}`" :class="mobile ? 'pt-4 px-0':'pt-6 px-5'">
                       <v-text-field
-                        v-model="joiningQuestions[i].answer"
+                        v-model="answers[i].answer"
                         v-bind="customProps"
-                        :label="joiningQuestions[i].question"
+                        :label="answers[i].question"
                       />
                     </v-col>
                   </v-row>
@@ -240,9 +240,9 @@
                 </v-btn>
               </v-stepper-content>
 
-              <!-- MESSAGE -->
+              <!-- comment -->
               <v-stepper-step :step="hasJoiningQuestions ? 5 : 4">
-                Send a message with your request
+                Send a comment with your request
               </v-stepper-step>
               <v-stepper-content :step="hasJoiningQuestions ? 5 : 4">
                 <v-card
@@ -253,8 +253,8 @@
                 >
                   <v-col cols="12" :class="mobile ? 'pt-4 px-0':'pt-6 px-5'">
                     <v-textarea
-                      v-model="message"
-                      label="Send a message with your request"
+                      v-model="comment"
+                      label="Send a comment with your request"
                       no-resize
                       v-bind="customProps"
                       rows="3"
@@ -328,8 +328,8 @@ export default {
       checkbox1: null,
       checkbox2: null,
       formData: this.profile,
-      message: '',
-      joiningQuestions: [],
+      comment: '',
+      answers: [],
       personalProfile: {}
     }
   },
@@ -338,7 +338,7 @@ export default {
       deep: true,
       immediate: true,
       handler (profile) {
-        this.joiningQuestions = profile.joiningQuestions.map(q => {
+        this.answers = profile.joiningQuestions.map(q => {
           return {
             question: q.label,
             answer: ''
@@ -397,7 +397,7 @@ export default {
       return this.invalidPersonalProfileProps.length === 0
     },
     hasJoiningQuestions () {
-      return this.joiningQuestions && this.joiningQuestions.length > 0
+      return this.answers && this.anwers.length > 0
     },
     disableSubmission () {
       // if we're not on the last step
@@ -411,7 +411,7 @@ export default {
       this.$emit('close')
     },
     submit () {
-      this.$emit('submit', { text: this.message, joiningQuestionAnswers: this.joiningQuestions })
+      this.$emit('submit', { comment: this.comment, answers: this.answers })
       this.close()
     },
     goProfile () {

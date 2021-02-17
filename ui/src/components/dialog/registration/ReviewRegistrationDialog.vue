@@ -135,7 +135,7 @@
 import Dialog from '@/components/dialog/Dialog.vue'
 import isEmpty from 'lodash.isempty'
 import Avatar from '@/components/Avatar.vue'
-import { ACCEPT_GROUP_APPLICATION } from '@/lib/tribes-application-helpers'
+import { acceptGroupApplication } from '@/lib/tribes-application-helpers'
 
 export default {
   name: 'ReviewRegistrationDialog',
@@ -214,20 +214,21 @@ export default {
       //   },
       //   to: this.formData.id
       // }
-      // // TODO - below consoles
-      // console.log('send response: ', output)
-      // console.log('add person to group')
 
       try {
-        this.$apollo.mutate({
-          mutation: ACCEPT_GROUP_APPLICATION,
-          variables: {
+        const res = await this.$apollo.mutate(
+          acceptGroupApplication({
             id: this.notification.applicationId,
-            text: this.resMessage
-          }
-        })
+            comment: this.resMessage
+            // TODO: groupItro: ...
+          })
+        )
+
+        if (res.errors) throw res.errors
+
+        // successfully accepted the application
       } catch (err) {
-        console.log('Error on accepting group application', err)
+        console.log('Something went wrong while trying to accept a group application', err)
       }
       /* TODO: check for errors */
       this.showMessage = !this.showMessage
