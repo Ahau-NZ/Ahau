@@ -13,17 +13,17 @@
           <!-- Slot = Search -->
           <template v-slot:search>
             <v-combobox
-              v-model="formData.preferredName"
+              v-model="formData.legalName"
               :items="generateSuggestions"
               item-value="id"
               item-text="id"
-              label="First name / Preferred name"
+              label="Full Name"
               :menu-props="{ light: true }"
               :clearable="hasSelection"
               append-icon=""
               v-bind="customProps"
               @click:clear="resetFormData()"
-              :search-input.sync="formData.preferredName"
+              :search-input.sync="formData.legalName"
               :readonly="hasSelection"
               outlined
               @blur.native="clearSuggestions"
@@ -39,8 +39,8 @@
                       <v-list-item-subtitle>Preferred name</v-list-item-subtitle>
                     </v-list-item-content>
                     <v-list-item-content>
-                      <v-list-item-title> {{ data.item.profile.legalName ? data.item.profile.legalName :  '&nbsp;' }} </v-list-item-title>
-                      <v-list-item-subtitle>Legal name</v-list-item-subtitle>
+                      <v-list-item-title> {{ data.item.profile.preferredName ? data.item.profile.preferredName :  '&nbsp;' }} </v-list-item-title>
+                      <v-list-item-subtitle>Full Name</v-list-item-subtitle>
                     </v-list-item-content>
                     <v-list-item-action>
                       <v-list-item-title> {{ age(data.item.profile.aliveInterval) }} </v-list-item-title>
