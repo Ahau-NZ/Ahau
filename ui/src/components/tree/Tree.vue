@@ -256,9 +256,9 @@ export default {
         }
       })
     },
-    nodes (newValue) {
-      this.setLoading(false)
-    }
+    // nodes (newValue) {
+    //   this.setLoading(false)
+    // }
   },
 
   methods: {

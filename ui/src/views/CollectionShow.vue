@@ -1,13 +1,13 @@
 <template>
   <div>
     <v-container fluid v-if="collection" >
-      <!-- Collection Header -->
       <v-row v-if="!showStory">
-        <!-- <CollectionTitle v-if="mobile" :collection="collection" @click="dialog = 'edit-collection'"/> -->
+        <!-- Mobile Collection Header -->
         <v-col v-if="mobile" cols="12" class="headliner black--text pa-0 pb-2 mt-n10">
           {{ collection.name + ' collection'}}
             <v-icon color="blue-grey" light @click="viewCollection" class="text-right justify-end">mdi-information</v-icon>
         </v-col>
+        <!-- Desktop Collection Header -->
         <v-col v-else cols="12" xs="12" sm="12" md="9" class="pa-0">
           <v-row class="pb-5">
             <CollectionTitleCard :collection="collection" :access="[access]" @click="editCollection"/>
@@ -98,7 +98,6 @@ export default {
     ...mapGetters(['whoami', 'currentAccess', 'showStory']),
     stories () {
       if (!this.collection || !this.collection.stories) return []
-
       return this.collection.stories.map(link => {
         return {
           linkId: link.linkId,

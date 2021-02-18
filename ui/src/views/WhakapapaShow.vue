@@ -419,12 +419,7 @@ export default {
       this.addRelationshipLinks(newVal)
     }
   },
-  // beforeCreate: function () {
-  //   document.body.classList.add('no-scroll')
-  // },
-  // beforeDestroy: function () {
-  //   document.body.classList.remove('no-scroll')
-  // },
+
   methods: {
     ...mapMutations(['updateSelectedProfile', 'setCurrentAccess']),
     ...mapActions(['setLoading', 'addNestedWhakapapa', 'addWhakapapa', 'addRelationshipLinks']),
