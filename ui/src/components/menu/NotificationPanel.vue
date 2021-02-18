@@ -19,10 +19,31 @@
         </div>
       </template>
       <v-card v-if="hasNotification" style="max-height:500px;">
+        <v-row>
+          <v-col>
+            <p class="pt-1 pl-5 my-0 headliner black--text">Notifications</p>
+          </v-col>
+          <v-divider></v-divider>
+        </v-row>
         <NotificationList
-          @expand="expand = !expand"
-          :notificationsToJoin="notificationsToJoin"
-          :notificationsAccepted="notificationsAccepted"
+          :notifications="joiningApplications"
+          title="New"
+          text="Has requested to join"
+          show-badge
+        />
+        <NotificationList
+          :notifications="pendingPersonalApplications"
+          title="Pending"
+          text="Is yet to review your request to join"
+        />
+        <NotificationList
+          :notifications="acceptedPersonalApplications"
+          title="Complete"
+          text="Has approved your message to join"
+        />
+        <NotificationList
+          :notifications="acceptedOthersApplications"
+          text="Has joined"
         />
       </v-card>
     </v-menu>
@@ -47,19 +68,33 @@
       </div>
     </div>
 
-    <v-expand-transition v-if="hasNotification">
+    <v-expand-transition v-if="hasNotification && expand">
       <v-card
         tile
         light
-        v-show="expand"
         style="position: absolute;left: 0px;top: 54px; width:100%; max-height:calc(100vh + 24px); overflow:auto"
         elevation="12"
         v-scroll="onScroll"
       >
         <NotificationList
-          @expand="expand = !expand"
-          :notificationsToJoin="notificationsToJoin"
-          :notificationsAccepted="notificationsAccepted"
+          :notifications="joiningApplications"
+          title="New"
+          text="Has requested to join"
+          show-badge
+        />
+        <NotificationList
+          :notifications="pendingPersonalApplications"
+          title="Pending"
+          text="Is yet to review your request to join"
+        />
+        <NotificationList
+          :notifications="acceptedPersonalApplications"
+          title="Complete"
+          text="Has approved your message to join"
+        />
+        <NotificationList
+          :notifications="acceptedOthersApplications"
+          text="Has joined"
         />
       </v-card>
     </v-expand-transition>
@@ -78,46 +113,64 @@ export default {
     return {
       menu: false,
       expand: false,
-      offset: 0
+      offset: 0,
+      test: []
     }
   },
   computed: {
     ...mapGetters(['whoami', 'notifications']),
-    myNotifications () {
+    pendingPersonalApplications () { // your requests to join others communities
+      const notifications = this.notifications
+        .filter(application => {
+          return application.accepted === null && application.isPersonalApplication
+        })
+        .map(application => {
+          application.to = application.groupAdmins[0]
+          return application
+        })
+      return notifications
+    },
+    joiningApplications () { // requests to join a community of yours
       return this.notifications
-        .slice(0) // stops side effect
-        .reverse() // reverse the order
-        .map(notification => {
-          return {
-            ...notification,
-            mine: notification.applicant.id === this.whoami.public.profile.id ||
-              notification.applicant.id === this.whoami.personal.profile.id
-          }
+        .filter(application => {
+          return application.accepted === null && !application.isPersonalApplication
+        })
+        .map(application => {
+          application.to = application.applicant
+          return application
         })
     },
-    notificationsToJoin () {
-      return this.myNotifications
-        .filter(i => {
-          return !i.accepted && !i.mine
+    acceptedPersonalApplications () { // your applications with have been accepted
+      return this.notifications
+        .filter(application => {
+          return application.accepted && application.isPersonalApplication
+        })
+        .map(application => {
+          application.to = application.groupAdmins[0]
+          return application
         })
     },
-    notificationsAccepted () {
-      return this.myNotifications
-        .filter(i => {
-          return i.accepted
+    acceptedOthersApplications () {
+      return this.notifications
+        .filter(application => {
+          return application.accepted && !application.isPersonalApplication
+        })
+        .map(application => {
+          application.to = application.applicant
+          return application
         })
     },
     notificationsCount () {
-      return this.notificationsToJoin.length
+      return this.joiningApplications.length
     },
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
     hasNotification () {
-      return this.notificationsToJoin.length > 0 || this.notificationsAccepted.length > 0
+      return this.joiningApplications.length > 0 || this.acceptedPersonalApplications.length > 0 || this.pendingPersonalApplications.length > 0
     },
     showBadge () {
-      return this.notificationsToJoin.length > 0
+      return this.joiningApplications.length > 0
     }
   },
   watch: {

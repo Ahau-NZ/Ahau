@@ -28,44 +28,20 @@ const mutations = {
 }
 
 const actions = {
-  async getAllNotifications ({ commit }) {
+  async getAllNotifications ({ commit, rootState: { whoami } }) {
     try {
       const res = await apollo.query(
-        listGroupApplications(null)
+        listGroupApplications()
       )
 
       if (res.errors) throw res.errors
 
       const formattedNotification = []
 
-      // NULL
-      // answers: []
-      // applicant: {…}
-      // decision: null
-      // group: {id: "%Idl/JumtnNqW4SRvNNEj0u7lnawO43YpxQekRqxMxQs=.cloaked", public: Array(1), private: Array(1), __typename: "TribeFaces"}
-      // groupAdmins: [{…}, __ob__: Observer]
-      // history: (2) [{…}, {…}] // { comment }, { answers }
-      // id: "%LN0JWIBd+WSPLGIvVApGxmExfqLdlMCNips/+7F/zyA=.sha256"
-      // __typename: "GroupApplication"
-
-      // TRUE
-      // answers: (3) [{…}, {…}, {…}]
-      // applicant: {…}
-      // decision: {accepted: true, __typename: "GroupApplicationDecision"}
-      // group: {id: "%Ez17jq5Gl/Ih92M2gp4kfEYuXyRJujDLlc/j3wOBu4M=.cloaked", public: Array(1), private: Array(1), __typename: "TribeFaces"}
-      // groupAdmins: [{…}, __ob__: Observer]
-      // history: (4) [{…}, {…}, {…}, {…}]
-      // id: "%J2YMOWiVJjdHM4R80Z7AQ7IIZ1N2bsr4SdoOKUSas/Y=.sha256"
-      // __typename: "GroupApplication"
-
-      // FALSE
-      // TODO
-
       // TODO: currently a bug here
       res.data.listGroupApplications.forEach(application => {
         if (application.group.public.length > 0) { // TODO: why do we have to check this?
           var notification = {
-            type: application.history.length < 2 ? 'registration' : 'response',
             message: {
               outcome: (application.decision === null)
                 ? 'not responded'
@@ -78,7 +54,8 @@ const actions = {
             applicationId: application.id,
             applicant: application.applicant,
             group: application.group.public[0],
-            accepted: application.decision === null ? null : application.decision.accepted
+            accepted: application.decision === null ? null : application.decision.accepted,
+            isPersonalApplication: application.applicant.id === whoami.public.profile.id
           }
           formattedNotification.push(notification)
         }

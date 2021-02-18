@@ -176,7 +176,7 @@ export default {
       )
     },
     notificationSent () {
-      return this.notifications.filter(i => i.message.group.id === this.profile.id).length > 0
+      return this.notifications.filter(application => application.group.id === this.profile.id).length > 0
     },
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
