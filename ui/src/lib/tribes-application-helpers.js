@@ -95,7 +95,7 @@ export const APPLICATION_FRAGMENT = gql`
   }
 `
 
-export const listGroupApplications = (accepted = null) => {
+export const listGroupApplications = (accepted) => {
   return {
     query: gql`
       ${APPLICATION_FRAGMENT}

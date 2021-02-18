@@ -10,17 +10,17 @@
           <span class="subtitle-2 black--text">
             A new request has been recieved from
             <strong>
-              <i>{{ notification.from.preferredName }}</i>
+              <i>{{ applicant.preferredName }}</i>
             </strong> to join
             <strong>
-              <i>{{ notification.message.group.preferredName }}</i>
+              <i>{{ group.preferredName }}</i>
             </strong>
             <br/>
             Please review their information and respond below
           </span>
         </v-col>
         <v-col>
-          <v-card>
+          <v-card class="py-6">
             <v-row align="center" class="pt-5">
               <v-col cols="4" align="center">
                 <v-row>
@@ -28,16 +28,16 @@
                     <Avatar
                       class="big-avatar"
                       size="100px"
-                      :image="notification.from.avatarImage"
-                      :alt="notification.from.preferredName"
-                      :gender="notification.from.gender"
-                      :aliveInterval="notification.from.aliveInterval"
-                      :deceased="notification.from.deceased"
-                      @updateAvatar="notification.from.avatarImage = $event"
+                      :image="applicant.avatarImage"
+                      :alt="applicant.preferredName"
+                      :gender="applicant.gender"
+                      :aliveInterval="applicant.aliveInterval"
+                      :deceased="applicant.deceased"
+                      @updateAvatar="applicant.avatarImage = $event"
                     />
                   </v-col>
                   <v-col cols="12">
-                    <h4> {{ notification.from.legalName || notification.from.preferredName }} </h4>
+                    <h4> {{ applicant.legalName || applicant.preferredName }} </h4>
                   </v-col>
                 </v-row>
               </v-col>
@@ -57,25 +57,123 @@
                     <Avatar
                       class="big-avatar"
                       size="100px"
-                      :image="notification.message.group.avatarImage"
-                      :alt="notification.message.group.preferredName"
-                      :gender="notification.message.group.gender"
-                      :aliveInterval="notification.message.group.aliveInterval"
-                      :deceased="notification.message.group.deceased"
-                      @updateAvatar="notification.message.group.avatarImage = $event"
+                      :image="group.avatarImage"
+                      :alt="group.preferredName"
+                      :gender="group.gender"
+                      :aliveInterval="group.aliveInterval"
+                      :deceased="group.deceased"
+                      @updateAvatar="group.avatarImage = $event"
+                      isView
                     />
                   </v-col>
                   <v-col cols="12">
-                    <h4> {{ notification.message.group.preferredName }} </h4>
+                    <h4> {{ group.preferredName }} </h4>
                   </v-col>
                 </v-row>
               </v-col>
             </v-row>
           </v-card>
         </v-col>
-        <v-col cols="12" :class="mobile ? 'pt-4 px-0':'pt-6 px-5'">
-          <div>{{ receivedMessage }}</div>
+        <v-col>
+          <span class="subtitle-2 black--text">
+            {{ applicant.legalName || applicant.preferredName }}'s Information
+          </span>
         </v-col>
+        <v-col class="px-0">
+          <ProfileCard :style="mobile ? 'margin: 10px;':'margin:20px'">
+            <template v-slot:content>
+              <v-row cols="12" class="pt-0">
+                <ProfileInfoItem
+                  :class="mobile ? 'bb':'br bb'"
+                  smCols="12"
+                  mdCols="6"
+                  title="Date of birth"
+                  :value="dob"
+                />
+                <ProfileInfoItem
+                  :class="mobile ? 'bb':'bb'"
+                  smCols="12"
+                  mdCols="6"
+                  title="Phone"
+                  :value="applicant.phone"
+                />
+                <ProfileInfoItem
+                  :class="mobile ? 'bb':'br'"
+                  smCols="12"
+                  mdCols="6"
+                  title="Email"
+                  :value="applicant.email"
+                />
+                <ProfileInfoItem
+                  smCols="12"
+                  mdCols="6"
+                  title="Address"
+                  :value="applicant.address"
+                />
+              </v-row>
+            </template>
+          </ProfileCard>
+          <ProfileCard :style="mobile ? 'margin: 10px;':'margin:20px'">
+            <template v-slot:content>
+              <v-row cols="12" class="pt-0">
+                <ProfileInfoItem
+                  :class="mobile ? 'bb':' bb'"
+                  smCols="12"
+                  mdCols="12"
+                  title="Description"
+                  :value="applicant.description"
+                />
+                <ProfileInfoItem
+                  :class="mobile ? 'bb':'bb br'"
+                  smCols="12"
+                  mdCols="6"
+                  title="Preferred Name"
+                  :value="applicant.preferredName"
+                />
+                <ProfileInfoItem
+                  :class="mobile ? 'bb':'bb'"
+                  smCols="12"
+                  mdCols="6"
+                  title="Full Name"
+                  :value="applicant.legalName"
+                />
+                <ProfileInfoItem
+                  :class="mobile ? 'bb':'br'"
+                  smCols="12"
+                  mdCols="6"
+                  title="City/Country"
+                  :value="applicant.location"
+                />
+                <ProfileInfoItem
+                  smCols="12"
+                  mdCols="6"
+                  title="Profession"
+                  :value="applicant.profession"
+                />
+              </v-row>
+            </template>
+          </ProfileCard>
+          <ProfileCard :style="mobile ? 'margin: 10px;':'margin:20px'">
+            <template v-slot:content>
+              <v-row cols="12" class="pt-0">
+                <ProfileInfoItem
+                  smCols="12"
+                  mdCols="12"
+                  title="Message"
+                  :value="receivedMessage"
+                />
+              </v-row>
+            </template>
+          </ProfileCard>
+        </v-col>
+        <!-- <v-col cols="12">
+          <span class="subtitle-2 black--text">
+            Message Received
+          </span>
+        </v-col>
+        <v-col cols="12">
+          <div>{{ receivedMessage }}</div>
+        </v-col> -->
       </template>
       <template v-if="type === 'review'" v-slot:actions>
         <v-btn @click="respond('decline')" text large class="secondary--text">
@@ -92,7 +190,7 @@
     <Dialog
       v-if="showMessage"
       :show="showMessage"
-      :title="`${response} request to join ${notification.message.group.preferredName}` "
+      :title="`${response} request to join ${group.preferredName}` "
       @close="close"
       width="720px"
       :goBack="close"
@@ -102,7 +200,7 @@
         <p class="pt-4 px-4 subtitle-2 black--text">
           Would you like to send a message along with your response to
           <strong>
-            <i>{{notification.from.preferredName}}</i>
+            <i>{{ applicant.preferredName }}</i>
           </strong>
         </p>
         <v-col cols="12" :class="mobile ? 'pt-4 px-0':'px-5'">
@@ -135,17 +233,22 @@
 import Dialog from '@/components/dialog/Dialog.vue'
 import isEmpty from 'lodash.isempty'
 import Avatar from '@/components/Avatar.vue'
+import ProfileCard from '@/components/profile/ProfileCard.vue'
+import ProfileInfoItem from '@/components/profile/ProfileInfoItem.vue'
+import { dateIntervalToString } from '@/lib/date-helpers.js'
 import { acceptGroupApplication } from '@/lib/tribes-application-helpers'
 
 export default {
   name: 'ReviewRegistrationDialog',
   components: {
     Dialog,
-    Avatar
+    Avatar,
+    ProfileCard,
+    ProfileInfoItem
   },
   props: {
     show: { type: Boolean, required: true },
-    title: { type: String },
+    title: { type: String, default: 'Review request' },
     profile: { type: Object },
     notification: Object,
     type: { type: String }
@@ -169,17 +272,30 @@ export default {
       return this.notification.message.comments[this.notification.accepted ? 1 : 0]
     },
     showActions () {
-      if (isEmpty(this.currentNotification)) {
+      if (isEmpty(this.notification)) {
         return true
       }
-      if (!this.currentNotification.mine && this.type === 'review') {
+      if (!this.notification.mine && this.type === 'review') {
         return true
       }
-      if (this.currentNotification.mine && this.type === 'response' && !this.currentNotification.accepted) {
+      if (this.notification.mine && this.type === 'response' && !this.currentNotification.accepted) {
         return true
       }
       return false
-    }
+    },
+    applicant () {
+      return this.notification.from
+    },
+    group () {
+      return this.notification.message.group
+    },
+    dob () {
+      if (this.applicant.aliveInterval) {
+        var formattedDate = dateIntervalToString(this.applicant.aliveInterval)
+        return formattedDate
+      }
+      return ' '
+    },
   },
   watch: {
     profile: {

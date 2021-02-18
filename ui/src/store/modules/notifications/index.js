@@ -36,7 +36,7 @@ const actions = {
 
       if (res.errors) throw res.errors
 
-      const formatedNotification = []
+      const formattedNotification = []
 
       // TODO: currently a bug here
       res.data.listGroupApplications.forEach(application => {
@@ -58,11 +58,11 @@ const actions = {
             from: application.applicant,
             accepted: application.decision ? application.decision.accepted : false
           }
-          formatedNotification.push(notification)
+          formattedNotification.push(notification)
         }
       })
 
-      commit('updateNotifications', formatedNotification)
+      commit('updateNotifications', formattedNotification)
     } catch (err) {
       console.error('Something went wrong while try to get all group applications', err)
     }

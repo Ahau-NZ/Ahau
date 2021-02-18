@@ -355,7 +355,7 @@ export default {
       if (checkbox) this.step = 3 // step to the next section
     },
     checkbox2 (checkbox) {
-      if (checkbox) this.step = this.hasJoiningQuestions ? 5 : 4 // step to the next section
+      if (checkbox) this.step = this.hasJoiningQuestions ? 4 : 5 // step to the next section
     },
     personalProfile: {
       deep: true,
