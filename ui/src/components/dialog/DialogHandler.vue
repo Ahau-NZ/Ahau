@@ -300,6 +300,7 @@ export default {
         return
       }
       if (this.parents.length) this.parents = []
+      if (this.isActive('table-filter-menu')) this.$emit('toggleFilterMenu')
       this.toggleDialog(this.source, null, null)
       this.$emit('setloading', false)
     },
