@@ -107,6 +107,12 @@
       :title="`Whakapapa registry`"
       @close="close"
     />
+    <FilterMenu
+      v-if="isActive('table-filter-menu')"
+      :show="isActive('table-filter-menu')"
+      :title="`Table Filter Menu`"
+      @close="close"
+    />
     <!-- <NewCollectionDialog
       :show="isActive('new-collection')"
       :title="'Create a new Collection'"
@@ -135,6 +141,7 @@ import WhakapapaEditDialog from '@/components/dialog/whakapapa/WhakapapaEditDial
 import WhakapapaDeleteDialog from '@/components/dialog/whakapapa/WhakapapaDeleteDialog.vue'
 import WhakapapaShowHelper from '@/components/dialog/whakapapa/WhakapapaShowHelper.vue'
 import WhakapapaTableHelper from '@/components/dialog/whakapapa/WhakapapaTableHelper.vue'
+import FilterMenu from '@/components/dialog/whakapapa/FilterMenu.vue'
 // import NewCollectionDialog from '@/components/dialog/archive/NewCollectionDialog.vue'
 import ComingSoonDialog from '@/components/dialog/ComingSoonDialog.vue'
 
@@ -163,6 +170,7 @@ export default {
     WhakapapaDeleteDialog,
     WhakapapaShowHelper,
     WhakapapaTableHelper,
+    FilterMenu,
     // NewCollectionDialog,
     ComingSoonDialog,
     NewCommunityDialog,
@@ -188,7 +196,7 @@ export default {
       default: null,
       validator: (val) => [
         'new-community', 'new-node', 'view-edit-node', 'delete-node', 'new-story', 'edit-story', 'edit-node', 'delete-story',
-        'whakapapa-view', 'whakapapa-edit', 'whakapapa-delete', 'whakapapa-helper', 'whakapapa-table-helper', 'new-registration', 'review-registration'
+        'whakapapa-view', 'whakapapa-edit', 'whakapapa-delete', 'whakapapa-helper', 'whakapapa-table-helper', 'table-filter-menu', 'new-registration', 'review-registration'
       ].includes(val)
     },
     type: {
@@ -281,6 +289,7 @@ export default {
     },
     isActive (type) {
       if (type === this.dialog || type === this.storeDialog) {
+        console.log('active dialog: ', this.dialog)
         return true
       }
       return false
@@ -297,6 +306,7 @@ export default {
     toggleDialog (dialog, type, source) {
       this.source = source
       if (this.storeDialog) {
+        console.log('active dialog: ', dialog)
         this.setDialog(dialog, type, source)
         return
       }

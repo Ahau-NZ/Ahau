@@ -237,8 +237,6 @@ export default {
             if (altNames.length > 0) {
               for (var i = 0; i < altNames.length; i++) {
                 const currAltName = this.setString(altNames[i])
-                console.log('curr alt name: ', currAltName)
-                console.log('search: ', search)
                 if (isEqual(currAltName, search) || currAltName.includes(search)) {
                   altNameMatch = true
                 }
@@ -546,7 +544,6 @@ export default {
       if (label === 'City, Country') {
         return location[this.sort['location']]
       }
-
       return ''
     },
     // Executes a sort on two values
