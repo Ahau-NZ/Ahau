@@ -22,16 +22,16 @@
           <v-list-item class="py-1" @click="openReview(notification)">
             <Avatar
               size="50px"
-              :image="notification.from.avatarImage"
-              :alt="notification.from.preferredName"
-              :gender="notification.from.gender"
-              :bornAt="notification.from.bornAt"
+              :image="notification.applicant.avatarImage"
+              :alt="notification.applicant.preferredName"
+              :gender="notification.applicant.gender"
+              :bornAt="notification.applicant.bornAt"
             />
             <v-list-item-content class="pl-5">
-              <v-list-item-title class="bold">{{notification.from.preferredName}}</v-list-item-title>
+              <v-list-item-title class="bold">{{notification.applicant.preferredName}}</v-list-item-title>
               <v-list-item-subtitle
                 class="text-caption bold"
-              >Has requested to join {{notification.message.group.preferredName}}</v-list-item-subtitle>
+              >Has requested to join {{notification.group.preferredName}}</v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
           <v-divider></v-divider>
@@ -54,16 +54,16 @@
           <v-list-item class="py-1" @click="openResponse(notification)">
             <Avatar
               size="50px"
-              :image="notification.message.groupAdmins[0].avatarImage"
-              :alt="notification.message.groupAdmins[0].preferredName"
-              :gender="notification.message.groupAdmins[0].gender"
-              :bornAt="notification.message.groupAdmins[0].bornAt"
+              :image="notification.groupAdmins[0].avatarImage"
+              :alt="notification.groupAdmins[0].preferredName"
+              :gender="notification.groupAdmins[0].gender"
+              :bornAt="notification.groupAdmins[0].bornAt"
             />
             <v-list-item-content class="pl-5">
-              <v-list-item-title>{{notification.message.groupAdmins[0].preferredName}}</v-list-item-title>
+              <v-list-item-title>{{notification.groupAdmins[0].preferredName}}</v-list-item-title>
               <v-list-item-subtitle
                 class="text-caption ahauRed"
-              >Has approved your request to join {{notification.message.group.preferredName}}</v-list-item-subtitle>
+              >Has approved your request to join {{ notification.group.preferredName }}</v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
           <v-divider></v-divider>
@@ -72,16 +72,16 @@
           <v-list-item class="py-1" @click="openResponse(notification)">
             <Avatar
               size="50px"
-              :image="notification.from.avatarImage"
-              :alt="notification.from.preferredName"
-              :gender="notification.from.gender"
-              :bornAt="notification.from.bornAt"
+              :image="notification.applicant.avatarImage"
+              :alt="notification.applicant.preferredName"
+              :gender="notification.applicant.gender"
+              :bornAt="notification.applicant.bornAt"
             />
             <v-list-item-content class="pl-5">
-              <v-list-item-title>{{notification.from.preferredName}}</v-list-item-title>
+              <v-list-item-title>{{notification.applicant.preferredName}}</v-list-item-title>
               <v-list-item-subtitle
                 class="text-caption ahauRed"
-              >Has joined {{notification.message.group.preferredName}}</v-list-item-subtitle>
+              >Has joined {{notification.group.preferredName}}</v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
           <v-divider></v-divider>

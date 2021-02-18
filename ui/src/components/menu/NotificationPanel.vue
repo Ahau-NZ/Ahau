@@ -90,8 +90,8 @@ export default {
         .map(notification => {
           return {
             ...notification,
-            mine: notification.from.id === this.whoami.public.profile.id ||
-              notification.from.id === this.whoami.personal.profile.id
+            mine: notification.applicant.id === this.whoami.public.profile.id ||
+              notification.applicant.id === this.whoami.personal.profile.id
           }
         })
     },

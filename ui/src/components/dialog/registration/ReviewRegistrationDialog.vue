@@ -20,7 +20,7 @@
           </span>
         </v-col>
         <v-col>
-          <v-card class="py-6">
+          <v-card outlined class="py-6">
             <v-row align="center" class="pt-5">
               <v-col cols="4" align="center">
                 <v-row>
@@ -174,6 +174,13 @@
         <v-col cols="12">
           <div>{{ receivedMessage }}</div>
         </v-col> -->
+        <v-col cols="12" sm="12" v-for="(question, i) in group.answers" :key="`j-q-${i}`" :class="mobile ? 'pt-4 px-0':'pt-6 px-5'">
+          <v-text-field
+            :value="group.answers[i].answer"
+            v-bind="customProps"
+            :label="group.answers[i].question"
+          />
+        </v-col>
       </template>
       <template v-if="type === 'review'" v-slot:actions>
         <v-btn @click="respond('decline')" text large class="secondary--text">
@@ -249,13 +256,11 @@ export default {
   props: {
     show: { type: Boolean, required: true },
     title: { type: String, default: 'Review request' },
-    profile: { type: Object },
     notification: Object,
     type: { type: String }
   },
   data () {
     return {
-      formData: {},
       showMessage: false,
       message: '',
       resMessage: '',
@@ -267,6 +272,13 @@ export default {
   computed: {
     mobile () {
       return this.$vuetify.breakpoint.xs
+    },
+    customProps () {
+      return {
+        hideDetails: true,
+        placeholder: ' ',
+        outlined: true
+      }
     },
     receivedMessage () {
       return this.notification.message.comments[this.notification.accepted ? 1 : 0]
@@ -284,10 +296,10 @@ export default {
       return false
     },
     applicant () {
-      return this.notification.from
+      return this.notification.applicant
     },
     group () {
-      return this.notification.message.group
+      return this.notification.group
     },
     dob () {
       if (this.applicant.aliveInterval) {
@@ -295,16 +307,6 @@ export default {
         return formattedDate
       }
       return ' '
-    },
-  },
-  watch: {
-    profile: {
-      deep: true,
-      immediate: true,
-      handler (newVal) {
-        if (!newVal) return
-        this.formData = newVal
-      }
     }
   },
   methods: {

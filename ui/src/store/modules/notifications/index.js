@@ -31,16 +31,39 @@ const actions = {
   async getAllNotifications ({ commit }) {
     try {
       const res = await apollo.query(
-        listGroupApplications()
+        listGroupApplications(null)
       )
 
       if (res.errors) throw res.errors
 
       const formattedNotification = []
 
+      // NULL
+      // answers: []
+      // applicant: {…}
+      // decision: null
+      // group: {id: "%Idl/JumtnNqW4SRvNNEj0u7lnawO43YpxQekRqxMxQs=.cloaked", public: Array(1), private: Array(1), __typename: "TribeFaces"}
+      // groupAdmins: [{…}, __ob__: Observer]
+      // history: (2) [{…}, {…}] // { comment }, { answers }
+      // id: "%LN0JWIBd+WSPLGIvVApGxmExfqLdlMCNips/+7F/zyA=.sha256"
+      // __typename: "GroupApplication"
+
+      // TRUE
+      // answers: (3) [{…}, {…}, {…}]
+      // applicant: {…}
+      // decision: {accepted: true, __typename: "GroupApplicationDecision"}
+      // group: {id: "%Ez17jq5Gl/Ih92M2gp4kfEYuXyRJujDLlc/j3wOBu4M=.cloaked", public: Array(1), private: Array(1), __typename: "TribeFaces"}
+      // groupAdmins: [{…}, __ob__: Observer]
+      // history: (4) [{…}, {…}, {…}, {…}]
+      // id: "%J2YMOWiVJjdHM4R80Z7AQ7IIZ1N2bsr4SdoOKUSas/Y=.sha256"
+      // __typename: "GroupApplication"
+
+      // FALSE
+      // TODO
+
       // TODO: currently a bug here
       res.data.listGroupApplications.forEach(application => {
-        if (application.group.public.length > 0) {
+        if (application.group.public.length > 0) { // TODO: why do we have to check this?
           var notification = {
             type: application.history.length < 2 ? 'registration' : 'response',
             message: {
@@ -49,14 +72,13 @@ const actions = {
                 : application.decision.accepted
                   ? 'accepted'
                   : 'declined',
-              group: application.group.public[0],
-              groupAdmins: application.groupAdmins,
-              profile: application.applicant,
               comments: application.history.filter(history => history.type === 'comment').map(history => history.comment)
             },
+            groupAdmins: application.groupAdmins,
             applicationId: application.id,
-            from: application.applicant,
-            accepted: application.decision ? application.decision.accepted : false
+            applicant: application.applicant,
+            group: application.group.public[0],
+            accepted: application.decision === null ? null : application.decision.accepted
           }
           formattedNotification.push(notification)
         }

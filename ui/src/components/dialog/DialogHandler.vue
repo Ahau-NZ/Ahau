@@ -3,9 +3,7 @@
     <ReviewRegistrationDialog
       v-if="isActive('review-registration')"
       :show="isActive('review-registration')"
-      :title="`Request to join : ${currentNotification.message.group.preferredName}`"
-      :profile="profile"
-      :tribe="tribe"
+      :title="`Request to join : ${currentNotification.group.preferredName}`"
       :type="dialogType"
       :notification="currentNotification"
       @close="close"
