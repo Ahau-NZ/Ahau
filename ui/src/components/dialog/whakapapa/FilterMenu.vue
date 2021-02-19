@@ -62,6 +62,9 @@ export default {
   computed: {
   },
   watch: {
+    searchFilterString (newValue) {
+      this.$emit('update:searchFilterString', newValue)
+    }
   },
   methods: {
     close () {

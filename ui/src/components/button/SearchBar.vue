@@ -14,7 +14,7 @@
     light
     hide-selected
     dense
-    :class="searchFilter ? search-input-filter : search-input"
+    :class="searchFilter ? 'search-input-filter' : 'search-input'"
     autofocus
   >
     <template v-slot:item="data">
@@ -105,7 +105,7 @@ export default {
   },
   watch: {
     searchString (newValue) {
-      this.$emit('update:searchFilterString', newValue)
+      if (this.searchFilter) this.$emit('update:searchFilterString', newValue)
     }
   },
   methods: {
@@ -149,7 +149,7 @@ export default {
   }
 
   .search-input-filter {
-    margin: 0px 10px 0px 10px;
+    margin: 0px 25px 0px 25px;
   }
 
 </style>

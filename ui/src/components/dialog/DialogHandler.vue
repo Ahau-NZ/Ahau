@@ -111,6 +111,7 @@
       v-if="isActive('table-filter-menu')"
       :show="isActive('table-filter-menu')"
       :title="`Table Filter Menu`"
+      :searchFilterString.sync="searchFilterString"
       @close="close"
     />
     <!-- <NewCollectionDialog
@@ -226,7 +227,8 @@ export default {
       parents: [],
       parentIndex: null,
       profile: {},
-      tribe: {}
+      tribe: {},
+      searchFilterString: ''
     }
   },
   computed: {
@@ -261,6 +263,9 @@ export default {
       } else {
         document.body.classList.remove('stop-scroll')
       }
+    },
+    searchFilterString (newValue) {
+      this.$emit('update:searchFilterString', newValue)
     }
   },
   methods: {
