@@ -4,17 +4,17 @@
     :items="nodes"
     :menu-props=" { light: true } "
     hide-no-data
-    append-icon="mdi-close"
+    :append-icon="!searchFilter ? 'mdi-close' : ''"
     @click:append="close()"
     placeholder="Search"
     :no-data-text="searchFilter ? '' : 'no suggestions'"
     :search-input.sync="searchString"
     solo
-    rounded
+    :rounded="true"
     light
     hide-selected
     dense
-    class="search-input"
+    :class="searchFilter ? search-input-filter : search-input"
     autofocus
   >
     <template v-slot:item="data">
@@ -146,6 +146,10 @@ export default {
     padding: 0;
     margin: 0;
     margin-top: -3px;
+  }
+
+  .search-input-filter {
+    margin: 0px 10px 0px 10px;
   }
 
 </style>

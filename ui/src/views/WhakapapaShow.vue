@@ -198,6 +198,7 @@
       :loadKnownFamily="loadKnownFamily"
       :getRelatives="getRelatives"
       :relationshipLinks="relationshipLinks"
+      :nestedWhakapapa="nestedWhakapapa"
       @updateFocus="updateFocus($event)"
       :setSelectedProfile="setSelectedProfile"
       @change-focus="changeFocus($event)"

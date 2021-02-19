@@ -289,7 +289,6 @@ export default {
     },
     isActive (type) {
       if (type === this.dialog || type === this.storeDialog) {
-        console.log('active dialog: ', this.dialog)
         return true
       }
       return false
@@ -307,7 +306,6 @@ export default {
     toggleDialog (dialog, type, source) {
       this.source = source
       if (this.storeDialog) {
-        console.log('active dialog: ', dialog)
         this.setDialog(dialog, type, source)
         return
       }
