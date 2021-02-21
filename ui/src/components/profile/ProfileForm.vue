@@ -244,7 +244,27 @@
             </v-row>
           </v-col>
         </v-row>
-        <!-- Profession, Place of Birth -->
+        <!-- Qualification, EducationProfession, Place of Birth -->
+        <v-row>
+          <v-col cols="12" class="pa-1"> <!-- Blake TODO: Hookup to back end -->
+            <v-text-field
+              v-model="formData.profession"
+              label="Qualification(s)"
+              v-bind="customProps"
+              outlined
+            />
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col cols="12" class="pa-1"> <!-- Blake TODO: Hookup to back end -->
+            <v-text-field
+              v-model="formData.profession"
+              label="Place(s) of Education"
+              v-bind="customProps"
+              outlined
+            />
+          </v-col>
+        </v-row>
         <v-row>
           <v-col cols="6" class="pa-1">
             <v-text-field
