@@ -150,7 +150,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['whoami', 'showStory', 'showArtefact', 'currentNotification']),
+    ...mapGetters(['whoami', 'showStory', 'showArtefact']),
     title () {
       if (this.profile.legalName) return this.profile.legalName
       else return this.profile.preferredName

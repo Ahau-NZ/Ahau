@@ -26,23 +26,23 @@
           <v-divider></v-divider>
         </v-row>
         <NotificationList
-          :notifications="joiningApplications"
+          :notifications="newNotifications"
           title="New"
           text="Has requested to join"
           show-badge
         />
         <NotificationList
-          :notifications="pendingPersonalApplications"
+          :notifications="pendingNotifications"
           title="Pending"
           text="Is yet to review your request to join"
         />
         <NotificationList
-          :notifications="acceptedPersonalApplications"
+          :notifications="personalCompleteNotifications"
           title="Complete"
           text="Has approved your message to join"
         />
         <NotificationList
-          :notifications="acceptedOthersApplications"
+          :notifications="otherCompleteNotifications"
           text="Has joined"
         />
       </v-card>
@@ -77,23 +77,23 @@
         v-scroll="onScroll"
       >
         <NotificationList
-          :notifications="joiningApplications"
+          :notifications="newNotifications"
           title="New"
           text="Has requested to join"
           show-badge
         />
         <NotificationList
-          :notifications="pendingPersonalApplications"
+          :notifications="pendingNotifications"
           title="Pending"
           text="Is yet to review your request to join"
         />
         <NotificationList
-          :notifications="acceptedPersonalApplications"
+          :notifications="personalCompleteNotifications"
           title="Complete"
           text="Has approved your message to join"
         />
         <NotificationList
-          :notifications="acceptedOthersApplications"
+          :notifications="otherCompleteNotifications"
           text="Has joined"
         />
       </v-card>
@@ -119,58 +119,41 @@ export default {
   },
   computed: {
     ...mapGetters(['whoami', 'notifications']),
-    pendingPersonalApplications () { // your requests to join others communities
-      const notifications = this.notifications
-        .filter(application => {
-          return application.accepted === null && application.isPersonalApplication
-        })
-        .map(application => {
-          application.to = application.groupAdmins[0]
-          return application
-        })
-      return notifications
-    },
-    joiningApplications () { // requests to join a community of yours
+    pendingNotifications () { // your requests to join others communities
       return this.notifications
         .filter(application => {
-          return application.accepted === null && !application.isPersonalApplication
-        })
-        .map(application => {
-          application.to = application.applicant
-          return application
+          return application.type === 'pending'
         })
     },
-    acceptedPersonalApplications () { // your applications with have been accepted
+    newNotifications () { // requests to join a community of yours
       return this.notifications
         .filter(application => {
-          return application.accepted && application.isPersonalApplication
-        })
-        .map(application => {
-          application.to = application.groupAdmins[0]
-          return application
+          return application.type === 'new'
         })
     },
-    acceptedOthersApplications () {
+    personalCompleteNotifications () { // your applications with have been accepted
       return this.notifications
-        .filter(application => {
-          return application.accepted && !application.isPersonalApplication
+        .filter(n => {
+          return n.type === 'personal-complete'
         })
-        .map(application => {
-          application.to = application.applicant
-          return application
+    },
+    otherCompleteNotifications () {
+      return this.notifications
+        .filter(n => {
+          return n.type === 'other-complete'
         })
     },
     notificationsCount () {
-      return this.joiningApplications.length
+      return this.newNotifications.length
     },
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
     hasNotification () {
-      return this.joiningApplications.length > 0 || this.acceptedPersonalApplications.length > 0 || this.pendingPersonalApplications.length > 0
+      return this.newNotifications.length > 0 || this.personalCompleteNotifications.length > 0 || this.pendingNotifications.length > 0
     },
     showBadge () {
-      return this.joiningApplications.length > 0
+      return this.newNotifications.length > 0
     }
   },
   watch: {

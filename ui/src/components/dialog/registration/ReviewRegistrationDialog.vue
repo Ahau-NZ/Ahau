@@ -166,14 +166,6 @@
             </template>
           </ProfileCard>
         </v-col>
-        <!-- <v-col cols="12">
-          <span class="subtitle-2 black--text">
-            Message Received
-          </span>
-        </v-col>
-        <v-col cols="12">
-          <div>{{ receivedMessage }}</div>
-        </v-col> -->
         <v-col cols="12" sm="12" v-for="(question, i) in group.answers" :key="`j-q-${i}`" :class="mobile ? 'pt-4 px-0':'pt-6 px-5'">
           <v-text-field
             :value="group.answers[i].answer"
@@ -183,54 +175,14 @@
         </v-col>
       </template>
       <template v-if="type === 'review'" v-slot:actions>
-        <v-btn @click="respond('decline')" text large class="secondary--text">
+        <v-btn @click="submit(false)" text large class="secondary--text">
           <span>decline</span>
         </v-btn>
-        <v-btn @click="respond('approve')" text large class="blue--text mx-5">
+        <v-btn @click="submit(true)" text large class="blue--text mx-5">
           <span>approve</span>
         </v-btn>
       </template>
 
-    </Dialog>
-
-    <!-- MESSAGE RESPONSE -->
-    <Dialog
-      v-if="showMessage"
-      :show="showMessage"
-      :title="`${response} request to join ${group.preferredName}` "
-      @close="close"
-      width="720px"
-      :goBack="close"
-      enableMenu
-    >
-      <template v-slot:content>
-        <p class="pt-4 px-4 subtitle-2 black--text">
-          Would you like to send a message along with your response to
-          <strong>
-            <i>{{ applicant.preferredName }}</i>
-          </strong>
-        </p>
-        <v-col cols="12" :class="mobile ? 'pt-4 px-0':'px-5'">
-          <v-textarea
-            v-model="resMessage"
-            label="Message"
-            no-resize
-            rows="3"
-            auto-grow
-            outlined
-            placeholder=" "
-          ></v-textarea>
-        </v-col>
-      </template>
-
-      <template v-slot:actions>
-        <v-btn @click="showMessage = !showMessage" text large class="secondary--text">
-          <span>cancel</span>
-        </v-btn>
-        <v-btn @click="sendResponse" text large class="blue--text mx-5">
-          <span>send</span>
-        </v-btn>
-      </template>
     </Dialog>
   </div>
 </template>
@@ -243,7 +195,8 @@ import Avatar from '@/components/Avatar.vue'
 import ProfileCard from '@/components/profile/ProfileCard.vue'
 import ProfileInfoItem from '@/components/profile/ProfileInfoItem.vue'
 import { dateIntervalToString } from '@/lib/date-helpers.js'
-import { acceptGroupApplication } from '@/lib/tribes-application-helpers'
+
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'ReviewRegistrationDialog',
@@ -256,20 +209,10 @@ export default {
   props: {
     show: { type: Boolean, required: true },
     title: { type: String, default: 'Review request' },
-    notification: Object,
     type: { type: String }
   },
-  data () {
-    return {
-      showMessage: false,
-      message: '',
-      resMessage: '',
-      response: '',
-      isResponding: false
-    }
-  },
-
   computed: {
+    ...mapGetters(['currentNotification']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -281,25 +224,22 @@ export default {
       }
     },
     receivedMessage () {
-      return this.notification.message.comments[this.notification.accepted ? 1 : 0]
+      // return this.notification.message.comments[this.notification.accepted ? 1 : 0]
+      return '' // TODO: add to store and here...
     },
     showActions () {
-      if (isEmpty(this.notification)) {
+      if (isEmpty(this.currentNotification)) {
         return true
       }
-      if (!this.notification.mine && this.type === 'review') {
-        return true
-      }
-      if (this.notification.mine && this.type === 'response' && !this.currentNotification.accepted) {
-        return true
-      }
+      if (this.currentNotification.type === 'new') return true
+
       return false
     },
     applicant () {
-      return this.notification.applicant
+      return this.currentNotification.applicant
     },
     group () {
-      return this.notification.group
+      return this.currentNotification.group
     },
     dob () {
       if (this.applicant.aliveInterval) {
@@ -310,47 +250,14 @@ export default {
     }
   },
   methods: {
-    respond (response) {
-      if (response === 'approve') {
-        this.showMessage = !this.showMessage
-        this.response = response
-      } else this.close()
-    },
-
-    async sendResponse () {
-      if (this.isResponding) return
-      this.isResponding = true
-      /* TODO: format */
-      // var output = {
-      //   // TODO - update to match notifications
-      //   action: 'response',
-      //   from: this.whoami.profile.id,
-      //   message: {
-      //     community: 'community profile.id',
-      //     outcome: this.response,
-      //     message: this.resMessage
-      //   },
-      //   to: this.formData.id
-      // }
-
-      try {
-        const res = await this.$apollo.mutate(
-          acceptGroupApplication({
-            id: this.notification.applicationId,
-            comment: this.resMessage
-            // TODO: groupItro: ...
-          })
-        )
-
-        if (res.errors) throw res.errors
-
-        // successfully accepted the application
-      } catch (err) {
-        console.log('Something went wrong while trying to accept a group application', err)
+    submit (approved) {
+      var output = {
+        comment: this.comment,
+        approved
       }
-      /* TODO: check for errors */
-      this.showMessage = !this.showMessage
-      this.close()
+
+      this.$emit('submit', output)
+      this.$emit('close')
     },
     close () {
       this.$emit('close')

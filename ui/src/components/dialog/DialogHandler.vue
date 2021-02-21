@@ -1,13 +1,5 @@
 <template>
   <div id="container">
-    <ReviewRegistrationDialog
-      v-if="isActive('review-registration')"
-      :show="isActive('review-registration')"
-      :title="`Request to join : ${currentNotification.group.preferredName}`"
-      :type="dialogType"
-      :notification="currentNotification"
-      @close="close"
-    />
     <NewCommunityDialog
       v-if="isActive('new-community')"
       :show="isActive('new-community')"
@@ -104,7 +96,6 @@ import * as d3 from 'd3'
 
 import NewNodeDialog from '@/components/dialog/profile/NewNodeDialog.vue'
 import NewCommunityDialog from '@/components/dialog/community/NewCommunityDialog.vue'
-import ReviewRegistrationDialog from '@/components/dialog/registration/ReviewRegistrationDialog.vue'
 import EditNodeDialog from '@/components/dialog/profile/EditNodeDialog.vue'
 import SideViewEditNodeDialog from '@/components/dialog/profile/SideViewEditNodeDialog.vue'
 import DeleteNodeDialog from '@/components/dialog/profile/DeleteNodeDialog.vue'
@@ -141,8 +132,7 @@ export default {
     WhakapapaShowHelper,
     WhakapapaTableHelper,
     ComingSoonDialog,
-    NewCommunityDialog,
-    ReviewRegistrationDialog
+    NewCommunityDialog
   },
   props: {
     story: {
@@ -197,7 +187,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['nestedWhakapapa', 'selectedProfile', 'whoami', 'storeDialog', 'storeType', 'storeSource', 'currentNotification']),
+    ...mapGetters(['nestedWhakapapa', 'selectedProfile', 'whoami', 'storeDialog', 'storeType', 'storeSource']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },

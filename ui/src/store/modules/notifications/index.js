@@ -38,24 +38,30 @@ const actions = {
 
       const formattedNotification = []
 
+      /*
+        different types of applications include:
+        - pending personal applications - these are applications you've sent that are pending approval
+        - joining applicantions - these are applications you have received that you havent yet responded to
+        - accepted personal appications - these are applications you've sent and they have been accepted
+        - accepted other applications - these are applications you have received and accepted
+      */
+
       // TODO: currently a bug here
       res.data.listGroupApplications.forEach(application => {
         if (application.group.public.length > 0) { // TODO: why do we have to check this?
+          const isPersonalApplication = application.applicant.id === whoami.public.profile.id
+          const accepted = application.decision === null ? null : application.decision.accepted
+          const type = getApplicationType(isPersonalApplication, accepted, application.groupAdmins, application.applicant)
+
           var notification = {
-            message: {
-              outcome: (application.decision === null)
-                ? 'not responded'
-                : application.decision.accepted
-                  ? 'accepted'
-                  : 'declined',
-              comments: application.history.filter(history => history.type === 'comment').map(history => history.comment)
-            },
+            ...type,
+            history: application.history,
             groupAdmins: application.groupAdmins,
             applicationId: application.id,
             applicant: application.applicant,
             group: application.group.public[0],
-            accepted: application.decision === null ? null : application.decision.accepted,
-            isPersonalApplication: application.applicant.id === whoami.public.profile.id
+            accepted,
+            isPersonalApplication
           }
           formattedNotification.push(notification)
         }
@@ -76,4 +82,15 @@ export default {
   mutations,
   actions,
   getters
+}
+
+// TODO: rename to something more suitable
+function getApplicationType (isPersonalApplication, accepted, groupAdmins, applicant) {
+  switch (true) {
+    case isPersonalApplication && accepted === null: return { type: 'pending', to: groupAdmins[0] }
+    case !isPersonalApplication && accepted === null: return { type: 'new', to: applicant }
+    case isPersonalApplication && accepted: return { type: 'personal-complete', to: groupAdmins[0] }
+    case !isPersonalApplication && accepted: return { type: 'other-complete', to: applicant }
+    default: return null
+  }
 }
