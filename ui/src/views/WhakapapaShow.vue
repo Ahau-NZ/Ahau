@@ -373,12 +373,12 @@ export default {
     sortFields () {
       return [
         {
-          name: 'Preferred Name',
-          value: 'preferredName'
+          name: 'Full Name',
+          value: 'legalName'
         },
         {
-          name: 'Legal Name',
-          value: 'legalName'
+          name: 'Preferred Name',
+          value: 'preferredName'
         },
         {
           name: 'Age',
