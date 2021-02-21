@@ -302,34 +302,24 @@
             <!-- Phone -->
             <v-row>
               <v-col cols="12" class="pa-1">
-                <!-- Address -->
                 <v-text-field
-                  v-model="formData.address"
-                  label="Address"
-                  v-bind="customProps"
-                  outlined
-                />
-              </v-col>
-            </v-row>
-            <!-- Country --> <!-- Blake TODO: Hookup to back end -->
-            <v-row>
-              <v-col cols="12" class="pa-1">
-                <v-text-field
-                  v-model="formData.location"
-                  label="Country"
+                  v-model="formData.phone"
+                  label="Phone"
                   v-bind="customProps"
                   outlined
                 />
               </v-col>
             </v-row>
           </v-col>
-
+          
           <v-col cols="12" :sm="mobile ? '12' : '6'">
+            <!-- Address -->
             <v-row>
               <v-col cols="12" class="pa-1">
+                <!-- Address -->
                 <v-text-field
-                  v-model="formData.phone"
-                  label="Phone"
+                  v-model="formData.address"
+                  label="Address"
                   v-bind="customProps"
                   outlined
                 />
@@ -352,6 +342,17 @@
                 <v-text-field
                   v-model="formData.location"
                   label="Post Code"
+                  v-bind="customProps"
+                  outlined
+                />
+              </v-col>
+            </v-row>
+            <!-- Country --> <!-- Blake TODO: Hookup to back end -->
+            <v-row>
+              <v-col cols="12" class="pa-1">
+                <v-text-field
+                  v-model="formData.location"
+                  label="Country"
                   v-bind="customProps"
                   outlined
                 />
