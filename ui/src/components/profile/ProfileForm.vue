@@ -177,7 +177,7 @@
       <div v-show="showAdvanced">
         <!-- Preferred name -->
         <v-row>
-          <v-col cols="6" class="pa-1">
+          <v-col :cols="isSideViewDialog ? 12 : 6" class="pa-1">
             <v-text-field
             v-model="formData.preferredName"
             label="Preferred Name"
