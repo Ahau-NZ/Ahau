@@ -161,7 +161,7 @@ export default {
       // 0 = no sort, 1 = sort ascending, 2 = sort descending
       sort: {
         preferredName: SORT.default,
-        fullName: SORT.default,
+        legalName: SORT.default,
         age: SORT.default,
         profession: SORT.default,
         location: SORT.default
