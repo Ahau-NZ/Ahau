@@ -244,7 +244,7 @@
             </v-row>
           </v-col>
         </v-row>
-        <!-- Qualification, EducationProfession, Place of Birth -->
+        <!-- Qualification -->
         <v-row>
           <v-col cols="12" class="pa-1"> <!-- Blake TODO: Hookup to back end -->
             <v-text-field
@@ -255,6 +255,7 @@
             />
           </v-col>
         </v-row>
+        <!-- Education -->
         <v-row>
           <v-col cols="12" class="pa-1"> <!-- Blake TODO: Hookup to back end -->
             <v-text-field
@@ -265,6 +266,7 @@
             />
           </v-col>
         </v-row>
+        <!-- Profession, Place of Birth -->
         <v-row>
           <v-col cols="6" class="pa-1">
             <v-text-field
@@ -300,9 +302,21 @@
             <!-- Phone -->
             <v-row>
               <v-col cols="12" class="pa-1">
+                <!-- Address -->
                 <v-text-field
-                  v-model="formData.phone"
-                  label="Phone"
+                  v-model="formData.address"
+                  label="Address"
+                  v-bind="customProps"
+                  outlined
+                />
+              </v-col>
+            </v-row>
+            <!-- Country --> <!-- Blake TODO: Hookup to back end -->
+            <v-row>
+              <v-col cols="12" class="pa-1">
+                <v-text-field
+                  v-model="formData.location"
+                  label="Country"
                   v-bind="customProps"
                   outlined
                 />
@@ -313,10 +327,9 @@
           <v-col cols="12" :sm="mobile ? '12' : '6'">
             <v-row>
               <v-col cols="12" class="pa-1">
-                <!-- Address -->
                 <v-text-field
-                  v-model="formData.address"
-                  label="Address"
+                  v-model="formData.phone"
+                  label="Phone"
                   v-bind="customProps"
                   outlined
                 />
@@ -324,10 +337,21 @@
             </v-row>
             <v-row>
               <v-col cols="12" class="pa-1">
-                <!-- Location -->
+                <!-- Location --> <!-- Blake TODO: Hookup to back end (change to city) -->
                 <v-text-field
                   v-model="formData.location"
-                  label="City, Country"
+                  label="City"
+                  v-bind="customProps"
+                  outlined
+                />
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col cols="12" class="pa-1">
+                <!-- Location --> <!-- Blake TODO: Hookup to back end (change to city) -->
+                <v-text-field
+                  v-model="formData.location"
+                  label="Post Code"
                   v-bind="customProps"
                   outlined
                 />
