@@ -72,7 +72,6 @@
           allowInterval
           :interval.sync="formData.aliveInterval"
           :hasEndDate.sync="formData.deceased"
-          checkbox-label="No longer living"
         />
 
         <!-- Editing: relationship type-->
@@ -89,12 +88,22 @@
         </v-row>
         <!-- ORDER OF BIRTH -->
         <v-row>
-          <v-col v-if="!readonly || formData.birthOrder" cols="12" class="pa-1">
+          <v-col v-if="!readonly || formData.birthOrder" cols="6" class="pa-1">
             <v-text-field
               v-model="formData.birthOrder"
               type="number"
               label="Order of birth"
               min="1"
+              v-bind="customProps"
+              outlined
+            />
+          </v-col>
+          <!-- No longer living -->
+          <v-col v-if="$route.name !== 'login'" cols='6' class="no-longer-living">
+            <v-checkbox 
+              v-model="formData.deceased"
+              label="No longer living" 
+              hide-details
               v-bind="customProps"
               outlined
             />
@@ -249,7 +258,7 @@
           <v-col cols="12" class="pa-1"> <!-- Blake TODO: Hookup to back end -->
             <v-text-field
               v-model="formData.profession"
-              label="Qualification(s)"
+              label="Skills/Education"
               v-bind="customProps"
               outlined
             />
@@ -279,7 +288,7 @@
           <v-col cols="6" class="pa-1">
             <v-text-field
               v-model="formData.placeOfBirth"
-              label="Place of Birth"
+              label="City/Country of Birth"
               v-bind="customProps"
               outlined
             />
@@ -654,5 +663,9 @@ export default {
     align-items: center;
     font-size:2rem;
     color:rgba(0, 0, 0, 0.54)
+  }
+
+  .no-longer-living {
+    padding: 0px 0px 0px 20px;
   }
 </style>

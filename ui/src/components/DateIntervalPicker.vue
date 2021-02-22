@@ -9,15 +9,8 @@
         :hasError="!!errorMsg"
       />
     </v-col>
-    <v-col  v-if="$route.name !== 'login' && allowInterval && !hideCheckbox" :cols="cols">
-      <v-checkbox v-model="showEndDate"
-        :label="checkboxLabel" hide-details
-        v-bind="customProps"
-        outlined
-      />
-    </v-col>
     <!-- DIED AT PICKER -->
-    <v-col :cols="cols" class="pa-1" v-if="showEndDate">
+    <v-col :cols="cols" class="pa-1" v-if="hasEndDate">
       <NodeDatePicker
         :label="endLabel"
         :value.sync="end"
@@ -26,7 +19,7 @@
         :hasError="!!errorMsg"
       />
     </v-col>
-    <v-col v-if="errorMsg && showEndDate" style="color: red;" cols="12 pa-0" align="center" class="custom-label">
+    <v-col v-if="errorMsg && hasEndDate" style="color: red;" cols="12 pa-0" align="center" class="custom-label">
       {{ errorMsg }}
     </v-col>
   </v-row>
@@ -62,7 +55,6 @@ export default {
     return {
       start: '',
       end: '',
-      showEndDate: this.hasEndDate,
       errorMsg: null,
       currentDate: new Date().toISOString().slice(0, 10)
     }
@@ -81,7 +73,7 @@ export default {
         this.end = end
       }
     },
-    showEndDate (show) {
+    hasEndDate (show) {
       if (!show) this.$emit('update:interval', this.start + '/')
       this.$emit('update:hasEndDate', show)
     },
