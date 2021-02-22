@@ -95,18 +95,21 @@ export const APPLICATION_FRAGMENT = gql`
   }
 `
 
-export const listGroupApplications = (accepted) => {
+export const listGroupApplications = () => {
   return {
     query: gql`
       ${APPLICATION_FRAGMENT}
-      query($accepted: Boolean) {
-        listGroupApplications(accepted: $accepted) {
+      query {
+        unseen: listGroupApplications {
+          ...ApplicationFragment
+        }
+        accepted: listGroupApplications(accepted: true) {
+          ...ApplicationFragment
+        }
+        declined: listGroupApplications(accepted: false) {
           ...ApplicationFragment
         }
       }`,
-    variables: {
-      accepted
-    },
     fetchPolicy: 'no-cache'
   }
 }

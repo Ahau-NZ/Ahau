@@ -16,13 +16,13 @@
           <v-list-item class="py-1" @click="openNotification(notification)">
             <Avatar
               size="50px"
-              :image="notification.to.avatarImage"
-              :alt="notification.to.preferredName"
-              :gender="notification.to.gender"
-              :bornAt="notification.to.bornAt"
+              :image="notification.from.avatarImage"
+              :alt="notification.from.preferredName"
+              :gender="notification.from.gender"
+              :bornAt="notification.from.bornAt"
             />
             <v-list-item-content class="pl-5">
-              <v-list-item-title :class="bold">{{ notification.to.preferredName }}</v-list-item-title>
+              <v-list-item-title :class="bold">{{ notification.from.preferredName }}</v-list-item-title>
               <v-list-item-subtitle
                 :class="`text-caption ${bold}`"
               >{{ text }} {{ notification.group.preferredName }}</v-list-item-subtitle>

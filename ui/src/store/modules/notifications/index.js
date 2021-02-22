@@ -1,6 +1,7 @@
 // import gql from 'graphql-tag'
 import { createProvider } from '@/plugins/vue-apollo'
 import { listGroupApplications } from '@/lib/tribes-application-helpers'
+
 const apolloProvider = createProvider()
 const apollo = apolloProvider.defaultClient
 
@@ -36,38 +37,13 @@ const actions = {
 
       if (res.errors) throw res.errors
 
-      const formattedNotification = []
+      var { unseen, accepted, declined } = res.data
 
-      /*
-        different types of applications include:
-        - pending personal applications - these are applications you've sent that are pending approval
-        - joining applicantions - these are applications you have received that you havent yet responded to
-        - accepted personal appications - these are applications you've sent and they have been accepted
-        - accepted other applications - these are applications you have received and accepted
-      */
+      unseen = unseen.map(application => mapValues(application, whoami))
+      accepted = accepted.map(application => mapValues(application, whoami))
+      declined = declined.map(application => mapValues(application, whoami))
 
-      // TODO: currently a bug here
-      res.data.listGroupApplications.forEach(application => {
-        if (application.group.public.length > 0) { // TODO: why do we have to check this?
-          const isPersonalApplication = application.applicant.id === whoami.public.profile.id
-          const accepted = application.decision === null ? null : application.decision.accepted
-          const type = getApplicationType(isPersonalApplication, accepted, application.groupAdmins, application.applicant)
-
-          var notification = {
-            ...type,
-            history: application.history,
-            groupAdmins: application.groupAdmins,
-            applicationId: application.id,
-            applicant: application.applicant,
-            group: application.group.public[0],
-            accepted,
-            isPersonalApplication
-          }
-          formattedNotification.push(notification)
-        }
-      })
-
-      commit('updateNotifications', formattedNotification)
+      commit('updateNotifications', [...unseen, ...accepted, ...declined])
     } catch (err) {
       console.error('Something went wrong while try to get all group applications', err)
     }
@@ -84,13 +60,30 @@ export default {
   getters
 }
 
-// TODO: rename to something more suitable
-function getApplicationType (isPersonalApplication, accepted, groupAdmins, applicant) {
-  switch (true) {
-    case isPersonalApplication && accepted === null: return { type: 'pending', to: groupAdmins[0] }
-    case !isPersonalApplication && accepted === null: return { type: 'new', to: applicant }
-    case isPersonalApplication && accepted: return { type: 'personal-complete', to: groupAdmins[0] }
-    case !isPersonalApplication && accepted: return { type: 'other-complete', to: applicant }
+function mapValues (application, whoami) {
+  const { decision, applicant, groupAdmins, group } = application
+
+  const isPersonal = applicant.id === whoami.public.profile.id
+  const accepted = decision === null ? null : decision.accepted
+
+  const from = isPersonal
+    ? groupAdmins[0]
+    : applicant
+
+  return {
+    type: getNotificationType(isPersonal, accepted),
+    from,
+    applicant,
+    group: group.public[0]
+  }
+}
+
+function getNotificationType (isPersonal, accepted) {
+  const prefix = isPersonal ? 'personal' : 'other'
+  switch (accepted) {
+    case true: return prefix + '-complete'
+    case false: return prefix + '-declined'
+    case null: return prefix + '-pending'
     default: return null
   }
 }

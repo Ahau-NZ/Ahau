@@ -113,8 +113,7 @@ export default {
     return {
       menu: false,
       expand: false,
-      offset: 0,
-      test: []
+      offset: 0
     }
   },
   computed: {
@@ -122,13 +121,13 @@ export default {
     pendingNotifications () { // your requests to join others communities
       return this.notifications
         .filter(application => {
-          return application.type === 'pending'
+          return application.type === 'personal-pending'
         })
     },
     newNotifications () { // requests to join a community of yours
       return this.notifications
         .filter(application => {
-          return application.type === 'new'
+          return application.type === 'other-pending'
         })
     },
     personalCompleteNotifications () { // your applications with have been accepted
