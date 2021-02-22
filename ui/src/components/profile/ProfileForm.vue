@@ -277,7 +277,7 @@
         </v-row>
         <!-- Profession, Place of Birth -->
         <v-row>
-          <v-col cols="6" class="pa-1">
+          <v-col :cols="isSideViewDialog ? 12 : 6" class="pa-1">
             <v-text-field
               v-model="formData.profession"
               label="Profession"
@@ -285,7 +285,7 @@
               outlined
             />
           </v-col>
-          <v-col cols="6" class="pa-1">
+          <v-col :cols="isSideViewDialog ? 12 : 6" class="pa-1">
             <v-text-field
               v-model="formData.placeOfBirth"
               label="City/Country of Birth"
