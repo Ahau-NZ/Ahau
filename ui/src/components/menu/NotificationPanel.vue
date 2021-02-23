@@ -39,7 +39,7 @@
         <NotificationList
           :notifications="personalCompleteNotifications"
           title="Complete"
-          text="Has approved your message to join"
+          text="Has approved your request to join"
         />
         <NotificationList
           :notifications="otherCompleteNotifications"
@@ -90,7 +90,7 @@
         <NotificationList
           :notifications="personalCompleteNotifications"
           title="Complete"
-          text="Has approved your message to join"
+          text="Has approved your request to join"
         />
         <NotificationList
           :notifications="otherCompleteNotifications"
