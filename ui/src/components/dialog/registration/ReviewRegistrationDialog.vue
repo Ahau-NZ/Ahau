@@ -97,8 +97,8 @@
           </v-card>
         </v-col>
         <v-expansion-panels flat>
-          <v-expansion-panel>
-            <v-expansion-panel-header class="subtitle-2 black--text">
+          <v-expansion-panel class="pa-0">
+            <v-expansion-panel-header class="subtitle-2 black--text pl-3">
               {{ notification.isPersonalApplication ? 'Your' : (applicant.legalName || applicant.preferredName) + "'s" }} Information
             </v-expansion-panel-header>
             <v-expansion-panel-content>
@@ -178,7 +178,7 @@
             </v-expansion-panel-content>
           </v-expansion-panel>
           <v-expansion-panel v-if="notification.answers && notification.answers.length > 0">
-            <v-expansion-panel-header class="subtitle-2 black--text">
+            <v-expansion-panel-header class="subtitle-2 black--text pl-3">
               Question Answers
             </v-expansion-panel-header>
             <v-expansion-panel-content>
@@ -192,6 +192,24 @@
             </v-expansion-panel-content>
           </v-expansion-panel>
         </v-expansion-panels>
+        <v-col>
+          <span class="subtitle-2 black--text">
+            Comments
+          </span>
+        </v-col>
+        <v-col>
+          <v-card outlined>
+            <v-row align="center">
+              <v-col cols="12" sm="12" v-for="({ comment, author }, i) in comments" :key="`j-q-${i}`" :class="mobile ? 'px-0':'px-5'">
+                <v-text-field
+                  :value="comment"
+                  v-bind="customProps"
+                  :label="author.preferredName || author.legalName"
+                />
+              </v-col>
+            </v-row>
+          </v-card>
+        </v-col>
       </template>
       <template v-slot:actions>
         <div v-if="showActions">
@@ -271,6 +289,9 @@ export default {
         return formattedDate
       }
       return ' '
+    },
+    comments () {
+      return this.notification.history.filter(d => d.type === 'comment')
     }
   },
   methods: {
