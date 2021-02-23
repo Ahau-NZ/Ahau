@@ -100,9 +100,9 @@
           </v-col>
           <!-- No longer living -->
           <v-col v-if="$route.name !== 'login'" cols='6' class="no-longer-living">
-            <v-checkbox 
+            <v-checkbox
               v-model="formData.deceased"
-              label="No longer living" 
+              label="No longer living"
               hide-details
               v-bind="customProps"
               outlined
