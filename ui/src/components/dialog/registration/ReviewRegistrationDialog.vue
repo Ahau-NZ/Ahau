@@ -182,13 +182,16 @@
               Question Answers
             </v-expansion-panel-header>
             <v-expansion-panel-content>
-              <v-col cols="12" sm="12" v-for="(question, i) in notification.answers" :key="`j-q-${i}`" :class="mobile ? 'pt-4 px-0':'pt-6 px-5'">
-                <v-text-field
-                  :value="notification.answers[i].answer"
-                  v-bind="customProps"
-                  :label="notification.answers[i].question"
-                />
-              </v-col>
+              <v-card outlined>
+                <v-col cols="12" sm="12" v-for="(question, i) in notification.answers" :key="`j-q-${i}`" :class="mobile ? 'pt-4 px-0':'pt-6 px-5'">
+                  <v-text-field
+                    :value="notification.answers[i].answer"
+                    v-bind="customProps"
+                    :label="notification.answers[i].question"
+
+                  />
+                </v-col>
+              </v-card>
             </v-expansion-panel-content>
           </v-expansion-panel>
         </v-expansion-panels>
@@ -198,14 +201,27 @@
           </span>
         </v-col>
         <v-col>
-          <v-card outlined>
+          <v-card outlined class="ml-2">
             <v-row align="center">
-              <v-col cols="12" sm="12" v-for="({ comment, author }, i) in comments" :key="`j-q-${i}`" :class="mobile ? 'px-0':'px-5'">
+              <v-col cols="12" sm="12" v-for="({ comment, author }, i) in comments" :key="`j-q-${i}`" :class="mobile ? 'px-0' : 'px-5'">
                 <v-text-field
                   :value="comment"
                   v-bind="customProps"
                   :label="author.preferredName || author.legalName"
                 />
+              </v-col>
+              <v-col v-if="notification.type === 'other-pending'">
+                <v-textarea
+                  v-model="comment"
+                  label="Send a message"
+                  no-resize
+                  rows="3"
+                  auto-grow
+                  outlined
+                  placeholder=" "
+                  class="px-4"
+                  hide-details
+                ></v-textarea>
               </v-col>
             </v-row>
           </v-card>
@@ -252,22 +268,23 @@ export default {
     title: { type: String, default: 'Review request' },
     notification: Object
   },
+  data () {
+    return {
+      comment: ''
+    }
+  },
   computed: {
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
     customProps () {
       return {
-        readonly: true,
         hideDetails: true,
         placeholder: ' ',
         flat: true,
-        class: 'custom'
+        class: 'custom',
+        readonly: true
       }
-    },
-    receivedMessage () {
-      // return this.notification.message.comments[this.notification.accepted ? 1 : 0]
-      return '' // TODO: add to store and here...
     },
     showActions () {
       if (isEmpty(this.notification)) {
