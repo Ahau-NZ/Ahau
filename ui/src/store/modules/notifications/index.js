@@ -61,7 +61,7 @@ export default {
 }
 
 function mapValues (application, whoami) {
-  const { decision, applicant, groupAdmins, group } = application
+  const { decision, applicant, groupAdmins, group, answers } = application
 
   const isPersonal = applicant.id === whoami.public.profile.id
   const accepted = decision === null ? null : decision.accepted
@@ -75,7 +75,9 @@ function mapValues (application, whoami) {
     from,
     group: group.public[0],
     applicant,
-    applicationId: application.id
+    id: application.id,
+    isPersonalApplication: isPersonal,
+    answers
   }
 }
 

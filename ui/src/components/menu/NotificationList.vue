@@ -66,7 +66,7 @@ export default {
       try {
         const mutation = approved
           ? acceptGroupApplication({
-            id: this.currentNotification.applicationId,
+            id: this.currentNotification.id,
             comment
             // TODO: groupItro: ...
           })

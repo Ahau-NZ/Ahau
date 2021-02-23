@@ -6,8 +6,8 @@
 
       <!-- Content Slot -->
       <template v-slot:content>
-        <v-col>
-          <span class="subtitle-2 black--text">
+        <v-col v-if="!notification.isPersonalApplication">
+          <span v-if="notification.type === 'other-pending'" class="subtitle-2 black--text">
             A new request has been recieved from
             <strong>
               <i>{{ applicant.preferredName }}</i>
@@ -17,6 +17,28 @@
             </strong>
             <br/>
             Please review their information and respond below
+          </span>
+          <span v-else>
+            <strong>
+              <i>{{ applicant.preferredName }}</i>
+            </strong> to join
+            <strong>
+              <i>{{ group.preferredName }}</i>
+              has been accepted
+            </strong>
+          </span>
+        </v-col>
+        <v-col v-else>
+          <span class="subtitle-2 black--text">
+            <strong>
+              <i>Your</i>
+            </strong> request to join
+            <strong>
+              <i>{{ group.preferredName }}</i>
+            </strong>
+            <span v-if="notification.type === 'personal-complete'"> has been accepted</span>
+            <span v-else> has been sent and is still pending</span>
+            <br/>
           </span>
         </v-col>
         <v-col>
@@ -74,105 +96,102 @@
             </v-row>
           </v-card>
         </v-col>
-        <v-col>
-          <span class="subtitle-2 black--text">
-            {{ applicant.legalName || applicant.preferredName }}'s Information
-          </span>
-        </v-col>
-        <v-col class="px-0">
-          <ProfileCard :style="mobile ? 'margin: 10px;':'margin:20px'">
-            <template v-slot:content>
-              <v-row cols="12" class="pt-0">
-                <ProfileInfoItem
-                  :class="mobile ? 'bb':'br bb'"
-                  smCols="12"
-                  mdCols="6"
-                  title="Date of birth"
-                  :value="dob"
+        <v-expansion-panels flat>
+          <v-expansion-panel>
+            <v-expansion-panel-header class="subtitle-2 black--text">
+              {{ notification.isPersonalApplication ? 'Your' : (applicant.legalName || applicant.preferredName) + "'s" }} Information
+            </v-expansion-panel-header>
+            <v-expansion-panel-content>
+              <ProfileCard :style="mobile ? 'margin: 10px;':'margin:20px'">
+                <template v-slot:content>
+                  <v-row cols="12" class="pt-0">
+                    <ProfileInfoItem
+                      :class="mobile ? 'bb':'br bb'"
+                      smCols="12"
+                      mdCols="6"
+                      title="Date of birth"
+                      :value="dob"
+                    />
+                    <ProfileInfoItem
+                      :class="mobile ? 'bb':'bb'"
+                      smCols="12"
+                      mdCols="6"
+                      title="Phone"
+                      :value="applicant.phone"
+                    />
+                    <ProfileInfoItem
+                      :class="mobile ? 'bb':'br'"
+                      smCols="12"
+                      mdCols="6"
+                      title="Email"
+                      :value="applicant.email"
+                    />
+                    <ProfileInfoItem
+                      smCols="12"
+                      mdCols="6"
+                      title="Address"
+                      :value="applicant.address"
+                    />
+                  </v-row>
+                </template>
+              </ProfileCard>
+              <ProfileCard :style="mobile ? 'margin: 10px;':'margin:20px'">
+                <template v-slot:content>
+                  <v-row cols="12" class="pt-0">
+                    <ProfileInfoItem
+                      :class="mobile ? 'bb':' bb'"
+                      smCols="12"
+                      mdCols="12"
+                      title="Description"
+                      :value="applicant.description"
+                    />
+                    <ProfileInfoItem
+                      :class="mobile ? 'bb':'bb br'"
+                      smCols="12"
+                      mdCols="6"
+                      title="Preferred Name"
+                      :value="applicant.preferredName"
+                    />
+                    <ProfileInfoItem
+                      :class="mobile ? 'bb':'bb'"
+                      smCols="12"
+                      mdCols="6"
+                      title="Full Name"
+                      :value="applicant.legalName"
+                    />
+                    <ProfileInfoItem
+                      :class="mobile ? 'bb':'br'"
+                      smCols="12"
+                      mdCols="6"
+                      title="City/Country"
+                      :value="applicant.location"
+                    />
+                    <ProfileInfoItem
+                      smCols="12"
+                      mdCols="6"
+                      title="Profession"
+                      :value="applicant.profession"
+                    />
+                  </v-row>
+                </template>
+              </ProfileCard>
+            </v-expansion-panel-content>
+          </v-expansion-panel>
+          <v-expansion-panel v-if="notification.answers && notification.answers.length > 0">
+            <v-expansion-panel-header class="subtitle-2 black--text">
+              Question Answers
+            </v-expansion-panel-header>
+            <v-expansion-panel-content>
+              <v-col cols="12" sm="12" v-for="(question, i) in notification.answers" :key="`j-q-${i}`" :class="mobile ? 'pt-4 px-0':'pt-6 px-5'">
+                <v-text-field
+                  :value="notification.answers[i].answer"
+                  v-bind="customProps"
+                  :label="notification.answers[i].question"
                 />
-                <ProfileInfoItem
-                  :class="mobile ? 'bb':'bb'"
-                  smCols="12"
-                  mdCols="6"
-                  title="Phone"
-                  :value="applicant.phone"
-                />
-                <ProfileInfoItem
-                  :class="mobile ? 'bb':'br'"
-                  smCols="12"
-                  mdCols="6"
-                  title="Email"
-                  :value="applicant.email"
-                />
-                <ProfileInfoItem
-                  smCols="12"
-                  mdCols="6"
-                  title="Address"
-                  :value="applicant.address"
-                />
-              </v-row>
-            </template>
-          </ProfileCard>
-          <ProfileCard :style="mobile ? 'margin: 10px;':'margin:20px'">
-            <template v-slot:content>
-              <v-row cols="12" class="pt-0">
-                <ProfileInfoItem
-                  :class="mobile ? 'bb':' bb'"
-                  smCols="12"
-                  mdCols="12"
-                  title="Description"
-                  :value="applicant.description"
-                />
-                <ProfileInfoItem
-                  :class="mobile ? 'bb':'bb br'"
-                  smCols="12"
-                  mdCols="6"
-                  title="Preferred Name"
-                  :value="applicant.preferredName"
-                />
-                <ProfileInfoItem
-                  :class="mobile ? 'bb':'bb'"
-                  smCols="12"
-                  mdCols="6"
-                  title="Full Name"
-                  :value="applicant.legalName"
-                />
-                <ProfileInfoItem
-                  :class="mobile ? 'bb':'br'"
-                  smCols="12"
-                  mdCols="6"
-                  title="City/Country"
-                  :value="applicant.location"
-                />
-                <ProfileInfoItem
-                  smCols="12"
-                  mdCols="6"
-                  title="Profession"
-                  :value="applicant.profession"
-                />
-              </v-row>
-            </template>
-          </ProfileCard>
-          <ProfileCard :style="mobile ? 'margin: 10px;':'margin:20px'">
-            <template v-slot:content>
-              <v-row cols="12" class="pt-0">
-                <ProfileInfoItem
-                  smCols="12"
-                  mdCols="12"
-                  title="Message"
-                  :value="receivedMessage"
-                />
-              </v-row>
-            </template>
-          </ProfileCard>
-        </v-col>
-        <v-col cols="12" sm="12" v-for="(question, i) in group.answers" :key="`j-q-${i}`" :class="mobile ? 'pt-4 px-0':'pt-6 px-5'">
-          <v-text-field
-            :value="group.answers[i].answer"
-            v-bind="customProps"
-            :label="group.answers[i].question"
-          />
-        </v-col>
+              </v-col>
+            </v-expansion-panel-content>
+          </v-expansion-panel>
+        </v-expansion-panels>
       </template>
       <template v-slot:actions>
         <div v-if="showActions">
@@ -221,9 +240,11 @@ export default {
     },
     customProps () {
       return {
+        readonly: true,
         hideDetails: true,
         placeholder: ' ',
-        outlined: true
+        flat: true,
+        class: 'custom'
       }
     },
     receivedMessage () {
@@ -238,13 +259,6 @@ export default {
 
       return false
     },
-    //     const prefix = isPersonal ? 'personal' : 'other'
-    // switch (accepted) {
-    //   case true: return prefix + '-complete'
-    //   case false: return prefix + '-declined'
-    //   case null: return prefix + '-pending'
-    //   default: return null
-    // }
     applicant () {
       return this.notification.applicant
     },
@@ -277,12 +291,6 @@ export default {
 </script>
 
 <style scoped>
-.custom.v-text-field > .v-input__control > .v-input__slot:before {
-  border-style: none;
-}
-.custom.v-text-field > .v-input__control > .v-input__slot:after {
-  border-style: none;
-}
 .close {
   top: -25px;
   right: -10px;
