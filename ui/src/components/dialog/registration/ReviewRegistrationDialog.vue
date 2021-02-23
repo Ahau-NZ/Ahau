@@ -174,15 +174,21 @@
           />
         </v-col>
       </template>
-      <template v-if="type === 'review'" v-slot:actions>
-        <v-btn @click="submit(false)" text large class="secondary--text">
-          <span>decline</span>
-        </v-btn>
-        <v-btn @click="submit(true)" text large class="blue--text mx-5">
-          <span>approve</span>
-        </v-btn>
+      <template v-slot:actions>
+        <div v-if="showActions">
+          <v-btn @click="submit(false)" text large class="secondary--text">
+            <span>decline</span>
+          </v-btn>
+          <v-btn @click="submit(true)" text large class="blue--text mx-5">
+            <span>approve</span>
+          </v-btn>
+        </div>
+        <div v-else>
+          <v-btn @click="close" text large class="blue--text mx-5">
+            <span>close</span>
+          </v-btn>
+        </div>
       </template>
-
     </Dialog>
   </div>
 </template>
@@ -196,8 +202,6 @@ import ProfileCard from '@/components/profile/ProfileCard.vue'
 import ProfileInfoItem from '@/components/profile/ProfileInfoItem.vue'
 import { dateIntervalToString } from '@/lib/date-helpers.js'
 
-import { mapGetters } from 'vuex'
-
 export default {
   name: 'ReviewRegistrationDialog',
   components: {
@@ -209,10 +213,9 @@ export default {
   props: {
     show: { type: Boolean, required: true },
     title: { type: String, default: 'Review request' },
-    type: { type: String }
+    notification: Object
   },
   computed: {
-    ...mapGetters(['currentNotification']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -228,18 +231,25 @@ export default {
       return '' // TODO: add to store and here...
     },
     showActions () {
-      if (isEmpty(this.currentNotification)) {
+      if (isEmpty(this.notification)) {
         return true
       }
-      if (this.currentNotification.type === 'new') return true
+      if (this.notification.type === 'other-pending') return true
 
       return false
     },
+    //     const prefix = isPersonal ? 'personal' : 'other'
+    // switch (accepted) {
+    //   case true: return prefix + '-complete'
+    //   case false: return prefix + '-declined'
+    //   case null: return prefix + '-pending'
+    //   default: return null
+    // }
     applicant () {
-      return this.currentNotification.applicant
+      return this.notification.applicant
     },
     group () {
-      return this.currentNotification.group
+      return this.notification.group
     },
     dob () {
       if (this.applicant.aliveInterval) {

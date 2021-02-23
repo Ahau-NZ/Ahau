@@ -73,8 +73,9 @@ function mapValues (application, whoami) {
   return {
     type: getNotificationType(isPersonal, accepted),
     from,
+    group: group.public[0],
     applicant,
-    group: group.public[0]
+    applicationId: application.id
   }
 }
 

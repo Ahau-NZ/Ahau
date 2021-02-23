@@ -13,7 +13,7 @@
       <div v-for="(notification, index) in notifications" :key="index">
         <!-- Registration Notification -->
         <div>
-          <v-list-item class="py-1" @click="openNotification(notification)">
+          <v-list-item class="py-1" @click="openReviewRegistration(notification)">
             <Avatar
               size="50px"
               :image="notification.from.avatarImage"
@@ -32,26 +32,18 @@
         </div>
       </div>
     </v-list>
-    <ReviewRegistrationDialog
-      v-if="dialog === 'review-registration'"
-      :show="dialog === 'review-registration'"
-      :title="`Request to join : ${currentNotification.group.preferredName}`"
-      @submit="sendResponse"
-      @close="close"
-    />
   </div>
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex'
 import Avatar from '@/components/Avatar'
 import { acceptGroupApplication } from '@/lib/tribes-application-helpers'
-import ReviewRegistrationDialog from '@/components/dialog/registration/ReviewRegistrationDialog.vue'
+
+import { mapActions } from 'vuex'
 
 export default {
   components: {
-    Avatar,
-    ReviewRegistrationDialog
+    Avatar
   },
   props: {
     notifications: Array,
@@ -59,22 +51,16 @@ export default {
     text: String,
     showBadge: Boolean
   },
-  data () {
-    return {
-      dialog: null
-    }
-  },
   computed: {
-    ...mapGetters(['currentNotification']),
     bold () {
       return this.showBadge ? 'bold' : ''
     }
   },
   methods: {
     ...mapActions(['setDialog', 'setCurrentNotification']),
-    openNotification (notification) {
+    openReviewRegistration (notification) {
       this.setCurrentNotification(notification)
-      this.dialog = 'review-registration'
+      this.setDialog({ active: 'review-registration' })
     },
     async sendResponse ({ comment, approved }) {
       try {
@@ -99,10 +85,6 @@ export default {
       } catch (err) {
         console.log('Something went wrong while trying to respond to the group application', err)
       }
-    },
-    close () {
-      this.dialog = null
-      this.setCurrentNotification(null)
     }
   }
 }
