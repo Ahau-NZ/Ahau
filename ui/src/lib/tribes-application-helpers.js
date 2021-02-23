@@ -43,6 +43,20 @@ export const acceptGroupApplication = ({ id, comment, groupIntro }) => {
   }
 }
 
+export const declineGroupApplication = ({ id, comment }) => {
+  return {
+    mutation: gql`
+      mutation($id: String!, $comment: String) {
+        declineGroupApplication(id: $id, reason: $comment)
+      }
+    `,
+    variables: {
+      id,
+      comment
+    }
+  }
+}
+
 export const APPLICATION_FRAGMENT = gql`
   ${COMMUNITY_FRAGMENT}
   ${PERSON_FRAGMENT}

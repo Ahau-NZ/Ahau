@@ -254,6 +254,7 @@ import Avatar from '@/components/Avatar.vue'
 import ProfileCard from '@/components/profile/ProfileCard.vue'
 import ProfileInfoItem from '@/components/profile/ProfileInfoItem.vue'
 import { dateIntervalToString } from '@/lib/date-helpers.js'
+import { acceptGroupApplication, declineGroupApplication } from '@/lib/tribes-application-helpers.js'
 
 export default {
   name: 'ReviewRegistrationDialog',
@@ -312,14 +313,27 @@ export default {
     }
   },
   methods: {
-    submit (approved) {
+    async submit (approved) {
       var output = {
-        comment: this.comment,
-        approved
+        id: this.notification.id, // the applicationId
+        comment: this.comment
+        // TODO (later): groupIntro
       }
 
-      this.$emit('submit', output)
-      this.$emit('close')
+      const mutation = approved
+        ? acceptGroupApplication(output)
+        : declineGroupApplication(output)
+
+      try {
+        const res = await this.$apollo.mutate(mutation)
+
+        if (res.errors) throw res.errors
+
+        // success
+        this.close()
+      } catch (err) {
+        console.error('Something went wrong while try to accept/decline application', err)
+      }
     },
     close () {
       this.$emit('close')
