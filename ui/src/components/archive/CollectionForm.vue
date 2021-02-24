@@ -78,7 +78,7 @@
               :selectedItems.sync="formData.stories"
               :items="stories"
               :openMenu.sync="showStories"
-              placeholder="add related record"
+              placeholder="add related story"
               item="title"
             />
             <ChipGroup

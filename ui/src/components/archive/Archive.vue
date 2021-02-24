@@ -40,7 +40,7 @@
   </VueContext>
 
     <NewRecordDialog v-if="dialog === 'new-story'" :show="dialog === 'new-story'"
-      :title="`Add record to ${ profile.preferredName || 'Untitled' }'s archive`" @close="dialog = null"
+      :title="`Add story to ${ profile.preferredName || 'Untitled' }'s archive`" @close="dialog = null"
       @submit="processStory"
     />
     <NewCollectionDialog v-if="dialog === 'new-collection'" :show="dialog === 'new-collection'"
