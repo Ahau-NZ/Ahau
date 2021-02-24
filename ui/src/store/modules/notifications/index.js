@@ -66,7 +66,6 @@ function mapValues (application, whoami) {
   const isPersonal = applicant.id === whoami.public.profile.id
   const isNew = decision === null
   const isAccepted = (decision && decision.accepted) || false
-  const isDeclined = (decision && decision.accepted === false) || false
 
   // TODO: not sure which admin, find out later: look at the history instead
   const from = isPersonal ? groupAdmins[0] : applicant
@@ -80,7 +79,6 @@ function mapValues (application, whoami) {
     history,
     isPersonal,
     isAccepted,
-    isDeclined,
     isNew
   }
 }

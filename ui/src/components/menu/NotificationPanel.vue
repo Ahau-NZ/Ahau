@@ -109,7 +109,7 @@ export default {
       const [unseen, pending, complete, other] = pileSort(this.notifications, [
         (n) => !n.isPersonal && n.isNew,
         (n) => n.isPersonal && n.isNew,
-        (n) => n.isAccepted || n.isDeclined
+        (n) => n.isAccepted || !n.isAccepted
       ])
 
       return { unseen, pending, complete, other }
