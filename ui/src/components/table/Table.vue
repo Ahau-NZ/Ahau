@@ -37,7 +37,7 @@
             </g>
             <svg :width="columns[1].x - 45" >
               <text  :transform="`translate(${columns[0].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ node.data.legalName }}
+                {{ node.data.preferredName }}
               </text>
             </svg>
             <svg :width="columns[2].x - 45" >
@@ -281,7 +281,7 @@ export default {
     columns () {
       return [
         {
-          label: 'Legal Name',
+          label: 'Preferred Name',
           x: this.colWidth
         },
         {
@@ -487,13 +487,13 @@ export default {
         return 'Phone'
       }
 
-      const legalName = ['Legal Name', 'Legal Name ↑', 'Legal Name ↓']
+      const preferredName = ['Preferred Name', 'Preferred Name ↑', 'Preferred Name ↓']
       const age = ['Age', 'Age ↑', 'Age ↓']
       const profession = ['Profession', 'Profession ↑', 'Profession ↓']
       const location = ['City, Country', 'City, Country ↑', 'City, Country ↓']
 
-      if (label === 'Legal Name') {
-        return legalName[this.sort['legalName']]
+      if (label === 'Preferred Name') {
+        return preferredName[this.sort['preferredName']]
       }
       if (label === 'Age') {
         return age[this.sort['age']]

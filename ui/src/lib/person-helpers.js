@@ -22,6 +22,10 @@ export const PERMITTED_PERSON_PROPS = [
   'birthOrder',
   'deceased',
 
+  'placeOfBirth',
+  'placeOfDeath',
+  'buriedLocation',
+
   'recps'
 ]
 
