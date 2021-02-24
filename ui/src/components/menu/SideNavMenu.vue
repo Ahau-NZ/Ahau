@@ -180,7 +180,6 @@ export default {
 
       // means the notification was sent
       if (notifications.length > 0) {
-        // if there is one that has been declined
         if (notifications.some(n => n.isPersonal && n.isNew)) return 'Request Sent'
         else if (notifications.some(n => n.isPersonal && !n.isAccepted && !n.isNew)) return 'Request Declined'
       }
