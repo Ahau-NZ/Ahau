@@ -23,7 +23,7 @@
     "ssb-backlinks": "^2.1.1",
     "ssb-blobs": "^2.0.0",
     "ssb-config": "^3.4.5",
-    "ssb-conn": "^0.18.2",
+    "ssb-conn": "^1.0.0",
     "ssb-db": "^20.3.0",
     "ssb-friends": "^4.2.0",
     "ssb-invite": "^2.1.6",

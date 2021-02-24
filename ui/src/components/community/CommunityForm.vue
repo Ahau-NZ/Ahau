@@ -54,23 +54,33 @@
           <!-- Phone -->
           <v-text-field v-model="formData.phone" label="Phone" v-bind="customProps" />
         </v-col>
-        <v-col cols="12" v-if="!allowJoiningQuestions" >
-          <v-checkbox v-model="allowJoiningQuestions" label="Add questions to ask joining members?"/>
+        <v-col cols="12" align="center" v-if="!allowJoiningQuestions" class="pt-12">
+          <v-btn @click="allowJoiningQuestions = true" text light color="blue">
+            Setup Comunity registration form
+            <v-icon>mdi-cogs</v-icon>
+          </v-btn>
         </v-col>
         <v-col v-else>
           <v-row>
             <v-col cols="12">
-              Member Joining Questions
+              Community registration form
             </v-col>
-            <v-col cols="12" sm="12" v-for="(question, i) in joiningQuestions" :key="`j-q-${i}`" class="pa-1">
+            <v-col cols="12" sm="12" v-for="(question, i) in formData.joiningQuestions" :key="`j-q-${i}`" class="pa-1, mt-4">
               <v-text-field
-                v-model="joiningQuestions[i].label"
+                v-model="formData.joiningQuestions[i].label"
                 v-bind="customProps"
+                append-icon="mdi-delete"
+                @click:append="removeJoiningQuestion(i)"
                 :label="`Question ${i + 1}`"
+                auto-focus
               />
             </v-col>
             <v-col cols="12">
-              <AddButton label="Add a question" @click="addQuestionField"/>
+              <v-row>
+                <v-spacer/>
+                <AddButton label="Add a question" @click="addQuestionField"/>
+                <v-spacer/>
+              </v-row>
             </v-col>
           </v-row>
         </v-col>
@@ -96,13 +106,17 @@ export default {
   },
   data () {
     return {
-      allowJoiningQuestions: false,
-      joiningQuestions: []
+      allowJoiningQuestions: false
     }
   },
   watch: {
-    allowJoiningQuestions (allowed) {
-      if (!allowed) this.joiningQuestions = [] // clear the questions
+    'formData.joiningQuestions': {
+      deep: true,
+      immediate: true,
+      handler (joiningQuestions) {
+        if (joiningQuestions && joiningQuestions.length > 0) this.allowJoiningQuestions = true
+        else this.allowJoiningQuestions = false
+      }
     }
   },
   computed: {
@@ -119,7 +133,10 @@ export default {
   },
   methods: {
     addQuestionField () {
-      this.joiningQuestions.push({ label: '', type: 'input' })
+      this.formData.joiningQuestions.push({ label: '', type: 'input' })
+    },
+    removeJoiningQuestion (index) {
+      this.formData.joiningQuestions.splice(index, 1)
     }
   }
 }

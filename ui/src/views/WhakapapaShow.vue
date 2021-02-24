@@ -373,12 +373,12 @@ export default {
     sortFields () {
       return [
         {
-          name: 'Preferred Name',
-          value: 'preferredName'
+          name: 'Full Name',
+          value: 'legalName'
         },
         {
-          name: 'Legal Name',
-          value: 'legalName'
+          name: 'Preferred Name',
+          value: 'preferredName'
         },
         {
           name: 'Age',
@@ -736,7 +736,6 @@ export default {
   &>.container {
     position: relative;
     max-height:98vh;
-
     &>.header {
       position: absolute;
       top: 70px;
@@ -822,6 +821,7 @@ h1 {
 .whakapapa-table {
   overflow: auto;
   width: 100%;
+  padding-top: 50px;
 }
 
 </style>

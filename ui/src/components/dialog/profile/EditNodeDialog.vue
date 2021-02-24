@@ -46,6 +46,9 @@ function defaultData (input) {
     deceased: profile.deceased,
     address: profile.address,
     profession: profile.profession,
+    placeOfBirth: profile.placeOfBirth,
+    placeOfDeath: profile.placeOfDeath,
+    buriedLocation: profile.buriedLocation,
     altNames: {
       currentState: clone(profile.altNames),
       add: [], // new altNames to add
