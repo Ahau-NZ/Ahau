@@ -37,8 +37,6 @@
 
 <script>
 import Avatar from '@/components/Avatar'
-import { acceptGroupApplication } from '@/lib/tribes-application-helpers'
-
 import { mapActions } from 'vuex'
 
 export default {
