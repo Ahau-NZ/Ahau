@@ -72,7 +72,7 @@ export const COLLECTION_FRAGMENT = gql`
   }
 `
 
-export const getAllCollections = filter => ({
+export const getAllCollections = ({ groupId }) => ({
   query: gql`
     ${COLLECTION_FRAGMENT}
     ${PUBLIC_PROFILE_FRAGMENT}
@@ -86,7 +86,10 @@ export const getAllCollections = filter => ({
     }
   `,
   variables: {
-    filter
+    filter: {
+      type: '*',
+      groupId
+    }
   },
   fetchPolicy: 'no-cache'
 })

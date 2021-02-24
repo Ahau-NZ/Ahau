@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-row v-show="!showStory">
-      <v-col cols="10" class="sub-headliner black--text pa-0 pl-4 pt-2">
+      <v-col cols="10" class="sub-headliner black--text pa-0 pl-4 pt-2" >
         {{ title }}
       </v-col>
     </v-row>
