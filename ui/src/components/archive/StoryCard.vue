@@ -387,7 +387,7 @@ export default {
         return
       }
 
-      this.$parent.$apollo.queries.stories.refetch({ id: this.story.id })
+      this.$parent.$apollo.queries.stories.refetch({ filter: { groupId: this.$route.params.tribeId, type: '*' } })
       this.$emit('close', null)
     },
     colour (index) {

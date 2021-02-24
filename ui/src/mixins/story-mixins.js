@@ -16,12 +16,12 @@ export const storiesApolloMixin = {
 
       if (isPersonal) {
         return {
-          ...getAllStories({ groupId: this.whoami.personal.groupId, type: '*' }),
+          ...getAllStories({ groupId: this.whoami.personal.groupId }),
           error
         }
       } else if (type === 'community') {
         return {
-          ...getAllStories({ groupId: this.$route.params.tribeId, type: '*' }),
+          ...getAllStories({ groupId: this.$route.params.tribeId }),
           error
         }
       } else if (type === 'person') {
@@ -124,6 +124,10 @@ export const methods = {
         this.setStory(story)
       } else {
         this.toggleStory(story)
+      }
+
+      if (this.$refs.child.$apollo.queries.collection) {
+        this.$refs.child.$apollo.queries.collection.refetch()
       }
 
       this.$apollo.queries.stories.refetch()
