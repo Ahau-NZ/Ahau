@@ -1,61 +1,65 @@
 <template>
   <div>
-    <fieldset :style="cssVars" :class="`custom-fieldset-${focused} rounded-input`" @mouseover="$emit('hover')" @mouseleave="$emit('hover')">
+    <fieldset
+      :style="cssVars"
+      :class="`custom-fieldset-${focused} rounded-input`"
+      @mouseover="$emit('hover')"
+      @mouseleave="$emit('hover')"
+    >
       <legend class="ml-2 custom-label">
-        {{label}}
+        {{ label }}
       </legend>
-        <v-row>
-          <v-col class="pa-0 pl-6">
-            <v-autocomplete
-              ref="day"
-              v-model="date.day"
-              hide-no-data
-              :items="days"
-              label="Day"
-              placeholder="DD"
-              v-bind="customProps"
-              @focus="focused = 'focused'"
-              @blur="focused = 'default'"
-              auto-select-first
-            ></v-autocomplete>
-          </v-col>
-          <v-col class="pa-0">
-            <v-autocomplete
-              ref="month"
-              v-model="date.month"
-              hide-no-data
-              :items="months"
-              label="Month"
-              placeholder="MM"
-              v-bind="customProps"
-              @focus="focused = 'focused'"
-              @blur="focused = 'default'"
-              auto-select-first
-            ></v-autocomplete>
-          </v-col>
-          <v-col class="pa-0 pr-3">
-            <v-autocomplete
-              ref="year"
-              v-model="date.year"
-              hide-no-data
-              :items="years"
-              label="Year"
-              placeholder="YYYY"
-              v-bind="customProps"
-              @focus="focused = 'focused'"
-              @blur="focused = 'default'"
-              auto-select-first
-            >
-            </v-autocomplete>
-          </v-col>
-        </v-row>
-        <v-row v-if="errorMsg">
-          <v-col class="pa-0 pl-3">
-            <legend class="custom-label">
-              {{ errorMsg }}
-            </legend>
-          </v-col>
-        </v-row>
+      <v-row>
+        <v-col cols="3" class="pl-6 py-0">
+          <v-select
+            :items="days"
+            ref="day"
+            v-model="date.day"
+            :menu-props="{ bottom: true, offsetY: true, light: true }"
+            label="Day"
+            :light="true"
+            @focus="focused == 'day'"
+            @blur="focused == 'default'"
+            @keydown.tab.prevent="onTab('day')"
+            auto-focus
+          ></v-select>
+        </v-col>
+        <v-col cols="5" class="pr-4 py-0">
+          <v-select
+            :items="months"
+            ref="month"
+            v-model="date.month"
+            :menu-props="{ bottom: true, offsetY: true, light: true }"
+            label="Month"
+            :light="true"
+            @focus="focused == 'month'"
+            @blur="focused == 'default'"
+            @keydown.tab.prevent="onTab('month')"
+            auto-focus
+          ></v-select>
+        </v-col>
+        <v-col cols="4" class="pr-6 py-0">
+          <v-select
+            :items="years"
+            ref="year"
+            v-model="date.year"
+            :menu-props="{ bottom: true, offsetY: true, light: true }"
+            label="Year"
+            :light="true"
+            @focus="focused == 'year'"
+            @blur="focused == 'default'"
+            @keydown.tab.prevent="onTab('year')"
+            auto-focus
+          ></v-select>
+        </v-col>
+      </v-row>
+      <v-row v-if="errorMsg">
+        <v-col class="pa-0 pl-3">
+          <legend class="custom-label">
+            {{ errorMsg }}
+          </legend>
+        </v-col>
+      </v-row>
     </fieldset>
   </div>
 </template>
@@ -87,13 +91,14 @@ export default {
         day: ''
       },
       theme: 'light',
-      errorMsg: null
+      errorMsg: null,
+      refDay: this.$refs.day,
+      refMonth: this.$refs.month,
+      refYear: this.$refs.year
     }
   },
   mounted () {
-    this.dark
-      ? this.theme = 'dark'
-      : this.theme = 'light'
+    this.dark ? (this.theme = 'dark') : (this.theme = 'light')
   },
   computed: {
     customProps () {
@@ -109,10 +114,30 @@ export default {
     },
     cssVars () {
       return {
-        '--custom-label': this.errorMsg || this.hasError ? 'red' : this.dark ? 'white' : '#858585',
-        '--custom-fieldset-hover': this.errorMsg || this.hasError ? 'red' : this.dark ? 'white' : '#242424',
-        '--custom-fieldset-focused': this.errorMsg || this.hasError ? 'red' : this.dark ? '#545454' : 'black',
-        '--rounded-input-color': this.errorMsg || this.hasError ? 'red' : this.dark ? '#545454' : 'rgba(0,0,0,0.3)'
+        '--custom-label':
+          this.errorMsg || this.hasError
+            ? 'red'
+            : this.dark
+              ? 'white'
+              : '#858585',
+        '--custom-fieldset-hover':
+          this.errorMsg || this.hasError
+            ? 'red'
+            : this.dark
+              ? 'white'
+              : '#242424',
+        '--custom-fieldset-focused':
+          this.errorMsg || this.hasError
+            ? 'red'
+            : this.dark
+              ? '#545454'
+              : 'black',
+        '--rounded-input-color':
+          this.errorMsg || this.hasError
+            ? 'red'
+            : this.dark
+              ? '#545454'
+              : 'rgba(0,0,0,0.3)'
       }
     },
     // generates the years available to the user
@@ -122,34 +147,34 @@ export default {
 
       // make sure the years only up to the minimum allowed year (given as a prop)
       const min = this.minDate.year
-      var maxYears = (max - min) + 1
+      var maxYears = max - min + 1
 
       // array to return
-      var years = [
-        { text: '', value: '' }
-      ]
+      var years = [{ text: '', value: '' }]
 
       // generates an array from 0 to max years
-      Array(maxYears).fill('').forEach((v, i) => {
-        // calculate the value of the current index e.g. (2020 - 0) = 2020, (2020 - 1) = 2019
-        var val = (max - i)
+      Array(maxYears)
+        .fill('')
+        .forEach((v, i) => {
+          // calculate the value of the current index e.g. (2020 - 0) = 2020, (2020 - 1) = 2019
+          var val = max - i
 
-        // if the current value is the current year
-        if (val === max) {
-          // only add that year and move on
-          years.push({ value: val.toString(), text: val.toString() })
-          return
-        }
+          // if the current value is the current year
+          if (val === max) {
+            // only add that year and move on
+            years.push({ value: val.toString(), text: val.toString() })
+            return
+          }
 
-        var unspecified = this.unspecified(val)
-        var normalized = this.normalize(val)
+          var unspecified = this.unspecified(val)
+          var normalized = this.normalize(val)
 
-        if (unspecified) {
-          years.push({ value: unspecified, text: unspecified })
-        }
+          if (unspecified) {
+            years.push({ value: unspecified, text: unspecified })
+          }
 
-        years.push({ value: normalized, text: normalized })
-      })
+          years.push({ value: normalized, text: normalized })
+        })
 
       // if there were more than one date, we can use a fully unspecified date too
       if (years.length > 1) years.push({ value: 'XXXX', text: 'XXXX' })
@@ -161,18 +186,18 @@ export default {
       return [
         { text: '', value: '' },
         { text: 'XX', value: 'XX' },
-        { text: '01', value: '01' },
-        { text: '02', value: '02' },
-        { text: '03', value: '03' },
-        { text: '04', value: '04' },
-        { text: '05', value: '05' },
-        { text: '06', value: '06' },
-        { text: '07', value: '07' },
-        { text: '08', value: '08' },
-        { text: '09', value: '09' },
-        { text: '10', value: '10' },
-        { text: '11', value: '11' },
-        { text: '12', value: '12' }
+        { text: 'January', value: '01' },
+        { text: 'February', value: '02' },
+        { text: 'March', value: '03' },
+        { text: 'April', value: '04' },
+        { text: 'May', value: '05' },
+        { text: 'June', value: '06' },
+        { text: 'July', value: '07' },
+        { text: 'August', value: '08' },
+        { text: 'September', value: '09' },
+        { text: 'October', value: '10' },
+        { text: 'November', value: '11' },
+        { text: 'December', value: '12' }
       ]
     },
     // generates an array of days
@@ -221,6 +246,18 @@ export default {
     }
   },
   methods: {
+    // on tab jump to next field
+    onTab (e) {
+      if (e === 'day') {
+        this.$refs.month.focus()
+        this.$refs.month.isMenuActive = true
+      } else if (e === 'month') {
+        this.$refs.year.focus()
+        this.$refs.year.isMenuActive = true
+      } else if (e === 'year') {
+        this.$refs.year.blur()
+      }
+    },
     // turns an integer into a double digit string
     intToDDString (int) {
       if (int < 10) {
@@ -355,9 +392,8 @@ export default {
 }
 </script>
 <style lang="scss">
-
 ::-webkit-scrollbar {
-  width:12px;
+  width: 12px;
 }
 
 /* Track */
@@ -369,7 +405,7 @@ export default {
 /* Handle */
 ::-webkit-scrollbar-thumb {
   background: #888;
-  border-radius: 10px
+  border-radius: 10px;
 }
 
 /* Handle on hover */
@@ -413,5 +449,4 @@ export default {
     color: var(--custom-fieldset-focused);
   }
 }
-
 </style>
