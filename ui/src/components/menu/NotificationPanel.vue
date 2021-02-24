@@ -69,26 +69,19 @@
         elevation="12"
         v-scroll="onScroll"
       >
-        <!-- <NotificationList
-          :notifications="filteredNotifications.newNotifications"
+        <NotificationList
+          :notifications="filteredNotifications.unseen"
           title="New"
-          text="Has requested to join"
           show-badge
         />
         <NotificationList
-          :notifications="filteredNotifications.pendingNotifications"
+          :notifications="filteredNotifications.pending"
           title="Pending"
-          text="Is yet to review your request to join"
         />
         <NotificationList
-          :notifications="filteredNotifications.personalCompleteNotifications"
+          :notifications="filteredNotifications.complete"
           title="Complete"
-          text="Has approved your request to join"
         />
-        <NotificationList
-          :notifications="filteredNotifications.otherCompleteNotifications"
-          text="Has joined"
-        /> -->
       </v-card>
     </v-expand-transition>
   </div>

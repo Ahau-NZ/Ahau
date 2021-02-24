@@ -6,39 +6,9 @@
 
       <!-- Content Slot -->
       <template v-slot:content>
-        <v-col v-if="!notification.isPersonalApplication">
-          <span v-if="notification.type === 'pending'" class="subtitle-2 black--text">
-            A new request has been recieved from
-            <strong>
-              <i>{{ applicant.preferredName }}</i>
-            </strong> to join
-            <strong>
-              <i>{{ group.preferredName }}</i>
-            </strong>
-            <br/>
-            Please review their information and respond below
-          </span>
-          <span v-else>
-            <strong>
-              <i>{{ applicant.preferredName }}</i>
-            </strong> to join
-            <strong>
-              <i>{{ group.preferredName }}</i>
-              has been accepted
-            </strong>
-          </span>
-        </v-col>
-        <v-col v-else>
+        <v-col>
           <span class="subtitle-2 black--text">
-            <strong>
-              <i>Your</i>
-            </strong> request to join
-            <strong>
-              <i>{{ group.preferredName }}</i>
-            </strong>
-            <span v-if="notification.type === 'personal-complete'"> has been accepted</span>
-            <span v-else> has been sent and is still pending</span>
-            <br/>
+            {{ text }}
           </span>
         </v-col>
         <v-col>
@@ -92,7 +62,7 @@
         </v-col>
         <v-expansion-panels flat>
           <v-expansion-panel class="pa-0">
-            <v-expansion-panel-header class="subtitle-2 black--text pl-3">
+            <v-expansion-panel-header :class="headerClass">
               {{ notification.isPersonalApplication ? 'Your' : (applicant.legalName || applicant.preferredName) + "'s" }} Information
             </v-expansion-panel-header>
             <v-expansion-panel-content>
@@ -171,13 +141,13 @@
               </ProfileCard>
             </v-expansion-panel-content>
           </v-expansion-panel>
-          <v-expansion-panel v-if="notification.answers && notification.answers.length > 0">
-            <v-expansion-panel-header class="subtitle-2 black--text pl-3">
+          <v-expansion-panel v-if="notification.answers && notification.answers.length > 0" class="px-0">
+            <v-expansion-panel-header :class="headerClass">
               Question Answers
             </v-expansion-panel-header>
-            <v-expansion-panel-content>
-              <v-card outlined>
-                <v-col cols="12" sm="12" v-for="(question, i) in notification.answers" :key="`j-q-${i}`" :class="mobile ? 'pt-4 px-0':'pt-6 px-5'">
+            <v-expansion-panel-content class="pl-0">
+              <v-card outlined class="px-0">
+                <v-col cols="12" sm="12" v-for="(question, i) in notification.answers" :key="`j-q-${i}`" :class="mobile ? 'px-0 pl-5' : 'px-5'">
                   <v-text-field
                     :value="notification.answers[i].answer"
                     v-bind="customProps"
@@ -189,22 +159,22 @@
             </v-expansion-panel-content>
           </v-expansion-panel>
         </v-expansion-panels>
-        <v-col>
-          <span class="subtitle-2 black--text">
+        <v-col :class="headerClass">
+          <span>
             Comments
           </span>
         </v-col>
-        <v-col>
-          <v-card outlined class="ml-2">
+        <v-col :class="mobile ? 'px-0' : ''">
+          <v-card outlined :class="mobile ? '' : 'ml-2'">
             <v-row align="center">
-              <v-col cols="12" sm="12" v-for="({ comment, author }, i) in comments" :key="`j-q-${i}`" :class="mobile ? 'px-0' : 'px-5'">
+              <v-col cols="12" sm="12" v-for="({ comment, author }, i) in comments" :key="`j-q-${i}`" :class="mobile ? 'px-0 pl-5' : 'px-5'">
                 <v-text-field
                   :value="comment"
                   v-bind="customProps"
                   :label="author.preferredName || author.legalName"
                 />
               </v-col>
-              <v-col v-if="notification.type === 'pending'">
+              <v-col v-if="!notification.isPersonal && notification.isNew">
                 <v-textarea
                   v-model="comment"
                   label="Send a message"
@@ -281,11 +251,14 @@ export default {
         readonly: true
       }
     },
+    headerClass () {
+      return `subtitle-2 black--text ${this.mobile ? 'pl-0 pr-0' : 'pl-3'}`
+    },
     showActions () {
       if (isEmpty(this.notification)) {
         return true
       }
-      if (this.notification.type === 'pending') return true
+      if (!this.notification.isPersonal && this.notification.isNew) return true
 
       return false
     },
@@ -304,6 +277,20 @@ export default {
     },
     comments () {
       return this.notification.history.filter(d => d.type === 'comment')
+    },
+    text () {
+      const { isPersonal, isNew, isAccepted } = this.notification
+
+      const groupName = this.notification.group.preferredName
+      const from = this.notification.from.preferredName
+
+      if (!isPersonal && isNew) return `A new request has been received from ${from} to join ${groupName}. please review their information and respond below`
+      if (!isPersonal && isAccepted) return `${from}'s application to join ${groupName} has been accepted`
+      if (!isPersonal && !isAccepted) return `${from}'s application to join ${groupName} has been declined`
+      if (isPersonal && isNew) return `Your request to join ${groupName} has been sent and is yet to be reviewed`
+      if (isPersonal && isAccepted) return `Your application to join ${groupName} has been accepted`
+      if (isPersonal && !isAccepted) return `Your application to join ${groupName} has been declined`
+      return 'No details'
     }
   },
   methods: {
