@@ -6,7 +6,7 @@
     :color="notificationSent ? 'grey' : '#b12526'"
     height="50px"
     :class="[{ btn: !mobile && !tablet }, { mobileBtn: mobile }, { tabletBtn: tablet }, { disabled: notificationSent }]"
-    @click="setDialog('new-registration')"
+    @click="$emit('click')"
   >
     <span>{{ text }}</span>
   </v-btn>

@@ -24,7 +24,7 @@
             />
           </v-btn>
       </v-row>
-      <RegisterButton v-if="nonMember" :notificationSent="notificationSent" />
+      <RegisterButton v-if="nonMember" :notificationSent="notificationSent" @click="$emit('new-registration')" />
       <v-row v-else :class="mobile ? 'rounded-border box-shadow' : tablet ? 'ml-10' : 'ml-12 px-4'">
         <v-col cols="3" md="12" v-if="showWhakapapa" :class="mobile ? 'py-0 px-0' : tablet ? 'py-4 px-0' : 'py-1'">
           <v-btn @click="setActive('profile')" light :fab="mobile" text>
@@ -176,7 +176,7 @@ export default {
       )
     },
     notificationSent () {
-      return this.notifications.filter(i => i.message.group.id === this.profile.id).length > 0
+      return this.notifications.filter(application => application.group.id === this.profile.id).length > 0
     },
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm

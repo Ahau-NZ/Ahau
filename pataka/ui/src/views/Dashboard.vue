@@ -323,7 +323,10 @@ export default {
       }
     },
     async tryInvite () {
-      if (this.portForwarding) await this.generateInviteCode(this.network.publicIpv4)
+      // TODO!!!!! This is a hack to allow generating an invite code without port forwarding
+      // - the current portForwarding check doesnt seem to be working with mac
+      // - shows port forwarding isnt enabled when it was
+      if (this.portForwarding || true) await this.generateInviteCode(this.network.publicIpv4)
       else this.toggleDialog()
     },
     async checkPortForwarding () {

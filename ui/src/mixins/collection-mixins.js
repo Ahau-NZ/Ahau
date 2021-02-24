@@ -5,10 +5,10 @@ export const collectionsApolloMixin = {
     collections () {
       const isPersonal = this.$route.params.profileId === this.whoami.personal.profile.id
 
-      if (isPersonal) return getAllCollections({ groupId: this.whoami.personal.groupId })
+      if (isPersonal) return getAllCollections({ groupId: this.whoami.personal.groupId, type: '*' })
 
       return {
-        ...getAllCollections({ groupId: this.$route.params.tribeId }),
+        ...getAllCollections({ groupId: this.$route.params.tribeId, type: '*' }),
         skip () {
           // skip getting any collections if we arent on a community archive
           return this.$route.name !== 'community/archive'

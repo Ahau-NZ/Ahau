@@ -6,21 +6,43 @@
 
       <!-- Content Slot -->
       <template v-slot:content>
-        <v-col>
-          <span class="subtitle-2 black--text">
+        <v-col v-if="!notification.isPersonalApplication">
+          <span v-if="notification.type === 'pending'" class="subtitle-2 black--text">
             A new request has been recieved from
             <strong>
-              <i>{{ notification.from.preferredName }}</i>
+              <i>{{ applicant.preferredName }}</i>
             </strong> to join
             <strong>
-              <i>{{ notification.message.group.preferredName }}</i>
+              <i>{{ group.preferredName }}</i>
             </strong>
             <br/>
             Please review their information and respond below
           </span>
+          <span v-else>
+            <strong>
+              <i>{{ applicant.preferredName }}</i>
+            </strong> to join
+            <strong>
+              <i>{{ group.preferredName }}</i>
+              has been accepted
+            </strong>
+          </span>
+        </v-col>
+        <v-col v-else>
+          <span class="subtitle-2 black--text">
+            <strong>
+              <i>Your</i>
+            </strong> request to join
+            <strong>
+              <i>{{ group.preferredName }}</i>
+            </strong>
+            <span v-if="notification.type === 'personal-complete'"> has been accepted</span>
+            <span v-else> has been sent and is still pending</span>
+            <br/>
+          </span>
         </v-col>
         <v-col>
-          <v-card>
+          <v-card outlined class="py-6">
             <v-row align="center" class="pt-5">
               <v-col cols="4" align="center">
                 <v-row>
@@ -28,16 +50,14 @@
                     <Avatar
                       class="big-avatar"
                       size="100px"
-                      :image="notification.from.avatarImage"
-                      :alt="notification.from.preferredName"
-                      :gender="notification.from.gender"
-                      :aliveInterval="notification.from.aliveInterval"
-                      :deceased="notification.from.deceased"
-                      @updateAvatar="notification.from.avatarImage = $event"
+                      :image="applicant.avatarImage"
+                      :alt="applicant.preferredName"
+                      :gender="applicant.gender"
+                      :aliveInterval="applicant.aliveInterval"
                     />
                   </v-col>
                   <v-col cols="12">
-                    <h4> {{ notification.from.legalName || notification.from.preferredName }} </h4>
+                    <h4> {{ applicant.legalName || applicant.preferredName }} </h4>
                   </v-col>
                 </v-row>
               </v-col>
@@ -57,74 +77,164 @@
                     <Avatar
                       class="big-avatar"
                       size="100px"
-                      :image="notification.message.group.avatarImage"
-                      :alt="notification.message.group.preferredName"
-                      :gender="notification.message.group.gender"
-                      :aliveInterval="notification.message.group.aliveInterval"
-                      :deceased="notification.message.group.deceased"
-                      @updateAvatar="notification.message.group.avatarImage = $event"
+                      :image="group.avatarImage"
+                      :alt="group.preferredName"
+                      isView
                     />
                   </v-col>
                   <v-col cols="12">
-                    <h4> {{ notification.message.group.preferredName }} </h4>
+                    <h4> {{ group.preferredName }} </h4>
                   </v-col>
                 </v-row>
               </v-col>
             </v-row>
           </v-card>
         </v-col>
-        <v-col cols="12" :class="mobile ? 'pt-4 px-0':'pt-6 px-5'">
-          <div>{{ receivedMessage }}</div>
+        <v-expansion-panels flat>
+          <v-expansion-panel class="pa-0">
+            <v-expansion-panel-header class="subtitle-2 black--text pl-3">
+              {{ notification.isPersonalApplication ? 'Your' : (applicant.legalName || applicant.preferredName) + "'s" }} Information
+            </v-expansion-panel-header>
+            <v-expansion-panel-content>
+              <ProfileCard :style="mobile ? 'margin: 10px;':'margin:20px'">
+                <template v-slot:content>
+                  <v-row cols="12" class="pt-0">
+                    <ProfileInfoItem
+                      :class="mobile ? 'bb':'br bb'"
+                      smCols="12"
+                      mdCols="6"
+                      title="Date of birth"
+                      :value="dob"
+                    />
+                    <ProfileInfoItem
+                      :class="mobile ? 'bb':'bb'"
+                      smCols="12"
+                      mdCols="6"
+                      title="Phone"
+                      :value="applicant.phone"
+                    />
+                    <ProfileInfoItem
+                      :class="mobile ? 'bb':'br'"
+                      smCols="12"
+                      mdCols="6"
+                      title="Email"
+                      :value="applicant.email"
+                    />
+                    <ProfileInfoItem
+                      smCols="12"
+                      mdCols="6"
+                      title="Address"
+                      :value="applicant.address"
+                    />
+                  </v-row>
+                </template>
+              </ProfileCard>
+              <ProfileCard :style="mobile ? 'margin: 10px;':'margin:20px'">
+                <template v-slot:content>
+                  <v-row cols="12" class="pt-0">
+                    <ProfileInfoItem
+                      :class="mobile ? 'bb':' bb'"
+                      smCols="12"
+                      mdCols="12"
+                      title="Description"
+                      :value="applicant.description"
+                    />
+                    <ProfileInfoItem
+                      :class="mobile ? 'bb':'bb br'"
+                      smCols="12"
+                      mdCols="6"
+                      title="Preferred Name"
+                      :value="applicant.preferredName"
+                    />
+                    <ProfileInfoItem
+                      :class="mobile ? 'bb':'bb'"
+                      smCols="12"
+                      mdCols="6"
+                      title="Full Name"
+                      :value="applicant.legalName"
+                    />
+                    <ProfileInfoItem
+                      :class="mobile ? 'bb':'br'"
+                      smCols="12"
+                      mdCols="6"
+                      title="City/Country"
+                      :value="applicant.location"
+                    />
+                    <ProfileInfoItem
+                      smCols="12"
+                      mdCols="6"
+                      title="Profession"
+                      :value="applicant.profession"
+                    />
+                  </v-row>
+                </template>
+              </ProfileCard>
+            </v-expansion-panel-content>
+          </v-expansion-panel>
+          <v-expansion-panel v-if="notification.answers && notification.answers.length > 0">
+            <v-expansion-panel-header class="subtitle-2 black--text pl-3">
+              Question Answers
+            </v-expansion-panel-header>
+            <v-expansion-panel-content>
+              <v-card outlined>
+                <v-col cols="12" sm="12" v-for="(question, i) in notification.answers" :key="`j-q-${i}`" :class="mobile ? 'pt-4 px-0':'pt-6 px-5'">
+                  <v-text-field
+                    :value="notification.answers[i].answer"
+                    v-bind="customProps"
+                    :label="notification.answers[i].question"
+
+                  />
+                </v-col>
+              </v-card>
+            </v-expansion-panel-content>
+          </v-expansion-panel>
+        </v-expansion-panels>
+        <v-col>
+          <span class="subtitle-2 black--text">
+            Comments
+          </span>
+        </v-col>
+        <v-col>
+          <v-card outlined class="ml-2">
+            <v-row align="center">
+              <v-col cols="12" sm="12" v-for="({ comment, author }, i) in comments" :key="`j-q-${i}`" :class="mobile ? 'px-0' : 'px-5'">
+                <v-text-field
+                  :value="comment"
+                  v-bind="customProps"
+                  :label="author.preferredName || author.legalName"
+                />
+              </v-col>
+              <v-col v-if="notification.type === 'pending'">
+                <v-textarea
+                  v-model="comment"
+                  label="Send a message"
+                  no-resize
+                  rows="3"
+                  auto-grow
+                  outlined
+                  placeholder=" "
+                  class="px-4"
+                  hide-details
+                ></v-textarea>
+              </v-col>
+            </v-row>
+          </v-card>
         </v-col>
       </template>
-      <template v-if="type === 'review'" v-slot:actions>
-        <v-btn @click="respond('decline')" text large class="secondary--text">
-          <span>decline</span>
-        </v-btn>
-        <v-btn @click="respond('approve')" text large class="blue--text mx-5">
-          <span>approve</span>
-        </v-btn>
-      </template>
-
-    </Dialog>
-
-    <!-- MESSAGE RESPONSE -->
-    <Dialog
-      v-if="showMessage"
-      :show="showMessage"
-      :title="`${response} request to join ${notification.message.group.preferredName}` "
-      @close="close"
-      width="720px"
-      :goBack="close"
-      enableMenu
-    >
-      <template v-slot:content>
-        <p class="pt-4 px-4 subtitle-2 black--text">
-          Would you like to send a message along with your response to
-          <strong>
-            <i>{{notification.from.preferredName}}</i>
-          </strong>
-        </p>
-        <v-col cols="12" :class="mobile ? 'pt-4 px-0':'px-5'">
-          <v-textarea
-            v-model="resMessage"
-            label="Message"
-            no-resize
-            rows="3"
-            auto-grow
-            outlined
-            placeholder=" "
-          ></v-textarea>
-        </v-col>
-      </template>
-
       <template v-slot:actions>
-        <v-btn @click="showMessage = !showMessage" text large class="secondary--text">
-          <span>cancel</span>
-        </v-btn>
-        <v-btn @click="sendResponse" text large class="blue--text mx-5">
-          <span>send</span>
-        </v-btn>
+        <div v-if="showActions">
+          <v-btn @click="submit(false)" text large class="secondary--text">
+            <span>decline</span>
+          </v-btn>
+          <v-btn @click="submit(true)" text large class="blue--text mx-5">
+            <span>approve</span>
+          </v-btn>
+        </div>
+        <div v-else>
+          <v-btn @click="close" text large class="blue--text mx-5">
+            <span>close</span>
+          </v-btn>
+        </div>
       </template>
     </Dialog>
   </div>
@@ -135,103 +245,89 @@
 import Dialog from '@/components/dialog/Dialog.vue'
 import isEmpty from 'lodash.isempty'
 import Avatar from '@/components/Avatar.vue'
-import { ACCEPT_GROUP_APPLICATION } from '@/lib/tribes-application-helpers'
+import ProfileCard from '@/components/profile/ProfileCard.vue'
+import ProfileInfoItem from '@/components/profile/ProfileInfoItem.vue'
+import { dateIntervalToString } from '@/lib/date-helpers.js'
+import { acceptGroupApplication, declineGroupApplication } from '@/lib/tribes-application-helpers.js'
 
 export default {
   name: 'ReviewRegistrationDialog',
   components: {
     Dialog,
-    Avatar
+    Avatar,
+    ProfileCard,
+    ProfileInfoItem
   },
   props: {
     show: { type: Boolean, required: true },
-    title: { type: String },
-    profile: { type: Object },
-    notification: Object,
-    type: { type: String }
+    title: { type: String, default: 'Review request' },
+    notification: Object
   },
   data () {
     return {
-      formData: {},
-      showMessage: false,
-      message: '',
-      resMessage: '',
-      response: '',
-      isResponding: false
+      comment: ''
     }
   },
-
   computed: {
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
-    receivedMessage () {
-      return this.notification.message.comments[this.notification.accepted ? 1 : 0]
+    customProps () {
+      return {
+        hideDetails: true,
+        placeholder: ' ',
+        flat: true,
+        class: 'custom',
+        readonly: true
+      }
     },
     showActions () {
-      if (isEmpty(this.currentNotification)) {
+      if (isEmpty(this.notification)) {
         return true
       }
-      if (!this.currentNotification.mine && this.type === 'review') {
-        return true
-      }
-      if (this.currentNotification.mine && this.type === 'response' && !this.currentNotification.accepted) {
-        return true
-      }
+      if (this.notification.type === 'pending') return true
+
       return false
-    }
-  },
-  watch: {
-    profile: {
-      deep: true,
-      immediate: true,
-      handler (newVal) {
-        if (!newVal) return
-        this.formData = newVal
+    },
+    applicant () {
+      return this.notification.applicant
+    },
+    group () {
+      return this.notification.group
+    },
+    dob () {
+      if (this.applicant.aliveInterval) {
+        var formattedDate = dateIntervalToString(this.applicant.aliveInterval)
+        return formattedDate
       }
+      return ' '
+    },
+    comments () {
+      return this.notification.history.filter(d => d.type === 'comment')
     }
   },
   methods: {
-    respond (response) {
-      if (response === 'approve') {
-        this.showMessage = !this.showMessage
-        this.response = response
-      } else this.close()
-    },
+    async submit (approved) {
+      var output = {
+        id: this.notification.id, // the applicationId
+        comment: this.comment
+        // TODO (later): groupIntro
+      }
 
-    async sendResponse () {
-      if (this.isResponding) return
-      this.isResponding = true
-      /* TODO: format */
-      // var output = {
-      //   // TODO - update to match notifications
-      //   action: 'response',
-      //   from: this.whoami.profile.id,
-      //   message: {
-      //     community: 'community profile.id',
-      //     outcome: this.response,
-      //     message: this.resMessage
-      //   },
-      //   to: this.formData.id
-      // }
-      // // TODO - below consoles
-      // console.log('send response: ', output)
-      // console.log('add person to group')
+      const mutation = approved
+        ? acceptGroupApplication(output)
+        : declineGroupApplication(output)
 
       try {
-        this.$apollo.mutate({
-          mutation: ACCEPT_GROUP_APPLICATION,
-          variables: {
-            id: this.notification.applicationId,
-            text: this.resMessage
-          }
-        })
+        const res = await this.$apollo.mutate(mutation)
+
+        if (res.errors) throw res.errors
+
+        // success
+        this.close()
       } catch (err) {
-        console.log('Error on accepting group application', err)
+        console.error('Something went wrong while try to accept/decline application', err)
       }
-      /* TODO: check for errors */
-      this.showMessage = !this.showMessage
-      this.close()
     },
     close () {
       this.$emit('close')
@@ -241,12 +337,6 @@ export default {
 </script>
 
 <style scoped>
-.custom.v-text-field > .v-input__control > .v-input__slot:before {
-  border-style: none;
-}
-.custom.v-text-field > .v-input__control > .v-input__slot:after {
-  border-style: none;
-}
 .close {
   top: -25px;
   right: -10px;
