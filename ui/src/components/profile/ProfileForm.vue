@@ -162,10 +162,10 @@
 
     <!-- Start of advanced section -->
     <v-divider />
-      <v-card-actions class="pt-2 pb-2 px-5">
+      <v-card-actions class="pt-2 pb-2 px-5 pointer">
         <v-row @click="showAdvanced = !showAdvanced" class="clickable">
           <v-col>
-            <span class="pa-0 ma-0">Advanced</span>
+            <span class="pa-0 ma-0">More info</span>
           </v-col>
           <v-btn icon right>
             <v-icon>{{ showAdvanced ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
@@ -609,5 +609,9 @@ export default {
     align-items: center;
     font-size:2rem;
     color:rgba(0, 0, 0, 0.54)
+  }
+
+  .pointer {
+    cursor: pointer;
   }
 </style>

@@ -6,7 +6,7 @@
     <template v-slot:content>
       <v-card-subtitle>
         <div class="warning-blurb">
-          Are you sure you want to delete this community profile and all its connections, including members, records and artefacts?
+          Are you sure you want to delete this community profile and all its connections, including members, stories and artefacts?
         </div>
       </v-card-subtitle>
     </template>

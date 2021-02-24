@@ -15,9 +15,9 @@
             :items="days"
             ref="day"
             v-model="date.day"
-            :menu-props="{ bottom: true, offsetY: true, light: true }"
+            :menu-props="{ bottom: true, offsetY: true, light: isDark() }"
             label="Day"
-            :light="true"
+            :light="isDark()"
             @focus="focused == 'day'"
             @blur="focused == 'default'"
             @keydown.tab.prevent="onTab('day')"
@@ -29,9 +29,9 @@
             :items="months"
             ref="month"
             v-model="date.month"
-            :menu-props="{ bottom: true, offsetY: true, light: true }"
+            :menu-props="{ bottom: true, offsetY: true, light: isDark() }"
             label="Month"
-            :light="true"
+            :light="isDark()"
             @focus="focused == 'month'"
             @blur="focused == 'default'"
             @keydown.tab.prevent="onTab('month')"
@@ -43,9 +43,9 @@
             :items="years"
             ref="year"
             v-model="date.year"
-            :menu-props="{ bottom: true, offsetY: true, light: true }"
+            :menu-props="{ bottom: true, offsetY: true, light: isDark() }"
             label="Year"
-            :light="true"
+            :light="isDark()"
             @focus="focused == 'year'"
             @blur="focused == 'default'"
             @keydown.tab.prevent="onTab('year')"
@@ -247,6 +247,13 @@ export default {
   },
   methods: {
     // on tab jump to next field
+    isDark () {
+      if (this.dark) {
+        return false
+      } else {
+        return true
+      }
+    },
     onTab (e) {
       if (e === 'day') {
         this.$refs.month.focus()

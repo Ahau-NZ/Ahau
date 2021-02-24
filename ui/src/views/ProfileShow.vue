@@ -63,6 +63,14 @@
       @submit="createGroupApplication"
       @close="dialog = null"
     />
+    <!-- Snackbar for successful Tribe request sent -->
+    <v-snackbar
+      v-model="joinRequestSent"
+      color="green"
+      content-class="text-center"
+    >
+      Request successfully sent
+    </v-snackbar>
   </v-container>
 </template>
 
@@ -117,7 +125,8 @@ export default {
       parentIndex: null,
       dialogType: null,
       source: null,
-      isApplication: false
+      isApplication: false,
+      joinRequestSent: false
     }
   },
   watch: {
@@ -257,6 +266,10 @@ export default {
         )
 
         if (res.errors) throw res.errors
+        else {
+          // flag for snackbar "request successfully sent"
+          this.joinRequestSent = true
+        }
 
         // return res.data.createGroupApplication // return the applicationId
       } catch (err) {

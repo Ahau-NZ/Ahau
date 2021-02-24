@@ -16,18 +16,18 @@
                 <v-icon v-if="!disabled">mdi-chevron-down</v-icon>
               </v-btn>
               <v-card-text v-if="access && !disabled" class="font-italic font-weight-light text-caption py-0 text-md-right">
-                {{ access.isPersonalGroup ? 'Only you will have access to this record' : `Only ${access.preferredName} will have access to this record` }}
+                {{ access.isPersonalGroup ? 'Only you will have access to this story' : `Only ${access.preferredName} will have access to this story` }}
               </v-card-text>
 
               <v-card-text v-if="access && disabled" class="font-italic font-weight-light text-caption py-0 text-md-right">
-                {{ access.isPersonalGroup ? 'Only you have access to this record' : `Only ${access.preferredName} has access to this record` }}
+                {{ access.isPersonalGroup ? 'Only you have access to this story' : `Only ${access.preferredName} has access to this story` }}
               </v-card-text>
             </v-col>
           </v-row>
       </template>
 
       <v-list>
-        <v-subheader>Choose who has access to this record:</v-subheader>
+        <v-subheader>Choose who has access to this story:</v-subheader>
         <v-list-item
           v-for="(tribe, index) in tribes"
           :key="index"
