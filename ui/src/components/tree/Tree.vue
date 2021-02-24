@@ -255,7 +255,7 @@ export default {
           this.centerNode(d)
         }
       })
-    },
+    }
     // nodes (newValue) {
     //   this.setLoading(false)
     // }

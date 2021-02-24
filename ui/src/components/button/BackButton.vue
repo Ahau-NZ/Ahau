@@ -131,7 +131,7 @@ export default {
           // AND the route we are going to isnt the tribes one
             this.route.to.name !== 'tribe' &&
             this.route.to.name !== 'person/whakapapa' &&
-            this.route.to.name !== 'community/whakapapa' 
+            this.route.to.name !== 'community/whakapapa'
           )
         )
       }

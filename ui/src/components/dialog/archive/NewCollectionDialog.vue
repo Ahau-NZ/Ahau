@@ -45,6 +45,7 @@
 import Dialog from '@/components/dialog/Dialog.vue'
 import CollectionForm from '@/components/archive/CollectionForm.vue'
 import AccessButton from '@/components/button/AccessButton.vue'
+import { getTribalProfile } from '@/lib/community-helpers.js'
 
 import { mapGetters, mapActions, mapMutations } from 'vuex'
 
