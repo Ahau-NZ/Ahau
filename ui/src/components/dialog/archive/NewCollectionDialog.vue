@@ -45,7 +45,6 @@
 import Dialog from '@/components/dialog/Dialog.vue'
 import CollectionForm from '@/components/archive/CollectionForm.vue'
 import AccessButton from '@/components/button/AccessButton.vue'
-import { getTribalProfile } from '@/lib/community-helpers.js'
 
 import { mapGetters, mapActions, mapMutations } from 'vuex'
 
@@ -80,14 +79,7 @@ export default {
       mapApollo: ['profile', 'tribe']
     })
   ],
-  async mounted () {
-    if (this.view) {
-      // populate access
-      const tribe = await this.getTribe(this.collection.recps[0])
-      // get the profile of the tribe
-      this.access = [getTribalProfile(tribe, this.whoami)]
-    }
-  },
+
   watch: {
     tribe: {
       deep: true,

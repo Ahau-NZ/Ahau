@@ -126,7 +126,7 @@ export default {
           (
             this.route.from.name === 'person/whakapapa/:whakapapaId' ||
             this.route.from.name === 'community/whakapapa/:whakapapaId'
-          ) &
+          ) &&
           (
           // AND the route we are going to isnt the tribes one
             this.route.to.name !== 'tribe' &&
