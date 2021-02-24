@@ -97,7 +97,7 @@
                   outlined
                 >
                   <v-card-text>
-                    Share the following information with the
+                    I agree to share the following information with the
                     <strong>
                       <i>{{ formData.preferredName }}</i>
                     </strong>
@@ -137,7 +137,7 @@
                     </template>
                   </ProfileCard>
                 </v-card>
-                <v-checkbox v-model="checkbox1" label="Agree"/>
+                <v-checkbox v-model="checkbox1" label="I Agree"/>
               </v-stepper-content>
 
               <v-stepper-step
@@ -156,7 +156,7 @@
                   outlined
                 >
                   <v-card-text>
-                    Share the following information with the
+                    I agree to share the following information with the
                     <strong>
                       <i>{{ formData.preferredName }}</i>
                     </strong>
@@ -203,7 +203,7 @@
                     </template>
                   </ProfileCard>
                 </v-card>
-                <v-checkbox v-model="checkbox2" label="Agree"/>
+                <v-checkbox v-model="checkbox2" label="I Agree"/>
               </v-stepper-content>
 
               <!-- Joining Questions -->
@@ -213,7 +213,7 @@
                 step="4"
                 :color="step > 4 ? 'green' : 'black'"
               >
-                Answer Joining Questions
+                Please answer these questions to join this community
               </v-stepper-step>
 
               <v-stepper-content step="4" v-if="hasJoiningQuestions">

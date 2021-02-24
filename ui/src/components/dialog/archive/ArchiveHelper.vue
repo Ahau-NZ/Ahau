@@ -2,9 +2,9 @@
   <Dialog :title="'Pūranga ---- Archive'" :show="show" @close="close" :width="`700px`" :goBack="close">
     <template v-slot:content>
       <v-card-text class="pt-4">
-        <p>An Archive is where you create, store and access your Records</p>
+        <p>An Archive is where you create, store and access your Stories</p>
         <p>
-          A Record is a digital copy, account or recording of a piece of information that is of some personal or commuinty significance. In particular information related to your heritage or culture. These may include things like memories, histories, stories, events, and legends.
+          A Story is a digital copy, account or recording of a piece of information that is of some personal or commuinty significance. In particular information related to your heritage or culture. These may include things like memories, histories, stories, events, and legends.
         </p>
         <p>
           In Āhau there are two types of Archives
@@ -14,7 +14,7 @@
           </ul>
         </p>
         <p>
-          When creating a Record you can decide which Archive you would like to store the Record in by changing the <i>'Access'</i> to either yourself, or a whānau group that you are apart of.
+          When creating a Story you can decide which Archive you would like to store the Story in by changing the <i>'Access'</i> to either yourself, or a whānau group that you are apart of.
         </p>
       </v-card-text>
       <v-divider />
@@ -63,7 +63,7 @@ export default {
         { src: require('../../../assets/images/add-record.png'),
           text: 'add stories and records to archive' },
         { src: require('../../../assets/images/edit-artefact.png'),
-          text: 'add artefacts and media to records ' },
+          text: 'add artefacts and media to stories ' },
         { src: require('../../../assets/images/view-archive.png'),
           text: 'view all your stories in one place' },
         { src: require('../../../assets/images/view-story.png'),
@@ -73,7 +73,7 @@ export default {
         { src: require('../../../assets/images/mobile-add-record.png'),
           text: 'add stories and records to archive' },
         { src: require('../../../assets/images/mobile-edit-artefact.png'),
-          text: 'add artefacts and media to records ' },
+          text: 'add artefacts and media to stories ' },
         { src: require('../../../assets/images/mobile-view-archive.png'),
           text: 'view all your stories in one place' }
       ]

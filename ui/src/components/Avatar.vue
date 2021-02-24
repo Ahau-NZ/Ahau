@@ -133,7 +133,7 @@ export default {
 
 .isOnline {
   border: #37e259 solid 3px;
-  border-radius: 50%
+  border-radius: 50% !important;
 }
 
 .avatar-overlay {
