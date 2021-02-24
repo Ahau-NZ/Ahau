@@ -1,21 +1,41 @@
 <template>
-  <Dialog :show="show" :title="title" width="55vw" :goBack="close" enableMenu
+  <Dialog :show="show" :title="title" width="55vw" :goBack="close" enableMenu :readonly="view"
     @submit="submit"
     @close="close"
   >
     <!-- FORM -->
     <template v-slot:content>
-      <CollectionForm ref="collectionForm" :formData.sync="formData"/>
-      <v-col align="center">
-        <v-btn v-if="editing" text @click="$emit('delete')">
+      <CollectionForm ref="collectionForm" :formData.sync="formData" :readonly="view" @edit="$emit('edit')"/>
+      <v-col v-if="editing" class="pt-8" align="center">
+        <v-btn text @click="$emit('delete')">
           Delete this Collection
           <v-icon class="pl-2">mdi-delete</v-icon>
         </v-btn>
       </v-col>
+      <v-row v-if="view">
+        <v-col v-if="access && access.length > 0" cols="auto" class="pb-0">
+          <v-list-item-subtitle style="color:#a7a3a3">Access</v-list-item-subtitle>
+          <AvatarGroup
+            style="position:relative; bottom:15px; right:15px"
+            :profiles="access"
+            show-labels :size="'50px'"
+            spacing="pr-2"
+          />
+        </v-col>
+        <v-col v-if="collection.tiaki && collection.tiaki.length > 0" cols="auto" class="pb-0">
+          <v-list-item-subtitle style="color:#a7a3a3">Kaitiaki</v-list-item-subtitle>
+          <AvatarGroup
+            style="position:relative; bottom:15px; right:15px"
+            :profiles="collection.tiaki"
+            show-labels :size="'50px'"
+            spacing="pr-2"
+          />
+        </v-col>
+      </v-row>
     </template>
 
     <template v-if="access" v-slot:before-actions>
-      <AccessButton :access="access" @access="updateAccess" :disabled="editing" />
+      <AccessButton :access="access" @access="updateAccess" :disabled="editing || view" />
     </template>
   </Dialog>
 </template>
@@ -31,19 +51,22 @@ import { mapGetters, mapActions, mapMutations } from 'vuex'
 import { EMPTY_COLLECTION, setDefaultCollection } from '@/lib/collection-helpers.js'
 import { getObjectChanges } from '@/lib/get-object-changes.js'
 import mapProfileMixins from '@/mixins/profile-mixins.js'
+import AvatarGroup from '@/components/AvatarGroup.vue'
 
 export default {
   name: 'NewCollectionDialog',
   components: {
     Dialog,
     CollectionForm,
-    AccessButton
+    AccessButton,
+    AvatarGroup
   },
   props: {
     show: { type: Boolean, required: true },
     collection: { type: Object, default () { return EMPTY_COLLECTION } },
     title: String,
-    editing: Boolean
+    editing: Boolean,
+    view: Boolean
   },
   data () {
     return {
@@ -53,14 +76,15 @@ export default {
   },
   mixins: [
     mapProfileMixins({
-      mapApollo: ['tribe']
+      mapApollo: ['profile', 'tribe']
     })
   ],
+
   watch: {
     tribe: {
       deep: true,
       immediate: true,
-      handler (tribe, oldTribe) {
+      handler (tribe) {
         if (!tribe || this.whoami.personal.groupId === this.$route.params.tribeId) {
           this.access = { isPersonalGroup: true, groupId: this.whoami.personal.groupId, ...this.whoami.personal.profile }
           return

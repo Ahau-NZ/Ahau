@@ -8,7 +8,7 @@
       <RecordForm ref="recordForm" :editing="editing" :formData.sync="formData" :access="access"/>
       <v-col align="center">
         <v-btn v-if="editing" text @click="$emit('delete')">
-          Delete this record
+          Delete this story
           <v-icon class="pl-2">mdi-delete</v-icon>
         </v-btn>
       </v-col>

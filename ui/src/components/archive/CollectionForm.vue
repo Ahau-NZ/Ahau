@@ -7,13 +7,19 @@
             <!-- Avatar -->
             <Avatar
               class="big-avatar"
-              size="250px"
+              :size="mobile ? '350px':'250px'"
               :image="formData.image"
               :alt="formData.name"
               isView
             />
           </v-col>
-          <v-col cols="12" justify="center" align="center" class="pa-0">
+          <v-col v-if="readonly" cols="12" justify="center" align="center" class="pa-0">
+            <v-btn class="blue--text" text @click="$emit('edit')">
+              Edit collection
+              <v-icon class="pl-4" small>mdi-pencil</v-icon>
+            </v-btn>
+          </v-col>
+          <v-col v-else cols="12" justify="center" align="center" class="pa-0">
             <ImagePicker label="Edit collection image"
               @updateAvatar="formData.image = $event"
               isView
@@ -24,7 +30,13 @@
       </v-col>
       <!-- Information Col -->
       <v-col cols="12" sm="7" class="border-right">
-        <v-row>
+        <v-row v-if="readonly">
+          <v-col>
+            <p class="caption">Description</p>
+            <p class="body-1">{{formData.description}}</p>
+          </v-col>
+        </v-row>
+        <v-row v-else>
           <!-- Name -->
           <v-col cols="12" class="pa-1">
             <v-text-field
@@ -35,7 +47,7 @@
             />
           </v-col>
           <!-- Description textarea -->
-          <v-col cols="12" class="pa-1">
+          <v-col cols="12" class="pa-1 pt-6">
             <v-textarea
               v-model="formData.description"
               label="Collection Description"
@@ -46,10 +58,13 @@
               auto-grow
             ></v-textarea>
           </v-col>
-          <v-col cols="12" md="auto" class="pa-5">
-            <v-tooltip top open-delay="700" :disabled="showStories">
+        </v-row>
+        <v-row>
+          <v-col cols="12" md="auto" class="pa-2">
+            <v-tooltip v-if="!readonly" top open-delay="700" :disabled="showStories">
               <template v-slot:activator="{ on }">
-                <div v-on="on">
+                <div class="pt-5" v-on="on">
+                  <p class="caption">Add stories from archive to this collection</p>
                   <v-row v-if="!showStories" @click="showStories = true" class="pl-5">
                     <v-icon small>mdi-plus</v-icon>
                     <AddButton size="20px" icon="mdi-book-multiple" iconClass="pr-3" label="Stories"  justify="start"/>
@@ -63,17 +78,17 @@
               :selectedItems.sync="formData.stories"
               :items="stories"
               :openMenu.sync="showStories"
-              placeholder="add related record"
+              placeholder="add related story"
               item="title"
             />
             <ChipGroup
               v-if="formData.stories && formData.stories.length > 0"
               type="story"
               :chips="formData.stories"
-              deletable
+              :deletable="!readonly"
               @delete="removeStory"
             />
-            <v-divider v-if="mobile" light class="mt-6 mr-4"></v-divider>
+            <!-- <v-divider v-if="mobile" light class="mt-6 mr-4"></v-divider> -->
           </v-col>
         </v-row>
       </v-col>

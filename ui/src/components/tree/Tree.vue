@@ -255,10 +255,10 @@ export default {
           this.centerNode(d)
         }
       })
-    },
-    nodes (newValue) {
-      this.setLoading(false)
     }
+    // nodes (newValue) {
+    //   this.setLoading(false)
+    // }
   },
 
   methods: {

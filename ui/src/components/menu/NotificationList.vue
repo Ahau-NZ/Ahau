@@ -1,25 +1,19 @@
 <template>
   <div>
-    <v-list class="py-0">
-      <v-list-item>
-        <p class="pt-1 pl-5 my-0 headliner black--text">Notifications</p>
-      </v-list-item>
-    </v-list>
-    <v-divider></v-divider>
     <v-list
       height="30px"
       class="py-0"
       style="background-color:#a9a9a950"
-      v-if="notificationsToJoin && notificationsToJoin.length > 0"
+      v-if="notifications && notifications.length > 0 && title"
     >
-      <p class="pt-1 pl-8 my-0 subtitle-2 black--text">New</p>
+      <p :class="`pt-1 pl-8 my-0 subtitle-2 black--text ${bold}`">{{ title }}</p>
     </v-list>
-    <v-divider></v-divider>
+    <v-divider v-if="title"></v-divider>
     <v-list class="py-0">
-      <div v-for="(notification, index) in notificationsToJoin" :key="index">
+      <div v-for="(notification, index) in notifications" :key="index">
         <!-- Registration Notification -->
         <div>
-          <v-list-item class="py-1" @click="openReview(notification)">
+          <v-list-item class="py-1" @click="openReviewRegistration(notification)">
             <Avatar
               size="50px"
               :image="notification.from.avatarImage"
@@ -28,60 +22,10 @@
               :bornAt="notification.from.bornAt"
             />
             <v-list-item-content class="pl-5">
-              <v-list-item-title class="bold">{{notification.from.preferredName}}</v-list-item-title>
+              <v-list-item-title :class="bold">{{ notification.from.preferredName }}</v-list-item-title>
               <v-list-item-subtitle
-                class="text-caption bold"
-              >Has requested to join {{notification.message.group.preferredName}}</v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
-          <v-divider></v-divider>
-        </div>
-      </div>
-    </v-list>
-    <v-list
-      height="30px"
-      class="py-0"
-      style="background-color:#a9a9a950"
-      v-if="notificationsAccepted && notificationsAccepted.length > 0"
-    >
-      <p class="pt-1 pl-8 my-0 subtitle-2 black--text">Complete</p>
-    </v-list>
-    <v-divider></v-divider>
-    <v-list class="py-0">
-      <div v-for="(notification, index) in notificationsAccepted" :key="index">
-        <!-- Response notification -->
-        <div v-if="notification.mine">
-          <v-list-item class="py-1" @click="openResponse(notification)">
-            <Avatar
-              size="50px"
-              :image="notification.message.groupAdmins[0].avatarImage"
-              :alt="notification.message.groupAdmins[0].preferredName"
-              :gender="notification.message.groupAdmins[0].gender"
-              :bornAt="notification.message.groupAdmins[0].bornAt"
-            />
-            <v-list-item-content class="pl-5">
-              <v-list-item-title>{{notification.message.groupAdmins[0].preferredName}}</v-list-item-title>
-              <v-list-item-subtitle
-                class="text-caption ahauRed"
-              >Has approved your request to join {{notification.message.group.preferredName}}</v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
-          <v-divider></v-divider>
-        </div>
-        <div v-else>
-          <v-list-item class="py-1" @click="openResponse(notification)">
-            <Avatar
-              size="50px"
-              :image="notification.from.avatarImage"
-              :alt="notification.from.preferredName"
-              :gender="notification.from.gender"
-              :bornAt="notification.from.bornAt"
-            />
-            <v-list-item-content class="pl-5">
-              <v-list-item-title>{{notification.from.preferredName}}</v-list-item-title>
-              <v-list-item-subtitle
-                class="text-caption ahauRed"
-              >Has joined {{notification.message.group.preferredName}}</v-list-item-subtitle>
+                :class="`text-caption ${bold}`"
+              >{{ text }} {{ notification.group.preferredName }}</v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
           <v-divider></v-divider>
@@ -92,25 +36,29 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
 import Avatar from '@/components/Avatar'
+import { mapActions } from 'vuex'
+
 export default {
   components: {
     Avatar
   },
   props: {
-    notificationsToJoin: Array,
-    notificationsAccepted: Array
+    notifications: Array,
+    title: String,
+    text: String,
+    showBadge: Boolean
+  },
+  computed: {
+    bold () {
+      return this.showBadge ? 'bold' : ''
+    }
   },
   methods: {
     ...mapActions(['setDialog', 'setCurrentNotification']),
-    openReview (notification) {
+    openReviewRegistration (notification) {
       this.setCurrentNotification(notification)
-      this.setDialog({ active: 'review-registration', type: 'review' })
-    },
-    openResponse (notification) {
-      this.setCurrentNotification(notification)
-      this.setDialog({ active: 'review-registration', type: 'response' })
+      this.setDialog({ active: 'review-registration' })
     }
   }
 }

@@ -1,6 +1,7 @@
 // import gql from 'graphql-tag'
 import { createProvider } from '@/plugins/vue-apollo'
-import { LIST_GROUP_APPLICATIONS } from '@/lib/tribes-application-helpers'
+import { listGroupApplications } from '@/lib/tribes-application-helpers'
+
 const apolloProvider = createProvider()
 const apollo = apolloProvider.defaultClient
 
@@ -28,36 +29,24 @@ const mutations = {
 }
 
 const actions = {
-  async getAllNotifications ({ commit }) {
-    const res = await apollo.query({
-      query: LIST_GROUP_APPLICATIONS,
-      fetchPolicy: 'no-cache'
-    })
-    const formatedNotification = []
-    res.data.listGroupApplications.forEach(a => {
-      if (a.group.public.length > 0) {
-        var noti = {
-          type: a.comments.length < 2 ? 'registration' : 'response',
-          message: {
-            outcome: a.accepted ? 'accepted' : 'not responded',
-            group: a.group.public[0],
-            groupAdmins: a.group.public[0].tiaki,
-            profile: a.applicant,
-            comments: a.comments.map(i => i.text)
-          },
-          applicationId: a.id,
-          from: a.applicant,
-          accepted: a.accepted
-        }
-        formatedNotification.push(noti)
-      }
-    })
-    if (res.errors) {
-      console.error('error fetching all notifications', res)
-      commit('updateNotifications', [])
-      return
+  async getAllNotifications ({ commit, rootState: { whoami } }) {
+    try {
+      const res = await apollo.query(
+        listGroupApplications()
+      )
+
+      if (res.errors) throw res.errors
+
+      var { unseen, accepted, declined } = res.data
+
+      unseen = unseen.map(application => mapValues(application, whoami))
+      accepted = accepted.map(application => mapValues(application, whoami))
+      declined = declined.map(application => mapValues(application, whoami))
+
+      commit('updateNotifications', [...unseen, ...accepted, ...declined])
+    } catch (err) {
+      console.error('Something went wrong while try to get all group applications', err)
     }
-    commit('updateNotifications', formatedNotification)
   },
   setCurrentNotification ({ commit }, notification) {
     commit('updateCurrentNotification', notification)
@@ -69,4 +58,35 @@ export default {
   mutations,
   actions,
   getters
+}
+
+function mapValues (application, whoami) {
+  const { decision, applicant, groupAdmins, group, answers, history } = application
+
+  const isPersonal = applicant.id === whoami.public.profile.id
+  const accepted = decision === null ? null : decision.accepted
+
+  // TODO: not sure which admin, find out later: look at the history instead
+  const from = isPersonal ? groupAdmins[0] : applicant
+
+  return {
+    type: getNotificationType(isPersonal, accepted),
+    from,
+    group: group.public[0],
+    applicant,
+    id: application.id,
+    isPersonalApplication: isPersonal,
+    answers,
+    history
+  }
+}
+
+function getNotificationType (isPersonal, isAccepted) {
+  const prefix = isPersonal ? 'personal-' : ''
+  switch (isAccepted) {
+    case true: return prefix + 'complete'
+    case false: return prefix + 'declined'
+    case null: return prefix + 'pending'
+    default: return null
+  }
 }

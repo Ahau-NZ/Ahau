@@ -243,7 +243,7 @@ export const getStory = id => ({
   fetchPolicy: 'no-cache'
 })
 
-export const getAllStories = filter => ({
+export const getAllStories = ({ groupId }) => ({
   query: gql`
     ${STORY_FRAGMENT}
     ${STORY_LINK_FRAGMENT}
@@ -255,7 +255,10 @@ export const getAllStories = filter => ({
     }
   `,
   variables: {
-    filter
+    filter: {
+      type: '*',
+      groupId
+    }
   },
   update (data) {
     return data.stories.reverse()

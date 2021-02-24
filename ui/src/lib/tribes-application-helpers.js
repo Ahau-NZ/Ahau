@@ -1,120 +1,156 @@
 import gql from 'graphql-tag'
+import { COMMUNITY_FRAGMENT } from './community-helpers'
+import { PERSON_FRAGMENT } from './person-helpers'
 
-export const CREATE_GROUP_APPLICATION = gql`
-  mutation($groupId: String!, $groupAdmins: [String!]!, $text: String) {
-    createGroupApplication(
-      groupId: $groupId
-      groupAdmins: $groupAdmins
-      text: $text
-    ) {
+export const createGroupApplication = ({ groupId, groupAdmins, answers, comment }) => {
+  return {
+    mutation: gql`
+      mutation(
+        $groupId: String!,
+        $groupAdmins: [String!]!,
+        $answers: [GroupApplicationAnswerInput],
+        $comment: String
+      ) {
+        createGroupApplication(
+          groupId: $groupId,
+          groupAdmins: $groupAdmins,
+          answers: $answers,
+          comment: $comment
+        )
+      }
+    `,
+    variables: {
+      groupId,
+      groupAdmins,
+      answers,
+      comment
+    }
+  }
+}
+
+export const acceptGroupApplication = ({ id, comment, groupIntro }) => {
+  return {
+    mutation: gql`
+      mutation($id: String!, $comment: String, $groupIntro: String) {
+        acceptGroupApplication(id: $id, applicationComment: $comment, groupIntro: $groupIntro)
+      }
+    `,
+    variables: {
+      id,
+      comment,
+      groupIntro
+    }
+  }
+}
+
+export const declineGroupApplication = ({ id, comment }) => {
+  return {
+    mutation: gql`
+      mutation($id: String!, $comment: String) {
+        declineGroupApplication(id: $id, reason: $comment)
+      }
+    `,
+    variables: {
+      id,
+      comment
+    }
+  }
+}
+
+export const APPLICATION_FRAGMENT = gql`
+  ${COMMUNITY_FRAGMENT}
+  ${PERSON_FRAGMENT}
+  fragment ApplicationFragment on GroupApplication {
+    id
+    group {
       id
-      group {
-        id
+      public {
+        ...CommunityFragment
       }
-      applicant {
-        id
+      private {
+        ...CommunityFragment
       }
-      comments {
-        author {
-          id
-          preferredName
-          avatarImage {
-            uri
-          }
-        }
-        text
-      }
-      groupAdmins
+    }
+    applicant {
+      ...ProfileFragment
+    }
+    groupAdmins {
+      ...ProfileFragment
+    }
+    decision {
       accepted
-      addMember
+    }
+    answers {
+      question
+      answer
+    }
+    history {
+      type
+      authorId
+      author {
+        ...ProfileFragment
+      }
+      timestamp
+      ...on GroupApplicationCommentHistory {
+        comment
+      }
+      ...on GroupApplicationAnswerHistory {
+        answers {
+          question
+          answer
+        }
+      }
+      ...on GroupApplicationDecisionHistory {
+        decision {
+          accepted
+        }
+      }
     }
   }
 `
 
-export const ACCEPT_GROUP_APPLICATION = gql`
-  mutation($id: String!, $text: String) {
-    acceptGroupApplication(id: $id, text: $text) {
-      id
-      group {
-        id
-      }
-      applicant {
-        id
-      }
-      comments {
-        author {
-          id
-          preferredName
-          avatarImage {
-            uri
-          }
+export const listGroupApplications = () => {
+  return {
+    query: gql`
+      ${APPLICATION_FRAGMENT}
+      query {
+        unseen: listGroupApplications {
+          ...ApplicationFragment
         }
-      }
-      groupAdmins
-      accepted
-    }
+        accepted: listGroupApplications(accepted: true) {
+          ...ApplicationFragment
+        }
+        declined: listGroupApplications(accepted: false) {
+          ...ApplicationFragment
+        }
+      }`,
+    fetchPolicy: 'no-cache'
   }
-`
+}
 
-export const LIST_GROUP_APPLICATIONS = gql`
-  query($groupId: String, $accepted: Boolean) {
-    listGroupApplications(groupId: $groupId, accepted: $accepted) {
-      id
-      comments {
-        author {
-          id
-          preferredName
-          avatarImage {
-            uri
-          }
-        }
-        text
-      }
-      accepted
-      applicant {
-        id
-        gender
-        preferredName
-        avatarImage {
-          uri
-        }
-      }
-      group {
-        id
-        public {
-          id
-          preferredName
-          avatarImage {
-            uri
-          }
-        }
-      }
-    }
-  }
-`
-
-export const GET_GROUP_APPLICATION = gql`
+export const getGroupApplication = gql`
+  ${APPLICATION_FRAGMENT}
   query($id: String!) {
     getGroupApplication(id: $id) {
-      id
-      group {
-        id
-      }
-      applicant {
-        id
-      }
-      comments {
-        author {
-          id
-          preferredName
-          avatarImage {
-            uri
-          }
-        }
-        text
-      }
-      groupAdmins
-      accepted
+      ...ApplicationFragment
     }
   }
 `
+
+export function findInvalidProfileProps (profile) {
+  // validate required props on a profile when applying to join a community
+  // preferredName or legalName
+  // dob
+  // address
+  // city/country
+  const invalidProps = []
+
+  const { preferredName, legalName, aliveInterval, address, location } = profile
+
+  if (!preferredName && !legalName) invalidProps.push({ prop: 'Preferred Name or Full Name' })
+  if (!aliveInterval) invalidProps.push({ prop: 'Date of Birth' })
+  if (!address) invalidProps.push({ prop: 'Address' })
+  if (!location) invalidProps.push({ prop: 'City, Country' })
+
+  return invalidProps
+}
