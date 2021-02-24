@@ -99,9 +99,6 @@ export default {
       showArchiveHelper: false
     }
   },
-  mounted () {
-    console.log(this.$refs.child.$apollo)
-  },
   computed: {
     ...mapGetters(['showStory', 'whoami', 'currentStory', 'showArtefact', 'storeDialog', 'currentAccess']),
     mobile () {

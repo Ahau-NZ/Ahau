@@ -33,6 +33,18 @@
         </v-row>
       </v-btn>
     </div>
+     <div v-else-if="isCollectionShow" fab :class="mobile ? 'ml-n4':'ms-10 pr-6 pb-1'">
+      <v-btn @click="goBack()" text>
+        <div v-if="mobile">
+          <v-icon dark>mdi-arrow-left</v-icon>
+        </div>
+        <v-row v-else align="center">
+          <v-icon large>mdi-chevron-left</v-icon>
+          <WhakapapaIcon size="small" color="white"/>
+          <span class="pl-2 caption">Back to archive</span>
+        </v-row>
+      </v-btn>
+    </div>
     <div v-else-if="mobile && showStory" class="ml-n4">
       <v-btn @click="toggleShowStory()" text>
         <v-icon dark>mdi-arrow-left</v-icon>
@@ -114,12 +126,12 @@ export default {
           (
             this.route.from.name === 'person/whakapapa/:whakapapaId' ||
             this.route.from.name === 'community/whakapapa/:whakapapaId'
-          ) &&
+          ) &
           (
           // AND the route we are going to isnt the tribes one
             this.route.to.name !== 'tribe' &&
             this.route.to.name !== 'person/whakapapa' &&
-            this.route.to.name !== 'community/whakapapa'
+            this.route.to.name !== 'community/whakapapa' 
           )
         )
       }
@@ -133,6 +145,12 @@ export default {
       return (
         this.$route.name === 'person/whakapapa/:whakapapaId' ||
         this.$route.name === 'community/whakapapa/:whakapapaId'
+      )
+    },
+    isCollectionShow () {
+      return (
+        this.$route.name === 'person/archive/:collectionId' ||
+        this.$route.name === 'community/archive/:collectionId'
       )
     }
   },
