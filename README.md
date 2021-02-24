@@ -214,7 +214,19 @@ npm run lint:ui // lint only UI
 
 npm run lint:pataka // lint only pataka UI
 
-npm run cleanup // delete node_modules and package-lock.json files from all packages
+npm run clear:all // deletes node_modules from the ./, desktop and ui folders
+
+npm run clear:desktop // deletes node_modules from /desktop
+
+npm run clear:ui // deletes node_modules from /ui
+
+npm run clear // deletes node_modules from ./
+
+npm run install:all // installs dependencies in the ./, desktop and ui folders
+
+npm run install:desktop // installs dependencies in desktop
+
+npm run install:ui // installs dependencies in ui
 ```
 
 ## Troubleshooting
