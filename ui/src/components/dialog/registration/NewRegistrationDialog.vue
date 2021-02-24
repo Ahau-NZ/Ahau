@@ -299,6 +299,8 @@ import { mapGetters } from 'vuex'
 import { dateIntervalToString } from '@/lib/date-helpers.js'
 import { findInvalidProfileProps } from '@/lib/tribes-application-helpers.js'
 
+import clone from 'lodash.clonedeep'
+
 export default {
   name: 'NewRegistrationDialog',
   components: {
@@ -330,7 +332,7 @@ export default {
       step: 1,
       checkbox1: null,
       checkbox2: null,
-      formData: this.profile,
+      formData: clone(this.profile),
       comment: '',
       answers: [],
       personalProfile: {}

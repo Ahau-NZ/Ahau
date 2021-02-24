@@ -7,7 +7,7 @@
       <!-- Content Slot -->
       <template v-slot:content>
         <v-col v-if="!notification.isPersonalApplication">
-          <span v-if="notification.type === 'other-pending'" class="subtitle-2 black--text">
+          <span v-if="notification.type === 'pending'" class="subtitle-2 black--text">
             A new request has been recieved from
             <strong>
               <i>{{ applicant.preferredName }}</i>
@@ -54,8 +54,6 @@
                       :alt="applicant.preferredName"
                       :gender="applicant.gender"
                       :aliveInterval="applicant.aliveInterval"
-                      :deceased="applicant.deceased"
-                      @updateAvatar="applicant.avatarImage = $event"
                     />
                   </v-col>
                   <v-col cols="12">
@@ -81,10 +79,6 @@
                       size="100px"
                       :image="group.avatarImage"
                       :alt="group.preferredName"
-                      :gender="group.gender"
-                      :aliveInterval="group.aliveInterval"
-                      :deceased="group.deceased"
-                      @updateAvatar="group.avatarImage = $event"
                       isView
                     />
                   </v-col>
@@ -210,7 +204,7 @@
                   :label="author.preferredName || author.legalName"
                 />
               </v-col>
-              <v-col v-if="notification.type === 'other-pending'">
+              <v-col v-if="notification.type === 'pending'">
                 <v-textarea
                   v-model="comment"
                   label="Send a message"
@@ -291,7 +285,7 @@ export default {
       if (isEmpty(this.notification)) {
         return true
       }
-      if (this.notification.type === 'other-pending') return true
+      if (this.notification.type === 'pending') return true
 
       return false
     },

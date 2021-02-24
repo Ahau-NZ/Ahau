@@ -79,12 +79,6 @@ export const AllProfileFieldsFragment = gql`
       children {
         profile {
           ...PersonProfileFields
-          children {
-            profile {
-              ...PersonProfileFields
-            }
-            ...PersonProfileLink
-          }
           parents {
             profile {
               ...PersonProfileFields
@@ -98,12 +92,6 @@ export const AllProfileFieldsFragment = gql`
         profile {
           ...PersonProfileFields
           children {
-            profile {
-              ...PersonProfileFields
-            }
-            ...PersonProfileLink
-          }
-          parents {
             profile {
               ...PersonProfileFields
             }
@@ -170,16 +158,6 @@ export const getProfile = ({
           relationshipType: parent.relationshipType
         }
         profile = tree.getSiblings(parentProfile, profile)
-
-        parentProfile.parents = parentProfile.parents.map(grandParent => {
-          var grandParentProfile = grandParent.profile ? grandParent.profile : grandParent
-          grandParentProfile = {
-            ...grandParentProfile,
-            relationshipType: grandParent.relationshipType
-          }
-
-          return grandParentProfile
-        })
         return parentProfile
       })
     }

@@ -26,23 +26,23 @@
           <v-divider></v-divider>
         </v-row>
         <NotificationList
-          :notifications="newNotifications"
+          :notifications="filteredNotifications.newNotifications"
           title="New"
           text="Has requested to join"
           show-badge
         />
         <NotificationList
-          :notifications="pendingNotifications"
+          :notifications="filteredNotifications.pendingNotifications"
           title="Pending"
           text="Is yet to review your request to join"
         />
         <NotificationList
-          :notifications="personalCompleteNotifications"
+          :notifications="filteredNotifications.personalCompleteNotifications"
           title="Complete"
           text="Has approved your request to join"
         />
         <NotificationList
-          :notifications="otherCompleteNotifications"
+          :notifications="filteredNotifications.otherCompleteNotifications"
           text="Has joined"
         />
       </v-card>
@@ -77,23 +77,23 @@
         v-scroll="onScroll"
       >
         <NotificationList
-          :notifications="newNotifications"
+          :notifications="filteredNotifications.newNotifications"
           title="New"
           text="Has requested to join"
           show-badge
         />
         <NotificationList
-          :notifications="pendingNotifications"
+          :notifications="filteredNotifications.pendingNotifications"
           title="Pending"
           text="Is yet to review your request to join"
         />
         <NotificationList
-          :notifications="personalCompleteNotifications"
+          :notifications="filteredNotifications.personalCompleteNotifications"
           title="Complete"
           text="Has approved your request to join"
         />
         <NotificationList
-          :notifications="otherCompleteNotifications"
+          :notifications="filteredNotifications.otherCompleteNotifications"
           text="Has joined"
         />
       </v-card>
@@ -104,6 +104,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import NotificationList from '@/components/menu/NotificationList.vue'
+import pileSort from 'pile-sort'
 
 export default {
   components: {
@@ -118,41 +119,28 @@ export default {
   },
   computed: {
     ...mapGetters(['whoami', 'notifications']),
-    pendingNotifications () { // your requests to join others communities
-      return this.notifications
-        .filter(application => {
-          return application.type === 'personal-pending'
-        })
-    },
-    newNotifications () { // requests to join a community of yours
-      return this.notifications
-        .filter(application => {
-          return application.type === 'other-pending'
-        })
-    },
-    personalCompleteNotifications () { // your applications with have been accepted
-      return this.notifications
-        .filter(n => {
-          return n.type === 'personal-complete'
-        })
-    },
-    otherCompleteNotifications () {
-      return this.notifications
-        .filter(n => {
-          return n.type === 'other-complete'
-        })
+    filteredNotifications () {
+      const [pendingNotifications, newNotifications, personalCompleteNotifications, otherCompleteNotifications, declinedApplications] = pileSort(this.notifications, [
+        (n) => n.type === 'personal-pending',
+        (n) => n.type === 'pending',
+        (n) => n.type === 'personal-complete',
+        (n) => n.type === 'complete',
+        (n) => n.type === 'personal-declined' || n.type === 'declined'
+      ])
+
+      return { pendingNotifications, newNotifications, personalCompleteNotifications, otherCompleteNotifications, declinedApplications }
     },
     notificationsCount () {
-      return this.newNotifications.length
+      return this.filteredNotifications.newNotifications.length
     },
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
     hasNotification () {
-      return this.newNotifications.length > 0 || this.personalCompleteNotifications.length > 0 || this.pendingNotifications.length > 0
+      return this.filteredNotifications.newNotifications.length > 0 || this.filteredNotifications.personalCompleteNotifications.length > 0 || this.filteredNotifications.pendingNotifications.length > 0
     },
     showBadge () {
-      return this.newNotifications.length > 0
+      return this.filteredNotifications.newNotifications.length > 0
     }
   },
   watch: {
