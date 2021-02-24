@@ -61,30 +61,6 @@ export default {
     openReviewRegistration (notification) {
       this.setCurrentNotification(notification)
       this.setDialog({ active: 'review-registration' })
-    },
-    async sendResponse ({ comment, approved }) {
-      try {
-        const mutation = approved
-          ? acceptGroupApplication({
-            id: this.currentNotification.id,
-            comment
-            // TODO: groupItro: ...
-          })
-          : null
-          // TODO decline applications
-          // - graphql mutation
-          // - helper mutation
-
-        if (!mutation) return
-
-        const res = await this.$apollo.mutate(
-          mutation
-        )
-
-        if (res.errors) throw res.errors
-      } catch (err) {
-        console.log('Something went wrong while trying to respond to the group application', err)
-      }
     }
   }
 }
