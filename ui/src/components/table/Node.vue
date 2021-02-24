@@ -88,7 +88,7 @@
 
     <g id="node-label" :style="textStyle">
       <!-- <rect :width="textWidth" y="-16" height="10"></rect> -->
-      <text>{{ profile.preferredName }}</text>
+      <text>{{ profile.legalName }}</text>
     </g>
     <defs>
       <filter id="shadow">

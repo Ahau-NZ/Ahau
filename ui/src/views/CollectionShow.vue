@@ -1,13 +1,13 @@
 <template>
   <div>
     <v-container fluid v-if="collection" >
+      <!-- Collection Header -->
       <v-row v-if="!showStory">
-        <!-- Mobile Collection Header -->
+        <!-- <CollectionTitle v-if="mobile" :collection="collection" @click="dialog = 'edit-collection'"/> -->
         <v-col v-if="mobile" cols="12" class="headliner black--text pa-0 pb-2 mt-n10">
           {{ collection.name + ' collection'}}
             <v-icon color="blue-grey" light @click="viewCollection" class="text-right justify-end">mdi-information</v-icon>
         </v-col>
-        <!-- Desktop Collection Header -->
         <v-col v-else cols="12" xs="12" sm="12" md="9" class="pa-0">
           <v-row class="pb-5">
             <CollectionTitleCard :collection="collection" :access="[access]" @click="editCollection"/>
@@ -29,8 +29,8 @@
 
     <!-- Dialog -->
     <NewCollectionDialog
-      v-if="collection && dialog"
-      :show="dialog"
+      v-if="collection && dialog === 'edit-collection'"
+      :show="dialog === 'edit-collection'"
       :collection="collection"
       :title="editing ? `Edit ${collection.name || 'Untitled'} Collection` : `${collection.name} Collection`"
       :editing="editing"
@@ -124,17 +124,17 @@ export default {
     editCollection () {
       this.view = false
       this.editing = true
-      this.dialog = true
+      this.dialog = 'edit-collection'
     },
     viewCollection () {
       this.view = true
       this.editing = false
-      this.dialog = true
+      this.dialog = 'edit-collection'
     },
     close () {
       this.view = false
       this.editing = false
-      this.dialog = false
+      this.dialog = null
     },
     async processCollection ($event) {
       const { stories } = $event
@@ -143,10 +143,10 @@ export default {
       await this.saveStoriesToCollection(this.collection.id, stories)
 
       this.$parent.$apollo.queries.collections.refetch({
-        filter: { groupId: this.$route.params.tribeId }
+        filter: { groupId: this.$route.params.tribeId, type: '*' }
       })
       this.$parent.$apollo.queries.stories.refetch({
-        filter: { groupId: this.$route.params.tribeId }
+        filter: { groupId: this.$route.params.tribeId, type: '*' }
       })
 
       this.$apollo.queries.collection.refetch()
@@ -164,7 +164,7 @@ export default {
 
       // reload parent component collections
       await this.$parent.$apollo.queries.collections.refetch({
-        filter: { groupId: this.$route.params.tribeId }
+        filter: { groupId: this.$route.params.tribeId, type: '*' }
       })
 
       // go to the default archive page

@@ -52,7 +52,6 @@ import { EMPTY_COLLECTION, setDefaultCollection } from '@/lib/collection-helpers
 import { getObjectChanges } from '@/lib/get-object-changes.js'
 import mapProfileMixins from '@/mixins/profile-mixins.js'
 import AvatarGroup from '@/components/AvatarGroup.vue'
-import { getTribalProfile } from '@/lib/community-helpers.js'
 
 export default {
   name: 'NewCollectionDialog',
@@ -77,8 +76,7 @@ export default {
   },
   mixins: [
     mapProfileMixins({
-      mapMethods: ['getTribe'],
-      mapApollo: ['tribe']
+      mapApollo: ['profile', 'tribe']
     })
   ],
   async mounted () {
@@ -93,7 +91,7 @@ export default {
     tribe: {
       deep: true,
       immediate: true,
-      handler (tribe, oldTribe) {
+      handler (tribe) {
         if (!tribe || this.whoami.personal.groupId === this.$route.params.tribeId) {
           this.access = { isPersonalGroup: true, groupId: this.whoami.personal.groupId, ...this.whoami.personal.profile }
           return

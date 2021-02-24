@@ -20,7 +20,7 @@
           </v-col>
           <v-col v-if="profile.legalName" cols="6" :class="mobile ? 'pl-8 py-0':'py-0'">
             <v-row>
-              <span class="text">{{profile.legalName}}</span>
+              <span class="text">{{ profile.legalName }}</span>
             </v-row>
             <v-row class="sub-title">
               <span>legal name</span>

@@ -1,25 +1,9 @@
 <template>
   <div id="container">
-    <NewRegistrationDialog
-      v-if="isActive('new-registration')"
-      :show="isActive('new-registration')"
-      :title="dialogType === 'review' ? `Request to join : ${currentNotification.message.group.preferredName}` : `Request to join : ${tribe.public[0].preferredName}`"
-      :profile="profile"
-      :tribe="tribe"
-      :parents.sync="parents"
-      :parentIndex.sync="parentIndex"
-      :type="dialogType"
-      :notification="currentNotification"
-      @editProfile="toggleEditProfile($event)"
-      @close="close"
-    />
     <ReviewRegistrationDialog
       v-if="isActive('review-registration')"
       :show="isActive('review-registration')"
-      :title="`Request to join : ${currentNotification.message.group.preferredName}`"
-      :profile="profile"
-      :tribe="tribe"
-      :type="dialogType"
+      :title="`Request to join : ${currentNotification.group.preferredName}`"
       :notification="currentNotification"
       @close="close"
     />
@@ -119,8 +103,6 @@ import * as d3 from 'd3'
 
 import NewNodeDialog from '@/components/dialog/profile/NewNodeDialog.vue'
 import NewCommunityDialog from '@/components/dialog/community/NewCommunityDialog.vue'
-import NewRegistrationDialog from '@/components/dialog/registration/NewRegistrationDialog.vue'
-import ReviewRegistrationDialog from '@/components/dialog/registration/ReviewRegistrationDialog.vue'
 import EditNodeDialog from '@/components/dialog/profile/EditNodeDialog.vue'
 import SideViewEditNodeDialog from '@/components/dialog/profile/SideViewEditNodeDialog.vue'
 import DeleteNodeDialog from '@/components/dialog/profile/DeleteNodeDialog.vue'
@@ -130,6 +112,7 @@ import WhakapapaDeleteDialog from '@/components/dialog/whakapapa/WhakapapaDelete
 import WhakapapaShowHelper from '@/components/dialog/whakapapa/WhakapapaShowHelper.vue'
 import WhakapapaTableHelper from '@/components/dialog/whakapapa/WhakapapaTableHelper.vue'
 import ComingSoonDialog from '@/components/dialog/ComingSoonDialog.vue'
+import ReviewRegistrationDialog from '@/components/dialog/registration/ReviewRegistrationDialog.vue'
 
 import { PERMITTED_RELATIONSHIP_ATTRS, savePerson } from '@/lib/person-helpers.js'
 import { createGroup, saveCommunity, savePublicCommunity, saveGroupProfileLink } from '@/lib/community-helpers'
@@ -158,7 +141,6 @@ export default {
     WhakapapaTableHelper,
     ComingSoonDialog,
     NewCommunityDialog,
-    NewRegistrationDialog,
     ReviewRegistrationDialog
   },
   props: {

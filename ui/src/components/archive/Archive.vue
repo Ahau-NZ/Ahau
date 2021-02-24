@@ -4,7 +4,7 @@
       <div v-if="showStory" :class="{ 'showOverlay': showStory && !mobile }"></div>
       <v-row v-show="!showStory" class="top-margin">
         <v-col v-if="!hideArchiveTitle" cols="10" class="headliner black--text pa-0 pl-4 pt-2 pb-2">
-          {{archiveTitle}}
+          {{ archiveTitle }}
           <v-icon color="blue-grey" light @click="toggleArchiveHelper" class="infoButton">mdi-information</v-icon>
         </v-col>
         <v-col v-show="!showStory">
@@ -40,7 +40,7 @@
   </VueContext>
 
     <NewRecordDialog v-if="dialog === 'new-story'" :show="dialog === 'new-story'"
-      :title="`Add record to ${ profile.preferredName || 'Untitled' }'s archive`" @close="dialog = null"
+      :title="`Add story to ${ profile.preferredName || 'Untitled' }'s archive`" @close="dialog = null"
       @submit="processStory"
     />
     <NewCollectionDialog v-if="dialog === 'new-collection'" :show="dialog === 'new-collection'"
@@ -93,7 +93,7 @@ export default {
   data () {
     return {
       stories: null,
-      collections: [],
+      collections: null,
       dialog: null,
       scrollPosition: 0,
       showArchiveHelper: false
@@ -108,36 +108,24 @@ export default {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
     hideArchiveTitle () {
-      if (this.onCollectionPage && this.mobile) return true
-      return false
+      return this.onCollectionPage && this.mobile
     },
     collectionTitle () {
       if (!this.profile || !this.profile.preferredName) return 'this'
       return this.profile.preferredName
     },
     archiveTitle () {
-      if (this.currentAccess.id === this.whoami.personal.profile.id) return 'Your personal archive'
+      if (this.isPersonalArchive) return 'Your personal archive'
       return this.currentAccess.preferredName ? `${this.currentAccess.preferredName} Archive` : `${this.currentAccess.legalName}'s Archive`
     },
+    isPersonalArchive () {
+      return this.$route.params.profileId === this.whoami.personal.profile.id
+    },
     allowCollections () {
-      // only personal or community archives will see collections
-
-      // if on personal archive
-      const isPersonal = this.$route.params.profileId === this.whoami.personal.profile.id
-      if (isPersonal) return true
-
-      // if on a community archive we're on
-      if (this.$route.name === 'community/archive') return true
-
-      // route name is person/archive
-      return false
+      return this.isPersonalArchive || this.$route.name === 'community/archive'
     },
     onCollectionPage () {
-      if (this.$route.name === 'person/archive/:collectionId' || this.$route.name === 'community/archive/:collectionId') {
-        return true
-      } else {
-        return false
-      }
+      return this.$route.name === 'person/archive/:collectionId' || this.$route.name === 'community/archive/:collectionId'
     }
   },
   methods: {
@@ -166,8 +154,8 @@ export default {
         await this.saveStoriesToCollection(id, stories)
 
         // reload the collections and stories to reflect new links
-        this.$apollo.queries.collections.refetch({ filter: { groupId: this.$route.params.tribeId } })
-        this.$apollo.queries.stories.refetch({ filter: { groupId: this.$route.params.tribeId } })
+        this.$apollo.queries.collections.refetch({ filter: { groupId: this.$route.params.tribeId, type: '*' } })
+        this.$apollo.queries.stories.refetch({ filter: { groupId: this.$route.params.tribeId, type: '*' } })
       } catch (err) {
         console.error('Something went wrong while saving a new collections and/or linking stories to it', $event)
         console.error(err)

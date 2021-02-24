@@ -48,7 +48,7 @@
             class="px-8 subtitle-1 grey--text "
             :class="{ 'text-center': mobile }"
           >
-            No records found
+            No stories found
           </div>
         </div>
       </v-col>

@@ -1,6 +1,5 @@
 import { getProfile } from '@/lib/profile-helpers.js'
 import { getTribe } from '@/lib/community-helpers.js'
-import tree from '@/lib/tree-helpers.js'
 import gql from 'graphql-tag'
 
 export default function mapProfileMixins ({ mapMethods, mapApollo }) {
@@ -43,37 +42,7 @@ const apollo = {
       error (err) {
         console.error('There was an error fetching the profile with id: ', this.$route.params.profileId)
         console.error(err)
-      },
-      update ({ profile }) {
-        if (profile.type === 'community') return profile
-
-        if (profile.children) {
-          profile.children = profile.children.map(child => {
-            var childProfile = child.profile ? child.profile : child
-            childProfile = {
-              ...childProfile,
-              relationshipType: child.relationshipType
-            }
-            profile = tree.getPartners(profile, childProfile)
-            return childProfile
-          })
-        }
-
-        if (profile.parents) {
-          profile.parents = profile.parents.map(parent => {
-            var parentProfile = parent.profile ? parent.profile : parent
-            profile = tree.getSiblings(parentProfile, profile)
-            parentProfile = {
-              ...parentProfile,
-              relationshipType: parent.relationshipType
-            }
-            return parentProfile
-          })
-        }
-
-        return profile
-      },
-      fetchPolicy: 'no-cache'
+      }
     }
   },
   tribe () {
