@@ -63,7 +63,7 @@
         <v-expansion-panels flat>
           <v-expansion-panel class="pa-0">
             <v-expansion-panel-header :class="headerClass">
-              {{ notification.isPersonalApplication ? 'Your' : (applicant.legalName || applicant.preferredName) + "'s" }} Information
+              {{ notification.isPersonal ? 'Your' : (applicant.legalName || applicant.preferredName) + "'s" }} Information
             </v-expansion-panel-header>
             <v-expansion-panel-content>
               <ProfileCard :style="mobile ? 'margin: 10px;':'margin:20px'">
