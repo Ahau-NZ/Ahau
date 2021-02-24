@@ -98,7 +98,6 @@ export default {
     ...mapGetters(['whoami', 'currentAccess', 'showStory']),
     stories () {
       if (!this.collection || !this.collection.stories) return []
-
       return this.collection.stories.map(link => {
         return {
           linkId: link.linkId,

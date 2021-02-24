@@ -79,6 +79,7 @@ export default {
       mapApollo: ['profile', 'tribe']
     })
   ],
+
   watch: {
     tribe: {
       deep: true,
