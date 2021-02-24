@@ -91,7 +91,7 @@ export default {
   data () {
     return {
       stories: null,
-      collections: [],
+      collections: null,
       dialog: null,
       scrollPosition: 0,
       showArchiveHelper: false
