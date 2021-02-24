@@ -9,7 +9,8 @@
     "start:dev": "cross-env NODE_ENV=development electron index.js -- --title Āhau",
     "build:icons": "node build/build-icons.js",
     "pack": "electron-builder --config build/electron-builder.config.js --dir",
-    "dist": "electron-builder --config build/electron-builder.config.js"
+    "dist": "electron-builder --config build/electron-builder.config.js",
+    "clear": "rm -rf node_modules"
   },
   "dependencies": {
     "ahau-env": "^1.0.0",
