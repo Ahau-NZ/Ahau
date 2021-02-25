@@ -36,6 +36,16 @@
               />
             </v-col>
           </v-row>
+          <v-row>
+            <v-col class="nav-buttons">
+              <v-btn @click="close" text large fab class="secondary--text mr-10">
+                <v-icon color="secondary">mdi-close</v-icon>
+              </v-btn>
+              <v-btn @click="close" text large fab class="blue--text ml-5" color="blue">
+                <v-icon>mdi-check</v-icon>
+              </v-btn>
+            </v-col>
+          </v-row>
         </v-container>
       </v-card>
     </v-navigation-drawer>
@@ -81,6 +91,10 @@ export default {
 
 .menu-title {
   padding-bottom: 50px;
+}
+
+.nav-buttons {
+  text-align: center;
 }
 
 </style>
