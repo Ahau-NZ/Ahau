@@ -5,7 +5,7 @@
     large
     :color="text !== 'Join Community' ? 'grey' : '#b12526'"
     height="50px"
-    :class="[{ btn: !mobile && !tablet }, { mobileBtn: mobile }, { tabletBtn: tablet }, { disabled: text !== '' }]"
+    :class="[{ btn: !mobile && !tablet }, { mobileBtn: mobile }, { tabletBtn: tablet }, { disabled: text !== 'Join Community' }]"
     @click="$emit('click')"
   >
     <span>{{ text }}</span>
