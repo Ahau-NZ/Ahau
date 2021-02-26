@@ -64,29 +64,21 @@ function mapValues (application, whoami) {
   const { decision, applicant, groupAdmins, group, answers, history } = application
 
   const isPersonal = applicant.id === whoami.public.profile.id
-  const accepted = decision === null ? null : decision.accepted
+  const isNew = decision === null
+  const isAccepted = (decision && decision.accepted) || false
 
   // TODO: not sure which admin, find out later: look at the history instead
   const from = isPersonal ? groupAdmins[0] : applicant
 
   return {
-    type: getNotificationType(isPersonal, accepted),
     from,
     group: group.public[0],
     applicant,
     id: application.id,
-    isPersonalApplication: isPersonal,
     answers,
-    history
-  }
-}
-
-function getNotificationType (isPersonal, isAccepted) {
-  const prefix = isPersonal ? 'personal-' : ''
-  switch (isAccepted) {
-    case true: return prefix + 'complete'
-    case false: return prefix + 'declined'
-    case null: return prefix + 'pending'
-    default: return null
+    history,
+    isPersonal,
+    isAccepted,
+    isNew
   }
 }
