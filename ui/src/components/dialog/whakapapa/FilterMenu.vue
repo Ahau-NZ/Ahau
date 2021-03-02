@@ -38,7 +38,7 @@
           </v-row>
           <v-row>
             <v-col class="nav-buttons">
-              <v-btn @click="close" text large fab class="secondary--text mr-10">
+              <v-btn @click="reset" text large fab class="secondary--text mr-10">
                 <v-icon color="secondary">mdi-close</v-icon>
               </v-btn>
               <v-btn @click="close" text large fab class="blue--text ml-5" color="blue">
@@ -80,8 +80,9 @@ export default {
     close () {
       this.$emit('close')
     },
-    printSearchFilterString () {
-      console.log('filter search: ', this.searchFilterString)
+    reset () {
+      this.$emit('update:searchFilterString', '')
+      this.close()
     }
   }
 }
