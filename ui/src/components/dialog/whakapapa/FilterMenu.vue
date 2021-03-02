@@ -12,11 +12,6 @@
       class="side-menu"
     >
       <v-card light min-height="100%">
-        <v-row class="justify-end">
-          <v-btn icon class="mr-3">
-            <v-icon @click="close" color="secondary">mdi-close</v-icon>
-          </v-btn>
-        </v-row>
         <v-container>
           <v-row class="justify-center menu-title">
             <h1>Apply Table Filters</h1>
