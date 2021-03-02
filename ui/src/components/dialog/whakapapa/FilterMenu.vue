@@ -1,14 +1,14 @@
 <template>
-  <transition appear name='left'>
+  <transition appear name="left">
     <v-navigation-drawer
-      style='top: 64px;'
+      style="top: 64px;"
       :absolute="false"
-      :fixed="true"
-      :right="true"
+      fixed
+      right
       light
-      width='21%'
+      width="21%"
       permanent
-      height='calc(100vh - 64px)'
+      height="calc(100vh - 64px)"
       class="side-menu"
     >
       <v-card light min-height="100%">
