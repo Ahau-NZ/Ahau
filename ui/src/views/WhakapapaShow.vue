@@ -40,10 +40,6 @@
         <div v-else class="icon-button">
           <SearchButton :search.sync="search"/>
         </div>
-        <!-- Blake TODO: Delete filter search bar
-        <div v-if="searchFilter" class="icon-search">
-          <SearchBar :nestedWhakapapa="nestedWhakapapa" :searchNodeId.sync="searchNodeId" :searchFilterString.sync="searchFilterString" :searchFilter="true" @close="clickedOffSearchFilter()"/>
-        </div> -->
         <div v-if="whakapapa.table" class="icon-button">
           <SearchFilterButton :searchFilter.sync="searchFilter"/>
         </div>
@@ -95,10 +91,6 @@
           <div v-else  class="icon-button">
             <SearchButton  @click.stop :search.sync="search"/>
           </div>
-          <!-- Blake TODO: Delete filter search bar
-          <div v-if="searchFilter" class="icon-search">
-            <SearchBar :nestedWhakapapa="nestedWhakapapa" :searchNodeId.sync="searchNodeId" :searchFilterString.sync="searchFilterString" @close="clickedOffSearchFilter()"/>
-          </div> -->
           <div v-if="whakapapa.table" class="icon-button">
             <SearchFilterButton :searchFilter.sync="searchFilter"/>
           </div>
