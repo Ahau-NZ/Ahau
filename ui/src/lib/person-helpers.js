@@ -82,7 +82,6 @@ export const PUBLIC_PROFILE_FRAGMENT = gql`
 export const whoami = ({
   query: gql`
     ${PERSON_FRAGMENT}
-    ${PUBLIC_PROFILE_FRAGMENT}
     ${AUTHOR_FRAGMENT}
     query {
       whoami {
@@ -90,7 +89,7 @@ export const whoami = ({
           feedId
           profile {
             type
-            ...PublicProfileFragment
+            ...ProfileFragment
           }
         }
         personal {
@@ -98,12 +97,12 @@ export const whoami = ({
           profile {
             ...ProfileFragment
             tiaki {
-              ...PublicProfileFragment
+              ...ProfileFragment
             }
             authors {
               ...AuthorFragment
               profile {
-                ...PublicProfileFragment
+                ...ProfileFragment
               }
             }
           }
@@ -126,7 +125,6 @@ export const getPerson = id => ({
   query: gql`
     ${PERSON_FRAGMENT}
     ${AUTHOR_FRAGMENT}
-    ${PUBLIC_PROFILE_FRAGMENT}
     ${PROFILE_LINK_FRAGMENT}
     query($id: String!) {
       person(id: $id){
@@ -144,12 +142,12 @@ export const getPerson = id => ({
           ...ProfileLinkFragment
         }
         tiaki {
-          ...PublicProfileFragment
+          ...ProfileFragment
         }
         authors {
           ...AuthorFragment
           profile {
-            ...PublicProfileFragment
+            ...ProfileFragment
           }
         }
       }
@@ -202,4 +200,11 @@ function pruneEmptyValues (input) {
     if (value !== '' && value !== null) pruned[key] = value
   })
   return pruned
+}
+
+export function getDisplayName (profile) {
+  if (!profile || (!profile.preferredName && !profile.legalName)) return '?'
+  if (profile.preferredName === '' && profile.legalName === '') return '?'
+
+  return profile.preferredName || profile.legalName
 }
