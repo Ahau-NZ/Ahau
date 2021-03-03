@@ -22,7 +22,7 @@
         <v-container>
           <v-row v-if="isEditing">
             <v-col>
-              <ProfileForm :profile.sync="formData" :readonly="!isEditing" mobile @cancel="cancel" isEditing isSideViewDialog="true">
+              <ProfileForm :profile.sync="formData" :readonly="!isEditing" mobile @cancel="cancel" isEditing isSideViewDialog>
                 <template v-slot:top>
                   <v-row class="justify-center">
                     <h1>Edit {{ getDisplayName(formData) }}</h1>
