@@ -189,14 +189,14 @@ export const savePerson = input => {
 function pruneEmptyValues (input) {
   const pruned = {}
   Object.entries(input).forEach(([key, value]) => {
-    if (value !== '' && value !== null) pruned[key] = value
+    if (value !== null) pruned[key] = value
   })
   return pruned
 }
 
 export function getDisplayName (profile) {
-  if (!profile || (!profile.preferredName && !profile.legalName)) return '?'
-  if (profile.preferredName === '' && profile.legalName === '') return '?'
+  if (!profile || (!profile.preferredName && !profile.legalName)) return 'Unknown'
+  if (profile.preferredName === '' && profile.legalName === '') return 'Unknown'
 
   return profile.preferredName || profile.legalName.split(' ')[0]
 }

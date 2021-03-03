@@ -4,26 +4,26 @@ const test = require('tape')
 test('get display name', t => {
   t.deepEqual(
     getDisplayName({ preferredName: null, legalName: null }),
-    '?',
-    'null names = ?'
+    'Unknown',
+    'null names = Unknown'
   )
 
   t.deepEqual(
     getDisplayName({ preferredName: '', legalName: '' }),
-    '?',
-    'empty names = ?'
+    'Unknown',
+    'empty names = Unknown'
   )
 
   t.deepEqual(
     getDisplayName({ preferredName: '', legalName: null }),
-    '?',
-    'empty preferredName and null legalName = ?'
+    'Unknown',
+    'empty preferredName and null legalName = Unknown'
   )
 
   t.deepEqual(
     getDisplayName({ preferredName: null, legalName: '' }),
-    '?',
-    'null preferredName and empty legalName = ?'
+    'Unknown',
+    'null preferredName and empty legalName = Unknown'
   )
 
   t.deepEqual(
