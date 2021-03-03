@@ -5,6 +5,7 @@ import {
   createApolloClient,
   restartWebsockets
 } from 'vue-cli-plugin-apollo/graphql-client'
+import { InMemoryCache } from 'apollo-cache-inmemory'
 // WARNING! this seems wrong (a cli plugin as a dependency?)
 
 // Install the vue plugin
@@ -64,7 +65,18 @@ export function createProvider (options = {}) {
   // Create apollo client
   const { apolloClient, wsClient } = createApolloClient({
     ...defaultOptions,
-    ...options
+    ...options,
+    cache: new InMemoryCache({
+      possibleTypes: {
+        Profile: ['Person', 'Community'],
+        Artefact: ['Photo', 'Video', 'Audio', 'Document'],
+        GroupApplicationHistory: [
+          'GroupApplicationCommentHistory',
+          'GroupApplicationAnswerHistory',
+          'GroupApplicationDecisionHistory'
+        ]
+      }
+    })
   })
   apolloClient.wsClient = wsClient
 
