@@ -31,16 +31,22 @@
               />
             </v-col>
           </v-row>
-          <v-row>
-            <v-col class="nav-buttons">
-              <v-btn @click="reset" text large fab class="secondary--text mr-10">
-                <v-icon color="secondary">mdi-close</v-icon>
-              </v-btn>
-              <v-btn @click="close" text large fab class="blue--text ml-5" color="blue">
-                <v-icon>mdi-check</v-icon>
-              </v-btn>
-            </v-col>
-          </v-row>
+            <div class="nav-buttons">
+              <v-row>
+                <v-col>
+                  <v-btn @click="close" text large fab class="blue--text ml-5">
+                    Apply Filter
+                  </v-btn>
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col>
+                  <v-btn @click="reset" text large fab class="red--text ml-5">
+                    Clear Filter
+                  </v-btn>
+                </v-col>
+              </v-row>
+            </div>
         </v-container>
       </v-card>
     </v-navigation-drawer>
@@ -86,7 +92,7 @@ export default {
 <style lang="scss">
 
 .menu-title {
-  padding-bottom: 50px;
+  padding: 50px 0px 50px 0px;
 }
 
 .nav-buttons {
