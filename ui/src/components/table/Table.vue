@@ -624,7 +624,6 @@ export default {
             isEqual(legalName, search) ||
             legalName.includes(search) ||
             this.findAltNameMatch(search, node.data.altNames)
-
     },
     findAltNameMatch (filterString, altNames) {
       if (altNames.length > 0) {
