@@ -70,14 +70,6 @@ export const PERSON_FRAGMENT = gql`
     headerImage { uri }
   }
 `
-export const PUBLIC_PROFILE_FRAGMENT = gql`
-  fragment PublicProfileFragment on Person {
-    id
-    preferredName
-    avatarImage { uri }
-    feedId: originalAuthor
-  }
-`
 
 export const whoami = ({
   query: gql`

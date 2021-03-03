@@ -1,7 +1,8 @@
 import gql from 'graphql-tag'
 import pick from 'lodash.pick'
 import { ARTEFACT_FRAGMENT } from './artefact-helpers'
-import { PERSON_FRAGMENT, PUBLIC_PROFILE_FRAGMENT } from './person-helpers'
+import { PERSON_FRAGMENT } from './person-helpers'
+import { PublicProfileFieldsFragment } from './profile-helpers.js'
 import clone from 'lodash.clonedeep'
 import { COLLECTION_FRAGMENT } from './collection-helpers'
 
@@ -205,14 +206,14 @@ export const STORY_LINK_FRAGMENT = gql`
 export const getCollection = id => ({
   query: gql`
     ${COLLECTION_FRAGMENT}
-    ${PUBLIC_PROFILE_FRAGMENT}
+    ${PublicProfileFieldsFragment}
     ${STORY_FRAGMENT}
     ${STORY_LINK_FRAGMENT}
     query ($id: ID!) {
       collection(id: $id) {
         ...CollectionFragment
         tiaki {
-          ...PublicProfileFragment
+          ...PublicProfileFields
         }
         stories: storyLinks {
           linkId
