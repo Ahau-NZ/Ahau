@@ -380,9 +380,9 @@ function addParent (nestedWhakapapa, child, parent) {
   if (found) {
     if (nestedWhakapapa.partners.length === 0) nestedWhakapapa.partners.push(parent)
     else {
-      nestedWhakapapa.partners.map(p => {
-        if (p.id !== parent.id) nestedWhakapapa.partners.push(parent)
-      })
+      if (!nestedWhakapapa.partners.some(p => p.id === parent.id)) {
+        nestedWhakapapa.partners.push(parent)
+      }
     }
   }
 
