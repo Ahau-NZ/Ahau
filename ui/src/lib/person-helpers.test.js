@@ -28,13 +28,13 @@ test('get display name', t => {
 
   t.deepEqual(
     getDisplayName({ preferredName: null, legalName: 'Cherese Eriepa' }),
-    'Cherese Eriepa',
+    'Cherese',
     'null preferredName and legalName = legalName'
   )
 
   t.deepEqual(
     getDisplayName({ preferredName: '', legalName: 'Cherese Eriepa' }),
-    'Cherese Eriepa',
+    'Cherese',
     'empty preferredName and legalName = legalName'
   )
 

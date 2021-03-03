@@ -206,5 +206,5 @@ export function getDisplayName (profile) {
   if (!profile || (!profile.preferredName && !profile.legalName)) return '?'
   if (profile.preferredName === '' && profile.legalName === '') return '?'
 
-  return profile.preferredName || profile.legalName
+  return profile.preferredName || profile.legalName.split(' ')[0]
 }
