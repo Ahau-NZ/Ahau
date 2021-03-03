@@ -11,13 +11,7 @@
 
 <script>
 export default {
-  name: 'SearchFilterButton',
-  data () {
-    return {
-    }
-  },
-  methods: {
-  }
+  name: 'SearchFilterButton'
 }
 </script>
 

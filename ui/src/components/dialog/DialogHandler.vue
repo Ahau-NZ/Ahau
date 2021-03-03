@@ -98,12 +98,6 @@
       :searchFilterString.sync="searchFilterString"
       @close="close"
     />
-    <!-- <NewCollectionDialog
-      :show="isActive('new-collection')"
-      :title="'Create a new Collection'"
-      @close="close"
-      @submit="console.log('TODO: add collection to profile')"
-    />-->
     <ComingSoonDialog :show="isActive('coming-soon')" @close="close" />
   </div>
 </template>
@@ -125,7 +119,6 @@ import WhakapapaDeleteDialog from '@/components/dialog/whakapapa/WhakapapaDelete
 import WhakapapaShowHelper from '@/components/dialog/whakapapa/WhakapapaShowHelper.vue'
 import WhakapapaTableHelper from '@/components/dialog/whakapapa/WhakapapaTableHelper.vue'
 import FilterMenu from '@/components/dialog/whakapapa/FilterMenu.vue'
-// import NewCollectionDialog from '@/components/dialog/archive/NewCollectionDialog.vue'
 import ComingSoonDialog from '@/components/dialog/ComingSoonDialog.vue'
 import ReviewRegistrationDialog from '@/components/dialog/registration/ReviewRegistrationDialog.vue'
 
@@ -155,7 +148,6 @@ export default {
     WhakapapaShowHelper,
     WhakapapaTableHelper,
     FilterMenu,
-    // NewCollectionDialog,
     ComingSoonDialog,
     NewCommunityDialog,
     ReviewRegistrationDialog

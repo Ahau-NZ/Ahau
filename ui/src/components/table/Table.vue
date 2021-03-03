@@ -219,43 +219,8 @@ export default {
         .sort((a, b) => {
           return this.determineSort(a, b)
         })
-        // filter deceased
-        .filter(peeps => {
-          if (this.filter && peeps.data.deceased) {
-            return false
-          }
-          return true
-        })
         .filter(d => {
-          if (this.searchFilterString) {
-            const search = this.setString(this.searchFilterString)
-            const preferredName = this.setString(d.data.preferredName)
-            const legalName = this.setString(d.data.legalName)
-
-            var altNameMatch = false
-            const altNames = d.data.altNames
-            if (altNames.length > 0) {
-              for (var i = 0; i < altNames.length; i++) {
-                const currAltName = this.setString(altNames[i])
-                if (isEqual(currAltName, search) || currAltName.includes(search)) {
-                  altNameMatch = true
-                }
-              }
-            }
-
-            if (
-              isEqual(preferredName, search) ||
-              preferredName.includes(search) ||
-              isEqual(legalName, search) ||
-              legalName.includes(search) ||
-              altNameMatch
-            ) {
-              return true
-            } else {
-              return false
-            }
-          }
-          return true
+          return this.applyFilter(d)
         })
         // returns a new custom object for each node
         .map((d, i) => {
@@ -640,6 +605,37 @@ export default {
         top: elementPos,
         behavior: 'smooth'
       })
+    },
+    applyFilter (node) {
+      if (this.searchFilterString) {
+        if (this.nameMatchesFilter(node)) return true
+        else return false
+      }
+      if (this.filter && node.data.deceased) return false
+      return true
+    },
+    nameMatchesFilter (node) {
+      const search = this.setString(this.searchFilterString)
+      const preferredName = this.setString(node.data.preferredName)
+      const legalName = this.setString(node.data.legalName)
+
+      return isEqual(preferredName, search) ||
+            preferredName.includes(search) ||
+            isEqual(legalName, search) ||
+            legalName.includes(search) ||
+            this.findAltNameMatch(search, node.data.altNames)
+
+    },
+    findAltNameMatch (filterString, altNames) {
+      if (altNames.length > 0) {
+        for (var i = 0; i < altNames.length; i++) {
+          const currAltName = this.setString(altNames[i])
+          if (isEqual(currAltName, filterString) || currAltName.includes(filterString)) {
+            return true
+          }
+        }
+      }
+      return false
     }
   },
   components: {

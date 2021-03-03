@@ -31,22 +31,25 @@
               />
             </v-col>
           </v-row>
-            <div class="nav-buttons">
+          <v-spacer style="height:400px"></v-spacer>
+          <v-row>
+            <v-col class="nav-buttons">
               <v-row>
                 <v-col>
                   <v-btn @click="close" text large fab class="blue--text ml-5">
-                    Apply Filter
+                    Apply and Close
                   </v-btn>
                 </v-col>
               </v-row>
               <v-row>
                 <v-col>
                   <v-btn @click="reset" text large fab class="red--text ml-5">
-                    Clear Filter
+                    Clear
                   </v-btn>
                 </v-col>
               </v-row>
-            </div>
+            </v-col>
+          </v-row>
         </v-container>
       </v-card>
     </v-navigation-drawer>
@@ -61,16 +64,11 @@ export default {
   components: {
     SearchBar
   },
-  props: {
-  },
-
   data () {
     return {
       searchFilterString: '',
       searchNodeId: null
     }
-  },
-  computed: {
   },
   watch: {
     searchFilterString (newValue) {
@@ -97,6 +95,8 @@ export default {
 
 .nav-buttons {
   text-align: center;
+  padding: 0px;
+  margin: 0px;
 }
 
 </style>

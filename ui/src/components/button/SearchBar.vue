@@ -10,7 +10,7 @@
     :no-data-text="searchFilter ? '' : 'no suggestions'"
     :search-input.sync="searchString"
     solo
-    :rounded="true"
+    rounded
     light
     hide-selected
     dense
