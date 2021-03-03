@@ -11,7 +11,8 @@
     "build:mobile": "vue-cli-service build --dest ../mobile/www",
     "lint": "vue-cli-service lint",
     "test:js": "tape -r esm src/**/*.test.js | tap-spec",
-    "test": "npm run test:js && npm run lint"
+    "test": "npm run test:js && npm run lint",
+    "clear": "rm -rf node_modules"
   },
   "dependencies": {
     "@mdi/font": "^4.5.95",
