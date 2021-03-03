@@ -32,23 +32,13 @@
             </v-col>
           </v-row>
           <v-spacer style="height:400px"></v-spacer>
-          <v-row>
-            <v-col class="nav-buttons">
-              <v-row>
-                <v-col>
-                  <v-btn @click="close" text large fab class="blue--text ml-5">
-                    Apply and Close
-                  </v-btn>
-                </v-col>
-              </v-row>
-              <v-row>
-                <v-col>
-                  <v-btn @click="reset" text large fab class="red--text ml-5">
-                    Clear
-                  </v-btn>
-                </v-col>
-              </v-row>
-            </v-col>
+          <v-row class="nav-buttons">
+            <v-btn @click="close" text large fab class="blue--text ml-5 filter-btn">
+              Apply and Close
+            </v-btn>
+            <v-btn @click="reset" text large fab class="red--text ml-5 filter-btn">
+              Clear
+            </v-btn>
           </v-row>
         </v-container>
       </v-card>
@@ -94,9 +84,11 @@ export default {
 }
 
 .nav-buttons {
-  text-align: center;
-  padding: 0px;
-  margin: 0px;
+  margin-left: 80px;
+}
+
+.filter-btn {
+  margin: 0px 50px 0px 50px;
 }
 
 </style>
