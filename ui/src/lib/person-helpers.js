@@ -1,5 +1,6 @@
 import gql from 'graphql-tag'
 import pick from 'lodash.pick'
+import { PublicProfileFieldsFragment } from './profile-helpers'
 
 export const PERMITTED_PERSON_PROPS = [
   'id',
@@ -73,6 +74,7 @@ export const PERSON_FRAGMENT = gql`
 
 export const whoami = ({
   query: gql`
+    ${PublicProfileFieldsFragment}
     ${PERSON_FRAGMENT}
     ${AUTHOR_FRAGMENT}
     query {
@@ -89,7 +91,7 @@ export const whoami = ({
           profile {
             ...ProfileFragment
             tiaki {
-              ...ProfileFragment
+              ...PublicProfileFields
             }
             authors {
               ...AuthorFragment
@@ -115,6 +117,7 @@ export const PROFILE_LINK_FRAGMENT = gql`
 
 export const getPerson = id => ({
   query: gql`
+    ${PublicProfileFieldsFragment}
     ${PERSON_FRAGMENT}
     ${AUTHOR_FRAGMENT}
     ${PROFILE_LINK_FRAGMENT}
@@ -134,7 +137,7 @@ export const getPerson = id => ({
           ...ProfileLinkFragment
         }
         tiaki {
-          ...ProfileFragment
+          ...PublicProfileFields
         }
         authors {
           ...AuthorFragment

@@ -135,17 +135,11 @@ export const PERMITTED_STORY_LINKS = [
 export const STORY_FRAGMENT = gql`
   fragment StoryFragment on Story {
     ${PERMITTED_STORY_ATTRS}
-    tiaki {
-      id
-      preferredName
-      avatarImage {
-        uri
-      }
-    }
   }
 `
 
 export const STORY_LINK_FRAGMENT = gql`
+  ${PublicProfileFieldsFragment}
   ${ARTEFACT_FRAGMENT}
   ${PERSON_FRAGMENT}
   ${COLLECTION_FRAGMENT}
@@ -193,7 +187,7 @@ export const STORY_LINK_FRAGMENT = gql`
       }
     }
     tiaki {
-      ...ProfileFragment
+      ...PublicProfileFields
     }
   }
 `
