@@ -622,8 +622,9 @@ export default {
       const profileId = this.selectedProfile.id
       await this.savePerson({ id: profileId, ...input })
 
-      const relationshipAttrs = pick(input, [...PERMITTED_RELATIONSHIP_ATTRS])
-      if (!isEmpty(relationshipAttrs) && this.selectedProfile.id !== this.view.focus) {
+      const relationshipAttrs = pick(input, PERMITTED_RELATIONSHIP_ATTRS)
+      // TEMP: skips saving relationship if there is no relationship on the selectedProfile
+      if (!isEmpty(relationshipAttrs) && this.selectedProfile.id !== this.view.focus && this.selectedProfile.relationship) {
         const relationship = this.selectedProfile.relationship
         let input = {
           type: 'link/profile-profile/child',

@@ -21,7 +21,7 @@
       >
         <g v-for="node in nodes" :key="node.id" class="node">
           <Node
-            :node.sync="node"
+            :node="node"
             :radius="nodeRadius"
             :nonFocusedPartners="nonFocusedPartners"
             :nodeCentered="nodeCentered"
