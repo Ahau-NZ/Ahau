@@ -23,7 +23,7 @@
                 <!-- <Avatar v-else :size="mobile ? '50px' : '40px'" isView /> -->
               </v-col>
               <v-col  class="py-0">
-                <p style="color:black;">{{ kaitiaki.preferredName }}</p>
+                <p style="color:black;">{{ getDisplayName(kaitiaki) }}</p>
               </v-col>
             </v-row>
           </div>
@@ -71,6 +71,7 @@ import ProfileInfoItem from '@/components/profile/ProfileInfoItem.vue'
 import ProfileCard from '@/components/profile/ProfileCard.vue'
 import Avatar from '@/components/Avatar.vue'
 import { mapGetters, mapActions } from 'vuex'
+import { getDisplayName } from '@/lib/person-helpers.js'
 
 export default {
   name: 'Profile',
@@ -114,7 +115,8 @@ export default {
         name: profile.type,
         params: { tribeId: tribe.id, profileId: profile.id, profile }
       }
-    }
+    },
+    getDisplayName
   }
 }
 </script>

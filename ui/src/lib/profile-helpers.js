@@ -60,6 +60,10 @@ export const PublicProfileFieldsFragment = gql`
   fragment PublicProfileFields on Profile {
     id
     preferredName
+    legalName
+    ...on Person {
+      gender
+    }
     avatarImage { uri }
     feedId: originalAuthor   
   }
