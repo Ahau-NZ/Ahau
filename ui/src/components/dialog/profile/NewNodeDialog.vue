@@ -367,6 +367,7 @@ export default {
         this.hasSelection = false
         this.formData = setDefaultData(this.withRelationships)
       }
+      this.$emit('getSuggestions', null)
     }
 
   },
