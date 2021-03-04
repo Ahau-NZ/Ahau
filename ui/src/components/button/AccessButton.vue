@@ -33,7 +33,7 @@
           :key="index"
           @click="go(tribe)"
         >
-          <Avatar class="mr-3" size="40px" :image="tribe.avatarImage" :isView="!tribe.isPersonalGroup" :alt="getDisplayName(tribe.preferredName)" :gender="tribe.gender" :aliveInterval="tribe.aliveInterval" />
+          <Avatar class="mr-3" size="40px" :image="tribe.avatarImage" :isView="!tribe.isPersonalGroup" :alt="getDisplayName(tribe)" :gender="tribe.gender" :aliveInterval="tribe.aliveInterval" />
           <v-list-item-title>{{ tribe.isPersonalGroup ? 'Private' : tribe.preferredName + ' (tribe)' }}</v-list-item-title>
         </v-list-item>
       </v-list>
