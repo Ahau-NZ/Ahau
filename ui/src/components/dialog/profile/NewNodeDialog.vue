@@ -402,6 +402,10 @@ export default {
     hasSelection (newValue) {
       if (newValue) {
         this.$emit('getSuggestions', null)
+
+        // hack: when there is no legal name and a selected profile, the clearable button doesnt how up
+        // doing this forces it to show
+        if (this.formData.legalName === '' || this.formData.legalName === null) this.formData.legalName = ' '
       }
     }
   }
