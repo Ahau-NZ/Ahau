@@ -78,7 +78,7 @@
 
     <g id="node-label" :style="textStyle">
       <rect :width="textWidth" y="-16" height="20"></rect>
-      <text>{{ nodeDisplayName }}</text>
+      <text>{{ displayName }}</text>
     </g>
     <!-- Changes focus -->
     <g
@@ -108,6 +108,7 @@
 import get from 'lodash.get'
 import avatarHelper from '@/lib/avatar-helpers.js'
 import { DECEASED_COLOUR, ALIVE_COLOUR } from '@/lib/constants.js'
+import { getDisplayName } from '@/lib/person-helpers.js'
 // import flower.svg from '@/src/assets'
 
 export default {
@@ -155,7 +156,7 @@ export default {
     },
     textWidth () {
       // const { x, y } = textElm.getBBox();
-      const width = (this.nodeDisplayName || '').length * 8
+      const width = (this.displayName || '').length * 8
       return width
     },
     groupStyle () {
@@ -187,11 +188,8 @@ export default {
       const x = this.node.right ? -0.3 : 1.4
       return `translate(${x * this.radius} ${1.3 * this.radius})`
     },
-    nodeDisplayName () {
-      // display name on the tree node is preferred name if available, otherwise take the first string in the full name
-      return this.profile.preferredName
-        ? this.profile.preferredName
-        : this.profile.legalName ? this.profile.legalName.split(' ')[0] : ''
+    displayName () {
+      return getDisplayName(this.profile)
     }
   },
   methods: {

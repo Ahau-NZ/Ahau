@@ -28,7 +28,7 @@
         </v-row>
 
         <v-row v-if="isEditing" class="justify-center">
-          <h1>Edit {{ formData.preferredName }}</h1>
+          <h1>Edit {{ getDisplayName(formData) }}</h1>
         </v-row>
         <v-row v-if="isEditing" class="justify-center">
           <v-btn
@@ -358,6 +358,7 @@ import AddButton from '@/components/button/AddButton.vue'
 import DateIntervalPicker from '@/components/DateIntervalPicker.vue'
 
 import { GENDERS, RELATIONSHIPS } from '@/lib/constants'
+import { getDisplayName } from '@/lib/person-helpers.js'
 
 import isEmpty from 'lodash.isempty'
 
@@ -446,6 +447,7 @@ export default {
     }
   },
   methods: {
+    getDisplayName,
     updateSelectedGender (genderClicked) {
       // reset images to outlined
       this.$refs.taneImg.src = require('@/assets/tane-outlined.svg')

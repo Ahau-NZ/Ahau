@@ -12,7 +12,8 @@
     "lint": "vue-cli-service lint",
     "test:js": "tape -r esm src/**/*.test.js | tap-spec",
     "test": "npm run test:js && npm run lint",
-    "clear": "rm -rf node_modules"
+    "clear": "rm -rf node_modules",
+    "build-fragment" : "node src/schemaQuery.js"
   },
   "dependencies": {
     "@mdi/font": "^4.5.95",

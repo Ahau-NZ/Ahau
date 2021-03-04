@@ -16,6 +16,7 @@
 import Stories from '@/components/archive/Stories.vue'
 import CollectionGroup from '@/components/archive/CollectionGroup.vue'
 import { mapGetters } from 'vuex'
+import { getDisplayName } from '@/lib/person-helpers.js'
 
 export default {
   name: 'ArchiveHome',
@@ -32,11 +33,12 @@ export default {
   computed: {
     ...mapGetters(['showStory', 'whoami', 'currentAccess']),
     title () {
-      if (this.profile.id !== this.currentAccess.id) return `Stories about ${this.profile.preferredName ? this.profile.preferredName : this.profile.legalName}`
+      if (this.profile.id !== this.currentAccess.id) return `Stories about ${this.getDisplayName(this.profile)}`
       return 'Stories'
     }
   },
   methods: {
+    getDisplayName,
     showCurrentCollection ({ id }) {
       var type = this.$route.name.split('/archive')[0]
       this.$router.push({

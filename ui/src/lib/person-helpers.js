@@ -1,5 +1,6 @@
 import gql from 'graphql-tag'
 import pick from 'lodash.pick'
+import { PublicProfileFieldsFragment } from './profile-helpers'
 
 export const PERMITTED_PERSON_PROPS = [
   'id',
@@ -70,19 +71,11 @@ export const PERSON_FRAGMENT = gql`
     headerImage { uri }
   }
 `
-export const PUBLIC_PROFILE_FRAGMENT = gql`
-  fragment PublicProfileFragment on Person {
-    id
-    preferredName
-    avatarImage { uri }
-    feedId: originalAuthor
-  }
-`
 
 export const whoami = ({
   query: gql`
+    ${PublicProfileFieldsFragment}
     ${PERSON_FRAGMENT}
-    ${PUBLIC_PROFILE_FRAGMENT}
     ${AUTHOR_FRAGMENT}
     query {
       whoami {
@@ -90,7 +83,7 @@ export const whoami = ({
           feedId
           profile {
             type
-            ...PublicProfileFragment
+            ...ProfileFragment
           }
         }
         personal {
@@ -98,12 +91,12 @@ export const whoami = ({
           profile {
             ...ProfileFragment
             tiaki {
-              ...PublicProfileFragment
+              ...PublicProfileFields
             }
             authors {
               ...AuthorFragment
               profile {
-                ...PublicProfileFragment
+                ...ProfileFragment
               }
             }
           }
@@ -124,9 +117,9 @@ export const PROFILE_LINK_FRAGMENT = gql`
 
 export const getPerson = id => ({
   query: gql`
+    ${PublicProfileFieldsFragment}
     ${PERSON_FRAGMENT}
     ${AUTHOR_FRAGMENT}
-    ${PUBLIC_PROFILE_FRAGMENT}
     ${PROFILE_LINK_FRAGMENT}
     query($id: String!) {
       person(id: $id){
@@ -144,12 +137,12 @@ export const getPerson = id => ({
           ...ProfileLinkFragment
         }
         tiaki {
-          ...PublicProfileFragment
+          ...PublicProfileFields
         }
         authors {
           ...AuthorFragment
           profile {
-            ...PublicProfileFragment
+            ...ProfileFragment
           }
         }
       }
@@ -199,7 +192,14 @@ export const savePerson = input => {
 function pruneEmptyValues (input) {
   const pruned = {}
   Object.entries(input).forEach(([key, value]) => {
-    if (value !== '' && value !== null) pruned[key] = value
+    if (value !== null) pruned[key] = value
   })
   return pruned
+}
+
+export function getDisplayName (profile) {
+  if (!profile || (!profile.preferredName && !profile.legalName)) return 'Unknown'
+  if (profile.preferredName === '' && profile.legalName === '') return 'Unknown'
+
+  return profile.preferredName || profile.legalName.split(' ')[0]
 }

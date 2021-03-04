@@ -27,7 +27,7 @@
         <!-- MENTIONS + CONTRIBUTORS + CREATOR -->
         <template v-if="item.type === 'person'">
           <v-list-item class="click" @mousedown="addSelectedItem(item)">
-            <Avatar class="mr-3" size="40px" :image="item.avatarImage" :alt="item.preferredName" :gender="item.gender" :aliveInterval="item.aliveInterval" />
+            <Avatar class="mr-3" size="40px" :image="item.avatarImage" :alt="getDisplayName(item)" :gender="item.gender" :aliveInterval="item.aliveInterval" />
             <v-list-item-content>
               <v-list-item-title> {{ item.preferredName || 'No preferred name' }} </v-list-item-title>
               <v-list-item-subtitle>Preferred name</v-list-item-subtitle>
@@ -46,7 +46,7 @@
         <!-- ACCESS -->
         <template v-else-if="item.type === 'community'">
           <v-list-item class="click" @mousedown="addSelectedItem(item)">
-            <Avatar class="mr-3" size="40px" :image="item.avatarImage" isView :alt="item.preferredName" :gender="item.gender" :aliveInterval="item.aliveInterval" />
+            <Avatar class="mr-3" size="40px" :image="item.avatarImage" isView :alt="getDisplayName(item)" :gender="item.gender" :aliveInterval="item.aliveInterval" />
             <v-list-item-content>
               <v-list-item-title> {{ item.preferredName || 'Untitled Tribe' }} </v-list-item-title>
               <v-list-item-subtitle>Tribe name</v-list-item-subtitle>
@@ -90,6 +90,8 @@ import Chip from '@/components/archive/Chip.vue'
 
 // default image for list items
 import niho from '@/assets/niho.svg'
+
+import { getDisplayName } from '@/lib/person-helpers.js'
 
 export default {
   name: 'ProfileSearchBar',
@@ -161,6 +163,7 @@ export default {
     }
   },
   methods: {
+    getDisplayName,
     getImage (item) {
       // for stories
       const { artefacts } = item

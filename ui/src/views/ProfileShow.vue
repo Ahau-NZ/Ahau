@@ -44,7 +44,7 @@
     <EditNodeDialog
       v-if="dialog === 'edit-node'"
       :show="dialog === 'edit-node'"
-      :title="`Edit ${profile.preferredName}`"
+      :title="`Edit ${getDisplayName(profile)}`"
       @submit="updatePerson"
       @close="dialog = null"
       :profile="profile"
@@ -89,6 +89,7 @@ import NewRegistrationDialog from '@/components/dialog/registration/NewRegistrat
 import { updateTribe, deleteTribe, getMembers, getTribalProfile } from '@/lib/community-helpers.js'
 
 import { createGroupApplication } from '@/lib/tribes-application-helpers.js'
+import { getDisplayName } from '@/lib/person-helpers.js'
 
 import {
   mapGetters,
@@ -194,6 +195,7 @@ export default {
     }
   },
   methods: {
+    getDisplayName,
     ...mapAlertMutations(['showAlert']),
     ...mapMutations(['updateSelectedProfile', 'setCurrentAccess']),
     goEdit () {
