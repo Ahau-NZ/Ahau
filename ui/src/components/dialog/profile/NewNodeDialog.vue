@@ -34,15 +34,15 @@
                 <template v-if="typeof data.item === 'object'">
                   <v-list-item @click="setFormData(data.item)">
                     <Avatar class="mr-3" size="40px" :image="data.item.profile.avatarImage" :alt="data.item.profile.preferredName" :gender="data.item.profile.gender" :aliveInterval="data.item.profile.aliveInterval" />
-                    <v-list-item-content>
+                    <v-list-item-content v-if="data.item.profile.preferredName">
                       <v-list-item-title> {{ data.item.profile.preferredName }} </v-list-item-title>
                       <v-list-item-subtitle>Preferred name</v-list-item-subtitle>
                     </v-list-item-content>
-                    <v-list-item-content>
-                      <v-list-item-title> {{ data.item.profile.preferredName ? data.item.profile.preferredName :  '&nbsp;' }} </v-list-item-title>
+                    <v-list-item-content v-if="data.item.profile.legalName">
+                      <v-list-item-title> {{ data.item.profile.legalName }} </v-list-item-title>
                       <v-list-item-subtitle>Full Name</v-list-item-subtitle>
                     </v-list-item-content>
-                    <v-list-item-action>
+                    <v-list-item-action v-if="age(data.item.profile.aliveInterval)">
                       <v-list-item-title> {{ age(data.item.profile.aliveInterval) }} </v-list-item-title>
                       <v-list-item-subtitle>Age</v-list-item-subtitle>
                     </v-list-item-action>
@@ -356,7 +356,7 @@ export default {
       this.resetFormData()
       this.$emit('close')
     },
-    async setFormData (person) {
+    setFormData (person) {
       this.hasSelection = true
       this.profile = person.profile
       this.formData.relationshipType = person.relationshipType
@@ -389,7 +389,7 @@ export default {
         this.showAvatar = true
       }
     },
-    'formData.preferredName' (newValue) {
+    'formData.legalName' (newValue) {
       if (!newValue) return
       if (newValue.length > 2) {
         if (!this.hasSelection) {
