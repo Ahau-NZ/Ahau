@@ -53,6 +53,7 @@
       <!-- Names -->
       <v-col cols="12" :sm="mobile ? '12' : '6'" class="pt-4">
         <v-row>
+          <!-- Full Name -->
           <v-col cols="12" class="pa-1">
             <slot name="search">
               <v-text-field
@@ -62,6 +63,15 @@
                 outlined
               />
             </slot>
+          </v-col>
+          <!-- Preferred Name -->
+          <v-col cols="12" class="pa-1">
+            <v-text-field
+            v-model="formData.preferredName"
+            label="First Name / Known As"
+            v-bind="customProps"
+            outlined
+            />
           </v-col>
         </v-row>
 
@@ -175,16 +185,7 @@
     <v-divider v-if="!showAdvanced" />
     <v-expand-transition>
       <div v-show="showAdvanced">
-        <!-- Preferred name -->
         <v-row>
-          <v-col cols="6" class="pa-1">
-            <v-text-field
-            v-model="formData.preferredName"
-            label="Preferred Name"
-            v-bind="customProps"
-            outlined
-            />
-          </v-col>
           <!-- Alt names -->
           <template>
             <v-col v-for="(altName, index) in formData.altNames.currentState"
