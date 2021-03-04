@@ -17,22 +17,22 @@
     <NewNodeDialog
       v-if="isActive('new-node')"
       :show="isActive('new-node')"
-      :title="source !== 'new-registration' ? `Add ${dialogType} to ${selectedProfile.preferredName}`:`Add ${dialogType} to Registration Form`"
+      :title="`Add ${dialogType} to ${getDisplayName(selectedProfile)}`"
       :selectedProfile="selectedProfile"
       :suggestions="suggestions"
       :type="dialogType"
-      :withView="source !== 'new-registration'"
+      withView
       @getSuggestions="getSuggestions($event)"
-      @create="source !== 'new-registration' ? addPerson($event) : dialogType === 'grandparent' ? addGrandparentToRegistartion($event) : addParentToRegistration($event)"
+      @create="addPerson($event)"
       @close="close"
     />
     <EditNodeDialog
       v-if="isActive('edit-node')"
       :show="isActive('edit-node')"
-      :title="source === 'new-registration' ? `Edit ${registration.preferredName}`:`Edit ${profile.preferredName}`"
+      :title="`Edit ${getDisplayName(selectedProfile)}`"
       @submit="updatePerson($event)"
       @close="close"
-      :profile="source === 'new-registration' ? registration : profile"
+      :profile="profile"
     />
     <SideViewEditNodeDialog
       v-if="isActive('view-edit-node')"
@@ -122,7 +122,7 @@ import FilterMenu from '@/components/dialog/whakapapa/FilterMenu.vue'
 import ComingSoonDialog from '@/components/dialog/ComingSoonDialog.vue'
 import ReviewRegistrationDialog from '@/components/dialog/registration/ReviewRegistrationDialog.vue'
 
-import { PERMITTED_RELATIONSHIP_ATTRS, savePerson } from '@/lib/person-helpers.js'
+import { PERMITTED_RELATIONSHIP_ATTRS, savePerson, getDisplayName } from '@/lib/person-helpers.js'
 import { createGroup, saveCommunity, savePublicCommunity, saveGroupProfileLink } from '@/lib/community-helpers'
 import { saveWhakapapaView } from '@/lib/whakapapa-helpers.js'
 import { findByName } from '@/lib/search-helpers.js'
@@ -243,29 +243,11 @@ export default {
     }
   },
   methods: {
+    getDisplayName,
     ...mapAlertMutations(['showAlert']),
     ...mapActions(['updateNode', 'deleteNode', 'updatePartnerNode', 'addChild', 'addParent', 'loading', 'setDialog',
       'setProfileById', 'setTribes'
     ]),
-    addGrandparentToRegistartion (grandparent) {
-      var parent = this.parents[this.parentIndex]
-      if (parent.grandparents) {
-        parent.grandparents.push(grandparent)
-      } else {
-        parent = {
-          ...parent,
-          grandparents: [grandparent]
-        }
-      }
-      this.parents.splice(this.parentIndex, 1, parent)
-    },
-    addParentToRegistration (parent) {
-      this.parents.push(parent)
-    },
-    toggleEditProfile (profile) {
-      this.registration = profile
-      this.toggleDialog('edit-node', null, 'new-registration')
-    },
     isActive (type) {
       if (type === this.dialog || type === this.storeDialog) {
         return true
@@ -636,8 +618,9 @@ export default {
       const profileId = this.selectedProfile.id
       await this.savePerson({ id: profileId, ...input })
 
-      const relationshipAttrs = pick(input, [...PERMITTED_RELATIONSHIP_ATTRS])
-      if (!isEmpty(relationshipAttrs) && this.selectedProfile.id !== this.view.focus) {
+      const relationshipAttrs = pick(input, PERMITTED_RELATIONSHIP_ATTRS)
+      // TEMP: skips saving relationship if there is no relationship on the selectedProfile
+      if (!isEmpty(relationshipAttrs) && this.selectedProfile.id !== this.view.focus && this.selectedProfile.relationship) {
         const relationship = this.selectedProfile.relationship
         let input = {
           type: 'link/profile-profile/child',
@@ -665,15 +648,9 @@ export default {
       }
 
       if (this.storeDialog === 'edit-node') {
-        if (this.source === 'new-registration') {
-          this.close()
-          return
-        } else {
-          this.setProfileById({
-            id: profileId
-          })
-          return
-        }
+        this.setProfileById({
+          id: profileId
+        })
       }
 
       // reload the selectedProfiles personal details

@@ -28,7 +28,7 @@
         </v-row>
 
         <v-row v-if="isEditing" class="justify-center">
-          <h1>Edit {{ formData.preferredName }}</h1>
+          <h1>Edit {{ getDisplayName(formData) }}</h1>
         </v-row>
         <v-row v-if="isEditing" class="justify-center">
           <v-btn
@@ -53,6 +53,7 @@
       <!-- Names -->
       <v-col cols="12" :sm="mobile ? '12' : '6'" class="pt-4">
         <v-row>
+          <!-- Full Name -->
           <v-col cols="12" class="pa-1">
             <slot name="search">
               <v-text-field
@@ -62,6 +63,15 @@
                 outlined
               />
             </slot>
+          </v-col>
+          <!-- Preferred Name -->
+          <v-col cols="12" class="pa-1">
+            <v-text-field
+            v-model="formData.preferredName"
+            label="First Name / Known As"
+            v-bind="customProps"
+            outlined
+            />
           </v-col>
         </v-row>
 
@@ -175,16 +185,7 @@
     <v-divider v-if="!showAdvanced" />
     <v-expand-transition>
       <div v-show="showAdvanced">
-        <!-- Preferred name -->
         <v-row>
-          <v-col cols="6" class="pa-1">
-            <v-text-field
-            v-model="formData.preferredName"
-            label="Preferred Name"
-            v-bind="customProps"
-            outlined
-            />
-          </v-col>
           <!-- Alt names -->
           <template>
             <v-col v-for="(altName, index) in formData.altNames.currentState"
@@ -357,6 +358,7 @@ import AddButton from '@/components/button/AddButton.vue'
 import DateIntervalPicker from '@/components/DateIntervalPicker.vue'
 
 import { GENDERS, RELATIONSHIPS } from '@/lib/constants'
+import { getDisplayName } from '@/lib/person-helpers.js'
 
 import isEmpty from 'lodash.isempty'
 
@@ -445,6 +447,7 @@ export default {
     }
   },
   methods: {
+    getDisplayName,
     updateSelectedGender (genderClicked) {
       // reset images to outlined
       this.$refs.taneImg.src = require('@/assets/tane-outlined.svg')

@@ -19,11 +19,10 @@
           <div>
             <v-row  v-for="(kaitiaki, i) in profile.tiaki" :key="i" class="justify-center align-center ma-0 ml-4">
               <v-col cols="2" class="pt-0 pl-0">
-                <Avatar :size="mobile ? '50px' : '40px'" :image="kaitiaki.avatarImage" :alt="kaitiaki.preferredName" :aliveInterval="kaitiaki.aliveInterval"/>
-                <!-- <Avatar v-else :size="mobile ? '50px' : '40px'" isView /> -->
+                <Avatar :size="mobile ? '50px' : '40px'" :image="kaitiaki.avatarImage" :alt="kaitiaki.preferredName" :aliveInterval="kaitiaki.aliveInterval" :gender="kaitiaki.gender"/>
               </v-col>
               <v-col  class="py-0">
-                <p style="color:black;">{{ kaitiaki.preferredName }}</p>
+                <p style="color:black;">{{ getDisplayName(kaitiaki) }}</p>
               </v-col>
             </v-row>
           </div>
@@ -71,6 +70,7 @@ import ProfileInfoItem from '@/components/profile/ProfileInfoItem.vue'
 import ProfileCard from '@/components/profile/ProfileCard.vue'
 import Avatar from '@/components/Avatar.vue'
 import { mapGetters, mapActions } from 'vuex'
+import { getDisplayName } from '@/lib/person-helpers.js'
 
 export default {
   name: 'Profile',
@@ -114,7 +114,8 @@ export default {
         name: profile.type,
         params: { tribeId: tribe.id, profileId: profile.id, profile }
       }
-    }
+    },
+    getDisplayName
   }
 }
 </script>
