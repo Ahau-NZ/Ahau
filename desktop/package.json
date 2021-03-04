@@ -6,7 +6,7 @@
   "scripts": {
     "postinstall": "electron-builder install-app-deps",
     "start": "electron index.js -- --title Āhau",
-    "start:dev": "cross-env NODE_ENV=development electron index.js -- --title Āhau",
+    "dev": "cross-env NODE_ENV=development electron index.js -- --title Āhau",
     "build:icons": "node build/build-icons.js",
     "pack": "electron-builder --config build/electron-builder.config.js --dir",
     "dist": "electron-builder --config build/electron-builder.config.js",
@@ -24,6 +24,7 @@
     "ssb-conn": "^1.0.0",
     "ssb-db": "^20.3.0",
     "ssb-friends": "^4.2.1",
+    "ssb-hyper-blobs": "^0.1.0",
     "ssb-invite": "^2.1.6",
     "ssb-lan": "^0.2.0",
     "ssb-master": "^1.0.3",

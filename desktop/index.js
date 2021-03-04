@@ -13,6 +13,7 @@ const plugins = [
 
   'ssb-blobs',
   'ssb-serve-blobs',
+  'ssb-hyper-blobs',
 
   'ssb-query',
   'ssb-backlinks',
