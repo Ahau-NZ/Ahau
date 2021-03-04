@@ -18,8 +18,7 @@
     autofocus
   >
     <template v-slot:item="data">
-      <!-- not sure why v-if="!searchFilter" is needed both here and the line below, but seems it is needed in both places to prevent a blank v-list-item when showing when filtering--->
-      <template v-if="!searchFilter">
+      <template>
         <v-list-item @click="setSearchNode(data.item, $event)" v-if="!searchFilter">
           <Avatar class="mr-3" size="40px" :image="data.item.avatarImage" :alt="data.item.preferredName" :gender="data.item.gender" :aliveInterval="data.item.aliveInterval" />
           <v-list-item-content>
