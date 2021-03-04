@@ -28,7 +28,7 @@
         </v-row>
 
         <v-row v-if="isEditing" class="justify-center">
-          <h1>Edit {{ getDisplayName(formData.preferredName) }}</h1>
+          <h1>Edit {{ getDisplayName(formData) }}</h1>
         </v-row>
         <v-row v-if="isEditing" class="justify-center">
           <v-btn
