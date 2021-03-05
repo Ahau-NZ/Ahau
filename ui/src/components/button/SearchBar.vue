@@ -2,7 +2,7 @@
   <v-combobox
     v-model="searchString"
     :items="nodes"
-    :menu-props=" { light: true } "
+    :menu-props=" { light: true, value: !searchFilter } "
     hide-no-data
     :append-icon="!searchFilter ? 'mdi-close' : ''"
     @click:append="close()"
@@ -18,23 +18,21 @@
     autofocus
   >
     <template v-slot:item="data">
-      <template>
-        <v-list-item @click="setSearchNode(data.item, $event)" v-if="!searchFilter">
-          <Avatar class="mr-3" size="40px" :image="data.item.avatarImage" :alt="data.item.preferredName" :gender="data.item.gender" :aliveInterval="data.item.aliveInterval" />
-          <v-list-item-content>
-            <v-list-item-title> {{ data.item.preferredName }}</v-list-item-title>
-            <v-list-item-subtitle>Preferred name</v-list-item-subtitle>
-          </v-list-item-content>
-          <v-list-item-content>
-            <v-list-item-title> {{ data.item.legalName }}</v-list-item-title>
-            <v-list-item-subtitle>Legal name</v-list-item-subtitle>
-          </v-list-item-content>
-          <v-list-item-action>
-            <v-list-item-title>{{ age(data.item.aliveInterval) }}</v-list-item-title>
-            <v-list-item-subtitle>Age</v-list-item-subtitle>
-          </v-list-item-action>
-        </v-list-item>
-      </template>
+      <v-list-item @click="setSearchNode(data.item, $event)">
+        <Avatar class="mr-3" size="40px" :image="data.item.avatarImage" :alt="data.item.preferredName" :gender="data.item.gender" :aliveInterval="data.item.aliveInterval" />
+        <v-list-item-content>
+          <v-list-item-title> {{ data.item.preferredName }}</v-list-item-title>
+          <v-list-item-subtitle>Preferred name</v-list-item-subtitle>
+        </v-list-item-content>
+        <v-list-item-content>
+          <v-list-item-title> {{ data.item.legalName }}</v-list-item-title>
+          <v-list-item-subtitle>Legal name</v-list-item-subtitle>
+        </v-list-item-content>
+        <v-list-item-action>
+          <v-list-item-title>{{ age(data.item.aliveInterval) }}</v-list-item-title>
+          <v-list-item-subtitle>Age</v-list-item-subtitle>
+        </v-list-item-action>
+      </v-list-item>
     </template>
   </v-combobox>
 </template>
