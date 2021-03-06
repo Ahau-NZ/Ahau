@@ -11,18 +11,18 @@
       height="calc(100vh - 64px)"
       class="side-menu"
     >
-      <v-card light min-height="100%">
+      <v-card light height="90%" class="text-center" flat>
         <v-container>
-          <v-row class="justify-center menu-title">
-            <h1>Apply Table Filters</h1>
-          </v-row>
-          <v-row>
-            <v-col class="py-1 px-0 profile-label overline">
-              Name
+          <v-row class="menu-title">
+            <v-col cols="12">
+              <h1>Apply Table Filters</h1>
             </v-col>
-          </v-row>
-          <v-row>
-            <v-col class="py-1 px-0 profile-label overline">
+            <v-col>
+              <p class="profile-label overline">
+                Name
+              </p>
+            </v-col>
+            <v-col cols="12">
               <SearchBar
                 :searchNodeId.sync="searchNodeId"
                 :searchFilterString.sync="searchFilterString"
@@ -31,16 +31,20 @@
               />
             </v-col>
           </v-row>
-          <v-spacer style="height:400px"></v-spacer>
-          <v-row class="nav-buttons">
-            <v-btn @click="close" text large fab class="blue--text ml-5 filter-btn">
-              Apply and Close
-            </v-btn>
-            <v-btn @click="reset" text large fab class="red--text ml-5 filter-btn">
-              Clear
-            </v-btn>
-          </v-row>
         </v-container>
+        <v-spacer />
+        <v-card-actions class="pa-0">
+          <v-row>
+            <v-col cols="12">
+              <v-btn @click="close" text large color="blue">
+                Apply and Close
+              </v-btn>
+              <v-btn @click="reset" text large color="red">
+                Clear
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-card-actions>
       </v-card>
     </v-navigation-drawer>
   </transition>
