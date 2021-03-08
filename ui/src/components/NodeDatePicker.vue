@@ -10,7 +10,7 @@
         {{ label }}
       </legend>
       <v-row>
-        <v-col cols="3" class="pl-6 py-0">
+        <v-col cols="3" class="pl-6 pr-0 py-0">
           <v-select
             :items="days"
             ref="day"
@@ -24,7 +24,7 @@
             auto-focus
           ></v-select>
         </v-col>
-        <v-col cols="5" class="pr-4 py-0">
+        <v-col cols="5" class="px-4 py-0">
           <v-select
             :items="months"
             ref="month"
@@ -38,7 +38,7 @@
             auto-focus
           ></v-select>
         </v-col>
-        <v-col cols="4" class="pr-6 py-0">
+        <v-col cols="4" class=" pl-0 pr-6 py-0">
           <v-select
             :items="years"
             ref="year"

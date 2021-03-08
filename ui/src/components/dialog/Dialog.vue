@@ -34,10 +34,10 @@
         >
           <v-icon>mdi-arrow-left</v-icon>
         </v-btn>
-        <v-spacer v-if="mobile"/>
+        <v-spacer v-if="mobile" style="min-width:10%"/>
 
-        <div class="dialog-title text-uppercase">
-          <span style="color: #BA041B; font-weight:500">{{ splitTitle.maori }}</span>
+        <div class="dialog-title text-uppercase" :style="mobile ? 'text-align:end':''">
+          <span :style="mobile ? 'color: #BA041B; font-weight:500':'color: #BA041B; font-weight:100'" >{{ splitTitle.maori }}</span>
           <span>{{ splitTitle.english }}</span>
         </div>
 
