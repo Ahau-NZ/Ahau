@@ -37,8 +37,8 @@
         <div v-if="search" class="icon-search">
           <SearchBar :nestedWhakapapa="nestedWhakapapa" :searchNodeId.sync="searchNodeId" :searchFilter="false" @close="clickedOffSearch()"  @searchNode="setSearchNode($event)"/>
         </div>
-        <div v-else class="icon-button">
-          <SearchButton :search.sync="search"/>
+        <div v-else-if="searchFilterString === ''" class="icon-button">
+          <SearchButton :search.sync="search" />
         </div>
         <div v-if="whakapapa.table" class="icon-button">
           <SearchFilterButton :searchFilter.sync="searchFilter"/>
@@ -88,8 +88,8 @@
           <div v-if="search" class="icon-search ml-n12 pt-7" @click.stop>
             <SearchBar :nestedWhakapapa="nestedWhakapapa" :searchNodeId.sync="searchNodeId" @searchNode="setSearchNode($event)" @close="clickedOffSearch()"/>
           </div>
-          <div v-else  class="icon-button">
-            <SearchButton  @click.stop :search.sync="search"/>
+          <div v-else-if="searchFilterString === ''"  class="icon-button">
+            <SearchButton  @click.stop :search.sync="search" />
           </div>
           <div v-if="whakapapa.table" class="icon-button">
             <SearchFilterButton :searchFilter.sync="searchFilter"/>
