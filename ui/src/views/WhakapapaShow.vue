@@ -35,10 +35,13 @@
 
       <v-row v-if="!mobile" class="select">
         <div v-if="search" class="icon-search">
-          <SearchBar :nestedWhakapapa="nestedWhakapapa" :searchNodeId.sync="searchNodeId" @searchNode="setSearchNode($event)" @close="clickedOff()"/>
+          <SearchBar :nestedWhakapapa="nestedWhakapapa" :searchNodeId.sync="searchNodeId" :searchFilter="false" @close="clickedOffSearch()"  @searchNode="setSearchNode($event)"/>
         </div>
-        <div v-else  class="icon-button">
-          <SearchButton :search.sync="search"/>
+        <div v-else-if="searchFilterString === ''" class="icon-button">
+          <SearchButton :search.sync="search" />
+        </div>
+        <div v-if="whakapapa.table" class="icon-button">
+          <SearchFilterButton :searchFilter.sync="searchFilter"/>
         </div>
         <div v-if="whakapapa.table && flatten" class="icon-button">
           <SortButton @sort="sortTable($event)" />
@@ -83,10 +86,13 @@
             </v-btn>
           </template>
           <div v-if="search" class="icon-search ml-n12 pt-7" @click.stop>
-            <SearchBar :nestedWhakapapa="nestedWhakapapa" :searchNodeId.sync="searchNodeId" @searchNode="setSearchNode($event)" @close="clickedOff()"/>
+            <SearchBar :nestedWhakapapa="nestedWhakapapa" :searchNodeId.sync="searchNodeId" @searchNode="setSearchNode($event)" @close="clickedOffSearch()"/>
           </div>
-          <div v-else  class="icon-button">
-            <SearchButton  @click.stop :search.sync="search"/>
+          <div v-else-if="searchFilterString === ''"  class="icon-button">
+            <SearchButton  @click.stop :search.sync="search" />
+          </div>
+          <div v-if="whakapapa.table" class="icon-button">
+            <SearchFilterButton :searchFilter.sync="searchFilter"/>
           </div>
           <div v-if="whakapapa.table && flatten" class="icon-button">
             <SortButton @sort="sortTable($event)" />
@@ -136,6 +142,7 @@
           @collapse-node="collapseNode($event)"
           @open-context-menu="openContextMenu($event)"
           :searchNodeId="searchNodeId"
+          :searchFilterString="searchFilterString"
           :sortValue="sortValue"
           :sortEvent="sortEvent"
           :searchNodeEvent="searchNodeEvent"
@@ -183,6 +190,7 @@
       :loadKnownFamily="loadKnownFamily"
       :getRelatives="getRelatives"
       :relationshipLinks="relationshipLinks"
+      :searchFilterString.sync="searchFilterString"
       @updateFocus="updateFocus($event)"
       :setSelectedProfile="setSelectedProfile"
       @change-focus="changeFocus($event)"
@@ -192,6 +200,7 @@
       @delete-whakapapa="deleteWhakapapa"
       @refreshWhakapapa="refreshWhakapapa"
       @setFocus="setFocus($event)"
+      @toggleFilterMenu="clickedOffSearchFilter()"
     />
   </div>
 </template>
@@ -213,6 +222,8 @@ import SortButton from '@/components/button/SortButton.vue'
 
 import SearchBar from '@/components/button/SearchBar.vue'
 import SearchButton from '@/components/button/SearchButton.vue'
+
+import SearchFilterButton from '@/components/button/SearchFilterButton.vue'
 
 import tree from '@/lib/tree-helpers'
 import avatarHelper from '@/lib/avatar-helpers.js'
@@ -238,6 +249,7 @@ export default {
     SortButton,
     SearchBar,
     SearchButton,
+    SearchFilterButton,
     FeedbackButton,
     Table,
     Tree,
@@ -257,6 +269,8 @@ export default {
       overflow: 'false',
       pan: 0,
       search: false,
+      searchFilter: false,
+      searchFilterString: '',
       searchNodeId: '',
       searchNodeEvent: null,
       showWhakapapaHelper: false,
@@ -417,6 +431,12 @@ export default {
     },
     relationshipLinks (newVal) {
       this.addRelationshipLinks(newVal)
+    },
+    searchFilter (newValue) {
+      if (newValue === true) {
+        this.updateDialog('table-filter-menu', null)
+        this.flatten = true
+      }
     }
   },
 
@@ -427,8 +447,11 @@ export default {
       var show = width > screen.width
       this.overflow = show
     },
-    clickedOff () {
+    clickedOffSearch () {
       this.search = !this.search
+    },
+    clickedOffSearchFilter () {
+      this.searchFilter = !this.searchFilter
     },
     isVisibleProfile (descendant) {
       if (this.whakapapaView.ignoredProfiles) { return this.whakapapaView.ignoredProfiles.indexOf(descendant.profile.id) === -1 }

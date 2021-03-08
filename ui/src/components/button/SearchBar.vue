@@ -1,40 +1,37 @@
 <template>
   <v-combobox
     v-model="searchString"
-    :items="nodes"
-    :menu-props="{ light: true }"
-    hide-no-data
-    append-icon="mdi-close"
+    :items="items"
+    :menu-props=" { light: true } "
+    :append-icon="!searchFilter ? 'mdi-close' : ''"
     @click:append="close()"
     placeholder="Search"
-    no-data-text="no suggestions"
+    :no-data-text="searchFilter ? '' : 'no suggestions'"
     :search-input.sync="searchString"
     solo
     rounded
     light
     hide-selected
     dense
-    class="search-input"
+    :class="searchFilter ? 'search-input-filter' : 'search-input'"
     autofocus
   >
     <template v-slot:item="data">
-      <template>
-        <v-list-item @click.stop="setSearchNode(data.item, $event)">
-          <Avatar class="mr-3" size="40px" :image="data.item.avatarImage" :alt="data.item.preferredName" :gender="data.item.gender" :aliveInterval="data.item.aliveInterval" />
-          <v-list-item-content>
-            <v-list-item-title> {{ data.item.preferredName }}</v-list-item-title>
-            <v-list-item-subtitle>Preferred name</v-list-item-subtitle>
-          </v-list-item-content>
-          <v-list-item-content>
-            <v-list-item-title> {{ data.item.legalName }}</v-list-item-title>
-            <v-list-item-subtitle>Legal name</v-list-item-subtitle>
-          </v-list-item-content>
-          <v-list-item-action>
-            <v-list-item-title>{{ age(data.item.aliveInterval) }}</v-list-item-title>
-            <v-list-item-subtitle>Age</v-list-item-subtitle>
-          </v-list-item-action>
-        </v-list-item>
-      </template>
+      <v-list-item @click="setSearchNode(data.item, $event)">
+        <Avatar class="mr-3" size="40px" :image="data.item.avatarImage" :alt="data.item.preferredName" :gender="data.item.gender" :aliveInterval="data.item.aliveInterval" />
+        <v-list-item-content>
+          <v-list-item-title> {{ data.item.preferredName }}</v-list-item-title>
+          <v-list-item-subtitle>Preferred name</v-list-item-subtitle>
+        </v-list-item-content>
+        <v-list-item-content>
+          <v-list-item-title> {{ data.item.legalName }}</v-list-item-title>
+          <v-list-item-subtitle>Legal name</v-list-item-subtitle>
+        </v-list-item-content>
+        <v-list-item-action>
+          <v-list-item-title>{{ age(data.item.aliveInterval) }}</v-list-item-title>
+          <v-list-item-subtitle>Age</v-list-item-subtitle>
+        </v-list-item-action>
+      </v-list-item>
     </template>
   </v-combobox>
 </template>
@@ -55,12 +52,8 @@ export default {
     Avatar
   },
   props: {
-    // nestedWhakapapa: {
-    //   type: Object
-    // },
-    searchNodeId: {
-      type: String
-    }
+    searchNodeId: String,
+    searchFilter: Boolean
   },
   data () {
     return {
@@ -96,6 +89,15 @@ export default {
             altNameMatch
           )
         })
+    },
+    items () {
+      if (this.searchFilter) return []
+      return this.nodes
+    }
+  },
+  watch: {
+    searchString (newValue) {
+      if (this.searchFilter) this.$emit('update:searchFilterString', newValue)
     }
   },
   methods: {
@@ -107,6 +109,7 @@ export default {
       return calculateAge(aliveInterval)
     },
     close () {
+      this.$emit('update:searchFilterString', '')
       this.$emit('close')
     },
     setSearchNode (data, event) {
@@ -135,6 +138,10 @@ export default {
     padding: 0;
     margin: 0;
     margin-top: -3px;
+  }
+
+  .search-input-filter {
+    margin: 0px 25px 0px 25px;
   }
 
 </style>

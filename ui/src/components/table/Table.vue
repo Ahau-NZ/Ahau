@@ -98,6 +98,7 @@ import * as d3 from 'd3'
 import Node from './Node.vue'
 import Link from '../tree/Link.vue'
 import calculateAge from '../../lib/calculate-age.js'
+import isEmpty from 'lodash.isempty'
 import isEqual from 'lodash.isequal'
 import { mapGetters, mapActions } from 'vuex'
 import { dateIntervalToString } from '@/lib/date-helpers.js'
@@ -138,6 +139,10 @@ export default {
     pan: {
       type: Number,
       default: 0
+    },
+    searchFilterString: {
+      type: String,
+      default: ''
     },
     sortValue: {
       type: String,
@@ -214,12 +219,8 @@ export default {
         .sort((a, b) => {
           return this.determineSort(a, b)
         })
-        // filter deceased
-        .filter(peeps => {
-          if (this.filter && peeps.data.deceased) {
-            return false
-          }
-          return true
+        .filter(d => {
+          return this.applyFilter(d)
         })
         // returns a new custom object for each node
         .map((d, i) => {
@@ -410,6 +411,10 @@ export default {
 
       // this.updateNode({ is, path: endNode.path })
     },
+    setString (name) {
+      if (isEmpty(name)) return ''
+      return name.toLowerCase().trim()
+    },
     altNames (altArray) {
       var altNames = ''
 
@@ -504,7 +509,6 @@ export default {
       if (label === 'City, Country') {
         return location[this.sort['location']]
       }
-
       return ''
     },
     // Executes a sort on two values
@@ -601,6 +605,36 @@ export default {
         top: elementPos,
         behavior: 'smooth'
       })
+    },
+    applyFilter (node) {
+      if (this.searchFilterString) {
+        if (this.nameMatchesFilter(node)) return true
+        else return false
+      }
+      if (this.filter && node.data.deceased) return false
+      return true
+    },
+    nameMatchesFilter (node) {
+      const search = this.setString(this.searchFilterString)
+      const preferredName = this.setString(node.data.preferredName)
+      const legalName = this.setString(node.data.legalName)
+
+      return isEqual(preferredName, search) ||
+            preferredName.includes(search) ||
+            isEqual(legalName, search) ||
+            legalName.includes(search) ||
+            this.findAltNameMatch(search, node.data.altNames)
+    },
+    findAltNameMatch (filterString, altNames) {
+      if (altNames.length > 0) {
+        for (var i = 0; i < altNames.length; i++) {
+          const currAltName = this.setString(altNames[i])
+          if (isEqual(currAltName, filterString) || currAltName.includes(filterString)) {
+            return true
+          }
+        }
+      }
+      return false
     }
   },
   components: {
