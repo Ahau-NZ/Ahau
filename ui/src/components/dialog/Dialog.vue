@@ -73,7 +73,6 @@
                   Cancel
                 </v-btn>
               </v-col>
-              <v-spacer></v-spacer>
               <v-col cols="6" md="auto" :align="mobile ? 'center' : 'end'" class="py-0">
                 <v-btn @click="submit"
                   :fab="!mobile"
