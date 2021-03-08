@@ -18,7 +18,7 @@
             :size="size"
             ::isEditing="false"
             :image="profile.avatarImage"
-            :alt="profile.preferredName"
+            :alt="getDisplayName(profile)"
             :gender="profile.gender"
             :aliveInterval="profile.aliveInterval"
             :deceased="profile.deceased"
@@ -40,6 +40,7 @@
 
 <script>
 import Avatar from './Avatar.vue'
+import { getDisplayName } from '@/lib/person-helpers.js'
 
 export default {
   name: 'AvatarGroup',
@@ -72,6 +73,7 @@ export default {
     }
   },
   methods: {
+    getDisplayName,
     click (profile) {
       this.$emit('profile-click', profile)
     }

@@ -34,10 +34,10 @@
         >
           <v-icon>mdi-arrow-left</v-icon>
         </v-btn>
-        <v-spacer v-if="mobile"/>
+        <v-spacer v-if="mobile" style="min-width:10%"/>
 
-        <div class="dialog-title text-uppercase">
-          <span style="color: #BA041B; font-weight:500">{{ splitTitle.maori }}</span>
+        <div class="dialog-title text-uppercase" :style="mobile ? 'text-align:end':''">
+          <span :style="mobile ? 'color: #BA041B; font-weight:500':'color: #BA041B; font-weight:100'" >{{ splitTitle.maori }}</span>
           <span>{{ splitTitle.english }}</span>
         </div>
 
@@ -55,7 +55,7 @@
         <slot name="content"></slot>
       </v-card-text>
       <v-divider/>
-      <v-card-actions class="pa-0">
+      <v-card-actions v-if="!readonly" class="pa-0">
         <v-container class="py-0">
           <v-row>
             <v-col cols="12" md="auto" v-if="$slots['before-actions']" align="center" class="py-0">
@@ -127,7 +127,8 @@ export default {
       default: true
     },
     title: String,
-    dark: Boolean
+    dark: Boolean,
+    readonly: Boolean
   },
   data () {
     return {

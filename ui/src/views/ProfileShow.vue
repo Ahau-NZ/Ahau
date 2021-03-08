@@ -18,7 +18,7 @@
     <v-row>
       <!-- SideNav -->
       <v-col  v-if="!hideNav && !isWhakapapaShow" cols="12" xs="12" sm="12" md="2" lg="20p" :class="!mobile ? 'pr-0' : 'px-5 py-0'">
-        <SideNavMenu :profile="profile" />
+        <SideNavMenu :profile="profile" @new-registration="dialog = 'new-registration'"/>
       </v-col>
       <!-- Content -->
       <v-col cols="12" xs="12" sm="12" :md="isWhakapapaShow ? '12' : '10'" :lg="isWhakapapaShow ? '100p' : '80p'" :class="mobile ? isWhakapapaShow ? 'py-0' : 'px-6 py-0' : 'pl-0 py-0'">
@@ -44,7 +44,7 @@
     <EditNodeDialog
       v-if="dialog === 'edit-node'"
       :show="dialog === 'edit-node'"
-      :title="`Edit ${profile.preferredName}`"
+      :title="`Edit ${getDisplayName(profile)}`"
       @submit="updatePerson"
       @close="dialog = null"
       :profile="profile"
@@ -55,6 +55,22 @@
       @submit="deleteCommunity"
       @close="dialog = 'edit-community'"
     />
+    <NewRegistrationDialog
+      v-if="dialog === 'new-registration'"
+      :show="dialog === 'new-registration'"
+      :title="`Request to join : ${tribe.public[0].preferredName}`"
+      :profile="profile"
+      @submit="createGroupApplication"
+      @close="dialog = null"
+    />
+    <!-- Snackbar for successful Tribe request sent -->
+    <v-snackbar
+      v-model="joinRequestSent"
+      color="green"
+      content-class="text-center"
+    >
+      Request successfully sent
+    </v-snackbar>
   </v-container>
 </template>
 
@@ -69,7 +85,11 @@ import mapProfileMixins from '@/mixins/profile-mixins.js'
 import NewCommunityDialog from '@/components/dialog/community/NewCommunityDialog.vue'
 import DeleteCommunityDialog from '@/components/dialog/community/DeleteCommunityDialog.vue'
 import EditNodeDialog from '@/components/dialog/profile/EditNodeDialog.vue'
+import NewRegistrationDialog from '@/components/dialog/registration/NewRegistrationDialog.vue'
 import { updateTribe, deleteTribe, getMembers, getTribalProfile } from '@/lib/community-helpers.js'
+
+import { createGroupApplication } from '@/lib/tribes-application-helpers.js'
+import { getDisplayName } from '@/lib/person-helpers.js'
 
 import {
   mapGetters,
@@ -93,7 +113,8 @@ export default {
     EditProfileButton,
     NewCommunityDialog,
     DeleteCommunityDialog,
-    EditNodeDialog
+    EditNodeDialog,
+    NewRegistrationDialog
   },
   data () {
     return {
@@ -103,7 +124,10 @@ export default {
       dialog: null,
       parents: [],
       parentIndex: null,
-      dialogType: null
+      dialogType: null,
+      source: null,
+      isApplication: false,
+      joinRequestSent: false
     }
   },
   watch: {
@@ -124,10 +148,19 @@ export default {
           this.showAlert({ message, delay: 5000, color: 'red' })
         }
       }
+    },
+    '$route.params' (params) {
+      if (!params.application) return
+      const { dialog, source } = params.application
+
+      this.dialog = dialog
+      this.source = source
+
+      this.isApplication = true
     }
   },
   computed: {
-    ...mapGetters(['whoami', 'showStory', 'showArtefact', 'currentNotification']),
+    ...mapGetters(['whoami', 'showStory', 'showArtefact']),
     title () {
       if (this.profile.legalName) return this.profile.legalName
       else return this.profile.preferredName
@@ -162,6 +195,7 @@ export default {
     }
   },
   methods: {
+    getDisplayName,
     ...mapAlertMutations(['showAlert']),
     ...mapMutations(['updateSelectedProfile', 'setCurrentAccess']),
     goEdit () {
@@ -200,6 +234,10 @@ export default {
       this.closeDialog()
       this.refresh()
       this.showAlert({ message: 'The profile was updated!' })
+
+      if (this.isApplication) {
+        this.goProfile()
+      }
     },
     async deleteCommunity () {
       try {
@@ -217,6 +255,44 @@ export default {
         this.showAlert({ message, delay: 5000, color: 'red' })
         this.dialog = 'edit-community'
       }
+    },
+    async createGroupApplication ({ comment, answers }) {
+      try {
+        const res = this.$apollo.mutate(
+          createGroupApplication({
+            groupId: this.tribe.id,
+            groupAdmins: [...this.tribe.public[0].tiaki.map(d => d.feedId)],
+            comment,
+            answers
+          })
+        )
+
+        if (res.errors) throw res.errors
+        else {
+          // flag for snackbar "request successfully sent"
+          this.joinRequestSent = true
+        }
+
+        // return res.data.createGroupApplication // return the applicationId
+      } catch (err) {
+        console.error('Something went wrong while create a group application', err)
+      }
+    },
+    goProfile () {
+      this.$router.push({
+        name: 'community/profile',
+        params: {
+          tribeId: this.source.tribeId,
+          profileId: this.source.profileId,
+          application: {
+            dialog: 'new-registration',
+            source: {
+              tribeId: this.$route.params.tribeId,
+              profileId: this.$route.params.profileId
+            }
+          }
+        }
+      }).catch(() => {})
     },
     closeDialog () {
       this.dialog = null

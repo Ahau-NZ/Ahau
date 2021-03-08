@@ -3,10 +3,10 @@
     pill
     outlined
     large
-    :color="notificationSent ? 'grey' : '#b12526'"
+    :color="text !== 'Join Community' ? 'grey' : '#b12526'"
     height="50px"
-    :class="[{ btn: !mobile && !tablet }, { mobileBtn: mobile }, { tabletBtn: tablet }, { disabled: notificationSent }]"
-    @click="setDialog('new-registration')"
+    :class="[{ btn: !mobile && !tablet }, { mobileBtn: mobile }, { tabletBtn: tablet }, { disabled: text !== 'Join Community' }]"
+    @click="$emit('click')"
   >
     <span>{{ text }}</span>
   </v-btn>
@@ -16,15 +16,9 @@ import { mapActions } from 'vuex'
 
 export default {
   props: {
-    notificationSent: {
-      type: Boolean,
-      default: false
-    }
+    text: String
   },
   computed: {
-    text () {
-      return this.notificationSent ? 'Request sent' : 'Join community'
-    },
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },

@@ -13,7 +13,7 @@
       class="side-menu"
     >
       <v-card light min-height="100%">
-        <DialogTitleBanner v-if="mobile" :title="formData.preferredName || 'Profile'" mobile @close="close"  :isEditing="isEditing" class="px-1 pt-3"/>
+        <DialogTitleBanner v-if="mobile" :title="getDisplayName(formData)" mobile @close="close"  :isEditing="isEditing" class="px-1 pt-3"/>
         <v-row v-else class="justify-end">
           <v-btn icon class="mr-3">
             <v-icon @click="close" color="secondary">mdi-close</v-icon>
@@ -22,10 +22,10 @@
         <v-container>
           <v-row v-if="isEditing">
             <v-col>
-              <ProfileForm :profile.sync="formData" :readonly="!isEditing" mobile @cancel="cancel" isEditing :isSideViewDialog="true">
+              <ProfileForm :profile.sync="formData" :readonly="!isEditing" mobile @cancel="cancel" isEditing isSideViewDialog>
                 <template v-slot:top>
                   <v-row class="justify-center">
-                    <h1>Edit {{ formData.preferredName }}</h1>
+                    <h1>Edit {{ getDisplayName(formData) }}</h1>
                   </v-row>
                   <v-row class="justify-center">
                     <v-btn
@@ -73,7 +73,7 @@
               class="big-avatar"
               size="250px"
               :image="formData.avatarImage"
-              :alt="formData.preferredName"
+              :alt="getDisplayName(formData)"
               :gender="formData.gender"
               :aliveInterval="formData.aliveInterval"
               :deceased="formData.deceased"
@@ -82,7 +82,7 @@
             />
           </v-row>
           <v-row v-if="!isEditing" class="justify-center">
-            <h1 >{{ formData.preferredName }}</h1>
+            <h1 >{{ getDisplayName(formData) }}</h1>
           </v-row>
           <v-row v-if="!isEditing"  class="justify-center">
             <v-btn
@@ -93,7 +93,7 @@
               class="blue--text"
             >
               <ArchiveIcon size="normal" color="blue"/>
-              <span class="pl-2 "> Archive </span>
+              <span class="pl-2 "> Stories </span>
             </v-btn>
             <v-btn
               v-if="!preview && profile.canEdit"
@@ -236,7 +236,7 @@ import isEqual from 'lodash.isequal'
 import isEmpty from 'lodash.isempty'
 import pick from 'lodash.pick'
 import clone from 'lodash.clonedeep'
-import { mapActions } from 'vuex'
+import { mapActions, mapMutations } from 'vuex'
 
 import ProfileForm from '@/components/profile/ProfileForm.vue'
 
@@ -245,6 +245,8 @@ import AvatarGroup from '@/components/AvatarGroup.vue'
 import AddButton from '@/components/button/AddButton.vue'
 import DialogTitleBanner from '@/components/dialog/DialogTitleBanner.vue'
 import ArchiveIcon from '@/components/button/ArchiveIcon.vue'
+
+import { getDisplayName } from '@/lib/person-helpers.js'
 
 function defaultData (input) {
   var profile = clone(input)
@@ -367,8 +369,15 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setProfileById', 'setDialog']),
+    ...mapMutations(['updateIsFromWhakapapaShow']),
+    ...mapActions(['setProfileById', 'setDialog', 'setIsFromWhakapapaShow']),
+    getDisplayName,
     goArchive () {
+      if (
+        this.$route.name === 'person/whakapapa/:whakapapaId' ||
+        this.$route.name === 'community/whakapapa/:whakapapaId'
+      // ) this.setIsFromWhakapapaShow(true)
+      ) this.updateIsFromWhakapapaShow(true)
       this.$router.push({
         name: 'person/archive',
         params: {

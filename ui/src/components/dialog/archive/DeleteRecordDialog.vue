@@ -1,12 +1,12 @@
 <template>
-  <Dialog :title="`Remove record from archive`" :show="show" width="720px" :goBack="close" enableMenu
+  <Dialog :title="`Remove story from archive`" :show="show" width="720px" :goBack="close" enableMenu
     @submit="submit"
     @close="close"
   >
     <template v-slot:content>
       <v-card-subtitle>
         <div class="warning-blurb">
-          Are you sure you want to remove this record from this archive?
+          Are you sure you want to remove this story from this archive?
         </div>
       </v-card-subtitle>
     </template>

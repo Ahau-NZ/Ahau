@@ -4,7 +4,8 @@ const state = {
   activeComponent: 'profile',
   currentStory: {},
   showStory: false,
-  showArtefact: false
+  showArtefact: false,
+  isFromWhakapapaShow: false
 }
 
 const getters = {
@@ -19,6 +20,9 @@ const getters = {
   },
   showArtefact: state => {
     return state.showArtefact
+  },
+  isFromWhakapapaShow: state => {
+    return state.isFromWhakapapaShow
   }
 }
 
@@ -34,6 +38,9 @@ const mutations = {
   },
   updateShowArtefact (state) {
     state.showArtefact = !state.showArtefact
+  },
+  updateIsFromWhakapapaShow (state, update) {
+    state.isFromWhakapapaShow = update
   }
 }
 

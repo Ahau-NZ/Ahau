@@ -19,10 +19,24 @@
         </div>
       </template>
       <v-card v-if="hasNotification" style="max-height:500px;">
+        <v-row>
+          <v-col>
+            <p class="pt-1 pl-5 my-0 headliner black--text">Notifications</p>
+          </v-col>
+          <v-divider></v-divider>
+        </v-row>
         <NotificationList
-          @expand="expand = !expand"
-          :notificationsToJoin="notificationsToJoin"
-          :notificationsAccepted="notificationsAccepted"
+          :notifications="filteredNotifications.unseen"
+          title="New"
+          show-badge
+        />
+        <NotificationList
+          :notifications="filteredNotifications.pending"
+          title="Pending"
+        />
+        <NotificationList
+          :notifications="filteredNotifications.complete"
+          title="Complete"
         />
       </v-card>
     </v-menu>
@@ -47,19 +61,26 @@
       </div>
     </div>
 
-    <v-expand-transition v-if="hasNotification">
+    <v-expand-transition v-if="hasNotification && expand">
       <v-card
         tile
         light
-        v-show="expand"
         style="position: absolute;left: 0px;top: 54px; width:100%; max-height:calc(100vh + 24px); overflow:auto"
         elevation="12"
         v-scroll="onScroll"
       >
         <NotificationList
-          @expand="expand = !expand"
-          :notificationsToJoin="notificationsToJoin"
-          :notificationsAccepted="notificationsAccepted"
+          :notifications="filteredNotifications.unseen"
+          title="New"
+          show-badge
+        />
+        <NotificationList
+          :notifications="filteredNotifications.pending"
+          title="Pending"
+        />
+        <NotificationList
+          :notifications="filteredNotifications.complete"
+          title="Complete"
         />
       </v-card>
     </v-expand-transition>
@@ -69,6 +90,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import NotificationList from '@/components/menu/NotificationList.vue'
+import pileSort from 'pile-sort'
 
 export default {
   components: {
@@ -83,33 +105,26 @@ export default {
   },
   computed: {
     ...mapGetters(['whoami', 'notifications']),
-    myNotifications () {
-      const reversedNotifications = this.notifications.slice(0).reverse()
-      return reversedNotifications.map(i => ({ ...i, mine: i.from.id === this.whoami.public.profile.id }))
-    },
-    notificationsToJoin () {
-      return this.myNotifications
-        .filter(i => {
-          return !i.accepted && !i.mine
-        })
-    },
-    notificationsAccepted () {
-      return this.myNotifications
-        .filter(i => {
-          return i.accepted
-        })
+    filteredNotifications () {
+      const [unseen, pending, complete, other] = pileSort(this.notifications, [
+        (n) => !n.isPersonal && n.isNew,
+        (n) => n.isPersonal && n.isNew,
+        (n) => n.isAccepted || !n.isAccepted
+      ])
+
+      return { unseen, pending, complete, other }
     },
     notificationsCount () {
-      return this.notificationsToJoin.length
+      return this.filteredNotifications.unseen.length
     },
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
     hasNotification () {
-      return this.notificationsToJoin.length > 0 || this.notificationsAccepted.length > 0
+      return this.filteredNotifications.unseen.length > 0 || this.filteredNotifications.pending.length > 0 || this.filteredNotifications.complete.length > 0
     },
     showBadge () {
-      return this.notificationsToJoin.length > 0
+      return this.filteredNotifications.unseen.length > 0
     }
   },
   watch: {

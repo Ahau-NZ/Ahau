@@ -1,7 +1,8 @@
 import gql from 'graphql-tag'
 import pick from 'lodash.pick'
 import { ARTEFACT_FRAGMENT } from './artefact-helpers'
-import { PERSON_FRAGMENT, PUBLIC_PROFILE_FRAGMENT } from './person-helpers'
+import { PERSON_FRAGMENT } from './person-helpers'
+import { PublicProfileFieldsFragment } from './profile-helpers.js'
 import clone from 'lodash.clonedeep'
 import { COLLECTION_FRAGMENT } from './collection-helpers'
 
@@ -134,17 +135,11 @@ export const PERMITTED_STORY_LINKS = [
 export const STORY_FRAGMENT = gql`
   fragment StoryFragment on Story {
     ${PERMITTED_STORY_ATTRS}
-    tiaki {
-      id
-      preferredName
-      avatarImage {
-        uri
-      }
-    }
   }
 `
 
 export const STORY_LINK_FRAGMENT = gql`
+  ${PublicProfileFieldsFragment}
   ${ARTEFACT_FRAGMENT}
   ${PERSON_FRAGMENT}
   ${COLLECTION_FRAGMENT}
@@ -192,7 +187,7 @@ export const STORY_LINK_FRAGMENT = gql`
       }
     }
     tiaki {
-      ...ProfileFragment
+      ...PublicProfileFields
     }
   }
 `
@@ -205,14 +200,14 @@ export const STORY_LINK_FRAGMENT = gql`
 export const getCollection = id => ({
   query: gql`
     ${COLLECTION_FRAGMENT}
-    ${PUBLIC_PROFILE_FRAGMENT}
+    ${PublicProfileFieldsFragment}
     ${STORY_FRAGMENT}
     ${STORY_LINK_FRAGMENT}
     query ($id: ID!) {
       collection(id: $id) {
         ...CollectionFragment
         tiaki {
-          ...PublicProfileFragment
+          ...PublicProfileFields
         }
         stories: storyLinks {
           linkId
@@ -243,7 +238,7 @@ export const getStory = id => ({
   fetchPolicy: 'no-cache'
 })
 
-export const getAllStories = filter => ({
+export const getAllStories = ({ groupId }) => ({
   query: gql`
     ${STORY_FRAGMENT}
     ${STORY_LINK_FRAGMENT}
@@ -255,7 +250,10 @@ export const getAllStories = filter => ({
     }
   `,
   variables: {
-    filter
+    filter: {
+      type: '*',
+      groupId
+    }
   },
   update (data) {
     return data.stories.reverse()

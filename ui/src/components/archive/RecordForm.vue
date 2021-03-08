@@ -17,7 +17,7 @@
                     style="text-align: start; font-size: 1.2em; font-weight: 700;"
                   />
                 </template>
-                <span>A short, descriptive name for the record</span>
+                <span>A short, descriptive name for the story</span>
               </v-tooltip>
             </v-col>
             <v-col v-if="formData.artefacts && formData.artefacts.length > 0" cols="12" class="pl-0 pr-0">
@@ -35,7 +35,7 @@
                   <UploadArtefactButton showLabel @artefacts="processArtefacts($event)"/>
                 </v-col>
               </template>
-              <span>Media assets associated with the record<br>Can be images, documents, video, or audio files. </span>
+              <span>Media assets associated with the story<br>Can be images, documents, video, or audio files. </span>
             </v-tooltip>
             <!-- <v-col cols="6" >
               <UploadArtefactButton showLabel @artefacts="processArtefacts($event)"/>
@@ -63,7 +63,7 @@
                   </v-row>
                 </v-col>
               </template>
-              <span>A short description about a location <br>or place associated with the record</span>
+              <span>A short description about a location <br>or place associated with the story</span>
             </v-tooltip>
                 <!-- <v-col :cols="formData.artefacts && formData.artefacts.length > 0 ? '6':'12'" class="pa-1">
                   <v-textarea
@@ -91,7 +91,7 @@
                   >
                   </v-textarea>
                 </template>
-                <span>An in depth description of the record</span>
+                <span>An in depth description of the story</span>
               </v-tooltip>
             </v-col>
 
@@ -118,7 +118,7 @@
                     </v-row>
                   </div>
                 </template>
-                <span>People and communities that are mentioned<br>or connected to the record</span>
+                <span>People and communities that are mentioned<br>or connected to the story</span>
               </v-tooltip>
               <ProfileSearchBar
                 :selectedItems.sync="formData.mentions"
@@ -149,7 +149,7 @@
                     </v-row>
                   </div>
                 </template>
-                <span>A Contributor is the person or people who contributed<br>to the submission of the record into the archive</span>
+                <span>A Contributor is the person or people who contributed<br>to the submission of the story into the archive</span>
               </v-tooltip>
 
               <ProfileSearchBar
@@ -180,7 +180,7 @@
                     </v-row>
                   </div>
                 </template>
-                <span>A Collection is a grouping of records</span>
+                <span>A Collection is a grouping of stories</span>
               </v-tooltip>
 
               <ProfileSearchBar
@@ -266,7 +266,7 @@
       <v-expand-transition>
         <div v-show="show">
           <v-row class="px-3">
-            <!-- RELATED RECORDS -->
+            <!-- RELATED RECORDS aka STORIES -->
             <v-col cols="12" md="auto" class="pa-5">
               <v-tooltip top open-delay="700" :disabled="showRecords">
                 <template v-slot:activator="{ on }">
@@ -277,14 +277,14 @@
                     </v-row>
                   </div>
                 </template>
-                <span>Related records are records that have a close connection <br> and are used to guide viewers from one record to another</span>
+                <span>Related stories are stories that have a close connection <br> and are used to guide viewers from one story to another</span>
               </v-tooltip>
 
               <ProfileSearchBar
                 :selectedItems.sync="formData.relatedRecords"
                 :items="filteredStories"
                 :openMenu.sync="showRecords"
-                placeholder="add related record"
+                placeholder="add related story"
                 item="title"
               />
               <ChipGroup
@@ -307,7 +307,7 @@
                     </v-row>
                   </div>
                 </template>
-                <span>A Creator is the person that is primarily responsible for providing the essential knowledge that goes into the record</span>
+                <span>A Creator is the person that is primarily responsible for providing the essential knowledge that goes into the story</span>
               </v-tooltip>
 
               <ProfileSearchBar
@@ -354,7 +354,7 @@
                   >
                   </v-textarea>
                 </template>
-                <span>Extra context about the record or the record creation process</span>
+                <span>Extra context about the story or the story creation process</span>
               </v-tooltip>
             </v-col>
 
@@ -380,7 +380,7 @@
                     v-bind="customProps"
                   />
                 </template>
-                <span>The specific physical or digital form of the record or artefact</span>
+                <span>The specific physical or digital form of the story or artefact</span>
               </v-tooltip>
             </v-col>
             <v-col :cols="mobile ? '6' : '3'" class="pa-1">
@@ -393,7 +393,7 @@
                     v-bind="customProps"
                   />
                 </template>
-                <span>A unique, unambiguous reference to the record</span>
+                <span>A unique, unambiguous reference to the story</span>
               </v-tooltip>
             </v-col>
             <v-col :cols="mobile ? '6' : '3'" class="pa-1">
@@ -406,7 +406,7 @@
                     v-bind="customProps"
                   />
                 </template>
-                <span>Source provides a reference to the resource or institution<br>from where the record is contributed or originated</span>
+                <span>Source provides a reference to the resource or institution<br>from where the story is contributed or originated</span>
               </v-tooltip>
             </v-col>
             <v-col :cols="mobile ? '6' : '3'" class="pa-1">

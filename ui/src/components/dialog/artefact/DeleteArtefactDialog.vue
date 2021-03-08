@@ -1,12 +1,12 @@
 <template>
-  <Dialog :title="`Remove artefact from record`" :show="show" width="720px" :goBack="close" enableMenu
+  <Dialog :title="`Remove artefact from story`" :show="show" width="720px" :goBack="close" enableMenu
     @submit="submit"
     @close="close"
   >
     <template v-slot:content>
       <v-card-subtitle>
         <div class="warning-blurb">
-          Are you sure you want to remove this artefact from this record?
+          Are you sure you want to remove this artefact from this story?
         </div>
       </v-card-subtitle>
     </template>

@@ -131,7 +131,7 @@ export default {
         return
       }
 
-      this.isSetup = Boolean(this.whoami.personal.profile.preferredName)
+      this.isSetup = Boolean(this.whoami.personal.profile.legalName) || Boolean(this.whoami.personal.profile.preferredName)
       // Shortcut in dev, that saves us from doing one click when testing
 
       // if (this.isSetup && process.env.NODE_ENV === 'development') {

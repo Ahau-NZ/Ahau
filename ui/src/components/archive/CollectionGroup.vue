@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-row>
-      <v-col cols="10" class="sub-headliner black--text pa-0 pl-4 pt-2">
+      <v-col cols="10" class="sub-headliner black--text pa-0 pl-6 pb-2">
         Collections
       </v-col>
     </v-row>
@@ -22,7 +22,8 @@
             class="pa-0 mx-3 mb-5"
           >
             <v-scale-transition>
-              <Collection :collection="collection"
+              <Collection
+                :collection="collection"
                 :selected="active"
                 @click="toggle && $emit('click', collection)"
               />
@@ -32,12 +33,40 @@
       </v-col>
     </v-row>
     <v-row v-else>
-      <div
-        class="px-8 subtitle-1 grey--text "
-        :class="{ 'text-center': mobile }"
+      <v-col
+        v-if="!collections || (collections && collections.length < 1)"
+        cols="12"
+        xs="12"
+        sm="12"
+        md="9"
+        class="pa-0"
       >
-        No collections found
-      </div>
+        <v-col v-if="!collections">
+          <v-slide-group light center-active style="width: 100%; height: 100%;">
+            <v-slide-item
+              v-for="n in 4"
+              :key="`skeleton-${n}`"
+              transition="fade-transition"
+              style="width:210px;height:310px;"
+              class="pa-0 mx-3 mb-5"
+            >
+              <v-scale-transition>
+                <v-skeleton-loader
+                  :width="mobile ? '100%' : '87%'"
+                  type="card-avatar, article, actions"
+                ></v-skeleton-loader>
+              </v-scale-transition>
+            </v-slide-item>
+          </v-slide-group>
+        </v-col>
+        <v-col
+          v-else
+          class="px-8 subtitle-1 grey--text "
+          :class="{ 'text-center': mobile }"
+        >
+          No Collections found
+        </v-col>
+      </v-col>
     </v-row>
   </div>
 </template>
@@ -47,7 +76,9 @@ import Collection from './Collection.vue'
 
 export default {
   name: 'CollectionGroup',
-  props: ['collections'],
+  props: {
+    collections: Array
+  },
   components: { Collection },
   data () {
     return {
@@ -105,5 +136,4 @@ export default {
 .v-slide-group__wrapper::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
-
 </style>

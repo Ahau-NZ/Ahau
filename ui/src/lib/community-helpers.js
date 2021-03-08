@@ -2,7 +2,8 @@ import gql from 'graphql-tag'
 import pick from 'lodash.pick'
 import clone from 'lodash.clonedeep'
 
-import { PUBLIC_PROFILE_FRAGMENT, AUTHOR_FRAGMENT } from './person-helpers'
+import { AUTHOR_FRAGMENT } from './person-helpers'
+import { PublicProfileFieldsFragment } from './profile-helpers.js'
 
 export const EMPTY_COMMUNITY = {
   type: 'community',
@@ -79,10 +80,10 @@ export const PERMITTED_COMMUNITY_LINK_ATTRS = [
 
 export const getMembers = id => ({
   query: gql`
-    ${PUBLIC_PROFILE_FRAGMENT}
+    ${PublicProfileFieldsFragment}
     query($id: ID!) {
       listGroupAuthors(id: $id) {
-        ...PublicProfileFragment
+        ...PublicProfileFields
       }
     }
   `,
@@ -91,7 +92,7 @@ export const getMembers = id => ({
 })
 
 export const COMMUNITY_FRAGMENT = gql`
-${PUBLIC_PROFILE_FRAGMENT}
+${PublicProfileFieldsFragment}
 ${AUTHOR_FRAGMENT}
   fragment CommunityFragment on Community {
     id
@@ -110,12 +111,12 @@ ${AUTHOR_FRAGMENT}
       label
     }
     tiaki {
-      ...PublicProfileFragment
+      ...PublicProfileFields
     }
     authors {
       ...AuthorFragment
       profile {
-        ...PublicProfileFragment
+        ...PublicProfileFields
       }
     }
   }

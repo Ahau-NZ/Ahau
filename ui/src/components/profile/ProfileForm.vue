@@ -28,7 +28,7 @@
         </v-row>
 
         <v-row v-if="isEditing" class="justify-center">
-          <h1>Edit {{ formData.preferredName }}</h1>
+          <h1>Edit {{ getDisplayName(formData) }}</h1>
         </v-row>
         <v-row v-if="isEditing" class="justify-center">
           <v-btn
@@ -53,6 +53,7 @@
       <!-- Names -->
       <v-col cols="12" :sm="mobile ? '12' : '6'" class="pt-4">
         <v-row>
+          <!-- Full Name -->
           <v-col cols="12" class="pa-1">
             <slot name="search">
               <v-text-field
@@ -62,6 +63,15 @@
                 outlined
               />
             </slot>
+          </v-col>
+          <!-- Preferred Name -->
+          <v-col cols="12" class="pa-1">
+            <v-text-field
+            v-model="formData.preferredName"
+            label="First Name / Known As"
+            v-bind="customProps"
+            outlined
+            />
           </v-col>
         </v-row>
 
@@ -124,7 +134,7 @@
       </v-col>
       <!-- GENDER EDIT -->
       <v-col v-if="!readonly" class="pa-1">
-        <p class="text-field">Identifies As</p>
+        <p class="text-field">Identifies as</p>
         <v-row class="gender-button-row">
           <!-- TANE -->
           <v-col class="pa-0">
@@ -157,10 +167,10 @@
         </v-row>
         <v-row v-if="!isSideViewDialog" class="gender-label-row">
           <v-col class="pa-0">
-            <p class="gender-label-text text-field">Tāne</p>
+            <p class="gender-label-text text-field">Male</p>
           </v-col>
           <v-col class="pa-0">
-            <p class="gender-label-text text-field">Wāhine</p>
+            <p class="gender-label-text text-field">Female</p>
           </v-col>
           <v-col class="pa-0">
             <p class="gender-label-text text-field">Other</p>
@@ -171,10 +181,10 @@
 
     <!-- Start of advanced section -->
     <v-divider />
-      <v-card-actions class="pt-2 pb-2 px-5">
+      <v-card-actions class="pt-2 pb-2 px-5 pointer">
         <v-row @click="showAdvanced = !showAdvanced" class="clickable">
           <v-col>
-            <span class="pa-0 ma-0">Advanced</span>
+            <span class="pa-0 ma-0">More info</span>
           </v-col>
           <v-btn icon right>
             <v-icon>{{ showAdvanced ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
@@ -184,16 +194,7 @@
     <v-divider v-if="!showAdvanced" />
     <v-expand-transition>
       <div v-show="showAdvanced">
-        <!-- Preferred name -->
         <v-row>
-          <v-col :cols="isSideViewDialog ? 12 : 6" class="pa-1">
-            <v-text-field
-            v-model="formData.preferredName"
-            label="Preferred Name"
-            v-bind="customProps"
-            outlined
-            />
-          </v-col>
           <!-- Alt names -->
           <template>
             <v-col v-for="(altName, index) in formData.altNames.currentState"
@@ -411,6 +412,7 @@ import AddButton from '@/components/button/AddButton.vue'
 import DateIntervalPicker from '@/components/DateIntervalPicker.vue'
 
 import { GENDERS, RELATIONSHIPS } from '@/lib/constants'
+import { getDisplayName } from '@/lib/person-helpers.js'
 
 import isEmpty from 'lodash.isempty'
 
@@ -499,6 +501,7 @@ export default {
     }
   },
   methods: {
+    getDisplayName,
     updateSelectedGender (genderClicked) {
       // reset images to outlined
       this.$refs.taneImg.src = require('@/assets/tane-outlined.svg')
@@ -665,7 +668,7 @@ export default {
     color:rgba(0, 0, 0, 0.54)
   }
 
-  .no-longer-living {
-    padding: 0px 0px 0px 20px;
+  .pointer {
+    cursor: pointer;
   }
 </style>

@@ -16,24 +16,24 @@
                 <v-icon v-if="!disabled">mdi-chevron-down</v-icon>
               </v-btn>
               <v-card-text v-if="access && !disabled" class="font-italic font-weight-light text-caption py-0 text-md-right">
-                {{ access.isPersonalGroup ? 'Only you will have access to this record' : `Only ${access.preferredName} will have access to this record` }}
+                {{ access.isPersonalGroup ? 'Only you will have access to this story' : `Only ${access.preferredName} will have access to this story` }}
               </v-card-text>
 
               <v-card-text v-if="access && disabled" class="font-italic font-weight-light text-caption py-0 text-md-right">
-                {{ access.isPersonalGroup ? 'Only you have access to this record' : `Only ${access.preferredName} has access to this record` }}
+                {{ access.isPersonalGroup ? 'Only you have access to this story' : `Only ${access.preferredName} has access to this story` }}
               </v-card-text>
             </v-col>
           </v-row>
       </template>
 
       <v-list>
-        <v-subheader>Choose who has access to this record:</v-subheader>
+        <v-subheader>Choose who has access to this story:</v-subheader>
         <v-list-item
           v-for="(tribe, index) in tribes"
           :key="index"
           @click="go(tribe)"
         >
-          <Avatar class="mr-3" size="40px" :image="tribe.avatarImage" :isView="!tribe.isPersonalGroup" :alt="tribe.preferredName" :gender="tribe.gender" :aliveInterval="tribe.aliveInterval" />
+          <Avatar class="mr-3" size="40px" :image="tribe.avatarImage" :isView="!tribe.isPersonalGroup" :alt="getDisplayName(tribe)" :gender="tribe.gender" :aliveInterval="tribe.aliveInterval" />
           <v-list-item-title>{{ tribe.isPersonalGroup ? 'Private' : tribe.preferredName + ' (tribe)' }}</v-list-item-title>
         </v-list-item>
       </v-list>
@@ -44,6 +44,7 @@
 import Avatar from '@/components/Avatar.vue'
 import { getTribes } from '@/lib/community-helpers.js'
 import { mapGetters } from 'vuex'
+import { getDisplayName } from '@/lib/person-helpers.js'
 
 export default {
   name: 'AccessButton',
@@ -96,6 +97,7 @@ export default {
     }
   },
   methods: {
+    getDisplayName,
     go (profile) {
       this.$emit('access', profile)
     }

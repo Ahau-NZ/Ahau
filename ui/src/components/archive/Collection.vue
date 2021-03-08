@@ -9,8 +9,7 @@
   >
     <v-img
       :src="image"
-      class="white--text align-end"
-      gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)"
+      class="grey darken-4 align-end"
       height="150px"
     >
     </v-img>

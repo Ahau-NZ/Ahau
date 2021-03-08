@@ -11,7 +11,9 @@
     "build:mobile": "vue-cli-service build --dest ../mobile/www",
     "lint": "vue-cli-service lint",
     "test:js": "tape -r esm src/**/*.test.js | tap-spec",
-    "test": "npm run test:js && npm run lint"
+    "test": "npm run test:js && npm run lint",
+    "clear": "rm -rf node_modules",
+    "build-fragment" : "node src/schemaQuery.js"
   },
   "dependencies": {
     "@mdi/font": "^4.5.95",
@@ -28,6 +30,7 @@
     "lodash.pick": "^4.4.0",
     "lodash.set": "^4.3.2",
     "lodash.uniqby": "^4.7.0",
+    "pile-sort": "^1.0.0",
     "vue-gallery": "^2.0.1",
     "vuetify-media-player": "^0.8.1",
     "vuex-router-sync": "^5.0.0"
