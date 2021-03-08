@@ -63,7 +63,7 @@
             </v-col>
             <v-spacer v-if="!mobile"/>
             <slot name="actions">
-              <v-col cols="24" md="auto" :align="mobile ? 'center' : 'end'" class="py-0 pb-2 pb-md-0">
+              <v-col cols="6" md="auto" :align="mobile ? 'center' : 'end'" class="py-0 pb-2 pb-md-0">
                 <v-btn @click="close"
                   :fab="!mobile"
                   icon
@@ -73,7 +73,8 @@
                   Cancel
                 </v-btn>
               </v-col>
-              <v-col cols="24" md="auto" :align="mobile ? 'center' : 'end'" class="py-0">
+              <v-spacer></v-spacer>
+              <v-col cols="6" md="auto" :align="mobile ? 'center' : 'end'" class="py-0">
                 <v-btn @click="submit"
                   :fab="!mobile"
                   icon
