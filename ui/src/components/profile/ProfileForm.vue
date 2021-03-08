@@ -52,18 +52,8 @@
 
       <!-- Names -->
       <v-col cols="12" :sm="mobile ? '12' : '6'" class="pt-4">
+        <v-spacer style="height:30%"></v-spacer>
         <v-row>
-          <!-- Full Name -->
-          <v-col cols="12" class="pa-1">
-            <slot name="search">
-              <v-text-field
-                v-model="formData.legalName"
-                label="Full Name"
-                v-bind="customProps"
-                outlined
-              />
-            </slot>
-          </v-col>
           <!-- Preferred Name -->
           <v-col cols="12" class="pa-1">
             <v-text-field
@@ -74,40 +64,7 @@
             />
           </v-col>
         </v-row>
-
-          <!-- DATE OF BIRTH + DATE OF DEATH-->
-        <DateIntervalPicker
-          label="Date of Birth"
-          endLabel="Date of Death"
-          allowInterval
-          :interval.sync="formData.aliveInterval"
-          :hasEndDate.sync="formData.deceased"
-        />
-
-        <!-- Editing: relationship type-->
-        <v-row v-if="withRelationships || editRelationship">
-          <v-col cols="12" class="pa-1" v-if="this.$route.name !== 'login'">
-            <v-select
-              v-model="formData.relationshipType"
-              label="Related by"
-              :items="relationshipTypes"
-              outlined
-              :menu-props="{light: true}"
-            />
-          </v-col>
-        </v-row>
-        <!-- ORDER OF BIRTH -->
         <v-row>
-          <v-col v-if="!readonly || formData.birthOrder" cols="6" class="pa-1">
-            <v-text-field
-              v-model="formData.birthOrder"
-              type="number"
-              label="Order of birth"
-              min="1"
-              v-bind="customProps"
-              outlined
-            />
-          </v-col>
           <!-- No longer living -->
           <v-col v-if="$route.name !== 'login'" cols='6' class="no-longer-living">
             <v-checkbox
@@ -195,6 +152,17 @@
     <v-expand-transition>
       <div v-show="showAdvanced">
         <v-row>
+          <!-- Full Name -->
+          <v-col cols="6" class="pa-1">
+            <slot name="search">
+              <v-text-field
+                v-model="formData.legalName"
+                label="Full Name"
+                v-bind="customProps"
+                outlined
+              />
+            </slot>
+          </v-col>
           <!-- Alt names -->
           <template>
             <v-col v-for="(altName, index) in formData.altNames.currentState"
@@ -234,6 +202,40 @@
             </v-col>
             <AddButton :align="'flex-end'" :width="'50px'" label="Add another name" @click="addAltNameField" row/>
           </template>
+        </v-row>
+        <!-- DATE OF BIRTH + DATE OF DEATH-->
+        <DateIntervalPicker
+          label="Date of Birth"
+          endLabel="Date of Death"
+          allowInterval
+          :interval.sync="formData.aliveInterval"
+          :hasEndDate.sync="formData.deceased"
+        />
+
+        <!-- Editing: relationship type-->
+        <v-row v-if="withRelationships || editRelationship">
+          <v-col cols="12" class="pa-1" v-if="this.$route.name !== 'login'">
+            <v-select
+              v-model="formData.relationshipType"
+              label="Related by"
+              :items="relationshipTypes"
+              outlined
+              :menu-props="{light: true}"
+            />
+          </v-col>
+        </v-row>
+        <v-row>
+          <!-- Order of birth -->
+          <v-col v-if="!readonly || formData.birthOrder" cols="6" class="pa-1">
+            <v-text-field
+              v-model="formData.birthOrder"
+              type="number"
+              label="Order of birth"
+              min="1"
+              v-bind="customProps"
+              outlined
+            />
+          </v-col>
         </v-row>
         <!-- Description, Profession, Place of Birth -->
         <v-row>
