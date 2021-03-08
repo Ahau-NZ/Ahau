@@ -91,6 +91,13 @@
       :title="`Whakapapa registry`"
       @close="close"
     />
+    <FilterMenu
+      v-if="isActive('table-filter-menu')"
+      :show="isActive('table-filter-menu')"
+      :title="`Table Filter Menu`"
+      :searchFilterString.sync="searchFilterString"
+      @close="close"
+    />
     <ComingSoonDialog :show="isActive('coming-soon')" @close="close" />
   </div>
 </template>
@@ -111,6 +118,7 @@ import WhakapapaEditDialog from '@/components/dialog/whakapapa/WhakapapaEditDial
 import WhakapapaDeleteDialog from '@/components/dialog/whakapapa/WhakapapaDeleteDialog.vue'
 import WhakapapaShowHelper from '@/components/dialog/whakapapa/WhakapapaShowHelper.vue'
 import WhakapapaTableHelper from '@/components/dialog/whakapapa/WhakapapaTableHelper.vue'
+import FilterMenu from '@/components/dialog/whakapapa/FilterMenu.vue'
 import ComingSoonDialog from '@/components/dialog/ComingSoonDialog.vue'
 import ReviewRegistrationDialog from '@/components/dialog/registration/ReviewRegistrationDialog.vue'
 
@@ -139,6 +147,7 @@ export default {
     WhakapapaDeleteDialog,
     WhakapapaShowHelper,
     WhakapapaTableHelper,
+    FilterMenu,
     ComingSoonDialog,
     NewCommunityDialog,
     ReviewRegistrationDialog
@@ -162,7 +171,7 @@ export default {
       default: null,
       validator: (val) => [
         'new-community', 'new-node', 'view-edit-node', 'delete-node', 'new-story', 'edit-story', 'edit-node', 'delete-story',
-        'whakapapa-view', 'whakapapa-edit', 'whakapapa-delete', 'whakapapa-helper', 'whakapapa-table-helper', 'new-registration', 'review-registration'
+        'whakapapa-view', 'whakapapa-edit', 'whakapapa-delete', 'whakapapa-helper', 'whakapapa-table-helper', 'table-filter-menu', 'new-registration', 'review-registration'
       ].includes(val)
     },
     type: {
@@ -192,7 +201,8 @@ export default {
       parents: [],
       parentIndex: null,
       profile: {},
-      tribe: {}
+      tribe: {},
+      searchFilterString: ''
     }
   },
   computed: {
@@ -227,6 +237,9 @@ export default {
       } else {
         document.body.classList.remove('stop-scroll')
       }
+    },
+    searchFilterString (newValue) {
+      this.$emit('update:searchFilterString', newValue)
     }
   },
   methods: {
@@ -247,6 +260,7 @@ export default {
         return
       }
       if (this.parents.length) this.parents = []
+      if (this.isActive('table-filter-menu')) this.$emit('toggleFilterMenu')
       this.toggleDialog(this.source, null, null)
       this.$emit('setloading', false)
     },
