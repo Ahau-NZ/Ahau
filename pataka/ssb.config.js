@@ -1,10 +1,10 @@
 const Config = require('ssb-config/defaults')
-const env = require('ahau-env')
+const { pataka: env } = require('ahau-env')
 const fs = require('fs')
 const path = require('path')
 
 const customConfig = {
-  port: 8088,
+  port: env.port,
   allowPrivate: true, // used for making local invite codes
   // HACK: There is a problem with ssb-invite where it look for a public incoming connection in the config which does not exist
   // and then throws an error.
@@ -20,6 +20,7 @@ const customConfig = {
     // disables legacy UDP announce (which doesn't respect caps.shs!)
   },
   serveBlobs: {
+    port: env.serveBlobs.port,
     cors: true,
     csp: ''
   },

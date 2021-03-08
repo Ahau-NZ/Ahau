@@ -15,6 +15,8 @@ const cache = new InMemoryCache({
 
 // WARNING! this seems wrong (a cli plugin as a dependency?)
 
+const { ahau: env } = require('ahau-env')
+
 // Install the vue plugin
 Vue.use(VueApollo)
 
@@ -23,7 +25,7 @@ const AUTH_TOKEN = 'apollo-token'
 
 // Http endpoint
 const httpEndpoint =
-  process.env.VUE_APP_GRAPHQL_HTTP || 'http://localhost:4000/graphql'
+  process.env.VUE_APP_GRAPHQL_HTTP || `http://localhost:${env.graphql.port}/graphql`
 
 const httpLink = createUploadLink({
   uri: httpEndpoint
@@ -38,7 +40,7 @@ const defaultOptions = {
   httpEndpoint,
   // You can use `wss` for secure connection (recommended in production)
   // Use `null` to disable subscriptions
-  wsEndpoint: process.env.VUE_APP_GRAPHQL_WS || 'ws://localhost:4000/graphql',
+  wsEndpoint: process.env.VUE_APP_GRAPHQL_WS || `ws://localhost:${env.graphql.port}/graphql`,
   // LocalStorage token
   tokenName: AUTH_TOKEN,
   // Enable Automatic Query persisting with Apollo Engine

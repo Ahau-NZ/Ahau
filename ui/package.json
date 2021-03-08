@@ -13,10 +13,11 @@
     "test:js": "tape -r esm src/**/*.test.js | tap-spec",
     "test": "npm run test:js && npm run lint",
     "clear": "rm -rf node_modules",
-    "build-fragment" : "node src/schemaQuery.js"
+    "build-fragment": "node src/schemaQuery.js"
   },
   "dependencies": {
     "@mdi/font": "^4.5.95",
+    "ahau-env": "^2.0.0",
     "animate.css": "^4.1.0",
     "apollo-upload-client": "^10.0.1",
     "edtf": "^2.8.0",

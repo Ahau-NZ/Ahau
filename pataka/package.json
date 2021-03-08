@@ -17,7 +17,7 @@
     "lint": "cd ui && npm run lint"
   },
   "dependencies": {
-    "ahau-env": "^1.0.0",
+    "ahau-env": "^2.0.0",
     "secret-stack": "^6.3.1",
     "ssb-ahoy": "^3.0.0",
     "ssb-backlinks": "^2.1.1",
@@ -30,7 +30,7 @@
     "ssb-lan": "^0.2.0",
     "ssb-master": "^1.0.3",
     "ssb-no-auth": "^1.0.0",
-    "ssb-pataka": "^2.0.0",
+    "ssb-pataka": "^3.0.2",
     "ssb-profile": "^2.1.0",
     "ssb-query": "^2.4.5",
     "ssb-recps-guard": "^2.1.0",
