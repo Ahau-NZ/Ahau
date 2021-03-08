@@ -93,7 +93,7 @@
               class="blue--text"
             >
               <ArchiveIcon size="normal" color="blue"/>
-              <span class="pl-2 "> Archive </span>
+              <span class="pl-2 "> Stories </span>
             </v-btn>
             <v-btn
               v-if="!preview && profile.canEdit"
@@ -236,7 +236,7 @@ import isEqual from 'lodash.isequal'
 import isEmpty from 'lodash.isempty'
 import pick from 'lodash.pick'
 import clone from 'lodash.clonedeep'
-import { mapActions } from 'vuex'
+import { mapActions, mapMutations } from 'vuex'
 
 import ProfileForm from '@/components/profile/ProfileForm.vue'
 
@@ -369,9 +369,15 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setProfileById', 'setDialog']),
+    ...mapMutations(['updateIsFromWhakapapaShow']),
+    ...mapActions(['setProfileById', 'setDialog', 'setIsFromWhakapapaShow']),
     getDisplayName,
     goArchive () {
+      if (
+        this.$route.name === 'person/whakapapa/:whakapapaId' ||
+        this.$route.name === 'community/whakapapa/:whakapapaId'
+      // ) this.setIsFromWhakapapaShow(true)
+      ) this.updateIsFromWhakapapaShow(true)
       this.$router.push({
         name: 'person/archive',
         params: {

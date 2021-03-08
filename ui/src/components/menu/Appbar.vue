@@ -1,10 +1,10 @@
 <template>
   <div>
     <v-app-bar v-if="mobile || enableMenu" :app="mobile && app" :class="classObject" flat color="#303030" fixed>
-      <template v-if="!isMobileGoBack">
+      <template v-if="!isMobileBackButton">
         <NotificationPanel/>
       </template>
-      <BackButton @go-back="goBack()"/>
+      <BackButton @go-back="goBack()" @isMobileBackButton="showMobileBackButton($event)"/>
       <v-spacer />
 
       <!-- Desktop doesn't use a drawer, it has the links directly in the app bar -->
@@ -103,12 +103,6 @@ So the pathway is clear
 To return to everyday activities
 ---------------------------------
 `
-/*
-Back button is visible when:
-
-- [ ] The previous screen is whakapapaShow and the current one is a profile
-- [ ] The previous screen is whakapapaIndex and the current one is whakapapaShow
-*/
 
 export default {
   name: 'Appbar',
@@ -122,7 +116,8 @@ export default {
       drawer: false,
       dialog: false,
       loading: true,
-      route: {}
+      route: {},
+      isMobileBackButton: false
     }
   },
   created () {
@@ -147,31 +142,6 @@ export default {
     },
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
-    },
-    isMobileGoBack () {
-      if (!this.mobile) return false
-
-      // if the current route is profile and the previous one was whakapapa
-      if (this.route.from) {
-        return (
-          (
-            this.$route.name === 'person/whakapapa/:whakapapaId' ||
-            this.$route.name === 'community/whakapapa/:whakapapaId'
-          ) ||
-          // if the prev routes is one of the whakapapaShow options
-          ((
-            this.route.from.name === 'person/whakapapa/:whakapapaId' ||
-            this.route.from.name === 'community/whakapapa/:whakapapaId'
-          ) &&
-          (
-          // AND the route we are going to isnt the tribes one
-            this.route.to.name !== 'tribe' &&
-            this.route.to.name !== 'person/whakapapa' &&
-            this.route.to.name !== 'community/whakapapa'
-          ))
-        )
-      }
-      return false
     }
   },
   mounted () {
@@ -182,6 +152,9 @@ export default {
   },
   methods: {
     ...mapActions(['setWhoami', 'setProfileById', 'toggleShowStory', 'setDialog', 'getAllNotifications']),
+    showMobileBackButton ($event) {
+      this.isMobileBackButton = $event
+    },
     resetWindow () {
       window.scrollTo(0, 0)
     },

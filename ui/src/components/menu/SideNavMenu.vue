@@ -227,8 +227,7 @@ export default {
         name: this.profile.type + '/' + component,
         params: {
           tribeId: this.$route.params.tribeId,
-          profileId: this.$route.params.profileId,
-          keepAlive: true
+          profileId: this.$route.params.profileId
         }
       }).catch(() => {})
     },
