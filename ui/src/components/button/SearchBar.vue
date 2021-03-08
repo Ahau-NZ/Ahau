@@ -1,9 +1,8 @@
 <template>
   <v-combobox
     v-model="searchString"
-    :items="nodes"
-    :menu-props=" { light: true, value: !searchFilter } "
-    hide-no-data
+    :items="items"
+    :menu-props=" { light: true } "
     :append-icon="!searchFilter ? 'mdi-close' : ''"
     @click:append="close()"
     placeholder="Search"
@@ -53,16 +52,8 @@ export default {
     Avatar
   },
   props: {
-    // nestedWhakapapa: {
-    //   type: Object
-    // },
-    searchNodeId: {
-      type: String
-    },
-    searchFilter: {
-      type: Boolean,
-      default: false
-    }
+    searchNodeId: String,
+    searchFilter: Boolean
   },
   data () {
     return {
@@ -98,6 +89,10 @@ export default {
             altNameMatch
           )
         })
+    },
+    items () {
+      if (this.searchFilter) return []
+      return this.nodes
     }
   },
   watch: {
