@@ -61,10 +61,10 @@
               class="pt-0 d-flex justify-space-between"
             >
               <v-btn @click="cancel" text large fab class="secondary--text mr-10">
-                <v-icon color="secondary">mdi-close</v-icon>
+                Cancel
               </v-btn>
               <v-btn @click="submit" text large fab class="blue--text ml-5" color="blue">
-                <v-icon>mdi-check</v-icon>
+                Save
               </v-btn>
             </v-col>
           </v-row>
