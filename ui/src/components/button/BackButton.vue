@@ -54,7 +54,7 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters, mapActions, mapMutations } from 'vuex'
 import Avatar from '@/components/Avatar'
 import WhakapapaIcon from '@/components/button/WhakapapaIcon.vue'
 import mapProfileMixins from '@/mixins/profile-mixins.js'
@@ -76,10 +76,12 @@ export default {
       history: null
     }
   },
+
   watch: {
     $route (to, from) {
       this.route = {
         to,
+        // from
         from: to.params.keepAlive ? this.route.from : from
       }
     },
@@ -92,10 +94,13 @@ export default {
           next: newProfile
         }
       }
+    },
+    mobileBackButton (newVal) {
+      this.$emit('isMobileBackButton', newVal)
     }
   },
   computed: {
-    ...mapGetters(['whakapapa', 'showStory']),
+    ...mapGetters(['whakapapa', 'showStory', 'isFromWhakapapaShow']),
     hasPreviousRoute () {
       return !!this.route.from
     },
@@ -115,48 +120,34 @@ export default {
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
-    /*
-      if the route we came from was whakapapaShow
-    */
-    isFromWhakapapaShow () {
-      // if the current route is profile and the previous one was whakapapa
-      if (this.route.from) {
-        return (
-          // if the prev routes is one of the whakapapaShow options
-          (
-            this.route.from.name === 'person/whakapapa/:whakapapaId' ||
-            this.route.from.name === 'community/whakapapa/:whakapapaId'
-          ) &&
-          (
-          // AND the route we are going to isnt the tribes one
-            this.route.to.name !== 'tribe' &&
-            this.route.to.name !== 'person/whakapapa' &&
-            this.route.to.name !== 'community/whakapapa'
-          )
-        )
-      }
 
-      return false
-    },
-    /*
-      if the we are on WhakapapaShow from Whakapapaindex?
-    */
+    // if the we are on WhakapapaShow from Whakapapaindex?
     isWhakapapaShow () {
       return (
         this.$route.name === 'person/whakapapa/:whakapapaId' ||
         this.$route.name === 'community/whakapapa/:whakapapaId'
       )
     },
+    // if we are on CollectionShow from Archive
     isCollectionShow () {
       return (
         this.$route.name === 'person/archive/:collectionId' ||
         this.$route.name === 'community/archive/:collectionId'
       )
+    },
+
+    // if we are showing the mobile BackButton: hide logo
+    mobileBackButton () {
+      return (
+        this.mobile && (this.isCollectionShow || this.isWhakapapaShow || this.isFromWhakapapaShow || this.showStory)
+      )
     }
   },
   methods: {
-    ...mapActions(['toggleShowStory']),
+    ...mapMutations(['updateIsFromWhakapapaShow']),
+    ...mapActions(['toggleShowStory', 'setIsFromWhakapapaShow']),
     goWhakapapaShow () {
+      this.updateIsFromWhakapapaShow(false)
       this.$router.push({ path: this.route.from.fullPath }).catch(() => {})
     },
     goWhakapapaIndex () {

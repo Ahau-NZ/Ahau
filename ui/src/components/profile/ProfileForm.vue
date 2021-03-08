@@ -125,7 +125,7 @@
       </v-col>
       <!-- GENDER EDIT -->
       <v-col v-if="!readonly" class="pa-1">
-        <p class="text-field">Identifies As</p>
+        <p class="text-field">Identifies as</p>
         <v-row class="gender-button-row">
           <!-- TANE -->
           <v-col class="pa-0">
@@ -158,10 +158,10 @@
         </v-row>
         <v-row v-if="!isSideViewDialog" class="gender-label-row">
           <v-col class="pa-0">
-            <p class="gender-label-text text-field">Tāne</p>
+            <p class="gender-label-text text-field">Male</p>
           </v-col>
           <v-col class="pa-0">
-            <p class="gender-label-text text-field">Wāhine</p>
+            <p class="gender-label-text text-field">Female</p>
           </v-col>
           <v-col class="pa-0">
             <p class="gender-label-text text-field">Other</p>
