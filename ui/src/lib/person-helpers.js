@@ -1,6 +1,6 @@
 import gql from 'graphql-tag'
 import pick from 'lodash.pick'
-import { PublicProfileFieldsFragment } from './profile-helpers'
+import { PublicProfileFieldsFragment, saveProfile } from './profile-helpers'
 
 export const PERMITTED_PERSON_PROPS = [
   'id',
@@ -174,19 +174,10 @@ export async function getRelatives (profileId, apollo) {
 }
 
 export const savePerson = input => {
-  var _input = pick(input, PERMITTED_PERSON_ATTRS)
-  _input = pruneEmptyValues(_input)
+  input = pick(input, PERMITTED_PERSON_ATTRS)
+  input = pruneEmptyValues(input)
 
-  if (!_input.id) _input.type = 'person'
-
-  return {
-    mutation: gql`
-      mutation($input: ProfileInput!) {
-        saveProfile(input: $input)
-      }
-    `,
-    variables: { input: _input }
-  }
+  return saveProfile(input)
 }
 
 function pruneEmptyValues (input) {

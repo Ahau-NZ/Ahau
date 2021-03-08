@@ -361,6 +361,13 @@ export default {
           isPermitted: Boolean(this.selectedProfile),
           icon: require('../assets/node-parent.svg')
         },
+        // TODO: add button for adding partners
+        // {
+        //   title: 'Add Partner',
+        //   dialog: 'new-node',
+        //   type: 'partner',
+        //   isPermitted: Boolean(this.selectedProfile)
+        // },
         {
           title: 'Add Child',
           dialog: 'new-node',
@@ -415,8 +422,8 @@ export default {
         this.setLoading(true)
 
         const nestedWhakapapa = await this.loadDescendants(newFocus, '', [])
-        this.addNestedWhakapapa(nestedWhakapapa)
-        this.addRelationshipLinks(this.relationshipLinks)
+        this.setNestedWhakapapa(nestedWhakapapa)
+        this.setRelationshipLinks(this.relationshipLinks)
 
         this.setLoading(false)
       }
@@ -427,10 +434,10 @@ export default {
         this.access = getTribalProfile(tribe, this.whoami)
         this.setCurrentAccess(this.access)
       }
-      this.addWhakapapa(whakapapa)
+      this.setWhakapapa(whakapapa)
     },
     relationshipLinks (newVal) {
-      this.addRelationshipLinks(newVal)
+      this.setRelationshipLinks(newVal)
     },
     searchFilter (newValue) {
       if (newValue === true) {
@@ -441,8 +448,8 @@ export default {
   },
 
   methods: {
-    ...mapMutations(['updateSelectedProfile', 'setCurrentAccess']),
-    ...mapActions(['setLoading', 'addNestedWhakapapa', 'addWhakapapa', 'addRelationshipLinks']),
+    ...mapMutations(['updateSelectedProfile', 'setCurrentAccess', 'setNestedWhakapapa', 'setWhakapapa', 'setRelationshipLinks']),
+    ...mapActions(['setLoading']),
     tableOverflow (width) {
       var show = width > screen.width
       this.overflow = show
@@ -735,8 +742,8 @@ export default {
   },
   destroyed () {
     // reset whakapapa and relationships when leaving the tree
-    this.addNestedWhakapapa([])
-    this.addRelationshipLinks([])
+    this.setNestedWhakapapa([])
+    this.setRelationshipLinks([])
   }
 }
 
