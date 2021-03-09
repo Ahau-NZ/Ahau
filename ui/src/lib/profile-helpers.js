@@ -174,3 +174,12 @@ export const getProfile = ({
   },
   fetchPolicy: 'no-cache'
 })
+
+export const saveProfile = input => ({
+  mutation: gql`
+    mutation($input: ProfileInput!) {
+      saveProfile(input: $input)
+    }
+  `,
+  variables: { input }
+})

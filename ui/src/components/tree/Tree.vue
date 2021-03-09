@@ -262,7 +262,7 @@ export default {
   },
 
   methods: {
-    ...mapActions(['updateNode', 'setLoading']),
+    ...mapActions(['setLoading']),
 
     pathStroke (sourceId, targetId) {
       if (!this.paths) return 'darkgrey'

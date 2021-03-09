@@ -351,7 +351,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['updateNode', 'setLoading']),
+    ...mapActions(['setLoading']),
     // sets the width of the table
     async tableOverflow () {
       var width = await this.colWidth + this.columns[this.columns.length - 1].x
@@ -408,8 +408,6 @@ export default {
         _children: children,
         children: _children
       })
-
-      // this.updateNode({ is, path: endNode.path })
     },
     setString (name) {
       if (isEmpty(name)) return ''

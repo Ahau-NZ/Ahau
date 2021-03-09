@@ -100,7 +100,7 @@ export default {
     this.whakapapas = await this.groupedWhakapapaViews()
   },
   methods: {
-    ...mapActions(['addNestedWhakapapa', 'setLoading']),
+    ...mapActions(['setLoading']),
 
     async groupedWhakapapaViews () {
       var views = []
