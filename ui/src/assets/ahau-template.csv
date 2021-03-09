@@ -1,4 +1,4 @@
-parentNumber,number,preferredName,legalName,gender,bornAt,diedAt,birthOrder,contact,location,profession,relationshipType,,,,
+parentNumber,number,preferredName,legalName,gender,bornAt,placeOfBirth,diedAt,placeOfDeath,buriedLocation,birthOrder,phone,email,address,city,country,profession,relationshipType,,,,
 ,,,,,,,,,,,,,,,
 ,,,,,,,,,,,,,,,
 ,,,,,,,,,,,,,,,

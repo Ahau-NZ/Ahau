@@ -410,9 +410,10 @@ export default {
           value: 'profession'
         },
         {
-          name: 'City, Country',
-          value: 'location'
+          name: 'City',
+          value: 'city'
         }
+        // add country
       ]
     }
   },

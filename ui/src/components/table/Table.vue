@@ -70,9 +70,10 @@
                 {{ node.data.address }}
               </text>
             </svg>
+            <!-- add country -->
             <svg :width="columns[8].x - 45">
               <text  :transform="`translate(${columns[7].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ node.data.location }}
+                {{ node.data.city }}
               </text>
             </svg>
             <svg :width="columns[9].x - 45">
@@ -169,7 +170,8 @@ export default {
         legalName: SORT.default,
         age: SORT.default,
         profession: SORT.default,
-        location: SORT.default
+        city: SORT.default
+        // add country
       },
       nodeCentered: ''
     }
@@ -309,8 +311,9 @@ export default {
           label: 'Address',
           x: this.colWidth + 1000
         },
+        // add label for country
         {
-          label: 'City, Country',
+          label: 'City',
           x: this.colWidth + 1405
         },
         {
@@ -493,7 +496,8 @@ export default {
       const preferredName = ['Preferred Name', 'Preferred Name ↑', 'Preferred Name ↓']
       const age = ['Age', 'Age ↑', 'Age ↓']
       const profession = ['Profession', 'Profession ↑', 'Profession ↓']
-      const location = ['City, Country', 'City, Country ↑', 'City, Country ↓']
+      const city = ['City', 'City ↑', 'City ↓']
+      // add country
 
       if (label === 'Preferred Name') {
         return preferredName[this.sort['preferredName']]
@@ -504,8 +508,8 @@ export default {
       if (label === 'Profession') {
         return profession[this.sort['profession']]
       }
-      if (label === 'City, Country') {
-        return location[this.sort['location']]
+      if (label === 'City') {
+        return city[this.sort['city']]
       }
       return ''
     },

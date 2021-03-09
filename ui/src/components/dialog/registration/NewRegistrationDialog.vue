@@ -191,7 +191,7 @@
                           smCols="12"
                           mdCols="6"
                           title="City/Country"
-                          :value="personalProfile.location"
+                          :value="personalProfile.city + ', ' + personalProfile.country "
                         />
                         <ProfileInfoItem
                           smCols="12"

@@ -7,8 +7,8 @@ const d3 = require('d3')
 // NOTE: column names need to be on same line as opening of string literal
 
 // for columns
-const ALL_COLUMNS = 'parentNumber,number,preferredName,legalName,gender,relationshipType,birthOrder,bornAt,deceased,diedAt,phone,email,address,location,profession'
-const MISSING_COLUMNS = 'parentNumber,number,legalName,gender,relationshipType,bornAt,deceased,diedAt,phone,address,location'
+const ALL_COLUMNS = 'parentNumber,number,preferredName,legalName,gender,bornAt,placeOfBirth,deceased,diedAt,placeOfDeath,buriedLocation,birthOrder,relationshipType,profession,phone,email,address,city,country'
+const MISSING_COLUMNS = 'parentNumber,number,legalName,gender,relationshipType,bornAt,deceased,diedAt,phone,address'
 const EXTRA_COLUMNS = `${ALL_COLUMNS},extra1,extra2
 `
 const MISPELLED_COLUMNS = 'parentNumbe,number,preferredName,legalName,gender,relationshipType,birthOrder,bornAt,deceased,diedAt,phone,email,address,location,profession'
@@ -142,7 +142,7 @@ test('csv.parse', t => {
         phone: '021167892345',
         email: 'cherese@me.com',
         address: '123 Happy Lane',
-        location: 'HappyVille',
+        country: 'HappyVille',
         profession: 'Software Engineer'
       }, 'returns correct profile')
     })

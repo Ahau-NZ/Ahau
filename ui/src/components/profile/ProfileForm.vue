@@ -264,7 +264,7 @@
             />
           </v-col>
         </v-row>
-        <!-- Email, Address, Phone, Location -->
+        <!-- Email, Address, Phone, Address -->
         <v-row v-if="!formData.deceased">
           <v-col cols="12" :sm="mobile ? '12' : '6'">
             <!-- Email -->
@@ -305,10 +305,21 @@
             </v-row>
             <v-row>
               <v-col cols="12" class="pa-1">
-                <!-- Location -->
+                <!-- City -->
                 <v-text-field
-                  v-model="formData.location"
-                  label="City, Country"
+                  v-model="formData.city"
+                  label="City"
+                  v-bind="customProps"
+                  outlined
+                />
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col cols="12" class="pa-1">
+                <!-- Country -->
+                <v-text-field
+                  v-model="formData.country"
+                  label="Country"
                   v-bind="customProps"
                   outlined
                 />

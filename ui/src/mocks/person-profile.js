@@ -90,7 +90,8 @@ export const personComplete = {
   birthOrder: '',
   altNames: ['Willard', 'William'],
   occupation: 'Actor',
-  location: 'USA',
+  city: 'Chicago',
+  country: 'USA',
   avatarImage: {
     uri:
       'https://m.media-amazon.com/images/M/MV5BNTczMzk1MjU1MV5BMl5BanBnXkFtZTcwNDk2MzAyMg@@._V1_UY317_CR2,0,214,317_AL_.jpg'

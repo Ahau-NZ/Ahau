@@ -128,7 +128,7 @@
                       smCols="12"
                       mdCols="6"
                       title="City/Country"
-                      :value="applicant.location"
+                      :value="applicant.city + ', ' + applicant.country"
                     />
                     <ProfileInfoItem
                       smCols="12"

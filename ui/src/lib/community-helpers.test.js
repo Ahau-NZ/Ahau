@@ -10,7 +10,7 @@ const communityUpdated = {
   avatarImage: null,
   headerImage: null,
   description: 'This is the whanau',
-  location: 'NZ',
+  country: 'NZ',
   address: null,
   email: null,
   phone: null,
@@ -33,7 +33,7 @@ test('create new community', t => {
   const expectedCommunity = {
     preferredName: 'Eriepa Whanau',
     description: 'This is the whanau',
-    location: 'NZ',
+    country: 'NZ',
     joiningQuestions: [
       { type: 'input', label: 'What is your iwi?' },
       { type: 'input', label: 'Where were you born?' }
@@ -51,7 +51,8 @@ test('get changes from an existing community', t => {
     avatarImage: null,
     headerImage: null,
     description: 'This is the whanau',
-    location: 'Waikato, NZ', // updated
+    city: 'Waikato', // updated
+    country: 'NZ', // updated
     address: '123 Some Street',
     email: 'whanau@email.com',
     phone: '0800 123 4567',
@@ -66,7 +67,8 @@ test('get changes from an existing community', t => {
 
   const expectedCommunity = {
     preferredName: 'Eriepa Family',
-    location: 'Waikato, NZ',
+    city: 'Waikato',
+    country: 'NZ',
     address: '123 Some Street',
     email: 'whanau@email.com',
     phone: '0800 123 4567',

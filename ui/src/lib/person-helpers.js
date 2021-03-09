@@ -14,7 +14,8 @@ export const PERMITTED_PERSON_PROPS = [
   'gender',
 
   'address',
-  'location',
+  'city',
+  'country',
   'email',
   'phone',
   'profession',

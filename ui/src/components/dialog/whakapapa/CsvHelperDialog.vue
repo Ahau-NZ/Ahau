@@ -111,17 +111,21 @@ export default {
       ],
       fields: [
         { name: 'preferredName', description: 'Name the person is known by. Generally, the first name or even a nick name.', formats: ['Text'] },
-        { name: 'legalName', description: 'Legal name of a person', formats: ['Text'] },
+        { name: 'legalName', description: 'the persons full name', formats: ['Text'] },
         { name: 'gender', description: 'Gender of a person', formats: ['male', 'female', 'other', 'unknown'] },
         { name: 'relationshipType', description: 'How a person is related', formats: ['birth (default)', 'whangai', 'adopted'] },
         { name: 'birthOrder', description: 'Order a person was born in their whānau. First born is 1, second is 2 and so on.', formats: ['Number'] },
         { name: 'bornAt', description: 'Date of birth, the date a person was born', formats: ['DD-MM-YYYY', 'DD/MM/YYYY'] },
+        { name: 'placeOfBirth', description: 'Location the person was born', formats: ['Text'] },
         { name: 'deceased', description: 'This is to specify if a person is no longer living', formats: ['no (default)', 'yes'] },
         { name: 'diedAt', description: 'Date of death, the date a person passed away', formats: ['DD-MM-YYYY', 'DD/MM/YYYY'] },
+        { name: 'placeOfDeath', description: 'Location the person passed away', formats: ['Text'] },
+        { name: 'buriedLocation', description: 'Location where the person was buried', formats: ['Text'] },
         { name: 'phone', description: 'Phone number, this can be any phone number (i.e. mobile, home or work)', formats: ['Text'] },
         { name: 'email', description: 'Email address', formats: ['Text'] },
         { name: 'address', description: 'Street address', formats: ['Text'] },
-        { name: 'location', description: 'Town, City or Country', formats: ['Text'] },
+        { name: 'city', description: 'Town, or City', formats: ['Text'] },
+        { name: 'country', description: 'Country', formats: ['Text'] },
         { name: 'profession', description: 'Current Profession', formats: ['Text'] }
       ]
     }
@@ -139,7 +143,7 @@ export default {
       this.close()
     },
     downloadCsv () {
-      var csv = 'parentNumber,number,preferredName,legalName,gender,bornAt,deceased,diedAt,birthOrder,relationshipType,profession,phone,email,address,location\n'
+      var csv = 'parentNumber,number,preferredName,legalName,gender,bornAt,placeOfBirth,deceased,diedAt,placeOfDeath,buriedLocation,birthOrder,relationshipType,profession,phone,email,address,city,country\n'
       var hiddenElement = document.createElement('a')
       hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(csv)
       hiddenElement.target = '_blank'
