@@ -211,7 +211,7 @@ export default {
       return this.profile.partners
         .map((d, i) => {
           var sign = i % 2 === 0 ? 1 : -1
-          var offset = sign === 1 ? +2 * this.offsetSize + ((i + 1) * 100) : -1 * this.offsetSize - ((i + 1) * 100)
+          var offset = sign === 1 ? +4 * this.offsetSize + ((i + 1) * 30) : -1 * this.offsetSize - ((i + 1) * 30)
           var count = sign === 1 ? ++leftCount : ++rightCount
           var x = sign * count * this.partnerRadius + offset
           var y = 10
@@ -223,17 +223,13 @@ export default {
             right: sign === -1,
             link: {
               d: `
-                M ${this.node.x + this.partnerRadius}, ${(sign * ((i + 1) * 3)) + this.partnerRadius}
+                M ${this.partnerRadius}, ${(sign * ((i + 1) * 3)) + this.partnerRadius}
                 H ${x + this.partnerRadius}
               `,
               style: {
                 fill: 'none',
                 stroke: 'darkgrey'
               }
-              // M ${this.node.x}, ${this.node.y}
-              // v ${this.branch}
-              // H ${d.target.x}
-              // V ${d.target.y}
             }
           }
         })

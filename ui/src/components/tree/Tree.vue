@@ -346,7 +346,7 @@ export default {
     visiblePartners (node) {
       return get(node, 'data.isCollapsed')
         ? 0
-        : get(node, 'data.partners.length', 0)
+        : get(node, 'data.partners.length', 0) * 1.3
     },
     zoom () {
       var svg = d3.select('#baseSvg')
