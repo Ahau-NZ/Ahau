@@ -3,6 +3,9 @@
     <!-- recursion of partners (first so they're drawing in background) -->
     <g v-if="!profile.isCollapsed">
       <g v-for="partner in partners" :key="partner.nodeId">
+        <Link
+          :link="partner.link"
+        />
         <Node
           :id="partner.nodeId"
           :radius="partnerRadius"
@@ -109,9 +112,11 @@ import get from 'lodash.get'
 import avatarHelper from '@/lib/avatar-helpers.js'
 import { DECEASED_COLOUR, ALIVE_COLOUR } from '@/lib/constants.js'
 import { getDisplayName } from '@/lib/person-helpers.js'
+import Link from './Link.vue'
 // import flower.svg from '@/src/assets'
 
 export default {
+  components: { Link },
   name: 'Node',
   props: {
     node: { type: Object, required: true },
@@ -206,14 +211,30 @@ export default {
       return this.profile.partners
         .map((d, i) => {
           var sign = i % 2 === 0 ? 1 : -1
-          var offset = sign === 1 ? +2 * this.offsetSize : -1 * this.offsetSize
+          var offset = sign === 1 ? +2 * this.offsetSize + ((i + 1) * 100) : -1 * this.offsetSize - ((i + 1) * 100)
           var count = sign === 1 ? ++leftCount : ++rightCount
+          var x = sign * count * this.partnerRadius + offset
+          var y = 10
           return {
             index: `${this.node.nodeId}-partner-${i}`,
-            x: sign * count * this.partnerRadius + offset,
-            y: 10,
+            x,
+            y,
             data: d,
-            right: sign === -1
+            right: sign === -1,
+            link: {
+              d: `
+                M ${this.node.x + this.partnerRadius}, ${(sign * ((i + 1) * 3)) + this.partnerRadius}
+                H ${x + this.partnerRadius}
+              `,
+              style: {
+                fill: 'none',
+                stroke: 'darkgrey'
+              }
+              // M ${this.node.x}, ${this.node.y}
+              // v ${this.branch}
+              // H ${d.target.x}
+              // V ${d.target.y}
+            }
           }
         })
         .reverse()

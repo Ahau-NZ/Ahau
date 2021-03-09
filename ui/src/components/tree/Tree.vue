@@ -8,7 +8,7 @@
     </defs>
     <path id="background" d="M5,5 l0,680 2980,0 l0,-680 l-980,0" fill="url(#img1)" />
     <!-- whakapapa tree -->
-    <g id="baseGroup" >
+    <g id="baseGroup">
       <g :transform="`translate(${treeX} ${treeY})`">
         <g v-for="link in links" :key="link.id" class="link">
           <Link :link="link" :class="link.class"/>

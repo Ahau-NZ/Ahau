@@ -51,6 +51,12 @@ const twoPartners = {
         stacey,
         susan
       ]
+    },
+    {
+      id: 'H',
+      preferredName: 'Zara',
+      children: [{ id: 'I', preferredName: 'Otene', gender: 'male' }],
+      partners: [{ id: 'J', preferredName: 'Makene', gender: 'male' }]
     }
   ],
   partners: [
@@ -65,6 +71,14 @@ const twoPartners = {
       children: [
         zavien
       ]
+    },
+    {
+      id: 'F',
+      preferredName: 'F'
+    },
+    {
+      id: 'G',
+      preferredName: 'G'
     }
   ]
 }
@@ -73,8 +87,13 @@ const relationshipLinks = new Map()
 
 const r1 = tree.getRelationship(stacey, cherese, { linkId: 'A-B', relationshipType: 'birth' })
 const r2 = tree.getRelationship(stacey, zavien, { linkId: 'A-D', relationshipType: 'birth' })
+const r3 = tree.getRelationship(stacey, { id: 'H' }, { linkId: 'A-H', relationshipType: 'birth' })
+const r4 = tree.getRelationship({ id: 'H' }, { id: 'I' }, { linkId: 'H-I', relationshipType: 'birth' })
+
 relationshipLinks.set(r1.index, r1.attrs)
-relationshipLinks.set(r2.index, r1.attrs)
+relationshipLinks.set(r2.index, r2.attrs)
+relationshipLinks.set(r3.index, r3.attrs)
+relationshipLinks.set(r4.index, r4.attrs)
 
 export const OnePartner = () => ({
   template: '<Tree />',
