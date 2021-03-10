@@ -75,6 +75,9 @@ export default {
 
           const CHILDREN = this.getChildrenByPartner(partner)
 
+          const startX = x + PARTNER_RADIUS
+          const endX = this.root.x + NODE_RADIUS
+
           return {
             index: `${this.profile.id}-partner-${i}`,
             x,
@@ -82,8 +85,8 @@ export default {
             data: partner,
             link: {
               d: `
-                M ${x + PARTNER_RADIUS}, ${this.root.y + NODE_RADIUS + (i * 3)}
-                H ${this.root.x + NODE_RADIUS}
+                M ${startX}, ${this.root.y + NODE_RADIUS + (i * 3)}
+                H ${endX}
               `,
               style: {
                 fill: 'none',
