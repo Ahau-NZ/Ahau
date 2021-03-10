@@ -1,23 +1,25 @@
 <template>
   <g :style="position">
+    <g>
     <defs>
-      <clipPath>
-        <circle :cx="radius" :cy="radius" />
+      <clipPath :id="clipPathId">
+        <circle :cx="radius" :cy="radius" :r="radius"/>
       </clipPath>
     </defs>
     <circle
       :style="{ fill: profile.deceased ? colours.deceased : colours.alive }"
       :cx="radius"
       :cy="radius"
-      :r="radius - 1"
+      :r="radius"
     />
     <image
       :xlink:href="imageSrc"
       :width="diameter"
       :height="diameter"
-      clip-path="url(#myCircle)"
+      :clip-path="`url(#${clipPathId})`"
       :style="{ opacity: profile.deceased ? 0.5 : 1 }"
     />
+    </g>
     <g v-if="profile.isCollapsed" :style="collapsedStyle">
       <text> ... </text>
     </g>
@@ -53,6 +55,9 @@ export default {
     }
   },
   computed: {
+    clipPathId () {
+      return this.partner ? 'partnerCirlce' : 'myCircle'
+    },
     profile () {
       return this.node.data
     },

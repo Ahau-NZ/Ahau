@@ -12,17 +12,14 @@
         <Link
           :link="partner.link"
         />
-        
-        <g v-for="child in partner.children" :key="`partner-${partner.data.id}-child-${child.data.id}`">
-          
-          <SubTree :root="child" />
-          <Link :link="child.link"/>
-        </g>
-        
+      </g>
+      <g v-for="child in children" :key="`child-${child.data.id}`" id="childGroup">
+        <SubTree :root="child" />
+        <!-- <Link :link="child.link"/> -->
       </g>
     </g>
     <!-- we draw the node second so the links appear underneath -->
-    
+
     <!-- Children -->
   </g>
 </template>
@@ -57,6 +54,11 @@ export default {
     profile () {
       return this.root.data
     },
+    children () {
+      if (!this.root || !this.root.children) return []
+
+      return this.root.children
+    },
     partners () {
       if (!this.profile || !this.profile.partners) return []
 
@@ -70,10 +72,6 @@ export default {
 
           const x = this.root.x + ((i + 1) * NODE_DIAMETER) + DIFF
           const y = this.root.y + (DIFF / 2)
-
-          console.log(this.profile.preferredName, i, x, y)
-
-          const CHILDREN = this.getChildrenByPartner(partner)
 
           const startX = x + PARTNER_RADIUS
           const endX = this.root.x + NODE_RADIUS
@@ -94,32 +92,29 @@ export default {
                 opacity: 0.7,
                 strokeWidth: 2
               }
-            },
-            children: CHILDREN.map((child, ci) => {
-              return {
-                ...child,
-                x: child.x,
-                y: child.y,
-                link: {
-                  d: `
-                    M ${x + PARTNER_RADIUS}, ${y + PARTNER_RADIUS}
-                    v ${100}
-                    H ${child.x + NODE_RADIUS}
-                    V ${child.y + NODE_RADIUS}
-                  `,
-                  style: {
-                    fill: 'none',
-                    stroke: 'darkgrey'
-                  }
-                }
-              }
-            })
+            }
+            // children: CHILDREN.map((child, ci) => {
+            //   return {
+            //     ...child,
+            //     x: child.x,
+            //     y: child.y,
+            //     link: {
+            //       d: `
+            //         M ${x + PARTNER_RADIUS}, ${y + PARTNER_RADIUS}
+            //         v ${100}
+            //         H ${child.x + NODE_RADIUS}
+            //         V ${child.y + NODE_RADIUS}
+            //       `,
+            //       style: {
+            //         fill: 'none',
+            //         stroke: 'darkgrey'
+            //       }
+            //     }
+            //   }
+            // })
           }
         })
         .reverse()
-    },
-    children () {
-      return this.root.children
     }
   },
   methods: {
