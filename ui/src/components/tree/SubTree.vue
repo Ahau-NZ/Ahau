@@ -82,14 +82,14 @@ export default {
             data: partner,
             link: {
               d: `
-                M ${x + PARTNER_RADIUS}, ${this.root.y + NODE_RADIUS}
+                M ${x + PARTNER_RADIUS}, ${this.root.y + NODE_RADIUS + (i * 3)}
                 H ${this.root.x + NODE_RADIUS}
               `,
               style: {
                 fill: 'none',
                 stroke: colours[Math.floor(Math.random() * colours.length)],
                 opacity: 0.7,
-                strokeWidth: 10
+                strokeWidth: 2
               }
             },
             children: CHILDREN.map((child, ci) => {
