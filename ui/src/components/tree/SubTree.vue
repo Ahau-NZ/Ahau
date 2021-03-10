@@ -71,6 +71,7 @@ export default {
           const y = this.root.y + (DIFF / 2)
 
           const startX = x + PARTNER_RADIUS
+          const startY = this.root.y + NODE_RADIUS + (i * 3)
           const endX = this.root.x + NODE_RADIUS
 
           const children = partner.children
@@ -86,8 +87,10 @@ export default {
             y,
             data: partner,
             link: {
+              startX,
+              startY,
               d: `
-                M ${startX}, ${this.root.y + NODE_RADIUS + (i * 3)}
+                M ${startX}, ${startY}
                 H ${endX}
               `,
               style: {
@@ -107,9 +110,12 @@ export default {
             return {
               ...node,
               link: {
-                style: partner.link.style,
+                style: {
+                  ...partner.link.style,
+                  opacity: partner.link.style.opacity
+                },
                 d: `
-                  M ${partner.x + PARTNER_RADIUS}, ${partner.y + PARTNER_RADIUS}
+                  M ${partner.x - (PARTNER_RADIUS / 3)}, ${partner.link.startY + 1}
                   v ${120}
                   H ${node.x + NODE_RADIUS}
                   V ${node.y + NODE_RADIUS}
