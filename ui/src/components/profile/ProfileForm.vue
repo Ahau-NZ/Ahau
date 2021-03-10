@@ -291,6 +291,7 @@
               sm="12"
               class="pa-1"
             >
+              <v-spacer v-if="index >= 1" style="height: 8%"></v-spacer>
               <v-text-field
               v-model="formData.education[index]"
               label="Skill/Qualification"
@@ -300,6 +301,7 @@
               cols="12"
               outlined
               />
+              <v-spacer style="height: 8%"></v-spacer>
               <v-text-field
               v-model="formData.school[index]"
               label="Place of Education"
@@ -307,8 +309,10 @@
               cols="12"
               outlined
               />
-          </v-col>
+            </v-col>
+          <v-col>
             <AddButton :align="'flex-end'" :width="'50px'" label="Add a skill/qualification" @click="addQualification" row/>
+          </v-col>
           </template>
         </v-row>
         <!-- Profession, Place of Birth -->
