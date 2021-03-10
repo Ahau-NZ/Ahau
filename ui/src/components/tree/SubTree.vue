@@ -1,35 +1,34 @@
 <template>
   <g>
-    <Node :node="root"/>
-    <!-- Partners -->
     <g>
-      <g v-for="partner in partners" :key="partner.id">
+      <g v-for="partner in partners" :key="`partner-link-${partner.data.id}`">
+        <Link
+          :link="partner.link"
+        />
+      </g>
+      <g v-for="partner in partners" :key="`partner-children-${partner.data.id}`">
+        <g v-for="child in partner.children" :key="`partner-child-${child.data.id}`" id="childGroup">
+          <Link :link="child.link"/>
+          <SubTree :root="child" />
+        </g>
+        <!--  -->
         <Node
           :node="partner"
           :radius="40"
           partner
         />
-        <Link
-          :link="partner.link"
-        />
-      </g>
-      <g v-for="child in children" :key="`child-${child.data.id}`" id="childGroup">
-        <SubTree :root="child" />
-        <!-- <Link :link="child.link"/> -->
       </g>
     </g>
-    <!-- we draw the node second so the links appear underneath -->
-
-    <!-- Children -->
+    <Node :node="root"/>
   </g>
 </template>
 
 <script>
 import Node from './Node.vue'
 import Link from './Link.vue'
-import pileSort from 'pile-sort'
 
-import { colours } from '@/lib/colours.js'
+const NODE_RADIUS = 50
+const PARTNER_RADIUS = 40
 
 export default {
   name: 'SubTree',
@@ -55,48 +54,10 @@ export default {
     profile () {
       return this.root.data
     },
-    children () {
-      if (!this.root || !this.root.children) return []
-
-      // // get all partner ids
-      const partnerIds = this.profile.partners.map(d => d.id)
-      const filters = []
-
-      partnerIds.forEach(id => {
-        filters.push((child) => child.data.parents.some(p => p.id === id))
-      })
-
-      if (filters.length === 0) {
-        // children without a second parent
-        if (this.root.children.length > 0) return this.root.children
-        else return []
-      }
-
-      const piles = pileSort(
-        this.root.children,
-        filters
-      )
-
-      if (piles.length === 0) return []
-
-      let arr = []
-
-      piles.forEach(d => {
-        arr = [...arr, ...d]
-      })
-
-      return arr.map((d, i) => {
-        const { x, y } = this.root.children[i]
-
-        return {
-          ...d,
-          x,
-          y
-        }
-      })
-    },
     partners () {
       if (!this.profile || !this.profile.partners) return []
+
+      var allChildren = []
 
       return this.profile.partners
         .map((partner, i) => {
@@ -112,6 +73,13 @@ export default {
           const startX = x + PARTNER_RADIUS
           const endX = this.root.x + NODE_RADIUS
 
+          const children = partner.children
+            .filter(child => {
+              return this.root.children.some(c => child.id === c.data.id)
+            })
+
+          allChildren.push(...children)
+
           return {
             index: i,
             x,
@@ -124,57 +92,35 @@ export default {
               `,
               style: {
                 fill: 'none',
-                stroke: colours[Math.floor(Math.random() * colours.length)],
-                opacity: 0.7,
-                strokeWidth: 2
+                stroke: '#' + Math.random().toString(16).substr(2, 6),
+                opacity: 0.4,
+                strokeWidth: 2.5
               }
-            }
-            // children: CHILDREN.map((child, ci) => {
-            //   return {
-            //     ...child,
-            //     x: child.x,
-            //     y: child.y,
-            //     link: {
-            //       d: `
-            //         M ${x + PARTNER_RADIUS}, ${y + PARTNER_RADIUS}
-            //         v ${100}
-            //         H ${child.x + NODE_RADIUS}
-            //         V ${child.y + NODE_RADIUS}
-            //       `,
-            //       style: {
-            //         fill: 'none',
-            //         stroke: 'darkgrey'
-            //       }
-            //     }
-            //   }
-            // })
+            },
+            children
           }
         })
-        .reverse()
-    }
-  },
-  methods: {
-    getChildrenByPartner (partner) {
-      if (!partner) return []
+        .map(partner => {
+          partner.children = partner.children.map(child => {
+            const node = this.root.children.find(d => d.data.id === child.id)
 
-      console.log(partner)
-      if (!this.root || !this.root.children) return []
-
-      return this.root.children
-        .filter(child => {
-          return partner.children.some(c => {
-            return c.id === child.data.id
+            return {
+              ...node,
+              link: {
+                style: partner.link.style,
+                d: `
+                  M ${partner.x + PARTNER_RADIUS}, ${partner.y + PARTNER_RADIUS}
+                  v ${120}
+                  H ${node.x + NODE_RADIUS}
+                  V ${node.y + NODE_RADIUS}
+                `
+              }
+            }
           })
+          return partner
         })
     }
   }
 }
 
-/*
-  TODO:
-  - [ ] reorder children by partner/parents
-
-  - display partner above children
-  - what happens when a child belongs to three parents?
-*/
 </script>
