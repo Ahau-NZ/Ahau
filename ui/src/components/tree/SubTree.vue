@@ -19,13 +19,15 @@
         />
       </g>
     </g>
-    <Node :node="root"/>
+    <Node v-if="!root.isHidden" :node="root" />
   </g>
 </template>
 
 <script>
 import Node from './Node.vue'
 import Link from './Link.vue'
+
+import uniqby from 'lodash.uniqby'
 
 const NODE_RADIUS = 50
 const PARTNER_RADIUS = 40
@@ -59,6 +61,8 @@ export default {
 
       var allChildren = []
 
+      var currentChildren = []
+
       return this.profile.partners
         .map((partner, i) => {
           const NODE_RADIUS = 50
@@ -76,13 +80,16 @@ export default {
 
           const children = partner.children
             .filter(child => {
-              return this.root.children.some(c => child.id === c.data.id)
+              return (
+                this.root.children.some(c => child.id === c.data.id) // &&
+                // !allChildren.some(c => child.id === c.id) // only display a child once with the first partner it occurs on
+              )
             })
 
           allChildren.push(...children)
+          allChildren = uniqby(allChildren, (child) => child.id)
 
           return {
-            index: i,
             x,
             y,
             data: partner,
@@ -103,26 +110,45 @@ export default {
             children
           }
         })
-        .map(partner => {
-          partner.children = partner.children.map(child => {
-            const node = this.root.children.find(d => d.data.id === child.id)
+        .map((partner, i) => {
+          partner.children = uniqby(partner.children, (child) => child.id)
 
-            return {
-              ...node,
-              link: {
-                style: {
-                  ...partner.link.style,
-                  opacity: partner.link.style.opacity
-                },
-                d: `
-                  M ${partner.x - (PARTNER_RADIUS / 3)}, ${partner.link.startY + 1}
-                  v ${120}
-                  H ${node.x + NODE_RADIUS}
-                  V ${node.y + NODE_RADIUS}
-                `
+          partner.children = partner.children
+            .map(child => {
+              const node = this.root.children.find(d => d.data.id === child.id)
+              const index = allChildren.indexOf(child)
+              var { x } = this.root.children[index]
+
+              var offset = 0
+              var isHidden = false
+
+              if (allChildren.length === 1) {
+                x = this.root.x
+              } else if (currentChildren.indexOf(child) >= 0) {
+                isHidden = true
+                offset = 10
+              } else {
+                currentChildren.push(child)
               }
-            }
-          })
+
+              return {
+                isHidden,
+                ...node,
+                x,
+                link: {
+                  style: {
+                    ...partner.link.style,
+                    opacity: partner.link.style.opacity
+                  },
+                  d: `
+                    M ${partner.x - PARTNER_RADIUS / 3}, ${partner.link.startY}
+                    v ${120 - (i * 3)}
+                    H ${x + NODE_RADIUS + offset}
+                    V ${node.y + NODE_RADIUS}
+                  `
+                }
+              }
+            })
           return partner
         })
     }

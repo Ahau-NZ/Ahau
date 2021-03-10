@@ -7,32 +7,6 @@
       </pattern>
     </defs>
     <path id="background" d="M5,5 l0,680 2980,0 l0,-680 l-980,0" fill="url(#img1)" />
-    <!-- whakapapa tree -->
-    <!-- <g id="baseGroup">
-      <g :transform="`translate(${treeX} ${treeY})`">
-        <g v-for="link in links" :key="link.id" class="link">
-          <Link :link="link" :class="link.class"/>
-        </g>
-      </g>
-
-      <g
-        :transform="`translate(${treeX - nodeRadius} ${treeY - nodeRadius})`"
-        ref="tree"
-      >
-        <g v-for="node in nodes" :key="node.id" class="node">
-          <Node
-            :node="node"
-            :radius="nodeRadius"
-            :nonFocusedPartners="nonFocusedPartners"
-            :nodeCentered="nodeCentered"
-            @click="centerNode(node)"
-            @open-context-menu="$emit('open-context-menu', $event)"
-            @change-focus="changeFocus($event, node)"
-            :showLabel="true"
-          />
-        </g>
-      </g>
-    </g> -->
     <g id="baseGroup">
       <g>
         :transform="`translate(${treeX - nodeRadius} ${treeY - nodeRadius})`"
@@ -63,8 +37,6 @@
 <script>
 import * as d3 from 'd3'
 import get from 'lodash.get'
-import Node from './Node.vue'
-import Link from './Link.vue'
 import SubTree from './SubTree'
 
 import isEqual from 'lodash.isequal'
@@ -86,9 +58,7 @@ export default {
     getRelatives: Function
   },
   components: {
-    SubTree,
-    Node,
-    Link
+    SubTree
   },
   data () {
     return {
@@ -168,16 +138,16 @@ export default {
           this.nodeSeparationX + this.nodeRadius,
           this.nodeSeparationY + this.nodeRadius
         ])
-        .separation((a, b) => {
-          if (a.parent !== b.parent) return 1.3
-          // "how far cousins be spaced"  (I think)
-          // nodes have only one one "node.parent" (but multiple node.data.parents)
+        // .separation((a, b) => {
+        //   if (a.parent !== b.parent) return 1.3
+        //   // "how far cousins be spaced"  (I think)
+        //   // nodes have only one one "node.parent" (but multiple node.data.parents)
 
-          return 1 + 0.3 * (this.visiblePartners(a) + this.visiblePartners(b))
-          // "how far are siblings spaced" (I think)
-          // start with a baseline of 1, then add a proportion of the number of partners
-          // as partners take up less space than central node, are placed evenly to either side
-        })
+        //   return 1 + 0.3 * (this.visiblePartners(a) + this.visiblePartners(b))
+        //   // "how far are siblings spaced" (I think)
+        //   // start with a baseline of 1, then add a proportion of the number of partners
+        //   // as partners take up less space than central node, are placed evenly to either side
+        // })
     },
     //  returns a nested data structure representing a tree based on the treeData object
     root () {

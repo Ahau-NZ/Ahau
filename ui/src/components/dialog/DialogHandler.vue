@@ -599,13 +599,13 @@ export default {
       }
 
       // reorder children if there is a change in birthorder
-      if (input.birthOrder) {
-        var nestedParent = tree.find(this.nestedWhakapapa, this.selectedProfile.parents[0].id)
-        nestedParent.children = nestedParent.children.sort((a, b) => {
-          return a.birthOrder - b.birthOrder
-        })
-        this.updateNodeInNestedWhakapapa(nestedParent)
-      }
+      // if (input.birthOrder) {
+      //   var nestedParent = tree.find(this.nestedWhakapapa, this.selectedProfile.parents[0].id)
+      //   nestedParent.children = nestedParent.children.sort((a, b) => {
+      //     return a.birthOrder - b.birthOrder
+      //   })
+      //   this.updateNodeInNestedWhakapapa(nestedParent)
+      // }
 
       // reset the selectedProfile to the newly changed one
       this.setSelectedProfile(node)
