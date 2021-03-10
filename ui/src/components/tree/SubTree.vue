@@ -27,6 +27,7 @@
 <script>
 import Node from './Node.vue'
 import Link from './Link.vue'
+import pileSort from 'pile-sort'
 
 import { colours } from '@/lib/colours.js'
 
@@ -57,7 +58,42 @@ export default {
     children () {
       if (!this.root || !this.root.children) return []
 
-      return this.root.children
+      // // get all partner ids
+      const partnerIds = this.profile.partners.map(d => d.id)
+      const filters = []
+
+      partnerIds.forEach(id => {
+        filters.push((child) => child.data.parents.some(p => p.id === id))
+      })
+
+      if (filters.length === 0) {
+        // children without a second parent
+        if (this.root.children.length > 0) return this.root.children
+        else return []
+      }
+
+      const piles = pileSort(
+        this.root.children,
+        filters
+      )
+
+      if (piles.length === 0) return []
+
+      let arr = []
+
+      piles.forEach(d => {
+        arr = [...arr, ...d]
+      })
+
+      return arr.map((d, i) => {
+        const { x, y } = this.root.children[i]
+
+        return {
+          ...d,
+          x,
+          y
+        }
+      })
     },
     partners () {
       if (!this.profile || !this.profile.partners) return []
@@ -77,7 +113,7 @@ export default {
           const endX = this.root.x + NODE_RADIUS
 
           return {
-            index: `${this.profile.id}-partner-${i}`,
+            index: i,
             x,
             y,
             data: partner,
@@ -133,4 +169,12 @@ export default {
     }
   }
 }
+
+/*
+  TODO:
+  - [ ] reorder children by partner/parents
+
+  - display partner above children
+  - what happens when a child belongs to three parents?
+*/
 </script>
