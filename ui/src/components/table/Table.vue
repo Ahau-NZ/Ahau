@@ -70,9 +70,10 @@
                 {{ node.data.address }}
               </text>
             </svg>
+            <!-- Blake TODO: add city and post code -->
             <svg :width="columns[8].x - 45">
               <text  :transform="`translate(${columns[7].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ node.data.location }}
+                {{ node.data.country }}
               </text>
             </svg>
             <svg :width="columns[9].x - 45">
@@ -169,7 +170,7 @@ export default {
         legalName: SORT.default,
         age: SORT.default,
         profession: SORT.default,
-        location: SORT.default
+        country: SORT.default
       },
       nodeCentered: ''
     }
@@ -310,7 +311,7 @@ export default {
           x: this.colWidth + 1000
         },
         {
-          label: 'City, Country',
+          label: 'Country',
           x: this.colWidth + 1405
         },
         {
@@ -493,7 +494,7 @@ export default {
       const preferredName = ['Preferred Name', 'Preferred Name ↑', 'Preferred Name ↓']
       const age = ['Age', 'Age ↑', 'Age ↓']
       const profession = ['Profession', 'Profession ↑', 'Profession ↓']
-      const location = ['City, Country', 'City, Country ↑', 'City, Country ↓']
+      const country = ['City, Country', 'City, Country ↑', 'City, Country ↓']
 
       if (label === 'Preferred Name') {
         return preferredName[this.sort['preferredName']]
@@ -504,8 +505,8 @@ export default {
       if (label === 'Profession') {
         return profession[this.sort['profession']]
       }
-      if (label === 'City, Country') {
-        return location[this.sort['location']]
+      if (label === 'Country') {
+        return country[this.sort['country']]
       }
       return ''
     },

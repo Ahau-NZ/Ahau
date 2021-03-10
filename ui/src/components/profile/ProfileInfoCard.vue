@@ -5,7 +5,8 @@
         <ProfileInfoItem v-if="profile.type === 'person'" :class="mobile ? 'br bb':'br'" :title="'Preferred Name'" :value="profile.preferredName"/>
         <ProfileInfoItem v-if="profile.type === 'person'" :class="mobile ? 'bb':'br'" :title="'Age'" :value="age"/>
         <ProfileInfoItem v-if="profile.type === 'person'" class="br" :title="'Occupation'" :value="profile.profession" />
-        <ProfileInfoItem v-if="profile.type === 'person'" :title="'City, Country'" :value="profile.location" />
+        <ProfileInfoItem v-if="profile.type === 'person'" :title="'City'" :value="profile.city" />
+        <ProfileInfoItem v-if="profile.type === 'person'" :title="'Country'" :value="profile.country" />
       </v-row>
       <v-row v-if="isFamily" class="rounded-border py-2">
         <div v-if="profile.parents && profile.parents.length > 0" class="pl-6">

@@ -92,17 +92,21 @@ function defaultData (input) {
     avatarImage: profile.avatarImage,
     description: profile.description,
     birthOrder: profile.birthOrder,
-    location: profile.location,
     email: profile.email,
     phone: profile.phone,
     deceased: profile.deceased,
     address: profile.address,
+    city: profile.city,
+    country: profile.country,
+    postCode: profile.postCode,
     profession: profile.profession,
     altNames: {
       currentState: clone(profile.altNames),
       add: [], // new altNames to add
       remove: [] // altNames to remove
-    }
+    },
+    education: profile.education,
+    school: profile.school
   }
 }
 
@@ -123,12 +127,16 @@ function setDefaultData (withRelationships) {
     aliveInterval: '',
     birthOrder: '',
     description: '',
-    location: '',
+    city: '',
+    country: '',
+    postCode: '',
     profession: '',
     address: '',
     email: '',
     phone: '',
-    deceased: false
+    deceased: false,
+    education: [],
+    school: []
   }
 
   if (!withRelationships) {

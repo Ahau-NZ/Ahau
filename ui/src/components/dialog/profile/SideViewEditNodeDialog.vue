@@ -147,10 +147,10 @@
                 </v-col>
                 <v-col cols="6">
                   <v-row>
-                    <v-col class="py-1 px-0 profile-label overline"><small>Location</small></v-col>
+                    <v-col class="py-1 px-0 profile-label overline"><small>Country</small></v-col>
                   </v-row>
                   <v-row class="py-0 justify-center">
-                    <p class="ma-0 profile-info" style="font-size: 0.8em">{{formData.location}}</p>
+                    <p class="ma-0 profile-info" style="font-size: 0.8em">{{formData.country}}</p>
                   </v-row>
                 </v-col>
               </v-row>
@@ -261,11 +261,13 @@ function defaultData (input) {
     description: profile.description,
     birthOrder: profile.birthOrder,
     relationshipType: profile.relationship ? profile.relationship.relationshipType : null,
-    location: profile.location,
     email: profile.email,
     phone: profile.phone,
     deceased: profile.deceased,
     address: profile.address,
+    city: profile.city,
+    country: profile.country,
+    postCode: profile.postCode,
     profession: profile.profession,
     altNames: {
       currentState: clone(profile.altNames),

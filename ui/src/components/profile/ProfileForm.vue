@@ -8,7 +8,7 @@
             <!-- Avatar -->
           <Avatar
             class="big-avatar"
-            size="200px"
+            size="80px"
             :image="formData.avatarImage"
             :alt="formData.preferredName"
             :gender="formData.gender"
@@ -52,7 +52,7 @@
 
       <!-- Names -->
       <v-col cols="12" :sm="mobile ? '12' : '6'" class="pt-4">
-        <v-spacer style="height:30%"></v-spacer>
+        <v-spacer style="height:5%"></v-spacer>
         <v-row>
           <!-- Preferred Name -->
           <v-col cols="12" class="pa-1">
@@ -258,25 +258,58 @@
         </v-row>
         <!-- Qualification -->
         <v-row>
-          <v-col cols="12" class="pa-1"> <!-- Blake TODO: Hookup to back end -->
-            <v-text-field
-              v-model="formData.profession"
-              label="Skills/Education"
+          <template v-if="readonly">
+            <v-col v-for="(qualification, index) in formData.education"
+              :key="`value-qual-name-${index}`"
+              cols="12"
+              sm="12"
+              class="pa-1"
+            >
+              <v-text-field
+              v-model="formData.education[index]"
+              label="Skill/Qualification"
+              :append-icon="readonly ? '' : 'mdi-delete'"
+              @click:append="removeQualification(index)"
               v-bind="customProps"
+              readonly
               outlined
-            />
-          </v-col>
-        </v-row>
-        <!-- Education -->
-        <v-row>
-          <v-col cols="12" class="pa-1"> <!-- Blake TODO: Hookup to back end -->
-            <v-text-field
-              v-model="formData.profession"
-              label="Place(s) of Education"
+              />
+              <v-text-field
+              v-model="formData.school[index]"
+              label="Place of Education"
               v-bind="customProps"
+              readonly
               outlined
-            />
+              />
+            </v-col>
+          </template>
+
+          <template v-else>
+            <v-col v-for="(qualification, index) in formData.education"
+              :key="`add-qual-name-${index}`"
+              cols="12"
+              sm="12"
+              class="pa-1"
+            >
+              <v-text-field
+              v-model="formData.education[index]"
+              label="Skill/Qualification"
+              append-icon="mdi-delete"
+              @click:append="removeQualification(index)"
+              v-bind="customProps"
+              cols="12"
+              outlined
+              />
+              <v-text-field
+              v-model="formData.school[index]"
+              label="Place of Education"
+              v-bind="customProps"
+              cols="12"
+              outlined
+              />
           </v-col>
+            <AddButton :align="'flex-end'" :width="'50px'" label="Add a skill/qualification" @click="addQualification" row/>
+          </template>
         </v-row>
         <!-- Profession, Place of Birth -->
         <v-row>
@@ -339,9 +372,9 @@
             </v-row>
             <v-row>
               <v-col cols="12" class="pa-1">
-                <!-- Location --> <!-- Blake TODO: Hookup to back end (change to city) -->
+                <!-- City -->
                 <v-text-field
-                  v-model="formData.location"
+                  v-model="formData.city"
                   label="City"
                   v-bind="customProps"
                   outlined
@@ -350,20 +383,20 @@
             </v-row>
             <v-row>
               <v-col cols="12" class="pa-1">
-                <!-- Location --> <!-- Blake TODO: Hookup to back end (change to city) -->
+                <!-- Post Code -->
                 <v-text-field
-                  v-model="formData.location"
+                  v-model="formData.postCode"
                   label="Post Code"
                   v-bind="customProps"
                   outlined
                 />
               </v-col>
             </v-row>
-            <!-- Country --> <!-- Blake TODO: Hookup to back end -->
+            <!-- Country -->
             <v-row>
               <v-col cols="12" class="pa-1">
                 <v-text-field
-                  v-model="formData.location"
+                  v-model="formData.country"
                   label="Country"
                   v-bind="customProps"
                   outlined
@@ -532,6 +565,14 @@ export default {
     },
     removeAltNameField (index) {
       this.formData.altNames.add.splice(index, 1)
+    },
+    addQualification () {
+      this.formData.education.push('')
+      this.formData.school.push('')
+    },
+    removeQualification (index) {
+      this.formData.education.splice(index, 1)
+      this.formData.school.splice(index, 1)
     }
   }
 }

@@ -43,8 +43,16 @@
           <v-text-field v-model="formData.address" label="Address" v-bind="customProps" />
         </v-col>
         <v-col cols="12" sm="6" class="pa-1">
-          <!-- City, Country -->
-          <v-text-field v-model="formData.location" label="City, Country" v-bind="customProps" />
+          <!-- City -->
+          <v-text-field v-model="formData.city" label="City" v-bind="customProps" />
+        </v-col>
+        <v-col cols="12" sm="6" class="pa-1">
+        <v-col cols="12" sm="6" class="pa-1">
+          <!-- Post Code -->
+          <v-text-field v-model="formData.postCode" label="Post Code" v-bind="customProps" />
+        </v-col>
+          <!-- Country -->
+          <v-text-field v-model="formData.country" label="Country" v-bind="customProps" />
         </v-col>
         <v-col cols="12" sm="6" class="pa-1">
           <!-- Email -->
