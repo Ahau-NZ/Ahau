@@ -8,7 +8,7 @@
     </defs>
     <path id="background" d="M5,5 l0,680 2980,0 l0,-680 l-980,0" fill="url(#img1)" />
     <!-- whakapapa tree -->
-    <g id="baseGroup">
+    <!-- <g id="baseGroup">
       <g :transform="`translate(${treeX} ${treeY})`">
         <g v-for="link in links" :key="link.id" class="link">
           <Link :link="link" :class="link.class"/>
@@ -31,6 +31,14 @@
             :showLabel="true"
           />
         </g>
+      </g>
+    </g> -->
+    <g id="baseGroup">
+      <g>
+        :transform="`translate(${treeX - nodeRadius} ${treeY - nodeRadius})`"
+        ref="tree"
+      >
+        <SubTree :root="treeLayout(this.root)" />
       </g>
     </g>
     <!-- zoom in, zoom out buttons -->
@@ -57,6 +65,7 @@ import * as d3 from 'd3'
 import get from 'lodash.get'
 import Node from './Node.vue'
 import Link from './Link.vue'
+import SubTree from './SubTree'
 
 import isEqual from 'lodash.isequal'
 
@@ -75,6 +84,11 @@ export default {
       type: String
     },
     getRelatives: Function
+  },
+  components: {
+    SubTree,
+    Node,
+    Link
   },
   data () {
     return {
@@ -346,7 +360,7 @@ export default {
     visiblePartners (node) {
       return get(node, 'data.isCollapsed')
         ? 0
-        : get(node, 'data.partners.length', 0) * 1.3
+        : get(node, 'data.partners.length', 0) * 1.5
     },
     zoom () {
       var svg = d3.select('#baseSvg')
@@ -428,10 +442,6 @@ export default {
           )
         })
     }
-  },
-  components: {
-    Node,
-    Link
   }
 }
 </script>
