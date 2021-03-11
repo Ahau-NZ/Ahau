@@ -12,7 +12,7 @@
         :transform="`translate(${treeX - nodeRadius} ${treeY - nodeRadius})`"
         ref="tree"
       >
-        <SubTree :root="treeLayout(this.root)" />
+        <SubTree :root="um" />
       </g>
     </g>
     <!-- zoom in, zoom out buttons -->
@@ -81,6 +81,7 @@ export default {
     this.zoom()
     this.scale()
   },
+
   computed: {
     ...mapGetters(['nestedWhakapapa', 'relationshipLinks']),
     mobile () {
@@ -94,6 +95,9 @@ export default {
     },
     branch () {
       return this.nodeSeparationY / 2 + this.nodeRadius
+    },
+    um () {
+      return this.treeLayout(this.root)
     },
     /*
       gets the X position of the tree based on the svg size
