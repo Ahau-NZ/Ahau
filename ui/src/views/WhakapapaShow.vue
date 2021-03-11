@@ -573,9 +573,9 @@ export default {
         return childProfile
       }))
 
-      person.children = person.children.sort((a, b) => {
-        return a.birthOrder - b.birthOrder
-      })
+      // person.children = person.children.sort((a, b) => {
+      //   return a.birthOrder - b.birthOrder
+      // })
 
       person.parents = await Promise.all(person.parents.map(async parent => {
         // load their profile

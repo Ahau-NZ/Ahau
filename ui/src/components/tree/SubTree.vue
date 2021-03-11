@@ -20,14 +20,6 @@
         partner
       />
     </g>
-    <!-- <g>
-      <g id="mock-group">
-        <g v-for="child in oneParentChildren" :key="`one-parent-child-${child.data.id}`">
-           <Link :link="child.link"/>
-          <SubTree :root="child"/>
-        </g>
-      </g>
-    </g> -->
     <Node :node="root" />
   </g>
 </template>
@@ -119,7 +111,7 @@ export default {
                 fill: 'none',
                 stroke: '#' + Math.random().toString(16).substr(2, 6),
                 opacity: 0.3,
-                strokeWidth: 2.5
+                strokeWidth: 5
               }
             },
             children
