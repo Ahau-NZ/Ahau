@@ -31,6 +31,9 @@ import Link from './Link.vue'
 import uniqby from 'lodash.uniqby'
 import pileSort from 'pile-sort'
 
+// TODO: better name
+import link from '@/lib/link.js'
+
 export default {
   name: 'SubTree',
   props: {
@@ -43,7 +46,8 @@ export default {
   data () {
     return {
       offsetSize: 15,
-      radius: 50
+      radius: 50,
+      branch: 120
     }
   },
   computed: {
@@ -71,7 +75,7 @@ export default {
     partners () {
       if (!this.profile || !this.profile.partners) return []
 
-      var [single, multiple] = pileSort(
+      var [singleParentChildren, otherChildren] = pileSort(
         this.root.children || [],
         [(child) => child.data.parents.length === 1] // children who only have one parent (the root node)
       )
@@ -112,12 +116,7 @@ export default {
                 M ${startX}, ${startY}
                 H ${endX}
               `,
-              style: {
-                fill: 'none',
-                stroke: '#' + Math.random().toString(16).substr(2, 6),
-                opacity: 0.3,
-                strokeWidth: 5
-              }
+              style: link.style.random()
             },
             children
           }
@@ -146,47 +145,63 @@ export default {
                 x,
                 link: {
                   style: partner.link.style,
-                  d: `
-                    M ${partner.x + this.partnerRadius}, ${partner.link.startY}
-                    v ${120 - (i * 3)}
-                    H ${x + this.radius + offset}
-                    V ${node.y + this.radius}
-                  `
+                  d: link.path(
+                    {
+                      startX: partner.x + this.partnerRadius,
+                      startY: partner.link.startY,
+                      endX: x + this.radius + offset,
+                      endY: node.y + this.radius
+                    },
+                    this.branch - (i * 3)
+                  )
                 }
               }
             })
           return partner
         })
 
-      // add the other children
-      var i = multiple.length
+      var len = otherChildren.length
+      var i = len
 
-      single = single.map(d => {
-        var { x } = this.root.children[i]
+      singleParentChildren = singleParentChildren.map(child => {
+        var node = this.root.children[i]
 
-        if (i === 0) x = this.root.x
-
+        if (i === 0) node.x = this.root.x
         i += 1
 
         return {
-          link: false,
-          ...d,
-          x
-          // TODO link for these
+          link: {
+            style: link.style.default,
+            d: link.path(
+              {
+                // this.root, node
+                // start in the middle of the main parent node
+                startX: this.root.x + this.radius,
+                startY: this.root.y + this.radius,
+                // end in the middle of this child
+                endX: node.x + this.radius,
+                endY: node.y + this.radius
+              },
+              this.branch
+            )
+          },
+          ...child,
+          x: node.x
         }
       })
 
+      // a non-visible partner so the children of this node who have no second parent
+      // can still be visible
       const ghost = {
-        link: false,
         data: {
           id: this.root.data.id + '-ghost-partner'
         },
-        children: single
+        children: singleParentChildren
       }
 
       partners.push(ghost)
 
-      return partners
+      return partners.reverse()
     }
   }
 }
