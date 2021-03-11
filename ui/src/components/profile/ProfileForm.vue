@@ -274,13 +274,6 @@
               readonly
               outlined
               />
-              <v-text-field
-              v-model="formData.school[index]"
-              label="Place of Education"
-              v-bind="customProps"
-              readonly
-              outlined
-              />
             </v-col>
           </template>
 
@@ -291,7 +284,6 @@
               sm="12"
               class="pa-1"
             >
-              <v-spacer v-if="index >= 1" style="height: 8%"></v-spacer>
               <v-text-field
               v-model="formData.education[index]"
               label="Skill/Qualification"
@@ -301,17 +293,52 @@
               cols="12"
               outlined
               />
-              <v-spacer style="height: 8%"></v-spacer>
+            </v-col>
+          <v-col>
+            <AddButton :align="'flex-end'" :width="'50px'" label="Add a skill/qualification" @click="addQualification" row/>
+          </v-col>
+          </template>
+        </v-row>
+        <!-- Education -->
+        <v-row>
+          <template v-if="readonly">
+            <v-col v-for="(school, index) in formData.school"
+              :key="`value-school-name-${index}`"
+              cols="12"
+              sm="12"
+              class="pa-1"
+            >
               <v-text-field
               v-model="formData.school[index]"
               label="Place of Education"
+              :append-icon="readonly ? '' : 'mdi-delete'"
+              @click:append="removeSchool(index)"
+              v-bind="customProps"
+              readonly
+              outlined
+              />
+            </v-col>
+          </template>
+
+          <template v-else>
+            <v-col v-for="(school, index) in formData.school"
+              :key="`add-school-name-${index}`"
+              cols="12"
+              sm="12"
+              class="pa-1"
+            >
+              <v-text-field
+              v-model="formData.school[index]"
+              label="Place of Education"
+              append-icon="mdi-delete"
+              @click:append="removeSchool(index)"
               v-bind="customProps"
               cols="12"
               outlined
               />
             </v-col>
           <v-col>
-            <AddButton :align="'flex-end'" :width="'50px'" label="Add a skill/qualification" @click="addQualification" row/>
+            <AddButton :align="'flex-end'" :width="'50px'" label="Add a place of education" @click="addSchool" row/>
           </v-col>
           </template>
         </v-row>
@@ -572,10 +599,14 @@ export default {
     },
     addQualification () {
       this.formData.education.push('')
-      this.formData.school.push('')
     },
     removeQualification (index) {
       this.formData.education.splice(index, 1)
+    },
+    addSchool () {
+      this.formData.school.push('')
+    },
+    removeSchool(index) {
       this.formData.school.splice(index, 1)
     }
   }
