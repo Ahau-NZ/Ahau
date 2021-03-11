@@ -12,7 +12,6 @@ export const EMPTY_COMMUNITY = {
   avatarImage: null,
   headerImage: null,
   description: null,
-  location: null,
   address: null,
   email: null,
   phone: null,
@@ -28,7 +27,6 @@ export function setDefaultCommunity (newCommunity) {
     avatarImage: community.avatarImage,
     headerImage: community.headerImage,
     description: community.description,
-    location: community.location,
     address: community.address,
     email: community.email,
     phone: community.phone,
@@ -46,7 +44,6 @@ export const PERMITTED_COMMUNITY_ATTRS = [
   'description',
   'email',
   'phone',
-  'location',
   'tombstone',
   'tiaki',
   'joiningQuestions',
@@ -65,7 +62,6 @@ export const PERMITTED_PUBLIC_COMMUNITY_ATTRS = [
   'description',
   'email',
   'phone',
-  'location',
   'tombstone',
   'tiaki',
   'joiningQuestions'
@@ -105,7 +101,6 @@ ${AUTHOR_FRAGMENT}
     phone
     canEdit
     recps
-    location
     joiningQuestions {
       type
       label

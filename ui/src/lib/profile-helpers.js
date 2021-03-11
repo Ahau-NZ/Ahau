@@ -14,7 +14,6 @@ export const SharedProfileFieldsFragment = gql`
     headerImage { uri }
     
     address
-    location
     phone
     email
   }

@@ -65,6 +65,10 @@ export default {
 
       if (blob.__typename) delete blob.__typename
 
+      // WIP
+      // - put in place a Blob uri resolver
+      // - review render-media to see how that handles things
+
       var createdAt = ''
       if (file.lastModified) {
         createdAt = new Date(file.lastModified).toISOString().slice(0, 10)
