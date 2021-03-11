@@ -16,11 +16,11 @@
       <Node
         v-if="partner.link"
         :node="partner"
-        :radius="40"
+        :radius="partnerRadius"
         partner
       />
     </g>
-    <Node :node="root" />
+    <Node :node="root"/>
   </g>
 </template>
 
@@ -30,13 +30,6 @@ import Link from './Link.vue'
 
 import uniqby from 'lodash.uniqby'
 import pileSort from 'pile-sort'
-
-const NODE_RADIUS = 50
-const PARTNER_RADIUS = 40
-
-const NODE_DIAMETER = NODE_RADIUS * 2
-const PARTNER_DIAMETER = PARTNER_RADIUS * 2
-const DIFF = NODE_DIAMETER - PARTNER_DIAMETER
 
 export default {
   name: 'SubTree',
@@ -50,10 +43,22 @@ export default {
   data () {
     return {
       offsetSize: 15,
-      partnerRadius: 0.8 * 50
+      radius: 50
     }
   },
   computed: {
+    partnerRadius () {
+      return 0.8 * this.radius // ensures the partner node will always be smaller then the main node
+    },
+    diameter () {
+      return this.radius * 2
+    },
+    partnerDiameter () {
+      return this.partnerRadius * 2
+    },
+    diameterDiff () {
+      return this.diameter - this.partnerDiameter
+    },
     position () {
       return {
         transform: `translate(${this.root.x}px, ${this.root.y}px)`,
@@ -76,17 +81,17 @@ export default {
 
       var partners = this.profile.partners
         .map((partner, i) => {
-          var x = this.root.x + ((i + 1) * NODE_DIAMETER) + DIFF
-          const y = this.root.y + (DIFF / 2)
+          var x = this.root.x + ((i + 1) * this.diameter) + this.diameterDiff
+          const y = this.root.y + (this.diameterDiff / 2)
           var sign = (i % 2 === 0) ? 1 : -1
 
-          if (i === 0) x = this.root.x - PARTNER_RADIUS * 3
-          if (i === 1) x = this.root.x + PARTNER_RADIUS * 3
+          if (i === 0) x = this.root.x - this.partnerRadius * 3
+          if (i === 1) x = this.root.x + this.partnerRadius * 3
           if (i > 2) x = sign * x
 
-          const startX = x + PARTNER_RADIUS
-          const startY = this.root.y + NODE_RADIUS + (i * 3)
-          const endX = this.root.x + NODE_RADIUS
+          const startX = x + this.partnerRadius
+          const startY = this.root.y + this.radius + (i * 3)
+          const endX = this.root.x + this.radius
 
           const children = partner.children
             .filter(child => {
@@ -142,10 +147,10 @@ export default {
                 link: {
                   style: partner.link.style,
                   d: `
-                    M ${partner.x + PARTNER_RADIUS}, ${partner.link.startY}
+                    M ${partner.x + this.partnerRadius}, ${partner.link.startY}
                     v ${120 - (i * 3)}
-                    H ${x + NODE_RADIUS + offset}
-                    V ${node.y + NODE_RADIUS}
+                    H ${x + this.radius + offset}
+                    V ${node.y + this.radius}
                   `
                 }
               }
