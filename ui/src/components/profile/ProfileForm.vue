@@ -58,7 +58,7 @@
           <v-col cols="12" class="pa-1">
             <v-text-field
             v-model="formData.preferredName"
-            label="First Name / Known As"
+            label="First name / knwon as"
             v-bind="customProps"
             outlined
             />
@@ -157,7 +157,7 @@
             <slot name="search">
               <v-text-field
                 v-model="formData.legalName"
-                label="Full Name"
+                label="Full name"
                 v-bind="customProps"
                 outlined
               />
@@ -205,8 +205,8 @@
         </v-row>
         <!-- DATE OF BIRTH + DATE OF DEATH-->
         <DateIntervalPicker
-          label="Date of Birth"
-          endLabel="Date of Death"
+          label="Date of birth"
+          endLabel="Date of death"
           allowInterval
           :interval.sync="formData.aliveInterval"
           :hasEndDate.sync="formData.deceased"
@@ -267,7 +267,7 @@
             >
               <v-text-field
               v-model="formData.education[index]"
-              label="Skill/Qualification"
+              label="Skill/qualification"
               :append-icon="readonly ? '' : 'mdi-delete'"
               @click:append="removeQualification(index)"
               v-bind="customProps"
@@ -286,7 +286,7 @@
             >
               <v-text-field
               v-model="formData.education[index]"
-              label="Skill/Qualification"
+              label="Skill/qualification"
               append-icon="mdi-delete"
               @click:append="removeQualification(index)"
               v-bind="customProps"
@@ -310,7 +310,7 @@
             >
               <v-text-field
               v-model="formData.school[index]"
-              label="Place of Education"
+              label="Place of education"
               :append-icon="readonly ? '' : 'mdi-delete'"
               @click:append="removeSchool(index)"
               v-bind="customProps"
@@ -329,7 +329,7 @@
             >
               <v-text-field
               v-model="formData.school[index]"
-              label="Place of Education"
+              label="Place of education"
               append-icon="mdi-delete"
               @click:append="removeSchool(index)"
               v-bind="customProps"
@@ -355,7 +355,7 @@
           <v-col :cols="isSideViewDialog ? 12 : 6" class="pa-1">
             <v-text-field
               v-model="formData.placeOfBirth"
-              label="City/Country of Birth"
+              label="City/country of birth"
               v-bind="customProps"
               outlined
             />
@@ -443,7 +443,7 @@
               <v-col cols="12" class="pa-1">
                 <v-text-field
                   v-model="formData.placeOfDeath"
-                  label="Place of Death"
+                  label="Place of death"
                   v-bind="customProps"
                   outlined
                 />
@@ -457,7 +457,7 @@
                 <!-- Burial Location -->
                 <v-text-field
                   v-model="formData.buriedLocation"
-                  label="Burial Location"
+                  label="Burial location"
                   v-bind="customProps"
                   outlined
                 />
