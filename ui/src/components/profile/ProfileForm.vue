@@ -366,78 +366,60 @@
         </v-row>
         <!-- Email, Address, Phone, Location -->
         <v-row v-if="!formData.deceased">
-          <v-col cols="12" :sm="mobile ? '12' : '6'">
-            <!-- Email -->
-            <v-row>
-              <v-col cols="12" class="pa-1">
-                <v-text-field
-                  v-model="formData.email"
-                  label="Email"
-                  v-bind="customProps"
-                  outlined
-                />
-              </v-col>
-            </v-row>
-            <!-- Phone -->
-            <v-row>
-              <v-col cols="12" class="pa-1">
-                <v-text-field
-                  v-model="formData.phone"
-                  label="Phone"
-                  v-bind="customProps"
-                  outlined
-                />
-              </v-col>
-            </v-row>
+          <!-- Email -->
+          <v-col :cols="isSideViewDialog ? '12' : '6'" class="pa-1">
+            <v-text-field
+              v-model="formData.email"
+              label="Email"
+              v-bind="customProps"
+              outlined
+            />
           </v-col>
-
-          <v-col cols="12" :sm="mobile ? '12' : '6'">
-            <!-- Address -->
-            <v-row>
-              <v-col cols="12" class="pa-1">
-                <!-- Address -->
-                <v-text-field
-                  v-model="formData.address"
-                  label="Address"
-                  v-bind="customProps"
-                  outlined
-                />
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col cols="12" class="pa-1">
-                <!-- City -->
-                <v-text-field
-                  v-model="formData.city"
-                  label="City"
-                  v-bind="customProps"
-                  outlined
-                />
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col cols="12" class="pa-1">
-                <!-- Post Code -->
-                <v-text-field
-                  v-model="formData.postCode"
-                  label="Post Code"
-                  v-bind="customProps"
-                  outlined
-                />
-              </v-col>
-            </v-row>
-            <!-- Country -->
-            <v-row>
-              <v-col cols="12" class="pa-1">
-                <v-text-field
-                  v-model="formData.country"
-                  label="Country"
-                  v-bind="customProps"
-                  outlined
-                />
-              </v-col>
-            </v-row>
+          <!-- Phone -->
+          <v-col :cols="isSideViewDialog ? '12' : '6'" class="pa-1">
+            <v-text-field
+              v-model="formData.phone"
+              label="Phone"
+              v-bind="customProps"
+              outlined
+            />
           </v-col>
+          <!-- Address -->
+          <v-col :cols="isSideViewDialog ? '12' : '6'" class="pa-1">
+            <v-text-field
+              v-model="formData.address"
+              label="Address"
+              v-bind="customProps"
+              outlined
+            />
+          </v-col>
+          <!-- City -->
+          <v-col :cols="isSideViewDialog ? '12' : '6'" class="pa-1">
+            <v-text-field
+              v-model="formData.city"
+              label="City"
+              v-bind="customProps"
+              outlined
+            />
+          </v-col>
+          <!-- Post Code -->
+          <v-col :cols="isSideViewDialog ? '12' : '6'" class="pa-1">
+            <v-text-field
+              v-model="formData.postCode"
+              label="Post Code"
+              v-bind="customProps"
+              outlined
+            />
+          </v-col>
+          <!-- Country -->
+            <v-col :cols="isSideViewDialog ? '12' : '6'" class="pa-1">
+              <v-text-field
+                v-model="formData.country"
+                label="Country"
+                v-bind="customProps"
+                outlined
+              />
+            </v-col>
         </v-row>
         <v-row v-if="formData.deceased">
           <v-col cols="12" :sm="mobile ? '12' : '6'">
@@ -567,6 +549,9 @@ export default {
     },
     altNames () {
       return [...this.formData.altNames.value, ...this.formData.altNames.add]
+    },
+    contactColOrdering () {
+      return this.isSideViewDialog ? '6' : '12'
     }
   },
   methods: {
