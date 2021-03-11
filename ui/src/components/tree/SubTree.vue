@@ -71,8 +71,12 @@ export default {
           const PARTNER_DIAMETER = PARTNER_RADIUS * 2
           const DIFF = NODE_DIAMETER - PARTNER_DIAMETER
 
-          const x = this.root.x + ((i + 1) * NODE_DIAMETER) + DIFF
+          var x = this.root.x + ((i + 1) * NODE_DIAMETER) + DIFF
           const y = this.root.y + (DIFF / 2)
+          var sign = (i % 2 === 0) ? 1 : -1
+
+          if (i === 0) x = -1 * x
+          if (i > 2) x = sign * x
 
           const startX = x + PARTNER_RADIUS
           const startY = this.root.y + NODE_RADIUS + (i * 3)
@@ -81,8 +85,7 @@ export default {
           const children = partner.children
             .filter(child => {
               return (
-                this.root.children.some(c => child.id === c.data.id) // &&
-                // !allChildren.some(c => child.id === c.id) // only display a child once with the first partner it occurs on
+                this.root.children.some(c => child.id === c.data.id)
               )
             })
 
