@@ -203,15 +203,31 @@
             <AddButton :align="'flex-end'" :width="'50px'" label="Add another name" @click="addAltNameField" row/>
           </template>
         </v-row>
-        <!-- DATE OF BIRTH + DATE OF DEATH-->
-        <DateIntervalPicker
-          label="Date of birth"
-          endLabel="Date of death"
-          allowInterval
-          :interval.sync="formData.aliveInterval"
-          :hasEndDate.sync="formData.deceased"
-        />
-
+        <v-row>
+          <!-- DATE OF BIRTH + DATE OF DEATH-->
+          <v-col cols="6">
+            <DateIntervalPicker
+            label="Date of birth"
+            endLabel="Date of death"
+            allowInterval
+            :interval.sync="formData.aliveInterval"
+            :hasEndDate.sync="formData.deceased"
+            
+          />
+          </v-col>
+          <!-- Order of birth -->
+          <v-col v-if="!readonly || formData.birthOrder" cols="6" class="pa-1">
+            <v-spacer :style="formData.deceased ? 'height: 39%' : 'height: 31%'"></v-spacer>
+            <v-text-field
+              v-model="formData.birthOrder"
+              type="number"
+              label="Order of birth"
+              min="1"
+              v-bind="customProps"
+              outlined
+            />
+          </v-col>
+        </v-row>
         <!-- Editing: relationship type-->
         <v-row v-if="withRelationships || editRelationship">
           <v-col cols="12" class="pa-1" v-if="this.$route.name !== 'login'">
@@ -221,19 +237,6 @@
               :items="relationshipTypes"
               outlined
               :menu-props="{light: true}"
-            />
-          </v-col>
-        </v-row>
-        <v-row>
-          <!-- Order of birth -->
-          <v-col v-if="!readonly || formData.birthOrder" cols="6" class="pa-1">
-            <v-text-field
-              v-model="formData.birthOrder"
-              type="number"
-              label="Order of birth"
-              min="1"
-              v-bind="customProps"
-              outlined
             />
           </v-col>
         </v-row>
@@ -606,7 +609,7 @@ export default {
     addSchool () {
       this.formData.school.push('')
     },
-    removeSchool(index) {
+    removeSchool (index) {
       this.formData.school.splice(index, 1)
     }
   }
