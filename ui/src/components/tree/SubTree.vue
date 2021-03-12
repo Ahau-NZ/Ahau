@@ -84,20 +84,21 @@ export default {
       var currentChildren = []
 
       var partners = this.profile.partners
-        .map((partner, i) => {
+        .map((parent, i) => {
           var x = this.root.x + ((i + 1) * this.diameter) + this.diameterDiff
           const y = this.root.y + (this.diameterDiff / 2)
           var sign = (i % 2 === 0) ? 1 : -1
 
-          if (i === 0) x = this.root.x - this.partnerRadius * 3
-          if (i === 1) x = this.root.x + this.partnerRadius * 3
+          if (i === 0) x = this.root.x + ((-1 * this.partnerRadius) * 3)
+          if (i === 1) x = this.root.x + (this.partnerRadius * 3) + 20
           if (i > 2) x = sign * x
 
           const startX = x + this.partnerRadius
           const startY = this.root.y + this.radius + (i * 3)
           const endX = this.root.x + this.radius
 
-          const children = partner.children
+          // we only care about the children that are this nodes children
+          const children = parent.children
             .filter(child => {
               return this.root.children.some(c => child.id === c.data.id)
             })
@@ -108,9 +109,8 @@ export default {
           return {
             x,
             y,
-            data: partner,
+            data: parent,
             link: {
-              startX,
               startY,
               d: `
                 M ${startX}, ${startY}
@@ -121,10 +121,11 @@ export default {
             children
           }
         })
-        .map((partner, i) => {
-          partner.children = uniqby(partner.children, (child) => child.id)
+        .map((parent, i) => {
+          var sign = (i % 2 === 0) ? 1 : -1
+          parent.children = uniqby(parent.children, (child) => child.id)
 
-          partner.children = partner.children
+          parent.children = parent.children
             .map(child => {
               const node = this.root.children.find(d => d.data.id === child.id)
               const index = allChildren.indexOf(child)
@@ -133,9 +134,12 @@ export default {
               var offset = 0
 
               if (allChildren.length === 1) {
+                // this is for a child who is an only child
                 x = this.root.x
+                offset = i * 7
               } else if (currentChildren.indexOf(child) >= 0) {
-                offset = 10
+                // this is for a child who has more than 2 parents
+                offset = i * 7
               } else {
                 currentChildren.push(child)
               }
@@ -144,20 +148,20 @@ export default {
                 ...node,
                 x,
                 link: {
-                  style: partner.link.style,
+                  style: parent.link.style, // inherits the style from the parent
                   d: link.path(
                     {
-                      startX: partner.x + this.partnerRadius,
-                      startY: partner.link.startY,
-                      endX: x + this.radius + offset,
+                      startX: parent.x + this.partnerRadius,
+                      startY: parent.link.startY,
+                      endX: x + this.radius + (-sign * offset),
                       endY: node.y + this.radius
                     },
-                    this.branch - (i * 3)
+                    this.branch - (i * 10)
                   )
                 }
               }
             })
-          return partner
+          return parent
         })
 
       var len = otherChildren.length
@@ -174,15 +178,12 @@ export default {
             style: link.style.default,
             d: link.path(
               {
-                // this.root, node
-                // start in the middle of the main parent node
                 startX: this.root.x + this.radius,
                 startY: this.root.y + this.radius,
-                // end in the middle of this child
                 endX: node.x + this.radius,
                 endY: node.y + this.radius
               },
-              this.branch
+              this.branch - (len * 3.5)
             )
           },
           ...child,
