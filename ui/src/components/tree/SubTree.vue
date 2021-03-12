@@ -110,7 +110,7 @@ export default {
             x,
             y,
             data: parent,
-            link: {
+            link: { // links from main parent node to this parent
               startY,
               d: `
                 M ${startX}, ${startY}
@@ -149,9 +149,9 @@ export default {
                 x,
                 link: {
                   style: parent.link.style, // inherits the style from the parent
-                  d: link.path(
+                  d: link.path( // links to the children
                     {
-                      startX: parent.x + this.partnerRadius,
+                      startX: this.root.x + this.radius + (-sign * this.radius * 1.5),
                       startY: parent.link.startY,
                       endX: x + this.radius + (-sign * offset),
                       endY: node.y + this.radius
