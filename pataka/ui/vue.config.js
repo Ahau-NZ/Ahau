@@ -1,4 +1,9 @@
 module.exports = {
   publicPath: './',
-  transpileDependencies: ['vuetify']
+  transpileDependencies: ['vuetify'],
+  pluginOptions: {
+    apollo: {
+      lintGQL: true
+    }
+  }
 }

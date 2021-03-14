@@ -12,7 +12,7 @@
     "dev:web": "npm run dev:mobile-server 1>&2 | npm run dev:ui",
     "dev:mobile-server": "cd mobile && npm run dev:server",
     "dev:ui": "kill-port 8080 && cd ui && npm run dev",
-    "dev:desktop": "npm run dev:ui 1>&2 | npm --prefix desktop run start:dev",
+    "dev:desktop": "npm run dev:ui 1>&2 | npm --prefix desktop run dev",
     "dev:pataka": "npm --prefix pataka run start:dev",
     "dev:android": "cd mobile && npm run dev:android",
     "dev:android-update": "cd mobile && npm run dev:android-update",

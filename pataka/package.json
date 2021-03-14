@@ -44,7 +44,6 @@
     "cross-env": "^7.0.2",
     "electron-builder": "^22.7.0",
     "electron-notarize": "^1.0.0",
-    "electron-rebuild": "^1.11.0",
     "esm": "^3.2.25",
     "sharp": "0.23.4",
     "to-ico": "^1.1.5",

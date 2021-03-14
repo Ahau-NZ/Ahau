@@ -6,7 +6,7 @@
   "scripts": {
     "postinstall": "electron-builder install-app-deps",
     "start": "electron index.js -- --title Āhau",
-    "start:dev": "cross-env NODE_ENV=development electron index.js -- --title Āhau",
+    "dev": "cross-env NODE_ENV=development electron index.js -- --title Āhau",
     "build:icons": "node build/build-icons.js",
     "pack": "electron-builder --config build/electron-builder.config.js --dir",
     "dist": "electron-builder --config build/electron-builder.config.js",
@@ -15,7 +15,7 @@
   "dependencies": {
     "ahau-env": "^2.0.0",
     "secret-stack": "^6.3.1",
-    "ssb-ahau": "^6.0.0",
+    "ssb-ahau": "^6.0.1",
     "ssb-ahoy": "^3.0.0",
     "ssb-artefact": "^3.1.1",
     "ssb-backlinks": "^2.1.1",
@@ -43,7 +43,6 @@
     "cross-env": "^7.0.2",
     "electron-builder": "^21.2.0",
     "electron-notarize": "^0.2.1",
-    "electron-rebuild": "^1.11.0",
     "esm": "^3.2.25",
     "sharp": "^0.23.4",
     "to-ico": "^1.1.5",
