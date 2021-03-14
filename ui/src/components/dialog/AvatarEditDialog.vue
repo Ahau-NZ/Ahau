@@ -108,7 +108,9 @@ export default {
 
           let cleanImage = {}
           Object.entries(image).forEach(([key, value]) => {
-            if (key !== '__typename') cleanImage[key] = value
+            if (key === '__typename') return
+            if (key === 'store') return
+            cleanImage[key] = value
           })
           this.$emit('submit', cleanImage)
         })

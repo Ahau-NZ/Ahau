@@ -2,10 +2,6 @@ const ahoy = require('ssb-ahoy')
 const Config = require('./ssb.config')
 
 const plugins = [
-  'ssb-master',
-  'ssb-unix-socket',
-  'ssb-no-auth',
-
   'ssb-conn',
   'ssb-lan',
   'ssb-replicate',
@@ -13,6 +9,7 @@ const plugins = [
 
   'ssb-blobs',
   'ssb-serve-blobs',
+  'ssb-hyper-blobs',
 
   'ssb-query',
   'ssb-backlinks',

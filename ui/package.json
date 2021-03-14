@@ -4,8 +4,7 @@
   "description": "An application for gathering and sharing whakapapa (family trees, traditional knowledge). Built using scuttlebutt",
   "homepage": "https://gitlab.com/ahau/whakapapa-ora",
   "scripts": {
-    "dev": "vue-cli-service serve --open",
-    "serve": "vue-cli-service serve",
+    "dev": "vue-cli-service serve",
     "storybook": "start-storybook -p 6001",
     "build:desktop": "vue-cli-service build --dest ../desktop/dist",
     "build:mobile": "vue-cli-service build --dest ../mobile/www",
@@ -32,6 +31,9 @@
     "lodash.set": "^4.3.2",
     "lodash.uniqby": "^4.7.0",
     "pile-sort": "^1.0.0",
+    "readable-stream": "^3.6.0",
+    "render-media": "^4.1.0",
+    "stream-http": "^3.1.1",
     "vue-gallery": "^2.0.1",
     "vuetify-media-player": "^0.8.1",
     "vuex-router-sync": "^5.0.0"

@@ -79,7 +79,12 @@ export const ARTEFACT_FRAGMENT = gql`
   fragment ArtefactFragment on Artefact {
     id
     type
-    blob { blobId mimeType size unbox uri }
+    blob {
+      blobId
+      mimeType
+      size
+      uri
+    }
     createdAt
     title
     description
