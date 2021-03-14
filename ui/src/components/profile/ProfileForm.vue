@@ -153,7 +153,7 @@
       <div v-show="showAdvanced">
         <v-row>
           <!-- Full Name -->
-          <v-col cols="6" class="pa-1">
+          <v-col :cols="sideViewCols" class="pa-1">
             <slot name="search">
               <v-text-field
                 v-model="formData.legalName"
@@ -205,19 +205,18 @@
         </v-row>
         <v-row>
           <!-- DATE OF BIRTH + DATE OF DEATH-->
-          <v-col cols="6">
+          <v-col :cols="sideViewCols">
             <DateIntervalPicker
-            label="Date of birth"
-            endLabel="Date of death"
-            allowInterval
-            :interval.sync="formData.aliveInterval"
-            :hasEndDate.sync="formData.deceased"
-
-          />
+              label="Date of birth"
+              endLabel="Date of death"
+              allowInterval
+              :interval.sync="formData.aliveInterval"
+              :hasEndDate.sync="formData.deceased"
+            />
           </v-col>
           <!-- Order of birth -->
-          <v-col v-if="!readonly || formData.birthOrder" cols="6" class="pa-1">
-            <v-spacer :style="formData.deceased ? 'height: 39%' : 'height: 31%'"></v-spacer>
+          <v-col v-if="!readonly || formData.birthOrder" :cols="sideViewCols" class="pa-1">
+            <v-spacer v-if="!isSideViewDialog" :style="formData.deceased ? 'height: 39%' : 'height: 31%'"></v-spacer>
             <v-text-field
               v-model="formData.birthOrder"
               type="number"
@@ -230,7 +229,7 @@
         </v-row>
         <!-- Editing: relationship type-->
         <v-row v-if="withRelationships || editRelationship">
-          <v-col cols="12" class="pa-1" v-if="this.$route.name !== 'login'">
+          <v-col :cols="sideViewCols" class="pa-1" v-if="this.$route.name !== 'login'">
             <v-select
               v-model="formData.relationshipType"
               label="Related by"
@@ -367,7 +366,7 @@
         <!-- Email, Address, Phone, Location -->
         <v-row v-if="!formData.deceased">
           <!-- Email -->
-          <v-col :cols="isSideViewDialog ? '12' : '6'" class="pa-1">
+          <v-col :cols="sideViewCols" class="pa-1">
             <v-text-field
               v-model="formData.email"
               label="Email"
@@ -376,7 +375,7 @@
             />
           </v-col>
           <!-- Phone -->
-          <v-col :cols="isSideViewDialog ? '12' : '6'" class="pa-1">
+          <v-col :cols="sideViewCols" class="pa-1">
             <v-text-field
               v-model="formData.phone"
               label="Phone"
@@ -385,7 +384,7 @@
             />
           </v-col>
           <!-- Address -->
-          <v-col :cols="isSideViewDialog ? '12' : '6'" class="pa-1">
+          <v-col :cols="sideViewCols" class="pa-1">
             <v-text-field
               v-model="formData.address"
               label="Address"
@@ -394,7 +393,7 @@
             />
           </v-col>
           <!-- City -->
-          <v-col :cols="isSideViewDialog ? '12' : '6'" class="pa-1">
+          <v-col :cols="sideViewCols" class="pa-1">
             <v-text-field
               v-model="formData.city"
               label="City"
@@ -403,7 +402,7 @@
             />
           </v-col>
           <!-- Post Code -->
-          <v-col :cols="isSideViewDialog ? '12' : '6'" class="pa-1">
+          <v-col :cols="sideViewCols" class="pa-1">
             <v-text-field
               v-model="formData.postCode"
               label="Post Code"
@@ -412,7 +411,7 @@
             />
           </v-col>
           <!-- Country -->
-            <v-col :cols="isSideViewDialog ? '12' : '6'" class="pa-1">
+            <v-col :cols="sideViewCols" class="pa-1">
               <v-text-field
                 v-model="formData.country"
                 label="Country"
@@ -552,6 +551,9 @@ export default {
     },
     contactColOrdering () {
       return this.isSideViewDialog ? '6' : '12'
+    },
+    sideViewCols () {
+      return this.isSideViewDialog ? '12' : '6'
     }
   },
   methods: {
