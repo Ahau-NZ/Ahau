@@ -72,16 +72,21 @@
             </svg>
             <svg :width="columns[8].x - 45">
               <text  :transform="`translate(${columns[7].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ node.data.country }}
+                {{ node.data.city }}
               </text>
             </svg>
             <svg :width="columns[9].x - 45">
-              <text :transform="`translate(${columns[8].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
+              <text  :transform="`translate(${columns[8].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
+                {{ node.data.country }}
+              </text>
+            </svg>
+            <svg :width="columns[10].x - 45">
+              <text :transform="`translate(${columns[9].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
                 {{ node.data.email }}
               </text>
             </svg>
             <svg>
-              <text :transform="`translate(${columns[9].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
+              <text :transform="`translate(${columns[10].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
                 {{ node.data.phone }}
               </text>
             </svg>
@@ -106,15 +111,6 @@ import { SORT } from '@/lib/constants.js'
 
 export default {
   props: {
-    // nestedWhakapapa: {
-    //   type: Object,
-    //   default: () => ({
-    //     preferredName: 'Loading',
-    //     gender: 'unknown',
-    //     children: [],
-    //     parents: []
-    //   })
-    // },
     view: {
       type: Object,
       required: true
@@ -310,16 +306,20 @@ export default {
           x: this.colWidth + 1000
         },
         {
-          label: 'Country',
+          label: 'City',
           x: this.colWidth + 1405
         },
         {
-          label: 'Email',
+          label: 'Country',
           x: this.colWidth + 1645
         },
         {
+          label: 'Email',
+          x: this.colWidth + 1885
+        },
+        {
           label: 'Phone',
-          x: this.colWidth + 2005
+          x: this.colWidth + 2245
         }
       ]
     }
@@ -471,29 +471,18 @@ export default {
     },
     // Computes the label of table headers depending on whether a sort is active
     computeLabel (label) {
-      if (label === 'Also Known As') {
-        return 'Also Known As'
-      }
-      if (label === 'D.O.B') {
-        return 'D.O.B'
-      }
-      if (label === 'D.O.D') {
-        return 'D.O.D'
-      }
-      if (label === 'Address') {
-        return 'Address'
-      }
-      if (label === 'Email') {
-        return 'Email'
-      }
-      if (label === 'Phone') {
-        return 'Phone'
-      }
+      if (label === 'Also Known As') return 'Also Known As'
+      if (label === 'D.O.B') return 'D.O.B'
+      if (label === 'D.O.D') return 'D.O.D'
+      if (label === 'Address') return 'Address'
+      if (label === 'Email') return 'Email'
+      if (label === 'Phone') return 'Phone'
+      if (label === 'City') return 'City'
 
       const preferredName = ['Preferred Name', 'Preferred Name ↑', 'Preferred Name ↓']
       const age = ['Age', 'Age ↑', 'Age ↓']
       const profession = ['Profession', 'Profession ↑', 'Profession ↓']
-      const country = ['City, Country', 'City, Country ↑', 'City, Country ↓']
+      const country = ['Country', 'Country ↑', 'Country ↓']
 
       if (label === 'Preferred Name') {
         return preferredName[this.sort['preferredName']]
