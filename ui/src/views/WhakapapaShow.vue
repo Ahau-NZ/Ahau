@@ -238,6 +238,8 @@ import findSuccessor from '@/lib/find-successor'
 
 import { mapGetters, mapActions, mapMutations } from 'vuex'
 
+import pileSort from 'pile-sort'
+
 export default {
   name: 'WhakapapaShow',
   components: {
@@ -590,6 +592,8 @@ export default {
         return parentProfile
       }))
 
+      var orderedChildren = []
+
       person.partners = await Promise.all(person.partners.map(async (partner, i) => {
         var partnerPath = `partners[${i}]`
         if (path) partnerPath = person.path + '.' + partnerPath
@@ -600,7 +604,14 @@ export default {
             var id = (child.profile) ? child.profile.id : child.id
             return d.id === id
           })
-          if (exists) return exists
+
+          const alreadyInArray = person.children.some(c => c.id === child.id)
+
+          if (exists && !alreadyInArray) {
+            orderedChildren.push({ ...child.profile, relationshipType: child.relationshipType })
+            return exists
+          }
+
           // TODO: doesnt save this relationship
           return child.profile
         })
@@ -615,6 +626,36 @@ export default {
 
         return partner
       }))
+
+      // var [singleParentChildren, otherChildren] = pileSort(
+      //   person.children || [],
+      //   [(child) => child.data.parents.length === 1] // children who only have one parent (the root node)
+      // )
+
+      const partnerIds = person.partners.map(d => d.id)
+      const filters = []
+
+      partnerIds.forEach(id => {
+        filters.push((child) => child.parents.some(p => p.id === id))
+      })
+      if (filters.length > 0) {
+        const piles = pileSort(
+          person.children,
+          filters
+        )
+
+        let arr = []
+
+        console.log(piles)
+
+        piles.forEach(d => {
+          arr = [...arr, ...d]
+        })
+
+        console.log(arr)
+
+        person.children = arr
+      }
 
       if (person.parents.length > 0) {
         person.relationship = this.relationshipLinks.get(person.parents[0].id + '-' + person.id)

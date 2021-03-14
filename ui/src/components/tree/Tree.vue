@@ -142,16 +142,16 @@ export default {
           this.nodeSeparationX + this.nodeRadius,
           this.nodeSeparationY + this.nodeRadius
         ])
-        // .separation((a, b) => {
-        //   if (a.parent !== b.parent) return 1.3
-        //   // "how far cousins be spaced"  (I think)
-        //   // nodes have only one one "node.parent" (but multiple node.data.parents)
+        .separation((a, b) => {
+          if (a.parent !== b.parent) return 1.3
+          // "how far cousins be spaced"  (I think)
+          // nodes have only one one "node.parent" (but multiple node.data.parents)
 
-        //   return 1 + 0.3 * (this.visiblePartners(a) + this.visiblePartners(b))
-        //   // "how far are siblings spaced" (I think)
-        //   // start with a baseline of 1, then add a proportion of the number of partners
-        //   // as partners take up less space than central node, are placed evenly to either side
-        // })
+          return 1 + 0.4 * (this.visiblePartners(a) + this.visiblePartners(b))
+          // "how far are siblings spaced" (I think)
+          // start with a baseline of 1, then add a proportion of the number of partners
+          // as partners take up less space than central node, are placed evenly to either side
+        })
     },
     //  returns a nested data structure representing a tree based on the treeData object
     root () {
