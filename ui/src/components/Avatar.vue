@@ -32,7 +32,7 @@
         <v-btn v-if="deletable" class="delete" @click="$emit('delete')" icon x-small light max-width="20px" max-height="20px">
           <v-icon>mdi-close</v-icon>
         </v-btn>
-        <v-avatar :size="size" :tile="isView" class="avatar-container" :class="{'isEditing': isEditing, 'isOnline': online}">
+        <v-avatar :size="size" :tile="isView" class="avatar-container" :class="{'isEditing': isEditing, 'isOnline': online, 'isProfileForm' : isProfileForm}">
           <v-img v-if="image && image.uri" :src="image.uri" :alt="alt" />
           <v-img
             v-else
@@ -49,6 +49,9 @@
         <p :style="`font-size:0.8em ${theme};margin-bottom:0`" class="limit-text">{{ alt }} </p>
       </v-row>
     </v-col>
+    <div v-if="isProfileForm" class="avatar-overlay">
+      <ImagePicker @updateAvatar="updateAvatar($event)" />
+    </div>
   </div>
 </template>
 
@@ -72,7 +75,8 @@ export default {
     deletable: Boolean,
     dark: Boolean,
     row: Boolean,
-    online: Boolean
+    online: Boolean,
+    isProfileForm: { type: Boolean, default: false},
   },
   components: {
     ImagePicker
@@ -131,6 +135,10 @@ export default {
   opacity: 0.2;
 }
 
+.isProfileForm {
+  opacity: 0.3;
+}
+
 .isOnline {
   border: #37e259 solid 3px;
   border-radius: 50% !important;
@@ -150,6 +158,8 @@ export default {
   backdrop-filter: opacity(0.1) blur(3px) saturate(5%) ;
   width: 100%;
   height: 100%;
+
+  padding-top: 85%;
 }
 
 .limit-text {

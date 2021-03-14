@@ -8,15 +8,15 @@
             <!-- Avatar -->
           <Avatar
             class="big-avatar"
-            size="200px"
+            size="150px"
             :image="formData.avatarImage"
             :alt="formData.preferredName"
             :gender="formData.gender"
             :aliveInterval="formData.aliveInterval"
             :deceased="formData.deceased"
             :isEditing="isEditing"
+            isProfileForm
             @updateAvatar="formData.avatarImage = $event"
-
           />
         </v-row>
 
@@ -41,13 +41,6 @@
             <v-icon small class="blue--text" left>mdi-close</v-icon>Cancel
           </v-btn>
         </v-row>
-        <v-row>
-          <!-- </v-col> -->
-          <!-- Upload Profile Photo Button -->
-          <v-col v-if="!readonly && !isEditing" cols="12" justify="center" align="center" class="pa-0">
-            <ImagePicker @updateAvatar="formData.avatarImage = $event" :avatarLoaded="formData.avatarImage"/>
-          </v-col>
-        </v-row>
       </v-col>
 
       <!-- Names -->
@@ -58,7 +51,7 @@
           <v-col cols="12" class="pa-1">
             <v-text-field
             v-model="formData.preferredName"
-            label="First name / knwon as"
+            label="First name / known as"
             v-bind="customProps"
             outlined
             />
@@ -66,7 +59,7 @@
         </v-row>
         <v-row>
           <!-- No longer living -->
-          <v-col v-if="$route.name !== 'login'" cols='6' class="no-longer-living">
+          <v-col v-if="$route.name !== 'login'" :cols="sideViewCols" class="no-longer-living">
             <v-checkbox
               v-model="formData.deceased"
               label="No longer living"
