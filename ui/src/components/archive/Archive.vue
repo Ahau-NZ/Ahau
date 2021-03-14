@@ -168,7 +168,7 @@ export default {
           window.scrollTo({
             top: this.scrollPosition
           })
-        }, 100)
+        }, 200)
       }
     }
   }
