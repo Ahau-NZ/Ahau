@@ -8,7 +8,7 @@
             <!-- Avatar -->
           <Avatar
             class="big-avatar"
-            size="80px"
+            size="200px"
             :image="formData.avatarImage"
             :alt="formData.preferredName"
             :gender="formData.gender"
@@ -675,12 +675,12 @@ export default {
       display: flex;
       align-items: center;
       justify-content: center;
-      margin: 5px;
+      margin: 0;
 
       .gender-image {
-        margin-top:30px;
-        width: 8em;
-        height: 8em;
+        margin-top:0px;
+        width: 6em;
+        height: 6em;
         border: 0.5px solid rgba(0,0,0,0.6);
         border-radius: 50%;
         cursor: pointer;
@@ -692,8 +692,8 @@ export default {
       }
 
       .gender-image-mobile {
-        width: 6em;
-        height: 6em;
+        width: 5em;
+        height: 5em;
         border: 0.5px solid rgba(0,0,0,0.6);
         border-radius: 50%;
         cursor: pointer;
@@ -706,17 +706,16 @@ export default {
     }
 
     .gender-checkbox-unknown-default {
-        padding: 50px 0px 0px 0px;
+        padding-top: 25px;
     }
     .gender-checkbox-unknown-side {
-        padding: 0px 0px 15px 0px;
+        padding-bottom: 20px;
     }
   }
 
     .gender-label-row {
-      width: 75%;
+      width: 75.3%;
       margin: 0px;
-      padding-top: 20px;
 
       .gender-label-text {
         text-align: center;
