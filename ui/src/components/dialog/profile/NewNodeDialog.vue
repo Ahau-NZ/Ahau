@@ -158,7 +158,7 @@ export default {
     type: {
       type: String,
       validator: (val) => [
-        'child', 'parent', 'sibling'
+        'child', 'parent', 'sibling', 'partner'
       ].includes(val)
     }
   },

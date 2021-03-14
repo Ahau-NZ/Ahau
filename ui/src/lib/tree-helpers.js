@@ -4,17 +4,21 @@ import uniqby from 'lodash.uniqby'
 export default {
   flatten,
   hydrate,
+  find,
+
   getPartners,
   getSiblings,
   getRelationship,
+
   updateNode,
-  updatePartnerNode,
   deleteNode,
-  deletePartnerNode,
   addChild,
-  addChildToPartner,
   addParent,
-  find
+
+  addPartner,
+  updatePartner,
+  addChildToPartner,
+  deletePartnerNode
 }
 
 function flatten (node) {
@@ -174,7 +178,7 @@ function getRelationship (parent, child, relationship) {
 function updateNode (nestedWhakapapa, node) {
   // if the nestedWhakapapa has no value
   // then we can search it
-  if (!nestedWhakapapa) return null
+  if (isEmpty(nestedWhakapapa)) return {}
 
   // if the nestedWhakapapa matches the node we are
   // looking for, then look no further
@@ -189,7 +193,12 @@ function updateNode (nestedWhakapapa, node) {
     // do the same for each child
     return updateNode(child, node) // will either return a changed value or the same one
   })
+
   return nestedWhakapapa
+}
+
+function isEmpty (d) {
+  return d === undefined || d === null || Object.keys(d).length === 0
 }
 
 /*
@@ -274,7 +283,7 @@ function deletePartnerNode (nestedWhakapapa, id) {
   return nestedWhakapapa
 }
 
-function updatePartnerNode (nestedWhakapapa, node) {
+function updatePartner (nestedWhakapapa, node) {
   // if the nestedWhakapapa has no value
   // then we can search it
   if (!nestedWhakapapa) return null
@@ -309,7 +318,7 @@ function updatePartnerNode (nestedWhakapapa, node) {
   // try searching its children
   nestedWhakapapa.children = nestedWhakapapa.children.map(child => {
     // do the same for each child
-    return updatePartnerNode(child, node) // will either return a changed value or the same one
+    return updatePartner(child, node) // will either return a changed value or the same one
   })
 
   return nestedWhakapapa
@@ -389,7 +398,20 @@ function addParent (nestedWhakapapa, child, parent) {
   return nestedWhakapapa
 }
 
-// TODO: rename is function
+function addPartner (nestedWhakapapa, node, partner) {
+  if (!nestedWhakapapa) return null
+  if (nestedWhakapapa.id === node.id) {
+    if (!nestedWhakapapa.partners) nestedWhakapapa.partners = []
+    nestedWhakapapa.partners.push(partner)
+    return nestedWhakapapa
+  }
+
+  // TODO: do we need to add this partner to anyone else
+
+  return nestedWhakapapa
+}
+
+// TODO: rename this function
 function find (nestedWhakapapa, node) {
   if (!nestedWhakapapa) return null
   if (nestedWhakapapa.id === node) {

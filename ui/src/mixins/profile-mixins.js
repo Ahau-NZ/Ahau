@@ -1,5 +1,8 @@
 import { getProfile } from '@/lib/profile-helpers.js'
 import { getTribe } from '@/lib/community-helpers.js'
+import { savePerson } from '@/lib/person-helpers.js'
+import { saveLink } from '@/lib/link-helpers.js'
+import { saveWhakapapaView } from '@/lib/whakapapa-helpers.js'
 import gql from 'graphql-tag'
 
 export default function mapProfileMixins ({ mapMethods, mapApollo }) {
@@ -131,6 +134,75 @@ const methods = {
       // dont need to return anything for now...
     } catch (err) {
       console.error('Something went wrong while saving the profile: ', $event)
+      console.error(err)
+    }
+  },
+
+  async createPerson (input) {
+    try {
+      if (!input.type) throw new Error('profile.type is required on createPerson()')
+      if (!input.recps) throw new Error('profile.recps is required on createPerson()')
+      if (!input.authors) throw new Error('profile.authors is required on createPerson()')
+      if (input.id) throw new Error('profile.id is not allowed on createPerson()')
+
+      return this.savePerson(input) // profileId
+    } catch (err) {
+      console.error('Something went wrong while trying to create a person', input)
+      console.error(err)
+    }
+  },
+  async updatePerson (input) {
+    try {
+      if (!input.id) throw new Error('profile.id is required on updatePerson()')
+      if (input.recps) throw new Error('profile.recps is not allowed on updatePerson()')
+      if (input.authors) throw new Error('cannot update authors field')
+      if (input.type) throw new Error('profile.type is not allowed on updatePerson()')
+
+      return this.savePerson(input) // profileId
+    } catch (err) {
+      console.error('Something went wrong while trying to update a person', input)
+      console.error(err)
+    }
+  },
+  async savePerson (input) {
+    try {
+      const res = await this.$apollo.mutate(
+        savePerson(input)
+      )
+
+      if (res.errors) throw res.errors
+
+      return res.data.saveProfile // profileId
+    } catch (err) {
+      console.error('Something went wrong while trying to save a person', input)
+      console.error(err)
+    }
+  },
+  async saveLink (input) {
+    try {
+      const res = await this.$apollo.mutate(
+        saveLink(input)
+      )
+
+      if (res.errors) throw res.errors
+
+      // return res.data.saveLink // linkId
+    } catch (err) {
+      console.error('Something went wrong while trying to save a link', input)
+      console.error(err)
+    }
+  },
+  async saveWhakapapa (input) {
+    try {
+      const res = await this.$apollo.mutate(
+        saveWhakapapaView(input)
+      )
+
+      if (res.errors) throw res.errors
+
+      return res.data.saveWhakapapaView
+    } catch (err) {
+      console.error('Something went wrong while trying to save a whakapapa', input)
       console.error(err)
     }
   }

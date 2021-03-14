@@ -231,3 +231,90 @@ test('hydrate', t => {
 
   t.end()
 })
+
+test('update node', t => {
+  // update a node in an empty tree
+  t.deepEqual(
+    tree.updateNode(undefined, { id: 'A', preferredName: 'A' }),
+    {},
+    'when nestedWhakapapa = undefined'
+  )
+
+  t.deepEqual(
+    tree.updateNode(null, { id: 'A', preferredName: 'A' }),
+    {},
+    'when nestedWhakapapa = null'
+  )
+
+  t.deepEqual(
+    tree.updateNode({}, { id: 'A', preferredName: 'A' }),
+    {},
+    'when nested whakapapa = {}'
+  )
+
+  t.deepEqual(
+    tree.updateNode(1, { id: 'A', preferredName: 'A' }),
+    {},
+    'when nestedWhakapapa = number1'
+  )
+
+  t.deepEqual(
+    tree.updateNode({ id: 'A' }, { id: 'A', preferredName: 'A' }),
+    { id: 'A', preferredName: 'A' },
+    'the root node fields'
+  )
+
+  t.deepEqual(
+    tree.updateNode({ id: 'A', children: [{ id: 'B' }] }, { id: 'B', preferredName: 'BBB' }),
+    { id: 'A', children: [{ id: 'B', preferredName: 'BBB' }] },
+    'update a child of the root node'
+  )
+
+  const deeplyNestedWhakapapa = {
+    id: 'A',
+    children: [
+      {
+        id: 'B',
+        children: [
+          {
+            id: 'C'
+          }
+        ]
+      }
+    ]
+  }
+
+  t.deepEqual(
+    tree.updateNode(deeplyNestedWhakapapa, { id: 'C', preferredName: 'C' }),
+    {
+      id: 'A',
+      children: [
+        {
+          id: 'B',
+          children: [
+            {
+              id: 'C',
+              preferredName: 'C'
+            }
+          ]
+        }
+      ]
+    },
+    'deeply nested update'
+  )
+
+  t.end()
+})
+
+test('add partner', t => {
+  t.deepEqual(
+    tree.addPartner({ id: 'A' }, { id: 'A' }, { id: 'B' }),
+    {
+      id: 'A',
+      partners: [{ id: 'B' }]
+    },
+    ''
+  )
+
+  t.end()
+})
