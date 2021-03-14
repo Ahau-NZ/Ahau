@@ -212,7 +212,7 @@
             allowInterval
             :interval.sync="formData.aliveInterval"
             :hasEndDate.sync="formData.deceased"
-            
+
           />
           </v-col>
           <!-- Order of birth -->
