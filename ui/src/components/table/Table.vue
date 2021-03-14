@@ -86,12 +86,17 @@
               </text>
             </svg>
             <svg :width="columns[11].x - 45">
-              <text :transform="`translate(${columns[10].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ node.data.email }}
+              <text  :transform="`translate(${columns[10].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
+                {{ node.data.placeOfBirth }}
+              </text>
+            </svg>
+            <svg :width="columns[12].x - 45">
+              <text :transform="`translate(${columns[11].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
+                {{ node.data.placeOfDeath }}
               </text>
             </svg>
             <svg>
-              <text :transform="`translate(${columns[11].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
+              <text :transform="`translate(${columns[13].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
                 {{ node.data.phone }}
               </text>
             </svg>
@@ -323,12 +328,20 @@ export default {
           x: this.colWidth + 1765
         },
         {
-          label: 'Email',
+          label: 'Place of Birth',
           x: this.colWidth + 2005
         },
         {
+          label: 'Place of Death',
+          x: this.colWidth + 2245
+        },
+        {
+          label: 'Email',
+          x: this.colWidth + 2485
+        },
+        {
           label: 'Phone',
-          x: this.colWidth + 2365
+          x: this.colWidth + 2845
         }
       ]
     }
