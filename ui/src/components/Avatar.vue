@@ -76,7 +76,7 @@ export default {
     dark: Boolean,
     row: Boolean,
     online: Boolean,
-    isProfileForm: { type: Boolean, default: false},
+    isProfileForm: { type: Boolean, default: false }
   },
   components: {
     ImagePicker

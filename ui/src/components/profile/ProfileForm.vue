@@ -450,7 +450,6 @@
 
 <script>
 import Avatar from '@/components/Avatar.vue'
-import ImagePicker from '@/components/ImagePicker.vue'
 import AddButton from '@/components/button/AddButton.vue'
 import DateIntervalPicker from '@/components/DateIntervalPicker.vue'
 
@@ -463,7 +462,6 @@ export default {
   name: 'ProfileForm',
   components: {
     Avatar,
-    ImagePicker,
     AddButton,
     DateIntervalPicker
   },

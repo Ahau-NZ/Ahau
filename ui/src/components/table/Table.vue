@@ -70,7 +70,6 @@
                 {{ node.data.address }}
               </text>
             </svg>
-            <!-- Blake TODO: add city and post code -->
             <svg :width="columns[8].x - 45">
               <text  :transform="`translate(${columns[7].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
                 {{ node.data.country }}
