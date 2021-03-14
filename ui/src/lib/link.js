@@ -27,21 +27,19 @@ function path ({ startX, startY, endX, endY }, branch) {
   `
 }
 
-const DEFAULT_STYLE = {
+const DEFAULT_STYLE = () => ({
   fill: 'none',
   stroke: 'grey',
   opacity: 0.3,
   strokeWidth: 5
-}
+})
 
-const RANDOM_STYLE = () => {
-  return {
-    fill: 'none',
-    stroke: randomColor(),
-    opacity: 0.3,
-    strokeWidth: 5
-  }
-}
+const RANDOM_STYLE = () => ({
+  fill: 'none',
+  stroke: randomColor(),
+  opacity: 0.3,
+  strokeWidth: 5
+})
 
 export default {
   path,

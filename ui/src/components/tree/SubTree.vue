@@ -144,11 +144,16 @@ export default {
                 currentChildren.push(child)
               }
 
+              const dashed = child.relationship.relationshipType !== 'birth'
+
               return {
                 ...node,
                 x,
                 link: {
-                  style: parent.link.style, // inherits the style from the parent
+                  style: {
+                    ...parent.link.style, // inherits the style from the parent
+                    strokeDasharray: dashed ? 2.5 : 0
+                  },
                   d: link.path( // links to the children
                     {
                       startX: this.root.x + this.radius + (-sign * this.radius * 1.5),
@@ -173,9 +178,14 @@ export default {
         if (i === 0) node.x = this.root.x
         i += 1
 
+        const dashed = child.data.relationship.relationshipType !== 'birth'
+
         return {
           link: {
-            style: link.style.default,
+            style: {
+              ...link.style.default(),
+              strokeDasharray: dashed ? 2.5 : 0
+            },
             d: link.path(
               {
                 startX: this.root.x + this.radius,
@@ -202,7 +212,7 @@ export default {
 
       partners.push(ghost)
 
-      return partners.reverse()
+      return partners
     }
   }
 }
