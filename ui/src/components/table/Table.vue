@@ -77,16 +77,21 @@
             </svg>
             <svg :width="columns[9].x - 45">
               <text  :transform="`translate(${columns[8].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ node.data.country }}
+                {{ node.data.postCode }}
               </text>
             </svg>
             <svg :width="columns[10].x - 45">
-              <text :transform="`translate(${columns[9].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
+              <text  :transform="`translate(${columns[9].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
+                {{ node.data.country }}
+              </text>
+            </svg>
+            <svg :width="columns[11].x - 45">
+              <text :transform="`translate(${columns[10].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
                 {{ node.data.email }}
               </text>
             </svg>
             <svg>
-              <text :transform="`translate(${columns[10].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
+              <text :transform="`translate(${columns[11].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
                 {{ node.data.phone }}
               </text>
             </svg>
@@ -310,16 +315,20 @@ export default {
           x: this.colWidth + 1405
         },
         {
-          label: 'Country',
+          label: 'Post Code',
           x: this.colWidth + 1645
         },
         {
+          label: 'Country',
+          x: this.colWidth + 1765
+        },
+        {
           label: 'Email',
-          x: this.colWidth + 1885
+          x: this.colWidth + 2005
         },
         {
           label: 'Phone',
-          x: this.colWidth + 2245
+          x: this.colWidth + 2365
         }
       ]
     }
@@ -471,32 +480,19 @@ export default {
     },
     // Computes the label of table headers depending on whether a sort is active
     computeLabel (label) {
-      if (label === 'Also Known As') return 'Also Known As'
-      if (label === 'D.O.B') return 'D.O.B'
-      if (label === 'D.O.D') return 'D.O.D'
-      if (label === 'Address') return 'Address'
-      if (label === 'Email') return 'Email'
-      if (label === 'Phone') return 'Phone'
-      if (label === 'City') return 'City'
+      if (label === '') return ''
 
       const preferredName = ['Preferred Name', 'Preferred Name ↑', 'Preferred Name ↓']
       const age = ['Age', 'Age ↑', 'Age ↓']
       const profession = ['Profession', 'Profession ↑', 'Profession ↓']
       const country = ['Country', 'Country ↑', 'Country ↓']
 
-      if (label === 'Preferred Name') {
-        return preferredName[this.sort['preferredName']]
-      }
-      if (label === 'Age') {
-        return age[this.sort['age']]
-      }
-      if (label === 'Profession') {
-        return profession[this.sort['profession']]
-      }
-      if (label === 'Country') {
-        return country[this.sort['country']]
-      }
-      return ''
+      if (label === 'Preferred Name') return preferredName[this.sort['preferredName']]
+      if (label === 'Age') return age[this.sort['age']]
+      if (label === 'Profession') return profession[this.sort['profession']]
+      if (label === 'Country') return country[this.sort['country']]
+
+      return label
     },
     // Executes a sort on two values
     sortByField (a, b) {
