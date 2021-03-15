@@ -37,7 +37,7 @@
           <v-carousel
             v-model="model"
             hide-delimiters
-            :show-arrows="!mobile && fullStory && story.artefacts && story.artefacts.length > 1" :show-arrows-on-hover="!mobile" :height="showArtefact ? 'auto' : mobile ? '300px' : '500px'" style="background-color:#1E1E1E">
+            :show-arrows="!mobile && fullStory && story.artefacts && story.artefacts.length > 1" :show-arrows-on-hover="!mobile" :height="showArtefact ? mobile ? '80vh' : 'auto' : mobile ? '300px' : '500px'" style="background-color:#1E1E1E">
             <v-carousel-item v-for="({ artefact } , i) in story.artefacts" :key="`story-card-artefact-${i}`">
               <Artefact :model="model" :index="i" @showArtefact="toggleShowArtefact($event)" :artefact="artefact" :controls="fullStory" />
             </v-carousel-item>
@@ -69,13 +69,18 @@
 
         </v-list-item-content>
       </v-list-item>
-      <v-list-item :class="mobile && fullStory ? 'px-6':''" :disabled="disableClick" :ripple="false" @click.stop="showText()">
+      <v-list-item v-if="!showArtefact && story.description" :disabled="disableClick" :ripple="false" @click.stop="showText()">
         <v-list-item-content>
-          <v-list-item-subtitle v-if="fullStory || showArtefact" class="pb-1" style="color:#a7a3a3"> Description </v-list-item-subtitle>
-          <p v-if="!showArtefact && story.description" ref="text" :class="truncateText ? 'description' : ''">
+          <v-list-item-subtitle v-if="fullStory" class="pb-1" style="color:#a7a3a3"> Description </v-list-item-subtitle>
+          <p ref="text" :class="truncateText ? 'description' : ''">
             <span v-for="(line, index) in story.description.split('\n')" :key="index">{{line}}<br></span>
           </p>
-          <p v-if="artefact.description" ref="text" style="color:white" class="text-justify">
+        </v-list-item-content>
+      </v-list-item>
+      <v-list-item v-else-if="showArtefact && artefact.description" :class="mobile && fullStory ? 'px-6':''">
+        <v-list-item-content >
+          <v-list-item-subtitle class="pb-1" style="color:#a7a3a3"> Description </v-list-item-subtitle>
+          <p ref="text" style="color:white" class="text-justify">
             <span v-for="(line, index) in artefact.description.split('\n')" :key="index">{{line}}<br></span>
           </p>
         </v-list-item-content>

@@ -13,7 +13,7 @@
     "test:js": "tape -r esm src/**/*.test.js | tap-spec",
     "test": "npm run test:js && npm run lint",
     "clear": "rm -rf node_modules",
-    "build-fragment" : "node src/schemaQuery.js"
+    "build-fragment": "node src/schemaQuery.js"
   },
   "dependencies": {
     "@mdi/font": "^4.5.95",
@@ -32,6 +32,7 @@
     "lodash.uniqby": "^4.7.0",
     "pile-sort": "^1.0.0",
     "vue-gallery": "^2.0.1",
+    "vue-zoomer": "^0.3.9",
     "vuetify-media-player": "^0.8.1",
     "vuex-router-sync": "^5.0.0"
   },
