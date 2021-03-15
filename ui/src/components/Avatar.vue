@@ -11,7 +11,6 @@
             v-else
             :src="getImage"
             :class="customClass"
-            :style="customStyle"
           />
         </v-avatar>
         <v-row v-if="showLabel && row">
@@ -38,7 +37,6 @@
             v-else
             :src="getImage"
             :class="customClass"
-            :style="customStyle"
           />
         </v-avatar>
         <div v-if="isEditing" class="avatar-overlay">
@@ -92,14 +90,7 @@ export default {
     customClass () {
       if (this.isView) return ''
       return this.deceased ? 'deceased' : 'alive'
-    },
-    customStyle () {
-      if (this.isView) return ''
-      return {
-        opacity: this.deceased ? 0.5 : 1
-      }
     }
-
   },
   methods: {
     updateAvatar (avatarImage) {
