@@ -402,6 +402,10 @@ export default {
       this.dialog = dialog
     },
 
+    cordovaBackButton () {
+      if (this.showArtefact) return this.setShowArtefact()
+    },
+
     // toggle artefact view
     toggleShowArtefact (artefact) {
       if (this.fullStory) {
