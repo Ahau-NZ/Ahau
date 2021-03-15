@@ -47,6 +47,7 @@
           v-if="!mobile"
           icon
           @click="closeDialog"
+          style="margin-right: 10px"
         >
           Close
         </v-btn>
