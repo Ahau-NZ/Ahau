@@ -63,28 +63,30 @@
             </v-col>
             <v-spacer v-if="!mobile"/>
             <slot name="actions">
-              <v-col cols="6" md="auto" :align="mobile ? 'center' : 'end'" class="py-0 pb-2 pb-md-0">
-                <v-btn @click="close"
-                  :fab="!mobile"
-                  icon
-                  :large="!mobile"
-                  class="secondary--text"
-                >
-                  Cancel
-                </v-btn>
-              </v-col>
-              <v-col cols="6" md="auto" :align="mobile ? 'center' : 'end'" class="py-0">
-                <v-btn @click="submit"
-                  :fab="!mobile"
-                  icon
-                  :large="!mobile"
-                  text
-                  color="blue"
-                  :disabled="!allowSubmissions"
-                >
-                  Save
-                </v-btn>
-              </v-col>
+              <v-row align="center" class="buttons">
+                <v-col cols="12" md="auto" :align="mobile ? 'center' : 'end'" class="py-0 pb-2 pb-md-0" style="">
+                  <v-btn @click="close"
+                    :fab="!mobile"
+                    icon
+                    :large="!mobile"
+                    class="secondary--text"
+                  >
+                    Cancel
+                  </v-btn>
+                </v-col>
+                <v-col cols="12" md="auto" :align="mobile ? 'center' : 'end'" class="py-0">
+                  <v-btn @click="submit"
+                    :fab="!mobile"
+                    icon
+                    :large="!mobile"
+                    text
+                    color="blue"
+                    :disabled="!allowSubmissions"
+                  >
+                    Save
+                  </v-btn>
+                </v-col>
+              </v-row>
             </slot>
           </v-row>
         </v-container>
@@ -211,5 +213,9 @@ export default {
   font-weight: 400;
   font-size: 0.99rem;
   letter-spacing: 0.1666666667em;
+}
+
+.buttons {
+  margin-right: 0px;
 }
 </style>
