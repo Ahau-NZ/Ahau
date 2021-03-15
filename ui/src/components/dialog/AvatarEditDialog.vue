@@ -96,20 +96,28 @@ export default {
         })
         canvas.toBlob(async blob => {
           const file = new File([blob], 'avatar', { type: blob.type })
+
+          if (file.size >= 5 * 1024 * 1024) {
+            console.error('this avvatar image is bigger than 5MB, we cannot allow this through, otherwise it will end up a hyperblob, which AvatarImage does not currently support')
+            throw new Error('avatar image must me < 5MB')
+          }
+
           const image = await this.uploadFile({ file, encrypt: true })
 
+          if (image.mimeType === null) image.mimeType = file.type
           // TODO: HACK until mimeType: Hello World gets solved
-          if (image.mimeType === null || image.mimeType === 'Hello World') image.mimeType = file.type
+          if (image.mimeType === 'Hello World') {
+            image.mimeType = file.type
+          }
 
-          // TODO: change when ssb-profile blobs are updated, need this because ssb-profile schema uses blob.blob not blob.blobId
+          // NOTE: ssb-profile blobs uses blob.blob not blob.blobId (which are the artefact style)
           if (image.blobId) image.blob = image.blobId
-
           delete image.blobId
 
           let cleanImage = {}
           Object.entries(image).forEach(([key, value]) => {
             if (key === '__typename') return
-            if (key === 'store') return
+            if (key === 'type') return
             cleanImage[key] = value
           })
           this.$emit('submit', cleanImage)
