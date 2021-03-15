@@ -429,8 +429,9 @@ export default {
       this.$emit('close')
     },
     finishEditing () {
-      this.toggleShowStory()
-      this.dialog = null
+      setTimeout(() => {
+       this.dialog = null
+      }, 500)
     }
   }
 }
