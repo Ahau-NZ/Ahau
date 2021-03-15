@@ -60,7 +60,6 @@
 <script>
 import { ARTEFACT_ICON } from '@/lib/artefact-helpers.js'
 
-
 export default {
   name: 'ArtefactCarouselItem',
   props: {
