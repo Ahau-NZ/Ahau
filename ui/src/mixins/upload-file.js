@@ -27,7 +27,7 @@ export default {
 const mutation = gql`
   mutation uploadFile($file: Upload!, $size: Int!, $encrypt: Boolean) {
     uploadFile(file: $file, size: $size, encrypt: $encrypt) {
-      store
+      type
       blobId
       mimeType
       uri

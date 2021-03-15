@@ -1,58 +1,17 @@
 <template>
   <div class="container">
-    <div v-if="isLoading" class="splash">
-      <img src="@/assets/logo_red.svg" />
-      <h1>Āhau</h1>
-      <v-progress-circular
-        v-if="mobile"
-        color="white"
-        :indeterminate="true"
-        size="16"
-        width="2"
-      />
-    </div>
-    <div v-if="!isLoading && !isSetup" style="justify-items: center;display: grid;">
-      <v-row>
-        <p class="mb-0 headliner">Nau mai whakatau mai</p>
-      </v-row>
-      <v-row class="pb-12">
-        <p style="color:darkgrey" class="mb-0 headliner2">welcome</p>
-      </v-row>
-      <v-row class="mt-10">
-        <v-btn
-          text
-          x-large
-          color="#b12526"
-          @click.prevent="toggleNew"
+    <div style='margin-bottom: 50px;'>
+      <button v-for="item in files" :key="item.fileEncryptionKey"
+        @click="handleClick(item)"
+        style="background: grey; padding: 5px; margin: 5px;"
         >
-            <p class="mb-0">Ko wai koe --</p><p style="color:lightgrey" class="mb-0"> -- who are you?</p>
-            <v-icon right small>mdi-cursor-default</v-icon>
-
-        </v-btn>
-      </v-row>
+        {{item.fileName}}
+      </button>
     </div>
 
-    <div
-      v-if="!isLoading && isSetup"
-      class="d-flex flex-column align-center button"
-      @click="login()"
-    >
-      <Avatar
-        :image="whoami.personal.profile.avatarImage"
-        :gender="whoami.personal.profile.gender"
-        :aliveInterval="whoami.personal.profile.aliveInterval"
-        size="13vh"
-      />
-      <p class="name mt-2">{{ whoami.personal.profile.preferredName }}</p>
-    </div>
-
-     <NewNodeDialog
-      v-if="dialog"
-      :show="dialog"
-      :title="`AHAU ---- I AM`"
-      @close="toggleNew" @create="save($event)"
+    <div id='appendTarget' v-once
+      style='display: flex; flex-wrap: wrap;'
     />
-
   </div>
 
 </template>
@@ -62,6 +21,46 @@ import Avatar from '@/components/Avatar'
 import NewNodeDialog from '@/components/dialog/profile/NewNodeDialog.vue'
 import { mapGetters, mapActions } from 'vuex'
 import { savePerson } from '@/lib/person-helpers.js'
+
+const render = require('render-media')
+const http = require('stream-http')
+const { Transform } = require('readable-stream')
+
+const hostname = 'localhost'
+const port = 1234
+
+function requestOpts (item) {
+  return {
+    hostname,
+    port,
+    path: '/file/' + item.fileName + '/' + item.driveAddress + '/' + item.fileEncryptionKey + '/' + item.start + '/' + item.end,
+    method: 'GET'
+  }
+}
+function renderMediaOpts (item) {
+  return {
+    name: item.fileName,
+    createReadStream: function (opts = {}) {
+      item.start = opts.start || 0
+      item.end = opts.end
+      const transform = new Transform({
+        transform (chunk, enc, callback) {
+          this.push(chunk)
+          callback()
+        }
+      })
+      const req = http.request(requestOpts(item), (res) => {
+        // console.log(`STATUS: ${res.statusCode}`)
+        res.pipe(transform)
+      })
+      req.on('error', (e) => {
+        console.error(`problem with request: ${e.message}`)
+      })
+      req.end()
+      return transform
+    }
+  }
+}
 
 const karakia = `
 ---------------------------------
@@ -89,7 +88,24 @@ export default {
     return {
       isLoading: true,
       isSetup: false, // has profile set up
-      dialog: false
+      dialog: false,
+      files: [
+        {
+          driveAddress: 'e1c3f8e4c191babb3f926182e066b9d9994bb7d5f10ed16412251ffa7ff12798',
+          fileEncryptionKey: 'da797f4b4e0da233e2d60c672c685308126baba757d454d9711cd79104ce3ec6',
+          fileName: 'ira-mix-cradle.jpeg'
+        },
+        {
+          driveAddress: 'e1c3f8e4c191babb3f926182e066b9d9994bb7d5f10ed16412251ffa7ff12798',
+          fileEncryptionKey: '7a5edca403fee856b803b4f05c950337ebeba98870e2aa35d63f0803cf85a6f0',
+          fileName: 'Sintel.mp4'
+        },
+        {
+          driveAddress: 'acb9d995b172a035f61ec8c42419b72c31742d9a1c586a46a703f33433a36806',
+          fileEncryptionKey: 'e630c26729207ce8489564341e0dd557db977f61558da1a1231ee500f463ed9d',
+          fileName: 'NAEST 108 01 - Mavor 50 year history booklet 1931.pdf'
+        }
+      ]
     }
   },
   computed: {
@@ -114,6 +130,17 @@ export default {
     }
   },
   methods: {
+    handleClick (item) {
+      render.append(renderMediaOpts(item), '#appendTarget', function (err, elem) {
+        if (err) return console.error(err.message)
+
+        // elem.height = 600
+        elem.style.minWidth = '400px'
+        elem.style.minHeight = '400px'
+        elem.style.maxHeight = '600px'
+        elem.style.margin = '10px'
+      })
+    },
     ...mapActions(['setWhoami']),
     async getCurrentIdentity () {
       await this.setWhoami()
