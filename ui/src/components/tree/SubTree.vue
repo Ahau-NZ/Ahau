@@ -20,18 +20,6 @@
         partner
       />
     </g>
-     <!-- <g id="child-group">
-        <g v-for="child in children" :key="`partner-child-${child.data.id}`">
-          <Link v-if="child.link" :link="child.link"/>
-          <SubTree :root="child"/>
-        </g>
-      </g> -->
-      <!-- <Node
-        v-if="partner.link"
-        :node="partner"
-        :radius="partnerRadius"
-        partner
-      /> -->
 
     <Node :node="root"/>
   </g>
@@ -42,7 +30,7 @@ import Node from './Node.vue'
 import Link from './Link.vue'
 
 // TODO: better name
-import link from '@/lib/link.js'
+import settings from '@/lib/link.js'
 
 export default {
   name: 'SubTree',
@@ -55,9 +43,7 @@ export default {
   },
   data () {
     return {
-      offsetSize: 100,
-      radius: 50,
-      branch: 120
+      radius: 50
     }
   },
   computed: {
@@ -66,17 +52,6 @@ export default {
     },
     diameter () {
       return this.radius * 2
-    },
-    partnerDiameter () {
-      return this.partnerRadius * 2
-    },
-    diameterDiff () {
-      return this.diameter - this.partnerDiameter
-    },
-    position () {
-      return {
-        transform: `translate(${this.root.x}px, ${this.root.y}px)`
-      }
     },
     profile () {
       return this.root.data
@@ -91,7 +66,6 @@ export default {
         .map((parent, i) => {
           // used to alternate between left and right
           var sign = i % 2 === 0 ? -1 : 1
-
           const count = sign === 1 ? ++leftCount : ++rightCount
           const offset = sign === 1
             ? this.diameter + this.partnerRadius / 2 // right
@@ -105,11 +79,13 @@ export default {
           // how far down the partner sits from the root node at 0
           const y = this.root.y + 10
 
+          // partner style
+          // NOTE: children of this partner will inherit this style
           const style = {
             fill: 'none',
-            stroke: link.color.random(),
-            opacity: link.opacity,
-            strokeWidth: link.thickness
+            stroke: settings.color.getRandomColor(),
+            opacity: settings.opacity,
+            strokeWidth: settings.thickness
           }
 
           return {
@@ -118,25 +94,27 @@ export default {
             children: parent.children
               .filter(partnerChild => this.root.children.some(rootChild => rootChild.data.id === partnerChild.id)) // filter out children who arent this nodes
               .map(child => {
-                // map to their profile from the root
+                // map to their node from the root parent
                 const node = this.root.children.find(rootChild => child.id === rootChild.data.id)
+
+                // change the link if they are not related by birth
                 const dashed = node.data.relationship.relationshipType !== 'birth'
 
                 return {
                   ...node,
                   link: {
                     style: {
-                      ...style, // inherits the style from the parent
+                      ...style, // inherits the style from the parent so the links are the same color
                       strokeDasharray: dashed ? 2.5 : 0
                     },
-                    d: link.path( // links to the children
+                    d: settings.path( // for drawing a link from the parent to child
                       {
                         startX: this.root.x + this.radius,
                         startY: this.root.y + this.radius,
-                        endX: node.x + this.radius,
-                        endY: node.y + this.radius
+                        endX: node.x + settings.radius,
+                        endY: node.y + settings.radius
                       },
-                      this.branch
+                      settings.branch
                     )
                   }
                 }
@@ -144,8 +122,9 @@ export default {
             data: parent,
             link: {
               style,
+              // for drawing the link from the root parent to this partner/parent
               d: `
-                M ${this.root.x + this.radius}, ${this.root.y + (i * link.partnerSpacing) + this.radius}
+                M ${this.root.x + this.radius}, ${this.root.y + (i * settings.partner.spacing.y) + this.radius}
                 H ${x + this.partnerRadius}
               `
             }
