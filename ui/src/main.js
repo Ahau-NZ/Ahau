@@ -10,8 +10,11 @@ import store from './store/index'
 import { apolloProvider } from './plugins/vue-apollo'
 import vuetify from './plugins/vuetify'
 import CordovaBackButton from './plugins/cordova-back-button'
+import nodejsClient from './plugins/cordova-nodejs-client.js'
 
-if (process.env.VUE_APP_PLATFORM === 'cordova') {
+const isCordova = process.env.VUE_APP_PLATFORM === 'cordova'
+
+if (isCordova) {
   document.addEventListener('deviceready', main, false)
 } else {
   main()
@@ -20,12 +23,7 @@ if (process.env.VUE_APP_PLATFORM === 'cordova') {
 VuexRouterSync.sync(store, router)
 
 async function main () {
-  // install
-  Vue.use(VuejsClipper)
-  Vue.use(CordovaBackButton, { router })
-  Vue.config.productionTip = false
-
-  checkReady(() => {
+  function startVue () {
     new Vue({
       router,
       store,
@@ -35,7 +33,25 @@ async function main () {
 
       render: h => h(App)
     }).$mount('#app')
-  })
+  }
+
+  // install
+  Vue.use(VuejsClipper)
+  Vue.use(CordovaBackButton, { router })
+  Vue.config.productionTip = false
+
+  if (isCordova) {
+    nodejsClient.start({
+      onReady: () => {
+        console.log('nodejs-mobile and GraphQL server are fully ready')
+        startVue()
+        navigator.splashscreen.hide()
+      }
+    })
+    return
+  }
+
+  checkReady(() => { startVue() })
 
   async function checkReady (next) {
     try {
