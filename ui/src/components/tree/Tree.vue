@@ -8,8 +8,8 @@
     </defs>
     <path id="background" d="M5,5 l0,680 2980,0 l0,-680 l-980,0" fill="url(#img1)" />
     <g id="baseGroup">
-      <g>
-        :transform="`translate(${treeX - nodeRadius} ${treeY - nodeRadius})`"
+      <g
+        :transform="`translate(${treeX - radius} ${treeY - radius})`"
         ref="tree"
       >
         <SubTree :root="um" />
@@ -43,6 +43,8 @@ import isEqual from 'lodash.isequal'
 
 import { mapGetters, mapActions } from 'vuex'
 
+import settings from '@/lib/link.js'
+
 export default {
   props: {
     find: {
@@ -66,9 +68,6 @@ export default {
       nodeCentered: '', // hold centered node id
       collapseNode: false, // if node is centered than we can show/collapse
 
-      nodeRadius: 50, // use variable for zoom later on
-      nodeSeparationX: 100,
-      nodeSeparationY: 150,
       nonFocusedPartners: [],
       changeFocusId: null,
       nodeId: '',
@@ -84,6 +83,15 @@ export default {
 
   computed: {
     ...mapGetters(['nestedWhakapapa', 'relationshipLinks']),
+    radius () {
+      return settings.radius
+    },
+    nodeSeparationX () {
+      return this.radius * 3
+    },
+    nodeSeparationY () {
+      return this.radius * 4
+    },
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -94,7 +102,7 @@ export default {
       })
     },
     branch () {
-      return this.nodeSeparationY / 2 + this.nodeRadius
+      return this.nodeSeparationY / 2 + this.radius
     },
     um () {
       return this.treeLayout(this.root)
@@ -139,8 +147,8 @@ export default {
       return d3
         .tree()
         .nodeSize([
-          this.nodeSeparationX + this.nodeRadius,
-          this.nodeSeparationY + this.nodeRadius
+          this.nodeSeparationX,
+          this.nodeSeparationY
         ])
         .separation((a, b) => {
           if (a.parent !== b.parent) return 1
@@ -250,9 +258,6 @@ export default {
         }
       })
     }
-    // nodes (newValue) {
-    //   this.setLoading(false)
-    // }
   },
 
   methods: {

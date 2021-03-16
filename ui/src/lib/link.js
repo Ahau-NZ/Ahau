@@ -31,6 +31,7 @@ function randomColor () {
   return '#' + Math.random().toString(16).substr(2, 6)
 }
 
+// TODO (later): move these settings into vuex where the tree style can be manipulated there
 export default {
   path,
   color: {
