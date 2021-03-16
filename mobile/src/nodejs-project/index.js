@@ -4,6 +4,7 @@ const ssbKeys = require('ssb-keys')
 const mkdirp = require('mkdirp')
 const makeConfig = require('ssb-config/inject')
 const SecretStack = require('secret-stack')
+const env = require('ahau-env')
 
 let appDataDir
 const appName = process.env.NODE_ENV === 'development' ? 'ahau-dev' : 'ssb-ahau'
@@ -21,6 +22,7 @@ const keys = ssbKeys.loadOrCreateSync(path.join(ssbPath, 'secret'))
 const config = makeConfig(appName, {
   path: ssbPath,
   keys,
+  caps: env.caps,
   conn: {
     autostart: true
   },
@@ -34,18 +36,27 @@ const config = makeConfig(appName, {
     incoming: {
       /* Causing error: */
       /* Error: ssb-config: conflicting connection settings for: net port */
-      //     net: [{ scope: 'private', transform: 'shs', port: 26831 }],
+      // net: [{ scope: 'private', transform: 'shs', port: 26831 }],
       tunnel: [{ scope: 'public', transform: 'shs' }]
     },
     outgoing: {
       net: [{ transform: 'shs' }],
       tunnel: [{ transform: 'shs' }]
     }
+  },
+  recpsGuard: {
+    allowedTypes: [
+      'contact', 'pub' // needed for ssb-invite
+    ]
+  },
+  serveBlobs: {
+    cors: true,
+    csp: ''
   }
 })
 
 // eslint-disable-next-line no-useless-call
-SecretStack({ appKey: 'LftKJZRB4nbBRnlJuFteWG9AP+gGboVEhibx016bR0s=' })
+SecretStack({ appKey: env.caps.shs })
   // Core
   .use(require('ssb-master'))
   .use(require('ssb-db'))
@@ -56,6 +67,7 @@ SecretStack({ appKey: 'LftKJZRB4nbBRnlJuFteWG9AP+gGboVEhibx016bR0s=' })
   .use(require('ssb-no-auth'))
   .use(require('ssb-lan'))
   .use(require('ssb-conn')) // needs: db, friends, lan
+  .use(require('ssb-invite')) // needs: db, conn
   .use(require('ssb-promiscuous')) // needs: conn, friends
   // Queries
   .use(require('ssb-query')) // needs: db
@@ -71,4 +83,5 @@ SecretStack({ appKey: 'LftKJZRB4nbBRnlJuFteWG9AP+gGboVEhibx016bR0s=' })
   .use(require('ssb-tribes'))
   // Custom
   .use(require('ssb-ahau'))
+  .use(require('ssb-recps-guard'))
   .call(null, config)
