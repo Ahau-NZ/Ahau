@@ -15,7 +15,7 @@
             :aliveInterval="formData.aliveInterval"
             :deceased="formData.deceased"
             :isEditing="isEditing"
-            isProfileForm
+            showPicker
             @updateAvatar="formData.avatarImage = $event"
           />
         </v-row>

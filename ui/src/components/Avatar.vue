@@ -31,7 +31,7 @@
         <v-btn v-if="deletable" class="delete" @click="$emit('delete')" icon x-small light max-width="20px" max-height="20px">
           <v-icon>mdi-close</v-icon>
         </v-btn>
-        <v-avatar :size="size" :tile="isView" class="avatar-container" :class="{'isEditing': isEditing, 'isOnline': online, 'showPicker' : showPicker}">
+        <v-avatar :size="size" :tile="isView" class="avatar-container" :class="{'isEditing': isEditing, 'isOnline': online, 'reduceOpacity' : showPicker}">
           <v-img v-if="image && image.uri" :src="image.uri" :alt="alt" />
           <v-img
             v-else
@@ -126,7 +126,7 @@ export default {
   opacity: 0.2;
 }
 
-.showPicker {
+.reduceOpacity {
   opacity: 0.3;
 }
 
