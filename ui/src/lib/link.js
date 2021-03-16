@@ -27,26 +27,15 @@ function path ({ startX, startY, endX, endY }, branch) {
   `
 }
 
-const DEFAULT_STYLE = () => ({
-  fill: 'none',
-  stroke: 'grey',
-  opacity: 0.3,
-  strokeWidth: 5
-})
-
-const RANDOM_STYLE = () => ({
-  fill: 'none',
-  stroke: randomColor(),
-  opacity: 0.3,
-  strokeWidth: 5
-})
-
 export default {
   path,
-  style: {
-    default: DEFAULT_STYLE,
-    random: RANDOM_STYLE
-  }
+  color: {
+    default: 'grey',
+    random: randomColor
+  },
+  partnerSpacing: 5,
+  opacity: 0.3,
+  thickness: 5
 }
 
 function randomColor () {
