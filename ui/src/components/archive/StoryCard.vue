@@ -200,6 +200,47 @@
           </v-col>
         </v-row>
       </div>
+      <!-- ARTEFACT FIELDS -->
+      <div v-if="showArtefact">
+        <v-row class="px-4">
+          <v-col v-if="artefact.blob.mimeType" cols="12" sm="12" md="3" class="py-1 pt-2" >
+            <v-list-item-subtitle class="pb-1" style="color:#a7a3a3">Format</v-list-item-subtitle>
+            <p style="color:white">{{ artefact.blob.mimeType }}</p>
+          </v-col>
+          <v-col v-if="artefact.blob.size" cols="12" sm="12" md="3" class="py-1 pt-2" >
+            <v-list-item-subtitle class="pb-1" style="color:#a7a3a3">Size</v-list-item-subtitle>
+            <p style="color:white">{{ artefact.blob.size }}</p>
+          </v-col>
+          <v-col v-if="artefact.language" cols="12" sm="12" md="3" class="py-1 pt-2" >
+            <v-list-item-subtitle class="pb-1" style="color:#a7a3a3">Language</v-list-item-subtitle>
+            <p style="color:white">{{ artefact.language }}</p>
+          </v-col>
+          <v-col v-if="artefact.licence" cols="12" sm="12" md="3" class="py-1 pt-2" >
+            <v-list-item-subtitle class="pb-1" style="color:#a7a3a3">License</v-list-item-subtitle>
+            <p style="color:white">{{ artefact.licence }}</p>
+          </v-col>
+          <v-col v-if="artefact.rights" cols="12" sm="12" md="4" class="py-1 pt-6" >
+            <v-list-item-subtitle class="pb-1" style="color:#a7a3a3">Rights</v-list-item-subtitle>
+            <p style="color:white">{{ artefact.rights }}</p>
+          </v-col>
+          <v-col v-if="artefact.source" cols="12" sm="12" md="4" class="py-1 pt-6" >
+            <v-list-item-subtitle class="pb-1" style="color:#a7a3a3">Source</v-list-item-subtitle>
+            <p style="color:white">{{ artefact.source }}</p>
+          </v-col>
+          <v-col v-if="artefact.duration" cols="12" sm="12" md="4" class="py-1 pt-2" >
+            <v-list-item-subtitle class="pb-1" style="color:#a7a3a3">Duration</v-list-item-subtitle>
+            <p style="color:white">{{ artefact.duration }}</p>
+          </v-col>
+          <v-col v-if="artefact.translation" cols="12" class="pt-6" >
+            <v-list-item-subtitle class="pb-1" style="color:#a7a3a3">Translation/Transcription</v-list-item-subtitle>
+            <p style="color:white">{{ artefact.translation }}</p>
+          </v-col>
+          <v-col v-if="artefact.location" cols="12" class="pt-6" >
+            <v-list-item-subtitle class="pb-1" style="color:#a7a3a3">Location</v-list-item-subtitle>
+            <p style="color:white">{{ artefact.location }}</p>
+          </v-col>
+        </v-row>
+      </div>
       <v-card-actions v-if="fullStory" class="justify-end">
         <v-list-item-icon v-if="fullStory && !showArtefact" class="pt-0 mt-0">
           <EditStoryButton v-if="story.canEdit" @click="toggleDialog('edit-story')"/>
@@ -255,6 +296,7 @@ import DeleteRecordDialog from '@/components/dialog/archive/DeleteRecordDialog.v
 import { deleteStory } from '@/lib/story-helpers.js'
 import { getTribalProfile } from '@/lib/community-helpers.js'
 import { dateIntervalToString, formatSubmissionDate } from '@/lib/date-helpers.js'
+import { getObjectChanges } from '@/lib/get-object-changes.js'
 
 import { mapActions, mapGetters, mapMutations } from 'vuex'
 import mapProfileMixins from '@/mixins/profile-mixins.js'
@@ -352,6 +394,16 @@ export default {
     }
   },
   watch: {
+    story (newVal, oldVal) {
+      var changes = {...getObjectChanges(oldVal.artefacts, newVal.artefacts)}
+      if (changes.artefacts) {
+        if ( this.showArtefact && changes.artefacts.remove) {
+          this.setShowArtefact()
+        } else if (this.showArtefact && changes.artefacts.add) {
+          this.artefact = changes.artefacts.add[0].artefact
+        }
+      }
+    },
     model (newVal) {
       // show artefact details when viewing in carousel
       if (this.showArtefact) {

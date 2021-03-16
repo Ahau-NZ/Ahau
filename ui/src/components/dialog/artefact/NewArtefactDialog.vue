@@ -92,7 +92,25 @@
               <span>The current digital form of this artefact being recorded</span>
             </v-tooltip>
           </v-col>
-          <v-col cols="12" sm="12" md="3" class="py-1 pt-2">
+           <v-col  class="py-1 pt-2" cols="12" sm="12" md="3">
+            <v-tooltip top open-delay="700">
+              <template v-slot:activator="{ on }">
+                <v-text-field
+                  v-on="on"
+                  v-if="show"
+                  readonly
+                  :value="artefact.blob.size"
+                  label="Size"
+                  type="number"
+                  v-bind="customProps"
+                  suffix="bytes"
+                >
+                </v-text-field>
+              </template>
+              <span>This file size of this uploaded digital artefact</span>
+            </v-tooltip>
+          </v-col>
+          <!-- <v-col cols="12" sm="12" md="3">
             <v-tooltip top open-delay="700">
               <template v-slot:activator="{ on }">
                 <v-text-field
@@ -106,7 +124,7 @@
               </template>
               <span>A unique, unambigous reference to the artefact</span>
             </v-tooltip>
-          </v-col>
+          </v-col> -->
           <v-col class=py-1 cols="12" sm="12" md="3">
             <v-tooltip top open-delay="700">
               <template v-slot:activator="{ on }">
@@ -201,24 +219,7 @@
               <span>An abstraction, transcription or translation to the artefact</span>
             </v-tooltip>
           </v-col>
-          <v-col class=py-1 cols="12" sm="12" md="3">
-            <v-tooltip top open-delay="700">
-              <template v-slot:activator="{ on }">
-                <v-text-field
-                  v-on="on"
-                  v-if="show"
-                  readonly
-                  :value="artefact.blob.size"
-                  label="Size"
-                  type="number"
-                  v-bind="customProps"
-                  suffix="bytes"
-                >
-                </v-text-field>
-              </template>
-              <span>This file size of this uploaded digital artefact</span>
-            </v-tooltip>
-          </v-col>
+         
           <!-- Location test field -->
          <v-col cols="12">
             <h1>

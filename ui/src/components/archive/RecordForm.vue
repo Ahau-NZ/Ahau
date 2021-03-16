@@ -614,7 +614,6 @@ export default {
       array.splice(index, 1, update)
     },
     async updateArtefacts (artefacts) {
-      console.log('updating artefact')
       this.formData.artefacts = await Promise.all(artefacts.map(async (artefact, i) => {
         if (this.editing) {
           if (artefact.id) {
@@ -625,9 +624,6 @@ export default {
         }
         return artefact
       }))
-      console.log('artefact:', artefact)
-
-      this.newDialog = !!this.newDialog
     },
     removeItem (array, index) {
       array.splice(index, 1)
