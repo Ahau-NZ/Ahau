@@ -273,7 +273,9 @@ function defaultData (input) {
       currentState: clone(profile.altNames),
       add: [], // new altNames to add
       remove: [] // altNames to remove
-    }
+    },
+    education: profile.education,
+    school: profile.school
   }
 }
 
