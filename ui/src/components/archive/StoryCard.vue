@@ -424,16 +424,13 @@ export default {
   },
   watch: {
     story (newVal, oldVal) {
-      console.log('stroy changes')
+      //show any changes to showArtefact if story.artefacts change
       var changes = { ...getObjectChanges(oldVal, newVal) }
-      console.log('changes: ', changes)
       if (changes.artefacts) {
-        console.log('has changes')
         if (this.showArtefact && changes.artefacts.remove) {
           this.setShowArtefact()
         } else if (this.showArtefact && changes.artefacts.add) {
-          console.log('changes with add', changes.artefacts)
-          this.artefact = changes.artefacts.add[0].artefact
+          this.artefact = changes.artefacts.add[this.model].artefact
         }
       }
     },
@@ -450,10 +447,7 @@ export default {
     ...mapActions(['setShowArtefact', 'toggleShowStory']),
     //  save artefact from showArtefact
     async saveArtefact ($event) {
-      console.log('new artefact: ', $event)
-      console.log('formData before: ', this.formData)
       await this.updateArtefacts($event)
-      console.log('formData after update: ', this.formData)
       // get all changes
       var output = {
         id: this.story.id,

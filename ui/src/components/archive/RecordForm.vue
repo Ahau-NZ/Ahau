@@ -37,9 +37,6 @@
               </template>
               <span>Media assets associated with the story<br>Can be images, documents, video, or audio files. </span>
             </v-tooltip>
-            <!-- <v-col cols="6" >
-              <UploadArtefactButton showLabel @artefacts="processArtefacts($event)"/>
-            </v-col> -->
             <v-tooltip top open-delay="700">
               <template v-slot:activator="{ on }">
                 <v-col v-on="on" :cols="showLocation ? '12':'6'" class="py-0">
@@ -488,6 +485,7 @@ import { storiesApolloMixin } from '@/mixins/story-mixins.js'
 import { collectionsApolloMixin, saveCollectionsMixin } from '@/mixins/collection-mixins.js'
 import { artefactMixin } from '@/mixins/artefact-mixins.js'
 
+
 export default {
   name: 'RecordForm',
   components: {
@@ -612,47 +610,6 @@ export default {
       // update the item in the array at the index
       array.splice(index, 1, update)
     }
-    // async updateArtefacts (artefacts) {
-    //   console.log('updating artefact: ', artefacts)
-    //   this.formData.artefacts = await Promise.all(artefacts.map(async (artefact, i) => {
-    //     if (this.editing) {
-    //       if (artefact.id) {
-    //         var oldArtefact = this.formData.artefacts[i]
-    //         Object.assign(oldArtefact, artefact)
-    //         return artefact
-    //       }
-    //     }
-    //     return artefact
-    //   }))
-    // },
-    // removeItem (array, index) {
-    //   array.splice(index, 1)
-    // },
-    // async deleteArtefact (id) {
-    //   try {
-    //     const res = await this.$apollo.mutate(DELETE_ARTEFACT(id, new Date()))
-
-    //     if (res.errors) {
-    //       throw res.errors
-    //     }
-    //   } catch (err) {
-    //     throw err
-    //   }
-    // },
-    // async removeArtefact (index) {
-    //   if (this.editing) {
-    //     // remove from the database
-    //     var artefact = this.formData.artefacts[this.index]
-
-    //     // check it has an id
-    //     if (artefact.id) {
-    //       await this.deleteArtefact(artefact.id)
-    //     }
-    //   }
-    //   // remove from formData
-    //   this.removeItem(this.formData.artefacts, this.index)
-    //   if (this.formData.artefacts && this.formData.artefacts.length === 0) this.newDialog = false
-    // }
   }
 }
 </script>

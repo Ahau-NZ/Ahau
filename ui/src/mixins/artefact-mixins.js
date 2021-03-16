@@ -2,7 +2,6 @@ import { DELETE_ARTEFACT } from '@/lib/artefact-helpers'
 
 export const methods = {
   async updateArtefacts (artefacts) {
-    console.log('updating artefact: ', artefacts)
     this.formData.artefacts = await Promise.all(artefacts.map(async (artefact, i) => {
       if (this.editing) {
         if (artefact.id) {
@@ -37,17 +36,6 @@ export const methods = {
     // remove from formData
     this.removeItem(this.formData.artefacts, this.index)
     if (this.formData.artefacts && this.formData.artefacts.length === 0) this.dialog = null
-  },
-  processArtefacts (artefacts) {
-    console.log('processing')
-    console.log('index: ', this.index)
-    this.index = this.formData.artefacts ? this.formData.artefacts.length : 0
-
-    artefacts.forEach(artefact => {
-      this.formData.artefacts.push(artefact)
-    })
-
-    this.dialog = 'edit-artefact'
   }
 }
 
