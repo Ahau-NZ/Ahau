@@ -47,9 +47,8 @@
           v-if="!mobile"
           icon
           @click="closeDialog"
-          style="margin-right: 10px"
         >
-          Close
+          <v-icon>mdi-close</v-icon>
         </v-btn>
       </v-app-bar>
       <v-card-text :style="mobile ? 'overflow-x: hidden;' : `max-height: 650px; overflow-x: hidden;`" class="pa-3">
