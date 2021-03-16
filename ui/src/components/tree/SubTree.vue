@@ -10,7 +10,7 @@
       <g id="child-group">
         <g v-for="child in partner.children" :key="`partner-child-${child.data.id}`">
           <Link v-if="child.link" :link="child.link"/>
-          <SubTree :root="child"/>
+          <SubTree :root="child" :openMenu="openMenu" />
         </g>
       </g>
       <Node
@@ -21,7 +21,7 @@
       />
     </g>
 
-    <Node :node="root"/>
+    <Node :node="root" @open-menu="openContextMenu($event)"/>
   </g>
 </template>
 
@@ -35,7 +35,8 @@ import settings from '@/lib/link.js'
 export default {
   name: 'SubTree',
   props: {
-    root: Object
+    root: Object,
+    openMenu: Function
   },
   components: {
     Node,
@@ -130,6 +131,11 @@ export default {
             }
           }
         })
+    }
+  },
+  methods: {
+    openContextMenu ($event) {
+      this.openMenu($event)
     }
   }
 }

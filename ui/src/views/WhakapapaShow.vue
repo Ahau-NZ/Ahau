@@ -122,12 +122,12 @@
         :getRelatives="getRelatives"
         @load-descendants="loadDescendants($event)"
         @collapse-node="collapseNode($event)"
-        @open-context-menu="openContextMenu($event)"
         @change-focus="changeFocus($event)"
         @loading='load($event)'
         :view="whakapapaView"
         :focus="focus"
         :searchNodeId="searchNodeId"
+        :openMenu="openContextMenu"
       />
       <div class="whakapapa-table">
         <Table
@@ -150,37 +150,15 @@
       </div>
     </v-container>
 
-    <vue-context ref="menu" class="px-0">
-      <li>
-        <a href="#" @click.prevent="updateDialog('view-edit-node', null)"  class="d-flex align-center px-4">
-          <img class="contextMenuIcon" :src="require('../assets/account-circle.svg')"/>
-          <p class="ma-0 pl-3">View Person</p>
-        </a>
-      </li>
-      <li v-for="(option, index) in contextMenuOpts" :key="index">
-        <a v-if="option.isPermitted" href="#" @click.prevent="updateDialog(option.dialog, option.type)" class="d-flex align-center px-4">
-          <v-icon v-if="option.icon==='mdi-delete'" class="contextMenuIcon">mdi-delete</v-icon>
-          <img v-else class="contextMenuIcon" :src="option.icon"/>
-          <p class="ma-0 pl-3">{{ option.title }}</p>
-        </a>
+    <NodeMenu ref="menu" :view="whakapapaView"/>
 
-        <!-- // TODO figure out how to grey out a list entry
-        <a v-else class="disabled-link d-flex align-center px-4">
-          <v-icon v-if="option.icon==='mdi-delete'" color="red" class="contextMenuIcon">mdi-delete</v-icon>
-          <img v-else class="contextMenuIcon" :src="option.icon"/>
-          <p class="ma-0 pl-3">{{ option.title }}</p>
-        </a>
-        -->
-      </li>
-    </vue-context>
-
-    <vue-context ref="sort" class="px-0">
+    <VueContext ref="sort" class="px-0">
       <li v-for="(field, i) in sortFields" :key="`sort-field-${i}`">
         <a href="#" @click.prevent="setSortField(field.value, $event)" class="d-flex align-center px-4">
           <p class="ma-0 pl-3">{{ field.name }}</p>
         </a>
       </li>
-    </vue-context>
+    </VueContext>
 
     <DialogHandler
       :dialog.sync="dialog.active"
@@ -234,11 +212,9 @@ import { getTribalProfile } from '@/lib/community-helpers'
 import mapProfileMixins from '@/mixins/profile-mixins.js'
 
 import DialogHandler from '@/components/dialog/DialogHandler.vue'
-import findSuccessor from '@/lib/find-successor'
 
 import { mapGetters, mapActions, mapMutations } from 'vuex'
-
-import pileSort from 'pile-sort'
+import NodeMenu from '../components/tree/NodeMenu.vue'
 
 export default {
   name: 'WhakapapaShow',
@@ -257,7 +233,8 @@ export default {
     Tree,
     VueContext,
     DialogHandler,
-    WhakapapaBanner
+    WhakapapaBanner,
+    NodeMenu
   },
   mixins: [
     mapProfileMixins({
@@ -333,66 +310,6 @@ export default {
     canEdit () {
       return this.selectedProfile && this.selectedProfile.canEdit
     },
-    canAddSibling () {
-      if (!this.selectedProfile) return false
-
-      // if adding a sibling to the focus
-      return this.selectedProfile.id !== this.whakapapaView.focus
-    },
-    canDelete () {
-      if (!this.canEdit) return false
-
-      // not allowed to delete own profile
-      if (this.selectedProfile.id === this.whoami.public.profile.id) return false
-      if (this.selectedProfile.id === this.whoami.personal.profile.id) return false
-
-      // if deleting the focus (top ancestor)
-      if (this.selectedProfile.id === this.whakapapaView.focus) {
-        // can only proceed if can find a clear "successor" to be new focus
-        return Boolean(findSuccessor(this.selectedProfile))
-      }
-
-      return true
-    },
-    contextMenuOpts () {
-      return [
-        {
-          title: 'Add Parent',
-          dialog: 'new-node',
-          type: 'parent',
-          isPermitted: Boolean(this.selectedProfile),
-          icon: require('../assets/node-parent.svg')
-        },
-        // TODO: add button for adding partners
-        // {
-        //   title: 'Add Partner',
-        //   dialog: 'new-node',
-        //   type: 'partner',
-        //   isPermitted: Boolean(this.selectedProfile)
-        // },
-        {
-          title: 'Add Child',
-          dialog: 'new-node',
-          type: 'child',
-          isPermitted: Boolean(this.selectedProfile),
-          icon: require('../assets/node-child.svg')
-        },
-        {
-          title: 'Add Sibling',
-          dialog: 'new-node',
-          type: 'sibling',
-          isPermitted: this.canAddSibling,
-          icon: require('../assets/node-sibling.svg')
-        },
-        {
-          title: 'Delete Person',
-          dialog: 'delete-node',
-          type: null,
-          isPermitted: this.canDelete,
-          icon: 'mdi-delete'
-        }
-      ]
-    },
     sortFields () {
       return [
         {
@@ -412,8 +329,8 @@ export default {
           value: 'profession'
         },
         {
-          name: 'City, Country',
-          value: 'location'
+          name: 'Country',
+          value: 'country'
         }
       ]
     }
@@ -575,9 +492,9 @@ export default {
         return childProfile
       }))
 
-      // person.children = person.children.sort((a, b) => {
-      //   return a.birthOrder - b.birthOrder
-      // })
+      person.children = person.children.sort((a, b) => {
+        return a.birthOrder - b.birthOrder
+      })
 
       person.parents = await Promise.all(person.parents.map(async parent => {
         // load their profile
@@ -592,8 +509,6 @@ export default {
         return parentProfile
       }))
 
-      var orderedChildren = []
-
       person.partners = await Promise.all(person.partners.map(async (partner, i) => {
         var partnerPath = `partners[${i}]`
         if (path) partnerPath = person.path + '.' + partnerPath
@@ -604,14 +519,7 @@ export default {
             var id = (child.profile) ? child.profile.id : child.id
             return d.id === id
           })
-
-          const alreadyInArray = person.children.some(c => c.id === child.id)
-
-          if (exists && !alreadyInArray) {
-            orderedChildren.push({ ...child.profile, relationshipType: child.relationshipType })
-            return exists
-          }
-
+          if (exists) return exists
           // TODO: doesnt save this relationship
           return child.profile
         })
@@ -627,36 +535,6 @@ export default {
         return partner
       }))
 
-      // var [singleParentChildren, otherChildren] = pileSort(
-      //   person.children || [],
-      //   [(child) => child.data.parents.length === 1] // children who only have one parent (the root node)
-      // )
-
-      const partnerIds = person.partners.map(d => d.id)
-      const filters = []
-
-      partnerIds.forEach(id => {
-        filters.push((child) => child.parents.some(p => p.id === id))
-      })
-      if (filters.length > 0) {
-        const piles = pileSort(
-          person.children,
-          filters
-        )
-
-        let arr = []
-
-        console.log(piles)
-
-        piles.forEach(d => {
-          arr = [...arr, ...d]
-        })
-
-        console.log(arr)
-
-        person.children = arr
-      }
-
       if (person.parents.length > 0) {
         person.relationship = this.relationshipLinks.get(person.parents[0].id + '-' + person.id)
       }
@@ -664,13 +542,8 @@ export default {
       return person
     },
 
-    // contextMenu //////////////////////////
-    // TODO - extract all this
     openContextMenu ({ event, profile }) {
       this.setSelectedProfile(profile)
-      if (this.dialog.view) {
-        this.toggleView()
-      }
       this.$refs.menu.open(event)
     },
     toggleFilter () {
@@ -798,6 +671,7 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 @import "~vue-context/dist/css/vue-context.css";
+
 #whakapapa-show {
   &>.container {
     position: relative;

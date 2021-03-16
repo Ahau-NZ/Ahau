@@ -37,22 +37,6 @@
       <g v-if="profile.isCollapsed" :style="collapsedStyle">
         <text> ... </text>
       </g>
-      <g
-        class="menu-button"
-        v-if="showMenu"
-        @click.stop="openMenu($event, profile, false)"
-        :transform="`translate(${1.4 * radius}, ${1.4 * radius})`"
-      >
-        <circle
-          stroke="white"
-          fill="white"
-          filter="url(#shadow)"
-          cx="20"
-          cy="1"
-          r="10"
-        />
-        <polygon points="15,0  25,0  20,6" style="fill:#000;" />
-      </g>
     </g>
 
     <g v-else class="avatar -partner" @click="$emit('change-focus', $event)">
@@ -111,8 +95,13 @@ import { DECEASED_COLOUR, ALIVE_COLOUR } from '@/lib/constants.js'
 import { getDisplayName } from '@/lib/person-helpers.js'
 // import flower.svg from '@/src/assets'
 
+import NodeMenuButton from './NodeMenuButton.vue'
+
 export default {
   name: 'Node',
+  components: {
+    NodeMenuButton
+  },
   props: {
     node: { type: Object, required: true },
     radius: { type: Number, required: true },

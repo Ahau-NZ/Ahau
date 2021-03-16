@@ -12,7 +12,7 @@
         :transform="`translate(${treeX - radius} ${treeY - radius})`"
         ref="tree"
       >
-        <SubTree :root="um" />
+        <SubTree :root="treeLayout(this.root)" :openMenu="openMenu"/>
       </g>
     </g>
     <!-- zoom in, zoom out buttons -->
@@ -47,6 +47,7 @@ import settings from '@/lib/link.js'
 
 export default {
   props: {
+    openMenu: Function,
     find: {
       type: Function
     },
@@ -104,9 +105,6 @@ export default {
     branch () {
       return this.nodeSeparationY / 2 + this.radius
     },
-    um () {
-      return this.treeLayout(this.root)
-    },
     /*
       gets the X position of the tree based on the svg size
       @TODO: change so it does it when the screen is resized, only displays changes when the page is
@@ -158,8 +156,6 @@ export default {
           // }
           // "how far cousins be spaced"  (I think)
           // nodes have only one one "node.parent" (but multiple node.data.parents)
-
-          console.log(a.data.preferredName, b.data.preferredName)
 
           return 1 + 0.3 * (this.visiblePartners(a) + this.visiblePartners(b))
           // "how far are siblings spaced" (I think)
@@ -262,7 +258,6 @@ export default {
 
   methods: {
     ...mapActions(['setLoading']),
-
     pathStroke (sourceId, targetId) {
       if (!this.paths) return 'darkgrey'
 

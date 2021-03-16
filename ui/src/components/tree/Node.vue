@@ -1,24 +1,29 @@
 <template>
-  <g :style="position">
-    <g>
-    <defs>
-      <clipPath :id="clipPathId">
-        <circle :cx="radius" :cy="radius" :r="radius"/>
-      </clipPath>
-    </defs>
-    <circle
-      :style="{ fill: profile.deceased ? colours.deceased : colours.alive }"
-      :cx="radius"
-      :cy="radius"
-      :r="radius"
-    />
-    <image
-      :xlink:href="imageSrc"
-      :width="diameter"
-      :height="diameter"
-      :clip-path="`url(#${clipPathId})`"
-      :style="{ opacity: profile.deceased ? 0.5 : 1 }"
-    />
+  <g :style="position" @mouseover="hover = true" @mouseleave="hover = false">
+    <g class="avatar">
+      <defs>
+        <clipPath :id="clipPathId">
+          <circle :cx="radius" :cy="radius" :r="radius"/>
+        </clipPath>
+      </defs>
+      <circle
+        :style="{ fill: profile.deceased ? colours.deceased : colours.alive }"
+        :cx="radius"
+        :cy="radius"
+        :r="radius"
+      />
+      <image
+        :xlink:href="imageSrc"
+        :width="diameter"
+        :height="diameter"
+        :clip-path="`url(#${clipPathId})`"
+        :style="{ opacity: profile.deceased ? 0.5 : 1 }"
+      />
+      <NodeMenuButton
+        v-if="showMenuButton"
+        :transform="`translate(${1.4 * radius}, ${1.4 * radius})`"
+        @click="openMenu($event, profile)"
+      />
     </g>
     <g v-if="profile.isCollapsed" :style="collapsedStyle">
       <text> ... </text>
@@ -35,6 +40,7 @@ import get from 'lodash.get'
 import avatarHelper from '@/lib/avatar-helpers.js'
 import { DECEASED_COLOUR, ALIVE_COLOUR } from '@/lib/constants.js'
 import { getDisplayName } from '@/lib/person-helpers.js'
+import NodeMenuButton from './NodeMenuButton.vue'
 
 export default {
   name: 'Node',
@@ -46,8 +52,12 @@ export default {
     },
     partner: Boolean
   },
+  components: {
+    NodeMenuButton
+  },
   data () {
     return {
+      hover: false,
       colours: {
         alive: ALIVE_COLOUR,
         deceased: DECEASED_COLOUR
@@ -55,6 +65,13 @@ export default {
     }
   },
   computed: {
+    showMenuButton () {
+      if (!this.profile.isCollapsed) {
+        if (this.hover) return true
+        // if (this.nodeCentered === this.node.data.id) return true
+      }
+      return false
+    },
     clipPathId () {
       return this.partner ? 'partnerCirlce' : 'myCircle'
     },
@@ -89,6 +106,12 @@ export default {
     displayName () {
       return getDisplayName(this.profile)
     }
+  },
+  methods: {
+    openMenu ($event, profile) {
+      profile.isPartner = this.partner
+      this.$emit('open-menu', { event, profile })
+    }
   }
 }
 </script>
@@ -98,14 +121,6 @@ g {
   transition: all ease-in 0.1s;
 
   g.avatar {
-    image {
-    }
-
-    .menu-button {
-      transition: opacity ease-in 0.2s;
-      opacity: 1;
-    }
-
     &:hover {
       .menu-button {
         opacity: 1;
