@@ -28,7 +28,6 @@
 
 <script>
 import Appbar from '@/components/menu/Appbar.vue'
-import nodejsClient from '@/plugins/cordova-nodejs-client.js'
 import Spinner from '@/components/Spinner.vue'
 
 import DialogHandler from '@/components/dialog/DialogHandler.vue'
@@ -73,13 +72,7 @@ export default {
     this.setWhoami()
 
     if (process.env.VUE_APP_PLATFORM === 'cordova') {
-      navigator.splashscreen.hide()
-      nodejsClient.start({
-        onReady: () => {
-          console.log('nodejs-mobile and GraphQL server are fully ready')
-          this.mobileServerLoaded = true
-        }
-      })
+      this.mobileServerLoaded = true
     }
   },
   methods: {
@@ -155,6 +148,7 @@ body {
 
 .mobileWhakapapaTitleStyle {
   padding-top: 56px !important;
+  overflow-x: hidden;
 }
 
 .v-timeline--dense .v-timeline-item__opposite {
