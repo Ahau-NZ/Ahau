@@ -246,7 +246,7 @@
           <EditStoryButton v-if="story.canEdit" @click="toggleDialog('edit-story')"/>
         </v-list-item-icon>
         <v-list-item-icon v-if="showArtefact" class="pt-0 mt-12">
-          <EditArtefactButton v-if="story.canEdit" @click="toggleDialog('edit-story')"/>
+          <EditArtefactButton v-if="story.canEdit" @click="toggleDialog('edit-artefact')"/>
         </v-list-item-icon>
         <v-list-item-icon v-if="showArtefact && !mobile" class="pt-0 mt-0"
         style="position:absolute; top:0px; right:0px;">
@@ -274,8 +274,26 @@
       <DeleteRecordDialog
         v-if="dialog === 'delete-story'"
         :show="dialog === 'delete-story'"
-        @close="dialog = null"
+        @close="dialog = 'edit-Story'"
         @submit="deleteStory()"
+      />
+      <NewArtefactDialog
+        v-if="dialog === 'edit-artefact'"
+        :show="dialog === 'edit-artefact'"
+        :index="model"
+        :artefacts="formData.artefacts"
+        :editing="true"
+        @close="finishEditing()"
+        @delete="dialog = 'delete-artefact'"
+        @submit="saveArtefact($event)"
+        @artefacts="processArtefacts($event)"
+      />
+      <DeleteArtefactDialog
+        v-if="dialog === 'delete-artefact'"
+        :show="dialog === 'delete-artefact'"
+        :index="model"
+        @close="dialog = 'edit-artefact'"
+        @submit="removeArtefact($event)"
       />
     </v-card>
   </div>
@@ -286,14 +304,16 @@ import AvatarGroup from '@/components/AvatarGroup.vue'
 // import Avatar from '@/components/Avatar.vue'
 import Artefact from '@/components/artefact/Artefact.vue'
 import ChipGroup from '@/components/archive/ChipGroup.vue'
-
 import EditStoryButton from '@/components/button/EditStoryButton.vue'
 import EditArtefactButton from '@/components/button/EditArtefactButton.vue'
-import { colours } from '@/lib/colours.js'
 import ArtefactCarouselItem from '@/components/artefact/ArtefactCarouselItem.vue'
 import NewRecordDialog from '@/components/dialog/archive/NewRecordDialog.vue'
 import DeleteRecordDialog from '@/components/dialog/archive/DeleteRecordDialog.vue'
-import { deleteStory } from '@/lib/story-helpers.js'
+import NewArtefactDialog from '@/components/dialog/artefact/NewArtefactDialog.vue'
+import DeleteArtefactDialog from '@/components/dialog/artefact/DeleteArtefactDialog.vue'
+
+import { colours } from '@/lib/colours.js'
+import { deleteStory, setDefaultStory } from '@/lib/story-helpers.js'
 import { getTribalProfile } from '@/lib/community-helpers.js'
 import { dateIntervalToString, formatSubmissionDate } from '@/lib/date-helpers.js'
 import { getObjectChanges } from '@/lib/get-object-changes.js'
@@ -301,6 +321,7 @@ import { getObjectChanges } from '@/lib/get-object-changes.js'
 import { mapActions, mapGetters, mapMutations } from 'vuex'
 import mapProfileMixins from '@/mixins/profile-mixins.js'
 import { methods as mapStoryMethods } from '@/mixins/story-mixins.js'
+import { artefactMixin } from '@/mixins/artefact-mixins.js'
 
 export default {
   name: 'StoryCard',
@@ -310,6 +331,7 @@ export default {
     loading: Boolean
   },
   mixins: [
+    artefactMixin,
     mapProfileMixins({
       mapMethods: ['getTribe']
     }),
@@ -328,7 +350,9 @@ export default {
     EditArtefactButton,
     ArtefactCarouselItem,
     NewRecordDialog,
-    DeleteRecordDialog
+    DeleteRecordDialog,
+    NewArtefactDialog,
+    DeleteArtefactDialog
   },
   data () {
     return {
@@ -338,7 +362,8 @@ export default {
       artefact: {},
       model: 0,
       dialog: null,
-      access: null
+      access: null,
+      index: 0
     }
   },
   async mounted () {
@@ -357,6 +382,10 @@ export default {
     ...mapGetters(['showArtefact', 'storeDialog', 'whoami']),
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
+    },
+    // used for updating artefacts direct from story card
+    formData () {
+      return setDefaultStory(this.story)
     },
     time () {
       if (this.story.timeInterval) {
@@ -395,11 +424,15 @@ export default {
   },
   watch: {
     story (newVal, oldVal) {
-      var changes = {...getObjectChanges(oldVal.artefacts, newVal.artefacts)}
+      console.log('stroy changes')
+      var changes = { ...getObjectChanges(oldVal, newVal) }
+      console.log('changes: ', changes)
       if (changes.artefacts) {
-        if ( this.showArtefact && changes.artefacts.remove) {
+        console.log('has changes')
+        if (this.showArtefact && changes.artefacts.remove) {
           this.setShowArtefact()
         } else if (this.showArtefact && changes.artefacts.add) {
+          console.log('changes with add', changes.artefacts)
           this.artefact = changes.artefacts.add[0].artefact
         }
       }
@@ -408,12 +441,31 @@ export default {
       // show artefact details when viewing in carousel
       if (this.showArtefact) {
         this.artefact = this.story.artefacts[newVal].artefact
+        this.index = newVal
       }
     }
   },
   methods: {
     ...mapMutations(['setStory']),
     ...mapActions(['setShowArtefact', 'toggleShowStory']),
+    //  save artefact from showArtefact
+    async saveArtefact ($event) {
+      console.log('new artefact: ', $event)
+      console.log('formData before: ', this.formData)
+      await this.updateArtefacts($event)
+      console.log('formData after update: ', this.formData)
+      // get all changes
+      var output = {
+        id: this.story.id,
+        ...getObjectChanges(setDefaultStory(this.story), this.formData)
+      }
+      this.$emit('submit', output)
+    },
+    finishEditing () {
+      setTimeout(() => {
+        this.dialog = null
+      }, 500)
+    },
     openProfile ($event) {
       this.$emit('openProfile', $event)
     },
@@ -479,12 +531,8 @@ export default {
     },
     close () {
       this.$emit('close')
-    },
-    finishEditing () {
-      setTimeout(() => {
-       this.dialog = null
-      }, 500)
     }
+
   }
 }
 </script>

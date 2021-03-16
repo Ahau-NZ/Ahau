@@ -219,7 +219,7 @@
               <span>An abstraction, transcription or translation to the artefact</span>
             </v-tooltip>
           </v-col>
-         
+
           <!-- Location test field -->
          <v-col cols="12">
             <h1>
@@ -333,6 +333,9 @@ export default {
     }
   },
   mounted () {
+    console.log('index: ', this.index)
+    console.log('artefacts: ', this.artefacts)
+    console.log('selectedIndex', this.selectedIndex)
     this.artefact = this.formData[this.selectedIndex]
   },
   computed: {
