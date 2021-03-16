@@ -31,7 +31,7 @@
         <v-btn v-if="deletable" class="delete" @click="$emit('delete')" icon x-small light max-width="20px" max-height="20px">
           <v-icon>mdi-close</v-icon>
         </v-btn>
-        <v-avatar :size="size" :tile="isView" class="avatar-container" :class="{'isEditing': isEditing, 'isOnline': online, 'isProfileForm' : isProfileForm}">
+        <v-avatar :size="size" :tile="isView" class="avatar-container" :class="{'isEditing': isEditing, 'isOnline': online, 'showPicker' : showPicker}">
           <v-img v-if="image && image.uri" :src="image.uri" :alt="alt" />
           <v-img
             v-else
@@ -47,7 +47,7 @@
         <p :style="`font-size:0.8em ${theme};margin-bottom:0`" class="limit-text">{{ alt }} </p>
       </v-row>
     </v-col>
-    <div v-if="isProfileForm" class="avatar-overlay">
+    <div v-if="showPicker" class="avatar-overlay">
       <ImagePicker @updateAvatar="updateAvatar($event)" />
     </div>
   </div>
@@ -74,7 +74,7 @@ export default {
     dark: Boolean,
     row: Boolean,
     online: Boolean,
-    isProfileForm: { type: Boolean, default: false }
+    showPicker: { type: Boolean, default: false }
   },
   components: {
     ImagePicker
@@ -126,7 +126,7 @@ export default {
   opacity: 0.2;
 }
 
-.isProfileForm {
+.showPicker {
   opacity: 0.3;
 }
 
