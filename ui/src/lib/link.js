@@ -40,7 +40,7 @@ export default {
   },
   partner: {
     spacing: {
-      x: 0,
+      x: 0, // TODO (later): set tree separation to use this value
       y: 5
     }
   },

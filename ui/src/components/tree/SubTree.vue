@@ -72,7 +72,7 @@ export default {
             : this.diameter // left
 
           // how far sideways the partner sits from the root node at 0
-          const x = this.root.x + (sign * offset) * count
+          const x = this.root.x + ((sign * offset) + (sign * settings.partner.spacing.x)) * count
           // if we are negative theres no offset
           // if we are positive - use diameter
 
