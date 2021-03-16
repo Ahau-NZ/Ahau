@@ -287,62 +287,20 @@ export default {
     // the headers for the columns - width currently hardcoded
     columns () {
       return [
-        {
-          label: 'Preferred Name',
-          x: this.colWidth
-        },
-        {
-          label: 'Also Known As',
-          x: this.colWidth + 200
-        },
-        {
-          label: 'Age',
-          x: this.colWidth + 400
-        },
-        {
-          label: 'D.O.B',
-          x: this.colWidth + 470
-        },
-        {
-          label: 'D.O.D',
-          x: this.colWidth + 600
-        },
-        {
-          label: 'Profession',
-          x: this.colWidth + 730
-        },
-        {
-          label: 'Address',
-          x: this.colWidth + 1000
-        },
-        {
-          label: 'City',
-          x: this.colWidth + 1405
-        },
-        {
-          label: 'Post Code',
-          x: this.colWidth + 1645
-        },
-        {
-          label: 'Country',
-          x: this.colWidth + 1765
-        },
-        {
-          label: 'Place of Birth',
-          x: this.colWidth + 2005
-        },
-        {
-          label: 'Place of Death',
-          x: this.colWidth + 2245
-        },
-        {
-          label: 'Email',
-          x: this.colWidth + 2485
-        },
-        {
-          label: 'Phone',
-          x: this.colWidth + 2845
-        }
+        { label: 'Preferred Name', x: this.colWidth },
+        { label: 'Also Known As', x: this.colWidth + 200 },
+        { label: 'Age', x: this.colWidth + 400 },
+        { label: 'D.O.B', x: this.colWidth + 470 },
+        { label: 'D.O.D', x: this.colWidth + 600 },
+        { label: 'Profession', x: this.colWidth + 730 },
+        { label: 'Address', x: this.colWidth + 1000 },
+        { label: 'City', x: this.colWidth + 1405 },
+        { label: 'Post Code', x: this.colWidth + 1645 },
+        { label: 'Country', x: this.colWidth + 1765 },
+        { label: 'Place of Birth', x: this.colWidth + 2005 },
+        { label: 'Place of Death', x: this.colWidth + 2245 },
+        { label: 'Email', x: this.colWidth + 2485 },
+        { label: 'Phone', x: this.colWidth + 2845 }
       ]
     }
   },
