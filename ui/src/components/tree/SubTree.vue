@@ -20,6 +20,14 @@
         partner
       />
     </g>
+    <g id="ghost-partner">
+      <g id="child-group">
+        <g v-for="child in ghostPartner.children" :key="`partner-child-${child.data.id}`">
+          <Link v-if="child.link" :link="child.link"/>
+          <SubTree :root="child" :openMenu="openMenu" />
+        </g>
+      </g>
+    </g>
 
     <Node :node="root" @open-menu="openContextMenu($event)"/>
   </g>
@@ -31,6 +39,7 @@ import Link from './Link.vue'
 
 // TODO: better name
 import settings from '@/lib/link.js'
+import pileSort from 'pile-sort'
 
 export default {
   name: 'SubTree',
@@ -94,32 +103,7 @@ export default {
             y,
             children: parent.children
               .filter(partnerChild => this.root.children.some(rootChild => rootChild.data.id === partnerChild.id)) // filter out children who arent this nodes
-              .map(child => {
-                // map to their node from the root parent
-                const node = this.root.children.find(rootChild => child.id === rootChild.data.id)
-
-                // change the link if they are not related by birth
-                const dashed = node.data.relationship.relationshipType !== 'birth'
-
-                return {
-                  ...node,
-                  link: {
-                    style: {
-                      ...style, // inherits the style from the parent so the links are the same color
-                      strokeDasharray: dashed ? 2.5 : 0
-                    },
-                    d: settings.path( // for drawing a link from the parent to child
-                      {
-                        startX: this.root.x + this.radius,
-                        startY: this.root.y + this.radius,
-                        endX: node.x + settings.radius,
-                        endY: node.y + settings.radius
-                      },
-                      settings.branch
-                    )
-                  }
-                }
-              }),
+              .map(child => this.mapChild(child, style)),
             data: parent,
             link: {
               style,
@@ -131,11 +115,56 @@ export default {
             }
           }
         })
+    },
+    ghostPartner () {
+      const [children] = pileSort(
+        this.root.children || [],
+        [(child) => child.data.parents.length === 1] // all children that this node is the only parent of
+      )
+
+      const style = {
+        fill: 'none',
+        stroke: settings.color.default,
+        opacity: settings.opacity,
+        strokeWidth: settings.thickness
+      }
+
+      return {
+        id: 'GHOST',
+        ghost: true,
+        children: children.map(({ data }) => this.mapChild(data, style))
+      }
     }
   },
   methods: {
     openContextMenu ($event) {
       this.openMenu($event)
+    },
+    mapChild (child, style) {
+      // map to their node from the root parent
+      const node = this.root.children.find(rootChild => child.id === rootChild.data.id)
+
+      // change the link if they are not related by birth
+      const dashed = node.data.relationship.relationshipType !== 'birth'
+
+      return {
+        ...node,
+        link: {
+          style: {
+            ...style, // inherits the style from the parent so the links are the same color
+            strokeDasharray: dashed ? 2.5 : 0
+          },
+          d: settings.path( // for drawing a link from the parent to child
+            {
+              startX: this.root.x + this.radius,
+              startY: this.root.y + this.radius,
+              endX: node.x + settings.radius,
+              endY: node.y + settings.radius
+            },
+            settings.branch
+          )
+        }
+      }
     }
   }
 }

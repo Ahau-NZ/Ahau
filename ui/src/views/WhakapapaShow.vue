@@ -216,6 +216,8 @@ import DialogHandler from '@/components/dialog/DialogHandler.vue'
 import { mapGetters, mapActions, mapMutations } from 'vuex'
 import NodeMenu from '../components/tree/NodeMenu.vue'
 
+import pileSort from 'pile-sort'
+
 export default {
   name: 'WhakapapaShow',
   components: {
@@ -492,11 +494,12 @@ export default {
         return childProfile
       }))
 
-      person.children = person.children.sort((a, b) => {
-        return a.birthOrder - b.birthOrder
-      })
+      // person.children = person.children.sort((a, b) => {
+      //   return a.birthOrder - b.birthOrder
+      // })
 
       person.parents = await Promise.all(person.parents.map(async parent => {
+        if (parent.ghost) return parent
         // load their profile
         const parentProfile = await this.getRelatives(parent.profile.id)
 
@@ -505,9 +508,10 @@ export default {
 
         const r = tree.getRelationship(parentProfile, person, parent)
         this.relationshipLinks.set(r.index, r.attrs)
-
         return parentProfile
       }))
+
+      var orderedChildren = []
 
       person.partners = await Promise.all(person.partners.map(async (partner, i) => {
         var partnerPath = `partners[${i}]`
@@ -519,7 +523,14 @@ export default {
             var id = (child.profile) ? child.profile.id : child.id
             return d.id === id
           })
-          if (exists) return exists
+
+          const alreadyInArray = person.children.some(c => c.id === child.id)
+
+          if (exists && !alreadyInArray) {
+            orderedChildren.push({ ...child.profile, relationshipType: child.relationshipType })
+            return exists
+          }
+
           // TODO: doesnt save this relationship
           return child.profile
         })
@@ -531,13 +542,35 @@ export default {
 
         partner.partners = [person]
         partner.siblings = []
-
         return partner
       }))
+
+      // sort the children by partner
+      const filters = []
+
+      person.partners.forEach(({ id }) => {
+        filters.push((child) => child.parents.some(p => p.id === id))
+      })
+
+      if (filters.length > 0) {
+        var piles = pileSort(
+          person.children,
+          [ ...filters ]
+        )
+
+        let arr = []
+
+        piles.forEach(d => {
+          arr = [...arr, ...d]
+        })
+
+        person.children = arr
+      }
 
       if (person.parents.length > 0) {
         person.relationship = this.relationshipLinks.get(person.parents[0].id + '-' + person.id)
       }
+
       if (this.selectedProfile && this.selectedProfile.id === person.id) this.updateSelectedProfile(person)
       return person
     },
