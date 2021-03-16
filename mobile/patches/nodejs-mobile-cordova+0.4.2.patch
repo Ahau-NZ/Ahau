@@ -1,5 +1,5 @@
 diff --git a/node_modules/nodejs-mobile-cordova/plugin.xml b/node_modules/nodejs-mobile-cordova/plugin.xml
-index 8f415b6..9a223c3 100644
+index 2128c31..227f1ff 100644
 --- a/node_modules/nodejs-mobile-cordova/plugin.xml
 +++ b/node_modules/nodejs-mobile-cordova/plugin.xml
 @@ -74,10 +74,6 @@

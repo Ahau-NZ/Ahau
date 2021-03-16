@@ -31,7 +31,7 @@ $ npm run setup:desktop
 
 ```bash
 $ npm run setup:mobile
-// Installs dependencies and creates Cordova folders for the Android project
+// Installs dependencies and creates Cordova folders for the Android and iOS platforms
 ```
 
 ### Pātaka

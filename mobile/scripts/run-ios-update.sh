@@ -22,12 +22,12 @@ cross-env NODE_ENV=production \
 $(npm bin)/vue-cli-service build --no-clean --dest ../mobile/www;
 cd ../mobile;
 
-# Don't update the backend, but since build-nodejs-project.sh would remove
-# these, we want to make sure they will not be shipped into the mobile app
-rm -rf ./www/nodejs-project/node_modules;
-rm -f ./www/nodejs-project/package-lock.json;
-
 # Compile the mobile app
-cordova prepare android;
-NODEJS_MOBILE_BUILD_NATIVE_MODULES=1 cordova compile android;
-cordova run android --nobuild;
+echo "Cleaning Cordova files in the project...";
+cordova clean ios > /dev/null 2>&1 || true;
+
+echo "Preparing Cordova files to build...";
+cordova prepare ios;
+# NODEJS_MOBILE_BUILD_NATIVE_MODULES=1 cordova compile ios --debug --device \
+#   --buildConfig=./build.json;
+# cordova run ios --nobuild --device;
