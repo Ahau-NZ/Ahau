@@ -424,7 +424,7 @@ export default {
   },
   watch: {
     story (newVal, oldVal) {
-      //show any changes to showArtefact if story.artefacts change
+      // show any changes to showArtefact if story.artefacts change
       var changes = { ...getObjectChanges(oldVal, newVal) }
       if (changes.artefacts) {
         if (this.showArtefact && changes.artefacts.remove) {

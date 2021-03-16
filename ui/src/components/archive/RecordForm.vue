@@ -485,7 +485,6 @@ import { storiesApolloMixin } from '@/mixins/story-mixins.js'
 import { collectionsApolloMixin, saveCollectionsMixin } from '@/mixins/collection-mixins.js'
 import { artefactMixin } from '@/mixins/artefact-mixins.js'
 
-
 export default {
   name: 'RecordForm',
   components: {
