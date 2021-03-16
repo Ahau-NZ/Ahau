@@ -1,29 +1,50 @@
 <template>
   <v-sheet @click="toggleArtefact($event)" class="container pa-0">
-    <div v-if="artefact.type === 'video'" :style="mobile ? 'height:300px' : 'height:auto'" >
-      <v-hover v-slot:default="{ hover }">
-        <video ref="video" :src="artefact.blob.uri" :controls="hover" class="video"/>
-      </v-hover>
-    </div>
-    <div v-if="artefact.type === 'audio'" :style="showArtefact ? 'height:300px': mobile ? 'height:300px' : 'height:500px'">
-      <audio ref="audio" :src="artefact.blob.uri" class="px-12" :controls="controls" style="width:100%;height:80%;"/>
-      <v-icon size="50" class="center">mdi-music</v-icon>
-    </div>
-    <v-img ref="photo" v-if="artefact.type === 'photo'" class="media" :src="artefact.blob.uri" contain></v-img>
-    <div v-else-if="artefact.type === 'document'" class="media" style="margin-top:15%;">
-      <div class="text-center">
-        <v-icon size="100px">{{ artefactIcon }}</v-icon><br>
-        <v-btn text @click.prevent="downloadFile()">
-          Download file
-        </v-btn>
+    <div v-if='useRenderMedia'
+      ref='renderTarget'
+      :class='classObj'
+
+      v-once
+      />
+
+    <template v-else>
+      <div v-if="artefact.type === 'video'" :class="classObj">
+        <v-hover v-slot:default="{ hover }">
+          <video ref="video" :src="artefact.blob.uri" :controls="hover" class="video"/>
+        </v-hover>
       </div>
-    </div>
+
+      <div v-if="artefact.type === 'audio'" :class="classObj">
+        <audio ref="audio" :src="artefact.blob.uri" class="px-12" :controls="controls"/>
+        <v-icon size="50" class="center">mdi-music</v-icon>
+      </div>
+
+      <v-img v-if="artefact.type === 'photo'"
+        ref='photo'
+        :class="classObj"
+        :src="artefact.blob.uri"
+        contain
+        />
+
+      <div v-if="artefact.type === 'document'" ref='document' :class="classObj">
+        <div class="text-center">
+          <v-icon size="100px">{{ artefactIcon }}</v-icon><br>
+          <v-btn text @click.prevent="downloadFile()">
+            Download file
+          </v-btn>
+        </div>
+      </div>
+    </template>
   </v-sheet>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
 import { ARTEFACT_ICON } from '@/lib/artefact-helpers.js'
+
+const renderMedia = require('render-media')
+const http = require('stream-http')
+const { Transform } = require('readable-stream')
 
 export default {
   name: 'Artefact',
@@ -33,12 +54,20 @@ export default {
     index: Number,
     controls: Boolean
   },
-  components: {
-  },
   computed: {
     ...mapGetters(['showArtefact']),
-    mobile () {
-      return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
+    useRenderMedia () {
+      return (
+        this.artefact.blob.__typename === 'BlobHyper' &&
+        this.artefact.type !== 'document' // NOTE this is here because pdf rendering in electron is patchy
+      )
+    },
+    classObj () {
+      return {
+        [this.artefact.type]: true,
+        '-mobile': this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm,
+        '-show': this.showArtefact
+      }
     },
     artefactIcon () {
       return ARTEFACT_ICON(this.artefact.blob.mimeType)
@@ -69,7 +98,51 @@ export default {
       }
     }
   },
+  mounted () {
+    if (this.useRenderMedia) this.renderHyperBlob()
+  },
   methods: {
+    buildRequest (uri, opts = {}) {
+      const url = new URL(uri)
+      if (opts.start) url.searchParams.append('start', opts.start)
+      if (opts.end) url.searchParams.append('end', opts.end)
+
+      return {
+        method: 'GET',
+        hostname: url.hostname,
+        port: url.port,
+        path: url.pathname + url.search
+      }
+    },
+    renderHyperBlob () {
+      const { title, blob } = this.artefact
+      const { buildRequest } = this
+      const file = {
+        name: `${title}.${blob.mimeType.split('/')[1]}`, // TODO see if there's a better way to tell render-media the mimeType
+        createReadStream (opts = {}) {
+          const transform = new Transform({
+            transform (chunk, enc, callback) {
+              this.push(chunk)
+              callback()
+            }
+          })
+          const requestOpts = buildRequest(blob.uri, { start: opts.start || 0, end: opts.end })
+          const req = http.request(requestOpts, (res) => {
+            // console.log(`STATUS: ${res.statusCode}`)
+            res.pipe(transform)
+          })
+          req.on('error', (e) => {
+            console.error(`problem with request: ${e.message}`)
+          })
+          req.end()
+          return transform
+        },
+        size: blob.size
+      }
+      renderMedia.append(file, this.$refs.renderTarget, function (err, elem) {
+        if (err) return console.error(err)
+      })
+    },
     toggleArtefact (e) {
       this.$emit('showArtefact', this.artefact)
     },
@@ -87,25 +160,56 @@ export default {
 <style lang="scss">
 
 .audio {
-  position:absolute;
-  top:40%;
-  left:10%;
-  width:80%;
-  display: block;
+  // old logic.. which I have changed... I think for the better?
+  // :style="showArtefact ? 'height:300px': mobile ? 'height:300px' : 'height:500px'"
+
+  height: 500px;
+
+  &.-mobile {
+    height: 300px;
+  }
+
+  audio {
+    width: 100%;
+    height:80%;
+  }
 }
 
-.media {
+.photo, .document {
   width: 100%;
   height: 100%;
+
+  img {
+    min-height: 500px;
+  }
+
+  object {
+    min-height: 500px;
+    width: 100%;
+  }
+
   background-color: #1E1E1E;
   object-fit: cover;
 }
 
+.document {
+  display: grid;
+  align-content: center;
+}
+
 .video {
-  width: 100%;
-  height: 100%;
-  background-color: #1E1E1E;
-  // display:content;
+  height: 500px;
+
+  &.-mobile {
+    height: 300px;
+  }
+
+  video {
+    width: 100%;
+    height: 100%;
+    background-color: #1E1E1E;
+    // display:content;
+  }
 }
 
 .center {

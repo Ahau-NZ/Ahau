@@ -236,6 +236,8 @@
 </template>
 
 <script>
+import { mapActions, mapGetters, mapMutations } from 'vuex'
+
 import AvatarGroup from '@/components/AvatarGroup.vue'
 // import Avatar from '@/components/Avatar.vue'
 import Artefact from '@/components/artefact/Artefact.vue'
@@ -251,7 +253,6 @@ import { deleteStory } from '@/lib/story-helpers.js'
 import { getTribalProfile } from '@/lib/community-helpers.js'
 import { dateIntervalToString, formatSubmissionDate } from '@/lib/date-helpers.js'
 
-import { mapActions, mapGetters, mapMutations } from 'vuex'
 import mapProfileMixins from '@/mixins/profile-mixins.js'
 import { methods as mapStoryMethods } from '@/mixins/story-mixins.js'
 
