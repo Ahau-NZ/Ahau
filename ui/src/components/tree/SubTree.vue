@@ -71,14 +71,15 @@ export default {
 
       var len = this.profile.partners.length
       if (len === 1) len = 2
-      const m = len % 2 === 0
+
+      const midway = len % 2 === 0
         ? len / 2
         : Math.round(len / 2) - 1
 
       return this.profile.partners
         .map((parent, i) => {
           // used to alternate between left and right
-          var sign = i >= m ? 1 : -1
+          var sign = i >= midway ? 1 : -1
 
           // const count = sign === 1 ? ++leftCount : ++rightCount
           const offset = sign === 1
@@ -86,10 +87,9 @@ export default {
             : 0 // left
 
           const xPos = sign === 1
-            ? (i - m) + 1
-            : i - m
+            ? (i - midway) + 1
+            : i - midway
 
-          console.log(parent.preferredName, sign)
           // how far sideways the partner sits from the root node at 0
           const x = this.root.x + offset + (xPos * this.diameter)
           // if we are negative theres no offset
@@ -107,18 +107,20 @@ export default {
             strokeWidth: settings.thickness
           }
 
+          const yOffset = this.root.y + (i * settings.partner.spacing.y) + this.radius
+
           return {
             x,
             y,
             children: parent.children
               .filter(partnerChild => this.root.children.some(rootChild => rootChild.data.id === partnerChild.id)) // filter out children who arent this nodes
-              .map(child => this.mapChild(child, style)),
+              .map(child => this.mapChild({ x, y, center: true, sign, yOffset }, child, style)),
             data: parent,
             link: {
               style,
               // for drawing the link from the root parent to this partner/parent
               d: `
-                M ${this.root.x + this.radius}, ${this.root.y + (i * settings.partner.spacing.y) + this.radius}
+                M ${this.root.x + this.radius}, ${yOffset}
                 H ${x + this.partnerRadius}
               `
             }
@@ -141,7 +143,7 @@ export default {
       return {
         id: 'GHOST',
         ghost: true,
-        children: children.map(({ data }) => this.mapChild(data, style))
+        children: children.map(({ data }) => this.mapChild({}, data, style))
       }
     }
   },
@@ -149,12 +151,17 @@ export default {
     openContextMenu ($event) {
       this.openMenu($event)
     },
-    mapChild (child, style) {
+    mapChild ({ x = this.root.x, y = this.root.y, center, sign, yOffset }, child, style) {
       // map to their node from the root parent
       const node = this.root.children.find(rootChild => child.id === rootChild.data.id)
 
       // change the link if they are not related by birth
       const dashed = node.data.relationship.relationshipType !== 'birth'
+
+      if (center) {
+        x = x + (-sign * this.radius) - 10
+        y = yOffset - this.radius
+      }
 
       return {
         ...node,
@@ -165,8 +172,8 @@ export default {
           },
           d: settings.path( // for drawing a link from the parent to child
             {
-              startX: this.root.x + this.radius,
-              startY: this.root.y + this.radius,
+              startX: x + this.radius,
+              startY: y + this.radius,
               endX: node.x + settings.radius,
               endY: node.y + settings.radius
             },
