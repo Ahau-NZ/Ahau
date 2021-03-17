@@ -167,6 +167,7 @@ export default {
       await this.setWhoami()
     },
     goProfile (component) {
+      if (this.mobile && this.showStory) this.toggleShowStory()
       this.$router.push({
         name: 'person/' + component,
         params: {
@@ -174,6 +175,7 @@ export default {
           profileId: this.whoami.personal.profile.id
         }
       }).catch(() => {})
+      this.toggleDrawer()
     },
     karakiaWhakamutunga () {
       console.log(karakia)

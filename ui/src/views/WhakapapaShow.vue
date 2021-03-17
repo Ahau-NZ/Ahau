@@ -150,7 +150,7 @@
       </div>
     </v-container>
 
-    <NodeMenu ref="menu" :view="whakapapaView"/>
+    <NodeMenu ref="menu" :view="whakapapaView" @open="updateDialog($event.dialog, $event.type)"/>
 
     <VueContext ref="sort" class="px-0">
       <li v-for="(field, i) in sortFields" :key="`sort-field-${i}`">
@@ -213,8 +213,9 @@ import mapProfileMixins from '@/mixins/profile-mixins.js'
 
 import DialogHandler from '@/components/dialog/DialogHandler.vue'
 
+import NodeMenu from '@/components/menu/NodeMenu.vue'
+
 import { mapGetters, mapActions, mapMutations } from 'vuex'
-import NodeMenu from '../components/tree/NodeMenu.vue'
 
 import pileSort from 'pile-sort'
 

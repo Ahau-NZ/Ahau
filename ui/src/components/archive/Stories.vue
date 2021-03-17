@@ -66,13 +66,6 @@ export default {
   components: {
     StoryCard
   },
-  mounted () {
-    let self = this
-
-    window.addEventListener('keyup', function (ev) {
-      self.cordovaBackButton(ev) // declared in your component methods
-    })
-  },
   watch: {
     showStory (newVal, oldVal) {
       if (oldVal === false && newVal === true) {

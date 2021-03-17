@@ -26,7 +26,7 @@
 
 <script>
 import { VueContext } from 'vue-context'
-import { mapActions, mapGetters } from 'vuex'
+import { mapGetters } from 'vuex'
 import findSuccessor from '@/lib/find-successor'
 
 export default {
@@ -38,7 +38,7 @@ export default {
     VueContext
   },
   computed: {
-    ...mapGetters(['selectedProfile']),
+    ...mapGetters(['selectedProfile', 'whoami']),
     canDelete () {
       if (!this.canEdit) return false
 
@@ -101,9 +101,8 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setDialog']),
     updateDialog (dialog, type) {
-      this.setDialog({ active: dialog, type })
+      this.$emit('open', { dialog, type })
     },
     open (e) {
       this.$refs.menu.open(e)
