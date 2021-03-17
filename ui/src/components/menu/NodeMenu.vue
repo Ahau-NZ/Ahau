@@ -38,7 +38,7 @@ export default {
     VueContext
   },
   computed: {
-    ...mapGetters(['selectedProfile']),
+    ...mapGetters(['selectedProfile', 'whoami']),
     canDelete () {
       if (!this.canEdit) return false
 
