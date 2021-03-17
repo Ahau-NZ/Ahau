@@ -312,27 +312,6 @@ export default {
     canEdit () {
       return this.selectedProfile && this.selectedProfile.canEdit
     },
-    canAddSibling () {
-      if (!this.selectedProfile) return false
-
-      // if adding a sibling to the focus
-      return this.selectedProfile.id !== this.whakapapaView.focus
-    },
-    canDelete () {
-      if (!this.canEdit) return false
-
-      // not allowed to delete own profile
-      if (this.selectedProfile.id === this.whoami.public.profile.id) return false
-      if (this.selectedProfile.id === this.whoami.personal.profile.id) return false
-
-      // if deleting the focus (top ancestor)
-      if (this.selectedProfile.id === this.whakapapaView.focus) {
-        // can only proceed if can find a clear "successor" to be new focus
-        return Boolean(findSuccessor(this.selectedProfile))
-      }
-
-      return true
-    },
     sortFields () {
       return [
         {
