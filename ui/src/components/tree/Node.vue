@@ -32,6 +32,18 @@
       <rect :width="textWidth" y="-16" height="20"></rect>
       <text>{{ displayName }}</text>
     </g>
+    <g
+      v-if="partner && hasAncestors"
+      :transform="`translate(${1 * radius}, ${radius * -0.5})`"
+    >
+      <text
+        font-size="30"
+        font-weight="600"
+        cursor="initial"
+        style="fill:#000;"
+        transform="rotate(90)"
+      >..</text>
+    </g>
   </g>
 </template>
 
@@ -71,6 +83,9 @@ export default {
         // if (this.nodeCentered === this.node.data.id) return true
       }
       return false
+    },
+    hasAncestors () {
+      return this.profile.parents.length > 0
     },
     clipPathId () {
       return this.partner ? 'partnerCirlce' : 'myCircle'
