@@ -69,20 +69,29 @@ export default {
     partners () {
       if (!this.root || !this.root.data.partners) return []
 
-      var leftCount = 0
-      var rightCount = 0
+      var len = this.profile.partners.length
+      if (len === 1) len = 2
+      const m = len % 2 === 0
+        ? len / 2
+        : Math.round(len / 2) - 1
 
       return this.profile.partners
         .map((parent, i) => {
           // used to alternate between left and right
-          var sign = i % 2 === 0 ? -1 : 1
-          const count = sign === 1 ? ++leftCount : ++rightCount
-          const offset = sign === 1
-            ? this.diameter + this.partnerRadius / 2 // right
-            : this.diameter // left
+          var sign = i >= m ? 1 : -1
 
+          // const count = sign === 1 ? ++leftCount : ++rightCount
+          const offset = sign === 1
+            ? this.radius / 2 // right
+            : 0 // left
+
+          const xPos = sign === 1
+            ? (i - m) + 1
+            : i - m
+
+          console.log(parent.preferredName, sign)
           // how far sideways the partner sits from the root node at 0
-          const x = this.root.x + ((sign * offset) + (sign * settings.partner.spacing.x)) * count
+          const x = this.root.x + offset + (xPos * this.diameter)
           // if we are negative theres no offset
           // if we are positive - use diameter
 
