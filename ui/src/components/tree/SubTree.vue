@@ -10,7 +10,7 @@
       <g id="child-group">
         <g v-for="child in partner.children" :key="`partner-child-${child.data.id}`">
           <Link v-if="child.link" :link="child.link"/>
-          <SubTree :root="child" :openMenu="openMenu" />
+          <SubTree :root="child" :openMenu="openMenu" :changeFocus="changeFocus" />
         </g>
       </g>
       <Node
@@ -18,13 +18,14 @@
         :node="partner"
         :radius="partnerRadius"
         partner
+        @change-focus="changeTreeFocus"
       />
     </g>
     <g id="ghost-partner">
       <g id="child-group">
         <g v-for="child in ghostPartner.children" :key="`partner-child-${child.data.id}`">
           <Link v-if="child.link" :link="child.link"/>
-          <SubTree :root="child" :openMenu="openMenu" />
+          <SubTree :root="child" :openMenu="openMenu" :changeFocus="changeFocus" />
         </g>
       </g>
     </g>
@@ -45,7 +46,8 @@ export default {
   name: 'SubTree',
   props: {
     root: Object,
-    openMenu: Function
+    openMenu: Function,
+    changeFocus: Function
   },
   components: {
     Node,
@@ -113,7 +115,10 @@ export default {
             x,
             y,
             children: parent.children
-              .filter(partnerChild => this.root.children.some(rootChild => rootChild.data.id === partnerChild.id)) // filter out children who arent this nodes
+              .filter(partnerChild => this.root.children.some(rootChild => {
+                if (!rootChild || !partnerChild) return false
+                return rootChild.data.id === partnerChild.id
+              })) // filter out children who arent this nodes
               .map(child => this.mapChild({ x, y, center: true, sign, yOffset }, child, style)),
             data: parent,
             link: {
@@ -150,6 +155,9 @@ export default {
   methods: {
     openContextMenu ($event) {
       this.openMenu($event)
+    },
+    changeTreeFocus ($event) {
+      this.changeFocus($event)
     },
     mapChild ({ x = this.root.x, y = this.root.y, center, sign, yOffset }, child, style) {
       // map to their node from the root parent

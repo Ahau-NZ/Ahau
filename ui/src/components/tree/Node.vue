@@ -1,5 +1,5 @@
 <template>
-  <g :style="position" @mouseover="hover = true" @mouseleave="hover = false">
+  <g :style="position" @mouseover="hover = true" @mouseleave="hover = false" @click="changeFocus">
     <g class="avatar">
       <defs>
         <clipPath :id="clipPathId">
@@ -78,6 +78,7 @@ export default {
   },
   computed: {
     showMenuButton () {
+      if (this.partner) return false
       if (!this.profile.isCollapsed) {
         if (this.hover) return true
         // if (this.nodeCentered === this.node.data.id) return true
@@ -126,6 +127,10 @@ export default {
     openMenu ($event, profile) {
       profile.isPartner = this.partner
       this.$emit('open-menu', { event, profile })
+    },
+    changeFocus () {
+      // only change focus when the partner nodes are clicked
+      if (this.partner) this.$emit('change-focus', this.profile.id)
     }
   }
 }

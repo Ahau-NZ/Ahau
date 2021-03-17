@@ -397,6 +397,7 @@ export default {
     // Used when adding top ancestor on a partner line & swapping between partner lines
     async changeFocus (profileId) {
       const newFocus = await this.getWhakapapaHead(profileId, 'newAmountParents')
+
       this.setSelectedProfile(profileId)
       this.setFocus(newFocus)
     },
@@ -520,24 +521,23 @@ export default {
         partner.path = partnerPath
 
         partner.children = partner.children.map(child => {
+          const profile = child.profile ? child.profile : child
+
           const exists = person.children.find(d => {
-            var id = (child.profile) ? child.profile.id : child.id
-            return d.id === id
+            return d.id === profile.id
           })
 
-          const alreadyInArray = person.children.some(c => c.id === child.id)
+          const alreadyInArray = person.children.some(c => c.id === profile.id)
 
           if (exists && !alreadyInArray) {
-            orderedChildren.push({ ...child.profile, relationshipType: child.relationshipType })
+            orderedChildren.push({ ...profile, relationshipType: child.relationshipType })
             return exists
           }
 
-          // TODO: doesnt save this relationship
-          return child.profile
+          return profile
         })
 
         partner.parents = partner.parents.map(d => {
-          // TODO: doesnt save this relationship
           return d.profile
         })
 
@@ -556,7 +556,7 @@ export default {
       if (filters.length > 0) {
         var piles = pileSort(
           person.children,
-          [ ...filters ]
+          filters
         )
 
         let arr = []
