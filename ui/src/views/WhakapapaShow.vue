@@ -150,29 +150,7 @@
       </div>
     </v-container>
 
-    <vue-context ref="menu" class="px-0">
-      <li>
-        <a href="#" @click.prevent="updateDialog('view-edit-node', null)"  class="d-flex align-center px-4">
-          <img class="contextMenuIcon" :src="require('../assets/account-circle.svg')"/>
-          <p class="ma-0 pl-3">View Person</p>
-        </a>
-      </li>
-      <li v-for="(option, index) in contextMenuOpts" :key="index">
-        <a v-if="option.isPermitted" href="#" @click.prevent="updateDialog(option.dialog, option.type)" class="d-flex align-center px-4">
-          <v-icon v-if="option.icon==='mdi-delete'" class="contextMenuIcon">mdi-delete</v-icon>
-          <img v-else class="contextMenuIcon" :src="option.icon"/>
-          <p class="ma-0 pl-3">{{ option.title }}</p>
-        </a>
-
-        <!-- // TODO figure out how to grey out a list entry
-        <a v-else class="disabled-link d-flex align-center px-4">
-          <v-icon v-if="option.icon==='mdi-delete'" color="red" class="contextMenuIcon">mdi-delete</v-icon>
-          <img v-else class="contextMenuIcon" :src="option.icon"/>
-          <p class="ma-0 pl-3">{{ option.title }}</p>
-        </a>
-        -->
-      </li>
-    </vue-context>
+    <NodeMenu ref="menu" :view="whakapapaView" @open="updateDialog($event.dialog, $event.type)"/>
 
     <vue-context ref="sort" class="px-0">
       <li v-for="(field, i) in sortFields" :key="`sort-field-${i}`">
@@ -236,6 +214,8 @@ import mapProfileMixins from '@/mixins/profile-mixins.js'
 import DialogHandler from '@/components/dialog/DialogHandler.vue'
 import findSuccessor from '@/lib/find-successor'
 
+import NodeMenu from '@/components/menu/NodeMenu.vue'
+
 import { mapGetters, mapActions, mapMutations } from 'vuex'
 
 export default {
@@ -255,7 +235,8 @@ export default {
     Tree,
     VueContext,
     DialogHandler,
-    WhakapapaBanner
+    WhakapapaBanner,
+    NodeMenu
   },
   mixins: [
     mapProfileMixins({
@@ -351,45 +332,6 @@ export default {
       }
 
       return true
-    },
-    contextMenuOpts () {
-      return [
-        {
-          title: 'Add Parent',
-          dialog: 'new-node',
-          type: 'parent',
-          isPermitted: Boolean(this.selectedProfile),
-          icon: require('../assets/node-parent.svg')
-        },
-        // TODO: add button for adding partners
-        // {
-        //   title: 'Add Partner',
-        //   dialog: 'new-node',
-        //   type: 'partner',
-        //   isPermitted: Boolean(this.selectedProfile)
-        // },
-        {
-          title: 'Add Child',
-          dialog: 'new-node',
-          type: 'child',
-          isPermitted: Boolean(this.selectedProfile),
-          icon: require('../assets/node-child.svg')
-        },
-        {
-          title: 'Add Sibling',
-          dialog: 'new-node',
-          type: 'sibling',
-          isPermitted: this.canAddSibling,
-          icon: require('../assets/node-sibling.svg')
-        },
-        {
-          title: 'Delete Person',
-          dialog: 'delete-node',
-          type: null,
-          isPermitted: this.canDelete,
-          icon: 'mdi-delete'
-        }
-      ]
     },
     sortFields () {
       return [
