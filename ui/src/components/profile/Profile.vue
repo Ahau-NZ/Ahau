@@ -36,7 +36,7 @@
       </ProfileCard>
     </v-col>
     <!-- RIGHT SIDE COLUMN -->
-    <v-col cols="12" sx="12" md="3" :class="{ 'pt-0 px-5':mobile, 'pt-6 pr-8':myProfile && !mobile, 'pt-8 pr-8':!myProfile }">
+    <v-col cols="12" sx="12" md="3" :class="{ 'pt-0 px-5':mobile, 'pt-10 pr-8':myProfile && !mobile, 'pt-12 pr-8':!myProfile }">
       <template v-if="myProfile">
         <v-col v-if="mobile" cols="12" class="mobile-profile-label headliner">
           communities

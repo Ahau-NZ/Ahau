@@ -333,9 +333,6 @@ export default {
     }
   },
   mounted () {
-    console.log('index: ', this.index)
-    console.log('artefacts: ', this.artefacts)
-    console.log('selectedIndex', this.selectedIndex)
     this.artefact = this.formData[this.selectedIndex]
   },
   computed: {
