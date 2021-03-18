@@ -8,18 +8,10 @@
     </li>
     <li v-for="(option, index) in options" :key="index">
       <a v-if="option.isPermitted" href="#" @click.prevent="updateDialog(option.dialog, option.type)" class="d-flex align-center px-4">
-        <v-icon v-if="option.icon === 'mdi-delete'" class="contextMenuIcon">mdi-delete</v-icon>
+        <v-icon v-if="option.icon === 'mdi-delete'" class="contextMenuIcon black--text"> {{ option.icon }}</v-icon>
         <img v-else class="contextMenuIcon" :src="option.icon"/>
         <p class="ma-0 pl-3">{{ option.title }}</p>
       </a>
-
-      <!-- // TODO figure out how to grey out a list entry
-      <a v-else class="disabled-link d-flex align-center px-4">
-        <v-icon v-if="option.icon==='mdi-delete'" color="red" class="contextMenuIcon">mdi-delete</v-icon>
-        <img v-else class="contextMenuIcon" :src="option.icon"/>
-        <p class="ma-0 pl-3">{{ option.title }}</p>
-      </a>
-      -->
     </li>
   </VueContext>
 </template>
@@ -39,6 +31,9 @@ export default {
   },
   computed: {
     ...mapGetters(['selectedProfile', 'whoami']),
+    canEdit () {
+      return this.selectedProfile && this.selectedProfile.canEdit
+    },
     canDelete () {
       if (!this.canEdit) return false
 

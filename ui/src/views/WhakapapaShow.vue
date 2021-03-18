@@ -308,9 +308,6 @@ export default {
         this.focus = newValue
       }
     },
-    canEdit () {
-      return this.selectedProfile && this.selectedProfile.canEdit
-    },
     sortFields () {
       return [
         {
