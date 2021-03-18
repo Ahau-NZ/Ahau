@@ -1,5 +1,5 @@
 <template>
-  <g :style="position" @mouseover="hover = true" @mouseleave="hover = false" @click="click">
+  <g class="node" :style="position" @mouseover="hover = true" @mouseleave="hover = false" @click="click">
     <g class="avatar">
       <defs>
         <clipPath :id="clipPathId">
@@ -126,7 +126,6 @@ export default {
         fontWeight: 600,
         transform: `translate(${this.radius - 3}px, ${this.diameter +
           25}px) rotate(90deg)`
-        // calculate the transform to draw nodes vertically
       }
     },
     displayName () {
@@ -155,8 +154,7 @@ export default {
 
 <style scoped lang="scss">
 g {
-  transition: all ease-in 0.1s;
-
+  transition: all ease-in 0.2s;
   g.avatar {
     &:hover {
       .menu-button {

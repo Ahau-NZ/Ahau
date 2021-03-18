@@ -1,5 +1,5 @@
 <template>
-  <g id="sub-tree">
+  <g>
     <g v-for="partner in partners" :key="`partner-link-${partner.data.id}`">
       <Link
         v-if="partner.link"
@@ -7,9 +7,9 @@
       />
     </g>
     <g v-for="partner in partners" :key="`partner-${partner.data.id}`">
-      <g id="child-group">
+      <g class="child-group">
         <g v-for="child in partner.children" :key="`partner-child-${child.data.id}`">
-          <Link v-if="child.link" :link="child.link"/>
+          <Link v-if="child.link" :link="child.link" style="transition: 1s linear;"/>
           <SubTree :root="child" :openMenu="openMenu" :changeFocus="changeFocus" :centerNode="centerNode" />
         </g>
       </g>
@@ -21,7 +21,7 @@
         @focus="focus"
       />
     </g>
-    <g id="ghost-partner">
+    <g class="ghost-partner">
       <g id="child-group">
         <g v-for="child in ghostPartner.children" :key="`partner-child-${child.data.id}`">
           <Link v-if="child.link" :link="child.link"/>
@@ -29,7 +29,6 @@
         </g>
       </g>
     </g>
-
     <Node :node="root" @open-menu="openContextMenu($event)" @center="center"/>
   </g>
 </template>
@@ -71,11 +70,10 @@ export default {
     },
     children () {
       if (this.profile.isCollapsed) return []
-
       return this.root.children
     },
     partners () {
-      if (!this.root || !this.root.data.partners || this.profile.isCollapsed) return []
+      if (!this.root || !this.profile.partners || this.profile.isCollapsed) return []
 
       var len = this.profile.partners.length
       if (len === 1) len = 2
