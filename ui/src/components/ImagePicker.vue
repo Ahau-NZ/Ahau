@@ -4,7 +4,7 @@
 
       <v-row class="upload-pic-row">
         <v-icon class="grey--text pr-2 pt-1">mdi-camera</v-icon>
-        <p class="toggle" style="cursor: pointer;">
+        <p class="toggle">
           {{ label }}
         </p>
       </v-row>
@@ -31,7 +31,7 @@ export default {
   props: {
     label: {
       type: String,
-      default: 'Upload profile photo'
+      default: 'Edit profile photo'
     },
     isView: { type: Boolean, default: false },
     type: String
@@ -66,8 +66,11 @@ export default {
 
     p.toggle {
       margin: 0px;
-      font-size: 0.8em;
-      color: rgba(0,0,0,0.6);
+      font-size: 14px;
+      color: rgba(0,0,0,0.8);
+      background-color: rgba(255,255,255,0.5);
+      cursor: pointer;
+      font-weight: 400;
     }
   }
 </style>

@@ -16,7 +16,9 @@ const PERMITTED_CSV_COLUMNS = [
   'phone',
   'email',
   'address',
-  'location',
+  'city',
+  'postCode',
+  'country',
   'profession'
 ]
 
@@ -105,7 +107,9 @@ function parse (fileContent) {
           phone: d.phone,
           email: d.email,
           address: d.address,
-          location: d.location,
+          city: d.city,
+          postCode: d.postCode,
+          country: d.country,
           profession: d.profession
         }
       }

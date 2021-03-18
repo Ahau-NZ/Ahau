@@ -121,7 +121,9 @@ export default {
         { name: 'phone', description: 'Phone number, this can be any phone number (i.e. mobile, home or work)', formats: ['Text'] },
         { name: 'email', description: 'Email address', formats: ['Text'] },
         { name: 'address', description: 'Street address', formats: ['Text'] },
-        { name: 'location', description: 'Town, City or Country', formats: ['Text'] },
+        { name: 'city', description: 'City', formats: ['Text'] },
+        { name: 'postCode', description: 'Post Code', formats: ['Text'] },
+        { name: 'country', description: 'Country', formats: ['Text'] },
         { name: 'profession', description: 'Current Profession', formats: ['Text'] }
       ]
     }
@@ -139,7 +141,7 @@ export default {
       this.close()
     },
     downloadCsv () {
-      var csv = 'parentNumber,number,preferredName,legalName,gender,bornAt,deceased,diedAt,birthOrder,relationshipType,profession,phone,email,address,location\n'
+      var csv = 'parentNumber,number,preferredName,legalName,gender,bornAt,deceased,diedAt,birthOrder,relationshipType,profession,phone,email,address,city,postCode,country\n'
       var hiddenElement = document.createElement('a')
       hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(csv)
       hiddenElement.target = '_blank'
