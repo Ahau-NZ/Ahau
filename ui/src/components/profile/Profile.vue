@@ -1,12 +1,12 @@
 <template>
   <v-row class="mb-12" :class="mobile ? 'mobile-profile':''">
-    <v-col cols="12" md="9" :class="mobile ? 'pt-7 pb-5 px-5' : ' pt-0 px-5' ">
-      <v-col cols="12" class="headliner black--text pa-0 pl-4 pb-2" :class="{'mobile-profile-label':mobile, 'pt-4':mobile}">
+    <v-col cols="12" md="9" :class="mobile ? 'pt-7 px-5' : ' pt-0 px-5' ">
+      <v-col cols="12" :class="mobile ? 'mobile-profile-label headliner':'profile-info-label headliner'">
         profile information
       </v-col>
       <ProfileInfoCard :myProfile="myProfile" :profile="profile" @setupProfile="setupProfile($event)"/>
       <template v-if="myProfile">
-        <v-col cols="12" class="headliner black--text pa-0 pl-4 pb-2 pt-4" :class="{'mobile-profile-label':mobile}">
+        <v-col cols="12" :class="mobile ? 'mobile-profile-label headliner':'profile-info-label headliner'">
           skills and education
         </v-col>
         <ProfileCard>
@@ -19,7 +19,7 @@
           </template>
         </ProfileCard>
       </template>
-      <v-col cols="12" class="headliner black--text pa-0 pl-4 pb-2 pt-4" :class="{'mobile-profile-label':mobile}">
+      <v-col cols="12" :class="mobile ? 'mobile-profile-label headliner':'profile-info-label headliner'">
         contact information
       </v-col>
       <ProfileCard>
@@ -36,9 +36,9 @@
       </ProfileCard>
     </v-col>
     <!-- RIGHT SIDE COLUMN -->
-    <v-col cols="12" sx="12" md="3" :class="{'pt-0 px-5':mobile, 'pt-6 pr-8':myProfile, 'pt-8 pr-8':!myProfile}">
+    <v-col cols="12" sx="12" md="3" :class="{ 'pt-0 px-5':mobile, 'pt-6 pr-8':myProfile && !mobile, 'pt-8 pr-8':!myProfile }">
       <template v-if="myProfile">
-        <v-col v-if="mobile" cols="12" class="headliner black--text pa-0 pl-4 pb-2 pt-4 mobile-profile-label">
+        <v-col v-if="mobile" cols="12" class="mobile-profile-label headliner">
           communities
         </v-col>
         <ProfileCard v-if="myProfile" :title="mobile ? '':'Communities'" class="mt-2">
@@ -176,9 +176,22 @@ export default {
   border-right: 0.5px solid rgba(0,0,0,0.3);
   }
 
+  .profile-info-label {
+    color: #000000 !important;
+    caret-color: #000000 !important;
+    padding-left: 16px !important;
+    padding-bottom: 8px !important;
+    padding-top: 16px !important;
+    letter-spacing: 5px;
+  }
+
   .mobile-profile-label {
-    letter-spacing: 3px;
-    padding-left: 0px
+    color: #000000 !important;
+    caret-color: #000000 !important;
+    letter-spacing: 3px !important;
+    padding-top:16px;
+    padding-bottom: 8px !important;
+    padding-left: 16px !important;
   }
 
 </style>
