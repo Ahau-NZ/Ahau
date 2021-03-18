@@ -2,31 +2,24 @@
   <v-form ref="form" light class="px-4">
     <v-row>
       <!-- Upload profile photo -->
-      <v-col :order="mobile ? '' : '2'" class="py-0">
-        <v-row v-if="showAvatar" class="justify-center pt-12">
-          <!-- <v-col cols="12" class="pa-0" > -->
-            <!-- Avatar -->
+      <v-col :order="smScreen ? '' : '2'" class="py-0">
+        <v-row :class="!isSideViewDialog || mobile ? 'justify-center pt-6' : 'justify-center ' ">
+          <!-- Avatar -->
           <Avatar
-            class="big-avatar"
-            size="200px"
+            :class="showAvatar ? 'big-avatar' : 'big-avatar avatarPlaceholder'"
+            size="140px"
             :image="formData.avatarImage"
             :alt="formData.preferredName"
             :gender="formData.gender"
             :aliveInterval="formData.aliveInterval"
             :deceased="formData.deceased"
             :isEditing="isEditing"
+            :showPicker="!isEditing"
+            :isSideViewDialog="isSideViewDialog"
+            :placeHolder="!showAvatar"
             @updateAvatar="formData.avatarImage = $event"
-
           />
         </v-row>
-
-        <v-row v-else class="justify-center pt-12">
-          <!-- no avatar placeholder -->
-          <div class="big-avatar avatarPlaceholder">
-            <img :src="require('@/assets/account.svg')"/>
-          </div>
-        </v-row>
-
         <v-row v-if="isEditing" class="justify-center">
           <h1>Edit {{ getDisplayName(formData) }}</h1>
         </v-row>
@@ -41,70 +34,29 @@
             <v-icon small class="blue--text" left>mdi-close</v-icon>Cancel
           </v-btn>
         </v-row>
-        <v-row>
-          <!-- </v-col> -->
-          <!-- Upload Profile Photo Button -->
-          <v-col v-if="!readonly && !isEditing" cols="12" justify="center" align="center" class="pa-0">
-            <ImagePicker @updateAvatar="formData.avatarImage = $event" :avatarLoaded="formData.avatarImage"/>
-          </v-col>
-        </v-row>
       </v-col>
 
       <!-- Names -->
-      <v-col cols="12" :sm="mobile ? '12' : '6'" class="pt-4">
+      <v-col cols="12" :sm="smScreen ? '12' : '6'" class="py-0">
+        <v-spacer style="height:5%"></v-spacer>
         <v-row>
-          <!-- Full Name -->
-          <v-col cols="12" class="pa-1">
-            <slot name="search">
-              <v-text-field
-                v-model="formData.legalName"
-                label="Full Name"
-                v-bind="customProps"
-                outlined
-              />
-            </slot>
-          </v-col>
           <!-- Preferred Name -->
-          <v-col cols="12" class="pa-1">
+          <v-col cols="12" class="pa-1 pt-4">
             <v-text-field
             v-model="formData.preferredName"
-            label="First Name / Known As"
+            label="First name / known as"
             v-bind="customProps"
             outlined
             />
           </v-col>
         </v-row>
-
-          <!-- DATE OF BIRTH + DATE OF DEATH-->
-        <DateIntervalPicker
-          label="Date of Birth"
-          endLabel="Date of Death"
-          allowInterval
-          :interval.sync="formData.aliveInterval"
-          :hasEndDate.sync="formData.deceased"
-          checkbox-label="No longer living"
-        />
-
-        <!-- Editing: relationship type-->
-        <v-row v-if="withRelationships || editRelationship">
-          <v-col cols="12" class="pa-1" v-if="this.$route.name !== 'login'">
-            <v-select
-              v-model="formData.relationshipType"
-              label="Related by"
-              :items="relationshipTypes"
-              outlined
-              :menu-props="{light: true}"
-            />
-          </v-col>
-        </v-row>
-        <!-- ORDER OF BIRTH -->
         <v-row>
-          <v-col v-if="!readonly || formData.birthOrder" cols="12" class="pa-1">
-            <v-text-field
-              v-model="formData.birthOrder"
-              type="number"
-              label="Order of birth"
-              min="1"
+          <!-- No longer living -->
+          <v-col v-if="$route.name !== 'login'" :cols="sideViewCols" class="pt-0">
+            <v-checkbox
+              v-model="formData.deceased"
+              label="No longer living"
+              hide-details
               v-bind="customProps"
               outlined
             />
@@ -113,7 +65,7 @@
       </v-col>
     </v-row>
 
-    <v-row>
+    <v-row :class="smScreen ? 'sideView-gender-button-row' : 'gender-button-row'">
     <!-- GENDER VIEW -->
       <v-col  v-if="readonly" class="pa-1">
         <v-text-field
@@ -126,27 +78,30 @@
       <!-- GENDER EDIT -->
       <v-col v-if="!readonly" class="pa-1">
         <p class="text-field">Identifies as</p>
-        <v-row class="gender-button-row">
+        <v-row>
           <!-- TANE -->
-          <v-col class="pa-0">
+          <v-col :cols="smScreen ? '3' : '2'" class="pa-0">
             <div class="gender-button" @click="updateSelectedGender('male')">
-              <img ref="taneImg" :src="require('@/assets/tane-outlined.svg')" :class="mobile ? 'gender-image-mobile':'gender-image'">
+              <img ref="taneImg" :src="require('@/assets/tane-outlined.svg')" :class="smScreen ? 'gender-image-mobile':'gender-image'">
+              <p :class="smScreen ? 'sideView-gender-label-text text-field' : 'gender-label-text text-field'">Male</p>
             </div>
           </v-col>
           <!-- WAHINE -->
-          <v-col class="pa-0">
+          <v-col :cols="smScreen ? '3' : '2'" class="pa-0 ml-6">
             <div class="gender-button" @click="updateSelectedGender('female')">
-              <img ref="wahineImg" :src="require('@/assets/wahine-outlined.svg')" :class="mobile ? 'gender-image-mobile':'gender-image'">
+              <img ref="wahineImg" :src="require('@/assets/wahine-outlined.svg')" :class="smScreen ? 'gender-image-mobile':'gender-image'">
+              <p :class="smScreen ? 'sideView-gender-label-text text-field' : 'gender-label-text text-field'">Female</p>
             </div>
           </v-col>
           <!-- DIVERSE -->
-          <v-col class="pa-0">
+          <v-col :cols="smScreen ? '3' : '2'" class="pa-0 ml-6">
             <div class="gender-button" @click="updateSelectedGender('other')">
-              <img ref="otherImg" :src="require('@/assets/diverse-outlined.svg')" :class="mobile ? 'gender-image-mobile':'gender-image'">
+              <img ref="otherImg" :src="require('@/assets/diverse-outlined.svg')" :class="smScreen ? 'gender-image-mobile':'gender-image'">
+              <p :class="smScreen ? 'sideView-gender-label-text text-field' : 'gender-label-text text-field'">Other</p>
             </div>
           </v-col>
-          <div :class="isSideViewDialog ? 'gender-checkbox-unknown-side' : 'gender-checkbox-unknown-default'">
-            <v-col  v-if="!readonly || formData.gender === 'unknown'" cols="3" class="pa-10 py-0">
+          <div class="gender-checkbox-unknown">
+            <v-col  v-if="!readonly || formData.gender === 'unknown'" cols="3">
               <v-checkbox v-model="formData.gender"
               value="unknown"
               label="Unknown" :hide-details="true"
@@ -156,26 +111,15 @@
             </v-col>
           </div>
         </v-row>
-        <v-row v-if="!isSideViewDialog" class="gender-label-row">
-          <v-col class="pa-0">
-            <p class="gender-label-text text-field">Male</p>
-          </v-col>
-          <v-col class="pa-0">
-            <p class="gender-label-text text-field">Female</p>
-          </v-col>
-          <v-col class="pa-0">
-            <p class="gender-label-text text-field">Other</p>
-          </v-col>
-        </v-row>
       </v-col>
     </v-row>
 
     <!-- Start of advanced section -->
     <v-divider />
-      <v-card-actions class="pt-2 pb-2 px-5 pointer">
+      <v-card-actions class="pt-2 pb-2 pr-5 pointer">
         <v-row @click="showAdvanced = !showAdvanced" class="clickable">
           <v-col>
-            <span class="pa-0 ma-0">More info</span>
+            <span class="pa-0 ma-0" style="font-weight:bold">Provide more information</span>
           </v-col>
           <v-btn icon right>
             <v-icon>{{ showAdvanced ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
@@ -186,12 +130,23 @@
     <v-expand-transition>
       <div v-show="showAdvanced">
         <v-row>
+          <!-- Full Name -->
+          <v-col :cols="sideViewCols" class="pa-1">
+            <slot name="search">
+              <v-text-field
+                v-model="formData.legalName"
+                label="Full name"
+                v-bind="customProps"
+                outlined
+              />
+            </slot>
+          </v-col>
           <!-- Alt names -->
           <template>
             <v-col v-for="(altName, index) in formData.altNames.currentState"
               :key="`value-alt-name-${index}`"
               cols="12"
-              :sm="mobile ? '12' : '6'"
+              :sm="smScreen ? '12' : '6'"
               class="pa-1"
             >
               <v-text-field
@@ -210,7 +165,7 @@
             <v-col v-for="(altName, index) in formData.altNames.add"
               :key="`add-alt-name-${index}`"
               cols="12"
-              :sm="mobile ? '12' : '6'"
+              :sm="smScreen ? '12' : '6'"
               class="pa-1"
             >
               <v-text-field
@@ -223,128 +178,213 @@
                 outlined
               />
             </v-col>
-            <AddButton :align="'flex-end'" :width="'50px'" label="Add another name" @click="addAltNameField" row/>
+            <v-col>
+              <AddButton :align="'flex-end'" :justify="justifyBtn" :width="'50px'" label="Add another name" @click="addAltNameField" row/>
+            </v-col>
           </template>
         </v-row>
-        <!-- Description, Profession, Place of Birth -->
         <v-row>
-          <v-col cols="12" sm="12" class="py-0">
-            <v-row>
-              <!-- Description textarea -->
-              <v-col cols="12" class="pa-1">
-                <v-textarea
-                  v-model="formData.description"
-                  label="Description"
-                  v-bind="customProps"
-                  no-resize
-                  rows="4"
-                  auto-grow
-                  outlined
-                />
-              </v-col>
-            </v-row>
+          <!-- DATE OF BIRTH + DATE OF DEATH-->
+          <v-col :cols="sideViewCols" class="py-0">
+            <DateIntervalPicker
+              label="Date of birth"
+              endLabel="Date of death"
+              allowInterval
+              :interval.sync="formData.aliveInterval"
+              :hasEndDate.sync="formData.deceased"
+              cols='12'
+            />
+          </v-col>
+          <!-- Order of birth -->
+          <v-col v-if="!readonly || formData.birthOrder" :cols="sideViewCols" :class="smScreen ? 'pa-1' : 'pa-1 mt-3'" >
+            <v-text-field
+              v-model="formData.birthOrder"
+              type="number"
+              label="Order of birth"
+              min="1"
+              v-bind="customProps"
+              outlined
+              :height="smScreen ? '' : '82px'"
+            />
           </v-col>
         </v-row>
-        <!-- Profession, Place of Birth -->
-        <v-row>
-          <v-col cols="6" class="pa-1">
+        <!-- Editing: relationship type-->
+        <v-row >
+          <v-col v-if="withRelationships || editRelationship || this.$route.name !== 'login'" :cols="sideViewCols" class="pa-1">
+            <v-select
+              v-model="formData.relationshipType"
+              label="Related by"
+              :items="relationshipTypes"
+              outlined
+              :menu-props="{light: true}"
+            />
+          </v-col>
+          <v-col :cols="sideViewCols" :class="smScreen ? 'pa-1 mt-n7' : 'pa-1'">
             <v-text-field
-              v-model="formData.profession"
-              label="Profession"
+              v-model="formData.placeOfBirth"
+              label="City/country of birth"
               v-bind="customProps"
               outlined
             />
           </v-col>
-          <v-col cols="6" class="pa-1">
+          <template v-if="formData.deceased" >
+            <v-col :cols="sideViewCols" :class="smScreen ? 'pa-1' : 'pa-1 mt-n7'">
+              <v-text-field
+                v-model="formData.placeOfDeath"
+                label="Place of death"
+                v-bind="customProps"
+                outlined
+              />
+            </v-col>
+            <v-col :cols="sideViewCols" :class="smScreen ? 'pa-1' : 'pa-1 mt-n7'">
+              <!-- Burial Location -->
+              <v-text-field
+                v-model="formData.buriedLocation"
+                label="Burial location"
+                v-bind="customProps"
+                outlined
+              />
+            </v-col>
+          </template>
+
+          <v-col cols="12" sm="12" :class="formData.deceased || smScreen ? 'pa-1' : 'pa-1 mt-n7'" >
+            <!-- Description textarea -->
+              <v-textarea
+                v-model="formData.description"
+                label="Description"
+                v-bind="customProps"
+                no-resize
+                rows="4"
+                auto-grow
+                outlined
+              />
+          </v-col>
+        </v-row>
+
+        <!-- Skills and Qualifications -->
+        <v-row class="pt-2">
+          <v-col cols="12">
+            <span class="pa-0 ma-0" style="font-weight:bold">Skills and qualifications</span>
+          </v-col>
+          <!-- Profession-->
+          <v-col cols="12" class="pa-0">
+            <v-col :cols="sideViewCols" class="pa-1">
+              <v-text-field
+                v-model="formData.profession"
+                label="Profession"
+                v-bind="customProps"
+                outlined
+              />
+            </v-col>
+          </v-col>
+          <!-- Skills -->
+          <v-col v-for="(qualification, index) in formData.education"
+            :key="`add-qual-name-${index}`"
+            :cols="smScreen ? '12':'6'"
+            class="pa-1"
+          >
             <v-text-field
-              v-model="formData.placeOfBirth"
-              label="Place of Birth"
-              v-bind="customProps"
-              outlined
+            v-model="formData.education[index]"
+            label="Skill/qualification"
+            append-icon="mdi-delete"
+            @click:append="removeItem(formData.education, index)"
+            v-bind="customProps"
+            :readonly="readonly"
+            outlined
             />
+          </v-col>
+          <v-col>
+            <AddButton :align="'flex-end'" :justify="justifyBtn" :width="'50px'" label="Add a skill/qualification" @click="addEmptyItem(formData.education)" row/>
+          </v-col>
+        </v-row>
+        <!-- Education -->
+        <v-row class="pb-1">
+          <v-col v-for="(school, index) in formData.school"
+            :key="`add-school-name-${index}`"
+            :cols="smScreen ? '12':'6'"
+            class="pa-1"
+          >
+            <v-text-field
+            v-model="formData.school[index]"
+            label="Place of education"
+            append-icon="mdi-delete"
+            @click:append="removeItem(formData.school, index)"
+            v-bind="customProps"
+            :readonly="readonly"
+            outlined
+            />
+          </v-col>
+          <v-col>
+            <AddButton :align="'flex-end'" :justify="justifyBtn" :width="'50px'" label="Add a place of education" @click="addEmptyItem(formData.school)" row/>
           </v-col>
         </v-row>
         <!-- Email, Address, Phone, Location -->
-        <v-row v-if="!formData.deceased">
-          <v-col cols="12" :sm="mobile ? '12' : '6'">
+        <div v-if="!formData.deceased">
+          <v-col cols="12">
+            <span class="pa-0 ma-0" style="font-weight:bold">Personal Information</span>
+          </v-col>
+          <v-row class="py-1" v-if="!formData.deceased">
             <!-- Email -->
-            <v-row>
-              <v-col cols="12" class="pa-1">
-                <v-text-field
-                  v-model="formData.email"
-                  label="Email"
-                  v-bind="customProps"
-                  outlined
-                />
-              </v-col>
-            </v-row>
+            <v-col :cols="sideViewCols" class="pa-1">
+              <v-text-field
+                v-model="formData.email"
+                label="Email"
+                v-bind="customProps"
+                outlined
+              />
+            </v-col>
             <!-- Phone -->
-            <v-row>
-              <v-col cols="12" class="pa-1">
-                <v-text-field
-                  v-model="formData.phone"
-                  label="Phone"
-                  v-bind="customProps"
-                  outlined
-                />
-              </v-col>
-            </v-row>
-          </v-col>
+            <v-col :cols="sideViewCols" class="pa-1">
+              <v-text-field
+                v-model="formData.phone"
+                label="Phone"
+                v-bind="customProps"
+                outlined
+              />
+            </v-col>
+          </v-row>
+          <v-row>
 
-          <v-col cols="12" :sm="mobile ? '12' : '6'">
-            <v-row>
-              <v-col cols="12" class="pa-1">
-                <!-- Address -->
+          </v-row>
+          <v-row>
+            <!-- Address -->
+            <v-col :cols="sideViewCols" class="pa-1">
+              <v-text-field
+                v-model="formData.address"
+                label="Address"
+                v-bind="customProps"
+                outlined
+              />
+            </v-col>
+            <!-- City -->
+            <v-col :cols="sideViewCols" class="pa-1">
+              <v-text-field
+                v-model="formData.city"
+                label="City"
+                v-bind="customProps"
+                outlined
+              />
+            </v-col>
+            <!-- Post Code -->
+            <v-col :cols="sideViewCols" class="pa-1">
+              <v-text-field
+                v-model="formData.postCode"
+                label="Post Code"
+                v-bind="customProps"
+                outlined
+              />
+            </v-col>
+            <!-- Country -->
+              <v-col :cols="sideViewCols" class="pa-1">
                 <v-text-field
-                  v-model="formData.address"
-                  label="Address"
+                  v-model="formData.country"
+                  label="Country"
                   v-bind="customProps"
                   outlined
                 />
               </v-col>
-            </v-row>
-            <v-row>
-              <v-col cols="12" class="pa-1">
-                <!-- Location -->
-                <v-text-field
-                  v-model="formData.location"
-                  label="City, Country"
-                  v-bind="customProps"
-                  outlined
-                />
-              </v-col>
-            </v-row>
-          </v-col>
-        </v-row>
-        <v-row v-if="formData.deceased">
-          <v-col cols="12" :sm="mobile ? '12' : '6'">
-            <!-- Place of Death -->
-            <v-row>
-              <v-col cols="12" class="pa-1">
-                <v-text-field
-                  v-model="formData.placeOfDeath"
-                  label="Place of Death"
-                  v-bind="customProps"
-                  outlined
-                />
-              </v-col>
-            </v-row>
-          </v-col>
-
-          <v-col cols="12" :sm="mobile ? '12' : '6'">
-            <v-row>
-              <v-col cols="12" class="pa-1">
-                <!-- Burial Location -->
-                <v-text-field
-                  v-model="formData.buriedLocation"
-                  label="Burial Location"
-                  v-bind="customProps"
-                  outlined
-                />
-              </v-col>
-            </v-row>
-          </v-col>
-        </v-row>
+          </v-row>
+        </div>
       </div>
     </v-expand-transition>
     <!-- End of advanced section -->
@@ -353,7 +393,6 @@
 
 <script>
 import Avatar from '@/components/Avatar.vue'
-import ImagePicker from '@/components/ImagePicker.vue'
 import AddButton from '@/components/button/AddButton.vue'
 import DateIntervalPicker from '@/components/DateIntervalPicker.vue'
 
@@ -366,7 +405,6 @@ export default {
   name: 'ProfileForm',
   components: {
     Avatar,
-    ImagePicker,
     AddButton,
     DateIntervalPicker
   },
@@ -401,6 +439,12 @@ export default {
     if (isEmpty(this.formData.relationshipType)) {
       this.formData.relationshipType = 'birth'
     }
+    if (!this.readonly && isEmpty(this.formData.education)) {
+      this.formData.education.push('')
+    }
+    if (!this.readonly && isEmpty(this.formData.school)) {
+      this.formData.school.push('')
+    }
   },
   watch: {
     profile: {
@@ -419,8 +463,8 @@ export default {
     showAvatar () {
       if (this.isEditing) return true
       if (this.formData) {
-        if (this.formData.gender) return true
-        if (this.formData.avatarImage) return true
+        if (!isEmpty(this.formData.gender)) return true
+        if (!isEmpty(this.formData.avatarImage)) return true
         else return false
       } else return false
     },
@@ -444,6 +488,15 @@ export default {
     },
     altNames () {
       return [...this.formData.altNames.value, ...this.formData.altNames.add]
+    },
+    smScreen () {
+      return this.mobile || this.isSideViewDialog
+    },
+    sideViewCols () {
+      return this.smScreen ? '12' : '6'
+    },
+    justifyBtn () {
+      return this.smScreen ? 'start' : 'end'
     }
   },
   methods: {
@@ -476,6 +529,12 @@ export default {
     },
     removeAltNameField (index) {
       this.formData.altNames.add.splice(index, 1)
+    },
+    addEmptyItem (array) {
+      array.push('')
+    },
+    removeItem (array, index) {
+      array.splice(index, 1)
     }
   }
 }
@@ -546,65 +605,72 @@ export default {
   .gender-button-row {
     width: 100%;
     margin: 0px;
+    margin-bottom: -10px;
+    position: relative;
+    top: -30px;
+    }
 
-    .gender-button {
-      width: auto;
-      height: 100px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 5px;
+  .sideView-gender-button-row {
+    width: 100%;
+    margin: 0px;
+    margin-bottom: -10px;
+    position: relative;
+    }
 
-      .gender-image {
-        margin-top:30px;
-        width: 8em;
-        height: 8em;
-        border: 0.5px solid rgba(0,0,0,0.6);
-        border-radius: 50%;
-        cursor: pointer;
-        transition: all 0.3s;
+  .gender-button {
+    width: auto;
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
 
-        &:hover {
-          border: 2px solid rgba(0,0,0,0.87);
-        }
-      }
+    .gender-image {
+      margin-top:0px;
+      width: 6em;
+      height: 6em;
+      border: 0.5px solid rgba(0,0,0,0.6);
+      border-radius: 50%;
+      cursor: pointer;
+      transition: all 0.3s;
 
-      .gender-image-mobile {
-        width: 6em;
-        height: 6em;
-        border: 0.5px solid rgba(0,0,0,0.6);
-        border-radius: 50%;
-        cursor: pointer;
-        transition: all 0.3s;
-
-        &:hover {
-          border: 2px solid rgba(0,0,0,0.87);
-        }
+      &:hover {
+        border: 2px solid rgba(0,0,0,0.87);
       }
     }
 
-    .gender-checkbox-unknown-default {
-        padding: 50px 0px 0px 0px;
+    .gender-image-mobile {
+      width: 5em;
+      height: 5em;
+      border: 0.5px solid rgba(0,0,0,0.6);
+      border-radius: 50%;
+      cursor: pointer;
+      transition: all 0.3s;
+
+      &:hover {
+        border: 2px solid rgba(0,0,0,0.87);
+      }
     }
-    .gender-checkbox-unknown-side {
-        padding: 0px 0px 15px 0px;
-    }
+
   }
 
-    .gender-label-row {
-      width: 75%;
-      margin: 0px;
-      padding-top: 20px;
+  .gender-checkbox-unknown {
+      padding-bottom: 10px;
+  }
+  .gender-label-text {
+    position: absolute;
+    top: 90%;
+  }
 
-      .gender-label-text {
-        text-align: center;
-      }
-    }
+  .sideView-gender-label-text {
+    position: absolute;
+    top: 60%;
+  }
 
   /* grey circle outline with plus */
   .avatarPlaceholder {
-    width: 200px;
-    height: 200px;
+    width: 140px;
+    height: 140px;
     border: 0.3px solid rgb(118, 118, 118,0.9);
     border-radius: 50%;
     display: flex;

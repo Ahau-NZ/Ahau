@@ -124,11 +124,18 @@
                       :value="applicant.legalName"
                     />
                     <ProfileInfoItem
-                      :class="mobile ? 'bb':'br'"
+                    :class="mobile ? 'bb':'br'"
                       smCols="12"
                       mdCols="6"
-                      title="City/Country"
-                      :value="applicant.location"
+                      title="City"
+                      :value="applicant.city"
+                    />
+                    <ProfileInfoItem
+                    :class="mobile ? 'bb':'br'"
+                      smCols="12"
+                      mdCols="6"
+                      title="Country"
+                      :value="applicant.country"
                     />
                     <ProfileInfoItem
                       smCols="12"

@@ -141,16 +141,16 @@ export function findInvalidProfileProps (profile) {
   // validate required props on a profile when applying to join a community
   // preferredName or legalName
   // dob
-  // address
-  // city/country
+  // city
+  // country
   const invalidProps = []
 
-  const { preferredName, legalName, aliveInterval, address, location } = profile
+  const { preferredName, legalName, aliveInterval, city, country } = profile
 
   if (!preferredName && !legalName) invalidProps.push({ prop: 'Preferred Name or Full Name' })
   if (!aliveInterval) invalidProps.push({ prop: 'Date of Birth' })
-  if (!address) invalidProps.push({ prop: 'Address' })
-  if (!location) invalidProps.push({ prop: 'City, Country' })
+  if (!city) invalidProps.push({ prop: 'City' })
+  if (!country) invalidProps.push({ prop: 'Country' })
 
   return invalidProps
 }
