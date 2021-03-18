@@ -394,17 +394,7 @@ export default {
       return name.toLowerCase().trim()
     },
     altNames (altArray) {
-      var altNames = ''
-
-      for (var i = 0; i < altArray.length; i++) {
-        if (altNames.length === 0) {
-          altNames += altArray[i]
-        } else {
-          altNames += ', ' + altArray[i]
-        }
-      }
-
-      return altNames
+      return altArray.join(', ')
     },
     computeDate (requiredDate, age) {
       if (!age) {

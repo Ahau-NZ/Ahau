@@ -21,8 +21,8 @@
         </v-row>
         <v-container>
           <v-row v-if="isEditing">
-            <v-col>
-              <ProfileForm :profile.sync="formData" :readonly="!isEditing" mobile @cancel="cancel" isEditing isSideViewDialog>
+            <v-col class="py-0">
+              <ProfileForm :profile.sync="formData" :readonly="!isEditing" :mobile="mobile" @cancel="cancel" isEditing isSideViewDialog>
                 <template v-slot:top>
                   <v-row class="justify-center">
                     <h1>Edit {{ getDisplayName(formData) }}</h1>
@@ -43,7 +43,7 @@
             </v-col>
           </v-row>
           <v-row v-if="isEditing">
-            <v-col cols="12" sm="auto" class="mb-8">
+            <v-col cols="12" sm="auto">
               <v-btn
                 v-if="deleteable"
                 @click="$emit('delete')"

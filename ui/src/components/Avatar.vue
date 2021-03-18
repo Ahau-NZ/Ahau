@@ -1,5 +1,12 @@
 <template>
-  <div v-if="clickable" @click="click" style="cursor: pointer;">
+  <!-- no avatar placeholder -->
+  <div v-if="placeHolder">
+    <img :src="require('@/assets/account.svg')"/>
+    <div :class="isSideViewDialog ? 'side-view-picker-button' : 'image-picker-button'">
+      <ImagePicker @updateAvatar="updateAvatar($event)" />
+    </div>
+  </div>
+  <div v-else-if="clickable" @click="click" style="cursor: pointer;">
     <v-col class="py-0">
       <v-row justify="center" class="wrap">
         <v-btn :dark="dark" v-if="deletable" class="delete" @click="$emit('delete')" icon x-small light max-width="20px" max-height="20px">
@@ -31,7 +38,7 @@
         <v-btn v-if="deletable" class="delete" @click="$emit('delete')" icon x-small light max-width="20px" max-height="20px">
           <v-icon>mdi-close</v-icon>
         </v-btn>
-        <v-avatar :size="size" :tile="isView" class="avatar-container" :class="{'isEditing': isEditing, 'isOnline': online, 'reduceOpacity' : showPicker}">
+        <v-avatar :size="isSideViewDialog ? '250px': size" :tile="isView" class="avatar-container" :class="{'isEditing': isEditing, 'isOnline': online, 'reduceOpacity' : showPicker}">
           <v-img v-if="image && image.uri" :src="image.uri" :alt="alt" />
           <v-img
             v-else
@@ -39,7 +46,7 @@
             :class="customClass"
           />
         </v-avatar>
-        <div v-if="isEditing" class="avatar-overlay">
+        <div v-if="isEditing" :class="isSideViewDialog ? 'side-view-picker-button' : 'image-picker-button'">
           <ImagePicker @updateAvatar="updateAvatar($event)" />
         </div>
       </v-row>
@@ -47,7 +54,7 @@
         <p :style="`font-size:0.8em ${theme};margin-bottom:0`" class="limit-text">{{ alt }} </p>
       </v-row>
     </v-col>
-    <div v-if="showPicker" class="avatar-overlay">
+    <div v-if="showPicker " :class="isSideViewDialog ? 'side-view-picker-button' : 'image-picker-button'">
       <ImagePicker @updateAvatar="updateAvatar($event)" />
     </div>
   </div>
@@ -74,7 +81,9 @@ export default {
     dark: Boolean,
     row: Boolean,
     online: Boolean,
-    showPicker: { type: Boolean, default: false }
+    showPicker: { type: Boolean, default: false },
+    placeHolder: { type: Boolean, default: false },
+    isSideViewDialog: { type: Boolean, default: false }
   },
   components: {
     ImagePicker
@@ -126,20 +135,17 @@ export default {
   opacity: 0.2;
 }
 
-.reduceOpacity {
-  opacity: 0.3;
-}
-
 .isOnline {
   border: #37e259 solid 3px;
   border-radius: 50% !important;
 }
 
-.avatar-overlay {
+.image-picker-button {
   position: absolute;
-  top: 50%;
+  top: 70%;
   left: 50%;
   transform: translate(-50%, -50%);
+  z-index: 1;
 
   display: flex;
   justify-content: center;
@@ -150,7 +156,12 @@ export default {
   width: 100%;
   height: 100%;
 
-  padding-top: 85%;
+  padding-top: 80%;
+}
+
+.side-view-picker-button {
+  position: absolute;
+  top: 91%
 }
 
 .limit-text {
@@ -159,4 +170,5 @@ export default {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
 </style>

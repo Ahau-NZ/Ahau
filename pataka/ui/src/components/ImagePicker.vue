@@ -2,8 +2,8 @@
   <div>
     <clipper-upload accept="image/*" @input="toggleAvatar">
       <v-row class="upload-pic-row">
-        <v-icon v-if="!avatar.new" class="grey--text">mdi-camera</v-icon>
-        <p class="toggle" style="cursor: pointer;">{{ label }}</p>
+        <v-icon v-if="!avatar.new" class="grey--text">mdi-camera-edit</v-icon>
+        <p class="toggle" style="cursor: pointer; background-color: rgba(255, 255, 255, 0.5)">{{ label }}</p>
       </v-row>
     </clipper-upload>
     <AvatarEditDialog
