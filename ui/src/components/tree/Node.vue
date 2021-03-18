@@ -119,6 +119,16 @@ export default {
           .diameter + 15}px)`
       }
     },
+    collapsedStyle () {
+      // centers the text element under name
+      return {
+        fontSize: '30px',
+        fontWeight: 600,
+        transform: `translate(${this.radius - 3}px, ${this.diameter +
+          25}px) rotate(90deg)`
+        // calculate the transform to draw nodes vertically
+      }
+    },
     displayName () {
       return getDisplayName(this.profile)
     }

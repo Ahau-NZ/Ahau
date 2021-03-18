@@ -121,7 +121,6 @@
         v-if="whakapapa.tree"
         :getRelatives="getRelatives"
         @load-descendants="loadDescendants($event)"
-        @collapse-node="collapseNode($event)"
         @change-focus="changeFocus($event)"
         @loading='load($event)'
         :view="whakapapaView"
@@ -139,7 +138,6 @@
           :nestedWhakapapa="nestedWhakapapa"
           :relationshipLinks="relationshipLinks"
           @load-descendants="loadDescendants($event)"
-          @collapse-node="collapseNode($event)"
           @open-context-menu="openContextMenu($event)"
           :searchNodeId="searchNodeId"
           :searchFilterString="searchFilterString"

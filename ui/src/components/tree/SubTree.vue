@@ -69,8 +69,13 @@ export default {
     profile () {
       return this.root.data
     },
+    children () {
+      if (this.profile.isCollapsed) return []
+
+      return this.root.children
+    },
     partners () {
-      if (!this.root || !this.root.data.partners) return []
+      if (!this.root || !this.root.data.partners || this.profile.isCollapsed) return []
 
       var len = this.profile.partners.length
       if (len === 1) len = 2
@@ -116,7 +121,7 @@ export default {
             x,
             y,
             children: parent.children
-              .filter(partnerChild => this.root.children.some(rootChild => {
+              .filter(partnerChild => this.children.some(rootChild => {
                 if (!rootChild || !partnerChild) return false
                 return rootChild.data.id === partnerChild.id
               })) // filter out children who arent this nodes

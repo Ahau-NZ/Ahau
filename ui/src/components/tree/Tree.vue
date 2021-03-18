@@ -67,7 +67,6 @@ export default {
     return {
       componentLoaded: false, // need to ensure component is loaded before using $refs
       nodeCentered: '', // hold centered node id
-      collapseNode: false, // if node is centered than we can show/collapse
 
       nonFocusedPartners: [],
       changeFocusId: null,
@@ -292,8 +291,7 @@ export default {
       }
     },
 
-    async collapse (node) {
-      console.log('collapse', node)
+    collapse (node) {
       const profile = node.data
       const { children, _children = [] } = profile
 
