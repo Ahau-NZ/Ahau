@@ -491,10 +491,6 @@ export default {
         return childProfile
       }))
 
-      // person.children = person.children.sort((a, b) => {
-      //   return a.birthOrder - b.birthOrder
-      // })
-
       person.parents = await Promise.all(person.parents.map(async parent => {
         if (parent.ghost) return parent
         // load their profile
@@ -532,6 +528,11 @@ export default {
           return profile
         })
 
+        // make sure the partners children are ordered by birth
+        partner.children = partner.children.sort((a, b) => {
+          return a.birthOrder - b.birthOrder
+        })
+
         partner.parents = partner.parents.map(d => {
           return d.profile
         })
@@ -540,6 +541,11 @@ export default {
         partner.siblings = []
         return partner
       }))
+
+      // sort the children by birthOrder first
+      person.children = person.children.sort((a, b) => {
+        return a.birthOrder - b.birthOrder
+      })
 
       // sort the children by partner
       const filters = []

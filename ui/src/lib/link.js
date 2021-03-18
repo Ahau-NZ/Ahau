@@ -36,7 +36,10 @@ export default {
   path,
   color: {
     default: 'grey',
-    getRandomColor: randomColor
+    getRandomColor: randomColor,
+    getColor (i) {
+      return '#' + ((i + 12) * 89).toString(16) // NOTE: change link colors here
+    }
   },
   partner: {
     spacing: {

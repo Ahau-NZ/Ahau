@@ -110,7 +110,7 @@ export default {
           // NOTE: children of this partner will inherit this style
           const style = {
             fill: 'none',
-            stroke: settings.color.getRandomColor(),
+            stroke: settings.color.getColor(i),
             opacity: settings.opacity,
             strokeWidth: settings.thickness
           }
@@ -126,6 +126,7 @@ export default {
                 return rootChild.data.id === partnerChild.id
               })) // filter out children who arent this nodes
               .map(child => this.mapChild({ x, y, center: true, sign, yOffset }, child, style)),
+
             data: parent,
             link: {
               style,
