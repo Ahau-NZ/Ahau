@@ -9,13 +9,11 @@ import { InMemoryCache } from 'apollo-cache-inmemory'
 
 import possibleTypes from './possibleTypes.json'
 
+const { ahau: env } = require('ahau-env')
+
 const cache = new InMemoryCache({
   possibleTypes
 })
-
-// WARNING! this seems wrong (a cli plugin as a dependency?)
-
-const { ahau: env } = require('ahau-env')
 
 // Install the vue plugin
 Vue.use(VueApollo)

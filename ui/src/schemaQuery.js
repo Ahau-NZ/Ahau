@@ -1,7 +1,8 @@
 const fetch = require('node-fetch')
 const fs = require('fs')
+const { ahau: env } = require('ahau-env')
 
-fetch('http://localhost:4000/graphql', {
+fetch(`http://localhost:${env.graphql.port}/graphql`, {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({

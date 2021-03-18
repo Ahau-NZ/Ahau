@@ -12,7 +12,7 @@
     "test:js": "tape -r esm src/**/*.test.js | tap-spec",
     "test": "npm run test:js && npm run lint",
     "clear": "rm -rf node_modules",
-    "build-fragment": "node src/schemaQuery.js"
+    "build-fragment": "NODE_ENV=development node src/schemaQuery.js"
   },
   "dependencies": {
     "@mdi/font": "^4.5.95",
@@ -20,7 +20,7 @@
     "animate.css": "^4.1.0",
     "apollo-upload-client": "^10.0.1",
     "edtf": "^2.8.0",
-    "graphql": "^14.5.8",
+    "graphql": "^15.5.0",
     "lodash.chunk": "^4.2.0",
     "lodash.clonedeep": "^4.5.0",
     "lodash.get": "^4.4.2",
@@ -34,6 +34,7 @@
     "readable-stream": "^3.6.0",
     "render-media": "^4.1.0",
     "stream-http": "^3.1.1",
+    "vue-cli-plugin-apollo": "^0.22.2",
     "vue-gallery": "^2.0.1",
     "vuetify-media-player": "^0.8.1",
     "vuex-router-sync": "^5.0.0"
@@ -63,7 +64,6 @@
     "typescript": "^3.9.6",
     "vue": "^2.6.10",
     "vue-apollo": "^3.0.0-beta.11",
-    "vue-cli-plugin-apollo": "^0.21.0",
     "vue-cli-plugin-vuetify": "^1.0.1",
     "vue-context": "^5.0.0",
     "vue-router": "^3.0.3",

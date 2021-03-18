@@ -24,6 +24,10 @@ const customConfig = {
     cors: true,
     csp: ''
   },
+  hyperBlobs: {
+    pataka: true
+    // port: env.hyperBlobs.port // TODO
+  },
   recpsGuard: {
     allowedTypes: [
       'contact'

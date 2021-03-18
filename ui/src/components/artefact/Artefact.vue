@@ -5,7 +5,8 @@
       :class='classObj'
 
       v-once
-      />
+      >
+    </div>
 
     <template v-else>
       <div v-if="artefact.type === 'video'" :class="classObj">
@@ -71,41 +72,41 @@ export default {
     },
     artefactIcon () {
       return ARTEFACT_ICON(this.artefact.blob.mimeType)
+    },
+    playableArtefact () {
+      const playable = (
+        (this.$refs.renderTarget && this.$refs.renderTarget.firstChild) ||
+        this.$refs.audio ||
+        this.$refs.video
+      )
+      if (!playable) return
+      if (typeof playable.play !== 'function') return
+
+      return playable
     }
   },
   watch: {
     model (newVal) {
       if (this.showArtefact) {
-        if (newVal === this.index) {
-          if (this.artefact.type === 'audio') {
-            this.$refs.audio.play()
-          } else if (this.artefact.type === 'video') {
-            this.$refs.video.play()
-          }
-        } else if (newVal !== this.index) {
-          if (this.artefact.type === 'audio') {
-            if (this.$refs.audio.play) { this.$refs.audio.pause() }
-          } else if (this.artefact.type === 'video') {
-            if (this.$refs.video.play) { this.$refs.video.pause() }
-          }
+        if (newVal === this.index && this.playableArtefact) {
+          this.playableArtefact.play()
+        } else {
+          this.playableArtefact.pause()
         }
-      } else if (newVal !== this.index) {
-        if (this.artefact.type === 'audio') {
-          if (this.$refs.audio.play) { this.$refs.audio.pause() }
-        } else if (this.artefact.type === 'video') {
-          if (this.$refs.video.play) { this.$refs.video.pause() }
-        }
+      } else if (newVal !== this.index && this.playableArtefact) {
+        this.playableArtefact.pause()
       }
     }
   },
   mounted () {
     if (this.useRenderMedia) this.renderHyperBlob()
+    // TODO check if this is best place for this
   },
   methods: {
     buildRequest (uri, opts = {}) {
       const url = new URL(uri)
-      if (opts.start) url.searchParams.append('start', opts.start)
-      if (opts.end) url.searchParams.append('end', opts.end)
+      if (typeof opts.start === 'number') url.searchParams.append('start', opts.start)
+      if (typeof opts.end === 'number') url.searchParams.append('end', opts.end)
 
       return {
         method: 'GET',
@@ -137,10 +138,16 @@ export default {
           req.end()
           return transform
         },
-        size: blob.size
+        length: blob.size,
+        maxBlobLength: 200 * 1024 * 1024,
+        controls: true
       }
+      console.log(file)
       renderMedia.append(file, this.$refs.renderTarget, function (err, elem) {
         if (err) return console.error(err)
+
+        // HACK to get initial frame to load
+        if (elem.play && elem.pause) elem.play().then(() => elem.pause())
       })
     },
     toggleArtefact (e) {
