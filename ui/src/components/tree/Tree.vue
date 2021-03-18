@@ -12,7 +12,7 @@
         :transform="`translate(${treeX - radius} ${treeY - radius})`"
         ref="tree"
       >
-        <SubTree :root="treeLayout(this.root)" :openMenu="openMenu" :changeFocus="changeFocus"/>
+        <SubTree :root="treeLayout(this.root)" :openMenu="openMenu" :changeFocus="changeFocus" :centerNode="centerNode"/>
       </g>
     </g>
     <!-- zoom in, zoom out buttons -->
@@ -293,6 +293,7 @@ export default {
     },
 
     async collapse (node) {
+      console.log('collapse', node)
       const profile = node.data
       const { children, _children = [] } = profile
 

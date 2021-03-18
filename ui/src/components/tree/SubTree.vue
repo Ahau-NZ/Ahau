@@ -10,7 +10,7 @@
       <g id="child-group">
         <g v-for="child in partner.children" :key="`partner-child-${child.data.id}`">
           <Link v-if="child.link" :link="child.link"/>
-          <SubTree :root="child" :openMenu="openMenu" :changeFocus="changeFocus" />
+          <SubTree :root="child" :openMenu="openMenu" :changeFocus="changeFocus" :centerNode="centerNode" />
         </g>
       </g>
       <Node
@@ -18,19 +18,19 @@
         :node="partner"
         :radius="partnerRadius"
         partner
-        @change-focus="changeTreeFocus"
+        @focus="focus"
       />
     </g>
     <g id="ghost-partner">
       <g id="child-group">
         <g v-for="child in ghostPartner.children" :key="`partner-child-${child.data.id}`">
           <Link v-if="child.link" :link="child.link"/>
-          <SubTree :root="child" :openMenu="openMenu" :changeFocus="changeFocus" />
+          <SubTree :root="child" :openMenu="openMenu" :changeFocus="changeFocus" :centerNode="centerNode" />
         </g>
       </g>
     </g>
 
-    <Node :node="root" @open-menu="openContextMenu($event)"/>
+    <Node :node="root" @open-menu="openContextMenu($event)" @center="center"/>
   </g>
 </template>
 
@@ -47,7 +47,8 @@ export default {
   props: {
     root: Object,
     openMenu: Function,
-    changeFocus: Function
+    changeFocus: Function,
+    centerNode: Function
   },
   components: {
     Node,
@@ -156,8 +157,11 @@ export default {
     openContextMenu ($event) {
       this.openMenu($event)
     },
-    changeTreeFocus ($event) {
+    focus ($event) {
       this.changeFocus($event)
+    },
+    center ($event) {
+      this.centerNode($event)
     },
     mapChild ({ x = this.root.x, y = this.root.y, center, sign, yOffset }, child, style) {
       // map to their node from the root parent
