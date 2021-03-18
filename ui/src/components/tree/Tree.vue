@@ -1,12 +1,5 @@
 <template>
   <svg id="baseSvg" width="100%" :height="height" ref="baseSvg">
-    <!-- niho background picture -->
-    <defs>
-      <pattern id="img1" patternUnits="userSpaceOnUse" x="400" y="0" width="100%" height="100%">
-        <image xlink:href="../../assets/niho.svg" width="100%" height="100%" />
-      </pattern>
-    </defs>
-    <path id="background" d="M5,5 l0,680 2980,0 l0,-680 l-980,0" fill="url(#img1)" />
     <g id="baseGroup">
       <g
         :transform="`translate(${treeX - radius} ${treeY - radius})`"
@@ -162,61 +155,11 @@ export default {
       return d3.hierarchy(this.nestedWhakapapa)
     },
     /*
-      returns an array of nodes associated with the root node created from the treeData object, as well as
-      extra attributes
+      returns an array of nodes associated with the root node created from the treeData object
     */
     nodes () {
       return this.treeLayout(this.root)
         .descendants() // returns the array of descendants starting with the root node, then followed by each child in topological order
-        .map((d, i) => {
-          return {
-            id: `tree-node-${i}-${d.data.id}`,
-            children: d.children,
-            data: d.data,
-            depth: d.depth,
-            height: d.height,
-            parent: d.parent,
-            x: d.x,
-            y: d.y,
-            index: i,
-            path: d.data.path
-          }
-        })
-    },
-    /*
-      returns an array of links which holds the X and Y coordinates of both the parent (source) and child (target) nodes
-    */
-    links () {
-      return this.treeLayout(this.root)
-        .links() // returns the array of links
-        .map((d, i) => { // returns a new custom object for each link
-          return {
-            id: `tree-link-${i}-${d.source.data.id}-${d.target.data.id}`,
-            index: i,
-            x1: d.source.x, // centre x position of parent node
-            x2: d.target.x, // centre x position of child node
-            y1: d.source.y, // centre y position of the parent node
-            y2: d.target.y, // centre y position of the child node
-            class: this.relationshipLinks.get(d.source.data.id + '-' + d.target.data.id).relationshipType !== 'birth' ? 'nonbiological' : '',
-            style: {
-              fill: 'none',
-              stroke: this.pathStroke(d.source.data.id, d.target.data.id)
-            },
-            d: `
-                M ${d.source.x}, ${d.source.y}
-                v ${this.branch}
-                H ${d.target.x}
-                V ${d.target.y}
-              `
-          }
-        })
-        .sort((a, b) => {
-          var A = a.style.stroke
-          var B = b.style.stroke
-          if (A > B) return -1
-          if (A < B) return 1
-          return 0
-        })
     },
     paths () {
       if (!this.componentLoaded || !this.pathNode) return null
@@ -378,10 +321,6 @@ export default {
       var x = width / 2 - source.x
       var y = height / 2 - source.y + 150
 
-      // g.transition()
-      //   .duration(700)
-      //   .attr('transform', 'translate(' + (x) + ',' + (y) + ')scale(' + 1 + ')')
-      //   .on('end', function () { svg.call(d3.zoom().transform, d3.zoomIdentity.translate((x), (y)).scale(1)) })
       g.transition()
         .duration(700)
         .attr('transform', 'translate(' + (x) + ',' + (y) + ')')
@@ -427,7 +366,9 @@ export default {
 
 svg#baseSvg {
   cursor: grab;
-  background: white;
+    background: linear-gradient(rgba(255, 255, 255, 0.99), rgba(255, 255, 255, 0.7)), url(../../assets/niho.svg);
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 
 .zoomControl {
