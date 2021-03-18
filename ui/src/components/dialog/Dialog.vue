@@ -57,7 +57,7 @@
       <v-divider/>
       <v-card-actions v-if="!readonly" class="pa-0">
         <v-container class="py-0">
-          <v-row>
+          <v-row align="end">
             <v-col cols="12" md="auto" v-if="$slots['before-actions']" align="center" class="py-0">
               <slot name="before-actions"></slot>
             </v-col>
@@ -65,19 +65,15 @@
             <slot name="actions">
               <v-col cols="6" md="auto" align="center">
                 <v-btn @click="close"
-                  :fab="!mobile"
-                  icon
+                  text
                   :large="!mobile"
                   class="secondary--text"
-                  relative
                 >
                   Cancel
                 </v-btn>
               </v-col>
               <v-col cols="6" md="auto" align="center">
                 <v-btn @click="submit"
-                  :fab="!mobile"
-                  icon
                   :large="!mobile"
                   text
                   color="blue"
