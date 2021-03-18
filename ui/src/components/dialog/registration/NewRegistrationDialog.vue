@@ -190,8 +190,15 @@
                         :class="mobile ? 'bb':'br'"
                           smCols="12"
                           mdCols="6"
-                          title="City/Country"
-                          :value="personalProfile.location"
+                          title="City"
+                          :value="personalProfile.city"
+                        />
+                        <ProfileInfoItem
+                        :class="mobile ? 'bb':'br'"
+                          smCols="12"
+                          mdCols="6"
+                          title="Country"
+                          :value="personalProfile.country"
                         />
                         <ProfileInfoItem
                           smCols="12"

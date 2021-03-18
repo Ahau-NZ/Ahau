@@ -21,8 +21,8 @@
         </v-row>
         <v-container>
           <v-row v-if="isEditing">
-            <v-col>
-              <ProfileForm :profile.sync="formData" :readonly="!isEditing" mobile @cancel="cancel" isEditing isSideViewDialog>
+            <v-col class="py-0">
+              <ProfileForm :profile.sync="formData" :readonly="!isEditing" :mobile="mobile" @cancel="cancel" isEditing isSideViewDialog>
                 <template v-slot:top>
                   <v-row class="justify-center">
                     <h1>Edit {{ getDisplayName(formData) }}</h1>
@@ -43,7 +43,7 @@
             </v-col>
           </v-row>
           <v-row v-if="isEditing">
-            <v-col cols="12" sm="auto" class="mb-8">
+            <v-col cols="12" sm="auto">
               <v-btn
                 v-if="deleteable"
                 @click="$emit('delete')"
@@ -61,10 +61,10 @@
               class="pt-0 d-flex justify-space-between"
             >
               <v-btn @click="cancel" text large fab class="secondary--text mr-10">
-                <v-icon color="secondary">mdi-close</v-icon>
+                Cancel
               </v-btn>
               <v-btn @click="submit" text large fab class="blue--text ml-5" color="blue">
-                <v-icon>mdi-check</v-icon>
+                Save
               </v-btn>
             </v-col>
           </v-row>
@@ -147,10 +147,10 @@
                 </v-col>
                 <v-col cols="6">
                   <v-row>
-                    <v-col class="py-1 px-0 profile-label overline"><small>Location</small></v-col>
+                    <v-col class="py-1 px-0 profile-label overline"><small>Country</small></v-col>
                   </v-row>
                   <v-row class="py-0 justify-center">
-                    <p class="ma-0 profile-info" style="font-size: 0.8em">{{formData.location}}</p>
+                    <p class="ma-0 profile-info" style="font-size: 0.8em">{{formData.country}}</p>
                   </v-row>
                 </v-col>
               </v-row>
@@ -261,17 +261,21 @@ function defaultData (input) {
     description: profile.description,
     birthOrder: profile.birthOrder,
     relationshipType: profile.relationship ? profile.relationship.relationshipType : null,
-    location: profile.location,
     email: profile.email,
     phone: profile.phone,
     deceased: profile.deceased,
     address: profile.address,
+    city: profile.city,
+    country: profile.country,
+    postCode: profile.postCode,
     profession: profile.profession,
     altNames: {
       currentState: clone(profile.altNames),
       add: [], // new altNames to add
       remove: [] // altNames to remove
-    }
+    },
+    education: profile.education,
+    school: profile.school
   }
 }
 
