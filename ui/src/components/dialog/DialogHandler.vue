@@ -489,7 +489,7 @@ export default {
               parent = id
 
               // load the parent profile
-              const parentProfile = await this.getRelatives(parent)
+              var parentProfile = await this.getRelatives(parent)
 
               if (!parentProfile.children.some(d => d.profile.id === child)) {
                 await this.createChildLink({
@@ -497,6 +497,9 @@ export default {
                   parent,
                   ...relationshipAttrs
                 })
+
+                // load their profile
+                parentProfile = await this.loadDescendants(parent)
               }
 
               if (child === this.view.focus) {
