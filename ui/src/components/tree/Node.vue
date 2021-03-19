@@ -81,7 +81,7 @@ export default {
       if (this.partner) return false
       if (!this.profile.isCollapsed) {
         if (this.hover) return true
-        // if (this.nodeCentered === this.node.data.id) return true
+        if (this.nodeCentered === this.node.data.id) return true
       }
       return false
     },

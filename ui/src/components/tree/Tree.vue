@@ -10,6 +10,13 @@
     </g>
     <!-- zoom in, zoom out buttons -->
     <g class="zoomControl">
+      <g>
+        <defs>
+          <filter id="shadow">
+            <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="grey" flood-opacity="0.5"/>
+          </filter>
+        </defs>
+      </g>
       <g @click="zoomReset()" :transform="mobile ? `translate(${15} ${treeY*3})` : `translate(${30} ${treeY*3.1})`">
         <circle stroke="white" fill="white" filter="url(#shadow)" cx="20" cy="1" r="15"/>
         <circle stroke="black" fill="white" filter="url(#shadow)" cx="20" cy="1" r="5"/>
@@ -366,17 +373,13 @@ export default {
 
 svg#baseSvg {
   cursor: grab;
-    background: linear-gradient(rgba(255, 255, 255, 0.99), rgba(255, 255, 255, 0.7)), url(../../assets/niho.svg);
-    background-repeat: no-repeat;
-    background-size: cover;
+  background: linear-gradient(rgba(255, 255, 255, 0.99), rgba(255, 255, 255, 0.7)), url(../../assets/niho.svg);
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 .zoomControl {
   cursor: pointer;
-}
-
-.nonbiological{
-  stroke-dasharray: 2.5
 }
 
 </style>

@@ -14,13 +14,6 @@
       />
       <polygon points="15,0  25,0  20,6" style="fill:#000;" />
     </g>
-    <g>
-      <defs>
-        <filter id="shadow">
-          <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="grey" flood-opacity="0.5"/>
-        </filter>
-      </defs>
-    </g>
   </g>
 </template>
 
