@@ -25,7 +25,7 @@
               @click:clear="resetFormData()"
               :search-input.sync="formData.preferredName"
               :readonly="hasSelection"
-              outlined
+              :outlined="!hasSelection"
               @blur.native="clearSuggestions"
             >
 
@@ -181,13 +181,11 @@ export default {
       return this.$vuetify.breakpoint.xs
     },
     customProps () {
-      // readonly = hasSelected || !isEditing
       return {
-        readonly: this.readonly,
-        flat: this.readonly,
+        readonly: this.hasSelection,
         hideDetails: true,
         placeholder: ' ',
-        class: this.readonly ? 'custom' : ''
+        class: this.hasSelection ? 'custom' : ''
       }
     },
     submission () {
@@ -391,7 +389,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
 .custom.v-text-field > .v-input__control > .v-input__slot:before {
   border-style: none;
 }

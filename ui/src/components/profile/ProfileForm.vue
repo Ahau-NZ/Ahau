@@ -52,6 +52,13 @@
             </slot>
           </v-col>
           <v-col v-if="readonly" :cols="sideViewCols" class="pa-1">
+            <v-text-field
+              v-model="formData.gender"
+              label="Gender"
+              v-bind="customProps"
+            />
+          </v-col>
+          <v-col v-if="readonly" :cols="sideViewCols" class="pa-1 pt-2">
             <v-select
               v-model="formData.relationshipType"
               label="Related by"
@@ -76,15 +83,6 @@
     </v-row>
 
     <v-row :class="smScreen ? 'sideView-gender-button-row' : 'gender-button-row'">
-    <!-- GENDER VIEW -->
-      <!-- <v-col  v-if="readonly" class="pa-1">
-        <v-text-field
-          v-model="formData.gender"
-          label="Gender"
-          v-bind="customProps"
-          outlined
-        />
-      </v-col> -->
       <!-- GENDER EDIT -->
       <v-col v-if="!readonly" class="pa-1">
         <p class="text-field">Identifies as</p>
@@ -138,7 +136,7 @@
       </v-card-actions>
     <v-divider v-if="!showAdvanced" />
     <v-expand-transition>
-      <div v-show="showAdvanced" :class="readonly ? 'ml-5' : ''">
+      <div v-show="showAdvanced" :class="readonly && !mobile ? 'ml-5' : ''">
         <v-row>
           <!-- Full Name -->
           <v-col :cols="sideViewCols" class="pa-1">
@@ -223,22 +221,22 @@
               outlined
             />
           </v-col>
-          <v-col :cols="sideViewCols" :class="smScreen ? 'pa-1 mt-n7' : 'pa-1'">
+          <v-col :cols="sideViewCols" class="pa-1">
             <v-text-field
               v-model="formData.placeOfBirth"
               label="City/country of birth"
               v-bind="customProps"
             />
           </v-col>
-          <template v-if="formData.deceased" >
-            <v-col :cols="sideViewCols" :class="smScreen ? 'pa-1' : 'pa-1 mt-n7'">
+          <template v-if="formData.deceased">
+            <v-col :cols="sideViewCols" class="pa-1">
               <v-text-field
                 v-model="formData.placeOfDeath"
                 label="Place of death"
                 v-bind="customProps"
               />
             </v-col>
-            <v-col :cols="sideViewCols" :class="smScreen ? 'pa-1' : 'pa-1 mt-n7'">
+            <v-col :cols="sideViewCols" class="pa-1">
               <!-- Burial Location -->
               <v-text-field
                 v-model="formData.buriedLocation"
@@ -248,14 +246,14 @@
             </v-col>
           </template>
 
-          <v-col cols="12" sm="12" :class="formData.deceased || smScreen ? 'pa-1' : 'pa-1 mt-n7'" >
+          <v-col cols="12" sm="12" class="pa-1" >
             <!-- Description textarea -->
               <v-textarea
                 v-model="formData.description"
                 label="Description"
                 v-bind="customProps"
                 no-resize
-                :rows="readonly ? formData.description === '' || formData.description === null ? 1 : 4 : 4"
+                :rows="readonly ? 0 : 2"
                 auto-grow
               />
           </v-col>
