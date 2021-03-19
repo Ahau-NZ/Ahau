@@ -89,8 +89,8 @@ export default {
 
           // const count = sign === 1 ? ++leftCount : ++rightCount
           const offset = sign === 1
-            ? this.radius / 2 // right
-            : 0 // left
+            ? this.radius - 15 // right
+            : -15 // left
 
           const xPos = sign === 1
             ? (i - midway) + 1
