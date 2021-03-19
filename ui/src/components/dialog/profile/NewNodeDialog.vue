@@ -13,17 +13,17 @@
           <!-- Slot = Search -->
           <template v-slot:search>
             <v-combobox
-              v-model="formData.legalName"
+              v-model="formData.preferredName"
               :items="generateSuggestions"
               item-value="id"
               item-text="id"
-              label="Full Name"
+              label="First name / known as"
               :menu-props="{ light: true }"
               :clearable="hasSelection"
               append-icon=""
               v-bind="customProps"
               @click:clear="resetFormData()"
-              :search-input.sync="formData.legalName"
+              :search-input.sync="formData.preferredName"
               :readonly="hasSelection"
               outlined
               @blur.native="clearSuggestions"
@@ -73,7 +73,7 @@ import calculateAge from '@/lib/calculate-age'
 import uniqby from 'lodash.uniqby'
 import pick from 'lodash.pick'
 
-import { PERMITTED_PERSON_ATTRS, PERMITTED_RELATIONSHIP_ATTRS, getPerson } from '@/lib/person-helpers'
+import { PERMITTED_PERSON_ATTRS, PERMITTED_RELATIONSHIP_ATTRS, getPerson, getDisplayName, setPersonProfile } from '@/lib/person-helpers'
 import AccessButton from '@/components/button/AccessButton.vue'
 import { mapGetters } from 'vuex'
 import { parseInterval } from '@/lib/date-helpers.js'
@@ -348,6 +348,16 @@ export default {
 
   },
   watch: {
+    profile: {
+      deep: true,
+      immediate: true,
+      handler (newVal) {
+        if (!newVal) return
+
+        this.formData = setPersonProfile(newVal)
+        if (!this.formData.relationshipType) this.formData.relationshipType = 'birth' // choose birth by default
+      }
+    },
     'formData.relationshipType' (newValue, oldValue) {
       // make sure adoption status can't be set true when relationship type is birth
       if (newValue === 'birth') this.formData.legallyAdopted = false
@@ -374,7 +384,7 @@ export default {
 
         // hack: when there is no legal name and a selected profile, the clearable button doesnt how up
         // doing this forces it to show
-        if (this.formData.legalName === '' || this.formData.legalName === null) this.formData.legalName = ' '
+        if (this.formData.preferredName === '' || this.formData.preferredName === null) this.formData.preferredName = getDisplayName(this.formData) || ' ' // take first name from legalname
       }
     }
   }
