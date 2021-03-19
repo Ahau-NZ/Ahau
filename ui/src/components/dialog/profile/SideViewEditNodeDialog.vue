@@ -21,8 +21,8 @@
         </v-row>
         <v-container>
           <v-row v-if="isEditing">
-            <v-col>
-              <ProfileForm :profile.sync="formData" :readonly="!isEditing" mobile @cancel="cancel" isEditing isSideViewDialog>
+            <v-col class="py-0">
+              <ProfileForm :profile.sync="formData" :readonly="!isEditing" :mobile="mobile" @cancel="cancel" isEditing isSideViewDialog>
                 <template v-slot:top>
                   <v-row class="justify-center">
                     <h1>Edit {{ getDisplayName(formData) }}</h1>
@@ -43,7 +43,7 @@
             </v-col>
           </v-row>
           <v-row v-if="isEditing">
-            <v-col cols="12" sm="auto" class="mb-8">
+            <v-col cols="12" sm="auto">
               <v-btn
                 v-if="deleteable"
                 @click="$emit('delete')"
@@ -61,10 +61,10 @@
               class="pt-0 d-flex justify-space-between"
             >
               <v-btn @click="cancel" text large fab class="secondary--text mr-10">
-                <v-icon color="secondary">mdi-close</v-icon>
+                Cancel
               </v-btn>
               <v-btn @click="submit" text large fab class="blue--text ml-5" color="blue">
-                <v-icon>mdi-check</v-icon>
+                Save
               </v-btn>
             </v-col>
           </v-row>
@@ -273,7 +273,9 @@ function defaultData (input) {
       currentState: clone(profile.altNames),
       add: [], // new altNames to add
       remove: [] // altNames to remove
-    }
+    },
+    education: profile.education,
+    school: profile.school
   }
 }
 

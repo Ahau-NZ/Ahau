@@ -4,6 +4,7 @@
       <template v-slot:activator="{ on, attrs }">
           <v-row :class="margin" justify="start">
             <v-col cols="12" md="auto" class="pa-0 pb-5">
+              <v-card-text class="text-caption py-0 text-md-right">Choose who has access to this story:</v-card-text>
               <v-btn
                 v-bind="attrs"
                 v-on="on"
@@ -27,7 +28,6 @@
       </template>
 
       <v-list>
-        <v-subheader>Choose who has access to this story:</v-subheader>
         <v-list-item
           v-for="(tribe, index) in tribes"
           :key="index"

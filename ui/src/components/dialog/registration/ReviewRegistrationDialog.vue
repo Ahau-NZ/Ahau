@@ -128,14 +128,14 @@
                       smCols="12"
                       mdCols="6"
                       title="City"
-                      :value="personalProfile.city"
+                      :value="applicant.city"
                     />
                     <ProfileInfoItem
                     :class="mobile ? 'bb':'br'"
                       smCols="12"
                       mdCols="6"
                       title="Country"
-                      :value="personalProfile.country"
+                      :value="applicant.country"
                     />
                     <ProfileInfoItem
                       smCols="12"

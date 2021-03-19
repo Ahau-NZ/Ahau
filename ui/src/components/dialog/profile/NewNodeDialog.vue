@@ -72,43 +72,11 @@ import calculateAge from '@/lib/calculate-age'
 
 import uniqby from 'lodash.uniqby'
 import pick from 'lodash.pick'
-import clone from 'lodash.clonedeep'
 
 import { PERMITTED_PERSON_ATTRS, PERMITTED_RELATIONSHIP_ATTRS, getPerson } from '@/lib/person-helpers'
 import AccessButton from '@/components/button/AccessButton.vue'
 import { mapGetters } from 'vuex'
 import { parseInterval } from '@/lib/date-helpers.js'
-
-function defaultData (input) {
-  var profile = clone(input)
-
-  return {
-    type: 'person',
-    id: profile.id,
-    gender: profile.gender,
-    legalName: profile.legalName,
-    aliveInterval: profile.aliveInterval,
-    preferredName: profile.preferredName,
-    avatarImage: profile.avatarImage,
-    description: profile.description,
-    birthOrder: profile.birthOrder,
-    email: profile.email,
-    phone: profile.phone,
-    deceased: profile.deceased,
-    address: profile.address,
-    city: profile.city,
-    country: profile.country,
-    postCode: profile.postCode,
-    profession: profile.profession,
-    altNames: {
-      currentState: clone(profile.altNames),
-      add: [], // new altNames to add
-      remove: [] // altNames to remove
-    },
-    education: profile.education,
-    school: profile.school
-  }
-}
 
 function setDefaultData (withRelationships) {
   const formData = {
@@ -380,14 +348,6 @@ export default {
 
   },
   watch: {
-    profile: {
-      deep: true,
-      immediate: true,
-      handler (newVal) {
-        if (!newVal) return
-        this.formData = defaultData(newVal)
-      }
-    },
     'formData.relationshipType' (newValue, oldValue) {
       // make sure adoption status can't be set true when relationship type is birth
       if (newValue === 'birth') this.formData.legallyAdopted = false
