@@ -36,7 +36,6 @@
 
 <script>
 import * as d3 from 'd3'
-import get from 'lodash.get'
 import SubTree from './SubTree'
 
 import isEqual from 'lodash.isequal'
@@ -154,7 +153,16 @@ export default {
             - to change space between cousins check a.parent !== b.parent
           */
 
-          return 1 + 0.3 * (this.visiblePartners(a) + this.visiblePartners(b))
+          // separation between a and b is determined by their partners
+          let rightNodeCount = settings.separation.rightPartnersCount(b)
+          let leftNodeCount = settings.separation.leftPartnersCount(a)
+
+          if (a.parent !== b.parent) {
+            rightNodeCount = settings.separation.rightPartnersCount(a)
+            leftNodeCount = settings.separation.leftPartnersCount(b)
+          }
+
+          return 1 + 0.9 * (rightNodeCount + leftNodeCount)
         })
     },
     //  returns a nested data structure representing a tree based on the treeData object
@@ -279,12 +287,6 @@ export default {
     changeFocus (profileId) {
       this.changeFocusId = profileId
       this.$emit('change-focus', profileId)
-    },
-
-    visiblePartners (node) {
-      return get(node, 'data.isCollapsed')
-        ? 0
-        : get(node, 'data.partners.length', 0) * 1.5
     },
     zoom () {
       var svg = d3.select('#baseSvg')
