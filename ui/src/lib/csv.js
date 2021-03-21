@@ -11,8 +11,11 @@ const PERMITTED_CSV_COLUMNS = [
   'relationshipType',
   'birthOrder',
   'bornAt',
+  'placeOfBirth',
   'deceased',
   'diedAt',
+  'placeOfDeath',
+  'buriedLocation',
   'phone',
   'email',
   'address',
@@ -104,6 +107,9 @@ function parse (fileContent) {
           birthOrder: d.birthOrder,
           deceased: d.deceased === 'yes',
           aliveInterval,
+          placeOfBirth: d.placeOfBirth,
+          placeOfDeath: d.placeOfDeath,
+          buriedLocation: d.buriedLoaction,
           phone: d.phone,
           email: d.email,
           address: d.address,
@@ -179,6 +185,10 @@ const schema = {
     action: d => isValidDate(d),
     msg: 'should be of format DD/MM/YYYY or DD-MM-YYYY'
   },
+  placeOfBirth: {
+    action: d => isString(d) || isEmpty(d),
+    msg: 'must be a string or empty'
+  },
   deceased: {
     action: d => ['yes', 'no', '', null].includes(d),
     msg: 'must be either yes, no or empty'
@@ -187,9 +197,17 @@ const schema = {
     action: d => isValidDate(d),
     msg: 'should be of format DD/MM/YYYY or DD-MM-YYYY'
   },
+  placeOfDeath: {
+    action: d => isString(d) || isEmpty(d),
+    msg: 'must be a string or empty'
+  },
   birthOrder: {
     action: d => isValidNumber(d) || isEmpty(d),
     msg: 'must be either a number or empty'
+  },
+  buriedLocation: {
+    action: d => isString(d) || isEmpty(d),
+    msg: 'must be either a string or empty'
   },
   relationshipType: {
     action: d => RELATIONSHIPS.includes(d) || isEmpty(d),
