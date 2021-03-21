@@ -109,7 +109,7 @@ function parse (fileContent) {
           aliveInterval,
           placeOfBirth: d.placeOfBirth,
           placeOfDeath: d.placeOfDeath,
-          buriedLocation: d.buriedLoaction,
+          buriedLocation: d.buriedLocation,
           phone: d.phone,
           email: d.email,
           address: d.address,
