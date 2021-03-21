@@ -99,7 +99,7 @@ function parse (fileContent) {
           number: d.number,
           preferredName: d.preferredName,
           legalName: d.legalName,
-          gender: d.gender,
+          gender: d.gender ? d.gender : 'unknown',
           relationshipType: d.relationshipType ? d.relationshipType : 'birth',
           birthOrder: d.birthOrder,
           deceased: d.deceased === 'yes',
