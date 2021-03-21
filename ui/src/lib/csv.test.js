@@ -62,7 +62,7 @@ test('header columns', t => {
   csv.parse(MISSING_COLUMNS)
     .catch(err => {
       t.deepEqual(err, [
-        { row: 'header', field: 'columns', error: 'missing column(s)', value: ['preferredName', 'birthOrder', 'email', 'profession'] }
+        { row: 'header', field: 'columns', error: 'missing column(s)', value: ['preferredName', 'birthOrder', 'email', 'postCode', 'country', 'profession'] }
       ], 'returns errors for missing columns')
     })
 
@@ -142,7 +142,9 @@ test('csv.parse', t => {
         phone: '021167892345',
         email: 'cherese@me.com',
         address: '123 Happy Lane',
-        location: 'HappyVille',
+        city: 'HappyVille',
+        postCode: '1234',
+        country: 'New Zealand',
         profession: 'Software Engineer'
       }, 'returns correct profile')
     })
