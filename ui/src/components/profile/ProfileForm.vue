@@ -65,6 +65,7 @@
               :items="relationshipTypes"
               :menu-props="{ light: true }"
               outlined
+              hide-details
             />
           </v-col>
         </v-row>
@@ -219,9 +220,10 @@
               :items="relationshipTypes"
               :menu-props="{ light: true }"
               outlined
+              hide-details
             />
           </v-col>
-          <v-col :cols="sideViewCols" class="pa-1">
+          <v-col class="pa-1">
             <v-text-field
               v-model="formData.placeOfBirth"
               label="City/country of birth"
@@ -253,7 +255,7 @@
                 label="Description"
                 v-bind="customProps"
                 no-resize
-                :rows="readonly ? 0 : 2"
+                :rows="readonly ? 0 : 3"
                 auto-grow
               />
           </v-col>
@@ -261,7 +263,8 @@
 
         <!-- Skills and Qualifications -->
         <v-row class="pt-2">
-          <v-col cols="12">
+          <v-col cols="12" class="px-0">
+            <v-divider class="py-2"/>
             <span class="pa-0 ma-0" style="font-weight:bold">Skills and qualifications</span>
           </v-col>
           <!-- Profession-->
@@ -314,66 +317,60 @@
           </v-col>
         </v-row>
         <!-- Email, Address, Phone, Location -->
-        <div v-if="!formData.deceased">
-          <v-col cols="12">
+        <v-row v-if="!formData.deceased">
+          <v-col cols="12" class="px-0">
+            <v-divider class="py-2"/>
             <span class="pa-0 ma-0" style="font-weight:bold">Personal Information</span>
           </v-col>
-          <v-row class="py-1" v-if="!formData.deceased">
-            <!-- Email -->
-            <v-col :cols="sideViewCols" class="pa-1">
-              <v-text-field
-                v-model="formData.email"
-                label="Email"
-                v-bind="customProps"
-              />
-            </v-col>
-            <!-- Phone -->
-            <v-col :cols="sideViewCols" class="pa-1">
-              <v-text-field
-                v-model="formData.phone"
-                label="Phone"
-                v-bind="customProps"
-              />
-            </v-col>
-          </v-row>
-          <v-row>
-
-          </v-row>
-          <v-row>
-            <!-- Address -->
-            <v-col :cols="sideViewCols" class="pa-1">
-              <v-text-field
-                v-model="formData.address"
-                label="Address"
-                v-bind="customProps"
-              />
-            </v-col>
-            <!-- City -->
-            <v-col :cols="sideViewCols" class="pa-1">
-              <v-text-field
-                v-model="formData.city"
-                label="City"
-                v-bind="customProps"
-              />
-            </v-col>
-            <!-- Post Code -->
-            <v-col :cols="sideViewCols" class="pa-1">
-              <v-text-field
-                v-model="formData.postCode"
-                label="Post Code"
-                v-bind="customProps"
-              />
-            </v-col>
-            <!-- Country -->
-              <v-col :cols="sideViewCols" class="pa-1">
-                <v-text-field
-                  v-model="formData.country"
-                  label="Country"
-                  v-bind="customProps"
-                />
-              </v-col>
-          </v-row>
-        </div>
+          <!-- Email -->
+          <v-col :cols="sideViewCols" class="pa-1">
+            <v-text-field
+              v-model="formData.email"
+              label="Email"
+              v-bind="customProps"
+            />
+          </v-col>
+          <!-- Phone -->
+          <v-col :cols="sideViewCols" class="pa-1">
+            <v-text-field
+              v-model="formData.phone"
+              label="Phone"
+              v-bind="customProps"
+            />
+          </v-col>
+          <!-- Address -->
+          <v-col :cols="sideViewCols" class="pa-1">
+            <v-text-field
+              v-model="formData.address"
+              label="Address"
+              v-bind="customProps"
+            />
+          </v-col>
+          <!-- City -->
+          <v-col :cols="sideViewCols" class="pa-1">
+            <v-text-field
+              v-model="formData.city"
+              label="City"
+              v-bind="customProps"
+            />
+          </v-col>
+          <!-- Post Code -->
+          <v-col :cols="sideViewCols" class="pa-1">
+            <v-text-field
+              v-model="formData.postCode"
+              label="Post Code"
+              v-bind="customProps"
+            />
+          </v-col>
+          <!-- Country -->
+          <v-col :cols="sideViewCols" class="pa-1">
+            <v-text-field
+              v-model="formData.country"
+              label="Country"
+              v-bind="customProps"
+            />
+          </v-col>
+        </v-row>
       </div>
     </v-expand-transition>
     <!-- End of advanced section -->

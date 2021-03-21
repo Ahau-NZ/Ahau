@@ -364,7 +364,7 @@ export default {
         this.showAvatar = true
       }
     },
-    'formData.legalName' (newValue) {
+    'formData.preferredName' (newValue) {
       if (!newValue) return
       if (newValue.length > 2) {
         if (!this.hasSelection) {
