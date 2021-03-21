@@ -7,38 +7,38 @@ const d3 = require('d3')
 // NOTE: column names need to be on same line as opening of string literal
 
 // for columns
-const ALL_COLUMNS = 'parentNumber,number,preferredName,legalName,gender,relationshipType,birthOrder,bornAt,deceased,diedAt,phone,email,address,location,profession'
-const MISSING_COLUMNS = 'parentNumber,number,legalName,gender,relationshipType,bornAt,deceased,diedAt,phone,address,location'
+const ALL_COLUMNS = 'parentNumber,number,preferredName,legalName,gender,relationshipType,birthOrder,bornAt,deceased,diedAt,phone,email,address,city,postCode,country,profession'
+const MISSING_COLUMNS = 'parentNumber,number,legalName,gender,relationshipType,bornAt,deceased,diedAt,phone,address,city'
 const EXTRA_COLUMNS = `${ALL_COLUMNS},extra1,extra2
 `
-const MISPELLED_COLUMNS = 'parentNumbe,number,preferredName,legalName,gender,relationshipType,birthOrder,bornAt,deceased,diedAt,phone,email,address,location,profession'
+const MISPELLED_COLUMNS = 'parentNumbe,number,preferredName,legalName,gender,relationshipType,birthOrder,bornAt,deceased,diedAt,phone,email,address,city,postCode,country,profession'
 
 // for numbers
 const DUPLICATE_NUMBERS = `${ALL_COLUMNS}
-,1,,,,,,,,,,,,,
-,1,,,,,,,,,,,,,
+,1,,,,,,,,,,,,,,,
+,1,,,,,,,,,,,,,,,
 `
 
 const VALID_NUMBERS = `${ALL_COLUMNS}
-,1,,,,,,,,,,,,,
-1,2,,,,,,,,,,,,,
-1,3,,,,,,,,,,,,,
+,1,,,,,,,,,,,,,,,
+1,2,,,,,,,,,,,,,,,
+1,3,,,,,,,,,,,,,,,
 `
 
 // for parentNumber
 const INVALID_FIRST_PARENT_NUMBER = `${ALL_COLUMNS}
-1,2,,,,,,,,,,,,,
+1,2,,,,,,,,,,,,,,,
 `
 const INVALID_PARENT_NUMBER = `${ALL_COLUMNS}
-,1,,,,,,,,,,,,,
-1,2,,,,,,,,,,,,,
-4,3,,,,,,,,,,,,,
+,1,,,,,,,,,,,,,,,
+1,2,,,,,,,,,,,,,,,
+4,3,,,,,,,,,,,,,,,
 `
 
 const CORRECT_PERSONS = `${ALL_COLUMNS}
-,1,Claudine,Claudine Eriepa,female,birth,16,01/02/0304,no,,021123456789,claudine@me.com,123 Happy Lane,HappyVille,Teacher
-1,2,Cherese,Cherese Eriepa,female,birth,2,24/02/0304,yes,24/02/0305,021167892345,cherese@me.com,123 Happy Lane,HappyVille,Software Engineer
-2,3,Daynah,Daynah Eriepa,female,birth,3,24/02/0304,no,,021167823459,daynah@me.com,123 Happy Lane,HappyVille,Community Advisor
+,1,Claudine,Claudine Eriepa,female,birth,16,01/02/0304,no,,021123456789,claudine@me.com,123 Happy Lane,HappyVille,1234,New Zealand,Teacher
+1,2,Cherese,Cherese Eriepa,female,birth,2,24/02/0304,yes,24/02/0305,021167892345,cherese@me.com,123 Happy Lane,HappyVille,1234,New Zealand,Software Engineer
+2,3,Daynah,Daynah Eriepa,female,birth,3,24/02/0304,no,,021167823459,daynah@me.com,123 Happy Lane,HappyVille,1234,New Zealand,Community Advisor
 `
 
 /*
@@ -47,9 +47,9 @@ const CORRECT_PERSONS = `${ALL_COLUMNS}
   row 3 - incorrect gender
 */
 const INCORRECT_PERSONS = `${ALL_COLUMNS}
-,1,Claudine,Claudine Eriepa,female,bith,16,01/02/0304,no,,021123456789,claudine@me.com,123 Happy Lane,HappyVille,Teacher
-1,2,Cherese,Cherese Eriepa,female,birth,2,24/02,no,,021167892345,cherese@me.com,123 Happy Lane,HappyVille,Software Engineer
-2,3,Daynah,Daynah Eriepa,fema,birth,3,24/02/0304,no,,021167823459,daynah@me.com,123 Happy Lane,HappyVille,Community Advisor
+,1,Claudine,Claudine Eriepa,female,bith,16,01/02/0304,no,,021123456789,claudine@me.com,123 Happy Lane,HappyVille,1234,New Zealand,Teacher
+1,2,Cherese,Cherese Eriepa,female,birth,2,24/02,no,,021167892345,cherese@me.com,123 Happy Lane,HappyVille,1234,New Zealand,Software Engineer
+2,3,Daynah,Daynah Eriepa,fema,birth,3,24/02/0304,no,,021167823459,daynah@me.com,123 Happy Lane,HappyVille,1234,New Zealand,Community Advisor
 `
 
 test('header columns', t => {
