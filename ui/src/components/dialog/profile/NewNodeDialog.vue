@@ -332,7 +332,11 @@ export default {
     },
     setFormData (person) {
       this.hasSelection = true
-      this.profile = { ...person.profile, relationshipType: 'birth', legallyAdopted: false }
+
+      person.profile.relationshipType = person.relationshipType || 'birth'
+      person.profile.legallyAdopted = person.legallyAdopted === undefined ? false : person.legallyAdopted
+
+      this.profile = { ...person.profile }
     },
     resetFormData () {
       if (this.hasSelection) {

@@ -58,7 +58,7 @@
               v-bind="customProps"
             />
           </v-col>
-          <v-col v-if="readonly" :cols="sideViewCols" class="pa-1 pt-2">
+          <v-col v-if="readonly && withRelationships" :cols="sideViewCols" class="pa-1 pt-2">
             <v-select
               v-model="formData.relationshipType"
               label="Related by"
