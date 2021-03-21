@@ -167,6 +167,10 @@ const schema = {
     action: d => isString(d) || isEmpty(d),
     msg: 'must be a string or empty'
   },
+  legalName: {
+    action: d => isString(d) || isEmpty(d),
+    msg: 'must be a string or empty'
+  },
   gender: {
     action: d => GENDERS.includes(d) || isEmpty(d),
     msg: 'only accepts the following: ' + GENDERS
@@ -192,6 +196,18 @@ const schema = {
     msg: 'only accepts the following: ' + RELATIONSHIPS
   },
   email: {
+    action: d => isString(d) || isEmpty(d),
+    msg: 'must be a string or empty'
+  },
+  city: {
+    action: d => isString(d) || isEmpty(d),
+    msg: 'must be a string or empty'
+  },
+  postCode: {
+    action: d => isString(d) || isEmpty(d),
+    msg: 'must be a string or empty'
+  },
+  country: {
     action: d => isString(d) || isEmpty(d),
     msg: 'must be a string or empty'
   }
