@@ -128,9 +128,8 @@
         :searchNodeId="searchNodeId"
         :openMenu="openContextMenu"
       />
-      <div class="whakapapa-table">
+      <div v-if="whakapapa.table" class="whakapapa-table">
         <Table
-          v-if="whakapapa.table"
           ref="table"
           :filter="filter"
           :flatten="flatten"

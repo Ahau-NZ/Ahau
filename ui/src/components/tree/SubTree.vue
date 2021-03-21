@@ -179,6 +179,10 @@ export default {
         y = yOffset - this.radius
       }
 
+      if (node.data.parents.length === 2 && node.data.siblings.length === 0) {
+        node.x = x
+      }
+
       return {
         ...node,
         link: {
