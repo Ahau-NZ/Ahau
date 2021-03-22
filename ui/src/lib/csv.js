@@ -160,6 +160,11 @@ function personErrors (d, row) {
   if (errors.length) return errors
 }
 
+const validateString = {
+  action: d => isString(d) || isEmpty(d),
+  masg: 'must be a string or empty'
+}
+
 const schema = {
   parentNumber: {
     action: d => isValidNumber(d) || isEmpty(d),
@@ -169,14 +174,8 @@ const schema = {
     action: d => isValidNumber(d) && d != null,
     msg: 'is required and must be a number'
   },
-  preferredName: {
-    action: d => isString(d) || isEmpty(d),
-    msg: 'must be a string or empty'
-  },
-  legalName: {
-    action: d => isString(d) || isEmpty(d),
-    msg: 'must be a string or empty'
-  },
+  preferredName: validateString,
+  legalName: validateString,
   gender: {
     action: d => GENDERS.includes(d) || isEmpty(d),
     msg: 'only accepts the following: ' + GENDERS
@@ -185,10 +184,7 @@ const schema = {
     action: d => isValidDate(d),
     msg: 'should be of format DD/MM/YYYY or DD-MM-YYYY'
   },
-  placeOfBirth: {
-    action: d => isString(d) || isEmpty(d),
-    msg: 'must be a string or empty'
-  },
+  placeOfBirth: validateString,
   deceased: {
     action: d => ['yes', 'no', '', null].includes(d),
     msg: 'must be either yes, no or empty'
@@ -197,10 +193,7 @@ const schema = {
     action: d => isValidDate(d),
     msg: 'should be of format DD/MM/YYYY or DD-MM-YYYY'
   },
-  placeOfDeath: {
-    action: d => isString(d) || isEmpty(d),
-    msg: 'must be a string or empty'
-  },
+  placeOfDeath: validateString,
   birthOrder: {
     action: d => isValidNumber(d) || isEmpty(d),
     msg: 'must be either a number or empty'
@@ -213,22 +206,10 @@ const schema = {
     action: d => RELATIONSHIPS.includes(d) || isEmpty(d),
     msg: 'only accepts the following: ' + RELATIONSHIPS
   },
-  email: {
-    action: d => isString(d) || isEmpty(d),
-    msg: 'must be a string or empty'
-  },
-  city: {
-    action: d => isString(d) || isEmpty(d),
-    msg: 'must be a string or empty'
-  },
-  postCode: {
-    action: d => isString(d) || isEmpty(d),
-    msg: 'must be a string or empty'
-  },
-  country: {
-    action: d => isString(d) || isEmpty(d),
-    msg: 'must be a string or empty'
-  }
+  email: validateString,
+  city: validateString,
+  postCode: validateString,
+  country: validateString
 }
 
 function isEmpty (d) {
