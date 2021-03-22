@@ -406,9 +406,9 @@ export default {
               } else {
                 // load the profile insteaad
                 const profile = await this.getRelatives(parent)
-                // if (profile.children.length === 1) {
-                //   profile.children[0] = this.selectedProfile
-                // }
+                if (profile.children.length === 1) {
+                  profile.children[0] = this.selectedProfile
+                }
 
                 this.addParentToNestedWhakapapa({
                   child: this.selectedProfile,
@@ -494,15 +494,15 @@ export default {
               // load the parent profile
               var parentProfile_ = await this.getRelatives(parent)
 
-              if (!parentProfile.children.some(d => d.profile.id === child)) {
+              if (!parentProfile_.children.some(d => d.profile.id === child)) {
                 await this.createChildLink({
                   child,
                   parent,
                   ...relationshipAttrs
                 })
 
-                // load their profile
-                parentProfile_ = await this.loadDescendants(parent)
+                // load the profile again to get the new link
+                parentProfile_ = await this.getRelatives(parent)
               }
 
               if (child === this.view.focus) {
