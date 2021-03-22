@@ -315,10 +315,20 @@ function convertDigit (digit) {
   return digit
 }
 
+function downloadCsv () {
+  var csv = 'parentNumber,number,preferredName,legalName,gender,relationshipType,birthOrder,bornAt,placeOfBirth,deceased,diedAt,placeOfDeath,buriedLocation,phone,email,address,city,postCode,country,profession\n'
+  var hiddenElement = document.createElement('a')
+  hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(csv)
+  hiddenElement.target = '_blank'
+  hiddenElement.download = 'whakapapa.csv'
+  hiddenElement.click()
+}
+
 export {
   importCsv,
   convertDate,
   parse,
+  downloadCsv,
   schema,
   PERMITTED_CSV_COLUMNS
 }
