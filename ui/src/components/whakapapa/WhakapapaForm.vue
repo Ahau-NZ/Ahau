@@ -115,6 +115,7 @@ import { RULES } from '@/lib/constants'
 import CsvHelperDialog from '@/components/dialog/whakapapa/CsvHelperDialog.vue'
 import CsvErrorDialog from '@/components/dialog/whakapapa/CsvErrorDialog.vue'
 import * as csv from '@/lib/csv'
+import { downloadCsv } from '@/lib/csv'
 
 const EMPTY_WHAKAPAPA = {
   name: '',
@@ -190,16 +191,7 @@ export default {
     }
   },
   methods: {
-
-    downloadCsv () {
-      var csv = 'parentNumber,number,preferredName,legalName,gender,bornAt,deceased,diedAt,birthOrder,relationshipType,profession,phone,email,address,city,postCode,country\n'
-      var hiddenElement = document.createElement('a')
-      hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(csv)
-      hiddenElement.target = '_blank'
-      hiddenElement.download = 'whakapapa.csv'
-      hiddenElement.click()
-    },
-
+    downloadCsv,
     csvInfo () {
       this.csvHelper = !this.csvHelper
     },
