@@ -87,7 +87,6 @@ export default {
           // used to alternate between left and right
           var sign = i >= midway ? 1 : -1
 
-          // const count = sign === 1 ? ++leftCount : ++rightCount
           const offset = sign === 1
             ? this.radius - 15 // right
             : -15 // left
