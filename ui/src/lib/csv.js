@@ -102,7 +102,7 @@ function parse (fileContent) {
           number: d.number,
           preferredName: d.preferredName,
           legalName: d.legalName,
-          gender: d.gender ? d.gender : 'unknown',
+          gender: d.gender ? d.gender : null,
           relationshipType: d.relationshipType ? d.relationshipType : 'birth',
           birthOrder: d.birthOrder,
           deceased: d.deceased === 'yes',
