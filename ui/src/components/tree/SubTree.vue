@@ -87,7 +87,6 @@ export default {
           // used to alternate between left and right
           var sign = i >= midway ? 1 : -1
 
-          // const count = sign === 1 ? ++leftCount : ++rightCount
           const offset = sign === 1
             ? this.radius - 15 // right
             : -15 // left
@@ -177,6 +176,10 @@ export default {
       if (center) {
         x = x + (-sign * this.radius) - 10
         y = yOffset - this.radius
+      }
+
+      if (node.data.parents.length === 2 && node.data.siblings.length === 0) {
+        node.x = x
       }
 
       return {

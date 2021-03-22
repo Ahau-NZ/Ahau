@@ -395,18 +395,20 @@ export default {
               parent = id
 
               if (child === this.view.focus) {
+                var parentProfile = await this.loadDescendants(parent, '', [])
+
                 // in this case we're updating the top of the graph, we update view.focus to that new top parent
                 this.$emit('updateFocus', parent)
                 this.addParentToNestedWhakapapa({
                   child: this.selectedProfile,
-                  parent: profile
+                  parent: parentProfile
                 })
               } else {
                 // load the profile insteaad
                 const profile = await this.getRelatives(parent)
-                if (profile.children.length === 1) {
-                  profile.children[0] = this.selectedProfile
-                }
+                // if (profile.children.length === 1) {
+                //   profile.children[0] = this.selectedProfile
+                // }
 
                 this.addParentToNestedWhakapapa({
                   child: this.selectedProfile,
