@@ -97,7 +97,7 @@
 </template>
 <script>
 import Dialog from '@/components/dialog/Dialog.vue'
-import { downloadCsv } from '@/lib/csv.js'
+import { downloadCsv } from '@/lib/csv'
 
 export default {
   props: {
