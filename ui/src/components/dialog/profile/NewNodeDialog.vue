@@ -103,6 +103,9 @@ function setDefaultData (withRelationships) {
     email: '',
     phone: '',
     deceased: false,
+    placeOfBirth: '',
+    placeOfDeath: '',
+    buriedLocation: '',
     education: [],
     school: []
   }
