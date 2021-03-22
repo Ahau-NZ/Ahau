@@ -9,7 +9,7 @@
         <AvatarGroup v-if="kaitiaki && kaitiaki.length > 0" size="50px" show-labels groupTitle="Kaitiaki" :profiles="kaitiaki" showLabels/>
       </template>
       <template v-slot:before-actions>
-        <AccessButton :access="access" @access="updateAccess" access-string="whakapapa" />
+        <AccessButton :access="access" @access="updateAccess" type="whakapapa" />
       </template>
     </Dialog>
   </div>

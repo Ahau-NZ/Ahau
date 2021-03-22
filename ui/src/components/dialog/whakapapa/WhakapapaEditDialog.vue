@@ -82,7 +82,7 @@
       </v-row>
     </template>
     <template v-if="access" v-slot:before-actions>
-      <AccessButton :access.sync="access" disabled access-string="whakapapa" />
+      <AccessButton :access.sync="access" disabled type="whakapapa" />
     </template>
   </Dialog>
 </template>
