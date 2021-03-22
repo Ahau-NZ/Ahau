@@ -492,7 +492,7 @@ export default {
               parent = id
 
               // load the parent profile
-              var parentProfile = await this.getRelatives(parent)
+              var parentProfile_ = await this.getRelatives(parent)
 
               if (!parentProfile.children.some(d => d.profile.id === child)) {
                 await this.createChildLink({
@@ -502,7 +502,7 @@ export default {
                 })
 
                 // load their profile
-                parentProfile = await this.loadDescendants(parent)
+                parentProfile_ = await this.loadDescendants(parent)
               }
 
               if (child === this.view.focus) {
@@ -511,12 +511,12 @@ export default {
               } else {
                 this.addParentToNestedWhakapapa({
                   child: this.selectedProfile,
-                  parent: parentProfile
+                  parent: parentProfile_
                 })
 
                 // if the parent is the new head of the tree and is being added on a partner family line that update the tree
                 if (this.selectedProfile.parents.length === 1) {
-                  this.$emit('change-focus', parentProfile.id)
+                  this.$emit('change-focus', parent)
                 }
               }
               break
