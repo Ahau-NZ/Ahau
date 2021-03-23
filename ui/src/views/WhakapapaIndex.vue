@@ -1,7 +1,7 @@
 
 <template>
-  <v-container fluid class="px-2" style="margin-top: 64px;">
-    <v-row class="pa-5" :class="mobile ? 'pb-0':''" light>
+  <v-container fluid class="px-2">
+    <v-row class="pa-5" :class="mobile ? 'pb-0':''" light style="margin-top: 64px;">
       <v-col cols="12" md="10" class="headliner black--text pa-0">
         Whakapapa records
         <v-icon color="blue-grey" light @click="toggleWhakapapaHelper" class="infoButton">mdi-information</v-icon>

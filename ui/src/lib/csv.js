@@ -11,8 +11,11 @@ const PERMITTED_CSV_COLUMNS = [
   'relationshipType',
   'birthOrder',
   'bornAt',
+  'placeOfBirth',
   'deceased',
   'diedAt',
+  'placeOfDeath',
+  'buriedLocation',
   'phone',
   'email',
   'address',
@@ -99,11 +102,14 @@ function parse (fileContent) {
           number: d.number,
           preferredName: d.preferredName,
           legalName: d.legalName,
-          gender: d.gender,
+          gender: d.gender || null,
           relationshipType: d.relationshipType ? d.relationshipType : 'birth',
           birthOrder: d.birthOrder,
           deceased: d.deceased === 'yes',
           aliveInterval,
+          placeOfBirth: d.placeOfBirth,
+          placeOfDeath: d.placeOfDeath,
+          buriedLocation: d.buriedLocation,
           phone: d.phone,
           email: d.email,
           address: d.address,
@@ -154,6 +160,11 @@ function personErrors (d, row) {
   if (errors.length) return errors
 }
 
+const validateString = {
+  action: d => isString(d) || isEmpty(d),
+  masg: 'must be a string or empty'
+}
+
 const schema = {
   parentNumber: {
     action: d => isValidNumber(d) || isEmpty(d),
@@ -163,10 +174,8 @@ const schema = {
     action: d => isValidNumber(d) && d != null,
     msg: 'is required and must be a number'
   },
-  preferredName: {
-    action: d => isString(d) || isEmpty(d),
-    msg: 'must be a string or empty'
-  },
+  preferredName: validateString,
+  legalName: validateString,
   gender: {
     action: d => GENDERS.includes(d) || isEmpty(d),
     msg: 'only accepts the following: ' + GENDERS
@@ -175,6 +184,7 @@ const schema = {
     action: d => isValidDate(d),
     msg: 'should be of format DD/MM/YYYY or DD-MM-YYYY'
   },
+  placeOfBirth: validateString,
   deceased: {
     action: d => ['yes', 'no', '', null].includes(d),
     msg: 'must be either yes, no or empty'
@@ -183,18 +193,23 @@ const schema = {
     action: d => isValidDate(d),
     msg: 'should be of format DD/MM/YYYY or DD-MM-YYYY'
   },
+  placeOfDeath: validateString,
   birthOrder: {
     action: d => isValidNumber(d) || isEmpty(d),
     msg: 'must be either a number or empty'
+  },
+  buriedLocation: {
+    action: d => isString(d) || isEmpty(d),
+    msg: 'must be either a string or empty'
   },
   relationshipType: {
     action: d => RELATIONSHIPS.includes(d) || isEmpty(d),
     msg: 'only accepts the following: ' + RELATIONSHIPS
   },
-  email: {
-    action: d => isString(d) || isEmpty(d),
-    msg: 'must be a string or empty'
-  }
+  email: validateString,
+  city: validateString,
+  postCode: validateString,
+  country: validateString
 }
 
 function isEmpty (d) {
@@ -281,10 +296,20 @@ function convertDigit (digit) {
   return digit
 }
 
+function downloadCsv () {
+  var csv = 'parentNumber,number,preferredName,legalName,gender,relationshipType,birthOrder,bornAt,placeOfBirth,deceased,diedAt,placeOfDeath,buriedLocation,phone,email,address,city,postCode,country,profession\n'
+  var hiddenElement = document.createElement('a')
+  hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(csv)
+  hiddenElement.target = '_blank'
+  hiddenElement.download = 'whakapapa.csv'
+  hiddenElement.click()
+}
+
 export {
   importCsv,
   convertDate,
   parse,
+  downloadCsv,
   schema,
   PERMITTED_CSV_COLUMNS
 }
