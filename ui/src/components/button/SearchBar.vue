@@ -3,8 +3,8 @@
     v-model="searchString"
     :items="items"
     :menu-props=" { light: true } "
-    :append-icon="!searchFilter ? 'mdi-close' : ''"
-    @click:append="close()"
+    :append-icon="searchNodeId ? 'clear' : !searchFilter ? 'mdi-close' : ''"
+    @click:append="searchNodeId ? clearSearchNodeId() : close()"
     placeholder="Search"
     :no-data-text="searchFilter ? '' : 'no suggestions'"
     :search-input.sync="searchString"
@@ -120,8 +120,11 @@ export default {
     },
     reset () {
       this.searchString = ''
-      this.$emit('update:searchNodeId', '')
+      this.clearSearchNodeId()
       this.$emit('close')
+    },
+    clearSearchNodeId () {
+      this.$emit('update:searchNodeId', '')
     }
   }
 }
