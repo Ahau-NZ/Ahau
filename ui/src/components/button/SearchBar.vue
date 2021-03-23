@@ -13,6 +13,7 @@
     light
     hide-selected
     dense
+    :readonly="searchNodeId !== ''"
     :class="searchFilter ? 'search-input-filter' : 'search-input'"
     autofocus
   >
@@ -57,7 +58,8 @@ export default {
   },
   data () {
     return {
-      searchString: ''
+      searchString: '',
+      activeNode: null
     }
   },
   computed: {
@@ -114,6 +116,7 @@ export default {
     },
     setSearchNode (data, event) {
       this.searchString = data.preferredName
+      this.activeNode = data
       this.$emit('update:searchNodeId', data.id)
       this.$emit('searchNode', event)
       this.$emit('close')
