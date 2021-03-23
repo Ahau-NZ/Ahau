@@ -1,5 +1,5 @@
 <template>
-  <v-row class="mb-12" :class="mobile ? 'mobile-profile':''">
+  <v-row :class="mobile ? 'mobile-profile':''">
     <v-col cols="12" md="9" :class="mobile ? 'pt-7 px-5' : ' pt-0 px-5' ">
       <v-col cols="12" :class="mobile ? 'mobile-profile-label headliner':'profile-info-label headliner'">
         profile information
@@ -36,7 +36,7 @@
       </ProfileCard>
     </v-col>
     <!-- RIGHT SIDE COLUMN -->
-    <v-col cols="12" sx="12" md="3" :class="{ 'pt-0 px-5':mobile, 'pt-6 pr-8':myProfile && !mobile, 'pt-8 pr-8':!myProfile }">
+    <v-col cols="12" sx="12" md="3" :class="{ 'pt-0 px-5':mobile, 'pt-10 pr-8':myProfile && !mobile, 'pt-8 pr-8':!myProfile }">
       <template v-if="myProfile">
         <v-col v-if="mobile" cols="12" class="mobile-profile-label headliner">
           communities
@@ -154,9 +154,7 @@ export default {
 </script>
 <style lang="scss">
   .mobile-profile {
-    position: absolute;
-    top: 390px;
-    max-width: 99.5%;
+    margin-top:60px
   }
   .rounded-card {
     border-radius: 10px;
