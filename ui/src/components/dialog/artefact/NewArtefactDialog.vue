@@ -110,21 +110,6 @@
               <span>This file size of this uploaded digital artefact</span>
             </v-tooltip>
           </v-col>
-          <!-- <v-col cols="12" sm="12" md="3">
-            <v-tooltip top open-delay="700">
-              <template v-slot:activator="{ on }">
-                <v-text-field
-                  v-on="on"
-                  v-if="show"
-                  v-model="artefact.identifier"
-                  label="Identifier"
-                  v-bind="customProps"
-                >
-                </v-text-field>
-              </template>
-              <span>A unique, unambigous reference to the artefact</span>
-            </v-tooltip>
-          </v-col> -->
           <v-col class=py-1 cols="12" sm="12" md="3">
             <v-tooltip top open-delay="700">
               <template v-slot:activator="{ on }">

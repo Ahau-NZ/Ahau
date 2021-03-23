@@ -1,17 +1,16 @@
 import { DELETE_ARTEFACT } from '@/lib/artefact-helpers'
 
 export const methods = {
-  async updateArtefacts (artefacts) {
-    this.formData.artefacts = await Promise.all(artefacts.map(async (artefact, i) => {
+  updateArtefacts (artefacts) {
+    this.formData.artefacts = artefacts.map((artefact, i) => {
       if (this.editing) {
         if (artefact.id) {
-          var oldArtefact = this.formData.artefacts[i]
-          Object.assign(oldArtefact, artefact)
+          Object.assign(this.formData.artefacts[i], artefact)
           return artefact
         }
       }
       return artefact
-    }))
+    })
   },
   removeItem (array, index) {
     array.splice(index, 1)
@@ -19,9 +18,7 @@ export const methods = {
   async deleteArtefact (id) {
     const res = await this.$apollo.mutate(DELETE_ARTEFACT(id, new Date()))
 
-    if (res.errors) {
-      throw res.errors
-    }
+    if (res.errors) throw res.errors
   },
   async removeArtefact (index) {
     if (this.editing) {

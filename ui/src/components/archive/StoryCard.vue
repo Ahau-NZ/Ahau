@@ -446,8 +446,8 @@ export default {
     ...mapMutations(['setStory']),
     ...mapActions(['setShowArtefact', 'toggleShowStory']),
     //  save artefact from showArtefact
-    async saveArtefact ($event) {
-      await this.updateArtefacts($event)
+    saveArtefact ($event) {
+      this.updateArtefacts($event)
       // get all changes
       var output = {
         id: this.story.id,
