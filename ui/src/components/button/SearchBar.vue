@@ -3,7 +3,7 @@
     v-model="searchString"
     :items="items"
     :menu-props=" { light: true } "
-    :append-icon="searchNodeId ? 'clear' : !searchFilter ? 'mdi-close' : ''"
+    :append-icon="searchNodeId ? 'mdi-cancel' : !searchFilter ? 'mdi-close' : ''"
     @click:append="searchNodeId ? clearSearchNodeId() : close()"
     placeholder="Search"
     :no-data-text="searchFilter ? '' : 'no suggestions'"
