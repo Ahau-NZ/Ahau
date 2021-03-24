@@ -207,12 +207,6 @@ export default {
       }
     }
   },
-  watch: {
-    '$route.name' (name) {
-      if (name === 'profile' && this.mobile) this.offset = 290
-      else if (name === 'profile') this.offset = 100
-    }
-  },
   methods: {
     ...mapActions(['toggleShowStory', 'setDialog']),
     goArchive () {
@@ -332,7 +326,7 @@ export default {
 
 .userMobile {
   position: absolute;
-  top: 330px;
+  top: 310px;
   width: 101.5%;
 }
 .archiveMobile {
