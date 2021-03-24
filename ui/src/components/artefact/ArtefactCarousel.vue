@@ -69,6 +69,7 @@ export default {
   },
   watch: {
     index (newValue) {
+      console.log('caurosel index:', newValue)
       this.selectedIndex = newValue
     },
     selectedIndex (n, o) {

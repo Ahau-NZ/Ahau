@@ -446,7 +446,7 @@
       :show="dialog === 'edit-artefact'"
       :index="index"
       :artefacts="formData.artefacts"
-      :editing="true"
+      editing
       @close="dialog = null"
       @delete="toggleDialog($event, 'delete')"
       @submit="updateArtefacts($event)"
@@ -540,6 +540,11 @@ export default {
         valid: true,
         rules: RULES
       }
+    }
+  },
+  watch: {
+    index (newVal) {
+      console.log('recordform index', newVal)
     }
   },
   mounted () {

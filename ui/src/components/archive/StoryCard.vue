@@ -282,7 +282,7 @@
         :show="dialog === 'edit-artefact'"
         :index="model"
         :artefacts="formData.artefacts"
-        :editing="true"
+        editing
         @close="finishEditing()"
         @delete="dialog = 'delete-artefact'"
         @submit="saveArtefact($event)"
@@ -433,6 +433,9 @@ export default {
           this.artefact = changes.artefacts.add[this.model].artefact
         }
       }
+    },
+    index (newVal) {
+      console.log('storycard index: ', newVal)
     },
     model (newVal) {
       // show artefact details when viewing in carousel
