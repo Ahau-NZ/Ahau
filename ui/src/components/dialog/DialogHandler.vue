@@ -489,15 +489,19 @@ export default {
               parent = id
 
               // load the parent profile
-              parentProfile = await this.getRelatives(parent)
+              var parentProfile = await this.getRelatives(parent)
 
+              // if they arent already a child
               if (!parentProfile.children.some(d => d.profile.id === child)) {
+                // then link them as a child
                 await this.createChildLink({
                   child,
                   parent,
                   ...relationshipAttrs
                 })
 
+                // reload the parents profile with the new changes
+                // this updates the selected profile too
                 parentProfile = await this.loadDescendants(parent)
               }
 
