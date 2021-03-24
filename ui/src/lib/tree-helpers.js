@@ -18,7 +18,9 @@ export default {
   addPartner,
   updatePartner,
   addChildToPartner,
-  deletePartnerNode
+  deletePartnerNode,
+
+  partners
 }
 
 function flatten (node) {
@@ -424,4 +426,50 @@ function find (nestedWhakapapa, node) {
   }
 
   return null
+}
+
+/*
+
+function: takes in a person and calculates the partners from the persons childrens other parents
+
+requirements:
+- partners should be ordered by childrens order of birth from left to right
+- the children of the partners should be ordered by order of birth as well
+- there should be no duplicates in the array
+- need to set the partners partners to the person
+- map childrens profiles to the ones from the person
+
+*/
+
+function partners (person) {
+  person.partners = person.partners.map(partner => {
+    // map the partners children
+    partner.children = partner.children.map(child => {
+      // get the childs profile
+      // can be in two formats profile {...} OR child { profile {...}}
+      const profile = child.profile ? child.profile : child
+
+      // check if the current child is a child of the person too and get their profile from there
+      const profileInPerson = person.children.find(c => c.id === profile.id)
+
+      if (profileInPerson) {
+        // if we found them, map them to this profile
+        return profileInPerson
+      }
+
+      // otherwise just map them to their profile
+      // note: these are step children and their relationship is ignored here
+      return profile
+    })
+
+    // map partners parents to their profiles
+    partner.parents = partner.parents.map(p => p.profile)
+
+    // add this person as a partner
+    partner.partners = [person] // note: we dont really care about the partners other partners because we dont need to load them yet
+    partner.siblings = [] // initialise their siblings (not needed yet
+
+    // return the new profile for the partner
+    return partner
+  })
 }

@@ -234,6 +234,7 @@ export default {
         var { id } = input
 
         if (!id) {
+          input.type = 'person'
           input.authors = {
             add: [
               input.recps.includes(this.whoami.personal.groupId)

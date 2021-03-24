@@ -380,8 +380,7 @@ export default {
               child = id
               parent = this.selectedProfile.id
 
-              var profile = await this.loadDescendants(child, '', [])
-              profile.parents[0] = this.selectedProfile
+              var profile = await this.loadDescendants(child)
 
               // add child to parent
               this.addChildToNestedWhakapapa({
@@ -395,13 +394,11 @@ export default {
               parent = id
 
               if (child === this.view.focus) {
-                var parentProfile = await this.loadDescendants(parent, '', [])
-
                 // in this case we're updating the top of the graph, we update view.focus to that new top parent
                 this.$emit('updateFocus', parent)
                 this.addParentToNestedWhakapapa({
                   child: this.selectedProfile,
-                  parent: parentProfile
+                  parent: profile
                 })
               } else {
                 // load the profile insteaad
@@ -426,7 +423,7 @@ export default {
               parent = this.selectedProfile.parents[0].id
               child = id
 
-              var profileSibling = await this.loadDescendants(child, '', [])
+              var profileSibling = await this.loadDescendants(child)
               profileSibling.parents[0] = this.selectedProfile.parents[0]
 
               // add child to parent
@@ -476,7 +473,7 @@ export default {
                 ...relationshipAttrs
               })
 
-              const profile = await this.loadDescendants(child, '', [])
+              const profile = await this.loadDescendants(child)
 
               profile.parents[0] = this.selectedProfile
 
@@ -492,17 +489,16 @@ export default {
               parent = id
 
               // load the parent profile
-              var parentProfile_ = await this.getRelatives(parent)
+              parentProfile = await this.getRelatives(parent)
 
-              if (!parentProfile_.children.some(d => d.profile.id === child)) {
+              if (!parentProfile.children.some(d => d.profile.id === child)) {
                 await this.createChildLink({
                   child,
                   parent,
                   ...relationshipAttrs
                 })
 
-                // load the profile again to get the new link
-                parentProfile_ = await this.getRelatives(parent)
+                parentProfile = await this.loadDescendants(parent)
               }
 
               if (child === this.view.focus) {
@@ -511,12 +507,12 @@ export default {
               } else {
                 this.addParentToNestedWhakapapa({
                   child: this.selectedProfile,
-                  parent: parentProfile_
+                  parent: parentProfile
                 })
 
                 // if the parent is the new head of the tree and is being added on a partner family line that update the tree
                 if (this.selectedProfile.parents.length === 1) {
-                  this.$emit('change-focus', parent)
+                  this.$emit('change-focus', parentProfile.id)
                 }
               }
               break
@@ -530,7 +526,7 @@ export default {
                 ...relationshipAttrs
               })
 
-              const profileSibling = await this.loadDescendants(child, '', [])
+              const profileSibling = await this.loadDescendants(child)
 
               profileSibling.parents[0] = this.selectedProfile.parents[0]
 
@@ -713,10 +709,7 @@ export default {
 
         // now we have the flatStore for the suggestions we need to filter out the records
         // so we cant add one that is already in the tree
-        records = records.filter(record => {
-          if (this.findInTree(record.id)) return false // dont include it
-          return true
-        })
+        records = records.filter(record => !this.findInTree(record.id))
 
         // hydrate all the left over records
         records = records.map(record => {
@@ -724,14 +717,8 @@ export default {
         })
       }
 
-      records = records.map(record => {
-        let obj = {}
-        let profile = record
-        obj = {
-          profile
-        }
-        return obj
-      })
+      records = records.map(profile => ({ profile }))
+
       // sets suggestions which is passed into the dialogs
       this.suggestions = Object.assign([], records)
     },

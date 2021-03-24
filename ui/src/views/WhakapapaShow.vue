@@ -337,7 +337,7 @@ export default {
       if (newFocus) {
         this.setLoading(true)
 
-        const nestedWhakapapa = await this.loadDescendants(newFocus, '', [])
+        const nestedWhakapapa = await this.loadDescendants(newFocus)
         this.setNestedWhakapapa(nestedWhakapapa)
         this.setRelationshipLinks(this.relationshipLinks)
 
@@ -461,93 +461,43 @@ export default {
       return result
     },
 
-    async loadDescendants (profileId, path, temp) {
-      // calls person.fetchPerson which gets info about this person from the db
+    async loadDescendants (profileId) {
+      // get the persons profile + links
       var person = await this.getRelatives(profileId)
 
       // make sure every person has a partners and siblings array
       person.partners = []
       person.siblings = []
 
-      person.path = path
-
       // filter out ignored profiles
       person.children = person.children.filter(this.isVisibleProfile)
       person.parents = person.parents.filter(this.isVisibleProfile)
 
-      // for each of my children
-      person.children = await Promise.all(person.children.map(async (child, i) => {
-        var childPath = `children[${i}]`
-        if (path) childPath = person.path + '.' + childPath
+      // map all links
+      person.children = this.sortChildrenByOrderOfBirth(person)
+      person.children = await this.mapChildren(person)
+      person.parents = await this.mapParents(person)
+      person.partners = this.mapPartners(person)
+      person.children = this.sortChildrenByPartner(person)
 
-        // load their descendants
-        const childProfile = await this.loadDescendants(child.profile.id, childPath, temp)
-        person = tree.getPartners(person, childProfile)
+      if (person.parents.length > 0) {
+        person.relationship = this.relationshipLinks.get(person.parents[0].id + '-' + person.id)
+      }
 
-        const r = tree.getRelationship(person, childProfile, child)
-        this.relationshipLinks.set(r.index, r.attrs)
-
-        return childProfile
-      }))
-
-      person.parents = await Promise.all(person.parents.map(async parent => {
-        if (parent.ghost) return parent
-        // load their profile
-        const parentProfile = await this.getRelatives(parent.profile.id)
-
-        // look at their children
-        person = tree.getSiblings(parentProfile, person)
-
-        const r = tree.getRelationship(parentProfile, person, parent)
-        this.relationshipLinks.set(r.index, r.attrs)
-        return parentProfile
-      }))
-
-      var orderedChildren = []
-
-      person.partners = await Promise.all(person.partners.map(async (partner, i) => {
-        var partnerPath = `partners[${i}]`
-        if (path) partnerPath = person.path + '.' + partnerPath
-        partner.path = partnerPath
-
-        partner.children = partner.children.map(child => {
-          const profile = child.profile ? child.profile : child
-
-          const exists = person.children.find(d => {
-            return d.id === profile.id
-          })
-
-          const alreadyInArray = person.children.some(c => c.id === profile.id)
-
-          if (exists && !alreadyInArray) {
-            orderedChildren.push({ ...profile, relationshipType: child.relationshipType })
-            return exists
-          }
-
-          return profile
-        })
-
-        // make sure the partners children are ordered by birth
-        partner.children = partner.children.sort((a, b) => {
-          return a.birthOrder - b.birthOrder
-        })
-
-        partner.parents = partner.parents.map(d => {
-          return d.profile
-        })
-
-        partner.partners = [person]
-        partner.siblings = []
-        return partner
-      }))
-
-      // sort the children by birthOrder first
-      person.children = person.children.sort((a, b) => {
-        return a.birthOrder - b.birthOrder
+      // if this person is the selected one, then we make sure we keep that profile up to date
+      if (this.selectedProfile && this.selectedProfile.id === person.id) this.updateSelectedProfile(person)
+      return person
+    },
+    sortChildrenByOrderOfBirth (person) {
+      return person.children.sort((a, b) => {
+        return a.profile.birthOrder - b.profile.birthOrder
       })
-
+    },
+    sortChildrenByPartner (person) {
       // sort the children by partner
       const filters = []
+
+      if (person.children.length === 0 || person.partners.length === 0) return person.children
 
       person.partners.forEach(({ id }) => {
         filters.push((child) => child.parents.some(p => p.id === id))
@@ -568,12 +518,67 @@ export default {
         person.children = arr
       }
 
-      if (person.parents.length > 0) {
-        person.relationship = this.relationshipLinks.get(person.parents[0].id + '-' + person.id)
-      }
+      return person.children
+    },
+    async mapChildren (person) {
+      return Promise.all(person.children.map(async child => {
+        // load their descendants
+        const childProfile = await this.loadDescendants(child.profile.id)
+        person = tree.getPartners(person, childProfile)
 
-      if (this.selectedProfile && this.selectedProfile.id === person.id) this.updateSelectedProfile(person)
-      return person
+        const r = tree.getRelationship(person, childProfile, child)
+        this.relationshipLinks.set(r.index, r.attrs)
+
+        return childProfile
+      }))
+    },
+    mapPartners (person) {
+      person.partners.map(partner => {
+        // map the partners children
+        partner.children = partner.children.map(child => {
+          // get the childs profile
+          // can be in two formats profile {...} OR child { profile {...}}
+          const profile = child.profile ? child.profile : child
+
+          // check if the current child is a child of the person too and get their profile from there
+          const profileInPerson = person.children.find(c => c.id === profile.id)
+
+          if (profileInPerson) {
+            // if we found them, map them to this profile
+            return profileInPerson
+          }
+
+          // otherwise just map them to their profile
+          // note: these are step children and their relationship is ignored here
+          return profile
+        })
+
+        // map partners parents to their profiles
+        partner.parents = partner.parents.map(p => p.profile)
+
+        // add this person as a partner
+        partner.partners = [person] // note: we dont really care about the partners other partners because we dont need to load them yet
+        partner.siblings = [] // initialise their siblings (not needed yet
+
+        // return the new profile for the partner
+        return partner
+      })
+
+      return person.partners
+    },
+    async mapParents (person) {
+      return Promise.all(person.parents.map(async parent => {
+        if (parent.ghost) return parent
+        // load their profile
+        const parentProfile = await this.getRelatives(parent.profile.id)
+
+        // look at their children
+        person = tree.getSiblings(parentProfile, person)
+
+        const r = tree.getRelationship(parentProfile, person, parent)
+        this.relationshipLinks.set(r.index, r.attrs)
+        return parentProfile
+      }))
     },
 
     openContextMenu ({ event, profile }) {
@@ -620,7 +625,7 @@ export default {
         var profileFound = await tree.find(this.nestedWhakapapa, profile)
         if (!profileFound) {
           // lets load descendants of them instead
-          let partner = await this.loadDescendants(profile, '', [])
+          let partner = await this.loadDescendants(profile)
           partner.isPartner = true
           console.warn('could potentially be loading a large amount of data')
           this.updateSelectedProfile(partner)

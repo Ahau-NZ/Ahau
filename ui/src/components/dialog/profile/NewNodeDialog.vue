@@ -263,6 +263,9 @@ export default {
         })
       }
       children = uniqby(children, 'linkId')
+      children = uniqby(children, 'profile.id')
+
+      console.log('suggested children', children)
 
       // eslint-disable-next-line no-return-assign
       return this.closeSuggestions = children
@@ -302,7 +305,10 @@ export default {
         })
       }
 
-      parents = uniqby(parents, 'realtionshipId')
+      parents = uniqby(parents, 'linkId')
+      parents = uniqby(parents, 'profile.id')
+
+      console.log('suggested parents', parents)
 
       // eslint-disable-next-line no-return-assign
       return this.closeSuggestions = parents
@@ -382,9 +388,9 @@ export default {
       if (newValue) {
         this.$emit('getSuggestions', null)
 
-        // hack: when there is no legal name and a selected profile, the clearable button doesnt how up
+        // hack: when there is no preferred name and a selected profile, the clearable button doesnt how up
         // doing this forces it to show
-        if (this.formData.preferredName === '' || this.formData.preferredName === null) this.formData.preferredName = getDisplayName(this.formData) || ' ' // take first name from legalname
+        if (this.formData.preferredName === '' || this.formData.preferredName === null) this.formData.preferredName = getDisplayName(this.formData)
       }
     }
   }

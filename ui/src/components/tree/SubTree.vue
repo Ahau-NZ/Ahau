@@ -118,7 +118,7 @@ export default {
             x,
             y,
             children: parent.children
-              .filter(partnerChild => this.children.some(rootChild => {
+              .filter(partnerChild => this.children && this.children.some(rootChild => {
                 if (!rootChild || !partnerChild) return false
                 return rootChild.data.id === partnerChild.id
               })) // filter out children who arent this nodes
@@ -149,10 +149,12 @@ export default {
         strokeWidth: settings.thickness
       }
 
+      const yOffset = this.root.y + (this.partners.length * settings.partner.spacing.y)
+
       return {
         id: 'GHOST',
         ghost: true,
-        children: children.map(({ data }) => this.mapChild({}, data, style))
+        children: children.map(({ data }) => this.mapChild({ y: yOffset }, data, style))
       }
     }
   },
@@ -187,7 +189,7 @@ export default {
         link: {
           style: {
             ...style, // inherits the style from the parent so the links are the same color
-            strokeDasharray: dashed ? 2.5 : 0
+            strokeDasharray: dashed ? 2.5 : 0 // for drawing a dashed link to represent adopted/whangai
           },
           d: settings.path( // for drawing a link from the parent to child
             {

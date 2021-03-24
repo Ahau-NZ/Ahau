@@ -82,11 +82,11 @@ export default {
   partner: {
     spacing: {
       x: 0, // TODO (later): set tree separation to use this value
-      y: 5
+      y: 3 // set to same as thickness
     }
   },
-  opacity: 0.3,
-  thickness: 5,
+  opacity: 0.8,
+  thickness: 3,
   branch: 120,
   radius: 50,
   separation: {
