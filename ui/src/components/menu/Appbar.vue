@@ -155,9 +155,6 @@ export default {
     showMobileBackButton ($event) {
       this.isMobileBackButton = $event
     },
-    resetWindow () {
-      window.scrollTo(0, 0)
-    },
     getNotifications () {
       this.polling = setInterval(() => {
         this.getAllNotifications()
