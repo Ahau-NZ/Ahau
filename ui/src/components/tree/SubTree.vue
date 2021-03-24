@@ -180,7 +180,8 @@ export default {
         y = yOffset - this.radius
       }
 
-      if (node.data.parents.length === 2 && node.data.siblings.length === 0) {
+      // change how the link looks when the person is the only child in the tree
+      if (node.data.parents.length === 2 && this.root.children.length === 1) {
         x = this.root.x
       }
 

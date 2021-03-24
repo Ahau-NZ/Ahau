@@ -390,11 +390,11 @@ export default {
     },
     // Used when adding top ancestor on a partner line & swapping between partner lines
     async changeFocus (profileId) {
+      this.updateDialog(null)
       const newFocus = await this.getWhakapapaHead(profileId, 'newAmountParents')
 
       this.setSelectedProfile(profileId)
       this.setFocus(newFocus)
-      this.updateDialog(null)
     },
     async getWhakapapaHead (profileId, type = 'temp') {
       if (this.whakapapaView.focus === profileId) return profileId
