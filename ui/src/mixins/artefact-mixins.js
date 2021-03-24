@@ -20,21 +20,20 @@ export const methods = {
     if (res.errors) throw res.errors
   },
   removeArtefact (index) {
-    console.log('removing artefact')
-    console.log('index: ', index)
-    // remove from the database
     var artefact = this.formData.artefacts[index]
 
     // remove from formData
     this.removeItem(this.formData.artefacts, index)
 
-    // check it has an id
+    // remove from dataBase
     if (artefact.id) {
-      console.log('deleteing artefact')
       this.deleteArtefact(artefact.id)
 
+      // remove from current story
+      console.log(this.story.id)
+      console.log(this.story.id)
       var output = {
-        id: this.story.id,
+        id: this.formData.id,
         ...getObjectChanges(setDefaultStory(this.story), this.formData)
       }
       this.$emit('submit', output)

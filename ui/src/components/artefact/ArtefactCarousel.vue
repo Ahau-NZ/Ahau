@@ -69,10 +69,10 @@ export default {
   },
   watch: {
     index (newValue) {
-      console.log('caurosel index:', newValue)
       this.selectedIndex = newValue
     },
     selectedIndex (n, o) {
+      console.log('caurosel index:', n)
       this.$emit('update:index', n)
     }
   },

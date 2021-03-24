@@ -209,7 +209,7 @@
           </v-col>
           <v-col v-if="artefact.blob.size" cols="12" sm="12" md="3" class="py-1 pt-2" >
             <v-list-item-subtitle class="pb-1" style="color:#a7a3a3">Size</v-list-item-subtitle>
-            <p style="color:white">{{ artefact.blob.size }}</p>
+            <p style="color:white">{{ size }}</p>
           </v-col>
           <v-col v-if="artefact.language" cols="12" sm="12" md="3" class="py-1 pt-2" >
             <v-list-item-subtitle class="pb-1" style="color:#a7a3a3">Language</v-list-item-subtitle>
@@ -280,7 +280,7 @@
       <NewArtefactDialog
         v-if="dialog === 'edit-artefact'"
         :show="dialog === 'edit-artefact'"
-        :index="model"
+        :index.sync="model"
         :artefacts="formData.artefacts"
         editing
         @close="finishEditing()"
@@ -317,6 +317,7 @@ import { deleteStory, setDefaultStory } from '@/lib/story-helpers.js'
 import { getTribalProfile } from '@/lib/community-helpers.js'
 import { dateIntervalToString, formatSubmissionDate } from '@/lib/date-helpers.js'
 import { getObjectChanges } from '@/lib/get-object-changes.js'
+import { convertBytes } from '@/lib/artefact-helpers.js'
 
 import { mapActions, mapGetters, mapMutations } from 'vuex'
 import mapProfileMixins from '@/mixins/profile-mixins.js'
@@ -362,8 +363,7 @@ export default {
       artefact: {},
       model: 0,
       dialog: null,
-      access: null,
-      index: 0
+      access: null
     }
   },
   async mounted () {
@@ -420,6 +420,10 @@ export default {
         else return 'disableCard recordView'
       }
       return 'rounded-border'
+    },
+
+    size () {
+      return convertBytes(this.artefact.blob.size)
     }
   },
   watch: {
@@ -434,14 +438,11 @@ export default {
         }
       }
     },
-    index (newVal) {
-      console.log('storycard index: ', newVal)
-    },
     model (newVal) {
+      console.log('stroyIndex: ', newVal)
       // show artefact details when viewing in carousel
       if (this.showArtefact) {
         this.artefact = this.story.artefacts[newVal].artefact
-        this.index = newVal
       }
     }
   },
