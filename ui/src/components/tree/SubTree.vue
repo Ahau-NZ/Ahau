@@ -181,7 +181,7 @@ export default {
       }
 
       if (node.data.parents.length === 2 && node.data.siblings.length === 0) {
-        node.x = x
+        x = this.root.x
       }
 
       return {

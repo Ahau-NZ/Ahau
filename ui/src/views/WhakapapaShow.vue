@@ -394,6 +394,7 @@ export default {
 
       this.setSelectedProfile(profileId)
       this.setFocus(newFocus)
+      this.updateDialog(null)
     },
     async getWhakapapaHead (profileId, type = 'temp') {
       if (this.whakapapaView.focus === profileId) return profileId
