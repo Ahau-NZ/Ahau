@@ -21,24 +21,21 @@ export const methods = {
   },
   removeArtefact (index) {
     var artefact = this.formData.artefacts[index]
-
     // remove from formData
     this.removeItem(this.formData.artefacts, index)
 
-    // remove from dataBase
-    if (artefact.id) {
+    if (artefact.id && this.story) {
+      // remove from dataBase
       this.deleteArtefact(artefact.id)
-
+      this.model--
       // remove from current story
-      console.log(this.story.id)
-      console.log(this.story.id)
       var output = {
-        id: this.formData.id,
+        id: this.story.id,
         ...getObjectChanges(setDefaultStory(this.story), this.formData)
       }
       this.$emit('submit', output)
-      if (this.formData.artefacts && this.formData.artefacts.length === 0) this.dialog = null
     }
+    if (this.formData.artefacts && this.formData.artefacts.length === 0) this.dialog = null
   }
 }
 

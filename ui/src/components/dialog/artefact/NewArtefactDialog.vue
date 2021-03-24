@@ -304,7 +304,6 @@ export default {
   },
   watch: {
     selectedIndex (newIndex) {
-      console.log('dialog index: ', newIndex)
       if (newIndex) this.artefact = this.formData[newIndex]
       this.$emit('update:index', newIndex)
     },
