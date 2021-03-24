@@ -4,7 +4,7 @@
     :items="items"
     :menu-props=" { light: true } "
     :append-icon="searchNodeId ? 'mdi-cancel' : !searchFilter ? 'mdi-close' : ''"
-    @click:append="searchNodeId ? clearSearchNodeId() : close()"
+    @click:append="close()"
     placeholder="Search"
     :no-data-text="searchFilter ? '' : 'no suggestions'"
     :search-input.sync="searchString"
@@ -121,12 +121,7 @@ export default {
       this.$emit('update:searchNodeName', data.preferredName || data.legalName)
       this.$emit('update:searchNodeId', data.id)
       this.$emit('searchNode', event)
-      this.$emit('close')
-    },
-    reset () {
-      this.searchString = ''
-      this.clearSearchNodeId()
-      this.$emit('close')
+      // this.$emit('close')
     },
     clearSearchNodeId () {
       this.$emit('update:searchNodeId', '')
