@@ -2,7 +2,6 @@ import { DELETE_ARTEFACT } from '@/lib/artefact-helpers'
 import { getObjectChanges } from '@/lib/get-object-changes.js'
 import { setDefaultStory } from '@/lib/story-helpers.js'
 
-
 export const methods = {
   updateArtefacts (artefacts) {
     this.formData.artefacts = artefacts.map((artefact, i) => {
@@ -25,7 +24,7 @@ export const methods = {
     console.log('index: ', index)
     // remove from the database
     var artefact = this.formData.artefacts[index]
-    
+
     // remove from formData
     this.removeItem(this.formData.artefacts, index)
 
@@ -40,9 +39,7 @@ export const methods = {
       }
       this.$emit('submit', output)
       if (this.formData.artefacts && this.formData.artefacts.length === 0) this.dialog = null
-
     }
-
   }
 }
 

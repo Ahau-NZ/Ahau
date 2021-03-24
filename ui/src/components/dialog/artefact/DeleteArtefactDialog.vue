@@ -19,7 +19,7 @@ import Dialog from '@/components/dialog/Dialog.vue'
 export default {
   props: {
     show: { type: Boolean, required: true },
-    index:  { type: Number, required: true }
+    index: { type: Number, required: true }
   },
   computed: {
     mobile () {
