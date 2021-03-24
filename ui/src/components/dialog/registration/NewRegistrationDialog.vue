@@ -47,6 +47,7 @@
               v-model="step"
               vertical
             >
+            <!-- STEP 1: Profile has basic profile information  -->
               <v-stepper-step
                 :complete="step > 1"
                 step="1"
@@ -80,13 +81,13 @@
                 </v-btn>
               </v-stepper-content>
 
+              <!-- STEP 2: Share Community information  -->
               <v-stepper-step
                 :complete="step > 2"
                 step="2"
                 :color="checkbox1 ? 'green' : 'black'"
               >
-                Share your information with the Community Kaitiaki
-                <small></small>
+                Share your information with the Community Members
               </v-stepper-step>
 
               <v-stepper-content step="2">
@@ -101,37 +102,105 @@
                     <strong>
                       <i>{{ formData.preferredName }}</i>
                     </strong>
-                    Community Kaitiaki
+                    community members
                   </v-card-text>
                   <ProfileCard :style="mobile ? 'margin: 10px;':'margin:20px'">
                     <template v-slot:content>
                       <v-row cols="12" class="pt-0">
                         <ProfileInfoItem
-                          :class="mobile ? 'bb':'br bb'"
+                          :class="mobile ? 'bb':' bb'"
                           smCols="12"
-                          mdCols="6"
-                          title="Date of birth"
-                          :value="dob"
+                          mdCols="12"
+                          title="Description"
+                          :value="personalProfile.description"
+                          class="pb-0"
                         />
                         <ProfileInfoItem
-                          :class="mobile ? 'bb':'bb'"
+                          :class="mobile ? 'bb':'bb br'"
                           smCols="12"
                           mdCols="6"
-                          title="Phone"
-                          :value="personalProfile.phone"
+                          title="Preferred Name"
+                          :value="personalProfile.preferredName"
+                          class="pb-0"
+                        />
+                        <ProfileInfoItem
+                          smCols="12"
+                          mdCols="6"
+                          title="Full Name"
+                          :value="personalProfile.legalName"
+                          class="pb-0 bb"
                         />
                         <ProfileInfoItem
                           :class="mobile ? 'bb':'br'"
                           smCols="12"
                           mdCols="6"
-                          title="Email"
-                          :value="personalProfile.email"
+                          title="Other names"
+                          :value="altNames"
+                          class="pb-0"
                         />
                         <ProfileInfoItem
                           smCols="12"
                           mdCols="6"
-                          title="Address"
-                          :value="personalProfile.address"
+                          title="Place of birth"
+                          :value="personalProfile.placeOfBirth"
+                          class="pb-0"
+                        />
+                      </v-row>
+                    </template>
+                  </ProfileCard>
+                  <ProfileCard :style="mobile ? 'margin: 10px;':'margin:20px'">
+                    <template v-slot:content>
+                      <v-row cols="12">
+                        <ProfileInfoItem
+                          :class="mobile ? 'bb':'bb br'"
+                          smCols="12"
+                          mdCols="6"
+                          title="Age"
+                          :value="age"
+                          class="pb-0"
+                        />
+                        <ProfileInfoItem
+                          smCols="12"
+                          mdCols="6"
+                          title="Profession"
+                          :value="personalProfile.profession"
+                          class="pb-0 bb"
+                        />
+                        <ProfileInfoItem
+                          :class="mobile ? 'bb':'br'"
+                          smCols="12"
+                          mdCols="6"
+                          title="Skills"
+                          :value="education"
+                          class="pb-0"
+                        />
+                        <ProfileInfoItem
+                          smCols="12"
+                          mdCols="6"
+                          title="Schools"
+                          :value="school"
+                          class="pb-0"
+                        />
+                      </v-row>
+                    </template>
+                  </ProfileCard>
+                  <ProfileCard :style="mobile ? 'margin: 10px;':'margin:20px'">
+                    <template v-slot:content>
+                      <v-row cols="12">
+                        <ProfileInfoItem
+                          :class="mobile ? 'bb':'br'"
+                          smCols="12"
+                          mdCols="6"
+                          title="City"
+                          :value="personalProfile.city"
+                          class="pb-0"
+                        />
+                        <ProfileInfoItem
+                          class="pb-0"
+                          smCols="12"
+                          mdCols="6"
+                          title="Country"
+                          :value="personalProfile.country"
                         />
                       </v-row>
                     </template>
@@ -140,12 +209,14 @@
                 <v-checkbox v-model="checkbox1" label="I Agree"/>
               </v-stepper-content>
 
+              <!-- STEP 3: Share Kaitiaki information  -->
               <v-stepper-step
                 :complete="step > 3"
                 step="3"
                 :color="checkbox2 ? 'green' : 'black'"
               >
-                Share your information with the Community Members
+                Share your information with the Community Kaitiaki
+                <small></small>
               </v-stepper-step>
 
               <v-stepper-content step="3">
@@ -160,51 +231,48 @@
                     <strong>
                       <i>{{ formData.preferredName }}</i>
                     </strong>
-                    Community Members
+                    community kaitiaki
                   </v-card-text>
                   <ProfileCard :style="mobile ? 'margin: 10px;':'margin:20px'">
                     <template v-slot:content>
                       <v-row cols="12" class="pt-0">
                         <ProfileInfoItem
-                          :class="mobile ? 'bb':' bb'"
-                          smCols="12"
-                          mdCols="12"
-                          title="Description"
-                          :value="personalProfile.description"
-                        />
-                        <ProfileInfoItem
-                          :class="mobile ? 'bb':'bb br'"
+                          :class="mobile ? 'bb':'br bb'"
                           smCols="12"
                           mdCols="6"
-                          title="Preferred Name"
-                          :value="personalProfile.preferredName"
+                          title="Date of birth"
+                          :value="dob"
+                          class="pb-0"
                         />
                         <ProfileInfoItem
                           :class="mobile ? 'bb':'bb'"
                           smCols="12"
                           mdCols="6"
-                          title="Full Name"
-                          :value="personalProfile.legalName"
+                          title="Phone"
+                          :value="personalProfile.phone"
+                          class="pb-0"
                         />
                         <ProfileInfoItem
-                        :class="mobile ? 'bb':'br'"
+                          :class="mobile ? 'bb':'br bb'"
                           smCols="12"
                           mdCols="6"
-                          title="City"
-                          :value="personalProfile.city"
-                        />
-                        <ProfileInfoItem
-                        :class="mobile ? 'bb':'br'"
-                          smCols="12"
-                          mdCols="6"
-                          title="Country"
-                          :value="personalProfile.country"
+                          title="Email"
+                          :value="personalProfile.email"
+                          class="pb-0"
                         />
                         <ProfileInfoItem
                           smCols="12"
                           mdCols="6"
-                          title="Profession"
-                          :value="personalProfile.profession"
+                          title="Address"
+                          :value="personalProfile.postCode"
+                          class="pb-0 bb"
+                        />
+                        <ProfileInfoItem
+                          smCols="12"
+                          mdCols="12"
+                          title="Address"
+                          :value="personalProfile.address"
+                          class="pb-0"
                         />
                       </v-row>
                     </template>
@@ -298,6 +366,7 @@ import Avatar from '@/components/Avatar.vue'
 import Dialog from '@/components/dialog/Dialog.vue'
 import ProfileCard from '@/components/profile/ProfileCard.vue'
 import ProfileInfoItem from '@/components/profile/ProfileInfoItem.vue'
+import calculateAge from '@/lib/calculate-age'
 
 import { getProfile } from '@/lib/profile-helpers.js'
 
@@ -375,6 +444,23 @@ export default {
   },
   computed: {
     ...mapGetters(['whoami']),
+    altNames () {
+      if (this.personalProfile.altNames) return this.personalProfile.altNames.join(', ')
+      return ''
+    },
+    education () {
+      if (this.personalProfile.education) return this.personalProfile.education.join('\n')
+      return ''
+    },
+    school () {
+      if (this.personalProfile.school) return this.personalProfile.school.join('\n')
+      return ''
+    },
+    age () {
+      var age = calculateAge(this.personalProfile.aliveInterval)
+      if (age === null) return ' '
+      return age.toString()
+    },
     length () {
       var name = ''
       if (this.profile.legalName) name = this.profile.legalName
