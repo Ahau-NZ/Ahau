@@ -54,7 +54,8 @@ export default {
   },
   props: {
     searchNodeId: String,
-    searchFilter: Boolean
+    searchFilter: Boolean,
+    searchNodeName: String
   },
   data () {
     return {
@@ -117,6 +118,7 @@ export default {
     setSearchNode (data, event) {
       this.searchString = data.preferredName
       this.activeNode = data
+      this.$emit('update:searchNodeName', data.preferredName || data.legalName)
       this.$emit('update:searchNodeId', data.id)
       this.$emit('searchNode', event)
       this.$emit('close')
