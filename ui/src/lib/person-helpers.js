@@ -16,6 +16,7 @@ export const PERMITTED_PERSON_PROPS = [
   'address',
   'city',
   'country',
+  'postCode',
   'email',
   'phone',
   'profession',
@@ -27,6 +28,9 @@ export const PERMITTED_PERSON_PROPS = [
   'placeOfBirth',
   'placeOfDeath',
   'buriedLocation',
+
+  'education',
+  'school',
 
   'recps'
 ]

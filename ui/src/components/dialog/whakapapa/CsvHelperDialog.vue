@@ -97,6 +97,7 @@
 </template>
 <script>
 import Dialog from '@/components/dialog/Dialog.vue'
+import { downloadCsv } from '@/lib/csv'
 
 export default {
   props: {
@@ -124,7 +125,8 @@ export default {
         { name: 'phone', description: 'Phone number, this can be any phone number (i.e. mobile, home or work)', formats: ['Text'] },
         { name: 'email', description: 'Email address', formats: ['Text'] },
         { name: 'address', description: 'Street address', formats: ['Text'] },
-        { name: 'city', description: 'Town, or City', formats: ['Text'] },
+        { name: 'city', description: 'City', formats: ['Text'] },
+        { name: 'postCode', description: 'Post Code', formats: ['Text'] },
         { name: 'country', description: 'Country', formats: ['Text'] },
         { name: 'profession', description: 'Current Profession', formats: ['Text'] }
       ]
@@ -139,16 +141,9 @@ export default {
     }
   },
   methods: {
+    downloadCsv,
     cordovaBackButton () {
       this.close()
-    },
-    downloadCsv () {
-      var csv = 'parentNumber,number,preferredName,legalName,gender,bornAt,placeOfBirth,deceased,diedAt,placeOfDeath,buriedLocation,birthOrder,relationshipType,profession,phone,email,address,city,country\n'
-      var hiddenElement = document.createElement('a')
-      hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(csv)
-      hiddenElement.target = '_blank'
-      hiddenElement.download = 'whakapapa.csv'
-      hiddenElement.click()
     },
     close () {
       this.$emit('close')

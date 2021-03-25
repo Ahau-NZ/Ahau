@@ -43,11 +43,15 @@
           <v-text-field v-model="formData.address" label="Address" v-bind="customProps" />
         </v-col>
         <v-col cols="12" sm="6" class="pa-1">
-          <!-- City, Country -->
+          <!-- City -->
           <v-text-field v-model="formData.city" label="City" v-bind="customProps" />
         </v-col>
         <v-col cols="12" sm="6" class="pa-1">
-          <!-- City, Country -->
+          <!-- Post Code -->
+          <v-text-field v-model="formData.postCode" label="Post Code" v-bind="customProps" />
+        </v-col>
+        <v-col cols="12" sm="6" class="pa-1">
+          <!-- Country -->
           <v-text-field v-model="formData.country" label="Country" v-bind="customProps" />
         </v-col>
         <v-col cols="12" sm="6" class="pa-1">

@@ -51,37 +51,35 @@
           <v-icon>mdi-close</v-icon>
         </v-btn>
       </v-app-bar>
-      <v-card-text :style="mobile ? 'overflow-x: hidden;' : `max-height: 650px; overflow-x: hidden;`" class="pa-3">
+      <v-card-text :style="mobile ? 'overflow-x: hidden;' : `max-height: 650px; overflow-x: hidden;`" class="pa-3 pb-0">
         <slot name="content"></slot>
       </v-card-text>
       <v-divider/>
       <v-card-actions v-if="!readonly" class="pa-0">
         <v-container class="py-0">
-          <v-row>
+          <v-row align="end">
             <v-col cols="12" md="auto" v-if="$slots['before-actions']" align="center" class="py-0">
               <slot name="before-actions"></slot>
             </v-col>
             <v-spacer v-if="!mobile"/>
             <slot name="actions">
-              <v-col cols="6" md="auto" :align="mobile ? 'center' : 'end'" class="py-0 pb-2 pb-md-0">
+              <v-col cols="6" md="auto" align="center">
                 <v-btn @click="close"
-                  :fab="!mobile"
-                  icon
+                  text
                   :large="!mobile"
                   class="secondary--text"
                 >
-                  <v-icon color="secondary">mdi-close</v-icon>
+                  Cancel
                 </v-btn>
               </v-col>
-              <v-col cols="6" md="auto" :align="mobile ? 'center' : 'end'" class="py-0">
+              <v-col cols="6" md="auto" align="center">
                 <v-btn @click="submit"
-                  :fab="!mobile"
-                  icon
                   :large="!mobile"
-                  class="blue--text"
+                  text
+                  color="blue"
                   :disabled="!allowSubmissions"
                 >
-                  <v-icon>mdi-check</v-icon>
+                  Save
                 </v-btn>
               </v-col>
             </slot>

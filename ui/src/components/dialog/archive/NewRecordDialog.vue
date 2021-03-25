@@ -15,7 +15,7 @@
     </template>
 
     <template v-if="access" v-slot:before-actions>
-      <AccessButton :access="access" @access="updateAccess" :disabled="editing" />
+      <AccessButton :access="access" @access="updateAccess" :disabled="editing" type="story" />
     </template>
   </Dialog>
 </template>

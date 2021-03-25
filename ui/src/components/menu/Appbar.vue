@@ -155,9 +155,6 @@ export default {
     showMobileBackButton ($event) {
       this.isMobileBackButton = $event
     },
-    resetWindow () {
-      window.scrollTo(0, 0)
-    },
     getNotifications () {
       this.polling = setInterval(this.getAllNotifications, 7e3)
     },
@@ -165,6 +162,7 @@ export default {
       await this.setWhoami()
     },
     goProfile (component) {
+      if (this.mobile && this.showStory) this.toggleShowStory()
       this.$router.push({
         name: 'person/' + component,
         params: {
@@ -172,6 +170,7 @@ export default {
           profileId: this.whoami.personal.profile.id
         }
       }).catch(() => {})
+      this.toggleDrawer()
     },
     karakiaWhakamutunga () {
       console.log(karakia)

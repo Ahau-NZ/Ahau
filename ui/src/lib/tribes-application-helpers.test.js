@@ -18,8 +18,8 @@ test('invalid profile props (empty profile)', t => {
     [
       { prop: 'Preferred Name or Full Name' },
       { prop: 'Date of Birth' },
-      { prop: 'Address' },
-      { prop: 'City, Country' }
+      { prop: 'City' },
+      { prop: 'Country' }
     ]
   )
 

@@ -66,79 +66,151 @@
               {{ notification.isPersonal ? 'Your' : (applicant.legalName || applicant.preferredName) + "'s" }} Information
             </v-expansion-panel-header>
             <v-expansion-panel-content>
-              <ProfileCard :style="mobile ? 'margin: 10px;':'margin:20px'">
-                <template v-slot:content>
-                  <v-row cols="12" class="pt-0">
-                    <ProfileInfoItem
-                      :class="mobile ? 'bb':'br bb'"
-                      smCols="12"
-                      mdCols="6"
-                      title="Date of birth"
-                      :value="dob"
-                    />
-                    <ProfileInfoItem
-                      :class="mobile ? 'bb':'bb'"
-                      smCols="12"
-                      mdCols="6"
-                      title="Phone"
-                      :value="applicant.phone"
-                    />
-                    <ProfileInfoItem
-                      :class="mobile ? 'bb':'br'"
-                      smCols="12"
-                      mdCols="6"
-                      title="Email"
-                      :value="applicant.email"
-                    />
-                    <ProfileInfoItem
-                      smCols="12"
-                      mdCols="6"
-                      title="Address"
-                      :value="applicant.address"
-                    />
-                  </v-row>
-                </template>
-              </ProfileCard>
-              <ProfileCard :style="mobile ? 'margin: 10px;':'margin:20px'">
-                <template v-slot:content>
-                  <v-row cols="12" class="pt-0">
-                    <ProfileInfoItem
-                      :class="mobile ? 'bb':' bb'"
-                      smCols="12"
-                      mdCols="12"
-                      title="Description"
-                      :value="applicant.description"
-                    />
-                    <ProfileInfoItem
-                      :class="mobile ? 'bb':'bb br'"
-                      smCols="12"
-                      mdCols="6"
-                      title="Preferred Name"
-                      :value="applicant.preferredName"
-                    />
-                    <ProfileInfoItem
-                      :class="mobile ? 'bb':'bb'"
-                      smCols="12"
-                      mdCols="6"
-                      title="Full Name"
-                      :value="applicant.legalName"
-                    />
-                    <ProfileInfoItem
-                      :class="mobile ? 'bb':'br'"
-                      smCols="12"
-                      mdCols="6"
-                      title="City/Country"
-                      :value="applicant.city + ', ' + applicant.country"
-                    />
-                    <ProfileInfoItem
-                      smCols="12"
-                      mdCols="6"
-                      title="Profession"
-                      :value="applicant.profession"
-                    />
-                  </v-row>
-                </template>
-              </ProfileCard>
+                 <ProfileCard :style="mobile ? 'margin: 10px;':'margin:20px'">
+                    <template v-slot:content>
+                      <v-row cols="12" class="pt-0">
+                        <ProfileInfoItem
+                          :class="mobile ? 'bb':'br bb'"
+                          smCols="12"
+                          mdCols="6"
+                          title="Date of birth"
+                          :value="dob"
+                          class="pb-0"
+                        />
+                        <ProfileInfoItem
+                          :class="mobile ? 'bb':'bb'"
+                          smCols="12"
+                          mdCols="6"
+                          title="Phone"
+                          :value="applicant.phone"
+                          class="pb-0"
+                        />
+                        <ProfileInfoItem
+                          :class="mobile ? 'bb':'br bb'"
+                          smCols="12"
+                          mdCols="6"
+                          title="Email"
+                          :value="applicant.email"
+                          class="pb-0"
+                        />
+                        <ProfileInfoItem
+                          smCols="12"
+                          mdCols="6"
+                          title="Address"
+                          :value="applicant.postCode"
+                          class="pb-0 bb"
+                        />
+                        <ProfileInfoItem
+                          smCols="12"
+                          mdCols="12"
+                          title="Address"
+                          :value="applicant.address"
+                          class="pb-0"
+                        />
+                      </v-row>
+                    </template>
+                  </ProfileCard>
+                      <ProfileCard :style="mobile ? 'margin: 10px;':'margin:20px'">
+                    <template v-slot:content>
+                      <v-row cols="12" class="pt-0">
+                        <ProfileInfoItem
+                          :class="mobile ? 'bb':' bb'"
+                          smCols="12"
+                          mdCols="12"
+                          title="Description"
+                          :value="applicant.description"
+                          class="pb-0"
+                        />
+                        <ProfileInfoItem
+                          :class="mobile ? 'bb':'bb br'"
+                          smCols="12"
+                          mdCols="6"
+                          title="Preferred Name"
+                          :value="applicant.preferredName"
+                          class="pb-0"
+                        />
+                        <ProfileInfoItem
+                          smCols="12"
+                          mdCols="6"
+                          title="Full Name"
+                          :value="applicant.legalName"
+                          class="pb-0 bb"
+                        />
+                        <ProfileInfoItem
+                          :class="mobile ? 'bb':'br'"
+                          smCols="12"
+                          mdCols="6"
+                          title="Other names"
+                          :value="altNames"
+                          class="pb-0"
+                        />
+                        <ProfileInfoItem
+                          smCols="12"
+                          mdCols="6"
+                          title="Place of birth"
+                          :value="applicant.placeOfBirth"
+                          class="pb-0"
+                        />
+                      </v-row>
+                    </template>
+                  </ProfileCard>
+                  <ProfileCard :style="mobile ? 'margin: 10px;':'margin:20px'">
+                    <template v-slot:content>
+                      <v-row cols="12">
+                        <ProfileInfoItem
+                          :class="mobile ? 'bb':'bb br'"
+                          smCols="12"
+                          mdCols="6"
+                          title="Age"
+                          :value="age"
+                          class="pb-0"
+                        />
+                        <ProfileInfoItem
+                          smCols="12"
+                          mdCols="6"
+                          title="Profession"
+                          :value="applicant.profession"
+                          class="pb-0 bb"
+                        />
+                        <ProfileInfoItem
+                          :class="mobile ? 'bb':'br'"
+                          smCols="12"
+                          mdCols="6"
+                          title="Profession"
+                          :value="education"
+                          class="pb-0"
+                        />
+                        <ProfileInfoItem
+                          smCols="12"
+                          mdCols="6"
+                          title="Profession"
+                          :value="school"
+                          class="pb-0"
+                        />
+                      </v-row>
+                    </template>
+                  </ProfileCard>
+                  <ProfileCard :style="mobile ? 'margin: 10px;':'margin:20px'">
+                    <template v-slot:content>
+                      <v-row cols="12">
+                        <ProfileInfoItem
+                          :class="mobile ? 'bb':'br'"
+                          smCols="12"
+                          mdCols="6"
+                          title="City"
+                          :value="applicant.city"
+                          class="pb-0"
+                        />
+                        <ProfileInfoItem
+                          class="pb-0"
+                          smCols="12"
+                          mdCols="6"
+                          title="Country"
+                          :value="applicant.country"
+                        />
+                      </v-row>
+                    </template>
+                  </ProfileCard>
             </v-expansion-panel-content>
           </v-expansion-panel>
           <v-expansion-panel v-if="notification.answers && notification.answers.length > 0" class="px-0">
@@ -219,6 +291,7 @@ import ProfileCard from '@/components/profile/ProfileCard.vue'
 import ProfileInfoItem from '@/components/profile/ProfileInfoItem.vue'
 import { dateIntervalToString } from '@/lib/date-helpers.js'
 import { acceptGroupApplication, declineGroupApplication } from '@/lib/tribes-application-helpers.js'
+import calculateAge from '@/lib/calculate-age'
 
 export default {
   name: 'ReviewRegistrationDialog',
@@ -274,6 +347,23 @@ export default {
         return formattedDate
       }
       return ' '
+    },
+    altNames () {
+      if (this.applicant.altNames) return this.applicant.altNames.join(', ')
+      return ''
+    },
+    education () {
+      if (this.applicant.education) return this.applicant.education.join('\n')
+      return ''
+    },
+    school () {
+      if (this.applicant.school) return this.applicant.school.join('\n')
+      return ''
+    },
+    age () {
+      var age = calculateAge(this.applicant.aliveInterval)
+      if (age === null) return ' '
+      return age.toString()
     },
     comments () {
       return this.notification.history.filter(d => d.type === 'comment')

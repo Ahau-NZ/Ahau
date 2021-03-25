@@ -40,12 +40,13 @@ function defaultData (input) {
     avatarImage: profile.avatarImage,
     description: profile.description,
     birthOrder: profile.birthOrder,
-    address: profile.address,
-    city: profile.city,
-    country: profile.country,
     email: profile.email,
     phone: profile.phone,
     deceased: profile.deceased,
+    address: profile.address,
+    city: profile.city,
+    country: profile.country,
+    postCode: profile.postCode,
     profession: profile.profession,
     placeOfBirth: profile.placeOfBirth,
     placeOfDeath: profile.placeOfDeath,
@@ -54,7 +55,9 @@ function defaultData (input) {
       currentState: clone(profile.altNames),
       add: [], // new altNames to add
       remove: [] // altNames to remove
-    }
+    },
+    education: profile.education,
+    school: profile.school
   }
 }
 

@@ -15,6 +15,7 @@ export const EMPTY_COMMUNITY = {
   address: null,
   city: null,
   country: null,
+  postCode: null,
   email: null,
   phone: null,
   joiningQuestions: []
@@ -29,9 +30,10 @@ export function setDefaultCommunity (newCommunity) {
     avatarImage: community.avatarImage,
     headerImage: community.headerImage,
     description: community.description,
+    address: community.address,
     city: community.city,
     country: community.country,
-    address: community.address,
+    postCode: community.postCode,
     email: community.email,
     phone: community.phone,
     joiningQuestions: community.joiningQuestions
@@ -48,13 +50,14 @@ export const PERMITTED_COMMUNITY_ATTRS = [
   'description',
   'email',
   'phone',
+  'address',
   'city',
   'country',
+  'postCode',
   'tombstone',
   'tiaki',
   'joiningQuestions',
   // private only attrs
-  'address',
   'recps'
 ]
 
@@ -68,8 +71,10 @@ export const PERMITTED_PUBLIC_COMMUNITY_ATTRS = [
   'description',
   'email',
   'phone',
+  'address',
   'city',
   'country',
+  'postCode',
   'tombstone',
   'tiaki',
   'joiningQuestions'
@@ -109,8 +114,10 @@ ${AUTHOR_FRAGMENT}
     phone
     canEdit
     recps
+    address
     city
     country
+    postCode
     joiningQuestions {
       type
       label

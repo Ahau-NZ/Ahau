@@ -158,6 +158,13 @@ export default {
     this.componentLoaded = true
     this.offset = this.$refs.sideNav.offsetTop - 50
   },
+  watch: {
+    '$route.name' (name) {
+      var route = name.split('/')
+      if (route[1] === 'profile' && this.mobile) this.offset = 260
+      else if (route[1] === 'profile') this.offset = 135
+    }
+  },
   computed: {
     ...mapGetters(['showStory', 'storeDialog', 'notifications', 'whoami']),
     activeComponent () {
@@ -205,12 +212,6 @@ export default {
         archiveMobile: this.mobile && this.activeComponent !== 'profile',
         sideNav: this.activeComponent !== 'profile'
       }
-    }
-  },
-  watch: {
-    '$route.name' (name) {
-      if (name === 'profile' && this.mobile) this.offset = 290
-      else if (name === 'profile') this.offset = 100
     }
   },
   methods: {
@@ -327,12 +328,12 @@ export default {
 
 .user {
   position: absolute;
-  top: 150px;
+  top: 185px;
 }
 
 .userMobile {
   position: absolute;
-  top: 330px;
+  top: 310px;
   width: 101.5%;
 }
 .archiveMobile {

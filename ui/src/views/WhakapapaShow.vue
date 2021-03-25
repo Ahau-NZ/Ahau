@@ -150,29 +150,7 @@
       </div>
     </v-container>
 
-    <vue-context ref="menu" class="px-0">
-      <li>
-        <a href="#" @click.prevent="updateDialog('view-edit-node', null)"  class="d-flex align-center px-4">
-          <img class="contextMenuIcon" :src="require('../assets/account-circle.svg')"/>
-          <p class="ma-0 pl-3">View Person</p>
-        </a>
-      </li>
-      <li v-for="(option, index) in contextMenuOpts" :key="index">
-        <a v-if="option.isPermitted" href="#" @click.prevent="updateDialog(option.dialog, option.type)" class="d-flex align-center px-4">
-          <v-icon v-if="option.icon==='mdi-delete'" class="contextMenuIcon">mdi-delete</v-icon>
-          <img v-else class="contextMenuIcon" :src="option.icon"/>
-          <p class="ma-0 pl-3">{{ option.title }}</p>
-        </a>
-
-        <!-- // TODO figure out how to grey out a list entry
-        <a v-else class="disabled-link d-flex align-center px-4">
-          <v-icon v-if="option.icon==='mdi-delete'" color="red" class="contextMenuIcon">mdi-delete</v-icon>
-          <img v-else class="contextMenuIcon" :src="option.icon"/>
-          <p class="ma-0 pl-3">{{ option.title }}</p>
-        </a>
-        -->
-      </li>
-    </vue-context>
+    <NodeMenu ref="menu" :view="whakapapaView" @open="updateDialog($event.dialog, $event.type)"/>
 
     <vue-context ref="sort" class="px-0">
       <li v-for="(field, i) in sortFields" :key="`sort-field-${i}`">
@@ -234,7 +212,8 @@ import { getTribalProfile } from '@/lib/community-helpers'
 import mapProfileMixins from '@/mixins/profile-mixins.js'
 
 import DialogHandler from '@/components/dialog/DialogHandler.vue'
-import findSuccessor from '@/lib/find-successor'
+
+import NodeMenu from '@/components/menu/NodeMenu.vue'
 
 import { mapGetters, mapActions, mapMutations } from 'vuex'
 
@@ -255,7 +234,8 @@ export default {
     Tree,
     VueContext,
     DialogHandler,
-    WhakapapaBanner
+    WhakapapaBanner,
+    NodeMenu
   },
   mixins: [
     mapProfileMixins({
@@ -328,69 +308,6 @@ export default {
         this.focus = newValue
       }
     },
-    canEdit () {
-      return this.selectedProfile && this.selectedProfile.canEdit
-    },
-    canAddSibling () {
-      if (!this.selectedProfile) return false
-
-      // if adding a sibling to the focus
-      return this.selectedProfile.id !== this.whakapapaView.focus
-    },
-    canDelete () {
-      if (!this.canEdit) return false
-
-      // not allowed to delete own profile
-      if (this.selectedProfile.id === this.whoami.public.profile.id) return false
-      if (this.selectedProfile.id === this.whoami.personal.profile.id) return false
-
-      // if deleting the focus (top ancestor)
-      if (this.selectedProfile.id === this.whakapapaView.focus) {
-        // can only proceed if can find a clear "successor" to be new focus
-        return Boolean(findSuccessor(this.selectedProfile))
-      }
-
-      return true
-    },
-    contextMenuOpts () {
-      return [
-        {
-          title: 'Add Parent',
-          dialog: 'new-node',
-          type: 'parent',
-          isPermitted: Boolean(this.selectedProfile),
-          icon: require('../assets/node-parent.svg')
-        },
-        // TODO: add button for adding partners
-        // {
-        //   title: 'Add Partner',
-        //   dialog: 'new-node',
-        //   type: 'partner',
-        //   isPermitted: Boolean(this.selectedProfile)
-        // },
-        {
-          title: 'Add Child',
-          dialog: 'new-node',
-          type: 'child',
-          isPermitted: Boolean(this.selectedProfile),
-          icon: require('../assets/node-child.svg')
-        },
-        {
-          title: 'Add Sibling',
-          dialog: 'new-node',
-          type: 'sibling',
-          isPermitted: this.canAddSibling,
-          icon: require('../assets/node-sibling.svg')
-        },
-        {
-          title: 'Delete Person',
-          dialog: 'delete-node',
-          type: null,
-          isPermitted: this.canDelete,
-          icon: 'mdi-delete'
-        }
-      ]
-    },
     sortFields () {
       return [
         {
@@ -412,8 +329,11 @@ export default {
         {
           name: 'City',
           value: 'city'
+        },
+        {
+          name: 'Country',
+          value: 'country'
         }
-        // add country
       ]
     }
   },
@@ -624,12 +544,10 @@ export default {
       return person
     },
 
-    // contextMenu //////////////////////////
-    // TODO - extract all this
     openContextMenu ({ event, profile }) {
       this.setSelectedProfile(profile)
-      if (this.dialog.view) {
-        this.toggleView()
+      if (this.dialog.active === 'view-edit-node') {
+        this.updateDialog(null, null)
       }
       this.$refs.menu.open(event)
     },

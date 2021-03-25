@@ -16,6 +16,7 @@ export const SharedProfileFieldsFragment = gql`
     address
     city
     country
+    postCode
     phone
     email
   }
@@ -46,6 +47,8 @@ export const PersonProfileFieldsFragment = gql`
     placeOfBirth
     placeOfDeath
     buriedLocation
+    education
+    school
   }
 `
 
