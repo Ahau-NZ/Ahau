@@ -1,1 +1,33 @@
-{"Blob":["BlobScuttlebutt","BlobHyper"],"_Entity":["CurrentIdentity","PublicIdentity","PersonalIdentity","Peer","Person","Video","Audio","Photo","Document","Story"],"GroupApplicationHistory":["GroupApplicationCommentHistory","GroupApplicationAnswerHistory","GroupApplicationDecisionHistory"],"Profile":["Person","Community"],"Artefact":["Video","Audio","Photo","Document"]}
+{
+  "Blob": [
+    "BlobScuttlebutt",
+    "BlobHyper"
+  ],
+  "_Entity": [
+    "CurrentIdentity",
+    "PublicIdentity",
+    "PersonalIdentity",
+    "Peer",
+    "Person",
+    "Video",
+    "Audio",
+    "Photo",
+    "Document",
+    "Story"
+  ],
+  "GroupApplicationHistory": [
+    "GroupApplicationCommentHistory",
+    "GroupApplicationAnswerHistory",
+    "GroupApplicationDecisionHistory"
+  ],
+  "Profile": [
+    "Person",
+    "Community"
+  ],
+  "Artefact": [
+    "Video",
+    "Audio",
+    "Photo",
+    "Document"
+  ]
+}

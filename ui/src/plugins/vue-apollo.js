@@ -1,10 +1,7 @@
 import Vue from 'vue'
 import VueApollo from 'vue-apollo'
-import { createUploadLink } from 'apollo-upload-client'
-import {
-  createApolloClient,
-  restartWebsockets
-} from 'vue-cli-plugin-apollo/graphql-client'
+import { createUploadLink } from 'apollo-upload-client' // partners with graphql-upload
+import { createApolloClient, restartWebsockets } from 'vue-cli-plugin-apollo/graphql-client'
 import { InMemoryCache } from 'apollo-cache-inmemory'
 
 import possibleTypes from './possibleTypes.json'
@@ -25,13 +22,6 @@ const AUTH_TOKEN = 'apollo-token'
 const httpEndpoint =
   process.env.VUE_APP_GRAPHQL_HTTP || `http://localhost:${env.graphql.port}/graphql`
 
-const httpLink = createUploadLink({
-  uri: httpEndpoint
-  // opts: {
-  //   mode: 'no-cors',
-  // },
-  // credentials: DEV ? "same-origin" : "include"
-})
 // Config
 const defaultOptions = {
   // You can use `https` for secure connection (recommended in production)
@@ -52,7 +42,13 @@ const defaultOptions = {
   // Override default apollo link
   // note: don't override httpLink here, specify httpLink options in the
   // httpLinkOptions property of defaultOptions.
-  link: httpLink
+  link: createUploadLink({
+    uri: httpEndpoint
+    // opts: {
+    //   mode: 'no-cors',
+    // },
+    // credentials: DEV ? "same-origin" : "include"
+  })
 
   // Override default cache
   // cache: myCache

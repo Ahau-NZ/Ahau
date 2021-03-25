@@ -22,7 +22,7 @@ export default {
   mixins: [uploadFile],
   data () {
     return {
-      artefacts: []
+      processing: 0
     }
   },
   computed: {
@@ -35,57 +35,50 @@ export default {
   },
   methods: {
     async processMediaFiles ($event) {
-      const { files } = $event.target
+      const files = Array.from($event.target.files)
+      this.processing = files.length
 
-      this.artefacts = await Promise.all(
-        Array.from(files).map(async file => {
+      const artefacts = await Promise.all(
+        files.map(async file => {
           var artefact = await this.processArtefact(file)
+          this.processing = this.processing - 1
           return artefact
         })
       )
 
-      this.artefacts = this.artefacts.filter(Boolean)
-
-      this.$emit('artefacts', this.artefacts)
+      this.$emit('artefacts', artefacts.filter(Boolean))
     },
     async processArtefact (file) {
-      // upload the file to ssb
+      // persist as an scuttlebutt/ hyper blob
       const blob = await this.uploadFile({ file, encrypt: true })
-
       if (blob === null) return null // means there was an error
 
       var [ type ] = file.type.split('/')
-      const [ name ] = file.name.split('.')
 
       if (type === 'image') type = 'photo'
       else if (type === 'application' || type === 'text') type = 'document'
 
-      // TODO: HACK until mimeType: Hello World gets solved
-      if (!blob.mimeType || blob.mimeType === 'Hello World') blob.mimeType = file.type
-
-      if (blob.__typename) delete blob.__typename
-
-      // WIP
-      // - put in place a Blob uri resolver
-      // - review render-media to see how that handles things
-
-      var createdAt = ''
-      if (file.lastModified) {
-        createdAt = new Date(file.lastModified).toISOString().slice(0, 10)
-      } else {
-        createdAt = Date.now().toISOString().slice(0, 10)
+      if (!blob.mimeType) blob.mimeType = file.type
+      if (blob.mimeType === 'Hello World') {
+        // TODO: HACK until mimeType: Hello World gets solved
+        blob.mimeType = file.type
       }
+      if (blob.__typename) delete blob.__typename
 
       return {
         type,
         blob,
-        title: name,
-        createdAt
+        title: file.name.split('.')[0],
+        createdAt: file.lastModified
+          ? new Date(file.lastModified).toISOString().slice(0, 10)
+          : Date.now().toISOString().slice(0, 10)
+
       }
     }
   }
 }
 </script>
+
 <style scoped>
 .add-label {
   text-align: center;

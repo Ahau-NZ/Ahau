@@ -159,9 +159,7 @@ export default {
       window.scrollTo(0, 0)
     },
     getNotifications () {
-      this.polling = setInterval(() => {
-        this.getAllNotifications()
-      }, 5e3)
+      this.polling = setInterval(this.getAllNotifications, 7e3)
     },
     async getCurrentIdentity () {
       await this.setWhoami()

@@ -32,7 +32,7 @@ fetch(`http://localhost:${env.graphql.port}/graphql`, {
       }
     })
 
-    fs.writeFile('./src/plugins/possibleTypes.json', JSON.stringify(possibleTypes), err => {
+    fs.writeFile('./src/plugins/possibleTypes.json', JSON.stringify(possibleTypes, null, 2), err => {
       if (err) {
         console.error('Error writing possibleTypes.json', err)
       } else {

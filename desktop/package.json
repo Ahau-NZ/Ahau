@@ -15,7 +15,7 @@
   "dependencies": {
     "ahau-env": "^2.0.0",
     "secret-stack": "^6.3.1",
-    "ssb-ahau": "^6.0.1",
+    "ssb-ahau": "^7.0.0",
     "ssb-ahoy": "^3.0.0",
     "ssb-artefact": "^3.2.0",
     "ssb-backlinks": "^2.1.1",
