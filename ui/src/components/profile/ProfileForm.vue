@@ -40,22 +40,34 @@
       <v-col cols="12" :sm="smScreen ? '12' : '6'" class="py-0">
         <v-spacer style="height:5%"></v-spacer>
         <v-row>
+          <!-- Full Name -->
+          <v-col cols="12" class="pa-1">
+            <slot name="search">
+              <v-text-field
+                v-model="formData.legalName"
+                :label="t('legalName')"
+                v-bind="customProps"
+                outlined
+              />
+            </slot>
+          </v-col>
           <!-- Preferred Name -->
           <v-col cols="12" class="pa-1 pt-4">
             <v-text-field
             v-model="formData.preferredName"
-            label="First name / known as"
+            :label="t('preferredName')"
             v-bind="customProps"
             outlined
             />
           </v-col>
         </v-row>
+
         <v-row>
           <!-- No longer living -->
           <v-col v-if="$route.name !== 'login'" :cols="sideViewCols" class="pt-0">
             <v-checkbox
               v-model="formData.deceased"
-              label="No longer living"
+              :label="t('notLiving')"
               hide-details
               v-bind="customProps"
               outlined
@@ -70,47 +82,62 @@
       <v-col  v-if="readonly" class="pa-1">
         <v-text-field
           v-model="formData.gender"
-          label="Gender"
+          :label="t('gender.title')"
           v-bind="customProps"
           outlined
         />
       </v-col>
       <!-- GENDER EDIT -->
       <v-col v-if="!readonly" class="pa-1">
-        <p class="text-field">Identifies as</p>
+        <p class="text-field">{{ t('identity') }}</p>
         <v-row>
           <!-- TANE -->
           <v-col :cols="smScreen ? '3' : '2'" class="pa-0">
             <div class="gender-button" @click="updateSelectedGender('male')">
-              <img ref="taneImg" :src="require('@/assets/tane-outlined.svg')" :class="smScreen ? 'gender-image-mobile':'gender-image'">
-              <p :class="smScreen ? 'sideView-gender-label-text text-field' : 'gender-label-text text-field'">Male</p>
+              <img ref="taneImg" :src="require('@/assets/tane-outlined.svg')" :class="smScreen ? 'gender-image-mobile': 'gender-image'">
+              <p :class="smScreen ? 'sideView-gender-label-text text-field' : 'gender-label-text text-field'">{{ t('gender.male') }}</p>
             </div>
           </v-col>
           <!-- WAHINE -->
           <v-col :cols="smScreen ? '3' : '2'" class="pa-0 ml-6">
             <div class="gender-button" @click="updateSelectedGender('female')">
               <img ref="wahineImg" :src="require('@/assets/wahine-outlined.svg')" :class="smScreen ? 'gender-image-mobile':'gender-image'">
-              <p :class="smScreen ? 'sideView-gender-label-text text-field' : 'gender-label-text text-field'">Female</p>
+              <p :class="smScreen ? 'sideView-gender-label-text text-field' : 'gender-label-text text-field'">{{ t('gender.female') }}</p>
             </div>
           </v-col>
           <!-- DIVERSE -->
           <v-col :cols="smScreen ? '3' : '2'" class="pa-0 ml-6">
             <div class="gender-button" @click="updateSelectedGender('other')">
               <img ref="otherImg" :src="require('@/assets/diverse-outlined.svg')" :class="smScreen ? 'gender-image-mobile':'gender-image'">
-              <p :class="smScreen ? 'sideView-gender-label-text text-field' : 'gender-label-text text-field'">Other</p>
+              <p :class="smScreen ? 'sideView-gender-label-text text-field' : 'gender-label-text text-field'">{{ t('gender.other') }}</p>
             </div>
           </v-col>
           <div class="gender-checkbox-unknown">
             <v-col  v-if="!readonly || formData.gender === 'unknown'" cols="3">
               <v-checkbox v-model="formData.gender"
-              value="unknown"
-              label="Unknown" :hide-details="true"
-              v-bind="customProps"
-              outlined
-              />
+                value="unknown"
+                :label="t('gender.unknown')" :hide-details="true"
+                v-bind="customProps"
+                outlined
+                />
             </v-col>
           </div>
         </v-row>
+
+        <!--
+          TODO!
+        <v-row v-if="!isSideViewDialog" class="gender-label-row">
+          <v-col class="pa-0">
+            <p class="gender-label-text text-field">{{ t('gender.male') }}</p>
+          </v-col>
+          <v-col class="pa-0">
+            <p class="gender-label-text text-field">{{ t('gender.female') }}</p>
+          </v-col>
+          <v-col class="pa-0">
+            <p class="gender-label-text text-field">{{ t('gender.other') }}</p>
+          </v-col>
+        </v-row>
+        -->
       </v-col>
     </v-row>
 
@@ -119,7 +146,7 @@
       <v-card-actions class="pt-2 pb-2 pr-5 pointer">
         <v-row @click="showAdvanced = !showAdvanced" class="clickable">
           <v-col>
-            <span class="pa-0 ma-0" style="font-weight:bold">Provide more information</span>
+            <span class="pa-0 ma-0" style="font-weight:bold">{{ t('moreInfo') }}</span>
           </v-col>
           <v-btn icon right>
             <v-icon>{{ showAdvanced ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
@@ -179,7 +206,7 @@
               />
             </v-col>
             <v-col>
-              <AddButton :align="'flex-end'" :justify="justifyBtn" :width="'50px'" label="Add another name" @click="addAltNameField" row/>
+              <AddButton :align="'flex-end'" :justify="justifyBtn" :width="'50px'" :label="t('addName')" @click="addAltNameField" row/>
             </v-col>
           </template>
         </v-row>
@@ -198,10 +225,8 @@
           <!-- Order of birth -->
           <v-col v-if="!readonly || formData.birthOrder" :cols="sideViewCols" :class="smScreen ? 'pa-1' : 'pa-1 mt-3'" >
             <v-text-field
-              v-model="formData.birthOrder"
-              type="number"
-              label="Order of birth"
-              min="1"
+              v-model="formData.profession"
+              :label="t('profession')"
               v-bind="customProps"
               outlined
               :height="smScreen ? '' : '82px'"
@@ -227,6 +252,33 @@
               outlined
             />
           </v-col>
+        </v-row>
+        <!-- Email, Address, Phone, Location -->
+        <v-row v-if="!formData.deceased">
+          <v-col cols="12" :sm="mobile ? '12' : '6'">
+            <!-- Email -->
+            <v-row>
+              <v-col cols="12" class="pa-1">
+                <v-text-field
+                  v-model="formData.email"
+                  :label="t('email')"
+                  v-bind="customProps"
+                  outlined
+                />
+              </v-col>
+            </v-row>
+            <!-- Phone -->
+            <v-row>
+              <v-col cols="12" class="pa-1">
+                <v-text-field
+                  v-model="formData.phone"
+                  :label="t('phone')"
+                  v-bind="customProps"
+                  outlined
+                />
+              </v-col>
+            </v-row>
+          </v-col>
           <template v-if="formData.deceased" >
             <v-col :cols="sideViewCols" :class="smScreen ? 'pa-1' : 'pa-1 mt-n7'">
               <v-text-field
@@ -251,7 +303,7 @@
             <!-- Description textarea -->
               <v-textarea
                 v-model="formData.description"
-                label="Description"
+                :label="t('description')"
                 v-bind="customProps"
                 no-resize
                 rows="4"
@@ -328,7 +380,7 @@
             <v-col :cols="sideViewCols" class="pa-1">
               <v-text-field
                 v-model="formData.email"
-                label="Email"
+                :label="t('email')"
                 v-bind="customProps"
                 outlined
               />
@@ -337,7 +389,7 @@
             <v-col :cols="sideViewCols" class="pa-1">
               <v-text-field
                 v-model="formData.phone"
-                label="Phone"
+                :label="t('phone')"
                 v-bind="customProps"
                 outlined
               />
@@ -351,7 +403,7 @@
             <v-col :cols="sideViewCols" class="pa-1">
               <v-text-field
                 v-model="formData.address"
-                label="Address"
+                :label="t('address')"
                 v-bind="customProps"
                 outlined
               />
@@ -360,7 +412,7 @@
             <v-col :cols="sideViewCols" class="pa-1">
               <v-text-field
                 v-model="formData.city"
-                label="City"
+                :label="t('city')"
                 v-bind="customProps"
                 outlined
               />
@@ -369,7 +421,7 @@
             <v-col :cols="sideViewCols" class="pa-1">
               <v-text-field
                 v-model="formData.postCode"
-                label="Post Code"
+                :label="t('postCode')"
                 v-bind="customProps"
                 outlined
               />
@@ -378,7 +430,7 @@
               <v-col :cols="sideViewCols" class="pa-1">
                 <v-text-field
                   v-model="formData.country"
-                  label="Country"
+                  :label="t('country')"
                   v-bind="customProps"
                   outlined
                 />
@@ -535,6 +587,9 @@ export default {
     },
     removeItem (array, index) {
       array.splice(index, 1)
+    },
+    t (key, vars) {
+      return this.$t('addPersonForm.' + key, vars)
     }
   }
 }
