@@ -5,7 +5,7 @@ import translations from '../translations'
 Vue.use(VueI18n)
 
 export default new VueI18n({
-  locale: 'mo', // we pick this in a smarter way in LanguagePicker.vue
+  locale: 'en', // we pick this in a smarter way in LanguagePicker.vue
   fallbackLocale: 'en',
   messages: translations
 })

@@ -123,21 +123,6 @@
             </v-col>
           </div>
         </v-row>
-
-        <!--
-          TODO!
-        <v-row v-if="!isSideViewDialog" class="gender-label-row">
-          <v-col class="pa-0">
-            <p class="gender-label-text text-field">{{ t('gender.male') }}</p>
-          </v-col>
-          <v-col class="pa-0">
-            <p class="gender-label-text text-field">{{ t('gender.female') }}</p>
-          </v-col>
-          <v-col class="pa-0">
-            <p class="gender-label-text text-field">{{ t('gender.other') }}</p>
-          </v-col>
-        </v-row>
-        -->
       </v-col>
     </v-row>
 
@@ -225,8 +210,10 @@
           <!-- Order of birth -->
           <v-col v-if="!readonly || formData.birthOrder" :cols="sideViewCols" :class="smScreen ? 'pa-1' : 'pa-1 mt-3'" >
             <v-text-field
-              v-model="formData.profession"
-              :label="t('profession')"
+               v-model="formData.birthOrder"
+              type="number"
+              :label="t('birthOrder')"
+              min="1"
               v-bind="customProps"
               outlined
               :height="smScreen ? '' : '82px'"
