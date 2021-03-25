@@ -327,10 +327,6 @@ export default {
           value: 'profession'
         },
         {
-          name: 'City',
-          value: 'city'
-        },
-        {
           name: 'Country',
           value: 'country'
         }
