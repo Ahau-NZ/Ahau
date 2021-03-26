@@ -64,13 +64,12 @@ export default {
           isPermitted: Boolean(this.selectedProfile),
           icon: require('@/assets/node-parent.svg')
         },
-        // TODO: add button for adding partners
-        // {
-        //   title: 'Add Partner',
-        //   dialog: 'new-node',
-        //   type: 'partner',
-        //   isPermitted: Boolean(this.selectedProfile)
-        // },
+        {
+          title: 'Add Partner',
+          dialog: 'new-node',
+          type: 'partner',
+          isPermitted: Boolean(this.selectedProfile)
+        },
         {
           title: 'Add Child',
           dialog: 'new-node',

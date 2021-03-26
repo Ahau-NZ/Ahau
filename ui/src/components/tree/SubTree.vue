@@ -6,6 +6,10 @@
         :link="partner.link"
       />
     </g>
+    <!-- <g v-for="child in children" :key="`partner-child-${child.data.id}`">
+      <Link v-if="child.link" :link="child.link" style="transition: 1s linear;"/>
+      <SubTree :root="child" :openMenu="openMenu" :changeFocus="changeFocus" :centerNode="centerNode" />
+    </g> -->
     <g v-for="partner in partners" :key="`partner-${partner.data.id}`">
       <g class="child-group">
         <g v-for="child in partner.children" :key="`partner-child-${child.data.id}`">
@@ -173,7 +177,7 @@ export default {
       const node = this.root.children.find(rootChild => child.id === rootChild.data.id)
 
       // change the link if they are not related by birth
-      const dashed = node.data.relationship.relationshipType !== 'birth'
+      const dashed = node.data.relationshipType !== 'birth'
 
       if (center) {
         x = x + (-sign * this.radius) - 10

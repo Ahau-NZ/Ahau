@@ -110,7 +110,7 @@ const methods = {
 
       if (res.errors) throw res.errors
 
-      return res.data.person
+      return res.data.profile
     } catch (err) {
       console.error('Something went wrong while fetching the profile: ', id)
       console.error(err)

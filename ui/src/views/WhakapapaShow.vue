@@ -377,7 +377,7 @@ export default {
       this.searchFilter = !this.searchFilter
     },
     isVisibleProfile (descendant) {
-      if (this.whakapapaView.ignoredProfiles) { return this.whakapapaView.ignoredProfiles.indexOf(descendant.profile.id) === -1 }
+      if (this.whakapapaView.ignoredProfiles) { return this.whakapapaView.ignoredProfiles.indexOf(descendant.id) === -1 }
     },
     updateDialog (dialog, type) {
       this.dialog.type = type
@@ -402,10 +402,10 @@ export default {
       const record = await this.getRelatives(profileId)
       if (
         !record || !record.parents || !record.parents.length ||
-        this.whakapapaView.ignoredProfiles.includes(record.parents[0].profile.id)
+        this.whakapapaView.ignoredProfiles.includes(record.parents[0].id)
       ) return profileId
 
-      return this.getWhakapapaHead(record.parents[0].profile.id, type)
+      return this.getWhakapapaHead(record.parents[0].id, type)
     },
     /*
       makes changes of a person to all their decendants
@@ -467,23 +467,20 @@ export default {
       var person = await this.getRelatives(profileId)
 
       // make sure every person has a partners and siblings array
-      person.partners = []
-      person.siblings = []
+      // person.partners = []
+      // person.siblings = []
 
       // filter out ignored profiles
-      person.children = person.children.filter(this.isVisibleProfile)
-      person.parents = person.parents.filter(this.isVisibleProfile)
+      // person.children = person.children.filter(this.isVisibleProfile)
+      // person.parents = person.parents.filter(this.isVisibleProfile)
 
       // map all links
-      person.children = this.sortChildrenByOrderOfBirth(person)
+      // person.children = this.sortChildrenByOrderOfBirth(person)
       person.children = await this.mapChildren(person)
-      person.parents = await this.mapParents(person)
-      person.partners = this.mapPartners(person)
-      person.children = this.sortChildrenByPartner(person)
 
-      if (person.parents.length > 0) {
-        person.relationship = this.relationshipLinks.get(person.parents[0].id + '-' + person.id)
-      }
+      // person.parents = await this.mapParents(person)
+      // person.partners = this.mapPartners(person)
+      // person.children = this.sortChildrenByPartner(person)
 
       // if this person is the selected one, then we make sure we keep that profile up to date
       if (this.selectedProfile && this.selectedProfile.id === person.id) this.updateSelectedProfile(person)
@@ -523,13 +520,10 @@ export default {
     },
     async mapChildren (person) {
       return Promise.all(person.children.map(async child => {
-        // load their descendants
-        const childProfile = await this.loadDescendants(child.profile.id)
-        person = tree.getPartners(person, childProfile)
-
-        const r = tree.getRelationship(person, childProfile, child)
-        this.relationshipLinks.set(r.index, r.attrs)
-
+        var childProfile = await this.loadDescendants(child.id)
+        // copy over the relationship attrs
+        childProfile.relationshipType = child.relationshipType
+        childProfile.legallyAdopted = child.legallyAdopted
         return childProfile
       }))
     },
@@ -571,7 +565,7 @@ export default {
       return Promise.all(person.parents.map(async parent => {
         if (parent.ghost) return parent
         // load their profile
-        const parentProfile = await this.getRelatives(parent.profile.id)
+        const parentProfile = await this.getRelatives(parent.id)
 
         // look at their children
         person = tree.getSiblings(parentProfile, person)

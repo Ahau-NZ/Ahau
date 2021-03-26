@@ -359,202 +359,147 @@ export default {
         })
       }
     },
-    async addPerson ($event) {
-      try {
-        var { id } = $event
+    async addPerson (input) {
+      var { id } = input
 
-        if (this.view.ignoredProfiles.includes(id)) {
-          const input = {
-            id: this.$route.params.whakapapaId,
-            ignoredProfiles: {
-              remove: [id]
+      id = await this.createNewPerson(input)
+      const ignored = await this.removeIgnoredProfile(id)
+
+      const relationshipAttrs = pick(input, [
+        'relationshipType',
+        'legallyAdopted'
+      ])
+
+      switch (this.dialogType) {
+        case 'child':
+        case 'sibling':
+          var child = id
+          var parentProfile = this.dialogType === 'child'
+            ? this.selectedProfile
+            : this.selectedProfile.parents[0] // for siblings we take the first parent
+
+          if (!ignored) {
+            // create the link
+            await this.createChildLink({
+              child,
+              parent: parentProfile.id,
+              relationshipAttrs
+            })
+          }
+
+          // load the childs profile
+          var childProfile = await this.loadDescendants(child)
+
+          // copy over the parents profile
+          childProfile.parents[0] = parentProfile
+
+          // copy over the relationship
+          childProfile = {
+            ...childProfile,
+            ...relationshipAttrs
+          }
+
+          // add the child to the parent in the nested whakapapa
+          this.addChildToNestedWhakapapa({
+            child: childProfile,
+            parent: parentProfile
+          })
+          break
+
+        case 'parent':
+          child = this.selectedProfile.id
+          var parent = id
+
+          if (!ignored) {
+            await this.createChildLink({
+              child,
+              parent,
+              relationshipAttrs
+            })
+          }
+
+          if (child === this.view.focus) {
+            this.$emit('updateFocus', parent)
+          } else {
+            parentProfile = await this.getRelatives(parent)
+
+            this.addParentToNestedWhakapapa({
+              child: this.selectedProfile,
+              parent: parentProfile,
+              relationshipAttrs
+            })
+
+            if (this.selectedProfile.parents.length === 1) {
+              this.$emit('change-focus', parentProfile.id)
             }
           }
-          await this.saveWhakapapa(input)
-          this.$emit('refreshWhakapapa')
+          break
+        case 'partner':
+          parent = this.selectedProfile.id
+          child = id
 
-          let child, parent
-
-          switch (this.dialogType) {
-            case 'child':
-              child = id
-              parent = this.selectedProfile.id
-
-              var profile = await this.loadDescendants(child)
-
-              // add child to parent
-              this.addChildToNestedWhakapapa({
-                child: profile,
-                parent: this.selectedProfile
-              })
-
-              break
-            case 'parent':
-              child = this.selectedProfile.id
-              parent = id
-
-              if (child === this.view.focus) {
-                // in this case we're updating the top of the graph, we update view.focus to that new top parent
-                this.$emit('updateFocus', parent)
-                this.addParentToNestedWhakapapa({
-                  child: this.selectedProfile,
-                  parent: profile
-                })
-              } else {
-                // load the profile insteaad
-                const profile = await this.getRelatives(parent)
-                if (profile.children.length === 1) {
-                  profile.children[0] = this.selectedProfile
-                }
-
-                this.addParentToNestedWhakapapa({
-                  child: this.selectedProfile,
-                  parent: profile
-                })
-
-                // if the parent is the new head of the tree and is being added on a partner family line that update the tree
-                if (this.selectedProfile.parents.length === 1) {
-                  this.$emit('change-focus', profile.id)
-                }
-              }
-              break
-            case 'sibling':
-              if (!this.selectedProfile.parents) break
-              parent = this.selectedProfile.parents[0].id
-              child = id
-
-              var profileSibling = await this.loadDescendants(child)
-              profileSibling.parents[0] = this.selectedProfile.parents[0]
-
-              // add child to parent
-              this.addChildToNestedWhakapapa({
-                child: profileSibling,
-                parent: this.selectedProfile.parents[0]
-              })
-              break
-            case 'partner':
-              // TODO: add functions for adding partners
-              console.error('cannot add partners yet')
-              break
-            default:
-              console.error('Add person was unsuccessful. Could not detect the relationship type')
+          // create the link
+          if (!ignored) {
+            await this.createPartnerLink({
+              parent,
+              child
+            })
           }
 
-          return
-        } else {
-          // if person doesnt exist create one
-          if (!id) {
-            $event.type = 'person'
-            $event.authors = {
-              add: [
-                $event.recps.includes(this.whoami.personal.groupId)
-                  ? this.whoami.public.feedId // set it to my own feedId, making only i can edit
-                  : '*' // set it to allow all authors
-              ]
-            }
-            // set the authors
-            id = await this.createPerson($event)
-            if (!id) return
-          }
+          // TODO: figure out how to reload the whakapapa here
+          console.error('no reload when adding a partner, please refresh the page instead')
 
-          let child, parent
-          const relationshipAttrs = pick($event, [
-            'relationshipType',
-            'legallyAdopted'
-          ])
-
-          switch (this.dialogType) {
-            case 'child':
-              child = id
-              parent = this.selectedProfile.id
-              await this.createChildLink({
-                child,
-                parent,
-                ...relationshipAttrs
-              })
-
-              const profile = await this.loadDescendants(child)
-
-              profile.parents[0] = this.selectedProfile
-
-              // add child to parent
-              this.addChildToNestedWhakapapa({
-                child: profile,
-                parent: this.selectedProfile
-              })
-
-              break
-            case 'parent':
-              child = this.selectedProfile.id
-              parent = id
-
-              // load the parent profile
-              var parentProfile = await this.getRelatives(parent)
-
-              // if they arent already a child
-              if (!parentProfile.children.some(d => d.profile.id === child)) {
-                // then link them as a child
-                await this.createChildLink({
-                  child,
-                  parent,
-                  ...relationshipAttrs
-                })
-
-                // reload the parents profile with the new changes
-                // this updates the selected profile too
-                parentProfile = await this.loadDescendants(parent)
-              }
-
-              if (child === this.view.focus) {
-                // in this case we're updating the top of the graph, we update view.focus to that new top parent
-                this.$emit('updateFocus', parent)
-              } else {
-                this.addParentToNestedWhakapapa({
-                  child: this.selectedProfile,
-                  parent: parentProfile
-                })
-
-                // if the parent is the new head of the tree and is being added on a partner family line that update the tree
-                if (this.selectedProfile.parents.length === 1) {
-                  this.$emit('change-focus', parentProfile.id)
-                }
-              }
-              break
-            case 'sibling':
-              if (!this.selectedProfile.parents) break
-              parent = this.selectedProfile.parents[0].id
-              child = id
-              await this.createChildLink({
-                child,
-                parent,
-                ...relationshipAttrs
-              })
-
-              const profileSibling = await this.loadDescendants(child)
-
-              profileSibling.parents[0] = this.selectedProfile.parents[0]
-
-              // add child to parent
-              this.addChildToNestedWhakapapa({
-                child: profileSibling,
-                parent: this.selectedProfile.parents[0]
-              })
-              break
-            case 'partner':
-              // TODO: add functions for adding partners
-              console.error('cannot add partners yet')
-              break
-            default:
-              console.error('not built')
-          }
-        }
-      } catch (err) {
-        throw err
+          break
+        default:
+          console.error('TODO')
       }
     },
 
-    async createChildLink (input) {
-      input.type = 'link/profile-profile/child'
+    async createNewPerson (input) {
+      // if there is an id, we dont need to create, just return the id
+      if (input.id) return input.id
+
+      // setup new profile required fields
+      input.type = 'person'
+      input.authors = {
+        add: [
+          input.recps.includes(this.whoami.personal.groupId) // if its my personal group
+            ? this.whoami.public.feedId // encrypt to my feedId
+            : '*' // otherwise allow all authors
+        ]
+      }
+
+      // create the person and return their id
+      return this.createPerson(input)
+    },
+
+    async removeIgnoredProfile (id) {
+      if (!this.view.ignoredProfiles.includes(id)) return false
+
+      const input = {
+        id: this.$route.params.whakapapaId,
+        ignoredProfiles: {
+          remove: [id]
+        }
+      }
+
+      await this.saveWhakapapa(input)
+      this.$emit('refreshWhakapapa')
+
+      return true
+    },
+
+    async createChildLink ({ child, parent, relationshipAttrs }) {
+      await this.saveLink({
+        type: 'link/profile-profile/child',
+        child,
+        parent,
+        recps: this.view.recps,
+        ...relationshipAttrs
+      })
+    },
+    async createPartnerLink (input) {
+      input.type = 'link/profile-profile/partner'
       input.recps = this.view.recps
 
       await this.saveLink(input)
@@ -701,12 +646,12 @@ export default {
 
         records.forEach(record => {
           record.children = record.children.map(child => {
-            profiles[child.profile.id] = child.profile // add this records children to the flatStore
-            return child.profile.id // only want the childs ID
+            profiles[child.id] = child // add this records children to the flatStore
+            return child.id // only want the childs ID
           })
           record.parents = record.parents.map(parent => {
-            profiles[parent.profile.id] = parent.profile // add this records parents to the flatStore
-            return parent.profile.id // only want the parents ID
+            profiles[parent.id] = parent // add this records parents to the flatStore
+            return parent.id // only want the parents ID
           })
           profiles[record.id] = record // add this record to the flatStore
         })
@@ -720,8 +665,6 @@ export default {
           return tree.hydrate(record, profiles) // needed to hydrate to fix all dates
         })
       }
-
-      records = records.map(profile => ({ profile }))
 
       // sets suggestions which is passed into the dialogs
       this.suggestions = Object.assign([], records)

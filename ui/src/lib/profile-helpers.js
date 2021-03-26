@@ -53,8 +53,7 @@ export const PersonProfileFieldsFragment = gql`
 `
 
 export const PersonProfileLinkFragment = gql`
-  fragment PersonProfileLink on WhakapapaLink {
-    linkId
+  fragment PersonProfileLink on Person {
     relationshipType
     legallyAdopted
   }
@@ -85,28 +84,27 @@ export const AllProfileFieldsFragment = gql`
     ...on Person {
       ...PersonProfileFields
       children {
-        profile {
-          ...PersonProfileFields
-          parents {
-            profile {
-              ...PersonProfileFields
-            }
-            ...PersonProfileLink
-          }
-        }
+        ...PersonProfileFields
         ...PersonProfileLink
       }
       parents {
-        profile {
-          ...PersonProfileFields
-          children {
-            profile {
-              ...PersonProfileFields
-            }
-            ...PersonProfileLink
-          }
-        }
+        ...PersonProfileFields
         ...PersonProfileLink
+      }
+      partners {
+        ...PersonProfileFields
+        ...PersonProfileLink
+        children {
+          ...PersonProfileFields
+          ...PersonProfileLink
+        }
+        parents {
+          ...PersonProfileFields
+          ...PersonProfileLink
+        }
+      }
+      siblings {
+        ...PersonProfileFields
       }
     }
   }
