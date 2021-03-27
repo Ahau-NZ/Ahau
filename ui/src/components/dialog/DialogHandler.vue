@@ -446,9 +446,11 @@ export default {
             })
           }
 
+          var partnerProfile = await this.getRelatives(child)
+
           // TODO: figure out how to reload the whakapapa here
           console.error('no reload when adding a partner, please refresh the page instead')
-
+          this.addPartnerToNestedWhakapapa({ node: this.selectedProfile, partner: partnerProfile })
           break
         default:
           console.error('TODO')

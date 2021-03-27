@@ -377,36 +377,45 @@ function addChildToPartner (nestedWhakapapa, child, partner) {
 
 function addParent (nestedWhakapapa, child, parent) {
   if (!nestedWhakapapa) return null
+
   if (nestedWhakapapa.id === child.id) {
     nestedWhakapapa.parents.push(parent)
     return nestedWhakapapa
   }
 
-  var found = false
+  // var found = false
   nestedWhakapapa.children = nestedWhakapapa.children.map(c => {
-    if (c.id === child.id) found = true
+    // if (c.id === child.id) found = true
     return addParent(c, child, parent)
   })
 
-  if (found) {
-    if (nestedWhakapapa.partners.length === 0) nestedWhakapapa.partners.push(parent)
-    else {
-      if (!nestedWhakapapa.partners.some(p => p.id === parent.id)) {
-        nestedWhakapapa.partners.push(parent)
-      }
-    }
-  }
+  // if (found) {
+  //   if (nestedWhakapapa.partners.length === 0) nestedWhakapapa.partners.push(parent)
+  //   else {
+  //     if (!nestedWhakapapa.partners.some(p => p.id === parent.id)) {
+  //       nestedWhakapapa.partners.push(parent)
+  //     }
+  //   }
+  // }
 
   return nestedWhakapapa
 }
 
 function addPartner (nestedWhakapapa, node, partner) {
   if (!nestedWhakapapa) return null
+
   if (nestedWhakapapa.id === node.id) {
-    if (!nestedWhakapapa.partners) nestedWhakapapa.partners = []
     nestedWhakapapa.partners.push(partner)
     return nestedWhakapapa
   }
+
+  // search the children until we find the node
+  nestedWhakapapa.children = nestedWhakapapa.children.map(c => {
+    return addPartner(c, node, partner)
+  })
+
+  // var found = false
+  // nestedWhakapapa.chil
 
   // TODO: do we need to add this partner to anyone else
 
