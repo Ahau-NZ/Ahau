@@ -141,9 +141,22 @@ export default {
         })
     },
     ghostPartner () {
-      const [children] = pileSort(
+      const [children, otherChildren] = pileSort(
         this.root.children || [],
-        [(child) => child.data.parents.length === 1] // all children that this node is the only parent of
+        [
+          (child) => child.data.parents.length === 1, // all children that this node is the only parent of
+          (child) => {
+            return (
+              child.data.parents.length > 1 && // the child has two or more parents
+              //  none of their other parents are a partner of the root node
+              !child.data.parents.some(parent => {
+                return this.partners.some(partner => {
+                  return partner.data.id === parent.id
+                })
+              })
+            )
+          }
+        ]
       )
 
       const style = {
@@ -158,7 +171,7 @@ export default {
       return {
         id: 'GHOST',
         ghost: true,
-        children: children.map(({ data }) => this.mapChild({ y: yOffset }, data, style))
+        children: [...children, ...otherChildren].map(({ data }) => this.mapChild({ y: yOffset }, data, style))
       }
     }
   },
