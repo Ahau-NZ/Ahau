@@ -471,8 +471,9 @@ export default {
       // person.siblings = []
 
       // filter out ignored profiles
-      // person.children = person.children.filter(this.isVisibleProfile)
-      // person.parents = person.parents.filter(this.isVisibleProfile)
+      person.children = person.children.filter(this.isVisibleProfile)
+      person.parents = person.parents.filter(this.isVisibleProfile)
+      person.partners = person.partners.filter(this.isVisibleProfile)
 
       // map all links
       // person.children = this.sortChildrenByOrderOfBirth(person)

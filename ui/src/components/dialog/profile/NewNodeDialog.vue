@@ -300,8 +300,10 @@ export default {
 
         // get suggestions from the parents partners
         this.selectedProfile.parents.forEach(parent => {
+          if (!parent.partners) return
+
           parent.partners.forEach(partner => {
-            if (!currentParents[partner.id] && !parent.includes(partner)) {
+            if (!currentParents[partner.id] && !parents.includes(partner)) {
               parents.push(partner)
             }
           })
