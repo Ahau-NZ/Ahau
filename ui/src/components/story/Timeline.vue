@@ -50,7 +50,7 @@
             class="px-8 subtitle-1 grey--text "
             :class="{ 'text-center': mobile }"
           >
-            No stories found in this profile. Please add a story to this profile via Archive
+            Sorry we couldn't find any stories that have a date recorded. Please add a date to a story to view in the timeline
           </div>
         </div>
       </v-col>
