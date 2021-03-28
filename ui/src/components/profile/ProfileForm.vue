@@ -40,17 +40,6 @@
       <v-col cols="12" :sm="smScreen ? '12' : '6'" class="py-0">
         <v-spacer style="height:5%"></v-spacer>
         <v-row>
-          <!-- Full Name -->
-          <v-col cols="12" class="pa-1">
-            <slot name="search">
-              <v-text-field
-                v-model="formData.legalName"
-                :label="t('legalName')"
-                v-bind="customProps"
-                outlined
-              />
-            </slot>
-          </v-col>
           <!-- Preferred Name -->
           <v-col cols="12" class="pa-1 pt-4">
             <v-text-field
@@ -242,30 +231,6 @@
         </v-row>
         <!-- Email, Address, Phone, Location -->
         <v-row v-if="!formData.deceased">
-          <v-col cols="12" :sm="mobile ? '12' : '6'">
-            <!-- Email -->
-            <v-row>
-              <v-col cols="12" class="pa-1">
-                <v-text-field
-                  v-model="formData.email"
-                  :label="t('email')"
-                  v-bind="customProps"
-                  outlined
-                />
-              </v-col>
-            </v-row>
-            <!-- Phone -->
-            <v-row>
-              <v-col cols="12" class="pa-1">
-                <v-text-field
-                  v-model="formData.phone"
-                  :label="t('phone')"
-                  v-bind="customProps"
-                  outlined
-                />
-              </v-col>
-            </v-row>
-          </v-col>
           <template v-if="formData.deceased" >
             <v-col :cols="sideViewCols" :class="smScreen ? 'pa-1' : 'pa-1 mt-n7'">
               <v-text-field
