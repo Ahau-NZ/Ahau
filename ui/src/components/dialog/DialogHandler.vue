@@ -421,13 +421,14 @@ export default {
           if (child === this.view.focus) {
             this.$emit('updateFocus', parent)
           } else {
-            parentProfile = await this.getRelatives(parent)
+            // BUG here: needs to check if we are loading
+            if (this.selectedProfile.parents && this.selectedProfile.parents.length > 0) {
+              parentProfile = await this.getRelatives(this.selectedProfile.parents[0].id) // take the main one and loads its profile
+            } else {
+              parentProfile = await this.getRelatives(parent)
+            }
 
-            this.addParentToNestedWhakapapa({
-              child: this.selectedProfile,
-              parent: parentProfile,
-              relationshipAttrs
-            })
+            this.updateNodeInNestedWhakapapa(parentProfile)
 
             if (this.selectedProfile.parents.length === 1) {
               this.$emit('change-focus', parentProfile.id)

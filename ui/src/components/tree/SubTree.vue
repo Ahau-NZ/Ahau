@@ -144,9 +144,10 @@ export default {
       const [children, otherChildren] = pileSort(
         this.root.children || [],
         [
-          (child) => child.data.parents.length === 1, // all children that this node is the only parent of
+          (child) => child.data.parents && child.data.parents.length === 1, // all children that this node is the only parent of
           (child) => {
             return (
+              child.data.parents &&
               child.data.parents.length > 1 && // the child has two or more parents
               //  none of their other parents are a partner of the root node
               !child.data.parents.some(parent => {
@@ -198,7 +199,7 @@ export default {
       }
 
       // change how the link looks when the person is the only child in the tree
-      if (node.data.parents.length === 2 && this.root.children.length === 1) {
+      if (node.data.parents && node.data.parents.length === 2 && this.root.children.length === 1) {
         x = this.root.x
       }
 

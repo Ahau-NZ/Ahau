@@ -466,10 +466,6 @@ export default {
       // get the persons profile + links
       var person = await this.getRelatives(profileId)
 
-      // make sure every person has a partners and siblings array
-      // person.partners = []
-      // person.siblings = []
-
       // filter out ignored profiles
       person.children = person.children.filter(this.isVisibleProfile)
       person.parents = person.parents.filter(this.isVisibleProfile)
