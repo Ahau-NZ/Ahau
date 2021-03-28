@@ -775,7 +775,7 @@ h1 {
 .mobile-tree {
   position:absolute;
   height: calc(100vh - 43px);
-  margin-top: -68px;
+  margin-top: -85px;
 }
 
 #create .v-speed-dial {

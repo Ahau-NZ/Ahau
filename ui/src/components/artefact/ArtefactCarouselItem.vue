@@ -38,13 +38,13 @@
           </div>
         </div>
       </div>
-      <v-btn v-if="controls && hover && editing" class="edit mr-2 mt-2"
+      <v-btn v-if="controls && editing" class="edit mr-2 mt-2"
         fab x-small
         @click="$emit('update')"
       >
         <v-icon>mdi-pencil</v-icon>
       </v-btn>
-      <v-btn v-if="controls && hover && editing" class="close mr-2 mt-2"
+      <v-btn v-if="controls && editing" class="close mr-2 mt-2"
         fab x-small
         @click="$emit('delete')"
       >

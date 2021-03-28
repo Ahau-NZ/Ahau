@@ -9,7 +9,13 @@
       <audio ref="audio" :src="artefact.blob.uri" class="px-12" :controls="controls" style="width:100%;height:80%;"/>
       <v-icon size="50" class="center">mdi-music</v-icon>
     </div>
-    <v-img ref="photo" v-if="artefact.type === 'photo'" class="media" :src="artefact.blob.uri" contain></v-img>
+    <v-zoomer v-if="artefact.type === 'photo' && showArtefact && mobile" style="height:80vh">
+      <img
+        :src="artefact.blob.uri"
+        style="object-fit: contain; width: 100%; height: 100%;"
+      >
+    </v-zoomer>
+    <v-img v-else-if="artefact.type === 'photo'" class="media" :src="artefact.blob.uri" contain></v-img>
     <div v-else-if="artefact.type === 'document'" class="media" style="margin-top:15%;">
       <div class="text-center">
         <v-icon size="100px">{{ artefactIcon }}</v-icon><br>
@@ -71,6 +77,7 @@ export default {
   },
   methods: {
     toggleArtefact (e) {
+      if (this.artefact.type === 'photo' && this.showArtefact && this.mobile) return
       this.$emit('showArtefact', this.artefact)
     },
     downloadFile () {
