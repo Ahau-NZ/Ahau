@@ -50,7 +50,7 @@
             class="px-8 subtitle-1 grey--text "
             :class="{ 'text-center': mobile }"
           >
-            Sorry we couldn't find any stories that have a date recorded. Please add a date to a story to view in the timeline
+            No stories to show. Please add dates to your stories in Archive to view them in Timeline
           </div>
         </div>
       </v-col>

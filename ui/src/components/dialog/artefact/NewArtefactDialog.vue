@@ -16,7 +16,7 @@
                     v-model="artefact.title"
                     label="Title"
                     v-bind="customProps"
-                    dark
+                    color="grey"
                   />
                 </template>
                 <span>Provide a name for this artefact</span>
@@ -58,6 +58,7 @@
                   no-resize
                   rows="3"
                   auto-grow
+                  color="grey"
                 >
                 </v-textarea>
               </template>
@@ -82,6 +83,7 @@
                   :value="artefact.blob.mimeType"
                   label="Format"
                   v-bind="customProps"
+                  color="grey"
                 >
                 </v-text-field>
               </template>
@@ -100,6 +102,7 @@
                   type="number"
                   v-bind="customProps"
                   suffix="bytes"
+                  color="grey"
                 >
                 </v-text-field>
               </template>
@@ -115,6 +118,7 @@
                   v-model="artefact.language"
                   label="Language"
                   v-bind="customProps"
+                  color="grey"
                 >
                 </v-text-field>
               </template>
@@ -130,6 +134,7 @@
                   v-model="artefact.licence"
                   label="Licence"
                   v-bind="customProps"
+                  color="grey"
                 >
                 </v-text-field>
               </template>
@@ -145,6 +150,7 @@
                   v-model="artefact.rights"
                   label="Rights"
                   v-bind="customProps"
+                  color="grey"
                 >
                 </v-text-field>
                 </template>
@@ -160,6 +166,7 @@
                   v-model="artefact.source"
                   label="Source"
                   v-bind="customProps"
+                  color="grey"
                 >
                 </v-text-field>
                 </template>
@@ -176,6 +183,7 @@
                   label="Duration"
                   type="number"
                   v-bind="customProps"
+                  color="grey"
                 >
                 </v-text-field>
                 </template>
@@ -194,6 +202,7 @@
                   no-resize
                   rows="3"
                   auto-grow
+                  color="grey"
                 >
                 </v-textarea>
               </template>
@@ -212,7 +221,7 @@
                     v-model="artefact.location"
                     label="Location"
                     v-bind="customProps"
-                    dark
+                    color="grey"
                   />
                 </template>
                 <span>Where was this artefact captured</span>

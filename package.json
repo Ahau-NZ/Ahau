@@ -67,6 +67,5 @@
   "license": "AGPL-3.0",
   "bugs": {
     "url": "https://gitlab.com/ahau/whakapapa-ora/issues"
-  },
-  "dependencies": {}
+  }
 }
