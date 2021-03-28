@@ -441,7 +441,6 @@ export default {
       }
     },
     model (newVal) {
-      console.log('stroyIndex: ', newVal)
       // show artefact details when viewing in carousel
       if (this.showArtefact) {
         this.artefact = this.story.artefacts[newVal].artefact
