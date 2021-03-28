@@ -97,11 +97,9 @@
                   v-on="on"
                   v-if="show"
                   readonly
-                  :value="artefact.blob.size"
+                  :value="size"
                   label="Size"
-                  type="number"
                   v-bind="customProps"
-                  suffix="bytes"
                   color="grey"
                 >
                 </v-text-field>
@@ -242,7 +240,7 @@
 
 <script>
 import Dialog from '@/components/dialog/Dialog.vue'
-// import DialogTitleBanner from '@/components/dialog/DialogTitleBanner.vue'
+import { convertBytes } from '@/lib/artefact-helpers.js'
 import ArtefactCarousel from '@/components/artefact/ArtefactCarousel.vue'
 
 import clone from 'lodash.clonedeep'
@@ -300,6 +298,9 @@ export default {
     this.artefact = this.formData[this.selectedIndex]
   },
   computed: {
+    size () {
+      return convertBytes(this.artefact.blob.size)
+    },
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },

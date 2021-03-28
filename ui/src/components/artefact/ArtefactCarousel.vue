@@ -72,7 +72,6 @@ export default {
       this.selectedIndex = newValue
     },
     selectedIndex (n, o) {
-      console.log('caurosel index:', n)
       this.$emit('update:index', n)
     }
   },
