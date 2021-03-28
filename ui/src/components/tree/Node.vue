@@ -49,9 +49,9 @@
           filter="url(#shadow)"
           cx="20"
           cy="1"
-          r="10"
+          r="15"
         />
-        <polygon points="15,0  25,0  20,6" style="fill:#000;" />
+        <polygon points="12,0  28,0  20,9" style="fill:#000;" />
       </g>
     </g>
 

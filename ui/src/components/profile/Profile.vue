@@ -13,8 +13,8 @@
           <template v-slot:content>
             <v-row cols="12" class="pt-0" >
               <ProfileInfoItem :class="mobile ? 'bb':'br bb'" smCols="12" mdCols="12"  title="Profession" :value="profile.profession"/>
-              <ProfileInfoItem :class="mobile ? 'br bb':'br'" smCols="12" mdCols="6" title="Schools" :value="profile.school.join(', ')"/>
-              <ProfileInfoItem :class="mobile ? '':'br'" smCols="12" mdCols="6" title="Skills" :value="profile.education.join(', ')"/>
+              <ProfileInfoItem :class="mobile ? 'bb':'br'" smCols="12" mdCols="6" title="Schools" :value="profile.school.join('\n')"/>
+              <ProfileInfoItem :class="mobile ? '':'br'" smCols="12" mdCols="6" title="Skills" :value="profile.education.join('\n')"/>
             </v-row>
           </template>
         </ProfileCard>
@@ -115,8 +115,10 @@ export default {
     tribe: Object
   },
   beforeMount () {
-    window.scrollTo(0, 0)
     this.setTribes()
+  },
+  mounted () {
+    window.scrollTo(0, 0)
   },
   computed: {
     ...mapGetters(['whoami', 'tribes']),

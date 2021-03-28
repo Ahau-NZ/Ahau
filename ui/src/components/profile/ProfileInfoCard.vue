@@ -3,7 +3,7 @@
       <v-row cols="12" class="rounded-border">
         <ProfileInfoItem :class="profile.type === 'person' ? 'bb':''" title="About" smCols="12" mdCols="12" :value="profile.description"/>
         <ProfileInfoItem v-if="profile.type === 'person'" :class="mobile ? 'br bb' : 'br'" :title="'Preferred Name'" :value="profile.preferredName"/>
-        <ProfileInfoItem v-if="profile.type === 'person'" :class="mobile ? 'br bb' : 'br'" :title="'Other Names'" :value="profile.altNames.join(', ')"/>
+        <ProfileInfoItem v-if="profile.type === 'person'" :class="mobile ? 'bb' : 'br'" :title="'Other Names'" :value="profile.altNames.join(', ')"/>
         <ProfileInfoItem v-if="profile.type === 'person'" class="br" :title="'Age'" :value="age"/>
         <ProfileInfoItem v-if="profile.type === 'person'" :title="'Place of birth'" :value="profile.placeOfBirth" />
       </v-row>

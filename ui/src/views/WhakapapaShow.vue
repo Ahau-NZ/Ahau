@@ -540,12 +540,10 @@ export default {
       return person
     },
 
-    // contextMenu //////////////////////////
-    // TODO - extract all this
     openContextMenu ({ event, profile }) {
       this.setSelectedProfile(profile)
-      if (this.dialog.view) {
-        this.toggleView()
+      if (this.dialog.active === 'view-edit-node') {
+        this.updateDialog(null, null)
       }
       this.$refs.menu.open(event)
     },

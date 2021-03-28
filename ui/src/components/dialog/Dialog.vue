@@ -58,7 +58,7 @@
       <v-card-actions v-if="!readonly" class="pa-0">
         <v-container class="py-0">
           <v-row align="end">
-            <v-col cols="12" md="auto" v-if="$slots['before-actions']" align="center" class="py-0">
+            <v-col cols="12" md="auto" v-if="$slots['before-actions']" :align="mobile ? 'center':'start'" class="py-0">
               <slot name="before-actions"></slot>
             </v-col>
             <v-spacer v-if="!mobile"/>
@@ -195,9 +195,16 @@ export default {
     this.listener = document.addEventListener('keydown', e => {
       if (e.keyCode === 27) this.close()
     })
+    document.body.style.top = `-${window.scrollY}px`
+    document.body.style.minWidth = '100%'
+    document.body.style.position = 'fixed'
   },
   destroyed () {
     document.removeEventListener('keydown', this.listener)
+    const scrollY = document.body.style.top
+    document.body.style.position = ''
+    document.body.style.top = ''
+    window.scrollTo(0, parseInt(scrollY || '0') * -1)
   }
 }
 </script>

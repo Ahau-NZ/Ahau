@@ -10,6 +10,7 @@ import store from './store/index'
 
 import { apolloProvider } from './plugins/vue-apollo'
 import vuetify from './plugins/vuetify'
+import i18n from './plugins/i18n'
 import CordovaBackButton from './plugins/cordova-back-button'
 import nodejsClient from './plugins/cordova-nodejs-client.js'
 
@@ -31,6 +32,7 @@ async function main () {
 
       apolloProvider,
       vuetify,
+      i18n,
 
       render: h => h(App)
     }).$mount('#app')

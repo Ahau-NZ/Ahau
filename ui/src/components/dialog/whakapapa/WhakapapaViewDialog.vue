@@ -10,28 +10,24 @@
         isView
         style="margin-top: 20px;"
       />
-      <div justify="center" align="center" class="px-4">
+      <div v-if="view.canEdit" justify="center" align="center" class="px-4">
         <h1>{{ view.name }}</h1>
         <v-btn
           @click="$emit('edit')"
           align="right"
           color="white"
           text
-          x-small
           class="blue--text pt-4"
         >
-          <v-icon small class="blue--text" left>mdi-pencil</v-icon>Edit
+          <v-icon class="blue--text" left>mdi-pencil</v-icon>Edit
         </v-btn>
       </div>
       <v-row justify="center" align="center" class="mt-5">
         <v-col>{{ view.description }}</v-col>
       </v-row>
-      <AvatarGroup size="50px" show-labels groupTitle="Kaitiaki" :profiles="view.kaitiaki"/>
-      <v-row justify="center" align="center" class="mt-5">
-        <v-icon>
-           mdi-lock
-        </v-icon>
-        <small> Private record - Only visible by you</small>
+      <v-row class="pl-4">
+        <AvatarGroup :profiles="view.kaitiaki || view.tiaki" groupTitle="Kaitiaki" size="50px" showLabels @profile-click="openProfile($event)"/>
+        <AvatarGroup v-if="currentAccess" :profiles="[currentAccess]" :isView="currentAccess.type === 'community'" groupTitle="Access" size="50px" showLabels @profile-click="openProfile($event)"/>
       </v-row>
     </template>
     <template v-slot:actions>
@@ -51,6 +47,8 @@
 import Dialog from '@/components/dialog/Dialog.vue'
 import Avatar from '@/components/Avatar.vue'
 import AvatarGroup from '@/components/AvatarGroup.vue'
+
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'WhakapapaViewDialog',
@@ -74,6 +72,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['currentAccess']),
     mobile () {
       return this.$vuetify.breakpoint.xs || this.vuetify.breakpoint.sm
     }

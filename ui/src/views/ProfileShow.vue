@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid class="body-width pa-0 niho-bg">
+  <v-container fluid class="pa-0 niho-bg">
     <v-overlay dark :value="showArtefact" z-index="6" opacity="1" color="rgba(30,30,30)">
     </v-overlay>
     <!-- Header and Title -->
@@ -323,10 +323,6 @@ export default {
     max-width: 80%;
     flex-basis: 80%;
   }
-}
-
-.body-width {
-  max-width: 100vw;
 }
 
 .niho-bg {

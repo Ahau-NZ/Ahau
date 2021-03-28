@@ -1,5 +1,5 @@
 <template>
-  <div style="width: 100%; height: 100%;">
+  <div style="width: 100%; height: 100%;" :class="{'showArtefactMobileDialog': mobileShowArtefact}">
     <v-card
       v-click-outside="onClickOutside"
       class="mx-auto"
@@ -254,7 +254,7 @@
             <v-icon>mdi-close</v-icon>
           </v-btn>
         </v-list-item-icon>
-        <v-list-item-icon v-else-if="showArtefact && mobile" class="pt-0 mt-0"
+        <v-list-item-icon v-else-if="mobileShowArtefact" class="pt-0 mt-0"
         style="position:absolute; top:-68px; left:-12px;">
           <v-btn dark text fab @click="setShowArtefact()">
             <v-icon>mdi-arrow-left</v-icon>
@@ -421,9 +421,11 @@ export default {
       }
       return 'rounded-border'
     },
-
     size () {
       return convertBytes(this.artefact.blob.size)
+    },
+    mobileShowArtefact () {
+      return this.mobile && this.showArtefact
     }
   },
   watch: {
@@ -611,5 +613,11 @@ v-list-item-subtitle {
 
 .background {
   background-color: #1E1E1E;
+}
+
+.showArtefactMobileDialog {
+  margin-top: -68px;
+  padding-top: 68px;
+  z-index: 7;
 }
 </style>

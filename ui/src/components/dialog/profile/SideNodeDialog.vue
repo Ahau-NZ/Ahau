@@ -84,7 +84,7 @@
           <v-row v-if="!isEditing" class="justify-center">
             <h1 >{{ getDisplayName(formData) }}</h1>
           </v-row>
-          <v-row v-if="!isEditing"  class="justify-center">
+          <v-row v-if="!isEditing"  class="justify-center pt-3">
             <v-btn
               @click.native="goArchive()"
               color="white"
@@ -116,44 +116,29 @@
               </v-row>
             </v-col>
           </v-row>
-          <v-row v-if="!isEditing"  style="border: 0.5px solid rgba(0,0,0,0.12); border-radius: 10px;" class="flex-column mx-0 ">
+          <v-row v-if="!isEditing"  class="flex-column mx-0 ">
             <v-col class="pa-0">
-              <v-row style="border-bottom: 0.5px solid rgba(0,0,0,0.12);" class="ma-0">
-                <v-col cols="6">
-                  <v-row>
-                    <v-col class="py-1 px-0 profile-label overline"><small>Legal Name</small></v-col>
-                  </v-row>
-                  <v-row class="py-0 justify-center">
-                    <p class="ma-0 profile-info">{{formData.legalName}}</p>
-                  </v-row>
-                </v-col>
-                <v-col cols="6">
-                  <v-row>
-                    <v-col class="py-1 px-0 profile-label overline"><small>Age</small></v-col>
-                  </v-row>
-                  <v-row class="py-0 justify-center">
-                    <p class="ma-0 profile-info">{{age(formData.aliveInterval)}}</p>
-                  </v-row>
-                </v-col>
-              </v-row>
-              <v-row class="ma-0">
-                <v-col cols="6">
-                  <v-row>
-                    <v-col class="py-1 px-0 profile-label overline"><small>Occupation</small></v-col>
-                  </v-row>
-                  <v-row class="py-0 justify-center">
-                    <p class="ma-0 profile-info" style="font-size: 0.8em">{{formData.profession}}</p>
-                  </v-row>
-                </v-col>
-                <v-col cols="6">
-                  <v-row>
-                    <v-col class="py-1 px-0 profile-label overline"><small>Country</small></v-col>
-                  </v-row>
-                  <v-row class="py-0 justify-center">
-                    <p class="ma-0 profile-info" style="font-size: 0.8em">{{formData.country}}</p>
-                  </v-row>
-                </v-col>
-              </v-row>
+              <v-col cols="12" :class="profile.description ? 'pt-0':'pt-6'">
+                <v-row cols="12" class="rounded-border">
+                  <ProfileInfoItem class="pb-0 bb" mdCols="12" smCols="12" :title="'Full Name'" :value="profile.legalName"/>
+                  <ProfileInfoItem class="pb-0 br bb" mdCols="6" smCols="6" :title="'Other Names'" :value="profile.altNames.join(', ')"/>
+                  <ProfileInfoItem class="pb-0 bb" mdCols="6" smCols="6" :title="'Age'" :value="age(formData.aliveInterval)"/>
+                  <ProfileInfoItem class="pb-0 br" mdCols="6" smCols="6" title="City" :value="formData.city"/>
+                  <ProfileInfoItem class="pb-0 br" mdCols="6" smCols="6" title="Country" :value="formData.country"/>
+                </v-row>
+                <v-row cols="12" class="rounded-border">
+                  <ProfileInfoItem class="pb-0" :title="'Place of birth'" mdCols="12" smCols="12" :value="profile.placeOfBirth" />
+                  <div v-if="profile.deceased">
+                    <ProfileInfoItem class="pb-0" :title="'Place of passing'" mdCols="12" smCols="12" :value="profile.placeOfDeath" />
+                    <ProfileInfoItem class="pb-0" :title="'Buried location'" mdCols="12" smCols="12" :value="profile.buriedLocation" />
+                  </div>
+                </v-row>
+                <v-row cols="12" class="rounded-border">
+                  <ProfileInfoItem class="bb pb-0" mdCols="12" smCols="12"  title="Profession" :value="formData.profession"/>
+                  <ProfileInfoItem class="bb pb-0" mdCols="12" smCols="12" title="Schools" :value="formData.school.join('\n')"/>
+                  <ProfileInfoItem class="pb-0" mdCols="12" smCols="12" title="Skills" :value="formData.education.join('\n')"/>
+                </v-row>
+              </v-col>
             </v-col>
           </v-row>
           <v-row v-if="!isEditing"  class="px-2">
@@ -227,6 +212,7 @@
 </template>
 
 <script>
+
 import calculateAge from '../../../lib/calculate-age'
 
 import { PERMITTED_PERSON_ATTRS, PERMITTED_RELATIONSHIP_ATTRS } from '@/lib/person-helpers'
@@ -238,6 +224,7 @@ import pick from 'lodash.pick'
 import clone from 'lodash.clonedeep'
 import { mapActions, mapMutations } from 'vuex'
 
+import ProfileInfoItem from '@/components/profile/ProfileInfoItem.vue'
 import ProfileForm from '@/components/profile/ProfileForm.vue'
 
 import Avatar from '@/components/Avatar.vue'
@@ -283,14 +270,15 @@ function defaultData (input) {
 }
 
 export default {
-  name: 'SideViewEditNodeDialog',
+  name: 'SideNodeDialog',
   components: {
     ProfileForm,
     AddButton,
     Avatar,
     AvatarGroup,
     DialogTitleBanner,
-    ArchiveIcon
+    ArchiveIcon,
+    ProfileInfoItem
   },
   props: {
     goBack: { type: Function },
@@ -395,6 +383,9 @@ export default {
     },
     age (born) {
       var age = calculateAge(born)
+      if (age) {
+        return age.toString()
+      }
       return age
     },
     openProfile (profile) {

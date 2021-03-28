@@ -28,23 +28,23 @@
     <li v-if="allowCollections">
       <a href="#" @click.prevent="dialog = 'new-collection'" class="d-flex align-center px-4">
         <v-icon light>mdi-folder-multiple-outline</v-icon>
-        <p class="ma-0 pl-3">Create a new collection</p>
+        <p class="ma-0 pl-3">Create a collection</p>
       </a>
     </li>
     <li>
       <a href="#" @click.prevent="dialog = 'new-story'" class="d-flex align-center px-4">
         <v-icon light>mdi-post-outline</v-icon>
-        <p class="ma-0 pl-3">Add a new story</p>
+        <p class="ma-0 pl-3">Add a story</p>
       </a>
     </li>
   </VueContext>
 
     <NewRecordDialog v-if="dialog === 'new-story'" :show="dialog === 'new-story'"
-      :title="`Add story to ${ profile.preferredName || 'Untitled' }'s archive`" @close="dialog = null"
+      :title="`Add a story`" @close="dialog = null"
       @submit="processStory"
     />
     <NewCollectionDialog v-if="dialog === 'new-collection'" :show="dialog === 'new-collection'"
-      :title="`Add a collection to ${ collectionTitle } archive`" @close="dialog = null"
+      :title="`Add a collection`" @close="dialog = null"
       @submit="processCollection"
     />
   </div>
@@ -99,6 +99,9 @@ export default {
       showArchiveHelper: false
     }
   },
+  beforeMount () {
+    window.scrollTo(0, 0)
+  },
   computed: {
     ...mapGetters(['showStory', 'whoami', 'currentStory', 'showArtefact', 'storeDialog', 'currentAccess']),
     mobile () {
@@ -113,7 +116,7 @@ export default {
     },
     archiveTitle () {
       if (this.isPersonalArchive) return 'Your personal archive'
-      return this.currentAccess.preferredName ? `${this.currentAccess.preferredName} Archive` : `${this.currentAccess.legalName}'s Archive`
+      return this.currentAccess.preferredName ? `${this.currentAccess.preferredName}'s Archive` : `${this.currentAccess.legalName}'s Archive`
     },
     isPersonalArchive () {
       return this.$route.params.profileId === this.whoami.personal.profile.id
