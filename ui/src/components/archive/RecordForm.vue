@@ -94,7 +94,6 @@
                 <span>An in depth description of the story</span>
               </v-tooltip>
             </v-col>
-
             <DateIntervalPicker
               class="px-3"
               label="Date"
@@ -104,11 +103,10 @@
               :hasEndDate.sync="hasEndDate"
               checkbox-label="include an end date"
               :cols="mobile ? '12' : '6'"
-              :hide-checkbox="hasEndDate"
+              :showCheckbox="!hasEndDate"
             />
-
             <!-- ADD MENTIONS -->
-            <v-col cols="12" md="6" class="pa-5">
+            <v-col cols="12" md="4" class="pa-5">
               <v-tooltip top open-delay="700" :disabled="showMentions">
                 <template v-slot:activator="{ on }">
                   <div v-on="on">
@@ -135,11 +133,10 @@
                 deletable
                 @delete="removeItem(formData.mentions, $event)"
               />
-              <v-divider v-if="mobile" light class="mt-6 mr-4"></v-divider>
             </v-col>
 
             <!-- ADD CONTRIBUTORS -->
-            <v-col cols="12" md="6" class="pa-5">
+            <v-col cols="12" md="4" class="pa-5">
               <v-tooltip top open-delay="700" :disabled="showContributors">
                 <template v-slot:activator="{ on }">
                   <div v-on="on">
@@ -168,37 +165,19 @@
                 @delete="removeItem(formData.contributors, $event)"
               />
             </v-col>
-
-            <!-- COLLECTIONS -->
+            <!-- <v-divider v-if="mobile" light class="mt-6 mr-4"></v-divider> -->
+            <!-- ADD KAITIAKI -->
             <v-col cols="12" md="auto" class="pa-5">
-              <v-tooltip top open-delay="700" :disabled="showCollections">
-                <template v-slot:activator="{ on }">
-                  <div v-on="on">
-                    <v-row v-if="!showCollections" @click="showCollections = true" class="pl-5">
-                      <v-icon small>mdi-plus</v-icon>
-                      <AddButton size="20px" icon="mdi-folder" iconClass="pr-3" label="Collections"  justify="start"/>
-                    </v-row>
-                  </div>
-                </template>
-                <span>A Collection is a grouping of stories</span>
-              </v-tooltip>
-
-              <ProfileSearchBar
-                :selectedItems.sync="formData.collections"
-                :items="filteredCollections"
-                :openMenu.sync="showCollections"
-                placeholder="add collections"
-                item="name"
+              <v-row class="pl-5">
+                <AddButton size="20px" icon="mdi-library" iconClass="pr-3" label="Kaitiaki"  justify="start"/>
+              </v-row>
+              <AvatarGroup v-if="formData.tiaki && formData.tiaki.length > 0"
+                :profiles="formData.tiaki"
+                show-labels
+                size="40px"
               />
-              <ChipGroup
-                v-if="formData.collections && formData.collections.length > 0"
-                type="collection"
-                :chips="formData.collections"
-                deletable
-                @delete="removeItem(formData.collections, $event)"
-              />
-              <v-divider v-if="mobile" light class="mt-6 mr-4"></v-divider>
             </v-col>
+
            </v-row>
             <!-- TODO: ADD CATEGORIES -->
            <!-- <v-col :cols="mobile ? formData.categories.length > 2 ? 'auto' : '6' : formData.categories.length > 1 ? 'auto' : '3'">
@@ -296,8 +275,38 @@
               />
               <v-divider v-if="mobile" light class="mt-6 mr-4"></v-divider>
             </v-col>
-            <!-- ADD CREATOR -->
+            <!-- COLLECTIONS -->
             <v-col cols="12" md="auto" class="pa-5">
+              <v-tooltip top open-delay="700" :disabled="showCollections">
+                <template v-slot:activator="{ on }">
+                  <div v-on="on">
+                    <v-row v-if="!showCollections" @click="showCollections = true" class="pl-5">
+                      <v-icon small>mdi-plus</v-icon>
+                      <AddButton size="20px" icon="mdi-folder" iconClass="pr-3" label="Collections"  justify="start"/>
+                    </v-row>
+                  </div>
+                </template>
+                <span>A Collection is a grouping of stories</span>
+              </v-tooltip>
+
+              <ProfileSearchBar
+                :selectedItems.sync="formData.collections"
+                :items="filteredCollections"
+                :openMenu.sync="showCollections"
+                placeholder="add collections"
+                item="name"
+              />
+              <ChipGroup
+                v-if="formData.collections && formData.collections.length > 0"
+                type="collection"
+                :chips="formData.collections"
+                deletable
+                @delete="removeItem(formData.collections, $event)"
+              />
+              <v-divider v-if="mobile" light class="mt-6 mr-4"></v-divider>
+            </v-col>
+            <!-- ADD CREATOR -->
+            <!-- <v-col cols="12" md="4" class="pa-5">
               <v-tooltip top open-delay="700" :disabled="showCreators">
                 <template v-slot:activator="{ on }">
                   <div v-on="on">
@@ -326,19 +335,8 @@
                 deletable
                 @delete="removeItem(formData.creators, $event)"
               />
-            </v-col>
-            <v-divider v-if="mobile" light class="mt-6 mr-4"></v-divider>
-            <!-- ADD KAITIAKI -->
-            <v-col cols="12" md="auto" class="pa-5">
-              <v-row class="pl-5">
-                <AddButton size="20px" icon="mdi-library" iconClass="pr-3" label="Kaitiaki"  justify="start"/>
-              </v-row>
-              <AvatarGroup v-if="formData.tiaki && formData.tiaki.length > 0"
-                :profiles="formData.tiaki"
-                show-labels
-                size="40px"
-              />
-            </v-col>
+            </v-col> -->
+
             <v-col cols="12" class="pa-1">
               <v-tooltip top open-delay="700">
                 <template v-slot:activator="{ on }">

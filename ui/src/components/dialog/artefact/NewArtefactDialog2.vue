@@ -1,9 +1,13 @@
 <template>
-  <Dialog :show="show" title="edit artefact" width="55vw" :goBack="close" enableMenu dark
-    @submit="submit"
-    @close="close"
+  <v-dialog v-model="show"
+    transition="dialog-bottom-transition"
+    :fullscreen="mobile"
+    width="70%"
+    :content-class="mobile ? '':'artefact-dialog'"
+    overlay-opacity="0.8"
   >
-    <template v-slot:content>
+    <v-card tile flat style="overflow-x:hidden">
+      <DialogTitleBanner title="edit artefact" :mobile="mobile" @close="close"/>
       <v-container :class="mobile ? 'px-2':'px-2'" :style="`width:${width};`">
         <v-row>
           <v-col cols="12">
@@ -216,7 +220,7 @@
             </v-tooltip>
           </v-col>
           <!-- Location test field -->
-          <v-col cols="12">
+         <v-col cols="12">
             <h1>
               <v-tooltip top open-delay="700">
                 <template v-slot:activator="{ on }">
@@ -234,20 +238,48 @@
             </h1>
           </v-col>
           <v-col cols="12">
-            <v-btn :class="mobile ? 'mt-4':'mt-7'" text @click="$emit('delete', selectedIndex)">
-              Delete this artefact
-              <v-icon class="pl-2">mdi-delete</v-icon>
-            </v-btn>
+            <v-card-actions>
+              <v-row>
+                <v-btn :class="mobile ? 'mt-4':'mt-7'" text @click="$emit('delete', selectedIndex)">
+                  Delete this artefact
+                  <v-icon class="pl-2">mdi-delete</v-icon>
+                </v-btn>
+
+                <v-col
+                  :align="mobile ? '' : 'right'"
+                  :class="{
+                    'pt-3': mobile,
+                    'pb-0': true,
+                    'd-flex': mobile,
+                    'justify-space-between': mobile
+                  }"
+                >
+                  <v-btn @click="close"
+                    text large fab
+                    class="secondary--text"
+                    :class="!mobile ? 'mr-5':''"
+                  >
+                    <v-icon color="secondary">mdi-close</v-icon>
+                  </v-btn>
+                  <v-btn @click="submit"
+                    text large fab
+                    class="blue--text"
+                  >
+                    <v-icon>mdi-check</v-icon>
+                  </v-btn>
+                </v-col>
+
+              </v-row>
+            </v-card-actions>
           </v-col>
         </v-row>
       </v-container>
-    </template>
-  </Dialog>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script>
-import Dialog from '@/components/dialog/Dialog.vue'
-// import DialogTitleBanner from '@/components/dialog/DialogTitleBanner.vue'
+import DialogTitleBanner from '@/components/dialog/DialogTitleBanner.vue'
 import ArtefactCarousel from '@/components/artefact/ArtefactCarousel.vue'
 
 import clone from 'lodash.clonedeep'
@@ -272,9 +304,8 @@ export default {
     // AddButton,
     // ProfileSearchBar,
     // AvatarGroup,
-    // DialogTitleBanner,
-    NodeDatePicker,
-    Dialog
+    DialogTitleBanner,
+    NodeDatePicker
   },
   data () {
     return {
