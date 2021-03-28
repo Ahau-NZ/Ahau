@@ -16,7 +16,7 @@
                     v-model="artefact.title"
                     label="Title"
                     v-bind="customProps"
-                    dark
+                    color="grey"
                   />
                 </template>
                 <span>Provide a name for this artefact</span>
@@ -58,6 +58,7 @@
                   no-resize
                   rows="3"
                   auto-grow
+                  color="grey"
                 >
                 </v-textarea>
               </template>
@@ -82,25 +83,28 @@
                   :value="artefact.blob.mimeType"
                   label="Format"
                   v-bind="customProps"
+                  color="grey"
                 >
                 </v-text-field>
               </template>
               <span>The current digital form of this artefact being recorded</span>
             </v-tooltip>
           </v-col>
-          <v-col cols="12" sm="12" md="3" class="py-1 pt-2">
+           <v-col  class="py-1 pt-2" cols="12" sm="12" md="3">
             <v-tooltip top open-delay="700">
               <template v-slot:activator="{ on }">
                 <v-text-field
                   v-on="on"
                   v-if="show"
-                  v-model="artefact.identifier"
-                  label="Identifier"
+                  readonly
+                  :value="size"
+                  label="Size"
                   v-bind="customProps"
+                  color="grey"
                 >
                 </v-text-field>
               </template>
-              <span>A unique, unambigous reference to the artefact</span>
+              <span>This file size of this uploaded digital artefact</span>
             </v-tooltip>
           </v-col>
           <v-col class=py-1 cols="12" sm="12" md="3">
@@ -112,6 +116,7 @@
                   v-model="artefact.language"
                   label="Language"
                   v-bind="customProps"
+                  color="grey"
                 >
                 </v-text-field>
               </template>
@@ -127,6 +132,7 @@
                   v-model="artefact.licence"
                   label="Licence"
                   v-bind="customProps"
+                  color="grey"
                 >
                 </v-text-field>
               </template>
@@ -142,6 +148,7 @@
                   v-model="artefact.rights"
                   label="Rights"
                   v-bind="customProps"
+                  color="grey"
                 >
                 </v-text-field>
                 </template>
@@ -157,6 +164,7 @@
                   v-model="artefact.source"
                   label="Source"
                   v-bind="customProps"
+                  color="grey"
                 >
                 </v-text-field>
                 </template>
@@ -173,6 +181,7 @@
                   label="Duration"
                   type="number"
                   v-bind="customProps"
+                  color="grey"
                 >
                 </v-text-field>
                 </template>
@@ -191,30 +200,14 @@
                   no-resize
                   rows="3"
                   auto-grow
+                  color="grey"
                 >
                 </v-textarea>
               </template>
               <span>An abstraction, transcription or translation to the artefact</span>
             </v-tooltip>
           </v-col>
-          <v-col class=py-1 cols="12" sm="12" md="3">
-            <v-tooltip top open-delay="700">
-              <template v-slot:activator="{ on }">
-                <v-text-field
-                  v-on="on"
-                  v-if="show"
-                  readonly
-                  :value="artefact.blob.size"
-                  label="Size"
-                  type="number"
-                  v-bind="customProps"
-                  suffix="bytes"
-                >
-                </v-text-field>
-              </template>
-              <span>This file size of this uploaded digital artefact</span>
-            </v-tooltip>
-          </v-col>
+
           <!-- Location test field -->
           <v-col cols="12">
             <h1>
@@ -226,7 +219,7 @@
                     v-model="artefact.location"
                     label="Location"
                     v-bind="customProps"
-                    dark
+                    color="grey"
                   />
                 </template>
                 <span>Where was this artefact captured</span>
@@ -247,7 +240,7 @@
 
 <script>
 import Dialog from '@/components/dialog/Dialog.vue'
-// import DialogTitleBanner from '@/components/dialog/DialogTitleBanner.vue'
+import { convertBytes } from '@/lib/artefact-helpers.js'
 import ArtefactCarousel from '@/components/artefact/ArtefactCarousel.vue'
 
 import clone from 'lodash.clonedeep'
@@ -288,6 +281,7 @@ export default {
   watch: {
     selectedIndex (newIndex) {
       if (newIndex) this.artefact = this.formData[newIndex]
+      this.$emit('update:index', newIndex)
     },
     index (newIndex) {
       if (newIndex) this.selectedIndex = newIndex
@@ -304,6 +298,9 @@ export default {
     this.artefact = this.formData[this.selectedIndex]
   },
   computed: {
+    size () {
+      return convertBytes(this.artefact.blob.size)
+    },
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },

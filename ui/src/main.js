@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VuexRouterSync from 'vuex-router-sync'
 import VuejsClipper from 'vuejs-clipper'
 import gql from 'graphql-tag'
+import VueZoomer from 'vue-zoomer'
 
 import App from './App.vue'
 import router from './router'
@@ -39,6 +40,7 @@ async function main () {
 
   // install
   Vue.use(VuejsClipper)
+  Vue.use(VueZoomer)
   Vue.use(CordovaBackButton, { router })
   Vue.config.productionTip = false
 

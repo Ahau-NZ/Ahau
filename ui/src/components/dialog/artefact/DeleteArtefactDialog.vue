@@ -18,7 +18,8 @@ import Dialog from '@/components/dialog/Dialog.vue'
 
 export default {
   props: {
-    show: { type: Boolean, required: true }
+    show: { type: Boolean, required: true },
+    index: { type: Number, required: true }
   },
   computed: {
     mobile () {
@@ -38,7 +39,7 @@ export default {
       this.$emit('close')
     },
     submit () {
-      this.$emit('submit')
+      this.$emit('submit', this.index)
       this.close()
     }
   },

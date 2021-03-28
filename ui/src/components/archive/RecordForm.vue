@@ -37,9 +37,6 @@
               </template>
               <span>Media assets associated with the story<br>Can be images, documents, video, or audio files. </span>
             </v-tooltip>
-            <!-- <v-col cols="6" >
-              <UploadArtefactButton showLabel @artefacts="processArtefacts($event)"/>
-            </v-col> -->
             <v-tooltip top open-delay="700">
               <template v-slot:activator="{ on }">
                 <v-col v-on="on" :cols="showLocation ? '12':'6'" class="py-0">
@@ -443,21 +440,21 @@
     </v-form>
   <!-- </v-card> -->
     <NewArtefactDialog
-      v-if="newDialog"
-      :show="newDialog"
+      v-if="dialog === 'edit-artefact'"
+      :show="dialog === 'edit-artefact'"
       :index="index"
       :artefacts="formData.artefacts"
-      :editing="true"
-      @close="newDialog = false"
+      editing
+      @close="dialog = null"
       @delete="toggleDialog($event, 'delete')"
       @submit="updateArtefacts($event)"
       @artefacts="processArtefacts($event)"
     />
     <DeleteArtefactDialog
-      v-if="deleteDialog"
-      :show="deleteDialog"
+      v-if="dialog === 'delete-artefact'"
+      :show="dialog === 'delete-artefact'"
       :index="index"
-      @close="deleteDialog = false"
+      @close="dialog = null"
       @submit="removeArtefact($event)"
     />
   </div>
@@ -474,7 +471,6 @@ import ChipGroup from '@/components/archive/ChipGroup.vue'
 import ProfileSearchBar from '@/components/archive/ProfileSearchBar.vue'
 
 import { findByName } from '@/lib/search-helpers.js'
-import { DELETE_ARTEFACT } from '@/lib/artefact-helpers'
 
 import NewArtefactDialog from '@/components/dialog/artefact/NewArtefactDialog.vue'
 import ArtefactCarousel from '@/components/artefact/ArtefactCarousel.vue'
@@ -485,6 +481,7 @@ import { mapGetters } from 'vuex'
 
 import { storiesApolloMixin } from '@/mixins/story-mixins.js'
 import { collectionsApolloMixin, saveCollectionsMixin } from '@/mixins/collection-mixins.js'
+import { artefactMixin } from '@/mixins/artefact-mixins.js'
 
 export default {
   name: 'RecordForm',
@@ -510,14 +507,13 @@ export default {
   mixins: [
     storiesApolloMixin,
     collectionsApolloMixin,
-    saveCollectionsMixin
+    saveCollectionsMixin,
+    artefactMixin
   ],
   data () {
     return {
       stories: [],
-      newDialog: false,
-      deleteDialog: false,
-      deleteRecordDialog: false,
+      dialog: null,
       index: 0,
       search: false,
       model: 0,
@@ -542,6 +538,11 @@ export default {
         valid: true,
         rules: RULES
       }
+    }
+  },
+  watch: {
+    index (newVal) {
+      console.log('recordform index', newVal)
     }
   },
   mounted () {
@@ -579,7 +580,7 @@ export default {
         this.formData.artefacts.push(artefact)
       })
 
-      this.newDialog = true
+      this.dialog = 'edit-artefact'
     },
     showAdvanced () {
       if (this.showStory) this.show = true
@@ -601,8 +602,8 @@ export default {
     },
     toggleDialog ($event, dialog) {
       this.index = $event
-      if (dialog === 'new') this.newDialog = !this.newDialog
-      if (dialog === 'delete') this.deleteDialog = !this.deleteDialog
+      if (dialog === 'new') this.dialog = 'edit-artefact'
+      if (dialog === 'delete') this.dialog = 'delete-artefact'
     },
     warn (field) {
       alert(`Cannot add ${field} yet`)
@@ -610,48 +611,6 @@ export default {
     updateItem (array, update, index) {
       // update the item in the array at the index
       array.splice(index, 1, update)
-    },
-    async updateArtefacts (artefacts) {
-      this.formData.artefacts = await Promise.all(artefacts.map(async (artefact, i) => {
-        if (this.editing) {
-          if (artefact.id) {
-            var oldArtefact = this.formData.artefacts[i]
-            Object.assign(oldArtefact, artefact)
-            return artefact
-          }
-        }
-        return artefact
-      }))
-
-      this.newDialog = !!this.newDialog
-    },
-    removeItem (array, index) {
-      array.splice(index, 1)
-    },
-    async deleteArtefact (id) {
-      try {
-        const res = await this.$apollo.mutate(DELETE_ARTEFACT(id, new Date()))
-
-        if (res.errors) {
-          throw res.errors
-        }
-      } catch (err) {
-        throw err
-      }
-    },
-    async removeArtefact (index) {
-      if (this.editing) {
-        // remove from the database
-        var artefact = this.formData.artefacts[this.index]
-
-        // check it has an id
-        if (artefact.id) {
-          await this.deleteArtefact(artefact.id)
-        }
-      }
-      // remove from formData
-      this.removeItem(this.formData.artefacts, this.index)
-      if (this.formData.artefacts && this.formData.artefacts.length === 0) this.newDialog = false
     }
   }
 }
