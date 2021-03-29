@@ -385,22 +385,11 @@ export default {
           }
 
           // load the childs profile
-          var childProfile = await this.loadDescendants(child)
-
-          // copy over the parents profile
-          // childProfile.parents[0] = parentProfile
-
-          // copy over the relationship
-          childProfile = {
-            ...childProfile,
-            ...relationshipAttrs
-          }
+          parentProfile = await this.loadDescendants(parentProfile.id)
 
           // add the child to the parent in the nested whakapapa
-          this.addChildToNestedWhakapapa({
-            child: childProfile,
-            parent: parentProfile
-          })
+          this.updateNodeInNestedWhakapapa(parentProfile)
+
           break
 
         case 'parent':
@@ -419,13 +408,12 @@ export default {
             this.$emit('updateFocus', parent)
           } else {
             if (this.selectedProfile.parent) {
-              parentProfile = await this.getRelatives(this.selectedProfile.parent.id)
+              parentProfile = await this.loadDescendants(this.selectedProfile.parent.id)
+              this.updateNodeInNestedWhakapapa(parentProfile)
             } else {
               // load the new parents profile
-              parentProfile = await this.getRelatives(parent)
+              parentProfile = await this.loadDescendants(parent)
             }
-
-            this.updateNodeInNestedWhakapapa(parentProfile)
 
             if (this.selectedProfile.parents.length === 1) {
               this.$emit('change-focus', parentProfile.id)
@@ -519,6 +507,8 @@ export default {
 
       var { relationshipType, legallyAdopted, parent } = this.selectedProfile
 
+      var node = null
+
       // TEMP: skips saving relationship if there is no relationship on the selectedProfile
       if (!isEmpty(relationshipAttrs) && profileId !== this.view.focus && parent) {
         // get the link between the parent and child
@@ -536,15 +526,11 @@ export default {
 
         relationshipType = relationshipAttrs.relationshipType
         legallyAdopted = relationshipAttrs.legallyAdopted
-        console.log(relationshipType, legallyAdopted)
+
+        node = await this.loadDescendants(this.selectedProfile.id)
+      } else {
+        node = await this.loadKnownFamily(true, this.selectedProfile)
       }
-
-      // reload the selectedProfiles personal details
-      var node = await this.getRelatives(this.selectedProfile.id)
-
-      node.relationshipType = relationshipType
-      node.legallyAdopted = legallyAdopted
-      node.parent = parent
 
       // apply the changes to the nestedWhakapapa
       this.updateNodeInNestedWhakapapa(node)
@@ -668,30 +654,28 @@ export default {
       if (this.selectedProfile.id === profileId) return true // this is always in the tree
 
       // if they are a sibling
-      if (this.selectedProfile.siblings) {
-        if (this.selectedProfile.siblings.find(sibling => {
-          return sibling.id === profileId
-        })) return true // filter them out
-      }
+      if (this.selectedProfile.siblings.some(s => s.id === profileId)) return true
 
-      if (this.selectedProfile.parents) {
-        // if they are a parents partner
-        if (this.selectedProfile.parents.find(parent => {
-          if (!parent.partners) return false // this parent doesnt have parters
-          return parent.partners.find(partnerId => {
-            return partnerId === profileId
-          })
-        })) return true // filter them out
-      }
+      var isParentsPartner = this.selectedProfile.parents.some(p => {
+        if (!p.partners) return false // this parent doesnt have partners
+        return p.partners.some(id => {
+          return id === profileId
+        })
+      })
+
+      if (isParentsPartner) return true
 
       var root = d3.hierarchy(this.nestedWhakapapa)
 
       var partners = []
 
       var family = [...root.ancestors(), ...root.descendants()].map(node => {
-        node.data.partners.forEach(partner => {
-          partners.push(partner)
-        })
+        if (node.data.partners) {
+          node.data.partners.forEach(partner => {
+            partners.push(partner)
+          })
+        }
+
         return node.data
       }).filter(obj => obj.id !== this.selectedProfile.id) // take this out
 
