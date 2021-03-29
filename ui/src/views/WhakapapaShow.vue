@@ -100,7 +100,7 @@
           </template>
           <div v-if="search" class="icon-search ml-n12 pt-7" @click.stop>
             <SearchBar
-              v-if="searchNodeId"
+              v-if="!searchNodeId"
               :nestedWhakapapa="nestedWhakapapa"
               :searchNodeId.sync="searchNodeId"
               :searchNodeName.sync="searchNodeName"

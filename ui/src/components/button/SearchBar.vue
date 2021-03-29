@@ -121,7 +121,6 @@ export default {
       this.$emit('update:searchNodeName', data.preferredName || data.legalName)
       this.$emit('update:searchNodeId', data.id)
       this.$emit('searchNode', event)
-      // this.$emit('close')
     },
     clearSearchNodeId () {
       this.$emit('update:searchNodeId', '')
