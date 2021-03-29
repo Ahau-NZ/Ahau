@@ -117,7 +117,8 @@ const methods = {
     }
   },
   // method to save a profile (community or person) using apollo
-  async saveProfile ($event) {
+  async saveProfile (input) {
+    if (input.avatarImage) delete input.avatarImage.uri // not valid to transmit / persist
     try {
       const res = await this.$apollo.mutate({
         mutation: gql`
@@ -126,14 +127,14 @@ const methods = {
           }
         `,
         variables: {
-          input: $event
+          input
         }
       })
 
       if (res.errors) throw res.errors
       // dont need to return anything for now...
     } catch (err) {
-      console.error('Something went wrong while saving the profile: ', $event)
+      console.error('Something went wrong while saving the profile: ', input)
       console.error(err)
     }
   },

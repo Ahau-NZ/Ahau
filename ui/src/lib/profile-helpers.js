@@ -175,6 +175,7 @@ export const getProfile = ({
   fetchPolicy: 'no-cache'
 })
 
+// WIP - rip this out and use mixins?
 export const saveProfile = input => ({
   mutation: gql`
     mutation($input: ProfileInput!) {
