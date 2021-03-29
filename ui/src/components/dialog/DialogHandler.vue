@@ -407,15 +407,15 @@ export default {
           if (child === this.view.focus) {
             this.$emit('updateFocus', parent)
           } else {
-            if (this.selectedProfile.parent) {
+            if (this.selectedProfile.parent) { // when a node already has a parent node above them, this will be called
               parentProfile = await this.loadDescendants(this.selectedProfile.parent.id)
               this.updateNodeInNestedWhakapapa(parentProfile)
+
+              // so you wont see the extra parent update
             } else {
+              // when the child doesnt have a parent above them, this will be called
               // load the new parents profile
               parentProfile = await this.loadDescendants(parent)
-            }
-
-            if (this.selectedProfile.parents.length === 1) {
               this.$emit('change-focus', parentProfile.id)
             }
           }
@@ -437,7 +437,7 @@ export default {
           this.addPartnerToNestedWhakapapa({ node: this.selectedProfile, partner: partnerProfile })
           break
         default:
-          console.error('TODO')
+          console.error('wrong type for add person')
       }
     },
 
