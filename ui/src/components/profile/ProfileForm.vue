@@ -372,6 +372,7 @@
             />
           </v-col>
         </v-row>
+      </div>
     </v-expand-transition>
     <!-- End of advanced section -->
   </v-form>
