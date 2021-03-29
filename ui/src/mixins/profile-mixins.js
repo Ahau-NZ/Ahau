@@ -179,7 +179,6 @@ const methods = {
     }
   },
   async saveLink (input) {
-    console.log('input', input)
     try {
       const res = await this.$apollo.mutate(
         saveLink(input)

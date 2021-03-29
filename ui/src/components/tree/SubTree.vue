@@ -6,10 +6,10 @@
         :link="partner.link"
       />
     </g>
-    <!-- <g v-for="child in children" :key="`partner-child-${child.data.id}`">
+    <g v-for="child in children" :key="`partner-child-${child.data.id}`">
       <Link v-if="child.link" :link="child.link" style="transition: 1s linear;"/>
       <SubTree :root="child" :openMenu="openMenu" :changeFocus="changeFocus" :centerNode="centerNode" />
-    </g> -->
+    </g>
     <g v-for="partner in partners" :key="`partner-${partner.data.id}`">
       <g class="child-group">
         <g v-for="child in partner.children" :key="`partner-child-${child.data.id}`">
@@ -177,9 +177,11 @@ export default {
     }
   },
   methods: {
-    openContextMenu ($event) {
-      console.log('event', $event)
-      this.openMenu($event)
+    openContextMenu ({ event, profile }) {
+      // NOTE: this where we will handle which parent to use for addPerson/processUpdate in DialogHandler
+      profile.parent = this.root.parent ? this.root.parent.data : null
+
+      this.openMenu({ event, profile })
     },
     focus ($event) {
       this.changeFocus($event)
@@ -190,9 +192,8 @@ export default {
     mapChild ({ x = this.root.x, y = this.root.y, center, sign, yOffset }, child, style) {
       // map to their node from the root parent
       const node = this.root.children.find(rootChild => child.id === rootChild.data.id)
-
       // change the link if they are not related by birth
-      const dashed = node.data.relationshipType !== 'birth'
+      const dashed = ['adopted', 'whangai'].includes(node.data.relationshipType)
 
       if (center) {
         x = x + (-sign * this.radius) - 10

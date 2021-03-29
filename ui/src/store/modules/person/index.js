@@ -1,6 +1,5 @@
 import { apolloProvider } from '@/plugins/vue-apollo'
 import { getRelatives } from '@/lib/person-helpers'
-import tree from '@/lib/tree-helpers'
 
 const apollo = apolloProvider.defaultClient
 

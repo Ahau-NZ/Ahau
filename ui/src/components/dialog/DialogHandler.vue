@@ -373,7 +373,7 @@ export default {
           var child = id
           var parentProfile = this.dialogType === 'child'
             ? this.selectedProfile
-            : this.selectedProfile.parents[0] // for siblings we take the first parent
+            : this.selectedProfile.parent // for siblings we take the first parent
 
           if (!ignored) {
             // create the link
@@ -388,7 +388,7 @@ export default {
           var childProfile = await this.loadDescendants(child)
 
           // copy over the parents profile
-          childProfile.parents[0] = parentProfile
+          // childProfile.parents[0] = parentProfile
 
           // copy over the relationship
           childProfile = {
@@ -418,10 +418,10 @@ export default {
           if (child === this.view.focus) {
             this.$emit('updateFocus', parent)
           } else {
-            // BUG here: needs to check if we are loading
-            if (this.selectedProfile.parents && this.selectedProfile.parents.length > 0) {
-              parentProfile = await this.getRelatives(this.selectedProfile.parents[0].id) // take the main one and loads its profile
+            if (this.selectedProfile.parent) {
+              parentProfile = await this.getRelatives(this.selectedProfile.parent.id)
             } else {
+              // load the new parents profile
               parentProfile = await this.getRelatives(parent)
             }
 
@@ -510,43 +510,44 @@ export default {
       }
 
       const profileId = this.selectedProfile.id
+
+      // update their profile
       await this.updatePerson({ id: profileId, ...input })
 
+      // update the relationship
       const relationshipAttrs = pick(input, PERMITTED_RELATIONSHIP_ATTRS)
-      // TEMP: skips saving relationship if there is no relationship on the selectedProfile
-      if (!isEmpty(relationshipAttrs) && this.selectedProfile.id !== this.view.focus && this.selectedProfile.parents && this.selectedProfile.parents.length > 0) {        
-        console.log('parent', this.selectedProfile.parents[0])
-        const parent = this.selectedProfile.parents[0].id
-        const child = this.selectedProfile.id
 
+      var { relationshipType, legallyAdopted, parent } = this.selectedProfile
+
+      // TEMP: skips saving relationship if there is no relationship on the selectedProfile
+      if (!isEmpty(relationshipAttrs) && profileId !== this.view.focus && parent) {
         // get the link between the parent and child
-        var whakapapaLink = await this.getWhakapapaLink(parent, child)
-        console.log('SAVING WHAKAPAPA', whakapapaLink)
+        var oldLink = await this.getWhakapapaLink(parent.id, profileId)
 
         let input = {
           type: 'link/profile-profile/child',
-          linkId: whakapapaLink.linkId,
-          child: this.selectedProfile.id,
-          parent: this.selectedProfile.parents[0].id,
+          linkId: oldLink.linkId,
+          child: profileId,
+          parent: parent.id,
           ...relationshipAttrs
         }
 
         await this.saveLink(input)
+
+        relationshipType = relationshipAttrs.relationshipType
+        legallyAdopted = relationshipAttrs.legallyAdopted
+        console.log(relationshipType, legallyAdopted)
       }
 
       // reload the selectedProfiles personal details
       var node = await this.getRelatives(this.selectedProfile.id)
 
-      // copy over the relationship attrs
-      node.relationshipType = input.relationshipType || this.selectedProfile.relationshipType
-      node.legallyAdoped = input.legallyAdoped || this.selectedProfile.legallyAdopted
+      node.relationshipType = relationshipType
+      node.legallyAdopted = legallyAdopted
+      node.parent = parent
 
       // apply the changes to the nestedWhakapapa
-      if (this.selectedProfile.isPartner && this.selectedProfile.id !== this.focus) {
-        this.updatePartnerInNestedWhakapapa(node)
-      } else {
-        this.updateNodeInNestedWhakapapa(node)
-      }
+      this.updateNodeInNestedWhakapapa(node)
 
       // reset the selectedProfile to the newly changed one
       this.setSelectedProfile(node)

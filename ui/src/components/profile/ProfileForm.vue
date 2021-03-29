@@ -422,9 +422,6 @@ export default {
     if (this.formData.gender) {
       this.updateSelectedGender(this.formData.gender)
     }
-    if (isEmpty(this.formData.relationshipType)) {
-      this.formData.relationshipType = 'birth'
-    }
     if (!this.readonly && isEmpty(this.formData.education)) {
       this.formData.education.push('')
     }

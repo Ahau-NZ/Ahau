@@ -374,7 +374,7 @@ export default {
     updateDialog (dialog, type) {
       this.dialog.type = type
       this.dialog.active = dialog
-    }, 
+    },
     // Used when ignoring/deleteing top ancestor on a partner line
     // AND when adding a partner ancestor update the tree to load
     setFocus (profileId) {
@@ -404,7 +404,7 @@ export default {
       without making calls to the db
     */
     async loadKnownFamily (loadProfile, person) {
-      const { children, parents, partners, siblings, relationship } = person
+      const { children, parents, partners, siblings, parent, relationshipType, legallyAdopted } = person
       var profile = {}
 
       if (loadProfile) {
@@ -415,21 +415,14 @@ export default {
 
       // populate it with what we do know about family members
       profile = Object.assign(profile, {
+        parent,
+        relationshipType,
+        legallyAdopted,
         children: children || [],
         parents: parents || [],
         siblings: siblings || [],
-        partners: partners || [],
-        relationship: relationship
+        partners: partners || []
       })
-
-      if (!profile.relationship && profile.parents.length) {
-        const whakapapaLink = await this.getWhakapapaLink(profile.parents[0].id, profile.id)
-
-        profile = {
-          ...profile,
-          ...whakapapaLink
-        }
-      }
 
       if (!profile.children || profile.children.length === 0) return profile
 
@@ -471,90 +464,23 @@ export default {
       person.partners = person.partners.filter(this.isVisibleProfile)
 
       // map all links
-      // person.children = this.sortChildrenByOrderOfBirth(person)
       person.children = await this.mapChildren(person)
-
-      // person.partners = this.mapPartners(person)
-      // person.children = this.sortChildrenByPartner(person)
 
       // if this person is the selected one, then we make sure we keep that profile up to date
       if (this.selectedProfile && this.selectedProfile.id === person.id) this.updateSelectedProfile(person)
       return person
     },
-    sortChildrenByOrderOfBirth (person) {
-      return person.children.sort((a, b) => {
-        return a.profile.birthOrder - b.profile.birthOrder
-      })
-    },
-    sortChildrenByPartner (person) {
-      // sort the children by partner
-      const filters = []
-
-      if (person.children.length === 0 || person.partners.length === 0) return person.children
-
-      person.partners.forEach(({ id }) => {
-        filters.push((child) => child.parents.some(p => p.id === id))
-      })
-
-      if (filters.length > 0) {
-        var piles = pileSort(
-          person.children,
-          filters
-        )
-
-        let arr = []
-
-        piles.forEach(d => {
-          arr = [...arr, ...d]
-        })
-
-        person.children = arr
-      }
-
-      return person.children
-    },
     async mapChildren (person) {
       return Promise.all(person.children.map(async child => {
         var childProfile = await this.loadDescendants(child.id)
-        // copy over the relationship attrs
-        childProfile.relationshipType = child.relationshipType
-        childProfile.legallyAdopted = child.legallyAdopted
+
+        // load the relationship between the two
+        const { relationshipType, legallyAdoped } = await this.getWhakapapaLink(person.id, child.id)
+        childProfile.relationshipType = relationshipType
+        childProfile.legallyAdoped = legallyAdoped
+
         return childProfile
       }))
-    },
-    mapPartners (person) {
-      person.partners.map(partner => {
-        // map the partners children
-        partner.children = partner.children.map(child => {
-          // get the childs profile
-          // can be in two formats profile {...} OR child { profile {...}}
-          const profile = child.profile ? child.profile : child
-
-          // check if the current child is a child of the person too and get their profile from there
-          const profileInPerson = person.children.find(c => c.id === profile.id)
-
-          if (profileInPerson) {
-            // if we found them, map them to this profile
-            return profileInPerson
-          }
-
-          // otherwise just map them to their profile
-          // note: these are step children and their relationship is ignored here
-          return profile
-        })
-
-        // map partners parents to their profiles
-        partner.parents = partner.parents.map(p => p.profile)
-
-        // add this person as a partner
-        partner.partners = [person] // note: we dont really care about the partners other partners because we dont need to load them yet
-        partner.siblings = [] // initialise their siblings (not needed yet
-
-        // return the new profile for the partner
-        return partner
-      })
-
-      return person.partners
     },
     openContextMenu ({ event, profile }) {
       this.setSelectedProfile(profile)
@@ -577,46 +503,36 @@ export default {
     async updateFocus (focus) {
       await this.saveWhakapapa({ focus })
     },
+    // async setSelectedProfile (profile) {
+    //   if (!profile) {
+    //     this.updateSelectedProfile({})
+    //     return
+    //   }
+
+    //   var loadedProfile = await this.getRelatives(profile.id || profile)
+
+    //   if (typeof profile === 'object' && profile.id !== this.currentFocus) {
+    //     // copy the relationship information
+    //     loadedProfile.relationshipType = profile.relationshipType
+    //     loadedProfile.legallyAdoped = profile.legallyAdoped
+    //     loadedProfile.parent = profile.parent
+    //   }
+
+    //   this.updateSelectedProfile(loadedProfile)
+    // },
     async setSelectedProfile (profile) {
       if (profile === null) {
         this.updateSelectedProfile({})
         return
       }
-      // check the type of profile we received
+
       if (typeof profile === 'object') {
-        profile = await this.loadKnownFamily(true, profile)
-        if (profile.parents.length) {
-          // find parent to get any changes to siblings
-          var person = await tree.find(this.nestedWhakapapa, profile.parents[0].id)
-          if (!person) {
-            this.updateSelectedProfile(profile)
-            return
-          }
-          var updatedProfile = tree.getSiblings(person, profile)
-          this.updateSelectedProfile(updatedProfile)
-        } else this.updateSelectedProfile(profile)
+        var loadedProfile = await this.loadKnownFamily(true, profile)
+        this.updateSelectedProfile(loadedProfile)
       } else if (typeof profile === 'string') {
         // need to find the profile in this whakapapa
-        var profileFound = await tree.find(this.nestedWhakapapa, profile)
-        if (!profileFound) {
-          // lets load descendants of them instead
-          let partner = await this.loadDescendants(profile)
-          partner.isPartner = true
-          console.warn('could potentially be loading a large amount of data')
-          this.updateSelectedProfile(partner)
-          return
-        }
-        if (profileFound.parents.length) {
-          // find parent to get any changes to siblings
-          var parent = await tree.find(this.nestedWhakapapa, profileFound.parents[0].id)
-          // if parent not found is becuase that parent is not in this nestedWhakapapa
-          if (!parent) {
-            this.updateSelectedProfile(profileFound)
-            return
-          }
-          var newUpdatedProfile = tree.getSiblings(parent, profileFound)
-          this.updateSelectedProfile(newUpdatedProfile)
-        } else this.updateSelectedProfile(profileFound)
+        var profileInNestedWhakapapa = await tree.find(this.nestedWhakapapa, profile)
+        if (profileInNestedWhakapapa) this.updateSelectedProfile(profileInNestedWhakapapa)
       } else {
         this.updateSelectedProfile({})
       }
