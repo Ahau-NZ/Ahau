@@ -9,6 +9,18 @@
         :hasError="!!errorMsg"
       />
     </v-col>
+    <!-- END DATE CHECKBOX -->
+    <v-col v-if="showCheckbox && !hasEndDate">
+      <v-checkbox
+        class="pt-6 pl-4"
+        v-if="!hasEndDate"
+        v-model="hasEndDate"
+        label="has an end date"
+        hide-details
+        v-bind="customProps"
+        outlined
+      />
+    </v-col>
     <!-- DIED AT PICKER -->
     <v-col :cols="cols" class="pa-1" v-if="hasEndDate">
       <NodeDatePicker
@@ -46,7 +58,7 @@ export default {
       type: String,
       default: '12'
     },
-    hideCheckbox: Boolean
+    showCheckbox: Boolean
   },
   components: {
     NodeDatePicker

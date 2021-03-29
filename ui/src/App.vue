@@ -3,7 +3,7 @@
     <Appbar v-if="displayAppbar" :enableMenu="enableMenu" app />
 
     <!-- Sizes your content based upon application components -->
-    <v-main v-if="!mobile || mobile && !storeDialog" :class="{ 'mobileWhakapapaTitleStyle': mobile }">
+    <v-main v-if="!mobile || mobile && !storeDialog" :class="{ 'mobileWhakapapaTitleStyle': mobile}">
 
       <!-- Provides the application the proper gutter -->
       <v-container fluid class="pa-0">
@@ -154,11 +154,6 @@ body {
 .v-timeline--dense .v-timeline-item__opposite {
   display: inline-block !important;
   flex:none
-}
-
-.stop-scroll {
-  max-height: 100vh !important;
-  overflow: hidden !important;
 }
 
 .version {

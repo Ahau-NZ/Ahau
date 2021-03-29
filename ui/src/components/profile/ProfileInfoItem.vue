@@ -4,7 +4,9 @@
       <v-col v-if="title" class=" ma-0 profile-label overline pt-0"><small>{{ title }}</small></v-col>
     </v-row>
     <v-row v-if="value" class="justify-center px-2 pb-6">
-      <p class="ma-0 profile-info">{{ value }}</p>
+      <p class="ma-0 profile-info">
+        <span v-for="(line, index) in value.split('\n')" :key="index">{{line}}<br></span>
+      </p>
     </v-row>
     <v-row v-if="subValue" class="justify-center">
       <p class="ma-0 profile-info"><small>{{ subValue }}</small></p>

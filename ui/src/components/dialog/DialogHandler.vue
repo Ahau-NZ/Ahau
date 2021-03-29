@@ -34,7 +34,7 @@
       @close="close"
       :profile="profile"
     />
-    <SideViewEditNodeDialog
+    <SideNodeDialog
       v-if="isActive('view-edit-node')"
       :show="isActive('view-edit-node')"
       :profile="selectedProfile"
@@ -111,7 +111,7 @@ import * as d3 from 'd3'
 import NewNodeDialog from '@/components/dialog/profile/NewNodeDialog.vue'
 import NewCommunityDialog from '@/components/dialog/community/NewCommunityDialog.vue'
 import EditNodeDialog from '@/components/dialog/profile/EditNodeDialog.vue'
-import SideViewEditNodeDialog from '@/components/dialog/profile/SideViewEditNodeDialog.vue'
+import SideNodeDialog from '@/components/dialog/profile/SideNodeDialog.vue'
 import DeleteNodeDialog from '@/components/dialog/profile/DeleteNodeDialog.vue'
 import WhakapapaViewDialog from '@/components/dialog/whakapapa/WhakapapaViewDialog.vue'
 import WhakapapaEditDialog from '@/components/dialog/whakapapa/WhakapapaEditDialog.vue'
@@ -139,7 +139,7 @@ export default {
   components: {
     NewNodeDialog,
     EditNodeDialog,
-    SideViewEditNodeDialog,
+    SideNodeDialog,
     DeleteNodeDialog,
     WhakapapaViewDialog,
     WhakapapaEditDialog,

@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid class="body-width pa-0 niho-bg">
+  <v-container fluid class="pa-0 niho-bg">
     <v-overlay dark :value="showArtefact" z-index="6" opacity="1" color="rgba(30,30,30)">
     </v-overlay>
     <!-- Header and Title -->
@@ -7,7 +7,7 @@
       :profile="profile"
     />
     <v-row v-if="isProfile">
-      <v-col cols="12" offset-md="2" md="8" sm="12" :class="!mobile ? 'pl-12' : 'pt-0 mt-n3' " :align="mobile ? 'center' : 'start'" :order="mobile ? '3' : '1'">
+      <v-col cols="12" offset-md="2" md="8" sm="12" :class="!mobile ? 'pl-12' : 'py-0 mt-n3' " :align="mobile ? 'center' : 'start'" :order="mobile ? '3' : '1'">
         <h1 class="primary--text" :style="mobile ? length : ''">{{ title }}</h1>
       </v-col>
       <v-col :order="mobile ? '2' : '3'" :align="mobile || tablet ? 'end' : isCommunity ? 'start':'center'" cols="12" :md="isCommunity ? 1:2" class="px-5">
@@ -323,10 +323,6 @@ export default {
     max-width: 80%;
     flex-basis: 80%;
   }
-}
-
-.body-width {
-  max-width: 100vw;
 }
 
 .niho-bg {
