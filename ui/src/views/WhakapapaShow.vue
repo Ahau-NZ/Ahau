@@ -100,10 +100,10 @@
           <div v-if="whakapapa.table && flatten" class="icon-button">
             <FilterButton :filter="filter" @filter="toggleFilter()" />
           </div>
-          <!-- <div v-if="whakapapa.table" class="icon-button">
+          <div v-if="whakapapa.table" class="icon-button">
             <FlattenButton @flatten="toggleFlatten()" />
           </div>
-          <div v-if="whakapapa.table" class="icon-button">
+          <!-- <div v-if="whakapapa.table" class="icon-button">
             <FlattenButton @flatten="toggleDownload()" />
           </div>
           <div v-if="whakapapa.table" class="icon-button">
