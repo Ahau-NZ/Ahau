@@ -125,9 +125,6 @@ export default {
       type: Object,
       required: true
     },
-    relationshipLinks: {
-      type: Map
-    },
     flatten: {
       type: Boolean,
       default: false

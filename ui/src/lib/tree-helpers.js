@@ -8,7 +8,6 @@ export default {
 
   getPartners,
   getSiblings,
-  getRelationship,
 
   updateNode,
   deleteNode,
@@ -152,23 +151,6 @@ function getPartners (parent, child) {
   // do not allow duplicates
   parent.partners = uniqby(parent.partners, 'id')
   return parent
-}
-
-/*
-  calulates a relationship object for the given parent and child. The index
-  stating what index in the tree it goes in and the attrs are what attributes
-  to store at that index
-*/
-function getRelationship (parent, child, relationship) {
-  return {
-    index: parent.id + '-' + child.id, // index in the relationshipLinks map
-    attrs: {
-      linkId: relationship.linkId,
-      relationshipType: relationship.relationshipType,
-      parent: parent.id,
-      child: child.id
-    }
-  }
 }
 
 /*

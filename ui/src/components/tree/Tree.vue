@@ -81,7 +81,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters(['nestedWhakapapa', 'relationshipLinks']),
+    ...mapGetters(['nestedWhakapapa']),
     radius () {
       return settings.radius
     },

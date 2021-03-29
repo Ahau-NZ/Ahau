@@ -158,9 +158,6 @@ export default {
     focus: {
       type: String
     },
-    relationshipLinks: {
-      type: Map
-    },
     view: {
       type: Object, default: null
     },
@@ -188,7 +185,7 @@ export default {
   mixins: [
     mapProfileMixins({
       mapApollo: ['profile', 'tribe'],
-      mapMethods: ['getTribe', 'createPerson', 'updatePerson', 'saveLink', 'savePerson', 'saveWhakapapa']
+      mapMethods: ['getTribe', 'createPerson', 'updatePerson', 'saveLink', 'savePerson', 'saveWhakapapa', 'getWhakapapaLink']
     })
   ],
   data () {
@@ -517,47 +514,39 @@ export default {
 
       const relationshipAttrs = pick(input, PERMITTED_RELATIONSHIP_ATTRS)
       // TEMP: skips saving relationship if there is no relationship on the selectedProfile
-      if (!isEmpty(relationshipAttrs) && this.selectedProfile.id !== this.view.focus && this.selectedProfile.relationship) {
-        const relationship = this.selectedProfile.relationship
+      if (!isEmpty(relationshipAttrs) && this.selectedProfile.id !== this.view.focus && this.selectedProfile.parents && this.selectedProfile.parents.length > 0) {        
+        console.log('parent', this.selectedProfile.parents[0])
+        const parent = this.selectedProfile.parents[0].id
+        const child = this.selectedProfile.id
+
+        // get the link between the parent and child
+        var whakapapaLink = await this.getWhakapapaLink(parent, child)
+        console.log('SAVING WHAKAPAPA', whakapapaLink)
+
         let input = {
           type: 'link/profile-profile/child',
-          linkId: relationship.linkId,
-          child: relationship.child,
-          parent: relationship.parent,
+          linkId: whakapapaLink.linkId,
+          child: this.selectedProfile.id,
+          parent: this.selectedProfile.parents[0].id,
           ...relationshipAttrs
         }
 
         await this.saveLink(input)
-
-        this.relationshipLinks.set(relationship.parent + '-' + relationship.child, input)
-        this.selectedProfile.relationship = input
-        let node = this.selectedProfile
-        this.updateNodeInNestedWhakapapa(node)
-      }
-
-      if (this.storeDialog === 'edit-node') {
-        this.setProfileById({
-          id: profileId
-        })
       }
 
       // reload the selectedProfiles personal details
-      var node = await this.loadKnownFamily(true, this.selectedProfile)
+      var node = await this.getRelatives(this.selectedProfile.id)
+
+      // copy over the relationship attrs
+      node.relationshipType = input.relationshipType || this.selectedProfile.relationshipType
+      node.legallyAdoped = input.legallyAdoped || this.selectedProfile.legallyAdopted
+
       // apply the changes to the nestedWhakapapa
       if (this.selectedProfile.isPartner && this.selectedProfile.id !== this.focus) {
         this.updatePartnerInNestedWhakapapa(node)
       } else {
         this.updateNodeInNestedWhakapapa(node)
       }
-
-      // reorder children if there is a change in birthorder
-      // if (input.birthOrder) {
-      //   var nestedParent = tree.find(this.nestedWhakapapa, this.selectedProfile.parents[0].id)
-      //   nestedParent.children = nestedParent.children.sort((a, b) => {
-      //     return a.birthOrder - b.birthOrder
-      //   })
-      //   this.updateNodeInNestedWhakapapa(nestedParent)
-      // }
 
       // reset the selectedProfile to the newly changed one
       this.setSelectedProfile(node)

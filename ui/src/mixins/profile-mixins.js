@@ -1,6 +1,6 @@
 import { getProfile } from '@/lib/profile-helpers.js'
 import { getTribe } from '@/lib/community-helpers.js'
-import { savePerson } from '@/lib/person-helpers.js'
+import { savePerson, whakapapaLink } from '@/lib/person-helpers.js'
 import { saveLink } from '@/lib/link-helpers.js'
 import { saveWhakapapaView } from '@/lib/whakapapa-helpers.js'
 import gql from 'graphql-tag'
@@ -179,6 +179,7 @@ const methods = {
     }
   },
   async saveLink (input) {
+    console.log('input', input)
     try {
       const res = await this.$apollo.mutate(
         saveLink(input)
@@ -203,6 +204,20 @@ const methods = {
       return res.data.saveWhakapapaView
     } catch (err) {
       console.error('Something went wrong while trying to save a whakapapa', input)
+      console.error(err)
+    }
+  },
+  async getWhakapapaLink (parent, child) {
+    try {
+      const res = await this.$apollo.query(
+        whakapapaLink(parent, child)
+      )
+
+      if (res.errors) throw res.errors
+
+      return res.data.whakapapaLink
+    } catch (err) {
+      console.error('Something went wrong while trying to get a whakapapa link')
       console.error(err)
     }
   }

@@ -135,7 +135,6 @@
           :flatten="flatten"
           :view="whakapapaView"
           :nestedWhakapapa="nestedWhakapapa"
-          :relationshipLinks="relationshipLinks"
           @load-descendants="loadDescendants($event)"
           @open-context-menu="openContextMenu($event)"
           :searchNodeId="searchNodeId"
@@ -164,7 +163,6 @@
       :loadDescendants="loadDescendants"
       :loadKnownFamily="loadKnownFamily"
       :getRelatives="getRelatives"
-      :relationshipLinks="relationshipLinks"
       :searchFilterString.sync="searchFilterString"
       @updateFocus="updateFocus($event)"
       :setSelectedProfile="setSelectedProfile"
@@ -238,7 +236,7 @@ export default {
   },
   mixins: [
     mapProfileMixins({
-      mapMethods: ['getTribe']
+      mapMethods: ['getTribe', 'getWhakapapaLink']
     })
   ],
   data () {
@@ -264,8 +262,6 @@ export default {
       },
       focus: null,
       // the record which defines the starting point for a tree (the 'focus')
-
-      relationshipLinks: new Map(), // shows relationship information between two profiles -> reference using parentId-childId as the key
 
       dialog: {
         active: null,
@@ -339,7 +335,6 @@ export default {
 
         const nestedWhakapapa = await this.loadDescendants(newFocus)
         this.setNestedWhakapapa(nestedWhakapapa)
-        this.setRelationshipLinks(this.relationshipLinks)
 
         this.setLoading(false)
       }
@@ -352,9 +347,6 @@ export default {
       }
       this.setWhakapapa(whakapapa)
     },
-    relationshipLinks (newVal) {
-      this.setRelationshipLinks(newVal)
-    },
     searchFilter (newValue) {
       if (newValue === true) {
         this.updateDialog('table-filter-menu', null)
@@ -364,7 +356,7 @@ export default {
   },
 
   methods: {
-    ...mapMutations(['updateSelectedProfile', 'setCurrentAccess', 'setNestedWhakapapa', 'setWhakapapa', 'setRelationshipLinks']),
+    ...mapMutations(['updateSelectedProfile', 'setCurrentAccess', 'setNestedWhakapapa', 'setWhakapapa']),
     ...mapActions(['setLoading']),
     tableOverflow (width) {
       var show = width > screen.width
@@ -382,7 +374,7 @@ export default {
     updateDialog (dialog, type) {
       this.dialog.type = type
       this.dialog.active = dialog
-    },
+    }, 
     // Used when ignoring/deleteing top ancestor on a partner line
     // AND when adding a partner ancestor update the tree to load
     setFocus (profileId) {
@@ -430,7 +422,14 @@ export default {
         relationship: relationship
       })
 
-      if (!profile.relationship && profile.parents.length) profile.relationship = this.relationshipLinks[profile.parents[0].id + '-' + profile.id]
+      if (!profile.relationship && profile.parents.length) {
+        const whakapapaLink = await this.getWhakapapaLink(profile.parents[0].id, profile.id)
+
+        profile = {
+          ...profile,
+          ...whakapapaLink
+        }
+      }
 
       if (!profile.children || profile.children.length === 0) return profile
 
@@ -475,7 +474,6 @@ export default {
       // person.children = this.sortChildrenByOrderOfBirth(person)
       person.children = await this.mapChildren(person)
 
-      // person.parents = await this.mapParents(person)
       // person.partners = this.mapPartners(person)
       // person.children = this.sortChildrenByPartner(person)
 
@@ -558,21 +556,6 @@ export default {
 
       return person.partners
     },
-    async mapParents (person) {
-      return Promise.all(person.parents.map(async parent => {
-        if (parent.ghost) return parent
-        // load their profile
-        const parentProfile = await this.getRelatives(parent.id)
-
-        // look at their children
-        person = tree.getSiblings(parentProfile, person)
-
-        const r = tree.getRelationship(parentProfile, person, parent)
-        this.relationshipLinks.set(r.index, r.attrs)
-        return parentProfile
-      }))
-    },
-
     openContextMenu ({ event, profile }) {
       this.setSelectedProfile(profile)
       this.$refs.menu.open(event)
@@ -688,7 +671,6 @@ export default {
   destroyed () {
     // reset whakapapa and relationships when leaving the tree
     this.setNestedWhakapapa([])
-    this.setRelationshipLinks([])
   }
 }
 

@@ -36,28 +36,6 @@ const actions = {
       dispatch('setDialog', null)
     }
     var person = await getRelatives(id, apollo)
-    if (person.children) {
-      person.children = await Promise.all(person.children.map(async (child) => {
-        var childProfile = await getRelatives(child.profile.id, apollo)
-        childProfile = {
-          ...childProfile,
-          relationshipType: child.relationshipType
-        }
-        person = tree.getPartners(person, childProfile)
-        return childProfile
-      }))
-    }
-    if (person.parents) {
-      person.parents = await Promise.all(person.parents.map(async parent => {
-        var parentProfile = await getRelatives(parent.profile.id, apollo)
-        person = tree.getSiblings(parentProfile, person)
-        parentProfile = {
-          ...parentProfile,
-          relationshipType: parent.relationshipType
-        }
-        return parentProfile
-      }))
-    }
     commit('updateSelectedProfile', person)
   }
 }

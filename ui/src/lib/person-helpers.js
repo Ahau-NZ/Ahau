@@ -245,3 +245,23 @@ export function getDisplayName (profile) {
 
   return profile.preferredName || profile.legalName.split(' ')[0]
 }
+
+export const whakapapaLink = (parent, child) => ({
+  query: gql`
+    query($parent: String!, $child: String!) {
+      whakapapaLink (parent: $parent, child: $child) {
+        type
+        linkId
+        parent
+        child
+        relationshipType
+        legallyAdopted
+        recps
+      }
+    }
+  `,
+  variables: {
+    parent,
+    child
+  }
+})

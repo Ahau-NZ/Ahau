@@ -260,7 +260,8 @@ function defaultData (input) {
     avatarImage: profile.avatarImage,
     description: profile.description,
     birthOrder: profile.birthOrder,
-    relationshipType: profile.relationship ? profile.relationship.relationshipType : null,
+    relationshipType: profile.relationshipType,
+    legallyAdoped: profile.legallyAdopted,
     email: profile.email,
     phone: profile.phone,
     deceased: profile.deceased,
@@ -296,7 +297,6 @@ export default {
     warnAboutChildren: { type: Boolean, default: true },
     view: { type: Object },
     sideMenu: { type: Boolean, default: false },
-    relationshipLinks: { type: Array },
     show: { type: Boolean, required: true },
     readonly: { type: Boolean, default: false },
     preview: { type: Boolean, default: false }

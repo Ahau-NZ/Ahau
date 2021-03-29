@@ -178,6 +178,7 @@ export default {
   },
   methods: {
     openContextMenu ($event) {
+      console.log('event', $event)
       this.openMenu($event)
     },
     focus ($event) {

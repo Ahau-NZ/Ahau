@@ -142,32 +142,6 @@ export const getProfile = ({
     }
   `,
   update ({ profile }) {
-    if (profile.type === 'community') return profile
-
-    if (profile.children) {
-      profile.children = profile.children.map(child => {
-        var childProfile = child.profile ? child.profile : child
-        childProfile = {
-          ...childProfile,
-          relationshipType: child.relationshipType
-        }
-        profile = tree.getPartners(profile, childProfile)
-        return childProfile
-      })
-    }
-
-    if (profile.parents) {
-      profile.parents = profile.parents.map(parent => {
-        var parentProfile = parent.profile ? parent.profile : parent
-        parentProfile = {
-          ...parentProfile,
-          relationshipType: parent.relationshipType
-        }
-        profile = tree.getSiblings(parentProfile, profile)
-        return parentProfile
-      })
-    }
-
     return profile
   },
   fetchPolicy: 'no-cache'

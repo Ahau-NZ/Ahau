@@ -2,8 +2,7 @@ import tree from '@/lib/tree-helpers'
 
 const state = {
   nestedWhakapapa: {},
-  whakapapa: {},
-  relationshipLinks: new Map()
+  whakapapa: {}
 }
 
 const getters = {
@@ -12,9 +11,6 @@ const getters = {
   },
   whakapapa: state => {
     return state.whakapapa
-  },
-  relationshipLinks: state => {
-    return state.relationshipLinks
   }
 }
 
@@ -24,9 +20,6 @@ const mutations = {
   },
   setWhakapapa (state, whakapapa) {
     state.whakapapa = whakapapa
-  },
-  setRelationshipLinks (state, link) {
-    state.relationshipLinks = link
   },
   updatePartnerInNestedWhakapapa (state, node) {
     state.nestedWhakapapa = tree.updatePartner(state.nestedWhakapapa, node)
