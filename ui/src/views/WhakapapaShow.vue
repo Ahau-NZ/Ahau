@@ -100,9 +100,15 @@
           <div v-if="whakapapa.table && flatten" class="icon-button">
             <FilterButton :filter="filter" @filter="toggleFilter()" />
           </div>
-          <div v-if="whakapapa.table" class="icon-button">
+          <!-- <div v-if="whakapapa.table" class="icon-button">
             <FlattenButton @flatten="toggleFlatten()" />
           </div>
+          <div v-if="whakapapa.table" class="icon-button">
+            <FlattenButton @flatten="toggleDownload()" />
+          </div>
+          <div v-if="whakapapa.table" class="icon-button">
+            <FlattenButton @flatten="toggleDownload()" />
+          </div> -->
           <!-- <div class="icon-button">
             <TableButton @table="toggleTable()" />
           </div> -->
@@ -135,6 +141,7 @@
           ref="table"
           :filter="filter"
           :flatten="flatten"
+          :download="download"
           :view="whakapapaView"
           :nestedWhakapapa="nestedWhakapapa"
           :relationshipLinks="relationshipLinks"
@@ -274,6 +281,7 @@ export default {
       },
       filter: false,
       flatten: true,
+      download: false,
       whakapapa: {
         tree: true,
         table: false
@@ -553,6 +561,9 @@ export default {
     toggleFlatten () {
       this.filter = false
       this.flatten = !this.flatten
+    },
+    toggleDownload () {
+      this.download = !this.download
     },
     toggleTable () {
       this.whakapapa.tree = !this.whakapapa.tree

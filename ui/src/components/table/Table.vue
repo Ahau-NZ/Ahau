@@ -158,6 +158,10 @@ export default {
       type: MouseEvent,
       required: false,
       default: null
+    },
+    download: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -208,6 +212,8 @@ export default {
         n.y = ++index * 30
         n.x = flatten ? 0.1 : n.depth * 15
       })
+      console.log('layout: ', layout)
+      console.log('descendants: ', layout.descendants())
       return layout
     },
     // table height based on number of nodes on table
@@ -327,6 +333,15 @@ export default {
             this.centerNode(d)
           }
         })
+      }
+    },
+    download (newVal) {
+      console.log('download hit: ', newVal)
+      if (newVal) {
+        console.log(this.nodes)
+        var csv = d3.csvFormat(this.nodes)
+        console.log('csv: ', csv)
+        this.download = false
       }
     }
   },
