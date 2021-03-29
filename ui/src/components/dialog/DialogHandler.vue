@@ -507,8 +507,6 @@ export default {
 
       var { relationshipType, legallyAdopted, parent } = this.selectedProfile
 
-      var node = null
-
       // TEMP: skips saving relationship if there is no relationship on the selectedProfile
       if (!isEmpty(relationshipAttrs) && profileId !== this.view.focus && parent) {
         // get the link between the parent and child
@@ -526,17 +524,16 @@ export default {
 
         relationshipType = relationshipAttrs.relationshipType
         legallyAdopted = relationshipAttrs.legallyAdopted
-
-        node = await this.loadDescendants(this.selectedProfile.id)
-      } else {
-        node = await this.loadKnownFamily(true, this.selectedProfile)
       }
+
+      var node = await this.loadDescendants(parent.id)
+
+      this.selectedProfile.relationshipType = relationshipType
+      this.selectedProfile.legallyAdopted = legallyAdopted
+      this.selectedProfile.parent = node
 
       // apply the changes to the nestedWhakapapa
       this.updateNodeInNestedWhakapapa(node)
-
-      // reset the selectedProfile to the newly changed one
-      this.setSelectedProfile(node)
     },
     async removeProfile (deleteOrIgnore) {
       if (deleteOrIgnore === 'delete') {
