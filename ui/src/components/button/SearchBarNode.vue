@@ -2,7 +2,7 @@
   <v-combobox
     v-model="displayString"
     :menu-props=" { light: true } "
-    append-icon="mdi-cancel"
+    append-icon="mdi-close"
     @click:append="clearSearchNodeId()"
     solo
     rounded
