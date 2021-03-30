@@ -34,25 +34,12 @@
       </v-list-item>
       <v-list-item class="px-0" >
         <v-list-item-content v-if="story.artefacts && story.artefacts.length > 0">
-          <ArtefactCarousel
-            v-if="story.artefacts.length > 1"
-            :artefacts="story.artefacts.map(a => a.artefact)"
-            @delete="toggleDialog($event, 'delete')"
-            @update="toggleDialog($event, 'new')"
-            @artefacts="processArtefacts($event)"
-            :editing="fullStory"
-          />
-          <Artefact
-            v-else
-            :artefact="story.artefacts[0].artefact"
-            :hide-video="!fullStory"
-          />
-          <!-- <v-carousel
+          <v-carousel
             v-model="model"
             hide-delimiters
             :show-arrows="!mobile && fullStory && story.artefacts && story.artefacts.length > 1" :show-arrows-on-hover="!mobile" :height="showArtefact ? 'auto' : mobile ? '300px' : '500px'" style="background-color:#1E1E1E">
             <v-carousel-item v-for="({ artefact } , i) in story.artefacts" :key="`story-card-artefact-${i}`">
-              <Artefact :model="model" :index="i" @showArtefact="toggleShowArtefact($event)" :artefact="artefact" :controls="fullStory" />
+              <Artefact :model="model" :index="i" @showArtefact="toggleShowArtefact($event)" :artefact="artefact" :controls="fullStory" :hide-video="!fullStory" />
             </v-carousel-item>
           </v-carousel>
           <v-slide-group
@@ -75,10 +62,11 @@
                 <ArtefactCarouselItem :artefact="artefact"
                   :selected="active"
                   @click.capture="toggle"
+                  hide-video
                 />
               </v-scale-transition>
             </v-slide-item>
-          </v-slide-group> -->
+          </v-slide-group>
         </v-list-item-content>
       </v-list-item>
       <v-list-item :class="mobile && fullStory ? 'px-6':''" :disabled="disableClick" :ripple="false" @click.stop="showText()">
