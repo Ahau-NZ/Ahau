@@ -13,7 +13,7 @@
     light
     hide-selected
     dense
-    :readonly="searchNodeId !== ''"
+    :readonly="searchNodeId !== '' && !searchFilter"
     :class="searchFilter ? 'search-input-filter' : 'search-input'"
     autofocus
   >
