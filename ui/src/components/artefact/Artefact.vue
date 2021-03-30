@@ -10,7 +10,7 @@
 
     <template v-else>
       <div v-if="artefact.type === 'video'" :class="classObj">
-        <v-icon v-if="hideVideo" size="50" class="center white--text">mdi-video</v-icon>
+        <v-icon v-if="hidePreview" size="50" class="center white--text">mdi-video</v-icon>
         <v-hover v-else v-slot:default="{ hover }">
           <video ref="video" :src="artefact.blob.uri" :controls="hover" class="video"/>
         </v-hover>
@@ -55,12 +55,12 @@ export default {
     model: { type: Number, default: -1 },
     index: Number,
     controls: Boolean,
-    hideVideo: Boolean
+    hidePreview: Boolean
   },
   computed: {
     ...mapGetters(['showArtefact']),
     useRenderMedia () {
-      if (this.hideVideo) return false
+      if (this.hidePreview) return false
       return (
         this.artefact.blob.__typename === 'BlobHyper' &&
         this.artefact.type !== 'document' // NOTE this is here because pdf rendering in electron is patchy
