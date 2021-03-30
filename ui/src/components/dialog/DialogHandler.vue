@@ -470,7 +470,7 @@ export default {
       }
 
       await this.saveWhakapapa(input)
-      this.$emit('refreshWhakapapa')
+      await this.$parent.$apollo.queries.whakapapaView.refetch()
 
       return true
     },
@@ -549,29 +549,30 @@ export default {
           add: [this.selectedProfile.id]
         }
       }
-      try {
-        const res = await this.$apollo.mutate(saveWhakapapaView(input))
-        this.$emit('refreshWhakapapa')
-        if (res.data) {
-          // if removing top ancestor on main whanau line, update the whakapapa view focus with child/partner
-          if (this.selectedProfile.id === this.view.focus) {
-            const successor = findSuccessor(this.selectedProfile)
-            this.$emit('updateFocus', successor.id)
-            return
-            // if removing top ancestor on a partner line show the new top ancestor
-          } else if (this.selectedProfile.id === this.focus) {
-            const successor = findSuccessor(this.selectedProfile)
-            this.$emit('setFocus', successor.id)
-          } else {
-            this.deleteNodeInNestedWhakapapa(this.selectedProfile)
-          }
-          this.setSelectedProfile(null)
+
+      await this.saveWhakapapa(input)
+      await this.$parent.$apollo.queries.whakapapaView.refetch()
+
+      if (this.selectedProfile.id === this.view.focus) {
+        const successor = findSuccessor(this.selectedProfile)
+        this.$emit('updateFocus', successor.id)
+        return
+        // if removing top ancestor on a partner line show the new top ancestor
+      } else if (this.selectedProfile.id === this.focus) {
+        const successor = findSuccessor(this.selectedProfile)
+        this.$emit('setFocus', successor.id)
+      } else {
+        if (this.view.focus === this.focus) {
+          // if we are on the main tree now
+          this.deleteNodeInNestedWhakapapa(this.selectedProfile)
         } else {
-          console.error(res)
+          // if we are on a partners tree
+          // change focus back
+          this.$emit('change-focus', this.view.focus)
         }
-      } catch (err) {
-        throw err
       }
+
+      this.setSelectedProfile(null)
     },
     async deletePerson () {
       if (!this.canDelete(this.selectedProfile)) return
@@ -633,11 +634,6 @@ export default {
         // now we have the flatStore for the suggestions we need to filter out the records
         // so we cant add one that is already in the tree
         records = records.filter(record => !this.findInTree(record.id))
-
-        // hydrate all the left over records
-        records = records.map(record => {
-          return tree.hydrate(record, profiles) // needed to hydrate to fix all dates
-        })
       }
 
       // sets suggestions which is passed into the dialogs

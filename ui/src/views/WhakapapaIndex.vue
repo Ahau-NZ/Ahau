@@ -153,9 +153,6 @@ export default {
           if (equals) profiles[profile.id] = profile
           return equals
         })
-        // .map(profile => {
-        //   return tree.hydrate(profile, profiles)
-        // })
 
       // sets suggestions which is passed into the dialogs
       this.suggestions = Object.assign([], records)

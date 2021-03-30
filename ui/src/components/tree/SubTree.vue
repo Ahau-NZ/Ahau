@@ -6,10 +6,7 @@
         :link="partner.link"
       />
     </g>
-    <g v-for="child in children" :key="`partner-child-${child.data.id}`">
-      <Link v-if="child.link" :link="child.link" style="transition: 1s linear;"/>
-      <SubTree :root="child" :openMenu="openMenu" :changeFocus="changeFocus" :centerNode="centerNode" />
-    </g>
+
     <g v-for="partner in partners" :key="`partner-${partner.data.id}`">
       <g class="child-group">
         <g v-for="child in partner.children" :key="`partner-child-${child.data.id}`">
@@ -25,6 +22,10 @@
         @focus="focus"
       />
     </g>
+    <!-- <g v-for="child in children" :key="`partner-child-${child.data.id}`"> -->
+      <!-- <Link v-if="child.link" :link="child.link" style="transition: 1s linear;"/> -->
+      <!-- <SubTree :root="child" :openMenu="openMenu" :changeFocus="changeFocus" :centerNode="centerNode" /> -->
+    <!-- </g> -->
     <g class="ghost-partner">
       <g id="child-group">
         <g v-for="child in ghostPartner.children" :key="`partner-child-${child.data.id}`">

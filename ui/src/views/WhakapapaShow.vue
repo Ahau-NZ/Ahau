@@ -446,11 +446,6 @@ export default {
       const result = await getRelatives(id, this.$apollo)
       if (!result) return
 
-      if (result.id === this.currentFocus && result.parents.length) {
-        // this looks like we are sometimes wiping parents? why?
-        // if it wasn't for this piece of code we would not need to pass this function into Tree, ...
-        result.parents = []
-      }
       return result
     },
 
@@ -503,23 +498,6 @@ export default {
     async updateFocus (focus) {
       await this.saveWhakapapa({ focus })
     },
-    // async setSelectedProfile (profile) {
-    //   if (!profile) {
-    //     this.updateSelectedProfile({})
-    //     return
-    //   }
-
-    //   var loadedProfile = await this.getRelatives(profile.id || profile)
-
-    //   if (typeof profile === 'object' && profile.id !== this.currentFocus) {
-    //     // copy the relationship information
-    //     loadedProfile.relationshipType = profile.relationshipType
-    //     loadedProfile.legallyAdoped = profile.legallyAdoped
-    //     loadedProfile.parent = profile.parent
-    //   }
-
-    //   this.updateSelectedProfile(loadedProfile)
-    // },
     async setSelectedProfile (profile) {
       if (profile === null) {
         this.updateSelectedProfile({})
