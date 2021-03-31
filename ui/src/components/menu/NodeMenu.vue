@@ -68,7 +68,8 @@ export default {
           title: 'Add Partner',
           dialog: 'new-node',
           type: 'partner',
-          isPermitted: Boolean(this.selectedProfile)
+          isPermitted: Boolean(this.selectedProfile),
+          icon: require('@/assets/node-partner.svg')
         },
         {
           title: 'Add Child',

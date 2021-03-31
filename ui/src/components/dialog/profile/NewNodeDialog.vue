@@ -42,10 +42,10 @@
                       <v-list-item-title> {{ data.item.legalName }} </v-list-item-title>
                       <v-list-item-subtitle>Full Name</v-list-item-subtitle>
                     </v-list-item-content>
-                    <!-- <v-list-item-content v-if="!data.item.preferredName && !data.item.legalName">
+                    <v-list-item-content v-if="!data.item.preferredName && !data.item.legalName">
                       <v-list-item-title> Unknown </v-list-item-title>
                       <v-list-item-subtitle>Full Name</v-list-item-subtitle>
-                    </v-list-item-content> -->
+                    </v-list-item-content>
                     <v-list-item-action v-if="age(data.item.aliveInterval)">
                       <v-list-item-title> {{ age(data.item.aliveInterval) }} </v-list-item-title>
                       <v-list-item-subtitle>Age</v-list-item-subtitle>
@@ -165,7 +165,7 @@ export default {
   computed: {
     ...mapGetters(['currentAccess']),
     allowRelationships () {
-      return this.withRelationships && this.type !== 'partner'
+      return this.withRelationships && this.type !== 'partner' && (this.profile.relationshipType === null || this.profile.relationshipType === undefined)
     },
     generateSuggestions () {
       if (this.hasSelection) return []
@@ -394,11 +394,6 @@ export default {
     },
     setFormData (person) {
       this.hasSelection = true
-
-      if (this.allowRelationships) {
-        person.relationshipType = person.relationshipType || 'birth'
-        person.legallyAdopted = person.legallyAdopted === undefined ? false : person.legallyAdopted
-      }
 
       this.profile = person
     },
