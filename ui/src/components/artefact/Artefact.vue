@@ -115,9 +115,9 @@ export default {
         path: url.pathname + url.search
       }
 
-      if (typeof opts.start === 'number' && typeof opts.end === 'number') {
+      if (typeof opts.start === 'number') {
         req.headers = {
-          'Content-Range': `bytes ${opts.start}-${opts.end}/*`
+          Range: `bytes=${opts.start}-${opts.end || ''}`
         }
       }
 
