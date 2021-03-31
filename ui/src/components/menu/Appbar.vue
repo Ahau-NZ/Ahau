@@ -156,7 +156,8 @@ export default {
       this.isMobileBackButton = $event
     },
     getNotifications () {
-      this.polling = setInterval(this.getAllNotifications, 7e3)
+      // TODO uncomment
+      // this.polling = setInterval(this.getAllNotifications, 7e3)
     },
     async getCurrentIdentity () {
       await this.setWhoami()

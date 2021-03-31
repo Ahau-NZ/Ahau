@@ -105,15 +105,23 @@ export default {
   methods: {
     buildRequest (uri, opts = {}) {
       const url = new URL(uri)
-      if (typeof opts.start === 'number') url.searchParams.append('start', opts.start)
-      if (typeof opts.end === 'number') url.searchParams.append('end', opts.end)
+      // if (typeof opts.start === 'number') url.searchParams.append('start', opts.start)
+      // if (typeof opts.end === 'number') url.searchParams.append('end', opts.end)
 
-      return {
+      const req = {
         method: 'GET',
         hostname: url.hostname,
         port: url.port,
         path: url.pathname + url.search
       }
+
+      if (typeof opts.start === 'number' && typeof opts.end === 'number') {
+        req.headers = {
+          'Content-Range': `bytes ${opts.start}-${opts.end}/*`
+        }
+      }
+
+      return req
     },
     renderHyperBlob () {
       const { title, blob } = this.artefact
@@ -128,6 +136,7 @@ export default {
             }
           })
           const requestOpts = buildRequest(blob.uri, { start: opts.start || 0, end: opts.end })
+          console.log(requestOpts)
           const req = http.request(requestOpts, (res) => {
             // console.log(`STATUS: ${res.statusCode}`)
             res.pipe(transform)
@@ -142,7 +151,6 @@ export default {
         maxBlobLength: 200 * 1024 * 1024,
         controls: true
       }
-      console.log(file)
       renderMedia.append(file, this.$refs.renderTarget, function (err, elem) {
         if (err) return console.error(err)
 
