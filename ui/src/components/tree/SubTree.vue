@@ -22,10 +22,6 @@
         @focus="focus"
       />
     </g>
-    <!-- <g v-for="child in children" :key="`partner-child-${child.data.id}`"> -->
-      <!-- <Link v-if="child.link" :link="child.link" style="transition: 1s linear;"/> -->
-      <!-- <SubTree :root="child" :openMenu="openMenu" :changeFocus="changeFocus" :centerNode="centerNode" /> -->
-    <!-- </g> -->
     <g class="ghost-partner">
       <g id="child-group">
         <g v-for="child in ghostPartner.children" :key="`partner-child-${child.data.id}`">
@@ -196,14 +192,10 @@ export default {
       // change the link if they are not related by birth
       const dashed = ['adopted', 'whangai'].includes(node.data.relationshipType)
 
+      // center the link between the parents
       if (center) {
         x = x + (-sign * this.radius) - 10
         y = yOffset - this.radius
-      }
-
-      // change how the link looks when the person is the only child in the tree
-      if (node.data.parents && node.data.parents.length === 2 && this.root.children.length === 1) {
-        x = this.root.x
       }
 
       return {
