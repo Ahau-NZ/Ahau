@@ -17,6 +17,9 @@ const customConfig = {
     cors: true,
     csp: ''
   },
+  hyperBlobs: {
+    port: env.ahau.hyperBlobs && env.ahau.hyperBlobs.port // TODO
+  },
   recpsGuard: {
     allowedTypes: [
       'contact', 'pub' // needed for ssb-invite

@@ -1,12 +1,17 @@
 <template>
-  <div @click="$refs.fileInput.click()">
+  <div @click="handleClick">
     <input v-show="false" ref="fileInput" type="file" :accept="acceptedFileTypes"  multiple @change="processMediaFiles($event)" />
-    <AddButton :dark="dark" :size="mobile ? '40px' : '60px'" icon="mdi-image-plus" />
+    <AddButton
+      :dark="dark"
+      :size="mobile ? '40px' : '60px'"
+      :icon="processing ? 'mdi-loading mdi-spin' : 'mdi-image-plus'"
+      />
     <p v-if="showLabel" class="add-label clickable" >Add artefacts</p>
   </div>
 </template>
+
 <script>
-import uploadFile from '@/mixins/upload-file.js'
+import uploadFile from '@/mixins/upload-hyper-file.js'
 import { ARTEFACT_FILE_TYPES } from '@/lib/artefact-helpers.js'
 import AddButton from '@/components/button/AddButton.vue'
 
@@ -14,7 +19,10 @@ export default {
   name: 'UploadArtefactButton',
   props: {
     dark: Boolean,
-    showLabel: Boolean
+    showLabel: Boolean,
+    acceptedFileTypes: {
+      default: ARTEFACT_FILE_TYPES
+    }
   },
   components: {
     AddButton
@@ -22,18 +30,18 @@ export default {
   mixins: [uploadFile],
   data () {
     return {
-      processing: 0
+      processing: 0 // TODO do something with this - spinner?
     }
   },
   computed: {
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
-    },
-    acceptedFileTypes () {
-      return ARTEFACT_FILE_TYPES
     }
   },
   methods: {
+    handleClick () {
+      if (!this.processing) this.$refs.fileInput.click()
+    },
     async processMediaFiles ($event) {
       const files = Array.from($event.target.files)
       this.processing = files.length
@@ -49,21 +57,12 @@ export default {
       this.$emit('artefacts', artefacts.filter(Boolean))
     },
     async processArtefact (file) {
-      // persist as an scuttlebutt/ hyper blob
-      const blob = await this.uploadFile({ file, encrypt: true })
-      if (blob === null) return null // means there was an error
-
-      var [ type ] = file.type.split('/')
-
+      let [ type ] = file.type.split('/')
       if (type === 'image') type = 'photo'
       else if (type === 'application' || type === 'text') type = 'document'
 
-      if (!blob.mimeType) blob.mimeType = file.type
-      if (blob.mimeType === 'Hello World') {
-        // TODO: HACK until mimeType: Hello World gets solved
-        blob.mimeType = file.type
-      }
-      if (blob.__typename) delete blob.__typename
+      const blob = await this.uploadFile({ file })
+      if (blob === null) return null // means there was an error
 
       return {
         type,
