@@ -22,7 +22,10 @@ const PERMITTED_CSV_COLUMNS = [
   'city',
   'postCode',
   'country',
-  'profession'
+  'profession',
+  'altNames',
+  'school',
+  'education'
 ]
 
 function importCsv (file) {
@@ -97,6 +100,23 @@ function parse (fileContent) {
           d.birthOrder = null
         }
 
+        if (d.altNames) {
+          d.altNames = convertToSet(d.altNames)
+        } else {
+          d.altNames = null
+        }
+
+        if (d.school) {
+          d.school = convertToArray(d.school)
+        } else {
+          d.school = null
+        }
+        if (d.education) {
+          d.education = convertToArray(d.education)
+        } else {
+          d.education = null
+        }
+
         return {
           parentNumber: d.parentNumber,
           number: d.number,
@@ -116,7 +136,10 @@ function parse (fileContent) {
           city: d.city,
           postCode: d.postCode,
           country: d.country,
-          profession: d.profession
+          profession: d.profession,
+          school: d.school,
+          education: d.education,
+          altNames: d.altNames
         }
       }
     })
@@ -209,7 +232,10 @@ const schema = {
   email: validateString,
   city: validateString,
   postCode: validateString,
-  country: validateString
+  country: validateString,
+  school: validateString,
+  education: validateString,
+  altNames: validateString
 }
 
 function isEmpty (d) {
@@ -229,9 +255,11 @@ function isValidDate (d) {
 function isValidNumber (d) {
   if (d === null) return false
   if (d === '') return false
-  if (isNaN(d)) return false
-  if (Number(d) % 1 !== 0) return false
-  if (Number(d) < 0) return false
+
+  // removing this to allow for id's to be used as numbers
+  // if (isNaN(d)) return false
+  // if (Number(d) % 1 !== 0) return false
+  // if (Number(d) < 0) return false
   return true
 }
 
@@ -280,6 +308,24 @@ function convertDate (date) {
   return _date
 }
 
+function convertToSet (str) {
+  var set = { add: [] }
+  if (str.indexOf(', ') > -1) {
+    str = str.split(',')
+    str.forEach(i => set.add.push(i))
+  } else {
+    set.add.push(str)
+  }
+  return set
+}
+
+function convertToArray (arr) {
+  if (arr.indexOf(', ') > -1) {
+    arr = arr.split(', ')
+  }
+  return arr
+}
+
 function isValidInterval (interval) {
   if (interval === '/' || interval === '' || interval === null) return true
 
@@ -297,7 +343,7 @@ function convertDigit (digit) {
 }
 
 function downloadCsv () {
-  var csv = 'parentNumber,number,preferredName,legalName,gender,relationshipType,birthOrder,bornAt,placeOfBirth,deceased,diedAt,placeOfDeath,buriedLocation,phone,email,address,city,postCode,country,profession\n'
+  var csv = 'parentNumber,number,preferredName,legalName,gender,relationshipType,birthOrder,bornAt,placeOfBirth,deceased,diedAt,placeOfDeath,buriedLocation,phone,email,address,city,postCode,country,profession,school,education,altNames\n'
   var hiddenElement = document.createElement('a')
   hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(csv)
   hiddenElement.target = '_blank'

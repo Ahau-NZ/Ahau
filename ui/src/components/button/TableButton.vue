@@ -1,5 +1,5 @@
 <template>
-  <v-tooltip  v-if="tableIcon" bottom>
+  <v-tooltip  v-if="!table" bottom>
     <template v-slot:activator="{ on }">
         <v-btn v-on="on" @click="toggle()" fab x-small color="black">
           <v-icon light > mdi-table </v-icon>
@@ -21,14 +21,11 @@
 <script>
 export default {
   name: 'TableButton',
-  data () {
-    return {
-      tableIcon: true
-    }
+  props: {
+    table: Boolean
   },
   methods: {
     toggle () {
-      this.tableIcon = !this.tableIcon
       this.$emit('table')
     }
   }

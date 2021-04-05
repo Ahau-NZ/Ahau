@@ -212,8 +212,6 @@ export default {
         n.y = ++index * 30
         n.x = flatten ? 0.1 : n.depth * 15
       })
-      console.log('layout: ', layout)
-      console.log('descendants: ', layout.descendants())
       return layout
     },
     // table height based on number of nodes on table
@@ -338,10 +336,49 @@ export default {
     download (newVal) {
       console.log('download hit: ', newVal)
       if (newVal) {
-        console.log(this.nodes)
-        var csv = d3.csvFormat(this.nodes)
+        var nodes = this.nodes.map(node => {
+          var d = node.data
+          console.log('aliveInterval: ', d.aliveInterval)
+          var aliveInterval = d.aliveInterval ? d.aliveInterval.split('/') : null
+          var altNames = d.altNames.length > 0 ? d.altNames.join(', ') : null
+          var school = d.school.length > 0 ? d.school.join(', ') : null
+          var education = d.education.length > 0 ? d.education.join(', ') : null
+          return {
+            parentNumber: d.parents.length > 0 ? d.parents[0].id : '',
+            number: d.id,
+            preferredName: d.preferredName,
+            legalName: d.legalName,
+            altNames: altNames,
+            gender: d.gender || 'unknown',
+            relationshipType: d.relationshipType || 'birth',
+            birthOrder: d.birthOrder,
+            deceased: d.deceased ? 'yes' : null,
+            bornAt: aliveInterval ? aliveInterval[0] : null,
+            diedAt: aliveInterval && aliveInterval.length > 1 ? aliveInterval[1] : null,
+            placeOfBirth: d.placeOfBirth,
+            placeOfDeath: d.placeOfDeath,
+            buriedLocation: d.buriedLocation,
+            phone: d.phone,
+            email: d.email,
+            address: d.address,
+            city: d.city,
+            postCode: d.postCode,
+            country: d.country,
+            profession: d.profession,
+            education: education,
+            school: school
+          }
+        })
+        console.log(nodes)
+        var csv = d3.csvFormat(nodes)
         console.log('csv: ', csv)
-        this.download = false
+        this.$emit('update:download', false)
+
+        var hiddenElement = document.createElement('a')
+        hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(csv)
+        hiddenElement.target = '_blank'
+        hiddenElement.download = this.view.name + '.csv'
+        hiddenElement.click()
       }
     }
   },
