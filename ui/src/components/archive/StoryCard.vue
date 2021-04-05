@@ -247,7 +247,6 @@ import EditStoryButton from '@/components/button/EditStoryButton.vue'
 import EditArtefactButton from '@/components/button/EditArtefactButton.vue'
 import { colours } from '@/lib/colours.js'
 import ArtefactCarouselItem from '@/components/artefact/ArtefactCarouselItem.vue'
-import ArtefactCarousel from '@/components/artefact/ArtefactCarousel.vue'
 import NewRecordDialog from '@/components/dialog/archive/NewRecordDialog.vue'
 import DeleteRecordDialog from '@/components/dialog/archive/DeleteRecordDialog.vue'
 import { deleteStory } from '@/lib/story-helpers.js'
@@ -282,7 +281,6 @@ export default {
     EditStoryButton,
     EditArtefactButton,
     ArtefactCarouselItem,
-    ArtefactCarousel,
     NewRecordDialog,
     DeleteRecordDialog
   },
