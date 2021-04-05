@@ -10,6 +10,7 @@
           @update="$emit('update', i)"
           @delete="$emit('delete', i)"
           :editing="editing"
+          :hide-preview="!editing"
         />
       </v-carousel-item>
     </v-carousel>
@@ -32,6 +33,7 @@
           <ArtefactCarouselItem :artefact="artefact"
             :selected="active"
             @click="selectItem(active, toggle)"
+            hide-preview
           />
         </v-scale-transition>
       </v-slide-item>

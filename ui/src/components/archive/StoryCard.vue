@@ -32,14 +32,14 @@
           <v-list-item-title v-else class="headline mb-1 wrap-text">{{ artefact.title }}</v-list-item-title>
         </v-list-item-content>
       </v-list-item>
-      <v-list-item v-if="story.artefacts && story.artefacts.length > 0" class="px-0" >
-        <v-list-item-content>
+      <v-list-item class="px-0" >
+        <v-list-item-content v-if="story.artefacts && story.artefacts.length > 0">
           <v-carousel
             v-model="model"
             hide-delimiters
             :show-arrows="!mobile && fullStory && story.artefacts && story.artefacts.length > 1" :show-arrows-on-hover="!mobile" :height="showArtefact ? 'auto' : mobile ? '300px' : '500px'" style="background-color:#1E1E1E">
             <v-carousel-item v-for="({ artefact } , i) in story.artefacts" :key="`story-card-artefact-${i}`">
-              <Artefact :model="model" :index="i" @showArtefact="toggleShowArtefact($event)" :artefact="artefact" :controls="fullStory" />
+              <Artefact :model="model" :index="i" @showArtefact="toggleShowArtefact($event)" :artefact="artefact" :controls="fullStory" :hide-preview="!fullStory" />
             </v-carousel-item>
           </v-carousel>
           <v-slide-group
@@ -62,11 +62,11 @@
                 <ArtefactCarouselItem :artefact="artefact"
                   :selected="active"
                   @click.capture="toggle"
+                  hide-preview
                 />
               </v-scale-transition>
             </v-slide-item>
           </v-slide-group>
-
         </v-list-item-content>
       </v-list-item>
       <v-list-item :class="mobile && fullStory ? 'px-6':''" :disabled="disableClick" :ripple="false" @click.stop="showText()">
@@ -247,6 +247,7 @@ import EditStoryButton from '@/components/button/EditStoryButton.vue'
 import EditArtefactButton from '@/components/button/EditArtefactButton.vue'
 import { colours } from '@/lib/colours.js'
 import ArtefactCarouselItem from '@/components/artefact/ArtefactCarouselItem.vue'
+import ArtefactCarousel from '@/components/artefact/ArtefactCarousel.vue'
 import NewRecordDialog from '@/components/dialog/archive/NewRecordDialog.vue'
 import DeleteRecordDialog from '@/components/dialog/archive/DeleteRecordDialog.vue'
 import { deleteStory } from '@/lib/story-helpers.js'
@@ -281,6 +282,7 @@ export default {
     EditStoryButton,
     EditArtefactButton,
     ArtefactCarouselItem,
+    ArtefactCarousel,
     NewRecordDialog,
     DeleteRecordDialog
   },

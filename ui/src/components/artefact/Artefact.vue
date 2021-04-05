@@ -10,7 +10,8 @@
 
     <template v-else>
       <div v-if="artefact.type === 'video'" :class="classObj">
-        <v-hover v-slot:default="{ hover }">
+        <v-icon v-if="hidePreview" size="50" class="center white--text">mdi-video</v-icon>
+        <v-hover v-else v-slot:default="{ hover }">
           <video ref="video" :src="artefact.blob.uri" :controls="hover" class="video"/>
         </v-hover>
       </div>
@@ -25,11 +26,11 @@
         :class="classObj"
         :src="artefact.blob.uri"
         contain
-        />
+      />
 
       <div v-if="artefact.type === 'document'" ref='document' :class="classObj">
         <div class="text-center">
-          <v-icon size="100px">{{ artefactIcon }}</v-icon><br>
+          <v-icon size="100px" class="white--text">{{ artefactIcon }}</v-icon><br>
           <v-btn text @click.prevent="downloadFile()">
             Download file
           </v-btn>
@@ -53,11 +54,13 @@ export default {
     artefact: Object,
     model: { type: Number, default: -1 },
     index: Number,
-    controls: Boolean
+    controls: Boolean,
+    hidePreview: Boolean
   },
   computed: {
     ...mapGetters(['showArtefact']),
     useRenderMedia () {
+      if (this.hidePreview) return false
       return (
         this.artefact.blob.__typename === 'BlobHyper' &&
         this.artefact.type !== 'document' // NOTE this is here because pdf rendering in electron is patchy
@@ -179,6 +182,7 @@ export default {
   // :style="showArtefact ? 'height:300px': mobile ? 'height:300px' : 'height:500px'"
 
   height: 500px;
+  background-color: #1E1E1E;
 
   &.-mobile {
     height: 300px;
@@ -187,6 +191,7 @@ export default {
   audio {
     width: 100%;
     height:80%;
+    background-color: #1E1E1E;
   }
 }
 
@@ -214,6 +219,7 @@ export default {
 
 .video {
   height: 500px;
+  background-color: #1E1E1E;
 
   &.-mobile {
     height: 300px;
