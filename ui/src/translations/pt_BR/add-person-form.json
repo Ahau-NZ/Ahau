@@ -1,0 +1,30 @@
+{
+  "legalName": "Nome Completo",
+  "preferredName": "Primeiro nome / Conhecido como",
+  "dob": "Data Nascimento",
+  "day": "Dia",
+  "month": "Mês",
+  "year": "Ano",
+  "notLiving": "Não está mais vivendo",
+  "birthOrder": "Ordem de nascimento",
+  "identity": "Identifica como",
+  "gender": {
+    "title": "Gênero",
+    "female": "Feminino",
+    "male": "Masculino",
+    "other": "Outros",
+    "unknown": "Desconhecido"
+  },
+  "moreInfo": "Forneça mais informações",
+  "addName": "Adicione outro nome",
+  "description": "Descrição",
+  "email": "E-mail",
+  "phone": "Phone",
+  "uploadPhoto": "Carregar foto do perfil",
+  "profession": "Profissão",
+  "birthPlace": "Local de nascimento",
+  "address": "Endereço",
+  "city": "Cidade",
+  "postCode": "CEP Residencial",
+  "country": "País/região"
+}

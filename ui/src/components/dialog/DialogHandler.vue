@@ -445,6 +445,7 @@ export default {
         } else {
           // if person doesnt exist create one
           if (!id) {
+            $event.type = 'person'
             $event.authors = {
               add: [
                 $event.recps.includes(this.whoami.personal.groupId)

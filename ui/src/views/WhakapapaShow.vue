@@ -35,7 +35,20 @@
 
       <v-row v-if="!mobile" class="select">
         <div v-if="search" class="icon-search">
-          <SearchBar :nestedWhakapapa="nestedWhakapapa" :searchNodeId.sync="searchNodeId" :searchFilter="false" @close="clickedOffSearch()"  @searchNode="setSearchNode($event)"/>
+          <SearchBar
+            v-if="!searchNodeId"
+            :nestedWhakapapa="nestedWhakapapa"
+            :searchNodeId.sync="searchNodeId"
+            :searchFilter="false"
+            :searchNodeName.sync="searchNodeName"
+            @close="clickedOffSearch()"
+            @searchNode="setSearchNode($event)"
+          />
+          <SearchBarNode
+            v-else
+            :searchNodeId.sync="searchNodeId"
+            :searchNodeName="searchNodeName"
+          />
         </div>
         <div v-else-if="searchFilterString === ''" class="icon-button">
           <SearchButton :search.sync="search" />
@@ -89,7 +102,19 @@
             </v-btn>
           </template>
           <div v-if="search" class="icon-search ml-n12 pt-7" @click.stop>
-            <SearchBar :nestedWhakapapa="nestedWhakapapa" :searchNodeId.sync="searchNodeId" @searchNode="setSearchNode($event)" @close="clickedOffSearch()"/>
+            <SearchBar
+              v-if="!searchNodeId"
+              :nestedWhakapapa="nestedWhakapapa"
+              :searchNodeId.sync="searchNodeId"
+              :searchNodeName.sync="searchNodeName"
+              @searchNode="setSearchNode($event)"
+              @close="clickedOffSearch()"
+            />
+            <SearchBarNode
+              v-else
+              :searchNodeId.sync="searchNodeId"
+              :searchNodeName="searchNodeName"
+            />
           </div>
           <div v-else-if="searchFilterString === ''"  class="icon-button">
             <SearchButton  @click.stop :search.sync="search" />
@@ -204,6 +229,7 @@ import FilterButton from '@/components/button/FilterButton.vue'
 import SortButton from '@/components/button/SortButton.vue'
 
 import SearchBar from '@/components/button/SearchBar.vue'
+import SearchBarNode from '@/components/button/SearchBarNode.vue'
 import SearchButton from '@/components/button/SearchButton.vue'
 
 import SearchFilterButton from '@/components/button/SearchFilterButton.vue'
@@ -232,6 +258,7 @@ export default {
     FilterButton,
     SortButton,
     SearchBar,
+    SearchBarNode,
     SearchButton,
     SearchFilterButton,
     FeedbackButton,
@@ -287,7 +314,8 @@ export default {
       },
       sortTableBool: false,
       sortValue: '',
-      sortEvent: null
+      sortEvent: null,
+      searchNodeName: ''
     }
   },
   apollo: {
