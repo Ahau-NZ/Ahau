@@ -1,6 +1,6 @@
 <template>
   <v-container class="pa-0 background">
-    <v-carousel v-model="selectedIndex" hide-delimiters style="width: 100vw;">
+    <v-carousel v-model="selectedIndex" hide-delimiters style="width: 100vw;" :show-arrows="artefacts.length > 1">
       <v-carousel-item v-for="(artefact, i) in artefacts" :key="`a-c-${i}`"
         style="width:100%;"
       >
