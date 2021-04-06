@@ -17,7 +17,7 @@
 
 <script>
 
-import { PERMITTED_PERSON_ATTRS } from '@/lib/person-helpers.js'
+import { PERMITTED_PERSON_ATTRS, setPersonProfile } from '@/lib/person-helpers.js'
 import { parseInterval } from '@/lib/date-helpers.js'
 
 import Dialog from '@/components/dialog/Dialog.vue'
@@ -26,40 +26,6 @@ import isEmpty from 'lodash.isempty'
 import calculateAge from '@/lib/calculate-age'
 import pick from 'lodash.pick'
 import isEqual from 'lodash.isequal'
-import clone from 'lodash.clonedeep'
-
-function defaultData (input) {
-  var profile = clone(input)
-
-  return {
-    id: profile.id,
-    gender: profile.gender,
-    legalName: profile.legalName,
-    aliveInterval: profile.aliveInterval,
-    preferredName: profile.preferredName,
-    avatarImage: profile.avatarImage,
-    description: profile.description,
-    birthOrder: profile.birthOrder,
-    email: profile.email,
-    phone: profile.phone,
-    deceased: profile.deceased,
-    address: profile.address,
-    city: profile.city,
-    country: profile.country,
-    postCode: profile.postCode,
-    profession: profile.profession,
-    placeOfBirth: profile.placeOfBirth,
-    placeOfDeath: profile.placeOfDeath,
-    buriedLocation: profile.buriedLocation,
-    altNames: {
-      currentState: clone(profile.altNames),
-      add: [], // new altNames to add
-      remove: [] // altNames to remove
-    },
-    education: profile.education,
-    school: profile.school
-  }
-}
 
 export default {
   name: 'EditNodeDialog',
@@ -119,7 +85,7 @@ export default {
       immediate: true,
       handler (newVal) {
         if (!newVal) return
-        this.formData = defaultData(newVal)
+        this.formData = setPersonProfile(newVal)
       }
     }
   },
