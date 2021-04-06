@@ -9,7 +9,7 @@
     </div>
 
     <template v-else>
-      <div v-if="artefact.type === 'video' && !hidePreview" :class="classObj" id="video-container">
+      <div v-if="artefact.type === 'video' && !showPreview" :class="classObj" id="video-container">
         <v-hover v-slot:default="{ hover }">
           <video ref="video" :src="artefact.blob.uri" :controls="hover" class="video"/>
         </v-hover>
@@ -27,10 +27,10 @@
         contain
       />
 
-      <img v-if="hidePreview"
-        :id="`poster-${this.artefact.id}`"
+      <img v-if="artefact.type === 'video' && showPreview"
+        :src="poster"
         ref="photo"
-        :class="photoClassObj"
+        :class="classObj"
         contain
       />
 
@@ -62,12 +62,17 @@ export default {
     model: { type: Number, default: -1 },
     index: Number,
     controls: Boolean,
-    hidePreview: Boolean
+    showPreview: Boolean
+  },
+  data () {
+    return {
+      poster: null
+    }
   },
   computed: {
     ...mapGetters(['showArtefact']),
     useRenderMedia () {
-      if (this.hidePreview) return false
+      if (this.showPreview) return false
 
       return (
         this.artefact.blob.__typename === 'BlobHyper' &&
@@ -75,15 +80,12 @@ export default {
       )
     },
     classObj () {
+      const type = this.showPreview
+        ? 'photo'
+        : this.artefact.type
+
       return {
-        [this.artefact.type]: true,
-        '-mobile': this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm,
-        '-show': this.showArtefact
-      }
-    },
-    photoClassObj () {
-      return {
-        'photo': true,
+        [type]: true,
         '-mobile': this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm,
         '-show': this.showArtefact
       }
@@ -120,13 +122,13 @@ export default {
     if (this.useRenderMedia) this.renderHyperBlob()
     // TODO check if this is best place for this
 
-    if (this.artefact && this.artefact.type === 'video' && this.hidePreview) {
+    if (this.artefact && this.artefact.type === 'video' && this.showPreview) {
       this.getVideoPoster()
     }
   },
   methods: {
     getVideoPoster () {
-      const id = `poster-${this.artefact.id}`
+      var component = this
       const video = document.createElement('video')
       video.addEventListener('canplay', onCanPlay)
 
@@ -143,7 +145,7 @@ export default {
         video.currentTime = 2 // seek 2 seconds into the video
       }
 
-      function onSeeked () {
+      function onSeeked (a) {
         video.removeEventListener('seeked', onSeeked)
 
         const frame = captureFrame(video)
@@ -153,9 +155,7 @@ export default {
         video.src = ''
         video.load()
 
-        // show the captured image in the DOM
-        const image = document.getElementById(id)
-        image.src = URL.createObjectURL(
+        component.poster = URL.createObjectURL(
           new Blob([frame.image], { type: 'image/png' })
         )
       }

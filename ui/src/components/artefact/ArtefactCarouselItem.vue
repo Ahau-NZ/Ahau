@@ -17,7 +17,7 @@
       >
       </v-img>
       <div v-if="artefact.type === 'video'">
-        <v-icon v-if="hidePreview" size="50" class="center">mdi-video</v-icon>
+        <v-icon v-if="showPreview" size="50" class="center">mdi-video</v-icon>
         <video v-else ref="video" :src="artefact.blob.uri" :controls="hover && controls" class="video"/>
       </div>
       <div v-if="artefact.type === 'audio'" class="media" >
@@ -71,7 +71,7 @@ export default {
     selected: { type: Boolean, default: false },
     selectedIndex: { type: Number, default: 0 },
     editing: { type: Boolean },
-    hidePreview: Boolean
+    showPreview: Boolean
   },
   components: {
   },
