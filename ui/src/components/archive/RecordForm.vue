@@ -547,6 +547,8 @@ export default {
   },
   mounted () {
     this.showAdvanced()
+    console.log('route', this.$route.params.tribeId)
+    console.log('acccess receps: ', this.access.recps[0])
   },
   computed: {
     ...mapGetters(['showStory', 'whoami']),
@@ -592,10 +594,10 @@ export default {
 
       // filter out suggestions not in this tribe
       if (!suggestions) return
-
       suggestions = suggestions.filter(record => {
         if (!record.recps) return false // dont suggest public profiles?
-        return record.recps.includes(this.$route.params.tribeId)
+        
+        return record.recps.includes(this.access.recps[0])
       })
 
       this[array] = suggestions
