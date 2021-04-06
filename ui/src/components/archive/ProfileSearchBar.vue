@@ -139,12 +139,8 @@ export default {
     selectedItems: {
       deep: true,
       immediate: true,
-      handler (newValue, oldValue) {
-        if (oldValue && oldValue.length > newValue.length) {
-          this.chips = oldValue
-        } else {
-          this.chips = newValue
-        }
+      handler (newValue) {
+        this.chips = newValue
       }
     },
     chips: {
