@@ -101,7 +101,7 @@ export default {
       return {
         hideDetails: true,
         class: 'customInput',
-        placeholder: this.readonly ? ' ' : 'Select',
+        placeholder: this.readonly ? ' ' : '____________',
         appendIcon: this.readonly ? '' : undefined,
         readonly: this.readonly,
         menuProps: { bottom: true, offsetY: true, light: this.isDark() },
