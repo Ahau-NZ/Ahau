@@ -157,6 +157,8 @@ export default {
   mounted () {
     this.componentLoaded = true
     this.offset = this.$refs.sideNav.offsetTop - 50
+    console.log(this.profile.gender)
+    console.log(this.profile.preferredName)
   },
   watch: {
     '$route.name' (name) {
