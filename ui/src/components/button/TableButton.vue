@@ -2,7 +2,7 @@
   <v-tooltip  v-if="!table" bottom>
     <template v-slot:activator="{ on }">
         <v-btn v-on="on" @click="toggle()" fab x-small color="black">
-          <v-icon light > mdi-table </v-icon>
+          <v-icon light > mdi-view-list-outline </v-icon>
         </v-btn>
     </template>
     <span>Registry</span>
