@@ -9,9 +9,8 @@
     </div>
 
     <template v-else>
-      <div v-if="artefact.type === 'video'" :class="classObj">
-        <v-icon v-if="hidePreview" size="50" class="center white--text">mdi-video</v-icon>
-        <v-hover v-else v-slot:default="{ hover }">
+      <div v-if="artefact.type === 'video' && !hidePreview" :class="classObj" id="video-container">
+        <v-hover v-slot:default="{ hover }">
           <video ref="video" :src="artefact.blob.uri" :controls="hover" class="video"/>
         </v-hover>
       </div>
@@ -25,6 +24,13 @@
         ref='photo'
         :class="classObj"
         :src="artefact.blob.uri"
+        contain
+      />
+
+      <img v-if="hidePreview"
+        :id="`poster-${this.artefact.id}`"
+        ref="photo"
+        :class="photoClassObj"
         contain
       />
 
@@ -46,6 +52,7 @@ import { ARTEFACT_ICON } from '@/lib/artefact-helpers.js'
 
 const renderMedia = require('render-media')
 const http = require('stream-http')
+const captureFrame = require('capture-frame')
 const { Transform } = require('readable-stream')
 
 export default {
@@ -61,6 +68,7 @@ export default {
     ...mapGetters(['showArtefact']),
     useRenderMedia () {
       if (this.hidePreview) return false
+
       return (
         this.artefact.blob.__typename === 'BlobHyper' &&
         this.artefact.type !== 'document' // NOTE this is here because pdf rendering in electron is patchy
@@ -69,6 +77,13 @@ export default {
     classObj () {
       return {
         [this.artefact.type]: true,
+        '-mobile': this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm,
+        '-show': this.showArtefact
+      }
+    },
+    photoClassObj () {
+      return {
+        'photo': true,
         '-mobile': this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm,
         '-show': this.showArtefact
       }
@@ -104,8 +119,47 @@ export default {
   mounted () {
     if (this.useRenderMedia) this.renderHyperBlob()
     // TODO check if this is best place for this
+
+    if (this.artefact && this.artefact.type === 'video' && this.hidePreview) {
+      this.getVideoPoster()
+    }
   },
   methods: {
+    getVideoPoster () {
+      const id = `poster-${this.artefact.id}`
+      const video = document.createElement('video')
+      video.addEventListener('canplay', onCanPlay)
+
+      video.volume = 0
+      video.autoplay = true
+      video.muted = true // most browsers block autoplay unless muted
+      video.setAttribute('crossOrigin', 'anonymous') // optional, when cross-domain
+      video.src = this.artefact.blob.uri
+
+      function onCanPlay () {
+        video.removeEventListener('canplay', onCanPlay)
+        video.addEventListener('seeked', onSeeked)
+
+        video.currentTime = 2 // seek 2 seconds into the video
+      }
+
+      function onSeeked () {
+        video.removeEventListener('seeked', onSeeked)
+
+        const frame = captureFrame(video)
+
+        // unload video element, to prevent memory leaks
+        video.pause()
+        video.src = ''
+        video.load()
+
+        // show the captured image in the DOM
+        const image = document.getElementById(id)
+        image.src = URL.createObjectURL(
+          new Blob([frame.image], { type: 'image/png' })
+        )
+      }
+    },
     buildRequest (uri, opts = {}) {
       const url = new URL(uri)
       // if (typeof opts.start === 'number') url.searchParams.append('start', opts.start)
