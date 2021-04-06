@@ -13,19 +13,19 @@
           <!-- Slot = Search -->
           <template v-slot:search>
             <v-combobox
-              v-model="formData.legalName"
+              v-model="formData.preferredName"
               :items="generateSuggestions"
               item-value="id"
               item-text="id"
-              label="Full Name"
+              label="First name / known as"
               :menu-props="{ light: true }"
               :clearable="hasSelection"
               append-icon=""
               v-bind="customProps"
               @click:clear="resetFormData()"
-              :search-input.sync="formData.legalName"
+              :search-input.sync="formData.preferredName"
               :readonly="hasSelection"
-              outlined
+              :outlined="!hasSelection"
               @blur.native="clearSuggestions"
             >
 
@@ -73,7 +73,7 @@ import calculateAge from '@/lib/calculate-age'
 import uniqby from 'lodash.uniqby'
 import pick from 'lodash.pick'
 
-import { PERMITTED_PERSON_ATTRS, PERMITTED_RELATIONSHIP_ATTRS, getPerson } from '@/lib/person-helpers'
+import { PERMITTED_PERSON_ATTRS, PERMITTED_RELATIONSHIP_ATTRS, getPerson, getDisplayName, setPersonProfile } from '@/lib/person-helpers'
 import AccessButton from '@/components/button/AccessButton.vue'
 import { mapGetters } from 'vuex'
 import { parseInterval } from '@/lib/date-helpers.js'
@@ -184,13 +184,11 @@ export default {
       return this.$vuetify.breakpoint.xs
     },
     customProps () {
-      // readonly = hasSelected || !isEditing
       return {
-        readonly: this.readonly,
-        flat: this.readonly,
+        readonly: this.hasSelection,
         hideDetails: true,
         placeholder: ' ',
-        class: this.readonly ? 'custom' : ''
+        class: this.hasSelection ? 'custom' : ''
       }
     },
     submission () {
@@ -337,9 +335,11 @@ export default {
     },
     setFormData (person) {
       this.hasSelection = true
-      this.profile = person.profile
-      this.formData.relationshipType = person.relationshipType
-      this.formData.legallyAdopted = false
+
+      person.profile.relationshipType = person.relationshipType || 'birth'
+      person.profile.legallyAdopted = person.legallyAdopted === undefined ? false : person.legallyAdopted
+
+      this.profile = { ...person.profile }
     },
     resetFormData () {
       if (this.hasSelection) {
@@ -351,6 +351,16 @@ export default {
 
   },
   watch: {
+    profile: {
+      deep: true,
+      immediate: true,
+      handler (newVal) {
+        if (!newVal) return
+
+        this.formData = setPersonProfile(newVal)
+        if (!this.formData.relationshipType) this.formData.relationshipType = 'birth' // choose birth by default
+      }
+    },
     'formData.relationshipType' (newValue, oldValue) {
       // make sure adoption status can't be set true when relationship type is birth
       if (newValue === 'birth') this.formData.legallyAdopted = false
@@ -361,7 +371,7 @@ export default {
         this.showAvatar = true
       }
     },
-    'formData.legalName' (newValue) {
+    'formData.preferredName' (newValue) {
       if (!newValue) return
       if (newValue.length > 2) {
         if (!this.hasSelection) {
@@ -377,14 +387,14 @@ export default {
 
         // hack: when there is no legal name and a selected profile, the clearable button doesnt how up
         // doing this forces it to show
-        if (this.formData.legalName === '' || this.formData.legalName === null) this.formData.legalName = ' '
+        if (this.formData.preferredName === '' || this.formData.preferredName === null) this.formData.preferredName = getDisplayName(this.formData) || ' ' // take first name from legalname
       }
     }
   }
 }
 </script>
 
-<style scoped>
+<style>
 .custom.v-text-field > .v-input__control > .v-input__slot:before {
   border-style: none;
 }

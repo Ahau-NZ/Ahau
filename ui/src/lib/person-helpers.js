@@ -1,6 +1,43 @@
 import gql from 'graphql-tag'
 import pick from 'lodash.pick'
+import clone from 'lodash.clonedeep'
 import { PublicProfileFieldsFragment, saveProfile } from './profile-helpers'
+
+export function setPersonProfile (input) {
+  var profile = clone(input)
+
+  return {
+    id: profile.id,
+    gender: profile.gender,
+    legalName: profile.legalName,
+    aliveInterval: profile.aliveInterval,
+    preferredName: profile.preferredName,
+    avatarImage: profile.avatarImage,
+    description: profile.description,
+    birthOrder: profile.birthOrder,
+    email: profile.email,
+    phone: profile.phone,
+    deceased: profile.deceased,
+    address: profile.address,
+    city: profile.city,
+    country: profile.country,
+    postCode: profile.postCode,
+    profession: profile.profession,
+    placeOfBirth: profile.placeOfBirth,
+    placeOfDeath: profile.placeOfDeath,
+    buriedLocation: profile.buriedLocation,
+
+    // relationship
+    relationshipType: profile.relationshipType,
+    altNames: {
+      currentState: clone(profile.altNames),
+      add: [], // new altNames to add
+      remove: [] // altNames to remove
+    },
+    education: profile.education || [],
+    school: profile.school || []
+  }
+}
 
 export const PERMITTED_PERSON_PROPS = [
   'id',
