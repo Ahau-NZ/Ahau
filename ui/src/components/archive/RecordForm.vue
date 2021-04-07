@@ -151,7 +151,7 @@
                 :items="contributors"
                 :openMenu.sync="showContributors"
                 item="preferredName"
-                placeholder="contributors"
+                placeholder="add contributors"
                 @getSuggestions="getSuggestions('contributors', $event)"
               />
               <AvatarGroup v-if="formData.contributors && formData.contributors.length > 0"
@@ -290,8 +290,8 @@
                 :selectedItems.sync="formData.collections"
                 :items="filteredCollections"
                 :openMenu.sync="showCollections"
-                placeholder="add collections"
-                item="name"
+                placeholder="add story to collection"
+                item="title"
               />
               <ChipGroup
                 v-if="formData.collections && formData.collections.length > 0"

@@ -60,8 +60,17 @@ export default {
   },
   computed: {
     colour () {
-      var i = Math.round(Math.random() * 10)
-      return colours[i]
+      var artefacts = this.chip.artefacts
+      if (artefacts) {
+        if (artefacts.length > 0) {
+          if (artefacts[0].artefact.type === 'photo') return colours[1]
+          if (artefacts[0].artefact.type === 'video') return colours[2]
+          if (artefacts[0].artefact.type === 'audio') return colours[3]
+          if (artefacts[0].artefact.type === 'document') return colours[6]
+          } else return colours[0]
+      } return colours[this.index]
+      // var i = Math.round(Math.random() * 10)
+      // return colours[i]
     },
     mobile () {
       return this.$vuetify.breakpoint.xs
