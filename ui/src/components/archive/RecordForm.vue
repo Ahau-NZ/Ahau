@@ -558,8 +558,6 @@ export default {
   },
   mounted () {
     this.showAdvanced()
-    console.log('route', this.$route.params.tribeId)
-    console.log('acccess receps: ', this.access.recps[0])
   },
   computed: {
     ...mapGetters(['showStory', 'whoami']),
