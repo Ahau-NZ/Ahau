@@ -483,6 +483,10 @@ import { storiesApolloMixin } from '@/mixins/story-mixins.js'
 import { collectionsApolloMixin, saveCollectionsMixin } from '@/mixins/collection-mixins.js'
 import { artefactMixin } from '@/mixins/artefact-mixins.js'
 
+import { getAllStories } from '@/lib/story-helpers.js'
+import { getAllCollections } from '@/lib/collection-helpers'
+
+
 export default {
   name: 'RecordForm',
   components: {
@@ -541,9 +545,16 @@ export default {
     }
   },
   watch: {
-    index (newVal) {
-      console.log('recordform index', newVal)
+    async access (newVal) {
+      if (newVal) {
+        var storyRes = await this.$apollo.query(getAllStories({groupId: newVal.recps[0]}))
+        this.stories = storyRes.data.stories
+        var collectionRes = await this.$apollo.query(getAllCollections({groupId: newVal.recps[0]}))
+        console.log(collectionRes)
+        this.collections = collectionRes.data.collections
+      } 
     }
+
   },
   mounted () {
     this.showAdvanced()

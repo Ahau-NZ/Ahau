@@ -186,6 +186,7 @@ export default {
       this.close()
     },
     close () {
+      console.log('close dialog')
       this.isSubmitting = false
       this.setAllowSubmissions(true)
       this.$emit('close')
