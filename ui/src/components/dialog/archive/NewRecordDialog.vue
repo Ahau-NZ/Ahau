@@ -119,15 +119,6 @@ export default {
     updateAccess ($event) {
       this.access = $event
       this.setCurrentAccess(this.access)
-      console.log('setaccess: ', $event)
-
-      // this.$router.push({
-      //   name: this.access.type + '/' + 'archive',
-      //   params: {
-      //     tribeId: this.access.groupId,
-      //     profileId: this.access.id
-      //   }
-      // }).catch(() => {})
     },
     close () {
       this.formData = setDefaultStory(this.story)
