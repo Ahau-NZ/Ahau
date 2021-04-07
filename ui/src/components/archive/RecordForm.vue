@@ -486,7 +486,6 @@ import { artefactMixin } from '@/mixins/artefact-mixins.js'
 import { getAllStories } from '@/lib/story-helpers.js'
 import { getAllCollections } from '@/lib/collection-helpers'
 
-
 export default {
   name: 'RecordForm',
   components: {
@@ -547,12 +546,12 @@ export default {
   watch: {
     async access (newVal) {
       if (newVal) {
-        var storyRes = await this.$apollo.query(getAllStories({groupId: newVal.recps[0]}))
+        var storyRes = await this.$apollo.query(getAllStories({ groupId: newVal.recps[0] }))
         this.stories = storyRes.data.stories
-        var collectionRes = await this.$apollo.query(getAllCollections({groupId: newVal.recps[0]}))
+        var collectionRes = await this.$apollo.query(getAllCollections({ groupId: newVal.recps[0] }))
         console.log(collectionRes)
         this.collections = collectionRes.data.collections
-      } 
+      }
     }
 
   },
@@ -605,7 +604,7 @@ export default {
       if (!suggestions) return
       suggestions = suggestions.filter(record => {
         if (!record.recps) return false // dont suggest public profiles?
-        
+
         return record.recps.includes(this.access.recps[0])
       })
 

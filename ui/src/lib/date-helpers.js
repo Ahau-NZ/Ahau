@@ -52,7 +52,7 @@ export function intervalToDayMonthYear (interval) {
     upper = dateToDayMonthYear(upper)
     return [lower, upper]
   }
-  
+
   if (lower.length) {
     lower.replace(/ /g, '')
     lower = dateToDayMonthYear(lower)
@@ -73,12 +73,12 @@ function dateToDayMonthYear (date) {
   var month = split[1]
   if (!month || !month.length || month.match(/X/)) {
     year.replace(/X/g, '0')
-    return `01-01-${year}` 
+    return `01-01-${year}`
   }
   var day = split[2]
   if (!day || !day.length || day.match(/X/)) {
     year.replace(/X/g, '0')
-    return `01-${month}-${year}` 
+    return `01-${month}-${year}`
   }
   return `${day}-${month}-${year}`
 }

@@ -337,7 +337,6 @@ export default {
       console.log('download hit: ', newVal)
       if (newVal) {
         var nodes = this.nodes.map(node => {
-
           var d = node.data
           var aliveInterval = d.aliveInterval ? intervalToDayMonthYear(d.aliveInterval) : null
           console.log('alive interval: ', aliveInterval)

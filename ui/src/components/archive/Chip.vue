@@ -67,7 +67,7 @@ export default {
           if (artefacts[0].artefact.type === 'video') return colours[2]
           if (artefacts[0].artefact.type === 'audio') return colours[3]
           if (artefacts[0].artefact.type === 'document') return colours[6]
-          } else return colours[0]
+        } else return colours[0]
       } return colours[this.index]
       // var i = Math.round(Math.random() * 10)
       // return colours[i]
