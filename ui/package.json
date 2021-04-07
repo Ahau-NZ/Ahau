@@ -16,7 +16,7 @@
     "build-fragment": "node src/schemaQuery.js"
   },
   "dependencies": {
-    "@mdi/font": "^4.5.95",
+    "@mdi/font": "^5.9.55",
     "animate.css": "^4.1.0",
     "apollo-upload-client": "^10.0.1",
     "edtf": "^2.8.0",

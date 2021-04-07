@@ -14,9 +14,9 @@
             :aliveInterval="formData.aliveInterval"
             :deceased="formData.deceased"
             :isEditing="isEditing"
-            :showPicker="!isEditing"
+            :showPicker="!isEditing && !readonly"
             :isSideViewDialog="isSideViewDialog"
-            :placeHolder="!showAvatar"
+            :placeHolder="!showAvatar && !readonly"
             @updateAvatar="formData.avatarImage = $event"
           />
         </v-row>
@@ -42,24 +42,42 @@
         <v-row>
           <!-- Preferred Name -->
           <v-col cols="12" class="pa-1 pt-4">
+            <slot name="search">
+              <v-text-field
+                v-model="formData.preferredName"
+                label="First name / known as"
+                v-bind="customProps"
+                outlined
+              />
+            </slot>
+          </v-col>
+          <v-col v-if="readonly" :cols="sideViewCols" class="pa-1">
             <v-text-field
-            v-model="formData.preferredName"
-            :label="t('preferredName')"
-            v-bind="customProps"
-            outlined
+              v-model="formData.gender"
+              label="Gender"
+              v-bind="customProps"
+            />
+          </v-col>
+          <v-col v-if="readonly && withRelationships" :cols="sideViewCols" class="pa-1 pt-2">
+            <v-select
+              v-model="formData.relationshipType"
+              label="Related by"
+              :items="relationshipTypes"
+              :menu-props="{ light: true }"
+              outlined
+              hide-details
             />
           </v-col>
         </v-row>
 
         <v-row>
           <!-- No longer living -->
-          <v-col v-if="$route.name !== 'login'" :cols="sideViewCols" class="pt-0">
+          <v-col v-if="$route.name !== 'login' && !readonly" :cols="sideViewCols" class="pt-0">
             <v-checkbox
               v-model="formData.deceased"
               :label="t('notLiving')"
               hide-details
               v-bind="customProps"
-              outlined
             />
           </v-col>
         </v-row>
@@ -67,15 +85,6 @@
     </v-row>
 
     <v-row :class="smScreen ? 'sideView-gender-button-row' : 'gender-button-row'">
-    <!-- GENDER VIEW -->
-      <v-col  v-if="readonly" class="pa-1">
-        <v-text-field
-          v-model="formData.gender"
-          :label="t('gender.title')"
-          v-bind="customProps"
-          outlined
-        />
-      </v-col>
       <!-- GENDER EDIT -->
       <v-col v-if="!readonly" class="pa-1">
         <p class="text-field">{{ t('identity') }}</p>
@@ -120,7 +129,7 @@
       <v-card-actions class="pt-2 pb-2 pr-5 pointer">
         <v-row @click="showAdvanced = !showAdvanced" class="clickable">
           <v-col>
-            <span class="pa-0 ma-0" style="font-weight:bold">{{ t('moreInfo') }}</span>
+            <span class="pa-0 ma-0" style="font-weight:bold">{{ readonly ? `${getDisplayName(formData)}'s Information` : t('moreInfo') }}</span>
           </v-col>
           <v-btn icon right>
             <v-icon>{{ showAdvanced ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
@@ -129,18 +138,15 @@
       </v-card-actions>
     <v-divider v-if="!showAdvanced" />
     <v-expand-transition>
-      <div v-show="showAdvanced">
+      <div v-show="showAdvanced" :class="readonly && !mobile ? 'ml-5' : ''">
         <v-row>
           <!-- Full Name -->
           <v-col :cols="sideViewCols" class="pa-1">
-            <slot name="search">
-              <v-text-field
-                v-model="formData.legalName"
-                label="Full name"
-                v-bind="customProps"
-                outlined
-              />
-            </slot>
+            <v-text-field
+              v-model="formData.legalName"
+              label="Full name"
+              v-bind="customProps"
+            />
           </v-col>
           <!-- Alt names -->
           <template>
@@ -157,7 +163,6 @@
                 @click:append="removeAltName(formData.altNames.currentState[index], index)"
                 readonly
                 v-bind="customProps"
-                outlined
               />
             </v-col>
           </template>
@@ -172,11 +177,10 @@
               <v-text-field
                 v-model="formData.altNames.add[index]"
                 label="Also known as"
-                append-icon="mdi-delete"
+                :append-icon="readonly ? '' : 'mdi-delete'"
                 @click:append="removeAltNameField(index)"
                 v-bind="customProps"
                 cols="12"
-                outlined
               />
             </v-col>
             <v-col>
@@ -194,6 +198,7 @@
               :interval.sync="formData.aliveInterval"
               :hasEndDate.sync="formData.deceased"
               cols='12'
+              :readonly="readonly"
             />
           </v-col>
           <!-- Order of birth -->
@@ -204,70 +209,63 @@
               :label="t('birthOrder')"
               min="1"
               v-bind="customProps"
-              outlined
-              :height="smScreen ? '' : '82px'"
             />
           </v-col>
         </v-row>
         <!-- Editing: relationship type-->
         <v-row >
-          <v-col v-if="withRelationships || editRelationship || this.$route.name !== 'login'" :cols="sideViewCols" class="pa-1">
+          <v-col v-if="(withRelationships || editRelationship || $route.name !== 'login') && !readonly" :cols="sideViewCols" class="pa-1">
             <v-select
               v-model="formData.relationshipType"
               label="Related by"
               :items="relationshipTypes"
+              :menu-props="{ light: true }"
               outlined
-              :menu-props="{light: true}"
+              hide-details
             />
           </v-col>
-          <v-col :cols="sideViewCols" :class="smScreen ? 'pa-1 mt-n7' : 'pa-1'">
+          <v-col class="pa-1">
             <v-text-field
               v-model="formData.placeOfBirth"
               label="City/country of birth"
               v-bind="customProps"
-              outlined
             />
           </v-col>
-        </v-row>
-        <!-- Email, Address, Phone, Location -->
-        <v-row v-if="!formData.deceased">
-          <template v-if="formData.deceased" >
-            <v-col :cols="sideViewCols" :class="smScreen ? 'pa-1' : 'pa-1 mt-n7'">
+          <template v-if="formData.deceased">
+            <v-col :cols="sideViewCols" class="pa-1">
               <v-text-field
                 v-model="formData.placeOfDeath"
                 label="Place of death"
                 v-bind="customProps"
-                outlined
               />
             </v-col>
-            <v-col :cols="sideViewCols" :class="smScreen ? 'pa-1' : 'pa-1 mt-n7'">
+            <v-col :cols="sideViewCols" class="pa-1">
               <!-- Burial Location -->
               <v-text-field
                 v-model="formData.buriedLocation"
                 label="Burial location"
                 v-bind="customProps"
-                outlined
               />
             </v-col>
           </template>
 
-          <v-col cols="12" sm="12" :class="formData.deceased || smScreen ? 'pa-1' : 'pa-1 mt-n7'" >
+          <v-col cols="12" sm="12" class="pa-1" >
             <!-- Description textarea -->
               <v-textarea
                 v-model="formData.description"
                 :label="t('description')"
                 v-bind="customProps"
                 no-resize
-                rows="4"
+                :rows="readonly ? 0 : 3"
                 auto-grow
-                outlined
               />
           </v-col>
         </v-row>
 
         <!-- Skills and Qualifications -->
         <v-row class="pt-2">
-          <v-col cols="12">
+          <v-col cols="12" class="px-0">
+            <v-divider class="py-2"/>
             <span class="pa-0 ma-0" style="font-weight:bold">Skills and qualifications</span>
           </v-col>
           <!-- Profession-->
@@ -277,7 +275,6 @@
                 v-model="formData.profession"
                 label="Profession"
                 v-bind="customProps"
-                outlined
               />
             </v-col>
           </v-col>
@@ -288,16 +285,15 @@
             class="pa-1"
           >
             <v-text-field
-            v-model="formData.education[index]"
-            label="Skill/qualification"
-            append-icon="mdi-delete"
-            @click:append="removeItem(formData.education, index)"
-            v-bind="customProps"
-            :readonly="readonly"
-            outlined
+              v-model="formData.education[index]"
+              label="Skill/qualification"
+              :append-icon="readonly ? '' : 'mdi-delete'"
+              @click:append="removeItem(formData.education, index)"
+              v-bind="customProps"
+              :readonly="readonly"
             />
           </v-col>
-          <v-col>
+          <v-col v-if="!readonly">
             <AddButton :align="'flex-end'" :justify="justifyBtn" :width="'50px'" label="Add a skill/qualification" @click="addEmptyItem(formData.education)" row/>
           </v-col>
         </v-row>
@@ -311,84 +307,71 @@
             <v-text-field
             v-model="formData.school[index]"
             label="Place of education"
-            append-icon="mdi-delete"
+            :append-icon="readonly ? '' : 'mdi-delete'"
             @click:append="removeItem(formData.school, index)"
             v-bind="customProps"
             :readonly="readonly"
-            outlined
             />
           </v-col>
-          <v-col>
+          <v-col v-if="!readonly">
             <AddButton :align="'flex-end'" :justify="justifyBtn" :width="'50px'" label="Add a place of education" @click="addEmptyItem(formData.school)" row/>
           </v-col>
         </v-row>
         <!-- Email, Address, Phone, Location -->
-        <div v-if="!formData.deceased">
-          <v-col cols="12">
+        <v-row v-if="!formData.deceased">
+          <v-col cols="12" class="px-0">
+            <v-divider class="py-2"/>
             <span class="pa-0 ma-0" style="font-weight:bold">Personal Information</span>
           </v-col>
-          <v-row class="py-1" v-if="!formData.deceased">
-            <!-- Email -->
-            <v-col :cols="sideViewCols" class="pa-1">
-              <v-text-field
-                v-model="formData.email"
-                :label="t('email')"
-                v-bind="customProps"
-                outlined
-              />
-            </v-col>
-            <!-- Phone -->
-            <v-col :cols="sideViewCols" class="pa-1">
-              <v-text-field
-                v-model="formData.phone"
-                :label="t('phone')"
-                v-bind="customProps"
-                outlined
-              />
-            </v-col>
-          </v-row>
-          <v-row>
-
-          </v-row>
-          <v-row>
-            <!-- Address -->
-            <v-col :cols="sideViewCols" class="pa-1">
-              <v-text-field
-                v-model="formData.address"
-                :label="t('address')"
-                v-bind="customProps"
-                outlined
-              />
-            </v-col>
-            <!-- City -->
-            <v-col :cols="sideViewCols" class="pa-1">
-              <v-text-field
-                v-model="formData.city"
-                :label="t('city')"
-                v-bind="customProps"
-                outlined
-              />
-            </v-col>
-            <!-- Post Code -->
-            <v-col :cols="sideViewCols" class="pa-1">
-              <v-text-field
-                v-model="formData.postCode"
-                :label="t('postCode')"
-                v-bind="customProps"
-                outlined
-              />
-            </v-col>
-            <!-- Country -->
-              <v-col :cols="sideViewCols" class="pa-1">
-                <v-text-field
-                  v-model="formData.country"
-                  :label="t('country')"
-                  v-bind="customProps"
-                  outlined
-                />
-              </v-col>
-          </v-row>
-        </div>
+          <!-- Email -->
+          <v-col :cols="sideViewCols" class="pa-1">
+            <v-text-field
+              v-model="formData.email"
+              label="Email"
+              v-bind="customProps"
+            />
+          </v-col>
+          <!-- Phone -->
+          <v-col :cols="sideViewCols" class="pa-1">
+            <v-text-field
+              v-model="formData.phone"
+              label="Phone"
+              v-bind="customProps"
+            />
+          </v-col>
+          <!-- Address -->
+          <v-col :cols="sideViewCols" class="pa-1">
+            <v-text-field
+              v-model="formData.address"
+              label="Address"
+              v-bind="customProps"
+            />
+          </v-col>
+          <!-- City -->
+          <v-col :cols="sideViewCols" class="pa-1">
+            <v-text-field
+              v-model="formData.city"
+              label="City"
+              v-bind="customProps"
+            />
+          </v-col>
+          <!-- Post Code -->
+          <v-col :cols="sideViewCols" class="pa-1">
+            <v-text-field
+              v-model="formData.postCode"
+              label="Post Code"
+              v-bind="customProps"
+            />
+          </v-col>
+          <!-- Country -->
+          <v-col :cols="sideViewCols" class="pa-1">
+            <v-text-field
+              v-model="formData.country"
+              label="Country"
+              v-bind="customProps"
+            />
+          </v-col>
+        </v-row>
       </div>
     </v-expand-transition>
     <!-- End of advanced section -->
@@ -480,7 +463,8 @@ export default {
         hideDetails: true,
         placeholder: ' ',
         class: this.readonly ? 'custom' : '',
-        light: true
+        light: true,
+        outlined: !this.readonly
       }
     },
     showLegallyAdopted () {

@@ -127,16 +127,17 @@
                   <ProfileInfoItem class="pb-0 br" mdCols="6" smCols="6" title="Country" :value="formData.country"/>
                 </v-row>
                 <v-row cols="12" class="rounded-border">
-                  <ProfileInfoItem class="pb-0" :title="'Place of birth'" mdCols="12" smCols="12" :value="profile.placeOfBirth" />
-                  <div v-if="profile.deceased">
-                    <ProfileInfoItem class="pb-0" :title="'Place of passing'" mdCols="12" smCols="12" :value="profile.placeOfDeath" />
-                    <ProfileInfoItem class="pb-0" :title="'Buried location'" mdCols="12" smCols="12" :value="profile.buriedLocation" />
-                  </div>
+                  <ProfileInfoItem :class="profile.deceased ? 'pb-0 bb br':'pb-0'" :title="'Place of birth'" :mdCols="profile.deceased ? '6':'12'" :smCols="profile.deceased ? '6':'12'" :value="profile.placeOfBirth" />
+                  <template v-if="profile.deceased">
+                    <ProfileInfoItem class="pb-0 bb" :title="'Place of passing'" mdCols="6" smCols="6" :value="profile.placeOfDeath" />
+                    <ProfileInfoItem class="pb-0 br" :title="'Date of passing'" mdCols="6" smCols="6" :value="diedAt" />
+                    <ProfileInfoItem class="pb-0" :title="'Buried location'" mdCols="6" smCols="6" :value="profile.buriedLocation" />
+                  </template>
                 </v-row>
                 <v-row cols="12" class="rounded-border">
                   <ProfileInfoItem class="bb pb-0" mdCols="12" smCols="12"  title="Profession" :value="formData.profession"/>
-                  <ProfileInfoItem class="bb pb-0" mdCols="12" smCols="12" title="Schools" :value="formData.school.join('\n')"/>
-                  <ProfileInfoItem class="pb-0" mdCols="12" smCols="12" title="Skills" :value="formData.education.join('\n')"/>
+                  <ProfileInfoItem class="br pb-0" mdCols="6" smCols="6" title="Schools" :value="formData.school.join('\n')"/>
+                  <ProfileInfoItem class="pb-0" mdCols="6" smCols="6" title="Skills" :value="formData.education.join('\n')"/>
                 </v-row>
               </v-col>
             </v-col>
@@ -216,7 +217,7 @@
 import calculateAge from '../../../lib/calculate-age'
 
 import { PERMITTED_PERSON_ATTRS, PERMITTED_RELATIONSHIP_ATTRS } from '@/lib/person-helpers'
-import { parseInterval } from '@/lib/date-helpers.js'
+import { parseInterval, dateToString } from '@/lib/date-helpers.js'
 
 import isEqual from 'lodash.isequal'
 import isEmpty from 'lodash.isempty'
@@ -305,6 +306,10 @@ export default {
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
+    diedAt () {
+      var date = this.profile.aliveInterval.split('/')
+      return dateToString(date[1])
+    },
     profileChanges () {
       let changes = {}
 
@@ -383,7 +388,7 @@ export default {
     },
     age (born) {
       var age = calculateAge(born)
-      if (age) {
+      if (age || age === 0) {
         return age.toString()
       }
       return age
