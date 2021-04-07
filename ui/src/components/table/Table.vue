@@ -116,7 +116,7 @@ import calculateAge from '../../lib/calculate-age.js'
 import isEmpty from 'lodash.isempty'
 import isEqual from 'lodash.isequal'
 import { mapGetters, mapActions } from 'vuex'
-import { dateIntervalToString } from '@/lib/date-helpers.js'
+import { dateIntervalToString, intervalToDayMonthYear } from '@/lib/date-helpers.js'
 import { SORT } from '@/lib/constants.js'
 
 export default {
@@ -337,12 +337,14 @@ export default {
       console.log('download hit: ', newVal)
       if (newVal) {
         var nodes = this.nodes.map(node => {
+
           var d = node.data
-          console.log('aliveInterval: ', d.aliveInterval)
-          var aliveInterval = d.aliveInterval ? d.aliveInterval.split('/') : null
+          var aliveInterval = d.aliveInterval ? intervalToDayMonthYear(d.aliveInterval) : null
+          console.log('alive interval: ', aliveInterval)
           var altNames = d.altNames.length > 0 ? d.altNames.join(', ') : null
           var school = d.school.length > 0 ? d.school.join(', ') : null
           var education = d.education.length > 0 ? d.education.join(', ') : null
+
           return {
             parentNumber: d.parents.length > 0 ? d.parents[0].id : '',
             number: d.id,
@@ -353,8 +355,8 @@ export default {
             relationshipType: d.relationshipType || 'birth',
             birthOrder: d.birthOrder,
             deceased: d.deceased ? 'yes' : null,
-            bornAt: aliveInterval ? aliveInterval[0] : null,
-            diedAt: aliveInterval && aliveInterval.length > 1 ? aliveInterval[1] : null,
+            bornAt: aliveInterval && aliveInterval[0].length ? aliveInterval[0] : null,
+            diedAt: aliveInterval && aliveInterval[1].length ? aliveInterval[1] : null,
             placeOfBirth: d.placeOfBirth,
             placeOfDeath: d.placeOfDeath,
             buriedLocation: d.buriedLocation,
@@ -371,7 +373,7 @@ export default {
         })
         console.log(nodes)
         var csv = d3.csvFormat(nodes)
-        console.log('csv: ', csv)
+        // console.log('csv: ', csv)
         this.$emit('update:download', false)
 
         var hiddenElement = document.createElement('a')
