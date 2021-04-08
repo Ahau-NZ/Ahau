@@ -7,11 +7,10 @@ yarn.lock
 # Electron
 /desktop/dist
 /desktop/electron-builder.env
-/desktop/build/win/win_csc.pfx
+**/electron-builder.env
 
 /pataka/dist
 /pataka/electron-builder.env
-/pataka/build/win/win_csc.pfx
 
 # Cordova
 /mobile/platforms
