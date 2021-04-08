@@ -228,7 +228,13 @@ export default {
   width: 100%;
   height: 100%;
   background-color: #1E1E1E;
-  object-fit: cover;
+  object-fit: contain;
+
+  img {
+    object-fit: contain;
+    width: 100%;
+    height: 100%;
+  }
 }
 .container {
   width: 100%;
