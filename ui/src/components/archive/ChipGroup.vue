@@ -40,7 +40,7 @@ export default {
     }
   },
   methods: {
-      getImage (item) {
+    getImage (item) {
       // for stories
       const { artefacts } = item
       if (artefacts && artefacts.length > 0) {
@@ -55,7 +55,7 @@ export default {
 
       // default
       return niho
-    },
+    }
   }
 }
 </script>
