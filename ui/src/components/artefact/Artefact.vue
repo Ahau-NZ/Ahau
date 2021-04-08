@@ -1,7 +1,7 @@
 <template>
   <v-sheet @click="toggleArtefact($event)" class="container pa-0">
-    <div v-if='useRenderMedia'
-      ref='renderTarget'
+    <div v-if="useRenderMedia"
+      ref="renderTarget"
       :class='classObj'
 
       v-once
@@ -254,7 +254,9 @@ export default {
   height: 100%;
 
   img {
-    min-height: 500px;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
   }
 
   object {
@@ -263,7 +265,6 @@ export default {
   }
 
   background-color: #1E1E1E;
-  object-fit: cover;
 }
 
 .document {
