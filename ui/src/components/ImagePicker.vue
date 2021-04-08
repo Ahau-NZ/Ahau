@@ -5,7 +5,7 @@
       <v-row class="upload-pic-row">
         <v-icon class="grey--text pr-2 pt-1">mdi-camera</v-icon>
         <p class="toggle">
-          {{ label }}
+          {{ label || t('uploadPhoto')  }}
         </p>
       </v-row>
 
@@ -30,8 +30,7 @@ export default {
   components: { AvatarEditDialog },
   props: {
     label: {
-      type: String,
-      default: 'Edit profile photo'
+      type: String
     },
     isView: { type: Boolean, default: false },
     type: String
@@ -52,6 +51,9 @@ export default {
     updateAvatar (avatarImage) {
       this.$emit('updateAvatar', avatarImage)
       this.toggleAvatar(null)
+    },
+    t (key, vars) {
+      return this.$t('addPersonForm.' + key, vars)
     }
   }
 }
