@@ -48,12 +48,11 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { ARTEFACT_ICON } from '@/lib/artefact-helpers.js'
+import { ARTEFACT_ICON } from '@/lib/artefact-helpers'
+import FileStream from '@/lib/hyper-file-stream'
 
 const renderMedia = require('render-media')
-const http = require('stream-http')
 const captureFrame = require('capture-frame')
-const { Transform } = require('readable-stream')
 
 export default {
   name: 'Artefact',
@@ -160,49 +159,15 @@ export default {
         )
       }
     },
-    buildRequest (uri, opts = {}) {
-      const url = new URL(uri)
-      // if (typeof opts.start === 'number') url.searchParams.append('start', opts.start)
-      // if (typeof opts.end === 'number') url.searchParams.append('end', opts.end)
-
-      const req = {
-        method: 'GET',
-        hostname: url.hostname,
-        port: url.port,
-        path: url.pathname + url.search
-      }
-
-      if (typeof opts.start === 'number') {
-        req.headers = {
-          Range: `bytes=${opts.start}-${opts.end || ''}`
-        }
-      }
-
-      return req
-    },
     renderHyperBlob () {
       const { title, blob } = this.artefact
-      const { buildRequest } = this
       const file = {
         name: `${title}.${blob.mimeType.split('/')[1]}`, // TODO see if there's a better way to tell render-media the mimeType
         createReadStream (opts = {}) {
-          const transform = new Transform({
-            transform (chunk, enc, callback) {
-              this.push(chunk)
-              callback()
-            }
-          })
-          const requestOpts = buildRequest(blob.uri, { start: opts.start || 0, end: opts.end })
-          console.log(requestOpts)
-          const req = http.request(requestOpts, (res) => {
-            // console.log(`STATUS: ${res.statusCode}`)
-            res.pipe(transform)
-          })
-          req.on('error', (e) => {
-            console.error(`problem with request: ${e.message}`)
-          })
-          req.end()
-          return transform
+          console.log('createReadStream', opts)
+          const stream = new FileStream(blob, opts)
+
+          return stream
         },
         length: blob.size,
         maxBlobLength: 200 * 1024 * 1024,

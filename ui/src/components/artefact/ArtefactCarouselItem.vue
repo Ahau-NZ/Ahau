@@ -101,6 +101,7 @@ export default {
   },
   mounted () {
     if (this.useRenderMedia) this.renderHyperBlob()
+    // WIP extract and fix this up mix
 
     if (this.artefact && this.artefact.type === 'video' && this.showPreview) {
       this.getVideoPoster()
