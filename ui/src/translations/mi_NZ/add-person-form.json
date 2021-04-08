@@ -7,7 +7,7 @@
   "year": "Tau",
   "notLiving": "Kua Mate",
   "birthOrder": "Raupapa whānautanga mai",
-  "identity": "Identifies As",
+  "identity": "Tuakiri ira tangata",
   "gender": {
     "title": "Ira",
     "female": "Wāhine",
@@ -15,7 +15,7 @@
     "other": "Atu",
     "unknown": "Tautangata"
   },
-  "moreInfo": "Provide more information",
+  "moreInfo": "Tukuna etahi atu kōrero",
   "addName": "Ingoa anō",
   "description": "Kōrero whakaaturanga",
   "email": "Imera",
