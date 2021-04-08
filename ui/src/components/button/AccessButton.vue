@@ -3,8 +3,8 @@
     <v-menu top offset-y light hide-details dense rounded outlined>
       <template v-slot:activator="{ on, attrs }">
           <v-row :class="margin" justify="start">
-            <v-col cols="12" md="auto" class="pa-0 pb-5">
-              <v-card-text class="text-caption py-0 text-md-right">Choose who has access to this {{ type }}:</v-card-text>
+            <v-col cols="12" md="auto" class="pa-0 pb-5" justify-start>
+              <v-card-text v-if="!disabled" class="text-caption py-0 text-md-start">Add {{ type }} to archive</v-card-text>
               <v-btn
                 v-bind="attrs"
                 v-on="on"
@@ -17,11 +17,11 @@
                 <v-icon v-if="!disabled">mdi-chevron-down</v-icon>
               </v-btn>
               <v-card-text v-if="access && !disabled" class="font-italic font-weight-light text-caption py-0 text-md-right">
-                {{ access.isPersonalGroup ? `Only you have access to this ${type}` : `Only ${access.preferredName} will have access to this story` }}
+                {{ access.isPersonalGroup ? `Only you have access to this ${type}` : `Only members of ${access.preferredName} will have access to this ${type}` }}
               </v-card-text>
 
               <v-card-text v-if="access && disabled" class="font-italic font-weight-light text-caption py-0 text-md-right">
-                {{ access.isPersonalGroup ? `Only you have access to this ${type}` : `Only ${access.preferredName} has access to this story` }}
+                {{ access.isPersonalGroup ? `Only you have access to this ${type}` : `Only members of ${access.preferredName} can access this ${type}` }}
               </v-card-text>
             </v-col>
           </v-row>

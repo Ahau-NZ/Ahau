@@ -3,7 +3,7 @@
     v-model="searchString"
     :items="items"
     :menu-props=" { light: true } "
-    :append-icon="!searchFilter ? 'mdi-close' : ''"
+    :append-icon="searchNodeId ? 'mdi-cancel' : !searchFilter ? 'mdi-close' : ''"
     @click:append="close()"
     placeholder="Search"
     :no-data-text="searchFilter ? '' : 'no suggestions'"
@@ -13,6 +13,7 @@
     light
     hide-selected
     dense
+    :readonly="searchNodeId !== '' && !searchFilter"
     :class="searchFilter ? 'search-input-filter' : 'search-input'"
     autofocus
   >
@@ -53,11 +54,13 @@ export default {
   },
   props: {
     searchNodeId: String,
-    searchFilter: Boolean
+    searchFilter: Boolean,
+    searchNodeName: String
   },
   data () {
     return {
-      searchString: ''
+      searchString: '',
+      activeNode: null
     }
   },
   computed: {
@@ -114,14 +117,13 @@ export default {
     },
     setSearchNode (data, event) {
       this.searchString = data.preferredName
+      this.activeNode = data
+      this.$emit('update:searchNodeName', data.preferredName || data.legalName)
       this.$emit('update:searchNodeId', data.id)
       this.$emit('searchNode', event)
-      this.$emit('close')
     },
-    reset () {
-      this.searchString = ''
+    clearSearchNodeId () {
       this.$emit('update:searchNodeId', '')
-      this.$emit('close')
     }
   }
 }

@@ -37,9 +37,6 @@
               </template>
               <span>Media assets associated with the story<br>Can be images, documents, video, or audio files. </span>
             </v-tooltip>
-            <!-- <v-col cols="6" >
-              <UploadArtefactButton showLabel @artefacts="processArtefacts($event)"/>
-            </v-col> -->
             <v-tooltip top open-delay="700">
               <template v-slot:activator="{ on }">
                 <v-col v-on="on" :cols="showLocation ? '12':'6'" class="py-0">
@@ -94,7 +91,6 @@
                 <span>An in depth description of the story</span>
               </v-tooltip>
             </v-col>
-
             <DateIntervalPicker
               class="px-3"
               label="Date"
@@ -104,11 +100,10 @@
               :hasEndDate.sync="hasEndDate"
               checkbox-label="include an end date"
               :cols="mobile ? '12' : '6'"
-              :hide-checkbox="hasEndDate"
+              :showCheckbox="!hasEndDate"
             />
-
             <!-- ADD MENTIONS -->
-            <v-col cols="12" md="6" class="pa-5">
+            <v-col cols="12" md="4" class="pa-5">
               <v-tooltip top open-delay="700" :disabled="showMentions">
                 <template v-slot:activator="{ on }">
                   <div v-on="on">
@@ -135,11 +130,10 @@
                 deletable
                 @delete="removeItem(formData.mentions, $event)"
               />
-              <v-divider v-if="mobile" light class="mt-6 mr-4"></v-divider>
             </v-col>
 
             <!-- ADD CONTRIBUTORS -->
-            <v-col cols="12" md="6" class="pa-5">
+            <v-col cols="12" md="4" class="pa-5">
               <v-tooltip top open-delay="700" :disabled="showContributors">
                 <template v-slot:activator="{ on }">
                   <div v-on="on">
@@ -157,7 +151,7 @@
                 :items="contributors"
                 :openMenu.sync="showContributors"
                 item="preferredName"
-                placeholder="contributors"
+                placeholder="add contributors"
                 @getSuggestions="getSuggestions('contributors', $event)"
               />
               <AvatarGroup v-if="formData.contributors && formData.contributors.length > 0"
@@ -168,37 +162,19 @@
                 @delete="removeItem(formData.contributors, $event)"
               />
             </v-col>
-
-            <!-- COLLECTIONS -->
+            <!-- <v-divider v-if="mobile" light class="mt-6 mr-4"></v-divider> -->
+            <!-- ADD KAITIAKI -->
             <v-col cols="12" md="auto" class="pa-5">
-              <v-tooltip top open-delay="700" :disabled="showCollections">
-                <template v-slot:activator="{ on }">
-                  <div v-on="on">
-                    <v-row v-if="!showCollections" @click="showCollections = true" class="pl-5">
-                      <v-icon small>mdi-plus</v-icon>
-                      <AddButton size="20px" icon="mdi-folder" iconClass="pr-3" label="Collections"  justify="start"/>
-                    </v-row>
-                  </div>
-                </template>
-                <span>A Collection is a grouping of stories</span>
-              </v-tooltip>
-
-              <ProfileSearchBar
-                :selectedItems.sync="formData.collections"
-                :items="filteredCollections"
-                :openMenu.sync="showCollections"
-                placeholder="add collections"
-                item="name"
+              <v-row class="pl-5">
+                <AddButton size="20px" icon="mdi-library" iconClass="pr-3" label="Kaitiaki"  justify="start"/>
+              </v-row>
+              <AvatarGroup v-if="formData.tiaki && formData.tiaki.length > 0"
+                :profiles="formData.tiaki"
+                show-labels
+                size="40px"
               />
-              <ChipGroup
-                v-if="formData.collections && formData.collections.length > 0"
-                type="collection"
-                :chips="formData.collections"
-                deletable
-                @delete="removeItem(formData.collections, $event)"
-              />
-              <v-divider v-if="mobile" light class="mt-6 mr-4"></v-divider>
             </v-col>
+
            </v-row>
             <!-- TODO: ADD CATEGORIES -->
            <!-- <v-col :cols="mobile ? formData.categories.length > 2 ? 'auto' : '6' : formData.categories.length > 1 ? 'auto' : '3'">
@@ -296,8 +272,38 @@
               />
               <v-divider v-if="mobile" light class="mt-6 mr-4"></v-divider>
             </v-col>
-            <!-- ADD CREATOR -->
+            <!-- COLLECTIONS -->
             <v-col cols="12" md="auto" class="pa-5">
+              <v-tooltip top open-delay="700" :disabled="showCollections">
+                <template v-slot:activator="{ on }">
+                  <div v-on="on">
+                    <v-row v-if="!showCollections" @click="showCollections = true" class="pl-5">
+                      <v-icon small>mdi-plus</v-icon>
+                      <AddButton size="20px" icon="mdi-folder" iconClass="pr-3" label="Collections"  justify="start"/>
+                    </v-row>
+                  </div>
+                </template>
+                <span>A Collection is a grouping of stories</span>
+              </v-tooltip>
+
+              <ProfileSearchBar
+                :selectedItems.sync="formData.collections"
+                :items="filteredCollections"
+                :openMenu.sync="showCollections"
+                placeholder="add story to collection"
+                item="name"
+              />
+              <ChipGroup
+                v-if="formData.collections && formData.collections.length > 0"
+                type="collection"
+                :chips="formData.collections"
+                deletable
+                @delete="removeItem(formData.collections, $event)"
+              />
+              <v-divider v-if="mobile" light class="mt-6 mr-4"></v-divider>
+            </v-col>
+            <!-- ADD CREATOR -->
+            <!-- <v-col cols="12" md="4" class="pa-5">
               <v-tooltip top open-delay="700" :disabled="showCreators">
                 <template v-slot:activator="{ on }">
                   <div v-on="on">
@@ -326,19 +332,8 @@
                 deletable
                 @delete="removeItem(formData.creators, $event)"
               />
-            </v-col>
-            <v-divider v-if="mobile" light class="mt-6 mr-4"></v-divider>
-            <!-- ADD KAITIAKI -->
-            <v-col cols="12" md="auto" class="pa-5">
-              <v-row class="pl-5">
-                <AddButton size="20px" icon="mdi-library" iconClass="pr-3" label="Kaitiaki"  justify="start"/>
-              </v-row>
-              <AvatarGroup v-if="formData.tiaki && formData.tiaki.length > 0"
-                :profiles="formData.tiaki"
-                show-labels
-                size="40px"
-              />
-            </v-col>
+            </v-col> -->
+
             <v-col cols="12" class="pa-1">
               <v-tooltip top open-delay="700">
                 <template v-slot:activator="{ on }">
@@ -445,21 +440,21 @@
     </v-form>
   <!-- </v-card> -->
     <NewArtefactDialog
-      v-if="newDialog"
-      :show="newDialog"
+      v-if="dialog === 'edit-artefact'"
+      :show="dialog === 'edit-artefact'"
       :index="index"
       :artefacts="formData.artefacts"
-      :editing="true"
-      @close="newDialog = false"
+      editing
+      @close="dialog = null"
       @delete="toggleDialog($event, 'delete')"
       @submit="updateArtefacts($event)"
       @artefacts="processArtefacts($event)"
     />
     <DeleteArtefactDialog
-      v-if="deleteDialog"
-      :show="deleteDialog"
+      v-if="dialog === 'delete-artefact'"
+      :show="dialog === 'delete-artefact'"
       :index="index"
-      @close="deleteDialog = false"
+      @close="dialog = null"
       @submit="removeArtefact($event)"
     />
   </div>
@@ -476,7 +471,6 @@ import ChipGroup from '@/components/archive/ChipGroup.vue'
 import ProfileSearchBar from '@/components/archive/ProfileSearchBar.vue'
 
 import { findByName } from '@/lib/search-helpers.js'
-import { DELETE_ARTEFACT } from '@/lib/artefact-helpers'
 
 import NewArtefactDialog from '@/components/dialog/artefact/NewArtefactDialog.vue'
 import ArtefactCarousel from '@/components/artefact/ArtefactCarousel.vue'
@@ -487,6 +481,10 @@ import { mapGetters } from 'vuex'
 
 import { storiesApolloMixin } from '@/mixins/story-mixins.js'
 import { collectionsApolloMixin, saveCollectionsMixin } from '@/mixins/collection-mixins.js'
+import { artefactMixin } from '@/mixins/artefact-mixins.js'
+
+import { getAllStories } from '@/lib/story-helpers.js'
+import { getAllCollections } from '@/lib/collection-helpers'
 
 export default {
   name: 'RecordForm',
@@ -512,14 +510,13 @@ export default {
   mixins: [
     storiesApolloMixin,
     collectionsApolloMixin,
-    saveCollectionsMixin
+    saveCollectionsMixin,
+    artefactMixin
   ],
   data () {
     return {
       stories: [],
-      newDialog: false,
-      deleteDialog: false,
-      deleteRecordDialog: false,
+      dialog: null,
       index: 0,
       search: false,
       model: 0,
@@ -545,6 +542,17 @@ export default {
         rules: RULES
       }
     }
+  },
+  watch: {
+    async access (newVal) {
+      if (newVal) {
+        var storyRes = await this.$apollo.query(getAllStories({ groupId: newVal.recps[0] }))
+        this.stories = storyRes.data.stories
+        var collectionRes = await this.$apollo.query(getAllCollections({ groupId: newVal.recps[0] }))
+        this.collections = collectionRes.data.collections
+      }
+    }
+
   },
   mounted () {
     this.showAdvanced()
@@ -581,7 +589,7 @@ export default {
         this.formData.artefacts.push(artefact)
       })
 
-      this.newDialog = true
+      this.dialog = 'edit-artefact'
     },
     showAdvanced () {
       if (this.showStory) this.show = true
@@ -593,18 +601,18 @@ export default {
 
       // filter out suggestions not in this tribe
       if (!suggestions) return
-
       suggestions = suggestions.filter(record => {
         if (!record.recps) return false // dont suggest public profiles?
-        return record.recps.includes(this.$route.params.tribeId)
+
+        return record.recps.includes(this.access.recps[0])
       })
 
       this[array] = suggestions
     },
     toggleDialog ($event, dialog) {
       this.index = $event
-      if (dialog === 'new') this.newDialog = !this.newDialog
-      if (dialog === 'delete') this.deleteDialog = !this.deleteDialog
+      if (dialog === 'new') this.dialog = 'edit-artefact'
+      if (dialog === 'delete') this.dialog = 'delete-artefact'
     },
     warn (field) {
       alert(`Cannot add ${field} yet`)
@@ -612,48 +620,6 @@ export default {
     updateItem (array, update, index) {
       // update the item in the array at the index
       array.splice(index, 1, update)
-    },
-    async updateArtefacts (artefacts) {
-      this.formData.artefacts = await Promise.all(artefacts.map(async (artefact, i) => {
-        if (this.editing) {
-          if (artefact.id) {
-            var oldArtefact = this.formData.artefacts[i]
-            Object.assign(oldArtefact, artefact)
-            return artefact
-          }
-        }
-        return artefact
-      }))
-
-      this.newDialog = !!this.newDialog
-    },
-    removeItem (array, index) {
-      array.splice(index, 1)
-    },
-    async deleteArtefact (id) {
-      try {
-        const res = await this.$apollo.mutate(DELETE_ARTEFACT(id, new Date()))
-
-        if (res.errors) {
-          throw res.errors
-        }
-      } catch (err) {
-        throw err
-      }
-    },
-    async removeArtefact (index) {
-      if (this.editing) {
-        // remove from the database
-        var artefact = this.formData.artefacts[this.index]
-
-        // check it has an id
-        if (artefact.id) {
-          await this.deleteArtefact(artefact.id)
-        }
-      }
-      // remove from formData
-      this.removeItem(this.formData.artefacts, this.index)
-      if (this.formData.artefacts && this.formData.artefacts.length === 0) this.newDialog = false
     }
   }
 }

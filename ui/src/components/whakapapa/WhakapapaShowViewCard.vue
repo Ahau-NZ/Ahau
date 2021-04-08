@@ -63,8 +63,10 @@
         <div>
           <v-divider></v-divider>
           <v-card-subtitle v-if="description" v-text="description" class="pa-3"/>
-          <AvatarGroup :profiles="view.kaitiaki || view.tiaki" groupTitle="Kaitiaki" size="50px" showLabels @profile-click="openProfile($event)"/>
-          <AvatarGroup v-if="access" :profiles="[access]" :isView="access.type === 'community'" groupTitle="Access" size="50px" showLabels @profile-click="openProfile($event)"/>
+          <v-row class="pl-4">
+            <AvatarGroup :profiles="view.kaitiaki || view.tiaki" groupTitle="Kaitiaki" size="50px" showLabels @profile-click="openProfile($event)"/>
+            <AvatarGroup v-if="access" :profiles="[access]" :isView="access.type === 'community'" groupTitle="Access" size="50px" showLabels @profile-click="openProfile($event)"/>
+          </v-row>
         </div>
       </v-expand-transition>
     </v-container>

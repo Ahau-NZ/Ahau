@@ -27,28 +27,23 @@
       <RegisterButton v-if="nonMember" :text="buttonText" @click="$emit('new-registration')" />
       <v-row v-else :class="mobile ? 'rounded-border box-shadow' : tablet ? 'ml-10' : 'ml-12 px-4'">
         <v-col cols="3" md="12" v-if="showWhakapapa" :class="mobile ? 'py-0 px-0' : tablet ? 'py-4 px-0' : 'py-1'">
-          <v-btn @click="setActive('profile')" light :fab="mobile" text>
+          <v-btn @click="setActive('whakapapa')" light :fab="mobile" text>
             <v-col class="pa-0" :cols="mobile ? '12' : '2'">
-              <Avatar
-                v-if="mobile && activeComponent !=='profile'"
-                :image="profile.avatarImage"
-                size="40px"
-              />
-              <UserIcon
-                v-else
-                :size="tablet ? 'x-large':'medium'"
-                :color="activeComponent === 'profile' ? 'red' : 'black'"
+              <WhakapapaIcon
+                :size="mobile ? 'large' : tablet ? 'x-large' : 'medium'"
+                :color="activeComponent === 'whakapapa' ? 'red' : 'black'"
               />
             </v-col>
             <v-col class="py-0" v-if="!mobile && !isOverflowing">
               <span
                 ref="text"
-                :style="activeComponent === 'profile' ? 'color:#B02425;' : ''"
-                class="ml-2 nav-label subtitle-1"
-              >Profile</span>
+                :style="activeComponent === 'whakapapa' ? 'color:#B02425;' : 'black'"
+                class="ml-2 subtitle-1"
+              >Whakapapa</span>
             </v-col>
           </v-btn>
         </v-col>
+        
         <!-- <v-col :class="mobile ? 'py-0 px-0' : 'py-1'">
           <v-btn @click="setActive('Activity')" light :fab="mobile" text>
             <v-col class="pa-0" :cols="mobile ? '12' : '2'">
@@ -65,11 +60,9 @@
           <v-btn @click="goArchive()" light :fab="mobile" text>
             <v-col class="pa-0" :cols="mobile ? '12' : '2'">
               <ArchiveIcon
-                v-if="!showStory"
                 :size="mobile ? 'large' : tablet ? 'x-large' : 'medium'"
                 :color="activeComponent === 'archive' ? 'red' : 'black'"
               />
-              <v-icon v-else color="#B02425">mdi-arrow-left</v-icon>
             </v-col>
             <v-col class="py-0" v-if="!mobile && !isOverflowing">
               <span
@@ -100,19 +93,25 @@
           </v-btn>
         </v-col>
         <v-col cols="3" md="12" v-if="showWhakapapa" :class="mobile ? 'py-0 px-0' : tablet ? 'py-4 px-0' : 'py-1'">
-          <v-btn @click="setActive('whakapapa')" light :fab="mobile" text>
+          <v-btn @click="setActive('profile')" light :fab="mobile" text>
             <v-col class="pa-0" :cols="mobile ? '12' : '2'">
-              <WhakapapaIcon
-                :size="mobile ? 'large' : tablet ? 'x-large' : 'medium'"
-                :color="activeComponent === 'whakapapa' ? 'red' : 'black'"
+              <Avatar
+                v-if="mobile && activeComponent !=='profile'"
+                :image="profile.avatarImage"
+                size="40px"
+              />
+              <UserIcon
+                v-else
+                :size="tablet ? 'x-large':'medium'"
+                :color="activeComponent === 'profile' ? 'red' : 'black'"
               />
             </v-col>
             <v-col class="py-0" v-if="!mobile && !isOverflowing">
               <span
                 ref="text"
-                :style="activeComponent === 'whakapapa' ? 'color:#B02425;' : 'black'"
-                class="ml-2 subtitle-1"
-              >Whakapapa</span>
+                :style="activeComponent === 'profile' ? 'color:#B02425;' : ''"
+                class="ml-2 nav-label subtitle-1"
+              >Profile</span>
             </v-col>
           </v-btn>
         </v-col>

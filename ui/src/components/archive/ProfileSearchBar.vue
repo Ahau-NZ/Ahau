@@ -1,5 +1,5 @@
 <template>
-  <div style="width: 300px">
+  <div style="width: 250px">
     <v-combobox
       v-if="openMenu"
       v-model="chips"
@@ -8,7 +8,7 @@
       :items="items"
       item-value="id"
       :item-text="item"
-      :menu-props="{ light: true, value: openMenu }"
+      :menu-props="{ light: true }"
       hide-selected append-icon="mdi-close"
       @click:append="close"
       :placeholder="placeholder"
@@ -139,12 +139,8 @@ export default {
     selectedItems: {
       deep: true,
       immediate: true,
-      handler (newValue, oldValue) {
-        if (oldValue && oldValue.length > newValue.length) {
-          this.chips = oldValue
-        } else {
-          this.chips = newValue
-        }
+      handler (newValue) {
+        this.chips = newValue
       }
     },
     chips: {
@@ -214,6 +210,8 @@ export default {
 
 .search-input {
     overflow: auto;
+    background-color: white;
+    z-index: 101;
 }
 
 .click {

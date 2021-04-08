@@ -7,7 +7,7 @@
         <v-icon color="blue-grey" light @click="toggleWhakapapaHelper" class="infoButton">mdi-information</v-icon>
       </v-col>
       <v-col>
-        <BigAddButton @click="toggleViewForm" />
+        <BigAddButton label="new whakapapa record" :customClass="mobile ? 'addBtnMobile':'addBtnDesktop'" @click="toggleViewForm" />
       </v-col>
     </v-row>
     <v-row>

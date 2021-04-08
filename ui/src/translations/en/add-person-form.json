@@ -1,0 +1,50 @@
+{
+  "addPersonFormTitle": "Edit",
+  "legalName":"Full name",
+  "aka": "Also known as",
+  "preferredName":"First name / Known as",
+  "dob": {
+    "title":"Date of birth",
+    "day":"Day",
+    "month":"Month",
+    "year":"Year"
+  },
+  "dod":"Date of death",
+  "uploadPhoto":"Upload profile photo",
+  "relatedBy":"Related by",
+  "birthPlace":"City/country of birth",
+  "notLiving":"No longer living",
+  "birthOrder":"Order of birth",
+  "genderIdentity":"Identifies as",
+  "gender":{
+    "title":"Gender",
+    "female":"Female",
+    "male":"Male",
+    "other":"Other",
+    "unknown":"Unknown"
+  },
+  "moreInfo":"Provide more information",
+  "addName":"Add another name",
+  "description":"Description",
+  "skills": {
+    "title":"Skills and qualifications",
+    "profession":"Profession",
+    "skillsQuals":"Skill/qualification",
+    "addSkill":"Add skill/qualification",
+    "placeOfEducation":"Place of education",
+    "addEducation":"Add a place of education"
+  },
+  "personalInfo": {
+    "title":"Personal information",
+    "email":"Email",
+    "phone":"Phone",
+    "address":"Address",
+    "city":"City",
+    "postCode":"Postcode",
+    "country":"Country"
+  },
+  "formHandlers": {
+    "cancel":"Cancel",
+    "save":"Save"
+  }
+}

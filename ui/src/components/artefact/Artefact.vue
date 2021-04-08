@@ -5,28 +5,15 @@
       :class='classObj'
 
       v-once
-      >
-    </div>
+      />
 
     <template v-else>
+      <!-- video -->
       <div v-if="artefact.type === 'video' && !showPreview" :class="classObj" id="video-container">
         <v-hover v-slot:default="{ hover }">
           <video ref="video" :src="artefact.blob.uri" :controls="hover" class="video"/>
         </v-hover>
       </div>
-
-      <div v-if="artefact.type === 'audio'" :class="classObj">
-        <audio ref="audio" :src="artefact.blob.uri" class="px-12" :controls="controls"/>
-        <v-icon size="50" class="center">mdi-music</v-icon>
-      </div>
-
-      <v-img v-if="artefact.type === 'photo'"
-        ref='photo'
-        :class="classObj"
-        :src="artefact.blob.uri"
-        contain
-      />
-
       <img v-if="artefact.type === 'video' && showPreview"
         :src="poster"
         ref="photo"
@@ -34,6 +21,18 @@
         contain
       />
 
+      <!-- photo -->
+      <v-img v-if="artefact.type === 'photo' && !mobile"
+        ref='photo'
+        :class="classObj"
+        :src="artefact.blob.uri"
+        contain
+      />
+      <v-zoomer v-else-if="artefact.type === 'photo' && showArtefact && mobile" style="height:80vh">
+        <img :src="artefact.blob.uri" style="object-fit: contain; width: 100%; height: 100%;" />
+      </v-zoomer>
+
+      <!-- document -->
       <div v-if="artefact.type === 'document'" ref='document' :class="classObj">
         <div class="text-center">
           <v-icon size="100px" class="white--text">{{ artefactIcon }}</v-icon><br>
@@ -41,6 +40,12 @@
             Download file
           </v-btn>
         </div>
+      </div>
+
+      <!-- audio -->
+      <div v-if="artefact.type === 'audio'" :class="classObj">
+        <audio ref="audio" :src="artefact.blob.uri" class="px-12" :controls="controls"/>
+        <v-icon size="50" class="center">mdi-music</v-icon>
       </div>
     </template>
   </v-sheet>
@@ -181,6 +186,7 @@ export default {
       })
     },
     toggleArtefact (e) {
+      if (this.artefact.type === 'photo' && this.showArtefact && this.mobile) return
       this.$emit('showArtefact', this.artefact)
     },
     downloadFile () {

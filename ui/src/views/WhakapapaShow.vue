@@ -35,7 +35,20 @@
 
       <v-row v-if="!mobile" class="select">
         <div v-if="search" class="icon-search">
-          <SearchBar :nestedWhakapapa="nestedWhakapapa" :searchNodeId.sync="searchNodeId" :searchFilter="false" @close="clickedOffSearch()"  @searchNode="setSearchNode($event)"/>
+          <SearchBar
+            v-if="!searchNodeId"
+            :nestedWhakapapa="nestedWhakapapa"
+            :searchNodeId.sync="searchNodeId"
+            :searchFilter="false"
+            :searchNodeName.sync="searchNodeName"
+            @close="clickedOffSearch()"
+            @searchNode="setSearchNode($event)"
+          />
+          <SearchBarNode
+            v-else
+            :searchNodeId.sync="searchNodeId"
+            :searchNodeName="searchNodeName"
+          />
         </div>
         <div v-else-if="searchFilterString === ''" class="icon-button">
           <SearchButton :search.sync="search" />
@@ -53,7 +66,7 @@
           <FlattenButton @flatten="toggleFlatten()" />
         </div>
         <div class="icon-button" v-if="isKaitiaki">
-          <TableButton @table="toggleTable()" />
+          <TableButton :table="whakapapa.table" @table="toggleTable()" />
         </div>
         <div class="icon-button">
           <HelpButton v-if="whakapapa.tree" @click="updateDialog('whakapapa-helper', null)" />
@@ -61,6 +74,9 @@
         </div>
         <div class="icon-button">
           <FeedbackButton />
+        </div>
+        <div v-if="whakapapa.table" class="icon-button">
+          <ExportButton @export="toggleDownload()" />
         </div>
       </v-row>
 
@@ -86,7 +102,19 @@
             </v-btn>
           </template>
           <div v-if="search" class="icon-search ml-n12 pt-7" @click.stop>
-            <SearchBar :nestedWhakapapa="nestedWhakapapa" :searchNodeId.sync="searchNodeId" @searchNode="setSearchNode($event)" @close="clickedOffSearch()"/>
+            <SearchBar
+              v-if="!searchNodeId"
+              :nestedWhakapapa="nestedWhakapapa"
+              :searchNodeId.sync="searchNodeId"
+              :searchNodeName.sync="searchNodeName"
+              @searchNode="setSearchNode($event)"
+              @close="clickedOffSearch()"
+            />
+            <SearchBarNode
+              v-else
+              :searchNodeId.sync="searchNodeId"
+              :searchNodeName="searchNodeName"
+            />
           </div>
           <div v-else-if="searchFilterString === ''"  class="icon-button">
             <SearchButton  @click.stop :search.sync="search" />
@@ -103,9 +131,9 @@
           <div v-if="whakapapa.table" class="icon-button">
             <FlattenButton @flatten="toggleFlatten()" />
           </div>
-          <!-- <div class="icon-button">
-            <TableButton @table="toggleTable()" />
-          </div> -->
+          <div class="icon-button">
+            <TableButton :table="whakapapa.table" @table="toggleTable()" />
+          </div>
           <div class="icon-button">
             <HelpButton v-if="whakapapa.tree" @click="updateDialog('whakapapa-helper', null)" />
             <HelpButton v-else @click="updateDialog('whakapapa-table-helper', null)" />
@@ -135,6 +163,7 @@
           ref="table"
           :filter="filter"
           :flatten="flatten"
+          :download.sync="download"
           :view="whakapapaView"
           :nestedWhakapapa="nestedWhakapapa"
           :relationshipLinks="relationshipLinks"
@@ -195,10 +224,12 @@ import FeedbackButton from '@/components/button/FeedbackButton.vue'
 import TableButton from '@/components/button/TableButton.vue'
 import HelpButton from '@/components/button/HelpButton.vue'
 import FlattenButton from '@/components/button/FlattenButton.vue'
+import ExportButton from '@/components/button/ExportButton.vue'
 import FilterButton from '@/components/button/FilterButton.vue'
 import SortButton from '@/components/button/SortButton.vue'
 
 import SearchBar from '@/components/button/SearchBar.vue'
+import SearchBarNode from '@/components/button/SearchBarNode.vue'
 import SearchButton from '@/components/button/SearchButton.vue'
 
 import SearchFilterButton from '@/components/button/SearchFilterButton.vue'
@@ -227,6 +258,7 @@ export default {
     FilterButton,
     SortButton,
     SearchBar,
+    SearchBarNode,
     SearchButton,
     SearchFilterButton,
     FeedbackButton,
@@ -235,7 +267,8 @@ export default {
     VueContext,
     DialogHandler,
     WhakapapaBanner,
-    NodeMenu
+    NodeMenu,
+    ExportButton
   },
   mixins: [
     mapProfileMixins({
@@ -274,13 +307,15 @@ export default {
       },
       filter: false,
       flatten: true,
+      download: false,
       whakapapa: {
         tree: true,
         table: false
       },
       sortTableBool: false,
       sortValue: '',
-      sortEvent: null
+      sortEvent: null,
+      searchNodeName: ''
     }
   },
   apollo: {
@@ -554,6 +589,9 @@ export default {
       this.filter = false
       this.flatten = !this.flatten
     },
+    toggleDownload () {
+      this.download = !this.download
+    },
     toggleTable () {
       this.whakapapa.tree = !this.whakapapa.tree
       this.whakapapa.table = !this.whakapapa.table
@@ -747,7 +785,7 @@ h1 {
 .mobile-tree {
   position:absolute;
   height: calc(100vh - 43px);
-  margin-top: -68px;
+  margin-top: -85px;
 }
 
 #create .v-speed-dial {

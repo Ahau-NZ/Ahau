@@ -8,7 +8,8 @@
           <v-icon color="blue-grey" light @click="toggleArchiveHelper" class="infoButton">mdi-information</v-icon>
         </v-col>
         <v-col v-show="!showStory">
-          <BigAddButton @click.native.stop="openContextMenu($event)" />
+          <BigAddButton label="new story" :customClass="mobile ? 'addBtnMobile':'addBtnDesktop'" @click.native.stop="mobile ? openContextMenu($event): dialog = 'new-story' " />
+          <BigAddButton v-if="!mobile" label="new collection" :customClass="mobile ? 'addBtnMobile':'addBtnCollection'" @click.native.stop="dialog = 'new-collection'" />
         </v-col>
       </v-row>
       <v-row>
@@ -28,23 +29,23 @@
     <li v-if="allowCollections">
       <a href="#" @click.prevent="dialog = 'new-collection'" class="d-flex align-center px-4">
         <v-icon light>mdi-folder-multiple-outline</v-icon>
-        <p class="ma-0 pl-3">Create a new collection</p>
+        <p class="ma-0 pl-3">Create a collection</p>
       </a>
     </li>
     <li>
       <a href="#" @click.prevent="dialog = 'new-story'" class="d-flex align-center px-4">
         <v-icon light>mdi-post-outline</v-icon>
-        <p class="ma-0 pl-3">Add a new story</p>
+        <p class="ma-0 pl-3">Add a story</p>
       </a>
     </li>
   </VueContext>
 
     <NewRecordDialog v-if="dialog === 'new-story'" :show="dialog === 'new-story'"
-      :title="`Add story to ${ profile.preferredName || 'Untitled' }'s archive`" @close="dialog = null"
+      :title="`Add a story`" @close="dialog = null"
       @submit="processStory"
     />
     <NewCollectionDialog v-if="dialog === 'new-collection'" :show="dialog === 'new-collection'"
-      :title="`Add a collection to ${ collectionTitle } archive`" @close="dialog = null"
+      :title="`Add a collection`" @close="dialog = null"
       @submit="processCollection"
     />
   </div>
@@ -116,7 +117,7 @@ export default {
     },
     archiveTitle () {
       if (this.isPersonalArchive) return 'Your personal archive'
-      return this.currentAccess.preferredName ? `${this.currentAccess.preferredName} Archive` : `${this.currentAccess.legalName}'s Archive`
+      return this.currentAccess.preferredName ? `${this.currentAccess.preferredName}'s Archive` : `${this.currentAccess.legalName}'s Archive`
     },
     isPersonalArchive () {
       return this.$route.params.profileId === this.whoami.personal.profile.id

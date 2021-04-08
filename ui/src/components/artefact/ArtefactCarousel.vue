@@ -37,7 +37,7 @@
           />
         </v-scale-transition>
       </v-slide-item>
-      <v-slide-item>
+      <v-slide-item v-if="editing">
         <UploadArtefactButton dark class="pt-4 px-5" @artefacts="$emit('artefacts', $event)"/>
       </v-slide-item>
     </v-slide-group>

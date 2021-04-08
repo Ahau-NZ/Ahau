@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VuexRouterSync from 'vuex-router-sync'
 import VuejsClipper from 'vuejs-clipper'
 import gql from 'graphql-tag'
+import VueZoomer from 'vue-zoomer'
 
 import App from './App.vue'
 import router from './router'
@@ -9,6 +10,7 @@ import store from './store/index'
 
 import { apolloProvider } from './plugins/vue-apollo'
 import vuetify from './plugins/vuetify'
+import i18n from './plugins/i18n'
 import CordovaBackButton from './plugins/cordova-back-button'
 import nodejsClient from './plugins/cordova-nodejs-client.js'
 
@@ -30,6 +32,7 @@ async function main () {
 
       apolloProvider,
       vuetify,
+      i18n,
 
       render: h => h(App)
     }).$mount('#app')
@@ -37,6 +40,7 @@ async function main () {
 
   // install
   Vue.use(VuejsClipper)
+  Vue.use(VueZoomer)
   Vue.use(CordovaBackButton, { router })
   Vue.config.productionTip = false
 

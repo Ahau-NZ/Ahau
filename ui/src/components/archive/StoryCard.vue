@@ -37,7 +37,7 @@
           <v-carousel
             v-model="model"
             hide-delimiters
-            :show-arrows="!mobile && fullStory && story.artefacts && story.artefacts.length > 1" :show-arrows-on-hover="!mobile" :height="showArtefact ? 'auto' : mobile ? '300px' : '500px'" style="background-color:#1E1E1E">
+            :show-arrows="!mobile && fullStory && story.artefacts && story.artefacts.length > 1" :show-arrows-on-hover="!mobile" :height="showArtefact ? mobile ? '80vh' : 'auto' : mobile ? '300px' : '500px'" style="background-color:#1E1E1E">
             <v-carousel-item v-for="({ artefact } , i) in story.artefacts" :key="`story-card-artefact-${i}`">
               <Artefact :model="model" :index="i" @showArtefact="toggleShowArtefact($event)" :artefact="artefact" :controls="fullStory" :show-preview="!fullStory" />
             </v-carousel-item>
@@ -69,13 +69,18 @@
           </v-slide-group>
         </v-list-item-content>
       </v-list-item>
-      <v-list-item :class="mobile && fullStory ? 'px-6':''" :disabled="disableClick" :ripple="false" @click.stop="showText()">
+      <v-list-item v-if="!showArtefact && story.description" :disabled="disableClick" :ripple="false" @click.stop="showText()">
         <v-list-item-content>
-          <v-list-item-subtitle v-if="fullStory || showArtefact" class="pb-1" style="color:#a7a3a3"> Description </v-list-item-subtitle>
-          <p v-if="!showArtefact && story.description" ref="text" :class="truncateText ? 'description' : ''">
+          <v-list-item-subtitle v-if="fullStory" class="pb-1" style="color:#a7a3a3"> Description </v-list-item-subtitle>
+          <p ref="text" :class="truncateText ? 'description' : ''">
             <span v-for="(line, index) in story.description.split('\n')" :key="index">{{line}}<br></span>
           </p>
-          <p v-if="artefact.description" ref="text" style="color:white" class="text-justify">
+        </v-list-item-content>
+      </v-list-item>
+      <v-list-item v-else-if="showArtefact && artefact.description" :class="mobile && fullStory ? 'px-6':''">
+        <v-list-item-content >
+          <v-list-item-subtitle class="pb-1" style="color:#a7a3a3"> Description </v-list-item-subtitle>
+          <p ref="text" style="color:white" class="text-justify">
             <span v-for="(line, index) in artefact.description.split('\n')" :key="index">{{line}}<br></span>
           </p>
         </v-list-item-content>
@@ -148,19 +153,17 @@
           </v-col>
         </v-row>
         <v-row class="px-4">
-          <v-col class="pt-0 pr-1" v-if="story.collections && story.collections.length > 0" cols="12" sm="12" md="auto">
-            <v-list-item-subtitle class="pb-1" style="color:#a7a3a3">Collections</v-list-item-subtitle>
-            <ChipGroup :chips="story.collections.map(c => c.collection)" type="collection" @click="showRelatedCollection"/>
-          </v-col>
-        </v-row>
-        <v-row class="px-4">
-          <v-col class="pt-0 pr-1" v-if="story.relatedRecords && story.relatedRecords.length > 0" cols="12" sm="12" md="auto">
+          <v-col class="pt-0 pr-1" v-if="story.relatedRecords && story.relatedRecords.length > 0" cols="12" md="6">
             <v-list-item-subtitle class="pb-1" style="color:#a7a3a3">Related records</v-list-item-subtitle>
             <ChipGroup
               :chips="story.relatedRecords.map(r => r.story)"
               type="story"
               @click="showRelatedStory"
             />
+          </v-col>
+          <v-col class="pt-0 pr-1" v-if="story.collections && story.collections.length > 0" cols="12" md="6">
+            <v-list-item-subtitle class="pb-1" style="color:#a7a3a3">Collections</v-list-item-subtitle>
+            <ChipGroup :chips="story.collections.map(c => c.collection)" type="collection" @click="showRelatedCollection"/>
           </v-col>
         </v-row>
         <v-row class="px-4 mb-12">
@@ -195,12 +198,53 @@
           </v-col>
         </v-row>
       </div>
+      <!-- ARTEFACT FIELDS -->
+      <div v-if="showArtefact">
+        <v-row class="px-4">
+          <v-col v-if="artefact.blob.mimeType" cols="12" sm="12" md="3" class="py-1 pt-2" >
+            <v-list-item-subtitle class="pb-1" style="color:#a7a3a3">Format</v-list-item-subtitle>
+            <p style="color:white">{{ artefact.blob.mimeType }}</p>
+          </v-col>
+          <v-col v-if="artefact.blob.size" cols="12" sm="12" md="3" class="py-1 pt-2" >
+            <v-list-item-subtitle class="pb-1" style="color:#a7a3a3">Size</v-list-item-subtitle>
+            <p style="color:white">{{ size }}</p>
+          </v-col>
+          <v-col v-if="artefact.language" cols="12" sm="12" md="3" class="py-1 pt-2" >
+            <v-list-item-subtitle class="pb-1" style="color:#a7a3a3">Language</v-list-item-subtitle>
+            <p style="color:white">{{ artefact.language }}</p>
+          </v-col>
+          <v-col v-if="artefact.licence" cols="12" sm="12" md="3" class="py-1 pt-2" >
+            <v-list-item-subtitle class="pb-1" style="color:#a7a3a3">License</v-list-item-subtitle>
+            <p style="color:white">{{ artefact.licence }}</p>
+          </v-col>
+          <v-col v-if="artefact.rights" cols="12" sm="12" md="4" class="py-1 pt-6" >
+            <v-list-item-subtitle class="pb-1" style="color:#a7a3a3">Rights</v-list-item-subtitle>
+            <p style="color:white">{{ artefact.rights }}</p>
+          </v-col>
+          <v-col v-if="artefact.source" cols="12" sm="12" md="4" class="py-1 pt-6" >
+            <v-list-item-subtitle class="pb-1" style="color:#a7a3a3">Source</v-list-item-subtitle>
+            <p style="color:white">{{ artefact.source }}</p>
+          </v-col>
+          <v-col v-if="artefact.duration" cols="12" sm="12" md="4" class="py-1 pt-2" >
+            <v-list-item-subtitle class="pb-1" style="color:#a7a3a3">Duration</v-list-item-subtitle>
+            <p style="color:white">{{ artefact.duration }}</p>
+          </v-col>
+          <v-col v-if="artefact.translation" cols="12" class="pt-6" >
+            <v-list-item-subtitle class="pb-1" style="color:#a7a3a3">Translation/Transcription</v-list-item-subtitle>
+            <p style="color:white">{{ artefact.translation }}</p>
+          </v-col>
+          <v-col v-if="artefact.location" cols="12" class="pt-6" >
+            <v-list-item-subtitle class="pb-1" style="color:#a7a3a3">Location</v-list-item-subtitle>
+            <p style="color:white">{{ artefact.location }}</p>
+          </v-col>
+        </v-row>
+      </div>
       <v-card-actions v-if="fullStory" class="justify-end">
         <v-list-item-icon v-if="fullStory && !showArtefact" class="pt-0 mt-0">
           <EditStoryButton v-if="story.canEdit" @click="toggleDialog('edit-story')"/>
         </v-list-item-icon>
         <v-list-item-icon v-if="showArtefact" class="pt-0 mt-12">
-          <EditArtefactButton v-if="story.canEdit" @click="toggleDialog('edit-story')"/>
+          <EditArtefactButton v-if="story.canEdit" @click="toggleDialog('edit-artefact')"/>
         </v-list-item-icon>
         <v-list-item-icon v-if="showArtefact && !mobile" class="pt-0 mt-0"
         style="position:absolute; top:0px; right:0px;">
@@ -228,8 +272,26 @@
       <DeleteRecordDialog
         v-if="dialog === 'delete-story'"
         :show="dialog === 'delete-story'"
-        @close="dialog = null"
+        @close="dialog = 'edit-Story'"
         @submit="deleteStory()"
+      />
+      <NewArtefactDialog
+        v-if="dialog === 'edit-artefact'"
+        :show="dialog === 'edit-artefact'"
+        :index.sync="model"
+        :artefacts="formData.artefacts"
+        editing
+        @close="finishEditing()"
+        @delete="dialog = 'delete-artefact'"
+        @submit="saveArtefact($event)"
+        @artefacts="processArtefacts($event)"
+      />
+      <DeleteArtefactDialog
+        v-if="dialog === 'delete-artefact'"
+        :show="dialog === 'delete-artefact'"
+        :index="model"
+        @close="dialog = 'edit-artefact'"
+        @submit="removeArtefact($event)"
       />
     </v-card>
   </div>
@@ -242,19 +304,24 @@ import AvatarGroup from '@/components/AvatarGroup.vue'
 // import Avatar from '@/components/Avatar.vue'
 import Artefact from '@/components/artefact/Artefact.vue'
 import ChipGroup from '@/components/archive/ChipGroup.vue'
-
 import EditStoryButton from '@/components/button/EditStoryButton.vue'
 import EditArtefactButton from '@/components/button/EditArtefactButton.vue'
-import { colours } from '@/lib/colours.js'
 import ArtefactCarouselItem from '@/components/artefact/ArtefactCarouselItem.vue'
 import NewRecordDialog from '@/components/dialog/archive/NewRecordDialog.vue'
 import DeleteRecordDialog from '@/components/dialog/archive/DeleteRecordDialog.vue'
-import { deleteStory } from '@/lib/story-helpers.js'
+import NewArtefactDialog from '@/components/dialog/artefact/NewArtefactDialog.vue'
+import DeleteArtefactDialog from '@/components/dialog/artefact/DeleteArtefactDialog.vue'
+
+import { colours } from '@/lib/colours.js'
+import { deleteStory, setDefaultStory } from '@/lib/story-helpers.js'
 import { getTribalProfile } from '@/lib/community-helpers.js'
 import { dateIntervalToString, formatSubmissionDate } from '@/lib/date-helpers.js'
+import { getObjectChanges } from '@/lib/get-object-changes.js'
+import { convertBytes } from '@/lib/artefact-helpers.js'
 
 import mapProfileMixins from '@/mixins/profile-mixins.js'
 import { methods as mapStoryMethods } from '@/mixins/story-mixins.js'
+import { artefactMixin } from '@/mixins/artefact-mixins.js'
 
 export default {
   name: 'StoryCard',
@@ -264,6 +331,7 @@ export default {
     loading: Boolean
   },
   mixins: [
+    artefactMixin,
     mapProfileMixins({
       mapMethods: ['getTribe']
     }),
@@ -282,7 +350,9 @@ export default {
     EditArtefactButton,
     ArtefactCarouselItem,
     NewRecordDialog,
-    DeleteRecordDialog
+    DeleteRecordDialog,
+    NewArtefactDialog,
+    DeleteArtefactDialog
   },
   data () {
     return {
@@ -311,6 +381,10 @@ export default {
     ...mapGetters(['showArtefact', 'storeDialog', 'whoami']),
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
+    },
+    // used for updating artefacts direct from story card
+    formData () {
+      return setDefaultStory(this.story)
     },
     time () {
       if (this.story.timeInterval) {
@@ -346,11 +420,25 @@ export default {
       }
       return 'rounded-border'
     },
+    size () {
+      return convertBytes(this.artefact.blob.size)
+    },
     mobileShowArtefact () {
       return this.mobile && this.showArtefact
     }
   },
   watch: {
+    story (newVal, oldVal) {
+      // show any changes to showArtefact if story.artefacts change
+      var changes = { ...getObjectChanges(oldVal, newVal) }
+      if (changes.artefacts) {
+        if (this.showArtefact && changes.artefacts.remove) {
+          this.setShowArtefact()
+        } else if (this.showArtefact && changes.artefacts.add) {
+          this.artefact = changes.artefacts.add[this.model].artefact
+        }
+      }
+    },
     model (newVal) {
       // show artefact details when viewing in carousel
       if (this.showArtefact) {
@@ -361,6 +449,21 @@ export default {
   methods: {
     ...mapMutations(['setStory']),
     ...mapActions(['setShowArtefact', 'toggleShowStory']),
+    //  save artefact from showArtefact
+    saveArtefact ($event) {
+      this.updateArtefacts($event)
+      // get all changes
+      var output = {
+        id: this.story.id,
+        ...getObjectChanges(setDefaultStory(this.story), this.formData)
+      }
+      this.$emit('submit', output)
+    },
+    finishEditing () {
+      setTimeout(() => {
+        this.dialog = null
+      }, 500)
+    },
     openProfile ($event) {
       this.$emit('openProfile', $event)
     },
@@ -401,6 +504,10 @@ export default {
       this.dialog = dialog
     },
 
+    cordovaBackButton () {
+      if (this.showArtefact) return this.setShowArtefact()
+    },
+
     // toggle artefact view
     toggleShowArtefact (artefact) {
       if (this.fullStory) {
@@ -422,11 +529,8 @@ export default {
     },
     close () {
       this.$emit('close')
-    },
-    finishEditing () {
-      this.toggleShowStory()
-      this.dialog = null
     }
+
   }
 }
 </script>

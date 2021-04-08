@@ -1,5 +1,5 @@
 <template>
-  <v-banner light single-line color="white" style="z-index:1">
+  <v-banner class="whakapapa-banner" light single-line color="white" style="z-index:1">
     <router-link :to="back()">
       <v-avatar size="35" tile >
         <v-img v-if="view.image && view.image.uri" :src="view.image.uri" :alt="view.name"/>
@@ -51,3 +51,8 @@ export default {
   }
 }
 </script>
+<style scoped>
+.whakapapa-banner {
+  margin-top:10px
+}
+</style>
