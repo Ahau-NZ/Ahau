@@ -8,7 +8,7 @@
     <template v-if="!hideDetails" v-slot:content>
       <v-col class="py-0 px-0">
 
-        <ProfileForm :profile.sync="formData" :readonly="hasSelection" :editRelationship="hasSelection" :withRelationships="allowRelationships" :mobile="mobile">
+        <ProfileForm :profile.sync="formData" :readonly="hasSelection" :editRelationship="hasSelection" :withRelationships="allowRelationships" :mobile="mobile" isNewNodeDialog>
 
           <!-- Slot = Search -->
           <template v-slot:search>
@@ -55,6 +55,37 @@
               </template>
             </v-combobox>
           </template>
+
+          <template v-slot:addParents>
+            <v-col cols="12" md="4" class="pa-5">
+              <v-tooltip top open-delay="700" :disabled="addParents">
+                <template v-slot:activator="{ on }">
+                  <div v-on="on">
+                    <v-row v-if="!addParents" @click="addParents = true" class="pl-5">
+                      <v-icon small>mdi-plus</v-icon>
+                      <AddButton size="20px" icon="mdi-account" iconClass="pr-3" label="Add Parent" justify="start"/>
+                    </v-row>
+                  </div>
+                </template>
+                <span>People and communities that are mentioned<br>or connected to the story</span>
+              </v-tooltip>
+              <ProfileSearchBar
+                :selectedItems.sync="parents"
+                :items="generateParents"
+                :openMenu.sync="addParents"
+                placeholder="add mention"
+                item="preferredName"
+                @getSuggestions="$emit('getSuggestions', $event)"
+              />
+              <AvatarGroup v-if="parents && parents.length > 0"
+                :profiles="parents"
+                show-labels
+                size="40px"
+                deletable
+                @delete="removeItem(parents, $event)"
+              />
+            </v-col>
+          </template>
         </ProfileForm>
 
       </v-col>
@@ -69,6 +100,9 @@
 import Dialog from '@/components/dialog/Dialog.vue'
 
 import ProfileForm from '@/components/profile/ProfileForm.vue'
+import ProfileSearchBar from '@/components/archive/ProfileSearchBar.vue'
+import AvatarGroup from '@/components/AvatarGroup.vue'
+import AddButton from '@/components/button/AddButton.vue'
 
 import Avatar from '@/components/Avatar.vue'
 import isEmpty from 'lodash.isempty'
@@ -129,7 +163,10 @@ export default {
     Avatar,
     Dialog,
     ProfileForm,
-    AccessButton
+    AccessButton,
+    ProfileSearchBar,
+    AvatarGroup,
+    AddButton
   },
   mixins: [
     mapProfileMixins({
@@ -156,11 +193,14 @@ export default {
       formData: setDefaultData(this.allowRelationships),
       hasSelection: false,
       closeSuggestions: [],
-      profile: {}
+      profile: {},
+      addParents: false,
+      parents: []
     }
   },
   async mounted () {
     this.closeSuggestions = await this.getCloseSuggestions()
+    // this.parents = await this.newChildParents()
   },
   computed: {
     ...mapGetters(['currentAccess']),
@@ -179,7 +219,6 @@ export default {
           ...this.suggestions
         ]
       }
-
       if (this.closeSuggestions && this.closeSuggestions.length > 0 && this.suggestions.length < 1) {
         closeSuggestions = [
           this.header,
@@ -192,6 +231,11 @@ export default {
         ...closeSuggestions,
         ...otherSuggestions
       ].filter(Boolean)
+    },
+    generateParents () {
+      this.parents = this.newChildParents()
+      console.log('parents computed: ', this.parents)
+      return [this.header, this.parents, this.divider].filter(Boolean)
     },
     mobile () {
       return this.$vuetify.breakpoint.xs
@@ -292,10 +336,20 @@ export default {
       return children
     },
 
+    newChildParents () {
+      var currentPartners = []
+
+      if (this.selectedProfile.partners) {
+        this.selectedProfile.partners.forEach(d => {
+          currentPartners[d.id] = d
+        })
+      }
+      return currentPartners
+    },
+
     async findParents () {
       var currentParents = []
       var parents = []
-
       if (this.selectedProfile.parents) {
         this.selectedProfile.parents.forEach(d => {
           currentParents[d.id] = d

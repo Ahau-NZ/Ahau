@@ -124,6 +124,15 @@
       </v-col>
     </v-row>
 
+    <slot name="addParents">
+      <v-text-field
+        v-model="formData.preferredName"
+        :label="t('preferredName')"
+        v-bind="customProps"
+        outlined
+      />
+    </slot>
+
     <!-- Start of advanced section -->
     <v-divider />
       <v-card-actions class="pt-2 pb-2 pr-5 pointer">

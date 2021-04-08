@@ -130,6 +130,9 @@ export default {
     Avatar,
     Chip
   },
+  mounted () {
+    console.log('items: ', this.items[1].length)
+  },
   computed: {
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
@@ -160,6 +163,9 @@ export default {
       } else {
         this.clearSuggestions()
       }
+    },
+    items (newValue) {
+      console.log('new items: ', newValue)
     }
   },
   methods: {
