@@ -8,7 +8,8 @@
           <v-icon color="blue-grey" light @click="toggleArchiveHelper" class="infoButton">mdi-information</v-icon>
         </v-col>
         <v-col v-show="!showStory">
-          <BigAddButton @click.native.stop="openContextMenu($event)" />
+          <BigAddButton label="new story" :customClass="mobile ? 'addBtnMobile':'addBtnDesktop'" @click.native.stop="mobile ? openContextMenu($event): dialog = 'new-story' " />
+          <BigAddButton v-if="!mobile" label="new collection" :customClass="mobile ? 'addBtnMobile':'addBtnCollection'" @click.native.stop="dialog = 'new-collection'" />
         </v-col>
       </v-row>
       <v-row>

@@ -21,7 +21,7 @@
           <v-img
             :height="expanded ? '100' : '60'"
             :width="expanded ? '100' : '80'"
-            :src="getImage"
+            :src="image"
             :class="expanded ? 'ma-0' : ''"
           >
           </v-img>
@@ -84,17 +84,6 @@ export default {
       }
 
       return false
-    },
-    getImage () {
-      if (this.image) return this.image
-      if (this.chip.image && this.chip.uri) return this.chip.uri
-      if (this.type === 'story' && this.chip.artefacts && this.chip.artefacts.length > 0) {
-        var artefact = this.chip.artefacts[0].artefact
-        if (artefact.type === 'photo') {
-          return artefact.blob.uri
-        }
-      }
-      return niho
     },
     width () {
       if (this.expanded) {

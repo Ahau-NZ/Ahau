@@ -291,7 +291,7 @@
                 :items="filteredCollections"
                 :openMenu.sync="showCollections"
                 placeholder="add story to collection"
-                item="title"
+                item="name"
               />
               <ChipGroup
                 v-if="formData.collections && formData.collections.length > 0"
