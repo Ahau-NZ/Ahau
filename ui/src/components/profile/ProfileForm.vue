@@ -21,7 +21,7 @@
           />
         </v-row>
         <v-row v-if="isEditing" class="justify-center">
-          <h1>Edit {{ getDisplayName(formData) }}</h1>
+          <h1>{{ t('addPersonFormTitle', { name: getDisplayName(formData) }) }}</h1>
         </v-row>
         <v-row v-if="isEditing" class="justify-center">
           <v-btn
@@ -42,14 +42,12 @@
         <v-row>
           <!-- Preferred Name -->
           <v-col cols="12" class="pa-1 pt-4">
-            <slot name="search">
-              <v-text-field
-                v-model="formData.preferredName"
-                label="First name / known as"
-                v-bind="customProps"
-                outlined
-              />
-            </slot>
+            <v-text-field
+              v-model="formData.preferredName"
+              label="First name / known as"
+              v-bind="customProps"
+              outlined
+            />
           </v-col>
           <v-col v-if="readonly" :cols="sideViewCols" class="pa-1">
             <v-text-field
@@ -87,7 +85,7 @@
     <v-row :class="smScreen ? 'sideView-gender-button-row' : 'gender-button-row'">
       <!-- GENDER EDIT -->
       <v-col v-if="!readonly" class="pa-1">
-        <p class="text-field">{{ t('identity') }}</p>
+        <p class="text-field">{{ t('genderIdentity') }}</p>
         <v-row>
           <!-- TANE -->
           <v-col :cols="smScreen ? '3' : '2'" class="pa-0">
@@ -142,11 +140,14 @@
         <v-row>
           <!-- Full Name -->
           <v-col :cols="sideViewCols" class="pa-1">
-            <v-text-field
-              v-model="formData.legalName"
-              label="Full name"
-              v-bind="customProps"
-            />
+            <slot name="search">
+              <v-text-field
+                v-model="formData.legalName"
+                :label="t('legalName')"
+                v-bind="customProps"
+                outlined
+              />
+            </slot>
           </v-col>
           <!-- Alt names -->
           <template>
@@ -158,7 +159,7 @@
             >
               <v-text-field
                 v-model="formData.altNames.currentState[index]"
-                label="Also known as"
+                :label="t('aka')"
                 :append-icon="readonly ? '' : 'mdi-delete'"
                 @click:append="removeAltName(formData.altNames.currentState[index], index)"
                 readonly
@@ -192,8 +193,8 @@
           <!-- DATE OF BIRTH + DATE OF DEATH-->
           <v-col :cols="sideViewCols" class="py-0">
             <DateIntervalPicker
-              label="Date of birth"
-              endLabel="Date of death"
+              :label="t('dob.title')"
+              :endLabel="t('dod')"
               allowInterval
               :interval.sync="formData.aliveInterval"
               :hasEndDate.sync="formData.deceased"
@@ -227,12 +228,12 @@
           <v-col class="pa-1">
             <v-text-field
               v-model="formData.placeOfBirth"
-              label="City/country of birth"
+              :label="t('birthPlace')"
               v-bind="customProps"
             />
           </v-col>
-          <template v-if="formData.deceased">
-            <v-col :cols="sideViewCols" class="pa-1">
+          <template v-if="formData.deceased" >
+            <v-col :cols="sideViewCols" :class="pa-1">
               <v-text-field
                 v-model="formData.placeOfDeath"
                 label="Place of death"
@@ -264,16 +265,15 @@
 
         <!-- Skills and Qualifications -->
         <v-row class="pt-2">
-          <v-col cols="12" class="px-0">
-            <v-divider class="py-2"/>
-            <span class="pa-0 ma-0" style="font-weight:bold">Skills and qualifications</span>
+          <v-col cols="12">
+            <span class="pa-0 ma-0" style="font-weight:bold">{{ t('skills.title') }}</span>
           </v-col>
           <!-- Profession-->
           <v-col cols="12" class="pa-0">
             <v-col :cols="sideViewCols" class="pa-1">
               <v-text-field
                 v-model="formData.profession"
-                label="Profession"
+                :label="t('skills.profession')"
                 v-bind="customProps"
               />
             </v-col>
@@ -285,16 +285,17 @@
             class="pa-1"
           >
             <v-text-field
-              v-model="formData.education[index]"
-              label="Skill/qualification"
-              :append-icon="readonly ? '' : 'mdi-delete'"
-              @click:append="removeItem(formData.education, index)"
-              v-bind="customProps"
-              :readonly="readonly"
+            v-model="formData.education[index]"
+            :label="t('skills.skillsQuals')"
+            append-icon="mdi-delete"
+            @click:append="removeItem(formData.education, index)"
+            v-bind="customProps"
+            :readonly="readonly"
+            outlined
             />
           </v-col>
-          <v-col v-if="!readonly">
-            <AddButton :align="'flex-end'" :justify="justifyBtn" :width="'50px'" label="Add a skill/qualification" @click="addEmptyItem(formData.education)" row/>
+          <v-col>
+            <AddButton :align="'flex-end'" :justify="justifyBtn" :width="'50px'" :label="t('skills.addSkill')" @click="addEmptyItem(formData.education)" row/>
           </v-col>
         </v-row>
         <!-- Education -->
@@ -306,72 +307,84 @@
           >
             <v-text-field
             v-model="formData.school[index]"
-            label="Place of education"
-            :append-icon="readonly ? '' : 'mdi-delete'"
+            :label="t('skills.placeOfEducation')"
+            append-icon="mdi-delete"
             @click:append="removeItem(formData.school, index)"
             v-bind="customProps"
             :readonly="readonly"
             />
           </v-col>
-          <v-col v-if="!readonly">
-            <AddButton :align="'flex-end'" :justify="justifyBtn" :width="'50px'" label="Add a place of education" @click="addEmptyItem(formData.school)" row/>
+          <v-col>
+            <AddButton :align="'flex-end'" :justify="justifyBtn" :width="'50px'" :label="t('skills.addEducation')" @click="addEmptyItem(formData.school)" row/>
           </v-col>
         </v-row>
         <!-- Email, Address, Phone, Location -->
-        <v-row v-if="!formData.deceased">
-          <v-col cols="12" class="px-0">
-            <v-divider class="py-2"/>
-            <span class="pa-0 ma-0" style="font-weight:bold">Personal Information</span>
+        <div v-if="!formData.deceased">
+          <v-col cols="12">
+            <span class="pa-0 ma-0" style="font-weight:bold">{{ t('personalInfo.title') }}</span>
           </v-col>
-          <!-- Email -->
-          <v-col :cols="sideViewCols" class="pa-1">
-            <v-text-field
-              v-model="formData.email"
-              label="Email"
-              v-bind="customProps"
-            />
-          </v-col>
-          <!-- Phone -->
-          <v-col :cols="sideViewCols" class="pa-1">
-            <v-text-field
-              v-model="formData.phone"
-              label="Phone"
-              v-bind="customProps"
-            />
-          </v-col>
-          <!-- Address -->
-          <v-col :cols="sideViewCols" class="pa-1">
-            <v-text-field
-              v-model="formData.address"
-              label="Address"
-              v-bind="customProps"
-            />
-          </v-col>
-          <!-- City -->
-          <v-col :cols="sideViewCols" class="pa-1">
-            <v-text-field
-              v-model="formData.city"
-              label="City"
-              v-bind="customProps"
-            />
-          </v-col>
-          <!-- Post Code -->
-          <v-col :cols="sideViewCols" class="pa-1">
-            <v-text-field
-              v-model="formData.postCode"
-              label="Post Code"
-              v-bind="customProps"
-            />
-          </v-col>
-          <!-- Country -->
-          <v-col :cols="sideViewCols" class="pa-1">
-            <v-text-field
-              v-model="formData.country"
-              label="Country"
-              v-bind="customProps"
-            />
-          </v-col>
-        </v-row>
+          <v-row class="py-1" v-if="!formData.deceased">
+            <!-- Email -->
+            <v-col :cols="sideViewCols" class="pa-1">
+              <v-text-field
+                v-model="formData.email"
+                :label="t('personalInfo.email')"
+                v-bind="customProps"
+                outlined
+              />
+            </v-col>
+            <!-- Phone -->
+            <v-col :cols="sideViewCols" class="pa-1">
+              <v-text-field
+                v-model="formData.phone"
+                :label="t('personalInfo.phone')"
+                v-bind="customProps"
+                outlined
+              />
+            </v-col>
+          </v-row>
+          <v-row>
+
+          </v-row>
+          <v-row>
+            <!-- Address -->
+            <v-col :cols="sideViewCols" class="pa-1">
+              <v-text-field
+                v-model="formData.address"
+                :label="t('personalInfo.address')"
+                v-bind="customProps"
+                outlined
+              />
+            </v-col>
+            <!-- City -->
+            <v-col :cols="sideViewCols" class="pa-1">
+              <v-text-field
+                v-model="formData.city"
+                :label="t('personalInfo.city')"
+                v-bind="customProps"
+                outlined
+              />
+            </v-col>
+            <!-- Post Code -->
+            <v-col :cols="sideViewCols" class="pa-1">
+              <v-text-field
+                v-model="formData.postCode"
+                :label="t('personalInfo.postCode')"
+                v-bind="customProps"
+                outlined
+              />
+            </v-col>
+            <!-- Country -->
+              <v-col :cols="sideViewCols" class="pa-1">
+                <v-text-field
+                  v-model="formData.country"
+                  :label="t('personalInfo.country')"
+                  v-bind="customProps"
+                  outlined
+                />
+              </v-col>
+          </v-row>
+        </div>
       </div>
     </v-expand-transition>
     <!-- End of advanced section -->
