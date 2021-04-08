@@ -291,7 +291,7 @@
                 :items="filteredCollections"
                 :openMenu.sync="showCollections"
                 placeholder="add story to collection"
-                item="title"
+                item="name"
               />
               <ChipGroup
                 v-if="formData.collections && formData.collections.length > 0"
@@ -549,7 +549,6 @@ export default {
         var storyRes = await this.$apollo.query(getAllStories({ groupId: newVal.recps[0] }))
         this.stories = storyRes.data.stories
         var collectionRes = await this.$apollo.query(getAllCollections({ groupId: newVal.recps[0] }))
-        console.log(collectionRes)
         this.collections = collectionRes.data.collections
       }
     }

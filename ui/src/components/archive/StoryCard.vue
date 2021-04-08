@@ -153,19 +153,17 @@
           </v-col>
         </v-row>
         <v-row class="px-4">
-          <v-col class="pt-0 pr-1" v-if="story.collections && story.collections.length > 0" cols="12" sm="12" md="auto">
-            <v-list-item-subtitle class="pb-1" style="color:#a7a3a3">Collections</v-list-item-subtitle>
-            <ChipGroup :chips="story.collections.map(c => c.collection)" type="collection" @click="showRelatedCollection"/>
-          </v-col>
-        </v-row>
-        <v-row class="px-4">
-          <v-col class="pt-0 pr-1" v-if="story.relatedRecords && story.relatedRecords.length > 0" cols="12" sm="12" md="auto">
+          <v-col class="pt-0 pr-1" v-if="story.relatedRecords && story.relatedRecords.length > 0" cols="12" md="6">
             <v-list-item-subtitle class="pb-1" style="color:#a7a3a3">Related records</v-list-item-subtitle>
             <ChipGroup
               :chips="story.relatedRecords.map(r => r.story)"
               type="story"
               @click="showRelatedStory"
             />
+          </v-col>
+          <v-col class="pt-0 pr-1" v-if="story.collections && story.collections.length > 0" cols="12" md="6">
+            <v-list-item-subtitle class="pb-1" style="color:#a7a3a3">Collections</v-list-item-subtitle>
+            <ChipGroup :chips="story.collections.map(c => c.collection)" type="collection" @click="showRelatedCollection"/>
           </v-col>
         </v-row>
         <v-row class="px-4 mb-12">
