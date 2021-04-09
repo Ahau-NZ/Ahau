@@ -132,6 +132,14 @@
         outlined
       />
     </slot>
+    <slot name="addChildren">
+      <v-text-field
+        v-model="formData.preferredName"
+        :label="t('preferredName')"
+        v-bind="customProps"
+        outlined
+      />
+    </slot>
 
     <!-- Start of advanced section -->
     <v-divider />

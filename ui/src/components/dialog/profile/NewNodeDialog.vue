@@ -56,7 +56,67 @@
             </v-combobox>
           </template>
 
-          <template v-slot:addParents>
+          <template v-slot:addParents v-if="typeIsChild">
+            <v-col cols="12" md="4" class="pa-5">
+              <v-tooltip top open-delay="700" :disabled="addParents">
+                <template v-slot:activator="{ on }">
+                  <div v-on="on">
+                    <v-row v-if="!addParents" @click="addParents = true" class="pl-5">
+                      <v-icon small>mdi-plus</v-icon>
+                      <AddButton size="20px" icon="mdi-account" iconClass="pr-3" label="Add Parent" justify="start"/>
+                    </v-row>
+                  </div>
+                </template>
+                <span>Add a parent to this new child</span>
+              </v-tooltip>
+              <ProfileSearchBar
+                :selectedItems.sync="selectedParents"
+                :items="generateParents"
+                :openMenu.sync="addParents"
+                placeholder="add mention"
+                item="preferredName"
+                @getSuggestions="$emit('getSuggestions', $event)"
+              />
+              <AvatarGroup v-if="selectedParents && selectedParents.length > 0"
+                :profiles="selectedParents"
+                show-labels
+                size="40px"
+                deletable
+                @delete="removeItem(selectedParents, $event)"
+              />
+            </v-col>
+          </template>
+          <template v-slot:addChildren v-if="typeIsPartner">
+            <v-col cols="12" md="4" class="pa-5">
+              <v-tooltip top open-delay="700" :disabled="addChildren">
+                <template v-slot:activator="{ on }">
+                  <div v-on="on">
+                    <v-row v-if="!addChildren" @click="addChildren = true" class="pl-5">
+                      <v-icon small>mdi-plus</v-icon>
+                      <AddButton size="20px" icon="mdi-account" iconClass="pr-3" label="Add Children" justify="start"/>
+                    </v-row>
+                  </div>
+                </template>
+                <span>Add children to this new partner</span>
+              </v-tooltip>
+              <ProfileSearchBar
+                :selectedItems.sync="selectedChildren"
+                :items="generateChildren"
+                :openMenu.sync="addChildren"
+                placeholder="add mention"
+                item="preferredName"
+                @getSuggestions="$emit('getSuggestions', $event)"
+              />
+              <AvatarGroup v-if="selectedChildren && selectedChildren.length > 0"
+                :profiles="selectedChildren"
+                show-labels
+                size="40px"
+                deletable
+                @delete="removeItem(selectedChildren, $event)"
+              />
+            </v-col>
+          </template>
+          <template v-slot:addPartners>
             <v-col cols="12" md="4" class="pa-5">
               <v-tooltip top open-delay="700" :disabled="addParents">
                 <template v-slot:activator="{ on }">
@@ -195,8 +255,11 @@ export default {
       closeSuggestions: [],
       profile: {},
       addParents: false,
+      addChildren: false,
       parents: [],
-      selectedParents: []
+      selectedParents: [],
+      children: [],
+      selectedChildren: [],
     }
   },
   async mounted () {
@@ -239,12 +302,19 @@ export default {
       let parentSuggestions = []
 
       this.parents = this.newChildParents()
-      console.log('parents: ', this.parents)
       if (this.parents && this.parents.length > 0) {
         parentSuggestions = [this.header, ...this.parents, this.divider]
       }
-      console.log('parent suggestions: ', parentSuggestions)
       return parentSuggestions.filter(Boolean)
+    },
+    generateChildren () {
+      let childrenSuggestions = []
+
+      this.children = this.newPartnerChildren()
+      if (this.children && this.children.length > 0) {
+        childrenSuggestions = [this.header, ...this.children, this.divider]
+      }
+      return childrenSuggestions.filter(Boolean)
     },
     mobile () {
       return this.$vuetify.breakpoint.xs
@@ -293,6 +363,15 @@ export default {
       })
 
       return submission
+    },
+    typeIsChild () {
+      return this.type === 'child'
+    },
+    typeIsPartner () {
+      return this.type === 'partner'
+    },
+    typeIsParent () {
+      return this.type === 'parent'
     }
   },
   methods: {
@@ -354,6 +433,17 @@ export default {
         })
       }
       return currentPartners
+    },
+
+    newPartnerChildren () {
+      var currentChildren = []
+
+      if (this.selectedProfile.children) {
+        this.selectedProfile.children.forEach(d => {
+          currentChildren.push(d)
+        })
+      }
+      return currentChildren
     },
 
     async findParents () {
