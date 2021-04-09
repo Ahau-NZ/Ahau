@@ -121,6 +121,9 @@ export default {
         'avatarImage',
         'description'
       )
+      // TODO replace this with graphql mixin?
+      if (newProfile.avatarImage) delete newProfile.avatarImage.uri
+
       const result = await this.$apollo.mutate({
         mutation: gql`
           mutation($input: ProfileInput!) {

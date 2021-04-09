@@ -119,6 +119,8 @@ const methods = {
   // method to save a profile (community or person) using apollo
   async saveProfile (input) {
     if (input.avatarImage) delete input.avatarImage.uri // not valid to transmit / persist
+    if (input.headerImage) delete input.headerImage.uri
+
     try {
       const res = await this.$apollo.mutate({
         mutation: gql`
