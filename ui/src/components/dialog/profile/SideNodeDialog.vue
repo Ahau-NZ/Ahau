@@ -307,8 +307,11 @@ export default {
       return this.$vuetify.breakpoint.xs
     },
     diedAt () {
-      var date = this.profile.aliveInterval.split('/')
-      return dateToString(date[1])
+      if (this.profile.aliveInterval){
+        var date = this.profile.aliveInterval.split('/')
+        return dateToString(date[1])
+      }
+      return null
     },
     profileChanges () {
       let changes = {}

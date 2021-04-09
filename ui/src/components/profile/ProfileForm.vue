@@ -233,7 +233,7 @@
             />
           </v-col>
           <template v-if="formData.deceased" >
-            <v-col :cols="sideViewCols" :class="pa-1">
+            <v-col :cols="sideViewCols" class="pa-1">
               <v-text-field
                 v-model="formData.placeOfDeath"
                 label="Place of death"
