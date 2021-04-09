@@ -131,7 +131,7 @@ export default {
     Chip
   },
   mounted () {
-    console.log('items: ', this.items[1].length)
+    // console.log('items: ', this.items[1].length)
   },
   computed: {
     mobile () {

@@ -70,19 +70,19 @@
                 <span>People and communities that are mentioned<br>or connected to the story</span>
               </v-tooltip>
               <ProfileSearchBar
-                :selectedItems.sync="parents"
+                :selectedItems.sync="selectedParents"
                 :items="generateParents"
                 :openMenu.sync="addParents"
                 placeholder="add mention"
                 item="preferredName"
                 @getSuggestions="$emit('getSuggestions', $event)"
               />
-              <AvatarGroup v-if="parents && parents.length > 0"
-                :profiles="parents"
+              <AvatarGroup v-if="selectedParents && selectedParents.length > 0"
+                :profiles="selectedParents"
                 show-labels
                 size="40px"
                 deletable
-                @delete="removeItem(parents, $event)"
+                @delete="removeItem(selectedParents, $event)"
               />
             </v-col>
           </template>
@@ -195,7 +195,8 @@ export default {
       closeSuggestions: [],
       profile: {},
       addParents: false,
-      parents: []
+      parents: [],
+      selectedParents: []
     }
   },
   async mounted () {
@@ -227,15 +228,23 @@ export default {
         ]
       }
 
+      console.log('close suggestions: ', closeSuggestions)
+
       return [
         ...closeSuggestions,
         ...otherSuggestions
       ].filter(Boolean)
     },
     generateParents () {
+      let parentSuggestions = []
+
       this.parents = this.newChildParents()
-      console.log('parents computed: ', this.parents)
-      return [this.header, this.parents, this.divider].filter(Boolean)
+      console.log('parents: ', this.parents)
+      if (this.parents && this.parents.length > 0) {
+        parentSuggestions = [this.header, ...this.parents, this.divider]
+      }
+      console.log('parent suggestions: ', parentSuggestions)
+      return parentSuggestions.filter(Boolean)
     },
     mobile () {
       return this.$vuetify.breakpoint.xs
@@ -341,7 +350,7 @@ export default {
 
       if (this.selectedProfile.partners) {
         this.selectedProfile.partners.forEach(d => {
-          currentPartners[d.id] = d
+          currentPartners.push(d)
         })
       }
       return currentPartners
