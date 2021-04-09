@@ -43,7 +43,7 @@
             </v-col>
           </v-btn>
         </v-col>
-        
+
         <!-- <v-col :class="mobile ? 'py-0 px-0' : 'py-1'">
           <v-btn @click="setActive('Activity')" light :fab="mobile" text>
             <v-col class="pa-0" :cols="mobile ? '12' : '2'">
