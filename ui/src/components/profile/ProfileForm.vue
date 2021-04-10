@@ -124,7 +124,7 @@
       </v-col>
     </v-row>
 
-    <slot name="addParents">
+    <slot name="addParents" v-if="typeIsChild">
       <v-text-field
         v-model="formData.preferredName"
         :label="t('preferredName')"
@@ -132,7 +132,15 @@
         outlined
       />
     </slot>
-    <slot name="addChildren">
+    <slot name="addChildren" v-if="typeIsPartner || typeIsParent">
+      <v-text-field
+        v-model="formData.preferredName"
+        :label="t('preferredName')"
+        v-bind="customProps"
+        outlined
+      />
+    </slot>
+    <slot name="addPartners" v-if="typeIsParent">
       <v-text-field
         v-model="formData.preferredName"
         :label="t('preferredName')"
@@ -421,7 +429,8 @@ export default {
     mobile: { type: Boolean, default: false },
     isEditing: { type: Boolean, default: false },
     isUser: { type: Boolean, default: false },
-    isSideViewDialog: { type: Boolean, default: false }
+    isSideViewDialog: { type: Boolean, default: false },
+    dialogType: { type: String, default: ''}
   },
   data () {
     return {
@@ -499,6 +508,15 @@ export default {
     },
     justifyBtn () {
       return this.smScreen ? 'start' : 'end'
+    },
+    typeIsChild () {
+      return this.dialogType === 'child'
+    },
+    typeIsPartner () {
+      return this.dialogType === 'partner'
+    },
+    typeIsParent () {
+      return this.dialogType === 'parent'
     }
   },
   methods: {

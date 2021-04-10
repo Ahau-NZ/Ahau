@@ -8,7 +8,7 @@
     <template v-if="!hideDetails" v-slot:content>
       <v-col class="py-0 px-0">
 
-        <ProfileForm :profile.sync="formData" :readonly="hasSelection" :editRelationship="hasSelection" :withRelationships="allowRelationships" :mobile="mobile" isNewNodeDialog>
+        <ProfileForm :profile.sync="formData" :readonly="hasSelection" :editRelationship="hasSelection" :withRelationships="allowRelationships" :mobile="mobile" isNewNodeDialog :dialogType="type">
 
           <!-- Slot = Search -->
           <template v-slot:search>
@@ -56,7 +56,7 @@
             </v-combobox>
           </template>
 
-          <template v-slot:addParents v-if="typeIsChild">
+          <template v-slot:addParents>
             <v-col cols="12" md="4" class="pa-5">
               <v-tooltip top open-delay="700" :disabled="addParents">
                 <template v-slot:activator="{ on }">
@@ -86,7 +86,7 @@
               />
             </v-col>
           </template>
-          <template v-slot:addChildren v-if="typeIsPartner">
+          <template v-slot:addChildren>
             <v-col cols="12" md="4" class="pa-5">
               <v-tooltip top open-delay="700" :disabled="addChildren">
                 <template v-slot:activator="{ on }">
@@ -118,31 +118,31 @@
           </template>
           <template v-slot:addPartners>
             <v-col cols="12" md="4" class="pa-5">
-              <v-tooltip top open-delay="700" :disabled="addParents">
+              <v-tooltip top open-delay="700" :disabled="addPartners">
                 <template v-slot:activator="{ on }">
                   <div v-on="on">
-                    <v-row v-if="!addParents" @click="addParents = true" class="pl-5">
+                    <v-row v-if="!addPartners" @click="addPartners = true" class="pl-5">
                       <v-icon small>mdi-plus</v-icon>
-                      <AddButton size="20px" icon="mdi-account" iconClass="pr-3" label="Add Parent" justify="start"/>
+                      <AddButton size="20px" icon="mdi-account" iconClass="pr-3" label="Add Partner" justify="start"/>
                     </v-row>
                   </div>
                 </template>
-                <span>People and communities that are mentioned<br>or connected to the story</span>
+                <span>Add partners to this new parent</span>
               </v-tooltip>
               <ProfileSearchBar
-                :selectedItems.sync="selectedParents"
-                :items="generateParents"
-                :openMenu.sync="addParents"
+                :selectedItems.sync="selectedPartners"
+                :items="generatePartners"
+                :openMenu.sync="addPartners"
                 placeholder="add mention"
                 item="preferredName"
                 @getSuggestions="$emit('getSuggestions', $event)"
               />
-              <AvatarGroup v-if="selectedParents && selectedParents.length > 0"
-                :profiles="selectedParents"
+              <AvatarGroup v-if="selectedPartners && selectedPartners.length > 0"
+                :profiles="selectedPartners"
                 show-labels
                 size="40px"
                 deletable
-                @delete="removeItem(selectedParents, $event)"
+                @delete="removeItem(selectedPartners, $event)"
               />
             </v-col>
           </template>
@@ -256,10 +256,13 @@ export default {
       profile: {},
       addParents: false,
       addChildren: false,
+      addPartners: false,
       parents: [],
       selectedParents: [],
       children: [],
       selectedChildren: [],
+      partners: [],
+      selectedPartners: []
     }
   },
   async mounted () {
@@ -310,11 +313,21 @@ export default {
     generateChildren () {
       let childrenSuggestions = []
 
-      this.children = this.newPartnerChildren()
+      if (this.type === 'partner') this.children = this.newPartnerChildren()
+      else if (this.type === 'parent') this.children = this.newParentChildren()
       if (this.children && this.children.length > 0) {
         childrenSuggestions = [this.header, ...this.children, this.divider]
       }
       return childrenSuggestions.filter(Boolean)
+    },
+    generatePartners () {
+      let partnerSuggestions = []
+
+      this.partners = this.newParentPartners()
+      if (this.partners && this.partners.length > 0) {
+        partnerSuggestions = [this.header, ...this.partners, this.divider]
+      }
+      return partnerSuggestions.filter(Boolean)
     },
     mobile () {
       return this.$vuetify.breakpoint.xs
@@ -363,15 +376,6 @@ export default {
       })
 
       return submission
-    },
-    typeIsChild () {
-      return this.type === 'child'
-    },
-    typeIsPartner () {
-      return this.type === 'partner'
-    },
-    typeIsParent () {
-      return this.type === 'parent'
     }
   },
   methods: {
@@ -440,6 +444,28 @@ export default {
 
       if (this.selectedProfile.children) {
         this.selectedProfile.children.forEach(d => {
+          currentChildren.push(d)
+        })
+      }
+      return currentChildren
+    },
+
+    newParentPartners () {
+      var currentPartners = []
+
+      if (this.selectedProfile.partners) {
+        this.selectedProfile.partners.forEach(d => {
+          currentPartners.push(d)
+        })
+      }
+      return currentPartners
+    },
+
+    newParentChildren () {
+      var currentChildren = []
+
+      if (this.selectedProfile.siblings) {
+        this.selectedProfile.siblings.forEach(d => {
           currentChildren.push(d)
         })
       }
