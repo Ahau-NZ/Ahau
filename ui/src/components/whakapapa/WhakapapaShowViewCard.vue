@@ -7,23 +7,23 @@
   >
     <!-- Whakapapa Image and Title -->
     <v-container fluid class="py-0">
-      <v-row cols="12">
+      <v-row cols="12" align="center" >
         <!-- Image part of the card -->
-        <v-col cols="4" class="pa-0">
+        <v-col cols="4" class="pa-0" >
           <v-img
             :src="image"
             class="pa-0"
-            contain
-            height="100%"
-            width="100%"
+            cover
+            height="100px"
+            
           >
           </v-img>
         </v-col>
         <!-- Rest of the card -->
-        <v-col cols="8">
+        <v-col cols="8" class="py-0">
           <v-row>
             <!-- TITLE -->
-            <v-card-title>{{ view.name || 'Untitled' }}</v-card-title>
+            <v-card-title class="py-0">{{ view.name || 'Untitled' }}</v-card-title>
             <!-- <v-card-subtitle>{{ view.description || 'No description' }}</v-card-subtitle> -->
             <v-card-text class="pa-0 d-flex justify-start align-center" style="width: 100%;">
               <!-- Lock icon for access -->

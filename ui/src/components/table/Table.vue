@@ -334,12 +334,10 @@ export default {
       }
     },
     download (newVal) {
-      console.log('download hit: ', newVal)
       if (newVal) {
         var nodes = this.nodes.map(node => {
           var d = node.data
           var aliveInterval = d.aliveInterval ? intervalToDayMonthYear(d.aliveInterval) : null
-          console.log('alive interval: ', aliveInterval)
           var altNames = d.altNames.length > 0 ? d.altNames.join(', ') : null
           var school = d.school.length > 0 ? d.school.join(', ') : null
           var education = d.education.length > 0 ? d.education.join(', ') : null
@@ -370,9 +368,7 @@ export default {
             school: school
           }
         })
-        console.log(nodes)
         var csv = d3.csvFormat(nodes)
-        // console.log('csv: ', csv)
         this.$emit('update:download', false)
 
         var hiddenElement = document.createElement('a')
