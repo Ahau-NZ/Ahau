@@ -41,18 +41,18 @@
         <v-spacer style="height:5%"></v-spacer>
         <v-row>
           <!-- Preferred Name -->
-          <v-col cols="12" class="pa-1 pt-4">
+          <slot name="search">
             <v-text-field
               v-model="formData.preferredName"
-              label="First name / known as"
+              :label="t('preferredName')"
               v-bind="customProps"
               outlined
             />
-          </v-col>
+          </slot>
           <v-col v-if="readonly" :cols="sideViewCols" class="pa-1">
             <v-text-field
               v-model="formData.gender"
-              label="Gender"
+              :label="t('genderIdentity')"
               v-bind="customProps"
             />
           </v-col>
@@ -127,7 +127,7 @@
       <v-card-actions class="pt-2 pb-2 pr-5 pointer">
         <v-row @click="showAdvanced = !showAdvanced" class="clickable">
           <v-col>
-            <span class="pa-0 ma-0" style="font-weight:bold">{{ readonly ? `${getDisplayName(formData)}'s Information` : t('moreInfo') }}</span>
+            <span class="pa-0 ma-0" style="font-weight:bold">{{ t('moreInfo') }}</span>
           </v-col>
           <v-btn icon right>
             <v-icon>{{ showAdvanced ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
@@ -140,14 +140,12 @@
         <v-row>
           <!-- Full Name -->
           <v-col :cols="sideViewCols" class="pa-1">
-            <slot name="search">
-              <v-text-field
-                v-model="formData.legalName"
-                :label="t('legalName')"
-                v-bind="customProps"
-                outlined
-              />
-            </slot>
+            <v-text-field
+              v-model="formData.legalName"
+              :label="t('legalName')"
+              v-bind="customProps"
+              outlined
+            />
           </v-col>
           <!-- Alt names -->
           <template>
