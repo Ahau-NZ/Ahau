@@ -357,7 +357,14 @@ export default {
       }
     },
     async addPerson (input) {
-      var { id } = input
+      var { id, children, parents, partners } = input
+      delete input.children
+      delete input.parents
+      delete input.partners
+      console.log('input: ', input)
+      console.log('children: ', children)
+      console.log('parents: ', parents)
+      console.log('partners: ', partners)
 
       id = await this.createNewPerson(input)
       const ignored = await this.removeIgnoredProfile(id)
@@ -384,6 +391,15 @@ export default {
             })
           }
 
+          if (parents) {
+            await Promise.all(parents.map(async parent => {
+              await this.createChildLink({
+                child: id,
+                parent: parent.id
+              })
+            }))
+          }
+
           // load the childs profile
           parentProfile = await this.loadDescendants(parentProfile.id)
 
@@ -402,6 +418,24 @@ export default {
               parent,
               relationshipAttrs
             })
+          }
+
+          if (partners) {
+            await Promise.all(partners.map(async partner => {
+              await this.createPartnerLink({
+                child: id,
+                parent: partner.id
+              })
+            }))
+          }
+
+          if (children) {
+            await Promise.all(children.map(async child => {
+              await this.createChildLink({
+                child: child.id,
+                parent: id
+              })
+            }))
           }
 
           if (child === this.view.focus) {
@@ -430,6 +464,15 @@ export default {
               parent,
               child
             })
+          }
+
+          if (children) {
+            await Promise.all(children.map(async child => {
+              await this.createChildLink({
+                child: child.id,
+                parent: id
+              })
+            }))
           }
 
           var partnerProfile = await this.getRelatives(child)
