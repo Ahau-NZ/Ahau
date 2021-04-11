@@ -14,6 +14,16 @@
       <v-list-item-subtitle>Age</v-list-item-subtitle>
     </v-list-item-action>
     <v-list-item-action>
+      <v-select
+        v-model="relatedBy"
+        label="Related by"
+        :items="relationshipTypes"
+        :menu-props="{ light: true }"
+        outlined
+        hide-details
+       />
+    </v-list-item-action>
+    <v-list-item-action>
       <v-btn class="delete" @click="$emit('removeItem')" icon x-small light max-width="20px" max-height="20px">
         <v-icon>mdi-close</v-icon>
       </v-btn>
@@ -25,6 +35,7 @@
 import Avatar from '@/components/Avatar.vue'
 import { getDisplayName } from '@/lib/person-helpers.js'
 import calculateAge from '@/lib/calculate-age'
+import { RELATIONSHIPS } from '@/lib/constants'
 
 export default {
   name: 'ProfileChip',
@@ -36,7 +47,7 @@ export default {
   },
   data () {
     return {
-
+      relationshipTypes: RELATIONSHIPS
     }
   },
   methods: {
