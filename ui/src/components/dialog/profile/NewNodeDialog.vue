@@ -582,8 +582,10 @@ export default {
         this.formData = setDefaultData(this.withRelationships)
       }
       this.$emit('getSuggestions', null)
+    },
+    removeItem (array, index) {
+      array.splice(index, 1)
     }
-
   },
   watch: {
     profile: {
