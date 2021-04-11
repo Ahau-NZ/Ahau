@@ -30,6 +30,8 @@
             :isView="isView || (profile.type === 'community' && !profile.avatarImage)"
             :dark="dark"
             :row="row"
+            :addable="addable"
+            :addableProfile="addedProfile(profile)"
           />
         </div>
       </div>
@@ -58,7 +60,9 @@ export default {
     isView: Boolean,
     clickable: { type: Boolean, default: true },
     dark: Boolean,
-    row: Boolean
+    row: Boolean,
+    addable: Boolean,
+    addedProfiles: { type: Array, default: null }
   },
   computed: {
     columns () {
@@ -76,6 +80,13 @@ export default {
     getDisplayName,
     click (profile) {
       this.$emit('profile-click', profile)
+    },
+    addedProfile (profile) {
+      if (!this.addedProfiles || !this.addedProfiles.length) return null
+      let added = this.addedProfiles.some(person => {
+        return person.id === profile.id
+      })
+      return added
     }
   }
 }

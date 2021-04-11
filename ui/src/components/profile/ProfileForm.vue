@@ -133,12 +133,6 @@
       />
     </slot>
     <slot name="addChildren" v-if="typeIsPartner || typeIsParent">
-      <v-text-field
-        v-model="formData.preferredName"
-        :label="t('preferredName')"
-        v-bind="customProps"
-        outlined
-      />
     </slot>
     <slot name="addPartners" v-if="typeIsParent">
       <v-text-field
@@ -430,7 +424,7 @@ export default {
     isEditing: { type: Boolean, default: false },
     isUser: { type: Boolean, default: false },
     isSideViewDialog: { type: Boolean, default: false },
-    dialogType: { type: String, default: ''}
+    dialogType: { type: String, default: '' }
   },
   data () {
     return {

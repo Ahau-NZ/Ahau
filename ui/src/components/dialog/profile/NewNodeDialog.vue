@@ -73,7 +73,7 @@
                 :selectedItems.sync="selectedParents"
                 :items="generateParents"
                 :openMenu.sync="addParents"
-                placeholder="add mention"
+                placeholder="add parent"
                 item="preferredName"
                 @getSuggestions="$emit('getSuggestions', $event)"
               />
@@ -90,7 +90,7 @@
                   <div v-on="on">
                     <v-row v-if="!addChildren" @click="addChildren = true" class="pl-5">
                       <v-icon small>mdi-plus</v-icon>
-                      <AddButton size="20px" icon="mdi-account" iconClass="pr-3" label="Add Children" justify="start"/>
+                      <AddButton size="20px" icon="mdi-account" iconClass="pr-3" label="Add Children " justify="start"/>
                     </v-row>
                   </div>
                 </template>
@@ -100,7 +100,7 @@
                 :selectedItems.sync="selectedChildren"
                 :items="generateChildren"
                 :openMenu.sync="addChildren"
-                placeholder="add mention"
+                placeholder="add child"
                 item="preferredName"
                 @getSuggestions="$emit('getSuggestions', $event)"
               />
@@ -108,6 +108,15 @@
                 :items="selectedChildren"
                 @removeItem="removeItem(profileId, selectedChildren)"
               />
+              <!-- <span>Add children</span>
+              <AvatarGroup
+                :profiles="generateChildren"
+                show-labels
+                size="50px"
+                addable
+                :addedProfiles.sync="selectedChildren"
+                @profile-click="addProfile($event)"
+              /> -->
             </v-col>
           </template>
           <template v-slot:addPartners>
@@ -127,7 +136,7 @@
                 :selectedItems.sync="selectedPartners"
                 :items="generatePartners"
                 :openMenu.sync="addPartners"
-                placeholder="add mention"
+                placeholder="add partner"
                 item="preferredName"
                 @getSuggestions="$emit('getSuggestions', $event)"
               />
@@ -255,7 +264,8 @@ export default {
       children: [],
       selectedChildren: [],
       partners: [],
-      selectedPartners: []
+      selectedPartners: [],
+      existingProfile: null
     }
   },
   async mounted () {
@@ -295,7 +305,7 @@ export default {
     generateParents () {
       let parentSuggestions = []
 
-      this.parents = this.newChildParents()
+      this.parents = this.newChildParents(this.selectedProfile)
       if (this.parents && this.parents.length > 0) {
         parentSuggestions = [this.header, ...this.parents, this.divider]
       }
@@ -304,19 +314,21 @@ export default {
     generateChildren () {
       let childrenSuggestions = []
 
-      if (this.type === 'partner') this.children = this.newPartnerChildren()
-      else if (this.type === 'parent') this.children = this.newParentChildren()
+      if (this.type === 'partner') this.children = this.newPartnerChildren(this.selectedProfile)
+      else if (this.type === 'parent') this.children = this.newParentChildren(this.selectedProfile)
       if (this.children && this.children.length > 0) {
-        childrenSuggestions = [this.header, ...this.children, this.divider]
+        childrenSuggestions = ['suggested children', ...this.children, this.divider]
       }
       return childrenSuggestions.filter(Boolean)
     },
     generatePartners () {
       let partnerSuggestions = []
 
-      this.partners = this.newParentPartners()
+      // this.partners = this.newParentPartners(this.selectedProfile)
+      this.partners = this.selectedProfile.parents
+      console.log('partners: ', this.partners)
       if (this.partners && this.partners.length > 0) {
-        partnerSuggestions = [this.header, ...this.partners, this.divider]
+        partnerSuggestions = ['suggested partners', ...this.partners, this.divider]
       }
       return partnerSuggestions.filter(Boolean)
     },
@@ -370,6 +382,15 @@ export default {
     }
   },
   methods: {
+    removeItem (array, index) {
+      array.splice(index, 1)
+    },
+    addProfile (profile) {
+      if (this.selectedChildren.some(d => d.id === profile.id)) {
+        return this.selectedChildren = this.selectedChildren.filter(d => d.id !== profile.id)
+      }
+      return this.selectedChildren.push(profile)
+    },
     clearSuggestions () {
       this.$emit('getSuggestions', null)
     },
@@ -419,44 +440,44 @@ export default {
       return children
     },
 
-    newChildParents () {
+    newChildParents (profile) {
       var currentPartners = []
 
-      if (this.selectedProfile.partners) {
-        this.selectedProfile.partners.forEach(d => {
+      if (profile.partners) {
+        profile.partners.forEach(d => {
           currentPartners.push(d)
         })
       }
       return currentPartners
     },
 
-    newPartnerChildren () {
+    newPartnerChildren (profile) {
       var currentChildren = []
 
-      if (this.selectedProfile.children) {
-        this.selectedProfile.children.forEach(d => {
+      if (profile.children) {
+        profile.children.forEach(d => {
           currentChildren.push(d)
         })
       }
       return currentChildren
     },
 
-    newParentPartners () {
-      var currentPartners = []
+    async newParentPartners (profile) {
+      var currentParents = []
 
-      if (this.selectedProfile.partners) {
-        this.selectedProfile.partners.forEach(d => {
+      if (profile.parents) {
+        profile.partners.forEach(d => {
           currentPartners.push(d)
         })
       }
       return currentPartners
     },
 
-    newParentChildren () {
+    newParentChildren (profile) {
       var currentChildren = []
 
-      if (this.selectedProfile.siblings) {
-        this.selectedProfile.siblings.forEach(d => {
+      if (profile.siblings) {
+        profile.siblings.forEach(d => {
           currentChildren.push(d)
         })
       }
@@ -548,9 +569,43 @@ export default {
         : null
 
       var submission = {
-        ...pick(this.submission, [...PERMITTED_PERSON_ATTRS, ...PERMITTED_RELATIONSHIP_ATTRS]),
+        ...pick(this.submission, [...PERMITTED_PERSON_ATTRS, ...PERMITTED_RELATIONSHIP_ATTRS ]),
         recps
       }
+
+      if (this.selectedChildren && this.selectedChildren.length) {
+        if (this.existingProfile && this.existingProfile.children) {
+          let _children = this.selectedChildren.filter(child => {
+            return this.existingProfile.children.every(d => child.id !== d.id)
+          })
+          if (_children.length) submission.children = _children
+        } else {
+          submission.children = this.selectedChildren
+        }
+      }
+
+      if (this.selectedParents && this.selectedParents.length) {
+        if (this.existingProfile && this.existingProfile.parents) {
+          let _parents = this.selectedParents.filter(child => {
+            return this.existingProfile.children.every(d => child.id !== d.id)
+          })
+          if (_parents.length) submission.children = _parents
+        } else {
+          submission.parents = this.selectedParents
+        }
+      }
+
+      if (this.selectedPartners && this.selectedPartners.length) {
+        if (this.existingProfile && this.existingProfile.partners) {
+          let _partners = this.selectedPartners.filter(child => {
+            return this.existingProfile.children.every(d => child.id !== d.id)
+          })
+          if (_partners.length) submission.children = _partners
+        } else {
+          submission.partners = this.selectedPartners
+        }
+      }
+
 
       this.$emit('create', submission)
       this.close()
@@ -614,9 +669,16 @@ export default {
         this.$emit('getSuggestions', null)
       }
     },
-    hasSelection (newValue) {
+    async hasSelection (newValue) {
       if (newValue) {
         this.$emit('getSuggestions', null)
+
+        this.existingProfile = await this.getProfile(this.profile.id)
+
+        // if hasSelection and quickAddSection, show exsisting links
+        if (this.generateChildren && this.existingProfile.children) this.selectedChildren = [...this.existingProfile.children]
+        if (this.generatePartners && this.existingProfile.partners) this.selectedPartners = [...this.existingProfile.partners]
+        if (this.generateParents && this.existingProfile.parents) this.selectedPartners = [...this.existingProfile.parents]
 
         // hack: when there is no preferred name and a selected profile, the clearable button doesnt how up
         // doing this forces it to show

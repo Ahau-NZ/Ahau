@@ -13,6 +13,17 @@
           <v-icon :dark="dark">mdi-close</v-icon>
         </v-btn>
         <v-avatar :size="size" :tile="isView">
+            <v-overlay
+              v-if="showOverlay"
+              :dark='false'
+              :light="true"
+              color="white"
+              absolute
+              opacity="0.9"
+              value="true"
+            >
+              <v-icon>mdi-plus</v-icon>
+            </v-overlay>
           <v-img v-if="image && image.uri" :src="image.uri" :alt="alt" />
           <v-img
             v-else
@@ -83,12 +94,17 @@ export default {
     online: Boolean,
     showPicker: { type: Boolean, default: false },
     placeHolder: { type: Boolean, default: false },
-    isSideViewDialog: { type: Boolean, default: false }
+    isSideViewDialog: { type: Boolean, default: false },
+    addable: Boolean,
+    addableProfile: Boolean
   },
   components: {
     ImagePicker
   },
   computed: {
+    showOverlay () {
+      return this.addable && !this.addableProfile
+    },
     theme () {
       if (this.dark) return 'color: white;'
       return ''
