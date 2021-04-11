@@ -57,7 +57,7 @@
           </template>
 
           <template v-slot:addParents>
-            <v-col cols="12" md="4" class="pa-5">
+            <v-col cols="12" class="pa-5">
               <v-tooltip top open-delay="700" :disabled="addParents">
                 <template v-slot:activator="{ on }">
                   <div v-on="on">
@@ -77,17 +77,14 @@
                 item="preferredName"
                 @getSuggestions="$emit('getSuggestions', $event)"
               />
-              <AvatarGroup v-if="selectedParents && selectedParents.length > 0"
-                :profiles="selectedParents"
-                show-labels
-                size="40px"
-                deletable
-                @delete="removeItem(selectedParents, $event)"
+              <ProfileList v-if="selectedParents && selectedParents.length > 0"
+                :items="selectedParents"
+                @removeItem="removeItem(profileId, selectedParents)"
               />
             </v-col>
           </template>
           <template v-slot:addChildren>
-            <v-col cols="12" md="4" class="pa-5">
+            <v-col cols="12" class="pa-5">
               <v-tooltip top open-delay="700" :disabled="addChildren">
                 <template v-slot:activator="{ on }">
                   <div v-on="on">
@@ -107,17 +104,14 @@
                 item="preferredName"
                 @getSuggestions="$emit('getSuggestions', $event)"
               />
-              <AvatarGroup v-if="selectedChildren && selectedChildren.length > 0"
-                :profiles="selectedChildren"
-                show-labels
-                size="40px"
-                deletable
-                @delete="removeItem(selectedChildren, $event)"
+              <ProfileList v-if="selectedChildren && selectedChildren.length > 0"
+                :items="selectedChildren"
+                @removeItem="removeItem(profileId, selectedChildren)"
               />
             </v-col>
           </template>
           <template v-slot:addPartners>
-            <v-col cols="12" md="4" class="pa-5">
+            <v-col cols="12" class="pa-5">
               <v-tooltip top open-delay="700" :disabled="addPartners">
                 <template v-slot:activator="{ on }">
                   <div v-on="on">
@@ -137,12 +131,9 @@
                 item="preferredName"
                 @getSuggestions="$emit('getSuggestions', $event)"
               />
-              <AvatarGroup v-if="selectedPartners && selectedPartners.length > 0"
-                :profiles="selectedPartners"
-                show-labels
-                size="40px"
-                deletable
-                @delete="removeItem(selectedPartners, $event)"
+              <ProfileList v-if="selectedPartners && selectedPartners.length > 0"
+                :items="selectedPartners"
+                @removeItem="removeItem(profileId, selectedPartners)"
               />
             </v-col>
           </template>
@@ -163,6 +154,7 @@ import ProfileForm from '@/components/profile/ProfileForm.vue'
 import ProfileSearchBar from '@/components/archive/ProfileSearchBar.vue'
 import AvatarGroup from '@/components/AvatarGroup.vue'
 import AddButton from '@/components/button/AddButton.vue'
+import ProfileList from '@/components/profile/ProfileList.vue'
 
 import Avatar from '@/components/Avatar.vue'
 import isEmpty from 'lodash.isempty'
@@ -226,7 +218,8 @@ export default {
     AccessButton,
     ProfileSearchBar,
     AvatarGroup,
-    AddButton
+    AddButton,
+    ProfileList
   },
   mixins: [
     mapProfileMixins({
@@ -293,8 +286,6 @@ export default {
           this.divider
         ]
       }
-
-      console.log('close suggestions: ', closeSuggestions)
 
       return [
         ...closeSuggestions,
@@ -583,7 +574,12 @@ export default {
       }
       this.$emit('getSuggestions', null)
     },
-    removeItem (array, index) {
+    removeItem (id, array) {
+      console.log('remove id: ', id)
+      var index = -1;
+      for (var i = 0; i < array.length; i++) {
+        if (array[i].id === id) index = i
+      }
       array.splice(index, 1)
     }
   },
