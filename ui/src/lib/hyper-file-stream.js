@@ -16,9 +16,12 @@ export default class FileStream extends stream.Readable {
     super(opts)
 
     const start = (opts && opts.start) || 0
-    const end = (opts && opts.end && opts.end < blob.size)
-      ? opts.end
-      : blob.size - 1
+    let end
+    if (start) {
+      end = (opts && opts.end && opts.end < blob.size)
+        ? opts.end
+        : blob.size - 1
+    }
 
     this.destroyed = false
     this._reading = false
@@ -66,10 +69,6 @@ export default class FileStream extends stream.Readable {
   _destroy (err, onclose) {
     if (this.destroyed) return
     this.destroyed = true
-
-    // if (!this._torrent.destroyed) {
-    //   this._torrent.deselect(this._startPiece, this._endPiece, true)
-    // }
 
     if (err) this.emit('error', err)
     this.emit('close')

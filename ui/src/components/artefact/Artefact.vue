@@ -14,20 +14,22 @@
           <video ref="video" :src="artefact.blob.uri" :controls="hover" class="video"/>
         </v-hover>
       </div>
-      <img v-if="artefact.type === 'video' && showPreview"
-        :src="poster"
-        ref="photo"
-        :class="classObj"
-        contain
-      />
+      <div v-if="artefact.type === 'video' && showPreview" :class="classObj">
+        <img v-if="artefact.type === 'video' && showPreview"
+          :src="poster"
+          ref="photo"
+          contain
+        />
+      </div>
 
       <!-- photo -->
-      <v-img v-if="artefact.type === 'photo' && !mobile"
-        ref='photo'
-        :class="classObj"
-        :src="artefact.blob.uri"
-        contain
-      />
+      <div v-if="artefact.type === 'photo' && !mobile" :class="classObj">
+        <img
+          ref='photo'
+          :src="artefact.blob.uri"
+          contain
+        />
+      </div>
       <v-zoomer v-else-if="artefact.type === 'photo' && showArtefact && mobile" style="height:80vh">
         <img :src="artefact.blob.uri" style="object-fit: contain; width: 100%; height: 100%;" />
       </v-zoomer>
@@ -55,9 +57,9 @@
 import { mapGetters } from 'vuex'
 import { ARTEFACT_ICON } from '@/lib/artefact-helpers'
 import FileStream from '@/lib/hyper-file-stream'
+import getVideoPoster from '@/lib/get-video-poster'
 
 const renderMedia = require('render-media')
-const captureFrame = require('capture-frame')
 
 export default {
   name: 'Artefact',
@@ -75,13 +77,20 @@ export default {
   },
   computed: {
     ...mapGetters(['showArtefact']),
+    mobile () {
+      return Boolean(this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm)
+    },
+    showPoster () {
+      return this.artefact.type === 'video' && this.showPreview
+    },
     useRenderMedia () {
-      if (this.showPreview) return false
+      if (this.showPoster) return false
 
-      return (
-        this.artefact.blob.__typename === 'BlobHyper' &&
-        this.artefact.type !== 'document' // NOTE this is here because pdf rendering in electron is patchy
-      )
+      if (this.artefact.blob.__typename !== 'BlobHyper') return false
+      if (this.artefact.type === 'photo') return false
+      if (this.artefact.type === 'document') return false // NOTE this is here because pdf rendering in electron is patchy
+
+      return true
     },
     classObj () {
       const type = this.showPreview
@@ -126,59 +135,26 @@ export default {
     if (this.useRenderMedia) this.renderHyperBlob()
     // TODO check if this is best place for this
 
-    if (this.artefact && this.artefact.type === 'video' && this.showPreview) {
-      this.getVideoPoster()
+    if (this.showPoster) {
+      getVideoPoster(this.artefact.blob.uri)
+        .then(src => { this.poster = src })
     }
   },
   methods: {
-    getVideoPoster () {
-      var component = this
-      const video = document.createElement('video')
-      video.addEventListener('canplay', onCanPlay)
-
-      video.volume = 0
-      video.autoplay = true
-      video.muted = true // most browsers block autoplay unless muted
-      video.setAttribute('crossOrigin', 'anonymous') // optional, when cross-domain
-      video.src = this.artefact.blob.uri
-
-      function onCanPlay () {
-        video.removeEventListener('canplay', onCanPlay)
-        video.addEventListener('seeked', onSeeked)
-
-        video.currentTime = 2 // seek 2 seconds into the video
-      }
-
-      function onSeeked (a) {
-        video.removeEventListener('seeked', onSeeked)
-
-        const frame = captureFrame(video)
-
-        // unload video element, to prevent memory leaks
-        video.pause()
-        video.src = ''
-        video.load()
-
-        component.poster = URL.createObjectURL(
-          new Blob([frame.image], { type: 'image/png' })
-        )
-      }
-    },
     renderHyperBlob () {
       const { title, blob } = this.artefact
       const file = {
         name: `${title}.${blob.mimeType.split('/')[1]}`, // TODO see if there's a better way to tell render-media the mimeType
+        length: blob.size,
         createReadStream (opts = {}) {
-          console.log('createReadStream', opts)
           const stream = new FileStream(blob, opts)
 
           return stream
-        },
-        length: blob.size,
-        maxBlobLength: 200 * 1024 * 1024,
-        controls: true
+        }
       }
       renderMedia.append(file, this.$refs.renderTarget, function (err, elem) {
+        console.log({ err, elem })
+        debugger
         if (err) return console.error(err)
 
         // HACK to get initial frame to load
@@ -224,8 +200,11 @@ export default {
   width: 100%;
   height: 100%;
 
+  display: grid;
+  justify-items: center;
+
   img {
-    width: 100%;
+    max-width: 100%;
     height: 100%;
     object-fit: contain;
   }
