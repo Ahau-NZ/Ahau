@@ -205,13 +205,18 @@ export default {
         selectedPartners: [],
         parents: [],
         children: [],
-        partners: [],
+        partners: []
       },
       existingProfile: null
     }
   },
   async mounted () {
     this.closeSuggestions = await this.getCloseSuggestions()
+
+    this.quickAddProfiles['parents'] = await this.newChildParents(this.selectedProfile)
+    if (this.type === 'partner') this.quickAddProfiles['children'] = await this.newPartnerChildren(this.selectedProfile)
+    else if (this.type === 'parent') this.quickAddProfiles['children'] = await this.newParentChildren(this.selectedProfile)
+    this.quickAddProfiles['partners'] = this.selectedProfile.parents
   },
   computed: {
     ...mapGetters(['currentAccess']),
@@ -246,8 +251,6 @@ export default {
     generateParents () {
       let parentSuggestions = []
 
-      this.quickAddProfiles['parents'] = this.newChildParents(this.selectedProfile)
-      
       if (this.quickAddProfiles['parents'] && this.quickAddProfiles['parents'].length > 0) {
         parentSuggestions = this.quickAddProfiles['parents']
       }
@@ -256,8 +259,6 @@ export default {
     generateChildren () {
       let childrenSuggestions = []
 
-      if (this.type === 'partner') this.quickAddProfiles['children'] = this.newPartnerChildren(this.selectedProfile)
-      else if (this.type === 'parent') this.quickAddProfiles['children'] = this.newParentChildren(this.selectedProfile)
       if (this.quickAddProfiles['children'] && this.quickAddProfiles['children'].length > 0) {
         childrenSuggestions = this.quickAddProfiles['children']
       }
@@ -266,7 +267,6 @@ export default {
     generatePartners () {
       let partnerSuggestions = []
 
-      this.quickAddProfiles['partners'] = this.selectedProfile.parents
       if (this.quickAddProfiles['partners'] && this.quickAddProfiles['partners'].length > 0) {
         partnerSuggestions = this.quickAddProfiles['partners']
       }
@@ -325,8 +325,7 @@ export default {
     addProfile (profile, selectedArray) {
       if (this.quickAddProfiles[selectedArray].some(d => d.id === profile.id)) {
         this.quickAddProfiles[selectedArray] = this.quickAddProfiles[selectedArray].filter(d => d.id !== profile.id)
-      }
-      else this.quickAddProfiles[selectedArray].push(profile)
+      } else this.quickAddProfiles[selectedArray].push(profile)
     },
     clearSuggestions () {
       this.$emit('getSuggestions', null)
@@ -377,7 +376,7 @@ export default {
       return children
     },
 
-    newChildParents (profile) {
+    async newChildParents (profile) {
       var currentPartners = []
 
       if (this.type === 'child' && profile.partners) {
@@ -394,7 +393,7 @@ export default {
       return currentPartners
     },
 
-    newPartnerChildren (profile) {
+    async newPartnerChildren (profile) {
       var currentChildren = []
 
       if (profile.children) {
@@ -405,18 +404,7 @@ export default {
       return currentChildren
     },
 
-    newParentPartners (profile) {
-      var currentPartners = []
-
-      if (profile.parents) {
-        profile.partners.forEach(d => {
-          currentPartners.push(d)
-        })
-      }
-      return currentPartners
-    },
-
-    newParentChildren (profile) {
+    async newParentChildren (profile) {
       var currentChildren = []
 
       if (profile.siblings) {
