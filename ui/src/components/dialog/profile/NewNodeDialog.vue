@@ -216,7 +216,6 @@ export default {
   },
   async mounted () {
     this.closeSuggestions = await this.getCloseSuggestions()
-    // this.parents = await this.newChildParents()
   },
   computed: {
     ...mapGetters(['currentAccess']),
@@ -270,9 +269,7 @@ export default {
     generatePartners () {
       let partnerSuggestions = []
 
-      // this.partners = this.newParentPartners(this.selectedProfile)
       this.partners = this.selectedProfile.parents
-      console.log('partners: ', this.partners)
       if (this.partners && this.partners.length > 0) {
         partnerSuggestions = this.partners
       }
