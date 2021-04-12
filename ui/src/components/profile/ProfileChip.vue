@@ -1,17 +1,28 @@
 <template>
   <v-list-item class="profile-list">
-    <Avatar class="mr-3" size="40px" :image="item.avatarImage" :alt="getDisplayName(item)" :gender="item.gender" :aliveInterval="item.aliveInterval" />
+    <Avatar
+      class="mr-3"
+      size="40px"
+      :image="item.avatarImage"
+      :alt="getDisplayName(item)"
+      :gender="item.gender"
+      :aliveInterval="item.aliveInterval"
+      :addable="addable"
+      :addableProfile="addableProfile"
+      clickable
+      @click="$emit('profile-click', item)"
+    />
     <v-list-item-content>
-      <v-list-item-title> {{ item.legalName || item.preferredName || 'No name' }} </v-list-item-title>
-      <v-list-item-subtitle>Name</v-list-item-subtitle>
+      <v-list-item-title class="list-title"> {{ item.legalName || item.preferredName || 'Unknown' }} </v-list-item-title>
+      <v-list-item-subtitle class="list-subtitle">Name</v-list-item-subtitle>
     </v-list-item-content>
     <v-list-item-content>
-      <v-list-item-title> {{ item.placeOfBirth || 'No place of birth' }} </v-list-item-title>
-      <v-list-item-subtitle>Place of Birth</v-list-item-subtitle>
+      <v-list-item-title class="list-title"> {{ item.placeOfBirth || 'No place of birth' }} </v-list-item-title>
+      <v-list-item-subtitle class="list-subtitle">Place of Birth</v-list-item-subtitle>
     </v-list-item-content>
-    <v-list-item-action>
-      <v-list-item-title> {{ age(item.aliveInterval) || 'No age' }} </v-list-item-title>
-      <v-list-item-subtitle>Age</v-list-item-subtitle>
+    <v-list-item-action style="margin-right: 20px;">
+      <v-list-item-title class="list-title"> {{ age(item.aliveInterval) || 'Unknown' }} </v-list-item-title>
+      <v-list-item-subtitle class="list-subtitle">Year of Birth</v-list-item-subtitle>
     </v-list-item-action>
     <v-list-item-action>
       <v-select
@@ -19,8 +30,8 @@
         label="Related by"
         :items="relationshipTypes"
         :menu-props="{ light: true }"
-        outlined
         hide-details
+        style="width: 100px;"
        />
     </v-list-item-action>
     <v-list-item-action>
@@ -34,8 +45,8 @@
 <script>
 import Avatar from '@/components/Avatar.vue'
 import { getDisplayName } from '@/lib/person-helpers.js'
-import calculateAge from '@/lib/calculate-age'
 import { RELATIONSHIPS } from '@/lib/constants'
+import calculateBirthYear from '@/lib/date-helpers.js'
 
 export default {
   name: 'ProfileChip',
@@ -43,17 +54,28 @@ export default {
     Avatar
   },
   props: {
-    item: { type: Object, default: null }
+    item: { type: Object, default: null },
+    addable: { type: Boolean, default: false },
+    addableProfile: { type: Boolean, default: false }
   },
   data () {
     return {
-      relationshipTypes: RELATIONSHIPS
+      relationshipTypes: RELATIONSHIPS,
+      relatedBy: 'birth'
+    }
+  },
+  computed: {
+    showOverlay () {
+      return this.addable && !this.addableProfile
     }
   },
   methods: {
     getDisplayName,
     age (aliveInterval) {
-      return calculateAge(aliveInterval)
+      return calculateBirthYear(aliveInterval)
+    },
+    profileClicked () {
+        console.log('profile clicked')
     }
   }
 }
@@ -61,6 +83,12 @@ export default {
 
 <style>
 .profile-list {
-
+  height: 60px;
+}
+.list-title {
+  font-size: 15px;
+}
+.list-subtitle {
+  font-size: 12px;
 }
 </style>

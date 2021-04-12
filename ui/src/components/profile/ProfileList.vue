@@ -1,10 +1,10 @@
 <template>
-    <div>
-<div v-for="profile in items" v-bind:key="profile.id">
-    <ProfileChip :item="profile" @removeItem="$emit('removeItem', profileId)">
-    </ProfileChip>
-  </div>
+  <div>
+    <div v-for="profile in items" v-bind:key="profile.id">
+      <ProfileChip :item="profile" @removeItem="$emit('removeItem', profileId)" :addable="addable" :addableProfile="addedProfile(profile)" @profile-click="$emit('profile-click', profile)">
+      </ProfileChip>
     </div>
+  </div>
 </template>
 
 <script>
@@ -16,13 +16,18 @@ export default {
     ProfileChip
   },
   props: {
-    items: { type: Array, default: null }
-  },
-  mounted () {
-    console.log('profile list items: ', this.items)
+    items: { type: Array, default: null },
+    addable: { type: Boolean, default: false },
+    addedProfiles: { type: Array, default: null }
   },
   methods: {
-
+    addedProfile (profile) {
+      if (!this.addedProfiles || !this.addedProfiles.length) return null
+      let added = this.addedProfiles.some(person => {
+        return person.id === profile.id
+      })
+      return added
+    }
   }
 }
 </script>

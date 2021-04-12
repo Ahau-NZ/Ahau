@@ -176,3 +176,8 @@ export function formatSubmissionDate (submittedDate) {
     console.error(e.message) // Invalid format of date string
   }
 }
+
+export function calculateBirthYear (aliveInterval) {
+  if (aliveInterval !== '' && aliveInterval) return aliveInterval.substring(0,4)
+  return ''
+}
