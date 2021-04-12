@@ -34,11 +34,6 @@
         style="width: 100px;"
        />
     </v-list-item-action>
-    <v-list-item-action>
-      <v-btn class="delete" @click="$emit('removeItem')" icon x-small light max-width="20px" max-height="20px">
-        <v-icon>mdi-close</v-icon>
-      </v-btn>
-    </v-list-item-action>
   </v-list-item>
 </template>
 
@@ -75,7 +70,7 @@ export default {
       return calculateBirthYear(aliveInterval)
     },
     profileClicked () {
-        console.log('profile clicked')
+      console.log('profile clicked')
     }
   }
 }

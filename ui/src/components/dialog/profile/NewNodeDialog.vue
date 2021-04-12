@@ -63,7 +63,6 @@
                 addable
                 :addedProfiles.sync="selectedParents"
                 :items="generateParents"
-                @removeItem="removeItem(profileId, selectedParents)"
                 @profile-click="addParentsProfile($event)"
               />
             </v-col>
@@ -75,7 +74,6 @@
                 addable
                 :addedProfiles.sync="selectedChildren"
                 :items="generateChildren"
-                @removeItem="removeItem(profileId, selectedChildren)"
                 @profile-click="addChildrenProfile($event)"
               />
             </v-col>
@@ -87,7 +85,6 @@
                 addable
                 :addedProfiles.sync="selectedPartners"
                 :items="generatePartners"
-                @removeItem="removeItem(profileId, selectedPartners)"
                 @profile-click="addPartnersProfile($event)"
               />
             </v-col>
@@ -106,9 +103,6 @@
 import Dialog from '@/components/dialog/Dialog.vue'
 
 import ProfileForm from '@/components/profile/ProfileForm.vue'
-import ProfileSearchBar from '@/components/archive/ProfileSearchBar.vue'
-import AvatarGroup from '@/components/AvatarGroup.vue'
-import AddButton from '@/components/button/AddButton.vue'
 import ProfileList from '@/components/profile/ProfileList.vue'
 
 import Avatar from '@/components/Avatar.vue'
@@ -171,9 +165,6 @@ export default {
     Dialog,
     ProfileForm,
     AccessButton,
-    ProfileSearchBar,
-    AvatarGroup,
-    AddButton,
     ProfileList
   },
   mixins: [
@@ -325,26 +316,23 @@ export default {
     }
   },
   methods: {
-    removeItem (array, index) {
-      array.splice(index, 1)
-    },
     addParentsProfile (profile) {
       if (this.selectedParents.some(d => d.id === profile.id)) {
-        return this.selectedParents = this.selectedParents.filter(d => d.id !== profile.id)
+        this.selectedParents = this.selectedParents.filter(d => d.id !== profile.id)
       }
-      return this.selectedParents.push(profile)
+      this.selectedParents.push(profile)
     },
     addChildrenProfile (profile) {
       if (this.selectedChildren.some(d => d.id === profile.id)) {
-        return this.selectedChildren = this.selectedChildren.filter(d => d.id !== profile.id)
+        this.selectedChildren = this.selectedChildren.filter(d => d.id !== profile.id)
       }
-      return this.selectedChildren.push(profile)
+      this.selectedChildren.push(profile)
     },
     addPartnersProfile (profile) {
       if (this.selectedPartners.some(d => d.id === profile.id)) {
-        return this.selectedPartners = this.selectedPartners.filter(d => d.id !== profile.id)
+        this.selectedPartners = this.selectedPartners.filter(d => d.id !== profile.id)
       }
-      return this.selectedPartners.push(profile)
+      this.selectedPartners.push(profile)
     },
     clearSuggestions () {
       this.$emit('getSuggestions', null)
@@ -403,7 +391,7 @@ export default {
           currentPartners.push(d)
         })
       }
-      console.log('current partners: ', currentPartners)
+
       return currentPartners
     },
 
@@ -419,7 +407,7 @@ export default {
     },
 
     async newParentPartners (profile) {
-      var currentParents = []
+      var currentPartners = []
 
       if (profile.parents) {
         profile.partners.forEach(d => {
@@ -525,7 +513,7 @@ export default {
         : null
 
       var submission = {
-        ...pick(this.submission, [...PERMITTED_PERSON_ATTRS, ...PERMITTED_RELATIONSHIP_ATTRS ]),
+        ...pick(this.submission, [ ...PERMITTED_PERSON_ATTRS, ...PERMITTED_RELATIONSHIP_ATTRS ]),
         recps
       }
 
@@ -562,7 +550,6 @@ export default {
         }
       }
 
-
       this.$emit('create', submission)
       this.close()
     },
@@ -584,14 +571,6 @@ export default {
         this.formData = setDefaultData(this.withRelationships)
       }
       this.$emit('getSuggestions', null)
-    },
-    removeItem (id, array) {
-      console.log('remove id: ', id)
-      var index = -1;
-      for (var i = 0; i < array.length; i++) {
-        if (array[i].id === id) index = i
-      }
-      array.splice(index, 1)
     }
   },
   watch: {

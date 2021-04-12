@@ -178,6 +178,6 @@ export function formatSubmissionDate (submittedDate) {
 }
 
 export function calculateBirthYear (aliveInterval) {
-  if (aliveInterval !== '' && aliveInterval) return aliveInterval.substring(0,4)
+  if (aliveInterval !== '' && aliveInterval) return aliveInterval.substring(0, 4)
   return ''
 }
