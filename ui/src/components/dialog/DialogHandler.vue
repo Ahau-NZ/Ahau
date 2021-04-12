@@ -124,9 +124,7 @@ import ReviewRegistrationDialog from '@/components/dialog/registration/ReviewReg
 
 import { PERMITTED_RELATIONSHIP_ATTRS, getDisplayName } from '@/lib/person-helpers.js'
 import { createGroup, saveCommunity, savePublicCommunity, saveGroupProfileLink } from '@/lib/community-helpers'
-import { saveWhakapapaView } from '@/lib/whakapapa-helpers.js'
 import { findByName } from '@/lib/search-helpers.js'
-import tree from '@/lib/tree-helpers'
 
 import findSuccessor from '@/lib/find-successor'
 
