@@ -29,7 +29,7 @@
     "ssb-lan": "^0.2.0",
     "ssb-master": "^1.0.3",
     "ssb-no-auth": "^1.0.0",
-    "ssb-pataka": "^3.0.2",
+    "ssb-pataka": "^3.1.1",
     "ssb-profile": "^2.3.1",
     "ssb-query": "^2.4.5",
     "ssb-recps-guard": "^2.1.0",

@@ -13,6 +13,7 @@ const plugins = [
 
   'ssb-blobs',
   'ssb-serve-blobs',
+  'ssb-hyper-blobs',
 
   'ssb-query',
   'ssb-backlinks',
@@ -49,7 +50,7 @@ Forward together!
 console.log(karakia)
 
 const appURL = process.env.NODE_ENV === 'development'
-  ? 'http://localhost:8081' // dev-server
+  ? 'http://localhost:8081' // dev-server // TODO ahau-env
   : `file://${__dirname}/dist/index.html` // production build
 
 ahoy({

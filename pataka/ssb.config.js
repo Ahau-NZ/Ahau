@@ -26,7 +26,7 @@ const customConfig = {
   },
   hyperBlobs: {
     pataka: true
-    // port: env.hyperBlobs.port // TODO
+    // port: env.hyperBlobs.port // TODO ahau-env
   },
   recpsGuard: {
     allowedTypes: [
