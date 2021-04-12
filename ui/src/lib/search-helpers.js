@@ -1,5 +1,6 @@
 import gql from 'graphql-tag'
 import { createProvider } from '@/plugins/vue-apollo'
+import { PERSON_FRAGMENT, PROFILE_LINK_FRAGMENT } from './person-helpers.js'
 
 const apolloProvider = createProvider()
 const apolloClient = apolloProvider.defaultClient
@@ -7,50 +8,22 @@ const apolloClient = apolloProvider.defaultClient
 export async function findByName (name) {
   const request = {
     query: gql`
+      ${PERSON_FRAGMENT}
+      ${PROFILE_LINK_FRAGMENT}
       query($name: String!) {
         findPersons(name: $name) {
-          id
-          type
-          preferredName
-          legalName
-          gender
-          aliveInterval
-          birthOrder
-          description
-          altNames
-          avatarImage { uri }
-          recps
+          ...ProfileFragment
           children {
             profile {
-              id
-              type
-              preferredName
-              legalName
-              gender
-              aliveInterval
-              birthOrder
-              description
-              altNames
-              avatarImage { uri }
-              recps
+              ...ProfileFragment
             }
-            relationshipType
+            ...ProfileLinkFragment
           }
           parents {
             profile {
-              id
-              type
-              preferredName
-              legalName
-              gender
-              aliveInterval
-              birthOrder
-              description
-              altNames
-              avatarImage { uri }
-              recps
+              ...ProfileFragment
             }
-            relationshipType
+            ...ProfileLinkFragment
           }
         }
       }

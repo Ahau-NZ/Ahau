@@ -41,6 +41,48 @@ function humanDate (date) {
   return `${day} ${month} ${year}`
 }
 
+export function intervalToDayMonthYear (interval) {
+  if (interval === null) return ''
+
+  var [lower, upper] = interval.split('/')
+  if (lower.length && upper.length) {
+    lower.replace(/ /g, '')
+    upper.replace(/ /g, '')
+    lower = dateToDayMonthYear(lower)
+    upper = dateToDayMonthYear(upper)
+    return [lower, upper]
+  }
+
+  if (lower.length) {
+    lower.replace(/ /g, '')
+    lower = dateToDayMonthYear(lower)
+    return [lower, '']
+  }
+  if (upper.length) {
+    upper.replace(/ /g, '')
+    upper = dateToDayMonthYear(upper)
+    return ['', upper]
+  }
+  return ''
+}
+
+function dateToDayMonthYear (date) {
+  var split = date.split('-')
+
+  var year = split[0]
+  var month = split[1]
+  if (!month || !month.length || month.match(/X/)) {
+    year.replace(/X/g, '0')
+    return `01-01-${year}`
+  }
+  var day = split[2]
+  if (!day || !day.length || day.match(/X/)) {
+    year.replace(/X/g, '0')
+    return `01-${month}-${year}`
+  }
+  return `${day}-${month}-${year}`
+}
+
 export function yearMonthDay (interval) {
   if (interval === null) return ''
   const [lower, upper] = interval.split('/')

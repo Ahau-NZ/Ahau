@@ -20,7 +20,7 @@ export default {
   name: 'ProfileInfoItem',
   props: {
     title: String,
-    value: String,
+    value: String || Number,
     subValue: String,
     smCols: {
       type: String,

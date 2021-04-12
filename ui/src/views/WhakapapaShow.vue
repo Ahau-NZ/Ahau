@@ -66,7 +66,7 @@
           <FlattenButton @flatten="toggleFlatten()" />
         </div>
         <div class="icon-button" v-if="isKaitiaki">
-          <TableButton @table="toggleTable()" />
+          <TableButton :table="whakapapa.table" @table="toggleTable()" />
         </div>
         <div class="icon-button">
           <HelpButton v-if="whakapapa.tree" @click="updateDialog('whakapapa-helper', null)" />
@@ -74,6 +74,9 @@
         </div>
         <div class="icon-button">
           <FeedbackButton />
+        </div>
+        <div v-if="whakapapa.table" class="icon-button">
+          <ExportButton @export="toggleDownload()" />
         </div>
       </v-row>
 
@@ -128,9 +131,9 @@
           <div v-if="whakapapa.table" class="icon-button">
             <FlattenButton @flatten="toggleFlatten()" />
           </div>
-          <!-- <div class="icon-button">
-            <TableButton @table="toggleTable()" />
-          </div> -->
+          <div class="icon-button">
+            <TableButton :table="whakapapa.table" @table="toggleTable()" />
+          </div>
           <div class="icon-button">
             <HelpButton v-if="whakapapa.tree" @click="updateDialog('whakapapa-helper', null)" />
             <HelpButton v-else @click="updateDialog('whakapapa-table-helper', null)" />
@@ -160,6 +163,7 @@
           ref="table"
           :filter="filter"
           :flatten="flatten"
+          :download.sync="download"
           :view="whakapapaView"
           :nestedWhakapapa="nestedWhakapapa"
           :relationshipLinks="relationshipLinks"
@@ -220,6 +224,7 @@ import FeedbackButton from '@/components/button/FeedbackButton.vue'
 import TableButton from '@/components/button/TableButton.vue'
 import HelpButton from '@/components/button/HelpButton.vue'
 import FlattenButton from '@/components/button/FlattenButton.vue'
+import ExportButton from '@/components/button/ExportButton.vue'
 import FilterButton from '@/components/button/FilterButton.vue'
 import SortButton from '@/components/button/SortButton.vue'
 
@@ -262,7 +267,8 @@ export default {
     VueContext,
     DialogHandler,
     WhakapapaBanner,
-    NodeMenu
+    NodeMenu,
+    ExportButton
   },
   mixins: [
     mapProfileMixins({
@@ -301,6 +307,7 @@ export default {
       },
       filter: false,
       flatten: true,
+      download: false,
       whakapapa: {
         tree: true,
         table: false
@@ -582,6 +589,9 @@ export default {
       this.filter = false
       this.flatten = !this.flatten
     },
+    toggleDownload () {
+      this.download = !this.download
+    },
     toggleTable () {
       this.whakapapa.tree = !this.whakapapa.tree
       this.whakapapa.table = !this.whakapapa.table
@@ -709,7 +719,7 @@ export default {
       top: 70px;
       left: 50px;
       /* right: 160px; */
-      width: 30%;
+      width: 40%;
       .col {
           padding-top: 0;
           padding-bottom: 0;

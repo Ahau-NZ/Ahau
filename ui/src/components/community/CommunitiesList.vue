@@ -3,7 +3,7 @@
     <v-row>
       <v-col cols="10" class="headliner black--text pa-0 pl-4 pt-5" :class="!mobile ? 'pt-2':''">Tribes</v-col>
       <v-col >
-        <BigAddButton @click="$emit('add-community-dialog')" />
+        <BigAddButton label="new tribe" :customClass="mobile ? 'addBtnMobile':'addBtnDesktop'" @click="$emit('add-community-dialog')" />
       </v-col>
     </v-row>
     <v-row>

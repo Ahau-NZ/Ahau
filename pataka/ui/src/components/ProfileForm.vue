@@ -18,7 +18,7 @@
           />
         </v-row>
         <v-row v-if="isEditing" class="justify-center">
-          <h1>Edit {{ formData.preferredName }}</h1>
+          <h1>{{ t('addPersonFormTitle', { name: formData.preferredName }) }}</h1>
         </v-row>
         <v-row v-if="isEditing" class="justify-center">
           <v-btn @click="$emit('cancel')" color="white" text medium class="blue--text">

@@ -151,7 +151,7 @@
                 :items="contributors"
                 :openMenu.sync="showContributors"
                 item="preferredName"
-                placeholder="contributors"
+                placeholder="add contributors"
                 @getSuggestions="getSuggestions('contributors', $event)"
               />
               <AvatarGroup v-if="formData.contributors && formData.contributors.length > 0"
@@ -290,7 +290,7 @@
                 :selectedItems.sync="formData.collections"
                 :items="filteredCollections"
                 :openMenu.sync="showCollections"
-                placeholder="add collections"
+                placeholder="add story to collection"
                 item="name"
               />
               <ChipGroup
@@ -483,6 +483,9 @@ import { storiesApolloMixin } from '@/mixins/story-mixins.js'
 import { collectionsApolloMixin, saveCollectionsMixin } from '@/mixins/collection-mixins.js'
 import { artefactMixin } from '@/mixins/artefact-mixins.js'
 
+import { getAllStories } from '@/lib/story-helpers.js'
+import { getAllCollections } from '@/lib/collection-helpers'
+
 export default {
   name: 'RecordForm',
   components: {
@@ -541,9 +544,15 @@ export default {
     }
   },
   watch: {
-    index (newVal) {
-      console.log('recordform index', newVal)
+    async access (newVal) {
+      if (newVal) {
+        var storyRes = await this.$apollo.query(getAllStories({ groupId: newVal.recps[0] }))
+        this.stories = storyRes.data.stories
+        var collectionRes = await this.$apollo.query(getAllCollections({ groupId: newVal.recps[0] }))
+        this.collections = collectionRes.data.collections
+      }
     }
+
   },
   mounted () {
     this.showAdvanced()
@@ -592,10 +601,10 @@ export default {
 
       // filter out suggestions not in this tribe
       if (!suggestions) return
-
       suggestions = suggestions.filter(record => {
         if (!record.recps) return false // dont suggest public profiles?
-        return record.recps.includes(this.$route.params.tribeId)
+
+        return record.recps.includes(this.access.recps[0])
       })
 
       this[array] = suggestions

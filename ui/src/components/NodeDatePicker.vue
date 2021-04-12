@@ -2,26 +2,25 @@
   <div>
     <fieldset
       :style="cssVars"
-      :class="`custom-fieldset-${focused} rounded-input`"
+      :class="`custom-fieldset-${focused} ${readonly ? 'no-border' : 'rounded-input' }`"
       @mouseover="$emit('hover')"
       @mouseleave="$emit('hover')"
     >
-      <legend class="ml-2 custom-label">
+      <legend :class="`custom-label ${readonly ? '' : 'ml-2'}`">
         {{ label }}
       </legend>
       <v-row>
-        <v-col cols="3" class="pl-6 pr-0 py-0">
+        <v-col cols="3" :class="`${readonly ? '' : 'pl-6'} pr-0 py-0`">
           <v-select
             :items="days"
             ref="day"
             v-model="date.day"
-            :menu-props="{ bottom: true, offsetY: true, light: isDark() }"
             label="Day"
-            :light="isDark()"
             @focus="focused == 'day'"
             @blur="focused == 'default'"
             @keydown.tab.prevent="onTab('day')"
-            auto-focus
+            v-bind="customProps"
+
           ></v-select>
         </v-col>
         <v-col cols="5" class="px-4 py-0">
@@ -29,13 +28,12 @@
             :items="months"
             ref="month"
             v-model="date.month"
-            :menu-props="{ bottom: true, offsetY: true, light: isDark() }"
             label="Month"
             :light="isDark()"
             @focus="focused == 'month'"
             @blur="focused == 'default'"
             @keydown.tab.prevent="onTab('month')"
-            auto-focus
+            v-bind="customProps"
           ></v-select>
         </v-col>
         <v-col cols="4" class=" pl-0 pr-6 py-0">
@@ -43,13 +41,11 @@
             :items="years"
             ref="year"
             v-model="date.year"
-            :menu-props="{ bottom: true, offsetY: true, light: isDark() }"
             label="Year"
-            :light="isDark()"
             @focus="focused == 'year'"
             @blur="focused == 'default'"
             @keydown.tab.prevent="onTab('year')"
-            auto-focus
+            v-bind="customProps"
           ></v-select>
         </v-col>
       </v-row>
@@ -71,8 +67,8 @@ export default {
   name: 'NodeDatePicker',
   props: {
     label: String,
-    value: { type: [Date, String], default: 'XXXX-XX-XX' },
-    readonly: { type: Boolean, default: false },
+    value: { type: [Date, String] },
+    readonly: Boolean,
     min: { type: String },
     dark: Boolean,
     hasError: Boolean
@@ -105,11 +101,12 @@ export default {
       return {
         hideDetails: true,
         class: 'customInput',
-        flat: true,
-        hideNoData: true,
-        appendIcon: '',
+        placeholder: this.readonly ? ' ' : '____________',
+        appendIcon: this.readonly ? '' : undefined,
         readonly: this.readonly,
-        menuProps: { light: true }
+        menuProps: { bottom: true, offsetY: true, light: this.isDark() },
+        light: this.isDark(),
+        autoFocus: true
       }
     },
     cssVars () {
@@ -150,7 +147,7 @@ export default {
       var maxYears = max - min + 1
 
       // array to return
-      var years = [{ text: '', value: '' }]
+      var years = [{ text: '', value: null }]
 
       // generates an array from 0 to max years
       Array(maxYears)
@@ -184,7 +181,7 @@ export default {
     // generates an array of months
     months () {
       return [
-        { text: '', value: '' },
+        { text: '', value: null },
         { text: 'XX', value: 'XX' },
         { text: 'January', value: '01' },
         { text: 'February', value: '02' },
@@ -204,7 +201,7 @@ export default {
     days () {
       // the array to return will always have the unspecified option
       var days = [
-        { value: '', text: '' },
+        { value: null, text: '' },
         { value: 'XX', text: 'XX' }
       ]
 
@@ -430,6 +427,10 @@ export default {
   border-radius: 4px;
 }
 
+.no-border {
+  border-style: none;
+}
+
 .customInput.v-text-field > .v-input__control > .v-input__slot:before {
   border-style: none;
 }
@@ -439,7 +440,7 @@ export default {
 
 .custom-label {
   font-size: 12px;
-  margin-left: 8px;
+  margin-left: -3px;
   color: var(--custom-label);
   padding-left: 3px;
   padding-right: 3px;
@@ -455,5 +456,8 @@ export default {
   .custom-label {
     color: var(--custom-fieldset-focused);
   }
+}
+
+.custom-fieldset-readonly {
 }
 </style>
