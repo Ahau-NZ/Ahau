@@ -1,7 +1,12 @@
 <template>
   <div>
     <div v-for="profile in items" v-bind:key="profile.id">
-      <ProfileChip :item="profile" @removeItem="$emit('removeItem', profileId)" :addable="addable" :addableProfile="addedProfile(profile)" @profile-click="$emit('profile-click', profile)">
+      <ProfileChip 
+        :item="profile"
+        @removeItem="$emit('removeItem', profileId)"
+        :mobile="mobile"
+        :addableProfile="addedProfile(profile)"
+        @profile-click="$emit('profile-click', profile)">
       </ProfileChip>
     </div>
   </div>
@@ -17,8 +22,8 @@ export default {
   },
   props: {
     items: { type: Array, default: null },
-    addable: { type: Boolean, default: false },
-    addedProfiles: { type: Array, default: null }
+    addedProfiles: { type: Array, default: null },
+    mobile: { type: Boolean, default: false }
   },
   methods: {
     addedProfile (profile) {

@@ -124,24 +124,14 @@
       </v-col>
     </v-row>
 
-    <slot name="addParents" v-if="typeIsChild || typeIsSibling">
-      <v-text-field
-        v-model="formData.preferredName"
-        :label="t('preferredName')"
-        v-bind="customProps"
-        outlined
-      />
-    </slot>
-    <slot name="addChildren" v-if="typeIsPartner || typeIsParent">
-    </slot>
-    <slot name="addPartners" v-if="typeIsParent">
-      <v-text-field
-        v-model="formData.preferredName"
-        :label="t('preferredName')"
-        v-bind="customProps"
-        outlined
-      />
-    </slot>
+    <v-row>
+      <slot name="addParents" v-if="typeIsChild || typeIsSibling">
+      </slot>
+      <slot name="addChildren" v-if="typeIsPartner || typeIsParent">
+      </slot>
+      <slot name="addPartners" v-if="typeIsParent">
+      </slot>
+    </v-row>
 
     <!-- Start of advanced section -->
     <v-divider />

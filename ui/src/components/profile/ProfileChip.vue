@@ -7,24 +7,28 @@
       :alt="getDisplayName(item)"
       :gender="item.gender"
       :aliveInterval="item.aliveInterval"
-      :addable="addable"
+      addable
       :addableProfile="addableProfile"
       clickable
       @click="$emit('profile-click', item)"
     />
-    <v-list-item-content>
+    <v-list-item-content v-if="!mobile">
       <v-list-item-title class="list-title"> {{ item.legalName || item.preferredName || 'Unknown' }} </v-list-item-title>
       <v-list-item-subtitle class="list-subtitle">Name</v-list-item-subtitle>
     </v-list-item-content>
-    <v-list-item-content>
+    <v-list-item-content v-if="!mobile">
       <v-list-item-title class="list-title"> {{ item.placeOfBirth || 'No place of birth' }} </v-list-item-title>
       <v-list-item-subtitle class="list-subtitle">Place of Birth</v-list-item-subtitle>
     </v-list-item-content>
-    <v-list-item-action style="margin-right: 20px;">
+    <v-list-item-action v-if="!mobile">
       <v-list-item-title class="list-title"> {{ age(item.aliveInterval) || 'Unknown' }} </v-list-item-title>
       <v-list-item-subtitle class="list-subtitle">Year of Birth</v-list-item-subtitle>
     </v-list-item-action>
-    <v-list-item-action>
+    <v-list-item-action v-else >
+      <v-list-item-title class="list-title"> {{ item.legalName || item.preferredName || 'Unknown' }} </v-list-item-title>
+      <v-list-item-subtitle class="list-subtitle">{{ age(item.aliveInterval) || 'Unknown' }}</v-list-item-subtitle>
+    </v-list-item-action>
+    <v-list-item-action style="margin-left: 100px;">
       <v-select
         v-model="relatedBy"
         label="Related by"
@@ -50,8 +54,8 @@ export default {
   },
   props: {
     item: { type: Object, default: null },
-    addable: { type: Boolean, default: false },
-    addableProfile: { type: Boolean, default: false }
+    addableProfile: { type: Boolean, default: false },
+    mobile: { type: Boolean, default: false }
   },
   data () {
     return {

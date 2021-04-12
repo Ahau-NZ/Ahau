@@ -57,37 +57,31 @@
           </template>
 
           <template v-slot:addParents>
-            <v-col cols="12" class="pa-5">
-              <span v-if="quickAddProfiles['parents'] && quickAddProfiles['parents'].length > 0">Add Parent</span>
-              <ProfileList
-                addable
-                :addedProfiles.sync="quickAddProfiles['selectedParents']"
-                :items="generateParents"
-                @profile-click="addProfile($event, 'selectedParents')"
-              />
-            </v-col>
+            <span v-if="quickAddProfiles['parents'] && quickAddProfiles['parents'].length > 0">Add Parent</span>
+            <ProfileList
+              :addedProfiles.sync="quickAddProfiles['selectedParents']"
+              :items="generateParents"
+              :mobile="mobile"
+              @profile-click="addProfile($event, 'selectedParents')"
+            />
           </template>
           <template v-slot:addChildren>
-            <v-col cols="12" class="pa-5">
-              <span v-if="quickAddProfiles['children'] && quickAddProfiles['children'].length > 0">Add Children</span>
-              <ProfileList
-                addable
-                :addedProfiles.sync="quickAddProfiles['selectedChildren']"
-                :items="generateChildren"
-                @profile-click="addProfile($event, 'selectedChildren')"
-              />
-            </v-col>
+            <span v-if="quickAddProfiles['children'] && quickAddProfiles['children'].length > 0">Add Children</span>
+            <ProfileList
+              :addedProfiles.sync="quickAddProfiles['selectedChildren']"
+              :items="generateChildren"
+              :mobile="mobile"
+              @profile-click="addProfile($event, 'selectedChildren')"
+            />
           </template>
           <template v-slot:addPartners>
-            <v-col cols="12" class="pa-5">
-              <span v-if="quickAddProfiles['partners'] && quickAddProfiles['partners'].length > 0">Add Partners</span>
-              <ProfileList
-                addable
-                :addedProfiles.sync="quickAddProfiles['selectedPartners']"
-                :items="generatePartners"
-                @profile-click="addProfile($event, 'selectedPartners')"
-              />
-            </v-col>
+            <span v-if="quickAddProfiles['partners'] && quickAddProfiles['partners'].length > 0">Add Partners</span>
+            <ProfileList
+              :addedProfiles.sync="quickAddProfiles['selectedPartners']"
+              :items="generatePartners"
+              :mobile="mobile"
+              @profile-click="addProfile($event, 'selectedPartners')"
+            />
           </template>
         </ProfileForm>
 
