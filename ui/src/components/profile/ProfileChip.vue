@@ -41,7 +41,7 @@
 import Avatar from '@/components/Avatar.vue'
 import { getDisplayName } from '@/lib/person-helpers.js'
 import { RELATIONSHIPS } from '@/lib/constants'
-import { calculateBirthYear } from '@/lib/date-helpers.js'
+import { getBirthYear } from '@/lib/date-helpers.js'
 
 export default {
   name: 'ProfileChip',
@@ -67,7 +67,7 @@ export default {
   methods: {
     getDisplayName,
     age (aliveInterval) {
-      return calculateBirthYear(aliveInterval)
+      return getBirthYear(aliveInterval)
     },
     profileClicked () {
       console.log('profile clicked')

@@ -177,7 +177,10 @@ export function formatSubmissionDate (submittedDate) {
   }
 }
 
-export function calculateBirthYear (aliveInterval) {
+export function getBirthYear (aliveInterval) {
+  if (!aliveInterval) return ''
+  var split = aliveInterval.split('/')
+  if (split[0] === '' || !split[0]) return '' 
   if (aliveInterval !== '' && aliveInterval) return aliveInterval.substring(0, 4)
   return ''
 }
