@@ -124,7 +124,7 @@
       </v-col>
     </v-row>
 
-    <slot name="addParents" v-if="typeIsChild">
+    <slot name="addParents" v-if="typeIsChild || typeIsSibling">
       <v-text-field
         v-model="formData.preferredName"
         :label="t('preferredName')"
@@ -505,6 +505,9 @@ export default {
     },
     typeIsChild () {
       return this.dialogType === 'child'
+    },
+    typeIsSibling () {
+      return this.dialogType === 'sibling'
     },
     typeIsPartner () {
       return this.dialogType === 'partner'
