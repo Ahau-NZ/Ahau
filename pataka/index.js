@@ -1,5 +1,6 @@
 const ahoy = require('ssb-ahoy')
 const Config = require('./ssb.config')
+const env = require('ahau-env')
 
 const plugins = [
   'ssb-master',
@@ -47,10 +48,9 @@ Permanently fixed, established and understood!
 Forward together!
 ---------------------------------
 `
-console.log(karakia)
 
-const appURL = process.env.NODE_ENV === 'development'
-  ? 'http://localhost:8081' // dev-server // TODO ahau-env
+const appURL = env.isDevelopment
+  ? 'http://localhost:8081' // dev-server
   : `file://${__dirname}/dist/index.html` // production build
 
 ahoy({
@@ -61,7 +61,6 @@ ahoy({
   // appDir: '../whakapapa-ora', // only use this when ssb-ahoy symlinked
   onReady: ({ config }) => {
     // this config has updated manifest added
-
-    console.log('BOOM')
+    console.log(karakia)
   }
 })

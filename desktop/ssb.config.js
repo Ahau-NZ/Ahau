@@ -1,7 +1,6 @@
 const Config = require('ssb-config/defaults')
 const fs = require('fs')
 const path = require('path')
-
 const env = require('ahau-env')
 
 const customConfig = {
@@ -18,7 +17,7 @@ const customConfig = {
     csp: ''
   },
   hyperBlobs: {
-    port: env.ahau.hyperBlobs && env.ahau.hyperBlobs.port // TODO
+    port: env.ahau.hyperBlobs.port
   },
   recpsGuard: {
     allowedTypes: [

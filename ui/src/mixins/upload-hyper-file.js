@@ -10,11 +10,18 @@ const url = `http://localhost:${(env.hyperBlobs && env.hyperBlobs.port) || 26836
 const { mapMutations: mapAlertMutations } = createNamespacedHelpers('alerts')
 const hexTo64 = str => Buffer.from(str, 'hex').toString('base64')
 
+const MB = 1024 * 1024
+const MAX_FILE_SIZE = 150 * MB
+
 export default {
   methods: {
     ...mapAlertMutations(['showAlert']),
     async uploadFile ({ file }) {
       try {
+        if (file && file.size > MAX_FILE_SIZE) {
+          throw new Error('Please check the file size is less than 150MB')
+        }
+
         const res = await axios(url, {
           method: 'post',
           data: {
@@ -24,8 +31,10 @@ export default {
         })
         // NOTE! file.path will only be accessible in electron UI, not in browser
 
-        if (res.errors) throw res.errors // WIP how axios returns errors
-        // WIP figure out why preview isn't loading for upload - could be file is not ready...
+        if (res.errors) {
+          console.error(res.errors)
+          throw new Error('Something went wrong while uploading a file')
+        }
 
         const { driveAddress, blobId, readKey, href } = res.data
 
@@ -39,11 +48,7 @@ export default {
           uri: href
         }
       } catch (err) {
-        const message = 'Something went wrong while upload a file. Please check the file size is less the 5MB'
-        console.error(message)
-        console.error(err)
-        this.showAlert({ message, delay: 5000, color: 'red' })
-
+        this.showAlert({ message: err.message, delay: 5000, color: 'red' })
         return null
       }
     }

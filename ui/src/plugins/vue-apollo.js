@@ -6,7 +6,7 @@ import { InMemoryCache } from 'apollo-cache-inmemory'
 
 import possibleTypes from './possibleTypes.json'
 
-const { ahau: env } = require('ahau-env')
+const env = require('ahau-env')
 
 const cache = new InMemoryCache({
   possibleTypes
@@ -20,7 +20,7 @@ const AUTH_TOKEN = 'apollo-token'
 
 // Http endpoint
 const httpEndpoint =
-  process.env.VUE_APP_GRAPHQL_HTTP || `http://localhost:${env.graphql.port}/graphql`
+  process.env.VUE_APP_GRAPHQL_HTTP || `http://localhost:${env.ahau.graphql.port}/graphql`
 
 // Config
 const defaultOptions = {
@@ -28,7 +28,7 @@ const defaultOptions = {
   httpEndpoint,
   // You can use `wss` for secure connection (recommended in production)
   // Use `null` to disable subscriptions
-  wsEndpoint: process.env.VUE_APP_GRAPHQL_WS || `ws://localhost:${env.graphql.port}/graphql`,
+  wsEndpoint: process.env.VUE_APP_GRAPHQL_WS || `ws://localhost:${env.ahau.graphql.port}/graphql`,
   // LocalStorage token
   tokenName: AUTH_TOKEN,
   // Enable Automatic Query persisting with Apollo Engine

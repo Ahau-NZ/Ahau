@@ -6,7 +6,7 @@ import {
   restartWebsockets
 } from 'vue-cli-plugin-apollo/graphql-client'
 
-const { pataka: env } = require('ahau-env')
+const env = require('ahau-env')
 
 // Install the vue plugin
 Vue.use(VueApollo)
@@ -16,7 +16,7 @@ const AUTH_TOKEN = 'apollo-pataka-token'
 
 // Http endpoint
 const httpEndpoint =
-  process.env.VUE_APP_GRAPHQL_HTTP || `http://localhost:${env.graphql.port}/graphql`
+  process.env.VUE_APP_GRAPHQL_HTTP || `http://localhost:${env.pataka.graphql.port}/graphql`
 
 const httpLink = createUploadLink({
   uri: httpEndpoint
@@ -31,7 +31,7 @@ const defaultOptions = {
   httpEndpoint,
   // You can use `wss` for secure connection (recommended in production)
   // Use `null` to disable subscriptions
-  wsEndpoint: process.env.VUE_APP_GRAPHQL_WS || `ws://localhost:${env.graphql.port}/graphql`,
+  wsEndpoint: process.env.VUE_APP_GRAPHQL_WS || `ws://localhost:${env.pataka.graphql.port}/graphql`,
   // LocalStorage token
   tokenName: AUTH_TOKEN,
   // Enable Automatic Query persisting with Apollo Engine

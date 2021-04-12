@@ -153,8 +153,6 @@ export default {
         }
       }
       renderMedia.append(file, this.$refs.renderTarget, function (err, elem) {
-        console.log({ err, elem })
-        debugger
         if (err) return console.error(err)
 
         // HACK to get initial frame to load

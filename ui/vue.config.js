@@ -3,6 +3,9 @@ process.env.VUE_APP_PLATFORM =
 
 module.exports = {
   publicPath: './',
+  devServer: {
+    port: 8080
+  },
   transpileDependencies: ['vuetify'],
   pluginOptions: {
     apollo: {
