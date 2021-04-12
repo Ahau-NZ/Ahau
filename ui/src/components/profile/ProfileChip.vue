@@ -59,18 +59,10 @@ export default {
       relatedBy: 'birth'
     }
   },
-  computed: {
-    showOverlay () {
-      return this.addable && !this.addableProfile
-    }
-  },
   methods: {
     getDisplayName,
     age (aliveInterval) {
       return getBirthYear(aliveInterval)
-    },
-    profileClicked () {
-      console.log('profile clicked')
     }
   }
 }

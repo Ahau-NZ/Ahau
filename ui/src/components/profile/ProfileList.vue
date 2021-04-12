@@ -26,6 +26,7 @@ export default {
       let added = this.addedProfiles.some(person => {
         return person.id === profile.id
       })
+
       return added
     }
   }

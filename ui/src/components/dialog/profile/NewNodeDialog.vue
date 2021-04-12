@@ -61,7 +61,7 @@
               <span v-if="parents && parents.length > 0">Add Parent</span>
               <ProfileList
                 addable
-                :addedProfiles.sync="selectedParents"
+                :addedProfiles.sync="selectedProfiles['selectedParents']"
                 :items="generateParents"
                 @profile-click="addParentsProfile($event)"
               />
@@ -72,7 +72,7 @@
               <span v-if="children && children.length > 0">Add Children</span>
               <ProfileList
                 addable
-                :addedProfiles.sync="selectedChildren"
+                :addedProfiles.sync="selectedProfiles['selectedChildren']"
                 :items="generateChildren"
                 @profile-click="addChildrenProfile($event)"
               />
@@ -83,7 +83,7 @@
               <span v-if="partners && partners.length > 0">Add Partners</span>
               <ProfileList
                 addable
-                :addedProfiles.sync="selectedPartners"
+                :addedProfiles.sync="selectedProfiles['selectedPartners']"
                 :items="generatePartners"
                 @profile-click="addPartnersProfile($event)"
               />
@@ -197,11 +197,16 @@ export default {
       addChildren: false,
       addPartners: false,
       parents: [],
-      selectedParents: [],
+      // selectedParents: [],
       children: [],
-      selectedChildren: [],
+      // selectedChildren: [],
       partners: [],
-      selectedPartners: [],
+      // selectedPartners: [],
+      selectedProfiles: {
+        selectedParents: [],
+        selectedChildren: [],
+        selectedPartners: []
+      },
       existingProfile: null
     }
   },
@@ -317,22 +322,22 @@ export default {
   },
   methods: {
     addParentsProfile (profile) {
-      if (this.selectedParents.some(d => d.id === profile.id)) {
-        this.selectedParents = this.selectedParents.filter(d => d.id !== profile.id)
+      if (this.selectedProfiles['selectedParents'].some(d => d.id === profile.id)) {
+        this.selectedProfiles['selectedParents'] = this.selectedProfiles['selectedParents'].filter(d => d.id !== profile.id)
       }
-      this.selectedParents.push(profile)
+      else this.selectedProfiles['selectedParents'].push(profile)
     },
     addChildrenProfile (profile) {
-      if (this.selectedChildren.some(d => d.id === profile.id)) {
-        this.selectedChildren = this.selectedChildren.filter(d => d.id !== profile.id)
+      if (this.selectedProfiles['selectedChildren'].some(d => d.id === profile.id)) {
+        this.selectedProfiles['selectedChildren'] = this.selectedProfiles['selectedChildren'].filter(d => d.id !== profile.id)
       }
-      this.selectedChildren.push(profile)
+      else this.selectedProfiles['selectedChildren'].push(profile)
     },
     addPartnersProfile (profile) {
-      if (this.selectedPartners.some(d => d.id === profile.id)) {
-        this.selectedPartners = this.selectedPartners.filter(d => d.id !== profile.id)
+      if (this.selectedProfiles['selectedPartners'].some(d => d.id === profile.id)) {
+        this.selectedProfiles['selectedPartners'] = this.selectedProfiles['selectedPartners'].filter(d => d.id !== profile.id)
       }
-      this.selectedPartners.push(profile)
+      else this.selectedProfiles['selectedPartners'].push(profile)
     },
     clearSuggestions () {
       this.$emit('getSuggestions', null)
@@ -517,36 +522,36 @@ export default {
         recps
       }
 
-      if (this.selectedChildren && this.selectedChildren.length) {
+      if (this.selectedProfiles['selectedChildren'] && this.selectedProfiles['selectedChildren'].length) {
         if (this.existingProfile && this.existingProfile.children) {
-          let _children = this.selectedChildren.filter(child => {
+          let _children = this.selectedProfiles['selectedChildren'].filter(child => {
             return this.existingProfile.children.every(d => child.id !== d.id)
           })
           if (_children.length) submission.children = _children
         } else {
-          submission.children = this.selectedChildren
+          submission.children = this.selectedProfiles['selectedChildren']
         }
       }
 
-      if (this.selectedParents && this.selectedParents.length) {
+      if (this.selectedProfiles['selectedParents'] && this.selectedProfiles['selectedParents'].length) {
         if (this.existingProfile && this.existingProfile.parents) {
-          let _parents = this.selectedParents.filter(child => {
+          let _parents = this.selectedProfiles['selectedParents'].filter(child => {
             return this.existingProfile.children.every(d => child.id !== d.id)
           })
           if (_parents.length) submission.children = _parents
         } else {
-          submission.parents = this.selectedParents
+          submission.parents = this.selectedProfiles['selectedParents']
         }
       }
 
-      if (this.selectedPartners && this.selectedPartners.length) {
+      if (this.selectedProfiles['selectedPartners'] && this.selectedProfiles['selectedPartners'].length) {
         if (this.existingProfile && this.existingProfile.partners) {
-          let _partners = this.selectedPartners.filter(child => {
+          let _partners = this.selectedProfiles['selectedPartners'].filter(child => {
             return this.existingProfile.children.every(d => child.id !== d.id)
           })
           if (_partners.length) submission.children = _partners
         } else {
-          submission.partners = this.selectedPartners
+          submission.partners = this.selectedProfiles['selectedPartners']
         }
       }
 
@@ -611,9 +616,9 @@ export default {
         this.existingProfile = await this.getProfile(this.profile.id)
 
         // if hasSelection and quickAddSection, show exsisting links
-        if (this.generateChildren && this.existingProfile.children) this.selectedChildren = [...this.existingProfile.children]
-        if (this.generatePartners && this.existingProfile.partners) this.selectedPartners = [...this.existingProfile.partners]
-        if (this.generateParents && this.existingProfile.parents) this.selectedPartners = [...this.existingProfile.parents]
+        if (this.generateChildren && this.existingProfile.children) this.selectedProfiles['selectedChildren'] = [...this.existingProfile.children]
+        if (this.generatePartners && this.existingProfile.partners) this.selectedProfiles['selectedPartners'] = [...this.existingProfile.partners]
+        if (this.generateParents && this.existingProfile.parents) this.selectedProfiles['selectedParents'] = [...this.existingProfile.parents]
 
         // hack: when there is no preferred name and a selected profile, the clearable button doesnt how up
         // doing this forces it to show
