@@ -58,25 +58,7 @@
 
           <template v-slot:addParents>
             <v-col cols="12" class="pa-5">
-              <!-- <v-tooltip top open-delay="700" :disabled="addParents">
-                <template v-slot:activator="{ on }">
-                  <div v-on="on">
-                    <v-row v-if="!addParents" @click="addParents = true" class="pl-5">
-                      <v-icon small>mdi-plus</v-icon>
-                      <AddButton size="20px" icon="mdi-account" iconClass="pr-3" label="Add Parent" justify="start"/>
-                    </v-row>
-                  </div>
-                </template> -->
-                <span v-if="parents && parents.length > 0">Add Parent</span>
-              <!-- </v-tooltip>
-              <ProfileSearchBar
-                :selectedItems.sync="selectedParents"
-                :items="generateParents"
-                :openMenu.sync="addParents"
-                placeholder="add parent"
-                item="preferredName"
-                @getSuggestions="$emit('getSuggestions', $event)"
-              /> -->
+              <span v-if="parents && parents.length > 0">Add Parent</span>
               <ProfileList
                 addable
                 :addedProfiles.sync="selectedParents"
@@ -88,25 +70,7 @@
           </template>
           <template v-slot:addChildren>
             <v-col cols="12" class="pa-5">
-              <!-- <v-tooltip top open-delay="700" :disabled="addChildren">
-                <template v-slot:activator="{ on }">
-                  <div v-on="on">
-                    <v-row v-if="!addChildren" @click="addChildren = true" class="pl-5">
-                      <v-icon small>mdi-plus</v-icon>
-                      <AddButton size="20px" icon="mdi-account" iconClass="pr-3" label="Add Children " justify="start"/>
-                    </v-row>
-                  </div>
-                </template> -->
-                <span v-if="children && children.length > 0">Add Children</span>
-              <!-- </v-tooltip> -->
-              <!-- <ProfileSearchBar
-                :selectedItems.sync="selectedChildren"
-                :items="generateChildren"
-                :openMenu.sync="addChildren"
-                placeholder="add child"
-                item="preferredName"
-                @getSuggestions="$emit('getSuggestions', $event)"
-              /> -->
+              <span v-if="children && children.length > 0">Add Children</span>
               <ProfileList
                 addable
                 :addedProfiles.sync="selectedChildren"
@@ -114,38 +78,11 @@
                 @removeItem="removeItem(profileId, selectedChildren)"
                 @profile-click="addChildrenProfile($event)"
               />
-              <!-- <span>Add children</span>
-              <AvatarGroup
-                :profiles="generateChildren"
-                show-labels
-                size="50px"
-                addable
-                :addedProfiles.sync="selectedChildren"
-                @profile-click="addProfile($event)"
-              /> -->
             </v-col>
           </template>
           <template v-slot:addPartners>
             <v-col cols="12" class="pa-5">
-              <!-- <v-tooltip top open-delay="700" :disabled="addPartners">
-                <template v-slot:activator="{ on }">
-                  <div v-on="on">
-                    <v-row v-if="!addPartners" @click="addPartners = true" class="pl-5">
-                      <v-icon small>mdi-plus</v-icon>
-                      <AddButton size="20px" icon="mdi-account" iconClass="pr-3" label="Add Partner" justify="start"/>
-                    </v-row>
-                  </div>
-                </template> -->
-                <span v-if="partners && partners.length > 0">Add Partners</span>
-              <!-- </v-tooltip>
-              <ProfileSearchBar
-                :selectedItems.sync="selectedPartners"
-                :items="generatePartners"
-                :openMenu.sync="addPartners"
-                placeholder="add partner"
-                item="preferredName"
-                @getSuggestions="$emit('getSuggestions', $event)"
-              /> -->
+              <span v-if="partners && partners.length > 0">Add Partners</span>
               <ProfileList
                 addable
                 :addedProfiles.sync="selectedPartners"

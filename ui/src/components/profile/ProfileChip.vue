@@ -46,7 +46,7 @@
 import Avatar from '@/components/Avatar.vue'
 import { getDisplayName } from '@/lib/person-helpers.js'
 import { RELATIONSHIPS } from '@/lib/constants'
-import calculateBirthYear from '@/lib/date-helpers.js'
+import { calculateBirthYear } from '@/lib/date-helpers.js'
 
 export default {
   name: 'ProfileChip',
