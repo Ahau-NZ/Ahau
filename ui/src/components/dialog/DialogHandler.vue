@@ -359,10 +359,6 @@ export default {
       delete input.children
       delete input.parents
       delete input.partners
-      console.log('input: ', input)
-      console.log('children: ', children)
-      console.log('parents: ', parents)
-      console.log('partners: ', partners)
 
       id = await this.createNewPerson(input)
       const ignored = await this.removeIgnoredProfile(id)

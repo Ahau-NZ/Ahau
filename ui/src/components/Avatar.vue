@@ -14,7 +14,7 @@
         </v-btn>
         <v-avatar :size="size" :tile="isView">
             <v-overlay
-              v-if="showOverlay"
+              v-if="addable"
               :dark='false'
               :light="true"
               color="white"
@@ -102,9 +102,6 @@ export default {
     ImagePicker
   },
   computed: {
-    showOverlay () {
-      return this.addable && !this.addableProfile
-    },
     theme () {
       if (this.dark) return 'color: white;'
       return ''

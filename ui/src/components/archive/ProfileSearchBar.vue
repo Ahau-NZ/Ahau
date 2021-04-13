@@ -29,7 +29,7 @@
           <v-list-item class="click" @mousedown="addSelectedItem(item)">
             <Avatar class="mr-3" size="40px" :image="item.avatarImage" :alt="getDisplayName(item)" :gender="item.gender" :aliveInterval="item.aliveInterval" />
             <v-list-item-content>
-              <v-list-item-title> {{ item.legalName || item.preferredName || 'No name' }} </v-list-item-title>
+              <v-list-item-title> {{ item.legalName || item.preferredName || 'Unknown' }} </v-list-item-title>
               <v-list-item-subtitle>Name</v-list-item-subtitle>
             </v-list-item-content>
             <v-list-item-content>
@@ -130,9 +130,6 @@ export default {
     Avatar,
     Chip
   },
-  mounted () {
-    // console.log('items: ', this.items[1].length)
-  },
   computed: {
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
@@ -163,9 +160,6 @@ export default {
       } else {
         this.clearSuggestions()
       }
-    },
-    items (newValue) {
-      console.log('new items: ', newValue)
     }
   },
   methods: {

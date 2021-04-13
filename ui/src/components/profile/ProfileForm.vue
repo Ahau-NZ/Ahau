@@ -125,7 +125,7 @@
     </v-row>
 
     <v-row>
-      <slot name="addParents" v-if="typeIsChild || typeIsSibling">
+      <slot name="addParents" v-if="typeIsChild">
       </slot>
       <slot name="addChildren" v-if="typeIsPartner || typeIsParent">
       </slot>
@@ -494,10 +494,7 @@ export default {
       return this.smScreen ? 'start' : 'end'
     },
     typeIsChild () {
-      return this.dialogType === 'child'
-    },
-    typeIsSibling () {
-      return this.dialogType === 'sibling'
+      return this.dialogType === 'child' || this.dialogType === 'sibling'
     },
     typeIsPartner () {
       return this.dialogType === 'partner'

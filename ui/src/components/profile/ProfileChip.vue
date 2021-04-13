@@ -7,8 +7,7 @@
       :alt="getDisplayName(item)"
       :gender="item.gender"
       :aliveInterval="item.aliveInterval"
-      addable
-      :addableProfile="addableProfile"
+      :addable="!addableProfile"
       clickable
       @click="$emit('profile-click', item)"
     />
