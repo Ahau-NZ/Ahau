@@ -73,12 +73,12 @@
               </v-row>
             </div>
             <div v-else>
-              <p class="pl-3 caption">You are not currently connected to any Pātaka</p>
+              <p class="pl-3 caption">{{ $t('pataka.notConnected') }}</p>
             </div>
             <v-row justify='center'>
               <v-btn text small justify-center class="blue--text mt-3" @click="dialog = !dialog">
                 <v-icon small class="blue--text pr-2 ml-3">mdi-plus</v-icon>
-                Connect Pātaka
+                {{ $t('pataka.connectPataka')}}
               </v-btn>
             </v-row>
           </template>
@@ -88,7 +88,7 @@
     <NewPatakaDialog
       v-if="dialog"
       :show="dialog"
-      :title="`Connect to new Pātaka`"
+      :title="$t('pataka.newPataka')"
       @close="dialog = false"
       @submit="connected($event)"
     />
