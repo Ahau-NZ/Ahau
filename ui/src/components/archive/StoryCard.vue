@@ -37,7 +37,11 @@
           <v-carousel
             v-model="model"
             hide-delimiters
-            :show-arrows="!mobile && fullStory && story.artefacts && story.artefacts.length > 1" :show-arrows-on-hover="!mobile" :height="showArtefact ? mobile ? '80vh' : 'auto' : mobile ? '300px' : '500px'" style="background-color:#1E1E1E">
+            :show-arrows="!mobile && fullStory && story.artefacts && story.artefacts.length > 1"
+            :show-arrows-on-hover="!mobile"
+            :height="artefactHeight"
+            style="background-color:#1E1E1E"
+          >
             <v-carousel-item v-for="({ artefact } , i) in story.artefacts" :key="`story-card-artefact-${i}`">
               <ArtefactCarouselItem :artefact="artefact"
                 :controls="fullStory"
@@ -381,6 +385,11 @@ export default {
     ...mapGetters(['showArtefact', 'storeDialog', 'whoami']),
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
+    },
+    artefactHeight () {
+      return this.showArtefact
+        ? this.mobile ? '80vh' : '60vh'
+        : this.mobile ? '300px' : '500px'
     },
     // used for updating artefacts direct from story card
     formData () {

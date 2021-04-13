@@ -16,12 +16,13 @@
 
       <template v-else>
         <!-- video "viewing"-->
-        <div v-if="artefact.type === 'video' && !showPreview && !editing">
+        <div v-if="artefact.type === 'video' && !showPreview && !editing" class="media vertical-center">
           <video ref="video" :src="artefact.blob.uri" :controls="hover && controls"/>
         </div>
         <!-- video "preview" -->
         <div v-if="artefact.type === 'video' && (showPreview || editing)" class="media vertical-center">
-          <v-img :src="poster" contain class="photo" />
+          <v-img :src="poster" contain class="photo"/>
+          <!-- <v-icon size="50" class="vertical-center">mdi-video</v-icon> -->
         </div>
 
         <!-- photo -->
@@ -201,6 +202,7 @@ export default {
 
   video {
     width: 100%;
+    height: 100%;
   }
 }
 
