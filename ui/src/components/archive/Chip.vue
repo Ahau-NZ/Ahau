@@ -43,9 +43,6 @@
 import { colours } from '@/lib/colours.js'
 import { mapMutations } from 'vuex'
 
-// default image for list items
-// import niho from '@/assets/niho.svg'
-
 export default {
   name: 'Chip',
   props: {

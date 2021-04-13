@@ -719,7 +719,7 @@ export default {
       top: 70px;
       left: 50px;
       /* right: 160px; */
-      width: 30%;
+      width: 40%;
       .col {
           padding-top: 0;
           padding-bottom: 0;
