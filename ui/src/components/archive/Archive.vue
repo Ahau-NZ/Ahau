@@ -45,7 +45,7 @@
       @submit="processStory"
     />
     <NewCollectionDialog v-if="dialog === 'new-collection'" :show="dialog === 'new-collection'"
-      :title="`Add a collection`" @close="dialog = null"
+      :title="$t('addCollectionForm.addCollection')" @close="dialog = null"
       @submit="processCollection"
     />
   </div>
@@ -174,6 +174,9 @@ export default {
           })
         }, 200)
       }
+    },
+    t (key, vars) {
+      return this.$t('addCollection.' + key, vars)
     }
   }
 }
