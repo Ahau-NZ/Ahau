@@ -15,42 +15,45 @@
       />
 
       <template v-else>
-        <!-- video "viewing"-->
-        <div v-if="artefact.type === 'video' && !showPreview && !editing" class="media vertical-center">
-          <video ref="video" :src="artefact.blob.uri" :controls="hover && controls"/>
-        </div>
-        <!-- video "preview" -->
-        <div v-if="artefact.type === 'video' && (showPreview || editing)" class="media vertical-center">
-          <v-img :src="poster" contain class="photo">
-            <v-icon size="50" class="center">mdi-video</v-icon>
-          </v-img>
-        </div>
+        <template v-if="artefact.type === 'video'">
+          <!-- video "viewing"-->
+          <div v-if="!showPreview && !editing" class="media vertical-center">
+            <video ref="video" :src="artefact.blob.uri" :controls="hover && controls"/>
+          </div>
+          <!-- video "preview" -->
+          <div v-else-if="showPreview || editing" class="media vertical-center">
+            <v-img :src="poster" contain class="photo">
+              <v-icon size="50" class="center">mdi-video</v-icon>
+            </v-img>
+          </div>
+        </template>
 
         <!-- photo -->
-        <v-img
-          v-if="artefact.type === 'photo' && !mobile"
-          :src="artefact.blob.uri"
-          contain
-          class="media"
-        />
 
-        <!-- mobile photo -->
-        <v-zoomer v-else-if="artefact.type === 'photo' && showArtefact && mobile" style="height:80vh">
-          <v-img :src="artefact.blob.uri" contain />
-        </v-zoomer>
+        <template v-if="artefact.type === 'photo'">
+          <v-img
+            v-if="!mobile"
+            :src="artefact.blob.uri"
+            contain
+            class="media"
+          />
+
+          <!-- mobile photo -->
+          <v-zoomer v-else-if="mobile && showArtefact" style="height:80vh">
+            <v-img :src="artefact.blob.uri" contain />
+          </v-zoomer>
+        </template>
 
         <!-- document -->
         <div v-if="artefact.type === 'document'" class="media">
-          <div>
-            <div v-if="controls" class="text-center" style="padding-top:15%;">
-              <v-icon size="100px">{{ artefactIcon }}</v-icon><br>
-              <v-btn text @click.prevent="downloadFile()">
-                Download File
-              </v-btn>
-            </div>
-            <div v-else class="pt-4 px-5">
-              <v-icon size="60px">{{ artefactIcon }}</v-icon>
-            </div>
+          <div v-if="controls" class="text-center" style="padding-top:15%;">
+            <v-icon size="100px">{{ artefactIcon }}</v-icon><br>
+            <v-btn text @click.prevent="downloadFile()">
+              Download File
+            </v-btn>
+          </div>
+          <div v-else class="pt-4 px-5">
+            <v-icon size="60px">{{ artefactIcon }}</v-icon>
           </div>
         </div>
 
@@ -62,6 +65,7 @@
           <v-icon size="50" class="center">mdi-music</v-icon>
         </div>
 
+        <!-- controls -->
         <v-btn v-if="controls && editing" class="edit mr-2 mt-2"
           fab x-small
           @click="$emit('update')"
@@ -74,6 +78,7 @@
         >
           <v-icon>mdi-delete</v-icon>
         </v-btn>
+
         <v-fade-transition>
           <v-overlay :absolute="true" opacity="0.6" :value="!selected && !controls"/>
         </v-fade-transition>
