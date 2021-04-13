@@ -1,7 +1,7 @@
 <template>
   <div>
     <div v-for="profile in items" v-bind:key="profile.id">
-      <ProfileChip 
+      <ProfileChip
         :item="profile"
         @removeItem="$emit('removeItem', profileId)"
         :mobile="mobile"
