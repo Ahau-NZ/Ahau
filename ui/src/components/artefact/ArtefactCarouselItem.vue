@@ -5,38 +5,35 @@
       flat
       :class="{ 'on-hover': hover, 'highlight': selected }"
       @click="$emit('click')"
-      class="container"
     >
+      <!-- large files render here -->
       <div v-if="useRenderMedia"
-        ref='renderTarget'
-        class="media"
-
+        ref="renderTarget"
         v-once
-        >
-      </div>
+      />
+
       <template v-else>
         <!-- TODO: see if can dedeplicate with Artefact.vue -->
 
-        <!-- video -->
-        <div v-if="artefact.type === 'video' && !showPreview">
-          <video ref="video" :src="artefact.blob.uri" :controls="hover && controls" class="video"/>
+        <!-- video "viewing"-->
+        <div v-if="artefact.type === 'video' && !showPreview && !editing">
+          <video ref="video" :src="artefact.blob.uri" :controls="hover && controls"/>
         </div>
-        <v-img v-if="artefact.type === 'video' && showPreview"
-          :src="poster"
-          ref="photo"
-          class="media"
-          contain
-        />
+        <!-- video "preview" -->
+        <div v-if="artefact.type === 'video' && (showPreview || editing)">
+          <v-img :src="poster" contain />
+        </div>
 
         <!-- photo -->
         <v-img
-          v-if="artefact.type === 'photo'"
+          v-if="artefact.type === 'photo' && !mobile"
           :src="artefact.blob.uri"
-          :contain='controls'
-          class="media"
-          tile
-          flat
+          contain
         />
+        <!-- mobile photo -->
+        <v-zoomer v-else-if="artefact.type === 'photo' && showArtefact && mobile" style="height:80vh">
+          <v-img :src="artefact.blob.uri" contain />
+        </v-zoomer>
 
         <!-- document -->
         <div v-if="artefact.type === 'document'" class="media">
@@ -82,6 +79,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import { ARTEFACT_ICON } from '@/lib/artefact-helpers.js'
 import FileStream from '@/lib/hyper-file-stream'
 import getVideoPoster from '@/lib/get-video-poster'
@@ -112,14 +110,19 @@ export default {
     if (this.useRenderMedia) this.renderHyperBlob()
     // WIP extract and fix this up mix
 
-    if (this.artefact && this.artefact.type === 'video' && this.showPreview) {
+    if (this.artefact && this.artefact.type === 'video' && (this.showPreview || this.editing)) {
       getVideoPoster(this.artefact.blob.uri)
         .then(src => { this.poster = src })
     }
   },
   computed: {
+    ...mapGetters(['showArtefact']),
+    mobile () {
+      return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
+    },
     useRenderMedia () {
-      if (this.showPoster) return false
+      // ensure we only use render media if we are "viewing"
+      if (this.showPreview || this.editing) return false
 
       if (this.artefact.blob.__typename !== 'BlobHyper') return false
       if (this.artefact.type === 'photo') return false
@@ -129,14 +132,31 @@ export default {
     },
     artefactIcon () {
       return ARTEFACT_ICON(this.artefact.blob.mimeType)
+    },
+    playableArtefact () {
+      const playable = (
+        (this.$refs.renderTarget && this.$refs.renderTarget.firstChild) ||
+        this.$refs.audio ||
+        this.$refs.video
+      )
+      if (!playable) return
+      if (typeof playable.play !== 'function') return
+
+      return playable
+    },
+    classObj () {
+      const type = this.showPreview
+        ? 'photo'
+        : this.artefact.type
+
+      return {
+        [type]: true,
+        '-mobile': this.mobile,
+        '-show': this.showArtefact
+      }
     }
   },
   methods: {
-    match (i) {
-      if (this.selectedIndex === i) {
-        return true
-      }
-    },
     downloadFile () {
       var hiddenElement = document.createElement('a')
       hiddenElement.href = this.artefact.blob.uri
@@ -203,7 +223,6 @@ export default {
 
 .video {
   position: absolute;
-  top: 10%;
   left: 0%;
   width: 100%;
 }

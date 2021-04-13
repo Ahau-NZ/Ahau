@@ -11,8 +11,8 @@
       :elevation="!mobile && !showArtefact && fullStory ? '24':''"
       @click="showStory()"
     >
-      <v-list-item class="px-0" style="min-height:0; height:10px">
-        <v-list-item-icon v-if="!fullStory" class="pt-1 mt-0" style="position:absolute; top:5px; right:1px; margin-right:0px">
+      <v-list-item  v-if="!fullStory" class="px-0" style="min-height:0; height:10px">
+        <v-list-item-icon class="pt-1 mt-0" style="position:absolute; top:5px; right:1px; margin-right:0px">
           <v-list-item-subtitle v-if="!mobile" class="no-flex">contributors</v-list-item-subtitle>
           <AvatarGroup :profiles="story.contributors.map(c => c.profile)" customClass="ma-0 pa-0" style="position:relative; bottom:15px; left:10px" :size="mobile ? '25px':'30px'" spacing="pr-1"/>
         </v-list-item-icon>
@@ -32,14 +32,18 @@
           <v-list-item-title v-else class="headline mb-1 wrap-text">{{ artefact.title }}</v-list-item-title>
         </v-list-item-content>
       </v-list-item>
-      <v-list-item class="px-0" >
-        <v-list-item-content v-if="story.artefacts && story.artefacts.length > 0">
+      <v-list-item v-if="story.artefacts && story.artefacts.length > 0" class="px-0">
+        <v-list-item-content>
           <v-carousel
             v-model="model"
             hide-delimiters
             :show-arrows="!mobile && fullStory && story.artefacts && story.artefacts.length > 1" :show-arrows-on-hover="!mobile" :height="showArtefact ? mobile ? '80vh' : 'auto' : mobile ? '300px' : '500px'" style="background-color:#1E1E1E">
             <v-carousel-item v-for="({ artefact } , i) in story.artefacts" :key="`story-card-artefact-${i}`">
-              <Artefact :model="model" :index="i" @showArtefact="toggleShowArtefact($event)" :artefact="artefact" :controls="fullStory" :show-preview="!fullStory" />
+              <ArtefactCarouselItem :artefact="artefact"
+                :controls="fullStory"
+                :show-preview="!fullStory && !showArtefact"
+                @click="toggleArtefact(artefact)"
+            />
             </v-carousel-item>
           </v-carousel>
           <v-slide-group
@@ -301,8 +305,6 @@
 import { mapActions, mapGetters, mapMutations } from 'vuex'
 
 import AvatarGroup from '@/components/AvatarGroup.vue'
-// import Avatar from '@/components/Avatar.vue'
-import Artefact from '@/components/artefact/Artefact.vue'
 import ChipGroup from '@/components/archive/ChipGroup.vue'
 import EditStoryButton from '@/components/button/EditStoryButton.vue'
 import EditArtefactButton from '@/components/button/EditArtefactButton.vue'
@@ -343,8 +345,6 @@ export default {
   ],
   components: {
     AvatarGroup,
-    // Avatar,
-    Artefact,
     ChipGroup,
     EditStoryButton,
     EditArtefactButton,
@@ -458,6 +458,10 @@ export default {
         ...getObjectChanges(setDefaultStory(this.story), this.formData)
       }
       this.$emit('submit', output)
+    },
+    toggleArtefact (artefact) {
+      if (artefact.type === 'photo' && this.showArtefact && this.mobile) return
+      this.toggleShowArtefact(artefact)
     },
     finishEditing () {
       setTimeout(() => {
