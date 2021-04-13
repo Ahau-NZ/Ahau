@@ -5,6 +5,7 @@
       flat
       :class="{ 'on-hover': hover, 'highlight': selected }"
       @click="$emit('click')"
+      class="container"
     >
       <!-- large files render here -->
       <div v-if="useRenderMedia"
@@ -21,7 +22,8 @@
         </div>
         <!-- video "preview" -->
         <div v-if="artefact.type === 'video' && (showPreview || editing)">
-          <v-img :src="poster" contain />
+          <v-img :src="poster" contain/>
+          <v-icon size="50" class="center">mdi-video</v-icon>
         </div>
 
         <!-- photo -->
