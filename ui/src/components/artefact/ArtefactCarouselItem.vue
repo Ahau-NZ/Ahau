@@ -21,8 +21,9 @@
         </div>
         <!-- video "preview" -->
         <div v-if="artefact.type === 'video' && (showPreview || editing)" class="media vertical-center">
-          <v-img :src="poster" contain class="photo"/>
-          <!-- <v-icon size="50" class="vertical-center">mdi-video</v-icon> -->
+          <v-img :src="poster" contain class="photo">
+            <v-icon size="50" class="center">mdi-video</v-icon>
+          </v-img>
         </div>
 
         <!-- photo -->
