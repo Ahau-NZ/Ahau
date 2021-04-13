@@ -7,23 +7,21 @@
       @click="$emit('click')"
       class="container"
     >
-      <!-- large files render here -->
+      <!-- large files render here: video + photo -->
       <div v-if="useRenderMedia"
         ref="renderTarget"
+        class="media vertical-center"
         v-once
       />
 
       <template v-else>
-        <!-- TODO: see if can dedeplicate with Artefact.vue -->
-
         <!-- video "viewing"-->
         <div v-if="artefact.type === 'video' && !showPreview && !editing">
           <video ref="video" :src="artefact.blob.uri" :controls="hover && controls"/>
         </div>
         <!-- video "preview" -->
-        <div v-if="artefact.type === 'video' && (showPreview || editing)">
-          <v-img :src="poster" contain/>
-          <v-icon size="50" class="center">mdi-video</v-icon>
+        <div v-if="artefact.type === 'video' && (showPreview || editing)" class="media vertical-center">
+          <v-img :src="poster" contain class="photo" />
         </div>
 
         <!-- photo -->
@@ -31,7 +29,9 @@
           v-if="artefact.type === 'photo' && !mobile"
           :src="artefact.blob.uri"
           contain
+          class="media"
         />
+
         <!-- mobile photo -->
         <v-zoomer v-else-if="artefact.type === 'photo' && showArtefact && mobile" style="height:80vh">
           <v-img :src="artefact.blob.uri" contain />
@@ -187,18 +187,20 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
 /* set to parent dimensions */
 .media {
+  background-color: #1E1E1E;
   width: 100%;
   height: 100%;
-  background-color: #1E1E1E;
-  object-fit: contain;
 
   img {
+    width: 100%;
     object-fit: contain;
-    max-width: 100%;
-    height: 100%;
+  }
+
+  video {
+    width: 100%;
   }
 }
 
@@ -224,9 +226,14 @@ export default {
 }
 
 .video {
-  position: absolute;
-  left: 0%;
   width: 100%;
+  height: 100%;
+  background-color: #1E1E1E;
+}
+
+.photo {
+  width: 100%;
+  height: 100%;
 }
 
 .edit {
@@ -247,4 +254,11 @@ export default {
   right: 2px;
 }
 
+.vertical-center {
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+}
 </style>
