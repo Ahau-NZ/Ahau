@@ -151,6 +151,8 @@ export const saveCommunity = input => {
   const _input = prune(input, PERMITTED_COMMUNITY_ATTRS)
 
   if (!_input.id) _input.type = 'community'
+  if (_input.avatarImage) delete _input.avatarImage.uri
+  if (_input.headerImage) delete _input.headerImage.uri
 
   return {
     mutation: gql`
@@ -168,6 +170,9 @@ export const savePublicCommunity = input => {
   const _input = prune(input, PERMITTED_PUBLIC_COMMUNITY_ATTRS)
 
   if (!_input.id) _input.type = 'community'
+  if (_input.avatarImage) delete _input.avatarImage.uri
+  if (_input.headerImage) delete _input.headerImage.uri
+
   _input.allowPublic = true
 
   return {
@@ -221,7 +226,12 @@ export const deleteTribe = tribe => {
 
 export const updateTribe = (tribe, input) => {
   const privateDetails = pick(input, PERMITTED_COMMUNITY_ATTRS)
+  if (privateDetails.avatarImage) delete privateDetails.avatarImage.uri
+  if (privateDetails.headerImage) delete privateDetails.headerImage.uri
+
   const publicDetails = pick(input, PERMITTED_PUBLIC_COMMUNITY_ATTRS)
+  if (publicDetails.avatarImage) delete privateDetails.avatarImage.uri
+  if (publicDetails.headerImage) delete privateDetails.headerImage.uri
 
   return {
     mutation: gql`

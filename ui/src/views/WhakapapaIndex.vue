@@ -321,6 +321,9 @@ export default {
     },
 
     async createProfile (input) {
+      if (input.avatarImage) delete input.avatarImage.uri
+      if (input.headerImage) delete input.headerImage.uri
+
       const res = await this.$apollo.mutate(savePerson({
         type: 'person',
         recps: [this.currentAccess.groupId],

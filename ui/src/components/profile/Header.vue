@@ -29,6 +29,8 @@ export default {
   },
   methods: {
     async updateHeader (image) {
+      delete image.uri
+
       const res = await this.$apollo.mutate({
         mutation: gql`
           mutation($input: ProfileInput!) {

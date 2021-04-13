@@ -1,7 +1,8 @@
 const fetch = require('node-fetch')
 const fs = require('fs')
+const env = require('ahau-env')
 
-fetch('http://localhost:4000/graphql', {
+fetch(`http://localhost:${env.ahau.graphql.port}/graphql`, {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({
@@ -31,7 +32,7 @@ fetch('http://localhost:4000/graphql', {
       }
     })
 
-    fs.writeFile('./src/plugins/possibleTypes.json', JSON.stringify(possibleTypes), err => {
+    fs.writeFile('./src/plugins/possibleTypes.json', JSON.stringify(possibleTypes, null, 2), err => {
       if (err) {
         console.error('Error writing possibleTypes.json', err)
       } else {

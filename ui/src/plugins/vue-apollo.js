@@ -1,19 +1,16 @@
 import Vue from 'vue'
 import VueApollo from 'vue-apollo'
-import { createUploadLink } from 'apollo-upload-client'
-import {
-  createApolloClient,
-  restartWebsockets
-} from 'vue-cli-plugin-apollo/graphql-client'
+import { createUploadLink } from 'apollo-upload-client' // partners with graphql-upload
+import { createApolloClient, restartWebsockets } from 'vue-cli-plugin-apollo/graphql-client'
 import { InMemoryCache } from 'apollo-cache-inmemory'
 
 import possibleTypes from './possibleTypes.json'
 
+const env = require('ahau-env')
+
 const cache = new InMemoryCache({
   possibleTypes
 })
-
-// WARNING! this seems wrong (a cli plugin as a dependency?)
 
 // Install the vue plugin
 Vue.use(VueApollo)
@@ -23,22 +20,15 @@ const AUTH_TOKEN = 'apollo-token'
 
 // Http endpoint
 const httpEndpoint =
-  process.env.VUE_APP_GRAPHQL_HTTP || 'http://localhost:4000/graphql'
+  process.env.VUE_APP_GRAPHQL_HTTP || `http://localhost:${env.ahau.graphql.port}/graphql`
 
-const httpLink = createUploadLink({
-  uri: httpEndpoint
-  // opts: {
-  //   mode: 'no-cors',
-  // },
-  // credentials: DEV ? "same-origin" : "include"
-})
 // Config
 const defaultOptions = {
   // You can use `https` for secure connection (recommended in production)
   httpEndpoint,
   // You can use `wss` for secure connection (recommended in production)
   // Use `null` to disable subscriptions
-  wsEndpoint: process.env.VUE_APP_GRAPHQL_WS || 'ws://localhost:4000/graphql',
+  wsEndpoint: process.env.VUE_APP_GRAPHQL_WS || `ws://localhost:${env.ahau.graphql.port}/graphql`,
   // LocalStorage token
   tokenName: AUTH_TOKEN,
   // Enable Automatic Query persisting with Apollo Engine
@@ -52,7 +42,13 @@ const defaultOptions = {
   // Override default apollo link
   // note: don't override httpLink here, specify httpLink options in the
   // httpLinkOptions property of defaultOptions.
-  link: httpLink
+  link: createUploadLink({
+    uri: httpEndpoint
+    // opts: {
+    //   mode: 'no-cors',
+    // },
+    // credentials: DEV ? "same-origin" : "include"
+  })
 
   // Override default cache
   // cache: myCache

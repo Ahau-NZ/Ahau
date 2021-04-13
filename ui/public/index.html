@@ -21,6 +21,10 @@
     <link rel="icon" href="<%= BASE_URL %>favicon.ico">
     <title>Āhau</title>
     <base href="./" />
+    <!-- NOTE
+      this seems to need to be ./ in production build
+      if you change it to / in dev, then refreshing of pages works nicely
+    -->
   </head>
   <body>
     <noscript>
