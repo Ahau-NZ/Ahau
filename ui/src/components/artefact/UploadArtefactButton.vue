@@ -30,7 +30,8 @@ export default {
   mixins: [uploadFile],
   data () {
     return {
-      processing: 0 // TODO do something with this - spinner?
+      processing: 0
+      // TODO cherese 2021-04-14 should disable saving while processing!
     }
   },
   computed: {

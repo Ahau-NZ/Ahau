@@ -3,9 +3,9 @@ const { ahau: env } = require('ahau-env')
 const axios = require('axios')
 const { v4: uuid } = require('uuid')
 
-const url = `http://localhost:${(env.hyperBlobs && env.hyperBlobs.port) || 26836}/blob` // TODO add hyperBlobs.port to ahau-env
+const url = `http://localhost:${(env.hyperBlobs && env.hyperBlobs.port) || 26836}/blob`
 // readKey
-// blobId // should make one with uuid
+// blobId
 
 const { mapMutations: mapAlertMutations } = createNamespacedHelpers('alerts')
 const hexTo64 = str => Buffer.from(str, 'hex').toString('base64')
