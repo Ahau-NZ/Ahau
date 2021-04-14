@@ -1,0 +1,16 @@
+{
+    "preferredName": "Preferred Name",
+    "aka": "Also Known As",
+    "age": "Age",
+    "dob": "D.O.B.",
+    "dod": "D.O.D.",
+    "profession": "Profession",
+    "address": "Address",
+    "city": "City",
+    "postCode": "Post Code",
+    "country": "Country",
+    "pob": "Place of Birth",
+    "pod": "Place of Death",
+    "email": "Email",
+    "phone": "Phone"
+  }
