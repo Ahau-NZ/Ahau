@@ -110,7 +110,8 @@ export default {
             fill: 'none',
             stroke: settings.color.getColor(i),
             opacity: settings.opacity,
-            strokeWidth: settings.thickness
+            strokeWidth: settings.thickness,
+            strokeLinejoin: 'round'
           }
 
           const yOffset = this.root.y + (i * settings.partner.spacing.y) + this.radius
@@ -161,7 +162,8 @@ export default {
         fill: 'none',
         stroke: settings.color.default,
         opacity: settings.opacity,
-        strokeWidth: settings.thickness
+        strokeWidth: settings.thickness,
+        strokeLinejoin: 'round'
       }
 
       const yOffset = this.root.y + (this.partners.length * settings.partner.spacing.y)

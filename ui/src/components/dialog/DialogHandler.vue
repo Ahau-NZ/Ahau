@@ -124,9 +124,7 @@ import ReviewRegistrationDialog from '@/components/dialog/registration/ReviewReg
 
 import { PERMITTED_RELATIONSHIP_ATTRS, getDisplayName } from '@/lib/person-helpers.js'
 import { createGroup, saveCommunity, savePublicCommunity, saveGroupProfileLink } from '@/lib/community-helpers'
-import { saveWhakapapaView } from '@/lib/whakapapa-helpers.js'
 import { findByName } from '@/lib/search-helpers.js'
-import tree from '@/lib/tree-helpers'
 
 import findSuccessor from '@/lib/find-successor'
 
@@ -357,7 +355,12 @@ export default {
       }
     },
     async addPerson (input) {
-      var { id } = input
+      // get children, parents, partners quick add links
+      var { id, children, parents, partners } = input
+      // remove them from input
+      delete input.children
+      delete input.parents
+      delete input.partners
 
       id = await this.createNewPerson(input)
       const ignored = await this.removeIgnoredProfile(id)
@@ -384,6 +387,9 @@ export default {
             })
           }
 
+          // Add parents if parent quick links
+          if (parents) { this.quickAddLinks(parents, { child: id }) }
+
           // load the childs profile
           parentProfile = await this.loadDescendants(parentProfile.id)
 
@@ -403,6 +409,19 @@ export default {
               relationshipAttrs
             })
           }
+
+          // Add parents if partner quick add links
+          if (partners) {
+            await Promise.all(partners.map(async partner => {
+              await this.createPartnerLink({
+                child: id,
+                parent: partner.id
+              })
+            }))
+          }
+
+          // Add children if children quick add links
+          if (children) { this.quickAddLinks(children, { parent: id }) }
 
           if (child === this.view.focus) {
             this.$emit('updateFocus', parent)
@@ -432,6 +451,9 @@ export default {
             })
           }
 
+          // Add children if children quick add links
+          if (children) { this.quickAddLinks(children, { parent: id }) }
+
           var partnerProfile = await this.getRelatives(child)
 
           this.addPartnerToNestedWhakapapa({ node: this.selectedProfile, partner: partnerProfile })
@@ -439,6 +461,24 @@ export default {
         default:
           console.error('wrong type for add person')
       }
+    },
+
+    // Function for adding multiple links to existing profiles we adding a person
+    async quickAddLinks (array, { parent, child }) {
+      await Promise.all(array.map(async person => {
+        if (!parent) parent = person.id
+        else child = person.id
+
+        const relationshipAttrs = pick(person, [
+          'relationshipType',
+          'legallyAdopted'
+        ])
+        await this.createChildLink({
+          child,
+          parent,
+          relationshipAttrs
+        })
+      }))
     },
 
     async createNewPerson (input) {

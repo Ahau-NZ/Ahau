@@ -95,13 +95,8 @@ import { DECEASED_COLOUR, ALIVE_COLOUR } from '@/lib/constants.js'
 import { getDisplayName } from '@/lib/person-helpers.js'
 // import flower.svg from '@/src/assets'
 
-import NodeMenuButton from './NodeMenuButton.vue'
-
 export default {
   name: 'Node',
-  components: {
-    NodeMenuButton
-  },
   props: {
     node: { type: Object, required: true },
     radius: { type: Number, required: true },

@@ -8,7 +8,7 @@
     <template v-if="!hideDetails" v-slot:content>
       <v-col class="py-0 px-0">
 
-        <ProfileForm :profile.sync="formData" :readonly="hasSelection" :editRelationship="hasSelection" :withRelationships="allowRelationships" :mobile="mobile">
+        <ProfileForm :profile.sync="formData" :readonly="hasSelection" :editRelationship="hasSelection" :withRelationships="allowRelationships" :mobile="mobile" isNewNodeDialog :dialogType="type">
 
           <!-- Slot = Search -->
           <template v-slot:search>
@@ -55,6 +55,45 @@
               </template>
             </v-combobox>
           </template>
+
+          <template v-slot:addParents>
+            <!-- <v-row>
+              <span v-if="hasProfiles('parents')">Add Parent</span>
+            </v-row> -->
+            <v-col cols="12" :class="mobile ? 'px-0':'py-0'" v-if="hasProfiles('parents')">
+              <ProfileList
+                label="Add other parent"
+                :addedProfiles.sync="quickAdd['newParents']"
+                :items="generateParents"
+                :mobile="mobile"
+                @profile-click="addProfile($event, 'newParents')"
+                @related-by="updateRelationships($event, 'newParents')"
+              />
+            </v-col>
+          </template>
+          <template v-slot:addChildren>
+            <v-col cols="12" v-if="hasProfiles('children')">
+              <ProfileList
+                label="Add children"
+                :addedProfiles.sync="quickAdd['newChildren']"
+                :items="generateChildren"
+                :mobile="mobile"
+                @profile-click="addProfile($event, 'newChildren')"
+                @related-by="updateRelationships($event, 'newChildren')"
+              />
+            </v-col>
+          </template>
+          <template v-slot:addPartners>
+            <v-col cols="12" v-if="hasProfiles('partners')">
+              <ProfileList
+                label="Add partners"
+                :addedProfiles.sync="quickAdd['newPartners']"
+                :items="generatePartners"
+                :mobile="mobile"
+                @profile-click="addProfile($event, 'newPartners')"
+              />
+            </v-col>
+          </template>
         </ProfileForm>
 
       </v-col>
@@ -69,6 +108,7 @@
 import Dialog from '@/components/dialog/Dialog.vue'
 
 import ProfileForm from '@/components/profile/ProfileForm.vue'
+import ProfileList from '@/components/profile/ProfileList.vue'
 
 import Avatar from '@/components/Avatar.vue'
 import isEmpty from 'lodash.isempty'
@@ -129,7 +169,8 @@ export default {
     Avatar,
     Dialog,
     ProfileForm,
-    AccessButton
+    AccessButton,
+    ProfileList
   },
   mixins: [
     mapProfileMixins({
@@ -156,11 +197,25 @@ export default {
       formData: setDefaultData(this.allowRelationships),
       hasSelection: false,
       closeSuggestions: [],
-      profile: {}
+      profile: {},
+      quickAdd: {
+        newParents: [],
+        newChildren: [],
+        newPartners: [],
+        parents: [],
+        children: [],
+        partners: []
+      },
+      existingProfile: null
     }
   },
   async mounted () {
     this.closeSuggestions = await this.getCloseSuggestions()
+
+    this.quickAdd['parents'] = await this.newChildParents(this.selectedProfile)
+    if (this.type === 'partner') this.quickAdd['children'] = await this.newPartnerChildren(this.selectedProfile)
+    else if (this.type === 'parent') this.quickAdd['children'] = await this.newParentChildren(this.selectedProfile)
+    this.quickAdd['partners'] = this.selectedProfile.parents
   },
   computed: {
     ...mapGetters(['currentAccess']),
@@ -179,7 +234,6 @@ export default {
           ...this.suggestions
         ]
       }
-
       if (this.closeSuggestions && this.closeSuggestions.length > 0 && this.suggestions.length < 1) {
         closeSuggestions = [
           this.header,
@@ -192,6 +246,15 @@ export default {
         ...closeSuggestions,
         ...otherSuggestions
       ].filter(Boolean)
+    },
+    generateParents () {
+      return this.getSuggestionsByField('parents')
+    },
+    generateChildren () {
+      return this.getSuggestionsByField('children')
+    },
+    generatePartners () {
+      return this.getSuggestionsByField('partners')
     },
     mobile () {
       return this.$vuetify.breakpoint.xs
@@ -243,6 +306,23 @@ export default {
     }
   },
   methods: {
+    updateRelationships (profile, selectedArray) {
+      var arr = this.quickAdd[selectedArray]
+      var foundIndex = arr.findIndex(x => x.id === profile.id)
+      this.quickAdd[selectedArray][foundIndex] = profile
+    },
+    addProfile (profile, selectedArray) {
+      if (this.quickAdd[selectedArray].some(d => d.id === profile.id)) {
+        this.quickAdd[selectedArray] = this.quickAdd[selectedArray].filter(d => d.id !== profile.id)
+      } else this.quickAdd[selectedArray].push(profile)
+    },
+    hasProfiles (field) {
+      return this.quickAdd[field] && this.quickAdd[field].length > 0
+    },
+    getSuggestionsByField (field) {
+      if (!this.hasProfiles(field)) return []
+      return this.quickAdd[field].filter(Boolean)
+    },
     clearSuggestions () {
       this.$emit('getSuggestions', null)
     },
@@ -292,10 +372,48 @@ export default {
       return children
     },
 
+    async newChildParents (profile) {
+      var currentPartners = []
+
+      if (this.type === 'child' && profile.partners) {
+        profile.partners.forEach(d => {
+          currentPartners.push(d)
+        })
+      }
+      if (this.type === 'sibling' && profile.parents) {
+        profile.parents.forEach(d => {
+          currentPartners.push(d)
+        })
+      }
+
+      return currentPartners
+    },
+
+    async newPartnerChildren (profile) {
+      var currentChildren = []
+
+      if (profile.children) {
+        profile.children.forEach(d => {
+          currentChildren.push(d)
+        })
+      }
+      return currentChildren
+    },
+
+    async newParentChildren (profile) {
+      var currentChildren = []
+
+      if (profile.siblings) {
+        profile.siblings.forEach(d => {
+          currentChildren.push(d)
+        })
+      }
+      return currentChildren
+    },
+
     async findParents () {
       var currentParents = []
       var parents = []
-
       if (this.selectedProfile.parents) {
         this.selectedProfile.parents.forEach(d => {
           currentParents[d.id] = d
@@ -378,8 +496,41 @@ export default {
         : null
 
       var submission = {
-        ...pick(this.submission, [...PERMITTED_PERSON_ATTRS, ...PERMITTED_RELATIONSHIP_ATTRS]),
+        ...pick(this.submission, [ ...PERMITTED_PERSON_ATTRS, ...PERMITTED_RELATIONSHIP_ATTRS ]),
         recps
+      }
+
+      if (this.hasProfiles('newChildren')) {
+        if (this.existingProfile && this.existingProfile.children) {
+          let _children = this.quickAdd['newChildren'].filter(child => {
+            return this.existingProfile.children.every(d => child.id !== d.id)
+          })
+          if (_children.length) submission.children = _children
+        } else {
+          submission.children = this.quickAdd['newChildren']
+        }
+      }
+
+      if (this.hasProfiles('newParents')) {
+        if (this.existingProfile && this.existingProfile.parents) {
+          let _parents = this.quickAdd['newParents'].filter(child => {
+            return this.existingProfile.children.every(d => child.id !== d.id)
+          })
+          if (_parents.length) submission.children = _parents
+        } else {
+          submission.parents = this.quickAdd['newParents']
+        }
+      }
+
+      if (this.hasProfiles('newPartners')) {
+        if (this.existingProfile && this.existingProfile.partners) {
+          let _partners = this.quickAdd['newPartners'].filter(child => {
+            return this.existingProfile.children.every(d => child.id !== d.id)
+          })
+          if (_partners.length) submission.children = _partners
+        } else {
+          submission.partners = this.quickAdd['newPartners']
+        }
       }
 
       this.$emit('create', submission)
@@ -404,7 +555,6 @@ export default {
       }
       this.$emit('getSuggestions', null)
     }
-
   },
   watch: {
     profile: {
@@ -437,9 +587,16 @@ export default {
         this.$emit('getSuggestions', null)
       }
     },
-    hasSelection (newValue) {
+    async hasSelection (newValue) {
       if (newValue) {
         this.$emit('getSuggestions', null)
+
+        this.existingProfile = await this.getProfile(this.profile.id)
+
+        // if hasSelection and quickAdd Section, show exsisting links
+        if (this.generateChildren && this.existingProfile.children) this.quickAdd['newChildren'] = [...this.existingProfile.children]
+        if (this.generatePartners && this.existingProfile.partners) this.quickAdd['newPartners'] = [...this.existingProfile.partners]
+        if (this.generateParents && this.existingProfile.parents) this.quickAdd['newParents'] = [...this.existingProfile.parents]
 
         // hack: when there is no preferred name and a selected profile, the clearable button doesnt how up
         // doing this forces it to show
