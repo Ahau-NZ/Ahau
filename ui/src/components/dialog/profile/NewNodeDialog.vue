@@ -308,8 +308,8 @@ export default {
   methods: {
     updateRelationships (profile, selectedArray) {
       var arr = this.quickAdd[selectedArray]
-      var foundIndex = arr.findIndex(x => x.id == profile.id);
-      this.quickAdd[selectedArray][foundIndex] = profile;
+      var foundIndex = arr.findIndex(x => x.id === profile.id)
+      this.quickAdd[selectedArray][foundIndex] = profile
     },
     addProfile (profile, selectedArray) {
       if (this.quickAdd[selectedArray].some(d => d.id === profile.id)) {

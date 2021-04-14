@@ -1,7 +1,7 @@
 <template>
   <v-row class="pl-4">
     <v-col cols="8" :class="mobile ? 'py-2':'py-1'">
-      <v-row :class="{'center-items':mobile}"> 
+      <v-row :class="{'center-items':mobile}">
         <v-col :cols="mobile ? '3':'2'" class="py-0">
           <Avatar
             size="50px"
@@ -26,7 +26,7 @@
           <span class="list-title"> {{ age(item.aliveInterval) || '...' }} </span>
           <p v-if="!mobile" class="list-subtitle">Year of Birth</p>
         </v-col>
-      </v-row>     
+      </v-row>
     </v-col>
     <v-col cols="3" class="py-0 px-0">
       <v-select
@@ -62,7 +62,7 @@ export default {
   data () {
     return {
       relationshipTypes: RELATIONSHIPS,
-      relatedBy: this.item.relationshipType,
+      relatedBy: this.item.relationshipType
     }
   },
   watch: {

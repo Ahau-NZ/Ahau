@@ -370,7 +370,6 @@ export default {
         'legallyAdopted'
       ])
 
-
       switch (this.dialogType) {
         case 'child':
         case 'sibling':
@@ -389,7 +388,7 @@ export default {
           }
 
           // Add parents if parent quick links
-          if (parents) {this.quickAddLinks(parents ,{child:id})}
+          if (parents) { this.quickAddLinks(parents, { child: id }) }
 
           // load the childs profile
           parentProfile = await this.loadDescendants(parentProfile.id)
@@ -422,7 +421,7 @@ export default {
           }
 
           // Add children if children quick add links
-          if (children) { this.quickAddLinks (children, { parent: id }) }
+          if (children) { this.quickAddLinks(children, { parent: id }) }
 
           if (child === this.view.focus) {
             this.$emit('updateFocus', parent)
@@ -453,7 +452,7 @@ export default {
           }
 
           // Add children if children quick add links
-          if (children) { this.quickAddLinks (children, { parent: id }) }
+          if (children) { this.quickAddLinks(children, { parent: id }) }
 
           var partnerProfile = await this.getRelatives(child)
 
@@ -469,11 +468,11 @@ export default {
       await Promise.all(array.map(async person => {
         if (!parent) parent = person.id
         else child = person.id
-        
+
         const relationshipAttrs = pick(person, [
           'relationshipType',
           'legallyAdopted'
-        ])        
+        ])
         await this.createChildLink({
           child,
           parent,
@@ -481,7 +480,6 @@ export default {
         })
       }))
     },
-
 
     async createNewPerson (input) {
       // if there is an id, we dont need to create, just return the id
