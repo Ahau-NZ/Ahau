@@ -57,31 +57,42 @@
           </template>
 
           <template v-slot:addParents>
-            <span v-if="hasProfiles('parents')">Add Parent</span>
-            <ProfileList
-              :addedProfiles.sync="quickAdd['newParents']"
-              :items="generateParents"
-              :mobile="mobile"
-              @profile-click="addProfile($event, 'newParents')"
-            />
+            <!-- <v-row>
+              <span v-if="hasProfiles('parents')">Add Parent</span>
+            </v-row> -->
+            <v-col cols="12" :class="mobile ? 'px-0':'py-0'" v-if="hasProfiles('parents')">
+              <ProfileList
+                label="Add other parent"
+                :addedProfiles.sync="quickAdd['newParents']"
+                :items="generateParents"
+                :mobile="mobile"
+                @profile-click="addProfile($event, 'newParents')"
+                @related-by="updateRelationships($event, 'newParents')"
+              />
+            </v-col>
           </template>
           <template v-slot:addChildren>
-            <span v-if="hasProfiles('children')">Add Children</span>
-            <ProfileList
-              :addedProfiles.sync="quickAdd['newChildren']"
-              :items="generateChildren"
-              :mobile="mobile"
-              @profile-click="addProfile($event, 'newChildren')"
-            />
+            <v-col cols="12" v-if="hasProfiles('children')">
+              <ProfileList
+                label="Add children"
+                :addedProfiles.sync="quickAdd['newChildren']"
+                :items="generateChildren"
+                :mobile="mobile"
+                @profile-click="addProfile($event, 'newChildren')"
+                @related-by="updateRelationships($event, 'newChildren')"
+              />
+            </v-col>
           </template>
           <template v-slot:addPartners>
-            <span v-if="hasProfiles('partners')">Add Partners</span>
-            <ProfileList
-              :addedProfiles.sync="quickAdd['newPartners']"
-              :items="generatePartners"
-              :mobile="mobile"
-              @profile-click="addProfile($event, 'newPartners')"
-            />
+            <v-col cols="12" v-if="hasProfiles('partners')">
+              <ProfileList
+                label="Add partners"
+                :addedProfiles.sync="quickAdd['newPartners']"
+                :items="generatePartners"
+                :mobile="mobile"
+                @profile-click="addProfile($event, 'newPartners')"
+              />
+            </v-col>
           </template>
         </ProfileForm>
 
@@ -295,6 +306,11 @@ export default {
     }
   },
   methods: {
+    updateRelationships (profile, selectedArray) {
+      var arr = this.quickAdd[selectedArray]
+      var foundIndex = arr.findIndex(x => x.id == profile.id);
+      this.quickAdd[selectedArray][foundIndex] = profile;
+    },
     addProfile (profile, selectedArray) {
       if (this.quickAdd[selectedArray].some(d => d.id === profile.id)) {
         this.quickAdd[selectedArray] = this.quickAdd[selectedArray].filter(d => d.id !== profile.id)

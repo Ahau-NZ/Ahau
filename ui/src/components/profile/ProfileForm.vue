@@ -68,9 +68,6 @@
               hide-details
             />
           </v-col>
-        </v-row>
-
-        <v-row>
           <!-- No longer living -->
           <v-col v-if="$route.name !== 'login' && !readonly" :cols="sideViewCols" class="pt-0">
             <v-checkbox
@@ -86,7 +83,7 @@
 
     <v-row :class="smScreen ? 'sideView-gender-button-row' : 'gender-button-row'">
       <!-- GENDER EDIT -->
-      <v-col v-if="!readonly" class="pa-1">
+      <v-col v-if="!readonly" class="pa-1 pt-6">
         <p class="text-field">{{ t('identity') }}</p>
         <v-row>
           <!-- TANE -->

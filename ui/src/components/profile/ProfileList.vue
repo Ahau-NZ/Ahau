@@ -1,15 +1,17 @@
 <template>
-  <div>
-    <div v-for="profile in items" v-bind:key="profile.id">
+  <v-col :class="mobile ? 'px-0':''">
+    <v-row class="pl-4 pb-4">{{label}}</v-row>
+    <v-row v-for="profile in items" v-bind:key="profile.id">
       <ProfileChip
+        :label="label"
         :item="profile"
-        @removeItem="$emit('removeItem', profileId)"
         :mobile="mobile"
         :addableProfile="addedProfile(profile)"
-        @profile-click="$emit('profile-click', profile)">
-      </ProfileChip>
-    </div>
-  </div>
+        @profile-click="$emit('profile-click', profile)"
+        @related-by="$emit('related-by', $event)"
+      />
+    </v-row>
+  </v-col>
 </template>
 
 <script>
@@ -21,6 +23,7 @@ export default {
     ProfileChip
   },
   props: {
+    label: String,
     items: { type: Array, default: null },
     addedProfiles: { type: Array, default: null },
     mobile: { type: Boolean, default: false }
