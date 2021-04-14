@@ -1,3 +1,4 @@
 module.exports = {
-  addPersonForm: require('./add-person-form.json')
+  addPersonForm: require('./add-person-form.json'),
+  viewTribes: require('./view-tribes.json')
 }
