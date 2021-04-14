@@ -29,12 +29,12 @@
           <v-list-item class="click" @mousedown="addSelectedItem(item)">
             <Avatar class="mr-3" size="40px" :image="item.avatarImage" :alt="getDisplayName(item)" :gender="item.gender" :aliveInterval="item.aliveInterval" />
             <v-list-item-content>
-              <v-list-item-title> {{ item.preferredName || 'No preferred name' }} </v-list-item-title>
-              <v-list-item-subtitle>Preferred name</v-list-item-subtitle>
+              <v-list-item-title> {{ item.legalName || item.preferredName || 'Unknown' }} </v-list-item-title>
+              <v-list-item-subtitle>Name</v-list-item-subtitle>
             </v-list-item-content>
             <v-list-item-content>
-              <v-list-item-title> {{ item.legalName || 'No legal name' }} </v-list-item-title>
-              <v-list-item-subtitle>Legal name</v-list-item-subtitle>
+              <v-list-item-title> {{ item.placeOfBirth || 'No place of birth' }} </v-list-item-title>
+              <v-list-item-subtitle>Place of Birth</v-list-item-subtitle>
             </v-list-item-content>
             <v-list-item-action>
               <v-list-item-title> {{ age(item.aliveInterval) || 'No age' }} </v-list-item-title>

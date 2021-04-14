@@ -1,4 +1,6 @@
 import get from 'lodash.get'
+import { linkColours } from '@/lib/colours.js'
+
 /*
 
   use with <path></path> d attribute
@@ -76,7 +78,8 @@ export default {
     default: 'grey',
     getRandomColor: randomColor,
     getColor (i) {
-      return '#' + ((i + 12) * 89).toString(16) // NOTE: change link colors here
+      if (i < 7) return linkColours[i]
+      return '#' + ((i + 10) * 89).toString(16) // NOTE: change link colors here
     }
   },
   partner: {
@@ -85,8 +88,8 @@ export default {
       y: 3 // set to same as thickness
     }
   },
-  opacity: 0.8,
-  thickness: 3,
+  opacity: 1,
+  thickness: 1.5,
   branch: 120,
   radius: 50,
   separation: {

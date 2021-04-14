@@ -212,8 +212,6 @@ import NodeMenu from '@/components/menu/NodeMenu.vue'
 
 import { mapGetters, mapActions, mapMutations } from 'vuex'
 
-import pileSort from 'pile-sort'
-
 export default {
   name: 'WhakapapaShow',
   components: {

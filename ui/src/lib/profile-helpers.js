@@ -1,5 +1,4 @@
 import gql from 'graphql-tag'
-import tree from './tree-helpers.js'
 
 export const SharedProfileFieldsFragment = gql`
   fragment SharedProfileFields on Profile {

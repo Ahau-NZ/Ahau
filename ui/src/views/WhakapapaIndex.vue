@@ -61,7 +61,6 @@ import BigAddButton from '@/components/button/BigAddButton.vue'
 
 import { saveLink } from '@/lib/link-helpers.js'
 import { savePerson } from '@/lib/person-helpers.js'
-import tree from '@/lib/tree-helpers'
 import { saveWhakapapaView, getWhakapapaViews } from '@/lib/whakapapa-helpers.js'
 import { findByName } from '@/lib/search-helpers.js'
 import mapProfileMixins from '@/mixins/profile-mixins.js'

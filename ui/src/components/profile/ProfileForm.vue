@@ -68,9 +68,6 @@
               hide-details
             />
           </v-col>
-        </v-row>
-
-        <v-row>
           <!-- No longer living -->
           <v-col v-if="$route.name !== 'login' && !readonly" :cols="sideViewCols" class="pt-0">
             <v-checkbox
@@ -86,7 +83,7 @@
 
     <v-row :class="smScreen ? 'sideView-gender-button-row' : 'gender-button-row'">
       <!-- GENDER EDIT -->
-      <v-col v-if="!readonly" class="pa-1">
+      <v-col v-if="!readonly" class="pa-1 pt-6">
         <p class="text-field">{{ t('identity') }}</p>
         <v-row>
           <!-- TANE -->
@@ -122,6 +119,15 @@
           </div>
         </v-row>
       </v-col>
+    </v-row>
+
+    <v-row>
+      <slot name="addParents" v-if="typeIsChild">
+      </slot>
+      <slot name="addChildren" v-if="typeIsPartner || typeIsParent">
+      </slot>
+      <slot name="addPartners" v-if="typeIsParent">
+      </slot>
     </v-row>
 
     <!-- Start of advanced section -->
@@ -404,7 +410,8 @@ export default {
     mobile: { type: Boolean, default: false },
     isEditing: { type: Boolean, default: false },
     isUser: { type: Boolean, default: false },
-    isSideViewDialog: { type: Boolean, default: false }
+    isSideViewDialog: { type: Boolean, default: false },
+    dialogType: { type: String, default: '' }
   },
   data () {
     return {
@@ -482,6 +489,15 @@ export default {
     },
     justifyBtn () {
       return this.smScreen ? 'start' : 'end'
+    },
+    typeIsChild () {
+      return this.dialogType === 'child' || this.dialogType === 'sibling'
+    },
+    typeIsPartner () {
+      return this.dialogType === 'partner'
+    },
+    typeIsParent () {
+      return this.dialogType === 'parent'
     }
   },
   methods: {
