@@ -16,6 +16,9 @@
 </template>
 
 <script>
+function getVuetifyLocale (locale) {
+  return locale.split('_')[0]
+}
 
 export default {
   data () {
@@ -29,25 +32,13 @@ export default {
         return this.$i18n.locale
       },
       set (val) {
-        // TODO mix 2021-04-14 investigate to see if Vuetify needs something similar
-
-        // setting quasar's language as well to get e.g. localized calendars
-        // https://quasar.dev/options/quasar-language-packs#Change-Quasar-Language-Pack-at-Runtime
-        // switching en with en-us since quasar doesn't have plain en
-        // const qLang = val === 'en' ? 'en-us' : val
-        // import(
-        //   /* webpackInclude: /(en-us|es)\.js$/ */
-        //   `quasar/lang/${qLang}`
-        // )
-        //   .then((lang) => {
-        //     this.$q.lang.set(lang.default)
-        //   })
-        //   .catch((err) =>
-        //     console.error("Couldn't import quasar language:", err)
-        //   )
-
         this.$i18n.locale = val
         localStorage.setItem('locale', val)
+
+        this.$vuetify.lang.current = getVuetifyLocale(val)
+        // TODO mix 2021-04-14 vuetify i18n integrations
+        // may not be needed but if we need to customise component translations check this out:
+        // https://dev.vuetifyjs.com/en/features/internationalization/#vue-i18n
       }
     },
     locales () {
@@ -83,6 +74,7 @@ export default {
     // otherwise get a language that the browser says the user prefers
     // if we don't have a language like that, fall back to english
     this.locale = localStorage.getItem('locale') || browserLang || 'en'
+    this.$vuetify.lang.current = getVuetifyLocale(this.locale)
   },
   methods: {
     handleChange (locale) {
