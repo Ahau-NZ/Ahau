@@ -1,23 +1,32 @@
 import gql from 'graphql-tag'
-import pick from 'lodash.pick'
+const pick = require('lodash.pick')
 
 export const PERMITTED_FILE_INPUT = ['file', 'encrypt']
 
 export const UPLOAD_FILE = input => {
-  input = pick(input, PERMITTED_FILE_INPUT)
-
   return {
     mutation: gql`
-      mutation uploadFile($file: Upload!, $encrypt: Boolean) {
-        uploadFile(file: $file, encrypt: $encrypt) {
+      mutation uploadFile($file: Upload!, $size: Int!, $encrypt: Boolean) {
+        uploadFile(file: $file, size: $size, encrypt: $encrypt) {
+          store
           blobId
-          unbox
           mimeType
           uri
           size
+
+          ...on BlobScuttlebutt {
+            unbox
+          }
+          ...on BlobHyper {
+            driveAddress
+            readKey
+          }
         }
       }
     `,
-    variables: input
+    variables: {
+      ...pick(input, PERMITTED_FILE_INPUT),
+      size: input.file.size
+    }
   }
 }

@@ -7,7 +7,10 @@ export default function calculateAge (aliveInterval, now = new Date()) {
   var [year] = end.split('-')
   var addedOne = false
 
-  if ((start === '' && end !== '') || start === end) {
+  // if no start date we cant calculate the age
+  if (start === '') return null
+
+  if (start === end) {
     var newYear = parseInt(year) - 1
     aliveInterval = newYear + '/' + end
     addedOne = true

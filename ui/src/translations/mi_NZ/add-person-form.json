@@ -1,0 +1,50 @@
+{
+  "addPersonFormTitle": "Whakaniko",
+  "legalName": "Ingoa katoa",
+  "aka": "Kei te mohiotia ano ko",
+  "preferredName": "Ingoa tuatahi",
+  "dob": {
+    "title": "Whānanautanga mai",
+    "day": "Rā",
+    "month": "Marama",
+    "year": "Tau"
+  },
+  "dod": "Te ra o te mate",
+  "uploadPhoto": "Whakarewa Whakaahua",
+  "relatedBy": "Pehea te hono",
+  "birthPlace": "Waahi whānau",
+  "notLiving": "Kua Mate",
+  "birthOrder": "Raupapa whānautanga mai",
+  "genderIdentity": "Tuakiri ira tangata",
+  "gender": {
+    "title": "Ira",
+    "female": "Wāhine",
+    "male": "Tāne",
+    "other": "Atu",
+    "unknown": "Tautangata"
+  },
+  "moreInfo": "Tukuna etahi atu kōrero",
+  "addName": "Ingoa anō",
+  "description": "Kōrero whakaaturanga",
+  "skills": {
+    "title": "Ngā pūkenga me nga tohu",
+    "profession": "Tūranga Mahi",
+    "skillsQuals": "Pūkenga/Tohu",
+    "addSkill": "Tāpiri he pūkenga/he tohu",
+    "placeOfEducation": "Whare wānanga",
+    "addEducation": "Tāpiri te whare wānanga"
+  },
+  "personalInfo": {
+    "title": "Pārongo whaiaro",
+    "email": "Imera",
+    "phone": "Waea",
+    "address": "Wahi Noho",
+    "city": "Taone",
+    "postCode": "Waehere",
+    "country": "Motu"
+  },
+  "formHandlers": {
+    "cancel": "Whakakora",
+    "save": "Penapena"
+  }
+}

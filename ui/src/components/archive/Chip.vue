@@ -21,7 +21,7 @@
           <v-img
             :height="expanded ? '100' : '60'"
             :width="expanded ? '100' : '80'"
-            :src="getImage"
+            :src="image"
             :class="expanded ? 'ma-0' : ''"
           >
           </v-img>
@@ -43,9 +43,6 @@
 import { colours } from '@/lib/colours.js'
 import { mapMutations } from 'vuex'
 
-// default image for list items
-import niho from '@/assets/niho.svg'
-
 export default {
   name: 'Chip',
   props: {
@@ -60,8 +57,15 @@ export default {
   },
   computed: {
     colour () {
-      var i = Math.round(Math.random() * 10)
-      return colours[i]
+      var artefacts = this.chip.artefacts
+      if (artefacts) {
+        if (artefacts.length > 0) {
+          if (artefacts[0].artefact.type === 'photo') return colours[1]
+          if (artefacts[0].artefact.type === 'video') return colours[2]
+          if (artefacts[0].artefact.type === 'audio') return colours[3]
+          if (artefacts[0].artefact.type === 'document') return colours[6]
+        } else return colours[0]
+      } return colours[this.index]
     },
     mobile () {
       return this.$vuetify.breakpoint.xs
@@ -77,17 +81,6 @@ export default {
       }
 
       return false
-    },
-    getImage () {
-      if (this.image) return this.image
-      if (this.chip.image && this.chip.uri) return this.chip.uri
-      if (this.type === 'story' && this.chip.artefacts && this.chip.artefacts.length > 0) {
-        var artefact = this.chip.artefacts[0].artefact
-        if (artefact.type === 'photo') {
-          return artefact.blob.uri
-        }
-      }
-      return niho
     },
     width () {
       if (this.expanded) {

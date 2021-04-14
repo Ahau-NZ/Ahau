@@ -1,0 +1,50 @@
+{
+  "addPersonFormTitle": "Editar",
+  "legalName": "Nome completo",
+  "aka": "Também conhecido como",
+  "preferredName": "Primeiro nome / Conhecido como",
+  "dob": {
+    "title": "Data Nascimento",
+    "day": "Dia",
+    "month": "Mês",
+    "year": "Ano"
+  },
+  "dod": "Data de falecimento",
+  "uploadPhoto": "Carregar foto do perfil",
+  "relatedBy": "Relacionado por",
+  "birthPlace": "Cidade/país de nascimento",
+  "notLiving": "Não está mais vivendo",
+  "birthOrder": "Ordem de nascimento",
+  "genderIdentity": "Identifica como",
+  "gender": {
+    "title": "Gênero",
+    "female": "Feminino",
+    "male": "Masculino",
+    "other": "Outros",
+    "unknown": "Desconhecido"
+  },
+  "moreInfo": "Forneça mais informações",
+  "addName": "Adicione outro nome",
+  "description": "Descrição",
+  "skills": {
+    "title": "Habilidades e qualificações",
+    "profession": "Profissão",
+    "skillsQuals": "Habilidade/qualificação",
+    "addSkill": "Adicionar habilidade/qualificação",
+    "placeOfEducation": "Local da educação",
+    "addEducation": "Adicione um local da educação"
+  },
+  "personalInfo": {
+    "title": "Informação Pessoal",
+    "email": "E-mail",
+    "phone": "Phone",
+    "address": "Endereço",
+    "city": "Cidade",
+    "postCode": "CEP",
+    "country": "País/região"
+  },
+  "formHandlers": {
+    "cancel": "cancelar",
+    "save": "Guardar"
+  }
+}

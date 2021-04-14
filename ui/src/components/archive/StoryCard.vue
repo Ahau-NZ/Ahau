@@ -11,8 +11,8 @@
       :elevation="!mobile && !showArtefact && fullStory ? '24':''"
       @click="showStory()"
     >
-      <v-list-item class="px-0" style="min-height:0; height:10px">
-        <v-list-item-icon v-if="!fullStory" class="pt-1 mt-0" style="position:absolute; top:5px; right:1px; margin-right:0px">
+      <v-list-item  v-if="!fullStory" class="px-0" style="min-height:0; height:10px">
+        <v-list-item-icon class="pt-1 mt-0" style="position:absolute; top:5px; right:1px; margin-right:0px">
           <v-list-item-subtitle v-if="!mobile" class="no-flex">contributors</v-list-item-subtitle>
           <AvatarGroup :profiles="story.contributors.map(c => c.profile)" customClass="ma-0 pa-0" style="position:relative; bottom:15px; left:10px" :size="mobile ? '25px':'30px'" spacing="pr-1"/>
         </v-list-item-icon>
@@ -32,41 +32,14 @@
           <v-list-item-title v-else class="headline mb-1 wrap-text">{{ artefact.title }}</v-list-item-title>
         </v-list-item-content>
       </v-list-item>
-      <v-list-item v-if="story.artefacts && story.artefacts.length > 0" class="px-0" >
+      <v-list-item v-if="artefacts && artefacts.length > 0" class="px-0">
         <v-list-item-content>
-          <v-carousel
-            v-model="model"
-            hide-delimiters
-            :show-arrows="!mobile && fullStory && story.artefacts && story.artefacts.length > 1" :show-arrows-on-hover="!mobile" :height="showArtefact ? mobile ? '80vh' : 'auto' : mobile ? '300px' : '500px'" style="background-color:#1E1E1E">
-            <v-carousel-item v-for="({ artefact } , i) in story.artefacts" :key="`story-card-artefact-${i}`">
-              <Artefact :model="model" :index="i" @showArtefact="toggleShowArtefact($event)" :artefact="artefact" :controls="fullStory" />
-            </v-carousel-item>
-          </v-carousel>
-          <v-slide-group
-            v-if="!showArtefact && story.artefacts && story.artefacts.length > 1"
-            v-model="model"
-            class="pa-0 background"
-            dark
-            center-active
-            style="width:100vw;margin-top:-2px"
-          >
-            <v-slide-item
-              v-for="({ artefact }, i) in story.artefacts"
-              :key="`a-s-g-${i}`"
-              v-slot:default="{ active, toggle }"
-              transition="fade-transition"
-              style="width:100px;height:100px; background-color:rgba(30,30,30)"
-              class="pa-1"
-            >
-              <v-scale-transition>
-                <ArtefactCarouselItem :artefact="artefact"
-                  :selected="active"
-                  @click.capture="toggle"
-                />
-              </v-scale-transition>
-            </v-slide-item>
-          </v-slide-group>
+          <ArtefactCarousel
+            :artefacts="artefacts"
+            :fullStory="fullStory"
 
+            :selectedIndex.sync="selectedIndex"
+          />
         </v-list-item-content>
       </v-list-item>
       <v-list-item v-if="!showArtefact && story.description" :disabled="disableClick" :ripple="false" @click.stop="showText()">
@@ -153,19 +126,17 @@
           </v-col>
         </v-row>
         <v-row class="px-4">
-          <v-col class="pt-0 pr-1" v-if="story.collections && story.collections.length > 0" cols="12" sm="12" md="auto">
-            <v-list-item-subtitle class="pb-1" style="color:#a7a3a3">Collections</v-list-item-subtitle>
-            <ChipGroup :chips="story.collections.map(c => c.collection)" type="collection" @click="showRelatedCollection"/>
-          </v-col>
-        </v-row>
-        <v-row class="px-4">
-          <v-col class="pt-0 pr-1" v-if="story.relatedRecords && story.relatedRecords.length > 0" cols="12" sm="12" md="auto">
+          <v-col class="pt-0 pr-1" v-if="story.relatedRecords && story.relatedRecords.length > 0" cols="12" md="6">
             <v-list-item-subtitle class="pb-1" style="color:#a7a3a3">Related records</v-list-item-subtitle>
             <ChipGroup
               :chips="story.relatedRecords.map(r => r.story)"
               type="story"
               @click="showRelatedStory"
             />
+          </v-col>
+          <v-col class="pt-0 pr-1" v-if="story.collections && story.collections.length > 0" cols="12" md="6">
+            <v-list-item-subtitle class="pb-1" style="color:#a7a3a3">Collections</v-list-item-subtitle>
+            <ChipGroup :chips="story.collections.map(c => c.collection)" type="collection" @click="showRelatedCollection"/>
           </v-col>
         </v-row>
         <v-row class="px-4 mb-12">
@@ -280,7 +251,7 @@
       <NewArtefactDialog
         v-if="dialog === 'edit-artefact'"
         :show="dialog === 'edit-artefact'"
-        :index.sync="model"
+        :index.sync="selectedIndex"
         :artefacts="formData.artefacts"
         editing
         @close="finishEditing()"
@@ -291,7 +262,7 @@
       <DeleteArtefactDialog
         v-if="dialog === 'delete-artefact'"
         :show="dialog === 'delete-artefact'"
-        :index="model"
+        :index="selectedIndex"
         @close="dialog = 'edit-artefact'"
         @submit="removeArtefact($event)"
       />
@@ -300,13 +271,13 @@
 </template>
 
 <script>
+import { mapActions, mapGetters, mapMutations } from 'vuex'
+
 import AvatarGroup from '@/components/AvatarGroup.vue'
-// import Avatar from '@/components/Avatar.vue'
-import Artefact from '@/components/artefact/Artefact.vue'
 import ChipGroup from '@/components/archive/ChipGroup.vue'
 import EditStoryButton from '@/components/button/EditStoryButton.vue'
 import EditArtefactButton from '@/components/button/EditArtefactButton.vue'
-import ArtefactCarouselItem from '@/components/artefact/ArtefactCarouselItem.vue'
+import ArtefactCarousel from '@/components/artefact/ArtefactCarousel.vue'
 import NewRecordDialog from '@/components/dialog/archive/NewRecordDialog.vue'
 import DeleteRecordDialog from '@/components/dialog/archive/DeleteRecordDialog.vue'
 import NewArtefactDialog from '@/components/dialog/artefact/NewArtefactDialog.vue'
@@ -319,7 +290,6 @@ import { dateIntervalToString, formatSubmissionDate } from '@/lib/date-helpers.j
 import { getObjectChanges } from '@/lib/get-object-changes.js'
 import { convertBytes } from '@/lib/artefact-helpers.js'
 
-import { mapActions, mapGetters, mapMutations } from 'vuex'
 import mapProfileMixins from '@/mixins/profile-mixins.js'
 import { methods as mapStoryMethods } from '@/mixins/story-mixins.js'
 import { artefactMixin } from '@/mixins/artefact-mixins.js'
@@ -344,12 +314,10 @@ export default {
   ],
   components: {
     AvatarGroup,
-    // Avatar,
-    Artefact,
     ChipGroup,
     EditStoryButton,
     EditArtefactButton,
-    ArtefactCarouselItem,
+    ArtefactCarousel,
     NewRecordDialog,
     DeleteRecordDialog,
     NewArtefactDialog,
@@ -360,8 +328,7 @@ export default {
       show: false,
       truncateText: true,
       textHeight: 0,
-      artefact: {},
-      model: 0,
+      selectedIndex: 0,
       dialog: null,
       access: null
     }
@@ -380,6 +347,14 @@ export default {
   },
   computed: {
     ...mapGetters(['showArtefact', 'storeDialog', 'whoami']),
+    artefacts () {
+      return this.story.artefacts.map(link => link.artefact)
+    },
+    artefact () {
+      const artefact = this.artefacts[this.selectedIndex]
+      if (artefact) return artefact
+      return {}
+    },
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
@@ -430,20 +405,14 @@ export default {
   },
   watch: {
     story (newVal, oldVal) {
-      // show any changes to showArtefact if story.artefacts change
+      // show any changes to showArtefact if artefacts change
       var changes = { ...getObjectChanges(oldVal, newVal) }
       if (changes.artefacts) {
         if (this.showArtefact && changes.artefacts.remove) {
           this.setShowArtefact()
         } else if (this.showArtefact && changes.artefacts.add) {
-          this.artefact = changes.artefacts.add[this.model].artefact
+          this.artefact = changes.artefacts.add[this.selectedIndex].artefact
         }
-      }
-    },
-    model (newVal) {
-      // show artefact details when viewing in carousel
-      if (this.showArtefact) {
-        this.artefact = this.story.artefacts[newVal].artefact
       }
     }
   },
@@ -509,13 +478,6 @@ export default {
       if (this.showArtefact) return this.setShowArtefact()
     },
 
-    // toggle artefact view
-    toggleShowArtefact (artefact) {
-      if (this.fullStory) {
-        this.artefact = artefact
-        this.setShowArtefact()
-      }
-    },
     // toggle story view
     showStory () {
       if (!this.fullStory) {
@@ -524,9 +486,6 @@ export default {
     },
     showText () {
       this.truncateText = !this.truncateText
-    },
-    updateModel (event) {
-      this.model = event
     },
     close () {
       this.$emit('close')

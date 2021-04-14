@@ -36,8 +36,8 @@ const mutations = {
   updateShowStory (state) {
     state.showStory = !state.showStory
   },
-  updateShowArtefact (state) {
-    state.showArtefact = !state.showArtefact
+  updateShowArtefact (state, payload) {
+    state.showArtefact = (payload !== undefined) ? payload : !state.showArtefact
   },
   updateIsFromWhakapapaShow (state, update) {
     state.isFromWhakapapaShow = update
@@ -51,8 +51,8 @@ const actions = {
   toggleShowStory ({ commit }) {
     commit('updateShowStory')
   },
-  setShowArtefact ({ commit }) {
-    commit('updateShowArtefact')
+  setShowArtefact ({ commit }, state) {
+    commit('updateShowArtefact', state)
   }
 }
 

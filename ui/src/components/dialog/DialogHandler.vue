@@ -10,7 +10,7 @@
     <NewCommunityDialog
       v-if="isActive('new-community')"
       :show="isActive('new-community')"
-      :title="`Ko Wai Mātou ---- Create New Community`"
+      :title="t('createCommunityTitle')"
       @submit="setupNewCommunity($event)"
       @close="close"
     />
@@ -718,6 +718,9 @@ export default {
         return true // was found
       }
       return false // wasnt found
+    },
+    t (key, vars) {
+      return this.$t('addCommunityForm.' + key, vars)
     }
   }
 }

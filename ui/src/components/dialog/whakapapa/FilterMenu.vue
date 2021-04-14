@@ -13,6 +13,11 @@
     >
       <v-card light height="90%" class="text-center" flat>
         <v-container>
+          <v-row class="justify-end">
+          <v-btn icon class="mr-3">
+            <v-icon @click="reset" color="secondary">mdi-close</v-icon>
+          </v-btn>
+        </v-row>
           <v-row class="menu-title">
             <v-col cols="12">
               <h1>Apply Table Filters</h1>
@@ -37,10 +42,10 @@
           <v-row>
             <v-col cols="12">
               <v-btn @click="close" text large color="blue">
-                Apply and Close
+                Apply
               </v-btn>
               <v-btn @click="reset" text large color="red">
-                Clear
+                Cancel
               </v-btn>
             </v-col>
           </v-row>

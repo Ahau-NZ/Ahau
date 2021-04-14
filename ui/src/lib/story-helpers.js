@@ -1,9 +1,10 @@
 import gql from 'graphql-tag'
 import pick from 'lodash.pick'
+import clone from 'lodash.clonedeep'
+
 import { ARTEFACT_FRAGMENT } from './artefact-helpers'
 import { PERSON_FRAGMENT } from './person-helpers'
 import { PublicProfileFieldsFragment } from './profile-helpers.js'
-import clone from 'lodash.clonedeep'
 import { COLLECTION_FRAGMENT } from './collection-helpers'
 
 export function setDefaultStory (newStory) {

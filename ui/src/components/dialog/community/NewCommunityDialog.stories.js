@@ -24,7 +24,8 @@ export const EditCommunity = () => ({
         address: '123 Far far away',
         email: 'eriepawhanau@email.co.nz',
         phone: '021 123 4556',
-        location: 'Waikato, New Zealand',
+        city: 'Waikato',
+        country: 'New Zealand',
         joiningQuestions: [
           { type: 'input', label: 'What is your name?' },
           { type: 'input', label: 'Where are you from?' },

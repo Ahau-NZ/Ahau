@@ -146,11 +146,16 @@ export const getProfile = ({
   fetchPolicy: 'no-cache'
 })
 
-export const saveProfile = input => ({
-  mutation: gql`
-    mutation($input: ProfileInput!) {
-      saveProfile(input: $input)
-    }
-  `,
-  variables: { input }
-})
+export const saveProfile = input => {
+  if (input.avatarImage) delete input.avatarImage.uri
+  if (input.headerImage) delete input.headerImage.uri
+
+  return {
+    mutation: gql`
+      mutation($input: ProfileInput!) {
+        saveProfile(input: $input)
+      }
+    `,
+    variables: { input }
+  }
+}

@@ -1,1 +1,120 @@
-{"_Entity":["CurrentIdentity","PublicIdentity","Person","Story","PersonalIdentity","Peer","Video","Audio","Photo","Document"],"Profile":["Person","Community"],"Artefact":["Video","Audio","Photo","Document"],"GroupApplicationHistory":["GroupApplicationCommentHistory","GroupApplicationAnswerHistory","GroupApplicationDecisionHistory"]}
+{
+  "__schema": {
+    "types": [
+      {
+        "name": "Blob",
+        "kind": "INTERFACE",
+        "possibleTypes": [
+          {
+            "name": "BlobScuttlebutt",
+            "description": "Blobs of the ssb-blobs variety"
+          },
+          {
+            "name": "BlobHyper",
+            "description": "Blobs of the ssb-hyper-blobs variety"
+          }
+        ]
+      },
+      {
+        "name": "_Entity",
+        "kind": "UNION",
+        "possibleTypes": [
+          {
+            "name": "CurrentIdentity",
+            "description": "Secure Scuttlebutt current identity"
+          },
+          {
+            "name": "PublicIdentity",
+            "description": null
+          },
+          {
+            "name": "PersonalIdentity",
+            "description": null
+          },
+          {
+            "name": "Peer",
+            "description": "Secure Scuttlebutt replication peer"
+          },
+          {
+            "name": "Person",
+            "description": "Person fields used by ssb-profile plugin"
+          },
+          {
+            "name": "Video",
+            "description": "Video type uses the Artefact interface and adds additional fields"
+          },
+          {
+            "name": "Audio",
+            "description": "Audio type uses the Artefact interface and adds additional fields"
+          },
+          {
+            "name": "Photo",
+            "description": "Photo type uses the Artefact interface. Currently not adding additional fields"
+          },
+          {
+            "name": "Document",
+            "description": "Document type uses the Artefact interface. Currently not adding additional fields"
+          },
+          {
+            "name": "Story",
+            "description": null
+          }
+        ]
+      },
+      {
+        "name": "GroupApplicationHistory",
+        "kind": "INTERFACE",
+        "possibleTypes": [
+          {
+            "name": "GroupApplicationCommentHistory",
+            "description": null
+          },
+          {
+            "name": "GroupApplicationAnswerHistory",
+            "description": null
+          },
+          {
+            "name": "GroupApplicationDecisionHistory",
+            "description": null
+          }
+        ]
+      },
+      {
+        "name": "Profile",
+        "kind": "INTERFACE",
+        "possibleTypes": [
+          {
+            "name": "Person",
+            "description": "Person fields used by ssb-profile plugin"
+          },
+          {
+            "name": "Community",
+            "description": "Community profile (fields from ssb-profile plugin)"
+          }
+        ]
+      },
+      {
+        "name": "Artefact",
+        "kind": "INTERFACE",
+        "possibleTypes": [
+          {
+            "name": "Video",
+            "description": "Video type uses the Artefact interface and adds additional fields"
+          },
+          {
+            "name": "Audio",
+            "description": "Audio type uses the Artefact interface and adds additional fields"
+          },
+          {
+            "name": "Photo",
+            "description": "Photo type uses the Artefact interface. Currently not adding additional fields"
+          },
+          {
+            "name": "Document",
+            "description": "Document type uses the Artefact interface. Currently not adding additional fields"
+          }
+        ]
+      }
+    ]
+  }
+}

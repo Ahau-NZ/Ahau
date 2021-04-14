@@ -3,7 +3,7 @@
     <template v-slot:content>
       <v-row class="py-2 pl-10">
         <v-col cols="12">
-          <p class="sub-headline pa-0">Enter a Pātaka code to discover tribes</p>
+          <p class="sub-headline pa-0"> {{ $t('pataka.patakaCode') }} </p>
           <v-row>
             <v-col cols="10" md='9' class="py-0">
               <v-text-field
@@ -27,7 +27,7 @@
                 :x-small="mobile"
               >
                 <v-icon v-if="mobile">mdi-arrow-right</v-icon>
-                <span v-else>connect</span>
+                <span v-else>{{ $t('pataka.connect') }}</span>
               </v-btn>
             </v-col>
           </v-row>
@@ -80,11 +80,11 @@ export default {
             inviteCode: this.patakaCode.trim()
           }
         })
-        this.successMsg = ['Successfully connected to Pātaka']
-        this.$emit('submit', 'Successfully connected to Pātaka')
+        this.successMsg = [this.$t('pataka.connectSuccess')]
+        this.$emit('submit', this.$t('pataka.connectSuccess'))
         this.close()
       } catch (err) {
-        this.errorMsg = ['Invalid code, please check the code and try again']
+        this.errorMsg = [this.$t('pataka.invalidCode')]
         console.error('Invite error: ', err)
         return
       }
