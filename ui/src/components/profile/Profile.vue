@@ -2,35 +2,35 @@
   <v-row :class="mobile ? 'mobile-profile':''">
     <v-col cols="12" md="9" :class="mobile ? 'pt-7 px-5' : ' pt-0 px-5' ">
       <v-col cols="12" :class="mobile ? 'mobile-profile-label headliner':'profile-info-label headliner'">
-        profile information
+      {{ $t('viewPerson.viewPersonTitle') }}
       </v-col>
       <ProfileInfoCard :myProfile="myProfile" :profile="profile" @setupProfile="setupProfile($event)"/>
       <template v-if="myProfile">
         <v-col cols="12" :class="mobile ? 'mobile-profile-label headliner':'profile-info-label headliner'">
-          skills and education
+          {{ $t('viewPerson.skillsEducationTitle') }}
         </v-col>
         <ProfileCard>
           <template v-slot:content>
             <v-row cols="12" class="pt-0" >
-              <ProfileInfoItem :class="mobile ? 'bb':'br bb'" smCols="12" mdCols="12"  title="Profession" :value="profile.profession"/>
-              <ProfileInfoItem :class="mobile ? 'bb':'br'" smCols="12" mdCols="6" title="Schools" :value="profile.school.join('\n')"/>
-              <ProfileInfoItem :class="mobile ? '':'br'" smCols="12" mdCols="6" title="Skills" :value="profile.education.join('\n')"/>
+              <ProfileInfoItem :class="mobile ? 'bb':'br bb'" smCols="12" mdCols="12"  :title="$t('viewPerson.profession')" :value="profile.profession"/>
+              <ProfileInfoItem :class="mobile ? 'bb':'br'" smCols="12" mdCols="6" :title="$t('viewPerson.schools')" :value="profile.school.join('\n')"/>
+              <ProfileInfoItem :class="mobile ? '':'br'" smCols="12" mdCols="6" :title="$t('viewPerson.skills')" :value="profile.education.join('\n')"/>
             </v-row>
           </template>
         </ProfileCard>
       </template>
       <v-col cols="12" :class="mobile ? 'mobile-profile-label headliner':'profile-info-label headliner'">
-        contact information
+        {{ $t('viewPerson.contactInfo.contactInfoTitle') }}
       </v-col>
       <ProfileCard>
         <template v-slot:content>
           <v-row cols="12" class="pt-0" >
-            <ProfileInfoItem class="br bb" smCols="6" mdCols="4" title="Phone" :value="profile.phone"/>
-            <ProfileInfoItem :class="mobile ? 'bb':'br bb'" smCols="6" mdCols="4" title="Email" :value="profile.email"/>
-            <ProfileInfoItem class="bb" smCols="12" mdCols="4" title="Address" :value="profile.address"/>
-            <ProfileInfoItem :class="mobile ? 'bb':'br'" smCols="12" mdCols="4" title="City" :value="profile.city"/>
-            <ProfileInfoItem class="br" smCols="6" mdCols="4" title="Country" :value="profile.country"/>
-            <ProfileInfoItem smCols="6" mdCols="4" title="Postcode" :value="profile.postCode"/>
+            <ProfileInfoItem class="br bb" smCols="6" mdCols="4" :title="$t('viewPerson.contactInfo.phone')" :value="profile.phone"/>
+            <ProfileInfoItem :class="mobile ? 'bb':'br bb'" smCols="6" mdCols="4" :title="$t('viewPerson.contactInfo.email')" :value="profile.email"/>
+            <ProfileInfoItem class="bb" smCols="12" mdCols="4" :title="$t('viewPerson.contactInfo.address')" :value="profile.address"/>
+            <ProfileInfoItem :class="mobile ? 'bb':'br'" smCols="12" mdCols="4" :title="$t('viewPerson.contactInfo.city')" :value="profile.city"/>
+            <ProfileInfoItem class="br" smCols="6" mdCols="4" :title="$t('viewPerson.contactInfo.country')" :value="profile.country"/>
+            <ProfileInfoItem smCols="6" mdCols="4" :title="$t('viewPerson.contactInfo.postcode')" :value="profile.postCode"/>
           </v-row>
         </template>
       </ProfileCard>
@@ -39,7 +39,7 @@
     <v-col cols="12" sx="12" md="3" :class="{ 'pt-0 px-5':mobile, 'pt-10 pr-8':myProfile && !mobile, 'pt-12 pr-8':!myProfile }">
       <template v-if="myProfile">
         <v-col v-if="mobile" cols="12" class="mobile-profile-label headliner">
-          communities
+             {{ $t('viewPerson.communities') }}
         </v-col>
         <ProfileCard v-if="myProfile" :title="mobile ? '':'Communities'" class="mt-2">
           <template v-slot:content>

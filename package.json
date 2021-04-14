@@ -1,6 +1,6 @@
 {
   "name": "ahau",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Desktop and mobile applications for gathering and sharing whakapapa (family trees, traditional knowledge). Built using Scuttlebutt",
   "homepage": "https://gitlab.com/ahau/whakapapa-ora",
   "scripts": {
@@ -9,11 +9,11 @@
     "setup:desktop": "cd desktop && npm install",
     "setup:mobile": "cd mobile && npm install && npm run setup",
     "setup:pataka": "cd pataka && npm install",
-    "dev:web": "npm run dev:mobile-server 1>&2 | npm run dev:ui",
+    "dev:web": "npm run dev:mobile-server 1>&2 | npm run dev:desktop:ui",
     "dev:mobile-server": "cd mobile && npm run dev:server",
-    "dev:ui": "kill-port 8080 && cd ui && npm run dev",
-    "dev:desktop": "npm run dev:ui 1>&2 | npm --prefix desktop run start:dev",
-    "dev:pataka": "npm --prefix pataka run start:dev",
+    "dev:desktop:ui": "kill-port 8080 && cd ui && npm run dev",
+    "dev:desktop": "npm run dev:ui 1>&2 | npm --prefix desktop run dev",
+    "dev:pataka": "cd pataka && npm run serve 1>&2 | npm run dev",
     "dev:android": "cd mobile && npm run dev:android",
     "dev:ios": "cd mobile && npm run dev:ios",
     "dev:android-update": "cd mobile && npm run dev:android-update",

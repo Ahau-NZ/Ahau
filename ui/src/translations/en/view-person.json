@@ -1,0 +1,25 @@
+{
+  "viewPersonTitle": "Profile Information",
+  "about": "About",
+  "preferredName": "Preferred Name",
+  "otherNames": "Other Names",
+  "age": "Age",
+  "placeOfBirth": "Place of Birth",
+  "skillsEducationTitle": "Skills and Education",
+  "profession": "Profession",
+  "schools": "Schools",
+  "Skills": "Skills",
+  "cityCountry": "City, Country",
+  "parents": "Parents",
+  "siblings": "Siblings",
+  "contactInfo" : {
+    "contactInfoTitle": "Contact Information",
+    "phone": "Phone",
+    "email": "Email",
+    "address": "Address",
+    "city": "City",
+    "country": "Country",
+    "postcode": "Postcode"
+  },
+  "communities": "Communities"
+}

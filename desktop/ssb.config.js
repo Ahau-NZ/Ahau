@@ -1,20 +1,23 @@
 const Config = require('ssb-config/defaults')
 const fs = require('fs')
 const path = require('path')
-
 const env = require('ahau-env')
 
 const customConfig = {
-  port: 8087,
-  caps: env.caps,
+  port: env.ahau.port,
+  caps: env.ahau.caps,
   // caps = capabilities, only apps with:
   // - the same shs ("secret handshake") key can connect to each other
   // - thas same sign can verify (+replicatie) messages with each other
   friends: { hops: 2 },
   lan: { legacy: false }, // disables legacy UDP announce (which doesn't respect caps.shs!)
   serveBlobs: {
+    port: env.ahau.serveBlobs.port,
     cors: true,
     csp: ''
+  },
+  hyperBlobs: {
+    port: env.ahau.hyperBlobs.port
   },
   recpsGuard: {
     allowedTypes: [

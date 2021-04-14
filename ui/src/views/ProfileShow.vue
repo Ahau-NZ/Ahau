@@ -1,7 +1,5 @@
 <template>
   <v-container fluid class="pa-0 niho-bg">
-    <v-overlay dark :value="showArtefact" z-index="6" opacity="1" color="rgba(30,30,30)">
-    </v-overlay>
     <!-- Header and Title -->
     <Header v-if="isProfile"
       :profile="profile"
@@ -22,12 +20,11 @@
       </v-col>
       <!-- Content -->
       <v-col cols="12" xs="12" sm="12" :md="isWhakapapaShow ? '12' : '10'" :lg="isWhakapapaShow ? '100p' : '80p'" :class="mobile ? isWhakapapaShow ? 'py-0' : 'px-6 py-0' : 'pl-0 py-0'">
-        <transition
-          name="fade"
-          mode="out-in"
-       >
-        <router-view :key="JSON.stringify(profile)" :profile="profile" :tribe="tribe"></router-view>
-      </transition>
+        <v-overlay dark :value="showArtefact" z-index="6" opacity="1" color="rgba(30,30,30)" />
+        <transition name="fade" mode="out-in">
+          <router-view :key="JSON.stringify(profile)" :profile="profile" :tribe="tribe" />
+
+        </transition>
       </v-col>
     </v-row>
     <v-spacer v-if="!mobile && !isWhakapapaShow" style="height:200px"></v-spacer>

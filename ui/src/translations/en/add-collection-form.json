@@ -6,6 +6,8 @@
   "stories": "Stories",
   "addRelatedStories": "Add related stories",
   "edit": "Edit collection image",
+  "editCollection": "Edit collection",
+  "description": "Description",
   "privacySelection": "Private",
   "privacy": "Only you will have access to this story"
 }

@@ -1,11 +1,11 @@
 const ahoy = require('ssb-ahoy')
 const Config = require('./ssb.config')
+const env = require('ahau-env')
 
 const plugins = [
   'ssb-master',
   'ssb-unix-socket',
   'ssb-no-auth',
-
   'ssb-conn',
   'ssb-lan',
   'ssb-replicate',
@@ -13,6 +13,7 @@ const plugins = [
 
   'ssb-blobs',
   'ssb-serve-blobs',
+  'ssb-hyper-blobs',
 
   'ssb-query',
   'ssb-backlinks',
@@ -48,7 +49,7 @@ Forward together!
 ---------------------------------
 `
 
-const appURL = process.env.NODE_ENV === 'development'
+const appURL = env.isDevelopment
   ? 'http://localhost:8080' // dev-server
   : `file://${__dirname}/dist/index.html` // production build
 

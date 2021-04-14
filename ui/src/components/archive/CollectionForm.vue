@@ -15,7 +15,7 @@
           </v-col>
           <v-col v-if="readonly" cols="12" justify="center" align="center" class="pa-0">
             <v-btn class="blue--text" text @click="$emit('edit')">
-              Edit collection
+              {{ t('editCollection')}}
               <v-icon class="pl-4" small>mdi-pencil</v-icon>
             </v-btn>
           </v-col>
@@ -32,7 +32,7 @@
       <v-col cols="12" sm="7" class="border-right">
         <v-row v-if="readonly">
           <v-col>
-            <p class="caption">Description</p>
+            <p class="caption">{{ t('description') }}</p>
             <p class="body-1">{{formData.description}}</p>
           </v-col>
         </v-row>
