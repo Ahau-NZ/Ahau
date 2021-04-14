@@ -22,14 +22,14 @@
           <v-row>
             <v-col cols="12" class="pa-1">
               <!-- <slot name="search"> -->
-                <v-text-field v-model="formData.preferredName" label="Community name" v-bind="customProps"/>
+                <v-text-field v-model="formData.preferredName" :label="$t('addCommunityForm.name')" v-bind="customProps"/>
               <!-- </slot> -->
             </v-col>
           </v-row>
           <v-row>
             <!-- Description textarea -->
             <v-col cols="12" class="pa-1">
-              <v-textarea v-model="formData.description" label="Community description" v-bind="customProps" no-resize rows="4"
+              <v-textarea v-model="formData.description" :label="$t('addCommunityForm.description')" v-bind="customProps" no-resize rows="4"
                 auto-grow>
               </v-textarea>
             </v-col>
@@ -40,38 +40,38 @@
       <v-row>
         <v-col cols="12" sm="6" class="pa-1">
           <!-- Address -->
-          <v-text-field v-model="formData.address" label="Address" v-bind="customProps" />
+          <v-text-field v-model="formData.address" :label="$t('addCommunityForm.address')" v-bind="customProps" />
         </v-col>
         <v-col cols="12" sm="6" class="pa-1">
           <!-- City -->
-          <v-text-field v-model="formData.city" label="City" v-bind="customProps" />
+          <v-text-field v-model="formData.city" :label="$t('addCommunityForm.city')" v-bind="customProps" />
         </v-col>
         <v-col cols="12" sm="6" class="pa-1">
           <!-- Post Code -->
-          <v-text-field v-model="formData.postCode" label="Post Code" v-bind="customProps" />
+          <v-text-field v-model="formData.postCode" :label="$t('addCommunityForm.postCode')" v-bind="customProps" />
         </v-col>
         <v-col cols="12" sm="6" class="pa-1">
           <!-- Country -->
-          <v-text-field v-model="formData.country" label="Country" v-bind="customProps" />
+          <v-text-field v-model="formData.country" :label="$t('addCommunityForm.country')" v-bind="customProps" />
         </v-col>
         <v-col cols="12" sm="6" class="pa-1">
           <!-- Email -->
-          <v-text-field v-model="formData.email" label="Email" v-bind="customProps" />
+          <v-text-field v-model="formData.email" :label="$t('addCommunityForm.email')" v-bind="customProps" />
         </v-col>
         <v-col cols="12" sm="6" class="pa-1">
           <!-- Phone -->
-          <v-text-field v-model="formData.phone" label="Phone" v-bind="customProps" />
+          <v-text-field v-model="formData.phone" :label="$t('addCommunityForm.phone')" v-bind="customProps" />
         </v-col>
         <v-col cols="12" align="center" v-if="!allowJoiningQuestions" class="pt-12">
           <v-btn @click="allowJoiningQuestions = true" text light color="blue">
-            Setup Comunity registration form
+            {{ $t('addCommunityForm.setupRegistrationForm') }}
             <v-icon>mdi-cogs</v-icon>
           </v-btn>
         </v-col>
         <v-col v-else>
           <v-row>
             <v-col cols="12">
-              Community registration form
+               {{ $t('addCommunityForm.form') }}
             </v-col>
             <v-col cols="12" sm="12" v-for="(question, i) in formData.joiningQuestions" :key="`j-q-${i}`" class="pa-1, mt-4">
               <v-text-field
