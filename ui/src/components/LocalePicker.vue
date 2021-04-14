@@ -2,18 +2,27 @@
   <v-select
     :value="locale"
     :items="locales"
-    @change="locale = $event"
+    @focus="handleFocus"
+    @click="handleFocus"
+    @blur="isFocused = false"
+    @change="handleChange"
+
+    dark
     dense
     hide-details
     outlined
-
-    class="LocalePicker"
+    :class="{ LocalePicker: true, '-focused': isFocused }"
   />
 </template>
 
 <script>
 
 export default {
+  data () {
+    return {
+      isFocused: false
+    }
+  },
   computed: {
     locale: {
       get () {
@@ -42,6 +51,17 @@ export default {
       }
     },
     locales () {
+      if (!this.isFocused) {
+        return this.$i18n.availableLocales.map(locale => {
+          switch (locale) {
+            case 'en': return { text: 'EN', value: locale }
+            case 'mi_NZ': return { text: 'MI', value: locale }
+            case 'pt_BR': return { text: 'PT', value: locale }
+            default: return { text: locale, value: locale }
+          }
+        })
+      }
+
       return this.$i18n.availableLocales.map(locale => {
         switch (locale) {
           case 'en': return { text: 'English', value: locale }
@@ -63,6 +83,15 @@ export default {
     // otherwise get a language that the browser says the user prefers
     // if we don't have a language like that, fall back to english
     this.locale = localStorage.getItem('locale') || browserLang || 'en'
+  },
+  methods: {
+    handleChange (locale) {
+      this.isFocused = false
+      this.locale = locale
+    },
+    handleFocus () {
+      this.isFocused = true
+    }
   }
 }
 </script>
@@ -71,12 +100,15 @@ export default {
 .LocalePicker {
   margin: 0;
   padding: 0;
-  max-width: 160px;
+  max-width: 80px;
 
   // text-transform: uppercase;
   // font-weight: 800;
   font-size: 14px;
   letter-spacing: 1px;
-}
 
+  &.-focused {
+    max-width: 140px;
+  }
+}
 </style>
