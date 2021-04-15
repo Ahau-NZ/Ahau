@@ -106,7 +106,7 @@ export default {
       var views = []
       const res = await this.$apollo.query(getWhakapapaViews())
       if (res.errors) {
-        console.log('error getting whakapapa views')
+        console.error('error getting whakapapa views', errors)
       } else {
         views = res.data.whakapapaViews
       }
@@ -234,6 +234,7 @@ export default {
         var { id } = input
 
         if (!id) {
+          input.type = 'person'
           input.authors = {
             add: [
               input.recps.includes(this.whoami.personal.groupId)
