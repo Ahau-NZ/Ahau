@@ -33,7 +33,7 @@
         </div>
       </v-col>
     </v-row>
-    <NewViewDialog v-if="showViewForm" :show="showViewForm" title="Create a new whakapapa" @close="toggleViewForm"
+    <NewViewDialog v-if="showViewForm" :show="showViewForm" :title="t('createWhakapapa')" @close="toggleViewForm"
       @submit="handleStepOne($event)" />
     <!-- TODO: add suggestions in here as well? -->
     <NewNodeDialog v-if="showProfileForm" :show="showProfileForm" :suggestions="suggestions"
@@ -367,8 +367,10 @@ export default {
       } catch (err) {
         throw err
       }
+    },
+    t (key, vars) {
+      return this.$t('addWhakapapaForm.' + key, vars)
     }
-
   },
   components: {
     WhakapapaViewCard,

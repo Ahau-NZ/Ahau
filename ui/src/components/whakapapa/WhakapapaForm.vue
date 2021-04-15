@@ -14,7 +14,7 @@
             />
           </v-col>
           <v-col cols="12" justify="center" align="center" class="pa-0">
-            <ImagePicker label="Edit whakapapa image"
+            <ImagePicker :label="t('editImage')"
               @updateAvatar="formData.image = $event"
               isView
             />
@@ -29,7 +29,7 @@
           <v-col cols="12" class="pa-1">
             <v-text-field
               v-model="formData.name"
-              label="Name*"
+              :label="t('name')"
               placeholder=" "
               hide-details
               :rules="form.rules.name.whakapapaView"
@@ -39,7 +39,7 @@
           <v-col cols="12" class="pa-1">
             <v-textarea
               v-model="formData.description"
-              label="Description"
+              :label="t('description')"
               placeholder=" "
               hide-details
               no-resize
@@ -48,7 +48,7 @@
             ></v-textarea>
           </v-col>
           <v-col cols="12" class="pa-1 pt-10" v-if="!hideDetails">
-            Would you like to start with
+            {{ t('start') }}
           </v-col>
           <v-col cols="12" class="pa-1" v-if="!hideDetails">
             <v-radio-group v-model="formData.focus">
@@ -65,8 +65,8 @@
                   Needs research.
               -->
 
-              <v-radio :label="`Another person`" value="new"></v-radio>
-              <v-radio :label="`Import from CSV file`" value="file"></v-radio>
+              <v-radio :label="t('anotherPerson')" value="new"></v-radio>
+              <v-radio :label="t('csvImport')" value="file"></v-radio>
             </v-radio-group>
           </v-col>
           <v-row v-if="formData.focus == 'file'" transition="scroll-y-transition">
@@ -93,7 +93,7 @@
                 v-model="file"
                 show-size
                 accept=".csv"
-                label="Upload CSV File"
+                :label="t('csvUpload')"
                 :success-messages="successMsg"
                 :rules="form.rules.csvFile"
                 @click:clear="resetFile()"
@@ -203,6 +203,9 @@ export default {
       this.file = null
       this.errorMsgs = []
       this.successMsg = []
+    },
+    t (key, vars) {
+      return this.$t('addWhakapapaForm.' + key, vars)
     }
   }
 }
