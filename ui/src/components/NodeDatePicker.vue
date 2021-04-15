@@ -323,6 +323,7 @@ export default {
       deep: true,
       handler (newValue) {
         try {
+          console.log('date new value: ', newValue)
           var date = convertDateObjToString(newValue)
           this.errorMsg = null
           this.$emit('update:value', date)
