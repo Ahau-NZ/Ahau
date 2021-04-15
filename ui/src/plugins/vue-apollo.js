@@ -2,14 +2,14 @@ import Vue from 'vue'
 import VueApollo from 'vue-apollo'
 import { createUploadLink } from 'apollo-upload-client' // partners with graphql-upload
 import { createApolloClient, restartWebsockets } from 'vue-cli-plugin-apollo/graphql-client'
-import { InMemoryCache } from 'apollo-cache-inmemory'
+import { InMemoryCache, IntrospectionFragmentMatcher } from 'apollo-cache-inmemory'
 
 import possibleTypes from './possibleTypes.json'
 
 const env = require('ahau-env')
 
-const cache = new InMemoryCache({
-  possibleTypes
+const fragmentMatcher = new IntrospectionFragmentMatcher({
+  introspectionQueryResultData: possibleTypes
 })
 
 // Install the vue plugin
@@ -69,7 +69,9 @@ export function createProvider (options = {}) {
   const { apolloClient, wsClient } = createApolloClient({
     ...defaultOptions,
     ...options,
-    cache
+    cache: new InMemoryCache({
+      fragmentMatcher
+    })
   })
   apolloClient.wsClient = wsClient
 

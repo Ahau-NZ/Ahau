@@ -3,7 +3,7 @@
     <v-row>
       <v-col cols="10" class="headliner black--text pa-0 pl-4 pt-5" :class="!mobile ? 'pt-2':''">Tribes</v-col>
       <v-col >
-        <BigAddButton label="new tribe" :customClass="mobile ? 'addBtnMobile':'addBtnDesktop'" @click="$emit('add-community-dialog')" />
+        <BigAddButton :label="t('newTribeButton')" :customClass="mobile ? 'addBtnMobile':'addBtnDesktop'" @click="$emit('add-community-dialog')" />
       </v-col>
     </v-row>
     <v-row>
@@ -11,7 +11,7 @@
         <div>
           <v-row v-if="connectedTribes.length" class="pt-4">
             <v-col cols="12" class="py-0">
-              <p class="sub-headline pa-0 mb-4">Tribes that you are connected to</p>
+              <p class="sub-headline pa-0 mb-4">{{ t('connectedTribes') }}</p>
               <v-row justify="start">
                 <v-col
                   v-for="tribe in connectedTribes"
@@ -39,7 +39,7 @@
           </v-row>
           <v-row v-if="otherTribes.length" class="pt-4">
             <v-col cols="12" class="py-0">
-              <p class="sub-headline pa-0 mb-4">Other whanau tribes</p>
+              <p class="sub-headline pa-0 mb-4">{{ t('otherTribes')}}</p>
               <v-row justify="start">
                 <v-col v-for="tribe in otherTribes" :item="tribe" :key="tribe.id" justify-self="start">
                   <v-card flat light class="rounded-border" :width="!mobile ? '190px':'100vw'" :to="goTribe(tribe)">
@@ -218,6 +218,9 @@ export default {
     shortDescription (community) {
       if (!community.description) return
       return community.description.substring(0, 180)
+    },
+    t (key, vars) {
+      return this.$t('viewTribes.' + key, vars)
     }
   }
 }

@@ -1,0 +1,18 @@
+{
+  "createCommunityTitle": "Ko Wai Mātou ---- Create New Community",
+  "name": "Community name",
+  "description": "Community description",
+  "uploadPhoto": "Upload profile photo",
+  "address": "Address",
+  "postcode": "Postcode",
+  "email": "Email",
+  "city": "City",
+  "country": "Country",
+  "phone": "Phone",
+  "setupRegistrationForm": "Setup community registration form",
+  "form": "Community registration form",
+  "addQuestion": "Add a question",
+  "question": "Question",
+  "cancel": "Cancel",
+  "save": "Save"
+}
