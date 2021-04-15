@@ -8,7 +8,14 @@
     <template v-if="!hideDetails" v-slot:content>
       <v-col class="py-0 px-0">
 
-        <ProfileForm :profile.sync="formData" :readonly="hasSelection" :editRelationship="hasSelection" :withRelationships="withRelationships" :mobile="mobile">
+        <ProfileForm 
+          :isUser="isUser" 
+          :profile.sync="formData" 
+          :readonly="hasSelection" 
+          :withRelationships="withRelationships" 
+          :mobile="mobile"
+          :type="type"
+        >
 
           <!-- Slot = Search -->
           <template v-slot:search>
@@ -128,12 +135,12 @@ export default {
   },
   props: {
     show: { type: Boolean, required: true },
-    withRelationships: { type: Boolean, default: true },
     title: { type: String, default: 'Create a new person' },
     suggestions: Array,
     hideDetails: Boolean,
     selectedProfile: Object,
     withView: { type: Boolean, default: true },
+    isUser: { type: Boolean, default: false },
     type: {
       type: String,
       validator: (val) => [
@@ -154,6 +161,9 @@ export default {
   },
   computed: {
     ...mapGetters(['currentAccess']),
+    withRelationships () {
+      return this.type && this.type !== 'partner'
+    },
     generateSuggestions () {
       if (this.hasSelection) return []
 
