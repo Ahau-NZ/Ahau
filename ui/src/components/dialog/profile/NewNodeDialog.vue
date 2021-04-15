@@ -8,11 +8,11 @@
     <template v-if="!hideDetails" v-slot:content>
       <v-col class="py-0 px-0">
 
-        <ProfileForm 
-          :isUser="isUser" 
-          :profile.sync="formData" 
-          :readonly="hasSelection" 
-          :withRelationships="withRelationships" 
+        <ProfileForm
+          :isUser="isUser"
+          :profile.sync="formData"
+          :readonly="hasSelection"
+          :withRelationships="withRelationships"
           :mobile="mobile"
           :type="type"
         >

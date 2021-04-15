@@ -154,7 +154,7 @@
               v-model="formData.legalName"
               :label="t('legalName')"
               v-bind="customProps"
-              
+
             />
           </v-col>
           <!-- Alt names -->
@@ -211,7 +211,6 @@
             />
           </v-col>
 
-         
         </v-row>
         <!-- Editing: relationship type-->
         <v-row >
@@ -457,7 +456,8 @@ export default {
   computed: {
     showBirthOrder () {
       if (this.type === 'parent') return false
-      if (!this.readonly || this.formData.birthOrder) return true
+      if (this.readonly && !this.formData.birthOrder) return false
+      else return true 
     },
     showAvatar () {
       if (this.isEditing) return true
