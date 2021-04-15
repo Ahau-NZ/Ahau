@@ -8,31 +8,28 @@ fetch(`http://localhost:${env.ahau.graphql.port}/graphql`, {
   body: JSON.stringify({
     variables: {},
     query: `
-      {
+      query {
         __schema {
           types {
-            kind
             name
+            kind
             possibleTypes {
               name
+              description
             }
           }
         }
-      }
+      }    
     `
   })
 }).then(result => result.json())
   .then(result => {
-    const possibleTypes = {}
+    const filteredData = result.data.__schema.types.filter(
+      type => type.possibleTypes !== null
+    )
+    result.data.__schema.types = filteredData
 
-    result.data.__schema.types.forEach(supertype => {
-      if (supertype.possibleTypes) {
-        possibleTypes[supertype.name] =
-          supertype.possibleTypes.map(subtype => subtype.name)
-      }
-    })
-
-    fs.writeFile('./src/plugins/possibleTypes.json', JSON.stringify(possibleTypes, null, 2), err => {
+    fs.writeFile('./src/plugins/possibleTypes.json', JSON.stringify(result.data, null, 2), err => {
       if (err) {
         console.error('Error writing possibleTypes.json', err)
       } else {

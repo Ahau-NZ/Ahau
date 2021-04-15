@@ -2,14 +2,14 @@
     <div>
       <v-row cols="12" class="rounded-border">
         <ProfileInfoItem :class="profile.type === 'person' ? 'bb':''" title="About" smCols="12" mdCols="12" :value="profile.description"/>
-        <ProfileInfoItem v-if="profile.type === 'person'" :class="mobile ? 'br bb' : 'br'" :title="'Preferred Name'" :value="profile.preferredName"/>
-        <ProfileInfoItem v-if="profile.type === 'person'" :class="mobile ? 'bb' : 'br'" :title="'Other Names'" :value="profile.altNames.join(', ')"/>
-        <ProfileInfoItem v-if="profile.type === 'person'" class="br" :title="'Age'" :value="age"/>
-        <ProfileInfoItem v-if="profile.type === 'person'" :title="'Place of birth'" :value="profile.placeOfBirth" />
+        <ProfileInfoItem v-if="profile.type === 'person'" :class="mobile ? 'br bb' : 'br'" :title="$t('viewPerson.preferredName')"  :value="profile.preferredName"/>
+        <ProfileInfoItem v-if="profile.type === 'person'" :class="mobile ? 'bb' : 'br'" :title="$t('viewPerson.otherNames')" :value="profile.altNames.join(', ')"/>
+        <ProfileInfoItem v-if="profile.type === 'person'" class="br" :title="$t('viewPerson.age')" :value="age"/>
+        <ProfileInfoItem v-if="profile.type === 'person'" :title="$t('viewPerson.placeOfBirth')" :value="profile.placeOfBirth" />
       </v-row>
       <v-row v-if="isFamily" class="rounded-border py-2">
         <div v-if="profile.parents && profile.parents.length > 0" class="pl-6">
-          <AvatarGroup :profiles="profile.parents" group-title="Parents" size="50px" :show-labels="true"
+          <AvatarGroup :profiles="profile.parents" :group-title="$t('viewPerson.parents')" size="50px" :show-labels="true"
             @profile-click="openProfile($event)">
             <template v-slot:action >
               <AddButton v-if="isRegistration" @click="toggleNew('parent')" class="pb-4" justify="start"/>
@@ -18,7 +18,7 @@
         </div>
 
         <div v-if="profile.siblings && profile.siblings.length > 0" class="pl-6">
-          <AvatarGroup :profiles="profile.siblings" group-title="Siblings" size="50px" :show-labels="true"
+          <AvatarGroup :profiles="profile.siblings" :group-title="$t('viewPerson.siblings')" size="50px" :show-labels="true"
             @profile-click="openProfile($event)">
             <template v-slot:action >
               <AddButton v-if="isRegistration" @click="toggleNew('sibling')" class="pb-4" justify="start"/>
@@ -27,7 +27,7 @@
         </div>
 
         <div v-if="profile.children && profile.children.length > 0" class="pl-6">
-          <AvatarGroup :profiles="profile.children" group-title="Children" size="50px" :show-labels="true"
+          <AvatarGroup :profiles="profile.children" :group-title="$t('viewPerson.children')" size="50px" :show-labels="true"
             @profile-click="openProfile($event)">
             <template v-slot:action >
               <AddButton v-if="isRegistration" @click="toggleNew('child')" class="pb-4" justify="start"/>
