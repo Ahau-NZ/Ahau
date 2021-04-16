@@ -8,6 +8,7 @@ test('invalid profile props (empty profile)', t => {
     preferredName: null,
     legalName: null,
     aliveInterval: null,
+    address: null,
     city: null,
     country: null
   }
@@ -27,8 +28,9 @@ test('invalid profile props (empty profile)', t => {
     preferredName: '',
     legalName: 'Cherese Putiputi Eriepa',
     aliveInterval: '2020-12-12/',
-    city: 'Auckland',
-    country: 'New Zealand'
+    address: '123 Place Road',
+    city: 'My City',
+    country: 'Cook Islands'
   }
 
   t.deepEqual(

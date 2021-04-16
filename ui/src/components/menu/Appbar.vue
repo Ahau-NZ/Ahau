@@ -9,6 +9,7 @@
 
       <!-- Desktop doesn't use a drawer, it has the links directly in the app bar -->
       <template v-if="!mobile">
+        <!-- <LocalePicker /> -->
         <v-btn text active-class="no-active" to="/tribe" class="white--text text-uppercase ms-10">Tribes</v-btn>
         <v-btn active-class="no-active" text @click.native="goProfile('archive')" class="white--text text-uppercase ms-10">Archive</v-btn>
 
@@ -71,6 +72,7 @@
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
+
     <v-progress-linear
       v-if="syncing"
       :active="syncing"
@@ -89,6 +91,7 @@ import NotificationPanel from '@/components/menu/NotificationPanel'
 import FeedbackButton from '@/components/button/FeedbackButton'
 import { mapGetters, mapActions } from 'vuex'
 import BackButton from '@/components/button/BackButton'
+// import LocalePicker from '@/components/LocalePicker'
 
 const karakia = `
 ---------------------------------
@@ -156,9 +159,7 @@ export default {
       this.isMobileBackButton = $event
     },
     getNotifications () {
-      this.polling = setInterval(() => {
-        this.getAllNotifications()
-      }, 5e3)
+      this.polling = setInterval(this.getAllNotifications, 7e3)
     },
     async getCurrentIdentity () {
       await this.setWhoami()
@@ -189,7 +190,8 @@ export default {
     Avatar,
     FeedbackButton,
     NotificationPanel,
-    BackButton
+    BackButton,
+    // LocalePicker
   }
 }
 </script>

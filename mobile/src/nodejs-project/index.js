@@ -4,6 +4,7 @@ const ssbKeys = require('ssb-keys')
 const mkdirp = require('mkdirp')
 const makeConfig = require('ssb-config/inject')
 const SecretStack = require('secret-stack')
+// TODO: update env here to use env.ahau
 const env = require('ahau-env')
 
 let appDataDir

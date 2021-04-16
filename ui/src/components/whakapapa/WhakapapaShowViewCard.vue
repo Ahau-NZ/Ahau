@@ -15,7 +15,6 @@
             class="pa-0"
             cover
             height="100px"
-            
           >
           </v-img>
         </v-col>

@@ -50,6 +50,7 @@
       v-if="dialog"
       :show="dialog"
       :title="`AHAU ---- I AM`"
+      :withRelationships='false'
       @close="toggleNew" @create="save($event)"
     />
 
@@ -58,10 +59,11 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex'
+
 import Avatar from '@/components/Avatar'
 import NewNodeDialog from '@/components/dialog/profile/NewNodeDialog.vue'
-import { mapGetters, mapActions } from 'vuex'
-import { savePerson } from '@/lib/person-helpers.js'
+import mapProfileMixins from '@/mixins/profile-mixins'
 
 const karakia = `
 ---------------------------------
@@ -92,6 +94,9 @@ export default {
       dialog: false
     }
   },
+  mixins: [
+    mapProfileMixins({ mapMethods: ['savePerson'] })
+  ],
   computed: {
     ...mapGetters(['whoami']),
     mobile () {
@@ -157,17 +162,10 @@ export default {
     },
 
     async save (input) {
-      input = {
+      await this.savePerson({
         id: this.whoami.personal.profile.id,
         ...input
-      }
-
-      const res = await this.$apollo.mutate(savePerson(input))
-
-      if (res.errors) {
-        console.error('failed to update profile', res)
-        return
-      }
+      })
 
       this.getCurrentIdentity()
     }

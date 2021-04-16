@@ -70,6 +70,7 @@
                 {{ node.data.address }}
               </text>
             </svg>
+            <!-- add country -->
             <svg :width="columns[8].x - 45">
               <text  :transform="`translate(${columns[7].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
                 {{ node.data.city }}
@@ -181,7 +182,8 @@ export default {
         profession: SORT.default,
         country: SORT.default
       },
-      nodeCentered: ''
+      nodeCentered: '',
+      sortActive: false
     }
   },
   mounted () {
@@ -222,16 +224,22 @@ export default {
 
     // returns an array of nodes associated with the root node created from the treeData object, as well as extra attributes
     nodes () {
-      return this.tableLayout
+      var nodes = this.tableLayout
         // returns the array of descendants starting with the root node, then followed by each child in topological order
         .descendants()
-        // sort by preferred name
-        .sort((a, b) => {
-          return this.determineSort(a, b)
-        })
         .filter(d => {
           return this.applyFilter(d)
         })
+
+      if (this.sortActive) {
+        nodes
+          // sort by preferred name
+          .sort((a, b) => {
+            return this.determineSort(a, b)
+          })
+      }
+
+      return nodes
         // returns a new custom object for each node
         .map((d, i) => {
           // set width of first column
@@ -318,7 +326,6 @@ export default {
     nodes (newValue) {
       this.setLoading(false)
     },
-
     // Triggered whenever the user selects a sort
     sortEvent () {
       this.resetSorts(this.sortValue)
@@ -472,13 +479,16 @@ export default {
       switch (currentSort) {
         case SORT.default:
           this.sort[field] = SORT.ascending
+          this.sortActive = true
           break
         case SORT.ascending:
           this.sort[field] = SORT.descending
+          this.sortActive = true
           break
         case SORT.descending:
         default:
           this.sort[field] = SORT.default
+          this.sortActive = false
       }
     },
     // When a sort is triggered, ensures all other sorts are disabled
@@ -601,6 +611,7 @@ export default {
     },
     applyFilter (node) {
       if (this.searchFilterString) {
+        console.log('going in')
         if (this.nameMatchesFilter(node)) return true
         else return false
       }

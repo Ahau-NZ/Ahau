@@ -263,7 +263,7 @@
                         <ProfileInfoItem
                           smCols="12"
                           mdCols="6"
-                          title="Address"
+                          title="Post code"
                           :value="personalProfile.postCode"
                           class="pb-0 bb"
                         />

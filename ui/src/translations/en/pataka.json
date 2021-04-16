@@ -1,0 +1,9 @@
+ {
+  "connectPataka": "Connect Pātaka",
+  "connectSuccess": "Successfully connected to Pātaka",
+  "invalidCode": "Invalid code, please check the code and try again",
+  "notConnected": "You are not currently connected to any Pātaka",
+  "newPataka": "Connect to new Pātaka",
+  "patakaCode": "Enter a Pātaka code to discover tribes",
+  "connect": "Connect"
+ }

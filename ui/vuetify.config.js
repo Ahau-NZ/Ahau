@@ -1,5 +1,8 @@
 import { DECEASED_COLOUR, ALIVE_COLOUR } from '@/lib/constants.js'
 
+import en from 'vuetify/es5/locale/en'
+import pt from 'vuetify/es5/locale/pt'
+
 export default {
   theme: {
     dark: true,
@@ -19,5 +22,9 @@ export default {
   },
   icons: {
     iconfont: 'mdi'
+  },
+  lang: {
+    locales: { en, pt },
+    current: 'en'
   }
 }
