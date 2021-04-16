@@ -3,5 +3,7 @@ module.exports = {
   addCommunityForm: require('./add-community-form.json'),
   pataka: require('./pataka'),
   viewPerson: require('./view-person.json'),
-  viewTribes: require('./view-tribes.json')
+  viewTribes: require('./view-tribes.json'),
+  viewPersonArchive: require('./view-person-archive.json')
+
 }
