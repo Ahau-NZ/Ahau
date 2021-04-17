@@ -106,7 +106,7 @@ export default {
       var views = []
       const res = await this.$apollo.query(getWhakapapaViews())
       if (res.errors) {
-        console.error('error getting whakapapa views', errors)
+        console.error('error getting whakapapa views', res.errors)
       } else {
         views = res.data.whakapapaViews
       }

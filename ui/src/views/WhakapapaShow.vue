@@ -81,13 +81,13 @@
       </v-row>
 
       <!-- speed dial menu for mobile -->
-      <v-card v-if="mobile" id="create">
+      <v-card v-if="mobile" id="speeddial">
         <v-speed-dial
           v-model="fab"
-          top
-          left
-          direction="right"
+          right
+          direction="bottom"
           transition="slide-y-transition"
+          fixed
         >
           <template v-slot:activator>
             <v-btn
@@ -101,7 +101,7 @@
               <v-icon v-else>mdi-hexagon-multiple</v-icon>
             </v-btn>
           </template>
-          <div v-if="search" class="icon-search ml-n12 pt-7" @click.stop>
+          <div v-if="search" class="icon-search mobile-searchBar" @click.stop>
             <SearchBar
               v-if="!searchNodeId"
               :nestedWhakapapa="nestedWhakapapa"
@@ -116,7 +116,7 @@
               :searchNodeName="searchNodeName"
             />
           </div>
-          <div v-else-if="searchFilterString === ''"  class="icon-button">
+          <div v-else  class="icon-button">
             <SearchButton  @click.stop :search.sync="search" />
           </div>
           <div v-if="whakapapa.table" class="icon-button">
@@ -157,7 +157,7 @@
         :focus="focus"
         :searchNodeId="searchNodeId"
       />
-      <div class="whakapapa-table">
+      <div :class="mobile ? 'mobile-table' : 'whakapapa-table'">
         <Table
           v-if="whakapapa.table"
           ref="table"
@@ -788,18 +788,29 @@ h1 {
   margin-top: -85px;
 }
 
-#create .v-speed-dial {
-  position: absolute;
-}
-
-#create .v-btn--floating {
-  position: relative;
+#speeddial {
+  top:-45px;
 }
 
 .whakapapa-table {
   overflow: auto;
   width: 100%;
   padding-top: 50px;
+}
+
+.mobile-table {
+  overflow: auto;
+  width: 100%;
+}
+
+.button-row {
+  left: 20%;
+  position: fixed;
+}
+
+.mobile-searchBar {
+ padding-top: 10px;
+ margin-right: 255px;
 }
 
 </style>
