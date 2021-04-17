@@ -190,7 +190,7 @@ export default {
     Avatar,
     FeedbackButton,
     NotificationPanel,
-    BackButton,
+    BackButton
     // LocalePicker
   }
 }
