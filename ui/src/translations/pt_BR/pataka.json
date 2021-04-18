@@ -1,1 +1,9 @@
-{}
+{
+  "connectPataka": "Conectar ao Pa├taka",
+  "connectSuccess": "Conectado com sucesso ao Pa➲ taka",
+  "invalidCode": "Código inválido, por favor verifique o código e tente novamente",
+  "notConnected": "Você não está atualmente conectado a nenhum Pa➲ taka",
+  "newPataka": "Conectar-se ao novo Pa├taka",
+  "patakaCode": "Insira um código Pa➲ taka para descobrir tribos",
+  "connect": "Conectar"
+}
