@@ -8,10 +8,11 @@
   "skillsEducationTitle": "Skills and Education",
   "profession": "Profession",
   "schools": "Schools",
-  "Skills": "Skills",
+  "skills": "Skills",
   "cityCountry": "City, Country",
   "parents": "Parents",
   "siblings": "Siblings",
+  "children": "Children",
   "contactInfo" : {
     "contactInfoTitle": "Contact Information",
     "phone": "Phone",

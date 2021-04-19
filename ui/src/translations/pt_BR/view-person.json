@@ -1,2 +1,26 @@
 {
+  "viewPersonTitle": "Informações do perfil",
+  "about": "SOBRE",
+  "preferredName": "Nome preferencial",
+  "otherNames": "Outros Nomes",
+  "age": "Idade",
+  "placeOfBirth": "Local de nascimento",
+  "skillsEducationTitle": "Habilidades e Educação",
+  "profession": "Profissão",
+  "schools": "Escolas",
+  "skills": "Habilidades",
+  "cityCountry": "Cidade, País",
+  "parents": "Pais",
+  "siblings": "Irmãos",
+  "children": "Children",
+  "contactInfo": {
+    "contactInfoTitle": "Informação do Contato",
+    "phone": "Phone",
+    "email": "E-mail",
+    "address": "Endereço",
+    "city": "Cidade",
+    "country": "País/região",
+    "postcode": "CEP"
+  },
+  "communities": "Comunidades"
 }
