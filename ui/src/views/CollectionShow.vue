@@ -172,9 +172,9 @@ export default {
       this.$router.push({ path: newPath + 'archive' }).catch(() => {})
     }
   },
-    t (key, vars) {
-      return this.$t('viewPersonArchive.' + key, vars)
-    }
+  t (key, vars) {
+    return this.$t('viewPersonArchive.' + key, vars)
+  }
 }
 </script>
 <style lang="scss">

@@ -1,2 +1,26 @@
 {
+  "viewPersonTitle": "He kōrero",
+  "about": "He kōrero",
+  "preferredName": "Ingoa Tuatahi",
+  "otherNames": "Ētahi atu ingoa",
+  "age": "Tau",
+  "placeOfBirth": "Noho",
+  "skillsEducationTitle": "Ngā pūkenga me ngā mātauranga",
+  "profession": "Tūranga Mahi",
+  "schools": "Whare wānanga",
+  "skills": "Pūkenga",
+  "cityCountry": "Taone, Motu",
+  "parents": "Mātua",
+  "siblings": "Tungāne/Tuahine",
+  "children": "Tamariki",
+  "contactInfo": {
+    "contactInfoTitle": "Kōrero whakapā",
+    "phone": "Waea",
+    "email": "Imera",
+    "address": "Wahi Noho",
+    "city": "Taone",
+    "country": "Motu",
+    "postcode": "Waehere"
+  },
+  "communities": "Hāpori"
 }
