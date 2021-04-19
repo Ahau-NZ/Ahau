@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <v-col class="pa-0">
     <fieldset
       :style="cssVars"
       :class="`custom-fieldset-${focused} ${readonly ? 'no-border' : 'rounded-input' }`"
@@ -15,7 +15,7 @@
             :items="days"
             ref="day"
             v-model="date.day"
-            label="Day"
+            :label="t('day')"
             @focus="focused == 'day'"
             @blur="focused == 'default'"
             @keydown.tab.prevent="onTab('day')"
@@ -28,7 +28,7 @@
             :items="months"
             ref="month"
             v-model="date.month"
-            label="Month"
+            :label="t('month')"
             :light="isDark()"
             @focus="focused == 'month'"
             @blur="focused == 'default'"
@@ -41,7 +41,7 @@
             :items="years"
             ref="year"
             v-model="date.year"
-            label="Year"
+            :label="t('year')"
             @focus="focused == 'year'"
             @blur="focused == 'default'"
             @keydown.tab.prevent="onTab('year')"
@@ -57,7 +57,7 @@
         </v-col>
       </v-row>
     </fieldset>
-  </div>
+  </v-col>
 </template>
 <script>
 import edtf from 'edtf'
@@ -316,6 +316,9 @@ export default {
         default:
           return null
       }
+    },
+    t (key, vars) {
+      return this.$t('addStoryForm.' + key, vars)
     }
   },
   watch: {

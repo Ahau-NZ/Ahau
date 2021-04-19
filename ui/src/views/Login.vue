@@ -46,11 +46,11 @@
       <p class="name mt-2">{{ whoami.personal.profile.preferredName }}</p>
     </div>
 
-     <NewNodeDialog
+    <NewNodeDialog
       v-if="dialog"
       :show="dialog"
       :title="`AHAU ---- I AM`"
-      :withRelationships='false'
+      isUser
       @close="toggleNew" @create="save($event)"
     />
 
