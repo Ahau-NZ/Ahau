@@ -775,9 +775,6 @@ export default {
     t (key, vars) {
       return this.$t('addCommunityForm.' + key, vars)
     }
-  },
-    t (key, vars) {
-      return this.$t('instructionsWhakapapa.' + key, vars)
-    }
+  }
 }
 </script>
