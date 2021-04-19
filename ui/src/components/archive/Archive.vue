@@ -8,8 +8,8 @@
           <v-icon color="blue-grey" light @click="toggleArchiveHelper" class="infoButton">mdi-information</v-icon>
         </v-col>
         <v-col v-show="!showStory">
-          <BigAddButton label="new story" :customClass="mobile ? 'addBtnMobile':'addBtnDesktop'" @click.native.stop="mobile ? openContextMenu($event): dialog = 'new-story' " />
-          <BigAddButton v-if="!mobile" label="new collection" :customClass="mobile ? 'addBtnMobile':'addBtnCollection'" @click.native.stop="dialog = 'new-collection'" />
+          <BigAddButton :label="$t('viewPersonArchive.newStoryButton')" :customClass="mobile ? 'addBtnMobile':'addBtnDesktop'" @click.native.stop="mobile ? openContextMenu($event): dialog = 'new-story' " />
+          <BigAddButton v-if="!mobile" :label="$t('viewPersonArchive.newCollectionButton')" :customClass="mobile ? 'addBtnMobile':'addBtnCollection'" @click.native.stop="dialog = 'new-collection'" />
         </v-col>
       </v-row>
       <v-row>
@@ -45,7 +45,7 @@
       @submit="processStory"
     />
     <NewCollectionDialog v-if="dialog === 'new-collection'" :show="dialog === 'new-collection'"
-      :title="`Add a collection`" @close="dialog = null"
+      :title="$t('addCollectionForm.addCollection')" @close="dialog = null"
       @submit="processCollection"
     />
   </div>
@@ -174,6 +174,9 @@ export default {
           })
         }, 200)
       }
+    },
+    t (key, vars) {
+      return this.$t('viewPersonArchive.' + key, vars)
     }
   }
 }

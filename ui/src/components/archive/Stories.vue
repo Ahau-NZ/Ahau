@@ -48,7 +48,7 @@
             class="px-8 subtitle-1 grey--text "
             :class="{ 'text-center': mobile }"
           >
-            No stories found
+            {{ $t('viewPersonArchive.storyNotFound') }}
           </div>
         </div>
       </v-col>
@@ -100,6 +100,9 @@ export default {
     cordovaBackButton () {
       if (this.showStory) this.toggleStory()
     }
+  },
+  t (key, vars) {
+    return this.$t('viewPersonArchive.' + key, vars)
   }
 }
 </script>

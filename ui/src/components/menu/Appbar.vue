@@ -87,11 +87,11 @@
 
 <script>
 import Avatar from '@/components/Avatar'
-import LocalePicker from '@/components/LocalePicker'
 import NotificationPanel from '@/components/menu/NotificationPanel'
 import FeedbackButton from '@/components/button/FeedbackButton'
 import { mapGetters, mapActions } from 'vuex'
 import BackButton from '@/components/button/BackButton'
+// import LocalePicker from '@/components/LocalePicker'
 
 const karakia = `
 ---------------------------------
@@ -190,8 +190,8 @@ export default {
     Avatar,
     FeedbackButton,
     NotificationPanel,
-    BackButton,
-    LocalePicker
+    BackButton
+    // LocalePicker
   }
 }
 </script>
