@@ -12,10 +12,9 @@
         color="primary"
         text
         @click="$emit('more-info')"
-        class="px-0"
-        small
+        class="mr-10"
       >
-      <v-icon class="grey--text" left>mdi-information</v-icon>
+      <v-icon large class="grey--text" left>mdi-information</v-icon>
       </v-btn>
     </template>
   </v-banner>
