@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <v-col class="pa-0">
     <fieldset
       :style="cssVars"
       :class="`custom-fieldset-${focused} ${readonly ? 'no-border' : 'rounded-input' }`"
@@ -57,7 +57,7 @@
         </v-col>
       </v-row>
     </fieldset>
-  </div>
+  </v-col>
 </template>
 <script>
 import edtf from 'edtf'

@@ -15,12 +15,12 @@
           </v-col>
           <v-col v-if="readonly" cols="12" justify="center" align="center" class="pa-0">
             <v-btn class="blue--text" text @click="$emit('edit')">
-              Edit collection
+              {{ t('editCollection')}}
               <v-icon class="pl-4" small>mdi-pencil</v-icon>
             </v-btn>
           </v-col>
           <v-col v-else cols="12" justify="center" align="center" class="pa-0">
-            <ImagePicker label="Edit collection image"
+            <ImagePicker :label="t('editImage')"
               @updateAvatar="formData.image = $event"
               isView
             />
@@ -32,7 +32,7 @@
       <v-col cols="12" sm="7" class="border-right">
         <v-row v-if="readonly">
           <v-col>
-            <p class="caption">Description</p>
+            <p class="caption">{{ t('description') }}</p>
             <p class="body-1">{{formData.description}}</p>
           </v-col>
         </v-row>
@@ -41,7 +41,7 @@
           <v-col cols="12" class="pa-1">
             <v-text-field
               v-model="formData.name"
-              label="Collection Name"
+              :label="t('collectionName')"
               placeholder=" "
               hide-details
             />
@@ -50,7 +50,7 @@
           <v-col cols="12" class="pa-1 pt-6">
             <v-textarea
               v-model="formData.description"
-              label="Collection Description"
+              :label="t('collectionDescription')"
               placeholder=" "
               hide-details
               no-resize
@@ -64,21 +64,21 @@
             <v-tooltip v-if="!readonly" top open-delay="700" :disabled="showStories">
               <template v-slot:activator="{ on }">
                 <div class="pt-5" v-on="on">
-                  <p class="caption">Add stories from archive to this collection</p>
+                  <p class="caption"> {{ t('addStories') }} </p>
                   <v-row v-if="!showStories" @click="showStories = true" class="pl-5">
                     <v-icon small>mdi-plus</v-icon>
                     <AddButton size="20px" icon="mdi-book-multiple" iconClass="pr-3" label="Stories"  justify="start"/>
                   </v-row>
                 </div>
               </template>
-              <span>Add stories from this archive to this collection</span>
+              <span> {{ t('addStories') }} </span>
             </v-tooltip>
 
             <ProfileSearchBar
               :selectedItems.sync="formData.stories"
               :items="stories"
               :openMenu.sync="showStories"
-              placeholder="add related story"
+              :placeholder="t('addRelatedStories')"
               item="title"
             />
             <ChipGroup
@@ -147,6 +147,9 @@ export default {
   methods: {
     removeStory (i) {
       this.formData.stories.splice(i, 1)
+    },
+    t (key, vars) {
+      return this.$t('addCollectionForm.' + key, vars)
     }
   }
 }
