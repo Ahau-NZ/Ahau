@@ -1,12 +1,12 @@
 <template>
-  <Dialog :title="'Whakapapa ---- Family tree'" :show="show" @close="close" :width="`550px`" :goBack="close">
+  <Dialog :title="$t('instructionsWhakapapa.whakapapaInstructionsTitle')" :show="show" @close="close" :width="`550px`" :goBack="close">
     <template v-slot:content>
       <v-card-text class="pt-0">
-        In Āhau a whakapapa record is a genealogy graph. You can create as many whakapapa records as you like to represent the many different family lines that you belong to.
+        {{ $t('instructionsWhakapapa.whakapapaRecord') }}
       </v-card-text>
       <v-divider />
       <p>
-          Example images
+        {{ $t('instructionsWhakapapa.exampleImages') }}
       </p>
       <v-carousel hide-delimiters>
         <v-tooltip
@@ -29,7 +29,7 @@
           text
           @click="close"
         >
-          close
+           {{ $t('instructionsWhakapapa.close') }}
         </v-btn>
       </v-col>
     </template>
