@@ -5,5 +5,6 @@ module.exports = {
   pataka: require('./pataka'),
   viewPerson: require('./view-person.json'),
   viewTribes: require('./view-tribes.json'),
+  viewPersonArchive: require('./view-person-archive.json'),
   viewPersonWhakapapa: require('./view-person-whakapapa.json')
 }
