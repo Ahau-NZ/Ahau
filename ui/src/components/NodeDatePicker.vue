@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <v-col class="pa-0">
     <fieldset
       :style="cssVars"
       :class="`custom-fieldset-${focused} ${readonly ? 'no-border' : 'rounded-input' }`"
@@ -57,7 +57,7 @@
         </v-col>
       </v-row>
     </fieldset>
-  </div>
+  </v-col>
 </template>
 <script>
 import edtf from 'edtf'
@@ -323,6 +323,7 @@ export default {
       deep: true,
       handler (newValue) {
         try {
+          console.log('date new value: ', newValue)
           var date = convertDateObjToString(newValue)
           this.errorMsg = null
           this.$emit('update:value', date)
