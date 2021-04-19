@@ -2,5 +2,7 @@
   "tribes": "Tribos",
   "newTribeButton": "nova tribo",
   "connectedTribes": "Tribos que você está conectado a",
-  "otherTribes": "Outras tribos suaves"
+  "otherTribes": "Outras tribos suaves",
+  "connectPataka": "Conectar ao Pa├taka",
+  "notConnected": "You are not currently connected"
 }
