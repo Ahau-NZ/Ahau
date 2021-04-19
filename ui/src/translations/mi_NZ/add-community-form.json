@@ -1,1 +1,18 @@
-{}
+{
+  "createCommunityTitle": "Ko Wai Mātou ---- Hangaia he Hapori Hou",
+  "name": "Hapori ingoa",
+  "description": "Hapori whakaaturanga",
+  "uploadPhoto": "Whakarewa Whakaahua",
+  "address": "Wahi Noho",
+  "postcode": "Waehere",
+  "email": "Imera",
+  "city": "Taone",
+  "country": "Motu",
+  "phone": "Waea",
+  "setupRegistrationForm": "Whakatakotoranga puka rehitatanga hapori",
+  "form": "Puka Rēhita Hapori",
+  "addQuestion": "Tāpirihia he pātai",
+  "question": "Pātai",
+  "cancel": "Whakakora",
+  "save": "Penapena"
+}
