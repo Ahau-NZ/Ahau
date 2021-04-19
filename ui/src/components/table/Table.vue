@@ -2,11 +2,11 @@
   <svg id="baseSvg" :width="tableWidth" :height="tableHeight" ref="baseSvg" style="background-color:white"  min-height="500px">
     <g id="zoomable">
       <line x1="60" y1="55" :x2="tableWidth" y2="55" style="stroke-width: 1; stroke: lightgrey;"/>
-      <g class="headers" v-for="column in columns" :key="column.label">
+      <g class="headers" v-for="(column, i) in columns" :key="column.label">
         <text :transform="`translate(${column.x + 10} ${50})`">
           {{ computeLabel(column.label) }}
         </text>
-        <line :x1="column.x" y1="55" :x2="column.x" :y2="tableHeight" style="stroke-width: 1; stroke: lightgrey;"/>
+        <line v-if="i !== 0" :x1="column.x" y1="55" :x2="column.x" :y2="tableHeight" style="stroke-width: 1; stroke: lightgrey;"/>
       </g>
       <svg id="baseGroup" :width="tableWidth">
         <g v-if="!flatten" :transform="`translate(${60} ${80})`">
@@ -35,64 +35,64 @@
             <g v-if="flatten && node.data.children.length > 0" :transform="`translate(${node.x - 10} ${node.y + nodeRadius + 5})`">
               <text> - </text>
             </g>
-            <svg :width="columns[1].x - 45" >
-              <text  :transform="`translate(${columns[0].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
+            <svg :width="columns[2].x - 45" >
+              <text  :transform="`translate(${columns[1].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
                 {{ node.data.preferredName }}
               </text>
             </svg>
-            <svg :width="columns[2].x - 45" >
-              <text  :transform="`translate(${columns[1].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ altNames(node.data.altNames) }}
-              </text>
-            </svg>
-            <svg :width="columns[3].x - 45">
+            <svg :width="columns[3].x - 45" >
               <text  :transform="`translate(${columns[2].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ node.age }}
+                {{ altNames(node.data.altNames) }}
               </text>
             </svg>
             <svg :width="columns[4].x - 45">
               <text  :transform="`translate(${columns[3].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ computeDate('dob', node.data.aliveInterval) }} <!-- {{ node.data.aliveInterval.substring(0,10)  }} -->
+                {{ node.age }}
               </text>
             </svg>
             <svg :width="columns[5].x - 45">
               <text  :transform="`translate(${columns[4].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ computeDate('dod', node.data.aliveInterval) }}<!-- {{ node.data.aliveInterval.substring(11,21) }} -->
+                {{ computeDate('dob', node.data.aliveInterval) }} <!-- {{ node.data.aliveInterval.substring(0,10)  }} -->
               </text>
             </svg>
             <svg :width="columns[6].x - 45">
               <text  :transform="`translate(${columns[5].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ node.data.profession }}
+                {{ computeDate('dod', node.data.aliveInterval) }}<!-- {{ node.data.aliveInterval.substring(11,21) }} -->
               </text>
             </svg>
             <svg :width="columns[7].x - 45">
               <text  :transform="`translate(${columns[6].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
+                {{ node.data.profession }}
+              </text>
+            </svg>
+            <svg :width="columns[8].x - 45">
+              <text  :transform="`translate(${columns[7].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
                 {{ node.data.address }}
               </text>
             </svg>
             <!-- add country -->
-            <svg :width="columns[8].x - 45">
-              <text  :transform="`translate(${columns[7].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ node.data.city }}
-              </text>
-            </svg>
             <svg :width="columns[9].x - 45">
               <text  :transform="`translate(${columns[8].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ node.data.postCode }}
+                {{ node.data.city }}
               </text>
             </svg>
             <svg :width="columns[10].x - 45">
               <text  :transform="`translate(${columns[9].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ node.data.country }}
+                {{ node.data.postCode }}
               </text>
             </svg>
             <svg :width="columns[11].x - 45">
               <text  :transform="`translate(${columns[10].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ node.data.placeOfBirth }}
+                {{ node.data.country }}
               </text>
             </svg>
             <svg :width="columns[12].x - 45">
-              <text :transform="`translate(${columns[11].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
+              <text  :transform="`translate(${columns[11].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
+                {{ node.data.placeOfBirth }}
+              </text>
+            </svg>
+            <svg :width="columns[13].x - 45">
+              <text :transform="`translate(${columns[12].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
                 {{ node.data.placeOfDeath }}
               </text>
             </svg>
@@ -165,7 +165,6 @@ export default {
   data () {
     return {
       tableWidth: 0,
-      colWidth: 350,
       componentLoaded: false, // need to ensure component is loaded before using $refs
       nodeRadius: 20, // use variable for zoom later on
       nodeSize: 40,
@@ -179,7 +178,8 @@ export default {
         profession: SORT.default,
         country: SORT.default
       },
-      nodeCentered: ''
+      nodeCentered: '',
+      sortActive: false
     }
   },
   mounted () {
@@ -189,7 +189,10 @@ export default {
 
   computed: {
     ...mapGetters(['nestedWhakapapa']),
-
+    colWidth () {
+      if (this.flatten) return 300
+      return 350
+    },
     pathNode () {
       if (this.searchNodeId === '') return null
       return this.root.descendants().find(d => {
@@ -220,16 +223,22 @@ export default {
 
     // returns an array of nodes associated with the root node created from the treeData object, as well as extra attributes
     nodes () {
-      return this.tableLayout
+      var nodes = this.tableLayout
         // returns the array of descendants starting with the root node, then followed by each child in topological order
         .descendants()
-        // sort by preferred name
-        .sort((a, b) => {
-          return this.determineSort(a, b)
-        })
         .filter(d => {
           return this.applyFilter(d)
         })
+
+      if (this.sortActive) {
+        nodes
+          // sort by preferred name
+          .sort((a, b) => {
+            return this.determineSort(a, b)
+          })
+      }
+
+      return nodes
         // returns a new custom object for each node
         .map((d, i) => {
           // set width of first column
@@ -289,34 +298,29 @@ export default {
     // the headers for the columns - width currently hardcoded
     columns () {
       return [
-        { label: 'Preferred Name', x: this.colWidth },
-        { label: 'Also Known As', x: this.colWidth + 200 },
-        { label: 'Age', x: this.colWidth + 400 },
-        { label: 'D.O.B', x: this.colWidth + 470 },
-        { label: 'D.O.D', x: this.colWidth + 600 },
-        { label: 'Profession', x: this.colWidth + 730 },
-        { label: 'Address', x: this.colWidth + 1000 },
-        { label: 'City', x: this.colWidth + 1405 },
-        { label: 'Post Code', x: this.colWidth + 1645 },
-        { label: 'Country', x: this.colWidth + 1765 },
-        { label: 'Place of Birth', x: this.colWidth + 2005 },
-        { label: 'Place of Death', x: this.colWidth + 2245 },
-        { label: 'Email', x: this.colWidth + 2485 },
-        { label: 'Phone', x: this.colWidth + 2845 }
+        { label: this.t('fullName'), x: 80 },
+        { label: this.t('preferredName'), x: this.colWidth },
+        { label: this.t('aka'), x: this.colWidth + 200 },
+        { label: this.t('age'), x: this.colWidth + 400 },
+        { label: this.t('dob'), x: this.colWidth + 470 },
+        { label: this.t('dod'), x: this.colWidth + 600 },
+        { label: this.t('profession'), x: this.colWidth + 730 },
+        { label: this.t('address'), x: this.colWidth + 1000 },
+        { label: this.t('city'), x: this.colWidth + 1405 },
+        { label: this.t('postCode'), x: this.colWidth + 1645 },
+        { label: this.t('country'), x: this.colWidth + 1765 },
+        { label: this.t('pob'), x: this.colWidth + 2005 },
+        { label: this.t('pod'), x: this.colWidth + 2245 },
+        { label: this.t('email'), x: this.colWidth + 2485 },
+        { label: this.t('phone'), x: this.colWidth + 2845 }
       ]
     }
   },
 
   watch: {
-    flatten (newValue) {
-      if (newValue === true) this.colWidth = 250
-      else this.colWidth = 350
-    },
-
     nodes (newValue) {
       this.setLoading(false)
     },
-
     // Triggered whenever the user selects a sort
     sortEvent () {
       this.resetSorts(this.sortValue)
@@ -470,13 +474,16 @@ export default {
       switch (currentSort) {
         case SORT.default:
           this.sort[field] = SORT.ascending
+          this.sortActive = true
           break
         case SORT.ascending:
           this.sort[field] = SORT.descending
+          this.sortActive = true
           break
         case SORT.descending:
         default:
           this.sort[field] = SORT.default
+          this.sortActive = false
       }
     },
     // When a sort is triggered, ensures all other sorts are disabled
@@ -599,6 +606,7 @@ export default {
     },
     applyFilter (node) {
       if (this.searchFilterString) {
+        console.log('going in')
         if (this.nameMatchesFilter(node)) return true
         else return false
       }
@@ -626,6 +634,9 @@ export default {
         }
       }
       return false
+    },
+    t (key, vars) {
+      return this.$t('viewTribalRegistry.' + key, vars)
     }
   },
   components: {
@@ -637,7 +648,13 @@ export default {
 
 <style scoped lang="scss">
 svg#baseSvg {
-  padding-top:150px;
+  @media screen and (max-width: 420px) {
+    padding-top: 20px;
+  }
+  @media screen and (min-width: 421px) {
+    padding-top: 150px;
+  }
+  // padding-top:150px;
   min-height: calc(100vh - 68px);
 }
 .nonbiological{

@@ -160,14 +160,11 @@ export function convertDateObjToString (obj) {
 
   if (year && month && day) return `${year}-${month}-${day}`
   if (year && month && !day) return `${year}-${month}`
+  if (year && !month && !day) return `${year}`
   if (!year && !month && !day) return ''
   if (year && !month && day) {
     error = new Error('Please specify a month')
     error.metadata = { month: true }
-  }
-  if (year && !month && !day) {
-    error = new Error('Please specify a month')
-    error.metadata = { month: true, day: true }
   }
   if (!year && month && day) {
     error = new Error('Please specify a year')

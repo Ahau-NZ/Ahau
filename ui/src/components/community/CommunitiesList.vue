@@ -73,11 +73,13 @@
               </v-row>
             </div>
             <div v-else>
+              <p class="pl-3 caption">{{ t('notconnected')}}</p>
               <p class="pl-3 caption">{{ $t('pataka.notConnected') }}</p>
             </div>
             <v-row justify='center'>
               <v-btn text small justify-center class="blue--text mt-3" @click="dialog = !dialog">
                 <v-icon small class="blue--text pr-2 ml-3">mdi-plus</v-icon>
+               {{ t('connectPataka') }}
                 {{ $t('pataka.connectPataka')}}
               </v-btn>
             </v-row>

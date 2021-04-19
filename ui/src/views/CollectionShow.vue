@@ -19,7 +19,7 @@
       <v-row>
         <v-col cols="12" class="px-0">
           <Stories
-            title="Stories"
+            :title="t('viewPersonArchive.stories')"
             :stories="stories"
             @save="$emit('processStory', $event)"
           />
@@ -171,6 +171,9 @@ export default {
       const [newPath] = this.$route.fullPath.split('archive/')
       this.$router.push({ path: newPath + 'archive' }).catch(() => {})
     }
+  },
+  t (key, vars) {
+    return this.$t('viewPersonArchive.' + key, vars)
   }
 }
 </script>

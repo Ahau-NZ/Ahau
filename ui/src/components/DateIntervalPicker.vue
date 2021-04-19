@@ -15,7 +15,7 @@
         class="pt-6 pl-4"
         v-if="!hasEndDate"
         v-model="hasEndDate"
-        label="has an end date"
+        :label="t('hasEndDate')"
         hide-details
         v-bind="customProps"
         outlined
@@ -127,6 +127,9 @@ export default {
       } catch (err) {
         this.errorMsg = 'Please try another date range'
       }
+    },
+    t (key, vars) {
+      return this.$t('addStoryForm.' + key, vars)
     }
   }
 }

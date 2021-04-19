@@ -8,7 +8,13 @@
     <template v-if="!hideDetails" v-slot:content>
       <v-col class="py-0 px-0">
 
-        <ProfileForm :profile.sync="formData" :readonly="hasSelection" :editRelationship="hasSelection" :withRelationships="allowRelationships" :mobile="mobile" isNewNodeDialog :dialogType="type">
+        <ProfileForm
+          :isUser="isUser"
+          :profile.sync="formData"
+          :readonly="hasSelection"
+          :withRelationships="allowRelationships"
+          :dialogType="type"
+        >
 
           <!-- Slot = Search -->
           <template v-slot:search>
@@ -179,12 +185,12 @@ export default {
   ],
   props: {
     show: { type: Boolean, required: true },
-    withRelationships: { type: Boolean, default: true },
     title: { type: String, default: 'Create a new person' },
     suggestions: Array,
     hideDetails: Boolean,
     selectedProfile: Object,
     withView: { type: Boolean, default: true },
+    isUser: { type: Boolean, default: false },
     type: {
       type: String,
       validator: (val) => [
@@ -220,7 +226,7 @@ export default {
   computed: {
     ...mapGetters(['currentAccess']),
     allowRelationships () {
-      return this.withRelationships && this.type !== 'partner' && (this.profile.relationshipType === null || this.profile.relationshipType === undefined)
+      return this.type && this.type !== 'partner' && (this.profile.relationshipType === null || this.profile.relationshipType === undefined)
     },
     generateSuggestions () {
       if (this.hasSelection) return []
@@ -257,7 +263,7 @@ export default {
       return this.getSuggestionsByField('partners')
     },
     mobile () {
-      return this.$vuetify.breakpoint.xs
+      return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
     customProps () {
       return {
