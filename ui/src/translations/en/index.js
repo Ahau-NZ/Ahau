@@ -6,6 +6,7 @@ module.exports = {
   addCommunityForm: require('./add-community-form.json'),
   viewPerson: require('./view-person.json'),
   viewTribes: require('./view-tribes.json'),
+  addWhakapapaForm: require('./add-whakapapa-form.json'),
   instructionsWhakapapa: require('./instructions-whakapapa.json'),
   viewPersonArchive: require('./view-person-archive.json'),
   viewPersonWhakapapa: require('./view-person-whakapapa.json')
