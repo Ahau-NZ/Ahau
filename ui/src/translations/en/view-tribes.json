@@ -1,6 +1,8 @@
-{
+ {
   "tribes": "Tribes",
   "newTribeButton": "new tribe",
   "connectedTribes": "Tribes that you are connected to",
-  "otherTribes": "Other whānau tribes"
+  "otherTribes": "Other whānau tribes",
+  "connectPataka": "Connect Pātaka",
+  "notConnected": "You are not currently connected"
 }
