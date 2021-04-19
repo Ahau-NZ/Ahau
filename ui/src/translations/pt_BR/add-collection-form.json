@@ -1,0 +1,13 @@
+{
+  "addCollection": "Add a Collection",
+  "collectionName": "Collection Name",
+  "collectionDescription": "Collection Description",
+  "addStories": "Add stories from archive to this collection",
+  "stories": "Stories",
+  "addRelatedStories": "Add related stories",
+  "editImage": "Edit collection image",
+  "editCollection": "Edit collection",
+  "description": "Descrição",
+  "privacySelection": "Private",
+  "privacy": "Only you will have access to this story"
+}
