@@ -9,7 +9,7 @@
 
       <!-- Desktop doesn't use a drawer, it has the links directly in the app bar -->
       <template v-if="!mobile">
-        <!-- <LocalePicker /> -->
+        <LocalePicker />
         <v-btn text active-class="no-active" to="/tribe" class="white--text text-uppercase ms-10">Tribes</v-btn>
         <v-btn active-class="no-active" text @click.native="goProfile('archive')" class="white--text text-uppercase ms-10">Archive</v-btn>
 
