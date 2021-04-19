@@ -1,0 +1,10 @@
+{
+    "createWhakapapa": "Create a new whakapapa",
+    "name": "Name",
+    "description": "Kōrero whakaaturanga",
+    "start": "Would you like to start with",
+    "anotherPerson": "Another person",
+    "csvImport": "Import from CSV file",
+    "csvUpload": "Upload CSV File",
+    "editImage": "Edit whakapapa image"
+}
