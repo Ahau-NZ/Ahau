@@ -20,7 +20,7 @@
             </v-btn>
           </v-col>
           <v-col v-else cols="12" justify="center" align="center" class="pa-0">
-            <ImagePicker :label="t('edit')"
+            <ImagePicker :label="t('editImage')"
               @updateAvatar="formData.image = $event"
               isView
             />
