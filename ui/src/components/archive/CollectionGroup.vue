@@ -97,9 +97,9 @@ export default {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     }
   },
-    t (key, vars) {
-      return this.$t('viewPersonArchive.' + key, vars)
-    }
+  t (key, vars) {
+    return this.$t('viewPersonArchive.' + key, vars)
+  }
 }
 </script>
 

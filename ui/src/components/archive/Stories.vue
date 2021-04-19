@@ -101,9 +101,9 @@ export default {
       if (this.showStory) this.toggleStory()
     }
   },
-    t (key, vars) {
-      return this.$t('viewPersonArchive.' + key, vars)
-    }
+  t (key, vars) {
+    return this.$t('viewPersonArchive.' + key, vars)
+  }
 }
 </script>
 
