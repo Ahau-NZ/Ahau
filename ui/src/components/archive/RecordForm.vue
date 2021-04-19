@@ -11,13 +11,13 @@
                   <v-text-field
                     v-on="on"
                     v-model="formData.title"
-                    label="Title"
+                    :label="t('title')"
                     v-bind="customProps"
                     class="title-input"
                     style="text-align: start; font-size: 1.2em; font-weight: 700;"
                   />
                 </template>
-                <span>A short, descriptive name for the story</span>
+                <span>{{ t('story') }}</span>
               </v-tooltip>
             </v-col>
             <v-col v-if="formData.artefacts && formData.artefacts.length > 0" cols="12" class="pl-0 pr-0">
@@ -35,21 +35,21 @@
                   <UploadArtefactButton showLabel @artefacts="processArtefacts($event)"/>
                 </v-col>
               </template>
-              <span>Media assets associated with the story<br>Can be images, documents, video, or audio files. </span>
+              <span>{{ t('mediaAssets') }}<br>{{ t('mediaTypes') }}</span>
             </v-tooltip>
             <v-tooltip top open-delay="700">
               <template v-slot:activator="{ on }">
                 <v-col v-on="on" :cols="showLocation ? '12':'6'" class="py-0">
                   <div v-if="!showLocation" @click="showLocation = true" class="pt-3">
                     <AddButton :size="mobile ? '40px' : '60px'" icon="mdi-map-plus"/>
-                    <p class="add-label clickable" >Add location</p>
+                    <p class="add-label clickable" >{{ t('addLocation') }}</p>
                   </div>
                   <v-row v-if="showLocation">
                     <v-col :cols="formData.artefacts && formData.artefacts.length > 0 ? '6':'12'" class="pa-1">
                       <v-textarea
                         v-on="on"
                         v-model="formData.location"
-                        label="Location"
+                        :label="t('location')"
                         v-bind="customProps"
                         no-resize
                         rows="3"
@@ -60,7 +60,7 @@
                   </v-row>
                 </v-col>
               </template>
-              <span>A short description about a location <br>or place associated with the story</span>
+              <span>{{ t('locationDescription') }} <br>{{ t('orPlace') }}</span>
             </v-tooltip>
                 <!-- <v-col :cols="formData.artefacts && formData.artefacts.length > 0 ? '6':'12'" class="pa-1">
                   <v-textarea
@@ -80,7 +80,7 @@
                   <v-textarea
                     v-on="on"
                     v-model="formData.description"
-                    label="Description"
+                    :label="t('description')"
                     v-bind="customProps"
                     no-resize
                     rows="3"
@@ -88,17 +88,17 @@
                   >
                   </v-textarea>
                 </template>
-                <span>An in depth description of the story</span>
+                <span>{{ t('inDepthDescription') }}</span>
               </v-tooltip>
             </v-col>
             <DateIntervalPicker
               class="px-3"
-              label="Date"
-              endLabel="End Date"
+              :label="t('date')"
+              :endLabel="t('endDate')"
               allowInterval
               :interval.sync="formData.timeInterval"
               :hasEndDate.sync="hasEndDate"
-              checkbox-label="include an end date"
+              :checkbox-label="t('includeEndDate')"
               :cols="mobile ? '12' : '6'"
               :showCheckbox="!hasEndDate"
             />
@@ -109,11 +109,11 @@
                   <div v-on="on">
                     <v-row v-if="!showMentions" @click="showMentions = true; mentions = []" class="pl-5">
                       <v-icon small>mdi-plus</v-icon>
-                      <AddButton size="20px" icon="mdi-account" iconClass="pr-3" label="Mention" justify="start"/>
+                      <AddButton size="20px" icon="mdi-account" iconClass="pr-3" :label="t('mention')" justify="start"/>
                     </v-row>
                   </div>
                 </template>
-                <span>People and communities that are mentioned<br>or connected to the story</span>
+                <span>{{ t('mentioned') }}<br>{{ t('connected') }}</span>
               </v-tooltip>
               <ProfileSearchBar
                 :selectedItems.sync="formData.mentions"
@@ -139,11 +139,11 @@
                   <div v-on="on">
                     <v-row v-if="!showContributors" @click="showContributors = true; contributors = []" class="pl-5">
                       <v-icon small>mdi-plus</v-icon>
-                        <AddButton size="20px" icon="mdi-library" iconClass="pr-3" label="Contributor"  justify="start"/>
+                        <AddButton size="20px" icon="mdi-library" iconClass="pr-3" :label="t('contributor')"  justify="start"/>
                     </v-row>
                   </div>
                 </template>
-                <span>A Contributor is the person or people who contributed<br>to the submission of the story into the archive</span>
+                <span>{{ t('contributorDescription') }}<br>{{ t('contributorTip') }}</span>
               </v-tooltip>
 
               <ProfileSearchBar
@@ -166,7 +166,7 @@
             <!-- ADD KAITIAKI -->
             <v-col cols="12" md="auto" class="pa-5">
               <v-row class="pl-5">
-                <AddButton size="20px" icon="mdi-library" iconClass="pr-3" label="Kaitiaki"  justify="start"/>
+                <AddButton size="20px" icon="mdi-library" iconClass="pr-3" :label="t('kaitiaki')"  justify="start"/>
               </v-row>
               <AvatarGroup v-if="formData.tiaki && formData.tiaki.length > 0"
                 :profiles="formData.tiaki"
@@ -231,7 +231,7 @@
       <v-card-actions class="pt-2 pb-2 px-5">
         <v-row @click="show = !show" class="clickable">
           <v-col>
-            <span class="pa-0 ma-0">Advanced</span>
+            <span class="pa-0 ma-0">{{ t('advanced') }}</span>
           </v-col>
           <v-btn icon right>
             <v-icon>{{ show ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
@@ -249,18 +249,18 @@
                   <div v-on="on">
                     <v-row v-if="!showRecords" @click="showRecords = true" class="pl-5">
                       <v-icon small>mdi-plus</v-icon>
-                      <AddButton size="20px" icon="mdi-book-multiple" iconClass="pr-3" label="Related records"  justify="start"/>
+                      <AddButton size="20px" icon="mdi-book-multiple" iconClass="pr-3" :label="t('relatedRecords')"  justify="start"/>
                     </v-row>
                   </div>
                 </template>
-                <span>Related stories are stories that have a close connection <br> and are used to guide viewers from one story to another</span>
+                <span>{{ t('relatedStories') }} <br> {{ t('guideViewers') }}</span>
               </v-tooltip>
 
               <ProfileSearchBar
                 :selectedItems.sync="formData.relatedRecords"
                 :items="filteredStories"
                 :openMenu.sync="showRecords"
-                placeholder="add related story"
+                :placeholder="t('storyPlaceholder')"
                 item="title"
               />
               <ChipGroup
@@ -279,18 +279,18 @@
                   <div v-on="on">
                     <v-row v-if="!showCollections" @click="showCollections = true" class="pl-5">
                       <v-icon small>mdi-plus</v-icon>
-                      <AddButton size="20px" icon="mdi-folder" iconClass="pr-3" label="Collections"  justify="start"/>
+                      <AddButton size="20px" icon="mdi-folder" iconClass="pr-3" :label="t('collections')"  justify="start"/>
                     </v-row>
                   </div>
                 </template>
-                <span>A Collection is a grouping of stories</span>
+                <span>{{ t('collectionTip') }}</span>
               </v-tooltip>
 
               <ProfileSearchBar
                 :selectedItems.sync="formData.collections"
                 :items="filteredCollections"
                 :openMenu.sync="showCollections"
-                placeholder="add story to collection"
+                :placeholder="t('collectionPlaceholder')"
                 item="name"
               />
               <ChipGroup
@@ -341,7 +341,7 @@
                     v-on="on"
                     v-if="show"
                     v-model="formData.contributionNotes"
-                    label="Contribution notes"
+                    :label="t('contributionNotes')"
                     v-bind="customProps"
                     no-resize
                     rows="3"
@@ -349,7 +349,7 @@
                   >
                   </v-textarea>
                 </template>
-                <span>Extra context about the story or the story creation process</span>
+                <span>{{ t('extraContent') }}</span>
               </v-tooltip>
             </v-col>
 
@@ -371,11 +371,11 @@
                   <v-text-field
                     v-on="on"
                     v-model="formData.format"
-                    label="Format"
+                    :label="t('format')"
                     v-bind="customProps"
                   />
                 </template>
-                <span>The specific physical or digital form of the story or artefact</span>
+                <span>{{ t('physicalDigital') }}</span>
               </v-tooltip>
             </v-col>
             <v-col :cols="mobile ? '6' : '3'" class="pa-1">
@@ -384,11 +384,11 @@
                   <v-text-field
                     v-on="on"
                     v-model="formData.identifier"
-                    label="Identifier"
+                    :label="t('identifier')"
                     v-bind="customProps"
                   />
                 </template>
-                <span>A unique, unambiguous reference to the story</span>
+                <span>{{ t('uniqueIdentifier') }}</span>
               </v-tooltip>
             </v-col>
             <v-col :cols="mobile ? '6' : '3'" class="pa-1">
@@ -397,11 +397,11 @@
                   <v-text-field
                     v-on="on"
                     v-model="formData.source"
-                    label="Source"
+                    :label="t('source')"
                     v-bind="customProps"
                   />
                 </template>
-                <span>Source provides a reference to the resource or institution<br>from where the story is contributed or originated</span>
+                <span>{{ t('sourceProvides') }}<br>{{ t('sourceOriginated') }}</span>
               </v-tooltip>
             </v-col>
             <v-col :cols="mobile ? '6' : '3'" class="pa-1">
@@ -410,11 +410,11 @@
                   <v-text-field
                     v-on="on"
                     v-model="formData.language"
-                    label="Language"
+                    :label="t('language')"
                     v-bind="customProps"
                   />
                 </template>
-                <span>The language that the information or media asset has been provided</span>
+                <span>{{ t('languageTip') }}</span>
               </v-tooltip>
             </v-col>
             <v-col cols="12" class="pa-1">
@@ -423,7 +423,7 @@
                   <v-textarea
                     v-on="on"
                     v-model="formData.transcription"
-                    label="Translation/Transcription"
+                    :label="t('translation')"
                     v-bind="customProps"
                     no-resize
                     rows="3"
@@ -431,7 +431,7 @@
                   >
                   </v-textarea>
                 </template>
-                <span>Transcription is a plain text field used to provide a text transcription or translation <br>of an audio or video recording, or of text in an image or document</span>
+                <span>{{ t('translationTip') }} <br>{{ translationFormat }}</span>
               </v-tooltip>
             </v-col>
           </v-row>
@@ -620,6 +620,9 @@ export default {
     updateItem (array, update, index) {
       // update the item in the array at the index
       array.splice(index, 1, update)
+    },
+    t (key, vars) {
+      return this.$t('addStoryForm.' + key, vars)
     }
   }
 }
