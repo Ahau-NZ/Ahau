@@ -14,8 +14,8 @@
   },
   "dependencies": {
     "ahau-env": "^2.1.0",
-    "secret-stack": "^6.3.1",
-    "ssb-ahau": "gitlab:ahau/ssb-plugins/ssb-ahau#partners",
+    "secret-stack": "^6.4.0",
+    "ssb-ahau": "^8.0.0",
     "ssb-ahoy": "^3.0.0",
     "ssb-artefact": "^3.2.1",
     "ssb-backlinks": "^2.1.1",
@@ -29,7 +29,7 @@
     "ssb-lan": "^0.2.0",
     "ssb-master": "^1.0.3",
     "ssb-no-auth": "^1.0.0",
-    "ssb-profile": "^2.3.1",
+    "ssb-profile": "^2.4.1",
     "ssb-query": "^2.4.5",
     "ssb-recps-guard": "^2.1.0",
     "ssb-replicate": "^1.3.2",
@@ -37,7 +37,7 @@
     "ssb-story": "^2.2.3",
     "ssb-tribes": "2.0.1",
     "ssb-unix-socket": "^1.0.0",
-    "ssb-whakapapa": "gitlab:ahau/ssb-plugins/ssb-whakapapa#partners"
+    "ssb-whakapapa": "^2.1.0"
   },
   "devDependencies": {
     "@fiahfy/icns-convert": "0.0.8",
