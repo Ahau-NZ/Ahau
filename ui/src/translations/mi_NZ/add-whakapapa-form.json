@@ -1,10 +1,10 @@
 {
-    "createWhakapapa": "Create a new whakapapa",
-    "name": "Name",
+    "createWhakapapa": "Hangaia whakapapa hou",
+    "name": "Ingoa",
     "description": "Kōrero whakaaturanga",
-    "start": "Would you like to start with",
-    "anotherPerson": "Another person",
-    "csvImport": "Import from CSV file",
-    "csvUpload": "Upload CSV File",
-    "editImage": "Edit whakapapa image"
+    "start": "E hiahia ana koe te timata me te",
+    "anotherPerson": "Tangata anō",
+    "csvImport": "Kawe mai i te kōnae CSV",
+    "csvUpload": "Whakarewa kōnae CSV",
+    "editImage": "Panoni whakaahua whakapapa"
 }
