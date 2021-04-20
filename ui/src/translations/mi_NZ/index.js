@@ -7,5 +7,5 @@ module.exports = {
   viewTribes: require('./view-tribes.json'),
   instructionsWhakapapa: require('./instructions-whakapapa.json'),
   viewArchive: require('./view-archive.json'),
-  viewPersonWhakapapa: require('./view-person-whakapapa.json')
+  whakapapaIndex: require('./whakapapa-index.json')
 }
