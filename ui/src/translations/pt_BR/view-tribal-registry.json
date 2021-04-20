@@ -1,17 +1,17 @@
 {
     "fullName": "Nome Completo",
     "preferredName": "Nome preferencial",
-    "aka": "Also Known As",
+    "aka": "Também conhecido como",
     "age": "Idade",
-    "dob": "D.O.B.",
-    "dod": "D.O.D.",
+    "dob": "B.D.O.",
+    "dod": "D.O.D",
     "profession": "Profissão",
     "address": "Endereço",
     "city": "Cidade",
     "postCode": "CEP Residencial",
     "country": "País/região",
     "pob": "Local de nascimento",
-    "pod": "Place of Death",
+    "pod": "Local da Morte",
     "email": "E-mail",
     "phone": "Phone"
 }
