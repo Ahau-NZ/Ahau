@@ -1,10 +1,10 @@
 {
     "createWhakapapa": "Create a new whakapapa",
-    "name": "Name",
+    "name": "Nome:",
     "description": "Descrição",
-    "start": "Would you like to start with",
-    "anotherPerson": "Another person",
-    "csvImport": "Import from CSV file",
-    "csvUpload": "Upload CSV File",
-    "editImage": "Edit whakapapa image"
+    "start": "Você gostaria de começar com",
+    "anotherPerson": "Outra pessoa",
+    "csvImport": "Importar de um arquivo CSV",
+    "csvUpload": "Carregar arquivo CSV",
+    "editImage": "Editar imagem de whakapa"
 }
