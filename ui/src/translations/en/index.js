@@ -9,6 +9,6 @@ module.exports = {
   viewTribes: require('./view-tribes.json'),
   addWhakapapaForm: require('./add-whakapapa-form.json'),
   instructionsWhakapapa: require('./instructions-whakapapa.json'),
-  viewPersonArchive: require('./view-archive.json'),
+  viewArchive: require('./view-archive.json'),
   viewPersonWhakapapa: require('./view-person-whakapapa.json')
 }
