@@ -17,7 +17,7 @@
                     style="text-align: start; font-size: 1.2em; font-weight: 700;"
                   />
                 </template>
-                <span>{{ t('story') }}</span>
+                <span>{{ t('titleTooltip') }}</span>
               </v-tooltip>
             </v-col>
             <v-col v-if="formData.artefacts && formData.artefacts.length > 0" cols="12" class="pl-0 pr-0">
@@ -35,7 +35,7 @@
                   <UploadArtefactButton showLabel @artefacts="processArtefacts($event)"/>
                 </v-col>
               </template>
-              <span>{{ t('mediaAssets') }}<br>{{ t('mediaTypes') }}</span>
+              <span>{{ t('uploadArtefactButtonTooltip') }}'</span>
             </v-tooltip>
             <v-tooltip top open-delay="700">
               <template v-slot:activator="{ on }">
@@ -60,7 +60,7 @@
                   </v-row>
                 </v-col>
               </template>
-              <span>{{ t('locationDescription') }} <br>{{ t('orPlace') }}</span>
+              <span>{{ t('locationTooltip') }}</span>
             </v-tooltip>
                 <!-- <v-col :cols="formData.artefacts && formData.artefacts.length > 0 ? '6':'12'" class="pa-1">
                   <v-textarea
@@ -88,7 +88,7 @@
                   >
                   </v-textarea>
                 </template>
-                <span>{{ t('inDepthDescription') }}</span>
+                <span>{{ t('descriptionTooltip') }}</span>
               </v-tooltip>
             </v-col>
             <DateIntervalPicker
@@ -113,13 +113,13 @@
                     </v-row>
                   </div>
                 </template>
-                <span>{{ t('mentioned') }}<br>{{ t('connected') }}</span>
+                <span>{{ t('mentionTooltip') }}</span>
               </v-tooltip>
               <ProfileSearchBar
                 :selectedItems.sync="formData.mentions"
                 :items="mentions"
                 :openMenu.sync="showMentions"
-                placeholder="add mention"
+                :placeholder="t('addMention')"
                 item="preferredName"
                 @getSuggestions="getSuggestions('mentions', $event)"
               />
@@ -143,7 +143,7 @@
                     </v-row>
                   </div>
                 </template>
-                <span>{{ t('contributorDescription') }}<br>{{ t('contributorTip') }}</span>
+                <span>{{ t('contributorTooltip') }}</span>
               </v-tooltip>
 
               <ProfileSearchBar
@@ -151,7 +151,7 @@
                 :items="contributors"
                 :openMenu.sync="showContributors"
                 item="preferredName"
-                placeholder="add contributors"
+                :placeholder="t('addContributor')"
                 @getSuggestions="getSuggestions('contributors', $event)"
               />
               <AvatarGroup v-if="formData.contributors && formData.contributors.length > 0"
@@ -253,7 +253,7 @@
                     </v-row>
                   </div>
                 </template>
-                <span>{{ t('relatedStories') }} <br> {{ t('guideViewers') }}</span>
+                <span>{{ t('relatedRecordsTooltip') }}</span>
               </v-tooltip>
 
               <ProfileSearchBar
@@ -283,7 +283,7 @@
                     </v-row>
                   </div>
                 </template>
-                <span>{{ t('collectionTip') }}</span>
+                <span>{{ t('collectionTooltip') }}</span>
               </v-tooltip>
 
               <ProfileSearchBar
@@ -349,7 +349,7 @@
                   >
                   </v-textarea>
                 </template>
-                <span>{{ t('extraContent') }}</span>
+                <span>{{ t('contributorNotesTooltip') }}</span>
               </v-tooltip>
             </v-col>
 
@@ -375,7 +375,7 @@
                     v-bind="customProps"
                   />
                 </template>
-                <span>{{ t('physicalDigital') }}</span>
+                <span>{{ t('formatTooltip') }}</span>
               </v-tooltip>
             </v-col>
             <v-col :cols="mobile ? '6' : '3'" class="pa-1">
@@ -388,7 +388,7 @@
                     v-bind="customProps"
                   />
                 </template>
-                <span>{{ t('uniqueIdentifier') }}</span>
+                <span>{{ t('identifierTooltip') }}</span>
               </v-tooltip>
             </v-col>
             <v-col :cols="mobile ? '6' : '3'" class="pa-1">
@@ -401,7 +401,7 @@
                     v-bind="customProps"
                   />
                 </template>
-                <span>{{ t('sourceProvides') }}<br>{{ t('sourceOriginated') }}</span>
+                <span>{{ t('sourceTooltip') }}</span>
               </v-tooltip>
             </v-col>
             <v-col :cols="mobile ? '6' : '3'" class="pa-1">
@@ -414,7 +414,7 @@
                     v-bind="customProps"
                   />
                 </template>
-                <span>{{ t('languageTip') }}</span>
+                <span>{{ t('languageTooltip') }}</span>
               </v-tooltip>
             </v-col>
             <v-col cols="12" class="pa-1">
@@ -423,7 +423,7 @@
                   <v-textarea
                     v-on="on"
                     v-model="formData.transcription"
-                    :label="t('translation')"
+                    :label="t('transcription')"
                     v-bind="customProps"
                     no-resize
                     rows="3"
@@ -431,7 +431,7 @@
                   >
                   </v-textarea>
                 </template>
-                <span>{{ t('translationTip') }} <br>{{ translationFormat }}</span>
+                <span>{{ t('transcriptionTooltip') }}</span>
               </v-tooltip>
             </v-col>
           </v-row>
