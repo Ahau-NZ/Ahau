@@ -1,3 +1,14 @@
 {
-  
+  "archiveTitle": "Seu Arquivo Pessoal",
+  "newCollectionButton": "nova coleção",
+  "newStoryButton": "nova história",
+  "collections": "Coleções",
+  "updated": "Atualizado",
+  "stories": "Histórias",
+  "archiveRecords": "Arquivar Registros",
+  "access": "Acesso",
+  "mentions": "Menciona",
+  "location": "Local:",
+  "collectionNotFound": "Nenhuma coleção encontrada",
+  "storyNotFound": " Nenhuma história encontrada"
 }
