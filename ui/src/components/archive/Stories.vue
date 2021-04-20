@@ -48,7 +48,7 @@
             class="px-8 subtitle-1 grey--text "
             :class="{ 'text-center': mobile }"
           >
-            {{ $t('viewPersonArchive.storyNotFound') }}
+            {{ $t('viewArchive.storyNotFound') }}
           </div>
         </div>
       </v-col>
@@ -102,7 +102,7 @@ export default {
     }
   },
   t (key, vars) {
-    return this.$t('viewPersonArchive.' + key, vars)
+    return this.$t('viewArchive.' + key, vars)
   }
 }
 </script>
