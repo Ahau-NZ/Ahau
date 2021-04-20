@@ -21,7 +21,7 @@
           <div v-for="(group, index ) in whakapapas" :key="index" class="py-4">
             <v-row class="pl-6 pb-3">
               <Avatar :size="mobile ? '50px' : '40px'" :image="group.image" :alt="group.name" :isView="!group.image" />
-              <p class="black--text overline pl-6 pt-1" style="font-size:20px">{{ group.name }} {{ t('whakapapaRecords')}}</p>
+              <p class="black--text overline pl-6 pt-1" style="font-size:20px">{{ `${group.name} ${t('whakapapaRecords')}`}}</p>
             </v-row>
             <v-row v-for="view in group.views" :key="view.id" dense class="mb-2">
               <v-col cols="12" md="10">
@@ -366,7 +366,7 @@ export default {
       }
     },
     t (key, vars) {
-      return this.$t('viewPersonWhakapapa.' + key, vars)
+      return this.$t('whakapapaIndex.' + key, vars)
     },
     t2 (key, vars) {
       return this.$t('addWhakapapaForm.' + key, vars)

@@ -19,7 +19,7 @@
       <v-row>
         <v-col cols="12" class="px-0">
           <Stories
-            :title="t('viewPersonArchive.stories')"
+            :title="t('stories')"
             :stories="stories"
             @save="$emit('processStory', $event)"
           />
@@ -173,7 +173,7 @@ export default {
     }
   },
   t (key, vars) {
-    return this.$t('viewPersonArchive.' + key, vars)
+    return this.$t('viewArchive.' + key, vars)
   }
 }
 </script>
