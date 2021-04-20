@@ -1,7 +1,7 @@
 {
-  "whakapapaTitle": "Whakapapa Records",
-  "addWhakapapaButton": "new whakapapa record",
-  "noWhakapapaFound": "no whakapapa record found",
-  "whakapapaRecords": "Records",
-  "privateRecords": "My private"
+  "whakapapaTitle": "Registros de Whakapa",
+  "addWhakapapaButton": "novo registro de whakapa",
+  "noWhakapapaFound": "nenhum registro de whakapa encontrado",
+  "whakapapaRecords": "registros",
+  "privateRecords": "Meu privado"
 }
