@@ -175,7 +175,7 @@
       </div>
     </v-container>
 
-    <NodeMenu ref="menu" :view="whakapapaView" @open="updateDialog($event.dialog, $event.type)"/>
+    <NodeMenu ref="menu" :view="whakapapaView" :currentFocus="currentFocus" @open="updateDialog($event.dialog, $event.type)"/>
 
     <VueContext ref="sort" class="px-0">
       <li v-for="(field, i) in sortFields" :key="`sort-field-${i}`">
