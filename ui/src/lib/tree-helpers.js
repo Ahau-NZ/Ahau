@@ -313,20 +313,9 @@ function addParent (nestedWhakapapa, child, parent) {
     return nestedWhakapapa
   }
 
-  // var found = false
   nestedWhakapapa.children = nestedWhakapapa.children.map(c => {
-    // if (c.id === child.id) found = true
     return addParent(c, child, parent)
   })
-
-  // if (found) {
-  //   if (nestedWhakapapa.partners.length === 0) nestedWhakapapa.partners.push(parent)
-  //   else {
-  //     if (!nestedWhakapapa.partners.some(p => p.id === parent.id)) {
-  //       nestedWhakapapa.partners.push(parent)
-  //     }
-  //   }
-  // }
 
   return nestedWhakapapa
 }
@@ -343,11 +332,6 @@ function addPartner (nestedWhakapapa, node, partner) {
   nestedWhakapapa.children = nestedWhakapapa.children.map(c => {
     return addPartner(c, node, partner)
   })
-
-  // var found = false
-  // nestedWhakapapa.chil
-
-  // TODO: do we need to add this partner to anyone else
 
   return nestedWhakapapa
 }
