@@ -25,8 +25,12 @@ export default {
   props: {
     label: String,
     items: { type: Array, default: null },
-    addedProfiles: { type: Array, default: null },
-    mobile: { type: Boolean, default: false }
+    addedProfiles: { type: Array, default: null }
+  },
+  computed: {
+    mobile () {
+      return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
+    }
   },
   methods: {
     addedProfile (profile) {

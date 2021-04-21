@@ -63,15 +63,11 @@
           </template>
 
           <template v-slot:addParents>
-            <!-- <v-row>
-              <span v-if="hasProfiles('parents')">Add Parent</span>
-            </v-row> -->
             <v-col cols="12" :class="mobile ? 'px-0':'py-0'" v-if="hasProfiles('parents')">
               <ProfileList
                 label="Add other parent"
                 :addedProfiles.sync="quickAdd['newParents']"
                 :items="generateParents"
-                :mobile="mobile"
                 @profile-click="addProfile($event, 'newParents')"
                 @related-by="updateRelationships($event, 'newParents')"
               />
@@ -83,7 +79,6 @@
                 label="Add children"
                 :addedProfiles.sync="quickAdd['newChildren']"
                 :items="generateChildren"
-                :mobile="mobile"
                 @profile-click="addProfile($event, 'newChildren')"
                 @related-by="updateRelationships($event, 'newChildren')"
               />
@@ -95,7 +90,6 @@
                 label="Add partners"
                 :addedProfiles.sync="quickAdd['newPartners']"
                 :items="generatePartners"
-                :mobile="mobile"
                 @profile-click="addProfile($event, 'newPartners')"
               />
             </v-col>
@@ -219,14 +213,14 @@ export default {
     this.closeSuggestions = await this.getCloseSuggestions()
 
     this.quickAdd['parents'] = await this.newChildParents(this.selectedProfile)
-    if (this.type === 'partner') this.quickAdd['children'] = await this.newPartnerChildren(this.selectedProfile)
-    else if (this.type === 'parent') this.quickAdd['children'] = await this.newParentChildren(this.selectedProfile)
+    if (this.type === 'partner') this.quickAdd['children'] = this.newPartnerChildren(this.selectedProfile)
+    else if (this.type === 'parent') this.quickAdd['children'] = this.newParentChildren(this.selectedProfile)
     this.quickAdd['partners'] = this.selectedProfile.parents
   },
   computed: {
     ...mapGetters(['currentAccess']),
     allowRelationships () {
-      return this.type && this.type !== 'partner' && (this.profile.relationshipType === null || this.profile.relationshipType === undefined)
+      return this.type && this.type !== 'partner' && (this.profile.relationshipType == null)
     },
     generateSuggestions () {
       if (this.hasSelection) return []
@@ -345,40 +339,40 @@ export default {
       }
     },
     async findChildren () {
-      var currentChildren = []
-      var children = []
-
-      if (this.selectedProfile.children) {
-        this.selectedProfile.children.forEach(d => {
-          currentChildren[d.id] = d
-        })
-      }
+      var currentChildren = this.selectedProfile.children || []
+      var suggestedChildren = []
 
       // children of your partners that arent currently your children
       if (this.selectedProfile.partners) {
-        this.selectedProfile.partners.forEach(async partner => {
-          const profile = await this.getProfile(partner.id)
+        await Promise.all(
+          this.selectedProfile.partners.map(async partner => {
+            const profile = await this.getProfile(partner.id)
 
-          profile.children.forEach(d => {
-            if (!currentChildren[d.id]) {
-              children.push(d)
-            }
+            profile.children.forEach(child => {
+              if (!this.find(currentChildren, child) && !this.find(suggestedChildren, child)) {
+                suggestedChildren.push(child)
+              }
+            })
+
+            return partner
           })
-        })
+        )
       }
 
       // get ignored children
       const profile = await this.getProfile(this.selectedProfile.id)
-      profile.children.forEach(d => {
-        if (!currentChildren[d.id]) {
-          children.push(d)
+      profile.children.forEach(child => {
+        if (!this.find(currentChildren, child) && !this.find(suggestedChildren, child)) {
+          suggestedChildren.push(child)
         }
       })
 
-      return children
+      return suggestedChildren
     },
 
     async newChildParents (profile) {
+      if (!profile.partners) return []
+
       var currentPartners = []
 
       if (this.type === 'child' && profile.partners) {
@@ -395,102 +389,102 @@ export default {
       return currentPartners
     },
 
-    async newPartnerChildren (profile) {
-      var currentChildren = []
-
-      if (profile.children) {
-        profile.children.forEach(d => {
-          currentChildren.push(d)
-        })
-      }
-      return currentChildren
+    newPartnerChildren (profile) {
+      return profile.children || []
     },
 
-    async newParentChildren (profile) {
-      var currentChildren = []
-
-      if (profile.siblings) {
-        profile.siblings.forEach(d => {
-          currentChildren.push(d)
-        })
-      }
-      return currentChildren
+    newParentChildren (profile) {
+      return profile.siblings || []
     },
 
     async findParents () {
-      var currentParents = []
-      var parents = []
-      if (this.selectedProfile.parents) {
-        this.selectedProfile.parents.forEach(d => {
-          currentParents[d.id] = d
+      var currentParents = this.selectedProfile.parents || []
+      if (!currentParents || currentParents.length === 0) return []
+
+      var suggestedParents = []
+
+      currentParents.forEach(parent => {
+        if (!parent.partners) return
+
+        parent.partners.forEach(partner => {
+          if (!this.find(currentParents, partner) && !this.find(suggestedParents, partner)) {
+            suggestedParents.push(partner)
+          }
         })
+      })
 
-        // get suggestions from the parents partners
-        this.selectedProfile.parents.forEach(parent => {
-          if (!parent.partners) return
-
-          parent.partners.forEach(partner => {
-            if (!currentParents[partner.id] && !parents.includes(partner)) {
-              parents.push(partner)
-            }
-          })
-        })
-      }
-
-      if (this.selectedProfile.siblings) {
-        this.selectedProfile.siblings.forEach(async sibling => {
+      await Promise.all(
+        this.selectedProfile.siblings.map(async sibling => {
+          // needed because siblings dont have information about their parents yet
           const profile = await this.getProfile(sibling.id)
 
-          profile.parents.forEach(d => {
-            if (!currentParents[d.id]) {
-              parents.push(d)
+          if (!profile.parents) return sibling
+
+          profile.parents.forEach(parent => {
+            if (!this.find(currentParents, parent) && !this.find(suggestedParents, parent)) {
+              suggestedParents.push(parent)
             }
           })
+          return sibling
         })
-      }
+      )
 
       // get ignored parents
       const profile = await this.getProfile(this.selectedProfile.id)
-      profile.parents.forEach(d => {
-        if (!currentParents[d.id]) {
-          parents.push(d)
+      profile.parents.forEach(parent => {
+        if (!this.find(currentParents, parent) && !this.find(suggestedParents, parent)) {
+          suggestedParents.push(parent)
         }
       })
 
-      return parents
+      return suggestedParents
+    },
+
+    find (array, item) {
+      return array.some(i => i.id === item.id)
     },
 
     async findPartners () {
-      var currentPartners = []
-      var partners = []
+      var currentPartners = this.selectedProfile.partners || []
+      if (!currentPartners || currentPartners.length === 0) return []
 
-      if (this.selectedProfile.partners) {
-        this.selectedProfile.partners.forEach(d => {
-          currentPartners[d.id] = d
+      var suggestedPartners = []
+
+      currentPartners.forEach(parent => {
+        if (!parent.partners) return
+
+        parent.partners.forEach(partner => {
+          if (!this.find(currentPartners, partner) && !this.find(suggestedPartners, partner)) {
+            suggestedPartners.push(partner)
+          }
         })
-      }
+      })
 
-      if (this.selectedProfile.children) {
-        this.selectedProfile.children.forEach(async child => {
+      await Promise.all(
+        this.selectedProfile.children.map(async child => {
+          // needed because siblings dont have information about their parents yet
           const profile = await this.getProfile(child.id)
 
-          profile.parents.forEach(d => {
-            if (!currentPartners[d.id] && d.id !== this.selectedProfile.id) {
-              partners.push(d)
+          if (!profile.parents) return child
+
+          profile.parents.forEach(parent => {
+            if (!this.find(currentPartners, parent) && !this.find(suggestedPartners, parent)) {
+              suggestedPartners.push(parent)
             }
           })
+          return child
         })
-      }
+      )
 
-      // get ignored partners
+      // get ignored parents
       const profile = await this.getProfile(this.selectedProfile.id)
-      profile.partners.forEach(d => {
-        if (!currentPartners[d.id]) {
-          partners.push(d)
+      profile.partners.forEach(partner => {
+        if (!this.find(currentPartners, partner) && !this.find(suggestedPartners, partner)) {
+          suggestedPartners.push(partner)
         }
       })
 
-      return partners
+      return suggestedPartners
     },
 
     age (aliveInterval) {
@@ -502,7 +496,7 @@ export default {
         : null
 
       var submission = {
-        ...pick(this.submission, [ ...PERMITTED_PERSON_ATTRS, ...PERMITTED_RELATIONSHIP_ATTRS ]),
+        ...pick(this.submission, [...PERMITTED_PERSON_ATTRS, ...PERMITTED_RELATIONSHIP_ATTRS]),
         recps
       }
 

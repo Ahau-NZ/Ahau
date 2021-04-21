@@ -319,7 +319,7 @@ test('add partner', t => {
   t.end()
 })
 
-test.only('Tree', t => {
+test('Tree', t => {
   // add child to root node
   const parent = {
     id: 'A',
