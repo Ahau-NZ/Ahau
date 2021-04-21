@@ -44,6 +44,7 @@
             :selected="active"
             @click="selectItem(active, toggle)"
             show-preview
+            icon
           />
         </v-scale-transition>
       </v-slide-item>
@@ -106,7 +107,7 @@ export default {
     },
     artefactHeight () {
       return this.showArtefact
-        ? (this.mobile ? '80vh' : '60vh')
+        ? (this.mobile ? '80vh' : '100%')
         : (this.mobile ? '300px' : '500px')
     }
   },

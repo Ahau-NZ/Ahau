@@ -4,8 +4,9 @@
       tile
       flat
       :class="{ 'on-hover': hover, 'highlight': selected }"
-      @click="$emit('click')"
+      @click="click"
       class="container"
+      :ripple="!showArtefact"
     >
       <!-- large files render here: video + photo -->
       <div v-if="useRenderMedia"
@@ -29,19 +30,23 @@
         </template>
 
         <!-- photo -->
-
         <template v-if="artefact.type === 'photo'">
+          <v-zoomer
+            v-if="showArtefact"
+            :zoomed.sync="zoomed"
+            style="height:100%"
+            :limitTranslation="!zoomed"
+          >
+            <v-img :src="artefact.blob.uri" cover/>
+          </v-zoomer>
           <v-img
-            v-if="!mobile"
+            v-else
             :src="artefact.blob.uri"
-            contain
+            :contain="!icon"
+            :cover="icon"
             class="media"
           />
-
-          <!-- mobile photo -->
-          <v-zoomer v-else-if="mobile && showArtefact" style="height:80vh">
-            <v-img :src="artefact.blob.uri" contain />
-          </v-zoomer>
+  ``
         </template>
 
         <!-- document -->
@@ -52,8 +57,8 @@
               Download File
             </v-btn>
           </div>
-          <div v-else class="pt-4 px-5">
-            <v-icon size="60px">{{ artefactIcon }}</v-icon>
+          <div v-else class="text-center" style="padding-top:15%;">
+            <v-icon :size="icon ? '60px':'160px'">{{ artefactIcon }}</v-icon>
           </div>
         </div>
 
@@ -105,14 +110,16 @@ export default {
     selected: { type: Boolean, default: false },
     selectedIndex: { type: Number, default: 0 },
     editing: { type: Boolean },
-    showPreview: Boolean
+    showPreview: Boolean,
+    icon: Boolean
   },
   components: {
   },
   data () {
     return {
       hover: false,
-      poster: null
+      poster: null,
+      zoomed: false
     }
   },
   mounted () {
@@ -166,10 +173,16 @@ export default {
     }
   },
   methods: {
+    click () {
+      if (this.showArtefact) return
+      this.$emit('click')
+    },
     downloadFile () {
       var hiddenElement = document.createElement('a')
       hiddenElement.href = this.artefact.blob.uri
       hiddenElement.target = '_blank'
+      // TODO cherese 21-04-21 to download, it needs to have the file extension appended to the title (which i think can be derived from the mimeType)
+      // hiddenElement.download = this.artefact.title + getExtFromMimeType(this.artefact.blob.mimeType)
       hiddenElement.click()
     },
     renderHyperBlob () {
