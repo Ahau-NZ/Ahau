@@ -39,8 +39,6 @@
       :show="isActive('view-edit-node')"
       :profile="selectedProfile"
       :deleteable="canDelete(selectedProfile)"
-      :warnAboutChildren="selectedProfile && selectedProfile.id !== nestedWhakapapa.id"
-      :sideMenu="true"
       @close="close"
       @new="toggleDialog('new-node', $event, 'view-edit-node')"
       @submit="processUpdate($event)"

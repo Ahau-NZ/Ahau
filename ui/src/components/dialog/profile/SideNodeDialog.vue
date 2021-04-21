@@ -22,7 +22,7 @@
         <v-container>
           <v-row v-if="isEditing">
             <v-col class="py-0">
-              <ProfileForm :profile.sync="formData" :readonly="!isEditing" :mobile="mobile" @cancel="cancel" isEditing isSideViewDialog>
+              <ProfileForm :profile.sync="formData" :withRelationships="withRelationships" :readonly="!isEditing" :mobile="mobile" @cancel="cancel" isEditing isSideViewDialog>
                 <template v-slot:top>
                   <v-row class="justify-center">
                     <h1>Edit {{ getDisplayName(formData) }}</h1>
@@ -283,12 +283,9 @@ export default {
     ProfileInfoItem
   },
   props: {
-    goBack: { type: Function },
     profile: { type: Object, default: () => {} },
     deleteable: { type: Boolean, default: false },
-    warnAboutChildren: { type: Boolean, default: true },
     view: { type: Object },
-    sideMenu: { type: Boolean, default: false },
     show: { type: Boolean, required: true },
     readonly: { type: Boolean, default: false },
     preview: { type: Boolean, default: false }
@@ -305,6 +302,9 @@ export default {
   computed: {
     mobile () {
       return this.$vuetify.breakpoint.xs
+    },
+    withRelationships () {
+      return this.profile.parent !== null
     },
     diedAt () {
       if (this.profile.aliveInterval) {
