@@ -20,6 +20,8 @@ export const WHAKAPAPA_FRAGMENT = gql`
 `
 
 export const saveWhakapapaView = input => {
+  if (input.image) delete input.image.uri
+
   return {
     mutation: gql`
       mutation($input: WhakapapaViewInput) {
