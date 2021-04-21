@@ -97,8 +97,10 @@ export default {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     }
   },
-  t (key, vars) {
-    return this.$t('viewArchive.' + key, vars)
+  methods: {
+    t (key, vars) {
+      return this.$t('viewArchive.' + key, vars)
+    }
   }
 }
 </script>
