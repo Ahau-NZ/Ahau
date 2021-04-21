@@ -354,6 +354,7 @@ export default {
     },
     async addPerson (input) {
       // get children, parents, partners quick add links
+
       var { id, children, parents, partners } = input
       // remove them from input
       delete input.children
@@ -386,7 +387,7 @@ export default {
           }
 
           // Add parents if parent quick links
-          if (parents) { this.quickAddLinks(parents, { child: id }) }
+          if (parents) await this.quickAddLinks(parents, { child: id })
 
           // load the childs profile
           parentProfile = await this.loadDescendants(parentProfile.id)
@@ -419,7 +420,7 @@ export default {
           }
 
           // Add children if children quick add links
-          if (children) { this.quickAddLinks(children, { parent: id }) }
+          if (children) await this.quickAddLinks(children, { parent: id })
 
           if (child === this.view.focus) {
             this.$emit('updateFocus', parent)
@@ -450,7 +451,7 @@ export default {
           }
 
           // Add children if children quick add links
-          if (children) { this.quickAddLinks(children, { parent: id }) }
+          if (children) await this.quickAddLinks(children, { parent: id })
 
           var partnerProfile = await this.getRelatives(child)
 
