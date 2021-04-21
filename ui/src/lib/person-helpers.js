@@ -231,7 +231,7 @@ export const savePerson = input => {
   return saveProfile(input)
 }
 
-function pruneEmptyValues (input) {
+export function pruneEmptyValues (input) {
   const pruned = {}
   Object.entries(input).forEach(([key, value]) => {
     if (value !== null) pruned[key] = value

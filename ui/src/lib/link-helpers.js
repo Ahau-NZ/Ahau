@@ -1,5 +1,6 @@
 import gql from 'graphql-tag'
 import pick from 'lodash.pick'
+import { pruneEmptyValues } from '@/lib/person-helpers.js'
 
 export const TYPES = {
   STORY_ARTEFACT: 'link/story-artefact',
@@ -26,6 +27,8 @@ export const LINK_PERMITTED_ATTRS = [
 
 export const saveLink = input => {
   input = pick(input, LINK_PERMITTED_ATTRS)
+  input = pruneEmptyValues(input)
+
   return {
     mutation: gql`
       mutation($input: LinkInput!) {

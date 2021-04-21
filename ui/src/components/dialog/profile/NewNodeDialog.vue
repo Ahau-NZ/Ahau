@@ -593,7 +593,10 @@ export default {
 
         // if hasSelection and quickAdd Section, show exsisting links
         if (this.generateChildren && this.existingProfile.children) this.quickAdd['newChildren'] = [...this.existingProfile.children]
-        if (this.generatePartners && this.existingProfile.partners) this.quickAdd['newPartners'] = [...this.existingProfile.partners]
+        if (this.generatePartners && this.existingProfile.partners) {
+          this.quickAdd['partners'] = [...this.existingProfile.partners]
+          this.quickAdd['newPartners'] = [...this.existingProfile.partners]
+        }
         if (this.generateParents && this.existingProfile.parents) this.quickAdd['newParents'] = [...this.existingProfile.parents]
 
         // hack: when there is no preferred name and a selected profile, the clearable button doesnt how up
