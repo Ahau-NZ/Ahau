@@ -56,6 +56,7 @@ export default {
       return (
         this.selectedProfile.id !== this.view.focus &&
         this.selectedProfile.id !== this.currentFocus &&
+        this.selectedProfile.parents &&
         this.selectedProfile.parents.length > 0
       )
     },
