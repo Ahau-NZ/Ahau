@@ -10,7 +10,7 @@
             :gender="item.gender"
             :aliveInterval="item.aliveInterval"
             :addable="!addableProfile"
-            clickable
+            :clickable="!addSibling"
             @click="$emit('profile-click', item)"
           />
         </v-col>
@@ -57,7 +57,9 @@ export default {
     item: { type: Object, default: null },
     addableProfile: { type: Boolean, default: false },
     mobile: { type: Boolean, default: false },
-    label: String
+    label: String,
+    index: { type: Number, default: -1 },
+    groupType: { type: String, default: '' }
   },
   data () {
     return {
@@ -75,6 +77,9 @@ export default {
   computed: {
     showRelatedBy () {
       return this.addableProfile && this.label !== 'Add partners'
+    },
+    addSibling () {
+      return this.index === 0 && this.groupType === 'parents-siblings'
     }
   },
   methods: {
