@@ -326,7 +326,7 @@ export default {
     clearSuggestions () {
       this.$emit('getSuggestions', null)
     },
-    async getCloseSuggestions () {
+    getCloseSuggestions () {
       switch (this.type) {
         case 'child':
           return this.findChildren()
@@ -370,9 +370,7 @@ export default {
       return suggestedChildren
     },
 
-    async newChildParents (profile) {
-      if (!profile.partners) return []
-
+    newChildParents (profile) {
       var currentPartners = []
 
       if (this.type === 'child' && profile.partners) {
@@ -398,8 +396,8 @@ export default {
     },
 
     async findParents () {
-      var currentParents = this.selectedProfile.parents || []
-      if (!currentParents || currentParents.length === 0) return []
+      var currentParents = this.selectedProfile.parents
+      if (!currentParents) return []
 
       var suggestedParents = []
 
