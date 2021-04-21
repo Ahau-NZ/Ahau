@@ -452,6 +452,7 @@ export default {
         if (!parent.partners) return
 
         parent.partners.forEach(partner => {
+          if (this.selectedProfile.id === partner.id) return
           if (!this.find(currentPartners, partner) && !this.find(suggestedPartners, partner)) {
             suggestedPartners.push(partner)
           }
@@ -466,6 +467,7 @@ export default {
           if (!profile.parents) return child
 
           profile.parents.forEach(parent => {
+            if (this.selectedProfile.id === parent.id) return
             if (!this.find(currentPartners, parent) && !this.find(suggestedPartners, parent)) {
               suggestedPartners.push(parent)
             }
@@ -477,6 +479,7 @@ export default {
       // get ignored parents
       const profile = await this.getProfile(this.selectedProfile.id)
       profile.partners.forEach(partner => {
+        if (this.selectedProfile.id === partner.id) return
         if (!this.find(currentPartners, partner) && !this.find(suggestedPartners, partner)) {
           suggestedPartners.push(partner)
         }

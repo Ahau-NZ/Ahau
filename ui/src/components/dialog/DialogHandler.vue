@@ -453,9 +453,8 @@ export default {
           // Add children if children quick add links
           if (children) await this.quickAddLinks(children, { parent: id })
 
-          var partnerProfile = await this.getRelatives(child)
-
-          this.addPartnerToNestedWhakapapa({ node: this.selectedProfile, partner: partnerProfile })
+          await this.loadDescendants(this.selectedProfile.id)
+          this.updateNodeInNestedWhakapapa(this.selectedProfile)
           break
         default:
           console.error('wrong type for add person')
