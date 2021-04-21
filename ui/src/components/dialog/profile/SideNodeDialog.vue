@@ -169,7 +169,7 @@
                     :show-labels="true"
                     @profile-click="openProfile($event)"
                   >
-                  <template v-slot:action >
+                  <template v-slot:action>
                     <AddButton v-if="!preview && view && view.focus !== profile.id" @click="toggleNew('sibling')" class="pb-4" justify="start"/>
                   </template>
                   </AvatarGroup>

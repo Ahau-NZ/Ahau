@@ -566,14 +566,18 @@ export default {
         legallyAdopted = relationshipAttrs.legallyAdopted
       }
 
-      var node = await this.loadDescendants(parent.id)
+      if (parent) {
+        var node = await this.loadDescendants(parent.id)
 
-      this.selectedProfile.relationshipType = relationshipType
-      this.selectedProfile.legallyAdopted = legallyAdopted
-      this.selectedProfile.parent = node
+        this.selectedProfile.relationshipType = relationshipType
+        this.selectedProfile.legallyAdopted = legallyAdopted
+        this.selectedProfile.parent = node
 
-      // apply the changes to the nestedWhakapapa
-      this.updateNodeInNestedWhakapapa(node)
+        this.updateNodeInNestedWhakapapa(node)
+      } else {
+        var rootNode = await this.loadDescendants(profileId)
+        this.updateNodeInNestedWhakapapa(rootNode)
+      }
     },
     async removeProfile (deleteOrIgnore) {
       if (deleteOrIgnore === 'delete') {
