@@ -24,7 +24,8 @@ import findSuccessor from '@/lib/find-successor'
 export default {
   name: 'NodeMenu',
   props: {
-    view: Object
+    view: Object,
+    currentFocus: String
   },
   components: {
     VueContext
@@ -52,8 +53,11 @@ export default {
     canAddSibling () {
       if (!this.selectedProfile) return false
 
-      // if adding a sibling to the focus
-      return this.selectedProfile.id !== this.view.focus
+      return (
+        this.selectedProfile.id !== this.view.focus &&
+        this.selectedProfile.id !== this.currentFocus &&
+        this.selectedProfile.parents.length > 0
+      )
     },
     options () {
       return [
