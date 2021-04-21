@@ -68,6 +68,7 @@
                 label="Add other parent"
                 :addedProfiles.sync="quickAdd['newParents']"
                 :items="generateParents"
+                :groupType="type === 'sibling' ? 'parents-siblings': ''"
                 @profile-click="addProfile($event, 'newParents')"
                 @related-by="updateRelationships($event, 'newParents')"
               />
