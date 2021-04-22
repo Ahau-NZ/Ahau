@@ -42,6 +42,9 @@ import Link from './Link.vue'
 import settings from '@/lib/link.js'
 import pileSort from 'pile-sort'
 
+const PARTNER_SHRINK = 0.7
+const X_PADDING = 15
+
 export default {
   name: 'SubTree',
   props: {
@@ -61,7 +64,7 @@ export default {
   },
   computed: {
     partnerRadius () {
-      return 0.8 * this.radius // ensures the partner node will always be smaller then the main node
+      return PARTNER_SHRINK * this.radius // ensures the partner node will always be smaller then the main node
     },
     diameter () {
       return this.radius * 2
@@ -89,20 +92,20 @@ export default {
           var sign = i >= midway ? 1 : -1
 
           const offset = sign === 1
-            ? this.radius - 15 // right
-            : -15 // left
+            ? this.diameter - 2 * this.partnerRadius // right
+            : 0 // left
 
-          const xPos = sign === 1
+          const xMultiplier = sign === 1
             ? (i - midway) + 1
             : i - midway
 
           // how far sideways the partner sits from the root node at 0
-          const x = this.root.x + offset + (xPos * this.diameter)
+          const x = this.root.x + offset + xMultiplier * (this.diameter + X_PADDING)
           // if we are negative theres no offset
           // if we are positive - use diameter
 
           // how far down the partner sits from the root node at 0
-          const y = this.root.y + 10
+          const y = this.root.y + this.radius - this.partnerRadius
 
           // partner style
           // NOTE: children of this partner will inherit this style
@@ -188,15 +191,16 @@ export default {
     center ($event) {
       this.centerNode($event)
     },
-    mapChild ({ x = this.root.x, y = this.root.y, center, sign, yOffset }, child, style) {
+    mapChild ({ x = this.root.x, y = this.root.y, center, sign, yOffset = 0 }, child, style) {
       // map to their node from the root parent
       const node = this.root.children.find(rootChild => child.id === rootChild.data.id)
+
       // change the link if they are not related by birth
       const dashed = ['adopted', 'whangai'].includes(node.data.relationshipType)
 
       // center the link between the parents
       if (center) {
-        x = x + (-sign * this.radius) - 10
+        x = x - this.radius + this.partnerRadius - sign * (this.partnerRadius + 20)// end constant is dependant on radius, partnerRadius, X_PADDING
         y = yOffset - this.radius
       }
 
