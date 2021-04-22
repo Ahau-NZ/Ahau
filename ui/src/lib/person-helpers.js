@@ -187,6 +187,7 @@ export const getPerson = id => ({
             ...ProfileFragment
           }
         }
+        originalAuthor
       }
     }
   `,
