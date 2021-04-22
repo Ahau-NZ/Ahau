@@ -203,6 +203,16 @@
                     </template>
                   </AvatarGroup>
                 </v-col>
+                <hr v-if="authors" class="family-divider"/>
+                <v-col v-if="authors" :cols="12" class="pa-0">
+                  <AvatarGroup
+                    :profiles="authors"
+                    group-title="Contributed by"
+                    size="60px"
+                    :show-labels="true"
+                    @profile-click="openProfile($event)"
+                  />
+                </v-col>
               </v-row>
             </v-col>
           </v-row>
@@ -235,6 +245,7 @@ import DialogTitleBanner from '@/components/dialog/DialogTitleBanner.vue'
 import ArchiveIcon from '@/components/button/ArchiveIcon.vue'
 
 import { getDisplayName } from '@/lib/person-helpers.js'
+import mapProfileMixins from '@/mixins/profile-mixins.js'
 
 function defaultData (input) {
   var profile = clone(input)
@@ -293,14 +304,22 @@ export default {
     readonly: { type: Boolean, default: false },
     preview: { type: Boolean, default: false }
   },
-
+  mixins: [
+    mapProfileMixins({ mapMethods: ['getProfile'] })
+  ],
   data () {
     return {
       isEditing: false,
       formData: {},
       showDescription: false,
-      drawer: false
+      drawer: false,
+      authors: []
     }
+  },
+  async mounted () {
+    // TODO cherese 22-04-21 move to graphql
+    const originalAuthor = await this.getOriginalAuthor()
+    this.authors = [originalAuthor]
   },
   computed: {
     mobile () {
@@ -375,6 +394,9 @@ export default {
     ...mapMutations(['updateIsFromWhakapapaShow']),
     ...mapActions(['setProfileById', 'setDialog', 'setIsFromWhakapapaShow']),
     getDisplayName,
+    async getOriginalAuthor () {
+      return this.getProfile(this.profile.originalAuthor)
+    },
     goArchive () {
       if (
         this.$route.name === 'person/whakapapa/:whakapapaId' ||
