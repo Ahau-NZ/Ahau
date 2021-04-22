@@ -10,5 +10,6 @@ module.exports = {
   addWhakapapaForm: require('./add-whakapapa-form.json'),
   instructionsWhakapapa: require('./instructions-whakapapa.json'),
   viewPersonArchive: require('./view-person-archive.json'),
-  viewPersonWhakapapa: require('./view-person-whakapapa.json')
+  viewPersonWhakapapa: require('./view-person-whakapapa.json'),
+  sideNav: require('./side-nav-menu.json')
 }
