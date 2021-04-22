@@ -64,7 +64,7 @@ export default {
   data () {
     return {
       relationshipTypes: RELATIONSHIPS,
-      relatedBy: this.item.relationshipType
+      relatedBy: 'birth'
     }
   },
   watch: {

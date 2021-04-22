@@ -606,6 +606,9 @@ export default {
         // hack: when there is no preferred name and a selected profile, the clearable button doesnt how up
         // doing this forces it to show
         if (this.formData.preferredName === '' || this.formData.preferredName === null) this.formData.preferredName = getDisplayName(this.formData)
+      } else {
+        this.quickAdd['newChildren'] = []
+        this.quickAdd['newPartners'] = []
       }
     }
   }
