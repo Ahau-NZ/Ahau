@@ -337,7 +337,7 @@
           <v-col :cols="sideViewCols" class="pa-1">
             <v-text-field
               v-model="formData.email"
-              :label="t('personInfo.email')"
+              :label="t('personalInfo.email')"
               v-bind="customProps"
             />
           </v-col>
@@ -345,7 +345,7 @@
           <v-col :cols="sideViewCols" class="pa-1">
             <v-text-field
               v-model="formData.phone"
-              :label="t('personInfo.phone')"
+              :label="t('personalInfo.phone')"
               v-bind="customProps"
             />
           </v-col>
@@ -353,7 +353,7 @@
           <v-col :cols="sideViewCols" class="pa-1">
             <v-text-field
               v-model="formData.address"
-              :label="t('personInfo.address')"
+              :label="t('personalInfo.address')"
               v-bind="customProps"
             />
           </v-col>
@@ -361,7 +361,7 @@
           <v-col :cols="sideViewCols" class="pa-1">
             <v-text-field
               v-model="formData.city"
-              :label="t('personInfo.city')"
+              :label="t('personalInfo.city')"
               v-bind="customProps"
             />
           </v-col>
@@ -369,7 +369,7 @@
           <v-col :cols="sideViewCols" class="pa-1">
             <v-text-field
               v-model="formData.postCode"
-              :label="t('personInfo.postCode')"
+              :label="t('personalInfo.postCode')"
               v-bind="customProps"
             />
           </v-col>
@@ -377,7 +377,7 @@
           <v-col :cols="sideViewCols" class="pa-1">
             <v-text-field
               v-model="formData.country"
-              :label="t('personInfo.country')"
+              :label="t('personalInfo.country')"
               v-bind="customProps"
             />
           </v-col>

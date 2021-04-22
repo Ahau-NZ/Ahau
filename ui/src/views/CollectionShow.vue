@@ -170,10 +170,10 @@ export default {
       // go to the default archive page
       const [newPath] = this.$route.fullPath.split('archive/')
       this.$router.push({ path: newPath + 'archive' }).catch(() => {})
+    },
+    t (key, vars) {
+      return this.$t('viewArchive.' + key, vars)
     }
-  },
-  t (key, vars) {
-    return this.$t('viewArchive.' + key, vars)
   }
 }
 </script>

@@ -443,39 +443,23 @@ export default {
       return array.some(i => i.id === item.id)
     },
 
+    // suggests other parents of children
     async findPartners () {
       var currentPartners = this.selectedProfile.partners || []
-      if (!currentPartners || currentPartners.length === 0) return []
 
       var suggestedPartners = []
 
-      currentPartners.forEach(parent => {
-        if (!parent.partners) return
+      this.selectedProfile.children.map(child => {
+        if (!child.parents) return child
 
-        parent.partners.forEach(partner => {
-          if (this.selectedProfile.id === partner.id) return
-          if (!this.find(currentPartners, partner) && !this.find(suggestedPartners, partner)) {
-            suggestedPartners.push(partner)
+        child.parents.forEach(parent => {
+          if (this.selectedProfile.id === parent.id) return
+          if (!this.find(currentPartners, parent) && !this.find(suggestedPartners, parent)) {
+            suggestedPartners.push(parent)
           }
         })
+        return child
       })
-
-      await Promise.all(
-        this.selectedProfile.children.map(async child => {
-          // needed because siblings dont have information about their parents yet
-          const profile = await this.getProfile(child.id)
-
-          if (!profile.parents) return child
-
-          profile.parents.forEach(parent => {
-            if (this.selectedProfile.id === parent.id) return
-            if (!this.find(currentPartners, parent) && !this.find(suggestedPartners, parent)) {
-              suggestedPartners.push(parent)
-            }
-          })
-          return child
-        })
-      )
 
       // get ignored parents
       const profile = await this.getProfile(this.selectedProfile.id)
@@ -504,6 +488,7 @@ export default {
 
       if (this.hasProfiles('newChildren')) {
         if (this.existingProfile && this.existingProfile.children) {
+          // if quick adding children, remove exisiting children from the list
           let _children = this.quickAdd['newChildren'].filter(child => {
             return this.existingProfile.children.every(d => child.id !== d.id)
           })
@@ -518,7 +503,7 @@ export default {
           let _parents = this.quickAdd['newParents'].filter(child => {
             return this.existingProfile.children.every(d => child.id !== d.id)
           })
-          if (_parents.length) submission.children = _parents
+          if (_parents.length) submission.parents = _parents
         } else {
           submission.parents = this.quickAdd['newParents']
         }
@@ -529,7 +514,7 @@ export default {
           let _partners = this.quickAdd['newPartners'].filter(child => {
             return this.existingProfile.children.every(d => child.id !== d.id)
           })
-          if (_partners.length) submission.children = _partners
+          if (_partners.length) submission.partners = _partners
         } else {
           submission.partners = this.quickAdd['newPartners']
         }
