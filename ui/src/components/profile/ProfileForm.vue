@@ -41,14 +41,16 @@
         <v-spacer style="height:5%"></v-spacer>
         <v-row>
           <!-- Preferred Name -->
-          <slot name="search">
-            <v-text-field
-              v-model="formData.preferredName"
-              :label="t('preferredName')"
-              v-bind="customProps"
-              outlined
-            />
-          </slot>
+          <v-col cols="12" class="pa-1 pt-4">
+            <slot name="search">
+              <v-text-field
+                v-model="formData.preferredName"
+                :label="t('preferredName')"
+                v-bind="customProps"
+                outlined
+              />
+            </slot>
+          </v-col>
           <v-col v-if="readonly" :cols="sideViewCols" class="pa-1">
             <v-text-field
               v-model="formData.gender"
@@ -56,7 +58,7 @@
               v-bind="customProps"
             />
           </v-col>
-          <v-col v-if="withRelationships || isEditing" cols="6" class="pa-1 pt-2 pl-0">
+          <v-col v-if="withRelationships" cols="6" class="pa-1 pt-2 pl-0">
             <v-select
               v-model="formData.relationshipType"
               label="Related by"
@@ -94,7 +96,7 @@
 
     <v-row :class="smScreen ? 'sideView-gender-button-row' : 'gender-button-row'">
       <!-- GENDER EDIT -->
-      <v-col v-if="!readonly" class="pa-1">
+      <v-col v-if="!readonly" class="pa-1 pt-6">
         <p class="text-field">{{ t('genderIdentity') }}</p>
         <v-row>
           <!-- TANE -->
@@ -132,6 +134,15 @@
       </v-col>
     </v-row>
 
+    <v-row>
+      <slot name="addParents" v-if="typeIsChild">
+      </slot>
+      <slot name="addChildren" v-if="typeIsPartner || typeIsParent">
+      </slot>
+      <slot name="addPartners" v-if="typeIsParent">
+      </slot>
+    </v-row>
+
     <!-- Start of advanced section -->
     <v-divider />
       <v-card-actions class="pt-2 pb-2 pr-5 pointer">
@@ -154,7 +165,6 @@
               v-model="formData.legalName"
               :label="t('legalName')"
               v-bind="customProps"
-
             />
           </v-col>
           <!-- Alt names -->
@@ -231,8 +241,7 @@
               v-bind="customProps"
             />
           </v-col>
-
-          <template v-if="formData.deceased" >
+          <template v-if="formData.deceased">
             <v-col :cols="sideViewCols" class="pa-1">
               <v-text-field
                 v-model="formData.placeOfDeath"
@@ -265,7 +274,8 @@
 
         <!-- Skills and Qualifications -->
         <v-row class="pt-2">
-          <v-col cols="12">
+          <v-col cols="12" class="px-0">
+            <v-divider class="py-2"/>
             <span class="pa-0 ma-0" style="font-weight:bold">{{ t('skills.title') }}</span>
           </v-col>
           <!-- Profession-->
@@ -285,12 +295,12 @@
             class="pa-1"
           >
             <v-text-field
-            v-model="formData.education[index]"
-            :label="t('skills.skillsQuals')"
-            :append-icon="!readonly ? 'mdi-delete':''"
-            @click:append="removeItem(formData.education, index)"
-            v-bind="customProps"
-            :readonly="readonly"
+              v-model="formData.education[index]"
+              :label="t('skills.skillsQuals')"
+              :append-icon="!readonly ? 'mdi-delete':''"
+              @click:append="removeItem(formData.education, index)"
+              v-bind="customProps"
+              :readonly="readonly"
             />
           </v-col>
           <v-col v-if="!readonly">
@@ -307,7 +317,7 @@
             <v-text-field
             v-model="formData.school[index]"
             :label="t('skills.placeOfEducation')"
-            :append-icon="!readonly ? 'mdi-delete':''"
+            :append-icon="readonly ? '' : 'mdi-delete'"
             @click:append="removeItem(formData.school, index)"
             v-bind="customProps"
             :readonly="readonly"
@@ -318,66 +328,60 @@
           </v-col>
         </v-row>
         <!-- Email, Address, Phone, Location -->
-        <div v-if="!formData.deceased">
-          <v-col cols="12">
+        <v-row v-if="!formData.deceased">
+          <v-col cols="12" class="px-0">
+            <v-divider class="py-2"/>
             <span class="pa-0 ma-0" style="font-weight:bold">{{ t('personalInfo.title') }}</span>
           </v-col>
-          <v-row class="py-1" v-if="!formData.deceased">
-            <!-- Email -->
-            <v-col :cols="sideViewCols" class="pa-1">
-              <v-text-field
-                v-model="formData.email"
-                :label="t('personalInfo.email')"
-                v-bind="customProps"
-              />
-            </v-col>
-            <!-- Phone -->
-            <v-col :cols="sideViewCols" class="pa-1">
-              <v-text-field
-                v-model="formData.phone"
-                :label="t('personalInfo.phone')"
-                v-bind="customProps"
-              />
-            </v-col>
-          </v-row>
-          <v-row>
-
-          </v-row>
-          <v-row>
-            <!-- Address -->
-            <v-col :cols="sideViewCols" class="pa-1">
-              <v-text-field
-                v-model="formData.address"
-                :label="t('personalInfo.address')"
-                v-bind="customProps"
-              />
-            </v-col>
-            <!-- City -->
-            <v-col :cols="sideViewCols" class="pa-1">
-              <v-text-field
-                v-model="formData.city"
-                :label="t('personalInfo.city')"
-                v-bind="customProps"
-              />
-            </v-col>
-            <!-- Post Code -->
-            <v-col :cols="sideViewCols" class="pa-1">
-              <v-text-field
-                v-model="formData.postCode"
-                :label="t('personalInfo.postCode')"
-                v-bind="customProps"
-              />
-            </v-col>
-            <!-- Country -->
-              <v-col :cols="sideViewCols" class="pa-1">
-                <v-text-field
-                  v-model="formData.country"
-                  :label="t('personalInfo.country')"
-                  v-bind="customProps"
-                />
-              </v-col>
-          </v-row>
-        </div>
+          <!-- Email -->
+          <v-col :cols="sideViewCols" class="pa-1">
+            <v-text-field
+              v-model="formData.email"
+              :label="t('personInfo.email')"
+              v-bind="customProps"
+            />
+          </v-col>
+          <!-- Phone -->
+          <v-col :cols="sideViewCols" class="pa-1">
+            <v-text-field
+              v-model="formData.phone"
+              :label="t('personInfo.phone')"
+              v-bind="customProps"
+            />
+          </v-col>
+          <!-- Address -->
+          <v-col :cols="sideViewCols" class="pa-1">
+            <v-text-field
+              v-model="formData.address"
+              :label="t('personInfo.address')"
+              v-bind="customProps"
+            />
+          </v-col>
+          <!-- City -->
+          <v-col :cols="sideViewCols" class="pa-1">
+            <v-text-field
+              v-model="formData.city"
+              :label="t('personInfo.city')"
+              v-bind="customProps"
+            />
+          </v-col>
+          <!-- Post Code -->
+          <v-col :cols="sideViewCols" class="pa-1">
+            <v-text-field
+              v-model="formData.postCode"
+              :label="t('personInfo.postCode')"
+              v-bind="customProps"
+            />
+          </v-col>
+          <!-- Country -->
+          <v-col :cols="sideViewCols" class="pa-1">
+            <v-text-field
+              v-model="formData.country"
+              :label="t('personInfo.country')"
+              v-bind="customProps"
+            />
+          </v-col>
+        </v-row>
       </div>
     </v-expand-transition>
     <!-- End of advanced section -->
@@ -406,11 +410,11 @@ export default {
     withRelationships: { type: Boolean, default: false },
     readonly: { type: Boolean, default: false },
     hideDetails: { type: Boolean, default: false },
-    editRelationship: { type: Boolean, default: false },
     mobile: { type: Boolean, default: false },
     isEditing: { type: Boolean, default: false },
     isUser: { type: Boolean, default: false },
     isSideViewDialog: { type: Boolean, default: false },
+    dialogType: { type: String, default: '' },
     type: String
   },
   data () {
@@ -429,9 +433,6 @@ export default {
   mounted () {
     if (this.formData.gender) {
       this.updateSelectedGender(this.formData.gender)
-    }
-    if (isEmpty(this.formData.relationshipType)) {
-      this.formData.relationshipType = 'birth'
     }
     if (!this.readonly && isEmpty(this.formData.education)) {
       this.formData.education.push('')
@@ -455,7 +456,7 @@ export default {
   },
   computed: {
     showBirthOrder () {
-      if (this.type === 'parent') return false
+      if (this.dialogType === 'parent') return false
       if (this.readonly && !this.formData.birthOrder) return false
       else return true
     },
@@ -497,6 +498,15 @@ export default {
     },
     justifyBtn () {
       return this.smScreen ? 'start' : 'end'
+    },
+    typeIsChild () {
+      return this.dialogType === 'child' || this.dialogType === 'sibling'
+    },
+    typeIsPartner () {
+      return this.dialogType === 'partner'
+    },
+    typeIsParent () {
+      return this.dialogType === 'parent'
     }
   },
   methods: {

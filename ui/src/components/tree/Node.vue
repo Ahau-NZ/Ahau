@@ -1,88 +1,39 @@
 <template>
-  <g :id="node.nodeId" :style="groupStyle" @mouseover="hover = true" @mouseleave="hover = false">
-    <!-- recursion of partners (first so they're drawing in background) -->
-    <g v-if="!profile.isCollapsed">
-      <g v-for="partner in partners" :key="partner.nodeId">
-        <Node
-          :id="partner.nodeId"
-          :radius="partnerRadius"
-          :isPartner="true"
-          :node="partner"
-          :nonFocusedPartners="nonFocusedPartners"
-          @change-focus="$emit('change-focus', partner.data.id)"
-          @open-context-menu="openMenu($event, partner.data, true)"
-        />
-      </g>
-    </g>
-
-    <g class="avatar -main" v-if="!isPartner" @click.left="click">
+  <g class="node" :style="position" @mouseover="hover = true" @mouseleave="hover = false" @click="click">
+    <g class="avatar">
       <defs>
-        <clipPath id="myCircle">
-          <circle :cx="radius" :cy="radius" :r="radius" />
+        <clipPath :id="clipPathId">
+          <circle :cx="radius" :cy="radius" :r="radius"/>
         </clipPath>
       </defs>
       <circle
         :style="{ fill: profile.deceased ? colours.deceased : colours.alive }"
         :cx="radius"
         :cy="radius"
-        :r="radius - 1"
+        :r="radius"
       />
       <image
-        :xlink:href="imageSource"
+        :xlink:href="imageSrc"
         :width="diameter"
         :height="diameter"
-        clip-path="url(#myCircle)"
+        :clip-path="`url(#${clipPathId})`"
         :style="{ opacity: profile.deceased ? 0.5 : 1 }"
       />
-      <g v-if="profile.isCollapsed" :style="collapsedStyle">
-        <text> ... </text>
-      </g>
-      <g
-        class="menu-button"
-        v-if="showMenu"
-        @click.stop="openMenu($event, profile, false)"
+      <NodeMenuButton
+        v-if="showMenuButton"
         :transform="`translate(${1.4 * radius}, ${1.4 * radius})`"
-      >
-        <circle
-          stroke="white"
-          fill="white"
-          filter="url(#shadow)"
-          cx="20"
-          cy="1"
-          r="15"
-        />
-        <polygon points="12,0  28,0  20,9" style="fill:#000;" />
-      </g>
-    </g>
-
-    <g v-else class="avatar -partner" @click="$emit('change-focus', $event)">
-      <defs>
-        <clipPath id="myPartnerCircle">
-          <circle :cx="radius" :cy="radius" :r="radius" />
-        </clipPath>
-      </defs>
-      <circle
-        :style="{ fill: profile.deceased ? colours.deceased : colours.alive }"
-        :cx="radius"
-        :cy="radius"
-        :r="radius - 1"
-      />
-      <image
-        :xlink:href="imageSource"
-        :width="diameter"
-        :height="diameter"
-        clip-path="url(#myPartnerCircle)"
-        :style="{ opacity: profile.deceased ? 0.5 : 1 }"
+        @click="openMenu($event, profile)"
       />
     </g>
-
-    <g id="node-label" :style="textStyle">
+    <g v-if="profile.isCollapsed" :style="collapsedStyle">
+      <text> ... </text>
+    </g>
+    <g :style="textStyle">
       <rect :width="textWidth" y="-16" height="20"></rect>
       <text>{{ displayName }}</text>
     </g>
-    <!-- Changes focus -->
     <g
-      v-if="nonFocusedPartners.includes(profile.id)"
+      v-if="partner && hasAncestors"
       :transform="`translate(${1 * radius}, ${radius * -0.5})`"
     >
       <text
@@ -93,14 +44,6 @@
         transform="rotate(90)"
       >..</text>
     </g>
-    <defs>
-      <filter id="shadow">
-        <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="grey" flood-opacity="0.5"/>
-      </filter>
-    </defs>
-    <g v-if="profile.isCollapsed" :style="collapsedStyle">
-      <text> ... </text>
-    </g>
   </g>
 </template>
 
@@ -109,22 +52,24 @@ import get from 'lodash.get'
 import avatarHelper from '@/lib/avatar-helpers.js'
 import { DECEASED_COLOUR, ALIVE_COLOUR } from '@/lib/constants.js'
 import { getDisplayName } from '@/lib/person-helpers.js'
-// import flower.svg from '@/src/assets'
+import NodeMenuButton from './NodeMenuButton.vue'
 
 export default {
   name: 'Node',
   props: {
-    node: { type: Object, required: true },
-    radius: { type: Number, required: true },
-    isPartner: { type: Boolean, default: false },
-    nonFocusedPartners: { type: Array },
-    nodeCentered: { type: String }
+    node: Object,
+    radius: {
+      type: Number,
+      default: 50
+    },
+    partner: Boolean
+  },
+  components: {
+    NodeMenuButton
   },
   data () {
     return {
       hover: false,
-      offsetSize: 15,
-      partnerRadius: 0.8 * this.radius,
       colours: {
         alive: ALIVE_COLOUR,
         deceased: DECEASED_COLOUR
@@ -132,37 +77,41 @@ export default {
     }
   },
   computed: {
-    showMenu () {
+    showMenuButton () {
+      if (this.partner) return false
       if (!this.profile.isCollapsed) {
         if (this.hover) return true
         if (this.nodeCentered === this.node.data.id) return true
       }
       return false
     },
+    hasAncestors () {
+      return this.profile.parents.length > 0
+    },
+    clipPathId () {
+      return this.partner ? 'partnerCirlce' : 'myCircle'
+    },
     profile () {
       return this.node.data
-    },
-    nonFocusedPartner () {
-      return this.node.data.nonFocusedPartner
     },
     diameter () {
       return this.radius * 2
     },
-    imageSource () {
-      const uri = get(this.node, 'data.avatarImage.uri')
+    imageSrc () {
+      const uri = get(this.profile, 'avatarImage.uri')
       if (uri) return uri
 
       return avatarHelper.defaultImage(false, this.profile.aliveInterval, this.profile.gender)
+    },
+    position () {
+      return {
+        transform: `translate(${this.node.x}px, ${this.node.y}px)`
+      }
     },
     textWidth () {
       // const { x, y } = textElm.getBBox();
       const width = (this.displayName || '').length * 8
       return width
-    },
-    groupStyle () {
-      return {
-        transform: `translate(${this.node.x}px, ${this.node.y}px)`
-      }
     },
     textStyle () {
       return {
@@ -177,46 +126,27 @@ export default {
         fontWeight: 600,
         transform: `translate(${this.radius - 3}px, ${this.diameter +
           25}px) rotate(90deg)`
-        // calculate the transform to draw nodes vertically
       }
-    },
-    partners () {
-      if (this.isPartner || this.profile.partners === undefined) return []
-      return this.getPartners()
-    },
-    partnerMenuTranslate () {
-      const x = this.node.right ? -0.3 : 1.4
-      return `translate(${x * this.radius} ${1.3 * this.radius})`
     },
     displayName () {
       return getDisplayName(this.profile)
     }
   },
   methods: {
+    openMenu ($event, profile) {
+      profile.isPartner = this.partner
+      this.$emit('open-menu', { event, profile })
+    },
     click () {
-      this.$emit('click')
+      // only change focus when the partner nodes are clicked
+      if (this.partner) this.focus()
+      else this.center()
     },
-    openMenu ($event, profile, isPartner) {
-      profile.isPartner = isPartner
-      this.$emit('open-context-menu', { event, profile })
+    focus () {
+      this.$emit('focus', this.profile.id)
     },
-    getPartners () {
-      var leftCount = 0
-      var rightCount = 0
-      return this.profile.partners
-        .map((d, i) => {
-          var sign = i % 2 === 0 ? 1 : -1
-          var offset = sign === 1 ? +2 * this.offsetSize : -1 * this.offsetSize
-          var count = sign === 1 ? ++leftCount : ++rightCount
-          return {
-            index: `${this.node.nodeId}-partner-${i}`,
-            x: sign * count * this.partnerRadius + offset,
-            y: 10,
-            data: d,
-            right: sign === -1
-          }
-        })
-        .reverse()
+    center () {
+      this.$emit('center', this.node)
     }
   }
 }
@@ -224,17 +154,8 @@ export default {
 
 <style scoped lang="scss">
 g {
-  transition: all ease-in 0.1s;
-
+  transition: all ease-in 0.2s;
   g.avatar {
-    image {
-    }
-
-    .menu-button {
-      transition: opacity ease-in 0.2s;
-      opacity: 1;
-    }
-
     &:hover {
       .menu-button {
         opacity: 1;

@@ -1,5 +1,16 @@
 <template>
-  <path class="link" :d="link.d" :style="link.style"/>
+  <g>
+    <g>
+      <!--
+        draws a white link underneath this link so the links dont show the overlaps
+        from the opacity
+       -->
+      <path class="white-link" :d="link.d" :style="whiteStyle"/>
+    </g>
+    <g>
+      <path class="link" :d="link.d" :style="link.style"/>
+    </g>
+  </g>
 </template>
 
 <script>
@@ -8,6 +19,16 @@ export default {
     link: {
       type: Object,
       required: true
+    }
+  },
+  computed: {
+    whiteStyle () {
+      var style = { ...this.link.style }
+
+      style.stroke = 'white'
+      style.opacity = 1
+
+      return style
     }
   }
 }

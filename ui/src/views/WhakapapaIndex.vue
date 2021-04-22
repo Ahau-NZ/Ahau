@@ -61,7 +61,6 @@ import BigAddButton from '@/components/button/BigAddButton.vue'
 
 import { saveLink } from '@/lib/link-helpers.js'
 import { savePerson } from '@/lib/person-helpers.js'
-import tree from '@/lib/tree-helpers'
 import { saveWhakapapaView, getWhakapapaViews } from '@/lib/whakapapa-helpers.js'
 import { findByName } from '@/lib/search-helpers.js'
 import mapProfileMixins from '@/mixins/profile-mixins.js'
@@ -152,9 +151,6 @@ export default {
           var equals = isEqual(profile.recps, [this.currentAccess.groupId])
           if (equals) profiles[profile.id] = profile
           return equals
-        })
-        .map(profile => {
-          return tree.hydrate({ profile }, profiles)
         })
 
       // sets suggestions which is passed into the dialogs

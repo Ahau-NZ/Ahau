@@ -318,3 +318,79 @@ test('add partner', t => {
 
   t.end()
 })
+
+test('Tree', t => {
+  // add child to root node
+  const parent = {
+    id: 'A',
+    children: []
+  }
+
+  const child = { id: 'B' }
+  const grandchild1 = { id: 'D' }
+
+  // add first child
+  t.deepEqual(
+    tree.addChild(parent, child, parent),
+    {
+      id: 'A',
+      children: [child]
+    },
+    'adds child to root node'
+  )
+
+  const nestedWhakapapa = {
+    id: 'C',
+    children: [
+      {
+        ...child,
+        children: []
+      }
+    ]
+  }
+
+  const withOneGrandchild = {
+    id: 'C',
+    children: [
+      {
+        ...child,
+        children: [
+          grandchild1
+        ]
+      }
+    ]
+  }
+
+  // add first grandchild
+  t.deepEqual(
+    tree.addChild(nestedWhakapapa, grandchild1, child),
+    withOneGrandchild,
+    'adds grandchild'
+  )
+
+  const grandchild2 = { id: 'E' }
+
+  const withTwoGrandchildren = {
+    id: 'C',
+    children: [
+      {
+        ...child,
+        children: [
+          {
+            id: 'D',
+            siblings: [grandchild2]
+          },
+          grandchild2
+        ]
+      }
+    ]
+  }
+
+  t.deepEqual(
+    tree.addChild(withOneGrandchild, grandchild2, child),
+    withTwoGrandchildren,
+    'adds second grandchild'
+  )
+
+  t.end()
+})
