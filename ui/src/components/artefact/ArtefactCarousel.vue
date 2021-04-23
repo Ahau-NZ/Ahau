@@ -107,7 +107,7 @@ export default {
     },
     artefactHeight () {
       return this.showArtefact
-        ? (this.mobile ? '80vh' : '100%')
+        ? '80vh'
         : (this.mobile ? '300px' : '500px')
     }
   },
