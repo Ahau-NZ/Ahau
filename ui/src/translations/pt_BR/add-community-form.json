@@ -4,7 +4,7 @@
   "description": "Descrição da comunidade",
   "uploadPhoto": "Carregar foto do perfil",
   "address": "Endereço",
-  "postcode": "CEP",
+  "postCode": "CEP",
   "email": "E-mail",
   "city": "Cidade",
   "country": "País/região",
