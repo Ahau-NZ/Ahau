@@ -133,11 +133,16 @@ export default {
       async handler (tribe) {
         if (!tribe.id) return
         try {
-          const res = await this.$apollo.query(getMembers(tribe.id))
+          const res = await this.$apollo.query(
+            getMembers(tribe.id)
+          )
+
           if (res.errors) throw res.errors
 
           this.tribe.members = res.data.listGroupAuthors
-          this.setCurrentAccess(getTribalProfile(tribe, this.whoami))
+          this.setCurrentAccess(
+            getTribalProfile(tribe, this.whoami)
+          )
         } catch (err) {
           const message = 'Something went wrong while trying to fetch members'
           console.error(message)
