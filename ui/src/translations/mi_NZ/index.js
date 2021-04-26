@@ -1,5 +1,6 @@
 module.exports = {
   addPersonForm: require('./add-person-form.json'),
+  addStoryForm: require('./add-story-form.json'),
   addCommunityForm: require('./add-community-form.json'),
   addCollectionForm: require('./add-collection-form.json'),
   pataka: require('./pataka'),
