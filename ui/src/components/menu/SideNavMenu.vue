@@ -45,7 +45,7 @@
                 ref="text"
                 :style="activeComponent === 'profile' ? 'color:#B02425;' : ''"
                 class="ml-2 nav-label subtitle-1"
-              >Profile</span>
+              >{{ t('profile')}}</span>
             </v-col>
           </v-btn>
         </v-col>
@@ -74,7 +74,7 @@
                 ref="text"
                 :style="activeComponent === 'archive' ? 'color:#B02425;' : ''"
                 class="ml-2 nav-label subtitle-1"
-              >Archive</span>
+              >{{ t('archive') }}</span>
             </v-col>
           </v-btn>
         </v-col>
@@ -93,7 +93,7 @@
                 ref="text"
                 :style="activeComponent === 'timeline' ? 'color:#B02425;' : 'black'"
                 class="ml-2 nav-label subtitle-1"
-              >Timeline</span>
+              >{{ t('timeline')}}</span>
             </v-col>
           </v-btn>
         </v-col>
@@ -110,7 +110,7 @@
                 ref="text"
                 :style="activeComponent === 'whakapapa' ? 'color:#B02425;' : 'black'"
                 class="ml-2 subtitle-1"
-              >Whakapapa</span>
+              >{{ t('whakapapa') }}</span>
             </v-col>
           </v-btn>
         </v-col>
@@ -277,6 +277,9 @@ export default {
         }
       }
       this.prevScroll = this.scroll
+    },
+    t (key, vars) {
+      return this.$t('sideNav.' + key, vars)
     }
   },
   components: {
