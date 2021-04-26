@@ -43,7 +43,10 @@ const actions = {
       accepted = accepted.map(application => mapValues(application, whoami))
       declined = declined.map(application => mapValues(application, whoami))
 
-      commit('updateNotifications', [...unseen, ...accepted, ...declined])
+      const notifs = [...unseen, ...accepted, ...declined]
+        .filter(n => n.group)
+
+      commit('updateNotifications', notifs)
     } catch (err) {
       console.error('Something went wrong while try to get all group applications', err)
     }

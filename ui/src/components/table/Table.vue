@@ -126,9 +126,6 @@ export default {
       type: Object,
       required: true
     },
-    relationshipLinks: {
-      type: Map
-    },
     flatten: {
       type: Boolean,
       default: false
@@ -271,8 +268,8 @@ export default {
           return {
             id: `table-link-${i}-${d.target.data.id}`,
             index: i,
-            relationshipType: d.target.data.relationship.relationshipType ? d.target.data.relationship.relationshipType : '',
-            class: d.target.data.relationship.relationshipType !== 'birth' ? 'nonbiological' : '',
+            relationshipType: d.target.data.relationshipType ? d.target.data.relationshipType : '',
+            class: d.target.data.relationshipType !== 'birth' ? 'nonbiological' : '',
             style: {
               fill: 'none',
               stroke: this.pathStroke(d.source.data.id, d.target.data.id)

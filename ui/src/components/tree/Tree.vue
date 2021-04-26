@@ -1,40 +1,22 @@
 <template>
   <svg id="baseSvg" width="100%" :height="height" ref="baseSvg">
-    <!-- niho background picture -->
-    <defs>
-      <pattern id="img1" patternUnits="userSpaceOnUse" x="400" y="0" width="100%" height="100%">
-        <image xlink:href="../../assets/niho.svg" width="100%" height="100%" />
-      </pattern>
-    </defs>
-    <path id="background" d="M5,5 l0,680 2980,0 l0,-680 l-980,0" fill="url(#img1)" />
-    <!-- whakapapa tree -->
-    <g id="baseGroup" >
-      <g :transform="`translate(${treeX} ${treeY})`">
-        <g v-for="link in links" :key="link.id" class="link">
-          <Link :link="link" :class="link.class"/>
-        </g>
-      </g>
-
+    <g id="baseGroup">
       <g
-        :transform="`translate(${treeX - nodeRadius} ${treeY - nodeRadius})`"
+        :transform="`translate(${treeX - radius} ${treeY - radius})`"
         ref="tree"
       >
-        <g v-for="node in nodes" :key="node.id" class="node">
-          <Node
-            :node="node"
-            :radius="nodeRadius"
-            :nonFocusedPartners="nonFocusedPartners"
-            :nodeCentered="nodeCentered"
-            @click="centerNode(node)"
-            @open-context-menu="$emit('open-context-menu', $event)"
-            @change-focus="changeFocus($event, node)"
-            :showLabel="true"
-          />
-        </g>
+        <SubTree :root="treeLayout(this.root)" :openMenu="openMenu" :changeFocus="changeFocus" :centerNode="centerNode"/>
       </g>
     </g>
     <!-- zoom in, zoom out buttons -->
     <g class="zoomControl">
+      <g>
+        <defs>
+          <filter id="shadow">
+            <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="grey" flood-opacity="0.5"/>
+          </filter>
+        </defs>
+      </g>
       <g @click="zoomReset()" :transform="mobile ? `translate(${15} ${treeY*3})` : `translate(${30} ${treeY*3.1})`">
         <circle stroke="white" fill="white" filter="url(#shadow)" cx="20" cy="1" r="15"/>
         <circle stroke="black" fill="white" filter="url(#shadow)" cx="20" cy="1" r="5"/>
@@ -54,16 +36,17 @@
 
 <script>
 import * as d3 from 'd3'
-import get from 'lodash.get'
-import Node from './Node.vue'
-import Link from './Link.vue'
+import SubTree from './SubTree'
 
 import isEqual from 'lodash.isequal'
 
 import { mapGetters, mapActions } from 'vuex'
 
+import settings from '@/lib/link.js'
+
 export default {
   props: {
+    openMenu: Function,
     find: {
       type: Function
     },
@@ -76,15 +59,14 @@ export default {
     },
     getRelatives: Function
   },
+  components: {
+    SubTree
+  },
   data () {
     return {
       componentLoaded: false, // need to ensure component is loaded before using $refs
       nodeCentered: '', // hold centered node id
-      collapseNode: false, // if node is centered than we can show/collapse
 
-      nodeRadius: 50, // use variable for zoom later on
-      nodeSeparationX: 100,
-      nodeSeparationY: 150,
       nonFocusedPartners: [],
       changeFocusId: null,
       nodeId: '',
@@ -97,8 +79,18 @@ export default {
     this.zoom()
     this.scale()
   },
+
   computed: {
-    ...mapGetters(['nestedWhakapapa', 'relationshipLinks']),
+    ...mapGetters(['nestedWhakapapa']),
+    radius () {
+      return settings.radius
+    },
+    nodeSeparationX () {
+      return this.radius * 3
+    },
+    nodeSeparationY () {
+      return this.radius * 4
+    },
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -109,7 +101,7 @@ export default {
       })
     },
     branch () {
-      return this.nodeSeparationY / 2 + this.nodeRadius
+      return this.nodeSeparationY / 2 + this.radius
     },
     /*
       gets the X position of the tree based on the svg size
@@ -151,18 +143,26 @@ export default {
       return d3
         .tree()
         .nodeSize([
-          this.nodeSeparationX + this.nodeRadius,
-          this.nodeSeparationY + this.nodeRadius
+          this.nodeSeparationX,
+          this.nodeSeparationY
         ])
         .separation((a, b) => {
-          if (a.parent !== b.parent) return 1.3
-          // "how far cousins be spaced"  (I think)
-          // nodes have only one one "node.parent" (but multiple node.data.parents)
+          /*
+            NOTE:
+            - to change space between siblings check a.parent === b.parent
+            - to change space between cousins check a.parent !== b.parent
+          */
 
-          return 1 + 0.3 * (this.visiblePartners(a) + this.visiblePartners(b))
-          // "how far are siblings spaced" (I think)
-          // start with a baseline of 1, then add a proportion of the number of partners
-          // as partners take up less space than central node, are placed evenly to either side
+          // separation between a and b is determined by their partners
+          let rightNodeCount = settings.separation.rightPartnersCount(b)
+          let leftNodeCount = settings.separation.leftPartnersCount(a)
+
+          if (a.parent !== b.parent) {
+            rightNodeCount = settings.separation.rightPartnersCount(a)
+            leftNodeCount = settings.separation.leftPartnersCount(b)
+          }
+
+          return 1 + 0.9 * (rightNodeCount + leftNodeCount)
         })
     },
     //  returns a nested data structure representing a tree based on the treeData object
@@ -170,61 +170,11 @@ export default {
       return d3.hierarchy(this.nestedWhakapapa)
     },
     /*
-      returns an array of nodes associated with the root node created from the treeData object, as well as
-      extra attributes
+      returns an array of nodes associated with the root node created from the treeData object
     */
     nodes () {
       return this.treeLayout(this.root)
         .descendants() // returns the array of descendants starting with the root node, then followed by each child in topological order
-        .map((d, i) => {
-          return {
-            id: `tree-node-${i}-${d.data.id}`,
-            children: d.children,
-            data: d.data,
-            depth: d.depth,
-            height: d.height,
-            parent: d.parent,
-            x: d.x,
-            y: d.y,
-            index: i,
-            path: d.data.path
-          }
-        })
-    },
-    /*
-      returns an array of links which holds the X and Y coordinates of both the parent (source) and child (target) nodes
-    */
-    links () {
-      return this.treeLayout(this.root)
-        .links() // returns the array of links
-        .map((d, i) => { // returns a new custom object for each link
-          return {
-            id: `tree-link-${i}-${d.source.data.id}-${d.target.data.id}`,
-            index: i,
-            x1: d.source.x, // centre x position of parent node
-            x2: d.target.x, // centre x position of child node
-            y1: d.source.y, // centre y position of the parent node
-            y2: d.target.y, // centre y position of the child node
-            class: this.relationshipLinks.get(d.source.data.id + '-' + d.target.data.id).relationshipType !== 'birth' ? 'nonbiological' : '',
-            style: {
-              fill: 'none',
-              stroke: this.pathStroke(d.source.data.id, d.target.data.id)
-            },
-            d: `
-                M ${d.source.x}, ${d.source.y}
-                v ${this.branch}
-                H ${d.target.x}
-                V ${d.target.y}
-              `
-          }
-        })
-        .sort((a, b) => {
-          var A = a.style.stroke
-          var B = b.style.stroke
-          if (A > B) return -1
-          if (A < B) return 1
-          return 0
-        })
     },
     paths () {
       if (!this.componentLoaded || !this.pathNode) return null
@@ -256,14 +206,10 @@ export default {
         }
       })
     }
-    // nodes (newValue) {
-    //   this.setLoading(false)
-    // }
   },
 
   methods: {
     ...mapActions(['setLoading']),
-
     pathStroke (sourceId, targetId) {
       if (!this.paths) return 'darkgrey'
 
@@ -303,7 +249,7 @@ export default {
       }
     },
 
-    async collapse (node) {
+    collapse (node) {
       const profile = node.data
       const { children, _children = [] } = profile
 
@@ -341,12 +287,6 @@ export default {
     changeFocus (profileId) {
       this.changeFocusId = profileId
       this.$emit('change-focus', profileId)
-    },
-
-    visiblePartners (node) {
-      return get(node, 'data.isCollapsed')
-        ? 0
-        : get(node, 'data.partners.length', 0)
     },
     zoom () {
       var svg = d3.select('#baseSvg')
@@ -390,10 +330,6 @@ export default {
       var x = width / 2 - source.x
       var y = height / 2 - source.y + 150
 
-      // g.transition()
-      //   .duration(700)
-      //   .attr('transform', 'translate(' + (x) + ',' + (y) + ')scale(' + 1 + ')')
-      //   .on('end', function () { svg.call(d3.zoom().transform, d3.zoomIdentity.translate((x), (y)).scale(1)) })
       g.transition()
         .duration(700)
         .attr('transform', 'translate(' + (x) + ',' + (y) + ')')
@@ -428,10 +364,6 @@ export default {
           )
         })
     }
-  },
-  components: {
-    Node,
-    Link
   }
 }
 </script>
@@ -443,15 +375,13 @@ export default {
 
 svg#baseSvg {
   cursor: grab;
-  background: white;
+  background: linear-gradient(rgba(255, 255, 255, 0.99), rgba(255, 255, 255, 0.88)), url(../../assets/niho.svg);
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 .zoomControl {
   cursor: pointer;
-}
-
-.nonbiological{
-  stroke-dasharray: 2.5
 }
 
 </style>

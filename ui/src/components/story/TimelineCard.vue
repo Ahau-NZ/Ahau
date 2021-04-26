@@ -7,9 +7,9 @@
         :class="{ 'desktop-timeItem': !mobile }"
         v-for="(item, index) in sortedData"
         :key="index"
-        :color="getDotColour(item.storyTypeIcon)"
+        :color="dotColor"
         :icon="item.storyTypeIcon"
-        :icon-color="getIconColour(item.storyTypeIcon)"
+        :icon-color="iconColor"
         right
         small
         light
@@ -37,6 +37,7 @@
               :chip="item"
               light
               expanded
+              :image="getImageSrc(item)"
             />
           </v-row>
           <v-card-actions v-if="show == index" class="pt-0">
@@ -86,6 +87,7 @@
 <script>
 import AvatarGroup from '@/components/AvatarGroup.vue'
 import Chip from '@/components/archive/Chip.vue'
+import niho from '@/assets/niho.svg'
 
 import { mapGetters } from 'vuex'
 import { yearMonthDay, edtfToDateString } from '@/lib/date-helpers.js'
@@ -98,7 +100,9 @@ export default {
   },
   data: () => ({
     show: -1,
-    animation: -1
+    animation: -1,
+    dotColor: '#b12526',
+    iconColor: '#ffffff'
   }),
   computed: {
     ...mapGetters(['showArtefact']),
@@ -109,18 +113,12 @@ export default {
       var sortedData = this.sortDesc(this.data)
       return sortedData
     }
-
   },
   methods: {
     sortDesc (data) {
-      var sortDescending = data.sort((a, b) => edtfToDateString(a.timeInterval) - edtfToDateString(b.timeInterval))
-      return sortDescending
-    },
-    getDotColour (iconType) {
-      return '#b12526'
-    },
-    getIconColour (iconType) {
-      return '#ffffff'
+      return data.sort((a, b) => {
+        return edtfToDateString(a.timeInterval) - edtfToDateString(b.timeInterval)
+      })
     },
     formatTimeInterval (date) {
       return yearMonthDay(date)
@@ -135,12 +133,21 @@ export default {
     hide () {
       this.show = -1
     },
-    // enter and leave methods animate the description shorten
-    enter (index) {
-      this.animation = index
-    },
-    afterLeave (index, el) {
-      this.animation = -1
+    getImageSrc ({ artefacts }) {
+      // determine the image to show based on the artefacts
+      if (!artefacts && !artefacts.length) return null
+
+      // look for a photo artfact to use as the cover
+      const thing = artefacts.find(({ artefact }) => artefact.type === 'photo')
+
+      if (thing && thing.artefact && thing.artefact.blob) return thing.artefact.blob.uri
+      if (thing && thing.blob) return thing.blob.uri
+
+      // TODO cherese 25-04-2021 see if we should return a video cover image for stories without a photo
+      // that have a video
+
+      // we didnt find an artefact photo in the story, use a default image
+      return niho
     }
   }
 }

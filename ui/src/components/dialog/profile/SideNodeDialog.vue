@@ -22,7 +22,7 @@
         <v-container>
           <v-row v-if="isEditing">
             <v-col class="py-0">
-              <ProfileForm :profile.sync="formData" :readonly="!isEditing" :mobile="mobile" @cancel="cancel" isEditing isSideViewDialog>
+              <ProfileForm :profile.sync="formData" :withRelationships="withRelationships" :readonly="!isEditing" :mobile="mobile" @cancel="cancel" isEditing isSideViewDialog>
                 <template v-slot:top>
                   <v-row class="justify-center">
                     <h1>Edit {{ getDisplayName(formData) }}</h1>
@@ -169,7 +169,7 @@
                     :show-labels="true"
                     @profile-click="openProfile($event)"
                   >
-                  <template v-slot:action >
+                  <template v-slot:action>
                     <AddButton v-if="!preview && view && view.focus !== profile.id" @click="toggleNew('sibling')" class="pb-4" justify="start"/>
                   </template>
                   </AvatarGroup>
@@ -203,6 +203,16 @@
                     </template>
                   </AvatarGroup>
                 </v-col>
+                <hr v-if="authors" class="family-divider"/>
+                <v-col v-if="authors" :cols="12" class="pa-0">
+                  <AvatarGroup
+                    :profiles="authors"
+                    group-title="Contributed by"
+                    size="60px"
+                    :show-labels="true"
+                    @profile-click="openProfile($event)"
+                  />
+                </v-col>
               </v-row>
             </v-col>
           </v-row>
@@ -235,6 +245,7 @@ import DialogTitleBanner from '@/components/dialog/DialogTitleBanner.vue'
 import ArchiveIcon from '@/components/button/ArchiveIcon.vue'
 
 import { getDisplayName } from '@/lib/person-helpers.js'
+import mapProfileMixins from '@/mixins/profile-mixins.js'
 
 function defaultData (input) {
   var profile = clone(input)
@@ -248,7 +259,8 @@ function defaultData (input) {
     avatarImage: profile.avatarImage,
     description: profile.description,
     birthOrder: profile.birthOrder,
-    relationshipType: profile.relationship ? profile.relationship.relationshipType : null,
+    relationshipType: profile.relationshipType,
+    legallyAdoped: profile.legallyAdopted,
     email: profile.email,
     phone: profile.phone,
     deceased: profile.deceased,
@@ -282,29 +294,36 @@ export default {
     ProfileInfoItem
   },
   props: {
-    goBack: { type: Function },
     profile: { type: Object, default: () => {} },
     deleteable: { type: Boolean, default: false },
-    warnAboutChildren: { type: Boolean, default: true },
     view: { type: Object },
-    sideMenu: { type: Boolean, default: false },
-    relationshipLinks: { type: Array },
     show: { type: Boolean, required: true },
     readonly: { type: Boolean, default: false },
     preview: { type: Boolean, default: false }
   },
-
+  mixins: [
+    mapProfileMixins({ mapMethods: ['getProfile'] })
+  ],
   data () {
     return {
       isEditing: false,
       formData: {},
       showDescription: false,
-      drawer: false
+      drawer: false,
+      authors: []
     }
+  },
+  async mounted () {
+    // TODO cherese 22-04-21 move to graphql
+    const originalAuthor = await this.getOriginalAuthor()
+    this.authors = [originalAuthor]
   },
   computed: {
     mobile () {
       return this.$vuetify.breakpoint.xs
+    },
+    withRelationships () {
+      return this.profile.parent !== null
     },
     diedAt () {
       if (this.profile.aliveInterval) {
@@ -375,6 +394,9 @@ export default {
     ...mapMutations(['updateIsFromWhakapapaShow']),
     ...mapActions(['setProfileById', 'setDialog', 'setIsFromWhakapapaShow']),
     getDisplayName,
+    async getOriginalAuthor () {
+      return this.getProfile(this.profile.originalAuthor)
+    },
     goArchive () {
       if (
         this.$route.name === 'person/whakapapa/:whakapapaId' ||

@@ -34,7 +34,7 @@
       />
       <g
         class="menu-button"
-        @click.stop="openMenu($event, profile)"
+        @click="openMenu($event, profile)"
         :transform="`translate(${1.4 * radius}, ${1.4 * radius})`"
       >
         <circle
@@ -166,7 +166,7 @@ export default {
       this.$emit('click')
     },
     openMenu ($event, profile) {
-      this.$emit('open-context-menu', { event, profile })
+      this.$emit('open-menu', { $event, profile })
     },
     getPartners () {
       var leftCount = 0

@@ -24,7 +24,8 @@ import findSuccessor from '@/lib/find-successor'
 export default {
   name: 'NodeMenu',
   props: {
-    view: Object
+    view: Object,
+    currentFocus: String
   },
   components: {
     VueContext
@@ -52,8 +53,12 @@ export default {
     canAddSibling () {
       if (!this.selectedProfile) return false
 
-      // if adding a sibling to the focus
-      return this.selectedProfile.id !== this.view.focus
+      return (
+        this.selectedProfile.id !== this.view.focus &&
+        this.selectedProfile.id !== this.currentFocus &&
+        this.selectedProfile.parents &&
+        this.selectedProfile.parents.length > 0
+      )
     },
     options () {
       return [
@@ -64,13 +69,13 @@ export default {
           isPermitted: Boolean(this.selectedProfile),
           icon: require('@/assets/node-parent.svg')
         },
-        // TODO: add button for adding partners
-        // {
-        //   title: 'Add Partner',
-        //   dialog: 'new-node',
-        //   type: 'partner',
-        //   isPermitted: Boolean(this.selectedProfile)
-        // },
+        {
+          title: 'Add Partner',
+          dialog: 'new-node',
+          type: 'partner',
+          isPermitted: Boolean(this.selectedProfile),
+          icon: require('@/assets/node-partner.svg')
+        },
         {
           title: 'Add Child',
           dialog: 'new-node',

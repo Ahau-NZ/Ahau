@@ -29,7 +29,7 @@
             <span>{{ time }}</span>
           </v-list-item-subtitle>
           <v-list-item-title v-if="!showArtefact" class="headline mb-1 wrap-text">{{ story.title }}</v-list-item-title>
-          <v-list-item-title v-else class="headline mb-1 wrap-text">{{ artefact.title }}</v-list-item-title>
+          <v-list-item-title v-else class="headline mb-1 wrap-text" style="max-width:90%">{{ artefact.title }}</v-list-item-title>
         </v-list-item-content>
       </v-list-item>
       <v-list-item v-if="artefacts && artefacts.length > 0" class="px-0">

@@ -98,7 +98,7 @@ export default {
           const file = new File([blob], 'avatar', { type: blob.type })
 
           if (file.size >= 5 * 1024 * 1024) {
-            console.error('this avvatar image is bigger than 5MB, we cannot allow this through, otherwise it will end up a hyperblob, which AvatarImage does not currently support')
+            console.error('this avatar image is bigger than 5MB, we cannot allow this through, otherwise it will end up a hyperblob, which AvatarImage does not currently support')
             throw new Error('avatar image must me < 5MB')
           }
 

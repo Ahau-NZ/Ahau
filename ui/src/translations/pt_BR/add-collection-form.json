@@ -1,3 +1,13 @@
 {
-  
+  "addCollection": "Adicionar uma coleção",
+  "collectionName": "Nome da coleção",
+  "collectionDescription": "Descrição da coleção",
+  "addStories": "Adicionar histórias do arquivo a esta coleção",
+  "stories": "Histórias",
+  "addRelatedStories": "Adicionar histórias relacionadas",
+  "editImage": "Editar imagem da coleção",
+  "editCollection": "Editar Coleção",
+  "description": "Descrição",
+  "privacySelection": "Privado",
+  "privacy": "Apenas você terá acesso a esta história"
 }

@@ -149,9 +149,8 @@ export const whoami = ({
   fetchPolicy: 'no-cache'
 })
 
-export const PROFILE_LINK_FRAGMENT = gql`
-  fragment ProfileLinkFragment on WhakapapaLink {
-    linkId
+export const WHAKAPAPA_LINK_FRAGMENT = gql`
+  fragment WhakapapaLinkFragment on Person {
     relationshipType
     legallyAdopted
   }
@@ -162,21 +161,31 @@ export const getPerson = id => ({
     ${PublicProfileFieldsFragment}
     ${PERSON_FRAGMENT}
     ${AUTHOR_FRAGMENT}
-    ${PROFILE_LINK_FRAGMENT}
+    ${WHAKAPAPA_LINK_FRAGMENT}
     query($id: String!) {
       person(id: $id){
         ...ProfileFragment
         children {
-          profile {
-            ...ProfileFragment
-          }
-          ...ProfileLinkFragment
+          ...ProfileFragment
+          ...WhakapapaLinkFragment
         }
         parents {
-          profile {
+          ...ProfileFragment
+          ...WhakapapaLinkFragment
+        }
+        partners {
+          ...ProfileFragment
+          children {
             ...ProfileFragment
+            ...WhakapapaLinkFragment
           }
-          ...ProfileLinkFragment
+          parents {
+            ...ProfileFragment
+            ...WhakapapaLinkFragment
+          }
+        }
+        siblings {
+          ...ProfileFragment
         }
         tiaki {
           ...PublicProfileFields
@@ -187,6 +196,7 @@ export const getPerson = id => ({
             ...ProfileFragment
           }
         }
+        originalAuthor
       }
     }
   `,
@@ -222,7 +232,7 @@ export const savePerson = input => {
   return saveProfile(input)
 }
 
-function pruneEmptyValues (input) {
+export function pruneEmptyValues (input) {
   const pruned = {}
   Object.entries(input).forEach(([key, value]) => {
     if (value !== null) pruned[key] = value
@@ -236,3 +246,23 @@ export function getDisplayName (profile) {
 
   return profile.preferredName || profile.legalName.split(' ')[0]
 }
+
+export const whakapapaLink = (parent, child) => ({
+  query: gql`
+    query($parent: String!, $child: String!) {
+      whakapapaLink (parent: $parent, child: $child) {
+        type
+        linkId
+        parent
+        child
+        relationshipType
+        legallyAdopted
+        recps
+      }
+    }
+  `,
+  variables: {
+    parent,
+    child
+  }
+})
