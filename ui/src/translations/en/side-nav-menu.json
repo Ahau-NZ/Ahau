@@ -1,6 +1,6 @@
 {
-  "Profile": "profile",
-  "Archive": "archive",
-  "timeline": "timeline",
-  "Whakapapa": "whakapapa"
+  "profile": "Profile",
+  "archive": "Archive",
+  "timeline": "Timeline",
+  "whakapapa": "Whakapapa"
 }

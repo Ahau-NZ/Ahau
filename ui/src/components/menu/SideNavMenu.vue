@@ -45,7 +45,7 @@
                 ref="text"
                 :style="activeComponent === 'profile' ? 'color:#B02425;' : ''"
                 class="ml-2 nav-label subtitle-1"
-              >{{ $t('profile')}}</span>
+              >{{ t('profile')}}</span>
             </v-col>
           </v-btn>
         </v-col>
@@ -74,7 +74,7 @@
                 ref="text"
                 :style="activeComponent === 'archive' ? 'color:#B02425;' : ''"
                 class="ml-2 nav-label subtitle-1"
-              >{{ $t('archive') }}</span>
+              >{{ t('archive') }}</span>
             </v-col>
           </v-btn>
         </v-col>
@@ -93,7 +93,7 @@
                 ref="text"
                 :style="activeComponent === 'timeline' ? 'color:#B02425;' : 'black'"
                 class="ml-2 nav-label subtitle-1"
-              >{{ $t('timeline')}}</span>
+              >{{ t('timeline')}}</span>
             </v-col>
           </v-btn>
         </v-col>
@@ -110,7 +110,7 @@
                 ref="text"
                 :style="activeComponent === 'whakapapa' ? 'color:#B02425;' : 'black'"
                 class="ml-2 subtitle-1"
-              >{{ $t('whakapapa') }}</span>
+              >{{ t('whakapapa') }}</span>
             </v-col>
           </v-btn>
         </v-col>
