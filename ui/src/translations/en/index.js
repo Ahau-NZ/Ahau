@@ -11,5 +11,5 @@ module.exports = {
   instructionsWhakapapa: require('./instructions-whakapapa.json'),
   viewArchive: require('./view-archive.json'),
   whakapapaIndex: require('./whakapapa-index.json'),
-  sideNav: require('./side-nav-menubar.json')
+  sideNav: require('./side-nav-menu.json')
 }
