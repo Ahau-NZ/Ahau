@@ -10,10 +10,10 @@
       <!-- Desktop doesn't use a drawer, it has the links directly in the app bar -->
       <template v-if="!mobile">
         <LocalePicker v-if="false"/>
-        <v-btn text active-class="no-active" to="/tribe" class="white--text text-uppercase ms-10">Tribes</v-btn>
-        <v-btn active-class="no-active" text @click.native="goProfile('archive')" class="white--text text-uppercase ms-10">Archive</v-btn>
+        <v-btn text active-class="no-active" to="/tribe" class="white--text text-uppercase ms-10">{{ t('tribes' )}}</v-btn>
+        <v-btn active-class="no-active" text @click.native="goProfile('archive')" class="white--text text-uppercase ms-10">{{ t('archive') }}</v-btn>
 
-        <v-btn active-class="no-active" text @click.native="goProfile('whakapapa')" class="white--text text-uppercase ms-10">whakapapa</v-btn>
+        <v-btn active-class="no-active" text @click.native="goProfile('whakapapa')" class="white--text text-uppercase ms-10">{{ t('whakapapa') }}</v-btn>
         <v-btn active-class="no-active" fab @click.native="goProfile('profile')" class="pr-12 mr-4 ml-10">
           <Avatar
             v-if="!mobile"
@@ -59,13 +59,13 @@
           />
         </v-list-item>
         <v-list-item active-class="no-active" link @click.native="goProfile('whakapapa')" class="white--text">
-          <v-list-item-title>whakapapa</v-list-item-title>
+        <v-list-item-title>{{ t('whakapapa') }}</v-list-item-title>
         </v-list-item>
         <v-list-item active-class="no-active" link @click.native="goProfile('archive')" >
-          <v-list-item-title class="white--text" >Archive</v-list-item-title>
+          <v-list-item-title class="white--text" >{{ t('archive') }}</v-list-item-title>
         </v-list-item>
         <v-list-item active-class="no-active" link to="/tribe">
-          <v-list-item-title class="white--text">Tribes</v-list-item-title>
+          <v-list-item-title class="white--text">{{ t('tribes' )}}</v-list-item-title>
         </v-list-item>
         <v-list-item class="pt-12">
           <FeedbackButton />
@@ -184,6 +184,9 @@ export default {
     goBack () {
       if (this.$route.name === 'whakapapa') return this.$router.push({ path: this.$route.from.fullPath }).catch(() => {})
       else if (this.showStory) return this.toggleShowStory()
+    },
+    t (key, vars) {
+      return this.$t('appBarMenu.' + key, vars)
     }
   },
   components: {
