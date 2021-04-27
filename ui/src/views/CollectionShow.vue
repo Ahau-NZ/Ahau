@@ -1,6 +1,7 @@
 <template>
-  <div>
-    <v-container fluid v-if="collection" >
+  <div :class="{ topMargin: !showStory }">
+    <div v-if="showStory" :class="{ showOverlay: showStory && !mobile }"></div>
+    <v-container fluid v-if="collection">
       <!-- Collection Header -->
       <v-row v-if="!showStory">
         <!-- <CollectionTitle v-if="mobile" :collection="collection" @click="dialog = 'edit-collection'"/> -->
@@ -21,7 +22,8 @@
           <Stories
             :title="t('stories')"
             :stories="stories"
-            @save="$emit('processStory', $event)"
+            @save="processStory"
+            :reload="reload"
           />
         </v-col>
       </v-row>
@@ -56,6 +58,7 @@ import { getTribalProfile } from '@/lib/community-helpers'
 
 import mapProfileMixins from '@/mixins/profile-mixins.js'
 import { saveCollectionsMixin } from '@/mixins/collection-mixins.js'
+import { saveStoryMixin } from '@/mixins/story-mixins.js'
 
 import { mapGetters, mapMutations } from 'vuex'
 import Stories from '../components/archive/Stories.vue'
@@ -67,6 +70,7 @@ import CollectionTitleCard from '@/components/archive/CollectionTitleCard.vue'
 export default {
   name: 'CollectionShow',
   mixins: [
+    saveStoryMixin,
     saveCollectionsMixin,
     mapProfileMixins({
       mapMethods: ['getTribe']
@@ -141,15 +145,8 @@ export default {
 
       await this.saveCollection($event)
       await this.saveStoriesToCollection(this.collection.id, stories)
+      await this.reload()
 
-      this.$parent.$apollo.queries.collections.refetch({
-        filter: { groupId: this.$route.params.tribeId, type: '*' }
-      })
-      this.$parent.$apollo.queries.stories.refetch({
-        filter: { groupId: this.$route.params.tribeId, type: '*' }
-      })
-
-      this.$apollo.queries.collection.refetch()
       this.close()
     },
     async deleteCollection () {
@@ -162,14 +159,18 @@ export default {
         return
       }
 
-      // reload parent component collections
-      await this.$parent.$apollo.queries.collections.refetch({
-        filter: { groupId: this.$route.params.tribeId, type: '*' }
-      })
+      const [type] = this.$route.name.split('/collection')
 
-      // go to the default archive page
-      const [newPath] = this.$route.fullPath.split('archive/')
-      this.$router.push({ path: newPath + 'archive' }).catch(() => {})
+      this.$router.push({
+        name: type + '/archive',
+        params: {
+          profileId: this.$route.params.profileId,
+          tribeId: this.$route.params.tribeId
+        }
+      }).catch(() => {})
+    },
+    async reload () {
+      await this.$apollo.queries.collection.refetch()
     },
     t (key, vars) {
       return this.$t('viewArchive.' + key, vars)
@@ -194,6 +195,10 @@ export default {
     max-width: 80%;
     flex-basis: 80%;
   }
+}
+
+.topMargin {
+  margin-top: 70px;
 }
 
 .body-width {
@@ -221,6 +226,17 @@ export default {
 
 .fade-enter-active {
   transition: all 0.6s ease-in-out;
+}
+
+.showOverlay {
+  z-index: 1;
+  height: 100%;
+  width: 100%;
+  position: fixed;
+  overflow: auto;
+  top: 0px;
+  left: 0px;
+  background: rgba(0, 0, 0, 0.81);
 }
 
 .fade-enter,

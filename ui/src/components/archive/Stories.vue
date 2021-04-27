@@ -21,6 +21,7 @@
               @updateDialog="updateDialog($event)"
               @submit="$emit('save', $event)"
               @close="toggleStory($event)"
+              :reload="reload"
             />
           </v-row>
         </div>
@@ -62,7 +63,11 @@ import { mapGetters, mapMutations, mapActions } from 'vuex'
 
 export default {
   name: 'Stories',
-  props: ['stories', 'title'],
+  props: {
+    stories: Array,
+    title: String,
+    reload: Function
+  },
   components: {
     StoryCard
   },

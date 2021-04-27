@@ -13,13 +13,14 @@
         </v-col>
       </v-row>
       <v-row>
-        <v-col cols="12">
-          <router-view :profile="profile" :stories="stories"
-            ref="child"
+        <v-col v-if="allowCollections" v-show="!showStory" cols="12" class="pa-0">
+          <CollectionGroup
             :collections="collections"
-            @processStory="processStory"
-            :hide-collections="!allowCollections"
-          ></router-view>
+            @click="showCurrentCollection"
+          />
+        </v-col>
+        <v-col cols="12">
+          <Stories :stories="stories" @save="processStory" :title="title" :reload="reload"/>
         </v-col>
       </v-row>
       <ArchiveHelper v-if="showArchiveHelper" :show="showArchiveHelper" @close="toggleArchiveHelper" />
@@ -56,6 +57,8 @@ import { mapGetters, createNamespacedHelpers } from 'vuex'
 import NewRecordDialog from '@/components/dialog/archive/NewRecordDialog.vue'
 import NewCollectionDialog from '@/components/dialog/archive/NewCollectionDialog.vue'
 import BigAddButton from '@/components/button/BigAddButton.vue'
+import CollectionGroup from '@/components/archive/CollectionGroup.vue'
+import Stories from '@/components/archive/Stories.vue'
 
 // TODO: Replace with Archive Helper (doesnt exist yet)
 import ArchiveHelper from '@/components/dialog/archive/ArchiveHelper.vue'
@@ -89,7 +92,9 @@ export default {
     NewCollectionDialog,
     ArchiveHelper,
     BigAddButton,
-    VueContext
+    VueContext,
+    CollectionGroup,
+    Stories
   },
   data () {
     return {
@@ -107,6 +112,10 @@ export default {
     ...mapGetters(['showStory', 'whoami', 'currentStory', 'showArtefact', 'storeDialog', 'currentAccess']),
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
+    },
+    title () {
+      if (this.profile.id !== this.currentAccess.id) return `Stories about ${this.getDisplayName(this.profile)}`
+      return 'Stories'
     },
     hideArchiveTitle () {
       return this.onCollectionPage && this.mobile
@@ -131,6 +140,15 @@ export default {
   },
   methods: {
     ...mapAlertMutations(['showAlert']),
+    showCurrentCollection ({ id }) {
+      var type = this.$route.name.split('/archive')[0]
+      this.$router.push({
+        name: type + '/collection',
+        params: {
+          collectionId: id
+        }
+      })
+    },
     toggleArchiveHelper () {
       this.showArchiveHelper = !this.showArchiveHelper
     },
@@ -155,12 +173,15 @@ export default {
         await this.saveStoriesToCollection(id, stories)
 
         // reload the collections and stories to reflect new links
-        this.$apollo.queries.collections.refetch({ filter: { groupId: this.$route.params.tribeId, type: '*' } })
-        this.$apollo.queries.stories.refetch({ filter: { groupId: this.$route.params.tribeId, type: '*' } })
+        await this.reload()
       } catch (err) {
         console.error('Something went wrong while saving a new collections and/or linking stories to it', $event)
         console.error(err)
       }
+    },
+    async reload () {
+      this.$apollo.queries.collections.refetch({ filter: { groupId: this.$route.params.tribeId, type: '*' } })
+      this.$apollo.queries.stories.refetch({ filter: { groupId: this.$route.params.tribeId, type: '*' } })
     }
   },
   watch: {
