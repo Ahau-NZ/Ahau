@@ -51,7 +51,7 @@ import isEqual from 'lodash.isequal'
 import groupBy from 'lodash.groupby'
 
 import * as d3 from 'd3'
-import { mapGetters, mapActions } from 'vuex'
+
 import WhakapapaViewCard from '@/components/whakapapa/WhakapapaViewCard.vue'
 import NewViewDialog from '@/components/dialog/whakapapa/NewViewDialog.vue'
 import NewNodeDialog from '@/components/dialog/profile/NewNodeDialog.vue'
@@ -61,9 +61,13 @@ import BigAddButton from '@/components/button/BigAddButton.vue'
 
 import { saveLink } from '@/lib/link-helpers.js'
 import { savePerson } from '@/lib/person-helpers.js'
-import { saveWhakapapaView, getWhakapapaViews } from '@/lib/whakapapa-helpers.js'
+import { saveWhakapapaView } from '@/lib/whakapapa-helpers.js'
+import mapWhakapapaMixins from '@/mixins/whakapapa-view.js'
 import { findByName } from '@/lib/search-helpers.js'
 import mapProfileMixins from '@/mixins/profile-mixins.js'
+
+import { mapGetters, mapActions, createNamespacedHelpers } from 'vuex'
+const { mapMutations: mapAlertMutations } = createNamespacedHelpers('alerts')
 
 export default {
   name: 'WhakapapaIndex',
@@ -74,6 +78,9 @@ export default {
   mixins: [
     mapProfileMixins({
       mapMethods: ['getTribe']
+    }),
+    mapWhakapapaMixins({
+      mapMethods: ['getWhakapapaViews']
     })
   ],
   data () {
@@ -100,26 +107,25 @@ export default {
   },
   methods: {
     ...mapActions(['setLoading']),
+    ...mapAlertMutations(['showAlert']),
 
     async groupedWhakapapaViews () {
-      var views = []
-      const res = await this.$apollo.query(getWhakapapaViews())
-      if (res.errors) {
-        console.error('error getting whakapapa views', res.errors)
-      } else {
-        views = res.data.whakapapaViews
-      }
+      const views = await this.getWhakapapaViews()
+
       if (this.$route.params.profileId === this.whoami.personal.profile.id) {
         var groupedObj = groupBy(views, 'recps[0]')
+
         const groups = await Promise.all(
           Object.keys(groupedObj).map(async id => {
             var views = groupedObj[id]
             if (id === this.whoami.personal.groupId) return { name: this.t('privateRecords'), image: this.whoami.personal.profile.avatarImage, views: views, tribeId: this.whoami.personal.groupId }
             var tribe = await this.getTribe(id)
-            return { name: tribe.private[0].preferredName, image: tribe.private[0].avatarImage, views: views, tribeId: tribe.id }
+
+            if (tribe.private && tribe.length) return { name: tribe.private[0].preferredName, image: tribe.private[0].avatarImage, views: views, tribeId: tribe.id }
+            return null
           })
         )
-        const filteredGroups = groups.filter(i => !isEmpty(i))
+        const filteredGroups = groups.filter(group => !isEmpty(group))
         return filteredGroups
       }
 
