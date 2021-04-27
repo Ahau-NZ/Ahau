@@ -12,5 +12,6 @@ module.exports = {
   instructionsWhakapapa: require('./instructions-whakapapa.json'),
   viewArchive: require('./view-archive.json'),
   whakapapaIndex: require('./whakapapa-index.json'),
+  instructionsStory: require('./instructions-story.json'),
   sideNav: require('./side-nav-menu.json')
 }

@@ -1,25 +1,25 @@
 <template>
-  <Dialog :title="'Pūranga ---- Archive'" :show="show" @close="close" :width="`700px`" :goBack="close">
+  <Dialog :title="t('titleArchive')" :show="show" @close="close" :width="`700px`" :goBack="close">
     <template v-slot:content>
       <v-card-text class="pt-4">
-        <p>An Archive is where you create, store and access your Stories</p>
+        <p>{{ t('archiveDescription') }}</p>
         <p>
-          A Story is a digital copy, account or recording of a piece of information that is of some personal or commuinty significance. In particular information related to your heritage or culture. These may include things like memories, histories, stories, events, and legends.
+          {{ t('storyDescription') }}
         </p>
         <p>
-          In Āhau there are two types of Archives
+          {{ t('archiveTypes') }}
           <ul>
-            <li><strong>Your personal archive</strong>, completely private and securely encrypted to your own personal device. Your personal Archive is created when you first create an account for Āhau</li>
-            <li><strong>A whānau archive</strong>, which is a shared archive that has a privately shared encryption key and is only accessible by approved whānau members personal devices. A community Archive is created whenever you create a new tribe in Āhau</li>
+            <li>{{ t('personalArchive') }}</li>
+            <li>{{ t('whanauArchive') }}</li>
           </ul>
         </p>
         <p>
-          When creating a Story you can decide which Archive you would like to store the Story in by changing the <i>'Access'</i> to either yourself, or a whānau group that you are apart of.
+          {{ t('createRecord') }}
         </p>
       </v-card-text>
       <v-divider />
       <p>
-          Example images
+          {{ t('exampleImages') }}
       </p>
       <v-carousel hide-delimiters height="100%">
         <v-tooltip
@@ -42,7 +42,7 @@
           text
           @click="close"
         >
-          close
+          {{ t('close') }}
         </v-btn>
       </v-col>
     </template>
@@ -61,21 +61,21 @@ export default {
     return {
       items: [
         { src: require('../../../assets/images/add-record.png'),
-          text: 'add stories and records to archive' },
+          text: this.t('itemsStories') },
         { src: require('../../../assets/images/edit-artefact.png'),
-          text: 'add artefacts and media to stories ' },
+          text: this.t('itemsArtefacts') },
         { src: require('../../../assets/images/view-archive.png'),
-          text: 'view all your stories in one place' },
+          text: this.t('itemsViewAll') },
         { src: require('../../../assets/images/view-story.png'),
-          text: 'view individual stories for more information' }
+          text: this.t('itemsIndividual') }
       ],
       mobileItems: [
         { src: require('../../../assets/images/mobile-add-record.png'),
-          text: 'add stories and records to archive' },
+          text: this.t('itemsStories') },
         { src: require('../../../assets/images/mobile-edit-artefact.png'),
-          text: 'add artefacts and media to stories ' },
+          text: this.t('itemsArtefacts') },
         { src: require('../../../assets/images/mobile-view-archive.png'),
-          text: 'view all your stories in one place' }
+          text: this.t('itemsViewAll') }
       ]
     }
   },
@@ -97,6 +97,9 @@ export default {
     },
     close () {
       this.$emit('close')
+    },
+    t (key, vars) {
+      return this.$t('instructionsStory.' + key, vars)
     }
   }
 }
