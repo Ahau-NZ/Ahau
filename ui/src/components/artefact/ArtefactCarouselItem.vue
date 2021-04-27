@@ -97,6 +97,8 @@ import { mapGetters } from 'vuex'
 import { ARTEFACT_ICON } from '@/lib/artefact-helpers.js'
 import FileStream from '@/lib/hyper-file-stream'
 import getVideoPoster from '@/lib/get-video-poster'
+import mime from 'mime-types'
+import axios from 'axios'
 
 const renderMedia = require('render-media')
 
@@ -146,6 +148,13 @@ export default {
 
       return true
     },
+    filename () {
+      return `${this.artefact.title || 'untitled'}.${mime.extension(this.blob.mimeType)}`
+        .replace(/\s/g, '-') // replace all blank spaces with '-' symbol
+    },
+    blob () {
+      return this.artefact.blob
+    },
     artefactIcon () {
       return ARTEFACT_ICON(this.artefact.blob.mimeType)
     },
@@ -178,20 +187,28 @@ export default {
       this.$emit('click')
     },
     downloadFile () {
-      var hiddenElement = document.createElement('a')
-      hiddenElement.href = this.artefact.blob.uri
-      hiddenElement.target = '_blank'
-      // TODO cherese 21-04-21 to download, it needs to have the file extension appended to the title (which i think can be derived from the mimeType)
-      // hiddenElement.download = this.artefact.title + getExtFromMimeType(this.artefact.blob.mimeType)
-      hiddenElement.click()
+      axios.get(this.blob.uri, {
+        headers: {
+          'Content-Type': this.blob.mimeType
+        },
+        responseType: 'blob'
+      })
+        .then(response => {
+          const a = document.createElement('a')
+          a.href = window.URL.createObjectURL(response.data)
+          a.download = this.filename
+          a.click()
+        })
+        .catch(err => {
+          console.error('Something went wrong while trying to download the file', err)
+        })
     },
     renderHyperBlob () {
-      const { title, blob } = this.artefact
       const file = {
-        name: `${title}.${blob.mimeType.split('/')[1]}`, // TODO see if there's a better way to tell render-media the mimeType
-        length: blob.size,
+        name: this.filename,
+        length: this.blob.size,
         createReadStream (opts = {}) {
-          const stream = new FileStream(blob, opts)
+          const stream = new FileStream(this.blob, opts)
 
           return stream
         }
