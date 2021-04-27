@@ -299,7 +299,8 @@ export default {
   props: {
     story: Object,
     fullStory: Boolean,
-    loading: Boolean
+    loading: Boolean,
+    reload: Function
   },
   mixins: [
     artefactMixin,
@@ -464,7 +465,7 @@ export default {
         return
       }
 
-      this.$parent.$apollo.queries.stories.refetch({ filter: { groupId: this.$route.params.tribeId, type: '*' } })
+      await this.reload()
       this.$emit('close', null)
     },
     colour (index) {

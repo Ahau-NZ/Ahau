@@ -131,8 +131,8 @@ export default {
     // if we are on CollectionShow from Archive
     isCollectionShow () {
       return (
-        this.$route.name === 'person/archive/:collectionId' ||
-        this.$route.name === 'community/archive/:collectionId'
+        this.$route.name === 'person/collection' ||
+        this.$route.name === 'community/collection'
       )
     },
 
