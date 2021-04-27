@@ -4,6 +4,7 @@ const { autoUpdater } = require('electron-updater')
 const Config = require('./ssb.config')
 
 const plugins = [
+  'ssb-db',
   'ssb-master',
   'ssb-unix-socket',
   'ssb-no-auth',
@@ -59,7 +60,7 @@ ahoy({
   config: Config(),
   plugins,
   appURL,
-  // appDir: '../whakapapa-ora', // only use this when ssb-ahoy symlinked
+  // appDir: '../../AHAU/whakapapa-ora/desktop', // only use this when ssb-ahoy symlinked
   onReady: ({ config }) => {
     // this config has updated manifest added
     console.log(karakia)
