@@ -1,6 +1,6 @@
 {
   "name": "ahau-desktop",
-  "version": "1.2.2-beta",
+  "version": "1.2.2-beta-2",
   "description": "An application for gathering and sharing whakapapa (family trees, traditional knowledge). Built using scuttlebutt",
   "homepage": "https://gitlab.com/ahau/whakapapa-ora",
   "scripts": {
@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "ahau-env": "^2.1.0",
+    "electron-updater": "^4.3.8",
     "secret-stack": "^6.4.0",
     "ssb-ahau": "^8.0.2",
     "ssb-ahoy": "^3.0.0",

@@ -111,9 +111,22 @@ You can try running the build with `npm run start:desktop` or `npm run start:pat
 
 ### Desktop
 
+Think about what the new version is going to be
+- update `package.json` version (e.g `1.12.3`)
+- update `desktop/package.json` to match that
+- run the following
+
 ```bash
+$ npm i && cd desktop && npm i && cd ..
+$ git add .
+$ git commit -m "v1.12.3"   # same as your package.json version but with a v in front
+$ git tag v1.12.3
+$ git push origin master --tags
+$ git push github master --tags   # the protozoa-nz/whakapapa-ora repo
 $ npm run release:desktop
 ```
+
+(you can use `npm version` if you know how to use it and keep all the `package.json` versions lined up)
 
 Compiles and minifies code (and assets) for production, builds installer (using compiled clientside code + back end code), and outputs to `./release/desktop`.
 

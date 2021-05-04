@@ -1,6 +1,7 @@
 const ahoy = require('ssb-ahoy')
-const Config = require('./ssb.config')
 const env = require('ahau-env')
+const { autoUpdater } = require('electron-updater')
+const Config = require('./ssb.config')
 
 const plugins = [
   'ssb-master',
@@ -62,5 +63,6 @@ ahoy({
   onReady: ({ config }) => {
     // this config has updated manifest added
     console.log(karakia)
+    autoUpdater.checkForUpdatesAndNotify()
   }
 })
