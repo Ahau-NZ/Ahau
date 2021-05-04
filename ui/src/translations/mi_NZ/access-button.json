@@ -1,0 +1,9 @@
+{
+  "privateAccess": "Only you have access to this {recordType}",
+  "membersWillHaveAccess": "Only members of {preferredName} will have access to this {recordType}",
+  "membersCanAccess": "Only members of {preferredName} can access this {recordType}",
+  "private": "Muna",
+  "setAccess": "set access",
+  "addToArchive": "Add {recordType} to archive",
+  "tribeName": "{tribeName} (tribe)"
+}
