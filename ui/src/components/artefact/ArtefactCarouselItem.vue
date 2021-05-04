@@ -31,16 +31,7 @@
 
         <!-- photo -->
         <template v-if="artefact.type === 'photo'">
-          <v-zoomer
-            v-if="showArtefact"
-            :zoomed.sync="zoomed"
-            style="height:100%"
-            :limitTranslation="!zoomed"
-          >
-            <v-img :src="artefact.blob.uri" cover/>
-          </v-zoomer>
           <v-img
-            v-else
             :src="artefact.blob.uri"
             :contain="!icon"
             :cover="icon"
