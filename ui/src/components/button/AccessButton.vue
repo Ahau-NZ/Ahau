@@ -17,11 +17,11 @@
                 <v-icon v-if="!disabled">mdi-chevron-down</v-icon>
               </v-btn>
               <v-card-text v-if="access && !disabled" class="font-italic font-weight-light text-caption py-0 text-md-right">
-                {{ access.isPersonalGroup ? t('onlyYou', { type: type }) : t('onlyMembersWillHave', { preferredName: access.preferredName, type: type }) }}
+                {{ access.isPersonalGroup ? t('privateAccess', { recordType: type }) : t('membersWillHaveAccess', { preferredName: access.preferredName, recordType: type }) }}
               </v-card-text>
 
               <v-card-text v-if="access && disabled" class="font-italic font-weight-light text-caption py-0 text-md-right">
-                {{ access.isPersonalGroup ? t('onlyYou', { type: type }) : t('onlyMembersCanAccess', { preferredName: access.preferredName, type: type }) }}
+                {{ access.isPersonalGroup ? t('privateAccess', { recordType: type }) : t('membersCanAccess', { preferredName: access.preferredName, recordType: type }) }}
               </v-card-text>
             </v-col>
           </v-row>
@@ -97,7 +97,7 @@ export default {
       return 'pt-3 ml-2'
     },
     caption () {
-      return this.t('addToArchive', { type: this.type })
+      return this.t('addToArchive', { recordType: this.type })
     }
   },
   methods: {
