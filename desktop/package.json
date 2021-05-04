@@ -9,11 +9,12 @@
     "dev": "cross-env NODE_ENV=development electron index.js -- --title Āhau",
     "build:icons": "node build/build-icons.js",
     "pack": "electron-builder --config build/electron-builder.config.js --dir",
-    "dist": "electron-builder --config build/electron-builder.config.js",
+    "dist": "electron-builder --config build/electron-builder.config.js --publish always",
     "clear": "rm -rf node_modules"
   },
   "dependencies": {
     "ahau-env": "^2.1.0",
+    "electron-updater": "^4.3.8",
     "secret-stack": "^6.4.0",
     "ssb-ahau": "^8.0.2",
     "ssb-ahoy": "^3.0.0",
