@@ -86,6 +86,7 @@
 </template>
 
 <script>
+import { autoUpdater } from 'electron-updater'
 import Avatar from '@/components/Avatar'
 import NotificationPanel from '@/components/menu/NotificationPanel'
 import FeedbackButton from '@/components/button/FeedbackButton'
@@ -148,6 +149,7 @@ export default {
     }
   },
   mounted () {
+    autoUpdater.checkForUpdatesAndNotify()
     this.getAllNotifications()
     if (process.env.VUE_APP_PLATFORM !== 'cordova') {
       this.getCurrentIdentity()

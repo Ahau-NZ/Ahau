@@ -22,6 +22,8 @@
     "axios": "^0.21.1",
     "capture-frame": "^4.0.0",
     "edtf": "^2.8.0",
+    "electron": "file:../desktop/node_modules/electron",
+    "electron-updater": "^4.3.8",
     "graphql": "^15.5.0",
     "lodash.chunk": "^4.2.0",
     "lodash.clonedeep": "^4.5.0",
