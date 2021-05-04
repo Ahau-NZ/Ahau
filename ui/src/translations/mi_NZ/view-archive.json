@@ -1,14 +1,14 @@
 {
   "archiveTitle": "Ko tō ake ake pūranga",
-  "newCollectionButton": "new collection",
+  "newCollectionButton": "kohinga hou",
   "newStoryButton": "kōrero hou",
-  "collections": "Collections",
+  "collections": "Kohinga",
   "updated": "Whakahou",
   "stories": "Ngā Rua Mahara",
   "archiveRecords": "Ngā Rua Mahara",
   "access": "Te Whakatapoko",
   "mentions": "Tauāki",
   "location": "Wāhi",
-  "collectionNotFound": "No collections found",
-  "storyNotFound": " No stories found"
+  "collectionNotFound": "Kāore i kitea",
+  "storyNotFound": " Kāore i kōrero"
 }
