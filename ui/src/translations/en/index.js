@@ -1,4 +1,5 @@
 module.exports = {
+  accessButton: require('./access-button.json'),
   appBarMenu: require('./appbar-menu.json'),
   addPersonForm: require('./add-person-form.json'),
   addStoryForm: require('./add-story-form.json'),
