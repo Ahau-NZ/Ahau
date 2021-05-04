@@ -4,7 +4,7 @@
       <template v-slot:activator="{ on, attrs }">
           <v-row :class="margin" justify="start">
             <v-col cols="12" md="auto" class="pa-0 pb-5" justify-start>
-              <v-card-text v-if="!disabled" class="text-caption py-0 text-md-start">Add {{ type }} to archive</v-card-text>
+              <v-card-text v-if="!disabled" class="text-caption py-0 text-md-start">{{ caption }}</v-card-text>
               <v-btn
                 v-bind="attrs"
                 v-on="on"
@@ -13,15 +13,15 @@
                 :disabled="disabled"
               >
                 <v-icon>mdi-eye</v-icon>
-                <span class="ml-2">{{ access ? access.isPersonalGroup ? 'Private' : access.preferredName : 'set access'}}</span>
+                <span class="ml-2">{{ access ? access.isPersonalGroup ? t('private') : access.preferredName : t('setAccess')}}</span>
                 <v-icon v-if="!disabled">mdi-chevron-down</v-icon>
               </v-btn>
               <v-card-text v-if="access && !disabled" class="font-italic font-weight-light text-caption py-0 text-md-right">
-                {{ access.isPersonalGroup ? `Only you have access to this ${type}` : `Only members of ${access.preferredName} will have access to this ${type}` }}
+                {{ access.isPersonalGroup ? t('onlyYou', { type: type }) : t('onlyMembersWillHave', { preferredName: access.preferredName, type: type }) }}
               </v-card-text>
 
               <v-card-text v-if="access && disabled" class="font-italic font-weight-light text-caption py-0 text-md-right">
-                {{ access.isPersonalGroup ? `Only you have access to this ${type}` : `Only members of ${access.preferredName} can access this ${type}` }}
+                {{ access.isPersonalGroup ? t('onlyYou', { type: type }) : t('onlyMembersCanAccess', { preferredName: access.preferredName, type: type }) }}
               </v-card-text>
             </v-col>
           </v-row>
@@ -34,7 +34,7 @@
           @click="go(tribe)"
         >
           <Avatar class="mr-3" size="40px" :image="tribe.avatarImage" :isView="!tribe.isPersonalGroup" :alt="getDisplayName(tribe)" :gender="tribe.gender" :aliveInterval="tribe.aliveInterval" />
-          <v-list-item-title>{{ tribe.isPersonalGroup ? 'Private' : tribe.preferredName + ' (tribe)' }}</v-list-item-title>
+          <v-list-item-title>{{ tribe.isPersonalGroup ? t('private') : t('tribeName', { tribeName: tribe.preferredName }) }}</v-list-item-title>
         </v-list-item>
       </v-list>
     </v-menu>
@@ -95,12 +95,18 @@ export default {
     margin () {
       if (this.mobile) return ''
       return 'pt-3 ml-2'
+    },
+    caption () {
+      return this.t('addToArchive', { type: this.type })
     }
   },
   methods: {
     getDisplayName,
     go (profile) {
       this.$emit('access', profile)
+    },
+    t (key, vars) {
+      return this.$t('accessButton.' + key, vars)
     }
   }
 }

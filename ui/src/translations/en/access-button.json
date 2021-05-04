@@ -1,0 +1,9 @@
+{
+  "onlyYou": "Only you have access to this {type}",
+  "onlyMembersWillHave": "Only members of {preferredName} will have access to this {type}",
+  "onlyMembersCanAccess": "Only members of {.preferredName} can access this {type}",
+  "private": "Private",
+  "setAccess": "set access",
+  "addToArchive": "Add {type} to archive",
+  "tribeName": "{tribeName} (tribe)"
+}
