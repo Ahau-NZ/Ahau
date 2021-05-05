@@ -88,6 +88,7 @@ $ npm run dev:pataka
 NOTES: same as desktop
 
 ### Other tools
+
 - [Graphiql](https://github.com/graphql/graphiql)
   - a sweet GraphQL tool for exploring generated doc and practicing queries/ mutations with the server
   - start the above dev environment then go to http://localhost:4000/graphql
