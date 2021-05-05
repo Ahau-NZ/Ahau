@@ -36,7 +36,9 @@ module.exports = {
 
   win: {
     icon: 'build/win/icon.ico',
-    publisherName: ['Āhau Limited', 'Protozoa Limited']
+    publisherName: ['Ahau NZ Limited']
+    // WARNING - this name must exactly match the subject/ "issued to" field on the Signing Certificate
+    // In future if this name changes, auto-updating will fail D:
   },
   nsis: {
     artifactName: '${name}-Windows-${version}.${ext}', // eslint-disable-line
@@ -66,5 +68,12 @@ module.exports = {
     '!**/{__pycache__,thumbs.db,.flowconfig,.idea,.vs,.nyc_output}',
     '!**/{appveyor.yml,.travis.yml,circle.yml}',
     '!**/{npm-debug.log,yarn.lock,.yarn-integrity,.yarn-metadata.json}'
-  ]
+  ],
+
+  publish: [{
+    provider: 'github',
+    owner: 'protozoa-nz',
+    repo: 'whakapapa-ora',
+    releaseType: 'release'
+  }]
 }
