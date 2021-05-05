@@ -6,9 +6,25 @@ This updates `electron`, `electron-builder` and `electron-notarize`
 
 ## v1.3.0
 
-### New Features
-This adds `electron-updater` - a module which allows checking for updates automatically on startup.
-Updates are downloaded in the background and installed when you close the app
+### Features
+- This adds `electron-updater` - a module which allows checking for updates automatically on startup.
+  - Updates are downloaded in the background and installed when you close the app
+
+### Bug fixes
+- Timeline images not showing
+- Deleting a story
+- Member avatar only showing default avatar - female
+- Download file name
+    - When you downloaded a file, it wasnt saving with the filename
+- Post code label on the create new community form
+- Removed zoom from desktop artefact view
+  - It was causing large images to not display correctly and sometimes get lost in the view
+- Broken whakapapa list
+  - Fixed an error where the whakapapa page wouldnt load when you deleted the community that has a whakapapa in it
+
+### Improvements
+- better story reloading
+
 
 ## v1.2.1
 
