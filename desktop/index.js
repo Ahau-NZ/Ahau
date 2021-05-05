@@ -63,6 +63,10 @@ ahoy({
   onReady: ({ config }) => {
     // this config has updated manifest added
     console.log(karakia)
+
+    // TODO mix 2021-05-05
+    // - only run in production
+    // - don't run on mobile
     autoUpdater.checkForUpdatesAndNotify()
   }
 })
