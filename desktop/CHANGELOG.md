@@ -1,5 +1,9 @@
 # Changelog | Ahau desktop
 
+## v1.3.1
+
+This updates `electron`, `electron-builder` and `electron-notarize`
+
 ## v1.3.0
 
 ### New Features
