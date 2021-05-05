@@ -1,5 +1,10 @@
 # Changelog | Ahau desktop
 
+## v1.3.0
+
+### New Features
+This adds `electron-updater` - a module which allows checking for updates automatically on startup.
+Updates are downloaded in the background and installed when you close the app
 
 ## v1.2.1
 
