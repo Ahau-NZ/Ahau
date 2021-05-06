@@ -35,6 +35,7 @@ import AlertMessage from './components/dialog/AlertMessage.vue'
 
 import { createNamespacedHelpers, mapGetters, mapActions } from 'vuex'
 const { mapGetters: mapAlertGetters } = createNamespacedHelpers('alerts')
+const { mapActions: mapAnalyticsActions } = createNamespacedHelpers('analytics')
 
 const { version } = require('../../desktop/package.json')
 // TODO - this is only useful for the desktop installer,
@@ -76,7 +77,8 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setWhoami'])
+    ...mapActions(['setWhoami']),
+    ...mapAnalyticsActions(['appUsed'])
   },
   components: {
     Appbar,
@@ -93,6 +95,8 @@ export default {
           document.body.classList.remove('page--' + from.toLowerCase())
         }
         document.body.classList.add('page--' + to.toLowerCase())
+
+        this.appUsed() // analytics logging some usage
       },
       immediate: true
     }

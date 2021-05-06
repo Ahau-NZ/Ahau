@@ -9,6 +9,8 @@ yarn.lock
 /desktop/electron-builder.env
 **/electron-builder.env
 
+**/.env
+
 /pataka/dist
 /pataka/electron-builder.env
 
