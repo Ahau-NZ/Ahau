@@ -480,11 +480,9 @@ import { RULES } from '@/lib/constants'
 import { mapGetters } from 'vuex'
 
 import { storiesApolloMixin } from '@/mixins/story-mixins.js'
-import { collectionsApolloMixin, saveCollectionsMixin } from '@/mixins/collection-mixins.js'
 import { artefactMixin } from '@/mixins/artefact-mixins.js'
 
 import { getAllStories } from '@/lib/story-helpers.js'
-import { getAllCollections } from '@/lib/collection-helpers'
 
 export default {
   name: 'RecordForm',
@@ -509,8 +507,6 @@ export default {
   },
   mixins: [
     storiesApolloMixin,
-    collectionsApolloMixin,
-    saveCollectionsMixin,
     artefactMixin
   ],
   data () {
@@ -544,13 +540,13 @@ export default {
     }
   },
   watch: {
-    async access (newVal) {
-      if (newVal) {
-        var storyRes = await this.$apollo.query(getAllStories({ groupId: newVal.recps[0] }))
-        this.stories = storyRes.data.stories
-        var collectionRes = await this.$apollo.query(getAllCollections({ groupId: newVal.recps[0] }))
-        this.collections = collectionRes.data.collections
-      }
+    async access (group) {
+      if (!group) return
+
+      const groupId = group.recps[0]
+      var storyRes = await this.$apollo.query(getAllStories({ groupId }))
+      this.stories = storyRes.data.stories
+      this.collections = await this.$store.dispatch('collection/getCollectionsByGroup', groupId)
     }
 
   },

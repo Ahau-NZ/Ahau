@@ -5,7 +5,7 @@ import clone from 'lodash.clonedeep'
 import { ARTEFACT_FRAGMENT } from './artefact-helpers'
 import { PERSON_FRAGMENT } from './person-helpers'
 import { PublicProfileFieldsFragment } from './profile-helpers.js'
-import { COLLECTION_FRAGMENT } from './collection-helpers'
+import { CollectionFragment } from '@/store/modules/collection/apollo-helpers.js'
 
 export function setDefaultStory (newStory) {
   var story = clone(newStory)
@@ -143,7 +143,7 @@ export const STORY_LINK_FRAGMENT = gql`
   ${PublicProfileFieldsFragment}
   ${ARTEFACT_FRAGMENT}
   ${PERSON_FRAGMENT}
-  ${COLLECTION_FRAGMENT}
+  ${CollectionFragment}
   fragment StoryLinkFragment on Story {
     artefacts: artefactLinks {
       linkId
@@ -200,7 +200,7 @@ export const STORY_LINK_FRAGMENT = gql`
 */
 export const getCollection = id => ({
   query: gql`
-    ${COLLECTION_FRAGMENT}
+    ${CollectionFragment}
     ${PublicProfileFieldsFragment}
     ${STORY_FRAGMENT}
     ${STORY_LINK_FRAGMENT}

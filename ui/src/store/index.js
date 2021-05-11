@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import { apolloProvider } from '../plugins/vue-apollo'
 
 import { whoami } from '../lib/person-helpers.js'
 
@@ -13,6 +12,10 @@ import tribe from './modules/tribe'
 import alerts from './modules/alerts'
 import analytics from './modules/analytics'
 
+// new
+import collection from './modules/collection/'
+
+import { apolloProvider } from '../plugins/vue-apollo'
 const apollo = apolloProvider.defaultClient
 
 Vue.use(Vuex)
@@ -121,6 +124,9 @@ export default new Vuex.Store({
     notifications,
     tribe,
     alerts,
-    analytics
+    analytics,
+
+    // new
+    collection: collection(apollo)
   }
 })
