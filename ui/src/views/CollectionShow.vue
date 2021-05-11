@@ -37,7 +37,7 @@
       :title="editing ? `Edit ${collection.name || 'Untitled'} Collection` : `${collection.name} Collection`"
       :editing="editing"
       :view="view"
-      @submit="processCollection"
+      @submit="processUpdateCollection"
       @delete="dialog = 'delete-collection'"
       @close="close"
       @edit="editCollection"
@@ -52,37 +52,28 @@
 </template>
 
 <script>
-import { deleteCollection } from '@/lib/collection-helpers'
-import { getCollection } from '@/lib/story-helpers'
 import { getTribalProfile } from '@/lib/community-helpers'
 
 import mapProfileMixins from '@/mixins/profile-mixins.js'
-import { saveCollectionsMixin } from '@/mixins/collection-mixins.js'
 import { saveStoryMixin } from '@/mixins/story-mixins.js'
 
-import { mapGetters, mapMutations } from 'vuex'
+import { mapGetters, mapMutations, createNamespacedHelpers } from 'vuex'
 import Stories from '../components/archive/Stories.vue'
 
 import NewCollectionDialog from '@/components/dialog/archive/NewCollectionDialog.vue'
 import DeleteCollectionDialog from '@/components/dialog/archive/DeleteCollectionDialog.vue'
 import CollectionTitleCard from '@/components/archive/CollectionTitleCard.vue'
 
+const { mapActions: mapCollectionActions } = createNamespacedHelpers('collection')
+
 export default {
   name: 'CollectionShow',
   mixins: [
     saveStoryMixin,
-    saveCollectionsMixin,
     mapProfileMixins({
       mapMethods: ['getTribe']
     })
   ],
-  apollo: {
-    collection () {
-      return {
-        ...getCollection(this.$route.params.collectionId)
-      }
-    }
-  },
   components: {
     Stories,
     NewCollectionDialog,
@@ -97,6 +88,9 @@ export default {
       editing: false,
       view: false
     }
+  },
+  async mounted () {
+    await this.reload()
   },
   computed: {
     ...mapGetters(['whoami', 'currentAccess', 'showStory']),
@@ -125,6 +119,7 @@ export default {
   },
   methods: {
     ...mapMutations(['setCurrentAccess']),
+    ...mapCollectionActions(['getCollection', 'updateCollection', 'deleteCollection']),
     editCollection () {
       this.view = false
       this.editing = true
@@ -140,24 +135,11 @@ export default {
       this.editing = false
       this.dialog = null
     },
-    async processCollection ($event) {
-      const { stories } = $event
-
-      await this.saveCollection($event)
-      await this.saveStoriesToCollection(this.collection.id, stories)
-      await this.reload()
-
-      this.close()
+    async processUpdateCollection (input) {
+      this.collection = await this.updateCollection(input)
     },
-    async deleteCollection () {
-      const res = await this.$apollo.mutate(
-        deleteCollection(this.collection.id, new Date())
-      )
-
-      if (res.errors) {
-        console.error('failed to delete collection', res.errors)
-        return
-      }
+    async processDeleteCollection () {
+      await this.deleteCollection(this.collection.id)
 
       const [type] = this.$route.name.split('/collection')
 
@@ -169,8 +151,8 @@ export default {
         }
       }).catch(() => {})
     },
-    async reload () {
-      await this.$apollo.queries.collection.refetch()
+    async reload () { // TODO story mixin depends on this
+      this.collection = await this.getCollection(this.$route.params.collectionId)
     },
     t (key, vars) {
       return this.$t('viewArchive.' + key, vars)

@@ -41,17 +41,47 @@
 </template>
 
 <script>
+import clone from 'lodash.clonedeep'
+import { mapGetters, mapActions, mapMutations } from 'vuex'
 
 import Dialog from '@/components/dialog/Dialog.vue'
 import CollectionForm from '@/components/archive/CollectionForm.vue'
 import AccessButton from '@/components/button/AccessButton.vue'
 
-import { mapGetters, mapActions, mapMutations } from 'vuex'
-
-import { EMPTY_COLLECTION, setDefaultCollection } from '@/lib/collection-helpers.js'
 import { getObjectChanges } from '@/lib/get-object-changes.js'
 import mapProfileMixins from '@/mixins/profile-mixins.js'
 import AvatarGroup from '@/components/AvatarGroup.vue'
+
+function setDefaultCollection (newCollection) {
+  var collection = clone(newCollection)
+
+  var { stories } = collection
+
+  if (stories && stories.length > 0) {
+    stories = stories.map(d => {
+      return {
+        ...d.story,
+        linkId: d.linkId
+      }
+    })
+  }
+
+  return {
+    id: collection.id,
+    name: collection.name,
+    description: collection.description,
+    image: collection.image,
+    stories
+  }
+}
+
+const EMPTY_COLLECTION = {
+  id: null,
+  name: null,
+  description: null,
+  image: null,
+  stories: []
+}
 
 export default {
   name: 'NewCollectionDialog',

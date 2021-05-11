@@ -47,7 +47,7 @@
     />
     <NewCollectionDialog v-if="dialog === 'new-collection'" :show="dialog === 'new-collection'"
       :title="$t('addCollectionForm.addCollection')" @close="dialog = null"
-      @submit="processCollection"
+      @submit="createCollection"
     />
   </div>
 </template>
@@ -65,13 +65,11 @@ import ArchiveHelper from '@/components/dialog/archive/ArchiveHelper.vue'
 
 import { saveStoryMixin, storiesApolloMixin } from '@/mixins/story-mixins.js'
 import mapProfileMixins from '@/mixins/profile-mixins.js'
-import { collectionsApolloMixin, saveCollectionsMixin } from '@/mixins/collection-mixins.js'
-
-import { getCollection } from '@/lib/story-helpers'
 
 import { VueContext } from 'vue-context'
 
 const { mapMutations: mapAlertMutations } = createNamespacedHelpers('alerts')
+const { mapActions: mapCollectionActions } = createNamespacedHelpers('collection')
 
 export default {
   name: 'Archive',
@@ -81,8 +79,6 @@ export default {
   mixins: [
     saveStoryMixin,
     storiesApolloMixin,
-    collectionsApolloMixin,
-    saveCollectionsMixin,
     mapProfileMixins({
       mapApollo: ['profile']
     })
@@ -107,6 +103,9 @@ export default {
   },
   beforeMount () {
     window.scrollTo(0, 0)
+  },
+  async mounted () {
+    await this.loadCollections()
   },
   computed: {
     ...mapGetters(['showStory', 'whoami', 'currentStory', 'showArtefact', 'storeDialog', 'currentAccess']),
@@ -140,6 +139,7 @@ export default {
   },
   methods: {
     ...mapAlertMutations(['showAlert']),
+    ...mapCollectionActions(['createCollection', 'getCollectionsByGroup']),
     showCurrentCollection ({ id }) {
       var type = this.$route.name.split('/archive')[0]
       this.$router.push({
@@ -155,32 +155,19 @@ export default {
     openContextMenu ($event) {
       this.$refs.menu.open($event)
     },
-    async processCollection ($event) {
-      const { stories } = $event
+    async createCollection (input) {
+      await this.createCollection(input)
+      await this.reload()
+    },
+    async loadCollections () {
+      const groupId = this.$route.params.profileId === this.whoami.personal.profile.id
+        ? this.whoami.personal.groupId
+        : this.$route.params.tribeId
 
-      try {
-        // save the collection
-        const id = await this.saveCollection($event)
-
-        // get it from the db
-        const res = await this.$apollo.query(
-          getCollection(id)
-        )
-
-        if (res.errors) throw res.errors
-
-        // save the collection-story links
-        await this.saveStoriesToCollection(id, stories)
-
-        // reload the collections and stories to reflect new links
-        await this.reload()
-      } catch (err) {
-        console.error('Something went wrong while saving a new collections and/or linking stories to it', $event)
-        console.error(err)
-      }
+      this.collections = await this.getCollectionsByGroup(groupId)
     },
     async reload () {
-      this.$apollo.queries.collections.refetch({ filter: { groupId: this.$route.params.tribeId, type: '*' } })
+      await this.loadCollections()
       this.$apollo.queries.stories.refetch({ filter: { groupId: this.$route.params.tribeId, type: '*' } })
     }
   },
