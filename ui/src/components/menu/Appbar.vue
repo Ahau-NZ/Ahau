@@ -9,7 +9,7 @@
 
       <!-- Desktop doesn't use a drawer, it has the links directly in the app bar -->
       <template v-if="!mobile">
-        <LocalePicker v-if="false"/>
+        <LocalePicker class='locale-easteregg' />
         <v-btn text active-class="no-active" to="/tribe" class="white--text text-uppercase ms-10">{{ t('tribes' )}}</v-btn>
         <v-btn active-class="no-active" text @click.native="goProfile('archive')" class="white--text text-uppercase ms-10">{{ t('archive') }}</v-btn>
 
@@ -201,6 +201,14 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
+  .locale-easteregg {
+    opacity: 0;
+    transition: opacity 0.5s ease-in;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
 
   .sideMenuAppBarStyle {
     margin-top: -56px !important;
