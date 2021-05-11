@@ -25,7 +25,7 @@ Vue.use(Vuex)
           - see alerts module for another example
 */
 
-const globalModule = {
+const rootModule = {
   state: {
     whoami: {
       public: {
@@ -112,7 +112,7 @@ const globalModule = {
 }
 
 export default new Vuex.Store({
-  ...globalModule,
+  ...rootModule,
   modules: {
     whakapapa,
     person,
