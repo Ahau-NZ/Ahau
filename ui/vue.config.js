@@ -13,7 +13,7 @@ if (env.error) {
   }
 } else {
   process.env.VUE_APP_MIXPANEL_TOKEN = env.parsed.MIXPANEL_TOKEN
-  process.env.VUE_APP_MIXPANEL_API_HOST = env.parse.MIXPANEL_API_HOST
+  process.env.VUE_APP_MIXPANEL_API_HOST = env.parsed.MIXPANEL_API_HOST
 }
 
 process.env.VUE_APP_PLATFORM = process.env.PLATFORM === 'cordova'

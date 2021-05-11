@@ -1,5 +1,11 @@
 # Changelog | Ahau desktop
 
+## v1.3.2
+
+- adds anonymised usage analytics
+- refactored collections helper / mixins > vuex
+- easter-egg : locale picker
+
 ## v1.3.1
 
 This updates `electron`, `electron-builder` and `electron-notarize`
