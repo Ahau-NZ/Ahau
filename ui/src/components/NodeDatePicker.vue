@@ -15,7 +15,7 @@
             :items="days"
             ref="day"
             v-model="date.day"
-            label="Day"
+            :label="t('day')"
             @focus="focused == 'day'"
             @blur="focused == 'default'"
             @keydown.tab.prevent="onTab('day')"
@@ -28,7 +28,7 @@
             :items="months"
             ref="month"
             v-model="date.month"
-            label="Month"
+            :label="t('month')"
             :light="isDark()"
             @focus="focused == 'month'"
             @blur="focused == 'default'"
@@ -41,7 +41,7 @@
             :items="years"
             ref="year"
             v-model="date.year"
-            label="Year"
+            :label="t('year')"
             @focus="focused == 'year'"
             @blur="focused == 'default'"
             @keydown.tab.prevent="onTab('year')"
@@ -316,6 +316,9 @@ export default {
         default:
           return null
       }
+    },
+    t (key, vars) {
+      return this.$t('addStoryForm.' + key, vars)
     }
   },
   watch: {
@@ -323,7 +326,6 @@ export default {
       deep: true,
       handler (newValue) {
         try {
-          console.log('date new value: ', newValue)
           var date = convertDateObjToString(newValue)
           this.errorMsg = null
           this.$emit('update:value', date)

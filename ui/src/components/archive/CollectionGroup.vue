@@ -2,7 +2,7 @@
   <div>
     <v-row>
       <v-col cols="10" class="sub-headliner black--text pa-0 pl-6 pb-2">
-        Collections
+        {{ t('collections' )}}
       </v-col>
     </v-row>
     <v-row v-if="collections && collections.length > 0">
@@ -64,7 +64,7 @@
           class="px-8 subtitle-1 grey--text "
           :class="{ 'text-center': mobile }"
         >
-          No Collections found
+          {{ t('collectionNotFound') }}
         </v-col>
       </v-col>
     </v-row>
@@ -95,6 +95,11 @@ export default {
   computed: {
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
+    }
+  },
+  methods: {
+    t (key, vars) {
+      return this.$t('viewArchive.' + key, vars)
     }
   }
 }

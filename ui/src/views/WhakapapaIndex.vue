@@ -3,11 +3,11 @@
   <v-container fluid class="px-2">
     <v-row class="pa-5" :class="mobile ? 'pb-0':''" light style="margin-top: 64px;">
       <v-col cols="12" md="10" class="headliner black--text pa-0">
-        Whakapapa records
+        {{ t('whakapapaTitle')}}
         <v-icon color="blue-grey" light @click="toggleWhakapapaHelper" class="infoButton">mdi-information</v-icon>
       </v-col>
       <v-col>
-        <BigAddButton label="new whakapapa record" :customClass="mobile ? 'addBtnMobile':'addBtnDesktop'" @click="toggleViewForm" />
+        <BigAddButton :label="t('addWhakapapaButton')" :customClass="mobile ? 'addBtnMobile':'addBtnDesktop'" @click="toggleViewForm" />
       </v-col>
     </v-row>
     <v-row>
@@ -15,13 +15,13 @@
         <div v-if="!whakapapas || (whakapapas && whakapapas.length < 1) || (whakapapas && whakapapas[0].views.length < 1) " class="px-8 py-12 subtitle grey--text " :class="{
             'text-center': mobile
           }">
-          No whakapapa record found
+          {{ t('noWhakapapaFound') }}
         </div>
         <div v-else>
           <div v-for="(group, index ) in whakapapas" :key="index" class="py-4">
             <v-row class="pl-6 pb-3">
               <Avatar :size="mobile ? '50px' : '40px'" :image="group.image" :alt="group.name" :isView="!group.image" />
-              <p class="black--text overline pl-6 pt-1" style="font-size:20px">{{ group.name }} records</p>
+              <p class="black--text overline pl-6 pt-1" style="font-size:20px">{{ `${group.name} ${t('whakapapaRecords')}`}}</p>
             </v-row>
             <v-row v-for="view in group.views" :key="view.id" dense class="mb-2">
               <v-col cols="12" md="10">
@@ -33,7 +33,7 @@
         </div>
       </v-col>
     </v-row>
-    <NewViewDialog v-if="showViewForm" :show="showViewForm" title="Create a new whakapapa" @close="toggleViewForm"
+    <NewViewDialog v-if="showViewForm" :show="showViewForm" :title="t2('createWhakapapa')" @close="toggleViewForm"
       @submit="handleStepOne($event)" />
     <!-- TODO: add suggestions in here as well? -->
     <NewNodeDialog v-if="showProfileForm" :show="showProfileForm" :suggestions="suggestions"
@@ -51,7 +51,7 @@ import isEqual from 'lodash.isequal'
 import groupBy from 'lodash.groupby'
 
 import * as d3 from 'd3'
-import { mapGetters, mapActions } from 'vuex'
+
 import WhakapapaViewCard from '@/components/whakapapa/WhakapapaViewCard.vue'
 import NewViewDialog from '@/components/dialog/whakapapa/NewViewDialog.vue'
 import NewNodeDialog from '@/components/dialog/profile/NewNodeDialog.vue'
@@ -61,10 +61,13 @@ import BigAddButton from '@/components/button/BigAddButton.vue'
 
 import { saveLink } from '@/lib/link-helpers.js'
 import { savePerson } from '@/lib/person-helpers.js'
-import tree from '@/lib/tree-helpers'
-import { saveWhakapapaView, getWhakapapaViews } from '@/lib/whakapapa-helpers.js'
+import { saveWhakapapaView } from '@/lib/whakapapa-helpers.js'
+import mapWhakapapaMixins from '@/mixins/whakapapa-view.js'
 import { findByName } from '@/lib/search-helpers.js'
 import mapProfileMixins from '@/mixins/profile-mixins.js'
+
+import { mapGetters, mapActions, createNamespacedHelpers } from 'vuex'
+const { mapMutations: mapAlertMutations } = createNamespacedHelpers('alerts')
 
 export default {
   name: 'WhakapapaIndex',
@@ -75,6 +78,9 @@ export default {
   mixins: [
     mapProfileMixins({
       mapMethods: ['getTribe']
+    }),
+    mapWhakapapaMixins({
+      mapMethods: ['getWhakapapaViews']
     })
   ],
   data () {
@@ -101,26 +107,25 @@ export default {
   },
   methods: {
     ...mapActions(['setLoading']),
+    ...mapAlertMutations(['showAlert']),
 
     async groupedWhakapapaViews () {
-      var views = []
-      const res = await this.$apollo.query(getWhakapapaViews())
-      if (res.errors) {
-        console.error('error getting whakapapa views', res.errors)
-      } else {
-        views = res.data.whakapapaViews
-      }
+      const views = await this.getWhakapapaViews()
+
       if (this.$route.params.profileId === this.whoami.personal.profile.id) {
         var groupedObj = groupBy(views, 'recps[0]')
+
         const groups = await Promise.all(
           Object.keys(groupedObj).map(async id => {
             var views = groupedObj[id]
-            if (id === this.whoami.personal.groupId) return { name: 'my private', image: this.whoami.personal.profile.avatarImage, views: views, tribeId: this.whoami.personal.groupId }
+            if (id === this.whoami.personal.groupId) return { name: this.t('privateRecords'), image: this.whoami.personal.profile.avatarImage, views: views, tribeId: this.whoami.personal.groupId }
             var tribe = await this.getTribe(id)
-            return { name: tribe.private[0].preferredName, image: tribe.private[0].avatarImage, views: views, tribeId: tribe.id }
+
+            if (tribe.private && tribe.length) return { name: tribe.private[0].preferredName, image: tribe.private[0].avatarImage, views: views, tribeId: tribe.id }
+            return null
           })
         )
-        const filteredGroups = groups.filter(i => !isEmpty(i))
+        const filteredGroups = groups.filter(group => !isEmpty(group))
         return filteredGroups
       }
 
@@ -152,9 +157,6 @@ export default {
           var equals = isEqual(profile.recps, [this.currentAccess.groupId])
           if (equals) profiles[profile.id] = profile
           return equals
-        })
-        .map(profile => {
-          return tree.hydrate({ profile }, profiles)
         })
 
       // sets suggestions which is passed into the dialogs
@@ -368,8 +370,13 @@ export default {
       } catch (err) {
         throw err
       }
+    },
+    t (key, vars) {
+      return this.$t('whakapapaIndex.' + key, vars)
+    },
+    t2 (key, vars) {
+      return this.$t('addWhakapapaForm.' + key, vars)
     }
-
   },
   components: {
     WhakapapaViewCard,

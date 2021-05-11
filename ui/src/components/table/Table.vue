@@ -126,9 +126,6 @@ export default {
       type: Object,
       required: true
     },
-    relationshipLinks: {
-      type: Map
-    },
     flatten: {
       type: Boolean,
       default: false
@@ -271,8 +268,8 @@ export default {
           return {
             id: `table-link-${i}-${d.target.data.id}`,
             index: i,
-            relationshipType: d.target.data.relationship.relationshipType ? d.target.data.relationship.relationshipType : '',
-            class: d.target.data.relationship.relationshipType !== 'birth' ? 'nonbiological' : '',
+            relationshipType: d.target.data.relationshipType ? d.target.data.relationshipType : '',
+            class: d.target.data.relationshipType !== 'birth' ? 'nonbiological' : '',
             style: {
               fill: 'none',
               stroke: this.pathStroke(d.source.data.id, d.target.data.id)
@@ -301,21 +298,21 @@ export default {
     // the headers for the columns - width currently hardcoded
     columns () {
       return [
-        { label: 'Full Name', x: 80 },
-        { label: 'Preferred Name', x: this.colWidth },
-        { label: 'Other Names', x: this.colWidth + 200 },
-        { label: 'Age', x: this.colWidth + 400 },
-        { label: 'D.O.B', x: this.colWidth + 470 },
-        { label: 'D.O.D', x: this.colWidth + 600 },
-        { label: 'Profession', x: this.colWidth + 730 },
-        { label: 'Address', x: this.colWidth + 1000 },
-        { label: 'City', x: this.colWidth + 1405 },
-        { label: 'Post Code', x: this.colWidth + 1645 },
-        { label: 'Country', x: this.colWidth + 1765 },
-        { label: 'Place of Birth', x: this.colWidth + 2005 },
-        { label: 'Place of Death', x: this.colWidth + 2245 },
-        { label: 'Email', x: this.colWidth + 2485 },
-        { label: 'Phone', x: this.colWidth + 2845 }
+        { label: this.t('fullName'), x: 80 },
+        { label: this.t('preferredName'), x: this.colWidth },
+        { label: this.t('aka'), x: this.colWidth + 200 },
+        { label: this.t('age'), x: this.colWidth + 400 },
+        { label: this.t('dob'), x: this.colWidth + 470 },
+        { label: this.t('dod'), x: this.colWidth + 600 },
+        { label: this.t('profession'), x: this.colWidth + 730 },
+        { label: this.t('address'), x: this.colWidth + 1000 },
+        { label: this.t('city'), x: this.colWidth + 1405 },
+        { label: this.t('postCode'), x: this.colWidth + 1645 },
+        { label: this.t('country'), x: this.colWidth + 1765 },
+        { label: this.t('pob'), x: this.colWidth + 2005 },
+        { label: this.t('pod'), x: this.colWidth + 2245 },
+        { label: this.t('email'), x: this.colWidth + 2485 },
+        { label: this.t('phone'), x: this.colWidth + 2845 }
       ]
     }
   },
@@ -637,6 +634,9 @@ export default {
         }
       }
       return false
+    },
+    t (key, vars) {
+      return this.$t('viewTribalRegistry.' + key, vars)
     }
   },
   components: {

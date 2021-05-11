@@ -6,7 +6,7 @@
       :size="mobile ? '40px' : '60px'"
       :icon="processing ? 'mdi-loading mdi-spin' : 'mdi-image-plus'"
       />
-    <p v-if="showLabel" class="add-label clickable" >Add artefacts</p>
+    <p v-if="showLabel" class="add-label clickable" >{{ t('addArtefacts') }}</p>
   </div>
 </template>
 
@@ -74,6 +74,9 @@ export default {
           : Date.now().toISOString().slice(0, 10)
 
       }
+    },
+    t (key, vars) {
+      return this.$t('addStoryForm.' + key, vars)
     }
   }
 }

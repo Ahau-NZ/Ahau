@@ -36,12 +36,7 @@ const customConfig = {
 }
 
 module.exports = function () {
-  let appName = 'ahau-pataka'
-  if (!env.isProduction) {
-    console.log(`\x1b[37m\x1b[41m NODE_ENV \x1b[31m\x1b[47m ${env.name} \x1b[0m`)
-    appName += `-${env.shortName || env.name}`
-  }
-  const config = Config(appName, customConfig)
+  const config = Config(env.pataka.appName, customConfig)
 
   // write a copy of this customConfig to ~/.{appName}/config
   fs.writeFile(

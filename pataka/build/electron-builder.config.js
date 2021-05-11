@@ -36,7 +36,7 @@ module.exports = {
 
   win: {
     icon: 'build/win/icon.ico',
-    publisherName: ['Āhau Limited', 'Protozoa Limited']
+    publisherName: ['Ahau NZ Limited']
   },
   nsis: {
     artifactName: '${name}-Windows-${version}.${ext}', // eslint-disable-line

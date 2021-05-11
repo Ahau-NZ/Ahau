@@ -32,7 +32,7 @@ const mutations = {
 }
 
 const actions = {
-  setDialog ({ commit }, dialog, type) {
+  setDialog ({ commit }, dialog) {
     if (dialog === null) {
       commit('updateDialog', dialog)
       commit('updateType', null)

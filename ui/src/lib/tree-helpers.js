@@ -1,14 +1,11 @@
-import clone from 'lodash.clonedeep'
 import uniqby from 'lodash.uniqby'
 
 export default {
   flatten,
-  hydrate,
   find,
 
   getPartners,
   getSiblings,
-  getRelationship,
 
   updateNode,
   deleteNode,
@@ -18,7 +15,9 @@ export default {
   addPartner,
   updatePartner,
   addChildToPartner,
-  deletePartnerNode
+  deletePartnerNode,
+
+  partners
 }
 
 function flatten (node) {
@@ -43,56 +42,6 @@ function flatten (node) {
   // NOTE these children + parent entries have Person data, but dont't yet
   // have associated children/ parent records
 
-  return output
-}
-
-function hydrate (node, flatStore) {
-  var output = clone(node)
-
-  if (output.children) {
-    output.children = output.children.map(profileId => {
-      // look up the full record to replace the profileId
-      var profile = flatStore[profileId]
-      profile = hydrate(profile, flatStore)
-      return profile
-    })
-    output.children.sort((a, b) => {
-      return a.birthOrder - b.birthOrder
-    })
-  }
-
-  if (output.parents) {
-    output.siblings = []
-    output.parents = output.parents.map(profileId => {
-      // look up the full record to replace the profileId
-      var profile = flatStore[profileId]
-
-      if (profile.children) {
-        const currentSiblings = profile.children.map(d => {
-          return d
-        })
-
-        const siblings = new Set([...currentSiblings, ...output.siblings])
-        siblings.delete(output.id) // remove the current profile from this
-        output.siblings = Array.from(siblings)
-      }
-      return profile
-    })
-  }
-
-  if (output.siblings) {
-    output.siblings = output.siblings.map(profileId => {
-      var profile = flatStore[profileId]
-      return profile
-    })
-  }
-
-  if (output.partners) {
-    output.partners = output.partners.map(profileId => {
-      var profile = flatStore[profileId]
-      return profile
-    })
-  }
   return output
 }
 
@@ -150,23 +99,6 @@ function getPartners (parent, child) {
   // do not allow duplicates
   parent.partners = uniqby(parent.partners, 'id')
   return parent
-}
-
-/*
-  calulates a relationship object for the given parent and child. The index
-  stating what index in the tree it goes in and the attrs are what attributes
-  to store at that index
-*/
-function getRelationship (parent, child, relationship) {
-  return {
-    index: parent.id + '-' + child.id, // index in the relationshipLinks map
-    attrs: {
-      linkId: relationship.linkId,
-      relationshipType: relationship.relationshipType,
-      parent: parent.id,
-      child: child.id
-    }
-  }
 }
 
 /*
@@ -375,38 +307,31 @@ function addChildToPartner (nestedWhakapapa, child, partner) {
 
 function addParent (nestedWhakapapa, child, parent) {
   if (!nestedWhakapapa) return null
+
   if (nestedWhakapapa.id === child.id) {
     nestedWhakapapa.parents.push(parent)
     return nestedWhakapapa
   }
 
-  var found = false
   nestedWhakapapa.children = nestedWhakapapa.children.map(c => {
-    if (c.id === child.id) found = true
     return addParent(c, child, parent)
   })
-
-  if (found) {
-    if (nestedWhakapapa.partners.length === 0) nestedWhakapapa.partners.push(parent)
-    else {
-      if (!nestedWhakapapa.partners.some(p => p.id === parent.id)) {
-        nestedWhakapapa.partners.push(parent)
-      }
-    }
-  }
 
   return nestedWhakapapa
 }
 
 function addPartner (nestedWhakapapa, node, partner) {
   if (!nestedWhakapapa) return null
+
   if (nestedWhakapapa.id === node.id) {
-    if (!nestedWhakapapa.partners) nestedWhakapapa.partners = []
     nestedWhakapapa.partners.push(partner)
     return nestedWhakapapa
   }
 
-  // TODO: do we need to add this partner to anyone else
+  // search the children until we find the node
+  nestedWhakapapa.children = nestedWhakapapa.children.map(c => {
+    return addPartner(c, node, partner)
+  })
 
   return nestedWhakapapa
 }
@@ -424,4 +349,50 @@ function find (nestedWhakapapa, node) {
   }
 
   return null
+}
+
+/*
+
+function: takes in a person and calculates the partners from the persons childrens other parents
+
+requirements:
+- partners should be ordered by childrens order of birth from left to right
+- the children of the partners should be ordered by order of birth as well
+- there should be no duplicates in the array
+- need to set the partners partners to the person
+- map childrens profiles to the ones from the person
+
+*/
+
+function partners (person) {
+  person.partners = person.partners.map(partner => {
+    // map the partners children
+    partner.children = partner.children.map(child => {
+      // get the childs profile
+      // can be in two formats profile {...} OR child { profile {...}}
+      const profile = child.profile ? child.profile : child
+
+      // check if the current child is a child of the person too and get their profile from there
+      const profileInPerson = person.children.find(c => c.id === profile.id)
+
+      if (profileInPerson) {
+        // if we found them, map them to this profile
+        return profileInPerson
+      }
+
+      // otherwise just map them to their profile
+      // note: these are step children and their relationship is ignored here
+      return profile
+    })
+
+    // map partners parents to their profiles
+    partner.parents = partner.parents.map(p => p.profile)
+
+    // add this person as a partner
+    partner.partners = [person] // note: we dont really care about the partners other partners because we dont need to load them yet
+    partner.siblings = [] // initialise their siblings (not needed yet
+
+    // return the new profile for the partner
+    return partner
+  })
 }

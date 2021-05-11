@@ -1,5 +1,4 @@
 import gql from 'graphql-tag'
-import tree from './tree-helpers.js'
 
 export const SharedProfileFieldsFragment = gql`
   fragment SharedProfileFields on Profile {
@@ -53,8 +52,7 @@ export const PersonProfileFieldsFragment = gql`
 `
 
 export const PersonProfileLinkFragment = gql`
-  fragment PersonProfileLink on WhakapapaLink {
-    linkId
+  fragment PersonProfileLink on Person {
     relationshipType
     legallyAdopted
   }
@@ -85,28 +83,27 @@ export const AllProfileFieldsFragment = gql`
     ...on Person {
       ...PersonProfileFields
       children {
-        profile {
-          ...PersonProfileFields
-          parents {
-            profile {
-              ...PersonProfileFields
-            }
-            ...PersonProfileLink
-          }
-        }
+        ...PersonProfileFields
         ...PersonProfileLink
       }
       parents {
-        profile {
-          ...PersonProfileFields
-          children {
-            profile {
-              ...PersonProfileFields
-            }
-            ...PersonProfileLink
-          }
-        }
+        ...PersonProfileFields
         ...PersonProfileLink
+      }
+      partners {
+        ...PersonProfileFields
+        ...PersonProfileLink
+        children {
+          ...PersonProfileFields
+          ...PersonProfileLink
+        }
+        parents {
+          ...PersonProfileFields
+          ...PersonProfileLink
+        }
+      }
+      siblings {
+        ...PersonProfileFields
       }
     }
   }
@@ -144,32 +141,6 @@ export const getProfile = ({
     }
   `,
   update ({ profile }) {
-    if (profile.type === 'community') return profile
-
-    if (profile.children) {
-      profile.children = profile.children.map(child => {
-        var childProfile = child.profile ? child.profile : child
-        childProfile = {
-          ...childProfile,
-          relationshipType: child.relationshipType
-        }
-        profile = tree.getPartners(profile, childProfile)
-        return childProfile
-      })
-    }
-
-    if (profile.parents) {
-      profile.parents = profile.parents.map(parent => {
-        var parentProfile = parent.profile ? parent.profile : parent
-        parentProfile = {
-          ...parentProfile,
-          relationshipType: parent.relationshipType
-        }
-        profile = tree.getSiblings(parentProfile, profile)
-        return parentProfile
-      })
-    }
-
     return profile
   },
   fetchPolicy: 'no-cache'

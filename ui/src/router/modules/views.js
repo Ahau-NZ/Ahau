@@ -9,8 +9,6 @@ import Profile from '@/components/profile/Profile.vue'
 import Archive from '@/components/archive/Archive.vue'
 import Timeline from '@/components/story/Timeline.vue'
 
-import ArchiveHome from '@/components/archive/ArchiveHome.vue'
-
 // Unfortunately Vue Router doesn't work without at least a fake component
 // If you do only data handling
 const EmptyRouterComponent = {
@@ -50,21 +48,14 @@ function sharedRoutes (type) {
     { path: 'profile', name: `${type}/profile`, component: Profile },
     {
       path: 'archive',
-      // name: `${type}/archive`,
+      name: `${type}/archive`,
       component: Archive,
-      props: true,
-      children: [
-        {
-          path: '',
-          name: `${type}/archive`,
-          component: ArchiveHome
-        },
-        {
-          path: ':collectionId',
-          name: `${type}/archive/:collectionId`,
-          component: CollectionShow
-        }
-      ]
+      props: true
+    },
+    {
+      path: 'collection/:collectionId',
+      name: `${type}/collection`,
+      component: CollectionShow
     },
     { path: 'timeline', name: `${type}/timeline`, component: Timeline, props: true },
     { path: 'whakapapa', name: `${type}/whakapapa`, component: WhakapapaIndex, props: true },

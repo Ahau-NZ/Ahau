@@ -4,8 +4,9 @@
       tile
       flat
       :class="{ 'on-hover': hover, 'highlight': selected }"
-      @click="$emit('click')"
+      @click="click"
       class="container"
+      :ripple="!showArtefact"
     >
       <!-- large files render here: video + photo -->
       <div v-if="useRenderMedia"
@@ -29,19 +30,14 @@
         </template>
 
         <!-- photo -->
-
         <template v-if="artefact.type === 'photo'">
           <v-img
-            v-if="!mobile"
             :src="artefact.blob.uri"
-            contain
+            :contain="!icon"
+            :cover="icon"
             class="media"
           />
-
-          <!-- mobile photo -->
-          <v-zoomer v-else-if="mobile && showArtefact" style="height:80vh">
-            <v-img :src="artefact.blob.uri" contain />
-          </v-zoomer>
+  ``
         </template>
 
         <!-- document -->
@@ -52,8 +48,8 @@
               Download File
             </v-btn>
           </div>
-          <div v-else class="pt-4 px-5">
-            <v-icon size="60px">{{ artefactIcon }}</v-icon>
+          <div v-else class="text-center" style="padding-top:15%;">
+            <v-icon :size="icon ? '60px':'160px'">{{ artefactIcon }}</v-icon>
           </div>
         </div>
 
@@ -92,6 +88,8 @@ import { mapGetters } from 'vuex'
 import { ARTEFACT_ICON } from '@/lib/artefact-helpers.js'
 import FileStream from '@/lib/hyper-file-stream'
 import getVideoPoster from '@/lib/get-video-poster'
+import mime from 'mime-types'
+import axios from 'axios'
 
 const renderMedia = require('render-media')
 
@@ -105,14 +103,16 @@ export default {
     selected: { type: Boolean, default: false },
     selectedIndex: { type: Number, default: 0 },
     editing: { type: Boolean },
-    showPreview: Boolean
+    showPreview: Boolean,
+    icon: Boolean
   },
   components: {
   },
   data () {
     return {
       hover: false,
-      poster: null
+      poster: null,
+      zoomed: false
     }
   },
   mounted () {
@@ -138,6 +138,13 @@ export default {
       if (this.artefact.type === 'document') return false // NOTE this is here because pdf rendering in electron is patchy
 
       return true
+    },
+    filename () {
+      return `${this.artefact.title || 'untitled'}.${mime.extension(this.blob.mimeType)}`
+        .replace(/\s/g, '-') // replace all blank spaces with '-' symbol
+    },
+    blob () {
+      return this.artefact.blob
     },
     artefactIcon () {
       return ARTEFACT_ICON(this.artefact.blob.mimeType)
@@ -166,19 +173,33 @@ export default {
     }
   },
   methods: {
+    click () {
+      if (this.showArtefact) return
+      this.$emit('click')
+    },
     downloadFile () {
-      var hiddenElement = document.createElement('a')
-      hiddenElement.href = this.artefact.blob.uri
-      hiddenElement.target = '_blank'
-      hiddenElement.click()
+      axios.get(this.blob.uri, {
+        headers: {
+          'Content-Type': this.blob.mimeType
+        },
+        responseType: 'blob'
+      })
+        .then(response => {
+          const a = document.createElement('a')
+          a.href = window.URL.createObjectURL(response.data)
+          a.download = this.filename
+          a.click()
+        })
+        .catch(err => {
+          console.error('Something went wrong while trying to download the file', err)
+        })
     },
     renderHyperBlob () {
-      const { title, blob } = this.artefact
       const file = {
-        name: `${title}.${blob.mimeType.split('/')[1]}`, // TODO see if there's a better way to tell render-media the mimeType
-        length: blob.size,
+        name: this.filename,
+        length: this.blob.size,
         createReadStream (opts = {}) {
-          const stream = new FileStream(blob, opts)
+          const stream = new FileStream(this.blob, opts)
 
           return stream
         }

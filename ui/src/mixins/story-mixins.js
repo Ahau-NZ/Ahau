@@ -89,6 +89,8 @@ export const methods = {
     }
   },
   async processStory (input) {
+    if (!this.reload) throw new Error('the processStory mixin requires you have a reload function defined')
+
     var {
       artefacts,
       mentions,
@@ -126,11 +128,7 @@ export const methods = {
         this.toggleStory(story)
       }
 
-      if (this.$refs.child.$apollo.queries.collection) {
-        this.$refs.child.$apollo.queries.collection.refetch()
-      }
-
-      this.$apollo.queries.stories.refetch()
+      await this.reload()
     } catch (err) {
       console.error('Something went wrong while creating a story')
       throw err

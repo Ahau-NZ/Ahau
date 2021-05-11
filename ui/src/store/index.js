@@ -1,6 +1,8 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import { createProvider } from '../plugins/vue-apollo'
+import { apolloProvider } from '../plugins/vue-apollo'
+
+import { whoami } from '../lib/person-helpers.js'
 
 import whakapapa from './modules/whakapapa'
 import person from './modules/person'
@@ -9,10 +11,8 @@ import dialog from './modules/dialog'
 import notifications from './modules/notifications'
 import tribe from './modules/tribe'
 import alerts from './modules/alerts'
+import analytics from './modules/analytics'
 
-import { whoami } from '../lib/person-helpers.js'
-
-const apolloProvider = createProvider()
 const apollo = apolloProvider.defaultClient
 
 Vue.use(Vuex)
@@ -25,9 +25,8 @@ Vue.use(Vuex)
           - see alerts module for another example
 */
 
-const store = new Vuex.Store({
+const rootModule = {
   state: {
-    currentAccess: null,
     whoami: {
       public: {
         feedId: '',
@@ -49,46 +48,27 @@ const store = new Vuex.Store({
       }
     },
     loading: false,
-    goBack: '',
-    allowSubmissions: true,
-    syncing: false
+    syncing: false,
+
+    goBack: '', // TODO deprecate?
+    currentAccess: null,
+    allowSubmissions: true // TODO extract to specific domain
   },
-  modules: {
-    whakapapa,
-    person,
-    archive,
-    dialog,
-    notifications,
-    tribe,
-    alerts
-  },
+
   getters: {
-    loadingState: state => {
-      return state.loading
-    },
-    syncing: state => {
-      return state.syncing
-    },
-    whoami: state => {
-      return state.whoami
-    },
+    loadingState: state => state.loading,
+    syncing: state => state.syncing,
+    whoami: state => state.whoami,
+
     // TODO-implement goBack to previous profile &| component
-    goBack: state => {
-      return state.goBack
-    },
-    currentAccess: state => {
-      return state.currentAccess
-    },
-    allowSubmissions: state => {
-      return state.allowSubmissions
-    }
+    goBack: state => state.goBack,
+    currentAccess: state => state.currentAccess,
+    allowSubmissions: state => state.allowSubmissions
   },
+
   mutations: {
-    setAllowSubmissions (state, allow) {
-      state.allowSubmissions = allow
-    },
-    setCurrentAccess (state, access) {
-      state.currentAccess = access
+    updateWhoami (state, whoami) {
+      state.whoami = whoami
     },
     updateLoading (state, loading) {
       state.loading = loading
@@ -99,20 +79,19 @@ const store = new Vuex.Store({
         state.syncing = !state.syncing
       }, 30000)
     },
-    updateWhoami (state, whoami) {
-      state.whoami = whoami
-    },
+
     updateGoBack (state, id) {
       state.goBack = id
+    },
+    setCurrentAccess (state, access) {
+      state.currentAccess = access
+    },
+    setAllowSubmissions (state, allow) {
+      state.allowSubmissions = allow
     }
   },
+
   actions: {
-    setLoading ({ commit }, loading) {
-      commit('updateLoading', loading)
-    },
-    setSyncing ({ commit }, syncing) {
-      commit('updateSyncing', syncing)
-    },
     async setWhoami ({ commit }) {
       const result = await apollo.query(whoami)
 
@@ -120,10 +99,28 @@ const store = new Vuex.Store({
 
       commit('updateWhoami', result.data.whoami)
     },
+    setLoading ({ commit }, loading) {
+      commit('updateLoading', loading)
+    },
+    setSyncing ({ commit }, syncing) {
+      commit('updateSyncing', syncing)
+    },
     setGoBack ({ commit }, id) {
       commit('updateGoBack', id)
     }
   }
-})
+}
 
-export default store
+export default new Vuex.Store({
+  ...rootModule,
+  modules: {
+    whakapapa,
+    person,
+    archive,
+    dialog,
+    notifications,
+    tribe,
+    alerts,
+    analytics
+  }
+})

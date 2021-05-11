@@ -21,6 +21,7 @@
               @updateDialog="updateDialog($event)"
               @submit="$emit('save', $event)"
               @close="toggleStory($event)"
+              :reload="reload"
             />
           </v-row>
         </div>
@@ -48,7 +49,7 @@
             class="px-8 subtitle-1 grey--text "
             :class="{ 'text-center': mobile }"
           >
-            No stories found
+            {{ $t('viewArchive.storyNotFound') }}
           </div>
         </div>
       </v-col>
@@ -62,7 +63,11 @@ import { mapGetters, mapMutations, mapActions } from 'vuex'
 
 export default {
   name: 'Stories',
-  props: ['stories', 'title'],
+  props: {
+    stories: Array,
+    title: String,
+    reload: Function
+  },
   components: {
     StoryCard
   },
@@ -100,6 +105,9 @@ export default {
     cordovaBackButton () {
       if (this.showStory) this.toggleStory()
     }
+  },
+  t (key, vars) {
+    return this.$t('viewArchive.' + key, vars)
   }
 }
 </script>
