@@ -9,8 +9,8 @@
     "dev": "cross-env NODE_ENV=development electron index.js -- --title Āhau",
     "build:icons": "node build/build-icons.js",
     "pack": "electron-builder --config build/electron-builder.config.js --dir",
-    "build": "electron-builder --config build/electron-builder.config.js",
-    "dist": "electron-builder --config build/electron-builder.config.js --publish always",
+    "dist": "electron-builder --config build/electron-builder.config.js",
+    "publish": "electron-builder --config build/electron-builder.config.js --publish always",
     "clear": "rm -rf node_modules"
   },
   "dependencies": {

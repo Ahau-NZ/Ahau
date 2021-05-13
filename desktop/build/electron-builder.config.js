@@ -47,8 +47,9 @@ module.exports = {
 
   files: [
     '**/*',
+
     /* custom */
-    '!dist/installers/*',
+    '!dist/installers',
     '!electron-builder.env',
 
     // sodium-native: only include needed prebuilds
