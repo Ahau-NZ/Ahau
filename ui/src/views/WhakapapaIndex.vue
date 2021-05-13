@@ -115,18 +115,20 @@ export default {
       if (this.$route.params.profileId === this.whoami.personal.profile.id) {
         var groupedObj = groupBy(views, 'recps[0]')
 
-        const groups = await Promise.all(
+        let filtered = await Promise.all(
           Object.keys(groupedObj).map(async id => {
             var views = groupedObj[id]
             if (id === this.whoami.personal.groupId) return { name: this.t('privateRecords'), image: this.whoami.personal.profile.avatarImage, views: views, tribeId: this.whoami.personal.groupId }
             var tribe = await this.getTribe(id)
 
-            if (tribe.private && tribe.length) return { name: tribe.private[0].preferredName, image: tribe.private[0].avatarImage, views: views, tribeId: tribe.id }
+            if (tribe.private && tribe.private.length) return { name: tribe.private[0].preferredName, image: tribe.private[0].avatarImage, views: views, tribeId: tribe.id }
             return null
           })
         )
-        const filteredGroups = groups.filter(group => !isEmpty(group))
-        return filteredGroups
+
+        filtered = filtered.filter(Boolean)
+
+        return filtered
       }
 
       return [{
