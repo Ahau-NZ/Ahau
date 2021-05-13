@@ -5,7 +5,7 @@
           <v-icon :medium ="!mobile" :small="mobile" class="black--text">mdi-account-edit</v-icon>
         </v-btn>
     </template>
-    <span>Edit profile</span>
+    <span>{{t('editProfile')}}</span>
   </v-tooltip>
 </template>
 <script>
@@ -18,6 +18,9 @@ export default {
   methods: {
     toggle () {
       this.$emit('click')
+    },
+    t (key, vars) {
+      return this.$t('viewPerson.' + key, vars)
     }
   }
 }
