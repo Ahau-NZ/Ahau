@@ -32,7 +32,7 @@
       v-if="dialog === 'edit-community'"
       :show="dialog === 'edit-community'"
       editing
-      :title="`Edit ${profile.preferredName}`"
+      :title="t('addPersonFormTitle', { displayName: profile.preferredName })"
       @delete="dialog = 'delete-community'"
       @submit="updateCommunity"
       @close="dialog = null"
@@ -41,7 +41,7 @@
     <EditNodeDialog
       v-if="dialog === 'edit-node'"
       :show="dialog === 'edit-node'"
-      :title="t('addPersonFormTitle', { displayName: 'rachael'})"
+      :title="t('addPersonFormTitle', { displayName: getDisplayName(profile) })"
       @submit="updatePerson"
       @close="dialog = null"
       :profile="profile"
