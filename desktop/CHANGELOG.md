@@ -1,5 +1,11 @@
 # Changelog | Ahau desktop
 
+## Current
+
+### Bug fixes
+
+- fix bug where all whakapapa werent listed on the main whakapapa page
+
 ## v1.3.2
 
 - adds anonymised usage analytics
