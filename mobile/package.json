@@ -11,6 +11,8 @@
   },
   "main": "index.js",
   "scripts": {
+    "postinstall": "./scripts/postinstall.sh",
+    "setup": "./scripts/setup.sh",
     "build:res": "./scripts/build-res.js",
     "dev:android": "cross-env NODE_ENV=development cross-env ./scripts/run.sh android",
     "dev:ios": "cross-env NODE_ENV=development cross-env ./scripts/run.sh ios",
@@ -21,8 +23,6 @@
     "dist:android-dev": "cross-env NODE_ENV=production cross-env AHAU_ENV=development cross-env ./scripts/run.sh android",
     "dist:ios": "cross-env NODE_ENV=production cross-env ./scripts/run.sh ios",
     "dist:ios-dev": "cross-env NODE_ENV=development cross-env ./scripts/run.sh ios",
-    "postinstall": "./scripts/postinstall.sh",
-    "setup": "./scripts/setup.sh",
     "teardown": "rm -rf platforms plugins www src/nodejs-project/node_modules"
   },
   "dependencies": {
