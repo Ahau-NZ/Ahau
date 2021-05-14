@@ -41,7 +41,7 @@
     <EditNodeDialog
       v-if="dialog === 'edit-node'"
       :show="dialog === 'edit-node'"
-      :title="`Edit ${getDisplayName(profile)}`"
+      :title="t('addPersonFormTitle', { displayName: 'rachael'})"
       @submit="updatePerson"
       @close="dialog = null"
       :profile="profile"
@@ -303,6 +303,9 @@ export default {
       // tell apollo to refresh the current tribe and profile queries
       this.$apollo.queries.tribe.refetch()
       this.$apollo.queries.profile.refetch()
+    },
+    t (key, vars) {
+      return this.$t('addPersonForm.' + key, vars)
     }
   }
 }

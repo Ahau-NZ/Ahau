@@ -41,7 +41,7 @@
         <v-col v-if="mobile" cols="12" class="mobile-profile-label headliner">
              {{ $t('viewPerson.communities') }}
         </v-col>
-        <ProfileCard v-if="myProfile" :title="mobile ? '':'Communities'" class="mt-2">
+        <ProfileCard v-if="myProfile" :title="mobile ? '':$t('viewPerson.communities')" class="mt-2">
           <template v-slot:content>
             <div v-if="connectedTribes.length > 0" :class="{'pt-4':mobile}">
               <v-row v-for="tribe in connectedTribes" :key="tribe.id" class="justify-center align-center ma-0 ml-4">

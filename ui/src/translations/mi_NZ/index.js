@@ -13,5 +13,6 @@ module.exports = {
   viewArchive: require('./view-archive.json'),
   whakapapaIndex: require('./whakapapa-index.json'),
   sideNav: require('./side-nav-menu.json'),
-  addWhakapapaForm: require('./add-whakapapa-form.json')
+  addWhakapapaForm: require('./add-whakapapa-form.json'),
+  viewTribalRegistry: require('./view-tribal-registry.json')
 }

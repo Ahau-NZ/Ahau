@@ -42,7 +42,7 @@
   </VueContext>
 
     <NewRecordDialog v-if="dialog === 'new-story'" :show="dialog === 'new-story'"
-      :title="`Add a story`" @close="dialog = null"
+      :title="$t('viewArchive.addStory')" @close="dialog = null"
       @submit="processStory"
     />
     <NewCollectionDialog v-if="dialog === 'new-collection'" :show="dialog === 'new-collection'"
@@ -114,7 +114,7 @@ export default {
     },
     title () {
       if (this.profile.id !== this.currentAccess.id) return `Stories about ${this.getDisplayName(this.profile)}`
-      return 'Stories'
+      return this.$t('viewArchive.stories')
     },
     hideArchiveTitle () {
       return this.onCollectionPage && this.mobile
@@ -124,7 +124,7 @@ export default {
       return this.profile.preferredName
     },
     archiveTitle () {
-      if (this.isPersonalArchive) return 'Your personal archive'
+      if (this.isPersonalArchive) return this.$t('viewArchive.archiveTitle')
       return this.currentAccess.preferredName ? `${this.currentAccess.preferredName}'s Archive` : `${this.currentAccess.legalName}'s Archive`
     },
     isPersonalArchive () {
@@ -182,6 +182,9 @@ export default {
           })
         }, 200)
       }
+    },
+    t (key, vars) {
+      return this.$t('viewArchive.' + key, vars)
     }
   }
 }
