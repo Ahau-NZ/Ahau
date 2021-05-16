@@ -60,6 +60,8 @@ import BigAddButton from '@/components/button/BigAddButton.vue'
 import CollectionGroup from '@/components/archive/CollectionGroup.vue'
 import Stories from '@/components/archive/Stories.vue'
 
+import { getDisplayName } from '@/lib/person-helpers.js'
+
 // TODO: Replace with Archive Helper (doesnt exist yet)
 import ArchiveHelper from '@/components/dialog/archive/ArchiveHelper.vue'
 
@@ -113,7 +115,7 @@ export default {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
     title () {
-      if (this.profile.id !== this.currentAccess.id) return `Stories about ${this.getDisplayName(this.profile)}`
+      if (this.profile.id !== this.currentAccess.id) return `Stories about ${getDisplayName(this.profile)}`
       return 'Stories'
     },
     hideArchiveTitle () {

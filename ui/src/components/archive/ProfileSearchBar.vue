@@ -151,7 +151,7 @@ export default {
     },
     searchInput (newValue) {
       if (!newValue) return
-      if (newValue.length > 1) {
+      if (newValue.length > 2) {
         this.$emit('getSuggestions', newValue)
       } else {
         this.clearSuggestions()

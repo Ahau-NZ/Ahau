@@ -592,6 +592,7 @@ export default {
       if (this.formData.endDate && this.formData.endDate.length > 0) this.hasEndDate = true
     },
     async getSuggestions (array, $event) {
+      if (!$event) return
       var suggestions = []
       if ($event) suggestions = await findByName($event)
 
