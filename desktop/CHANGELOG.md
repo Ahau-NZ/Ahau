@@ -5,6 +5,13 @@
 ### Bug fixes
 
 - fix bug where all whakapapa werent listed on the main whakapapa page
+- fix profile picture upload not working
+- fix bug where mentioning a profile when creating/editing a story was potentially crashing the app
+- fix archive page title
+
+### Improvements
+
+- move the pataka into its own repo
 
 ## v1.3.2
 
