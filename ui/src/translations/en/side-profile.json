@@ -1,0 +1,20 @@
+{
+  "stories": "stories",
+  "editProfile": "edit",
+  "fullName": "full name",
+  "otherNames": "other names",
+  "age": "age",
+  "city": "city",
+  "country": "country",
+  "placeOfBirth": "place of birth",
+  "placeOfPassing": "place of passing",
+  "dateOfPassing": "date of passing",
+  "buriedLocation": "buried location", 
+  "profession": "profession",
+  "schools": "schools",
+  "skills": "skills",
+  "parents": "parents",
+  "siblings": "siblings",
+  "children": "children",
+  "contributedBy": "contributed by"
+}
