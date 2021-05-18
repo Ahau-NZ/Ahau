@@ -1,5 +1,5 @@
 <template>
-  <Dialog :title="`Delete ${ profile.preferredName }`" :show="show" width="720px" :goBack="close" enableMenu
+  <Dialog :title="t('delete', { preferredName: profile.preferredName })" :show="show" width="720px" :goBack="close" enableMenu
     @submit="submit"
     @close="close"
   >
