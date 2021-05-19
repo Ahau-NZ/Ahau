@@ -1,5 +1,11 @@
 # Changelog | Ahau desktop
 
+## Current
+
+### Features
+
+- Settings dialog in Profile Show
+  - Change app language
 
 ## v1.4.0
 ### Features

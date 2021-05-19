@@ -9,7 +9,6 @@
 
       <!-- Desktop doesn't use a drawer, it has the links directly in the app bar -->
       <template v-if="!mobile">
-        <LocalePicker class='locale-easteregg' />
         <v-btn text active-class="no-active" to="/tribe" class="white--text text-uppercase ms-10">{{ t('tribes' )}}</v-btn>
         <v-btn active-class="no-active" text @click.native="goProfile('archive')" class="white--text text-uppercase ms-10">{{ t('archive') }}</v-btn>
 
@@ -91,7 +90,6 @@ import NotificationPanel from '@/components/menu/NotificationPanel'
 import FeedbackButton from '@/components/button/FeedbackButton'
 import { mapGetters, mapActions } from 'vuex'
 import BackButton from '@/components/button/BackButton'
-import LocalePicker from '@/components/LocalePicker'
 
 const karakia = `
 ---------------------------------
@@ -193,23 +191,13 @@ export default {
     Avatar,
     FeedbackButton,
     NotificationPanel,
-    BackButton,
-    LocalePicker
+    BackButton
   }
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
-  .locale-easteregg {
-    opacity: 0;
-    transition: opacity 0.5s ease-in;
-
-    &:hover {
-      opacity: 1;
-    }
-  }
-
   .sideMenuAppBarStyle {
     margin-top: -56px !important;
   }
