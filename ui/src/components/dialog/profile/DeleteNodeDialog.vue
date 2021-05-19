@@ -69,13 +69,13 @@ export default {
     submit () {
       this.$emit('submit', this.removeProfile)
       this.close()
+    },
+    t (key, vars) {
+      return this.$t('deleteNode.' + key, vars)
     }
   },
   components: {
     Dialog
-  },
-    t (key, vars) {
-      return this.$t('deleteNode.' + key, vars)
-    }
+  }
 }
 </script>
