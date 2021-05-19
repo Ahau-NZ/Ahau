@@ -1,7 +1,7 @@
 <template>
     <div>
       <v-row cols="12" class="rounded-border">
-        <ProfileInfoItem :class="profile.type === 'person' ? 'bb':''" title="About" smCols="12" mdCols="12" :value="profile.description"/>
+        <ProfileInfoItem :class="profile.type === 'person' ? 'bb':''" :title="$t('viewPerson.about')" smCols="12" mdCols="12" :value="profile.description"/>
         <ProfileInfoItem v-if="profile.type === 'person'" :class="mobile ? 'br bb' : 'br'" :title="$t('viewPerson.preferredName')"  :value="profile.preferredName"/>
         <ProfileInfoItem v-if="profile.type === 'person'" :class="mobile ? 'bb' : 'br'" :title="$t('viewPerson.otherNames')" :value="profile.altNames.join(', ')"/>
         <ProfileInfoItem v-if="profile.type === 'person'" class="br" :title="$t('viewPerson.age')" :value="age"/>
