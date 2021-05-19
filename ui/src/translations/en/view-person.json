@@ -22,5 +22,7 @@
     "country": "Country",
     "postcode": "Postcode"
   },
-  "communities": "Communities"
+  "communities": "Communities",
+  "editProfile": "Edit Profile",
+  "settings": "Settings"
 }

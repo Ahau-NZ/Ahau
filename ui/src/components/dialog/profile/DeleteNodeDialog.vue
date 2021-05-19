@@ -1,5 +1,5 @@
 <template>
-  <Dialog :title="`Delete ${ profile.preferredName }`" :show="show" width="720px" :goBack="close" enableMenu
+  <Dialog :title="t('delete', { preferredName: profile.preferredName })" :show="show" width="720px" :goBack="close" enableMenu
     @submit="submit"
     @close="close"
   >
@@ -7,22 +7,20 @@
       <v-card-subtitle>
         <v-col cols="12" sm="5" md="8">
           <v-radio-group v-model="removeProfile" column>
-            <v-radio label="Hide this profile from this whakapapa record" value="ignore"></v-radio>
-            <v-radio label="Delete this profile from all whakapapa records" value="delete"></v-radio>
+            <v-radio :label="$t('deleteNode.hideProfile')" value="ignore"></v-radio>
+            <v-radio :label="$t('deleteNode.deleteProile')" value="delete"></v-radio>
           </v-radio-group>
         </v-col>
         <div v-show="removeProfile == 'delete' " class="warning-blurb">
-          Are you sure you want to delete this profile from all whakapapa records.
+          {{ $t('deleteNode.confirmationMessage') }}
           <span v-if="warnAboutChildren">
-            This will also remove all connected children from the whakapapa
-            record.
+            {{ $t('deleteNode.warnAboutChildren') }}
         </span>
         </div>
         <div v-show="removeProfile == 'ignore' " class="warning-blurb">
-          Are you sure you want to hide this profile from this whakapapa record.
+            {{ $t('deleteNode.confirmationMessage') }}
           <span v-if="warnAboutChildren">
-            This will also remove all connected children from the whakapapa
-            record.
+             {{ $t('deleteNode.warnAboutChildren') }}
         </span>
         </div>
 
@@ -71,6 +69,9 @@ export default {
     submit () {
       this.$emit('submit', this.removeProfile)
       this.close()
+    },
+    t (key, vars) {
+      return this.$t('deleteNode.' + key, vars)
     }
   },
   components: {
