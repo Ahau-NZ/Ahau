@@ -1,8 +1,7 @@
 # Changelog | Ahau desktop
 
 
-## Current
-
+## v1.3.3
 ### Features
 
 - new personal settings record
@@ -14,6 +13,7 @@
 - fix bug where all whakapapa werent listed on the main whakapapa page
 - fix bug where mentioning a profile when creating/editing a story was potentially crashing the app
 - fix archive page title
+- update `ssb-ahau` to fix profile avatar upload bug
 
 ### Known Bugs
 
