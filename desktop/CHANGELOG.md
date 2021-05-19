@@ -1,7 +1,7 @@
 # Changelog | Ahau desktop
 
 
-## v1.3.3
+## v1.4.0
 ### Features
 
 - new personal settings record
