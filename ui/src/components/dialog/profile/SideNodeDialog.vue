@@ -25,9 +25,6 @@
               <ProfileForm :profile.sync="formData" :withRelationships="withRelationships" :readonly="!isEditing" :mobile="mobile" @cancel="cancel" isEditing isSideViewDialog>
                 <template v-slot:top>
                   <v-row class="justify-center">
-                    <h1>Edit {{ getDisplayName(formData) }}</h1>
-                  </v-row>
-                  <v-row class="justify-center">
                     <v-btn
                       @click="toggleEdit"
                       color="white"
@@ -52,7 +49,7 @@
                 text
                 class="secondary--text"
               >
-                <v-icon class="secondary--text" left>mdi-delete</v-icon>Delete this person
+                <v-icon class="secondary--text" left>mdi-delete</v-icon>{{ t('deletePerson') }}
               </v-btn>
             </v-col>
             <v-col
@@ -61,10 +58,10 @@
               class="pt-0 d-flex justify-space-between"
             >
               <v-btn @click="cancel" text large fab class="secondary--text mr-10">
-                Cancel
+                {{ t('cancel') }}
               </v-btn>
               <v-btn @click="submit" text large fab class="blue--text ml-5" color="blue">
-                Save
+                {{ t('save') }}
               </v-btn>
             </v-col>
           </v-row>
@@ -103,13 +100,13 @@
               medium
               class="blue--text"
             >
-              <v-icon small class="blue--text" left>mdi-pencil</v-icon>{{ $t('edit') }}
+              <v-icon small class="blue--text" left>mdi-pencil</v-icon>{{ t('edit') }}
             </v-btn>
           </v-row>
           <v-row v-if="formData.description && !isEditing" class="ma-2 py-2">
             <v-col cols="12" class="pt-0">
               <v-row>
-                <v-col class="py-1 px-0 profile-label overline"><small>Description</small></v-col>
+                <v-col class="py-1 px-0 profile-label overline"><small>{{ t('description') }}</small></v-col>
               </v-row>
               <v-row class="py-0 justify-center">
                 <p class="ma-0 profile-info" style="font-size: 0.8em">{{formData.description}}</p>
@@ -193,7 +190,7 @@
                   <AvatarGroup
                     v-else
                     :profiles="profile._children"
-                    group-title="Children"
+                    :group-title="t('children')"
                     size="60px"
                     :show-labels="true"
                     @profile-click="openProfile($event)"
