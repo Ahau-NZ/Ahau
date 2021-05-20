@@ -14,6 +14,7 @@ module.exports = {
   viewArchive: require('./view-archive.json'),
   whakapapaIndex: require('./whakapapa-index.json'),
   instructionsStory: require('./instructions-story.json'),
+  sideProfile: require('./side-profile.json'),
   deleteNode: require('./delete-node.json'),
   settingsForm: require('./settings-form.json'),
   sideNav: require('./side-nav-menu.json')

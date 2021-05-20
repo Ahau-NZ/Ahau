@@ -25,9 +25,6 @@
               <ProfileForm :profile.sync="formData" :withRelationships="withRelationships" :readonly="!isEditing" :mobile="mobile" @cancel="cancel" isEditing isSideViewDialog>
                 <template v-slot:top>
                   <v-row class="justify-center">
-                    <h1>Edit {{ getDisplayName(formData) }}</h1>
-                  </v-row>
-                  <v-row class="justify-center">
                     <v-btn
                       @click="toggleEdit"
                       color="white"
@@ -52,7 +49,7 @@
                 text
                 class="secondary--text"
               >
-                <v-icon class="secondary--text" left>mdi-delete</v-icon>Delete this person
+                <v-icon class="secondary--text" left>mdi-delete</v-icon>{{ t('deletePerson') }}
               </v-btn>
             </v-col>
             <v-col
@@ -61,10 +58,10 @@
               class="pt-0 d-flex justify-space-between"
             >
               <v-btn @click="cancel" text large fab class="secondary--text mr-10">
-                Cancel
+                {{ t('cancel') }}
               </v-btn>
               <v-btn @click="submit" text large fab class="blue--text ml-5" color="blue">
-                Save
+                {{ t('save') }}
               </v-btn>
             </v-col>
           </v-row>
@@ -93,7 +90,7 @@
               class="blue--text"
             >
               <ArchiveIcon size="normal" color="blue"/>
-              <span class="pl-2 "> Stories </span>
+              <span class="pl-2 "> {{ t('stories') }} </span>
             </v-btn>
             <v-btn
               v-if="!preview && profile.canEdit"
@@ -103,13 +100,13 @@
               medium
               class="blue--text"
             >
-              <v-icon small class="blue--text" left>mdi-pencil</v-icon>Edit
+              <v-icon small class="blue--text" left>mdi-pencil</v-icon>{{ t('edit') }}
             </v-btn>
           </v-row>
           <v-row v-if="formData.description && !isEditing" class="ma-2 py-2">
             <v-col cols="12" class="pt-0">
               <v-row>
-                <v-col class="py-1 px-0 profile-label overline"><small>Description</small></v-col>
+                <v-col class="py-1 px-0 profile-label overline"><small>{{ t('description') }}</small></v-col>
               </v-row>
               <v-row class="py-0 justify-center">
                 <p class="ma-0 profile-info" style="font-size: 0.8em">{{formData.description}}</p>
@@ -120,24 +117,24 @@
             <v-col class="pa-0">
               <v-col cols="12" :class="profile.description ? 'pt-0':'pt-6'">
                 <v-row cols="12" class="rounded-border">
-                  <ProfileInfoItem class="pb-0 bb" mdCols="12" smCols="12" :title="'Full Name'" :value="profile.legalName"/>
-                  <ProfileInfoItem class="pb-0 br bb" mdCols="6" smCols="6" :title="'Other Names'" :value="profile.altNames.join(', ')"/>
-                  <ProfileInfoItem class="pb-0 bb" mdCols="6" smCols="6" :title="'Age'" :value="age(formData.aliveInterval)"/>
-                  <ProfileInfoItem class="pb-0 br" mdCols="6" smCols="6" title="City" :value="formData.city"/>
-                  <ProfileInfoItem class="pb-0 br" mdCols="6" smCols="6" title="Country" :value="formData.country"/>
+                  <ProfileInfoItem class="pb-0 bb" mdCols="12" smCols="12" :title="t('fullName')" :value="profile.legalName"/>
+                  <ProfileInfoItem class="pb-0 br bb" mdCols="6" smCols="6" :title="t('otherNames')" :value="profile.altNames.join(', ')"/>
+                  <ProfileInfoItem class="pb-0 bb" mdCols="6" smCols="6" :title="t('age')" :value="age(formData.aliveInterval)"/>
+                  <ProfileInfoItem class="pb-0 br" mdCols="6" smCols="6" :title="t('city')" :value="formData.city"/>
+                  <ProfileInfoItem class="pb-0 br" mdCols="6" smCols="6" :title="t('country')" :value="formData.country"/>
                 </v-row>
                 <v-row cols="12" class="rounded-border">
-                  <ProfileInfoItem :class="profile.deceased ? 'pb-0 bb br':'pb-0'" :title="'Place of birth'" :mdCols="profile.deceased ? '6':'12'" :smCols="profile.deceased ? '6':'12'" :value="profile.placeOfBirth" />
+                  <ProfileInfoItem :class="profile.deceased ? 'pb-0 bb br':'pb-0'" :title="t('placeOfBirth')" :mdCols="profile.deceased ? '6':'12'" :smCols="profile.deceased ? '6':'12'" :value="profile.placeOfBirth" />
                   <template v-if="profile.deceased">
-                    <ProfileInfoItem class="pb-0 bb" :title="'Place of passing'" mdCols="6" smCols="6" :value="profile.placeOfDeath" />
-                    <ProfileInfoItem class="pb-0 br" :title="'Date of passing'" mdCols="6" smCols="6" :value="diedAt" />
-                    <ProfileInfoItem class="pb-0" :title="'Buried location'" mdCols="6" smCols="6" :value="profile.buriedLocation" />
+                    <ProfileInfoItem class="pb-0 bb" :title="t('placeOfPassing')" mdCols="6" smCols="6" :value="profile.placeOfDeath" />
+                    <ProfileInfoItem class="pb-0 br" :title="t('dateOfPassing')" mdCols="6" smCols="6" :value="diedAt" />
+                    <ProfileInfoItem class="pb-0" :title="t('buriedLocation')" mdCols="6" smCols="6" :value="profile.buriedLocation" />
                   </template>
                 </v-row>
                 <v-row cols="12" class="rounded-border">
-                  <ProfileInfoItem class="bb pb-0" mdCols="12" smCols="12"  title="Profession" :value="formData.profession"/>
-                  <ProfileInfoItem class="br pb-0" mdCols="6" smCols="6" title="Schools" :value="formData.school.join('\n')"/>
-                  <ProfileInfoItem class="pb-0" mdCols="6" smCols="6" title="Skills" :value="formData.education.join('\n')"/>
+                  <ProfileInfoItem class="bb pb-0" mdCols="12" smCols="12"  :title="t('profession')" :value="formData.profession"/>
+                  <ProfileInfoItem class="br pb-0" mdCols="6" smCols="6" :title="t('schools')" :value="formData.school.join('\n')"/>
+                  <ProfileInfoItem class="pb-0" mdCols="6" smCols="6" :title="t('skills')" :value="formData.education.join('\n')"/>
                 </v-row>
               </v-col>
             </v-col>
@@ -148,7 +145,7 @@
                 <v-col :cols="12" class="pa-0">
                   <AvatarGroup
                     :profiles="profile.parents"
-                    group-title="Parents"
+                    :group-title="t('parents')"
                     size="50px"
                     :show-labels="true"
                     @profile-click="openProfile($event)"
@@ -164,7 +161,7 @@
                 <v-col :cols="12" v-if="profile.siblings && profile.siblings.length" class="pa-0">
                   <AvatarGroup
                     :profiles="profile.siblings"
-                    group-title="Siblings"
+                    :group-title="t('siblings')"
                     size="60px"
                     :show-labels="true"
                     @profile-click="openProfile($event)"
@@ -181,7 +178,7 @@
                   <AvatarGroup
                     v-if="profile.children && profile.children.length"
                     :profiles="profile.children"
-                    group-title="Children"
+                    :group-title="t('children')"
                     size="60px"
                     :show-labels="true"
                     @profile-click="openProfile($event)"
@@ -193,7 +190,7 @@
                   <AvatarGroup
                     v-else
                     :profiles="profile._children"
-                    group-title="Children"
+                    :group-title="t('children')"
                     size="60px"
                     :show-labels="true"
                     @profile-click="openProfile($event)"
@@ -207,7 +204,7 @@
                 <v-col v-if="authors" :cols="12" class="pa-0">
                   <AvatarGroup
                     :profiles="authors"
-                    group-title="Contributed by"
+                    :group-title="t('contributedBy')"
                     size="60px"
                     :show-labels="true"
                     @profile-click="openProfile($event)"
@@ -445,6 +442,9 @@ export default {
     },
     toggleEdit () {
       this.isEditing = !this.isEditing
+    },
+    t (key, vars) {
+      return this.$t('sideProfile.' + key, vars)
     }
   }
 }
