@@ -20,7 +20,7 @@
               :aliveInterval="profile.aliveInterval"
               :alt="profile.preferredName"
               :size="tablet ? '110px':'170px'"
-              :isView="profile.type === 'community' && !profile.avatarImage"
+              :isView="isView"
             />
           </v-btn>
       </v-row>
@@ -32,7 +32,9 @@
               <Avatar
                 v-if="mobile && activeComponent !=='profile'"
                 :image="profile.avatarImage"
+                :gender="profile.gender"
                 size="40px"
+                :isView="isView"
               />
               <UserIcon
                 v-else
@@ -165,6 +167,9 @@ export default {
   },
   computed: {
     ...mapGetters(['showStory', 'storeDialog', 'notifications', 'whoami']),
+    isView() {
+      return this.profile.type === 'community' && !this.profile.avatarImage
+    },      
     activeComponent () {
       if (this.$route.name === 'whakapapa/:whakapapaId') return 'whakapapa'
       return this.$route.name.split('/')[1]
