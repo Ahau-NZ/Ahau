@@ -7,5 +7,14 @@
   "languageTitle": "Language",
   "chooseLanguage": "Choose between English, Māori, or Portugese.", 
   "languagesNote": "Please note that languages are a work in progress, we welcome your suggestions and feedback.",
-  "submitFeedback": "Submit your feedback here"
+  "submitFeedback": "Submit your feedback here",
+  "storageTitle": "Storage",
+  "diskUsageTitle": "Disk Usage",
+  "ahauStorageTitle": "Current Ahau Storage",
+  "defaultStorageOption": "By default Ahau will download and keep a copy of all information and files you have accessed. It does this so content is available offline, and it creates copy of the information for safe keeping",
+  "excludeStorageOption": "Do not keep artefacts (photos, files or videos) on this device. You will still be able to access them while online but may be slower (this is not recommended)",
+  "limitStorageOption": "Set storage limit",
+  "ahauStorageLimit": "Ahau Storage Limit",
+  "pruneStorageOption": "Old photos and videos will be automatically deleted to make space for new ones when this limit is reached",
+  "default": "Default"
 }
