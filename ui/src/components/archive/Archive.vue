@@ -229,14 +229,6 @@ export default {
     margin-left: 10px;
   }
 
-  .niho-bg {
-    background: linear-gradient(rgba(255, 255, 255, 0.99),
-        rgba(255, 255, 255, 0.7)), url(../../assets/niho.svg);
-    background-position-x: 0px;
-    background-attachment: fixed;
-    // background-repeat: no-repeat;
-  }
-
   .headliner {
     font-size: 1em;
     text-transform: uppercase;

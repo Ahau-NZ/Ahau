@@ -25,19 +25,19 @@
         >
           <v-tooltip  bottom nudge-bottom="-12" open-delay="300">
             <template v-slot:activator="{ on }">
-              <v-btn 
-                v-on="on" 
-                active-class="no-active" 
-                fab  
-                @click.native="goTribeProfile(tribe)" 
+              <v-btn
+                v-on="on"
+                active-class="no-active"
+                fab
+                @click.native="goTribeProfile(tribe)"
                 class="mr-3 red--text"
                 :outlined="outlinedTribe(tribe)"
               >
                 <Avatar
                   v-if="!mobile"
                   size="45px"
-                  :image="tribe.private[0].avatarImage" 
-                  :alt="tribe.private[0].preferredName" 
+                  :image="tribe.private[0].avatarImage"
+                  :alt="tribe.private[0].preferredName"
                   :isView="!tribe.private[0].avatarImage"
                 />
               </v-btn>
@@ -49,7 +49,7 @@
           inset
           vertical
           class="ml-6"
-        ></v-divider>        
+        ></v-divider>
         <v-btn active-class="no-active" fab :outlined="isMyProfile" @click.native="goMyProfile()" class="mr-6 ml-12">
           <Avatar
             v-if="!mobile"
@@ -94,7 +94,7 @@
           </v-btn>
             <span class="font-weight-light">{{whoami.personal.profile.preferredName}}</span>
         </v-row>
-        <v-divider class="ma-6 mt-3" />     
+        <v-divider class="ma-6 mt-3" />
         <div class="sub-headliner ml-6 mb-2">tribes</div>
         <div
           v-for="tribe in connectedTribes"
@@ -102,23 +102,23 @@
           :key="tribe.id"
           justify-self="start"
         >
-          <v-btn 
-            active-class="no-active" 
-            fab  
-            @click.native="goTribeProfile(tribe)" 
+          <v-btn
+            active-class="no-active"
+            fab
+            @click.native="goTribeProfile(tribe)"
             class="ml-1 mr-3 red--text my-2"
             :outlined="outlinedTribe(tribe)"
           >
             <Avatar
               size="45px"
-              :image="tribe.private[0].avatarImage" 
-              :alt="tribe.private[0].preferredName" 
+              :image="tribe.private[0].avatarImage"
+              :alt="tribe.private[0].preferredName"
               :isView="!tribe.private[0].avatarImage"
             />
           </v-btn>
           <span @click="goTribeProfile(tribe)" class="font-weight-light">{{tribe.private[0].preferredName}}</span>
         </div>
-        <v-divider class="ma-6"/>        
+        <v-divider class="ma-6"/>
         <v-btn text active-class="no-active" to="/tribe" class="white--text text-uppercase ml-3">
           <p class="font-weight-light" style="font-size: 0.8em;">+ add tribe</p>
         </v-btn>
@@ -173,7 +173,7 @@ export default {
       loading: true,
       route: {},
       isMobileBackButton: false,
-      tribes: [],
+      tribes: []
     }
   },
   apollo: {
@@ -194,7 +194,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['whoami', 'whakapapa', 'showStory', 'storeDialog', 'syncing']),
+    ...mapGetters(['whoami', 'whakapapa', 'showStory', 'storeDialog', 'syncing', 'navComponent']),
     connectedTribes () {
       return this.tribes.filter(tribe => tribe.private.length > 0)
     },
@@ -247,13 +247,16 @@ export default {
     goTribeProfile (tribe) {
       if (this.mobile && this.showStory) this.toggleShowStory()
       var profile = tribe.private[0]
+      console.log('routename: ', this.$route.name)
+      console.log('navComponent: ', this.navComponent)
       var route = this.$route.name.split('/')[1] ? this.$route.name.split('/')[1] : 'profile'
+      console.log('route: ', route)
 
       this.$router.push({
-        name: 'community/' + route,
+        name: 'community/' + this.navComponent,
         params: {
-          tribeId: tribe.id, 
-          profileId: profile.id, 
+          tribeId: tribe.id,
+          profileId: profile.id,
           profile
         }
       }).catch(() => {})

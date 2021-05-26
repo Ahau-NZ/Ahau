@@ -1,7 +1,7 @@
 // import gql from 'graphql-tag'
 
 const state = {
-  activeComponent: 'profile',
+  navComponent: 'profile',
   currentStory: {},
   showStory: false,
   showArtefact: false,
@@ -9,8 +9,8 @@ const state = {
 }
 
 const getters = {
-  activeComponent: state => {
-    return state.activeComponent
+  navComponent: state => {
+    return state.navComponent
   },
   currentStory: state => {
     return state.currentStory
@@ -28,7 +28,7 @@ const getters = {
 
 const mutations = {
   updateComponent (state, component) {
-    state.activeComponent = component
+    state.navComponent = component
   },
   setStory (state, story) {
     state.currentStory = story

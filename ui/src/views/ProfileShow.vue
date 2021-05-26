@@ -357,19 +357,12 @@ export default {
   }
 
 .niho-bg {
-  background: linear-gradient(to right, rgba(255, 255, 255, 0.99),
+  background: linear-gradient(to right, rgba(255, 255, 255, 0.8),
   rgba(255, 255, 255, 0.7)), url(../assets/niho.svg);
   background-position-x: 100px;
   background-attachment: fixed;
   background-repeat: no-repeat;
 }
-
-/* .fade-enter-active,
-.fade-leave-active {
-  transition-duration: 0.2;
-  transition-property: top;
-  transition-timing-function: ease-in-out;
- } */
 
  .fade-enter-active {
     transition: all 0.6s ease-in-out;
