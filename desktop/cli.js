@@ -24,6 +24,7 @@ const plugins = [
   'ssb-tribes',
 
   'ssb-profile',
+  'ssb-settings',
   'ssb-story',
   'ssb-artefact',
   'ssb-whakapapa',

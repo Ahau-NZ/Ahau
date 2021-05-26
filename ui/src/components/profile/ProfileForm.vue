@@ -245,7 +245,7 @@
             <v-col :cols="sideViewCols" class="pa-1">
               <v-text-field
                 v-model="formData.placeOfDeath"
-                label="Place of death"
+                :label="t('deathPlace')"
                 v-bind="customProps"
               />
             </v-col>
@@ -253,7 +253,7 @@
               <!-- Burial Location -->
               <v-text-field
                 v-model="formData.buriedLocation"
-                label="Burial location"
+                :label="t('burialLocation')"
                 v-bind="customProps"
               />
             </v-col>

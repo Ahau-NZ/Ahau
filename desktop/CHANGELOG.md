@@ -2,9 +2,32 @@
 
 ## Current
 
+### Features
+
+- Settings dialog in Profile Show
+  - Change app language
+
+## v1.4.0
+### Features
+
+- new personal settings record
+  - automatically finds or creates a personal settings record to store information about app settings:
+    - current only storing information about whether your keys have been backed up
+
 ### Bug fixes
 
 - fix bug where all whakapapa werent listed on the main whakapapa page
+- fix bug where mentioning a profile when creating/editing a story was potentially crashing the app
+- fix archive page title
+- update `ssb-ahau` to fix profile avatar upload bug
+
+### Known Bugs
+
+- fix profile picture upload not working
+
+### Improvements
+
+- move the pataka into its own repo
 
 ## v1.3.2
 

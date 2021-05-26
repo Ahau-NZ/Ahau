@@ -36,6 +36,10 @@ module.exports = function () {
   config = Config(env.ahau.appName, customConfig())
   // NOTE this pulls in config from ~/.{appName}>/config as the base then merges customConfig
 
+  if (!env.isProduction) {
+    console.log(`\x1b[37m\x1b[41m NODE_ENV \x1b[31m\x1b[47m ${env.name} \x1b[0m`)
+  }
+
   if (!config.mixpanelId) config.mixpanelId = generateId()
 
   // write a copy of customConfig to ~/.{appName}/config so that:

@@ -2,16 +2,13 @@
   <v-select
     :value="locale"
     :items="locales"
-    @focus="handleFocus"
-    @click="handleFocus"
-    @blur="isFocused = false"
     @change="handleChange"
-
-    dark
+    light
     dense
     hide-details
     outlined
-    :class="{ LocalePicker: true, '-focused': isFocused }"
+    class="LocalePicker"
+    :menuProps="{ light: true }"
   />
 </template>
 
@@ -21,11 +18,6 @@ function getVuetifyLocale (locale) {
 }
 
 export default {
-  data () {
-    return {
-      isFocused: false
-    }
-  },
   computed: {
     locale: {
       get () {
@@ -42,17 +34,6 @@ export default {
       }
     },
     locales () {
-      if (!this.isFocused) {
-        return this.$i18n.availableLocales.map(locale => {
-          switch (locale) {
-            case 'en': return { text: 'EN', value: locale }
-            case 'mi_NZ': return { text: 'MI', value: locale }
-            case 'pt_BR': return { text: 'PT', value: locale }
-            default: return { text: locale, value: locale }
-          }
-        })
-      }
-
       return this.$i18n.availableLocales.map(locale => {
         switch (locale) {
           case 'en': return { text: 'English', value: locale }
@@ -78,11 +59,7 @@ export default {
   },
   methods: {
     handleChange (locale) {
-      this.isFocused = false
       this.locale = locale
-    },
-    handleFocus () {
-      this.isFocused = true
     }
   }
 }
@@ -92,15 +69,8 @@ export default {
 .LocalePicker {
   margin: 0;
   padding: 0;
-  max-width: 80px;
-
-  // text-transform: uppercase;
-  // font-weight: 800;
+  max-width: 140px;
   font-size: 14px;
   letter-spacing: 1px;
-
-  &.-focused {
-    max-width: 140px;
-  }
 }
 </style>

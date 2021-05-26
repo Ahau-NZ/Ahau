@@ -5,13 +5,26 @@
       :profile="profile"
     />
     <v-row v-if="isProfile">
-      <v-col cols="12" offset-md="2" md="8" sm="12" :class="!mobile ? 'pl-12' : 'py-0 mt-n3' " :align="mobile ? 'center' : 'start'" :order="mobile ? '3' : '1'">
+      <div :class="mobile ? 'mobile-title order-3 d-flex':'desktop-title order-1 mr-auto'">
         <h1 class="primary--text" :style="mobile ? length : ''">{{ title }}</h1>
-      </v-col>
-      <v-col :order="mobile ? '2' : '3'" :align="mobile || tablet ? 'end' : isCommunity ? 'start':'center'" cols="12" :md="isCommunity ? 1:2" class="px-5">
-        <EditProfileButton v-if="profile.canEdit" @click="goEdit()" />
+      </div>
+      <div :class="mobile ? 'mob-btn order-1':'align-self-end order-2'">
+        <ProfileButton
+          v-if="myProfile"
+          @click="toggleSettings"
+          icon="mdi-cog"
+          :label="t('settings')"
+        />
+      </div>
+      <div :class="mobile ? 'edit-mob-btn order-2':'align-self-end mr-10 order-3'">
+        <ProfileButton
+          v-if="profile.canEdit"
+          @click="goEdit"
+          icon="mdi-account-edit"
+          :label="t('editProfile')"
+        />
         <v-divider v-else class="py-5"></v-divider>
-      </v-col>
+      </div>
     </v-row>
     <v-row>
       <!-- SideNav -->
@@ -60,6 +73,11 @@
       @submit="createGroupApplication"
       @close="dialog = null"
     />
+    <SettingsDialog
+      v-if="dialog === 'settings'"
+      :show="dialog === 'settings'"
+      @close="dialog = null"
+    />
     <!-- Snackbar for successful Tribe request sent -->
     <v-snackbar
       v-model="joinRequestSent"
@@ -76,13 +94,14 @@ import isEmpty from 'lodash.isempty'
 
 import SideNavMenu from '@/components/menu/SideNavMenu.vue'
 import Header from '@/components/profile/Header.vue'
-import EditProfileButton from '@/components/button/EditProfileButton.vue'
+import ProfileButton from '@/components/button/ProfileButton.vue'
 import mapProfileMixins from '@/mixins/profile-mixins.js'
 
 import NewCommunityDialog from '@/components/dialog/community/NewCommunityDialog.vue'
 import DeleteCommunityDialog from '@/components/dialog/community/DeleteCommunityDialog.vue'
 import EditNodeDialog from '@/components/dialog/profile/EditNodeDialog.vue'
 import NewRegistrationDialog from '@/components/dialog/registration/NewRegistrationDialog.vue'
+import SettingsDialog from '@/components/dialog/SettingsDialog.vue'
 import { updateTribe, deleteTribe, getMembers, getTribalProfile } from '@/lib/community-helpers.js'
 
 import { createGroupApplication } from '@/lib/tribes-application-helpers.js'
@@ -107,11 +126,12 @@ export default {
   components: {
     SideNavMenu,
     Header,
-    EditProfileButton,
     NewCommunityDialog,
     DeleteCommunityDialog,
     EditNodeDialog,
-    NewRegistrationDialog
+    NewRegistrationDialog,
+    SettingsDialog,
+    ProfileButton
   },
   data () {
     return {
@@ -163,6 +183,9 @@ export default {
   },
   computed: {
     ...mapGetters(['whoami', 'showStory', 'showArtefact']),
+    myProfile () {
+      return this.whoami.personal.groupId === this.tribe.id
+    },
     title () {
       if (this.profile.legalName) return this.profile.legalName
       else return this.profile.preferredName
@@ -203,6 +226,9 @@ export default {
     goEdit () {
       if (this.profile.type === 'person') this.dialog = 'edit-node'
       else this.dialog = 'edit-community'
+    },
+    toggleSettings () {
+      this.dialog = 'settings'
     },
     // TOTO if these need to be used elsewhere, move to a mixin
     async updateCommunity ($event) {
@@ -305,30 +331,30 @@ export default {
       this.$apollo.queries.profile.refetch()
     },
     t (key, vars) {
-      return this.$t('addPersonForm.' + key, vars)
+      return this.$t('viewPerson.' + key, vars)
     }
   }
 }
 </script>
 
 <style lang="scss">
-@media (min-width: 1264px) and (max-width: 1903px) {
-  .col-lg-20p {
-    width: 20%;
-    max-width: 20%;
-    flex-basis: 20%;
+  @media (min-width: 1264px) and (max-width: 1903px) {
+    .col-lg-20p {
+      width: 20%;
+      max-width: 20%;
+      flex-basis: 20%;
+    }
+    .col-lg-60p {
+      width: 60%;
+      max-width: 60%;
+      flex-basis: 60%;
+    }
+    .col-lg-80p {
+      width: 80%;
+      max-width: 80%;
+      flex-basis: 80%;
+    }
   }
-  .col-lg-60p {
-    width: 60%;
-    max-width: 60%;
-    flex-basis: 60%;
-  }
-  .col-lg-80p {
-    width: 80%;
-    max-width: 80%;
-    flex-basis: 80%;
-  }
-}
 
 .niho-bg {
   background: linear-gradient(to right, rgba(255, 255, 255, 0.99),
@@ -353,6 +379,37 @@ export default {
   .fade-leave-to {
     opacity: 0;
     transform: translateY(30px);
+  }
+
+  .desktop-title {
+    margin-left: 20%;
+    margin-top: 22px
+  }
+
+  .mobile-title {
+    width: 100%;
+    max-width:100%;
+    justify-content: center;
+    position: relative;
+    top: 10px
+  }
+
+  .mob-btn {
+    padding-left: 12px;
+    padding-top: 6px;
+    width: 50%;
+    max-width: 50%;
+    flex-basis: 50%;
+  }
+
+  .edit-mob-btn {
+    padding-right: 12px;
+    padding-top: 6px;
+    width: 50%;
+    max-width: 50%;
+    flex-basis: 50%;
+    display: flex;
+    justify-content: flex-end;
   }
 
 </style>
