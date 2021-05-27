@@ -1,21 +1,31 @@
 # Changelog | Ahau desktop
 
-## Current
+## v1.4.2
 
 ### Features
-
 - Settings dialog in Profile Show
   - Change app language
+- New translations
+
+### Bug fixes
+- Added install script to auto-install `VCRUNTIME140.dll` if it's missing during Windows install
+
+
+## v1.4.1
+
+### Bug fixes
+- Small patch attempting to fix windows install bug (failed)
+
 
 ## v1.4.0
-### Features
 
+### Features
 - new personal settings record
   - automatically finds or creates a personal settings record to store information about app settings:
     - current only storing information about whether your keys have been backed up
+- Updated translations
 
 ### Bug fixes
-
 - fix bug where all whakapapa werent listed on the main whakapapa page
 - fix bug where mentioning a profile when creating/editing a story was potentially crashing the app
 - fix archive page title

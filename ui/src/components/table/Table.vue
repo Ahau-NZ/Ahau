@@ -303,16 +303,16 @@ export default {
         { label: this.t('aka'), x: this.colWidth + 200 },
         { label: this.t('age'), x: this.colWidth + 400 },
         { label: this.t('dob'), x: this.colWidth + 470 },
-        { label: this.t('dod'), x: this.colWidth + 600 },
-        { label: this.t('profession'), x: this.colWidth + 730 },
-        { label: this.t('address'), x: this.colWidth + 1000 },
-        { label: this.t('city'), x: this.colWidth + 1405 },
-        { label: this.t('postCode'), x: this.colWidth + 1645 },
-        { label: this.t('country'), x: this.colWidth + 1765 },
-        { label: this.t('pob'), x: this.colWidth + 2005 },
-        { label: this.t('pod'), x: this.colWidth + 2245 },
-        { label: this.t('email'), x: this.colWidth + 2485 },
-        { label: this.t('phone'), x: this.colWidth + 2845 }
+        { label: this.t('dod'), x: this.colWidth + 650 },
+        { label: this.t('profession'), x: this.colWidth + 780 },
+        { label: this.t('address'), x: this.colWidth + 1050 },
+        { label: this.t('city'), x: this.colWidth + 1455 },
+        { label: this.t('postCode'), x: this.colWidth + 1695 },
+        { label: this.t('country'), x: this.colWidth + 1815 },
+        { label: this.t('pob'), x: this.colWidth + 2055 },
+        { label: this.t('pod'), x: this.colWidth + 2295 },
+        { label: this.t('email'), x: this.colWidth + 2535 },
+        { label: this.t('phone'), x: this.colWidth + 2895 }
       ]
     }
   },
