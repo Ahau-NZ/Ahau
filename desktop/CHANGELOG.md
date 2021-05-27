@@ -1,5 +1,10 @@
 # Changelog | Ahau desktop
 
+## V1.5
+
+### Features
+- The main nav bar now shows connected tribes for quick navigation
+
 ## v1.4.2
 
 ### Features
