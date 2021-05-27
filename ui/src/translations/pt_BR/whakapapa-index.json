@@ -3,5 +3,9 @@
   "addWhakapapaButton": "novo registro de whakapa",
   "noWhakapapaFound": "nenhum registro de whakapa encontrado",
   "whakapapaRecords": "registros",
-  "privateRecords": "Meu privado"
+  "privateRecords": "Meu privado",
+  "backToWhakapapa": "Back to whakapapa records",
+  "onlyYouHaveAccess": "Only you have access to this whakapapa",
+  "showDetails": "Show Whakapapa details",
+  "editDescription": "Edit whakapapa description"
 }
