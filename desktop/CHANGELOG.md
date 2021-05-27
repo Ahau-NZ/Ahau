@@ -7,6 +7,10 @@
 - Settings dialog in Profile Show
   - Change app language
 
+### Improvements
+
+- added translations for NodeMenu.vue
+
 ## v1.4.0
 ### Features
 

@@ -22,6 +22,7 @@ module.exports = {
   /* Nav / misc */
   accessButton: require('./access-button.json'),
   appBarMenu: require('./appbar-menu.json'),
+  nodeMenu: require('./node-menu.json'), // whakapapa menu
   sideNav: require('./side-nav-menu.json'),
 
   pataka: require('./pataka'),
