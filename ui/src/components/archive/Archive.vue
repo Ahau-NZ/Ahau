@@ -143,6 +143,7 @@ export default {
   methods: {
     ...mapAlertMutations(['showAlert']),
     ...mapCollectionActions(['createCollection', 'getCollectionsByGroup']),
+    getDisplayName,
     showCurrentCollection ({ id }) {
       var type = this.$route.name.split('/archive')[0]
       this.$router.push({
