@@ -139,7 +139,6 @@
 <script>
 import Avatar from '@/components/Avatar'
 import NotificationPanel from '@/components/menu/NotificationPanel'
-import FeedbackButton from '@/components/button/FeedbackButton'
 import { mapGetters, mapActions } from 'vuex'
 import BackButton from '@/components/button/BackButton'
 
@@ -165,6 +164,11 @@ export default {
     enableMenu: { type: Boolean, default: true },
     app: { type: Boolean, default: false },
     sideMenu: { type: Boolean, default: false }
+  },
+  components: {
+    Avatar,
+    NotificationPanel,
+    BackButton
   },
   data () {
     return {
@@ -275,12 +279,6 @@ export default {
     t (key, vars) {
       return this.$t('appBarMenu.' + key, vars)
     }
-  },
-  components: {
-    Avatar,
-    FeedbackButton,
-    NotificationPanel,
-    BackButton
   }
 }
 </script>
