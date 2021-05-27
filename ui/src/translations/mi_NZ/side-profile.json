@@ -9,7 +9,7 @@
   "placeOfBirth": "place of birth",
   "placeOfPassing": "place of passing",
   "dateOfPassing": "date of passing",
-  "buriedLocation": "buried location", 
+  "buriedLocation": "buried location",
   "profession": "profession",
   "schools": "schools",
   "skills": "skills",
@@ -18,7 +18,7 @@
   "children": "children",
   "contributedBy": "contributed by",
   "deletePerson": "Delete this person",
-  "cancel": "Cancel",
-  "save": "Save",
-  "description": "Description"
+  "cancel": "Whakakora",
+  "save": "Penapena",
+  "description": "Kōrero whakaaturanga"
 }
