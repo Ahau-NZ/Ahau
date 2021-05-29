@@ -40,10 +40,9 @@
 import { mapGetters, mapActions, createNamespacedHelpers } from 'vuex'
 import Dialog from '@/components/dialog/Dialog.vue'
 import { downloadKeys } from '@/lib/key-backup.js'
-import { getGroupIds } from '@/lib/community-helpers.js'
-import { getLatestSeq } from '@/lib/person-helpers.js'
 
 const { mapActions: mapSettingsActions } = createNamespacedHelpers('settings')
+const { mapActions: mapTribeActions } = createNamespacedHelpers('tribe')
 
 export default {
   props: {
@@ -64,10 +63,11 @@ export default {
     }
   },
   methods: {
-    ...mapSettingsActions(['updateSettings']),
+    ...mapSettingsActions(['updateSettings', 'getLatestSeq']),
+    ...mapTribeActions(['getTribeIds']),
     ...mapActions(['setWhoami']),
     async downloadKeys () {
-      const groupIds = await this.getGroupIds()
+      const groupIds = await this.getTribeIds()
       const latestMssgSeq = await this.getLatestSeq()
 
       downloadKeys(groupIds, latestMssgSeq)
@@ -79,34 +79,6 @@ export default {
       await this.updateSettings(input)
 
       await this.setWhoami()
-    },
-    async getGroupIds () {
-      try {
-        const res = await this.$apollo.query(
-          getGroupIds
-        )
-
-        if (res.errors) throw res.errors
-
-        return res.data.listGroups.map(d => d.id)
-      } catch (err) {
-        console.error(err)
-        return null
-      }
-    },
-    async getLatestSeq () {
-      try {
-        const res = await this.$apollo.query(
-          getLatestSeq
-        )
-
-        if (res.errors) throw res.errors
-
-        return res.data.latestSequence
-      } catch (err) {
-        console.error(err)
-        return null
-      }
     },
     t (key, vars) {
       return this.$t('keyBackupForm.' + key, vars)
