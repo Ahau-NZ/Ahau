@@ -1,6 +1,6 @@
 import pick from 'lodash.pick'
 import gql from 'graphql-tag'
-import { PublicProfileFieldsFragment } from '@/lib/profile-helpers'
+import { PublicProfileFieldsFragment } from '../../../lib/profile-helpers.js'
 
 // TODO we should get rid of these and force the developer to manually enter the fields into the fragment
 // this will also ensure further down when saving, that we are seeing input errors rather than removing extra

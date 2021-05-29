@@ -113,12 +113,38 @@ export const PERSON_FRAGMENT = gql`
     headerImage { uri }
   }
 `
+export const SETTINGS_FRAGMENT = gql`
+  ${AUTHOR_FRAGMENT}
+  fragment SettingsFragment on Settings {
+    id
+    keyBackedUp
+    tombstone {
+      date
+      reason
+    }
+    recps
+    authors {
+      ...AuthorFragment
+      profile {
+        type
+        ...ProfileFragment
+      }
+    }
+    tiaki {
+      type
+      ...ProfileFragment
+    }
+    canEdit
+    originalAuthor
+  }
+`
 
 export const whoami = ({
   query: gql`
     ${PublicProfileFieldsFragment}
     ${PERSON_FRAGMENT}
     ${AUTHOR_FRAGMENT}
+    ${SETTINGS_FRAGMENT}
     query {
       whoami {
         public {
@@ -142,6 +168,9 @@ export const whoami = ({
               }
             }
           }
+          settings {
+            ...SettingsFragment
+          }
         }
       }
     }
@@ -155,6 +184,13 @@ export const WHAKAPAPA_LINK_FRAGMENT = gql`
     legallyAdopted
   }
 `
+export const getLatestSeq = {
+  query: gql`
+    query {
+      latestSequence
+    }
+  `
+}
 
 export const getPerson = id => ({
   query: gql`

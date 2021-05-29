@@ -26,17 +26,24 @@
           <v-divider></v-divider>
         </v-row>
         <NotificationList
+          v-if="!isKeyBackedUp"
+          :notifications="ahauNotification"
+          :title="t('systemTitle')"
+          show-badge
+          @click="toggleShowKeyBackup"
+        />
+        <NotificationList
           :notifications="filteredNotifications.unseen"
-          title="New"
+          :title="t('newTitle')"
           show-badge
         />
         <NotificationList
           :notifications="filteredNotifications.pending"
-          title="Pending"
+          :title="t('pendingTitle')"
         />
         <NotificationList
           :notifications="filteredNotifications.complete"
-          title="Complete"
+          :title="t('completeTitle')"
         />
       </v-card>
     </v-menu>
@@ -70,20 +77,28 @@
         v-scroll="onScroll"
       >
         <NotificationList
+          v-if="!isKeyBackedUp"
+          :notifications="ahauNotification"
+          :title="t('systemTitle')"
+          show-badge
+          @click="toggleShowKeyBackup"
+        />
+        <NotificationList
           :notifications="filteredNotifications.unseen"
-          title="New"
+          :title="t('newTitle')"
           show-badge
         />
         <NotificationList
           :notifications="filteredNotifications.pending"
-          title="Pending"
+          :title="t('pendingTitle')"
         />
         <NotificationList
           :notifications="filteredNotifications.complete"
-          title="Complete"
+          :title="t('completeTitle')"
         />
       </v-card>
     </v-expand-transition>
+    <KeyBackupDialog v-if="showKeyBackup" :show="showKeyBackup" @close="toggleShowKeyBackup" />
   </div>
 </template>
 
@@ -91,16 +106,36 @@
 import { mapGetters } from 'vuex'
 import NotificationList from '@/components/menu/NotificationList.vue'
 import pileSort from 'pile-sort'
+import KeyBackupDialog from '@/components/dialog/KeyBackupDialog.vue'
 
 export default {
   components: {
-    NotificationList
+    NotificationList,
+    KeyBackupDialog
   },
   data () {
     return {
       menu: false,
       expand: false,
-      offset: 0
+      offset: 0,
+      showKeyBackup: false,
+      ahauNotification: [
+        {
+          from: {
+            avatarImage: {
+              uri: require('@/assets/logo_red.svg')
+            },
+            preferredName: 'Ahau',
+            gender: null,
+            bornAt: null
+          },
+          group: {
+            preferredName: 'Ahau'
+          },
+          isSystem: true,
+          isNew: true
+        }
+      ]
     }
   },
   computed: {
@@ -114,17 +149,24 @@ export default {
 
       return { unseen, pending, complete, other }
     },
+    isKeyBackedUp () {
+      return this.whoami.personal.settings.keyBackedUp
+    },
     notificationsCount () {
-      return this.filteredNotifications.unseen.length
+      const notifs = this.filteredNotifications.unseen.length
+      return !this.isKeyBackedUp ? notifs + 1 : notifs
     },
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
     hasNotification () {
-      return this.filteredNotifications.unseen.length > 0 || this.filteredNotifications.pending.length > 0 || this.filteredNotifications.complete.length > 0
+      return this.filteredNotifications.unseen.length > 0 ||
+      this.filteredNotifications.pending.length > 0 ||
+      this.filteredNotifications.complete.length > 0 ||
+      !this.isKeyBackedUp
     },
     showBadge () {
-      return this.filteredNotifications.unseen.length > 0
+      return this.filteredNotifications.unseen.length > 0 || !this.isKeyBackedUp
     }
   },
   watch: {
@@ -142,6 +184,13 @@ export default {
   methods: {
     onScroll () {
       if (!this.expand) this.offset = window.pageYOffset
+    },
+    toggleShowKeyBackup () {
+      if (this.showKeyBackup) this.showKeyBackup = false
+      else this.showKeyBackup = true
+    },
+    t (key, vars) {
+      return this.$t('notifications.' + key, vars)
     }
   }
 

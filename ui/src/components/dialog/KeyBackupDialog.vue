@@ -1,44 +1,44 @@
 <template>
-  <Dialog :title="t('settingsTitle')" :show="show" @close="close" :width="`700px`" :goBack="close">
+  <Dialog :title="t('title')" :show="show" @close="close" :width="`700px`" :goBack="close">
     <template v-slot:content>
       <v-card-text class="pt-4">
-        <h3>{{ t('keyBackupTitle') }}</h3>
+        <p>{{ t('whyBackUp') }}</p>
         <p>
-          {{ t('loseAccess') }}.
-          {{ t('backUpKey') }}
+          <ul>
+            <li>{{ t('allInformation') }}</li>
+            <li>{{ t('noAccess') }}</li>
+          </ul>
         </p>
-        <v-col style="margin-bottom:20px" align="left" class="py-0">
-          <v-btn
-            class="white--text"
-            color="black"
-            @click.prevent="downloadKeys"
-          >
-            {{ t('downloadKey') }}
-          </v-btn>
-      </v-col>
-        <h3>{{ t('languageTitle') }}</h3>
         <p>
-          {{ t('chooseLanguage') }}
+          {{ t('yourAhauKey') }}
         </p>
-        <LocalePicker class='locale' />
         <p>
-          {{ t('languagesNote') }}
-          <a href="http://chat.ahau.io" target="_blank">{{ t('submitFeedback') }}</a>
+          {{ t('recommendations') }}
         </p>
+        <ol>
+          <li>{{ t('personal') }}</li>
+          <li>{{ t('trustedPerson') }}</li>
+          <li>{{ t('printFile') }}</li>
+        </ol>
       </v-card-text>
     </template>
     <template v-slot:actions>
       <v-col align="center" class="py-0">
+        <v-btn
+          class="white--text my-3"
+          color="black"
+          @click.prevent="downloadKeys"
+        >
+          {{ t('downloadButton') }}
+        </v-btn>
       </v-col>
     </template>
   </Dialog>
 </template>
 
 <script>
-import Dialog from '@/components/dialog/Dialog.vue'
-import LocalePicker from '@/components/LocalePicker'
-
 import { mapGetters, mapActions, createNamespacedHelpers } from 'vuex'
+import Dialog from '@/components/dialog/Dialog.vue'
 import { downloadKeys } from '@/lib/key-backup.js'
 import { getGroupIds } from '@/lib/community-helpers.js'
 import { getLatestSeq } from '@/lib/person-helpers.js'
@@ -49,13 +49,19 @@ export default {
   props: {
     show: { type: Boolean, required: true }
   },
-  name: 'SettingsDialog',
+  name: 'KeyBackupDialog',
   components: {
-    Dialog,
-    LocalePicker
+    Dialog
   },
   computed: {
-    ...mapGetters(['whoami'])
+    ...mapGetters(['whoami', 'notifications']),
+    mobile () {
+      return this.$vuetify.breakpoint.xs
+    },
+    examples () {
+      if (this.mobile) return this.mobileItems
+      return this.items
+    }
   },
   methods: {
     ...mapSettingsActions(['updateSettings']),
@@ -102,17 +108,24 @@ export default {
         return null
       }
     },
+    t (key, vars) {
+      return this.$t('keyBackupForm.' + key, vars)
+    },
     close () {
       this.$emit('close')
-    },
-    t (key, vars) {
-      return this.$t('settingsForm.' + key, vars)
     }
   }
 }
 </script>
-<style scoped lang="scss">
-.locale {
-    margin-bottom:20px;
-  }
+<style scoped>
+v-btn {
+  height:100px;
+}
+.dwn-btn {
+  background-color: black;
+  color: white;
+}
+.text-centre {
+  height: 700px;
+}
 </style>

@@ -5,7 +5,7 @@ import clone from 'lodash.clonedeep'
 import { ARTEFACT_FRAGMENT } from './artefact-helpers'
 import { PERSON_FRAGMENT } from './person-helpers'
 import { PublicProfileFieldsFragment } from './profile-helpers.js'
-import { CollectionFragment } from '@/store/modules/collection/apollo-helpers.js'
+import { CollectionFragment } from '../store/modules/collection/apollo-helpers.js'
 
 export function setDefaultStory (newStory) {
   var story = clone(newStory)
