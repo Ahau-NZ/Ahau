@@ -184,13 +184,6 @@ export const WHAKAPAPA_LINK_FRAGMENT = gql`
     legallyAdopted
   }
 `
-export const getLatestSeq = {
-  query: gql`
-    query {
-      latestSequence
-    }
-  `
-}
 
 export const getPerson = id => ({
   query: gql`

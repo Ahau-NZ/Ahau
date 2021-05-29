@@ -99,8 +99,10 @@ import ProfileInfoCard from '@/components/profile/ProfileInfoCard.vue'
 import ProfileInfoItem from '@/components/profile/ProfileInfoItem.vue'
 import ProfileCard from '@/components/profile/ProfileCard.vue'
 import Avatar from '@/components/Avatar.vue'
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters, createNamespacedHelpers } from 'vuex'
 import { getDisplayName } from '@/lib/person-helpers.js'
+
+const { mapActions: mapTribeActions, mapGetters: mapTribeGetters } = createNamespacedHelpers('tribe')
 
 export default {
   name: 'Profile',
@@ -114,14 +116,15 @@ export default {
     profile: Object,
     tribe: Object
   },
-  beforeMount () {
-    this.setTribes()
+  async beforeMount () {
+    await this.getTribes()
   },
   mounted () {
     window.scrollTo(0, 0)
   },
   computed: {
     ...mapGetters(['whoami', 'tribes']),
+    ...mapTribeGetters(['tribes']),
     myProfile () {
       return this.profile.id === this.whoami.personal.profile.id
     },
@@ -139,7 +142,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setTribes']),
+    ...mapTribeActions(['getTribes']),
     goTribe (tribe) {
       var profile = tribe.private.length > 0
         ? tribe.private[0]

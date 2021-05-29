@@ -63,3 +63,11 @@ export const deleteSettings = (id, date) => ({
     }
   }
 })
+
+export const getLatestSeq = {
+  query: gql`
+    query {
+      latestSequence
+    }
+  `
+}

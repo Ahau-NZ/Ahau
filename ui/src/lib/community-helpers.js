@@ -87,16 +87,6 @@ export const PERMITTED_COMMUNITY_LINK_ATTRS = [
   'allowPublic'
 ]
 
-export const getGroupIds = {
-  query: gql`
-    query {
-      listGroups {
-        id
-      }
-    }
-  `
-}
-
 export const getMembers = id => ({
   query: gql`
     ${PublicProfileFieldsFragment}

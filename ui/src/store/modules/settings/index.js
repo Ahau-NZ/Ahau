@@ -1,4 +1,10 @@
-import { getSettings, getAllSettings, saveSettings, deleteSettings } from './apollo-helpers'
+import {
+  getSettings,
+  getAllSettings,
+  saveSettings,
+  deleteSettings,
+  getLatestSeq
+} from './apollo-helpers'
 
 export default function (apollo) {
   const state = {
@@ -95,6 +101,20 @@ export default function (apollo) {
       } catch (err) {
         // TODO error alert message
         console.error(err)
+      }
+    },
+    async getLatestSeq () {
+      try {
+        const res = await apollo.query(
+          getLatestSeq
+        )
+
+        if (res.errors) throw res.errors
+
+        return res.data.latestSequence
+      } catch (err) {
+        console.error(err)
+        return null
       }
     }
   }
