@@ -36,17 +36,24 @@ export default {
       return this.showBadge ? 'font-weight-medium' : ''
     },
     text () {
-      const { isPersonal, isNew, isAccepted } = this.notification
+      const { isPersonal, isNew, isAccepted, isSystem } = this.notification
+
+      if (isSystem) return this.t('system')
 
       const groupName = this.notification.group.preferredName
 
-      if (isPersonal && isNew) return `Has yet to review your request to join ${groupName}`
-      if (isPersonal && isAccepted) return `Has accepted your request to join ${groupName}`
-      if (isPersonal && !isAccepted) return `Has declined your request to join ${groupName}`
-      if (!isPersonal && isNew) return `Has requested to join ${groupName}`
-      if (!isPersonal && isAccepted) return `Has joined ${groupName}`
-      if (!isPersonal && !isAccepted) return `Has been declined to join ${groupName}`
-      return 'No details'
+      if (isPersonal && isNew) return this.t('personalNew', { groupName: groupName })
+      if (isPersonal && isAccepted) return this.t('personalAccepted', { groupName: groupName })
+      if (isPersonal && !isAccepted) return this.t('personalDeclined', { groupName: groupName })
+      if (!isPersonal && isNew) return this.t('groupNew', { groupName: groupName })
+      if (!isPersonal && isAccepted) return this.t('groupAccepted', { groupName: groupName })
+      if (!isPersonal && !isAccepted) return this.t('groupDeclined', { groupName: groupName })
+      return this.t('noDetails')
+    }
+  },
+  methods: {
+    t (key, vars) {
+      return this.$t('notifications.' + key, vars)
     }
   }
 }

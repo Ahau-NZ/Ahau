@@ -16,7 +16,7 @@ module.exports = {
   addStoryForm: require('./add-story-form.json'),
   addCollectionForm: require('./add-collection-form.json'),
   settingsForm: require('./settings-form.json'),
-
+  keyBackupForm: require('./key-backup-form.json'),
   deleteNode: require('./delete-node.json'),
 
   /* Nav / misc */
@@ -24,6 +24,7 @@ module.exports = {
   appBarMenu: require('./appbar-menu.json'),
   nodeMenu: require('./node-menu.json'), // whakapapa menu
   sideNav: require('./side-nav-menu.json'),
+  notifications: require('./notifications.json'),
 
   pataka: require('./pataka'),
 

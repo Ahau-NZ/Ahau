@@ -3,8 +3,16 @@
 ## v1.4.2
 
 ### Features
+
+- Key backup feature to backup:
+  - Personal key
+  - Group keys
+  - Locations of known pataka
+  - Latest message sequence number
+
 - Settings dialog in Profile Show
   - Change app language
+  - Download key backup
 - New translations
 
 ### Bug fixes

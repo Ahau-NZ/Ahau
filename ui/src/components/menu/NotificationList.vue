@@ -12,8 +12,9 @@
     <v-list class="py-0">
       <div v-for="(notification, index) in notifications" :key="index">
         <!-- Registration Notification -->
-        <Notification :notification="notification" :showBadge="showBadge" @click="openReviewRegistration(notification)" />
+        <Notification :notification="notification" :showBadge="showBadge" @click="openNotification(notification)" />
       </div>
+
     </v-list>
   </div>
 </template>
@@ -32,12 +33,12 @@ export default {
   components: {
     Notification
   },
-
   methods: {
     ...mapActions(['setDialog', 'setCurrentNotification']),
-    openReviewRegistration (notification) {
+    openNotification (notification) {
       this.setCurrentNotification(notification)
-      this.setDialog({ active: 'review-registration' })
+      if (notification.isSystem) this.$emit('click')
+      else this.setDialog({ active: 'review-registration' })
     }
   }
 }
