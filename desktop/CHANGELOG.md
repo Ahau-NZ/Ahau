@@ -1,23 +1,30 @@
 # Changelog | Ahau desktop
 
+## Current
+
+### Features
+
+- Key backup:
+  - Notification telling you to back up your keys (if you havent already)
+  - Download key backup:
+    - In the notification
+    - In the settings dialog
+
+### Bug Fixes
+
+- Fix bug where you couldnt create a new collection
+
 ## v1.4.2
 
 ### Features
 
-- Key backup feature to backup:
-  - Personal key
-  - Group keys
-  - Locations of known pataka
-  - Latest message sequence number
-
 - Settings dialog in Profile Show
   - Change app language
-  - Download key backup
 - New translations
 
 ### Bug fixes
-- Added install script to auto-install `VCRUNTIME140.dll` if it's missing during Windows install
 
+- Added install script to auto-install `VCRUNTIME140.dll` if it's missing during Windows install
 
 ## v1.4.1
 

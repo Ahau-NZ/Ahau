@@ -47,7 +47,7 @@
     />
     <NewCollectionDialog v-if="dialog === 'new-collection'" :show="dialog === 'new-collection'"
       :title="$t('addCollectionForm.addCollection')" @close="dialog = null"
-      @submit="createCollection"
+      @submit="processCollection"
     />
   </div>
 </template>
@@ -159,7 +159,7 @@ export default {
     openContextMenu ($event) {
       this.$refs.menu.open($event)
     },
-    async createCollection (input) {
+    async processCollection (input) {
       await this.createCollection(input)
       await this.reload()
     },
