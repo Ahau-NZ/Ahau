@@ -53,14 +53,7 @@ export default {
     Dialog
   },
   computed: {
-    ...mapGetters(['whoami', 'notifications']),
-    mobile () {
-      return this.$vuetify.breakpoint.xs
-    },
-    examples () {
-      if (this.mobile) return this.mobileItems
-      return this.items
-    }
+    ...mapGetters(['whoami', 'notifications'])
   },
   methods: {
     ...mapSettingsActions(['updateSettings', 'getLatestSeq']),

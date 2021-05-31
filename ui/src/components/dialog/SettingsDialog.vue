@@ -29,7 +29,7 @@
           <v-btn
             class="white--text"
             color="black"
-            @click.prevent="deleteAhau"
+            @click.prevent="$emit('showDeleteProfile')"
           >
             {{ t('deleteProfile') }}
           </v-btn>
@@ -82,9 +82,6 @@ export default {
       await this.updateSettings(input)
 
       await this.setWhoami()
-    },
-    deleteProfile () {
-      console.log('delete ahau')
     },
     close () {
       this.$emit('close')

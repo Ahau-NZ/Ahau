@@ -77,6 +77,13 @@
       v-if="dialog === 'settings'"
       :show="dialog === 'settings'"
       @close="dialog = null"
+      @showDeleteProfile="showDeleteProfile"
+    />
+    <DeleteProfileDialog
+      v-if="dialog === 'delete-profile'"
+      :show="dialog === 'delete-profile'"
+      @close="dialog = null"
+      @cancel="cancelDeleteProfile"
     />
     <!-- Snackbar for successful Tribe request sent -->
     <v-snackbar
@@ -102,6 +109,7 @@ import DeleteCommunityDialog from '@/components/dialog/community/DeleteCommunity
 import EditNodeDialog from '@/components/dialog/profile/EditNodeDialog.vue'
 import NewRegistrationDialog from '@/components/dialog/registration/NewRegistrationDialog.vue'
 import SettingsDialog from '@/components/dialog/SettingsDialog.vue'
+import DeleteProfileDialog from '@/components/dialog/DeleteProfileDialog.vue'
 import { updateTribe, deleteTribe, getMembers, getTribalProfile } from '@/lib/community-helpers.js'
 
 import { createGroupApplication } from '@/lib/tribes-application-helpers.js'
@@ -131,6 +139,7 @@ export default {
     EditNodeDialog,
     NewRegistrationDialog,
     SettingsDialog,
+    DeleteProfileDialog,
     ProfileButton
   },
   data () {
@@ -329,6 +338,12 @@ export default {
       // tell apollo to refresh the current tribe and profile queries
       this.$apollo.queries.tribe.refetch()
       this.$apollo.queries.profile.refetch()
+    },
+    showDeleteProfile () {
+      this.dialog = 'delete-profile'
+    },
+    cancelDeleteProfile () {
+      this.dialog = 'settings'
     },
     t (key, vars) {
       return this.$t('viewPerson.' + key, vars)
