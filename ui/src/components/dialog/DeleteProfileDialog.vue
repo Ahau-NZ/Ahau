@@ -5,12 +5,22 @@
         <p>
           <b>{{ t('warning') }}</b>{{ t('undone') }}
         </p>
+        <v-checkbox
+          v-model="removeProfile"
+          :label="t('removeProfile')"
+          hide-details
+        />
+        <v-checkbox
+          v-model="keepProfileVisible"
+          :label="t('keepProfileVisible')"
+          hide-details
+        />
       </v-card-text>
     </template>
     <template v-slot:actions>
-      <v-col align="center" class="py-0">
         <v-btn
           class="white--text my-3"
+          style="margin-right: 20px"
           color="black"
           @click.prevent="deleteProfile"
         >
@@ -18,12 +28,12 @@
         </v-btn>
         <v-btn
           class="black--text my-3"
+          style="margin-right: 20px"
           color="white"
           @click.prevent="cancel"
         >
           {{ t('cancelButton') }}
         </v-btn>
-      </v-col>
     </template>
   </Dialog>
 </template>
@@ -38,6 +48,12 @@ export default {
   name: 'KeyBackupDialog',
   components: {
     Dialog
+  },
+  data () {
+    return {
+      removeProfile: false,
+      keepProfileVisible: false
+    }
   },
   methods: {
     deleteProfile () {
@@ -58,5 +74,6 @@ export default {
 <style scoped>
 v-btn {
   height:100px;
+  margin-right: 20px;
 }
 </style>

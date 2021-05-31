@@ -1,9 +1,9 @@
 {
-  "title": "Delete Your Ahau Profile!!",
-  "warning": "WARNING!!: ",
-  "undone": "This can't be undone.!!",
-  "removeProfile": "Delete my database and remove my profile from all records.!!",
-  "keepProfileVisible": "Delete my database and keep my profile visble in all records.!!",
-  "deleteButton": "Delete My Profile!!",
-  "cancelButton": "Cancel, Keep My Profile!!"
+  "title": "Delete Your Ahau Profile",
+  "warning": "WARNING: ",
+  "undone": "This can't be undone.",
+  "removeProfile": "Delete my database and remove my profile from all records.",
+  "keepProfileVisible": "Delete my database and keep my profile visble in records.",
+  "deleteButton": "Delete My Profile",
+  "cancelButton": "Cancel, Keep My Profile"
 }
