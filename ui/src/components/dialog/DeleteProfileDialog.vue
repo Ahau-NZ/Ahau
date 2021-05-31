@@ -5,16 +5,12 @@
         <p>
           <b>{{ t('warning') }}</b>{{ t('undone') }}
         </p>
-        <v-checkbox
-          v-model="removeProfile"
-          :label="t('removeProfile')"
-          hide-details
-        />
-        <v-checkbox
-          v-model="keepProfileVisible"
-          :label="t('keepProfileVisible')"
-          hide-details
-        />
+        <p>
+          {{ t('notBackedUp') }}
+        </p>
+        <p>
+          {{ t('continue') }}
+        </p>
       </v-card-text>
     </template>
     <template v-slot:actions>
