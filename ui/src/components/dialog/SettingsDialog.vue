@@ -15,7 +15,7 @@
           >
             {{ t('downloadKey') }}
           </v-btn>
-      </v-col>
+        </v-col>
         <h3>{{ t('languageTitle') }}</h3>
         <p>
           {{ t('chooseLanguage') }}
@@ -25,6 +25,15 @@
           {{ t('languagesNote') }}
           <a href="http://chat.ahau.io" target="_blank">{{ t('submitFeedback') }}</a>
         </p>
+        <v-col style="margin-bottom:20px" align="left" class="py-0">
+          <v-btn
+            class="white--text"
+            color="black"
+            @click.prevent="deleteAhau"
+          >
+            {{ t('deleteProfile') }}
+          </v-btn>
+        </v-col>
       </v-card-text>
     </template>
     <template v-slot:actions>
@@ -73,6 +82,9 @@ export default {
       await this.updateSettings(input)
 
       await this.setWhoami()
+    },
+    deleteProfile () {
+      console.log('delete ahau')
     },
     close () {
       this.$emit('close')
