@@ -1,8 +1,8 @@
 {
-  "viewPerson": "View Person",
-  "addParent": "Add Parent",
-  "addPartner": "Add Partner",
-  "addChild": "Add Child",
-  "addSibling": "Add Sibling",
-  "deletePerson": "Delete Person"
+  "viewPerson": "Tiro tangata",
+  "addParent": "Mātua hou",
+  "addPartner": "Tāpiri i te hoa rangatira",
+  "addChild": "Tāpiri tamariki",
+  "addSibling": "Tāpirihia te teina",
+  "deletePerson": "Muku tangata"
 }
