@@ -82,6 +82,7 @@
     <DeleteProfileDialog
       v-if="dialog === 'delete-profile'"
       :show="dialog === 'delete-profile'"
+      :profile="profile"
       @close="dialog = null"
       @cancel="cancelDeleteProfile"
     />

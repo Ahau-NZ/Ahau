@@ -118,6 +118,7 @@ const methods = {
   },
   // method to save a profile (community or person) using apollo
   async saveProfile (input) {
+    console.log('saving, input: ', input)
     if (input.avatarImage) delete input.avatarImage.uri // not valid to transmit / persist
     if (input.headerImage) delete input.headerImage.uri
 
@@ -142,6 +143,7 @@ const methods = {
   },
 
   async createPerson (input) {
+    console.log('create person: ', input.authors)
     try {
       if (!input.type) throw new Error('profile.type is required on createPerson()')
       if (!input.recps) throw new Error('profile.recps is required on createPerson()')

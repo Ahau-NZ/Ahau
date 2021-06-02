@@ -36,12 +36,19 @@
 
 <script>
 import Dialog from '@/components/dialog/Dialog.vue'
+import mapProfileMixins from '@/mixins/profile-mixins.js'
 
 export default {
   props: {
-    show: { type: Boolean, required: true }
+    show: { type: Boolean, required: true },
+    profile: { type: Object, required: true }
   },
   name: 'KeyBackupDialog',
+  mixins: [
+    mapProfileMixins({
+      mapMethods: ['saveProfile']
+    })
+  ],
   components: {
     Dialog
   },
@@ -52,8 +59,15 @@ export default {
     }
   },
   methods: {
-    deleteProfile () {
-      console.log('delete my profile')
+    async deleteProfile () {
+      const addAuthors = {
+        // add: ['*'],
+        remove: ['*']
+      }
+
+      console.log('change authors to *: ', addAuthors)
+      const input = { id: this.profile.id, authors: addAuthors }
+      await this.saveProfile(input)
     },
     cancel () {
       this.$emit('cancel')
