@@ -82,7 +82,7 @@
         <template v-slot:content>
           <v-row v-for="member in tribe.members" :key="member.id" class="justify-center align-center ma-0 ml-4">
             <v-col cols="2" class="pt-0 pl-0">
-              <Avatar :size="mobile ? '50px' : '40px'" :image="member.avatarImage" :alt="member.preferredName" :gender="member.gender" />
+              <Avatar :size="mobile ? '50px' : '40px'" :image="member.avatarImage" :alt="member.preferredName" :gender="member.gender" clickable @click="openProfile(member)"/>
             </v-col>
             <v-col class="py-0">
               <p style="color:black;">{{ getDisplayName(member) }}</p>
@@ -99,7 +99,7 @@ import ProfileInfoCard from '@/components/profile/ProfileInfoCard.vue'
 import ProfileInfoItem from '@/components/profile/ProfileInfoItem.vue'
 import ProfileCard from '@/components/profile/ProfileCard.vue'
 import Avatar from '@/components/Avatar.vue'
-import { mapGetters, createNamespacedHelpers } from 'vuex'
+import { mapGetters, createNamespacedHelpers, mapActions } from 'vuex'
 import { getDisplayName } from '@/lib/person-helpers.js'
 
 const { mapActions: mapTribeActions, mapGetters: mapTribeGetters } = createNamespacedHelpers('tribe')
@@ -143,6 +143,8 @@ export default {
   },
   methods: {
     ...mapTribeActions(['getTribes']),
+    ...mapActions(['setProfileById', 'setDialog']),
+
     goTribe (tribe) {
       var profile = tribe.private.length > 0
         ? tribe.private[0]
@@ -152,6 +154,10 @@ export default {
         name: profile.type,
         params: { tribeId: tribe.id, profileId: profile.id, profile }
       }
+    },
+    openProfile (profile) {
+      this.setProfileById({ id: profile.id, type: 'preview' })
+      this.setDialog({ active: 'view-edit-node', type: 'preview' })
     },
     getDisplayName
   }

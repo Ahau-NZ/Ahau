@@ -310,11 +310,6 @@ export default {
       authors: []
     }
   },
-  async mounted () {
-    // TODO cherese 22-04-21 move to graphql
-    const originalAuthor = await this.getOriginalAuthor()
-    this.authors = [originalAuthor]
-  },
   computed: {
     mobile () {
       return this.$vuetify.breakpoint.xs
@@ -384,6 +379,7 @@ export default {
       handler (newVal) {
         if (!newVal) return
         this.formData = defaultData(newVal)
+        this.getOriginalAuthor()
       }
     }
   },
@@ -392,7 +388,9 @@ export default {
     ...mapActions(['setProfileById', 'setDialog', 'setIsFromWhakapapaShow']),
     getDisplayName,
     async getOriginalAuthor () {
-      return this.getProfile(this.profile.originalAuthor)
+      // TODO cherese 22-04-21 move to graphql
+      const originalAuthor = await this.getProfile(this.profile.originalAuthor)
+      this.authors = [originalAuthor]
     },
     goArchive () {
       if (
