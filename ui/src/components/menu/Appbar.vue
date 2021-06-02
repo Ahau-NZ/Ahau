@@ -166,6 +166,11 @@ export default {
     app: { type: Boolean, default: false },
     sideMenu: { type: Boolean, default: false }
   },
+  components: {
+    Avatar,
+    NotificationPanel,
+    BackButton
+  },
   data () {
     return {
       drawer: false,
