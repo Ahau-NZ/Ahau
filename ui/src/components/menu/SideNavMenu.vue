@@ -20,7 +20,7 @@
               :aliveInterval="profile.aliveInterval"
               :alt="profile.preferredName"
               :size="tablet ? '110px':'170px'"
-              :isView="profile.type === 'community' && !profile.avatarImage"
+              :isView="isView"
             />
           </v-btn>
       </v-row>
@@ -32,7 +32,9 @@
               <Avatar
                 v-if="mobile && activeComponent !=='profile'"
                 :image="profile.avatarImage"
+                :gender="profile.gender"
                 size="40px"
+                :isView="isView"
               />
               <UserIcon
                 v-else
@@ -129,7 +131,7 @@ import TimelineIcon from '@/components/button/TimelineIcon.vue'
 import RegisterButton from '@/components/button/RegisterButton.vue'
 
 import Avatar from '@/components/Avatar.vue'
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters, mapActions, mapMutations } from 'vuex'
 
 export default {
   name: 'SideNavMenu',
@@ -165,6 +167,9 @@ export default {
   },
   computed: {
     ...mapGetters(['showStory', 'storeDialog', 'notifications', 'whoami']),
+    isView () {
+      return this.profile.type === 'community' && !this.profile.avatarImage
+    },
     activeComponent () {
       if (this.$route.name === 'whakapapa/:whakapapaId') return 'whakapapa'
       return this.$route.name.split('/')[1]
@@ -214,6 +219,7 @@ export default {
   },
   methods: {
     ...mapActions(['toggleShowStory', 'setDialog']),
+    ...mapMutations(['updateComponent']),
     goArchive () {
       if (this.showStory) {
         this.toggleShowStory()
@@ -222,6 +228,7 @@ export default {
     },
     setActive (component) {
       if (this.showStory) this.toggleShowStory()
+      this.updateComponent(component)
       this.$router.push({
         name: this.profile.type + '/' + component,
         params: {

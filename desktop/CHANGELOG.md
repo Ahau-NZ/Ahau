@@ -9,10 +9,14 @@
   - Download key backup:
     - In the notification
     - In the settings dialog
+- The main nav bar now shows connected tribes for quick navigation
+- In tribe profile view you can now click on a member to view there profile
+
 
 ### Bug Fixes
 
 - Fix bug where you couldnt create a new collection
+- Fix mobile view for adding a person
 
 ## v1.4.2
 
