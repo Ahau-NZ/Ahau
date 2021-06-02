@@ -4,18 +4,43 @@
 
 ### Features
 
-- Settings dialog in Profile Show
-  - Change app language
+- Key backup:
+  - Notification telling you to back up your keys (if you havent already)
+  - Download key backup:
+    - In the notification
+    - In the settings dialog
 
-## v1.4.0
+### Bug Fixes
+
+- Fix bug where you couldnt create a new collection
+
+## v1.4.2
+
 ### Features
 
-- new personal settings record
-  - automatically finds or creates a personal settings record to store information about app settings:
-    - current only storing information about whether your keys have been backed up
+- Settings dialog in Profile Show
+  - Change app language
+- New translations
 
 ### Bug fixes
 
+- Added install script to auto-install `VCRUNTIME140.dll` if it's missing during Windows install
+
+## v1.4.1
+
+### Bug fixes
+- Small patch attempting to fix windows install bug (failed)
+
+
+## v1.4.0
+
+### Features
+- new personal settings record
+  - automatically finds or creates a personal settings record to store information about app settings:
+    - current only storing information about whether your keys have been backed up
+- Updated translations
+
+### Bug fixes
 - fix bug where all whakapapa werent listed on the main whakapapa page
 - fix bug where mentioning a profile when creating/editing a story was potentially crashing the app
 - fix archive page title

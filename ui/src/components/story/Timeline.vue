@@ -4,7 +4,7 @@
 
     <v-row v-if="!showStory" class="top-margin mb-5">
       <v-col class="headliner black--text pa-0 pl-4 pt-2">
-        Timeline
+       {{ t('timeline') }}
       </v-col>
     </v-row>
 
@@ -50,7 +50,7 @@
             class="px-8 subtitle-1 grey--text "
             :class="{ 'text-center': mobile }"
           >
-            No stories to show. Please add dates to your stories in Archive to view them in Timeline
+           {{ t('noStories') }}
           </div>
         </div>
       </v-col>
@@ -115,6 +115,9 @@ export default {
     ...mapActions(['setDialog']),
     updateDialog (dialog) {
       this.$emit('setDialog', dialog)
+    },
+    t (key, vars) {
+      return this.$t('timeline.' + key, vars)
     }
   }
 }

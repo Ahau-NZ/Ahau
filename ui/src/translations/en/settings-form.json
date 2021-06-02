@@ -1,5 +1,9 @@
 {
   "settingsTitle": "Account Settings",
+  "keyBackupTitle": "Key Backup",
+  "loseAccess": "Make sure you don't lose access to your account",
+  "backUpKey": "Back up your key now",
+  "downloadKey": "Download Key Backup",
   "languageTitle": "Language",
   "chooseLanguage": "Choose between English, Māori, or Portugese.", 
   "languagesNote": "Please note that languages are a work in progress, we welcome your suggestions and feedback.",

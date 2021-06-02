@@ -3,7 +3,7 @@
     <li>
       <a href="#" @click.prevent="updateDialog('view-edit-node', null)"  class="d-flex align-center px-4">
         <img class="contextMenuIcon" :src="require('@/assets/account-circle.svg')"/>
-        <p class="ma-0 pl-3">View Person</p>
+        <p class="ma-0 pl-3">{{ t('viewPerson') }}</p>
       </a>
     </li>
     <li v-for="(option, index) in options" :key="index">
@@ -63,35 +63,35 @@ export default {
     options () {
       return [
         {
-          title: 'Add Parent',
+          title: this.t('addParent'),
           dialog: 'new-node',
           type: 'parent',
           isPermitted: Boolean(this.selectedProfile),
           icon: require('@/assets/node-parent.svg')
         },
         {
-          title: 'Add Partner',
+          title: this.t('addPartner'),
           dialog: 'new-node',
           type: 'partner',
           isPermitted: Boolean(this.selectedProfile),
           icon: require('@/assets/node-partner.svg')
         },
         {
-          title: 'Add Child',
+          title: this.t('addChild'),
           dialog: 'new-node',
           type: 'child',
           isPermitted: Boolean(this.selectedProfile),
           icon: require('@/assets/node-child.svg')
         },
         {
-          title: 'Add Sibling',
+          title: this.t('addSibling'),
           dialog: 'new-node',
           type: 'sibling',
           isPermitted: this.canAddSibling,
           icon: require('@/assets/node-sibling.svg')
         },
         {
-          title: 'Delete Person',
+          title: this.t('deletePerson'),
           dialog: 'delete-node',
           type: null,
           isPermitted: this.canDelete,
@@ -106,6 +106,9 @@ export default {
     },
     open (e) {
       this.$refs.menu.open(e)
+    },
+    t (key, vars) {
+      return this.$t('nodeMenu.' + key, vars)
     }
   }
 }

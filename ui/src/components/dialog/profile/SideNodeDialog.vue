@@ -116,14 +116,14 @@
           <v-row v-if="!isEditing"  class="flex-column mx-0 ">
             <v-col class="pa-0">
               <v-col cols="12" :class="profile.description ? 'pt-0':'pt-6'">
-                <v-row cols="12" class="rounded-border">
+                <v-row cols="12" class="rounded-border mb-4">
                   <ProfileInfoItem class="pb-0 bb" mdCols="12" smCols="12" :title="t('fullName')" :value="profile.legalName"/>
                   <ProfileInfoItem class="pb-0 br bb" mdCols="6" smCols="6" :title="t('otherNames')" :value="profile.altNames.join(', ')"/>
                   <ProfileInfoItem class="pb-0 bb" mdCols="6" smCols="6" :title="t('age')" :value="age(formData.aliveInterval)"/>
                   <ProfileInfoItem class="pb-0 br" mdCols="6" smCols="6" :title="t('city')" :value="formData.city"/>
-                  <ProfileInfoItem class="pb-0 br" mdCols="6" smCols="6" :title="t('country')" :value="formData.country"/>
+                  <ProfileInfoItem class="pb-0" mdCols="6" smCols="6" :title="t('country')" :value="formData.country"/>
                 </v-row>
-                <v-row cols="12" class="rounded-border">
+                <v-row cols="12" class="rounded-border mb-4">
                   <ProfileInfoItem :class="profile.deceased ? 'pb-0 bb br':'pb-0'" :title="t('placeOfBirth')" :mdCols="profile.deceased ? '6':'12'" :smCols="profile.deceased ? '6':'12'" :value="profile.placeOfBirth" />
                   <template v-if="profile.deceased">
                     <ProfileInfoItem class="pb-0 bb" :title="t('placeOfPassing')" mdCols="6" smCols="6" :value="profile.placeOfDeath" />

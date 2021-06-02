@@ -1,5 +1,5 @@
 {
-  "addPersonFormTitle": "Whakaniko",
+  "addPersonFormTitle": "Whakatika {displayName}",
   "legalName": "Ingoa katoa",
   "aka": "Kei te mohiotia ano ko",
   "preferredName": "Ingoa tuatahi",
@@ -13,6 +13,8 @@
   "uploadPhoto": "Whakarewa Whakaahua",
   "relatedBy": "Pehea te hono",
   "birthPlace": "Waahi whānau",
+  "deathPlace": "Wāhi o te mate",
+  "burialLocation": "Wāhi tanumanga",
   "notLiving": "Kua Mate",
   "birthOrder": "Raupapa whānautanga mai",
   "genderIdentity": "Tuakiri ira tangata",
@@ -20,7 +22,7 @@
     "title": "Ira",
     "female": "Wāhine",
     "male": "Tāne",
-    "other": "Atu",
+    "other": "Ia",
     "unknown": "Tautangata"
   },
   "moreInfo": "Tukuna etahi atu kōrero",

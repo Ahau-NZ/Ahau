@@ -29,7 +29,7 @@
         <v-row v-else align="center">
           <v-icon large>mdi-chevron-left</v-icon>
           <WhakapapaIcon size="small" color="white"/>
-          <span class="pl-2 caption">Back to whakapapa records</span>
+          <span class="pl-2 caption">{{ t('backToWhakapapa') }}</span>
         </v-row>
       </v-btn>
     </div>
@@ -156,6 +156,9 @@ export default {
     },
     goBack () {
       this.$router.push({ path: this.route.from.fullPath })
+    },
+    t (key, vars) {
+      return this.$t('whakapapaIndex.' + key, vars)
     }
   }
 }

@@ -1,5 +1,5 @@
 {
-  "addPersonFormTitle": "Editar",
+  "addPersonFormTitle": "Edit {displayName}",
   "legalName": "Nome completo",
   "aka": "Também conhecido como",
   "preferredName": "Primeiro nome / Conhecido como",
@@ -13,6 +13,8 @@
   "uploadPhoto": "Carregar foto do perfil",
   "relatedBy": "Relacionado por",
   "birthPlace": "Local de nascimento",
+  "deathPlace": "Place of death",
+  "burialLocation": "Burial location",
   "notLiving": "Não está mais vivendo",
   "birthOrder": "Ordem de nascimento",
   "genderIdentity": "Identifica como",

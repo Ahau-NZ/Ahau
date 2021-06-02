@@ -1,5 +1,5 @@
 {
-  "addPersonFormTitle": "Edit",
+  "addPersonFormTitle": "Edit {displayName}",
   "legalName":"Full name",
   "aka": "Also known as",
   "preferredName":"First name / Known as",

@@ -198,7 +198,7 @@ export default {
       const file = {
         name: this.filename,
         length: this.blob.size,
-        createReadStream (opts = {}) {
+        createReadStream: (opts = {}) => {
           const stream = new FileStream(this.blob, opts)
 
           return stream

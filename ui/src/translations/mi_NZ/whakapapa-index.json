@@ -3,5 +3,9 @@
   "addWhakapapaButton": "whakapapa hou",
   "noWhakapapaFound": "kaore i kitea he whakapapa",
   "whakapapaRecords": "Ngā Rua Mahara",
-  "privateRecords": "Aku muna"
+  "privateRecords": "Aku muna",
+  "backToWhakapapa": "Hoki ki te whakapapa",
+  "onlyYouHaveAccess": "Ko koe anake ka uru ki tenei whakapapa",
+  "showDetails": "Whakaatuhia ngā kōrero mo te whakapapa",
+  "editDescription": "Whakatika whakaahuatanga"
 }

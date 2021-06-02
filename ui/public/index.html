@@ -20,11 +20,7 @@
     <meta name="msapplication-tap-highlight" content="no">
     <link rel="icon" href="<%= BASE_URL %>favicon.ico">
     <title>Āhau</title>
-    <base href="./" />
-    <!-- NOTE
-      this seems to need to be ./ in production build
-      if you change it to / in dev, then refreshing of pages works nicely
-    -->
+    <base href="<%= NODE_ENV === 'development' ? '/' : './' %>./" />
   </head>
   <body>
     <noscript>

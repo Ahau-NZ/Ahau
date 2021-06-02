@@ -15,6 +15,8 @@ import analytics from './modules/analytics'
 // new
 import collection from './modules/collection/'
 
+import settings from './modules/settings/'
+
 import { apolloProvider } from '../plugins/vue-apollo'
 const apollo = apolloProvider.defaultClient
 
@@ -127,6 +129,8 @@ export default new Vuex.Store({
     analytics,
 
     // new
-    collection: collection(apollo)
+    collection: collection(apollo),
+
+    settings: settings(apollo)
   }
 })

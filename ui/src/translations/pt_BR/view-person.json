@@ -22,5 +22,7 @@
     "country": "País/região",
     "postcode": "CEP"
   },
-  "communities": "Comunidades"
+  "communities": "Comunidades",
+  "editProfile": "Edit Profile",
+  "settings": "Settings"
 }

@@ -42,12 +42,12 @@
   </VueContext>
 
     <NewRecordDialog v-if="dialog === 'new-story'" :show="dialog === 'new-story'"
-      :title="`Add a story`" @close="dialog = null"
+      :title="$t('viewArchive.addStory')" @close="dialog = null"
       @submit="processStory"
     />
     <NewCollectionDialog v-if="dialog === 'new-collection'" :show="dialog === 'new-collection'"
       :title="$t('addCollectionForm.addCollection')" @close="dialog = null"
-      @submit="createCollection"
+      @submit="processCollection"
     />
   </div>
 </template>
@@ -115,8 +115,9 @@ export default {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
     title () {
-      if (this.profile.id !== this.currentAccess.id) return `Stories about ${getDisplayName(this.profile)}`
-      return 'Stories'
+      if (this.profile.id !== this.currentAccess.id) return `Stories about ${this.getDisplayName(this.profile)}`
+      // TODO i18n on this line ^
+      return this.$t('viewArchive.stories')
     },
     hideArchiveTitle () {
       return this.onCollectionPage && this.mobile
@@ -126,7 +127,7 @@ export default {
       return this.profile.preferredName
     },
     archiveTitle () {
-      if (this.isPersonalArchive) return 'Your personal archive'
+      if (this.isPersonalArchive) return this.$t('viewArchive.archiveTitle')
       return this.currentAccess.preferredName ? `${this.currentAccess.preferredName}'s Archive` : `${this.currentAccess.legalName}'s Archive`
     },
     isPersonalArchive () {
@@ -142,6 +143,7 @@ export default {
   methods: {
     ...mapAlertMutations(['showAlert']),
     ...mapCollectionActions(['createCollection', 'getCollectionsByGroup']),
+    getDisplayName,
     showCurrentCollection ({ id }) {
       var type = this.$route.name.split('/archive')[0]
       this.$router.push({
@@ -157,7 +159,7 @@ export default {
     openContextMenu ($event) {
       this.$refs.menu.open($event)
     },
-    async createCollection (input) {
+    async processCollection (input) {
       await this.createCollection(input)
       await this.reload()
     },
@@ -184,6 +186,9 @@ export default {
           })
         }, 200)
       }
+    },
+    t (key, vars) {
+      return this.$t('viewArchive.' + key, vars)
     }
   }
 }

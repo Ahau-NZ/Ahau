@@ -31,7 +31,7 @@
                 fab
                 @click.native="goTribeProfile(tribe)"
                 class="mr-3 red--text"
-                :outlined="outlinedTribe(tribe)"
+                :outlined="isOutlinedTribe(tribe)"
               >
                 <Avatar
                   v-if="!mobile"
@@ -107,7 +107,7 @@
             fab
             @click.native="goTribeProfile(tribe)"
             class="ml-1 mr-3 red--text my-2"
-            :outlined="outlinedTribe(tribe)"
+            :outlined="isOutlinedTribe(tribe)"
           >
             <Avatar
               size="45px"
@@ -223,7 +223,7 @@ export default {
     showMobileBackButton ($event) {
       this.isMobileBackButton = $event
     },
-    outlinedTribe (tribe) {
+    isOutlinedTribe (tribe) {
       return this.$route.params.tribeId === tribe.id
     },
     getNotifications () {
@@ -247,11 +247,6 @@ export default {
     goTribeProfile (tribe) {
       if (this.mobile && this.showStory) this.toggleShowStory()
       var profile = tribe.private[0]
-      console.log('routename: ', this.$route.name)
-      console.log('navComponent: ', this.navComponent)
-      var route = this.$route.name.split('/')[1] ? this.$route.name.split('/')[1] : 'profile'
-      console.log('route: ', route)
-
       this.$router.push({
         name: 'community/' + this.navComponent,
         params: {
