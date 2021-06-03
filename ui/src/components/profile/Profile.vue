@@ -57,8 +57,8 @@
                 </v-col>
               </v-row>
             </div>
-            <router-link v-else to="/discovery">
-              <p class="pl-3 caption">Click here to discover your tribes</p>
+            <router-link v-else to="/tribe">
+              <p class="pl-3 pt-3 caption"> + Click here to discover your tribes</p>
             </router-link>
           </template>
         </ProfileCard>

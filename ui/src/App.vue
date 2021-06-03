@@ -140,7 +140,7 @@ body {
     background-color: var(--primary-background);
     background-repeat: no-repeat;
     background-size: cover;
-    background-position-y: 60vh;
+    background-position-y: 10vh;
   }
   &.page--whakapapaindex {
     background: url(./assets/niho.svg);

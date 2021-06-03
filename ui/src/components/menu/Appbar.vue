@@ -96,28 +96,32 @@
         </v-row>
         <v-divider class="ma-6 mt-3" />
         <div class="sub-headliner ml-6 mb-2">tribes</div>
-        <div
+        <v-row
           v-for="tribe in connectedTribes"
           :item="tribe"
           :key="tribe.id"
           justify-self="start"
         >
-          <v-btn
-            active-class="no-active"
-            fab
-            @click.native="goTribeProfile(tribe)"
-            class="ml-1 mr-3 red--text my-2"
-            :outlined="isOutlinedTribe(tribe)"
-          >
-            <Avatar
-              size="45px"
-              :image="tribe.private[0].avatarImage"
-              :alt="tribe.private[0].preferredName"
-              :isView="!tribe.private[0].avatarImage"
-            />
-          </v-btn>
-          <span @click="goTribeProfile(tribe)" class="font-weight-light">{{tribe.private[0].preferredName}}</span>
-        </div>
+          <v-col cols=3 class="py-0">
+            <v-btn
+              active-class="no-active"
+              fab
+              @click.native="goTribeProfile(tribe)"
+              class="ml-1 mr-3 red--text my-2"
+              :outlined="isOutlinedTribe(tribe)"
+            >
+              <Avatar
+                size="45px"
+                :image="tribe.private[0].avatarImage"
+                :alt="tribe.private[0].preferredName"
+                :isView="!tribe.private[0].avatarImage"
+              />
+            </v-btn>
+          </v-col>
+          <v-col cols="9" align-self="center" class="pr-4">
+            <span @click="goTribeProfile(tribe)" class="font-weight-light">{{tribe.private[0].preferredName}}</span>
+          </v-col>
+        </v-row>
         <v-divider class="ma-6"/>
         <v-btn text active-class="no-active" to="/tribe" class="white--text text-uppercase ml-3">
           <p class="font-weight-light" style="font-size: 0.8em;">+ add tribe</p>
