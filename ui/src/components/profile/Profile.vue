@@ -25,12 +25,12 @@
       <ProfileCard>
         <template v-slot:content>
           <v-row cols="12" class="pt-0" >
-            <ProfileInfoItem class="br bb" smCols="6" mdCols="4" :title="$t('viewPerson.contactInfo.phone')" :value="profile.phone"/>
-            <ProfileInfoItem :class="mobile ? 'bb':'br bb'" smCols="6" mdCols="4" :title="$t('viewPerson.contactInfo.email')" :value="profile.email"/>
-            <ProfileInfoItem class="bb" smCols="12" mdCols="4" :title="$t('viewPerson.contactInfo.address')" :value="profile.address"/>
-            <ProfileInfoItem :class="mobile ? 'bb':'br'" smCols="12" mdCols="4" :title="$t('viewPerson.contactInfo.city')" :value="profile.city"/>
-            <ProfileInfoItem class="br" smCols="6" mdCols="4" :title="$t('viewPerson.contactInfo.country')" :value="profile.country"/>
-            <ProfileInfoItem smCols="6" mdCols="4" :title="$t('viewPerson.contactInfo.postcode')" :value="profile.postCode"/>
+            <ProfileInfoItem :class="mobile ? 'bb':'br bb'" smCols="12" mdCols="6" :title="$t('viewPerson.contactInfo.phone')" :value="profile.phone"/>
+            <ProfileInfoItem class="bb" smCols="12" mdCols="6" :title="$t('viewPerson.contactInfo.email')" :value="profile.email"/>
+            <ProfileInfoItem :class="mobile ? 'bb':'br bb'" smCols="12" mdCols="6" :title="$t('viewPerson.contactInfo.address')" :value="profile.address"/>
+            <ProfileInfoItem class="bb" smCols="12" mdCols="6" :title="$t('viewPerson.contactInfo.city')" :value="profile.city"/>
+            <ProfileInfoItem class="br" smCols="6" mdCols="6" :title="$t('viewPerson.contactInfo.country')" :value="profile.country"/>
+            <ProfileInfoItem smCols="6" mdCols="6" :title="$t('viewPerson.contactInfo.postcode')" :value="profile.postCode"/>
           </v-row>
         </template>
       </ProfileCard>
@@ -57,8 +57,8 @@
                 </v-col>
               </v-row>
             </div>
-            <router-link v-else to="/discovery">
-              <p class="pl-3 caption">Click here to discover your tribes</p>
+            <router-link v-else to="/tribe">
+              <p class="pl-3 pt-3 caption"> + Click here to discover your tribes</p>
             </router-link>
           </template>
         </ProfileCard>
