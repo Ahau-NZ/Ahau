@@ -58,17 +58,27 @@
       isUser
       @close="toggleNew" @create="save($event)"
     />
-
+    <OnboardDialog
+      v-if="onboarding"
+      :show="onboarding"
+      :title="$t('pataka.newPataka')"
+      @skip="login()" 
+      @submit="connect($event)"
+      @close="onboarding = false"
+    />
   </div>
 
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters, mapActions, createNamespacedHelpers } from 'vuex'
 
 import Avatar from '@/components/Avatar'
 import NewNodeDialog from '@/components/dialog/profile/NewNodeDialog.vue'
+import OnboardDialog from '@/components/dialog/connection/OnboardDialog.vue'
 import mapProfileMixins from '@/mixins/profile-mixins'
+const { mapMutations: mapAlertMutations } = createNamespacedHelpers('alerts')
+
 
 const karakia = `
 ---------------------------------
@@ -96,7 +106,10 @@ export default {
     return {
       isLoading: true,
       isSetup: false, // has profile set up
-      dialog: false
+      dialog: false,
+      onboarded: false,
+      onboarding: false,
+      pataka: false
     }
   },
   mixins: [
@@ -125,6 +138,7 @@ export default {
   },
   methods: {
     ...mapActions(['setWhoami']),
+    ...mapAlertMutations(['showAlert']),
     async getCurrentIdentity () {
       await this.setWhoami()
       this.proceed()
@@ -140,7 +154,6 @@ export default {
         setTimeout(this.proceed, 300)
         return
       }
-
       this.isSetup = Boolean(this.whoami.personal.profile.legalName) || Boolean(this.whoami.personal.profile.preferredName)
       // Shortcut in dev, that saves us from doing one click when testing
 
@@ -152,14 +165,34 @@ export default {
     },
 
     login () {
-      this.karakiaTūwhera()
-      this.$router.push({
-        name: 'person',
-        params: {
-          tribeId: this.whoami.personal.groupId,
-          profileId: this.whoami.personal.profile.id
-        }
-      }).catch(() => {})
+      if (this.onboarded) {
+        this.karakiaTūwhera()
+        this.$router.push({
+          name: 'person',
+          params: {
+            tribeId: this.whoami.personal.groupId,
+            profileId: this.whoami.personal.profile.id
+          }
+        }).catch(() => {})
+      } else {
+        this.onboarding = true
+      }
+    },
+
+    connect (text) {
+      console.log('connect to pataka')
+      this.onboarding = false
+      this.showAlert({
+          message: text,
+          delay: 5000,
+          color: 'green'
+        })
+      this.setSyncing(true)
+      setTimeout(() => {
+        this.snackbar = !this.snackbar
+      }, 5000)
+      // update to check ssb.status
+      this.login()
     },
 
     toggleNew () {
@@ -172,12 +205,15 @@ export default {
         ...input
       })
 
+      this.onboarded = false
+
       this.getCurrentIdentity()
     }
   },
   components: {
     Avatar,
-    NewNodeDialog
+    NewNodeDialog,
+    OnboardDialog
   }
 }
 </script>

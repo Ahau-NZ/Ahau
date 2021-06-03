@@ -1,0 +1,12 @@
+{
+    "titlePataka":"Pātaka",
+    "description":"A Pātaka is alot like other 'cloud' services, It syncs an online back up of information within a chosen network of computers giving individuals the ability to share information between tribes.",
+    "difference":"The biggest difference between a 'Pātaka' and a 'cloud' is that a cloud is generally a warehouse of computers run by a company and chosen by the product developers. A Pātaka is a network of computers run by individuals and tribes and chosen by the users.",
+    "setup":"Individuals and Tribes can run there own Pataka to have greater control over the location their data.", 
+    "ahau":"Ahau also runs A Pataka for those that dont have access to a Tribal Pataka.",
+    "ecryption":"All information held on a Pataka is completely encrypted and only accessible by yous or members of your tribe", 
+    "info":"To learn more please visit https://docs.ahau.io",
+    "agree":"I Agree",
+    "close": "close"
+  }
+    

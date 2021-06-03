@@ -7,7 +7,7 @@
           {{ t('loseAccess') }}.
           {{ t('backUpKey') }}
         </p>
-        <v-col style="margin-bottom:20px" align="left" class="py-0">
+        <v-col style="margin-bottom:20px" align="left" class="py-0 pl-0">
           <v-btn
             class="white--text"
             color="black"
@@ -16,7 +16,7 @@
             {{ t('downloadKey') }}
           </v-btn>
       </v-col>
-        <h3>{{ t('languageTitle') }}</h3>
+        <h3 class="pt-6">{{ t('languageTitle') }}</h3>
         <p>
           {{ t('chooseLanguage') }}
         </p>
