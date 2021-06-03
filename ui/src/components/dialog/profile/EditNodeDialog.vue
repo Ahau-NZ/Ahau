@@ -35,7 +35,7 @@ export default {
   },
   props: {
     show: { type: Boolean, required: true },
-    title: { type: String, default: 'Create a new person' },
+    title: { type: String, default: '' },
     hideDetails: { type: Boolean, default: false },
     profile: { type: Object, default: () => {} },
     readOnly: { type: Boolean, default: false }

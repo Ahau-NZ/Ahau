@@ -94,8 +94,8 @@
           </v-btn>
             <span class="font-weight-light">{{whoami.personal.profile.preferredName}}</span>
         </v-row>
-        <v-divider class="ma-6 mt-3" />
-        <div class="sub-headliner ml-6 mb-2">tribes</div>
+        <v-divider v-if="connectedTribes.length" class="ma-6 mt-3" />
+        <div v-if="connectedTribes.length" class="sub-headliner ml-6 mb-2">tribes</div>
         <v-row
           v-for="tribe in connectedTribes"
           :item="tribe"
@@ -279,12 +279,6 @@ export default {
     t (key, vars) {
       return this.$t('appBarMenu.' + key, vars)
     }
-  },
-  components: {
-    Avatar,
-    // FeedbackButton,
-    NotificationPanel,
-    BackButton
   }
 }
 </script>

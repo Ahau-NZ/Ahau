@@ -10,13 +10,20 @@
     - In the notification
     - In the settings dialog
 - The main nav bar now shows connected tribes for quick navigation
-- In tribe profile view you can now click on a member to view there profile
+- In tribe profile view you can now click on a member to view there profile info
 
 
 ### Bug Fixes
 
 - Fix bug where you couldnt create a new collection
 - Fix mobile view for adding a person
+- fix landing button
+- fix mobile landing screen
+- fix long community name on appbar on mobile
+- fix long community names on profile.vie on mobile
+- fix long emails in profile.vue
+- fix showing tribes list if no tribes in appbar
+- fix addPersonFormTitle translations
 
 ## v1.4.2
 
