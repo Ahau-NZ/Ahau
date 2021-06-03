@@ -45,16 +45,6 @@ export default {
     }
   },
   created () {
-    // try to be smart when picking the default language
-
-    const browserLang = navigator.languages.find((lang) =>
-      this.$i18n.availableLocales.includes(lang)
-    )
-
-    // default to what the user had last time, if anything
-    // otherwise get a language that the browser says the user prefers
-    // if we don't have a language like that, fall back to english
-    this.locale = localStorage.getItem('locale') || browserLang || 'en'
     this.$vuetify.lang.current = getVuetifyLocale(this.locale)
   },
   methods: {

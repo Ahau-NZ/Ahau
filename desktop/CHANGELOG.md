@@ -24,6 +24,7 @@
 - fix long emails in profile.vue
 - fix showing tribes list if no tribes in appbar
 - fix addPersonFormTitle translations
+- Fixed bug causing selected locale to default to English when another language has been selected
 
 ## v1.4.2
 
