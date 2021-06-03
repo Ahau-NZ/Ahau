@@ -35,7 +35,7 @@
                     <v-icon v-on="on" small color="#555">mdi-eye</v-icon>
                   </v-btn>
                 </template>
-                <span v-if="access.isPersonalGroup">Only you have access to this whakapapa</span>
+                <span v-if="access.isPersonalGroup">{{ t('onlyYouHaveAccess') }}</span>
                 <span v-else>Only {{ access.preferredName }} has access to this whakapapa</span>
               </v-tooltip>
               <!-- Pencil icon -->
@@ -52,7 +52,7 @@
                   <v-icon>{{ show ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
                 </v-btn>
                 </template>
-                <span>Show Whakapapa details</span>
+                <span>{{ t('showDetails')}}</span>
               </v-tooltip>
             </v-card-text>
           </v-row>
@@ -133,6 +133,9 @@ export default {
     openProfile (profile) {
       this.setProfileById({ id: profile.id, type: 'preview' })
       this.setDialog({ active: 'view-edit-node', type: 'preview' })
+    },
+    t (key, vars) {
+      return this.$t('whakapapaIndex.' + key, vars)
     }
   }
 }

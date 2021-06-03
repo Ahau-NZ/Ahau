@@ -1,6 +1,7 @@
 // import gql from 'graphql-tag'
 import { createProvider } from '@/plugins/vue-apollo'
 import { getTribes } from '@/lib/community-helpers'
+import { getTribeIds } from './apollo-helpers'
 
 const apolloProvider = createProvider()
 const apollo = apolloProvider.defaultClient
@@ -22,16 +23,30 @@ const mutations = {
 }
 
 const actions = {
-  async setTribes ({ commit }) {
-    let tribes
+  async getTribes ({ commit }) {
     try {
-      tribes = await apollo.query(getTribes)
+      const res = await apollo.query(getTribes)
 
-      if (tribes.errors) throw tribes.errors
+      if (res.errors) throw res.errors
 
-      commit('updateTribes', tribes.data.tribes)
+      commit('updateTribes', res.data.tribes)
+
+      return res.data.tribes
     } catch (err) {
-      console.error('Failed to get tribes', tribes)
+      console.error('Failed to get tribes', err)
+      return []
+    }
+  },
+  async getTribeIds () {
+    try {
+      const res = await apollo.query(getTribeIds)
+
+      if (res.errors) throw res.errors
+
+      return res.data.listGroups.map(d => d.id)
+    } catch (err) {
+      console.error('failed to get group ids', err)
+      return []
     }
   }
 }
@@ -40,5 +55,6 @@ export default {
   state,
   mutations,
   actions,
-  getters
+  getters,
+  namespaced: true
 }

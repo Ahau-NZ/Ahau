@@ -1,0 +1,7 @@
+{
+  "delete": "Muku {preferredName}",
+  "hideProfile": "Hunaia tēnei kōrero mai i te whakapapa nei",
+  "deleteProile": "Mukua tēnei tohu mai i ngā whakapapa katoa",
+  "confirmationMessage": " Are you sure you want to hide this profile from this whakapapa record? This will also remove all connected children from the whakapaparecord.",
+  "warnAboutChildren": "This will also remove all connected children from the whakapaparecord."
+}

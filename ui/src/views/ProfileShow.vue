@@ -45,7 +45,7 @@
       v-if="dialog === 'edit-community'"
       :show="dialog === 'edit-community'"
       editing
-      :title="`Edit ${profile.preferredName}`"
+      :title="t('addPersonFormTitle', { displayName: profile.preferredName })"
       @delete="dialog = 'delete-community'"
       @submit="updateCommunity"
       @close="dialog = null"
@@ -54,7 +54,7 @@
     <EditNodeDialog
       v-if="dialog === 'edit-node'"
       :show="dialog === 'edit-node'"
-      :title="`Edit ${getDisplayName(profile)}`"
+      :title="t('addPersonFormTitle', { displayName: getDisplayName(profile) })"
       @submit="updatePerson"
       @close="dialog = null"
       :profile="profile"
@@ -357,19 +357,12 @@ export default {
   }
 
 .niho-bg {
-  background: linear-gradient(to right, rgba(255, 255, 255, 0.99),
+  background: linear-gradient(to right, rgba(255, 255, 255, 0.8),
   rgba(255, 255, 255, 0.7)), url(../assets/niho.svg);
   background-position-x: 100px;
   background-attachment: fixed;
   background-repeat: no-repeat;
 }
-
-/* .fade-enter-active,
-.fade-leave-active {
-  transition-duration: 0.2;
-  transition-property: top;
-  transition-timing-function: ease-in-out;
- } */
 
  .fade-enter-active {
     transition: all 0.6s ease-in-out;

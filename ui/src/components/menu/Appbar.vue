@@ -9,15 +9,51 @@
 
       <!-- Desktop doesn't use a drawer, it has the links directly in the app bar -->
       <template v-if="!mobile">
-        <v-btn text active-class="no-active" to="/tribe" class="white--text text-uppercase ms-10">{{ t('tribes' )}}</v-btn>
-        <v-btn active-class="no-active" text @click.native="goProfile('archive')" class="white--text text-uppercase ms-10">{{ t('archive') }}</v-btn>
-
-        <v-btn active-class="no-active" text @click.native="goProfile('whakapapa')" class="white--text text-uppercase ms-10">{{ t('whakapapa') }}</v-btn>
-        <v-btn active-class="no-active" fab @click.native="goProfile('profile')" class="pr-12 mr-4 ml-10">
+        <v-tooltip  bottom nudge-bottom="-12" open-delay="300">
+          <template v-slot:activator="{ on }">
+            <v-btn v-on="on" text active-class="no-active" to="/tribe" class="white--text text-uppercase ms-10">
+              <span class="font-weight-light" style="font-size:2em">+</span>
+            </v-btn>
+          </template>
+          <span>Add tribes</span>
+        </v-tooltip>
+        <div
+          v-for="tribe in connectedTribes"
+          :item="tribe"
+          :key="tribe.id"
+          justify-self="start"
+        >
+          <v-tooltip  bottom nudge-bottom="-12" open-delay="300">
+            <template v-slot:activator="{ on }">
+              <v-btn
+                v-on="on"
+                active-class="no-active"
+                fab
+                @click.native="goTribeProfile(tribe)"
+                class="mr-3 red--text"
+                :outlined="isOutlinedTribe(tribe)"
+              >
+                <Avatar
+                  v-if="!mobile"
+                  size="45px"
+                  :image="tribe.private[0].avatarImage"
+                  :alt="tribe.private[0].preferredName"
+                  :isView="!tribe.private[0].avatarImage"
+                />
+              </v-btn>
+            </template>
+            <span>{{tribe.private[0].preferredName}}</span>
+          </v-tooltip>
+        </div>
+        <v-divider
+          inset
+          vertical
+          class="ml-6"
+        ></v-divider>
+        <v-btn active-class="no-active" fab :outlined="isMyProfile" @click.native="goMyProfile()" class="mr-6 ml-12">
           <Avatar
             v-if="!mobile"
             size="45px"
-            class="ms-12"
             :image="whoami.personal.profile.avatarImage"
             :alt="whoami.personal.profile.preferredName"
             :gender="whoami.personal.profile.gender"
@@ -42,34 +78,50 @@
         color="#B71C1C"
         height='5'
       />
-
     </v-app-bar>
 
     <!-- The drawer shows only on mobile -->
     <v-navigation-drawer v-if="mobile && enableMenu" v-model="drawer" app dark right width="60%">
-      <v-list nav class="text-uppercase">
-        <v-list-item active-class="no-active" @click="goProfile('profile')" >
-          <Avatar
-            size="80px"
-            :image="whoami.personal.profile.avatarImage"
-            :alt="whoami.personal.profile.preferredName"
-            :gender="whoami.personal.profile.gender"
-            :aliveInterval="whoami.personal.profile.aliveInterval"
-          />
-        </v-list-item>
-        <v-list-item active-class="no-active" link @click.native="goProfile('whakapapa')" class="white--text">
-        <v-list-item-title>{{ t('whakapapa') }}</v-list-item-title>
-        </v-list-item>
-        <v-list-item active-class="no-active" link @click.native="goProfile('archive')" >
-          <v-list-item-title class="white--text" >{{ t('archive') }}</v-list-item-title>
-        </v-list-item>
-        <v-list-item active-class="no-active" link to="/tribe">
-          <v-list-item-title class="white--text">{{ t('tribes' )}}</v-list-item-title>
-        </v-list-item>
-        <v-list-item class="pt-12">
-          <FeedbackButton />
-        </v-list-item>
-      </v-list>
+        <v-row align="center" class="ml-2 mt-6">
+          <v-btn active-class="no-active" fab :outlined="isMyProfile" @click.native="goMyProfile()" class="mr-3">
+            <Avatar
+              size="45px"
+              :image="whoami.personal.profile.avatarImage"
+              :alt="whoami.personal.profile.preferredName"
+              :gender="whoami.personal.profile.gender"
+              :aliveInterval="whoami.personal.profile.aliveInterval"
+            />
+          </v-btn>
+            <span class="font-weight-light">{{whoami.personal.profile.preferredName}}</span>
+        </v-row>
+        <v-divider class="ma-6 mt-3" />
+        <div class="sub-headliner ml-6 mb-2">tribes</div>
+        <div
+          v-for="tribe in connectedTribes"
+          :item="tribe"
+          :key="tribe.id"
+          justify-self="start"
+        >
+          <v-btn
+            active-class="no-active"
+            fab
+            @click.native="goTribeProfile(tribe)"
+            class="ml-1 mr-3 red--text my-2"
+            :outlined="isOutlinedTribe(tribe)"
+          >
+            <Avatar
+              size="45px"
+              :image="tribe.private[0].avatarImage"
+              :alt="tribe.private[0].preferredName"
+              :isView="!tribe.private[0].avatarImage"
+            />
+          </v-btn>
+          <span @click="goTribeProfile(tribe)" class="font-weight-light">{{tribe.private[0].preferredName}}</span>
+        </div>
+        <v-divider class="ma-6"/>
+        <v-btn text active-class="no-active" to="/tribe" class="white--text text-uppercase ml-3">
+          <p class="font-weight-light" style="font-size: 0.8em;">+ add tribe</p>
+        </v-btn>
     </v-navigation-drawer>
 
     <v-progress-linear
@@ -87,9 +139,11 @@
 <script>
 import Avatar from '@/components/Avatar'
 import NotificationPanel from '@/components/menu/NotificationPanel'
-import FeedbackButton from '@/components/button/FeedbackButton'
+// import FeedbackButton from '@/components/button/FeedbackButton'
 import { mapGetters, mapActions } from 'vuex'
 import BackButton from '@/components/button/BackButton'
+
+import { getTribes } from '@/lib/community-helpers.js'
 
 const karakia = `
 ---------------------------------
@@ -112,13 +166,25 @@ export default {
     app: { type: Boolean, default: false },
     sideMenu: { type: Boolean, default: false }
   },
+  components: {
+    Avatar,
+    NotificationPanel,
+    BackButton
+  },
   data () {
     return {
       drawer: false,
       dialog: false,
       loading: true,
       route: {},
-      isMobileBackButton: false
+      isMobileBackButton: false,
+      tribes: []
+    }
+  },
+  apollo: {
+    tribes: {
+      ...getTribes,
+      pollInterval: 10e3
     }
   },
   created () {
@@ -133,7 +199,13 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['whoami', 'whakapapa', 'showStory', 'storeDialog', 'syncing']),
+    ...mapGetters(['whoami', 'whakapapa', 'showStory', 'storeDialog', 'syncing', 'navComponent']),
+    connectedTribes () {
+      return this.tribes.filter(tribe => tribe.private.length > 0)
+    },
+    isMyProfile () {
+      return this.$route.params.profileId === this.whoami.personal.profile.id
+    },
     classObject: function () {
       return {
         'mobile': this.mobile,
@@ -156,19 +228,36 @@ export default {
     showMobileBackButton ($event) {
       this.isMobileBackButton = $event
     },
+    isOutlinedTribe (tribe) {
+      return this.$route.params.tribeId === tribe.id
+    },
     getNotifications () {
       this.polling = setInterval(this.getAllNotifications, 7e3)
     },
     async getCurrentIdentity () {
       await this.setWhoami()
     },
-    goProfile (component) {
+    goMyProfile () {
       if (this.mobile && this.showStory) this.toggleShowStory()
+      var route = this.$route.name.split('/')[1] ? this.$route.name.split('/')[1] : 'profile'
       this.$router.push({
-        name: 'person/' + component,
+        name: 'person/' + route,
         params: {
           tribeId: this.whoami.personal.groupId,
           profileId: this.whoami.personal.profile.id
+        }
+      }).catch(() => {})
+      this.toggleDrawer()
+    },
+    goTribeProfile (tribe) {
+      if (this.mobile && this.showStory) this.toggleShowStory()
+      var profile = tribe.private[0]
+      this.$router.push({
+        name: 'community/' + this.navComponent,
+        params: {
+          tribeId: tribe.id,
+          profileId: profile.id,
+          profile
         }
       }).catch(() => {})
       this.toggleDrawer()
@@ -186,12 +275,6 @@ export default {
     t (key, vars) {
       return this.$t('appBarMenu.' + key, vars)
     }
-  },
-  components: {
-    Avatar,
-    FeedbackButton,
-    NotificationPanel,
-    BackButton
   }
 }
 </script>
@@ -233,6 +316,12 @@ export default {
     100% {
       transform: translateY(-5px)
     }
+  }
+  .sub-headliner {
+    font-size: 0.6em;
+    text-transform: uppercase;
+    font-weight: 400;
+    letter-spacing: 5px;
   }
 
 </style>

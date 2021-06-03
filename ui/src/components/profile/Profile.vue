@@ -41,7 +41,7 @@
         <v-col v-if="mobile" cols="12" class="mobile-profile-label headliner">
              {{ $t('viewPerson.communities') }}
         </v-col>
-        <ProfileCard v-if="myProfile" :title="mobile ? '':'Communities'" class="mt-2">
+        <ProfileCard v-if="myProfile" :title="mobile ? '':$t('viewPerson.communities')" class="mt-2">
           <template v-slot:content>
             <div v-if="connectedTribes.length > 0" :class="{'pt-4':mobile}">
               <v-row v-for="tribe in connectedTribes" :key="tribe.id" class="justify-center align-center ma-0 ml-4">
@@ -82,7 +82,7 @@
         <template v-slot:content>
           <v-row v-for="member in tribe.members" :key="member.id" class="justify-center align-center ma-0 ml-4">
             <v-col cols="2" class="pt-0 pl-0">
-              <Avatar :size="mobile ? '50px' : '40px'" :image="member.avatarImage" :alt="member.preferredName" :gender="member.gender" />
+              <Avatar :size="mobile ? '50px' : '40px'" :image="member.avatarImage" :alt="member.preferredName" :gender="member.gender" clickable @click="openProfile(member)"/>
             </v-col>
             <v-col class="py-0">
               <p style="color:black;">{{ getDisplayName(member) }}</p>
@@ -99,8 +99,10 @@ import ProfileInfoCard from '@/components/profile/ProfileInfoCard.vue'
 import ProfileInfoItem from '@/components/profile/ProfileInfoItem.vue'
 import ProfileCard from '@/components/profile/ProfileCard.vue'
 import Avatar from '@/components/Avatar.vue'
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters, createNamespacedHelpers, mapActions } from 'vuex'
 import { getDisplayName } from '@/lib/person-helpers.js'
+
+const { mapActions: mapTribeActions, mapGetters: mapTribeGetters } = createNamespacedHelpers('tribe')
 
 export default {
   name: 'Profile',
@@ -114,14 +116,15 @@ export default {
     profile: Object,
     tribe: Object
   },
-  beforeMount () {
-    this.setTribes()
+  async beforeMount () {
+    await this.getTribes()
   },
   mounted () {
     window.scrollTo(0, 0)
   },
   computed: {
     ...mapGetters(['whoami', 'tribes']),
+    ...mapTribeGetters(['tribes']),
     myProfile () {
       return this.profile.id === this.whoami.personal.profile.id
     },
@@ -139,7 +142,9 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setTribes']),
+    ...mapTribeActions(['getTribes']),
+    ...mapActions(['setProfileById', 'setDialog']),
+
     goTribe (tribe) {
       var profile = tribe.private.length > 0
         ? tribe.private[0]
@@ -149,6 +154,10 @@ export default {
         name: profile.type,
         params: { tribeId: tribe.id, profileId: profile.id, profile }
       }
+    },
+    openProfile (profile) {
+      this.setProfileById({ id: profile.id, type: 'preview' })
+      this.setDialog({ active: 'view-edit-node', type: 'preview' })
     },
     getDisplayName
   }
