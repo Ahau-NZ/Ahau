@@ -275,12 +275,6 @@ export default {
     t (key, vars) {
       return this.$t('appBarMenu.' + key, vars)
     }
-  },
-  components: {
-    Avatar,
-    // FeedbackButton,
-    NotificationPanel,
-    BackButton
   }
 }
 </script>

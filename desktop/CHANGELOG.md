@@ -17,6 +17,7 @@
 
 - Fix bug where you couldnt create a new collection
 - Fix mobile view for adding a person
+- Fixed bug causing selected locale to default to English when another language has been selected
 
 ## v1.4.2
 
