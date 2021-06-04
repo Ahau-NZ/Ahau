@@ -19,7 +19,7 @@ const customConfig = (mixpanelId) => ({
   },
   hyperBlobs: {
     port: env.ahau.hyperBlobs.port,
-    autoPrune: false
+    autoPrune: true
   },
   recpsGuard: {
     allowedTypes: [
