@@ -6,7 +6,9 @@
     <v-col cols="12">
       {{ t('chooseLanguage') }}
     </v-col>
-    <LocalePicker class="ml-5" />
+    <v-col cols="12" class="ml-5">
+      <LocalePicker />
+    </v-col>
     <v-col cols="12">
       {{ t('languagesNote') }}
       <a

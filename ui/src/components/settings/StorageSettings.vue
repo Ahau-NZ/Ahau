@@ -1,8 +1,8 @@
 <template>
   <v-row>
     <v-col cols="12" class="text-h5">
-        {{ t('storageTitle') }}
-      </v-col>
+      {{ t('storageTitle') }}
+    </v-col>
     <v-col cols="12" md="8">
       <v-progress-linear
         :value="diskSpacePercentage"
@@ -31,7 +31,7 @@
     <v-col cols="12">
       {{ t('storageManagementTitle' )}}
     </v-col>
-    <v-col cols="12" class="ml-md-8">
+    <v-col cols="12" class="ml-md-8 pt-0">
         <!-- <v-radio
           :label="t('defaultOption')"
         />
