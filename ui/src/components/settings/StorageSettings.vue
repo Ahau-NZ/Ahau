@@ -55,6 +55,7 @@
 </template>
 
 <script>
+import gql from 'graphql-tag'
 
 export default {
   name: 'StorageSettings',
@@ -63,17 +64,43 @@ export default {
       storageOption: 0,
       ahauLimit: 5,
       ahauDBStats: {
-        size: 2486611008,
+        size: 0,
         hyperBlobStats: {
-          size: 2158242485
+          size: 0
         }
       },
       fileSystemStats: {
-        size: 1000240963584,
-        used: 15052365824,
-        available: 583128702976,
-        use: 2.52
+        size: 0,
+        use: 0,
+        available: 0,
+        used: 0
       }
+    }
+  },
+  apollo: {
+    ahauDBStats: {
+      query: gql`
+        query {
+          ahauDBStats {
+            size
+            hyperBlobStats {
+              size
+            }
+          }
+        }
+      `
+    },
+    fileSystemStats: {
+      query: gql`
+        query {
+          fileSystemStats {
+            size
+            use
+            available
+            used
+          }
+        }
+      `
     }
   },
   computed: {
