@@ -78,14 +78,6 @@
       :show="dialog === 'settings'"
       @close="dialog = null"
     />
-    <!-- Snackbar for successful Tribe request sent -->
-    <v-snackbar
-      v-model="joinRequestSent"
-      color="green"
-      content-class="text-center"
-    >
-      Request successfully sent
-    </v-snackbar>
   </v-container>
 </template>
 
@@ -112,7 +104,6 @@ import {
   mapMutations,
   createNamespacedHelpers
 } from 'vuex'
-
 const { mapMutations: mapAlertMutations } = createNamespacedHelpers('alerts')
 
 export default {
@@ -143,8 +134,7 @@ export default {
       parentIndex: null,
       dialogType: null,
       source: null,
-      isApplication: false,
-      joinRequestSent: false
+      isApplication: false
     }
   },
   watch: {
@@ -246,12 +236,12 @@ export default {
 
         this.closeDialog()
         this.refresh()
-        this.showAlert({ message: 'Successfully updated the community' })
+        this.showAlert({ message: 'Successfully updated the community', color: 'green' })
       } catch (err) {
         const message = 'Something went wrong when saving the tribe'
         console.error(message, this.tribe)
         console.error(err)
-        this.showAlert({ message })
+        this.showAlert({ message, color: 'red' })
         this.closeDialog()
       }
     },
@@ -261,7 +251,7 @@ export default {
       await this.saveProfile(input)
       this.closeDialog()
       this.refresh()
-      this.showAlert({ message: 'The profile was updated!' })
+      this.showAlert({ message: 'Profile updated', color: 'green' })
 
       if (this.isApplication) {
         this.goProfile()
@@ -274,7 +264,7 @@ export default {
         )
 
         if (res.errors) throw res.errors
-        this.showAlert({ message: 'community successfully deleted' })
+        this.showAlert({ message: 'community successfully deleted', color: 'green' })
         this.$router.push('/tribe').catch(() => {})
       } catch (err) {
         const message = 'Something went wrong while trying to delete the community'
@@ -298,7 +288,8 @@ export default {
         if (res.errors) throw res.errors
         else {
           // flag for snackbar "request successfully sent"
-          this.joinRequestSent = true
+          const message = 'Request successfully sent'
+          this.showAlert({ message, delay: 5000, color: 'green' })
         }
 
         // return res.data.createGroupApplication // return the applicationId

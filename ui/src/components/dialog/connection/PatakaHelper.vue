@@ -1,32 +1,32 @@
 <template>
   <Dialog :title="t('titlePataka')" :show="show" @close="close" :width="`700px`" :goBack="close">
     <template v-slot:content>
-      <v-card-text class="pt-4">
+      <v-card-text class="pt-4" style="color:black">
         <p>{{ t('description') }}</p>
         <p>{{ t('difference') }}</p>
-        <p>{{ t('setup') }}</p>
+        <p>{{ t('setup') }} {{ t('patakaDescription') }} </p>
         <p>{{ t('ahau') }}</p>
         <p>{{ t('ecryption') }}</p>
-        <p>{{ t('info') }}</p>
+        <p>{{ t('info') }} <a href="https://docs.ahau.io/#/pataka-guide" target="_blank">https://docs.ahau.io</a></p>
       </v-card-text>
       <v-divider />
-      <!-- <p>
+      <p>
           {{ t('exampleImages') }}
-      </p> -->
-      <!-- <v-carousel hide-delimiters height="100%">
+      </p>
+      <v-carousel hide-delimiters height="300px" class="mb-12">
         <v-tooltip
-          v-for="(item,i) in examples"
+          v-for="(item,i) in items"
           :key="i" top>
           <template v-slot:activator="{ on }">
             <v-carousel-item
               v-on="on"
               :src="item.src"
-              style="background-size:contain"
-            ></v-carousel-item>
+            >
+            </v-carousel-item>
           </template>
           <span> {{item.text}} </span>
         </v-tooltip>
-      </v-carousel> -->
+      </v-carousel>
     </template>
     <template v-slot:actions>
       <v-col :align="mobile ? 'center' : 'end'" class="py-0">
@@ -51,9 +51,19 @@ export default {
   name: 'PatakaHelper',
   data () {
     return {
-      items:[
-      ],
-      mobileItems: [
+      items: [
+        { src: require('@/assets/animations/replication-via-internet_css.svg'),
+          text: this.t('replication')
+        },
+        { src: require('@/assets/animations/data-on-a-pātaka_css.svg'),
+          text: this.t('onPataka')
+        },
+        { src: require('@/assets/animations/corporate-server.svg'),
+          text: this.t('corporateServer')
+        },
+        { src: require('@/assets/animations/alternative-servers.svg'),
+          text: this.t('ahauServer')
+        }
       ]
     }
   },
@@ -63,10 +73,6 @@ export default {
   computed: {
     mobile () {
       return this.$vuetify.breakpoint.xs
-    },
-    examples () {
-      if (this.mobile) return this.mobileItems
-      return this.items
     }
   },
   methods: {
@@ -90,4 +96,5 @@ export default {
   width: auto;
   height:auto
 }
+
 </style>

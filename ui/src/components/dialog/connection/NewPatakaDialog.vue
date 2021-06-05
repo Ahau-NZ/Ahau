@@ -1,51 +1,171 @@
 <template>
-  <Dialog :show="show" :title="title" width="75vw" :goBack="close" enableMenu @close="close">
-    <template v-slot:content>
-      <v-row class="py-2">
-        <v-col cols="12">
-          <p class="sub-headline pa-0"> {{ $t('pataka.patakaCode') }} </p>
-          <v-row>
-            <v-col cols="12" md='9' class="py-0">
-              <v-text-field
-                v-model="patakaCode"
-                placeholder="xxxx-xxxxx-xxxx-xxxx"
-                outlined
-                light
-                dense
-                :success-messages="successMsg"
-                :error-messages="errorMsg"
-                append-icon="mdi-lan-connect"
-                clearable
-              />
-            </v-col>
-            <v-col class="py-0">
-              <v-btn
-                color="black"
-                class="white--text"
-                @click="acceptInvite"
-              >
-                <span>{{ $t('pataka.connect') }}</span>
-              </v-btn>
-            </v-col>
-          </v-row>
-        </v-col>
-      </v-row>
-    </template>
-    <template v-slot:actions>
-      <v-row></v-row>
-    </template>
-  </Dialog>
+  <div>
+    <Dialog :show="show" :title="title" width="65vw" :goBack="close" enableMenu @close="$emit('close')">
+      <template v-slot:content>
+        <v-row>
+          <v-col cols="10">
+            <p class="mb-0 ml-2">{{ t('intro') }}</p>
+          </v-col>
+          <v-col align-self="end">
+            <v-icon color="blue-grey" light @click="togglePatakaHelper" class="infoButton">mdi-information</v-icon>
+          </v-col>
+        </v-row>
+
+        <v-row justify="center" class="mx-4 mb-8">
+          <v-expansion-panels focusable v-model="panel">
+            <v-expansion-panel>
+              <v-expansion-panel-header>
+                <v-row align="center">
+                  <v-icon class="px-4 black--text">mdi-share-variant</v-icon>
+                  <p class="mb-0 font-weight-bold">{{ t('code') }}</p>
+                </v-row>
+              </v-expansion-panel-header>
+              <v-expansion-panel-content>
+                <v-row class="py-2 pl-6">
+                  <v-col cols="12">
+                    <p class="sub-headline pa-0"> {{ t('patakaCode') }} </p>
+                    <v-row>
+                      <v-col cols="12" md='10' class="py-0">
+                        <v-text-field
+                          v-model="patakaCode"
+                          placeholder="xxxx-xxxxx-xxxx-xxxx"
+                          outlined
+                          light
+                          dense
+                          :success-messages="successMsg"
+                          :error-messages="errorMsg"
+                          append-icon="mdi-lan-connect"
+                          clearable
+                        />
+                      </v-col>
+                      <v-col class="py-0">
+                        <v-btn
+                          color="black"
+                          class="white--text"
+                          @click="acceptInvite(patakaCode)"
+                        >
+                          <span>{{ t('connect') }}</span>
+                        </v-btn>
+                      </v-col>
+                    </v-row>
+                  </v-col>
+                </v-row>
+              </v-expansion-panel-content>
+            </v-expansion-panel>
+
+            <v-expansion-panel>
+              <v-expansion-panel-header>
+                <v-row align="center">
+                  <img src="@/assets/logo_black.svg" class="logo" />
+                  <p class="mb-0 font-weight-bold">{{ t('ahauPataka') }}</p>
+                </v-row>
+              </v-expansion-panel-header>
+              <v-expansion-panel-content>
+                <p class="pt-4 font-weight-bold">{{ t('publicPataka') }}</p>
+                <div class="pa-4 pb-6" style="background-color:#ebebeb;">
+                  <p bold>{{ t('agreementTitle') }}</p>
+                  <p>{{ t('sharing') }}</p>
+                  <ul>
+                    <li>{{ t('shareProfile') }}</li>
+                    <li>{{ t('shareTribe') }}
+                      <ul>
+                        <li>{{ t('shareTribePic') }}</li>
+                        <li>{{ t('ShareTribeCover') }}</li>
+                        <li>{{ t('shareTribeKaitiaki') }}</li>
+                        <li>{{ t('shareTribeContact') }}</li>
+                      </ul>
+                    </li>
+                    <li>{{ t('encryption') }}</li>
+                    <li>{{ t('access') }}</li>
+                    <li>{{ t('backup') }}</li>
+                    <li>{{ t('waver') }}</li>
+                  </ul>
+                </div>
+                <v-row>
+                    <v-checkbox
+                      class="px-4"
+                      v-model="checkbox"
+                      :label="t('agree')"
+                      hide-details
+                    />
+                    <v-btn
+                      v-if="checkbox"
+                      color="black"
+                      class="white--text ml-4 mt-4"
+                      @click="acceptInvite(patakaAotearoa)"
+                    >
+                      <span>{{ $t('connect') }}</span>
+                    </v-btn>
+                </v-row>
+              </v-expansion-panel-content>
+            </v-expansion-panel>
+
+            <v-expansion-panel>
+              <v-expansion-panel-header>
+                <v-row align="center">
+                  <v-icon class="px-4 black--text">mdi-laptop-windows</v-icon>
+                  <p class="mb-0 font-weight-bold">{{ t('selfHost') }}</p>
+                </v-row>
+              </v-expansion-panel-header>
+              <v-expansion-panel-content>
+                <p class="pt-4">{{ t('selfIntro') }}</p>
+                <p>{{ t('selfPatakaDescription') }}</p>
+                <p>{{ t('selfPatakaSetup') }}</p>
+                <p>{{ t('selfPatakaGuide') }}</p>
+                <a class="blue--text font-weight-bold" href="https://docs.ahau.io/#/pataka-guide" target="_blank">Pataka Setup Guide</a>
+              </v-expansion-panel-content>
+            </v-expansion-panel>
+
+            <v-expansion-panel>
+              <v-expansion-panel-header>
+                <v-row align="center">
+                  <v-icon class="px-4 black--text">mdi-cloud-sync</v-icon>
+                  <p class="mb-0 font-weight-bold">{{ t('cloudPataka') }}</p>
+                </v-row>
+              </v-expansion-panel-header>
+              <v-expansion-panel-content>
+                <p class="pt-4">{{ t('cloudIntro') }}</p>
+                <p>{{ t('cloudDescription') }}</p>
+                <p>{{ t('cloudPros') }}</p>
+                <p>{{ t('cloudCosts') }} {{ t('cloudCons') }}</p>
+                <p>{{ t('cloudSetup') }}</p>
+                <p>{{ t('contact') }} <a class="blue--text" href="https://chat.ahau.io" target="_blank">https://chat.ahau.io</a></p>
+              </v-expansion-panel-content>
+            </v-expansion-panel>
+          </v-expansion-panels>
+          <p class="pt-4">{{ t('help') }} <a class="blue--text" href="https://chat.ahau.io" target="_blank">https://chat.ahau.io</a></p>
+        </v-row>
+      </template>
+
+      <template v-slot:actions>
+
+          <v-col :align="mobile ? 'center' : 'end'">
+            <v-btn
+              color="#B12626"
+              text
+              @click="closeBtn"
+            >
+              {{ t('skip') }}
+            </v-btn>
+          </v-col>
+      </template>
+    </Dialog>
+    <PatakaHelper v-if="showPatakaHelper" :show="showPatakaHelper" @close="togglePatakaHelper" />
+  </div>
 </template>
 
 <script>
 
 import Dialog from '@/components/dialog/Dialog.vue'
+import PatakaHelper from '@/components/dialog/connection/PatakaHelper.vue'
+
 import gql from 'graphql-tag'
 
 export default {
   name: 'NewPatakaDialog',
   components: {
-    Dialog
+    Dialog,
+    PatakaHelper
   },
   props: {
     show: { type: Boolean, required: true },
@@ -53,20 +173,32 @@ export default {
   },
   data () {
     return {
+      panel: 0,
       patakaCode: null,
       invalidCode: false,
       validCode: false,
       successMsg: [],
-      errorMsg: []
+      errorMsg: [],
+      showPatakaHelper: false,
+      publicPataka: false,
+      checkbox: false
     }
   },
   computed: {
     mobile () {
       return this.$vuetify.breakpoint.xs
+    },
+    patakaAotearoa () {
+      const env = require('ahau-env')
+      return env.isDevelopment ? '101.98.39.231:8068:@62VgwJ/NzNURnkZhjV0RtnMTLwF5sv2u4EUxrNycNvg=.ed25519~MirBPjRWElcPzvUJXGbp4xSmCGhbIbTxyt0EX840Zek=' : '101.98.39.231:8088:@QhiiCWBuxwbHs0bDFZoAgxGLhOlX88FQvvDd4aKD4Os=.ed25519~vdszvGYDU+3kHC+nOPtvZsgrM2HKfHRIfiuW/69cTFc='
     }
+
   },
   methods: {
-    async acceptInvite () {
+    togglePatakaHelper () {
+      this.showPatakaHelper = !this.showPatakaHelper
+    },
+    async acceptInvite (invite) {
       try {
         await this.$apollo.mutate({
           mutation: gql`
@@ -74,7 +206,7 @@ export default {
             acceptInvite(inviteCode: $inviteCode)
           }`,
           variables: {
-            inviteCode: this.patakaCode.trim()
+            inviteCode: invite.trim()
           }
         })
         this.successMsg = [this.$t('pataka.connectSuccess')]
@@ -87,13 +219,23 @@ export default {
       }
       this.errorMsg = []
     },
+    closeBtn () {
+      this.$route.name === 'login' ? this.$emit('skip') : this.$emit('close')
+    },
     close () {
       this.$emit('close')
+    },
+    t (key, vars) {
+      return this.$t('pataka.' + key, vars)
     }
   }
 }
 </script>
 
 <style scoped lang="scss">
-
+.logo {
+  width:25px;
+  margin-left: 16px;
+  margin-right: 16px;
+}
 </style>

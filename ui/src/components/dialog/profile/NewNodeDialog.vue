@@ -214,10 +214,12 @@ export default {
   async mounted () {
     this.closeSuggestions = await this.getCloseSuggestions()
 
-    this.quickAdd['parents'] = await this.newChildParents(this.selectedProfile)
-    if (this.type === 'partner') this.quickAdd['children'] = this.newPartnerChildren(this.selectedProfile)
-    else if (this.type === 'parent') this.quickAdd['children'] = this.newParentChildren(this.selectedProfile)
-    this.quickAdd['partners'] = this.selectedProfile.parents
+    if (this.$route.name !== 'login') {
+      this.quickAdd['parents'] = await this.newChildParents(this.selectedProfile)
+      if (this.type === 'partner') this.quickAdd['children'] = this.newPartnerChildren(this.selectedProfile)
+      else if (this.type === 'parent') this.quickAdd['children'] = this.newParentChildren(this.selectedProfile)
+      this.quickAdd['partners'] = this.selectedProfile.parents
+    }
   },
   computed: {
     ...mapGetters(['currentAccess']),

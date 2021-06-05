@@ -18,7 +18,6 @@
       <v-row>
         <p class="mb-0 headliner">Whakatau mai</p>
       </v-row>
-      <v-divider light dark="false"></v-divider>
       <v-row class="pb-12">
         <p style="color:darkgrey" class="mb-0 headliner2">welcome</p>
       </v-row>
@@ -50,19 +49,19 @@
       />
       <p class="name mt-2">{{ whoami.personal.profile.preferredName }}</p>
     </div>
-
     <NewNodeDialog
       v-if="dialog"
       :show="dialog"
       :title="`AHAU ---- I AM`"
       isUser
-      @close="toggleNew" @create="save($event)"
+      @close="toggleNew"
+      @create="save($event)"
     />
-    <OnboardDialog
+    <NewPatakaDialog
       v-if="onboarding"
       :show="onboarding"
       :title="$t('pataka.newPataka')"
-      @skip="login()" 
+      @skip="skip()"
       @submit="connect($event)"
       @close="onboarding = false"
     />
@@ -75,10 +74,9 @@ import { mapGetters, mapActions, createNamespacedHelpers } from 'vuex'
 
 import Avatar from '@/components/Avatar'
 import NewNodeDialog from '@/components/dialog/profile/NewNodeDialog.vue'
-import OnboardDialog from '@/components/dialog/connection/OnboardDialog.vue'
+import NewPatakaDialog from '@/components/dialog/connection/NewPatakaDialog.vue'
 import mapProfileMixins from '@/mixins/profile-mixins'
 const { mapMutations: mapAlertMutations } = createNamespacedHelpers('alerts')
-
 
 const karakia = `
 ---------------------------------
@@ -107,7 +105,7 @@ export default {
       isLoading: true,
       isSetup: false, // has profile set up
       dialog: false,
-      onboarded: false,
+      onboarded: true,
       onboarding: false,
       pataka: false
     }
@@ -137,7 +135,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setWhoami']),
+    ...mapActions(['setWhoami', 'setSyncing']),
     ...mapAlertMutations(['showAlert']),
     async getCurrentIdentity () {
       await this.setWhoami()
@@ -164,6 +162,16 @@ export default {
       this.isLoading = false
     },
 
+    close () {
+      this.onboarding = false
+    },
+
+    skip () {
+      this.onbaording = false
+      this.onboarded = true
+      this.login()
+    },
+
     login () {
       if (this.onboarded) {
         this.karakiaTūwhera()
@@ -180,19 +188,13 @@ export default {
     },
 
     connect (text) {
-      console.log('connect to pataka')
-      this.onboarding = false
       this.showAlert({
-          message: text,
-          delay: 5000,
-          color: 'green'
-        })
+        message: text,
+        color: 'green'
+      })
       this.setSyncing(true)
-      setTimeout(() => {
-        this.snackbar = !this.snackbar
-      }, 5000)
       // update to check ssb.status
-      this.login()
+      // this.skip()
     },
 
     toggleNew () {
@@ -205,6 +207,7 @@ export default {
         ...input
       })
 
+      // set to false to open pataka dialog
       this.onboarded = false
 
       this.getCurrentIdentity()
@@ -213,7 +216,7 @@ export default {
   components: {
     Avatar,
     NewNodeDialog,
-    OnboardDialog
+    NewPatakaDialog
   }
 }
 </script>

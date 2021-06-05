@@ -92,24 +92,19 @@
       @close="dialog = false"
       @submit="connected($event)"
     />
-    <AlertMessage
-      :show="snackbar"
-      :message="confirmationText"
-      color="#b12526"
-    />
   </div>
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapActions, createNamespacedHelpers } from 'vuex'
 import gql from 'graphql-tag'
 import whakapapa from '@/assets/whakapapa.png'
 import ProfileCard from '@/components/profile/ProfileCard.vue'
 import Avatar from '@/components/Avatar.vue'
 import NewPatakaDialog from '@/components/dialog/connection/NewPatakaDialog.vue'
-import AlertMessage from '@/components/dialog/AlertMessage.vue'
 import BigAddButton from '@/components/button/BigAddButton.vue'
 import { getTribes } from '@/lib/community-helpers.js'
+const { mapMutations: mapAlertMutations } = createNamespacedHelpers('alerts')
 
 const get = require('lodash.get')
 
@@ -117,7 +112,6 @@ export default {
   name: 'CommunitiesList',
   data () {
     return {
-      snackbar: false,
       confirmationText: null,
       tribes: [],
       patakasRaw: [],
@@ -129,7 +123,6 @@ export default {
     ProfileCard,
     Avatar,
     NewPatakaDialog,
-    AlertMessage,
     BigAddButton
   },
   apollo: {
@@ -193,14 +186,15 @@ export default {
   },
   methods: {
     ...mapActions(['setSyncing']),
+    ...mapAlertMutations(['showAlert']),
     connected (text) {
       this.dialog = false
-      this.snackbar = !this.snackbar
+      this.showAlert({
+        message: text,
+        color: 'green'
+      })
       this.setSyncing(true)
-      setTimeout(() => {
-        this.snackbar = !this.snackbar
-      }, 5000)
-      this.confirmationText = text
+
       // update to check ssb.status
     },
     goTribe (tribe) {
