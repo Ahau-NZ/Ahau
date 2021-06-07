@@ -1,5 +1,5 @@
 {
-  "addPersonFormTitle": "Edit {displayName}",
+  "addPersonFormTitle": "Whakatika {displayName}",
   "legalName": "Ingoa katoa",
   "aka": "Kei te mohiotia ano ko",
   "preferredName": "Ingoa tuatahi",
@@ -13,8 +13,8 @@
   "uploadPhoto": "Whakarewa Whakaahua",
   "relatedBy": "Pehea te hono",
   "birthPlace": "Waahi whānau",
-  "deathPlace": "Place of death",
-  "burialLocation": "Burial location",
+  "deathPlace": "Wāhi o te mate",
+  "burialLocation": "Wāhi tanumanga",
   "notLiving": "Kua Mate",
   "birthOrder": "Raupapa whānautanga mai",
   "genderIdentity": "Tuakiri ira tangata",

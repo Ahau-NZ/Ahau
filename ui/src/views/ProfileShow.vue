@@ -45,7 +45,7 @@
       v-if="dialog === 'edit-community'"
       :show="dialog === 'edit-community'"
       editing
-      :title="t('addPersonFormTitle', { displayName: profile.preferredName })"
+      :title="dt('addPersonFormTitle', { displayName: profile.preferredName })"
       @delete="dialog = 'delete-community'"
       @submit="updateCommunity"
       @close="dialog = null"
@@ -54,7 +54,7 @@
     <EditNodeDialog
       v-if="dialog === 'edit-node'"
       :show="dialog === 'edit-node'"
-      :title="t('addPersonFormTitle', { displayName: getDisplayName(profile) })"
+      :title="dt('addPersonFormTitle', { displayName: getDisplayName(profile) })"
       @submit="updatePerson"
       @close="dialog = null"
       :profile="profile"
@@ -219,7 +219,7 @@ export default {
       var name = ''
       if (this.profile.legalName) name = this.profile.legalName
       else if (this.profile.preferredName) name = this.profile.preferredName
-      if (name.length > 30) return 'font-size:6vw'
+      if (name.length > 30) return 'font-size:6vw; text-align:center; margin-left:15px; margin-right:15px'
       if (name.length > 25) return 'font-size:7vw'
       if (name.length > 20) return 'font-size:8vw'
       else return 'font-size: 10vw'
@@ -348,6 +348,9 @@ export default {
     },
     t (key, vars) {
       return this.$t('viewPerson.' + key, vars)
+    },
+    dt (key, vars) {
+      return this.$t('addPersonForm.' + key, vars)
     }
   }
 }
@@ -373,19 +376,12 @@ export default {
   }
 
 .niho-bg {
-  background: linear-gradient(to right, rgba(255, 255, 255, 0.99),
+  background: linear-gradient(to right, rgba(255, 255, 255, 0.8),
   rgba(255, 255, 255, 0.7)), url(../assets/niho.svg);
   background-position-x: 100px;
   background-attachment: fixed;
   background-repeat: no-repeat;
 }
-
-/* .fade-enter-active,
-.fade-leave-active {
-  transition-duration: 0.2;
-  transition-property: top;
-  transition-timing-function: ease-in-out;
- } */
 
  .fade-enter-active {
     transition: all 0.6s ease-in-out;

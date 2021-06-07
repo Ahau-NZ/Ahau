@@ -14,6 +14,7 @@
           :readonly="hasSelection"
           :withRelationships="allowRelationships"
           :dialogType="type"
+          :mobile="mobile"
         >
 
           <!-- Slot = Search -->

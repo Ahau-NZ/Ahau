@@ -21,7 +21,7 @@
           />
         </v-row>
         <v-row v-if="isEditing" class="justify-center">
-          <h1>{{ t('addPersonFormTitle', { name: getDisplayName(formData) }) }}</h1>
+          <h1>{{ t('addPersonFormTitle', { displayName: getDisplayName(formData) }) }}</h1>
         </v-row>
         <v-row v-if="isEditing" class="justify-center">
           <v-btn

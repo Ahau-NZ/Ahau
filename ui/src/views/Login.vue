@@ -11,10 +11,14 @@
         width="2"
       />
     </div>
-    <div v-if="!isLoading && !isSetup" style="justify-items: center;display: grid;">
+    <div v-if="!isLoading && !isSetup" class="welcome-text" style="justify-items:center;display: grid;">
       <v-row>
-        <p class="mb-0 headliner">Nau mai whakatau mai</p>
+        <p class="mb-0 headliner">Nau mai</p>
       </v-row>
+      <v-row>
+        <p class="mb-0 headliner">Whakatau mai</p>
+      </v-row>
+      <v-divider light dark="false"></v-divider>
       <v-row class="pb-12">
         <p style="color:darkgrey" class="mb-0 headliner2">welcome</p>
       </v-row>
@@ -23,10 +27,11 @@
           text
           x-large
           color="#b12526"
+          style="border-color:#b12526; background-color: #303030;"
           @click.prevent="toggleNew"
+          outlined
         >
-            <p class="mb-0">Ko wai koe --</p><p style="color:lightgrey" class="mb-0"> -- who are you?</p>
-            <v-icon right small>mdi-cursor-default</v-icon>
+            <p class="login-text mb-0">Ko wai koe --</p><p style="color:lightgrey" class="login-text mb-0"> -- who are you?</p>
 
         </v-btn>
       </v-row>
@@ -215,6 +220,11 @@ h1 {
   cursor: pointer;
 }
 
+.welcome-text {
+  position: relative;
+  top: -10%;
+}
+
  .headliner {
     font-size: 1.5em;
     text-transform: uppercase;
@@ -223,9 +233,14 @@ h1 {
   }
 
  .headliner2 {
+    padding-top: 50px;
     font-size: 1.5em;
     text-transform: uppercase;
-    font-weight: 400;
+    font-weight: 300;
     letter-spacing: 3px;
+  }
+
+  .login-text {
+    font-weight: 500;
   }
 </style>

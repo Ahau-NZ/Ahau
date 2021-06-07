@@ -49,7 +49,18 @@ export default {
       version
     }
   },
+  created () {
+    // try to be smart when picking the default language
 
+    const browserLang = navigator.languages.find((lang) =>
+      this.$i18n.availableLocales.includes(lang)
+    )
+
+    // default to what the user had last time, if anything
+    // otherwise get a language that the browser says the user prefers
+    // if we don't have a language like that, fall back to english
+    this.$i18n.locale = localStorage.getItem('locale') || browserLang || 'en'
+  },
   computed: {
     ...mapGetters(['storeDialog']),
     ...mapAlertGetters(['alertSettings']),
@@ -140,7 +151,7 @@ body {
     background-color: var(--primary-background);
     background-repeat: no-repeat;
     background-size: cover;
-    background-position-y: 60vh;
+    background-position-y: 10vh;
   }
   &.page--whakapapaindex {
     background: url(./assets/niho.svg);

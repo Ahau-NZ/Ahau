@@ -1,11 +1,11 @@
 <template>
   <Dialog :show="show" :title="title" width="75vw" :goBack="close" enableMenu @close="close">
     <template v-slot:content>
-      <v-row class="py-2 pl-10">
+      <v-row class="py-2">
         <v-col cols="12">
           <p class="sub-headline pa-0"> {{ $t('pataka.patakaCode') }} </p>
           <v-row>
-            <v-col cols="10" md='9' class="py-0">
+            <v-col cols="12" md='9' class="py-0">
               <v-text-field
                 v-model="patakaCode"
                 placeholder="xxxx-xxxxx-xxxx-xxxx"
@@ -18,16 +18,13 @@
                 clearable
               />
             </v-col>
-            <v-col class="py-0 pl-0">
+            <v-col class="py-0">
               <v-btn
                 color="black"
-                :class="mobile ? 'px-0':'white--text'"
+                class="white--text"
                 @click="acceptInvite"
-                :text="mobile"
-                :x-small="mobile"
               >
-                <v-icon v-if="mobile">mdi-arrow-right</v-icon>
-                <span v-else>{{ $t('pataka.connect') }}</span>
+                <span>{{ $t('pataka.connect') }}</span>
               </v-btn>
             </v-col>
           </v-row>
