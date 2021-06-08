@@ -3,7 +3,7 @@ import {
   getAllSettings,
   saveSettings,
   deleteSettings,
-  getLatestSeq
+  getBackup
 } from './apollo-helpers'
 
 export default function (apollo) {
@@ -12,7 +12,6 @@ export default function (apollo) {
   }
 
   const getters = {
-
   }
 
   const mutations = {
@@ -103,19 +102,31 @@ export default function (apollo) {
         console.error(err)
       }
     },
-    async getLatestSeq () {
+
+    async getBackup () {
       try {
         const res = await apollo.query(
-          getLatestSeq
+          getBackup
         )
 
         if (res.errors) throw res.errors
 
-        return res.data.latestSequence
+        return res.data.backup
       } catch (err) {
         console.error(err)
         return null
       }
+    },
+
+    async updateKeyBackupSettings ({ dispatch, rootGetters }, backedUp) {
+      const id = rootGetters.whoami.personal.settings.id
+      const input = {
+        id,
+        keyBackedUp: backedUp
+      }
+
+      await dispatch('updateSettings', input)
+      await dispatch('setWhoami', null, { root: true })
     }
   }
 
