@@ -395,7 +395,6 @@ import DateIntervalPicker from '@/components/DateIntervalPicker.vue'
 
 import { GENDERS, RELATIONSHIPS } from '@/lib/constants'
 import { getDisplayName } from '@/lib/person-helpers.js'
-import { downloadKeys } from '@/lib/key-backup.js'
 
 import isEmpty from 'lodash.isempty'
 
@@ -512,7 +511,6 @@ export default {
   },
   methods: {
     getDisplayName,
-    downloadKeys,
     updateSelectedGender (genderClicked) {
       // reset images to outlined
       this.$refs.taneImg.src = require('@/assets/tane-outlined.svg')
