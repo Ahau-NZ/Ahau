@@ -38,7 +38,7 @@ export default {
         switch (locale) {
           case 'en': return { text: 'English', value: locale }
           case 'mi_NZ': return { text: 'Māori', value: locale }
-          case 'pt_BR': return { text: 'Portugeuse (BR)', value: locale }
+          case 'pt_BR': return { text: 'Portuguese (BR)', value: locale }
           default: return { text: locale, value: locale }
         }
       })

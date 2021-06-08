@@ -20,8 +20,7 @@ rm -rf ./www;
 # Bundle the new frontend
 cd ../ui;
 cross-env PLATFORM=cordova \
-cross-env NODE_ENV=production \
-$(npm bin)/vue-cli-service build --dest ../mobile/www;
+npm run build:mobile;
 cd ../mobile;
 
 # Bundle the new backend

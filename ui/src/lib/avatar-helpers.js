@@ -6,9 +6,11 @@ import tama from '../assets/tama.svg'
 import kotiro from '../assets/kotiro.svg'
 import diverse from '../assets/diverse.svg'
 
-import whakapapa from '@/assets/whakapapa.svg'
+import whakapapa from '../assets/whakapapa.svg'
+import whakapapaPng from '../assets/whakapapa.png'
 
 import calculateAge from './calculate-age'
+import { isCordova } from './cordova-helpers'
 
 export default {
   defaultImage
@@ -16,6 +18,8 @@ export default {
 
 function defaultImage (isView, aliveInterval, gender) {
   if (isView) {
+    if (isCordova()) return whakapapaPng
+
     return whakapapa
   }
   var age = calculateAge(aliveInterval)
