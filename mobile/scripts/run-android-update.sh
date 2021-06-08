@@ -18,8 +18,7 @@ rm -rf ./www/index.html;
 # Bundle the new frontend
 cd ../ui;
 cross-env PLATFORM=cordova \
-cross-env NODE_ENV=production \
-$(npm bin)/vue-cli-service build --no-clean --dest ../mobile/www;
+npm run build:mobile -- --no-clean;
 cd ../mobile;
 
 # Don't update the backend, but since build-nodejs-project.sh would remove
@@ -30,4 +29,4 @@ rm -f ./www/nodejs-project/package-lock.json;
 # Compile the mobile app
 cordova prepare android;
 NODEJS_MOBILE_BUILD_NATIVE_MODULES=1 cordova compile android;
-cordova run android --nobuild;
+cordova run android --nobuild --device;

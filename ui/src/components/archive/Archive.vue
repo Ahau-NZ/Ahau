@@ -27,19 +27,19 @@
     </div>
 
     <VueContext ref="menu" class="pa-4">
-    <li v-if="allowCollections">
-      <a href="#" @click.prevent="dialog = 'new-collection'" class="d-flex align-center px-4">
-        <v-icon light>mdi-folder-multiple-outline</v-icon>
-        <p class="ma-0 pl-3">Create a collection</p>
-      </a>
-    </li>
-    <li>
-      <a href="#" @click.prevent="dialog = 'new-story'" class="d-flex align-center px-4">
-        <v-icon light>mdi-post-outline</v-icon>
-        <p class="ma-0 pl-3">Add a story</p>
-      </a>
-    </li>
-  </VueContext>
+      <li v-if="allowCollections">
+        <a href="#" @click.prevent="dialog = 'new-collection'" class="d-flex align-center px-4">
+          <v-icon light>mdi-folder-multiple-outline</v-icon>
+          <p class="ma-0 pl-3">Create a new collection</p>
+        </a>
+      </li>
+      <li>
+        <a href="#" @click.prevent="dialog = 'new-story'" class="d-flex align-center px-4">
+          <v-icon light>mdi-post-outline</v-icon>
+          <p class="ma-0 pl-3">Add a new story</p>
+        </a>
+      </li>
+    </VueContext>
 
     <NewRecordDialog v-if="dialog === 'new-story'" :show="dialog === 'new-story'"
       :title="$t('viewArchive.addStory')" @close="dialog = null"
@@ -53,7 +53,7 @@
 </template>
 
 <script>
-import { mapGetters, createNamespacedHelpers } from 'vuex'
+import { mapGetters, createNamespacedHelpers, mapMutations, mapActions } from 'vuex'
 import NewRecordDialog from '@/components/dialog/archive/NewRecordDialog.vue'
 import NewCollectionDialog from '@/components/dialog/archive/NewCollectionDialog.vue'
 import BigAddButton from '@/components/button/BigAddButton.vue'
@@ -138,10 +138,18 @@ export default {
     },
     onCollectionPage () {
       return this.$route.name === 'person/archive/:collectionId' || this.$route.name === 'community/archive/:collectionId'
+    },
+    isNewStoryDialogOpen () {
+      return this.dialog === 'new-story'
+    },
+    isNewCollectionDialogOpen () {
+      return this.dialog === 'new-collection'
     }
   },
   methods: {
     ...mapAlertMutations(['showAlert']),
+    ...mapMutations(['setStory', 'setDialog']),
+    ...mapActions(['toggleShowStory', 'setShowArtefact']),
     ...mapCollectionActions(['createCollection', 'getCollectionsByGroup']),
     getDisplayName,
     showCurrentCollection ({ id }) {
@@ -173,6 +181,20 @@ export default {
     async reload () {
       await this.loadCollections()
       this.$apollo.queries.stories.refetch({ filter: { groupId: this.$route.params.tribeId, type: '*' } })
+    },
+    cordovaBackButton () {
+      if (this.showArtefact) {
+        this.setShowArtefact()
+        return false
+      }
+      if (this.showStory) {
+        this.toggleShowStory()
+        return false
+      }
+      if (this.isNewStoryDialogOpen || this.isNewCollectionDialogOpen) {
+        this.dialog = null
+        return false
+      } else this.$router.go(-1)
     }
   },
   watch: {

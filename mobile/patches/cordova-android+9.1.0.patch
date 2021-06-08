@@ -1,0 +1,13 @@
+diff --git a/node_modules/cordova-android/framework/project.properties b/node_modules/cordova-android/framework/project.properties
+index d051917..52d09c3 100644
+--- a/node_modules/cordova-android/framework/project.properties
++++ b/node_modules/cordova-android/framework/project.properties
+@@ -5,7 +5,7 @@
+ split.density=false
+ 
+ # Project target.
+-target=android-29
++target=android-30
+ apk-configurations=
+ renderscript.opt.level=O0
+ android.library=true

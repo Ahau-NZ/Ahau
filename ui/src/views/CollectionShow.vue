@@ -57,7 +57,7 @@ import { getTribalProfile } from '@/lib/community-helpers'
 import mapProfileMixins from '@/mixins/profile-mixins.js'
 import { saveStoryMixin } from '@/mixins/story-mixins.js'
 
-import { mapGetters, mapMutations, createNamespacedHelpers } from 'vuex'
+import { mapGetters, mapMutations, mapActions, createNamespacedHelpers } from 'vuex'
 import Stories from '../components/archive/Stories.vue'
 
 import NewCollectionDialog from '@/components/dialog/archive/NewCollectionDialog.vue'
@@ -93,7 +93,7 @@ export default {
     await this.reload()
   },
   computed: {
-    ...mapGetters(['whoami', 'currentAccess', 'showStory']),
+    ...mapGetters(['whoami', 'currentAccess', 'showStory', 'showArtefact']),
     stories () {
       if (!this.collection || !this.collection.stories) return []
       return this.collection.stories.map(link => {
@@ -118,7 +118,8 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['setCurrentAccess']),
+    ...mapMutations(['setCurrentAccess', 'setStory']),
+    ...mapActions(['toggleShowStory', 'setShowArtefact']),
     ...mapCollectionActions(['getCollection', 'updateCollection', 'deleteCollection']),
     editCollection () {
       this.view = false
@@ -134,6 +135,19 @@ export default {
       this.view = false
       this.editing = false
       this.dialog = null
+    },
+    cordovaBackButton () {
+      if (this.showArtefact) {
+        this.setShowArtefact()
+        return false
+      }
+      if (this.showStory) {
+        this.setStory(undefined)
+        this.toggleShowStory()
+        return false
+      }
+
+      return this.$router.back()
     },
     async processUpdateCollection (input) {
       this.collection = await this.updateCollection(input)
