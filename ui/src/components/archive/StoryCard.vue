@@ -9,7 +9,7 @@
       :ripple="false"
       :light="!showArtefact"
       :elevation="!mobile && !showArtefact && fullStory ? '24':''"
-      @click="showStory()"
+      @click.passive="showStory()"
     >
       <v-list-item  v-if="!fullStory" class="px-0" style="min-height:0; height:10px">
         <v-list-item-icon class="pt-1 mt-0" style="position:absolute; top:5px; right:1px; margin-right:0px">
@@ -66,6 +66,7 @@
             :profiles="access"
             show-labels :size="fullStory ? '50px': '30px'"
             spacing="pr-2"
+            :clickable="fullStory"
           />
         </v-col>
         <v-col v-if="story.mentions && story.mentions.length > 0" cols="auto"  class="pb-0">
@@ -397,11 +398,11 @@ export default {
       }
       return 'rounded-border'
     },
-    size () {
-      return convertBytes(this.artefact.blob.size)
-    },
     mobileShowArtefact () {
       return this.mobile && this.showArtefact
+    },
+    size () {
+      return convertBytes(this.artefact.blob.size)
     }
   },
   watch: {
@@ -475,10 +476,6 @@ export default {
       this.dialog = dialog
     },
 
-    cordovaBackButton () {
-      if (this.showArtefact) return this.setShowArtefact()
-    },
-
     // toggle story view
     showStory () {
       if (!this.fullStory) {
@@ -491,7 +488,6 @@ export default {
     close () {
       this.$emit('close')
     }
-
   }
 }
 </script>

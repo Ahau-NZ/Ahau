@@ -417,6 +417,9 @@ export default {
       this.setProfileById({ id: profile.id, type: 'preview' })
       this.setDialog({ active: 'view-edit-node', type: 'preview' })
     },
+    cordovaBackButton () {
+      this.close()
+    },
     close () {
       this.$emit('close')
     },

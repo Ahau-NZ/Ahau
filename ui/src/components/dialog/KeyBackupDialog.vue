@@ -37,12 +37,11 @@
 </template>
 
 <script>
-import { mapGetters, mapActions, createNamespacedHelpers } from 'vuex'
+import { createNamespacedHelpers } from 'vuex'
 import Dialog from '@/components/dialog/Dialog.vue'
-import { downloadKeys } from '@/lib/key-backup.js'
+import { downloadBackup } from '@/lib/download-helper'
 
 const { mapActions: mapSettingsActions } = createNamespacedHelpers('settings')
-const { mapActions: mapTribeActions } = createNamespacedHelpers('tribe')
 
 export default {
   props: {
@@ -52,33 +51,14 @@ export default {
   components: {
     Dialog
   },
-  computed: {
-    ...mapGetters(['whoami', 'notifications']),
-    mobile () {
-      return this.$vuetify.breakpoint.xs
-    },
-    examples () {
-      if (this.mobile) return this.mobileItems
-      return this.items
-    }
-  },
   methods: {
-    ...mapSettingsActions(['updateSettings', 'getLatestSeq']),
-    ...mapTribeActions(['getTribeIds']),
-    ...mapActions(['setWhoami']),
+    ...mapSettingsActions(['getBackup', 'updateKeyBackupSettings']),
     async downloadKeys () {
-      const groupIds = await this.getTribeIds()
-      const latestMssgSeq = await this.getLatestSeq()
+      const backupContent = await this.getBackup()
 
-      downloadKeys(groupIds, latestMssgSeq)
+      downloadBackup(backupContent)
 
-      const input = {
-        id: this.whoami.personal.settings.id,
-        keyBackedUp: true
-      }
-      await this.updateSettings(input)
-
-      await this.setWhoami()
+      await this.updateKeyBackupSettings(true)
     },
     t (key, vars) {
       return this.$t('keyBackupForm.' + key, vars)

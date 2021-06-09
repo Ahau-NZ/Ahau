@@ -13,3 +13,62 @@ index 2128c31..227f1ff 100644
      <source-file src="src/android/java/com/janeasystems/cdvnodejsmobile/NodeJS.java" target-dir="src/com/janeasystems/cdvnodejsmobile/" />
  
      <source-file src="src/common/cordova-bridge/cordova-bridge.h" target-dir="libs/cdvnodejsmobile/" />
+diff --git a/node_modules/nodejs-mobile-cordova/src/android/build.gradle b/node_modules/nodejs-mobile-cordova/src/android/build.gradle
+index 8cd92c8..06d1ab0 100644
+--- a/node_modules/nodejs-mobile-cordova/src/android/build.gradle
++++ b/node_modules/nodejs-mobile-cordova/src/android/build.gradle
+@@ -24,9 +24,17 @@ android {
+     lintOptions {
+         abortOnError false
+     }
++
++    packagingOptions {
++        pickFirst 'lib/x86/libnode.so'
++        pickFirst 'lib/armeabi-v7a/libnode.so'
++        pickFirst 'lib/arm64-v8a/libnode.so'
++        pickFirst 'lib/x86_64/libnode.so'
++    }
+ }
+ 
+ import org.gradle.internal.os.OperatingSystem;
++import org.gradle.util.GradleVersion;
+ 
+ cdvPluginPostBuildExtras += { ->
+     if (android.defaultConfig.ndk.abiFilters == null) {
+@@ -42,7 +50,9 @@ cdvPluginPostBuildExtras += { ->
+     // The file that caches the value of NODEJS_MOBILE_BUILD_NATIVE_MODULES is not needed inside the APK.
+     android.aaptOptions.ignoreAssetsPattern += ":!NODEJS_MOBILE_BUILD_NATIVE_MODULES_VALUE.txt";
+ 
+-    android.sourceSets.main.jniLibs.srcDirs += 'libs/cdvnodejsmobile/libnode/bin/';
++    if (GradleVersion.current() < GradleVersion.version("4.0")) {
++        android.sourceSets.main.jniLibs.srcDirs += 'libs/cdvnodejsmobile/libnode/bin/';
++    }
+ 
+     String projectWWW; // www assets folder from the Application project.
+     if ( file("${project.projectDir}/src/main/assets/www/").exists() ) {
+@@ -209,14 +219,14 @@ cdvPluginPostBuildExtras += { ->
+                 description = "Building a native toolchain to compile nodejs-mobile native modules for ${abi_name}."
+                 executable = "${ndk_bundle_path}/build/tools/make-standalone-toolchain.sh"
+                 args "--toolchain=${temp_toolchain_name}-${temp_cc_ver}", "--arch=${temp_arch}", "--install-dir=${standalone_toolchain}", "--stl=libc++", "--force", "--platform=android-22"
+-                outputs.file "${standalone_toolchain}"
++                outputs.dir "${standalone_toolchain}"
+             }
+ 
+             task "BuildNpmModules${abi_name}" (type:Exec) {
+                 dependsOn "MakeToolchain${abi_name}"
+                 dependsOn "CopyNodeProjectAssets${abi_name}"
+                 inputs.file "${rootProject.buildDir}/nodejs-native-assets-temp-build/nodejs-native-assets-${abi_name}/copy.timestamp"
+-                outputs.file "${rootProject.buildDir}/nodejs-native-assets-temp-build/nodejs-native-assets-${abi_name}/nodejs-project/"
++                outputs.dir "${rootProject.buildDir}/nodejs-native-assets-temp-build/nodejs-native-assets-${abi_name}/nodejs-project/"
+                 description = "Building native modules for ${abi_name}."
+                 workingDir "${rootProject.buildDir}/nodejs-native-assets-temp-build/nodejs-native-assets-${abi_name}/nodejs-project/"
+                 commandLine npmCommandName, '--verbose', 'rebuild', '--build-from-source'
+@@ -262,7 +272,7 @@ cdvPluginPostBuildExtras += { ->
+             task "GenerateNodeNativeAssetsLists${abi_name}" {
+                 dependsOn "CopyBuiltNpmAssets${abi_name}"
+                 description "Generates a list for runtime copying"
+-                inputs.file "${rootProject.buildDir}/nodejs-native-assets/nodejs-native-assets-${abi_name}/"
++                inputs.dir "${rootProject.buildDir}/nodejs-native-assets/nodejs-native-assets-${abi_name}/"
+                 outputs.file "${rootProject.buildDir}/nodejs-native-assets/nodejs-native-assets-${abi_name}/file.list"
+                 outputs.file "${rootProject.buildDir}/nodejs-native-assets/nodejs-native-assets-${abi_name}/dir.list"
+                 doLast{
