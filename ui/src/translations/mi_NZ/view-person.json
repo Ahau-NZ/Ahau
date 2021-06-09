@@ -1,8 +1,8 @@
 {
-  "viewPersonTitle": "He kōrero",
+  "viewPersonTitle": "Mōhiohio paki",
   "about": "He kōrero",
   "preferredName": "Ingoa Tuatahi",
-  "otherNames": "Ētahi atu ingoa",
+  "otherNames": "Ingoa anō",
   "age": "Tau",
   "placeOfBirth": "Noho",
   "skillsEducationTitle": "Ngā pūkenga me ngā mātauranga",
@@ -23,6 +23,6 @@
     "postcode": "Waehere"
   },
   "communities": "Hāpori",
-  "editProfile": "Whakatika kōtaha",
+  "editProfile": "Paki panoni",
   "settings": "Tautuhinga"
 }

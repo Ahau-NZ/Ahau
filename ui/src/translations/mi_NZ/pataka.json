@@ -1,9 +1,9 @@
 {
   "connectPataka": "Hono atu ki te Pātaka",
-  "connectSuccess": "Angitu te hono atu ki a Pātaka Taonga",
-  "invalidCode": "Waehere muhu, tirohia koa te waehere ka ngana ano",
-  "notConnected": "Kaore koe i te hono atu ki tetahi Pātaka",
+  "connectSuccess": "Kua hono ki te Pātaka",
+  "invalidCode": "Kāore i tutuki. Tirohia te waehere, ā, ngana anō",
+  "notConnected": "Kaore anō koe kia hono ki tētahi Pātaka",
   "newPataka": "Hono atu ki te Pātaka hou",
-  "patakaCode": "Tuhia he waehere Pātaka kia tuhura i ngā iwi",
+  "patakaCode": "Tuhia he waehere Pātaka kia tuhura i ngā hapori",
   "connect": "Hono"
 }
