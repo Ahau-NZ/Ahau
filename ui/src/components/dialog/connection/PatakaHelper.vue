@@ -11,7 +11,7 @@
       </v-card-text>
       <v-divider />
       <p>
-          {{ t('exampleImages') }}
+        {{ t('exampleImages') }}
       </p>
       <v-carousel hide-delimiters height="300px" class="mb-12">
         <v-tooltip

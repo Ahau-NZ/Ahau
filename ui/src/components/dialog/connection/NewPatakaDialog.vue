@@ -82,20 +82,20 @@
                   </ul>
                 </div>
                 <v-row>
-                    <v-checkbox
-                      class="px-4"
-                      v-model="checkbox"
-                      :label="t('agree')"
-                      hide-details
-                    />
-                    <v-btn
-                      v-if="checkbox"
-                      color="black"
-                      class="white--text ml-4 mt-4"
-                      @click="acceptInvite(patakaAotearoa)"
-                    >
-                      <span>{{ $t('connect') }}</span>
-                    </v-btn>
+                  <v-checkbox
+                    class="px-4"
+                    v-model="checkbox"
+                    :label="t('agree')"
+                    hide-details
+                  />
+                  <v-btn
+                    v-if="checkbox"
+                    color="black"
+                    class="white--text ml-4 mt-4"
+                    @click="acceptInvite(patakaAotearoa)"
+                  >
+                    <span>{{ $t('connect') }}</span>
+                  </v-btn>
                 </v-row>
               </v-expansion-panel-content>
             </v-expansion-panel>
@@ -112,7 +112,7 @@
                 <p>{{ t('selfPatakaDescription') }}</p>
                 <p>{{ t('selfPatakaSetup') }}</p>
                 <p>{{ t('selfPatakaGuide') }}</p>
-                <a class="blue--text font-weight-bold" href="https://docs.ahau.io/#/pataka-guide" target="_blank">Pataka Setup Guide</a>
+                <a class="blue--text font-weight-bold" href="https://docs.ahau.io/#/pataka-guide" target="_blank">{{ t('setupGuide') }}</a>
               </v-expansion-panel-content>
             </v-expansion-panel>
 

@@ -30,6 +30,7 @@
   "selfPatakaDescription":"A self-hosted Pātaka can be setup using your own internet connection and a dedicated laptop or computer.", 
   "selfPatakaSetup":"To setup a self hosted Pātaka you will need a static IP address (provided by you internet provider) and some configuration of your router.", 
   "selfPatakaGuide":"Click this link to learn how to setup a self host Pātaka ", 
+  "setupGuide": "Pataka Setup Guide",
   
   "cloudPataka":"Setup a Cloud Pātaka",
   "cloudIntro":"Individuals and Tribes can setup their own cloud based Pātaka to have greater ownership and control over their network and data.",

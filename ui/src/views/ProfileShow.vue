@@ -45,7 +45,7 @@
       v-if="dialog === 'edit-community'"
       :show="dialog === 'edit-community'"
       editing
-      :title="dt('addPersonFormTitle', { displayName: profile.preferredName })"
+      :title="$t('addPersonForm.addPersonFormTitle', { displayName: profile.preferredName })"
       @delete="dialog = 'delete-community'"
       @submit="updateCommunity"
       @close="dialog = null"
@@ -54,7 +54,7 @@
     <EditNodeDialog
       v-if="dialog === 'edit-node'"
       :show="dialog === 'edit-node'"
-      :title="dt('addPersonFormTitle', { displayName: getDisplayName(profile) })"
+      :title="$t('addPersonForm.addPersonFormTitle', { displayName: getDisplayName(profile) })"
       @submit="updatePerson"
       @close="dialog = null"
       :profile="profile"
@@ -154,7 +154,7 @@ export default {
             getTribalProfile(tribe, this.whoami)
           )
         } catch (err) {
-          const message = 'Something went wrong while trying to fetch members'
+          const message = t('failMembers')
           console.error(message)
           console.error(err)
           this.showAlert({ message, delay: 5000, color: 'red' })
@@ -323,9 +323,6 @@ export default {
     },
     t (key, vars) {
       return this.$t('viewPerson.' + key, vars)
-    },
-    dt (key, vars) {
-      return this.$t('addPersonForm.' + key, vars)
     }
   }
 }
