@@ -1,5 +1,10 @@
 # Changelog | Ahau desktop
 
+## 1.5.1
+
+- fixed ssb-profile allow gender to be set to null (original blank state)
+- app logs you straight in if you already have a profile
+
 ## 1.5.0
 
 ### Features
