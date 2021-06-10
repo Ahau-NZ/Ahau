@@ -88,9 +88,9 @@
                     :label="t('agree')"
                     hide-details
                   />
-                  <v-progress-circular 
-                    v-if="tryingConnection" 
-                    class="mt-4"  
+                  <v-progress-circular
+                    v-if="tryingConnection"
+                    class="mt-4"
                     indeterminate>
                   </v-progress-circular>
                   <v-btn

@@ -239,7 +239,7 @@ export default {
         this.refresh()
         this.showAlert({ message: this.t('updateCommunity'), color: 'green' })
       } catch (err) {
-        console.error(t('failUpdateCommunity'), this.tribe)
+        console.error(this.t('failUpdateCommunity'), this.tribe)
         console.error(err)
         this.showAlert({ message: this.t('failUpdateCommunity'), color: 'red' })
         this.closeDialog()
@@ -267,7 +267,7 @@ export default {
         this.showAlert({ message: this.t('communityDeleted'), color: 'green' })
         this.$router.push('/tribe').catch(() => {})
       } catch (err) {
-        console.error(t('failCommunityDeleted'), this.tribe.id)
+        console.error(this.t('failCommunityDeleted'), this.tribe.id)
         console.error(err)
         this.showAlert({ message: this.t('failCommunityDeleted'), delay: 5000, color: 'red' })
         this.dialog = 'edit-community'
