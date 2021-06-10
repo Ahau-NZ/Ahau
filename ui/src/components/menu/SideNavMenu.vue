@@ -68,13 +68,13 @@
             <v-col class="pa-0" :cols="mobile ? '12' : '2'">
               <ArchiveIcon
                 :size="mobile ? 'large' : tablet ? 'x-large' : 'medium'"
-                :color="activeComponent === 'archive' ? 'red' : 'black'"
+                :color="activeComponent === 'archive' || activeComponent === 'collection' ? 'red' : 'black'"
               />
             </v-col>
             <v-col class="py-0" v-if="!mobile && !isOverflowing">
               <span
                 ref="text"
-                :style="activeComponent === 'archive' ? 'color:#B02425;' : ''"
+                :style="activeComponent === 'archive' || activeComponent === 'collection' ? 'color:#B02425;' : ''"
                 class="ml-2 nav-label subtitle-1"
               >{{ t('archive') }}</span>
             </v-col>

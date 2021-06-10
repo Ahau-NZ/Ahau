@@ -5,7 +5,7 @@
       <!-- Collection Header -->
       <v-row v-if="!showStory">
         <!-- <CollectionTitle v-if="mobile" :collection="collection" @click="dialog = 'edit-collection'"/> -->
-        <v-col v-if="mobile" cols="12" class="headliner black--text pa-0 pb-2 mt-n10">
+        <v-col v-if="mobile" cols="12" class="headliner black--text pa-0 pb-2">
           {{ collection.name + ' collection'}}
             <v-icon color="blue-grey" light @click="viewCollection" class="text-right justify-end">mdi-information</v-icon>
         </v-col>

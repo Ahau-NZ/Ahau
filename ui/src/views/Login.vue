@@ -18,7 +18,6 @@
       <v-row>
         <p class="mb-0 headliner">Whakatau mai</p>
       </v-row>
-      <v-divider light dark="false"></v-divider>
       <v-row class="pb-12">
         <p style="color:darkgrey" class="mb-0 headliner2">welcome</p>
       </v-row>
@@ -50,25 +49,34 @@
       />
       <p class="name mt-2">{{ whoami.personal.profile.preferredName }}</p>
     </div>
-
     <NewNodeDialog
       v-if="dialog"
       :show="dialog"
       :title="`AHAU ---- I AM`"
       isUser
-      @close="toggleNew" @create="save($event)"
+      @close="toggleNew"
+      @create="save($event)"
     />
-
+    <NewPatakaDialog
+      v-if="onboarding"
+      :show="onboarding"
+      :title="$t('pataka.newPataka')"
+      @skip="skip()"
+      @submit="connect($event)"
+      @close="onboarding = false"
+    />
   </div>
 
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters, mapActions, createNamespacedHelpers } from 'vuex'
 
 import Avatar from '@/components/Avatar'
 import NewNodeDialog from '@/components/dialog/profile/NewNodeDialog.vue'
+import NewPatakaDialog from '@/components/dialog/connection/NewPatakaDialog.vue'
 import mapProfileMixins from '@/mixins/profile-mixins'
+const { mapMutations: mapAlertMutations } = createNamespacedHelpers('alerts')
 
 const karakia = `
 ---------------------------------
@@ -96,7 +104,10 @@ export default {
     return {
       isLoading: true,
       isSetup: false, // has profile set up
-      dialog: false
+      dialog: false,
+      onboarded: true,
+      onboarding: false,
+      pataka: false
     }
   },
   mixins: [
@@ -124,7 +135,8 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setWhoami']),
+    ...mapActions(['setWhoami', 'setSyncing']),
+    ...mapAlertMutations(['showAlert']),
     async getCurrentIdentity () {
       await this.setWhoami()
       this.proceed()
@@ -140,7 +152,6 @@ export default {
         setTimeout(this.proceed, 300)
         return
       }
-
       this.isSetup = Boolean(this.whoami.personal.profile.legalName) || Boolean(this.whoami.personal.profile.preferredName)
       // Shortcut in dev, that saves us from doing one click when testing
 
@@ -151,15 +162,39 @@ export default {
       this.isLoading = false
     },
 
+    close () {
+      this.onboarding = false
+    },
+
+    skip () {
+      this.onbaording = false
+      this.onboarded = true
+      this.login()
+    },
+
     login () {
-      this.karakiaTūwhera()
-      this.$router.push({
-        name: 'person',
-        params: {
-          tribeId: this.whoami.personal.groupId,
-          profileId: this.whoami.personal.profile.id
-        }
-      }).catch(() => {})
+      if (this.onboarded) {
+        this.karakiaTūwhera()
+        this.$router.push({
+          name: 'person',
+          params: {
+            tribeId: this.whoami.personal.groupId,
+            profileId: this.whoami.personal.profile.id
+          }
+        }).catch(() => {})
+      } else {
+        this.onboarding = true
+      }
+    },
+
+    connect (text) {
+      this.showAlert({
+        message: text,
+        color: 'green'
+      })
+      this.setSyncing(true)
+      // update to check ssb.status
+      // this.skip()
     },
 
     toggleNew () {
@@ -172,12 +207,16 @@ export default {
         ...input
       })
 
+      // set to false to open pataka dialog
+      this.onboarded = false
+
       this.getCurrentIdentity()
     }
   },
   components: {
     Avatar,
-    NewNodeDialog
+    NewNodeDialog,
+    NewPatakaDialog
   }
 }
 </script>

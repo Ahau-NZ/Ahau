@@ -27,6 +27,7 @@ module.exports = {
   notifications: require('./notifications.json'),
 
   pataka: require('./pataka'),
+  patakaInstruction: require('./instructions-pataka.json'),
 
   sideProfile: require('./side-profile.json'),
 

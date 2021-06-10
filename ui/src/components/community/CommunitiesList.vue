@@ -89,27 +89,23 @@
       v-if="dialog"
       :show="dialog"
       :title="$t('pataka.newPataka')"
+      :connected="connectedPatakaAotearoa"
       @close="dialog = false"
       @submit="connected($event)"
-    />
-    <AlertMessage
-      :show="snackbar"
-      :message="confirmationText"
-      color="#b12526"
     />
   </div>
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapActions, createNamespacedHelpers } from 'vuex'
 import gql from 'graphql-tag'
 import whakapapa from '@/assets/whakapapa.png'
 import ProfileCard from '@/components/profile/ProfileCard.vue'
 import Avatar from '@/components/Avatar.vue'
-import NewPatakaDialog from '@/components/dialog/community/NewPatakaDialog.vue'
-import AlertMessage from '@/components/dialog/AlertMessage.vue'
+import NewPatakaDialog from '@/components/dialog/connection/NewPatakaDialog.vue'
 import BigAddButton from '@/components/button/BigAddButton.vue'
 import { getTribes } from '@/lib/community-helpers.js'
+const { mapMutations: mapAlertMutations } = createNamespacedHelpers('alerts')
 
 const get = require('lodash.get')
 
@@ -117,7 +113,6 @@ export default {
   name: 'CommunitiesList',
   data () {
     return {
-      snackbar: false,
       confirmationText: null,
       tribes: [],
       patakasRaw: [],
@@ -129,7 +124,6 @@ export default {
     ProfileCard,
     Avatar,
     NewPatakaDialog,
-    AlertMessage,
     BigAddButton
   },
   apollo: {
@@ -179,6 +173,12 @@ export default {
     otherTribes () {
       return this.tribes.filter(tribe => tribe.private.length < 1 && tribe.public.length > 0)
     },
+    connectedPatakaAotearoa () {
+      if (!this.patakasRaw) return
+      const env = require('ahau-env')
+      const patakaId = env.isDevelopment ? '%2XVs1WkdDdCmiHtijSES/q7PBcLIi9cyK64ndfn/c1w=.sha256' : '%tSrLMNsHrgoXMa6AAXL5EoZiLN0CqbHZ7fdFEW0AG/o=.sha256'
+      return this.patakasRaw.some(pataka => pataka.id === patakaId)
+    },
     patakas () {
       if (!this.patakasRaw) return
       return this.patakasRaw.map(pataka => {
@@ -193,14 +193,15 @@ export default {
   },
   methods: {
     ...mapActions(['setSyncing']),
+    ...mapAlertMutations(['showAlert']),
     connected (text) {
       this.dialog = false
-      this.snackbar = !this.snackbar
+      this.showAlert({
+        message: text,
+        color: 'green'
+      })
       this.setSyncing(true)
-      setTimeout(() => {
-        this.snackbar = !this.snackbar
-      }, 5000)
-      this.confirmationText = text
+
       // update to check ssb.status
     },
     goTribe (tribe) {
