@@ -89,6 +89,7 @@
       v-if="dialog"
       :show="dialog"
       :title="$t('pataka.newPataka')"
+      :connected="connectedPatakaAotearoa"
       @close="dialog = false"
       @submit="connected($event)"
     />
@@ -171,6 +172,12 @@ export default {
     },
     otherTribes () {
       return this.tribes.filter(tribe => tribe.private.length < 1 && tribe.public.length > 0)
+    },
+    connectedPatakaAotearoa () {
+      if (!this.patakasRaw) return
+      const env = require('ahau-env')
+      const patakaId = env.isDevelopment ? '%2XVs1WkdDdCmiHtijSES/q7PBcLIi9cyK64ndfn/c1w=.sha256' : '%tSrLMNsHrgoXMa6AAXL5EoZiLN0CqbHZ7fdFEW0AG/o=.sha256'
+      return this.patakasRaw.some(pataka => pataka.id === patakaId)
     },
     patakas () {
       if (!this.patakasRaw) return

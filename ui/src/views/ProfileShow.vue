@@ -154,7 +154,7 @@ export default {
             getTribalProfile(tribe, this.whoami)
           )
         } catch (err) {
-          const message = t('failMembers')
+          const message = this.t('failMembers')
           console.error(message)
           console.error(err)
           this.showAlert({ message, delay: 5000, color: 'red' })
@@ -222,8 +222,9 @@ export default {
     },
     // TOTO if these need to be used elsewhere, move to a mixin
     async updateCommunity ($event) {
+      console.log('update community')
       if (isEmpty($event)) {
-        this.showAlert({ message: 'No changes submitted' })
+        this.showAlert({ message: this.t('noChanges') })
         this.closeDialog()
       }
 
@@ -236,12 +237,11 @@ export default {
 
         this.closeDialog()
         this.refresh()
-        this.showAlert({ message: 'Successfully updated the community', color: 'green' })
+        this.showAlert({ message: this.t('updateCommunity'), color: 'green' })
       } catch (err) {
-        const message = 'Something went wrong when saving the tribe'
-        console.error(message, this.tribe)
+        console.error(t('failUpdateCommunity'), this.tribe)
         console.error(err)
-        this.showAlert({ message, color: 'red' })
+        this.showAlert({ message: this.t('failUpdateCommunity'), color: 'red' })
         this.closeDialog()
       }
     },
@@ -251,7 +251,7 @@ export default {
       await this.saveProfile(input)
       this.closeDialog()
       this.refresh()
-      this.showAlert({ message: 'Profile updated', color: 'green' })
+      this.showAlert({ message: this.t('profileUpdated'), color: 'green' })
 
       if (this.isApplication) {
         this.goProfile()
@@ -264,13 +264,12 @@ export default {
         )
 
         if (res.errors) throw res.errors
-        this.showAlert({ message: 'community successfully deleted', color: 'green' })
+        this.showAlert({ message: this.t('communityDeleted'), color: 'green' })
         this.$router.push('/tribe').catch(() => {})
       } catch (err) {
-        const message = 'Something went wrong while trying to delete the community'
-        console.error(message, this.tribe.id)
+        console.error(t('failCommunityDeleted'), this.tribe.id)
         console.error(err)
-        this.showAlert({ message, delay: 5000, color: 'red' })
+        this.showAlert({ message: this.t('failCommunityDeleted'), delay: 5000, color: 'red' })
         this.dialog = 'edit-community'
       }
     },
@@ -288,8 +287,7 @@ export default {
         if (res.errors) throw res.errors
         else {
           // flag for snackbar "request successfully sent"
-          const message = 'Request successfully sent'
-          this.showAlert({ message, delay: 5000, color: 'green' })
+          this.showAlert({ message: this.t('requestSent'), delay: 5000, color: 'green' })
         }
 
         // return res.data.createGroupApplication // return the applicationId

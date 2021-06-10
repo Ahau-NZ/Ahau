@@ -4,6 +4,7 @@
   "connectPataka": "Connect Pātaka",
   "connectSuccess": "Successfully connected to Pātaka",
   "invalidCode": "Invalid code, please check the code and try again",
+  "failConnection": "Failed to connect to Pātaka, please check your connection or try again later",
   "notConnected": "You are not currently connected to any Pātaka",
 
   "newPataka": "Connect to new Pātaka",
@@ -29,7 +30,7 @@
   "selfIntro":"Individuals and Tribes can run their own Pātaka to have greater ownership and control over their network and data.",
   "selfPatakaDescription":"A self-hosted Pātaka can be setup using your own internet connection and a dedicated laptop or computer.", 
   "selfPatakaSetup":"To setup a self hosted Pātaka you will need a static IP address (provided by you internet provider) and some configuration of your router.", 
-  "selfPatakaGuide":"Click this link to learn how to setup a self host Pātaka ", 
+  "selfPatakaGuide":"Click this link to learn how to setup a self hosted Pātaka ", 
   "setupGuide": "Pataka Setup Guide",
   
   "cloudPataka":"Setup a Cloud Pātaka",
@@ -38,7 +39,7 @@
   "cloudPros":"Renting a cloud Pātaka will save you from having to manage any hardware requirements such as storage, power or internet. However this does come at a cost.",
   "cloudCosts":"This service will be provided at a monthly fee, with a cost depending on the amount of storage and use. This may add up over time",
   "cloudCons":"This also designates a third party as kaitiaki over your backed-up information and your network.",
-  "cloudSetup":"To setup a Cloud Pātaka contact our team and we will schedule an appointment to get this up with you.",
+  "cloudSetup":"To setup a Cloud Pātaka contact our team and we will schedule an appointment to set this up with you.",
   "contact":"You can email us info@ahau.io or connect directly to our team chat via ",
   
   "help":"If you have any questions or need support getting setup you can email us at info@ahau.io or connect directly to our team chat via ",

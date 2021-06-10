@@ -1,25 +1,25 @@
 <template>
   <div>
-    <div class="px-4">
+    <div>
       <div v-if="showStory" :class="{ 'showOverlay': showStory && !mobile }"></div>
       <v-row v-show="!showStory" class="top-margin">
-        <v-col v-if="!hideArchiveTitle" cols="10" class="headliner black--text pa-0 pl-4 pt-2 pb-2">
+        <v-col v-if="!hideArchiveTitle" cols="10" class="headliner black--text pa-0 py-2 pl-3">
           {{ archiveTitle }}
-          <v-icon color="blue-grey" light @click="toggleArchiveHelper" class="infoButton">mdi-information</v-icon>
+          <v-icon color="blue-grey" light @click="toggleArchiveHelper" :class="mobile ? 'mobInfoBtn':'infoButton'">mdi-information</v-icon>
         </v-col>
         <v-col v-show="!showStory">
           <BigAddButton :label="$t('viewArchive.newStoryButton')" :customClass="mobile ? 'addBtnMobile':'addBtnDesktop'" @click.native.stop="mobile ? openContextMenu($event): dialog = 'new-story' " />
           <BigAddButton v-if="!mobile" :label="$t('viewArchive.newCollectionButton')" :customClass="mobile ? 'addBtnMobile':'addBtnCollection'" @click.native.stop="dialog = 'new-collection'" />
         </v-col>
       </v-row>
-      <v-row>
-        <v-col v-if="allowCollections" v-show="!showStory" cols="12" class="pa-0">
+      <v-row :class="mobile ? '':'mt-4'">
+        <v-col v-if="allowCollections" v-show="!showStory" cols="12" class="pl-2 pb-0">
           <CollectionGroup
             :collections="collections"
             @click="showCurrentCollection"
           />
         </v-col>
-        <v-col cols="12">
+        <v-col cols="12" class="pt-0" :class="mobile ? '':'mt-4'">
           <Stories :stories="stories" @save="processStory" :title="title" :reload="reload"/>
         </v-col>
       </v-row>
@@ -254,6 +254,11 @@ export default {
 
   .infoButton {
     margin-left: 10px;
+  }
+
+  .mobInfoBtn {
+    position: absolute;
+    right: 15px;
   }
 
   .headliner {

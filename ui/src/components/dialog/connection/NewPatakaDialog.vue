@@ -53,7 +53,7 @@
               </v-expansion-panel-content>
             </v-expansion-panel>
 
-            <v-expansion-panel>
+            <v-expansion-panel v-if="!connected">
               <v-expansion-panel-header>
                 <v-row align="center">
                   <img src="@/assets/logo_black.svg" class="logo" />
@@ -88,14 +88,20 @@
                     :label="t('agree')"
                     hide-details
                   />
+                  <v-progress-circular 
+                    v-if="tryingConnection" 
+                    class="mt-4"  
+                    indeterminate>
+                  </v-progress-circular>
                   <v-btn
-                    v-if="checkbox"
+                    v-else-if="checkbox"
                     color="black"
                     class="white--text ml-4 mt-4"
-                    @click="acceptInvite(patakaAotearoa)"
+                    @click="acceptInvite(patakaAotearoa, true)"
                   >
                     <span>{{ $t('connect') }}</span>
                   </v-btn>
+                  <span v-if="connectionErrMsg" :class="mobile ? 'pt-4 text-center':'pl-8 pt-6 text-center'">{{connectionErrMsg}}</span>
                 </v-row>
               </v-expansion-panel-content>
             </v-expansion-panel>
@@ -169,7 +175,8 @@ export default {
   },
   props: {
     show: { type: Boolean, required: true },
-    title: String
+    title: String,
+    connected: Boolean
   },
   data () {
     return {
@@ -181,7 +188,9 @@ export default {
       errorMsg: [],
       showPatakaHelper: false,
       publicPataka: false,
-      checkbox: false
+      checkbox: false,
+      tryingConnection: false,
+      connectionErrMsg: null
     }
   },
   computed: {
@@ -198,7 +207,10 @@ export default {
     togglePatakaHelper () {
       this.showPatakaHelper = !this.showPatakaHelper
     },
-    async acceptInvite (invite) {
+    async acceptInvite (invite, dev) {
+      this.tryingConnection = true
+      this.errorMsg = []
+      this.connectionErrMsg = null
       try {
         await this.$apollo.mutate({
           mutation: gql`
@@ -209,11 +221,14 @@ export default {
             inviteCode: invite.trim()
           }
         })
+        this.tryingConnection = false
         this.successMsg = [this.$t('pataka.connectSuccess')]
         this.$emit('submit', this.$t('pataka.connectSuccess'))
         this.close()
       } catch (err) {
-        this.errorMsg = [this.$t('pataka.invalidCode')]
+        this.tryingConnection = false
+        if (dev) this.connectionErrMsg = this.$t('pataka.failConnection')
+        else this.errorMsg = [this.$t('pataka.invalidCode')]
         console.error('Invite error: ', err)
         return
       }
