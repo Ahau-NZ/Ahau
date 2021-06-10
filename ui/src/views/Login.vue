@@ -192,9 +192,9 @@ export default {
         message: text,
         color: 'green'
       })
-      this.setSyncing(true)
       // update to check ssb.status
-      // this.skip()
+      this.setSyncing(true)
+      this.skip()
     },
 
     toggleNew () {
