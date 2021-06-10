@@ -23,6 +23,10 @@ else
   echo "Build Native Modules turned on";
 fi
 
+# Install node-gyp in order to Cordova to run `prepare`
+echo "Installing node-gyp in order to Cordova to run 'prepare'"
+npm install node-gyp --no-save
+
 cd ./www/nodejs-project
 
 # Write a env.json file to load process.env in the backend
@@ -35,10 +39,10 @@ echo "Installing node_modules dependencies...";
 npm install --ignore-scripts --no-optional --silent
 
 if [ $BUILD_PLATFORM == "android" ]; then
-  # Install/build just sodium-native-nodejs-mobile to Android
-  # XCode will build this by its own after
-  cd ./node_modules/sodium-native-nodejs-mobile && npm install --no-optional --silent;
-  cd ../..
+  # XCode will build this by its own so iOS isn't necessary
+  cd ./node_modules
+  cd ./sodium-native-nodejs-mobile && npm install --no-optional --silent && cd ..
+  cd ..
 fi
 
 # Patch some file changes
@@ -65,6 +69,8 @@ find ./node_modules \
 echo "Deleting some definitely-not-necessary files from node_modules...";
 find ./node_modules -empty -type d -delete;
 
+rm -rf ./patches ./node_modules/patch-package
+
 # Remove sodium-native and other unnecessary modules of node_modules to prevent their build
 declare -a modules=(
   "envelope-js"
@@ -74,7 +80,17 @@ for module in "${modules[@]}"
 do
   rm -rf ./node_modules/$module/node_modules/sodium-native
 done
-rm -rf ./node_modules/sodium-native
+
+declare -a modulesRoot=(
+  "sodium-native"
+  "leveldown"
+  "bufferutil"
+  "systeminformation"
+)
+for module in "${modulesRoot[@]}"
+do
+  rm -rf ./node_modules/$module
+done
 
 cd ../..;
 
@@ -89,6 +105,9 @@ if [ $BUILD_PLATFORM == "android" ]; then
 
   # Copies www folder to the platform/android
   cordova prepare android;
+
+  # Remove node-gyp to force using nodejs-mobile-gyp. PS.: Just setting the npm_config_node_gyp didn't work
+  rm -rf ./node_modules/.bin/node-gyp ./node_modules/node-gyp
 
   ./scripts/android/build-native-modules.sh
 fi
@@ -112,6 +131,7 @@ $(npm bin)/noderify \
   --replace.leveldown=leveldown-nodejs-mobile \
   --replace.chloride=sodium-chloride-native-nodejs-mobile \
   --replace.sodium-native=sodium-native-nodejs-mobile \
+  --replace.utp-native=utp-native-nodejs-mobile \
   --filter=cordova-bridge \
   --filter=bl \
   --filter=bufferutil \
@@ -119,6 +139,7 @@ $(npm bin)/noderify \
   --filter=utf-8-validate \
   --filter=encoding \
   --filter=casual \
+  --filter=systeminformation \
   index.js > _index.js;
 rm index.js; mv _index.js index.js;
 cd ../..;

@@ -73,7 +73,8 @@ export default {
     return {
       route: {},
       profile: {},
-      history: null
+      history: null,
+      whakapapaRoute: null
     }
   },
 
@@ -97,6 +98,9 @@ export default {
     },
     mobileBackButton (newVal) {
       this.$emit('isMobileBackButton', newVal)
+    },
+    isFromWhakapapaShow (newVal) {
+      if (newVal) this.whakapapaRoute = this.route.from.fullPath
     }
   },
   computed: {
@@ -148,7 +152,7 @@ export default {
     ...mapActions(['toggleShowStory', 'setIsFromWhakapapaShow']),
     goWhakapapaShow () {
       this.updateIsFromWhakapapaShow(false)
-      this.$router.push({ path: this.route.from.fullPath }).catch(() => {})
+      this.$router.push({ path: this.whakapapaRoute }).catch(() => {})
     },
     goWhakapapaIndex () {
       var type = this.$route.name.split('/whakapapa')[0]

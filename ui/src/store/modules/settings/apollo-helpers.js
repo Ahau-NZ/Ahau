@@ -64,10 +64,11 @@ export const deleteSettings = (id, date) => ({
   }
 })
 
-export const getLatestSeq = {
+export const getBackup = {
   query: gql`
     query {
-      latestSequence
+      backup
     }
-  `
+  `,
+  fetchPolicy: 'no-cache'
 }

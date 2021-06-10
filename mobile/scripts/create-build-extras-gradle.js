@@ -11,7 +11,6 @@ module.exports = function (context) {
     .writeFile(
       filePath,
       [
-        'ext.cdvMinSdkVersion = 21;',
         'android.defaultConfig.ndk.abiFilters = ["armeabi-v7a", "arm64-v8a"] as Set<String>;'
       ].join('\n'),
       'utf-8'

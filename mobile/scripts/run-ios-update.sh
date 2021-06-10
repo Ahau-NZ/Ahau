@@ -18,8 +18,7 @@ rm -rf ./www/index.html;
 # Bundle the new frontend
 cd ../ui;
 cross-env PLATFORM=cordova \
-cross-env NODE_ENV=production \
-$(npm bin)/vue-cli-service build --no-clean --dest ../mobile/www;
+npm run build:mobile -- --no-clean;
 cd ../mobile;
 
 # Compile the mobile app
