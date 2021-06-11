@@ -21,7 +21,7 @@ index b14a47b..fc66ebd 100644
      graphqlServer(sbot, (err, graphql) => {
        if (err) throw err
 diff --git a/node_modules/ssb-ahau/src/graphql-server.js b/node_modules/ssb-ahau/src/graphql-server.js
-index 40146ef..b7821da 100644
+index 7b32e8a..e9ed2ce 100644
 --- a/node_modules/ssb-ahau/src/graphql-server.js
 +++ b/node_modules/ssb-ahau/src/graphql-server.js
 @@ -15,7 +15,7 @@ const Artefact = require('@ssb-graphql/artefact')
@@ -51,16 +51,7 @@ index 40146ef..b7821da 100644
        latestSequence,
        backup
      ])
-@@ -73,7 +73,7 @@ module.exports = function graphqlServer (sbot, cb) {
-       origin (origin, cb) {
-         const { NODE_ENV, PLATFORM } = process.env
- 
--        if (PLATFORM === 'cordova' && origin === 'file://') return cb(null, true)
-+        if (PLATFORM === 'cordova' && (origin === undefined || origin === 'file://')) return cb(null, true)
- 
-         switch (NODE_ENV) {
-           case undefined: // if NODE_ENV not set, apply production, standards
-@@ -122,12 +122,12 @@ module.exports = function graphqlServer (sbot, cb) {
+@@ -123,12 +123,12 @@ module.exports = function graphqlServer (sbot, cb) {
          cordova-bridge is used in Cordova, DO NOT REMOVE!
          The if statement is uncommented by patch-package in the mobile platform
        */
