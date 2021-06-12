@@ -42,6 +42,7 @@
 <script>
 import Dialog from '@/components/dialog/Dialog.vue'
 import uploadFile from '@/mixins/upload-file.js'
+import { makeFile } from '@/lib/file-helpers.js'
 
 export default {
   name: 'AvatarEditDialog',
@@ -95,7 +96,7 @@ export default {
           maxWPixel: this.type === 'header' ? 1920 : 800
         })
         canvas.toBlob(async blob => {
-          const file = new File([blob], 'avatar', { type: blob.type })
+          const file = makeFile(blob)
 
           if (file.size >= 5 * 1024 * 1024) {
             console.error('this avatar image is bigger than 5MB, we cannot allow this through, otherwise it will end up a hyperblob, which AvatarImage does not currently support')

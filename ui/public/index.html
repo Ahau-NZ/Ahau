@@ -32,6 +32,10 @@
     </noscript>
     <div id="app"></div>
     <% if (process.env.VUE_APP_PLATFORM === 'cordova') { %>
+      <!-- workaround for File because there's a plugin that overwrites it -->
+      <script>
+        window.NativeFile = window.File
+      </script>
       <script src="cordova.js"></script>
     <% } %>
     <!-- built files will be auto injected -->
