@@ -100,9 +100,6 @@ export default {
       this.setStory(story)
       this.toggleShowStory()
       this.setDialog(null)
-    },
-    cordovaBackButton () {
-      if (this.showStory) this.toggleStory()
     }
   },
   t (key, vars) {

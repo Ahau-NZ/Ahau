@@ -6,7 +6,7 @@
       <ImagePicker @updateAvatar="updateAvatar($event)" />
     </div>
   </div>
-  <div v-else-if="clickable" @click="click" style="cursor: pointer;">
+  <div v-else-if="clickable" @click.passive="click" style="cursor: pointer;">
     <v-col class="py-0">
       <v-row justify="center" class="wrap">
         <v-btn :dark="dark" v-if="deletable" class="delete" @click="$emit('delete')" icon x-small light max-width="20px" max-height="20px">

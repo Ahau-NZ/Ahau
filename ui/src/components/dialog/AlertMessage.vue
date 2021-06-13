@@ -2,13 +2,13 @@
   <div class="text-center ma-2">
     <v-snackbar
       v-model="showMessage"
-      :color="color"
+      content-class="text-center"
     >
       {{ message }}
 
       <template v-slot:action="{ attrs }">
         <v-btn
-          color="green"
+          :color="color"
           text
           v-bind="attrs"
           @click="show = false"

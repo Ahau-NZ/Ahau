@@ -12,9 +12,9 @@
         <ProfileCard>
           <template v-slot:content>
             <v-row cols="12" class="pt-0" >
-              <ProfileInfoItem :class="mobile ? 'bb':'br bb'" smCols="12" mdCols="12"  :title="$t('viewPerson.profession')" :value="profile.profession"/>
+              <ProfileInfoItem class="bb" smCols="12" mdCols="12"  :title="$t('viewPerson.profession')" :value="profile.profession"/>
               <ProfileInfoItem :class="mobile ? 'bb':'br'" smCols="12" mdCols="6" :title="$t('viewPerson.schools')" :value="profile.school.join('\n')"/>
-              <ProfileInfoItem :class="mobile ? '':'br'" smCols="12" mdCols="6" :title="$t('viewPerson.skills')" :value="profile.education.join('\n')"/>
+              <ProfileInfoItem smCols="12" mdCols="6" :title="$t('viewPerson.skills')" :value="profile.education.join('\n')"/>
             </v-row>
           </template>
         </ProfileCard>

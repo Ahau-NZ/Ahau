@@ -1,0 +1,72 @@
+diff --git a/node_modules/ssb-ahau/index.js b/node_modules/ssb-ahau/index.js
+index b14a47b..fc66ebd 100644
+--- a/node_modules/ssb-ahau/index.js
++++ b/node_modules/ssb-ahau/index.js
+@@ -2,7 +2,7 @@ const pull = require('pull-stream')
+ const Obz = require('obz')
+ const graphqlServer = require('./src/graphql-server')
+ const autoPrivateProfile = require('./src/auto-private-profile')
+-const autoPrune = require('./src/auto-prune')
++// const autoPrune = require('./src/auto-prune')
+ 
+ module.exports = {
+   name: 'ahau',
+@@ -20,7 +20,7 @@ module.exports = {
+ 
+     autoPrivateProfile(sbot, isReady)
+ 
+-    autoPrune(sbot, isReady)
++    // autoPrune(sbot, isReady)
+ 
+     graphqlServer(sbot, (err, graphql) => {
+       if (err) throw err
+diff --git a/node_modules/ssb-ahau/src/graphql-server.js b/node_modules/ssb-ahau/src/graphql-server.js
+index 7b32e8a..e9ed2ce 100644
+--- a/node_modules/ssb-ahau/src/graphql-server.js
++++ b/node_modules/ssb-ahau/src/graphql-server.js
+@@ -15,7 +15,7 @@ const Artefact = require('@ssb-graphql/artefact')
+ const Story = require('@ssb-graphql/story')
+ const Whakapapa = require('@ssb-graphql/whakapapa')
+ const Invite = require('@ssb-graphql/invite')
+-const StorageManagement = require('../src/graphql-storage-management')
++// const StorageManagement = require('../src/graphql-storage-management')
+ const Settings = require('@ssb-graphql/settings')
+ 
+ const Author = require('./graphql-author')
+@@ -40,7 +40,7 @@ module.exports = function graphqlServer (sbot, cb) {
+   })
+ 
+   const invite = Invite(sbot)
+-  const storage = StorageManagement(sbot)
++  // const storage = StorageManagement(sbot)
+   const latestSequence = LatestSequence(sbot)
+   const backup = Backup(sbot)
+ 
+@@ -63,7 +63,7 @@ module.exports = function graphqlServer (sbot, cb) {
+       settings,
+       author,
+       invite,
+-      storage,
++      // storage,
+       latestSequence,
+       backup
+     ])
+@@ -123,12 +123,12 @@ module.exports = function graphqlServer (sbot, cb) {
+         cordova-bridge is used in Cordova, DO NOT REMOVE!
+         The if statement is uncommented by patch-package in the mobile platform
+       */
+-      // if (process.env.PLATFORM === 'cordova') {
+-      //   require('cordova-bridge').channel.post(
+-      //     'initialized',
+-      //     JSON.stringify({ started: true })
+-      //   )
+-      // }
++      if (process.env.PLATFORM === 'cordova') {
++        require('cordova-bridge').channel.post(
++          'initialized',
++          JSON.stringify({ started: true })
++        )
++      }
+ 
+       cb(null, httpServer)
+     })

@@ -20,7 +20,11 @@
     <meta name="msapplication-tap-highlight" content="no">
     <link rel="icon" href="<%= BASE_URL %>favicon.ico">
     <title>Āhau</title>
-    <base href="<%= NODE_ENV === 'development' ? '/' : './' %>./" />
+    <% if (process.env.VUE_APP_PLATFORM === 'cordova') { %>
+      <base href="./" />
+    <% } else { %>
+      <base href="<%= NODE_ENV === 'development' ? '/' : './' %>./" />
+    <% } %>
   </head>
   <body>
     <noscript>

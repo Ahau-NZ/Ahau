@@ -14,9 +14,9 @@ import i18n from './plugins/i18n'
 import CordovaBackButton from './plugins/cordova-back-button'
 import nodejsClient from './plugins/cordova-nodejs-client.js'
 
-const isCordova = process.env.VUE_APP_PLATFORM === 'cordova'
+import { isCordova } from './lib/cordova-helpers'
 
-if (isCordova) {
+if (isCordova()) {
   document.addEventListener('deviceready', main, false)
 } else {
   main()
@@ -44,7 +44,7 @@ async function main () {
   Vue.use(CordovaBackButton, { router })
   Vue.config.productionTip = false
 
-  if (isCordova) {
+  if (isCordova()) {
     nodejsClient.start({
       onReady: () => {
         console.log('nodejs-mobile and GraphQL server are fully ready')

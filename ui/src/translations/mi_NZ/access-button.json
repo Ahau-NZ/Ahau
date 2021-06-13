@@ -1,9 +1,9 @@
 {
   "privateAccess": "E āhei ana koe me tō kotahi te uru atu ki tēnei rua",
   "membersWillHaveAccess": "Ko ngā mema anake o {preferredName} ka uru ki tēnei {recordType}",
-  "membersCanAccess": "Only members of {preferredName} can access this {recordType}",
+  "membersCanAccess": "Ko ngā mema anake o {preferredName} ka uru ki tēnei {recordType}",
   "private": "Muna",
-  "setAccess": "tautuhi urunga",
+  "setAccess": "te Whakatapoko",
   "addToArchive": "Add {recordType} to archive",
-  "tribeName": "{tribeName} (tribe)"
+  "tribeName": "{tribeName} iwi"
 }

@@ -171,6 +171,10 @@ body {
   flex:none
 }
 
+.v-image__image--cover {
+    background-size: contain !important;
+}
+
 .version {
   color: #999;
   position: fixed;

@@ -45,7 +45,7 @@
       v-if="dialog === 'edit-community'"
       :show="dialog === 'edit-community'"
       editing
-      :title="dt('addPersonFormTitle', { displayName: profile.preferredName })"
+      :title="$t('addPersonForm.addPersonFormTitle', { displayName: profile.preferredName })"
       @delete="dialog = 'delete-community'"
       @submit="updateCommunity"
       @close="dialog = null"
@@ -54,7 +54,7 @@
     <EditNodeDialog
       v-if="dialog === 'edit-node'"
       :show="dialog === 'edit-node'"
-      :title="dt('addPersonFormTitle', { displayName: getDisplayName(profile) })"
+      :title="$t('addPersonForm.addPersonFormTitle', { displayName: getDisplayName(profile) })"
       @submit="updatePerson"
       @close="dialog = null"
       :profile="profile"
@@ -86,14 +86,6 @@
       @close="dialog = null"
       @cancel="cancelDeleteProfile"
     />
-    <!-- Snackbar for successful Tribe request sent -->
-    <v-snackbar
-      v-model="joinRequestSent"
-      color="green"
-      content-class="text-center"
-    >
-      Request successfully sent
-    </v-snackbar>
   </v-container>
 </template>
 
@@ -121,7 +113,6 @@ import {
   mapMutations,
   createNamespacedHelpers
 } from 'vuex'
-
 const { mapMutations: mapAlertMutations } = createNamespacedHelpers('alerts')
 
 export default {
@@ -153,8 +144,7 @@ export default {
       parentIndex: null,
       dialogType: null,
       source: null,
-      isApplication: false,
-      joinRequestSent: false
+      isApplication: false
     }
   },
   watch: {
@@ -174,7 +164,7 @@ export default {
             getTribalProfile(tribe, this.whoami)
           )
         } catch (err) {
-          const message = 'Something went wrong while trying to fetch members'
+          const message = this.t('failMembers')
           console.error(message)
           console.error(err)
           this.showAlert({ message, delay: 5000, color: 'red' })
@@ -242,8 +232,9 @@ export default {
     },
     // TOTO if these need to be used elsewhere, move to a mixin
     async updateCommunity ($event) {
+      console.log('update community')
       if (isEmpty($event)) {
-        this.showAlert({ message: 'No changes submitted' })
+        this.showAlert({ message: this.t('noChanges') })
         this.closeDialog()
       }
 
@@ -256,12 +247,11 @@ export default {
 
         this.closeDialog()
         this.refresh()
-        this.showAlert({ message: 'Successfully updated the community' })
+        this.showAlert({ message: this.t('updateCommunity'), color: 'green' })
       } catch (err) {
-        const message = 'Something went wrong when saving the tribe'
-        console.error(message, this.tribe)
+        console.error(this.t('failUpdateCommunity'), this.tribe)
         console.error(err)
-        this.showAlert({ message })
+        this.showAlert({ message: this.t('failUpdateCommunity'), color: 'red' })
         this.closeDialog()
       }
     },
@@ -271,7 +261,7 @@ export default {
       await this.saveProfile(input)
       this.closeDialog()
       this.refresh()
-      this.showAlert({ message: 'The profile was updated!' })
+      this.showAlert({ message: this.t('profileUpdated'), color: 'green' })
 
       if (this.isApplication) {
         this.goProfile()
@@ -284,13 +274,12 @@ export default {
         )
 
         if (res.errors) throw res.errors
-        this.showAlert({ message: 'community successfully deleted' })
+        this.showAlert({ message: this.t('communityDeleted'), color: 'green' })
         this.$router.push('/tribe').catch(() => {})
       } catch (err) {
-        const message = 'Something went wrong while trying to delete the community'
-        console.error(message, this.tribe.id)
+        console.error(this.t('failCommunityDeleted'), this.tribe.id)
         console.error(err)
-        this.showAlert({ message, delay: 5000, color: 'red' })
+        this.showAlert({ message: this.t('failCommunityDeleted'), delay: 5000, color: 'red' })
         this.dialog = 'edit-community'
       }
     },
@@ -308,7 +297,7 @@ export default {
         if (res.errors) throw res.errors
         else {
           // flag for snackbar "request successfully sent"
-          this.joinRequestSent = true
+          this.showAlert({ message: this.t('requestSent'), delay: 5000, color: 'green' })
         }
 
         // return res.data.createGroupApplication // return the applicationId
@@ -348,9 +337,6 @@ export default {
     },
     t (key, vars) {
       return this.$t('viewPerson.' + key, vars)
-    },
-    dt (key, vars) {
-      return this.$t('addPersonForm.' + key, vars)
     }
   }
 }

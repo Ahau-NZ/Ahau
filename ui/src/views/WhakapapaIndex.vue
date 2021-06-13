@@ -378,6 +378,12 @@ export default {
     },
     t2 (key, vars) {
       return this.$t('addWhakapapaForm.' + key, vars)
+    },
+    cordovaBackButton () {
+      if (this.showViewForm) {
+        this.toggleViewForm()
+        return false
+      }
     }
   },
   components: {

@@ -16,9 +16,9 @@
         <div justify="center" class="pt-2">
           <Avatar
             :size="size"
-            ::isEditing="false"
+            :isEditing="false"
             :image="profile.avatarImage"
-            :alt="getDisplayName(profile)"
+            :alt="profile.displayName"
             :gender="profile.gender"
             :aliveInterval="profile.aliveInterval"
             :deceased="profile.deceased"
@@ -27,7 +27,7 @@
             @click="click(profile)"
             :deletable="deletable"
             @delete="$emit('delete', i)"
-            :isView="isView || (profile.type === 'community' && !profile.avatarImage)"
+            :isView="profile.isView"
             :dark="dark"
             :row="row"
             :addable="addable"
@@ -71,8 +71,17 @@ export default {
     formattedProfiles () {
       if (!this.profiles) return null
       return this.profiles.map(d => {
-        if (d.profile) return d.profile
-        return d
+        let profile = d
+
+        if (d.profile) {
+          profile = d.profile
+        }
+
+        return {
+          ...profile,
+          displayName: getDisplayName(profile),
+          isView: this.isView || (profile.type === 'community' && !profile.avatarImage)
+        }
       })
     }
   },

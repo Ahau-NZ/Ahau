@@ -1,6 +1,11 @@
 # Changelog | Ahau desktop
 
-## Current
+## 1.5.1
+
+- fixed ssb-profile allow gender to be set to null (original blank state)
+- app logs you straight in if you already have a profile
+
+## 1.5.0
 
 ### Features
 
@@ -11,6 +16,10 @@
     - In the settings dialog
 - The main nav bar now shows connected tribes for quick navigation
 - In tribe profile view you can now click on a member to view there profile info
+- Updated Pataka onboarding
+  - updated the Pataka dialog to provided users with other options
+  - Users will now be prompted to join a Pātaka upon creating a profile 
+- Translation updates
 
 
 ### Bug Fixes
@@ -25,6 +34,10 @@
 - fix showing tribes list if no tribes in appbar
 - fix addPersonFormTitle translations
 - Fixed bug causing selected locale to default to English when another language has been selected
+- Updated the popup messages for consistency in style
+- bugfix around public profiles
+    - now impossible to accidentally publish private profile (e.g. phone number) to your public (unencrypted) profile) over graphql
+    - ensure all public profiles have do not have private profile data in them
 
 ## v1.4.2
 
