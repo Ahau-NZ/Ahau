@@ -14,10 +14,11 @@
     "clear": "rm -rf node_modules"
   },
   "dependencies": {
+    "@ssb-graphql/profile": "^5.0.3",
     "ahau-env": "^2.2.0",
     "electron-updater": "^4.3.8",
     "secret-stack": "^6.4.0",
-    "ssb-ahau": "^10.2.1",
+    "ssb-ahau": "^10.2.4",
     "ssb-ahoy": "^4.1.2",
     "ssb-artefact": "^3.2.1",
     "ssb-backlinks": "^2.1.1",
