@@ -35,6 +35,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import Dialog from '@/components/dialog/Dialog.vue'
 import mapProfileMixins from '@/mixins/profile-mixins.js'
 
@@ -58,16 +59,27 @@ export default {
       keepProfileVisible: false
     }
   },
+  computed: {
+    ...mapGetters(['whoami'])
+  },
   methods: {
     async deleteProfile () {
       const addAuthors = {
-        // add: ['*'],
-        remove: ['*']
+        add: ['*']
       }
 
-      console.log('change authors to *: ', addAuthors)
       const input = { id: this.profile.id, authors: addAuthors }
       await this.saveProfile(input)
+
+      const tombstone = {
+        date: Date.now(),
+        reason: 'User deleted profile'
+      }
+
+      console.log('id: ', this.whoami.public.profile.id)
+      console.log('add tombstone: ', tombstone)
+      const tombInput = { id: this.whoami.public.profile.id, tombstone, allowPublic: true }
+      await this.saveProfile(tombInput)
     },
     cancel () {
       this.$emit('cancel')
