@@ -113,8 +113,18 @@ export const ProfileTiakiFieldsFragment = gql`
   ${PublicProfileFieldsFragment}
   fragment ProfileTiakiFields on Profile {
     canEdit
-    tiaki {
-      ...PublicProfileFields
+    ...on Person {
+      tiaki {
+        ...PublicProfileFields
+      }
+    }
+    ...on Community {
+      kaitiaki {
+        feedId
+        profile {
+          ...PublicProfileFields
+        }
+      }
     }
     authors {
       profile {

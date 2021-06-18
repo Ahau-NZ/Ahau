@@ -158,8 +158,10 @@ export const whoami = ({
           groupId
           profile {
             ...ProfileFragment
-            tiaki {
-              ...PublicProfileFields
+            ...on Person {
+              tiaki {
+                ...PublicProfileFields
+              }
             }
             authors {
               ...AuthorFragment

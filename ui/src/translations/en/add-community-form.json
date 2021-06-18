@@ -3,6 +3,9 @@
   "name": "Community name",
   "description": "Community description",
   "uploadPhoto": "Upload profile photo",
+  "personalName": "Name",
+  "preferredName": "Preferred name",
+  "legalName": "Legal name",
   "address": "Address",
   "postCode": "Postcode",
   "email": "Email",
@@ -10,9 +13,18 @@
   "country": "Country",
   "phone": "Phone",
   "setupRegistrationForm": "Setup community registration form",
-  "form": "Community registration form",
-  "addQuestion": "Add a question",
+  "form": "Create your tribal registration questions",
+  "addQuestion": "Add question",
   "question": "Question",
   "cancel": "Cancel",
-  "save": "Save"
+  "save": "Save",
+  "selectMember": "Select a member as Kaitiaki",
+  
+  "delete": "Delete This Tribe",
+  "profile": "profile",
+  "registration": "registration", 
+  "kaitiaki": "kaitiaki",
+  "tribalKaitiaki": "Tribal kaitiaki",
+  "deleteCommunity": "Delete this community"
+
 }

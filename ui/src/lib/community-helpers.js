@@ -18,7 +18,9 @@ export const EMPTY_COMMUNITY = {
   postCode: null,
   email: null,
   phone: null,
-  joiningQuestions: []
+  joiningQuestions: [],
+  authors: [],
+  kaitiaki: []
 }
 
 export function setDefaultCommunity (newCommunity) {
@@ -36,7 +38,8 @@ export function setDefaultCommunity (newCommunity) {
     postCode: community.postCode,
     email: community.email,
     phone: community.phone,
-    joiningQuestions: community.joiningQuestions
+    joiningQuestions: community.joiningQuestions,
+    authors: community.kaitiaki.map(d => ({ ...d.profile, feedId: d.feedId }))
   }
 }
 
@@ -118,12 +121,15 @@ ${AUTHOR_FRAGMENT}
     city
     country
     postCode
+    kaitiaki {
+      feedId
+      profile {
+        ...PublicProfileFields
+      }
+    }
     joiningQuestions {
       type
       label
-    }
-    tiaki {
-      ...PublicProfileFields
     }
     authors {
       ...AuthorFragment

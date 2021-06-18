@@ -62,36 +62,6 @@
           <!-- Phone -->
           <v-text-field v-model="formData.phone" :label="$t('addCommunityForm.phone')" v-bind="customProps" />
         </v-col>
-        <v-col cols="12" align="center" v-if="!allowJoiningQuestions" class="pt-12">
-          <v-btn @click="allowJoiningQuestions = true" text light color="blue">
-            {{ $t('addCommunityForm.setupRegistrationForm') }}
-            <v-icon>mdi-cogs</v-icon>
-          </v-btn>
-        </v-col>
-        <v-col v-else>
-          <v-row>
-            <v-col cols="12">
-               {{ $t('addCommunityForm.form') }}
-            </v-col>
-            <v-col cols="12" sm="12" v-for="(question, i) in formData.joiningQuestions" :key="`j-q-${i}`" class="pa-1, mt-4">
-              <v-text-field
-                v-model="formData.joiningQuestions[i].label"
-                v-bind="customProps"
-                append-icon="mdi-delete"
-                @click:append="removeJoiningQuestion(i)"
-                :label="`Question ${i + 1}`"
-                auto-focus
-              />
-            </v-col>
-            <v-col cols="12">
-              <v-row>
-                <v-spacer/>
-                <AddButton label="Add a question" @click="addQuestionField"/>
-                <v-spacer/>
-              </v-row>
-            </v-col>
-          </v-row>
-        </v-col>
       </v-row>
     </v-col>
   </v-form>
@@ -100,14 +70,12 @@
 <script>
 import Avatar from '@/components/Avatar.vue'
 import ImagePicker from '@/components/ImagePicker.vue'
-import AddButton from '@/components/button/AddButton.vue'
 
 export default {
   name: 'CommunityForm',
   components: {
     Avatar,
-    ImagePicker,
-    AddButton
+    ImagePicker
   },
   props: {
     formData: Object
@@ -115,16 +83,6 @@ export default {
   data () {
     return {
       allowJoiningQuestions: false
-    }
-  },
-  watch: {
-    'formData.joiningQuestions': {
-      deep: true,
-      immediate: true,
-      handler (joiningQuestions) {
-        if (joiningQuestions && joiningQuestions.length > 0) this.allowJoiningQuestions = true
-        else this.allowJoiningQuestions = false
-      }
     }
   },
   computed: {
@@ -137,14 +95,6 @@ export default {
         placeholder: ' ',
         outlined: true
       }
-    }
-  },
-  methods: {
-    addQuestionField () {
-      this.formData.joiningQuestions.push({ label: '', type: 'input' })
-    },
-    removeJoiningQuestion (index) {
-      this.formData.joiningQuestions.splice(index, 1)
     }
   }
 }
