@@ -1,6 +1,18 @@
 # Changelog | Ahau desktop
 
+## Current
+
+### Features
+
+- Can now add multiple members as kaitiaki to a group, any kaitiaki will be able to edit the Community, add/remove other kaitiaki and accept/decline applications to join the group
+
+### Bug Fixes
+
+- fixed `ssb-profile` not allowing `headerImage` and `avatarImage` to be set to null
+
 ## 1.5.1
+
+### Bug Fixes
 
 - fixed ssb-profile allow gender to be set to null (original blank state)
 - app logs you straight in if you already have a profile

@@ -10,14 +10,14 @@ const communityUpdated = {
   avatarImage: null,
   headerImage: null,
   description: 'This is the whanau',
-  country: 'NZ',
   address: null,
   email: null,
   phone: null,
   joiningQuestions: [
     { type: 'input', label: 'What is your iwi?' },
     { type: 'input', label: 'Where were you born?' }
-  ]
+  ],
+  authors: []
 }
 
 test('get changes from a new community', t => {
@@ -33,7 +33,6 @@ test('create new community', t => {
   const expectedCommunity = {
     preferredName: 'Eriepa Whanau',
     description: 'This is the whanau',
-    country: 'NZ',
     joiningQuestions: [
       { type: 'input', label: 'What is your iwi?' },
       { type: 'input', label: 'Where were you born?' }
@@ -60,7 +59,8 @@ test('get changes from an existing community', t => {
       { type: 'input', label: 'What is your iwi?' },
       { type: 'input', label: 'Where were you born?' },
       { type: 'input', label: 'What is the time?' } // update
-    ]
+    ],
+    authors: [{ feedId: 'A' }] // updated
   }
 
   const updatedChanges = getObjectChanges(communityUpdated, newUpdate)
@@ -76,7 +76,10 @@ test('get changes from an existing community', t => {
       { type: 'input', label: 'What is your iwi?' },
       { type: 'input', label: 'Where were you born?' },
       { type: 'input', label: 'What is the time?' }
-    ]
+    ],
+    authors: {
+      add: [{ feedId: 'A' }]
+    }
   }
 
   t.deepEqual(updatedChanges, expectedCommunity, 'returns updated changes')

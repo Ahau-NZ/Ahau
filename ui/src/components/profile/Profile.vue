@@ -66,9 +66,9 @@
       <ProfileCard v-if="!myProfile" title="Kaitiaki" class="mt-0 px-0">
         <template v-slot:content>
           <div>
-            <v-row  v-for="(kaitiaki, i) in profile.tiaki" :key="i" class="justify-center align-center ma-0 ml-4">
+            <v-row  v-for="({ profile: kaitiaki }, i) in profile.kaitiaki" :key="i" class="justify-center align-center ma-0 ml-4">
               <v-col cols="2" class="pt-0 pl-0">
-                <Avatar :size="mobile ? '50px' : '40px'" :image="kaitiaki.avatarImage" :alt="kaitiaki.preferredName" :aliveInterval="kaitiaki.aliveInterval" :gender="kaitiaki.gender"/>
+                <Avatar :size="mobile ? '50px' : '40px'" :image="kaitiaki.avatarImage" :alt="kaitiaki.preferredName" />
               </v-col>
               <v-col  class="py-0">
                 <p style="color:black;">{{ getDisplayName(kaitiaki) }}</p>
