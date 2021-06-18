@@ -64,11 +64,11 @@ export default {
   },
   methods: {
     async deleteProfile () {
-      const addAuthors = {
+      const authors = {
         add: ['*']
       }
 
-      const input = { id: this.profile.id, authors: addAuthors }
+      const input = { id: this.profile.id, authors }
       await this.saveProfile(input)
 
       const tombstone = {
@@ -76,10 +76,13 @@ export default {
         reason: 'User deleted profile'
       }
 
-      console.log('id: ', this.whoami.public.profile.id)
-      console.log('add tombstone: ', tombstone)
-      const tombInput = { id: this.whoami.public.profile.id, tombstone, allowPublic: true }
-      await this.saveProfile(tombInput)
+      const tombstoneInput = {
+        id: this.whoami.public.profile.id,
+        tombstone,
+        allowPublic: true
+      }
+
+      await this.saveProfile(tombstoneInput)
     },
     cancel () {
       this.$emit('cancel')

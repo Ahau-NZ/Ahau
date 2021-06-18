@@ -37,7 +37,7 @@
 </template>
 
 <script>
-import { mapGetters, createNamespacedHelpers } from 'vuex'
+import { createNamespacedHelpers } from 'vuex'
 import Dialog from '@/components/dialog/Dialog.vue'
 import { downloadBackup } from '@/lib/download-helper'
 
@@ -50,9 +50,6 @@ export default {
   name: 'KeyBackupDialog',
   components: {
     Dialog
-  },
-  computed: {
-    ...mapGetters(['whoami', 'notifications'])
   },
   methods: {
     ...mapSettingsActions(['getBackup', 'updateKeyBackupSettings']),
