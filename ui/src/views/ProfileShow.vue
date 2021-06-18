@@ -50,6 +50,7 @@
       @submit="updateCommunity"
       @close="dialog = null"
       :profile="profile"
+      :tribe="tribe"
     />
     <EditNodeDialog
       v-if="dialog === 'edit-node'"
@@ -232,10 +233,10 @@ export default {
     },
     // TOTO if these need to be used elsewhere, move to a mixin
     async updateCommunity ($event) {
-      console.log('update community')
       if (isEmpty($event)) {
-        this.showAlert({ message: this.t('noChanges') })
+        this.showAlert({ message: this.t('noChanges'), color: 'green' })
         this.closeDialog()
+        return
       }
 
       try {
@@ -288,7 +289,7 @@ export default {
         const res = this.$apollo.mutate(
           createGroupApplication({
             groupId: this.tribe.id,
-            groupAdmins: [...this.tribe.public[0].tiaki.map(d => d.feedId)],
+            groupAdmins: [...this.tribe.public[0].kaitiaki.map(d => d.feedId)],
             comment,
             answers
           })
