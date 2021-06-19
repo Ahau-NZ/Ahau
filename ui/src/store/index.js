@@ -49,6 +49,9 @@ const rootModule = {
           preferredName: '',
           aliveInterval: '',
           avatarImage: { uri: '' }
+        },
+        settings: {
+          keyBackedUp: null
         }
       }
     },
