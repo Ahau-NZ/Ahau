@@ -45,7 +45,7 @@
     <DeleteCollectionDialog
       v-if="dialog === 'delete-collection'"
       :show="dialog === 'delete-collection'"
-      @submit="deleteCollection"
+      @submit="processDeleteCollection"
       @close="close"
     />
   </div>
