@@ -1,15 +1,15 @@
 {
-  "titleArchive": "Mahara",
-  "archiveDescription": "Tēnei mea te Rua Mahara. He wāhi pupuri, tuhi, uru hoki ki ōu nei purākau",
-  "storyDescription": "Ko te Pakiwaitara/Purākau, he kōrero matihiko e hiranga ana ki te tētahi, ki tētahi hapori rānei. Inarā he kōrero whakapapa, he kōrero ahurea rānei. Ko ēnei he kōrero pēnei i ngā maharatanga, he hitori, he purākau, he takamahi, he pakaiwaitara rānei.",
-  "archiveTypes": "E rua ngā momo rua mahara ki roto i a Āhau",
-  "personalArchive": "Ko tāu rua mahara, kua muna katoatia, a, kua whakamuna hoki ki tāu ake taputapu hangarau. Kia whakaritea tāu pūkete, ka whakaritea hoki tāu rua mahara",
-  "whanauArchive": "Kohinga Mahara: He rua mahara kua whakamunatia. E āhei ana te hunga e whakaae anake kia uru. Ko ērā whanaunga e whakaae anake e uru. Kia hangaia he iwi hou. ka hangaia hoki he kohinga Hapori",
-  "createRecord": "Kia whakaritea he pūranga. Nāu anō te mana kia kōwhirihia ko tewhea te rua mahara ka noho ai tāu pūranga ma te tini i te mana uru ki a koe, ko tētahi rōpu e noho ana koe.",
-  "exampleImages": "He tauira",
-  "itemsStories": "rau atu he purākau mai i ngā pūranga ki te kohinga nei",
-  "itemsArtefacts": "tāpirihia ngā taonga me ngā pāpāho ki ngā kōrero ",
-  "itemsViewAll": "tiro i o kōrero katoa i te wāhi kotahi",
-  "itemsIndividual": "tiro i ngā kōrero takitahi mo etahi atu kōrero",
-  "close": "puta ki waho"
+  "titleArchive": "Pūranga",
+  "archiveDescription": "Tēnei mea te pūranga. He wāhi auaha hei pupuri, hei tiki, ā, hei uru hoki ki ōu nei pūrākau",
+  "storyDescription": "Ko te Pakiwaitara/Pūrākau, he kōrero matihiko e hiranga ana ki tētahi, ki tētahi hapori rānei. Inarā he kōrero whakapapa, he kōrero ahurea rānei. Ko ēnei he kōrero pēnei i ngā maharatanga, he hītori, he pūrākau, he takamahi, he pakaiwaitara rānei.",
+  "archiveTypes": "E rua ngā momo pūranga ki roto i Āhau",
+  "personalArchive": "Ko tāu pūranga ake, kua muna katoatia, ā, kua whakamuna hoki ki tāu ake taputapu hangarau. Kia whakaritea tāu pūkete, ka whakaritea hoki tāu pūranga",
+  "whanauArchive": "Kohinga Mahara: He pūranga kua whakamunatia. E āhei ana te hunga e whakaae anake kia uru. Ko ērā whanaunga e whakaae anake kia uru. Kia hangaia he iwi hou. ka hangaia hoki he kohinga Hapori",
+  "createRecord": "Kia whakaritea he pūranga. Nāu anō te mana kia kōwhirihia ko tēwhea te rua mahara ka noho ai tāu pūranga mā te tini i te mana uru ki a koe, ko tētahi rōpū e noho ana koe.",
+  "exampleImages": "He mātātuhi",
+  "itemsStories": "Rau atu ngā pūrākau mai i ngā pūranga ki te kohinga nei",
+  "itemsArtefacts": "Tāpirihia ngā taonga me ngā pāpāho ki ngā kōrero ",
+  "itemsViewAll": "Tirohia ō kōrero katoa i te wāhi kotahi",
+  "itemsIndividual": "Tirohia ngā kōrero takitahi mō ētahi atu kōrero",
+  "close": "Katia"
 }
