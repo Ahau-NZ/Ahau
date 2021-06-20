@@ -24,5 +24,13 @@
   },
   "communities": "Comunidades",
   "editProfile": "Edit Profile",
-  "settings": "Settings"
+  "settings": "Settings",
+  "failMembers": "Something went wrong while trying to fetch members",
+  "noChanges": "No changes submitted",
+  "updateCommunity": "Successfully updated the community",
+  "failUpdateCommunity": "Something went wrong when saving the tribe",
+  "profileUpdated": "Profile updated",
+  "communityDeleted": "Community successfully deleted",
+  "failCommunityDeleted": "Something went wrong while trying to delete the community",
+  "requestSent": "Request successfully sent"
 }

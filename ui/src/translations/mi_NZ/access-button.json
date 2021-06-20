@@ -3,7 +3,7 @@
   "membersWillHaveAccess": "Ko ngā mema anake o {preferredName} ka uru ki tēnei {recordType}",
   "membersCanAccess": "Ko ngā mema anake o {preferredName} ka uru ki tēnei {recordType}",
   "private": "Muna",
-  "setAccess": "te Whakatapoko",
+  "setAccess": "Whakatapoko",
   "addToArchive": "Add {recordType} to archive",
-  "tribeName": "{tribeName} iwi"
+  "tribeName": "{tribeName} (iwi)"
 }

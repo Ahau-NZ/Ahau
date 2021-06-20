@@ -1,15 +1,15 @@
 {
-  "archiveTitle": "Ko tō ake ake pūranga",
-  "addStory": "He purākau hou",
-  "newCollectionButton": "kohinga hou",
-  "newStoryButton": "kōrero hou",
-  "collections": "Kohinga",
+  "archiveTitle": "Ko tō ake pūranga",
+  "addStory": "He pūrākau hou",
+  "newCollectionButton": "Kohinga hou",
+  "newStoryButton": "Kōrero hou",
+  "collections": "Ngā kohinga",
   "updated": "Whakahou",
-  "stories": "Ngā Rua Mahara",
-  "archiveRecords": "Ngā Rua Mahara",
+  "stories": "Ngā pūrākau/kōrero",
+  "archiveRecords": "Ngā pūranga o mua",
   "access": "Te Whakatapoko",
-  "mentions": "Tauāki",
+  "mentions": "Tauākī",
   "location": "Wāhi",
-  "collectionNotFound": "Kāore i kohinga",
-  "storyNotFound": " Kāore i purākau"
+  "collectionNotFound": "He kohinga tē kitea",
+  "storyNotFound": " He pūrākau tē kitea"
 }
