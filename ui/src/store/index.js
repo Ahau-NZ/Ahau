@@ -122,7 +122,6 @@ const rootModule = {
 export default new Vuex.Store({
   ...rootModule,
   modules: {
-    whakapapa,
     person,
     archive,
     dialog,
@@ -133,7 +132,7 @@ export default new Vuex.Store({
 
     // new
     collection: collection(apollo),
-
-    settings: settings(apollo)
+    settings: settings(apollo),
+    whakapapa: whakapapa(apollo)
   }
 })
