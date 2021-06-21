@@ -3,8 +3,8 @@
     <template v-slot:content>
       <v-container fluid>
         <LanguageSettings />
-        <StorageSettings />
         <BackupSettings />
+        <StorageSettings />
       </v-container>
     </template>
   </Dialog>
