@@ -168,8 +168,8 @@ export default {
       this.$refs.menu.open($event)
     },
     async processCollection (input) {
-      await this.createCollection(input)
-      await this.reload()
+      const collection = await this.createCollection(input)
+      if (collection) this.collections.push(collection)
     },
     async loadCollections () {
       const groupId = this.$route.params.profileId === this.whoami.personal.profile.id
