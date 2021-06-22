@@ -62,7 +62,8 @@
               <slot name="before-actions"></slot>
             </v-col>
             <v-spacer v-if="!mobile"/>
-            <slot name="actions">
+            <v-col v-if="hideActions" class="pa-3"></v-col>
+            <slot name="actions" v-else>
               <v-col cols="6" md="auto" align="center">
                 <v-btn @click="close"
                   text
@@ -97,17 +98,10 @@ import { mapGetters, mapMutations } from 'vuex'
 export default {
   name: 'Dialog',
   props: {
-    show: {
-      type: Boolean,
-      required: false
-    },
-    isEditing: {
-      type: Boolean,
-      required: false
-    },
+    show: Boolean,
+    isEditing: Boolean,
     width: {
       type: String,
-      required: false,
       default: '1000px'
     },
     height: {
@@ -126,7 +120,8 @@ export default {
     },
     title: String,
     dark: Boolean,
-    readonly: Boolean
+    readonly: Boolean,
+    hideActions: Boolean
   },
   data () {
     return {

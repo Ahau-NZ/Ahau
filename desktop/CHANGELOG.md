@@ -5,6 +5,9 @@
 ### Features
 
 - Can now add multiple members as kaitiaki to a group, any kaitiaki will be able to edit the Community, add/remove other kaitiaki and accept/decline applications to join the group
+- Storage Management:
+  - automatically prune hyperBlobs when the hyperBlobs total size exceeds 5gb
+  - shows storage information in the settings
 
 ### Bug Fixes
 
@@ -32,7 +35,6 @@
   - updated the Pataka dialog to provided users with other options
   - Users will now be prompted to join a Pātaka upon creating a profile 
 - Translation updates
-
 
 ### Bug Fixes
 
