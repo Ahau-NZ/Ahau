@@ -3,7 +3,9 @@
     <template v-slot:content>
       <v-container fluid>
         <LanguageSettings />
+        <v-divider />
         <BackupSettings />
+        <v-divider />
         <StorageSettings />
       </v-container>
     </template>
@@ -38,6 +40,11 @@ export default {
   }
 }
 </script>
+
 <style scoped lang="scss">
 
+// v-divider
+hr {
+  margin-bottom: 20px;
+}
 </style>

@@ -3,11 +3,7 @@
     <v-col cols="12" class="text-h5">
       {{ t('keyBackupTitle') }}
     </v-col>
-    <v-col>
-      {{ t('loseAccess') }}.
-      {{ t('backUpKey') }}
-    </v-col>
-    <v-col cols="12" class="ml-5">
+    <v-col cols="12" class="">
       <v-btn
         class="white--text"
         color="black"
@@ -15,6 +11,12 @@
       >
         {{ t('downloadKey') }}
       </v-btn>
+    </v-col>
+    <v-col>
+      <i>
+        {{ t('loseAccess') }}.
+        {{ t('backUpKey') }}
+      </i>
     </v-col>
   </v-row>
 </template>

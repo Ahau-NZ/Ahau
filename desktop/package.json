@@ -17,7 +17,7 @@
     "ahau-env": "^2.2.0",
     "electron-updater": "^4.3.8",
     "secret-stack": "^6.4.0",
-    "ssb-ahau": "^11.0.0",
+    "ssb-ahau": "^11.1.0",
     "ssb-ahoy": "^4.1.2",
     "ssb-artefact": "^3.2.1",
     "ssb-backlinks": "^2.1.1",
