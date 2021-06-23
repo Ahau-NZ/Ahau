@@ -24,7 +24,7 @@
               :items="generateSuggestions"
               item-value="id"
               item-text="id"
-              label="First name / known as"
+              :label="t('firstName')"
               :menu-props="{ light: true }"
               :clearable="hasSelection"
               append-icon=""
@@ -43,19 +43,19 @@
                     <Avatar class="mr-3" size="40px" :image="data.item.avatarImage" :alt="data.item.preferredName" :gender="data.item.gender" :aliveInterval="data.item.aliveInterval" />
                     <v-list-item-content v-if="data.item.preferredName">
                       <v-list-item-title> {{ data.item.preferredName }} </v-list-item-title>
-                      <v-list-item-subtitle>Preferred name</v-list-item-subtitle>
+                      <v-list-item-subtitle>{{ t('preferredName') }}</v-list-item-subtitle>
                     </v-list-item-content>
                     <v-list-item-content v-if="data.item.legalName">
                       <v-list-item-title> {{ data.item.legalName }} </v-list-item-title>
-                      <v-list-item-subtitle>Full Name</v-list-item-subtitle>
+                      <v-list-item-subtitle>{{ t('fullName') }}</v-list-item-subtitle>
                     </v-list-item-content>
                     <v-list-item-content v-if="!data.item.preferredName && !data.item.legalName">
-                      <v-list-item-title> Unknown </v-list-item-title>
-                      <v-list-item-subtitle>Full Name</v-list-item-subtitle>
+                      <v-list-item-title>{{ t('unknown') }}</v-list-item-title>
+                      <v-list-item-subtitle>{{ t('fullName') }}</v-list-item-subtitle>
                     </v-list-item-content>
                     <v-list-item-action v-if="age(data.item.aliveInterval)">
                       <v-list-item-title> {{ age(data.item.aliveInterval) }} </v-list-item-title>
-                      <v-list-item-subtitle>Age</v-list-item-subtitle>
+                      <v-list-item-subtitle>{{ t('age') }}</v-list-item-subtitle>
                     </v-list-item-action>
                   </v-list-item>
                 </template>
@@ -66,7 +66,7 @@
           <template v-slot:addParents>
             <v-col cols="12" :class="mobile ? 'px-0':'py-0'" v-if="hasProfiles('parents')">
               <ProfileList
-                label="Add other parent"
+                :label="t('addParent')"
                 :addedProfiles.sync="quickAdd['newParents']"
                 :items="generateParents"
                 :groupType="type === 'sibling' ? 'parents-siblings': ''"
@@ -78,7 +78,7 @@
           <template v-slot:addChildren>
             <v-col cols="12" v-if="hasProfiles('children')">
               <ProfileList
-                label="Add children"
+                :label="t('addChildren')"
                 :addedProfiles.sync="quickAdd['newChildren']"
                 :items="generateChildren"
                 @profile-click="addProfile($event, 'newChildren')"
@@ -89,7 +89,7 @@
           <template v-slot:addPartners>
             <v-col cols="12" v-if="hasProfiles('partners')">
               <ProfileList
-                label="Add partners"
+                :label="t('addPartners')"
                 :addedProfiles.sync="quickAdd['newPartners']"
                 :items="generatePartners"
                 @profile-click="addProfile($event, 'newPartners')"
@@ -544,6 +544,9 @@ export default {
         this.formData = setDefaultData(this.withRelationships)
       }
       this.$emit('getSuggestions', null)
+    },
+    t (key, vars) {
+      return this.$t('newNode.' + key, vars)
     }
   },
   watch: {
