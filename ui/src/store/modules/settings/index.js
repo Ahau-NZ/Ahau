@@ -3,7 +3,8 @@ import {
   getAllSettings,
   saveSettings,
   deleteSettings,
-  getBackup
+  getBackup,
+  deleteAhau
 } from './apollo-helpers'
 
 export default function (apollo) {
@@ -102,14 +103,13 @@ export default function (apollo) {
         console.error(err)
       }
     },
-
     async getBackup () {
       try {
         const res = await apollo.query(
           getBackup
         )
 
-        if (res.errors) throw res.errors
+        if (res.errors) throw new Error(res.errors)
 
         return res.data.backup
       } catch (err) {
@@ -117,7 +117,18 @@ export default function (apollo) {
         return null
       }
     },
+    // TODO: not sure the best place to put this function!
+    async deleteAhau () {
+      try {
+        const res = await apollo.mutate(deleteAhau)
 
+        if (res.errors) throw new Error(res.errors)
+
+        return true
+      } catch (err) {
+        console.error(err)
+      }
+    },
     async updateKeyBackupSettings ({ dispatch, rootGetters }, backedUp) {
       const id = rootGetters.whoami.personal.settings.id
       const input = {

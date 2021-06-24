@@ -7,6 +7,16 @@
         <BackupSettings />
         <v-divider />
         <StorageSettings />
+        <v-divider />
+        <v-col align="left" class="pb-10">
+          <v-btn
+            class="white--text"
+            color="secondary"
+            @click.prevent="$emit('showDeleteProfile')"
+          >
+            {{ t('deleteProfile') }}
+          </v-btn>
+        </v-col>
       </v-container>
     </template>
   </Dialog>

@@ -78,6 +78,14 @@
       v-if="dialog === 'settings'"
       :show="dialog === 'settings'"
       @close="dialog = null"
+      @showDeleteProfile="showDeleteProfile"
+    />
+    <DeleteProfileDialog
+      v-if="dialog === 'delete-profile'"
+      :show="dialog === 'delete-profile'"
+      @close="dialog = null"
+      @submit="deleteProfile"
+      @cancel="cancelDeleteProfile"
     />
   </v-container>
 </template>
@@ -95,6 +103,7 @@ import DeleteCommunityDialog from '@/components/dialog/community/DeleteCommunity
 import EditNodeDialog from '@/components/dialog/profile/EditNodeDialog.vue'
 import NewRegistrationDialog from '@/components/dialog/registration/NewRegistrationDialog.vue'
 import SettingsDialog from '@/components/dialog/SettingsDialog.vue'
+import DeleteProfileDialog from '@/components/dialog/DeleteProfileDialog.vue'
 import { updateTribe, deleteTribe, getMembers, getTribalProfile } from '@/lib/community-helpers.js'
 
 import { createGroupApplication } from '@/lib/tribes-application-helpers.js'
@@ -103,9 +112,12 @@ import { getDisplayName } from '@/lib/person-helpers.js'
 import {
   mapGetters,
   mapMutations,
+  mapActions,
   createNamespacedHelpers
 } from 'vuex'
+
 const { mapMutations: mapAlertMutations } = createNamespacedHelpers('alerts')
+const { mapActions: mapSettingsActions } = createNamespacedHelpers('settings')
 
 export default {
   name: 'ProfileShow',
@@ -123,6 +135,7 @@ export default {
     EditNodeDialog,
     NewRegistrationDialog,
     SettingsDialog,
+    DeleteProfileDialog,
     ProfileButton
   },
   data () {
@@ -212,8 +225,10 @@ export default {
   },
   methods: {
     getDisplayName,
-    ...mapAlertMutations(['showAlert']),
     ...mapMutations(['updateSelectedProfile', 'setCurrentAccess']),
+    ...mapAlertMutations(['showAlert']),
+    ...mapActions(['setLoading']),
+    ...mapSettingsActions(['deleteAhau']),
     goEdit () {
       if (this.profile.type === 'person') this.dialog = 'edit-node'
       else this.dialog = 'edit-community'
@@ -312,6 +327,41 @@ export default {
         }
       }).catch(() => {})
     },
+    async deleteProfile () {
+      this.setLoading(true)
+      // update the authors to all authors on all of our own profiles
+      const input = {
+        id: this.profile.id,
+        authors: {
+          add: ['*']
+        }
+      }
+
+      await this.saveProfile(input)
+
+      // tombstone our public profile
+      const tombstoneInput = {
+        id: this.whoami.public.profile.id,
+        tombstone: {
+          date: Date.now(),
+          reason: 'User deleted Ahau'
+        },
+        allowPublic: true // to update the public profile
+      }
+
+      await this.saveProfile(tombstoneInput)
+
+      // now delete the ahau folder where the db sits
+      await this.deleteAhau()
+
+      this.setLoading(false)
+
+      this.$router.push({ path: '/login' })
+        .then(() => {
+          this.showAlert({ message: this.t('deletedProfileMessage') })
+        })
+        .catch(() => {})
+    },
     closeDialog () {
       this.dialog = null
     },
@@ -319,6 +369,12 @@ export default {
       // tell apollo to refresh the current tribe and profile queries
       this.$apollo.queries.tribe.refetch()
       this.$apollo.queries.profile.refetch()
+    },
+    showDeleteProfile () {
+      this.dialog = 'delete-profile'
+    },
+    cancelDeleteProfile () {
+      this.dialog = 'settings'
     },
     t (key, vars) {
       return this.$t('viewPerson.' + key, vars)

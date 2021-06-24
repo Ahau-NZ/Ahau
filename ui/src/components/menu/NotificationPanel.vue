@@ -98,7 +98,11 @@
         />
       </v-card>
     </v-expand-transition>
-    <KeyBackupDialog v-if="showKeyBackup" :show="showKeyBackup" @close="toggleShowKeyBackup" />
+    <KeyBackupDialog
+      v-if="showKeyBackup"
+      :show="showKeyBackup"
+      @close="toggleShowKeyBackup"
+    />
   </div>
 </template>
 

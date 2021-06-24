@@ -33,9 +33,7 @@
   "profileUpdated": "Profile updated",
   "communityDeleted": "Community successfully deleted",
   "failCommunityDeleted": "Something went wrong while trying to delete the community",
-  "requestSent": "Request successfully sent"
+  "requestSent": "Request successfully sent",
 
-
-
-
+  "deletedProfileMessage": "Your profile and database were deleted!"
 }
