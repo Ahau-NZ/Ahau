@@ -26,7 +26,7 @@
       <v-btn
         class="white--text my-3"
         style="margin-right: 20px"
-        color="black"
+        color="secondary"
         @click.prevent="submit"
         :disabled="!userInputMatches"
       >

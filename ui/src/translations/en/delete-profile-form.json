@@ -6,8 +6,8 @@
   "continue": "Are you sure you want to continue?",
   "removeProfile": "Delete my database and remove my profile from all records.",
   "keepProfileVisible": "Delete my database and keep my profile visble in records.",
-  "deleteButton": "Yes, Delete My Profile",
-  "cancelButton": "Cancel, Keep My Profile",
+  "deleteButton": "Yes, Delete My Profile and Database",
+  "cancelButton": "Cancel",
   "confirmDeletePrompt": "If you would like to continue, please type the following phrase",
   "deletePhrase": "Yes, I would like to delete Ahau"
 }

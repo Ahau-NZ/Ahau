@@ -11,7 +11,7 @@
         <v-col align="left" class="pb-10">
           <v-btn
             class="white--text"
-            color="black"
+            color="secondary"
             @click.prevent="$emit('showDeleteProfile')"
           >
             {{ t('deleteProfile') }}

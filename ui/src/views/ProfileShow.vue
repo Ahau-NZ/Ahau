@@ -358,6 +358,9 @@ export default {
       this.setLoading(false)
 
       this.$router.push({ path: '/login' })
+        .then(() => {
+          this.showAlert({ message: 'Your profile and database were deleted!', delay: 10000 })
+        })
         .catch(() => {})
     },
     closeDialog () {
