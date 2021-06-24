@@ -19,6 +19,7 @@ module.exports = {
   keyBackupForm: require('./key-backup-form.json'),
   newNode: require('./new-node.json'),
   deleteNode: require('./delete-node.json'),
+  dialogHandler: require('./dialog-handler.json'),
 
   /* Nav / misc */
   accessButton: require('./access-button.json'),
