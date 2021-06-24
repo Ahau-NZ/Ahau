@@ -1,0 +1,9 @@
+{
+  "reviewRegistrationTitle": "Request to join {groupPreferredName}",
+  "createCommunityTitle": "Ko Wai Mātou ---- Create New Community",
+  "newNodeTitle": "Add {dialogType} to {displayName}",
+  "editNodeTitle": "Edit {displayName}",
+  "whakapapaShowHelperTitle": "Whakapapa ---- Family tree",
+  "whakapapaRegistryTitle": "Whakapapa registry",
+  "filterMenuTitle": "Table Filter Menu"
+}
