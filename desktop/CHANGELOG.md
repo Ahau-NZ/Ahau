@@ -8,6 +8,8 @@
 - Storage Management:
   - automatically prune hyperBlobs when the hyperBlobs total size exceeds 5gb
   - shows storage information in the settings
+- Analytics:
+  - reports version of app being used, so we can see how many people are on which versions of the app
 
 ### Bug Fixes
 
