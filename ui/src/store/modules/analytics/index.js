@@ -1,12 +1,20 @@
 import mixpanel from './mixpanel'
 
+const mobileVersion = require('../../../../../mobile/package.json').version
+const desktopVersion = require('../../../../../desktop/package.json').version
+
+console.log({ mobileVersion, desktopVersion })
+const version = process.env.VUE_APP_PLATFORM === 'cordova' // isMobile?
+  ? mobileVersion
+  : desktopVersion
+
 const state = {}
 const getters = {}
 const mutations = {}
 
 const actions = {
   appUsed ({ state, commit }) {
-    mixpanel.throttledTrack('using-app')
+    mixpanel.throttledTrack('using-app', { version })
     // NOTE thottled means means we can call this action as much as we want and
     // mixpanel will only be hit e.g. once an hour (for this particular event)
     //
