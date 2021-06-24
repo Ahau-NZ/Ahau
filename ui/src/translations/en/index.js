@@ -17,8 +17,10 @@ module.exports = {
   addCollectionForm: require('./add-collection-form.json'),
   settingsForm: require('./settings-form.json'),
   keyBackupForm: require('./key-backup-form.json'),
+  newNode: require('./new-node.json'),
   deleteNode: require('./delete-node.json'),
   deleteProfileForm: require('./delete-profile-form.json'),
+  dialogHandler: require('./dialog-handler.json'),
 
   /* Nav / misc */
   accessButton: require('./access-button.json'),

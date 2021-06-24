@@ -3,7 +3,7 @@
     <ReviewRegistrationDialog
       v-if="isActive('review-registration')"
       :show="isActive('review-registration')"
-      :title="`Request to join : ${currentNotification.group.preferredName}`"
+      :title="t('reviewRegistrationTitle', {groupPreferredName: currentNotification.group.preferredName})"
       :notification="currentNotification"
       @close="close"
     />
@@ -17,7 +17,7 @@
     <NewNodeDialog
       v-if="isActive('new-node')"
       :show="isActive('new-node')"
-      :title="`Add ${dialogType} to ${getDisplayName(selectedProfile)}`"
+      :title="t('newNodeTitle', {dialogType, displayName: getDisplayName(selectedProfile)})"
       :selectedProfile="selectedProfile"
       :suggestions="suggestions"
       :type="dialogType"
@@ -29,7 +29,7 @@
     <EditNodeDialog
       v-if="isActive('edit-node')"
       :show="isActive('edit-node')"
-      :title="`Edit ${getDisplayName(selectedProfile)}`"
+      :title="t('editNodeTitle', {displayName: getDisplayName(selectedProfile)})"
       @submit="processUpdate($event)"
       @close="close"
       :profile="profile"
@@ -80,19 +80,19 @@
     <WhakapapaShowHelper
       v-if="isActive('whakapapa-helper')"
       :show="isActive('whakapapa-helper')"
-      :title="`Whakapapa ---- Family tree`"
+      :title="t('whakapapaShowHelperTitle')"
       @close="close"
     />
     <WhakapapaTableHelper
       v-if="isActive('whakapapa-table-helper')"
       :show="isActive('whakapapa-table-helper')"
-      :title="`Whakapapa registry`"
+      :title="t('whakapapaRegistryTitle')"
       @close="close"
     />
     <FilterMenu
       v-if="isActive('table-filter-menu')"
       :show="isActive('table-filter-menu')"
-      :title="`Table Filter Menu`"
+      :title="t('filterMenuTitle')"
       :searchFilterString.sync="searchFilterString"
       @close="close"
     />
@@ -724,7 +724,7 @@ export default {
       return false // wasnt found
     },
     t (key, vars) {
-      return this.$t('addCommunityForm.' + key, vars)
+      return this.$t('dialogHandler.' + key, vars)
     }
   }
 }

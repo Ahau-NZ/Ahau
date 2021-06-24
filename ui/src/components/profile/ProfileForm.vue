@@ -61,7 +61,7 @@
           <v-col v-if="withRelationships" cols="6" class="pa-1 pt-2 pl-0">
             <v-select
               v-model="formData.relationshipType"
-              label="Related by"
+              :label="t('relatedBy')"
               :items="relationshipTypes"
               :menu-props="{ light: true }"
               outlined
