@@ -200,7 +200,6 @@
       :focus="focus"
       @update-whakapapa="saveWhakapapa($event)"
       @delete-whakapapa="deleteWhakapapa"
-      @refreshWhakapapa="refreshWhakapapa"
       @setFocus="setFocus($event)"
       @toggleFilterMenu="clickedOffSearchFilter()"
     />
@@ -232,7 +231,7 @@ import SearchFilterButton from '@/components/button/SearchFilterButton.vue'
 import tree from '@/lib/tree-helpers'
 import avatarHelper from '@/lib/avatar-helpers.js'
 import { getRelatives } from '@/lib/person-helpers.js'
-import { getWhakapapaView, saveWhakapapaView } from '@/lib/whakapapa-helpers.js'
+import { saveWhakapapaView } from '@/lib/whakapapa-helpers.js'
 import { getTribalProfile } from '@/lib/community-helpers'
 
 import mapProfileMixins from '@/mixins/profile-mixins.js'
@@ -241,7 +240,17 @@ import DialogHandler from '@/components/dialog/DialogHandler.vue'
 
 import NodeMenu from '@/components/menu/NodeMenu.vue'
 
-import { mapGetters, mapActions, mapMutations } from 'vuex'
+import {
+  mapGetters,
+  mapActions,
+  mapMutations,
+  createNamespacedHelpers
+} from 'vuex'
+const {
+  mapActions: mapWhakapapaActions,
+  mapGetters: mapWhakapapaGetters,
+  mapMutations: mapWhakapapaMutations
+} = createNamespacedHelpers('whakapapa')
 
 export default {
   name: 'WhakapapaShow',
@@ -286,7 +295,6 @@ export default {
         name: 'Loading',
         description: '',
         focus: '',
-        // mode: 'descendants',
         recps: null,
         image: { uri: '' },
         ignoredProfiles: []
@@ -311,18 +319,17 @@ export default {
       searchNodeName: ''
     }
   },
-  apollo: {
-    whakapapaView () {
-      return getWhakapapaView(this.$route.params.whakapapaId)
-    }
-  },
-  mounted () {
+  async mounted () {
+    this.setLoading(true)
     window.scrollTo(0, 0)
+    await this.reload()
   },
   computed: {
-    ...mapGetters(['nestedWhakapapa', 'selectedProfile', 'whoami', 'loadingState']),
+    ...mapGetters(['selectedProfile', 'whoami']),
+    ...mapWhakapapaGetters(['nestedWhakapapa']),
     isKaitiaki () {
-      if (!this.whakapapaView.kaitiaki) return false
+      if (!this.whakapapaView || !this.whakapapaView.kaitiaki) return false
+
       return this.whoami.public.profile.id === this.whakapapaView.kaitiaki[0].id
     },
     mobile () {
@@ -330,7 +337,7 @@ export default {
     },
     currentFocus: {
       get () {
-        return this.focus || this.whakapapaView.focus
+        return this.focus || (this.whakapapaView && this.whakapapaView.focus)
       },
       set (newValue) {
         this.focus = newValue
@@ -363,14 +370,12 @@ export default {
   },
   watch: {
     currentFocus: async function (newFocus) {
+      this.setLoading(true)
       if (newFocus) {
-        this.setLoading(true)
-
         const nestedWhakapapa = await this.loadDescendants(newFocus)
         this.setNestedWhakapapa(nestedWhakapapa)
-
-        this.setLoading(false)
       }
+      this.setLoading(false)
     },
     async whakapapaView (whakapapa) {
       if (whakapapa.recps) {
@@ -389,8 +394,13 @@ export default {
   },
 
   methods: {
-    ...mapMutations(['updateSelectedProfile', 'setCurrentAccess', 'setNestedWhakapapa', 'setWhakapapa']),
+    ...mapMutations(['updateSelectedProfile', 'setCurrentAccess']),
     ...mapActions(['setLoading']),
+    ...mapWhakapapaMutations(['setNestedWhakapapa', 'setWhakapapa']),
+    ...mapWhakapapaActions(['getWhakapapaView']),
+    async reload () {
+      this.whakapapaView = await this.getWhakapapaView(this.$route.params.whakapapaId)
+    },
     tableOverflow (width) {
       var show = width > screen.width
       this.overflow = show
@@ -567,14 +577,11 @@ export default {
           return
         }
         // refresh the current whakapapa
-        await this.refreshWhakapapa()
+        await this.reload()
         return res.data.saveWhakapapaView
       } catch (e) {
         console.error('something went wrong while trying to save the whakapapa', e)
       }
-    },
-    async refreshWhakapapa () {
-      await this.$apollo.queries.whakapapaView.refresh()
     },
     async deleteWhakapapa () {
       var input = {

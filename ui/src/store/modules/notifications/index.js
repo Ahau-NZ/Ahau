@@ -45,6 +45,7 @@ const actions = {
 
       const notifs = [...unseen, ...accepted, ...declined]
         .filter(n => n.group)
+        .reverse()
 
       commit('updateNotifications', notifs)
     } catch (err) {

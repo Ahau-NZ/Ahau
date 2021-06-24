@@ -45,7 +45,8 @@ import isEmpty from 'lodash.isempty'
 import isEqual from 'lodash.isequal'
 
 import calculateAge from '../../lib/calculate-age'
-import { mapGetters } from 'vuex'
+import { createNamespacedHelpers } from 'vuex'
+const { mapGetters: mapWhakapapaGetters } = createNamespacedHelpers('whakapapa')
 
 export default {
   name: 'SearchBar',
@@ -64,7 +65,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['nestedWhakapapa']),
+    ...mapWhakapapaGetters(['nestedWhakapapa']),
     nodes () {
       return d3.hierarchy(this.nestedWhakapapa)
         .descendants()

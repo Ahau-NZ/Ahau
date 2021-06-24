@@ -44,6 +44,7 @@ function initialize () {
 
     mixpanel.people.set({
       application: 'ahau',
+      isPataka: false,
       isMobile: process.env.VUE_APP_PLATFORM === 'cordova',
       userId: mixpanelId
     })

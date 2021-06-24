@@ -116,9 +116,11 @@ import Link from '../tree/Link.vue'
 import calculateAge from '../../lib/calculate-age.js'
 import isEmpty from 'lodash.isempty'
 import isEqual from 'lodash.isequal'
-import { mapGetters, mapActions } from 'vuex'
 import { dateIntervalToString, intervalToDayMonthYear } from '@/lib/date-helpers.js'
 import { SORT } from '@/lib/constants.js'
+
+import { mapActions, createNamespacedHelpers } from 'vuex'
+const { mapGetters: mapWhakapapaGetters } = createNamespacedHelpers('whakapapa')
 
 export default {
   props: {
@@ -188,7 +190,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters(['nestedWhakapapa']),
+    ...mapWhakapapaGetters(['nestedWhakapapa']),
     colWidth () {
       if (this.flatten) return 300
       return 350

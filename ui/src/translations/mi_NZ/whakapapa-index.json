@@ -1,11 +1,11 @@
 {
   "whakapapaTitle": "Ngā whakapapa",
-  "addWhakapapaButton": "whakapapa hou",
-  "noWhakapapaFound": "kaore i kitea he whakapapa",
-  "whakapapaRecords": "Ngā Rua Mahara",
-  "privateRecords": "Aku muna",
-  "backToWhakapapa": "Hoki atu ngā whakapapa",
+  "addWhakapapaButton": "Whakapapa hou",
+  "noWhakapapaFound": "He whakapapa tē kitea",
+  "whakapapaRecords": "Ngā mauhanga",
+  "privateRecords": "Aku mauhanga muna",
+  "backToWhakapapa": "Hoki atu ki ngā whakapapa",
   "onlyYouHaveAccess": "E āhei ana koe me tō kotahi te uru atu ki tēnei whakapapa",
-  "showDetails": "Whakaatuhia ngā kōrero mo te whakapapa",
-  "editDescription": "Whakatika whakaahuatanga"
+  "showDetails": "Whakaatuhia ngā kōrero mō te whakapapa",
+  "editDescription": "Whakatika ngā whakaahuatanga whakapapa"
 }

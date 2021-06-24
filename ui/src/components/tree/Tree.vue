@@ -40,9 +40,10 @@ import SubTree from './SubTree'
 
 import isEqual from 'lodash.isequal'
 
-import { mapGetters, mapActions } from 'vuex'
-
 import settings from '@/lib/link.js'
+
+import { mapActions, createNamespacedHelpers } from 'vuex'
+const { mapGetters: mapWhakapapaGetters } = createNamespacedHelpers('whakapapa')
 
 export default {
   props: {
@@ -81,7 +82,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters(['nestedWhakapapa']),
+    ...mapWhakapapaGetters(['nestedWhakapapa']),
     radius () {
       return settings.radius
     },

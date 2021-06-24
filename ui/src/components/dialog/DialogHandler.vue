@@ -127,8 +127,9 @@ import { findByName } from '@/lib/search-helpers.js'
 import findSuccessor from '@/lib/find-successor'
 
 import mapProfileMixins from '@/mixins/profile-mixins.js'
-import { createNamespacedHelpers, mapGetters, mapActions, mapMutations } from 'vuex'
+import { createNamespacedHelpers, mapGetters, mapActions } from 'vuex'
 const { mapMutations: mapAlertMutations } = createNamespacedHelpers('alerts')
+const { mapGetters: mapWhakapapaGetters, mapMutations: mapWhakapapaMutations } = createNamespacedHelpers('whakapapa')
 
 export default {
   name: 'DialogHandler',
@@ -198,7 +199,8 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['nestedWhakapapa', 'selectedProfile', 'whoami', 'storeDialog', 'storeType', 'currentNotification']),
+    ...mapGetters(['selectedProfile', 'whoami', 'storeDialog', 'storeType', 'currentNotification']),
+    ...mapWhakapapaGetters(['nestedWhakapapa']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -231,7 +233,7 @@ export default {
   methods: {
     getDisplayName,
     ...mapAlertMutations(['showAlert']),
-    ...mapMutations([
+    ...mapWhakapapaMutations([
       'updatePartnerInNestedWhakapapa',
       'updateNodeInNestedWhakapapa',
       'deleteNodeInNestedWhakapapa',
@@ -508,7 +510,7 @@ export default {
       }
 
       await this.saveWhakapapa(input)
-      await this.$parent.$apollo.queries.whakapapaView.refetch()
+      await this.$parent.reload()
 
       return true
     },
@@ -593,7 +595,7 @@ export default {
       }
 
       await this.saveWhakapapa(input)
-      await this.$parent.$apollo.queries.whakapapaView.refetch()
+      await this.$parent.reload()
 
       if (this.selectedProfile.id === this.view.focus) {
         const successor = findSuccessor(this.selectedProfile)

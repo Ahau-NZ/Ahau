@@ -5,6 +5,11 @@
 ### Features
 
 - Can now add multiple members as kaitiaki to a group, any kaitiaki will be able to edit the Community, add/remove other kaitiaki and accept/decline applications to join the group
+- Storage Management:
+  - automatically prune hyperBlobs when the hyperBlobs total size exceeds 5gb
+  - shows storage information in the settings
+- Analytics:
+  - reports version of app being used, so we can see how many people are on which versions of the app
 
 - Delete Ahau:
   - Now requires user to enter a phrase before deleting Ahau to confirm that they really want to delete their database and lose access to their profiles
@@ -35,7 +40,6 @@
   - updated the Pataka dialog to provided users with other options
   - Users will now be prompted to join a Pātaka upon creating a profile 
 - Translation updates
-
 
 ### Bug Fixes
 

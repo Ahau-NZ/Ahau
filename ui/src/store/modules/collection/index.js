@@ -13,19 +13,13 @@ export default function (apollo) {
 
   const actions = {
     async saveCollection (context, input) {
-      try {
-        const res = await apollo.mutate(
-          saveCollection(input)
-        )
+      const res = await apollo.mutate(
+        saveCollection(input)
+      )
 
-        if (res.errors) throw new Error(res.errors)
+      if (res.errors) throw new Error(res.errors)
 
-        // TODO success alert message
-        return res.data.saveCollection
-      } catch (err) {
-        // TODO error alert message
-        console.error(err)
-      }
+      return res.data.saveCollection
     },
     async saveCollectionStoryLink (context, input) {
       try {
@@ -33,7 +27,7 @@ export default function (apollo) {
           saveCollectionStoryLink(input)
         )
 
-        if (res.errors) throw res.errors
+        if (res.errors) throw new Error(res.errors)
 
         // TODO sucess alert message
         return res.data.saveCollectionStoryLink
@@ -122,11 +116,14 @@ export default function (apollo) {
 
         const collectionId = await dispatch('saveCollection', input)
         await dispatch('saveStoriesToCollection', { collectionId, stories })
+        dispatch('alerts/showMessage', 'The Collection was created!', { root: true })
 
         return dispatch('getCollection', collectionId)
       } catch (err) {
-        // TODO error handling
         console.error(err)
+        dispatch('alerts/showError', 'Something went wrong while creating the Collection!', { root: true })
+
+        return null
       }
     },
     async getCollection (context, id) {
@@ -161,21 +158,23 @@ export default function (apollo) {
       }
     },
     async updateCollection ({ dispatch }, input) {
-      try {
-        const { id: collectionId, stories } = input
+      const { id: collectionId, stories } = input
 
+      try {
         if (!collectionId) throw new Error('collection/updateCollection is for updating. Missing collectionId on the input')
 
         await dispatch('saveCollection', input)
         await dispatch('saveStoriesToCollection', { collectionId, stories })
 
-        return dispatch('getCollection', collectionId)
+        dispatch('alerts/showMessage', 'The Collection was updated!', { root: true })
       } catch (err) {
-        // TODO error handling
         console.error(err)
+        dispatch('alerts/showError', 'Something went wrong while updating the Collection!', { root: true })
       }
+
+      return dispatch('getCollection', collectionId)
     },
-    async deleteCollection (context, collectionId) {
+    async deleteCollection ({ dispatch }, collectionId) {
       try {
         const res = await apollo.mutate(
           deleteCollection(collectionId, new Date())
@@ -183,10 +182,11 @@ export default function (apollo) {
 
         if (res.errors) throw new Error(res.errors)
 
+        dispatch('alerts/showMessage', 'The Collection was deleted!', { root: true })
         return
       } catch (err) {
-        // TODO error handling
         console.error(err)
+        dispatch('alerts/showError', 'Something went wrong while deleting the Collection!', { root: true })
       }
     }
   }
