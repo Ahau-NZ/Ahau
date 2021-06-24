@@ -85,6 +85,7 @@
       :show="dialog === 'delete-profile'"
       :profile="profile"
       @close="dialog = null"
+      @submit="deleteProfile"
       @cancel="cancelDeleteProfile"
     />
   </v-container>
@@ -112,9 +113,12 @@ import { getDisplayName } from '@/lib/person-helpers.js'
 import {
   mapGetters,
   mapMutations,
+  mapActions,
   createNamespacedHelpers
 } from 'vuex'
+
 const { mapMutations: mapAlertMutations } = createNamespacedHelpers('alerts')
+const { mapActions: mapSettingsActions } = createNamespacedHelpers('settings')
 
 export default {
   name: 'ProfileShow',
@@ -222,8 +226,10 @@ export default {
   },
   methods: {
     getDisplayName,
-    ...mapAlertMutations(['showAlert']),
     ...mapMutations(['updateSelectedProfile', 'setCurrentAccess']),
+    ...mapAlertMutations(['showAlert']),
+    ...mapActions(['setLoading']),
+    ...mapSettingsActions(['deleteAhau']),
     goEdit () {
       if (this.profile.type === 'person') this.dialog = 'edit-node'
       else this.dialog = 'edit-community'
@@ -321,6 +327,38 @@ export default {
           }
         }
       }).catch(() => {})
+    },
+    async deleteProfile () {
+      this.setLoading(true)
+      // update the authors to all authors on all of our own profiles
+      const input = {
+        id: this.profile.id,
+        authors: {
+          add: ['*']
+        }
+      }
+
+      await this.saveProfile(input)
+
+      // tombstone our public profile
+      const tombstoneInput = {
+        id: this.whoami.public.profile.id,
+        tombstone: {
+          date: Date.now(),
+          reason: 'User deleted Ahau'
+        },
+        allowPublic: true // to update the public profile
+      }
+
+      await this.saveProfile(tombstoneInput)
+
+      // now delete the ahau folder where the db sits
+      await this.deleteAhau()
+
+      this.setLoading(false)
+
+      this.$router.push({ path: '/login' })
+        .catch(() => {})
     },
     closeDialog () {
       this.dialog = null
