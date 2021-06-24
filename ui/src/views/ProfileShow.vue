@@ -83,7 +83,6 @@
     <DeleteProfileDialog
       v-if="dialog === 'delete-profile'"
       :show="dialog === 'delete-profile'"
-      :profile="profile"
       @close="dialog = null"
       @submit="deleteProfile"
       @cancel="cancelDeleteProfile"
@@ -359,7 +358,7 @@ export default {
 
       this.$router.push({ path: '/login' })
         .then(() => {
-          this.showAlert({ message: 'Your profile and database were deleted!', delay: 10000 })
+          this.showAlert({ message: this.t('deletedProfileMessage') })
         })
         .catch(() => {})
     },

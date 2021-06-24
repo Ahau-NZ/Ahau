@@ -14,7 +14,6 @@
     "clear": "rm -rf node_modules"
   },
   "dependencies": {
-    "@ssb-graphql/profile": "^5.0.3",
     "ahau-env": "^2.2.0",
     "electron-updater": "^4.3.8",
     "secret-stack": "^6.4.0",

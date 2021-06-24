@@ -18,7 +18,7 @@
         </p>
       </v-card-text>
       <v-text-field
-        v-model="confirmDeleteIput"
+        v-model="confirmDeleteInput"
         outlined
       />
     </template>
@@ -45,35 +45,24 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
 import Dialog from '@/components/dialog/Dialog.vue'
-import mapProfileMixins from '@/mixins/profile-mixins.js'
 
 export default {
   props: {
-    show: { type: Boolean, required: true },
-    profile: { type: Object, required: true }
+    show: { type: Boolean, required: true }
   },
   name: 'KeyBackupDialog',
-  mixins: [
-    mapProfileMixins({
-      mapMethods: ['saveProfile']
-    })
-  ],
   components: {
     Dialog
   },
   data () {
     return {
-      removeProfile: false,
-      keepProfileVisible: false,
-      confirmDeleteIput: ''
+      confirmDeleteInput: ''
     }
   },
   computed: {
-    ...mapGetters(['whoami']),
     userInputMatches () {
-      return this.confirmDeleteIput === this.t('deletePhrase')
+      return this.confirmDeleteInput === this.t('deletePhrase')
     }
   },
   methods: {

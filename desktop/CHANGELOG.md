@@ -10,9 +10,10 @@
   - shows storage information in the settings
 - Analytics:
   - reports version of app being used, so we can see how many people are on which versions of the app
-
 - Delete Ahau:
-  - Now requires user to enter a phrase before deleting Ahau to confirm that they really want to delete their database and lose access to their profiles
+  - Users have the option to delete their profile and database from the Settings dialog
+  - Users need to enter a phrase to be able to delete
+  - Takes Users to the login page when successfully deleted
 
 ### Bug Fixes
 
