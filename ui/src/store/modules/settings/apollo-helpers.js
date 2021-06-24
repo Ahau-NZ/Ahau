@@ -72,3 +72,11 @@ export const getBackup = {
   `,
   fetchPolicy: 'no-cache'
 }
+
+export const deleteAhau = {
+  mutation: gql`
+    mutation {
+      deleteAhau
+    }
+  `
+}
