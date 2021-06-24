@@ -6,6 +6,9 @@
 
 - Can now add multiple members as kaitiaki to a group, any kaitiaki will be able to edit the Community, add/remove other kaitiaki and accept/decline applications to join the group
 
+- Delete Ahau:
+  - Now requires user to enter a phrase before deleting Ahau to confirm that they really want to delete their database and lose access to their profiles
+
 ### Bug Fixes
 
 - fixed `ssb-profile` not allowing `headerImage` and `avatarImage` to be set to null

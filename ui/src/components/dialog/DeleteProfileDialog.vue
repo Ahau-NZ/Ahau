@@ -8,10 +8,19 @@
         <p>
           {{ t('notBackedUp') }}
         </p>
+      </v-card-text>
+      <v-card-text class="pt-4" style="text-align:center">
         <p>
-          {{ t('continue') }}
+          {{ t('confirmDeletePrompt') }}
+        </p>
+        <p>
+          <b>{{ t('deletePhrase') }}</b>
         </p>
       </v-card-text>
+      <v-text-field
+        v-model="confirmDeleteIput"
+        outlined
+      />
     </template>
     <template v-slot:actions>
         <v-btn
@@ -19,6 +28,7 @@
           style="margin-right: 20px"
           color="black"
           @click.prevent="deleteProfile"
+          :disabled="!userInputMatches"
         >
           {{ t('deleteButton') }}
         </v-btn>
@@ -56,11 +66,15 @@ export default {
   data () {
     return {
       removeProfile: false,
-      keepProfileVisible: false
+      keepProfileVisible: false,
+      confirmDeleteIput: ''
     }
   },
   computed: {
-    ...mapGetters(['whoami'])
+    ...mapGetters(['whoami']),
+    userInputMatches () {
+      return this.confirmDeleteIput === this.t('deletePhrase')
+    }
   },
   methods: {
     async deleteProfile () {
