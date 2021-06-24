@@ -3,7 +3,6 @@ import mixpanel from './mixpanel'
 const mobileVersion = require('../../../../../mobile/package.json').version
 const desktopVersion = require('../../../../../desktop/package.json').version
 
-console.log({ mobileVersion, desktopVersion })
 const version = process.env.VUE_APP_PLATFORM === 'cordova' // isMobile?
   ? mobileVersion
   : desktopVersion
