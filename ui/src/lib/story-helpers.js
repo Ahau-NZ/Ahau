@@ -284,20 +284,6 @@ export const getAllStoriesByMentions = id => ({
   fetchPolicy: 'no-cache'
 })
 
-export const deleteStory = (id, date) => ({
-  mutation: gql`
-    mutation ($input: StoryInput!) {
-      saveStory (input: $input)
-    }
-  `,
-  variables: {
-    input: {
-      id,
-      tombstone: { date }
-    }
-  }
-})
-
 export const saveStory = input => {
   var submissionDate = new Date().toISOString().slice(0, 10)
 

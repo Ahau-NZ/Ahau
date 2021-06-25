@@ -14,10 +14,11 @@ import analytics from './modules/analytics'
 
 // new
 import collection from './modules/collection/'
-
 import settings from './modules/settings/'
+import story from './modules/story/'
 
 import { apolloProvider } from '../plugins/vue-apollo'
+
 const apollo = apolloProvider.defaultClient
 
 Vue.use(Vuex)
@@ -133,6 +134,7 @@ export default new Vuex.Store({
     // new
     collection: collection(apollo),
     settings: settings(apollo),
-    whakapapa: whakapapa(apollo)
+    whakapapa: whakapapa(apollo),
+    story: story(apollo)
   }
 })
