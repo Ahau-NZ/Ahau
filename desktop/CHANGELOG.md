@@ -14,6 +14,8 @@
   - Users have the option to delete their profile and database from the Settings dialog
   - Users need to enter a phrase to be able to delete
   - Takes Users to the login page when successfully deleted
+- Story:
+  - show a success message when deleting a story
 
 ### Bug Fixes
 

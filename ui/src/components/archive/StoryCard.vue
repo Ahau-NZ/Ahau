@@ -247,7 +247,7 @@
         v-if="dialog === 'delete-story'"
         :show="dialog === 'delete-story'"
         @close="dialog = 'edit-Story'"
-        @submit="deleteStory()"
+        @submit="processDeleteStory"
       />
       <NewArtefactDialog
         v-if="dialog === 'edit-artefact'"
@@ -272,7 +272,7 @@
 </template>
 
 <script>
-import { mapActions, mapGetters, mapMutations } from 'vuex'
+import { mapActions, mapGetters, mapMutations, createNamespacedHelpers } from 'vuex'
 
 import AvatarGroup from '@/components/AvatarGroup.vue'
 import ChipGroup from '@/components/archive/ChipGroup.vue'
@@ -285,7 +285,7 @@ import NewArtefactDialog from '@/components/dialog/artefact/NewArtefactDialog.vu
 import DeleteArtefactDialog from '@/components/dialog/artefact/DeleteArtefactDialog.vue'
 
 import { colours } from '@/lib/colours.js'
-import { deleteStory, setDefaultStory } from '@/lib/story-helpers.js'
+import { setDefaultStory } from '@/lib/story-helpers.js'
 import { getTribalProfile } from '@/lib/community-helpers.js'
 import { dateIntervalToString, formatSubmissionDate } from '@/lib/date-helpers.js'
 import { getObjectChanges } from '@/lib/get-object-changes.js'
@@ -294,6 +294,8 @@ import { convertBytes } from '@/lib/artefact-helpers.js'
 import mapProfileMixins from '@/mixins/profile-mixins.js'
 import { methods as mapStoryMethods } from '@/mixins/story-mixins.js'
 import { artefactMixin } from '@/mixins/artefact-mixins.js'
+
+const { mapActions: mapStoryActions } = createNamespacedHelpers('story')
 
 export default {
   name: 'StoryCard',
@@ -421,6 +423,7 @@ export default {
   methods: {
     ...mapMutations(['setStory']),
     ...mapActions(['setShowArtefact', 'toggleShowStory']),
+    ...mapStoryActions(['deleteStory']),
     //  save artefact from showArtefact
     saveArtefact ($event) {
       this.updateArtefacts($event)
@@ -458,16 +461,11 @@ export default {
         }
       }
     },
-    async deleteStory () {
-      const res = await this.$apollo.mutate(deleteStory(this.story.id, new Date()))
-
-      if (res.errors) {
-        console.error('failed to delete story', res.errors)
-        return
-      }
+    async processDeleteStory () {
+      await this.deleteStory(this.story.id)
 
       await this.reload()
-      this.$emit('close', null)
+      this.close()
     },
     colour (index) {
       return colours[index]
