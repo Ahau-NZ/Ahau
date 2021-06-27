@@ -320,7 +320,7 @@ export default {
     diedAt () {
       if (this.profile.aliveInterval) {
         var date = this.profile.aliveInterval.split('/')
-        return dateToString(date[1])
+        return dateToString(date[1], this.monthTranslations)
       }
       return null
     },
@@ -391,6 +391,9 @@ export default {
       // TODO cherese 22-04-21 move to graphql
       const originalAuthor = await this.getProfile(this.profile.originalAuthor)
       this.authors = [originalAuthor]
+    },
+    monthTranslations (key, vars) {
+      return this.$t('months.' + key, vars)
     },
     goArchive () {
       if (

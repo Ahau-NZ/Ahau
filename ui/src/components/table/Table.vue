@@ -341,7 +341,7 @@ export default {
       if (newVal) {
         var nodes = this.nodes.map(node => {
           var d = node.data
-          var aliveInterval = d.aliveInterval ? intervalToDayMonthYear(d.aliveInterval) : null
+          var aliveInterval = d.aliveInterval ? intervalToDayMonthYear(d.aliveInterval, this.monthTranslations) : null
           var altNames = d.altNames.length > 0 ? d.altNames.join(', ') : null
           var school = d.school.length > 0 ? d.school.join(', ') : null
           var education = d.education.length > 0 ? d.education.join(', ') : null
@@ -455,7 +455,7 @@ export default {
       }
 
       var ageString = ''
-      const dateSplit = dateIntervalToString(age).split('-')
+      const dateSplit = dateIntervalToString(age, this.monthTranslations).split('-')
 
       if (requiredDate === 'dob') {
         if (dateSplit[0]) {
@@ -469,6 +469,9 @@ export default {
       }
 
       return ageString
+    },
+    monthTranslations (key, vars) {
+      return this.$t('months.' + key, vars)
     },
     // Toggles the sort on the current field between ascending, descending and no sort
     setSortOnField (field) {

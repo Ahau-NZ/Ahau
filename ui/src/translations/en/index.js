@@ -8,6 +8,7 @@ module.exports = {
   /* Shows (see a particular record) */
   viewPerson: require('./view-person.json'),
   viewArchive: require('./view-archive.json'),
+  months: require('./months.json'),
 
   /* Forms */
   addPersonForm: require('./add-person-form.json'),

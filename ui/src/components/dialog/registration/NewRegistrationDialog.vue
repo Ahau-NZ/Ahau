@@ -482,10 +482,13 @@ export default {
     },
     dob () {
       if (this.personalProfile.aliveInterval) {
-        var formattedDate = dateIntervalToString(this.personalProfile.aliveInterval)
+        var formattedDate = dateIntervalToString(this.personalProfile.aliveInterval, this.monthTranslations)
         return formattedDate
       }
       return null
+    },
+    monthTranslations (key, vars) {
+      return this.$t('months.' + key, vars)
     },
     invalidPersonalProfileProps () {
       if (!this.personalProfile) return []

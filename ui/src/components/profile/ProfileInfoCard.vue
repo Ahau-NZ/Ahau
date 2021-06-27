@@ -70,10 +70,13 @@ export default {
     },
     dob () {
       if (this.profile.aliveInterval) {
-        var formattedDate = dateIntervalToString(this.profile.aliveInterval)
+        var formattedDate = dateIntervalToString(this.profile.aliveInterval, this.monthTranslations)
         return formattedDate
       }
       return ' '
+    },
+    monthTranslations (key, vars) {
+      return this.$t('months.' + key, vars)
     },
     isFamily () {
       if (this.profile.type === 'community') return false

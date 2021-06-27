@@ -1,23 +1,23 @@
 import edtf from 'edtf'
 
-export function dateIntervalToString (interval) {
+export function dateIntervalToString (interval, t) {
   if (interval === null) return ''
 
   const [lower, upper] = interval.split('/')
   if (lower.length && upper.length) {
-    if (lower === upper) return `${humanDate(lower)}`
-    return `${humanDate(lower)} - ${humanDate(upper)}`
+    if (lower === upper) return `${humanDate(lower, t)}`
+    return `${humanDate(lower, t)} - ${humanDate(upper, t)}`
   }
-  if (lower.length) return humanDate(lower)
-  if (upper.length) return humanDate(upper)
+  if (lower.length) return humanDate(lower, t)
+  if (upper.length) return humanDate(upper, t)
   return ''
 }
 
-export function dateToString (date) {
-  return humanDate(date)
+export function dateToString (date, t) {
+  return humanDate(date, t)
 }
 
-function humanDate (date) {
+function humanDate (date, t) {
   if (date === null || date === undefined || date === '') {
     return ''
   }
@@ -33,7 +33,7 @@ function humanDate (date) {
   if (!month) return year
   if (!month.length) return year
   if (month.match(/X/)) return year
-  month = MONTHS[month]
+  month = t(MONTHS[month])
   var day = split[2]
   if (!day) return `${month} ${year}`
   if (!day.length) return `${month} ${year}`
@@ -83,19 +83,19 @@ function dateToDayMonthYear (date) {
   return `${day}-${month}-${year}`
 }
 
-export function yearMonthDay (interval) {
+export function yearMonthDay (interval, t) {
   if (interval === null) return ''
   const [lower, upper] = interval.split('/')
   if (lower.length && upper.length) {
-    if (lower === upper) return `${yearMonthDayFormatter(lower)}`
-    return `${yearMonthDayFormatter(lower)} - ${yearMonthDayFormatter(upper)}`
+    if (lower === upper) return `${yearMonthDayFormatter(lower, t)}`
+    return `${yearMonthDayFormatter(lower, t)} - ${yearMonthDayFormatter(upper, t)}`
   }
-  if (lower.length) return yearMonthDayFormatter(lower)
-  if (upper.length) return yearMonthDayFormatter(upper)
+  if (lower.length) return yearMonthDayFormatter(lower, t)
+  if (upper.length) return yearMonthDayFormatter(upper, t)
   return ''
 }
 
-function yearMonthDayFormatter (date) {
+function yearMonthDayFormatter (date, t) {
   var split = date.split('-')
   if (!split[0].length && !split[1].length) return
   if (!split[0].length && split[1].length) {
@@ -107,7 +107,7 @@ function yearMonthDayFormatter (date) {
   if (!month) return year
   if (!month.length) return year
   if (month.match(/X/)) return year
-  month = MONTHS[month]
+  month = t(MONTHS[month])
   // var day = split[2]
   // if (!day) return `${year}-${month}`
   // if (!day.length) return `${year}-${month}`
@@ -139,18 +139,18 @@ export function edtfToDateString (dateStr) {
 }
 
 const MONTHS = {
-  '01': 'Jan',
-  '02': 'Feb',
-  '03': 'Mar',
-  '04': 'Apr',
-  '05': 'May',
-  '06': 'Jun',
-  '07': 'Jul',
-  '08': 'Aug',
-  '09': 'Sep',
-  10: 'Oct',
-  11: 'Nov',
-  12: 'Dec'
+  '01': 'jan',
+  '02': 'feb',
+  '03': 'mar',
+  '04': 'apr',
+  '05': 'may',
+  '06': 'jun',
+  '07': 'jul',
+  '08': 'aug',
+  '09': 'sep',
+  10: 'oct',
+  11: 'nov',
+  12: 'dec'
 }
 
 export function convertDateObjToString (obj) {
@@ -194,8 +194,21 @@ export function parseInterval (interval) {
   return interval
 }
 
-export function formatSubmissionDate (submittedDate) {
-  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+export function formatSubmissionDate (submittedDate, t) {
+  const months = [
+    t('jan'),
+    t('feb'),
+    t('mar'),
+    t('apr'),
+    t('may'),
+    t('jun'),
+    t('jul'),
+    t('aug'),
+    t('sep'),
+    t('oct'),
+    t('nov'),
+    t('dec')
+  ]
 
   // Date format incorrect
   if (submittedDate === undefined ||
