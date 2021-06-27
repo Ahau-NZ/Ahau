@@ -52,7 +52,7 @@ const INCORRECT_PERSONS = `${ALL_COLUMNS}
 2,3,Daynah,Daynah Eriepa,fema,birth,3,24/02/0304,,no,,,,021167823459,daynah@me.com,123 Happy Lane,HappyVille,1234,New Zealand,Community Advisor
 `
 
-test('header columns', t => {
+test.skip('header columns', t => {
   t.plan(4)
   csv.parse(ALL_COLUMNS)
     .then(res => {
@@ -82,7 +82,7 @@ test('header columns', t => {
     })
 })
 
-test('number', t => {
+test.skip('number', t => {
   t.plan(2)
   csv.parse(DUPLICATE_NUMBERS)
     .catch(err => {
@@ -100,7 +100,7 @@ test('number', t => {
     })
 })
 
-test('parentNumber', t => {
+test.skip('parentNumber', t => {
   t.plan(2)
   csv.parse(INVALID_FIRST_PARENT_NUMBER)
     .then(res => {
@@ -124,7 +124,7 @@ test('parentNumber', t => {
     })
 })
 
-test('csv.parse', t => {
+test.skip('csv.parse', t => {
   t.plan(2)
 
   csv.parse(CORRECT_PERSONS)
@@ -163,7 +163,7 @@ test('csv.parse', t => {
     })
 })
 
-test('csv.schema', t => {
+test.skip('csv.schema', t => {
   // cherese's schema tests:
 
   function isValid (prop) {
@@ -285,7 +285,7 @@ test('csv.schema', t => {
   t.end()
 })
 
-test('real data', (t) => {
+test.skip('real data', (t) => {
   t.plan(304)
   const filepath = path.join(__dirname, 'fixtures', 'MOCK_DATA_150.csv')
   fs.readFile(filepath, 'utf8').then((file) => {
@@ -339,7 +339,7 @@ test('real data', (t) => {
   })
 })
 
-test('csv.convertDate', (t) => {
+test.skip('csv.convertDate', (t) => {
   t.plan(8)
   function convert (date, expectedRes) {
     var res = csv.convertDate(date)

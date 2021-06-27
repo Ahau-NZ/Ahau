@@ -368,13 +368,13 @@ export default {
     },
     time () {
       if (this.story.timeInterval) {
-        return dateIntervalToString(this.story.timeInterval)
+        return dateIntervalToString(this.story.timeInterval, this.monthTranslations)
       }
       return ''
     },
     submissionDate () {
       if (this.story.submissionDate) {
-        return formatSubmissionDate(this.story.submissionDate)
+        return formatSubmissionDate(this.story.submissionDate, this.monthTranslations)
       }
       return ''
     },
@@ -485,6 +485,9 @@ export default {
     },
     close () {
       this.$emit('close')
+    },
+    monthTranslations (key, vars) {
+      return this.$t('months.' + key, vars)
     }
   }
 }

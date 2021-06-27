@@ -121,7 +121,10 @@ export default {
       })
     },
     formatTimeInterval (date) {
-      return yearMonthDay(date)
+      return yearMonthDay(date, this.monthTranslations)
+    },
+    monthTranslations (key, vars) {
+      return this.$t('months.' + key, vars)
     },
     showStory (story) {
       this.$emit('toggleStory', story)

@@ -50,7 +50,7 @@ export default {
       return niho
     },
     submissionDate () {
-      return formatSubmissionDate(this.collection.submissionDate)
+      return formatSubmissionDate(this.collection.submissionDate, this.monthTranslations)
     }
   },
   methods: {
@@ -61,6 +61,9 @@ export default {
           collectionId: this.collection.id
         }
       }
+    },
+    monthTranslations (key, vars) {
+      return this.$t('months.' + key, vars)
     }
   }
 }

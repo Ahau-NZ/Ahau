@@ -343,10 +343,13 @@ export default {
     },
     dob () {
       if (this.applicant.aliveInterval) {
-        var formattedDate = dateIntervalToString(this.applicant.aliveInterval)
+        var formattedDate = dateIntervalToString(this.applicant.aliveInterval, this.monthTranslations)
         return formattedDate
       }
       return ' '
+    },
+    monthTranslations (key, vars) {
+      return this.$t('months.' + key, vars)
     },
     altNames () {
       if (this.applicant.altNames) return this.applicant.altNames.join(', ')
