@@ -16,6 +16,9 @@
   - Takes Users to the login page when successfully deleted
 - Story:
   - show a success message when deleting a story
+- Whakapapa Tree/Registry:
+  - Added ability to right click to open node context menu on desktop
+  - Added ability to long press to open node context menu on mobile
 
 ### Bug Fixes
 

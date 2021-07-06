@@ -13,7 +13,13 @@
         />
       </g>
     </g> -->
-    <g class="avatar -main" v-if="!isPartner" @click.left="click">
+    <g
+      class="avatar -main"
+      v-if="!isPartner"
+      @click.left="click"
+      @mousedown.right="openMenu($event, profile)"
+      @contextmenu.prevent
+    >
       <defs>
         <clipPath id="myCircle">
           <circle :cx="radius" :cy="radius" :r="radius" />

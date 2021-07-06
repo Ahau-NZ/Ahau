@@ -1,5 +1,13 @@
 <template>
-  <g class="node" :style="position" @mouseover="hover = true" @mouseleave="hover = false" @click="click">
+  <g
+    class="node"
+    :style="position"
+    @mouseover="hover = true"
+    @mouseleave="hover = false"
+    @click="click"
+    @mousedown.right="openMenu($event, profile)"
+    @contextmenu.prevent
+  >
     <g class="avatar">
       <defs>
         <clipPath :id="clipPathId">
@@ -133,7 +141,7 @@ export default {
     }
   },
   methods: {
-    openMenu ($event, profile) {
+    openMenu (event, profile) {
       profile.isPartner = this.partner
       this.$emit('open-menu', { event, profile })
     },
