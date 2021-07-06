@@ -71,7 +71,7 @@
       :show="dialog === 'new-registration'"
       :title="`Request to join : ${tribe.public[0].preferredName}`"
       :profile="profile"
-      @submit="createGroupApplication"
+      @submit="processApplication"
       @close="dialog = null"
     />
     <SettingsDialog
@@ -106,7 +106,7 @@ import SettingsDialog from '@/components/dialog/SettingsDialog.vue'
 import DeleteProfileDialog from '@/components/dialog/DeleteProfileDialog.vue'
 import { updateTribe, deleteTribe, getMembers, getTribalProfile } from '@/lib/community-helpers.js'
 
-import { createGroupApplication } from '@/lib/tribes-application-helpers.js'
+import { createGroupApplication, copyProfileInformation } from '@/lib/tribes-application-helpers.js'
 import { getDisplayName } from '@/lib/person-helpers.js'
 
 import {
@@ -190,6 +190,9 @@ export default {
     myProfile () {
       return this.whoami.personal.groupId === this.tribe.id
     },
+    personalProfileCopy () {
+      return copyProfileInformation(this.whoami.personal.profile)
+    },
     title () {
       if (this.profile.legalName) return this.profile.legalName
       else return this.profile.preferredName
@@ -227,7 +230,7 @@ export default {
     getDisplayName,
     ...mapMutations(['updateSelectedProfile', 'setCurrentAccess']),
     ...mapAlertMutations(['showAlert']),
-    ...mapActions(['setLoading']),
+    ...mapActions(['setLoading', 'setWhoami']),
     ...mapSettingsActions(['deleteAhau']),
     goEdit () {
       if (this.profile.type === 'person') this.dialog = 'edit-node'
@@ -269,6 +272,8 @@ export default {
       this.refresh()
       this.showAlert({ message: this.t('profileUpdated'), color: 'green' })
 
+      if (this.whoami.personal.profile.id === this.profile.id) await this.setWhoami()
+
       if (this.isApplication) {
         this.goProfile()
       }
@@ -289,12 +294,37 @@ export default {
         this.dialog = 'edit-community'
       }
     },
-    async createGroupApplication ({ comment, answers }) {
+    async processApplication (input) {
+      const groupAdmins = this.tribe.public[0].kaitiaki.map(d => d.feedId)
+
+      const kaitiaki = [
+        ...groupAdmins,
+        this.whoami.public.feedId
+      ]
+
+      // creates a profile that the kaitiaki can all see
+      const profileInput = {
+        type: 'person',
+        ...this.personalProfileCopy,
+        authors: {
+          add: kaitiaki
+        },
+        recps: kaitiaki
+      }
+
+      // creates a new profile for the applicant
+      const profileId = await this.saveProfile(profileInput)
+
+      // attach it to the application
+      await this.createGroupApplication({ ...input, profileId, groupAdmins })
+    },
+    async createGroupApplication ({ comment, answers, profileId, groupAdmins }) {
       try {
         const res = this.$apollo.mutate(
           createGroupApplication({
             groupId: this.tribe.id,
-            groupAdmins: [...this.tribe.public[0].kaitiaki.map(d => d.feedId)],
+            profileId,
+            groupAdmins,
             comment,
             answers
           })

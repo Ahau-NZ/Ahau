@@ -118,52 +118,12 @@ import calculateAge from '@/lib/calculate-age'
 
 import pick from 'lodash.pick'
 
-import { PERMITTED_PERSON_ATTRS, PERMITTED_RELATIONSHIP_ATTRS, getDisplayName, setPersonProfile } from '@/lib/person-helpers'
+import { PERMITTED_PERSON_ATTRS, PERMITTED_RELATIONSHIP_ATTRS, getDisplayName, setPersonProfile, setDefaultData } from '@/lib/person-helpers'
 import AccessButton from '@/components/button/AccessButton.vue'
 import { mapGetters } from 'vuex'
 import { parseInterval } from '@/lib/date-helpers.js'
 
 import mapProfileMixins from '@/mixins/profile-mixins.js'
-
-function setDefaultData (withRelationships) {
-  const formData = {
-    type: 'person',
-    id: '',
-    preferredName: '',
-    legalName: '',
-    altNames: {
-      add: []
-    },
-    gender: '',
-    relationshipType: 'birth',
-    legallyAdopted: false,
-    children: [],
-    avatarImage: {},
-    aliveInterval: '',
-    birthOrder: '',
-    description: '',
-    city: '',
-    country: '',
-    postCode: '',
-    profession: '',
-    address: '',
-    email: '',
-    phone: '',
-    deceased: false,
-    placeOfBirth: '',
-    placeOfDeath: '',
-    buriedLocation: '',
-    education: [],
-    school: []
-  }
-
-  if (!withRelationships) {
-    delete formData.relationshipType
-    delete formData.legallyAdopted
-  }
-
-  return formData
-}
 
 export default {
   name: 'NewNodeDialog',

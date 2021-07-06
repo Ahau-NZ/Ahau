@@ -1,9 +1,11 @@
+import gql from 'graphql-tag'
+import isEmpty from 'lodash.isempty'
+
 import { getProfile } from '@/lib/profile-helpers.js'
 import { getTribe } from '@/lib/community-helpers.js'
 import { savePerson, whakapapaLink } from '@/lib/person-helpers.js'
 import { saveLink } from '@/lib/link-helpers.js'
 import { saveWhakapapaView } from '@/lib/whakapapa-helpers.js'
-import gql from 'graphql-tag'
 
 export default function mapProfileMixins ({ mapMethods, mapApollo }) {
   var customMixin = {}
@@ -121,6 +123,13 @@ const methods = {
     if (input.avatarImage) delete input.avatarImage.uri // not valid to transmit / persist
     if (input.headerImage) delete input.headerImage.uri
 
+    if (input.altNames) {
+      if (input.altNames.add && !input.altNames.add.length) delete input.altNames.add
+      if (input.altNames.remove && !input.altNames.remove.length) delete input.altNames.remove
+
+      if (isEmpty(input.altNames)) delete input.altNames
+    }
+
     try {
       const res = await this.$apollo.mutate({
         mutation: gql`
@@ -133,8 +142,9 @@ const methods = {
         }
       })
 
-      if (res.errors) throw res.errors
-      // dont need to return anything for now...
+      if (res.errors) throw new Error(res.errors)
+
+      return res.data.saveProfile // profileId
     } catch (err) {
       console.error('Something went wrong while saving the profile: ', input)
       console.error(err)

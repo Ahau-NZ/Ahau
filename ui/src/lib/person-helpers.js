@@ -158,6 +158,22 @@ export const whoami = ({
           groupId
           profile {
             ...ProfileFragment
+            avatarImage {
+              uri
+              blob
+              mimeType
+              size
+              width
+              height
+            }
+            headerImage {
+              uri
+              blob
+              mimeType
+              size
+              width
+              height
+            }
             ...on Person {
               tiaki {
                 ...PublicProfileFields
@@ -266,6 +282,8 @@ export const savePerson = input => {
 export function pruneEmptyValues (input) {
   const pruned = {}
   Object.entries(input).forEach(([key, value]) => {
+    if (Array.isArray(value) && !value.length) return
+    if (typeof value === 'object' && value === {}) return
     if (value !== null) pruned[key] = value
   })
   return pruned
@@ -297,3 +315,43 @@ export const whakapapaLink = (parent, child) => ({
     child
   }
 })
+
+export function setDefaultData (withRelationships) {
+  const formData = {
+    type: 'person',
+    id: '',
+    preferredName: '',
+    legalName: '',
+    altNames: {
+      add: []
+    },
+    gender: '',
+    relationshipType: 'birth',
+    legallyAdopted: false,
+    children: [],
+    avatarImage: {},
+    aliveInterval: '',
+    birthOrder: '',
+    description: '',
+    city: '',
+    country: '',
+    postCode: '',
+    profession: '',
+    address: '',
+    email: '',
+    phone: '',
+    deceased: false,
+    placeOfBirth: '',
+    placeOfDeath: '',
+    buriedLocation: '',
+    education: [],
+    school: []
+  }
+
+  if (!withRelationships) {
+    delete formData.relationshipType
+    delete formData.legallyAdopted
+  }
+
+  return formData
+}

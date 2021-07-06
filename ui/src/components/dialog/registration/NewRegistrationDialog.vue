@@ -385,18 +385,6 @@ export default {
     ProfileCard,
     ProfileInfoItem
   },
-  apollo: {
-    personalProfile () {
-      return {
-        ...getProfile,
-        variables () {
-          return {
-            id: this.whoami.personal.profile.id
-          }
-        }
-      }
-    }
-  },
   props: {
     show: { type: Boolean, required: true },
     title: { type: String, default: 'Join Community' },
@@ -413,6 +401,9 @@ export default {
       answers: [],
       personalProfile: {}
     }
+  },
+  mounted () {
+    this.personalProfile = this.whoami.personal.profile
   },
   watch: {
     profile: {
@@ -445,7 +436,7 @@ export default {
   computed: {
     ...mapGetters(['whoami']),
     altNames () {
-      if (this.personalProfile.altNames) return this.personalProfile.altNames.join(', ')
+      if (this.personalProfile.altNames && this.personalProfile.altNames.length) return this.personalProfile.altNames.join(', ')
       return ''
     },
     education () {
@@ -482,13 +473,9 @@ export default {
     },
     dob () {
       if (this.personalProfile.aliveInterval) {
-        var formattedDate = dateIntervalToString(this.personalProfile.aliveInterval, this.monthTranslations)
-        return formattedDate
+        return dateIntervalToString(this.personalProfile.aliveInterval, this.monthTranslations)
       }
-      return null
-    },
-    monthTranslations (key, vars) {
-      return this.$t('months.' + key, vars)
+      return ''
     },
     invalidPersonalProfileProps () {
       if (!this.personalProfile) return []
@@ -516,6 +503,9 @@ export default {
     submit () {
       this.$emit('submit', { comment: this.comment, answers: this.answers })
       this.close()
+    },
+    monthTranslations (key, vars) {
+      return this.$t('months.' + key, vars)
     },
     goProfile () {
       this.$router.push({
