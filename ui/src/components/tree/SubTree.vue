@@ -20,6 +20,7 @@
         :radius="partnerRadius"
         partner
         @focus="focus"
+        @mousedown.right="console.log('hello, mouse down')"
       />
     </g>
     <g class="ghost-partner">

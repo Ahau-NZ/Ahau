@@ -26,7 +26,7 @@
               :radius="nodeRadius"
               :nodeCentered="nodeCentered"
               @click="collapse(node)"
-              @open-context-menu="$emit('open-context-menu', $event)"
+              @open-menu="openContextMenu($event)"
               :showLabel="true"
             />
             <g v-if="flatten && node.data.isCollapsed" :transform="`translate(${node.x - 10} ${node.y + nodeRadius + 5})`">
@@ -639,6 +639,9 @@ export default {
         }
       }
       return false
+    },
+    openContextMenu (event) {
+      this.$emit('open-context-menu', event)
     },
     t (key, vars) {
       return this.$t('viewTribalRegistry.' + key, vars)

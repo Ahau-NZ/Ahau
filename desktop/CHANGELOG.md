@@ -23,6 +23,7 @@
 ### Bug Fixes
 
 - fixed `ssb-profile` not allowing `headerImage` and `avatarImage` to be set to null
+- fixed bug preventing node context menu from opening in whakapapa table
 - fixed bug where you could no longer see profile information on a group application
 
 ## 1.5.1

@@ -40,9 +40,16 @@
       />
       <g
         class="menu-button"
-        @click="openMenu($event, profile)"
+        @click.prevent.stop="openMenu($event, profile)"
         :transform="`translate(${1.4 * radius}, ${1.4 * radius})`"
       >
+        <circle
+          v-if="mobile"
+          opacity="0"
+          cx="20"
+          cy="1"
+          r="22"
+        />
         <circle
           stroke="white"
           fill="white"
@@ -130,6 +137,9 @@ export default {
     }
   },
   computed: {
+    mobile () {
+      return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
+    },
     profile () {
       return this.node.data
     },
