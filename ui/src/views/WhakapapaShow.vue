@@ -165,7 +165,7 @@
           :view="whakapapaView"
           :nestedWhakapapa="nestedWhakapapa"
           @load-descendants="loadDescendants($event)"
-          @open-context-menu="openContextMenu($event)"
+          @open-context-menu="openTableContextMenu($event)"
           :searchNodeId="searchNodeId"
           :searchFilterString="searchFilterString"
           :sortValue="sortValue"
@@ -526,6 +526,13 @@ export default {
         this.updateDialog(null, null)
       }
       this.$refs.menu.open(event)
+    },
+    openTableContextMenu (event) {
+      this.setSelectedProfile(event.profile)
+      if (this.dialog.active === 'view-edit-node') {
+        this.updateDialog(null, null)
+      }
+      this.$refs.menu.open(event.$event)
     },
     toggleFilter () {
       this.filter = !this.filter
