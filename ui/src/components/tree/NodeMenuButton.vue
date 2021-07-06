@@ -5,6 +5,13 @@
       :transform="transform"
     >
       <circle
+        v-if="mobile"
+        opacity="0"
+        cx="20"
+        cy="1"
+        r="35"
+      />
+      <circle
         stroke="white"
         fill="white"
         filter="url(#shadow)"
@@ -23,6 +30,11 @@ export default {
   props: {
     show: Boolean,
     transform: String
+  },
+  computed: {
+    mobile () {
+      return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
+    }
   },
   methods: {
     click ($event) {
