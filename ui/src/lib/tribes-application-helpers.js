@@ -1,18 +1,23 @@
 import gql from 'graphql-tag'
-import { COMMUNITY_FRAGMENT } from './community-helpers'
-import { PERSON_FRAGMENT } from './person-helpers'
+import pick from 'lodash.pick'
+import clone from 'lodash.clonedeep'
 
-export const createGroupApplication = ({ groupId, groupAdmins, answers, comment }) => {
+import { COMMUNITY_FRAGMENT } from './community-helpers'
+import { PERSON_FRAGMENT, pruneEmptyValues } from './person-helpers'
+
+export const createGroupApplication = ({ groupId, profileId, groupAdmins, answers, comment }) => {
   return {
     mutation: gql`
       mutation(
         $groupId: String!,
+        $profileId: String,
         $groupAdmins: [String!]!,
         $answers: [GroupApplicationAnswerInput],
         $comment: String
       ) {
         createGroupApplication(
           groupId: $groupId,
+          profileId: $profileId,
           groupAdmins: $groupAdmins,
           answers: $answers,
           comment: $comment
@@ -21,6 +26,7 @@ export const createGroupApplication = ({ groupId, groupAdmins, answers, comment 
     `,
     variables: {
       groupId,
+      profileId,
       groupAdmins,
       answers,
       comment
@@ -74,6 +80,7 @@ export const APPLICATION_FRAGMENT = gql`
     applicant {
       ...ProfileFragment
     }
+    applicantId
     groupAdmins {
       ...ProfileFragment
     }
@@ -153,4 +160,45 @@ export function findInvalidProfileProps (profile) {
   if (!country) invalidProps.push({ prop: 'Country' })
 
   return invalidProps
+}
+
+export function copyProfileInformation (profile) {
+  profile = clone(profile)
+  // delete field the new profile doesnt need
+  const copy = pruneFields(profile)
+
+  if (copy.altNames && copy.altNames.length) {
+    copy.altNames = {
+      add: copy.altNames
+    }
+  }
+
+  if (copy.avatarImage) copy.avatarImage = copyImage(copy.avatarImage)
+  if (copy.headerImage) copy.headerImage = copyImage(copy.headerImage)
+
+  return pruneEmptyValues(copy)
+}
+
+function pruneFields (profile) {
+  delete profile.authors
+  delete profile.recps
+  delete profile.id
+  delete profile.tiaki
+  delete profile.canEdit
+  delete profile.__typename
+  delete profile.type
+
+  return profile
+}
+
+function copyImage (image) {
+  image = clone(image)
+
+  if (image.uri) {
+    delete image.unbox
+    var url = new URL(image.uri)
+    image.unbox = url.searchParams.get('unbox')
+  }
+  const allowed = pick(image, ['blob', 'mimeType', 'size', 'unbox', 'width', 'height'])
+  return pruneEmptyValues(allowed)
 }

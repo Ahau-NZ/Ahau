@@ -65,19 +65,20 @@ export default {
 }
 
 function mapValues (application, whoami) {
-  const { decision, applicant, groupAdmins, group, answers, history } = application
+  const { decision, applicant, applicantId, groupAdmins, group, answers, history } = application
 
-  const isPersonal = applicant.id === whoami.public.profile.id
+  const isPersonal = applicantId === whoami.public.feedId
   const isNew = decision === null
   const isAccepted = (decision && decision.accepted) || false
+  const _group = (group && group.public[0]) || null
 
   // TODO: not sure which admin, find out later: look at the history instead
   const from = isPersonal ? groupAdmins[0] : applicant
 
   return {
     from,
-    group: group.public[0],
-    applicant,
+    group: _group,
+    applicant: applicant || null,
     id: application.id,
     answers,
     history,

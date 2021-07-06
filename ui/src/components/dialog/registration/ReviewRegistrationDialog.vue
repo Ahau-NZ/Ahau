@@ -176,14 +176,14 @@
                           :class="mobile ? 'bb':'br'"
                           smCols="12"
                           mdCols="6"
-                          title="Profession"
+                          title="Education"
                           :value="education"
                           class="pb-0"
                         />
                         <ProfileInfoItem
                           smCols="12"
                           mdCols="6"
-                          title="Profession"
+                          title="School"
                           :value="school"
                           class="pb-0"
                         />
@@ -241,6 +241,7 @@
             <v-row align="center">
               <v-col cols="12" sm="12" v-for="({ comment, author }, i) in comments" :key="`j-q-${i}`" :class="mobile ? 'px-0 pl-5' : 'px-5'">
                 <v-text-field
+                  v-if="author"
                   :value="comment"
                   v-bind="customProps"
                   :label="author.preferredName || author.legalName"
