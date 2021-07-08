@@ -368,8 +368,6 @@ import ProfileCard from '@/components/profile/ProfileCard.vue'
 import ProfileInfoItem from '@/components/profile/ProfileInfoItem.vue'
 import calculateAge from '@/lib/calculate-age'
 
-import { getProfile } from '@/lib/profile-helpers.js'
-
 import { mapGetters } from 'vuex'
 
 import { dateIntervalToString } from '@/lib/date-helpers.js'

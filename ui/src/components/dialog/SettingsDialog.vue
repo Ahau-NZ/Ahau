@@ -6,8 +6,10 @@
         <v-divider />
         <BackupSettings />
         <v-divider />
-        <StorageSettings />
-        <v-divider />
+        <template v-if="showStorageSettings">
+          <StorageSettings />
+          <v-divider />
+        </template>
         <v-col align="left" class="pb-10">
           <v-btn
             class="white--text"
@@ -23,6 +25,7 @@
 </template>
 
 <script>
+import { isCordova } from '@/lib/cordova-helpers'
 import Dialog from '@/components/dialog/Dialog.vue'
 
 import LanguageSettings from '@/components/settings/LanguageSettings.vue'
@@ -34,11 +37,19 @@ export default {
     show: { type: Boolean, required: true }
   },
   name: 'SettingsDialog',
+  data () {
+    return {
+      showStorageSettings: true
+    }
+  },
   components: {
     Dialog,
     BackupSettings,
     LanguageSettings,
     StorageSettings
+  },
+  mounted () {
+    this.showStorageSettings = !isCordova()
   },
   methods: {
     close () {

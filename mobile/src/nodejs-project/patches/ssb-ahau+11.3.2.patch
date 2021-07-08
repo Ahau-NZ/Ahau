@@ -1,10 +1,10 @@
 diff --git a/node_modules/ssb-ahau/index.js b/node_modules/ssb-ahau/index.js
-index b14a47b..fc66ebd 100644
+index c3aebf1..bd898be 100644
 --- a/node_modules/ssb-ahau/index.js
 +++ b/node_modules/ssb-ahau/index.js
 @@ -2,7 +2,7 @@ const pull = require('pull-stream')
  const Obz = require('obz')
- const graphqlServer = require('./src/graphql-server')
+ const graphqlServer = require('./src/graphql')
  const autoPrivateProfile = require('./src/auto-private-profile')
 -const autoPrune = require('./src/auto-prune')
 +// const autoPrune = require('./src/auto-prune')
@@ -20,28 +20,28 @@ index b14a47b..fc66ebd 100644
  
      graphqlServer(sbot, (err, graphql) => {
        if (err) throw err
-diff --git a/node_modules/ssb-ahau/src/graphql-server.js b/node_modules/ssb-ahau/src/graphql-server.js
-index 7b32e8a..e9ed2ce 100644
---- a/node_modules/ssb-ahau/src/graphql-server.js
-+++ b/node_modules/ssb-ahau/src/graphql-server.js
-@@ -15,7 +15,7 @@ const Artefact = require('@ssb-graphql/artefact')
- const Story = require('@ssb-graphql/story')
- const Whakapapa = require('@ssb-graphql/whakapapa')
- const Invite = require('@ssb-graphql/invite')
--const StorageManagement = require('../src/graphql-storage-management')
-+// const StorageManagement = require('../src/graphql-storage-management')
- const Settings = require('@ssb-graphql/settings')
+diff --git a/node_modules/ssb-ahau/src/graphql/index.js b/node_modules/ssb-ahau/src/graphql/index.js
+index d71f69e..35484b7 100644
+--- a/node_modules/ssb-ahau/src/graphql/index.js
++++ b/node_modules/ssb-ahau/src/graphql/index.js
+@@ -20,7 +20,7 @@ const Settings = require('@ssb-graphql/settings')
+ const Author = require('./author')
+ const Backup = require('./backup')
+ const LatestSequence = require('./latest-sequence')
+-const StorageManagement = require('./storage-management')
++// const StorageManagement = require('./storage-management')
  
- const Author = require('./graphql-author')
-@@ -40,7 +40,7 @@ module.exports = function graphqlServer (sbot, cb) {
-   })
- 
+ module.exports = function graphqlServer (sbot, cb) {
+   const PORT = (sbot.config.graphql && sbot.config.graphql.port) || env.graphql.port
+@@ -42,7 +42,7 @@ module.exports = function graphqlServer (sbot, cb) {
    const invite = Invite(sbot)
+   const backup = Backup(sbot)
+   const latestSequence = LatestSequence(sbot)
 -  const storage = StorageManagement(sbot)
 +  // const storage = StorageManagement(sbot)
-   const latestSequence = LatestSequence(sbot)
-   const backup = Backup(sbot)
  
+   if (sbot.config.graphql && sbot.config.graphql.loadContext === false) {
+     return next(null)
 @@ -63,7 +63,7 @@ module.exports = function graphqlServer (sbot, cb) {
        settings,
        author,
