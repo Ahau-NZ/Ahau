@@ -62,7 +62,8 @@ const config = makeConfig(appName, {
     csp: ''
   },
   hyperBlobs: {
-    port: env.ahau.hyperBlobs.port
+    port: env.ahau.hyperBlobs.port,
+    autoPrune: false
   }
 })
 
