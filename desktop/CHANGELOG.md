@@ -16,13 +16,16 @@
   - Takes Users to the login page when successfully deleted
 - Story:
   - show a success message when deleting a story
+- Permissions:
+  - Added a permissions tabs to edit community profile dialog
+    - this still needs some backend to handle any changes so the options are currently disabled
 - Whakapapa Tree/Registry:
   - Added ability to right click to open node context menu on desktop
   - Added ability to long press to open node context menu on mobile
 
-### Bug Fixes
-
+  ### Bug Fixes
 - fixed `ssb-profile` not allowing `headerImage` and `avatarImage` to be set to null
+- updated the access button so that you cant change access to a story. To change access you now have to change the tribe 
 - fixed bug preventing node context menu from opening in whakapapa table
 - fixed bug where you could no longer see profile information on a group application
 

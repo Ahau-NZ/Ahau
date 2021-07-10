@@ -1,7 +1,7 @@
 {
   "privateAccess": "Only you have access to this {recordType}",
-  "membersWillHaveAccess": "Only members of {preferredName} will have access to this {recordType}",
-  "membersCanAccess": "Only members of {preferredName} can access this {recordType}",
+  "membersWillHaveAccess": "Only members of this tribe will have access to this {recordType}",
+  "membersCanAccess": "Only members of this tribe can access this {recordType}",
   "private": "Private",
   "setAccess": "set access",
   "addToArchive": "Add {recordType} to archive",

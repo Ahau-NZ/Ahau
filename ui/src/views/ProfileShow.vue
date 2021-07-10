@@ -8,7 +8,7 @@
       <div :class="mobile ? 'mobile-title order-3 d-flex':'desktop-title order-1 mr-auto'">
         <h1 class="primary--text" :style="mobile ? length : ''">{{ title }}</h1>
       </div>
-      <div :class="mobile ? 'mob-btn order-1':'align-self-end order-2'">
+      <div :class="mobile ? 'mob-btn order-1':'align-self-end order-2 mr-4'">
         <ProfileButton
           v-if="myProfile"
           @click="toggleSettings"

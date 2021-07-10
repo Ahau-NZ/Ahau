@@ -2,7 +2,8 @@ import gql from 'graphql-tag'
 import pick from 'lodash.pick'
 import clone from 'lodash.clonedeep'
 
-import { AUTHOR_FRAGMENT } from './person-helpers'
+// disabled until returning empty authors is fixed
+// import { AUTHOR_FRAGMENT } from './person-helpers'
 import { PublicProfileFieldsFragment } from './profile-helpers.js'
 
 export const EMPTY_COMMUNITY = {
@@ -105,7 +106,6 @@ export const getMembers = id => ({
 
 export const COMMUNITY_FRAGMENT = gql`
 ${PublicProfileFieldsFragment}
-${AUTHOR_FRAGMENT}
   fragment CommunityFragment on Community {
     id
     type
@@ -131,14 +131,45 @@ ${AUTHOR_FRAGMENT}
       type
       label
     }
-    authors {
-      ...AuthorFragment
-      profile {
-        ...PublicProfileFields
-      }
-    }
   }
 `
+// copied until returning empty author is fixed
+// export const COMMUNITY_FRAGMENT = gql`
+// ${PublicProfileFieldsFragment}
+// ${AUTHOR_FRAGMENT}
+//   fragment CommunityFragment on Community {
+//     id
+//     type
+//     preferredName
+//     description
+//     avatarImage { uri }
+//     headerImage { uri }
+//     email
+//     phone
+//     canEdit
+//     recps
+//     address
+//     city
+//     country
+//     postCode
+//     kaitiaki {
+//       feedId
+//       profile {
+//         ...PublicProfileFields
+//       }
+//     }
+//     joiningQuestions {
+//       type
+//       label
+//     }
+//     authors {
+//       ...AuthorFragment
+//       profile {
+//         ...PublicProfileFields
+//       }
+//     }
+//   }
+// `
 
 export const createGroup = () => {
   return {

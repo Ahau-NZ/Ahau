@@ -6,7 +6,8 @@
         {{ t('whakapapaTitle')}}
         <v-icon color="blue-grey" light @click="toggleWhakapapaHelper" class="infoButton">mdi-information</v-icon>
       </v-col>
-      <v-col>
+      <!-- Only Kaitiaki can create whakapapa -->
+      <v-col v-if="profile.canEdit">
         <BigAddButton :label="t('addWhakapapaButton')" :customClass="mobile ? 'addBtnMobile':'addBtnDesktop'" @click="toggleViewForm" />
       </v-col>
     </v-row>
