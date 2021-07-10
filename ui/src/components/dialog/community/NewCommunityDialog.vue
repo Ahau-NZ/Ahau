@@ -4,24 +4,30 @@
     @close="close"
   >
     <template v-if="!hideDetails" v-slot:content>
-      <v-tabs v-model="tab">
-        <v-tab href="#tab-1" class="mr-10">
-          <v-icon left>
+      <v-tabs v-model="tab" class="mt-n3">
+        <v-tab href="#tab-1" :class="mobile ? 'ml-n5 mb-tabs':'desk-tabs'">
+          <v-icon small v-if="!mobile"  left>
             mdi-account
           </v-icon>
           {{t('profile')}}
         </v-tab>
-        <v-tab href="#tab-2" class="mr-10">
-          <v-icon left>
+        <v-tab href="#tab-2" :class="mobile ? 'mb-tabs':'desk-tabs'">
+          <v-icon small v-if="!mobile" left>
             mdi-form-select
           </v-icon>
           {{t('registration')}}
         </v-tab>
-        <v-tab v-if="formData.authors && formData.authors.length" href="#tab-3">
-          <v-icon left>
+        <v-tab v-if="formData.authors && formData.authors.length" href="#tab-3" :class="mobile ? 'mb-tabs':'desk-tabs'">
+          <v-icon small v-if="!mobile" left>
             mdi-security
           </v-icon>
           {{t('kaitiaki')}}
+        </v-tab>
+        <v-tab v-if="formData.authors && formData.authors.length" href="#tab-4" :class="mobile ? 'mb-tabs':'desk-tabs'">
+          <v-icon small v-if="!mobile" left>
+            mdi-account-multiple-check
+          </v-icon>
+          {{t('permissions')}}
         </v-tab>
       </v-tabs>
       <v-divider></v-divider>
@@ -32,9 +38,9 @@
           </v-col>
         </v-tab-item>
         <v-tab-item value="tab-2">
-          <v-row class="ma-4">
+          <v-row class="ma-2">
             <v-col cols="12">
-              {{ $t('addCommunityForm.form') }}
+              <p>{{ $t('addCommunityForm.form') }}</p>
             </v-col>
             <div>
               <v-col cols="12" v-for="(question, i) in formData.joiningQuestions" :key="`j-q-${i}`" class="pa-1">
@@ -58,14 +64,14 @@
         </v-tab-item>
         <v-tab-item light value="tab-3">
           <v-col cols="12" class="pa-5">
-            <p class="mb-5">{{ t('tribalKaitiaki') }}</p>
+            <p class="mb-5">{{ t('kaitiakiDescription') }}</p>
 
             <!-- Displays Tribal Kaitiaki in rows, new and existing ones that havent been removed -->
             <v-row  v-for="(kaitiaki , i) in formData.authors" :key="i" class="justify-center align-center mx-4 mt-4">
               <v-col cols="1" class="pt-0 px-0">
-                <Avatar :size="mobile ? '50px' : '40px'" :image="kaitiaki.avatarImage" :alt="kaitiaki.preferredName" />
+                <Avatar :size="mobile ? '50px' : '40px'" :image="kaitiaki.avatarImage" :alt="kaitiaki.preferredName" :gender="kaitiaki.gender"/>
               </v-col>
-              <v-col class="py-0" px-0>
+              <v-col :class="mobile ? 'pl-5':'py-0'">
                 <p style="color:black;">{{ getDisplayName(kaitiaki) }}</p>
               </v-col>
               <v-col v-if="formData.authors && formData.authors.length >= 2">
@@ -77,7 +83,7 @@
 
             <!-- Displays the button to add new kaitiaki - shows the drop down when clicked -->
             <v-row v-if="!showKaitiaki" class="pa-5">
-              <v-btn color="black" outlined @click="showKaitiaki = true">
+              <v-btn color="black" class="white--text" @click="showKaitiaki = true">
                 <v-icon small class="pr-2">mdi-plus</v-icon> {{ t('kaitiaki') }}
               </v-btn>
             </v-row>
@@ -111,6 +117,9 @@
             </v-row>
           </v-col>
         </v-tab-item>
+        <v-tab-item light value="tab-4">
+          <Permissions mobile />
+        </v-tab-item>
       </v-tabs-items>
     </template>
     <template v-slot:before-actions>
@@ -132,13 +141,15 @@ import { getObjectChanges } from '@/lib/get-object-changes.js'
 import { getDisplayName } from '@/lib/person-helpers.js'
 import Avatar from '@/components/Avatar.vue'
 import avatarHelper from '@/lib/avatar-helpers.js'
+import Permissions from './Permissions'
 
 export default {
   name: 'NewCommunityDialog',
   components: {
     Dialog,
     CommunityForm,
-    Avatar
+    Avatar,
+    Permissions
   },
   props: {
     show: { type: Boolean, required: true },
@@ -271,5 +282,20 @@ export default {
 
 .v-input--radio-group__input label {
   font-size: 14px;
+}
+
+.mb-tabs {
+  font-size: 0.8em;
+  padding-left: 0px;
+  padding-right: 0px
+}
+
+.desk-tabs {
+  font-size: 0.9em;
+  padding-right: 16px;
+}
+
+p {
+  color: black
 }
 </style>

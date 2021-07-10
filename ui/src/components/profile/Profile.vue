@@ -39,9 +39,9 @@
     <v-col cols="12" sx="12" md="3" :class="{ 'pt-0 px-5':mobile, 'pt-10 pr-8':myProfile && !mobile, 'pt-12 pr-8':!myProfile }">
       <template v-if="myProfile">
         <v-col v-if="mobile" cols="12" class="mobile-profile-label headliner">
-             {{ $t('viewPerson.communities') }}
+             {{ $t('viewPerson.tribes') }}
         </v-col>
-        <ProfileCard v-if="myProfile" :title="mobile ? '':$t('viewPerson.communities')" class="mt-2">
+        <ProfileCard v-if="myProfile" :title="mobile ? '':$t('viewPerson.tribes')" class="mt-2">
           <template v-slot:content>
             <div v-if="connectedTribes.length > 0" :class="{'pt-4':mobile}">
               <v-row v-for="tribe in connectedTribes" :key="tribe.id" class="justify-center align-center ma-0 ml-4">
@@ -123,7 +123,7 @@ export default {
     window.scrollTo(0, 0)
   },
   computed: {
-    ...mapGetters(['whoami', 'tribes']),
+    ...mapGetters(['whoami']),
     ...mapTribeGetters(['tribes']),
     myProfile () {
       return this.profile.id === this.whoami.personal.profile.id

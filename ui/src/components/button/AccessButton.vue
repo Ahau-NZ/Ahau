@@ -1,33 +1,43 @@
 <template>
-  <!-- <v-row cols="12" class="pl-2 pt-2"> -->
-    <v-menu top offset-y light hide-details dense rounded outlined>
-      <template v-slot:activator="{ on, attrs }">
-          <v-row :class="margin" justify="start">
-            <v-col cols="12" md="auto" class="pa-0 pb-5" justify-start>
-              <v-card-text v-if="!disabled" class="text-caption py-0 text-md-start">{{ caption }}</v-card-text>
-              <v-btn
+  <v-row cols="12" class="pl-2 pt-2">
+    <v-row :class="margin" justify="start">
+      <v-col cols="12" md="auto" class="pa-0 pb-5" justify-start>
+          <v-icon>mdi-eye</v-icon>
+          <span class="ml-2">{{ access ? access.isPersonalGroup ? t('private') : access.preferredName : t('setAccess')}}</span>
+        <v-card-text class="font-italic font-weight-light text-caption pa-0 text-md-right">
+          {{ access.isPersonalGroup ? t('privateAccess', { recordType: type }) : t('membersCanAccess', { preferredName: access.preferredName, recordType: type }) }}
+        </v-card-text>
+      </v-col>
+    </v-row>
+    <!-- Keeping for future use in groups and permissions -->
+    <!-- <v-menu top offset-y light hide-details dense rounded outlined> -->
+      <!-- <template v-slot:activator="{ on, attrs }"> -->
+          <!-- <v-row :class="margin" justify="start">
+            <v-col cols="12" md="auto" class="pa-0 pb-5" justify-start> -->
+              <!-- <v-card-text v-if="!disabled" class="text-caption py-0 text-md-start">{{ caption }}</v-card-text> -->
+              <!-- <v-btn
                 v-bind="attrs"
                 v-on="on"
                 text
                 rounded
                 :disabled="disabled"
-              >
-                <v-icon>mdi-eye</v-icon>
-                <span class="ml-2">{{ access ? access.isPersonalGroup ? t('private') : access.preferredName : t('setAccess')}}</span>
-                <v-icon v-if="!disabled">mdi-chevron-down</v-icon>
-              </v-btn>
-              <v-card-text v-if="access && !disabled" class="font-italic font-weight-light text-caption py-0 text-md-right">
+              > -->
+                <!-- <v-icon>mdi-eye</v-icon>
+                <span class="ml-2">{{ access ? access.isPersonalGroup ? t('private') : access.preferredName : t('setAccess')}}</span> -->
+                <!-- <v-icon v-if="!disabled">mdi-chevron-down</v-icon> -->
+              <!-- </v-btn> -->
+              <!-- <v-card-text v-if="access && !disabled" class="font-italic font-weight-light text-caption py-0 text-md-right">
                 {{ access.isPersonalGroup ? t('privateAccess', { recordType: type }) : t('membersWillHaveAccess', { preferredName: access.preferredName, recordType: type }) }}
-              </v-card-text>
+              </v-card-text> -->
 
-              <v-card-text v-if="access && disabled" class="font-italic font-weight-light text-caption py-0 text-md-right">
+              <!-- <v-card-text class="font-italic font-weight-light text-caption pa-0 text-md-right">
                 {{ access.isPersonalGroup ? t('privateAccess', { recordType: type }) : t('membersCanAccess', { preferredName: access.preferredName, recordType: type }) }}
               </v-card-text>
             </v-col>
-          </v-row>
-      </template>
+          </v-row> -->
+      <!-- </template> -->
 
-      <v-list>
+      <!-- <v-list>
         <v-list-item
           v-for="(tribe, index) in tribes"
           :key="index"
@@ -37,12 +47,12 @@
           <v-list-item-title>{{ tribe.isPersonalGroup ? t('private') : t('tribeName', { tribeName: tribe.preferredName }) }}</v-list-item-title>
         </v-list-item>
       </v-list>
-    </v-menu>
-  <!-- </v-row> -->
+    </v-menu> -->
+  </v-row>
 </template>
 <script>
-import Avatar from '@/components/Avatar.vue'
-import { getTribes } from '@/lib/community-helpers.js'
+// import Avatar from '@/components/Avatar.vue'
+// import { getTribes } from '@/lib/community-helpers.js'
 import { mapGetters } from 'vuex'
 import { getDisplayName } from '@/lib/person-helpers.js'
 
@@ -59,34 +69,35 @@ export default {
       tribes: []
     }
   },
-  apollo: {
-    tribes () {
-      return {
-        ...getTribes,
-        update ({ tribes }) {
-          tribes = tribes
-            .filter(tribe => tribe.private.length !== 0)
-            .map(tribe => {
-              return {
-                groupId: tribe.id,
-                ...tribe.private.length > 0
-                  ? tribe.private[0]
-                  : tribe.public[0]
-              }
-            })
-          tribes.push({
-            groupId: this.whoami.personal.groupId,
-            ...this.whoami.personal.profile,
-            isPersonalGroup: true
-          })
-          return tribes
-        }
-      }
-    }
-  },
-  components: {
-    Avatar
-  },
+  // apollo: {
+  //   tribes () {
+  //     return {
+  //       ...getTribes,
+  //       update ({ tribes }) {
+  //         tribes = tribes
+  //         // a person can only change access to a tribe that it canEdit (is a kaitiaki)
+  //           .filter(tribe => tribe.private.length !== 0 && tribe.private[0].canEdit)
+  //           .map(tribe => {
+  //             return {
+  //               groupId: tribe.id,
+  //               ...tribe.private.length > 0
+  //                 ? tribe.private[0]
+  //                 : tribe.public[0]
+  //             }
+  //           })
+  //         tribes.push({
+  //           groupId: this.whoami.personal.groupId,
+  //           ...this.whoami.personal.profile,
+  //           isPersonalGroup: true
+  //         })
+  //         return tribes
+  //       }
+  //     }
+  //   }
+  // },
+  // components: {
+  //   Avatar
+  // },
   computed: {
     ...mapGetters(['whoami']),
     mobile () {
@@ -95,10 +106,10 @@ export default {
     margin () {
       if (this.mobile) return ''
       return 'pt-3 ml-2'
-    },
-    caption () {
-      return this.t('addToArchive', { recordType: this.type })
     }
+    // caption () {
+    //   return this.t('addToArchive', { recordType: this.type })
+    // }
   },
   methods: {
     getDisplayName,

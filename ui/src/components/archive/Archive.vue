@@ -8,8 +8,9 @@
           <v-icon color="blue-grey" light @click="toggleArchiveHelper" :class="mobile ? 'mobInfoBtn':'infoButton'">mdi-information</v-icon>
         </v-col>
         <v-col v-show="!showStory">
-          <BigAddButton :label="$t('viewArchive.newStoryButton')" :customClass="mobile ? 'addBtnMobile':'addBtnDesktop'" @click.native.stop="mobile ? openContextMenu($event): dialog = 'new-story' " />
-          <BigAddButton v-if="!mobile" :label="$t('viewArchive.newCollectionButton')" :customClass="mobile ? 'addBtnMobile':'addBtnCollection'" @click.native.stop="dialog = 'new-collection'" />
+          <BigAddButton :label="$t('viewArchive.newStoryButton')" :customClass="mobile ? 'addBtnMobile':'addBtnDesktop'" @click.native.stop="mobile && profile.canEdit ? openContextMenu($event): dialog = 'new-story' " />
+          <!-- Only Kaitiaki can create collections -->
+          <BigAddButton v-if="!mobile && profile.canEdit" :label="$t('viewArchive.newCollectionButton')" :customClass="mobile ? 'addBtnMobile':'addBtnCollection'" @click.native.stop="dialog = 'new-collection'" />
         </v-col>
       </v-row>
       <v-row :class="mobile ? '':'mt-4'">

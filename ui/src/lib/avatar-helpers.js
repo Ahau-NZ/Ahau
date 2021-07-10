@@ -40,7 +40,7 @@ function defaultImage (isView, aliveInterval, gender) {
       return diverse
     case 'unknown':
       return diverse
-    default:
+    case 'female':
       switch (true) {
         case age === null:
           return wahine
@@ -51,5 +51,7 @@ function defaultImage (isView, aliveInterval, gender) {
         default:
           return wahine
       }
+    default:
+      return diverse
   }
 }

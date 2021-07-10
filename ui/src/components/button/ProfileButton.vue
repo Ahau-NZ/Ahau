@@ -1,8 +1,10 @@
 <template>
   <v-btn
     @click="$emit('click')"
-    text
     light
+    :outlined="!mobile"
+    :rounded="!mobile"
+    :text="mobile"
   >
     <v-icon>{{ icon }}</v-icon>
     <span v-if="!mobile" class="pl-1">

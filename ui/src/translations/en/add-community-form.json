@@ -24,6 +24,12 @@
   "registration": "registration", 
   "kaitiaki": "kaitiaki",
   "tribalKaitiaki": "Tribal kaitiaki",
-  "deleteCommunity": "Delete this community"
+  "kaitiakiDescription": "Tribal Kaitiaki are your community administrators responsible for the content and members in a community.",
+  "deleteCommunity": "Delete this community",
+  "permissions": "permissions",
+  "tribalPermissions": "Update the permissions members have in this tribe",
+  "createWhakapapas": "Create whakapapa records",
+  "createCollections": "Create collections",
+  "createStories": "Create stories"
 
 }
