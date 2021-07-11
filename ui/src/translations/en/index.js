@@ -22,6 +22,7 @@ module.exports = {
   deleteNode: require('./delete-node.json'),
   deleteProfileForm: require('./delete-profile-form.json'),
   dialogHandler: require('./dialog-handler.json'),
+  dialog: require('./dialog.json'),
 
   /* Nav / misc */
   accessButton: require('./access-button.json'),
@@ -36,5 +37,6 @@ module.exports = {
   sideProfile: require('./side-profile.json'),
 
   instructionsWhakapapa: require('./instructions-whakapapa.json'),
-  instructionsStory: require('./instructions-story.json')
+  instructionsStory: require('./instructions-story.json'),
+  support: require('./support.json')
 }

@@ -19,6 +19,9 @@
 - Permissions:
   - Added a permissions tabs to edit community profile dialog
     - this still needs some backend to handle any changes so the options are currently disabled
+- Record Permissions:
+  - added some front end buttons to a record for setting a record to a specific group and different permissions
+    - this still needs some backend to handle any changes so the options are currently disabled
 - Whakapapa Tree/Registry:
   - Added ability to right click to open node context menu on desktop
   - Added ability to long press to open node context menu on mobile
@@ -28,6 +31,7 @@
 - updated the access button so that you cant change access to a story. To change access you now have to change the tribe 
 - fixed bug preventing node context menu from opening in whakapapa table
 - fixed bug where you could no longer see profile information on a group application
+- changed the access button so that a user cannot select a different tribe when creating a record
 
 ## 1.5.1
 

@@ -57,31 +57,36 @@
       <v-divider/>
       <v-card-actions v-if="!readonly" class="pa-0">
         <v-container class="py-0">
-          <v-row align="end">
-            <v-col cols="12" md="auto" v-if="$slots['before-actions']" :align="mobile ? 'center':'start'" class="py-0">
+          <v-row>
+            <v-col cols="12" md="9" v-if="$slots['before-actions']" :align="mobile ? 'center':'start'" class="py-0">
               <slot name="before-actions"></slot>
             </v-col>
             <v-spacer v-if="!mobile"/>
             <v-col v-if="hideActions" class="pa-3"></v-col>
             <slot name="actions" v-else>
-              <v-col cols="6" md="auto" align="center">
-                <v-btn @click="close"
-                  text
-                  :large="!mobile"
-                  class="secondary--text"
-                >
-                  Cancel
-                </v-btn>
-              </v-col>
-              <v-col cols="6" md="auto" align="center">
-                <v-btn @click="submit"
-                  :large="!mobile"
-                  text
-                  color="blue"
-                  :disabled="!allowSubmissions"
-                >
-                  Save
-                </v-btn>
+              <v-col cols="12" md="3" :style="mobile ? 'text-align:center;':''">
+                <v-row>
+                  <v-col cols="6" align-items="start" class="pa-0">
+                    <v-btn @click="close"
+                      text
+                      :large="!mobile"
+                      class="secondary--text align-btn"
+                    >
+                      {{ t('cancel') }}
+                    </v-btn>
+                  </v-col>
+                  <v-col cols="6" align="center" class="pa-0">
+                    <v-btn @click="submit"
+                      :large="!mobile"
+                      text
+                      color="blue"
+                      :disabled="!allowSubmissions"
+                      class="align-btn"
+                    >
+                      {{ t('save') }}
+                    </v-btn>
+                  </v-col>
+                </v-row>
               </v-col>
             </slot>
           </v-row>
@@ -184,6 +189,9 @@ export default {
       this.isSubmitting = false
       this.setAllowSubmissions(true)
       this.$emit('close')
+    },
+    t (key, vars) {
+      return this.$t('dialog.' + key, vars)
     }
   },
   mounted () {
@@ -210,5 +218,9 @@ export default {
   font-weight: 400;
   font-size: 0.99rem;
   letter-spacing: 0.1666666667em;
+}
+
+.align-btn {
+  align-items: start;
 }
 </style>
