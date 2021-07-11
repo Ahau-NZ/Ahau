@@ -3,7 +3,7 @@
     <div>
       <div v-if="showStory" :class="{ 'showOverlay': showStory && !mobile }"></div>
       <v-row v-show="!showStory" class="top-margin">
-        <v-col v-if="!hideArchiveTitle" cols="10" class="headliner black--text pa-0 py-2 pl-3">
+        <v-col v-if="!hideArchiveTitle" cols="7" class="headliner black--text pa-0 py-2 pl-3">
           {{ archiveTitle }}
           <v-icon color="blue-grey" light @click="toggleArchiveHelper" :class="mobile ? 'mobInfoBtn':'infoButton'">mdi-information</v-icon>
         </v-col>

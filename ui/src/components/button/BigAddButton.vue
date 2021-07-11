@@ -42,6 +42,7 @@ export default {
     right:20px !important;
     color: white;
     background-color: rgba(160, 35, 36,1) !important;
+    border: none;
   }
   .addBtnDesktop {
     right: 50px !important;
