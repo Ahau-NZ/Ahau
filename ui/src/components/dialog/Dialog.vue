@@ -55,7 +55,7 @@
         <slot name="content"></slot>
       </v-card-text>
       <v-divider/>
-      <v-card-actions v-if="!readonly" class="pa-0">
+      <v-card-actions v-if="!readonly && actionsVisible" class="pa-0">
         <v-container class="py-0">
           <v-row>
             <v-col cols="12" md="9" v-if="$slots['before-actions']" :align="mobile ? 'center':'start'" class="py-0">
@@ -100,6 +100,8 @@
 import banner from '@/assets/bg-tohu.png'
 import { mapGetters, mapMutations } from 'vuex'
 
+import { isCordova } from '@/lib/cordova-helpers'
+
 export default {
   name: 'Dialog',
   props: {
@@ -133,7 +135,8 @@ export default {
       showDialog: this.show,
       listener: null,
       banner,
-      isSubmitting: false
+      isSubmitting: false,
+      keyboardVisible: false
     }
   },
   computed: {
@@ -171,6 +174,9 @@ export default {
         }
         return titleObj
       }
+    },
+    actionsVisible () {
+      return !this.mobile || !this.keyboardVisible
     }
   },
   methods: {
@@ -192,6 +198,11 @@ export default {
     },
     t (key, vars) {
       return this.$t('dialog.' + key, vars)
+    },
+    setKeyboardVisible (isVisible) {
+      if (!isCordova()) return
+
+      this.keyboardVisible = isVisible
     }
   },
   mounted () {
@@ -201,6 +212,13 @@ export default {
     document.body.style.top = `-${window.scrollY}px`
     document.body.style.minWidth = '100%'
     document.body.style.position = 'fixed'
+
+    if (isCordova()) {
+      this.setKeyboardVisible(window.Keyboard.isVisible)
+
+      window.addEventListener('keyboardWillShow', () => this.setKeyboardVisible(true))
+      window.addEventListener('keyboardWillHide', () => this.setKeyboardVisible(false))
+    }
   },
   destroyed () {
     document.removeEventListener('keydown', this.listener)
