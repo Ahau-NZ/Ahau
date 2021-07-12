@@ -1,4 +1,6 @@
 import { createNamespacedHelpers } from 'vuex'
+import { isCordova } from '../lib/cordova-helpers'
+
 const { ahau: env } = require('ahau-env')
 const axios = require('axios')
 const { v4: uuid } = require('uuid')
@@ -13,6 +15,31 @@ const hexTo64 = str => Buffer.from(str, 'hex').toString('base64')
 const MB = 1024 * 1024
 const MAX_FILE_SIZE = 150 * MB
 
+function uploadArtefact (file) {
+  const blobId = uuid()
+
+  if (isCordova()) {
+    const formData = new FormData()
+    formData.append('files', file)
+    formData.append('blobId', blobId)
+
+    return axios.post(url, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
+  }
+
+  return axios(url, {
+    method: 'post',
+    data: {
+      // NOTE! file.path will only be accessible in electron UI, not in browser or cordova
+      localFilePath: file.path,
+      blobId
+    }
+  })
+}
+
 export default {
   methods: {
     ...mapAlertMutations(['showAlert']),
@@ -22,18 +49,12 @@ export default {
           throw new Error('Please check the file size is less than 150MB')
         }
 
-        const res = await axios(url, {
-          method: 'post',
-          data: {
-            localFilePath: file.path,
-            blobId: uuid()
-          }
-        })
-        // NOTE! file.path will only be accessible in electron UI, not in browser
+        const res = await uploadArtefact(file)
 
-        if (res.errors) {
-          console.error(res.errors)
-          throw new Error('Something went wrong while uploading a file')
+        if (res.error) {
+          console.error(res.error)
+          alert(res.error)
+          throw new Error(res.error)
         }
 
         const { driveAddress, blobId, readKey, href } = res.data
