@@ -1,8 +1,8 @@
 <template>
   <v-row cols="12" class="py-0 px-3">
     <v-row :class="margin">
-      <v-col cols="12" class="pa-0" justify-start>
-        <v-row>
+      <v-col cols="12" class="py-0">
+        <v-row :justify="mobile ? 'center':'start'">
           <v-btn
             text
             small
