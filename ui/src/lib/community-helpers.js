@@ -44,6 +44,30 @@ export function setDefaultCommunity (newCommunity) {
   }
 }
 
+export const EMPTY_SUBGROUP = {
+  type: 'subgroup',
+  id: null,
+  preferredName: null,
+  avatarImage: null,
+  description: null,
+  authors: [],
+  kaitiaki: [],
+  members: []
+}
+
+export function setDefaultSubgroup (newSubgroup) {
+  var subGroup = clone(newSubgroup)
+
+  return {
+    id: subGroup.id,
+    preferredName: subGroup.preferredName,
+    avatarImage: subGroup.avatarImage,
+    description: subGroup.description,
+    authors: subGroup.kaitiaki.map(d => ({ ...d.profile, feedId: d.feedId })),
+    members: subGroup.members
+  }
+}
+
 export const PERMITTED_COMMUNITY_ATTRS = [
   'authors',
   'avatarImage',

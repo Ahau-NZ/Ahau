@@ -269,13 +269,6 @@ export default {
     letter-spacing: 5px;
   }
 
-  .sub-headliner {
-    font-size: 0.8em;
-    text-transform: uppercase;
-    font-weight: 400;
-    letter-spacing: 5px;
-  }
-
   .showOverlay {
     z-index: 1;
     height: 100%;
