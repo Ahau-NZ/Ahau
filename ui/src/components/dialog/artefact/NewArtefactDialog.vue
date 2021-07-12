@@ -354,7 +354,4 @@ export default {
 .artefact-dialog {
     max-height: 91% !important;
 }
-.v-input--is-focused {
-  color: yellow !important;
-}
 </style>

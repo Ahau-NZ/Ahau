@@ -104,6 +104,6 @@ export default {
   color: black;
 }
 .list-subtitle {
-  font-size: 12px;
+  font-size: 10px;
 }
 </style>
