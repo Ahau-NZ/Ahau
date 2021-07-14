@@ -48,7 +48,6 @@
       <span>{{ $t('support.comingSoon')}}</span>
     </v-tooltip>
   </v-col>
-</v-col>
 </template>
 <script>
 
