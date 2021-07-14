@@ -1,5 +1,5 @@
 const ahoy = require('ssb-ahoy')
-const env = require('ahau-env')
+const env = require('ahau-env')()
 const { autoUpdater } = require('electron-updater')
 const Config = require('./ssb.config')
 

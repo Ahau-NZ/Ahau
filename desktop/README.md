@@ -28,7 +28,7 @@ This takes icons from `desktop/build` and generates icon files specific for part
 ### All platforms need
 
 - an `desktop/electron-builder.env` with environment variable `GH_TOKEN`
-- each developer with publishing rights to `github.com/protozoa-nz/whakapapa-ora` needs to make their own token, make one [here](https://github.com/settings/tokens/new), selecting "repo" permissions
+- each developer with publishing rights to `github.com/ahau-nz/ahau` needs to make their own token, make one [here](https://github.com/settings/tokens/new), selecting "repo" permissions
 - an `ui/.env` with environment variable `MIXPANEL_TOKEN`
 
 ### Platform specific
@@ -76,7 +76,7 @@ $ git add .
 $ git commit -m "v1.12.3"   # same as your package.json version but with a v in front
 $ git tag v1.12.3
 $ git push origin master --tags
-$ git push github master --tags   # the protozoa-nz/whakapapa-ora repo
+$ git push github master --tags   # the ahau-nz/ahau repo
 $ npm run release:desktop         # from the root folder
 ```
 

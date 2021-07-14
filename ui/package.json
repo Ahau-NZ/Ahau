@@ -17,7 +17,7 @@
   "dependencies": {
     "@apollo/client": "^3.3.19",
     "@mdi/font": "^5.9.55",
-    "ahau-env": "^2.2.0",
+    "ahau-env": "^3.0.0",
     "animate.css": "^4.1.0",
     "apollo-upload-client": "^15.0.0",
     "axios": "^0.21.1",
