@@ -199,7 +199,10 @@ export default {
     },
     patakaAotearoa () {
       const env = require('ahau-env')()
-      return env.isDevelopment ? '101.98.39.231:8068:@62VgwJ/NzNURnkZhjV0RtnMTLwF5sv2u4EUxrNycNvg=.ed25519~MirBPjRWElcPzvUJXGbp4xSmCGhbIbTxyt0EX840Zek=' : '101.98.39.231:8088:@QhiiCWBuxwbHs0bDFZoAgxGLhOlX88FQvvDd4aKD4Os=.ed25519~vdszvGYDU+3kHC+nOPtvZsgrM2HKfHRIfiuW/69cTFc='
+      // TODO: move to environment variables
+      return env.isDevelopment
+        ? 'devpataka.ahau.io:8068:@10wXMFBhxDycNWjgdx2Ql/YUz59wtUh0wJSTv3MB7rs=.ed25519~Ic4LnKIze8pivSJtFzTULyxPQ8XjkaVKYzfKPLKvZG0='
+        : 'devpataka.ahau.io:8088:@rdb7tKErhISZAk7lxKpI7dqXwg+LlrJxkoxL//nbWnU=.ed25519~hIVRITBGdSjItd0sL/42KMDSmGHd0DhAzlIvYQVpetc=' // TODO: change to pataka.ahau.io
     }
 
   },
