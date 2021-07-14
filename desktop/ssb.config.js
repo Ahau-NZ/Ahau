@@ -1,10 +1,16 @@
-const Config = require('ssb-config/inject')
+const Config = require('ssb-config/defaults')
 const fs = require('fs')
 const path = require('path')
-const env = require('ahau-env')
+const env = require('ahau-env')()
 const crypto = require('crypto')
+const envPaths = require('env-paths')
+const merge = require('lodash.merge')
 
-const customConfig = (mixpanelId) => ({
+const appPath = envPaths(env.ahau.appName, { suffix: '' }).data
+const configPath = path.join(appPath, 'config')
+
+const core = {
+  path: appPath,
   port: env.ahau.port,
   caps: env.ahau.caps,
   // caps = capabilities, only apps with:
@@ -25,36 +31,45 @@ const customConfig = (mixpanelId) => ({
     allowedTypes: [
       'contact', 'pub' // needed for ssb-invite
     ]
-  },
-  mixpanelId // unique string to be added
-})
+  }
+}
 
 let config = null
 
 module.exports = function () {
   if (config) return config
 
-  config = Config(env.ahau.appName, customConfig())
-  // NOTE this pulls in config from ~/.{appName}>/config as the base then merges customConfig
+  const persisted = loadPersisted(configPath)
+  if (!persisted.mixpanelId) persisted.mixpanelId = generateId()
 
-  if (!env.isProduction) {
-    console.log(`\x1b[37m\x1b[41m NODE_ENV \x1b[31m\x1b[47m ${env.name} \x1b[0m`)
-  }
+  config = Config(env.ahau.appName, merge({}, persisted, core))
 
-  if (!config.mixpanelId) config.mixpanelId = generateId()
-
-  // write a copy of customConfig to ~/.{appName}/config so that:
+  // write a copy of customConfig to configPath so that:
   // - ssb-ahoy + ssb-client can load up the right config to be able to connect to the server
   // - we can persist our unique mixpanel ID for anonymous analytics
   fs.writeFileSync(
-    path.join(config.path, 'config'),
-    JSON.stringify(customConfig(config.mixpanelId), null, 2),
+    configPath,
+    JSON.stringify(config, null, 2),
     (err) => {
       if (err) throw err
     }
   )
 
+  if (!env.isProduction) {
+    console.log(`\x1b[37m\x1b[41m NODE_ENV \x1b[31m\x1b[47m ${env.name} \x1b[0m`)
+  }
+
   return config
+}
+
+function loadPersisted (configPath) {
+  try {
+    const persistedConfig = fs.readFileSync(configPath, 'utf8')
+    console.log(persistedConfig)
+    return JSON.parse(persistedConfig) || {}
+  } catch (err) {
+    return {}
+  }
 }
 
 function generateId () {

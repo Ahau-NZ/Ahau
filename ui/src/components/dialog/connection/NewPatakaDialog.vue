@@ -198,7 +198,7 @@ export default {
       return this.$vuetify.breakpoint.xs
     },
     patakaAotearoa () {
-      const env = require('ahau-env')
+      const env = require('ahau-env')()
       return env.isDevelopment ? '101.98.39.231:8068:@62VgwJ/NzNURnkZhjV0RtnMTLwF5sv2u4EUxrNycNvg=.ed25519~MirBPjRWElcPzvUJXGbp4xSmCGhbIbTxyt0EX840Zek=' : '101.98.39.231:8088:@QhiiCWBuxwbHs0bDFZoAgxGLhOlX88FQvvDd4aKD4Os=.ed25519~vdszvGYDU+3kHC+nOPtvZsgrM2HKfHRIfiuW/69cTFc='
     }
 

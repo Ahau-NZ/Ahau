@@ -6,7 +6,7 @@ import { IntrospectionFragmentMatcher } from 'apollo-cache-inmemory'
 
 import possibleTypes from './possibleTypes.json'
 
-const env = require('ahau-env')
+const env = require('ahau-env')()
 
 const fragmentMatcher = new IntrospectionFragmentMatcher({
   introspectionQueryResultData: possibleTypes

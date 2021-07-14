@@ -36,8 +36,8 @@ module.exports = {
   ],
   publish: [{
     provider: 'github',
-    owner: 'protozoa-nz',
-    repo: 'whakapapa-ora',
+    owner: 'ahau-nz',
+    repo: 'ahau',
     releaseType: 'release'
   }],
 

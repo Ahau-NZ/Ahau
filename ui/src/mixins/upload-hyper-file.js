@@ -1,7 +1,7 @@
 import { createNamespacedHelpers } from 'vuex'
 import { isCordova } from '../lib/cordova-helpers'
 
-const { ahau: env } = require('ahau-env')
+const { ahau: env } = require('ahau-env')()
 const axios = require('axios')
 const { v4: uuid } = require('uuid')
 

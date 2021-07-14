@@ -175,7 +175,7 @@ export default {
     },
     connectedPatakaAotearoa () {
       if (!this.patakasRaw) return
-      const env = require('ahau-env')
+      const env = require('ahau-env')()
       const patakaId = env.isDevelopment ? '%2XVs1WkdDdCmiHtijSES/q7PBcLIi9cyK64ndfn/c1w=.sha256' : '%tSrLMNsHrgoXMa6AAXL5EoZiLN0CqbHZ7fdFEW0AG/o=.sha256'
       return this.patakasRaw.some(pataka => pataka.id === patakaId)
     },
