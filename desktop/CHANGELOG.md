@@ -1,5 +1,32 @@
 # Changelog | Ahau desktop
 
+## v2.0.2
+- Fix bug where back button wasnt showing
+- Updated profile page description labels
+
+## v2.0.1
+- Plug in new pataka codes for the new network
+
+## v2.0.0
+
+### Features
+- **New network**:
+  - **changed the apps network caps and home directory location**
+- Record Permissions:
+  - added some front end buttons to a record for setting a record to a specific group and different permissions
+    - this still needs some backend to handle any changes so the options are currently disabled
+- Permissions:
+  - Added a permissions tabs to edit community profile dialog
+    - this still needs some backend to handle any changes so the options are currently disabled
+- Groups:
+  - update ui when you create a new community
+- Mobile changes:
+  - artefact upload
+  - hide actions when keyboard is open on mobile dialogs
+
+### Bug Fixes
+- updated the access button so that you cant change access to a story. To change access you now have to change the tribe
+- changed the access button so that a user cannot select a different tribe when creating a record
 ## 1.6.0
 
 ### Features
@@ -16,22 +43,15 @@
   - Takes Users to the login page when successfully deleted
 - Story:
   - show a success message when deleting a story
-- Permissions:
-  - Added a permissions tabs to edit community profile dialog
-    - this still needs some backend to handle any changes so the options are currently disabled
-- Record Permissions:
-  - added some front end buttons to a record for setting a record to a specific group and different permissions
-    - this still needs some backend to handle any changes so the options are currently disabled
 - Whakapapa Tree/Registry:
   - Added ability to right click to open node context menu on desktop
   - Added ability to long press to open node context menu on mobile
 
   ### Bug Fixes
+
 - fixed `ssb-profile` not allowing `headerImage` and `avatarImage` to be set to null
-- updated the access button so that you cant change access to a story. To change access you now have to change the tribe 
 - fixed bug preventing node context menu from opening in whakapapa table
 - fixed bug where you could no longer see profile information on a group application
-- changed the access button so that a user cannot select a different tribe when creating a record
 
 ## 1.5.1
 
