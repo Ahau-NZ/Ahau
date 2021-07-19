@@ -58,13 +58,13 @@
       <v-card-actions v-if="!readonly && actionsVisible" class="pa-0">
         <v-container class="py-0">
           <v-row>
-            <v-col cols="12" md="9" v-if="$slots['before-actions']" :align="mobile ? 'center':'start'" class="py-0">
+            <v-col cols="12" md="8" v-if="$slots['before-actions']" :align="mobile ? 'center':'start'" class="py-0">
               <slot name="before-actions"></slot>
             </v-col>
             <v-spacer v-if="!mobile"/>
             <v-col v-if="hideActions" class="pa-3"></v-col>
             <slot name="actions" v-else>
-              <v-col cols="12" md="3" :style="mobile ? 'text-align:center;':''">
+              <v-col cols="12" md="auto" :style="mobile ? 'text-align:center;':''">
                 <v-row>
                   <v-col cols="6" align-items="start" class="pa-0">
                     <v-btn @click="close"

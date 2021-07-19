@@ -27,7 +27,7 @@
   },
   "moreInfo":"Provide more information",
   "addName":"Add another name",
-  "description":"Description",
+  "description":"About {displayName} ",
   "skills": {
     "title":"Skills and qualifications",
     "profession":"Profession",
