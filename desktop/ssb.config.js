@@ -6,7 +6,7 @@ const crypto = require('crypto')
 const envPaths = require('env-paths')
 const merge = require('lodash.merge')
 
-const appPath = envPaths(env.ahau.appName, { suffix: 'abc' }).data
+const appPath = envPaths(env.ahau.appName, { suffix: '' }).data
 const configPath = path.join(appPath, 'config')
 
 const core = {
@@ -42,7 +42,7 @@ module.exports = function () {
   const persisted = loadPersisted(configPath)
   if (!persisted.mixpanelId) persisted.mixpanelId = generateId()
 
-  config = Config('abc', merge({}, persisted, core))
+  config = Config(env.ahau.appName, merge({}, persisted, core))
 
   // write a copy of customConfig to configPath so that:
   // - ssb-ahoy + ssb-client can load up the right config to be able to connect to the server
