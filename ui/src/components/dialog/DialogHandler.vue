@@ -32,7 +32,7 @@
       :title="t('editNodeTitle', {displayName: getDisplayName(selectedProfile)})"
       @submit="processUpdate($event)"
       @close="close"
-      :profile="profile"
+      :nodeProfile="profile"
     />
     <SideNodeDialog
       v-if="isActive('view-edit-node')"

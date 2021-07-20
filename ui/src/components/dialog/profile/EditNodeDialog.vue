@@ -1,14 +1,49 @@
 <template>
-  <Dialog :show="show" :title="title" width="720px" :goBack="close" enableMenu
+  <Dialog
+    :show="show"
+    :title="title"
+    width="720px"
+    :goBack="close"
+    enableMenu
+    :hideActions="hideActions"
     @submit="submit"
     @close="close"
   >
 
     <!-- Content Slot -->
     <template v-if="!hideDetails" v-slot:content>
-      <v-col class="py-0 px-0">
-        <ProfileForm isUser :profile.sync="formData" :withRelationships="false" :mobile="mobile"/>
-      </v-col>
+      <v-tabs v-model="tab" class="mt-n3">
+        <v-tab href="#tab-1" :class="mobile ? 'ml-n5 mb-tabs':'desk-tabs'">
+          <v-icon small v-if="!mobile"  left>
+            mdi-account
+          </v-icon>
+          {{ t('profile') }}
+        </v-tab>
+        <v-tab href="#tab-2" :class="mobile ? 'mb-tabs':'desk-tabs'">
+          <v-icon small v-if="!mobile" left>
+            mdi-cog
+          </v-icon>
+          {{ t('settings') }}
+        </v-tab>
+      </v-tabs>
+      <v-divider></v-divider>
+      <v-tabs-items light v-model="tab">
+        <v-tab-item value="tab-1">
+          <v-col class="py-0 px-0">
+            <ProfileForm isUser :profile.sync="formData" :withRelationships="false" :mobile="mobile"/>
+          </v-col>
+        </v-tab-item>
+        <v-tab-item value="tab-2">
+          <SettingsForm @openDeleteProfile="showDeleteProfile = true"/>
+          <DeleteProfileDialog
+            v-if="showDeleteProfile"
+            :show="showDeleteProfile"
+            @close="showDeleteProfile = false"
+            @cancel="showDeleteProfile = false"
+            @submit="deleteProfile"
+          />
+        </v-tab-item>
+      </v-tabs-items>
     </template>
     <!-- End Content Slot -->
 
@@ -19,45 +54,68 @@
 
 import { PERMITTED_PERSON_ATTRS, setPersonProfile } from '@/lib/person-helpers.js'
 import { parseInterval } from '@/lib/date-helpers.js'
+import mapProfileMixins from '@/mixins/profile-mixins.js'
 
 import Dialog from '@/components/dialog/Dialog.vue'
+import DeleteProfileDialog from '@/components/dialog/DeleteProfileDialog.vue'
+import SettingsForm from '@/components/settings/SettingsForm.vue'
 import ProfileForm from '@/components/profile/ProfileForm.vue'
 import isEmpty from 'lodash.isempty'
 import calculateAge from '@/lib/calculate-age'
 import pick from 'lodash.pick'
 import isEqual from 'lodash.isequal'
 
+import {
+  mapActions,
+  createNamespacedHelpers,
+  mapGetters }
+  from 'vuex'
+
+const { mapActions: mapSettingsActions } = createNamespacedHelpers('settings')
+const { mapMutations: mapAlertMutations } = createNamespacedHelpers('alerts')
+
 export default {
   name: 'EditNodeDialog',
+  mixins: [
+    mapProfileMixins({
+      mapApollo: ['profile'],
+      mapMethods: ['saveProfile']
+    })
+  ],
   components: {
     Dialog,
+    DeleteProfileDialog,
+    SettingsForm,
     ProfileForm
   },
   props: {
     show: { type: Boolean, required: true },
     title: { type: String, default: '' },
     hideDetails: { type: Boolean, default: false },
-    profile: { type: Object, default: () => {} },
+    nodeProfile: { type: Object, default: () => {} },
     readOnly: { type: Boolean, default: false }
   },
   data () {
     return {
       formData: {},
-      hasSelection: false
+      hasSelection: false,
+      tab: null,
+      showDeleteProfile: false,
+      hideActions: false
     }
   },
-
   computed: {
+    ...mapGetters(['whoami']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
     profileChanges () {
       let changes = {}
       Object.entries(this.formData).forEach(([key, value]) => {
-        if (!isEqual(this.formData[key], this.profile[key])) {
+        if (!isEqual(this.formData[key], this.nodeProfile[key])) {
           switch (key) {
             case 'altNames':
-              if (!isEqual(this.formData.altNames.add, this.profile.altNames)) {
+              if (!isEqual(this.formData.altNames.add, this.nodeProfile.altNames)) {
                 changes[key] = pick(this.formData.altNames, ['add', 'remove'])
                 changes[key].add = changes[key].add.filter(Boolean)
               }
@@ -76,20 +134,27 @@ export default {
       return changes
     },
     hasChanges () {
-      return isEqual(this.data, this.profile)
+      return isEqual(this.data, this.nodeProfile)
     }
   },
   watch: {
-    profile: {
+    nodeProfile: {
       deep: true,
       immediate: true,
       handler (newVal) {
         if (!newVal) return
         this.formData = setPersonProfile(newVal)
       }
+    },
+    tab (newVal) {
+      if (newVal === 'tab-2') this.hideActions = true
+      else this.hideActions = false
     }
   },
   methods: {
+    ...mapActions(['setLoading']),
+    ...mapAlertMutations(['showAlert']),
+    ...mapSettingsActions(['deleteAhau']),
     updateAvatar (avatarImage) {
       this.formData.avatarImage = avatarImage
     },
@@ -100,7 +165,44 @@ export default {
     close () {
       this.$emit('close')
     },
+    async deleteProfile () {
+      this.setLoading(true)
+      this.showDeleteProfile = false
+      this.close()
 
+      // update the authors to all authors on all of our own profiles
+      const input = {
+        id: this.profile.id,
+        authors: {
+          add: ['*']
+        }
+      }
+
+      await this.saveProfile(input)
+
+      // tombstone our public profile
+      const tombstoneInput = {
+        id: this.whoami.public.profile.id,
+        tombstone: {
+          date: Date.now(),
+          reason: 'User deleted Ahau'
+        },
+        allowPublic: true // to update the public profile
+      }
+
+      await this.saveProfile(tombstoneInput)
+
+      // now delete the ahau folder where the db sits
+      await this.deleteAhau()
+
+      this.setLoading(false)
+
+      this.$router.push({ path: '/login' })
+        .then(() => {
+          this.showAlert({ message: this.t('deletedProfileMessage') })
+        })
+        .catch(() => {})
+    },
     submit () {
       var output = Object.assign({}, pick(this.profileChanges, PERMITTED_PERSON_ATTRS))
       if (!isEmpty(output)) {
@@ -123,6 +225,9 @@ export default {
     },
     deleteFromDialog (index) {
       this.formData.altNames.currentState.splice(index, 1)
+    },
+    t (key, vars) {
+      return this.$t('editNodeDialog.' + key, vars)
     }
   }
 }

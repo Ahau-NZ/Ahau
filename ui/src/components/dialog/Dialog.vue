@@ -55,7 +55,7 @@
         <slot name="content"></slot>
       </v-card-text>
       <v-divider/>
-      <v-card-actions v-if="!readonly && actionsVisible" class="pa-0">
+      <v-card-actions v-if="!readonly && actionsVisible && !hideActions" class="pa-0">
         <v-container class="py-0">
           <v-row>
             <v-col cols="12" md="8" v-if="$slots['before-actions']" :align="mobile ? 'center':'start'" class="py-0">

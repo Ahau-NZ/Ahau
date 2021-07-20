@@ -8,14 +8,6 @@
       <div :class="mobile ? 'mobile-title order-3 d-flex':'desktop-title order-1 mr-auto'">
         <h1 class="primary--text" :style="mobile ? length : ''">{{ title }}</h1>
       </div>
-      <div :class="mobile ? 'mob-btn order-1':'align-self-end order-2 mr-4'">
-        <ProfileButton
-          v-if="myProfile"
-          @click="toggleSettings"
-          icon="mdi-cog"
-          :label="t('settings')"
-        />
-      </div>
       <div :class="mobile ? 'edit-mob-btn order-2':'align-self-end mr-10 order-3'">
         <ProfileButton
           v-if="profile.canEdit"
@@ -58,7 +50,7 @@
       :title="$t('addPersonForm.addPersonFormTitle', { displayName: getDisplayName(profile) })"
       @submit="updatePerson"
       @close="dialog = null"
-      :profile="profile"
+      :nodeProfile="profile"
     />
     <DeleteCommunityDialog
       v-if="dialog === 'delete-community'"
@@ -73,19 +65,6 @@
       :profile="profile"
       @submit="processApplication"
       @close="dialog = null"
-    />
-    <SettingsDialog
-      v-if="dialog === 'settings'"
-      :show="dialog === 'settings'"
-      @close="dialog = null"
-      @showDeleteProfile="showDeleteProfile"
-    />
-    <DeleteProfileDialog
-      v-if="dialog === 'delete-profile'"
-      :show="dialog === 'delete-profile'"
-      @close="dialog = null"
-      @submit="deleteProfile"
-      @cancel="cancelDeleteProfile"
     />
   </v-container>
 </template>
@@ -102,8 +81,6 @@ import NewCommunityDialog from '@/components/dialog/community/NewCommunityDialog
 import DeleteCommunityDialog from '@/components/dialog/community/DeleteCommunityDialog.vue'
 import EditNodeDialog from '@/components/dialog/profile/EditNodeDialog.vue'
 import NewRegistrationDialog from '@/components/dialog/registration/NewRegistrationDialog.vue'
-import SettingsDialog from '@/components/dialog/SettingsDialog.vue'
-import DeleteProfileDialog from '@/components/dialog/DeleteProfileDialog.vue'
 import { updateTribe, deleteTribe, getMembers, getTribalProfile } from '@/lib/community-helpers.js'
 
 import { createGroupApplication, copyProfileInformation } from '@/lib/tribes-application-helpers.js'
@@ -117,7 +94,6 @@ import {
 } from 'vuex'
 
 const { mapMutations: mapAlertMutations } = createNamespacedHelpers('alerts')
-const { mapActions: mapSettingsActions } = createNamespacedHelpers('settings')
 
 export default {
   name: 'ProfileShow',
@@ -134,8 +110,6 @@ export default {
     DeleteCommunityDialog,
     EditNodeDialog,
     NewRegistrationDialog,
-    SettingsDialog,
-    DeleteProfileDialog,
     ProfileButton
   },
   data () {
@@ -228,16 +202,12 @@ export default {
   },
   methods: {
     getDisplayName,
-    ...mapMutations(['updateSelectedProfile', 'setCurrentAccess']),
+    ...mapMutations(['setCurrentAccess']),
     ...mapAlertMutations(['showAlert']),
-    ...mapActions(['setLoading', 'setWhoami']),
-    ...mapSettingsActions(['deleteAhau']),
+    ...mapActions(['setWhoami']),
     goEdit () {
       if (this.profile.type === 'person') this.dialog = 'edit-node'
       else this.dialog = 'edit-community'
-    },
-    toggleSettings () {
-      this.dialog = 'settings'
     },
     // TOTO if these need to be used elsewhere, move to a mixin
     async updateCommunity ($event) {
@@ -357,41 +327,6 @@ export default {
         }
       }).catch(() => {})
     },
-    async deleteProfile () {
-      this.setLoading(true)
-      // update the authors to all authors on all of our own profiles
-      const input = {
-        id: this.profile.id,
-        authors: {
-          add: ['*']
-        }
-      }
-
-      await this.saveProfile(input)
-
-      // tombstone our public profile
-      const tombstoneInput = {
-        id: this.whoami.public.profile.id,
-        tombstone: {
-          date: Date.now(),
-          reason: 'User deleted Ahau'
-        },
-        allowPublic: true // to update the public profile
-      }
-
-      await this.saveProfile(tombstoneInput)
-
-      // now delete the ahau folder where the db sits
-      await this.deleteAhau()
-
-      this.setLoading(false)
-
-      this.$router.push({ path: '/login' })
-        .then(() => {
-          this.showAlert({ message: this.t('deletedProfileMessage') })
-        })
-        .catch(() => {})
-    },
     closeDialog () {
       this.dialog = null
     },
@@ -399,12 +334,6 @@ export default {
       // tell apollo to refresh the current tribe and profile queries
       this.$apollo.queries.tribe.refetch()
       this.$apollo.queries.profile.refetch()
-    },
-    showDeleteProfile () {
-      this.dialog = 'delete-profile'
-    },
-    cancelDeleteProfile () {
-      this.dialog = 'settings'
     },
     t (key, vars) {
       return this.$t('viewPerson.' + key, vars)
