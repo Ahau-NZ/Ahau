@@ -1,5 +1,11 @@
 # Changelog | Ahau desktop
 
+## Current
+
+### Features
+
+- Moved settings dialog/form into its own tab in EditNodeDialog
+
 ## v2.0.2
 - Fix bug where back button wasnt showing
 - Updated profile page description labels

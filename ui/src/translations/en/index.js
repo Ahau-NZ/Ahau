@@ -23,6 +23,7 @@ module.exports = {
   deleteProfileForm: require('./delete-profile-form.json'),
   dialogHandler: require('./dialog-handler.json'),
   dialog: require('./dialog.json'),
+  editNodeDialog: require('./edit-node-dialog.json'),
 
   /* Nav / misc */
   accessButton: require('./access-button.json'),

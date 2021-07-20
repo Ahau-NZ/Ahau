@@ -60,7 +60,7 @@ import WhakapapaIcon from '@/components/button/WhakapapaIcon.vue'
 import mapProfileMixins from '@/mixins/profile-mixins.js'
 
 const {
-  mapGetters: mapWhakapapaGetters,
+  mapGetters: mapWhakapapaGetters
 } = createNamespacedHelpers('whakapapa')
 
 export default {
