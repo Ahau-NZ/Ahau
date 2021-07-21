@@ -105,8 +105,9 @@ import Avatar from '@/components/Avatar.vue'
 import NewPatakaDialog from '@/components/dialog/connection/NewPatakaDialog.vue'
 import BigAddButton from '@/components/button/BigAddButton.vue'
 import { getTribes } from '@/lib/community-helpers.js'
-const { mapMutations: mapAlertMutations } = createNamespacedHelpers('alerts')
+import patakaConfig from '../../../pataka.config'
 
+const { mapMutations: mapAlertMutations } = createNamespacedHelpers('alerts')
 const get = require('lodash.get')
 
 export default {
@@ -175,8 +176,7 @@ export default {
     },
     connectedPatakaAotearoa () {
       if (!this.patakasRaw) return
-      const env = require('ahau-env')()
-      const patakaId = env.isDevelopment ? '%2XVs1WkdDdCmiHtijSES/q7PBcLIi9cyK64ndfn/c1w=.sha256' : '%tSrLMNsHrgoXMa6AAXL5EoZiLN0CqbHZ7fdFEW0AG/o=.sha256'
+      const patakaId = patakaConfig.id
       return this.patakasRaw.some(pataka => pataka.id === patakaId)
     },
     patakas () {
