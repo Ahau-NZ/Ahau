@@ -161,11 +161,10 @@
 </template>
 
 <script>
-
+import gql from 'graphql-tag'
 import Dialog from '@/components/dialog/Dialog.vue'
 import PatakaHelper from '@/components/dialog/connection/PatakaHelper.vue'
-
-import gql from 'graphql-tag'
+import patakaConfig from '../../../../pataka.config'
 
 export default {
   name: 'NewPatakaDialog',
@@ -190,21 +189,14 @@ export default {
       publicPataka: false,
       checkbox: false,
       tryingConnection: false,
-      connectionErrMsg: null
+      connectionErrMsg: null,
+      patakaAotearoa: patakaConfig.code
     }
   },
   computed: {
     mobile () {
       return this.$vuetify.breakpoint.xs
-    },
-    patakaAotearoa () {
-      const env = require('ahau-env')()
-      // TODO: move to environment variables
-      return env.isDevelopment
-        ? 'devpataka.ahau.io:8068:@10wXMFBhxDycNWjgdx2Ql/YUz59wtUh0wJSTv3MB7rs=.ed25519~Ic4LnKIze8pivSJtFzTULyxPQ8XjkaVKYzfKPLKvZG0='
-        : 'devpataka.ahau.io:8088:@rdb7tKErhISZAk7lxKpI7dqXwg+LlrJxkoxL//nbWnU=.ed25519~hIVRITBGdSjItd0sL/42KMDSmGHd0DhAzlIvYQVpetc=' // TODO: change to pataka.ahau.io
     }
-
   },
   methods: {
     togglePatakaHelper () {
