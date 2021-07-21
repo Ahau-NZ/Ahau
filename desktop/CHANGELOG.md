@@ -5,6 +5,9 @@
 ### Features
 
 - Moved settings dialog/form into its own tab in EditNodeDialog
+- Updated storage management in settings:
+  - can now choose to prune hyperBlobs or not
+  - can specify the max remote space hyperBlobs are allowed to use up before it prunes
 
 ## v2.0.2
 - Fix bug where back button wasnt showing

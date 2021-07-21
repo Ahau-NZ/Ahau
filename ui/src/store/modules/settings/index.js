@@ -4,7 +4,11 @@ import {
   saveSettings,
   deleteSettings,
   getBackup,
-  deleteAhau
+  deleteAhau,
+  updateAutoPrune,
+  disableAutoPrune,
+  getAutoPruneConfig
+
 } from './apollo-helpers'
 
 export default function (apollo) {
@@ -138,6 +142,48 @@ export default function (apollo) {
 
       await dispatch('updateSettings', input)
       await dispatch('setWhoami', null, { root: true })
+    },
+    async updateAutoPrune (context, input) {
+      try {
+        const res = await apollo.mutate(
+          updateAutoPrune(input)
+        )
+
+        if (res.errors) throw new Error(res.errors)
+
+        return res.data.saveHyperBlobsAutoPruneConfig // returns boolean
+      } catch (err) {
+        console.error('Something went wrong while trying to save new hyperBlobs auto-prune config', err)
+        return false
+      }
+    },
+    async disableAutoPrune () {
+      try {
+        const res = await apollo.mutate(
+          disableAutoPrune
+        )
+
+        if (res.errors) throw new Error(res.errors)
+
+        return res.data.saveHyperBlobsAutoPruneConfig
+      } catch (err) {
+        console.error('Something went wrong while trying to disable auto-prune', err)
+        return null
+      }
+    },
+    async getAutoPruneConfig () {
+      try {
+        const res = await apollo.query(
+          getAutoPruneConfig
+        )
+
+        if (res.errors) throw new Error(res.errors)
+
+        return res.data.hyperBlobsAutoPruneConfig
+      } catch (err) {
+        console.error('Something went wrong while trying to get hyperBlobs auto-prune config', err)
+        return null
+      }
     }
   }
 
