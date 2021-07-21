@@ -4,10 +4,11 @@
 
 ### Features
 
-- Moved settings dialog/form into its own tab in EditNodeDialog
-- Updated storage management in settings:
-  - can now choose to prune hyperBlobs or not
-  - can specify the max remote space hyperBlobs are allowed to use up before it prunes
+- Settings
+  - moved settings from profile page to the dialog where you edit your profile as a tab
+  - more storage management settings
+    - can now choose to prune hyperBlobs or not
+    - can specify the max space remote hyperBlobs are allowed to use up before it prunes
 
 ### Bug Fixes
 - Fixes bug where creating/editing a community with joining questions failed because the field was removed from private community profiles
