@@ -9,24 +9,34 @@
     @submit="submit"
     @close="close"
   >
-
+    <template v-if="!hideDetails" v-slot:pinned>
+      <v-app-bar
+        flat
+        dense
+        light
+        color="#fff"
+        height="60px"
+        max-height="60px"
+      >
+        <v-tabs v-model="tab" class="mt-n3">
+          <v-tab href="#tab-1" :class="mobile ? 'ml-n5 mb-tabs':'desk-tabs'">
+            <v-icon small v-if="!mobile"  left>
+              mdi-account
+            </v-icon>
+            {{ t('profile') }}
+          </v-tab>
+          <v-tab href="#tab-2" :class="mobile ? 'mb-tabs':'desk-tabs'">
+            <v-icon small v-if="!mobile" left>
+              mdi-cog
+            </v-icon>
+            {{ t('settings') }}
+          </v-tab>
+        </v-tabs>
+      </v-app-bar>
+      <v-divider/>
+    </template>
     <!-- Content Slot -->
     <template v-if="!hideDetails" v-slot:content>
-      <v-tabs v-model="tab" class="mt-n3">
-        <v-tab href="#tab-1" :class="mobile ? 'ml-n5 mb-tabs':'desk-tabs'">
-          <v-icon small v-if="!mobile"  left>
-            mdi-account
-          </v-icon>
-          {{ t('profile') }}
-        </v-tab>
-        <v-tab href="#tab-2" :class="mobile ? 'mb-tabs':'desk-tabs'">
-          <v-icon small v-if="!mobile" left>
-            mdi-cog
-          </v-icon>
-          {{ t('settings') }}
-        </v-tab>
-      </v-tabs>
-      <v-divider></v-divider>
       <v-tabs-items light v-model="tab">
         <v-tab-item value="tab-1">
           <v-col class="py-0 px-0">

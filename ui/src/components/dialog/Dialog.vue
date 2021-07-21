@@ -12,6 +12,7 @@
     @input="close"
   >
     <v-card>
+      <!-- bar at the top of the dialog with title + close button -->
       <v-app-bar
         color="#292929"
         :dark="!dark"
@@ -26,7 +27,7 @@
             v-bind="props"
             style="opacity:40%; left:100px"
           ></v-img>
-      </template>
+        </template>
         <v-btn
           v-if="mobile"
           icon
@@ -51,9 +52,15 @@
           <v-icon>mdi-close</v-icon>
         </v-btn>
       </v-app-bar>
+      <!-- for pinning things underneath the dialog top bar -->
+      <slot name="pinned"></slot>
+
+      <!-- content section for main part of dialog -->
       <v-card-text id="app-dialog" :style="mobile ? 'overflow-x: hidden;' : `max-height: 650px; overflow-x: hidden;`" class="pa-3 pb-0">
         <slot name="content"></slot>
       </v-card-text>
+
+      <!-- bottom footer of dialog -->
       <v-divider/>
       <v-card-actions v-if="!readonly && actionsVisible && !hideActions" class="pa-0">
         <v-container class="py-0">
