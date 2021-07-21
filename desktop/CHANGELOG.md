@@ -9,6 +9,8 @@
   - more storage management settings
     - can now choose to prune hyperBlobs or not
     - can specify the max space remote hyperBlobs are allowed to use up before it prunes
+- Create/Edit Community Dialog
+  - pin tab headers to the top bar so they are visible on scroll
 
 ### Bug Fixes
 - Fixes bug where creating/editing a community with joining questions failed because the field was removed from private community profiles

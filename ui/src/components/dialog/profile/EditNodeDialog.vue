@@ -19,7 +19,7 @@
         max-height="60px"
       >
         <v-tabs v-model="tab" class="mt-n3">
-          <v-tab href="#tab-1" :class="mobile ? 'ml-n5 mb-tabs':'desk-tabs'">
+          <v-tab href="#tab-1" :class="mobile ? 'mb-tabs':'desk-tabs'">
             <v-icon small v-if="!mobile"  left>
               mdi-account
             </v-icon>
