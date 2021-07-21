@@ -80,3 +80,37 @@ export const deleteAhau = {
     }
   `
 }
+
+export const updateAutoPrune = ({ startDelay, maxRemoteSize, intervalTime }) => ({
+  mutation: gql`
+    mutation($startDelay: Float, $maxRemoteSize: Float, $intervalTime: Float) {
+      saveHyperBlobsAutoPruneConfig(startDelay: $startDelay, maxRemoteSize: $maxRemoteSize, intervalTime: $intervalTime)
+    }
+  `,
+  variables: {
+    startDelay,
+    maxRemoteSize,
+    intervalTime
+  }
+})
+
+export const disableAutoPrune = {
+  mutation: gql`
+    mutation {
+      saveHyperBlobsAutoPruneConfig(disable: true)
+    }
+  `
+}
+
+export const getAutoPruneConfig = {
+  query: gql`
+    query {
+      hyperBlobsAutoPruneConfig {
+        intervalTime
+        startDelay
+        maxRemoteSize
+      }
+    }
+  `,
+  fetchPolicy: 'no-cache'
+}

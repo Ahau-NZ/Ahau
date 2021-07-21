@@ -39,6 +39,7 @@
     "readable-stream": "^3.6.0",
     "render-media": "^4.1.0",
     "ssb-config": "^3.4.5",
+    "ssb-hyper-blobs": "^3.0.0",
     "stream-http": "^3.1.1",
     "uuid": "^3.4.0",
     "vue-cli-plugin-apollo": "^0.22.2",

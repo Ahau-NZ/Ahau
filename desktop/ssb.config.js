@@ -25,7 +25,7 @@ const core = {
   },
   hyperBlobs: {
     port: env.ahau.hyperBlobs.port,
-    autoPrune: true
+    autoPrune: false
   },
   recpsGuard: {
     allowedTypes: [
