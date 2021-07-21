@@ -138,6 +138,10 @@ export default {
           if (res.errors) throw res.errors
 
           this.tribe.members = res.data.listGroupAuthors
+
+          // if we are looking at the private profile, we need to make sure it has the joiningQuestions from the public one
+          this.profile.joiningQuestions = tribe.public[0].joiningQuestions
+
           this.setCurrentAccess(
             getTribalProfile(tribe, this.whoami)
           )

@@ -119,7 +119,8 @@ export default {
       }
     },
     tab (newVal) {
-      if (newVal === 'tab-2' && this.formData.joiningQuestions.length < 1) {
+      if (newVal !== 'tab-2') return
+      if (this.formData && this.formData.joiningQuestions && this.formData.joiningQuestions.length < 1) {
         this.formData.joiningQuestions.push({ label: '', type: 'input' })
       }
     }

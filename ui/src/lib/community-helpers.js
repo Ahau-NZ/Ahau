@@ -84,7 +84,6 @@ export const PERMITTED_COMMUNITY_ATTRS = [
   'postCode',
   'tombstone',
   'tiaki',
-  'joiningQuestions',
   // private only attrs
   'recps'
 ]

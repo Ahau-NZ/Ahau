@@ -9,6 +9,9 @@
   - can now choose to prune hyperBlobs or not
   - can specify the max remote space hyperBlobs are allowed to use up before it prunes
 
+### Bug Fixes
+- Fixes bug where creating/editing a community with joining questions failed because the field was removed from private community profiles
+
 ## v2.0.2
 - Fix bug where back button wasnt showing
 - Updated profile page description labels
