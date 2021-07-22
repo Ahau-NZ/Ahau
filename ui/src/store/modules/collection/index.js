@@ -58,7 +58,7 @@ export default function (apollo) {
         await Promise.all(add.map(async collection => {
           // create the link between the collection and story
           // save the link
-          await dispatch({
+          await dispatch('saveCollectionStoryLink', {
             collection: collection.id,
             story: storyId,
             recps: [rootGetters.currentAccess.groupId]

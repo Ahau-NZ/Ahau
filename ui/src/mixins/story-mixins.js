@@ -115,7 +115,7 @@ export const methods = {
           this.saveContributors(story, contributors),
           this.saveCreators(story, creators),
           this.saveRelatedRecords(story, relatedRecords),
-          this.$store.dispatch('collection/saveCollectionsToStory', { storyId: story, collections })
+          this.$store.dispatch('collection/saveCollectionsToStory', { storyId: story.id, collections })
         ]
       )
 
@@ -130,8 +130,7 @@ export const methods = {
 
       await this.reload()
     } catch (err) {
-      console.error('Something went wrong while creating a story')
-      throw err
+      console.error('Something went wrong while saving a story.', err)
     }
   },
   async saveRelatedRecords (story, relatedRecords) {
