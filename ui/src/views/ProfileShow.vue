@@ -8,7 +8,7 @@
       <div :class="mobile ? 'mobile-title order-3 d-flex':'desktop-title order-1 mr-auto'">
         <h1 class="primary--text" :style="mobile ? length : ''">{{ title }}</h1>
       </div>
-      <div :class="mobile ? 'edit-mob-btn order-2':'align-self-end mr-10 order-3'">
+      <div :class="mobile ? '' : 'align-self-end mr-10 order-3'">
         <ProfileButton
           v-if="profile.canEdit"
           @click="goEdit"
@@ -182,7 +182,7 @@ export default {
       return this.$route.name === 'person/whakapapa/:whakapapaId' || this.$route.name === 'community/whakapapa/:whakapapaId'
     },
     mobile () {
-      return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
+      return this.$vuetify.breakpoint.xs
     },
     tablet () {
       return this.$vuetify.breakpoint.md
