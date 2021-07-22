@@ -47,6 +47,7 @@ export default {
   },
   data () {
     return {
+      tribe: null,
       formData: setDefaultStory(this.story),
       access: null,
       profile: {},
