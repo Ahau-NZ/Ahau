@@ -14,6 +14,7 @@
 
 ### Bug Fixes
 - Fixes bug where creating/editing a community with joining questions failed because the field was removed from private community profiles
+- Fixes bug where the edit profile button was hidden on mobile
 
 ## v2.0.2
 - Fix bug where back button wasnt showing
