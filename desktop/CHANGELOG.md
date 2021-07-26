@@ -1,5 +1,10 @@
 # Changelog | Ahau desktop
 
+## Current
+
+### Features
+
+- Added skeleton loaders to Profile.vue
 ## v2.1.0
 
 ### Features

@@ -1,6 +1,16 @@
 <template>
   <v-row :class="mobile ? 'mobile-profile':''">
-    <v-col cols="12" md="9" :class="mobile ? 'pt-7 px-5' : ' pt-0 px-5' ">
+    <v-col v-if="!isLoaded" cols="12" md="9" :class="mobile ? 'pt-7 px-5' : ' pt-0 px-5' ">
+      <SkeletonLoader
+        :totalSkeletons=2
+        skeletonType="card-heading, image"
+      />
+      <SkeletonLoader
+        :totalSkeletons=1
+        skeletonType="card-heading, image@2"
+      />
+    </v-col>
+    <v-col v-else cols="12" md="9" :class="mobile ? 'pt-7 px-5' : ' pt-0 px-5' ">
       <v-col cols="12" :class="mobile ? 'mobile-profile-label headliner':'profile-info-label headliner'">
       {{ $t('viewPerson.viewPersonTitle') }}
       </v-col>
@@ -36,10 +46,16 @@
       </ProfileCard>
     </v-col>
     <!-- RIGHT SIDE COLUMN -->
-    <v-col cols="12" sx="12" md="3" :class="{ 'pt-0 px-5':mobile, 'pt-10 pr-8':myProfile && !mobile, 'pt-12 pr-8':!myProfile }">
+    <v-col v-if="!isLoaded" cols="12" sx="12" md="3" :class="{ 'pt-0 px-5':mobile, 'pt-10 pr-8':myProfile && !mobile, 'pt-12 pr-8':!myProfile }">
+      <SkeletonLoader
+        :totalSkeletons=2
+        skeletonType="card-heading, divider, list-item-avatar-two-line@6, divider"
+      />
+    </v-col>
+    <v-col v-else cols="12" sx="12" md="3" :class="{ 'pt-0 px-5':mobile, 'pt-10 pr-8':myProfile && !mobile, 'pt-12 pr-8':!myProfile }">
       <template v-if="myProfile">
         <v-col v-if="mobile" cols="12" class="mobile-profile-label headliner">
-             {{ $t('viewPerson.tribes') }}
+            {{ $t('viewPerson.tribes') }}
         </v-col>
         <ProfileCard v-if="myProfile" :title="mobile ? '':$t('viewPerson.tribes')" class="mt-2">
           <template v-slot:content>
@@ -99,6 +115,8 @@ import ProfileInfoCard from '@/components/profile/ProfileInfoCard.vue'
 import ProfileInfoItem from '@/components/profile/ProfileInfoItem.vue'
 import ProfileCard from '@/components/profile/ProfileCard.vue'
 import Avatar from '@/components/Avatar.vue'
+import SkeletonLoader from '@/components/SkeletonLoader.vue'
+
 import { mapGetters, createNamespacedHelpers, mapActions } from 'vuex'
 import { getDisplayName } from '@/lib/person-helpers.js'
 
@@ -110,7 +128,8 @@ export default {
     ProfileInfoCard,
     ProfileCard,
     ProfileInfoItem,
-    Avatar
+    Avatar,
+    SkeletonLoader
   },
   props: {
     profile: Object,
@@ -139,6 +158,9 @@ export default {
         this.profile.type === 'community' &&
         !this.profile.recps
       )
+    },
+    isLoaded () {
+      return Boolean(this.profile && this.profile.id)
     }
   },
   methods: {
