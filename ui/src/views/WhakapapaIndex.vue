@@ -13,7 +13,21 @@
     </v-row>
     <v-row>
       <v-col :class="mobile ? 'pt-0':''" cols="12" md="10">
-        <div v-if="!whakapapas || (whakapapas && whakapapas.length < 1) || (whakapapas && whakapapas[0].views.length < 1) " class="px-8 py-12 subtitle grey--text " :class="{
+        <div
+          v-if="!whakapapas"
+          class="px-8 py-12 subtitle grey--text"
+          :class="{
+            'text-center': mobile
+          }">
+          <SkeletonLoader
+            :totalSkeletons=1
+            skeletonType="list-item-avatar-two-line@20"
+          />
+        </div>
+        <div
+          v-else-if="(whakapapas && whakapapas.length < 1) || (whakapapas && whakapapas[0].views.length < 1)"
+          class="px-8 py-12 subtitle grey--text"
+          :class="{
             'text-center': mobile
           }">
           {{ t('noWhakapapaFound') }}
@@ -59,6 +73,7 @@ import NewNodeDialog from '@/components/dialog/profile/NewNodeDialog.vue'
 import WhakapapaListHelper from '@/components/dialog/whakapapa/WhakapapaListHelper.vue'
 import Avatar from '@/components/Avatar.vue'
 import BigAddButton from '@/components/button/BigAddButton.vue'
+import SkeletonLoader from '@/components/SkeletonLoader.vue'
 
 import { saveLink } from '@/lib/link-helpers.js'
 import { savePerson } from '@/lib/person-helpers.js'
@@ -75,6 +90,15 @@ export default {
   props: {
     profile: Object,
     tribe: Object
+  },
+  components: {
+    WhakapapaViewCard,
+    NewViewDialog,
+    NewNodeDialog,
+    WhakapapaListHelper,
+    Avatar,
+    BigAddButton,
+    SkeletonLoader
   },
   mixins: [
     mapProfileMixins({
@@ -93,7 +117,7 @@ export default {
       showViewForm: false,
       newView: null,
       columns: [],
-      whakapapas: []
+      whakapapas: null
     }
   },
   computed: {
@@ -386,29 +410,21 @@ export default {
         return false
       }
     }
-  },
-  components: {
-    WhakapapaViewCard,
-    NewViewDialog,
-    NewNodeDialog,
-    WhakapapaListHelper,
-    Avatar,
-    BigAddButton
   }
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
-  .headliner {
-    font-size: 1em;
-    text-transform: uppercase;
-    font-weight: 400;
-    letter-spacing: 5px;
-  }
+.headliner {
+  font-size: 1em;
+  text-transform: uppercase;
+  font-weight: 400;
+  letter-spacing: 5px;
+}
 
-  .infoButton {
-    margin-left: 10px;
-  }
+.infoButton {
+  margin-left: 10px;
+}
 
 </style>
