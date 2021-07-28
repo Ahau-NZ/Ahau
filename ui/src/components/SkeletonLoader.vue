@@ -1,21 +1,22 @@
 <template>
-  <div>
-    <v-card
-      :width="mobile ? '100%' : '87%'"
-      flat
-      :ripple="false"
-      light
-      v-for="n in totalSkeletons"
-      :key="`skeleton-${n}`"
-      :class="mobile ? 'py-12' : 'pl-12 py-12'"
-    >
-      <v-skeleton-loader
-        :width="mobile ? '100%' : '87%'"
-        :type="skeletonType"
-      >
-      </v-skeleton-loader>
-    </v-card>
-  </div>
+  <v-card
+    :width="mobile ? '100%' : '87%'"
+    flat
+    :ripple="false"
+    light
+    :class="customClass"
+  >
+    <v-container fluid>
+      <v-row>
+        <v-col v-for="n in totalSkeletons" :key="`skeleton-${n}`" :cols="cols">
+          <v-skeleton-loader
+          :width="mobile ? '100%' : '87%'"
+          :type="skeletonType"
+          />
+        </v-col>
+      </v-row>
+    </v-container>
+  </v-card>
 </template>
 
 <script>
@@ -26,7 +27,9 @@ export default {
   },
   props: {
     totalSkeletons: Number,
-    skeletonType: String
+    skeletonType: String,
+    cols: String,
+    customClass: String
   },
   computed: {
     mobile () {
