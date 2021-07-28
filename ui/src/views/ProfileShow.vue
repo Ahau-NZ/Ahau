@@ -28,7 +28,6 @@
         <v-overlay dark :value="showArtefact" z-index="6" opacity="1" color="rgba(30,30,30)" />
         <transition name="fade" mode="out-in">
           <router-view :key="JSON.stringify(profile)" :profile="profile" :tribe="tribe" />
-
         </transition>
       </v-col>
     </v-row>
