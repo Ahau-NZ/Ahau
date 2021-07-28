@@ -26,9 +26,9 @@ export default {
   components: {
   },
   props: {
-    totalSkeletons: Number,
+    totalSkeletons: [String, Number],
     skeletonType: String,
-    cols: String,
+    cols: [String, Number],
     customClass: String
   },
   computed: {
