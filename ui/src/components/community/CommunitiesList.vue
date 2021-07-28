@@ -8,54 +8,15 @@
     </v-row>
     <v-row>
       <v-col cols="12" md="9">
-        <div>
-          <v-row v-if="connectedTribes.length" class="pt-4">
-            <v-col cols="12" class="py-0">
-              <p class="sub-headline pa-0 mb-4">{{ t('connectedTribes') }}</p>
-              <v-row justify="start">
-                <v-col
-                  v-for="tribe in connectedTribes"
-                  :item="tribe"
-                  :key="tribe.id"
-                  justify-self="start"
-                >
-                  <v-card flat class="rounded-border" light :width="!mobile ? '190px':'100vw'" :to="goTribe(tribe)">
-                    <v-img height="150px" :src="getImage(tribe.private[0])" class="card-image" />
-                    <v-card-title class="subtitle font-weight-bold pb-2">
-                      {{
-                      tribe.private[0].preferredName
-                      }}
-                    </v-card-title>
-                    <v-card-text class="body-2">
-                      {{
-                      shortDescription(tribe.private[0])
-                      }}
-                    </v-card-text>
-                  </v-card>
-                </v-col>
-              </v-row>
-              <v-divider v-if="otherTribes && otherTribes.length" light color="grey" class="my-10"></v-divider>
-            </v-col>
-          </v-row>
-          <v-row v-if="otherTribes.length" class="pt-4">
-            <v-col cols="12" class="py-0">
-              <p class="sub-headline pa-0 mb-4">{{ t('otherTribes')}}</p>
-              <v-row justify="start">
-                <v-col v-for="tribe in otherTribes" :item="tribe" :key="tribe.id" justify-self="start">
-                  <v-card flat light class="rounded-border" :width="!mobile ? '190px':'100vw'" :to="goTribe(tribe)">
-                    <v-img height="150px" :src="getImage(tribe.public[0])" class="card-image" />
-                    <v-card-title class="subtitle font-weight-bold pb-2">
-                      {{ tribe.public[0].preferredName }}
-                    </v-card-title>
-                    <v-card-text class="body-2">
-                      {{ shortDescription(tribe.public[0]) }}
-                    </v-card-text>
-                  </v-card>
-                </v-col>
-              </v-row>
-            </v-col>
-          </v-row>
-        </div>
+        <v-row class="pt-4">
+          <v-col v-if="connectedTribes.length" cols="12" class="py-0">
+            <CommunityList :title="t('connectedTribes')" :tribes="connectedTribes"/>
+          </v-col>
+          <v-col v-if="otherTribes.length" cols="12" class="py-0">
+            <v-divider light color="grey" class="my-10"></v-divider>
+            <CommunityList :title="t('otherTribes')" :tribes="otherTribes"/>
+          </v-col>
+        </v-row>
       </v-col>
       <v-col cols="12" md='3' :class="mobile ? 'px-6':'py-0 pr-8 pl-4 mt-12'">
         <v-divider v-if="mobile" light></v-divider>
@@ -99,8 +60,8 @@
 <script>
 import { mapActions, createNamespacedHelpers } from 'vuex'
 import gql from 'graphql-tag'
-import whakapapa from '@/assets/whakapapa.png'
 import ProfileCard from '@/components/profile/ProfileCard.vue'
+import CommunityList from '@/components/community/CommunityList.vue'
 import Avatar from '@/components/Avatar.vue'
 import NewPatakaDialog from '@/components/dialog/connection/NewPatakaDialog.vue'
 import BigAddButton from '@/components/button/BigAddButton.vue'
@@ -108,7 +69,6 @@ import { getTribes } from '@/lib/community-helpers.js'
 import patakaConfig from '../../../pataka.config'
 
 const { mapMutations: mapAlertMutations } = createNamespacedHelpers('alerts')
-const get = require('lodash.get')
 
 export default {
   name: 'CommunitiesList',
@@ -123,6 +83,7 @@ export default {
   },
   components: {
     ProfileCard,
+    CommunityList,
     Avatar,
     NewPatakaDialog,
     BigAddButton
@@ -204,22 +165,6 @@ export default {
 
       // update to check ssb.status
     },
-    goTribe (tribe) {
-      if (tribe.private.length > 0) return this.goProfile(tribe.id, tribe.private[0])
-      return this.goProfile(tribe.id, tribe.public[0])
-    },
-    goProfile (tribeId, profile) {
-      return {
-        name: 'community', params: { tribeId, profileId: profile.id, profile }
-      }
-    },
-    getImage (community) {
-      return get(community, 'avatarImage.uri') || whakapapa
-    },
-    shortDescription (community) {
-      if (!community.description) return
-      return community.description.substring(0, 180)
-    },
     t (key, vars) {
       return this.$t('viewTribes.' + key, vars)
     }
@@ -229,38 +174,8 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
-.subtitle {
-  word-break: break-word;
-}
-
 .col {
   flex-grow: 0;
-}
-
-.card-image {
-  background: linear-gradient(
-      45deg,
-      hsl(0, 6%, 37.1%) 12%,
-      transparent 0,
-      transparent 88%,
-      hsl(0, 6%, 37.1%) 0
-    ),
-    linear-gradient(
-      135deg,
-      transparent 37%,
-      hsl(13.5, 4%, 31%) 0,
-      hsl(13.5, 4%, 31%) 63%,
-      transparent 0
-    ),
-    linear-gradient(
-      45deg,
-      transparent 37%,
-      hsl(0, 6%, 37.1%) 0,
-      hsl(0, 6%, 37.1%) 63%,
-      transparent 0
-    ),
-    hsl(0, 5.2%, 27.6%);
-  background-size: 50px 50px;
 }
 
 .headliner {
@@ -269,18 +184,6 @@ export default {
   font-weight: 400;
   letter-spacing: 5px;
   color: black;
-}
-
-.sub-headline {
-  font-size: 0.8rem;
-  color: rgba(0, 0, 0, 0.6);
-}
-
-.rounded-border {
-  color: black;
-  border: 0.5px solid rgba(0,0,0,0.3);
-  border-radius: 10px;
-  background-color: white;
 }
 
 </style>
