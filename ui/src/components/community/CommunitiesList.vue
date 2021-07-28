@@ -8,7 +8,36 @@
     </v-row>
     <v-row>
       <v-col cols="12" md="9">
-        <v-row class="pt-4">
+        <v-row v-if="!tribes">
+          <SkeletonLoader
+            :cols="mobile ? 12 : 3"
+            :totalSkeletons=1
+            skeletonType="heading"
+            customClass="py-0"
+          />
+          <SkeletonLoader
+            :cols="mobile ? 12 : 2"
+            :totalSkeletons=12
+            skeletonType="image, card-heading"
+          />
+          <SkeletonLoader
+            cols="12"
+            :totalSkeletons=1
+            skeletonType="divider"
+          />
+          <SkeletonLoader
+            :cols="mobile ? 12 : 3"
+            :totalSkeletons=1
+            skeletonType="heading"
+            customClass="py-0"
+          />
+          <SkeletonLoader
+            :cols="mobile ? 12 : 2"
+            :totalSkeletons=12
+            skeletonType="image, card-heading"
+          />
+        </v-row>
+        <v-row v-else class="pt-4">
           <v-col v-if="connectedTribes.length" cols="12" class="py-0">
             <CommunityList :title="t('connectedTribes')" :tribes="connectedTribes"/>
           </v-col>
@@ -67,6 +96,7 @@ import NewPatakaDialog from '@/components/dialog/connection/NewPatakaDialog.vue'
 import BigAddButton from '@/components/button/BigAddButton.vue'
 import { getTribes } from '@/lib/community-helpers.js'
 import patakaConfig from '../../../pataka.config'
+import SkeletonLoader from '@/components/SkeletonLoader.vue'
 
 const { mapMutations: mapAlertMutations } = createNamespacedHelpers('alerts')
 
@@ -75,7 +105,7 @@ export default {
   data () {
     return {
       confirmationText: null,
-      tribes: [],
+      tribes: null,
       patakasRaw: [],
       connectedPeers: [],
       dialog: false
@@ -86,7 +116,8 @@ export default {
     CommunityList,
     Avatar,
     NewPatakaDialog,
-    BigAddButton
+    BigAddButton,
+    SkeletonLoader
   },
   apollo: {
     tribes: {
