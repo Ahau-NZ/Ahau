@@ -1,25 +1,44 @@
 <template>
-  <div :class="mobile ? 'niho-bg':'wrapper niho-bg'">
-    <!-- LeftSideNav -->
-    <v-col cols="12" xs="12" sm="12" md="2  " :class="!mobile ? 'pr-0' : 'px-0 py-0'"></v-col>
-    <!-- Content -->
-    <v-col cols="12" xs="12" sm="12" md="10" :class="mobile ? 'py-0' : 'pl-0 py-0'">
-      <!-- <CommunitiesNav /> -->
-      <CommunitiesList @add-community-dialog="addCommunityDialog" />
-    </v-col>
-  </div>
+  <v-container fluid :class="`niho-bg ${mobile ? 'pt-0' : 'container'}`">
+    <!-- body of the page -->
+    <v-row class="pa-0">
+      <!-- top of page -->
+      <v-col cols="12" :class="mobile ? '' : 'mt-4'">
+        <BigAddButton :label="t('newTribeButton')" :customClass="mobile ? 'addBtnMobile':'addBtnDesktop'" @click="addCommunityDialog" />
+      </v-col>
+      <!-- left hand side of page -->
+      <v-col v-if="!mobile" cols="12" md="2">
+      </v-col>
+
+      <!-- main/middle body of page -->
+      <v-col cols="12" md="8">
+        <CommunitiesList />
+      </v-col>
+
+      <!-- right hand side of page -->
+      <v-col cols="12" md="2">
+        <PatakaList />
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
 // import CommunitiesNav from '@/components/CommunitiesNav'
-import CommunitiesList from '@/components/community/CommunitiesList'
+import CommunitiesList from '@/components/community/CommunitiesList.vue'
+import PatakaList from '@/components/community/PatakaList.vue'
+
+import BigAddButton from '@/components/button/BigAddButton.vue'
+
 import { mapActions } from 'vuex'
 
 export default {
   name: 'Discovery',
   components: {
     // CommunitiesNav,
-    CommunitiesList
+    CommunitiesList,
+    PatakaList,
+    BigAddButton
   },
   beforeMount () {
     window.scrollTo(0, 0)
@@ -33,6 +52,9 @@ export default {
     ...mapActions(['setDialog']),
     addCommunityDialog () {
       this.setDialog({ active: 'new-community' })
+    },
+    t (key, vars) {
+      return this.$t('viewTribes.' + key, vars)
     }
   }
 }
@@ -40,11 +62,16 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
+
 .wrapper {
   background-color: white;
   width: 100%;
   height: 100%;
   display: flex;
+  padding-top: 64px;
+}
+
+.container {
   padding-top: 64px;
 }
 
