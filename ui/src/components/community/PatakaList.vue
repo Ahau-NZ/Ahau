@@ -5,7 +5,16 @@
         <v-divider v-if="mobile" light></v-divider>
         <ProfileCard :title="t('title')" class="mt-7">
           <template v-slot:content>
-            <div v-if="patakas.length > 0">
+            <div v-if="!patakas">
+              <SkeletonLoader
+                :cols="12"
+                :totalSkeletons=5
+                skeletonType="list-item-avatar"
+                customClass="pr-n10"
+                width="100%"
+              />
+            </div>
+            <div v-else-if="patakas && patakas.length > 0">
               <v-row v-for="pataka in patakas" :key="pataka.id" class="align-center ml-6">
                 <v-col cols="2" class="pt-0 pl-0">
                   <Avatar :size="mobile ? '60px' : '45px'" :image="pataka.avatarImage" :alt="pataka.preferredName" :isView="!pataka.avatarImage" :online="pataka.online"/>
@@ -45,6 +54,7 @@ import gql from 'graphql-tag'
 import ProfileCard from '@/components/profile/ProfileCard.vue'
 import Avatar from '@/components/Avatar.vue'
 import NewPatakaDialog from '@/components/dialog/connection/NewPatakaDialog.vue'
+import SkeletonLoader from '@/components/SkeletonLoader.vue'
 
 import patakaConfig from '../../../pataka.config'
 import { mapActions, createNamespacedHelpers } from 'vuex'
@@ -55,7 +65,8 @@ export default {
   components: {
     ProfileCard,
     Avatar,
-    NewPatakaDialog
+    NewPatakaDialog,
+    SkeletonLoader
   },
   apollo: {
     patakasRaw: {
@@ -93,7 +104,7 @@ export default {
   data () {
     return {
       dialog: null,
-      patakasRaw: [],
+      patakasRaw: null,
       connectedPeers: []
     }
   },
@@ -107,7 +118,8 @@ export default {
       return this.patakasRaw.some(pataka => pataka.id === patakaId)
     },
     patakas () {
-      if (!this.patakasRaw) return
+      if (!this.patakasRaw) return null
+
       return this.patakasRaw.map(pataka => {
         if (this.connectedPeers && this.connectedPeers.pataka && this.connectedPeers.pataka.some(peer => peer.id === pataka.id)) {
           return {
