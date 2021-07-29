@@ -2,10 +2,17 @@
   <v-row :class="mobile ? 'mobile-profile':''">
     <v-col v-if="!isLoaded" cols="12" md="9" :class="mobile ? 'pt-7 px-5' : ' pt-0 px-5' ">
       <SkeletonLoader
+        cols=12
+        :totalSkeletons=1
+        skeletonType="card-heading"
+      />
+      <SkeletonLoader
+        cols=12
         :totalSkeletons=2
         skeletonType="card-heading, image"
       />
       <SkeletonLoader
+        cols=12
         :totalSkeletons=1
         skeletonType="card-heading, image@2"
       />
@@ -48,7 +55,13 @@
     <!-- RIGHT SIDE COLUMN -->
     <v-col v-if="!isLoaded" cols="12" sx="12" md="3" :class="{ 'pt-0 px-5':mobile, 'pt-10 pr-8':myProfile && !mobile, 'pt-12 pr-8':!myProfile }">
       <SkeletonLoader
-        :totalSkeletons=2
+        :totalSkeletons=1
+        skeletonType="card-heading, divider, list-item-avatar-two-line@6, divider"
+      />
+
+      <SkeletonLoader
+        class="mt-16"
+        :totalSkeletons=1
         skeletonType="card-heading, divider, list-item-avatar-two-line@6, divider"
       />
     </v-col>
