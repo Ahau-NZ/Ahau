@@ -450,7 +450,14 @@ export default {
       this.setStory(story)
     },
     showRelatedCollection (collection) {
-      console.warn('Not yet showing collection on click', collection)
+      var type = this.$route.name.split('/archive')[0]
+      this.$router.push({
+        name: type + '/collection',
+        params: {
+          collectionId: collection.id
+        }
+      })
+      this.close()
     },
     onClickOutside () {
       if (!this.fullStory || this.dialog) return
