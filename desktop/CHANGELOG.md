@@ -5,6 +5,7 @@
 ### Features
 
 - Added skeleton loaders to Profile.vue
+- Can now click related collection in StoryCard.vue and the related collection will show
 ## v2.1.0
 
 ### Features
