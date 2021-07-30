@@ -61,7 +61,7 @@
           <v-col v-if="withRelationships" cols="6" class="pa-1 pt-2 pl-0">
             <v-select
               v-model="formData.relationshipType"
-              :label="t('relatedBy')"
+              :label="t('relatedBy', { displayName })"
               :items="relationshipTypes"
               :menu-props="{ light: true }"
               outlined
@@ -263,7 +263,7 @@
             <!-- Description textarea -->
               <v-textarea
                 v-model="formData.description"
-                :label="t('description', { displayName: getDisplayName(formData)})"
+                :label="t('description')"
                 v-bind="customProps"
                 no-resize
                 :rows="readonly ? 0 : 3"
@@ -415,7 +415,8 @@ export default {
     isUser: { type: Boolean, default: false },
     isSideViewDialog: { type: Boolean, default: false },
     dialogType: { type: String, default: '' },
-    type: String
+    type: String,
+    displayName: { type: String, default: '' }
   },
   data () {
     return {
