@@ -11,7 +11,7 @@
   },
   "dod":"Date of death",
   "uploadPhoto":"Upload profile photo",
-  "relatedBy":"Related by",
+  "relatedBy":"Related to {displayName} by",
   "birthPlace":"Place of birth",
   "deathPlace": "Place of death",
   "burialLocation": "Burial location",

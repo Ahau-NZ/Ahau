@@ -15,6 +15,7 @@
           :withRelationships="allowRelationships"
           :dialogType="type"
           :mobile="mobile"
+          :displayName="getDisplayName(selectedProfile)"
         >
 
           <!-- Slot = Search -->
@@ -270,6 +271,7 @@ export default {
     }
   },
   methods: {
+    getDisplayName,
     updateRelationships (profile, selectedArray) {
       var arr = this.quickAdd[selectedArray]
       var foundIndex = arr.findIndex(x => x.id === profile.id)
