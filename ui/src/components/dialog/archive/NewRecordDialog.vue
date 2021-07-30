@@ -5,7 +5,13 @@
   >
     <!-- FORM -->
     <template v-slot:content>
-      <RecordForm ref="recordForm" :editing="editing" :formData.sync="formData" :access="access"/>
+      <RecordForm
+        ref="recordForm"
+        :editing="editing"
+        :formData.sync="formData"
+        :access="access"
+        :collection="collection"
+      />
       <v-col align="center">
         <v-btn v-if="editing" text @click="$emit('delete')">
           Delete this story
@@ -43,7 +49,8 @@ export default {
     show: { type: Boolean, required: true },
     story: { type: Object, default () { return EMPTY_STORY } },
     title: String,
-    editing: { type: Boolean, default: false }
+    editing: { type: Boolean, default: false },
+    collection: { type: Object, required: false }
   },
   data () {
     return {
@@ -90,7 +97,7 @@ export default {
       this.formData.tiaki = [this.whoami.public.profile]
       this.formData.creators = []
       this.formData.relatedRecords = []
-      this.formData.collections = []
+      this.formData.collections = (this.collection) ? [this.collection] : []
     },
     access (access, prevAccess) {
       if (!access || this.editing) return
@@ -105,7 +112,7 @@ export default {
       this.formData.tiaki = [this.whoami.public.profile]
       this.formData.creators = []
       this.formData.relatedRecords = []
-      this.formData.collections = []
+      this.formData.collections = (this.collection) ? [this.collection] : []
     }
   },
   computed: {
