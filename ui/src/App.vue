@@ -32,6 +32,7 @@ import Spinner from '@/components/Spinner.vue'
 
 import DialogHandler from '@/components/dialog/DialogHandler.vue'
 import AlertMessage from './components/dialog/AlertMessage.vue'
+import { getIndexes } from '@/store/modules/settings/apollo-helpers'
 
 import { createNamespacedHelpers, mapGetters, mapActions } from 'vuex'
 const { mapGetters: mapAlertGetters } = createNamespacedHelpers('alerts')
@@ -46,7 +47,18 @@ export default {
   data () {
     return {
       mobileServerLoaded: false,
-      version
+      version,
+      indexes: null,
+      isRebuilding: false,
+      isLoading: false
+    }
+  },
+  apollo: {
+    indexes: {
+      ...getIndexes,
+      pollInterval () {
+        return this.indexPollingInterval
+      }
     }
   },
   created () {
@@ -62,10 +74,15 @@ export default {
     this.$i18n.locale = localStorage.getItem('locale') || browserLang || 'en'
   },
   computed: {
-    ...mapGetters(['storeDialog']),
+    ...mapGetters(['storeDialog', 'loadingState']),
     ...mapAlertGetters(['alertSettings']),
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
+    },
+    indexPollingInterval () {
+      if (!this.progess || !this.progress.isIndexing) return 1000
+
+      return 500
     },
     enableMenu () {
       if (
@@ -88,7 +105,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setWhoami']),
+    ...mapActions(['setWhoami', 'setLoading']),
     ...mapAnalyticsActions(['appUsed'])
   },
   components: {
@@ -110,6 +127,24 @@ export default {
         this.appUsed() // analytics logging some usage
       },
       immediate: true
+    },
+    indexes: {
+      deep: true,
+      handler (progress) {
+        if (progress.isIndexing) {
+          this.setLoading(progress.percentageIndexed)
+        } else if (!progress.isIndexing && this.loadingState) {
+          if (this.isLoading) return
+
+          this.isLoading = true
+          this.setLoading(100)
+
+          setTimeout(() => {
+            this.setLoading(false)
+            this.isLoading = false
+          }, 2000) // delay the stop by a couple of seconds
+        }
+      }
     }
   }
 }
