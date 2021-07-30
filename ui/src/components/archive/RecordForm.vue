@@ -296,8 +296,8 @@
               <ChipGroup
                 v-if="formData.collections && formData.collections.length > 0"
                 type="collection"
-                :chips="formData.collections"
-                deletable
+                :chips="this.formData.collections"
+                :deletable="!this.collection"
                 @delete="removeItem(formData.collections, $event)"
               />
               <v-divider v-if="mobile" light class="mt-6 mr-4"></v-divider>
@@ -503,7 +503,8 @@ export default {
       type: Object
     },
     editing: Boolean,
-    access: Object
+    access: Object,
+    collection: Object
   },
   mixins: [
     storiesApolloMixin,
@@ -548,7 +549,6 @@ export default {
       this.stories = storyRes.data.stories
       this.collections = await this.$store.dispatch('collection/getCollectionsByGroup', groupId)
     }
-
   },
   mounted () {
     this.showAdvanced()

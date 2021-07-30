@@ -6,7 +6,7 @@
           <Chip
             :title="chip.title || chip.name || 'Untitled'"
             :description="chip.description"
-            :deletable="deletable"
+            :deletable="!(!deletable && i === 0)"
             :index="i"
             :type="type"
             :chip="chip"

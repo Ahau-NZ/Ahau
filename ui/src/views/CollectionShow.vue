@@ -5,6 +5,7 @@
       <!-- Collection Header -->
       <v-row v-if="!showStory">
         <!-- <CollectionTitle v-if="mobile" :collection="collection" @click="dialog = 'edit-collection'"/> -->
+        <BigAddButton :label="$t('viewArchive.newStoryButton')" :customClass="mobile ? 'addBtnMobile':'addBtnDesktop'" @click="newStory" />
         <v-col v-if="mobile" cols="12" class="headliner black--text pa-0 pb-2">
           {{ collection.name + ' collection'}}
             <v-icon color="blue-grey" light @click="viewCollection" class="text-right justify-end">mdi-information</v-icon>
@@ -48,6 +49,13 @@
       @submit="processDeleteCollection"
       @close="close"
     />
+    <NewRecordDialog
+      v-if="dialog === 'new-story'"
+      :show="dialog === 'new-story'"
+      :title="$t('viewArchive.addStory')" @close="dialog = null"
+      :collection="collection"
+      @submit="processStory"
+    />
   </div>
 </template>
 
@@ -60,8 +68,10 @@ import { saveStoryMixin } from '@/mixins/story-mixins.js'
 import { mapGetters, mapMutations, mapActions, createNamespacedHelpers } from 'vuex'
 import Stories from '../components/archive/Stories.vue'
 
+import BigAddButton from '@/components/button/BigAddButton.vue'
 import NewCollectionDialog from '@/components/dialog/archive/NewCollectionDialog.vue'
 import DeleteCollectionDialog from '@/components/dialog/archive/DeleteCollectionDialog.vue'
+import NewRecordDialog from '@/components/dialog/archive/NewRecordDialog.vue'
 import CollectionTitleCard from '@/components/archive/CollectionTitleCard.vue'
 
 const { mapActions: mapCollectionActions } = createNamespacedHelpers('collection')
@@ -76,8 +86,10 @@ export default {
   ],
   components: {
     Stories,
+    BigAddButton,
     NewCollectionDialog,
     DeleteCollectionDialog,
+    NewRecordDialog,
     CollectionTitleCard
   },
   data () {
@@ -125,6 +137,11 @@ export default {
       this.view = false
       this.editing = true
       this.dialog = 'edit-collection'
+    },
+    newStory () {
+      this.view = false
+      this.editing = false
+      this.dialog = 'new-story'
     },
     viewCollection () {
       this.view = true
