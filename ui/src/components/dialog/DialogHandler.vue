@@ -94,6 +94,7 @@
       :show="isActive('table-filter-menu')"
       :title="t('filterMenuTitle')"
       :searchFilterString.sync="searchFilterString"
+      :locationFilterString.sync="locationFilterString"
       @close="close"
     />
     <ComingSoonDialog :show="isActive('coming-soon')" @close="close" />
@@ -195,7 +196,8 @@ export default {
       parentIndex: null,
       profile: {},
       tribe: {},
-      searchFilterString: ''
+      searchFilterString: '',
+      locationFilterString: ''
     }
   },
   computed: {
@@ -228,6 +230,9 @@ export default {
     },
     searchFilterString (newValue) {
       this.$emit('update:searchFilterString', newValue)
+    },
+    locationFilterString (newValue) {
+      this.$emit('update:locationFilterString', newValue)
     }
   },
   methods: {

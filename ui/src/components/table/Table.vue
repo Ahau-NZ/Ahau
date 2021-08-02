@@ -150,6 +150,10 @@ export default {
       type: String,
       default: ''
     },
+    locationFilterString: {
+      type: String,
+      default: ''
+    },
     sortValue: {
       type: String,
       default: null
@@ -611,21 +615,19 @@ export default {
     },
     applyFilter (node) {
       if (this.searchFilterString) {
-        console.log('going in')
-        if (this.nameMatchesFilter(node)) return true
-        else return false
+        return this.nameMatchesFilter(node)
       }
-      if (this.filter && node.data.deceased) return false
-      return true
+      if (this.locationFilterString) {
+        return this.locationMatchesFilter(node)
+      }
+      return !(this.filter && node.data.deceased)
     },
     nameMatchesFilter (node) {
       const search = this.setString(this.searchFilterString)
       const preferredName = this.setString(node.data.preferredName)
       const legalName = this.setString(node.data.legalName)
 
-      return isEqual(preferredName, search) ||
-            preferredName.includes(search) ||
-            isEqual(legalName, search) ||
+      return preferredName.includes(search) ||
             legalName.includes(search) ||
             this.findAltNameMatch(search, node.data.altNames)
     },
@@ -633,12 +635,22 @@ export default {
       if (altNames.length > 0) {
         for (var i = 0; i < altNames.length; i++) {
           const currAltName = this.setString(altNames[i])
-          if (isEqual(currAltName, filterString) || currAltName.includes(filterString)) {
-            return true
-          }
+          return currAltName.includes(filterString)
         }
       }
       return false
+    },
+    locationMatchesFilter (node) {
+      const search = this.setString(this.locationFilterString)
+      const address = this.setString(node.data.address)
+      const city = this.setString(node.data.city)
+      const postCode = this.setString(node.data.postCode)
+      const country = this.setString(node.data.country)
+
+      return address.includes(search) ||
+            city.includes(search) ||
+            postCode.includes(search) ||
+            country.includes(search)
     },
     openContextMenu (event) {
       this.$emit('open-context-menu', event)

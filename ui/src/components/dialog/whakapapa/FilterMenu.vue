@@ -20,19 +20,28 @@
         </v-row>
           <v-row class="menu-title">
             <v-col cols="12">
-              <h1>Apply Table Filters</h1>
+              <h1>{{ t('applyTableFilters') }}</h1>
             </v-col>
             <v-col>
               <p class="profile-label overline">
-                Name
+                {{ t('name') }}
               </p>
             </v-col>
             <v-col cols="12">
               <SearchBar
-                :searchNodeId.sync="searchNodeId"
                 :searchFilterString.sync="searchFilterString"
                 :searchFilter="true"
-                @close="clickedOffSearchFilter()"
+              />
+            </v-col>
+            <v-col>
+              <p class="profile-label overline">
+                {{ t('location') }}
+              </p>
+            </v-col>
+            <v-col cols="12">
+              <SearchBar
+                :locationFilterString.sync="locationFilterString"
+                :locationFilter="true"
               />
             </v-col>
           </v-row>
@@ -42,10 +51,10 @@
           <v-row>
             <v-col cols="12">
               <v-btn @click="close" text large color="blue">
-                Apply
+                {{ t('apply') }}
               </v-btn>
               <v-btn @click="reset" text large color="red">
-                Cancel
+                {{ t('cancel') }}
               </v-btn>
             </v-col>
           </v-row>
@@ -66,12 +75,16 @@ export default {
   data () {
     return {
       searchFilterString: '',
+      locationFilterString: '',
       searchNodeId: null
     }
   },
   watch: {
     searchFilterString (newValue) {
       this.$emit('update:searchFilterString', newValue)
+    },
+    locationFilterString (newValue) {
+      this.$emit('update:locationFilterString', newValue)
     }
   },
   methods: {
@@ -80,7 +93,11 @@ export default {
     },
     reset () {
       this.$emit('update:searchFilterString', '')
+      this.$emit('update:locationFilterString', '')
       this.close()
+    },
+    t (key, vars) {
+      return this.$t('whakapapaTable.' + key, vars)
     }
   }
 }

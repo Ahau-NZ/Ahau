@@ -168,6 +168,7 @@
           @open-context-menu="openTableContextMenu($event)"
           :searchNodeId="searchNodeId"
           :searchFilterString="searchFilterString"
+          :locationFilterString.sync="locationFilterString"
           :sortValue="sortValue"
           :sortEvent="sortEvent"
           :searchNodeEvent="searchNodeEvent"
@@ -193,6 +194,7 @@
       :loadKnownFamily="loadKnownFamily"
       :getRelatives="getRelatives"
       :searchFilterString.sync="searchFilterString"
+      :locationFilterString.sync="locationFilterString"
       @updateFocus="updateFocus($event)"
       :setSelectedProfile="setSelectedProfile"
       @change-focus="changeFocus($event)"
@@ -288,6 +290,7 @@ export default {
       search: false,
       searchFilter: false,
       searchFilterString: '',
+      locationFilterString: '',
       searchNodeId: '',
       searchNodeEvent: null,
       showWhakapapaHelper: false,

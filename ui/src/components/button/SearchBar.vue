@@ -3,18 +3,18 @@
     v-model="searchString"
     :items="items"
     :menu-props=" { light: true } "
-    :append-icon="searchNodeId ? 'mdi-cancel' : !searchFilter ? 'mdi-close' : ''"
+    :append-icon="searchNodeId ? 'mdi-cancel' : !isFilterSearchBar ? 'mdi-close' : ''"
     @click:append="close()"
     placeholder="Search"
-    :no-data-text="searchFilter ? '' : 'no suggestions'"
+    :no-data-text="isFilterSearchBar ? '' : 'no suggestions'"
     :search-input.sync="searchString"
     solo
     rounded
     light
     hide-selected
     dense
-    :readonly="searchNodeId !== '' && !searchFilter"
-    :class="searchFilter ? 'search-input-filter' : 'search-input'"
+    :readonly="searchNodeId !== '' && !isFilterSearchBar"
+    :class="isFilterSearchBar ? 'search-input-filter' : 'search-input'"
     autofocus
   >
     <template v-slot:item="data">
@@ -56,6 +56,7 @@ export default {
   props: {
     searchNodeId: String,
     searchFilter: Boolean,
+    locationFilter: Boolean,
     searchNodeName: String
   },
   data () {
@@ -95,13 +96,17 @@ export default {
         })
     },
     items () {
-      if (this.searchFilter) return []
+      if (this.isFilterSearchBar) return []
       return this.nodes
+    },
+    isFilterSearchBar () {
+      return this.searchFilter || this.locationFilter
     }
   },
   watch: {
     searchString (newValue) {
       if (this.searchFilter) this.$emit('update:searchFilterString', newValue)
+      if (this.locationFilter) this.$emit('update:locationFilterString', newValue)
     }
   },
   methods: {
