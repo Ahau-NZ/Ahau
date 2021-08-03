@@ -95,6 +95,8 @@
       :title="t('filterMenuTitle')"
       :searchFilterString.sync="searchFilterString"
       :locationFilterString.sync="locationFilterString"
+      :lowerAgeFilter.sync="lowerAgeFilter"
+      :upperAgeFilter.sync="upperAgeFilter"
       @close="close"
     />
     <ComingSoonDialog :show="isActive('coming-soon')" @close="close" />
@@ -197,7 +199,9 @@ export default {
       profile: {},
       tribe: {},
       searchFilterString: '',
-      locationFilterString: ''
+      locationFilterString: '',
+      lowerAgeFilter: 0,
+      upperAgeFilter: 0
     }
   },
   computed: {
@@ -233,6 +237,12 @@ export default {
     },
     locationFilterString (newValue) {
       this.$emit('update:locationFilterString', newValue)
+    },
+    lowerAgeFilter (newValue) {
+      this.$emit('update:lowerAgeFilter', newValue)
+    },
+    upperAgeFilter (newValue) {
+      this.$emit('update:upperAgeFilter', newValue)
     }
   },
   methods: {

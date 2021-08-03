@@ -2,6 +2,13 @@
   "applyTableFilters": "Apply Table Filters",
   "name": "Name",
   "location": "Location",
+  "age": "Age",
+  "lowerAge": "Lower age",
+  "upperAge": "Upper age",
+  "validLower": "Enter a valid lower age",
+  "validUpper": "Enter a valid upper age",
+  "invalidRange": "Invalid age range",
+  "invalidNumbers": "Lower must be at least 0 and upper must be at least 1",
   "apply": "Apply",
   "cancel": "Cancel"
 }

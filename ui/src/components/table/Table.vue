@@ -154,6 +154,14 @@ export default {
       type: String,
       default: ''
     },
+    lowerAgeFilter: {
+      type: Number,
+      default: 0
+    },
+    upperAgeFilter: {
+      type: Number,
+      default: 0
+    },
     sortValue: {
       type: String,
       default: null
@@ -620,6 +628,10 @@ export default {
       if (this.locationFilterString) {
         return this.locationMatchesFilter(node)
       }
+      if (this.upperAgeFilter >= 1) {
+        return this.ageMatchesFilter(node)
+      }
+
       return !(this.filter && node.data.deceased)
     },
     nameMatchesFilter (node) {
@@ -651,6 +663,12 @@ export default {
             city.includes(search) ||
             postCode.includes(search) ||
             country.includes(search)
+    },
+    ageMatchesFilter (node) {
+      const nodeAge = calculateAge(node.data.aliveInterval)
+
+      if (nodeAge >= this.lowerAgeFilter && nodeAge <= this.upperAgeFilter) return true
+      return false
     },
     openContextMenu (event) {
       this.$emit('open-context-menu', event)

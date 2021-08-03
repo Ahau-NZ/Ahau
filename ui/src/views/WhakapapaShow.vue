@@ -169,6 +169,8 @@
           :searchNodeId="searchNodeId"
           :searchFilterString="searchFilterString"
           :locationFilterString.sync="locationFilterString"
+          :lowerAgeFilter.sync="lowerAgeFilter"
+          :upperAgeFilter.sync="upperAgeFilter"
           :sortValue="sortValue"
           :sortEvent="sortEvent"
           :searchNodeEvent="searchNodeEvent"
@@ -195,6 +197,8 @@
       :getRelatives="getRelatives"
       :searchFilterString.sync="searchFilterString"
       :locationFilterString.sync="locationFilterString"
+      :lowerAgeFilter.sync="lowerAgeFilter"
+      :upperAgeFilter.sync="upperAgeFilter"
       @updateFocus="updateFocus($event)"
       :setSelectedProfile="setSelectedProfile"
       @change-focus="changeFocus($event)"
@@ -291,6 +295,8 @@ export default {
       searchFilter: false,
       searchFilterString: '',
       locationFilterString: '',
+      lowerAgeFilter: 0,
+      upperAgeFilter: 0,
       searchNodeId: '',
       searchNodeEvent: null,
       showWhakapapaHelper: false,
