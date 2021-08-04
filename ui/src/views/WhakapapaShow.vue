@@ -399,6 +399,8 @@ export default {
     },
     searchFilter (newValue) {
       if (newValue === true) {
+        this.lowerAgeFilter = 0
+        this.upperAgeFilter = 0
         this.updateDialog('table-filter-menu', null)
         this.flatten = true
       }

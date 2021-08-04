@@ -106,8 +106,8 @@ export default {
       searchFilterString: '',
       locationFilterString: '',
       skillsFilterString: '',
-      lowerAgeFilter: '',
-      upperAgeFilter: '',
+      lowerAgeFilter: 0,
+      upperAgeFilter: 0,
       ageErrorMessage: '',
       searchNodeId: null
     }
@@ -116,7 +116,9 @@ export default {
     searchFilterString (newValue) {
       this.$emit('update:searchFilterString', newValue)
     },
-    locationFilterString (newValue) {
+    locationFilterString (newValue, oldValue) {
+      console.log('old : ', oldValue)
+      console.log('new : ', newValue)
       this.$emit('update:locationFilterString', newValue)
     },
     skillsFilterString (newValue) {
