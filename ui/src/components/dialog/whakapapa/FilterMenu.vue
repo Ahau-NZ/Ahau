@@ -18,38 +18,47 @@
             <v-icon @click="reset" color="secondary">mdi-close</v-icon>
           </v-btn>
         </v-row>
-          <v-row class="menu-title">
             <v-col cols="12">
               <h1>{{ t('applyTableFilters') }}</h1>
             </v-col>
+          <v-row>
             <v-col>
-              <p class="profile-label overline">
+              <p class="profile-label overline" style="">
                 {{ t('name') }}
               </p>
-            </v-col>
-            <v-col cols="12">
               <SearchBar
                 :searchFilterString.sync="searchFilterString"
                 :searchFilter="true"
               />
             </v-col>
+          </v-row>
+          <v-row>
             <v-col>
               <p class="profile-label overline">
                 {{ t('location') }}
               </p>
-            </v-col>
-            <v-col cols="12">
               <SearchBar
                 :locationFilterString.sync="locationFilterString"
                 :locationFilter="true"
               />
             </v-col>
+          </v-row>
+          <v-row>
+            <v-col>
+              <p class="profile-label overline">
+                {{ t('skills') }}
+              </p>
+              <SearchBar
+                :skillsFilterString.sync="skillsFilterString"
+                :skillsFilter="true"
+              />
+            </v-col>
+          </v-row>
+          <v-row>
             <v-col>
               <p class="profile-label overline">
                 {{ t('age') }}
               </p>
-            </v-col>
-            <v-col cols="12">
               <v-text-field
                 v-model="lowerAgeFilter"
                 :label="t('lowerAge')"
@@ -60,9 +69,9 @@
                 :label="t('upperAge')"
                 :error="ageError"
               />
-              <v-col v-if="ageError" style="color: red;" cols="12 pa-0" align="center" class="custom-label">
+              <div v-if="ageError" style="color: red;" cols="12 pa-0" align="center" class="custom-label">
                 {{ ageErrorMessage }}
-              </v-col>
+              </div>
             </v-col>
           </v-row>
         </v-container>
@@ -96,6 +105,7 @@ export default {
     return {
       searchFilterString: '',
       locationFilterString: '',
+      skillsFilterString: '',
       lowerAgeFilter: '',
       upperAgeFilter: '',
       ageErrorMessage: '',
@@ -108,6 +118,9 @@ export default {
     },
     locationFilterString (newValue) {
       this.$emit('update:locationFilterString', newValue)
+    },
+    skillsFilterString (newValue) {
+      this.$emit('update:skillsFilterString', newValue)
     },
     lowerAgeFilter (newValue) {
       const upper = parseInt(this.upperAgeFilter)
@@ -156,6 +169,7 @@ export default {
     reset () {
       this.$emit('update:searchFilterString', '')
       this.$emit('update:locationFilterString', '')
+      this.$emit('update:skillsFilterString', '')
       this.$emit('update:lowerAgeFilter', 0)
       this.$emit('update:upperAgeFilter', 0)
       this.close()

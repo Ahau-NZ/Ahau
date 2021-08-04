@@ -2,6 +2,7 @@
   "applyTableFilters": "Apply Table Filters",
   "name": "Name",
   "location": "Location",
+  "skills": "Skills",
   "age": "Age",
   "lowerAge": "Lower age",
   "upperAge": "Upper age",

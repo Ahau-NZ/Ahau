@@ -169,6 +169,7 @@
           :searchNodeId="searchNodeId"
           :searchFilterString="searchFilterString"
           :locationFilterString.sync="locationFilterString"
+          :skillsFilterString.sync="skillsFilterString"
           :lowerAgeFilter.sync="lowerAgeFilter"
           :upperAgeFilter.sync="upperAgeFilter"
           :sortValue="sortValue"
@@ -197,6 +198,7 @@
       :getRelatives="getRelatives"
       :searchFilterString.sync="searchFilterString"
       :locationFilterString.sync="locationFilterString"
+      :skillsFilterString.sync="skillsFilterString"
       :lowerAgeFilter.sync="lowerAgeFilter"
       :upperAgeFilter.sync="upperAgeFilter"
       @updateFocus="updateFocus($event)"
@@ -295,6 +297,7 @@ export default {
       searchFilter: false,
       searchFilterString: '',
       locationFilterString: '',
+      skillsFilterString: '',
       lowerAgeFilter: 0,
       upperAgeFilter: 0,
       searchNodeId: '',

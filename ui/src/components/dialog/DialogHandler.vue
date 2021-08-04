@@ -95,6 +95,7 @@
       :title="t('filterMenuTitle')"
       :searchFilterString.sync="searchFilterString"
       :locationFilterString.sync="locationFilterString"
+      :skillsFilterString.sync="skillsFilterString"
       :lowerAgeFilter.sync="lowerAgeFilter"
       :upperAgeFilter.sync="upperAgeFilter"
       @close="close"
@@ -200,6 +201,7 @@ export default {
       tribe: {},
       searchFilterString: '',
       locationFilterString: '',
+      skillsFilterString: '',
       lowerAgeFilter: 0,
       upperAgeFilter: 0
     }
@@ -237,6 +239,9 @@ export default {
     },
     locationFilterString (newValue) {
       this.$emit('update:locationFilterString', newValue)
+    },
+    skillsFilterString (newValue) {
+      this.$emit('update:skillsFilterString', newValue)
     },
     lowerAgeFilter (newValue) {
       this.$emit('update:lowerAgeFilter', newValue)

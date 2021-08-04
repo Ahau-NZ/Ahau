@@ -57,6 +57,7 @@ export default {
     searchNodeId: String,
     searchFilter: Boolean,
     locationFilter: Boolean,
+    skillsFilter: Boolean,
     searchNodeName: String
   },
   data () {
@@ -100,13 +101,14 @@ export default {
       return this.nodes
     },
     isFilterSearchBar () {
-      return this.searchFilter || this.locationFilter
+      return this.searchFilter || this.locationFilter || this.skillsFilter
     }
   },
   watch: {
     searchString (newValue) {
       if (this.searchFilter) this.$emit('update:searchFilterString', newValue)
       if (this.locationFilter) this.$emit('update:locationFilterString', newValue)
+      if (this.skillsFilter) this.$emit('update:skillsFilterString', newValue)
     }
   },
   methods: {

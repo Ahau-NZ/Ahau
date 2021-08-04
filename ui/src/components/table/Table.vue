@@ -154,6 +154,10 @@ export default {
       type: String,
       default: ''
     },
+    skillsFilterString: {
+      type: String,
+      default: ''
+    },
     lowerAgeFilter: {
       type: Number,
       default: 0
@@ -628,6 +632,9 @@ export default {
       if (this.locationFilterString) {
         return this.locationMatchesFilter(node)
       }
+      if (this.skillsFilterString) {
+        return this.skillsMatchesFilter(node)
+      }
       if (this.upperAgeFilter >= 1) {
         return this.ageMatchesFilter(node)
       }
@@ -644,13 +651,15 @@ export default {
             this.findAltNameMatch(search, node.data.altNames)
     },
     findAltNameMatch (filterString, altNames) {
+      var altNameFound = false
+
       if (altNames.length > 0) {
         for (var i = 0; i < altNames.length; i++) {
           const currAltName = this.setString(altNames[i])
-          return currAltName.includes(filterString)
+          if (currAltName.includes(filterString)) altNameFound = true
         }
       }
-      return false
+      return altNameFound
     },
     locationMatchesFilter (node) {
       const search = this.setString(this.locationFilterString)
@@ -664,11 +673,25 @@ export default {
             postCode.includes(search) ||
             country.includes(search)
     },
+    skillsMatchesFilter (node) {
+      const skills = node.data.education
+      const search = this.setString(this.skillsFilterString)
+      var skillFound = false
+
+      if (skills[0] !== '') {
+        for (var i = 0; i < skills.length; i++) {
+          const currSkill = this.setString(skills[i])
+          if (currSkill.includes(search)) skillFound = true
+        }
+      }
+
+      return skillFound
+    },
     ageMatchesFilter (node) {
       const nodeAge = calculateAge(node.data.aliveInterval)
-
+      if (!nodeAge) return false
       if (nodeAge >= this.lowerAgeFilter && nodeAge <= this.upperAgeFilter) return true
-      return false
+      else return false
     },
     openContextMenu (event) {
       this.$emit('open-context-menu', event)
