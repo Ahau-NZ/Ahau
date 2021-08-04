@@ -626,20 +626,28 @@ export default {
       })
     },
     applyFilter (node) {
+      var nameFilter = true
+      var locationFilter = true
+      var skillsFilter = true
+      var ageFilter = true
+      var nodeDeceased = this.filter && node.data.deceased
+
       if (this.searchFilterString) {
-        return this.nameMatchesFilter(node)
+        nameFilter = this.nameMatchesFilter(node)
       }
       if (this.locationFilterString) {
-        return this.locationMatchesFilter(node)
+        locationFilter = this.locationMatchesFilter(node)
       }
       if (this.skillsFilterString) {
-        return this.skillsMatchesFilter(node)
+        skillsFilter = this.skillsMatchesFilter(node)
       }
       if (this.upperAgeFilter >= 1) {
-        return this.ageMatchesFilter(node)
+        ageFilter = this.ageMatchesFilter(node)
       }
 
-      return !(this.filter && node.data.deceased)
+      return nameFilter && locationFilter && skillsFilter && ageFilter && !nodeDeceased
+
+      // return !(this.filter && node.data.deceased)
     },
     nameMatchesFilter (node) {
       const search = this.setString(this.searchFilterString)
