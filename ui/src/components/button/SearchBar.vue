@@ -106,7 +106,7 @@ export default {
   },
   watch: {
     searchString (newValue) {
-      if (this.searchFilter) this.$emit('update:searchFilterString', newValue)
+      if (this.searchFilter) this.$emit('update:nameFilterString', newValue)
       if (this.locationFilter) this.$emit('update:locationFilterString', newValue)
       if (this.skillsFilter) this.$emit('update:skillsFilterString', newValue)
     }
@@ -120,7 +120,7 @@ export default {
       return calculateAge(aliveInterval)
     },
     close () {
-      this.$emit('update:searchFilterString', '')
+      this.$emit('update:nameFilterString', '')
       this.$emit('close')
     },
     setSearchNode (data, event) {

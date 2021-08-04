@@ -93,7 +93,7 @@
       v-if="isActive('table-filter-menu')"
       :show="isActive('table-filter-menu')"
       :title="t('filterMenuTitle')"
-      :searchFilterString.sync="searchFilterString"
+      :nameFilterString.sync="nameFilterString"
       :locationFilterString.sync="locationFilterString"
       :skillsFilterString.sync="skillsFilterString"
       :lowerAgeFilter.sync="lowerAgeFilter"
@@ -199,7 +199,7 @@ export default {
       parentIndex: null,
       profile: {},
       tribe: {},
-      searchFilterString: '',
+      nameFilterString: '',
       locationFilterString: '',
       skillsFilterString: '',
       lowerAgeFilter: 0,
@@ -234,8 +234,8 @@ export default {
         document.body.classList.remove('stop-scroll')
       }
     },
-    searchFilterString (newValue) {
-      this.$emit('update:searchFilterString', newValue)
+    nameFilterString (newValue) {
+      this.$emit('update:nameFilterString', newValue)
     },
     locationFilterString (newValue) {
       this.$emit('update:locationFilterString', newValue)

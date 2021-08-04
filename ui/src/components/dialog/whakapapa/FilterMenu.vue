@@ -27,7 +27,7 @@
                 {{ t('name') }}
               </p>
               <SearchBar
-                :searchFilterString.sync="searchFilterString"
+                :nameFilterString.sync="nameFilterString"
                 :searchFilter="true"
               />
             </v-col>
@@ -103,7 +103,7 @@ export default {
   },
   data () {
     return {
-      searchFilterString: '',
+      nameFilterString: '',
       locationFilterString: '',
       skillsFilterString: '',
       lowerAgeFilter: 0,
@@ -113,12 +113,10 @@ export default {
     }
   },
   watch: {
-    searchFilterString (newValue) {
-      this.$emit('update:searchFilterString', newValue)
+    nameFilterString (newValue) {
+      this.$emit('update:nameFilterString', newValue)
     },
-    locationFilterString (newValue, oldValue) {
-      console.log('old : ', oldValue)
-      console.log('new : ', newValue)
+    locationFilterString (newValue) {
       this.$emit('update:locationFilterString', newValue)
     },
     skillsFilterString (newValue) {
@@ -169,7 +167,7 @@ export default {
       this.$emit('close')
     },
     reset () {
-      this.$emit('update:searchFilterString', '')
+      this.$emit('update:nameFilterString', '')
       this.$emit('update:locationFilterString', '')
       this.$emit('update:skillsFilterString', '')
       this.$emit('update:lowerAgeFilter', 0)

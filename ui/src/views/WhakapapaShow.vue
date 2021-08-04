@@ -50,7 +50,7 @@
             :searchNodeName="searchNodeName"
           />
         </div>
-        <div v-else-if="searchFilterString === ''" class="icon-button">
+        <div v-else-if="nameFilterString === ''" class="icon-button">
           <SearchButton :search.sync="search" />
         </div>
         <div v-if="whakapapa.table" class="icon-button">
@@ -167,7 +167,7 @@
           @load-descendants="loadDescendants($event)"
           @open-context-menu="openTableContextMenu($event)"
           :searchNodeId="searchNodeId"
-          :searchFilterString="searchFilterString"
+          :nameFilterString="nameFilterString"
           :locationFilterString.sync="locationFilterString"
           :skillsFilterString.sync="skillsFilterString"
           :lowerAgeFilter.sync="lowerAgeFilter"
@@ -196,7 +196,7 @@
       :loadDescendants="loadDescendants"
       :loadKnownFamily="loadKnownFamily"
       :getRelatives="getRelatives"
-      :searchFilterString.sync="searchFilterString"
+      :nameFilterString.sync="nameFilterString"
       :locationFilterString.sync="locationFilterString"
       :skillsFilterString.sync="skillsFilterString"
       :lowerAgeFilter.sync="lowerAgeFilter"
@@ -295,7 +295,7 @@ export default {
       pan: 0,
       search: false,
       searchFilter: false,
-      searchFilterString: '',
+      nameFilterString: '',
       locationFilterString: '',
       skillsFilterString: '',
       lowerAgeFilter: 0,

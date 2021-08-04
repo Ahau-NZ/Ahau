@@ -146,7 +146,7 @@ export default {
       type: Number,
       default: 0
     },
-    searchFilterString: {
+    nameFilterString: {
       type: String,
       default: ''
     },
@@ -632,7 +632,7 @@ export default {
       var ageFilter = true
       var nodeDeceased = this.filter && node.data.deceased
 
-      if (this.searchFilterString) {
+      if (this.nameFilterString) {
         nameFilter = this.nameMatchesFilter(node)
       }
       if (this.locationFilterString) {
@@ -650,7 +650,7 @@ export default {
       // return !(this.filter && node.data.deceased)
     },
     nameMatchesFilter (node) {
-      const search = this.setString(this.searchFilterString)
+      const search = this.setString(this.nameFilterString)
       const preferredName = this.setString(node.data.preferredName)
       const legalName = this.setString(node.data.legalName)
 

@@ -9,6 +9,8 @@
 - Added 'Related to {Relative name} by' in whakapapa registry
 - Show loading symbol when the database is rebuilding
 - Can now create new stories when viewing a collection and saving that story adds it to that collection
+- Added location, skills and age filters to whakapapa table FilterMenu.vue
+
 ## v2.1.0
 
 ### Features
