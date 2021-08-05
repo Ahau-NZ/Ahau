@@ -16,6 +16,7 @@ import analytics from './modules/analytics'
 import collection from './modules/collection/'
 import settings from './modules/settings/'
 import story from './modules/story/'
+import table from './modules/table'
 
 import { apolloProvider } from '../plugins/vue-apollo'
 
@@ -135,6 +136,7 @@ export default new Vuex.Store({
     collection: collection(apollo),
     settings: settings(apollo),
     whakapapa: whakapapa(apollo),
-    story: story(apollo)
+    story: story(apollo),
+    table: table(apollo)
   }
 })

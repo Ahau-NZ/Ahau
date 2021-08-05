@@ -27,8 +27,8 @@
                 {{ t('name') }}
               </p>
               <SearchBar
-                :nameFilterString.sync="nameFilterString"
-                :searchFilter="true"
+                @change="updateTableFilter({ type: 'name', value: $event})"
+                isFilter
               />
             </v-col>
           </v-row>
@@ -38,8 +38,8 @@
                 {{ t('location') }}
               </p>
               <SearchBar
-                :locationFilterString.sync="locationFilterString"
-                :locationFilter="true"
+                @change="updateTableFilter({ type: 'location', value: $event})"
+                isFilter
               />
             </v-col>
           </v-row>
@@ -49,8 +49,8 @@
                 {{ t('skills') }}
               </p>
               <SearchBar
-                :skillsFilterString.sync="skillsFilterString"
-                :skillsFilter="true"
+                @change="updateTableFilter({ type: 'skills', value: $event})"
+                isFilter
               />
             </v-col>
           </v-row>
@@ -59,19 +59,21 @@
               <p class="profile-label overline">
                 {{ t('age') }}
               </p>
-              <v-text-field
-                v-model="lowerAgeFilter"
-                :label="t('lowerAge')"
-                :error="ageError"
-              />
-              <v-text-field
-                v-model="upperAgeFilter"
-                :label="t('upperAge')"
-                :error="ageError"
-              />
-              <div v-if="ageError" style="color: red;" cols="12 pa-0" align="center" class="custom-label">
-                {{ ageErrorMessage }}
-              </div>
+              <v-range-slider
+                v-model="ageRange"
+                min="0"
+                max="150"
+                hide-details
+                class="align-center mt-12"
+                thumb-label="always"
+              >
+                <template v-slot:prepend>
+                  <p class="profile-label overline">Min</p>
+                </template>
+                <template v-slot:append>
+                  <p class="profile-label overline">Max</p>
+                </template>
+              </v-range-slider>
             </v-col>
           </v-row>
         </v-container>
@@ -95,6 +97,9 @@
 
 <script>
 import SearchBar from '@/components/button/SearchBar.vue'
+import { createNamespacedHelpers } from 'vuex'
+
+const { mapActions: mapTableActions, mapGetters: mapTableGetters } = createNamespacedHelpers('table')
 
 export default {
   name: 'FilterMenu',
@@ -103,75 +108,25 @@ export default {
   },
   data () {
     return {
-      nameFilterString: '',
-      locationFilterString: '',
-      skillsFilterString: '',
-      lowerAgeFilter: 0,
-      upperAgeFilter: 0,
-      ageErrorMessage: '',
-      searchNodeId: null
-    }
-  },
-  watch: {
-    nameFilterString (newValue) {
-      this.$emit('update:nameFilterString', newValue)
-    },
-    locationFilterString (newValue) {
-      this.$emit('update:locationFilterString', newValue)
-    },
-    skillsFilterString (newValue) {
-      this.$emit('update:skillsFilterString', newValue)
-    },
-    lowerAgeFilter (newValue) {
-      const upper = parseInt(this.upperAgeFilter)
-      const lower = parseInt(newValue)
-      const invalidRange = lower >= upper || lower < 0
-
-      if (isNaN(lower)) this.ageErrorMessage = this.t('validLower')
-      else if (isNaN(upper)) this.ageErrorMessage = this.t('validUpper')
-      else if (invalidRange) this.ageErrorMessage = this.t('invalidRange')
-      else {
-        this.ageErrorMessage = ''
-        this.$emit('update:lowerAgeFilter', lower)
-        this.$emit('update:upperAgeFilter', upper)
-      }
-    },
-    upperAgeFilter (newValue) {
-      const lower = parseInt(this.lowerAgeFilter)
-      const upper = parseInt(newValue)
-      const invalidRange = lower >= upper || lower < 0
-
-      if (isNaN(upper)) this.ageErrorMessage = this.t('validUpper')
-      else if (isNaN(lower)) this.ageErrorMessage = this.t('validLower')
-      else if (invalidRange) this.ageErrorMessage = this.t('invalidRange')
-      else {
-        this.ageErrorMessage = ''
-        this.$emit('update:lowerAgeFilter', lower)
-        this.$emit('update:upperAgeFilter', upper)
-      }
-    },
-    ageErrorMessage (newValue) {
-      if (newValue !== '') {
-        this.$emit('update:lowerAgeFilter', 0)
-        this.$emit('update:upperAgeFilter', 0)
-      }
+      searchNodeId: null,
+      ageRange: [0, 150]
     }
   },
   computed: {
-    ageError () {
-      return this.ageErrorMessage !== ''
+    ...mapTableGetters(['tableFilter'])
+  },
+  watch: {
+    ageRange ([min, max]) {
+      this.updateTableFilter({ type: 'age', value: { min, max } })
     }
   },
   methods: {
+    ...mapTableActions(['updateTableFilter', 'resetTableFilters']),
     close () {
       this.$emit('close')
     },
     reset () {
-      this.$emit('update:nameFilterString', '')
-      this.$emit('update:locationFilterString', '')
-      this.$emit('update:skillsFilterString', '')
-      this.$emit('update:lowerAgeFilter', 0)
-      this.$emit('update:upperAgeFilter', 0)
+      this.resetTableFilters()
       this.close()
     },
     t (key, vars) {

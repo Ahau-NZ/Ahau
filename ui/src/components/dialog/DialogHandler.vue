@@ -93,11 +93,6 @@
       v-if="isActive('table-filter-menu')"
       :show="isActive('table-filter-menu')"
       :title="t('filterMenuTitle')"
-      :nameFilterString.sync="nameFilterString"
-      :locationFilterString.sync="locationFilterString"
-      :skillsFilterString.sync="skillsFilterString"
-      :lowerAgeFilter.sync="lowerAgeFilter"
-      :upperAgeFilter.sync="upperAgeFilter"
       @close="close"
     />
     <ComingSoonDialog :show="isActive('coming-soon')" @close="close" />
@@ -198,12 +193,7 @@ export default {
       parents: [],
       parentIndex: null,
       profile: {},
-      tribe: {},
-      nameFilterString: '',
-      locationFilterString: '',
-      skillsFilterString: '',
-      lowerAgeFilter: 0,
-      upperAgeFilter: 0
+      tribe: {}
     }
   },
   computed: {
@@ -233,21 +223,6 @@ export default {
       } else {
         document.body.classList.remove('stop-scroll')
       }
-    },
-    nameFilterString (newValue) {
-      this.$emit('update:nameFilterString', newValue)
-    },
-    locationFilterString (newValue) {
-      this.$emit('update:locationFilterString', newValue)
-    },
-    skillsFilterString (newValue) {
-      this.$emit('update:skillsFilterString', newValue)
-    },
-    lowerAgeFilter (newValue) {
-      this.$emit('update:lowerAgeFilter', newValue)
-    },
-    upperAgeFilter (newValue) {
-      this.$emit('update:upperAgeFilter', newValue)
     }
   },
   methods: {
