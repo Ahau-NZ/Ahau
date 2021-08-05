@@ -623,8 +623,8 @@ export default {
       if (this.tableFilter.skills) {
         skillsFilter = this.skillsMatchesFilter(node)
       }
-      if (this.tableFilter.age.max >= 1) {
-        ageFilter = this.ageMatchesFilter(node)
+      if (this.tableFilter.age.max < 150) {
+        ageFilter = this.filterByAge(node)
       }
 
       return nameFilter && locationFilter && skillsFilter && ageFilter && !nodeDeceased
@@ -677,7 +677,7 @@ export default {
 
       return skillFound
     },
-    ageMatchesFilter (node) {
+    filterByAge (node) {
       const min = this.tableFilter.age.min
       const max = this.tableFilter.age.max
 

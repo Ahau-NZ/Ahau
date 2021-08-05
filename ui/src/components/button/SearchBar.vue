@@ -113,7 +113,6 @@ export default {
       return calculateAge(aliveInterval)
     },
     close () {
-      this.$emit('update:nameFilterString', '')
       this.$emit('close')
     },
     setSearchNode (data, event) {

@@ -4,7 +4,7 @@ const defaultFilter = {
   skills: '',
   age: {
     min: 0,
-    max: 0 // filter is disabled when max is 0
+    max: 150 // filter is disabled when max is this
   }
 }
 
@@ -28,13 +28,10 @@ export default function () {
       state.tableFilter.skills = skills
     },
     updateAgeFilter (state, age) {
-      if (age.max === 150) age.max = 0
       state.tableFilter.age = age
     },
     updateFilter (state, tableFilter) {
       state.tableFilter = tableFilter
-      state.tableFilter.age.min = 0
-      state.tableFilter.age.max = 0
     }
   }
 
