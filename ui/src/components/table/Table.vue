@@ -121,6 +121,7 @@ import { SORT } from '@/lib/constants.js'
 
 import { mapActions, createNamespacedHelpers } from 'vuex'
 const { mapGetters: mapWhakapapaGetters } = createNamespacedHelpers('whakapapa')
+const { mapGetters: mapFilterGetters } = createNamespacedHelpers('table')
 
 export default {
   props: {
@@ -143,26 +144,6 @@ export default {
       required: false
     },
     pan: {
-      type: Number,
-      default: 0
-    },
-    nameFilterString: {
-      type: String,
-      default: ''
-    },
-    locationFilterString: {
-      type: String,
-      default: ''
-    },
-    skillsFilterString: {
-      type: String,
-      default: ''
-    },
-    lowerAgeFilter: {
-      type: Number,
-      default: 0
-    },
-    upperAgeFilter: {
       type: Number,
       default: 0
     },
@@ -207,6 +188,7 @@ export default {
 
   computed: {
     ...mapWhakapapaGetters(['nestedWhakapapa']),
+    ...mapFilterGetters(['tableFilter']),
     colWidth () {
       if (this.flatten) return 300
       return 350
@@ -632,16 +614,16 @@ export default {
       var ageFilter = true
       var nodeDeceased = this.filter && node.data.deceased
 
-      if (this.nameFilterString) {
+      if (this.tableFilter.name) {
         nameFilter = this.nameMatchesFilter(node)
       }
-      if (this.locationFilterString) {
+      if (this.tableFilter.location) {
         locationFilter = this.locationMatchesFilter(node)
       }
-      if (this.skillsFilterString) {
+      if (this.tableFilter.skills) {
         skillsFilter = this.skillsMatchesFilter(node)
       }
-      if (this.upperAgeFilter >= 1) {
+      if (this.tableFilter.age.max >= 1) {
         ageFilter = this.ageMatchesFilter(node)
       }
 
@@ -650,7 +632,7 @@ export default {
       // return !(this.filter && node.data.deceased)
     },
     nameMatchesFilter (node) {
-      const search = this.setString(this.nameFilterString)
+      const search = this.setString(this.tableFilter.name)
       const preferredName = this.setString(node.data.preferredName)
       const legalName = this.setString(node.data.legalName)
 
@@ -670,7 +652,7 @@ export default {
       return altNameFound
     },
     locationMatchesFilter (node) {
-      const search = this.setString(this.locationFilterString)
+      const search = this.setString(this.tableFilter.location)
       const address = this.setString(node.data.address)
       const city = this.setString(node.data.city)
       const postCode = this.setString(node.data.postCode)
@@ -683,7 +665,7 @@ export default {
     },
     skillsMatchesFilter (node) {
       const skills = node.data.education
-      const search = this.setString(this.skillsFilterString)
+      const search = this.setString(this.tableFilter.skills)
       var skillFound = false
 
       if (skills[0] !== '') {
@@ -696,9 +678,12 @@ export default {
       return skillFound
     },
     ageMatchesFilter (node) {
+      const min = this.tableFilter.age.min
+      const max = this.tableFilter.age.max
+
       const nodeAge = calculateAge(node.data.aliveInterval)
       if (!nodeAge) return false
-      if (nodeAge >= this.lowerAgeFilter && nodeAge <= this.upperAgeFilter) return true
+      if (nodeAge >= min && nodeAge <= max) return true
       else return false
     },
     openContextMenu (event) {

@@ -3,18 +3,18 @@
     v-model="searchString"
     :items="items"
     :menu-props=" { light: true } "
-    :append-icon="searchNodeId ? 'mdi-cancel' : !isFilterSearchBar ? 'mdi-close' : ''"
+    :append-icon="searchNodeId ? 'mdi-cancel' : !isFilter ? 'mdi-close' : ''"
     @click:append="close()"
     placeholder="Search"
-    :no-data-text="isFilterSearchBar ? '' : 'no suggestions'"
+    :no-data-text="isFilter ? '' : 'no suggestions'"
     :search-input.sync="searchString"
     solo
     rounded
     light
     hide-selected
     dense
-    :readonly="searchNodeId !== '' && !isFilterSearchBar"
-    :class="isFilterSearchBar ? 'search-input-filter' : 'search-input'"
+    :readonly="searchNodeId !== '' && !isFilter"
+    :class="isFilter ? 'search-input-filter' : 'search-input'"
     autofocus
   >
     <template v-slot:item="data">
@@ -55,9 +55,7 @@ export default {
   },
   props: {
     searchNodeId: String,
-    searchFilter: Boolean,
-    locationFilter: Boolean,
-    skillsFilter: Boolean,
+    isFilter: Boolean,
     searchNodeName: String
   },
   data () {
@@ -97,18 +95,13 @@ export default {
         })
     },
     items () {
-      if (this.isFilterSearchBar) return []
+      if (this.isFilter) return []
       return this.nodes
-    },
-    isFilterSearchBar () {
-      return this.searchFilter || this.locationFilter || this.skillsFilter
     }
   },
   watch: {
     searchString (newValue) {
-      if (this.searchFilter) this.$emit('update:nameFilterString', newValue)
-      if (this.locationFilter) this.$emit('update:locationFilterString', newValue)
-      if (this.skillsFilter) this.$emit('update:skillsFilterString', newValue)
+      this.$emit('change', newValue)
     }
   },
   methods: {

@@ -50,7 +50,7 @@
             :searchNodeName="searchNodeName"
           />
         </div>
-        <div v-else-if="nameFilterString === ''" class="icon-button">
+        <div v-else class="icon-button">
           <SearchButton :search.sync="search" />
         </div>
         <div v-if="whakapapa.table" class="icon-button">
@@ -167,11 +167,6 @@
           @load-descendants="loadDescendants($event)"
           @open-context-menu="openTableContextMenu($event)"
           :searchNodeId="searchNodeId"
-          :nameFilterString="nameFilterString"
-          :locationFilterString.sync="locationFilterString"
-          :skillsFilterString.sync="skillsFilterString"
-          :lowerAgeFilter.sync="lowerAgeFilter"
-          :upperAgeFilter.sync="upperAgeFilter"
           :sortValue="sortValue"
           :sortEvent="sortEvent"
           :searchNodeEvent="searchNodeEvent"
@@ -196,11 +191,6 @@
       :loadDescendants="loadDescendants"
       :loadKnownFamily="loadKnownFamily"
       :getRelatives="getRelatives"
-      :nameFilterString.sync="nameFilterString"
-      :locationFilterString.sync="locationFilterString"
-      :skillsFilterString.sync="skillsFilterString"
-      :lowerAgeFilter.sync="lowerAgeFilter"
-      :upperAgeFilter.sync="upperAgeFilter"
       @updateFocus="updateFocus($event)"
       :setSelectedProfile="setSelectedProfile"
       @change-focus="changeFocus($event)"
@@ -260,6 +250,10 @@ const {
   mapMutations: mapWhakapapaMutations
 } = createNamespacedHelpers('whakapapa')
 
+const {
+  mapActions: mapTableActions
+} = createNamespacedHelpers('table')
+
 export default {
   name: 'WhakapapaShow',
   components: {
@@ -295,11 +289,6 @@ export default {
       pan: 0,
       search: false,
       searchFilter: false,
-      nameFilterString: '',
-      locationFilterString: '',
-      skillsFilterString: '',
-      lowerAgeFilter: 0,
-      upperAgeFilter: 0,
       searchNodeId: '',
       searchNodeEvent: null,
       showWhakapapaHelper: false,
@@ -399,8 +388,7 @@ export default {
     },
     searchFilter (newValue) {
       if (newValue === true) {
-        this.lowerAgeFilter = 0
-        this.upperAgeFilter = 0
+        this.resetTableFilters() // Resets any active filters when opening table filter menu
         this.updateDialog('table-filter-menu', null)
         this.flatten = true
       }
@@ -412,6 +400,7 @@ export default {
     ...mapActions(['setLoading']),
     ...mapWhakapapaMutations(['setNestedWhakapapa', 'setWhakapapa']),
     ...mapWhakapapaActions(['getWhakapapaView']),
+    ...mapTableActions(['resetTableFilters']),
     async reload () {
       this.whakapapaView = await this.getWhakapapaView(this.$route.params.whakapapaId)
     },
