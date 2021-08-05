@@ -608,30 +608,17 @@ export default {
       })
     },
     applyFilter (node) {
-      var nameFilter = true
-      var locationFilter = true
-      var skillsFilter = true
-      var ageFilter = true
+      const nameFilter = this.nameMatchesFilter(node)
+      const locationFilter = this.locationMatchesFilter(node)
+      const skillsFilter = this.skillsMatchesFilter(node)
+      const ageFilter = this.filterByAge(node)
       var nodeDeceased = this.filter && node.data.deceased
 
-      if (this.tableFilter.name) {
-        nameFilter = this.nameMatchesFilter(node)
-      }
-      if (this.tableFilter.location) {
-        locationFilter = this.locationMatchesFilter(node)
-      }
-      if (this.tableFilter.skills) {
-        skillsFilter = this.skillsMatchesFilter(node)
-      }
-      if (this.tableFilter.age.max < 150) {
-        ageFilter = this.filterByAge(node)
-      }
-
       return nameFilter && locationFilter && skillsFilter && ageFilter && !nodeDeceased
-
-      // return !(this.filter && node.data.deceased)
     },
     nameMatchesFilter (node) {
+      if (!this.tableFilter.name) return true
+
       const search = this.setString(this.tableFilter.name)
       const preferredName = this.setString(node.data.preferredName)
       const legalName = this.setString(node.data.legalName)
@@ -652,6 +639,8 @@ export default {
       return altNameFound
     },
     locationMatchesFilter (node) {
+      if (!this.tableFilter.location) return true
+
       const search = this.setString(this.tableFilter.location)
       const address = this.setString(node.data.address)
       const city = this.setString(node.data.city)
@@ -664,6 +653,8 @@ export default {
             country.includes(search)
     },
     skillsMatchesFilter (node) {
+      if (!this.tableFilter.skills) return true
+
       const skills = node.data.education
       const search = this.setString(this.tableFilter.skills)
       var skillFound = false
@@ -678,6 +669,8 @@ export default {
       return skillFound
     },
     filterByAge (node) {
+      if (!(this.tableFilter.age.max < 150)) return true
+
       const min = this.tableFilter.age.min
       const max = this.tableFilter.age.max
 

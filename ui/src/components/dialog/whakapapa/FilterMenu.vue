@@ -68,10 +68,10 @@
                 thumb-label="always"
               >
                 <template v-slot:prepend>
-                  <p class="profile-label overline">Min</p>
+                  <p class="profile-label overline">{{ t('min') }}</p>
                 </template>
                 <template v-slot:append>
-                  <p class="profile-label overline">Max</p>
+                  <p class="profile-label overline">{{ t('max') }}</p>
                 </template>
               </v-range-slider>
             </v-col>
