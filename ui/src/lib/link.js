@@ -45,6 +45,7 @@ function leftPartnersCount (node) {
 }
 
 function rightPartnersCount (node) {
+  if (node.data.partners.length === 1) return 0
   return sideCount(node, 1)
 }
 
@@ -52,7 +53,7 @@ function sideCount (node, direction) {
   const len = visiblePartners(node)
 
   if (len === 0) return 0
-  if (len === 1) return 0.8
+  if (len === 1) return 1
 
   const mid = halfwayPoint(len)
 

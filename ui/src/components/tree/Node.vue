@@ -94,7 +94,7 @@ export default {
       return false
     },
     hasAncestors () {
-      return this.profile.parents.length > 0
+      return this.profile.parents && this.profile.parents.length > 0
     },
     clipPathId () {
       return this.partner ? 'partnerCirlce' : 'myCircle'

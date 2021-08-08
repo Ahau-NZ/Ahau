@@ -13,6 +13,12 @@
 
 ### Features
 
+- Added non-partner parents to whakapapa tree
+
+- Moved settings dialog/form into its own tab in EditNodeDialog
+- Updated storage management in settings:
+  - can now choose to prune hyperBlobs or not
+  - can specify the max remote space hyperBlobs are allowed to use up before it prunes
 - Settings
   - moved settings from profile page to the dialog where you edit your profile as a tab
   - more storage management settings
