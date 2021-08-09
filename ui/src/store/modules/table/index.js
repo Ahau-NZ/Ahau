@@ -1,16 +1,14 @@
-const defaultFilter = {
-  name: '',
-  location: '',
-  skills: '',
-  age: {
-    min: 0,
-    max: 150 // filter is disabled when max is this
-  }
-}
-
 export default function () {
   const state = {
-    tableFilter: defaultFilter
+    tableFilter: {
+      name: '',
+      location: '',
+      skills: '',
+      age: {
+        min: 0,
+        max: 150 // filter is disabled when max is this
+      }
+    }
   }
 
   const getters = {
@@ -44,7 +42,17 @@ export default function () {
       else console.error('Unknown table filter')
     },
     resetTableFilters ({ commit }) {
-      commit('updateFilter', defaultFilter)
+      const resetFilter = {
+        name: '',
+        location: '',
+        skills: '',
+        age: {
+          min: 0,
+          max: 150 // filter is disabled when max is this
+        }
+      }
+
+      commit('updateFilter', resetFilter)
     }
   }
 
