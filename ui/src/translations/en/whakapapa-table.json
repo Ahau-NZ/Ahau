@@ -6,10 +6,6 @@
   "age": "Age",
   "min": "Min",
   "max": "Max",
-  "validLower": "Enter a valid lower age",
-  "validUpper": "Enter a valid upper age",
-  "invalidRange": "Invalid age range",
-  "invalidNumbers": "Lower must be at least 0 and upper must be at least 1",
   "apply": "Apply",
   "cancel": "Cancel"
 }
