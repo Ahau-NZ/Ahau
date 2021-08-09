@@ -5,7 +5,7 @@
         :transform="`translate(${treeX - radius} ${treeY - radius})`"
         ref="tree"
       >
-        <SubTree :root="treeLayout(this.root)" :openMenu="openMenu" :changeFocus="changeFocus" :centerNode="centerNode"/>
+        <SubTree :root="treeLayout(this.root)" :openMenu="openMenu" :changeFocus="changeFocus" :centerNode="centerNode" :nodeCentered="nodeCentered"/>
       </g>
     </g>
     <!-- zoom in, zoom out buttons -->
@@ -148,22 +148,14 @@ export default {
           this.nodeSeparationY
         ])
         .separation((a, b) => {
-          /*
-            NOTE:
-            - to change space between siblings check a.parent === b.parent
-            - to change space between cousins check a.parent !== b.parent
-          */
+          // const newA = { data: { ...a.data, partners: this.getNodePartners(a) } }
+          // const newB = { data: { ...b.data, partners: this.getNodePartners(b) } }
 
-          // separation between a and b is determined by their partners
-          let rightNodeCount = settings.separation.rightPartnersCount(b)
-          let leftNodeCount = settings.separation.leftPartnersCount(a)
+          const separation = (a.parent === b.parent)
+            ? this.distanceBetweenNodes(b, a) // siblings (left=B, right=A)
+            : this.distanceBetweenNodes(a, b, true) // cousins (left=A, right=B)
 
-          if (a.parent !== b.parent) {
-            rightNodeCount = settings.separation.rightPartnersCount(a)
-            leftNodeCount = settings.separation.leftPartnersCount(b)
-          }
-
-          return 1 + 0.9 * (rightNodeCount + leftNodeCount)
+          return separation
         })
     },
     //  returns a nested data structure representing a tree based on the treeData object
@@ -211,6 +203,21 @@ export default {
 
   methods: {
     ...mapActions(['setLoading']),
+    distanceBetweenNodes (leftNode, rightNode, cousins) {
+      const leftNodesRightPartners = settings.separation.rightPartnersCount(leftNode)
+      const rightNodesLeftPartners = settings.separation.leftPartnersCount(rightNode)
+
+      var combinedPartners = leftNodesRightPartners + rightNodesLeftPartners
+
+      if (cousins) {
+        // depends on the parents partners
+        const leftNodesParentPartners = settings.separation.rightPartnersCount(leftNode.parent)
+        const rightNodesParentPartners = settings.separation.rightPartnersCount(rightNode.parent)
+        combinedPartners += 0.5 * (leftNodesParentPartners + rightNodesParentPartners)
+      }
+
+      return 1 + (0.8 * combinedPartners)
+    },
     pathStroke (sourceId, targetId) {
       if (!this.paths) return 'darkgrey'
 

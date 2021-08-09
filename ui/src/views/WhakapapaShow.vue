@@ -205,6 +205,9 @@
 </template>
 
 <script>
+import uniqby from 'lodash.uniqby'
+import flatten from 'lodash.flatten'
+
 import { VueContext } from 'vue-context'
 
 import WhakapapaShowViewCard from '@/components/whakapapa/WhakapapaShowViewCard.vue'
@@ -506,10 +509,35 @@ export default {
 
       // map all links
       person.children = await this.mapChildren(person)
+      person.partners = [...person.partners, ...this.getOtherPartners(person)]
 
       // if this person is the selected one, then we make sure we keep that profile up to date
       if (this.selectedProfile && this.selectedProfile.id === person.id) this.updateSelectedProfile(person)
       return person
+    },
+    getOtherPartners (person) {
+      // get all the other parents
+      let formatted = flatten(person.children.map(d => d.parents))
+        .filter((parent) => {
+          return (
+            (parent.id !== person.id) &&
+            !person.partners.some(partner => partner.id === parent.id)
+          )
+        })
+
+      formatted = uniqby(formatted, 'id')
+        .map(partner => {
+          return {
+            ...partner, // their profile
+            isNonPartner: true,
+            children: this.getOtherParentChildren(person, partner)
+          }
+        })
+
+      return formatted
+    },
+    getOtherParentChildren (mainParent, partner) {
+      return mainParent.children.filter(child => child.parents.some(parent => parent.id === partner.id))
     },
     async mapChildren (person) {
       return Promise.all(person.children.map(async child => {
