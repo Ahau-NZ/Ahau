@@ -50,7 +50,7 @@
             :searchNodeName="searchNodeName"
           />
         </div>
-        <div v-else-if="searchFilterString === ''" class="icon-button">
+        <div v-else class="icon-button">
           <SearchButton :search.sync="search" />
         </div>
         <div v-if="whakapapa.table" class="icon-button">
@@ -167,7 +167,6 @@
           @load-descendants="loadDescendants($event)"
           @open-context-menu="openTableContextMenu($event)"
           :searchNodeId="searchNodeId"
-          :searchFilterString="searchFilterString"
           :sortValue="sortValue"
           :sortEvent="sortEvent"
           :searchNodeEvent="searchNodeEvent"
@@ -192,7 +191,6 @@
       :loadDescendants="loadDescendants"
       :loadKnownFamily="loadKnownFamily"
       :getRelatives="getRelatives"
-      :searchFilterString.sync="searchFilterString"
       @updateFocus="updateFocus($event)"
       :setSelectedProfile="setSelectedProfile"
       @change-focus="changeFocus($event)"
@@ -255,6 +253,10 @@ const {
   mapMutations: mapWhakapapaMutations
 } = createNamespacedHelpers('whakapapa')
 
+const {
+  mapActions: mapTableActions
+} = createNamespacedHelpers('table')
+
 export default {
   name: 'WhakapapaShow',
   components: {
@@ -290,7 +292,6 @@ export default {
       pan: 0,
       search: false,
       searchFilter: false,
-      searchFilterString: '',
       searchNodeId: '',
       searchNodeEvent: null,
       showWhakapapaHelper: false,
@@ -390,6 +391,7 @@ export default {
     },
     searchFilter (newValue) {
       if (newValue === true) {
+        this.resetTableFilters() // Resets any active filters when opening table filter menu
         this.updateDialog('table-filter-menu', null)
         this.flatten = true
       }
@@ -401,6 +403,7 @@ export default {
     ...mapActions(['setLoading']),
     ...mapWhakapapaMutations(['setNestedWhakapapa', 'setWhakapapa']),
     ...mapWhakapapaActions(['getWhakapapaView']),
+    ...mapTableActions(['resetTableFilters']),
     async reload () {
       this.whakapapaView = await this.getWhakapapaView(this.$route.params.whakapapaId)
     },

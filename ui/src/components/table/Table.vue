@@ -121,6 +121,7 @@ import { SORT } from '@/lib/constants.js'
 
 import { mapActions, createNamespacedHelpers } from 'vuex'
 const { mapGetters: mapWhakapapaGetters } = createNamespacedHelpers('whakapapa')
+const { mapGetters: mapFilterGetters } = createNamespacedHelpers('table')
 
 export default {
   props: {
@@ -145,10 +146,6 @@ export default {
     pan: {
       type: Number,
       default: 0
-    },
-    searchFilterString: {
-      type: String,
-      default: ''
     },
     sortValue: {
       type: String,
@@ -191,6 +188,7 @@ export default {
 
   computed: {
     ...mapWhakapapaGetters(['nestedWhakapapa']),
+    ...mapFilterGetters(['tableFilter']),
     colWidth () {
       if (this.flatten) return 300
       return 350
@@ -610,35 +608,76 @@ export default {
       })
     },
     applyFilter (node) {
-      if (this.searchFilterString) {
-        console.log('going in')
-        if (this.nameMatchesFilter(node)) return true
-        else return false
-      }
-      if (this.filter && node.data.deceased) return false
-      return true
+      const nameFilter = this.nameMatchesFilter(node)
+      const locationFilter = this.locationMatchesFilter(node)
+      const skillsFilter = this.skillsMatchesFilter(node)
+      const ageFilter = this.filterByAge(node)
+      var nodeDeceased = this.filter && node.data.deceased
+
+      return nameFilter && locationFilter && skillsFilter && ageFilter && !nodeDeceased
     },
     nameMatchesFilter (node) {
-      const search = this.setString(this.searchFilterString)
+      if (!this.tableFilter.name) return true
+
+      const search = this.setString(this.tableFilter.name)
       const preferredName = this.setString(node.data.preferredName)
       const legalName = this.setString(node.data.legalName)
 
-      return isEqual(preferredName, search) ||
-            preferredName.includes(search) ||
-            isEqual(legalName, search) ||
+      return preferredName.includes(search) ||
             legalName.includes(search) ||
             this.findAltNameMatch(search, node.data.altNames)
     },
     findAltNameMatch (filterString, altNames) {
+      var altNameFound = false
+
       if (altNames.length > 0) {
         for (var i = 0; i < altNames.length; i++) {
           const currAltName = this.setString(altNames[i])
-          if (isEqual(currAltName, filterString) || currAltName.includes(filterString)) {
-            return true
-          }
+          if (currAltName.includes(filterString)) altNameFound = true
         }
       }
-      return false
+      return altNameFound
+    },
+    locationMatchesFilter (node) {
+      if (!this.tableFilter.location) return true
+
+      const search = this.setString(this.tableFilter.location)
+      const address = this.setString(node.data.address)
+      const city = this.setString(node.data.city)
+      const postCode = this.setString(node.data.postCode)
+      const country = this.setString(node.data.country)
+
+      return address.includes(search) ||
+            city.includes(search) ||
+            postCode.includes(search) ||
+            country.includes(search)
+    },
+    skillsMatchesFilter (node) {
+      if (!this.tableFilter.skills) return true
+
+      const skills = node.data.education
+      const search = this.setString(this.tableFilter.skills)
+      var skillFound = false
+
+      if (skills[0] !== '') {
+        for (var i = 0; i < skills.length; i++) {
+          const currSkill = this.setString(skills[i])
+          if (currSkill.includes(search)) skillFound = true
+        }
+      }
+
+      return skillFound
+    },
+    filterByAge (node) {
+      if (!(this.tableFilter.age.max < 150)) return true
+
+      const min = this.tableFilter.age.min
+      const max = this.tableFilter.age.max
+
+      const nodeAge = calculateAge(node.data.aliveInterval)
+      if (!nodeAge) return false
+      if (nodeAge >= min && nodeAge <= max) return true
+      else return false
     },
     openContextMenu (event) {
       this.$emit('open-context-menu', event)

@@ -18,22 +18,62 @@
             <v-icon @click="reset" color="secondary">mdi-close</v-icon>
           </v-btn>
         </v-row>
-          <v-row class="menu-title">
             <v-col cols="12">
-              <h1>Apply Table Filters</h1>
+              <h1>{{ t('applyTableFilters') }}</h1>
             </v-col>
+          <v-row>
+            <v-col>
+              <p class="profile-label overline" style="">
+                {{ t('name') }}
+              </p>
+              <SearchBar
+                @change="updateTableFilter({ type: 'name', value: $event})"
+                isFilter
+              />
+            </v-col>
+          </v-row>
+          <v-row>
             <v-col>
               <p class="profile-label overline">
-                Name
+                {{ t('location') }}
               </p>
-            </v-col>
-            <v-col cols="12">
               <SearchBar
-                :searchNodeId.sync="searchNodeId"
-                :searchFilterString.sync="searchFilterString"
-                :searchFilter="true"
-                @close="clickedOffSearchFilter()"
+                @change="updateTableFilter({ type: 'location', value: $event})"
+                isFilter
               />
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col>
+              <p class="profile-label overline">
+                {{ t('skills') }}
+              </p>
+              <SearchBar
+                @change="updateTableFilter({ type: 'skills', value: $event})"
+                isFilter
+              />
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col>
+              <p class="profile-label overline">
+                {{ t('age') }}
+              </p>
+              <v-range-slider
+                v-model="ageRange"
+                min="0"
+                max="150"
+                hide-details
+                class="align-center mt-12"
+                thumb-label="always"
+              >
+                <template v-slot:prepend>
+                  <p class="profile-label overline">{{ t('min') }}</p>
+                </template>
+                <template v-slot:append>
+                  <p class="profile-label overline">{{ t('max') }}</p>
+                </template>
+              </v-range-slider>
             </v-col>
           </v-row>
         </v-container>
@@ -42,10 +82,10 @@
           <v-row>
             <v-col cols="12">
               <v-btn @click="close" text large color="blue">
-                Apply
+                {{ t('apply') }}
               </v-btn>
               <v-btn @click="reset" text large color="red">
-                Cancel
+                {{ t('cancel') }}
               </v-btn>
             </v-col>
           </v-row>
@@ -57,6 +97,9 @@
 
 <script>
 import SearchBar from '@/components/button/SearchBar.vue'
+import { createNamespacedHelpers } from 'vuex'
+
+const { mapActions: mapTableActions, mapGetters: mapTableGetters } = createNamespacedHelpers('table')
 
 export default {
   name: 'FilterMenu',
@@ -65,22 +108,29 @@ export default {
   },
   data () {
     return {
-      searchFilterString: '',
-      searchNodeId: null
+      searchNodeId: null,
+      ageRange: [0, 150]
     }
   },
+  computed: {
+    ...mapTableGetters(['tableFilter'])
+  },
   watch: {
-    searchFilterString (newValue) {
-      this.$emit('update:searchFilterString', newValue)
+    ageRange ([min, max]) {
+      this.updateTableFilter({ type: 'age', value: { min, max } })
     }
   },
   methods: {
+    ...mapTableActions(['updateTableFilter', 'resetTableFilters']),
     close () {
       this.$emit('close')
     },
     reset () {
-      this.$emit('update:searchFilterString', '')
+      this.resetTableFilters()
       this.close()
+    },
+    t (key, vars) {
+      return this.$t('whakapapaTable.' + key, vars)
     }
   }
 }

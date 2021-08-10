@@ -93,7 +93,6 @@
       v-if="isActive('table-filter-menu')"
       :show="isActive('table-filter-menu')"
       :title="t('filterMenuTitle')"
-      :searchFilterString.sync="searchFilterString"
       @close="close"
     />
     <ComingSoonDialog :show="isActive('coming-soon')" @close="close" />
@@ -194,8 +193,7 @@ export default {
       parents: [],
       parentIndex: null,
       profile: {},
-      tribe: {},
-      searchFilterString: ''
+      tribe: {}
     }
   },
   computed: {
@@ -225,9 +223,6 @@ export default {
       } else {
         document.body.classList.remove('stop-scroll')
       }
-    },
-    searchFilterString (newValue) {
-      this.$emit('update:searchFilterString', newValue)
     }
   },
   methods: {

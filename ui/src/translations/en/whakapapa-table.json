@@ -1,0 +1,11 @@
+{
+  "applyTableFilters": "Apply Table Filters",
+  "name": "Name",
+  "location": "Location",
+  "skills": "Skills",
+  "age": "Age",
+  "min": "Min",
+  "max": "Max",
+  "apply": "Apply",
+  "cancel": "Cancel"
+}
