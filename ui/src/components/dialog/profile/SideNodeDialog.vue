@@ -158,6 +158,22 @@
 
                 <hr v-if="profile.parents" class="family-divider"/>
 
+                <v-col v-if="profile.partners && profile.partners.length" :cols="12" class="pa-0">
+                  <AvatarGroup
+                    :profiles="profile.partners"
+                    :group-title="t('partners')"
+                    size="50px"
+                    :show-labels="true"
+                    @profile-click="openProfile($event)"
+                  >
+                    <template v-slot:action >
+                      <AddButton v-if="!preview && profile.canEdit" @click="toggleNew('partner')" class="pb-4" justify="start"/>
+                    </template>
+                  </AvatarGroup>
+                </v-col>
+
+                <hr v-if="profile.partners && profile.partners.length" class="family-divider"/>
+
                 <v-col :cols="12" v-if="profile.siblings && profile.siblings.length" class="pa-0">
                   <AvatarGroup
                     :profiles="profile.siblings"
