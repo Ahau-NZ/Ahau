@@ -1,6 +1,6 @@
 # Changelog | Ahau desktop
 
-## Current
+## v2.2.0
 
 ### Features
 
@@ -11,6 +11,12 @@
 - Can now create new stories when viewing a collection and saving that story adds it to that collection
 - Added location, skills and age filters to whakapapa table FilterMenu.vue
 - Added partners to SideNodeDialog.vue
+- new translations
+- clearing logging of config
+
+### Fixes
+
+- persist only custom config (and prune bloated config which might be causing bugs)
 
 ## v2.1.0
 

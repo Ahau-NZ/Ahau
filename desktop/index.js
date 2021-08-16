@@ -67,7 +67,7 @@ function printConfig (config) {
   const configTxt = chalk`{blue AHAU} {white.bgRed ${envName}}
 
 {bold feedId}  ${config.keys.id}
-{bold path}  ${config.path}
+{bold path}    ${config.path}
 {bold network}
   ├── host  ${config.host}
   ├── port  ${config.port}
