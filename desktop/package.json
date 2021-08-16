@@ -15,6 +15,8 @@
   },
   "dependencies": {
     "ahau-env": "^3.0.0",
+    "boxen": "^5.0.1",
+    "chalk": "^4.1.2",
     "electron-updater": "^4.3.8",
     "lodash.merge": "^4.6.2",
     "secret-stack": "^6.4.0",
