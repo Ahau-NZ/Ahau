@@ -2,7 +2,7 @@ const path = require('path')
 const ssbKeys = require('ssb-keys')
 const makeConfig = require('ssb-config/inject')
 const SecretStack = require('secret-stack')
-const env = require('ahau-env')
+const { ahau: env } = require('ahau-env')()
 
 const { createOrMigrate } = require('./config-helper')
 
@@ -17,7 +17,7 @@ if (process.env.PLATFORM === 'cordova') {
 
 // App name
 const oldAppName = process.env.NODE_ENV === 'development' ? 'ahau-dev' : 'ssb-ahau'
-const appName = env.ahau.appName
+const appName = env.appName
 const ssbPath = path.resolve(appDataDir, `.${appName}`)
 
 // Create or migrate config path
@@ -26,10 +26,10 @@ createOrMigrate(appDataDir, appName, oldAppName)
 const keys = ssbKeys.loadOrCreateSync(path.join(ssbPath, 'secret'))
 
 const config = makeConfig(appName, {
-  port: env.ahau.port,
+  port: env.port,
   path: ssbPath,
   keys,
-  caps: env.ahau.caps,
+  caps: env.caps,
   conn: {
     autostart: true
   },
@@ -57,18 +57,18 @@ const config = makeConfig(appName, {
     ]
   },
   serveBlobs: {
-    port: env.ahau.serveBlobs.port,
+    port: env.serveBlobs.port,
     cors: true,
     csp: ''
   },
   hyperBlobs: {
-    port: env.ahau.hyperBlobs.port,
+    port: env.hyperBlobs.port,
     autoPrune: false
   }
 })
 
 // eslint-disable-next-line no-useless-call
-SecretStack({ appKey: env.ahau.caps.shs })
+SecretStack({ appKey: env.caps.shs })
   // Core
   .use(require('ssb-master'))
   .use(require('ssb-db'))

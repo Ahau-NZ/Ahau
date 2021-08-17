@@ -9,6 +9,10 @@
 - [Apply this Android NDK hack for "mipsel-linux-android"](https://github.com/JaneaSystems/nodejs-mobile-cordova#android)
 
 
+**IMPORTANT**
+Use Node.js 12.19 AND npm 6, later version of npm aren't compiling the native modules.
+
+
 ```bash
 $ npm install
 $ npm run setup:mobile
@@ -27,6 +31,11 @@ $ npm run setup:mobile
 ```bash
 $ npm run dev:android
 // compiles everything and runs the Android app on a device
+```
+
+```bash
+$ npm run dev:android-prod
+// compiles everything and runs the Android app on a device (running in dev mode) with the Ahau environment of production (that can connect to Pataka in production)
 ```
 
 ```bash
@@ -69,6 +78,12 @@ When all of that is set up, just run
 
 ```bash
 $ npm run release:android   # from root folder
+// builds an apk to android
+```
+
+```bash
+$ npm run release:android-dev   # from root folder
+// builds an apk to android that connects with Pataka in development
 ```
 
 After it is done, you can find the APK file at
