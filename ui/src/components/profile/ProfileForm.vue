@@ -416,7 +416,8 @@ export default {
     isSideViewDialog: { type: Boolean, default: false },
     dialogType: { type: String, default: '' },
     type: String,
-    displayName: { type: String, default: '' }
+    displayName: { type: String, default: '' },
+    fullForm: { type: Boolean, default: false }
   },
   data () {
     return {
@@ -432,6 +433,7 @@ export default {
     }
   },
   mounted () {
+    if (this.fullForm) this.showAdvanced = true
     if (this.formData.gender) {
       this.updateSelectedGender(this.formData.gender)
     }
