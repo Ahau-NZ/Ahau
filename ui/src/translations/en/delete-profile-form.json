@@ -6,5 +6,5 @@
   "deleteButton": "Yes, Delete My Profile and Database",
   "cancelButton": "Cancel",
   "confirmDeletePrompt": "If you would like to continue, please type the following phrase",
-  "deletePhrase": "Yes, I would like to delete Ahau"
+  "deletePhrase": "DELETE"
 }

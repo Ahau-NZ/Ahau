@@ -187,7 +187,7 @@ export default {
 .truncated-x {
   overflow: hidden;
   display: block;
-  width: 200px;
+  width: 120px;
   white-space: nowrap;
   text-overflow: ellipsis;
   text-align: start;

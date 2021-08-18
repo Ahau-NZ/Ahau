@@ -9,7 +9,7 @@ export default {
     themes: {
       dark: {
         primary: '#383838',
-        secondary: '#A80000',
+        secondary: '#b12526',
         accent: '#A70000',
         error: '#ff0000',
         alive: ALIVE_COLOUR,
