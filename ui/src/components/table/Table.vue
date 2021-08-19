@@ -41,63 +41,68 @@
               </text>
             </svg>
             <svg :width="columns[3].x - 45" >
-              <text  :transform="`translate(${columns[2].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ altNames(node.data.altNames) }}
+              <text :transform="`translate(${columns[2].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
+                {{ partnerNames(node.data.partners) }}
               </text>
             </svg>
-            <svg :width="columns[4].x - 45">
+            <svg :width="columns[4].x - 45" >
               <text  :transform="`translate(${columns[3].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ node.age }}
+                {{ altNames(node.data.altNames) }}
               </text>
             </svg>
             <svg :width="columns[5].x - 45">
               <text  :transform="`translate(${columns[4].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ computeDate('dob', node.data.aliveInterval) }} <!-- {{ node.data.aliveInterval.substring(0,10)  }} -->
+                {{ node.age }}
               </text>
             </svg>
             <svg :width="columns[6].x - 45">
               <text  :transform="`translate(${columns[5].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ computeDate('dod', node.data.aliveInterval) }}<!-- {{ node.data.aliveInterval.substring(11,21) }} -->
+                {{ computeDate('dob', node.data.aliveInterval) }} <!-- {{ node.data.aliveInterval.substring(0,10)  }} -->
               </text>
             </svg>
             <svg :width="columns[7].x - 45">
               <text  :transform="`translate(${columns[6].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ node.data.profession }}
+                {{ computeDate('dod', node.data.aliveInterval) }}<!-- {{ node.data.aliveInterval.substring(11,21) }} -->
               </text>
             </svg>
             <svg :width="columns[8].x - 45">
               <text  :transform="`translate(${columns[7].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
+                {{ node.data.profession }}
+              </text>
+            </svg>
+            <svg :width="columns[9].x - 45">
+              <text  :transform="`translate(${columns[8].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
                 {{ node.data.address }}
               </text>
             </svg>
             <!-- add country -->
-            <svg :width="columns[9].x - 45">
-              <text  :transform="`translate(${columns[8].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
+            <svg :width="columns[10].x - 45">
+              <text  :transform="`translate(${columns[9].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
                 {{ node.data.city }}
               </text>
             </svg>
-            <svg :width="columns[10].x - 45">
-              <text  :transform="`translate(${columns[9].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ node.data.postCode }}
-              </text>
-            </svg>
             <svg :width="columns[11].x - 45">
-              <text  :transform="`translate(${columns[10].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ node.data.country }}
+              <text  :transform="`translate(${columns[0].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
+                {{ node.data.postCode }}
               </text>
             </svg>
             <svg :width="columns[12].x - 45">
               <text  :transform="`translate(${columns[11].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ node.data.placeOfBirth }}
+                {{ node.data.country }}
               </text>
             </svg>
             <svg :width="columns[13].x - 45">
-              <text :transform="`translate(${columns[12].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
+              <text  :transform="`translate(${columns[12].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
+                {{ node.data.placeOfBirth }}
+              </text>
+            </svg>
+            <svg :width="columns[14].x - 45">
+              <text :transform="`translate(${columns[13].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
                 {{ node.data.placeOfDeath }}
               </text>
             </svg>
             <svg>
-              <text :transform="`translate(${columns[13].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
+              <text :transform="`translate(${columns[14].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
                 {{ node.data.phone }}
               </text>
             </svg>
@@ -300,19 +305,20 @@ export default {
       return [
         { label: this.t('fullName'), x: 80 },
         { label: this.t('preferredName'), x: this.colWidth },
-        { label: this.t('aka'), x: this.colWidth + 200 },
-        { label: this.t('age'), x: this.colWidth + 400 },
-        { label: this.t('dob'), x: this.colWidth + 470 },
-        { label: this.t('dod'), x: this.colWidth + 650 },
-        { label: this.t('profession'), x: this.colWidth + 780 },
-        { label: this.t('address'), x: this.colWidth + 1050 },
-        { label: this.t('city'), x: this.colWidth + 1455 },
-        { label: this.t('postCode'), x: this.colWidth + 1695 },
-        { label: this.t('country'), x: this.colWidth + 1815 },
-        { label: this.t('pob'), x: this.colWidth + 2055 },
-        { label: this.t('pod'), x: this.colWidth + 2295 },
-        { label: this.t('email'), x: this.colWidth + 2535 },
-        { label: this.t('phone'), x: this.colWidth + 2895 }
+        { label: this.t('partners'), x: this.colWidth + 200 },
+        { label: this.t('aka'), x: this.colWidth + 475 },
+        { label: this.t('age'), x: this.colWidth + 700 },
+        { label: this.t('dob'), x: this.colWidth + 770 },
+        { label: this.t('dod'), x: this.colWidth + 900 },
+        { label: this.t('profession'), x: this.colWidth + 1000 },
+        { label: this.t('address'), x: this.colWidth + 1350 },
+        { label: this.t('city'), x: this.colWidth + 1755 },
+        { label: this.t('postCode'), x: this.colWidth + 1995 },
+        { label: this.t('country'), x: this.colWidth + 2115 },
+        { label: this.t('pob'), x: this.colWidth + 2355 },
+        { label: this.t('pod'), x: this.colWidth + 2595 },
+        { label: this.t('email'), x: this.colWidth + 2835 },
+        { label: this.t('phone'), x: this.colWidth + 3195 }
       ]
     }
   },
@@ -446,6 +452,13 @@ export default {
     },
     altNames (altArray) {
       return altArray.join(', ')
+    },
+    partnerNames (partnerArray) {
+      const partnerNames = []
+      partnerArray.forEach(partner => {
+        partnerNames.push(partner.preferredName)
+      })
+      return partnerNames.join(', ')
     },
     computeDate (requiredDate, age) {
       if (!age) {
