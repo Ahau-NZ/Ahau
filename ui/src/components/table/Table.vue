@@ -41,9 +41,21 @@
               </text>
             </svg>
             <svg :width="columns[3].x - 45" >
-              <text :transform="`translate(${columns[2].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ partnerNames(node.data.partners) }}
-              </text>
+              <g v-if="node.data.partners">
+                <Node
+                  v-for="(partner, i) in node.data.partners"
+                  :key="partner.id"
+                  :id="partner.id"
+                  :width="columns[4].x"
+                  :node="{ ...partner, x: columns[2].x - nodeSize + (nodeSize * i), y: node.y }"
+                  :radius="nodeRadius"
+                  isPartner
+                  @open="updateDialog($event)"
+                />
+                <text :transform="`translate(${columns[2].x - nodeSize + 55} ${node.y + nodeRadius + 5})`">
+                  {{ partnerNames(node.data.partners) }}
+                </text>
+              </g>
             </svg>
             <svg :width="columns[4].x - 45" >
               <text  :transform="`translate(${columns[3].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
@@ -694,6 +706,9 @@ export default {
     },
     openContextMenu (event) {
       this.$emit('open-context-menu', event)
+    },
+    updateDialog ($event) {
+      this.$emit('open', $event)
     },
     t (key, vars) {
       return this.$t('viewTribalRegistry.' + key, vars)

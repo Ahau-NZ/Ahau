@@ -15,8 +15,7 @@
     </g> -->
     <g
       class="avatar -main"
-      v-if="!isPartner"
-      @click.left="click"
+      @click.prevent="click"
       @mousedown.right="openMenu($event, profile)"
       @contextmenu.prevent
     >
@@ -39,6 +38,7 @@
         :style="{ opacity: profile.deceased ? 0.5 : 1 }"
       />
       <g
+        v-if="!isPartner"
         class="menu-button"
         @click.prevent.stop="openMenu($event, profile)"
         :transform="`translate(${1.4 * radius}, ${1.4 * radius})`"
@@ -141,6 +141,7 @@ export default {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
     profile () {
+      if (this.isPartner) return this.node
       return this.node.data
     },
     diameter () {
@@ -179,7 +180,12 @@ export default {
   },
   methods: {
     click () {
-      this.$emit('click')
+      if (this.isPartner) {
+        const dialog = 'view-edit-node'
+        const type = null
+        const profile = this.node
+        this.$emit('open', { dialog, type, profile })
+      } else this.$emit('click')
     },
     openMenu ($event, profile) {
       this.$emit('open-menu', { $event, profile })

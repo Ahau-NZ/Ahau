@@ -210,6 +210,9 @@ export default {
     }
   },
   watch: {
+    selectedProfile (newVal) {
+      console.log('new selected profile: ', newVal.preferredName)
+    },
     type (newVal) {
       this.dialogType = newVal
     },
