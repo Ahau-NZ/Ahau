@@ -1,15 +1,28 @@
 <template>
   <div>
     <v-row v-show="!showStory">
-      <v-col cols="10" class="sub-headliner black--text pa-0 pl-4 pt-2" >
+      <v-col cols="6" class="sub-headliner black--text pa-0 pl-4 pt-2" >
         {{ title }}
       </v-col>
+      <v-col cols="6">
+        <v-combobox
+          v-model="storySearchString"
+          :search-input.sync="storySearchString"
+          :menu-props=" { light: true } "
+          light
+          hide-selected
+          hide-details
+          dense
+          v-bind="customProps"
+        >
+        </v-combobox>
+      </v-col>
     </v-row>
-    <v-row v-if="stories && stories.length > 0">
+    <v-row v-if="filteredStories && filteredStories.length > 0">
       <v-col cols="12" xs="12" sm="12" md="9" :class="!showStory ? '':'pa-0'">
         <!-- <v-divider class="mt-6 mb-8" light></v-divider> -->
         <div v-if="!showStory">
-          <v-row v-for="(story, i) in stories" :key="`story-${i}-id-${story.id}`">
+          <v-row v-for="(story, i) in filteredStories" :key="`story-${i}-id-${story.id}`">
             <StoryCard @updateDialog="updateDialog($event)" @toggleStory="toggleStory($event)" :story="story" />
           </v-row>
         </div>
@@ -29,8 +42,8 @@
     </v-row>
     <v-row v-else>
       <v-col>
-        <div v-if="!stories || (stories && stories.length < 1)">
-          <div v-if="!stories">
+        <div v-if="!filteredStories || (filteredStories && filteredStories.length < 1)">
+          <div v-if="!filteredStories">
             <v-card
               :width="mobile ? '100%' : '87%'"
               flat
@@ -61,6 +74,8 @@
 import StoryCard from '@/components/archive/StoryCard.vue'
 import { mapGetters, mapMutations, mapActions } from 'vuex'
 
+import isEmpty from 'lodash.isempty'
+
 export default {
   name: 'Stories',
   props: {
@@ -70,6 +85,11 @@ export default {
   },
   components: {
     StoryCard
+  },
+  data () {
+    return {
+      storySearchString: ''
+    }
   },
   watch: {
     showStory (newVal, oldVal) {
@@ -88,11 +108,54 @@ export default {
     ...mapGetters(['showStory', 'currentStory']),
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
+    },
+    customProps () {
+      return {
+        outlined: true,
+        appendIcon: '',
+        placeholder: 'Search',
+        noDataText: 'no suggestions',
+        rounded: true,
+        class: 'searchbar-input',
+        autofocus: true,
+        solo: true,
+        header: null
+      }
+    },
+    filteredStories () {
+      if (!this.storySearchString) return this.stories
+
+      return this.stories.filter(story => {
+        const search = this.setString(this.storySearchString)
+        const title = this.setString(story.title)
+        const location = this.setString(story.location)
+
+        var mentionsMatch = false
+        story.mentions.forEach(mention => {
+          mentionsMatch = this.storyProfileMatchesSearch(mention.profile, search)
+        })
+
+        var contributorsMatch = false
+        story.contributors.forEach(contributor => {
+          contributorsMatch = this.storyProfileMatchesSearch(contributor.profile, search)
+        })
+
+        return (
+          title.includes(search) ||
+          mentionsMatch ||
+          location.includes(search) ||
+          contributorsMatch
+        )
+      })
     }
   },
   methods: {
     ...mapMutations(['setStory', 'updateDialog']),
     ...mapActions(['setComponent', 'toggleShowStory', 'setDialog']),
+    setString (name) {
+      if (isEmpty(name)) return ''
+      return name.toLowerCase().trim()
+    },
     toggleArchiveHelper () {
       this.showArchiveHelper = !this.showArchiveHelper
     },
@@ -100,6 +163,24 @@ export default {
       this.setStory(story)
       this.toggleShowStory()
       this.setDialog(null)
+    },
+    storyProfileMatchesSearch (mention, search) {
+      const mentionPreferredName = this.setString(mention.preferredName)
+      const mentionLegalName = this.setString(mention.legalName)
+
+      var altNameMatch = false
+      if (mention.altNames && mention.altNames.length > 0) {
+        mention.altNames.forEach(alt => {
+          const currName = this.setString(alt)
+          if (currName.includes(search)) altNameMatch = true
+        })
+      }
+
+      return (
+        mentionPreferredName.includes(search) ||
+        mentionLegalName.includes(search) ||
+        altNameMatch
+      )
     }
   },
   t (key, vars) {
