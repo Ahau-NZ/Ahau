@@ -19,7 +19,7 @@
 <script>
 
 export default {
-  name: 'SearchBar',
+  name: 'SearchBarNode',
   components: {
   },
   props: {

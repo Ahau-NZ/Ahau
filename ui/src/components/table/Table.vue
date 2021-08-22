@@ -52,33 +52,32 @@
             </svg>
             <svg :width="columns[5].x - 45">
               <text  :transform="`translate(${columns[4].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ computeDate('dob', node.data.aliveInterval) }} <!-- {{ node.data.aliveInterval.substring(0,10)  }} -->
+                {{ node.data.profession }}
               </text>
             </svg>
             <svg :width="columns[6].x - 45">
               <text  :transform="`translate(${columns[5].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ computeDate('dod', node.data.aliveInterval) }}<!-- {{ node.data.aliveInterval.substring(11,21) }} -->
+                {{ computeDate('dob', node.data.aliveInterval) }} <!-- {{ node.data.aliveInterval.substring(0,10)  }} -->
               </text>
             </svg>
             <svg :width="columns[7].x - 45">
               <text  :transform="`translate(${columns[6].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ node.data.profession }}
+                {{ node.data.placeOfBirth }}
               </text>
             </svg>
             <svg :width="columns[8].x - 45">
               <text  :transform="`translate(${columns[7].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ node.data.address }}
+                {{ computeDate('dod', node.data.aliveInterval) }}<!-- {{ node.data.aliveInterval.substring(11,21) }} -->
               </text>
             </svg>
-            <!-- add country -->
             <svg :width="columns[9].x - 45">
               <text  :transform="`translate(${columns[8].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ node.data.city }}
+                {{ node.data.placeOfDeath }}
               </text>
             </svg>
             <svg :width="columns[10].x - 45">
               <text  :transform="`translate(${columns[9].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ node.data.postCode }}
+                {{ node.data.city }}
               </text>
             </svg>
             <svg :width="columns[11].x - 45">
@@ -88,17 +87,17 @@
             </svg>
             <svg :width="columns[12].x - 45">
               <text  :transform="`translate(${columns[11].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ node.data.placeOfBirth }}
+                {{ node.data.address }}
               </text>
             </svg>
             <svg :width="columns[13].x - 45">
               <text :transform="`translate(${columns[12].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ node.data.placeOfDeath }}
+                {{ node.data.phone }}
               </text>
             </svg>
             <svg>
               <text :transform="`translate(${columns[13].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ node.data.phone }}
+                {{ node.data.postCode }}
               </text>
             </svg>
           </g>
@@ -113,6 +112,7 @@
 import * as d3 from 'd3'
 import Node from './Node.vue'
 import Link from '../tree/Link.vue'
+
 import calculateAge from '../../lib/calculate-age.js'
 import isEmpty from 'lodash.isempty'
 import isEqual from 'lodash.isequal'
@@ -121,7 +121,7 @@ import { SORT } from '@/lib/constants.js'
 
 import { mapActions, createNamespacedHelpers } from 'vuex'
 const { mapGetters: mapWhakapapaGetters } = createNamespacedHelpers('whakapapa')
-const { mapGetters: mapFilterGetters } = createNamespacedHelpers('table')
+const { mapGetters: mapTableGetters } = createNamespacedHelpers('table')
 
 export default {
   props: {
@@ -146,15 +146,6 @@ export default {
     pan: {
       type: Number,
       default: 0
-    },
-    sortValue: {
-      type: String,
-      default: null
-    },
-    sortEvent: {
-      type: MouseEvent,
-      required: false,
-      default: null
     },
     download: {
       type: Boolean,
@@ -188,7 +179,7 @@ export default {
 
   computed: {
     ...mapWhakapapaGetters(['nestedWhakapapa']),
-    ...mapFilterGetters(['tableFilter']),
+    ...mapTableGetters(['tableFilter', 'tableSort']),
     colWidth () {
       if (this.flatten) return 300
       return 350
@@ -302,31 +293,33 @@ export default {
         { label: this.t('preferredName'), x: this.colWidth },
         { label: this.t('aka'), x: this.colWidth + 200 },
         { label: this.t('age'), x: this.colWidth + 400 },
-        { label: this.t('dob'), x: this.colWidth + 470 },
-        { label: this.t('dod'), x: this.colWidth + 650 },
-        { label: this.t('profession'), x: this.colWidth + 780 },
-        { label: this.t('address'), x: this.colWidth + 1050 },
-        { label: this.t('city'), x: this.colWidth + 1455 },
-        { label: this.t('postCode'), x: this.colWidth + 1695 },
+        { label: this.t('profession'), x: this.colWidth + 470 },
+        { label: this.t('dob'), x: this.colWidth + 650 },
+        { label: this.t('pob'), x: this.colWidth + 780 },
+        { label: this.t('dod'), x: this.colWidth + 1050 },
+        { label: this.t('pod'), x: this.colWidth + 1180 },
+        { label: this.t('city'), x: this.colWidth + 1495 },
         { label: this.t('country'), x: this.colWidth + 1815 },
-        { label: this.t('pob'), x: this.colWidth + 2055 },
-        { label: this.t('pod'), x: this.colWidth + 2295 },
+        { label: this.t('address'), x: this.colWidth + 2055 },
+        { label: this.t('phone'), x: this.colWidth + 2295 },
         { label: this.t('email'), x: this.colWidth + 2535 },
-        { label: this.t('phone'), x: this.colWidth + 2895 }
+        { label: this.t('postCode'), x: this.colWidth + 2895 }
       ]
     }
   },
 
   watch: {
-    nodes (newValue) {
+    nodes () {
       this.setLoading(false)
     },
-    // Triggered whenever the user selects a sort
-    sortEvent () {
-      this.resetSorts(this.sortValue)
-      this.setSortOnField(this.sortValue)
+    tableSort: {
+      deep: true,
+      handler () {
+        this.resetSorts(this.tableSort.value)
+        this.setSortOnField(this.tableSort.value)
+      }
     },
-    searchNodeEvent (newValue) {
+    searchNodeEvent () {
       if (this.searchNodeId !== null) {
         this.root.descendants().find(d => {
           if (d.data.id === this.searchNodeId) {
@@ -514,7 +507,7 @@ export default {
     },
     // Executes a sort on two values
     sortByField (a, b) {
-      const sort = this.sort[this.sortValue]
+      const sort = this.sort[this.tableSort.value]
       if (sort !== SORT.default) {
         if (sort === SORT.ascending) {
           if (a < b) { return -1 }
@@ -530,7 +523,7 @@ export default {
     },
     // Determines the sort to be performed depending on the field to be sorted
     determineSort (a, b) {
-      const field = this.sortValue
+      const field = this.tableSort.value
       if (field === null || field === '') {
         return
       }
@@ -553,7 +546,7 @@ export default {
     // Hacky way to get empty/null fields to display below non-empty sorted fields
     convertNullToChar (val) {
       if (val !== null && val !== '') return val
-      const sort = this.sort[this.sortValue]
+      const sort = this.sort[this.tableSort.value]
       if (sort === SORT.ascending) {
         return 'ZZZZZ'
       }
@@ -565,7 +558,7 @@ export default {
     // Hacky way to get empty/null ages to display below non-empty sorted ages
     convertNullAgeToValue (val) {
       if (val !== null && val !== '') return val
-      const sort = this.sort[this.sortValue]
+      const sort = this.sort[this.tableSort.value]
       if (sort === SORT.ascending) {
         return 9999
       }
@@ -656,6 +649,7 @@ export default {
       if (!this.tableFilter.skills) return true
 
       const skills = node.data.education
+      const profession = this.setString(node.data.profession)
       const search = this.setString(this.tableFilter.skills)
       var skillFound = false
 
@@ -666,7 +660,7 @@ export default {
         }
       }
 
-      return skillFound
+      return skillFound || profession.includes(search)
     },
     filterByAge (node) {
       if (!(this.tableFilter.age.max < 150)) return true

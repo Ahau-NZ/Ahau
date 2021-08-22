@@ -8,11 +8,16 @@ export default function () {
         min: 0,
         max: 150 // filter is disabled when max is this
       }
+    },
+    tableSort: {
+      value: null,
+      event: null
     }
   }
 
   const getters = {
-    tableFilter: state => state.tableFilter
+    tableFilter: state => state.tableFilter,
+    tableSort: state => state.tableSort
   }
 
   const mutations = {
@@ -30,6 +35,9 @@ export default function () {
     },
     updateFilter (state, tableFilter) {
       state.tableFilter = tableFilter
+    },
+    updateSort (state, tableSort) {
+      state.tableSort = tableSort
     }
   }
 
@@ -53,6 +61,9 @@ export default function () {
       }
 
       commit('updateFilter', resetFilter)
+    },
+    updateTableSort ({ commit }, { value, event }) {
+      commit('updateSort', { value, event })
     }
   }
 

@@ -89,12 +89,6 @@
       :title="t('whakapapaRegistryTitle')"
       @close="close"
     />
-    <FilterMenu
-      v-if="isActive('table-filter-menu')"
-      :show="isActive('table-filter-menu')"
-      :title="t('filterMenuTitle')"
-      @close="close"
-    />
     <ComingSoonDialog :show="isActive('coming-soon')" @close="close" />
   </div>
 </template>
@@ -115,7 +109,6 @@ import WhakapapaEditDialog from '@/components/dialog/whakapapa/WhakapapaEditDial
 import WhakapapaDeleteDialog from '@/components/dialog/whakapapa/WhakapapaDeleteDialog.vue'
 import WhakapapaShowHelper from '@/components/dialog/whakapapa/WhakapapaShowHelper.vue'
 import WhakapapaTableHelper from '@/components/dialog/whakapapa/WhakapapaTableHelper.vue'
-import FilterMenu from '@/components/dialog/whakapapa/FilterMenu.vue'
 import ComingSoonDialog from '@/components/dialog/ComingSoonDialog.vue'
 import ReviewRegistrationDialog from '@/components/dialog/registration/ReviewRegistrationDialog.vue'
 
@@ -142,7 +135,6 @@ export default {
     WhakapapaDeleteDialog,
     WhakapapaShowHelper,
     WhakapapaTableHelper,
-    FilterMenu,
     ComingSoonDialog,
     NewCommunityDialog,
     ReviewRegistrationDialog
