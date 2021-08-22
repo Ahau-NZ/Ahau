@@ -56,12 +56,6 @@
         <div v-if="whakapapa.table" class="icon-button">
           <SearchFilterButton :searchFilter.sync="searchFilter"/>
         </div>
-        <!-- <div v-if="whakapapa.table && flatten" class="icon-button">
-          <FilterButton :filter="filter" @filter="toggleFilter()" />
-        </div>
-        <div v-if="whakapapa.table" class="icon-button">
-          <FlattenButton @flatten="toggleFlatten()" />
-        </div> -->
         <div class="icon-button" v-if="isKaitiaki">
           <TableButton :table="whakapapa.table" @table="toggleTable()" />
         </div>
@@ -71,6 +65,9 @@
         <div class="icon-button">
           <HelpButton v-if="whakapapa.tree" @click="updateDialog('whakapapa-helper', null)" />
           <HelpButton v-else @click="updateDialog('whakapapa-table-helper', null)" />
+        </div>
+        <div class="icon-button">
+          <FeedbackButton />
         </div>
       </v-row>
       <!-- speed dial menu for mobile -->
@@ -114,12 +111,6 @@
           </div>
           <div v-if="whakapapa.table" class="icon-button">
             <SearchFilterButton :searchFilter.sync="searchFilter"/>
-          </div>
-          <div v-if="whakapapa.table && flatten" class="icon-button">
-            <FilterButton :filter="filter" @filter="toggleFilter()" />
-          </div>
-          <div v-if="whakapapa.table" class="icon-button">
-            <FlattenButton @flatten="toggleFlatten()" />
           </div>
           <div class="icon-button">
             <TableButton :table="whakapapa.table" @table="toggleTable()" />
@@ -206,9 +197,7 @@ import Table from '@/components/table/Table.vue'
 import FeedbackButton from '@/components/button/FeedbackButton.vue'
 import TableButton from '@/components/button/TableButton.vue'
 import HelpButton from '@/components/button/HelpButton.vue'
-import FlattenButton from '@/components/button/FlattenButton.vue'
 import ExportButton from '@/components/button/ExportButton.vue'
-import FilterButton from '@/components/button/FilterButton.vue'
 
 import SearchBar from '@/components/button/SearchBar.vue'
 import SearchBarNode from '@/components/button/SearchBarNode.vue'
@@ -250,8 +239,6 @@ export default {
     WhakapapaShowViewCard,
     TableButton,
     HelpButton,
-    FlattenButton,
-    FilterButton,
     SearchBar,
     SearchBarNode,
     SearchButton,

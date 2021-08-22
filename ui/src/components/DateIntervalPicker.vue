@@ -14,7 +14,7 @@
       <v-checkbox
         class="pt-6 pl-4"
         v-if="!hasEndDate"
-        v-model="hasEndDate"
+        v-model="showEndDate"
         :label="t('hasEndDate')"
         hide-details
         v-bind="customProps"
@@ -68,7 +68,8 @@ export default {
       start: '',
       end: '',
       errorMsg: null,
-      currentDate: new Date().toISOString().slice(0, 10)
+      currentDate: new Date().toISOString().slice(0, 10),
+      showEndDate: false
     }
   },
   watch: {
@@ -85,7 +86,7 @@ export default {
         this.end = end
       }
     },
-    hasEndDate (show) {
+    showEndDate (show) {
       if (!show) this.$emit('update:interval', this.start + '/')
       this.$emit('update:hasEndDate', show)
     },
