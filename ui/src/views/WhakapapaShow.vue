@@ -166,7 +166,7 @@
           :nestedWhakapapa="nestedWhakapapa"
           @load-descendants="loadDescendants($event)"
           @open-context-menu="openTableContextMenu($event)"
-          @open="updateDialog($event.dialog, $event.type, $event.profile)"
+          @open="openPartnerSideNode($event.dialog, $event.type, $event.profile)"
           :searchNodeId="searchNodeId"
           :sortValue="sortValue"
           :sortEvent="sortEvent"
@@ -421,13 +421,16 @@ export default {
     isVisibleProfile (descendant) {
       if (this.whakapapaView.ignoredProfiles) { return this.whakapapaView.ignoredProfiles.indexOf(descendant.id) === -1 }
     },
-    updateDialog (dialog, type, profile) {
-      this.dialog.type = null
-      this.dialog.active = null
-
+    openPartnerSideNode (dialog, type, profile) {
+      this.setSelectedProfile(profile)
+      if (this.dialog.active === 'view-edit-node') {
+        this.updateDialog(null, null)
+      }
+      this.updateDialog(dialog, type)
+    },
+    updateDialog (dialog, type) {
       this.dialog.type = type
       this.dialog.active = dialog
-      if (profile) this.updateSelectedProfile(profile)
     },
     // Used when ignoring/deleteing top ancestor on a partner line
     // AND when adding a partner ancestor update the tree to load
