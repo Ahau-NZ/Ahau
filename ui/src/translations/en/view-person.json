@@ -13,6 +13,7 @@
   "parents": "Parents",
   "siblings": "Siblings",
   "children": "Children",
+  "partners": "Partners",
   "contactInfo" : {
     "contactInfoTitle": "Contact Information",
     "phone": "Phone",

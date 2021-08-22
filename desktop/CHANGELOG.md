@@ -1,5 +1,11 @@
 # Changelog | Ahau desktop
 
+## Current
+
+### Features
+
+- Added partners to ProfileShow.vue
+
 ## v2.2.0
 
 ### Features
