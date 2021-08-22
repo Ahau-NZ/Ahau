@@ -109,6 +109,11 @@
       </filter>
     </defs>
   </g>
+  <g v-if="isPartner && !noPartnerName" :style="displayNameStyle">
+    <text>
+      {{ getDisplayName(node) }}
+    </text>
+  </g>
 </svg>
 </template>
 
@@ -116,6 +121,7 @@
 import get from 'lodash.get'
 import avatarHelper from '@/lib/avatar-helpers.js'
 import { DECEASED_COLOUR, ALIVE_COLOUR } from '@/lib/constants.js'
+import { getDisplayName } from '@/lib/person-helpers.js'
 // import flower.svg from '@/src/assets'
 
 export default {
@@ -124,6 +130,7 @@ export default {
     node: { type: Object, required: true },
     radius: { type: Number, required: true },
     isPartner: { type: Boolean, default: false },
+    noPartnerName: { type: Boolean, default: false },
     width: { type: Number, required: true }
   },
   data () {
@@ -148,7 +155,7 @@ export default {
       return this.radius * 2
     },
     imageSource () {
-      const uri = get(this.node, 'data.avatarImage.uri')
+      const uri = this.isPartner ? get(this.node, 'avatarImage.uri') : get(this.node, 'data.avatarImage.uri')
       if (uri) return uri
 
       return avatarHelper.defaultImage(false, this.profile.aliveInterval, this.profile.gender)
@@ -161,6 +168,11 @@ export default {
     groupStyle () {
       return {
         transform: `translate(${this.node.x}px, ${this.node.y}px)`
+      }
+    },
+    displayNameStyle () {
+      return {
+        transform: `translate(${this.node.x + 45}px, ${this.node.y + 25}px)`
       }
     },
     textStyle () {
@@ -179,6 +191,7 @@ export default {
     }
   },
   methods: {
+    getDisplayName,
     click () {
       if (this.isPartner) {
         const dialog = 'view-edit-node'

@@ -41,7 +41,7 @@
               </text>
             </svg>
             <svg :width="columns[3].x - 45" >
-              <g v-if="node.data.partners">
+              <g v-if="node.data.partners && node.data.partners.length > 0">
                 <Node
                   v-for="(partner, i) in node.data.partners"
                   :key="partner.id"
@@ -50,11 +50,12 @@
                   :node="{ ...partner, x: columns[2].x - nodeSize + (nodeSize * i), y: node.y }"
                   :radius="nodeRadius"
                   isPartner
+                  :noPartnerName="node.data.partners.length > 1"
                   @open="updateDialog($event)"
                 />
-                <text :transform="`translate(${columns[2].x - nodeSize + 55} ${node.y + nodeRadius + 5})`">
+                <!-- <text :transform="`translate(${columns[2].x - nodeSize + 55} ${node.y + nodeRadius + 5})`">
                   {{ partnerNames(node.data.partners) }}
-                </text>
+                </text> -->
               </g>
             </svg>
             <svg :width="columns[4].x - 45" >
@@ -468,7 +469,7 @@ export default {
     partnerNames (partnerArray) {
       const partnerNames = []
       partnerArray.forEach(partner => {
-        partnerNames.push(partner.preferredName)
+        partnerNames.push(this.getDisplayName(partner))
       })
       return partnerNames.join(', ')
     },
