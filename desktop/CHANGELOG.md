@@ -5,13 +5,10 @@
 ### Features
 
 - Updated table side menu controls who tribal registry
-  
-## v2.2.1
-
-### Features
-
 - Added partners to ProfileShow.vue
 
+### Fixes
+- Now shows an error when trying to create a record that is too big for the current limit   
 ## v2.2.0
 
 ### Features

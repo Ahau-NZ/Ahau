@@ -4,11 +4,12 @@
     :menu-props=" { light: true } "
     append-icon="mdi-close"
     @click:append="clearSearchNodeId()"
-    solo
     rounded
+    outlined
     light
     hide-selected
     dense
+    hide-details
     readonly
     class="search-input"
     autofocus

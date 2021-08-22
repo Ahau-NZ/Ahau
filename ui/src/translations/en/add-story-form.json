@@ -44,5 +44,7 @@
     "language": "Language",
     "transcription": "Translation/Transcription",
     "private": "Private",
-    "access": "Only you will have access to this record"
+    "access": "Only you will have access to this record",
+    "maxLength": "Exceeding record character limit: 4000",
+    "titleLength": "Max title character limit: 200"
 }

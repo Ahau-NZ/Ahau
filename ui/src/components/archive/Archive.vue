@@ -149,7 +149,7 @@ export default {
   },
   methods: {
     ...mapAlertMutations(['showAlert']),
-    ...mapMutations(['setStory', 'setDialog']),
+    ...mapMutations(['setStory']),
     ...mapActions(['toggleShowStory', 'setShowArtefact']),
     ...mapCollectionActions(['createCollection', 'getCollectionsByGroup']),
     getDisplayName,
