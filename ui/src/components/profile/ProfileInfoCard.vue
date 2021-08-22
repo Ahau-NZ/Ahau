@@ -17,6 +17,15 @@
           </AvatarGroup>
         </div>
 
+        <div v-if="profile.partners && profile.partners.length > 0" class="pl-6">
+          <AvatarGroup :profiles="profile.partners" :group-title="$t('viewPerson.partners')" size="50px" :show-labels="true"
+            @profile-click="openProfile($event)">
+            <template v-slot:action >
+              <AddButton v-if="isRegistration" @click="toggleNew('partner')" class="pb-4" justify="start"/>
+            </template>
+          </AvatarGroup>
+        </div>
+
         <div v-if="profile.siblings && profile.siblings.length > 0" class="pl-6">
           <AvatarGroup :profiles="profile.siblings" :group-title="$t('viewPerson.siblings')" size="50px" :show-labels="true"
             @profile-click="openProfile($event)">
