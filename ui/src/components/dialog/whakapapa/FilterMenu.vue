@@ -1,131 +1,124 @@
 <template>
-  <transition appear name="left">
+  <transition appear name="right">
     <v-navigation-drawer
-      style="top: 64px;"
-      :absolute="false"
-      fixed
-      right
+      :style="mobile ? 'top: 0px;' : 'top: 64px;'"
+      :absolute="mobile"
+      :fixed="!mobile"
+      :right="!mobile"
       light
-      width="21%"
       permanent
-      height="calc(100vh - 64px)"
+      :width="navWidth"
+      :height="mobile ? '100%' : 'calc(100vh - 64px)'"
       class="side-menu"
+      :bottom="mobile"
     >
       <v-card light height="90%" class="text-center" flat>
-        <v-container>
+        <v-container class="black--text">
           <v-row class="justify-end">
-          <v-btn icon class="mr-3">
-            <v-icon @click="reset" color="secondary">mdi-close</v-icon>
-          </v-btn>
-        </v-row>
-            <v-col cols="12">
-              <h1>{{ t('applyTableFilters') }}</h1>
-            </v-col>
-          <v-row>
-            <v-col>
-              <p class="profile-label overline" style="">
-                {{ t('name') }}
-              </p>
-              <SearchBar
-                @change="updateTableFilter({ type: 'name', value: $event})"
-                isFilter
-              />
-            </v-col>
+            <v-btn icon class="mr-3">
+              <v-icon @click="close" color="secondary">mdi-close</v-icon>
+            </v-btn>
           </v-row>
+          <v-col cols="12 overline" align="start" class="mt-n10 mb-2">
+            <h1>{{ t('applyTableFilters') }}</h1>
+          </v-col>
+          <FilterInput :reset="resetData" @whakapapa="toggleWhakapapa()"/>
+          <SortInput :reset="resetData"  @whakapapa="toggleWhakapapa()"/>
+          <OptionsInput :reset="resetData"/>
+
+          <!-- Hide Deceased -->
+          <v-list-item class="py-4">
+            <v-list-item-content>
+              <v-list-item-title align="start" v-text="'Hide descendants'" />
+            </v-list-item-content>
+            <v-list-item-action>
+              <v-switch v-model="descendants"/>
+            </v-list-item-action>
+          </v-list-item>
+
+          <!-- Hide WhakapapaLinks -->
+          <v-list-item class="pb-4">
+            <v-list-item-content>
+              <v-list-item-title align="start" v-text="'Show whakapapa'"/>
+            </v-list-item-content>
+            <v-list-item-action>
+              <v-switch v-model="whakapapa" />
+            </v-list-item-action>
+          </v-list-item>
+
           <v-row>
-            <v-col>
-              <p class="profile-label overline">
-                {{ t('location') }}
-              </p>
-              <SearchBar
-                @change="updateTableFilter({ type: 'location', value: $event})"
-                isFilter
-              />
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col>
-              <p class="profile-label overline">
-                {{ t('skills') }}
-              </p>
-              <SearchBar
-                @change="updateTableFilter({ type: 'skills', value: $event})"
-                isFilter
-              />
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col>
-              <p class="profile-label overline">
-                {{ t('age') }}
-              </p>
-              <v-range-slider
-                v-model="ageRange"
-                min="0"
-                max="150"
-                hide-details
-                class="align-center mt-12"
-                thumb-label="always"
-              >
-                <template v-slot:prepend>
-                  <p class="profile-label overline">{{ t('min') }}</p>
-                </template>
-                <template v-slot:append>
-                  <p class="profile-label overline">{{ t('max') }}</p>
-                </template>
-              </v-range-slider>
+            <v-col cols="12" class="mt-10">
+              <v-btn @click="close" text large color="blue" :class="mobile ? 'mr-10': 'pr-10'">
+                {{ t('apply') }}
+              </v-btn>
+              <v-btn @click="reset" text large color="red" :class="mobile ? 'ml-10':'pl-5'">
+                {{ t('clear') }}
+              </v-btn>
             </v-col>
           </v-row>
         </v-container>
-        <v-spacer />
-        <v-card-actions class="pa-0">
-          <v-row>
-            <v-col cols="12">
-              <v-btn @click="close" text large color="blue">
-                {{ t('apply') }}
-              </v-btn>
-              <v-btn @click="reset" text large color="red">
-                {{ t('cancel') }}
-              </v-btn>
-            </v-col>
-          </v-row>
-        </v-card-actions>
       </v-card>
     </v-navigation-drawer>
   </transition>
 </template>
 
 <script>
-import SearchBar from '@/components/button/SearchBar.vue'
 import { createNamespacedHelpers } from 'vuex'
+import FilterInput from '@/components/dialog/whakapapa/FilterInput.vue'
+import SortInput from './SortInput.vue'
+import OptionsInput from './OptionsInput.vue'
 
-const { mapActions: mapTableActions, mapGetters: mapTableGetters } = createNamespacedHelpers('table')
+const { mapActions: mapTableActions } = createNamespacedHelpers('table')
 
 export default {
   name: 'FilterMenu',
   components: {
-    SearchBar
+    FilterInput,
+    SortInput,
+    OptionsInput
+  },
+  props: {
+    show: { type: Boolean, default: false },
+    flatten: Boolean
   },
   data () {
     return {
-      searchNodeId: null,
-      ageRange: [0, 150]
+      resetData: false,
+      descendants: false,
+      whakapapa: !this.flatten
+    }
+  },
+  watch: {
+    show (newVal) {
+      if (newVal) this.resetData = false
+    },
+    descendants () {
+      this.$emit('descendants')
+    },
+    whakapapa () {
+      this.$emit('whakapapa')
     }
   },
   computed: {
-    ...mapTableGetters(['tableFilter'])
-  },
-  watch: {
-    ageRange ([min, max]) {
-      this.updateTableFilter({ type: 'age', value: { min, max } })
+    mobile () {
+      return this.$vuetify.breakpoint.xs
+    },
+    navWidth () {
+      if (!this.show) return '0px'
+      else if (this.mobile) return '100%'
+      return '21%'
     }
   },
   methods: {
-    ...mapTableActions(['updateTableFilter', 'resetTableFilters']),
+    ...mapTableActions(['resetTableFilters']),
+    toggleWhakapapa () {
+      if (this.whakapapa) this.whakapapa = false
+    },
     close () {
       this.$emit('close')
     },
     reset () {
+      this.resetData = true
       this.resetTableFilters()
       this.close()
     },
@@ -137,17 +130,4 @@ export default {
 </script>
 
 <style lang="scss">
-
-.menu-title {
-  padding: 50px 0px 50px 0px;
-}
-
-.nav-buttons {
-  margin-left: 80px;
-}
-
-.filter-btn {
-  margin: 0px 50px 0px 50px;
-}
-
 </style>

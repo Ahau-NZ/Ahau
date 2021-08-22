@@ -4,6 +4,12 @@
 
 ### Features
 
+- Updated table side menu controls who tribal registry
+  
+## v2.2.1
+
+### Features
+
 - Added partners to ProfileShow.vue
 
 ## v2.2.0

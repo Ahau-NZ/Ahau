@@ -56,30 +56,23 @@
         <div v-if="whakapapa.table" class="icon-button">
           <SearchFilterButton :searchFilter.sync="searchFilter"/>
         </div>
-        <div v-if="whakapapa.table && flatten" class="icon-button">
-          <SortButton @sort="sortTable($event)" />
-        </div>
-        <div v-if="whakapapa.table && flatten" class="icon-button">
+        <!-- <div v-if="whakapapa.table && flatten" class="icon-button">
           <FilterButton :filter="filter" @filter="toggleFilter()" />
         </div>
         <div v-if="whakapapa.table" class="icon-button">
           <FlattenButton @flatten="toggleFlatten()" />
-        </div>
+        </div> -->
         <div class="icon-button" v-if="isKaitiaki">
           <TableButton :table="whakapapa.table" @table="toggleTable()" />
+        </div>
+        <div v-if="whakapapa.table" class="icon-button">
+          <ExportButton @export="toggleDownload()" />
         </div>
         <div class="icon-button">
           <HelpButton v-if="whakapapa.tree" @click="updateDialog('whakapapa-helper', null)" />
           <HelpButton v-else @click="updateDialog('whakapapa-table-helper', null)" />
         </div>
-        <div class="icon-button">
-          <FeedbackButton />
-        </div>
-        <div v-if="whakapapa.table" class="icon-button">
-          <ExportButton @export="toggleDownload()" />
-        </div>
       </v-row>
-
       <!-- speed dial menu for mobile -->
       <v-card v-if="mobile" id="speeddial">
         <v-speed-dial
@@ -123,9 +116,6 @@
             <SearchFilterButton :searchFilter.sync="searchFilter"/>
           </div>
           <div v-if="whakapapa.table && flatten" class="icon-button">
-            <SortButton @sort="sortTable($event)" />
-          </div>
-          <div v-if="whakapapa.table && flatten" class="icon-button">
             <FilterButton :filter="filter" @filter="toggleFilter()" />
           </div>
           <div v-if="whakapapa.table" class="icon-button">
@@ -143,7 +133,6 @@
           </div>
         </v-speed-dial>
       </v-card>
-
       <Tree
         :class="mobile? 'mobile-tree':'tree'"
         v-if="whakapapa.tree"
@@ -167,8 +156,6 @@
           @load-descendants="loadDescendants($event)"
           @open-context-menu="openTableContextMenu($event)"
           :searchNodeId="searchNodeId"
-          :sortValue="sortValue"
-          :sortEvent="sortEvent"
           :searchNodeEvent="searchNodeEvent"
         />
       </div>
@@ -176,13 +163,14 @@
 
     <NodeMenu ref="menu" :view="whakapapaView" :currentFocus="currentFocus" @open="updateDialog($event.dialog, $event.type)"/>
 
-    <VueContext ref="sort" class="px-0">
-      <li v-for="(field, i) in sortFields" :key="`sort-field-${i}`">
-        <a href="#" @click.prevent="setSortField(field.value, $event)" class="d-flex align-center px-4">
-          <p class="ma-0 pl-3">{{ field.name }}</p>
-        </a>
-      </li>
-    </VueContext>
+    <FilterMenu
+      v-if="whakapapa.table"
+      :show="searchFilter"
+      :flatten="flatten"
+      @close="clickedOffSearchFilter()"
+      @descendants="toggleFilter()"
+      @whakapapa="toggleFlatten()"
+    />
 
     <DialogHandler
       :dialog.sync="dialog.active"
@@ -208,7 +196,7 @@
 import uniqby from 'lodash.uniqby'
 import flatten from 'lodash.flatten'
 
-import { VueContext } from 'vue-context'
+import FilterMenu from '@/components/dialog/whakapapa/FilterMenu.vue'
 
 import WhakapapaShowViewCard from '@/components/whakapapa/WhakapapaShowViewCard.vue'
 import WhakapapaBanner from '@/components/whakapapa/WhakapapaBanner.vue'
@@ -221,7 +209,6 @@ import HelpButton from '@/components/button/HelpButton.vue'
 import FlattenButton from '@/components/button/FlattenButton.vue'
 import ExportButton from '@/components/button/ExportButton.vue'
 import FilterButton from '@/components/button/FilterButton.vue'
-import SortButton from '@/components/button/SortButton.vue'
 
 import SearchBar from '@/components/button/SearchBar.vue'
 import SearchBarNode from '@/components/button/SearchBarNode.vue'
@@ -265,7 +252,6 @@ export default {
     HelpButton,
     FlattenButton,
     FilterButton,
-    SortButton,
     SearchBar,
     SearchBarNode,
     SearchButton,
@@ -273,11 +259,11 @@ export default {
     FeedbackButton,
     Table,
     Tree,
-    VueContext,
     DialogHandler,
     WhakapapaBanner,
     NodeMenu,
-    ExportButton
+    ExportButton,
+    FilterMenu
   },
   mixins: [
     mapProfileMixins({
@@ -317,9 +303,6 @@ export default {
         tree: true,
         table: false
       },
-      sortTableBool: false,
-      sortValue: '',
-      sortEvent: null,
       searchNodeName: ''
     }
   },
@@ -388,13 +371,6 @@ export default {
         this.setCurrentAccess(this.access)
       }
       this.setWhakapapa(whakapapa)
-    },
-    searchFilter (newValue) {
-      if (newValue === true) {
-        this.resetTableFilters() // Resets any active filters when opening table filter menu
-        this.updateDialog('table-filter-menu', null)
-        this.flatten = true
-      }
     }
   },
 
@@ -634,14 +610,11 @@ export default {
     getImage () {
       return avatarHelper.defaultImage(this.aliveInterval, this.gender)
     },
-    sortTable (event) {
-      this.$refs.sort.open(event)
-      this.sortTableBool = !this.sortTableBool
-    },
-    setSortField (value, event) {
-      this.sortValue = value
-      this.sortEvent = event
-    },
+    // sortTable (event) {
+    //   this.$refs.sort.open(event)
+    //   this.sortTableBool = !this.sortTableBool
+    // },
+
     setSearchNode (event) {
       this.searchNodeEvent = event
     }
@@ -764,6 +737,12 @@ h1 {
 .mobile-searchBar {
  padding-top: 10px;
  margin-right: 255px;
+}
+
+.button-group {
+  position: fixed;
+  top: 80px;
+  right: 50px;
 }
 
 </style>

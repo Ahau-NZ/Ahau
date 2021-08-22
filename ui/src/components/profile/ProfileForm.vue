@@ -263,7 +263,7 @@
             <!-- Description textarea -->
               <v-textarea
                 v-model="formData.description"
-                :label="t('description')"
+                :label="t('description', {displayName: formData.preferredName})"
                 v-bind="customProps"
                 no-resize
                 :rows="readonly ? 0 : 3"
