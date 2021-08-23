@@ -6,6 +6,7 @@
 
 - Updated table side menu controls who tribal registry
 - Added partners to ProfileShow.vue
+- Added dev commands for deleting node modules on windows
 
 ### Fixes
 - Now shows an error when trying to create a record that is too big for the current limit   
