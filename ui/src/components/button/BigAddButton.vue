@@ -46,7 +46,8 @@ export default {
   }
   .addBtnDesktop {
     right: 50px !important;
-    background-color: white
+    background-color: white;
+    z-index: 1;
   }
   .addBtnCollection {
     right: 250px !important;

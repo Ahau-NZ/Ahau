@@ -1,11 +1,11 @@
 <template>
 <v-card light flat rounded class="mx-2 pa-0" width="100%">
-  <v-row>
-    <v-col cols="12" xs="12" sm="12" md="2" class="py-0">
-      <v-img :src="image" cover class="grey darken-4" height="105px">
+  <v-row style="height:100px">
+    <v-col cols="12" xs="12" sm="12" md="2" class="pa-0">
+      <v-img :src="image" cover class="grey darken-4" height="100px">
       </v-img>
     </v-col>
-    <v-col cols="12" xs="12" sm="12" md="6" class="pa-0">
+    <v-col cols="12" xs="12" sm="12" md="6" class="py-0">
       <v-row class="align-center pl-3">
         <h4 class="blue-grey--text text--darken-4 text-uppercase">
           {{ collection.name + ' collection'}}

@@ -9,6 +9,7 @@
 
 ### Fixes
 - Now shows an error when trying to create a record that is too big for the current limit   
+- fix image sizes for collections and tribes
 ## v2.2.0
 
 ### Features
