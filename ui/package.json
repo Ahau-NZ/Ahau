@@ -12,6 +12,7 @@
     "test:js": "cross-env NODE_ENV=development tape -r esm src/**/*.test.js | tap-spec",
     "test": "npm run test:js && npm run lint",
     "clear": "rm -rf node_modules",
+    "win:clear": "rmdir /s /q node_modules",
     "build-fragment": "NODE_ENV=development node src/schemaQuery.js"
   },
   "dependencies": {
