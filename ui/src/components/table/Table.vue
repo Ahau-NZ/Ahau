@@ -1,4 +1,5 @@
 <template>
+  <div ref="tablediv" :class="mobile ? 'mobile-table' : 'whakapapa-table'" v-scroll.self="onscroll">
   <svg id="baseSvg" :width="tableWidth" :height="tableHeight" ref="baseSvg" style="background-color:white"  min-height="500px">
     <g id="zoomable">
       <line x1="60" y1="55" :x2="tableWidth" y2="55" style="stroke-width: 1; stroke: lightgrey;"/>
@@ -105,6 +106,7 @@
       </svg>
     </g>
   </svg>
+  </div>
 </template>
 
 <script>
@@ -169,7 +171,8 @@ export default {
         country: SORT.default
       },
       nodeCentered: '',
-      sortActive: false
+      sortActive: false,
+      scrollTop: ''
     }
   },
   mounted () {
@@ -180,6 +183,9 @@ export default {
   computed: {
     ...mapWhakapapaGetters(['nestedWhakapapa']),
     ...mapTableGetters(['tableFilter', 'tableSort']),
+    mobile () {
+      return this.$vuetify.breakpoint.xs
+    },
     colWidth () {
       if (this.flatten) return 300
       return 350
@@ -377,6 +383,9 @@ export default {
   methods: {
     ...mapActions(['setLoading']),
     // sets the width of the table
+    onscroll (e) {
+      this.scrollTop = e.target.scrollTop
+    },
     async tableOverflow () {
       var width = await this.colWidth + this.columns[this.columns.length - 1].x
       this.tableWidth = width
@@ -590,12 +599,11 @@ export default {
       return newString
     },
     centerNode (node) {
+      var div = this.$refs.tablediv
       const element = document.getElementById(`${node.data.id}`)
       const coord = element.getBoundingClientRect()
-
-      const elementPos = window.pageYOffset + coord.y - 400
-
-      window.scrollTo({
+      const elementPos = this.scrollTop + coord.y - 400
+      div.scrollTo({
         top: elementPos,
         behavior: 'smooth'
       })
@@ -716,6 +724,19 @@ svg#baseSvg {
 .headers {
   position:fixed;
   top: 100px
+}
+
+.whakapapa-table {
+  overflow: auto;
+  width: 100%;
+  padding-top: 50px;
+  height: 100vh;
+  margin-top: -2px //needed to hide parent scrollbar
+}
+
+.mobile-table {
+  overflow: auto;
+  width: 100%;
 }
 
 </style>

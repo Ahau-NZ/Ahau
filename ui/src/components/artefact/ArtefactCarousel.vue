@@ -140,7 +140,7 @@ export default {
 }
 
 ::-webkit-scrollbar {
-  height: 5px;
+  height: 8px;
   /* display: none; */
 }
 

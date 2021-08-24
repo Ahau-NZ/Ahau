@@ -136,20 +136,19 @@
         :searchNodeId="searchNodeId"
         :openMenu="openContextMenu"
       />
-      <div v-if="whakapapa.table" :class="mobile ? 'mobile-table' : 'whakapapa-table'">
-        <Table
-          ref="table"
-          :filter="filter"
-          :flatten="flatten"
-          :download.sync="download"
-          :view="whakapapaView"
-          :nestedWhakapapa="nestedWhakapapa"
-          @load-descendants="loadDescendants($event)"
-          @open-context-menu="openTableContextMenu($event)"
-          :searchNodeId="searchNodeId"
-          :searchNodeEvent="searchNodeEvent"
-        />
-      </div>
+      <Table
+        ref="table"
+        v-if="whakapapa.table"
+        :filter="filter"
+        :flatten="flatten"
+        :download.sync="download"
+        :view="whakapapaView"
+        :nestedWhakapapa="nestedWhakapapa"
+        @load-descendants="loadDescendants($event)"
+        @open-context-menu="openTableContextMenu($event)"
+        :searchNodeId="searchNodeId"
+        :searchNodeEvent="searchNodeEvent"
+      />
     </v-container>
 
     <NodeMenu ref="menu" :view="whakapapaView" :currentFocus="currentFocus" @open="updateDialog($event.dialog, $event.type)"/>
@@ -703,17 +702,6 @@ h1 {
 
 #speeddial {
   top:-45px;
-}
-
-.whakapapa-table {
-  overflow: auto;
-  width: 100%;
-  padding-top: 50px;
-}
-
-.mobile-table {
-  overflow: auto;
-  width: 100%;
 }
 
 .button-row {

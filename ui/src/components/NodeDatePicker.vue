@@ -400,7 +400,7 @@ export default {
 </script>
 <style lang="scss">
 ::-webkit-scrollbar {
-  width: 12px;
+  width: 8px;
 }
 
 /* Track */
