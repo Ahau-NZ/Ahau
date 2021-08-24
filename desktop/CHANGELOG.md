@@ -5,13 +5,15 @@
 ### Features
 
 - Updated table side menu controls who tribal registry
-  
-## v2.2.1
-
-### Features
-
 - Added partners to ProfileShow.vue
+- Added frontend for custom Data Model
 
+### Fixes
+- Now shows an error when trying to create a record that is too big for the current limit   
+- fixed image sizes for collections and tribes
+- fixed whakapapa table bottom scroll bar
+- Removed kaitiaki from members list
+- Added dev commands for deleting node modules on windows
 ## v2.2.0
 
 ### Features

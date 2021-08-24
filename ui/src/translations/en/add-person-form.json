@@ -27,6 +27,7 @@
   },
   "moreInfo":"Provide more information",
   "addName":"Add another name",
+  "altNames": "Other names",
   "description":"About {displayName} ",
   "skills": {
     "title":"Skills and qualifications",
@@ -48,5 +49,6 @@
   "formHandlers": {
     "cancel":"Cancel",
     "save":"Save"
-  }
+  },
+  "dataDescription": "Description"
 }
