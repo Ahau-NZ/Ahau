@@ -89,12 +89,6 @@
       :title="t('whakapapaRegistryTitle')"
       @close="close"
     />
-    <FilterMenu
-      v-if="isActive('table-filter-menu')"
-      :show="isActive('table-filter-menu')"
-      :title="t('filterMenuTitle')"
-      @close="close"
-    />
     <ComingSoonDialog :show="isActive('coming-soon')" @close="close" />
   </div>
 </template>
@@ -115,7 +109,6 @@ import WhakapapaEditDialog from '@/components/dialog/whakapapa/WhakapapaEditDial
 import WhakapapaDeleteDialog from '@/components/dialog/whakapapa/WhakapapaDeleteDialog.vue'
 import WhakapapaShowHelper from '@/components/dialog/whakapapa/WhakapapaShowHelper.vue'
 import WhakapapaTableHelper from '@/components/dialog/whakapapa/WhakapapaTableHelper.vue'
-import FilterMenu from '@/components/dialog/whakapapa/FilterMenu.vue'
 import ComingSoonDialog from '@/components/dialog/ComingSoonDialog.vue'
 import ReviewRegistrationDialog from '@/components/dialog/registration/ReviewRegistrationDialog.vue'
 
@@ -142,7 +135,6 @@ export default {
     WhakapapaDeleteDialog,
     WhakapapaShowHelper,
     WhakapapaTableHelper,
-    FilterMenu,
     ComingSoonDialog,
     NewCommunityDialog,
     ReviewRegistrationDialog
@@ -181,7 +173,7 @@ export default {
   mixins: [
     mapProfileMixins({
       mapApollo: ['profile', 'tribe'],
-      mapMethods: ['getTribe', 'createPerson', 'updatePerson', 'saveLink', 'savePerson', 'saveWhakapapa', 'getWhakapapaLink']
+      mapMethods: ['getTribe', 'createPerson', 'updatePerson', 'saveLink', 'getProfile', 'savePerson', 'saveWhakapapa', 'getWhakapapaLink']
     })
   ],
   data () {
@@ -193,7 +185,8 @@ export default {
       parents: [],
       parentIndex: null,
       profile: {},
-      tribe: {}
+      tribe: {},
+      predecessorArray: []
     }
   },
   computed: {
@@ -673,6 +666,21 @@ export default {
         // now we have the flatStore for the suggestions we need to filter out the records
         // so we cant add one that is already in the tree
         records = records.filter(record => !this.findInTree(record.id))
+
+        this.predecessorArray = []
+        await this.getNodePredecessors(this.selectedProfile.id) // Get the predecessors of the current node
+
+        const updatedRecords = []
+
+        records.forEach(record => {
+          var recordIsPredecessor = false
+          this.predecessorArray.forEach(predecessor => {
+            if (predecessor === record.id) recordIsPredecessor = true
+          })
+          if (!recordIsPredecessor) updatedRecords.push(record)
+        })
+
+        records = updatedRecords
       }
 
       // sets suggestions which is passed into the dialogs
@@ -717,6 +725,42 @@ export default {
         return true // was found
       }
       return false // wasnt found
+    },
+    async getNodePredecessors (currentId) {
+      this.predecessorArray.push(currentId) // Push the current person into predecessors array
+      const currentProfile = await this.getProfile(currentId) // Get the current profile
+
+      const { parents, partners, siblings } = currentProfile
+
+      const hasParents = this.arrayIsNotEmpty(parents)
+      const hasPartners = this.arrayIsNotEmpty(partners)
+      const hasSiblings = this.arrayIsNotEmpty(siblings)
+
+      // Return if there are no parents, partners and siblings on the current node
+      if (!hasParents && !hasPartners && !hasSiblings) return
+
+      // Filter out partners of predecessors
+      if (hasPartners) this.addToPredecessors(partners)
+      // Filter out siblings of predecessors
+      if (hasSiblings) this.addToPredecessors(siblings)
+
+      // Get the current parents and their predecessors
+      const currentProfileParents = parents
+      await this.mapPredecessors(currentProfileParents)
+    },
+    mapPredecessors (currentProfileParents) {
+      // Return the predecessors of the current parents
+      return Promise.all(currentProfileParents.map(async parent => {
+        await this.getNodePredecessors(parent.id)
+      }))
+    },
+    arrayIsNotEmpty (array) {
+      return array && array.length > 0
+    },
+    addToPredecessors (array) {
+      array.forEach(person => {
+        if (!this.predecessorArray.includes(person.id)) this.predecessorArray.push(person.id)
+      })
     },
     t (key, vars) {
       return this.$t('dialogHandler.' + key, vars)

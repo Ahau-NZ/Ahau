@@ -2,20 +2,14 @@
   <v-combobox
     v-model="searchString"
     :items="items"
-    :menu-props=" { light: true } "
-    :append-icon="searchNodeId ? 'mdi-cancel' : !isFilter ? 'mdi-close' : ''"
-    @click:append="close()"
-    placeholder="Search"
-    :no-data-text="isFilter ? '' : 'no suggestions'"
     :search-input.sync="searchString"
-    solo
-    rounded
+    :menu-props=" { light: true } "
     light
     hide-selected
+    hide-details
     dense
-    :readonly="searchNodeId !== '' && !isFilter"
-    :class="isFilter ? 'search-input-filter' : 'search-input'"
-    autofocus
+    v-bind="customProps"
+    @click:append="close()"
   >
     <template v-slot:item="data">
       <v-list-item @click="setSearchNode(data.item, $event)">
@@ -47,6 +41,7 @@ import isEqual from 'lodash.isequal'
 import calculateAge from '../../lib/calculate-age'
 import { createNamespacedHelpers } from 'vuex'
 const { mapGetters: mapWhakapapaGetters } = createNamespacedHelpers('whakapapa')
+const { mapGetters: mapTableGetters } = createNamespacedHelpers('table')
 
 export default {
   name: 'SearchBar',
@@ -56,7 +51,9 @@ export default {
   props: {
     searchNodeId: String,
     isFilter: Boolean,
-    searchNodeName: String
+    searchNodeName: String,
+    reset: Boolean,
+    buttonGroup: Boolean
   },
   data () {
     return {
@@ -66,6 +63,36 @@ export default {
   },
   computed: {
     ...mapWhakapapaGetters(['nestedWhakapapa']),
+    ...mapTableGetters(['tableFilter']),
+
+    customProps () {
+      if (this.isFilter) {
+        return {
+          appendIcon: 'mdi-close',
+          outlined: true,
+          class: 'search-input-filter',
+          flat: true
+        }
+      } else if (this.buttonGroup) {
+        return {
+          outlined: false,
+          appendIcon: 'mdi-close',
+          flat: true
+        }
+      } else {
+        return {
+          outlined: true,
+          appendIcon: this.searchNodeId ? '' : 'mdi-arrow-right',
+          placeholder: 'Search',
+          noDataText: 'no suggestions',
+          rounded: true,
+          readonly: this.searchNodeId !== '',
+          class: 'searchbar-input',
+          autofocus: true,
+          solo: true
+        }
+      }
+    },
     nodes () {
       return d3.hierarchy(this.nestedWhakapapa)
         .descendants()
@@ -99,9 +126,16 @@ export default {
       return this.nodes
     }
   },
+  // Reset search string if filters are reset
+  created: function () {
+    if (this.isFilter) this.$parent.$parent.$on('update', this.close)
+  },
   watch: {
     searchString (newValue) {
       this.$emit('change', newValue)
+    },
+    reset (newVal) {
+      if (newVal) this.searchString = ''
     }
   },
   methods: {
@@ -113,7 +147,8 @@ export default {
       return calculateAge(aliveInterval)
     },
     close () {
-      this.$emit('close')
+      if (this.isFilter) this.searchString = ''
+      else this.$emit('close')
     },
     setSearchNode (data, event) {
       this.searchString = data.preferredName
@@ -136,14 +171,10 @@ export default {
 </style>
 
 <style scoped lang="scss">
-  .search-input {
+  .searchbar-input {
     padding: 0;
     margin: 0;
     margin-top: -3px;
-  }
-
-  .search-input-filter {
-    margin: 0px 25px 0px 25px;
   }
 
 </style>

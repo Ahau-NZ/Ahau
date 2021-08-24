@@ -29,6 +29,11 @@
   "tribalPermissions": "Update the permissions members have in this tribe",
   "createWhakapapas": "Create whakapapa records",
   "createCollections": "Create collections",
-  "createStories": "Create stories"
-
+  "createStories": "Create stories",
+  "addDataPoint": "Add data point",
+  "dataModel": "Set your tribal registry data model", 
+  "data": "Data", 
+  "type": "Type",
+  "included": "Included",
+  "required": "Required"
 }

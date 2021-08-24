@@ -482,13 +482,13 @@ export default {
   z-index:6
 }
 
-// .no-scroll::-webkit-scrollbar{
+// ::-webkit-scrollbar{
 //   display:none;
 // }
 
 ::-webkit-scrollbar {
-  width: 5px;
-  // height: 8px;
+  width: 6px;
+  height: 8px;
 }
 
 /* Track */

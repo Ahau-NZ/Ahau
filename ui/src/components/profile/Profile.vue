@@ -109,7 +109,7 @@
 
       <ProfileCard v-if="profile.type === 'community' && !nonMember" title="Members">
         <template v-slot:content>
-          <v-row v-for="member in tribe.members" :key="member.id" class="justify-center align-center ma-0 ml-4">
+          <v-row v-for="member in members" :key="member.id" class="justify-center align-center ma-0 ml-4">
             <v-col cols="2" class="pt-0 pl-0">
               <Avatar :size="mobile ? '50px' : '40px'" :image="member.avatarImage" :alt="member.preferredName" :gender="member.gender" clickable @click="openProfile(member)"/>
             </v-col>
@@ -174,6 +174,14 @@ export default {
     },
     isLoaded () {
       return Boolean(this.profile && this.profile.id)
+    },
+    members () {
+      return this.tribe.members
+        .filter((member) => {
+          return !this.profile.authors.some(kaitiaki => {
+            return kaitiaki.feedId === member.feedId
+          })
+        })
     }
   },
   methods: {

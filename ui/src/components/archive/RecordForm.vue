@@ -1,7 +1,7 @@
 <template>
   <!-- <v-card light> -->
   <div>
-    <v-form ref="form" v-model="form.valid" lazy-validation>
+    <v-form ref="form" v-model="form.valid">
       <v-row class="px-3">
         <v-col cols="12" sm="12" md="12">
           <v-row>
@@ -15,6 +15,9 @@
                     v-bind="customProps"
                     class="title-input"
                     style="text-align: start; font-size: 1.2em; font-weight: 700;"
+                    counter
+                    :hide-details="false"
+                    :rules="rules.titleLength"
                   />
                 </template>
                 <span>{{ t('titleTooltip') }}</span>
@@ -54,6 +57,9 @@
                         no-resize
                         rows="3"
                         auto-grow
+                        :hide-details="false"
+                        :counter="totalCharLength"
+                        :rules="rules.recordLength"
                       >
                       </v-textarea>
                     </v-col>
@@ -85,6 +91,9 @@
                     no-resize
                     rows="3"
                     auto-grow
+                    :hide-details="false"
+                    :counter="totalCharLength"
+                    :rules="rules.recordLength"
                   >
                   </v-textarea>
                 </template>
@@ -339,13 +348,15 @@
                 <template v-slot:activator="{ on }">
                   <v-textarea
                     v-on="on"
-                    v-if="show"
                     v-model="formData.contributionNotes"
                     :label="t('contributionNotes')"
                     v-bind="customProps"
                     no-resize
                     rows="3"
                     auto-grow
+                    :hide-details="false"
+                    :counter="totalCharLength"
+                    :rules="rules.recordLength"
                   >
                   </v-textarea>
                 </template>
@@ -428,6 +439,9 @@
                     no-resize
                     rows="3"
                     auto-grow
+                    :hide-details="false"
+                    :counter="totalCharLength"
+                    :rules="rules.recordLength"
                   >
                   </v-textarea>
                 </template>
@@ -476,8 +490,7 @@ import NewArtefactDialog from '@/components/dialog/artefact/NewArtefactDialog.vu
 import ArtefactCarousel from '@/components/artefact/ArtefactCarousel.vue'
 import DeleteArtefactDialog from '@/components/dialog/artefact/DeleteArtefactDialog.vue'
 
-import { RULES } from '@/lib/constants'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapMutations } from 'vuex'
 
 import { storiesApolloMixin } from '@/mixins/story-mixins.js'
 import { artefactMixin } from '@/mixins/artefact-mixins.js'
@@ -534,10 +547,14 @@ export default {
       searchString: '',
       suggestions: [],
       hasEndDate: false,
+      rules: {
+        recordLength: [v => (this.totalCharLength <= 4000) || this.t('maxLength')],
+        titleLength: [v => (v.length <= 200) || this.t('titleLength')]
+      },
       form: {
-        valid: true,
-        rules: RULES
-      }
+        valid: true
+      },
+      currentLimit: null
     }
   },
   watch: {
@@ -548,6 +565,12 @@ export default {
       var storyRes = await this.$apollo.query(getAllStories({ groupId }))
       this.stories = storyRes.data.stories
       this.collections = await this.$store.dispatch('collection/getCollectionsByGroup', groupId)
+    },
+    form: {
+      deep: true,
+      handler () {
+        this.setAllowSubmissions(this.form.valid)
+      }
     }
   },
   mounted () {
@@ -557,6 +580,13 @@ export default {
     ...mapGetters(['showStory', 'whoami']),
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
+    },
+    totalCharLength () {
+      var data = this.formData
+      function calc (src) {
+        return src ? src.length : 0
+      }
+      return [calc(data.description), calc(data.contributionNotes), calc(data.location), calc(data.translation)].reduce((a, b) => a + b, 0)
     },
     customProps () {
       return {
@@ -578,6 +608,7 @@ export default {
     }
   },
   methods: {
+    ...mapMutations(['setAllowSubmissions']),
     processArtefacts (artefacts) {
       this.index = this.formData.artefacts ? this.formData.artefacts.length : 0
 

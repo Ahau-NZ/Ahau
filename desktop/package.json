@@ -1,6 +1,6 @@
 {
   "name": "ahau-desktop",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "An application for gathering and sharing whakapapa (family trees, traditional knowledge). Built using scuttlebutt",
   "homepage": "https://gitlab.com/ahau/whakapapa-ora",
   "scripts": {
@@ -11,7 +11,8 @@
     "pack": "electron-builder --config build/electron-builder.config.js --dir",
     "dist": "electron-builder --config build/electron-builder.config.js",
     "publish": "electron-builder --config build/electron-builder.config.js --publish always",
-    "clear": "rm -rf node_modules"
+    "clear": "rm -rf node_modules",
+    "win:clear": "rmdir /s /q node_modules"
   },
   "dependencies": {
     "ahau-env": "^3.0.0",

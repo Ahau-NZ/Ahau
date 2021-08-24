@@ -107,7 +107,7 @@ export default {
       return this.tribe.members
         .filter((member) => {
           return !this.formData.authors.some(kaitiaki => {
-            return kaitiaki.id === member.id
+            return kaitiaki.feedId === member.feedId
           })
         })
     }

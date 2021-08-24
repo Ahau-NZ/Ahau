@@ -1,4 +1,5 @@
 <template>
+  <div ref="tablediv" :class="mobile ? 'mobile-table' : 'whakapapa-table'" v-scroll.self="onscroll">
   <svg id="baseSvg" :width="tableWidth" :height="tableHeight" ref="baseSvg" style="background-color:white"  min-height="500px">
     <g id="zoomable">
       <line x1="60" y1="55" :x2="tableWidth" y2="55" style="stroke-width: 1; stroke: lightgrey;"/>
@@ -124,6 +125,7 @@
       </svg>
     </g>
   </svg>
+  </div>
 </template>
 
 <script>
@@ -131,6 +133,7 @@
 import * as d3 from 'd3'
 import Node from './Node.vue'
 import Link from '../tree/Link.vue'
+
 import calculateAge from '../../lib/calculate-age.js'
 import isEmpty from 'lodash.isempty'
 import isEqual from 'lodash.isequal'
@@ -139,7 +142,7 @@ import { SORT } from '@/lib/constants.js'
 
 import { mapActions, createNamespacedHelpers } from 'vuex'
 const { mapGetters: mapWhakapapaGetters } = createNamespacedHelpers('whakapapa')
-const { mapGetters: mapFilterGetters } = createNamespacedHelpers('table')
+const { mapGetters: mapTableGetters } = createNamespacedHelpers('table')
 
 export default {
   props: {
@@ -165,15 +168,6 @@ export default {
       type: Number,
       default: 0
     },
-    sortValue: {
-      type: String,
-      default: null
-    },
-    sortEvent: {
-      type: MouseEvent,
-      required: false,
-      default: null
-    },
     download: {
       type: Boolean,
       default: false
@@ -196,7 +190,8 @@ export default {
         country: SORT.default
       },
       nodeCentered: '',
-      sortActive: false
+      sortActive: false,
+      scrollTop: ''
     }
   },
   mounted () {
@@ -206,7 +201,10 @@ export default {
 
   computed: {
     ...mapWhakapapaGetters(['nestedWhakapapa']),
-    ...mapFilterGetters(['tableFilter']),
+    ...mapTableGetters(['tableFilter', 'tableSort']),
+    mobile () {
+      return this.$vuetify.breakpoint.xs
+    },
     colWidth () {
       if (this.flatten) return 300
       return 350
@@ -337,15 +335,17 @@ export default {
   },
 
   watch: {
-    nodes (newValue) {
+    nodes () {
       this.setLoading(false)
     },
-    // Triggered whenever the user selects a sort
-    sortEvent () {
-      this.resetSorts(this.sortValue)
-      this.setSortOnField(this.sortValue)
+    tableSort: {
+      deep: true,
+      handler () {
+        this.resetSorts(this.tableSort.value)
+        this.setSortOnField(this.tableSort.value)
+      }
     },
-    searchNodeEvent (newValue) {
+    searchNodeEvent () {
       if (this.searchNodeId !== null) {
         this.root.descendants().find(d => {
           if (d.data.id === this.searchNodeId) {
@@ -403,6 +403,9 @@ export default {
   methods: {
     ...mapActions(['setLoading']),
     // sets the width of the table
+    onscroll (e) {
+      this.scrollTop = e.target.scrollTop
+    },
     async tableOverflow () {
       var width = await this.colWidth + this.columns[this.columns.length - 1].x
       this.tableWidth = width
@@ -540,7 +543,7 @@ export default {
     },
     // Executes a sort on two values
     sortByField (a, b) {
-      const sort = this.sort[this.sortValue]
+      const sort = this.sort[this.tableSort.value]
       if (sort !== SORT.default) {
         if (sort === SORT.ascending) {
           if (a < b) { return -1 }
@@ -556,7 +559,7 @@ export default {
     },
     // Determines the sort to be performed depending on the field to be sorted
     determineSort (a, b) {
-      const field = this.sortValue
+      const field = this.tableSort.value
       if (field === null || field === '') {
         return
       }
@@ -579,7 +582,7 @@ export default {
     // Hacky way to get empty/null fields to display below non-empty sorted fields
     convertNullToChar (val) {
       if (val !== null && val !== '') return val
-      const sort = this.sort[this.sortValue]
+      const sort = this.sort[this.tableSort.value]
       if (sort === SORT.ascending) {
         return 'ZZZZZ'
       }
@@ -591,7 +594,7 @@ export default {
     // Hacky way to get empty/null ages to display below non-empty sorted ages
     convertNullAgeToValue (val) {
       if (val !== null && val !== '') return val
-      const sort = this.sort[this.sortValue]
+      const sort = this.sort[this.tableSort.value]
       if (sort === SORT.ascending) {
         return 9999
       }
@@ -623,12 +626,11 @@ export default {
       return newString
     },
     centerNode (node) {
+      var div = this.$refs.tablediv
       const element = document.getElementById(`${node.data.id}`)
       const coord = element.getBoundingClientRect()
-
-      const elementPos = window.pageYOffset + coord.y - 400
-
-      window.scrollTo({
+      const elementPos = this.scrollTop + coord.y - 400
+      div.scrollTo({
         top: elementPos,
         behavior: 'smooth'
       })
@@ -682,6 +684,7 @@ export default {
       if (!this.tableFilter.skills) return true
 
       const skills = node.data.education
+      const profession = this.setString(node.data.profession)
       const search = this.setString(this.tableFilter.skills)
       var skillFound = false
 
@@ -692,7 +695,7 @@ export default {
         }
       }
 
-      return skillFound
+      return skillFound || profession.includes(search)
     },
     filterByAge (node) {
       if (!(this.tableFilter.age.max < 150)) return true
@@ -751,6 +754,19 @@ svg#baseSvg {
 .headers {
   position:fixed;
   top: 100px
+}
+
+.whakapapa-table {
+  overflow: auto;
+  width: 100%;
+  padding-top: 50px;
+  height: 100vh;
+  margin-top: -2px //needed to hide parent scrollbar
+}
+
+.mobile-table {
+  overflow: auto;
+  width: 100%;
 }
 
 </style>
