@@ -109,7 +109,7 @@
       </filter>
     </defs>
   </g>
-  <g v-if="isPartner && !noPartnerName" :style="displayNameStyle">
+  <g v-if="isPartner && !hideLabel" :style="displayNameStyle">
     <text>
       {{ getDisplayName(node) }}
     </text>
@@ -130,7 +130,7 @@ export default {
     node: { type: Object, required: true },
     radius: { type: Number, required: true },
     isPartner: { type: Boolean, default: false },
-    noPartnerName: { type: Boolean, default: false },
+    hideLabel: { type: Boolean, default: false },
     width: { type: Number, required: true }
   },
   data () {

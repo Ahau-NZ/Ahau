@@ -51,12 +51,9 @@
                   :node="{ ...partner, x: columns[2].x - nodeSize + (nodeSize * i), y: node.y }"
                   :radius="nodeRadius"
                   isPartner
-                  :noPartnerName="node.data.partners.length > 1"
+                  :hideLabel="node.data.partners.length > 1"
                   @open="updateDialog($event)"
                 />
-                <!-- <text :transform="`translate(${columns[2].x - nodeSize + 55} ${node.y + nodeRadius + 5})`">
-                  {{ partnerNames(node.data.partners) }}
-                </text> -->
               </g>
             </svg>
             <svg :width="columns[4].x - 45" >
@@ -71,12 +68,12 @@
             </svg>
             <svg :width="columns[6].x - 45">
               <text  :transform="`translate(${columns[5].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ computeDate('dob', node.data.aliveInterval) }} <!-- {{ node.data.aliveInterval.substring(0,10)  }} -->
+                {{ computeDate('dob', node.data.aliveInterval) }}
               </text>
             </svg>
             <svg :width="columns[7].x - 45">
               <text  :transform="`translate(${columns[6].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ computeDate('dod', node.data.aliveInterval) }}<!-- {{ node.data.aliveInterval.substring(11,21) }} -->
+                {{ computeDate('dod', node.data.aliveInterval) }}
               </text>
             </svg>
             <svg :width="columns[8].x - 45">
@@ -89,7 +86,6 @@
                 {{ node.data.address }}
               </text>
             </svg>
-            <!-- add country -->
             <svg :width="columns[10].x - 45">
               <text  :transform="`translate(${columns[9].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
                 {{ node.data.city }}
@@ -468,13 +464,6 @@ export default {
     },
     altNames (altArray) {
       return altArray.join(', ')
-    },
-    partnerNames (partnerArray) {
-      const partnerNames = []
-      partnerArray.forEach(partner => {
-        partnerNames.push(this.getDisplayName(partner))
-      })
-      return partnerNames.join(', ')
     },
     computeDate (requiredDate, age) {
       if (!age) {
