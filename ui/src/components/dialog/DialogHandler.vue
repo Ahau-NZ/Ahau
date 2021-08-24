@@ -113,7 +113,6 @@ import ComingSoonDialog from '@/components/dialog/ComingSoonDialog.vue'
 import ReviewRegistrationDialog from '@/components/dialog/registration/ReviewRegistrationDialog.vue'
 
 import { PERMITTED_RELATIONSHIP_ATTRS, getDisplayName } from '@/lib/person-helpers.js'
-import { createGroup, saveCommunity, savePublicCommunity, saveGroupProfileLink } from '@/lib/community-helpers'
 import { findByName } from '@/lib/search-helpers.js'
 
 import findSuccessor from '@/lib/find-successor'
@@ -122,6 +121,8 @@ import mapProfileMixins from '@/mixins/profile-mixins.js'
 import { createNamespacedHelpers, mapGetters, mapActions } from 'vuex'
 const { mapMutations: mapAlertMutations } = createNamespacedHelpers('alerts')
 const { mapGetters: mapWhakapapaGetters, mapMutations: mapWhakapapaMutations } = createNamespacedHelpers('whakapapa')
+const { mapActions: mapTribeActions } = createNamespacedHelpers('tribe')
+const { mapActions: mapCommunityActions } = createNamespacedHelpers('community')
 
 export default {
   name: 'DialogHandler',
@@ -229,6 +230,15 @@ export default {
       'addParentToNestedWhakapapa',
       'addPartnerToNestedWhakapapa'
     ]),
+    ...mapTribeActions([
+      'createGroup',
+      'createPublicGroupProfileLink',
+      'createPrivateGroupProfileLink'
+    ]),
+    ...mapCommunityActions([
+      'saveCommunity',
+      'savePublicCommunity'
+    ]),
     ...mapActions(['loading', 'setDialog',
       'setProfileById'
     ]),
@@ -281,12 +291,7 @@ export default {
       //    - saveFeedProfileLink (recps: [groupId])
       try {
         if ($event.id) throw new Error('this is for creating a new tribe + community, not updating')
-
-        const createGroupRes = await this.$apollo.mutate(
-          createGroup()
-        )
-        if (createGroupRes.errors) throw new Error('Failed to create private group', createGroupRes.errors)
-        const groupId = createGroupRes.data.createGroup.id
+        const groupId = await this.createGroup()
 
         // Note: this auto-sets the authors to allow all authors
         const input = {
@@ -296,40 +301,23 @@ export default {
           }
         }
 
-        const createCommunityRes = await this.$apollo.mutate(
-          saveCommunity({
-            ...input,
-            recps: [groupId]
-          })
-        )
-        if (createCommunityRes.errors) throw new Error('Failed to create community profile', createCommunityRes.errors)
-        const groupProfileId = createCommunityRes.data.saveProfile // id
+        const groupProfileId = await this.saveCommunity({
+          ...input,
+          recps: [groupId]
+        })
 
-        const profileLinkRes = await this.$apollo.mutate(
-          saveGroupProfileLink({
-            profile: groupProfileId,
-            group: groupId
-          })
-        )
-        if (profileLinkRes.errors) throw new Error('Failed to create community profile link', profileLinkRes.errors)
+        await this.createPrivateGroupProfileLink({
+          group: groupId,
+          profile: groupProfileId
+        })
 
-        const createPublicCommunityRes = await this.$apollo.mutate(
-          savePublicCommunity(
-            input
-          )
-        )
-        if (createPublicCommunityRes.errors) throw new Error('Failed to create public community profile', createPublicCommunityRes.errors)
-        const groupPublicProfile = createPublicCommunityRes.data.saveProfile // id
+        const groupPublicProfile = await this.savePublicCommunity(input)
+        const publicLinkId = await this.createPublicGroupProfileLink({
+          profile: groupPublicProfile,
+          group: groupId
+        })
 
-        const profilePublicLinkRes = await this.$apollo.mutate(
-          saveGroupProfileLink({
-            profile: groupPublicProfile,
-            group: groupId,
-            allowPublic: true
-          })
-        )
-        if (profilePublicLinkRes.errors) throw new Error('Failed to create public community profile link', profilePublicLinkRes.errors)
-        if (profilePublicLinkRes.data.saveGroupProfileLink) {
+        if (publicLinkId) {
           this.$router.push({ name: 'community/profile', params: { tribeId: groupId, profileId: groupProfileId } }).catch(() => {})
         }
       } catch (err) {
