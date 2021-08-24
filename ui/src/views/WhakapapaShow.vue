@@ -148,8 +148,6 @@
           @open-context-menu="openTableContextMenu($event)"
           @open="openPartnerSideNode($event.dialog, $event.type, $event.profile)"
           :searchNodeId="searchNodeId"
-          :sortValue="sortValue"
-          :sortEvent="sortEvent"
           :searchNodeEvent="searchNodeEvent"
         />
       </div>
