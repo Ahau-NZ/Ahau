@@ -6,11 +6,13 @@
 
 - Updated table side menu controls who tribal registry
 - Added partners to ProfileShow.vue
-- Added dev commands for deleting node modules on windows
+- Added frontend for custom Data Model
 
 ### Fixes
-- Now shows an error when trying to create a record that is too big for the current limit   
+- Now shows an error when trying to create a record that is too big for the current limit 
+- Removed kaitiaki from members list  
 - fix image sizes for collections and tribes
+- Added dev commands for deleting node modules on windows
 ## v2.2.0
 
 ### Features
