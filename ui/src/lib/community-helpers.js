@@ -107,13 +107,6 @@ export const PERMITTED_PUBLIC_COMMUNITY_ATTRS = [
   'joiningQuestions'
 ]
 
-export const PERMITTED_COMMUNITY_LINK_ATTRS = [
-  'id',
-  'profile',
-  'group',
-  'allowPublic'
-]
-
 export const getMembers = id => ({
   query: gql`
     ${PublicProfileFieldsFragment}
@@ -194,19 +187,6 @@ ${PublicProfileFieldsFragment}
 //   }
 // `
 
-export const createGroup = () => {
-  return {
-    mutation: gql`
-      mutation($nothing: Boolean) {
-        createGroup(nothing: $nothing) {
-          id
-        }
-      }
-    `,
-    variables: { nothing: true }
-  }
-}
-
 export const saveCommunity = input => {
   const _input = prune(input, PERMITTED_COMMUNITY_ATTRS)
 
@@ -239,21 +219,6 @@ export const savePublicCommunity = input => {
     mutation: gql`
       mutation($input: ProfileInput!) {
         saveProfile(input: $input)
-      }
-    `,
-    variables: {
-      input: _input
-    }
-  }
-}
-
-export const saveGroupProfileLink = input => {
-  const _input = prune(input, PERMITTED_COMMUNITY_LINK_ATTRS)
-
-  return {
-    mutation: gql`
-      mutation($input: GroupProfileLinkInput!) {
-        saveGroupProfileLink(input: $input)
       }
     `,
     variables: {
@@ -332,7 +297,7 @@ export const getTribes = {
   fetchPolicy: 'no-cache'
 }
 
-function prune (input, attrs) {
+export function prune (input, attrs) {
   const _input = pick(input, attrs)
   Object.entries(_input).forEach(([key, value]) => {
     if (value === '') {

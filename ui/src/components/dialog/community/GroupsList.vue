@@ -5,7 +5,7 @@
       <v-tooltip top open-delay="200">
         <template v-slot:activator="{ on }">
           <div v-on="on">
-            <v-btn color="black" rounded outlined disabled  @click="showGroup = true">
+            <v-btn color="black" rounded outlined @click="showGroup = true">
               <v-icon class="pr-2">mdi-plus</v-icon> {{ t('addGroup') }}
             </v-btn>
           </div>
