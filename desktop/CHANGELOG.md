@@ -2,6 +2,9 @@
 
 ## Current
 
+### Bug Fixes
+
+- Prevent recursive loops from ocurring in whakapapa tree
 ### Features
 
 - Updated table side menu controls who tribal registry
