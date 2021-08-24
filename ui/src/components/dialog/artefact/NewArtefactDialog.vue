@@ -210,21 +210,19 @@
 
           <!-- Location test field -->
           <v-col cols="12">
-            <h1>
-              <v-tooltip top open-delay="700">
-                <template v-slot:activator="{ on }">
-                  <v-text-field
-                    v-on="on"
-                    v-if="show"
-                    v-model="artefact.location"
-                    label="Location"
-                    v-bind="customProps"
-                    color="grey"
-                  />
-                </template>
-                <span>Where was this artefact captured</span>
-              </v-tooltip>
-            </h1>
+            <v-tooltip top open-delay="700">
+              <template v-slot:activator="{ on }">
+                <v-text-field
+                  v-on="on"
+                  v-if="show"
+                  v-model="artefact.location"
+                  label="Location"
+                  v-bind="customProps"
+                  color="grey"
+                />
+              </template>
+              <span>Where was this artefact captured</span>
+            </v-tooltip>
           </v-col>
           <v-col cols="12">
             <v-btn :class="mobile ? 'mt-4':'mt-7'" text @click="$emit('delete', selectedIndex)">
