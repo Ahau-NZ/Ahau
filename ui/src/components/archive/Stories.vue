@@ -4,23 +4,23 @@
       <v-col cols="6" class="sub-headliner black--text pa-0 pl-4 pt-2" >
         {{ title }}
       </v-col>
-      <v-col cols="6">
-        <v-combobox
-          v-model="storySearchString"
-          :search-input.sync="storySearchString"
-          :menu-props=" { light: true } "
-          light
-          hide-selected
-          hide-details
-          dense
-          v-bind="customProps"
-        >
-        </v-combobox>
-      </v-col>
     </v-row>
     <v-row v-if="filteredStories && filteredStories.length > 0">
       <v-col cols="12" xs="12" sm="12" md="9" :class="!showStory ? '':'pa-0'">
         <!-- <v-divider class="mt-6 mb-8" light></v-divider> -->
+        <v-col cols="6" class="pr-0 ml-auto">
+          <v-combobox
+            v-model="storySearchString"
+            :search-input.sync="storySearchString"
+            :menu-props=" { light: true } "
+            light
+            hide-selected
+            hide-details
+            dense
+            v-bind="customProps"
+          >
+          </v-combobox>
+        </v-col>
         <div v-if="!showStory">
           <v-row v-for="(story, i) in filteredStories" :key="`story-${i}-id-${story.id}`">
             <StoryCard @updateDialog="updateDialog($event)" @toggleStory="toggleStory($event)" :story="story" />
