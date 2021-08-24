@@ -54,23 +54,24 @@
             <v-col cols="12">
               <p>{{ $t('addCommunityForm.form') }}</p>
             </v-col>
-              <v-col cols="10" v-for="(question, i) in formData.joiningQuestions" :key="`j-q-${i}`" class="pa-1">
-                <v-text-field
-                  v-model="formData.joiningQuestions[i].label"
-                  append-icon="mdi-delete"
-                  @click:append="removeJoiningQuestion(i)"
-                  :label="`Question ${i + 1}`"
-                  auto-focus
-                  outlined
-                  hide-details
-                />
-              </v-col>
+            <v-col cols="10" v-for="(question, i) in formData.joiningQuestions" :key="`j-q-${i}`" class="pa-1">
+              <v-text-field
+                v-model="formData.joiningQuestions[i].label"
+                append-icon="mdi-delete"
+                @click:append="removeJoiningQuestion(i)"
+                :label="`Question ${i + 1}`"
+                auto-focus
+                outlined
+                hide-details
+              />
+            </v-col>
             <v-col cols="12" justify="start" class="px-1">
               <v-btn color="#3b3b3b" class="white--text" @click="addQuestionField">
                 <v-icon class="pr-1">mdi-plus</v-icon> {{ $t('addCommunityForm.addQuestion') }}
               </v-btn>
             </v-col>
           </v-row>
+          <DataModel />
         </v-tab-item>
         <v-tab-item light value="tab-3">
           <GroupsList :formData.sync="formData" :profile="profile" :tribe="tribe" :mobile="mobile" />
@@ -98,6 +99,7 @@ import { EMPTY_COMMUNITY, setDefaultCommunity } from '@/lib/community-helpers.js
 import { getObjectChanges } from '@/lib/get-object-changes.js'
 import GroupsList from './GroupsList.vue'
 import Permissions from './Permissions.vue'
+import DataModel from './DataModel.vue'
 
 export default {
   name: 'NewCommunityDialog',
@@ -105,7 +107,8 @@ export default {
     Dialog,
     CommunityForm,
     GroupsList,
-    Permissions
+    Permissions,
+    DataModel
   },
   props: {
     show: { type: Boolean, required: true },
