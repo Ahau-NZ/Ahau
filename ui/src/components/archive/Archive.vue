@@ -21,7 +21,13 @@
           />
         </v-col>
         <v-col cols="12" class="pt-0" :class="mobile ? '':'mt-4'">
-          <Stories :stories="stories" @save="processStory" :title="title" :reload="reload"/>
+          <Stories
+            :stories="filteredStories"
+            @save="processStory"
+            :title="title"
+            :reload="reload"
+            @toggleFilteredStories="toggleFilteredStories"
+          />
         </v-col>
       </v-row>
       <ArchiveHelper v-if="showArchiveHelper" :show="showArchiveHelper" @close="toggleArchiveHelper" />
@@ -101,7 +107,8 @@ export default {
       collections: null,
       dialog: null,
       scrollPosition: 0,
-      showArchiveHelper: false
+      showArchiveHelper: false,
+      showCollectionStories: false
     }
   },
   beforeMount () {
@@ -145,6 +152,16 @@ export default {
     },
     isNewCollectionDialogOpen () {
       return this.dialog === 'new-collection'
+    },
+    filteredStories () {
+      if (!this.stories) return []
+
+      if (this.showCollectionStories) return this.stories
+      else {
+        return this.stories.filter(story => {
+          if (story.collections.length === 0) return true
+        })
+      }
     }
   },
   methods: {
@@ -196,6 +213,9 @@ export default {
         this.dialog = null
         return false
       } else this.$router.go(-1)
+    },
+    toggleFilteredStories () {
+      this.showCollectionStories = !this.showCollectionStories
     }
   },
   watch: {
