@@ -549,7 +549,7 @@ export default {
       hasEndDate: false,
       rules: {
         recordLength: [v => (this.totalCharLength <= 4000) || this.t('maxLength')],
-        titleLength: [v => (v.length <= 200) || this.t('titleLength')]
+        titleLength: [v => (v && v.length <= 200) || this.t('titleLength')]
       },
       form: {
         valid: true

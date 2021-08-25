@@ -1,26 +1,30 @@
 <template>
   <div>
     <v-row v-show="!showStory">
-      <v-col cols="6" class="sub-headliner black--text pa-0 pl-4 pt-2" >
+      <v-col cols="5" align-self="end" class="sub-headliner black--text pa-0 pl-4 pt-2" >
         {{ title }}
       </v-col>
+      <v-col cols="12" md="4" class="mr-auto pa-0">
+        <v-combobox
+          v-model="storySearchString"
+          :search-input.sync="storySearchString"
+          :menu-props=" { light: true } "
+          light
+          hide-selected
+          hide-details
+          dense
+          v-bind="customProps"
+        >
+        </v-combobox>
+        <!-- Turning this off for now -->
+        <!-- <v-btn @click="toggleFilteredStories" fab x-small color="#241023">
+        <v-icon color="white" >mdi-information</v-icon>
+        </v-btn> -->
+      </v-col>
     </v-row>
+        <!-- <v-divider class="mt-6 mb-8" light></v-divider> -->
     <v-row v-if="filteredStories && filteredStories.length > 0">
       <v-col cols="12" xs="12" sm="12" md="9" :class="!showStory ? '':'pa-0'">
-        <!-- <v-divider class="mt-6 mb-8" light></v-divider> -->
-        <v-col cols="6" class="pr-0 ml-auto">
-          <v-combobox
-            v-model="storySearchString"
-            :search-input.sync="storySearchString"
-            :menu-props=" { light: true } "
-            light
-            hide-selected
-            hide-details
-            dense
-            v-bind="customProps"
-          >
-          </v-combobox>
-        </v-col>
         <div v-if="!showStory">
           <v-row v-for="(story, i) in filteredStories" :key="`story-${i}-id-${story.id}`">
             <StoryCard @updateDialog="updateDialog($event)" @toggleStory="toggleStory($event)" :story="story" />
@@ -115,11 +119,8 @@ export default {
         appendIcon: '',
         placeholder: 'Search',
         noDataText: 'no suggestions',
-        rounded: true,
-        class: 'searchbar-input',
-        autofocus: true,
-        solo: true,
-        header: null
+        header: null,
+        style: 'background-color: white; border-radius: 10px;'
       }
     },
     filteredStories () {
@@ -181,6 +182,9 @@ export default {
         mentionLegalName.includes(search) ||
         altNameMatch
       )
+    },
+    toggleFilteredStories () {
+      this.$emit('toggleFilteredStories')
     }
   },
   t (key, vars) {
@@ -190,6 +194,7 @@ export default {
 </script>
 
 <style>
+
 .sub-headliner {
   font-size: 0.8em;
   text-transform: uppercase;
