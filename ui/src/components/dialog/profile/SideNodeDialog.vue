@@ -158,7 +158,7 @@
 
                 <hr v-if="profile.parents" class="family-divider"/>
 
-                <v-col v-if="profile.partners && profile.partners.length" :cols="12" class="pa-0">
+                <v-col v-if="profile.partners" :cols="12" class="pa-0">
                   <AvatarGroup
                     :profiles="profile.partners"
                     :group-title="t('partners')"
@@ -172,9 +172,9 @@
                   </AvatarGroup>
                 </v-col>
 
-                <hr v-if="profile.partners && profile.partners.length" class="family-divider"/>
+                <hr v-if="profile.partners" class="family-divider"/>
 
-                <v-col :cols="12" v-if="profile.siblings && profile.siblings.length" class="pa-0">
+                <v-col :cols="12" v-if="profile.siblings && profile.parents.length" class="pa-0">
                   <AvatarGroup
                     :profiles="profile.siblings"
                     :group-title="t('siblings')"
@@ -188,7 +188,7 @@
                   </AvatarGroup>
                 </v-col>
 
-                <hr v-if="profile.siblings && profile.siblings.length" class="family-divider"/>
+                <hr v-if="profile.siblings && profile.parents.length" class="family-divider"/>
 
                 <v-col :cols="12" class="pa-0">
                   <AvatarGroup
