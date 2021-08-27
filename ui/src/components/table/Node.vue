@@ -1,24 +1,13 @@
 <template>
 <svg :width="width - 50">
   <g :id="node.id" :style="groupStyle">
-    <!-- recursion of partners (first so they're drawing in background) -->
-    <!-- <g v-if="!profile.isCollapsed">
-      <g v-for="partner in partners" :key="partner.nodeId">
-        <Node
-          :id="partner.nodeId"
-          :radius="partnerRadius"
-          :isPartner="true"
-          :node="partner"
-          @open-context-menu="$emit('open-context-menu', $event)"
-        />
-      </g>
-    </g> -->
     <g
       class="avatar -main"
       @click.prevent="click"
       @mousedown.right="openMenu($event, profile)"
       @contextmenu.prevent
     >
+      <!-- Avatar -->
       <defs>
         <clipPath id="myCircle">
           <circle :cx="radius" :cy="radius" :r="radius" />
@@ -37,6 +26,7 @@
         clip-path="url(#myCircle)"
         :style="{ opacity: profile.deceased ? 0.5 : 1 }"
       />
+      <!-- nodeMenu -->
       <g
         v-if="!isPartner"
         class="menu-button"
@@ -61,46 +51,8 @@
         <polygon points="15,0  25,0  20,6" style="fill:#000;" />
       </g>
     </g>
-
-    <!-- <g v-else class="avatar -partner">
-      <defs>
-        <clipPath id="myPartnerCircle">
-          <circle :cx="radius" :cy="radius" :r="radius" />
-        </clipPath>
-      </defs>
-      <circle
-        :style="{ fill: profile.deceased ? colours.deceased : colours.alive }"
-        :cx="radius"
-        :cy="radius"
-        :r="radius - 1"
-      />
-      <image
-        :xlink:href="imageSource"
-        :width="diameter"
-        :height="diameter"
-        clip-path="url(#myPartnerCircle)"
-        :style="{ opacity: profile.deceased ? 0.5 : 1 }"
-      />
-
-      <g
-        class="menu-button"
-        @click.stop="openMenu($event, profile.id)"
-        :transform="partnerMenuTranslate"
-      >
-        <circle
-          stroke="white"
-          fill="white"
-          filter="url(#shadow)"
-          cx="20"
-          cy="1"
-          r="10"
-        />
-        <polygon points="15,0  25,0  20,6" style="fill:#000;" />
-      </g>
-    </g> -->
-
-    <g id="node-label" :style="textStyle">
-      <!-- <rect :width="textWidth" y="-16" height="10"></rect> -->
+    <!-- Names -->
+    <g v-if="!isPartner" id="node-label" :style="textStyle">
       <text>{{ profile.legalName }}</text>
     </g>
     <defs>

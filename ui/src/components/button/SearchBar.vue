@@ -82,13 +82,12 @@ export default {
       } else {
         return {
           outlined: true,
-          appendIcon: this.searchNodeId ? '' : 'mdi-arrow-right',
+          appendIcon: this.searchNodeId ? '' : 'mdi-magnify',
           placeholder: 'Search',
           noDataText: 'no suggestions',
           rounded: true,
           readonly: this.searchNodeId !== '',
           class: 'searchbar-input',
-          autofocus: true,
           solo: true
         }
       }
@@ -104,7 +103,7 @@ export default {
 
           var altNameMatch = false
           const altNames = d.altNames
-          if (altNames.length > 0) {
+          if (altNames && altNames.length > 0) {
             for (var i = 0; i < altNames.length; i++) {
               const currAltName = this.setString(altNames[i])
               if (isEqual(currAltName, search) || currAltName.includes(search)) {

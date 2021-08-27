@@ -34,7 +34,7 @@
       />
 
       <v-row v-if="!mobile" class="select">
-        <div v-if="search" class="icon-search">
+        <div class="icon-search">
           <SearchBar
             v-if="!searchNodeId"
             :nestedWhakapapa="nestedWhakapapa"
@@ -49,9 +49,6 @@
             :searchNodeId.sync="searchNodeId"
             :searchNodeName="searchNodeName"
           />
-        </div>
-        <div v-else class="icon-button">
-          <SearchButton :search.sync="search" />
         </div>
         <div v-if="whakapapa.table" class="icon-button">
           <SearchFilterButton :searchFilter.sync="searchFilter"/>

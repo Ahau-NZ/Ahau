@@ -92,7 +92,7 @@
               </text>
             </svg>
             <svg :width="columns[11].x - 45">
-              <text  :transform="`translate(${columns[0].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
+              <text  :transform="`translate(${columns[10].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
                 {{ node.data.postCode }}
               </text>
             </svg>
@@ -313,19 +313,19 @@ export default {
         { label: this.t('fullName'), x: 80 },
         { label: this.t('preferredName'), x: this.colWidth },
         { label: this.t('partners'), x: this.colWidth + 200 },
-        { label: this.t('aka'), x: this.colWidth + 475 },
-        { label: this.t('age'), x: this.colWidth + 700 },
-        { label: this.t('dob'), x: this.colWidth + 770 },
-        { label: this.t('dod'), x: this.colWidth + 900 },
-        { label: this.t('profession'), x: this.colWidth + 1000 },
-        { label: this.t('address'), x: this.colWidth + 1350 },
-        { label: this.t('city'), x: this.colWidth + 1755 },
-        { label: this.t('postCode'), x: this.colWidth + 1995 },
-        { label: this.t('country'), x: this.colWidth + 2115 },
-        { label: this.t('pob'), x: this.colWidth + 2355 },
-        { label: this.t('pod'), x: this.colWidth + 2595 },
-        { label: this.t('email'), x: this.colWidth + 2835 },
-        { label: this.t('phone'), x: this.colWidth + 3195 }
+        { label: this.t('aka'), x: this.colWidth + 400 },
+        { label: this.t('age'), x: this.colWidth + 600 },
+        { label: this.t('dob'), x: this.colWidth + 650 },
+        { label: this.t('dod'), x: this.colWidth + 775 },
+        { label: this.t('profession'), x: this.colWidth + 900 },
+        { label: this.t('address'), x: this.colWidth + 1100 },
+        { label: this.t('city'), x: this.colWidth + 1400 },
+        { label: this.t('postCode'), x: this.colWidth + 1600 },
+        { label: this.t('country'), x: this.colWidth + 1700 },
+        { label: this.t('pob'), x: this.colWidth + 1900 },
+        { label: this.t('pod'), x: this.colWidth + 2100 },
+        { label: this.t('email'), x: this.colWidth + 2300 },
+        { label: this.t('phone'), x: this.colWidth + 2550 }
       ]
     }
   },
