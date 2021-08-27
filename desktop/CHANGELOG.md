@@ -1,6 +1,6 @@
 # Changelog | Ahau desktop
 
-## Current
+## v2.3.0
 
 ### Bug Fixes
 

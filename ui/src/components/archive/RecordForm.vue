@@ -549,7 +549,7 @@ export default {
       hasEndDate: false,
       rules: {
         recordLength: [v => (this.totalCharLength <= 4000) || this.t('maxLength')],
-        titleLength: [v => (v.length <= 200) || this.t('titleLength')]
+        titleLength: [v => (v && v.length <= 200) || this.t('titleLength')]
       },
       form: {
         valid: true
@@ -575,6 +575,7 @@ export default {
   },
   mounted () {
     this.showAdvanced()
+    if (this.editing) this.addContributor()
   },
   computed: {
     ...mapGetters(['showStory', 'whoami']),
@@ -609,6 +610,11 @@ export default {
   },
   methods: {
     ...mapMutations(['setAllowSubmissions']),
+    addContributor () {
+      if (!this.formData.contributors.some(contributor => contributor.id === this.whoami.public.profile.id)) {
+        return this.formData.contributors.push(this.whoami.public.profile)
+      }
+    },
     processArtefacts (artefacts) {
       this.index = this.formData.artefacts ? this.formData.artefacts.length : 0
 

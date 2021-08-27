@@ -8,11 +8,13 @@ import person from './modules/person'
 import archive from './modules/archive'
 import dialog from './modules/dialog'
 import notifications from './modules/notifications'
-import tribe from './modules/tribe'
+
 import alerts from './modules/alerts'
 import analytics from './modules/analytics'
 
 // new
+import tribe from './modules/tribe'
+import community from './modules/community'
 import collection from './modules/collection/'
 import settings from './modules/settings/'
 import story from './modules/story/'
@@ -128,11 +130,13 @@ export default new Vuex.Store({
     archive,
     dialog,
     notifications,
-    tribe,
     alerts,
     analytics,
 
     // new
+    tribe: tribe(apollo),
+    community: community(apollo),
+
     collection: collection(apollo),
     settings: settings(apollo),
     whakapapa: whakapapa(apollo),
