@@ -327,33 +327,43 @@
             <AddButton :align="'flex-end'" :justify="justifyBtn" :width="'50px'" :label="t('skills.addEducation')" @click="addEmptyItem(formData.school)" row/>
           </v-col>
         </v-row>
-        <!-- Email, Address, Phone, Location -->
         <v-row v-if="!formData.deceased">
-          <v-col cols="12" class="px-0">
-            <v-divider class="py-2"/>
-            <span class="pa-0 ma-0" style="font-weight:bold">{{ t('personalInfo.title') }}</span>
-          </v-col>
-          <!-- Email -->
+          <!-- Personal Information -->
+          <template v-if="isKaitiaki">
+            <v-col cols="12" class="px-0">
+              <v-divider class="py-2"/>
+              <span class="pa-0 ma-0" style="font-weight:bold">{{ t('personalInfo.title') }}</span>
+            </v-col>
+            <!-- Email -->
+            <v-col :cols="sideViewCols" class="pa-1">
+              <v-text-field
+                v-model="formData.email"
+                :label="t('personalInfo.email')"
+                v-bind="customProps"
+              />
+            </v-col>
+            <!-- Phone -->
+            <v-col :cols="sideViewCols" class="pa-1">
+              <v-text-field
+                v-model="formData.phone"
+                :label="t('personalInfo.phone')"
+                v-bind="customProps"
+              />
+            </v-col>
+            <!-- Address -->
+            <v-col :cols="sideViewCols" class="pa-1">
+              <v-text-field
+                v-model="formData.address"
+                :label="t('personalInfo.address')"
+                v-bind="customProps"
+              />
+            </v-col>
+          </template>
+          <!-- Post Code -->
           <v-col :cols="sideViewCols" class="pa-1">
             <v-text-field
-              v-model="formData.email"
-              :label="t('personalInfo.email')"
-              v-bind="customProps"
-            />
-          </v-col>
-          <!-- Phone -->
-          <v-col :cols="sideViewCols" class="pa-1">
-            <v-text-field
-              v-model="formData.phone"
-              :label="t('personalInfo.phone')"
-              v-bind="customProps"
-            />
-          </v-col>
-          <!-- Address -->
-          <v-col :cols="sideViewCols" class="pa-1">
-            <v-text-field
-              v-model="formData.address"
-              :label="t('personalInfo.address')"
+              v-model="formData.postCode"
+              :label="t('personalInfo.postCode')"
               v-bind="customProps"
             />
           </v-col>
@@ -362,14 +372,6 @@
             <v-text-field
               v-model="formData.city"
               :label="t('personalInfo.city')"
-              v-bind="customProps"
-            />
-          </v-col>
-          <!-- Post Code -->
-          <v-col :cols="sideViewCols" class="pa-1">
-            <v-text-field
-              v-model="formData.postCode"
-              :label="t('personalInfo.postCode')"
               v-bind="customProps"
             />
           </v-col>
@@ -445,11 +447,6 @@ export default {
     if (!this.readonly && isEmpty(this.formData.school)) {
       this.formData.school.push('')
     }
-    if (!this.isKaitiaki) {
-      if (this.formData.address) this.formData.address = this.obfuscate(this.formData.address)
-      if (this.formData.phone) this.formData.phone = this.obfuscate(this.formData.phone)
-      if (this.formData.email) this.formData.email = this.obfuscate(this.formData.email)
-    }
   },
   watch: {
     profile: {
@@ -522,12 +519,6 @@ export default {
   },
   methods: {
     getDisplayName,
-    obfuscate (string) {
-      let start = string.slice(0, 2)
-      let end = string.slice(-3)
-      let fill = new Array(string.length - 5).fill('*').join('')
-      return start + fill + end
-    },
     updateSelectedGender (genderClicked) {
       // reset images to outlined
       this.$refs.taneImg.src = require('@/assets/tane-outlined.svg')
