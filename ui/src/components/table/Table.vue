@@ -41,15 +41,15 @@
                 {{ node.data.preferredName }}
               </text>
             </svg>
-            <svg :width="columns[3].x - 45" >
+            <svg :width="columns[3].x - 40" >
               <g v-if="node.data.partners && node.data.partners.length > 0">
                 <Node
                   v-for="(partner, i) in node.data.partners"
                   :key="partner.id"
                   :id="partner.id"
                   :width="columns[4].x"
-                  :node="{ ...partner, x: columns[2].x - nodeSize + (nodeSize * i), y: node.y }"
-                  :radius="nodeRadius"
+                  :node="{ ...partner, x: columns[2].x - nodeSize + 5 + (nodeSize * i), y: node.y }"
+                  :radius="nodeRadius * 0.9"
                   isPartner
                   :hideLabel="node.data.partners.length > 1"
                   @open="updateDialog($event)"

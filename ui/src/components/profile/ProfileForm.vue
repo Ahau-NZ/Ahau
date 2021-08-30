@@ -398,6 +398,8 @@ import { getDisplayName } from '@/lib/person-helpers.js'
 
 import isEmpty from 'lodash.isempty'
 
+import { mapGetters } from 'vuex'
+
 export default {
   name: 'ProfileForm',
   components: {
@@ -443,6 +445,11 @@ export default {
     if (!this.readonly && isEmpty(this.formData.school)) {
       this.formData.school.push('')
     }
+    if (!this.isKaitiaki) {
+      if (this.formData.address) this.formData.address = this.obfuscate(this.formData.address)
+      if (this.formData.phone) this.formData.phone = this.obfuscate(this.formData.phone)
+      if (this.formData.email) this.formData.email = this.obfuscate(this.formData.email)
+    }
   },
   watch: {
     profile: {
@@ -458,6 +465,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['isKaitiaki']),
     showBirthOrder () {
       if (this.dialogType === 'parent') return false
       if (this.readonly && !this.formData.birthOrder) return false
@@ -514,6 +522,12 @@ export default {
   },
   methods: {
     getDisplayName,
+    obfuscate (string) {
+      let start = string.slice(0, 2)
+      let end = string.slice(-3)
+      let fill = new Array(string.length - 5).fill('*').join('')
+      return start + fill + end
+    },
     updateSelectedGender (genderClicked) {
       // reset images to outlined
       this.$refs.taneImg.src = require('@/assets/tane-outlined.svg')

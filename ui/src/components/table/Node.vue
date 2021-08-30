@@ -88,7 +88,6 @@ export default {
   data () {
     return {
       offsetSize: 15,
-      partnerRadius: 0.8 * this.radius,
       colours: {
         alive: ALIVE_COLOUR,
         deceased: DECEASED_COLOUR
@@ -132,14 +131,6 @@ export default {
         transform: `translate(${this.radius * 2.5}px, ${this
           .radius + 5}px)`
       }
-    },
-    partners () {
-      if (this.isPartner || this.profile.partners === undefined) return []
-      return this.getPartners()
-    },
-    partnerMenuTranslate () {
-      const x = this.node.right ? -0.3 : 1.4
-      return `translate(${x * this.radius} ${1.3 * this.radius})`
     }
   },
   methods: {
@@ -154,24 +145,6 @@ export default {
     },
     openMenu ($event, profile) {
       this.$emit('open-menu', { $event, profile })
-    },
-    getPartners () {
-      var leftCount = 0
-      var rightCount = 0
-      return this.profile.partners
-        .map((d, i) => {
-          var sign = i % 2 === 0 ? 1 : -1
-          var offset = sign === 1 ? +2 * this.offsetSize : -1 * this.offsetSize
-          var count = sign === 1 ? ++leftCount : ++rightCount
-          return {
-            index: `${this.node.nodeId}-partner-${i}`,
-            x: sign * count * this.partnerRadius + offset,
-            y: 10,
-            data: d,
-            right: sign === -1
-          }
-        })
-        .reverse()
     }
   }
 }

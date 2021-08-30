@@ -61,16 +61,17 @@ const rootModule = {
     },
     loading: false,
     syncing: false,
-
     goBack: '', // TODO deprecate?
     currentAccess: null,
-    allowSubmissions: true // TODO extract to specific domain
+    allowSubmissions: true, // TODO extract to specific domain,
+    isKaitiaki: false
   },
 
   getters: {
     loadingState: state => state.loading,
     syncing: state => state.syncing,
     whoami: state => state.whoami,
+    isKaitiaki: state => state.isKaitiaki,
 
     // TODO-implement goBack to previous profile &| component
     goBack: state => state.goBack,
@@ -100,6 +101,9 @@ const rootModule = {
     },
     setAllowSubmissions (state, allow) {
       state.allowSubmissions = allow
+    },
+    setIsKaitiaki (state, kaitiaki) {
+      state.isKaitiaki = kaitiaki
     }
   },
 

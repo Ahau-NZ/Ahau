@@ -297,13 +297,8 @@ export default {
     await this.reload()
   },
   computed: {
-    ...mapGetters(['selectedProfile', 'whoami']),
+    ...mapGetters(['selectedProfile', 'whoami', 'isKaitiaki']),
     ...mapWhakapapaGetters(['nestedWhakapapa']),
-    isKaitiaki () {
-      if (!this.whakapapaView || !this.whakapapaView.kaitiaki) return false
-
-      return this.whoami.public.profile.id === this.whakapapaView.kaitiaki[0].id
-    },
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
