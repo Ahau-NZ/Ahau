@@ -21,5 +21,9 @@
   "deletePerson": "Delete this person",
   "cancel": "Cancel",
   "save": "Save",
-  "description": "Description"
+  "description": "Description",
+  "email": "Email", 
+  "phone": "Phone", 
+  "address": "Address",
+  "postcode": "Postcode"
 }

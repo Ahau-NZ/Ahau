@@ -57,10 +57,10 @@
               :align="mobile ? '' : 'right'"
               class="pt-0 d-flex justify-space-between"
             >
-              <v-btn @click="cancel" text large fab class="secondary--text mr-10">
+              <v-btn @click="cancel" text large fab class="secondary--text">
                 {{ t('cancel') }}
               </v-btn>
-              <v-btn @click="submit" text large fab class="blue--text ml-5" color="blue">
+              <v-btn @click="submit" text large fab class="blue--text" color="blue">
                 {{ t('save') }}
               </v-btn>
             </v-col>
@@ -136,6 +136,12 @@
                   <ProfileInfoItem class="br pb-0" mdCols="6" smCols="6" :title="t('schools')" :value="formData.school.join('\n')"/>
                   <ProfileInfoItem class="pb-0" mdCols="6" smCols="6" :title="t('skills')" :value="formData.education.join('\n')"/>
                 </v-row>
+                <v-row v-if="isKaitiaki" cols="12" class="rounded-border mt-4">
+                  <ProfileInfoItem class="bb pb-0" mdCols="12" smCols="12"  :title="t('address')" :value="formData.address"/>
+                  <ProfileInfoItem class="pb-0 bb" mdCols="12" smCols="12" :title="t('postcode')" :value="formData.postCode"/>
+                  <ProfileInfoItem class="bb pb-0" mdCols="12" smCols="12"  :title="t('phone')" :value="formData.phone"/>
+                  <ProfileInfoItem class="pb-0"  mdCols="12" smCols="12" :title="t('email')" :value="formData.email"/>
+                </v-row>
               </v-col>
             </v-col>
           </v-row>
@@ -158,7 +164,7 @@
 
                 <hr v-if="profile.parents" class="family-divider"/>
 
-                <v-col v-if="profile.partners && profile.partners.length" :cols="12" class="pa-0">
+                <v-col v-if="profile.partners" :cols="12" class="pa-0">
                   <AvatarGroup
                     :profiles="profile.partners"
                     :group-title="t('partners')"
@@ -172,9 +178,9 @@
                   </AvatarGroup>
                 </v-col>
 
-                <hr v-if="profile.partners && profile.partners.length" class="family-divider"/>
+                <hr v-if="profile.partners" class="family-divider"/>
 
-                <v-col :cols="12" v-if="profile.siblings && profile.siblings.length" class="pa-0">
+                <v-col :cols="12" v-if="profile.siblings && profile.parents.length" class="pa-0">
                   <AvatarGroup
                     :profiles="profile.siblings"
                     :group-title="t('siblings')"
@@ -188,7 +194,7 @@
                   </AvatarGroup>
                 </v-col>
 
-                <hr v-if="profile.siblings && profile.siblings.length" class="family-divider"/>
+                <hr v-if="profile.siblings && profile.parents.length" class="family-divider"/>
 
                 <v-col :cols="12" class="pa-0">
                   <AvatarGroup
@@ -246,7 +252,7 @@ import isEqual from 'lodash.isequal'
 import isEmpty from 'lodash.isempty'
 import pick from 'lodash.pick'
 import clone from 'lodash.clonedeep'
-import { mapActions, mapMutations } from 'vuex'
+import { mapActions, mapMutations, mapGetters } from 'vuex'
 
 import ProfileInfoItem from '@/components/profile/ProfileInfoItem.vue'
 import ProfileForm from '@/components/profile/ProfileForm.vue'
@@ -327,6 +333,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['isKaitiaki']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -433,8 +440,8 @@ export default {
       return age
     },
     openProfile (profile) {
-      this.setProfileById({ id: profile.id, type: 'preview' })
-      this.setDialog({ active: 'view-edit-node', type: 'preview' })
+      this.setProfileById({ id: profile.id })
+      this.setDialog({ active: 'view-edit-node' })
     },
     cordovaBackButton () {
       this.close()

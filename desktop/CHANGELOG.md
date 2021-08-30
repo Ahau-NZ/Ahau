@@ -9,6 +9,8 @@
 
 - Updated table side menu controls who tribal registry
 - Added partners to ProfileShow.vue
+- Added partners column to whakapapa table
+- Can now click on a partner in whakapapa table to show that person in SideNodeDialog.vue
 - Added frontend for custom Data Model
 
 ### Fixes

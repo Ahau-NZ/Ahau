@@ -41,39 +41,49 @@
                 {{ node.data.preferredName }}
               </text>
             </svg>
-            <svg :width="columns[3].x - 45" >
-              <text  :transform="`translate(${columns[2].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ altNames(node.data.altNames) }}
-              </text>
+            <svg :width="columns[3].x - 40" >
+              <g v-if="node.data.partners && node.data.partners.length > 0">
+                <Node
+                  v-for="(partner, i) in node.data.partners"
+                  :key="partner.id"
+                  :id="partner.id"
+                  :width="columns[4].x"
+                  :node="{ ...partner, x: columns[2].x - nodeSize + 5 + (nodeSize * i), y: node.y }"
+                  :radius="nodeRadius * 0.9"
+                  isPartner
+                  :hideLabel="node.data.partners.length > 1"
+                  @open="updateDialog($event)"
+                />
+              </g>
             </svg>
-            <svg :width="columns[4].x - 45">
+            <svg :width="columns[4].x - 45" >
               <text  :transform="`translate(${columns[3].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ node.age }}
+                {{ altNames(node.data.altNames) }}
               </text>
             </svg>
             <svg :width="columns[5].x - 45">
               <text  :transform="`translate(${columns[4].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ node.data.profession }}
+                {{ node.age }}
               </text>
             </svg>
             <svg :width="columns[6].x - 45">
               <text  :transform="`translate(${columns[5].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ computeDate('dob', node.data.aliveInterval) }} <!-- {{ node.data.aliveInterval.substring(0,10)  }} -->
+                {{ computeDate('dob', node.data.aliveInterval) }}
               </text>
             </svg>
             <svg :width="columns[7].x - 45">
               <text  :transform="`translate(${columns[6].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ node.data.placeOfBirth }}
+                {{ computeDate('dod', node.data.aliveInterval) }}
               </text>
             </svg>
             <svg :width="columns[8].x - 45">
               <text  :transform="`translate(${columns[7].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ computeDate('dod', node.data.aliveInterval) }}<!-- {{ node.data.aliveInterval.substring(11,21) }} -->
+                {{ node.data.profession }}
               </text>
             </svg>
             <svg :width="columns[9].x - 45">
               <text  :transform="`translate(${columns[8].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ node.data.placeOfDeath }}
+                {{ node.data.address }}
               </text>
             </svg>
             <svg :width="columns[10].x - 45">
@@ -83,22 +93,27 @@
             </svg>
             <svg :width="columns[11].x - 45">
               <text  :transform="`translate(${columns[10].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ node.data.country }}
+                {{ node.data.postCode }}
               </text>
             </svg>
             <svg :width="columns[12].x - 45">
               <text  :transform="`translate(${columns[11].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ node.data.address }}
+                {{ node.data.country }}
               </text>
             </svg>
             <svg :width="columns[13].x - 45">
-              <text :transform="`translate(${columns[12].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ node.data.phone }}
+              <text  :transform="`translate(${columns[12].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
+                {{ node.data.placeOfBirth }}
+              </text>
+            </svg>
+            <svg :width="columns[14].x - 45">
+              <text :transform="`translate(${columns[13].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
+                {{ node.data.placeOfDeath }}
               </text>
             </svg>
             <svg>
-              <text :transform="`translate(${columns[13].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ node.data.postCode }}
+              <text :transform="`translate(${columns[14].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
+                {{ node.data.phone }}
               </text>
             </svg>
           </g>
@@ -297,19 +312,20 @@ export default {
       return [
         { label: this.t('fullName'), x: 80 },
         { label: this.t('preferredName'), x: this.colWidth },
-        { label: this.t('aka'), x: this.colWidth + 200 },
-        { label: this.t('age'), x: this.colWidth + 400 },
-        { label: this.t('profession'), x: this.colWidth + 470 },
+        { label: this.t('partners'), x: this.colWidth + 200 },
+        { label: this.t('aka'), x: this.colWidth + 400 },
+        { label: this.t('age'), x: this.colWidth + 600 },
         { label: this.t('dob'), x: this.colWidth + 650 },
-        { label: this.t('pob'), x: this.colWidth + 780 },
-        { label: this.t('dod'), x: this.colWidth + 1050 },
-        { label: this.t('pod'), x: this.colWidth + 1180 },
-        { label: this.t('city'), x: this.colWidth + 1495 },
-        { label: this.t('country'), x: this.colWidth + 1815 },
-        { label: this.t('address'), x: this.colWidth + 2055 },
-        { label: this.t('phone'), x: this.colWidth + 2295 },
-        { label: this.t('email'), x: this.colWidth + 2535 },
-        { label: this.t('postCode'), x: this.colWidth + 2895 }
+        { label: this.t('dod'), x: this.colWidth + 775 },
+        { label: this.t('profession'), x: this.colWidth + 900 },
+        { label: this.t('address'), x: this.colWidth + 1100 },
+        { label: this.t('city'), x: this.colWidth + 1400 },
+        { label: this.t('postCode'), x: this.colWidth + 1600 },
+        { label: this.t('country'), x: this.colWidth + 1700 },
+        { label: this.t('pob'), x: this.colWidth + 1900 },
+        { label: this.t('pod'), x: this.colWidth + 2100 },
+        { label: this.t('email'), x: this.colWidth + 2300 },
+        { label: this.t('phone'), x: this.colWidth + 2550 }
       ]
     }
   },
@@ -683,6 +699,9 @@ export default {
     },
     openContextMenu (event) {
       this.$emit('open-context-menu', event)
+    },
+    updateDialog ($event) {
+      this.$emit('open', $event)
     },
     t (key, vars) {
       return this.$t('viewTribalRegistry.' + key, vars)

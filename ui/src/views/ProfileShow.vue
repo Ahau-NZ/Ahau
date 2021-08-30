@@ -144,6 +144,9 @@ export default {
           this.setCurrentAccess(
             getTribalProfile(tribe, this.whoami)
           )
+
+          if (this.whoami.personal.profile.id === this.tribe.private[0].id) this.setIsKaitiaki(true)
+          else this.setIsKaitiaki(this.tribe.public[0].kaitiaki.some(tiaki => tiaki.feedId === this.whoami.public.feedId))
         } catch (err) {
           const message = this.t('failMembers')
           console.error(message)
@@ -163,7 +166,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['whoami', 'showStory', 'showArtefact']),
+    ...mapGetters(['whoami', 'showStory', 'showArtefact', 'isKaitiaki']),
     myProfile () {
       return this.whoami.personal.groupId === this.tribe.id
     },
@@ -205,7 +208,7 @@ export default {
   },
   methods: {
     getDisplayName,
-    ...mapMutations(['setCurrentAccess']),
+    ...mapMutations(['setCurrentAccess', 'setIsKaitiaki']),
     ...mapAlertMutations(['showAlert']),
     ...mapActions(['setWhoami']),
     goEdit () {

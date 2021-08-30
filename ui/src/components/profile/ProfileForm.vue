@@ -327,33 +327,43 @@
             <AddButton :align="'flex-end'" :justify="justifyBtn" :width="'50px'" :label="t('skills.addEducation')" @click="addEmptyItem(formData.school)" row/>
           </v-col>
         </v-row>
-        <!-- Email, Address, Phone, Location -->
         <v-row v-if="!formData.deceased">
-          <v-col cols="12" class="px-0">
-            <v-divider class="py-2"/>
-            <span class="pa-0 ma-0" style="font-weight:bold">{{ t('personalInfo.title') }}</span>
-          </v-col>
-          <!-- Email -->
+          <!-- Personal Information -->
+          <template v-if="isKaitiaki">
+            <v-col cols="12" class="px-0">
+              <v-divider class="py-2"/>
+              <span class="pa-0 ma-0" style="font-weight:bold">{{ t('personalInfo.title') }}</span>
+            </v-col>
+            <!-- Email -->
+            <v-col :cols="sideViewCols" class="pa-1">
+              <v-text-field
+                v-model="formData.email"
+                :label="t('personalInfo.email')"
+                v-bind="customProps"
+              />
+            </v-col>
+            <!-- Phone -->
+            <v-col :cols="sideViewCols" class="pa-1">
+              <v-text-field
+                v-model="formData.phone"
+                :label="t('personalInfo.phone')"
+                v-bind="customProps"
+              />
+            </v-col>
+            <!-- Address -->
+            <v-col :cols="sideViewCols" class="pa-1">
+              <v-text-field
+                v-model="formData.address"
+                :label="t('personalInfo.address')"
+                v-bind="customProps"
+              />
+            </v-col>
+          </template>
+          <!-- Post Code -->
           <v-col :cols="sideViewCols" class="pa-1">
             <v-text-field
-              v-model="formData.email"
-              :label="t('personalInfo.email')"
-              v-bind="customProps"
-            />
-          </v-col>
-          <!-- Phone -->
-          <v-col :cols="sideViewCols" class="pa-1">
-            <v-text-field
-              v-model="formData.phone"
-              :label="t('personalInfo.phone')"
-              v-bind="customProps"
-            />
-          </v-col>
-          <!-- Address -->
-          <v-col :cols="sideViewCols" class="pa-1">
-            <v-text-field
-              v-model="formData.address"
-              :label="t('personalInfo.address')"
+              v-model="formData.postCode"
+              :label="t('personalInfo.postCode')"
               v-bind="customProps"
             />
           </v-col>
@@ -362,14 +372,6 @@
             <v-text-field
               v-model="formData.city"
               :label="t('personalInfo.city')"
-              v-bind="customProps"
-            />
-          </v-col>
-          <!-- Post Code -->
-          <v-col :cols="sideViewCols" class="pa-1">
-            <v-text-field
-              v-model="formData.postCode"
-              :label="t('personalInfo.postCode')"
               v-bind="customProps"
             />
           </v-col>
@@ -397,6 +399,8 @@ import { GENDERS, RELATIONSHIPS } from '@/lib/constants'
 import { getDisplayName } from '@/lib/person-helpers.js'
 
 import isEmpty from 'lodash.isempty'
+
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'ProfileForm',
@@ -458,6 +462,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['isKaitiaki']),
     showBirthOrder () {
       if (this.dialogType === 'parent') return false
       if (this.readonly && !this.formData.birthOrder) return false

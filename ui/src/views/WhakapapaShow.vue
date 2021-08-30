@@ -34,7 +34,7 @@
       />
 
       <v-row v-if="!mobile" class="select">
-        <div v-if="search" class="icon-search">
+        <div class="icon-search">
           <SearchBar
             v-if="!searchNodeId"
             :nestedWhakapapa="nestedWhakapapa"
@@ -49,9 +49,6 @@
             :searchNodeId.sync="searchNodeId"
             :searchNodeName="searchNodeName"
           />
-        </div>
-        <div v-else class="icon-button">
-          <SearchButton :search.sync="search" />
         </div>
         <div v-if="whakapapa.table" class="icon-button">
           <SearchFilterButton :searchFilter.sync="searchFilter"/>
@@ -136,19 +133,21 @@
         :searchNodeId="searchNodeId"
         :openMenu="openContextMenu"
       />
-      <Table
-        ref="table"
-        v-if="whakapapa.table"
-        :filter="filter"
-        :flatten="flatten"
-        :download.sync="download"
-        :view="whakapapaView"
-        :nestedWhakapapa="nestedWhakapapa"
-        @load-descendants="loadDescendants($event)"
-        @open-context-menu="openTableContextMenu($event)"
-        :searchNodeId="searchNodeId"
-        :searchNodeEvent="searchNodeEvent"
-      />
+      <div v-if="whakapapa.table" :class="mobile ? 'mobile-table' : 'whakapapa-table'">
+        <Table
+          ref="table"
+          :filter="filter"
+          :flatten="flatten"
+          :download.sync="download"
+          :view="whakapapaView"
+          :nestedWhakapapa="nestedWhakapapa"
+          @load-descendants="loadDescendants($event)"
+          @open-context-menu="openTableContextMenu($event)"
+          @open="openPartnerSideNode($event.dialog, $event.type, $event.profile)"
+          :searchNodeId="searchNodeId"
+          :searchNodeEvent="searchNodeEvent"
+        />
+      </div>
     </v-container>
 
     <NodeMenu ref="menu" :view="whakapapaView" :currentFocus="currentFocus" @open="updateDialog($event.dialog, $event.type)"/>
@@ -298,13 +297,8 @@ export default {
     await this.reload()
   },
   computed: {
-    ...mapGetters(['selectedProfile', 'whoami']),
+    ...mapGetters(['selectedProfile', 'whoami', 'isKaitiaki']),
     ...mapWhakapapaGetters(['nestedWhakapapa']),
-    isKaitiaki () {
-      if (!this.whakapapaView || !this.whakapapaView.kaitiaki) return false
-
-      return this.whoami.public.profile.id === this.whakapapaView.kaitiaki[0].id
-    },
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -381,6 +375,13 @@ export default {
     },
     isVisibleProfile (descendant) {
       if (this.whakapapaView.ignoredProfiles) { return this.whakapapaView.ignoredProfiles.indexOf(descendant.id) === -1 }
+    },
+    openPartnerSideNode (dialog, type, profile) {
+      this.setSelectedProfile(profile)
+      if (this.dialog.active === 'view-edit-node') {
+        this.updateDialog(null, null)
+      }
+      this.updateDialog(dialog, type)
     },
     updateDialog (dialog, type) {
       this.dialog.type = type

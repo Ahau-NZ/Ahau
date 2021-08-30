@@ -86,7 +86,7 @@ export default {
     size: { type: String, default: '25vh' },
     showLabel: Boolean,
     clickable: Boolean,
-    isView: Boolean,
+    isView: { type: Boolean, default: false },
     isEditing: Boolean,
     deletable: Boolean,
     dark: Boolean,

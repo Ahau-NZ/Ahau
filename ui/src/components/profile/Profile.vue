@@ -176,6 +176,7 @@ export default {
       return Boolean(this.profile && this.profile.id)
     },
     members () {
+      if (!this.tribe.members) return
       return this.tribe.members
         .filter((member) => {
           return !this.profile.authors.some(kaitiaki => {
