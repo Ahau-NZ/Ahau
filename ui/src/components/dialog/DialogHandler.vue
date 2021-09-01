@@ -44,6 +44,7 @@
       @submit="processUpdate($event)"
       @delete="toggleDialog('delete-node', null, null)"
       @open-profile="setSelectedProfile($event)"
+      @delete-link="deleteNodeInNestedWhakapapa"
       :view="view"
       :preview="previewProfile"
     />
@@ -618,7 +619,6 @@ export default {
       }
       this.setSelectedProfile(null)
     },
-
     async getSuggestions ($event) {
       if (!$event) {
         this.suggestions = []

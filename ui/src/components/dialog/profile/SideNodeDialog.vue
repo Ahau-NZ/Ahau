@@ -156,7 +156,7 @@
                     :show-labels="true"
                     @profile-click="openProfile($event)"
                   >
-                    <template v-slot:action >
+                    <template v-slot:action>
                       <AddButton v-if="!preview && profile.canEdit" @click="toggleNew('parent')" class="pb-4" justify="start"/>
                     </template>
                   </AvatarGroup>
@@ -180,7 +180,7 @@
 
                 <hr v-if="profile.partners" class="family-divider"/>
 
-                <v-col :cols="12" v-if="profile.siblings && profile.parents.length" class="pa-0">
+                <v-col :cols="12" v-if="profile.parents && profile.parents.length && profile.siblings" class="pa-0">
                   <AvatarGroup
                     :profiles="profile.siblings"
                     :group-title="t('siblings')"
@@ -188,37 +188,31 @@
                     :show-labels="true"
                     @profile-click="openProfile($event)"
                   >
-                  <template v-slot:action>
-                    <AddButton v-if="!preview && view && view.focus !== profile.id" @click="toggleNew('sibling')" class="pb-4" justify="start"/>
+                  <template v-slot:action v-if="!preview && view && view.focus !== profile.id">
+                    <AddButton @click="toggleNew('sibling')" class="pb-4" justify="start"/>
                   </template>
                   </AvatarGroup>
                 </v-col>
 
-                <hr v-if="profile.siblings && profile.parents.length" class="family-divider"/>
+                <hr v-if="profile.parents && profile.parents.length && profile.siblings" class="family-divider"/>
 
                 <v-col :cols="12" class="pa-0">
                   <AvatarGroup
-                    v-if="profile.children && profile.children.length"
-                    :profiles="profile.children"
+                    :profiles="profile.children && profile.children.length ? profile.children : profile._children"
                     :group-title="t('children')"
                     size="60px"
                     :show-labels="true"
                     @profile-click="openProfile($event)"
+                    :deletable="allowRemoveChildren"
+                    @delete="removeChildLink(profile.children[$event])"
                   >
-                    <template v-slot:action >
-                      <AddButton v-if="!preview && profile.canEdit" @click="toggleNew('child')" class="pb-4" justify="start"/>
+                    <template v-slot:title-actions v-if="profile.children && profile.children.length">
+                      <v-btn class="blue--text" text @click="toggleRemoveChildren">
+                        <v-icon small>{{ allowRemoveChildren ? 'mdi-check' : 'mdi-pencil' }}</v-icon>
+                      </v-btn>
                     </template>
-                  </AvatarGroup>
-                  <AvatarGroup
-                    v-else
-                    :profiles="profile._children"
-                    :group-title="t('children')"
-                    size="60px"
-                    :show-labels="true"
-                    @profile-click="openProfile($event)"
-                  >
-                    <template v-slot:action >
-                      <AddButton v-if="!preview && profile.canEdit" @click="toggleNew('child')" class="pb-6" />
+                    <template v-slot:action>
+                      <AddButton v-if="!preview && profile.canEdit" @click="toggleNew('child')" class="pb-4" justify="start"/>
                     </template>
                   </AvatarGroup>
                 </v-col>
@@ -321,7 +315,7 @@ export default {
     preview: { type: Boolean, default: false }
   },
   mixins: [
-    mapProfileMixins({ mapMethods: ['getProfile'] })
+    mapProfileMixins({ mapMethods: ['getProfile', 'getWhakapapaLink', 'saveLink'] })
   ],
   data () {
     return {
@@ -329,7 +323,8 @@ export default {
       formData: {},
       showDescription: false,
       drawer: false,
-      authors: []
+      authors: [],
+      allowRemoveChildren: false
     }
   },
   computed: {
@@ -410,6 +405,9 @@ export default {
     ...mapMutations(['updateIsFromWhakapapaShow']),
     ...mapActions(['setProfileById', 'setDialog', 'setIsFromWhakapapaShow']),
     getDisplayName,
+    toggleRemoveChildren () {
+      this.allowRemoveChildren = !this.allowRemoveChildren
+    },
     async getOriginalAuthor () {
       // TODO cherese 22-04-21 move to graphql
       const originalAuthor = await this.getProfile(this.profile.originalAuthor)
@@ -417,6 +415,28 @@ export default {
     },
     monthTranslations (key, vars) {
       return this.$t('months.' + key, vars)
+    },
+    async removeChildLink (child) {
+      await this.removeLinkedPerson(this.profile.id, child.id)
+      this.$emit('delete-link', child) // needed to reload the tree
+    },
+    async removeLinkedPerson (parent, child) {
+      const { linkId } = await this.getWhakapapaLink(parent, child)
+
+      if (!linkId) throw new Error('No linkId to remove this link!')
+
+      let input = {
+        linkId,
+        child,
+        parent,
+        tombstone: {
+          date: new Date().toISOString().slice(0, 10),
+          reason: 'user deleted link'
+        }
+      }
+
+      await this.saveLink(input)
+      this.$emit('submit', {}) // needed to reload this dialog
     },
     goArchive () {
       if (
