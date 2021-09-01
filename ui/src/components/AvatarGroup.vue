@@ -3,6 +3,7 @@
     <v-row v-if="groupTitle">
       <v-col class="pt-1 pb-0">
         <small class="label overline"> {{ groupTitle }} </small>
+        <slot name="title-actions"/>
       </v-col>
     </v-row>
 
@@ -88,6 +89,8 @@ export default {
   methods: {
     getDisplayName,
     click (profile) {
+      if (this.deletable) return // stop default click event when deleting an avatar
+
       this.$emit('profile-click', profile)
     },
     addedProfile (profile) {
