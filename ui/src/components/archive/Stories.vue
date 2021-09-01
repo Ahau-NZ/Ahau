@@ -4,7 +4,10 @@
       <v-col cols="5" align-self="end" class="sub-headliner black--text pa-0 pl-4 pt-2" >
         {{ title }}
       </v-col>
-      <v-col cols="12" md="4" class="mr-auto pa-0">
+      <v-col
+        v-if="filteredStories && filteredStories.length > 0"
+        cols="12" md="4" class="mr-auto pa-0"
+      >
         <v-combobox
           v-model="storySearchString"
           :search-input.sync="storySearchString"
