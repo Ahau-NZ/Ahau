@@ -341,6 +341,7 @@ export default {
       delete input.partners
 
       id = await this.createNewPerson(input)
+
       const ignored = await this.removeIgnoredProfile(id)
 
       const relationshipAttrs = pick(input, [
@@ -366,7 +367,7 @@ export default {
           }
 
           // Add parents if parent quick links
-          if (parents) await this.quickAddLinks(parents, { child: id })
+          if (parents) await this.quickAddParents(id, parents)
 
           // load the childs profile
           parentProfile = await this.loadDescendants(parentProfile.id)
@@ -399,7 +400,7 @@ export default {
           }
 
           // Add children if children quick add links
-          if (children) await this.quickAddLinks(children, { parent: id })
+          if (children) await this.quickAddChildren(id, children)
 
           if (child === this.view.focus) {
             this.$emit('updateFocus', parent)
@@ -430,7 +431,7 @@ export default {
           }
 
           // Add children if children quick add links
-          if (children) await this.quickAddLinks(children, { parent: id })
+          if (children) await this.quickAddChildren(id, children)
 
           await this.loadDescendants(this.selectedProfile.id)
           this.updateNodeInNestedWhakapapa(this.selectedProfile)
@@ -440,22 +441,21 @@ export default {
       }
     },
 
-    // Function for adding multiple links to existing profiles we adding a person
-    async quickAddLinks (array, { parent, child }) {
-      await Promise.all(array.map(async person => {
-        if (!parent) parent = person.id
-        else child = person.id
-
-        const relationshipAttrs = pick(person, [
-          'relationshipType',
-          'legallyAdopted'
-        ])
-        await this.createChildLink({
-          child,
-          parent,
-          relationshipAttrs
+    async quickAddParents (child, parents) {
+      await Promise.all(
+        parents.map(async parent => {
+          const relationshipAttrs = pick(parent, ['relationshipType', 'legallyAdopted'])
+          await this.createChildLink({ child, parent: parent.id, relationshipAttrs })
         })
-      }))
+      )
+    },
+    async quickAddChildren (parent, children) {
+      await Promise.all(
+        children.map(async child => {
+          const relationshipAttrs = pick(child, ['relationshipType', 'legallyAdopted'])
+          await this.createChildLink({ child: child.id, parent, relationshipAttrs })
+        })
+      )
     },
 
     async createNewPerson (input) {
