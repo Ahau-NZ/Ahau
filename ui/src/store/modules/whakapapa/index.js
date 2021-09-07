@@ -1,4 +1,5 @@
-import tree from '@/lib/tree-helpers'
+import uniqby from 'lodash.uniqby'
+import tree from '../../../lib/tree-helpers'
 import { getWhakapapaView } from './apollo-helpers'
 
 export default function (apollo) {
@@ -74,6 +75,23 @@ export default function (apollo) {
         // TODO error alert message
         console.error(err)
       }
+    },
+    async suggestedChildren ({ dispatch, state }, parentId) {
+      // get the persons full profile
+      const person = await dispatch('person/getPerson', parentId, { root: true })
+
+      if (!person || !person.children || !person.children.length) return []
+
+      // get current children who are ignored
+      const ignoredChildren = person.children.filter(A => state.whakapapa.ignoredProfiles.includes(A.id))
+
+      return uniqby(
+        [
+          ...childrenOfPartners(person), // get all children of partners
+          ...ignoredChildren // get all children who have been ignored from this whakapapa
+        ],
+        'id'
+      )
     }
   }
 
@@ -84,4 +102,13 @@ export default function (apollo) {
     mutations,
     actions
   }
+}
+
+function childrenOfPartners (person) {
+  if (!person.partners || !person.partners.length) return []
+
+  return person.partners
+    .map(partner => partner.children)
+    .flat()
+    .filter(A => !person.children.some(B => B.id === A.id))
 }

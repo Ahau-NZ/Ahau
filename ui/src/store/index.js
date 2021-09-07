@@ -130,7 +130,6 @@ const rootModule = {
 export default new Vuex.Store({
   ...rootModule,
   modules: {
-    person,
     archive,
     dialog,
     notifications,
@@ -140,11 +139,14 @@ export default new Vuex.Store({
     // new
     tribe: tribe(apollo),
     community: community(apollo),
-
     collection: collection(apollo),
-    settings: settings(apollo),
-    whakapapa: whakapapa(apollo),
     story: story(apollo),
-    table: table(apollo)
+
+    person: person(apollo),
+    whakapapa: whakapapa(apollo),
+
+    table: table(apollo),
+
+    settings: settings(apollo)
   }
 })

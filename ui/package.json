@@ -9,7 +9,7 @@
     "build:desktop": "vue-cli-service build --dest ../desktop/dist",
     "build:mobile": "vue-cli-service build --dest ../mobile/www",
     "lint": "vue-cli-service lint",
-    "test:js": "cross-env NODE_ENV=development tape -r esm src/**/*.test.js | tap-spec",
+    "test:js": "cross-env NODE_ENV=development tape -r esm 'src/**/*.test.js' | tap-spec",
     "test": "npm run test:js && npm run lint",
     "clear": "rm -rf node_modules",
     "win:clear": "rmdir /s /q node_modules",

@@ -227,6 +227,8 @@ const {
   mapMutations: mapWhakapapaMutations
 } = createNamespacedHelpers('whakapapa')
 
+const { mapGetters: mapPersonGetters, mapMutations: mapPersonMutations } = createNamespacedHelpers('person')
+
 const {
   mapActions: mapTableActions
 } = createNamespacedHelpers('table')
@@ -297,7 +299,8 @@ export default {
     await this.reload()
   },
   computed: {
-    ...mapGetters(['selectedProfile', 'whoami', 'isKaitiaki']),
+    ...mapGetters(['whoami', 'isKaitiaki']),
+    ...mapPersonGetters(['selectedProfile']),
     ...mapWhakapapaGetters(['nestedWhakapapa']),
     mobile () {
       return this.$vuetify.breakpoint.xs
@@ -355,7 +358,8 @@ export default {
   },
 
   methods: {
-    ...mapMutations(['updateSelectedProfile', 'setCurrentAccess']),
+    ...mapMutations(['setCurrentAccess']),
+    ...mapPersonMutations(['updateSelectedProfile']),
     ...mapActions(['setLoading']),
     ...mapWhakapapaMutations(['setNestedWhakapapa', 'setWhakapapa']),
     ...mapWhakapapaActions(['getWhakapapaView']),
