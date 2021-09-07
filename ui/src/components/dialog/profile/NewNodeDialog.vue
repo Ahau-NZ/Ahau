@@ -121,10 +121,11 @@ import pick from 'lodash.pick'
 
 import { PERMITTED_PERSON_ATTRS, PERMITTED_RELATIONSHIP_ATTRS, getDisplayName, setPersonProfile, setDefaultData } from '@/lib/person-helpers'
 import AccessButton from '@/components/button/AccessButton.vue'
-import { mapGetters } from 'vuex'
+import { mapGetters, createNamespacedHelpers } from 'vuex'
 import { parseInterval } from '@/lib/date-helpers.js'
 
 import mapProfileMixins from '@/mixins/profile-mixins.js'
+const { mapActions: mapWhakapapaActions } = createNamespacedHelpers('whakapapa')
 
 export default {
   name: 'NewNodeDialog',
@@ -271,6 +272,7 @@ export default {
     }
   },
   methods: {
+    ...mapWhakapapaActions(['suggestedChildren']),
     getDisplayName,
     updateRelationships (profile, selectedArray) {
       var arr = this.quickAdd[selectedArray]
@@ -305,35 +307,7 @@ export default {
       }
     },
     async findChildren () {
-      var currentChildren = this.selectedProfile.children || []
-      var suggestedChildren = []
-
-      // children of your partners that arent currently your children
-      if (this.selectedProfile.partners) {
-        await Promise.all(
-          this.selectedProfile.partners.map(async partner => {
-            const profile = await this.getProfile(partner.id)
-
-            profile.children.forEach(child => {
-              if (!this.find(currentChildren, child) && !this.find(suggestedChildren, child)) {
-                suggestedChildren.push(child)
-              }
-            })
-
-            return partner
-          })
-        )
-      }
-
-      // get ignored children
-      const profile = await this.getProfile(this.selectedProfile.id)
-      profile.children.forEach(child => {
-        if (!this.find(currentChildren, child) && !this.find(suggestedChildren, child)) {
-          suggestedChildren.push(child)
-        }
-      })
-
-      return suggestedChildren
+      return this.suggestedChildren(this.selectedProfile.id)
     },
 
     newChildParents (profile) {

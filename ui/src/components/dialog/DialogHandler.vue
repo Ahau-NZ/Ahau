@@ -124,6 +124,7 @@ const { mapMutations: mapAlertMutations } = createNamespacedHelpers('alerts')
 const { mapGetters: mapWhakapapaGetters, mapMutations: mapWhakapapaMutations } = createNamespacedHelpers('whakapapa')
 const { mapActions: mapTribeActions } = createNamespacedHelpers('tribe')
 const { mapActions: mapCommunityActions } = createNamespacedHelpers('community')
+const { mapGetters: mapPersonGetters } = createNamespacedHelpers('person')
 
 export default {
   name: 'DialogHandler',
@@ -192,7 +193,8 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['selectedProfile', 'whoami', 'storeDialog', 'storeType', 'currentNotification']),
+    ...mapPersonGetters(['selectedProfile']),
+    ...mapGetters(['whoami', 'storeDialog', 'storeType', 'currentNotification']),
     ...mapWhakapapaGetters(['nestedWhakapapa']),
     mobile () {
       return this.$vuetify.breakpoint.xs
