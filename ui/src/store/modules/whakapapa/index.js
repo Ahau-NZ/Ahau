@@ -87,8 +87,26 @@ export default function (apollo) {
 
       return uniqby(
         [
-          ...childrenOfPartners(person), // get all children of partners
+          ...flattenToNestedArray(person, 'partners', 'children'), // get all children of partners
           ...ignoredChildren // get all children who have been ignored from this whakapapa
+        ],
+        'id'
+      )
+    },
+    async suggestedParents ({ dispatch, state }, childId) {
+      const person = await dispatch('person/getPerson', childId, { root: true })
+      const isRootNode = state.nestedWhakapapa.id === person.id
+
+      if (!person || !person.parents || !person.parents.length) return []
+
+      const ignoredParents = person.parents.filter(A => state.whakapapa.ignoredProfiles.includes(A.id))
+
+      return uniqby(
+        [
+          ...flattenToNestedArray(person, 'siblings', 'parents'), // get all parents of siblings
+          ...flattenToNestedArray(person, 'parents', 'partners'), // get all partners of parents
+          ...ignoredParents,
+          ...(isRootNode ? person.parents : []) // handle existing parents if this is the root node
         ],
         'id'
       )
@@ -104,11 +122,19 @@ export default function (apollo) {
   }
 }
 
-function childrenOfPartners (person) {
-  if (!person.partners || !person.partners.length) return []
+/**
+ * A helper function to flatten nested arrays within an array of objects.
+ * E.g. to get a persons siblings parents use flattenToNestedArray(person, 'siblings', 'parents')
 
-  return person.partners
-    .map(partner => partner.children)
-    .flat()
-    .filter(A => !person.children.some(B => B.id === A.id))
+ * @param {object} obj an object which holds the array
+ * @param {string} array which field to look at on the given obj
+ * @param {string} nestedArray which field to map objects in obj.array to
+ */
+function flattenToNestedArray (obj, array, nestedArray) {
+  if (!obj[array] || !obj[array].length) return []
+
+  return obj[array]
+    .map(m => m[nestedArray])
+    .flat() // flattens from [[A, B], [C]] to [A, B, C]
+    .filter(A => !obj[nestedArray].some(B => B.id === A.id))
 }
