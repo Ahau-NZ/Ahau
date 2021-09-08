@@ -233,6 +233,10 @@ export const getPerson = id => ({
         }
         siblings {
           ...ProfileFragment
+          parents {
+            ...ProfileFragment
+            ...WhakapapaLinkFragment
+          }
         }
         tiaki {
           ...PublicProfileFields

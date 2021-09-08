@@ -180,7 +180,7 @@ export default {
       this.quickAdd['parents'] = await this.newChildParents(this.selectedProfile)
       if (this.type === 'partner') this.quickAdd['children'] = this.newPartnerChildren(this.selectedProfile)
       else if (this.type === 'parent') this.quickAdd['children'] = this.newParentChildren(this.selectedProfile)
-      this.quickAdd['partners'] = this.selectedProfile.parents
+      if (this.selectedProfile) this.quickAdd['partners'] = this.selectedProfile.parents
     }
   },
   computed: {
@@ -272,7 +272,7 @@ export default {
     }
   },
   methods: {
-    ...mapWhakapapaActions(['suggestedChildren']),
+    ...mapWhakapapaActions(['suggestedChildren', 'suggestedParents']),
     getDisplayName,
     updateRelationships (profile, selectedArray) {
       var arr = this.quickAdd[selectedArray]
@@ -297,19 +297,15 @@ export default {
     getCloseSuggestions () {
       switch (this.type) {
         case 'child':
-          return this.findChildren()
+          return this.suggestedChildren(this.selectedProfile.id)
         case 'parent':
-          return this.findParents()
+          return this.suggestedParents(this.selectedProfile.id)
         case 'partner':
           return this.findPartners()
         default:
           return []
       }
     },
-    async findChildren () {
-      return this.suggestedChildren(this.selectedProfile.id)
-    },
-
     newChildParents (profile) {
       var currentPartners = []
 
@@ -333,49 +329,6 @@ export default {
 
     newParentChildren (profile) {
       return profile.siblings || []
-    },
-
-    async findParents () {
-      var currentParents = this.selectedProfile.parents
-      if (!currentParents) return []
-
-      var suggestedParents = []
-
-      currentParents.forEach(parent => {
-        if (!parent.partners) return
-
-        parent.partners.forEach(partner => {
-          if (!this.find(currentParents, partner) && !this.find(suggestedParents, partner)) {
-            suggestedParents.push(partner)
-          }
-        })
-      })
-
-      await Promise.all(
-        this.selectedProfile.siblings.map(async sibling => {
-          // needed because siblings dont have information about their parents yet
-          const profile = await this.getProfile(sibling.id)
-
-          if (!profile.parents) return sibling
-
-          profile.parents.forEach(parent => {
-            if (!this.find(currentParents, parent) && !this.find(suggestedParents, parent)) {
-              suggestedParents.push(parent)
-            }
-          })
-          return sibling
-        })
-      )
-
-      // get ignored parents
-      const profile = await this.getProfile(this.selectedProfile.id)
-      profile.parents.forEach(parent => {
-        if (!this.find(currentParents, parent) && !this.find(suggestedParents, parent)) {
-          suggestedParents.push(parent)
-        }
-      })
-
-      return suggestedParents
     },
 
     find (array, item) {
