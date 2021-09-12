@@ -116,6 +116,9 @@ export default {
       })
         .reverse()
     },
+    recordCount () {
+      return this.stories.length || null
+    },
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     }
@@ -126,6 +129,15 @@ export default {
         const tribe = await this.getTribe(collection.recps[0])
         this.access = getTribalProfile(tribe, this.whoami)
         this.setCurrentAccess(this.access)
+      }
+    },
+    recordCount () {
+      if (this.recordCount !== this.collection.recordCount) {
+        let input = {
+          id: this.collection.id,
+          recordCount: this.recordCount
+        }
+        this.processUpdateCollection(input)
       }
     }
   },

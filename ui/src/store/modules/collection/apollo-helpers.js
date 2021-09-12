@@ -12,7 +12,8 @@ export const PERMITTED_COLLECTION_ATTRS = [
   'description',
   'canEdit',
   'recps',
-  'submissionDate'
+  'submissionDate',
+  'recordCount'
 ]
 
 // contains attrs with sub attrs

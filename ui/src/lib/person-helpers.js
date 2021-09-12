@@ -219,6 +219,9 @@ export const getPerson = id => ({
         parents {
           ...ProfileFragment
           ...WhakapapaLinkFragment
+          partners {
+            ...ProfileFragment
+          }
         }
         partners {
           ...ProfileFragment

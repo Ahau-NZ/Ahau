@@ -31,7 +31,8 @@ export function createProvider (options = {}) {
     cache: new InMemoryCache({
       fragmentMatcher
     }),
-    link: createUploadLink({ uri: httpEndpoint })
+    link: createUploadLink({ uri: httpEndpoint }),
+    connectToDevTools: true
   })
 
   // Create vue apollo provider
