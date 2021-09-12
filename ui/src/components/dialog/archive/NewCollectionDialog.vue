@@ -80,7 +80,8 @@ const EMPTY_COLLECTION = {
   name: null,
   description: null,
   image: null,
-  stories: []
+  stories: [],
+  recordCount: 0
 }
 
 export default {

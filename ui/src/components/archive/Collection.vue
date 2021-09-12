@@ -21,10 +21,10 @@
         <v-col cols="12" class="py-0 truncate description">
           <div class="small-text">{{ collection.description || 'No Description' }}</div>
         </v-col>
-        <!-- <v-col cols="5" class="small-text grey--text py-2">
-          Records: N/A
-        </v-col> -->
-        <v-col cols="7" class="small-text grey--text py-2">
+        <v-col v-if="collection.recordCount" cols="5" class="small-text grey--text py-2">
+          Records: {{ collection.recordCount }}
+        </v-col>
+        <v-col cols="7" class="small-text grey--text py-2 pb-4">
           Updated: {{ submissionDate }}
         </v-col>
         <v-col cols="12" class="small-text grey--text py-0" >

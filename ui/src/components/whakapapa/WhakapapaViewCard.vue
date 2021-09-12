@@ -2,6 +2,7 @@
   <v-card
     light
     :to="goWhakapapaShow()"
+    style="min-height:50px"
   >
     <v-container class="pa-0">
       <v-list-item-icon class="pt-1 mt-0" style="position:absolute; top:5px; right:1px; margin-right:0px">
@@ -11,8 +12,9 @@
       <div class="d-flex flex-no-wrap flex-start align-stretch">
         <div class="cover-image" :style="background(view)"></div>
         <div class="information">
-          <v-card-title v-text="view.name" class="pt-3" style="word-break: break-word;"/>
-          <v-card-subtitle v-text="description" class="pb-3"/>
+          <v-card-title v-text="view.name" class="py-3" style="word-break: break-word;"/>
+          <v-card-subtitle v-if="description" v-text="description" class="py-1"/>
+          <v-card-subtitle v-if="view.recordCount" v-text="`${view.recordCount} people`" class="mt-n2"/>
           <v-card-text v-if="hasSlotContent">
             <slot></slot>
           </v-card-text>

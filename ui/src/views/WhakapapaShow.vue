@@ -274,7 +274,7 @@ export default {
         focus: '',
         recps: null,
         image: { uri: '' },
-        ignoredProfiles: []
+        ignoredProfiles: ['']
       },
       focus: null,
       // the record which defines the starting point for a tree (the 'focus')
@@ -290,7 +290,8 @@ export default {
         tree: true,
         table: false
       },
-      searchNodeName: ''
+      searchNodeName: '',
+      nodeIds: []
     }
   },
   async mounted () {
@@ -336,6 +337,9 @@ export default {
           value: 'country'
         }
       ]
+    },
+    recordCount () {
+      return [...new Set(this.nodeIds)].length
     }
   },
   watch: {
@@ -467,6 +471,9 @@ export default {
 
     async loadDescendants (profileId) {
       // get the persons profile + links
+
+      this.nodeIds.push(profileId)
+
       var person = await this.getRelatives(profileId)
 
       // filter out ignored profiles
@@ -608,6 +615,16 @@ export default {
 
     setSearchNode (event) {
       this.searchNodeEvent = event
+    }
+  },
+  async beforeDestroy () {
+    const input = {
+      id: this.whakapapaView.id,
+      recordCount: this.recordCount
+    }
+    const res = await this.$apollo.mutate(saveWhakapapaView(input))
+    if (res.errors) {
+      console.error('failed to save recordCount', res.errors)
     }
   },
   destroyed () {

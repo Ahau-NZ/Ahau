@@ -11,6 +11,7 @@ export const WhakapapaFragment = gql`
     recps
     ignoredProfiles
     image { uri }
+    recordCount
   }
 `
 

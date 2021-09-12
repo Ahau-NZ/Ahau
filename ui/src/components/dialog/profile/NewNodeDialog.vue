@@ -176,7 +176,7 @@ export default {
   async mounted () {
     this.closeSuggestions = await this.getCloseSuggestions()
 
-    if (this.$route.name !== 'login') {
+    if (this.$route.name !== 'login' && this.selectedProfile) {
       this.quickAdd['parents'] = await this.newChildParents(this.selectedProfile)
       if (this.type === 'partner') this.quickAdd['children'] = this.newPartnerChildren(this.selectedProfile)
       else if (this.type === 'parent') this.quickAdd['children'] = this.newParentChildren(this.selectedProfile)
