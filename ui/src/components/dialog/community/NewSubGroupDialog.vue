@@ -86,7 +86,7 @@ import { getObjectChanges } from '@/lib/get-object-changes.js'
 import { EMPTY_SUBGROUP, setDefaultSubgroup } from '@/lib/community-helpers.js'
 
 export default {
-  name: 'NewGroupDialog',
+  name: 'NewSubGroupDialog',
   components: {
     Dialog,
     Avatar,

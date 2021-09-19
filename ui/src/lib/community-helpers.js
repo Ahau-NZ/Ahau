@@ -43,9 +43,9 @@ export function setDefaultCommunity (newCommunity) {
     authors: community.kaitiaki.map(d => ({ ...d.profile, feedId: d.feedId }))
   }
 }
-
+// TODO: uncomment needed fields
 export const EMPTY_SUBGROUP = {
-  type: 'subgroup',
+  // type: 'subgroup',
   id: null,
   preferredName: null,
   avatarImage: null,
@@ -73,6 +73,7 @@ export const PERMITTED_COMMUNITY_ATTRS = [
   'avatarImage',
   'headerImage',
   'id',
+  'poBoxId',
   'type',
   'preferredName',
   'description',
@@ -93,6 +94,7 @@ export const PERMITTED_PUBLIC_COMMUNITY_ATTRS = [
   'avatarImage',
   'headerImage',
   'id',
+  'poBoxId',
   'type',
   'preferredName',
   'description',

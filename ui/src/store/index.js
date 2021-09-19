@@ -14,6 +14,7 @@ import analytics from './modules/analytics'
 
 // new
 import tribe from './modules/tribe'
+import subtribe from './modules/subtribe'
 import community from './modules/community'
 import collection from './modules/collection/'
 import settings from './modules/settings/'
@@ -138,6 +139,7 @@ export default new Vuex.Store({
 
     // new
     tribe: tribe(apollo),
+    subtribe: subtribe(apollo),
     community: community(apollo),
     collection: collection(apollo),
     story: story(apollo),
