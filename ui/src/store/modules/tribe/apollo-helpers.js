@@ -1,10 +1,11 @@
 import gql from 'graphql-tag'
-import { prune, COMMUNITY_FRAGMENT } from '@/lib/community-helpers.js'
+import { prune, COMMUNITY_FRAGMENT } from '../../../lib/community-helpers'
 
 export const PERMITTED_COMMUNITY_LINK_ATTRS = [
   'id',
   'profile',
   'group',
+  'parentGroupId',
   'allowPublic'
 ]
 
@@ -26,7 +27,7 @@ export const getTribe = ({
   fetchPolicy: 'no-cache'
 })
 
-export const getTribes = {
+export const getTribes = ({
   query: gql`
     ${COMMUNITY_FRAGMENT}
     query {
@@ -42,7 +43,7 @@ export const getTribes = {
     }
   `,
   fetchPolicy: 'no-cache'
-}
+})
 
 export const getTribeIds = {
   query: gql`
@@ -78,20 +79,3 @@ export const saveGroupProfileLink = input => {
     }
   }
 }
-
-// export const createSubgroup = (groupId) => {
-//   return {
-//     mutation: gql`
-//       mutation($id: String!) {
-//         createSubgroup(id: $id) {
-//           id
-//           root
-//           # dmKey # TODO
-//         }
-//       }
-//     `,
-//     variables: {
-//       id: groupId
-//     }
-//   }
-// }
