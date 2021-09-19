@@ -291,11 +291,11 @@ import { dateIntervalToString, formatSubmissionDate } from '@/lib/date-helpers.j
 import { getObjectChanges } from '@/lib/get-object-changes.js'
 import { convertBytes } from '@/lib/artefact-helpers.js'
 
-import mapProfileMixins from '@/mixins/profile-mixins.js'
 import { methods as mapStoryMethods } from '@/mixins/story-mixins.js'
 import { artefactMixin } from '@/mixins/artefact-mixins.js'
 
 const { mapActions: mapStoryActions } = createNamespacedHelpers('story')
+const { mapActions: mapTribeActions } = createNamespacedHelpers('tribe')
 
 export default {
   name: 'StoryCard',
@@ -307,9 +307,6 @@ export default {
   },
   mixins: [
     artefactMixin,
-    mapProfileMixins({
-      mapMethods: ['getTribe']
-    }),
     {
       methods: {
         getStory: mapStoryMethods.getStory
@@ -424,6 +421,7 @@ export default {
     ...mapMutations(['setStory']),
     ...mapActions(['setShowArtefact', 'toggleShowStory']),
     ...mapStoryActions(['deleteStory']),
+    ...mapTribeActions(['getTribe']),
     //  save artefact from showArtefact
     saveArtefact ($event) {
       this.updateArtefacts($event)

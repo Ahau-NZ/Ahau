@@ -2,7 +2,7 @@ import gql from 'graphql-tag'
 import isEmpty from 'lodash.isempty'
 
 import { getProfile } from '@/lib/profile-helpers.js'
-import { getTribe } from '@/lib/community-helpers.js'
+import { getTribe } from '../store/modules/tribe/apollo-helpers'
 import { savePerson, whakapapaLink } from '@/lib/person-helpers.js'
 import { saveLink } from '@/lib/link-helpers.js'
 import { saveWhakapapaView } from '@/lib/whakapapa-helpers.js'
@@ -77,32 +77,6 @@ const apollo = {
 }
 
 const methods = {
-  async getTribe (id) {
-    try {
-      if (!this.whoami) throw new Error("the getTribe methods needs whoami. Use vuex.mapGetters(['whoami')")
-      if (id === this.whoami.personal.groupId) {
-        return {
-          groupId: this.whoami.personal.groupId,
-          ...this.whoami.personal.profile
-        }
-      }
-
-      const res = await this.$apollo.query({
-        ...getTribe,
-        variables: {
-          id
-        }
-      })
-
-      if (res.errors) throw res.errors
-
-      // const tribe = res.data.tribe
-      return res.data.tribe
-    } catch (err) {
-      console.error('Something went wrong while fetching tribe: ', id)
-      console.error(err)
-    }
-  },
   async getProfile (id) {
     try {
       const res = await this.$apollo.query({
