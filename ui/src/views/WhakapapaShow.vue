@@ -227,11 +227,9 @@ const {
   mapMutations: mapWhakapapaMutations
 } = createNamespacedHelpers('whakapapa')
 
+const { mapActions: mapTribeActions } = createNamespacedHelpers('tribe')
 const { mapGetters: mapPersonGetters, mapMutations: mapPersonMutations } = createNamespacedHelpers('person')
-
-const {
-  mapActions: mapTableActions
-} = createNamespacedHelpers('table')
+const { mapActions: mapTableActions } = createNamespacedHelpers('table')
 
 export default {
   name: 'WhakapapaShow',
@@ -254,7 +252,7 @@ export default {
   },
   mixins: [
     mapProfileMixins({
-      mapMethods: ['getTribe', 'getWhakapapaLink']
+      mapMethods: ['getWhakapapaLink']
     })
   ],
   data () {
@@ -363,6 +361,7 @@ export default {
 
   methods: {
     ...mapMutations(['setCurrentAccess']),
+    ...mapTribeActions(['getTribe']),
     ...mapPersonMutations(['updateSelectedProfile']),
     ...mapActions(['setLoading']),
     ...mapWhakapapaMutations(['setNestedWhakapapa', 'setWhakapapa']),

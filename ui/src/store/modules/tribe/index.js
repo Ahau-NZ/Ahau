@@ -1,5 +1,4 @@
-import { getTribes } from '@/lib/community-helpers'
-import { createGroup, getTribeIds, saveGroupProfileLink } from './apollo-helpers'
+import { createGroup, getTribe, getTribes, getTribeIds, saveGroupProfileLink } from './apollo-helpers'
 
 export default function (apollo) {
   const state = {
@@ -19,6 +18,30 @@ export default function (apollo) {
   }
 
   const actions = {
+    async getTribe ({ rootState }, id) {
+      try {
+        if (id === rootState.whoami.personal.groupId) {
+          return {
+            groupId: rootState.whoami.personal.groupId,
+            ...rootState.whoami.personal.profile
+          }
+        }
+
+        const res = await apollo.query({
+          ...getTribe,
+          variables: {
+            id
+          }
+        })
+
+        if (res.errors) throw res.errors
+
+        return res.data.tribe
+      } catch (err) {
+        console.error('Something went wrong while fetching tribe: ', id)
+        console.error(err)
+      }
+    },
     async getTribes ({ commit }) {
       try {
         const res = await apollo.query(getTribes)

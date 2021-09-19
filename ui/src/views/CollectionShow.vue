@@ -61,8 +61,6 @@
 
 <script>
 import { getTribalProfile } from '@/lib/community-helpers'
-
-import mapProfileMixins from '@/mixins/profile-mixins.js'
 import { saveStoryMixin } from '@/mixins/story-mixins.js'
 
 import { mapGetters, mapMutations, mapActions, createNamespacedHelpers } from 'vuex'
@@ -75,14 +73,12 @@ import NewRecordDialog from '@/components/dialog/archive/NewRecordDialog.vue'
 import CollectionTitleCard from '@/components/archive/CollectionTitleCard.vue'
 
 const { mapActions: mapCollectionActions } = createNamespacedHelpers('collection')
+const { mapActions: mapTribeActions } = createNamespacedHelpers('tribe')
 
 export default {
   name: 'CollectionShow',
   mixins: [
-    saveStoryMixin,
-    mapProfileMixins({
-      mapMethods: ['getTribe']
-    })
+    saveStoryMixin
   ],
   components: {
     Stories,
@@ -145,6 +141,7 @@ export default {
     ...mapMutations(['setCurrentAccess', 'setStory']),
     ...mapActions(['toggleShowStory', 'setShowArtefact']),
     ...mapCollectionActions(['getCollection', 'updateCollection', 'deleteCollection']),
+    ...mapTribeActions(['getTribe']),
     editCollection () {
       this.view = false
       this.editing = true
