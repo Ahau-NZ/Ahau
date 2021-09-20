@@ -5,7 +5,7 @@
       <!-- <v-tooltip top open-delay="200"> -->
         <!-- <template v-slot:activator="{ on }"> -->
           <!-- <div v-on="on"> -->
-            <v-btn color="black" rounded outlined @click="showGroup = true">
+            <v-btn color="black" rounded outlined @click="dialog = 'sub-group'">
               <v-icon class="pr-2">mdi-plus</v-icon> {{ t('addGroup') }} <!-- TODO cherese 23-08-21 title "ADD GROUP" is unclear its adding a subgroup -->
             </v-btn>
           <!-- </div> -->
@@ -52,15 +52,21 @@
       @edit="setEditingSubGroup"
     />
     <NewSubGroupDialog
-      v-if="showGroup"
-      :show="showGroup"
+      v-if="dialog === 'sub-group'"
+      :show="dialog === 'sub-group'"
       :profile="selectedSubGroupProfile"
       :editing="editing"
       @submit="addSubGroup"
       @edit="updateSubGroupProfiles"
+      @delete="dialog = 'delete-sub-group'"
       @close="close"
     />
-    <!-- @delete="deleteGroup($event)" -->
+    <DeleteCommunityDialog
+      v-if="dialog === 'delete-sub-group'"
+      :show="dialog === 'delete-sub-group'"
+      @submit="deleteSubGroup"
+      @close="dialog = 'sub-group'"
+    />
   </v-row>
 </template>
 <script>
@@ -69,6 +75,7 @@ import Avatar from '@/components/Avatar.vue'
 // import MembersPicker from './MembersPicker.vue'
 import SubGroup from './SubGroup.vue'
 import NewSubGroupDialog from './NewSubGroupDialog.vue'
+import DeleteCommunityDialog from '@/components/dialog/community/DeleteCommunityDialog.vue'
 
 // Calling in tribes to test as replacement data for groups
 import { mapGetters, createNamespacedHelpers } from 'vuex'
@@ -83,7 +90,8 @@ export default {
     Avatar,
     // MembersPicker,
     SubGroup,
-    NewSubGroupDialog
+    NewSubGroupDialog,
+    DeleteCommunityDialog
   },
   props: {
     profile: Object,
@@ -93,15 +101,17 @@ export default {
   },
   data () {
     return {
+      dialog: null,
       showKaitiaki: false,
       // groupMembers: this.profile.kaitiaki,
-      showGroup: false,
       subGroups: [],
       selectedSubGroup: null,
-      editing: false
+      editing: false,
+      parentGroup: null
     }
   },
   async mounted () {
+    await this.loadParentGroup()
     await this.loadSubGroups()
   },
   computed: {
@@ -111,7 +121,7 @@ export default {
       if (!this.selectedSubGroup) return null
 
       return getTribalProfile(this.selectedSubGroup, this.whoami)
-    },
+    }
     // kaitiakiGroupMembers () {
     //   return this.tribe.members
     //     .filter((member) => {
@@ -126,6 +136,11 @@ export default {
     ...mapSubTribeActions(['createSubGroup', 'getSubGroups']),
     ...mapCommunityActions(['saveCommunity', 'updateCommunity', 'savePublicCommunity']),
     getDisplayName,
+    // NOTE: im doing this because the tribe comes from a component which is far up, rather than
+    // going through all the components to get there, i'll just reload it locally
+    async loadParentGroup () {
+      this.parentGroup = await this.getTribe(this.tribe.id)
+    },
     async loadSubGroups () {
       this.subGroups = await this.getSubGroups(this.tribe.id)
     },
@@ -144,6 +159,7 @@ export default {
       await this.setupNewSubGroup($event)
 
       // add it to the list of subgroups
+      await this.loadParentGroup()
       await this.loadSubGroups()
 
       //   // scroll to bottom
@@ -151,7 +167,7 @@ export default {
     },
     async setupNewSubGroup ($event) {
       // create a subgroup and link it to the current tribe
-      const { id: subGroupId, poBoxId } = await this.createSubGroup(this.tribe.id)
+      const { id: subGroupId, poBoxId } = await this.createSubGroup(this.parentGroup.id)
 
       // create and link profiles
       const input = {
@@ -174,7 +190,7 @@ export default {
       await this.createPrivateGroupProfileLink({
         group: subGroupId,
         profile: privateProfileId,
-        parentGroupId: this.tribe.id // attaches the parent group
+        parentGroupId: this.parentGroup.id // attaches the parent group
       })
 
       // TODO: find out recps
@@ -184,7 +200,7 @@ export default {
         recps: [subGroupId] // encrypt it to the parent group
       })
       await this.createPrivateGroupProfileLink({
-        group: this.tribe.id, // link the subGroupProfile to the parent group
+        group: this.parentGroup.id, // link the subGroupProfile to the parent group
         profile: profileInParentGroupId
       })
 
@@ -203,7 +219,7 @@ export default {
     async updateSubGroupProfiles (input) {
       // get the subgroups two profiles
       const subGroupPrivateProfile = this.selectedSubGroup.private[0]
-      const subGroupProfileInGroup = this.tribe.private.find(profile => profile.recps[0] === this.selectedSubGroup.id)
+      const subGroupProfileInGroup = this.parentGroup.private.find(profile => profile.recps[0] === this.selectedSubGroup.id)
 
       // update them
       await this.saveCommunity({ id: subGroupPrivateProfile.id, ...input })
@@ -211,6 +227,7 @@ export default {
 
       // reload the ui
       // TODO: do something cheaper then this
+      await this.loadParentGroup()
       await this.loadSubGroups()
 
       // TODO: figure out how to scroll to this subgroup..?
@@ -218,18 +235,29 @@ export default {
     setEditingSubGroup (subGroup) {
       this.selectedSubGroup = subGroup
       this.editing = true
-      this.showGroup = true
+      this.dialog = 'sub-group'
     },
-    // deleteGroup (group) {
-    //   // TODO: change this to tombstone group profile and link
-    //   // refresh groups list
-    //   this.groups = this.groups.filter((d) => {
-    //     return d.preferredName !== group.preferredName
-    //   })
-    //   this.close()
-    // },
+    async deleteSubGroup () {
+      const subGroup = this.selectedSubGroup
+
+      // close the dialog
+      this.close()
+
+      // get the subgroups two profiles
+      const subGroupPrivateProfile = subGroup.private[0]
+      const subGroupProfileInGroup = this.parentGroup.private.find(profile => profile.recps[0] === subGroup.id)
+
+      // tombstone them
+      await this.saveCommunity({ id: subGroupPrivateProfile.id, tombstone: { date: new Date() } })
+      await this.saveCommunity({ id: subGroupProfileInGroup.id, tombstone: { date: new Date() } })
+
+      // reload the ui
+      // TODO: do something cheaper then this
+      await this.loadParentGroup()
+      await this.loadSubGroups()
+    },
     close () {
-      this.showGroup = false
+      this.dialog = null
       this.editing = false
       this.selectedSubGroup = null
     },

@@ -39,3 +39,24 @@ export const getSubGroups = (parentGroupId) => {
     fetchPolicy: 'no-cache'
   }
 }
+
+export const deleteSubGroup = (profileInSubGroup, profileInGroup) => {
+  return {
+    mutation: gql`
+      mutation($profileInSubGroup: ProfileInput, $profileInGroup: ProfileInput) {
+        deleteProfileInSubGroup: saveProfile(input: $profileInSubGroup)
+        deleteProfileInGroup: saveProfile(input: $profileInGroup)
+      }
+    `,
+    variables: {
+      profileInSubGroup: {
+        id: profileInSubGroup.id,
+        tombstone: { date: new Date() }
+      },
+      profileInGroup: {
+        id: profileInGroup.id,
+        tombstone: { date: new Date() }
+      }
+    }
+  }
+}
