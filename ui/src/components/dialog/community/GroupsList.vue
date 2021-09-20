@@ -47,19 +47,17 @@
     </v-col>
 
     <SubGroup
-      v-for="subtribe in subtribes" :key="subtribe.id"
-      :subtribe="subtribe" :mobile="mobile"
-      @edit="setEditing($event)"
+      v-for="subGroup in subGroups" :key="subGroup.id"
+      :subGroup="subGroup" :mobile="mobile"
+      @edit="setEditingSubGroup"
     />
     <NewSubGroupDialog
       v-if="showGroup"
       :show="showGroup"
-      :title="$t('groups.groupDialogTitle')"
-      :profile="subgroup"
+      :profile="selectedSubGroupProfile"
       :editing="editing"
-      @submit="addGroup($event)"
-
-      @edit="updateGroup($event)"
+      @submit="addSubGroup"
+      @edit="updateSubGroupProfiles"
       @close="close"
     />
     <!-- @delete="deleteGroup($event)" -->
@@ -74,6 +72,7 @@ import NewSubGroupDialog from './NewSubGroupDialog.vue'
 
 // Calling in tribes to test as replacement data for groups
 import { mapGetters, createNamespacedHelpers } from 'vuex'
+import { getTribalProfile } from '../../../lib/community-helpers'
 const { mapGetters: mapTribeGetters, mapActions: mapTribeActions } = createNamespacedHelpers('tribe')
 const { mapActions: mapSubTribeActions } = createNamespacedHelpers('subtribe')
 const { mapActions: mapCommunityActions } = createNamespacedHelpers('community')
@@ -97,17 +96,22 @@ export default {
       showKaitiaki: false,
       // groupMembers: this.profile.kaitiaki,
       showGroup: false,
-      subtribes: [],
-      subgroup: {},
+      subGroups: [],
+      selectedSubGroup: null,
       editing: false
     }
   },
   async mounted () {
-    await this.loadSubtribes()
+    await this.loadSubGroups()
   },
   computed: {
     ...mapGetters(['whoami']),
-    ...mapTribeGetters(['tribes'])
+    ...mapTribeGetters(['tribes']),
+    selectedSubGroupProfile () {
+      if (!this.selectedSubGroup) return null
+
+      return getTribalProfile(this.selectedSubGroup, this.whoami)
+    },
     // kaitiakiGroupMembers () {
     //   return this.tribe.members
     //     .filter((member) => {
@@ -120,11 +124,10 @@ export default {
   methods: {
     ...mapTribeActions(['getTribe', 'createPrivateGroupProfileLink']),
     ...mapSubTribeActions(['createSubGroup', 'getSubGroups']),
-    ...mapCommunityActions(['saveCommunity', 'savePublicCommunity']),
+    ...mapCommunityActions(['saveCommunity', 'updateCommunity', 'savePublicCommunity']),
     getDisplayName,
-    async loadSubtribes () {
-      this.subtribes = await this.getSubGroups(this.tribe.id)
-      // this.subtribes = Object.assign([], subtribes)
+    async loadSubGroups () {
+      this.subGroups = await this.getSubGroups(this.tribe.id)
     },
     addMember (member) {
       this.formData.authors.push(member)
@@ -136,15 +139,13 @@ export default {
         this.formData.authors.splice(index, 1)
       }
     },
-    async addGroup ($event) {
+    async addSubGroup ($event) {
       // create group profiles and link them
       await this.setupNewSubGroup($event)
 
-      // get the new group
-      // const subtribe = await this.getTribe(subtribeId)
-
       // add it to the list of subgroups
-      await this.loadSubtribes()
+      await this.loadSubGroups()
+
       //   // scroll to bottom
       this.jumpToBottom()
     },
@@ -189,7 +190,7 @@ export default {
 
       return subGroupId
     },
-    // jump to the bottom of the dialog
+    // scroll to the bottom of the dialog
     jumpToBottom () {
       setTimeout(() => {
         var element = document.getElementById('app-dialog')
@@ -199,12 +200,23 @@ export default {
         })
       }, 100)
     },
-    updateGroup (group) {
-    // TODO edit group
-      console.log('update this to edit  group')
+    async updateSubGroupProfiles (input) {
+      // get the subgroups two profiles
+      const subGroupPrivateProfile = this.selectedSubGroup.private[0]
+      const subGroupProfileInGroup = this.tribe.private.find(profile => profile.recps[0] === this.selectedSubGroup.id)
+
+      // update them
+      await this.saveCommunity({ id: subGroupPrivateProfile.id, ...input })
+      await this.saveCommunity({ id: subGroupProfileInGroup.id, ...input })
+
+      // reload the ui
+      // TODO: do something cheaper then this
+      await this.loadSubGroups()
+
+      // TODO: figure out how to scroll to this subgroup..?
     },
-    setEditing (subgroup) {
-      this.subgroup = subgroup
+    setEditingSubGroup (subGroup) {
+      this.selectedSubGroup = subGroup
       this.editing = true
       this.showGroup = true
     },
@@ -219,7 +231,7 @@ export default {
     close () {
       this.showGroup = false
       this.editing = false
-      this.subgroup = {}
+      this.selectedSubGroup = null
     },
     t (key, vars) {
       return this.$t('groups.' + key, vars)
