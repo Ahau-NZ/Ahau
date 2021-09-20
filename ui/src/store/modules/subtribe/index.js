@@ -39,9 +39,15 @@ export default function (apollo) {
 
         if (res.errors) throw res.errors
 
-        return res.data.subtribes
+        const subtribes = res.data.subtribes
+
+        if (!subtribes || !subtribes.length) return []
+
+        return subtribes
+          .filter(tribe => tribe.private.length > 0)
       } catch (err) {
         console.error('failed to get subgroups for a group', err)
+        return []
       }
     }
   }
