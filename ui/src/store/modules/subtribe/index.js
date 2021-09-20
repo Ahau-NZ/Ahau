@@ -39,8 +39,6 @@ export default function (apollo) {
 
         if (res.errors) throw res.errors
 
-        console.log(res.data.subtribes)
-
         return res.data.subtribes
       } catch (err) {
         console.error('failed to get subgroups for a group', err)

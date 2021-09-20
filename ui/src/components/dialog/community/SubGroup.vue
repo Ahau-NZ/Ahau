@@ -2,7 +2,7 @@
   <v-col cols="12" style="background-color:#ebebeb" class="mb-8">
     <v-row>
       <p class="ml-5 headliner">{{ profile.preferredName}}</p>
-      <!-- <v-icon @click="$emit('edit', (profile))" small class=" mb-4 ml-5 blue--text">mdi-pencil</v-icon> -->
+      <v-icon @click="$emit('edit', subGroup)" small class=" mb-4 ml-5 blue--text">mdi-pencil</v-icon>
     </v-row>
     <p class="ml-3 mb-1 caption black--text">{{ profile.description }}</p>
 
@@ -92,7 +92,7 @@ export default {
   },
   props: {
     mobile: Boolean,
-    subtribe: Object,
+    subGroup: Object,
     members: Array
   },
   data () {
@@ -117,7 +117,7 @@ export default {
     //     })
     // },
     profile () {
-      return getTribalProfile(this.subtribe, this.whoami)
+      return getTribalProfile(this.subGroup, this.whoami)
     }
   },
   methods: {
