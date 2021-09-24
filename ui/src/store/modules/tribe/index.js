@@ -1,4 +1,4 @@
-import { createGroup, getTribe, getTribes, getTribeIds, saveGroupProfileLink } from './apollo-helpers'
+import { createGroup, initGroup, getTribe, getTribes, getTribeIds, saveGroupProfileLink } from './apollo-helpers'
 
 export default function (apollo) {
   const state = {
@@ -77,6 +77,19 @@ export default function (apollo) {
         return res.data.createGroup.id
       } catch (err) {
         console.error('failed to create a group', err)
+      }
+    },
+    async initGroup ({ dispatch }, input) {
+      try {
+        const res = await apollo.mutate(
+          initGroup(input)
+        )
+
+        if (res.errors) throw res.errors
+
+        return dispatch('getTribe', res.data.initGroup) // groupId
+      } catch (err) {
+        console.error('failed to initialise the group, its profiles and kaitiaki-only subgroup', err)
       }
     },
     async saveGroupProfileLink (context, input) {

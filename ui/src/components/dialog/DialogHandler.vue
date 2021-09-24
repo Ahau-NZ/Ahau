@@ -234,7 +234,7 @@ export default {
       'addPartnerToNestedWhakapapa'
     ]),
     ...mapTribeActions([
-      'createGroup',
+      'initGroup',
       'createPublicGroupProfileLink',
       'createPrivateGroupProfileLink'
     ]),
@@ -294,35 +294,9 @@ export default {
       //    - saveFeedProfileLink (recps: [groupId])
       try {
         if ($event.id) throw new Error('this is for creating a new tribe + community, not updating')
-        const groupId = await this.createGroup()
 
-        // Note: this auto-sets the authors to allow all authors
-        const input = {
-          ...$event,
-          authors: {
-            add: [this.whoami.public.feedId]
-          }
-        }
-
-        const groupProfileId = await this.saveCommunity({
-          ...input,
-          recps: [groupId]
-        })
-
-        await this.createPrivateGroupProfileLink({
-          group: groupId,
-          profile: groupProfileId
-        })
-
-        const groupPublicProfile = await this.savePublicCommunity(input)
-        const publicLinkId = await this.createPublicGroupProfileLink({
-          profile: groupPublicProfile,
-          group: groupId
-        })
-
-        if (publicLinkId) {
-          this.$router.push({ name: 'community/profile', params: { tribeId: groupId, profileId: groupProfileId } }).catch(() => {})
-        }
+        const group = await this.initGroup($event)
+        this.$router.push({ name: 'community/profile', params: { tribeId: group.id, profileId: group.private[0].id } }).catch(() => {})
       } catch (err) {
         console.error('Something went wrong while trying to create private group', $event)
         console.error(err)
