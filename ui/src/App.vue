@@ -131,6 +131,8 @@ export default {
     indexes: {
       deep: true,
       handler (progress) {
+        if (this.$route.name === 'community/whakapapa/:whakapapaId' || this.$route.name === 'person/whakapapa/:whakapapaId') return
+
         if (progress.isIndexing) {
           this.setLoading(progress.percentageIndexed)
         } else if (!progress.isIndexing && this.loadingState) {
