@@ -5,6 +5,7 @@ import wahine from '../assets/wahine.svg'
 import tama from '../assets/tama.svg'
 import kotiro from '../assets/kotiro.svg'
 import diverse from '../assets/diverse.svg'
+import account from '../assets/account-2.svg'
 
 import whakapapa from '../assets/whakapapa.svg'
 import whakapapaPng from '../assets/whakapapa.png'
@@ -13,15 +14,17 @@ import calculateAge from './calculate-age'
 import { isCordova } from './cordova-helpers'
 
 export default {
-  defaultImage
+  defaultImage, circleColour
 }
 
-function defaultImage (isView, aliveInterval, gender) {
+function defaultImage (isView, aliveInterval, gender, noAvatar) {
   if (isView) {
     if (isCordova()) return whakapapaPng
 
     return whakapapa
   }
+  if (noAvatar) return account
+
   var age = calculateAge(aliveInterval)
 
   switch (gender) {
@@ -53,5 +56,17 @@ function defaultImage (isView, aliveInterval, gender) {
       }
     default:
       return diverse
+  }
+}
+
+function circleColour (deceased, gender) {
+  if (deceased) return '#bfbfbf'
+  switch (gender) {
+    case 'male':
+      return '#548fac'
+    case 'female':
+      return '#d8569d'
+    default:
+      return '#427979'
   }
 }

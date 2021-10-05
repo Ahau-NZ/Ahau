@@ -14,7 +14,7 @@
         </clipPath>
       </defs>
       <circle
-        :style="{ fill: profile.deceased ? colours.deceased : colours.alive }"
+        :style="circleColor"
         :cx="radius"
         :cy="radius"
         :r="radius - 1"
@@ -83,7 +83,8 @@ export default {
     radius: { type: Number, required: true },
     isPartner: { type: Boolean, default: false },
     hideLabel: { type: Boolean, default: false },
-    width: { type: Number, required: true }
+    width: { type: Number, required: true },
+    avatars: { type: String, default: 'plain' }
   },
   data () {
     return {
@@ -98,6 +99,10 @@ export default {
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
+    circleColor () {
+      if (this.avatars === 'maori') return { fill: avatarHelper.circleColour(this.profile.deceased) }
+      return { fill: avatarHelper.circleColour(null, this.profile.gender) }
+    },
     profile () {
       if (this.isPartner) return this.node
       return this.node.data
@@ -109,7 +114,7 @@ export default {
       const uri = this.isPartner ? get(this.node, 'avatarImage.uri') : get(this.node, 'data.avatarImage.uri')
       if (uri) return uri
 
-      return avatarHelper.defaultImage(false, this.profile.aliveInterval, this.profile.gender)
+      return avatarHelper.defaultImage(false, this.profile.aliveInterval, this.profile.gender, this.avatars !== 'maori')
     },
     textWidth () {
       // const { x, y } = textElm.getBBox();
