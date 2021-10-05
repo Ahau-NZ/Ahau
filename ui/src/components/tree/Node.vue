@@ -15,7 +15,7 @@
         </clipPath>
       </defs>
       <circle
-        :style="circleColor"
+        :style="{fill: profile.deceased ? colours.deceased : colours.alive }"
         :cx="radius"
         :cy="radius"
         :r="radius"
@@ -70,8 +70,7 @@ export default {
       type: Number,
       default: 50
     },
-    partner: Boolean,
-    avatars: { type: String, default: 'plain' }
+    partner: Boolean
   },
   components: {
     NodeMenuButton
@@ -86,10 +85,6 @@ export default {
     }
   },
   computed: {
-    circleColor () {
-      if (this.avatars === 'maori') return { fill: avatarHelper.circleColour(this.profile.deceased) }
-      return { fill: avatarHelper.circleColour(null, this.profile.gender) }
-    },
     showMenuButton () {
       if (this.partner) return false
       if (!this.profile.isCollapsed) {
@@ -114,7 +109,7 @@ export default {
       const uri = get(this.profile, 'avatarImage.uri')
       if (uri) return uri
 
-      return avatarHelper.defaultImage(false, this.profile.aliveInterval, this.profile.gender, this.avatars !== 'maori')
+      return avatarHelper.defaultImage(false, this.profile.aliveInterval, this.profile.gender)
     },
     position () {
       return {
