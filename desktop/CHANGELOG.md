@@ -19,6 +19,7 @@
 - fixed whakapapa table bottom scroll bar
 - Removed kaitiaki from members list
 - Added dev commands for deleting node modules on windows
+- Changed unknown/other gender avatar to plain account icon
 ## v2.2.0
 
 ### Features
