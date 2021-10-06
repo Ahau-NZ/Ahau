@@ -1,7 +1,5 @@
 import Vue from 'vue'
 import VueApollo from 'vue-apollo'
-// import { ApolloClient, InMemoryCache } from '@apollo/client'
-// import { createUploadLink } from 'apollo-upload-client' // partners with graphql-upload
 import Client from 'ahau-graphql-client'
 
 import possibleTypes from './possibleTypes.json'
@@ -20,19 +18,6 @@ const httpEndpoint =
 
 // Call this in the Vue app file
 export function createProvider (options = {}) {
-  // Create apollo client
-  // const apolloClient = new ApolloClient({
-  //   ...options,
-  //   ssrMode: typeof window === 'undefined',
-  //   cache: new InMemoryCache({
-  //     possibleTypes // TEST
-  //     // https://www.apollographql.com/docs/react/data/fragments/#defining-possibletypes-manually
-  //     // fragmentMatcher // TEST
-  //   }),
-  //   link: createUploadLink({ uri: httpEndpoint }),
-  //   connectToDevTools: true
-  // })
-
   const apolloClient = new Client(httpEndpoint, { possibleTypes })
 
   // Create vue apollo provider
