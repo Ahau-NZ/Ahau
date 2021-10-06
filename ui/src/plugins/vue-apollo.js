@@ -1,16 +1,12 @@
 import Vue from 'vue'
 import VueApollo from 'vue-apollo'
-import { ApolloClient, InMemoryCache } from '@apollo/client'
-import { createUploadLink } from 'apollo-upload-client' // partners with graphql-upload
-import { IntrospectionFragmentMatcher } from 'apollo-cache-inmemory'
+// import { ApolloClient, InMemoryCache } from '@apollo/client'
+// import { createUploadLink } from 'apollo-upload-client' // partners with graphql-upload
+import Client from 'ahau-graphql-client'
 
 import possibleTypes from './possibleTypes.json'
 
 const env = require('ahau-env')()
-
-const fragmentMatcher = new IntrospectionFragmentMatcher({
-  introspectionQueryResultData: possibleTypes
-})
 
 // Install the vue plugin
 Vue.use(VueApollo)
@@ -25,15 +21,19 @@ const httpEndpoint =
 // Call this in the Vue app file
 export function createProvider (options = {}) {
   // Create apollo client
-  const apolloClient = new ApolloClient({
-    ...options,
-    ssrMode: typeof window === 'undefined',
-    cache: new InMemoryCache({
-      fragmentMatcher
-    }),
-    link: createUploadLink({ uri: httpEndpoint }),
-    connectToDevTools: true
-  })
+  // const apolloClient = new ApolloClient({
+  //   ...options,
+  //   ssrMode: typeof window === 'undefined',
+  //   cache: new InMemoryCache({
+  //     possibleTypes // TEST
+  //     // https://www.apollographql.com/docs/react/data/fragments/#defining-possibletypes-manually
+  //     // fragmentMatcher // TEST
+  //   }),
+  //   link: createUploadLink({ uri: httpEndpoint }),
+  //   connectToDevTools: true
+  // })
+
+  const apolloClient = new Client(httpEndpoint, { possibleTypes })
 
   // Create vue apollo provider
   const apolloProvider = new VueApollo({
