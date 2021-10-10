@@ -50,7 +50,7 @@
             :searchNodeName="searchNodeName"
           />
         </div>
-        <div v-if="whakapapa.table" class="icon-button">
+        <div class="icon-button">
           <SearchFilterButton :searchFilter.sync="searchFilter"/>
         </div>
         <div class="icon-button" v-if="isKaitiaki">
@@ -124,14 +124,15 @@
       <Tree
         :class="mobile? 'mobile-tree':'tree'"
         v-if="whakapapa.tree"
+        :openMenu="openContextMenu"
+        :view="whakapapaView"
+        :searchNodeId="searchNodeId"
         :getRelatives="getRelatives"
+        :showAvatars="showAvatars"
+        :showParents="showParents"
         @load-descendants="loadDescendants($event)"
         @change-focus="changeFocus($event)"
         @loading='load($event)'
-        :view="whakapapaView"
-        :focus="focus"
-        :searchNodeId="searchNodeId"
-        :openMenu="openContextMenu"
       />
       <div v-if="whakapapa.table" :class="mobile ? 'mobile-table' : 'whakapapa-table'">
         <Table
@@ -153,12 +154,15 @@
     <NodeMenu ref="menu" :view="whakapapaView" :currentFocus="currentFocus" @open="updateDialog($event.dialog, $event.type)"/>
 
     <FilterMenu
-      v-if="whakapapa.table"
       :show="searchFilter"
       :flatten="flatten"
+      :tree="whakapapa.tree"
+      :table="whakapapa.table"
       @close="clickedOffSearchFilter()"
       @descendants="toggleFilter()"
       @whakapapa="toggleFlatten()"
+      @showAvatars="toggleShowAvatars()"
+      @showParents="toggleShowParents()"
     />
 
     <DialogHandler
@@ -289,7 +293,9 @@ export default {
         table: false
       },
       searchNodeName: '',
-      nodeIds: []
+      nodeIds: [],
+      showAvatars: true,
+      showParents: true
     }
   },
   async mounted () {
@@ -369,6 +375,12 @@ export default {
     ...mapTableActions(['resetTableFilters']),
     async reload () {
       this.whakapapaView = await this.getWhakapapaView(this.$route.params.whakapapaId)
+    },
+    toggleShowAvatars () {
+      this.showAvatars = !this.showAvatars
+    },
+    toggleShowParents () {
+      this.showParents = !this.showParents
     },
     tableOverflow (width) {
       var show = width > screen.width

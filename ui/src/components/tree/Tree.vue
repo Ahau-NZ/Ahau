@@ -5,7 +5,7 @@
         :transform="`translate(${treeX - radius} ${treeY - radius})`"
         ref="tree"
       >
-        <SubTree :root="treeLayout(this.root)" :openMenu="openMenu" :changeFocus="changeFocus" :centerNode="centerNode" :nodeCentered="nodeCentered"/>
+        <SubTree :root="treeLayout(this.root)" :openMenu="openMenu" :changeFocus="changeFocus" :centerNode="centerNode" :nodeCentered="nodeCentered" :showAvatars="showAvatars" :showParents="showParents"/>
       </g>
     </g>
     <!-- zoom in, zoom out buttons -->
@@ -48,9 +48,9 @@ const { mapGetters: mapWhakapapaGetters } = createNamespacedHelpers('whakapapa')
 export default {
   props: {
     openMenu: Function,
-    find: {
-      type: Function
-    },
+    // find: {
+    //   type: Function
+    // },
     view: {
       type: Object,
       required: true
@@ -58,7 +58,9 @@ export default {
     searchNodeId: {
       type: String
     },
-    getRelatives: Function
+    getRelatives: Function,
+    showAvatars: Boolean,
+    showParents: Boolean
   },
   components: {
     SubTree
