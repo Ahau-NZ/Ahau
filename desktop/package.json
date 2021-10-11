@@ -43,6 +43,7 @@
     "ssb-settings": "^1.1.4",
     "ssb-story": "^2.4.0",
     "ssb-tribes": "^2.7.1",
+    "ssb-tribes-registration": "^0.1.0",
     "ssb-unix-socket": "^1.0.0",
     "ssb-whakapapa": "^2.2.0"
   },
