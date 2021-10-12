@@ -5,7 +5,7 @@
         {{ title }}
       </v-col>
       <v-col
-        v-if="filteredStories && filteredStories.length > 0"
+        v-if="stories.length > 0"
         cols="12" md="4" class="mr-auto pa-0"
       >
         <v-combobox

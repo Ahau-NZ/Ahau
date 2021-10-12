@@ -82,7 +82,6 @@ export default {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
     indexPollingInterval () {
-      console.log({ loadingState: this.loadingState })
       if (typeof this.loadingState === 'boolean') return 1500
       else return 500
     },

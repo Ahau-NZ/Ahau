@@ -124,16 +124,18 @@
 </template>
 
 <script>
+import { mapGetters, createNamespacedHelpers, mapActions } from 'vuex'
+
 import ProfileInfoCard from '@/components/profile/ProfileInfoCard.vue'
 import ProfileInfoItem from '@/components/profile/ProfileInfoItem.vue'
 import ProfileCard from '@/components/profile/ProfileCard.vue'
 import Avatar from '@/components/Avatar.vue'
 import SkeletonLoader from '@/components/SkeletonLoader.vue'
 
-import { mapGetters, createNamespacedHelpers, mapActions } from 'vuex'
 import { getDisplayName } from '@/lib/person-helpers.js'
 
 const { mapActions: mapTribeActions, mapGetters: mapTribeGetters } = createNamespacedHelpers('tribe')
+const { mapActions: mapPersonActions } = createNamespacedHelpers('person')
 
 export default {
   name: 'Profile',
@@ -186,8 +188,9 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['setDialog']),
     ...mapTribeActions(['getTribes']),
-    ...mapActions(['setProfileById', 'setDialog']),
+    ...mapPersonActions(['setProfileById']),
 
     goTribe (tribe) {
       var profile = tribe.private.length > 0
