@@ -5,7 +5,7 @@
         :transform="`translate(${treeX - radius} ${treeY - radius})`"
         ref="tree"
       >
-        <SubTree :root="treeLayout(this.root)" :openMenu="openMenu" :changeFocus="changeFocus" :centerNode="centerNode" :nodeCentered="nodeCentered" :showAvatars="showAvatars" :showParents="showParents"/>
+        <SubTree :root="treeLayout(this.root)" :openMenu="openMenu" :changeFocus="changeFocus" :centerNode="centerNode" :nodeCentered="nodeCentered" :showAvatars="showAvatars" :showParents="showParents" :findInTree="findInTree"/>
       </g>
     </g>
     <!-- zoom in, zoom out buttons -->
@@ -373,6 +373,17 @@ export default {
               .scale(1)
           )
         })
+    },
+    findInTree (profileId) {
+      var partners = []
+      this.nodes.forEach(node => {
+        node.data.partners.forEach(partner => partners.push(partner))
+      })
+      const existingNode = this.nodes.find(node => node.data.id === profileId) 
+      if (existingNode) {
+        console.log('Node found!!!!')
+        return existingNode
+      }
     }
   }
 }
@@ -394,4 +405,7 @@ svg#baseSvg {
   cursor: pointer;
 }
 
+.node {
+  z-index: 20;
+}
 </style>

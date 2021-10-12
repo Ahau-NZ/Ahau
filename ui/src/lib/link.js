@@ -91,7 +91,7 @@ export default {
   },
   opacity: 1,
   thickness: 1.5,
-  branch: 120,
+  branch: 110,
   radius: 50,
   separation: {
     leftPartnersCount,

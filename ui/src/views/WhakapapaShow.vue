@@ -393,7 +393,15 @@ export default {
       this.searchFilter = !this.searchFilter
     },
     isVisibleProfile (descendant) {
-      if (this.whakapapaView.ignoredProfiles) { return this.whakapapaView.ignoredProfiles.indexOf(descendant.id) === -1 }
+      return this.whakapapaView.ignoredProfiles.indexOf(descendant.id) === -1
+    },
+    isDuplicateProfiles (descendantId, profileId) {
+      console.log('......')
+      if (this.whakapapaView.duplicateProfiles.some(arr => arr.id === descendantId && arr.linkId !== profileId)) {
+        console.log('FOUND!', descendantId, ':', profileId)
+        return false
+      }
+      return true
     },
     openPartnerSideNode (dialog, type, profile) {
       this.setSelectedProfile(profile)
@@ -488,9 +496,27 @@ export default {
       var person = await this.getRelatives(profileId)
 
       // filter out ignored profiles
-      person.children = person.children.filter(this.isVisibleProfile)
-      person.parents = person.parents.filter(this.isVisibleProfile)
-      person.partners = person.partners.filter(this.isVisibleProfile)
+      if (this.whakapapaView.ignoredProfiles) {
+        person.children = person.children.filter(this.isVisibleProfile)
+        person.parents = person.parents.filter(this.isVisibleProfile)
+        person.partners = person.partners.filter(this.isVisibleProfile)
+      }
+
+      // skip duplicate profiles
+      // if chilren, parents, or partners is a duplicate and the link id is not the profileId than skip it
+      // Duplicate Dummy Data
+      let x = [{
+        id: '%EBudSu8Vc45klXeT+BqJKf4+EoofeQeMZOC6EZYr6VY=.sha256',
+        linkId: '%EYxK7gZXR61bZMLGo6HaLV0yDyVAy62ihwcCmLEZvek=.sha256'
+      }]
+      this.whakapapaView = {
+        ...this.whakapapaView,
+        duplicateProfiles: x
+      }
+
+      if (this.whakapapaView.duplicateProfiles) {
+        person.children = person.children.filter(child => this.isDuplicateProfiles(child.id, profileId))
+      }
 
       // map all links
       person.children = await this.mapChildren(person)
@@ -522,7 +548,12 @@ export default {
       return formatted
     },
     getOtherParentChildren (mainParent, partner) {
-      return mainParent.children.filter(child => child.parents.some(parent => parent.id === partner.id))
+      return mainParent.children.filter(child => child.parents.some(parent => parent.id === partner.id)).map(child => {
+        return {
+          ...child,
+          isExtendedWhanau: true
+        }
+      })
     },
     async mapChildren (person) {
       return Promise.all(person.children.map(async child => {

@@ -622,21 +622,31 @@ export default {
       this.setSelectedProfile(null)
     },
     async getSuggestions ($event) {
+      console.log('get suggestions')
       if (!$event) {
         this.suggestions = []
         return
       }
       var records = await findByName($event)
 
+      console.log('1. records: ', records)
+
       if (isEmpty(records)) {
         this.suggestions = []
         return
       }
 
+      console.log('2. records: ', records)
+
+
+
       // filter out all records that arent in the current tribe
       records = records.filter(record => {
         return isEqual(record.recps, this.view.recps)
       })
+
+      console.log('3. records: ', records)
+
 
       if (this.source !== 'new-registration') {
         var profiles = {} // flatStore for these suggestions
@@ -655,12 +665,16 @@ export default {
 
         // now we have the flatStore for the suggestions we need to filter out the records
         // so we cant add one that is already in the tree
-        records = records.filter(record => !this.findInTree(record.id))
+        // records = records.filter(record => !this.findInTree(record.id))
+
+        console.log('4. records: ', records)
 
         this.predecessorArray = []
         await this.getNodePredecessors(this.selectedProfile.id) // Get the predecessors of the current node
 
         const updatedRecords = []
+
+        console.log('5. records: ', records)
 
         records.forEach(record => {
           var recordIsPredecessor = false
@@ -672,6 +686,8 @@ export default {
 
         records = updatedRecords
       }
+
+      console.log('6. records: ', records)
 
       // sets suggestions which is passed into the dialogs
       this.suggestions = Object.assign([], records)
@@ -725,6 +741,7 @@ export default {
       const hasParents = this.arrayIsNotEmpty(parents)
       const hasPartners = this.arrayIsNotEmpty(partners)
       const hasSiblings = this.arrayIsNotEmpty(siblings)
+      // const hasSiblings = []
 
       // Return if there are no parents, partners and siblings on the current node
       if (!hasParents && !hasPartners && !hasSiblings) return
@@ -732,7 +749,7 @@ export default {
       // Filter out partners of predecessors
       if (hasPartners) this.addToPredecessors(partners)
       // Filter out siblings of predecessors
-      if (hasSiblings) this.addToPredecessors(siblings)
+      // if (hasSiblings) this.addToPredecessors(siblings)
 
       // Get the current parents and their predecessors
       const currentProfileParents = parents

@@ -44,6 +44,7 @@
           <v-col cols="12" class="pa-1 pt-4">
             <slot name="search">
               <v-text-field
+                ref="name"
                 v-model="formData.preferredName"
                 :label="t('preferredName')"
                 v-bind="customProps"
@@ -447,6 +448,15 @@ export default {
     if (!this.readonly && isEmpty(this.formData.school)) {
       this.formData.school.push('')
     }
+    setTimeout(() => {
+      console.log(this.$refs.name)
+      this.$refs.name.focus()
+    }, 1000)
+    // console.log(this.$refs.name)
+    // this.$refs.preferredName.$refs.input.focus()
+  },
+  created () {
+    // console.log(this.$refs['name'])
   },
   watch: {
     profile: {
