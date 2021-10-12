@@ -4,7 +4,7 @@ import tane from '../assets/tane.svg'
 import wahine from '../assets/wahine.svg'
 import tama from '../assets/tama.svg'
 import kotiro from '../assets/kotiro.svg'
-import diverse from '../assets/diverse.svg'
+import account from '../assets/account-2.svg'
 
 import whakapapa from '../assets/whakapapa.svg'
 import whakapapaPng from '../assets/whakapapa.png'
@@ -16,12 +16,14 @@ export default {
   defaultImage
 }
 
-function defaultImage (isView, aliveInterval, gender) {
+function defaultImage (isView, aliveInterval, gender, noAvatar) {
   if (isView) {
     if (isCordova()) return whakapapaPng
 
     return whakapapa
   }
+  if (noAvatar) return account
+
   var age = calculateAge(aliveInterval)
 
   switch (gender) {
@@ -37,9 +39,9 @@ function defaultImage (isView, aliveInterval, gender) {
           return tane
       }
     case 'other':
-      return diverse
+      return account
     case 'unknown':
-      return diverse
+      return account
     case 'female':
       switch (true) {
         case age === null:
@@ -52,6 +54,6 @@ function defaultImage (isView, aliveInterval, gender) {
           return wahine
       }
     default:
-      return diverse
+      return account
   }
 }

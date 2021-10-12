@@ -14,7 +14,7 @@
         </clipPath>
       </defs>
       <circle
-        :style="{ fill: profile.deceased ? colours.deceased : colours.alive }"
+        :style="{fill: profile.deceased ? colours.deceased : colours.alive }"
         :cx="radius"
         :cy="radius"
         :r="radius - 1"

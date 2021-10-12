@@ -15,7 +15,6 @@
                     v-bind="customProps"
                     class="title-input"
                     style="text-align: start; font-size: 1.2em; font-weight: 700;"
-                    counter
                     :hide-details="false"
                     :rules="rules.titleLength"
                   />
@@ -58,7 +57,7 @@
                         rows="3"
                         auto-grow
                         :hide-details="false"
-                        :counter="totalCharLength"
+                        :counter="recordCounter"
                         :rules="rules.recordLength"
                       >
                       </v-textarea>
@@ -92,7 +91,7 @@
                     rows="3"
                     auto-grow
                     :hide-details="false"
-                    :counter="totalCharLength"
+                    :counter="recordCounter"
                     :rules="rules.recordLength"
                   >
                   </v-textarea>
@@ -355,7 +354,7 @@
                     rows="3"
                     auto-grow
                     :hide-details="false"
-                    :counter="totalCharLength"
+                    :counter="recordCounter"
                     :rules="rules.recordLength"
                   >
                   </v-textarea>
@@ -440,7 +439,7 @@
                     rows="3"
                     auto-grow
                     :hide-details="false"
-                    :counter="totalCharLength"
+                    :counter="recordCounter"
                     :rules="rules.recordLength"
                   >
                   </v-textarea>
@@ -579,6 +578,10 @@ export default {
   },
   computed: {
     ...mapGetters(['showStory', 'whoami']),
+    recordCounter () {
+      if (this.totalCharLength > 4000) return this.totalCharLength
+      else return false
+    },
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
