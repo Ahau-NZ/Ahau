@@ -45,7 +45,7 @@ export default function (apollo) {
       }
       // if viewing a story and sideview is open and you want to jump to another profile > close the story
       if (rootState.archive.showStory && rootState.dialog.preview) {
-        dispatch('toggleShowStory', null, { root: true })
+        dispatch('archive/toggleShowStory', null, { root: true })
       }
       if (type !== 'setWhanau' && rootState.dialog.dialog) {
         dispatch('setDialog', null, { root: true })
