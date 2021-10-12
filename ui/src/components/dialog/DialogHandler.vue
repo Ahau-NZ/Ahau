@@ -296,7 +296,7 @@ export default {
         if ($event.id) throw new Error('this is for creating a new tribe + community, not updating')
 
         const group = await this.initGroup($event)
-        this.$router.push({ name: 'community/profile', params: { tribeId: group.id, profileId: group.private[0].id } }).catch(() => {})
+        this.$router.push({ name: 'community/profile', params: { tribeId: group.groupId, profileId: group.private[0].id } }).catch(() => {})
       } catch (err) {
         console.error('Something went wrong while trying to create private group', $event)
         console.error(err)

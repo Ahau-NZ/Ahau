@@ -90,7 +90,11 @@ export const initGroup = (_input) => {
   return {
     mutation: gql`
       mutation ($communityProfile: CommunityProfileInput) {
-        initGroup(communityProfile: $communityProfile)
+        initGroup(communityProfile: $communityProfile) {
+          groupId
+          adminSubGroupId
+          poBoxId
+        }
       }
     `,
     variables: {
