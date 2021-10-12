@@ -221,6 +221,7 @@ import {
   mapMutations,
   createNamespacedHelpers
 } from 'vuex'
+
 const {
   mapActions: mapWhakapapaActions,
   mapGetters: mapWhakapapaGetters,

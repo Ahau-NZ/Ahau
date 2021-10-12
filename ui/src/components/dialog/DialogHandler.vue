@@ -123,7 +123,6 @@ import { createNamespacedHelpers, mapGetters, mapActions } from 'vuex'
 const { mapMutations: mapAlertMutations } = createNamespacedHelpers('alerts')
 const { mapGetters: mapWhakapapaGetters, mapMutations: mapWhakapapaMutations } = createNamespacedHelpers('whakapapa')
 const { mapActions: mapTribeActions } = createNamespacedHelpers('tribe')
-const { mapActions: mapCommunityActions } = createNamespacedHelpers('community')
 const { mapGetters: mapPersonGetters } = createNamespacedHelpers('person')
 
 export default {
@@ -225,25 +224,11 @@ export default {
   methods: {
     getDisplayName,
     ...mapAlertMutations(['showAlert']),
+    ...mapTribeActions(['initGroup']),
+    ...mapActions(['loading', 'setDialog']),
     ...mapWhakapapaMutations([
-      'updatePartnerInNestedWhakapapa',
       'updateNodeInNestedWhakapapa',
-      'deleteNodeInNestedWhakapapa',
-      'addChildToNestedWhakapapa',
-      'addParentToNestedWhakapapa',
-      'addPartnerToNestedWhakapapa'
-    ]),
-    ...mapTribeActions([
-      'initGroup',
-      'createPublicGroupProfileLink',
-      'createPrivateGroupProfileLink'
-    ]),
-    ...mapCommunityActions([
-      'saveCommunity',
-      'savePublicCommunity'
-    ]),
-    ...mapActions(['loading', 'setDialog',
-      'setProfileById'
+      'deleteNodeInNestedWhakapapa'
     ]),
     isActive (type) {
       if (type === this.dialog || type === this.storeDialog) {

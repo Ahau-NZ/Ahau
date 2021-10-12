@@ -1,7 +1,7 @@
 import gql from 'graphql-tag'
 import pick from 'lodash.pick'
 
-import { prune, COMMUNITY_FRAGMENT } from '../../../lib/community-helpers'
+import { COMMUNITY_FRAGMENT } from '../../../lib/community-helpers'
 
 export const PERMITTED_COMMUNITY_LINK_ATTRS = [
   'id',
@@ -47,26 +47,6 @@ export const getTribes = ({
   fetchPolicy: 'no-cache'
 })
 
-export const getTribeIds = {
-  query: gql`
-    query {
-      listGroups {
-        id
-      }
-    }
-  `
-}
-
-export const createGroup = {
-  mutation: gql`
-    mutation {
-      createGroup {
-        id
-      }
-    }
-  `
-}
-
 const communityProfileAttrs = [
   'preferredName',
   'description',
@@ -99,21 +79,6 @@ export const initGroup = (_input) => {
     `,
     variables: {
       communityProfile: input
-    }
-  }
-}
-
-export const saveGroupProfileLink = input => {
-  const _input = prune(input, PERMITTED_COMMUNITY_LINK_ATTRS)
-
-  return {
-    mutation: gql`
-      mutation($input: GroupProfileLinkInput!) {
-        saveGroupProfileLink(input: $input)
-      }
-    `,
-    variables: {
-      input: _input
     }
   }
 }
