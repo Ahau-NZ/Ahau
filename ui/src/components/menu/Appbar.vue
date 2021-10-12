@@ -146,7 +146,7 @@ import NotificationPanel from '@/components/menu/NotificationPanel'
 import { mapGetters, mapActions } from 'vuex'
 import BackButton from '@/components/button/BackButton'
 
-import { getTribes } from '@/lib/community-helpers.js'
+import { getTribes } from '../../store/modules/tribe/apollo-helpers'
 
 const karakia = `
 ---------------------------------

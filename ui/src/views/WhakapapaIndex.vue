@@ -80,10 +80,10 @@ import { savePerson } from '@/lib/person-helpers.js'
 import { saveWhakapapaView } from '@/lib/whakapapa-helpers.js'
 import mapWhakapapaMixins from '@/mixins/whakapapa-view.js'
 import { findByName } from '@/lib/search-helpers.js'
-import mapProfileMixins from '@/mixins/profile-mixins.js'
 
 import { mapGetters, mapActions, createNamespacedHelpers } from 'vuex'
 const { mapMutations: mapAlertMutations } = createNamespacedHelpers('alerts')
+const { mapActions: mapTribeActions } = createNamespacedHelpers('tribe')
 
 export default {
   name: 'WhakapapaIndex',
@@ -101,9 +101,6 @@ export default {
     SkeletonLoader
   },
   mixins: [
-    mapProfileMixins({
-      mapMethods: ['getTribe']
-    }),
     mapWhakapapaMixins({
       mapMethods: ['getWhakapapaViews']
     })
@@ -133,6 +130,7 @@ export default {
   methods: {
     ...mapActions(['setLoading']),
     ...mapAlertMutations(['showAlert']),
+    ...mapTribeActions(['getTribe']),
 
     async groupedWhakapapaViews () {
       const views = await this.getWhakapapaViews()

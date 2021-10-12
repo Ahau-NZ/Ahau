@@ -69,7 +69,7 @@
           color="blue"
           :disabled="!valid"
         >
-          create
+          {{ editing ? $t('groups.groupDialogButton.edit') : $t('groups.groupDialogButton.create') }}
         </v-btn>
       </v-col>
     </template>
@@ -86,7 +86,7 @@ import { getObjectChanges } from '@/lib/get-object-changes.js'
 import { EMPTY_SUBGROUP, setDefaultSubgroup } from '@/lib/community-helpers.js'
 
 export default {
-  name: 'NewGroupDialog',
+  name: 'NewSubGroupDialog',
   components: {
     Dialog,
     Avatar,
@@ -95,7 +95,6 @@ export default {
   props: {
     show: { type: Boolean, required: true },
     profile: Object,
-    title: String,
     editing: Boolean
   },
   data () {
@@ -108,6 +107,11 @@ export default {
   computed: {
     mobile () {
       return this.$vuetify.breakpoint.xs
+    },
+    title () {
+      return this.editing
+        ? this.$t('groups.groupDialogTitle.edit')
+        : this.$t('groups.groupDialogTitle.create')
     },
     customProps () {
       return {
