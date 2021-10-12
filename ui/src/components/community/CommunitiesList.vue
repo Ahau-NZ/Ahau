@@ -49,7 +49,7 @@
 <script>
 
 import CommunityList from '@/components/community/CommunityList.vue'
-import { getTribes } from '@/lib/community-helpers.js'
+import { getTribes } from '../../store/modules/tribe/apollo-helpers'
 import SkeletonLoader from '@/components/SkeletonLoader.vue'
 
 export default {

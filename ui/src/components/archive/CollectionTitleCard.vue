@@ -62,8 +62,9 @@
 import niho from '@/assets/niho.svg'
 import AvatarGroup from '@/components/AvatarGroup.vue'
 import { getTribalProfile } from '@/lib/community-helpers.js'
-import { mapGetters } from 'vuex'
-import mapProfileMixins from '@/mixins/profile-mixins.js'
+import { mapGetters, createNamespacedHelpers } from 'vuex'
+
+const { mapActions: mapTribeActions } = createNamespacedHelpers('tribe')
 
 export default {
   name: 'CollectionTitleCard',
@@ -73,11 +74,6 @@ export default {
   props: {
     collection: Object
   },
-  mixins: [
-    mapProfileMixins({
-      mapMethods: ['getTribe']
-    })
-  ],
   async mounted () {
     // populate access
     const tribe = await this.getTribe(this.collection.recps[0])
@@ -103,6 +99,9 @@ export default {
       // otherwise return a default one
       return niho
     }
+  },
+  methods: {
+    ...mapTribeActions(['getTribe'])
   }
 }
 </script>

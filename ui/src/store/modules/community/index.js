@@ -1,4 +1,4 @@
-import { saveCommunity, savePublicCommunity } from '@/lib/community-helpers.js' // TODO cherese 23-08-21 move these to ./apollo-helpers
+import { saveCommunity, savePublicCommunity, updateTribe } from '@/lib/community-helpers.js' // TODO cherese 23-08-21 move these to ./apollo-helpers
 
 export default function (apollo) {
   const state = {
@@ -35,6 +35,21 @@ export default function (apollo) {
         return res.data.saveProfile // profileId
       } catch (err) {
         console.error('failed to save a public community profile', err)
+      }
+    },
+    async updateCommunity ({ dispatch }, { tribe, input }) {
+      try {
+        const res = await apollo.mutate(
+          updateTribe(tribe, input)
+        )
+
+        if (res.errors) throw res.errors
+
+        // TODO: figure out how to use translations in vuex, leaving these for now
+        dispatch('alerts/showMessage', 'Successfully updated the community', { root: true })
+      } catch (err) {
+        console.error('Error updating a community', err)
+        dispatch('alerts/showError', 'Something went wrong while trying to update the community', { root: true })
       }
     }
   }

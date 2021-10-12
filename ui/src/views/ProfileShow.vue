@@ -38,7 +38,7 @@
       editing
       :title="$t('addPersonForm.addPersonFormTitle', { displayName: profile.preferredName })"
       @delete="dialog = 'delete-community'"
-      @submit="updateCommunity"
+      @submit="processUpdateCommunity"
       @close="dialog = null"
       :profile="profile"
       :tribe="tribe"
@@ -80,7 +80,7 @@ import NewCommunityDialog from '@/components/dialog/community/NewCommunityDialog
 import DeleteCommunityDialog from '@/components/dialog/community/DeleteCommunityDialog.vue'
 import EditNodeDialog from '@/components/dialog/profile/EditNodeDialog.vue'
 import NewRegistrationDialog from '@/components/dialog/registration/NewRegistrationDialog.vue'
-import { updateTribe, deleteTribe, getMembers, getTribalProfile } from '@/lib/community-helpers.js'
+import { deleteTribe, getMembers, getTribalProfile } from '@/lib/community-helpers.js'
 
 import { createGroupApplication, copyProfileInformation } from '@/lib/tribes-application-helpers.js'
 import { getDisplayName } from '@/lib/person-helpers.js'
@@ -93,6 +93,7 @@ import {
 } from 'vuex'
 
 const { mapMutations: mapAlertMutations } = createNamespacedHelpers('alerts')
+const { mapActions: mapCommunityActions } = createNamespacedHelpers('community')
 
 export default {
   name: 'ProfileShow',
@@ -210,35 +211,22 @@ export default {
     getDisplayName,
     ...mapMutations(['setCurrentAccess', 'setIsKaitiaki']),
     ...mapAlertMutations(['showAlert']),
+    ...mapCommunityActions(['updateCommunity']),
     ...mapActions(['setWhoami']),
     goEdit () {
       if (this.profile.type.startsWith('person')) this.dialog = 'edit-node'
       else this.dialog = 'edit-community'
     },
-    // TOTO if these need to be used elsewhere, move to a mixin
-    async updateCommunity ($event) {
+    async processUpdateCommunity ($event) {
       if (isEmpty($event)) {
         this.showAlert({ message: this.t('noChanges'), color: 'green' })
         this.closeDialog()
         return
       }
 
-      try {
-        const res = await this.$apollo.mutate(
-          updateTribe(this.tribe, $event)
-        )
-
-        if (res.errors) throw res.errors
-
-        this.closeDialog()
-        this.refresh()
-        this.showAlert({ message: this.t('updateCommunity'), color: 'green' })
-      } catch (err) {
-        console.error(this.t('failUpdateCommunity'), this.tribe)
-        console.error(err)
-        this.showAlert({ message: this.t('failUpdateCommunity'), color: 'red' })
-        this.closeDialog()
-      }
+      await this.updateCommunity({ tribe: this.tribe, input: $event })
+      this.closeDialog()
+      await this.refresh()
     },
     async updatePerson ($event) {
       // attach the id to the input
