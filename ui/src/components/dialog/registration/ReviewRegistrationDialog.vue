@@ -407,7 +407,7 @@ export default {
         // success
         this.close()
       } catch (err) {
-        console.error('Something went wrong while try to accept/decline application', err)
+        console.error('Something went wrong while trying to accept/decline application', err)
       }
     },
     close () {

@@ -49,7 +49,7 @@ const actions = {
 
       commit('updateNotifications', notifs)
     } catch (err) {
-      console.error('Something went wrong while try to get all group applications', err)
+      console.error('Something went wrong while trying to get all group applications', err)
     }
   },
   setCurrentNotification ({ commit }, notification) {

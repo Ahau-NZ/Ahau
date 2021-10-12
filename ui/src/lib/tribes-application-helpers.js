@@ -32,7 +32,7 @@ export const acceptGroupApplication = ({ id, comment, groupIntro }) => {
   return {
     mutation: gql`
       mutation($id: String!, $comment: String, $groupIntro: String) {
-        acceptGroupApplication(id: $id, applicationComment: $comment, groupIntro: $groupIntro)
+        acceptGroupApplication(id: $id, comment: $comment, groupIntro: $groupIntro)
       }
     `,
     variables: {
