@@ -1,13 +1,15 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 
-import root from './root'
-
-import whakapapa from './modules/whakapapa'
-import person from './modules/person'
+// /* global namespace */
+import root from './root' // probably has modules to split out
 import archive from './modules/archive'
 import dialog from './modules/dialog'
 import notifications from './modules/notifications'
+
+// /* namespaced */
+import whakapapa from './modules/whakapapa'
+import person from './modules/person'
 
 import alerts from './modules/alerts'
 import analytics from './modules/analytics'
@@ -29,7 +31,8 @@ Vue.use(Vuex)
 
 /*
   TODO (later):
-    - [ ] move loading and syncing to alerts modules
+    - [ ] assess which bits of these should be namespaced
+    - [ ] root: move loading and syncing to alerts modules
     - [ ] change modules to be namespaced
           - https://vuex.vuejs.org/guide/modules.html#namespacing
           - see alerts module for another example

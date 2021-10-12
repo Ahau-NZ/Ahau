@@ -246,7 +246,7 @@ import isEqual from 'lodash.isequal'
 import isEmpty from 'lodash.isempty'
 import pick from 'lodash.pick'
 import clone from 'lodash.clonedeep'
-import { mapActions, mapMutations, mapGetters } from 'vuex'
+import { mapActions, mapMutations, mapGetters, createNamespacedHelpers } from 'vuex'
 
 import ProfileInfoItem from '@/components/profile/ProfileInfoItem.vue'
 import ProfileForm from '@/components/profile/ProfileForm.vue'
@@ -259,6 +259,8 @@ import ArchiveIcon from '@/components/button/ArchiveIcon.vue'
 
 import { getDisplayName } from '@/lib/person-helpers.js'
 import mapProfileMixins from '@/mixins/profile-mixins.js'
+
+const { mapActions: mapPersonActions } = createNamespacedHelpers('person')
 
 function defaultData (input) {
   var profile = clone(input)
@@ -402,8 +404,9 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['updateIsFromWhakapapaShow']),
-    ...mapActions(['setProfileById', 'setDialog', 'setIsFromWhakapapaShow']),
+    ...mapMutations(['updateIsFromWhakapapaShow']), // TODO replace with an action
+    ...mapActions(['setDialog', 'setIsFromWhakapapaShow']),
+    ...mapPersonActions(['setProfileById']),
     getDisplayName,
     toggleRemoveChildren () {
       this.allowRemoveChildren = !this.allowRemoveChildren

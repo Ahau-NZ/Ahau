@@ -49,12 +49,15 @@
 </template>
 
 <script>
+import { mapActions, createNamespacedHelpers } from 'vuex'
+
 import calculateAge from '@/lib/calculate-age'
 import AvatarGroup from '@/components/AvatarGroup.vue'
 import ProfileInfoItem from './ProfileInfoItem'
-import { mapActions } from 'vuex'
 import AddButton from '@/components/button/AddButton.vue'
 import { dateIntervalToString } from '@/lib/date-helpers.js'
+
+const { mapActions: mapPersonActions } = createNamespacedHelpers('person')
 
 export default {
   name: 'ProfileInfoCard',
@@ -99,7 +102,8 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setProfileById', 'setDialog']),
+    ...mapActions(['setDialog']),
+    ...mapPersonActions(['setProfileById']),
     openProfile (profile) {
       this.setProfileById({ id: profile.id, type: 'preview' })
       this.setDialog({ active: 'view-edit-node', type: 'preview' })
