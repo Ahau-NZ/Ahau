@@ -130,6 +130,7 @@
         :getRelatives="getRelatives"
         :showAvatars="showAvatars"
         :showParents="showParents"
+        :duplicateProfiles="duplicateProfiles"
         @load-descendants="loadDescendants($event)"
         @change-focus="changeFocus($event)"
         @loading='load($event)'
@@ -278,6 +279,13 @@ export default {
         image: { uri: '' },
         ignoredProfiles: ['']
       },
+      duplicateProfiles: [
+        {
+          id: '%yUnysKn46VTtOcKDGd7njn5zrCucKlZ6Zt8ZChc6a2E=.sha256',
+          nodeId: '%4Pv06yd5cEAKxmpaO6m6dUCKIZ8ULYr91tP5iHpxRe0=.sha256',
+          linkId: '%oQWK1l1HiitOgimAWBIn4lJ5GHrwwbi/bk4U1ew/fM8=.sha256'
+        }
+      ],
       focus: null,
       // the record which defines the starting point for a tree (the 'focus')
 
@@ -395,14 +403,6 @@ export default {
     isVisibleProfile (descendant) {
       return this.whakapapaView.ignoredProfiles.indexOf(descendant.id) === -1
     },
-    isDuplicateProfiles (descendantId, profileId) {
-      console.log('......')
-      if (this.whakapapaView.duplicateProfiles.some(arr => arr.id === descendantId && arr.linkId !== profileId)) {
-        console.log('FOUND!', descendantId, ':', profileId)
-        return false
-      }
-      return true
-    },
     openPartnerSideNode (dialog, type, profile) {
       this.setSelectedProfile(profile)
       if (this.dialog.active === 'view-edit-node') {
@@ -505,18 +505,15 @@ export default {
       // skip duplicate profiles
       // if chilren, parents, or partners is a duplicate and the link id is not the profileId than skip it
       // Duplicate Dummy Data
-      let x = [{
-        id: '%EBudSu8Vc45klXeT+BqJKf4+EoofeQeMZOC6EZYr6VY=.sha256',
-        linkId: '%EYxK7gZXR61bZMLGo6HaLV0yDyVAy62ihwcCmLEZvek=.sha256'
-      }]
-      this.whakapapaView = {
-        ...this.whakapapaView,
-        duplicateProfiles: x
-      }
 
-      if (this.whakapapaView.duplicateProfiles) {
-        person.children = person.children.filter(child => this.isDuplicateProfiles(child.id, profileId))
-      }
+      // this.whakapapaView = {
+      //   ...this.whakapapaView,
+      //   duplicateProfiles: x
+      // }
+
+      // if (this.duplicateProfiles) {
+      //   person.children = person.children.filter(child => this.isDuplicateProfiles(child.id, profileId))
+      // }
 
       // map all links
       person.children = await this.mapChildren(person)

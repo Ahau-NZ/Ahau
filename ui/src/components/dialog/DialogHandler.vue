@@ -622,31 +622,21 @@ export default {
       this.setSelectedProfile(null)
     },
     async getSuggestions ($event) {
-      console.log('get suggestions')
       if (!$event) {
         this.suggestions = []
         return
       }
       var records = await findByName($event)
 
-      console.log('1. records: ', records)
-
       if (isEmpty(records)) {
         this.suggestions = []
         return
       }
 
-      console.log('2. records: ', records)
-
-
-
       // filter out all records that arent in the current tribe
       records = records.filter(record => {
         return isEqual(record.recps, this.view.recps)
       })
-
-      console.log('3. records: ', records)
-
 
       if (this.source !== 'new-registration') {
         var profiles = {} // flatStore for these suggestions
@@ -667,14 +657,10 @@ export default {
         // so we cant add one that is already in the tree
         // records = records.filter(record => !this.findInTree(record.id))
 
-        console.log('4. records: ', records)
-
         this.predecessorArray = []
         await this.getNodePredecessors(this.selectedProfile.id) // Get the predecessors of the current node
 
         const updatedRecords = []
-
-        console.log('5. records: ', records)
 
         records.forEach(record => {
           var recordIsPredecessor = false
@@ -686,10 +672,8 @@ export default {
 
         records = updatedRecords
       }
-
-      console.log('6. records: ', records)
-
-      // sets suggestions which is passed into the dialogs
+      
+     // sets suggestions which is passed into the dialogs
       this.suggestions = Object.assign([], records)
     },
     /*

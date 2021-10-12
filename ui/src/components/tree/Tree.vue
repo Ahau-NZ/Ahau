@@ -5,7 +5,17 @@
         :transform="`translate(${treeX - radius} ${treeY - radius})`"
         ref="tree"
       >
-        <SubTree :root="treeLayout(this.root)" :openMenu="openMenu" :changeFocus="changeFocus" :centerNode="centerNode" :nodeCentered="nodeCentered" :showAvatars="showAvatars" :showParents="showParents" :findInTree="findInTree"/>
+        <SubTree
+          :root="treeLayout(this.root)"
+          :openMenu="openMenu"
+          :changeFocus="changeFocus"
+          :centerNode="centerNode"
+          :nodeCentered="nodeCentered"
+          :showAvatars="showAvatars"
+          :showParents="showParents"
+          :findInTree="findInTree"
+          :duplicateProfiles="duplicateProfiles"
+        />
       </g>
     </g>
     <!-- zoom in, zoom out buttons -->
@@ -60,7 +70,8 @@ export default {
     },
     getRelatives: Function,
     showAvatars: Boolean,
-    showParents: Boolean
+    showParents: Boolean,
+    duplicateProfiles: Array
   },
   components: {
     SubTree
@@ -170,11 +181,20 @@ export default {
     nodes () {
       return this.treeLayout(this.root)
         .descendants() // returns the array of descendants starting with the root node, then followed by each child in topological order
+        // .filter(profile => !this.isDuplicateProfile(profile))
+        .filter(profile => {
+          console.log('node filter: ', profile)
+          return profile.id === this.duplicateProfiles[0].id
+        })
     },
     paths () {
       if (!this.componentLoaded || !this.pathNode) return null
       return this.root.path(this.pathNode)
         .map(d => d.data.id)
+    },
+    isDuplicateProfile (profile) {
+      console.log("isDup: ", profile)
+      return this.duplicateProfiles.some(arr => arr.id === profile.id && profile.parents.some(parent => parent.id !== arr.nodeId))
     }
   },
   watch: {

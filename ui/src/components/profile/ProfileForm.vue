@@ -448,15 +448,7 @@ export default {
     if (!this.readonly && isEmpty(this.formData.school)) {
       this.formData.school.push('')
     }
-    setTimeout(() => {
-      console.log(this.$refs.name)
-      this.$refs.name.focus()
-    }, 1000)
-    // console.log(this.$refs.name)
-    // this.$refs.preferredName.$refs.input.focus()
-  },
-  created () {
-    // console.log(this.$refs['name'])
+    console.log('mounted')
   },
   watch: {
     profile: {
