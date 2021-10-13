@@ -73,13 +73,14 @@
 </template>
 
 <script>
-
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters, mapActions, createNamespacedHelpers } from 'vuex'
 
 import AvatarGroup from '@/components/AvatarGroup.vue'
 
 import niho from '@/assets/niho.svg'
 import whakapapa from '@/assets/whakapapa.svg'
+
+const { mapActions: mapPersonActions } = createNamespacedHelpers('person')
 
 export default {
   name: 'WhakapapaShowViewCard',
@@ -129,7 +130,8 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setDialog', 'setProfileById']),
+    ...mapActions(['setDialog']),
+    ...mapPersonActions(['setProfileById']),
     openProfile (profile) {
       this.setProfileById({ id: profile.id, type: 'preview' })
       this.setDialog({ active: 'view-edit-node', type: 'preview' })

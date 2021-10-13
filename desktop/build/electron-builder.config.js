@@ -12,6 +12,7 @@ module.exports = {
     '**/*',
 
     /* custom */
+    '!build/node_modules',
     '!dist/installers',
     '!electron-builder.env',
 

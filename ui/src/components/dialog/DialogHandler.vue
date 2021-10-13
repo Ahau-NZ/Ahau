@@ -123,7 +123,6 @@ import { createNamespacedHelpers, mapGetters, mapActions } from 'vuex'
 const { mapMutations: mapAlertMutations } = createNamespacedHelpers('alerts')
 const { mapGetters: mapWhakapapaGetters, mapMutations: mapWhakapapaMutations } = createNamespacedHelpers('whakapapa')
 const { mapActions: mapTribeActions } = createNamespacedHelpers('tribe')
-const { mapActions: mapCommunityActions } = createNamespacedHelpers('community')
 const { mapGetters: mapPersonGetters } = createNamespacedHelpers('person')
 
 export default {
@@ -225,25 +224,11 @@ export default {
   methods: {
     getDisplayName,
     ...mapAlertMutations(['showAlert']),
+    ...mapTribeActions(['initGroup']),
+    ...mapActions(['loading', 'setDialog']),
     ...mapWhakapapaMutations([
-      'updatePartnerInNestedWhakapapa',
       'updateNodeInNestedWhakapapa',
-      'deleteNodeInNestedWhakapapa',
-      'addChildToNestedWhakapapa',
-      'addParentToNestedWhakapapa',
-      'addPartnerToNestedWhakapapa'
-    ]),
-    ...mapTribeActions([
-      'createGroup',
-      'createPublicGroupProfileLink',
-      'createPrivateGroupProfileLink'
-    ]),
-    ...mapCommunityActions([
-      'saveCommunity',
-      'savePublicCommunity'
-    ]),
-    ...mapActions(['loading', 'setDialog',
-      'setProfileById'
+      'deleteNodeInNestedWhakapapa'
     ]),
     isActive (type) {
       if (type === this.dialog || type === this.storeDialog) {
@@ -294,35 +279,9 @@ export default {
       //    - saveFeedProfileLink (recps: [groupId])
       try {
         if ($event.id) throw new Error('this is for creating a new tribe + community, not updating')
-        const groupId = await this.createGroup()
 
-        // Note: this auto-sets the authors to allow all authors
-        const input = {
-          ...$event,
-          authors: {
-            add: [this.whoami.public.feedId]
-          }
-        }
-
-        const groupProfileId = await this.saveCommunity({
-          ...input,
-          recps: [groupId]
-        })
-
-        await this.createPrivateGroupProfileLink({
-          group: groupId,
-          profile: groupProfileId
-        })
-
-        const groupPublicProfile = await this.savePublicCommunity(input)
-        const publicLinkId = await this.createPublicGroupProfileLink({
-          profile: groupPublicProfile,
-          group: groupId
-        })
-
-        if (publicLinkId) {
-          this.$router.push({ name: 'community/profile', params: { tribeId: groupId, profileId: groupProfileId } }).catch(() => {})
-        }
+        const group = await this.initGroup($event)
+        this.$router.push({ name: 'community/profile', params: { tribeId: group.groupId, profileId: group.private[0].id } }).catch(() => {})
       } catch (err) {
         console.error('Something went wrong while trying to create private group', $event)
         console.error(err)

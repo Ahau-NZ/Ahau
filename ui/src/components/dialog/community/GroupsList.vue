@@ -2,16 +2,17 @@
   <v-row class="ma-5" id="groupList">
     <v-row class="pa-2 pb-4" :justify="mobile ? 'end':'space-between'">
       <p>{{ t('groupYourMembers')}}</p>
-      <!-- <v-tooltip top open-delay="200"> -->
-        <!-- <template v-slot:activator="{ on }"> -->
-          <!-- <div v-on="on"> -->
-            <v-btn color="black" rounded outlined @click="dialog = 'sub-group'">
-              <v-icon class="pr-2">mdi-plus</v-icon> {{ t('addGroup') }} <!-- TODO cherese 23-08-21 title "ADD GROUP" is unclear its adding a subgroup -->
+      <v-tooltip top open-delay="200">
+        <template v-slot:activator="{ on }">
+          <div v-on="on">
+            <v-btn color="black" rounded outlined disabled @click="dialog = 'sub-group'">
+              <v-icon class="pr-2">mdi-plus</v-icon>
+              {{ t('addGroup') }}
             </v-btn>
-          <!-- </div> -->
-        <!-- </template> -->
-        <!-- <span>{{ $t('support.comingSoon')}}</span> -->
-      <!-- </v-tooltip> -->
+          </div>
+        </template>
+        <span>{{ $t('support.comingSoon')}}</span>
+      </v-tooltip>
     </v-row>
     <v-col cols="12" style="background-color:#ebebeb" class="mb-8">
       <p class="ml-5 mb-1 headliner">{{ t('tribalKaitiaki') }}</p>

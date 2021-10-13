@@ -62,7 +62,7 @@
       :show="dialog === 'new-registration'"
       :title="`Request to join : ${tribe.public[0].preferredName}`"
       :profile="profile"
-      @submit="processApplication"
+      @submit="createGroupApplication"
       @close="dialog = null"
     />
   </v-container>
@@ -214,7 +214,7 @@ export default {
     ...mapCommunityActions(['updateCommunity']),
     ...mapActions(['setWhoami']),
     goEdit () {
-      if (this.profile.type === 'person') this.dialog = 'edit-node'
+      if (this.profile.type.startsWith('person')) this.dialog = 'edit-node'
       else this.dialog = 'edit-community'
     },
     async processUpdateCommunity ($event) {
@@ -258,37 +258,11 @@ export default {
         this.dialog = 'edit-community'
       }
     },
-    async processApplication (input) {
-      const groupAdmins = this.tribe.public[0].kaitiaki.map(d => d.feedId)
-
-      const kaitiaki = [
-        ...groupAdmins,
-        this.whoami.public.feedId
-      ]
-
-      // creates a profile that the kaitiaki can all see
-      const profileInput = {
-        type: 'person',
-        ...this.personalProfileCopy,
-        authors: {
-          add: kaitiaki
-        },
-        recps: kaitiaki
-      }
-
-      // creates a new profile for the applicant
-      const profileId = await this.saveProfile(profileInput)
-
-      // attach it to the application
-      await this.createGroupApplication({ ...input, profileId, groupAdmins })
-    },
-    async createGroupApplication ({ comment, answers, profileId, groupAdmins }) {
+    async createGroupApplication ({ comment, answers }) {
       try {
         const res = this.$apollo.mutate(
           createGroupApplication({
             groupId: this.tribe.id,
-            profileId,
-            groupAdmins,
             comment,
             answers
           })

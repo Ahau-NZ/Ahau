@@ -221,6 +221,7 @@ import {
   mapMutations,
   createNamespacedHelpers
 } from 'vuex'
+
 const {
   mapActions: mapWhakapapaActions,
   mapGetters: mapWhakapapaGetters,
@@ -617,6 +618,9 @@ export default {
     }
   },
   async beforeDestroy () {
+    if (this.whakapapaView.recordCount === this.recordCount) return
+
+    // if there are more records here than are recorded, update the whakapapa-view
     const input = {
       id: this.whakapapaView.id,
       recordCount: this.recordCount

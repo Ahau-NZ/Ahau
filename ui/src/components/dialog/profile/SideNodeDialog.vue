@@ -136,12 +136,12 @@
                   <ProfileInfoItem class="br pb-0" mdCols="6" smCols="6" :title="t('schools')" :value="formData.school.join('\n')"/>
                   <ProfileInfoItem class="pb-0" mdCols="6" smCols="6" :title="t('skills')" :value="formData.education.join('\n')"/>
                 </v-row>
-                <v-row v-if="isKaitiaki" cols="12" class="rounded-border mt-4">
+                <!-- <v-row v-if="isKaitiaki" cols="12" class="rounded-border mt-4">
                   <ProfileInfoItem class="bb pb-0" mdCols="12" smCols="12"  :title="t('address')" :value="formData.address"/>
                   <ProfileInfoItem class="pb-0 bb" mdCols="12" smCols="12" :title="t('postcode')" :value="formData.postCode"/>
                   <ProfileInfoItem class="bb pb-0" mdCols="12" smCols="12"  :title="t('phone')" :value="formData.phone"/>
                   <ProfileInfoItem class="pb-0"  mdCols="12" smCols="12" :title="t('email')" :value="formData.email"/>
-                </v-row>
+                </v-row> -->
               </v-col>
             </v-col>
           </v-row>
@@ -246,7 +246,7 @@ import isEqual from 'lodash.isequal'
 import isEmpty from 'lodash.isempty'
 import pick from 'lodash.pick'
 import clone from 'lodash.clonedeep'
-import { mapActions, mapMutations, mapGetters } from 'vuex'
+import { mapActions, mapMutations, mapGetters, createNamespacedHelpers } from 'vuex'
 
 import ProfileInfoItem from '@/components/profile/ProfileInfoItem.vue'
 import ProfileForm from '@/components/profile/ProfileForm.vue'
@@ -259,6 +259,8 @@ import ArchiveIcon from '@/components/button/ArchiveIcon.vue'
 
 import { getDisplayName } from '@/lib/person-helpers.js'
 import mapProfileMixins from '@/mixins/profile-mixins.js'
+
+const { mapActions: mapPersonActions } = createNamespacedHelpers('person')
 
 function defaultData (input) {
   var profile = clone(input)
@@ -402,8 +404,9 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['updateIsFromWhakapapaShow']),
-    ...mapActions(['setProfileById', 'setDialog', 'setIsFromWhakapapaShow']),
+    ...mapMutations(['updateIsFromWhakapapaShow']), // TODO replace with an action
+    ...mapActions(['setDialog', 'setIsFromWhakapapaShow']),
+    ...mapPersonActions(['setProfileById']),
     getDisplayName,
     toggleRemoveChildren () {
       this.allowRemoveChildren = !this.allowRemoveChildren

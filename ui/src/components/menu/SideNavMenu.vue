@@ -167,21 +167,24 @@ export default {
   },
   computed: {
     ...mapGetters(['showStory', 'storeDialog', 'notifications', 'whoami']),
+    isCommunity () {
+      return this.profile.type === 'community'
+    },
     isView () {
-      return this.profile.type === 'community' && !this.profile.avatarImage
+      return this.isCommunity && !this.profile.avatarImage
     },
     activeComponent () {
       if (this.$route.name === 'whakapapa/:whakapapaId') return 'whakapapa'
       return this.$route.name.split('/')[1]
     },
     showWhakapapa () {
-      if (this.profile.type === 'community') return true
+      if (this.isCommunity) return true
       else if (this.profile.id === this.whoami.personal.profile.id) return true
       else return false
     },
     nonMember () {
       return (
-        this.profile.type === 'community' &&
+        this.isCommunity &&
         !this.profile.recps
       )
     },
@@ -229,8 +232,13 @@ export default {
     setActive (component) {
       if (this.showStory) this.toggleShowStory()
       this.updateComponent(component)
+
+      const type = this.isCommunity
+        ? 'community'
+        : 'person'
+
       this.$router.push({
-        name: this.profile.type + '/' + component,
+        name: type + '/' + component,
         params: {
           tribeId: this.$route.params.tribeId,
           profileId: this.$route.params.profileId

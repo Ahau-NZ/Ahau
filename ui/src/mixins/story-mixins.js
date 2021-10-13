@@ -24,7 +24,7 @@ export const storiesApolloMixin = {
           ...getAllStories({ groupId: this.$route.params.tribeId }),
           error
         }
-      } else if (type === 'person') {
+      } else if (type.startsWith('person')) {
         return {
           ...getAllStoriesByMentions(this.$route.params.profileId),
           update (data) {

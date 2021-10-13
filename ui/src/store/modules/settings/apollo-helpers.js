@@ -120,7 +120,9 @@ export const getIndexes = {
     query {
       indexes {
         isIndexing
+        isRebuilding
         percentageIndexed
+        percentageIndexedSinceStartup
       }
     }
   `,

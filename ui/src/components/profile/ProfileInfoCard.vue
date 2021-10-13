@@ -1,11 +1,11 @@
 <template>
     <div>
       <v-row cols="12" class="rounded-border mb-5">
-        <ProfileInfoItem :class="profile.type === 'person' ? 'bb':''" :title="$t('viewPerson.about')" smCols="12" mdCols="12" :value="profile.description"/>
-        <ProfileInfoItem v-if="profile.type === 'person'" :class="mobile ? 'br bb' : 'br'" :title="$t('viewPerson.preferredName')"  :value="profile.preferredName"/>
-        <ProfileInfoItem v-if="profile.type === 'person'" :class="mobile ? 'bb' : 'br'" :title="$t('viewPerson.otherNames')" :value="profile.altNames.join(', ')"/>
-        <ProfileInfoItem v-if="profile.type === 'person'" class="br" :title="$t('viewPerson.age')" :value="age"/>
-        <ProfileInfoItem v-if="profile.type === 'person'" :title="$t('viewPerson.placeOfBirth')" :value="profile.placeOfBirth" />
+        <ProfileInfoItem :class="isPerson ? 'bb':''" :title="$t('viewPerson.about')" smCols="12" mdCols="12" :value="profile.description"/>
+        <ProfileInfoItem v-if="isPerson" :class="mobile ? 'br bb' : 'br'" :title="$t('viewPerson.preferredName')"  :value="profile.preferredName"/>
+        <ProfileInfoItem v-if="isPerson" :class="mobile ? 'bb' : 'br'" :title="$t('viewPerson.otherNames')" :value="profile.altNames.join(', ')"/>
+        <ProfileInfoItem v-if="isPerson" class="br" :title="$t('viewPerson.age')" :value="age"/>
+        <ProfileInfoItem v-if="isPerson" :title="$t('viewPerson.placeOfBirth')" :value="profile.placeOfBirth" />
       </v-row>
       <v-row v-if="isFamily" class="rounded-border mb-5 py-2">
         <div v-if="profile.parents && profile.parents.length > 0" class="pl-6">
@@ -49,12 +49,15 @@
 </template>
 
 <script>
+import { mapActions, createNamespacedHelpers } from 'vuex'
+
 import calculateAge from '@/lib/calculate-age'
 import AvatarGroup from '@/components/AvatarGroup.vue'
 import ProfileInfoItem from './ProfileInfoItem'
-import { mapActions } from 'vuex'
 import AddButton from '@/components/button/AddButton.vue'
 import { dateIntervalToString } from '@/lib/date-helpers.js'
+
+const { mapActions: mapPersonActions } = createNamespacedHelpers('person')
 
 export default {
   name: 'ProfileInfoCard',
@@ -69,6 +72,9 @@ export default {
     myProfile: Boolean
   },
   computed: {
+    isPerson () {
+      return this.profile.type.startsWith('person')
+    },
     mobile () {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
@@ -96,7 +102,8 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setProfileById', 'setDialog']),
+    ...mapActions(['setDialog']),
+    ...mapPersonActions(['setProfileById']),
     openProfile (profile) {
       this.setProfileById({ id: profile.id, type: 'preview' })
       this.setDialog({ active: 'view-edit-node', type: 'preview' })

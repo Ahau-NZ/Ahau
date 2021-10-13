@@ -13,14 +13,13 @@
     "test": "npm run test:js && npm run lint",
     "clear": "rm -rf node_modules",
     "win:clear": "rmdir /s /q node_modules",
-    "build-fragment": "NODE_ENV=development node src/schemaQuery.js"
+    "build-fragment": "NODE_ENV=development ./bin/build-fragment.js"
   },
   "dependencies": {
-    "@apollo/client": "^3.3.19",
     "@mdi/font": "^5.9.55",
     "ahau-env": "^3.0.0",
+    "ahau-graphql-client": "^1.0.0",
     "animate.css": "^4.1.0",
-    "apollo-upload-client": "^15.0.0",
     "axios": "^0.21.1",
     "capture-frame": "^4.0.0",
     "dotenv": "^7.0.0",

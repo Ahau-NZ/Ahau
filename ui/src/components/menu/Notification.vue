@@ -3,13 +3,13 @@
     <v-list-item class="py-1" @click="$emit('click')">
       <Avatar
         size="50px"
-        :image="notification.from.avatarImage"
-        :alt="notification.from.preferredName"
-        :gender="notification.from.gender"
-        :bornAt="notification.from.bornAt"
+        :image="author.avatarImage"
+        :alt="author.preferredName"
+        :gender="author.gender"
+        :bornAt="author.bornAt"
       />
       <v-list-item-content class="pl-5">
-        <v-list-item-title :class="bold">{{ notification.from.preferredName }}</v-list-item-title>
+        <v-list-item-title :class="bold">{{ author.preferredName }}</v-list-item-title>
         <v-list-item-subtitle
           :class="`text-caption ${bold}`"
         >{{ text }}</v-list-item-subtitle>
@@ -49,6 +49,14 @@ export default {
       if (!isPersonal && isAccepted) return this.t('groupAccepted', { groupName: groupName })
       if (!isPersonal && !isAccepted) return this.t('groupDeclined', { groupName: groupName })
       return this.t('noDetails')
+    },
+    author () {
+      if (this.notification.isPersonal) {
+        let message = this.notification.history.find(history => history.type === 'decision')
+        if (message && this.notification.isAccepted) return message.author
+        return this.notification.group
+      }
+      return this.notification.from
     }
   },
   methods: {
