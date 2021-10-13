@@ -43,6 +43,13 @@
       />
     </g>
 
+    <!-- links between root node and partners -->
+    <g v-for="dup in dupLinks" :key="`dup-link-${dup.id}`">
+      <Link
+        :link="dup"
+      />
+    </g>
+
     <!-- this subtree root node -->
     <Node :node="root" @open-menu="openContextMenu($event)" @center="center" :showAvatars="showAvatars" :showParents="showParents"/>
   </g>
@@ -73,7 +80,7 @@ export default {
     findInTree: Function,
     duplicateProfiles: Array
   },
-  
+
   mixins: [
     mapProfileMixins({
       mapMethods: ['getProfile']
@@ -85,7 +92,8 @@ export default {
   },
   data () {
     return {
-      radius: 50
+      radius: 50,
+      dupLinks: []
     }
   },
   computed: {
@@ -111,7 +119,12 @@ export default {
     },
     children () {
       if (this.profile.isCollapsed) return []
-      return this.root.children
+      if (this.root.children) {
+        return this.root.children.filter(profile => {
+          return profile.data.id !== this.duplicateProfiles[0].id
+        })
+      }
+      return []
     },
     partners () {
       if (!this.root || !this.profile.partners || this.profile.isCollapsed || !this.showParents) return []
@@ -130,7 +143,7 @@ export default {
     ghostPartner () {
       let partners = this.partners.filter(partner => !partner.data.isNonPartner).map(partner => { return partner.data.id })
       const [children, otherChildren] = pileSort(
-        this.root.children || [],
+        this.children || [],
         [
           (child) => (child.data.parents && child.data.parents.length === 1) || partners.length === 0, // all children that this node is the only parent of
           (child) => {
@@ -184,121 +197,91 @@ export default {
     },
     mapNodes (nodes, midway) {
       return nodes.map((parent, i) => {
-        // if the partner is a duplicate profile and the partners link profile is the root node
-        // if (this.duplicateProfiles.some(d => d.id === parent.id && d.linkId === this.root.data.id)) {
-        //   this.findInTree(parent)
-        // }
+        // used to alternate between left and right
+        const sign = i >= midway ? 1 : -1
 
-        // show the node in this subtree
-        // find parent node
-        // create link to parent node
+        const offset = sign === 1
+          ? this.diameter - 2 * this.partnerRadius // right
+          : 0 // left
 
-        // -----------
-        // let node = this.findInTree(parent.id)
-        // if (node) {
-        //   console.log('existing node: ', node)
+        const xMultiplier = sign === 1
+          ? (i - midway) + 1
+          : i - midway
+        // how far sideways the partner sits from the root node at 0
+        const x = this.root.x + offset + xMultiplier * (this.diameter + X_PADDING)
+        // if we are negative theres no offset
+        // if we are positive - use diameter
 
-        //   const x = node.x
-        //   const y = node.y
+        // how far down the partner sits from the root node at 0
+        const y = this.root.y + this.radius - this.partnerRadius
 
-        //   // partner style
-        //   // NOTE: children of this partner will inherit this style
-        //   const style = {
-        //     fill: 'none',
-        //     stroke: settings.color.getColor(i),
-        //     opacity: settings.opacity,
-        //     strokeWidth: settings.thickness,
-        //     strokeLinejoin: 'round'
-        //   }
+        // partner style
+        // NOTE: children of this partner will inherit this style
+        const style = {
+          fill: 'none',
+          stroke: settings.color.getColor(i),
+          opacity: settings.opacity,
+          strokeWidth: settings.thickness,
+          strokeLinejoin: 'round'
+        }
 
-        //   // start point of the partner node links on the Y axist
-        //   const yOffset = this.root.y + (i * settings.partner.spacing.y) + this.radius
+        // start point of the partner node links on the Y axist
+        const yOffset = this.root.y + (i * settings.partner.spacing.y) + this.radius
 
-        //   // const link = parent.isNonPartner ? {} : {
-        //   //   style,
-        //   //   // for drawing the link from the root parent to this partner/parent
-        //   //   d: `
-        //   //     M ${this.root.x + this.radius}, ${yOffset}
-        //   //     H ${x + this.partnerRadius}`
-        //   // }
+        const link = parent.isNonPartner ? {} : {
+          style,
+          // for drawing the link from the root parent to this partner/parent
+          d: `
+            M ${this.root.x + this.radius}, ${yOffset}
+            H ${x + this.partnerRadius}`
+        }
 
-        //   return {
-        //     // x,
-        //     // y,
-        //     children: parent.children
-        //       .filter(partnerChild => {
-        //         return (
-        //           this.children &&
-        //           this.children.some(rootChild => {
-        //             if (!rootChild || !partnerChild) return false
-        //             return (rootChild.data.id === partnerChild.id)
-        //           })
-        //         )
-        //       }) // filter out children who arent this nodes
-        //       .map(child => this.mapChild({ x, y, center: !parent.isNonPartner, yOffset }, child, style, parent)),
-        //     data: parent,
-        //     // link
-        //   }
-        // } else {
+        // check if the partner is a duplicate profile and it should be connected here
+        let dup = this.duplicateProfiles.find(d => d.id === parent.id && d.nodeId === this.root.data.id)
+        
+        if (dup) {
+          // find the profile to link to
+          const linkNode = this.findInTree(dup.linkId)
+          // get the relationshipType for the link
+          const rel = linkNode.children.find(child => child.data.id === dup.id).data.relationshipType
+          const dashed = ['adopted', 'whangai'].includes(rel)
+          // push to the dupLinks array
+          this.dupLinks.push({
+            id: dup.id + '-' + dup.linkId,
+            style: {
+              ...style, // inherits the style from the parent so the links are the same color
+              strokeDasharray: dashed ? 2.5 : 0 // for drawing a dashed link to represent adopted/whangai
+            },
+            d: settings.path( // for drawing a link from the parent to child
+              {
+                startX: linkNode.x + this.radius,
+                startY: linkNode.y + this.radius * 2 + 15,
+                endX: x + this.partnerRadius,
+                endY: y + this.partnerRadius * 2 + 15
+              },
+              settings.branch - this.radius
+            )
+          })
+          parent.isDuplicate = true
+        }
 
-
-          // used to alternate between left and right
-          const sign = i >= midway ? 1 : -1
-
-          const offset = sign === 1
-            ? this.diameter - 2 * this.partnerRadius // right
-            : 0 // left
-
-          const xMultiplier = sign === 1
-            ? (i - midway) + 1
-            : i - midway
-          // how far sideways the partner sits from the root node at 0
-          const x = this.root.x + offset + xMultiplier * (this.diameter + X_PADDING)
-          // if we are negative theres no offset
-          // if we are positive - use diameter
-
-          // how far down the partner sits from the root node at 0
-          const y = this.root.y + this.radius - this.partnerRadius
-
-          // partner style
-          // NOTE: children of this partner will inherit this style
-          const style = {
-            fill: 'none',
-            stroke: settings.color.getColor(i),
-            opacity: settings.opacity,
-            strokeWidth: settings.thickness,
-            strokeLinejoin: 'round'
-          }
-
-          // start point of the partner node links on the Y axist
-          const yOffset = this.root.y + (i * settings.partner.spacing.y) + this.radius
-
-          const link = parent.isNonPartner ? {} : {
-            style,
-            // for drawing the link from the root parent to this partner/parent
-            d: `
-              M ${this.root.x + this.radius}, ${yOffset}
-              H ${x + this.partnerRadius}`
-          }
-
-          return {
-            x,
-            y,
-            children: parent.children
-              .filter(partnerChild => {
-                return (
-                  this.children &&
-                  this.children.some(rootChild => {
-                    if (!rootChild || !partnerChild) return false
-                    return (rootChild.data.id === partnerChild.id)
-                  })
-                )
-              }) // filter out children who arent this nodes
-              .map(child => this.mapChild({ x, y, center: !parent.isNonPartner, yOffset }, child, style, parent)),
-            data: parent,
-            link
-          }
-        // }
+        return {
+          x,
+          y,
+          children: parent.children
+            .filter(partnerChild => {
+              return (
+                this.children &&
+                this.children.some(rootChild => {
+                  if (!rootChild || !partnerChild) return false
+                  return (rootChild.data.id === partnerChild.id)
+                })
+              )
+            }) // filter out children who arent this nodes
+            .map(child => this.mapChild({ x, y, sign, center: !parent.isNonPartner, yOffset }, child, style, parent)),
+          data: parent,
+          link
+        }
       })
     },
     focus ($event) {
@@ -307,7 +290,7 @@ export default {
     center ($event) {
       this.centerNode($event)
     },
-    mapChild ({ x = this.root.x, y = this.root.y, center, sign, yOffset = 0 }, child, style, parent, ghostParent) {
+    mapChild ({ x = this.root.x, y = this.root.y, center, sign, yOffset }, child, style, parent, ghostParent) {
 
       // map to their node from the root parent
       const node = this.root.children.find(rootChild => child.id === rootChild.data.id)

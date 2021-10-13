@@ -35,6 +35,7 @@
               :readonly="hasSelection"
               :outlined="!hasSelection"
               @blur.native="clearSuggestions"
+              autofocus
             >
 
               <!-- Slot:item = Data -->

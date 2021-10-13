@@ -180,21 +180,13 @@ export default {
     */
     nodes () {
       return this.treeLayout(this.root)
-        .descendants() // returns the array of descendants starting with the root node, then followed by each child in topological order
-        // .filter(profile => !this.isDuplicateProfile(profile))
-        .filter(profile => {
-          console.log('node filter: ', profile)
-          return profile.id === this.duplicateProfiles[0].id
-        })
+        .descendants()
+        // returns the array of descendants starting with the root node, then followed by each child in topological order
     },
     paths () {
       if (!this.componentLoaded || !this.pathNode) return null
       return this.root.path(this.pathNode)
         .map(d => d.data.id)
-    },
-    isDuplicateProfile (profile) {
-      console.log("isDup: ", profile)
-      return this.duplicateProfiles.some(arr => arr.id === profile.id && profile.parents.some(parent => parent.id !== arr.nodeId))
     }
   },
   watch: {
@@ -395,11 +387,7 @@ export default {
         })
     },
     findInTree (profileId) {
-      var partners = []
-      this.nodes.forEach(node => {
-        node.data.partners.forEach(partner => partners.push(partner))
-      })
-      const existingNode = this.nodes.find(node => node.data.id === profileId) 
+      const existingNode = this.nodes.find(node => node.data.id === profileId)
       if (existingNode) {
         console.log('Node found!!!!')
         return existingNode
