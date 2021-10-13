@@ -50,12 +50,9 @@ export const PERMITTED_PERSON_PROPS = [
   'description',
   'gender',
 
-  'address',
+  'postCode',
   'city',
   'country',
-  'postCode',
-  'email',
-  'phone',
   'profession',
 
   'aliveInterval',
@@ -69,7 +66,11 @@ export const PERMITTED_PERSON_PROPS = [
   'education',
   'school',
 
-  'recps'
+  'recps',
+
+  'address',
+  'email',
+  'phone'
 ]
 
 export const PERMITTED_PERSON_NESTED_PROPS = [
@@ -251,6 +252,9 @@ export const getPerson = id => ({
           }
         }
         originalAuthor
+        adminProfile {
+          ...ProfileFragment
+        }
       }
     }
   `,
