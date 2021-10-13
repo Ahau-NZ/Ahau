@@ -13,6 +13,7 @@
   "parents": "Pais",
   "siblings": "Irmãos",
   "children": "Crianças",
+  "partners": "Partners",
   "contactInfo": {
     "contactInfoTitle": "Informação do Contato",
     "phone": "Phone",
@@ -22,7 +23,7 @@
     "country": "País/região",
     "postcode": "CEP"
   },
-  "communities": "Comunidades",
+  "tribes": "Tribos",
   "editProfile": "Edit Profile",
   "settings": "Settings",
   "failMembers": "Something went wrong while trying to fetch members",

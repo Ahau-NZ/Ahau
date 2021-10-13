@@ -44,5 +44,7 @@
     "language": "IDIOMA",
     "transcription": "Tradução/Transcrição",
     "private": "Privado",
-    "access": "Somente você terá acesso a este registro"
+    "access": "Somente você terá acesso a este registro",
+    "maxLength": "Exceeding record character limit: 4000",
+    "titleLength": "Max title character limit: 200"
 }

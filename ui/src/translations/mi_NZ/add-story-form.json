@@ -44,5 +44,7 @@
     "language": "Reo",
     "transcription": "Whakamāori/Tuhinga tuhi",
     "private": "Muna",
-    "access": "E āhei ana koe me tō kotahi te uru atu ki tēnei mauhanga"
+    "access": "E āhei ana koe me tō kotahi te uru atu ki tēnei mauhanga",
+    "maxLength": "Exceeding record character limit: 4000",
+    "titleLength": "Max title character limit: 200"
 }
