@@ -31,19 +31,24 @@ export default function (apollo) {
         console.error('Something went wrong while trying to get a person', err)
       }
     },
+
     async setProfileById ({ commit, rootState, dispatch }, { id, type }) {
+      // NOTE to dispatch outide this namespace, we use:
+      //   dispatch(actionName, data, { root: true })
+      //
+      // ref: https://vuex.vuejs.org/guide/modules.html#namespacing
       if (id === rootState.whoami.public.profile.id) {
-        dispatch('setWhoami', id)
+        dispatch('setWhoami', id, { root: null })
       }
       if (id === rootState.whoami.personal.profile.id) {
-        dispatch('setWhoami', id)
+        dispatch('setWhoami', id, { root: null })
       }
       // if viewing a story and sideview is open and you want to jump to another profile > close the story
       if (rootState.archive.showStory && rootState.dialog.preview) {
-        dispatch('toggleShowStory')
+        dispatch('archive/toggleShowStory', null, { root: true })
       }
       if (type !== 'setWhanau' && rootState.dialog.dialog) {
-        dispatch('setDialog', null)
+        dispatch('setDialog', null, { root: true })
       }
       var person = await getRelatives(id, apollo)
       commit('updateSelectedProfile', person)

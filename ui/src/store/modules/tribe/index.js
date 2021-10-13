@@ -1,4 +1,4 @@
-import { createGroup, getTribe, getTribes, getTribeIds, saveGroupProfileLink } from './apollo-helpers'
+import { initGroup, getTribe, getTribes } from './apollo-helpers'
 
 export default function (apollo) {
   const state = {
@@ -56,51 +56,17 @@ export default function (apollo) {
         return []
       }
     },
-    async getTribeIds () {
-      try {
-        const res = await apollo.query(getTribeIds)
-
-        if (res.errors) throw res.errors
-
-        return res.data.listGroups.map(d => d.id)
-      } catch (err) {
-        console.error('failed to get group ids', err)
-        return []
-      }
-    },
-    async createGroup () {
-      try {
-        const res = await apollo.mutate(createGroup)
-
-        if (res.errors) throw res.errors
-
-        return res.data.createGroup.id
-      } catch (err) {
-        console.error('failed to create a group', err)
-      }
-    },
-    async saveGroupProfileLink (context, input) {
+    async initGroup ({ dispatch }, input) {
       try {
         const res = await apollo.mutate(
-          saveGroupProfileLink(input)
+          initGroup(input)
         )
 
         if (res.errors) throw res.errors
 
-        return res.data.saveGroupProfileLink
+        return dispatch('getTribe', res.data.initGroup.groupId) // groupId
       } catch (err) {
-        console.error('failed to create link between group and profile', err)
-      }
-    },
-    async createPublicGroupProfileLink ({ dispatch }, { group, profile }) {
-      try {
-        return dispatch('saveGroupProfileLink', {
-          group,
-          profile,
-          allowPublic: true
-        })
-      } catch (err) {
-        console.log('failed to create public link between group and profile', err)
+        console.error('failed to initialise the group, its profiles and kaitiaki-only subgroup', err)
       }
     },
     // NOTE: this is an alias for saveGroupProfileLink with a clearer name

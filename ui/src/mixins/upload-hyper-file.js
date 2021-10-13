@@ -19,7 +19,7 @@ function uploadArtefact (file) {
   const blobId = uuid()
 
   if (isCordova()) {
-    const formData = new FormData()
+    const formData = new FormData() // eslint-disable-line
     formData.append('files', file)
     formData.append('blobId', blobId)
 
@@ -53,7 +53,7 @@ export default {
 
         if (res.error) {
           console.error(res.error)
-          alert(res.error)
+          alert(res.error) // eslint-disable-line
           throw new Error(res.error)
         }
 

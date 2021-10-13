@@ -5,20 +5,16 @@ import clone from 'lodash.clonedeep'
 import { COMMUNITY_FRAGMENT } from './community-helpers'
 import { PERSON_FRAGMENT, pruneEmptyValues } from './person-helpers'
 
-export const createGroupApplication = ({ groupId, profileId, groupAdmins, answers, comment }) => {
+export const createGroupApplication = ({ groupId, answers, comment }) => {
   return {
     mutation: gql`
       mutation(
         $groupId: String!,
-        $profileId: String,
-        $groupAdmins: [String!]!,
         $answers: [GroupApplicationAnswerInput],
         $comment: String
       ) {
         createGroupApplication(
           groupId: $groupId,
-          profileId: $profileId,
-          groupAdmins: $groupAdmins,
           answers: $answers,
           comment: $comment
         )
@@ -26,8 +22,6 @@ export const createGroupApplication = ({ groupId, profileId, groupAdmins, answer
     `,
     variables: {
       groupId,
-      profileId,
-      groupAdmins,
       answers,
       comment
     }
@@ -38,7 +32,7 @@ export const acceptGroupApplication = ({ id, comment, groupIntro }) => {
   return {
     mutation: gql`
       mutation($id: String!, $comment: String, $groupIntro: String) {
-        acceptGroupApplication(id: $id, applicationComment: $comment, groupIntro: $groupIntro)
+        acceptGroupApplication(id: $id, comment: $comment, groupIntro: $groupIntro)
       }
     `,
     variables: {
@@ -81,9 +75,6 @@ export const APPLICATION_FRAGMENT = gql`
       ...ProfileFragment
     }
     applicantId
-    groupAdmins {
-      ...ProfileFragment
-    }
     decision {
       accepted
     }

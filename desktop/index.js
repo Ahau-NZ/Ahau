@@ -25,6 +25,7 @@ const plugins = [
   'ssb-backlinks',
 
   'ssb-tribes',
+  'ssb-tribes-registration',
 
   'ssb-profile',
   'ssb-settings',

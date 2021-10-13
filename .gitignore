@@ -2,6 +2,7 @@
 node_modules
 yarn.lock
 
+/destkop/build/package-lock.json
 /releases
 
 # Electron

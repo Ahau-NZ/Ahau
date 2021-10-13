@@ -40,7 +40,7 @@ export function setDefaultCommunity (newCommunity) {
     email: community.email,
     phone: community.phone,
     joiningQuestions: community.joiningQuestions,
-    authors: community.kaitiaki.map(d => ({ ...d.profile, feedId: d.feedId }))
+    authors: (community.kaitiaki || community.tiaki).map(d => ({ ...d.profile, feedId: d.feedId }))
   }
 }
 // TODO: uncomment needed fields
@@ -63,7 +63,7 @@ export function setDefaultSubgroup (newSubgroup) {
     preferredName: subGroup.preferredName,
     avatarImage: subGroup.avatarImage,
     description: subGroup.description,
-    authors: subGroup.kaitiaki.map(d => ({ ...d.profile, feedId: d.feedId })),
+    authors: (subGroup.kaitiaki || subGroup.tiaki).map(d => ({ ...d.profile, feedId: d.feedId })),
     members: subGroup.members
   }
 }

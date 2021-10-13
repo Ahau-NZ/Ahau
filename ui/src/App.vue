@@ -48,9 +48,7 @@ export default {
     return {
       mobileServerLoaded: false,
       version,
-      indexes: null,
-      isRebuilding: false,
-      isLoading: false
+      indexes: null
     }
   },
   apollo: {
@@ -73,6 +71,10 @@ export default {
     // if we don't have a language like that, fall back to english
     this.$i18n.locale = localStorage.getItem('locale') || browserLang || 'en'
   },
+  methods: {
+    ...mapActions(['setWhoami', 'setIndexingData']),
+    ...mapAnalyticsActions(['appUsed'])
+  },
   computed: {
     ...mapGetters(['storeDialog', 'loadingState']),
     ...mapAlertGetters(['alertSettings']),
@@ -80,9 +82,8 @@ export default {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
     indexPollingInterval () {
-      if (!this.progess || !this.progress.isIndexing) return 1000
-
-      return 500
+      if (typeof this.loadingState === 'boolean') return 1500
+      else return 500
     },
     enableMenu () {
       if (
@@ -103,10 +104,6 @@ export default {
     if (process.env.VUE_APP_PLATFORM === 'cordova') {
       this.mobileServerLoaded = true
     }
-  },
-  methods: {
-    ...mapActions(['setWhoami', 'setLoading']),
-    ...mapAnalyticsActions(['appUsed'])
   },
   components: {
     Appbar,
@@ -130,20 +127,10 @@ export default {
     },
     indexes: {
       deep: true,
-      handler (progress) {
-        if (progress.isIndexing) {
-          this.setLoading(progress.percentageIndexed)
-        } else if (!progress.isIndexing && this.loadingState) {
-          if (this.isLoading) return
+      handler (data) {
+        // if (this.$route.name === 'community/whakapapa/:whakapapaId' || this.$route.name === 'person/whakapapa/:whakapapaId') return
 
-          this.isLoading = true
-          this.setLoading(100)
-
-          setTimeout(() => {
-            this.setLoading(false)
-            this.isLoading = false
-          }, 2000) // delay the stop by a couple of seconds
-        }
+        this.setIndexingData(data)
       }
     }
   }

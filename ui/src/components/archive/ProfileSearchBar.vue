@@ -25,7 +25,7 @@
       </template>
       <template v-slot:item="{ item }">
         <!-- MENTIONS + CONTRIBUTORS + CREATOR -->
-        <template v-if="item.type === 'person'">
+        <template v-if="item.type.startsWith('person')">
           <v-list-item class="click" @mousedown="addSelectedItem(item)">
             <Avatar class="mr-3" size="40px" :image="item.avatarImage" :alt="getDisplayName(item)" :gender="item.gender" :aliveInterval="item.aliveInterval" />
             <v-list-item-content>
