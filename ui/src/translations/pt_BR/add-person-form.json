@@ -11,7 +11,7 @@
   },
   "dod": "Data de falecimento",
   "uploadPhoto": "Carregar foto do perfil",
-  "relatedBy": "Relacionado por",
+  "relatedBy": "Related to {displayName} by",
   "birthPlace": "Local de nascimento",
   "deathPlace": "Place of death",
   "burialLocation": "Burial location",
@@ -27,7 +27,8 @@
   },
   "moreInfo": "Forneça mais informações",
   "addName": "Adicione outro nome",
-  "description": "Descrição",
+  "altNames": "Other names",
+  "description": "About {displayName} ",
   "skills": {
     "title": "Habilidades e qualificações",
     "profession": "Profissão",
@@ -48,5 +49,6 @@
   "formHandlers": {
     "cancel": "cancelar",
     "save": "Guardar"
-  }
+  },
+  "dataDescription": "Descrição"
 }

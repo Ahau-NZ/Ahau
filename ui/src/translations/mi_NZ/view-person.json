@@ -13,6 +13,7 @@
   "parents": "Ngā mātua",
   "siblings": "Tungāne/Tuahine/Tuakana/Teina",
   "children": "Tamariki",
+  "partners": "Partners",
   "contactInfo": {
     "contactInfoTitle": "Pārongo whakapā",
     "phone": "Waea",
@@ -22,7 +23,7 @@
     "country": "Motu",
     "postcode": "Waehere poutāpeta"
   },
-  "communities": "Hapori",
+  "tribes": "Ngā iwi",
   "editProfile": "Panoni whaiaro",
   "settings": "Tautuhinga",
   "failMembers": "Something went wrong while trying to fetch members",

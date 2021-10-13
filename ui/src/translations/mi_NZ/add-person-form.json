@@ -11,7 +11,7 @@
   },
   "dod": "Te ra o te mate",
   "uploadPhoto": "Whakarewa Whakaahua",
-  "relatedBy": "Pehea te hono",
+  "relatedBy": "Related to {displayName} by",
   "birthPlace": "Waahi whānau",
   "deathPlace": "Wāhi i mate ai",
   "burialLocation": "Wāhi tanumanga",
@@ -27,7 +27,8 @@
   },
   "moreInfo": "Tukuna etahi atu kōrero",
   "addName": "Ingoa anō",
-  "description": "Kōrero whakaaturanga",
+  "altNames": "Other names",
+  "description": "About {displayName} ",
   "skills": {
     "title": "Ngā pūkenga me nga tohu",
     "profession": "Tūranga Mahi",
@@ -48,5 +49,6 @@
   "formHandlers": {
     "cancel": "Whakakora",
     "save": "Penapena"
-  }
+  },
+  "dataDescription": "Kōrero whakaaturanga"
 }

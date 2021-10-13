@@ -14,11 +14,16 @@
   "schools": "Ngā kura/wānanga",
   "skills": "Ngā pūkenga",
   "parents": "Ngā mātua",
+  "partners": "partners",
   "siblings": "Tungāne/Tuahine/Tuakana/Teina",
   "children": "Tamariki",
   "contributedBy": "Takohatia mai e",
   "deletePerson": "Mukua tēnei tangata",
   "cancel": "Whakakore",
   "save": "Penapena",
-  "description": "Kōrero whakaaturanga"
+  "description": "Kōrero whakaaturanga",
+  "email": "Īmēra",
+  "phone": "Waea",
+  "address": "Wāhi Noho",
+  "postcode": "Waehere"
 }

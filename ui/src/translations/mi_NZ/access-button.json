@@ -1,9 +1,16 @@
 {
   "privateAccess": "E āhei ana koe me tō kotahi te uru atu ki tēnei rua",
-  "membersWillHaveAccess": "Ko ngā mema anake o {preferredName} ka uru ki tēnei {recordType}",
-  "membersCanAccess": "Ko ngā mema anake o {preferredName} ka uru ki tēnei {recordType}",
+  "membersCanAccess": "All members of this tribe can read this {recordType}. Only Kaitiaki can edit.",
+  "membersCanEdit": "All members of this tribe can edit this {recordType}",
+  "membersCanSubmit": "All members of this tribe can submit changes to this {recordType}. Changes are reviewed by Kaitiaki",
   "private": "Muna",
   "setAccess": "Whakatapoko",
   "addToArchive": "Add {recordType} to archive",
-  "tribeName": "{tribeName} (iwi)"
+  "tribeName": "{tribeName} (iwi)",
+  "kaitiakiAccess": "Only kaitiaki of this tribe can access this {recordType}",
+  "allMembers": "All members",
+  "kaitiaki": "Kaitiaki only",
+  "edit": "Whakaniko",
+  "read": "Read",
+  "submit": "Submit"
 }

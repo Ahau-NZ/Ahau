@@ -1,7 +1,21 @@
 {
   "settingsTitle": "Tautuhinga pūkete",
+  "keyBackupTitle": "Key Backup",
+  "loseAccess": "Make sure you don't lose access to your account",
+  "backUpKey": "Back up your key now",
+  "downloadKey": "Download Key Backup",
+  "deleteProfile": "Delete your profile and database",
   "languageTitle": "Reo",
   "chooseLanguage": "Whiriwhiria i waenga i te Reo Ingarihi, i te Reo Māori, i te Reo Pōtukihi",
   "languagesNote": "Please note that languages are a work in progress, we welcome your suggestions and feedback.",
-  "submitFeedback": "Submit your feedback here"
+  "submitFeedback": "Submit your feedback here",
+  "storageTitle": "Storage",
+  "ahauStorageTitle": "Ahau Usage",
+  "diskStorageTitle": "Free Space",
+  "storageManagementTitle": "Storage Management",
+  "limitOption": "Limit Disk Usage",
+  "ahauStorageLimit": "Ahau Storage Limit",
+  "limitOptionDescription": "Old photos and videos will be automatically deleted to make space for new ones when this limit is reached",
+  "defaultOption": "Keep all artefacts",
+  "defaultOptionDescription": "Ahau will download and keep a copy of all information and files you have accessed. It does this so content is available offline, and it creates copy of the information for safe keeping"
 }
