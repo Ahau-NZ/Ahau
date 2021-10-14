@@ -125,7 +125,7 @@ export default {
             return this.duplicateProfiles.some(dup => dup.id !== child.data.id && dup.nodeId !== this.profile.id)
           })
         }
-        return this.root.children
+        return this.showParents ? this.root.children : this.root.children.filter(child => !child.data.isNonChild)
       }
       return []
     },
@@ -170,7 +170,7 @@ export default {
       }
 
       var totalPartners = this.partners.length
-      const allChildren = [...children, ...otherChildren]
+      const allChildren = [...children, ...otherChildren].filter(child => !child.data.isNonChild)
       console.log('allChildren: ', allChildren)
 
       const yOffset = this.root.y + (totalPartners * settings.partner.spacing.y)
@@ -185,14 +185,6 @@ export default {
     }
   },
   methods: {
-    // TODO:  Remove if doesnt do anything
-    // getParentChildren (id) {
-    //   if (!this.root || !this.root.children) return []
-    //   return this.root.children
-    //     .filter(child => child.data.parents.some(parent => parent.id === id))
-    //     .map(child => child.data)
-    // },
-
     openContextMenu ({ event, profile }) {
       // NOTE: this where we will handle which parent to use for addPerson/processUpdate in DialogHandler
       profile.parent = this.root.parent ? this.root.parent.data : null
@@ -242,7 +234,7 @@ export default {
 
         // check if the partner is a duplicate profile and it should be connected here
         let dup
-        if (this.duplicateProfiles.length) {
+        if (this.duplicateProfiles) {
           dup = this.duplicateProfiles.find(d => d.id === parent.id && d.nodeId === this.root.data.id)
         }
         
@@ -252,7 +244,7 @@ export default {
           // get the relationshipType for the link
           const rel = linkNode.children.find(child => child.data.id === dup.id).data.relationshipType
           const dashed = ['adopted', 'whangai'].includes(rel)
-          // push to the dupLinks array
+
           this.dupLinks.push({
             id: dup.id + '-' + dup.linkId,
             style: {
@@ -289,15 +281,15 @@ export default {
           x,
           y,
           children: parent.children
-            // .filter(partnerChild => {
-            //   return (
-            //     this.children &&
-            //     this.children.some(rootChild => {
-            //       if (!rootChild || !partnerChild) return false
-            //       return (rootChild.data.id === partnerChild.id)
-            //     })
-            //   )
-            // }) // filter out children who arent this nodes
+            .filter(partnerChild => {
+              return (
+                this.children &&
+                this.children.some(rootChild => {
+                  if (!rootChild || !partnerChild) return false
+                  return (rootChild.data.id === partnerChild.id)
+                })
+              )
+            }) // filter out children who arent this nodes
             .map(child => this.mapChild({ x, y, sign, center: !parent.isNonPartner, yOffset }, child, style, parent)),
           data: parent,
           link
