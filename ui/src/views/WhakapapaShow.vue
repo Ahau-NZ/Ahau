@@ -512,28 +512,28 @@ export default {
       // map all links
       person.children = await this.mapChildren(person)
       
-      // if (this.showParents) {
+      if (this.showParents) {
         // get all step/whangai parents of their children
-        // let otherPartners = await this.getOtherPartners(person)
+        let otherPartners = await this.getOtherPartners(person)
         
         // add step children to this person and nonChild
-        // let otherChildren = []
-        // if (otherPartners) {
-        //   otherPartners.forEach(parent => {
-        //     parent.children.forEach(child => { if (child.isNonChild) otherChildren.push(child) })
-        //   })
-        // }
+        let otherChildren = []
+        if (otherPartners) {
+          otherPartners.forEach(parent => {
+            parent.children.forEach(child => { if (child.isNonChild) otherChildren.push(child) })
+          })
+        }
   
         // get all step children from current partner
-        // let partnersChildren = await this.getPartnersChildren(person)
-        // if (partnersChildren) {
-        //   let arr = flatten(partnersChildren)
-        //   arr.forEach(child => { if (child.isNonChild) otherChildren.push(child) })
-        // }
+        let partnersChildren = await this.getPartnersChildren(person)
+        if (partnersChildren) {
+          let arr = flatten(partnersChildren)
+          arr.forEach(child => { if (child.isNonChild) otherChildren.push(child) })
+        }
   
-        // person.partners = [...person.partners, ...otherPartners]
-        // person.children = uniqby([...person.children, ...otherChildren], 'id')
-      // }
+        person.partners = [...person.partners, ...otherPartners]
+        person.children = uniqby([...person.children, ...otherChildren], 'id')
+      }
 
       // if this person is the selected one, then we make sure we keep that profile up to date
       if (this.selectedProfile && this.selectedProfile.id === person.id) this.updateSelectedProfile(person)

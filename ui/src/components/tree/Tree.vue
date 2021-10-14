@@ -218,7 +218,6 @@ export default {
   methods: {
     ...mapActions(['setLoading']),
     distanceBetweenNodes (leftNode, rightNode, cousins) {
-      console.log(leftNode, rightNode, cousins)
       const leftNodesRightPartners = settings.separation.rightPartnersCount(leftNode)
       const rightNodesLeftPartners = settings.separation.leftPartnersCount(rightNode)
 

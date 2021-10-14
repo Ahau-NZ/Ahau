@@ -422,37 +422,6 @@ export default {
         linkId: link.parents[0].id
       }
 
-      // switch (this.dialogType) {
-      //   case 'child':
-      //   case 'sibling':
-      //     dupLink = {
-      //       id: link.id,
-      //       nodeId: this.dialogType === 'child'
-      //         ? this.selectedProfile.id
-      //         : this.selectedProfile.parent.id, // for siblings we take the first parent
-      //       linkId: link.parents[0].id
-      //     }
-
-      //     break
-      //   case 'parent':
-      //     dupLink = {
-      //       id: link.id,
-      //       nodeId: this.selectedProfile.id, // for siblings we take the first parent
-      //       linkId: link.parents[0].id
-      //     }
-
-      //     break
-      //   case 'partner':
-      //     parent = this.selectedProfile.id
-      //     child = id
-
-      //     break
-      //   default:
-      //     console.error('wrong type for add person')
-      // }
-
-      // this.view.dupLinks.push(dupLink)
-
       console.log('update whakapapa ', this.view)
       // this.$emit('update-whakapapa', this.view)
       this.$emit('addDupLink', dupLink)
