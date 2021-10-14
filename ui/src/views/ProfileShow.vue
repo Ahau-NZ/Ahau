@@ -94,6 +94,7 @@ import {
 
 const { mapMutations: mapAlertMutations } = createNamespacedHelpers('alerts')
 const { mapActions: mapCommunityActions } = createNamespacedHelpers('community')
+const { mapActions: mapTribeActions } = createNamespacedHelpers('tribe')
 
 export default {
   name: 'ProfileShow',
@@ -211,6 +212,7 @@ export default {
     getDisplayName,
     ...mapMutations(['setCurrentAccess', 'setIsKaitiaki']),
     ...mapAlertMutations(['showAlert']),
+    ...mapTribeActions(['addAdminsToGroup']),
     ...mapCommunityActions(['updateCommunity']),
     ...mapActions(['setWhoami']),
     goEdit () {
@@ -224,7 +226,19 @@ export default {
         return
       }
 
-      await this.updateCommunity({ tribe: this.tribe, input: $event })
+      const input = $event
+
+      // process the authors
+      if (input.authors) {
+        if (!input.authors.add) delete input.authors
+        else {
+          const adminIds = input.authors.add
+
+          await this.addAdminsToGroup({ groupId: this.tribe.id, adminIds })
+        }
+      }
+
+      await this.updateCommunity({ tribe: this.tribe, input })
       this.closeDialog()
       await this.refresh()
     },

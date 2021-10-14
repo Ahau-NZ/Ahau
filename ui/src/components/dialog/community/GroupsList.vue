@@ -27,7 +27,7 @@
         <v-col :class="mobile ? 'pb-0 pl-8':'pb-0'">
           <p style="color:black;">{{ getDisplayName(kaitiaki) }}</p>
         </v-col>
-        <v-col v-if="formData.authors && formData.authors.length >= 2" align="end">
+        <v-col v-if="formData.authors && formData.authors.length >= 2 && !isCurrentKaitiaki(kaitiaki)" align="end">
           <v-btn text @click="deleteKaitiaki(kaitiaki)">
           <v-icon>mdi-delete</v-icon>
           </v-btn>
@@ -36,13 +36,13 @@
       <hr size="2" color='white' width='150%' class="ml-n6">
 
       <!-- Displays the button to add new kaitiaki - shows the drop down when clicked -->
-      <v-row v-if="!showKaitiaki" class="pa-4 pb-0">
+      <v-row v-if="!showKaitiaki && membersNotInKaitiakiGroup && membersNotInKaitiakiGroup.length" class="pa-4 pb-0">
         <v-btn small color="#3b3b3b" class="white--text ml-3" @click="showKaitiaki = true">
           <v-icon small class="pr-2">mdi-plus</v-icon> {{ t('addKaitiaki') }}
         </v-btn>
       </v-row>
       <!-- The drop down for selecting members as kaitiaki -->
-      <v-row v-else class="pa-5">
+      <v-row v-else-if="membersNotInKaitiakiGroup && membersNotInKaitiakiGroup.length" class="pa-5">
         <MembersPicker :members="membersNotInKaitiakiGroup" @addMember='addMember($event)'/>
       </v-row>
     </v-col>
@@ -123,16 +123,16 @@ export default {
       return getTribalProfile(this.selectedSubGroup, this.whoami)
     },
     membersInKaitiakiGroup () {
-      return this.profile.kaitiaki.map(d => d.profile)
+      return this.formData.authors
     },
     membersNotInKaitiakiGroup () {
-      return this.parentGroup.members.filter(d => {
+      return this.parentGroup && this.parentGroup.members.filter(d => {
         return !this.membersInKaitiakiGroup.some(m => m.feedId === d.feedId)
       })
     }
   },
   methods: {
-    ...mapTribeActions(['getTribe', 'createPrivateGroupProfileLink', 'addAdminsToGroup']),
+    ...mapTribeActions(['getTribe', 'createPrivateGroupProfileLink']),
     ...mapSubTribeActions(['createSubGroup', 'getSubGroups']),
     ...mapCommunityActions(['saveCommunity', 'updateCommunity', 'savePublicCommunity']),
     getDisplayName,
@@ -145,10 +145,11 @@ export default {
     //   this.subGroups = await this.getSubGroups(this.tribe.id)
     // },
     async addMember (member) {
-      this.parentGroup = await this.addAdminsToGroup(this.parentGroup.id, [member.feedId])
-      // TODO: trigger a reload of the tribe and its profiles?
-
+      this.formData.authors.push(member)
       this.showKaitiaki = false
+    },
+    isCurrentKaitiaki (kaitiaki) {
+      return this.profile && this.profile.authors.some(m => m.feedId === kaitiaki.feedId)
     },
     deleteKaitiaki (tiaki) {
       const index = this.formData.authors.indexOf(tiaki)
