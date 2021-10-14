@@ -136,12 +136,12 @@
                   <ProfileInfoItem class="br pb-0" mdCols="6" smCols="6" :title="t('schools')" :value="formData.school.join('\n')"/>
                   <ProfileInfoItem class="pb-0" mdCols="6" smCols="6" :title="t('skills')" :value="formData.education.join('\n')"/>
                 </v-row>
-                <!-- <v-row v-if="isKaitiaki" cols="12" class="rounded-border mt-4">
-                  <ProfileInfoItem class="bb pb-0" mdCols="12" smCols="12"  :title="t('address')" :value="formData.address"/>
-                  <ProfileInfoItem class="pb-0 bb" mdCols="12" smCols="12" :title="t('postcode')" :value="formData.postCode"/>
-                  <ProfileInfoItem class="bb pb-0" mdCols="12" smCols="12"  :title="t('phone')" :value="formData.phone"/>
-                  <ProfileInfoItem class="pb-0"  mdCols="12" smCols="12" :title="t('email')" :value="formData.email"/>
-                </v-row> -->
+                <v-row v-if="isKaitiaki && profile.adminProfile" cols="12" class="rounded-border mt-4">
+                  <ProfileInfoItem class="bb pb-0" mdCols="12" smCols="12"  :title="t('address')" :value="profile.adminProfile.address"/>
+                  <ProfileInfoItem class="pb-0 bb" mdCols="12" smCols="12" :title="t('postcode')" :value="profile.adminProfile.postCode"/>
+                  <ProfileInfoItem class="bb pb-0" mdCols="12" smCols="12"  :title="t('phone')" :value="profile.adminProfile.phone"/>
+                  <ProfileInfoItem class="pb-0"  mdCols="12" smCols="12" :title="t('email')" :value="profile.adminProfile.email"/>
+                </v-row>
               </v-col>
             </v-col>
           </v-row>

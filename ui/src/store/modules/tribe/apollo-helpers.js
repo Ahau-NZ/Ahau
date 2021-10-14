@@ -82,3 +82,17 @@ export const initGroup = (_input) => {
     }
   }
 }
+
+export const addAdminsToGroup = (groupId, adminIds) => {
+  return {
+    mutation: gql`
+      mutation ($groupId: String!, $adminIds: [String!]!) {
+        addAdminsToGroup(groupId: $groupId, adminIds: $adminIds)
+      }
+    `,
+    variables: {
+      groupId,
+      adminIds
+    }
+  }
+}

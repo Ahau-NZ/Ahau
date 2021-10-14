@@ -1,4 +1,5 @@
-import { initGroup, getTribe, getTribes } from './apollo-helpers'
+import { initGroup, getTribe, getTribes, addAdminsToGroup } from './apollo-helpers'
+import { getMembers } from '../../../lib/community-helpers'
 
 export default function (apollo) {
   const state = {
@@ -18,7 +19,7 @@ export default function (apollo) {
   }
 
   const actions = {
-    async getTribe ({ rootState }, id) {
+    async getTribe ({ rootState, dispatch }, id) {
       try {
         if (id === rootState.whoami.personal.groupId) {
           return {
@@ -36,7 +37,9 @@ export default function (apollo) {
 
         if (res.errors) throw res.errors
 
-        return res.data.tribe
+        const members = await dispatch('getMembers', id)
+
+        return { ...res.data.tribe, members }
       } catch (err) {
         console.error('Something went wrong while fetching tribe: ', id)
         console.error(err)
@@ -75,6 +78,32 @@ export default function (apollo) {
         return dispatch('saveGroupProfileLink', input)
       } catch (err) {
         console.error('failed to create private link between group and profile')
+      }
+    },
+    async addAdminsToGroup ({ dispatch }, { groupId, adminIds }) {
+      try {
+        const res = await apollo.mutate(
+          addAdminsToGroup(groupId, adminIds)
+        )
+
+        if (res.errors) throw res.errors
+
+        return dispatch('getTribe', groupId)
+      } catch (err) {
+        console.error('failed to add admin to group', err)
+      }
+    },
+    async getMembers (context, groupId) {
+      try {
+        const res = await apollo.query(
+          getMembers(groupId)
+        )
+
+        if (res.errors) throw res.errors
+
+        return res.data.listGroupAuthors
+      } catch (err) {
+        console.log('failed to get the groups members', err)
       }
     }
   }

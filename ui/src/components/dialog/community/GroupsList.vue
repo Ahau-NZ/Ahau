@@ -27,7 +27,7 @@
         <v-col :class="mobile ? 'pb-0 pl-8':'pb-0'">
           <p style="color:black;">{{ getDisplayName(kaitiaki) }}</p>
         </v-col>
-        <v-col v-if="formData.authors && formData.authors.length >= 2" align="end">
+        <v-col v-if="formData.authors && formData.authors.length >= 2 && !isCurrentKaitiaki(kaitiaki)" align="end">
           <v-btn text @click="deleteKaitiaki(kaitiaki)">
           <v-icon>mdi-delete</v-icon>
           </v-btn>
@@ -36,15 +36,15 @@
       <hr size="2" color='white' width='150%' class="ml-n6">
 
       <!-- Displays the button to add new kaitiaki - shows the drop down when clicked -->
-      <!-- <v-row v-if="!showKaitiaki" class="pa-4 pb-0">
+      <v-row v-if="!showKaitiaki && membersNotInKaitiakiGroup && membersNotInKaitiakiGroup.length" class="pa-4 pb-0">
         <v-btn small color="#3b3b3b" class="white--text ml-3" @click="showKaitiaki = true">
           <v-icon small class="pr-2">mdi-plus</v-icon> {{ t('addKaitiaki') }}
         </v-btn>
-      </v-row> -->
+      </v-row>
       <!-- The drop down for selecting members as kaitiaki -->
-      <!-- <v-row v-else class="pa-5">
-        <MembersPicker :tribeMembers="kaitiakiGroupMembers" :groupMembers.sync="groupMembers" @addMember='addMember($event)'/>
-      </v-row> -->
+      <v-row v-else-if="membersNotInKaitiakiGroup && membersNotInKaitiakiGroup.length" class="pa-5">
+        <MembersPicker :members="membersNotInKaitiakiGroup" @addMember='addMember($event)'/>
+      </v-row>
     </v-col>
 
     <SubGroup
@@ -73,7 +73,7 @@
 <script>
 import { getDisplayName } from '@/lib/person-helpers.js'
 import Avatar from '@/components/Avatar.vue'
-// import MembersPicker from './MembersPicker.vue'
+import MembersPicker from './MembersPicker.vue'
 import SubGroup from './SubGroup.vue'
 import NewSubGroupDialog from './NewSubGroupDialog.vue'
 import DeleteCommunityDialog from '@/components/dialog/community/DeleteCommunityDialog.vue'
@@ -89,7 +89,7 @@ export default {
   name: 'GroupsList',
   components: {
     Avatar,
-    // MembersPicker,
+    MembersPicker,
     SubGroup,
     NewSubGroupDialog,
     DeleteCommunityDialog
@@ -104,7 +104,6 @@ export default {
     return {
       dialog: null,
       showKaitiaki: false,
-      // groupMembers: this.profile.kaitiaki,
       subGroups: [],
       selectedSubGroup: null,
       editing: false,
@@ -113,7 +112,7 @@ export default {
   },
   async mounted () {
     await this.loadParentGroup()
-    await this.loadSubGroups()
+    // await this.loadSubGroups()
   },
   computed: {
     ...mapGetters(['whoami']),
@@ -122,15 +121,15 @@ export default {
       if (!this.selectedSubGroup) return null
 
       return getTribalProfile(this.selectedSubGroup, this.whoami)
+    },
+    membersInKaitiakiGroup () {
+      return this.formData.authors
+    },
+    membersNotInKaitiakiGroup () {
+      return this.parentGroup && this.parentGroup.members.filter(d => {
+        return !this.membersInKaitiakiGroup.some(m => m.feedId === d.feedId)
+      })
     }
-    // kaitiakiGroupMembers () {
-    //   return this.tribe.members
-    //     .filter((member) => {
-    //       return !this.formData.authors.some(kaitiaki => {
-    //         return kaitiaki.feedId === member.feedId
-    //       })
-    //     })
-    // }
   },
   methods: {
     ...mapTribeActions(['getTribe', 'createPrivateGroupProfileLink']),
@@ -142,12 +141,15 @@ export default {
     async loadParentGroup () {
       this.parentGroup = await this.getTribe(this.tribe.id)
     },
-    async loadSubGroups () {
-      this.subGroups = await this.getSubGroups(this.tribe.id)
-    },
-    addMember (member) {
+    // async loadSubGroups () {
+    //   this.subGroups = await this.getSubGroups(this.tribe.id)
+    // },
+    async addMember (member) {
       this.formData.authors.push(member)
       this.showKaitiaki = false
+    },
+    isCurrentKaitiaki (kaitiaki) {
+      return this.profile && this.profile.authors.some(m => m.feedId === kaitiaki.feedId)
     },
     deleteKaitiaki (tiaki) {
       const index = this.formData.authors.indexOf(tiaki)
@@ -229,7 +231,7 @@ export default {
       // reload the ui
       // TODO: do something cheaper then this
       await this.loadParentGroup()
-      await this.loadSubGroups()
+      // await this.loadSubGroups()
 
       // TODO: figure out how to scroll to this subgroup..?
     },
@@ -255,7 +257,7 @@ export default {
       // reload the ui
       // TODO: do something cheaper then this
       await this.loadParentGroup()
-      await this.loadSubGroups()
+      // await this.loadSubGroups()
     },
     close () {
       this.dialog = null
