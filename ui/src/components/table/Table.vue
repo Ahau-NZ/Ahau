@@ -81,9 +81,9 @@
                 {{ node.data.profession }}
               </text>
             </svg>
-            <svg :width="columns[9].x - 45">
+            <svg v-if="node.data && node.data.adminProfile" :width="columns[9].x - 45">
               <text  :transform="`translate(${columns[8].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ node.data.address }}
+                {{ node.data.adminProfile.address }}
               </text>
             </svg>
             <svg :width="columns[10].x - 45">
@@ -111,9 +111,14 @@
                 {{ node.data.placeOfDeath }}
               </text>
             </svg>
-            <svg>
+            <svg v-if="node.data && node.data.adminProfile">
               <text :transform="`translate(${columns[14].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
-                {{ node.data.phone }}
+                {{ node.data.adminProfile.email }}
+              </text>
+            </svg>
+            <svg v-if="node.data && node.data.adminProfile">
+              <text :transform="`translate(${columns[15].x - nodeSize + 10} ${node.y + nodeRadius + 5})`">
+                {{ node.data.adminProfile.phone }}
               </text>
             </svg>
           </g>
@@ -359,7 +364,7 @@ export default {
           var school = d.school.length > 0 ? d.school.join(', ') : null
           var education = d.education.length > 0 ? d.education.join(', ') : null
 
-          return {
+          const details = {
             parentNumber: d.parents.length > 0 ? d.parents[0].id : '',
             number: d.id,
             preferredName: d.preferredName,
@@ -374,15 +379,18 @@ export default {
             placeOfBirth: d.placeOfBirth,
             placeOfDeath: d.placeOfDeath,
             buriedLocation: d.buriedLocation,
-            phone: d.phone,
-            email: d.email,
-            address: d.address,
             city: d.city,
             postCode: d.postCode,
             country: d.country,
             profession: d.profession,
             education: education,
             school: school
+          }
+
+          if (d.adminProfile) {
+            details.phone = d.adminProfile.phone
+            details.email = d.adminProfile.email
+            details.address = d.adminProfile.address
           }
         })
         var csv = d3.csvFormat(nodes)
