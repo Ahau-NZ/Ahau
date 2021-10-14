@@ -21,7 +21,7 @@
     "electron-updater": "^4.3.8",
     "lodash.merge": "^4.6.2",
     "secret-stack": "^6.4.0",
-    "ssb-ahau": "^13.1.0",
+    "ssb-ahau": "^13.2.0",
     "ssb-ahoy": "^4.1.2",
     "ssb-artefact": "^3.2.1",
     "ssb-backlinks": "^2.1.1",
