@@ -1,8 +1,7 @@
 <template>
   <v-col cols="12" md="6" class="pa-0">
     <v-autocomplete
-      v-model="groupMembers"
-      :items="tribeMembers"
+      :items="members"
       v-bind="customProps"
       outlined
       :label="t('selectMember')"
@@ -33,8 +32,7 @@ import { getDisplayName } from '@/lib/person-helpers.js'
 export default {
   name: 'MembersPicker',
   props: {
-    groupMembers: Array,
-    tribeMembers: Array
+    members: Array
   },
   data () {
     return {

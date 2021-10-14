@@ -56,7 +56,7 @@
       <slot name="pinned"></slot>
 
       <!-- content section for main part of dialog -->
-      <v-card-text id="app-dialog" :style="mobile ? 'overflow-x: hidden;' : `min-height: 650px; max-height: 80vh; overflow-x: hidden;`" class="pa-3 pb-0">
+      <v-card-text id="app-dialog" :style="mobile ? 'overflow-x: hidden;' : `max-height: 650px; overflow-x: hidden;`" class="pa-3 pb-0">
         <slot name="content"></slot>
       </v-card-text>
 
