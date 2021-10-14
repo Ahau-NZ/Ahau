@@ -2,6 +2,13 @@
   <g>
 
     <!-- links between root node and partners -->
+    <g v-for="dup in dupLinks" :key="`dup-link-${dup.id}`">
+      <Link
+        :link="dup"
+      />
+    </g>
+
+    <!-- links between root node and partners -->
     <g v-for="partner in allPartners" :key="`partner-link-${partner.data.id}`">
       <Link
         v-if="partner.link"
@@ -40,13 +47,6 @@
         :showParents="showParents"
         :findInTree="findInTree"
         :duplicateProfiles="duplicateProfiles"
-      />
-    </g>
-
-    <!-- links between root node and partners -->
-    <g v-for="dup in dupLinks" :key="`dup-link-${dup.id}`">
-      <Link
-        :link="dup"
       />
     </g>
 
@@ -120,9 +120,12 @@ export default {
     children () {
       if (this.profile.isCollapsed) return []
       if (this.root.children) {
-        return this.root.children.filter(profile => {
-          return profile.data.id !== this.duplicateProfiles[0].id
-        })
+        if (this.duplicateProfiles.length) {
+          return this.root.children.filter(child => {
+            return this.duplicateProfiles.some(dup => dup.id !== child.data.id && dup.nodeId !== this.profile.id)
+          })
+        }
+        return this.root.children
       }
       return []
     },
@@ -168,6 +171,7 @@ export default {
 
       var totalPartners = this.partners.length
       const allChildren = [...children, ...otherChildren]
+      console.log('allChildren: ', allChildren)
 
       const yOffset = this.root.y + (totalPartners * settings.partner.spacing.y)
 
@@ -237,7 +241,10 @@ export default {
         }
 
         // check if the partner is a duplicate profile and it should be connected here
-        let dup = this.duplicateProfiles.find(d => d.id === parent.id && d.nodeId === this.root.data.id)
+        let dup
+        if (this.duplicateProfiles.length) {
+          dup = this.duplicateProfiles.find(d => d.id === parent.id && d.nodeId === this.root.data.id)
+        }
         
         if (dup) {
           // find the profile to link to
@@ -265,10 +272,8 @@ export default {
           parent.isDuplicate = true
         }
 
-        return {
-          x,
-          y,
-          children: parent.children
+        if (!this.showParents) {
+          parent.children = parent.children
             .filter(partnerChild => {
               return (
                 this.children &&
@@ -278,6 +283,21 @@ export default {
                 })
               )
             }) // filter out children who arent this nodes
+        }
+
+        return {
+          x,
+          y,
+          children: parent.children
+            // .filter(partnerChild => {
+            //   return (
+            //     this.children &&
+            //     this.children.some(rootChild => {
+            //       if (!rootChild || !partnerChild) return false
+            //       return (rootChild.data.id === partnerChild.id)
+            //     })
+            //   )
+            // }) // filter out children who arent this nodes
             .map(child => this.mapChild({ x, y, sign, center: !parent.isNonPartner, yOffset }, child, style, parent)),
           data: parent,
           link
@@ -291,9 +311,13 @@ export default {
       this.centerNode($event)
     },
     mapChild ({ x = this.root.x, y = this.root.y, center, sign, yOffset }, child, style, parent, ghostParent) {
-
+      
+      console.log('rootChidlren: ', this.root.children)
+      console.log('child: ', child)
       // map to their node from the root parent
       const node = this.root.children.find(rootChild => child.id === rootChild.data.id)
+
+      console.log('node: ', node)
 
       // change the link if they are not related by birth
       const dashed = parent && parent.relationshipType ? ['adopted', 'whangai'].includes(parent.relationshipType) : ['adopted', 'whangai'].includes(node.data.relationshipType)

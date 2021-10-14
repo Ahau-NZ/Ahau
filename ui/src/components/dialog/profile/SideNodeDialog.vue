@@ -383,6 +383,9 @@ export default {
         placeholder: ' ',
         class: !this.isEditing ? 'custom' : ''
       }
+    },
+    partners () {
+      return this.profile.partners.filter(partner => !partner.isNonPartner)
     }
   },
   watch: {

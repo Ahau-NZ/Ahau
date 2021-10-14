@@ -21,6 +21,7 @@
       :selectedProfile="selectedProfile"
       :suggestions="suggestions"
       :type="dialogType"
+      :findInTree="findInTree"
       withView
       @getSuggestions="getSuggestions($event)"
       @create="addPerson($event)"
@@ -293,9 +294,15 @@ export default {
       }
     },
     async addPerson (input) {
-      // get children, parents, partners quick add links
+      // if moveDup is in input than add duplink
+      if (input.moveDup) {
+        this.addDupLink(input)
+        delete input.moveDup
+      }
 
+      // get children, parents, partners quick add links
       var { id, children, parents, partners } = input
+      
       // remove them from input
       delete input.children
       delete input.parents
@@ -401,7 +408,55 @@ export default {
           console.error('wrong type for add person')
       }
     },
+    addDupLink (link) {
+      console.log('adding duplink: ', link)
+      // TODO: remove after dupLinks to whakapapaView
+      this.view = {
+        ...this.view,
+        dupLinks: []
+      }
 
+      let dupLink = {
+        id: link.id,
+        nodeId: this.selectedProfile.id, // for siblings we take the first parent
+        linkId: link.parents[0].id
+      }
+
+      // switch (this.dialogType) {
+      //   case 'child':
+      //   case 'sibling':
+      //     dupLink = {
+      //       id: link.id,
+      //       nodeId: this.dialogType === 'child'
+      //         ? this.selectedProfile.id
+      //         : this.selectedProfile.parent.id, // for siblings we take the first parent
+      //       linkId: link.parents[0].id
+      //     }
+
+      //     break
+      //   case 'parent':
+      //     dupLink = {
+      //       id: link.id,
+      //       nodeId: this.selectedProfile.id, // for siblings we take the first parent
+      //       linkId: link.parents[0].id
+      //     }
+
+      //     break
+      //   case 'partner':
+      //     parent = this.selectedProfile.id
+      //     child = id
+
+      //     break
+      //   default:
+      //     console.error('wrong type for add person')
+      // }
+
+      // this.view.dupLinks.push(dupLink)
+
+      console.log('update whakapapa ', this.view)
+      // this.$emit('update-whakapapa', this.view)
+      this.$emit('addDupLink', dupLink)
+    },
     async quickAddParents (child, parents) {
       await Promise.all(
         parents.map(async parent => {
@@ -612,10 +667,6 @@ export default {
           profiles[record.id] = record // add this record to the flatStore
         })
 
-        // now we have the flatStore for the suggestions we need to filter out the records
-        // so we cant add one that is already in the tree
-        // records = records.filter(record => !this.findInTree(record.id))
-
         this.predecessorArray = []
         await this.getNodePredecessors(this.selectedProfile.id) // Get the predecessors of the current node
 
@@ -631,8 +682,8 @@ export default {
 
         records = updatedRecords
       }
-      
-     // sets suggestions which is passed into the dialogs
+
+      // sets suggestions which is passed into the dialogs
       this.suggestions = Object.assign([], records)
     },
     /*
