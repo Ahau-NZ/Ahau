@@ -86,7 +86,7 @@ export default {
   partner: {
     spacing: {
       x: 0, // TODO (later): set tree separation to use this value
-      y: 3 // set to same as thickness
+      y: 5 // set to same as thickness
     }
   },
   opacity: 1,

@@ -139,7 +139,6 @@ export default {
         ? len / 2
         : Math.round(len / 2) - 1
 
-
       return this.mapNodes(this.profile.partners, midway, false)
     },
     // Needed to draw links between parents and children outside of a partnership
@@ -171,7 +170,7 @@ export default {
 
       var totalPartners = this.partners.length
       const allChildren = [...children, ...otherChildren].filter(child => !child.data.isNonChild)
-      console.log('allChildren: ', allChildren)
+      // console.log('allChildren: ', allChildren)
 
       const yOffset = this.root.y + (totalPartners * settings.partner.spacing.y)
 
@@ -194,7 +193,17 @@ export default {
     mapNodes (nodes, midway) {
       return nodes.map((parent, i) => {
         // used to alternate between left and right
-        const sign = i >= midway ? 1 : -1
+        let sign = i >= midway ? 1 : -1
+        console.log('sign: ', sign)
+        console.log('midway: ', midway)
+        console.log('index: ', i)
+  
+        if (parent.children.length) {
+          const node = this.root.children.find(rootChild => parent.children[0].id === rootChild.data.id)
+          sign = node.data.x < this.root.x ? 1 : -1
+          i++
+        }
+        console.log('after sign: ', sign)
 
         const offset = sign === 1
           ? this.diameter - 2 * this.partnerRadius // right
@@ -203,6 +212,7 @@ export default {
         const xMultiplier = sign === 1
           ? (i - midway) + 1
           : i - midway
+          console.log('x: ', xMultiplier)
         // how far sideways the partner sits from the root node at 0
         const x = this.root.x + offset + xMultiplier * (this.diameter + X_PADDING)
         // if we are negative theres no offset
@@ -304,27 +314,20 @@ export default {
     },
     mapChild ({ x = this.root.x, y = this.root.y, center, sign, yOffset }, child, style, parent, ghostParent) {
       
-      console.log('rootChidlren: ', this.root.children)
-      console.log('child: ', child)
+      // console.log('rootChidlren: ', this.root.children)
       // map to their node from the root parent
       const node = this.root.children.find(rootChild => child.id === rootChild.data.id)
-
-      console.log('node: ', node)
 
       // change the link if they are not related by birth
       const dashed = parent && parent.relationshipType ? ['adopted', 'whangai'].includes(parent.relationshipType) : ['adopted', 'whangai'].includes(node.data.relationshipType)
 
       // center the link between the parents
-      if (center) {
+      if (center && !node.data.isNonChild) {
         x = x - this.radius + this.partnerRadius - sign * (this.partnerRadius + 20)// end constant is dependant on radius, partnerRadius, X_PADDING
         y = yOffset - this.radius
       }
 
       let offCenter = !ghostParent && !center
-
-      if (offCenter) {
-        x -= 5
-      }
 
       return {
         ...node,
@@ -336,8 +339,8 @@ export default {
           d: settings.path( // for drawing a link from the parent to child
             {
               startX: x + this.radius,
-              startY: y + this.radius,
-              endX: node.x + this.radius,
+              startY: offCenter ? yOffset : y + this.radius,
+              endX: offCenter ? node.x + this.radius + yOffset / 4 : node.x + this.radius,
               endY: node.y + this.radius
             },
             settings.branch

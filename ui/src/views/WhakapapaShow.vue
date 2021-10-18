@@ -514,40 +514,55 @@ export default {
       
       if (this.showParents) {
         // get all step/whangai parents of their children
-        let otherPartners = await this.getOtherPartners(person)
+        let otherParents = await this.getOtherPartners(person)
         
-        // add step children to this person and nonChild
+        // add step children to this person as nonChild
         let otherChildren = []
-        if (otherPartners) {
-          otherPartners.forEach(parent => {
+        if (otherParents) {
+          otherParents.forEach(parent => {
             parent.children.forEach(child => { if (child.isNonChild) otherChildren.push(child) })
           })
         }
   
-        // get all step children from current partner
-        let partnersChildren = await this.getPartnersChildren(person)
-        if (partnersChildren) {
-          let arr = flatten(partnersChildren)
+        // get all other children from current partner
+        let partnersOtherChildren = await this.getOtherChildren(person)
+        console.log('2. partnersOtherChildren: ', partnersOtherChildren)
+        if (partnersOtherChildren) {
+          let arr = flatten(partnersOtherChildren)
           arr.forEach(child => { if (child.isNonChild) otherChildren.push(child) })
         }
+        console.log('3. otherChildren: ', otherChildren)
   
-        person.partners = [...person.partners, ...otherPartners]
+        person.partners = [...person.partners, ...otherParents]
         person.children = uniqby([...person.children, ...otherChildren], 'id')
+        // var _children = uniqby([...person.children, ...otherChildren], 'id')
+        // console.log('CHILDREN: ', _children)
       }
 
       // if this person is the selected one, then we make sure we keep that profile up to date
       if (this.selectedProfile && this.selectedProfile.id === person.id) this.updateSelectedProfile(person)
       return person
     },
+
     // get all step children from current partner
-    async getPartnersChildren (person) {
+    async getOtherChildren (person) {
       return Promise.all(person.partners.map(async partner => {
-        let x = await this.getFullChildProfiles(partner, person)
-        return x
+        let children = await this.getFullChildProfiles(partner, person)
+        // remove children that are apart of this relationship
+        let _children = children.map(child => {
+          if (child.parents.some(parent => parent.id !== person.id)) {
+            return {
+              ...child,
+              isNonChild: true
+            }
+          }
+        })
+        console.log('1. _childern: ', _children)
+        return _children
       }))
     },
 
-    // get all the other parents
+    // get all the parents of the connected children
     async getOtherPartners (person) {
       let formatted = flatten(person.children.map(d => d.parents))
         .filter((parent) => {
@@ -559,43 +574,38 @@ export default {
 
       let partners = uniqby(formatted, 'id')
 
-      // get partners full profiles to find their children
+      // get parents full profiles to find if they have any other children
       if (this.showParents) partners = await this.getFullPartnerProfiles(partners, person)
 
       return partners
     },
-    // get partners full profiles to find their children
+
+    // get parents full profiles to find if they have any other children
     async getFullPartnerProfiles (formatted, person) {
       return Promise.all(
         formatted.map(async node => {
           let partner = await this.getRelatives(node.id)
-          // get all the children profiles so we can see which ones arent connected to this node 
-          partner.children = await this.getFullChildProfiles(partner, person)
+          // get all the children profiles so we can see which ones arent connected to this parent
+          partner.children = await this.getFullChildProfiles(partner)
           partner.children = partner.children.filter(child => !isEmpty(child))
           return {
-            ...partner, // their profile
+            ...partner,
             isNonPartner: true
           }
         })
       )
     },
-    // get partners full child profiles to match parents
-    async getFullChildProfiles (partner, person) {
+
+    // get parents full child profiles to match with other parents
+    async getFullChildProfiles (partner) {
       return Promise.all(
         partner.children.map(async child => {
           let fullChild = await this.getRelatives(child.id)
-          return this.filterOtherPartnersChildren(fullChild, person)
+          return fullChild
         })
       )
     },
-    // Match parents and mark children that arent apart of this relationship
-    filterOtherPartnersChildren (child, person) {
-      // if (child.parents.some(parent => parent.id === person.id)) return
-      return {
-        ...child,
-        isNonChild: true
-      }
-    },
+
     async mapChildren (person) {
       return Promise.all(person.children.map(async child => {
         var childProfile = await this.loadDescendants(child.id)
