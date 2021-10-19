@@ -214,27 +214,6 @@ export default {
         else leftPartners++
 
         // 2. the position on that side
-        // var len = this.
-        // if (len === 1) len = 2
-
-        // const midway = len % 2 === 0
-        //   ? len / 2
-        //   : Math.round(len / 2) - 1
-        
-        // 3. the y position of the link shouldnt overlap
-
-
-
-        // let sign = i >= midway ? 1 : -1
-        // console.log('sign: ', sign)
-        // console.log('midway: ', midway)
-        // console.log('index: ', i)
-  
-        // if (parent.children.length) {
-        //   const node = this.root.children.find(rootChild => parent.children[0].id === rootChild.data.id)
-        //   sign = node.data.x < this.root.x ? 1 : -1
-        // }
-        // console.log('after sign: ', sign)
 
         const offset = sign === 1
           ? this.diameter - 2 * this.partnerRadius // right
@@ -243,11 +222,6 @@ export default {
         const xMultiplier = sign === 1
           ? rightPartners
           : -leftPartners
-          console.log('x: ', xMultiplier)
-
-        // const xMultiplier = 1
-        // const offset = 0
-
 
         // how far sideways the partner sits from the root node at 0
         const x = this.root.x + offset + xMultiplier * (this.diameter + X_PADDING)
@@ -363,7 +337,7 @@ export default {
         y = yOffset - this.radius
       }
 
-      let offCenter = !ghostParent && !center
+      let offCenter = !ghostParent
 
       return {
         ...node,
@@ -374,7 +348,7 @@ export default {
           },
           d: settings.path( // for drawing a link from the parent to child
             {
-              startX: x + this.radius,
+              startX: offCenter ? x + this.partnerRadius : x + this.radius,
               startY: offCenter ? yOffset : y + this.radius,
               endX: offCenter ? node.x + this.radius + yOffset / 4 : node.x + this.radius,
               endY: node.y + this.radius
