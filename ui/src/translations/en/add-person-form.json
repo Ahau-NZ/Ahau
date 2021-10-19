@@ -16,8 +16,6 @@
   "deathPlace": "Place of death",
   "burialLocation": "Burial location",
   "notLiving":"No longer living",
-  "movePerson": "Move the person",
-  "createLink": "Create a link",
   "birthOrder":"Order of birth",
   "genderIdentity":"Identifies as",
   "gender":{

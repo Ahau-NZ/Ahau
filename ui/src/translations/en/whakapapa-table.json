@@ -31,7 +31,7 @@
   "showAncestors": "Show ancestors",
   "showWhakapapa": "Show whakapapa links",
   "view": "View controls",
-  "parents": "Show extended family",
   "avatars": "Show profile photos",
+  "parents": "Show extended family",
   "default": "revert to default settings"
 }

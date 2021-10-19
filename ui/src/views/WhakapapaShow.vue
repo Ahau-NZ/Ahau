@@ -130,7 +130,6 @@
         :getRelatives="getRelatives"
         :showAvatars="showAvatars"
         :showParents="showParents"
-        :duplicateProfiles="duplicateProfiles"
         @load-descendants="loadDescendants($event)"
         @change-focus="changeFocus($event)"
         @loading='load($event)'
@@ -182,7 +181,6 @@
       @delete-whakapapa="deleteWhakapapa"
       @setFocus="setFocus($event)"
       @toggleFilterMenu="clickedOffSearchFilter()"
-      @addDupLink="duplicateProfiles.push($event)"
     />
   </div>
 </template>
@@ -190,7 +188,6 @@
 <script>
 import uniqby from 'lodash.uniqby'
 import flatten from 'lodash.flatten'
-import isEmpty from 'lodash.isempty'
 
 import FilterMenu from '@/components/dialog/whakapapa/FilterMenu.vue'
 
@@ -282,14 +279,6 @@ export default {
         image: { uri: '' },
         ignoredProfiles: ['']
       },
-      duplicateProfiles: [
-        // {
-        //   id: '%yUnysKn46VTtOcKDGd7njn5zrCucKlZ6Zt8ZChc6a2E=.sha256', // the profile thats duplicated
-        //   nodeId: '%4Pv06yd5cEAKxmpaO6m6dUCKIZ8ULYr91tP5iHpxRe0=.sha256', // the profile that the dup profile be located
-        //   linkId: '%oQWK1l1HiitOgimAWBIn4lJ5GHrwwbi/bk4U1ew/fM8=.sha256' // the profile that the dup profile will be linked too
-        // },
-
-      ],
       focus: null,
       // the record which defines the starting point for a tree (the 'focus')
 
@@ -374,9 +363,6 @@ export default {
         this.setCurrentAccess(this.access)
       }
       this.setWhakapapa(whakapapa)
-    },
-    async showParents (newVal) {
-      // TODO: Force rebuild without all teh extra nodes and lines
     }
   },
 
@@ -511,62 +497,15 @@ export default {
 
       // map all links
       person.children = await this.mapChildren(person)
-      
-      if (this.showParents) {
-        // get all step/whangai parents of their children
-        let otherParents = await this.getOtherPartners(person)
-        
-        // add step children to this person as nonChild
-        let otherChildren = []
-        if (otherParents) {
-          otherParents.forEach(parent => {
-            parent.children.forEach(child => { if (child.isNonChild) otherChildren.push(child) })
-          })
-        }
-
-        // get all other children from current partner
-        let partnersOtherChildren = await this.getOtherChildren(person)
-        if (partnersOtherChildren) {
-          let arr = flatten(partnersOtherChildren)
-          arr.forEach(child => { if (child.isNonChild) otherChildren.push(child) })
-        }
-
-        otherChildren = await this.mapChildren({ children: otherChildren })
-
-        person.partners = [...person.partners, ...otherParents]
-        person.children = uniqby([...person.children, ...otherChildren], 'id')
-        if (person.children && person.children.length > 0) {
-          person.children.sort((a, b) => {
-            return a.birthOrder - b.birthOrder
-          })
-        }
-        // .sort((a, b) => a.birthOrder > b.birthOrder && 1 || -1)
-      }
+      person.partners = [...person.partners, ...this.getOtherPartners(person)]
 
       // if this person is the selected one, then we make sure we keep that profile up to date
       if (this.selectedProfile && this.selectedProfile.id === person.id) this.updateSelectedProfile(person)
       return person
     },
 
-    // get all step children from current partner
-    async getOtherChildren (person) {
-      return Promise.all(person.partners.map(async partner => {
-        let children = await this.getFullChildProfiles(partner, person)
-        // remove children that are apart of this relationship
-        let _children = children.map(child => {
-          if (child.parents.some(parent => parent.id !== person.id)) {
-            return {
-              ...child,
-              isNonChild: true
-            }
-          }
-        })
-        return _children
-      }))
-    },
-
-    // get all the parents of the connected children
-    async getOtherPartners (person) {
+    getOtherPartners (person) {
+      // get all the other parents
       let formatted = flatten(person.children.map(d => d.parents))
         .filter((parent) => {
           return (
@@ -575,59 +514,28 @@ export default {
           )
         })
 
-      let partners = uniqby(formatted, 'id')
-
-      // get parents full profiles to find if they have any other children
-      if (this.showParents) partners = await this.getFullPartnerProfiles(partners, person)
-
-      return partners
-    },
-
-    // get parents full profiles to find if they have any other children
-    async getFullPartnerProfiles (formatted, person) {
-      return Promise.all(
-        formatted.map(async node => {
-          let partner = await this.getRelatives(node.id)
-          // get all the children profiles so we can see which ones arent connected to this parent
-          partner.children = await this.getFullChildProfiles(partner)
-          partner.children = partner.children.filter(child => !isEmpty(child))
+      formatted = uniqby(formatted, 'id')
+        .map(partner => {
           return {
-            ...partner,
-            isNonPartner: true
+            ...partner, // their profile
+            isNonPartner: true,
+            children: this.getOtherParentChildren(person, partner)
           }
         })
-      )
-    },
 
-    // get parents full child profiles to match with other parents
-    async getFullChildProfiles (partner) {
-      return Promise.all(
-        partner.children.map(async child => {
-          let fullChild = await this.getRelatives(child.id)
-          return fullChild
-        })
-      )
+      return formatted
     },
-
+    getOtherParentChildren (mainParent, partner) {
+      return mainParent.children.filter(child => child.parents.some(parent => parent.id === partner.id))
+    },
     async mapChildren (person) {
       return Promise.all(person.children.map(async child => {
         var childProfile = await this.loadDescendants(child.id)
-        if (!person.id) person.id = childProfile.parents[0].id
 
         // load the relationship between the two
-        const relationship = await this.getWhakapapaLink(person.id, child.id)
-
-        if (child.isNonChild) {
-          childProfile = {
-            ...childProfile,
-            isNonChild: true
-          }
-        }
-
-        if (!relationship) return childProfile
-
-        childProfile.relationshipType = relationship.relationshipType
-        childProfile.legallyAdoped = relationship.legallyAdoped
+        const { relationshipType, legallyAdoped } = await this.getWhakapapaLink(person.id, child.id)
+        childProfile.relationshipType = relationshipType
+        childProfile.legallyAdoped = legallyAdoped
 
         return childProfile
       }))

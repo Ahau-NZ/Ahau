@@ -21,7 +21,6 @@
       :selectedProfile="selectedProfile"
       :suggestions="suggestions"
       :type="dialogType"
-      :findInTree="findInTree"
       withView
       @getSuggestions="getSuggestions($event)"
       @create="addPerson($event)"
@@ -294,15 +293,10 @@ export default {
       }
     },
     async addPerson (input) {
-      // if moveDup is in input than add duplink
-      if (input.moveDup) {
-        this.addDupLink(input)
-        delete input.moveDup
-      }
 
       // get children, parents, partners quick add links
       var { id, children, parents, partners } = input
-      
+
       // remove them from input
       delete input.children
       delete input.parents
@@ -407,24 +401,6 @@ export default {
         default:
           console.error('wrong type for add person')
       }
-    },
-    addDupLink (link) {
-      console.log('adding duplink: ', link)
-      // TODO: remove after dupLinks to whakapapaView
-      this.view = {
-        ...this.view,
-        dupLinks: []
-      }
-
-      let dupLink = {
-        id: link.id,
-        nodeId: this.selectedProfile.id, // for siblings we take the first parent
-        linkId: link.parents[0].id
-      }
-
-      console.log('update whakapapa ', this.view)
-      // this.$emit('update-whakapapa', this.view)
-      this.$emit('addDupLink', dupLink)
     },
     async quickAddParents (child, parents) {
       await Promise.all(
@@ -704,15 +680,12 @@ export default {
       const hasParents = this.arrayIsNotEmpty(parents)
       const hasPartners = this.arrayIsNotEmpty(partners)
       const hasSiblings = this.arrayIsNotEmpty(siblings)
-      // const hasSiblings = []
-
+      
       // Return if there are no parents, partners and siblings on the current node
       if (!hasParents && !hasPartners && !hasSiblings) return
 
       // Filter out partners of predecessors
       if (hasPartners) this.addToPredecessors(partners)
-      // Filter out siblings of predecessors
-      // if (hasSiblings) this.addToPredecessors(siblings)
 
       // Get the current parents and their predecessors
       const currentProfileParents = parents

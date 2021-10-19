@@ -13,8 +13,6 @@
           :nodeCentered="nodeCentered"
           :showAvatars="showAvatars"
           :showParents="showParents"
-          :findInTree="findInTree"
-          :duplicateProfiles="duplicateProfiles"
         />
       </g>
     </g>
@@ -58,9 +56,6 @@ const { mapGetters: mapWhakapapaGetters } = createNamespacedHelpers('whakapapa')
 export default {
   props: {
     openMenu: Function,
-    // find: {
-    //   type: Function
-    // },
     view: {
       type: Object,
       required: true
@@ -70,8 +65,7 @@ export default {
     },
     getRelatives: Function,
     showAvatars: Boolean,
-    showParents: Boolean,
-    duplicateProfiles: Array
+    showParents: Boolean
   },
   components: {
     SubTree
@@ -385,13 +379,6 @@ export default {
               .scale(1)
           )
         })
-    },
-    findInTree (profileId) {
-      const existingNode = this.nodes.find(node => node.data.id === profileId)
-      if (existingNode) {
-        console.log('Node found!!!!')
-        return existingNode
-      }
     }
   }
 }

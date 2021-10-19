@@ -36,7 +36,6 @@ export default function (apollo) {
       if (node.isPartner) {
         whakapapa = tree.deletePartnerNode(state.nestedWhakapapa, node.id)
       } else {
-        console.log("index nestedwhakapapa: ", state.nestedWhakapapa)
         whakapapa = tree.deleteNode(state.nestedWhakapapa, node.id)
       }
 

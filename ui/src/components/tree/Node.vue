@@ -37,8 +37,8 @@
       <text> ... </text>
     </g>
     <g v-if="!showAvatars" :style="nameTextStyle">
-      <rect :width="textWidth + 5" y="-15" height="20"></rect>
-      <text>{{ displayName }}</text>
+      <rect :width="textWidth*2" y="-25" height="30"></rect>
+      <text style="font-size: 30px;">{{ displayName }}</text>
     </g>
     <g v-else :style="textStyle">
       <rect :width="textWidth" y="-16" height="20"></rect>
@@ -99,7 +99,7 @@ export default {
       return false
     },
     hasAncestors () {
-      return this.profile.parents && this.profile.parents.length > 0 && !this.profile.isDuplicate
+      return this.profile.parents && this.profile.parents.length > 0
     },
     clipPathId () {
       return this.partner ? 'partnerCirlce' : 'myCircle'
@@ -134,7 +134,7 @@ export default {
     },
     nameTextStyle () {
       return {
-        transform: `translate(${this.radius - this.textWidth / 2}px, ${this
+        transform: `translate(${this.radius - this.textWidth}px, ${this
           .diameter / 2}px)`
       }
     },
