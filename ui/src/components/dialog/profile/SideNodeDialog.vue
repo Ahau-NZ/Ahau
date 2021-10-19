@@ -21,6 +21,8 @@
         </v-row>
         <v-container>
           <v-row v-if="isEditing">
+
+            <!-- Displays the form to edit the profile fields -->
             <v-col class="py-0">
               <ProfileForm :profile.sync="formData" :withRelationships="withRelationships" :readonly="!isEditing" :mobile="mobile" @cancel="cancel" isEditing isSideViewDialog>
                 <template v-slot:top>
@@ -39,8 +41,10 @@
               </ProfileForm>
             </v-col>
           </v-row>
+
           <v-row v-if="isEditing">
-            <v-col cols="12" sm="auto">
+            <!-- Displays delete profile button (if editing and allowed to delete) -->
+            <v-col cols="12" sm="auto" v-if="!isAdminProfile">
               <v-btn
                 v-if="deleteable"
                 @click="$emit('delete')"
@@ -52,6 +56,8 @@
                 <v-icon class="secondary--text" left>mdi-delete</v-icon>{{ t('deletePerson') }}
               </v-btn>
             </v-col>
+
+            <!-- Displays the save/cancel buttons when editing the profile -->
             <v-col
               col="12"
               :align="mobile ? '' : 'right'"
@@ -65,6 +71,8 @@
               </v-btn>
             </v-col>
           </v-row>
+
+          <!-- Displays the profile avatar when viewing the profile -->
           <v-row v-if="!isEditing"  :class="`${mobile ? 'mt-6' : '' } justify-center`" style="margin-bottom: -20px">
             <Avatar
               class="big-avatar"
@@ -78,9 +86,13 @@
               @updateAvatar="formData.avatarImage = $event"
             />
           </v-row>
+
+          <!-- Displays the profile name -->
           <v-row v-if="!isEditing" class="justify-center">
             <h1 >{{ getDisplayName(formData) }}</h1>
           </v-row>
+
+          <!-- Displays buttons to edit or navigate to this profiles archive -->
           <v-row v-if="!isEditing"  class="justify-center pt-3">
             <v-btn
               @click.native="goArchive()"
@@ -93,7 +105,7 @@
               <span class="pl-2 "> {{ t('stories') }} </span>
             </v-btn>
             <v-btn
-              v-if="!preview && profile.canEdit"
+              v-if="!preview && (profile.canEdit || isAdminProfile)"
               @click="toggleEdit"
               color="white"
               text
@@ -103,7 +115,9 @@
               <v-icon small class="blue--text" left>mdi-pencil</v-icon>{{ t('edit') }}
             </v-btn>
           </v-row>
-          <v-row v-if="formData.description && !isEditing" class="ma-2 py-2">
+
+          <!-- Displays the profiles description when viewing the profile -->
+          <v-row v-if="formData.description && !isEditing" class="mx-2 pb-2">
             <v-col cols="12" class="pt-0">
               <v-row>
                 <v-col class="py-1 px-0 profile-label overline"><small>{{ t('description') }}</small></v-col>
@@ -113,9 +127,11 @@
               </v-row>
             </v-col>
           </v-row>
+
+          <!-- Displays profile information when viewing! -->
           <v-row v-if="!isEditing"  class="flex-column mx-0 ">
             <v-col class="pa-0">
-              <v-col cols="12" :class="profile.description ? 'pt-0':'pt-6'">
+              <v-col cols="12" :class="profile.description ? 'pt-0':'pt-0'">
                 <v-row cols="12" class="rounded-border mb-4">
                   <ProfileInfoItem class="pb-0 bb" mdCols="12" smCols="12" :title="t('fullName')" :value="profile.legalName"/>
                   <ProfileInfoItem class="pb-0 br bb" mdCols="6" smCols="6" :title="t('otherNames')" :value="profile.altNames.join(', ')"/>
@@ -136,18 +152,27 @@
                   <ProfileInfoItem class="br pb-0" mdCols="6" smCols="6" :title="t('schools')" :value="formData.school.join('\n')"/>
                   <ProfileInfoItem class="pb-0" mdCols="6" smCols="6" :title="t('skills')" :value="formData.education.join('\n')"/>
                 </v-row>
-                <v-row v-if="isKaitiaki && profile.adminProfile" cols="12" class="rounded-border mt-4">
-                  <ProfileInfoItem class="bb pb-0" mdCols="12" smCols="12"  :title="t('address')" :value="profile.adminProfile.address"/>
-                  <ProfileInfoItem class="pb-0 bb" mdCols="12" smCols="12" :title="t('postcode')" :value="profile.adminProfile.postCode"/>
-                  <ProfileInfoItem class="bb pb-0" mdCols="12" smCols="12"  :title="t('phone')" :value="profile.adminProfile.phone"/>
-                  <ProfileInfoItem class="pb-0"  mdCols="12" smCols="12" :title="t('email')" :value="profile.adminProfile.email"/>
+                <v-row v-if="isKaitiaki && isAdminProfile" class="d-flex flex-column justify-center align-center">
+                  <v-card-subtitle>
+                    {{ t('contactInfoText') }}
+                  </v-card-subtitle>
+                </v-row>
+                <v-row v-if="isKaitiaki && isAdminProfile" cols="12" class="rounded-border">
+                  <ProfileInfoItem class="bb pb-0" mdCols="12" smCols="12"  :title="t('address')" :value="formData.address"/>
+                  <ProfileInfoItem class="pb-0 bb" mdCols="12" smCols="12" :title="t('postcode')" :value="formData.postCode"/>
+                  <ProfileInfoItem class="bb pb-0" mdCols="12" smCols="12"  :title="t('phone')" :value="formData.phone"/>
+                  <ProfileInfoItem class="pb-0"  mdCols="12" smCols="12" :title="t('email')" :value="formData.email"/>
                 </v-row>
               </v-col>
             </v-col>
           </v-row>
+
+          <!-- Displays whanau when viewing the profile -->
           <v-row v-if="!isEditing"  class="px-2">
             <v-col cols="12" class="border-right">
               <v-row class="d-flex flex-column justify-center align-center">
+
+                <!-- Displays a row of parents -->
                 <v-col :cols="12" class="pa-0">
                   <AvatarGroup
                     :profiles="profile.parents"
@@ -164,6 +189,7 @@
 
                 <hr v-if="profile.parents" class="family-divider"/>
 
+                <!-- Displays a row of partners -->
                 <v-col v-if="profile.partners" :cols="12" class="pa-0">
                   <AvatarGroup
                     :profiles="profile.partners"
@@ -180,6 +206,7 @@
 
                 <hr v-if="profile.partners" class="family-divider"/>
 
+                <!-- Displays a row of siblings -->
                 <v-col :cols="12" v-if="profile.parents && profile.parents.length && profile.siblings" class="pa-0">
                   <AvatarGroup
                     :profiles="profile.siblings"
@@ -196,6 +223,7 @@
 
                 <hr v-if="profile.parents && profile.parents.length && profile.siblings" class="family-divider"/>
 
+                <!-- Displays a row of children -->
                 <v-col :cols="12" class="pa-0">
                   <AvatarGroup
                     :profiles="profile.children && profile.children.length ? profile.children : profile._children"
@@ -216,6 +244,8 @@
                     </template>
                   </AvatarGroup>
                 </v-col>
+
+                <!-- Displays who contributed the profile -->
                 <hr v-if="authors" class="family-divider"/>
                 <v-col v-if="authors" :cols="12" class="pa-0">
                   <AvatarGroup
@@ -331,15 +361,29 @@ export default {
   },
   computed: {
     ...mapGetters(['isKaitiaki']),
+    scopedProfile () {
+      if (this.profile && this.profile.adminProfile) {
+        const profile = { ...this.profile, ...this.profile.adminProfile }
+        profile.adminProfileId = this.profile.adminProfile.id
+        delete profile.adminProfile
+
+        return profile
+      }
+
+      return this.profile
+    },
+    isAdminProfile () {
+      return this.profile && this.profile.adminProfile
+    },
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
     withRelationships () {
-      return this.profile.parent !== null
+      return this.scopedProfile.parent !== null
     },
     diedAt () {
-      if (this.profile.aliveInterval) {
-        var date = this.profile.aliveInterval.split('/')
+      if (this.scopedProfile.aliveInterval) {
+        var date = this.scopedProfile.aliveInterval.split('/')
         return dateToString(date[1], this.monthTranslations)
       }
       return null
@@ -348,10 +392,10 @@ export default {
       let changes = {}
 
       Object.entries(this.formData).forEach(([key, value]) => {
-        if (!isEqual(this.formData[key], this.profile[key])) {
+        if (!isEqual(this.formData[key], this.scopedProfile[key])) {
           switch (key) {
             case 'altNames':
-              if (!isEqual(this.formData.altNames.add, this.profile.altNames)) {
+              if (!isEqual(this.formData.altNames.add, this.scopedProfile.altNames)) {
                 changes[key] = pick(this.formData.altNames, ['add', 'remove'])
                 changes[key].add = changes[key].add.filter(Boolean)
               }
@@ -360,7 +404,7 @@ export default {
               changes[key] = parseInt(value)
               break
             case 'relationshipType':
-              if (value && value !== this.profile.relationshipType) {
+              if (value && value !== this.scopedProfile.relationshipType) {
                 changes[key] = value
               }
               break
@@ -393,7 +437,7 @@ export default {
         if (this.mobile) window.scrollTo(0, 0)
       }
     },
-    profile: {
+    scopedProfile: {
       deep: true,
       immediate: true,
       handler (newVal) {
@@ -413,14 +457,14 @@ export default {
     },
     async getOriginalAuthor () {
       // TODO cherese 22-04-21 move to graphql
-      const originalAuthor = await this.getProfile(this.profile.originalAuthor)
+      const originalAuthor = await this.getProfile(this.scopedProfile.originalAuthor)
       this.authors = [originalAuthor]
     },
     monthTranslations (key, vars) {
       return this.$t('months.' + key, vars)
     },
     async removeChildLink (child) {
-      await this.removeLinkedPerson(this.profile.id, child.id)
+      await this.removeLinkedPerson(this.scopedProfile.id, child.id)
       this.$emit('delete-link', child) // needed to reload the tree
     },
     async removeLinkedPerson (parent, child) {
@@ -451,7 +495,7 @@ export default {
         name: 'person/archive',
         params: {
           tribeId: this.$route.params.tribeId,
-          profileId: this.profile.id
+          profileId: this.scopedProfile.id
         }
       }).catch(() => {})
     },
@@ -474,17 +518,19 @@ export default {
     },
     cancel () {
       // reset form values
-      this.formData = defaultData(this.profile)
+      this.formData = defaultData(this.scopedProfile)
       this.toggleEdit()
     },
     submit () {
       var output = Object.assign({}, pick(this.profileChanges, [...PERMITTED_PERSON_ATTRS, ...PERMITTED_RELATIONSHIP_ATTRS]))
 
       if (!isEmpty(output)) {
+        if (this.profile.adminProfile) output.id = this.profile.adminProfile.id
+
         this.$emit('submit', output)
       }
 
-      this.formData = defaultData(this.profile)
+      this.formData = defaultData(this.scopedProfile)
       this.toggleEdit()
     },
     toggleNew (type) {
