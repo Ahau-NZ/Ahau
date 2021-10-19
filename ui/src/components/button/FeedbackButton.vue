@@ -5,6 +5,6 @@
             <v-icon light>mdi-message-alert</v-icon>
           </v-btn>
       </template>
-      <span>Feedback</span>
+      <span>Help</span>
     </v-tooltip>
 </template>

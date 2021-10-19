@@ -5,7 +5,17 @@
         :transform="`translate(${treeX - radius} ${treeY - radius})`"
         ref="tree"
       >
-        <SubTree :root="treeLayout(this.root)" :openMenu="openMenu" :changeFocus="changeFocus" :centerNode="centerNode" :nodeCentered="nodeCentered"/>
+        <SubTree
+          :root="treeLayout(this.root)"
+          :openMenu="openMenu"
+          :changeFocus="changeFocus"
+          :centerNode="centerNode"
+          :nodeCentered="nodeCentered"
+          :showAvatars="showAvatars"
+          :showParents="showParents"
+          :findInTree="findInTree"
+          :duplicateProfiles="duplicateProfiles"
+        />
       </g>
     </g>
     <!-- zoom in, zoom out buttons -->
@@ -48,9 +58,9 @@ const { mapGetters: mapWhakapapaGetters } = createNamespacedHelpers('whakapapa')
 export default {
   props: {
     openMenu: Function,
-    find: {
-      type: Function
-    },
+    // find: {
+    //   type: Function
+    // },
     view: {
       type: Object,
       required: true
@@ -58,7 +68,10 @@ export default {
     searchNodeId: {
       type: String
     },
-    getRelatives: Function
+    getRelatives: Function,
+    showAvatars: Boolean,
+    showParents: Boolean,
+    duplicateProfiles: Array
   },
   components: {
     SubTree
@@ -167,7 +180,8 @@ export default {
     */
     nodes () {
       return this.treeLayout(this.root)
-        .descendants() // returns the array of descendants starting with the root node, then followed by each child in topological order
+        .descendants()
+        // returns the array of descendants starting with the root node, then followed by each child in topological order
     },
     paths () {
       if (!this.componentLoaded || !this.pathNode) return null
@@ -371,6 +385,13 @@ export default {
               .scale(1)
           )
         })
+    },
+    findInTree (profileId) {
+      const existingNode = this.nodes.find(node => node.data.id === profileId)
+      if (existingNode) {
+        console.log('Node found!!!!')
+        return existingNode
+      }
     }
   }
 }
@@ -392,4 +413,7 @@ svg#baseSvg {
   cursor: pointer;
 }
 
+.node {
+  z-index: 20;
+}
 </style>

@@ -8,7 +8,7 @@
     @mousedown.right="openMenu($event, profile)"
     @contextmenu.prevent
   >
-    <g class="avatar">
+    <g v-if="showAvatars" class="avatar">
       <defs>
         <clipPath :id="clipPathId">
           <circle :cx="radius" :cy="radius" :r="radius"/>
@@ -36,7 +36,11 @@
     <g v-if="profile.isCollapsed" :style="collapsedStyle">
       <text> ... </text>
     </g>
-    <g :style="textStyle">
+    <g v-if="!showAvatars" :style="nameTextStyle">
+      <rect :width="textWidth + 5" y="-15" height="20"></rect>
+      <text>{{ displayName }}</text>
+    </g>
+    <g v-else :style="textStyle">
       <rect :width="textWidth" y="-16" height="20"></rect>
       <text>{{ displayName }}</text>
     </g>
@@ -70,7 +74,8 @@ export default {
       type: Number,
       default: 50
     },
-    partner: Boolean
+    partner: Boolean,
+    showAvatars: Boolean
   },
   components: {
     NodeMenuButton
@@ -94,7 +99,7 @@ export default {
       return false
     },
     hasAncestors () {
-      return this.profile.parents && this.profile.parents.length > 0
+      return this.profile.parents && this.profile.parents.length > 0 && !this.profile.isDuplicate
     },
     clipPathId () {
       return this.partner ? 'partnerCirlce' : 'myCircle'
@@ -125,6 +130,12 @@ export default {
       return {
         transform: `translate(${this.radius - this.textWidth / 2}px, ${this
           .diameter + 15}px)`
+      }
+    },
+    nameTextStyle () {
+      return {
+        transform: `translate(${this.radius - this.textWidth / 2}px, ${this
+          .diameter / 2}px)`
       }
     },
     collapsedStyle () {

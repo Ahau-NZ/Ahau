@@ -50,7 +50,7 @@
             :searchNodeName="searchNodeName"
           />
         </div>
-        <div v-if="whakapapa.table" class="icon-button">
+        <div class="icon-button">
           <SearchFilterButton :searchFilter.sync="searchFilter"/>
         </div>
         <div class="icon-button" v-if="isKaitiaki">
@@ -124,14 +124,16 @@
       <Tree
         :class="mobile? 'mobile-tree':'tree'"
         v-if="whakapapa.tree"
+        :openMenu="openContextMenu"
+        :view="whakapapaView"
+        :searchNodeId="searchNodeId"
         :getRelatives="getRelatives"
+        :showAvatars="showAvatars"
+        :showParents="showParents"
+        :duplicateProfiles="duplicateProfiles"
         @load-descendants="loadDescendants($event)"
         @change-focus="changeFocus($event)"
         @loading='load($event)'
-        :view="whakapapaView"
-        :focus="focus"
-        :searchNodeId="searchNodeId"
-        :openMenu="openContextMenu"
       />
       <div v-if="whakapapa.table" :class="mobile ? 'mobile-table' : 'whakapapa-table'">
         <Table
@@ -153,12 +155,15 @@
     <NodeMenu ref="menu" :view="whakapapaView" :currentFocus="currentFocus" @open="updateDialog($event.dialog, $event.type)"/>
 
     <FilterMenu
-      v-if="whakapapa.table"
       :show="searchFilter"
       :flatten="flatten"
+      :tree="whakapapa.tree"
+      :table="whakapapa.table"
       @close="clickedOffSearchFilter()"
       @descendants="toggleFilter()"
       @whakapapa="toggleFlatten()"
+      @showAvatars="toggleShowAvatars()"
+      @showParents="toggleShowParents()"
     />
 
     <DialogHandler
@@ -177,6 +182,7 @@
       @delete-whakapapa="deleteWhakapapa"
       @setFocus="setFocus($event)"
       @toggleFilterMenu="clickedOffSearchFilter()"
+      @addDupLink="duplicateProfiles.push($event)"
     />
   </div>
 </template>
@@ -184,6 +190,7 @@
 <script>
 import uniqby from 'lodash.uniqby'
 import flatten from 'lodash.flatten'
+import isEmpty from 'lodash.isempty'
 
 import FilterMenu from '@/components/dialog/whakapapa/FilterMenu.vue'
 
@@ -275,6 +282,14 @@ export default {
         image: { uri: '' },
         ignoredProfiles: ['']
       },
+      duplicateProfiles: [
+        // {
+        //   id: '%yUnysKn46VTtOcKDGd7njn5zrCucKlZ6Zt8ZChc6a2E=.sha256', // the profile thats duplicated
+        //   nodeId: '%4Pv06yd5cEAKxmpaO6m6dUCKIZ8ULYr91tP5iHpxRe0=.sha256', // the profile that the dup profile be located
+        //   linkId: '%oQWK1l1HiitOgimAWBIn4lJ5GHrwwbi/bk4U1ew/fM8=.sha256' // the profile that the dup profile will be linked too
+        // },
+
+      ],
       focus: null,
       // the record which defines the starting point for a tree (the 'focus')
 
@@ -290,7 +305,9 @@ export default {
         table: false
       },
       searchNodeName: '',
-      nodeIds: []
+      nodeIds: [],
+      showAvatars: true,
+      showParents: true
     }
   },
   async mounted () {
@@ -357,6 +374,9 @@ export default {
         this.setCurrentAccess(this.access)
       }
       this.setWhakapapa(whakapapa)
+    },
+    async showParents (newVal) {
+      // TODO: Force rebuild without all teh extra nodes and lines
     }
   },
 
@@ -371,6 +391,12 @@ export default {
     async reload () {
       this.whakapapaView = await this.getWhakapapaView(this.$route.params.whakapapaId)
     },
+    toggleShowAvatars () {
+      this.showAvatars = !this.showAvatars
+    },
+    toggleShowParents () {
+      this.showParents = !this.showParents
+    },
     tableOverflow (width) {
       var show = width > screen.width
       this.overflow = show
@@ -382,7 +408,7 @@ export default {
       this.searchFilter = !this.searchFilter
     },
     isVisibleProfile (descendant) {
-      if (this.whakapapaView.ignoredProfiles) { return this.whakapapaView.ignoredProfiles.indexOf(descendant.id) === -1 }
+      return this.whakapapaView.ignoredProfiles.indexOf(descendant.id) === -1
     },
     openPartnerSideNode (dialog, type, profile) {
       this.setSelectedProfile(profile)
@@ -477,20 +503,70 @@ export default {
       var person = await this.getRelatives(profileId)
 
       // filter out ignored profiles
-      person.children = person.children.filter(this.isVisibleProfile)
-      person.parents = person.parents.filter(this.isVisibleProfile)
-      person.partners = person.partners.filter(this.isVisibleProfile)
+      if (this.whakapapaView.ignoredProfiles) {
+        person.children = person.children.filter(this.isVisibleProfile)
+        person.parents = person.parents.filter(this.isVisibleProfile)
+        person.partners = person.partners.filter(this.isVisibleProfile)
+      }
 
       // map all links
       person.children = await this.mapChildren(person)
-      person.partners = [...person.partners, ...this.getOtherPartners(person)]
+      
+      if (this.showParents) {
+        // get all step/whangai parents of their children
+        let otherParents = await this.getOtherPartners(person)
+        
+        // add step children to this person as nonChild
+        let otherChildren = []
+        if (otherParents) {
+          otherParents.forEach(parent => {
+            parent.children.forEach(child => { if (child.isNonChild) otherChildren.push(child) })
+          })
+        }
+
+        // get all other children from current partner
+        let partnersOtherChildren = await this.getOtherChildren(person)
+        if (partnersOtherChildren) {
+          let arr = flatten(partnersOtherChildren)
+          arr.forEach(child => { if (child.isNonChild) otherChildren.push(child) })
+        }
+
+        otherChildren = await this.mapChildren({ children: otherChildren })
+
+        person.partners = [...person.partners, ...otherParents]
+        person.children = uniqby([...person.children, ...otherChildren], 'id')
+        if (person.children && person.children.length > 0) {
+          person.children.sort((a, b) => {
+            return a.birthOrder - b.birthOrder
+          })
+        }
+        // .sort((a, b) => a.birthOrder > b.birthOrder && 1 || -1)
+      }
 
       // if this person is the selected one, then we make sure we keep that profile up to date
       if (this.selectedProfile && this.selectedProfile.id === person.id) this.updateSelectedProfile(person)
       return person
     },
-    getOtherPartners (person) {
-      // get all the other parents
+
+    // get all step children from current partner
+    async getOtherChildren (person) {
+      return Promise.all(person.partners.map(async partner => {
+        let children = await this.getFullChildProfiles(partner, person)
+        // remove children that are apart of this relationship
+        let _children = children.map(child => {
+          if (child.parents.some(parent => parent.id !== person.id)) {
+            return {
+              ...child,
+              isNonChild: true
+            }
+          }
+        })
+        return _children
+      }))
+    },
+
+    // get all the parents of the connected children
+    async getOtherPartners (person) {
       let formatted = flatten(person.children.map(d => d.parents))
         .filter((parent) => {
           return (
@@ -499,28 +575,59 @@ export default {
           )
         })
 
-      formatted = uniqby(formatted, 'id')
-        .map(partner => {
+      let partners = uniqby(formatted, 'id')
+
+      // get parents full profiles to find if they have any other children
+      if (this.showParents) partners = await this.getFullPartnerProfiles(partners, person)
+
+      return partners
+    },
+
+    // get parents full profiles to find if they have any other children
+    async getFullPartnerProfiles (formatted, person) {
+      return Promise.all(
+        formatted.map(async node => {
+          let partner = await this.getRelatives(node.id)
+          // get all the children profiles so we can see which ones arent connected to this parent
+          partner.children = await this.getFullChildProfiles(partner)
+          partner.children = partner.children.filter(child => !isEmpty(child))
           return {
-            ...partner, // their profile
-            isNonPartner: true,
-            children: this.getOtherParentChildren(person, partner)
+            ...partner,
+            isNonPartner: true
           }
         })
+      )
+    },
 
-      return formatted
+    // get parents full child profiles to match with other parents
+    async getFullChildProfiles (partner) {
+      return Promise.all(
+        partner.children.map(async child => {
+          let fullChild = await this.getRelatives(child.id)
+          return fullChild
+        })
+      )
     },
-    getOtherParentChildren (mainParent, partner) {
-      return mainParent.children.filter(child => child.parents.some(parent => parent.id === partner.id))
-    },
+
     async mapChildren (person) {
       return Promise.all(person.children.map(async child => {
         var childProfile = await this.loadDescendants(child.id)
+        if (!person.id) person.id = childProfile.parents[0].id
 
         // load the relationship between the two
-        const { relationshipType, legallyAdoped } = await this.getWhakapapaLink(person.id, child.id)
-        childProfile.relationshipType = relationshipType
-        childProfile.legallyAdoped = legallyAdoped
+        const relationship = await this.getWhakapapaLink(person.id, child.id)
+
+        if (child.isNonChild) {
+          childProfile = {
+            ...childProfile,
+            isNonChild: true
+          }
+        }
+
+        if (!relationship) return childProfile
+
+        childProfile.relationshipType = relationship.relationshipType
+        childProfile.legallyAdoped = relationship.legallyAdoped
 
         return childProfile
       }))

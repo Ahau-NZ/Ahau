@@ -44,6 +44,7 @@
           <v-col cols="12" class="pa-1 pt-4">
             <slot name="search">
               <v-text-field
+                ref="name"
                 v-model="formData.preferredName"
                 :label="t('preferredName')"
                 v-bind="customProps"
@@ -141,6 +142,24 @@
       </slot>
       <slot name="addPartners" v-if="typeIsParent">
       </slot>
+    </v-row>
+    <v-row v-if="isDuplicate" class="pl-4">
+      <v-col cols="12" class="">
+        <v-row>
+          <p>This profile already exists in this whakapapa record. How would you like to handle this?</p>
+        </v-row>
+        <!-- <v-radio-group v-model="moveDup" row class="mt-0 ml-n2"> -->
+        <v-radio-group :value="moveDup" @change="$emit('update:moveDup', $event)" row class="mt-0 ml-n2" mandatory>
+          <v-radio
+            :label="t('movePerson')"
+            :value="true"
+          />
+          <v-radio
+            :value="false"
+            :label="t('createLink')"
+          />
+        </v-radio-group>
+      </v-col>
     </v-row>
 
     <!-- Start of advanced section -->
@@ -421,7 +440,9 @@ export default {
     dialogType: { type: String, default: '' },
     type: String,
     displayName: { type: String, default: '' },
-    fullForm: { type: Boolean, default: false }
+    fullForm: { type: Boolean, default: false },
+    moveDup: { type: Boolean, default: true },
+    isDuplicate: Boolean
   },
   data () {
     return {
