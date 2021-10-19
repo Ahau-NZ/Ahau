@@ -271,7 +271,7 @@ export default {
             {
               startX: offCenter ? x + this.partnerRadius : x + this.radius,
               startY: offCenter ? yOffset : y + this.radius,
-              endX: offCenter ? node.x + this.radius + yOffset / 4 : node.x + this.radius,
+              endX: offCenter ? node.x + this.radius + yOffset / 20 : node.x + this.radius,
               endY: node.y + this.radius
             },
             settings.branch
