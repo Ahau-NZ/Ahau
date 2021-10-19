@@ -526,17 +526,18 @@ export default {
   
         // get all other children from current partner
         let partnersOtherChildren = await this.getOtherChildren(person)
-        console.log('2. partnersOtherChildren: ', partnersOtherChildren)
         if (partnersOtherChildren) {
           let arr = flatten(partnersOtherChildren)
           arr.forEach(child => { if (child.isNonChild) otherChildren.push(child) })
         }
-        console.log('3. otherChildren: ', otherChildren)
-  
         person.partners = [...person.partners, ...otherParents]
         person.children = uniqby([...person.children, ...otherChildren], 'id')
-        // var _children = uniqby([...person.children, ...otherChildren], 'id')
-        // console.log('CHILDREN: ', _children)
+        if (person.children && person.children.length > 0) {
+          person.children.sort((a, b) => {
+            return a.birthOrder - b.birthOrder
+          })
+        }
+        // .sort((a, b) => a.birthOrder > b.birthOrder && 1 || -1)
       }
 
       // if this person is the selected one, then we make sure we keep that profile up to date
@@ -557,7 +558,6 @@ export default {
             }
           }
         })
-        console.log('1. _childern: ', _children)
         return _children
       }))
     },
