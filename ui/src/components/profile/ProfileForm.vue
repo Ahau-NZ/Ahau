@@ -143,24 +143,6 @@
       <slot name="addPartners" v-if="typeIsParent">
       </slot>
     </v-row>
-    <v-row v-if="isDuplicate" class="pl-4">
-      <v-col cols="12" class="">
-        <v-row>
-          <p>This profile already exists in this whakapapa record. How would you like to handle this?</p>
-        </v-row>
-        <!-- <v-radio-group v-model="moveDup" row class="mt-0 ml-n2"> -->
-        <v-radio-group :value="moveDup" @change="$emit('update:moveDup', $event)" row class="mt-0 ml-n2" mandatory>
-          <v-radio
-            :label="t('movePerson')"
-            :value="true"
-          />
-          <v-radio
-            :value="false"
-            :label="t('createLink')"
-          />
-        </v-radio-group>
-      </v-col>
-    </v-row>
 
     <!-- Start of advanced section -->
     <v-divider />
@@ -441,8 +423,7 @@ export default {
     type: String,
     displayName: { type: String, default: '' },
     fullForm: { type: Boolean, default: false },
-    moveDup: { type: Boolean, default: true },
-    isDuplicate: Boolean
+    moveDup: { type: Boolean, default: true }
   },
   data () {
     return {
