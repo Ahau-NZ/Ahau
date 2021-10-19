@@ -132,14 +132,14 @@ export default {
     partners () {
       if (!this.root || !this.profile.partners || this.profile.isCollapsed || !this.showParents) return []
 
-      var len = this.profile.partners.length
-      if (len === 1) len = 2
+      // var len = this.profile.partners.length
+      // if (len === 1) len = 2
 
-      const midway = len % 2 === 0
-        ? len / 2
-        : Math.round(len / 2) - 1
+      // const midway = len % 2 === 0
+      //   ? len / 2
+      //   : Math.round(len / 2) - 1
 
-      return this.mapNodes(this.profile.partners, midway, false)
+      return this.mapNodes(this.profile.partners)
     },
     // Needed to draw links between parents and children outside of a partnership
     ghostPartner () {
@@ -190,29 +190,65 @@ export default {
 
       this.openMenu({ event, profile })
     },
-    mapNodes (nodes, midway) {
+    mapNodes (nodes) {
+      var leftPartners = 0
+      var rightPartners = 0
       return nodes.map((parent, i) => {
         // used to alternate between left and right
-        let sign = i >= midway ? 1 : -1
-        console.log('sign: ', sign)
-        console.log('midway: ', midway)
-        console.log('index: ', i)
-  
+
+        // types of partner
+        // 1. partners w children*
+        // 2. partners w/o children
+        // 3. nonPartners*
+        
+        // 1. what side do we put the partner
+        let sign
+        
         if (parent.children.length) {
           const node = this.root.children.find(rootChild => parent.children[0].id === rootChild.data.id)
-          sign = node.data.x < this.root.x ? 1 : -1
-          i++
+          sign = node.x >= this.root.x ? 1 : -1
+        } else {
+          sign = 1
         }
-        console.log('after sign: ', sign)
+        if (sign === 1) rightPartners++
+        else leftPartners++
+
+        // 2. the position on that side
+        // var len = this.
+        // if (len === 1) len = 2
+
+        // const midway = len % 2 === 0
+        //   ? len / 2
+        //   : Math.round(len / 2) - 1
+        
+        // 3. the y position of the link shouldnt overlap
+
+
+
+        // let sign = i >= midway ? 1 : -1
+        // console.log('sign: ', sign)
+        // console.log('midway: ', midway)
+        // console.log('index: ', i)
+  
+        // if (parent.children.length) {
+        //   const node = this.root.children.find(rootChild => parent.children[0].id === rootChild.data.id)
+        //   sign = node.data.x < this.root.x ? 1 : -1
+        // }
+        // console.log('after sign: ', sign)
 
         const offset = sign === 1
           ? this.diameter - 2 * this.partnerRadius // right
           : 0 // left
 
         const xMultiplier = sign === 1
-          ? (i - midway) + 1
-          : i - midway
+          ? rightPartners
+          : -leftPartners
           console.log('x: ', xMultiplier)
+
+        // const xMultiplier = 1
+        // const offset = 0
+
+
         // how far sideways the partner sits from the root node at 0
         const x = this.root.x + offset + xMultiplier * (this.diameter + X_PADDING)
         // if we are negative theres no offset
