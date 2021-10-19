@@ -45,7 +45,7 @@ function leftPartnersCount (node) {
 }
 
 function rightPartnersCount (node) {
-  if (node.data.partners.length === 1) return 0
+  if (node.data.partners && node.data.partners.length === 1) return 0
   return sideCount(node, 1)
 }
 

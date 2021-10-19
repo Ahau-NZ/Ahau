@@ -523,13 +523,16 @@ export default {
             parent.children.forEach(child => { if (child.isNonChild) otherChildren.push(child) })
           })
         }
-  
+
         // get all other children from current partner
         let partnersOtherChildren = await this.getOtherChildren(person)
         if (partnersOtherChildren) {
           let arr = flatten(partnersOtherChildren)
           arr.forEach(child => { if (child.isNonChild) otherChildren.push(child) })
         }
+
+        otherChildren = await this.mapChildren({ children: otherChildren })
+
         person.partners = [...person.partners, ...otherParents]
         person.children = uniqby([...person.children, ...otherChildren], 'id')
         if (person.children && person.children.length > 0) {
@@ -609,11 +612,22 @@ export default {
     async mapChildren (person) {
       return Promise.all(person.children.map(async child => {
         var childProfile = await this.loadDescendants(child.id)
+        if (!person.id) person.id = childProfile.parents[0].id
 
         // load the relationship between the two
-        const { relationshipType, legallyAdoped } = await this.getWhakapapaLink(person.id, child.id)
-        childProfile.relationshipType = relationshipType
-        childProfile.legallyAdoped = legallyAdoped
+        const relationship = await this.getWhakapapaLink(person.id, child.id)
+
+        if (child.isNonChild) {
+          childProfile = {
+            ...childProfile,
+            isNonChild: true
+          }
+        }
+
+        if (!relationship) return childProfile
+
+        childProfile.relationshipType = relationship.relationshipType
+        childProfile.legallyAdoped = relationship.legallyAdoped
 
         return childProfile
       }))

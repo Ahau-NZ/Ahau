@@ -132,14 +132,14 @@ export default {
     partners () {
       if (!this.root || !this.profile.partners || this.profile.isCollapsed || !this.showParents) return []
 
-      // var len = this.profile.partners.length
-      // if (len === 1) len = 2
+      var len = this.profile.partners.length
+      if (len === 1) len = 2
 
-      // const midway = len % 2 === 0
-      //   ? len / 2
-      //   : Math.round(len / 2) - 1
+      const midway = len % 2 === 0
+        ? len / 2
+        : Math.round(len / 2) - 1
 
-      return this.mapNodes(this.profile.partners)
+      return this.mapNodes(this.profile.partners, midway)
     },
     // Needed to draw links between parents and children outside of a partnership
     ghostPartner () {
@@ -190,7 +190,7 @@ export default {
 
       this.openMenu({ event, profile })
     },
-    mapNodes (nodes) {
+    mapNodes (nodes, midway) {
       var leftPartners = 0
       var rightPartners = 0
       return nodes.map((parent, i) => {
@@ -208,7 +208,7 @@ export default {
           const node = this.root.children.find(rootChild => parent.children[0].id === rootChild.data.id)
           sign = node.x >= this.root.x ? 1 : -1
         } else {
-          sign = 1
+          sign = i >= midway ? 1 : -1
         }
         if (sign === 1) rightPartners++
         else leftPartners++
@@ -254,7 +254,7 @@ export default {
 
         // check if the partner is a duplicate profile and it should be connected here
         let dup
-        if (this.duplicateProfiles) {
+        if (this.duplicateProfiles.length) {
           dup = this.duplicateProfiles.find(d => d.id === parent.id && d.nodeId === this.root.data.id)
         }
         
