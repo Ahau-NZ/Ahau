@@ -16,8 +16,6 @@
           :dialogType="type"
           :mobile="mobile"
           :displayName="getDisplayName(selectedProfile)"
-          :isDuplicate="isDuplicate"
-          :moveDup.sync="moveDup"
         >
 
           <!-- Slot = Search -->
@@ -157,8 +155,7 @@ export default {
       validator: (val) => [
         'child', 'parent', 'sibling', 'partner'
       ].includes(val)
-    },
-    findInTree: Function
+    }
   },
   data () {
     return {
@@ -174,9 +171,7 @@ export default {
         children: [],
         partners: []
       },
-      existingProfile: null,
-      isDuplicate: false,
-      moveDup: true
+      existingProfile: null
     }
   },
   async mounted () {
@@ -418,10 +413,6 @@ export default {
         }
       }
 
-      if (this.isDuplicate) {
-        submission.moveDup = this.moveDup
-      }
-
       this.$emit('create', submission)
       this.close()
     },
@@ -435,13 +426,10 @@ export default {
     setFormData (person) {
       this.hasSelection = true
       this.profile = person
-
-      if (this.findInTree(person.id)) this.isDuplicate = true
     },
     resetFormData () {
       if (this.hasSelection) {
         this.hasSelection = false
-        this.isDuplicate = false
         this.formData = setDefaultData(this.withRelationships)
       }
       this.$emit('getSuggestions', null)
