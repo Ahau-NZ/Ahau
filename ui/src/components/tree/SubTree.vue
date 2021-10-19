@@ -204,7 +204,7 @@ export default {
             M ${this.root.x + this.radius}, ${yOffset}
             H ${x + this.partnerRadius}`
         }
-      
+
         if (!this.showParents) {
           parent.children = parent.children
             .filter(partnerChild => {
@@ -244,7 +244,6 @@ export default {
       this.centerNode($event)
     },
     mapChild ({ x = this.root.x, y = this.root.y, center, sign, yOffset }, child, style, parent, ghostParent) {
-      
       // console.log('rootChidlren: ', this.root.children)
       // map to their node from the root parent
       const node = this.root.children.find(rootChild => child.id === rootChild.data.id)

@@ -293,7 +293,6 @@ export default {
       }
     },
     async addPerson (input) {
-
       // get children, parents, partners quick add links
       var { id, children, parents, partners } = input
 
@@ -680,7 +679,7 @@ export default {
       const hasParents = this.arrayIsNotEmpty(parents)
       const hasPartners = this.arrayIsNotEmpty(partners)
       const hasSiblings = this.arrayIsNotEmpty(siblings)
-      
+
       // Return if there are no parents, partners and siblings on the current node
       if (!hasParents && !hasPartners && !hasSiblings) return
 
