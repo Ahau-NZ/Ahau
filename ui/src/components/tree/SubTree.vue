@@ -56,7 +56,7 @@ import pileSort from 'pile-sort'
 import mapProfileMixins from '@/mixins/profile-mixins.js'
 
 const PARTNER_SHRINK = 0.7
-const X_PADDING = 15
+const X_PADDING = 10
 
 export default {
   name: 'SubTree',
@@ -165,21 +165,43 @@ export default {
       this.openMenu({ event, profile })
     },
     mapNodes (nodes, midway) {
+      var leftPartners = 0
+      var rightPartners = 0
+
       return nodes.map((parent, i) => {
-        var sign = i >= midway ? 1 : -1
+        let sign
+        // If the parent has children find where they are positioned
+        // if (parent.children.length) {
+        //   const node = this.root.children.find(rootChild => parent.children[0].id === rootChild.data.id)
+        //   if (node) sign = node.x > this.root.x ? 1 : -1
+        if (parent.children.length) {
+          const childrenX = []
+          parent.children.forEach(child => {
+            let node = this.root.children.find(rootChild => child.id === rootChild.data.id) 
+            childrenX.push(node.x)
+          })
+          var average = childrenX.reduce((a, b) => a + b, 0) / childrenX.length
+          console.log('average: ', average)
+
+          if (average) sign = average > this.root.x ? 1 : -1
+          else sign = -1
+        } else {
+          // otherwise else just alternate side
+          sign = i >= midway ? 1 : -1
+        }
+        if (sign === 1) rightPartners++
+        else leftPartners++
 
         const offset = sign === 1
           ? this.diameter - 2 * this.partnerRadius // right
           : 0 // left
 
         const xMultiplier = sign === 1
-          ? (i - midway) + 1
-          : i - midway
+          ? rightPartners
+          : -leftPartners
 
         // how far sideways the partner sits from the root node at 0
-        const x = this.root.x + offset + xMultiplier * (this.diameter + X_PADDING)
-        // if we are negative theres no offset
-        // if we are positive - use diameter
+        const x = this.root.x + offset + xMultiplier * (this.diameter)
 
         // how far down the partner sits from the root node at 0
         const y = this.root.y + this.radius - this.partnerRadius
@@ -196,6 +218,8 @@ export default {
 
         // start point of the partner node links on the Y axist
         const yOffset = this.root.y + (i * settings.partner.spacing.y) + this.radius
+
+        const xOffset = xMultiplier * X_PADDING
 
         const link = parent.isNonPartner ? {} : {
           style,
@@ -231,7 +255,7 @@ export default {
                 })
               )
             }) // filter out children who arent this nodes
-            .map(child => this.mapChild({ x, y, sign, center: !parent.isNonPartner, yOffset }, child, style, parent)),
+            .map(child => this.mapChild({ x, y, sign, center: !parent.isNonPartner, yOffset, xOffset }, child, style, parent, false)),
           data: parent,
           link
         }
@@ -243,7 +267,7 @@ export default {
     center ($event) {
       this.centerNode($event)
     },
-    mapChild ({ x = this.root.x, y = this.root.y, center, sign, yOffset }, child, style, parent, ghostParent) {
+    mapChild ({ x = this.root.x, y = this.root.y, center, sign, yOffset, xOffset }, child, style, parent, ghostParent) {
       // console.log('rootChidlren: ', this.root.children)
       // map to their node from the root parent
       const node = this.root.children.find(rootChild => child.id === rootChild.data.id)
@@ -257,7 +281,9 @@ export default {
         y = yOffset - this.radius
       }
 
-      let offCenter = !ghostParent
+      let offCenter = !ghostParent && !center
+      console.log(offCenter)
+      console.log(xOffset)
 
       return {
         ...node,
@@ -270,7 +296,7 @@ export default {
             {
               startX: offCenter ? x + this.partnerRadius : x + this.radius,
               startY: offCenter ? yOffset : y + this.radius,
-              endX: offCenter ? node.x + this.radius + yOffset / 20 : node.x + this.radius,
+              endX: offCenter ? node.x + this.radius + xOffset : node.x + this.radius,
               endY: node.y + this.radius
             },
             settings.branch
