@@ -400,7 +400,4 @@ svg#baseSvg {
   cursor: pointer;
 }
 
-.node {
-  z-index: 20;
-}
 </style>
