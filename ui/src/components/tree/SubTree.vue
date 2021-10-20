@@ -170,19 +170,14 @@ export default {
 
       return nodes.map((parent, i) => {
         let sign
-        // If the parent has children find where they are positioned
-        // if (parent.children.length) {
-        //   const node = this.root.children.find(rootChild => parent.children[0].id === rootChild.data.id)
-        //   if (node) sign = node.x > this.root.x ? 1 : -1
+        // If the parent has children find where they are positioned and place the parent on the correct side
         if (parent.children.length) {
           const childrenX = []
           parent.children.forEach(child => {
-            let node = this.root.children.find(rootChild => child.id === rootChild.data.id) 
+            let node = this.root.children.find(rootChild => child.id === rootChild.data.id)
             childrenX.push(node.x)
           })
           var average = childrenX.reduce((a, b) => a + b, 0) / childrenX.length
-          console.log('average: ', average)
-
           if (average) sign = average > this.root.x ? 1 : -1
           else sign = -1
         } else {
@@ -268,7 +263,6 @@ export default {
       this.centerNode($event)
     },
     mapChild ({ x = this.root.x, y = this.root.y, center, sign, yOffset, xOffset }, child, style, parent, ghostParent) {
-      // console.log('rootChidlren: ', this.root.children)
       // map to their node from the root parent
       const node = this.root.children.find(rootChild => child.id === rootChild.data.id)
 
@@ -281,9 +275,8 @@ export default {
         y = yOffset - this.radius
       }
 
+      // offcenter links to avoid overlapping with partner or main parent node links
       let offCenter = !ghostParent && !center
-      console.log(offCenter)
-      console.log(xOffset)
 
       return {
         ...node,
