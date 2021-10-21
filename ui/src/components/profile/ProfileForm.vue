@@ -44,6 +44,7 @@
           <v-col cols="12" class="pa-1 pt-4">
             <slot name="search">
               <v-text-field
+                ref="name"
                 v-model="formData.preferredName"
                 :label="t('preferredName')"
                 v-bind="customProps"
@@ -421,7 +422,8 @@ export default {
     dialogType: { type: String, default: '' },
     type: String,
     displayName: { type: String, default: '' },
-    fullForm: { type: Boolean, default: false }
+    fullForm: { type: Boolean, default: false },
+    moveDup: { type: Boolean, default: true }
   },
   data () {
     return {

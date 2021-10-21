@@ -12,6 +12,7 @@
 - Added partners column to whakapapa table
 - Can now click on a partner in whakapapa table to show that person in SideNodeDialog.vue
 - Added frontend for custom Data Model
+- Added options to whakapapa view to hide avatars and show extended family
 
 ### Fixes
 - Now shows an error when trying to create a record that is too big for the current limit   
@@ -20,6 +21,9 @@
 - Removed kaitiaki from members list
 - Added dev commands for deleting node modules on windows
 - Changed unknown/other gender avatar to plain account icon
+- Can add duplicate profiles to whakapapa
+- Fixed other parent whakapapa links
+
 ## v2.2.0
 
 ### Features

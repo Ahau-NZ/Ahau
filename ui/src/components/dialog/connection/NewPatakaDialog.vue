@@ -66,17 +66,7 @@
                   <p bold>{{ t('agreementTitle') }}</p>
                   <p>{{ t('sharing') }}</p>
                   <ul>
-                    <li>{{ t('shareProfile') }}</li>
-                    <li>{{ t('shareTribe') }}
-                      <ul>
-                        <li>{{ t('shareTribePic') }}</li>
-                        <li>{{ t('ShareTribeCover') }}</li>
-                        <li>{{ t('shareTribeKaitiaki') }}</li>
-                        <li>{{ t('shareTribeContact') }}</li>
-                      </ul>
-                    </li>
                     <li>{{ t('encryption') }}</li>
-                    <li>{{ t('access') }}</li>
                     <li>{{ t('backup') }}</li>
                     <li>{{ t('waver') }}</li>
                   </ul>

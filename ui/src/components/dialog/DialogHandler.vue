@@ -294,8 +294,8 @@ export default {
     },
     async addPerson (input) {
       // get children, parents, partners quick add links
-
       var { id, children, parents, partners } = input
+
       // remove them from input
       delete input.children
       delete input.parents
@@ -401,7 +401,6 @@ export default {
           console.error('wrong type for add person')
       }
     },
-
     async quickAddParents (child, parents) {
       await Promise.all(
         parents.map(async parent => {
@@ -612,10 +611,6 @@ export default {
           profiles[record.id] = record // add this record to the flatStore
         })
 
-        // now we have the flatStore for the suggestions we need to filter out the records
-        // so we cant add one that is already in the tree
-        records = records.filter(record => !this.findInTree(record.id))
-
         this.predecessorArray = []
         await this.getNodePredecessors(this.selectedProfile.id) // Get the predecessors of the current node
 
@@ -690,8 +685,6 @@ export default {
 
       // Filter out partners of predecessors
       if (hasPartners) this.addToPredecessors(partners)
-      // Filter out siblings of predecessors
-      if (hasSiblings) this.addToPredecessors(siblings)
 
       // Get the current parents and their predecessors
       const currentProfileParents = parents

@@ -50,7 +50,7 @@
             :searchNodeName="searchNodeName"
           />
         </div>
-        <div v-if="whakapapa.table" class="icon-button">
+        <div class="icon-button">
           <SearchFilterButton :searchFilter.sync="searchFilter"/>
         </div>
         <div class="icon-button" v-if="isKaitiaki">
@@ -60,11 +60,11 @@
           <ExportButton @export="toggleDownload()" />
         </div>
         <div class="icon-button">
-          <HelpButton v-if="whakapapa.tree" @click="updateDialog('whakapapa-helper', null)" />
-          <HelpButton v-else @click="updateDialog('whakapapa-table-helper', null)" />
+          <InfoButton v-if="whakapapa.tree" @click="updateDialog('whakapapa-helper', null)" />
+          <InfoButton v-else @click="updateDialog('whakapapa-table-helper', null)" />
         </div>
         <div class="icon-button">
-          <FeedbackButton />
+          <HelpButton />
         </div>
       </v-row>
       <!-- speed dial menu for mobile -->
@@ -113,25 +113,26 @@
             <TableButton :table="whakapapa.table" @table="toggleTable()" />
           </div>
           <div class="icon-button">
-            <HelpButton v-if="whakapapa.tree" @click="updateDialog('whakapapa-helper', null)" />
-            <HelpButton v-else @click="updateDialog('whakapapa-table-helper', null)" />
+            <InfoButton v-if="whakapapa.tree" @click="updateDialog('whakapapa-helper', null)" />
+            <InfoButton v-else @click="updateDialog('whakapapa-table-helper', null)" />
           </div>
           <div class="icon-button">
-            <FeedbackButton />
+            <HelpButton />
           </div>
         </v-speed-dial>
       </v-card>
       <Tree
         :class="mobile? 'mobile-tree':'tree'"
         v-if="whakapapa.tree"
+        :openMenu="openContextMenu"
+        :view="whakapapaView"
+        :searchNodeId="searchNodeId"
         :getRelatives="getRelatives"
+        :showAvatars="showAvatars"
+        :showPartners="showPartners"
         @load-descendants="loadDescendants($event)"
         @change-focus="changeFocus($event)"
         @loading='load($event)'
-        :view="whakapapaView"
-        :focus="focus"
-        :searchNodeId="searchNodeId"
-        :openMenu="openContextMenu"
       />
       <div v-if="whakapapa.table" :class="mobile ? 'mobile-table' : 'whakapapa-table'">
         <Table
@@ -153,12 +154,14 @@
     <NodeMenu ref="menu" :view="whakapapaView" :currentFocus="currentFocus" @open="updateDialog($event.dialog, $event.type)"/>
 
     <FilterMenu
-      v-if="whakapapa.table"
       :show="searchFilter"
       :flatten="flatten"
+      :isTable="whakapapa.table"
       @close="clickedOffSearchFilter()"
       @descendants="toggleFilter()"
       @whakapapa="toggleFlatten()"
+      @toggleAvatars="toggleShowAvatars()"
+      @togglePartners="toggleShowPartners()"
     />
 
     <DialogHandler
@@ -192,9 +195,9 @@ import WhakapapaBanner from '@/components/whakapapa/WhakapapaBanner.vue'
 
 import Tree from '@/components/tree/Tree.vue'
 import Table from '@/components/table/Table.vue'
-import FeedbackButton from '@/components/button/FeedbackButton.vue'
-import TableButton from '@/components/button/TableButton.vue'
 import HelpButton from '@/components/button/HelpButton.vue'
+import TableButton from '@/components/button/TableButton.vue'
+import InfoButton from '@/components/button/InfoButton.vue'
 import ExportButton from '@/components/button/ExportButton.vue'
 
 import SearchBar from '@/components/button/SearchBar.vue'
@@ -237,12 +240,12 @@ export default {
   components: {
     WhakapapaShowViewCard,
     TableButton,
-    HelpButton,
+    InfoButton,
     SearchBar,
     SearchBarNode,
     SearchButton,
     SearchFilterButton,
-    FeedbackButton,
+    HelpButton,
     Table,
     Tree,
     DialogHandler,
@@ -290,7 +293,9 @@ export default {
         table: false
       },
       searchNodeName: '',
-      nodeIds: []
+      nodeIds: [],
+      showAvatars: true,
+      showPartners: true
     }
   },
   async mounted () {
@@ -371,6 +376,12 @@ export default {
     async reload () {
       this.whakapapaView = await this.getWhakapapaView(this.$route.params.whakapapaId)
     },
+    toggleShowAvatars () {
+      this.showAvatars = !this.showAvatars
+    },
+    toggleShowPartners () {
+      this.showPartners = !this.showPartners
+    },
     tableOverflow (width) {
       var show = width > screen.width
       this.overflow = show
@@ -382,7 +393,7 @@ export default {
       this.searchFilter = !this.searchFilter
     },
     isVisibleProfile (descendant) {
-      if (this.whakapapaView.ignoredProfiles) { return this.whakapapaView.ignoredProfiles.indexOf(descendant.id) === -1 }
+      return this.whakapapaView.ignoredProfiles.indexOf(descendant.id) === -1
     },
     openPartnerSideNode (dialog, type, profile) {
       this.setSelectedProfile(profile)
@@ -477,9 +488,11 @@ export default {
       var person = await this.getRelatives(profileId)
 
       // filter out ignored profiles
-      person.children = person.children.filter(this.isVisibleProfile)
-      person.parents = person.parents.filter(this.isVisibleProfile)
-      person.partners = person.partners.filter(this.isVisibleProfile)
+      if (this.whakapapaView.ignoredProfiles) {
+        person.children = person.children.filter(this.isVisibleProfile)
+        person.parents = person.parents.filter(this.isVisibleProfile)
+        person.partners = person.partners.filter(this.isVisibleProfile)
+      }
 
       // map all links
       person.children = await this.mapChildren(person)
@@ -489,6 +502,7 @@ export default {
       if (this.selectedProfile && this.selectedProfile.id === person.id) this.updateSelectedProfile(person)
       return person
     },
+
     getOtherPartners (person) {
       // get all the other parents
       let formatted = flatten(person.children.map(d => d.parents))
