@@ -41,5 +41,6 @@ module.exports = {
   instructionsWhakapapa: require('./instructions-whakapapa.json'),
   instructionsStory: require('./instructions-story.json'),
   groups: require('./groups.json'),
-  support: require('./support.json')
+  support: require('./support.json'),
+  button: require('./button.json')
 }

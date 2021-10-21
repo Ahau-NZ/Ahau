@@ -20,10 +20,10 @@
         v-if="partner.link"
         :node="partner"
         :radius="partnerRadius"
-        partner
+        isPartner
         @focus="focus"
         :showAvatars="showAvatars"
-        :showParents="showParents"
+        :showPartners="showPartners"
       />
     </g>
 
@@ -37,12 +37,12 @@
         :centerNode="centerNode"
         :nodeCentered="nodeCentered"
         :showAvatars="showAvatars"
-        :showParents="showParents"
+        :showPartners="showPartners"
       />
     </g>
 
     <!-- this subtree root node -->
-    <Node :node="root" @open-menu="openContextMenu($event)" @center="center" :showAvatars="showAvatars" :showParents="showParents"/>
+    <Node :node="root" @open-menu="openContextMenu($event)" @center="center" :showAvatars="showAvatars" :showPartners="showPartners"/>
   </g>
 </template>
 
@@ -66,7 +66,7 @@ export default {
     changeFocus: Function,
     centerNode: Function,
     nodeCentered: String,
-    showParents: Boolean,
+    showPartners: Boolean,
     showAvatars: Boolean
   },
 
@@ -102,10 +102,10 @@ export default {
     },
     children () {
       if (this.profile.isCollapsed) return []
-      return this.root.children
+      return this.root.children || []
     },
     partners () {
-      if (!this.root || !this.profile.partners || this.profile.isCollapsed || !this.showParents) return []
+      if (!this.root || !this.profile.partners || this.profile.isCollapsed || !this.showPartners) return []
 
       var len = this.profile.partners.length
       if (len === 1) len = 2
@@ -114,17 +114,20 @@ export default {
         ? len / 2
         : Math.round(len / 2) - 1
 
-      return this.mapNodes(this.profile.partners, midway)
+      return this.mapPartnerNodes(this.profile.partners, midway)
     },
     // Needed to draw links between parents and children outside of a partnership
     ghostPartner () {
-      let partners = this.partners.filter(partner => !partner.data.isNonPartner).map(partner => { return partner.data.id })
+      let partners = this.partners
+        .filter(partner => !partner.data.isNonPartner)
+        .map(partner => partner.data.id)
+
       const [children, otherChildren] = pileSort(
         this.children,
         [
           (child) => (child.data.parents && child.data.parents.length === 1) || partners.length === 0, // all children that this node is the only parent of
           (child) => {
-            let parentIds = child.data.parents.map(parent => parent.id)
+            let parentIds = child.data.parents.map(parent => { return parent.id })
             return (
               parentIds.length > 1 && // the child has two or more parents
               //  none of their other parents are a partner of the root node
@@ -163,26 +166,26 @@ export default {
 
       this.openMenu({ event, profile })
     },
-    mapNodes (nodes, midway) {
+    mapPartnerNodes (nodes, midway) {
       var leftPartners = 0
       var rightPartners = 0
 
-      return nodes.map((parent, i) => {
-        let sign
-        // If the parent has children find where they are positioned and place the parent on the correct side
-        if (parent.children.length) {
+      return nodes.map((partner, i) => {
+        // set partners to alternate sides
+        let sign = i >= midway ? 1 : -1
+
+        // If the partner has children find where they are positioned and place the partner on the correct side
+        if (partner.children.length) {
           const childrenX = []
-          parent.children.forEach(child => {
+          partner.children.forEach(child => {
             let node = this.root.children.find(rootChild => child.id === rootChild.data.id)
             if (node) childrenX.push(node.x)
           })
           var average = childrenX.reduce((a, b) => a + b, 0) / childrenX.length
           if (average) sign = average > this.root.x ? 1 : -1
-          else sign = i >= midway ? 1 : -1
-        } else {
-          // otherwise else just alternate side
-          sign = i >= midway ? 1 : -1
         }
+
+        // keep a count of the partners on each side
         if (sign === 1) rightPartners++
         else leftPartners++
 
@@ -215,16 +218,16 @@ export default {
 
         const xOffset = xMultiplier * X_PADDING
 
-        const link = parent.isNonPartner ? {} : {
+        const link = partner.isNonPartner ? {} : {
           style,
-          // for drawing the link from the root parent to this partner/parent
+          // for drawing the link from the root partner to this partner/partner
           d: `
             M ${this.root.x + this.radius}, ${yOffset}
             H ${x + this.partnerRadius}`
         }
 
-        if (!this.showParents) {
-          parent.children = parent.children
+        if (!this.showPartners) {
+          partner.children = partner.children
             .filter(partnerChild => {
               return (
                 this.children &&
@@ -239,7 +242,7 @@ export default {
         return {
           x,
           y,
-          children: parent.children
+          children: partner.children
             .filter(partnerChild => {
               return (
                 this.children &&
@@ -249,8 +252,8 @@ export default {
                 })
               )
             }) // filter out children who arent this nodes
-            .map(child => this.mapChild({ x, y, sign, center: !parent.isNonPartner, yOffset, xOffset }, child, style, parent, false)),
-          data: parent,
+            .map(child => this.mapChild({ x, y, sign, center: !partner.isNonPartner, yOffset, xOffset }, child, style, partner, false)),
+          data: partner,
           link
         }
       })

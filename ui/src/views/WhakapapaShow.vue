@@ -60,11 +60,11 @@
           <ExportButton @export="toggleDownload()" />
         </div>
         <div class="icon-button">
-          <HelpButton v-if="whakapapa.tree" @click="updateDialog('whakapapa-helper', null)" />
-          <HelpButton v-else @click="updateDialog('whakapapa-table-helper', null)" />
+          <InfoButton v-if="whakapapa.tree" @click="updateDialog('whakapapa-helper', null)" />
+          <InfoButton v-else @click="updateDialog('whakapapa-table-helper', null)" />
         </div>
         <div class="icon-button">
-          <FeedbackButton />
+          <HelpButton />
         </div>
       </v-row>
       <!-- speed dial menu for mobile -->
@@ -113,11 +113,11 @@
             <TableButton :table="whakapapa.table" @table="toggleTable()" />
           </div>
           <div class="icon-button">
-            <HelpButton v-if="whakapapa.tree" @click="updateDialog('whakapapa-helper', null)" />
-            <HelpButton v-else @click="updateDialog('whakapapa-table-helper', null)" />
+            <InfoButton v-if="whakapapa.tree" @click="updateDialog('whakapapa-helper', null)" />
+            <InfoButton v-else @click="updateDialog('whakapapa-table-helper', null)" />
           </div>
           <div class="icon-button">
-            <FeedbackButton />
+            <HelpButton />
           </div>
         </v-speed-dial>
       </v-card>
@@ -129,7 +129,7 @@
         :searchNodeId="searchNodeId"
         :getRelatives="getRelatives"
         :showAvatars="showAvatars"
-        :showParents="showParents"
+        :showPartners="showPartners"
         @load-descendants="loadDescendants($event)"
         @change-focus="changeFocus($event)"
         @loading='load($event)'
@@ -156,13 +156,12 @@
     <FilterMenu
       :show="searchFilter"
       :flatten="flatten"
-      :tree="whakapapa.tree"
-      :table="whakapapa.table"
+      :isTable="whakapapa.table"
       @close="clickedOffSearchFilter()"
       @descendants="toggleFilter()"
       @whakapapa="toggleFlatten()"
-      @showAvatars="toggleShowAvatars()"
-      @showParents="toggleShowParents()"
+      @toggleAvatars="toggleShowAvatars()"
+      @togglePartners="toggleShowPartners()"
     />
 
     <DialogHandler
@@ -196,9 +195,9 @@ import WhakapapaBanner from '@/components/whakapapa/WhakapapaBanner.vue'
 
 import Tree from '@/components/tree/Tree.vue'
 import Table from '@/components/table/Table.vue'
-import FeedbackButton from '@/components/button/FeedbackButton.vue'
-import TableButton from '@/components/button/TableButton.vue'
 import HelpButton from '@/components/button/HelpButton.vue'
+import TableButton from '@/components/button/TableButton.vue'
+import InfoButton from '@/components/button/InfoButton.vue'
 import ExportButton from '@/components/button/ExportButton.vue'
 
 import SearchBar from '@/components/button/SearchBar.vue'
@@ -241,12 +240,12 @@ export default {
   components: {
     WhakapapaShowViewCard,
     TableButton,
-    HelpButton,
+    InfoButton,
     SearchBar,
     SearchBarNode,
     SearchButton,
     SearchFilterButton,
-    FeedbackButton,
+    HelpButton,
     Table,
     Tree,
     DialogHandler,
@@ -296,7 +295,7 @@ export default {
       searchNodeName: '',
       nodeIds: [],
       showAvatars: true,
-      showParents: true
+      showPartners: true
     }
   },
   async mounted () {
@@ -380,8 +379,8 @@ export default {
     toggleShowAvatars () {
       this.showAvatars = !this.showAvatars
     },
-    toggleShowParents () {
-      this.showParents = !this.showParents
+    toggleShowPartners () {
+      this.showPartners = !this.showPartners
     },
     tableOverflow (width) {
       var show = width > screen.width

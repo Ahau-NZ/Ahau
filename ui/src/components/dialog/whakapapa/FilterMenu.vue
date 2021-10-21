@@ -13,7 +13,7 @@
       :bottom="mobile"
     >
       <v-card light height="90%" class="text-center" flat>
-        <v-container v-if="table" class="black--text">
+        <v-container v-if="isTable" class="black--text">
           <v-row class="justify-end">
             <v-btn icon class="mr-3">
               <v-icon @click="close" color="secondary">mdi-close</v-icon>
@@ -72,7 +72,7 @@
               <v-list-item-title align="start" v-text="t('avatars')" />
             </v-list-item-content>
             <v-list-item-action>
-              <v-switch v-model="avatars"/>
+              <v-switch v-model="showAvatars"/>
             </v-list-item-action>
           </v-list-item>
 
@@ -82,7 +82,7 @@
               <v-list-item-title align="start" v-text=" t('parents')"/>
             </v-list-item-content>
             <v-list-item-action>
-              <v-switch v-model="parents" />
+              <v-switch v-model="showPartners" />
             </v-list-item-action>
           </v-list-item>
 
@@ -117,16 +117,15 @@ export default {
   props: {
     show: { type: Boolean, default: false },
     flatten: Boolean,
-    tree: Boolean,
-    table: Boolean
+    isTable: { type: Boolean, default: false }
   },
   data () {
     return {
       resetData: false,
       descendants: false,
       whakapapa: !this.flatten,
-      avatars: true,
-      parents: true
+      showAvatars: true,
+      showPartners: true
     }
   },
   watch: {
@@ -139,11 +138,11 @@ export default {
     whakapapa () {
       this.$emit('whakapapa')
     },
-    avatars () {
-      this.$emit('showAvatars')
+    showAvatars () {
+      this.$emit('toggleAvatars')
     },
-    parents () {
-      this.$emit('showParents')
+    showPartners () {
+      this.$emit('togglePartners')
     }
   },
   computed: {
@@ -170,8 +169,8 @@ export default {
       this.close()
     },
     resetTree () {
-      this.avatars = true
-      this.parents = true
+      this.showAvatars = true
+      this.showPartners = true
       this.close()
     },
     t (key, vars) {

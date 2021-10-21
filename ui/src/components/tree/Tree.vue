@@ -12,7 +12,7 @@
           :centerNode="centerNode"
           :nodeCentered="nodeCentered"
           :showAvatars="showAvatars"
-          :showParents="showParents"
+          :showPartners="showPartners"
         />
       </g>
     </g>
@@ -65,7 +65,7 @@ export default {
     },
     getRelatives: Function,
     showAvatars: Boolean,
-    showParents: Boolean
+    showPartners: Boolean
   },
   components: {
     SubTree
@@ -223,7 +223,6 @@ export default {
         const rightNodesParentPartners = settings.separation.rightPartnersCount(rightNode.parent)
         combinedPartners += 0.5 * (leftNodesParentPartners + rightNodesParentPartners)
       }
-      // debugger
 
       return 1 + (0.8 * combinedPartners)
     },

@@ -34,7 +34,6 @@
 - Changed unknown/other gender avatar to plain account icon
 - Can add duplicate profiles to whakapapa
 - Fixed other parent whakapapa links
-- Updated parent links and nodes for better alignment and less crossover
 
 ## v2.2.0
 

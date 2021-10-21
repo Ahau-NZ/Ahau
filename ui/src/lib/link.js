@@ -41,8 +41,7 @@ function visiblePartners (node) {
 }
 
 function leftPartnersCount (node) {
-  const len = visiblePartners(node)
-  return len
+  return visiblePartners(node)
 }
 
 function rightPartnersCount (node) {

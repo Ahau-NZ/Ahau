@@ -45,7 +45,7 @@
       <text>{{ displayName }}</text>
     </g>
     <g
-      v-if="partner && hasAncestors"
+      v-if="isPartner && hasAncestors"
       :transform="`translate(${1 * radius}, ${radius * -0.5})`"
     >
       <text
@@ -74,7 +74,7 @@ export default {
       type: Number,
       default: 50
     },
-    partner: Boolean,
+    isPartner: Boolean,
     showAvatars: Boolean
   },
   components: {
@@ -91,7 +91,7 @@ export default {
   },
   computed: {
     showMenuButton () {
-      if (this.partner) return false
+      if (this.isPartner) return false
       if (!this.profile.isCollapsed) {
         if (this.hover) return true
         if (this.nodeCentered === this.node.data.id) return true
@@ -102,7 +102,7 @@ export default {
       return this.profile.parents && this.profile.parents.length > 0
     },
     clipPathId () {
-      return this.partner ? 'partnerCirlce' : 'myCircle'
+      return this.isPartner ? 'partnerCirlce' : 'myCircle'
     },
     profile () {
       return this.node.data
@@ -122,7 +122,6 @@ export default {
       }
     },
     textWidth () {
-      // const { x, y } = textElm.getBBox();
       const width = (this.displayName || '').length * 8
       return width
     },
@@ -134,8 +133,7 @@ export default {
     },
     nameTextStyle () {
       return {
-        transform: `translate(${this.radius - this.textWidth}px, ${this
-          .diameter / 2}px)`
+        transform: `translate(${this.radius - this.textWidth}px, ${this.radius + 10}px)`
       }
     },
     collapsedStyle () {
@@ -153,12 +151,12 @@ export default {
   },
   methods: {
     openMenu (event, profile) {
-      profile.isPartner = this.partner
+      profile.isPartner = this.isPartner
       this.$emit('open-menu', { event, profile })
     },
     click () {
       // only change focus when the partner nodes are clicked
-      if (this.partner) this.focus()
+      if (this.isPartner) this.focus()
       else this.center()
     },
     focus () {
