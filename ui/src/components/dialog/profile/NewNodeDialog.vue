@@ -35,6 +35,7 @@
               :readonly="hasSelection"
               :outlined="!hasSelection"
               @blur.native="clearSuggestions"
+              autofocus
             >
 
               <!-- Slot:item = Data -->
@@ -424,7 +425,6 @@ export default {
     },
     setFormData (person) {
       this.hasSelection = true
-
       this.profile = person
     },
     resetFormData () {

@@ -45,7 +45,7 @@ function leftPartnersCount (node) {
 }
 
 function rightPartnersCount (node) {
-  if (node.data.partners.length === 1) return 0
+  if (node.data.partners && node.data.partners.length === 1) return 0
   return sideCount(node, 1)
 }
 
@@ -86,12 +86,12 @@ export default {
   partner: {
     spacing: {
       x: 0, // TODO (later): set tree separation to use this value
-      y: 3 // set to same as thickness
+      y: 5 // set to same as thickness
     }
   },
   opacity: 1,
   thickness: 1.5,
-  branch: 120,
+  branch: 110,
   radius: 50,
   separation: {
     leftPartnersCount,
