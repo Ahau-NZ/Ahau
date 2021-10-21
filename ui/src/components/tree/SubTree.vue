@@ -120,14 +120,13 @@ export default {
     ghostPartner () {
       let partners = this.partners.filter(partner => !partner.data.isNonPartner).map(partner => { return partner.data.id })
       const [children, otherChildren] = pileSort(
-        this.children || [],
+        this.children,
         [
           (child) => (child.data.parents && child.data.parents.length === 1) || partners.length === 0, // all children that this node is the only parent of
           (child) => {
-            let parentIds = child.data.parents.map(parent => { return parent.id })
+            let parentIds = child.data.parents.map(parent => parent.id)
             return (
-              child.data.parents &&
-              child.data.parents.length > 1 && // the child has two or more parents
+              parentIds.length > 1 && // the child has two or more parents
               //  none of their other parents are a partner of the root node
               !partners.some(id => parentIds.includes(id))
             )
