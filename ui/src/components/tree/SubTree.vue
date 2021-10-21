@@ -175,11 +175,11 @@ export default {
           const childrenX = []
           parent.children.forEach(child => {
             let node = this.root.children.find(rootChild => child.id === rootChild.data.id)
-            childrenX.push(node.x)
+            if (node) childrenX.push(node.x)
           })
           var average = childrenX.reduce((a, b) => a + b, 0) / childrenX.length
           if (average) sign = average > this.root.x ? 1 : -1
-          else sign = -1
+          else sign = i >= midway ? 1 : -1
         } else {
           // otherwise else just alternate side
           sign = i >= midway ? 1 : -1
@@ -196,7 +196,7 @@ export default {
           : -leftPartners
 
         // how far sideways the partner sits from the root node at 0
-        const x = this.root.x + offset + xMultiplier * (this.diameter)
+        const x = this.root.x + offset + xMultiplier * (this.diameter - 10)
 
         // how far down the partner sits from the root node at 0
         const y = this.root.y + this.radius - this.partnerRadius
@@ -271,7 +271,7 @@ export default {
 
       // center the link between the parents
       if (center) {
-        x = x - this.radius + this.partnerRadius - sign * (this.partnerRadius + 20)// end constant is dependant on radius, partnerRadius, X_PADDING
+        x = x - this.radius + this.partnerRadius - sign * (this.partnerRadius + 10)// end constant is dependant on radius, partnerRadius, X_PADDING
         y = yOffset - this.radius
       }
 

@@ -190,9 +190,9 @@
                 <hr v-if="profile.parents" class="family-divider"/>
 
                 <!-- Displays a row of partners -->
-                <v-col v-if="profile.partners" :cols="12" class="pa-0">
+                <v-col v-if="partners" :cols="12" class="pa-0">
                   <AvatarGroup
-                    :profiles="profile.partners"
+                    :profiles="partners"
                     :group-title="t('partners')"
                     size="50px"
                     :show-labels="true"
@@ -204,7 +204,7 @@
                   </AvatarGroup>
                 </v-col>
 
-                <hr v-if="profile.partners" class="family-divider"/>
+                <hr v-if="partners" class="family-divider"/>
 
                 <!-- Displays a row of siblings -->
                 <v-col :cols="12" v-if="profile.parents && profile.parents.length && profile.siblings" class="pa-0">

@@ -223,6 +223,7 @@ export default {
         const rightNodesParentPartners = settings.separation.rightPartnersCount(rightNode.parent)
         combinedPartners += 0.5 * (leftNodesParentPartners + rightNodesParentPartners)
       }
+      // debugger
 
       return 1 + (0.8 * combinedPartners)
     },

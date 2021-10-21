@@ -1,5 +1,16 @@
 # Changelog | Ahau desktop
 
+## v2.6.0
+
+### Features
+- Added options to whakapapa view to hide avatars and show extended family
+
+### Fixes
+- Can add duplicate profiles to whakapapa
+- Fixed other parent whakapapa links
+- Updated parent links and nodes for better alignment and less crossover
+
+
 ## v2.3.0
 
 ### Bug Fixes
