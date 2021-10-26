@@ -209,7 +209,7 @@ import SearchFilterButton from '@/components/button/SearchFilterButton.vue'
 
 import tree from '@/lib/tree-helpers'
 import avatarHelper from '@/lib/avatar-helpers.js'
-import { getRelatives } from '@/lib/person-helpers.js'
+import { getRelatives, getExtendedRelatives } from '@/lib/person-helpers.js'
 import { saveWhakapapaView } from '@/lib/whakapapa-helpers.js'
 import { getTribalProfile } from '@/lib/community-helpers'
 
@@ -488,6 +488,13 @@ export default {
       return result
     },
 
+    async getExtendedRelatives (id) {
+      const result = await getExtendedRelatives(id, this.$apollo)
+      if (!result) return
+
+      return result
+    },
+
     async loadDescendants (profileId) {
       // get the persons profile + links
 
@@ -538,6 +545,10 @@ export default {
             return a.birthOrder - b.birthOrder
           })
         }
+
+        console.log('Person: ', person)
+        const extendedPerson = await getExtendedRelatives(profileId, this.$apollo)
+        console.log('Extended: ', extendedPerson)
       }
 
       // if this person is the selected one, then we make sure we keep that profile up to date
