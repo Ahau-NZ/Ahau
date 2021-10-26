@@ -40,16 +40,6 @@ function visiblePartners (node) {
     : get(node, 'data.partners.length', 0)
 }
 
-function leftPartnersCount (node) {
-  return visiblePartners(node)
-}
-
-function rightPartnersCount (node) {
-  const len = visiblePartners(node)
-  if (node.data.partners && len === 1) return 0
-  return len
-}
-
 // TODO (later): move these settings into vuex where the tree style can be manipulated there
 export default {
   path,
@@ -72,7 +62,6 @@ export default {
   branch: 110,
   radius: 50,
   separation: {
-    leftPartnersCount,
-    rightPartnersCount
+    visiblePartners
   }
 }

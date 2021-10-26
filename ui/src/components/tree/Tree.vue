@@ -155,9 +155,6 @@ export default {
           this.nodeSeparationY
         ])
         .separation((a, b) => {
-          // const newA = { data: { ...a.data, partners: this.getNodePartners(a) } }
-          // const newB = { data: { ...b.data, partners: this.getNodePartners(b) } }
-
           const separation = (a.parent === b.parent)
             ? this.distanceBetweenNodes(b, a) // siblings (left=B, right=A)
             : this.distanceBetweenNodes(a, b, true) // cousins (left=A, right=B)
@@ -165,13 +162,13 @@ export default {
           return separation
         })
     },
+
     //  returns a nested data structure representing a tree based on the treeData object
     root () {
       return d3.hierarchy(this.nestedWhakapapa)
     },
-    /*
-      returns an array of nodes associated with the root node created from the treeData object
-    */
+
+    // returns an array of nodes associated with the root node created from the treeData object
     nodes () {
       return this.treeLayout(this.root)
         .descendants()
@@ -212,19 +209,19 @@ export default {
   methods: {
     ...mapActions(['setLoading']),
     distanceBetweenNodes (leftNode, rightNode, cousins) {
-      const leftNodesRightPartners = settings.separation.rightPartnersCount(leftNode)
-      const rightNodesLeftPartners = settings.separation.leftPartnersCount(rightNode)
+      const leftNodesRightPartners = settings.separation.visiblePartners(leftNode)
+      const rightNodesLeftPartners = settings.separation.visiblePartners(rightNode)
 
       var combinedPartners = leftNodesRightPartners + rightNodesLeftPartners
 
       if (cousins) {
         // depends on the parents partners
-        const leftNodesParentPartners = settings.separation.rightPartnersCount(leftNode.parent)
-        const rightNodesParentPartners = settings.separation.rightPartnersCount(rightNode.parent)
+        const leftNodesParentPartners = settings.separation.visiblePartners(leftNode.parent)
+        const rightNodesParentPartners = settings.separation.visiblePartners(rightNode.parent)
         combinedPartners += 0.5 * (leftNodesParentPartners + rightNodesParentPartners)
       }
 
-      return 1 + (0.8 * combinedPartners)
+      return 1 + (0.5 * combinedPartners)
     },
     pathStroke (sourceId, targetId) {
       if (!this.paths) return 'darkgrey'

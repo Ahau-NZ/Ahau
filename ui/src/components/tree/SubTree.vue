@@ -47,6 +47,7 @@
 </template>
 
 <script>
+import isEmpty from 'lodash.isempty'
 import Node from './Node.vue'
 import Link from './Link.vue'
 
@@ -105,7 +106,8 @@ export default {
       return this.root.children || []
     },
     partners () {
-      if (!this.root || !this.profile.partners || this.profile.isCollapsed || !this.showPartners) return []
+      // check that component has loaded with data, the profile has partners and the profile is not collapsed
+      if (isEmpty(this.root.data) || isEmpty(this.profile.partners) || this.profile.isCollapsed) return []
 
       var len = this.profile.partners.length
       if (len === 1) len = 2
@@ -125,9 +127,9 @@ export default {
       const [children, otherChildren] = pileSort(
         this.children,
         [
-          (child) => (child.data.parents && child.data.parents.length === 1) || partners.length === 0, // all children that this node is the only parent of
+          (child) => (child.data.parents && child.data.parents.length === 1) || this.partners.length === 0, // all children that this node is the only parent of
           (child) => {
-            let parentIds = child.data.parents.map(parent => { return parent.id })
+            let parentIds = child.data.parents.map(parent => parent.id)
             return (
               parentIds.length > 1 && // the child has two or more parents
               //  none of their other parents are a partner of the root node
@@ -146,7 +148,7 @@ export default {
       }
 
       var totalPartners = this.partners.length
-      const allChildren = [...children, ...otherChildren]
+      const allChildren = [...children, ...otherChildren].filter(child => !child.data.isNonChild)
 
       const yOffset = this.root.y + (totalPartners * settings.partner.spacing.y)
 
@@ -243,15 +245,6 @@ export default {
           x,
           y,
           children: partner.children
-            .filter(partnerChild => {
-              return (
-                this.children &&
-                this.children.some(rootChild => {
-                  if (!rootChild || !partnerChild) return false
-                  return (rootChild.data.id === partnerChild.id)
-                })
-              )
-            }) // filter out children who arent this nodes
             .map(child => this.mapChild({ x, y, sign, center: !partner.isNonPartner, yOffset, xOffset }, child, style, partner, false)),
           data: partner,
           link
@@ -267,6 +260,8 @@ export default {
     mapChild ({ x = this.root.x, y = this.root.y, center, sign, yOffset, xOffset }, child, style, parent, ghostParent) {
       // map to their node from the root parent
       const node = this.root.children.find(rootChild => child.id === rootChild.data.id)
+
+      if (node.data.isNonChild) center = false
 
       // change the link if they are not related by birth
       const dashed = parent && parent.relationshipType ? ['adopted', 'whangai'].includes(parent.relationshipType) : ['adopted', 'whangai'].includes(node.data.relationshipType)
