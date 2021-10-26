@@ -365,7 +365,7 @@ export default {
           var education = d.education.length > 0 ? d.education.join(', ') : null
 
           const details = {
-            parentNumber: d.parents.length > 0 ? d.parents[0].id : '',
+            parentNumber: node.parent ? node.parent.data.id : '',
             number: d.id,
             preferredName: d.preferredName,
             legalName: d.legalName,
@@ -387,13 +387,15 @@ export default {
             school: school
           }
 
-          if (d.adminProfile) {
-            details.phone = d.adminProfile.phone
-            details.email = d.adminProfile.email
-            details.address = d.adminProfile.address
-          }
+          details.phone = d.adminProfile ? d.adminProfile.phone : ''
+          details.email = d.adminProfile ? d.adminProfile.email : ''
+          details.address = d.adminProfile ? d.adminProfile.address : ''
+
+          return details
         })
+
         var csv = d3.csvFormat(nodes)
+
         this.$emit('update:download', false)
 
         var hiddenElement = document.createElement('a')
