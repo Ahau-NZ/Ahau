@@ -181,7 +181,7 @@ export default {
 
       csv.importCsv(newFile)
         .then(csv => {
-          this.successMsg = ['Expected result = Top ancestor: ' + csv[0].preferredName + '. First child: ' + csv[1].preferredName]
+          this.successMsg = ['Expected result = Top ancestor: ' + csv[0].profile.preferredName + '. First child: ' + csv[1].profile.preferredName]
           this.$emit('update:data', csv)
         })
         .catch(errs => {

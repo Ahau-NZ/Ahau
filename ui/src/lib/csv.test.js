@@ -1,3 +1,4 @@
+/* eslint-disable */
 import * as csv from './csv'
 const test = require('tape')
 const fs = require('fs').promises
@@ -7,11 +8,11 @@ const d3 = require('d3')
 // NOTE: column names need to be on same line as opening of string literal
 
 // for columns
-const ALL_COLUMNS = 'parentNumber,number,preferredName,legalName,gender,relationshipType,birthOrder,bornAt,placeOfBirth,deceased,diedAt,placeOfDeath,buriedLocation,phone,email,address,city,postCode,country,profession'
+const ALL_COLUMNS = csv.PERMITTED_CSV_COLUMNS.join(',')
 const MISSING_COLUMNS = 'parentNumber,number,legalName,gender,relationshipType,bornAt,placeOfBirth,placeOfDeath,buriedLocation,deceased,diedAt,phone,address,city'
 const EXTRA_COLUMNS = `${ALL_COLUMNS},extra1,extra2
 `
-const MISPELLED_COLUMNS = 'parentNumbe,number,preferredName,legalName,gender,relationshipType,birthOrder,bornAt,placeOfBirth,deceased,diedAt,placeOfDeath,buriedLocation,phone,email,address,city,postCode,country,profession'
+const MISPELLED_COLUMNS = 'parentNumbe,number,preferredName,legalName,gender,relationshipType,birthOrder,bornAt,placeOfBirth,deceased,diedAt,placeOfDeath,buriedLocation,phone,email,address,city,postCode,country,profession,altNames,school,education'
 
 // for numbers
 const DUPLICATE_NUMBERS = `${ALL_COLUMNS}
@@ -52,7 +53,7 @@ const INCORRECT_PERSONS = `${ALL_COLUMNS}
 2,3,Daynah,Daynah Eriepa,fema,birth,3,24/02/0304,,no,,,,021167823459,daynah@me.com,123 Happy Lane,HappyVille,1234,New Zealand,Community Advisor
 `
 
-test.skip('header columns', t => {
+test('header columns', t => {
   t.plan(4)
   csv.parse(ALL_COLUMNS)
     .then(res => {
@@ -62,7 +63,7 @@ test.skip('header columns', t => {
   csv.parse(MISSING_COLUMNS)
     .catch(err => {
       t.deepEqual(err, [
-        { row: 'header', field: 'columns', error: 'missing column(s)', value: ['preferredName', 'birthOrder', 'email', 'postCode', 'country', 'profession'] }
+        { row: 'header', field: 'columns', error: 'missing column(s)', value: ['preferredName', 'birthOrder', 'email', 'postCode', 'country', 'profession', 'altNames', 'school', 'education'] }
       ], 'returns errors for missing columns')
     })
 
@@ -82,7 +83,7 @@ test.skip('header columns', t => {
     })
 })
 
-test.skip('number', t => {
+test('number', t => {
   t.plan(2)
   csv.parse(DUPLICATE_NUMBERS)
     .catch(err => {
@@ -100,7 +101,7 @@ test.skip('number', t => {
     })
 })
 
-test.skip('parentNumber', t => {
+test('parentNumber', t => {
   t.plan(2)
   csv.parse(INVALID_FIRST_PARENT_NUMBER)
     .then(res => {
@@ -124,7 +125,7 @@ test.skip('parentNumber', t => {
     })
 })
 
-test.skip('csv.parse', t => {
+test('csv.parse', t => {
   t.plan(2)
 
   csv.parse(CORRECT_PERSONS)
@@ -148,7 +149,10 @@ test.skip('csv.parse', t => {
         city: 'HappyVille',
         postCode: '1234',
         country: 'New Zealand',
-        profession: 'Software Engineer'
+        profession: 'Software Engineer',
+        school: null,
+        education: null,
+        altNames: null
       }, 'returns correct profile')
     })
     .catch(err => console.log(err))
@@ -163,7 +167,7 @@ test.skip('csv.parse', t => {
     })
 })
 
-test.skip('csv.schema', t => {
+test('csv.schema', t => {
   // cherese's schema tests:
 
   function isValid (prop) {
@@ -177,11 +181,11 @@ test.skip('csv.schema', t => {
 
   // allowed
   t.true(isValid('number')(12), 'number can be number')
+  t.true(isValid('number')('dog'), 'number can be string')
   // not allowed
   t.false(isValid('number')(null), 'number cannot be null')
   t.false(isValid('number')(undefined), 'number cannot be undefined')
   t.false(isValid('number')(''), 'number cannot be ""')
-  t.false(isValid('number')('dog'), 'number cannot be string')
 
   // PARENT NUMBER
 
@@ -189,8 +193,7 @@ test.skip('csv.schema', t => {
   t.true(isValid('parentNumber')(11), 'parentNumber can be a number')
   t.true(isValid('parentNumber')(''), 'parentNumber can be a empty string')
   t.true(isValid('parentNumber')(null), 'parentNumber can be a null')
-  // not allowed
-  t.false(isValid('parentNumber')('meow'), 'parentNumber cannot be a string')
+  t.true(isValid('parentNumber')('meow'), 'parentNumber can be a string')
 
   // GENDER
 
@@ -285,8 +288,15 @@ test.skip('csv.schema', t => {
   t.end()
 })
 
-test.skip('real data', (t) => {
-  t.plan(304)
+test('real data', (t) => {
+  // t.plan(304)
+
+  // TODO cherese 21/10/21: this test is failing, possibly because it has outdated test files. I have returned early so the failing test
+  // does mess with other tests and we also want to be reminded that this test fails when we run the tests!
+
+  t.fail('TODO: fix this test and the test files it uses')
+  t.end()
+  return
   const filepath = path.join(__dirname, 'fixtures', 'MOCK_DATA_150.csv')
   fs.readFile(filepath, 'utf8').then((file) => {
     t.ok(file, 'file read returns result')
@@ -339,7 +349,7 @@ test.skip('real data', (t) => {
   })
 })
 
-test.skip('csv.convertDate', (t) => {
+test('csv.convertDate', (t) => {
   t.plan(8)
   function convert (date, expectedRes) {
     var res = csv.convertDate(date)
