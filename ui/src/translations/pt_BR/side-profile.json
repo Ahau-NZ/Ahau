@@ -25,5 +25,6 @@
   "email": "E-mail",
   "phone": "Phone",
   "address": "Endereço",
-  "postcode": "CEP"
+  "postcode": "CEP",
+  "contactInfoText": "(Kaitiaki only)"
 }
