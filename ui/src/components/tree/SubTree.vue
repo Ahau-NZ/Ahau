@@ -44,6 +44,7 @@
         :nodeCentered="nodeCentered"
         :showAvatars="showAvatars"
         :showPartners="showPartners"
+        :importantRelationships="importantRelationships"
       />
     </g>
 
@@ -75,7 +76,7 @@ export default {
     nodeCentered: String,
     showPartners: Boolean,
     showAvatars: Boolean,
-    importantRelationships: Object
+    importantRelationships: Array
   },
 
   mixins: [
@@ -112,15 +113,13 @@ export default {
     children () {
       if (this.profile.isCollapsed) return []
       if (this.root.children) {
-        if (!isEmpty(this.importantRelationships)) {
-          console.log('important relationships: ', this.importantRelationships)
-          return this.root.children.filter(child => {
-            if (this.importantRelationships[child.id]) console.log('child found: ', child.id)
-            return true
-            // return this.importantRelationships[child.id] (dup => dup.id !== child.data.id && dup.nodeId !== this.profile.id)
-            // return this.important.some(dup => dup.id !== child.data.id && dup.nodeId !== this.profile.id)
-          })
-        }
+        // if (this.importantRelationships.length) {
+        //   console.log('important relationships: ', this.importantRelationships)
+        //   return this.root.children.filter(child => {
+        //     return !this.importantRelationships.some(dup => dup.profileId === child.data.id && dup.important[0] === this.profile.id)
+        //     // return this.importantRelationships[child.id] (dup => dup.id !== child.data.id && dup.nodeId !== this.profile.id)
+        //   })
+        // }
         return this.root.children
       }
       return []

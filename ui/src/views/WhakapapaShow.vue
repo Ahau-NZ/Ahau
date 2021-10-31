@@ -503,6 +503,23 @@ export default {
         person.partners = person.partners.filter(this.isVisibleProfile)
       }
 
+      // filter duplicates
+      person.children = person.children.filter(child => {
+        return !this.whakapapaView.importantRelationships.some(dup => dup.profileId === child.id && dup.important[1] === person.id)
+      })
+
+      // let filtered = person.children.map(child => {
+      //   let duplicate = this.whakapapaView.importantRelationships.find(dup => dup.profileId === child.id)
+      //   if (duplicate) {
+      //     console.log('dup found')
+      //     if (duplicate.important[1] === person.id) return
+      //     else return { ...child, isDuplicate: true }
+      //   }
+      //   return child
+      // })
+
+      console.log('filtered: ', filtered)
+
       // map all links
       person.children = await this.mapChildren(person)
 
