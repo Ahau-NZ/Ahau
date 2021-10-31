@@ -21,6 +21,10 @@ export async function findByName (name) {
             ...ProfileFragment
             ...WhakapapaLinkFragment
           }
+          partners {
+            ...ProfileFragment
+            ...WhakapapaLinkFragment
+          }
         }
       }
     `,

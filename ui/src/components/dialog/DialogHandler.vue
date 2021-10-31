@@ -21,6 +21,7 @@
       :selectedProfile="selectedProfile"
       :suggestions="suggestions"
       :type="dialogType"
+      :findInTree="findInTree"
       withView
       @getSuggestions="getSuggestions($event)"
       @create="addPerson($event)"
@@ -293,6 +294,12 @@ export default {
       }
     },
     async addPerson (input) {
+      // if moveDup is in input than add duplink
+      if (input.hasOwnProperty('moveDup')) {
+        this.addDupLink(input)
+        delete input.moveDup
+      }
+
       // get children, parents, partners quick add links
       var { id, children, parents, partners } = input
 
@@ -597,19 +604,20 @@ export default {
       })
 
       if (this.source !== 'new-registration') {
-        var profiles = {} // flatStore for these suggestions
+      //  DOES THIS DO ANYTHING?
+        // var profiles = {} // flatStore for these suggestions
 
-        records.forEach(record => {
-          record.children = record.children.map(child => {
-            profiles[child.id] = child // add this records children to the flatStore
-            return child.id // only want the childs ID
-          })
-          record.parents = record.parents.map(parent => {
-            profiles[parent.id] = parent // add this records parents to the flatStore
-            return parent.id // only want the parents ID
-          })
-          profiles[record.id] = record // add this record to the flatStore
-        })
+        // records.forEach(record => {
+        //   record.children = record.children.map(child => {
+        //     profiles[child.id] = child // add this records children to the flatStore
+        //     return child.id // only want the childs ID
+        //   })
+        //   record.parents = record.parents.map(parent => {
+        //     profiles[parent.id] = parent // add this records parents to the flatStore
+        //     return parent.id // only want the parents ID
+        //   })
+        //   profiles[record.id] = record // add this record to the flatStore
+        // })
 
         this.predecessorArray = []
         await this.getNodePredecessors(this.selectedProfile.id) // Get the predecessors of the current node
@@ -706,6 +714,34 @@ export default {
     },
     t (key, vars) {
       return this.$t('dialogHandler.' + key, vars)
+    },
+    async addDupLink (input) {
+      var profileId = input.id
+      var connectorId = (input.parents.length && this.findInTree(input.parents[0].id)) ? input.parents[0].id : input.partners[0].id
+      var dupLink = {}
+
+      if (input.moveDup) {
+        dupLink = {
+          profileId: profileId,
+          important: [this.selectedProfile.id, connectorId]
+        }
+      } else {
+        dupLink = {
+          profileId: profileId,
+          important: [connectorId, this.selectedProfile.id]
+        }
+      }
+
+      const update = {
+        id: this.$route.params.whakapapaId,
+        importantRelationships: {
+          ...this.view.importantRelationships,
+          ...dupLink
+        }
+      }
+
+      await this.saveWhakapapa(update)
+      await this.$parent.reload()
     }
   }
 }

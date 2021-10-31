@@ -39,6 +39,10 @@ export const getWhakapapaViews = () => ({
     query {
       whakapapaViews {
         ...WhakapapaFragment,
+        importantRelationships {
+          profileId
+          important
+        }
         kaitiaki {
           ...PublicProfileFields
         }

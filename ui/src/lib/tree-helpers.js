@@ -1,4 +1,5 @@
 import uniqby from 'lodash.uniqby'
+import merge from 'lodash.merge'
 
 export default {
   flatten,
@@ -115,8 +116,8 @@ function updateNode (nestedWhakapapa, node) {
   // if the nestedWhakapapa matches the node we are
   // looking for, then look no further
   if (nestedWhakapapa.id === node.id) {
-    // update its value
-    nestedWhakapapa = node
+    // merge the values to maintain isNonPartner/isNonChild assignments
+    merge(nestedWhakapapa, node)
     return nestedWhakapapa
   }
   // if this nestedWhakapap isnt the one we are looking for,

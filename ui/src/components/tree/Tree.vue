@@ -13,6 +13,7 @@
           :nodeCentered="nodeCentered"
           :showAvatars="showAvatars"
           :showPartners="showPartners"
+          :importantRelationships="view.importantRelationships"
         />
       </g>
     </g>

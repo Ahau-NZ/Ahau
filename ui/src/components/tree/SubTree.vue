@@ -1,5 +1,11 @@
 <template>
   <g>
+    <!-- links between root node and partners -->
+    <g v-for="dup in dupLinks" :key="`dup-link-${dup.id}`">
+      <Link
+        :link="dup"
+      />
+    </g>
 
     <!-- links between root node and partners -->
     <g v-for="partner in allPartners" :key="`partner-link-${partner.data.id}`">
@@ -68,7 +74,8 @@ export default {
     centerNode: Function,
     nodeCentered: String,
     showPartners: Boolean,
-    showAvatars: Boolean
+    showAvatars: Boolean,
+    importantRelationships: Object
   },
 
   mixins: [
@@ -82,7 +89,8 @@ export default {
   },
   data () {
     return {
-      radius: 50
+      radius: 50,
+      dupLinks: []
     }
   },
   computed: {
@@ -103,7 +111,19 @@ export default {
     },
     children () {
       if (this.profile.isCollapsed) return []
-      return this.root.children || []
+      if (this.root.children) {
+        if (!isEmpty(this.importantRelationships)) {
+          console.log('important relationships: ', this.importantRelationships)
+          return this.root.children.filter(child => {
+            if (this.importantRelationships[child.id]) console.log('child found: ', child.id)
+            return true
+            // return this.importantRelationships[child.id] (dup => dup.id !== child.data.id && dup.nodeId !== this.profile.id)
+            // return this.important.some(dup => dup.id !== child.data.id && dup.nodeId !== this.profile.id)
+          })
+        }
+        return this.root.children
+      }
+      return []
     },
     partners () {
       // check that component has loaded with data, the profile has partners and the profile is not collapsed
@@ -227,6 +247,37 @@ export default {
             M ${this.root.x + this.radius}, ${yOffset}
             H ${x + this.partnerRadius}`
         }
+
+        // let dup
+        // if (this.duplicateProfiles.length) {
+        //   dup = this.duplicateProfiles.find(d => d.id === parent.id && d.nodeId === this.root.data.id)
+        // }
+        
+        // if (dup) {
+        //   // find the profile to link to
+        //   const linkNode = this.findInTree(dup.linkId)
+        //   // get the relationshipType for the link
+        //   const rel = linkNode.children.find(child => child.data.id === dup.id).data.relationshipType
+        //   const dashed = ['adopted', 'whangai'].includes(rel)
+        //   // push to the dupLinks array
+        //   this.dupLinks.push({
+        //     id: dup.id + '-' + dup.linkId,
+        //     style: {
+        //       ...style, // inherits the style from the parent so the links are the same color
+        //       strokeDasharray: dashed ? 2.5 : 0 // for drawing a dashed link to represent adopted/whangai
+        //     },
+        //     d: settings.path( // for drawing a link from the parent to child
+        //       {
+        //         startX: linkNode.x + this.radius,
+        //         startY: linkNode.y + this.radius * 2 + 15,
+        //         endX: x + this.partnerRadius,
+        //         endY: y + this.partnerRadius * 2 + 15
+        //       },
+        //       settings.branch - this.radius
+        //     )
+        //   })
+        //   parent.isDuplicate = true
+        // }
 
         if (!this.showPartners) {
           partner.children = partner.children
