@@ -16,6 +16,10 @@ export const PERMITTED_WHAKAPAPA_ATTRS = [
 export const WHAKAPAPA_FRAGMENT = gql`
   fragment WhakapapaFragment on WhakapapaView {
     ${PERMITTED_WHAKAPAPA_ATTRS.slice(1)}
+    importantRelationships {
+      profileId
+      important
+    }
     image { uri }
   }
 `
@@ -38,11 +42,7 @@ export const getWhakapapaViews = () => ({
     ${PublicProfileFieldsFragment}
     query {
       whakapapaViews {
-        ...WhakapapaFragment,
-        importantRelationships {
-          profileId
-          important
-        }
+        ...WhakapapaFragment
         kaitiaki {
           ...PublicProfileFields
         }

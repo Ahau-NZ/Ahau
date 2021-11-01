@@ -503,22 +503,7 @@ export default {
         person.partners = person.partners.filter(this.isVisibleProfile)
       }
 
-      // filter duplicates
-      person.children = person.children.filter(child => {
-        return !this.whakapapaView.importantRelationships.some(dup => dup.profileId === child.id && dup.important[1] === person.id)
-      })
-
-      // let filtered = person.children.map(child => {
-      //   let duplicate = this.whakapapaView.importantRelationships.find(dup => dup.profileId === child.id)
-      //   if (duplicate) {
-      //     console.log('dup found')
-      //     if (duplicate.important[1] === person.id) return
-      //     else return { ...child, isDuplicate: true }
-      //   }
-      //   return child
-      // })
-
-      console.log('filtered: ', filtered)
+      person.children = this.removeImportantRelationships(person)
 
       // map all links
       person.children = await this.mapChildren(person)
@@ -561,6 +546,19 @@ export default {
       // if this person is the selected one, then we make sure we keep that profile up to date
       if (this.selectedProfile && this.selectedProfile.id === person.id) this.updateSelectedProfile(person)
       return person
+    },
+
+    removeImportantRelationships (person) {
+      return person.children.filter(child => {
+        // check if this child is listed as having an important relationship
+        const importantRelationship = this.whakapapaView.importantRelationships.find(dupe => dupe.profileId === child.id)
+
+        if (!importantRelationship) return true // no important relationship then we skip handling them
+
+        // there was an important relationship so we only show the link between them and the first profile listed as important
+        // any other links wont be drawn
+        return importantRelationship.important[0] === person.id
+      })
     },
 
     // get all step children from current partner
@@ -624,27 +622,30 @@ export default {
     },
 
     async mapChildren (person) {
-      return Promise.all(person.children.map(async child => {
-        var childProfile = await this.loadDescendants(child.id)
-        if (!person.id) person.id = childProfile.parents[0].id
+      return Promise.all(
+        person.children
+          .map(async child => {
+            var childProfile = await this.loadDescendants(child.id)
+            if (!person.id) person.id = childProfile.parents[0].id
 
-        // load the relationship between the two
-        const relationship = await this.getWhakapapaLink(person.id, child.id)
+            // load the relationship between the two
+            const relationship = await this.getWhakapapaLink(person.id, child.id)
 
-        if (child.isNonChild) {
-          childProfile = {
-            ...childProfile,
-            isNonChild: true
-          }
-        }
+            if (child.isNonChild) {
+              childProfile = {
+                ...childProfile,
+                isNonChild: true
+              }
+            }
 
-        if (!relationship) return childProfile
+            if (!relationship) return childProfile
 
-        childProfile.relationshipType = relationship.relationshipType
-        childProfile.legallyAdoped = relationship.legallyAdoped
+            childProfile.relationshipType = relationship.relationshipType
+            childProfile.legallyAdoped = relationship.legallyAdoped
 
-        return childProfile
-      }))
+            return childProfile
+          })
+      )
     },
 
     openContextMenu ({ event, profile }) {

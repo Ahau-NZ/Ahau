@@ -296,7 +296,7 @@ export default {
     async addPerson (input) {
       // if moveDup is in input than add duplink
       if (input.hasOwnProperty('moveDup')) {
-        this.addDupLink(input)
+        await this.addDupLink(input)
         delete input.moveDup
       }
 
@@ -718,26 +718,21 @@ export default {
     async addDupLink (input) {
       var profileId = input.id
       var connectorId = (input.parents.length && this.findInTree(input.parents[0].id)) ? input.parents[0].id : input.partners[0].id
-      var dupLink = {}
-
-      if (input.moveDup) {
-        dupLink = {
-          profileId: profileId,
-          important: [this.selectedProfile.id, connectorId]
-        }
-      } else {
-        dupLink = {
-          profileId: profileId,
-          important: [connectorId, this.selectedProfile.id]
-        }
+      var dupLink = {
+        profileId
       }
+
+      dupLink.important = (input.moveDup)
+        ? [this.selectedProfile.id, connectorId]
+        : [connectorId, this.selectedProfile.id]
 
       const update = {
         id: this.$route.params.whakapapaId,
-        importantRelationships: {
-          ...this.view.importantRelationships,
-          ...dupLink
-        }
+        importantRelationships: dupLink
+        // importantRelationships: {
+        // ...this.view.importantRelationships,
+        // ...dupLink
+        // }
       }
 
       await this.saveWhakapapa(update)
