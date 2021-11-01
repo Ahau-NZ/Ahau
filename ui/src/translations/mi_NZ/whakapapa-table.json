@@ -30,5 +30,8 @@
   "phone": "Waea",
   "showAncestors": "Show ancestors",
   "showWhakapapa": "Show whakapapa links",
-  "view": "View controls"
+  "view": "View controls",
+  "avatars": "Show profile photos",
+  "parents": "Show extended family",
+  "default": "revert to default settings"
 }

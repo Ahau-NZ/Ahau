@@ -284,68 +284,75 @@ export default {
         console.error('Something went wrong while creating a person', err)
       }
     },
-    async buildFromFile (csv) {
+    async buildFromFile (csvRows) {
       this.setLoading(true)
 
-      // create profile for each person
-      var profilesArray = await this.createProfiles(csv)
+      // create a profile for each row in the csv
+      var res = await this.createProfiles(csvRows)
+      if (!res) return
 
-      profilesArray['columns'] = this.columns
+      const { profiles, links } = res
 
-      // create obj of children and parents
-      var root = await d3.stratify()
-        .id(function (d) {
-          return d.number
-        })
-        .parentId(function (d) {
-          return d.parentNumber
-        })(profilesArray)
+      // create all the links from the profiles
+      await this.createLinks(links, profiles)
 
-      // create new array now with child and parents data
-      var descendants = await root.descendants()
+      // get the root persons profileId
+      const rootCsvId = csvRows[0].csvId
+      const rootProfileId = profiles[rootCsvId]
 
-      // create whakapapaLinks
-      var finalArray = await this.createLinks(descendants)
-
-      // create whakapapa with top ancestor as focus
-      this.createView({
+      // create whakapapa with first person in the csv as the focus
+      await this.createView({
         ...this.newView,
-        focus: finalArray[0].parent.data.id
+        focus: rootProfileId
       })
     },
 
-    async createProfiles (csv) {
-      this.columns = csv.columns
+    async createProfiles (csvData) {
+      const profiles = {}
+      const links = csvData
+        .map(row => row.link)
+        .filter(Boolean)
 
-      var results = Promise.all(csv.map(async (d) => {
-        var id = await this.createProfile(d)
-        return { id, ...d }
-      }))
-        .then((res) => res)
+      /*
+        NOTE:
+        profiles = {
+          [csvId]: profileId
+        }
+
+        links = [{ childCsvId, parentCsvId, relationshipType }]
+      */
+      const res = await Promise.all(
+        csvData.map(async ({ csvId, profile }) => {
+          if (!profile) return
+
+          var profileId = await this.createProfile(profile)
+          profiles[csvId] = profileId
+        })
+      )
         .catch((err) => {
           console.error('failed to create profile with csv bulk create', err)
           this.setLoading(false)
         })
 
-      return results
+      if (!res) return
+
+      return { profiles, links }
     },
-    async createLinks (descendants) {
-      // Remove first item
-      descendants.shift()
+    async createLinks (links, profiles) {
+      await Promise.all(
+        links.map(link => {
+          const { parentCsvId, childCsvId, relationshipType } = link
 
-      const results = Promise.all(descendants.map(async (d) => {
-        let relationship = { child: d.data.id, parent: d.parent.data.id, relationshipType: d.data.relationshipType }
-        var link = await this.createChildLink(relationship)
+          const relationship = {
+            // get the parent and child's actual profileId
+            parent: profiles[parentCsvId],
+            child: profiles[childCsvId],
+            relationshipType: relationshipType
+          }
 
-        var person = {
-          ...d,
-          link: link
-        }
-
-        return person
-      }))
-
-      return results
+          return this.createChildLink(relationship)
+        })
+      )
     },
 
     async createProfile (input) {
