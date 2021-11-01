@@ -61,11 +61,9 @@ function parse (fileContent) {
         errors.push({ row, field: 'parentNumber', error: 'the first parent number must be empty', value: d.parentNumber })
       }
 
-      if (seen.has(d.number)) {
-        errors.push({ row, field: 'number', error: 'the number is not unique', value: d.number })
-      }
-
-      seen.add(d.number)
+      // if (seen.has(d.number)) {
+      //   errors.push({ row, field: 'number', error: 'the number is not unique', value: d.number })
+      // }
 
       // the parentNumber should already exist as a number
       if (!isEmpty(d.parentNumber) && !seen.has(d.parentNumber)) {
@@ -117,22 +115,34 @@ function parse (fileContent) {
           d.education = null
         }
 
-        return {
-          parentNumber: d.parentNumber,
-          number: d.number,
+        const person = {
+          csvId: d.number
+        }
+
+        if (d.parentNumber) {
+          person.link = {
+            parentCsvId: d.parentNumber,
+            childCsvId: d.number,
+            relationshipType: d.relationshipType ? d.relationshipType : 'birth'
+          }
+        }
+
+        if (seen.has(d.number)) return person
+
+        person.profile = {
           preferredName: d.preferredName,
           legalName: d.legalName,
           gender: d.gender || null,
-          relationshipType: d.relationshipType ? d.relationshipType : 'birth',
           birthOrder: d.birthOrder,
           deceased: d.deceased === 'yes',
           aliveInterval,
           placeOfBirth: d.placeOfBirth,
           placeOfDeath: d.placeOfDeath,
           buriedLocation: d.buriedLocation,
-          phone: d.phone,
-          email: d.email,
-          address: d.address,
+          // NOTE: commented these out as they are breaking backend changes!
+          // phone: d.phone,
+          // email: d.email,
+          // address: d.address,
           city: d.city,
           postCode: d.postCode,
           country: d.country,
@@ -141,6 +151,10 @@ function parse (fileContent) {
           education: d.education,
           altNames: d.altNames
         }
+
+        seen.add(d.number)
+
+        return person
       }
     })
 
@@ -190,12 +204,12 @@ const validateString = {
 
 const schema = {
   parentNumber: {
-    action: d => isValidNumber(d) || isEmpty(d),
-    msg: 'must be either a number or empty'
+    action: d => isValidId(d) || isEmpty(d),
+    msg: 'must be either a number, id or empty'
   },
   number: {
-    action: d => isValidNumber(d) && d != null,
-    msg: 'is required and must be a number'
+    action: d => isValidId(d) && d != null,
+    msg: 'is required and must be a number or id'
   },
   preferredName: validateString,
   legalName: validateString,
@@ -252,14 +266,20 @@ function isValidDate (d) {
   return isEmpty(d) || dateRegex.test(d)
 }
 
+function isValidId (d) {
+  if (d === null) return false
+  if (d === '') return false
+
+  return true
+}
+
 function isValidNumber (d) {
   if (d === null) return false
   if (d === '') return false
 
-  // removing this to allow for id's to be used as numbers
-  // if (isNaN(d)) return false
-  // if (Number(d) % 1 !== 0) return false
-  // if (Number(d) < 0) return false
+  if (isNaN(d)) return false
+  if (Number(d) % 1 !== 0) return false
+  if (Number(d) < 0) return false
   return true
 }
 
@@ -343,7 +363,7 @@ function convertDigit (digit) {
 }
 
 function downloadCsv () {
-  var csv = 'parentNumber,number,preferredName,legalName,gender,relationshipType,birthOrder,bornAt,placeOfBirth,deceased,diedAt,placeOfDeath,buriedLocation,phone,email,address,city,postCode,country,profession,school,education,altNames\n'
+  var csv = PERMITTED_CSV_COLUMNS.join(',') + '\n'
   var hiddenElement = document.createElement('a')
   hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(csv)
   hiddenElement.target = '_blank'
