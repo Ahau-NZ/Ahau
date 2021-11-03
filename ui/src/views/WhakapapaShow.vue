@@ -583,10 +583,13 @@ export default {
               // exclude existing partners
               .filter(parent => person.partners.every(partner => parent.id !== partner.id))
               // exclude less importantRelationships
+              // WIP - disable this filter to show duplicate otherParent
               .filter(parent => {
                 if (!importantRelationships) return true
 
-                return importantRelationships.important[0] === parent.id
+                const keep = importantRelationships.important[0] === parent.id
+                if (!keep) console.log({ parent, child })
+                return keep
               })
 
             acc.concat(otherParents)
