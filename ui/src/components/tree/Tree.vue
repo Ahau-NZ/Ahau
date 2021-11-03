@@ -15,6 +15,10 @@
           :showPartners="showPartners"
           :importantRelationships="view.importantRelationships"
         />
+
+        <Link v-for="rule in view.importantRelationships"
+          :link="{ }"
+        />
       </g>
     </g>
     <!-- zoom in, zoom out buttons -->
@@ -179,6 +183,27 @@ export default {
       if (!this.componentLoaded || !this.pathNode) return null
       return this.root.path(this.pathNode)
         .map(d => d.data.id)
+    },
+    lessImportantLinks () {
+      return this.view.importantRelationships.map(rule => {
+        // TODO HERE
+
+        look up the rule.profileId node, rule.important.slice(1) nodes
+
+        return {
+          // style
+          d: settings.path(
+            {
+              startX: 
+              startY:
+              endX: 
+              endY:
+            },
+            settings.branch
+          )
+        }
+      })
+      // TODO flaten later if we have multiple less important per node
     }
   },
   watch: {

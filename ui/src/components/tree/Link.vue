@@ -1,15 +1,11 @@
 <template>
   <g>
-    <g>
-      <!--
-        draws a white link underneath this link so the links dont show the overlaps
-        from the opacity
-       -->
-      <path class="white-link" :d="link.d" :style="whiteStyle"/>
-    </g>
-    <g>
-      <path class="link" :d="link.d" :style="link.style"/>
-    </g>
+    <!--
+      draws a white link underneath this link so the links dont show the overlaps
+      from the opacity
+     -->
+    <path class="white-link" :d="link.d" :style="whiteStyle"/>
+    <path class="link" :d="link.d" :style="link.style"/>
   </g>
 </template>
 
