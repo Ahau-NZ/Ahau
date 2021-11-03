@@ -466,18 +466,16 @@ export default {
 
       if (!profile.children || profile.children.length === 0) return profile
 
-      // // change my profile in all of my children
-      profile.children = await Promise.all(profile.children.map(async child => {
+      // change my profile in all of my children
+      profile.children = profile.children.map(child => {
         if (!child.parents) return child
         child.parents = child.parents.map(parent => {
-          if (parent.id === person.id) {
-            return profile
-          }
+          if (parent.id === person.id) return profile
           return parent
         })
 
         return child
-      }))
+      })
 
       return profile
     },
@@ -503,7 +501,7 @@ export default {
         person.partners = person.partners.filter(this.isVisibleProfile)
       }
 
-      person.children = this.removeImportantRelationships(person)
+      person.children = this.removeMovedChildren(person.children, person.id)
 
       // map all links
       person.children = await this.mapChildren(person)
@@ -516,7 +514,7 @@ export default {
         // get all step/whangai parents of the children
         if (person.children.length) otherParents = await this.getOtherPartners(person)
 
-        // add half borthers and sisters as children with propert of isNonChild
+        // add half borthers and sisters as children with property of isNonChild
         if (otherParents.length) {
           otherParents.forEach(parent => {
             parent.children.forEach(child => { if (child.isNonChild) otherChildren.push(child) })
@@ -548,16 +546,16 @@ export default {
       return person
     },
 
-    removeImportantRelationships (person) {
-      return person.children.filter(child => {
+    removeMovedChildren (children, parentId) {
+      return children.filter(child => {
         // check if this child is listed as having an important relationship
         const importantRelationship = this.whakapapaView.importantRelationships.find(dupe => dupe.profileId === child.id)
 
-        if (!importantRelationship) return true // no important relationship then we skip handling them
+        if (!importantRelationship) return true // keep this profile as no rule was found
 
-        // there was an important relationship so we only show the link between them and the first profile listed as important
+        // profile has an important relationship so we only show the link between them and the first profile listed as important
         // any other links wont be drawn
-        return importantRelationship.important[0] === person.id
+        return importantRelationship.important[0] === parentId
       })
     },
 
@@ -573,36 +571,51 @@ export default {
 
     // get all the parents of the connected children
     async getOtherPartners (person) {
-      let formatted = flatten(person.children.map(d => d.parents))
-        .filter((parent) => {
-          return (
-            (parent.id !== person.id) &&
-            !person.partners.some(partner => partner.id === parent.id)
-          )
-        })
+      let partners = person.children
+        .reduce(
+          (acc, child) => {
+            const importantRelationships = this.whakapapaView.importantRelationships.find(rule => {
+              return rule.profileId === child.id
+            })
+            const otherParents = child.parents
+              // exclude self
+              .filter(parent => parent.id !== person.id)
+              // exclude existing partners
+              .filter(parent => person.partners.every(partner => parent.id !== partner.id))
+              // exclude less importantRelationships
+              .filter(parent => {
+                if (!importantRelationships) return true
 
-      let partners = uniqby(formatted, 'id')
+                return importantRelationships.important[0] === parent.id
+              })
 
-      // get parents full profiles to find if they have any other children
+            acc.concat(otherParents)
+
+            return acc
+          },
+          []
+        )
+
+      partners = uniqby(partners, 'id')
+
+      // get partners full profiles to find if they have any other children
       partners = await this.getFullPartnerProfiles(partners, person)
 
       return partners
     },
 
-    // get parents full profiles to find if they have any other children
+    // get partners full profiles to find if they have any other children
     async getFullPartnerProfiles (partners, person) {
-      return Promise.all(
-        partners.map(async node => {
-          let partner = await this.getRelatives(node.id)
-          // get all the children profiles so we can see which ones arent connected to this parent
-          partner.children = await this.getFullChildProfiles(partner, person)
-          partner.children = partner.children.filter(child => !isEmpty(child))
-          return {
-            ...partner,
-            isNonPartner: true
-          }
-        })
-      )
+      return Promise.all(partners.map(async partner => {
+        partner = await this.getRelatives(partner.id)
+        // get all the children profiles so we can see which ones arent connected to this parent
+        partner.children = await this.getFullChildProfiles(partner, person)
+        partner.children = partner.children.filter(child => !isEmpty(child))
+        return {
+          ...partner,
+          isNonPartner: true
+        }
+      }))
     },
 
     // get parents full child profiles to match with other parents
@@ -622,30 +635,27 @@ export default {
     },
 
     async mapChildren (person) {
-      return Promise.all(
-        person.children
-          .map(async child => {
-            var childProfile = await this.loadDescendants(child.id)
-            if (!person.id) person.id = childProfile.parents[0].id
+      return Promise.all(person.children.map(async child => {
+        var childProfile = await this.loadDescendants(child.id)
+        if (!person.id) person.id = childProfile.parents[0].id
 
-            // load the relationship between the two
-            const relationship = await this.getWhakapapaLink(person.id, child.id)
+        // load the relationship between the two
+        const relationship = await this.getWhakapapaLink(person.id, child.id)
 
-            if (child.isNonChild) {
-              childProfile = {
-                ...childProfile,
-                isNonChild: true
-              }
-            }
+        if (child.isNonChild) {
+          childProfile = {
+            ...childProfile,
+            isNonChild: true
+          }
+        }
 
-            if (!relationship) return childProfile
+        if (!relationship) return childProfile
 
-            childProfile.relationshipType = relationship.relationshipType
-            childProfile.legallyAdoped = relationship.legallyAdoped
+        childProfile.relationshipType = relationship.relationshipType
+        childProfile.legallyAdoped = relationship.legallyAdoped
 
-            return childProfile
-          })
-      )
+        return childProfile
+      }))
     },
 
     openContextMenu ({ event, profile }) {

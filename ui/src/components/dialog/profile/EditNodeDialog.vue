@@ -78,8 +78,8 @@ import isEqual from 'lodash.isequal'
 import {
   mapActions,
   createNamespacedHelpers,
-  mapGetters }
-  from 'vuex'
+  mapGetters
+} from 'vuex'
 
 const { mapActions: mapSettingsActions } = createNamespacedHelpers('settings')
 const { mapMutations: mapAlertMutations } = createNamespacedHelpers('alerts')

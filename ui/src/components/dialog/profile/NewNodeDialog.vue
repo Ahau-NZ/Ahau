@@ -417,7 +417,7 @@ export default {
           submission.partners = this.quickAdd['newPartners']
         }
       }
-      
+
       if (this.isDuplicate) {
         submission.moveDup = this.moveDup
       }

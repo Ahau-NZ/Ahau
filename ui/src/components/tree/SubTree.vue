@@ -2,17 +2,12 @@
   <g>
     <!-- links between root node and partners -->
     <g v-for="dup in dupLinks" :key="`dup-link-${dup.id}`">
-      <Link
-        :link="dup"
-      />
+      <Link :link="dup" />
     </g>
 
     <!-- links between root node and partners -->
     <g v-for="partner in allPartners" :key="`partner-link-${partner.data.id}`">
-      <Link
-        v-if="partner.link"
-        :link="partner.link"
-      />
+      <Link v-if="partner.link" :link="partner.link" />
     </g>
 
     <!-- all partners and links to their children -->
@@ -251,7 +246,7 @@ export default {
         // if (this.duplicateProfiles.length) {
         //   dup = this.duplicateProfiles.find(d => d.id === parent.id && d.nodeId === this.root.data.id)
         // }
-        
+
         // if (dup) {
         //   // find the profile to link to
         //   const linkNode = this.findInTree(dup.linkId)
