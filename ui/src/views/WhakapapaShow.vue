@@ -277,8 +277,8 @@ export default {
         focus: '',
         recps: null,
         image: { uri: '' },
-        ignoredProfiles: [''],
-        importantRelationships: ['']
+        ignoredProfiles: [],
+        importantRelationships: []
       },
       focus: null,
       // the record which defines the starting point for a tree (the 'focus')

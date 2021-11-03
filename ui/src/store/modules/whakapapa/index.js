@@ -6,7 +6,7 @@ export default function (apollo) {
   const state = {
     nestedWhakapapa: {},
     whakapapa: {},
-    nodes: []
+    nodes: {}
   }
 
   const getters = {
@@ -16,16 +16,24 @@ export default function (apollo) {
     whakapapa: state => {
       return state.whakapapa
     },
-    nodes: state => {
-      return state.nodes
+    getNode: state => (id) => {
+      return state.nodes[id]
     }
   }
 
   const mutations = {
     addNode (state, node) {
-      console.log('vuex node: ', node)
-      if (node) state.nodes = uniqby([...state.nodes, ...node], 'id')
-      else state.nodes = []
+      if (!node) return
+      const id = node.id || (node.data && node.data.id)
+      if (!id) return
+
+      state.nodes[id] = [
+        ...(state.nodes[id] || []),
+        node
+      ]
+    },
+    resetNodes (state) {
+      state.nodes = []
     },
     setNestedWhakapapa (state, nestedWhakapapa) {
       state.nestedWhakapapa = nestedWhakapapa
@@ -70,6 +78,13 @@ export default function (apollo) {
   }
 
   const actions = {
+    addNode ({ commit }, node) {
+      commit('addNode', node)
+    },
+    setNestedWhakapapa ({ commit }, nestedWhakapapa) {
+      commit('resetNodes')
+      commit('setNestedWhakapapa', nestedWhakapapa)
+    },
     async getWhakapapaView (context, id) {
       try {
         const res = await apollo.query(

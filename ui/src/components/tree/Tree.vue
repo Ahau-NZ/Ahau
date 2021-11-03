@@ -5,6 +5,14 @@
         :transform="`translate(${treeX - radius} ${treeY - radius})`"
         ref="tree"
       >
+        <g>
+          <!-- links between root node and partners -->
+          <Link v-for="link in lessImportantLinks"
+            :key="link.id"
+            :link="link"
+          />
+        </g>
+
         <SubTree
           :root="treeLayout(this.root)"
           :openMenu="openMenu"
@@ -46,6 +54,7 @@
 <script>
 import * as d3 from 'd3'
 import SubTree from './SubTree'
+import Link from './Link'
 
 import isEqual from 'lodash.isequal'
 
@@ -69,7 +78,8 @@ export default {
     showPartners: Boolean
   },
   components: {
-    SubTree
+    SubTree,
+    Link
   },
   data () {
     return {
@@ -91,6 +101,7 @@ export default {
 
   computed: {
     ...mapWhakapapaGetters(['nestedWhakapapa']),
+    ...mapWhakapapaGetters(['getNode']),
     radius () {
       return settings.radius
     },
@@ -180,45 +191,49 @@ export default {
       return this.root.path(this.pathNode)
         .map(d => d.data.id)
     },
-  //   lessImportantLinks () {
-  //     if (!this.view.focus || this.view.importantRelationships.length === 0) return []
-  //     console.log('view: ', this.view)
-  //     const links = []
-  //     // for each importantRelationship find the x,y coords on the graph and create set the link
-  //     this.view.importantRelationships.forEach(rule => {
-  //       console.log('rules: ', rule)
-  //       var node = this.nodes.find(node => node.data.id === rule.profileId)
-  //       console.log('node found: ', node)
-  //       rule.important.slice(1).forEach(link => {
-  //         var linkNode = this.nodes.find(d => d.data.id === link)
-  //         const dashed = ['adopted', 'whangai'].includes(linkNode.data.relationshipType)
-  //         console.log('link found: ', linkNode)
-  //         links.push({
-  //           id: node.data.id + ' - ' + linkNode.data.id,
-  //           style: {
-  //             fill: 'none',
-  //             stroke: settings.color.getColor(0),
-  //             opacity: settings.opacity,
-  //             strokeWidth: settings.thickness,
-  //             strokeLinejoin: 'round',
-  //             strokeDasharray: dashed ? 2.5 : 0
-  //           },
-  //           d: settings.path(
-  //             {
-  //               startX: node.x,
-  //               startY: node.y,
-  //               endX: linkNode.x,
-  //               endY: linkNode.y
-  //             },
-  //             settings.branch
-  //           )
-  //         })
-  //       })
-  //     })
-  //     console.log('links: ', links)
-  //     return links
-  //     // TODO flaten later if we have multiple less important per node
-  //   }
+    lessImportantLinks () {
+      if (!this.nodes || this.view.importantRelationships.length === 0) return []
+
+      const links = []
+      // for each importantRelationship find the x,y coords on the graph and create set the link
+      this.view.importantRelationships.forEach(rule => {
+        const nodes = this.getNode(rule.profileId)
+        if (!nodes || nodes.length === 0) return
+
+        const node = nodes[0]
+        // TODO WARNING - handle there being multiple locations for a node
+
+        // skip the 0th relationship as that was "most important" and already drawn
+        rule.important.slice(1).forEach(profileId => {
+          const targetNode = this.getNode(profileId)[0]
+          const isDashed = targetNode.data.relationshipType !== 'birth'
+
+          const branch = ((targetNode.y + targetNode.radius) - (node.y + node.radius)) / 2
+
+          links.push({
+            id: node.data.id + ' - ' + targetNode.data.id,
+            style: {
+              fill: 'none',
+              stroke: settings.color.getColor(0),
+              opacity: settings.opacity,
+              strokeWidth: settings.thickness,
+              strokeLinejoin: 'round',
+              strokeDasharray: isDashed ? 2.5 : 0
+            },
+            d: settings.path(
+              {
+                startX: node.x + node.radius,
+                startY: node.y + node.radius,
+                endX: targetNode.x + targetNode.radius,
+                endY: targetNode.y + targetNode.radius
+              },
+              branch
+            )
+          })
+        })
+      })
+      return links
+    }
   },
   watch: {
     'nestedWhakapapa': function (newValue) {
@@ -416,7 +431,7 @@ export default {
               .scale(1)
           )
         })
-    },
+    }
     // findInTree (profileId) {
     //   const existingNode = this.nodes.find(node => node.data.id === profileId)
     //   if (existingNode) {

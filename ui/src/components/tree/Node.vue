@@ -46,7 +46,7 @@
     </g>
     <g
       v-if="isPartner && hasAncestors"
-      :transform="`translate(${1 * radius}, ${radius * -0.5})`"
+      :transform="`translate(${1 * radius - 2}, ${radius * -0.5})`"
     >
       <text
         font-size="30"
@@ -68,12 +68,15 @@ import NodeMenuButton from './NodeMenuButton.vue'
 
 import { createNamespacedHelpers } from 'vuex'
 
-const { mapMutations: mapWhakapapaMutations } = createNamespacedHelpers('whakapapa')
+const { mapActions: mapWhakapapaActions } = createNamespacedHelpers('whakapapa')
 
 export default {
   name: 'Node',
   props: {
-    node: Object,
+    node: {
+      type: Object,
+      required: true
+    },
     radius: {
       type: Number,
       default: 50
@@ -92,10 +95,6 @@ export default {
         deceased: DECEASED_COLOUR
       }
     }
-  },
-  mounted () {
-    console.log('node mounted')
-    this.addNode([this.node])
   },
   computed: {
     showMenuButton () {
@@ -158,7 +157,7 @@ export default {
     }
   },
   methods: {
-    ...mapWhakapapaMutations(['addNode']),
+    ...mapWhakapapaActions(['addNode']),
     openMenu (event, profile) {
       profile.isPartner = this.isPartner
       this.$emit('open-menu', { event, profile })
@@ -173,6 +172,16 @@ export default {
     },
     center () {
       this.$emit('center', this.node)
+    }
+  },
+  watch: {
+    node: {
+      immediate: true,
+      handler (newVal) {
+        newVal.radius = this.radius
+        // NOTE may need to consider watch: { deep: true }
+        this.addNode(newVal)
+      }
     }
   }
 }
