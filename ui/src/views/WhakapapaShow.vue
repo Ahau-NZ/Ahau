@@ -228,8 +228,7 @@ import {
 
 const {
   mapActions: mapWhakapapaActions,
-  mapGetters: mapWhakapapaGetters,
-  mapMutations: mapWhakapapaMutations
+  mapGetters: mapWhakapapaGetters
 } = createNamespacedHelpers('whakapapa')
 
 const { mapActions: mapTribeActions } = createNamespacedHelpers('tribe')
@@ -271,15 +270,6 @@ export default {
       searchNodeId: '',
       searchNodeEvent: null,
       showWhakapapaHelper: false,
-      whakapapaView: {
-        name: 'Loading',
-        description: '',
-        focus: '',
-        recps: null,
-        image: { uri: '' },
-        ignoredProfiles: [],
-        importantRelationships: []
-      },
       focus: null,
       // the record which defines the starting point for a tree (the 'focus')
 
@@ -302,14 +292,13 @@ export default {
   },
   async mounted () {
     this.setLoading(true)
-    this.addNode()
     window.scrollTo(0, 0)
     await this.reload()
   },
   computed: {
     ...mapGetters(['whoami', 'isKaitiaki']),
     ...mapPersonGetters(['selectedProfile']),
-    ...mapWhakapapaGetters(['nestedWhakapapa']),
+    ...mapWhakapapaGetters(['whakapapaView', 'nestedWhakapapa']),
     mobile () {
       return this.$vuetify.breakpoint.xs
     },
@@ -350,21 +339,23 @@ export default {
     }
   },
   watch: {
-    currentFocus: async function (newFocus) {
-      this.setLoading(true)
-      if (newFocus) {
+    currentFocus: {
+      immediate: true,
+      handler: async function (newFocus) {
+        if (!newFocus) return
+
+        this.setLoading(true)
         const nestedWhakapapa = await this.loadDescendants(newFocus)
         this.setNestedWhakapapa(nestedWhakapapa)
+        this.setLoading(false)
       }
-      this.setLoading(false)
     },
-    async whakapapaView (whakapapa) {
-      if (whakapapa.recps) {
-        const tribe = await this.getTribe(whakapapa.recps[0])
+    async whakapapaView (view) {
+      if (view.recps) {
+        const tribe = await this.getTribe(view.recps[0])
         this.access = getTribalProfile(tribe, this.whoami)
         this.setCurrentAccess(this.access)
       }
-      this.setWhakapapa(whakapapa)
     },
     showPartners: async function () {
       this.setLoading(true)
@@ -380,11 +371,10 @@ export default {
     ...mapTribeActions(['getTribe']),
     ...mapPersonMutations(['updateSelectedProfile']),
     ...mapActions(['setLoading']),
-    ...mapWhakapapaMutations(['setNestedWhakapapa', 'setWhakapapa', 'addNode']),
-    ...mapWhakapapaActions(['getWhakapapaView']),
+    ...mapWhakapapaActions(['loadWhakapapaView', 'setNestedWhakapapa']),
     ...mapTableActions(['resetTableFilters']),
     async reload () {
-      this.whakapapaView = await this.getWhakapapaView(this.$route.params.whakapapaId)
+      await this.loadWhakapapaView(this.$route.params.whakapapaId)
     },
     toggleShowAvatars () {
       this.showAvatars = !this.showAvatars

@@ -3,18 +3,28 @@ import tree from '../../../lib/tree-helpers'
 import { getWhakapapaView } from './apollo-helpers'
 
 export default function (apollo) {
+  const defaultView = {
+    name: 'Loading',
+    description: '',
+    focus: '',
+    recps: null,
+    image: { uri: '' },
+    ignoredProfiles: [],
+    importantRelationships: []
+  }
   const state = {
+    view: defaultView,
     nestedWhakapapa: {},
     whakapapa: {},
     nodes: {}
   }
 
   const getters = {
-    nestedWhakapapa: state => {
-      return state.nestedWhakapapa
-    },
+    whakapapaView: state => state.view,
+    nestedWhakapapa: state => state.nestedWhakapapa,
     whakapapa: state => {
-      return state.whakapapa
+      throw new Error('WHO IS USING THIS')
+      // return state.whakapapa
     },
     getNode: state => (id) => {
       return state.nodes[id]
@@ -22,6 +32,9 @@ export default function (apollo) {
   }
 
   const mutations = {
+    setView (state, view) {
+      state.view = view
+    },
     addNode (state, node) {
       if (!node) return
       const id = node.id || (node.data && node.data.id)
@@ -78,13 +91,6 @@ export default function (apollo) {
   }
 
   const actions = {
-    addNode ({ commit }, node) {
-      commit('addNode', node)
-    },
-    setNestedWhakapapa ({ commit }, nestedWhakapapa) {
-      commit('resetNodes')
-      commit('setNestedWhakapapa', nestedWhakapapa)
-    },
     async getWhakapapaView (context, id) {
       try {
         const res = await apollo.query(
@@ -99,6 +105,19 @@ export default function (apollo) {
         // TODO error alert message
         console.error(err)
       }
+    },
+    async loadWhakapapaView ({ dispatch, commit, state }, id) {
+      if (id !== state.view.id) commit('setView', defaultView)
+
+      const view = await dispatch('getWhakapapaView', id)
+      if (view) commit('setView', view)
+    },
+    addNode ({ commit }, node) {
+      commit('addNode', node)
+    },
+    setNestedWhakapapa ({ commit }, nestedWhakapapa) {
+      commit('resetNodes')
+      commit('setNestedWhakapapa', nestedWhakapapa)
     },
     async suggestedChildren ({ dispatch, state }, parentId) {
       // get the persons full profile
