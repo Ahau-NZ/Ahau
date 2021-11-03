@@ -1,9 +1,12 @@
 import uniqby from 'lodash.uniqby'
+import isEmpty from 'lodash.isempty'
 import tree from '../../../lib/tree-helpers'
 import { getWhakapapaView } from './apollo-helpers'
 
+const settings = require('../../../lib/link')
+
 export default function (apollo) {
-  const defaultView = {
+  const loadingView = {
     name: 'Loading',
     description: '',
     focus: '',
@@ -13,7 +16,8 @@ export default function (apollo) {
     importantRelationships: []
   }
   const state = {
-    view: defaultView,
+    // loading, // TODO
+    view: loadingView,
     nestedWhakapapa: {},
     whakapapa: {},
     nodes: {}
@@ -21,13 +25,61 @@ export default function (apollo) {
 
   const getters = {
     whakapapaView: state => state.view,
+    // whakapapaView: state => state.loading ? loadingView : state.view, // TODO
     nestedWhakapapa: state => state.nestedWhakapapa,
     whakapapa: state => {
       throw new Error('WHO IS USING THIS')
       // return state.whakapapa
     },
-    getNode: state => (id) => {
-      return state.nodes[id]
+    // getNode: state => (id) => {
+    //   return state.nodes[id]
+    // },
+    lessImportantLinks: state => {
+      debugger
+      if (isEmpty(state.nodes) || isEmpty(state.view.importantRelationships)) return []
+
+      const links = []
+      // for each importantRelationship find the x,y coords on the graph and create set the link
+      state.view.importantRelationships.forEach(rule => {
+        const nodes = state.nodes[rule.profileId]
+        if (!nodes || nodes.length === 0) return
+
+        const node = nodes[0]
+        // TODO WARNING - handle there being multiple locations for a node
+
+        // skip the 0th relationship as that was "most important" and already drawn
+        rule.important.slice(1).forEach(profileId => {
+          const targetNodes = state.nodes[profileId]
+          if (!targetNodes || targetNodes.length === 0) return
+          const targetNode = targetNodes[0]
+          // TODO assuming first targetNode is right one
+          const isDashed = targetNode.data.relationshipType !== 'birth'
+
+          const branch = ((targetNode.y + targetNode.radius) - (node.y + node.radius)) / 2
+
+          links.push({
+            id: node.data.id + ' - ' + targetNode.data.id,
+            style: {
+              fill: 'none',
+              stroke: settings.color.getColor(0),
+              opacity: settings.opacity,
+              strokeWidth: settings.thickness,
+              strokeLinejoin: 'round',
+              strokeDasharray: isDashed ? 2.5 : 0
+            },
+            d: settings.path(
+              {
+                startX: node.x + node.radius,
+                startY: node.y + node.radius,
+                endX: targetNode.x + targetNode.radius,
+                endY: targetNode.y + targetNode.radius
+              },
+              branch
+            )
+          })
+        })
+      })
+      return links
     }
   }
 
@@ -107,7 +159,7 @@ export default function (apollo) {
       }
     },
     async loadWhakapapaView ({ dispatch, commit, state }, id) {
-      if (id !== state.view.id) commit('setView', defaultView)
+      if (id !== state.view.id) commit('setView', loadingView)
 
       const view = await dispatch('getWhakapapaView', id)
       if (view) commit('setView', view)

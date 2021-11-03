@@ -100,8 +100,7 @@ export default {
   },
 
   computed: {
-    ...mapWhakapapaGetters(['nestedWhakapapa']),
-    ...mapWhakapapaGetters(['getNode']),
+    ...mapWhakapapaGetters(['nestedWhakapapa', 'lessImportantLinks']),
     radius () {
       return settings.radius
     },
@@ -190,49 +189,6 @@ export default {
       if (!this.componentLoaded || !this.pathNode) return null
       return this.root.path(this.pathNode)
         .map(d => d.data.id)
-    },
-    lessImportantLinks () {
-      if (!this.nodes || this.view.importantRelationships.length === 0) return []
-
-      const links = []
-      // for each importantRelationship find the x,y coords on the graph and create set the link
-      this.view.importantRelationships.forEach(rule => {
-        const nodes = this.getNode(rule.profileId)
-        if (!nodes || nodes.length === 0) return
-
-        const node = nodes[0]
-        // TODO WARNING - handle there being multiple locations for a node
-
-        // skip the 0th relationship as that was "most important" and already drawn
-        rule.important.slice(1).forEach(profileId => {
-          const targetNode = this.getNode(profileId)[0]
-          const isDashed = targetNode.data.relationshipType !== 'birth'
-
-          const branch = ((targetNode.y + targetNode.radius) - (node.y + node.radius)) / 2
-
-          links.push({
-            id: node.data.id + ' - ' + targetNode.data.id,
-            style: {
-              fill: 'none',
-              stroke: settings.color.getColor(0),
-              opacity: settings.opacity,
-              strokeWidth: settings.thickness,
-              strokeLinejoin: 'round',
-              strokeDasharray: isDashed ? 2.5 : 0
-            },
-            d: settings.path(
-              {
-                startX: node.x + node.radius,
-                startY: node.y + node.radius,
-                endX: targetNode.x + targetNode.radius,
-                endY: targetNode.y + targetNode.radius
-              },
-              branch
-            )
-          })
-        })
-      })
-      return links
     }
   },
   watch: {
