@@ -302,6 +302,7 @@ export default {
   },
   async mounted () {
     this.setLoading(true)
+    this.addNode()
     window.scrollTo(0, 0)
     await this.reload()
   },
@@ -379,7 +380,7 @@ export default {
     ...mapTribeActions(['getTribe']),
     ...mapPersonMutations(['updateSelectedProfile']),
     ...mapActions(['setLoading']),
-    ...mapWhakapapaMutations(['setNestedWhakapapa', 'setWhakapapa']),
+    ...mapWhakapapaMutations(['setNestedWhakapapa', 'setWhakapapa', 'addNode']),
     ...mapWhakapapaActions(['getWhakapapaView']),
     ...mapTableActions(['resetTableFilters']),
     async reload () {

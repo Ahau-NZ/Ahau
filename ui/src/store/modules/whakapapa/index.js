@@ -5,7 +5,8 @@ import { getWhakapapaView } from './apollo-helpers'
 export default function (apollo) {
   const state = {
     nestedWhakapapa: {},
-    whakapapa: {}
+    whakapapa: {},
+    nodes: []
   }
 
   const getters = {
@@ -14,10 +15,18 @@ export default function (apollo) {
     },
     whakapapa: state => {
       return state.whakapapa
+    },
+    nodes: state => {
+      return state.nodes
     }
   }
 
   const mutations = {
+    addNode (state, node) {
+      console.log('vuex node: ', node)
+      if (node) state.nodes = uniqby([...state.nodes, ...node], 'id')
+      else state.nodes = []
+    },
     setNestedWhakapapa (state, nestedWhakapapa) {
       state.nestedWhakapapa = nestedWhakapapa
     },

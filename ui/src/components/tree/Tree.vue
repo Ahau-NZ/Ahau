@@ -416,7 +416,14 @@ export default {
               .scale(1)
           )
         })
-    }
+    },
+    // findInTree (profileId) {
+    //   const existingNode = this.nodes.find(node => node.data.id === profileId)
+    //   if (existingNode) {
+    //     console.log('Node found!!!!')
+    //     return existingNode
+    //   }
+    // }
   }
 }
 </script>

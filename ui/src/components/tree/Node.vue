@@ -66,6 +66,10 @@ import { DECEASED_COLOUR, ALIVE_COLOUR } from '@/lib/constants.js'
 import { getDisplayName } from '@/lib/person-helpers.js'
 import NodeMenuButton from './NodeMenuButton.vue'
 
+import { createNamespacedHelpers } from 'vuex'
+
+const { mapMutations: mapWhakapapaMutations } = createNamespacedHelpers('whakapapa')
+
 export default {
   name: 'Node',
   props: {
@@ -88,6 +92,10 @@ export default {
         deceased: DECEASED_COLOUR
       }
     }
+  },
+  mounted () {
+    console.log('node mounted')
+    this.addNode([this.node])
   },
   computed: {
     showMenuButton () {
@@ -150,6 +158,7 @@ export default {
     }
   },
   methods: {
+    ...mapWhakapapaMutations(['addNode']),
     openMenu (event, profile) {
       profile.isPartner = this.isPartner
       this.$emit('open-menu', { event, profile })

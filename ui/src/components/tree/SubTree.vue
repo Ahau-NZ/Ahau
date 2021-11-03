@@ -58,6 +58,9 @@ import Link from './Link.vue'
 import settings from '@/lib/link.js'
 import pileSort from 'pile-sort'
 import mapProfileMixins from '@/mixins/profile-mixins.js'
+import { createNamespacedHelpers } from 'vuex'
+
+const { mapGetters: mapWhakapapaGetters } = createNamespacedHelpers('whakapapa')
 
 const PARTNER_SHRINK = 0.7
 const X_PADDING = 10
@@ -90,6 +93,7 @@ export default {
     }
   },
   computed: {
+    ...mapWhakapapaGetters(['nodes']),
     allPartners () {
       return [
         ...this.partners,
@@ -167,15 +171,8 @@ export default {
         children: allChildren.map(({ data }) => this.mapChild({ y: yOffset }, data, style, null, true))
       }
     },
-    nodes () {
-      if (!this.root.data) return []
-      console.log('root: ', this.root)
-      console.log('partners: ', this.partners)
-      console.log('children: ', this.children)
-      return [...[this.root], ...this.partners, ...this.children]
-    },
     lessImportantLinks () {
-      if (this.importantRelationships.length === 0) return []
+      if (!this.nodes || this.importantRelationships.length === 0) return []
       console.log('subtree nodes: ', this.nodes)
       const links = []
       // for each importantRelationship find the x,y coords on the graph and create set the link
