@@ -15,10 +15,6 @@
           :showPartners="showPartners"
           :importantRelationships="view.importantRelationships"
         />
-
-        <Link v-for="rule in view.importantRelationships"
-          :link="{ }"
-        />
       </g>
     </g>
     <!-- zoom in, zoom out buttons -->
@@ -184,27 +180,45 @@ export default {
       return this.root.path(this.pathNode)
         .map(d => d.data.id)
     },
-    lessImportantLinks () {
-      return this.view.importantRelationships.map(rule => {
-        // TODO HERE
-
-        look up the rule.profileId node, rule.important.slice(1) nodes
-
-        return {
-          // style
-          d: settings.path(
-            {
-              startX: 
-              startY:
-              endX: 
-              endY:
-            },
-            settings.branch
-          )
-        }
-      })
-      // TODO flaten later if we have multiple less important per node
-    }
+  //   lessImportantLinks () {
+  //     if (!this.view.focus || this.view.importantRelationships.length === 0) return []
+  //     console.log('view: ', this.view)
+  //     const links = []
+  //     // for each importantRelationship find the x,y coords on the graph and create set the link
+  //     this.view.importantRelationships.forEach(rule => {
+  //       console.log('rules: ', rule)
+  //       var node = this.nodes.find(node => node.data.id === rule.profileId)
+  //       console.log('node found: ', node)
+  //       rule.important.slice(1).forEach(link => {
+  //         var linkNode = this.nodes.find(d => d.data.id === link)
+  //         const dashed = ['adopted', 'whangai'].includes(linkNode.data.relationshipType)
+  //         console.log('link found: ', linkNode)
+  //         links.push({
+  //           id: node.data.id + ' - ' + linkNode.data.id,
+  //           style: {
+  //             fill: 'none',
+  //             stroke: settings.color.getColor(0),
+  //             opacity: settings.opacity,
+  //             strokeWidth: settings.thickness,
+  //             strokeLinejoin: 'round',
+  //             strokeDasharray: dashed ? 2.5 : 0
+  //           },
+  //           d: settings.path(
+  //             {
+  //               startX: node.x,
+  //               startY: node.y,
+  //               endX: linkNode.x,
+  //               endY: linkNode.y
+  //             },
+  //             settings.branch
+  //           )
+  //         })
+  //       })
+  //     })
+  //     console.log('links: ', links)
+  //     return links
+  //     // TODO flaten later if we have multiple less important per node
+  //   }
   },
   watch: {
     'nestedWhakapapa': function (newValue) {

@@ -118,7 +118,7 @@ function updateNode (nestedWhakapapa, node) {
   if (nestedWhakapapa.id === node.id) {
     // merge the values to maintain isNonPartner/isNonChild assignments
     merge(nestedWhakapapa, node)
-    return nestedWhakapapa
+    return { ...nestedWhakapapa }
   }
   // if this nestedWhakapap isnt the one we are looking for,
   // try searching its children

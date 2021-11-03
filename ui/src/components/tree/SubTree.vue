@@ -1,9 +1,10 @@
 <template>
   <g>
     <!-- links between root node and partners -->
-    <g v-for="dup in dupLinks" :key="`dup-link-${dup.id}`">
-      <Link :link="dup" />
-    </g>
+    <Link v-for="link in lessImportantLinks"
+      :key="link.id"
+      :link="link"
+    />
 
     <!-- links between root node and partners -->
     <g v-for="partner in allPartners" :key="`partner-link-${partner.data.id}`">
@@ -85,8 +86,7 @@ export default {
   },
   data () {
     return {
-      radius: 50,
-      dupLinks: []
+      radius: 50
     }
   },
   computed: {
@@ -108,13 +108,6 @@ export default {
     children () {
       if (this.profile.isCollapsed) return []
       if (this.root.children) {
-        // if (this.importantRelationships.length) {
-        //   console.log('important relationships: ', this.importantRelationships)
-        //   return this.root.children.filter(child => {
-        //     return !this.importantRelationships.some(dup => dup.profileId === child.data.id && dup.important[0] === this.profile.id)
-        //     // return this.importantRelationships[child.id] (dup => dup.id !== child.data.id && dup.nodeId !== this.profile.id)
-        //   })
-        // }
         return this.root.children
       }
       return []
@@ -173,6 +166,53 @@ export default {
         ghost: true,
         children: allChildren.map(({ data }) => this.mapChild({ y: yOffset }, data, style, null, true))
       }
+    },
+    nodes () {
+      if (!this.root.data) return []
+      console.log('root: ', this.root)
+      console.log('partners: ', this.partners)
+      console.log('children: ', this.children)
+      return [...[this.root], ...this.partners, ...this.children]
+    },
+    lessImportantLinks () {
+      if (this.importantRelationships.length === 0) return []
+      console.log('subtree nodes: ', this.nodes)
+      const links = []
+      // for each importantRelationship find the x,y coords on the graph and create set the link
+      this.importantRelationships.forEach(rule => {
+        console.log('rules: ', rule)
+        var node = this.nodes.find(node => node.data.id === rule.profileId)
+        if (!node) return
+        console.log('node found: ', node)
+        rule.important.slice(1).forEach(link => {
+          var linkNode = this.nodes.find(d => d.data.id === link)
+          const dashed = ['adopted', 'whangai'].includes(linkNode.data.relationshipType)
+          console.log('link found: ', linkNode)
+          links.push({
+            id: node.data.id + ' - ' + linkNode.data.id,
+            style: {
+              fill: 'none',
+              stroke: settings.color.getColor(0),
+              opacity: settings.opacity,
+              strokeWidth: settings.thickness,
+              strokeLinejoin: 'round',
+              strokeDasharray: dashed ? 2.5 : 0
+            },
+            d: settings.path(
+              {
+                startX: node.x,
+                startY: node.y,
+                endX: linkNode.x,
+                endY: linkNode.y
+              },
+              settings.branch
+            )
+          })
+        })
+      })
+      console.log('links: ', links)
+      return links
+      // TODO flaten later if we have multiple less important per node
     }
   },
   methods: {
