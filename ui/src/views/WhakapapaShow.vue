@@ -492,7 +492,8 @@ export default {
         person.partners = person.partners.filter(this.isVisibleProfile)
       }
 
-      person.children = this.removeMovedChildren(person.children, person.id)
+      person.children = this.removeDuplicateNodes(person.children, person.id)
+      person.partners = this.removeDuplicateNodes(person.partners, person.id)
 
       // map all links
       person.children = await this.mapChildren(person)
@@ -537,16 +538,16 @@ export default {
       return person
     },
 
-    removeMovedChildren (children, parentId) {
-      return children.filter(child => {
-        // check if this child is listed as having an important relationship
-        const importantRelationship = this.whakapapaView.importantRelationships.find(dupe => dupe.profileId === child.id)
+    removeDuplicateNodes (nodes, personId) {
+      return nodes.filter(node => {
+        // check if this node is listed as having an important relationship
+        const importantRelationship = this.whakapapaView.importantRelationships.find(dupe => dupe.profileId === node.id)
 
         if (!importantRelationship) return true // keep this profile as no rule was found
 
         // profile has an important relationship so we only show the link between them and the first profile listed as important
         // any other links wont be drawn
-        return importantRelationship.important[0] === parentId
+        return importantRelationship.important[0] === personId
       })
     },
 
