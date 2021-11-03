@@ -35,7 +35,6 @@ export default function (apollo) {
     //   return state.nodes[id]
     // },
     lessImportantLinks: state => {
-      debugger
       if (isEmpty(state.nodes) || isEmpty(state.view.importantRelationships)) return []
 
       const links = []
