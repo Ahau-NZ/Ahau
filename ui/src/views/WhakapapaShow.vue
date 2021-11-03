@@ -574,27 +574,23 @@ export default {
       let partners = person.children
         .reduce(
           (acc, child) => {
-            const importantRelationships = this.whakapapaView.importantRelationships.find(rule => {
+            const rule = this.whakapapaView.importantRelationships.find(rule => {
               return rule.profileId === child.id
             })
+
             const otherParents = child.parents
               // exclude self
               .filter(parent => parent.id !== person.id)
               // exclude existing partners
               .filter(parent => person.partners.every(partner => parent.id !== partner.id))
               // exclude less importantRelationships
-              // WIP - disable this filter to show duplicate otherParent
               .filter(parent => {
-                if (!importantRelationships) return true
+                if (!rule) return true
 
-                const keep = importantRelationships.important[0] === parent.id
-                if (!keep) console.log({ parent, child })
-                return keep
+                return rule.important[0] === parent.id // keep?
               })
 
-            acc.concat(otherParents)
-
-            return acc
+            return [...acc, ...otherParents]
           },
           []
         )

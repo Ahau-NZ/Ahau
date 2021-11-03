@@ -716,6 +716,8 @@ export default {
       return this.$t('dialogHandler.' + key, vars)
     },
     async addDupLink (input) {
+      // TODO this is only handling if you're adding a child link...
+
       var profileId = input.id
       var connectorId = (input.parents.length && this.findInTree(input.parents[0].id)) ? input.parents[0].id : input.partners[0].id
       var dupLink = {
