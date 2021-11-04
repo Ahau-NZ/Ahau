@@ -251,14 +251,14 @@ export default {
           x,
           y,
           children: partner.children
-            .map(child => this.mapChild({ x, y, sign, center: !partner.isNonPartner, yOffset, xOffset }, child, style, partner, false)),
+            .map(child => this.mapChild({ x, y, sign, center: !partner.isNonPartner, yOffset, xOffset }, child, style, partner, false))
+            .filter(Boolean),
           data: partner,
           link
         }
       })
     },
     focus ($event) {
-      console.log('change focus: ', $event)
       this.changeFocus($event)
     },
     center ($event) {
@@ -268,6 +268,7 @@ export default {
       // map to their node from the root parent
       const node = this.root.children.find(rootChild => child.id === rootChild.data.id)
 
+      if (!node || !node.data) return
       if (node.data.isNonChild) center = false
 
       // change the link if they are not related by birth

@@ -23,6 +23,29 @@ import { linkColours } from '../lib/colours'
 */
 function path ({ startX, startY, endX, endY }, branch) {
   branch = branch || (endY - startY) / 2
+
+  // special case for when startY and endY are the same
+  /*
+                         __________
+                         |        |
+   startX, startY        |   endX, endY
+(parent) x               |        x (child)
+         |_______________|
+
+  */
+
+  if (startY === endY) {
+    const offset = 80
+    return `
+      M ${startX}, ${startY}
+      v ${offset}
+      H ${endX + ((startX > startY) ? 1 : -1) * offset}
+      v ${-2 * offset}
+      H ${endX}
+      V ${endY}  
+    `
+  }
+
   return `
     M ${startX}, ${startY}
     v ${branch}

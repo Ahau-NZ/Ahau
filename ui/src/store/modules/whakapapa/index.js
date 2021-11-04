@@ -119,10 +119,11 @@ export default function (apollo) {
         // TODO check this is the right node to be checking the relationshipType on
 
         const coords = {
-          startX: node.x + node.radius,
-          startY: node.y + node.radius,
-          endX: targetNode.x + targetNode.radius,
-          endY: targetNode.y + targetNode.radius
+
+          startX: targetNode.x + targetNode.radius,
+          startY: targetNode.y + targetNode.radius,
+          endX: node.x + node.radius,
+          endY: node.y + node.radius
         }
         const offset = (coords.startX < coords.endX) ? LINK_OFFSET : -1 * LINK_OFFSET
         coords.startX += offset

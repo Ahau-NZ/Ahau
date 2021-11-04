@@ -121,11 +121,10 @@ function updateNode (nestedWhakapapa, node) {
 
     nestedWhakapapa.children = node.children
     nestedWhakapapa.partners = node.partners
-    nestedWhakapapa.parents = node.parents
 
     return { ...nestedWhakapapa }
   }
-  // if this nestedWhakapap isnt the one we are looking for,
+  // if this nestedWhakapapa isnt the one we are looking for,
   // try searching its children
   nestedWhakapapa.children = nestedWhakapapa.children.map(child => {
     // do the same for each child
