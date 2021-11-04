@@ -22,6 +22,7 @@ import { linkColours } from '@/lib/colours.js'
 
 */
 function path ({ startX, startY, endX, endY }, branch) {
+  branch = branch || (endY - startY) / 2
   return `
     M ${startX}, ${startY}
     v ${branch}

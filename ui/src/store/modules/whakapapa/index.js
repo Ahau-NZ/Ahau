@@ -1,9 +1,10 @@
 import uniqby from 'lodash.uniqby'
 import isEmpty from 'lodash.isempty'
 import tree from '../../../lib/tree-helpers'
+import settings from '../../../lib/link'
 import { getWhakapapaView } from './apollo-helpers'
 
-const settings = require('../../../lib/link')
+const LINK_OFFSET = 10
 
 export default function (apollo) {
   const loadingView = {
@@ -20,7 +21,13 @@ export default function (apollo) {
     view: loadingView,
     nestedWhakapapa: {},
     whakapapa: {},
-    nodes: {}
+    nodes: {},
+    lessImportantLinks: []
+
+    // we may have multiple nodes
+    // we have two types of node:
+    //   - main node
+    //   - partner node
   }
 
   const getters = {
@@ -31,72 +38,37 @@ export default function (apollo) {
       throw new Error('WHO IS USING THIS')
       // return state.whakapapa
     },
+    lessImportantLinks: state => state.lessImportantLinks
     // getNode: state => (id) => {
     //   return state.nodes[id]
     // },
-    lessImportantLinks: state => {
-      if (isEmpty(state.nodes) || isEmpty(state.view.importantRelationships)) return []
-
-      const links = []
-      // for each importantRelationship find the x,y coords on the graph and create set the link
-      state.view.importantRelationships.forEach(rule => {
-        const nodes = state.nodes[rule.profileId]
-        if (!nodes || nodes.length === 0) return
-
-        const node = nodes[0]
-        // TODO WARNING - handle there being multiple locations for a node
-
-        // skip the 0th relationship as that was "most important" and already drawn
-        rule.important.slice(1).forEach(profileId => {
-          const targetNodes = state.nodes[profileId]
-          if (!targetNodes || targetNodes.length === 0) return
-          const targetNode = targetNodes[0]
-          // TODO assuming first targetNode is right one
-          const isDashed = targetNode.data.relationshipType !== 'birth'
-
-          const branch = ((targetNode.y + targetNode.radius) - (node.y + node.radius)) / 2
-
-          links.push({
-            id: node.data.id + ' - ' + targetNode.data.id,
-            style: {
-              fill: 'none',
-              stroke: settings.color.getColor(0),
-              opacity: settings.opacity,
-              strokeWidth: settings.thickness,
-              strokeLinejoin: 'round',
-              strokeDasharray: isDashed ? 2.5 : 0
-            },
-            d: settings.path(
-              {
-                startX: node.x + node.radius,
-                startY: node.y + node.radius,
-                endX: targetNode.x + targetNode.radius,
-                endY: targetNode.y + targetNode.radius
-              },
-              branch
-            )
-          })
-        })
-      })
-      return links
-    }
   }
 
   const mutations = {
     setView (state, view) {
       state.view = view
     },
-    addNode (state, node) {
-      if (!node) return
-      const id = node.id || (node.data && node.data.id)
-      if (!id) return
+    addNodes (state, nodes) {
+      if (!nodes.length) return
 
-      state.nodes[id] = [
-        ...(state.nodes[id] || []),
-        node
-      ]
+      const change = nodes.reduce((acc, node) => {
+        const id = node.id || (node.data && node.data.id)
+        if (!id) return acc
+
+        acc[id] = [...(state.nodes[id] || []), node]
+        return acc
+      }, {})
+
+      // this assignment stimulates lessImportantLinks to update
+      // NOTE this is spamming a lot of changes at the moment
+      const newValue = {
+        ...state.nodes,
+        ...change
+      }
+      state.nodes = newValue
     },
     resetNodes (state) {
+      console.log('resetNodes!!!!!!!!!!!!!!!!!!!!')
       state.nodes = []
     },
     setNestedWhakapapa (state, nestedWhakapapa) {
@@ -138,10 +110,67 @@ export default function (apollo) {
     },
     addPartnerToNestedWhakapapa (state, { node, partner }) {
       state.nestedWhakapapa = tree.addPartner(state.nestedWhakapapa, node, partner)
+    },
+
+    lessImportantLinks (state) {
+      if (isEmpty(state.nodes) || isEmpty(state.view.importantRelationships)) return []
+      console.log('lessImportantLinks')
+
+      const links = []
+      // for each importantRelationship find the x,y coords on the graph and create set the link
+      state.view.importantRelationships.forEach(rule => {
+        const nodes = state.nodes[rule.profileId]
+        if (!nodes || nodes.length === 0) return
+
+        const node = nodes[0]
+        // TODO WARNING - handle there being multiple locations for a node
+
+        // skip the 0th relationship as that was "most important" and already drawn
+        rule.important.slice(1).forEach(profileId => {
+          const targetNodes = state.nodes[profileId]
+          if (!targetNodes || targetNodes.length === 0) return
+          const targetNode = targetNodes[0]
+          // TODO assuming first targetNode is right one
+          const isDashed = targetNode.data.relationshipType !== 'birth'
+
+          const coords = {
+            startX: node.x + node.radius,
+            startY: node.y + node.radius,
+            endX: targetNode.x + targetNode.radius,
+            endY: targetNode.y + targetNode.radius
+          }
+          const offset = (coords.startX < coords.endX) ? LINK_OFFSET : -1 * LINK_OFFSET
+          coords.startX += offset
+          coords.endX -= offset
+
+          const branch = (coords.endY - coords.startY) / 2
+
+          links.push({
+            id: [node.data.id, targetNode.data.id].join('-'),
+            style: {
+              fill: 'none',
+              // stroke: settings.color.getColor(0),
+              stroke: '#f0f',
+              opacity: settings.opacity,
+              strokeWidth: settings.thickness,
+              strokeLinejoin: 'round',
+              strokeDasharray: isDashed ? 2.5 : 0
+            },
+            d: settings.path(coords, branch)
+          })
+        })
+      }),
+      state.lessImportantLinks = links
+      //return links
     }
   }
 
   const actions = {
+    calculateLessImportantLinks ({ commit }, id) {
+      // TODO - call this when loading graph is done?
+      //
+      // TODO reset state when loading new whakapapa
+    },
     async getWhakapapaView (context, id) {
       try {
         const res = await apollo.query(
@@ -164,7 +193,8 @@ export default function (apollo) {
       if (view) commit('setView', view)
     },
     addNode ({ commit }, node) {
-      commit('addNode', node)
+      // TODO change is so that addNodes is only hit once per second!
+      commit('addNodes', [node])
     },
     setNestedWhakapapa ({ commit }, nestedWhakapapa) {
       commit('resetNodes')
