@@ -1,5 +1,10 @@
 <template>
   <g>
+    <g v-for="link in lessImportantLinks" :key="link.id">
+      <Link v-if="root.data.id === whakapapaView.focus"
+        :link="link"
+      />
+    </g>
     <!-- links between root node and partners -->
     <g v-for="partner in allPartners" :key="`partner-link-${partner.data.id}`">
       <Link v-if="partner.link" :link="partner.link" />
@@ -31,10 +36,8 @@
         :openMenu="openMenu"
         :changeFocus="changeFocus"
         :centerNode="centerNode"
-        :nodeCentered="nodeCentered"
         :showAvatars="showAvatars"
         :showPartners="showPartners"
-        :importantRelationships="importantRelationships"
       />
     </g>
 
@@ -53,6 +56,9 @@ import settings from '@/lib/link.js'
 import pileSort from 'pile-sort'
 import mapProfileMixins from '@/mixins/profile-mixins.js'
 
+import { createNamespacedHelpers } from 'vuex'
+const { mapGetters: mapWhakapapaGetters } = createNamespacedHelpers('whakapapa')
+
 const PARTNER_SHRINK = 0.7
 const X_PADDING = 10
 
@@ -63,10 +69,8 @@ export default {
     openMenu: Function,
     changeFocus: Function,
     centerNode: Function,
-    nodeCentered: String,
     showPartners: Boolean,
-    showAvatars: Boolean,
-    importantRelationships: Array
+    showAvatars: Boolean
   },
 
   mixins: [
@@ -84,6 +88,7 @@ export default {
     }
   },
   computed: {
+    ...mapWhakapapaGetters(['whakapapaView', 'lessImportantLinks']),
     allPartners () {
       return [
         ...this.partners,
@@ -181,7 +186,7 @@ export default {
         if (partner.children.length) {
           const childrenX = []
           partner.children.forEach(child => {
-            let node = this.root.children.find(rootChild => child.id === rootChild.data.id)
+            let node = this.root.children && this.root.children.find(rootChild => child.id === rootChild.data.id)
             if (node) childrenX.push(node.x)
           })
           var average = childrenX.reduce((a, b) => a + b, 0) / childrenX.length
@@ -229,37 +234,6 @@ export default {
             H ${x + this.partnerRadius}`
         }
 
-        // let dup
-        // if (this.duplicateProfiles.length) {
-        //   dup = this.duplicateProfiles.find(d => d.id === parent.id && d.nodeId === this.root.data.id)
-        // }
-
-        // if (dup) {
-        //   // find the profile to link to
-        //   const linkNode = this.findInTree(dup.linkId)
-        //   // get the relationshipType for the link
-        //   const rel = linkNode.children.find(child => child.data.id === dup.id).data.relationshipType
-        //   const dashed = ['adopted', 'whangai'].includes(rel)
-        //   // push to the dupLinks array
-        //   this.dupLinks.push({
-        //     id: dup.id + '-' + dup.linkId,
-        //     style: {
-        //       ...style, // inherits the style from the parent so the links are the same color
-        //       strokeDasharray: dashed ? 2.5 : 0 // for drawing a dashed link to represent adopted/whangai
-        //     },
-        //     d: settings.path( // for drawing a link from the parent to child
-        //       {
-        //         startX: linkNode.x + this.radius,
-        //         startY: linkNode.y + this.radius * 2 + 15,
-        //         endX: x + this.partnerRadius,
-        //         endY: y + this.partnerRadius * 2 + 15
-        //       },
-        //       settings.branch - this.radius
-        //     )
-        //   })
-        //   parent.isDuplicate = true
-        // }
-
         if (!this.showPartners) {
           partner.children = partner.children
             .filter(partnerChild => {
@@ -284,6 +258,7 @@ export default {
       })
     },
     focus ($event) {
+      console.log('change focus: ', $event)
       this.changeFocus($event)
     },
     center ($event) {

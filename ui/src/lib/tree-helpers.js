@@ -159,13 +159,15 @@ function deleteNode (nestedWhakapapa, id) {
   // if this nestedWhakapap isnt the one we are looking for,
   // try searching its children
   var childIndex = -1
-  nestedWhakapapa.children.some((child, i) => {
-    var node = deleteNode(child, id)
-    if (node === null) {
-      childIndex = i
-      return true
-    }
-  })
+  if (nestedWhakapapa.children && nestedWhakapapa.children.length) {
+    nestedWhakapapa.children.some((child, i) => {
+      var node = deleteNode(child, id)
+      if (node === null) {
+        childIndex = i
+        return true
+      }
+    })
+  }
   // if an index was set
   if (childIndex > -1) {
     // remove that child

@@ -24,11 +24,6 @@ export default function (apollo) {
     whakapapa: {},
     nodes: {},
     lessImportantLinks: []
-
-    // we may have multiple nodes
-    // we have two types of node:
-    //   - main node
-    //   - partner node
   }
 
   const getters = {
@@ -127,7 +122,6 @@ export default function (apollo) {
   const actions = {
     calculateLessImportantLinks ({ commit, state }) {
       // TODO - call this when loading graph is done?
-
       if (isEmpty(state.nodes) || isEmpty(state.view.importantRelationships)) return
 
       const links = []
@@ -159,7 +153,7 @@ export default function (apollo) {
           coords.endX -= offset
 
           links.push({
-            id: [node.data.id, targetNode.data.id].join('--'),
+            // id: [node.data.id, targetNode.data.id].join('--'),
             style: {
               fill: 'none',
               // stroke: settings.color.getColor(0),
@@ -214,7 +208,7 @@ export default function (apollo) {
       if (!person || !person.children || !person.children.length) return []
 
       // get current children who are ignored
-      const ignoredChildren = person.children.filter(A => state.whakapapa.ignoredProfiles.includes(A.id))
+      const ignoredChildren = person.children.filter(A => state.view.ignoredProfiles.includes(A.id))
 
       return uniqby(
         [
@@ -230,7 +224,7 @@ export default function (apollo) {
 
       if (!person || !person.parents || !person.parents.length) return []
 
-      const ignoredParents = person.parents.filter(A => state.whakapapa.ignoredProfiles.includes(A.id))
+      const ignoredParents = person.parents.filter(A => state.view.ignoredProfiles.includes(A.id))
 
       return uniqby(
         [

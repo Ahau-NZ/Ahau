@@ -5,19 +5,11 @@
         :transform="`translate(${treeX - radius} ${treeY - radius})`"
         ref="tree"
       >
-        <!-- links connecting less important distant relationships partners -->
-        <g>
-          <Link v-for="link in lessImportantLinks" :key="link.id"
-            :link="link"
-          />
-        </g>
-
         <SubTree
           :root="treeLayout(root)"
           :openMenu="openMenu"
           :changeFocus="changeFocus"
           :centerNode="centerNode"
-          :nodeCentered="nodeCentered"
           :showAvatars="showAvatars"
           :showPartners="showPartners"
         />
@@ -52,7 +44,6 @@
 <script>
 import * as d3 from 'd3'
 import SubTree from './SubTree'
-import Link from './Link'
 
 import isEqual from 'lodash.isequal'
 
@@ -76,8 +67,7 @@ export default {
     showPartners: Boolean
   },
   components: {
-    SubTree,
-    Link
+    SubTree
   },
   data () {
     return {
@@ -87,7 +77,7 @@ export default {
       nonFocusedPartners: [],
       changeFocusId: null,
       nodeId: '',
-      lastNode: null,
+      lastNode: null
     }
   },
   mounted () {
@@ -98,7 +88,7 @@ export default {
   },
 
   computed: {
-    ...mapWhakapapaGetters(['nestedWhakapapa', 'lessImportantLinks']),
+    ...mapWhakapapaGetters(['nestedWhakapapa']),
     radius () {
       return settings.radius
     },
@@ -334,6 +324,7 @@ export default {
 
     centerNode (source) {
       // if source node is already centered than collapse
+      console.log('centering')
 
       if (this.nodeCentered === source.data.id) {
         this.collapse(source)
@@ -385,13 +376,6 @@ export default {
           )
         })
     }
-    // findInTree (profileId) {
-    //   const existingNode = this.nodes.find(node => node.data.id === profileId)
-    //   if (existingNode) {
-    //     console.log('Node found!!!!')
-    //     return existingNode
-    //   }
-    // }
   }
 }
 </script>

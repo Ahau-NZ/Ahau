@@ -122,7 +122,7 @@ import findSuccessor from '@/lib/find-successor'
 import mapProfileMixins from '@/mixins/profile-mixins.js'
 import { createNamespacedHelpers, mapGetters, mapActions } from 'vuex'
 const { mapMutations: mapAlertMutations } = createNamespacedHelpers('alerts')
-const { mapGetters: mapWhakapapaGetters, mapMutations: mapWhakapapaMutations } = createNamespacedHelpers('whakapapa')
+const { mapGetters: mapWhakapapaGetters, mapMutations: mapWhakapapaMutations, mapActions: mapWhakapapaActions } = createNamespacedHelpers('whakapapa')
 const { mapActions: mapTribeActions } = createNamespacedHelpers('tribe')
 const { mapGetters: mapPersonGetters } = createNamespacedHelpers('person')
 
@@ -231,6 +231,7 @@ export default {
       'updateNodeInNestedWhakapapa',
       'deleteNodeInNestedWhakapapa'
     ]),
+    ...mapWhakapapaActions(['calculateLessImportantLinks']),
     isActive (type) {
       if (type === this.dialog || type === this.storeDialog) {
         return true
@@ -296,7 +297,7 @@ export default {
     async addPerson (input) {
       // if moveDup is in input than add duplink
       if (input.hasOwnProperty('moveDup')) {
-        await this.addDupLink(input)
+        await this.addImportantRelationship(input)
         delete input.moveDup
       }
 
@@ -524,10 +525,44 @@ export default {
       }
     },
     async removeProfile (deleteOrIgnore) {
+      console.log('removing profile')
+      await this.checkImportantRelationships()
       if (deleteOrIgnore === 'delete') {
         await this.deletePerson()
       } else {
         await this.ignoreProfile()
+      }
+    },
+    async checkImportantRelationships () {
+      console.log('looking for matching rule')
+      let relationship
+      this.view.importantRelationships.forEach(rule => {
+        console.log('checking rule: ', rule.profileId)
+        console.log('selectedProfile: ', this.selectedProfile.id)
+        if (rule.profileId === this.selectedProfile.id) {
+          relationship = {
+            profileId: rule.profileId,
+            important: []
+          }
+        } else if (rule.important.includes(this.selectedProfile.id)) {
+          console.log('deleteing connetor')
+          relationship = {
+            profileId: rule.profileId,
+            important: rule.important.filter(id => id !== this.selectedProfile.id)
+          }
+        }
+      })
+
+      if (relationship) {
+        console.log('updating relaitionship: ', relationship)
+        const update = {
+          id: this.$route.params.whakapapaId,
+          importantRelationships: relationship
+        }
+        await this.saveWhakapapa(update)
+        // we need to load the different links
+        // await this.$parent.reload() //doesnt work reloading
+        // this.calculateLessImportantLinks() //doesnt work reloading links
       }
     },
     async ignoreProfile () {
@@ -604,7 +639,8 @@ export default {
       })
 
       if (this.source !== 'new-registration') {
-      //  DOES THIS DO ANYTHING?
+      //  DOES THIS DO ANYTHING? 4/11/21
+      // TODO: If nothing is broken after awhile remove
         // var profiles = {} // flatStore for these suggestions
 
         // records.forEach(record => {
@@ -715,26 +751,39 @@ export default {
     t (key, vars) {
       return this.$t('dialogHandler.' + key, vars)
     },
-    async addDupLink (input) {
-      // TODO this is only handling if you're adding a child link...
+    async addImportantRelationship (input) {
+      // if important relationships already exsists just update the relationships
+      console.log('adding relationships: ', input)
 
-      var profileId = input.id
-      var connectorId = (input.parents.length && this.findInTree(input.parents[0].id)) ? input.parents[0].id : input.partners[0].id
+      // Check if we are moving a partner connection
+      var profile = (input.moveDup || this.dialogType === 'child') ? input : this.selectedProfile
+
+      const exsistingDupe = this.view.importantRelationships.find(dupe => dupe.profileId === profile.id)
+      var lessRelationship
+
+      if (exsistingDupe) {
+        lessRelationship = exsistingDupe.important[0]
+      } else {
+        console.log('profile: ', profile)
+        lessRelationship = (profile.parentsv && profile.parents.length && this.findInTree(profile.parents[0].id)) ? profile.parents[0].id : profile.partners[0].id
+      }
+      var profileId = profile.id
       var dupLink = {
         profileId
       }
 
-      dupLink.important = (input.moveDup)
-        ? [this.selectedProfile.id, connectorId]
-        : [connectorId, this.selectedProfile.id]
+      // check if we are linking a partner connection
+      if (input.moveDup || this.dialogType === 'child') {
+        dupLink.important = (input.moveDup)
+          ? [this.selectedProfile.id, lessRelationship]
+          : [lessRelationship, this.selectedProfile.id]
+      } else {
+        dupLink.important = [input.id, lessRelationship]
+      }
 
       const update = {
         id: this.$route.params.whakapapaId,
         importantRelationships: dupLink
-        // importantRelationships: {
-        // ...this.view.importantRelationships,
-        // ...dupLink
-        // }
       }
 
       await this.saveWhakapapa(update)

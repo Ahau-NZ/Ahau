@@ -45,7 +45,7 @@
       <text>{{ displayName }}</text>
     </g>
     <g
-      v-if="isPartner && hasAncestors"
+      v-if="isPartner && hasAncestors && !isDuplicate"
       :transform="`translate(${1 * radius - 2}, ${radius * -0.5})`"
     >
       <text
@@ -68,7 +68,7 @@ import NodeMenuButton from './NodeMenuButton.vue'
 
 import { createNamespacedHelpers } from 'vuex'
 
-const { mapActions: mapWhakapapaActions } = createNamespacedHelpers('whakapapa')
+const { mapActions: mapWhakapapaActions, mapGetters: mapWhakapapaGetters } = createNamespacedHelpers('whakapapa')
 
 export default {
   name: 'Node',
@@ -97,6 +97,13 @@ export default {
     }
   },
   computed: {
+    ...mapWhakapapaGetters(['whakapapaView']),
+    isDuplicate () {
+      if (this.whakapapaView.importantRelationships.some(rel => rel.profileId === this.node.data.id && rel.important.length > 1)) {
+        return true
+      }
+      return false
+    },
     showMenuButton () {
       if (this.isPartner) return false
       if (!this.profile.isCollapsed) {
