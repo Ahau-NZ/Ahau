@@ -180,9 +180,6 @@ export default {
     }
   },
   watch: {
-    // lessImportantLinks (newVal) {
-    //   console.log({lessImportantLinks: newVal})
-    // },
     nestedWhakapapa (newValue) {
       // Check for partners parents dots
       if (newValue.preferredName !== 'Loading') {

@@ -22,8 +22,7 @@ export default function (apollo) {
     view: loadingView,
     nestedWhakapapa: {},
     whakapapa: {},
-    nodes: {},
-    lessImportantLinks: []
+    nodes: {}
   }
 
   const getters = {
@@ -41,7 +40,8 @@ export default function (apollo) {
     //   return state.nodes[id]
     // },
     lessImportantLinks: state => {
-      return state.lessImportantLinks
+      const links = calculateLessImportantLinks(state)
+      return links || []
     }
   }
 
@@ -80,12 +80,6 @@ export default function (apollo) {
     setNestedWhakapapa (state, nestedWhakapapa) {
       state.nestedWhakapapa = nestedWhakapapa
     },
-    setWhakapapa (state, whakapapa) {
-      state.whakapapa = whakapapa
-    },
-    updatePartnerInNestedWhakapapa (state, node) {
-      state.nestedWhakapapa = tree.updatePartner(state.nestedWhakapapa, node)
-    },
     updateNodeInNestedWhakapapa (state, node) {
       state.nestedWhakapapa = tree.updateNode(state.nestedWhakapapa, node)
     },
@@ -99,76 +93,66 @@ export default function (apollo) {
       }
 
       state.nestedWhakapapa = whakapapa
-    },
-    addChildToNestedWhakapapa (state, { child, parent }) {
-      var whakapapa = {}
-
-      if (parent.isPartner) {
-        whakapapa = tree.addChildToPartner(state.nestedWhakapapa, child, parent)
-      } else {
-        whakapapa = tree.addChild(state.nestedWhakapapa, child, parent)
-      }
-
-      state.nestedWhakapapa = whakapapa
-    },
-    addParentToNestedWhakapapa (state, { child, parent }) {
-      state.nestedWhakapapa = tree.addParent(state.nestedWhakapapa, child, parent)
-    },
-    addPartnerToNestedWhakapapa (state, { node, partner }) {
-      state.nestedWhakapapa = tree.addPartner(state.nestedWhakapapa, node, partner)
     }
   }
 
-  const actions = {
-    calculateLessImportantLinks ({ commit, state }) {
-      // TODO - call this when loading graph is done?
-      if (isEmpty(state.nodes) || isEmpty(state.view.importantRelationships)) return
+  function calculateLessImportantLinks (state) {
+    // TODO - call this when loading graph is done?
+    if (isEmpty(state.nodes) || isEmpty(state.view.importantRelationships)) return
 
-      const links = []
-      // // for each importantRelationship find the x,y coords on the graph and create set the link
-      state.view.importantRelationships.forEach(rule => {
-        const nodes = state.nodes[rule.profileId]
-        if (!nodes || nodes.length === 0) return
+    const links = []
+    // // for each importantRelationship find the x,y coords on the graph and create set the link
+    state.view.importantRelationships.forEach(rule => {
+      const nodes = state.nodes[rule.profileId]
+      if (!nodes || nodes.length === 0) return
 
-        const node = clone(nodes[0])
-        // TODO WARNING - handle there being multiple locations for a node
+      const node = clone(nodes[nodes.length - 1])
+      // TODO WARNING - handle there being multiple locations for a node
 
-        // skip the 0th relationship as that was "most important" and already drawn
-        rule.important.slice(1).forEach(profileId => {
-          const targetNodes = state.nodes[profileId]
-          if (!targetNodes || targetNodes.length === 0) return
-          const targetNode = clone(targetNodes[0])
-          // TODO check first targetNode is right one...
-          const isDashed = targetNode.data.relationshipType !== 'birth'
-          // TODO check this is the right node to be checking the relationshipType on
+      // skip the 0th relationship as that was "most important" and already drawn
+      rule.important.slice(1).forEach(profileId => {
+        const targetNodes = state.nodes[profileId]
+        if (!targetNodes || targetNodes.length === 0) return
+        const targetNode = clone(targetNodes[targetNodes.length - 1])
+        // TODO check first targetNode is right one...
+        const isDashed = targetNode.data.relationshipType !== 'birth'
+        // TODO check this is the right node to be checking the relationshipType on
 
-          const coords = {
-            startX: node.x + node.radius,
-            startY: node.y + node.radius,
-            endX: targetNode.x + targetNode.radius,
-            endY: targetNode.y + targetNode.radius
-          }
-          const offset = (coords.startX < coords.endX) ? LINK_OFFSET : -1 * LINK_OFFSET
-          coords.startX += offset
-          coords.endX -= offset
+        const coords = {
+          startX: node.x + node.radius,
+          startY: node.y + node.radius,
+          endX: targetNode.x + targetNode.radius,
+          endY: targetNode.y + targetNode.radius
+        }
+        const offset = (coords.startX < coords.endX) ? LINK_OFFSET : -1 * LINK_OFFSET
+        coords.startX += offset
+        coords.endX -= offset
 
-          links.push({
-            // id: [node.data.id, targetNode.data.id].join('--'),
-            style: {
-              fill: 'none',
-              // stroke: settings.color.getColor(0),
-              stroke: '#f0f',
-              opacity: settings.opacity,
-              strokeWidth: settings.thickness,
-              strokeLinejoin: 'round',
-              strokeDasharray: isDashed ? 2.5 : 0
-            },
-            d: settings.path(coords)
-          })
+        links.push({
+          // id: [node.data.id, targetNode.data.id].join('--'),
+          style: {
+            fill: 'none',
+            // stroke: settings.color.getColor(0),
+            stroke: '#f0f',
+            opacity: settings.opacity,
+            strokeWidth: settings.thickness,
+            strokeLinejoin: 'round',
+            strokeDasharray: isDashed ? 2.5 : 0
+          },
+          d: settings.path(coords)
         })
       })
+    })
 
-      if (links.length) commit('setLessImportantLinks', links)
+    if (links.length) return links
+  }
+
+  const actions = {
+    updateNodeInNestedWhakapapa ({ commit, dispatch }, node) {
+      commit('updateNodeInNestedWhakapapa', node)
+    },
+    deleteNodeInNestedWhakapapa ({ commit, dispatch }, node) {
+      commit('deleteNodeInNestedWhakapapa', node)
     },
     async getWhakapapaView (context, id) {
       try {
@@ -199,7 +183,6 @@ export default function (apollo) {
     },
     setNestedWhakapapa ({ commit, dispatch }, nestedWhakapapa) {
       commit('setNestedWhakapapa', nestedWhakapapa)
-      setTimeout(() => dispatch('calculateLessImportantLinks'), 1000)
     },
     async suggestedChildren ({ dispatch, state }, parentId) {
       // get the persons full profile
