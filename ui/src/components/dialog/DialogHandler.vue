@@ -122,7 +122,7 @@ import findSuccessor from '@/lib/find-successor'
 import mapProfileMixins from '@/mixins/profile-mixins.js'
 import { createNamespacedHelpers, mapGetters, mapActions } from 'vuex'
 const { mapMutations: mapAlertMutations } = createNamespacedHelpers('alerts')
-const { mapGetters: mapWhakapapaGetters, mapActions: mapWhakapapaActions } = createNamespacedHelpers('whakapapa')
+const { mapGetters: mapWhakapapaGetters, mapMutations: mapWhakapapaMutations } = createNamespacedHelpers('whakapapa')
 const { mapActions: mapTribeActions } = createNamespacedHelpers('tribe')
 const { mapGetters: mapPersonGetters } = createNamespacedHelpers('person')
 
@@ -227,7 +227,7 @@ export default {
     ...mapAlertMutations(['showAlert']),
     ...mapTribeActions(['initGroup']),
     ...mapActions(['loading', 'setDialog']),
-    ...mapWhakapapaActions([
+    ...mapWhakapapaMutations([
       'updateNodeInNestedWhakapapa',
       'deleteNodeInNestedWhakapapa'
     ]),

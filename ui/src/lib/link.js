@@ -1,5 +1,5 @@
 import get from 'lodash.get'
-import { linkColours } from '@/lib/colours.js'
+import { linkColours } from '../lib/colours'
 
 /*
 
