@@ -5,10 +5,9 @@
         :transform="`translate(${treeX - radius} ${treeY - radius})`"
         ref="tree"
       >
+        <!-- links connecting less important distant relationships partners -->
         <g>
-          <!-- links between root node and partners -->
-          <Link v-for="link in lessImportantLinks"
-            :key="link.id"
+          <Link v-for="link in lessImportantLinks" :key="link.id"
             :link="link"
           />
         </g>
@@ -88,7 +87,7 @@ export default {
       nonFocusedPartners: [],
       changeFocusId: null,
       nodeId: '',
-      lastNode: null
+      lastNode: null,
     }
   },
   mounted () {
@@ -191,7 +190,10 @@ export default {
     }
   },
   watch: {
-    'nestedWhakapapa': function (newValue) {
+    // lessImportantLinks (newVal) {
+    //   console.log({lessImportantLinks: newVal})
+    // },
+    nestedWhakapapa (newValue) {
       // Check for partners parents dots
       if (newValue.preferredName !== 'Loading') {
         this.nonFocusedPartners = []

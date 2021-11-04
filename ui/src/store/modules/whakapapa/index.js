@@ -1,5 +1,6 @@
 import uniqby from 'lodash.uniqby'
 import isEmpty from 'lodash.isempty'
+import clone from 'lodash.clonedeep'
 import tree from '../../../lib/tree-helpers'
 import settings from '../../../lib/link'
 import { getWhakapapaView } from './apollo-helpers'
@@ -72,13 +73,14 @@ export default function (apollo) {
       }
       state.nodes = newValue
     },
-    lessImportantLinks (state, links) {
+    setLessImportantLinks (state, links) {
       state.lessImportantLinks = links
     },
     resetWhakapapaView (state) {
-      state.nodes = []
-      state.nestedWhakapapa = {}
       state.view = loadingView
+      state.nestedWhakapapa = {}
+      state.nodes = []
+      state.lessImportantLinks = []
     },
     setNestedWhakapapa (state, nestedWhakapapa) {
       state.nestedWhakapapa = nestedWhakapapa
@@ -125,10 +127,8 @@ export default function (apollo) {
   const actions = {
     calculateLessImportantLinks ({ commit, state }) {
       // TODO - call this when loading graph is done?
-      //
-      // TODO reset state when loading new whakapapa
 
-      if (isEmpty(state.nodes) || isEmpty(state.view.importantRelationships)) return commit('lessImportantLinks', [])
+      if (isEmpty(state.nodes) || isEmpty(state.view.importantRelationships)) return
 
       const links = []
       // // for each importantRelationship find the x,y coords on the graph and create set the link
@@ -136,16 +136,17 @@ export default function (apollo) {
         const nodes = state.nodes[rule.profileId]
         if (!nodes || nodes.length === 0) return
 
-        const node = nodes[0]
+        const node = clone(nodes[0])
         // TODO WARNING - handle there being multiple locations for a node
 
         // skip the 0th relationship as that was "most important" and already drawn
         rule.important.slice(1).forEach(profileId => {
           const targetNodes = state.nodes[profileId]
           if (!targetNodes || targetNodes.length === 0) return
-          const targetNode = targetNodes[0]
-          // TODO assuming first targetNode is right one
+          const targetNode = clone(targetNodes[0])
+          // TODO check first targetNode is right one...
           const isDashed = targetNode.data.relationshipType !== 'birth'
+          // TODO check this is the right node to be checking the relationshipType on
 
           const coords = {
             startX: node.x + node.radius,
@@ -157,10 +158,8 @@ export default function (apollo) {
           coords.startX += offset
           coords.endX -= offset
 
-          const branch = (coords.endY - coords.startY) / 2
-
           links.push({
-            id: [node.data.id, targetNode.data.id].join('-'),
+            id: [node.data.id, targetNode.data.id].join('--'),
             style: {
               fill: 'none',
               // stroke: settings.color.getColor(0),
@@ -170,12 +169,12 @@ export default function (apollo) {
               strokeLinejoin: 'round',
               strokeDasharray: isDashed ? 2.5 : 0
             },
-            d: settings.path(coords, branch)
+            d: settings.path(coords)
           })
         })
       })
 
-      commit('lessImportantLinks', links)
+      if (links.length) commit('setLessImportantLinks', links)
     },
     async getWhakapapaView (context, id) {
       try {
@@ -206,7 +205,7 @@ export default function (apollo) {
     },
     setNestedWhakapapa ({ commit, dispatch }, nestedWhakapapa) {
       commit('setNestedWhakapapa', nestedWhakapapa)
-      dispatch('calculateLessImportantLinks')
+      setTimeout(() => dispatch('calculateLessImportantLinks'), 1000)
     },
     async suggestedChildren ({ dispatch, state }, parentId) {
       // get the persons full profile
