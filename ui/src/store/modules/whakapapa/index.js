@@ -38,10 +38,15 @@ export default function (apollo) {
       throw new Error('WHO IS USING THIS')
       // return state.whakapapa
     },
-    lessImportantLinks: state => state.lessImportantLinks
+    nodes: state => {
+      return state.nodes
+    },
     // getNode: state => (id) => {
     //   return state.nodes[id]
     // },
+    lessImportantLinks: state => {
+      return state.lessImportantLinks
+    }
   }
 
   const mutations = {
@@ -67,9 +72,13 @@ export default function (apollo) {
       }
       state.nodes = newValue
     },
-    resetNodes (state) {
-      console.log('resetNodes!!!!!!!!!!!!!!!!!!!!')
+    lessImportantLinks (state, links) {
+      state.lessImportantLinks = links
+    },
+    resetWhakapapaView (state) {
       state.nodes = []
+      state.nestedWhakapapa = {}
+      state.view = loadingView
     },
     setNestedWhakapapa (state, nestedWhakapapa) {
       state.nestedWhakapapa = nestedWhakapapa
@@ -110,14 +119,19 @@ export default function (apollo) {
     },
     addPartnerToNestedWhakapapa (state, { node, partner }) {
       state.nestedWhakapapa = tree.addPartner(state.nestedWhakapapa, node, partner)
-    },
+    }
+  }
 
-    lessImportantLinks (state) {
-      if (isEmpty(state.nodes) || isEmpty(state.view.importantRelationships)) return []
-      console.log('lessImportantLinks')
+  const actions = {
+    calculateLessImportantLinks ({ commit, state }) {
+      // TODO - call this when loading graph is done?
+      //
+      // TODO reset state when loading new whakapapa
+
+      if (isEmpty(state.nodes) || isEmpty(state.view.importantRelationships)) return commit('lessImportantLinks', [])
 
       const links = []
-      // for each importantRelationship find the x,y coords on the graph and create set the link
+      // // for each importantRelationship find the x,y coords on the graph and create set the link
       state.view.importantRelationships.forEach(rule => {
         const nodes = state.nodes[rule.profileId]
         if (!nodes || nodes.length === 0) return
@@ -159,17 +173,9 @@ export default function (apollo) {
             d: settings.path(coords, branch)
           })
         })
-      }),
-      state.lessImportantLinks = links
-      //return links
-    }
-  }
+      })
 
-  const actions = {
-    calculateLessImportantLinks ({ commit }, id) {
-      // TODO - call this when loading graph is done?
-      //
-      // TODO reset state when loading new whakapapa
+      commit('lessImportantLinks', links)
     },
     async getWhakapapaView (context, id) {
       try {
@@ -187,18 +193,20 @@ export default function (apollo) {
       }
     },
     async loadWhakapapaView ({ dispatch, commit, state }, id) {
-      if (id !== state.view.id) commit('setView', loadingView)
-
+      commit('resetWhakapapaView')
       const view = await dispatch('getWhakapapaView', id)
       if (view) commit('setView', view)
+    },
+    resetWhakapapaView ({ commit }) {
+      commit('resetWhakapapaView')
     },
     addNode ({ commit }, node) {
       // TODO change is so that addNodes is only hit once per second!
       commit('addNodes', [node])
     },
-    setNestedWhakapapa ({ commit }, nestedWhakapapa) {
-      commit('resetNodes')
+    setNestedWhakapapa ({ commit, dispatch }, nestedWhakapapa) {
       commit('setNestedWhakapapa', nestedWhakapapa)
+      dispatch('calculateLessImportantLinks')
     },
     async suggestedChildren ({ dispatch, state }, parentId) {
       // get the persons full profile

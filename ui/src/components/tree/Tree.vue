@@ -14,14 +14,13 @@
         </g>
 
         <SubTree
-          :root="treeLayout(this.root)"
+          :root="treeLayout(root)"
           :openMenu="openMenu"
           :changeFocus="changeFocus"
           :centerNode="centerNode"
           :nodeCentered="nodeCentered"
           :showAvatars="showAvatars"
           :showPartners="showPartners"
-          :importantRelationships="view.importantRelationships"
         />
       </g>
     </g>
@@ -251,10 +250,6 @@ export default {
         return '#b02425'
       }
       return 'darkgrey'
-    },
-
-    loadDescendants (profileId) {
-      this.$emit('load-descendants', profileId)
     },
 
     async checkNonFocusedPartner (profile) {

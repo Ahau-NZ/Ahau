@@ -371,7 +371,7 @@ export default {
     ...mapTribeActions(['getTribe']),
     ...mapPersonMutations(['updateSelectedProfile']),
     ...mapActions(['setLoading']),
-    ...mapWhakapapaActions(['loadWhakapapaView', 'setNestedWhakapapa']),
+    ...mapWhakapapaActions(['loadWhakapapaView', 'setNestedWhakapapa', 'resetWhakapapaView']),
     ...mapTableActions(['resetTableFilters']),
     async reload () {
       await this.loadWhakapapaView(this.$route.params.whakapapaId)
@@ -754,8 +754,7 @@ export default {
     }
   },
   destroyed () {
-    // reset whakapapa and relationships when leaving the tree
-    this.setNestedWhakapapa([])
+    this.resetWhakapapaView()
   }
 }
 

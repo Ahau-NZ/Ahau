@@ -178,7 +178,6 @@ export default {
     node: {
       immediate: true,
       handler (newVal) {
-        console.log(newVal.data.preferredName, 'updated!')
         newVal.radius = this.radius
         // NOTE may need to consider watch: { deep: true }
         this.addNode(newVal)
