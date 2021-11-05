@@ -114,23 +114,26 @@ export default function (apollo) {
         const targetNodes = state.nodes[profileId]
         if (!targetNodes || targetNodes.length === 0) return
         const targetNode = clone(targetNodes[targetNodes.length - 1])
-        // TODO check first targetNode is right one...
-        const isDashed = targetNode.data.relationshipType !== 'birth'
-        // TODO check this is the right node to be checking the relationshipType on
+
+        // TODO cherese 5/11/21 need to query the relationship between the two nodes in order to get an accurate relationshipType
+        // targetNode.data.relationshipType is the childs relationship to their parent in the tree
+        // node.data.relationshipType is that parents relationship to their parent in the tree!
+        // const isDashed = targetNode.data.relationshipType !== 'birth'
+        const isDashed = false
 
         const coords = {
-
           startX: targetNode.x + targetNode.radius,
           startY: targetNode.y + targetNode.radius,
           endX: node.x + node.radius,
           endY: node.y + node.radius
         }
+
         const offset = (coords.startX < coords.endX) ? LINK_OFFSET : -1 * LINK_OFFSET
         coords.startX += offset
         coords.endX -= offset
 
         links.push({
-          // id: [node.data.id, targetNode.data.id].join('--'),
+          id: [node.data.id, targetNode.data.id].join('--'),
           style: {
             fill: 'none',
             // stroke: settings.color.getColor(0),

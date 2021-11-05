@@ -321,8 +321,6 @@ export default {
 
     centerNode (source) {
       // if source node is already centered than collapse
-      console.log('centering')
-
       if (this.nodeCentered === source.data.id) {
         this.collapse(source)
         return
