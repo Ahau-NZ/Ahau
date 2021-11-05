@@ -12,6 +12,10 @@ export const WhakapapaFragment = gql`
     ignoredProfiles
     image { uri }
     recordCount
+    importantRelationships {
+      profileId
+      important
+    }
   }
 `
 

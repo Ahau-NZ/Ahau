@@ -1,12 +1,13 @@
 <template>
   <g>
-
+    <g v-if="root.data.id === whakapapaView.focus">
+      <g v-for="link in lessImportantLinks" :key="`l-i-${link.id}`">
+        <Link :link="link"/>
+      </g>
+    </g>
     <!-- links between root node and partners -->
-    <g v-for="partner in allPartners" :key="`partner-link-${partner.data.id}`">
-      <Link
-        v-if="partner.link"
-        :link="partner.link"
-      />
+    <g v-for="partner in allPartners.filter(p => p.link) " :key="`partner-link-${partner.data.id}`">
+      <Link v-if="partner.link" :link="partner.link" />
     </g>
 
     <!-- all partners and links to their children -->
@@ -35,7 +36,6 @@
         :openMenu="openMenu"
         :changeFocus="changeFocus"
         :centerNode="centerNode"
-        :nodeCentered="nodeCentered"
         :showAvatars="showAvatars"
         :showPartners="showPartners"
       />
@@ -47,6 +47,7 @@
 </template>
 
 <script>
+import isEmpty from 'lodash.isempty'
 import Node from './Node.vue'
 import Link from './Link.vue'
 
@@ -54,6 +55,9 @@ import Link from './Link.vue'
 import settings from '@/lib/link.js'
 import pileSort from 'pile-sort'
 import mapProfileMixins from '@/mixins/profile-mixins.js'
+
+import { createNamespacedHelpers } from 'vuex'
+const { mapGetters: mapWhakapapaGetters } = createNamespacedHelpers('whakapapa')
 
 const PARTNER_SHRINK = 0.7
 const X_PADDING = 10
@@ -65,7 +69,6 @@ export default {
     openMenu: Function,
     changeFocus: Function,
     centerNode: Function,
-    nodeCentered: String,
     showPartners: Boolean,
     showAvatars: Boolean
   },
@@ -85,6 +88,7 @@ export default {
     }
   },
   computed: {
+    ...mapWhakapapaGetters(['whakapapaView', 'lessImportantLinks']),
     allPartners () {
       return [
         ...this.partners,
@@ -102,10 +106,14 @@ export default {
     },
     children () {
       if (this.profile.isCollapsed) return []
-      return this.root.children || []
+      if (this.root.children) {
+        return this.root.children
+      }
+      return []
     },
     partners () {
-      if (!this.root || !this.profile.partners || this.profile.isCollapsed || !this.showPartners) return []
+      // check that component has loaded with data, the profile has partners and the profile is not collapsed
+      if (isEmpty(this.root.data) || isEmpty(this.profile.partners) || this.profile.isCollapsed) return []
 
       var len = this.profile.partners.length
       if (len === 1) len = 2
@@ -125,9 +133,9 @@ export default {
       const [children, otherChildren] = pileSort(
         this.children,
         [
-          (child) => (child.data.parents && child.data.parents.length === 1) || partners.length === 0, // all children that this node is the only parent of
+          (child) => (child.data.parents && child.data.parents.length === 1) || this.partners.length === 0, // all children that this node is the only parent of
           (child) => {
-            let parentIds = child.data.parents.map(parent => { return parent.id })
+            let parentIds = child.data.parents.map(parent => parent.id)
             return (
               parentIds.length > 1 && // the child has two or more parents
               //  none of their other parents are a partner of the root node
@@ -146,7 +154,7 @@ export default {
       }
 
       var totalPartners = this.partners.length
-      const allChildren = [...children, ...otherChildren]
+      const allChildren = [...children, ...otherChildren].filter(child => !child.data.isNonChild)
 
       const yOffset = this.root.y + (totalPartners * settings.partner.spacing.y)
 
@@ -178,7 +186,7 @@ export default {
         if (partner.children.length) {
           const childrenX = []
           partner.children.forEach(child => {
-            let node = this.root.children.find(rootChild => child.id === rootChild.data.id)
+            let node = this.root.children && this.root.children.find(rootChild => child.id === rootChild.data.id)
             if (node) childrenX.push(node.x)
           })
           var average = childrenX.reduce((a, b) => a + b, 0) / childrenX.length
@@ -243,16 +251,8 @@ export default {
           x,
           y,
           children: partner.children
-            .filter(partnerChild => {
-              return (
-                this.children &&
-                this.children.some(rootChild => {
-                  if (!rootChild || !partnerChild) return false
-                  return (rootChild.data.id === partnerChild.id)
-                })
-              )
-            }) // filter out children who arent this nodes
-            .map(child => this.mapChild({ x, y, sign, center: !partner.isNonPartner, yOffset, xOffset }, child, style, partner, false)),
+            .map(child => this.mapChild({ x, y, sign, center: !partner.isNonPartner, yOffset, xOffset }, child, style, partner, false))
+            .filter(Boolean),
           data: partner,
           link
         }
@@ -267,6 +267,9 @@ export default {
     mapChild ({ x = this.root.x, y = this.root.y, center, sign, yOffset, xOffset }, child, style, parent, ghostParent) {
       // map to their node from the root parent
       const node = this.root.children.find(rootChild => child.id === rootChild.data.id)
+
+      if (!node || !node.data) return
+      if (node.data.isNonChild) center = false
 
       // change the link if they are not related by birth
       const dashed = parent && parent.relationshipType ? ['adopted', 'whangai'].includes(parent.relationshipType) : ['adopted', 'whangai'].includes(node.data.relationshipType)

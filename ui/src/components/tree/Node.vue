@@ -45,8 +45,8 @@
       <text>{{ displayName }}</text>
     </g>
     <g
-      v-if="isPartner && hasAncestors"
-      :transform="`translate(${1 * radius}, ${radius * -0.5})`"
+      v-if="isPartner && hasAncestors && !isDuplicate"
+      :transform="`translate(${1 * radius - 2}, ${radius * -0.5})`"
     >
       <text
         font-size="30"
@@ -66,10 +66,17 @@ import { DECEASED_COLOUR, ALIVE_COLOUR } from '@/lib/constants.js'
 import { getDisplayName } from '@/lib/person-helpers.js'
 import NodeMenuButton from './NodeMenuButton.vue'
 
+import { createNamespacedHelpers } from 'vuex'
+
+const { mapActions: mapWhakapapaActions, mapGetters: mapWhakapapaGetters } = createNamespacedHelpers('whakapapa')
+
 export default {
   name: 'Node',
   props: {
-    node: Object,
+    node: {
+      type: Object,
+      required: true
+    },
     radius: {
       type: Number,
       default: 50
@@ -90,6 +97,13 @@ export default {
     }
   },
   computed: {
+    ...mapWhakapapaGetters(['whakapapaView']),
+    isDuplicate () {
+      if (this.whakapapaView.importantRelationships.some(rel => rel.profileId === this.node.data.id && rel.important.length > 1)) {
+        return true
+      }
+      return false
+    },
     showMenuButton () {
       if (this.isPartner) return false
       if (!this.profile.isCollapsed) {
@@ -150,6 +164,7 @@ export default {
     }
   },
   methods: {
+    ...mapWhakapapaActions(['addNode']),
     openMenu (event, profile) {
       profile.isPartner = this.isPartner
       this.$emit('open-menu', { event, profile })
@@ -164,6 +179,16 @@ export default {
     },
     center () {
       this.$emit('center', this.node)
+    }
+  },
+  watch: {
+    node: {
+      immediate: true,
+      handler (newVal) {
+        newVal.radius = this.radius
+        // NOTE may need to consider watch: { deep: true }
+        this.addNode(newVal)
+      }
     }
   }
 }

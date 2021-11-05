@@ -21,6 +21,7 @@
       :selectedProfile="selectedProfile"
       :suggestions="suggestions"
       :type="dialogType"
+      :findInTree="findInTree"
       withView
       @getSuggestions="getSuggestions($event)"
       @create="addPerson($event)"
@@ -293,6 +294,12 @@ export default {
       }
     },
     async addPerson (input) {
+      // if moveDup is in input than add duplink
+      if (input.hasOwnProperty('moveDup')) {
+        await this.addImportantRelationship(input)
+        delete input.moveDup
+      }
+
       // get children, parents, partners quick add links
       var { id, children, parents, partners } = input
 
@@ -517,10 +524,37 @@ export default {
       }
     },
     async removeProfile (deleteOrIgnore) {
+      await this.checkImportantRelationships()
       if (deleteOrIgnore === 'delete') {
         await this.deletePerson()
       } else {
         await this.ignoreProfile()
+      }
+    },
+    async checkImportantRelationships () {
+      let relationship
+      this.view.importantRelationships.forEach(rule => {
+        if (rule.profileId === this.selectedProfile.id) {
+          relationship = {
+            profileId: rule.profileId,
+            important: []
+          }
+        } else if (rule.important.includes(this.selectedProfile.id)) {
+          relationship = {
+            profileId: rule.profileId,
+            important: rule.important.filter(id => id !== this.selectedProfile.id)
+          }
+        }
+      })
+
+      if (relationship) {
+        const update = {
+          id: this.$route.params.whakapapaId,
+          importantRelationships: relationship
+        }
+        await this.saveWhakapapa(update)
+        // we need to load the different links
+        // await this.$parent.reload() //doesnt work reloading
       }
     },
     async ignoreProfile () {
@@ -597,19 +631,21 @@ export default {
       })
 
       if (this.source !== 'new-registration') {
-        var profiles = {} // flatStore for these suggestions
+      //  DOES THIS DO ANYTHING? 4/11/21
+      // TODO: If nothing is broken after awhile remove
+        // var profiles = {} // flatStore for these suggestions
 
-        records.forEach(record => {
-          record.children = record.children.map(child => {
-            profiles[child.id] = child // add this records children to the flatStore
-            return child.id // only want the childs ID
-          })
-          record.parents = record.parents.map(parent => {
-            profiles[parent.id] = parent // add this records parents to the flatStore
-            return parent.id // only want the parents ID
-          })
-          profiles[record.id] = record // add this record to the flatStore
-        })
+        // records.forEach(record => {
+        //   record.children = record.children.map(child => {
+        //     profiles[child.id] = child // add this records children to the flatStore
+        //     return child.id // only want the childs ID
+        //   })
+        //   record.parents = record.parents.map(parent => {
+        //     profiles[parent.id] = parent // add this records parents to the flatStore
+        //     return parent.id // only want the parents ID
+        //   })
+        //   profiles[record.id] = record // add this record to the flatStore
+        // })
 
         this.predecessorArray = []
         await this.getNodePredecessors(this.selectedProfile.id) // Get the predecessors of the current node
@@ -706,6 +742,49 @@ export default {
     },
     t (key, vars) {
       return this.$t('dialogHandler.' + key, vars)
+    },
+    async addImportantRelationship (input) {
+      // Check if we are moving a partner connection
+      var profile = (input.moveDup || this.dialogType === 'child') ? input : this.selectedProfile
+
+      // check if there is already an existing important relationship
+      const exsistingDupe = this.view.importantRelationships.find(dupe => dupe.profileId === profile.id)
+      var lessRelationship
+
+      if (exsistingDupe) {
+        // YES - there is an important relationship so we use that one instead
+        lessRelationship = exsistingDupe.important[0]
+      } else {
+        // NO - there isnt an important relationship so we find the parent which takes "presidence"
+        lessRelationship = (profile.parents && profile.parents.length && this.findInTree(profile.parents[0].id))
+          ? profile.parents[0].id // take the first parent
+          : profile.partners && profile.partners.length
+            ? profile.partners[0].id // otherwise take the first partner? TODO: is this logic right @ben? Need to check!
+            : null
+
+        if (!lessRelationship) return
+      }
+
+      var importantRelationship = {
+        profileId: profile.id
+      }
+
+      // check if we are linking a partner connection
+      if (input.moveDup || this.dialogType === 'child') {
+        importantRelationship.important = (input.moveDup)
+          ? [this.selectedProfile.id, lessRelationship]
+          : [lessRelationship, this.selectedProfile.id]
+      } else {
+        importantRelationship.important = [input.id, lessRelationship]
+      }
+
+      const update = {
+        id: this.$route.params.whakapapaId,
+        importantRelationships: importantRelationship
+      }
+
+      await this.saveWhakapapa(update)
+      await this.$parent.reload()
     }
   }
 }

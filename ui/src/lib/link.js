@@ -1,5 +1,5 @@
 import get from 'lodash.get'
-import { linkColours } from '@/lib/colours.js'
+import { linkColours } from '../lib/colours'
 
 /*
 
@@ -22,6 +22,30 @@ import { linkColours } from '@/lib/colours.js'
 
 */
 function path ({ startX, startY, endX, endY }, branch) {
+  branch = branch || (endY - startY) / 2
+
+  // special case for when startY and endY are the same
+  /*
+                         __________
+                         |        |
+   startX, startY        |   endX, endY
+(parent) x               |        x (child)
+         |_______________|
+
+  */
+
+  if (startY === endY) {
+    const offset = 80
+    return `
+      M ${startX}, ${startY}
+      v ${offset}
+      H ${endX + ((startX > startY) ? 1 : -1) * offset}
+      v ${-2 * offset}
+      H ${endX}
+      V ${endY}  
+    `
+  }
+
   return `
     M ${startX}, ${startY}
     v ${branch}
@@ -38,16 +62,6 @@ function visiblePartners (node) {
   return get(node, 'data.isCollapsed')
     ? 0
     : get(node, 'data.partners.length', 0)
-}
-
-function leftPartnersCount (node) {
-  return visiblePartners(node)
-}
-
-function rightPartnersCount (node) {
-  const len = visiblePartners(node)
-  if (node.data.partners && len === 1) return 0
-  return len
 }
 
 // TODO (later): move these settings into vuex where the tree style can be manipulated there
@@ -72,7 +86,6 @@ export default {
   branch: 110,
   radius: 50,
   separation: {
-    leftPartnersCount,
-    rightPartnersCount
+    visiblePartners
   }
 }

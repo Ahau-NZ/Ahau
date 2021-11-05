@@ -204,7 +204,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['whoami', 'whakapapa', 'showStory', 'storeDialog', 'syncing', 'navComponent']),
+    ...mapGetters(['whoami', 'showStory', 'storeDialog', 'syncing', 'navComponent']),
     connectedTribes () {
       return this.tribes.filter(tribe => tribe.private.length > 0)
     },

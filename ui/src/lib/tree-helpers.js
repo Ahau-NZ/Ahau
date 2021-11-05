@@ -1,4 +1,5 @@
 import uniqby from 'lodash.uniqby'
+import merge from 'lodash.merge'
 
 export default {
   flatten,
@@ -115,18 +116,22 @@ function updateNode (nestedWhakapapa, node) {
   // if the nestedWhakapapa matches the node we are
   // looking for, then look no further
   if (nestedWhakapapa.id === node.id) {
-    // update its value
-    nestedWhakapapa = node
-    return nestedWhakapapa
+    // merge the values to maintain isNonPartner/isNonChild assignments
+    merge(nestedWhakapapa, node)
+
+    nestedWhakapapa.children = node.children
+    nestedWhakapapa.partners = node.partners
+
+    return { ...nestedWhakapapa }
   }
-  // if this nestedWhakapap isnt the one we are looking for,
+  // if this nestedWhakapapa isnt the one we are looking for,
   // try searching its children
   nestedWhakapapa.children = nestedWhakapapa.children.map(child => {
     // do the same for each child
     return updateNode(child, node) // will either return a changed value or the same one
   })
 
-  return nestedWhakapapa
+  return { ...nestedWhakapapa }
 }
 
 function isEmpty (d) {
@@ -158,13 +163,15 @@ function deleteNode (nestedWhakapapa, id) {
   // if this nestedWhakapap isnt the one we are looking for,
   // try searching its children
   var childIndex = -1
-  nestedWhakapapa.children.some((child, i) => {
-    var node = deleteNode(child, id)
-    if (node === null) {
-      childIndex = i
-      return true
-    }
-  })
+  if (nestedWhakapapa.children && nestedWhakapapa.children.length) {
+    nestedWhakapapa.children.some((child, i) => {
+      var node = deleteNode(child, id)
+      if (node === null) {
+        childIndex = i
+        return true
+      }
+    })
+  }
   // if an index was set
   if (childIndex > -1) {
     // remove that child

@@ -1,4 +1,3 @@
-
 <template>
   <v-container fluid class="px-2">
     <v-row class="pa-5" :class="mobile ? 'pb-0':''" light style="margin-top: 64px;">
@@ -64,8 +63,6 @@ import pick from 'lodash.pick'
 import isEmpty from 'lodash.isempty'
 import isEqual from 'lodash.isequal'
 import groupBy from 'lodash.groupby'
-
-import * as d3 from 'd3'
 
 import WhakapapaViewCard from '@/components/whakapapa/WhakapapaViewCard.vue'
 import NewViewDialog from '@/components/dialog/whakapapa/NewViewDialog.vue'
