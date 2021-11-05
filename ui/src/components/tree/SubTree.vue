@@ -56,7 +56,7 @@ import pileSort from 'pile-sort'
 import mapProfileMixins from '@/mixins/profile-mixins.js'
 
 const PARTNER_SHRINK = 0.7
-const X_PADDING = 15
+const X_PADDING = 10
 
 export default {
   name: 'SubTree',
@@ -102,7 +102,7 @@ export default {
     },
     children () {
       if (this.profile.isCollapsed) return []
-      return this.root.children
+      return this.root.children || []
     },
     partners () {
       if (!this.root || !this.profile.partners || this.profile.isCollapsed || !this.showPartners) return []
@@ -114,7 +114,7 @@ export default {
         ? len / 2
         : Math.round(len / 2) - 1
 
-      return this.mapNodes(this.profile.partners, midway)
+      return this.mapPartnerNodes(this.profile.partners, midway)
     },
     // Needed to draw links between parents and children outside of a partnership
     ghostPartner () {
@@ -123,14 +123,13 @@ export default {
         .map(partner => partner.data.id)
 
       const [children, otherChildren] = pileSort(
-        this.children || [],
+        this.children,
         [
           (child) => (child.data.parents && child.data.parents.length === 1) || partners.length === 0, // all children that this node is the only parent of
           (child) => {
             let parentIds = child.data.parents.map(parent => { return parent.id })
             return (
-              child.data.parents &&
-              child.data.parents.length > 1 && // the child has two or more parents
+              parentIds.length > 1 && // the child has two or more parents
               //  none of their other parents are a partner of the root node
               !partners.some(id => parentIds.includes(id))
             )
@@ -167,22 +166,39 @@ export default {
 
       this.openMenu({ event, profile })
     },
-    mapNodes (nodes, midway) {
-      return nodes.map((parent, i) => {
-        var sign = i >= midway ? 1 : -1
+    mapPartnerNodes (nodes, midway) {
+      var leftPartners = 0
+      var rightPartners = 0
+
+      return nodes.map((partner, i) => {
+        // set partners to alternate sides
+        let sign = i >= midway ? 1 : -1
+
+        // If the partner has children find where they are positioned and place the partner on the correct side
+        if (partner.children.length) {
+          const childrenX = []
+          partner.children.forEach(child => {
+            let node = this.root.children.find(rootChild => child.id === rootChild.data.id)
+            if (node) childrenX.push(node.x)
+          })
+          var average = childrenX.reduce((a, b) => a + b, 0) / childrenX.length
+          if (average) sign = average > this.root.x ? 1 : -1
+        }
+
+        // keep a count of the partners on each side
+        if (sign === 1) rightPartners++
+        else leftPartners++
 
         const offset = sign === 1
           ? this.diameter - 2 * this.partnerRadius // right
           : 0 // left
 
         const xMultiplier = sign === 1
-          ? (i - midway) + 1
-          : i - midway
+          ? rightPartners
+          : -leftPartners
 
         // how far sideways the partner sits from the root node at 0
-        const x = this.root.x + offset + xMultiplier * (this.diameter + X_PADDING)
-        // if we are negative theres no offset
-        // if we are positive - use diameter
+        const x = this.root.x + offset + xMultiplier * (this.diameter - 10)
 
         // how far down the partner sits from the root node at 0
         const y = this.root.y + this.radius - this.partnerRadius
@@ -200,16 +216,18 @@ export default {
         // start point of the partner node links on the Y axist
         const yOffset = this.root.y + (i * settings.partner.spacing.y) + this.radius
 
-        const link = parent.isNonPartner ? {} : {
+        const xOffset = xMultiplier * X_PADDING
+
+        const link = partner.isNonPartner ? {} : {
           style,
-          // for drawing the link from the root parent to this partner/parent
+          // for drawing the link from the root partner to this partner/partner
           d: `
             M ${this.root.x + this.radius}, ${yOffset}
             H ${x + this.partnerRadius}`
         }
 
         if (!this.showPartners) {
-          parent.children = parent.children
+          partner.children = partner.children
             .filter(partnerChild => {
               return (
                 this.children &&
@@ -224,7 +242,7 @@ export default {
         return {
           x,
           y,
-          children: parent.children
+          children: partner.children
             .filter(partnerChild => {
               return (
                 this.children &&
@@ -234,8 +252,8 @@ export default {
                 })
               )
             }) // filter out children who arent this nodes
-            .map(child => this.mapChild({ x, y, sign, center: !parent.isNonPartner, yOffset }, child, style, parent)),
-          data: parent,
+            .map(child => this.mapChild({ x, y, sign, center: !partner.isNonPartner, yOffset, xOffset }, child, style, partner, false)),
+          data: partner,
           link
         }
       })
@@ -246,8 +264,7 @@ export default {
     center ($event) {
       this.centerNode($event)
     },
-    mapChild ({ x = this.root.x, y = this.root.y, center, sign, yOffset }, child, style, parent, ghostParent) {
-      // console.log('rootChidlren: ', this.root.children)
+    mapChild ({ x = this.root.x, y = this.root.y, center, sign, yOffset, xOffset }, child, style, parent, ghostParent) {
       // map to their node from the root parent
       const node = this.root.children.find(rootChild => child.id === rootChild.data.id)
 
@@ -256,11 +273,12 @@ export default {
 
       // center the link between the parents
       if (center) {
-        x = x - this.radius + this.partnerRadius - sign * (this.partnerRadius + 20)// end constant is dependant on radius, partnerRadius, X_PADDING
+        x = x - this.radius + this.partnerRadius - sign * (this.partnerRadius + 10)// end constant is dependant on radius, partnerRadius, X_PADDING
         y = yOffset - this.radius
       }
 
-      let offCenter = !ghostParent
+      // offcenter links to avoid overlapping with partner or main parent node links
+      let offCenter = !ghostParent && !center
 
       return {
         ...node,
@@ -273,7 +291,7 @@ export default {
             {
               startX: offCenter ? x + this.partnerRadius : x + this.radius,
               startY: offCenter ? yOffset : y + this.radius,
-              endX: offCenter ? node.x + this.radius + yOffset / 20 : node.x + this.radius,
+              endX: offCenter ? node.x + this.radius + xOffset : node.x + this.radius,
               endY: node.y + this.radius
             },
             settings.branch
