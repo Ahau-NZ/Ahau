@@ -14,8 +14,8 @@ import { linkColours } from '../lib/colours'
           (startX, startY)
                   |
                   |
-                  |
     (branch) _____|
+            |
             |
             |
       (endX, endY)
@@ -26,11 +26,11 @@ function path ({ startX, startY, endX, endY }, branch) {
 
   // special case for when startY and endY are the same
   /*
-                         __________
-                         |        |
-   startX, startY        |   endX, endY
-(parent) x               |        x (child)
-         |_______________|
+               ____________________
+               |                  |
+   startX, startY            endX, endY
+(parent) x     |                  x (child)
+         |_____|
 
   */
 
@@ -39,7 +39,7 @@ function path ({ startX, startY, endX, endY }, branch) {
     return `
       M ${startX}, ${startY}
       v ${offset}
-      H ${endX + ((startX > startY) ? 1 : -1) * offset}
+      H ${startX + (startX < endX ? offset : -offset)}
       v ${-2 * offset}
       H ${endX}
       V ${endY}  
