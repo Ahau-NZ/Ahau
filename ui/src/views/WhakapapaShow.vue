@@ -176,7 +176,7 @@
       @change-focus="changeFocus($event)"
       @newAncestor="setFocus($event)"
       :focus="focus"
-      @update-whakapapa="saveWhakapapa($event)"
+      @update-whakapapa="processSaveWhakapapa"
       @delete-whakapapa="deleteWhakapapa"
       @setFocus="setFocus($event)"
       @toggleFilterMenu="clickedOffSearchFilter()"
@@ -210,7 +210,6 @@ import SearchFilterButton from '@/components/button/SearchFilterButton.vue'
 import tree from '@/lib/tree-helpers'
 import avatarHelper from '@/lib/avatar-helpers.js'
 import { getRelatives } from '@/lib/person-helpers.js'
-import { saveWhakapapaView } from '@/lib/whakapapa-helpers.js'
 import { getTribalProfile } from '@/lib/community-helpers'
 
 import mapProfileMixins from '@/mixins/profile-mixins.js'
@@ -371,7 +370,7 @@ export default {
     ...mapTribeActions(['getTribe']),
     ...mapPersonMutations(['updateSelectedProfile']),
     ...mapActions(['setLoading']),
-    ...mapWhakapapaActions(['loadWhakapapaView', 'setNestedWhakapapa', 'resetWhakapapaView']),
+    ...mapWhakapapaActions(['loadWhakapapaView', 'setNestedWhakapapa', 'resetWhakapapaView', 'saveWhakapapaView']),
     ...mapTableActions(['resetTableFilters']),
     async reload () {
       await this.loadWhakapapaView(this.$route.params.whakapapaId)
@@ -681,7 +680,7 @@ export default {
       this.showWhakapapaHelper = !this.showWhakapapaHelper
     },
     async updateFocus (focus) {
-      await this.saveWhakapapa({ focus })
+      await this.processSaveWhakapapa({ focus })
     },
     async setSelectedProfile (profile) {
       if (profile === null) {
@@ -700,31 +699,20 @@ export default {
         this.updateSelectedProfile({})
       }
     },
-    async saveWhakapapa (input) {
+    async processSaveWhakapapa (input) {
       input = {
         id: this.whakapapaView.id,
         ...input
       }
 
-      try {
-        const res = await this.$apollo.mutate(saveWhakapapaView(input))
-        if (res.errors) {
-          console.error('failed to save whakapapa', res.errors)
-          return
-        }
-        // refresh the current whakapapa
-        await this.reload()
-        return res.data.saveWhakapapaView
-      } catch (e) {
-        console.error('something went wrong while trying to save the whakapapa', e)
-      }
+      await this.saveWhakapapaView(input)
     },
     async deleteWhakapapa () {
       var input = {
         tombstone: { date: new Date() }
       }
 
-      await this.saveWhakapapa(input)
+      await this.processSaveWhakapapa(input)
 
       const [newPath] = this.$route.fullPath.split('whakapapa/')
       this.$router.push({ path: newPath + 'whakapapa' }).catch(() => {})
@@ -742,6 +730,12 @@ export default {
     }
   },
   async beforeDestroy () {
+    if (!this.whakapapaView.id) {
+      console.error('Trying to save the record count without a whakapapa id', this.whakapapaView)
+      return
+    }
+
+    if (this.whakapapaView.recordCount === 0) return
     if (this.whakapapaView.recordCount === this.recordCount) return
 
     // if there are more records here than are recorded, update the whakapapa-view
@@ -749,10 +743,8 @@ export default {
       id: this.whakapapaView.id,
       recordCount: this.recordCount
     }
-    const res = await this.$apollo.mutate(saveWhakapapaView(input))
-    if (res.errors) {
-      console.error('failed to save recordCount', res.errors)
-    }
+
+    await this.saveWhakapapaView(input)
   },
   destroyed () {
     this.resetWhakapapaView()

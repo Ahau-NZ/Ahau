@@ -74,13 +74,12 @@ import SkeletonLoader from '@/components/SkeletonLoader.vue'
 
 import { saveLink } from '@/lib/link-helpers.js'
 import { savePerson } from '@/lib/person-helpers.js'
-import { saveWhakapapaView } from '@/lib/whakapapa-helpers.js'
-import mapWhakapapaMixins from '@/mixins/whakapapa-view.js'
 import { findByName } from '@/lib/search-helpers.js'
 
 import { mapGetters, mapActions, createNamespacedHelpers } from 'vuex'
 const { mapMutations: mapAlertMutations } = createNamespacedHelpers('alerts')
 const { mapActions: mapTribeActions } = createNamespacedHelpers('tribe')
+const { mapActions: mapWhakapapaActions } = createNamespacedHelpers('whakapapa')
 
 export default {
   name: 'WhakapapaIndex',
@@ -97,11 +96,6 @@ export default {
     BigAddButton,
     SkeletonLoader
   },
-  mixins: [
-    mapWhakapapaMixins({
-      mapMethods: ['getWhakapapaViews']
-    })
-  ],
   data () {
     return {
       suggestions: [],
@@ -128,6 +122,7 @@ export default {
     ...mapActions(['setLoading']),
     ...mapAlertMutations(['showAlert']),
     ...mapTribeActions(['getTribe']),
+    ...mapWhakapapaActions(['getWhakapapaViews', 'saveWhakapapaView']),
 
     async groupedWhakapapaViews () {
       const views = await this.getWhakapapaViews()
@@ -229,29 +224,28 @@ export default {
       }
     },
     async createView (input) {
+      // TODO cherese 6/11/21 get rid of this code
       const pruned = {}
       Object.entries(input).forEach(([key, value]) => {
         if (!isEmpty(value)) pruned[key] = value
       })
 
-      try {
-        const result = await this.$apollo.mutate(
-          saveWhakapapaView(input)
-        )
-
-        if (result.errors) throw result.errors
-
-        var type = this.$route.name.split('/whakapapa')[0]
-        this.$router.push({
-          name: type + '/whakapapa/:whakapapaId',
-          params: {
-            whakapapaId: result.data.saveWhakapapaView
-          }
-        }).catch(() => {})
-      } catch (err) {
-        this.setLoading(false)
-        console.error('Something went wrong while creating a whakapapa', err)
+      if (!input.authors) {
+        input.authors = {
+          add: ['*']
+        }
       }
+
+      const whakapapaId = await this.saveWhakapapaView(input)
+
+      var type = this.$route.name.split('/whakapapa')[0]
+
+      this.$router.push({
+        name: type + '/whakapapa/:whakapapaId',
+        params: {
+          whakapapaId
+        }
+      }).catch(() => {})
     },
     async handleDoubleStep (input) {
       try {

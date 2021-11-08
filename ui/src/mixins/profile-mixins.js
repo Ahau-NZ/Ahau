@@ -5,7 +5,6 @@ import { getProfile } from '@/lib/profile-helpers.js'
 import { getTribe } from '../store/modules/tribe/apollo-helpers'
 import { savePerson, whakapapaLink } from '@/lib/person-helpers.js'
 import { saveLink } from '@/lib/link-helpers.js'
-import { saveWhakapapaView } from '@/lib/whakapapa-helpers.js'
 
 export default function mapProfileMixins ({ mapMethods, mapApollo }) {
   var customMixin = {}
@@ -176,20 +175,6 @@ const methods = {
       // return res.data.saveLink // linkId
     } catch (err) {
       console.error('Something went wrong while trying to save a link', input)
-      console.error(err)
-    }
-  },
-  async saveWhakapapa (input) {
-    try {
-      const res = await this.$apollo.mutate(
-        saveWhakapapaView(input)
-      )
-
-      if (res.errors) throw res.errors
-
-      return res.data.saveWhakapapaView
-    } catch (err) {
-      console.error('Something went wrong while trying to save a whakapapa', input)
       console.error(err)
     }
   },

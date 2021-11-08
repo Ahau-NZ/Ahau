@@ -3,7 +3,7 @@ import isEmpty from 'lodash.isempty'
 import clone from 'lodash.clonedeep'
 import tree from '../../../lib/tree-helpers'
 import settings from '../../../lib/link'
-import { getWhakapapaView } from './apollo-helpers'
+import { getWhakapapaView, getWhakapapaViews, saveWhakapapaView } from './apollo-helpers'
 
 const LINK_OFFSET = 10
 
@@ -15,7 +15,8 @@ export default function (apollo) {
     recps: null,
     image: { uri: '' },
     ignoredProfiles: [],
-    importantRelationships: []
+    importantRelationships: [],
+    recordCount: 0
   }
   const state = {
     // loading, // TODO
@@ -170,13 +171,44 @@ export default function (apollo) {
         return res.data.whakapapaView
       } catch (err) {
         // TODO error alert message
-        console.error(err)
+        console.error('failed to get the whakapapa', err)
       }
     },
-    async loadWhakapapaView ({ dispatch, commit, state }, id) {
+    async getWhakapapaViews (context) {
+      try {
+        const res = await apollo.query(
+          getWhakapapaViews
+        )
+
+        if (res.errors) throw new Error(res.errors)
+
+        // TODO success alert message
+        return res.data.whakapapaViews
+      } catch (err) {
+        // TODO error alert message
+        return []
+      }
+    },
+    async loadWhakapapaView ({ dispatch, commit }, id) {
       commit('resetWhakapapaView')
       const view = await dispatch('getWhakapapaView', id)
       if (view) commit('setView', view)
+    },
+    async saveWhakapapaView ({ dispatch, commit }, input) {
+      try {
+        const res = await apollo.mutate(
+          saveWhakapapaView(input)
+        )
+
+        if (res.errors) throw new Error(res.errors)
+
+        const view = await dispatch('getWhakapapaView', res.data.saveWhakapapaView)
+        if (view) commit('setView', view)
+
+        return res.data.saveWhakapapaView
+      } catch (err) {
+        console.error('failed to save the whakapapa', err)
+      }
     },
     resetWhakapapaView ({ commit }) {
       commit('resetWhakapapaView')
