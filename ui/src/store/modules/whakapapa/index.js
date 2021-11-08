@@ -189,12 +189,12 @@ export default function (apollo) {
         return []
       }
     },
-    async loadWhakapapaView ({ dispatch, commit, state }, id) {
+    async loadWhakapapaView ({ dispatch, commit }, id) {
       commit('resetWhakapapaView')
       const view = await dispatch('getWhakapapaView', id)
       if (view) commit('setView', view)
     },
-    async saveWhakapapaView (context, input) {
+    async saveWhakapapaView ({ dispatch, commit }, input) {
       try {
         const res = await apollo.mutate(
           saveWhakapapaView(input)
@@ -202,7 +202,10 @@ export default function (apollo) {
 
         if (res.errors) throw new Error(res.errors)
 
-        return res.data.saveWhakapapaView // whakapapaId
+        const view = await dispatch('getWhakapapaView', res.data.saveWhakapapaView)
+        if (view) commit('setView', view)
+
+        return res.data.saveWhakapapaView
       } catch (err) {
         console.error('failed to save the whakapapa', err)
       }

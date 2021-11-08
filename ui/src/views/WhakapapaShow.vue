@@ -706,7 +706,6 @@ export default {
       }
 
       await this.saveWhakapapaView(input)
-      await this.reload()
     },
     async deleteWhakapapa () {
       var input = {
@@ -741,7 +740,7 @@ export default {
 
     // if there are more records here than are recorded, update the whakapapa-view
     const input = {
-      id: this.$route.params.whakapapaId,
+      id: this.whakapapaView.id,
       recordCount: this.recordCount
     }
 
