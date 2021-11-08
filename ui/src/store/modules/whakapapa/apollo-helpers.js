@@ -26,7 +26,7 @@ export const getWhakapapaView = id => ({
     query($id: String!) {
       whakapapaView(id: $id) {
         ...WhakapapaFragment
-        kaitiaki {
+        tiaki {
           ...PublicProfileFields
         }
       }

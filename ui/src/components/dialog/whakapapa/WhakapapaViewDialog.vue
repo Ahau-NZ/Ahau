@@ -26,7 +26,7 @@
         <v-col>{{ view.description }}</v-col>
       </v-row>
       <v-row class="pl-4">
-        <AvatarGroup :profiles="view.kaitiaki || view.tiaki" groupTitle="Kaitiaki" size="50px" showLabels @profile-click="openProfile($event)"/>
+        <AvatarGroup :profiles="view.tiaki" groupTitle="Kaitiaki" size="50px" showLabels @profile-click="openProfile($event)"/>
         <AvatarGroup v-if="currentAccess" :profiles="[currentAccess]" :isView="currentAccess.type === 'community'" groupTitle="Access" size="50px" showLabels @profile-click="openProfile($event)"/>
       </v-row>
     </template>

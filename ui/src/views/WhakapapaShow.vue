@@ -742,6 +742,11 @@ export default {
     }
   },
   async beforeDestroy () {
+    if (!this.whakapapaView.id) {
+      console.error('Trying to save the record count without a whakapapa id', this.whakapapaView)
+      return
+    }
+
     if (this.whakapapaView.recordCount === this.recordCount) return
 
     // if there are more records here than are recorded, update the whakapapa-view
