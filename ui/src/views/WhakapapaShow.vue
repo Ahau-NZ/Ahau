@@ -478,7 +478,8 @@ export default {
       return result
     },
 
-    async loadDescendants (profileId, seen = []) {
+    async loadDescendants (profileId, seen = new Set([])) {
+      seen.add(profileId)
       // get the persons profile + links
 
       this.nodeIds.push(profileId)
@@ -496,7 +497,7 @@ export default {
       person.partners = this.removeDuplicateNodes(person.partners, person.id)
 
       // map all links
-      person.children = await this.mapChildren(person)
+      person.children = await this.mapChildren(person, seen)
 
       if (this.showPartners) {
         let otherChildren = []
@@ -504,7 +505,7 @@ export default {
         let partnersOtherChildren = []
 
         // get all step/whangai parents of the children
-        if (person.children.length) otherParents = await this.getOtherParents(person)
+        if (person.children.length) otherParents = await this.getOtherParents(person, seen)
 
         // add half brothers and sisters as children with property of isNonChild
         if (otherParents.length) {
@@ -514,14 +515,14 @@ export default {
         }
 
         // get all other children from current partner
-        if (person.partners.length) partnersOtherChildren = await this.getOtherChildren(person)
+        if (person.partners.length) partnersOtherChildren = await this.getOtherChildren(person, seen)
         if (partnersOtherChildren.length) {
           let arr = flatten(partnersOtherChildren)
           arr.forEach(child => { if (child.isNonChild) otherChildren.push(child) })
         }
 
         // add all children's whakapapa to this view
-        otherChildren = await this.mapChildren({ children: otherChildren })
+        otherChildren = await this.mapChildren({ children: otherChildren }, seen)
 
         person.partners = uniqby([...person.partners, ...otherParents], 'id')
         person.children = uniqby([...person.children, ...otherChildren], 'id')
@@ -556,13 +557,14 @@ export default {
       return Promise.all(person.partners.map(async partner => {
         let children = await this.getFullChildProfiles(partner, person)
         // remove children that already the main parents child
-        var _children = children.filter(child => !child.parents.some(parent => parent.id === person.id))
-        return _children
+
+        return children
+          .filter(child => !child.parents.some(parent => parent.id === person.id))
       }))
     },
 
     // get all the parents of the connected children
-    async getOtherParents (person) {
+    async getOtherParents (person, seen) {
       // we have a problem if there is a child who is also a whangai sibling
 
       let parents = person.children
@@ -583,13 +585,9 @@ export default {
                 NOTE
                 there is an edge case where if a child is whangai'd to a grandparent,
                 then we can enter into an infinite loop when trying to resolve "otherParents"
-
-                WARNING - this does not protect against vertical movement > 1 hop
               */
-              // filter out otherParents who are also children
-              .filter(otherParent => person.children.every(child => child.id !== otherParent.id))
-              // filter out otherParents who are also parents
-              .filter(otherParent => person.parents.every(parent => parent.id !== otherParent.id))
+              // filter out otherParents we have already seen to prevent infinite loops
+              .filter(otherParent => !seen.has(otherParent.id))
 
               // exclude less importantRelationships
               .filter(otherParent => {
@@ -604,12 +602,6 @@ export default {
         )
 
       parents = uniqby(parents, 'id')
-
-      console.log(`
-        getOtherParents ${person.preferredName}
-        children: ${person.children.map(c => c.preferredName).join(', ')}
-        otherParents: ${parents.map(c => c.preferredName).join(', ')}
-      `)
 
       // get partners full profiles to find if they have any other children
       parents = await this.getFullPartnerProfiles(parents, person)
@@ -647,9 +639,9 @@ export default {
       )
     },
 
-    async mapChildren (person) {
+    async mapChildren (person, seen) {
       return Promise.all(person.children.map(async child => {
-        var childProfile = await this.loadDescendants(child.id)
+        var childProfile = await this.loadDescendants(child.id, seen)
         if (!person.id) person.id = childProfile.parents[0].id
 
         // load the relationship between the two
