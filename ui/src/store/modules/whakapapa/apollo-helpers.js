@@ -43,7 +43,7 @@ export const getWhakapapaViews = ({
     query {
       whakapapaViews {
         ...WhakapapaFragment
-        kaitiaki {
+        tiaki {
           ...PublicProfileFields
         }
       }

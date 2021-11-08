@@ -230,6 +230,12 @@ export default {
         if (!isEmpty(value)) pruned[key] = value
       })
 
+      if (!input.authors) {
+        input.authors = {
+          add: ['*']
+        }
+      }
+
       const whakapapaId = await this.saveWhakapapaView(input)
 
       var type = this.$route.name.split('/whakapapa')[0]

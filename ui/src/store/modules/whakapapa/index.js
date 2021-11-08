@@ -196,7 +196,6 @@ export default function (apollo) {
     },
     async saveWhakapapaView (context, input) {
       try {
-        console.log(input)
         const res = await apollo.mutate(
           saveWhakapapaView(input)
         )
