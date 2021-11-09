@@ -405,7 +405,7 @@ export default {
       this.dialog.type = type
       this.dialog.active = dialog
     },
-    // Used when ignoring/deleteing top ancestor on a partner line
+    // Used when ignoring/deleting top ancestor on a partner line
     // AND when adding a partner ancestor update the tree to load
     setFocus (profileId) {
       this.currentFocus = profileId
@@ -477,7 +477,8 @@ export default {
       return result
     },
 
-    async loadDescendants (profileId) {
+    async loadDescendants (profileId, seen = new Set([])) {
+      seen.add(profileId)
       // get the persons profile + links
 
       this.nodeIds.push(profileId)
@@ -495,7 +496,7 @@ export default {
       person.partners = this.removeDuplicateNodes(person.partners, person.id)
 
       // map all links
-      person.children = await this.mapChildren(person)
+      person.children = await this.mapChildren(person, seen)
 
       if (this.showPartners) {
         let otherChildren = []
@@ -503,9 +504,9 @@ export default {
         let partnersOtherChildren = []
 
         // get all step/whangai parents of the children
-        if (person.children.length) otherParents = await this.getOtherPartners(person)
+        if (person.children.length) otherParents = await this.getOtherParents(person, seen)
 
-        // add half borthers and sisters as children with property of isNonChild
+        // add half brothers and sisters as children with property of isNonChild
         if (otherParents.length) {
           otherParents.forEach(parent => {
             parent.children.forEach(child => { if (child.isNonChild) otherChildren.push(child) })
@@ -513,14 +514,14 @@ export default {
         }
 
         // get all other children from current partner
-        if (person.partners.length) partnersOtherChildren = await this.getOtherChildren(person)
+        if (person.partners.length) partnersOtherChildren = await this.getOtherChildren(person, seen)
         if (partnersOtherChildren.length) {
           let arr = flatten(partnersOtherChildren)
           arr.forEach(child => { if (child.isNonChild) otherChildren.push(child) })
         }
 
-        // add all childrens whakapapa to this view
-        otherChildren = await this.mapChildren({ children: otherChildren })
+        // add all children's whakapapa to this view
+        otherChildren = await this.mapChildren({ children: otherChildren }, seen)
 
         person.partners = uniqby([...person.partners, ...otherParents], 'id')
         person.children = uniqby([...person.children, ...otherChildren], 'id')
@@ -555,14 +556,17 @@ export default {
       return Promise.all(person.partners.map(async partner => {
         let children = await this.getFullChildProfiles(partner, person)
         // remove children that already the main parents child
-        var _children = children.filter(child => !child.parents.some(parent => parent.id === person.id))
-        return _children
+
+        return children
+          .filter(child => !child.parents.some(parent => parent.id === person.id))
       }))
     },
 
     // get all the parents of the connected children
-    async getOtherPartners (person) {
-      let partners = person.children
+    async getOtherParents (person, seen) {
+      // we have a problem if there is a child who is also a whangai sibling
+
+      let parents = person.children
         .reduce(
           (acc, child) => {
             const rule = this.whakapapaView.importantRelationships.find(rule => {
@@ -571,14 +575,24 @@ export default {
 
             const otherParents = child.parents
               // exclude self
-              .filter(parent => parent.id !== person.id)
+              .filter(otherParent => otherParent.id !== person.id)
+
               // exclude existing partners
-              .filter(parent => person.partners.every(partner => parent.id !== partner.id))
+              .filter(otherParent => person.partners.every(partner => partner.id !== otherParent.id))
+
+              /*
+                NOTE
+                there is an edge case where if a child is whangai'd to a grandparent,
+                then we can enter into an infinite loop when trying to resolve "otherParents"
+              */
+              // filter out otherParents we have already seen to prevent infinite loops
+              .filter(otherParent => !seen.has(otherParent.id))
+
               // exclude less importantRelationships
-              .filter(parent => {
+              .filter(otherParent => {
                 if (!rule) return true
 
-                return rule.important[0] === parent.id // keep?
+                return rule.important[0] === otherParent.id // keep?
               })
 
             return [...acc, ...otherParents]
@@ -586,19 +600,19 @@ export default {
           []
         )
 
-      partners = uniqby(partners, 'id')
+      parents = uniqby(parents, 'id')
 
       // get partners full profiles to find if they have any other children
-      partners = await this.getFullPartnerProfiles(partners, person)
+      parents = await this.getFullPartnerProfiles(parents, person)
 
-      return partners
+      return parents
     },
 
     // get partners full profiles to find if they have any other children
     async getFullPartnerProfiles (partners, person) {
       return Promise.all(partners.map(async partner => {
         partner = await this.getRelatives(partner.id)
-        // get all the children profiles so we can see which ones arent connected to this parent
+        // get all the children profiles so we can see which ones aren't connected to this parent
         partner.children = await this.getFullChildProfiles(partner, person)
         partner.children = partner.children.filter(child => !isEmpty(child))
         return {
@@ -624,9 +638,9 @@ export default {
       )
     },
 
-    async mapChildren (person) {
+    async mapChildren (person, seen) {
       return Promise.all(person.children.map(async child => {
-        var childProfile = await this.loadDescendants(child.id)
+        var childProfile = await this.loadDescendants(child.id, seen)
         if (!person.id) person.id = childProfile.parents[0].id
 
         // load the relationship between the two
