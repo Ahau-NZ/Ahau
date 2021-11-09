@@ -744,11 +744,12 @@ export default {
     }
   },
   async beforeDestroy () {
-    if (!this.whakapapaView.id) {
+    if (!this.whakapapaView.id && this.whakapapView.name !== 'Loading') {
       console.error('Trying to save the record count without a whakapapa id', this.whakapapaView)
       return
     }
 
+    if (!this.whakapapaView.canEdit) return
     if (this.whakapapaView.recordCount === 0) return
     if (this.whakapapaView.recordCount === this.recordCount) return
 
