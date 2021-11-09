@@ -122,7 +122,12 @@ import findSuccessor from '@/lib/find-successor'
 import mapProfileMixins from '@/mixins/profile-mixins.js'
 import { createNamespacedHelpers, mapGetters, mapActions } from 'vuex'
 const { mapMutations: mapAlertMutations } = createNamespacedHelpers('alerts')
-const { mapGetters: mapWhakapapaGetters, mapMutations: mapWhakapapaMutations } = createNamespacedHelpers('whakapapa')
+const {
+  mapGetters: mapWhakapapaGetters,
+  mapMutations: mapWhakapapaMutations,
+  mapActions: mapWhakapapaActions
+} = createNamespacedHelpers('whakapapa')
+
 const { mapActions: mapTribeActions } = createNamespacedHelpers('tribe')
 const { mapGetters: mapPersonGetters } = createNamespacedHelpers('person')
 
@@ -176,7 +181,7 @@ export default {
   mixins: [
     mapProfileMixins({
       mapApollo: ['profile', 'tribe'],
-      mapMethods: ['createPerson', 'updatePerson', 'saveLink', 'getProfile', 'savePerson', 'saveWhakapapa', 'getWhakapapaLink']
+      mapMethods: ['createPerson', 'updatePerson', 'saveLink', 'getProfile', 'savePerson', 'getWhakapapaLink']
     })
   ],
   data () {
@@ -230,6 +235,9 @@ export default {
     ...mapWhakapapaMutations([
       'updateNodeInNestedWhakapapa',
       'deleteNodeInNestedWhakapapa'
+    ]),
+    ...mapWhakapapaActions([
+      'saveWhakapapaView'
     ]),
     isActive (type) {
       if (type === this.dialog || type === this.storeDialog) {
@@ -453,7 +461,7 @@ export default {
         }
       }
 
-      await this.saveWhakapapa(input)
+      await this.saveWhakapapaView(input)
       await this.$parent.reload()
 
       return true
@@ -552,7 +560,7 @@ export default {
           id: this.$route.params.whakapapaId,
           importantRelationships: relationship
         }
-        await this.saveWhakapapa(update)
+        await this.saveWhakapapaView(update)
         // we need to load the different links
         // await this.$parent.reload() //doesnt work reloading
       }
@@ -565,7 +573,7 @@ export default {
         }
       }
 
-      await this.saveWhakapapa(input)
+      await this.saveWhakapapaView(input)
       await this.$parent.reload()
 
       if (this.selectedProfile.id === this.view.focus) {
@@ -783,7 +791,7 @@ export default {
         importantRelationships: importantRelationship
       }
 
-      await this.saveWhakapapa(update)
+      await this.saveWhakapapaView(update)
       await this.$parent.reload()
     }
   }

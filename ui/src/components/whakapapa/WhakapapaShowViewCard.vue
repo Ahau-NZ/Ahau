@@ -41,7 +41,7 @@
               <!-- Pencil icon -->
               <slot name="edit"></slot>
               <!-- Dropdown icon -->
-              <v-tooltip v-if="description || view.kaitiaki || view.tiaki" bottom>
+              <v-tooltip v-if="description || view.tiaki" bottom>
                 <template v-slot:activator="{ on }">
                 <v-btn
                   v-on="on"
@@ -63,7 +63,7 @@
           <v-divider></v-divider>
           <v-card-subtitle v-if="description" v-text="description" class="pa-3"/>
           <v-row class="pl-4">
-            <AvatarGroup :profiles="view.kaitiaki || view.tiaki" groupTitle="Kaitiaki" size="50px" showLabels @profile-click="openProfile($event)"/>
+            <AvatarGroup :profiles="view.tiaki" groupTitle="Kaitiaki" size="50px" showLabels @profile-click="openProfile($event)"/>
             <AvatarGroup v-if="access" :profiles="[access]" :isView="access.type === 'community'" groupTitle="Access" size="50px" showLabels @profile-click="openProfile($event)"/>
           </v-row>
         </div>

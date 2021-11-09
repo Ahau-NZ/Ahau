@@ -26,7 +26,7 @@ export const getWhakapapaView = id => ({
     query($id: String!) {
       whakapapaView(id: $id) {
         ...WhakapapaFragment
-        kaitiaki {
+        tiaki {
           ...PublicProfileFields
         }
       }
@@ -35,3 +35,33 @@ export const getWhakapapaView = id => ({
   variables: { id },
   fetchPolicy: 'no-cache'
 })
+
+export const getWhakapapaViews = ({
+  query: gql`
+    ${WhakapapaFragment}
+    ${PublicProfileFieldsFragment}
+    query {
+      whakapapaViews {
+        ...WhakapapaFragment
+        tiaki {
+          ...PublicProfileFields
+        }
+      }
+    }
+  `,
+  update: data => data.whakapapaViews,
+  fetchPolicy: 'no-cache'
+})
+
+export const saveWhakapapaView = input => {
+  if (input.image) delete input.image.uri
+
+  return {
+    mutation: gql`
+      mutation($input: WhakapapaViewInput) {
+        saveWhakapapaView(input: $input)
+      }
+    `,
+    variables: { input }
+  }
+}
