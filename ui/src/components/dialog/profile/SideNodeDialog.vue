@@ -95,7 +95,7 @@
           <!-- Displays buttons to edit or navigate to this profiles archive -->
           <v-row v-if="!isEditing"  class="justify-center pt-3">
             <v-btn
-              @click.native="goArchive()"
+              @click.native="goArchive"
               color="white"
               text
               medium
@@ -492,7 +492,6 @@ export default {
       if (
         this.$route.name === 'person/whakapapa/:whakapapaId' ||
         this.$route.name === 'community/whakapapa/:whakapapaId'
-      // ) this.setIsFromWhakapapaShow(true)
       ) this.updateIsFromWhakapapaShow(true)
       this.$router.push({
         name: 'person/archive',

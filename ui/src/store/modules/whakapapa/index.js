@@ -30,10 +30,6 @@ export default function (apollo) {
     whakapapaView: state => state.view,
     // whakapapaView: state => state.loading ? loadingView : state.view, // TODO
     nestedWhakapapa: state => state.nestedWhakapapa,
-    whakapapa: state => {
-      throw new Error('WHO IS USING THIS')
-      // return state.whakapapa
-    },
     nodes: state => {
       return state.nodes
     },
@@ -73,7 +69,7 @@ export default function (apollo) {
       state.lessImportantLinks = links
     },
     resetWhakapapaView (state) {
-      state.view = loadingView
+      // state.view = loadingView // NOTE: removing this doesnt affect the whakapapa that is shown
       state.nestedWhakapapa = {}
       state.nodes = []
       state.lessImportantLinks = []
