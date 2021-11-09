@@ -433,23 +433,33 @@ export default {
       this.$emit('close')
     },
     checkIfDuplicate (profile) {
-      // if we are adding a parent and they are a partner of a parent
-      if (this.type === 'parent' && this.selectedProfile.parents.length) {
-        const isParentsPartner = this.selectedProfile.parents.some(d => {
-          return d.partners.some(p => p.id === profile.id)
+      if (this.type === 'parent') {
+        const existingParents = this.selectedProfile.parents
+        const isNewParentExistingParentsPartner = existingParents.some(parent => {
+          return parent.partners.some(p => p.id === profile.id)
         })
-        if (isParentsPartner) return false
+        if (isNewParentExistingParentsPartner) return false
       }
 
-      // if we are adding a child and they are a child of a partner
       if (this.type === 'child') {
-        const isPartnersChild = this.selectedProfile.partners.some(d => {
-          return d.children.some(c => c.id === profile.id)
+        const existingPartners = this.selectedProfile.partners
+        const isNewChildExistingPartnersChild = existingPartners.some(partner => {
+          return partner.children.some(c => c.id === profile.id)
         })
-        if (isPartnersChild) return false
+        if (isNewChildExistingPartnersChild) return false
+      }
+
+      if (this.type === 'partner') {
+        const existingChildren = this.selectedProfile.children
+        const isNewPartnerExistingChildsParent = existingChildren.some(child => {
+          return child.parents.some(p => p.id === profile.id)
+        })
+        if (isNewPartnerExistingChildsParent) return false
       }
 
       if (this.findInTree(profile.id)) return true
+
+      return false
     },
     setFormData (person) {
       this.hasSelection = true
