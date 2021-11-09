@@ -432,10 +432,39 @@ export default {
       this.resetFormData()
       this.$emit('close')
     },
+    checkIfDuplicate (profile) {
+      if (this.type === 'parent') {
+        const existingParents = this.selectedProfile.parents
+        const isNewParentExistingParentsPartner = existingParents.some(parent => {
+          return parent.partners.some(p => p.id === profile.id)
+        })
+        if (isNewParentExistingParentsPartner) return false
+      }
+
+      if (this.type === 'child') {
+        const existingPartners = this.selectedProfile.partners
+        const isNewChildExistingPartnersChild = existingPartners.some(partner => {
+          return partner.children.some(c => c.id === profile.id)
+        })
+        if (isNewChildExistingPartnersChild) return false
+      }
+
+      if (this.type === 'partner') {
+        const existingChildren = this.selectedProfile.children
+        const isNewPartnerExistingChildsParent = existingChildren.some(child => {
+          return child.parents.some(p => p.id === profile.id)
+        })
+        if (isNewPartnerExistingChildsParent) return false
+      }
+
+      if (this.findInTree(profile.id)) return true
+
+      return false
+    },
     setFormData (person) {
       this.hasSelection = true
       this.profile = person
-      if (this.findInTree(person.id)) this.isDuplicate = true
+      this.isDuplicate = this.checkIfDuplicate(this.profile)
     },
     resetFormData () {
       if (this.hasSelection) {
