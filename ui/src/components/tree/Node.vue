@@ -99,10 +99,8 @@ export default {
   computed: {
     ...mapWhakapapaGetters(['whakapapaView']),
     isDuplicate () {
-      if (this.whakapapaView.importantRelationships.some(rel => rel.profileId === this.node.data.id && rel.important.length > 1)) {
-        return true
-      }
-      return false
+      return this.whakapapaView.importantRelationships
+        .some(rel => rel.profileId === this.node.data.id && rel.important.length > 1)
     },
     showMenuButton () {
       if (this.isPartner) return false
