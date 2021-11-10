@@ -21,6 +21,7 @@ export default function (apollo) {
   const state = {
     // loading, // TODO
     view: loadingView,
+    lastView: loadingView,
     nestedWhakapapa: {},
     whakapapa: {},
     nodes: {}
@@ -28,12 +29,9 @@ export default function (apollo) {
 
   const getters = {
     whakapapaView: state => state.view,
+    lastWhakapapaView: state => state.lastView,
     // whakapapaView: state => state.loading ? loadingView : state.view, // TODO
     nestedWhakapapa: state => state.nestedWhakapapa,
-    whakapapa: state => {
-      throw new Error('WHO IS USING THIS')
-      // return state.whakapapa
-    },
     nodes: state => {
       return state.nodes
     },
@@ -48,6 +46,7 @@ export default function (apollo) {
 
   const mutations = {
     setView (state, view) {
+      state.lastView = state.view
       state.view = view
     },
     addNodes (state, nodes) {
@@ -73,6 +72,7 @@ export default function (apollo) {
       state.lessImportantLinks = links
     },
     resetWhakapapaView (state) {
+      state.lastView = state.view
       state.view = loadingView
       state.nestedWhakapapa = {}
       state.nodes = []
