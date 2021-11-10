@@ -21,6 +21,7 @@ export default function (apollo) {
   const state = {
     // loading, // TODO
     view: loadingView,
+    lastView: loadingView,
     nestedWhakapapa: {},
     whakapapa: {},
     nodes: {}
@@ -28,6 +29,7 @@ export default function (apollo) {
 
   const getters = {
     whakapapaView: state => state.view,
+    lastWhakapapaView: state => state.lastView,
     // whakapapaView: state => state.loading ? loadingView : state.view, // TODO
     nestedWhakapapa: state => state.nestedWhakapapa,
     nodes: state => {
@@ -44,6 +46,7 @@ export default function (apollo) {
 
   const mutations = {
     setView (state, view) {
+      state.lastView = state.view
       state.view = view
     },
     addNodes (state, nodes) {
@@ -69,7 +72,8 @@ export default function (apollo) {
       state.lessImportantLinks = links
     },
     resetWhakapapaView (state) {
-      // state.view = loadingView // NOTE: removing this doesnt affect the whakapapa that is shown
+      state.lastView = state.view
+      state.view = loadingView
       state.nestedWhakapapa = {}
       state.nodes = []
       state.lessImportantLinks = []

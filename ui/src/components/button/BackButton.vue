@@ -10,14 +10,14 @@
           <Avatar
             size="45px"
             class="ma-0"
-            :image="whakapapaView.image ? whakapapaView.image : null"
-            :alt="whakapapaView.name"
-            :isView="!whakapapaView.image"
+            :image="lastWhakapapaView.image ? lastWhakapapaView.image : null"
+            :alt="lastWhakapapaView.name"
+            :isView="!lastWhakapapaView.image"
             showLabel
             row
 
           />
-          <span class="pl-2 caption">Back to {{ whakapapaView.name }} whakapapa</span>
+          <span class="pl-2 caption">Back to {{ lastWhakapapaView.name }} whakapapa</span>
         </v-row>
       </v-btn>
     </div>
@@ -109,7 +109,7 @@ export default {
   },
   computed: {
     ...mapGetters(['showStory', 'isFromWhakapapaShow']),
-    ...mapWhakapapaGetters(['whakapapaView']),
+    ...mapWhakapapaGetters(['lastWhakapapaView']),
     hasPreviousRoute () {
       return !!this.route.from
     },
