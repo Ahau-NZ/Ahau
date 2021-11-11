@@ -547,10 +547,14 @@ export default {
             profileId: rule.profileId,
             important: []
           }
-        } else if (rule.important.includes(this.selectedProfile.id)) {
-          relationship = {
-            profileId: rule.profileId,
-            important: rule.important.filter(id => id !== this.selectedProfile.id)
+        } else {
+          const important = [rule.primary.profileId, ...rule.other.map(d => d.profileId)]
+
+          if (important.includes(this.selectedProfile.id)) {
+            relationship = {
+              profileId: rule.profileId,
+              important: important.filter(id => id !== this.selectedProfile.id)
+            }
           }
         }
       })
@@ -761,7 +765,7 @@ export default {
 
       if (exsistingDupe) {
         // YES - there is an important relationship so we use that one instead
-        lessRelationship = exsistingDupe.important[0]
+        lessRelationship = exsistingDupe.primary.profileId
       } else {
         // NO - there isnt an important relationship so we find the parent which takes "presidence"
         lessRelationship = (profile.parents && profile.parents.length && this.findInTree(profile.parents[0].id))

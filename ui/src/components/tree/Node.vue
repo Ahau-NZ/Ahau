@@ -100,7 +100,7 @@ export default {
     ...mapWhakapapaGetters(['whakapapaView']),
     isDuplicate () {
       return this.whakapapaView.importantRelationships
-        .some(rel => rel.profileId === this.node.data.id && rel.important.length > 1)
+        .some(rel => rel.profileId === this.node.data.id && rel.other.length > 1)
     },
     showMenuButton () {
       if (this.isPartner) return false

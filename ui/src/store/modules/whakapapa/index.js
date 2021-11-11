@@ -1,9 +1,11 @@
 import uniqby from 'lodash.uniqby'
 import isEmpty from 'lodash.isempty'
 import clone from 'lodash.clonedeep'
+import Vue from 'vue'
+
+import { getWhakapapaView, getWhakapapaViews, saveWhakapapaView } from './apollo-helpers'
 import tree from '../../../lib/tree-helpers'
 import settings from '../../../lib/link'
-import { getWhakapapaView, getWhakapapaViews, saveWhakapapaView } from './apollo-helpers'
 
 const LINK_OFFSET = 10
 
@@ -24,7 +26,9 @@ export default function (apollo) {
     lastView: loadingView,
     nestedWhakapapa: {},
     whakapapa: {},
-    nodes: {}
+    nodes: {
+      // [profileId]: [node, node, ... ]  NOTE multiple nodes for each profileId as there might be duplicates
+    }
   }
 
   const getters = {
@@ -49,24 +53,13 @@ export default function (apollo) {
       state.lastView = state.view
       state.view = view
     },
-    addNodes (state, nodes) {
-      if (!nodes.length) return
+    addNode (state, node) {
+      if (!node || !node.data || !node.data.id) return
 
-      const change = nodes.reduce((acc, node) => {
-        const id = node.id || (node.data && node.data.id)
-        if (!id) return acc
+      const nodeId = node.data.id
+      const change = [...(state.nodes[nodeId] || []), node]
 
-        acc[id] = [...(state.nodes[id] || []), node]
-        return acc
-      }, {})
-
-      // this assignment stimulates lessImportantLinks to update
-      // NOTE this is spamming a lot of changes at the moment
-      const newValue = {
-        ...state.nodes,
-        ...change
-      }
-      state.nodes = newValue
+      Vue.set(state.nodes, nodeId, change)
     },
     setLessImportantLinks (state, links) {
       state.lessImportantLinks = links
@@ -99,7 +92,7 @@ export default function (apollo) {
 
   function calculateLessImportantLinks (state) {
     // TODO - call this when loading graph is done?
-    if (isEmpty(state.nodes) || isEmpty(state.view.importantRelationships)) return
+    if (!Object.keys(state.nodes).length || isEmpty(state.view.importantRelationships)) return
 
     const links = []
     // // for each importantRelationship find the x,y coords on the graph and create set the link
@@ -111,7 +104,7 @@ export default function (apollo) {
       // TODO WARNING - handle there being multiple locations for a node
 
       // skip the 0th relationship as that was "most important" and already drawn
-      rule.important.slice(1).forEach(profileId => {
+      rule.other.forEach(({ profileId, relationshipType }) => {
         const targetNodes = state.nodes[profileId]
         if (!targetNodes || targetNodes.length === 0) return
         const targetNode = clone(targetNodes[targetNodes.length - 1])
@@ -119,14 +112,17 @@ export default function (apollo) {
         // TODO cherese 5/11/21 need to query the relationship between the two nodes in order to get an accurate relationshipType
         // targetNode.data.relationshipType is the childs relationship to their parent in the tree
         // node.data.relationshipType is that parents relationship to their parent in the tree!
-        // const isDashed = targetNode.data.relationshipType !== 'birth'
-        const isDashed = false
+        const isDashed = relationshipType && relationshipType !== 'birth' && relationshipType !== 'partner'
 
         const coords = {
           startX: targetNode.x + targetNode.radius,
           startY: targetNode.y + targetNode.radius,
           endX: node.x + node.radius,
           endY: node.y + node.radius
+        }
+
+        if (relationshipType === 'partner') {
+          coords.directed = false
         }
 
         const offset = (coords.startX < coords.endX) ? LINK_OFFSET : -1 * LINK_OFFSET
@@ -159,11 +155,9 @@ export default function (apollo) {
     deleteNodeInNestedWhakapapa ({ commit, dispatch }, node) {
       commit('deleteNodeInNestedWhakapapa', node)
     },
-    async getWhakapapaView (context, id) {
+    async getWhakapapaView (context, viewId) {
       try {
-        const res = await apollo.query(
-          getWhakapapaView(id)
-        )
+        const res = await apollo.query(getWhakapapaView(viewId))
 
         if (res.errors) throw new Error(res.errors)
 
@@ -174,12 +168,10 @@ export default function (apollo) {
         console.error('failed to get the whakapapa', err)
       }
     },
-    async getWhakapapaViews (context) {
+    async getWhakapapaViews (context, opts = {}) {
+      const { groupId } = opts
       try {
-        const res = await apollo.query(
-          getWhakapapaViews
-        )
-
+        const res = await apollo.query(getWhakapapaViews(groupId))
         if (res.errors) throw new Error(res.errors)
 
         // TODO success alert message
@@ -214,8 +206,7 @@ export default function (apollo) {
       commit('resetWhakapapaView')
     },
     addNode ({ commit }, node) {
-      // TODO change is so that addNodes is only hit once per second!
-      commit('addNodes', [node])
+      commit('addNode', node)
     },
     setNestedWhakapapa ({ commit, dispatch }, nestedWhakapapa) {
       commit('setNestedWhakapapa', nestedWhakapapa)
