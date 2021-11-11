@@ -363,9 +363,19 @@ export default {
     ...mapGetters(['isKaitiaki']),
     scopedProfile () {
       if (this.profile && this.profile.adminProfile) {
-        const profile = { ...this.profile, ...this.profile.adminProfile }
-        profile.adminProfileId = this.profile.adminProfile.id
+        const ignoreList = new Set(['id', 'type', 'recps', '__typename'])
+        const profile = { ...this.profile }
+        const adminProfile = profile.adminProfile
         delete profile.adminProfile
+
+        for (const field in adminProfile) {
+          if (ignoreList.has(field)) continue
+          if (adminProfile[field] === null) continue
+          if (Array.isArray(adminProfile[field]) && adminProfile[field].length === 0) continue
+
+          profile[field] = adminProfile[field]
+        }
+        profile.adminProfileId = this.profile.adminProfile.id
 
         return profile
       }
