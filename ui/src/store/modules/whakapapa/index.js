@@ -4,6 +4,7 @@ import clone from 'lodash.clonedeep'
 import tree from '../../../lib/tree-helpers'
 import settings from '../../../lib/link'
 import { getWhakapapaView, getWhakapapaViews, saveWhakapapaView } from './apollo-helpers'
+import Vue from 'vue'
 
 const LINK_OFFSET = 10
 
@@ -24,7 +25,9 @@ export default function (apollo) {
     lastView: loadingView,
     nestedWhakapapa: {},
     whakapapa: {},
-    nodes: {}
+    nodes: {
+      // [profileId]: [node, node, ... ]  NOTE multiple nodes for each profileId as there might be duplicates
+    }
   }
 
   const getters = {
@@ -49,24 +52,13 @@ export default function (apollo) {
       state.lastView = state.view
       state.view = view
     },
-    addNodes (state, nodes) {
-      if (!nodes.length) return
+    addNode (state, node) {
+      if (!node || !node.data || !node.data.id) return
 
-      const change = nodes.reduce((acc, node) => {
-        const id = node.id || (node.data && node.data.id)
-        if (!id) return acc
+      const nodeId = node.data.id
+      const change = [...(state.nodes[nodeId] || []), node]
 
-        acc[id] = [...(state.nodes[id] || []), node]
-        return acc
-      }, {})
-
-      // this assignment stimulates lessImportantLinks to update
-      // NOTE this is spamming a lot of changes at the moment
-      const newValue = {
-        ...state.nodes,
-        ...change
-      }
-      state.nodes = newValue
+      Vue.set(state.nodes, nodeId, change)
     },
     setLessImportantLinks (state, links) {
       state.lessImportantLinks = links
@@ -99,7 +91,7 @@ export default function (apollo) {
 
   function calculateLessImportantLinks (state) {
     // TODO - call this when loading graph is done?
-    if (isEmpty(state.nodes) || isEmpty(state.view.importantRelationships)) return
+    if (!Object.keys(state.nodes).length || isEmpty(state.view.importantRelationships)) return
 
     const links = []
     // // for each importantRelationship find the x,y coords on the graph and create set the link
@@ -214,8 +206,7 @@ export default function (apollo) {
       commit('resetWhakapapaView')
     },
     addNode ({ commit }, node) {
-      // TODO change is so that addNodes is only hit once per second!
-      commit('addNodes', [node])
+      commit('addNode', node)
     },
     setNestedWhakapapa ({ commit, dispatch }, nestedWhakapapa) {
       commit('setNestedWhakapapa', nestedWhakapapa)
