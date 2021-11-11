@@ -21,7 +21,7 @@ import { linkColours } from '../lib/colours'
       (endX, endY)
 
 */
-function path ({ startX, startY, endX, endY }, branch) {
+function path ({ startX, startY, endX, endY, directed = true }, branch) {
   branch = branch || (endY - startY) / 2
 
   // special case for when startY and endY are the same
@@ -34,7 +34,7 @@ function path ({ startX, startY, endX, endY }, branch) {
 
   */
 
-  if (startY === endY) {
+  if (directed && startY === endY) {
     const offset = 80
     return `
       M ${startX}, ${startY}

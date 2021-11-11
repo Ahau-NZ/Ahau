@@ -547,7 +547,7 @@ export default {
 
         // profile has an important relationship so we only show the link between them and the first profile listed as important
         // any other links wont be drawn
-        return importantRelationship.important[0] === personId
+        return importantRelationship.primary.profileId === personId
       })
     },
 
@@ -592,7 +592,7 @@ export default {
               .filter(otherParent => {
                 if (!rule) return true
 
-                return rule.important[0] === otherParent.id // keep?
+                return rule.primary.profileId === otherParent.id // keep?
               })
 
             return [...acc, ...otherParents]

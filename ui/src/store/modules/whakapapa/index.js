@@ -103,7 +103,7 @@ export default function (apollo) {
       // TODO WARNING - handle there being multiple locations for a node
 
       // skip the 0th relationship as that was "most important" and already drawn
-      rule.important.slice(1).forEach(profileId => {
+      rule.other.forEach(({ profileId, relationshipType }) => {
         const targetNodes = state.nodes[profileId]
         if (!targetNodes || targetNodes.length === 0) return
         const targetNode = clone(targetNodes[targetNodes.length - 1])
@@ -111,14 +111,17 @@ export default function (apollo) {
         // TODO cherese 5/11/21 need to query the relationship between the two nodes in order to get an accurate relationshipType
         // targetNode.data.relationshipType is the childs relationship to their parent in the tree
         // node.data.relationshipType is that parents relationship to their parent in the tree!
-        // const isDashed = targetNode.data.relationshipType !== 'birth'
-        const isDashed = false
+        const isDashed = relationshipType && relationshipType !== 'birth' && relationshipType !== 'partner'
 
         const coords = {
           startX: targetNode.x + targetNode.radius,
           startY: targetNode.y + targetNode.radius,
           endX: node.x + node.radius,
           endY: node.y + node.radius
+        }
+
+        if (relationshipType === 'partner') {
+          coords.directed = false
         }
 
         const offset = (coords.startX < coords.endX) ? LINK_OFFSET : -1 * LINK_OFFSET
