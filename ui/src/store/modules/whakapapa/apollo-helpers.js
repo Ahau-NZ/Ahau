@@ -43,12 +43,12 @@ export const getWhakapapaView = id => ({
   fetchPolicy: 'no-cache'
 })
 
-export const getWhakapapaViews = ({
+export const getWhakapapaViews = groupId => ({
   query: gql`
     ${WhakapapaFragment}
     ${PublicProfileFieldsFragment}
-    query {
-      whakapapaViews {
+    query ($groupId: String) {
+      whakapapaViews (groupId: $groupId) {
         ...WhakapapaFragment
         tiaki {
           ...PublicProfileFields
@@ -56,6 +56,7 @@ export const getWhakapapaViews = ({
       }
     }
   `,
+  variables: { groupId },
   update: data => data.whakapapaViews,
   fetchPolicy: 'no-cache'
 })

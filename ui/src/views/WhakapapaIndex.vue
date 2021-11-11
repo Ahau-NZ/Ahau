@@ -125,9 +125,8 @@ export default {
     ...mapWhakapapaActions(['getWhakapapaViews', 'saveWhakapapaView']),
 
     async groupedWhakapapaViews () {
-      const views = await this.getWhakapapaViews()
-
       if (this.$route.params.profileId === this.whoami.personal.profile.id) {
+        const views = await this.getWhakapapaViews()
         var groupedObj = groupBy(views, 'recps[0]')
 
         let filtered = await Promise.all(
@@ -146,13 +145,10 @@ export default {
         return filtered
       }
 
+      const views = await this.getWhakapapaViews({ groupId: this.$route.params.tribeId })
       return [{
         name: this.profile.preferredName,
-        views: views.filter(view => {
-          return view.recps.some(recp => {
-            return recp === this.$route.params.tribeId
-          })
-        }),
+        views,
         image: this.profile.avatarImage,
         tribeId: this.$route.params.tribeId
       }]
