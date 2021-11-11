@@ -25,7 +25,9 @@ export default function (apollo) {
     lastView: loadingView,
     nestedWhakapapa: {},
     whakapapa: {},
-    nodes: {}
+    nodes: {
+      // [profileId]: [node, node, ... ]  NOTE multiple nodes for each profileId as there might be duplicates
+    }
   }
 
   const getters = {
@@ -53,16 +55,10 @@ export default function (apollo) {
     addNode (state, node) {
       if (!node || !node.data || !node.data.id) return
 
-      const change = [node].reduce((acc, node) => {
-        const id = node.id || (node.data && node.data.id)
-        if (!id) return acc
-
-        acc[id] = [...(state.nodes[id] || []), node]
-        return acc
-      }, {})
       const nodeId = node.data.id
+      const change = [...(state.nodes[nodeId] || []), node]
 
-      Vue.set(state.nodes, nodeId, change[nodeId])
+      Vue.set(state.nodes, nodeId, change)
     },
     setLessImportantLinks (state, links) {
       state.lessImportantLinks = links
