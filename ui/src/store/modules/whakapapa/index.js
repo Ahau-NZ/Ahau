@@ -1,10 +1,11 @@
 import uniqby from 'lodash.uniqby'
 import isEmpty from 'lodash.isempty'
 import clone from 'lodash.clonedeep'
+import Vue from 'vue'
+
+import { getWhakapapaView, getWhakapapaViews, saveWhakapapaView } from './apollo-helpers'
 import tree from '../../../lib/tree-helpers'
 import settings from '../../../lib/link'
-import { getWhakapapaView, getWhakapapaViews, saveWhakapapaView } from './apollo-helpers'
-import Vue from 'vue'
 
 const LINK_OFFSET = 10
 
@@ -151,11 +152,9 @@ export default function (apollo) {
     deleteNodeInNestedWhakapapa ({ commit, dispatch }, node) {
       commit('deleteNodeInNestedWhakapapa', node)
     },
-    async getWhakapapaView (context, id) {
+    async getWhakapapaView (context, viewId) {
       try {
-        const res = await apollo.query(
-          getWhakapapaView(id)
-        )
+        const res = await apollo.query(getWhakapapaView(viewId))
 
         if (res.errors) throw new Error(res.errors)
 
@@ -166,12 +165,10 @@ export default function (apollo) {
         console.error('failed to get the whakapapa', err)
       }
     },
-    async getWhakapapaViews (context) {
+    async getWhakapapaViews (context, opts = {}) {
+      const { groupId } = opts
       try {
-        const res = await apollo.query(
-          getWhakapapaViews
-        )
-
+        const res = await apollo.query(getWhakapapaViews(groupId))
         if (res.errors) throw new Error(res.errors)
 
         // TODO success alert message
