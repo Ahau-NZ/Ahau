@@ -72,7 +72,7 @@ export default {
     this.$i18n.locale = localStorage.getItem('locale') || browserLang || 'en'
   },
   methods: {
-    ...mapActions(['setWhoami', 'setIndexingData']),
+    ...mapActions(['setWhoami', 'setIndexingData', 'setLoading']),
     ...mapAnalyticsActions(['appUsed'])
   },
   computed: {
@@ -116,6 +116,8 @@ export default {
   watch: {
     '$route.name': {
       handler (to, from) {
+        this.setLoading(false)
+
         if (from !== undefined) {
           document.body.classList.remove('page--' + from.toLowerCase())
         }
