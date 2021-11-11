@@ -1,5 +1,5 @@
 <template>
-  <v-overlay opacity="0.8" :value="loadingState">
+  <v-overlay opacity="0.8" :value="loadingState" :z-index="1">
     <v-progress-circular :value="value" indeterminate size="64" color="#b12526">
       {{ label }}
     </v-progress-circular>
