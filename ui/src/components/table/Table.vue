@@ -414,10 +414,14 @@ export default {
       this.scrollTop = e.target.scrollTop
     },
     dataField (node, field) {
-      return (
-        (node.data.adminProfile && node.data.adminProfile[field]) ||
-        node.data[field]
-      )
+      const adminValue = node.data.adminProfile && node.data.adminProfile[field]
+
+      if (
+        adminValue === null ||
+        (Array.isArray(adminValue) && adminValue.length === 0)
+      ) return node.data[field]
+
+      return adminValue
     },
     async tableOverflow () {
       var width = await this.colWidth + this.columns[this.columns.length - 1].x
