@@ -14,7 +14,14 @@ export const WhakapapaFragment = gql`
     recordCount
     importantRelationships {
       profileId
-      important
+      primary {
+        profileId
+        relationshipType
+      }
+      other {
+        profileId
+        relationshipType
+      }
     }
   }
 `
