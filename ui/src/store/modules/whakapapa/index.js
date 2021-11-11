@@ -101,13 +101,18 @@ export default function (apollo) {
       if (!nodes || nodes.length === 0) return
 
       const node = clone(nodes[nodes.length - 1])
+      if (node.parent && node.parent.data.isCollapsed) return
+
       // TODO WARNING - handle there being multiple locations for a node
 
       // skip the 0th relationship as that was "most important" and already drawn
       rule.other.forEach(({ profileId, relationshipType }) => {
         const targetNodes = state.nodes[profileId]
+
         if (!targetNodes || targetNodes.length === 0) return
+
         const targetNode = clone(targetNodes[targetNodes.length - 1])
+        if (targetNode.parent && targetNode.parent.data.isCollapsed) return
 
         // TODO cherese 5/11/21 need to query the relationship between the two nodes in order to get an accurate relationshipType
         // targetNode.data.relationshipType is the childs relationship to their parent in the tree
