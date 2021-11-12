@@ -383,6 +383,7 @@ export default {
           } else {
             if (this.selectedProfile.parent) { // when a node already has a parent node above them, this will be called
               parentProfile = await this.loadDescendants(this.selectedProfile.parent.id)
+              // NOTE we're not passing in a "seen" variable, so this call might result in infinite loops
               this.updateNodeInNestedWhakapapa(parentProfile)
 
               // so you wont see the extra parent update
