@@ -478,6 +478,7 @@ export default {
     },
 
     async loadDescendants (profileId, seen = new Set([])) {
+      // TODO if seen isn't provided, maybe try and build based on parents above in graph?
       seen.add(profileId)
       // get the persons profile + links
 
