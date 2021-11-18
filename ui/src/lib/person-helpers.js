@@ -212,14 +212,52 @@ export const WHAKAPAPA_LINK_FRAGMENT = gql`
   }
 `
 
-export const getPerson = id => ({
-  query: gql`
-    ${PublicProfileFieldsFragment}
-    ${PERSON_FRAGMENT}
-    ${AUTHOR_FRAGMENT}
-    ${WHAKAPAPA_LINK_FRAGMENT}
-    query($id: String!) {
-      person(id: $id){
+const GET_PERSON_LITE = gql`
+  query($id: String!) {
+    person(id: $id){
+      id
+      preferredName
+      gender
+      avatarImage { uri }
+
+      aliveInterval
+      deceased
+
+      parents { id }
+      adminProfile {
+        id
+        preferredName
+        aliveInterval
+      }
+    }
+  }
+`
+export const getPersonLite = (id, fetchPolicy = 'no-cache') => ({
+  query: GET_PERSON_LITE,
+  variables: { id },
+  fetchPolicy
+})
+
+const GET_PERSON = gql`
+  ${PublicProfileFieldsFragment}
+  ${PERSON_FRAGMENT}
+  ${AUTHOR_FRAGMENT}
+  ${WHAKAPAPA_LINK_FRAGMENT}
+  query($id: String!) {
+    person(id: $id){
+      ...ProfileFragment
+      children {
+        ...ProfileFragment
+        ...WhakapapaLinkFragment
+      }
+      parents {
+        ...ProfileFragment
+        ...WhakapapaLinkFragment
+        partners {
+          ...ProfileFragment
+        }
+      }
+      partners {
         ...ProfileFragment
         children {
           ...ProfileFragment
@@ -228,47 +266,35 @@ export const getPerson = id => ({
         parents {
           ...ProfileFragment
           ...WhakapapaLinkFragment
-          partners {
-            ...ProfileFragment
-          }
         }
-        partners {
+      }
+      siblings {
+        ...ProfileFragment
+        parents {
           ...ProfileFragment
-          children {
-            ...ProfileFragment
-            ...WhakapapaLinkFragment
-          }
-          parents {
-            ...ProfileFragment
-            ...WhakapapaLinkFragment
-          }
+          ...WhakapapaLinkFragment
         }
-        siblings {
-          ...ProfileFragment
-          parents {
-            ...ProfileFragment
-            ...WhakapapaLinkFragment
-          }
-        }
-        tiaki {
-          ...PublicProfileFields
-        }
-        authors {
-          ...AuthorFragment
-          profile {
-            ...ProfileFragment
-          }
-        }
-        originalAuthor
-        adminProfile {
+      }
+      tiaki {
+        ...PublicProfileFields
+      }
+      authors {
+        ...AuthorFragment
+        profile {
           ...ProfileFragment
         }
       }
+      originalAuthor
+      adminProfile {
+        ...ProfileFragment
+      }
     }
-  `,
-  variables: {
-    id
-  },
+  }
+`
+
+export const getPerson = id => ({
+  query: GET_PERSON,
+  variables: { id },
   update: data => data.person,
   fetchPolicy: 'no-cache'
 })

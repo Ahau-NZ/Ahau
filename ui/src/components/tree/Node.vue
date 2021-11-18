@@ -5,7 +5,7 @@
     @mouseover="hover = true"
     @mouseleave="hover = false"
     @click="click"
-    @mousedown.right="openMenu($event, profile)"
+    @mousedown.right="openMenu($event)"
     @contextmenu.prevent
   >
     <g v-if="showAvatars" class="avatar">
@@ -30,10 +30,10 @@
       <NodeMenuButton
         v-if="showMenuButton"
         :transform="`translate(${1.4 * radius}, ${1.4 * radius})`"
-        @click="openMenu($event, profile)"
+        @click="openMenu($event)"
       />
     </g>
-    <g v-if="profile.isCollapsed" :style="collapsedStyle">
+    <g v-if="node.data.isCollapsed" :style="collapsedStyle">
       <text> ... </text>
     </g>
     <g v-if="!showAvatars" :style="nameTextStyle">
@@ -61,6 +61,7 @@
 
 <script>
 import get from 'lodash.get'
+import { getPersonLite } from '@/lib/person-helpers'
 import avatarHelper from '@/lib/avatar-helpers.js'
 import { DECEASED_COLOUR, ALIVE_COLOUR } from '@/lib/constants.js'
 import { getDisplayName } from '@/lib/person-helpers.js'
@@ -91,7 +92,8 @@ export default {
       colours: {
         alive: ALIVE_COLOUR,
         deceased: DECEASED_COLOUR
-      }
+      },
+      profile: {} // to be loaded
     }
   },
   computed: {
@@ -102,7 +104,7 @@ export default {
     },
     showMenuButton () {
       if (this.isPartner) return false
-      if (!this.profile.isCollapsed) {
+      if (!this.node.data.isCollapsed) {
         if (this.hover) return true
         if (this.nodeCentered === this.node.data.id) return true
       }
@@ -113,9 +115,6 @@ export default {
     },
     clipPathId () {
       return this.isPartner ? 'partnerCirlce' : 'myCircle'
-    },
-    profile () {
-      return this.node.data
     },
     diameter () {
       return this.radius * 2
@@ -161,9 +160,12 @@ export default {
   },
   methods: {
     ...mapActions('whakapapa', ['addNode']),
-    openMenu (event, profile) {
-      profile.isPartner = this.isPartner
-      this.$emit('open-menu', { event, profile })
+    openMenu (event) {
+      this.$emit('open-menu', {
+        event,
+        profile: { ...this.profile, isPartner: this.isPartner } // mix: this is weird?
+        // TODO follow through to see where this goes
+      })
     },
     click () {
       // only change focus when the partner nodes are clicked
@@ -180,10 +182,29 @@ export default {
   watch: {
     node: {
       immediate: true,
-      handler (newVal) {
+      async handler (newVal) {
         newVal.radius = this.radius
         // NOTE may need to consider watch: { deep: true }
+
+        if (!newVal) return
         this.addNode(newVal)
+
+        const { id } = newVal.data
+
+        /* put the cached profile in if it exists */
+        const cached = await this.$apollo.query(getPersonLite(id, 'cache-only'))
+          .catch(err => {
+            console.log('error hitting the cache!', err)
+            return { errors: err }
+          })
+        if (!cached.errors && cached.data.person) {
+          this.profile = cached.data.person
+        }
+
+        /* then load the latest over the top */
+        // NOTE 'network-only' ensures the result is added to the cache
+        const fresh = await this.$apollo.query(getPersonLite(id, 'network-only'))
+        this.profile = fresh.data.person
       }
     }
   }
