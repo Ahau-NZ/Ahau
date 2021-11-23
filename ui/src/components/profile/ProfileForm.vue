@@ -148,17 +148,17 @@
     <v-row v-if="isDuplicate" class="pl-4">
       <v-col cols="12" class="">
         <v-row>
-          <p>This profile already exists in this whakapapa record. How would you like to handle this?</p>
+          <p>{{ t('profileExists') }}</p>
         </v-row>
         <!-- <v-radio-group v-model="moveDup" row class="mt-0 ml-n2"> -->
         <v-radio-group :value="moveDup" @change="$emit('update:moveDup', $event)" row class="mt-0 ml-n2" mandatory>
           <v-radio
-            :label="t('movePerson')"
+            :label="t('movePerson', { person: getDisplayName(formData), displayName })"
             :value="true"
           />
           <v-radio
             :value="false"
-            :label="t('createLink')"
+            :label="t('createLink', { person: getDisplayName(formData), displayName })"
           />
         </v-radio-group>
       </v-col>
