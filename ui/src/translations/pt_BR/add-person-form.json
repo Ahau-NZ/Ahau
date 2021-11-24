@@ -16,8 +16,9 @@
   "deathPlace": "Place of death",
   "burialLocation": "Burial location",
   "notLiving": "Não está mais vivendo",
-  "movePerson": "Move the person",
-  "createLink": "Create a link",
+  "profileExists": "This profile already exists in this whakapapa record. How would you like to see this relationship",
+  "movePerson": "Move {person} to {displayName}'s position",
+  "createLink": "Create a link between {person} and {displayName}",
   "birthOrder": "Ordem de nascimento",
   "genderIdentity": "Identifica como",
   "gender": {
