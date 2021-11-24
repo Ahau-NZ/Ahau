@@ -62,7 +62,6 @@
 import pick from 'lodash.pick'
 import isEmpty from 'lodash.isempty'
 import isEqual from 'lodash.isequal'
-import groupBy from 'lodash.groupby'
 
 import WhakapapaViewCard from '@/components/whakapapa/WhakapapaViewCard.vue'
 import NewViewDialog from '@/components/dialog/whakapapa/NewViewDialog.vue'
@@ -125,26 +124,6 @@ export default {
     ...mapWhakapapaActions(['getWhakapapaViews', 'saveWhakapapaView']),
 
     async groupedWhakapapaViews () {
-      if (this.$route.params.profileId === this.whoami.personal.profile.id) {
-        const views = await this.getWhakapapaViews()
-        var groupedObj = groupBy(views, 'recps[0]')
-
-        let filtered = await Promise.all(
-          Object.keys(groupedObj).map(async id => {
-            var views = groupedObj[id]
-            if (id === this.whoami.personal.groupId) return { name: this.t('privateRecords'), image: this.whoami.personal.profile.avatarImage, views: views, tribeId: this.whoami.personal.groupId }
-            var tribe = await this.getTribe(id)
-
-            if (tribe.private && tribe.private.length) return { name: tribe.private[0].preferredName, image: tribe.private[0].avatarImage, views: views, tribeId: tribe.id }
-            return null
-          })
-        )
-
-        filtered = filtered.filter(Boolean)
-
-        return filtered
-      }
-
       const views = await this.getWhakapapaViews({ groupId: this.$route.params.tribeId })
       return [{
         name: this.profile.preferredName,

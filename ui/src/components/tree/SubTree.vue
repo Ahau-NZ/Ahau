@@ -186,7 +186,7 @@ export default {
         if (partner.children.length) {
           const childrenX = []
           partner.children.forEach(child => {
-            let node = this.root.children && this.root.children.find(rootChild => child.id === rootChild.data.id)
+            let node = this.children && this.children.find(rootChild => child.id === rootChild.data.id)
             if (node) childrenX.push(node.x)
           })
           var average = childrenX.reduce((a, b) => a + b, 0) / childrenX.length
@@ -266,7 +266,7 @@ export default {
     },
     mapChild ({ x = this.root.x, y = this.root.y, center, sign, yOffset, xOffset }, child, style, parent, ghostParent) {
       // map to their node from the root parent
-      const node = this.root.children.find(rootChild => child.id === rootChild.data.id)
+      const node = this.children.find(rootChild => child.id === rootChild.data.id)
 
       if (!node || !node.data) return
       if (node.data.isNonChild) center = false
@@ -293,7 +293,7 @@ export default {
           d: settings.path( // for drawing a link from the parent to child
             {
               startX: offCenter ? x + this.partnerRadius : x + this.radius,
-              startY: offCenter ? yOffset : y + this.radius,
+              startY: offCenter ? yOffset + 10 : y + this.radius,
               endX: offCenter ? node.x + this.radius + xOffset : node.x + this.radius,
               endY: node.y + this.radius
             },
